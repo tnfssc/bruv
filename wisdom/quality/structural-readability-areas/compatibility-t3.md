@@ -5,3 +5,7 @@
 Area checkout: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d; branch `bruv/whole-repo-structural-readability-compat-dc14408d`; initial commit `59413c532e6422983f611915e509e8421aa2f363`. Max three primary/rework workers and three judges concurrently. Related changes will be integrated coherently and final changed blobs rejudged; new helpers require primary coverage. No worker pickup notes are imported.
 
 Proof limits: no tests yet; native/provider/device/SSH acceptance requires real environments and is not inferred from fixtures. Parent owns full gate and PR #45.
+
+## First accepted boundary
+
+`src/t3/tasks/native-task.ts`: independent judge `task_2c886e04` found no change needed at blob `9152be57bb326b4f919518efe6d13be4b10c363b`. Strict contracts, exceptional launch replay and caller-owned lifetime are already visible. Primary proof: 36 focused tests, 154 assertions. Important qualification: adapter does not replay cancellation ambiguity, but MCP transport may resend after 404. No source patch or worker pickup note imported. Other files remain pending/in flight; this is not area completion.

@@ -358,25 +358,50 @@
     {
       "file": "src/t3/tasks/mcp-client.ts",
       "initialBlob": "b00156caaeb4ba5fe15e0f3c7fb8eff472d282ce",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_ea47c14e",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_ea47c14e",
+        "branch": "bruv/primary-src-t3-tasks-mcp-client.ts-ea47c14e",
+        "launchBase": "e72704350b15832a736ed3bce0b080b8d5d3ab9b",
+        "commit": null
+      },
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "launchBase": "e72704350b15832a736ed3bce0b080b8d5d3ab9b"
     },
     {
       "file": "src/t3/tasks/native-task.ts",
       "initialBlob": "9152be57bb326b4f919518efe6d13be4b10c363b",
-      "status": "primary-running",
+      "status": "accepted-unchanged",
       "primary": {
         "id": "task_c80e2264",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_c80e2264",
         "branch": "bruv/primary-src-t3-tasks-native-task.ts-c80e2264",
         "launchBase": "18cb468114e1d73f402f66015b14138e2ede2f47",
-        "commit": null
+        "commit": "bb9db4b7aaec6b9f4f2d0a4a76ffd313208d41a5"
       },
-      "judges": [],
-      "acceptedBlob": null,
-      "launchBase": "18cb468114e1d73f402f66015b14138e2ede2f47"
+      "judges": [
+        {
+          "id": "task_2c886e04",
+          "status": "completed",
+          "candidate": "bb9db4b7aaec6b9f4f2d0a4a76ffd313208d41a5",
+          "verdict": "NO CHANGE NEEDED",
+          "blob": "9152be57bb326b4f919518efe6d13be4b10c363b",
+          "objections": [],
+          "qualifications": [
+            "launch-identity derives new stable IDs and reads legacy mappings; it does not persist a fresh reservation.",
+            "No ambiguous-response replay for cancellation in adapter; MCP transport CAN reconnect/resend after HTTP 404."
+          ],
+          "evidence": "Read full diff/source plus JobService, extension, job-bridge, launch-identity, MCP client and native-routing/production-bridge test bodies. Tests not rerun by judge."
+        }
+      ],
+      "acceptedBlob": "9152be57bb326b4f919518efe6d13be4b10c363b",
+      "launchBase": "18cb468114e1d73f402f66015b14138e2ede2f47",
+      "readingResult": "Strict schemas expose boundary contracts; launch explicitly validates, calls, replays ambiguity once with stable args, sanitizes structured rejections and validates result. Observation/cancel/list stay short without generic retry framework. JobService owns connection cleanup. No rewrite warranted.",
+      "checks": "36 pass, 154 assertions: native-routing and production-bridge; diff check. No live backend.",
+      "integrationState": "Matches area tip; no worker note imported.",
+      "changedRelatedPaths": []
     },
     {
       "file": "src/t3/web/launcher.ts",
