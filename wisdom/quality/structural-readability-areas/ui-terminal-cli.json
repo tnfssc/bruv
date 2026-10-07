@@ -459,24 +459,43 @@
     {
       "focus": "src/diagnostics.ts",
       "initialBlob": "6fbe60bb93e4ee1cc78243ee5f28e585294dd5ca",
-      "status": "primary-running",
+      "status": "judging",
       "primary": [
         {
           "id": "task_123df133",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_123df133",
           "branch": "bruv/primary-readability-src-diagnostics.ts-123df133",
-          "launchBase": "d7358730889bcc702110e71fae0e18c4bea3a840"
+          "launchBase": "d7358730889bcc702110e71fae0e18c4bea3a840",
+          "commit": "54ebccd6eeedc055d6832461c3fe4e4e9bae859b"
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_50dcf5f6",
+          "base": "d7358730889bcc702110e71fae0e18c4bea3a840",
+          "candidate": "54ebccd6eeedc055d6832461c3fe4e4e9bae859b",
+          "verdict": "pending"
+        }
+      ],
       "acceptedBlob": null,
       "integrationState": "pending",
-      "launchBase": "d7358730889bcc702110e71fae0e18c4bea3a840"
+      "launchBase": "d7358730889bcc702110e71fae0e18c4bea3a840",
+      "changedRelatedPaths": [
+        "tests/diagnostics.test.ts"
+      ],
+      "result": "Candidate separates live bounded observations from durable acceptance, and centralizes initialization/reset snapshot shape; judgment pending.",
+      "checks": [
+        "58 tests /840 assertions",
+        "Focused TypeScript/Biome/diff checks"
+      ],
+      "limits": [
+        "No full build/provider/packaged-runtime proof"
+      ]
     },
     {
       "focus": "src/ui/action-label.ts",
       "initialBlob": "290d620d94ba2c45b195cc5c220ae0894bf95056",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_7482f459",
@@ -491,11 +510,24 @@
           "id": "task_8d1d090b",
           "base": "bbdb5ecb5188b24392d17ceb4bfa2914bc2d1dfb",
           "candidate": "3d5d0ae28d7ddd8fbbc16e390e164724ec72b53e",
-          "verdict": "pending"
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reviewedBlobs": {
+            "src/ui/action-label.ts": "290d620d94ba2c45b195cc5c220ae0894bf95056"
+          },
+          "evidence": "Label fallback/sanitization and error evidence precedence are adjacent pure decisions; callers separately own status/clipping/animation. Additional helper/policy abstraction would obscure visible precedence.",
+          "checks": [
+            "12 independent direct assertions",
+            "Pinned Biome format/diff check"
+          ],
+          "limits": [
+            "Four suite independent runs blocked by unresolved dependencies; writer 112-pass report not independently reproduced",
+            "No build/interactive/provider/SSH"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integrationState": "pending",
+      "acceptedBlob": "290d620d94ba2c45b195cc5c220ae0894bf95056",
+      "integrationState": "unchanged focus accepted at current area tip",
       "launchBase": "bbdb5ecb5188b24392d17ceb4bfa2914bc2d1dfb",
       "changedRelatedPaths": [],
       "result": "No-change candidate: local label sanitation/fallback and error evidence/precedence; callers own animation/status/clipping.",
@@ -781,8 +813,15 @@
     {
       "focus": "tests/cli.test.ts",
       "initialBlob": "70002a8662ff8db59fa74014040bb2544af9f464",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_f5df93a3",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_f5df93a3",
+          "branch": "bruv/primary-readability-tests-cli.test.ts-f5df93a3",
+          "launchBase": "868ad04a4bc7bf245bb63eeb87767e7d55769691"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integrationState": "CLI-related patch integrated; primary focus still pending",
@@ -793,7 +832,8 @@
           "verdict": "ACCEPT",
           "blob": "528e6e7735b03cdd9812839b8c18657884904713"
         }
-      ]
+      ],
+      "launchBase": "868ad04a4bc7bf245bb63eeb87767e7d55769691"
     },
     {
       "focus": "tests/context-usage-cache.test.ts",
