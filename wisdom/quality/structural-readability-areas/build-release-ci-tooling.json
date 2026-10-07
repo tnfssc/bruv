@@ -105,8 +105,16 @@
     {
       "focus": "scripts/build.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_df95845d",
+          "launchBase": "147c9738bf53e2a693a3f44330320a4e3042522f",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_df95845d",
+          "branch": "bruv/primary-scripts-build.ts-df95845d",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null
@@ -114,8 +122,16 @@
     {
       "focus": "scripts/ci-selective.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_e1108b07",
+          "launchBase": "147c9738bf53e2a693a3f44330320a4e3042522f",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_e1108b07",
+          "branch": "bruv/primary-scripts-ci-selective.ts-e1108b07",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null
@@ -294,8 +310,16 @@
     {
       "focus": "src/update.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_d0b99b87",
+          "launchBase": "147c9738bf53e2a693a3f44330320a4e3042522f",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_d0b99b87",
+          "branch": "bruv/primary-src-update.ts-d0b99b87",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null
