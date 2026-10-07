@@ -88,3 +88,39 @@ Native runner:check→spawn→close→recheckbinary→success→admit evidence l
 Native setup:all verification before env handoff;task_1e479592 ACCEPT9d6cfd86/newtest8191a1d5. Explicit reproduced SDK-failure partial export fix (base1pass2fail/new3pass);65checks. Final runner handoff compatible;not atomicfs or actual native run. EXTRA test primary pending. Diagnostic probe task_e49b32f4 NO CHANGE NEEDEDd33b6f17;normalization not redaction,7/47tests.
 
 Launcher verifier:packaging→isolated release dispatch→isolated installed dispatch,one temporary sibling lifetime each. Judge task_dc2eea02 ACCEPT exact ledgerhash;35/395plusalltarget template/oversize/failurecleanup probes. Not nativeAndroid or compiledcross-target proof.
+
+Update verifier:per-artifact contracts and readable generated runners;judge task_073fd75a ACCEPT88994dc plus related99c0344.7/50tests+2runnerinspection;real compiledfixture invocation retained,not production/historicaldownload/native proof. Frozenfixture/probe unchanged;related test primary pending.
+
+Native runner test primary:typed scenarios/readable child,owned fixture cleanup including failed setup,typed call log. Judge task_3098ce67 ACCEPT6762793;9/66tests. Explicitly supplied pathstrings/mockchildren/syntheticprovenance,not actual paired/native/setup gates.
+
+EXTRA setup-native test primary completed:ordered argv/checksum observations,independent exact-cutoff failures. Judge task_6e25dc37 ACCEPTe1bf5ce;15/85combined,all4postfetch oldpartialenv failures reproduced. Only SDKAPI usesrealNode;downloads/checksumexecution/extraction stubbed.
+
+Browser tests:explicitoutcomes/orderedtraces,duplicate shell and recheckproof;task_d53adce7 ACCEPT80b148a,31/376. Verifier tests:namedpair/per-runupdater/readableidentity;task_3bcf763e ACCEPT9d3d678,7/50frozencompiledfixturechecks. BroaderBiome unchangedimport-ordererror remains,not whollygreen. No actualbrowser/publishedbinaryproof.
+
+Shared helper NO CHANGE NEEDED task_f7319ebc45e0d907;13tests and1MiBbothstreams/exit/environment/spawn probes. Sanitization only Herdr—not credentials/network;run has no timeout/cancellation/processtree cleanup. Boundaries honest.
+
+Launcher-test primary:fresh validfixture per rejection,explicit checksum authority,alloldcases plusbothlayoutdirections/shippedtemplates. Judge task_a8a68815 ACCEPTda1a4e5;21/47tests. Judge tsc absentgeneratedJSON—notgreenclaim;no nativeexecution.
+
+CI runner-test primary:single invocationrecord,namedoptions,explicit cleanup eachscenario. Judge task_562c8dbd ACCEPT7b18e15;8/85andtrap6/offline2/pipefail3mutationfailures. Stubs not realgates;no judge tsc/actionlint.
+
+Offline sourcePTY:home/setup/process/evidence lifetimes explicit;fresh transcript suffix checks replace sleep-dependent staleproof. Judge task_11e13c7d ACCEPT27df96e;actual startup shows --no-approve skips obsolete trustdialog;local revoke still confirmed and owner-not-notified.2/14+realofflinePTY and adversarialstale/cleanup/group checks;not liveSSH/compiled/runnerwidecancel.
+
+Selective-workflow tests accepted task_fd6b7e52 blob25486b26: explicit accepted tuples and separate admission/dependency rejection cases. Corrected stale release-source job expectation, preserving fail-closed authority.75focus97combined,tsc/Biome/diff;not hostedActions proof.
+
+Combined boundary proof at143f8d13:19accepted suites354pass0fail1639expectations (task_818f5ea5). Real tsc --noEmit passed at4f71d1b0(task_09f53559),own generated runtimeassets/sharedread-onlydeps. Earlier absent-asset typecheck blockers resolved for this combined source.56/72focusrowsaccepted;remaining16 still individuallyowned/pending,not areaacceptance.
+
+CI baseline source NO CHANGE NEEDED task_149c9180 fb773c5d: linear trust/ancestry journey and shared budget appropriate.23candidatepass plus stale sibling testfailure;fixed acceptedworkflowblob75pass resolves latter. No authenticatedAPI/deadlineexhaustion proof. Two stopped attempts retained,not coverage.
+
+Actual Linux pair buildtask_4c7a84d9passed;Pi adaptation on owned dependencycopy only. Full area test baseline atb2e6926b:405pass0fail2014expectations30suites(totalincluding2extras),task_4703d778.57accepted focus blobs match tip;15remaining still primary/judge pending. No whole-repo/hosted/native acceptance inferred.
+
+Compiled Bun fixture NO CHANGE NEEDED task_0f0570b0 blob986f1428:direct runtimeauthority,private compiler caller owns cleanup,no sourcefallback.Independent compiledtrue/sourcefalse,7compiled+2sourceguardassertions,tsc/Biomepass;Linuxfixture not releaseacceptance.
+
+Source remoteCLI tests:case-owned homes/specificerrors/reject-before-owner proof;judge task_65a4c618 ACCEPT2b8ba4bd.4/17 with acceptedPython27df96e,tsc/Biomepass. Disposable environment initially missed trustwarning;compatibility proof requires worktree trust resources and cleared BRUV_* agentidentity—not arbitraryambient guarantee. No cancellation/liveSSHclaim.
+
+Architecture guard NO CHANGE NEEDED task_bdc1d4a5 fe6b52be:15/143+21disposable fixtures,188TS423relativeedges. Direct relativeimport/layout only;nonrelativeignored and .js-suffixed taskowner predicate gap observed(no current correspondingedge). Listedhomes not universalownershipuniqueness.
+
+Nodepath tests NO CHANGE NEEDED task_179e47de48730a38;17/95independent. ChildexecPath not tapinterpreterproof;generatedcommands onlyinspected,wireonlystdout,workflowstatictext. Actual native acceptance caller separately pinned/hash/exit/evidence. Stalledpredecessor not evidence.
+
+REJECT task_685f1bda process-isolation candidate933de4fb: inherited BRUV_SUBAGENT_TYPE=normal masks Herdr TUI startupguard despite depth0,so zero requests can pass for wrongreason. Smallrework explicit emptytype rootlaunch and TUI-specific bypass negativecontrol under hostileparent;sanitizer scope unchanged. Candidate NOTintegrated;freshrework waits primaryslot.
+
+Connectorupdate fixture:single release-filemap eliminates duplicated metadata/body/checksum authority. Judge task_cab47470 ACCEPT11fbb1c6;7/91+9differentialconfigs(bytes,headers,order,logs,URLerrors/failures),tsc/Biomepass. Checksums capture fixed childenv at initialization;normal executable synthetic,connector shippinggenerator. Frozenhashunchanged.
