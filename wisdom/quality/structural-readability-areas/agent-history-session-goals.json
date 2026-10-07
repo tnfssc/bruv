@@ -173,16 +173,31 @@
     {
       "focus": "src/agent/extension.ts",
       "initialBlob": "0cd419b1553cf5ec998b65ecf35ddbcff4f3ffc7",
-      "status": "primary-running",
+      "status": "judging",
       "primary": [
         {
           "id": "task_f10ebf0a",
           "launchBase": "738e1d3ad264a15ff8c60be741ddc7a6c922aee4",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_f10ebf0a",
-          "branch": "bruv/primary-agent-composition-root-f10ebf0a"
+          "branch": "bruv/primary-agent-composition-root-f10ebf0a",
+          "commit": "8472ed2449ce129f1929ac5c60867cf34dfd2f0e",
+          "changedPaths": [
+            "src/agent/extension.ts",
+            "tests/subagent-extension.test.ts",
+            "wisdom/quality/structural-readability-worker.md"
+          ],
+          "checks": "113 tests/867 assertions across 9 delivery/cancel/preview/SDK suites; new reattachment/replay/native missing-mailbox regressions pass baseline; tsc/format/diff pass; unchanged 3 lint warnings/4 infos; SDK attention shared old binary, not freshly compiled parity.",
+          "result": "File-local notification owner holds batch/native mailbox/SSH replay-retry/print-wait delivery resources. Root exposes attach/turn settlement/close-before-manager-shutdown while task ownership/cancel remain root; redundant completion/attention facades removed."
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_0acb5c07",
+          "candidate": "8472ed2449ce129f1929ac5c60867cf34dfd2f0e",
+          "base": "738e1d3ad264a15ff8c60be741ddc7a6c922aee4",
+          "status": "running"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending",
       "relatedPatchReview": {
@@ -1795,8 +1810,15 @@
       "focus": "src/session/transcript-snapshots.ts",
       "initialBlob": null,
       "originCandidate": "7f466cef21871ee373a158c35f58f85e19861166",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_3b6b9b8d",
+          "launchBase": "aa29a96f021b586c95a74c56452dcabe6be8490a",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_3b6b9b8d",
+          "branch": "bruv/primary-transcript-snapshot-retention-3b6b9b8d"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "integrated-related-primary-pending",
@@ -1819,6 +1841,14 @@
       "need": "If integrated, assigned live-area primary must cover final combined blob; do not overwrite sibling tests. Parent reconcile overlap.",
       "judge": "task_9ae7f05e",
       "verdict": "ACCEPT"
+    },
+    {
+      "file": "tests/subagent-extension.test.ts",
+      "owner": "execution-tasks-questions",
+      "candidate": "8472ed2449ce129f1929ac5c60867cf34dfd2f0e",
+      "blob": "2bbf39985a247af7d4b586444d853f420a46cd06",
+      "state": "candidate-under-judge",
+      "need": "If integrated, assigned primary owner must cover final hash; parent reconcile related test overlaps."
     }
   ],
   "batchChecks": [
