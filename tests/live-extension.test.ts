@@ -1676,6 +1676,95 @@ test("real Realtime session accepts a 50-second reply below the playback queue b
   expect(await t.stop()).toEqual({ stopped: true, errors: [], jobsUnchanged: true });
 });
 
+test("Realtime replays owner context before devices start and revokes delivery on stop", async () => {
+  const events: string[] = [];
+  const updates: Array<{ text: string; options?: { triggerResponse?: boolean } }> = [];
+  let deliver!: (text: string, options?: { triggerResponse?: boolean }) => void;
+  let input!: (text: string) => void;
+  let state: "connecting" | "ready" = "connecting";
+  const orchestration: VoiceOrchestration = {
+    instructions: "current root authority",
+    tools: [],
+    execute: async () => ({}),
+  };
+  const f = setup({
+    owner: async (_pi, _ctx, callbacks) => {
+      deliver = callbacks!.onContext!;
+      input = callbacks!.onInput!;
+      deliver("Queued completion reply", { triggerResponse: true });
+      input("Queued typed input");
+      deliver('{"source":"gpt_live_provisional","text":"already heard"}');
+      return {
+        orchestration,
+        close() {},
+        stopForeground() {},
+        released: Promise.resolve(),
+      } as any;
+    },
+    voice: (_callbacks, authority) => {
+      expect(authority).toBe(orchestration);
+      events.push("provider-created");
+      return {
+        get state() {
+          return state;
+        },
+        generation: 0,
+        connect: async () => {
+          events.push("provider-connect");
+          deliver("Connecting reply", { triggerResponse: false });
+          state = "ready";
+        },
+        sendContext: (text, options) => {
+          events.push(text);
+          updates.push({ text, options });
+        },
+        sendAudio: () => {
+          events.push("microphone");
+        },
+        close: async () => {},
+      };
+    },
+    audio: async (callbacks) => {
+      events.push("helper-hello");
+      return {
+        diagnostics: { queuedMs: 0, captureFrames: 0, capturedBytes: 0 },
+        start: async () => {
+          events.push("audio-start");
+          callbacks.capture?.(Buffer.alloc(320));
+        },
+        play: async () => {},
+        flush: async () => {},
+        stop: async () => {},
+        close: async () => {},
+      };
+    },
+  });
+  await f.run("start");
+  expect(events).toEqual([
+    "helper-hello",
+    "provider-created",
+    "provider-connect",
+    "Queued completion reply",
+    "Queued typed input",
+    "Connecting reply",
+    "audio-start",
+    "microphone",
+  ]);
+  deliver("Ready completion reply", { triggerResponse: true });
+  input("Ready typed input");
+  expect(updates).toEqual([
+    { text: "Queued completion reply", options: { triggerResponse: true } },
+    { text: "Queued typed input", options: undefined },
+    { text: "Connecting reply", options: { triggerResponse: false } },
+    { text: "Ready completion reply", options: { triggerResponse: true } },
+    { text: "Ready typed input", options: undefined },
+  ]);
+  await f.run("stop");
+  deliver("Stale completion reply", { triggerResponse: true });
+  input("Stale typed input");
+  expect(updates).toHaveLength(5);
+});
+
 test("GPT-Live replays connecting replies as commentary without speaking ordinary context", async () => {
   const updates: Array<{ text: string; speak: boolean }> = [];
   let deliver!: (text: string, options?: { triggerResponse?: boolean }) => void;

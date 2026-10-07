@@ -265,9 +265,16 @@
         "status": "candidate ready",
         "commit": "0e0c7d766c65f4cbfbfb46b973946cc6217c9e65"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_8ae63e66",
+          "status": "running",
+          "candidate": "0e0c7d766c65f4cbfbfb46b973946cc6217c9e65",
+          "base": "b4a44ed5445f1339bd884d47ffc3681cce5348fc"
+        }
+      ],
       "acceptedBlob": null,
-      "integration": "awaiting judge slot",
+      "integration": "judge running",
       "relatedPaths": [],
       "readingResult": "Unchanged opaque core API exposes direct admission/generation/render operations; capture origin tags preserved through ring and validated before resampling; wrappers genuinely used.",
       "checks": "3 C ASan/UBSan regressions and19 Bun tests pass; no macOS/device/provider proof."
@@ -280,12 +287,15 @@
         "launchBase": "06e32904306803bcb25ea542d1e3676a54d234cb",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_68f2d62b",
         "branch": "bruv/primary-native-live-info.plist-68f2d62b",
-        "status": "running",
-        "commit": null
+        "status": "candidate ready",
+        "commit": "439444f649249259125c548e41f1a345977de91f"
       },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "primary running"
+      "integration": "awaiting judge slot",
+      "relatedPaths": [],
+      "readingResult": "Unchanged three-entry metadata has one clear role: native build embeds Mach-O metadata, release embeds bytes, runtime launches helper, Swift owns microphone permission.",
+      "checks": "Exact plist assertions/build-script syntax;13 helper/workflow tests/120 assertions. No macOS permission/device/provider/full gate."
     },
     {
       "focus": "native/live/main.swift",
@@ -332,12 +342,15 @@
         "launchBase": "8226c8524fdfa3f56329b591c7be4efb1843a0ad",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_c28913a3",
         "branch": "bruv/primary-native-live-test-capture-gate.c-c28913a3",
-        "status": "running",
-        "commit": null
+        "status": "candidate ready",
+        "commit": "1dfc7b232c6ec64fdf89ff41b6c6eda2283baf8c"
       },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "primary running"
+      "integration": "awaiting judge slot",
+      "relatedPaths": [],
+      "readingResult": "Unchanged single temporal scenario purposefully retains queued block tags through mute/reopen transitions; extraction would hide lifetime. Startup-2,epoch0/1 and drop/backpressure distinctions explicit.",
+      "checks": "4 Bun pass/24 assertions;strict ClangASan/UBSan pass;no concurrent stress/macOS/device/provider."
     },
     {
       "focus": "native/live/test-core.c",
@@ -394,10 +407,17 @@
     {
       "focus": "scripts/build-live-helper.sh",
       "initialBlob": "bf9a9d9873825675f42392aa331f61bda36097f4",
-      "primary": null,
+      "primary": {
+        "id": "task_2ce0dc69",
+        "launchBase": "6f3ada6c721a7a8eb9d9ea091a52bcbadea5174a",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_2ce0dc69",
+        "branch": "bruv/primary-scripts-build-live-helper.sh-2ce0dc69",
+        "status": "running",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "primary running"
     },
     {
       "focus": "scripts/build-live-linux-helper.sh",
@@ -663,13 +683,21 @@
       "judgeRounds": [
         {
           "id": "task_65eb4c80",
-          "status": "running",
+          "status": "complete",
           "candidate": "f98b50c96fde73aaa0da8be7ce3b1c7015351866",
-          "base": "e81164ded74d4add7f7a8a0735b52d788da3cf39"
+          "base": "e81164ded74d4add7f7a8a0735b52d788da3cf39",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Start exposes connect-before-device startup without nested provider callbacks; separate delegated/tool wiring, late helper disposal and shared context dispatch own coherent operations; mirrored orchestration removed. Newer main-owner/audio seams inspected no collision.",
+          "checks": "Independent48 dependency-light+15 current audio tests pass; extension/integration dependency-blocked. Added Realtime-named test generic provider seam/default Google, not real Realtime transport proof.",
+          "acceptedBlobs": {
+            "src/live/extension.ts": "cd43d45e34ddc90153c765193c21ce7b9052d5de",
+            "tests/live-extension.test.ts": "ea3dffdf18791aac1b2e150b505d6bdb11ba6764"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "judge running",
+      "acceptedBlob": "cd43d45e34ddc90153c765193c21ce7b9052d5de",
+      "integration": "integrated accepted exact primary candidate",
       "relatedPaths": [
         "tests/live-extension.test.ts"
       ],
@@ -1226,7 +1254,12 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "related accepted patch integrated; own primary focus pending",
+      "relatedPatchJudgment": {
+        "judgeId": "task_65eb4c80",
+        "verdict": "ACCEPT",
+        "blob": "ea3dffdf18791aac1b2e150b505d6bdb11ba6764"
+      }
     },
     {
       "focus": "tests/live-gpt-live-provider.acceptance.test.ts",
