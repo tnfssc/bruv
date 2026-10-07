@@ -457,11 +457,19 @@
     {
       "focus": "src/diagnostics-extension.ts",
       "initialBlob": "51f2655613a4022bf3b3742d0c2de4524711e002",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_ce10c8d9",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_ce10c8d9",
+          "branch": "bruv/primary-readability-src-diagnostics-exte-ce10c8d9",
+          "launchBase": "f4d0b160ac48c05be77276e1afb1295690fc1fde"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "launchBase": "f4d0b160ac48c05be77276e1afb1295690fc1fde"
     },
     {
       "focus": "src/diagnostics.ts",
@@ -564,36 +572,74 @@
     {
       "focus": "src/ui/activity-projection.ts",
       "initialBlob": "90fe58e67e209ca8c64219ac0e60c8c7f1788dd8",
-      "status": "primary-running",
+      "status": "judging",
       "primary": [
         {
           "id": "task_5c8f0f5d",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_5c8f0f5d",
           "branch": "bruv/primary-readability-src-ui-activity-proj-5c8f0f5d",
-          "launchBase": "3e588f8d9d2d6a413a03089234803fb6a8385a30"
+          "launchBase": "3e588f8d9d2d6a413a03089234803fb6a8385a30",
+          "commit": "64bd85472711c2d5c6469466641b14107d4d532f"
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_f92fc2a1",
+          "base": "3e588f8d9d2d6a413a03089234803fb6a8385a30",
+          "candidate": "64bd85472711c2d5c6469466641b14107d4d532f",
+          "verdict": "pending"
+        }
+      ],
       "acceptedBlob": null,
       "integrationState": "pending",
-      "launchBase": "3e588f8d9d2d6a413a03089234803fb6a8385a30"
+      "launchBase": "3e588f8d9d2d6a413a03089234803fb6a8385a30",
+      "changedRelatedPaths": [],
+      "result": "No-change: SDK canonical ownership, lazy native body projection and installer-owned registration teardown are explicit separate authorities.",
+      "checks": [
+        "78 tests /713 assertions",
+        "format/diff"
+      ],
+      "limits": [
+        "No build/live/PTY; joins must be checked after active SDK/density changes"
+      ]
     },
     {
       "focus": "src/ui/conversation-density.ts",
       "initialBlob": "52d7ef08952d91ea499632280fc44dce2b3e4815",
-      "status": "primary-running",
+      "status": "judging",
       "primary": [
         {
           "id": "task_19cd167f",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_19cd167f",
           "branch": "bruv/primary-readability-src-ui-conversation--19cd167f",
-          "launchBase": "756cbb9f216616e36d6fd26cc238759fb37b6444"
+          "launchBase": "756cbb9f216616e36d6fd26cc238759fb37b6444",
+          "commit": "1071775f8f3c9c120ddc639d60c267d4acd8ef1f"
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_203052f5",
+          "base": "756cbb9f216616e36d6fd26cc238759fb37b6444",
+          "candidate": "1071775f8f3c9c120ddc639d60c267d4acd8ef1f",
+          "verdict": "pending"
+        }
+      ],
       "acceptedBlob": null,
       "integrationState": "pending",
-      "launchBase": "756cbb9f216616e36d6fd26cc238759fb37b6444"
+      "launchBase": "756cbb9f216616e36d6fd26cc238759fb37b6444",
+      "changedRelatedPaths": [
+        "tests/conversation-density.test.ts"
+      ],
+      "result": "Candidate separates layout/mouse adaptation and assistant source/presentation/streaming restoration, replacing mixed restoration records with owned restorers.",
+      "checks": [
+        "88 tests /683 assertions",
+        "27 exact-base characterization tests /237 assertions",
+        "Source-only TypeScript and pinned format/lint/diff"
+      ],
+      "limits": [
+        "Broader Biome check unchanged import-order assist",
+        "No full build/gate/interactive/platform proof"
+      ]
     },
     {
       "focus": "src/ui/editor.ts",
@@ -844,11 +890,19 @@
     {
       "focus": "src/ui/settled-execute-render.ts",
       "initialBlob": "d8134b728f86ecd669820d7922f459350e78adc8",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_cde04507",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_cde04507",
+          "branch": "bruv/primary-readability-src-ui-settled-execu-cde04507",
+          "launchBase": "f4d0b160ac48c05be77276e1afb1295690fc1fde"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "launchBase": "f4d0b160ac48c05be77276e1afb1295690fc1fde"
     },
     {
       "focus": "src/ui/startup.ts",
@@ -1131,7 +1185,7 @@
     {
       "focus": "tests/diagnostics.test.ts",
       "initialBlob": "d58d7850cbe8b802a66c7049b161476b1beb955d",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_28d3f49e",
@@ -1146,12 +1200,24 @@
           "id": "task_a3ac95db",
           "base": "c18d20532ffe409cccc86719081ba8d0e0fba286",
           "candidate": "d2bf06b4b75226b367e8889279889527f076dab8",
-          "verdict": "pending",
-          "priorRelatedJudge": "task_50dcf5f6"
+          "verdict": "NO CHANGE NEEDED",
+          "priorRelatedJudge": "task_50dcf5f6",
+          "objections": [],
+          "reviewedBlobs": {
+            "tests/diagnostics.test.ts": "48a273afdc220bd4984fbc18739015dc4a86c88a"
+          },
+          "evidence": "Privacy traps, ring/write/replay boundaries, reentrant reservations and generation lifetimes have explicit local assertions. Actual SDK owned-session restoration distinguishes pre-append refusal from post-append failure.",
+          "checks": [
+            "Independent 13 tests /573 assertions",
+            "Biome three files/diff"
+          ],
+          "limits": [
+            "No full suite/build/live/authenticated SSH/macOS/device/compiled CLI"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integrationState": "related patch integrated; primary pending",
+      "acceptedBlob": "48a273afdc220bd4984fbc18739015dc4a86c88a",
+      "integrationState": "fresh primary and judge accept existing integrated test blob",
       "relatedPatchJudgments": [
         {
           "id": "task_50dcf5f6",
