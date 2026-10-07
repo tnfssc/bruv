@@ -1,11 +1,12 @@
 import { afterEach, expect, test } from "bun:test";
-import { createServer } from "node:http";
 import { randomUUID } from "node:crypto";
+import { createServer } from "node:http";
 import { resolve } from "node:path";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
+import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { z } from "zod";
-import { InjectedMcpSession, parseInjectedMcpConfig, type McpSessionPolicy } from "../../src/claude-compat/mcp";
+import { InjectedMcpSession, type McpSessionPolicy, parseInjectedMcpConfig } from "../../src/claude-compat/mcp";
 import { createPermissionPolicy } from "../../src/claude-compat/permissions";
 
 import { httpMcpLifecycleFixture } from "./fixtures/http-mcp-lifecycle";
@@ -23,6 +24,90 @@ async function fixture() {
   const requests: { token?: string; method: string; rpc?: string }[] = [];
   const calls: string[] = [];
   let cancels = 0;
+  // Hold the tool response until the test has cancelled or replaced its client.
+  const slowStarted = Promise.withResolvers<void>();
+  const slowRelease = Promise.withResolvers<void>();
+  const slowFinished = Promise.withResolvers<void>();
+  const returnedAppFailure: CallToolResult = {
+    isError: false,
+    structuredContent: {
+      _tag: "OrchestratorMcpFailure",
+      code: "task_not_found",
+      message: "Task does not belong to thread",
+    },
+    content: [{ type: "text", text: "Task does not belong to thread" }],
+  };
+
+  async function createPeer() {
+    const transport = new StreamableHTTPServerTransport({
+      sessionIdGenerator: () => randomUUID(),
+      enableJsonResponse: true,
+      onsessioninitialized: (sessionId) => {
+        sessions.set(sessionId, transport);
+      },
+    });
+    const server = new McpServer({ name: "real-local-fixture", version: "1" });
+    server.registerTool(
+      "echo",
+      { inputSchema: { text: z.string() }, annotations: { readOnlyHint: true } },
+      async ({ text }) => {
+        calls.push("echo");
+        return { content: [{ type: "text", text }] };
+      },
+    );
+    server.registerTool(
+      "delegate_task",
+      { inputSchema: { clientRequestId: z.string() } },
+      async ({ clientRequestId }) => {
+        calls.push("delegate_task");
+        return {
+          content: [
+            {
+              type: "text",
+              text: JSON.stringify({
+                clientRequestId,
+                taskId: "app-task",
+                threadId: "app-thread",
+                runId: "app-run",
+              }),
+            },
+          ],
+        };
+      },
+    );
+    server.registerTool("scope_denied", { inputSchema: {}, outputSchema: { taskId: z.string() } }, async () => ({
+      isError: true,
+      structuredContent: { code: "scope_violation", message: "Task does not belong to thread" },
+      content: [{ type: "text", text: "Task does not belong to thread" }],
+    }));
+    server.registerTool(
+      "scope_returned_failure",
+      { inputSchema: {}, outputSchema: { taskId: z.string() } },
+      async () => returnedAppFailure,
+    );
+    server.registerTool("task_status", { inputSchema: {} }, async () => {
+      calls.push("task_status");
+      return { content: [{ type: "text", text: "actual fixture status" }] };
+    });
+    server.registerTool("task_cancel", { inputSchema: {} }, async () => {
+      calls.push("task_cancel");
+      cancels++;
+      return { content: [{ type: "text", text: "cancelled fixture task" }] };
+    });
+    server.registerTool("bruv_task_launch", { inputSchema: {} }, async () => {
+      throw Error("old bridge must not run");
+    });
+    server.registerTool("slow", { inputSchema: {} }, async () => {
+      calls.push("slow");
+      slowStarted.resolve();
+      await slowRelease.promise;
+      slowFinished.resolve();
+      return { content: [{ type: "text", text: "late" }] };
+    });
+    await server.connect(transport);
+    return transport;
+  }
+
   const http = createServer(async (req, res) => {
     try {
       const data: Buffer[] = [];
@@ -32,78 +117,7 @@ async function fixture() {
       const id = req.headers["mcp-session-id"] as string | undefined;
       let transport = id ? sessions.get(id) : undefined;
       if (!transport && body?.method === "initialize") {
-        transport = new StreamableHTTPServerTransport({
-          sessionIdGenerator: () => randomUUID(),
-          enableJsonResponse: true,
-          onsessioninitialized: (sessionId) => {
-            sessions.set(sessionId, transport!);
-          },
-        });
-        const server = new McpServer({ name: "real-local-fixture", version: "1" });
-        server.registerTool(
-          "echo",
-          { inputSchema: { text: z.string() }, annotations: { readOnlyHint: true } },
-          async ({ text }) => {
-            calls.push("echo");
-            return { content: [{ type: "text", text }] };
-          },
-        );
-        server.registerTool(
-          "delegate_task",
-          { inputSchema: { clientRequestId: z.string() } },
-          async ({ clientRequestId }) => {
-            calls.push("delegate_task");
-            return {
-              content: [
-                {
-                  type: "text",
-                  text: JSON.stringify({
-                    clientRequestId,
-                    taskId: "app-task",
-                    threadId: "app-thread",
-                    runId: "app-run",
-                  }),
-                },
-              ],
-            };
-          },
-        );
-        server.registerTool("scope_denied", { inputSchema: {}, outputSchema: { taskId: z.string() } }, async () => ({
-          isError: true,
-          structuredContent: { code: "scope_violation", message: "Task does not belong to thread" },
-          content: [{ type: "text", text: "Task does not belong to thread" }],
-        }));
-        server.registerTool(
-          "scope_returned_failure",
-          { inputSchema: {}, outputSchema: { taskId: z.string() } },
-          async () => ({
-            isError: false,
-            structuredContent: {
-              _tag: "OrchestratorMcpFailure",
-              code: "task_not_found",
-              message: "Task does not belong to thread",
-            },
-            content: [{ type: "text", text: "Task does not belong to thread" }],
-          }),
-        );
-        server.registerTool("task_status", { inputSchema: {} }, async () => {
-          calls.push("task_status");
-          return { content: [{ type: "text", text: "actual fixture status" }] };
-        });
-        server.registerTool("task_cancel", { inputSchema: {} }, async () => {
-          calls.push("task_cancel");
-          cancels++;
-          return { content: [{ type: "text", text: "cancelled fixture task" }] };
-        });
-        server.registerTool("bruv_task_launch", { inputSchema: {} }, async () => {
-          throw Error("old bridge must not run");
-        });
-        server.registerTool("slow", { inputSchema: {} }, async () => {
-          calls.push("slow");
-          await Bun.sleep(150);
-          return { content: [{ type: "text", text: "late" }] };
-        });
-        await server.connect(transport);
+        transport = await createPeer();
       }
       if (!transport) {
         res.writeHead(404).end();
@@ -122,17 +136,12 @@ async function fixture() {
         // The unchanged official Effect MCP server returns failures with isError:false.
         // Bypass this fixture SDK server's own success-schema check to reproduce
         // exactly the observed response envelope, not a connector/native UI event.
-        const structuredContent = {
-          _tag: "OrchestratorMcpFailure",
-          code: "task_not_found",
-          message: "Task does not belong to thread",
-        };
         res.writeHead(200, { "content-type": "application/json" });
         res.end(
           JSON.stringify({
             jsonrpc: "2.0",
             id: body.id,
-            result: { isError: false, structuredContent, content: [{ type: "text", text: structuredContent.message }] },
+            result: returnedAppFailure,
           }),
         );
         return;
@@ -144,6 +153,9 @@ async function fixture() {
   });
   await new Promise<void>((done) => http.listen(0, "127.0.0.1", done));
   cleanup.push(async () => {
+    // Also release and drain a handler stranded by a failed assertion.
+    slowRelease.resolve();
+    if (calls.includes("slow")) await slowFinished.promise;
     for (const transport of sessions.values()) await transport.close();
     http.closeAllConnections();
     await new Promise<void>((done) => http.close(() => done()));
@@ -159,7 +171,13 @@ async function fixture() {
       },
     },
   });
-  return { config, requests, calls, cancels: () => cancels };
+  return {
+    config,
+    requests,
+    calls,
+    cancels: () => cancels,
+    slowCall: { started: slowStarted.promise, release: slowRelease.resolve, finished: slowFinished.promise },
+  };
 }
 function track(session: InjectedMcpSession) {
   cleanup.push(() => session.close());
@@ -287,10 +305,11 @@ test("cancellation/close cannot adopt a late result or retry an ambiguous call",
   );
   const controller = new AbortController();
   const pending = session.callTool("mcp__t3-code__slow", {}, { toolUseId: "slow", signal: controller.signal });
-  while (!f.calls.includes("slow")) await Bun.sleep(5);
+  await f.slowCall.started;
   controller.abort();
   await expect(pending).rejects.toThrow("outcome may be unknown");
-  await Bun.sleep(180);
+  f.slowCall.release();
+  await f.slowCall.finished;
   expect(f.calls).toEqual(["slow"]);
 });
 
@@ -367,14 +386,17 @@ test("close cancels old connection calls; replacement cannot receive an old resu
     await InjectedMcpSession.open(f.config("old-scope"), { cwd: process.cwd(), appOwnedServers: [], policy: allow }),
   );
   const pending = old.callTool("mcp__t3-code__slow", {}, { toolUseId: "old-call" }).catch((error) => error);
-  while (!f.calls.includes("slow")) await Bun.sleep(5);
+  await f.slowCall.started;
   await old.close();
   expect((await pending).code).toBe("call-failed");
   const replacement = track(
     await InjectedMcpSession.open(f.config("new-scope"), { cwd: process.cwd(), appOwnedServers: [], policy: allow }),
   );
+  f.slowCall.release();
+  await f.slowCall.finished;
   const result = await replacement.callTool("mcp__t3-code__echo", { text: "new only" }, { toolUseId: "new-call" });
   expect(result.content).toEqual([{ type: "text", text: "new only" }]);
+  expect(f.calls).toEqual(["slow", "echo"]);
 });
 
 test("actual SDK preserves structured scoped errors instead of validating a success schema", async () => {

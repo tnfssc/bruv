@@ -1236,7 +1236,7 @@
     {
       "file": "tests/claude-compat/mcp.test.ts",
       "initialBlob": "35c79565ff48cb3976226b305697ca63cd122619",
-      "status": "judging",
+      "status": "accepted-integrated",
       "primary": {
         "id": "task_95076a9f",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_95076a9f",
@@ -1247,11 +1247,16 @@
       "judges": [
         {
           "id": "task_89cb5d88",
-          "status": "running",
-          "candidate": "d2ad9567a47bf4b7e3614da2bdb8dfb035db25f0"
+          "status": "completed",
+          "candidate": "d2ad9567a47bf4b7e3614da2bdb8dfb035db25f0",
+          "verdict": "ACCEPT",
+          "blob": "7e2b7fb68df577da37497fc6ce526157cf332620",
+          "objections": [],
+          "evidence": "Peer construction separate dispatch, official failure envelope single faithful value, explicit slow-call start/release/finish replaces timing guess and replacement precedes release. Cancellation/error/permission/credential/release/admission/no rediscovery preserved;added exact call accounting.",
+          "limits": "finished means handler completion NOT HTTP delivery ack;SDK cancel may suppress late response. Judge deps blocked rerun;format/diff clean."
         }
       ],
-      "acceptedBlob": null,
+      "acceptedBlob": "7e2b7fb68df577da37497fc6ce526157cf332620",
       "relatedPatchJudgments": [
         {
           "id": "task_5e2a8606",
@@ -1263,7 +1268,8 @@
       "launchBase": "7e19e0f72539d75c097a2e6bb4bdf7c764ba207f",
       "changedRelatedPaths": [],
       "readingResult": "SDK peer construction separate HTTP dispatch; official failure envelope unified; explicit start/release/finish cancellation sequence replaces polling/sleeps and replacement exists before old response release. Whole file/callers/fixtures traced.",
-      "checks": "14 pass62 assertions;focused Biome/strict TypeScript/diff pass;no production/shared fixture edits."
+      "checks": "14 pass62 assertions;focused Biome/strict TypeScript/diff pass;no production/shared fixture edits.",
+      "integrationState": "Exact fresh whole-file primary/judge patch joined, supersedes earlier related test blob"
     },
     {
       "file": "tests/claude-compat/native-adapter-prompt-ownership.ts.txt",
@@ -1539,7 +1545,7 @@
       "file": "tests/claude-compat-binding.test.ts",
       "kind": "new",
       "initialBlob": null,
-      "status": "judging",
+      "status": "accepted-unchanged",
       "introducedBy": "3743b41972dd27bbeb33d459f2a6f5ced7413c33",
       "primary": {
         "id": "task_f673edab",
@@ -1551,11 +1557,16 @@
       "judges": [
         {
           "id": "task_1c7cf1d4",
-          "status": "running",
-          "candidate": "98212400adf815257b45fdd5359f6a1b9d412d76"
+          "status": "completed",
+          "candidate": "98212400adf815257b45fdd5359f6a1b9d412d76",
+          "verdict": "NO CHANGE NEEDED",
+          "blob": "35149e461ce949a6a0d48bf591e7c9ba14256916",
+          "objections": [],
+          "evidence": "Direct fresh canonical identity then shared import/reopen/rejection journey coherent, cleanup local. No unnecessary fixture split.",
+          "limits": "Persisted leaf does not establish no memory branch;source validation order and earlier imported reopening may reject,not isolated validation-site test. Judge test deps unavailable."
         }
       ],
-      "acceptedBlob": null,
+      "acceptedBlob": "35149e461ce949a6a0d48bf591e7c9ba14256916",
       "relatedPatchJudgments": [
         {
           "id": "task_dfcc2819",
@@ -1567,7 +1578,8 @@
       "launchBase": "cbae72747a50b54edc7e4d30347f2c67b680dc5e",
       "changedRelatedPaths": [],
       "readingResult": "Fresh new-file primary unchanged: direct fresh identity/import-reopen-rejection journeys; shared import lifetime avoids duplicate fixtures. Rejection proves persisted state, not absence attempted memory branch; source validation order/earlier reopening may reject.",
-      "checks": "2 pass15 assertions;target format/lint pass."
+      "checks": "2 pass15 assertions;target format/lint pass.",
+      "integrationState": "New-file fresh primary+whole-file judge complete at exact area blob"
     }
   ],
   "crossAreaNeeds": [],
@@ -1677,6 +1689,13 @@
       "status": "passed",
       "scope": "Integrated task-binding/projection/runtime15 outer tests80 assertions;typecheck;format",
       "limits": "Isolated child tests included;no live/SDK/SSH/full gate."
+    },
+    {
+      "id": "task_0a52599b",
+      "commit": "a27ea734",
+      "status": "passed",
+      "scope": "Combined final projection/task-binding/runtime17 outer tests89 assertions;typecheck;format",
+      "limits": "No SDK/live/compiled/full gate."
     }
   ],
   "combinedReviews": [
@@ -1700,6 +1719,17 @@
       },
       "evidence": "Independent combined admission/mode/output/teardown journeys; 37 focused +20 runtime/composition/permissions/MCP top-level passes; baseline double diagnostic vs final single reproduced. Delayed teardown/repeated first signal/invalid MCP before start/unbound request release/aux output error close probes pass.",
       "limits": "No compiled/live; does not substitute fresh test primary coverage."
+    },
+    {
+      "id": "task_9f597255",
+      "status": "running",
+      "candidate": "a27ea7341b8a2a89ba556134b8d36b20bcd96275",
+      "files": [
+        "src/claude-compat/task-binding.ts",
+        "src/claude-compat/task-projection.ts",
+        "tests/claude-compat-task-binding.test.ts",
+        "tests/claude-compat-task-projection.test.ts"
+      ]
     }
   ]
 }
