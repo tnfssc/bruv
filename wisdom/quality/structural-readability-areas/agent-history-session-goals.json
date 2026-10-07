@@ -411,7 +411,7 @@
     {
       "focus": "src/agent/native-fast-mode.ts",
       "initialBlob": "a89e3e2bac3e22cbf9b209a8694b8c871070ee21",
-      "status": "accepted-check-rework-pending",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_fd75f63a",
@@ -441,13 +441,25 @@
           "acceptedRelatedBlobs": {
             "tests/native-fast-mode.test.ts": "ccde20788d3485bb3a2eeb8b73137d321a402ce3"
           }
+        },
+        {
+          "id": "task_4cfa8579",
+          "candidate": "4b7d3e5b47687be57c96e4035265b5c2ce1ec3c5",
+          "base": "9d91fb4693bdce5fc85cc002aeaf926d27668569",
+          "status": "complete",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Fixture uses actual shared runtime/persistence authority, explicit consent/preparation signals and direct rollback fault injection; all 108 assertions/test declarations remain. Final source policy/authorization/guard/rollback/last-owner lifetime inspected, imports-only delta no structural credit.",
+          "checks": "Independent 28 tests/182 assertions; Biome check exit0 with15 baseline warnings; expanded50 passes then missing photon asset in subagent suite; no full gate.",
+          "acceptedRelatedBlobs": {
+            "src/agent/native-fast-mode.ts": "07e4935305ca0bca5cd66c7042b15757d87877bf"
+          },
+          "role": "final-related-source-rejudgment"
         }
       ],
-      "acceptedBlob": "309b5621faefc75b19774691e226d2f390d3aacd",
+      "acceptedBlob": "07e4935305ca0bca5cd66c7042b15757d87877bf",
       "integration": "integrated-exact-candidate",
-      "checkNeeds": [
-        "Native fast source/test import organization errors need file-worker correction and final hash rejudge."
-      ]
+      "checkNeeds": []
     },
     {
       "focus": "src/agent/provider-attempts.ts",
@@ -1789,7 +1801,7 @@
     {
       "focus": "tests/native-fast-mode.test.ts",
       "initialBlob": "d1a70d64a44454f962627792e65517f3c4171b9d",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_efb8e91c",
@@ -1811,11 +1823,18 @@
           "id": "task_4cfa8579",
           "candidate": "4b7d3e5b47687be57c96e4035265b5c2ce1ec3c5",
           "base": "9d91fb4693bdce5fc85cc002aeaf926d27668569",
-          "status": "running"
+          "status": "complete",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Fixture uses actual shared runtime/persistence authority, explicit consent/preparation signals and direct rollback fault injection; all 108 assertions/test declarations remain. Final source policy/authorization/guard/rollback/last-owner lifetime inspected, imports-only delta no structural credit.",
+          "checks": "Independent 28 tests/182 assertions; Biome check exit0 with15 baseline warnings; expanded50 passes then missing photon asset in subagent suite; no full gate.",
+          "acceptedRelatedBlobs": {
+            "src/agent/native-fast-mode.ts": "07e4935305ca0bca5cd66c7042b15757d87877bf"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending",
+      "acceptedBlob": "ab607b97df359dd53b1897dfe5596e59206dab33",
+      "integration": "integrated-exact-candidate",
       "relatedPatchReview": {
         "candidate": "e4a406a62b1e3715cc8f50b3e5bb5661644c8bb1",
         "judge": "task_167d27b3",
@@ -1823,9 +1842,7 @@
         "blob": "ccde20788d3485bb3a2eeb8b73137d321a402ce3",
         "primaryFocusStillRequired": true
       },
-      "checkNeeds": [
-        "Native fast source/test import organization errors need file-worker correction and final hash rejudge."
-      ]
+      "checkNeeds": []
     },
     {
       "focus": "tests/native-request-history.test.ts",
