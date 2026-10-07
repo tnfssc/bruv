@@ -487,7 +487,7 @@
     {
       "focus": "src/history/types.ts",
       "initialBlob": "4f47ce0c473b8e2f03d11590cc9952e5a739907b",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_90c49aec",
@@ -507,11 +507,15 @@
           "id": "task_bbbdce1d",
           "candidate": "520137fbe51b09be0d9cb0c7a8833b90630f80bf",
           "base": "94e6edf6f19a0b270b6ac35c72b2a427d9be1295",
-          "status": "running"
+          "status": "complete",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "Four evidence contracts separate provenance, match/read ranges and page/scan completeness. Permission, session/branch authority and live exclusions stay explicitly in service; shared provenance is evidence not context bag.",
+          "checks": "Independent disk retrieval pass; other history suite dependency-blocked; actual bridge/service/test journeys inspected."
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending"
+      "acceptedBlob": "4f47ce0c473b8e2f03d11590cc9952e5a739907b",
+      "integration": "unchanged-at-area-tip"
     },
     {
       "focus": "src/pi-host.ts",
