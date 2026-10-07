@@ -1023,7 +1023,7 @@
     {
       "focus": "scripts/verify-release-launchers.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-running",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_644a204a",
@@ -1039,13 +1039,21 @@
           "id": "task_dc2eea02",
           "base": "fb12edc6d79b0f2ee5612171a6d6d4eaffa652f2",
           "candidate": "f6481df2ddbb7103e8e26f67a97fc7ccb0b36b66",
-          "state": "running"
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "evidence": "Packaging authority separate from dispatch;release/installed probe each owns one sibling pair and cleanup lifetime instead of reused two-layout dir. Shebang,size,mode,exactchecksum,PATH,dispatch/PIDexec/args/status preserved.",
+          "checks": "Independent35tests395assertions;actualtemplates alltargets/bothlayouts,oversize/sourcebytes/layoutisolation/failurecleanup probes;tsc/format/lint/diffpass10infos;hostPOSIX not nativeAndroid or crossbinary/fullbuild.",
+          "acceptedBlobs": {
+            "scripts/verify-release-launchers.ts": "9fd1db0e1baa21cc4a69d5edc702f962eb82173d"
+          }
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "9fd1db0e1baa21cc4a69d5edc702f962eb82173d",
       "readingResult": "Explicit packaging→release dispatch→installed dispatch;each probe owns temporary sibling pair rather than interleaved two-layout cleanup.",
-      "checks": "35tests395assertions;generatedtemplates alltargets/bothlayouts+oversize refusal;tsc/format/lint/diffpass;no build/network/nativeAndroid."
+      "checks": "35tests395assertions;generatedtemplates alltargets/bothlayouts+oversize refusal;tsc/format/lint/diffpass;no build/network/nativeAndroid.",
+      "integrationState": "Full focus patch integrated without overlap,noteexcluded."
     },
     {
       "focus": "scripts/verify-update-probe.ts",
@@ -1555,7 +1563,7 @@
     {
       "focus": "tests/native-release-gate.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "awaiting-judge",
+      "state": "judge-running",
       "primary": [
         {
           "id": "task_d230f8cd",
@@ -1566,7 +1574,14 @@
           "commit": "258c2277c3df7d06a9860df140eb85642f29af46"
         }
       ],
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_3098ce67",
+          "base": "6bbab92af36001555036325216dea9270bb32964",
+          "candidate": "258c2277c3df7d06a9860df140eb85642f29af46",
+          "state": "running"
+        }
+      ],
       "relatedPaths": [],
       "acceptedBlob": null,
       "relatedPatchJudgment": {
@@ -1911,7 +1926,7 @@
     {
       "focus": "tsconfig.json",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-running",
+      "state": "accepted-unchanged",
       "primary": [
         {
           "id": "task_357ea541",
@@ -1927,13 +1942,18 @@
           "id": "task_4c5a1d2a",
           "base": "fd0ff748a36a5ba307e85060df397bd3d8ab57e3",
           "candidate": "024d75619f77b79d8210a2b0bdfad24bea21d967",
-          "state": "running"
+          "state": "completed",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "evidence": "Flat ES2022/PreserveBundler/strict/compiler scope coherent for Bun consumers;skipLibCheck not loss of source strictness;root includes explicit,imports still enter program.",
+          "checks": "IndependentTS7.0.2 effectiveconfig exactly609tracked scopedTS includingambient,Bun/Pi declarationresolution,formatpass;no fulltsc/build/runtime."
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "b984b24eea2a441adca35f80564e94c869658551",
       "readingResult": "Unchanged flat compiler policy and explicit src/scripts/tests scope;no useful structure change.",
-      "checks": "Effectiveconfig609files/ambient/package resolution/formatpass;no fulltypecheck/build."
+      "checks": "Effectiveconfig609files/ambient/package resolution/formatpass;no fulltypecheck/build.",
+      "integrationState": "Unchanged compiler config equals tip;source scope snapshot609 at candidate,no later inventory inference."
     }
   ],
   "extra": [
