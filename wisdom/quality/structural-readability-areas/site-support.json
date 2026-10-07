@@ -965,7 +965,7 @@
     {
       "focus": "site/scripts/preview.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judging",
+      "state": "accepted-unchanged",
       "primary": [
         {
           "id": "task_0207fb65",
@@ -980,10 +980,16 @@
         {
           "id": "task_21f20bcf",
           "candidate": "0a903f459e4ce09442756f7f314b388a39ea9d71",
-          "state": "running"
+          "state": "completed",
+          "verdict": "NO CHANGE NEEDED",
+          "evidence": "Request-local decode/resolve/root-escape check/existence/no-store response directly follows delivery;caller owns shutdown. Judge3 HTTP probes404/400/traversal404. Worker/judge startup import blocked missing playwright,no assertions;area browser gate separately passed. Existing pre-try browser-launch caller cleanup gap and symlink containment unproven.",
+          "objections": []
         }
       ],
-      "initialBlob": "7b3f72d907458d58798d63986222b4a95ab9608a"
+      "initialBlob": "7b3f72d907458d58798d63986222b4a95ab9608a",
+      "acceptedBlob": "7b3f72d907458d58798d63986222b4a95ab9608a",
+      "changedRelatedPaths": [],
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded"
     },
     {
       "focus": "site/scripts/scroll.test.ts",
@@ -1017,7 +1023,7 @@
     {
       "focus": "site/scripts/startup.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "candidate-awaiting-judge",
+      "state": "judging",
       "primary": [
         {
           "id": "task_2473ecf3",
@@ -1028,7 +1034,13 @@
           "result": "Unchanged local gate->pending assertions->release->ready assertions;asset failures straightforward loop,no-JS separate context;short lifetimes would scatter behind hooks. Focused test blocked missing playwright in worker,no assertions;area combined browser run previously passed."
         }
       ],
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_07a74302",
+          "candidate": "0a09cf324d706407d0f12d83eccd9d47827d27ad",
+          "state": "running"
+        }
+      ],
       "initialBlob": "8ff4a906e773189da064dd81b8087d883ab7019b"
     },
     {

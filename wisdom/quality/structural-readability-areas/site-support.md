@@ -75,3 +75,5 @@ site/scripts/capture-real-pty.py: Direct namespace/PTY lifetime and timed IO->pe
 site/scripts/install-ui.test.ts: observeTerminal owns instrumentation/dataset-buffer observation and target coordinate derivation; desktop/mobile snapshots no longer overwrite geometry state. Test actions/assertions remain visible; full caller contract inspected. No independent runtime rerun;fixed waits/minified-bundle instrumentation remain existing limits.
 
 site/scripts/scroll.test.ts: Separate accumulators remove hidden remainder across unrelated reversal/horizontal/bounds/reset scenarios;wheel normalization stands alone;all original assertions retained+reset assertion. Judge7 tests/17 assertions;bounds still does not independently prove same-direction boundary remainder clearing.
+
+site/scripts/preview.ts: Request-local decode/resolve/root-escape check/existence/no-store response directly follows delivery;caller owns shutdown. Judge3 HTTP probes404/400/traversal404. Worker/judge startup import blocked missing playwright,no assertions;area browser gate separately passed. Existing pre-try browser-launch caller cleanup gap and symlink containment unproven.
