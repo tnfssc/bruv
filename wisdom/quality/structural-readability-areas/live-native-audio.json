@@ -1919,10 +1919,17 @@
     {
       "focus": "tests/live-playback.test.ts",
       "initialBlob": "55e410b4de84f8f0a83fc8e1e540d68085254e34",
-      "primary": null,
+      "primary": {
+        "id": "task_29a09f86",
+        "launchBase": "000950277a6a27f3488b994db6cbf0186ba1cd98",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_29a09f86",
+        "branch": "bruv/primary-tests-live-playback.test.ts-29a09f86",
+        "status": "running",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "related accepted patch integrated;own primary pending",
+      "integration": "primary running",
       "relatedPatchJudgment": {
         "judgeId": "task_542a0b36",
         "verdict": "ACCEPT",
@@ -2342,7 +2349,7 @@
         }
       ],
       "acceptedBlob": null,
-      "integration": "rejected candidate retained;fresh rework running",
+      "integration": "rejected original retained;rework awaiting fresh judge",
       "relatedPatchJudgment": {
         "judgeId": "task_1a73a583",
         "verdict": "ACCEPT",
@@ -2357,9 +2364,12 @@
           "launchBase": "e0d16fcab040e73015809ed99f6e3ef7c1d192a9",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_c11abfe2",
           "branch": "bruv/rework-isolated-fixture-temporary-owners-c11abfe2",
-          "status": "running",
-          "commit": null,
-          "reason": "Timeout teardown kills fake processes before Bash trap can remove wrapper mktemp graph root outside test temporary tree; observed leaked runtime/config/log directory after stop and doCleanups. Confine TMPDIR to harness-owned tree, verify eventual removal; preserve per-invocation records and kill-before-drain."
+          "status": "candidate ready",
+          "commit": "009b872830322e84e4a6a1f181029f10831a1769",
+          "reason": "Timeout teardown kills fake processes before Bash trap can remove wrapper mktemp graph root outside test temporary tree; observed leaked runtime/config/log directory after stop and doCleanups. Confine TMPDIR to harness-owned tree, verify eventual removal; preserve per-invocation records and kill-before-drain.",
+          "relatedPaths": [],
+          "readingResult": "Prior WrapperInvocation ownership retained;controlled TMPDIR confines Bashgraph under harness tree;timeoutregression asserts containment,stoppedprocesses,eventual graph removal. Perinvocationrecords and kill-before-drain preserved,productionwrapper unchanged.",
+          "checks": "Reproduced escapedgraph survivesstop/testcleanup;32Python+8focused pass;removeonlyTMPDIR regressionfails;probe leaks removed;diffclean. Fake-tool proofonly."
         }
       ]
     },
@@ -2453,11 +2463,12 @@
     },
     {
       "focus": "native/live-linux/tests/test_isolated_audio.py",
-      "status": "fresh rework running",
+      "status": "rework candidate awaiting fresh judge",
       "reason": "Timeout teardown kills fake processes before Bash trap can remove wrapper mktemp graph root outside test temporary tree; observed leaked runtime/config/log directory after stop and doCleanups. Confine TMPDIR to harness-owned tree, verify eventual removal; preserve per-invocation records and kill-before-drain.",
       "rejectedCandidate": "a4bdb033fc65291cdc41a36b3a0365b806aa7942",
       "judgeId": "task_dd7fe5dc",
-      "workerId": "task_c11abfe2"
+      "workerId": "task_c11abfe2",
+      "candidate": "009b872830322e84e4a6a1f181029f10831a1769"
     }
   ],
   "audit": {
