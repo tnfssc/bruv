@@ -344,7 +344,8 @@
             "tests/manual-shake.test.ts",
             "wisdom/quality/structural-readability-worker.md"
           ],
-          "checks": "89 focused SDK/history passes/1058 assertions; regressions baseline pass; baseline/candidate tsc pass; focused format/lint/diff pass; 4 lint warnings vs 2 baseline; no compiled/live claims."
+          "checks": "89 focused SDK/history passes/1058 assertions; regressions baseline pass; baseline/candidate tsc pass; focused format/lint/diff pass; 4 lint warnings vs 2 baseline; no compiled/live claims.",
+          "result": "Protocol analysis owns ordered/duplicate call-result evidence; replay matches copies/authorizes groups/rewrites only proven matches without constructing checkpoint. One commit operation owns append/leaf rollback/carry-forward-block clearing; callers retain admission/fallback policy."
         }
       ],
       "judgeRounds": [
@@ -1288,7 +1289,7 @@
     {
       "focus": "tests/goals.test.ts",
       "initialBlob": "ff1548ac48ad95b5ac2d695e4d3a5990cd3c921a",
-      "status": "rework-running",
+      "status": "judge-pending",
       "primary": [
         {
           "id": "task_6d7a5ed8",
@@ -1324,7 +1325,14 @@
           "launchBase": "fcbade1c776f50c86bdd29dd5d365936d3a6fa5d",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_1ac39db6",
           "branch": "bruv/rework-goal-test-required-rpc-argument-1ac39db6",
-          "priorCandidate": "cf81cf961f870a8835854de8a268a928cf1c8abc"
+          "priorCandidate": "cf81cf961f870a8835854de8a268a928cf1c8abc",
+          "commit": "3ae9918527f5233e52e6683774e02438e37bf31f",
+          "changedPaths": [
+            "tests/goals.test.ts",
+            "wisdom/quality/structural-readability-worker.md"
+          ],
+          "result": "Pass explicit undefined RPC params to required GoalRuntime.handle contract, preserving genuine before-start assertion and reminder invalidation. No production change.",
+          "checks": "Baseline tsc TS2554 reproduced; candidate full tsc pass; 35 goal tests/173 assertions; format/diff pass; unchanged lint warning."
         }
       ],
       "judgeRounds": [
@@ -2091,8 +2099,15 @@
       "focus": "tests/transcript-snapshots.test.ts",
       "initialBlob": null,
       "originCandidate": "dfd632869cc21aaf0b20cb3e732e14258929b910",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_08a471b0",
+          "launchBase": "4b1df2f3343aab4fe418037aefdefbce5d99ca90",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_08a471b0",
+          "branch": "bruv/primary-snapshot-isolated-runner-08a471b0"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "integrated-related-primary-pending",
