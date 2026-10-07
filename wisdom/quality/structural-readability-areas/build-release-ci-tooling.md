@@ -48,3 +48,5 @@ Local-installer-test primary: phase suites and one chronological build/probe tra
 Download-test primary: scoped scenario cleanup, explicit fixture roles and source-based faults. Judge task_bdc5b9c4 ACCEPT7f47af8; candidate22/106 sequential/concurrent, related48/204. Independently reproduced baseline cross-test deletion (1pass21fail vs worker2pass20fail scheduling-dependent), repaired as explicit test-lifetime defect. No real download/platform proof.
 
 Paired build: singleton matrix/loop removed in favor of direct command→spawn→exit. Judge task_438d5e06 ACCEPT3cfc224;18/109 focused incl actual entrypoint stub child cwd/argv/IO/status. No compile claim. Related production-packaging test primary pending; no remaining tracked old plural API callers.
+
+CI workflow: explicit feedback success then two accepted full/docs lane tuples; judge task_884543de ACCEPT8f17983.21/276 tests,17 bash syntax blocks,1500 behavior comparisons plus45 malformed values, exactly same two allowed outcomes. Permissions/wiring unchanged; no actionlint/hosted proof.

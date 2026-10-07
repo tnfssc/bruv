@@ -15,7 +15,7 @@
     {
       "focus": ".github/workflows/ci.yml",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-running",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_f5563536",
@@ -31,13 +31,21 @@
           "id": "task_884543de",
           "base": "f1fca7d35a0785a69849f58fbadcae8f5c522457",
           "candidate": "802ea4ed2ee7d35d9597be1ed693d002670bcc12",
-          "state": "running"
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "evidence": "Explicit feedback prerequisite plus exactly two complete accepted plan/lane tuples replace nested reconstruction. Fail-closed for missing/failure/cancel/inconsistent; permissions/triggers/dependencies unchanged; diagnostics safe data formatting.",
+          "checks": "Independent21tests276 assertions,17 shell blocks bash-n,1500 old/new combinations exactly2 successes,45 malformed reject; parsed fields identical; diff pass. No actionlint/hosted/macOS/API/full build.",
+          "acceptedBlobs": {
+            ".github/workflows/ci.yml": "8f1798300f04ecf1317570abb5b8868422f140b9"
+          }
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "8f1798300f04ecf1317570abb5b8868422f140b9",
       "readingResult": "Nested policy predicates become two explicit allowed plan/result tuples with rejection diagnostics. Permissions/wiring/comparison/acceptance unchanged.",
-      "checks": "21 focused tests;17 shell blocks syntax;1500 baseline/candidate policy combinations equivalent; rejection messages checked. actionlint absent, no hosted/macOS/API."
+      "checks": "21 focused tests;17 shell blocks syntax;1500 baseline/candidate policy combinations equivalent; rejection messages checked. actionlint absent, no hosted/macOS/API.",
+      "integrationState": "Workflow patch integrated unchanged, no related source edits; note excluded."
     },
     {
       "focus": ".github/workflows/dependency-updates.yml",
