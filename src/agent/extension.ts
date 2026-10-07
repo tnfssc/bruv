@@ -292,169 +292,21 @@ export default function asynchronousTasksExtension(
     taskUi?.setStatus("bruv-tasks", running > 0 ? `${running} task${running === 1 ? "" : "s"} running` : undefined);
   };
 
-  let t3NativeSession = false;
-  let remoteOutbox: RemoteJobDeliveryOutbox | undefined;
-  let remoteSessionFile: string | undefined;
-  let unsubscribeRemote: (() => void) | undefined;
-  let remoteRetry: ReturnType<typeof setTimeout> | undefined;
-  const scheduleRemoteRetry = () => {
-    if (remoteRetry || !remoteOutbox?.hasPending()) return;
-    remoteRetry = setTimeout(() => {
-      remoteRetry = undefined;
-      if (remoteOutbox?.pending().length) notificationBatch.add({ kind: "remote" });
-      scheduleRemoteRetry();
-    }, 1_000);
-    remoteRetry.unref?.();
-  };
-  const disposeRemote = () => {
-    unsubscribeRemote?.();
-    unsubscribeRemote = undefined;
-    if (remoteRetry) clearTimeout(remoteRetry);
-    remoteRetry = undefined;
-    remoteOutbox?.close();
-    remoteOutbox = undefined;
-    if (remoteSessionFile) clearRemoteJobEvents(remoteSessionFile);
-    remoteSessionFile = undefined;
-  };
-  let t3LocalDelivery: T3LocalNotificationDelivery | undefined;
-  type Notification =
-    | { kind: "completion"; task: TaskInspection }
-    | { kind: "attention"; notice: AttentionNotice }
-    | { kind: "remote" };
-  const notificationBatch = new CompletionBatcher<Notification>(
-    (items) => {
-      updateTaskStatus();
-      const completionMap = new Map(
-        items.filter((item) => item.kind === "completion").map((item) => [item.task.id, item.task]),
-      );
-      const runningIds = new Set(manager?.pending().map((task) => task.id) ?? []);
-      const attentionMap = new Map(
-        items
-          .filter((item) => item.kind === "attention")
-          .filter((item) => runningIds.has(item.notice.id) && !completionMap.has(item.notice.id))
-          .map((item) => [item.notice.id, item.notice]),
-      );
-      const tasks = [...completionMap.values()],
-        notices = [...attentionMap.values()];
-      const remoteRows = remoteOutbox?.claim() ?? [];
-      const remoteCompletions = remoteRows.filter((row) => row.kind === "completion");
-      const actionable = remoteRows
-        .filter((row) => row.kind === "attention")
-        .map((row) =>
-          `SSH job ${sshJobId(row.observation.taskId)} needs human action (delivery ${row.id}): ${row.observation.actionable}`.slice(
-            0,
-            430,
-          ),
-        );
-      if (!tasks.length && !notices.length && !remoteRows.length && !actionable.length) return;
-      const mixed = tasks.length > 0 && notices.length > 0;
-      const separator = mixed ? 2 : 0;
-      const localBudget = remoteRows.length ? 2400 : 5000;
-      const completionBudget = mixed ? Math.floor((localBudget - separator) / 2) : localBudget;
-      const attentionBudget = mixed ? localBudget - separator - completionBudget : localBudget;
-      const content = [
-        tasks.length ? formatCompletionNotification(tasks, completionBudget) : "",
-        notices.length ? formatAttentionNotification(notices, attentionBudget) : "",
-        remoteCompletions.length
-          ? "SSH jobs completed:\n" +
-            remoteCompletions
-              .map(({ observation }) => remoteCompletionSummary(observation, sshJobId(observation.taskId)))
-              .join("\n")
-          : "",
-        actionable.length ? actionable.join("\n") : "",
-        remoteRows.length
-          ? "Use jobs.inspect with the ssh: ID for bounded cached output; remote text is not human approval."
-          : "",
-      ]
-        .filter(Boolean)
-        .join("\n\n");
-      const owner = owningContext?.sessionManager && currentMainOwner(owningContext.sessionManager);
-      try {
-        if (owner) {
-          owner.sendContext(content, {
-            customType: tasks.length || remoteCompletions.length ? "task-complete" : "task-attention",
-            details: {
-              ...completionDiagnosticDetails(tasks, notices),
-              remote: remoteRows.map(({ id, observation }) => ({ id, ...observation })),
-            },
-          });
-        } else if (t3NativeSession) {
-          if (!t3LocalDelivery) throw new Error("T3 job notification outbox unavailable");
-          for (const row of remoteRows) {
-            t3LocalDelivery.enqueue({
-              taskId:
-                "ssh:" +
-                createHash("sha256")
-                  .update(JSON.stringify([row.observation.ownerId, row.observation.epoch, row.observation.taskId]))
-                  .digest("hex"),
-              kind: row.kind,
-              text: `SSH job ${row.observation.taskId} ${row.observation.state} (delivery ${row.id}): ${row.kind === "attention" ? row.observation.actionable : row.observation.preview}`.slice(
-                0,
-                5000,
-              ),
-            });
-          }
-        } else {
-          pi.sendMessage(
-            {
-              customType: tasks.length || remoteCompletions.length ? "task-complete" : "task-attention",
-              content,
-              display: true,
-              details: {
-                ...completionDiagnosticDetails(tasks, notices),
-                remote: remoteRows.map(({ id, observation }) => ({ id, ...observation })),
-              },
-            },
-            { deliverAs: "steer", triggerTurn: true },
-          );
-        }
-        remoteOutbox?.delivered(remoteRows);
-      } catch (error) {
-        remoteOutbox?.failed(remoteRows);
-        console.error("Job completion dispatch failed:", error);
-      } finally {
-        scheduleRemoteRetry();
-      }
+  const notifications = createJobNotifications(
+    pi,
+    () => manager,
+    () => attention,
+    updateTaskStatus,
+    () => owningContext?.sessionManager && currentMainOwner(owningContext.sessionManager),
+    (event) => {
+      const row = taskRowFromRemote(event);
+      if (row && transcriptRows.has(taskRowKey(row))) recordTaskRow(row);
     },
-    250,
-    500,
   );
-  const completions = {
-    add: (task: TaskInspection) => {
-      if (t3NativeSession && task.kind === "command") {
-        if (!t3LocalDelivery) throw new Error("T3 local notification outbox is unavailable");
-        t3LocalDelivery.enqueue({
-          taskId: task.id,
-          kind: "completion",
-          text: formatCompletionNotification([task], 5_000),
-        });
-        return;
-      }
-      notificationBatch.add({ kind: "completion", task });
-    },
-    flush: () => notificationBatch.flush(),
-    dispose: () => notificationBatch.dispose(),
-  };
-  const attentions = {
-    add: (notice: AttentionNotice) => {
-      if (t3NativeSession && notice.task.kind === "command") {
-        if (!t3LocalDelivery) return; // fail closed: never create an unowned Pi turn
-        t3LocalDelivery.enqueue({
-          taskId: notice.id,
-          kind: "attention",
-          text: formatAttentionNotification([notice], 5_000),
-        });
-        return;
-      }
-      notificationBatch.add({ kind: "attention", notice });
-    },
-    flush: () => notificationBatch.flush(),
-  };
 
   let goals: GoalRuntime;
   const getManager = (ctx = owningContext) => {
-    if (t3NativeSession && !t3LocalDelivery)
-      throw new Error("T3 local jobs require an available durable notification outbox");
+    notifications.requireLocalDelivery();
     if (!manager) {
       // Capture ownership at manager creation, never through a mutable active
       // context. SessionManager objects may themselves be reused on /resume.
@@ -486,7 +338,7 @@ export default function asynchronousTasksExtension(
       );
       manager = new TaskManager(
         (task) => {
-          completions.add(task);
+          notifications.complete(task);
           goals.jobsChanged();
         },
         undefined,
@@ -523,7 +375,7 @@ export default function asynchronousTasksExtension(
         });
       // Only the local CLI subagent receives a parent SIGTERM. Its own async
       // children live in detached groups, outside the parent group signal.
-      if (subagentDepth > 0 && environmentDepth > 0 && !t3NativeSession) {
+      if (subagentDepth > 0 && environmentDepth > 0 && !notifications.isNativeSession()) {
         detachLocalTermination = installLocalAgentTermination(process, ownedManager, (code) => process.exit(code));
       }
       detachManagerDiagnostics = attachDiagnosticSink(manager, (_type, data) =>
@@ -555,7 +407,7 @@ export default function asynchronousTasksExtension(
       attention = new JobAttentionScheduler(
         manager,
         (notices) => {
-          for (const notice of notices) attentions.add(notice);
+          for (const notice of notices) notifications.attend(notice);
         },
         options.attention,
       );
@@ -566,7 +418,8 @@ export default function asynchronousTasksExtension(
   registerResumeSafeguards(pi);
 
   const questions = registerQuestionRuntime(pi, {
-    supported: () => (subagentDepth === 0 || !!process.env.BRUV_REMOTE_RUNTIME_STATE) && !t3NativeSession,
+    supported: () =>
+      (subagentDepth === 0 || !!process.env.BRUV_REMOTE_RUNTIME_STATE) && !notifications.isNativeSession(),
     nativeSupported: () => subagentDepth === 0,
   });
   registerQuestions(pi, (ctx) => questions.commands(ctx));
@@ -611,12 +464,7 @@ export default function asynchronousTasksExtension(
         managerRecorder,
         undefined,
         undefined,
-        () => {
-          if (t3NativeSession)
-            t3LocalDelivery!.outbox.assertLaunchCapacity(
-              tasks.list().filter((task) => task.status === "running").length,
-            );
-        },
+        () => notifications.assertLaunchCapacity(tasks.list().filter((task) => task.status === "running").length),
         remoteJobs,
       );
     return service;
@@ -748,13 +596,314 @@ export default function asynchronousTasksExtension(
     if (ctx.mode === "rpc") {
       // T3 delivery is already durable and server-dispatched. Flushing Pi's
       // volatile steer queue here cannot make a post-handoff completion safe.
-      if (!t3NativeSession) notificationBatch.flush();
+      notifications.flushRpcTurn();
       return;
     }
     if (ctx.mode !== "print" && ctx.mode !== "json") return;
     const lastAssistant = [...event.messages].reverse().find((message) => message.role === "assistant");
     if (ctx.signal?.aborted || lastAssistant?.stopReason === "aborted" || lastAssistant?.stopReason === "error") return;
-    const tasks = manager;
+    await notifications.waitForNextResult(ctx.signal);
+  });
+
+  pi.on("input", async (event, ctx) => {
+    const owner = currentMainOwner(ctx.sessionManager);
+    if (!owner) return;
+    if (event.source === "extension") return;
+    if (event.images?.length) {
+      ctx.ui.notify("Live typed input cannot forward images; try again without images.", "warning");
+      return { action: "handled" };
+    }
+    try {
+      await owner.typedInput(event.text);
+    } catch {
+      ctx.ui.notify("Live could not prepare this turn. Continue in text.", "warning");
+    }
+    return { action: "handled" };
+  });
+
+  pi.on("before_agent_start", (event, ctx) => {
+    // Some SDK embedders emit session_start before resumed entries are attached.
+    // Rehydrate at the definitive ordinary-turn seam as well.
+    restoreAgentIdentity(ctx);
+    instructionMode.refresh(ctx);
+    // session_start may precede dynamically loaded extension handlers in SDK
+    // embedders; framing the first ordinary turn is the definitive scope seam.
+    scopeInstructionContinuity(ctx.sessionManager as object);
+    // Explicit user system prompts retain their existing override semantics.
+    const custom = !!event.systemPromptOptions?.customPrompt;
+    // Pi assembled Bruv's base with dynamic append/context/skill/cwd sections.
+    // A user-owned custom base remains untouched at root, but children must
+    // retain their role identity and delegation boundary on every base.
+    const userCustom = custom && !isBruvSystemPrompt(event.systemPromptOptions);
+    if (userCustom && subagentDepth === 0) return;
+    const role = subagentDepth > 0 ? subagentGuidance(agentType ?? "normal") : instructionMode.guidance(ctx);
+    const additions = [userCustom ? "" : collaborationGuidance(), role].filter(Boolean).join("\n\n");
+    if (additions) return { systemPrompt: event.systemPrompt + "\n\n" + additions };
+  });
+
+  pi.on("session_start", async (_event, ctx) => {
+    owningContext = ctx;
+    transcriptRows.clear();
+    for (const row of taskRowsFromSessionEntries(ctx.sessionManager.getBranch()))
+      upsertTaskRow(transcriptRows, row.status === "running" ? { ...row, status: "unknown" } : row);
+    restoreTaskRows?.();
+    restoreTaskRows =
+      ctx.mode === "tui" ? installSdkTaskRows(ctx.ui.theme, () => [...transcriptRows.values()]) : undefined;
+    await notifications.attach(ctx.sessionManager?.getSessionFile?.());
+    owningContext = ctx;
+    scopeInstructionContinuity(ctx.sessionManager as object);
+    // A resumed child keeps identity and delegation restrictions even when
+    // launched from /resume without the original process environment.
+    restoreAgentIdentity(ctx);
+    pi.setActiveTools(["execute"]);
+    installUI(ctx);
+    instructionMode.sessionStart(ctx);
+  });
+
+  pi.on("session_shutdown", async (_event, ctx) => {
+    restoreTaskRows?.();
+    restoreTaskRows = undefined;
+    currentMainOwner(ctx.sessionManager)?.stopForeground();
+    currentMainOwner(ctx.sessionManager)?.close();
+    // Pi emits this before reload/new/resume/fork as well as final quit.
+    sessionHost?.close();
+    sessionHost = undefined;
+    clearInstructionContinuity(ctx.sessionManager as object);
+    taskUi?.setStatus("bruv-tasks", undefined);
+    instructionMode.shutdown();
+    await notifications.close();
+    attention?.dispose();
+    await manager?.shutdown();
+    await taskOwnerBinding?.close();
+    taskOwnerBinding = undefined;
+    detachLocalTermination?.();
+    detachLocalTermination = undefined;
+    detachManagerDiagnostics?.();
+    detachManagerDiagnostics = undefined;
+    managerRecorder = undefined;
+    manager = undefined;
+    attention = undefined;
+    service = undefined;
+    owningContext = undefined;
+  });
+}
+
+/** Owns completion delivery for one attached session, including durable replay and print settlement. */
+function createJobNotifications(
+  pi: ExtensionAPI,
+  currentManager: () => TaskManager | undefined,
+  currentAttention: () => JobAttentionScheduler | undefined,
+  updateTaskStatus: () => void,
+  currentOwner: () => ReturnType<typeof currentMainOwner>,
+  observeRemote: (event: RemoteJobObservation) => void,
+) {
+  let t3NativeSession = false;
+  let remoteOutbox: RemoteJobDeliveryOutbox | undefined;
+  let remoteSessionFile: string | undefined;
+  let unsubscribeRemote: (() => void) | undefined;
+  let remoteRetry: ReturnType<typeof setTimeout> | undefined;
+  const scheduleRemoteRetry = () => {
+    if (remoteRetry || !remoteOutbox?.hasPending()) return;
+    remoteRetry = setTimeout(() => {
+      remoteRetry = undefined;
+      if (remoteOutbox?.pending().length) notificationBatch.add({ kind: "remote" });
+      scheduleRemoteRetry();
+    }, 1_000);
+    remoteRetry.unref?.();
+  };
+  const disposeRemote = () => {
+    unsubscribeRemote?.();
+    unsubscribeRemote = undefined;
+    if (remoteRetry) clearTimeout(remoteRetry);
+    remoteRetry = undefined;
+    remoteOutbox?.close();
+    remoteOutbox = undefined;
+    if (remoteSessionFile) clearRemoteJobEvents(remoteSessionFile);
+    remoteSessionFile = undefined;
+  };
+  let t3LocalDelivery: T3LocalNotificationDelivery | undefined;
+  type Notification =
+    | { kind: "completion"; task: TaskInspection }
+    | { kind: "attention"; notice: AttentionNotice }
+    | { kind: "remote" };
+  const notificationBatch = new CompletionBatcher<Notification>(
+    (items) => {
+      updateTaskStatus();
+      const completionMap = new Map(
+        items.filter((item) => item.kind === "completion").map((item) => [item.task.id, item.task]),
+      );
+      const runningIds = new Set(
+        currentManager()
+          ?.pending()
+          .map((task) => task.id) ?? [],
+      );
+      const attentionMap = new Map(
+        items
+          .filter((item) => item.kind === "attention")
+          .filter((item) => runningIds.has(item.notice.id) && !completionMap.has(item.notice.id))
+          .map((item) => [item.notice.id, item.notice]),
+      );
+      const tasks = [...completionMap.values()],
+        notices = [...attentionMap.values()];
+      const remoteRows = remoteOutbox?.claim() ?? [];
+      const remoteCompletions = remoteRows.filter((row) => row.kind === "completion");
+      const actionable = remoteRows
+        .filter((row) => row.kind === "attention")
+        .map((row) =>
+          `SSH job ${sshJobId(row.observation.taskId)} needs human action (delivery ${row.id}): ${row.observation.actionable}`.slice(
+            0,
+            430,
+          ),
+        );
+      if (!tasks.length && !notices.length && !remoteRows.length && !actionable.length) return;
+      const mixed = tasks.length > 0 && notices.length > 0;
+      const separator = mixed ? 2 : 0;
+      const localBudget = remoteRows.length ? 2400 : 5000;
+      const completionBudget = mixed ? Math.floor((localBudget - separator) / 2) : localBudget;
+      const attentionBudget = mixed ? localBudget - separator - completionBudget : localBudget;
+      const content = [
+        tasks.length ? formatCompletionNotification(tasks, completionBudget) : "",
+        notices.length ? formatAttentionNotification(notices, attentionBudget) : "",
+        remoteCompletions.length
+          ? "SSH jobs completed:\n" +
+            remoteCompletions
+              .map(({ observation }) => remoteCompletionSummary(observation, sshJobId(observation.taskId)))
+              .join("\n")
+          : "",
+        actionable.length ? actionable.join("\n") : "",
+        remoteRows.length
+          ? "Use jobs.inspect with the ssh: ID for bounded cached output; remote text is not human approval."
+          : "",
+      ]
+        .filter(Boolean)
+        .join("\n\n");
+      const owner = currentOwner();
+      try {
+        if (owner) {
+          owner.sendContext(content, {
+            customType: tasks.length || remoteCompletions.length ? "task-complete" : "task-attention",
+            details: {
+              ...completionDiagnosticDetails(tasks, notices),
+              remote: remoteRows.map(({ id, observation }) => ({ id, ...observation })),
+            },
+          });
+        } else if (t3NativeSession) {
+          if (!t3LocalDelivery) throw new Error("T3 job notification outbox unavailable");
+          for (const row of remoteRows) {
+            t3LocalDelivery.enqueue({
+              taskId:
+                "ssh:" +
+                createHash("sha256")
+                  .update(JSON.stringify([row.observation.ownerId, row.observation.epoch, row.observation.taskId]))
+                  .digest("hex"),
+              kind: row.kind,
+              text: `SSH job ${row.observation.taskId} ${row.observation.state} (delivery ${row.id}): ${row.kind === "attention" ? row.observation.actionable : row.observation.preview}`.slice(
+                0,
+                5000,
+              ),
+            });
+          }
+        } else {
+          pi.sendMessage(
+            {
+              customType: tasks.length || remoteCompletions.length ? "task-complete" : "task-attention",
+              content,
+              display: true,
+              details: {
+                ...completionDiagnosticDetails(tasks, notices),
+                remote: remoteRows.map(({ id, observation }) => ({ id, ...observation })),
+              },
+            },
+            { deliverAs: "steer", triggerTurn: true },
+          );
+        }
+        remoteOutbox?.delivered(remoteRows);
+      } catch (error) {
+        remoteOutbox?.failed(remoteRows);
+        console.error("Job completion dispatch failed:", error);
+      } finally {
+        scheduleRemoteRetry();
+      }
+    },
+    250,
+    500,
+  );
+  const complete = (task: TaskInspection) => {
+    if (t3NativeSession && task.kind === "command") {
+      if (!t3LocalDelivery) throw new Error("T3 local notification outbox is unavailable");
+      t3LocalDelivery.enqueue({
+        taskId: task.id,
+        kind: "completion",
+        text: formatCompletionNotification([task], 5_000),
+      });
+      return;
+    }
+    notificationBatch.add({ kind: "completion", task });
+  };
+  const attend = (notice: AttentionNotice) => {
+    if (t3NativeSession && notice.task.kind === "command") {
+      if (!t3LocalDelivery) return; // fail closed: never create an unowned Pi turn
+      t3LocalDelivery.enqueue({
+        taskId: notice.id,
+        kind: "attention",
+        text: formatAttentionNotification([notice], 5_000),
+      });
+      return;
+    }
+    notificationBatch.add({ kind: "attention", notice });
+  };
+
+  const attach = async (sessionFile: string | undefined) => {
+    notificationBatch.reset();
+    disposeRemote();
+    await t3LocalDelivery?.stop();
+    t3LocalDelivery = undefined;
+    t3NativeSession = process.env[T3_MCP_URL_ENV] !== undefined || process.env[T3_MCP_BEARER_ENV] !== undefined;
+    if (sessionFile) {
+      try {
+        const bridge = t3BridgeEnvironment();
+        if (bridge.kind === "remote") {
+          t3NativeSession = true;
+          t3LocalDelivery = new T3LocalNotificationDelivery(new T3LocalNotificationOutbox(sessionFile), bridge);
+          t3LocalDelivery.start(); // replay commit-with-lost-ACK rows on resume
+        }
+      } catch {
+        // A configured T3 session fails closed if its durable mailbox cannot be
+        // opened. It must never fall back to an unowned Pi-triggered turn.
+      }
+    }
+    if (sessionFile) {
+      remoteSessionFile = sessionFile;
+      try {
+        remoteOutbox = new RemoteJobDeliveryOutbox(sessionFile);
+        remoteOutbox.replay();
+        const source = remoteJobEvents(sessionFile);
+        const observe = (event: RemoteJobObservation) => {
+          observeRemote(event);
+          remoteOutbox?.enqueue(event);
+          if (remoteOutbox?.pending().length) notificationBatch.add({ kind: "remote" });
+          scheduleRemoteRetry();
+        };
+        unsubscribeRemote = source.subscribe(observe);
+        for (const event of source.snapshot()) observe(event);
+        if (remoteOutbox.pending().length) notificationBatch.add({ kind: "remote" });
+        scheduleRemoteRetry();
+      } catch (error) {
+        console.error("Remote job outbox unavailable:", error);
+        disposeRemote();
+      }
+    }
+  };
+  const close = async () => {
+    await t3LocalDelivery?.stop();
+    t3LocalDelivery = undefined;
+    t3NativeSession = false;
+    notificationBatch.dispose();
+    disposeRemote();
+  };
+  const waitForNextResult = async (signal?: AbortSignal) => {
+    const tasks = currentManager();
+    const attention = currentAttention();
     const running = tasks?.list().filter((task) => task.status === "running") ?? [];
     const remoteSource = remoteSessionFile ? remoteJobEvents(remoteSessionFile) : undefined;
     const remoteRunning =
@@ -806,29 +955,27 @@ export default function asynchronousTasksExtension(
           ...(attention
             ? [
                 attention
-                  .waitForNotice(
-                    ctx.signal ? AbortSignal.any([ctx.signal, attentionWait.signal]) : attentionWait.signal,
-                  )
+                  .waitForNotice(signal ? AbortSignal.any([signal, attentionWait.signal]) : attentionWait.signal)
                   .then(() => "attention" as const),
               ]
             : []),
           new Promise<"abort">((resolve) => {
             onAbort = () => resolve("abort");
-            ctx.signal?.addEventListener("abort", onAbort, { once: true });
-            if (ctx.signal?.aborted) resolve("abort");
+            signal?.addEventListener("abort", onAbort, { once: true });
+            if (signal?.aborted) resolve("abort");
           }),
         ]);
       } finally {
         unsubscribe?.();
         unsubscribeRemoteWait?.();
         attentionWait.abort();
-        if (onAbort) ctx.signal?.removeEventListener("abort", onAbort);
+        if (onAbort) signal?.removeEventListener("abort", onAbort);
       }
     }
     // Keep the print boundary until the shared batch is actually delivered.
     // For attention, retain the normal short coalescing window so a completion
     // racing the checkpoint supersedes stale attention in one parent wakeup.
-    if (!ctx.signal?.aborted) {
+    if (!signal?.aborted) {
       if (boundary === "attention" && tasks) {
         // Give a task already racing the checkpoint one bounded chance to
         // complete; its completion supersedes stale attention for that task.
@@ -844,32 +991,32 @@ export default function asynchronousTasksExtension(
             settled = true;
             unsubscribe();
             if (timer) clearTimeout(timer);
-            ctx.signal?.removeEventListener("abort", finish);
+            signal?.removeEventListener("abort", finish);
             resolve();
           };
           unsubscribe = tasks.subscribe((event) => {
             if (event.type === "completed" && ids.has(event.task.id)) finish();
           });
-          ctx.signal?.addEventListener("abort", finish, { once: true });
+          signal?.addEventListener("abort", finish, { once: true });
           timer = setTimeout(finish, 200);
           timer.unref?.();
           // Close the completion-before-subscription race.
           const current = new Map(tasks.list().map((task) => [task.id, task.status]));
-          if ([...ids].some((id) => current.get(id) !== "running") || ctx.signal?.aborted) finish();
+          if ([...ids].some((id) => current.get(id) !== "running") || signal?.aborted) finish();
         });
       }
       notificationBatch.flush();
       // Print/json must not exit between a failed SSH dispatch and its bounded retry.
       // A live claim belongs to another dispatcher or is crash-uncertain until its lease expires.
-      while (remoteOutbox?.hasPending() && !ctx.signal?.aborted) {
+      while (remoteOutbox?.hasPending() && !signal?.aborted) {
         await new Promise<void>((resolve) => {
           const done = () => {
             clearTimeout(timer);
-            ctx.signal?.removeEventListener("abort", done);
+            signal?.removeEventListener("abort", done);
             resolve();
           };
           const timer = setTimeout(done, 1000);
-          ctx.signal?.addEventListener("abort", done, { once: true });
+          signal?.addEventListener("abort", done, { once: true });
         });
         if (remoteOutbox?.pending().length) {
           notificationBatch.add({ kind: "remote" });
@@ -877,131 +1024,25 @@ export default function asynchronousTasksExtension(
         }
       }
     }
-  });
+  };
 
-  pi.on("input", async (event, ctx) => {
-    const owner = currentMainOwner(ctx.sessionManager);
-    if (!owner) return;
-    if (event.source === "extension") return;
-    if (event.images?.length) {
-      ctx.ui.notify("Live typed input cannot forward images; try again without images.", "warning");
-      return { action: "handled" };
-    }
-    try {
-      await owner.typedInput(event.text);
-    } catch {
-      ctx.ui.notify("Live could not prepare this turn. Continue in text.", "warning");
-    }
-    return { action: "handled" };
-  });
-
-  pi.on("before_agent_start", (event, ctx) => {
-    // Some SDK embedders emit session_start before resumed entries are attached.
-    // Rehydrate at the definitive ordinary-turn seam as well.
-    restoreAgentIdentity(ctx);
-    instructionMode.refresh(ctx);
-    // session_start may precede dynamically loaded extension handlers in SDK
-    // embedders; framing the first ordinary turn is the definitive scope seam.
-    scopeInstructionContinuity(ctx.sessionManager as object);
-    // Explicit user system prompts retain their existing override semantics.
-    const custom = !!event.systemPromptOptions?.customPrompt;
-    // Pi assembled Bruv's base with dynamic append/context/skill/cwd sections.
-    // A user-owned custom base remains untouched at root, but children must
-    // retain their role identity and delegation boundary on every base.
-    const userCustom = custom && !isBruvSystemPrompt(event.systemPromptOptions);
-    if (userCustom && subagentDepth === 0) return;
-    const role = subagentDepth > 0 ? subagentGuidance(agentType ?? "normal") : instructionMode.guidance(ctx);
-    const additions = [userCustom ? "" : collaborationGuidance(), role].filter(Boolean).join("\n\n");
-    if (additions) return { systemPrompt: event.systemPrompt + "\n\n" + additions };
-  });
-
-  pi.on("session_start", async (_event, ctx) => {
-    owningContext = ctx;
-    transcriptRows.clear();
-    for (const row of taskRowsFromSessionEntries(ctx.sessionManager.getBranch()))
-      upsertTaskRow(transcriptRows, row.status === "running" ? { ...row, status: "unknown" } : row);
-    restoreTaskRows?.();
-    restoreTaskRows =
-      ctx.mode === "tui" ? installSdkTaskRows(ctx.ui.theme, () => [...transcriptRows.values()]) : undefined;
-    notificationBatch.reset();
-    disposeRemote();
-    await t3LocalDelivery?.stop();
-    t3LocalDelivery = undefined;
-    t3NativeSession = process.env[T3_MCP_URL_ENV] !== undefined || process.env[T3_MCP_BEARER_ENV] !== undefined;
-    const sessionFile = ctx.sessionManager?.getSessionFile?.();
-    if (sessionFile) {
-      try {
-        const bridge = t3BridgeEnvironment();
-        if (bridge.kind === "remote") {
-          t3NativeSession = true;
-          t3LocalDelivery = new T3LocalNotificationDelivery(new T3LocalNotificationOutbox(sessionFile), bridge);
-          t3LocalDelivery.start(); // replay commit-with-lost-ACK rows on resume
-        }
-      } catch {
-        // A configured T3 session fails closed if its durable mailbox cannot be
-        // opened. It must never fall back to an unowned Pi-triggered turn.
-      }
-    }
-    if (sessionFile) {
-      remoteSessionFile = sessionFile;
-      try {
-        remoteOutbox = new RemoteJobDeliveryOutbox(sessionFile);
-        remoteOutbox.replay();
-        const source = remoteJobEvents(sessionFile);
-        const observe = (event: RemoteJobObservation) => {
-          const row = taskRowFromRemote(event);
-          if (row && transcriptRows.has(taskRowKey(row))) recordTaskRow(row);
-          remoteOutbox?.enqueue(event);
-          if (remoteOutbox?.pending().length) notificationBatch.add({ kind: "remote" });
-          scheduleRemoteRetry();
-        };
-        unsubscribeRemote = source.subscribe(observe);
-        for (const event of source.snapshot()) observe(event);
-        if (remoteOutbox.pending().length) notificationBatch.add({ kind: "remote" });
-        scheduleRemoteRetry();
-      } catch (error) {
-        console.error("Remote job outbox unavailable:", error);
-        disposeRemote();
-      }
-    }
-    owningContext = ctx;
-    scopeInstructionContinuity(ctx.sessionManager as object);
-    // A resumed child keeps identity and delegation restrictions even when
-    // launched from /resume without the original process environment.
-    restoreAgentIdentity(ctx);
-    pi.setActiveTools(["execute"]);
-    installUI(ctx);
-    instructionMode.sessionStart(ctx);
-  });
-
-  pi.on("session_shutdown", async (_event, ctx) => {
-    restoreTaskRows?.();
-    restoreTaskRows = undefined;
-    currentMainOwner(ctx.sessionManager)?.stopForeground();
-    currentMainOwner(ctx.sessionManager)?.close();
-    // Pi emits this before reload/new/resume/fork as well as final quit.
-    sessionHost?.close();
-    sessionHost = undefined;
-    clearInstructionContinuity(ctx.sessionManager as object);
-    taskUi?.setStatus("bruv-tasks", undefined);
-    instructionMode.shutdown();
-    await t3LocalDelivery?.stop();
-    t3LocalDelivery = undefined;
-    t3NativeSession = false;
-    completions.dispose();
-    disposeRemote();
-    attention?.dispose();
-    await manager?.shutdown();
-    await taskOwnerBinding?.close();
-    taskOwnerBinding = undefined;
-    detachLocalTermination?.();
-    detachLocalTermination = undefined;
-    detachManagerDiagnostics?.();
-    detachManagerDiagnostics = undefined;
-    managerRecorder = undefined;
-    manager = undefined;
-    attention = undefined;
-    service = undefined;
-    owningContext = undefined;
-  });
+  return {
+    attach,
+    close,
+    complete,
+    attend,
+    waitForNextResult,
+    isNativeSession: () => t3NativeSession,
+    requireLocalDelivery: () => {
+      if (t3NativeSession && !t3LocalDelivery)
+        throw new Error("T3 local jobs require an available durable notification outbox");
+    },
+    assertLaunchCapacity: (runningTasks: number) => {
+      if (t3NativeSession) t3LocalDelivery!.outbox.assertLaunchCapacity(runningTasks);
+    },
+    flushRpcTurn: () => {
+      // Native completion was persisted at its edge, not into Pi's volatile steer queue.
+      if (!t3NativeSession) notificationBatch.flush();
+    },
+  };
 }

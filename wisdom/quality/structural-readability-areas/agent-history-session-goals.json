@@ -61,7 +61,7 @@
     {
       "focus": "src/agent/README.md",
       "initialBlob": "ef24df2fd49f7cf8f8ee6dfbb4094463b2c2384d",
-      "status": "accepted",
+      "status": "rework-pending",
       "primary": [
         {
           "id": "task_f5ba33fd",
@@ -120,12 +120,13 @@
           "checks": "Actual wiring/callers/tests inspected; 22 links and diff check pass; no runtime rerun for docs."
         }
       ],
-      "acceptedBlob": "463258e1632b8aca69b566ffe8a60fdb76790cb4",
-      "integration": "integrated-exact-rework",
+      "acceptedBlob": null,
+      "integration": "semantic-map-update-needed",
       "pendingRelatedNeed": {
         "candidate": "8472ed2449ce129f1929ac5c60867cf34dfd2f0e",
         "reason": "If composition candidate accepted, delivery reading map names completions/attentions/notificationBatch removed/reowned by createJobNotifications. Fresh file worker must reconcile README to final source and fresh judge; same doc blob alone is insufficient semantic evidence."
-      }
+      },
+      "previousAcceptedBlob": "463258e1632b8aca69b566ffe8a60fdb76790cb4"
     },
     {
       "focus": "src/agent/cache-affine-compaction.ts",
@@ -177,7 +178,7 @@
     {
       "focus": "src/agent/extension.ts",
       "initialBlob": "0cd419b1553cf5ec998b65ecf35ddbcff4f3ffc7",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_f10ebf0a",
@@ -199,11 +200,18 @@
           "id": "task_0acb5c07",
           "candidate": "8472ed2449ce129f1929ac5c60867cf34dfd2f0e",
           "base": "738e1d3ad264a15ff8c60be741ddc7a6c922aee4",
-          "status": "running"
+          "status": "complete",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Notification owner makes attachment/delivery batching/mailbox/outbox/replay/turn-settlement lifetime coherent; root retains manager/task authority and report-before-cancel. Added failed-dispatch replay/old-source detach/native mailbox tests preserve safety.",
+          "checks": "Independent 113 tests/867 assertions across 9 suites; existing shared binary used for SDK, not freshly compiled parity; diff clean.",
+          "acceptedRelatedBlobs": {
+            "tests/subagent-extension.test.ts": "2bbf39985a247af7d4b586444d853f420a46cd06"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending",
+      "acceptedBlob": "1aab431cbafaa31522e0ccb977e4aef5fe6199f1",
+      "integration": "integrated-exact-candidate",
       "relatedPatchReview": {
         "candidate": "7600a5871c87dbdc8a5ad33a06f3aff8629fe30c",
         "judge": "task_eef5d289",
@@ -1898,8 +1906,10 @@
       "owner": "execution-tasks-questions",
       "candidate": "8472ed2449ce129f1929ac5c60867cf34dfd2f0e",
       "blob": "2bbf39985a247af7d4b586444d853f420a46cd06",
-      "state": "candidate-under-judge",
-      "need": "If integrated, assigned primary owner must cover final hash; parent reconcile related test overlaps."
+      "state": "integrated-judged-needs-assigned-primary",
+      "need": "If integrated, assigned primary owner must cover final hash; parent reconcile related test overlaps.",
+      "judge": "task_0acb5c07",
+      "verdict": "ACCEPT"
     }
   ],
   "batchChecks": [
