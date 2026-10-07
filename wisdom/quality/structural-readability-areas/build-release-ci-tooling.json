@@ -1256,19 +1256,29 @@
     {
       "focus": "tests/architecture.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judge-running",
       "primary": [
         {
           "id": "task_66f5eec2",
           "launchBase": "4f71d1b0e2cb25e1abd126730484ead7212aff82",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_66f5eec2",
           "branch": "bruv/primary-tests-architecture.test.ts-66f5eec2",
+          "state": "completed",
+          "commit": "74ccbdbf77e0a83423099f84c47dc1816b865eed"
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_bdc1d4a5",
+          "base": "4f71d1b0e2cb25e1abd126730484ead7212aff82",
+          "candidate": "74ccbdbf77e0a83423099f84c47dc1816b865eed",
           "state": "running"
         }
       ],
-      "judges": [],
       "relatedPaths": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "readingResult": "Unchanged proposed: scan/normalize runtimeedges/three explicit ownership predicates/report;maintained/retired homes directlylisted.",
+      "checks": "15focuspass;disposable dependency/retired-path rejection and type-only TaskEvent allowprobes;format/lintpass."
     },
     {
       "focus": "tests/ci-remote-cli-source.test.ts",
@@ -1447,25 +1457,43 @@
     {
       "focus": "tests/compiled-bun-fixture.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judge-running",
       "primary": [
         {
           "id": "task_ad105ef8",
           "launchBase": "4f71d1b0e2cb25e1abd126730484ead7212aff82",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_ad105ef8",
           "branch": "bruv/primary-tests-compiled-bun-fixture.ts-ad105ef8",
+          "state": "completed",
+          "commit": "dbdb83940629b30103c877dbaa491323da0fdce1"
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_0f0570b0",
+          "base": "4f71d1b0e2cb25e1abd126730484ead7212aff82",
+          "candidate": "dbdb83940629b30103c877dbaa491323da0fdce1",
           "state": "running"
         }
       ],
-      "judges": [],
       "relatedPaths": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "readingResult": "Unchanged proposed: tiny entry directly exposes real compile/runtime authority;no source fallback or related edits.",
+      "checks": "Actual compiled test7assertions/sourceguard/source compiled:false;focus tsc/Biomepass."
     },
     {
       "focus": "tests/connector-update-fixture.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_1c667037",
+          "launchBase": "b2e6926b3d45bf905d8430e208bf50690dd38b91",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_1c667037",
+          "branch": "bruv/primary-tests-connector-update-fixture.t-1c667037",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null
@@ -1566,8 +1594,16 @@
     {
       "focus": "tests/find-ci-baseline.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_109390aa",
+          "launchBase": "b2e6926b3d45bf905d8430e208bf50690dd38b91",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_109390aa",
+          "branch": "bruv/primary-tests-find-ci-baseline.test.ts-109390aa",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null
@@ -2427,9 +2463,54 @@
     "result": "format exit0,lint exit0;13warnings92infos remain,no fixes applied",
     "limits": "Only accepted TS/JSON focus paths,not full repository biome check/import ordering."
   },
-  "pendingBuild": {
+  "actualBuildProof": {
     "job": "task_4c7a84d9",
     "commit": "6ad16ebc",
-    "dependencyOwnership": "Actual paired build;root node_modules links read-only shared packages except owned dereferenced pi-coding-agent copy,so preparePiHost writes only owned package."
+    "dependencyOwnership": "Actual paired build;root node_modules links read-only shared packages except owned dereferenced pi-coding-agent copy,so preparePiHost writes only owned package.",
+    "result": "PASS exit0;actual dist/bruv and dist/bruv-claude-compat generated via bun run build",
+    "limits": "Linux host paired build only;no native helper/cross-target/release publication proof."
+  },
+  "allAreaTestProof": {
+    "job": "task_4703d778",
+    "commit": "b2e6926b",
+    "tests": [
+      "./tests/architecture.test.ts",
+      "./tests/ci-remote-cli-source.test.ts",
+      "./tests/ci-runner.test.ts",
+      "./tests/ci-selective-workflow.test.ts",
+      "./tests/ci-selective.test.ts",
+      "./tests/connector-update.test.ts",
+      "./tests/dependency-updates.test.ts",
+      "./tests/dependency-workflow.test.ts",
+      "./tests/find-ci-baseline.test.ts",
+      "./tests/install-download.test.ts",
+      "./tests/install-local.test.ts",
+      "./tests/manual-release.test.ts",
+      "./tests/native-node-path.test.ts",
+      "./tests/native-release-gate.test.ts",
+      "./tests/offline-process-isolation.test.ts",
+      "./tests/prepare-assets.test.ts",
+      "./tests/product-identity.test.ts",
+      "./tests/production-packaging.test.ts",
+      "./tests/publish-release.test.ts",
+      "./tests/release-browser-setup.test.ts",
+      "./tests/release-launcher-gate.test.ts",
+      "./tests/release-workflows.test.ts",
+      "./tests/smoke-script.test.ts",
+      "./tests/tooling-fixtures.test.ts",
+      "./tests/update-release-shape.test.ts",
+      "./tests/update.test.ts",
+      "./tests/verify-update-probe.test.ts",
+      "./tests/verify-update.test.ts",
+      "./tests/generate-third-party-notices.test.ts",
+      "./tests/setup-native-release-gate.test.ts"
+    ],
+    "scope": "All assigned test files plus extras,current mixed accepted/pending coverage;not replacement for remaining primary/judge.",
+    "result": "PASS 405tests0fail2014expectations30files44.81s against actual Linux built pair"
+  },
+  "acceptedBlobAudit": {
+    "commit": "b2e6926b",
+    "accepted": 57,
+    "mismatches": []
   }
 }

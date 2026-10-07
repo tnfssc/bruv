@@ -110,3 +110,5 @@ Selective-workflow tests accepted task_fd6b7e52 blob25486b26: explicit accepted 
 Combined boundary proof at143f8d13:19accepted suites354pass0fail1639expectations (task_818f5ea5). Real tsc --noEmit passed at4f71d1b0(task_09f53559),own generated runtimeassets/sharedread-onlydeps. Earlier absent-asset typecheck blockers resolved for this combined source.56/72focusrowsaccepted;remaining16 still individuallyowned/pending,not areaacceptance.
 
 CI baseline source NO CHANGE NEEDED task_149c9180 fb773c5d: linear trust/ancestry journey and shared budget appropriate.23candidatepass plus stale sibling testfailure;fixed acceptedworkflowblob75pass resolves latter. No authenticatedAPI/deadlineexhaustion proof. Two stopped attempts retained,not coverage.
+
+Actual Linux pair buildtask_4c7a84d9passed;Pi adaptation on owned dependencycopy only. Full area test baseline atb2e6926b:405pass0fail2014expectations30suites(totalincluding2extras),task_4703d778.57accepted focus blobs match tip;15remaining still primary/judge pending. No whole-repo/hosted/native acceptance inferred.
