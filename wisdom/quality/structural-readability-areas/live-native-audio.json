@@ -179,12 +179,24 @@
         "launchBase": "6f82665bbbe90a15958576f541f5be68217232bf",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_c8643d8b",
         "branch": "bruv/primary-native-live-linux-tests-capture--c8643d8b",
-        "status": "running",
-        "commit": null
+        "status": "candidate ready",
+        "commit": "3c71d4a280d89be9b6597d09af48a40a376451f8"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_c412b125",
+          "status": "running",
+          "candidate": "3c71d4a280d89be9b6597d09af48a40a376451f8",
+          "base": "6f82665bbbe90a15958576f541f5be68217232bf"
+        }
+      ],
       "acceptedBlob": null,
-      "integration": "primary running"
+      "integration": "judge running",
+      "relatedPaths": [
+        "native/live-linux/tests/test_capture_protocol.py"
+      ],
+      "readingResult": "Scoped session owns framing/shutdown and one validation path;scenario startup/hold/suspendedclient backlog/freshhold/stop visible. Baseline mutedrain accepted newepoch/malformedPCM;explicit regressions reject both while retaining oldepoch settling allowance.",
+      "checks": "27 Python tests+4 capturegate tests/helper build;launch+3candidate privatehardwarefree graph pass. Local PipeWirePulse not CI PulseAudio;nulltraffic not acquisitionorigin proof, nativefrontier tests supply it."
     },
     {
       "focus": "native/live-linux/tests/protocol.py",
@@ -2142,10 +2154,17 @@
       "focus": "native/live-linux/tests/test_isolated_audio.py",
       "introducedBy": "5a342b6aa3df79f4be15d4fa2b84561a276f95b3",
       "initialBlob": null,
-      "primary": null,
+      "primary": {
+        "id": "task_7950a5e2",
+        "launchBase": "ba1575ae4a9300c6729f8988f79029f59699318a",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_7950a5e2",
+        "branch": "bruv/primary-native-live-linux-tests-test_iso-7950a5e2",
+        "status": "running",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "related accepted patch integrated;own primary pending",
+      "integration": "primary running",
       "relatedPatchJudgment": {
         "judgeId": "task_1a73a583",
         "verdict": "ACCEPT",
@@ -2155,6 +2174,15 @@
     {
       "focus": "native/live-linux/tests/test_source_removal.py",
       "introducedBy": "bebc961f249c35103aa08d0bebf496548844c8ad",
+      "initialBlob": null,
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "candidate addition;own primary pending"
+    },
+    {
+      "focus": "native/live-linux/tests/test_capture_protocol.py",
+      "introducedBy": "3c71d4a280d89be9b6597d09af48a40a376451f8",
       "initialBlob": null,
       "primary": null,
       "judgeRounds": [],
