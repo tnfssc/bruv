@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
-import { mkdtemp, readFile, readdir, rm } from "node:fs/promises";
+import { mkdtemp, readdir, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { executeIsolated, formatResult } from "../src/typescript/execution";
@@ -9,11 +9,10 @@ import {
   MAX_IMAGE_BYTES,
   MAX_IMAGE_CHANNEL_BYTES,
   MAX_IMAGE_INPUT_BYTES,
+  MAX_TOTAL_IMAGE_BYTES,
 } from "../src/typescript/images";
 import { makePng } from "./image-fixture";
 
-const binary = resolve(import.meta.dir, "../dist/bruv");
-let directory: string;
 const png = makePng();
 const jpeg = Buffer.from("ffd8ffe00010", "hex");
 const gif = Buffer.from("GIF89a" + "\0".repeat(7));
@@ -21,20 +20,24 @@ const webp = Buffer.from("RIFF" + "\0".repeat(4) + "WEBPVP8 " + "\0".repeat(4));
 const encoded = png.toString("base64");
 const bytesCode = `Buffer.from(${JSON.stringify(encoded)}, "base64")`;
 
-beforeEach(async () => {
-  directory = await mkdtemp(join(tmpdir(), "bruv-images-"));
-});
-afterEach(async () => {
-  await rm(directory, { recursive: true, force: true });
-});
-function execute(code: string, timeoutMs = 3_000) {
-  return executeIsolated(code, directory, undefined, timeoutMs, { executablePath: binary, killGraceMs: 100 });
-}
 function record(data = encoded, mimeType = "image/png") {
   return Buffer.from(JSON.stringify({ type: "image", data, mimeType }) + "\n");
 }
 
 describe("execute image output", () => {
+  const binary = resolve(import.meta.dir, "../dist/bruv");
+  let directory: string;
+
+  beforeEach(async () => {
+    directory = await mkdtemp(join(tmpdir(), "bruv-images-"));
+  });
+  afterEach(async () => {
+    await rm(directory, { recursive: true, force: true });
+  });
+  function execute(code: string, timeoutMs = 3_000) {
+    return executeIsolated(code, directory, undefined, timeoutMs, { executablePath: binary, killGraceMs: 100 });
+  }
+
   test("exposes showImage without the old emitImage alias", async () => {
     const result = await execute(
       `console.log(typeof showImage, typeof globalThis.showImage, typeof globalThis.emitImage); await showImage(${bytesCode});`,
@@ -255,16 +258,23 @@ describe("execute image output", () => {
     expect(code).toBe(1);
     expect(stderr).toContain("available only through the execute tool");
   });
+});
 
-  test("validates format headers and untrusted frame metadata", () => {
+describe("image format detection", () => {
+  test("recognizes supported headers and rejects other bytes", () => {
     expect(imageMimeType(png)).toBe("image/png");
     expect(imageMimeType(jpeg)).toBe("image/jpeg");
     expect(imageMimeType(webp)).toBe("image/webp");
     expect(() => imageMimeType(gif)).toThrow("supports PNG, JPEG, and WebP bytes");
+    expect(() => imageMimeType(Buffer.from("not an image"))).toThrow();
+  });
+});
+
+describe("image channel validation", () => {
+  test("validates untrusted record contents before accepting images", () => {
     expect(() => decodeImageChannel(record(gif.toString("base64"), "image/gif"))).toThrow(
       "supports PNG, JPEG, and WebP bytes",
     );
-    expect(() => imageMimeType(Buffer.from("not an image"))).toThrow();
     expect(() => decodeImageChannel(record(encoded, "image/jpeg"))).toThrow("mismatch");
     expect(() => decodeImageChannel(record("%%%"))).toThrow("base64");
     expect(() => decodeImageChannel(Buffer.from("null\n"))).toThrow("Invalid");
@@ -281,6 +291,46 @@ describe("execute image output", () => {
       ),
     ).toThrow("Invalid image resize metadata");
     expect(() => decodeImageChannel(Buffer.from("{bad json}\n"))).toThrow("Invalid JSON");
+  });
+
+  test("accepts ordered records and preserves validated resize metadata", () => {
+    const resize = { originalWidth: 4, originalHeight: 6, width: 2, height: 3 };
+    const resized = Buffer.from(
+      JSON.stringify({ type: "image", data: encoded, mimeType: "image/png", resize, ignored: true }) + "\n",
+    );
+    expect(decodeImageChannel(Buffer.concat([record(), resized]))).toEqual([
+      { type: "image", data: encoded, mimeType: "image/png" },
+      { type: "image", data: encoded, mimeType: "image/png", resize },
+    ]);
+  });
+
+  test("rejects the whole channel when a later record is malformed", () => {
+    expect(() => decodeImageChannel(Buffer.concat([record(), record("%%%")]))).toThrow("Invalid image base64");
+    expect(() => decodeImageChannel(Buffer.concat([record(), Buffer.from("{bad json}\n")]))).toThrow(
+      "Invalid JSON in image output record",
+    );
+    expect(() => decodeImageChannel(Buffer.concat([record(), record().subarray(0, -1)]))).toThrow(
+      "Incomplete image output record",
+    );
+  });
+
+  test("accounts for decoded bytes across individually valid records", () => {
+    const large = Buffer.concat([png, Buffer.alloc(MAX_IMAGE_BYTES - png.length)]);
+    const channel = Buffer.concat([record(large.toString("base64")), record(large.toString("base64"))]);
+    expect(large.length * 2).toBe(MAX_TOTAL_IMAGE_BYTES);
+    expect(decodeImageChannel(channel)).toHaveLength(2);
+    const overflow = Buffer.concat([channel, record()]);
+    expect(overflow.length).toBeLessThan(MAX_IMAGE_CHANNEL_BYTES);
+    expect(() => decodeImageChannel(overflow)).toThrow("Image output exceeded its total byte limit");
+  });
+
+  test("keeps channel framing and count checks ahead of record validation", () => {
+    expect(decodeImageChannel(Buffer.alloc(0))).toEqual([]);
+    expect(() => decodeImageChannel(Buffer.alloc(MAX_IMAGE_CHANNEL_BYTES + 1))).toThrow(
+      "Image output channel exceeded its byte limit",
+    );
+    expect(() => decodeImageChannel(Buffer.from("{bad json}"))).toThrow("Incomplete image output record");
+    expect(() => decodeImageChannel(Buffer.from("null\n".repeat(5)))).toThrow("Image output exceeds 4 images");
     expect(() => decodeImageChannel(Buffer.concat(Array(5).fill(record())))).toThrow("4 images");
   });
 });

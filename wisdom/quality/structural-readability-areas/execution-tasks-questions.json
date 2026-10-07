@@ -6,29 +6,90 @@
     {
       "focus": "scripts/fixtures/task-placement-clean/fake-provider.ts",
       "initialBlob": "e0be25e37e1014caeeb403c56a7c4b046936a9b5",
-      "status": "pending",
-      "primary": null,
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integration": "pending"
+      "status": "accepted",
+      "primary": {
+        "id": "task_15c2f619",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_15c2f619",
+        "branch": "bruv/primary-scripts-fixtures-task-placement--15c2f619",
+        "base": "5541e227169c66a51af1854b644cbf42103f29d7",
+        "commit": "974450ede40c7c55f70002457fcacfbccaa22acb"
+      },
+      "judgeRounds": [
+        {
+          "id": "task_d44580c4",
+          "status": "complete",
+          "candidate": "974450ede40c7c55f70002457fcacfbccaa22acb",
+          "base": "5541e227169c66a51af1854b644cbf42103f29d7",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "Thin request route/parse/log/scenarioSSE,errorlog400 boundary coherent; container readiness/cleanup belongs capture, stage machine belongs scenario; no provider authority inferred.",
+          "checks": [
+            "independent4scenario tests13assertions",
+            "actual handler/real scenario interceptedserve/appends health404/SSE/log/error400/parsing-order probe pass",
+            "no HTTPserver/Docker/capture/video/compiledpair/authSSH/liveprovider"
+          ]
+        }
+      ],
+      "acceptedBlob": "e0be25e37e1014caeeb403c56a7c4b046936a9b5",
+      "integration": "unchanged blob matches area tip",
+      "launchBase": "5541e227169c66a51af1854b644cbf42103f29d7",
+      "changedRelatedPaths": [],
+      "readingResult": "No-change: route→parse→record inference→scenarioSSE; error→record→400. Capture owns readiness/diagnostics/containercleanup, scenario owns decisions.",
+      "checks": [
+        "4 scenario tests",
+        "exactsource handler probe intercepted logs",
+        "no liveprovider/Docker/HTTPserver/compiledproof"
+      ]
     },
     {
       "focus": "scripts/fixtures/task-placement-clean/models.json",
       "initialBlob": "c84a95a5c122e5e94128004cea6607e770db1195",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_7fd7969e",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_7fd7969e",
+        "branch": "bruv/primary-scripts-fixtures-task-placement--7fd7969e",
+        "base": "82785a3026958b2a41115c214ac4872edeab2ceb",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "launchBase": "82785a3026958b2a41115c214ac4872edeab2ceb"
     },
     {
       "focus": "scripts/fixtures/task-placement-clean/scenario.ts",
       "initialBlob": "1dd0984297604e141df606d48595c1f698a75ab7",
-      "status": "pending",
-      "primary": null,
-      "judgeRounds": [],
+      "status": "judge-running",
+      "primary": {
+        "id": "task_c163c18d",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_c163c18d",
+        "branch": "bruv/primary-scripts-fixtures-task-placement--c163c18d",
+        "base": "1304bb28ed21d6f4d24c2fdea02a1a36a301efb9",
+        "commit": "c320f627d8afad6cbfbce09906a0e0325dcffb13"
+      },
+      "judgeRounds": [
+        {
+          "id": "task_58a442b6",
+          "status": "running",
+          "candidate": "c320f627d8afad6cbfbce09906a0e0325dcffb13",
+          "base": "1304bb28ed21d6f4d24c2fdea02a1a36a301efb9"
+        }
+      ],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "launchBase": "1304bb28ed21d6f4d24c2fdea02a1a36a301efb9",
+      "changedRelatedPaths": [
+        "scripts/fixtures/task-placement-clean/scenario.ts",
+        "scripts/task-placement-clean-scenario.test.ts"
+      ],
+      "readingResult": "Inline executable templates expose ask→block and list→resolve→write effects/ownership without concatenated fragment reconstruction; transcript selection/failure rejection/SSE preserved.",
+      "checks": [
+        "6 tests69 assertions",
+        "7 base/candidate turns same after emittedcode whitespace normalize",
+        "format/diff pass lint noerrors existingdiagnostics",
+        "no capture/video/build/providerSSH"
+      ]
     },
     {
       "focus": "scripts/fixtures/task-placement-clean/settings.json",
@@ -51,29 +112,120 @@
     {
       "focus": "scripts/leak-audit/bridge-retention.ts",
       "initialBlob": "ee2233f4c87685c6df576910efe671a5c7540634",
-      "status": "pending",
-      "primary": null,
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integration": "pending"
+      "status": "accepted",
+      "primary": {
+        "id": "task_cd5dc6c2",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_cd5dc6c2",
+        "branch": "bruv/primary-scripts-leak-audit-bridge-retent-cd5dc6c2",
+        "base": "a162e56cc49a21401275253ed445b6027dbc248a",
+        "commit": "d174794cecc988c95a077c7586a92c858ca5bf72"
+      },
+      "judgeRounds": [
+        {
+          "id": "task_265d13f3",
+          "status": "complete",
+          "candidate": "d174794cecc988c95a077c7586a92c858ca5bf72",
+          "base": "a162e56cc49a21401275253ed445b6027dbc248a",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "Sequential actual bridge call→ACK→listener observation and finally cleanup coherent; bounded retention probe not comprehensive memory/delivery audit.",
+          "checks": [
+            "independent10000request probe833ms exit0 all7samples0handofflisteners",
+            "heapMiB0.8679 baseline→1.4699 requests→1.4393 closed; observational not asserting leakgate",
+            "protocol14/368",
+            "does not exercise JobService/concurrency/foreground/actualhandoffabort/IPC; no binary/fullgate/provider"
+          ]
+        }
+      ],
+      "acceptedBlob": "ee2233f4c87685c6df576910efe671a5c7540634",
+      "integration": "unchanged blob matches area tip",
+      "launchBase": "a162e56cc49a21401275253ed445b6027dbc248a",
+      "changedRelatedPaths": [],
+      "readingResult": "No-change: real request→cancellation wrapper→responseACK→listener cleanup, success close and unconditional teardown together; no extraction needed.",
+      "checks": [
+        "existing10000-request probe exit0 in914ms allsamples0listeners",
+        "protocol14/368",
+        "no build"
+      ]
     },
     {
       "focus": "scripts/leak-audit/cli-rpc-soak.ts",
       "initialBlob": "53a39f74d7b7c7932543ae4430d6645840e344d5",
-      "status": "pending",
-      "primary": null,
-      "judgeRounds": [],
+      "status": "judge-running",
+      "primary": {
+        "id": "task_22687cca",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_22687cca",
+        "branch": "bruv/primary-scripts-leak-audit-cli-rpc-soak.-22687cca",
+        "base": "7fbe619959f9863e7dc9aa8f7248993382739ebf",
+        "commit": "89605c0477f7ccd000a1d7ad97eb671ca08ecc4f"
+      },
+      "judgeRounds": [
+        {
+          "id": "task_9baa1135",
+          "status": "running",
+          "candidate": "89605c0477f7ccd000a1d7ad97eb671ca08ecc4f",
+          "base": "7fbe619959f9863e7dc9aa8f7248993382739ebf"
+        }
+      ],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "launchBase": "7fbe619959f9863e7dc9aa8f7248993382739ebf",
+      "changedRelatedPaths": [
+        "scripts/leak-audit/cli-rpc-soak.ts",
+        "tests/cli-rpc-soak.test.ts"
+      ],
+      "readingResult": "RPC session owns subprocess/correlations/drains; perturn endwait; soak scheduling/cleanup explicit instead of globalcallbacks/queues/catch reconstruction.",
+      "checks": [
+        "5 tests38 assertions",
+        "focused tsc/format/diff pass",
+        "mixed/replacement20cycle compiled probes pass",
+        "rejectedprompt timer leak reproduced+fixed; no heapplateau claim"
+      ],
+      "incidentalFix": "Rejected-prompt wait timer leak reproduced; perturn cleanup fixes audit resource lifetime."
     },
     {
       "focus": "scripts/leak-audit/execution-runtime.ts",
       "initialBlob": "a1b7750b9557d511dd7d7c5d9d9a417217829995",
-      "status": "pending",
-      "primary": null,
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integration": "pending"
+      "status": "accepted",
+      "primary": {
+        "id": "task_bf95f257",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_bf95f257",
+        "branch": "bruv/primary-scripts-leak-audit-execution-run-bf95f257",
+        "base": "7fbe619959f9863e7dc9aa8f7248993382739ebf",
+        "commit": "db26839716843264d2b04407245826d2ad453bf0"
+      },
+      "judgeRounds": [
+        {
+          "id": "task_9bfea73b",
+          "status": "complete",
+          "candidate": "db26839716843264d2b04407245826d2ad453bf0",
+          "base": "7fbe619959f9863e7dc9aa8f7248993382739ebf",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Audit-owned artifacts/PIDs/samples and finally, aborttimer execution/release and descendant launch/register/observe coherent. Named effects replace positional undefined/any. Workloads/criteria unchanged; explicit timer rejection fix verified.",
+          "checks": [
+            "independent343candidate executions10labels8FDs6reportedaborts10descendants0survivors exactPIDs absent",
+            "baseline/candidate logs compared not fullbaseline rerun",
+            "synthetic rejection baseline1timer0clears candidate1timer1clear bothrootremoved",
+            "strict tsc/format/diff pass",
+            "observational Linux only no leakabsence/replay/ACK/disk proof"
+          ]
+        }
+      ],
+      "acceptedBlob": "4aa62fc619c272ae73a45011e2fc1ce41b770812",
+      "integration": "full audit source diff integrated",
+      "launchBase": "7fbe619959f9863e7dc9aa8f7248993382739ebf",
+      "changedRelatedPaths": [
+        "scripts/leak-audit/execution-runtime.ts"
+      ],
+      "readingResult": "Audit operation owns artifacts/PIDs/cleanup; per-execution abort/descendant lifetimes scoped and named timeout/bridge options expose effects. Workload/phase/assertions retained.",
+      "checks": [
+        "baseline+candidate bounded343 executions each;10labels8FDs6bridgeaborts0descendants",
+        "synthetic rejection reproduced timer cleanup fix",
+        "focused tsc/format/diff pass",
+        "measurements not leak absence/replayproof; binary predates image update"
+      ],
+      "incidentalFix": "Probe timer cleanup corrected on synthetic execution rejection; explicit audit-only fix."
     },
     {
       "focus": "scripts/task-placement-clean-capture.ts",
@@ -96,20 +248,56 @@
     {
       "focus": "scripts/task-placement-clean-video.py",
       "initialBlob": "86a649cd69e8eefb913ceb0a567644050e0bd3d9",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_577e2124",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_577e2124",
+        "branch": "bruv/primary-scripts-task-placement-clean-vid-577e2124",
+        "base": "e317b9a8c4a1a203d3bf25172cdc7c614128411e",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "launchBase": "e317b9a8c4a1a203d3bf25172cdc7c614128411e"
     },
     {
       "focus": "src/delegation-environment.ts",
       "initialBlob": "352e1f7710a97911faf7aaefca724bb4536f20ff",
-      "status": "pending",
-      "primary": null,
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integration": "pending"
+      "status": "accepted",
+      "primary": {
+        "id": "task_238b6364",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_238b6364",
+        "branch": "bruv/primary-src-delegation-environment.ts-238b6364",
+        "base": "739da40a80981fc3f47aff84b0958f94448c4ccb",
+        "commit": "90791397e19f73ad7616526b96671befb4579dfa"
+      },
+      "judgeRounds": [
+        {
+          "id": "task_36f1a10b",
+          "status": "complete",
+          "candidate": "90791397e19f73ad7616526b96671befb4579dfa",
+          "base": "739da40a80981fc3f47aff84b0958f94448c4ccb",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "Copied scrub vs startup mutation vs fresh child policy explicit; helpers retain needed checkpoint while fresh agents drop authority; native factory called only after argument validation/env scrub; configured MCP env not provider credential inheritance.",
+          "checks": [
+            "candidate18 tests before asset blocker",
+            "area22/121+startup1/9 with15filtered",
+            "area joined runner not exact candidate runner proof; no fullCI/liveSSH"
+          ]
+        }
+      ],
+      "acceptedBlob": "352e1f7710a97911faf7aaefca724bb4536f20ff",
+      "integration": "unchanged blob matches area tip",
+      "launchBase": "739da40a80981fc3f47aff84b0958f94448c4ccb",
+      "changedRelatedPaths": [],
+      "readingResult": "No-change: copied root scrub, inplace startup mutation and freshchild isolation explicit; helpers retain owner checkpoint while fresh agents remove/replace policy, native strips root before startup.",
+      "checks": [
+        "23 pass130 assertions",
+        "startup selection filtered15",
+        "no build/liveSSH/compiledparity"
+      ]
     },
     {
       "focus": "src/job-delivery.ts",
@@ -1148,32 +1336,83 @@
     {
       "focus": "src/tool-schema.ts",
       "initialBlob": "d9d4667861de79f9c1947396164f07adc0f23d85",
-      "status": "pending",
-      "primary": null,
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integration": "pending"
+      "status": "accepted",
+      "primary": {
+        "id": "task_9f98ded3",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_9f98ded3",
+        "branch": "bruv/primary-src-tool-schema.ts-9f98ded3",
+        "base": "1b7977e10031ccc622c0b30f7359e04a912e2db4",
+        "commit": "4894e9ad7736db769ac89495ad045247aba907bb"
+      },
+      "judgeRounds": [
+        {
+          "id": "task_87f3fbc6",
+          "status": "complete",
+          "candidate": "4894e9ad7736db769ac89495ad045247aba907bb",
+          "base": "1b7977e10031ccc622c0b30f7359e04a912e2db4",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "Pure schema projection boundary strips provider metadata while keeping validation authority at runtime; registration/setup equality and no-execution setup remain explicit, no extra state needed.",
+          "checks": [
+            "independent16 source assertions registration/setup/required/enum/coercion/rejection/metadata/denial",
+            "normal suite WASM import blocker no green suite claim",
+            "diff clean no build/provider"
+          ]
+        }
+      ],
+      "acceptedBlob": "d9d4667861de79f9c1947396164f07adc0f23d85",
+      "integration": "unchanged blob matches area tip",
+      "launchBase": "1b7977e10031ccc622c0b30f7359e04a912e2db4",
+      "changedRelatedPaths": [],
+      "readingResult": "No-change: Zod definition→converted registration declaration while execution separately parses; Live reuses schema but owns validation/admission/cancel; setup probe declaration denies execution.",
+      "checks": [
+        "schema1/10 plus5 adapter assertions",
+        "diff pass; no staleDist/build/provider"
+      ]
     },
     {
       "focus": "src/typescript/definition.ts",
       "initialBlob": "7d850644a24233284f0dc1dba04e3c7096f400a5",
-      "status": "primary-running",
+      "status": "accepted",
       "primary": {
         "id": "task_58ef2195",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_58ef2195",
         "branch": "bruv/primary-src-typescript-definition.ts-58ef2195",
         "base": "e2da3df7682179df3011bf9690e118c000b88c10",
-        "commit": null
+        "commit": "e6c1dbdb4583531c763033773492c0b320ad0b69"
       },
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integration": "pending",
-      "launchBase": "e2da3df7682179df3011bf9690e118c000b88c10"
+      "judgeRounds": [
+        {
+          "id": "task_f4dcc4bc",
+          "status": "complete",
+          "candidate": "e6c1dbdb4583531c763033773492c0b320ad0b69",
+          "base": "e2da3df7682179df3011bf9690e118c000b88c10",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "Declaration shares one Zod contract with registration parse; fresh converted schema setup probe avoids runtime dependencies and effects; no cached competing contract state.",
+          "checks": [
+            "independent offlineOpenAI11/69",
+            "assetfree freshschema/boundary probes",
+            "format/diff pass",
+            "tool-schema suite WASM blocker read not rerun; no provider/runtime permission claim"
+          ]
+        }
+      ],
+      "acceptedBlob": "7d850644a24233284f0dc1dba04e3c7096f400a5",
+      "integration": "unchanged blob matches area tip",
+      "launchBase": "e2da3df7682179df3011bf9690e118c000b88c10",
+      "changedRelatedPaths": [],
+      "readingResult": "No-change: registration/handler share ExecuteParameters; gated setup diagnostics adapt same declaration without execution dependencies; runtime lifetime remains extension.",
+      "checks": [
+        "12 pass79 assertions",
+        "asset-free import/schema boundaries pass",
+        "format/diff pass; no build/stale dist/liveprovider"
+      ]
     },
     {
       "focus": "src/typescript/error-diagnostic.ts",
       "initialBlob": "a8d9b7c059051f55ce1d197b5c2842d164abc7a5",
-      "status": "awaiting-judge",
+      "status": "accepted",
       "primary": {
         "id": "task_60592667",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_60592667",
@@ -1181,9 +1420,24 @@
         "base": "4f28172f2d4c8430b0138a415f2d338138ee7ef9",
         "commit": "a9c686b1c083d57296c65e3feb59da8a20d0e4de"
       },
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integration": "pending",
+      "judgeRounds": [
+        {
+          "id": "task_5f71aa25",
+          "status": "complete",
+          "candidate": "a9c686b1c083d57296c65e3feb59da8a20d0e4de",
+          "base": "4f28172f2d4c8430b0138a415f2d338138ee7ef9",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "One bounded formatting decision reconciles Error message/stack and guarded nonError conversion; CLI owns URL sanitizing/exit and parent owns capture/cancel/ACK.",
+          "checks": [
+            "independent3/7",
+            "10 branchprobe assertions matching/stale/unrelated/missingstack/revokedproxy/truncation",
+            "format/diff clean; no sourceCLI/compiled/fullsuite rerun"
+          ]
+        }
+      ],
+      "acceptedBlob": "a8d9b7c059051f55ce1d197b5c2842d164abc7a5",
+      "integration": "unchanged blob matches area tip",
       "launchBase": "4f28172f2d4c8430b0138a415f2d338138ee7ef9",
       "changedRelatedPaths": [],
       "readingResult": "No-change: guarded nonError conversion, Error message/stack reconciliation and diagnostic bounds; CLI sanitizes URL/stderr/exit1; caller owns execution cancellation/delivery.",
@@ -1238,7 +1492,7 @@
     {
       "focus": "src/typescript/extension.ts",
       "initialBlob": "3bf31c850c9c529d1692e59b56b4667bb0af0599",
-      "status": "judge-running",
+      "status": "accepted",
       "primary": {
         "id": "task_032f5c01",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_032f5c01",
@@ -1249,13 +1503,21 @@
       "judgeRounds": [
         {
           "id": "task_cee52f91",
-          "status": "running",
+          "status": "complete",
           "candidate": "081b8862213c79f947489cd5becb63d1ff680f5a",
-          "base": "b457ae3d2e0b852a62258799beb66a10f73a1171"
+          "base": "b457ae3d2e0b852a62258799beb66a10f73a1171",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "ExecuteDelivery owns one invocation reply evidence/decisions not shared session authority; handoff cancels waits not managed jobs, recordLaunches publishes before failure, finish governs failure/termination consistently. Session shutdown/cancel/live stop remain registration-owned; combined bridge/capture/runner compatible.",
+          "checks": [
+            "independent12/49 handoff/live",
+            "independent109/736 eight suites",
+            "diff clean; fresh joined binary mandatory"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending",
+      "acceptedBlob": "3542bf968fc6fdf8c06c82d149a15f3e9e95eac7",
+      "integration": "full source/handoff-test candidate diff integrated",
       "launchBase": "b457ae3d2e0b852a62258799beb66a10f73a1171",
       "changedRelatedPaths": [
         "src/typescript/extension.ts",
@@ -1273,18 +1535,44 @@
     {
       "focus": "src/typescript/images.ts",
       "initialBlob": "aa4d74eebcab9dc89cfbcbd11829ba68b5335286",
-      "status": "primary-running",
+      "status": "accepted",
       "primary": {
         "id": "task_5f2762ae",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_5f2762ae",
         "branch": "bruv/primary-src-typescript-images.ts-5f2762ae",
         "base": "64250a1477cb7ca25ed40a3e4e17c60de08c854d",
-        "commit": null
+        "commit": "066f319f7741234a589fbc9d89d46a2be1a076d2"
       },
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integration": "pending",
-      "launchBase": "64250a1477cb7ca25ed40a3e4e17c60de08c854d"
+      "judgeRounds": [
+        {
+          "id": "task_2d0765d2",
+          "status": "complete",
+          "candidate": "066f319f7741234a589fbc9d89d46a2be1a076d2",
+          "base": "64250a1477cb7ca25ed40a3e4e17c60de08c854d",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Record trust decision returns validated content/size; channel owns count/wholepipe/aggregate loop and atomic return. Malformed later rejects before publication; joined runner/bridge/capture/extension contracts unchanged.",
+          "checks": [
+            "independent4 boundary bodies12assertions each baseline/candidate in-memory",
+            "diff pass",
+            "WASM blocker prevented full18/107 rerun; fresh image compiled parity pending"
+          ]
+        }
+      ],
+      "acceptedBlob": "0a762301d2a0acfbdfee65d553121800a36fbbc0",
+      "integration": "full source/test candidate diff integrated; compiled image update next batch",
+      "launchBase": "64250a1477cb7ca25ed40a3e4e17c60de08c854d",
+      "changedRelatedPaths": [
+        "src/typescript/images.ts",
+        "tests/typescript-images.test.ts"
+      ],
+      "readingResult": "Record validator returns trusted content/decoded size; channel loop owns aggregate accounting and atomic acceptance instead of stateful callback. Malformed later record rejects all.",
+      "checks": [
+        "18 pass107 assertions",
+        "directsource boundary4 pass baseline+candidate",
+        "Biome0 with3 inherited warnings; diff pass",
+        "older childbinary no fresh compiled proof"
+      ]
     },
     {
       "focus": "src/typescript/job-bridge.ts",
@@ -1374,7 +1662,7 @@
     {
       "focus": "src/typescript/runner.ts",
       "initialBlob": "0405699abd4d594fb5dbebe432169885984a338d",
-      "status": "judge-running",
+      "status": "accepted",
       "primary": {
         "id": "task_e65a5513",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_e65a5513",
@@ -1385,13 +1673,22 @@
       "judgeRounds": [
         {
           "id": "task_5c8f3c0f",
-          "status": "running",
+          "status": "complete",
           "candidate": "7758b00c032100018a3548e9e7a6dfa3beaab6e8",
-          "base": "d5623c8e9d529384108765b2ae2604f493c0c60d"
+          "base": "d5623c8e9d529384108765b2ae2604f493c0c60d",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Graph registrar owns visited/canonicalization/static traversal/TS erasure/hooks before callbacks capture it; native require/resolve hook one lifetime, loader order/CJS cache/cycles/lazy imports intact; run catches only handoff and drains jobs then images. Joined bridge/capture/executor inspected compatible.",
+          "checks": [
+            "independent joined protocol+capture28/412",
+            "diff clean",
+            "NOT compiled runner acceptance: mandatory joined build+ORIGINAL runner/bridge suites",
+            "writer source-adapted baseline failure not independent proof"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending",
+      "acceptedBlob": "38b68c6d2f3f42a8ef8c9f03ffc004e235df2b6e",
+      "integration": "full diff integrated; fresh joined build and ORIGINAL runner/bridge suites passed task_e6a5072d",
       "launchBase": "d5623c8e9d529384108765b2ae2604f493c0c60d",
       "changedRelatedPaths": [
         "src/typescript/runner.ts"
@@ -1401,7 +1698,8 @@
         "format/lint/tsc pass1 inherited info",
         "source-adapted bridge/protocol29/423",
         "source-adapted runner20pass1fail extraHOME directory also baseline; assertions unchanged",
-        "MUST batch-build joined runner/bridge then original suites; no compiled proof yet"
+        "MUST batch-build joined runner/bridge then original suites; no compiled proof yet",
+        "Area fresh paired build task_78bc3ded plus original compiled suites task_e6a5072d passed; source-adapted extra HOME fixture failure did not reproduce compiled."
       ]
     },
     {
@@ -1416,11 +1714,18 @@
     {
       "focus": "tests/agent-session.test.ts",
       "initialBlob": "f6d95e20d621a4897f82623836a2a68771772eff",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_b74d589c",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_b74d589c",
+        "branch": "bruv/primary-tests-agent-session.test.ts-b74d589c",
+        "base": "acac9e04fb89f422027e080ab64e4dff268a3090",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "launchBase": "acac9e04fb89f422027e080ab64e4dff268a3090"
     },
     {
       "focus": "tests/attention-sdk.test.ts",
@@ -1479,16 +1784,56 @@
     {
       "focus": "tests/execute-handoff.test.ts",
       "initialBlob": "a3e11225c49f9a1af729bd4f1052286524d985d0",
-      "status": "pending",
-      "primary": null,
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integration": "pending"
+      "status": "accepted",
+      "primary": {
+        "id": "task_c5b89dde",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_c5b89dde",
+        "branch": "bruv/primary-tests-execute-handoff.test.ts-c5b89dde",
+        "base": "241e60a4ed3b07887724c5605d86ef29aedc00bc",
+        "commit": "0f04b677427acd928f44731e043264ff19293b18"
+      },
+      "judgeRounds": [
+        {
+          "id": "task_8ed2ab8e",
+          "status": "complete",
+          "candidate": "0f04b677427acd928f44731e043264ff19293b18",
+          "base": "241e60a4ed3b07887724c5605d86ef29aedc00bc",
+          "priorRelatedJudge": "task_cee52f91",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Concurrent invocation promises scoped inside spy lifetime; release+drain before restore without swallowing normal awaits/original rejection. Whole-file independent session/wait/handoff/launch/notification assertions preserved.",
+          "checks": [
+            "independent injected rejection baseowner1unsettled vs candidate settled, samefailure/backgroundtwo",
+            "all10 actual bodies sequential read-only harness pass",
+            "format/lint/diff pass; normal4suite WASM blocker,12protocol passed,writer33 not independently claimed"
+          ]
+        }
+      ],
+      "acceptedBlob": "4c64cdd32dcefa46258e47612c2fa2ab02c72122",
+      "integration": "full primary test diff integrated; related blob superseded",
+      "relatedAcceptance": {
+        "judge": "task_cee52f91",
+        "candidate": "081b8862213c79f947489cd5becb63d1ff680f5a",
+        "blob": "c4e1069d2c37f98b1eebe81ed0ea7e8500afd9a5",
+        "verdict": "ACCEPT",
+        "primaryStillRequired": true
+      },
+      "launchBase": "241e60a4ed3b07887724c5605d86ef29aedc00bc",
+      "changedRelatedPaths": [
+        "tests/execute-handoff.test.ts"
+      ],
+      "readingResult": "Concurrent invocation test releases AND drains both calls before restoring spy; prior released gates but call1 still unsettled on injected call2 failure. Existing evidence/validation/failure assertions retained.",
+      "checks": [
+        "baseline/candidate focus10/39",
+        "four suites33/441",
+        "format/lint/diff pass; no tsc/build/fullgate"
+      ],
+      "incidentalFix": "Reproduced test teardown overlap with injected call2 failure; draining outstanding invocations before spy restoration preserves original failure/background notice."
     },
     {
       "focus": "tests/execute-output-capture.test.ts",
       "initialBlob": "f1944e32116dbce754fa013622fd989907092d99",
-      "status": "judge-running",
+      "status": "accepted",
       "primary": {
         "id": "task_341d3c1d",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_341d3c1d",
@@ -1499,14 +1844,21 @@
       "judgeRounds": [
         {
           "id": "task_6cb5fad6",
-          "status": "running",
+          "status": "complete",
           "candidate": "9ac5bfece6800ec7265d6958644120f84bba0519",
           "base": "6bd1ff8d9f3ed41bdf98c641e8c3518b3449ab73",
-          "priorRelatedJudge": "task_0321bbc2"
+          "priorRelatedJudge": "task_0321bbc2",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "Complete test journeys expose decoded preview vs artifact bytes/error/budget and filesystem effects without fixture machinery; root cleanup/descriptor ownership visible, pump-before-close caller traced.",
+          "checks": [
+            "independent candidate16/65 incl Linux descriptors",
+            "diff clean; no fresh compiledCLI/fullgate"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending",
+      "acceptedBlob": "315f7fcd90966bafccad4c9d4c7f978ad77c4cbc",
+      "integration": "unchanged primary blob matches integrated related patch",
       "relatedAcceptance": {
         "judge": "task_0321bbc2",
         "candidate": "c88c37a075d16cd5ba9b1abc7f0354264406b337",
@@ -1599,17 +1951,33 @@
     {
       "focus": "tests/job-bridge-protocol.test.ts",
       "initialBlob": "7f4c7f7cbfe6f214e5ca5ca4ac0721364d3f77a6",
-      "status": "primary-running",
+      "status": "accepted",
       "primary": {
         "id": "task_6e7d0428",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_6e7d0428",
         "branch": "bruv/primary-tests-job-bridge-protocol.test.t-6e7d0428",
         "base": "64250a1477cb7ca25ed40a3e4e17c60de08c854d",
-        "commit": null
+        "commit": "c9bbbce5a4f1f00a261e93e922e6341e056f0f56"
       },
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integration": "pending",
+      "judgeRounds": [
+        {
+          "id": "task_b123eb27",
+          "status": "complete",
+          "candidate": "c9bbbce5a4f1f00a261e93e922e6341e056f0f56",
+          "base": "64250a1477cb7ca25ed40a3e4e17c60de08c854d",
+          "priorRelatedJudge": "task_849e9ce1",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Fixture owns globals snapshot/install/scenario/socketdestroy/exactdescriptor restore, not protocol operations. Judge reproduced original remote/live/questions leaks and candidate success/failure restoration incl absent/nonenumerable; all12 scenarios and assertions retained.",
+          "checks": [
+            "independent16/379",
+            "strict tsc/Biome/diff pass",
+            "sourceprotocol not fullbinary/provider"
+          ]
+        }
+      ],
+      "acceptedBlob": "4c2ec710464729b919dec726c538d391fda19336",
+      "integration": "full primary test diff integrated; supplemental blob superseded",
       "relatedAcceptance": {
         "judge": "task_849e9ce1",
         "candidate": "9d80aab5646300b24ae57999007d62463e6bb6b5",
@@ -1617,7 +1985,18 @@
         "verdict": "ACCEPT",
         "primaryStillRequired": true
       },
-      "launchBase": "64250a1477cb7ca25ed40a3e4e17c60de08c854d"
+      "launchBase": "64250a1477cb7ca25ed40a3e4e17c60de08c854d",
+      "changedRelatedPaths": [
+        "tests/job-bridge-protocol.test.ts"
+      ],
+      "readingResult": "One fixture owns install/socket teardown/exact globals restore; prior9 installed globals only6 restored. Server close in finally; all protocol authority assertions retained.",
+      "checks": [
+        "base12/347",
+        "base restore regression12pass1fail",
+        "candidate+foreground16/379",
+        "strict tsc/format/lint/diff pass; source-only no binary"
+      ],
+      "incidentalFix": "Observed test global contamination: installed9 globals but restored6; new restoration regression fails baseline, fixture restores exact descriptors/absence on failure and success."
     },
     {
       "focus": "tests/job-bridge.test.ts",
@@ -1631,11 +2010,67 @@
     {
       "focus": "tests/job-service.test.ts",
       "initialBlob": "01c7c3f343042cbbd544af39be1614fccd8b3a40",
-      "status": "pending",
-      "primary": null,
-      "judgeRounds": [],
+      "status": "rework-judge-running",
+      "primary": {
+        "id": "task_51bb34f2",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_51bb34f2",
+        "branch": "bruv/primary-tests-job-service.test.ts-51bb34f2",
+        "base": "1475ea9c468e343de12524cf8fbbd6f5da3ef83b",
+        "commit": "6c2a4f36feb6c9cce854d33dc9af178fc0216842"
+      },
+      "judgeRounds": [
+        {
+          "id": "task_207ccf5d",
+          "status": "complete",
+          "candidate": "6c2a4f36feb6c9cce854d33dc9af178fc0216842",
+          "base": "1475ea9c468e343de12524cf8fbbd6f5da3ef83b",
+          "verdict": "REJECT",
+          "reason": "Three authority journeys and real-manager substitution coherent, but new delegation-policy fixture omits sessionManager, leaking prepared child history into real agent directory outside cleanup. Baseline supplied fixture session dir.",
+          "objections": [
+            "Judge reproduced removed /tmp/bruv-jobs-depth-3jiE8h but surviving real ~/.bruv/agent/sessions/--tmp-bruv-jobs-depth-3jiE8h-- child JSONL.",
+            "Restore policy fixture sessionManager.getSessionDir()=>dir and getSessionFile()=>undefined; assert prepared child session path in dir, retain shutdown-before-rm and all existing assertions. No production/framework change."
+          ],
+          "checks": [
+            "independent13 pass70 assertions green despite reproduced persistence leak"
+          ]
+        },
+        {
+          "id": "task_2ae89e04",
+          "status": "running",
+          "candidate": "a7e7c1de30189ac337e9fec9c3599e9c2e42a53d",
+          "base": "5fdfc376dfeb1ba0bcd80eef80d37f41b890f1eb",
+          "priorJudge": "task_207ccf5d",
+          "writerResponse": "Imported full rejected structural test diff; reproduced policy child history escaping temp root, containment assertion fails before and passes after local sessionManager restoration. Keeps all assertions/real manager/shutdown-before-rm. Removed only own reproduction artifact."
+        }
+      ],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "NOT imported; rejected candidate retained",
+      "launchBase": "1475ea9c468e343de12524cf8fbbd6f5da3ef83b",
+      "changedRelatedPaths": [
+        "tests/job-service.test.ts"
+      ],
+      "readingResult": "One mutable fabricated-receipt test split into three isolated profile/delegation/nativefast journeys using real manager receipts/waits/exit/cleanup, substituting child execution only.",
+      "checks": [
+        "focus13/70",
+        "related5suites77/471",
+        "tsc/Biome/diff pass; no production changes/fullCI/liveprovider"
+      ],
+      "reworks": [
+        {
+          "id": "task_57b22da7",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_57b22da7",
+          "branch": "bruv/rework-jobservice-test-session-ownership-57b22da7",
+          "base": "5fdfc376dfeb1ba0bcd80eef80d37f41b890f1eb",
+          "commit": "a7e7c1de30189ac337e9fec9c3599e9c2e42a53d",
+          "respondsTo": "task_207ccf5d",
+          "response": "Imported full rejected structural test diff; reproduced policy child history escaping temp root, containment assertion fails before and passes after local sessionManager restoration. Keeps all assertions/real manager/shutdown-before-rm. Removed only own reproduction artifact.",
+          "checks": [
+            "focus13/71",
+            "format/lint/diff pass",
+            "full focus used isolatedHOME because unchanged baseline partialspawn test also defaults session storage"
+          ]
+        }
+      ]
     },
     {
       "focus": "tests/local-agent-termination.test.ts",
@@ -1801,11 +2236,42 @@
     {
       "focus": "tests/questions.test.ts",
       "initialBlob": "79a2979c636f8a49ef3c192f91acea0868cc10ec",
-      "status": "pending",
-      "primary": null,
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integration": "pending"
+      "status": "accepted",
+      "primary": {
+        "id": "task_e678c58b",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_e678c58b",
+        "branch": "bruv/primary-tests-questions.test.ts-e678c58b",
+        "base": "1475ea9c468e343de12524cf8fbbd6f5da3ef83b",
+        "commit": "ae3387d53e9f40c074eb0b3eceefd62844ad5caa"
+      },
+      "judgeRounds": [
+        {
+          "id": "task_67d501cd",
+          "status": "complete",
+          "candidate": "ae3387d53e9f40c074eb0b3eceefd62844ad5caa",
+          "base": "1475ea9c468e343de12524cf8fbbd6f5da3ef83b",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Lifecycle/replay,dedup/navigation,race/capacity independent fixture lifetimes remove state-dependent reconstruction; all old obligations retained,8branchcases unchanged,persisted winner/answer deterministic.",
+          "checks": [
+            "independent baseline11/57 candidate14/61 sixfile50/392",
+            "Biome/fulltsc/diff pass",
+            "no humanUI/liveSSH/fullgate"
+          ]
+        }
+      ],
+      "acceptedBlob": "6baf85f21deab6c3d694f54aeba957d665bb3391",
+      "integration": "full primary test diff integrated",
+      "launchBase": "1475ea9c468e343de12524cf8fbbd6f5da3ef83b",
+      "changedRelatedPaths": [
+        "tests/questions.test.ts"
+      ],
+      "readingResult": "Three mixed tests→six independent lifecycle/replay,authority,dedup,lockwaitnavigation,race,capacity journeys; persisted race/version and retained capacity answer checked;8 branch/diagnostic tests byte-identical.",
+      "checks": [
+        "focus14/61 baseline11/57",
+        "sixfile integration50/392",
+        "Biome/tsc/diff pass; no build"
+      ]
     },
     {
       "focus": "tests/resume-safeguards.test.ts",
@@ -2111,11 +2577,50 @@
     {
       "focus": "tests/typescript-images.test.ts",
       "initialBlob": "94a00fb9bbe92edc63a9192476d6562be57ff4ce",
-      "status": "pending",
-      "primary": null,
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integration": "pending"
+      "status": "accepted",
+      "primary": {
+        "id": "task_cf585928",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_cf585928",
+        "branch": "bruv/primary-tests-typescript-images.test.ts-cf585928",
+        "base": "65e63c95e0526c6ae3d3c64993e2de8f875699b8",
+        "commit": "4e012a7723635492f49eb27bfd292f3b052dda53"
+      },
+      "judgeRounds": [
+        {
+          "id": "task_c0294795",
+          "status": "complete",
+          "candidate": "4e012a7723635492f49eb27bfd292f3b052dda53",
+          "base": "65e63c95e0526c6ae3d3c64993e2de8f875699b8",
+          "priorRelatedJudge": "task_2d0765d2",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Execution suite owns tempworkspace/executable/hooks; pure header/record/channel tests no longer inherit execution lifetime. All assertions preserved, atomic rejection direct.",
+          "checks": [
+            "independent baseline18/107 candidate19/107",
+            "source6/24 adjacentcancel6/29",
+            "format/lint/diff pass; no fresh packageddecoder"
+          ]
+        }
+      ],
+      "acceptedBlob": "c812a1a951d36405c07022c0aaf61963bc51bdd6",
+      "integration": "full primary test diff integrated",
+      "relatedAcceptance": {
+        "judge": "task_2d0765d2",
+        "candidate": "066f319f7741234a589fbc9d89d46a2be1a076d2",
+        "blob": "9f9558c9cdacab507096ffa1a1a07f7094cef177",
+        "verdict": "ACCEPT",
+        "primaryStillRequired": true
+      },
+      "launchBase": "65e63c95e0526c6ae3d3c64993e2de8f875699b8",
+      "changedRelatedPaths": [
+        "tests/typescript-images.test.ts"
+      ],
+      "readingResult": "Execution cases own temp workspace instead of global hooks covering pure validators; header detection/record trust/channel accounting grouped separately from delivery. All assertions retained.",
+      "checks": [
+        "baseline18/107 candidate19/107",
+        "sourceonly6/24",
+        "format/lint/diff pass; no current packaged decoder claim"
+      ]
     },
     {
       "focus": "tests/typescript-runner.test.ts",
@@ -2199,6 +2704,16 @@
         }
       ],
       "integration": "integrated; remote primary owner required"
+    },
+    {
+      "focus": "tests/cli-rpc-soak.test.ts",
+      "kind": "new-test",
+      "status": "pending",
+      "initialBlob": null,
+      "primary": null,
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "candidate only; must add fresh primary after judged parent patch"
     }
   ],
   "limits": [
@@ -2267,11 +2782,37 @@
       "scope": "full typecheck plus9 changed-file format/lint and diff",
       "tip": "4c0e427a",
       "proof": "Full tsc including attention passed;9 changed files format/lint and diff passed,13 inherited warnings19 infos."
+    },
+    {
+      "job": "task_78bc3ded",
+      "state": "passed",
+      "scope": "own paired build +full typecheck of joined runner/bridge/capture/extension/attention/resume/questionUI",
+      "tip": "241e60a4",
+      "limits": "images candidate pending, not included",
+      "proof": "Own paired binary and full tsc pass, joined source at241e60a4."
+    },
+    {
+      "job": "task_e6a5072d",
+      "state": "passed",
+      "scope": "21 original suites including compiled runner/bridge and joined execute/question/TUI/cancel checks",
+      "tip": "241e60a4",
+      "proof": "182 pass,0 fail,1199 assertions across21 ORIGINAL suites on own fresh paired binary; includes original typescript-runner/job-bridge, joined handoff/output/images/questionTUI/resume/attention."
+    },
+    {
+      "job": "task_52557831",
+      "state": "passed",
+      "scope": "23 changed TS files since initial area baseline, format/lint/diff",
+      "tip": "241e60a4",
+      "proof": "All exit0;32 warnings62 infos retained (includes explicitly recorded new test void warning)."
     }
   ],
   "parentIntegrationInspection": {
-    "tip": "6a285569",
-    "result": "Documentation only; no accepted common source to import at second batch boundary. No sibling merge.",
-    "freeDisk": "145GB"
+    "tip": "0072ad15",
+    "result": "Parent integrated site-support; no useful shared execution API/source delta to merge at this batch boundary. No sibling branches merged.",
+    "freeDisk": "129GB"
+  },
+  "reviewProtocol": {
+    "primary": "Read wisdom/values.md and wisdom/quality/structural-readability-{guidance,owner-pilot,repo-wide}.md. Original WHOLE-REPO brief: maximize actual ease of understanding, not diff count/names/file size/boilerplate. Identify concrete mental bookkeeping before edits; trace actual callers/shipped paths. Simplify tangled responsibilities/hidden state/unrelated lifetimes/indirection/dead machinery with coherent domain operations and visible effects, not arbitrary splits/context bags/registries/state-machine frameworks. Clear code may remain unchanged; names/comments alone insufficient if tangled. Preserve purposeful permission/replay/cancellation/delivery/data-loss/protocol contracts. No speculative guards/dependencies/feature cuts/test weakening. Incidental fixes must be explicit observed/reproduced/tested. Green tests support safety, not quality. No push/PR. Shared dependencies/assets read-only /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6; Bun /home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin on PATH INSIDE bash. Area own fresh paired binary /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d/dist built241e60a4 (joined runner/bridge/capture/extension; predates image decoder change). Fresh PRIMARY single focus; complete-file review not inherited supplemental acceptance. Focus NOT edit-only-one-file: coherent related edits allowed, report every path and overlap. All source edits in durable worktree. Focused checks for actual edit, no per-file full builds or giant soaks. Before commit SHORT wisdom/quality/structural-readability-worker.md: focus/problem/result/exact proof/limits/path/branch. Preserve all area/global notes. Return exact candidate/base/changed paths and concrete before-after reader journeys/checks. Candidate only; independent actual-code judge follows.",
+    "judge": "Read wisdom/values.md and wisdom/quality/structural-readability-{guidance,owner-pilot,repo-wide}.md. Original WHOLE-REPO brief: maximize actual ease of understanding, not diff count/names/file size/boilerplate. Identify concrete mental bookkeeping before edits; trace actual callers/shipped paths. Simplify tangled responsibilities/hidden state/unrelated lifetimes/indirection/dead machinery with coherent domain operations and visible effects, not arbitrary splits/context bags/registries/state-machine frameworks. Clear code may remain unchanged; names/comments alone insufficient if tangled. Preserve purposeful permission/replay/cancellation/delivery/data-loss/protocol contracts. No speculative guards/dependencies/feature cuts/test weakening. Incidental fixes must be explicit observed/reproduced/tested. Green tests support safety, not quality. No push/PR. Shared dependencies/assets read-only /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6; Bun /home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin on PATH INSIDE bash. Area own fresh paired binary /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d/dist built241e60a4 (joined runner/bridge/capture/extension; predates image decoder change). Fresh independent READ-ONLY actual-code judge, separate from writer. Read ACTUAL entire focus source, real callers/tests and FULL candidate diff; never trust summary/note or green tests. Judge intrinsic current code and improvement separately: ACCEPT / REJECT / NO CHANGE NEEDED. Cite concrete reader journeys/reconstruction removed, exact final focus/related blobs and smallest coherent rework if rejected. Complete-file primary judgment, not inferred from adjacent/supplemental verdict. No repository edits. Include prior findings and writer response supplied below, resolve each objection explicitly; no laundering prior acceptance. Report actual independent checks and honest limits."
   }
 }

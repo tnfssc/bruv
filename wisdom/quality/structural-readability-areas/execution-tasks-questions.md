@@ -39,3 +39,25 @@ Output capture accepted task_0321bbc2: InlineOutputPreview owns decoding/tails/f
 Bridge accepted task_849e9ce1: concrete delivery obligations and explicit ACK/dispatch operations replace crossing status/ownership/controller flags; ordinary vs provisional foreground ACK, failed-token cancellation and late-handler suppression preserved. Independent14/358 plus fallback/cancellation probes. Source d40b9d66d1c674f46e1a2ad28c390e2e39377a8f/testa4577cd8ce21d1176c5b1c3215a32eeb36f0ec25 integrated. Protocol-test primary required. Runner7758b00c awaits judge; joined fresh binary and original runner/bridge suites REQUIRED, source-adapted20pass1baselinefail is not binary proof.
 
 Question-extension test primary accepted task_5abbe0b2, finaldcd59fc37732014cf809153c65036fe79582fdbd: chronological interaction scripts check rendered prompts/retry/Escape and preserve visible ledger/authority assertions; fixes skipped Escape coverage and adds displayed-snapshot stale dispatch. Independent15/74+related45/377,tsc/format/diff pass. Full judged test diff integrated.
+
+Runner accepted task_5c8f3c0f, blob38b68c6d2f3f42a8ef8c9f03ffc004e235df2b6e: established graph registrar owns visited traversal/hooks; native require lifecycle/loader order/CJS semantics preserved. Judge inspected actual joined bridge/capture/executor, ran28/412 source protocol+capture. Runner source integrated; REQUIRED original runner/bridge suites on freshly built joined binary remain open (source-adapted baseline fixture failure is not compiled proof).
+
+Execute invocation owner accepted task_cee52f91: reply handoff/wait metadata/launch evidence/finish lifetime distinct from registration session cancellation; concurrent calls isolated and launch evidence survives error. Source3542bf968fc6fdf8c06c82d149a15f3e9e95eac7 plus related execute-handoff testc4e1069d2c37f98b1eebe81ed0ea7e8500afd9a5 integrated; independent109/736+12/49 and actual joined runner/bridge/capture compatibility. Handoff-test primary still required.
+
+## Fresh compiled third-batch proof
+
+Own paired build/full typecheck task_78bc3ded passed at241e60a4. ORIGINAL21 suites task_e6a5072d:182 pass/0fail/1199 assertions, including original runner/bridge and joined execution/handoff/capture/images/foreground-stop/resume/question-TUI/attention. Required compiled runner/bridge proof is now satisfied; source-adapted extra-HOME failure did not reproduce. Pending images candidate is NOT part of this binary. No live-provider/authenticatedSSH/device parity claim.
+
+Protocol-test primary accepted task_b123eb27, blob4c2ec710464729b919dec726c538d391fda19336: one client fixture restores all9 descriptors/absence and socket; server finally cleanup. Judge independently reproduced old remote/live/questions leak and fixed success/failure restoration;16/379+tsc/Biome/diff. Explicit test contamination fix, production unchanged; full test diff integrated.
+
+Image validation accepted task_2d0765d2: complete record trust decision vs channel accounting/atomic acceptance; malformed later records reject before publication. Actual joined runner/bridge/capture/extension inspected. Source0a762301d2a0acfbdfee65d553121800a36fbbc0/test9f9558c9cdacab507096ffa1a1a07f7094cef177 integrated; related test primary and image-updated compiled batch pending.4 boundary bodies12 assertions baseline/candidate independently replayed; writer18/107 not independently rerun due WASM.
+
+Handoff-test primary accepted task_8ed2ab8e, final4c64cdd32dcefa46258e47612c2fa2ab02c72122: both invocation promises drain before shared spy restore; independent early rejection reproduces base unsettled vs fixed settled, same original error/background notice. Whole10 test bodies passed read-only harness; normal4suite dependency blocker retained. Explicit fixture defect correction integrated.
+
+## Open JobService-test rework
+
+Judge task_207ccf5d REJECTS candidate6c2a4f36 (NOT imported): coherent three-authority split omitted policy fixture sessionManager, causing durable child history outside temp cleanup in real agent sessions. Green13/70 missed it; judge reproduced retained file after temp directory removal. Fresh rework must preserve split/real-manager benefits, restore fixture getSessionDir/getSessionFile and assert prepared session remains in dir, then fresh judge with full rejection/response. No production change needed.
+
+Image-test primary task_c0294795 and question-ledger primary task_67d501cd accepted: execution-only fixture ownership vs pure validators, and independent ledger contract lifetimes remove real reconstruction. Exact final blobs in JSON; independent image19/107+source6/24+cancel6/29; questions14/61+sixfile50/392, static checks passed. Both full test diffs integrated.
+
+Runtime audit accepted task_9bfea73b, blob4aa62fc619c272ae73a45011e2fc1ce41b770812: scoped audit/abort/descendant lifetimes, unchanged343-execution workload, explicit rejection timer-clear fix independently reproduced. Candidate rerun10labels8FDs6reportedaborts10descendants0survivors; baseline logs compared only. Narrow observations, not leak/replay/ACK guarantee. Source diff integrated.
