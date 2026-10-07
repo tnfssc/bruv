@@ -947,13 +947,19 @@
     {
       "focus": "src/pi-host.ts",
       "initialBlob": "db2f1392adacf1d649e960bf7aaaf837200f66d2",
-      "status": "primary-running",
+      "status": "judge-pending",
       "primary": [
         {
           "id": "task_dad4fc12",
           "launchBase": "de02b17ff1a64acb638e2da98b3eec3c107e114e",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_dad4fc12",
-          "branch": "bruv/primary-pi-host-integration-dad4fc12"
+          "branch": "bruv/primary-pi-host-integration-dad4fc12",
+          "commit": "f41b2a9eb367298f703309897930711b7d8c20cd",
+          "changedPaths": [
+            "wisdom/quality/structural-readability-worker.md"
+          ],
+          "result": "No change: prep owns pinned version/hash validation; one fail-closed startup assertion before session creation, no duplication of object identity/projection/history/teardown ownership.",
+          "checks": "Host/sourceCLI9 tests90 assertions; isolated compat3/33; format/lint/diff pass; unfiltered2 compiled failures missing dist/bruv, no fresh build/typecheck/live claim."
         }
       ],
       "judgeRounds": [],
@@ -1369,7 +1375,8 @@
             "tests/live-transcript.test.ts",
             "wisdom/quality/structural-readability-worker.md"
           ],
-          "checks": "96 focused tests/563 assertions; added contracts pass baseline; focused strict type/format/diff pass; lint2 baseline infos; no full compile/build/live/device."
+          "checks": "96 focused tests/563 assertions; added contracts pass baseline; focused strict type/format/diff pass; lint2 baseline infos; no full compile/build/live/device.",
+          "result": "Single speaker-owned draft replaces two slots whose invariant allowed only one. Receive handles replacement/interleaving/finality; append owns whole-turn retention vs4096-byte audit chunks; views/finish use same draft, sink/source/status/supersession semantics preserved."
         }
       ],
       "judgeRounds": [],
@@ -1397,8 +1404,15 @@
     {
       "focus": "src/wisdom/location.ts",
       "initialBlob": "909717075aaac02a273286168e712faf0269f7ab",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_4e40c20e",
+          "launchBase": "f120f454c4d706972b9220340d35614262c39cac",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_4e40c20e",
+          "branch": "bruv/primary-wisdom-location-resolution-4e40c20e"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending"
