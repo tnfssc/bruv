@@ -61,7 +61,7 @@
     {
       "focus": "src/agent/README.md",
       "initialBlob": "ef24df2fd49f7cf8f8ee6dfbb4094463b2c2384d",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_f5ba33fd",
@@ -109,15 +109,19 @@
           "id": "task_8739dae2",
           "candidate": "22538fc2778f389d8331126ccc19fbe1ba57f7fe",
           "base": "439a4b07750ec7dc3e98d6a56b5e371de3047be9",
-          "status": "running",
+          "status": "complete",
           "priorObjections": [
             "README lines 25–26 wrongly imply all notification formatting/batching lives in tasks/. extension.ts assembles SSH attention and mixed content/budgets; remote completion summaries live in remote/job-observations.ts. Qualify ownership sentence; no runtime change requested."
           ],
-          "writerResponse": "Clarifies local task formatters versus extension mixed assembly/budgets/destinations and remote completion summary owner; resolves first judge objection."
+          "writerResponse": "Clarifies local task formatters versus extension mixed assembly/budgets/destinations and remote completion summary owner; resolves first judge objection.",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Full map accurately describes attachment/service lifetime, delivery ownership, and compaction/fast-tier policy precedence; prior incorrect all-task-formatting claim resolved.",
+          "checks": "Actual wiring/callers/tests inspected; 22 links and diff check pass; no runtime rerun for docs."
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending"
+      "acceptedBlob": "463258e1632b8aca69b566ffe8a60fdb76790cb4",
+      "integration": "integrated-exact-rework"
     },
     {
       "focus": "src/agent/cache-affine-compaction.ts",
@@ -326,13 +330,22 @@
     {
       "focus": "src/goals/types.ts",
       "initialBlob": "c032871506f64451dd458946bc06f5493b788e73",
-      "status": "primary-running",
+      "status": "judge-pending-overlap",
       "primary": [
         {
           "id": "task_b5e31e7f",
           "launchBase": "7c82b6171079e23e80badc6b521c2765fc8c2f9d",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_b5e31e7f",
-          "branch": "bruv/primary-goal-types-b5e31e7f"
+          "branch": "bruv/primary-goal-types-b5e31e7f",
+          "commit": "99438e18ec5dde7fdbff4c937edf67c663723834",
+          "changedPaths": [
+            "src/goals/types.ts",
+            "src/goals/store.ts",
+            "wisdom/quality/structural-readability-worker.md"
+          ],
+          "result": "Discriminate clear versus required goal snapshot records; store assertion no longer needed.",
+          "checks": "28 tests/133 assertions; static contract probe candidate pass/baseline expected failures; missing runtime-assets tsc baseline reproduced.",
+          "overlap": "Store one assertion removal overlaps pending replay candidate; coherent final combination requires fresh file worker."
         }
       ],
       "judgeRounds": [],

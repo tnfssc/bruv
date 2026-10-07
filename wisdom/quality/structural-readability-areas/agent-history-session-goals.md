@@ -21,3 +21,5 @@ Candidate `b56b4b3a`, judge task_00bd7047 ACCEPT: eliminate cached session/diges
 Combined proof at `4287844f`: 111 tests pass, 0 fail, 596 assertions across 10 history/instruction/goals/live-delegation source suites (task_b86bb73e). Shared dependencies/assets read-only; no binary/provider/device/SSH claim.
 
 Batch typecheck `tsc --noEmit` and diff check pass. Stronger `biome check` failed organizeImports on extension.ts, history-storage-io.test.ts, instruction-mode.test.ts (12 warnings/12 infos also). This is not a format/lint-only pass contradiction; queued file owners must address/rejudge final hashes. No green combined style claim.
+
+README round 2 task_8739dae2 ACCEPT after fresh rework fixes notification ownership map; exact final blob recorded, rejected candidate retained. No runtime changes. Goal types primary overlaps goal-store replay candidate by one removed assertion; queued coherent file-worker integration and judgment, not silently dropping related diff.
