@@ -40,3 +40,5 @@ Use /bin/bash with Bun 1.4.2 PATH inside quoted script. Shared node_modules stay
 ## Wisdom
 
 Only this area's notes and reusable brief files changed; values/global guidance unchanged. Proposed parent lesson: final semantic documentation can go stale without a blob change; rejudge/update its map after owner restructuring. Isolate retained-artifact tests rather than weakening shared retention. Do not import hundreds of worker notes or mistake check-only diagnostics for structural verdicts. No new shared values edit made here.
+
+Compaction batch: manual 16e68536, native 08e00ae3 and cache-affine 6765c847 accepted by fresh actual-code judges. Separate protocol/checkpoint, pinned native attempt and cache summary/settlement lifetimes. Explicit cache fix independently reproduced with real SDK: throwing post-inference notifier previously erased cancel and allowed default summarization; candidate preserves cancel with one usage append attempt. Independent cache suite 87/508; pre-inference notices unchanged. Related compaction tests still require fresh primary coverage.

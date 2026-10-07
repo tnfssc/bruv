@@ -160,7 +160,7 @@
     {
       "focus": "src/agent/cache-affine-compaction.ts",
       "initialBlob": "6a0fba6331dc4d46404ff9e81356202574390438",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_f6a2cf6a",
@@ -182,11 +182,18 @@
           "id": "task_2020f326",
           "candidate": "6765c847fd17806b697ec1bede8a8260ac9123d0",
           "base": "52f67ec6edd404e9865237f6607bd95e3f69b4f7",
-          "status": "running"
+          "status": "complete",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Inference/projection returns classified outcome/response receipt; hook owns one cancelled-usage append attempt plus diagnostic/notification/cancel. Wire acceptance not erased by later rejection. Actual SDK reproduction confirms notifier exception formerly yielded undefined/default-summarizer eligibility, now cancel survives with one usage attempt.",
+          "checks": "Independent 87 tests/508 assertions plus actual SDK baseline/candidate notifier regression; diff pass. Pre-inference notifications unchanged; no full build/live claim.",
+          "acceptedRelatedBlobs": {
+            "tests/cache-affine-compaction.test.ts": "faf1ca8647b6c9b5540ceb8a970f834a1443c550"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending"
+      "acceptedBlob": "1b4656ebb9765af61b459073d4eeeb6ceffa1d06",
+      "integration": "integrated-exact-candidate"
     },
     {
       "focus": "src/agent/cache-countdown.ts",
@@ -827,7 +834,7 @@
     {
       "focus": "src/history/session-manager.ts",
       "initialBlob": "ed6dfb651192791de44bf933592e3061c2d32633",
-      "status": "judge-pending",
+      "status": "judging",
       "primary": [
         {
           "id": "task_f9b9fc58",
@@ -844,7 +851,14 @@
           "result": "Context-accounting installer owns footer estimator/cache lifetime separate from model projection, supplies recording operation to journal. One metadata publisher serves append/rebuild; rebuild owner explicit rather than hidden WeakMap lookup. Store/replay/fallback/recovery/disposal unchanged."
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_4b35440e",
+          "candidate": "a6bc2c45ad4f18f5bede511ca33e4eb690c26b36",
+          "base": "5bd90dce070d7d1656f78d6e441dc1dd579919da",
+          "status": "running"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending"
     },
@@ -1353,7 +1367,14 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "relatedPatchReview": {
+        "candidate": "6765c847fd17806b697ec1bede8a8260ac9123d0",
+        "judge": "task_2020f326",
+        "verdict": "ACCEPT",
+        "blob": "faf1ca8647b6c9b5540ceb8a970f834a1443c550",
+        "primaryFocusStillRequired": true
+      }
     },
     {
       "focus": "tests/cache-countdown-sdk.test.ts",
