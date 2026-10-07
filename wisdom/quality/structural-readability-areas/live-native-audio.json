@@ -129,13 +129,20 @@
       "judgeRounds": [
         {
           "id": "task_794b83a8",
-          "status": "running",
+          "status": "complete",
           "candidate": "60884cc93465a0bd217574abdb6e148db81dfaf6",
-          "base": "f473c8e5a1c4377742f0b65c27d06782d456f7d1"
+          "base": "f473c8e5a1c4377742f0b65c27d06782d456f7d1",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Local continuous/backlog/reopen fixtures remove accidental shared history; reopening keeps complete temporal journey with9000 acceptance/rejection; first-hold units/boundaries remain together. All prior assertions retained.",
+          "checks": "Independent4 Bun tests24 assertions,strictGCC,ClangASanUBSan,diff pass;no Pulse/device runtime.",
+          "acceptedBlobs": {
+            "native/live-linux/tests/capture-gate.cpp": "6cb2911f8dbc46de4ea293fed9d12f8b64f0730d"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "judge running",
+      "acceptedBlob": "6cb2911f8dbc46de4ea293fed9d12f8b64f0730d",
+      "integration": "integrated accepted exact primary candidate",
       "relatedPaths": [],
       "readingResult": "Three local gate fixtures isolate continuous/first hold/reopen; reopening proves index9000 accepted before mute then rejected until new snapshot and against new frontier, units explicit. Prior assertions retained.",
       "checks": "4 Bun tests/24 assertions; strict GCC and ClangASan/UBSan pass; diff clean. No Pulse/device/provider/macOS runtime."
@@ -297,9 +304,16 @@
         "status": "candidate ready",
         "commit": "439444f649249259125c548e41f1a345977de91f"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_9de91bbe",
+          "status": "running",
+          "candidate": "439444f649249259125c548e41f1a345977de91f",
+          "base": "06e32904306803bcb25ea542d1e3676a54d234cb"
+        }
+      ],
       "acceptedBlob": null,
-      "integration": "awaiting judge slot",
+      "integration": "judge running",
       "relatedPaths": [],
       "readingResult": "Unchanged three-entry metadata has one clear role: native build embeds Mach-O metadata, release embeds bytes, runtime launches helper, Swift owns microphone permission.",
       "checks": "Exact plist assertions/build-script syntax;13 helper/workflow tests/120 assertions. No macOS permission/device/provider/full gate."
@@ -422,12 +436,15 @@
         "launchBase": "6f3ada6c721a7a8eb9d9ea091a52bcbadea5174a",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_2ce0dc69",
         "branch": "bruv/primary-scripts-build-live-helper.sh-2ce0dc69",
-        "status": "running",
-        "commit": null
+        "status": "candidate ready",
+        "commit": "0c9fc2f2baff2c16895b74f6d2a5a75ebe6035ab"
       },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "primary running"
+      "integration": "awaiting judge slot",
+      "relatedPaths": [],
+      "readingResult": "Unchanged linear temporary compile/link/self-test/publish sequence; install/CI/release/embedding/runtime cleanup distinct responsibilities, extraction adds navigation.",
+      "checks": "Shell syntax;44 focused tests481 assertions;6 fake-tool lifecycle order/failure/cleanup cases. No macOSXcode/device/provider/signal/cross-volume proof."
     },
     {
       "focus": "scripts/build-live-linux-helper.sh",
@@ -636,10 +653,17 @@
     {
       "focus": "src/live/config.ts",
       "initialBlob": "066a823fe085451dad54f693c824013f2a4ffbb5",
-      "primary": null,
+      "primary": {
+        "id": "task_51d6ae66",
+        "launchBase": "575ba3835b85f46d758b9187447c70e161374c54",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_51d6ae66",
+        "branch": "bruv/primary-src-live-config.ts-51d6ae66",
+        "status": "running",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "primary running"
     },
     {
       "focus": "src/live/conversation.ts",
