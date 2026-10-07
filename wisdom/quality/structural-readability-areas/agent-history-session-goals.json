@@ -355,13 +355,20 @@
     {
       "focus": "src/agent/last-used-cli-model.ts",
       "initialBlob": "09d386f26bb6aa3e28e07e4b4d7800f92d8c0491",
-      "status": "primary-running",
+      "status": "judge-pending",
       "primary": [
         {
           "id": "task_9d8cd3c0",
           "launchBase": "ddc4ad72c1125d125f83e9eaee2530e40b57e2a2",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_9d8cd3c0",
-          "branch": "bruv/primary-last-used-cli-model-persistence-9d8cd3c0"
+          "branch": "bruv/primary-last-used-cli-model-persistence-9d8cd3c0",
+          "commit": "f2547578087fdb398df7a2bbaa7bfdb0ca36c1dc",
+          "changedPaths": [
+            "wisdom/quality/structural-readability-worker.md"
+          ],
+          "result": "No change candidate: root TUI guard, exact preference update, awaited flush and error notification already local; short parallel handlers need no indirection.",
+          "checks": "7 tests/28 assertions; format/lint pass2warnings; stronger Biome import-order error baseline; no compile/build.",
+          "limits": "Observed comment caveat: Pi thinking-selection also fires on model-induced effective thinking changes; picker-only comment understates upstream event surface. Needs judge actual-code decision, no behavior fix claimed."
         }
       ],
       "judgeRounds": [],
@@ -920,8 +927,15 @@
     {
       "focus": "src/pi-host.ts",
       "initialBlob": "db2f1392adacf1d649e960bf7aaaf837200f66d2",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_dad4fc12",
+          "launchBase": "de02b17ff1a64acb638e2da98b3eec3c107e114e",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_dad4fc12",
+          "branch": "bruv/primary-pi-host-integration-dad4fc12"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending"
