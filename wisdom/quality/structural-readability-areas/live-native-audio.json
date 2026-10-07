@@ -1664,10 +1664,17 @@
     {
       "focus": "tests/gpt-live-delegation.test.ts",
       "initialBlob": "1a6bb3e927e44740fd7d513e2d250be178b9c43e",
-      "primary": null,
+      "primary": {
+        "id": "task_79a24111",
+        "launchBase": "b418d87d4ba3cd6651d70ff65a31242a2e9cc7d6",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_79a24111",
+        "branch": "bruv/primary-tests-gpt-live-delegation.test.t-79a24111",
+        "status": "running",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "related accepted patch integrated;own primary pending",
+      "integration": "primary running",
       "relatedPatchJudgment": {
         "judgeId": "task_3583b317",
         "verdict": "ACCEPT",
@@ -1827,17 +1834,20 @@
         "launchBase": "7d8902e0818915cbc1cc56d8996f91f1b327e083",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_0ed9f187",
         "branch": "bruv/primary-tests-live-cost.test.ts-0ed9f187",
-        "status": "running",
-        "commit": null
+        "status": "candidate ready",
+        "commit": "186f1a59ded8eae2d42c6c1a5e33d93ad5817612"
       },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "primary running",
+      "integration": "awaiting judge slot",
       "relatedPatchJudgment": {
         "judgeId": "task_4b5c5997",
         "verdict": "ACCEPT",
         "blob": "345f8739c2c77b33db539d11aabd2c4bb142a75e"
-      }
+      },
+      "relatedPaths": [],
+      "readingResult": "Pricingeligibility separate from persistence/close;one tracker peraccountingtest instead3lifetimes zerousage;eventsequences/charges visible,alloriginalcases plus sessionvsturn watermark/distinctresponseIDs.",
+      "checks": "109tests558assertions cost/session/extension;Biome/diffpass,no productfix/dedicated switchedsession guardproof/device/provider/macOS."
     },
     {
       "focus": "tests/live-credentials.test.ts",
