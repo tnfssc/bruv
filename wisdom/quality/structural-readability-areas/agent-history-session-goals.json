@@ -380,16 +380,30 @@
     {
       "focus": "src/agent/native-compaction.ts",
       "initialBlob": "dbe3719e3628a5d5ece6f4eed440ea8ceba8b0f1",
-      "status": "primary-running",
+      "status": "judging",
       "primary": [
         {
           "id": "task_ec8e3840",
           "launchBase": "1b4c733cda50010b819a35365ddc53e80827e861",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_ec8e3840",
-          "branch": "bruv/primary-native-compaction-ec8e3840"
+          "branch": "bruv/primary-native-compaction-ec8e3840",
+          "commit": "08e00ae3c0aa5603288096ddb7d5a3ab73a8c682",
+          "changedPaths": [
+            "src/agent/native-compaction.ts",
+            "tests/native-compaction.test.ts",
+            "wisdom/quality/structural-readability-worker.md"
+          ],
+          "checks": "134 tests/732 assertions across 8 native/cache/fast/instruction files; deferred HTTP invalidation regression passes baseline, generation-guard mutation fails; format/diff pass; baseline lint16/3; known old goal TS2554 only, no compiled/live claim."
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_7caa7713",
+          "candidate": "08e00ae3c0aa5603288096ddb7d5a3ab73a8c682",
+          "base": "1b4c733cda50010b819a35365ddc53e80827e861",
+          "status": "running"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending"
     },
@@ -1131,8 +1145,15 @@
     {
       "focus": "src/session/operations.ts",
       "initialBlob": "b007de00a379d4f69fdd42594c4e608c7635a85a",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_7a84499f",
+          "launchBase": "97259e213b9f78703fdc630f66bc53375ef669ae",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_7a84499f",
+          "branch": "bruv/primary-session-operation-contracts-7a84499f"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending"
