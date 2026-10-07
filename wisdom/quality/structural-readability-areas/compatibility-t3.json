@@ -203,7 +203,7 @@
     {
       "file": "src/claude-compat/arguments.ts",
       "initialBlob": "61a99f162b7328d9f937d10ec33691a9b47bd645",
-      "status": "rejudging",
+      "status": "accepted-integrated",
       "primary": {
         "id": "task_1b5068a0",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_1b5068a0",
@@ -225,12 +225,20 @@
         },
         {
           "id": "task_e06dc5c8",
-          "status": "running",
+          "status": "completed",
           "candidate": "e5f89da92237ef8f257f4afd30fe0250630eba66",
-          "prior": "task_c9ec06dd"
+          "prior": "task_c9ec06dd",
+          "verdict": "ACCEPT",
+          "blob": "f84dc294d18bb530a4147da1d02abe3baf2ac05e",
+          "relatedBlobs": {
+            "tests/claude-compat-arguments.test.ts": "49284980b17450943aaf9fed71f6cbc2dbd74cdd"
+          },
+          "objections": [],
+          "evidence": "Both compatibility flags still validate values/duplicates but no longer imply runtime switches; neither/either/both in both modes produce same argument contract. Actual MCP only injected config/permission authority unchanged. Prior rejection resolved. 15 transport tests/44 assertions independently pass.",
+          "limits": "Argument/launch/composition rerun blocked by missing deps; separate CLI candidate excluded."
         }
       ],
-      "acceptedBlob": null,
+      "acceptedBlob": "f84dc294d18bb530a4147da1d02abe3baf2ac05e",
       "launchBase": "67a28f5fc0743487066df1d8b259d823e3a4c31a",
       "changedRelatedPaths": [
         "tests/claude-compat-arguments.test.ts"
@@ -248,7 +256,8 @@
         }
       ],
       "reworkResponse": "Confirmed never-read flags state, removed fields/defaults/writes; keeps flag acceptance/toggle validation/duplicates with explicit unconditional semantics. Parser structure preserved; cli/launch test untouched. Added new focused argument tests.",
-      "reworkChecks": "34 focused pass plus 5 isolated composition; baseline regression reproduced; typecheck/format/diff pass."
+      "reworkChecks": "34 focused pass plus 5 isolated composition; baseline regression reproduced; typecheck/format/diff pass.",
+      "integrationState": "Fresh rework accepted after rejection; exact patch joined. Combined CLI contract review pending."
     },
     {
       "file": "src/claude-compat/binding.ts",
@@ -999,11 +1008,19 @@
       "file": "tests/claude-compat-arguments.test.ts",
       "kind": "new",
       "initialBlob": null,
-      "status": "pending-candidate",
+      "status": "pending-primary",
       "introducedBy": "e5f89da92237ef8f257f4afd30fe0250630eba66",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "relatedPatchJudgments": [
+        {
+          "id": "task_e06dc5c8",
+          "verdict": "ACCEPT",
+          "blob": "49284980b17450943aaf9fed71f6cbc2dbd74cdd",
+          "candidate": "e5f89da92237ef8f257f4afd30fe0250630eba66"
+        }
+      ]
     }
   ],
   "crossAreaNeeds": [],
