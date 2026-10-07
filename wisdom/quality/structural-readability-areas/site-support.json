@@ -93,24 +93,39 @@
     {
       "focus": "site/demos.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_01e034e7",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_01e034e7",
+          "branch": "bruv/primary-site-demos.ts-01e034e7",
+          "base": "a91050017527e1dade52382f0908aefc28ddf981"
+        }
+      ],
       "judges": [],
       "initialBlob": "e16065e32509b7f0a844cf8cd98b8627caf31e23"
     },
     {
       "focus": "site/html-animation.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judging",
       "primary": [
         {
           "id": "task_9c42d8e3",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_9c42d8e3",
           "branch": "bruv/primary-site-html-animation.ts-9c42d8e3",
-          "base": "b5e49e8740cd201d38d59342ebec6fdcd429c7f9"
+          "base": "b5e49e8740cd201d38d59342ebec6fdcd429c7f9",
+          "commit": "79091f23d4496931af90ea863ed9f5e812126397",
+          "result": "HtmlDemo owns complete panel operations instead of mount interleaving per-panel state/UI with shared scheduling/observer lifetime. Click toggle updates UI then mount schedules; reduced-motion holds final frame then reschedules; shared clock/observers/listeners/teardown remain together. 19 existing tests, focused TS, formatting/diff pass. Only html-animation.ts source changed."
         }
       ],
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_a0562ba4",
+          "candidate": "79091f23d4496931af90ea863ed9f5e812126397",
+          "state": "running"
+        }
+      ],
       "initialBlob": "83d93edb503c6c100e5a778c48b69a91bc91756e"
     },
     {
@@ -148,8 +163,15 @@
     {
       "focus": "site/layout.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_c8710829",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_c8710829",
+          "branch": "bruv/primary-site-layout.ts-c8710829",
+          "base": "a91050017527e1dade52382f0908aefc28ddf981"
+        }
+      ],
       "judges": [],
       "initialBlob": "0ec60a65bd36d939f302323b7a5fd63ab170046b"
     },
@@ -218,7 +240,7 @@
     {
       "focus": "site/scripts/build.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judging",
+      "state": "accepted-integrated",
       "primary": [
         {
           "id": "task_f66bbf8b",
@@ -234,10 +256,16 @@
         {
           "id": "task_f3451b4a",
           "candidate": "05d5c22da50b4bcd69e4239b6cd547b07fac2c9a",
-          "state": "running"
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "evidence": "Complete terminal bootstrap/fallback/navigation policy and text enhancement policy each visible in one branch. Build effect sequence explicit. Independent 18 tests and byte-identical generated artifacts at empty/subpath URL; invalid URL preserves dist."
         }
       ],
-      "initialBlob": "a8ca48ae0d03f2567d458737f143c245e9acfa89"
+      "initialBlob": "a8ca48ae0d03f2567d458737f143c245e9acfa89",
+      "acceptedBlob": "1cf04b95f42c7d500d2dd302f02f48db84273aba",
+      "changedRelatedPaths": [],
+      "integration": "exact candidate source patch applied; no overlap; worker note excluded"
     },
     {
       "focus": "site/scripts/capture-demo-source.ts",
@@ -384,16 +412,24 @@
     {
       "focus": "site/terminal.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judging",
       "primary": [
         {
           "id": "task_8638bdbf",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_8638bdbf",
           "branch": "bruv/primary-site-terminal.ts-8638bdbf",
-          "base": "20e8cff6ed94b618032adf87ef0a701322b1c974"
+          "base": "20e8cff6ed94b618032adf87ef0a701322b1c974",
+          "commit": "dd7569a9e16e31deaec78bae830dc45f43b9e03c",
+          "result": "paint now advances playback -> resizes -> lays out -> presents -> schedules; presentFrame owns presentation caches/publication; bindPointerInput contains gesture state/consumers. 10 focused tests, rendered-grid validation and animation journeys passed. Formatting passed; lint baseline. Typecheck blocked by baseline missing site/demos.ts import ./type. Only terminal.ts source changed."
         }
       ],
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_d14c7a16",
+          "candidate": "dd7569a9e16e31deaec78bae830dc45f43b9e03c",
+          "state": "running"
+        }
+      ],
       "initialBlob": "9c375c3852c97216dc89f6d055587ef63353ac52"
     },
     {
@@ -414,5 +450,10 @@
     }
   ],
   "extra": [],
-  "crossArea": []
+  "crossArea": [],
+  "limits": [
+    "Automatic fish setup lacks Bun; explicit Bun tooling supplied to all workers.",
+    "Observed initial demos.ts missing ./type import blocks focused terminal typecheck; demos primary tasked to trace and explicitly fix if confirmed."
+  ],
+  "parentBoundary": "Inspected integration 6a285569: docs-only changes, no common source to bring in. Disk 159G available."
 }

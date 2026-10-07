@@ -7,3 +7,5 @@ Area checkout: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea
 Use JSON ledger for precise launch/commit/round/blob evidence. At most three code workers and three judges; pending rows are not accepted. Parent owns PR #45 and whole-repository delivery.
 
 First accepted unchanged file: playback.ts. Independent judge traced mutation gate/wrap, terminal/layout rendering and HTML lifecycle; clear narrow timing helper, no forced extraction. Exact blob and verdict live in ledger. No repository-wide claim.
+
+Accepted build refactor integrated: each view now owns a complete rendering policy instead of six mode branches. Independent 18 focused tests, baseline/candidate artifact parity at root/subpath, and validation-before-deletion proof. No worker note imported. Parent boundary 6a285569 is documentation-only; no common source merged.
