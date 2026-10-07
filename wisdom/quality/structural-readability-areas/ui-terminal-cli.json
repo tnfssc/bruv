@@ -333,7 +333,7 @@
     {
       "focus": "scripts/tasks-ui-proof-build.ts",
       "initialBlob": "3c50cd1531b85ff6b44517154be60c5c133b8b03",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_69932f49",
@@ -356,20 +356,35 @@
           "id": "task_f9504048",
           "base": "c9898c0cc69de4a9b5b09d52ee1cf63c86f3084e",
           "candidate": "85e990227aa93c12c16337f7a23a686b77661eda",
-          "verdict": "pending",
+          "verdict": "ACCEPT",
           "priorAttempt": "task_69932f49 interrupted without judgment",
           "coordinatorTargets": [
             "Worker checkpoint removes REAL_WEB_ARCHIVE positional arg, archive symlink/hash provenance, updates wisdom/tasks-ui/native-proof-tooling.md. Fresh judge must trace every actual caller/embed path and prove archive machinery unshipped/irrelevant, not drop purposeful provenance or silently change compatibility; deletion/CLI behavior explicit."
+          ],
+          "objections": [],
+          "reviewedBlobs": {
+            "scripts/tasks-ui-proof-build.ts": "c6710c2ffd68ce9f89521bda3249f9ed64f8b18f",
+            "tests/tasks-ui-proof-build.test.ts": "d132c1709bbc03d1e3851dd2e6886ed50fc8bf0d",
+            "wisdom/tasks-ui/native-proof-tooling.md": "85add9294132347035faaff201b02e34bf1afae6"
+          },
+          "evidence": "Archive argument/link/hash never consumed by compile or native proof consumer; current CLI uses external T3, architecture tests confirm retired embedded paths absent. Official T3/release provenance separate unchanged. Removing unrelated lifetime exposes actual build/source/binary authority.",
+          "behaviorChange": "Local proof script now only OUTPUT_BINARY, rejects old2arg invocation and omits archive fields; out-of-repo callers need migration. No shipped feature/provenance removal.",
+          "checks": [
+            "Independent32Bun/438assertions and13Python",
+            "Real read-only Pi preflight with stub prep/compile; pre-existing archive symlink inode/target/bytes unchanged",
+            "Focused strict TS/Biome/diff"
+          ],
+          "limits": [
+            "Stub compile/assets no real native build/PTY/screenshots/full gate/release acceptance"
           ]
         }
       ],
-      "acceptedBlob": null,
-      "integrationState": "Uncommitted work retained in original worktree; no candidate integrated",
+      "acceptedBlob": "c6710c2ffd68ce9f89521bda3249f9ed64f8b18f",
+      "integrationState": "fresh retry exact candidate integrated; interrupted attempt preserved",
       "launchBase": "c9898c0cc69de4a9b5b09d52ee1cf63c86f3084e",
       "coordinatorReviewTargets": [
         "Worker checkpoint removes REAL_WEB_ARCHIVE positional arg, archive symlink/hash provenance, updates wisdom/tasks-ui/native-proof-tooling.md. Fresh judge must trace every actual caller/embed path and prove archive machinery unshipped/irrelevant, not drop purposeful provenance or silently change compatibility; deletion/CLI behavior explicit."
       ],
-      "priority": "fresh retry active",
       "changedRelatedPaths": [
         "tests/tasks-ui-proof-build.test.ts",
         "wisdom/tasks-ui/native-proof-tooling.md"
@@ -3108,11 +3123,18 @@
       "focus": "tests/tasks-ui-proof-build.test.ts",
       "kind": "new-test",
       "initialBlob": null,
-      "status": "candidate-related-primary-pending",
+      "status": "related-patch-accepted-primary-pending",
       "primary": [],
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integrationState": "proof build related candidate; future primary required"
+      "judgeRounds": [
+        {
+          "id": "task_f9504048",
+          "verdict": "ACCEPT",
+          "candidate": "85e990227aa93c12c16337f7a23a686b77661eda",
+          "kind": "related-only"
+        }
+      ],
+      "acceptedBlob": "d132c1709bbc03d1e3851dd2e6886ed50fc8bf0d",
+      "integrationState": "integrated related patch; fresh primary required"
     }
   ],
   "batchChecks": [
