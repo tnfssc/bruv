@@ -137,6 +137,8 @@ describe("voice in real CompactEditor input routing", () => {
     expect(f.changes).toEqual([false, true]);
     f.send("\x1b[D");
     expect(f.changes.at(-1)).toBe(false);
+    f.detach();
+    expect(f.writes).toEqual(["\x1b[?1004h", "\x1b[?1004l"]);
   });
 
   test("paste marker registry and undo history survive a hold", () => {
@@ -220,6 +222,69 @@ describe("voice in real CompactEditor input routing", () => {
     remove();
   });
 
+  test("reattachment puts safety before existing listeners without reordering or removing them", () => {
+    const f = fixture();
+    f.detach();
+    const seen: string[] = [];
+    const first: TuiInputListener = (data) => {
+      if (data === "\x03") {
+        expect(f.changes.at(-1)).toBe(false);
+        seen.push("first");
+      }
+      return undefined;
+    };
+    const second: TuiInputListener = (data) => {
+      if (data !== "\x03") return undefined;
+      seen.push("second");
+      return { consume: true };
+    };
+    const removeFirst = f.tui.addInputListener(first);
+    const removeSecond = f.tui.addInputListener(second);
+    const listeners = (f.tui as unknown as { inputListeners: Set<TuiInputListener> }).inputListeners;
+    const existing = [...listeners];
+    const detach = f.input.attachPushToTalk(f.ui, f.options);
+    cleanups.push(detach, removeFirst, removeSecond);
+    expect([...listeners].slice(1)).toEqual(existing);
+    hold(f);
+    f.send("\x03");
+    expect(seen).toEqual(["first", "second"]);
+    detach();
+    expect([...listeners]).toEqual(existing);
+  });
+
+  test.each(["detach", "abort"] as const)("%s restores Pi's writable focus property with its latest value", (end) => {
+    const f = fixture();
+    expect(Object.getOwnPropertyDescriptor(f.input, "focused")?.get).toBeDefined();
+    hold(f);
+    f.tui.setFocus(null);
+    expect(f.changes.at(-1)).toBe(false);
+    if (end === "detach") f.detach();
+    else f.abort.abort();
+    expect(Object.getOwnPropertyDescriptor(f.input, "focused")).toEqual({
+      configurable: true,
+      enumerable: true,
+      writable: true,
+      value: false,
+    });
+    f.tui.setFocus(f.input);
+    expect(f.input.focused).toBe(true);
+    f.send(" ");
+    expect(f.input.getText()).toBe(" ");
+  });
+
+  test("an already-aborted attachment detaches the prior session without acquiring new hooks", () => {
+    const f = fixture();
+    hold(f);
+    const aborted = new AbortController();
+    aborted.abort();
+    const detach = f.input.attachPushToTalk(f.ui, { ...f.options, signal: aborted.signal });
+    detach();
+    expect(f.changes).toEqual([false, true, false]);
+    expect(f.listeners()).toBe(0);
+    expect(f.input.wantsKeyRelease).toBe(false);
+    expect(f.writes).toEqual(["\x1b[>15u", "\x1b[?1004h", "\x1b[?1004l", "\x1b[<u"]);
+  });
+
   test("terminal focus loss and changed-modifier release close capture at the raw seam", () => {
     const f = fixture();
     hold(f);
@@ -244,6 +309,8 @@ describe("voice in real CompactEditor input routing", () => {
     f.send("\x1b[<64;1;1M");
     expect(f.changes.at(-1)).toBe(false);
     expect(f.writes).toEqual(["\x1b[>15u"]); // fullscreen already owns focus reporting
+    f.detach();
+    expect(f.writes).toEqual(["\x1b[>15u", "\x1b[<u"]);
   });
 
   test("abort preserves a pending typed Space, detaches listeners and restores terminal flags", () => {

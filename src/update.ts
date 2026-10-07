@@ -1,4 +1,5 @@
 import { createHash } from "node:crypto";
+import type { Stats } from "node:fs";
 import { chmod, copyFile, lstat, mkdtemp, realpath, rename, rm, stat, writeFile } from "node:fs/promises";
 import { basename, dirname, join } from "node:path";
 import bruvPackage from "../package.json";
@@ -44,6 +45,17 @@ function errorMessage(error: unknown): string {
 export function isCompiledInvocation(moduleUrl = import.meta.url): boolean {
   return moduleUrl.startsWith("file:///$bunfs/");
 }
+type Version = [number, number, number];
+type ReleaseRequest = (url: string, accept: string) => Promise<Response>;
+type ReleaseArtifact = { name: string; binaryUrl: string; checksumUrl: string };
+type StableRelease = { version: string; parts: Version; bruv: ReleaseArtifact; connector: ReleaseArtifact };
+type InstalledExecutable = { name: string; path: string; original?: Stats };
+type InstalledPair = {
+  bruv: Required<InstalledExecutable>;
+  connector: InstalledExecutable;
+};
+type PairProbe = (path: string, args: string[], bruvPath?: string) => Promise<string>;
+
 export async function updateBruv(deps: UpdateDeps = {}): Promise<UpdateResult> {
   if (!(deps.compiled ?? isCompiledInvocation()))
     throw new Error("Refusing to self-update a source Bun invocation; run the compiled bruv executable.");
@@ -58,11 +70,41 @@ export async function updateBruv(deps: UpdateDeps = {}): Promise<UpdateResult> {
   const currentParts = version(current);
   if (!currentParts) throw new Error("Cannot self-update this development version: " + current);
   const http = deps.fetch ?? fetch;
-  const request = (url: string, accept: string) =>
+  const request: ReleaseRequest = (url, accept) =>
     http(url, {
       headers: { accept, "user-agent": "bruv/" + current },
       signal: AbortSignal.timeout(300_000),
     });
+  const release = await fetchStablePair(request, updateAsset);
+  const installed = await inspectInstalledPair(deps.executable ?? process.execPath);
+  const run = pairProbe(deps.runBinary ?? runBinary);
+  const relation =
+    release.parts[0] - currentParts[0] || release.parts[1] - currentParts[1] || release.parts[2] - currentParts[2];
+  if (relation <= 0) {
+    const matched = await installedConnectorMatches(installed.connector, current, run);
+    if (relation < 0) {
+      if (!matched)
+        throw new Error(
+          "bruv is newer than the stable release but its connector is missing or mismatched; reinstall a matching pair manually (no downgrade performed).",
+        );
+      return { status: "newer", version: current };
+    }
+    if (matched) return { status: "current", version: release.version };
+  }
+  if (deps.check) return { status: "available", version: release.version };
+  deps.onDownload?.(release.version);
+  await installReleasePair(
+    installed,
+    release,
+    request,
+    run,
+    deps.rename ?? rename,
+    platform === "darwin" && arch === "arm64",
+  );
+  return { status: "updated", version: release.version, path: installed.bruv.path };
+}
+
+async function fetchStablePair(request: ReleaseRequest, updateAsset: string): Promise<StableRelease> {
   let release: unknown;
   try {
     const response = await request(RELEASES_URL, "application/vnd.github+json");
@@ -78,9 +120,6 @@ export async function updateBruv(deps: UpdateDeps = {}): Promise<UpdateResult> {
     throw new Error("GitHub returned an invalid stable release version.");
   const tag = release.tag_name;
   const latest = tag.replace(/^v/, "");
-  const relation =
-    latestParts[0] - currentParts[0] || latestParts[1] - currentParts[1] || latestParts[2] - currentParts[2];
-
   const assets: unknown[] = Array.isArray(release.assets) ? release.assets : [];
   const assetUrl = (name: string): string => {
     const matches = assets.filter((asset): asset is Record<string, unknown> => isRecord(asset) && asset.name === name);
@@ -91,16 +130,20 @@ export async function updateBruv(deps: UpdateDeps = {}): Promise<UpdateResult> {
   };
   const connectorAsset = updateAsset.replace(/^bruv-/, "bruv-claude-compat-");
   // Resolve all four official assets before downloading or changing anything.
-  const downloads = [updateAsset, connectorAsset].map((name) => ({
+  const artifact = (name: string): ReleaseArtifact => ({
     name,
     binaryUrl: assetUrl(name),
     checksumUrl: assetUrl(name + ".sha256"),
-  }));
+  });
+  return { version: latest, parts: latestParts, bruv: artifact(updateAsset), connector: artifact(connectorAsset) };
+}
+
+async function inspectInstalledPair(executable: string): Promise<InstalledPair> {
   let target: string;
-  let original: Awaited<ReturnType<typeof stat>>;
-  let connectorOriginal: Awaited<ReturnType<typeof lstat>> | undefined;
+  let original: Stats;
+  let connectorOriginal: Stats | undefined;
   try {
-    target = await realpath(deps.executable ?? process.execPath);
+    target = await realpath(executable);
     original = await stat(target);
     if (!original.isFile()) throw new Error("not a regular file");
     if (basename(target) !== "bruv" || original.nlink !== 1)
@@ -113,89 +156,106 @@ export async function updateBruv(deps: UpdateDeps = {}): Promise<UpdateResult> {
       "Installation layout needs manual action; reinstall the matched pair in one directory: " + errorMessage(error),
     );
   }
-  const connector = join(dirname(target), "bruv-claude-compat");
+  return {
+    bruv: { name: "bruv", path: target, original },
+    connector: {
+      name: "bruv-claude-compat",
+      path: join(dirname(target), "bruv-claude-compat"),
+      original: connectorOriginal,
+    },
+  };
+}
+
+function pairProbe(binaryRunner: NonNullable<UpdateDeps["runBinary"]>): PairProbe {
   // Never let a caller's launcher override conceal a mismatched installed pair.
   const probeEnv = { ...process.env };
   delete probeEnv.BRUV_CLAUDE_COMPAT_BRUV_PATH;
-  const binaryRunner = deps.runBinary ?? runBinary;
-  const run = (path: string, args: string[], bruvPath?: string) =>
+  return (path, args, bruvPath) =>
     binaryRunner(path, args, bruvPath ? { ...probeEnv, BRUV_CLAUDE_COMPAT_BRUV_PATH: bruvPath } : probeEnv);
-  if (relation <= 0) {
-    let matched = false;
-    if (connectorOriginal) {
-      try {
-        let product: string | undefined;
-        try {
-          product = (await run(connector, ["--bruv-version"])).trim();
-        } catch {
-          /* The old standalone connector does not implement this flag. */
-        }
-        // Fallback only for an installed pre-migration connector, never a candidate.
-        matched =
-          product === "bruv-claude-compat " + current ||
-          (!product && (await run(connector, ["--version"])).trim() === "bruv-claude-compat " + current);
-      } catch {
-        /* A broken connector can be repaired from the same stable release. */
-      }
+}
+
+async function installedConnectorMatches(
+  connector: InstalledExecutable,
+  current: string,
+  run: PairProbe,
+): Promise<boolean> {
+  if (!connector.original) return false;
+  try {
+    let product: string | undefined;
+    try {
+      product = (await run(connector.path, ["--bruv-version"])).trim();
+    } catch {
+      /* The old standalone connector does not implement this flag. */
     }
-    if (relation < 0) {
-      if (!matched)
-        throw new Error(
-          "bruv is newer than the stable release but its connector is missing or mismatched; reinstall a matching pair manually (no downgrade performed).",
-        );
-      return { status: "newer", version: current };
-    }
-    if (matched) return { status: "current", version: latest };
+    // Fallback only for an installed pre-migration connector, never a candidate.
+    return (
+      product === "bruv-claude-compat " + current ||
+      (!product && (await run(connector.path, ["--version"])).trim() === "bruv-claude-compat " + current)
+    );
+  } catch {
+    // A broken connector can be repaired from the same stable release.
+    return false;
   }
-  if (deps.check) return { status: "available", version: latest };
-  deps.onDownload?.(latest);
+}
+
+async function stageVerifiedExecutable(
+  stage: string,
+  file: InstalledExecutable,
+  artifact: ReleaseArtifact,
+  bruvMode: number,
+  request: ReleaseRequest,
+): Promise<void> {
+  let bytes: Uint8Array;
+  try {
+    const response = await request(artifact.binaryUrl, "application/octet-stream");
+    if (!response.ok) throw new Error("HTTP " + response.status);
+    bytes = new Uint8Array(await response.arrayBuffer());
+    if (!bytes.length) throw new Error("empty download");
+  } catch (error) {
+    throw new Error("Unable to download " + artifact.name + ": " + errorMessage(error));
+  }
+  try {
+    const response = await request(artifact.checksumUrl, "text/plain");
+    if (!response.ok) throw new Error("HTTP " + response.status);
+    const escapedAsset = artifact.name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const match = new RegExp("^([a-fA-F0-9]{64})[ \t]+\\*?" + escapedAsset + "$").exec((await response.text()).trim());
+    if (!match) throw new Error("invalid checksum format or filename");
+    if (createHash("sha256").update(bytes).digest("hex") !== match[1]!.toLowerCase())
+      throw new Error("download does not match the release SHA256");
+  } catch (error) {
+    throw new Error("Checksum verification failed for " + artifact.name + ": " + errorMessage(error));
+  }
+  const staged = join(stage, file.name);
+  const mode = (Number(file.original?.mode ?? bruvMode) & 0o777) | 0o100;
+  await writeFile(staged, bytes, { mode, flag: "wx" });
+  await chmod(staged, mode);
+}
+
+async function installReleasePair(
+  installed: InstalledPair,
+  release: StableRelease,
+  request: ReleaseRequest,
+  run: PairProbe,
+  move: typeof rename,
+  checkLiveHelper: boolean,
+): Promise<void> {
   let stage: string | undefined;
   let keepRecovery = false;
-  const move = deps.rename ?? rename;
   const replaced: { path: string; backup?: string }[] = [];
   try {
-    stage = await mkdtemp(join(dirname(target), ".bruv-update-"));
-    const files = [
-      { path: target, original, name: "bruv" },
-      { path: connector, original: connectorOriginal, name: "bruv-claude-compat" },
-    ];
-    for (const [index, file] of files.entries()) {
-      const asset = downloads[index]!;
-      let bytes: Uint8Array;
-      try {
-        const response = await request(asset.binaryUrl, "application/octet-stream");
-        if (!response.ok) throw new Error("HTTP " + response.status);
-        bytes = new Uint8Array(await response.arrayBuffer());
-        if (!bytes.length) throw new Error("empty download");
-      } catch (error) {
-        throw new Error("Unable to download " + asset.name + ": " + errorMessage(error));
-      }
-      try {
-        const response = await request(asset.checksumUrl, "text/plain");
-        if (!response.ok) throw new Error("HTTP " + response.status);
-        const escapedAsset = asset.name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-        const match = new RegExp("^([a-fA-F0-9]{64})[ \t]+\\*?" + escapedAsset + "$").exec(
-          (await response.text()).trim(),
-        );
-        if (!match) throw new Error("invalid checksum format or filename");
-        if (createHash("sha256").update(bytes).digest("hex") !== match[1]!.toLowerCase())
-          throw new Error("download does not match the release SHA256");
-      } catch (error) {
-        throw new Error("Checksum verification failed for " + asset.name + ": " + errorMessage(error));
-      }
-      const staged = join(stage, file.name);
-      const mode = (Number(file.original?.mode ?? original.mode) & 0o777) | 0o100;
-      await writeFile(staged, bytes, { mode, flag: "wx" });
-      await chmod(staged, mode);
-    }
+    stage = await mkdtemp(join(dirname(installed.bruv.path), ".bruv-update-"));
+    await stageVerifiedExecutable(stage, installed.bruv, release.bruv, installed.bruv.original.mode, request);
+    await stageVerifiedExecutable(stage, installed.connector, release.connector, installed.bruv.original.mode, request);
+    const stagedBruv = join(stage, installed.bruv.name);
+    const stagedConnector = join(stage, installed.connector.name);
     // Product versions are independent of Claude compatibility --version output.
     if (
-      (await run(join(stage, "bruv"), ["--version"])).trim() !== latest ||
-      (await run(join(stage, "bruv-claude-compat"), ["--bruv-version"], join(stage, "bruv"))).trim() !==
-        "bruv-claude-compat " + latest
+      (await run(stagedBruv, ["--version"])).trim() !== release.version ||
+      (await run(stagedConnector, ["--bruv-version"], stagedBruv)).trim() !== "bruv-claude-compat " + release.version
     )
-      throw new Error("Staged Bruv pair version mismatch (expected " + latest + ")");
-    if (platform === "darwin" && arch === "arm64") await run(join(stage, "bruv"), ["--live-self-test"]);
+      throw new Error("Staged Bruv pair version mismatch (expected " + release.version + ")");
+    if (checkLiveHelper) await run(stagedBruv, ["--live-self-test"]);
+    const files = [installed.bruv, installed.connector];
     for (const file of files) {
       if (file.original) await copyFile(file.path, join(stage, file.name + ".previous"));
     }
@@ -204,8 +264,8 @@ export async function updateBruv(deps: UpdateDeps = {}): Promise<UpdateResult> {
       if (!sameFile(now, file.original))
         throw new Error(file.name + " executable changed during the update; run bruv update again");
     }
-    // Two renames are NOT a transaction. Keep originals until both have succeeded.
-    for (const file of [files[1]!, files[0]!]) {
+    // Two renames are NOT a transaction. Publish the connector first; retain originals until both succeed.
+    for (const file of [installed.connector, installed.bruv]) {
       await move(join(stage, file.name), file.path);
       replaced.push({ path: file.path, backup: file.original ? join(stage, file.name + ".previous") : undefined });
     }
@@ -240,7 +300,6 @@ export async function updateBruv(deps: UpdateDeps = {}): Promise<UpdateResult> {
   } finally {
     if (stage && !keepRecovery) await rm(stage, { recursive: true, force: true }).catch(() => undefined);
   }
-  return { status: "updated", version: latest, path: target };
 }
 async function inspectOptional(path: string) {
   try {
@@ -250,7 +309,7 @@ async function inspectOptional(path: string) {
     throw error;
   }
 }
-function sameFile(a: Awaited<ReturnType<typeof lstat>> | undefined, b: Awaited<ReturnType<typeof lstat>> | undefined) {
+function sameFile(a: Stats | undefined, b: Stats | undefined) {
   if (!a || !b) return a === b;
   return a.dev === b.dev && a.ino === b.ino && a.size === b.size && a.mtimeMs === b.mtimeMs && a.ctimeMs === b.ctimeMs;
 }

@@ -254,19 +254,8 @@ export function installConversationDensity(): () => void {
   const originalRemoveChild = prototype.removeChild;
   const originalClear = prototype.clear;
   type Restoration = {
-    original: (width: number) => string[];
-    wrapper: (width: number) => string[];
+    restore: () => void;
     reference: WeakRef<RenderComponent>;
-    originalMouse: RenderComponent["handleMouse"];
-    mouseWrapper: RenderComponent["handleMouse"];
-    mouseWidth?: number;
-    mouseYOffset: number;
-    mouseHeightOffset: number;
-    originalUpdate?: AssistantShape["updateContent"];
-    updateWrapper?: AssistantShape["updateContent"];
-    sourceMessage?: AssistantMessageShape;
-    presentedMessage?: AssistantMessageShape;
-    isStreaming?: boolean;
   };
   type SpacerRestoration = {
     original: (width: number) => string[];
@@ -340,21 +329,107 @@ export function installConversationDensity(): () => void {
     const renderable = component as RenderComponent;
     const restoration = restorations.get(renderable);
     if (!restoration) return;
-    if (renderable instanceof UserMessageComponent && userContent(renderable).paddingY === 0) {
-      setUserVerticalPadding(renderable, 1);
-    }
-    if (renderable.render === restoration.wrapper) renderable.render = restoration.original;
-    if (renderable.handleMouse === restoration.mouseWrapper) renderable.handleMouse = restoration.originalMouse;
-    if (restoration.originalUpdate && restoration.updateWrapper) {
-      const assistant = renderable as AssistantShape;
-      if (assistant.updateContent === restoration.updateWrapper) assistant.updateContent = restoration.originalUpdate;
-      if (restoration.sourceMessage) {
-        restoration.originalUpdate.call(assistant, restoration.sourceMessage, restoration.isStreaming);
-      }
-    }
+    restoration.restore();
     restorations.delete(renderable);
     liveReferences.delete(restoration.reference);
     finalized.unregister(restoration);
+  }
+
+  function adaptMessageLayout(
+    parent: Container,
+    renderable: RenderComponent,
+    originalRender: RenderComponent["render"],
+    originalMouse: RenderComponent["handleMouse"],
+  ): () => void {
+    const parentReference = new WeakRef(parent);
+    let mouseWidth: number | undefined;
+    let mouseYOffset = 0;
+    let mouseHeightOffset = 0;
+    function denseRender(this: RenderComponent, width: number): string[] {
+      if (active && this instanceof UserMessageComponent) setUserVerticalPadding(this, 0);
+      const lines = originalRender.call(this, width);
+      if (!active) {
+        mouseYOffset = 0;
+        mouseHeightOffset = 0;
+        return lines;
+      }
+      const parent = parentReference.deref();
+      const index = parent ? parentIndexes.get(parent)?.get(this) : undefined;
+      const precedingKind = parent && index !== undefined ? previousKind(parent, index) : undefined;
+      const currentKind = kind(this);
+      let rendered = lines;
+      let yOffset = 0;
+      let heightOffset = 0;
+      if (currentKind === "user") {
+        const hasLeadingRow = precedingKind !== "user";
+        rendered = hasLeadingRow ? ["", ...lines, ""] : [...lines, ""];
+        yOffset = hasLeadingRow ? -1 : 0;
+        heightOffset = hasLeadingRow ? -2 : -1;
+      } else if (
+        currentKind === "non-user" &&
+        precedingKind !== undefined &&
+        lines.length >= 2 &&
+        isBlank(lines[0] ?? "")
+      ) {
+        const preceding = parent && index !== undefined ? previousComponent(parent, index) : undefined;
+        // Keep Pi's one native leading row only for a model answer that starts
+        // with visible prose after a compact tool/task status. Thinking remains
+        // attached to the status; mixed thinking/text gets its separator from
+        // AssistantMessageComponent between those blocks.
+        const keepStatusToProseGap = isCompactStatusComponent(preceding) && startsWithVisibleProse(this);
+        if (!keepStatusToProseGap) {
+          rendered = lines.slice(1);
+          yOffset = 1;
+          heightOffset = 1;
+        }
+      }
+      mouseWidth = width;
+      mouseYOffset = yOffset;
+      mouseHeightOffset = heightOffset;
+      return rendered;
+    }
+    function denseMouse(this: RenderComponent, event: TuiMouseEvent): TuiMouseEventResult | undefined {
+      if (!active || mouseWidth !== event.width) return originalMouse.call(this, event);
+      return originalMouse.call(this, {
+        ...event,
+        y: event.y + mouseYOffset,
+        height: event.height + mouseHeightOffset,
+      });
+    }
+    renderable.render = denseRender;
+    renderable.handleMouse = denseMouse;
+    return () => {
+      if (renderable instanceof UserMessageComponent && userContent(renderable).paddingY === 0) {
+        setUserVerticalPadding(renderable, 1);
+      }
+      if (renderable.render === denseRender) renderable.render = originalRender;
+      if (renderable.handleMouse === denseMouse) renderable.handleMouse = originalMouse;
+    };
+  }
+
+  function adaptAssistantThinking(
+    assistant: AssistantShape,
+    nativeUpdate: AssistantShape["updateContent"],
+  ): () => void {
+    let sourceMessage: AssistantMessageShape | undefined;
+    let presentedMessage: AssistantMessageShape | undefined;
+    let streaming: boolean | undefined;
+    function denseUpdate(this: AssistantShape, message: AssistantMessageShape, isStreaming?: boolean): void {
+      // Pi redraws from lastMessage, which contains our presentation copy. Keep
+      // that redraw tied to its source rather than compacting the copy again.
+      const source = message === presentedMessage ? (sourceMessage ?? message) : message;
+      sourceMessage = source;
+      streaming = isStreaming ?? this.isStreaming;
+      const presented = active ? compactThinkingForDisplay(source) : source;
+      presentedMessage = presented;
+      if (isStreaming === undefined) nativeUpdate.call(this, presented);
+      else nativeUpdate.call(this, presented, isStreaming);
+    }
+    assistant.updateContent = denseUpdate;
+    return () => {
+      if (assistant.updateContent === denseUpdate) assistant.updateContent = nativeUpdate;
+      if (sourceMessage) nativeUpdate.call(assistant, sourceMessage, streaming);
+    };
   }
 
   function denseAddChild(this: Container, component: Component): void {
@@ -395,92 +470,21 @@ export function installConversationDensity(): () => void {
       throw new Error("Pi 1.0.0 conversation-density seam changed: assistant update shape is unsupported");
     }
     const originalUpdate = assistant?.updateContent;
-    const parentReference = new WeakRef(this);
-    let restoration: Restoration;
-    function denseRender(this: RenderComponent, width: number): string[] {
-      if (active && this instanceof UserMessageComponent) setUserVerticalPadding(this, 0);
-      const lines = originalRender.call(this, width);
-      if (!active) {
-        restoration.mouseYOffset = 0;
-        restoration.mouseHeightOffset = 0;
-        return lines;
-      }
-      const parent = parentReference.deref();
-      const index = parent ? parentIndexes.get(parent)?.get(this) : undefined;
-      const precedingKind = parent && index !== undefined ? previousKind(parent, index) : undefined;
-      const currentKind = kind(this);
-      let rendered = lines;
-      let mouseYOffset = 0;
-      let mouseHeightOffset = 0;
-      if (currentKind === "user") {
-        const hasLeadingRow = precedingKind !== "user";
-        rendered = hasLeadingRow ? ["", ...lines, ""] : [...lines, ""];
-        mouseYOffset = hasLeadingRow ? -1 : 0;
-        mouseHeightOffset = hasLeadingRow ? -2 : -1;
-      } else if (
-        currentKind === "non-user" &&
-        precedingKind !== undefined &&
-        lines.length >= 2 &&
-        isBlank(lines[0] ?? "")
-      ) {
-        const preceding = parent && index !== undefined ? previousComponent(parent, index) : undefined;
-        // Keep Pi's one native leading row only for a model answer that starts
-        // with visible prose after a compact tool/task status. Thinking remains
-        // attached to the status; mixed thinking/text gets its separator from
-        // AssistantMessageComponent between those blocks.
-        const keepStatusToProseGap = isCompactStatusComponent(preceding) && startsWithVisibleProse(this);
-        if (!keepStatusToProseGap) {
-          rendered = lines.slice(1);
-          mouseYOffset = 1;
-          mouseHeightOffset = 1;
-        }
-      }
-      restoration.mouseWidth = width;
-      restoration.mouseYOffset = mouseYOffset;
-      restoration.mouseHeightOffset = mouseHeightOffset;
-      return rendered;
-    }
-    function denseMouse(this: RenderComponent, event: TuiMouseEvent): TuiMouseEventResult | undefined {
-      if (!active || restoration.mouseWidth !== event.width) return originalMouse.call(this, event);
-      const { mouseYOffset, mouseHeightOffset } = restoration;
-      return originalMouse.call(this, {
-        ...event,
-        y: event.y + mouseYOffset,
-        height: event.height + mouseHeightOffset,
-      });
-    }
+    const restoreLayout = adaptMessageLayout(this, renderable, originalRender, originalMouse);
+    const restoreThinking = assistant && originalUpdate ? adaptAssistantThinking(assistant, originalUpdate) : undefined;
     const reference = new WeakRef(renderable);
-    restoration = {
-      original: originalRender,
-      wrapper: denseRender,
+    const restoration: Restoration = {
+      restore: () => {
+        restoreLayout();
+        restoreThinking?.();
+      },
       reference,
-      originalMouse,
-      mouseWrapper: denseMouse,
-      mouseYOffset: 0,
-      mouseHeightOffset: 0,
     };
     restorations.set(renderable, restoration);
     liveReferences.add(reference);
     finalized.register(renderable, reference, restoration);
-    renderable.render = denseRender;
-    renderable.handleMouse = denseMouse;
-
-    if (assistant && originalUpdate) {
-      const nativeUpdate = originalUpdate;
-      function denseUpdate(this: AssistantShape, message: AssistantMessageShape, isStreaming?: boolean): void {
-        const source = message === restoration.presentedMessage ? (restoration.sourceMessage ?? message) : message;
-        restoration.sourceMessage = source;
-        restoration.isStreaming = isStreaming ?? this.isStreaming;
-        const presented = active ? compactThinkingForDisplay(source) : source;
-        restoration.presentedMessage = presented;
-        if (isStreaming === undefined) nativeUpdate.call(this, presented);
-        else nativeUpdate.call(this, presented, isStreaming);
-      }
-      restoration.originalUpdate = nativeUpdate;
-      restoration.updateWrapper = denseUpdate;
-      assistant.updateContent = denseUpdate;
-      if (assistant.lastMessage) denseUpdate.call(assistant, assistant.lastMessage, assistant.isStreaming);
-    }
+    // Track before the initial redraw: Pi updates rebuild child Containers.
+    if (assistant?.lastMessage) assistant.updateContent(assistant.lastMessage, assistant.isStreaming);
   }
 
   function denseRemoveChild(this: Container, component: Component): void {

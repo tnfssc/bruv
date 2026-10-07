@@ -339,6 +339,61 @@ describe("local worktree workspace", () => {
     }
   });
 
+  test("async setup allows activation before settling and publishes its eventual failure", async () => {
+    const { root, repo, worktrees } = await fixture();
+    const releasePath = join(root, "release-setup");
+    await writeFile(
+      join(repo, "t3.json"),
+      JSON.stringify({
+        scripts: [
+          {
+            name: "setup",
+            command: "/bin/sh -c 'while [ ! -f \"" + releasePath + "\" ]; do sleep 0.01; done; exit 7'",
+            runOnWorktreeCreate: true,
+            async: true,
+          },
+        ],
+      }),
+    );
+    const oldRoot = process.env.BRUV_WORKTREE_ROOT;
+    process.env.BRUV_WORKTREE_ROOT = worktrees;
+    const manager = new TaskManager(() => {}, 25);
+    const activate = spyOn(manager, "activatePreparedAgent");
+    const service = new JobService(
+      manager,
+      () => ({ depth: 0 }),
+      undefined,
+      join(root, "profiles.json"),
+      undefined,
+      undefined,
+      {},
+    );
+    try {
+      const result = (await service.handle(
+        "subagent",
+        { prompt: "async setup", workspace: { kind: "worktree" }, waitSeconds: 0 },
+        { cwd: repo, model: { provider: "test", id: "model" }, isProjectTrusted: () => false } as never,
+        new AbortController().signal,
+      )) as { id: string };
+      for (let attempt = 0; attempt < 100 && !activate.mock.calls.length; attempt++)
+        await new Promise((resolve) => setTimeout(resolve, 5));
+      expect(activate.mock.calls).toHaveLength(1);
+      const workspace = manager.inspect(result.id).workspace!;
+      expect(workspace.preparationStatus).toBe("ready");
+      expect(workspace.setupStatus).toBe("running");
+      const setupId = workspace.setupTaskId!;
+      expect(manager.inspect(setupId).status).toBe("running");
+      await writeFile(releasePath, "");
+      expect((await manager.wait(setupId)).exitCode).toBe(7);
+      expect(manager.inspect(result.id).workspace?.setupStatus).toBe("failed");
+    } finally {
+      activate.mockRestore();
+      await manager.shutdown();
+      if (oldRoot === undefined) delete process.env.BRUV_WORKTREE_ROOT;
+      else process.env.BRUV_WORKTREE_ROOT = oldRoot;
+    }
+  });
+
   test("a synchronous setup failure retains every batch identity without killing siblings", async () => {
     const { repo, worktrees } = await fixture();
     await writeFile(

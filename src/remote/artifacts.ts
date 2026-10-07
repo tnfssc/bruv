@@ -143,6 +143,77 @@ export type ArtifactManifest = {
   complete: boolean;
   files: Record<string, { path: string; remotePath: string; size: number; sha256: string }>;
 };
+function validateArtifactCatalog(artifacts: RemoteArtifact[]) {
+  if (!Array.isArray(artifacts) || artifacts.length > ARTIFACT_COUNT_LIMIT) throw Error("Invalid artifact catalog");
+  let total = 0;
+  const seen = new Set<string>();
+  for (const item of artifacts) {
+    if (
+      !item ||
+      typeof item.name !== "string" ||
+      !validName(item.name) ||
+      item.remotePath !== item.name ||
+      seen.has(item.name) ||
+      !Number.isSafeInteger(item.size) ||
+      item.size < 0 ||
+      item.size > ARTIFACT_FILE_LIMIT ||
+      !validHash(item.sha256)
+    )
+      throw Error("Invalid artifact catalog entry");
+    seen.add(item.name);
+    total += item.size;
+    if (total > ARTIFACT_TOTAL_LIMIT) throw Error("Artifact catalog exceeds 128 MiB");
+  }
+}
+
+/** Reuses verified cached bytes or downloads, verifies, and atomically saves a replacement. */
+async function syncArtifactFile(
+  client: Pick<RemoteClient, "control">,
+  taskId: string,
+  identity: Pick<RemoteTask, "ownerId" | "epoch">,
+  dir: string,
+  item: RemoteArtifact,
+): Promise<string> {
+  const path = join(dir, item.name);
+  directory(dirname(path));
+  if (existsSync(path)) {
+    const cached = readArtifact(dir, item.name);
+    if (cached.length === item.size && hash(cached) === item.sha256) return path;
+  }
+  const parts: Buffer[] = [];
+  let offset = 0;
+  do {
+    const page = (await client.control(
+      { op: "artifact", taskId, action: "get", name: item.name, sha256: item.sha256, offset },
+      identity,
+    )) as ArtifactPage;
+    if (
+      !page ||
+      page.name !== item.name ||
+      page.sha256 !== item.sha256 ||
+      page.size !== item.size ||
+      typeof page.data !== "string" ||
+      !Number.isSafeInteger(page.offset)
+    )
+      throw Error("Artifact identity or size changed; refetch catalog");
+    const chunk = Buffer.from(page.data, "base64");
+    if (
+      chunk.toString("base64") !== page.data ||
+      chunk.length > ARTIFACT_CHUNK ||
+      page.offset !== offset + chunk.length ||
+      page.offset > item.size ||
+      (offset < item.size && !chunk.length)
+    )
+      throw Error("Invalid artifact chunk offset or encoding");
+    parts.push(chunk);
+    offset = page.offset;
+  } while (offset < item.size);
+  const data = Buffer.concat(parts);
+  if (data.length !== item.size || hash(data) !== item.sha256) throw Error("Artifact digest mismatch; refetch catalog");
+  save(path, data);
+  return path;
+}
+
 /** Manifest remains incomplete across failure; verified files can be reused on retry. */
 export async function syncRemoteArtifacts(
   client: Pick<RemoteClient, "control" | "path">,
@@ -167,69 +238,9 @@ export async function syncRemoteArtifacts(
   const catalog = (await client.control({ op: "artifact", taskId: task.taskId, action: "list" }, identity)) as {
     artifacts: RemoteArtifact[];
   };
-  if (!Array.isArray(catalog.artifacts) || catalog.artifacts.length > ARTIFACT_COUNT_LIMIT)
-    throw Error("Invalid artifact catalog");
-  let total = 0;
-  const seen = new Set<string>();
+  validateArtifactCatalog(catalog.artifacts);
   for (const item of catalog.artifacts) {
-    if (
-      !item ||
-      typeof item.name !== "string" ||
-      !validName(item.name) ||
-      item.remotePath !== item.name ||
-      seen.has(item.name) ||
-      !Number.isSafeInteger(item.size) ||
-      item.size < 0 ||
-      item.size > ARTIFACT_FILE_LIMIT ||
-      !validHash(item.sha256)
-    )
-      throw Error("Invalid artifact catalog entry");
-    seen.add(item.name);
-    total += item.size;
-    if (total > ARTIFACT_TOTAL_LIMIT) throw Error("Artifact catalog exceeds 128 MiB");
-  }
-  for (const item of catalog.artifacts) {
-    const path = join(dir, item.name);
-    directory(dirname(path));
-    let data: Buffer | undefined;
-    if (existsSync(path)) {
-      const cached = readArtifact(dir, item.name);
-      if (cached.length === item.size && hash(cached) === item.sha256) data = cached;
-    }
-    if (!data) {
-      const parts: Buffer[] = [];
-      let offset = 0;
-      do {
-        const page = (await client.control(
-          { op: "artifact", taskId: task.taskId, action: "get", name: item.name, sha256: item.sha256, offset },
-          identity,
-        )) as ArtifactPage;
-        if (
-          !page ||
-          page.name !== item.name ||
-          page.sha256 !== item.sha256 ||
-          page.size !== item.size ||
-          typeof page.data !== "string" ||
-          !Number.isSafeInteger(page.offset)
-        )
-          throw Error("Artifact identity or size changed; refetch catalog");
-        const chunk = Buffer.from(page.data, "base64");
-        if (
-          chunk.toString("base64") !== page.data ||
-          chunk.length > ARTIFACT_CHUNK ||
-          page.offset !== offset + chunk.length ||
-          page.offset > item.size ||
-          (offset < item.size && !chunk.length)
-        )
-          throw Error("Invalid artifact chunk offset or encoding");
-        parts.push(chunk);
-        offset = page.offset;
-      } while (offset < item.size);
-      data = Buffer.concat(parts);
-      if (data.length !== item.size || hash(data) !== item.sha256)
-        throw Error("Artifact digest mismatch; refetch catalog");
-      save(path, data);
-    }
+    const path = await syncArtifactFile(client, task.taskId, identity, dir, item);
     result.files[item.name] = { path, remotePath: item.remotePath, size: item.size, sha256: item.sha256 };
     save(manifestPath, Buffer.from(JSON.stringify(result)));
   }

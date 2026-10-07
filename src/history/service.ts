@@ -31,7 +31,15 @@ type Manager = Pick<SessionManager, "getSessionId" | "getSessionFile" | "getCwd"
   Partial<Pick<SessionManager, "getEntry">>;
 type Context = { sessionManager: Manager };
 type ScopeInput = { sessionFile?: string; allowCrossSession?: boolean };
-type TextItem = { text: string; provenance: HistoryProvenance; rank: number };
+type TextItem = { text: string; provenance: HistoryProvenance };
+
+// Original dialogue outranks execution output and tool-produced retrieval echoes.
+const SEARCH_ROLE_ORDER: Record<HistoryProvenance["role"], number> = {
+  user: 0,
+  assistant: 1,
+  bashExecution: 2,
+  toolResult: 3,
+};
 type Cursor = { kind: "search" | "read"; sessionId: string; leafId: string | null; offset: number; key: string };
 
 function record(value: unknown): value is Record<string, unknown> {
@@ -260,9 +268,7 @@ export class HistoryService {
     const { manager, scope } = await this.#scope(params, ctx);
     const key = JSON.stringify({ query, excerptChars, scope, file: manager.getSessionFile() ?? null });
     const cursor = cursorDecode(params.cursor, "search");
-    this.#validateCursor(cursor, manager, key);
-    const snapshotLeaf = cursor?.leafId ?? manager.getLeafId();
-    const items = this.#items(manager, scope, snapshotLeaf);
+    const items = this.#retrievalScan(manager, scope, cursor, key);
     const needle = query.toLowerCase();
     const matches: HistorySearchMatch[] = [];
     for (const item of items.values) {
@@ -278,13 +284,12 @@ export class HistoryService {
           provenance: item.provenance,
         });
     }
-    // Direct dialogue precedes execution output, which helps original evidence
-    // outrank tool-produced summaries and retrieval echoes.
-    matches.sort((a, b) => {
-      const ar = items.rankByRef.get(a.ref) ?? 9;
-      const br = items.rankByRef.get(b.ref) ?? 9;
-      return ar - br || b.provenance.timestamp.localeCompare(a.provenance.timestamp) || a.ref.localeCompare(b.ref);
-    });
+    matches.sort(
+      (a, b) =>
+        SEARCH_ROLE_ORDER[a.provenance.role] - SEARCH_ROLE_ORDER[b.provenance.role] ||
+        b.provenance.timestamp.localeCompare(a.provenance.timestamp) ||
+        a.ref.localeCompare(b.ref),
+    );
     const offset = cursor?.offset ?? 0;
     const page = matches.slice(offset, offset + limit);
     const next =
@@ -292,7 +297,7 @@ export class HistoryService {
         ? cursorEncode({
             kind: "search",
             sessionId: manager.getSessionId(),
-            leafId: snapshotLeaf,
+            leafId: items.leafId,
             offset: offset + page.length,
             key,
           })
@@ -314,9 +319,7 @@ export class HistoryService {
       throw new Error("History ref does not belong to the selected session");
     const key = String(params.ref);
     const cursor = cursorDecode(params.cursor, "read");
-    this.#validateCursor(cursor, manager, key);
-    const snapshotLeaf = cursor?.leafId ?? manager.getLeafId();
-    const items = this.#items(manager, scope, snapshotLeaf);
+    const items = this.#retrievalScan(manager, scope, cursor, key);
     let item: TextItem | undefined;
     // Consume the bounded scan even after finding a ref so work-limit validation
     // remains fail-closed, without retaining every other original text part.
@@ -331,7 +334,7 @@ export class HistoryService {
     const end = Math.min(item.text.length, start + maxChars);
     const next =
       end < item.text.length
-        ? cursorEncode({ kind: "read", sessionId: manager.getSessionId(), leafId: snapshotLeaf, offset: end, key })
+        ? cursorEncode({ kind: "read", sessionId: manager.getSessionId(), leafId: items.leafId, offset: end, key })
         : undefined;
     return {
       ref: key,
@@ -361,26 +364,28 @@ export class HistoryService {
     return { manager: await openReadonlySession(input.sessionFile), scope: "cross-session-branch" };
   }
 
-  #validateCursor(cursor: Cursor | undefined, manager: Manager, key: string): void {
-    if (!cursor) return;
-    if (cursor.sessionId !== manager.getSessionId() || cursor.key !== key)
-      throw new Error("History cursor does not match this query, reference, session, or active branch");
-    const activeIds = new Set(boundedBranch(manager).map((entry) => entry.id));
-    if (cursor.leafId !== null && !activeIds.has(cursor.leafId))
-      throw new Error("History cursor does not match this query, reference, session, or active branch");
-  }
-
-  #items(
+  #retrievalScan(
     manager: Manager,
     scope: HistoryProvenance["scope"],
-    leafId: string | null = manager.getLeafId(),
-  ): { values: Iterable<TextItem>; rankByRef: Map<string, number>; scannedEntries: number; scanLimited: boolean } {
-    const branch = leafId === null ? [] : boundedBranch(manager, leafId);
+    cursor: Cursor | undefined,
+    key: string,
+  ): { leafId: string | null; values: Iterable<TextItem>; scannedEntries: number; scanLimited: boolean } {
+    if (cursor && (cursor.sessionId !== manager.getSessionId() || cursor.key !== key))
+      throw new Error("History cursor does not match this query, reference, session, or active branch");
+    const activeBranch = boundedBranch(manager);
+    if (cursor?.leafId != null && !activeBranch.some((entry) => entry.id === cursor.leafId))
+      throw new Error("History cursor does not match this query, reference, session, or active branch");
+
+    // The text snapshot can predate appends, but exclusions always come from
+    // the live active branch: a later shake must also hide earlier cursor pages.
+    const activeLeaf = manager.getLeafId();
+    const leafId = cursor?.leafId ?? activeLeaf;
+    let branch = activeBranch;
+    if (leafId === null) branch = [];
+    else if (leafId !== activeLeaf) branch = boundedBranch(manager, leafId);
     const scanLimited = branch.length > MAX_SCAN_ENTRIES;
     const selected = scanLimited ? branch.slice(-MAX_SCAN_ENTRIES) : branch;
-    // Cursor data remains pinned to its snapshot, but exclusion policy is live.
-    const excludedResults = retrievalExcludedResults(manager, boundedBranch(manager));
-    const rankByRef = new Map<string, number>();
+    const excludedResults = retrievalExcludedResults(manager, activeBranch);
     function* scan(): Generator<TextItem> {
       let indexedParts = 0;
       let indexedBytes = 0;
@@ -391,22 +396,13 @@ export class HistoryService {
         const message = entry.message as unknown;
         if (!record(message) || typeof message.role !== "string") continue;
         let parts: Array<{ part: number; text: string }> = [];
-        let rank = 9;
-        if (message.role === "user") {
+        if (message.role === "user" || message.role === "assistant" || message.role === "toolResult") {
           parts = textParts(message.content);
-          rank = 0;
-        } else if (message.role === "assistant") {
-          parts = textParts(message.content);
-          rank = 1;
-        } else if (message.role === "toolResult") {
-          parts = textParts(message.content);
-          rank = 3;
         } else if (message.role === "bashExecution" && message.excludeFromContext !== true) {
           parts = [
             typeof message.command === "string" ? { part: 0, text: message.command } : undefined,
             typeof message.output === "string" ? { part: 1, text: message.output } : undefined,
           ].filter((part): part is { part: number; text: string } => !!part);
-          rank = 2;
         } else continue;
         indexedParts += Array.isArray(message.content) ? message.content.length : parts.length;
         if (indexedParts > MAX_INDEXED_PARTS)
@@ -427,14 +423,13 @@ export class HistoryService {
             branchLeafId: leafId,
             entryId: entry.id,
             timestamp: entry.timestamp,
-            role: message.role as HistoryProvenance["role"],
+            role: message.role,
             part: part.part,
           };
-          rankByRef.set(ref(provenance.sessionId, provenance.entryId, provenance.part), rank);
-          yield { text: part.text, provenance, rank };
+          yield { text: part.text, provenance };
         }
       }
     }
-    return { values: scan(), rankByRef, scannedEntries: selected.length, scanLimited };
+    return { leafId, values: scan(), scannedEntries: selected.length, scanLimited };
   }
 }

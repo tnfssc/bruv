@@ -60,6 +60,89 @@ test("hello does not start mic; start waits ready, capture fixed 20ms and playba
   worker.emitMessage({ type: "capture", data: Buffer.alloc(640).toString("base64") });
   expect(frames).toHaveLength(1);
 });
+test("native stop queue report precedes the stop acknowledgement", async () => {
+  const played: number[] = [];
+  const errors: string[] = [];
+  let closed = 0;
+  const { audio, worker } = await running({
+    callbacks: {
+      played: (ms: number) => played.push(ms),
+      error: (code: string) => errors.push(code),
+      closed: () => closed++,
+    },
+  });
+  worker.emitMessage({ type: "played", queuedMs: 20 });
+  const stop = audio.stop();
+  expect(audio.stop()).toBe(stop);
+  await tick();
+  expect(JSON.parse(worker.writes.at(-1)!)).toEqual({ type: "stop" });
+  // Swift's finishStop barrier writes these two events; stdout may batch them.
+  worker.stdout.write('{"type":"played","queuedMs":0}\n{"type":"stopped"}\n');
+  await stop;
+  expect(audio.stopError).toBeUndefined();
+  expect(errors).toEqual([]);
+  expect(played).toEqual([20, 0]);
+  expect(audio.diagnostics.queuedMs).toBe(0);
+  expect(closed).toBe(1);
+  expect(worker.killed).toBe(true);
+  // Closing ownership retains error guards until the native child is reaped.
+  expect(worker.listenerCount("error")).toBe(1);
+  worker.emit("close");
+  expect(worker.listenerCount("error")).toBe(0);
+});
+
+test("queue reports during stop do not acknowledge microphone shutdown", async () => {
+  const played: number[] = [];
+  const errors: string[] = [];
+  const { audio, worker } = await running({
+    stopTimeoutMs: 20,
+    callbacks: { played: (ms: number) => played.push(ms), error: (code: string) => errors.push(code) },
+  });
+  const stop = audio.stop();
+  let acknowledged = false;
+  void stop.then(() => {
+    acknowledged = true;
+  });
+  // Linux may still publish pump queue reports while it joins the pump thread.
+  worker.emitMessage({ type: "played", queuedMs: 20 });
+  worker.emitMessage({ type: "played", queuedMs: 0 });
+  await tick();
+  expect(acknowledged).toBe(false);
+  expect(worker.killed).toBe(false);
+  expect(played).toEqual([20, 0]);
+  await expect(audio.play(Buffer.alloc(960), 0)).rejects.toThrow("not running");
+  await expect(audio.flush(1)).rejects.toThrow("not running");
+  await stop;
+  expect(audio.stopError).toBe("Audio stop acknowledgement was not observed");
+  expect(worker.killed).toBe(true);
+  expect(errors).toEqual([]);
+  worker.emit("close");
+});
+
+test("stop still rejects invalid queue reports and unrelated events", async () => {
+  for (const message of [{ type: "played", queuedMs: -1 }, { type: "ready" }]) {
+    const errors: string[] = [];
+    const played: number[] = [];
+    const { audio, worker } = await running({
+      callbacks: { error: (code: string) => errors.push(code), played: (ms: number) => played.push(ms) },
+    });
+    const stop = audio.stop();
+    worker.emitMessage(message);
+    worker.emitMessage({ type: "stopped" });
+    await stop;
+    expect(errors).toEqual(["helper_failure"]);
+    expect(played).toEqual([]);
+    expect(audio.stopError).toBe("Audio stop acknowledgement was not observed");
+    expect(worker.killed).toBe(true);
+    worker.emit("close");
+  }
+  const { audio, worker } = await open();
+  worker.emitMessage({ type: "played", queuedMs: 0 });
+  expect(worker.killed).toBe(true);
+  await expect(audio.start()).rejects.toThrow("not idle");
+  worker.emit("close");
+});
+
 test("handshake mismatch, timeout, exit, and late events close process", async () => {
   const worker = new Fake();
   const launch = LiveAudio.launch({ worker: worker as never, helloTimeoutMs: 20 });

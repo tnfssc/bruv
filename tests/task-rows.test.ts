@@ -102,6 +102,59 @@ test("replayed terminal truth cannot regress to old running or unknown owner sna
   expect(formatTaskRow(map.get(taskRowKey(row()))!)).toBe("✓ Run tests");
   expect(taskRowsFromDetails(JSON.parse(JSON.stringify({ taskRows: [...map.values()] })))).toHaveLength(1);
 });
+test("stale lifecycle snapshots still refresh metadata without replacing terminal evidence", () => {
+  const map = new Map<string, TaskRow>();
+  const terminal = row("one", "failed", { exitCode: 7, timedOut: true });
+  upsertTaskRow(map, terminal);
+  for (const stale of [row("one"), { ...row("one", "unknown"), terminal: true }]) {
+    const next = {
+      ...stale,
+      title: "  Updated\nname  ",
+      fallbackTitle: "  New\npreview  ",
+      sourceCallId: "new-call",
+      exitCode: 0,
+      timedOut: false,
+    };
+    const merged = upsertTaskRow(map, next);
+    expect(merged).toEqual({
+      ...terminal,
+      title: "Updated name",
+      fallbackTitle: "New preview",
+      sourceCallId: "new-call",
+    });
+    expect(map.get(taskRowKey(next))).toBe(merged);
+    expect(merged).not.toBe(terminal);
+    expect(next.title).toBe("  Updated\nname  ");
+    expect(terminal.title).toBe("Run tests");
+  }
+});
+test("terminal unknown can be resolved while omitted metadata and evidence survive partial updates", () => {
+  const map = new Map<string, TaskRow>();
+  const unknown: TaskRow = {
+    id: "ssh:remote",
+    source: "ssh",
+    status: "unknown",
+    terminal: true,
+    title: "  Earlier\nname  ",
+    fallbackTitle: "  Earlier\npreview  ",
+    sourceCallId: "launch-call",
+    exitCode: 7,
+  };
+  upsertTaskRow(map, unknown);
+  const merged = upsertTaskRow(map, {
+    id: unknown.id,
+    source: unknown.source,
+    status: "failed",
+    terminal: true,
+    title: " ",
+    fallbackTitle: " ",
+    sourceCallId: "",
+  });
+  expect(merged).toEqual({ ...unknown, status: "failed", title: "Earlier name", fallbackTitle: "Earlier preview" });
+  expect(formatTaskRow(merged)).toBe("✗ Earlier name — exit 7");
+  expect(upsertTaskRow(map, { ...merged, status: "cancelled", exitCode: 9 }).status).toBe("cancelled");
+  expect(map.get(taskRowKey(unknown))?.exitCode).toBe(9);
+});
 test("real SDK execute row updates in place, preserves prose and expansion, hides completion duplicate", () => {
   restores.push(installSdkTaskRows(theme));
   const parent = new Container();
