@@ -947,18 +947,24 @@
     {
       "focus": "src/tasks/task-monitor.ts",
       "initialBlob": "27acfb4e8b82ff387afbd53c59cfa399481632df",
-      "status": "primary-running",
+      "status": "awaiting-judge",
       "primary": {
         "id": "task_276c367a",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_276c367a",
         "branch": "bruv/primary-src-tasks-task-monitor.ts-276c367a",
         "base": "eb0e877718005a15d0e7604f3538098627c65730",
-        "commit": null
+        "commit": "c9e944995c92d27bc5c95b18d9cb40ccd9bd8230"
       },
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending",
-      "launchBase": "eb0e877718005a15d0e7604f3538098627c65730"
+      "launchBase": "eb0e877718005a15d0e7604f3538098627c65730",
+      "changedRelatedPaths": [],
+      "readingResult": "No-change: nonTUI refusal before allocation, session-captured /ps, panel closes adapter not jobs, confirmed stop rechecks identity/owner and preserves pending semantics.",
+      "checks": [
+        "18 pass143 assertions",
+        "diff pass; no realTUI rerun/fullbuild/authSSH"
+      ]
     },
     {
       "focus": "src/tasks/task-owner.ts",
@@ -1052,11 +1058,18 @@
     {
       "focus": "src/tasks/worktree-workspace.ts",
       "initialBlob": "76fe2987f9f644571d9b478ba835254f1fe988da",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_2d59fe31",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_2d59fe31",
+        "branch": "bruv/primary-src-tasks-worktree-workspace.ts-2d59fe31",
+        "base": "d5623c8e9d529384108765b2ae2604f493c0c60d",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "launchBase": "d5623c8e9d529384108765b2ae2604f493c0c60d"
     },
     {
       "focus": "src/tool-schema.ts",
@@ -1164,27 +1177,45 @@
     {
       "focus": "src/typescript/output-capture.ts",
       "initialBlob": "4b21e94241155f009144497997c9f8662e405ee8",
-      "status": "primary-running",
+      "status": "awaiting-judge",
       "primary": {
         "id": "task_105272bf",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_105272bf",
         "branch": "bruv/primary-src-typescript-output-capture.ts-105272bf",
         "base": "7a99d536c8be21afa20521148843a2d85f3c96b3",
+        "commit": "c88c37a075d16cd5ba9b1abc7f0354264406b337"
+      },
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending",
+      "launchBase": "7a99d536c8be21afa20521148843a2d85f3c96b3",
+      "changedRelatedPaths": [
+        "src/typescript/output-capture.ts",
+        "tests/execute-output-capture.test.ts"
+      ],
+      "readingResult": "StreamPreview owns decoding/character retention; capture owns serialized byte selection/prefix/spill/files/errors. Append visibly chooses file write vs prefix+first spill.",
+      "checks": [
+        "capture+execution41/184",
+        "characterization baseline16 pass",
+        "strict tsc/format/lint/diff pass",
+        "area runner reused; no rebuilt binary/fullgate"
+      ]
+    },
+    {
+      "focus": "src/typescript/runner.ts",
+      "initialBlob": "0405699abd4d594fb5dbebe432169885984a338d",
+      "status": "primary-running",
+      "primary": {
+        "id": "task_e65a5513",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_e65a5513",
+        "branch": "bruv/primary-src-typescript-runner.ts-e65a5513",
+        "base": "d5623c8e9d529384108765b2ae2604f493c0c60d",
         "commit": null
       },
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending",
-      "launchBase": "7a99d536c8be21afa20521148843a2d85f3c96b3"
-    },
-    {
-      "focus": "src/typescript/runner.ts",
-      "initialBlob": "0405699abd4d594fb5dbebe432169885984a338d",
-      "status": "pending",
-      "primary": null,
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integration": "pending"
+      "launchBase": "d5623c8e9d529384108765b2ae2604f493c0c60d"
     },
     {
       "focus": "tests/agent-progress.test.ts",
