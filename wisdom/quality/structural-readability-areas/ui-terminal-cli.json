@@ -2717,7 +2717,7 @@
     {
       "focus": "tests/terminal-interactions-cli.test.ts",
       "initialBlob": "45005f3443bbbd98a85ad66cc0e31b59a8a33c0c",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_58841b38",
@@ -2732,12 +2732,26 @@
           "id": "task_9704585a",
           "base": "0dc957493a1c216603772fb9aa207cfef43023c1",
           "candidate": "03a4c651a1a8967ecfe8090b1f7377ce9af6d511",
-          "verdict": "pending",
-          "priorRelatedJudge": "task_16ed90d7"
+          "verdict": "ACCEPT",
+          "priorRelatedJudge": "task_16ed90d7",
+          "objections": [],
+          "reviewedBlobs": {
+            "tests/terminal-interactions-cli.test.ts": "157c77305cba239e6c5e2ee273f5d1d4f72eb93d"
+          },
+          "evidence": "Each of five runs owns its artifact directory, assertions read their producer, baseline validates embedded comparison not unconditional heading. Existing pipe/worker/evidence/checkpoint/failure paths byte-identical.",
+          "checks": [
+            "Independent23tests/197assertions",
+            "Dashboard baseline-drop mutation original passes1/8, candidate rejects nullcomparison",
+            "format/lint/diff"
+          ],
+          "limits": [
+            "No runtime performance/build/typecheck/compiled/provider/PTY/paint",
+            "Existing test/worker timeouts unchanged; no kill escalation/signal/bounded drain guarantees"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integrationState": "related patch integrated; primary pending",
+      "acceptedBlob": "157c77305cba239e6c5e2ee273f5d1d4f72eb93d",
+      "integrationState": "exact fresh primary candidate integrated",
       "relatedPatchJudgments": [
         {
           "id": "task_16ed90d7",

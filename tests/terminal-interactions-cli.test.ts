@@ -16,23 +16,45 @@ async function run(...args: string[]) {
 test("report mode preserves budget, compares baseline and strictly gates saved evidence", async () => {
   const dir = await mkdtemp(join(tmpdir(), "interactions-report-"));
   try {
-    const source = join(dir, "source.json"),
-      out = join(dir, "report");
+    const source = join(dir, "source.json");
+    const baselineOut = join(dir, "baseline");
+    const strictOut = join(dir, "strict");
+    const permissiveOut = join(dir, "permissive");
+    const invalidReportOut = join(dir, "invalid-report");
+    const unknownCaseOut = join(dir, "unknown-case");
     await Bun.write(source, JSON.stringify(reportFixture()));
-    expect((await run("--report", source, "--baseline", source, "--strict", "--out", out)).exit).toBe(0);
-    expect((await Bun.file(join(out, "run.json")).json()).budgetMs).toBe(8);
-    const fail = await run("--report", source, "--budget", "7", "--strict", "--out", out);
+
+    const compared = await run("--report", source, "--baseline", source, "--strict", "--out", baselineOut);
+    expect(compared.exit).toBe(0);
+    expect((await Bun.file(join(baselineOut, "run.json")).json()).budgetMs).toBe(8);
+    const html = await Bun.file(join(baselineOut, "index.html")).text();
+    expect(html).toContain("Baseline comparison");
+    const data = JSON.parse(html.match(/<script id="interaction-data" type="application\/json">(.*?)<\/script>/s)![1]);
+    expect(data.comparison).not.toBeNull();
+    expect(data.comparison.warnings).toEqual([]);
+    expect(data.comparison.cases.map((c: { id: string }) => c.id)).toEqual(["tools/short/reveal"]);
+
+    // The longest observed span is exactly 7 ms: strict means below, not at, the budget.
+    const fail = await run("--report", source, "--budget", "7", "--strict", "--out", strictOut);
     expect(fail.exit).toBe(1);
     expect(fail.stdout).toContain("OBSERVED CPU MISSES");
-    expect((await run("--report", source, "--budget", "7", "--out", out)).exit).toBe(0);
-    expect(await Bun.file(join(out, "index.html")).text()).toContain("Baseline comparison");
+    expect((await Bun.file(join(strictOut, "run.json")).json()).budgetMs).toBe(7);
+    const permissive = await run("--report", source, "--budget", "7", "--out", permissiveOut);
+    expect(permissive.exit).toBe(0);
+    expect((await Bun.file(join(permissiveOut, "run.json")).json()).budgetMs).toBe(7);
+    expect((await Bun.file(source).json()).budgetMs).toBe(8);
+
     await Bun.write(source, '{"schemaVersion":"bogus"}');
-    expect((await run("--report", source, "--out", out)).exit).toBe(2);
-    expect((await run("--cases", "bad", "--out", out)).exit).toBe(2);
+    expect((await run("--report", source, "--out", invalidReportOut)).exit).toBe(2);
+    expect((await run("--cases", "bad", "--out", unknownCaseOut)).exit).toBe(2);
+    for (const out of [invalidReportOut, unknownCaseOut])
+      for (const name of ["run.json", "report.txt", "index.html"])
+        expect(await Bun.file(join(out, name)).exists()).toBe(false);
   } finally {
     await rm(dir, { recursive: true, force: true });
   }
 }, 30000);
+
 test("real repeated serial cases preserve raw evidence and separate cold/init from actions", async () => {
   const dir = await mkdtemp(join(tmpdir(), "interactions-repeat-"));
   try {
