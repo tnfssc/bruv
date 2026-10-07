@@ -1260,10 +1260,17 @@
     {
       "focus": "src/live/helper.ts",
       "initialBlob": "7cd173370b3ab5bf89e08ea287cbbe8e9e70b8a8",
-      "primary": null,
+      "primary": {
+        "id": "task_34c585ed",
+        "launchBase": "f67636586cd6bf6649ab5fce055cfec0819784f8",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_34c585ed",
+        "branch": "bruv/primary-src-live-helper.ts-34c585ed",
+        "status": "running",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "primary running"
     },
     {
       "focus": "src/live/lifecycle-access.ts",
@@ -2678,17 +2685,20 @@
         "launchBase": "47f771f49027fec0791ef455be4f548dbc77aaee",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_0dad3ccb",
         "branch": "bruv/primary-native-live-linux-tests-test_cap-0dad3ccb",
-        "status": "running",
-        "commit": null
+        "status": "candidate ready",
+        "commit": "08ec6a90ee3f57e3e43ea8e97292afaae80dc1a6"
       },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "primary running",
+      "integration": "awaiting judge slot",
       "relatedPatchJudgment": {
         "judgeId": "task_0f8a556e",
         "verdict": "ACCEPT",
         "blob": "589184ed6845c98d21a05cc338101e89708c3c6f"
-      }
+      },
+      "relatedPaths": [],
+      "readingResult": "Unchanged single fixture ownstemphelper/realpipes;closedepochsettling vsnew/malformed rejection direct;framing andsuspendedfailure teardown evidence intact.",
+      "checks": "10testspass/diffclean;no nativebuild/fullgate/device/provider/Mac."
     }
   ],
   "sharedBrief": "ONGOING whole-repo structural readability task. User rejected shallow rename/comment sweep and required independent judgment. Read wisdom/values.md and wisdom/quality/structural-readability-{guidance,owner-pilot,repo-wide}.md. Maximize actual ease of understanding, not diff count/names/smaller files/boilerplate. Identify concrete mental bookkeeping, trace real callers/shipped paths. Simplify tangled responsibilities, branching/hidden state, unrelated lifetimes, needless indirection/dead machinery. Coherent domain operations and visible effects, not arbitrary splitting/context bags/registries/state-machine frameworks. Good names/comments/types help but are insufficient when structure remains tangled. Already clear code may stay unchanged. Preserve purposeful permission/replay/cancellation/delivery/data-loss/protocol contracts; no invented safety reductions, speculative defenses/dependencies/feature cuts/weakened tests. Explicitly report and test observed incidental fixes. Green tests support safety, not readability. Source focus is not edit-only-one-file restriction: coherent related edits allowed, report overlaps and all changed paths. No push/PR. No global/other area notes/values edits. Shared read-only dependencies /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules. Bun /home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin/bun; use /bin/bash PATH set inside quoted script (automatic fish setup failure known). No per-worker massive builds. Device/provider/macOS gaps honest.",
