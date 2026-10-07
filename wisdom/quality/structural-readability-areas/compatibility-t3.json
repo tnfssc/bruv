@@ -96,18 +96,29 @@
     {
       "file": "scripts/claude-native-acceptance/model.mjs",
       "initialBlob": "974c4c41cd0b921a6b8bb569137a349d95135492",
-      "status": "primary-running",
+      "status": "judging",
       "primary": {
         "id": "task_caff1c75",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_caff1c75",
         "branch": "bruv/primary-scripts-claude-native-acceptance-caff1c75",
         "launchBase": "18cb468114e1d73f402f66015b14138e2ede2f47",
-        "commit": null
+        "commit": "484fff19d6f71ce3459426ba881d2e953badc4f4"
       },
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_84bcbfb5",
+          "status": "running",
+          "candidate": "484fff19d6f71ce3459426ba881d2e953badc4f4"
+        }
+      ],
       "acceptedBlob": null,
       "launchBase": "18cb468114e1d73f402f66015b14138e2ede2f47",
-      "observedIncidentalFix": "Worker reproduced overlapping async replies both recording/emitting sequence 2 while delayed request tool identity is sequence 1 using supported options.reply; proposes request-local attribution and deterministic overlap regression. Must be independently judged; not yet accepted."
+      "observedIncidentalFix": "Worker reproduced overlapping async replies both recording/emitting sequence 2 while delayed request tool identity is sequence 1 using supported options.reply; proposes request-local attribution and deterministic overlap regression. Must be independently judged; not yet accepted.",
+      "changedRelatedPaths": [
+        "tests/claude-native-acceptance-model.test.mjs"
+      ],
+      "readingResult": "Notification-only persisted ID/history correlation separated from ordinary scenario selection; runtime programs expose launch/save-owned-ID/stop/terminal wait and saved question authority instead of nested quote concatenation. Request-local sequence fixes reproduced overlapping async SSE/record attribution.",
+      "checks": "42 Node tests across acceptance/model variants;2 Bun node-path tests/10 expectations;syntax/format/lint/diff passed; fixtures not real connector evidence."
     },
     {
       "file": "scripts/claude-native-acceptance/run-subagent.mjs",
@@ -250,7 +261,7 @@
     {
       "file": "src/claude-compat/cli.ts",
       "initialBlob": "fdc3bb4a35f2f52b9a7d970aac5213681ffa0f85",
-      "status": "judging",
+      "status": "accepted-integrated",
       "primary": {
         "id": "task_adf93322",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_adf93322",
@@ -261,17 +272,26 @@
       "judges": [
         {
           "id": "task_71218826",
-          "status": "running",
-          "candidate": "150667b5d6000ff8f6bdc933a1ef57e5256511e0"
+          "status": "completed",
+          "candidate": "150667b5d6000ff8f6bdc933a1ef57e5256511e0",
+          "verdict": "ACCEPT",
+          "blob": "c3d9050ff5912bb22e961b72c52717b5cb3aede4",
+          "relatedBlobs": {
+            "tests/claude-compat-launch.test.ts": "36dade8e529327d36e7defa61bf9acf899fbae0a"
+          },
+          "objections": [],
+          "evidence": "Single teardown wait boundary before exit status; prompt cancellation still immediate; distinct operation/cleanup failure, startup stop prevents run, signal teardown maintained. Independently reproduced base double-diagnostic regression 18 pass/2 fail; candidate 35 launch/transport pass151 assertions + runtime outer pass +4 lifecycle probes.",
+          "limits": "Exact committed snapshots with shared deps/candidate assets, not compiled/live-provider."
         }
       ],
-      "acceptedBlob": null,
+      "acceptedBlob": "c3d9050ff5912bb22e961b72c52717b5cb3aede4",
       "launchBase": "0bc2b30a175d9af76fe95b04ce1966df1110eaa0",
       "changedRelatedPaths": [
         "tests/claude-compat-launch.test.ts"
       ],
       "readingResult": "Stop triggers cancellation immediately; one finally waits teardown; exit selected afterward, replacing distributed return branches/repeated close waits/asynchronous shutdownError. Explicit fix duplicated cleanup diagnostics reports once, still nonzero.",
-      "checks": "36 launch/transport/runtime outer tests,152 assertions; base regression 16 pass/2 fail for duplicate diagnostic tests, candidate passes. Format/diff pass; inherited lint/import organization notes."
+      "checks": "36 launch/transport/runtime outer tests,152 assertions; base regression 16 pass/2 fail for duplicate diagnostic tests, candidate passes. Format/diff pass; inherited lint/import organization notes.",
+      "integrationState": "Exact reviewed source and related launch test integrated; launch test primary pending."
     },
     {
       "file": "src/claude-compat/commands.ts",
@@ -306,10 +326,17 @@
     {
       "file": "src/claude-compat/history.ts",
       "initialBlob": "a89c8a44b0fb136a21e4f11fd6213f07a8cf60a7",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_3a86626e",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_3a86626e",
+        "branch": "bruv/primary-history-3a86626e",
+        "launchBase": "6eda4dac92470f5180fdde2c7c56518480ac5212",
+        "commit": null
+      },
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "launchBase": "6eda4dac92470f5180fdde2c7c56518480ac5212"
     },
     {
       "file": "src/claude-compat/human-controls.ts",
@@ -664,7 +691,15 @@
       "status": "pending",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "relatedPatchJudgments": [
+        {
+          "id": "task_71218826",
+          "verdict": "ACCEPT",
+          "blob": "36dade8e529327d36e7defa61bf9acf899fbae0a",
+          "candidate": "150667b5d6000ff8f6bdc933a1ef57e5256511e0"
+        }
+      ]
     },
     {
       "file": "tests/claude-compat-launcher.test.ts",
@@ -971,13 +1006,7 @@
       "acceptedBlob": null
     }
   ],
-  "crossAreaNeeds": [
-    {
-      "file": "src/claude-compat/arguments.ts",
-      "kind": "internal-overlap",
-      "reason": "CLI primary task_adf93322 active while arguments rework queued. Must inspect actual changed paths before joining; do not silently overwrite."
-    }
-  ],
+  "crossAreaNeeds": [],
   "batchChecks": [
     {
       "id": "task_554a7ded",
@@ -993,6 +1022,13 @@
       "status": "passed",
       "scope": "production-bridge/native-routing/local-notifications tests 47 pass/180 assertions; tsc --noEmit; focused Biome format/lint",
       "limits": "2 inherited warnings/10 infos; no live/build/full gate."
+    },
+    {
+      "id": "task_0b5ba673",
+      "commit": "6eda4dac",
+      "status": "passed",
+      "scope": "Integrated production-bridge/native-routing 39 pass,159 assertions",
+      "limits": "No live/full gate."
     }
   ]
 }
