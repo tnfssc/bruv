@@ -330,7 +330,7 @@
     {
       "focus": "src/goals/types.ts",
       "initialBlob": "c032871506f64451dd458946bc06f5493b788e73",
-      "status": "judge-pending-overlap",
+      "status": "judging-overlap",
       "primary": [
         {
           "id": "task_b5e31e7f",
@@ -348,7 +348,14 @@
           "overlap": "Store one assertion removal overlaps pending replay candidate; coherent final combination requires fresh file worker."
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_229853f3",
+          "candidate": "99438e18ec5dde7fdbff4c937edf67c663723834",
+          "base": "7c82b6171079e23e80badc6b521c2765fc8c2f9d",
+          "status": "running"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending"
     },
@@ -1030,8 +1037,15 @@
     {
       "focus": "tests/instruction-mode.test.ts",
       "initialBlob": "6bda0c237bcaf3fbbce1aac4c43d6780b5a24742",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_5d4de9b9",
+          "launchBase": "147c19b262b2388db01cdb80541f537f8f8717d0",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_5d4de9b9",
+          "branch": "bruv/primary-instruction-mode-tests-5d4de9b9"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending",
