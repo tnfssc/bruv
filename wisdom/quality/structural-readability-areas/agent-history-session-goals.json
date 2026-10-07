@@ -331,16 +331,30 @@
     {
       "focus": "src/agent/manual-shake.ts",
       "initialBlob": "238257a3a9b17501825647ca16dbf5e38daba6c6",
-      "status": "primary-running",
+      "status": "judging",
       "primary": [
         {
           "id": "task_dd5dc858",
           "launchBase": "8e3b36d9dc6b0ccf893791e119a71a60831ce972",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_dd5dc858",
-          "branch": "bruv/primary-manual-shake-projection-dd5dc858"
+          "branch": "bruv/primary-manual-shake-projection-dd5dc858",
+          "commit": "16e685366452845e2faff7fe7fbee57c6cdc5a6e",
+          "changedPaths": [
+            "src/agent/manual-shake.ts",
+            "tests/manual-shake.test.ts",
+            "wisdom/quality/structural-readability-worker.md"
+          ],
+          "checks": "89 focused SDK/history passes/1058 assertions; regressions baseline pass; baseline/candidate tsc pass; focused format/lint/diff pass; 4 lint warnings vs 2 baseline; no compiled/live claims."
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_c5c84c0c",
+          "candidate": "16e685366452845e2faff7fe7fbee57c6cdc5a6e",
+          "base": "8e3b36d9dc6b0ccf893791e119a71a60831ce972",
+          "status": "running"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending"
     },
@@ -2053,8 +2067,15 @@
       "focus": "tests/fixtures/transcript-snapshots.ts",
       "initialBlob": null,
       "originCandidate": "dfd632869cc21aaf0b20cb3e732e14258929b910",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_e8c1f4a2",
+          "launchBase": "69fa3b70dfa8987a2bf8784a73c66d650fe43f48",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_e8c1f4a2",
+          "branch": "bruv/primary-snapshot-filesystem-contracts-fi-e8c1f4a2"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "integrated-related-primary-pending",
