@@ -42,7 +42,7 @@ From: [resource judgment](resources/memory-resource-judgment.md), [queue review]
 
 ## 6. Leave user's work safe
 
-Leave other work, choices, and history alone. Separate independent edits. Clean up only what we own. Tool unavailable or denied? No quietly switch to one with more power. Unsure whose work it is, who may act, or what must stay private? Stop or say unsure. No weaken guard to get past it. Follow current permissions. No invent extra approval steps from old notes.
+Leave other work, choices, and history alone. Separate independent edits. Clean up only what we own. For probes, remove exact paths we created, not HOME or inherited SDK/config paths. A changed environment variable is not proof of isolation. Stop on setup errors; nested shell quoting must not turn fixture cleanup into removal of user data. See [HOME cleanup incident](quality/home-cleanup-incident.md). Tool unavailable or denied? No quietly switch to one with more power. Unsure whose work it is, who may act, or what must stay private? Stop or say unsure. No weaken guard to get past it. Follow current permissions. No invent extra approval steps from old notes.
 
 From: [PR hygiene](quality/pr-hygiene-final.md), [first-launch defaults](packaging/die-only-first-launch.md), [native interface](t3/t3-v2-production-interface.md), [current worktree design](t3/t3-worktree-design.md), [history privacy](history/searchable-history.md).
 
