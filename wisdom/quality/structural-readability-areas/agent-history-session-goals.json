@@ -395,7 +395,7 @@
     {
       "focus": "src/agent/native-compaction.ts",
       "initialBlob": "dbe3719e3628a5d5ece6f4eed440ea8ceba8b0f1",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_ec8e3840",
@@ -417,11 +417,18 @@
           "id": "task_7caa7713",
           "candidate": "08e00ae3c0aa5603288096ddb7d5a3ab73a8c682",
           "base": "1b4c733cda50010b819a35365ddc53e80827e861",
-          "status": "running"
+          "status": "complete",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Registration owns capture/replay/admission; one attempt owns pinned scope through auth/transport/settlement without capture mutation. Stale scope, billable cancelled/failed usage, response evidence and no postlaunch plaintext fallback preserved. Final manual projection context explicitly inspected.",
+          "checks": "Independent actual source/callers/tests/full diff and final manual context inspected; exact source/test blobs supplied; no whole-gate/live/compiled claim.",
+          "acceptedRelatedBlobs": {
+            "tests/native-compaction.test.ts": "165dbac0f976b308ce582985a00dda6846280cd9"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending"
+      "acceptedBlob": "629695696d1bedafc6147cfac485600ed878e664",
+      "integration": "integrated-exact-candidate"
     },
     {
       "focus": "src/agent/native-fast-mode.ts",
@@ -1193,7 +1200,7 @@
     {
       "focus": "src/session/operations.ts",
       "initialBlob": "b007de00a379d4f69fdd42594c4e608c7635a85a",
-      "status": "judge-pending",
+      "status": "judging",
       "primary": [
         {
           "id": "task_7a84499f",
@@ -1208,7 +1215,14 @@
           "checks": "27 tests/169 assertions; focused format/lint/diff pass; isolated TMPDIR/assets rerun after shared budget/missing asset failures; no build/typecheck/provider/SSH."
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_864426d0",
+          "candidate": "a285b48cd5f6879568f7514beb9f72bd5510f0dc",
+          "base": "97259e213b9f78703fdc630f66bc53375ef669ae",
+          "status": "running"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending"
     },
@@ -1844,7 +1858,14 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "relatedPatchReview": {
+        "candidate": "08e00ae3c0aa5603288096ddb7d5a3ab73a8c682",
+        "judge": "task_7caa7713",
+        "verdict": "ACCEPT",
+        "blob": "165dbac0f976b308ce582985a00dda6846280cd9",
+        "primaryFocusStillRequired": true
+      }
     },
     {
       "focus": "tests/native-fast-mode.test.ts",
