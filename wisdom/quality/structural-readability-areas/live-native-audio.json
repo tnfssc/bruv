@@ -908,9 +908,16 @@
         "status": "candidate ready",
         "commit": "79325faf09732f06bd890dbad180957b0a323def"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_365a3eee",
+          "status": "running",
+          "candidate": "79325faf09732f06bd890dbad180957b0a323def",
+          "base": "d50c5dcdcac64eebb0e8d9fb98f5f4e394159a34"
+        }
+      ],
       "acceptedBlob": null,
-      "integration": "awaiting judge slot",
+      "integration": "judge running",
       "relatedPaths": [],
       "readingResult": "Unchanged conversation adapter keeps transcript record/correction and matching currentbranch reconstruction together;admission/context exclusion/playbackinterrupt/explicitworkcancel remain distinctauthorities;extra splitting addsnavigation.",
       "checks": "43tests245assertions conversation/owner/passivehistory/transcript;initialWASM setupresolvedexistingasset,no behaviorfix/provider/device/Mac."
@@ -1236,13 +1243,20 @@
       "judgeRounds": [
         {
           "id": "task_bf610eb5",
-          "status": "running",
+          "status": "complete",
           "candidate": "ee1694e6abc99958cdd3600cb6fa3b29954a71c6",
-          "base": "168832841052c286d6f7fc0ed3bebdcda3e16167"
+          "base": "168832841052c286d6f7fc0ed3bebdcda3e16167",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "Pure omission refusal and arrivalorder overlapscan/maxend/priorwatermark/jointrim direct;bridge ownsreserve/loss/watermark/admission,owner rawaudit/sanitizedprompt,passivehistory provisionalmetadata. Helpernoinventedfinality or userprose.",
+          "checks": "Independent63tests705assertions plusarrivalorder/watermark/equality/omission/trim probes,diffclean;no build/provider/device/Mac.",
+          "acceptedBlobs": {
+            "src/live/gpt-live-request.ts": "ff55e2444000fa15232dabf6d697c63037a7b0ae"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "judge running",
+      "acceptedBlob": "ff55e2444000fa15232dabf6d697c63037a7b0ae",
+      "integration": "accepted unchanged blob matches area tip",
       "relatedPaths": [],
       "readingResult": "Unchanged rejectomittedspeech/scanarrivalorder timingvsadmission/jointext newlineoverlap/trim;rawaudit/provisionalreplay/admission stay withowners,no inventedfinality.",
       "checks": "63tests705assertions;missingWASM fixedexistingfixtures;no runtime/sourcechange/provider/device/Mac/build."
