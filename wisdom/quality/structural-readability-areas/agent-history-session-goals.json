@@ -1133,8 +1133,13 @@
     {
       "focus": "src/session/identity.ts",
       "initialBlob": "12d42ff85ad0c1524bb85bafeeb668fed2a42b26",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_743c2cfa",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending"
@@ -1180,13 +1185,19 @@
     {
       "focus": "src/session/operations.ts",
       "initialBlob": "b007de00a379d4f69fdd42594c4e608c7635a85a",
-      "status": "primary-running",
+      "status": "judge-pending",
       "primary": [
         {
           "id": "task_7a84499f",
           "launchBase": "97259e213b9f78703fdc630f66bc53375ef669ae",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_7a84499f",
-          "branch": "bruv/primary-session-operation-contracts-7a84499f"
+          "branch": "bruv/primary-session-operation-contracts-7a84499f",
+          "commit": "a285b48cd5f6879568f7514beb9f72bd5510f0dc",
+          "changedPaths": [
+            "wisdom/quality/structural-readability-worker.md"
+          ],
+          "result": "No change: contracts route to owning host replay/scope/existing task authority; cancellation confirmation distinct from observation, current Live uses MainOwner not facade.",
+          "checks": "27 tests/169 assertions; focused format/lint/diff pass; isolated TMPDIR/assets rerun after shared budget/missing asset failures; no build/typecheck/provider/SSH."
         }
       ],
       "judgeRounds": [],
