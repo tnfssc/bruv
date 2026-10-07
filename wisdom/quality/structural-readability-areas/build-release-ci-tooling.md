@@ -120,3 +120,7 @@ Source remoteCLI tests:case-owned homes/specificerrors/reject-before-owner proof
 Architecture guard NO CHANGE NEEDED task_bdc1d4a5 fe6b52be:15/143+21disposable fixtures,188TS423relativeedges. Direct relativeimport/layout only;nonrelativeignored and .js-suffixed taskowner predicate gap observed(no current correspondingedge). Listedhomes not universalownershipuniqueness.
 
 Nodepath tests NO CHANGE NEEDED task_179e47de48730a38;17/95independent. ChildexecPath not tapinterpreterproof;generatedcommands onlyinspected,wireonlystdout,workflowstatictext. Actual native acceptance caller separately pinned/hash/exit/evidence. Stalledpredecessor not evidence.
+
+REJECT task_685f1bda process-isolation candidate933de4fb: inherited BRUV_SUBAGENT_TYPE=normal masks Herdr TUI startupguard despite depth0,so zero requests can pass for wrongreason. Smallrework explicit emptytype rootlaunch and TUI-specific bypass negativecontrol under hostileparent;sanitizer scope unchanged. Candidate NOTintegrated;freshrework waits primaryslot.
+
+Connectorupdate fixture:single release-filemap eliminates duplicated metadata/body/checksum authority. Judge task_cab47470 ACCEPT11fbb1c6;7/91+9differentialconfigs(bytes,headers,order,logs,URLerrors/failures),tsc/Biomepass. Checksums capture fixed childenv at initialization;normal executable synthetic,connector shippinggenerator. Frozenhashunchanged.

@@ -1508,19 +1508,37 @@
     {
       "focus": "tests/connector-update-fixture.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_1c667037",
           "launchBase": "b2e6926b3d45bf905d8430e208bf50690dd38b91",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_1c667037",
           "branch": "bruv/primary-tests-connector-update-fixture.t-1c667037",
-          "state": "running"
+          "state": "completed",
+          "commit": "a73bf5f5d0ff4ea90e96cc7391c553d5c9a5ce02"
         }
       ],
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_cab47470",
+          "base": "b2e6926b3d45bf905d8430e208bf50690dd38b91",
+          "candidate": "a73bf5f5d0ff4ea90e96cc7391c553d5c9a5ce02",
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "evidence": "One releasefiles authority supplies metadata/body/checksum;exact mapkey retains URLrejection. Checksumconfig read once at fixtureinitialization vsrequest;actual callers fixed env. Shipping-generatedconnector vs syntheticnormal versionprobe explicit.",
+          "checks": "Independent7tests91assertions;9differential configurations exactmetadata/order/bytes/hashtext/statusheaders/logs7rejectedURLs each;launcherread/logfailurematch. tsc/Biome/diffpass;frozenSHA unchanged. Linuxfixture not shippednormalbinary/fullbuild/native/live.",
+          "acceptedBlobs": {
+            "tests/connector-update-fixture.ts": "11fbb1c606d69a7d5df227b963f8a2a088005ce9"
+          }
+        }
+      ],
       "relatedPaths": [],
-      "acceptedBlob": null
+      "acceptedBlob": "11fbb1c606d69a7d5df227b963f8a2a088005ce9",
+      "readingResult": "Single release-file map supplies metadata/downloads replacing separate bytes/names/requesttime checksumbranches.",
+      "checks": "7integrationtests;tsc/Biome/diffpass;6differential scenarios preserve metadata/bytes/headers/logs/URLrejection. Frozenhashunchanged;syntheticnormal versionprobe not shippedconnector.",
+      "integrationState": "Fullfocus patch integrated;production/frozenfixture unchanged;note excluded."
     },
     {
       "focus": "tests/connector-update.test.ts",
@@ -1618,19 +1636,29 @@
     {
       "focus": "tests/find-ci-baseline.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judge-running",
       "primary": [
         {
           "id": "task_109390aa",
           "launchBase": "b2e6926b3d45bf905d8430e208bf50690dd38b91",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_109390aa",
           "branch": "bruv/primary-tests-find-ci-baseline.test.ts-109390aa",
+          "state": "completed",
+          "commit": "486c2a12038fce135250d229915ac9ba186f788b"
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_aa63512d",
+          "base": "b2e6926b3d45bf905d8430e208bf50690dd38b91",
+          "candidate": "486c2a12038fce135250d229915ac9ba186f788b",
           "state": "running"
         }
       ],
-      "judges": [],
       "relatedPaths": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "readingResult": "Named trust-boundary groups replace anonymous rejectionloops/mixedfailures;realGit/selector retained;endpointauth/commitvsblob/shareddeadlineabort added.",
+      "checks": "35focus47combined;strictfocus tsc/Biome/diff;finderunchanged. HTTPstub,no hostedAPI/forcedGithang/fullbuild."
     },
     {
       "focus": "tests/helpers.ts",
@@ -1901,19 +1929,35 @@
     {
       "focus": "tests/offline-process-isolation.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "rework-pending",
       "primary": [
         {
           "id": "task_61decf20",
           "launchBase": "54d2cdb779c91c327c19e5768f2da2e6463b1512",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_61decf20",
           "branch": "bruv/primary-tests-offline-process-isolation.-61decf20",
-          "state": "running"
+          "state": "completed",
+          "commit": "933de4fb5119a222d5843361016443eb012c20d3"
         }
       ],
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_685f1bda",
+          "base": "54d2cdb779c91c327c19e5768f2da2e6463b1512",
+          "candidate": "933de4fb5119a222d5843361016443eb012c20d3",
+          "state": "completed",
+          "verdict": "REJECT",
+          "fullContext": "**REJECT — one concrete startup-fixture blocker.**\n\nInspected full patch at candidate `933de4fb5119a222d5843361016443eb012c20d3`, against base `54d2cdb779c91c327c19e5768f2da2e6463b1512`.\n\nFocus blob: `f433e93d14b0c3fa94bb7024cd1125da2a4c96f6`. No repository edits.\n\n### Real improvement\nExplicit per-launch environments remove global mutation/restoration bookkeeping. The new Bun-child test meaningfully checks stripped Herdr fields, retained API key, and unchanged source fields. Shared quoting/readiness helpers preserve assertions; moving listener setup inside `try/finally` improves cleanup coverage.\n\n### Blocker\nThe compiled TUI fixture resets `BRUV_SUBAGENT_DEPTH=0` but inherits `BRUV_SUBAGENT_TYPE`.\n\nActual judge environment contains `BRUV_SUBAGENT_TYPE=normal`. `src/herdr-agent-state.ts:readConfig()` disables Herdr whenever that role is nonblank. Consequently:\n\n- Bypassing sanitization makes the direct-child test fail correctly.\n- **The compiled TUI isolation test still passes with sanitization bypassed.**\n- Removing only the inherited role makes that same TUI negative control fail, recording `pane.report_agent_session` and `pane.report_agent`.\n\nThus the TUI’s empty-request assertion is masked by unrelated inherited startup identity in this worker environment. This weakness is pre-existing, but remains an observed intrinsic problem in the candidate.\n\n### Smallest coherent rework\nExplicitly launch the fixture as a root process: add `BRUV_SUBAGENT_TYPE=` alongside `BRUV_SUBAGENT_DEPTH=0`. Preserve the sanitizer’s current scope. Verify sanitized startup passes and **TUI-specific** sanitizer bypass fails while the parent carries `BRUV_SUBAGENT_TYPE=normal`.\n\n### Independent checks\n- Bun 1.4.2: **7 tests passed**, 36 expectations.\n- Focus Biome format/lint, `tsc --noEmit`, diff check passed.\n- Reused compiled `dist/bruv`, SHA256 `4049e1a6691a74aece96ac664d3e02d5078cb659255df889f2c4f4826f62ef24`; no source fallback/build.\n- Reviewed helpers, readiness/assertion contracts, tmux configuration, CLI registration and Herdr startup gate.\n\nNo credential, network, timeout, process-tree, live/provider/device/SSH proof claimed.",
+          "objections": [
+            "Inherited BRUV_SUBAGENT_TYPE=normal masks TUI startup Herdr check;empty-request assertion passes for unrelated reason. Root depth alone insufficient."
+          ],
+          "requiredRework": "Explicit rootchild BRUV_SUBAGENT_TYPE= with DEPTH=0;preserve sanitizer scope;verify pass and TUI-specific bypassfailure under normal parenttype."
+        }
+      ],
       "relatedPaths": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "readingResult": "Explicit hostile childenv replaces global mutation/restoration;realchild checks strippedHerdr,retainedAPIkey,unchangedsource;reuse quoting/readiness helpers,listener setup inside cleanupscope.",
+      "checks": "7tests;focusBiome/tsc/diff;sanitizerbypassnegative controlfails. Reused area realbinary;not credential/network/timeout/processtree proof."
     },
     {
       "focus": "tests/prepare-assets.test.ts",
@@ -1953,11 +1997,29 @@
     {
       "focus": "tests/product-identity.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
-      "judges": [],
+      "state": "judge-running",
+      "primary": [
+        {
+          "id": "task_0c3e11ef",
+          "launchBase": "2ef3dcded18b316ecaa74fb1c6a083f13f17a69b",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_0c3e11ef",
+          "branch": "bruv/primary-tests-product-identity.test.ts-0c3e11ef",
+          "state": "completed",
+          "commit": "7acb4cf61b4f3f169be9480439e9d6458972bd36"
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_b7a011bf",
+          "base": "2ef3dcded18b316ecaa74fb1c6a083f13f17a69b",
+          "candidate": "7acb4cf61b4f3f169be9480439e9d6458972bd36",
+          "state": "running"
+        }
+      ],
       "relatedPaths": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "readingResult": "Separate metadata contracts,complete releaseassets and named route/flag probes each with fresh isolatedhome replace mixed assertions/nested sharedhome.",
+      "checks": "10focuspass;Biome/tsc/diff;reused actualareapair,norebuild;no productionchanges."
     },
     {
       "focus": "tests/production-packaging.test.ts",
@@ -2186,8 +2248,16 @@
     {
       "focus": "tests/smoke-script.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_d0d9d3eb",
+          "launchBase": "2ef3dcded18b316ecaa74fb1c6a083f13f17a69b",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_d0d9d3eb",
+          "branch": "bruv/primary-tests-smoke-script.test.ts-d0d9d3eb",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null
@@ -2195,8 +2265,16 @@
     {
       "focus": "tests/tooling-fixtures.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_8c70c1f6",
+          "launchBase": "2ef3dcded18b316ecaa74fb1c6a083f13f17a69b",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_8c70c1f6",
+          "branch": "bruv/primary-tests-tooling-fixtures.test.ts-8c70c1f6",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null
@@ -2222,8 +2300,16 @@
     {
       "focus": "tests/update-v0.16.3-fixture.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_bf44caf8",
+          "launchBase": "2ef3dcded18b316ecaa74fb1c6a083f13f17a69b",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_bf44caf8",
+          "branch": "bruv/primary-frozen-historical-updater-fixtur-bf44caf8",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null
