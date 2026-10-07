@@ -109,3 +109,5 @@ Render profiler primary task_98eabc08; judge task_5e042418 ACCEPT ec5417038093c7
 Performance report primary task_598e86e4 + judge task_7b633bb8 NO CHANGE NEEDED at 2fcf24ca57d3c81087a237150258a6ec944bbefa, independent 22 tests/122 assertions. Pure capture/import/summary/budget/comparison transforms already coherent. Identity serialization stays order-sensitive; environment/content differences warn, not suppress comparisons.
 
 Runtime acceptance primary task_8217bb2e; judge task_150f5c27 ACCEPT 98bd940bd8dc870efa814074b7c038649d4df706. Journal/snapshot/session fixture creation separated from unchanged UI/replay journey. Both Python suites 11 passes; independent deterministic bytes and AST preservation, syntax/diff. Fixture-only proof, not compiled/visual acceptance. Related Python test primary pending.
+
+Performance options primary task_61e4e31c + judge task_be297c64 NO CHANGE NEEDED at 9d123b4f21a13ef603be8c89b2eb9e16a68e1463; independent 9 tests/60 assertions and 63 supplemental parsing/selection/budget/strict-boundary assertions.

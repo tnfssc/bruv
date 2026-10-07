@@ -163,11 +163,19 @@
     {
       "focus": "scripts/tasks-ui-proof-build.ts",
       "initialBlob": "3c50cd1531b85ff6b44517154be60c5c133b8b03",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_69932f49",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_69932f49",
+          "branch": "bruv/primary-readability-scripts-tasks-ui-pro-69932f49",
+          "launchBase": "c9707192e101252662f82998d281ba8565592584"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "launchBase": "c9707192e101252662f82998d281ba8565592584"
     },
     {
       "focus": "scripts/tasks-ui-proof-screenshots.ts",
@@ -405,19 +413,30 @@
     {
       "focus": "scripts/terminal-perf/interaction-report.ts",
       "initialBlob": "18af4bb852d356ff8cb446eccd13fad32242b79d",
-      "status": "primary-running",
+      "status": "candidate-awaiting-judge-slot",
       "primary": [
         {
           "id": "task_5930e394",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_5930e394",
           "branch": "bruv/primary-readability-scripts-terminal-per-5930e394",
-          "launchBase": "10c405fe18f54e15e915efe5d9a98ee37144f798"
+          "launchBase": "10c405fe18f54e15e915efe5d9a98ee37144f798",
+          "commit": "d5fadc4552948bf4041af05249ccb577b313b269"
         }
       ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integrationState": "pending",
-      "launchBase": "10c405fe18f54e15e915efe5d9a98ee37144f798"
+      "launchBase": "10c405fe18f54e15e915efe5d9a98ee37144f798",
+      "changedRelatedPaths": [
+        "tests/terminal-interactions-report.test.ts"
+      ],
+      "result": "Candidate separates run identity, per-case repetitions, evidence links and span validation ownership; preserves validation ordering/messages/values and report accounting.",
+      "checks": [
+        "20 tests /117 assertions",
+        "Focused strict TypeScript/format",
+        "Seven exact-base validation contracts match",
+        "lint exit 0 infos"
+      ]
     },
     {
       "focus": "scripts/terminal-perf/interaction-tool-events.test.ts",
@@ -475,7 +494,7 @@
     {
       "focus": "scripts/terminal-perf/options.ts",
       "initialBlob": "9d123b4f21a13ef603be8c89b2eb9e16a68e1463",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_61e4e31c",
@@ -490,11 +509,24 @@
           "id": "task_be297c64",
           "base": "2ebd9fd9b43f358eabf5351ab01fb4b4af4e855b",
           "candidate": "b17800456f856f9314ab01b6387210c2f3376592",
-          "verdict": "pending"
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reviewedBlobs": {
+            "scripts/terminal-perf/options.ts": "9d123b4f21a13ef603be8c89b2eb9e16a68e1463"
+          },
+          "evidence": "Fresh defaults, primitive parsing and local validation visible; runner owns union selection, report runner distinguishes explicit override from defaults and strict boundaries.",
+          "checks": [
+            "Independent 9 tests /60 assertions",
+            "63 supplemental reader-journey assertions",
+            "diff check"
+          ],
+          "limits": [
+            "No full build/typecheck/platform/provider/PTY/paint/speed; artifacts nontransactional"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integrationState": "pending",
+      "acceptedBlob": "9d123b4f21a13ef603be8c89b2eb9e16a68e1463",
+      "integrationState": "unchanged final focus accepted",
       "launchBase": "2ebd9fd9b43f358eabf5351ab01fb4b4af4e855b",
       "changedRelatedPaths": [],
       "result": "No-change: defaults/validation, runner-owned union selection and explicit budget override remain direct.",
@@ -2093,7 +2125,7 @@
     {
       "focus": "tests/task-rows.test.ts",
       "initialBlob": "020528a4b2ce3105e8d0c203cee2c9e13273cf96",
-      "status": "candidate-awaiting-judge-slot",
+      "status": "judging",
       "primary": [
         {
           "id": "task_e44a3fd7",
@@ -2104,7 +2136,19 @@
           "commit": "1b66a8d1dc898e2953e963da9f4af5b663bafd86"
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_c584a1d4",
+          "base": "10c405fe18f54e15e915efe5d9a98ee37144f798",
+          "candidate": "1b66a8d1dc898e2953e963da9f4af5b663bafd86",
+          "verdict": "pending",
+          "priorRelatedJudges": [
+            "task_24064ab2",
+            "task_060d7edf"
+          ],
+          "unresolved": "Observed TS2741 missing Component.invalidate in prior accepted related test; primary repairs one-line fixture only"
+        }
+      ],
       "acceptedBlob": null,
       "integrationState": "related blob judged; full tsc blocked by missing fixture Component.invalidate; next free primary slot must repair and freshly judge",
       "relatedPatchJudgments": [
