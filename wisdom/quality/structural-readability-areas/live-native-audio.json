@@ -238,17 +238,20 @@
         "launchBase": "08dc3dd7c0e48cbb811c003b70592b7e51628b55",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_e7779538",
         "branch": "bruv/primary-native-live-test-core.c-e7779538",
-        "status": "running",
-        "commit": null
+        "status": "candidate ready",
+        "commit": "017776567ec43ba4a886dd5edadab71d6430331d"
       },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "primary running",
+      "integration": "awaiting judge slot",
       "relatedPatchJudgment": {
         "judgeId": "task_365b0c49",
         "verdict": "ACCEPT",
         "blob": "c976ac82d9a89a8241d65311bc798bb214150a89"
-      }
+      },
+      "relatedPaths": [],
+      "readingResult": "Independent scenarios own core lifetimes instead of one shared history through generations 0–10; contiguous/split playback juxtaposed, capture overflow owns refill/drop accounting, flush/capacity sequence kept coherent; accepted flush helper identical.",
+      "checks": "Baseline/candidate Clang ASan/UBSan strict core pass; capture-gate/waveform pass; three mutations rejected by both baseline/candidate; diff clean. No production change/macOS/device/provider/full build."
     },
     {
       "focus": "native/live/test-waveform.c",
@@ -1317,10 +1320,17 @@
     {
       "focus": "tests/openai-session.test.ts",
       "initialBlob": "a3284f8c1803e2b14259bddf0216ad4daa55aaaf",
-      "primary": null,
+      "primary": {
+        "id": "task_b8b36154",
+        "launchBase": "ffafbca7bdd95d535b73d915a3211eca801b7479",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_b8b36154",
+        "branch": "bruv/primary-tests-openai-session.test.ts-b8b36154",
+        "status": "running",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "related accepted patch integrated; own primary focus pending",
+      "integration": "primary running",
       "relatedPatchJudgment": {
         "judgeId": "task_5c3c9aed",
         "verdict": "ACCEPT",
