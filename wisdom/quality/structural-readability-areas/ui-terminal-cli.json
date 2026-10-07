@@ -1916,7 +1916,7 @@
     {
       "focus": "tests/conversation-density.test.ts",
       "initialBlob": "e58898c0494a2673216105420c234d2be53960fa",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_9bb57a1e",
@@ -1931,15 +1931,30 @@
           "id": "task_32a06541",
           "base": "5ae62b2e32a076821c5c28aeef53100b2f8c7689",
           "candidate": "cf43fa6ef2bcbb84d142fbd3478300d85d7a0bf6",
-          "verdict": "pending",
+          "verdict": "ACCEPT",
           "priorRelatedJudges": [
             "task_203052f5",
             "task_060d7edf"
+          ],
+          "objections": [],
+          "reviewedBlobs": {
+            "tests/conversation-density.test.ts": "a3500820b45fc6b2223b3fc7770027ad4f601474"
+          },
+          "evidence": "One fixture registers every installed adaptation; tests keep explicit disposal under assertion. Observed failure-path prototype leak repaired, geometry/source/foreign-wrapper journeys local and assertions unchanged.",
+          "checks": [
+            "126 ordered assertion statements equal",
+            "27 installs registered vs base20",
+            "Primary base/candidate27/237; four suites87/679",
+            "Failure injection base add/remove/clear leaked, candidate restored",
+            "format/lint/diff"
+          ],
+          "limits": [
+            "No build/typecheck/provider/PTY/device"
           ]
         }
       ],
-      "acceptedBlob": null,
-      "integrationState": "related patch integrated; primary pending",
+      "acceptedBlob": "a3500820b45fc6b2223b3fc7770027ad4f601474",
+      "integrationState": "new primary test candidate integrated, supersedes related/join test blob",
       "relatedPatchJudgments": [
         {
           "id": "task_203052f5",
@@ -2634,6 +2649,11 @@
       "judge": "task_c584a1d4",
       "blob": "d2b90b93184b0a257924201768a79283208f9dd8",
       "proof": "Six-file UI join149/13662; no production blobs changed; one-line contract repair."
+    },
+    "laterDensityTestRepair": {
+      "judge": "task_32a06541",
+      "blob": "a3500820b45fc6b2223b3fc7770027ad4f601474",
+      "proof": "Four suites87/679; unchanged126 assertions and no production blobs changed; observed fixture failure cleanup fixed"
     }
   }
 }
