@@ -5,11 +5,11 @@ describe("provider-reported CLI voice cost", () => {
   test("GPT-Live cumulative duration, duplicates, out-of-order, final correction; backend remains unknown", () => {
     const entries: { cost: number; unknown?: boolean }[] = [];
     const tracker = new VoiceCostTracker("openai", "gpt-live-1", (e) => entries.push(e));
-    tracker.cumulative({ seconds: 12 });
-    tracker.cumulative({ seconds: 15 });
-    tracker.cumulative({ seconds: 15 });
-    tracker.cumulative({ seconds: 13 });
-    tracker.cumulative({ seconds: 18 });
+    tracker.usage({ seconds: 12 });
+    tracker.usage({ seconds: 15 });
+    tracker.usage({ seconds: 15 });
+    tracker.usage({ seconds: 13 });
+    tracker.usage({ seconds: 18 });
     tracker.close();
     expect(entries.map((e) => [Number(e.cost.toFixed(8)), e.unknown])).toEqual([
       [0.01, undefined],
@@ -49,11 +49,11 @@ describe("provider-reported CLI voice cost", () => {
       ],
       candidatesTokensDetails: [{ modality: "AUDIO", tokenCount: 20 }],
     });
-    tracker.gemini(usage(100));
-    tracker.gemini(usage(100));
-    tracker.gemini(usage(120));
+    tracker.usage(usage(100));
+    tracker.usage(usage(100));
+    tracker.usage(usage(120));
     tracker.turnComplete();
-    tracker.gemini(usage(100));
+    tracker.usage(usage(100));
     tracker.close();
     expect(entries).toHaveLength(3);
     expect(entries.reduce((sum, e) => sum + e.cost, 0)).toBeCloseTo(
@@ -90,8 +90,8 @@ describe("provider-reported CLI voice cost", () => {
     );
     const entries: { cost: number; unknown?: boolean }[] = [];
     const tracker = new VoiceCostTracker("google", "gemini-3.8-live", (entry) => entries.push(entry));
-    tracker.gemini(base);
-    tracker.gemini({ ...base, cachedContentTokenCount: 25 });
+    tracker.usage(base);
+    tracker.usage({ ...base, cachedContentTokenCount: 25 });
     expect(entries).toEqual([{ cost: (100 * 3 + 20 * 4.5) / 1e6 }, { cost: 0, unknown: true }]);
     tracker.close();
     expect(entries).toHaveLength(2);
@@ -99,9 +99,49 @@ describe("provider-reported CLI voice cost", () => {
   test("unknown usage/pricing is never recorded as zero", () => {
     const entries: { cost: number; unknown?: boolean }[] = [];
     const tracker = new VoiceCostTracker("google", "unpriced", (e) => entries.push(e));
-    tracker.gemini({ promptTokensDetails: [] });
+    tracker.usage({ promptTokensDetails: [] });
     tracker.close();
     expect(entries).toEqual([{ cost: 0, unknown: true }]);
     expect(voiceCost("openai", "gpt-live-1", {})).toBeUndefined();
+  });
+  test("unknown snapshots retain known increments and survive successful finalization", () => {
+    const entries: { cost: number; unknown?: boolean }[] = [];
+    const tracker = new VoiceCostTracker("google", "gemini-3.8-live", (entry) => entries.push(entry));
+    const usage = (count: number) => ({
+      promptTokensDetails: [{ modality: "AUDIO", tokenCount: count }],
+      candidatesTokensDetails: [],
+    });
+    tracker.usage(usage(100));
+    tracker.usage({ promptTokenCount: 120 });
+    tracker.usage(usage(120));
+    tracker.usage(usage(110));
+    tracker.turnComplete();
+    tracker.usage(usage(100));
+    tracker.close(true);
+    tracker.close(false);
+    expect(entries).toEqual([
+      { cost: (100 * 3) / 1e6 },
+      { cost: 0, unknown: true },
+      { cost: (120 * 3) / 1e6 - (100 * 3) / 1e6 },
+      { cost: (100 * 3) / 1e6 },
+    ]);
+    expect(tracker.incomplete).toBe(true);
+  });
+  test("explicit zero usage is distinct from no usage and unfinalized usage", () => {
+    const zero = { promptTokensDetails: [], candidatesTokensDetails: [] };
+    const completed: { cost: number; unknown?: boolean }[] = [];
+    const known = new VoiceCostTracker("google", "gemini-3.8-live", (entry) => completed.push(entry));
+    known.usage(zero);
+    known.close();
+    expect(known.incomplete).toBe(false);
+    expect(completed).toEqual([]);
+    const incomplete: { cost: number; unknown?: boolean }[] = [];
+    const unfinalized = new VoiceCostTracker("google", "gemini-3.8-live", (entry) => incomplete.push(entry));
+    unfinalized.usage(zero);
+    unfinalized.close(false);
+    expect(incomplete).toEqual([{ cost: 0, unknown: true }]);
+    const absent: { cost: number; unknown?: boolean }[] = [];
+    new VoiceCostTracker("google", "gemini-3.8-live", (entry) => absent.push(entry)).close();
+    expect(absent).toEqual([{ cost: 0, unknown: true }]);
   });
 });

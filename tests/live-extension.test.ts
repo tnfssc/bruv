@@ -1496,6 +1496,62 @@ test("extended thinking stays busy across filler turn completion until provider 
   await t.run("stop");
 });
 
+test("GPT-Live terminal duration is billed even without interim usage", async () => {
+  let callbacks!: import("../src/live/gpt-live-session").GPTLiveCallbacks;
+  const f = setup({
+    config: { load: async () => ({ provider: "openai", model: "gpt-live-1" }), save: async () => {} },
+    gptSession: (cb) => {
+      callbacks = cb;
+      return {
+        state: "ready",
+        connect: async () => {},
+        appendMicrophone: () => true,
+        observation: () => true,
+        commentary: () => true,
+        close: async () => callbacks.onClosed?.(true, { seconds: 18 }),
+      } as any;
+    },
+  });
+  await f.run("start");
+  expect((await f.stop()).stopped).toBe(true);
+  expect(f.transcriptEntries.filter((entry) => entry.type === "bruv-live-cost").map((entry) => entry.data)).toEqual([
+    { cost: (18 * 0.05) / 60 },
+    { cost: 0, unknown: true },
+  ]);
+});
+
+test("GPT-Live bills cumulative snapshots once and includes terminal usage during stop", async () => {
+  let callbacks!: import("../src/live/gpt-live-session").GPTLiveCallbacks;
+  const f = setup({
+    config: { load: async () => ({ provider: "openai", model: "gpt-live-1" }), save: async () => {} },
+    gptSession: (cb) => {
+      callbacks = cb;
+      return {
+        state: "ready",
+        connect: async () => {},
+        appendMicrophone: () => true,
+        observation: () => true,
+        commentary: () => true,
+        close: async () => callbacks.onClosed?.(true, { seconds: 18 }),
+      } as any;
+    },
+  });
+  await f.run("start");
+  callbacks.onUsage?.({ seconds: 12 });
+  callbacks.onUsage?.({ seconds: 15 });
+  callbacks.onUsage?.({ seconds: 15 });
+  callbacks.onUsage?.({ seconds: 13 });
+  const costs = () => f.transcriptEntries.filter((entry) => entry.type === "bruv-live-cost").map((entry) => entry.data);
+  expect(costs().map((entry) => Number(entry.cost.toFixed(8)))).toEqual([0.01, 0.0025]);
+  expect((await f.stop()).stopped).toBe(true);
+  expect(costs().map((entry) => [Number(entry.cost.toFixed(8)), entry.unknown])).toEqual([
+    [0.01, undefined],
+    [0.0025, undefined],
+    [0.0025, undefined],
+    [0, true], // Backend charges remain unavailable, even with terminal duration.
+  ]);
+});
+
 test("GPT-Live routes client delegation to selected main owner, keeps transcript provisional and voice stop leaves work untouched", async () => {
   let callbacks: any;
   const observations: any[] = [];

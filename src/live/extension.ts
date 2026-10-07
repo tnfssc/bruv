@@ -680,7 +680,9 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
         },
         onUsage: (usage) => this.cost.usage(usage),
         onError: (message) => this.fail(message),
-        onClosed: () => {
+        onClosed: (finalized, usage) => {
+          if (usage !== undefined) this.cost.usage(usage);
+          this.cost.close(finalized);
           if (this.alive) this.fail("GPT-Live provider closed");
         },
       });
@@ -690,10 +692,7 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
       this.voice = deps.voice(
         {
           onAudio: (pcm, epoch) => this.output(pcm, epoch),
-          onUsage: (usage, id) => {
-            if (this.provider === "google") this.cost.gemini(usage);
-            else this.cost.usage(usage, id);
-          },
+          onUsage: (usage, id) => this.cost.usage(usage, id),
           getPlayedAudioMs: () => this.playback.playedMs,
           onInterrupted: (epoch) => this.interrupt(epoch),
           onInteractionStatus: (status) => {

@@ -901,13 +901,23 @@
       "judgeRounds": [
         {
           "id": "task_4b5c5997",
-          "status": "running",
+          "status": "complete",
           "candidate": "da7f97d770768c2f74540f8a9c3fde8667e15177",
-          "base": "dceb7d50d4ef5cd3f88d248ba18419d63507fad2"
+          "base": "dceb7d50d4ef5cd3f88d248ba18419d63507fad2",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Usage ingress owns provider-specific watermark/dedup/pricing/incremental persistence;caller no longer picks accounting semantics. GPTsession cumulative/Geminiturn cumulative/Realtime independent IDs explicit. Terminalbilling preserved after activityrevocation,sessionIDguard+unknown sticky.",
+          "checks": "Independent97candidate tests851assertions;126combinedGPT/accounting/footer1157assertions;two exactbaseline realtransportcontrolledsocket regressions fail thenpass;finalGPT92d985f0 API/closeorder/faileduncertainty/switchedsession checked. No authenticated/device/macOS.",
+          "acceptedBlobs": {
+            "src/live/cost.ts": "1a6087ab8fb201b5c7d2aa771ab26aec7c899b04",
+            "src/live/extension.ts": "9bb119ffec8a22b85ffa06c6ae9b624bed838c0d",
+            "tests/live-cost.test.ts": "345f8739c2c77b33db539d11aabd2c4bb142a75e",
+            "tests/live-extension.test.ts": "da0317117b6400fdba6b333935d8bb0b2d951e31"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "judge running;related extension accepted blobs pending rejudgment",
+      "acceptedBlob": "1a6087ab8fb201b5c7d2aa771ab26aec7c899b04",
+      "integration": "integrated accepted exact primary candidate",
       "relatedPaths": [
         "src/live/extension.ts",
         "tests/live-cost.test.ts",
@@ -1048,10 +1058,24 @@
             "src/live/extension.ts": "cd43d45e34ddc90153c765193c21ce7b9052d5de",
             "tests/live-extension.test.ts": "ea3dffdf18791aac1b2e150b505d6bdb11ba6764"
           }
+        },
+        {
+          "id": "task_4b5c5997",
+          "status": "complete",
+          "candidate": "da7f97d770768c2f74540f8a9c3fde8667e15177",
+          "base": "dceb7d50d4ef5cd3f88d248ba18419d63507fad2",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Usage ingress owns provider-specific watermark/dedup/pricing/incremental persistence;caller no longer picks accounting semantics. GPTsession cumulative/Geminiturn cumulative/Realtime independent IDs explicit. Terminalbilling preserved after activityrevocation,sessionIDguard+unknown sticky.",
+          "checks": "Independent97candidate tests851assertions;126combinedGPT/accounting/footer1157assertions;two exactbaseline realtransportcontrolledsocket regressions fail thenpass;finalGPT92d985f0 API/closeorder/faileduncertainty/switchedsession checked. No authenticated/device/macOS.",
+          "acceptedBlobs": {
+            "src/live/extension.ts": "9bb119ffec8a22b85ffa06c6ae9b624bed838c0d"
+          },
+          "round": "fresh combined cost accounting revision"
         }
       ],
-      "acceptedBlob": "cd43d45e34ddc90153c765193c21ce7b9052d5de",
-      "integration": "integrated accepted exact primary candidate",
+      "acceptedBlob": "9bb119ffec8a22b85ffa06c6ae9b624bed838c0d",
+      "integration": "integrated related revision freshly judged at final blob",
       "relatedPaths": [
         "tests/live-extension.test.ts"
       ],
@@ -1087,9 +1111,16 @@
         "status": "candidate ready",
         "commit": "a5f932b5712711f4de4767f2fed28986dec14052"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_3583b317",
+          "status": "running",
+          "candidate": "a5f932b5712711f4de4767f2fed28986dec14052",
+          "base": "bb9c21526dfa7e1aca0c27cf97d5fe0c108ee081"
+        }
+      ],
       "acceptedBlob": null,
-      "integration": "awaiting judge slot",
+      "integration": "judge running",
       "relatedPaths": [
         "tests/gpt-live-delegation.test.ts"
       ],
@@ -1725,7 +1756,12 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "related accepted patch integrated;own primary pending",
+      "relatedPatchJudgment": {
+        "judgeId": "task_4b5c5997",
+        "verdict": "ACCEPT",
+        "blob": "345f8739c2c77b33db539d11aabd2c4bb142a75e"
+      }
     },
     {
       "focus": "tests/live-credentials.test.ts",
@@ -1791,10 +1827,24 @@
           "acceptedBlobs": {
             "tests/live-extension.test.ts": "605f1dc19bcd6c8ada6584d03410a3d671eac9ef"
           }
+        },
+        {
+          "id": "task_4b5c5997",
+          "status": "complete",
+          "candidate": "da7f97d770768c2f74540f8a9c3fde8667e15177",
+          "base": "dceb7d50d4ef5cd3f88d248ba18419d63507fad2",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Usage ingress owns provider-specific watermark/dedup/pricing/incremental persistence;caller no longer picks accounting semantics. GPTsession cumulative/Geminiturn cumulative/Realtime independent IDs explicit. Terminalbilling preserved after activityrevocation,sessionIDguard+unknown sticky.",
+          "checks": "Independent97candidate tests851assertions;126combinedGPT/accounting/footer1157assertions;two exactbaseline realtransportcontrolledsocket regressions fail thenpass;finalGPT92d985f0 API/closeorder/faileduncertainty/switchedsession checked. No authenticated/device/macOS.",
+          "acceptedBlobs": {
+            "tests/live-extension.test.ts": "da0317117b6400fdba6b333935d8bb0b2d951e31"
+          },
+          "round": "fresh combined cost accounting revision"
         }
       ],
-      "acceptedBlob": "605f1dc19bcd6c8ada6584d03410a3d671eac9ef",
-      "integration": "integrated accepted exact primary candidate",
+      "acceptedBlob": "da0317117b6400fdba6b333935d8bb0b2d951e31",
+      "integration": "integrated related revision freshly judged at final blob",
       "relatedPatchJudgment": {
         "judgeId": "task_65eb4c80",
         "verdict": "ACCEPT",
