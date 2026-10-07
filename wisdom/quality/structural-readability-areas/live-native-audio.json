@@ -939,12 +939,15 @@
         "launchBase": "3faae10fe2fb393f921117b47ebc565299db873e",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_84881347",
         "branch": "bruv/primary-src-live-diagnostics.ts-84881347",
-        "status": "running",
-        "commit": null
+        "status": "candidate ready",
+        "commit": "ad1dfa9d42fc87c397fe92e691127958201e0f1a"
       },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "primary running"
+      "integration": "awaiting judge slot",
+      "relatedPaths": [],
+      "readingResult": "Unchanged nativephase/detail->bridge sanitize->extension ignores helpertext->fixedguidance switch;unknowncodes remainfailures;no hiddenstate/lifetimes tosplit.",
+      "checks": "21tests139assertions/diffclean;mockedaudioUI/native source only,no macOS/device/provider/compiledCLI."
     },
     {
       "focus": "src/live/editor-push-to-talk.ts",
@@ -1015,10 +1018,17 @@
     {
       "focus": "src/live/gpt-live-delegation.ts",
       "initialBlob": "0096dd7f6d3ef5601f2605a8cf2f8117b648b2b7",
-      "primary": null,
+      "primary": {
+        "id": "task_05694cc7",
+        "launchBase": "bb9c21526dfa7e1aca0c27cf97d5fe0c108ee081",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_05694cc7",
+        "branch": "bruv/primary-src-live-gpt-live-delegation.ts-05694cc7",
+        "status": "running",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "primary running"
     },
     {
       "focus": "src/live/gpt-live-playback.ts",
