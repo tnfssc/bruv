@@ -133,7 +133,7 @@
     {
       "focus": "scripts/ansi_video_renderer.py",
       "initialBlob": "81a25813f084b89e7f58988d6bb05e02237ac948",
-      "status": "judging",
+      "status": "rework-awaiting-primary-slot",
       "primary": [
         {
           "id": "task_32c7f556",
@@ -148,11 +148,25 @@
           "id": "task_c420e381",
           "base": "10c405fe18f54e15e915efe5d9a98ee37144f798",
           "candidate": "15e0abb0dc551c00523d84c928e363f2acaae3f9",
-          "verdict": "pending"
+          "verdict": "REJECT",
+          "objections": [
+            "Sampling condition caches selected row after audit_frame, unlike base rereading rows[index]. If callback replaces rows[0] with t=1, base skips sample while candidate saves; can add sample-save exception. Restore t - rows[row_index][\"t\"] >= 0 and add focused regression; do not restrict callbacks."
+          ],
+          "evidence": "Intrinsic/improvement accepted in principle: snapshot color and video presentation lifetimes clear; bold had zero reads. Exact candidate rejected for callback/sampling behavior drift.",
+          "checks": [
+            "Seven Python tests pass base/candidate",
+            "Six-frame real encoding identical",
+            "Ten exception boundaries equal",
+            "Independent one-frame mutating callback reproduced sample count base0 vs candidate1"
+          ],
+          "limits": [
+            "Shipped callback does not mutate timeline; not observed production failure, but contract preservation required",
+            "No build/Docker/visual/product acceptance"
+          ]
         }
       ],
       "acceptedBlob": null,
-      "integrationState": "pending",
+      "integrationState": "REJECTED candidate NOT integrated",
       "launchBase": "10c405fe18f54e15e915efe5d9a98ee37144f798",
       "changedRelatedPaths": [
         "tests/ansi-video-renderer.test.py"
@@ -166,7 +180,8 @@
       ],
       "limits": [
         "No Docker/compiled CLI recapture/product/full build; exception cleanup unchanged"
-      ]
+      ],
+      "priority": "next-primary: fresh rework then fresh judge"
     },
     {
       "focus": "scripts/benchmark-footer-context.ts",
@@ -210,7 +225,10 @@
       "judgeRounds": [],
       "acceptedBlob": null,
       "integrationState": "pending",
-      "launchBase": "c9707192e101252662f82998d281ba8565592584"
+      "launchBase": "c9707192e101252662f82998d281ba8565592584",
+      "coordinatorReviewTargets": [
+        "Worker checkpoint removes REAL_WEB_ARCHIVE positional arg, archive symlink/hash provenance, updates wisdom/tasks-ui/native-proof-tooling.md. Fresh judge must trace every actual caller/embed path and prove archive machinery unshipped/irrelevant, not drop purposeful provenance or silently change compatibility; deletion/CLI behavior explicit."
+      ]
     },
     {
       "focus": "scripts/tasks-ui-proof-screenshots.ts",
@@ -2544,7 +2562,7 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "candidate with ANSI renderer; needs fresh primary after accepted integration"
+      "integrationState": "Unintegrated rejected related candidate; requires rework regression then new judgment and primary focus"
     }
   ],
   "batchChecks": [
