@@ -232,7 +232,7 @@
     {
       "focus": "src/agent/instruction-continuity.ts",
       "initialBlob": "51020264675b38641611920f0adb4e4c4c03664a",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_9489bfd1",
@@ -252,11 +252,15 @@
           "id": "task_7a60dd3f",
           "candidate": "e1ce1259975e663d8f091564175612a85dafa92f",
           "base": "d2d42103b7bc010e242453cbe36d9d65ba8d2962",
-          "status": "running"
+          "status": "complete",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "Actual private SDK adapter separates bound-session ownership, manager/session-scoped frame and per-run options; prompt/compaction/hooks synchronize final frames, replacement/shutdown invalidate old authority, root custom/child roles stay at framing owner.",
+          "checks": "Actual SDK runtime source hashes inspected along with shipped callers/tests; focused test dependency resolution blocked before execution, no independent green suite."
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending"
+      "acceptedBlob": "51020264675b38641611920f0adb4e4c4c03664a",
+      "integration": "unchanged-at-area-tip"
     },
     {
       "focus": "src/agent/instruction-mode.ts",
