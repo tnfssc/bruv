@@ -44,3 +44,5 @@ Updater-test primary: contract suites and typed per-artifact fixture inputs, exp
 Combined a472a64c seven-suite batch: **138 pass,0 fail,628 assertions**, including private compiled updater fixtures (task_f6b41b88). Not application build or full gate.
 
 Local-installer-test primary: phase suites and one chronological build/probe trace; explicit staged binding plus permanent SIGTERM restoration case. Judge task_5442746a ACCEPT51a27b0, all17 prior cases retained;18/65 focus,40/161 with current accepted download pair. No native proof.
+
+Download-test primary: scoped scenario cleanup, explicit fixture roles and source-based faults. Judge task_bdc5b9c4 ACCEPT7f47af8; candidate22/106 sequential/concurrent, related48/204. Independently reproduced baseline cross-test deletion (1pass21fail vs worker2pass20fail scheduling-dependent), repaired as explicit test-lifetime defect. No real download/platform proof.
