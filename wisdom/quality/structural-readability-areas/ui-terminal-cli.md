@@ -1,6 +1,6 @@
 # UI / terminal / CLI structural readability
 
-101 baseline files; all pending. This is an ongoing area, not whole-repo acceptance.
+101 baseline files; three accepted primary focuses integrated, remaining coverage ongoing. This is an ongoing area, not whole-repo acceptance.
 
 Workspace: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6
 Branch: bruv/whole-repo-structural-readability-ui-ter-f8e968d6
@@ -14,7 +14,7 @@ First independent focus domains: CLI entry, editor lifecycle, terminal action pr
 
 ## Proof and limits
 
-No source acceptance or runtime proof yet. Shared read-only dependencies and explicit Bun PATH are required. Focused checks per actual edit; combined gates at batch boundaries. Live/provider/device/SSH limits remain explicit.
+Exact source acceptance and focused proof are recorded below; whole-area acceptance remains pending. Shared read-only dependencies and explicit Bun PATH are required. Focused checks per actual edit; combined gates at batch boundaries. Live/provider/device/SSH limits remain explicit.
 
 ## Accepted editor lifetime patch
 
@@ -29,3 +29,7 @@ Primary task_75c8d308; judge task_db22e114 ACCEPT candidate f27f3d73c76d754b0c19
 ## Accepted profiler attribution ownership
 
 Primary task_6ffa8972; judge task_40ff7535 ACCEPT candidate 84108130c3b7f3ba70e166dac04e53bfde0f7dcb. Request batching/frame attribution/late completion corrections now share a bounded owner, apart from wrappers and span accounting. Reentrant consumed-batch linkage preserved. Writer: 57 focused passes, targeted TS/Biome; judge exact base/candidate reentrant snapshots identical with 19 clock reads. Judge SDK suites blocked by module resolution, so no independent suite claim. Related action-profiler test primary still pending.
+
+## Batch boundary
+
+First three accepted source patches integrated through fa5689ff. Combined editor/profiler focused checks, full TypeScript, and changed-file Biome running as task_4c9cc9a5. Shared dependencies linked read-only; only local photon WASM copied (prepare:assets not run against shared deps). Parent tip 6a285569 contains documentation progress only; no common code to bring in. Disk: 157G available.

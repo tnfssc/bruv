@@ -6,7 +6,6 @@
   "workspace": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6",
   "branch": "bruv/whole-repo-structural-readability-ui-ter-f8e968d6",
   "limits": [
-    "No source or runtime acceptance yet.",
     "Live/provider/device/SSH checks must remain explicit limits.",
     "Automatic setup reported fish cannot find bun (exit 127); workers have explicit Bun path and shared dependency instructions."
   ],
@@ -1167,5 +1166,18 @@
       "acceptedBlob": "95453da9cb3f0827a96b955c60f854e905939dac",
       "integrationState": "integrated; parent must reconcile assigned primary owner"
     }
-  ]
+  ],
+  "batchChecks": [
+    {
+      "job": "task_4c9cc9a5",
+      "commit": "fa5689ff",
+      "scope": "editor/startup/controller/action-profiler/profiler tests; full tsc; changed-file Biome",
+      "status": "running"
+    }
+  ],
+  "parentBoundary": {
+    "checkedTip": "6a285569",
+    "result": "Only documentation progress commits beyond initial area base; no common source changes to import."
+  },
+  "diskBoundary": "157G available after first three accepted patches"
 }
