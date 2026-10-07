@@ -78,14 +78,26 @@
     {
       "focus": "src/remote/artifacts.ts",
       "initialBlob": "0e9ff60dbda7ab6ef98b296024ad3af18947c9d8",
-      "status": "pending",
-      "judgeRounds": []
+      "status": "primary-running",
+      "judgeRounds": [],
+      "primary": {
+        "id": "task_8d554dba",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_8d554dba",
+        "branch": "bruv/remote-primary-artifacts-8d554dba"
+      },
+      "launchBase": "434f845b0084f093fc425e7e5d32e0222836aa77"
     },
     {
       "focus": "src/remote/cancellation.ts",
       "initialBlob": "195fc52acc1eee3dc1d569be0728ae22a8585c1e",
-      "status": "pending",
-      "judgeRounds": []
+      "status": "primary-running",
+      "judgeRounds": [],
+      "launchBase": "434f845b0084f093fc425e7e5d32e0222836aa77",
+      "primary": {
+        "id": "task_3ca50561",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_3ca50561",
+        "branch": "bruv/remote-primary-cancellation-3ca50561"
+      }
     },
     {
       "focus": "src/remote/capabilities.ts",
@@ -172,14 +184,26 @@
     {
       "focus": "src/remote/jobs.ts",
       "initialBlob": "e34856a1f1b8aae577fff635b0328f720f092a12",
-      "status": "primary-running",
-      "judgeRounds": [],
+      "status": "judging",
+      "judgeRounds": [
+        {
+          "id": "task_35f0c540",
+          "status": "running",
+          "candidate": "b13219c979026976ae9acf72a3248c8ad18a0138"
+        }
+      ],
       "launchBase": "59413c532e6422983f611915e509e8421aa2f363",
       "primary": {
         "id": "task_e65b0fab",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_e65b0fab",
-        "branch": "bruv/remote-primary-src-remote-jobs.ts-e65b0fab"
-      }
+        "branch": "bruv/remote-primary-src-remote-jobs.ts-e65b0fab",
+        "commit": "b13219c979026976ae9acf72a3248c8ad18a0138"
+      },
+      "result": "prepareLaunchRequest resolves replay ownership/durable approval into explicit request; launch exposes approval gate, trusted dispatch, uncertain outcomes, ownership and raced cancellation.",
+      "checks": "46 pass, 270 assertions; focused TS/Biome pass, 9 existing lint warnings; no full build/SSH/provider/CLI parity.",
+      "changedRelatedPaths": [
+        "tests/remote-source-approval.test.ts"
+      ]
     },
     {
       "focus": "src/remote/menu.ts",
@@ -250,12 +274,15 @@
     {
       "focus": "src/remote/repository.ts",
       "initialBlob": "264e183b88a7f1a0c667244efbb73c834369188e",
-      "status": "judging",
+      "status": "accepted",
       "judgeRounds": [
         {
           "id": "task_944616f9",
-          "status": "running",
-          "candidate": "56906c4565e6a2a0b667e105b8d8cb613bf5e414"
+          "status": "completed",
+          "candidate": "56906c4565e6a2a0b667e105b8d8cb613bf5e414",
+          "verdict": "ACCEPT",
+          "reason": "History-free snapshot construction now owns patch/copy/tree validation/orphan HEAD; capture retains authorization/provenance/stability/publication. Collection/integration remain coherent.",
+          "checks": "Judge core repository 5 pass/24 assertions; reverse extraction byte-identical baseline; diff clean. Broader tests blocked missing zod/mini."
         }
       ],
       "launchBase": "59413c532e6422983f611915e509e8421aa2f363",
@@ -267,7 +294,9 @@
       },
       "result": "Capture mixed approval/provenance and assembling a parentless snapshot; extracted createOrphanSnapshot to own patch/copy/validation/history replacement.",
       "checks": "Baseline and candidate 19 pass, 112 assertions; format/diff pass, pre-existing lint warnings.",
-      "changedRelatedPaths": []
+      "changedRelatedPaths": [],
+      "acceptedBlob": "88b0c7fd48b6844e2c25cb3853465a0d65c5b9c3",
+      "integrationState": "accepted candidate patch applied without overlap; exact index blob matches"
     },
     {
       "focus": "src/remote/root-cli.ts",
@@ -314,12 +343,15 @@
     {
       "focus": "src/remote/root-runtime.ts",
       "initialBlob": "c10a7a7c45510373e30d9d2385045f9fad23fa93",
-      "status": "judging",
+      "status": "accepted",
       "judgeRounds": [
         {
           "id": "task_a90ee127",
-          "status": "running",
-          "candidate": "216602412f172476fa0e2946fa1f26cb5f9aa418"
+          "status": "completed",
+          "candidate": "216602412f172476fa0e2946fa1f26cb5f9aa418",
+          "verdict": "NO CHANGE NEEDED",
+          "reason": "Shared session context and serial ordering distinct from per-connection framing; question service owns answer replay, runtime owns continuation; close settlement distinct from owner exit; acknowledged rejection distinct from unknown delivery.",
+          "limits": "Independent execution missing pi-ai/zod dependencies; source/tests inspected, no independent passing claim."
         }
       ],
       "launchBase": "59413c532e6422983f611915e509e8421aa2f363",
@@ -331,7 +363,9 @@
       },
       "result": "No source change proposed. Registration/session ordering, connection framing, ordinary question replay, close settlement, rejection vs unknown delivery traced.",
       "checks": "15 tests pass, 82 assertions; no live/authenticated SSH/build.",
-      "changedRelatedPaths": []
+      "changedRelatedPaths": [],
+      "acceptedBlob": "c10a7a7c45510373e30d9d2385045f9fad23fa93",
+      "integrationState": "unchanged area blob verified"
     },
     {
       "focus": "src/remote/root-store.ts",
@@ -360,14 +394,24 @@
     {
       "focus": "src/remote/security.ts",
       "initialBlob": "81dff39ca5ffff8d61eaffceb6535a946361e3e1",
-      "status": "primary-running",
-      "judgeRounds": [],
+      "status": "judging",
+      "judgeRounds": [
+        {
+          "id": "task_cf362947",
+          "status": "running",
+          "candidate": "9635328b201c2f02a4d7b206a06eb3c74d677f86"
+        }
+      ],
       "launchBase": "9823c60aa4ff01bd92ecf8d6a3e0f773e29b23e5",
       "primary": {
         "id": "task_c4d61278",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_c4d61278",
-        "branch": "bruv/remote-primary-security-c4d61278"
-      }
+        "branch": "bruv/remote-primary-security-c4d61278",
+        "commit": "9635328b201c2f02a4d7b206a06eb3c74d677f86"
+      },
+      "result": "Unchanged pure component-wise sensitive-path predicate; capture/export refusal and capability grant/traversal/symlink policies traced.",
+      "checks": "27 pass, 166 assertions; no build/authenticated SSH.",
+      "changedRelatedPaths": []
     },
     {
       "focus": "src/remote/services.ts",

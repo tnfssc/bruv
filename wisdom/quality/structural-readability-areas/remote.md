@@ -1,7 +1,17 @@
 # Remote structural readability
 
-In progress; 119 baseline files. No source accepted yet. Area path: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74; branch bruv/whole-repo-structural-readability-remote-cbb4da74. Initial area commit 59413c532e6422983f611915e509e8421aa2f363.
+In progress: 119 baseline files, 2 independently accepted (repository.ts changed, root-runtime.ts unchanged). All others pending/in pipeline; not an area completion or whole-repo claim.
 
-Pipeline: three primary worktree workers and three independent read-only judges maximum. Full per-file status and durable pickup pointers in remote.json. Candidate notes are not imported. No PR/push.
+Retained area: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74
+Branch: bruv/whole-repo-structural-readability-remote-cbb4da74
+Initial commit: 59413c532e6422983f611915e509e8421aa2f363. Exact file/worker/worktree/branch/candidate/judge/blob records in remote.json. Three primary and three judge slots max; fill on substantive completion and yield. Worker pickup notes never imported.
 
-Proof limits: no checks yet; live/provider/authenticated SSH requires honest separate proof. Initial disk 163 GB free.
+## Accepted batch reasoning
+- repository.ts: candidate 56906c45 separates construction of history-free transport input from capture authorization/provenance/stability/publication. Judge task_944616f9 ACCEPT at blob 88b0c7fd48b6844e2c25cb3853465a0d65c5b9c3; reverse extraction exactly recovers baseline. Worker 19 tests/112 assertions; judge core suite 5/24. Broader judge suites blocked dependency resolution, not passing by inference.
+- root-runtime.ts: task_a90ee127 NO CHANGE NEEDED at c10a7a7c45510373e30d9d2385045f9fad23fa93. Session ordering versus connection framing, question replay versus continuation, settlement versus process exit and rejection versus uncertain delivery remain visible. Worker 15 tests/82 assertions; judge test loading blocked missing dependencies.
+
+## Pending integration
+Jobs candidate also changes tests/remote-source-approval.test.ts; full candidate is judged together and that test still requires its own fresh primary. No cross-area edits yet. No new helper/deletion.
+
+## Limits / pickup
+Automatic fish setup cannot find Bun; explicit Bun 1.4.2 path/shared dependencies in worker briefs. No authenticated SSH/provider/macOS/compiled CLI parity claim; no combined full gate yet. Parent owns PR #45 and final integration. Preserve all worker worktrees.
