@@ -15,8 +15,16 @@
     {
       "focus": ".github/workflows/ci.yml",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_f5563536",
+          "launchBase": "f1fca7d35a0785a69849f58fbadcae8f5c522457",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_f5563536",
+          "branch": "bruv/primary-.github-workflows-ci.yml-f5563536",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null
@@ -96,8 +104,16 @@
     {
       "focus": "scripts/build-pair.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_fb3e9b39",
+          "launchBase": "f1fca7d35a0785a69849f58fbadcae8f5c522457",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_fb3e9b39",
+          "branch": "bruv/primary-scripts-build-pair.ts-fb3e9b39",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null
@@ -450,19 +466,29 @@
     {
       "focus": "scripts/validate-release-tag.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judge-running",
       "primary": [
         {
           "id": "task_36d64ea6",
           "launchBase": "81837423373d8b661a6a116f66cf3e7a490e4fc8",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_36d64ea6",
           "branch": "bruv/primary-scripts-validate-release-tag.ts-36d64ea6",
+          "state": "completed",
+          "commit": "0efbf76510761f9386728fb112e6195ddc7b5058"
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_81661b13",
+          "base": "81837423373d8b661a6a116f66cf3e7a490e4fc8",
+          "candidate": "0efbf76510761f9386728fb112e6195ddc7b5058",
           "state": "running"
         }
       ],
-      "judges": [],
       "relatedPaths": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "readingResult": "Unchanged pure version/type guard→exact tag comparison; separate CLI input/package/diagnostics/exit boundary; extra wrappers cosmetic.",
+      "checks": "3 focused pass; standalone tsc/format/contract probe pass;3 existing lint infos; no build."
     },
     {
       "focus": "scripts/verify-release-launchers.ts",
@@ -700,17 +726,25 @@
     {
       "focus": "tests/install-download.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judge-running",
       "primary": [
         {
           "id": "task_7936354f",
           "launchBase": "ff1e8fad27798df7beb8c9b6df2c287633f5acf8",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_7936354f",
           "branch": "bruv/primary-tests-install-download.test.ts-7936354f",
+          "state": "completed",
+          "commit": "55c8f981c39f5d155ced588327d0ad7d550d780b"
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_bdc5b9c4",
+          "base": "ff1e8fad27798df7beb8c9b6df2c287633f5acf8",
+          "candidate": "55c8f981c39f5d155ced588327d0ad7d550d780b",
           "state": "running"
         }
       ],
-      "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null,
       "relatedPatchJudgment": {
@@ -718,7 +752,9 @@
         "verdict": "ACCEPT",
         "blob": "caf39e95601ad64f532c08d60b47d5acf507725b",
         "primaryStillRequired": true
-      }
+      },
+      "readingResult": "Scenario-owned try/finally replaces shared cleanup; explicit fixture roles replace reconstructed paths; visible source-based faults replace opaque mv args. Both staging-name forms covered. Incidental concurrency cleanup defect reproduced baseline2 pass20 fail.",
+      "checks": "22/106 sequential+concurrent candidate; related48/204; strict tsc/format/lint/diff pass; no build/live downloads."
     },
     {
       "focus": "tests/install-local.test.ts",
