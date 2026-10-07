@@ -62,3 +62,7 @@ Lifecycle-test primary task_053c976a, judge task_52da150f ACCEPT at 53027e2c: ex
 Presenter batch f8ba5c92 ACCEPT task_29eea7cb: local showModal owns mount/settle/focus/render, interaction builders no longer duplicate lifetime; server dialog authority and close-before-local-cancel remain distinct. Related presenter tests ae65079a need own primary. Mocked terminal routing evidence is not physical-terminal proof.
 
 Capability-runtime combined candidate 33088eba ACCEPT task_f6ad3799: intent/marker publication semantics explicit; admission chain retains rejection progress without serializing reply wait. Fresh combination worker preserved accepted services assertions and original runtime additions byte-for-byte; independent 86 tests/1367 assertions. Final related capability test ee0b6d2b still requires its own primary.
+
+Parent accepted shared checkpoint 695ade32 merged cleanly in staging: questions runtime/service and job-service common updates, plus sibling accepted areas only via parent. No accepted remote blob changes. Incoming tests/remote-question-bridge.test.ts remains pending own remote primary/final judge. Real combined typecheck and authority/bridge/owner suites running before merge checkpoint commit.
+
+Parent join proof: assets + whole-project tsc pass; seven cross-authority/bridge/owner/capability suites 92 pass/581 assertions. Existing remote accepted hashes unchanged; incoming related test remains pending primary.

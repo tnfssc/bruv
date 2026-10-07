@@ -127,3 +127,78 @@ describe("compiled bruv CLI", () => {
     expect(connector.stdout.trim()).toBe("bruv-claude-compat " + packageVersion);
   });
 });
+
+// These startup paths need no compiled binary, network, provider, or TTY.
+describe("source bruv startup boundaries", () => {
+  const source = [process.execPath, join(root, "src/cli.ts")];
+  const runtime = () => join(home, ".bruv", "runtime", packageVersion);
+  const invoke = (args: string[]) => run([...source, ...args], { cwd: home, env: isolatedEnv() });
+
+  test("paired-update aliases exit before runtime preparation", async () => {
+    const direct = await invoke(["update", "--help"]);
+    expect(direct.code).toBe(0);
+    expect(direct.stdout).toContain("bruv-claude-compat together");
+    const alias = await invoke(["claude-compat", "update", "--help"]);
+    expect(alias).toEqual(direct);
+    expect(await Bun.file(join(runtime(), "package.json")).exists()).toBe(false);
+  });
+
+  test("connector and web commands do not enter normal CLI bootstrap", async () => {
+    const connector = await invoke(["claude-compat", "--help"]);
+    expect(connector.code).toBe(0);
+    expect(connector.stdout).toStartWith("bruv-claude-compat");
+    const web = await invoke(["web"]);
+    expect(web.code).toBe(0);
+    expect(web.stdout).toContain("Setup guide only");
+    expect(await Bun.file(join(runtime(), "package.json")).exists()).toBe(false);
+  });
+
+  test("tool-policy and offline-probe gates reject before runtime preparation", async () => {
+    const removed = await invoke(["--tools=read"]);
+    expect(removed.code).toBe(1);
+    expect(removed.stderr).toContain("is not supported by bruv");
+    const probe = await invoke(["--offline-openai-transport-probe"]);
+    expect(probe.code).toBe(1);
+    expect(probe.stderr).toContain("explicit loopback test gate");
+    expect(await Bun.file(join(runtime(), "package.json")).exists()).toBe(false);
+  });
+
+  test("normal startup configures branded metadata and reuses immutable assets", async () => {
+    const first = await invoke(["--version"]);
+    expect(first.code).toBe(0);
+    expect(first.stdout.trim()).toBe(packageVersion);
+    const metadata = join(runtime(), "package.json");
+    const before = (await stat(metadata)).mtimeMs;
+    await Bun.sleep(20);
+    expect(await invoke(["--version"])).toEqual(first);
+    expect((await stat(metadata)).mtimeMs).toBe(before);
+    expect(await Bun.file(join(home, ".pi", "agent", "settings.json")).exists()).toBe(false);
+  });
+
+  test("local placement reaches the same branded local help", async () => {
+    const help = await invoke(["--help"]);
+    expect(help.code).toBe(0);
+    expect(help.stdout).toStartWith("bruv - AI coding assistant");
+    expect(help.stdout).toContain("--place <name>");
+    expect(help.stdout).not.toContain("--no-tools");
+    expect(help.stdout).not.toContain(" update [source|self|pi]");
+    expect(await invoke(["--place", "local", "--help"])).toEqual(help);
+  });
+
+  test("internal and remote-placement errors stop before local conversation", async () => {
+    for (const [args, diagnostic] of [
+      [["--remote-control", "extra"], "Usage: bruv --remote-control"],
+      [["--remote-owner"], "Usage: bruv --remote-owner <taskId>"],
+      [["--remote-root-control", "extra"], "Usage: bruv --remote-root-control"],
+      [["--remote-root-owner"], "Usage: bruv --remote-root-owner <sessionId>"],
+      [["--place", "fixture", "--help"], "Unsupported remote main-session argument"],
+    ] as const) {
+      const result = await invoke([...args]);
+      expect(result.code).toBe(1);
+      expect(result.stdout).toBe("");
+      expect(result.stderr).toContain(diagnostic);
+    }
+    expect(await Bun.file(join(runtime(), "package.json")).exists()).toBe(true);
+    expect(await Bun.file(join(home, ".bruv", "agent", "settings.json")).exists()).toBe(false);
+  });
+});

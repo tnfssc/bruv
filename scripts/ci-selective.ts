@@ -22,9 +22,12 @@ export function isDoc(path: string): boolean {
     /^wisdom\/(?:ci|quality|remote-workspaces|dependencies|configuration)\/[a-z0-9][a-z0-9-]*\.md$/.test(path)
   );
 }
+function isReferenceOnlyDiff(changes: Change[]): boolean {
+  return changes.length > 0 && changes.every((c) => c.status === "M" && c.paths.length === 1 && isDoc(c.paths[0]!));
+}
+
 export function planDiff(changes: Change[], blocker?: string) {
-  const docs =
-    changes.length > 0 && changes.every((c) => c.status === "M" && c.paths.length === 1 && isDoc(c.paths[0]!));
+  const docs = isReferenceOnlyDiff(changes);
   const full = !!blocker || !docs;
   const reasons = blocker
     ? [blocker]
@@ -53,6 +56,25 @@ function git(cwd: string, args: string[]): string {
   if (r.status !== 0) throw new Error((r.stderr || "git command failed").trim());
   return r.stdout;
 }
+function checkoutBlocker(cwd: string, head: string | undefined): string | undefined {
+  if (git(cwd, ["rev-parse", "HEAD"]).trim() !== head)
+    return "Checkout does not match planned head; full validation required.";
+  if (git(cwd, ["status", "--porcelain", "--untracked-files=all"]).trim())
+    return "Checkout is not clean; full validation required.";
+  return undefined;
+}
+
+function referenceFileBlocker(cwd: string, changes: Change[], base: string, head: string): string | undefined {
+  let blocker: string | undefined;
+  for (const change of changes) {
+    for (const revision of [base, head]) {
+      if (!git(cwd, ["ls-tree", "-z", revision, "--", change.paths[0]!]).startsWith("100644 "))
+        blocker = "Non-regular or executable reference file requires full validation.";
+    }
+  }
+  return blocker;
+}
+
 export function plan(
   cwd: string,
   base?: string,
@@ -63,14 +85,8 @@ export function plan(
   try {
     const headSha = git(cwd, ["rev-parse", "--verify", (head || "HEAD") + "^{commit}"]).trim();
     const baseSha = git(cwd, ["rev-parse", "--verify", base + "^{commit}"]).trim();
-    if (git(cwd, ["rev-parse", "HEAD"]).trim() !== headSha)
-      return {
-        ...planDiff([], "Checkout does not match planned head; full validation required."),
-        base: baseSha,
-        head: headSha,
-      };
-    if (git(cwd, ["status", "--porcelain", "--untracked-files=all"]).trim())
-      return { ...planDiff([], "Checkout is not clean; full validation required."), base: baseSha, head: headSha };
+    const checkoutProblem = checkoutBlocker(cwd, headSha);
+    if (checkoutProblem) return { ...planDiff([], checkoutProblem), base: baseSha, head: headSha };
     git(cwd, ["rev-parse", "--verify", baseSha + "^{tree}"]);
     git(cwd, ["rev-parse", "--verify", headSha + "^{tree}"]);
     const raw = git(cwd, [
@@ -85,14 +101,7 @@ export function plan(
       "--",
     ]);
     const changes = parseDiff(raw);
-    let blocker: string | undefined;
-    if (!planDiff(changes).full) {
-      for (const change of changes)
-        for (const revision of [baseSha, headSha]) {
-          if (!git(cwd, ["ls-tree", "-z", revision, "--", change.paths[0]!]).startsWith("100644 "))
-            blocker = "Non-regular or executable reference file requires full validation.";
-        }
-    }
+    const blocker = isReferenceOnlyDiff(changes) ? referenceFileBlocker(cwd, changes, baseSha, headSha) : undefined;
     return { ...planDiff(changes, blocker), base: baseSha, head: headSha };
   } catch (error) {
     return planDiff([], error instanceof Error ? error.message : String(error));
@@ -102,6 +111,29 @@ export function summary(p: ReturnType<typeof planDiff>): string {
   const json = JSON.stringify(p, null, 2).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
   return "## CI plan: " + p.mode + "\n\n" + p.scope + "\n\n<pre>" + json + "</pre>\n";
 }
+function publishSelection(selection: ReturnType<typeof plan>): void {
+  const json = JSON.stringify(selection, null, 2);
+  const markdown = summary(selection);
+  mkdirSync("artifacts/ci", { recursive: true });
+  writeFileSync("artifacts/ci/selection.json", json + "\n");
+  writeFileSync("artifacts/ci/selection-summary.md", markdown);
+  if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, markdown);
+  if (process.env.GITHUB_OUTPUT)
+    appendFileSync(process.env.GITHUB_OUTPUT, "mode=" + selection.mode + "\nfull=" + selection.full + "\n");
+  console.log(json);
+}
+
+function runDocsChecks(cwd: string, selection: ReturnType<typeof plan>): number {
+  if (selection.full) {
+    console.error("Complete CI required; refusing docs-only success.");
+    process.exit(3);
+  }
+  if (checkoutBlocker(cwd, selection.head)) throw new Error("runner requires clean checkout at planned head");
+  const command = selection.commands[0]!;
+  const result = spawnSync(command[0]!, command.slice(1), { stdio: "inherit" });
+  return result.status ?? 1;
+}
+
 if (import.meta.main) {
   const args = process.argv.slice(2),
     bi = args.indexOf("--base"),
@@ -109,26 +141,8 @@ if (import.meta.main) {
   for (let i = 0; i < args.length; i++)
     if (args[i] === "--base") i++;
     else if (args[i] !== "--run") throw new Error("usage: bun scripts/ci-selective.ts --base SHA [--run]");
-  const p = plan(process.cwd(), base);
-  mkdirSync("artifacts/ci", { recursive: true });
-  writeFileSync("artifacts/ci/selection.json", JSON.stringify(p, null, 2) + "\n");
-  writeFileSync("artifacts/ci/selection-summary.md", summary(p));
-  if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, summary(p));
-  if (process.env.GITHUB_OUTPUT)
-    appendFileSync(process.env.GITHUB_OUTPUT, "mode=" + p.mode + "\nfull=" + p.full + "\n");
-  console.log(JSON.stringify(p, null, 2));
-  if (args.includes("--run")) {
-    if (p.full) {
-      console.error("Complete CI required; refusing docs-only success.");
-      process.exit(3);
-    }
-    if (
-      git(process.cwd(), ["rev-parse", "HEAD"]).trim() !== p.head ||
-      git(process.cwd(), ["status", "--porcelain", "--untracked-files=all"]).trim()
-    )
-      throw new Error("runner requires clean checkout at planned head");
-    const c = p.commands[0]!,
-      result = spawnSync(c[0]!, c.slice(1), { stdio: "inherit" });
-    process.exitCode = result.status ?? 1;
-  }
+  const cwd = process.cwd();
+  const selection = plan(cwd, base);
+  publishSelection(selection);
+  if (args.includes("--run")) process.exitCode = runDocsChecks(cwd, selection);
 }

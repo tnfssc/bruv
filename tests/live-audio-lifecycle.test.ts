@@ -29,10 +29,10 @@ class Worker extends EventEmitter {
     this.stdout.emit("data", Buffer.from(JSON.stringify(value) + "\n"));
   }
 }
-async function rig(callbacks: AudioCallbacks = {}) {
+async function rig(callbacks: AudioCallbacks = {}, captureGate = false) {
   const worker = new Worker();
   const launched = LiveAudio.launch({ worker: worker as never, callbacks });
-  worker.event({ type: "hello", protocol: 1 });
+  worker.event({ type: "hello", protocol: 1, captureGate });
   const audio = await launched;
   const started = audio.start();
   worker.stdin.complete();
@@ -100,6 +100,97 @@ describe("Live audio protocol boundary", () => {
     await flushed;
     audio.close();
     worker.emit("close");
+  });
+  test("stdin acceptance waits for callback and drain in either order", async () => {
+    for (const first of ["callback", "drain"]) {
+      const { worker, audio } = await rig();
+      worker.stdin.accept = false;
+      let accepted = false;
+      const written = audio.play(Buffer.alloc(960), 0).then(() => {
+        accepted = true;
+      });
+      const next = audio.play(Buffer.alloc(960), 0);
+      const callback = worker.stdin.pending.shift()!;
+      if (first === "callback") callback();
+      else worker.stdin.emit("drain");
+      await Promise.resolve();
+      expect(accepted).toBe(false);
+      expect(worker.stdin.writes).toHaveLength(2); // start + active play
+      worker.stdin.accept = true;
+      if (first === "callback") worker.stdin.emit("drain");
+      else callback();
+      await written;
+      expect(accepted).toBe(true);
+      expect(worker.stdin.writes).toHaveLength(3);
+      worker.stdin.complete();
+      await next;
+      audio.close();
+      worker.emit("close");
+    }
+  });
+  test("flush and stop keep queued capture controls but interrupt only unsent playback", async () => {
+    for (const command of ["flush", "stop"]) {
+      const { worker, audio } = await rig({}, true);
+      worker.stdin.accept = false;
+      const written = audio.play(Buffer.alloc(960), 0);
+      const gate = audio.setCaptureGate(null);
+      const stale = audio.play(Buffer.alloc(960), 0);
+      const rejected = stale.catch((error: Error) => error.message);
+      const control = command === "flush" ? audio.flush(1) : audio.stop();
+      expect(await rejected).toContain("interrupted");
+      expect(worker.stdin.writes).toHaveLength(2);
+      worker.stdin.complete();
+      await written;
+      expect(JSON.parse(worker.stdin.writes[2])).toEqual({ type: "capture_gate", epoch: null });
+      worker.stdin.complete();
+      await gate;
+      expect(JSON.parse(worker.stdin.writes[3]).type).toBe(command);
+      worker.stdin.complete();
+      if (command === "stop") worker.event({ type: "stopped" });
+      await control;
+      expect(audio.stopError).toBeUndefined();
+      audio.close();
+      worker.emit("close");
+    }
+  });
+  test("close rejects active and unsent writes; late callback and drain cannot restart the pipe", async () => {
+    const { worker, audio } = await rig();
+    worker.stdin.accept = false;
+    const written = audio.play(Buffer.alloc(960), 0).catch((error: Error) => error.message);
+    const queued = audio.play(Buffer.alloc(960), 0).catch((error: Error) => error.message);
+    audio.close();
+    expect(await written).toContain("closed");
+    expect(await queued).toContain("closed");
+    expect(worker.stdin.listenerCount("drain")).toBe(0);
+    worker.stdin.complete();
+    expect(worker.stdin.writes).toHaveLength(2);
+    // Input/process error guards stay until the child is reaped, not just ownership close.
+    expect(worker.stdin.listenerCount("error")).toBe(1);
+    worker.emit("close");
+    expect(worker.stdin.listenerCount("error")).toBe(0);
+  });
+  test("input write failures close ownership and reject the entire queue", async () => {
+    for (const failure of ["callback", "throw"]) {
+      const errors: string[] = [];
+      let closed = 0;
+      const { worker, audio } = await rig({ error: (code) => errors.push(code), closed: () => closed++ });
+      worker.stdin.accept = false;
+      const written = audio.play(Buffer.alloc(960), 0).catch((error: Error) => error.message);
+      const queued = audio.play(Buffer.alloc(960), 0).catch((error: Error) => error.message);
+      if (failure === "callback") worker.stdin.pending.shift()!(new Error("private failure"));
+      else {
+        worker.stdin.write = () => {
+          throw new Error("private failure");
+        };
+        worker.stdin.complete(); // The next queued write throws.
+      }
+      expect(await written).toBe(failure === "callback" ? "Audio helper input failed" : undefined);
+      expect(await queued).toBe("Audio helper input failed");
+      expect(errors).toEqual(["helper_failure"]);
+      expect(closed).toBe(1);
+      expect(worker.stdin.listenerCount("drain")).toBe(0);
+      worker.emit("close");
+    }
   });
   test("pre-aborted launch does not own a worker; aborted start closes", async () => {
     const abort = new AbortController();

@@ -286,34 +286,90 @@ test("raw agent model chunks emit one activity even when reasoning is not retain
   expect(done.output).not.toContain("secret");
 });
 
-test("transient inspection errors retain monitoring until pending confirms completion", () => {
+test("inspection failures consume checkpoints and diagnostics reset only after recovery", () => {
   const clock = new FakeClock(),
     batches: AttentionNotice[][] = [];
   const manager = new TaskManager(() => {}, 10);
   managers.push(manager);
   const task = manager.spawn(launch("transient inspect"));
   const inspect = manager.inspect.bind(manager);
-  let fail = true;
-  (manager as any).inspect = (...args: unknown[]) => {
+  let fail = true,
+    attempts = 0;
+  manager.inspect = (...args) => {
+    attempts++;
     if (fail) throw new Error("temporary inspect failure");
-    return inspect(...(args as Parameters<TaskManager["inspect"]>));
+    return inspect(...args);
   };
   const scheduler = new JobAttentionScheduler(manager, (items) => batches.push(items), {
     clock,
     quietMs: 100,
     reviewMs: 200,
   });
+  const failures = () => inspectDiagnostics(manager).records.filter((item) => item.code === "inspection_failed");
+  try {
+    clock.advance(100);
+    expect(batches).toHaveLength(0);
+    expect(scheduler.diagnostics().activeJobs).toBe(1);
+    expect(attempts).toBe(1);
+    clock.advance(99);
+    expect(attempts).toBe(1);
 
-  clock.advance(200);
-  expect(batches).toHaveLength(0);
-  expect(scheduler.diagnostics().activeJobs).toBe(1);
-  clock.advance(200);
-  expect(scheduler.diagnostics().activeJobs).toBe(1);
-  expect(inspectDiagnostics(manager).records.filter((item) => item.code === "inspection_failed")).toHaveLength(1);
+    fail = false;
+    clock.advance(1);
+    expect(batches).toHaveLength(1);
+    expect(batches[0]![0]!).toMatchObject({ id: task.id, reasons: ["review"] });
+    expect(failures()).toHaveLength(1);
 
-  fail = false;
-  clock.advance(200);
-  expect(batches).toHaveLength(1);
-  expect(batches[0]![0]!.id).toBe(task.id);
-  scheduler.dispose();
+    fail = true;
+    clock.advance(200);
+    clock.advance(200);
+    expect(batches).toHaveLength(1);
+    expect(scheduler.diagnostics().activeJobs).toBe(1);
+    expect(failures()).toHaveLength(2);
+
+    fail = false;
+    clock.advance(200);
+    expect(batches).toHaveLength(2);
+    fail = true;
+    clock.advance(200);
+    expect(failures()).toHaveLength(3);
+  } finally {
+    scheduler.dispose();
+    manager.inspect = inspect;
+  }
+});
+
+test("pending snapshot retires a failed observation without inspection or stopping the job", () => {
+  const clock = new FakeClock(),
+    batches: AttentionNotice[][] = [];
+  const manager = new TaskManager(() => {}, 10);
+  managers.push(manager);
+  const task = manager.spawn(launch("missing snapshot"));
+  const inspect = manager.inspect.bind(manager),
+    pending = manager.pending.bind(manager);
+  let attempts = 0;
+  manager.inspect = () => {
+    attempts++;
+    throw new Error("temporary inspect failure");
+  };
+  const scheduler = new JobAttentionScheduler(manager, (items) => batches.push(items), {
+    clock,
+    quietMs: 100,
+    reviewMs: 200,
+  });
+  try {
+    clock.advance(100);
+    expect(scheduler.diagnostics().activeJobs).toBe(1);
+    manager.pending = () => [];
+    clock.advance(100);
+    expect(attempts).toBe(1);
+    expect(scheduler.diagnostics()).toMatchObject({ activeJobs: 0, timerArmed: false });
+    expect(clock.timers.size).toBe(0);
+    expect(batches).toHaveLength(0);
+    expect(manager.list().find((item) => item.id === task.id)?.status).toBe("running");
+  } finally {
+    scheduler.dispose();
+    manager.inspect = inspect;
+    manager.pending = pending;
+  }
 });

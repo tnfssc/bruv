@@ -1581,6 +1581,20 @@
       "command": "bun test tests/remote-root-presenter.test.ts tests/remote-root-client.test.ts",
       "result": "34 pass, 0 fail, 181 assertions",
       "limits": "Mocked terminal integration and source fixtures, not physical/live/compiled parity"
+    },
+    {
+      "commit": "staged merge of 94632c6e + parent 695ade32",
+      "job": "task_1f9268d9",
+      "command": "bun run check",
+      "result": "assets + whole-project tsc pass",
+      "limits": "No full CI/binary build; combined authority tests pending"
+    },
+    {
+      "commit": "merge checkpoint of 94632c6e + parent 695ade32",
+      "job": "task_68449671",
+      "command": "bun test remote-question-bridge,remote-source-approval,remote-jobs,remote-owner,remote-owner-lifecycle,root-owner,remote-capability-runtime tests",
+      "result": "92 pass, 0 fail, 581 assertions across 7 files",
+      "limits": "Not live SSH/provider/compiled parity"
     }
   ],
   "crossAreaNeeds": [
@@ -1605,14 +1619,18 @@
   },
   "parentIntegrationCheckpoint": {
     "tip": "695ade32",
+    "state": "clean join accepted; all accepted remote blob hashes unchanged; whole configured typecheck and 92-test authority suite pass",
     "commonChanges": [
       "src/questions/runtime.ts",
       "src/questions/service.ts",
       "src/tasks/job-service.ts"
     ],
     "remoteRelatedIncoming": [
-      "tests/remote-question-bridge.test.ts"
-    ],
-    "state": "merge preview pending; parent imported earlier accepted remote batch"
+      {
+        "file": "tests/remote-question-bridge.test.ts",
+        "blob": "069ad73fe9042f5b166b40c4ed9167ef8b2bcee2",
+        "needs": "already pending remote primary; fresh coverage must use combined final blob"
+      }
+    ]
   }
 }
