@@ -126,9 +126,16 @@
         "status": "candidate ready",
         "commit": "60884cc93465a0bd217574abdb6e148db81dfaf6"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_794b83a8",
+          "status": "running",
+          "candidate": "60884cc93465a0bd217574abdb6e148db81dfaf6",
+          "base": "f473c8e5a1c4377742f0b65c27d06782d456f7d1"
+        }
+      ],
       "acceptedBlob": null,
-      "integration": "awaiting judge slot",
+      "integration": "judge running",
       "relatedPaths": [],
       "readingResult": "Three local gate fixtures isolate continuous/first hold/reopen; reopening proves index9000 accepted before mute then rejected until new snapshot and against new frontier, units explicit. Prior assertions retained.",
       "checks": "4 Bun tests/24 assertions; strict GCC and ClangASan/UBSan pass; diff clean. No Pulse/device/provider/macOS runtime."
@@ -1346,13 +1353,20 @@
       "judgeRounds": [
         {
           "id": "task_3251abf2",
-          "status": "running",
+          "status": "complete",
           "candidate": "70bfa1a0e0d8dd8048bd60b7690c5e7a4a7ed4bb",
-          "base": "07bda6417ddbb90145ccd92024ce1bf98d150000"
+          "base": "07bda6417ddbb90145ccd92024ce1bf98d150000",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Session lifecycle isolated from actual execute/typed-input/text-fence/release journey; real registered tool and production renderers retained. Four race bodies whitespace identical,108 baseline assertions retained. Duplicate fixture idle-state bug independently reproduced/fixed.",
+          "checks": "Independent exact source mirror with shared deps:42 tests/352 assertions pass; Biome/diff pass. Initial incomplete mirror missing CLI fixtures not claimed green; no compiled parity.",
+          "acceptedBlobs": {
+            "tests/live-main-owner.test.ts": "9e228bc0c98e2ae271d679c8aeedcfd3e4a10fe1"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "judge running",
+      "acceptedBlob": "9e228bc0c98e2ae271d679c8aeedcfd3e4a10fe1",
+      "integration": "integrated accepted exact primary candidate",
       "relatedPatchJudgment": {
         "judgeId": "task_bb0fe7ca",
         "verdict": "ACCEPT",
