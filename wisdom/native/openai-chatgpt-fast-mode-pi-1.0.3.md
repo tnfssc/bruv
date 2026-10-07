@@ -66,3 +66,11 @@ latency/tier guarantee is inferred from mock response usage.
 
 Values unchanged: values 1/2/9/10 already require source-based dependency semantics,
 essential authorization boundaries, scoped proof and an integration-ready handoff.
+
+## Parent integration
+
+Worker commit `6c046852aeaf8fca205eff5451b80943bcd84014` is integrated as `fb5dda07` on `t3/fix-openai-fast-mode-login`. Parent read the pinned canonical provider, OAuth resource and Responses tier mapping, then reviewed the auth-bound consent and concrete request guard.
+
+On the integrated tree, fast-mode, compaction and job-service suites pass: 92 tests / 541 assertions. Isolated request-history gate passes too: 1 test / 1 assertion. `bun run check` and `git diff --check` pass. No live provider, full TUI or release claim. Direct Bun path worked despite the shell mise trust warning; no trust setting changed.
+
+Code and wisdom are committed locally. No push, PR, install or release requested or performed. To use the fix in the product, publish/install an updated build in a new delivery task and run `/fast on` again to save auth-bound consent. Values reviewed and unchanged: the existing upgrade and authorization values cover the lesson.
