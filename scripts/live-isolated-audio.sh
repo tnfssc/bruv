@@ -1,7 +1,18 @@
 #!/usr/bin/env bash
 # An owned, hardware-free PipeWire graph; never touches the desktop server.
 set -euo pipefail
-for tool in pipewire pipewire-pulse wireplumber pw-dump pactl parec pacat python3 bun mktemp timeout; do
+# With --, run a local fixture in this graph; otherwise run provider acceptance.
+if [[ ${1:-} == -- ]]; then
+  shift
+  (( $# )) || { echo 'Expected a command after --' >&2; exit 1; }
+  command=("$@")
+else
+  command=(bun scripts/live-acceptance.ts "$@")
+  for tool in parec pacat bun; do
+    command -v "$tool" >/dev/null || { echo "Missing $tool" >&2; exit 1; }
+  done
+fi
+for tool in pipewire pipewire-pulse wireplumber pw-dump pactl python3 mktemp timeout; do
   command -v "$tool" >/dev/null || { echo "Missing $tool" >&2; exit 1; }
 done
 root=$(mktemp -d)
@@ -54,5 +65,5 @@ timeout 2 pactl info >/dev/null
 timeout 2 pw-dump | python3 -c 'import json,sys; nodes=[o.get("info",{}).get("props",{}) for o in json.load(sys.stdin) if o.get("type","").endswith(":Node")]; bad=[n for n in nodes if n.get("node.name") not in ("Dummy-Driver","Freewheel-Driver")]; print("Pre-test graph nodes:",[(n.get("node.name"),n.get("media.class")) for n in nodes]); sys.exit(bool(bad))'
 [[ $(timeout 2 pactl -f json list sinks) == '[]' ]] || { echo 'Unexpected sink in private graph' >&2; exit 1; }
 [[ $(timeout 2 pactl -f json list sources) == '[]' ]] || { echo 'Unexpected source in private graph' >&2; exit 1; }
-BRUV_LIVE_ISOLATED=1 bun scripts/live-acceptance.ts "$@" & test_pid=$!
+BRUV_LIVE_ISOLATED=1 "${command[@]}" & test_pid=$!
 wait "$test_pid"

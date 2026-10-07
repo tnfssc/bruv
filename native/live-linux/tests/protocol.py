@@ -147,27 +147,39 @@ def synthetic_microphone(sink):
             raise failures[0]
 
 
+def wait_for_queued_audio(protocol):
+    """played reports queue changes, not command acknowledgements."""
+    deadline = time.monotonic() + 3
+    while time.monotonic() < deadline:
+        if protocol.read('played', timeout=deadline - time.monotonic())['queuedMs'] > 0:
+            return
+    raise AssertionError('no nonempty playback queue report')
+
+
 def check_virtual_audio(protocol, source):
     protocol.command(type='start')
     protocol.read('ready')
     with synthetic_microphone(source.removesuffix('.monitor')):
-        pcm = base64.b64encode(b'\x00\x20' * 480).decode()
+        # 500ms remains queued beyond the helper's 100ms report cadence.
+        pcm = base64.b64encode(b'\x00\x20' * 12000).decode()
         protocol.reject('play', 'Invalid PCM16 data or generation', type='play', generation=1, data=pcm)
         protocol.reject('play', 'Invalid PCM16 data or generation', type='play', generation=0, data='!!!!')
         protocol.command(type='play', generation=0, data=pcm)
-        assert protocol.read('played')['queuedMs'] >= 0
+        wait_for_queued_audio(protocol)
         protocol.command(type='flush', generation=1)
         protocol.reject('generation', 'Flush generation must increase', type='flush', generation=1)
         protocol.reject('play', 'Invalid PCM16 data or generation', type='play', generation=0, data=pcm)
         protocol.command(type='play', generation=1, data=pcm)
-        protocol.read('played')
+        wait_for_queued_audio(protocol)
+        # Observe near-end audio while the 300ms microphone injection is live,
+        # before draining playback (which takes longer than the injection).
+        assert any(any(base64.b64decode(protocol.read('capture')['data'])) for _ in range(100))
         # Drain reports must reach zero without a new play command.
         deadline = time.monotonic() + 3
         while True:
             assert time.monotonic() < deadline, 'no playback drain report'
             if protocol.read('played')['queuedMs'] == 0:
                 break
-        assert any(any(base64.b64decode(protocol.read('capture')['data'])) for _ in range(100))
     protocol.command(type='stop')
     protocol.read('stopped')
     protocol.command(type='start')

@@ -49,3 +49,9 @@ Extension primary `task_b67e363a` / judge `task_65eb4c80`: startup ordering visi
 Owner-test primary `task_d7333f4e` / judge `task_3251abf2`: real session setup/disposal separated from authority journey, production tool/renderers retained.108 original assertions preserved and four race bodies whitespace-identical. Duplicate idle-state fixture bug independently reproduced;42 tests/352 assertions passed in exact temporary source mirror with shared dependencies. Final test blob now independently accepted.
 
 Linux gate regression primary `task_3f8cfc8c` / judge `task_794b83a8`: independent policy scenarios remove accidental history while reopening retains full old-frontier/mute/rearm/new-frontier journey. Prior assertions retained;4 focused tests/24 assertions and strict GCC/Clang sanitizer runs pass.
+
+## Private-graph runtime proof replaces earlier virtual blocker
+
+Virtual fixture `61dd8616` / judge `task_ab2edd5f` accepted with ALL five related final source blobs inspected. Graph owner reused; virtual.sh owns only its two modules with one cleanup owner. Explicit baseline missing-played issue reproduced inside private graph:20ms stimulus shorter than100ms report throttle.500ms stimulus now requires positive queue, live nonzero capture,zero drain,restart and source removal. Judge independently built unchanged Linux helper and passed3 consecutive real private-graph smokes plus17 regressions; desktop modules unchanged,exit23 preserved,owned processes/root removed. This resolves prior virtual proof blocker for this graph, not physical-device/macOS/provider or desktop parity.
+
+Changed protocol and test_protocol blobs received fresh combined judgments (old rounds retained). New test_virtual.py and changed isolated-audio script still require own primary focus. AudioCore header independently accepted unchanged by `task_8ae63e66` with21 Bun tests and3 sanitized C regressions.
