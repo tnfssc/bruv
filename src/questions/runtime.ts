@@ -13,6 +13,259 @@ export interface NativeQuestionAccess {
 }
 
 /** A reply starts a new parent turn. It never holds or revives an execute stack. */
+type QueuedAnswer = { question: Question; manager: object; leaf: string | null; epoch: number };
+
+/** Owns local parent-turn delivery, including the session fence and durable replay claim. */
+class ParentQuestionContinuations {
+  private activeContext: ExtensionContext | undefined;
+  private epoch = 0;
+  private stopped = false;
+  private closed = false;
+  private continuationPending = false;
+  private flushing = false;
+  private readonly queued = new Map<string, QueuedAnswer>();
+  private readonly delivered = new Set<string>();
+  private readonly createdHere = new Set<string>();
+  private readonly maxQueued = 20; // The ledger admits at most twenty pending questions.
+
+  constructor(
+    private readonly pi: Pick<ExtensionAPI, "sendMessage">,
+    private readonly service: QuestionService,
+    private readonly supported: () => boolean,
+    private readonly hasMainToolOwner: (manager: object) => boolean,
+    private readonly changed: () => void,
+  ) {}
+
+  get context() {
+    return this.activeContext;
+  }
+
+  attach(ctx: ExtensionContext, navigation = false): boolean {
+    // Only navigation events can replace the active manager. A late callback from
+    // an old session must never re-attach it and dispatch into the new session.
+    if (this.closed && !navigation) return false;
+    if (navigation) this.closed = false;
+    if (this.activeContext && this.activeContext.sessionManager !== ctx.sessionManager) {
+      if (!navigation) return false;
+      this.epoch++;
+      this.queued.clear();
+      this.delivered.clear();
+      this.createdHere.clear();
+      this.stopped = false;
+    }
+    this.activeContext = ctx;
+    return true;
+  }
+
+  pause() {
+    this.stopped = true;
+    this.continuationPending = false;
+    this.epoch++;
+    this.queued.clear();
+    this.changed();
+  }
+
+  treeNavigated() {
+    this.stopped = false;
+    this.changed();
+  }
+
+  agentStarted() {
+    this.continuationPending = false;
+  }
+
+  shutdown() {
+    this.pause();
+    this.closed = true;
+    const previous = this.activeContext;
+    this.activeContext = undefined;
+    this.delivered.clear();
+    this.createdHere.clear();
+    return previous;
+  }
+
+  questionCreated(question: Question) {
+    this.createdHere.add(question.id);
+  }
+
+  private replyKey(q: Question) {
+    return q.replyId ?? q.id + ":" + q.version;
+  }
+
+  private project(q: Question): Question {
+    return q.status === "answered" && q.delivery === "queued" && !this.queued.has(this.replyKey(q))
+      ? { ...q, delivery: "resume-needed" }
+      : q;
+  }
+
+  projectResult(value: Question | Question[]) {
+    return Array.isArray(value) ? value.map((q) => this.project(q)) : this.project(value);
+  }
+
+  hasBlockingQuestions() {
+    const ctx = this.activeContext;
+    if (!ctx || !this.supported()) return false;
+    if (this.continuationPending || this.queued.size) return true;
+    try {
+      return this.service
+        .list(ctx)
+        .some(
+          (q) => !q.readOnly && (q.status === "pending" || q.status === "cancelled") && q.blocked?.foreground === true,
+        );
+    } catch {
+      return true;
+    }
+  }
+
+  private async recordDelivery(
+    ctx: ExtensionContext,
+    q: Question,
+    delivery: "resume-needed" | "queued" | "dispatching" | "delivered",
+  ) {
+    const latest = this.service.get(ctx, q.id);
+    if (latest.status !== "answered" || latest.readOnly) throw new Error("Answer no longer active");
+    return this.service.setDelivery(ctx, { id: latest.id, owner: latest.owner, version: latest.version, delivery });
+  }
+
+  async answerSaved(ctx: ExtensionContext, question: Question) {
+    const key = this.replyKey(question);
+    if (
+      !this.stopped &&
+      this.createdHere.has(question.id) &&
+      this.supported() &&
+      this.activeContext?.sessionManager === ctx.sessionManager &&
+      !this.delivered.has(key)
+    ) {
+      if (!this.queued.has(key) && this.queued.size >= this.maxQueued) {
+        this.changed();
+        return;
+      }
+      const answerEpoch = this.epoch;
+      try {
+        question = await this.recordDelivery(ctx, question, "queued");
+      } catch {
+        this.changed();
+        return;
+      }
+      if (answerEpoch !== this.epoch || this.stopped || this.activeContext?.sessionManager !== ctx.sessionManager) {
+        this.changed();
+        return;
+      }
+      this.queued.set(key, {
+        question,
+        manager: ctx.sessionManager,
+        leaf: ctx.sessionManager.getLeafId(),
+        epoch: this.epoch,
+      });
+      if (this.activeContext?.sessionManager === ctx.sessionManager) queueMicrotask(() => this.flush());
+    }
+    this.changed();
+  }
+
+  async resume(ctx: ExtensionContext, question: Question) {
+    if (question.readOnly) throw new Error("Question belongs to the original branch; this is history only.");
+    if (question.status !== "answered") throw new Error("Only a saved answer can be resumed.");
+    const key = this.replyKey(question);
+    if (question.delivery === "dispatching")
+      throw new Error(
+        "Answer delivery is uncertain. Check the parent chat before continuing; this reply will not be sent twice.",
+      );
+    if (this.delivered.has(key) || question.delivery === "delivered")
+      throw new Error(
+        "This reply was already sent to a parent turn. Read its result or continue in chat; do not replay it.",
+      );
+    if (!this.queued.has(key) && this.queued.size >= this.maxQueued)
+      throw new Error("Too many queued answers; let the agent settle first.");
+    await this.recordDelivery(ctx, question, "queued");
+    this.stopped = false;
+    this.queued.set(key, {
+      question,
+      manager: ctx.sessionManager,
+      leaf: ctx.sessionManager.getLeafId(),
+      epoch: this.epoch,
+    });
+    queueMicrotask(() => this.flush());
+    return question;
+  }
+
+  private belongsToSession(ctx: ExtensionContext, item: QueuedAnswer) {
+    return (
+      this.activeContext?.sessionManager === ctx.sessionManager &&
+      item.epoch === this.epoch &&
+      item.manager === ctx.sessionManager &&
+      item.question.owner.sessionId === ctx.sessionManager.getSessionId() &&
+      (!item.leaf || ctx.sessionManager.getBranch().some((entry) => entry.id === item.leaf))
+    );
+  }
+
+  private async dispatchAnswer(ctx: ExtensionContext, key: string, item: QueuedAnswer) {
+    this.continuationPending = true;
+    try {
+      // Durable claim before the host side effect. A crash between claim and
+      // acknowledgement is uncertain, never permission to replay the reply.
+      await this.recordDelivery(ctx, item.question, "dispatching");
+      if (
+        !this.belongsToSession(ctx, item) ||
+        this.stopped ||
+        !ctx.isIdle() ||
+        this.hasMainToolOwner(ctx.sessionManager)
+      ) {
+        await this.recordDelivery(ctx, item.question, "resume-needed");
+        this.continuationPending = false;
+        this.changed();
+        return;
+      }
+      this.delivered.add(key);
+      if (this.delivered.size > 220) this.delivered.delete(this.delivered.values().next().value!);
+      this.continuationPending = true;
+      this.pi.sendMessage(
+        {
+          customType: "question-answer",
+          display: false,
+          content:
+            "Saved answer for " +
+            item.question.id +
+            ":\n" +
+            JSON.stringify(item.question) +
+            "\nUse this saved reply in a new parent turn. Do not replay prior tool calls or resume a native child in place.",
+          details: { questionId: item.question.id, replyKey: key, owner: item.question.owner },
+        },
+        { triggerTurn: true, deliverAs: "followUp" },
+      );
+      await this.recordDelivery(ctx, item.question, "delivered");
+    } catch {
+      // dispatching stays visible as uncertain. No automatic or blind manual
+      // retry can duplicate a host turn that may already have been accepted.
+    }
+    this.changed();
+  }
+
+  async flush() {
+    const ctx = this.activeContext;
+    if (
+      this.flushing ||
+      !ctx ||
+      this.stopped ||
+      !this.supported() ||
+      !ctx.isIdle() ||
+      this.hasMainToolOwner(ctx.sessionManager)
+    )
+      return;
+    this.flushing = true;
+    try {
+      for (const [key, item] of this.queued) {
+        const eligible = this.belongsToSession(ctx, item);
+        this.queued.delete(key);
+        if (!eligible) continue;
+        await this.dispatchAnswer(ctx, key, item);
+        return;
+      }
+    } finally {
+      this.flushing = false;
+    }
+  }
+}
+
 export function registerQuestionRuntime(
   pi: ExtensionAPI,
   options: {
@@ -23,163 +276,38 @@ export function registerQuestionRuntime(
 ) {
   const service = new QuestionService();
   let remoteBridge: RemoteQuestionBridge | undefined;
-  let context: ExtensionContext | undefined;
-  let epoch = 0;
-  let stopped = false;
-  let closed = false;
-  let continuationPending = false;
-  const hasMainToolOwner = options.hasMainToolOwner ?? ((manager: object) => !!currentMainToolOwner(manager));
   let nativeManager: object | undefined;
   const supported = () =>
-    options.supported() || (nativeManager !== undefined && nativeManager === context?.sessionManager);
-  const maxQueued = 20; // The ledger admits at most twenty pending questions.
-  const queued = new Map<string, { question: Question; manager: object; leaf: string | null; epoch: number }>();
-  const delivered = new Set<string>();
-  const createdHere = new Set<string>();
-  service.onAsked = (q) => {
-    createdHere.add(q.id);
-  };
+    options.supported() || (nativeManager !== undefined && nativeManager === continuations.context?.sessionManager);
   const listeners = new Set<() => void>();
   const changed = () => {
     for (const listener of [...listeners]) listener();
   };
-  const replyKey = (q: Question) => q.replyId ?? q.id + ":" + q.version;
-  const project = (q: Question): Question =>
-    q.status === "answered" && q.delivery === "queued" && !queued.has(replyKey(q))
-      ? { ...q, delivery: "resume-needed" }
-      : q;
-  const projectResult = (value: Question | Question[]) => (Array.isArray(value) ? value.map(project) : project(value));
-  const pause = () => {
-    stopped = true;
-    continuationPending = false;
-    epoch++;
-    queued.clear();
-    changed();
-  };
-  const recordDelivery = async (
-    ctx: ExtensionContext,
-    q: Question,
-    delivery: "resume-needed" | "queued" | "dispatching" | "delivered",
-  ) => {
-    const latest = service.get(ctx, q.id);
-    if (latest.status !== "answered" || latest.readOnly) throw new Error("Answer no longer active");
-    return service.setDelivery(ctx, { id: latest.id, owner: latest.owner, version: latest.version, delivery });
-  };
-  let flushing = false;
-  const flush = async () => {
-    const ctx = context;
-    if (flushing || !ctx || stopped || !supported() || !ctx.isIdle() || hasMainToolOwner(ctx.sessionManager)) return;
-    flushing = true;
-    try {
-      for (const [key, item] of queued) {
-        const eligible = () =>
-          context?.sessionManager === ctx.sessionManager &&
-          item.epoch === epoch &&
-          item.manager === ctx.sessionManager &&
-          item.question.owner.sessionId === ctx.sessionManager.getSessionId() &&
-          (!item.leaf || ctx.sessionManager.getBranch().some((entry) => entry.id === item.leaf));
-        if (!eligible()) {
-          queued.delete(key);
-          continue;
-        }
-        queued.delete(key);
-        continuationPending = true;
-        try {
-          // Durable claim before the host side effect. A crash between claim and
-          // acknowledgement is uncertain, never permission to replay the reply.
-          await recordDelivery(ctx, item.question, "dispatching");
-          if (!eligible() || stopped || !ctx.isIdle() || hasMainToolOwner(ctx.sessionManager)) {
-            await recordDelivery(ctx, item.question, "resume-needed");
-            continuationPending = false;
-            changed();
-            return;
-          }
-          delivered.add(key);
-          if (delivered.size > 220) delivered.delete(delivered.values().next().value!);
-          continuationPending = true;
-          pi.sendMessage(
-            {
-              customType: "question-answer",
-              display: false,
-              content:
-                "Saved answer for " +
-                item.question.id +
-                ":\n" +
-                JSON.stringify(item.question) +
-                "\nUse this saved reply in a new parent turn. Do not replay prior tool calls or resume a native child in place.",
-              details: { questionId: item.question.id, replyKey: key, owner: item.question.owner },
-            },
-            { triggerTurn: true, deliverAs: "followUp" },
-          );
-          await recordDelivery(ctx, item.question, "delivered");
-        } catch {
-          // dispatching stays visible as uncertain. No automatic or blind manual
-          // retry can duplicate a host turn that may already have been accepted.
-        }
-        changed();
-        return;
-      }
-    } finally {
-      flushing = false;
-    }
-  };
+  const continuations = new ParentQuestionContinuations(
+    pi,
+    service,
+    supported,
+    options.hasMainToolOwner ?? ((manager: object) => !!currentMainToolOwner(manager)),
+    changed,
+  );
+  service.onAsked = (q) => continuations.questionCreated(q);
   service.onAnswered = async (question, raw) => {
     const ctx = raw as ExtensionContext;
-    if (question.remote) {
-      try {
-        if (!remoteBridge || !supported() || context?.sessionManager !== ctx.sessionManager)
-          throw new Error("Remote reply saved; parent remote bridge is not active");
-        await remoteBridge.dispatch(ctx, question.id);
-      } finally {
-        changed();
-      }
-      return;
+    if (!question.remote) return continuations.answerSaved(ctx, question);
+    try {
+      if (!remoteBridge || !supported() || continuations.context?.sessionManager !== ctx.sessionManager)
+        throw new Error("Remote reply saved; parent remote bridge is not active");
+      await remoteBridge.dispatch(ctx, question.id);
+    } finally {
+      changed();
     }
-    const key = replyKey(question);
-    if (
-      !stopped &&
-      createdHere.has(question.id) &&
-      supported() &&
-      context?.sessionManager === ctx.sessionManager &&
-      !delivered.has(key)
-    ) {
-      if (!queued.has(key) && queued.size >= maxQueued) {
-        changed();
-        return;
-      }
-      const answerEpoch = epoch;
-      try {
-        question = await recordDelivery(ctx, question, "queued");
-      } catch {
-        changed();
-        return;
-      }
-      if (answerEpoch !== epoch || stopped || context?.sessionManager !== ctx.sessionManager) {
-        changed();
-        return;
-      }
-      queued.set(key, { question, manager: ctx.sessionManager, leaf: ctx.sessionManager.getLeafId(), epoch });
-      if (context?.sessionManager === ctx.sessionManager) queueMicrotask(flush);
-    }
-    changed();
   };
   const attach = (ctx: ExtensionContext, navigation = false): boolean => {
-    // Only navigation events can replace the active manager. A late callback from
-    // an old session must never re-attach it and dispatch into the new session.
-    if (closed && !navigation) return false;
-    if (navigation) closed = false;
-    if (context && context.sessionManager !== ctx.sessionManager) {
-      if (!navigation) return false;
-      observeRemoteQuestions(context.sessionManager);
-      epoch++;
-      queued.clear();
-      delivered.clear();
-      createdHere.clear();
-      stopped = false;
-    }
-    context = ctx;
+    const previous = continuations.context;
+    if (!continuations.attach(ctx, navigation)) return false;
+    if (previous && previous.sessionManager !== ctx.sessionManager) observeRemoteQuestions(previous.sessionManager);
     observeRemoteQuestions(ctx.sessionManager, async (state) => {
-      if (closed || context?.sessionManager !== ctx.sessionManager || !supported()) return;
+      if (continuations.context?.sessionManager !== ctx.sessionManager || !supported()) return;
       try {
         await remoteBridge?.sync(ctx, state);
       } finally {
@@ -200,30 +328,25 @@ export function registerQuestionRuntime(
     changed();
   });
   pi.on("session_tree", (_event, ctx) => {
-    pause();
+    continuations.pause();
     attach(ctx, true);
-    stopped = false;
-    changed();
+    continuations.treeNavigated();
   });
   pi.on("before_agent_start", (_event, ctx) => {
-    if (attach(ctx)) continuationPending = false;
+    if (attach(ctx)) continuations.agentStarted();
   });
   pi.on("agent_end", (event, ctx) => {
     if (!attach(ctx)) return;
     const last = [...event.messages].reverse().find((message) => message.role === "assistant");
-    if (ctx.signal?.aborted || last?.stopReason === "aborted" || last?.stopReason === "error") pause();
+    if (ctx.signal?.aborted || last?.stopReason === "aborted" || last?.stopReason === "error") continuations.pause();
   });
   pi.on("agent_settled", (_event, ctx) => {
-    if (attach(ctx)) flush();
+    if (attach(ctx)) continuations.flush();
   });
   pi.on("session_shutdown", () => {
     nativeManager = undefined;
-    pause();
-    closed = true;
-    if (context) observeRemoteQuestions(context.sessionManager);
-    context = undefined;
-    delivered.clear();
-    createdHere.clear();
+    const previous = continuations.shutdown();
+    if (previous) observeRemoteQuestions(previous.sessionManager);
     listeners.clear();
   });
   const runtime = {
@@ -237,21 +360,8 @@ export function registerQuestionRuntime(
       await remoteBridge?.sync(ctx, state);
       changed();
     },
-    pause,
-    hasBlockingQuestions() {
-      if (!context || !supported()) return false;
-      if (continuationPending || queued.size) return true;
-      try {
-        return service
-          .list(context)
-          .some(
-            (q) =>
-              !q.readOnly && (q.status === "pending" || q.status === "cancelled") && q.blocked?.foreground === true,
-          );
-      } catch {
-        return true;
-      }
-    },
+    pause: () => continuations.pause(),
+    hasBlockingQuestions: () => continuations.hasBlockingQuestions(),
     async handle(ctx: ExtensionContext, method: string, params: unknown) {
       if (!attach(ctx)) throw new Error("Question session is no longer active.");
       if (!supported())
@@ -265,7 +375,7 @@ export function registerQuestionRuntime(
       await remoteBridge?.sync(ctx);
       const result = await service.handle(method, params, ctx);
       changed();
-      return projectResult(result);
+      return continuations.projectResult(result);
     },
     commands(ctx: ExtensionContext) {
       if (!attach(ctx)) throw new Error("Question session is no longer active.");
@@ -277,7 +387,8 @@ export function registerQuestionRuntime(
           };
         },
         async handle(method: string, params: Record<string, unknown> = {}) {
-          if (context?.sessionManager !== ctx.sessionManager) throw new Error("Question session is no longer active.");
+          if (continuations.context?.sessionManager !== ctx.sessionManager)
+            throw new Error("Question session is no longer active.");
           if (!supported()) throw new Error("Questions are supported in the parent CLI session only.");
           await remoteBridge?.sync(ctx);
           if (method === "questions.answer" || method === "questions.cancel" || method === "questions.resume") {
@@ -298,29 +409,7 @@ export function registerQuestionRuntime(
               }
             }
             if (method === "questions.resume") {
-              if (q.readOnly) throw new Error("Question belongs to the original branch; this is history only.");
-              if (q.status !== "answered") throw new Error("Only a saved answer can be resumed.");
-              const key = replyKey(q);
-              if (q.delivery === "dispatching")
-                throw new Error(
-                  "Answer delivery is uncertain. Check the parent chat before continuing; this reply will not be sent twice.",
-                );
-              if (delivered.has(key) || q.delivery === "delivered")
-                throw new Error(
-                  "This reply was already sent to a parent turn. Read its result or continue in chat; do not replay it.",
-                );
-              if (!queued.has(key) && queued.size >= maxQueued)
-                throw new Error("Too many queued answers; let the agent settle first.");
-              await recordDelivery(ctx, q, "queued");
-              stopped = false;
-              queued.set(key, {
-                question: q,
-                manager: ctx.sessionManager,
-                leaf: ctx.sessionManager.getLeafId(),
-                epoch,
-              });
-              queueMicrotask(flush);
-              return q;
+              return continuations.resume(ctx, q);
             }
             const input = {
               id: q.id,
@@ -338,7 +427,7 @@ export function registerQuestionRuntime(
             changed();
             return q.remote ? service.get(ctx, q.id) : result;
           }
-          return projectResult(await service.handle(method, params, ctx));
+          return continuations.projectResult(await service.handle(method, params, ctx));
         },
       };
     },

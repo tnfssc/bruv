@@ -268,16 +268,15 @@ export async function runConnector(
   const transportBound = Promise.withResolvers<ClaudeCompatTransport>();
   void transportBound.promise.catch(() => {});
   let closing: Promise<void> | undefined;
-  let shutdownError: unknown;
+  let exitCode = 0;
   let stopped: "EOF" | "SIGTERM" | "SIGINT" | undefined;
   const close = () => (runtime ? (closing ??= runtime.close()) : Promise.resolve());
   const stop = (reason: "EOF" | "SIGTERM" | "SIGINT") => {
     stopped ??= reason;
     transport?.close(new Error("Connector stopped: " + reason));
     io.input.destroy();
-    void close().catch((error) => {
-      shutdownError = error;
-    });
+    // Start cancellation immediately; the finally boundary awaits and reports it.
+    void close().catch(() => {});
   };
   const terminate = () => stop("SIGTERM"),
     interrupt = () => stop("SIGINT");
@@ -357,11 +356,7 @@ export async function runConnector(
       },
       args,
     );
-    if (stopped) {
-      await close();
-      return stopped === "SIGTERM" ? 143 : 130;
-    }
-    if (args.mode === "auxiliary") {
+    if (!stopped && args.mode === "auxiliary") {
       let prompt = args.prompt;
       if (prompt === undefined) {
         const chunks: Buffer[] = [];
@@ -371,7 +366,7 @@ export async function runConnector(
       if (!prompt.trim()) throw new Error("Auxiliary prompt is empty");
       const result = await runtime.runAuxiliary(prompt, args.schema!);
       if (!stopped) await write(io.output, JSON.stringify(result) + "\n");
-    } else {
+    } else if (!stopped) {
       transport = new ClaudeCompatTransport({
         input: io.input,
         output: io.output,
@@ -381,39 +376,31 @@ export async function runConnector(
       });
       transportBound.resolve(transport);
       io.input.on("end", eof);
-      try {
-        await transport.run();
-      } catch (error) {
-        if (!stopped) throw error;
-      }
+      await transport.run();
     }
-    await close();
-    if (shutdownError) throw shutdownError;
-    return stopped === "SIGTERM" ? 143 : stopped === "SIGINT" ? 130 : 0;
   } catch (error) {
-    if (stopped && !shutdownError) {
-      try {
-        await close();
-        return stopped === "SIGTERM" ? 143 : stopped === "SIGINT" ? 130 : 0;
-      } catch (shutdown) {
-        io.stderr.write("[bruv-claude-compat] shutdown failed: " + detail(shutdown) + "\n");
-        return 1;
-      }
+    // Failed startup must release requests waiting for a transport before teardown.
+    transportBound.reject(new Error("Connector closed before native transport binding"));
+    transport?.close();
+    if (!stopped) {
+      io.stderr.write("[bruv-claude-compat] " + detail(error) + "\n");
+      exitCode = 1;
     }
-    io.stderr.write("[bruv-claude-compat] " + detail(error) + "\n");
-    return 1;
   } finally {
+    try {
+      await close();
+    } catch (error) {
+      io.stderr.write("[bruv-claude-compat] shutdown failed: " + detail(error) + "\n");
+      exitCode = 1;
+    }
     transportBound.reject(new Error("Connector closed before native transport binding"));
     io.input.off("end", eof);
     io.signals.off("SIGTERM", terminate);
     io.signals.off("SIGINT", interrupt);
     transport?.close();
-    try {
-      await close();
-    } catch (error) {
-      io.stderr.write("[bruv-claude-compat] shutdown failed: " + detail(error) + "\n");
-    }
   }
+  // Cancellation is successful only after the owning runtime has closed.
+  return exitCode || (stopped === "SIGTERM" ? 143 : stopped === "SIGINT" ? 130 : 0);
 }
 
 if (import.meta.main) process.exitCode = await runConnector(process.argv.slice(2));

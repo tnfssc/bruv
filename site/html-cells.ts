@@ -1,4 +1,4 @@
-import type { Cell } from "./type";
+import type { Cell } from "./demos";
 
 export const escapeText = (text: string) =>
   text.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");

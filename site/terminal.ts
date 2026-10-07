@@ -51,14 +51,12 @@ async function start() {
   const scrollInput = new CellScroll();
   let pendingFrame = 0;
   let needsResize = false;
-  let previousRows: string[] = [];
   let clock = performance.now();
   let animationTimer: ReturnType<typeof setTimeout> | undefined;
   const announcement = document.createElement("span");
   announcement.className = "sr-only";
   announcement.setAttribute("aria-live", "polite");
   host.after(announcement);
-  let lastFocus = "";
   const visibleDemo = (capture: ReturnType<typeof layout>["captures"][number]) =>
     state.demos![capture.id].started
       ? capture.y < frame.clip.bottom && capture.y + capture.rows.length > frame.clip.top
@@ -75,7 +73,8 @@ async function start() {
         advance(state.demos![capture.id], now - clock, demoDuration(capture.id), visibleDemo(capture));
     }
     clock = now;
-    if (needsResize) {
+    const resized = needsResize;
+    if (resized) {
       needsResize = false;
       terminal.options.fontSize = innerWidth < 600 ? 14 : 16;
       const r = terminal.renderer!;
@@ -83,13 +82,21 @@ async function start() {
         Math.max(24, Math.floor(host.clientWidth / r.charWidth)),
         Math.max(12, Math.floor(host.clientHeight / r.charHeight)),
       );
-      previousRows = [];
       scrollInput.reset();
       state.focus = -1;
     }
     frame = layout(terminal.cols, terminal.rows, state);
     state.scroll = frame.scroll;
-    const changedRows = frame.ansiRows.filter((row, i) => row !== previousRows[i]);
+    presentFrame(frame, resized);
+    if (!document.hidden && frame.captures.some((c) => visibleDemo(c) && !state.demos![c.id].paused))
+      animationTimer = setTimeout(render, 80);
+  }
+  // Presentation owns the row cache and focus announcement; layout/timing stay in paint.
+  let previousRows: string[] = [];
+  let lastFocus = "";
+  function presentFrame(nextFrame: ReturnType<typeof layout>, resized: boolean) {
+    if (resized) previousRows = [];
+    const changedRows = nextFrame.ansiRows.filter((row, i) => row !== previousRows[i]);
     if (changedRows.length) {
       terminal.write("\x1b[?25l\x1b[?7l" + changedRows.join("") + "\x1b[0m");
       // Ghostty 0.4 writes WASM synchronously, but its normal canvas paint is a
@@ -99,13 +106,13 @@ async function start() {
       // parsing stays row-diffed; there is still only one paint per changed frame.
       terminal.renderer!.render(terminal.wasmTerm!, true);
     }
-    previousRows = frame.ansiRows;
-    host.dataset.scroll = String(frame.scroll);
+    previousRows = nextFrame.ansiRows;
+    host.dataset.scroll = String(nextFrame.scroll);
     host.dataset.installCommand = state.installCommand;
     host.dataset.installUrl = state.installUrl;
     host.dataset.cols = String(terminal.cols);
     host.dataset.rows = String(terminal.rows);
-    host.dataset.focus = frame.hits[state.focus]?.label || "";
+    host.dataset.focus = nextFrame.hits[state.focus]?.label || "";
     host.dataset.cellWidth = String(terminal.renderer!.charWidth);
     host.dataset.cellHeight = String(terminal.renderer!.charHeight);
     host.dataset.demos = JSON.stringify(state.demos);
@@ -113,8 +120,6 @@ async function start() {
       lastFocus = host.dataset.focus || "";
       announcement.textContent = lastFocus ? lastFocus + ". Press Enter to activate." : "";
     }
-    if (!document.hidden && frame.captures.some((c) => visibleDemo(c) && !state.demos![c.id].paused))
-      animationTimer = setTimeout(render, 80);
   }
   document.addEventListener("visibilitychange", () => {
     clearTimeout(animationTimer);
@@ -174,115 +179,118 @@ async function start() {
     } else if (action === "text") location.assign("./text.html");
     else location.assign(action);
   }
-  function cell(e: { clientX: number; clientY: number }) {
-    const rect = canvas.getBoundingClientRect();
-    // CSS pixels and measured renderer cells, not device-pixel canvas dimensions.
-    return {
-      x: Math.floor((e.clientX - rect.left) / terminal.renderer!.charWidth),
-      y: Math.floor((e.clientY - rect.top) / terminal.renderer!.charHeight),
-    };
-  }
-  let touchY: number | null = null,
-    touchDistance = 0,
-    moved = false;
-  function scrollPixels(pixels: number) {
-    const next = scrollInput.move(state.scroll, pixels, terminal.renderer!.charHeight, frame.maxScroll);
-    if (next !== state.scroll) {
-      state.scroll = next;
-      render();
+  function bindPointerInput() {
+    function cell(e: { clientX: number; clientY: number }) {
+      const rect = canvas.getBoundingClientRect();
+      // CSS pixels and measured renderer cells, not device-pixel canvas dimensions.
+      return {
+        x: Math.floor((e.clientX - rect.left) / terminal.renderer!.charWidth),
+        y: Math.floor((e.clientY - rect.top) / terminal.renderer!.charHeight),
+      };
     }
-  }
-  canvas.addEventListener("pointerdown", (e) => {
-    if (e.pointerType === "touch") {
-      touchY = e.clientY;
-      touchDistance = 0;
-      scrollInput.reset();
+    let touchY: number | null = null,
+      touchDistance = 0,
       moved = false;
-      canvas.setPointerCapture(e.pointerId);
-    }
-  });
-  canvas.addEventListener("pointermove", (e) => {
-    if (e.pointerType === "touch" && touchY !== null) {
-      const delta = touchY - e.clientY;
-      touchY = e.clientY;
-      touchDistance += Math.abs(delta);
-      if (touchDistance > 4) moved = true;
-      scrollPixels(delta);
-      return;
-    }
-    const { x, y } = cell(e);
-    const i = hitAt(frame.hits, x, y);
-    canvas.style.cursor = i >= 0 ? "pointer" : "default";
-    const hover =
-      i >= 0 && frame.hits[i].action.startsWith("demo:") ? (frame.hits[i].action.split(":")[1] as DemoId) : undefined;
-    if (state.hover !== hover) {
-      state.hover = hover;
-      render();
-    }
-  });
-  canvas.addEventListener("pointerleave", () => {
-    state.hover = undefined;
-    render();
-  });
-  canvas.addEventListener("pointerup", (e) => {
-    touchY = null;
-    if (e.pointerType === "touch") {
-      e.preventDefault();
-      if (!moved) {
-        const { x, y } = cell(e);
-        const i = hitAt(frame.hits, x, y);
-        if (i >= 0) {
-          state.focus = i;
-          state.hover = frame.hits[i].action.startsWith("demo:")
-            ? (frame.hits[i].action.split(":")[1] as DemoId)
-            : undefined;
-          activate(frame.hits[i].action);
-        }
+    function scrollPixels(pixels: number) {
+      const next = scrollInput.move(state.scroll, pixels, terminal.renderer!.charHeight, frame.maxScroll);
+      if (next !== state.scroll) {
+        state.scroll = next;
+        render();
       }
-      moved = false;
     }
-  });
-  canvas.addEventListener("pointercancel", () => {
-    touchY = null;
-    moved = false;
-  });
-  canvas.addEventListener(
-    "click",
-    (e) => {
-      e.preventDefault();
-      e.stopImmediatePropagation();
-      host.focus({ preventScroll: true });
-      if ((e as PointerEvent).pointerType === "touch") return;
-      if (moved) {
+    canvas.addEventListener("pointerdown", (e) => {
+      if (e.pointerType === "touch") {
+        touchY = e.clientY;
+        touchDistance = 0;
+        scrollInput.reset();
         moved = false;
+        canvas.setPointerCapture(e.pointerId);
+      }
+    });
+    canvas.addEventListener("pointermove", (e) => {
+      if (e.pointerType === "touch" && touchY !== null) {
+        const delta = touchY - e.clientY;
+        touchY = e.clientY;
+        touchDistance += Math.abs(delta);
+        if (touchDistance > 4) moved = true;
+        scrollPixels(delta);
         return;
       }
       const { x, y } = cell(e);
-      const index = hitAt(frame.hits, x, y);
-      if (index >= 0) {
-        state.focus = index;
-        activate(frame.hits[index].action);
+      const i = hitAt(frame.hits, x, y);
+      canvas.style.cursor = i >= 0 ? "pointer" : "default";
+      const hover =
+        i >= 0 && frame.hits[i].action.startsWith("demo:") ? (frame.hits[i].action.split(":")[1] as DemoId) : undefined;
+      if (state.hover !== hover) {
+        state.hover = hover;
+        render();
       }
-    },
-    true,
-  );
-  // Ghostty also listens in capture on the host. Own input one level earlier
-  // so it cannot generate terminal scroll events or cancel browser pinch zoom.
-  document.addEventListener(
-    "wheel",
-    (e) => {
-      if (!host.contains(e.target as Node)) return;
-      if (e.ctrlKey) {
-        // Skip Ghostty's own cancelling wheel listener, but keep browser zoom.
+    });
+    canvas.addEventListener("pointerleave", () => {
+      state.hover = undefined;
+      render();
+    });
+    canvas.addEventListener("pointerup", (e) => {
+      touchY = null;
+      if (e.pointerType === "touch") {
+        e.preventDefault();
+        if (!moved) {
+          const { x, y } = cell(e);
+          const i = hitAt(frame.hits, x, y);
+          if (i >= 0) {
+            state.focus = i;
+            state.hover = frame.hits[i].action.startsWith("demo:")
+              ? (frame.hits[i].action.split(":")[1] as DemoId)
+              : undefined;
+            activate(frame.hits[i].action);
+          }
+        }
+        moved = false;
+      }
+    });
+    canvas.addEventListener("pointercancel", () => {
+      touchY = null;
+      moved = false;
+    });
+    canvas.addEventListener(
+      "click",
+      (e) => {
+        e.preventDefault();
         e.stopImmediatePropagation();
-        return;
-      }
-      e.preventDefault();
-      e.stopImmediatePropagation();
-      scrollPixels(wheelPixels(e.deltaY, e.deltaMode, terminal.renderer!.charHeight, frame.visible));
-    },
-    { passive: false, capture: true },
-  );
+        host.focus({ preventScroll: true });
+        if ((e as PointerEvent).pointerType === "touch") return;
+        if (moved) {
+          moved = false;
+          return;
+        }
+        const { x, y } = cell(e);
+        const index = hitAt(frame.hits, x, y);
+        if (index >= 0) {
+          state.focus = index;
+          activate(frame.hits[index].action);
+        }
+      },
+      true,
+    );
+    // Ghostty also listens in capture on the host. Own input one level earlier
+    // so it cannot generate terminal scroll events or cancel browser pinch zoom.
+    document.addEventListener(
+      "wheel",
+      (e) => {
+        if (!host.contains(e.target as Node)) return;
+        if (e.ctrlKey) {
+          // Skip Ghostty's own cancelling wheel listener, but keep browser zoom.
+          e.stopImmediatePropagation();
+          return;
+        }
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        scrollPixels(wheelPixels(e.deltaY, e.deltaMode, terminal.renderer!.charHeight, frame.visible));
+      },
+      { passive: false, capture: true },
+    );
+  }
+  bindPointerInput();
   document.addEventListener(
     "keydown",
     (e) => {

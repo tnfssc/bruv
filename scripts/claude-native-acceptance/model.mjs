@@ -29,6 +29,29 @@ export function modelsConfig(port) {
 function text(m) {
   return typeof m.content === "string" ? m.content : JSON.stringify(m.content ?? "");
 }
+
+function isCancellationNotice(user, messages, worker, state) {
+  if (!user.includes("asynchronous task completed.") || !user.includes(" killed")) return false;
+  // A full command identifies isolated inputs; actual job notices may shorten it.
+  if (user.includes(worker) && user.includes(" cancel")) return true;
+  const killedId = user.match(/(task_[a-z0-9]+) killed\b/)?.[1];
+  if (!killedId) return false;
+  // The launch saves its owned ID before stopping. A prior real inspection also
+  // identifies the job when the notification's command preview was shortened.
+  let actualCancelledId;
+  try {
+    actualCancelledId = readFileSync(state + "/cancel.job-id", "utf8").trim();
+  } catch {}
+  return (
+    killedId === actualCancelledId ||
+    messages.some(
+      (m) =>
+        m.role === "tool" &&
+        text(m).includes("CANCEL_INSPECT_REAL") &&
+        new RegExp("\\b" + killedId + "\\b").test(text(m)),
+    )
+  );
+}
 export function reply(body, { worker, state }) {
   if (body.model !== modelId) throw Error("Wrong test model identity: " + body.model);
   const messages = body.messages ?? [],
@@ -51,63 +74,50 @@ export function reply(body, { worker, state }) {
     ],
   });
   const content = (value) => ({ role: "assistant", content: value });
-  const shellCode = (scenario, wait) =>
-    "const r = await shell(" +
-    JSON.stringify(
-      JSON.stringify(process.execPath) + " " + JSON.stringify(worker) + " " + JSON.stringify(state) + " " + scenario,
-    ) +
-    ", {waitSeconds:" +
-    wait +
-    "}); console.log(JSON.stringify(r));";
-  // This is an actual Bruv completion notification, not another user scenario.
-  // Long worktree paths are shortened in the actual human job notice. The full
-  // command cannot identify those notices; correlate to the prior real terminal
-  // inspection instead. Keep the complete-command route for isolated unit input.
-  const killedId = user.match(/(task_[a-z0-9]+) killed\b/)?.[1];
-  let actualCancelledId;
-  try {
-    actualCancelledId = readFileSync(state + "/cancel.job-id", "utf8").trim();
-  } catch {}
-  const confirmedKilledId =
-    killedId &&
-    messages.some(
-      (m) =>
-        m.role === "tool" &&
-        text(m).includes("CANCEL_INSPECT_REAL") &&
-        new RegExp("\\b" + killedId + "\\b").test(text(m)),
-    );
-  if (
-    user.includes("asynchronous task completed.") &&
-    user.includes(" killed") &&
-    ((user.includes(worker) && user.includes(" cancel")) ||
-      (killedId && killedId === actualCancelledId) ||
-      confirmedKilledId)
-  )
-    return content("CANCELLATION_COMPLETED_REAL");
+  const workerCommand = (scenario) =>
+    JSON.stringify(process.execPath) + " " + JSON.stringify(worker) + " " + JSON.stringify(state) + " " + scenario;
+  const shellCode = (scenario, wait) => `
+    const r = await shell(${JSON.stringify(workerCommand(scenario))}, {waitSeconds:${wait}});
+    console.log(JSON.stringify(r));
+  `;
+  if (isCancellationNotice(user, messages, worker, state)) return content("CANCELLATION_COMPLETED_REAL");
   if (user.includes("Saved answer for ")) {
     if (results.includes("QUESTION_RESOLVED_ACTUAL")) return content("HUMAN_ANSWER_DELIVERED_ONCE_REAL");
-    return execute(
-      'const qs=await questions.list();const q=qs.find(q=>q.dedupKey==="human-controls-acceptance");if(!q||q.answer!=="Use local fixture"||q.status!=="answered")throw Error("No saved human answer");console.log("QUESTION_RESOLVED_ACTUAL",JSON.stringify(await questions.resolve({id:q.id,owner:q.owner,version:q.version,reason:"Acceptance used explicit saved human answer"})));',
-    );
+    return execute(`
+      const qs = await questions.list();
+      const q = qs.find(q => q.dedupKey === "human-controls-acceptance");
+      if (!q || q.answer !== "Use local fixture" || q.status !== "answered")
+        throw Error("No saved human answer");
+      const resolved = await questions.resolve({
+        id: q.id, owner: q.owner, version: q.version,
+        reason: "Acceptance used explicit saved human answer"
+      });
+      console.log("QUESTION_RESOLVED_ACTUAL", JSON.stringify(resolved));
+    `);
   }
   if (user.includes("HUMAN_PERMISSION_")) {
     const scenario = user.match(/HUMAN_PERMISSION_(allow|deny|stop)/)?.[1];
     if (!scenario) throw Error("Unknown permission scenario");
     if (results) return content("HUMAN_PERMISSION_" + scenario + "_RESULT_REAL");
-    return execute(
-      "await Bun.write(" +
-        JSON.stringify(state + "/permission-") +
-        "+" +
-        JSON.stringify(scenario) +
-        '+".effect", "actual side effect after consent");console.log("PERMISSION_SIDE_EFFECT_REAL");',
-    );
+    return execute(`
+      await Bun.write(${JSON.stringify(state + "/permission-" + scenario + ".effect")}, "actual side effect after consent");
+      console.log("PERMISSION_SIDE_EFFECT_REAL");
+    `);
   }
   if (user.includes("HUMAN_QUESTION_ASK"))
     return results
       ? content("HUMAN_QUESTION_SAVED_REAL")
-      : execute(
-          'const q=await questions.ask({text:"Acceptance saved human question",dedupKey:"human-controls-acceptance",choices:["Use local fixture","Cancel"],allowFreeText:false});await questions.block({id:q.id,owner:q.owner,version:q.version,checkpoint:"Use the saved human answer",foreground:false});console.log("QUESTION_SAVED_ACTUAL",JSON.stringify(q));',
-        );
+      : execute(`
+          const q = await questions.ask({
+            text: "Acceptance saved human question", dedupKey: "human-controls-acceptance",
+            choices: ["Use local fixture", "Cancel"], allowFreeText: false
+          });
+          await questions.block({
+            id: q.id, owner: q.owner, version: q.version,
+            checkpoint: "Use the saved human answer", foreground: false
+          });
+          console.log("QUESTION_SAVED_ACTUAL", JSON.stringify(q));
+        `);
   if (user.includes("HUMAN_CONTINUE")) return content("HUMAN_CONTINUED_REAL");
   if (user.includes("ACCEPT_STEER_NOW")) return content("STEER_ADMITTED_REAL");
   if (user.includes("ACCEPT_EXECUTE"))
@@ -128,24 +138,35 @@ export function reply(body, { worker, state }) {
       if (!results.includes("CANCEL_INSPECT_REAL")) throw Error("Cancellation did not produce terminal inspection");
       return content("CANCEL_CONFIRMED_REAL");
     }
-    return execute(
-      "const job = await shell(" +
-        JSON.stringify(
-          JSON.stringify(process.execPath) + " " + JSON.stringify(worker) + " " + JSON.stringify(state) + " cancel",
-        ) +
-        ', {waitSeconds:0}); if(!job.background)throw Error("Expected fresh owned background job"); await Bun.write(' +
-        JSON.stringify(state + "/cancel.job-id") +
-        ',job.id); console.log(JSON.stringify(await jobs.stop(job.id))); const deadline=Date.now()+10000; let inspected; do { inspected=await jobs.inspect(job.id); if(["killed","cancelled","stopped"].includes(inspected.status))break; await new Promise(r=>setTimeout(r,25)); } while(Date.now()<deadline); if(!["killed","cancelled","stopped"].includes(inspected.status))throw Error("Cancellation not confirmed: "+inspected.status); console.log("CANCEL_INSPECT_REAL",JSON.stringify(inspected));',
-    );
+    return execute(`
+      const job = await shell(${JSON.stringify(workerCommand("cancel"))}, {waitSeconds:0});
+      if (!job.background) throw Error("Expected fresh owned background job");
+      await Bun.write(${JSON.stringify(state + "/cancel.job-id")}, job.id);
+      console.log(JSON.stringify(await jobs.stop(job.id)));
+      const deadline = Date.now() + 10000;
+      let inspected;
+      do {
+        inspected = await jobs.inspect(job.id);
+        if (["killed", "cancelled", "stopped"].includes(inspected.status)) break;
+        await new Promise(r => setTimeout(r, 25));
+      } while (Date.now() < deadline);
+      if (!["killed", "cancelled", "stopped"].includes(inspected.status))
+        throw Error("Cancellation not confirmed: " + inspected.status);
+      console.log("CANCEL_INSPECT_REAL", JSON.stringify(inspected));
+    `);
   }
   if (user.includes("ACCEPT_STOP"))
     return results ? content("STOP_TOOL_RETURNED_REAL") : execute(shellCode("stop", 30));
   if (user.includes("ACCEPT_QUESTION"))
     return results
       ? content("SAVED_QUESTION_CREATED_REAL")
-      : execute(
-          'const q=await questions.ask({text:"Acceptance saved human question",dedupKey:"native-acceptance",choices:["Use local fixture","Cancel"],allowFreeText:false}); console.log(JSON.stringify(q));',
-        );
+      : execute(`
+          const q = await questions.ask({
+            text: "Acceptance saved human question", dedupKey: "native-acceptance",
+            choices: ["Use local fixture", "Cancel"], allowFreeText: false
+          });
+          console.log(JSON.stringify(q));
+        `);
   if (user.includes("ACCEPT_PERMISSION"))
     return results ? content("PERMISSION_RESULT_REAL") : execute('console.log("PERMISSION_EXECUTE_REAL")');
   // Bruv wake messages contain real worker output; never manufacture completion.
@@ -164,14 +185,16 @@ export async function startModel(options) {
       res.end();
       return;
     }
+    let requestSequence;
     try {
       let input = "";
       for await (const b of req) input += b;
       const body = JSON.parse(input);
-      body.__sequence = ++sequence;
+      requestSequence = ++sequence;
+      body.__sequence = requestSequence;
       const delta = options.reply ? await options.reply(body, options) : reply(body, options);
       records.push({
-        sequence,
+        sequence: requestSequence,
         model: body.model,
         reasoningEffort: body.reasoning_effort,
         messages: body.messages,
@@ -179,7 +202,7 @@ export async function startModel(options) {
       });
       res.writeHead(200, { "content-type": "text/event-stream" });
       const chunk = (d, finish) => ({
-        id: "local-acceptance-" + sequence,
+        id: "local-acceptance-" + requestSequence,
         object: "chat.completion.chunk",
         created: 1,
         model: body.model,
@@ -191,7 +214,7 @@ export async function startModel(options) {
           .join("") + "data: [DONE]\n\n",
       );
     } catch (e) {
-      records.push({ sequence, error: e.message });
+      records.push({ sequence: requestSequence ?? sequence, error: e.message });
       res.writeHead(400, { "content-type": "application/json" });
       res.end(JSON.stringify({ error: { message: e.message, type: "acceptance_model_error" } }));
     }

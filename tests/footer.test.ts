@@ -391,6 +391,78 @@ test("disposing the footer suppresses an in-flight cost refresh redraw", async (
   expect(unsubscribed).toBe(1);
 });
 
+test("cost polling serializes refreshes, retries errors, and redraws only changed totals", async () => {
+  const { ctx, data } = fixture();
+  let factory: Parameters<ExtensionContext["ui"]["setFooter"]>[0];
+  ctx.ui.setFooter = (value) => {
+    factory = value;
+  };
+  let tick!: () => void;
+  let renders = 0,
+    cleared = 0;
+  const refreshes: ReturnType<typeof Promise.withResolvers<void>>[] = [];
+  const tracker = {
+    descendantCost: 0,
+    refresh: () => {
+      const refresh = Promise.withResolvers<void>();
+      refreshes.push(refresh);
+      return refresh.promise;
+    },
+  };
+  const oldSet = globalThis.setInterval,
+    oldClear = globalThis.clearInterval;
+  globalThis.setInterval = ((callback: TimerHandler, delay?: number) => {
+    tick = callback as () => void;
+    expect(delay).toBe(2_000);
+    return 77 as any;
+  }) as typeof setInterval;
+  globalThis.clearInterval = (() => {
+    cleared++;
+  }) as typeof clearInterval;
+  try {
+    const stop = installCompactFooter(ctx, () => false, tracker as any);
+    const component = factory!(
+      {
+        requestRender() {
+          renders++;
+        },
+      } as any,
+      theme,
+      data,
+    );
+    expect(refreshes).toHaveLength(1);
+    const initial = refreshes[0]!;
+    tick();
+    expect(refreshes).toHaveLength(1);
+    initial.reject(new Error("transient disk error"));
+    await initial.promise.catch(() => {});
+    expect(renders).toBe(0);
+
+    tick();
+    expect(refreshes).toHaveLength(2);
+    const unchanged = refreshes[1]!;
+    unchanged.resolve();
+    await unchanged.promise;
+    expect(renders).toBe(0);
+
+    tick();
+    expect(refreshes).toHaveLength(3);
+    const changed = refreshes[2]!;
+    tracker.descendantCost = 1;
+    changed.resolve();
+    await changed.promise;
+    expect(renders).toBe(1);
+    stop();
+    component.dispose?.();
+    expect(cleared).toBe(1);
+    tick();
+    expect(refreshes).toHaveLength(3);
+  } finally {
+    globalThis.setInterval = oldSet;
+    globalThis.clearInterval = oldClear;
+  }
+});
+
 test("footer includes failed compaction attempt costs without changing context usage", () => {
   const { ctx, data } = fixture();
   const entries = ctx.sessionManager.getEntries();
@@ -407,9 +479,9 @@ test("footer includes failed compaction attempt costs without changing context u
   expect(plain(renderSingleRowFooter(ctx, data, theme, 150))[0]).toContain("ctx 1%");
 });
 
-test("cache estimate keeps footer usage layout and uses a bounded disposable minute timer", () => {
+test("cache estimate keeps footer usage layout and signals warning and urgent states", () => {
   const { ctx, data } = fixture();
-  let now = 1_000_000;
+  const now = 1_000_000;
   const cache = new CacheCountdown(() => now);
   cache.record({ appendEntry() {} } as unknown as ExtensionAPI, ctx.model!, now);
   const estimate = cache.estimate(ctx);
@@ -428,6 +500,13 @@ test("cache estimate keeps footer usage layout and uses a bounded disposable min
   expect(renderSingleRowFooter(ctx, data, colored, 150, 0, { state: "urgent", text: "cache est 5m" })[0]).toContain(
     "\x1b[31mcache est 5m",
   );
+});
+
+test("cache countdown uses a bounded disposable minute timer", () => {
+  const { ctx, data } = fixture();
+  let now = 1_000_000;
+  const cache = new CacheCountdown(() => now);
+  cache.record({ appendEntry() {} } as unknown as ExtensionAPI, ctx.model!, now);
   let factory: Parameters<ExtensionContext["ui"]["setFooter"]>[0];
   ctx.ui.setFooter = (value) => {
     factory = value;
@@ -465,6 +544,78 @@ test("cache estimate keeps footer usage layout and uses a bounded disposable min
     component.dispose?.();
     stop();
     expect(cleared).toBeGreaterThan(0);
+  } finally {
+    globalThis.setTimeout = oldSet;
+    globalThis.clearTimeout = oldClear;
+  }
+});
+
+test("cache notifications and ticks share redraw policy and stop with the footer", () => {
+  const { ctx, data } = fixture();
+  let factory: Parameters<ExtensionContext["ui"]["setFooter"]>[0];
+  ctx.ui.setFooter = (value) => {
+    factory = value;
+  };
+  let notify!: () => void, tick!: () => void;
+  let renders = 0,
+    unsubscribed = 0;
+  let estimate: { text: string; nextUpdateMs?: number } = { text: "cache est 60m", nextUpdateMs: 120_000 };
+  const cache = {
+    estimate: () => estimate,
+    subscribe: (listener: () => void) => {
+      notify = listener;
+      return () => {
+        unsubscribed++;
+      };
+    },
+  } as unknown as CacheCountdown;
+  const oldSet = globalThis.setTimeout,
+    oldClear = globalThis.clearTimeout;
+  const delays: number[] = [];
+  const cleared: number[] = [];
+  globalThis.setTimeout = ((callback: TimerHandler, delay?: number) => {
+    tick = callback as () => void;
+    delays.push(delay!);
+    return delays.length as any;
+  }) as typeof setTimeout;
+  globalThis.clearTimeout = ((timer: any) => {
+    cleared.push(timer);
+  }) as typeof clearTimeout;
+  try {
+    const stop = installCompactFooter(ctx, () => false, undefined, cache);
+    const component = factory!(
+      {
+        requestRender() {
+          renders++;
+        },
+      } as any,
+      theme,
+      data,
+    );
+    expect(delays).toEqual([60_000]);
+    notify();
+    expect(renders).toBe(0);
+    expect(cleared).toEqual([1]);
+    estimate = { text: "cache est 59m", nextUpdateMs: 0 };
+    notify();
+    expect(renders).toBe(1);
+    expect(delays.at(-1)).toBe(1);
+    tick();
+    expect(renders).toBe(1);
+    estimate = { text: "cache est expired" };
+    tick();
+    expect(renders).toBe(2);
+    expect(delays).toHaveLength(4);
+    component.dispose?.();
+    stop();
+    expect(unsubscribed).toBe(1);
+    const clearedAtStop = cleared.length;
+    estimate = { text: "cache est 60m", nextUpdateMs: 60_000 };
+    notify();
+    tick();
+    expect(renders).toBe(2);
+    expect(delays).toHaveLength(4);
+    expect(cleared).toHaveLength(clearedAtStop);
   } finally {
     globalThis.setTimeout = oldSet;
     globalThis.clearTimeout = oldClear;

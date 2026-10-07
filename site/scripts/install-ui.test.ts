@@ -5,6 +5,50 @@ import { INSTALL_COMMAND, INSTALL_URL, INSTALL_SOURCE_URL } from "../install-com
 import { layout } from "../layout";
 import { resolve } from "node:path";
 import { mkdir } from "node:fs/promises";
+import type { Page } from "playwright-core";
+
+async function observeTerminal(page: Page) {
+  await page.context().route("**/terminal.js", async (route) => {
+    const response = await route.fetch(),
+      source = await response.text();
+    const hook = /([\w$]+)\.open\(([\w$]+)\),(?=\1\.write)/;
+    const start = source.lastIndexOf(".open(") - 30,
+      tail = source.slice(start);
+    expect(hook.test(tail)).toBe(true);
+    await route.fulfill({
+      response,
+      body: source.slice(0, start) + tail.replace(hook, "$1.open($2),window.__terminal=$1,"),
+    });
+  });
+
+  const terminalText = () =>
+    page.evaluate(() => {
+      const t = (window as any).__terminal;
+      return Array.from({ length: t.rows }, (_, i) => t.buffer.active.getLine(i)?.translateToString()).join("\n");
+    });
+
+  async function copyTarget() {
+    const d = await page.locator("#terminal").evaluate((el) => ({ ...(el as HTMLElement).dataset }));
+    const f = layout(Number(d.cols), Number(d.rows), {
+      scroll: Number(d.scroll),
+      focus: -1,
+      installCommand: d.installCommand,
+      installUrl: d.installUrl,
+    });
+    expect(f.hits.find((h) => h.action === INSTALL_SOURCE_URL)?.label).toContain("Script");
+    const hit = f.hits.find((h) => h.action === "copy-install")!;
+    expect(hit).toBeDefined();
+    return {
+      x: (hit.x + 2) * Number(d.cellWidth),
+      y: (hit.y + 0.5) * Number(d.cellHeight),
+      rightColumn: hit.x + hit.width,
+      columns: Number(d.cols),
+    };
+  }
+
+  return { text: terminalText, copyTarget };
+}
+
 test("README and both views use the one GitHub installer; BASE_URL is SEO only", async () => {
   const readme = await Bun.file(resolve(import.meta.dir, "../../README.md")).text();
   expect(readme.match(/```sh\n(curl[^\n]+)\n```/)?.[1]).toBe(INSTALL_COMMAND);
@@ -43,18 +87,6 @@ test("terminal and HTML copy GitHub command at arbitrary origin/subpath; keyboar
     viewport: { width: 1440, height: 960 },
     reducedMotion: "reduce",
   });
-  await context.route("**/terminal.js", async (route) => {
-    const response = await route.fetch(),
-      source = await response.text();
-    const hook = /([\w$]+)\.open\(([\w$]+)\),(?=\1\.write)/;
-    const start = source.lastIndexOf(".open(") - 30,
-      tail = source.slice(start);
-    expect(hook.test(tail)).toBe(true);
-    await route.fulfill({
-      response,
-      body: source.slice(0, start) + tail.replace(hook, "$1.open($2),window.__terminal=$1,"),
-    });
-  });
   const url = new URL("preview/bruv/", server.url).href;
   const expected = INSTALL_COMMAND;
   const page = await context.newPage();
@@ -63,6 +95,7 @@ test("terminal and HTML copy GitHub command at arbitrary origin/subpath; keyboar
   const evidence = resolve(import.meta.dir, "../../wisdom/landing-page/validation/install");
   await mkdir(evidence, { recursive: true });
   try {
+    const terminal = await observeTerminal(page);
     await page.goto(url);
     await page.locator('#terminal[data-ready="true"]').waitFor();
     expect(await page.locator("#terminal").getAttribute("data-install-command")).toBe(expected);
@@ -72,40 +105,22 @@ test("terminal and HTML copy GitHub command at arbitrary origin/subpath; keyboar
     await page.screenshot({ path: resolve(evidence, "desktop-header.png") });
     await page.keyboard.press("End");
     await page.waitForTimeout(100);
-    async function copyHit() {
-      const d = await page.locator("#terminal").evaluate((el) => ({ ...(el as HTMLElement).dataset }));
-      const f = layout(Number(d.cols), Number(d.rows), {
-        scroll: Number(d.scroll),
-        focus: -1,
-        installCommand: d.installCommand,
-        installUrl: d.installUrl,
-      });
-      expect(f.hits.find((h) => h.action === INSTALL_SOURCE_URL)?.label).toContain("Script");
-      const hit = f.hits.find((h) => h.action === "copy-install")!;
-      expect(hit).toBeDefined();
-      return { hit, d };
-    }
-    let { hit, d } = await copyHit();
-    await page.mouse.click((hit.x + 2) * Number(d.cellWidth), (hit.y + 0.5) * Number(d.cellHeight));
+    const desktopCopy = await terminal.copyTarget();
+    await page.mouse.click(desktopCopy.x, desktopCopy.y);
     await page.waitForTimeout(80);
     expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(expected);
-    const terminalText = () =>
-      page.evaluate(() => {
-        const t = (window as any).__terminal;
-        return Array.from({ length: t.rows }, (_, i) => t.buffer.active.getLine(i)?.translateToString()).join("\n");
-      });
-    expect(await terminalText()).toContain("Copied");
+    expect(await terminal.text()).toContain("Copied");
     await page.waitForTimeout(1900);
-    expect(await terminalText()).toContain("Copy command");
+    expect(await terminal.text()).toContain("Copy command");
     await page.keyboard.press("Enter");
     await page.waitForTimeout(80);
-    expect(await terminalText()).toContain("Copied");
+    expect(await terminal.text()).toContain("Copied");
     await page.setViewportSize({ width: 320, height: 844 });
     await page.waitForTimeout(100);
     await page.keyboard.press("End");
     await page.waitForTimeout(100);
-    ({ hit, d } = await copyHit());
-    expect(hit.x + hit.width).toBeLessThanOrEqual(Number(d.cols));
+    const mobileCopy = await terminal.copyTarget();
+    expect(mobileCopy.rightColumn).toBeLessThanOrEqual(mobileCopy.columns);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     await page.screenshot({ path: resolve(evidence, "mobile-install.png") });
     await page.goto(new URL("text.html", url).href);
