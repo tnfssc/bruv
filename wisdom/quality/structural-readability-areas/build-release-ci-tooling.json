@@ -1245,7 +1245,7 @@
     {
       "focus": "tests/release-workflows.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-running",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_3d7fb50a",
@@ -1261,19 +1261,28 @@
           "id": "task_f9136eba",
           "base": "6fef8439097918b80bac1693f31160f1e799b54d",
           "candidate": "a117749237e6e49cbd7c0e8459e73c3cd32f0584",
-          "state": "running"
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "evidence": "Build/helper/asset contracts bind named existing steps to owning jobs; shared YAML shape removes repeated casts/global searches. Wrong-job validation mutation caught by2 revised tests while baseline stays green; previous authority/gates retained.",
+          "checks": "Independentcandidate23/351,baseline21/339;mutation2fail;format/tsc/diff pass(four generated JSON prerequisites);lint4Actions warnings same base/candidate. Static checks not hosted/build.",
+          "acceptedBlobs": {
+            "tests/release-workflows.test.ts": "ffcf4742d5aadb88e1ed76996e43df81e3dc079d"
+          }
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "ffcf4742d5aadb88e1ed76996e43df81e3dc079d",
       "relatedPatchJudgment": {
         "id": "task_265f1748",
         "verdict": "ACCEPT",
         "blob": "38423dc785ee300c75dc1ec6a868e3eef9a4a05e",
-        "primaryStillRequired": true
+        "primaryStillRequired": false,
+        "superseded": true
       },
       "readingResult": "Separate build/helper/assets contracts replace whole-workflow assertion pile; shared workflow types, owning jobs and named present steps replace repeated untyped shapes/order searches. Wrong-job validation mutation now fails two tests previously missed.",
-      "checks": "23pass;tsc/format/diff pass;4 existing Actions-literal warnings;mutation proof;no production/build."
+      "checks": "23pass;tsc/format/diff pass;4 existing Actions-literal warnings;mutation proof;no production/build.",
+      "integrationState": "Full focus patch integrated without overlap; worker note excluded; workflows unchanged."
     },
     {
       "focus": "tests/setup.ts",

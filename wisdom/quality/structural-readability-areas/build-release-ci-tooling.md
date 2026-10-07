@@ -60,3 +60,5 @@ Asset-test primary: owned copied dependencies/input checkout, explicit generatio
 Dependency-workflow-test primary: step-local contracts, isolated real bundle scenarios. Judge task_35b870b5 ACCEPT5d0f15a;11focus39combined575assertions. Existing identity mutation-proof gap explicit; no hosted/authenticated push.
 
 Manual-test primary: isolated release states and owned repository lifetime, named admission/identity cases, byte retry/no-mutation refusals. Judge task_69fdb98c ACCEPT9fdf9ef;28/166focus52withpublisher. Explicit follow-up: rejudge fixture compatibility if pending preparer script changes; no hosted evaluator claim.
+
+Release-workflow-test primary: separate owned-job build/helper/assets contracts and required named-step lookup. Judge task_f9136eba ACCEPTffcf474;23/351 vs baseline21/339, wrong-job validation mutation caught2 tests previously missed. Lint warning attribution corrected:4 at both base/candidate. Static only, no hosted gate.
