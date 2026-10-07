@@ -87,3 +87,10 @@ artifact. No test was skipped to hide that dependency.
 
 Values are unchanged: paired ownership, truthful recovery/proof boundaries and
 preserving user data already follow wisdom/values.md. No new general rule needed.
+
+## Connector update entry
+
+The connector `update` command now enters this same normal updater through root
+CLI dispatch; it does not run a Claude updater. See [connector update](connector-update.md)
+for the branch, offline command-path proof and the important limit: T3 may still
+say unchanged/outdated because it compares protocol against latest Claude.

@@ -1,0 +1,32 @@
+Bun 1.4.2; PATH=/home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin:/usr/bin:/bin
+
+## build-final (exit 0)
+$ bun ./scripts/build-pair.ts
+Built /home/tnfssc/.bruv/worktrees/t3-1c4479b8-5442693331ce-task_ef0b72b0/dist/bruv
+Built Bruv connector launcher /home/tnfssc/.bruv/worktrees/t3-1c4479b8-5442693331ce-task_ef0b72b0/dist/bruv-claude-compat
+
+## check-final (exit 0)
+$ bun run prepare:assets && tsc --noEmit
+$ bun ./scripts/prepare-assets.ts
+
+## smoke-final (exit 0)
+bruv paired standalone smoke test passed (not native parity acceptance)
+
+## updater (exit 0)
+Compiled paired Bruv updater: checksum failures preserved BOTH installed files; second-rename rollback restored pair; replacement SHA256 and matched versions 0.16.13 passed (bruv-linux-x64 + bruv-claude-compat-linux-x64)
+Frozen v0.16.3 updater: checksum failures preserved BOTH installed files; second-rename rollback restored pair; replacement SHA256 and matched versions 0.16.13 passed (bruv-linux-x64 + bruv-claude-compat-linux-x64)
+
+## final focused tests
+136 pass, 0 fail; 1203 assertions; 13 files; 29.08s
+
+## full suite
+2224 pass, 27 skip, 6 fail; 112723 assertions; 302 files; 266.27s
+All six failures are in terminal-perf-send.test.ts: manager.getSessionId is not a function.
+The same file run alone passes 7 tests (173 assertions).
+
+## baseline comparison at 89b381e7
+2159 pass, 27 skip, 70 fail; 112143 assertions; 302 files; 249.38s
+The same adapter TypeError occurs in untouched manual-shake.ts/history projection.
+This is not a clean count comparator: baseline discovery order is reversed and
+source PTY tests also encounter an untrusted mise.toml in the temporary checkout.
+No trust was granted and no unrelated source was changed.

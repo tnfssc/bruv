@@ -9,7 +9,7 @@ afterEach(async () => {
   for (const root of roots.splice(0)) await rm(root, { recursive: true, force: true });
 });
 const normal =
-  '#!/bin/sh\ncase "$1" in --version) echo 0.17.0;; claude-compat) case "$2" in --bruv-version) echo "bruv-claude-compat 0.17.0";; --version) echo "2.1.280 (Bruv compatibility; bruv 0.17.0)";; *) exit 1;; esac;; *) exit 1;; esac\n';
+  '#!/bin/sh\ncase "$1" in --version) echo 0.17.0;; claude-compat) case "$2" in --bruv-version) echo "bruv-claude-compat 0.17.0";; --version) echo "Bruv connector";; *) exit 1;; esac;; *) exit 1;; esac\n';
 async function sandbox() {
   const root = await mkdtemp(join(tmpdir(), "bruv-download-install-"));
   roots.push(root);
@@ -75,7 +75,7 @@ test("download installer pairs raw-named wrapper with staged normal, ignoring in
     stdout: "pipe",
     stderr: "pipe",
   });
-  expect((await new Response(version.stdout).text()).trim()).toBe("2.1.280 (Bruv compatibility; bruv 0.17.0)");
+  expect((await new Response(version.stdout).text()).trim()).toBe("Bruv connector");
   expect(await version.exited).toBe(0);
 });
 

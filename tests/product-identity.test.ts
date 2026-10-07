@@ -35,3 +35,33 @@ test("compiled bruv starts a fresh namespace without touching old die data", asy
     await rm(home, { recursive: true, force: true });
   }
 });
+
+// Probe both shipped entry paths with no access to the user's home or PATH bruv.
+test("compiled product and connector keep separate display and product identities", async () => {
+  const home = await mkdtemp(join(tmpdir(), "bruv-version-identity-"));
+  const normal = resolve(import.meta.dir, "../dist/bruv");
+  const wrapper = resolve(import.meta.dir, "../dist/bruv-claude-compat");
+  const env = { HOME: home, PATH: "/nonexistent", BRUV_CLAUDE_COMPAT_BRUV_PATH: undefined };
+  try {
+    expect(await run([normal, "--version"], { env })).toEqual({
+      code: 0,
+      stdout: product.version + "\n",
+      stderr: "",
+    });
+    for (const entry of [[normal, "claude-compat"], [wrapper]]) {
+      for (const flag of ["--version", "-v"]) {
+        const result = await run([...entry, flag], { env });
+        expect(result).toEqual({ code: 0, stdout: "Bruv connector\n", stderr: "" });
+        // T3 scans for any dotted semver, not just one at the start of output.
+        expect(result.stdout + result.stderr).not.toMatch(/\d+\.\d+\.\d+/);
+      }
+      expect(await run([...entry, "--bruv-version"], { env })).toEqual({
+        code: 0,
+        stdout: "bruv-claude-compat " + product.version + "\n",
+        stderr: "",
+      });
+    }
+  } finally {
+    await rm(home, { recursive: true, force: true });
+  }
+});

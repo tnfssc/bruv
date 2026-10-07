@@ -55,9 +55,7 @@ async function fixture(env: Record<string, string | undefined> = {}) {
           ? '[ "$1" != --live-self-test ] || exit 0\necho "' + version + '"\n'
           : 'case "$1" in\n--bruv-version) echo "' +
             version +
-            '";;\n--version) echo "2.1.280 (Bruv compatibility; bruv ' +
-            version.replace("bruv-claude-compat ", "") +
-            ')";;\n*) exit 64;;\nesac\n');
+            '";;\n--version) echo "Bruv connector";;\n*) exit 64;;\nesac\n');
       await Bun.write(join(assets, name), bytes);
       const hash =
         env.BAD_CHECKSUM || (env.BAD_CONNECTOR && prefix === "bruv-claude-compat")

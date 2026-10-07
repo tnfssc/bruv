@@ -4,7 +4,10 @@ import product from "../../package.json";
 
 // Protocol compatibility identity, not an Anthropic product/auth claim.
 export const COMPAT_PROTOCOL_VERSION = "2.1.280";
-export const CONNECTOR_VERSION = COMPAT_PROTOCOL_VERSION + " (Bruv compatibility; bruv " + product.version + ")";
+// CLI display identity must contain no dotted semver: external T3 must not
+// mistake this connector for a Claude Code update candidate. SDK init keeps
+// COMPAT_PROTOCOL_VERSION; Bruv packaging uses BRUV_CONNECTOR_VERSION.
+export const CONNECTOR_DISPLAY_IDENTITY = "Bruv connector";
 export const BRUV_CONNECTOR_VERSION = "bruv-claude-compat " + product.version;
 
 /** Only expand the current user's home prefix; do not interpret shell syntax. */

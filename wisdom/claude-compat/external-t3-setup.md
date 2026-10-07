@@ -31,21 +31,31 @@ failure or guarantee graceful upstream handling; T3 may show only a generic
 turn failure. Do not change T3's parent environment, global environment, HOME,
 or ordinary Claude state to work around it. No silent fallback or synthetic fork.
 
-The connector now advertises an explicit supported protocol profile:
-`--version` returns `2.1.280 (Bruv compatibility; bruv <product version>)`;
-`--bruv-version` returns exact `bruv-claude-compat <product version>`.
-SDK init's `claude_code_version` is the protocol version; `bruv.version` is
-Bruv's real version. Normal `bruv --version` is unchanged. This supersedes the
-past decision not to advertise a compatibility version. It is not an Anthropic
-auth/account/model claim. Never use T3's Claude updater: it must not overwrite
-the Bruv wrapper. A latest-version update notice is separate from the unsupported
-range warning; local readiness still does not prove provider access or full parity.
+The connector CLI now reports only `Bruv connector` for `--version`, with no
+dotted semver in stdout or stderr. `--bruv-version` remains exact
+`bruv-claude-compat <product version>`; normal `bruv --version` stays real product.
+SDK init's `claude_code_version` remains protocol compatibility `2.1.280`;
+`bruv.version` stays real product. CLI identity and SDK protocol are distinct.
 
+In unmodified T3 **v0.0.46-nightly.20261005.2702**, source
+`cfa4f765ec05950a032b6c1cf9cdfff0c2391545`, label-only output parses as unknown:
+latest-Claude lookup is skipped and popup/settings update predicates exclude it.
+Tradeoff: version-gated built-in Claude models are filtered, and the separate
+“installed version is too old” model warning can remain. Custom Bruv models stay
+available. No fake high version or T3 settings change is needed. A private
+unchanged-2702 browser probe confirms the update popup and settings Update
+action disappear while native custom-model chat still works through a loopback
+fake model. The model-too-old advisory remains. This is not paid-provider auth,
+full native parity, or a promise about future hosts.
+See [label-only identity proof](label-only-cli-identity.md) and
+[final UI integration proof and limits](connector-version-probe-integration.md).
+
+Historical observation with the former semver CLI identity (not this change):
 Observed on unchanged official 2644: the **Unsupported version** warning is
 absent and chat with an exact custom model succeeds. T3 still shows a latest
 Claude update notification and a built-in Sonnet 5.5 minimum-version advisory
-(2.1.284). These are not Bruv custom-model/auth requirements; do not run the
-Claude updater or claim all host banners are gone. See
+(2.1.284). These are not Bruv custom-model/auth requirements. The connector
+update now updates Bruv only; do not claim it removes all host banners. See
 [bounded version/defaults proof](proof/version-defaults/README.md).
 
 ## Add a separate instance; leave real Claude untouched
@@ -159,8 +169,8 @@ bun run smoke -- --reuse-build # packaging smoke, not parity proof
 **Migration:** new install/update checks use `--bruv-version`. The thin launcher
 includes a narrow bridge for the old 0.16.3 updater: only its staged canonical
 `--version` probe inside `.bruv-update-*` returns the old product label derived
-from the staged normal binary. After installation, `--version` advertises protocol
-compatibility. Frozen 0.16.3 migration, checksum and rollback tests passed. Do not
+from the staged normal binary. After installation, `--version` uses the label-only
+CLI identity. Frozen 0.16.3 migration, checksum and rollback tests passed. Do not
 configure T3 to run from an updater staging directory. This replaces the earlier
 manual-reinstall-only plan; no checksum or replacement checks are bypassed.
 
@@ -177,7 +187,38 @@ bruv update now updates ordinary Bruv and its sibling connector together; use
 bruv update --check for a read-only check. A compatible normal-only install gains
 the connector. Split/custom layouts need manual paired reinstall. Stop active
 Bruv/T3 sessions first and restart afterward. See [paired update](paired-update.md)
-for rollback/recovery and same-version repair. Never masquerade as a Claude updater. External
+for rollback/recovery and same-version repair.
+
+### T3's Claude update button on the Bruv connector
+
+With the paired install configured as above, `bruv-claude-compat update` and
+`bruv claude-compat update` use **the same normal `bruv update` path**. The
+button can therefore update both Bruv siblings with the normal official-asset,
+SHA256, version, repair and rollback checks. No PATH Claude updater is spawned,
+no Claude/T3 is installed, and no T3 settings change is needed. Fresh paired
+installs carry this behavior in their own files; no machine-specific shim is
+required. Both entries accept only no arguments, `--check`, or `--help`/`-h`,
+just like the normal updater. Mixed stream flags and other arguments fail.
+
+This assumes the standalone matched-pair install, such as `~/.local/bin`. T3 may
+choose an Anthropic package-manager updater for paths it classifies as managed
+by npm or another package manager. Bruv cannot intercept that command; do not
+use that updater for a Bruv instance. Use the official paired installer path
+shown above. Self-update supports Linux x64/arm64, macOS arm64 and
+Android/Termux arm64; other platforms need a manual matching install.
+
+Label-only CLI identity avoids latest-Claude update candidates in the researched
+2702 tag. A built-in-model warning is separate and is not cured by a Bruv update.
+Check `bruv --version` and connector `--bruv-version` for real installed product
+versions and read the updater result. Do not keep retrying to clear a model
+advisory. Stop active Bruv/T3 sessions before updating; **restart T3 after the
+update**. If a host's button cannot run while sessions are stopped, use the
+connector command in a terminal.
+Source Bun invocations refuse self-update; split/custom layouts require a
+manual matched-pair reinstall. Never replace the connector with real Claude
+just to silence a Bruv provider's prompt.
+
+External
 T3 updates independently using t3 update or its original installer after reviewing
 the version. Newer T3 requires unchanged-host native acceptance again.
 
@@ -194,8 +235,9 @@ This change does not publish, upgrade T3, or promise a fixed upstream release.
 - Stop prevents a pending execute approval's side effect, but upstream leaves its
   cancelled card visible, even after reload. **Explicitly Decline the stale card**
   before continuing; do not approve it or claim automatic cleanup.
-- The explicit 2.1.280 compatibility profile addresses the supported-range check.
-  T3 may still offer a latest-Claude update: never run it on the Bruv wrapper.
+- Label-only CLI identity is unknown to the researched T3 version checks.
+  SDK protocol compatibility remains 2.1.280. Built-in model advisories are
+  separate; the paired updater updates Bruv, not Claude.
   Real Bruv version remains separately inspectable; no Anthropic auth claim.
   Local readiness is not verified provider access.
 - Live is **off by default**. Optional same-host audio requires the provider

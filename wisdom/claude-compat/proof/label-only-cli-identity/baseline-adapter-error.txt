@@ -1,0 +1,102 @@
+me without a group arrow at narrow widths [0.61ms]
+(pass) live and saved activity keep prose, question, permission, and user boundaries [1.49ms]
+(pass) late callback provenance updates its original call without duplicate cards or invented calls [2.88ms]
+(pass) notification-only batches keep failed and cancelled outcomes visible while progress and wake prose stays grouped [1.27ms]
+(pass) callback text does not classify unknown custom messages or absorb lasting custom controls [0.98ms]
+(pass) notification projection restores native output on disposal and regular-mode rendering [0.54ms]
+587 |   const lacksFreshUsage = (owner: typeof prototype): boolean => {
+588 |     const manager = owner.sessionManager;
+589 |     if (!manager) return false;
+590 |     const entries = (manager as unknown as { fileEntries?: unknown }).fileEntries;
+591 |     const cacheable = Array.isArray(entries) && typeof manager.getLeafId === "function";
+592 |     const sessionId = manager.getSessionId();
+                                    ^
+TypeError: manager.getSessionId is not a function. (In 'manager.getSessionId()', 'manager.getSessionId' is undefined)
+      at lacksFreshUsage (/tmp/bruv-label-baseline-ef0b72b0/src/agent/manual-shake.ts:592:31)
+      at <anonymous> (/tmp/bruv-label-baseline-ef0b72b0/src/agent/manual-shake.ts:657:21)
+      at <anonymous> (/tmp/bruv-label-baseline-ef0b72b0/src/history/session-manager.ts:493:40)
+      at <anonymous> (/tmp/bruv-label-baseline-ef0b72b0/src/history/session-manager.ts:506:53)
+      at replay (/tmp/bruv-label-baseline-ef0b72b0/tests/rolling-activity.test.ts:919:81)
+      at <anonymous> (/tmp/bruv-label-baseline-ef0b72b0/tests/rolling-activity.test.ts:922:18)
+(fail) native journal reopen and branch replay reconstruct notice groups and late call ownership [3.43ms]
+(pass) canonical task-card clicks open only their native tool details [0.93ms]
+(pass) activity
+
+70 tests failed:
+(fail) native journal reopen and branch replay reconstruct notice groups and late call ownership [3.43ms]
+(fail) real Pi command delivers saved reply in one new turn without a visible metadata bubble [10.56ms]
+(fail) native Codex real SDK: auth, Astra checkpoint to Sol, repeat, disk resume, and provider guard [10.57ms]
+(fail) real SDK /shake preserves native checkpoint exactly once, kept tail, post-checkpoint prose and disk reopen [5.79ms]
+(fail) SDK active-boundary semantics omit older retained checkpoints without losing their journal bytes [2.03ms]
+(fail) disk reopen retains genuine shake marker and original opaque transport [1.06ms]
+(fail) native dispatch uses the ordinary serialized shaken prefix and unchanged SDK cut, fresh and reopened [3.67ms]
+(fail) manual shake durability and SDK projection > survives JSONL reload, is branch-scoped, and serializes through the real SDK converter [1.09ms]
+(fail) manual shake durability and SDK projection > plain summary and shaken retained tail survive SDK JSONL reload [0.59ms]
+(fail) real SDK restores root instruction mode from durable session history [5.09ms]
+(fail) real SDK child identity and delegation depth ignore inherited root mode [4.87ms]
+(fail) /mode before the first request overrides a mode restored by a real resume [5.06ms]
+(fail) main Live owns first-turn instructions, actual execute and background completion without spawning text model [3.67ms]
+(fail) Live first turn applies production context and before/after tool hooks; typed route cannot steal owner [2.43ms]
+(fail) Live close releases exclusive owner; interruption does not cancel an asynchronous job [2.33ms]
+(fail) switching the on-disk session invalidates stale Live calls without a model request [2.23ms]
+(fail) explicit jobs.stopWork cancels only isolated fixture work and does not run the text model [2.75ms]
+(fail) main Live receives capability and delegation guidance in its assembled root and execute tool [2.66ms]
+(fail) custom root prompt is byte-identical to ordinary prompt assembly before first text model turn [2.21ms]
+(fail) real live.stop helper returns after teardown without self-cancelling execute or background jobs [2.30ms]
+(fail) overlapping executes keep canonical pairs contiguous while deferring every other owner record [2.50ms]
+(fail) unfinished ASR is revoked at turn boundary, interruption and close; a new final utterance admits tools [2.79ms]
+(fail) ordinary branch appends keep Live authority, duplicate tool calls do not replay side effects [2.92ms]
+(fail) prompt-dependent per-turn changes fail closed instead of dispatching with stale instructions [2.28ms]
+(fail) gemini-3.8-live direct function call executes real shell and receives async completion on its voice wire [2.76ms]
+(fail) gemini-3.8-live-extended-thinking direct function call executes real shell and receives async completion on its voice wire [3.15ms]
+(fail) stop voice then stop work in one real execute still cancels the draining voice foreground after its report [2.76ms]
+(fail) paired GPT delta stream remains canonical passive history without TUI bubbles or model turns [2.70ms]
+(fail) paired backend survives production input routing: voice and typed turns each run once [2.36ms]
+(fail) delegated OSC52 speech keeps hidden raw audit and safe canonical prompt/display/replay [2.52ms]
+(fail) paired backend resumes from production async task notification without inventing a user turn [2.39ms]
+(fail) paired execute can stop voice then work through the production scoped helpers [2.76ms]
+(fail) GPT Live spoken delegation reaches Pi as one clean provisional request [4.04ms]
+(fail) canonical finals are committed once then presented through native events, and replay the same source [2.31ms]
+(fail) grouped paired source retains full text and uncertainty on replay without becoming model context or a user instruction [1.13ms]
+(fail) source-reference groups render original GPT fragments once and replay without text copies [10.83ms]
+(fail) real Pi passive grouped delivery invokes no coding turn and emits one ordinary message after persistence [3.98ms]
+(fail) deferred voice display follows the existing canonical tool pair rather than splitting its replay [2.03ms]
+(fail) canonical voice replay keeps safe prose and retains unsafe source only as hidden audit [1.28ms]
+(fail) shell closes stdin by default while explicit open input remains writable [77.86ms]
+(fail) optional and failing refresh callbacks cannot strand successful launches [69.32ms]
+(fail) foreground work returns inline; background work survives execute and accepts input [273.18ms]
+(fail) canceling execute after a delayed job spawn transfers notification ownership without killing its job [568.60ms]
+(fail) disconnect before an inline response is acknowledged restores completion notification ownership [262.26ms]
+(fail) ACK is provisional until clean worker exit [253.20ms]
+(fail) oversized reply releases foreground ownership exactly once [259.50ms]
+(fail) registered execute handoff separates completed delivery from pending wait cancellation [312.72ms]
+(fail) fresh compaction prepares the frame and redacted context for a later custom multi-tool turn [4.16ms]
+(fail) real offline assembly changes only messages across goal set, update, and clear [4.46ms]
+(fail) real SDK reconciles helper waiting through task-complete and completes [4.12ms]
+(fail) real SDK print completion cycles pause within bounded agent runs [3.94ms]
+(fail) real SDK print completion cycles accept distinct explicit milestones [3.99ms]
+(fail) live goal fixture reaches an intercepted real-runtime provider offline [3.94ms]
+(fail) goal transport token never reaches provider or resumed history; typed lookalikes remain literal [3.46ms]
+(fail) actual SDK keeps the runtime leaf stable and reopened diagnostics context-transparent [4.48ms]
+(fail) fresh compacts current transformed conversation without a warm capture [6.23ms]
+(fail) uncaptured-tool-results compacts current transformed conversation without a warm capture [5.07ms]
+(fail) changed-prefix compacts current transformed conversation without a warm capture [4.12ms]
+(fail) automatic compacts current transformed conversation without a warm capture [3.00ms]
+(fail) tail-rewrite compacts current transformed conversation without a warm capture [3.58ms]
+(fail) empty-context compacts current transformed conversation without a warm capture [3.45ms]
+(fail) over-limit compacts current transformed conversation without a warm capture [3.30ms]
+(fail) real source CLI offline PTY: inbox, local capability, confirmation, durable revoke [7897.32ms]
+(fail) SDK provider pipeline records only the calling agent and survives disk resume [7.30ms]
+(fail) payload rejection before fetch does not reset the estimate [3.54ms]
+(fail) successful terminal observation covers transports without an HTTP hook [3.26ms]
+(fail) actual SDK HTTP hook does not record rejected responses [3.70ms]
+(fail) explicit task title names the durable child without replacing its identity [7553.10ms]
+  ^ this test timed out after 5000ms.
+(fail) scoped native affordances reject waiting and stream controls while local shell stays faithful [75.66ms]
+(fail) model-directed shell environments omit T3 credentials but retain unrelated variables [68.10ms]
+
+ 2159 pass
+ 27 skip
+ 70 fail
+ 112143 expect() calls
+Ran 2256 tests across 302 files. [249.38s]

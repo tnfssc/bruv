@@ -404,21 +404,18 @@ describe("paired install update", () => {
     expect(await readFile(connector, "utf8")).toBe("concurrent connector");
     expect(await readFile(x.path, "utf8")).toBe("old");
   });
-  test.each(["0.2.0", "2.1.280 (Bruv compatibility; bruv 0.3.0)"])(
-    "bad staged connector version %s prevents replacement",
-    async (output) => {
-      const x = await target();
-      await expect(
-        updateBruv(
-          deps(fixture().fetch, x.path, {
-            runBinary: async (path: string) => (path.endsWith("bruv-claude-compat") ? output : "0.3.0"),
-          }),
-        ),
-      ).rejects.toThrow("version mismatch");
-      expect(await readFile(x.path, "utf8")).toBe("old");
-      expect(await Bun.file(join(x.dir, "bruv-claude-compat")).exists()).toBe(false);
-    },
-  );
+  test.each(["0.2.0", "Bruv connector"])("bad staged connector version %s prevents replacement", async (output) => {
+    const x = await target();
+    await expect(
+      updateBruv(
+        deps(fixture().fetch, x.path, {
+          runBinary: async (path: string) => (path.endsWith("bruv-claude-compat") ? output : "0.3.0"),
+        }),
+      ),
+    ).rejects.toThrow("version mismatch");
+    expect(await readFile(x.path, "utf8")).toBe("old");
+    expect(await Bun.file(join(x.dir, "bruv-claude-compat")).exists()).toBe(false);
+  });
   test("macOS staged helper check failure preserves the installation", async () => {
     const x = await target();
     const probes: string[] = [];
@@ -482,7 +479,7 @@ test("compiled updater verifies staged distinct versions and updates a non-runni
   const connectorPayload = join(x.dir, "connector-payload");
   const normal = "#!/bin/sh\necho 0.3.0\n";
   const connector =
-    '#!/bin/sh\nif [ "$1" = --bruv-version ]; then product=$("${BRUV_CLAUDE_COMPAT_BRUV_PATH:-$(dirname "$0")/bruv}" --version); printf "bruv-claude-compat %s\\n" "$product"; exit; fi\necho "2.1.280 (Bruv compatibility; bruv 0.3.0)"\n';
+    '#!/bin/sh\nif [ "$1" = --bruv-version ]; then product=$("${BRUV_CLAUDE_COMPAT_BRUV_PATH:-$(dirname "$0")/bruv}" --version); printf "bruv-claude-compat %s\\n" "$product"; exit; fi\necho "Bruv connector"\n';
   await writeFile(normalPayload, normal);
   await writeFile(connectorPayload, connector);
   const build = Bun.spawn(
@@ -515,7 +512,7 @@ test("compiled updater verifies staged distinct versions and updates a non-runni
   expect(await readFile(runner)).toEqual(runnerBytes);
   for (const [path, version] of [
     [x.path, "0.3.0"],
-    [join(x.dir, "bruv-claude-compat"), "2.1.280 (Bruv compatibility; bruv 0.3.0)"],
+    [join(x.dir, "bruv-claude-compat"), "Bruv connector"],
   ]) {
     const check = Bun.spawn([path!, "--version"], { stdout: "pipe", stderr: "pipe" });
     expect((await new Response(check.stdout).text()).trim()).toBe(version!);

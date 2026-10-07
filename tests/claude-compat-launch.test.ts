@@ -4,7 +4,7 @@ import { PassThrough, Writable } from "node:stream";
 import { parseConnectorArguments, assertLaunchBindings } from "../src/claude-compat/arguments";
 import {
   runConnector,
-  CONNECTOR_VERSION,
+  CONNECTOR_DISPLAY_IDENTITY,
   BRUV_CONNECTOR_VERSION,
   type ConnectorIO,
   type RuntimeFactory,
@@ -159,8 +159,9 @@ describe("connector entry glue (injected engine, not integrated product proof)",
     };
     const h = harness();
     expect(await runConnector(["--version"], factory, h.io)).toBe(0);
-    expect(h.stdout()).toBe(CONNECTOR_VERSION + "\n");
-    expect(CONNECTOR_VERSION).toMatch(/^2\.1\.280 \(Bruv compatibility; bruv /);
+    expect(h.stdout()).toBe(CONNECTOR_DISPLAY_IDENTITY + "\n");
+    expect(CONNECTOR_DISPLAY_IDENTITY).toBe("Bruv connector");
+    expect(h.stdout() + h.stderr()).not.toMatch(/\d+\.\d+\.\d+/);
     const real = harness();
     expect(await runConnector(["--bruv-version"], factory, real.io)).toBe(0);
     expect(real.stdout()).toBe(BRUV_CONNECTOR_VERSION + "\n");

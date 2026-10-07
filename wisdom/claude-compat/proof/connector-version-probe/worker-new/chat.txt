@@ -1,0 +1,41 @@
+Code
+Reply with the local compatibility marker.
+No project
+Done
+Settle
+Reply with the local compatibility marker.
+Regenerating title
+Settled (0)
+No project
+/
+Reply with the local compatibility marker.
+You
+
+Reply with the local compatibility marker.
+
+9:26 AM
+
+T3 Code
+
+COMPAT_REPLY_REAL
+
+9:26 AM
+
+
+
+
+Ask anything, @tag files/folders, $use skills, or / for commands
+Compatibility local model
+Full access
+2026-10-07-reply-with-the-local-compatibility-89b53dba
+Worktree
+Open in editor
+Add project script
+Initialize Git
+Toggle Sidebar
+Nightly needs the beta mobile app
+
+Nightly uses the new orchestrator. The App Store and Google Play versions of T3 Code cannot connect to it.
+
+Dismiss
+Get the beta app

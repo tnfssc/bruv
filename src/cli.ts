@@ -19,6 +19,9 @@ import { INTERNAL_TYPESCRIPT_RUNNER_ARG, runTypeScriptFromStdin } from "./typesc
 import { isCompiledInvocation, updateBruv } from "./update";
 
 const cliArgs = process.argv.slice(2);
+// The thin connector launcher enters here as `bruv claude-compat update`.
+// Use the normal paired updater in this executable, never a PATH command or SDK updater.
+if (cliArgs[0] === "claude-compat" && cliArgs[1] === "update") cliArgs.shift();
 // Enter the connector before normal CLI bootstrap. Child work still starts this
 // executable without the subcommand and uses the ordinary CLI path.
 if (cliArgs[0] === "claude-compat") {
@@ -48,7 +51,7 @@ if (cliArgs[0] === "--live-self-test") {
 if (cliArgs[0] === "update") {
   if (cliArgs.length === 2 && ["--help", "-h"].includes(cliArgs[1]!)) {
     console.log(
-      "Usage: bruv update [--check]\n\nUpdate normal bruv and sibling bruv-claude-compat together after SHA256 and version checks.\nA compatible normal-only install gains the connector. --check reports without downloading or replacing files.\nStop active Bruv/T3 sessions first. Does not install Claude or T3; user data is unchanged.",
+      "Usage: bruv update [--check]\n\nUpdate normal bruv and sibling bruv-claude-compat together after SHA256 and version checks.\nA compatible normal-only install gains the connector. --check reports without downloading or replacing files.\nStop active Bruv/T3 sessions first. Does not install Claude or T3; user data is unchanged.\nAliases: bruv-claude-compat update, bruv claude-compat update (same arguments).\nRestart T3 after updating. The connector CLI identity is unknown to Claude version checks; a separate built-in Claude model too-old advisory can remain.",
     );
     process.exit(0);
   }

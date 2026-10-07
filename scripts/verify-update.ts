@@ -125,15 +125,19 @@ try {
           describeUpdateProbe(installed[i]!, [i === 0 ? "--version" : "--bruv-version"], actual),
       );
   }
-  // Once installed outside the old updater's stage, expose the SDK-facing version.
-  const sdkVersion = spawnSync(installed[1]!, ["--version"], {
+  // Once installed outside the old updater's stage, expose the label-only CLI identity.
+  const displayIdentity = spawnSync(installed[1]!, ["--version"], {
     encoding: "utf8",
     env: { HOME: join(directory, "home-1"), PATH: "/usr/bin:/bin" },
   });
-  if (sdkVersion.status !== 0 || sdkVersion.stdout.trim() !== "2.1.280 (Bruv compatibility; bruv " + version + ")")
+  if (
+    displayIdentity.status !== 0 ||
+    displayIdentity.stdout.trim() !== "Bruv connector" ||
+    displayIdentity.stderr !== ""
+  )
     throw new Error(
       "Installed launcher retained the legacy version label: " +
-        describeUpdateProbe(installed[1]!, ["--version"], sdkVersion),
+        describeUpdateProbe(installed[1]!, ["--version"], displayIdentity),
     );
   if (hash(await readFile(executable)) !== runnerHash) throw new Error("Gate replaced its running updater");
   if ((await readdir(install)).some((name) => name.startsWith(".bruv-update-")))

@@ -5,7 +5,11 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import product from "../package.json";
-import { CONNECTOR_VERSION, BRUV_CONNECTOR_VERSION, COMPAT_PROTOCOL_VERSION } from "../src/claude-compat/launch";
+import {
+  CONNECTOR_DISPLAY_IDENTITY,
+  BRUV_CONNECTOR_VERSION,
+  COMPAT_PROTOCOL_VERSION,
+} from "../src/claude-compat/launch";
 
 const binary = process.env.BRUV_CLAUDE_COMPAT_TEST_BINARY;
 const normalBinary = process.env.BRUV_CLAUDE_COMPAT_TEST_BRUV;
@@ -71,8 +75,8 @@ compiledTest(
     );
     await writeFile(join(state, "settings.json"), JSON.stringify({ cacheWarming: "off" }));
     await writeFile(join(state, "auth.json"), "{}\n");
-    const launch = (args: string[], env = environment) => {
-      const child = spawn(binary!, args, { cwd: root, env, stdio: ["pipe", "pipe", "pipe"] });
+    const launch = (args: string[], env = environment, entry = [binary!]) => {
+      const child = spawn(entry[0]!, [...entry.slice(1), ...args], { cwd: root, env, stdio: ["pipe", "pipe", "pipe"] });
       children.push(child);
       let stdout = "",
         stderr = "";
@@ -116,17 +120,19 @@ compiledTest(
       expect(await normalVersion.exited).toBe(0);
       expect(await new Response(normalVersion.stdout).text()).toBe(product.version + "\n");
       expect(await new Response(normalVersion.stderr).text()).toBe("");
-      const version = launch(["--version"]);
-      expect(await version.exit).toBe(0);
-      expect(version.stdout()).toBe(CONNECTOR_VERSION + "\n");
+      expect(CONNECTOR_DISPLAY_IDENTITY).toBe("Bruv connector");
+      expect(BRUV_CONNECTOR_VERSION).toBe("bruv-claude-compat " + product.version);
+      expect(COMPAT_PROTOCOL_VERSION).toBe("2.1.280");
       for (const [flag, identity] of [
-        ["--version", CONNECTOR_VERSION],
+        ["--version", CONNECTOR_DISPLAY_IDENTITY],
+        ["-v", CONNECTOR_DISPLAY_IDENTITY],
         ["--bruv-version", BRUV_CONNECTOR_VERSION],
       ]) {
         const version = launch([flag!]);
         expect(await version.exit).toBe(0);
         expect(version.stdout()).toBe(identity + "\n");
         expect(version.stderr()).toBe("");
+        if (flag !== "--bruv-version") expect(version.stdout() + version.stderr()).not.toMatch(/\d+\.\d+\.\d+/);
       }
       // Optional actual installed SDK, initialized without any inference request.
       const sdkPath = process.env.BRUV_CLAUDE_COMPAT_TEST_SDK;
@@ -156,20 +162,25 @@ compiledTest(
           q.close();
         }
       }
-      const stream = launch([
-        "--input-format",
-        "stream-json",
-        "--output-format",
-        "stream-json",
-        "--verbose",
-        "--model",
-        "fixture/fixture-model",
-        "--permission-mode",
-        "bypassPermissions",
-        "--allow-dangerously-skip-permissions",
-        "--no-session-persistence",
-        "--include-partial-messages",
-      ]);
+      // Wrapper version probes above and root protocol init below use the real pair.
+      const stream = launch(
+        [
+          "--input-format",
+          "stream-json",
+          "--output-format",
+          "stream-json",
+          "--verbose",
+          "--model",
+          "fixture/fixture-model",
+          "--permission-mode",
+          "bypassPermissions",
+          "--allow-dangerously-skip-permissions",
+          "--no-session-persistence",
+          "--include-partial-messages",
+        ],
+        environment,
+        [normalBinary!, "claude-compat"],
+      );
       stream.child.stdin.write('{"type":"control_request","request_id":"init","request":{"subtype":"initialize"}}\n');
       await until(() => stream.frames().some((f) => f.type === "control_response"), stream.stderr);
       const initialized = stream.frames().find((f) => f.type === "control_response");

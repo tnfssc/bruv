@@ -1,0 +1,6 @@
+{
+  "sourceCommit": "74b973a5",
+  "normalSha256": "c747b14777d2d4c25ad641ca5baaa890add998bbdd20b0bd91b134fe3396a68c",
+  "connectorSha256": "55b58718cdfb8f87e7a947b8e67ec4911bf6fb60cb33d2acfe72f67a39d96246",
+  "captureTiming": "After the integrated build. The UI runner copies this normal runtime and wrapper into its private fixture at startup."
+}

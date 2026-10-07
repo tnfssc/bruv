@@ -1,0 +1,118 @@
+tests/terminal-perf-send.test.ts:
+587 |   const lacksFreshUsage = (owner: typeof prototype): boolean => {
+588 |     const manager = owner.sessionManager;
+589 |     if (!manager) return false;
+590 |     const entries = (manager as unknown as { fileEntries?: unknown }).fileEntries;
+591 |     const cacheable = Array.isArray(entries) && typeof manager.getLeafId === "function";
+592 |     const sessionId = manager.getSessionId();
+                                    ^
+TypeError: manager.getSessionId is not a function. (In 'manager.getSessionId()', 'manager.getSessionId' is undefined)
+      at lacksFreshUsage (/home/tnfssc/.bruv/worktrees/t3-1c4479b8-5442693331ce-task_ef0b72b0/src/agent/manual-shake.ts:592:31)
+      at <anonymous> (/home/tnfssc/.bruv/worktrees/t3-1c4479b8-5442693331ce-task_ef0b72b0/src/agent/manual-shake.ts:657:21)
+      at <anonymous> (/home/tnfssc/.bruv/worktrees/t3-1c4479b8-5442693331ce-task_ef0b72b0/src/history/session-manager.ts:493:40)
+      at <anonymous> (/home/tnfssc/.bruv/worktrees/t3-1c4479b8-5442693331ce-task_ef0b72b0/src/history/session-manager.ts:506:53)
+      at createAgentSession (/home/tnfssc/.t3/worktrees/bruv/t3-1c4479b8/node_modules/@earendil-works/pi-coding-agent/dist/core/sdk.js:83:44)
+      at setup (/home/tnfssc/.bruv/worktrees/t3-1c4479b8-5442693331ce-task_ef0b72b0/scripts/terminal-perf/send-workloads.ts:306:30)
+      at async run (/home/tnfssc/.bruv/worktrees/t3-1c4479b8-5442693331ce-task_ef0b72b0/tests/terminal-perf-send.test.ts:9:19)
+      at async <anonymous> (/home/tnfssc/.bruv/worktrees/t3-1c4479b8-5442693331ce-task_ef0b72b0/tests/terminal-perf-send.test.ts:36:19)
+(fail) actual TUI Enter consumes input and sends a short user message through SDK and journal [82.89ms]
+587 |   const lacksFreshUsage = (owner: typeof prototype): boolean => {
+588 |     const manager = owner.sessionManager;
+589 |     if (!manager) return false;
+590 |     const entries = (manager as unknown as { fileEntries?: unknown }).fileEntries;
+591 |     const cacheable = Array.isArray(entries) && typeof manager.getLeafId === "function";
+592 |     const sessionId = manager.getSessionId();
+                                    ^
+TypeError: manager.getSessionId is not a function. (In 'manager.getSessionId()', 'manager.getSessionId' is undefined)
+      at lacksFreshUsage (/home/tnfssc/.bruv/worktrees/t3-1c4479b8-5442693331ce-task_ef0b72b0/src/agent/manual-shake.ts:592:31)
+      at <anonymous> (/home/tnfssc/.bruv/worktrees/t3-1c4479b8-5442693331ce-task_ef0b72b0/src/agent/manual-shake.ts:657:21)
+      at <anonymous> (/home/tnfssc/.bruv/worktrees/t3-1c4479b8-5442693331ce-task_ef0b72b0/src/history/session-manager.ts:493:40)
+      at <anonymous> (/home/tnfssc/.bruv/worktrees/t3-1c4479b8-5442693331ce-task_ef0b72b0/src/history/session-manager.ts:506:53)
+      at createAgentSession (/home/tnfssc/.t3/worktrees/bruv/t3-1c4479b8/node_modules/@earendil-works/pi-coding-agent/dist/core/sdk.js:83:44)
+      at setup (/home/tnfssc/.bruv/worktrees/t3-1c4479b8-5442693331ce-task_ef0b72b0/scripts/terminal-perf/send-workloads.ts:306:30)
+      at async run (/home/tnfssc/.bruv/worktrees/t3-1c4479b8-5442693331ce-task_ef0b72b0/tests/terminal-perf-send.test.ts:9:19)
+      at async <anonymous> (/home/tnfssc/.bruv/worktrees/t3-1c4479b8-5442693331ce-task_ef0b72b0/tests/terminal-perf-send.test.ts:55:21)
+(fail) multiline and large bracketed paste markers expand at real editor submit [11.11ms]
+587 |   const lacksFreshUsage = (owner: typeof prototype): boolean => {
+588 |     const manager = owner.sessionManager;
+589 |     if (!manager) return false;
+590 |     const entries = (manager as unknown as { fileEntries?: unknown }).fileEntries;
+591 |     const cacheable = Array.isArray(entries) && typeof manager.getLeafId === "function";
+592 |     const sessionId = manager.getSessionId();
+                                    ^
+TypeError: manager.getSessionId is not a function. (In 'manager.getSessionId()', 'manager.getSessionId' is undefined)
+      at lacksFreshUsage (/home/tnfssc/.bruv/worktrees/t3-1c4479b8-5442693331ce-task_ef0b72b0/src/agent/manual-shake.ts:592:31)
+      at <anonymous> (/home/tnfssc/.bruv/worktrees/t3-1c4479b8-5442693331ce-task_ef0b72b0/src/agent/manual-shake.ts:657:21)
+      at <anonymous> (/home/tnfssc/.bruv/worktrees/t3-1c4479b8-5442693331ce-task_ef0b72b0/src/history/session-manager.ts:493:40)
+      at <anonymous> (/home/tnfssc/.bruv/worktrees/t3-1c4479b8-5442693331ce-task_ef0b72b0/src/history/session-manager.ts:506:53)
+      at createAgentSession (/home/tnfssc/.t3/worktrees/bruv/t3-1c4479b8/node_modules/@earendil-works/pi-coding-agent/dist/core/sdk.js:83:44)
+      at setup (/home/tnfssc/.bruv/worktrees/t3-1c4479b8-5442693331ce-task_ef0b72b0/scripts/terminal-perf/send-workloads.ts:306:30)
+      at async run (/home/tnfssc/.bruv/worktrees/t3-1c4479b8-5442693331ce-task_ef0b72b0/tests/terminal-perf-send.test.ts:9:19)
+      at async <anonymous> (/home/tnfssc/.bruv/worktrees/t3-1c4479b8-5442693331ce-task_ef0b72b0/tests/terminal-perf-send.test.ts:65:23)
+(fail) same actual send on a populated session includes history in admission [7.73ms]
+587 |   const lacksFreshUsage = (owner: typeof prototype): boolean => {
+588 |     const manager = owner.sessionManager;
+589 |     if (!manager) return false;
+590 |     const entries = (manager as unknown as { fileEntries?: unknown }).fileEntries;
+591 |     const cacheable = Array.isArray(entries) && typeof manager.getLeafId === "function";
+592 |     const sessionId = manager.getSessionId();
+                                    ^
+TypeError: manager.getSessionId is not a function. (In 'manager.getSessionId()', 'manager.getSessionId' is undefined)
+      at lacksFreshUsage (/home/tnfssc/.bruv/worktrees/t3-1c4479b8-5442693331ce-task_ef0b72b0/src/agent/manual-shake.ts:592:31)
+      at <anonymous> (/home/tnfssc/.bruv/worktrees/t3-1c4479b8-5442693331ce-task_ef0b72b0/src/agent/manual-shake.ts:657:21)
+      at <anonymous> (/home/tnfssc/.bruv/worktrees/t3-1c4479b8-5442693331ce-task_ef0b72b0/src/history/session-manager.ts:493:40)
+      at <anonymous> (/home/tnfssc/.bruv/worktrees/t3-1c4479b8-5442693331ce-task_ef0b72b0/src/history/session-manager.ts:506:53)
+      at createAgentSession (/home/tnfssc/.t3/worktrees/bruv/t3-1c4479b8/node_modules/@earendil-works/pi-coding-agent/dist/core/sdk.js:83:44)
+      at setup (/home/tnfssc/.bruv/worktrees/t3-1c4479b8-5442693331ce-task_ef0b72b0/scripts/terminal-perf/send-workloads.ts:306:30)
+      at async run (/home/tnfssc/.bruv/worktrees/t3-1c4479b8-5442693331ce-task_ef0b72b0/tests/terminal-perf-send.test.ts:9:19)
+      at async <anonymous> (/home/tnfssc/.bruv/worktrees/t3-1c4479b8-5442693331ce-task_ef0b72b0/tests/terminal-perf-send.test.ts:76:21)
+(fail) Enter steering and Alt+Enter follow-up use real streaming queues, not a new provider request [6.22ms]
+587 |   const lacksFreshUsage = (owner: typeof prototype): boolean => {
+588 |     const manager = owner.sessionManager;
+589 |     if (!manager) return false;
+590 |     const entries = (manager as unknown as { fileEntries?: unknown }).fileEntries;
+591 |     const cacheable = Array.isArray(entries) && typeof manager.getLeafId === "function";
+592 |     const sessionId = manager.getSessionId();
+                                    ^
+TypeError: manager.getSessionId is not a function. (In 'manager.getSessionId()', 'manager.getSessionId' is undefined)
+      at lacksFreshUsage (/home/tnfssc/.bruv/worktrees/t3-1c4479b8-5442693331ce-task_ef0b72b0/src/agent/manual-shake.ts:592:31)
+      at <anonymous> (/home/tnfssc/.bruv/worktrees/t3-1c4479b8-5442693331ce-task_ef0b72b0/src/agent/manual-shake.ts:657:21)
+      at <anonymous> (/home/tnfssc/.bruv/worktrees/t3-1c4479b8-5442693331ce-task_ef0b72b0/src/history/session-manager.ts:493:40)
+      at <anonymous> (/home/tnfssc/.bruv/worktrees/t3-1c4479b8-5442693331ce-task_ef0b72b0/src/history/session-manager.ts:506:53)
+      at createAgentSession (/home/tnfssc/.t3/worktrees/bruv/t3-1c4479b8/node_modules/@earendil-works/pi-coding-agent/dist/core/sdk.js:83:44)
+      at setup (/home/tnfssc/.bruv/worktrees/t3-1c4479b8-5442693331ce-task_ef0b72b0/scripts/terminal-perf/send-workloads.ts:306:30)
+      at async run (/home/tnfssc/.bruv/worktrees/t3-1c4479b8-5442693331ce-task_ef0b72b0/tests/terminal-perf-send.test.ts:9:19)
+      at async <anonymous> (/home/tnfssc/.bruv/worktrees/t3-1c4479b8-5442693331ce-task_ef0b72b0/tests/terminal-perf-send.test.ts:88:19)
+(fail) actual slash command callback updates session name and screen without provider admission [6.68ms]
+587 |   const lacksFreshUsage = (owner: typeof prototype): boolean => {
+588 |     const manager = owner.sessionManager;
+589 |     if (!manager) return false;
+590 |     const entries = (manager as unknown as { fileEntries?: unknown }).fileEntries;
+591 |     const cacheable = Array.isArray(entries) && typeof manager.getLeafId === "function";
+592 |     const sessionId = manager.getSessionId();
+                                    ^
+TypeError: manager.getSessionId is not a function. (In 'manager.getSessionId()', 'manager.getSessionId' is undefined)
+      at lacksFreshUsage (/home/tnfssc/.bruv/worktrees/t3-1c4479b8-5442693331ce-task_ef0b72b0/src/agent/manual-shake.ts:592:31)
+      at <anonymous> (/home/tnfssc/.bruv/worktrees/t3-1c4479b8-5442693331ce-task_ef0b72b0/src/agent/manual-shake.ts:657:21)
+      at <anonymous> (/home/tnfssc/.bruv/worktrees/t3-1c4479b8-5442693331ce-task_ef0b72b0/src/history/session-manager.ts:493:40)
+      at <anonymous> (/home/tnfssc/.bruv/worktrees/t3-1c4479b8-5442693331ce-task_ef0b72b0/src/history/session-manager.ts:506:53)
+      at createAgentSession (/home/tnfssc/.t3/worktrees/bruv/t3-1c4479b8/node_modules/@earendil-works/pi-coding-agent/dist/core/sdk.js:83:44)
+      at setup (/home/tnfssc/.bruv/worktrees/t3-1c4479b8-5442693331ce-task_ef0b72b0/scripts/terminal-perf/send-workloads.ts:306:30)
+      at async <anonymous> (/home/tnfssc/.bruv/worktrees/t3-1c4479b8-5442693331ce-task_ef0b72b0/tests/terminal-perf-send.test.ts:105:15)
+(fail) setup exclusivity and disposal allow a fresh fixture and renderer profiler cleanup [6.06ms]
+(pass) fresh-process probe exercises Bruv disk-backed journal without installing permanent adapters in test runner [578.38ms]
+
+
+6 tests failed:
+(fail) actual TUI Enter consumes input and sends a short user message through SDK and journal [82.89ms]
+(fail) multiline and large bracketed paste markers expand at real editor submit [11.11ms]
+(fail) same actual send on a populated session includes history in admission [7.73ms]
+(fail) Enter steering and Alt+Enter follow-up use real streaming queues, not a new provider request [6.22ms]
+(fail) actual slash command callback updates session name and screen without provider admission [6.68ms]
+(fail) setup exclusivity and disposal allow a fresh fixture and renderer profiler cleanup [6.06ms]
+
+ 2224 pass
+ 27 skip
+ 6 fail
+ 112723 expect() calls
+Ran 2257 tests across 302 files. [266.27s]
