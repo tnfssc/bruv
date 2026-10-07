@@ -566,16 +566,29 @@
     {
       "focus": "src/session/host-access.ts",
       "initialBlob": "b5a5b4f018035a73c1261785c34b2fd75b057e61",
-      "status": "primary-running",
+      "status": "judging",
       "primary": [
         {
           "id": "task_bb3cc0b8",
           "launchBase": "c20f1ed7bd9c2995630f9711575c8db6e52271b8",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_bb3cc0b8",
-          "branch": "bruv/primary-src-session-host-access.ts-bb3cc0b8"
+          "branch": "bruv/primary-src-session-host-access.ts-bb3cc0b8",
+          "commit": "10ae751bb3481fd648093db7f31af241aa070782",
+          "changedPaths": [
+            "wisdom/quality/structural-readability-worker.md"
+          ],
+          "result": "Unchanged weak-map host adapter uses canonical identity; lifecycle owners stay in extension attach/detach.",
+          "checks": "2 cross-wrapper/checkpoint tests 19 assertions; 1 stop-confirmation test 4 assertions; focused format/lint/diff pass."
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_ed71d544",
+          "candidate": "10ae751bb3481fd648093db7f31af241aa070782",
+          "base": "c20f1ed7bd9c2995630f9711575c8db6e52271b8",
+          "status": "running"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending"
     },
@@ -874,8 +887,15 @@
     {
       "focus": "tests/history-storage-io.test.ts",
       "initialBlob": "27d019686d63830282ec0a9143e45f10d6b091f4",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_3073210f",
+          "launchBase": "8130a93798e0c03aca913c4469283430dd7a7290",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_3073210f",
+          "branch": "bruv/primary-storage-io-tests-3073210f"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending",
