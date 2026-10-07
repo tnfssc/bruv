@@ -2373,7 +2373,7 @@
     {
       "focus": "tests/update-release-shape.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-pending",
+      "state": "judge-running",
       "primary": [
         {
           "id": "task_dc6a6799",
@@ -2384,7 +2384,14 @@
           "commit": "1651a56fc3d5a8cbe259339a3d8aa73c4306096a"
         }
       ],
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_811b18de",
+          "base": "071e1d235fe9c1157ca12181fe9264fc9a1abc22",
+          "candidate": "1651a56fc3d5a8cbe259339a3d8aa73c4306096a",
+          "state": "running"
+        }
+      ],
       "relatedPaths": [
         "tests/update-release-shape.md"
       ],
@@ -2510,19 +2517,22 @@
     {
       "focus": "tests/verify-update-probe.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judge-pending",
       "primary": [
         {
           "id": "task_7b923de0",
           "launchBase": "ac29bd4f75d9ec48b381061ae775ee9b265ecc73",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_7b923de0",
           "branch": "bruv/primary-tests-verify-update-probe.test.t-7b923de0",
-          "state": "running"
+          "state": "completed",
+          "commit": "64aed029a2b9752dc8a1b70980bff53ee830f326"
         }
       ],
       "judges": [],
       "relatedPaths": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "readingResult": "Unchanged proposed: real UTF8 probe/serialize,SIGKILL vs exit contrast,ENOENTnullstreams;singlehelper no tangledstate.",
+      "checks": "2focuspass;tsc/Biome;serializer unchanged,diagnosticnotredactvalidate;optionalerrormetadata incompleteassertions."
     },
     {
       "focus": "tests/verify-update.test.ts",
@@ -2695,8 +2705,16 @@
     {
       "focus": "tests/update-self-fixture.test.ts",
       "initialBase": "452205ec0667aad35ef854a9862d4b5182143095",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_0ecce4b1",
+          "launchBase": "6004e0528ec906e3c5205b0f6adb0a8bd8c65ebf",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_0ecce4b1",
+          "branch": "bruv/primary-new-self-updater-fixture-tests-0ecce4b1",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPatchJudgment": {
         "candidate": "346d492a3d4d24f3a5990e4c40c6f9388603cb4e",
@@ -2716,8 +2734,9 @@
       "introducedBy": "task_dc6a6799",
       "relatedPatchJudgment": {
         "candidate": "1651a56fc3d5a8cbe259339a3d8aa73c4306096a",
-        "state": "judge-pending",
-        "primaryStillRequired": true
+        "state": "running",
+        "primaryStillRequired": true,
+        "judge": "task_811b18de"
       }
     }
   ],
@@ -2846,5 +2865,11 @@
       "tree": "6020cc0e06d6ab6f6480bdba4d0bccfc31b98765",
       "note": "Parent-owned accepted common code only;no direct sibling merge/no otherarea coverage claimed. Actual binary will rebuild for final combined proof."
     }
-  ]
+  ],
+  "pendingCombinedBuild": {
+    "job": "task_2901b129",
+    "commit": "6004e052",
+    "parent": "db885fce5225bf31dbaadba34c14ceb2393f5999",
+    "scope": "Actual paired build +real full tsc after acceptedcommonparentmerge;owned Pi adaptation."
+  }
 }
