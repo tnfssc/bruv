@@ -1,5 +1,6 @@
 # v0.16.16
 
+- Fix resource monitoring when temporary session files are renamed during sampling.
 - Merge pull request #48 from tnfssc/fix/task-history-resource-growth
 - Keep recovery walks within the measured memory budget
 - Fix truncated disk history walks and integrated developer notes

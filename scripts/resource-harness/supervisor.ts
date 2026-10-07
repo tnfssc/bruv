@@ -42,7 +42,15 @@ async function fixtureBytes(dir: string): Promise<number> {
   for (const entry of await readdir(dir, { withFileTypes: true })) {
     const path = join(dir, entry.name);
     if (entry.isDirectory()) total += await fixtureBytes(path);
-    else if (entry.isFile()) total += (await stat(path)).size;
+    else if (entry.isFile()) {
+      try {
+        total += (await stat(path)).size;
+      } catch (error) {
+        // Atomic session writes can rename a pending file after readdir.
+        // The next scan and the final scan still measure the published file.
+        if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
+      }
+    }
   }
   return total;
 }

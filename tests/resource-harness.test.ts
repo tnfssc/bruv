@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, test } from "bun:test";
 import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { join, resolve } from "node:path";
 import { type Budgets, supervise } from "../scripts/resource-harness/supervisor";
 
 const dirs: string[] = [];
@@ -25,6 +25,57 @@ async function run(source: string, limits: Partial<Budgets> = {}) {
 }
 
 describe("resource workload supervisor", () => {
+  test("tolerates pending files renamed between listing and stat but reports other I/O failures", async () => {
+    const dir = await mkdtemp(join(tmpdir(), "bruv-resource-sampling-race-"));
+    dirs.push(dir);
+    const supervisor = resolve(import.meta.dir, "../scripts/resource-harness/supervisor.ts");
+    for (const code of ["ENOENT", "EACCES"]) {
+      const pending = join(dir, "session.jsonl.pending-test");
+      const published = join(dir, "session.jsonl");
+      await writeFile(pending, Buffer.alloc(8192));
+      // Isolate the filesystem mock from the other tests and deterministically
+      // rename the file only after the supervisor has listed it.
+      const source = `
+        import { mock } from "bun:test";
+        import * as fs from "node:fs/promises";
+        const originalStat = fs.stat;
+        mock.module("node:fs/promises", () => ({ ...fs, stat: async (path) => {
+          if (path === ${JSON.stringify(pending)}) {
+            if (${JSON.stringify(code)} === "ENOENT") {
+              await fs.rename(path, ${JSON.stringify(published)});
+            } else {
+              throw Object.assign(new Error("stat denied"), { code: "EACCES" });
+            }
+          }
+          return originalStat(path);
+        }}));
+        const { supervise } = await import(${JSON.stringify(supervisor)});
+        const result = await supervise({
+          command: [process.execPath, "-e", ${JSON.stringify(`await Bun.sleep(250); ${complete}`)}],
+          dir: ${JSON.stringify(dir)}, phase: "write", budgets: ${JSON.stringify(budgets)}
+        });
+        console.log(JSON.stringify(result));
+      `;
+      const child = Bun.spawn([process.execPath, "-e", source], { stdout: "pipe", stderr: "pipe" });
+      const [stdout, stderr, exitCode] = await Promise.all([
+        new Response(child.stdout).text(),
+        new Response(child.stderr).text(),
+        child.exited,
+      ]);
+      expect(stderr).toBe("");
+      expect(exitCode).toBe(0);
+      const result = JSON.parse(stdout);
+      if (code === "ENOENT") {
+        expect(result.passed).toBe(true);
+        expect(result.completed).toBe(true);
+        expect(result.violations).toEqual([]);
+        expect(result.diskBytes).toBeGreaterThanOrEqual(8192);
+      } else {
+        expect(result.passed).toBe(false);
+        expect(result.violations).toContain("Resource sampling failed: Error: stat denied");
+      }
+    }
+  });
   test("records a completed workload and externally measures fixture bytes", async () => {
     const result = await run(complete);
     expect(result.passed).toBe(true);
