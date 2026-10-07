@@ -362,8 +362,15 @@
     {
       "focus": "src/agent/native-compaction.ts",
       "initialBlob": "dbe3719e3628a5d5ece6f4eed440ea8ceba8b0f1",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_ec8e3840",
+          "launchBase": "1b4c733cda50010b819a35365ddc53e80827e861",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_ec8e3840",
+          "branch": "bruv/primary-native-compaction-ec8e3840"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending"
@@ -2118,13 +2125,19 @@
       "focus": "tests/transcript-snapshots.test.ts",
       "initialBlob": null,
       "originCandidate": "dfd632869cc21aaf0b20cb3e732e14258929b910",
-      "status": "primary-running",
+      "status": "judge-pending",
       "primary": [
         {
           "id": "task_08a471b0",
           "launchBase": "4b1df2f3343aab4fe418037aefdefbce5d99ca90",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_08a471b0",
-          "branch": "bruv/primary-snapshot-isolated-runner-08a471b0"
+          "branch": "bruv/primary-snapshot-isolated-runner-08a471b0",
+          "commit": "f45666020f9de3ccf6e27934077664726665918c",
+          "changedPaths": [
+            "wisdom/quality/structural-readability-worker.md"
+          ],
+          "result": "No change: parent creates private root/env, awaits child output/exit, reports failure then removes only private root. Fixture owns isolated store contracts, no hidden scenario behavior.",
+          "checks": "Two concurrent parent runs pass; fixture 13/52; refusal preserves outer sentinel; injected exit17 streams/cleanup verified; focused type/format/lint/diff pass; full tsc known assets/goal error, no timeout-kill claim."
         }
       ],
       "judgeRounds": [],
