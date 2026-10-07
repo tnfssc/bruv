@@ -32,3 +32,5 @@ Check is configured assets+tsc; format/lint scoped changed files. No per-file bi
 
 ## Pickup
 Read ledger for active task IDs and retained worktrees. Next free primaries should cover root-owner.ts, services.ts, source-approval/artifact tests and both new tests alongside remaining 119-file baseline. Check parent accepted branch only at sensible batches; last inspected parent changes were documentation-only. Parent owns one PR #45 and final whole-repo gates.
+
+Approval batch: a200ff7d accepted by task_72f3d841. Pin source, durable question attachment and provenance/CLI decision acceptance now explicit phases. Full combined test retains prior jobs owner regression. Final approval-test blob 975c3601 replaces earlier related acceptance, own primary next. Worker 45 tests/267 assertions; judge 11 tests/57 assertions plus dependency-loading failures, area rerun due.

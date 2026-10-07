@@ -124,6 +124,34 @@ test("exact human-owned question pins tracked edits and requested bytes, not pos
   expect(readFileSync(join(checkout, "tracked"), "utf8")).toBe("current tracked edit");
   expect(snapshot.omittedUntracked).toEqual(["omitted.txt"]);
 });
+test("question creation failure retains pinned source and retries without recapture", async () => {
+  const f = fixture();
+  const ask = f.questions.ask.bind(f.questions);
+  f.questions.ask = async () => {
+    throw Error("question creation interrupted");
+  };
+  await expect(f.service.prepare(f.intent, f.ctx)).rejects.toThrow("question creation interrupted");
+  const pinned = f.service.get(f.file, f.intent.taskId)!;
+  expect(pinned.state).toBe("waiting");
+  expect(pinned.questionId).toBeUndefined();
+  expect(f.questions.list(f.ctx)).toEqual([]);
+  writeFileSync(join(f.root, "new.txt"), "changed during question outage");
+  writeFileSync(join(f.root, "tracked"), "changed during question outage");
+  f.questions.ask = ask;
+  const restarted = new SourceApprovalService(f.path, f.questions);
+  const awaiting = await restarted.prepare(f.intent, f.ctx);
+  expect(awaiting.include).toEqual(pinned.include);
+  expect(awaiting.omit).toEqual(pinned.omit);
+  expect(awaiting.questionOwner).toEqual(pinned.questionOwner);
+  expect(awaiting.dedupKey).toBe(pinned.dedupKey);
+  expect(f.questions.list(f.ctx)).toHaveLength(1);
+  await approve(f, SOURCE_CHOICES[0]);
+  const ready = await restarted.prepare(f.intent, f.ctx);
+  const checkout = join(f.dir, "restarted-proof");
+  git(f.dir, "clone", "-q", restarted.snapshot(ready).bundle, checkout);
+  expect(readFileSync(join(checkout, "new.txt"), "utf8")).toBe("pinned new bytes");
+  expect(readFileSync(join(checkout, "tracked"), "utf8")).toBe("current tracked edit");
+});
 test("ordinary agent ask/resolve cannot forge approval; unresolved defaults omit", async () => {
   const f = fixture();
   const pending = await f.service.prepare(f.intent, f.ctx);
