@@ -208,7 +208,7 @@
     {
       "focus": "site/brand.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-unchanged",
+      "state": "candidate-awaiting-judge",
       "primary": [
         {
           "id": "task_4f28d450",
@@ -226,13 +226,13 @@
           "state": "completed",
           "verdict": "NO CHANGE NEEDED",
           "evidence": "One explicit width selector returns48/28/24-cell rows; layout/presentation separate,extra helper adds navigation. Judge1 test/43 assertions;sampled bounds,not visual/freshness proof;no browser/build/generator. Judge used candidate git blobs despite shared checkout advancement.",
-          "objections": []
+          "objections": [],
+          "limit": "Judge had explicit candidate commit but launch response initially exposed unprepared source workspace and missing base; coordinator repaired provenance. Fresh final review required despite prior acceptance."
         }
       ],
       "initialBlob": "7e2b7b9da0314ee2a7f447148ffd2d28a0c651a4",
-      "acceptedBlob": "7e2b7b9da0314ee2a7f447148ffd2d28a0c651a4",
       "changedRelatedPaths": [],
-      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded"
+      "integration": "unchanged; final acceptance pending corrected-provenance review"
     },
     {
       "focus": "site/capture.ts",
@@ -260,7 +260,7 @@
     {
       "focus": "site/content.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judging",
+      "state": "accepted-unchanged",
       "primary": [
         {
           "id": "task_6b21fc71",
@@ -275,10 +275,16 @@
         {
           "id": "task_2ebc2a13",
           "candidate": "9f9958395ce3c0b60c7350e6fbd97688d64171d1",
-          "state": "running"
+          "state": "completed",
+          "verdict": "NO CHANGE NEEDED",
+          "evidence": "Two literal copy objects expose metadata/landing content without effects or hidden lifetimes; named-property flow to layout/build direct. Judge2 tests/24 assertions;no browser/build/factual-copy audit.",
+          "objections": []
         }
       ],
-      "initialBlob": "d3d5f4001715dfa8275e4295f25ab64d251e3ad8"
+      "initialBlob": "d3d5f4001715dfa8275e4295f25ab64d251e3ad8",
+      "acceptedBlob": "d3d5f4001715dfa8275e4295f25ab64d251e3ad8",
+      "changedRelatedPaths": [],
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded"
     },
     {
       "focus": "site/demos.test.ts",
@@ -416,7 +422,7 @@
     {
       "focus": "site/index.html",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "candidate-awaiting-judge",
+      "state": "judging",
       "primary": [
         {
           "id": "task_1510f666",
@@ -427,7 +433,13 @@
           "result": "Unchanged literal shell:head metadata/bootstrap,body hidden terminal+visible fallback/navigation/content then runtime injection. Build/runtime own view/startup/failure lifetimes.10 tests;browser startup read not rerun."
         }
       ],
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_076ad4af",
+          "candidate": "26c935af68ca49c3f004c75d3ab1078c7ca9930d",
+          "state": "running"
+        }
+      ],
       "initialBlob": "65aedee36320f9fb48ca7db09b5aaaa81fec3ee3"
     },
     {
@@ -689,13 +701,15 @@
     {
       "focus": "site/scripts/capture-real-pty.py",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "candidate-awaiting-judge",
       "primary": [
         {
           "id": "task_46c581d4",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_46c581d4",
           "branch": "bruv/primary-site-scripts-capture-real-pty.py-46c581d4",
-          "base": "e9fcaa45835574a9a63814bace2a9374d3b443b2"
+          "base": "e9fcaa45835574a9a63814bace2a9374d3b443b2",
+          "commit": "39e433dd12fa47efd56007077764c72bdfdebe37",
+          "result": "Unchanged ordered namespace/PTY startup->timed IO/byte persistence->terminate/wait/kill/close;three loop variables one lifetime. Python syntax/help,1 capture test/7 assertions,real namespaces+PTY synthetic executable timing/geometry/exactIO/SIGTERM/preserve output on nonzero proof. No real Bruv/browser recapture or escalation claim."
         }
       ],
       "judges": [],
@@ -864,13 +878,15 @@
     {
       "focus": "site/scripts/preview.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "candidate-awaiting-judge",
       "primary": [
         {
           "id": "task_0207fb65",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_0207fb65",
           "branch": "bruv/primary-site-scripts-preview.ts-0207fb65",
-          "base": "992ae03cb1d19ff6d5cca4802a80261720897705"
+          "base": "992ae03cb1d19ff6d5cca4802a80261720897705",
+          "commit": "0a903f459e4ce09442756f7f314b388a39ea9d71",
+          "result": "Unchanged decodeURL->index/file resolve->root-escape rejection->existence->no-store response. Local request state;caller shutdown.4 HTTP probes/6 assertions;startup test blocked missing playwright in worker;area combined browser suite previously passed."
         }
       ],
       "judges": [],
@@ -879,11 +895,15 @@
     {
       "focus": "site/scripts/scroll.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "candidate-awaiting-judge",
       "primary": [
         {
           "id": "task_6f289d7b",
-          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d"
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_6f289d7b",
+          "branch": "bruv/primary-site-scripts-scroll.test.ts-6f289d7b",
+          "base": "992ae03cb1d19ff6d5cca4802a80261720897705",
+          "commit": "6f158bfb311d5fd5f6bf6f0d1807a5834fb8a70b",
+          "result": "Fresh accumulator per behavior and separate wheel conversion remove hidden remainder between unrelated scenarios. All original assertions retained,reset setup gains assertion.7 tests/17 assertions;format/diff pass;existing lint info."
         }
       ],
       "judges": [],
@@ -892,8 +912,15 @@
     {
       "focus": "site/scripts/startup.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_2473ecf3",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_2473ecf3",
+          "branch": "bruv/primary-site-scripts-startup.test.ts-2473ecf3",
+          "base": "6e555e5e148be83d37cceed3254165503bb87753"
+        }
+      ],
       "judges": [],
       "initialBlob": "8ff4a906e773189da064dd81b8087d883ab7019b"
     },
@@ -929,16 +956,30 @@
     {
       "focus": "site/scroll.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_955a4df5",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_955a4df5",
+          "branch": "bruv/primary-site-scroll.ts-955a4df5",
+          "base": "6e555e5e148be83d37cceed3254165503bb87753"
+        }
+      ],
       "judges": [],
       "initialBlob": "0d0df4d08a23c1b2d2cc0a1682f2b0dffb08a4b3"
     },
     {
       "focus": "site/styles.css",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_05fa70bb",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_05fa70bb",
+          "branch": "bruv/primary-site-styles.css-05fa70bb",
+          "base": "6e555e5e148be83d37cceed3254165503bb87753"
+        }
+      ],
       "judges": [],
       "initialBlob": "d499b236d122d8c4c59549848a0dc8e119f96e1a"
     },

@@ -55,3 +55,5 @@ site/assets/settings-cells.json: Explicit provenance/crop/ordered glyph-style ru
 site/assets/cli-settings.txt: Authentic PTY bytes are replay evidence,not code to prettify; producer->emulator->crop->captured-cell consumer traced independently,not current shipped demos. Judge1 test/7 assertions and SHA256 c0ffce1b2681a451bf29f071fe01fc1ea8a35d6c776256276b266c61f641301a. No replay/recapture/build/provider claim.
 
 site/brand.ts: One explicit width selector returns48/28/24-cell rows; layout/presentation separate,extra helper adds navigation. Judge1 test/43 assertions;sampled bounds,not visual/freshness proof;no browser/build/generator. Judge used candidate git blobs despite shared checkout advancement.
+
+site/content.ts: Two literal copy objects expose metadata/landing content without effects or hidden lifetimes; named-property flow to layout/build direct. Judge2 tests/24 assertions;no browser/build/factual-copy audit.
