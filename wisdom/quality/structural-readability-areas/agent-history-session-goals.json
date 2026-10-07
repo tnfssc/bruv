@@ -1113,16 +1113,38 @@
     {
       "focus": "tests/goals.test.ts",
       "initialBlob": "ff1548ac48ad95b5ac2d695e4d3a5990cd3c921a",
-      "status": "primary-running",
+      "status": "rework-running-overlap",
       "primary": [
         {
           "id": "task_6d7a5ed8",
           "launchBase": "4bd65fd16c75678800b04e432dcaad64702ce0d3",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_6d7a5ed8",
-          "branch": "bruv/primary-goal-behavior-tests-6d7a5ed8"
+          "branch": "bruv/primary-goal-behavior-tests-6d7a5ed8",
+          "commit": "2e323383ea64470abbc17605d7838f50cc461954",
+          "changedPaths": [
+            "tests/goals.test.ts",
+            "wisdom/quality/structural-readability-worker.md"
+          ],
+          "result": "Shared goal runtime fixture owns mocked plumbing; tests visibly sequence handoff, run end, settlement, completion and assertions. Command-before-start scenario now really skips startup and rejects unconditional-start mutation.",
+          "checks": "31 tests/147 assertions; baseline 145; format/diff pass; 2 verified baseline lint warnings; no typecheck/build."
+        },
+        {
+          "id": "task_9a60ee5b",
+          "role": "overlap-rework",
+          "launchBase": "a37d5f5da6cff9a28002861fc9a98c0ee332731c",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_9a60ee5b",
+          "branch": "bruv/reconcile-goal-behavior-test-coverage-9a60ee5b",
+          "priorCandidate": "2e323383ea64470abbc17605d7838f50cc461954"
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_a7f9ce2d",
+          "candidate": "2e323383ea64470abbc17605d7838f50cc461954",
+          "base": "4bd65fd16c75678800b04e432dcaad64702ce0d3",
+          "status": "running"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending",
       "relatedPatchReview": {
