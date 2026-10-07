@@ -188,11 +188,24 @@
     {
       "focus": "src/questions/picker.ts",
       "initialBlob": "b3e4f1c4c717ddd9d1091c46e8f3b46b67b9c900",
-      "status": "pending",
-      "primary": null,
+      "status": "awaiting-judge",
+      "primary": {
+        "id": "task_b3e92305",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_b3e92305",
+        "branch": "bruv/primary-src-questions-picker.ts-b3e92305",
+        "base": "f256384cb549f1987e9b32969ae3c09069454b53",
+        "commit": "27c0eda3b2533c39a88047af57c5c7b84ae1fb67"
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "launchBase": "f256384cb549f1987e9b32969ae3c09069454b53",
+      "changedRelatedPaths": [],
+      "readingResult": "No-change: picker owns filtering/selection/resize restoration/detail paging; adapter owns mounting/editor retries/owner-version submission.",
+      "checks": [
+        "18 picker/extension tests /220 assertions",
+        "no full build/compiled TUI"
+      ]
     },
     {
       "focus": "src/questions/runtime.ts",
@@ -273,11 +286,18 @@
     {
       "focus": "src/tasks/agent-progress.ts",
       "initialBlob": "8089026a5b78616d952d89fc91f466fd757e0490",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_717608b7",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_717608b7",
+        "branch": "bruv/primary-src-tasks-agent-progress.ts-717608b7",
+        "base": "f256384cb549f1987e9b32969ae3c09069454b53",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "launchBase": "f256384cb549f1987e9b32969ae3c09069454b53"
     },
     {
       "focus": "src/tasks/agent-session.ts",
@@ -355,11 +375,18 @@
     {
       "focus": "src/tasks/completion-notification.ts",
       "initialBlob": "d9cb46b93e636ab2da2b01f2534ef5eb6b66d9ae",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_672581ab",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_672581ab",
+        "branch": "bruv/primary-src-tasks-completion-notificatio-672581ab",
+        "base": "f256384cb549f1987e9b32969ae3c09069454b53",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "launchBase": "f256384cb549f1987e9b32969ae3c09069454b53"
     },
     {
       "focus": "src/tasks/foreground-stop.ts",
@@ -452,7 +479,7 @@
     {
       "focus": "src/tasks/task-manager.ts",
       "initialBlob": "3f614d8920d22f8ae86d2adb8a7f40957af7b0e2",
-      "status": "rework-running",
+      "status": "rework-awaiting-judge",
       "primary": {
         "id": "task_53df8c4c",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_53df8c4c",
@@ -495,8 +522,14 @@
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_e5da5ab0",
           "branch": "bruv/rework-task-manager-snapshot-authority-e5da5ab0",
           "base": "62cfd14185774a6357c0f758bd82234f5c20344f",
-          "commit": null,
-          "respondsTo": "task_08e2c508"
+          "commit": "5eb5ac44b5ef72ddc095bd8cd20ae9827bc82dc3",
+          "respondsTo": "task_08e2c508",
+          "response": "Reproduced leaked controller on baseline and imported first candidate; explicit public metadata projection preserves nested copies and admission refactor. Added regression fails before fix and passes 27 assertions; inherited behavior defect explicitly documented.",
+          "checks": [
+            "78 pass/516 assertions across six suites",
+            "focused TypeScript/format/lint/diff pass; inherited warnings",
+            "no full build/provider/SSH/platform claim"
+          ]
         }
       ]
     },
@@ -1085,15 +1118,23 @@
     {
       "focus": "tests/typescript-execution.test.ts",
       "initialBlob": "99f89a2a17d69ecbc9feb84d0d336aed5c9ecc36",
-      "status": "primary-running",
+      "status": "judge-running",
       "primary": {
         "id": "task_b5390314",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_b5390314",
         "branch": "bruv/primary-tests-typescript-execution.test.-b5390314",
         "base": "6b773014c742fd6c78beeb2dc0a3035a82fa56f2",
-        "commit": null
+        "commit": "4203889ec83d22f2e4e373e0d7988f82077a9e94"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_d1f6dac2",
+          "status": "running",
+          "candidate": "4203889ec83d22f2e4e373e0d7988f82077a9e94",
+          "base": "6b773014c742fd6c78beeb2dc0a3035a82fa56f2",
+          "priorRelatedJudge": "task_b4813ac3"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending",
       "relatedAcceptance": {
@@ -1103,7 +1144,16 @@
         "verdict": "ACCEPT",
         "primaryStillRequired": true
       },
-      "launchBase": "6b773014c742fd6c78beeb2dc0a3035a82fa56f2"
+      "launchBase": "6b773014c742fd6c78beeb2dc0a3035a82fa56f2",
+      "changedRelatedPaths": [
+        "tests/typescript-execution.test.ts"
+      ],
+      "readingResult": "Narrow registration adapter captures lifecycle callbacks by event identity and emitted rows; shutdown/restart tests no longer reconstruct registration callback order/map.",
+      "checks": [
+        "baseline and candidate 25 tests/119 assertions",
+        "focused typecheck/Biome/diff pass",
+        "no full build"
+      ]
     },
     {
       "focus": "tests/typescript-images.test.ts",
