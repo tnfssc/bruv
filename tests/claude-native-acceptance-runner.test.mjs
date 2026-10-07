@@ -1,10 +1,10 @@
-import { test } from "node:test";
 import assert from "node:assert/strict";
-import fs from "node:fs/promises";
-import path from "node:path";
-import os from "node:os";
 import { spawn } from "node:child_process";
 import { createHash } from "node:crypto";
+import fs from "node:fs/promises";
+import os from "node:os";
+import path from "node:path";
+import { test } from "node:test";
 
 // Offline orchestrator proof only: these owned stand-ins never prove native acceptance.
 const runner =
@@ -24,6 +24,109 @@ const records = responses.map((content, sequence) => ({
   authorization: "PRIVATE_CREDENTIAL",
 }));
 
+// These programs replace only provider/UI IO. The copied runner, tap and worker
+// still own orchestration, environment filtering and process-scope cleanup.
+async function writeModelAndCaptureFixtures(scripts) {
+  await fs.writeFile(
+    path.join(scripts, "model.mjs"),
+    String.raw`
+import fs from "node:fs/promises";
+import path from "node:path";
+import { createServer } from "node:http";
+export const modelSlug = "offline-fixture/local", provider = "offline-fixture", modelId = "local";
+export const modelsConfig = (port) => ({ port });
+export async function openModel(state, name) {
+  const out = process.env.TEST_OBSERVATIONS;
+  await fs.writeFile(path.join(out, "root"), path.dirname(state));
+  const server = createServer();
+  await new Promise(r => server.listen(0, "127.0.0.1", r));
+  return {
+    port: server.address().port,
+    records: JSON.parse(process.env.TEST_RECORDS),
+    close: async () => {
+      await new Promise(r => server.close(r));
+      await fs.appendFile(path.join(out, "closed"), name + "\n");
+    }
+  };
+}
+export const startModel = ({state}) => openModel(state, "root-model");
+`,
+  );
+  await fs.writeFile(
+    path.join(scripts, "app-delegation-model.mjs"),
+    `
+import { openModel } from "./model.mjs";
+export const reply = () => {};
+export const startWorkerModel = ({state}) => openModel(state, "worker-model");
+`,
+  );
+  for (const file of ["driver.mjs", "app-delegation-driver.mjs"])
+    await fs.writeFile(path.join(scripts, file), "export const projectWire = () => [{ safeWire: true }];");
+  await fs.writeFile(
+    path.join(scripts, "human-driver.mjs"),
+    `
+import fs from "node:fs/promises";
+import path from "node:path";
+export const capture = ({proof}) => fs.writeFile(path.join(proof, "human-capture.json"), "{}");
+`,
+  );
+}
+
+async function writeReplayFixture(replayDir, failure, unrelatedPid) {
+  await fs.writeFile(
+    path.join(replayDir, "replay.mjs"),
+    String.raw`
+import fs from "node:fs/promises";
+import path from "node:path";
+import { spawn } from "node:child_process";
+const failure = ${JSON.stringify(failure ?? null)};
+const unrelatedPid = ${JSON.stringify(unrelatedPid ?? null)};
+const config = JSON.parse(await fs.readFile(process.env.BRUV_ACCEPTANCE_CONFIG, "utf8"));
+if (unrelatedPid) {
+  const worker = spawn(process.execPath, [path.join(path.dirname(config.state), "worker.mjs"), config.state, "stop"], { stdio: "ignore" });
+  worker.unref();
+  await fs.writeFile(path.join(config.proof, "worker-pid.json"), String(worker.pid));
+  while (true) {
+    try { await fs.access(path.join(config.state, "stop.started")); break; } catch {}
+    await new Promise(r => setTimeout(r, 10));
+  }
+  await fs.writeFile(path.join(config.state, "early.started"), String(unrelatedPid));
+}
+await fs.writeFile(path.join(config.proof, "replay-observation.json"), JSON.stringify({env: process.env, config}));
+await fs.writeFile(config.wire, JSON.stringify({ private: "PRIVATE_WIRE" }) + "\n");
+if (config.delegationCases) await fs.writeFile(path.join(config.state, "capabilities.json"), "{}");
+if (failure === "result") {
+  await fs.mkdir(path.join(config.proof, "result.json"));
+} else {
+  await fs.writeFile(path.join(config.proof, "result.json"), JSON.stringify({ fixtureHarness: true, preserved: "driver-result" }));
+}
+if (failure === "projection") await fs.mkdir(path.join(config.proof, "model-projection.json"));
+`,
+  );
+}
+
+async function runRunner(runFile, cwd, env) {
+  const child = spawn(process.execPath, [runFile], { cwd, env, stdio: ["ignore", "pipe", "pipe"] });
+  let output = "",
+    timedOut = false;
+  child.stdout.on("data", (b) => (output += b));
+  child.stderr.on("data", (b) => (output += b));
+  const timer = setTimeout(() => {
+    timedOut = true;
+    child.kill("SIGKILL");
+  }, 5000);
+  try {
+    const code = await new Promise((resolve, reject) => {
+      child.once("error", reject);
+      child.once("close", resolve);
+    });
+    return { code, output, timedOut };
+  } finally {
+    clearTimeout(timer);
+    if (child.exitCode === null) child.kill("SIGKILL");
+  }
+}
+
 async function runFixture({
   failure,
   app = false,
@@ -37,7 +140,7 @@ async function runFixture({
   const replayDir = path.join(fixture, "wisdom/claude-compat/proof/native-ui-fixture");
   const proof = path.join(fixture, "proof");
   const observations = path.join(fixture, "observations");
-  let child, scopedRoot, unrelated, workerPid;
+  let scopedRoot, unrelated, workerPid;
   try {
     await fs.mkdir(scripts, { recursive: true });
     await fs.mkdir(replayDir, { recursive: true });
@@ -50,113 +153,27 @@ async function runFixture({
       );
     const artifact = path.join(fixture, "owned-artifact");
     await fs.writeFile(artifact, "#!/bin/sh\nexit 0\n", { mode: 0o755 });
-    await fs.writeFile(
-      path.join(scripts, "model.mjs"),
-      [
-        'import fs from "node:fs/promises";',
-        'import path from "node:path";',
-        'import { createServer } from "node:http";',
-        'export const modelSlug = "offline-fixture/local", provider = "offline-fixture", modelId = "local";',
-        "export const modelsConfig = (port) => ({ port });",
-        "export async function openModel(state, name) {",
-        "  const out = process.env.TEST_OBSERVATIONS;",
-        '  await fs.writeFile(path.join(out, "root"), path.dirname(state));',
-        "  const server = createServer();",
-        '  await new Promise(r => server.listen(0, "127.0.0.1", r));',
-        "  return { port: server.address().port, records: JSON.parse(process.env.TEST_RECORDS),",
-        "    close: async () => {",
-        "      await new Promise(r => server.close(r));",
-        '      await fs.appendFile(path.join(out, "closed"), name + "\\n");',
-        "    }",
-        "  };",
-        "}",
-        'export const startModel = ({state}) => openModel(state, "root-model");',
-      ].join("\n"),
-    );
-    await fs.writeFile(
-      path.join(scripts, "app-delegation-model.mjs"),
-      [
-        'import { openModel } from "./model.mjs";',
-        "export const reply = () => {};",
-        'export const startWorkerModel = ({state}) => openModel(state, "worker-model");',
-      ].join("\n"),
-    );
-    for (const file of ["driver.mjs", "app-delegation-driver.mjs"])
-      await fs.writeFile(path.join(scripts, file), "export const projectWire = () => [{ safeWire: true }];");
-    await fs.writeFile(
-      path.join(scripts, "human-driver.mjs"),
-      [
-        'import fs from "node:fs/promises";',
-        'import path from "node:path";',
-        'export const capture = ({proof}) => fs.writeFile(path.join(proof, "human-capture.json"), "{}");',
-      ].join("\n"),
-    );
+    await writeModelAndCaptureFixtures(scripts);
     if (workers) unrelated = spawn(process.execPath, ["-e", "setInterval(() => {}, 1000)"], { stdio: "ignore" });
-    await fs.writeFile(
-      path.join(replayDir, "replay.mjs"),
-      [
-        'import fs from "node:fs/promises";',
-        'import path from "node:path";',
-        'const config = JSON.parse(await fs.readFile(process.env.BRUV_ACCEPTANCE_CONFIG, "utf8"));',
-        ...(workers
-          ? [
-              'const { spawn } = await import("node:child_process");',
-              'const worker = spawn(process.execPath, [path.join(path.dirname(config.state), "worker.mjs"), config.state, "stop"], { stdio: "ignore" });',
-              "worker.unref();",
-              'await fs.writeFile(path.join(config.proof, "worker-pid.json"), String(worker.pid));',
-              'while (true) { try { await fs.access(path.join(config.state, "stop.started")); break; } catch {} await new Promise(r => setTimeout(r, 10)); }',
-              'await fs.writeFile(path.join(config.state, "early.started"), ' +
-                JSON.stringify(String(unrelated.pid)) +
-                ");",
-            ]
-          : []),
-        'await fs.writeFile(path.join(config.proof, "replay-observation.json"), JSON.stringify({env: process.env, config}));',
-        'await fs.writeFile(config.wire, JSON.stringify({ private: "PRIVATE_WIRE" }) + "\\n");',
-        'if (config.delegationCases) await fs.writeFile(path.join(config.state, "capabilities.json"), "{}");',
-        failure === "result"
-          ? 'await fs.mkdir(path.join(config.proof, "result.json"));'
-          : 'await fs.writeFile(path.join(config.proof, "result.json"), JSON.stringify({ fixtureHarness: true, preserved: "driver-result" }));',
-        failure === "projection" ? 'await fs.mkdir(path.join(config.proof, "model-projection.json"));' : "",
-      ].join("\n"),
-    );
-    child = spawn(process.execPath, [path.join(scripts, "run.mjs")], {
-      cwd: fixture,
-      env: {
-        PATH: process.env.PATH,
-        BRUV_CONNECTOR_EXECUTABLE: artifact,
-        BRUV_RUNTIME_BINARY: artifact,
-        BRUV_CONNECTOR_ARGS_JSON: connectorArgs,
-        PROOF_OUTPUT: proof,
-        ACCEPT_APP_DELEGATION: app ? "1" : "0",
-        ACCEPT_HUMAN_CONTROLS: human ? "1" : "0",
-        ACCEPT_SAVED_QUESTION: human ? "1" : "0",
-        ACCEPT_PERMISSION: human ? "1" : "0",
-        TEST_OBSERVATIONS: observations,
-        TEST_RECORDS: JSON.stringify(modelRecords),
-        ANTHROPIC_API_KEY: "PARENT_SECRET",
-        T3_UPSTREAM: "owned-upstream",
-        BROWSER_PATH: "owned-browser",
-        FIXTURE_PORT: "12345",
-      },
-      stdio: ["ignore", "pipe", "pipe"],
+    await writeReplayFixture(replayDir, failure, unrelated?.pid);
+    const { code, output, timedOut } = await runRunner(path.join(scripts, "run.mjs"), fixture, {
+      PATH: process.env.PATH,
+      BRUV_CONNECTOR_EXECUTABLE: artifact,
+      BRUV_RUNTIME_BINARY: artifact,
+      BRUV_CONNECTOR_ARGS_JSON: connectorArgs,
+      PROOF_OUTPUT: proof,
+      ACCEPT_APP_DELEGATION: app ? "1" : "0",
+      ACCEPT_HUMAN_CONTROLS: human ? "1" : "0",
+      ACCEPT_SAVED_QUESTION: human ? "1" : "0",
+      ACCEPT_PERMISSION: human ? "1" : "0",
+      TEST_OBSERVATIONS: observations,
+      TEST_RECORDS: JSON.stringify(modelRecords),
+      ANTHROPIC_API_KEY: "PARENT_SECRET",
+      T3_UPSTREAM: "owned-upstream",
+      BROWSER_PATH: "owned-browser",
+      FIXTURE_PORT: "12345",
     });
-    let output = "",
-      timedOut = false;
-    child.stdout.on("data", (b) => (output += b));
-    child.stderr.on("data", (b) => (output += b));
-    const timer = setTimeout(() => {
-      timedOut = true;
-      child.kill("SIGKILL");
-    }, 5000);
-    let code;
-    try {
-      code = await new Promise((resolve, reject) => {
-        child.once("error", reject);
-        child.once("close", resolve);
-      });
-    } finally {
-      clearTimeout(timer);
-    }
+    // Observe before harness disposal: our fallback cleanup must not count as runner success.
     scopedRoot = await fs.readFile(path.join(observations, "root"), "utf8").catch(() => {
       throw Error(output);
     });
@@ -201,7 +218,6 @@ async function runFixture({
         .digest("hex"),
     };
   } finally {
-    if (child && child.exitCode === null) child.kill("SIGKILL");
     if (unrelated && unrelated.exitCode === null) {
       const closed = new Promise((resolve) => unrelated.once("close", resolve));
       unrelated.kill("SIGKILL");
