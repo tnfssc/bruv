@@ -103,9 +103,7 @@
           }
         }
       ],
-      "relatedPaths": [
-        "tests/dependency-workflow.test.ts"
-      ],
+      "relatedPaths": ["tests/dependency-workflow.test.ts"],
       "acceptedBlob": "8d6139ce1417bcf9d58c87750a78f049ac58721b",
       "readingResult": "Bundle verification separated from authenticated publishing shell scope; verification before token exposure, freshness stays immediately before leased push; controls/values retained.",
       "checks": "34pass;targeted tsc/Biome/nine Bash blocks syntax/diff pass; real Git identity/parent/file restrictions; no hosted/build.",
@@ -142,10 +140,7 @@
           }
         }
       ],
-      "relatedPaths": [
-        "tests/manual-release.test.ts",
-        "tests/release-workflows.test.ts"
-      ],
+      "relatedPaths": ["tests/manual-release.test.ts", "tests/release-workflows.test.ts"],
       "acceptedBlob": "72a12eb6a00a934c436ce9ff6982123c10320564",
       "readingResult": "One read-only release-source job replaces repeated admission predicates and SHA/tag reconstruction; preserves manual prep/publication authority and payload/gates. Explicit cost: additional Ubuntu runner startup.",
       "checks": "66 focused tests; tsc/format/diff pass,5 existing Actions-literal lint warnings; no hosted/platform/build.",
@@ -287,9 +282,7 @@
           }
         }
       ],
-      "relatedPaths": [
-        "tests/install-download.test.ts"
-      ],
+      "relatedPaths": ["tests/install-download.test.ts"],
       "acceptedBlob": "125933e061095c79bd5e2f16c68d384e8a2c9013",
       "readingResult": "Root now canonical staged pair, private probe subshell and restore-or-remove operation; remains standalone. Candidate matches accepted scripts/install.sh exactly; shared test comment claiming old root staging is stale.",
       "checks": "Base/candidate22pass;syntax/diffpass;mocked Linux only.",
@@ -390,9 +383,7 @@
           }
         }
       ],
-      "relatedPaths": [
-        "tests/production-packaging.test.ts"
-      ],
+      "relatedPaths": ["tests/production-packaging.test.ts"],
       "acceptedBlob": "3cfc224480eb04bd7019ec365b919fb031fef6c0",
       "readingResult": "Singleton command matrix/generic execution loop becomes one command and one visible spawn; argument/output/failure propagation unchanged.",
       "checks": "18 focused tests including child cwd/argv/IO/exit probes; changed-file tsc/format/diff pass; existing lint diagnostics. No full build.",
@@ -460,9 +451,7 @@
           }
         }
       ],
-      "relatedPaths": [
-        "tests/ci-selective.test.ts"
-      ],
+      "relatedPaths": ["tests/ci-selective.test.ts"],
       "acceptedBlob": "1995804abd171d6f2d73d107b79ba5aee0b57120",
       "readingResult": "Reference-diff eligibility predicate replaces building report to decide metadata inspection; two-tree operation owns blockers; CLI plan→publish→execute with shared freshness rule.",
       "checks": "Base/candidate 16 pass/231 assertions; format/isolated strict tsc/diff pass, baseline lint warnings unchanged; no hosted/full gate.",
@@ -582,9 +571,7 @@
           }
         }
       ],
-      "relatedPaths": [
-        "tests/generate-third-party-notices.test.ts"
-      ],
+      "relatedPaths": ["tests/generate-third-party-notices.test.ts"],
       "acceptedBlob": "10cc8165ebff6cb5821490b6cbebfae901000fa8",
       "readingResult": "Explicit license alternatives, graph collection, effect-free rendering and visible output publication replace interleaved traversal/fallback/render/write; unused entry directory removed.",
       "checks": "37tests549assertions;newtests pass base;tsc/Biome/diff pass;real bundle211packages657015bytes identical. No full build.",
@@ -620,9 +607,7 @@
           }
         }
       ],
-      "relatedPaths": [
-        "tests/install-local.test.ts"
-      ],
+      "relatedPaths": ["tests/install-local.test.ts"],
       "acceptedBlob": "ef8220b9c0b3bf364d5c4515f8fa7764f9ee13ff",
       "readingResult": "Candidate unifies separate replacement flags/commit state/path aliases into successful-rename journal; clearing journal commits pair. Explicit recovery backup rename compat.previous → bruv-claude-compat.previous.",
       "checks": "17 pass/61 assertions; bash syntax/strict tsc/format/diff pass; two unchanged lint warnings. No build/smoke/mac/device. Existing rename/signal window retained. Worker note untracked in retained candidate checkout.",
@@ -658,9 +643,7 @@
           }
         }
       ],
-      "relatedPaths": [
-        "tests/install-download.test.ts"
-      ],
+      "relatedPaths": ["tests/install-download.test.ts"],
       "acceptedBlob": "125933e061095c79bd5e2f16c68d384e8a2c9013",
       "readingResult": "Maps downloaded platform asset names to canonical staged pair; explicit pair probes isolated; shared binary restoration operation retains interruption flags. Explicit incidental fixes: absolute destination resolution and inherited connector-override isolation. Judge correction: relative destination alone worked at base when override cleared; normalization is necessary prerequisite of NEW explicit staged-path binding, not an old independent relative-path defect.",
       "checks": "36 pass140 assertions; shell syntax/Biome/tsc/diff pass; no build/live release/platform.",
@@ -766,9 +749,7 @@
           }
         }
       ],
-      "relatedPaths": [
-        "tests/publish-release.test.ts"
-      ],
+      "relatedPaths": ["tests/publish-release.test.ts"],
       "acceptedBlob": "5ffbb5141171cc6857ffd67b7f7eef971754c5a5",
       "readingResult": "verifyRemoteTag owns stale-develop/push/reuse policy; readExpectedAssets hashes bytes; ensureCompleteRelease repairs permissible drafts and returns verified immutable snapshot; main publishes then independently verifies public state.",
       "checks": "37 pass/391 assertions; 16 CLI baseline characterization pass/54 assertions incl ten new cases; strict tsc/format/lint/diff pass, no authenticated publication/full build.",
@@ -804,9 +785,7 @@
           }
         }
       ],
-      "relatedPaths": [
-        "tests/native-release-gate.test.ts"
-      ],
+      "relatedPaths": ["tests/native-release-gate.test.ts"],
       "acceptedBlob": "1037e58051ec59f325a31ed2945655eb9434b21e",
       "readingResult": "runVerifiedSuite owns process lifecycle→binary authority→evidence admission; named suite entries/final orchestration expose ordering; strict checks/cancellation/provenance/protocol unchanged.",
       "checks": "12/12and58/58testbatches;focusedtsc/format/lint/syntax/diffpass;no actualnative/build/download.",
@@ -874,9 +853,7 @@
           }
         }
       ],
-      "relatedPaths": [
-        "tests/setup-native-release-gate.test.ts"
-      ],
+      "relatedPaths": ["tests/setup-native-release-gate.test.ts"],
       "acceptedBlob": "9d6cfd866efee6fbc40ae2947f9a733216568f59",
       "readingResult": "Preparation/SDK checks lead to one final environment handoff rather than exports interleaved before verification;explicit reproduced fix SDK failure no partial gate configuration export.",
       "checks": "65testspass;newregressionsfailbaseline;tsc/Biome/bashsyntax/diffpass;no downloads/build/realbinarygates.",
@@ -1005,9 +982,7 @@
           }
         }
       ],
-      "relatedPaths": [
-        "tests/dependency-updates.test.ts"
-      ],
+      "relatedPaths": ["tests/dependency-updates.test.ts"],
       "acceptedBlob": "109d8d0ff7a8a595a081377126c7a968830164a7",
       "readingResult": "Shared ordered comparison/explicit lock-version normalization/grouped policy validation replace duplicate version ordering and inline post-update checks.",
       "checks": "16 focusedpass;tsc/Biome/diff pass;no registry/GitHub/build",
@@ -1143,9 +1118,7 @@
           }
         }
       ],
-      "relatedPaths": [
-        "tests/verify-update.test.ts"
-      ],
+      "relatedPaths": ["tests/verify-update.test.ts"],
       "acceptedBlob": "88994dc94c3236cbe0398d152565d401cc6b4012",
       "readingResult": "Explicit installed-pair contracts replace positional arrays;readable generated compiled-runner source replaces compressed fragments;compile/frozenfixture/checksum/rollback/diagnostic/cleanup retained.",
       "checks": "109combinedtests,7finalverifier/probetests;tsc/format/lint/diffpass;fulltsc missinggeneratedassets;fixturesnotproduction/no live.",
@@ -1213,9 +1186,7 @@
           }
         }
       ],
-      "relatedPaths": [
-        "tests/update.test.ts"
-      ],
+      "relatedPaths": ["tests/update.test.ts"],
       "acceptedBlob": "18439821dc68983f7f315f3c6b31fa5f7b320a3b",
       "readingResult": "Candidate separates release validation/installed-pair repair policy from staging and rollback; named bruv/connector pair replaces positional arrays; connector-first publication explicit.",
       "checks": "73 focused pass/367 assertions incl compiled updater/routing; new phase-order case baseline pass 1/10; focused typecheck/format/lint pass with existing warnings; no full build/live/native macOS.",
@@ -1543,11 +1514,37 @@
     {
       "focus": "tests/connector-update.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
-      "judges": [],
+      "state": "accepted",
+      "primary": [
+        {
+          "id": "task_23398c8b",
+          "launchBase": "071e1d235fe9c1157ca12181fe9264fc9a1abc22",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_23398c8b",
+          "branch": "bruv/primary-tests-connector-update.test.ts-23398c8b",
+          "state": "completed",
+          "commit": "150cc2abe7c5f2daca57c5e4712f5958278b2d63"
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_4a768c2f",
+          "base": "071e1d235fe9c1157ca12181fe9264fc9a1abc22",
+          "candidate": "150cc2abe7c5f2daca57c5e4712f5958278b2d63",
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "evidence": "Named entry/install contracts expose compile-lifetime vs installation and exactfetch/probes/bytes authority;bothchecksumfail/wrongproduct/symlink preservation stronger. Existingrollbackrerun not newcoverage.",
+          "checks": "Independent66tests316assertions;12actualpair191assertions;tsc/Biome/diffpass. Actualpair judge hashcb7aec7d differswriter4049e1a6 due recorded parent rebuild;not writerartifactreproduction or parentcommoncodeacceptance. Syntheticdownloadnormal not shippedrelease/native/live.",
+          "acceptedBlobs": {
+            "tests/connector-update.test.ts": "049c8cd3dcc817bcb8452ea564f22ca8644a59ba"
+          }
+        }
+      ],
       "relatedPaths": [],
-      "acceptedBlob": null
+      "acceptedBlob": "049c8cd3dcc817bcb8452ea564f22ca8644a59ba",
+      "readingResult": "Named entrycontract/install journeys replace positionalslicing;exactdownloadseq/bothproductprobes/exactconnectorbytes/bothchecksumfail/wrongproduct/symlinkauthority.",
+      "checks": "66connector/updatertests rollback plus12actualpair existingtests;tsc/Biome;acceptedfixture/source unchanged.",
+      "integrationState": "Fullfocuspatch integrated;fixture/updater/launcher unchanged;noteexcluded."
     },
     {
       "focus": "tests/dependency-updates.test.ts",
@@ -1636,7 +1633,7 @@
     {
       "focus": "tests/find-ci-baseline.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-running",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_109390aa",
@@ -1652,13 +1649,21 @@
           "id": "task_aa63512d",
           "base": "b2e6926b3d45bf905d8430e208bf50690dd38b91",
           "candidate": "486c2a12038fce135250d229915ac9ba186f788b",
-          "state": "running"
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "evidence": "Named trustboundary groups isolate rejection reasons;realGit object/ancestry and selector integration retained. Explicit endpoint/auth checks and sharedbudget exhaustion/abort proof;no green-count-only acceptance.",
+          "checks": "Independent35tests93assertions/47combined145;strictfocusedtsc/Biome/diffpass. RealAbortSignal stalled substitutedhistory abort,decreasing budgets,expired pre-localproof rejection closes narrowHTTPdeadlinegap only. No forced hangingGit/hostedtiming/fullbuild;finderjudgment not reissued.",
+          "acceptedBlobs": {
+            "tests/find-ci-baseline.test.ts": "a96d35ae74558f9b440dda3a486e19d2bd00a8d5"
+          }
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "a96d35ae74558f9b440dda3a486e19d2bd00a8d5",
       "readingResult": "Named trust-boundary groups replace anonymous rejectionloops/mixedfailures;realGit/selector retained;endpointauth/commitvsblob/shareddeadlineabort added.",
-      "checks": "35focus47combined;strictfocus tsc/Biome/diff;finderunchanged. HTTPstub,no hostedAPI/forcedGithang/fullbuild."
+      "checks": "35focus47combined;strictfocus tsc/Biome/diff;finderunchanged. HTTPstub,no hostedAPI/forcedGithang/fullbuild.",
+      "integrationState": "Full focuspatch integrated;finder source unchanged;noteexcluded."
     },
     {
       "focus": "tests/helpers.ts",
@@ -1929,7 +1934,7 @@
     {
       "focus": "tests/offline-process-isolation.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "rework-pending",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_61decf20",
@@ -1938,6 +1943,17 @@
           "branch": "bruv/primary-tests-offline-process-isolation.-61decf20",
           "state": "completed",
           "commit": "933de4fb5119a222d5843361016443eb012c20d3"
+        },
+        {
+          "id": "task_21c70b4e",
+          "launchBase": "58b93d9ce43fda8565720baeef40e98d25c85043",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_21c70b4e",
+          "branch": "bruv/rework-process-isolation-tui-root-fixtur-21c70b4e",
+          "state": "completed",
+          "role": "rework",
+          "priorCandidate": "933de4fb5119a222d5843361016443eb012c20d3",
+          "commit": "d75ad9eb6eae5973e53b8134092e9bb04e9158e0",
+          "writerResponse": "**Rework ready—not accepted. Fresh independent judgment required.**\n\n- **Base:** `58b93d9ce43fda8565720baeef40e98d25c85043`\n- **Candidate:** `d75ad9eb6eae5973e53b8134092e9bb04e9158e0`\n- **Focus blob:** `2ff5cc4eda8213e4b91e5a632132c490d73ce04a`\n- **Branch:** `bruv/rework-process-isolation-tui-root-fixtur-21c70b4e`\n\n### Rejection response\n1. Imported the rejected candidate’s full source patch only; retained explicit environments, direct-child assertions, shared helpers, and cleanup-scoped listener setup.\n2. Added only `BRUV_SUBAGENT_TYPE=` beside `BRUV_SUBAGENT_DEPTH=0`. Sanitizer scope unchanged.\n3. Reproduced the blocker under parent `BRUV_SUBAGENT_TYPE=normal`: old fixture still passes with sanitizer bypass.\n4. Repaired **TUI-only** bypass fails, recording `pane.report_agent_session`, `pane.report_agent`, and `pane.release_agent`. Direct-child bypass also fails.\n5. Restored sanitization: **7 tests pass, 36 expectations**. Focus Biome format/lint, `tsc --noEmit`, and diff check pass.\n\nReused area binary with SHA256 `4049e1a6691a74aece96ac664d3e02d5078cb659255df889f2c4f4826f62ef24`; no rebuild/source fallback.\n\nChanged paths:\n- `tests/offline-process-isolation.test.ts`\n- Fresh local `wisdom/quality/structural-readability-worker.md`, preserving rejection context and proof.\n\nNo credential, network, timeout, process-tree, live/provider/device/SSH proof claimed. No integration, push, or PR."
         }
       ],
       "judges": [
@@ -1951,13 +1967,31 @@
           "objections": [
             "Inherited BRUV_SUBAGENT_TYPE=normal masks TUI startup Herdr check;empty-request assertion passes for unrelated reason. Root depth alone insufficient."
           ],
-          "requiredRework": "Explicit rootchild BRUV_SUBAGENT_TYPE= with DEPTH=0;preserve sanitizer scope;verify pass and TUI-specific bypassfailure under normal parenttype."
+          "requiredRework": "Explicit rootchild BRUV_SUBAGENT_TYPE= with DEPTH=0;preserve sanitizer scope;verify pass and TUI-specific bypassfailure under normal parenttype.",
+          "resolvedBy": "task_cfbac1d2"
+        },
+        {
+          "id": "task_cfbac1d2",
+          "base": "58b93d9ce43fda8565720baeef40e98d25c85043",
+          "candidate": "d75ad9eb6eae5973e53b8134092e9bb04e9158e0",
+          "state": "completed",
+          "round": 2,
+          "priorJudge": "task_685f1bda",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "evidence": "Explicit hostile perlaunch environments remove globalmutation;realchild sanitizedHerdr/retainedAPIkey/sourceimmutability;cleanupscope coherent. PriorREJECT independently reproduced:oldrole bypassfalsepasses;explicit rootrole repairedTUI bypassfails Herdrreport/release;directchildbypassfails;restoredbothpass.",
+          "checks": "Independent7tests36assertions;tsc/Biome/diffpass. Same actualbinarySHA4049e1a6691a74aece96ac664d3e02d5078cb659255df889f2c4f4826f62ef24. Observedstartup only,not credential/network/timeout/processtree/live.",
+          "acceptedBlobs": {
+            "tests/offline-process-isolation.test.ts": "2ff5cc4eda8213e4b91e5a632132c490d73ce04a"
+          },
+          "resolvedPriorJudge": "task_685f1bda"
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "2ff5cc4eda8213e4b91e5a632132c490d73ce04a",
       "readingResult": "Explicit hostile childenv replaces global mutation/restoration;realchild checks strippedHerdr,retainedAPIkey,unchangedsource;reuse quoting/readiness helpers,listener setup inside cleanupscope.",
-      "checks": "7tests;focusBiome/tsc/diff;sanitizerbypassnegative controlfails. Reused area realbinary;not credential/network/timeout/processtree proof."
+      "checks": "7tests;focusBiome/tsc/diff;sanitizerbypassnegative controlfails. Reused area realbinary;not credential/network/timeout/processtree proof.",
+      "integrationState": "Fullrework patch integrated only after fresh round2acceptance;helper/sanitizerscope unchanged;notesexcluded."
     },
     {
       "focus": "tests/prepare-assets.test.ts",
@@ -1997,7 +2031,7 @@
     {
       "focus": "tests/product-identity.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-running",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_0c3e11ef",
@@ -2013,13 +2047,21 @@
           "id": "task_b7a011bf",
           "base": "2ef3dcded18b316ecaa74fb1c6a083f13f17a69b",
           "candidate": "7acb4cf61b4f3f169be9480439e9d6458972bd36",
-          "state": "running"
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "evidence": "Separate metadata contracts and named route/flag probes each freshHOME eliminate prior-bootstrap/order assumptions. Completeassetmap strengthens enumeration;sentinel/namespace/stdoutstderr/version/no-semver retained.",
+          "checks": "Independent10tests19assertions;Biome/focusedtsc/diffpass;reused area binariesSHAexact. Linuxcompiledsmoke not freshbuild/crosstarget/release/network/live.",
+          "acceptedBlobs": {
+            "tests/product-identity.test.ts": "b9e4e9ae5d8185883f905c42d4459d4c213847c5"
+          }
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "b9e4e9ae5d8185883f905c42d4459d4c213847c5",
       "readingResult": "Separate metadata contracts,complete releaseassets and named route/flag probes each with fresh isolatedhome replace mixed assertions/nested sharedhome.",
-      "checks": "10focuspass;Biome/tsc/diff;reused actualareapair,norebuild;no productionchanges."
+      "checks": "10focuspass;Biome/tsc/diff;reused actualareapair,norebuild;no productionchanges.",
+      "integrationState": "Fullfocuspatch integrated;productionunchanged;noteexcluded."
     },
     {
       "focus": "tests/production-packaging.test.ts",
@@ -2248,71 +2290,188 @@
     {
       "focus": "tests/smoke-script.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_d0d9d3eb",
           "launchBase": "2ef3dcded18b316ecaa74fb1c6a083f13f17a69b",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_d0d9d3eb",
           "branch": "bruv/primary-tests-smoke-script.test.ts-d0d9d3eb",
-          "state": "running"
+          "state": "completed",
+          "commit": "e842e14fc17e2cadc3569df152c9f2f2a0671183"
         }
       ],
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_e67972f5",
+          "base": "2ef3dcded18b316ecaa74fb1c6a083f13f17a69b",
+          "candidate": "e842e14fc17e2cadc3569df152c9f2f2a0671183",
+          "state": "killed",
+          "stopRequested": true,
+          "reason": "20min checkpoint unchanged43331B after14:27:41 modelresponse;no finalverdict,not coverage."
+        },
+        {
+          "id": "task_f209f608",
+          "base": "2ef3dcded18b316ecaa74fb1c6a083f13f17a69b",
+          "candidate": "e842e14fc17e2cadc3569df152c9f2f2a0671183",
+          "state": "completed",
+          "role": "fresh-retry",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "evidence": "Readable emittedscripts/percase invalidpair fixtures replace escapedstrings/sequentialrepairs;explicit probes/buildcounts and script-temp cleanup checked before outerfixture cleanup. env-i clearsinheritedvars but cwd unchanged.",
+          "checks": "Independentfocusedtests/tsc/Biome/diffpass;copied current actualpairSHAcb7aec7d/55b58718 smoke reuse exit0,ownedtemp/outercleanup pass. Initial wrappertrapquotingfailure corrected(emptydirremoved). No filesystemsandbox/native/live/exhaustivesideeffects.",
+          "acceptedBlobs": {
+            "tests/smoke-script.test.ts": "b0b5232653b47e05d11275766e5f9ede4229e561"
+          }
+        }
+      ],
       "relatedPaths": [],
-      "acceptedBlob": null
+      "acceptedBlob": "b0b5232653b47e05d11275766e5f9ede4229e561",
+      "readingResult": "Readable shellfixtures and independent pairfailure cases replace escaped strings/sequential mutation;probe/buildcount/cleanup explicit,unchangedcwd limit.",
+      "checks": "16focuspass;tsc/Biome/diff;copiedrealpairsmoke/cleanup pass.",
+      "integrationState": "Fullfocuspatch integrated;smokesourceunchanged;notesexcluded;stalledjudge noverdict."
     },
     {
       "focus": "tests/tooling-fixtures.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_8c70c1f6",
           "launchBase": "2ef3dcded18b316ecaa74fb1c6a083f13f17a69b",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_8c70c1f6",
           "branch": "bruv/primary-tests-tooling-fixtures.test.ts-8c70c1f6",
-          "state": "running"
+          "state": "completed",
+          "commit": "45d98000efd2a22cc368b0f54880072781015065"
         }
       ],
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_900a3c32",
+          "base": "2ef3dcded18b316ecaa74fb1c6a083f13f17a69b",
+          "candidate": "45d98000efd2a22cc368b0f54880072781015065",
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "evidence": "Readable embeddedprograms,controlled partialline delivery and protocolfield matching remove escaping/timing/positional bookkeeping. Trustdenial/prompt/malformedJSON/cleanup/external evidence retained;SSE/timeoutdiagnostics stronger.",
+          "checks": "Independent8tests101assertions;tsc/Biome/diffpass;disposablebaseline5/54;partialbuffer/trustapproval/timeoutstderr/toolfinish mutations eachfail relevanttest. Unseededsecret/RPCargv-env-nosession/earlyexit gaps remain;Bunloopback not shippedbinary/Docker/SSH/PTY/provider.",
+          "acceptedBlobs": {
+            "tests/tooling-fixtures.test.ts": "0e9728fccb32c1657f09e6d305ac14a10d1621ba"
+          }
+        }
+      ],
       "relatedPaths": [],
-      "acceptedBlob": null
+      "acceptedBlob": "0e9728fccb32c1657f09e6d305ac14a10d1621ba",
+      "readingResult": "Readable embedded childprograms/controlled partial-line delivery/protocol-field assertions replace escaped assembly/timingfragmentation/positional expectations.",
+      "checks": "8tests101assertions;tsc/Biome/diff;trustdenial/prompt/malformedJSON/cleanup retained;timeout/text/toolSSE strengthened. Gaps unseededsecret/RPCargv-env-earlyexit unasserted.",
+      "integrationState": "Fullfocuspatch integrated;sharedhelpers unchanged;noteexcluded."
     },
     {
       "focus": "tests/update-release-shape.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
-      "judges": [],
-      "relatedPaths": [],
-      "acceptedBlob": null
+      "state": "accepted",
+      "primary": [
+        {
+          "id": "task_dc6a6799",
+          "launchBase": "071e1d235fe9c1157ca12181fe9264fc9a1abc22",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_dc6a6799",
+          "branch": "bruv/primary-tests-update-release-shape.test.-dc6a6799",
+          "state": "completed",
+          "commit": "1651a56fc3d5a8cbe259339a3d8aa73c4306096a"
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_811b18de",
+          "base": "071e1d235fe9c1157ca12181fe9264fc9a1abc22",
+          "candidate": "1651a56fc3d5a8cbe259339a3d8aa73c4306096a",
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "evidence": "Explicitmetadata/payload mutations replace diskfixtures;actual emitted connector + stagedsibling-derivedidentity replaces filename-onlyreturn. Bothsiblings/cleanup across failures;tar reachesupdaterstagedprobe not testpreflight. Simulatedtarget proof accurately documented.",
+          "checks": "Independent34focus92combined;tsc/Biome/diff;defaultbinaryrunner on current actualLinuxpair cb7aec7d fivecanonicalrequests/byteequal/no residue. Differswriterolderbinary;hostproof not releaseprovenance/macOSAndroidboot.",
+          "acceptedBlobs": {
+            "tests/update-release-shape.test.ts": "2803b32f5712f44343edb649aaffbbce2fe29921",
+            "tests/update-release-shape.md": "b117a5a3499c9169edad37d9514810ebded9b6b1"
+          }
+        }
+      ],
+      "relatedPaths": ["tests/update-release-shape.md"],
+      "acceptedBlob": "2803b32f5712f44343edb649aaffbbce2fe29921",
+      "readingResult": "Explicit metadata/payloadmutations and actualemittedlauncher/stagedsiblingidentity replace diskfixtures/filename-onlyprobes;bothsiblings+cleanup failures,tarrejectactualupdater.",
+      "checks": "34focus92combined;tsc/Biome;actualLinuxpair default-runner installpass;crossplatformsimulated.",
+      "integrationState": "Fulltest+companiondocpatch integrated;docownprimary pending;productionunchanged;noteexcluded."
     },
     {
       "focus": "tests/update-self-fixture.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
-      "judges": [],
-      "relatedPaths": [],
-      "acceptedBlob": null
+      "state": "accepted",
+      "primary": [
+        {
+          "id": "task_1fdcbe47",
+          "launchBase": "452205ec0667aad35ef854a9862d4b5182143095",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_1fdcbe47",
+          "branch": "bruv/primary-tests-update-self-fixture.ts-1fdcbe47",
+          "state": "completed",
+          "commit": "346d492a3d4d24f3a5990e4c40c6f9388603cb4e"
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_81083bad",
+          "base": "452205ec0667aad35ef854a9862d4b5182143095",
+          "candidate": "346d492a3d4d24f3a5990e4c40c6f9388603cb4e",
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "evidence": "One closedrelease map/transport and explicitrunner boundary removes duplicated URLauthority;runtimeassetselection explicitfix Linuxx64 assumption,optionalversion defaultpreserved0.3.0. No networkfallback;sourceunauthorized;real compiled probes retained.",
+          "checks": "Independent58tests258assertions;tsc/changedBiomepass;wrongversion keepsboth and removesstage;actual0.16.14payload bytes/probes and unchangedrunner/sourcehashes. Linuxonly,no productrebuild.",
+          "acceptedBlobs": {
+            "tests/update-self-fixture.ts": "a6959fca4cf82247d0f82207b4a0a69f28b1c87d",
+            "tests/update-self-fixture.test.ts": "18ec63dc2d6927f4af87c6d7677b247ca7205340"
+          }
+        }
+      ],
+      "relatedPaths": ["tests/update-self-fixture.test.ts"],
+      "acceptedBlob": "a6959fca4cf82247d0f82207b4a0a69f28b1c87d",
+      "readingResult": "Closed releaseconstruction + explicit runner replaces interleaved URL/execution;explicitfix runtimeasset selection insteadLinuxx64;optionalversion for realpair(default0.3.0).",
+      "checks": "58tests258assertions;tsc/Biome;new tests/update-self-fixture.test.ts transport/sourceauthority/cleanup/compiledactualpair installation;frozenunchanged.",
+      "integrationState": "Fullfixture+newtestpatch integrated after fullpatchjudge;newtest separateprimarypending;noteexcluded."
     },
     {
       "focus": "tests/update-v0.16.3-fixture.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "accepted-unchanged",
       "primary": [
         {
           "id": "task_bf44caf8",
           "launchBase": "2ef3dcded18b316ecaa74fb1c6a083f13f17a69b",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_bf44caf8",
           "branch": "bruv/primary-frozen-historical-updater-fixtur-bf44caf8",
-          "state": "running"
+          "state": "completed",
+          "commit": "b8add67b80728e1c662a702d276020a375570072"
         }
       ],
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_4e5800d8",
+          "base": "2ef3dcded18b316ecaa74fb1c6a083f13f17a69b",
+          "candidate": "b8add67b80728e1c662a702d276020a375570072",
+          "state": "completed",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "evidence": "Byteidentical historical v0.16.3 updater/migrationparent;single stagedpair filesystem recovery lifetime visible together. Pairedarray bookkeeping retained intentionally;no concrete readability defect warrants changing historical authority.",
+          "checks": "Independent5tests38assertions;frozencompiledverifier against actualareapair0.16.14 checksum/secondrename rollback/restoration/hashes/version/cleanup pass. SHA256cab60e412c13277cf8a415d0c09fb0dbdfd69c9d000c42d21b2695f5b03230aa. Retainedrecoveryfailure inspected not injected;LinuxmockHTTPonly.",
+          "acceptedBlobs": {
+            "tests/update-v0.16.3-fixture.ts": "a97a2d229678e12335a802823dbca5a8c78c0285"
+          }
+        }
+      ],
       "relatedPaths": [],
-      "acceptedBlob": null
+      "acceptedBlob": "a97a2d229678e12335a802823dbca5a8c78c0285",
+      "readingResult": "Unchanged intentional historical authority;validate/stagechecksumprobe/backuprecheck/connectorfirstreplace/reverserollback-or-recovery is one lifetime.",
+      "checks": "v0.16.3:src/update.ts and migrationparent byteidentical;5tests38assertions plus frozencompiledverifier area pair0.16.14 checksum/secondrename rollback.",
+      "integrationState": "Frozenbytes unchanged at tip;candidate noteexcluded."
     },
     {
       "focus": "tests/update.test.ts",
@@ -2359,11 +2518,37 @@
     {
       "focus": "tests/verify-update-probe.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
-      "judges": [],
+      "state": "accepted-unchanged",
+      "primary": [
+        {
+          "id": "task_7b923de0",
+          "launchBase": "ac29bd4f75d9ec48b381061ae775ee9b265ecc73",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_7b923de0",
+          "branch": "bruv/primary-tests-verify-update-probe.test.t-7b923de0",
+          "state": "completed",
+          "commit": "64aed029a2b9752dc8a1b70980bff53ee830f326"
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_17380c61",
+          "base": "ac29bd4f75d9ec48b381061ae775ee9b265ecc73",
+          "candidate": "64aed029a2b9752dc8a1b70980bff53ee830f326",
+          "state": "completed",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "evidence": "RealUTF8 processprobe→serialization→JSON parse;SIGKILL empty vs exit7 bothstreams and ENOENTnullstreams directlycontrasted. Serializer preserves/projections evidence,not redactvalidate;verifier gates ownvalidation.",
+          "checks": "Independent2tests12assertions;focus tsc/Biomepass. Optionalerrormetadata partial;no nonASCII preservationassertion;compiledintegration inspectednotrerun;no build/macOS.",
+          "acceptedBlobs": {
+            "tests/verify-update-probe.test.ts": "f8e9a96777f6c92a2ef823b56d70375db0271d66"
+          }
+        }
+      ],
       "relatedPaths": [],
-      "acceptedBlob": null
+      "acceptedBlob": "f8e9a96777f6c92a2ef823b56d70375db0271d66",
+      "readingResult": "Unchanged proposed: real UTF8 probe/serialize,SIGKILL vs exit contrast,ENOENTnullstreams;singlehelper no tangledstate.",
+      "checks": "2focuspass;tsc/Biome;serializer unchanged,diagnosticnotredactvalidate;optionalerrormetadata incompleteassertions.",
+      "integrationState": "Unchangedfocus matches tip;noteexcluded."
     },
     {
       "focus": "tests/verify-update.test.ts",
@@ -2532,6 +2717,92 @@
       "readingResult": "Separate ordered argv/checksum observations replace flattened logs;named independent failures with exact cutoff replace loop-hidden failures. Five failurepoints/API refusal/byte-exact no-partial-env retained.",
       "checks": "15combinedpass;strict tsc/Biome/diffpass;no builds/live.",
       "integrationState": "Full final focus patch integrated;EXTRA primary/finaljudge complete;setup sourceunchanged,notesexcluded."
+    },
+    {
+      "focus": "tests/update-self-fixture.test.ts",
+      "initialBase": "452205ec0667aad35ef854a9862d4b5182143095",
+      "state": "accepted",
+      "primary": [
+        {
+          "id": "task_0ecce4b1",
+          "launchBase": "6004e0528ec906e3c5205b0f6adb0a8bd8c65ebf",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_0ecce4b1",
+          "branch": "bruv/primary-new-self-updater-fixture-tests-0ecce4b1",
+          "state": "completed",
+          "commit": "4f9efb98de0c2d35344e0c477d8d1154147fb38e"
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_efae7e17",
+          "base": "6004e0528ec906e3c5205b0f6adb0a8bd8c65ebf",
+          "candidate": "4f9efb98de0c2d35344e0c477d8d1154147fb38e",
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "evidence": "Explicit artifact-byte pairs/exactmetadata/named install-payload pairs/shared unchangedinstall assertion removes positionalbookkeeping;closedtransport/sourcecompiledcontrast/pairbytes/runnerpayloadhash retained. Wrongversion exercises prepublicationpreservation NOT rollback;adjacentrollback inspected/rerun only.",
+          "checks": "Independent60tests250assertions;tsc/Biome/diffpass. Initial unchanged5secondcompilehooktimeout failed,identical retry passedwithoutedits. Actualpair hashes cb7aec7d/55b58718 unchangedafter;Linuxonly,notnetwork/releaseprovenance.",
+          "acceptedBlobs": {
+            "tests/update-self-fixture.test.ts": "06c4344c3274180322ba17971dc91486149f7a09"
+          }
+        }
+      ],
+      "relatedPatchJudgment": {
+        "candidate": "346d492a3d4d24f3a5990e4c40c6f9388603cb4e",
+        "judge": "task_81083bad",
+        "state": "accepted",
+        "blob": "18ec63dc2d6927f4af87c6d7677b247ca7205340",
+        "primaryStillRequired": false,
+        "superseded": true
+      },
+      "introducedBy": "task_1fdcbe47",
+      "readingResult": "Explicitartifact-byte pairs/exactmetadata/namedinstallation-payload pairs/shared unchangedinstall assertion replace positional indexes/duplicateinvariants.",
+      "checks": "60tests;tsc/Biome/diff;closedtransport/sourcecompiledcontrast/staging/realpairbytes/runnerpayloadhash retained,sourcefixture unchanged.",
+      "acceptedBlob": "06c4344c3274180322ba17971dc91486149f7a09",
+      "integrationState": "Ownprimary patch integrated after freshfinalblobjudge;fixture sourceunchanged;noteexcluded."
+    },
+    {
+      "focus": "tests/update-release-shape.md",
+      "initialBase": "071e1d235fe9c1157ca12181fe9264fc9a1abc22",
+      "state": "accepted-unchanged",
+      "primary": [
+        {
+          "id": "task_cdc39c59",
+          "launchBase": "23ddbf92a93cb173d91b4fbd9e92e00fd6e5bc19",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_cdc39c59",
+          "branch": "bruv/primary-release-shape-fixture-documentat-cdc39c59",
+          "state": "completed",
+          "commit": "9dcbe98f6a11270f6eeb66bb1612f046f227176e"
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_c158deef",
+          "base": "23ddbf92a93cb173d91b4fbd9e92e00fd6e5bc19",
+          "candidate": "9dcbe98f6a11270f6eeb66bb1612f046f227176e",
+          "state": "completed",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "evidence": "Coherent scope→syntheticnormal/generatedlauncher→simulatedprobes→contracts→citedhost suites. Claims traced actual metadata/checksum/stagedsibling/ownership/cleanup;helperselection not execution;cleanup scopedtestedcases,retainedrecovery elsewhere intentional.",
+          "checks": "Independent34tests287assertions;actualdoc/test/updater/launcher/CLI/citedhost assertions inspected;integrationnotrerun. No build/published/foreigntarget/live.",
+          "acceptedBlobs": {
+            "tests/update-release-shape.md": "b117a5a3499c9169edad37d9514810ebded9b6b1"
+          }
+        }
+      ],
+      "introducedBy": "task_dc6a6799",
+      "relatedPatchJudgment": {
+        "candidate": "1651a56fc3d5a8cbe259339a3d8aa73c4306096a",
+        "judge": "task_811b18de",
+        "state": "accepted",
+        "blob": "b117a5a3499c9169edad37d9514810ebded9b6b1",
+        "primaryStillRequired": false,
+        "superseded": true
+      },
+      "readingResult": "Unchanged proposed: scopecommand→syntheticnormal/generatedlauncher→simulatedprobes→testedcontracts→separatehost suites;claims alignwithactualcode.",
+      "checks": "34release-shape tests287assertions;integration suites inspectednotrerun. Helperselection not execution;cleanup scopedtestedcases,retainedrecovery elsewhere preserved.",
+      "acceptedBlob": "b117a5a3499c9169edad37d9514810ebded9b6b1",
+      "integrationState": "Ownprimary unchangedfocus matches tip;freshfinaljudge independent of priorrelatedpatchjudgment;noteexcluded."
     }
   ],
   "crossAreaNeeds": [],
@@ -2648,5 +2919,183 @@
     "commit": "b2e6926b",
     "accepted": 57,
     "mismatches": []
+  },
+  "parentCheckpoints": [
+    {
+      "commit": "db885fce5225bf31dbaadba34c14ceb2393f5999",
+      "mergeBase": "65e0d2188a205dec705f8b4694941724ee34bece",
+      "parentChangedPaths": 107,
+      "areaFocusOverlap": [],
+      "acceptedBlobsVerified": 67,
+      "tree": "6020cc0e06d6ab6f6480bdba4d0bccfc31b98765",
+      "note": "Parent-owned accepted common code only;no direct sibling merge/no otherarea coverage claimed. Actual binary will rebuild for final combined proof."
+    }
+  ],
+  "latestCombinedBuild": {
+    "job": "task_2901b129",
+    "commit": "6004e052",
+    "parent": "db885fce5225bf31dbaadba34c14ceb2393f5999",
+    "scope": "Actual paired build +real full tsc after acceptedcommonparentmerge;owned Pi adaptation.",
+    "result": "PASS actual bun run build and full tsc --noEmit exit0",
+    "binaries": {
+      "dist/bruv": "cb7aec7df02d980207b3c8c9fc5d71aa9459a58c40cadcf225ee2c8f5dcdf50f",
+      "dist/bruv-claude-compat": "55b58718cdfb8f87e7a947b8e67ec4911bf6fb60cb33d2acfe72f67a39d96246"
+    }
+  },
+  "finalStaticProof": {
+    "job": "task_9122e3e5",
+    "files": [
+      "biome.json",
+      "package.json",
+      "scripts/build-pair.ts",
+      "scripts/build.ts",
+      "scripts/ci-selective.ts",
+      "scripts/find-ci-baseline.ts",
+      "scripts/generate-third-party-notices.ts",
+      "scripts/prepare-assets.ts",
+      "scripts/prepare-manual-release.ts",
+      "scripts/publish-release.ts",
+      "scripts/select-release-notes.ts",
+      "scripts/update-dependencies.ts",
+      "scripts/validate-release-tag.ts",
+      "scripts/verify-release-launchers.ts",
+      "scripts/verify-update-probe.ts",
+      "scripts/verify-update.ts",
+      "src/assets.d.ts",
+      "src/update.ts",
+      "t3.json",
+      "tests/architecture.test.ts",
+      "tests/ci-remote-cli-source.test.ts",
+      "tests/ci-runner.test.ts",
+      "tests/ci-selective-workflow.test.ts",
+      "tests/ci-selective.test.ts",
+      "tests/compiled-bun-fixture.ts",
+      "tests/connector-update-fixture.ts",
+      "tests/connector-update.test.ts",
+      "tests/dependency-updates.test.ts",
+      "tests/dependency-workflow.test.ts",
+      "tests/find-ci-baseline.test.ts",
+      "tests/helpers.ts",
+      "tests/install-download.test.ts",
+      "tests/install-local.test.ts",
+      "tests/manual-release.test.ts",
+      "tests/native-node-path.test.ts",
+      "tests/native-release-gate.test.ts",
+      "tests/offline-process-isolation.test.ts",
+      "tests/prepare-assets.test.ts",
+      "tests/product-identity.test.ts",
+      "tests/production-packaging.test.ts",
+      "tests/publish-release.test.ts",
+      "tests/release-browser-setup.test.ts",
+      "tests/release-launcher-gate.test.ts",
+      "tests/release-workflows.test.ts",
+      "tests/setup.ts",
+      "tests/smoke-script.test.ts",
+      "tests/tooling-fixtures.test.ts",
+      "tests/update-release-shape.test.ts",
+      "tests/update-self-fixture.ts",
+      "tests/update-v0.16.3-fixture.ts",
+      "tests/update.test.ts",
+      "tests/verify-update-probe.test.ts",
+      "tests/verify-update.test.ts",
+      "tsconfig.json",
+      "tests/generate-third-party-notices.test.ts",
+      "tests/setup-native-release-gate.test.ts",
+      "tests/update-self-fixture.test.ts"
+    ],
+    "commit": "43eade57",
+    "result": "PASS full tsc --noEmit,scoped57TSJSON format/lint,diffcheck;13warnings92infos unchanged,no fixes applied",
+    "limits": "Not whole-repository biome check/import-order gate."
+  },
+  "preFinalAudit": {
+    "commit": "43eade57",
+    "baseline": 70,
+    "extras": 4,
+    "accepted": 73,
+    "assignmentExact": true,
+    "issues": [],
+    "workerNoteImported": false
+  },
+  "finalTestProof": {
+    "job": "task_30e1b83f",
+    "files": [
+      "./tests/architecture.test.ts",
+      "./tests/ci-remote-cli-source.test.ts",
+      "./tests/ci-runner.test.ts",
+      "./tests/ci-selective-workflow.test.ts",
+      "./tests/ci-selective.test.ts",
+      "./tests/connector-update.test.ts",
+      "./tests/dependency-updates.test.ts",
+      "./tests/dependency-workflow.test.ts",
+      "./tests/find-ci-baseline.test.ts",
+      "./tests/install-download.test.ts",
+      "./tests/install-local.test.ts",
+      "./tests/manual-release.test.ts",
+      "./tests/native-node-path.test.ts",
+      "./tests/native-release-gate.test.ts",
+      "./tests/offline-process-isolation.test.ts",
+      "./tests/prepare-assets.test.ts",
+      "./tests/product-identity.test.ts",
+      "./tests/production-packaging.test.ts",
+      "./tests/publish-release.test.ts",
+      "./tests/release-browser-setup.test.ts",
+      "./tests/release-launcher-gate.test.ts",
+      "./tests/release-workflows.test.ts",
+      "./tests/smoke-script.test.ts",
+      "./tests/tooling-fixtures.test.ts",
+      "./tests/update-release-shape.test.ts",
+      "./tests/update.test.ts",
+      "./tests/verify-update-probe.test.ts",
+      "./tests/verify-update.test.ts",
+      "./tests/generate-third-party-notices.test.ts",
+      "./tests/setup-native-release-gate.test.ts",
+      "./tests/update-self-fixture.test.ts"
+    ],
+    "commit": "43eade57",
+    "result": "PASS 490tests0fail2443expectations31files51.54s",
+    "environment": "Bun1.4.2,BRUV_RUN_LLM_TESTS=0;actual joined-checkpoint Linux pair cb7aec7d/55b58718;owned Pi dependency copy;no sourcefallback."
+  },
+  "finalAudit": {
+    "sourceCommit": "43eade57",
+    "baseline": 70,
+    "extras": 4,
+    "total": 74,
+    "states": {
+      "accepted": 49,
+      "accepted-unchanged": 25
+    },
+    "assignmentExact": true,
+    "allAcceptedBlobsMatchTip": true,
+    "allFinalBlobsWitnessedInAcceptedJudgeCandidates": true,
+    "freshPrimaryIdsUnique": true,
+    "writerJudgeIndependent": true,
+    "unresolvedRejections": [],
+    "rejectionHistory": [
+      {
+        "focus": "scripts/update-dependencies.ts",
+        "judge": "task_98fc9caa",
+        "resolvedBy": "task_68106474"
+      },
+      {
+        "focus": "tests/offline-process-isolation.test.ts",
+        "judge": "task_685f1bda",
+        "resolvedBy": "task_cfbac1d2"
+      }
+    ],
+    "parentCheckpoint": "db885fce5225bf31dbaadba34c14ceb2393f5999",
+    "outsideAreaPathsRelativeToParent": [],
+    "workerNotesImported": false,
+    "frozenSha256": "cab60e412c13277cf8a415d0c09fb0dbdfd69c9d000c42d21b2695f5b03230aa",
+    "remaining": [],
+    "limits": "Area complete only;parent PR45 owns final whole-repository join/gates. No live/native/cross-target claims.",
+    "frozenGitBlob": "a97a2d229678e12335a802823dbca5a8c78c0285"
+  },
+  "status": "area-complete",
+  "finalHandoff": {
+    "branch": "bruv/whole-repo-structural-readability-build--d849d828",
+    "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
+    "lastSourceCommit": "43eade57",
+    "parentOwns": "single PR45, final global reconciliation;no area push/PR",
+    "retainedWorktrees": "Per-file primary[].path and branch retained, including stopped/rejected attempts."
   }
 }

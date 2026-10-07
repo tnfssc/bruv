@@ -4,8 +4,43 @@ import net, { type Socket } from "node:net";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { run } from "./helpers";
+import { frameContaining, shellQuote } from "./tui-helpers";
 
-test("test TUI processes cannot use an inherited Herdr pane identity", async () => {
+test("test subprocesses strip Herdr identity while preserving a caller-provided API key", async () => {
+  const source = {
+    ...process.env,
+    HERDR_ENV: "1",
+    HERDR_SOCKET_PATH: "/host/herdr.sock",
+    HERDR_PANE_ID: "host-pane",
+    OPENAI_API_KEY: "offline-test-placeholder",
+  };
+  const result = await run(
+    [
+      process.execPath,
+      "-e",
+      `process.stdout.write(JSON.stringify({
+        herdrEnabled: process.env.HERDR_ENV,
+        socketPath: process.env.HERDR_SOCKET_PATH ?? null,
+        paneId: process.env.HERDR_PANE_ID ?? null,
+        apiKey: process.env.OPENAI_API_KEY,
+      }))`,
+    ],
+    { env: source },
+  );
+
+  expect(result.code).toBe(0);
+  expect(JSON.parse(result.stdout)).toEqual({
+    herdrEnabled: "0",
+    socketPath: null,
+    paneId: null,
+    apiKey: "offline-test-placeholder",
+  });
+  expect(source.HERDR_ENV).toBe("1");
+  expect(source.HERDR_SOCKET_PATH).toBe("/host/herdr.sock");
+  expect(source.HERDR_PANE_ID).toBe("host-pane");
+});
+
+test("test TUI startup sends no Herdr requests from an inherited pane identity", async () => {
   const home = await mkdtemp(join(tmpdir(), "bruv-offline-isolation-"));
   const herdrSocket = join(home, "recording.sock");
   const paneId = "real-looking-host-pane";
@@ -24,28 +59,26 @@ test("test TUI processes cannot use an inherited Herdr pane identity", async () 
       }
     });
   });
-  await new Promise<void>((resolve, reject) => {
-    server.once("error", reject);
-    server.listen(herdrSocket, resolve);
-  });
-
-  const saved = {
-    HERDR_ENV: process.env.HERDR_ENV,
-    HERDR_SOCKET_PATH: process.env.HERDR_SOCKET_PATH,
-    HERDR_PANE_ID: process.env.HERDR_PANE_ID,
+  // Each tmux command gets a deliberately hostile source environment. run() must
+  // sanitize it before the fresh tmux server (and its TUI child) can inherit it.
+  const inheritedEnv = {
+    ...process.env,
+    HERDR_ENV: "1",
+    HERDR_SOCKET_PATH: herdrSocket,
+    HERDR_PANE_ID: paneId,
   };
-  process.env.HERDR_ENV = "1";
-  process.env.HERDR_SOCKET_PATH = herdrSocket;
-  process.env.HERDR_PANE_ID = paneId;
-
   const tmuxSocket = `bruv-offline-isolation-${process.pid}-${Date.now()}`;
-  const tmux = (...args: string[]) => run(["tmux", "-L", tmuxSocket, ...args]);
-  const quote = (value: string) => "'" + value.replaceAll("'", "'\\''") + "'";
+  const tmux = (...args: string[]) => run(["tmux", "-L", tmuxSocket, ...args], { env: inheritedEnv });
   try {
+    await new Promise<void>((resolve, reject) => {
+      server.once("error", reject);
+      server.listen(herdrSocket, resolve);
+    });
     const launch = [
       "env",
       "HOME=" + home,
       "BRUV_SUBAGENT_DEPTH=0",
+      "BRUV_SUBAGENT_TYPE=",
       "BRUV_CODING_AGENT_DIR=" + join(home, ".bruv", "agent"),
       "OPENAI_API_KEY=offline-test-placeholder",
       resolve(import.meta.dir, "../dist/bruv"),
@@ -57,7 +90,7 @@ test("test TUI processes cannot use an inherited Herdr pane identity", async () 
       "--model",
       "gpt-4o",
     ]
-      .map(quote)
+      .map(shellQuote)
       .join(" ");
     expect(
       (
@@ -79,23 +112,15 @@ test("test TUI processes cannot use an inherited Herdr pane identity", async () 
       ).code,
     ).toBe(0);
 
-    let frame = "";
-    for (let attempt = 0; attempt < 80; attempt++) {
-      frame = (await tmux("capture-pane", "-p", "-t", "isolation")).stdout;
-      if (frame.includes("gpt-4o")) break;
-      await Bun.sleep(50);
-    }
-    expect(frame).toContain("gpt-4o");
+    await frameContaining(async () => (await tmux("capture-pane", "-p", "-t", "isolation")).stdout, "gpt-4o", 80);
     await tmux("kill-server");
     await Bun.sleep(400);
 
+    // This observes startup and a short post-kill window, not all descendants'
+    // lifetimes or provider/network isolation. The run helper has no timeout.
     expect(requests).toEqual([]);
   } finally {
     await tmux("kill-server").catch(() => ({ code: 1, stdout: "", stderr: "" }));
-    for (const [key, value] of Object.entries(saved)) {
-      if (value === undefined) delete process.env[key];
-      else process.env[key] = value;
-    }
     for (const socket of connections) socket.destroy();
     await new Promise<void>((resolve) => server.close(() => resolve()));
     await rm(home, { recursive: true, force: true });
