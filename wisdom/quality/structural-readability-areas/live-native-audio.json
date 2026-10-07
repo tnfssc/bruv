@@ -339,13 +339,20 @@
       "judgeRounds": [
         {
           "id": "task_9de91bbe",
-          "status": "running",
+          "status": "complete",
           "candidate": "439444f649249259125c548e41f1a345977de91f",
-          "base": "06e32904306803bcb25ea542d1e3676a54d234cb"
+          "base": "06e32904306803bcb25ea542d1e3676a54d234cb",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "Three native metadata entries directly serve Mach-O embedding and permission identity; actual Swift runtime owns consent, no tangled responsibility or useful extraction.",
+          "checks": "Independent exact plist dictionary/shell syntax and13 Bun tests120 assertions;no OS consent/macOS/device/provider proof.",
+          "acceptedBlobs": {
+            "native/live/Info.plist": "d027ae3e545619f1628e72bf2c0f0fafdda72718"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "judge running",
+      "acceptedBlob": "d027ae3e545619f1628e72bf2c0f0fafdda72718",
+      "integration": "accepted unchanged blob matches area tip",
       "relatedPaths": [],
       "readingResult": "Unchanged three-entry metadata has one clear role: native build embeds Mach-O metadata, release embeds bytes, runtime launches helper, Swift owns microphone permission.",
       "checks": "Exact plist assertions/build-script syntax;13 helper/workflow tests/120 assertions. No macOS permission/device/provider/full gate."
@@ -503,9 +510,16 @@
         "status": "candidate ready",
         "commit": "a840d0db75cf09eeb7b3a0556de30c53e04a5e5d"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_1f20ecb1",
+          "status": "running",
+          "candidate": "a840d0db75cf09eeb7b3a0556de30c53e04a5e5d",
+          "base": "ccefb31e5026c37a0995e588fc5c2e1d7c3466cf"
+        }
+      ],
       "acceptedBlob": null,
-      "integration": "awaiting judge slot",
+      "integration": "judge running",
       "relatedPaths": [],
       "readingResult": "Unchanged direct dependency flags/output/compiler path; Linux build self-test only reports buildOK, no need to import macOS publication orchestration.",
       "checks": "Shell syntax/real native build including spaced nested output/self-test/no-device hello-stop pass;11 workflow/platform tests108 assertions. No privatePulse/device/provider/macOS/full gate."
@@ -709,12 +723,15 @@
         "launchBase": "575ba3835b85f46d758b9187447c70e161374c54",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_51d6ae66",
         "branch": "bruv/primary-src-live-config.ts-51d6ae66",
-        "status": "running",
-        "commit": null
+        "status": "candidate ready",
+        "commit": "fb653ebe559b3b04cd1588452662e7f246ff2249"
       },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "primary running"
+      "integration": "awaiting judge slot",
+      "relatedPaths": [],
+      "readingResult": "Unchanged validate-active-settings/load ENOENT defaults/private-temp atomic-save boundary; credentials/caches/run lifetimes outside.",
+      "checks": "82 tests452 assertions; initial missing assets resolved with standard prepare;no behavior fixes."
     },
     {
       "focus": "src/live/conversation.ts",
@@ -1093,12 +1110,15 @@
       "initialBlob": "982613947af84d36edeb598916e7826fc3f43190",
       "primary": {
         "id": "task_d79e8579",
-        "status": "running",
-        "commit": null
+        "status": "candidate ready",
+        "commit": "2932f52f154c8d697234bb620b66b927ba2afd44"
       },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "primary running"
+      "integration": "awaiting judge slot",
+      "relatedPaths": [],
+      "readingResult": "Unchanged shared provider contracts keep input/output/turn epochs and admission separate;GPT provisional delegation protocol not fabricated shared completion.",
+      "checks": "190 tests1350 assertions across7;standard assets resolved initial missing WASM;no typecheck/build/provider/device proof."
     },
     {
       "focus": "src/live/waveform.ts",
@@ -1942,5 +1962,9 @@
       "need": "New device-free native/live-linux/tests/test_protocol.py regressions currently manual; parent/assigned CI primary should decide coherent gate wiring. No cross-area edit made.",
       "status": "recorded for parent"
     }
-  ]
+  ],
+  "parentCheckpoint": {
+    "target": "95d2e164",
+    "status": "attempting clean join; parent has included accepted live batch f473c8e5"
+  }
 }
