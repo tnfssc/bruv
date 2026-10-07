@@ -34,7 +34,7 @@
     {
       "focus": "site/assets/brand/bruv-icon.svg",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judging",
+      "state": "accepted-unchanged",
       "primary": [
         {
           "id": "task_74788f3b",
@@ -49,15 +49,21 @@
         {
           "id": "task_3d50228c",
           "candidate": "738098f73a9080238aa241eb765ecf458d353ad3",
-          "state": "running"
+          "state": "completed",
+          "verdict": "NO CHANGE NEEDED",
+          "evidence": "One accessible glyph with local theme fill/lean transform/even-odd counter is direct; build copies and metadata links it. Judge 10 build tests do not prove favicon copying/geometry/theme rendering; no browser/full build.",
+          "objections": []
         }
       ],
-      "initialBlob": "2fba6b9ec8eae949bfdc03fc079b0e42cd9c2646"
+      "initialBlob": "2fba6b9ec8eae949bfdc03fc079b0e42cd9c2646",
+      "acceptedBlob": "2fba6b9ec8eae949bfdc03fc079b0e42cd9c2646",
+      "changedRelatedPaths": [],
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded"
     },
     {
       "focus": "site/assets/brand/bruv-wordmark-light.svg",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "candidate-awaiting-judge",
+      "state": "judging",
       "primary": [
         {
           "id": "task_8e8b5dd8",
@@ -68,7 +74,13 @@
           "result": "No source change; four letter paths share ink/lean transform,b counter evenodd; README dark-mode and HTML fallback direct references; build copies unchanged.2 tests/63 assertions;XML/geometry checks;no browser/build."
         }
       ],
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_08863fc0",
+          "candidate": "2ff0f2c0c985dedb7aa545ccca6bb84b8d15a631",
+          "state": "running"
+        }
+      ],
       "initialBlob": "24eb77aa30fe79688b85c3c1272d4a4dda664cf6"
     },
     {
@@ -108,13 +120,15 @@
     {
       "focus": "site/assets/cli-settings.txt",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "candidate-awaiting-judge",
       "primary": [
         {
           "id": "task_a55e7213",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_a55e7213",
           "branch": "bruv/primary-site-assets-cli-settings.txt-a55e7213",
-          "base": "8c9cb30674039dade57fd6707e7fd4ce6ff896af"
+          "base": "8c9cb30674039dade57fd6707e7fd4ce6ff896af",
+          "commit": "12fc1cec879428a41139b35049fbcd74cbe559a2",
+          "result": "Authentic PTY recording unchanged; rewriting escape bytes changes replay evidence not structure. PTY->Ghostty->explicit crop->styled JSON, not current scripted landing.1 integrity/reflow test/7 assertions;no replay/build."
         }
       ],
       "judges": [],
@@ -123,13 +137,15 @@
     {
       "focus": "site/assets/settings-cells.json",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "candidate-awaiting-judge",
       "primary": [
         {
           "id": "task_dc9fc829",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_dc9fc829",
           "branch": "bruv/primary-site-assets-settings-cells.json-dc9fc829",
-          "base": "8c9cb30674039dade57fd6707e7fd4ce6ff896af"
+          "base": "8c9cb30674039dade57fd6707e7fd4ce6ff896af",
+          "commit": "feaf97355ed70cb36f97e778a0dfd0da4f666478",
+          "result": "Unchanged provenance->crop geometry->ordered glyph/style runs; repetition retains terminal effects. Extractor->settingsCapture->fidelity/reflow tests,not current scripted landing.2 tests/99 assertions;no browser/build."
         }
       ],
       "judges": [],
@@ -151,16 +167,30 @@
     {
       "focus": "site/capture.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_a8322d06",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_a8322d06",
+          "branch": "bruv/primary-site-capture.ts-a8322d06",
+          "base": "e9e1127352dd78ae1a7946fccea740d01d948a5d"
+        }
+      ],
       "judges": [],
       "initialBlob": "f8f9b368b4326c6883d70f3c74d40cfbfe4f8cc7"
     },
     {
       "focus": "site/content.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_6b21fc71",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_6b21fc71",
+          "branch": "bruv/primary-site-content.ts-6b21fc71",
+          "base": "e9e1127352dd78ae1a7946fccea740d01d948a5d"
+        }
+      ],
       "judges": [],
       "initialBlob": "d3d5f4001715dfa8275e4295f25ab64d251e3ad8"
     },
@@ -613,12 +643,20 @@
           "branch": "bruv/primary-site-scripts-generate-wordmark.t-ff69ebfe",
           "base": "f05b259ae8894f05cae0dedc0835705fc66017d9",
           "commit": "f9c925d7e00680f7c572e0e9667d6950cef2c2c8",
-          "result": "No source change. Checked rasterization->half-block rows->JSON then SVG geometry->checked social render->PNG. Local width state and visible writes/failures. Consumer tests 2 pass/56 assertions; generator not rerun."
+          "result": "No source change. Checked rasterization->half-block rows->JSON then SVG geometry->checked social render->PNG. Local width state and visible writes/failures. Consumer tests 2 pass/56 assertions; generator not rerun. Prior reviewer was cancelled with no findings; inspect independently from scratch."
         }
       ],
       "judges": [
         {
           "id": "task_f6f14088",
+          "candidate": "f9c925d7e00680f7c572e0e9667d6950cef2c2c8",
+          "state": "killed",
+          "verdict": null,
+          "objections": [],
+          "evidence": "No verdict delivered; cancelled after ~18 minutes with no output beyond guidance-read turn. Not rejection or acceptance."
+        },
+        {
+          "id": "task_a0a2c4e8",
           "candidate": "f9c925d7e00680f7c572e0e9667d6950cef2c2c8",
           "state": "running"
         }
