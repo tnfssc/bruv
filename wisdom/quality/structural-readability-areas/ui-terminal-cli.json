@@ -911,7 +911,7 @@
     {
       "focus": "src/ui/task-rows.ts",
       "initialBlob": "6c4aaf00d8ca9275ed7dcfe7070fa5eb0e6a8179",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_3856c420",
@@ -926,11 +926,25 @@
           "id": "task_24064ab2",
           "base": "808375961557a918570c0a7d0ed7bf966fb1f487",
           "candidate": "eeb7a1d09e39e95ba7aecff9f09c98c21b4997f1",
-          "verdict": "pending"
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reviewedBlobs": {
+            "src/ui/task-rows.ts": "fe08b5d617e02ae6ec57c4fc479f3433977f34ed",
+            "tests/task-rows.test.ts": "804a93927808efaa7a764dc5f4b4790ba1c7c98f"
+          },
+          "evidence": "Lifecycle authority selected once, metadata refreshes independently, publication once. Stale evidence cannot roll back status, but presentation metadata can refresh; partial lifecycle data and terminal-unknown resolution preserved.",
+          "checks": [
+            "Independent 106 tests /965 assertions",
+            "30 candidate tests against exact base /446 assertions",
+            "Pinned Biome format/lint and diff check"
+          ],
+          "limits": [
+            "No full build/gate/compiled terminal/live provider/authenticated SSH"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integrationState": "pending",
+      "acceptedBlob": "fe08b5d617e02ae6ec57c4fc479f3433977f34ed",
+      "integrationState": "integrated unchanged from judged candidate",
       "launchBase": "808375961557a918570c0a7d0ed7bf966fb1f487",
       "changedRelatedPaths": [
         "tests/task-rows.test.ts"
@@ -1319,7 +1333,15 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "related patch integrated; primary pending",
+      "relatedPatchJudgments": [
+        {
+          "id": "task_24064ab2",
+          "candidate": "eeb7a1d09e39e95ba7aecff9f09c98c21b4997f1",
+          "verdict": "ACCEPT",
+          "blob": "804a93927808efaa7a764dc5f4b4790ba1c7c98f"
+        }
+      ]
     },
     {
       "focus": "tests/tasks-ui-proof-tooling.test.py",

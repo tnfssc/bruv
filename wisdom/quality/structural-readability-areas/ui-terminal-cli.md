@@ -63,3 +63,7 @@ Primary task_b0e54e09; judge task_f31c7dbc NO CHANGE NEEDED at 3e98efaa1c3aec6d7
 Second combined batch task_a480f513 passed at 10508c78: 161 pass 0 fail 2032 expect() calls Ran 161 tests across 8 files. [2.12s] Full TypeScript and eight-file format/lint passed; lint has 6 warnings/18 infos. Log local runtime-assets/readability-batch2.log. No compiled build yet.
 
 CLI test primary task_f5df93a3 + fresh judge task_a07a60a3 independently accept unchanged 528e6e7735b03cdd9812839b8c18657884904713; related-patch coverage now backed by actual primary focus. Six source tests/42 assertions independently pass. Nine compiled cases still require batch-built artifacts.
+
+## Accepted task-row authority merge
+
+Primary task_3856c420; judge task_24064ab2 ACCEPT candidate eeb7a1d09e39e95ba7aecff9f09c98c21b4997f1. Lifecycle authority selection, independent metadata refresh and publication are no longer duplicated across branches. Regressions preserve stale/partial/terminal-unknown evidence and input immutability. Independent 106 tests/965 assertions, exact-base characterization 30 tests/446 assertions; format/lint/diff pass. Task-row test primary still pending.
