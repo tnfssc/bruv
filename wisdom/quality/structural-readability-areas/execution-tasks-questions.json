@@ -429,7 +429,7 @@
     {
       "focus": "src/tasks/completion-notification.ts",
       "initialBlob": "d9cb46b93e636ab2da2b01f2534ef5eb6b66d9ae",
-      "status": "judge-running",
+      "status": "accepted",
       "primary": {
         "id": "task_672581ab",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_672581ab",
@@ -440,13 +440,21 @@
       "judgeRounds": [
         {
           "id": "task_1a568352",
-          "status": "running",
+          "status": "complete",
           "candidate": "81fea008fb3a637c997b470c534584a4447c4b7f",
-          "base": "f256384cb549f1987e9b32969ae3c09069454b53"
+          "base": "f256384cb549f1987e9b32969ae3c09069454b53",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "Detailed block admission keeps omitted-ID reservation with assembly; large-batch preview policy explicit. Caller owns batching/replay/delivery/stop. No speculative fix to existing budget discontinuity.",
+          "checks": [
+            "independent19 tests100 assertions",
+            "12 budget probes bounded/IDs retained",
+            "rendered action-label module loading blocked; no full CLI/liveSSH"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending",
+      "acceptedBlob": "d9cb46b93e636ab2da2b01f2534ef5eb6b66d9ae",
+      "integration": "unchanged blob matches area tip",
       "launchBase": "f256384cb549f1987e9b32969ae3c09069454b53",
       "changedRelatedPaths": [],
       "readingResult": "No-change: detailed results reserve omitted-ID space; large batches use five compact previews. Delivery/replay/cancellation/timer lifetimes remain with callers.",
@@ -481,7 +489,7 @@
     {
       "focus": "src/tasks/job-attention.ts",
       "initialBlob": "ca8cfabde5250344a14d03571eae1c868733a4c3",
-      "status": "awaiting-judge",
+      "status": "judge-running",
       "primary": {
         "id": "task_0a24c1f9",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_0a24c1f9",
@@ -489,7 +497,14 @@
         "base": "8b0b918042918037a96f996bd29f91e2624a166a",
         "commit": "0fb97677f66f54b55ee5902568f77d805139915a"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_846bbe75",
+          "status": "running",
+          "candidate": "0fb97677f66f54b55ee5902568f77d805139915a",
+          "base": "8b0b918042918037a96f996bd29f91e2624a166a"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending",
       "launchBase": "8b0b918042918037a96f996bd29f91e2624a166a",
@@ -608,18 +623,25 @@
     {
       "focus": "src/tasks/task-lifecycle.ts",
       "initialBlob": "606cc77e964e261f87c5c5777210584772e32747",
-      "status": "primary-running",
+      "status": "awaiting-judge",
       "primary": {
         "id": "task_da66c8c9",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_da66c8c9",
         "branch": "bruv/primary-src-tasks-task-lifecycle.ts-da66c8c9",
         "base": "8b0b918042918037a96f996bd29f91e2624a166a",
-        "commit": null
+        "commit": "b7e4deeca847f6201d0f117580923b5503da9a60"
       },
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending",
-      "launchBase": "8b0b918042918037a96f996bd29f91e2624a166a"
+      "launchBase": "8b0b918042918037a96f996bd29f91e2624a166a",
+      "changedRelatedPaths": [],
+      "readingResult": "No-change: owner-bound manager snapshot→protected index; shutdown→stopping/completed metadata; append/protection/compaction/cleanup stay one transaction.",
+      "checks": [
+        "recorder7/37",
+        "extension shutdown1/7",
+        "minimal compiled recorder+SIGKILL recovery not full CLI"
+      ]
     },
     {
       "focus": "src/tasks/task-manager.ts",
@@ -716,11 +738,18 @@
     {
       "focus": "src/tasks/task-owner.ts",
       "initialBlob": "b52d3b274bfcc6dc95c05b42bc38d7a45791d3c9",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_59432ef6",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_59432ef6",
+        "branch": "bruv/primary-src-tasks-task-owner.ts-59432ef6",
+        "base": "f2882f8d5f1758aea9530f2c91fab98d00a79de8",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "launchBase": "f2882f8d5f1758aea9530f2c91fab98d00a79de8"
     },
     {
       "focus": "src/tasks/task-title.ts",
