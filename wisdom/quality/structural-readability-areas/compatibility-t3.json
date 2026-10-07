@@ -141,7 +141,7 @@
     {
       "file": "scripts/claude-native-acceptance/driver.mjs",
       "initialBlob": "882479646781146d901ab1b87e5d3a99865d8509",
-      "status": "rejudging",
+      "status": "accepted-integrated",
       "primary": {
         "id": "task_ffc92537",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_ffc92537",
@@ -177,12 +177,22 @@
         },
         {
           "id": "task_0d4690cf",
-          "status": "running",
+          "status": "completed",
           "candidate": "a61eec6ee10a8f292f1f1edfeaaa5a39fc8367bc",
-          "prior": "task_2d4634f7"
+          "prior": "task_2d4634f7",
+          "verdict": "ACCEPT",
+          "blob": "2982fe9d1bc4651248115a82f5aff9014c4a4b46",
+          "relatedBlobs": {
+            "wisdom/claude-compat/proof/native-ui-fixture/replay.mjs": "6661503a7f97ab89141988bbced7aef0ed37f935",
+            "tests/claude-native-acceptance-capture.test.mjs": "fd82e29c59474bba8a3e8f439c9e031db40f42e4",
+            "tests/claude-native-acceptance-replay-finalization.test.mjs": "df5fa2f4fafd7b8743ec6ac2caa6ab1e6606afe9"
+          },
+          "objections": [],
+          "evidence": "Replay observation owns capture sequence/evidence/cancel identity;shared integration.flushCapture preserved with optional observation so subagent collector remains before private deletion. Browser owns listeners,no detach claim. Actual generated subagent replay test exercises browser setup failure and evidence collection;negative rejected-finalizer regression specifically missing evidence.Independent58 pass+syntax/format/lint/diff.",
+          "limits": "Offline generated replay setup failure,not successful UI/native/browser/provider/full orchestration."
         }
       ],
-      "acceptedBlob": null,
+      "acceptedBlob": "2982fe9d1bc4651248115a82f5aff9014c4a4b46",
       "launchBase": "994058813ce5c18a460d304418610b4a0995fb06",
       "changedRelatedPaths": [
         "wisdom/claude-compat/proof/native-ui-fixture/replay.mjs",
@@ -202,7 +212,8 @@
         }
       ],
       "reworkResponse": "Keeps replay-owned capture,restores shared flushCapture contract so generated subagent replay collects final-provider evidence before private deletion. Flush does not detach browser listeners. New actual generated replay regression fails rejected finalizer,passes repaired.",
-      "reworkChecks": "58 tests pass;baseline cross-page contamination reproduced;focused format/lint/syntax/diff pass;no native/full CI."
+      "reworkChecks": "58 tests pass;baseline cross-page contamination reproduced;focused format/lint/syntax/diff pass;no native/full CI.",
+      "integrationState": "Fresh rework+fresh round2 judge accepted entire coherent patch;all4 source/tests joined;3 related extra primary obligations pending"
     },
     {
       "file": "scripts/claude-native-acceptance/history-driver.mjs",
@@ -1752,15 +1763,21 @@
     {
       "file": "tests/claude-native-app-delegation-model.test.mjs",
       "initialBlob": "1cf00502ad018790f014c2cb3740e3fb38366ec6",
-      "status": "primary-running",
+      "status": "judging",
       "primary": {
         "id": "task_e6d0f185",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_e6d0f185",
         "branch": "bruv/primary-app-delegation-model-tests-e6d0f185",
         "launchBase": "4c9fd54804dbe22cf9fbc854199d879d8fcd2c74",
-        "commit": null
+        "commit": "c87751547054ba01def731c868035c2fc53d4029"
       },
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_d7f96210",
+          "status": "running",
+          "candidate": "c87751547054ba01def731c868035c2fc53d4029"
+        }
+      ],
       "acceptedBlob": null,
       "relatedPatchJudgments": [
         {
@@ -1770,7 +1787,10 @@
           "candidate": "89be0631d4fa7d22ab17ce62ed59b2a70e0b6039"
         }
       ],
-      "launchBase": "4c9fd54804dbe22cf9fbc854199d879d8fcd2c74"
+      "launchBase": "4c9fd54804dbe22cf9fbc854199d879d8fcd2c74",
+      "changedRelatedPaths": [],
+      "readingResult": "Copy transcript branches replace append/reject/pop bookkeeping;successful journey advances explicitly,rejection probe cannot mutate it.Original3 bodies and generated model programs unchanged.",
+      "checks": "7 each Bun/Node;instrumented baseline/candidate40 reply request transcripts identical;format/diff;no source/live."
     },
     {
       "file": "tests/claude-native-command-idle.test.mjs",
@@ -1791,8 +1811,14 @@
     {
       "file": "tests/claude-native-subagent-model.test.mjs",
       "initialBlob": "7312e31703cb656c2ba1d743b815887c2e018c82",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_988c56c9",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_988c56c9",
+        "branch": "bruv/primary-subagent-model-tests-988c56c9",
+        "launchBase": "cfc4a4035e4b35f09269664a4799931e1ddcf4ac",
+        "commit": null
+      },
       "judges": [],
       "acceptedBlob": null,
       "relatedPatchJudgments": [
@@ -1802,7 +1828,8 @@
           "blob": "893576c1f15e397763fea21915accb8619e49442",
           "candidate": "1ad3c7216d4c3dc4cd57039f10f91570513e6a3d"
         }
-      ]
+      ],
+      "launchBase": "cfc4a4035e4b35f09269664a4799931e1ddcf4ac"
     },
     {
       "file": "tests/claude-native-subagent-return.test.mjs",
@@ -2124,31 +2151,55 @@
       "file": "wisdom/claude-compat/proof/native-ui-fixture/replay.mjs",
       "kind": "related-existing",
       "initialBlob": "74e8a8040d7b70b0851550921bd988d377464e8e",
-      "status": "pending-candidate",
+      "status": "pending-primary",
       "introducedBy": "06f56bdd95bb033cd44026c458d3cb69d4e37a0c",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "relatedPatchJudgments": [
+        {
+          "id": "task_0d4690cf",
+          "verdict": "ACCEPT",
+          "blob": "6661503a7f97ab89141988bbced7aef0ed37f935",
+          "candidate": "a61eec6ee10a8f292f1f1edfeaaa5a39fc8367bc"
+        }
+      ]
     },
     {
       "file": "tests/claude-native-acceptance-capture.test.mjs",
       "kind": "new",
       "initialBlob": null,
-      "status": "pending-candidate",
+      "status": "pending-primary",
       "introducedBy": "06f56bdd95bb033cd44026c458d3cb69d4e37a0c",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "relatedPatchJudgments": [
+        {
+          "id": "task_0d4690cf",
+          "verdict": "ACCEPT",
+          "blob": "fd82e29c59474bba8a3e8f439c9e031db40f42e4",
+          "candidate": "a61eec6ee10a8f292f1f1edfeaaa5a39fc8367bc"
+        }
+      ]
     },
     {
       "file": "tests/claude-native-acceptance-replay-finalization.test.mjs",
       "kind": "new",
       "initialBlob": null,
-      "status": "pending-candidate",
+      "status": "pending-primary",
       "introducedBy": "a61eec6ee10a8f292f1f1edfeaaa5a39fc8367bc",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "relatedPatchJudgments": [
+        {
+          "id": "task_0d4690cf",
+          "verdict": "ACCEPT",
+          "blob": "df5fa2f4fafd7b8743ec6ac2caa6ab1e6606afe9",
+          "candidate": "a61eec6ee10a8f292f1f1edfeaaa5a39fc8367bc"
+        }
+      ]
     }
   ],
   "crossAreaNeeds": [
@@ -2361,6 +2412,13 @@
       "status": "passed",
       "scope": "App model7 Node;app/main model/runner29 Bun tests",
       "limits": "Offline transcript/loopback/generated checks only."
+    },
+    {
+      "id": "task_2cd77cc8",
+      "commit": "cfc4a403",
+      "status": "passed",
+      "scope": "Final runner test7 each Node/Bun",
+      "limits": "Offline orchestration;no live/native."
     }
   ],
   "combinedReviews": [

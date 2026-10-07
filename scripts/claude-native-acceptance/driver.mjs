@@ -59,7 +59,7 @@ export async function captureIdentity({ page, proof }) {
   await row.scrollIntoViewIfNeeded();
   await page.screenshot({ path: path.join(proof, "custom-model-identity.png") });
 }
-export async function exercise({ page, url, snapshot, body, config }) {
+export async function exercise({ page, url, snapshot, body, config, observation }) {
   if (config.humanControls) return (await import("./human-driver.mjs")).exercise({ page, url, snapshot, body, config });
   const state = config.state;
   // Reuse the real native composer prepared by the shared harness.
@@ -128,7 +128,7 @@ export async function exercise({ page, url, snapshot, body, config }) {
   // T3 folds intermediate assistant replies when an automatic continuation
   // supplies the final answer. Prove the original acknowledgement is retained.
   if (!(await page.getByText("CANCEL_CONFIRMED_REAL").last().isVisible()))
-    await expandRunDisclosure(page, cancellationRunId);
+    await expandRunDisclosure(page, observation.cancellationRunId);
   await snapshot("cancellation-expanded");
   await visible("CANCEL_CONFIRMED_REAL");
   await snapshot("task-cancelled");
@@ -140,7 +140,7 @@ export async function exercise({ page, url, snapshot, body, config }) {
   await page.locator("[data-thread-item]").filter({ hasText: "ACCEPT_EXECUTE" }).first().click();
   await visible("CANCELLATION_COMPLETED_REAL");
   if (!(await page.getByText("CANCEL_CONFIRMED_REAL").last().isVisible()))
-    await expandRunDisclosure(page, cancellationRunId);
+    await expandRunDisclosure(page, observation.cancellationRunId);
   await visible("CANCEL_CONFIRMED_REAL");
   await snapshot("reopened");
   assertCancellationChronology(
@@ -326,8 +326,6 @@ export async function waitForProcessExit(pidFile, timeoutMs = 15000) {
 }
 
 // Passive inspection of actual T3 projections, not synthetic connector output.
-const t3Items = [];
-let cancellationRunId;
 const fixtureMarkers = [
   "EXECUTE_CONFIRMED_REAL",
   "STEER_ADMITTED_REAL",
@@ -341,7 +339,8 @@ const fixtureMarkers = [
 ];
 const idHash = (value) => createHash("sha256").update(String(value)).digest("hex").slice(0, 16);
 export function capture({ page }) {
-  cancellationRunId = undefined;
+  const t3Items = [];
+  let cancellationRunId;
   let sequence = 0;
   page.on("websocket", (socket) =>
     socket.on("framereceived", ({ payload }) => {
@@ -398,8 +397,20 @@ export function capture({ page }) {
       walk(decoded);
     }),
   );
+  return {
+    get cancellationRunId() {
+      return cancellationRunId;
+    },
+    flush: (destination) => persistT3Evidence(destination, t3Items),
+  };
 }
-export async function flushCapture({ proof, root }) {
+// The shared replay finalizes through the integration driver even if browser setup failed
+// before capture. In that case there are no live items, but persisted evidence still exists.
+export async function flushCapture({ proof, root, observation }) {
+  if (observation) await observation.flush({ proof, root });
+  else await persistT3Evidence({ proof, root }, []);
+}
+async function persistT3Evidence({ proof, root }, t3Items) {
   if (root) {
     const { DatabaseSync } = await import("node:sqlite");
     const database = new DatabaseSync(path.join(root, "t3-base/userdata/statev2.sqlite"), { readOnly: true });
