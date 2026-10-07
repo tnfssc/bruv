@@ -105,7 +105,7 @@
     {
       "focus": "scripts/build.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-running",
+      "state": "accepted-unchanged",
       "primary": [
         {
           "id": "task_df95845d",
@@ -121,13 +121,18 @@
           "id": "task_ee123d58",
           "base": "147c9738bf53e2a693a3f44330320a4e3042522f",
           "candidate": "10577e2662f01feab4ce021cbc30b9465872ca5a",
-          "state": "running"
+          "state": "completed",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "evidence": "Sequential parse/validate, optional helper preparation, single compile, diagnostic reporting; option mutation ends before effects. One-use extraction adds distance, no observed structural problem.",
+          "checks": "32 pass/2 fail/463 assertions: absent candidate node_modules broke attribution/license checks; 10 independent actual-entrypoint subprocess probes pass with Bun.build stubbed. No full compile."
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "6162c89981b835927c7636d56bd3b054b9c17bba",
       "readingResult": "Writer found parse/validate → optional helper preparation → compile → report already coherent; unchanged source.",
-      "checks": "34 focused tests/476 assertions; 8 stubbed entrypoint probes/27 assertions; no real full compile."
+      "checks": "34 focused tests/476 assertions; 8 stubbed entrypoint probes/27 assertions; no real full compile.",
+      "integrationState": "Focus blob matches area HEAD; candidate note excluded; related inspected source not counted as primary coverage."
     },
     {
       "focus": "scripts/ci-selective.ts",
