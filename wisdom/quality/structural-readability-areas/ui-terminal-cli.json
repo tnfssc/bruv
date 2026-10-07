@@ -14,8 +14,8 @@
       "file": "tests/editor-voice-integration.test.ts",
       "owner": "live-native-audio",
       "candidate": "58af8f98e82c5d0ad6e34422cc2aafb9f5126ba7",
-      "blob": "95453da9cb3f0827a96b955c60f854e905939dac",
-      "state": "accepted patch integrated; assigned primary owner must inspect final blob"
+      "blob": "89f3ee58570d4e8d08bbb8aedf98e1e218524529",
+      "state": "resolved by assigned Live primary task_90932544 and judge task_5f1948bf, parent merge exact final hash"
     },
     {
       "file": "tests/subagent-settings-ui.test.ts",
@@ -133,7 +133,7 @@
     {
       "focus": "scripts/ansi_video_renderer.py",
       "initialBlob": "81a25813f084b89e7f58988d6bb05e02237ac948",
-      "status": "rework-running",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_32c7f556",
@@ -163,25 +163,54 @@
             "Shipped callback does not mutate timeline; not observed production failure, but contract preservation required",
             "No build/Docker/visual/product acceptance"
           ]
+        },
+        {
+          "id": "task_73d21038",
+          "base": "5e507f309981a85cf90105fd33b8ad66ed00fb39",
+          "candidate": "f72d5f0a9eea957f45cddd71695e6fad53cb164e",
+          "verdict": "ACCEPT",
+          "priorJudge": "task_c420e381",
+          "priorVerdict": "REJECT",
+          "priorFindings": [
+            "Sampling condition caches selected row after audit_frame, unlike base rereading rows[index]. If callback replaces rows[0] with t=1, base skips sample while candidate saves; can add sample-save exception. Restore t - rows[row_index][\"t\"] >= 0 and add focused regression; do not restrict callbacks."
+          ],
+          "writerResponse": "Restored post-audit rows[row_index] timestamp lookup; regression fails rejected source and passes exact base/rework",
+          "objections": [],
+          "resolvedPriorFindings": "Post-audit timeline timestamp reread restored; regression fails rejected code and passes original/rework. Callback freedom and sampling exception behavior preserved.",
+          "reviewedBlobs": {
+            "scripts/ansi_video_renderer.py": "b692fce492c0c227e42e9cc4645ce4bded57b27a",
+            "tests/ansi-video-renderer.test.py": "d5b9aa060a097d8e3b7cda75e52f15b550b646fd"
+          },
+          "evidence": "SGR parsing, snapshot-local glyph/color state, video-lifetime presentation/fonts and encoder orchestration form coherent boundaries; bold bookkeeping zero reads.",
+          "checks": [
+            "Independent original base/rework8tests pass; rejected version regression fails",
+            "Callback/exception ordering differential probes",
+            "Six-frame real audit/PNG/MP4/decoded RGB identical",
+            "H264/yuv420p1600x1200/5FPS/full decode/faststart",
+            "diff clean"
+          ],
+          "limits": [
+            "Existing exception encoder cleanup unchanged",
+            "No build/Docker/compiled recapture/provider/SSH/visual/product acceptance; callbacks not exhaustive"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integrationState": "old rejected source unintegrated; fresh rework running",
+      "acceptedBlob": "b692fce492c0c227e42e9cc4645ce4bded57b27a",
+      "integrationState": "fresh rework integrated only after round2 ACCEPT; rejected attempt retained",
       "launchBase": "10c405fe18f54e15e915efe5d9a98ee37144f798",
       "changedRelatedPaths": [
         "tests/ansi-video-renderer.test.py"
       ],
-      "result": "Candidate separates ANSI color parsing/glyph drawing/frame composition/video encoding; snapshot color state local, fonts video-lifetime, unused bold bookkeeping removed.",
+      "result": "Fresh rework restores post-audit timeline lookup; regression reproduces rejected sample-save exception, passes original base and repaired source. Retains coherent renderer structure.",
       "checks": [
-        "7 Python contracts on base/candidate",
-        "4 Bun scenario tests",
-        "Real five-frame ffmpeg PNG/pixels/MP4/audit equality",
+        "Rejected candidate7 pass+new regression fail",
+        "Original base/rework8 tests pass",
+        "Real6-frame audit/PNG/MP4/decodedRGB equality",
         "diff"
       ],
       "limits": [
         "No Docker/compiled CLI recapture/product/full build; exception cleanup unchanged"
       ],
-      "priority": "next-primary: fresh rework then fresh judge",
       "reworks": [
         {
           "id": "task_283b2f40",
@@ -189,27 +218,108 @@
           "branch": "bruv/fresh-ansi-renderer-rework-after-callbac-283b2f40",
           "launchBase": "5e507f309981a85cf90105fd33b8ad66ed00fb39",
           "priorCandidate": "15e0abb0dc551c00523d84c928e363f2acaae3f9",
-          "respondsTo": "task_c420e381"
+          "respondsTo": "task_c420e381",
+          "commit": "f72d5f0a9eea957f45cddd71695e6fad53cb164e"
         }
       ]
     },
     {
       "focus": "scripts/benchmark-footer-context.ts",
       "initialBlob": "91d84fe12a843948add9cd91c219ee7098b1f419",
-      "status": "pending",
-      "primary": [],
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integrationState": "pending"
+      "status": "accepted",
+      "primary": [
+        {
+          "id": "task_98c25ed9",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_98c25ed9",
+          "branch": "bruv/primary-readability-scripts-benchmark-fo-98c25ed9",
+          "launchBase": "57c0d3c3bfc9b1fcd00dce2a9534c5ccc490dc9f",
+          "commit": "0b04211f5d594e631d2a171807ecba84dc5e45f4"
+        }
+      ],
+      "judgeRounds": [
+        {
+          "id": "task_e562a5b1",
+          "base": "57c0d3c3bfc9b1fcd00dce2a9534c5ccc490dc9f",
+          "candidate": "0b04211f5d594e631d2a171807ecba84dc5e45f4",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reviewedBlobs": {
+            "scripts/benchmark-footer-context.ts": "4a3883306c3a8437a15dbceaf93eae751204c4e0"
+          },
+          "evidence": "Context readers bind receiver once; measurement owns local materialization probe/restoration; fixture manager/history lifetime separate. Counter measures entry materialization not file reads, timing boundaries unchanged.",
+          "checks": [
+            "12records all nontiming fields incl bytes/counters equal; uncached80/800/4000 cached0",
+            "29tests/307assertions",
+            "Incoming prototype identity restored and manager/directory cleaned success/warmup/measured failure",
+            "Biome/diff"
+          ],
+          "limits": [
+            "No speed/build/typecheck/compiled CLI/provider/device/SSH",
+            "Manager creation before try and disposal-before-directory-removal inherited"
+          ]
+        }
+      ],
+      "acceptedBlob": "4a3883306c3a8437a15dbceaf93eae751204c4e0",
+      "integrationState": "integrated exact judged candidate",
+      "launchBase": "57c0d3c3bfc9b1fcd00dce2a9534c5ccc490dc9f",
+      "changedRelatedPaths": [],
+      "result": "Candidate binds context readers once, scopes frame materialization counter/probe restoration and fixture history lifetime rather than nested receiver ternaries/global counter.",
+      "checks": [
+        "12benchmark records identical nontiming fields/counters",
+        "26tests/294assertions",
+        "Success and synthetic render-failure restoration/temp-history cleanup harness",
+        "Biome/diff"
+      ],
+      "limits": [
+        "No speed/build/typecheck"
+      ]
     },
     {
       "focus": "scripts/benchmark-task-row-render.ts",
       "initialBlob": "ae42ddf511434a63a309d1d4fbc023d366d938fa",
-      "status": "pending",
-      "primary": [],
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integrationState": "pending"
+      "status": "accepted",
+      "primary": [
+        {
+          "id": "task_c9f5fced",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_c9f5fced",
+          "branch": "bruv/primary-readability-scripts-benchmark-ta-c9f5fced",
+          "launchBase": "53cfb1e81e44d5ff23f81cabb3b21853d15d38b8",
+          "commit": "5cbafa0c84777290a9c0d56da036fd524fec748d"
+        }
+      ],
+      "judgeRounds": [
+        {
+          "id": "task_21c6d061",
+          "base": "53cfb1e81e44d5ff23f81cabb3b21853d15d38b8",
+          "candidate": "5cbafa0c84777290a9c0d56da036fd524fec748d",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reviewedBlobs": {
+            "scripts/benchmark-task-row-render.ts": "ae42ddf511434a63a309d1d4fbc023d366d938fa"
+          },
+          "evidence": "One case owns fixture warmups/counter reset/measured renders/median output/finally restoration; extracted fixtures would obscure intentional counter scope.",
+          "checks": [
+            "Independent benchmark nine rows schema/order/finite medians snapshot ratios1/1/0",
+            "95tests/1101assertions",
+            "diff clean"
+          ],
+          "limits": [
+            "No performance gain/build/gate/compiled terminal/provider/SSH/platform"
+          ]
+        }
+      ],
+      "acceptedBlob": "ae42ddf511434a63a309d1d4fbc023d366d938fa",
+      "integrationState": "unchanged final primary accepted",
+      "launchBase": "53cfb1e81e44d5ff23f81cabb3b21853d15d38b8",
+      "changedRelatedPaths": [],
+      "result": "No-change: per-case setup,3warmups,counter reset,7renders,median/JSON,finally restoration explicit.",
+      "checks": [
+        "Nine ordered benchmark rows snapshots/frame1/1/0",
+        "95tests/1101assertions"
+      ],
+      "limits": [
+        "No performance/build"
+      ]
     },
     {
       "focus": "scripts/tasks-ui-native-proof.py",
@@ -223,21 +333,71 @@
     {
       "focus": "scripts/tasks-ui-proof-build.ts",
       "initialBlob": "3c50cd1531b85ff6b44517154be60c5c133b8b03",
-      "status": "primary-running",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_69932f49",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_69932f49",
           "branch": "bruv/primary-readability-scripts-tasks-ui-pro-69932f49",
-          "launchBase": "c9707192e101252662f82998d281ba8565592584"
+          "launchBase": "c9707192e101252662f82998d281ba8565592584",
+          "state": "killed exit143; retained uncommitted proposal, not candidate accepted"
+        },
+        {
+          "id": "task_259c27b0",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_259c27b0",
+          "branch": "bruv/fresh-proof-build-primary-with-retained--259c27b0",
+          "launchBase": "c9898c0cc69de4a9b5b09d52ee1cf63c86f3084e",
+          "retryOf": "task_69932f49",
+          "commit": "85e990227aa93c12c16337f7a23a686b77661eda"
         }
       ],
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integrationState": "pending",
-      "launchBase": "c9707192e101252662f82998d281ba8565592584",
+      "judgeRounds": [
+        {
+          "id": "task_f9504048",
+          "base": "c9898c0cc69de4a9b5b09d52ee1cf63c86f3084e",
+          "candidate": "85e990227aa93c12c16337f7a23a686b77661eda",
+          "verdict": "ACCEPT",
+          "priorAttempt": "task_69932f49 interrupted without judgment",
+          "coordinatorTargets": [
+            "Worker checkpoint removes REAL_WEB_ARCHIVE positional arg, archive symlink/hash provenance, updates wisdom/tasks-ui/native-proof-tooling.md. Fresh judge must trace every actual caller/embed path and prove archive machinery unshipped/irrelevant, not drop purposeful provenance or silently change compatibility; deletion/CLI behavior explicit."
+          ],
+          "objections": [],
+          "reviewedBlobs": {
+            "scripts/tasks-ui-proof-build.ts": "c6710c2ffd68ce9f89521bda3249f9ed64f8b18f",
+            "tests/tasks-ui-proof-build.test.ts": "d132c1709bbc03d1e3851dd2e6886ed50fc8bf0d",
+            "wisdom/tasks-ui/native-proof-tooling.md": "85add9294132347035faaff201b02e34bf1afae6"
+          },
+          "evidence": "Archive argument/link/hash never consumed by compile or native proof consumer; current CLI uses external T3, architecture tests confirm retired embedded paths absent. Official T3/release provenance separate unchanged. Removing unrelated lifetime exposes actual build/source/binary authority.",
+          "behaviorChange": "Local proof script now only OUTPUT_BINARY, rejects old2arg invocation and omits archive fields; out-of-repo callers need migration. No shipped feature/provenance removal.",
+          "checks": [
+            "Independent32Bun/438assertions and13Python",
+            "Real read-only Pi preflight with stub prep/compile; pre-existing archive symlink inode/target/bytes unchanged",
+            "Focused strict TS/Biome/diff"
+          ],
+          "limits": [
+            "Stub compile/assets no real native build/PTY/screenshots/full gate/release acceptance"
+          ]
+        }
+      ],
+      "acceptedBlob": "c6710c2ffd68ce9f89521bda3249f9ed64f8b18f",
+      "integrationState": "fresh retry exact candidate integrated; interrupted attempt preserved",
+      "launchBase": "c9898c0cc69de4a9b5b09d52ee1cf63c86f3084e",
       "coordinatorReviewTargets": [
         "Worker checkpoint removes REAL_WEB_ARCHIVE positional arg, archive symlink/hash provenance, updates wisdom/tasks-ui/native-proof-tooling.md. Fresh judge must trace every actual caller/embed path and prove archive machinery unshipped/irrelevant, not drop purposeful provenance or silently change compatibility; deletion/CLI behavior explicit."
+      ],
+      "changedRelatedPaths": [
+        "tests/tasks-ui-proof-build.test.ts",
+        "wisdom/tasks-ui/native-proof-tooling.md"
+      ],
+      "result": "Fresh retry traced archive arg/link/hash as unconsumed by compile or proof consumer; explicitly removes dead archive contract, retains source and binary provenance, updates docs/tests.",
+      "checks": [
+        "32Bun/438assertions",
+        "13Python",
+        "Focused strict TS/Biome/diff",
+        "Build/assets test stubs only"
+      ],
+      "limits": [
+        "No real native build/PTY/screenshots"
       ]
     },
     {
@@ -404,11 +564,36 @@
     {
       "focus": "scripts/terminal-perf/artifacts.ts",
       "initialBlob": "eeac78ef15a882ca01423dfaf4c1ada83c10f861",
-      "status": "pending",
-      "primary": [],
-      "judgeRounds": [],
+      "status": "judging",
+      "primary": [
+        {
+          "id": "task_47a4d9cd",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_47a4d9cd",
+          "branch": "bruv/primary-readability-scripts-terminal-per-47a4d9cd",
+          "launchBase": "0a37f05e8b69b59dffc4250ea8b1a54e51732017",
+          "commit": "a70327eb16d622fbed9460d467ac2fb08f692150"
+        }
+      ],
+      "judgeRounds": [
+        {
+          "id": "task_83710623",
+          "base": "0a37f05e8b69b59dffc4250ea8b1a54e51732017",
+          "candidate": "a70327eb16d622fbed9460d467ac2fb08f692150",
+          "verdict": "pending"
+        }
+      ],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "launchBase": "0a37f05e8b69b59dffc4250ea8b1a54e51732017",
+      "changedRelatedPaths": [],
+      "result": "No-change: import owns parse/duplicate/summary-validation; export mkdir/four writes direct, staging would change failure ordering.",
+      "checks": [
+        "7tests/50assertions",
+        "2isolated probes/14assertions"
+      ],
+      "limits": [
+        "Nontransactional partial writes/overwrites unchanged; no build"
+      ]
     },
     {
       "focus": "scripts/terminal-perf/audit-probes/disk-callbacks.ts",
@@ -431,11 +616,19 @@
     {
       "focus": "scripts/terminal-perf/dashboard.ts",
       "initialBlob": "5da2c4acd3cdbf1ebbe47c5e32e4086843c9517e",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_64e62042",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_64e62042",
+          "branch": "bruv/primary-readability-scripts-terminal-per-64e62042",
+          "launchBase": "a58d7f02d1b2bca9a291c5c370d69c92e9f429f1"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "launchBase": "a58d7f02d1b2bca9a291c5c370d69c92e9f429f1"
     },
     {
       "focus": "scripts/terminal-perf/interaction-catalog.ts",
@@ -458,7 +651,7 @@
     {
       "focus": "scripts/terminal-perf/interaction-normalize.ts",
       "initialBlob": "7d11dad027d30e5fb2599903470d54dce827e746",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_5fb34446",
@@ -473,11 +666,26 @@
           "id": "task_23bf0f9f",
           "base": "1cb5260434b94a06fefc8906f5061f7011e206d8",
           "candidate": "e5654ea0d0f92812e5a1bf526f78057f631d4189",
-          "verdict": "pending"
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reviewedBlobs": {
+            "scripts/terminal-perf/interaction-normalize.ts": "03425e9333f88fd84f0aa26bc11a78a294ae3d0f",
+            "scripts/terminal-perf/interaction-tool-events.test.ts": "2e0e6eb8783ba3fcce9fde642717064f933dd67f",
+            "tests/terminal-interactions-normalize.test.ts": "96a49888775e77328e9cbeb1f416f2b5347b345b"
+          },
+          "evidence": "One tool-event evidence gate separates direct subset/total/burst reconciliation from ordered timing checks, then projects verified captured text. Missing/zero, raw identities and measurement boundaries unchanged.",
+          "checks": [
+            "Independent21tests/158assertions",
+            "Retained raw projections2/1/10/2/13cases equal exact base and validate accepted report join",
+            "format/lint/diff"
+          ],
+          "limits": [
+            "Retained record compatibility only; no fresh measurements/full catalog/latency/build/typecheck/provider/PTY"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integrationState": "pending",
+      "acceptedBlob": "03425e9333f88fd84f0aa26bc11a78a294ae3d0f",
+      "integrationState": "integrated exact independently judged candidate",
       "launchBase": "1cb5260434b94a06fefc8906f5061f7011e206d8",
       "changedRelatedPaths": [
         "scripts/terminal-perf/interaction-tool-events.test.ts",
@@ -496,11 +704,19 @@
     {
       "focus": "scripts/terminal-perf/interaction-options.ts",
       "initialBlob": "5f02670045e3b06132b1ba92708364d4c3950c19",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_1d27744f",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_1d27744f",
+          "branch": "bruv/primary-readability-scripts-terminal-per-1d27744f",
+          "launchBase": "c0f402b8e1a5a531c9de49afab12d45dbd6a75a2"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "launchBase": "c0f402b8e1a5a531c9de49afab12d45dbd6a75a2"
     },
     {
       "focus": "scripts/terminal-perf/interaction-report.ts",
@@ -558,7 +774,15 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "related patch integrated; primary pending",
+      "relatedPatchJudgments": [
+        {
+          "id": "task_23bf0f9f",
+          "candidate": "e5654ea0d0f92812e5a1bf526f78057f631d4189",
+          "verdict": "ACCEPT",
+          "blob": "2e0e6eb8783ba3fcce9fde642717064f933dd67f"
+        }
+      ]
     },
     {
       "focus": "scripts/terminal-perf/interaction-worker.ts",
@@ -817,11 +1041,49 @@
     {
       "focus": "scripts/terminal-perf/trace.ts",
       "initialBlob": "2cae4e67ca3341e12927116d7ec45dfd81ec957f",
-      "status": "pending",
-      "primary": [],
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integrationState": "pending"
+      "status": "accepted",
+      "primary": [
+        {
+          "id": "task_fb8832c3",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_fb8832c3",
+          "branch": "bruv/primary-readability-scripts-terminal-per-fb8832c3",
+          "launchBase": "b3ba838f312025822bf41e69da23c4ada4c9579f",
+          "commit": "6d00f91a29bd8b1567331d36bddb7ce0fc954d4f"
+        }
+      ],
+      "judgeRounds": [
+        {
+          "id": "task_36396b4b",
+          "base": "b3ba838f312025822bf41e69da23c4ada4c9579f",
+          "candidate": "6d00f91a29bd8b1567331d36bddb7ce0fc954d4f",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reviewedBlobs": {
+            "scripts/terminal-perf/trace.ts": "2cae4e67ca3341e12927116d7ec45dfd81ec957f"
+          },
+          "evidence": "One coherent frame trace projection and one cursor; actual zero/missing timestamps, cold/steady order and microsecond conversion visible. Phase totals remain args, no fabricated span lanes.",
+          "checks": [
+            "Independent24tests/152assertions",
+            "18mixed-start/gaps/backwards/fallback/order/units/metadata/nonmutation/artifact assertions",
+            "blob/diff"
+          ],
+          "limits": [
+            "No viewer/build/fullsuite/paint/responsiveness/latency"
+          ]
+        }
+      ],
+      "acceptedBlob": "2cae4e67ca3341e12927116d7ec45dfd81ec957f",
+      "integrationState": "unchanged final primary accepted",
+      "launchBase": "b3ba838f312025822bf41e69da23c4ada4c9579f",
+      "changedRelatedPaths": [],
+      "result": "No-change: case/cold/steady order and real timestamp vs fallback cursor explicit; timestamps/durations convert units, other args retain meaning; no fabricated lanes.",
+      "checks": [
+        "24tests/152assertions",
+        "Synthetic order/mixed timestamp/fallback/units/budget/serialization/nonmutation checks"
+      ],
+      "limits": [
+        "No build/viewer/performance"
+      ]
     },
     {
       "focus": "scripts/terminal-perf/workloads.ts",
@@ -895,7 +1157,7 @@
     {
       "focus": "scripts/ui-cleanup-probe.py",
       "initialBlob": "d77fd2cfa040e6ccd506cc2613ba0cc5b9d7f75f",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_96febf21",
@@ -910,11 +1172,26 @@
           "id": "task_988afb2b",
           "base": "086c29b0ddd3df29cefb22cc8795df658c2da1cb",
           "candidate": "caed7a396d78adb86e2b4e2294806491cb62a0b3",
-          "verdict": "pending"
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reviewedBlobs": {
+            "scripts/ui-cleanup-probe.py": "c68a4a4b1d55f6fa3ebde54cd408f5196a1ad8ce",
+            "tests/ui-cleanup-probe.test.py": "f404edc33e4d99e3c363466338e431cbbc305d2b"
+          },
+          "evidence": "Terminal owns socket/deadline, context owns HOME/fixture/tmux, exercise owns captures, pure assertion evaluation separate, report after teardown. Specific config-write thread/HOME leak independently reproduced/fixed.",
+          "checks": [
+            "8new+13adjacent Python tests",
+            "18predicate ASTs and SSE1-7 equal",
+            "Mocked successful commands/env/reports/seven files equal",
+            "Real base/candidate both exit1 same10screen failures/six requests"
+          ],
+          "limits": [
+            "Real terminal acceptance NOT passed; no current-source build or universal descendant cleanup guarantee; tmux best effort"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integrationState": "pending",
+      "acceptedBlob": "c68a4a4b1d55f6fa3ebde54cd408f5196a1ad8ce",
+      "integrationState": "integrated exact independently judged candidate",
       "launchBase": "086c29b0ddd3df29cefb22cc8795df658c2da1cb",
       "changedRelatedPaths": [
         "tests/ui-cleanup-probe.test.py"
@@ -2232,11 +2509,39 @@
     {
       "focus": "tests/rolling-activity-disk.test.ts",
       "initialBlob": "16109794da03297d71f74968b134a2c9e7929bf4",
-      "status": "pending",
-      "primary": [],
-      "judgeRounds": [],
+      "status": "rework-running",
+      "primary": [
+        {
+          "id": "task_1b754cf4",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_1b754cf4",
+          "branch": "bruv/primary-readability-tests-rolling-activi-1b754cf4",
+          "launchBase": "a86d8fc7b58bd35b8b977d46e059a0335418838d",
+          "commit": "ad493ccc4986fb5c18bc708590a38232c84621bd"
+        }
+      ],
+      "judgeRounds": [
+        {
+          "id": "task_6f3b1071",
+          "base": "a86d8fc7b58bd35b8b977d46e059a0335418838d",
+          "candidate": "ad493ccc4986fb5c18bc708590a38232c84621bd",
+          "verdict": "REJECT",
+          "priorRelatedJudge": "task_a6caab27",
+          "objections": [
+            "Owner transition now clean-seeded in new subprocess, losing dirty live controller state. Base before rewrite c,d,e expanded,e failed after branch/live/mouse/removal/settlement; candidate collapsed/all success. Expanded-group-only owner-invalidation mutant fails base rewrite0vs6 but candidate3passes. Preserve original branch roundtrip and live-state history in same controller lifetime or explicitly recreate before owner transitions."
+          ],
+          "evidence": "Structure easier to read and53 statements/counts retained, but statement preservation not journey coverage.",
+          "checks": [
+            "Base1pass; candidate109tests/965assertions",
+            "Three ordinary negatives retained; expanded-owner negative exposes weakening",
+            "Biome/diff"
+          ],
+          "limits": [
+            "Artificial mutant not production bug; no build/typecheck/compiled/provider/SSH"
+          ]
+        }
+      ],
       "acceptedBlob": null,
-      "integrationState": "related patch integrated; primary focus pending",
+      "integrationState": "Rejected primary candidate NOT integrated; original related test retained",
       "relatedPatchJudgments": [
         {
           "id": "task_a6caab27",
@@ -2244,16 +2549,63 @@
           "candidate": "8aaffbf961e73dbedafd111ad18a21faf3a1bfdb",
           "blob": "343ee9ee808ac7cbca4d822e520476ef92ba7ee8"
         }
+      ],
+      "launchBase": "a86d8fc7b58bd35b8b977d46e059a0335418838d",
+      "changedRelatedPaths": [],
+      "result": "Candidate splits state-coupled replay/branch, live-frame and owner-replacement into independently seeded subprocess journeys with finally teardown.",
+      "checks": [
+        "109related tests pass",
+        "53 original assertions/checkpoints retained",
+        "Three negative controls fail intended assertions",
+        "Biome/diff"
+      ],
+      "reworks": [
+        {
+          "id": "task_2031ace4",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_2031ace4",
+          "branch": "bruv/fresh-disk-activity-rework-preserving-di-2031ace4",
+          "launchBase": "0a37f05e8b69b59dffc4250ea8b1a54e51732017",
+          "priorCandidate": "ad493ccc4986fb5c18bc708590a38232c84621bd",
+          "respondsTo": "task_6f3b1071"
+        }
       ]
     },
     {
       "focus": "tests/rolling-activity.test.ts",
       "initialBlob": "d7fd169b04f7e8041287a022458bdfe24cd4fc26",
-      "status": "pending",
-      "primary": [],
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integrationState": "related patch integrated; primary focus pending",
+      "status": "accepted",
+      "primary": [
+        {
+          "id": "task_635acd35",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_635acd35",
+          "branch": "bruv/primary-readability-tests-rolling-activi-635acd35",
+          "launchBase": "28e3431334aaaf6888f1ce638057cc44eece8081",
+          "commit": "68e4045e79c099bd1397fb8f36e62b13d41fce80"
+        }
+      ],
+      "judgeRounds": [
+        {
+          "id": "task_b0411e3d",
+          "base": "28e3431334aaaf6888f1ce638057cc44eece8081",
+          "candidate": "68e4045e79c099bd1397fb8f36e62b13d41fce80",
+          "verdict": "NO CHANGE NEEDED",
+          "priorRelatedJudge": "task_a6caab27",
+          "objections": [],
+          "reviewedBlobs": {
+            "tests/rolling-activity.test.ts": "dcd301abaa75cadf31522a28357a2fa68f08f820"
+          },
+          "evidence": "Local native fixture/command stubs expose contiguous grouping, callback provenance, permission/handoff boundaries, native expansion, scroll anchors and bounded rendering; abstraction adds navigation not clarity.",
+          "checks": [
+            "Independent48/267; disk companion1/4plus subprocess",
+            "Pinned format/diff"
+          ],
+          "limits": [
+            "No build/typecheck/gate/compiled/live/device/provider/SSH/latency; companion not primary coverage"
+          ]
+        }
+      ],
+      "acceptedBlob": "dcd301abaa75cadf31522a28357a2fa68f08f820",
+      "integrationState": "fresh primary/judge accept unchanged final test",
       "relatedPatchJudgments": [
         {
           "id": "task_a6caab27",
@@ -2261,6 +2613,13 @@
           "candidate": "8aaffbf961e73dbedafd111ad18a21faf3a1bfdb",
           "blob": "dcd301abaa75cadf31522a28357a2fa68f08f820"
         }
+      ],
+      "launchBase": "28e3431334aaaf6888f1ce638057cc44eece8081",
+      "changedRelatedPaths": [],
+      "result": "No-change: ordered groups/provenance/permission/handoff/visibility/native expansion/scroll/render budget contracts local.",
+      "checks": [
+        "48tests/267assertions",
+        "format/diff"
       ]
     },
     {
@@ -2404,11 +2763,41 @@
     {
       "focus": "tests/terminal-interactions-cli.test.ts",
       "initialBlob": "45005f3443bbbd98a85ad66cc0e31b59a8a33c0c",
-      "status": "pending",
-      "primary": [],
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integrationState": "related patch integrated; primary pending",
+      "status": "accepted",
+      "primary": [
+        {
+          "id": "task_58841b38",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_58841b38",
+          "branch": "bruv/primary-readability-tests-terminal-inter-58841b38",
+          "launchBase": "0dc957493a1c216603772fb9aa207cfef43023c1",
+          "commit": "03a4c651a1a8967ecfe8090b1f7377ce9af6d511"
+        }
+      ],
+      "judgeRounds": [
+        {
+          "id": "task_9704585a",
+          "base": "0dc957493a1c216603772fb9aa207cfef43023c1",
+          "candidate": "03a4c651a1a8967ecfe8090b1f7377ce9af6d511",
+          "verdict": "ACCEPT",
+          "priorRelatedJudge": "task_16ed90d7",
+          "objections": [],
+          "reviewedBlobs": {
+            "tests/terminal-interactions-cli.test.ts": "157c77305cba239e6c5e2ee273f5d1d4f72eb93d"
+          },
+          "evidence": "Each of five runs owns its artifact directory, assertions read their producer, baseline validates embedded comparison not unconditional heading. Existing pipe/worker/evidence/checkpoint/failure paths byte-identical.",
+          "checks": [
+            "Independent23tests/197assertions",
+            "Dashboard baseline-drop mutation original passes1/8, candidate rejects nullcomparison",
+            "format/lint/diff"
+          ],
+          "limits": [
+            "No runtime performance/build/typecheck/compiled/provider/PTY/paint",
+            "Existing test/worker timeouts unchanged; no kill escalation/signal/bounded drain guarantees"
+          ]
+        }
+      ],
+      "acceptedBlob": "157c77305cba239e6c5e2ee273f5d1d4f72eb93d",
+      "integrationState": "exact fresh primary candidate integrated",
       "relatedPatchJudgments": [
         {
           "id": "task_16ed90d7",
@@ -2416,14 +2805,39 @@
           "verdict": "ACCEPT",
           "blob": "19ba98790a5c96bcac30a340e540ab4323df1a2a"
         }
+      ],
+      "launchBase": "0dc957493a1c216603772fb9aa207cfef43023c1",
+      "changedRelatedPaths": [],
+      "result": "Candidate gives each saved-report invocation separate artifact destination and local assertions; baseline comparison assertion checks actual data rather than unconditional heading.",
+      "checks": [
+        "Baseline4/49",
+        "Final23/197",
+        "Dashboard baseline-drop mutant passes original/fails candidate",
+        "format/lint/diff"
       ]
     },
     {
       "focus": "tests/terminal-interactions-report.test.ts",
       "initialBlob": "cfc814a308ee4706e83669beb49d53d7e4a84f4d",
-      "status": "pending",
-      "primary": [],
-      "judgeRounds": [],
+      "status": "judging",
+      "primary": [
+        {
+          "id": "task_374aa134",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_374aa134",
+          "branch": "bruv/primary-readability-tests-terminal-inter-374aa134",
+          "launchBase": "e2858e433821f359346cac97b1547653ebb9f13e",
+          "commit": "92a6e31512ade19844c2ec80bcc089fd24143141"
+        }
+      ],
+      "judgeRounds": [
+        {
+          "id": "task_b8bd6e1b",
+          "base": "e2858e433821f359346cac97b1547653ebb9f13e",
+          "candidate": "92a6e31512ade19844c2ec80bcc089fd24143141",
+          "verdict": "pending",
+          "priorRelatedJudge": "task_e42d2c99"
+        }
+      ],
       "acceptedBlob": null,
       "integrationState": "related patch accepted; primary pending",
       "relatedPatchJudgments": [
@@ -2433,23 +2847,56 @@
           "verdict": "ACCEPT",
           "blob": "15dec25e1d553a530fe00f16c0a4452c78e2ada7"
         }
+      ],
+      "launchBase": "e2858e433821f359346cac97b1547653ebb9f13e",
+      "changedRelatedPaths": [],
+      "result": "Candidate groups report contracts into coherent suites; malformed/repetition/identity negatives fresh named fixtures, deliberate multi-invalid order scenarios retained.",
+      "checks": [
+        "40tests/213assertions",
+        "Report/normalizer136assertions retained",
+        "Biome/diff"
+      ],
+      "limits": [
+        "No build/typecheck/latency"
       ]
     },
     {
       "focus": "tests/terminal-perf-action-profiler.test.ts",
       "initialBlob": "9ba463bccc121cc8700bcd29f5b98be1ceaea9ce",
-      "status": "primary-running",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_b9c5eb3e",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_b9c5eb3e",
           "branch": "bruv/primary-readability-tests-terminal-perf--b9c5eb3e",
-          "launchBase": "5e507f309981a85cf90105fd33b8ad66ed00fb39"
+          "launchBase": "5e507f309981a85cf90105fd33b8ad66ed00fb39",
+          "commit": "4bec0ca300a19bd4ee0b9f25438c1d8da4a42ef2"
         }
       ],
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integrationState": "related patch integrated; primary focus pending",
+      "judgeRounds": [
+        {
+          "id": "task_432725ee",
+          "base": "5e507f309981a85cf90105fd33b8ad66ed00fb39",
+          "candidate": "4bec0ca300a19bd4ee0b9f25438c1d8da4a42ef2",
+          "verdict": "ACCEPT",
+          "priorRelatedJudge": "task_40ff7535",
+          "objections": [],
+          "reviewedBlobs": {
+            "tests/terminal-perf-action-profiler.test.ts": "46abbafdc26b90a509b33f330bca9c13b348545a"
+          },
+          "evidence": "Renderer/clock fixture separate from default instrumentation eliminates six irrelevant attach/dispose lifetimes; test assertions/timing and explicit restore/rollback/foreign composition coverage unchanged.",
+          "checks": [
+            "Normalized complete test bodies identical",
+            "Base16/145; candidate profiler pair33/247",
+            "format/lint/diff"
+          ],
+          "limits": [
+            "No build/typecheck/provider/device/SSH/performance"
+          ]
+        }
+      ],
+      "acceptedBlob": "46abbafdc26b90a509b33f330bca9c13b348545a",
+      "integrationState": "integrated exact primary candidate; supersedes earlier related test blob",
       "relatedPatchJudgments": [
         {
           "id": "task_40ff7535",
@@ -2458,7 +2905,15 @@
           "blob": "4d02e0adb5d1eed02f4c5a1be49de460092d5a15"
         }
       ],
-      "launchBase": "5e507f309981a85cf90105fd33b8ad66ed00fb39"
+      "launchBase": "5e507f309981a85cf90105fd33b8ad66ed00fb39",
+      "changedRelatedPaths": [],
+      "result": "Candidate separates renderer/clock fixture creation from instrumentation so six customized tests no longer attach/dispose unused profiler before real one.",
+      "checks": [
+        "Baseline16 tests/145 assertions",
+        "Candidate profiler pair33/247",
+        "All timing/assertion statements unchanged",
+        "format/lint/diff"
+      ]
     },
     {
       "focus": "tests/terminal-perf-cli.test.ts",
@@ -2490,11 +2945,40 @@
     {
       "focus": "tests/terminal-perf-profiler.test.ts",
       "initialBlob": "7cb1ce3c1390f701e65cc245a7deb03fa10c8360",
-      "status": "pending",
-      "primary": [],
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integrationState": "related patch integrated; primary pending",
+      "status": "accepted",
+      "primary": [
+        {
+          "id": "task_6b781769",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_6b781769",
+          "branch": "bruv/primary-readability-tests-terminal-perf--6b781769",
+          "launchBase": "53cfb1e81e44d5ff23f81cabb3b21853d15d38b8",
+          "commit": "68ea091b9d1751f98c5c6ca5aa96591c05662c94"
+        }
+      ],
+      "judgeRounds": [
+        {
+          "id": "task_74718e8d",
+          "base": "53cfb1e81e44d5ff23f81cabb3b21853d15d38b8",
+          "candidate": "68ea091b9d1751f98c5c6ca5aa96591c05662c94",
+          "verdict": "NO CHANGE NEEDED",
+          "priorRelatedJudge": "task_5e042418",
+          "objections": [],
+          "reviewedBlobs": {
+            "tests/terminal-perf-profiler.test.ts": "708996371dabfb105ba97e010979b60c3af5b271"
+          },
+          "evidence": "Local fixture clocks and real Pi next-tick tests expose batching/eviction/timing boundaries, errors and descriptor restoration; generic fixture extraction would hide clock differences.",
+          "checks": [
+            "Independent focus17/102; composition4/52; action16/145",
+            "Pinned format/lint/diff"
+          ],
+          "limits": [
+            "Broader Biome check existing import-order assist fails",
+            "No build/typecheck/full suite/CLI/PTY/device/platform/latency"
+          ]
+        }
+      ],
+      "acceptedBlob": "708996371dabfb105ba97e010979b60c3af5b271",
+      "integrationState": "fresh primary/judge accept unchanged integrated test blob",
       "relatedPatchJudgments": [
         {
           "id": "task_5e042418",
@@ -2502,6 +2986,18 @@
           "verdict": "ACCEPT",
           "blob": "708996371dabfb105ba97e010979b60c3af5b271"
         }
+      ],
+      "launchBase": "53cfb1e81e44d5ff23f81cabb3b21853d15d38b8",
+      "changedRelatedPaths": [],
+      "result": "No-change: local clocks, frame-consumed request/input scopes, real Pi scheduling/timing/native errors/descriptor restoration have explicit test ownership.",
+      "checks": [
+        "17focus/102assertions",
+        "4composition/52assertions",
+        "format/lint/diff"
+      ],
+      "limits": [
+        "Broader biome check existing import-order assist",
+        "No build"
       ]
     },
     {
@@ -2601,17 +3097,43 @@
       "kind": "cross-area-related",
       "assignedOwner": "live-native-audio",
       "initialBlob": "a54b95973f39569c32af94c7043aa7665a8da4ca",
-      "status": "related-patch-accepted-primary-pending",
-      "primary": [],
+      "status": "accepted",
+      "primary": [
+        {
+          "id": "task_90932544",
+          "launchBase": "6f8654b872df51edd8f578f6b730babd1c42c439",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_90932544",
+          "branch": "bruv/primary-tests-editor-voice-integration.t-90932544",
+          "status": "candidate ready",
+          "commit": "1bebfe90e9b17b318805063068d637b4f1f8b1b5",
+          "externalOwner": "live-native-audio"
+        }
+      ],
       "judgeRounds": [
         {
           "id": "task_14234cb0",
           "verdict": "ACCEPT",
           "candidate": "58af8f98e82c5d0ad6e34422cc2aafb9f5126ba7"
+        },
+        {
+          "id": "task_5f1948bf",
+          "status": "complete",
+          "candidate": "1bebfe90e9b17b318805063068d637b4f1f8b1b5",
+          "base": "6f8654b872df51edd8f578f6b730babd1c42c439",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Independent hold/cancel/release/rearm scenarios remove evolving shared draft;fixture owns replacement disposers and reverse teardown before clock restore;realSDK/draft/undo/focus/staledetach/terminal evidence retained.",
+          "checks": "Independent22 tests83 assertions and39 across3 suites171 assertions via read-only package mapping;diff pass. No behaviorfix/device/provider/macOS.",
+          "acceptedBlobs": {
+            "tests/editor-voice-integration.test.ts": "89f3ee58570d4e8d08bbb8aedf98e1e218524529"
+          },
+          "externalOwner": "live-native-audio"
         }
       ],
-      "acceptedBlob": "95453da9cb3f0827a96b955c60f854e905939dac",
-      "integrationState": "integrated; parent must reconcile assigned primary owner"
+      "acceptedBlob": "89f3ee58570d4e8d08bbb8aedf98e1e218524529",
+      "integrationState": "parent merged assigned-owner fresh primary/judge final test; prior related blob superseded",
+      "result": "Independent cancellation journeys show hold/cancel/release/freshhold;mouse/programmatic edits separate;fixture owns all attachment disposers including reattach and teardown before clock restore;actual SDK/draft/undo/focus/stale-detach evidence retained.",
+      "checks": "22 primary tests83 assertions;39 across3 editor suites171 assertions;Biome/typecheck afterassets/diff pass;no production fix/device/provider/macOS."
     },
     {
       "focus": "tests/subagent-settings-ui.test.ts",
@@ -2634,31 +3156,253 @@
       "focus": "tests/ansi-video-renderer.test.py",
       "kind": "new-test",
       "initialBlob": null,
-      "status": "candidate-related-primary-pending",
-      "primary": [],
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integrationState": "Unintegrated rejected related candidate; requires rework regression then new judgment and primary focus"
+      "status": "accepted",
+      "primary": [
+        {
+          "id": "task_c89c25be",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_c89c25be",
+          "branch": "bruv/new-file-primary-readability-tests-ansi--c89c25be",
+          "launchBase": "57c0d3c3bfc9b1fcd00dce2a9534c5ccc490dc9f",
+          "commit": "e684683cd2ab8d675e88f557c49763b5ff279780"
+        }
+      ],
+      "judgeRounds": [
+        {
+          "id": "task_73d21038",
+          "verdict": "ACCEPT",
+          "candidate": "f72d5f0a9eea957f45cddd71695e6fad53cb164e",
+          "kind": "related-patch-only"
+        },
+        {
+          "id": "task_c7691cb3",
+          "base": "57c0d3c3bfc9b1fcd00dce2a9534c5ccc490dc9f",
+          "candidate": "e684683cd2ab8d675e88f557c49763b5ff279780",
+          "verdict": "ACCEPT",
+          "priorSourceJudges": [
+            "task_c420e381 REJECT",
+            "task_73d21038 ACCEPT rework"
+          ],
+          "objections": [],
+          "reviewedBlobs": {
+            "tests/ansi-video-renderer.test.py": "d720b8a1abde5a6517400921639390f46387f3dd"
+          },
+          "evidence": "Per-render captures and image-owned draw records replace overwritten TestCase state/parallel lists; explicit callback and encoder events keep invocation scope visible.",
+          "checks": [
+            "Independent exact-base/candidate8/8",
+            "39assertion calls match ownership-only AST normalization",
+            "Original rejected renderer still fails replacement; accepted source passes",
+            "All5patches restore success/encoder/audit failures",
+            "diff clean"
+          ],
+          "limits": [
+            "Mocked rendering only; no real encoding/build/CLI/provider/SSH/visual/product"
+          ]
+        }
+      ],
+      "acceptedBlob": "d720b8a1abde5a6517400921639390f46387f3dd",
+      "integrationState": "new-file genuine primary/judge accepted final candidate integrated",
+      "launchBase": "57c0d3c3bfc9b1fcd00dce2a9534c5ccc490dc9f",
+      "changedRelatedPaths": [],
+      "result": "Candidate per-render captures replace overwritten TestCase observations and parallel image/draw lists; callback/font/failed encoder/patch ownership explicit.",
+      "checks": [
+        "8tests;39assertion calls/expectations preserved",
+        "Timeline replacement fails rejected original renderer, passes accepted production",
+        "Patch restoration/isolation probe and diff"
+      ],
+      "limits": [
+        "No media/visual/product/build"
+      ]
     },
     {
       "focus": "tests/terminal-interactions-normalize.test.ts",
       "kind": "new-test",
       "initialBlob": null,
-      "status": "candidate-related-primary-pending",
-      "primary": [],
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integrationState": "needs actual patch judgment then fresh primary"
+      "status": "accepted",
+      "primary": [
+        {
+          "id": "task_c93f9a76",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_c93f9a76",
+          "branch": "bruv/new-file-primary-readability-tests-termi-c93f9a76",
+          "launchBase": "29ea20c0ccfece95029f0eef1c7d6c137abc37f1",
+          "commit": "694eb962f1db0458cf6bb395b25e9c8ab7f46a70"
+        }
+      ],
+      "judgeRounds": [
+        {
+          "id": "task_0d381a57",
+          "base": "29ea20c0ccfece95029f0eef1c7d6c137abc37f1",
+          "candidate": "694eb962f1db0458cf6bb395b25e9c8ab7f46a70",
+          "verdict": "NO CHANGE NEEDED",
+          "priorRelatedJudge": "task_23bf0f9f",
+          "objections": [],
+          "reviewedBlobs": {
+            "tests/terminal-interactions-normalize.test.ts": "96a49888775e77328e9cbeb1f416f2b5347b345b"
+          },
+          "evidence": "Local synthetic records expose disjoint init/action, zero vs unknown, lifecycle evidence precedence and peak-not-sum accounting; no hidden fixture authority or needed abstraction.",
+          "checks": [
+            "Independent3primary/68assertions,24combined/164assertions",
+            "Pinned Biome check/diff"
+          ],
+          "limits": [
+            "Synthetic durations not latency; no fresh workload/typecheck/build/provider/network/PTY"
+          ]
+        }
+      ],
+      "acceptedBlob": "96a49888775e77328e9cbeb1f416f2b5347b345b",
+      "integrationState": "new-file fresh primary and independent judge accepted exact integrated blob",
+      "relatedPatchJudgments": [
+        {
+          "id": "task_23bf0f9f",
+          "candidate": "e5654ea0d0f92812e5a1bf526f78057f631d4189",
+          "verdict": "ACCEPT",
+          "blob": "96a49888775e77328e9cbeb1f416f2b5347b345b"
+        }
+      ],
+      "launchBase": "29ea20c0ccfece95029f0eef1c7d6c137abc37f1",
+      "changedRelatedPaths": [],
+      "result": "No-change: local synthetic records expose init/action, zero/null, lifecycle input/stage precedence and teardown exclusion directly.",
+      "checks": [
+        "3primary/68assertions",
+        "24related/164assertions",
+        "Biome/diff"
+      ]
     },
     {
       "focus": "tests/ui-cleanup-probe.test.py",
       "kind": "new-test",
       "initialBlob": null,
-      "status": "candidate-related-primary-pending",
-      "primary": [],
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integrationState": "candidate patch; needs independent judgment then primary"
+      "status": "accepted",
+      "primary": [
+        {
+          "id": "task_09dea81c",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_09dea81c",
+          "branch": "bruv/new-file-primary-readability-tests-ui-cl-09dea81c",
+          "launchBase": "29ea20c0ccfece95029f0eef1c7d6c137abc37f1",
+          "commit": "e6e787e74a42fc4228198cf91cc26d8285162ec8"
+        }
+      ],
+      "judgeRounds": [
+        {
+          "id": "task_3bc6b56e",
+          "base": "29ea20c0ccfece95029f0eef1c7d6c137abc37f1",
+          "candidate": "e6e787e74a42fc4228198cf91cc26d8285162ec8",
+          "verdict": "REJECT",
+          "priorRelatedJudge": "task_988afb2b",
+          "objections": [
+            "Phase-local clock.side_effect replaces unconsumed observations, weakening timeout negative: mutant reads time once per wait then retries forever passes candidate all8 but baseline fails StopIteration. Before replacing clock observations assert cumulative call counts1after start,3after READY,4after SECOND; rerun negative control."
+          ],
+          "evidence": "Request-number fixture structure genuinely clearer, intrinsic whole file readable; phase-local clock change sacrifices coverage.",
+          "checks": [
+            "Independent base/candidate8+13 pass",
+            "Six bodies AST unchanged; production unchanged",
+            "Negative control reproduced baseline rejection vs candidate pass"
+          ],
+          "limits": [
+            "Real inherited probes still ten screen failures; no product acceptance"
+          ]
+        },
+        {
+          "id": "task_ce1af6b4",
+          "base": "a86d8fc7b58bd35b8b977d46e059a0335418838d",
+          "candidate": "a2c2b9f33764fde811d082c1fbf812c46b5cee15",
+          "verdict": "ACCEPT",
+          "priorJudge": "task_3bc6b56e",
+          "priorVerdict": "REJECT",
+          "priorFindings": [
+            "Phase-local clock.side_effect replaces unconsumed observations, weakening timeout negative: mutant reads time once per wait then retries forever passes candidate all8 but baseline fails StopIteration. Before replacing clock observations assert cumulative call counts1after start,3after READY,4after SECOND; rerun negative control."
+          ],
+          "writerResponse": "Cumulative clock-call assertions1/3/4; same stale-clock mutant now rejected at READY, all original contracts retained",
+          "objections": [],
+          "reviewedBlobs": {
+            "tests/ui-cleanup-probe.test.py": "4d6e5207586f61dfc1662548d2395830eac5ef0f"
+          },
+          "resolvedPriorFindings": "Cumulative clock counts consume observations before replacement. Independent stale-clock mutant original failsStopIteration/rejected passes/rework fails2!=3atREADY.",
+          "evidence": "Request-keyed response expectations remove index/list translation; phase-local clocks expose retry/deadline with preserved consumption negative. Whole eight-contract file readable.",
+          "checks": [
+            "Independent8focused+13adjacent pass",
+            "Three-version mutant and six identical AST bodies/all8contracts18predicates/production bytes unchanged",
+            "compile/help/diff"
+          ],
+          "limits": [
+            "Inherited10real screen failures; no product acceptance/new terminal run/full build"
+          ]
+        }
+      ],
+      "acceptedBlob": "4d6e5207586f61dfc1662548d2395830eac5ef0f",
+      "integrationState": "fresh rework round2 accepted and integrated; original rejected candidate retained",
+      "relatedPatchJudgments": [
+        {
+          "id": "task_988afb2b",
+          "candidate": "caed7a396d78adb86e2b4e2294806491cb62a0b3",
+          "verdict": "INSPECTED WITH ACCEPTED SOURCE",
+          "blob": "f404edc33e4d99e3c363466338e431cbbc305d2b"
+        }
+      ],
+      "launchBase": "29ea20c0ccfece95029f0eef1c7d6c137abc37f1",
+      "changedRelatedPaths": [],
+      "result": "Fresh rework retains request-keyed/local-clock structure and adds cumulative clock assertions1/3/4; negative stale-clock mutant rejected again, no production changes.",
+      "checks": [
+        "8primary+13adjacent pass",
+        "Original mutant StopIteration; rejected candidate passes; rework fails2!=3atREADY",
+        "Six bodies AST identical;8contracts/18predicate names retained"
+      ],
+      "limits": [
+        "No new terminal run; prior ten screen failures remain"
+      ],
+      "reworks": [
+        {
+          "id": "task_3a95a2db",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_3a95a2db",
+          "branch": "bruv/fresh-cleanup-test-rework-after-deadline-3a95a2db",
+          "launchBase": "a86d8fc7b58bd35b8b977d46e059a0335418838d",
+          "priorCandidate": "e6e787e74a42fc4228198cf91cc26d8285162ec8",
+          "respondsTo": "task_3bc6b56e",
+          "commit": "a2c2b9f33764fde811d082c1fbf812c46b5cee15"
+        }
+      ]
+    },
+    {
+      "focus": "tests/tasks-ui-proof-build.test.ts",
+      "kind": "new-test",
+      "initialBlob": null,
+      "status": "judging",
+      "primary": [
+        {
+          "id": "task_eed22df6",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_eed22df6",
+          "branch": "bruv/primary-readability-tests-tasks-ui-proof-eed22df6",
+          "launchBase": "b3ba838f312025822bf41e69da23c4ada4c9579f",
+          "commit": "fd1e6f44a2c88c3f1ac311087b90efb65f6e980d"
+        }
+      ],
+      "judgeRounds": [
+        {
+          "id": "task_f9504048",
+          "verdict": "ACCEPT",
+          "candidate": "85e990227aa93c12c16337f7a23a686b77661eda",
+          "kind": "related-only"
+        },
+        {
+          "id": "task_db1c285c",
+          "base": "b3ba838f312025822bf41e69da23c4ada4c9579f",
+          "candidate": "fd1e6f44a2c88c3f1ac311087b90efb65f6e980d",
+          "verdict": "pending",
+          "priorRelatedJudge": "task_f9504048"
+        }
+      ],
+      "acceptedBlob": "d132c1709bbc03d1e3851dd2e6886ed50fc8bf0d",
+      "integrationState": "integrated related patch; fresh primary required",
+      "launchBase": "b3ba838f312025822bf41e69da23c4ada4c9579f",
+      "changedRelatedPaths": [],
+      "result": "No-change: owned fixture cleanup, local source reset between preflight errors, compile/source-mutation failure with no published record explicit.",
+      "checks": [
+        "4tests/20assertions",
+        "format/lint",
+        "Read-only host/symlink preservation stub probe"
+      ],
+      "limits": [
+        "Stubs not real native/UI proof"
+      ]
     }
   ],
   "batchChecks": [
@@ -2698,15 +3442,24 @@
       "scope": "Full tsc --noEmit after task-row fixture repair and parent accepted common merge",
       "status": "pass exit0",
       "log": "runtime-assets/readability-parent-merged-typecheck.log"
+    },
+    {
+      "job": "task_a72075eb",
+      "commit": "503bec80",
+      "scope": "Combined interaction/action/frame suites +4Python suites +full tsc",
+      "status": "pass",
+      "log": "runtime-assets/readability-batch4.log",
+      "proof": "61 pass\n 0 fail\n 460 expect() calls\nRan 61 tests across 6 files. [5.43s]",
+      "python": "11runtime +13terminal +8ANSI +8cleanup pass",
+      "static": "Full tsc exit0"
     }
   ],
   "parentBoundary": {
-    "checkedTip": "695ade32dc055e22dd56a7bf06c01764973715d2",
-    "mergeCommit": "bc8f6e5ffb75aa2b27fd939ce60888063e756383",
-    "result": "Merged accepted parent common code cleanly; all UI accepted final blobs unchanged",
-    "acceptedHashMismatches": []
+    "checkedTip": "db885fce5225bf31dbaadba34c14ceb2393f5999",
+    "mergeCommit": "cef74bca0621739e63a5ae98e5b26dd38103141e",
+    "result": "Merged next accepted parent common checkpoint; only area overlap editor-voice test, assigned owner primary/judge exact final accepted blob reconciled"
   },
-  "diskBoundary": "136G available at parent-common-code merge",
+  "diskBoundary": "119G at second parent-common merge",
   "joinRequirements": [],
   "joinProof": {
     "judge": "task_060d7edf",
