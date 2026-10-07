@@ -19,3 +19,9 @@ Candidate `693ef090` independently accepted by `task_365b0c49`: callback-owned c
 At `8c131a00`, combined 7-file suite: 87 pass, 0 fail, 564 assertions, including OpenAI schema with shared dependencies (resolves judge-only zod setup gap). `bun run check` completed without diagnostics; changed TypeScript formatting passes; lint exits 0 with existing 8 warnings/7 infos. Job `task_2aacfb38`; no full gate/runtime parity claim.
 
 Workflow primary `task_8194489e` and judge `task_c5d328c7` both find no change needed: helper artifact lane and compiled transport lane already expose separate sequential lifetimes. Judge independently ran 9 tests/100 assertions and YAML contract checks. Accepted unchanged blob in JSON.
+
+## Accepted bridge / Gemini / Swift batch and observed follow-up
+
+Candidates `6d75f289`, `2e381e06`, `b01dac02` accepted by separate judges `task_aeb6dd8f`, `task_aba16011`, `task_660502a4`. Bridge separates active pipe write from retractable FIFO; Gemini dispatch now owns revocable checkpoint and capacity lifetime; Swift output queue owns its conversion/delivery/polling state, hardware ordering remains in Live. Related tests included, own primary coverage pending. Exact proof and blobs in JSON. macOS Swift compilation remains blocked; some independent TS suites lacked dependency resolution and require combined rerun.
+
+**Observed inherited defect, queued rework:** Swift judge reproduced native `played(queuedMs:0)` then `stopped` during stop; TS caller rejects played while stopping, falsely reporting helper failure. Baseline and candidate both affected. Accepted readability does not establish end-to-end stop correctness. Fresh caller worker + regression + new judge required before area completion; no safety relaxation or fixture-only suppression.

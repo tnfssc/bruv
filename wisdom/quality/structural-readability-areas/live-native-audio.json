@@ -208,13 +208,22 @@
       "judgeRounds": [
         {
           "id": "task_660502a4",
-          "status": "running",
+          "status": "complete",
           "candidate": "b01dac0216dfa47d3b40e57f92c6021ea530e368",
-          "base": "b769d70b9f292a9f01ec52a4ad27cc5aa4ede138"
+          "base": "b769d70b9f292a9f01ec52a4ad27cc5aa4ede138",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "LiveOutput owns output-queue execution domain; Live retains hardware/permission/commands. Stop and gate synchronization expose real sequencing; integrated AudioCore contract inspected unchanged.",
+          "checks": "Independent 18 pass/119 assertions; integrated C core/capture gate strict checks; Biome/diff pass. macOS/Xcode unavailable. Inherited native stop/caller played mismatch reproduced, followup required.",
+          "acceptedBlobs": {
+            "native/live/main.swift": "e51337959b28907cfa01625a6533bf0f068d014a",
+            "tests/live-capture-gate.test.ts": "e14d5006f3c1c8cd2ad1ca4d88c2f5021753c817",
+            "tests/live-setup-diagnostics.test.ts": "dfebe3a0f48e57f513209583119326744dff4afd"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "judge running",
+      "acceptedBlob": "e51337959b28907cfa01625a6533bf0f068d014a",
+      "integration": "integrated accepted exact candidate",
       "relatedPaths": [
         "tests/live-capture-gate.test.ts",
         "tests/live-setup-diagnostics.test.ts"
@@ -241,9 +250,16 @@
         "status": "candidate ready",
         "commit": "017776567ec43ba4a886dd5edadab71d6430331d"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_27183ba4",
+          "status": "running",
+          "candidate": "017776567ec43ba4a886dd5edadab71d6430331d",
+          "base": "08dc3dd7c0e48cbb811c003b70592b7e51628b55"
+        }
+      ],
       "acceptedBlob": null,
-      "integration": "awaiting judge slot",
+      "integration": "judge running",
       "relatedPatchJudgment": {
         "judgeId": "task_365b0c49",
         "verdict": "ACCEPT",
@@ -411,13 +427,21 @@
       "judgeRounds": [
         {
           "id": "task_aeb6dd8f",
-          "status": "running",
+          "status": "complete",
           "candidate": "6d75f2898337ffd503541d552edcfbff9d9eea59",
-          "base": "b769d70b9f292a9f01ec52a4ad27cc5aa4ede138"
+          "base": "b769d70b9f292a9f01ec52a4ad27cc5aa4ede138",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Active stdin write physically separate from unsent FIFO; callback/drain/accounting ownership together; LiveAudio retains ack/device/generation/reaping authority.",
+          "checks": "Independent 23 pass/111 assertions; broader 37 pass then extension import blocked; strict typecheck/format/diff pass.",
+          "acceptedBlobs": {
+            "src/live/audio.ts": "9c7db008d0f1f1284fda01c2e564157c7171d231",
+            "tests/live-audio-lifecycle.test.ts": "8a7be3d0c6cd48fd16c6a3bcbc9157dba226ab44"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "judge running",
+      "acceptedBlob": "9c7db008d0f1f1284fda01c2e564157c7171d231",
+      "integration": "integrated accepted exact candidate",
       "relatedPaths": [
         "tests/live-audio-lifecycle.test.ts"
       ],
@@ -680,13 +704,21 @@
       "judgeRounds": [
         {
           "id": "task_aba16011",
-          "status": "running",
+          "status": "complete",
           "candidate": "2e381e06926ba110a219c9602fbf14cccc922014",
-          "base": "6da356d503d6aba3d0667dab743c671d6f3201fc"
+          "base": "6da356d503d6aba3d0667dab743c671d6f3201fc",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Progress replaces optional-flag reconstruction; dispatch owns revocable checkpoint/capacity/execution/reply/finally; response recorded before transport, accepted work not cancelled.",
+          "checks": "Independent 4 tool-result tests; session/tool suites dependency-blocked on @google/genai; worker 31+2 not independently reproduced.",
+          "acceptedBlobs": {
+            "src/live/session.ts": "5d0f66a03d902165e3f1a224e3e607802ca015cb",
+            "tests/live-tools.test.ts": "700a785d33c4f17d4b7201f6a7f58bc01db2526a"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "judge running",
+      "acceptedBlob": "5d0f66a03d902165e3f1a224e3e607802ca015cb",
+      "integration": "integrated accepted exact candidate",
       "relatedPaths": [
         "tests/live-tools.test.ts"
       ],
@@ -899,7 +931,12 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "related accepted patch integrated; own primary focus pending",
+      "relatedPatchJudgment": {
+        "judgeId": "task_aeb6dd8f",
+        "verdict": "ACCEPT",
+        "blob": "8a7be3d0c6cd48fd16c6a3bcbc9157dba226ab44"
+      }
     },
     {
       "focus": "tests/live-audio.test.ts",
@@ -923,7 +960,12 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "related accepted patch integrated; own primary focus pending",
+      "relatedPatchJudgment": {
+        "judgeId": "task_660502a4",
+        "verdict": "ACCEPT",
+        "blob": "e14d5006f3c1c8cd2ad1ca4d88c2f5021753c817"
+      }
     },
     {
       "focus": "tests/live-config.test.ts",
@@ -1179,7 +1221,12 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "related accepted patch integrated; own primary focus pending",
+      "relatedPatchJudgment": {
+        "judgeId": "task_660502a4",
+        "verdict": "ACCEPT",
+        "blob": "dfebe3a0f48e57f513209583119326744dff4afd"
+      }
     },
     {
       "focus": "tests/live-setup.test.ts",
@@ -1267,7 +1314,12 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "related accepted patch integrated; own primary focus pending",
+      "relatedPatchJudgment": {
+        "judgeId": "task_aba16011",
+        "verdict": "ACCEPT",
+        "blob": "700a785d33c4f17d4b7201f6a7f58bc01db2526a"
+      }
     },
     {
       "focus": "tests/live-transcript.test.ts",
@@ -1351,9 +1403,16 @@
         "status": "candidate ready",
         "commit": "74ae2a442c5cb787d3666eeb5a1bc942c02319cf"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_1ce2e593",
+          "status": "running",
+          "candidate": "74ae2a442c5cb787d3666eeb5a1bc942c02319cf",
+          "base": "08dc3dd7c0e48cbb811c003b70592b7e51628b55"
+        }
+      ],
       "acceptedBlob": null,
-      "integration": "awaiting judge slot",
+      "integration": "judge running",
       "relatedPatchJudgment": {
         "judgeId": "task_13282f24",
         "verdict": "ACCEPT",
@@ -1376,6 +1435,13 @@
       "format": "2 changed TypeScript files pass",
       "lint": "exit 0; 8 warnings/7 infos unchanged from worker baseline",
       "limits": "no whole gate/provider/device/macOS/runtime parity claim"
+    }
+  ],
+  "followups": [
+    {
+      "focus": "src/live/audio.ts",
+      "status": "queued for next free primary/rework slot",
+      "reason": "Swift judge task_660502a4 reproduced inherited native stop sequence played(queuedMs:0) before stopped; LiveAudio rejects played while stopping, reports helper_failure/stopError. Baseline also affected. Fresh worker must reproduce against actual native sequence, preserve ack/reaping safety, explicitly test incidental fix; fresh judge then combined native/bridge review."
     }
   ]
 }

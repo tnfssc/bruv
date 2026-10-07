@@ -306,3 +306,93 @@ test("Session tool failures never expose exception messages or custom codes", as
   expect(JSON.stringify(h.responses)).not.toContain("secret");
   h.session.close();
 });
+
+test("queued cancellation is replayable and cannot reacquire dispatch authority", async () => {
+  let calls = 0;
+  const h = fixture(async () => {
+    calls++;
+    return "done";
+  });
+  await h.session.connect("key");
+  const request = { toolCall: { functionCalls: [{ id: "queued", name: "work" }] } };
+  h.send(request);
+  h.send({ toolCallCancellation: { ids: ["queued"] } });
+  h.send(request); // Still awaiting the dispatch checkpoint: no response to replay yet.
+  expect(h.responses).toEqual([]);
+  await flush();
+  expect(calls).toBe(0);
+  const rejection = {
+    functionResponses: {
+      id: "queued",
+      name: "work",
+      response: { error: "Tool execution failed" },
+      scheduling: "WHEN_IDLE",
+    },
+  };
+  expect(h.responses).toEqual([rejection]);
+  h.send({ toolCallCancellation: { ids: ["queued"] } });
+  h.send(request);
+  expect(h.responses).toEqual([rejection, rejection]);
+  expect(calls).toBe(0);
+  h.session.close();
+});
+
+test("queued calls reserve capacity until revoked calls settle, then new calls can dispatch", async () => {
+  let calls = 0;
+  const h = fixture(async () => {
+    calls++;
+    return "done";
+  });
+  await h.session.connect("key");
+  const ids = Array.from({ length: 16 }, (_, i) => String(i));
+  h.send({ toolCall: { functionCalls: ids.map((id) => ({ id, name: "work" })) } });
+  h.send({ toolCallCancellation: { ids } });
+  h.send({ toolCall: { functionCalls: [{ id: "before-settlement", name: "work" }] } });
+  expect(h.responses).toEqual([
+    {
+      functionResponses: {
+        id: "before-settlement",
+        name: "work",
+        response: { error: "Tool request rejected" },
+        scheduling: "WHEN_IDLE",
+      },
+    },
+  ]);
+  await flush();
+  expect(calls).toBe(0);
+  h.send({ toolCall: { functionCalls: [{ id: "after-settlement", name: "work" }] } });
+  await flush();
+  expect(calls).toBe(1);
+  expect(h.responses.at(-1)).toEqual({
+    functionResponses: {
+      id: "after-settlement",
+      name: "work",
+      response: { output: "done" },
+      scheduling: "WHEN_IDLE",
+    },
+  });
+  h.session.close();
+});
+
+test("rejected calls retain their original name and response when retransmitted with a valid tool", async () => {
+  let calls = 0;
+  const h = fixture(async () => {
+    calls++;
+  });
+  await h.session.connect("key");
+  h.send({ toolCall: { functionCalls: [{ id: "rejected", name: "undeclared" }] } });
+  h.send({ toolCall: { functionCalls: [{ id: "rejected", name: "work" }] } });
+  await flush();
+  expect(calls).toBe(0);
+  expect(h.responses).toEqual(
+    Array(2).fill({
+      functionResponses: {
+        id: "rejected",
+        name: "undeclared",
+        response: { error: "Tool request rejected" },
+        scheduling: "WHEN_IDLE",
+      },
+    }),
+  );
+  h.session.close();
+});
