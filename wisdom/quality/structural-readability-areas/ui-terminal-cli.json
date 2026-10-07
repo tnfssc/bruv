@@ -1,0 +1,925 @@
+{
+  "area": "ui-terminal-cli",
+  "initialCommit": "59413c532e6422983f611915e509e8421aa2f363",
+  "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
+  "baselineCount": 101,
+  "workspace": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6",
+  "branch": "bruv/whole-repo-structural-readability-ui-ter-f8e968d6",
+  "limits": [
+    "No source or runtime acceptance yet.",
+    "Live/provider/device/SSH checks must remain explicit limits."
+  ],
+  "crossAreaNeeds": [],
+  "files": [
+    {
+      "focus": "scripts/activity-runtime-acceptance.py",
+      "initialBlob": "ec93dec2d9d501bdb6233b29b383311f3480a166",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "scripts/activity-terminal-acceptance.py",
+      "initialBlob": "6189961015f97059362cb3698f831189221ae7a0",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "scripts/ansi_video_renderer.py",
+      "initialBlob": "81a25813f084b89e7f58988d6bb05e02237ac948",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "scripts/benchmark-footer-context.ts",
+      "initialBlob": "91d84fe12a843948add9cd91c219ee7098b1f419",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "scripts/benchmark-task-row-render.ts",
+      "initialBlob": "ae42ddf511434a63a309d1d4fbc023d366d938fa",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "scripts/tasks-ui-native-proof.py",
+      "initialBlob": "0255cb75d4ff7e4114d878669a7351fd2eb3cfed",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "scripts/tasks-ui-proof-build.ts",
+      "initialBlob": "3c50cd1531b85ff6b44517154be60c5c133b8b03",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "scripts/tasks-ui-proof-screenshots.ts",
+      "initialBlob": "c2db3b69aea3197ac7d013e9ba58ad8443a91199",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "scripts/terminal-interactions.ts",
+      "initialBlob": "36c68bbdea181e1066379e2176dc828abbd9c7d4",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "scripts/terminal-perf.ts",
+      "initialBlob": "696dd170594931b9907916079576e46666367030",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "scripts/terminal-perf/action-profiler.ts",
+      "initialBlob": "833e1e060db3eeffde361abc7c260aaca53bd8f8",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "scripts/terminal-perf/artifacts.ts",
+      "initialBlob": "eeac78ef15a882ca01423dfaf4c1ada83c10f861",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "scripts/terminal-perf/audit-probes/disk-callbacks.ts",
+      "initialBlob": "5c485f7a7ac0a5311928a43436af9615e3d8e696",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "scripts/terminal-perf/audit-probes/journal-stop.ts",
+      "initialBlob": "5d535f2de208af012789c2b9b05046ededd52463",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "scripts/terminal-perf/dashboard.ts",
+      "initialBlob": "5da2c4acd3cdbf1ebbe47c5e32e4086843c9517e",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "scripts/terminal-perf/interaction-catalog.ts",
+      "initialBlob": "9440f4128b7ec6f9dd429e456aca592ca32e5e14",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "scripts/terminal-perf/interaction-dashboard.ts",
+      "initialBlob": "f18fa94af55dd9bf016b3629273abf2d1a30ecbd",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "scripts/terminal-perf/interaction-normalize.ts",
+      "initialBlob": "7d11dad027d30e5fb2599903470d54dce827e746",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "scripts/terminal-perf/interaction-options.ts",
+      "initialBlob": "5f02670045e3b06132b1ba92708364d4c3950c19",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "scripts/terminal-perf/interaction-report.ts",
+      "initialBlob": "18af4bb852d356ff8cb446eccd13fad32242b79d",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "scripts/terminal-perf/interaction-tool-events.test.ts",
+      "initialBlob": "2ba446b1c0b439cc7ee92256ad58ff7ccd3d0836",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "scripts/terminal-perf/interaction-worker.ts",
+      "initialBlob": "479071932b154974ea189736685241aa5f1995c5",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "scripts/terminal-perf/navigation-workloads.ts",
+      "initialBlob": "d01398743c5affb8cc99babeae794e3f0dfe95a7",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "scripts/terminal-perf/options.ts",
+      "initialBlob": "9d123b4f21a13ef603be8c89b2eb9e16a68e1463",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "scripts/terminal-perf/profiler.ts",
+      "initialBlob": "3298aad91f561f6cee5e08f4efd3a840ac8bbb44",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "scripts/terminal-perf/report.ts",
+      "initialBlob": "2fcf24ca57d3c81087a237150258a6ec944bbefa",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "scripts/terminal-perf/selector-lifecycle-behavior.ts",
+      "initialBlob": "35e5c66c596e869e8067a9bb4c2298c671638330",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "scripts/terminal-perf/selector-lifecycle-probe.ts",
+      "initialBlob": "c050db1227585d0f71f7c2156f0a94128a808491",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "scripts/terminal-perf/selector-lifecycle.test.ts",
+      "initialBlob": "0799d40669ad0f61af0bd252affa18ff53e2ffa0",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "scripts/terminal-perf/send-workloads.ts",
+      "initialBlob": "52343cd8ba377fd60e745ecbc0d66c1e7afda918",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "scripts/terminal-perf/tool-event-workloads.ts",
+      "initialBlob": "89b078ccdf8cb1198e2ac22be0b734cd334573e6",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "scripts/terminal-perf/tool-workloads.ts",
+      "initialBlob": "9790dd19745757bf13aa0fe4980c1489ddecd511",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "scripts/terminal-perf/trace.ts",
+      "initialBlob": "2cae4e67ca3341e12927116d7ec45dfd81ec957f",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "scripts/terminal-perf/workloads.ts",
+      "initialBlob": "1402e6d195cd12b111d928c54c394203221ead1f",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "scripts/tmux.conf",
+      "initialBlob": "97b105de113aa23d912aa57f4f3dae012f9ef587",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "scripts/tui-harness.ts",
+      "initialBlob": "2fe85b0ba6b79f86d3bca3ca3ee4c187a82b610f",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "scripts/ui-cleanup-probe.py",
+      "initialBlob": "d77fd2cfa040e6ccd506cc2613ba0cc5b9d7f75f",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "src/cli.ts",
+      "initialBlob": "cbad51b1148eb0e4401b95d3e20bb3574f293c53",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "src/diagnostics-extension.ts",
+      "initialBlob": "51f2655613a4022bf3b3742d0c2de4524711e002",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "src/diagnostics.ts",
+      "initialBlob": "6fbe60bb93e4ee1cc78243ee5f28e585294dd5ca",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "src/ui/action-label.ts",
+      "initialBlob": "290d620d94ba2c45b195cc5c220ae0894bf95056",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "src/ui/activity-projection.ts",
+      "initialBlob": "90fe58e67e209ca8c64219ac0e60c8c7f1788dd8",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "src/ui/conversation-density.ts",
+      "initialBlob": "52d7ef08952d91ea499632280fc44dce2b3e4815",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "src/ui/editor.ts",
+      "initialBlob": "6f91ff6f6b3fe970e4fc9b821a687f6a0ba2f666",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "src/ui/execution-previews.ts",
+      "initialBlob": "26089d9420f9da4e0574d2053ba460283c46cb3a",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "src/ui/footer.ts",
+      "initialBlob": "fb774576e55d56e380988652dafc11d3bc6c6653",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "src/ui/quiet-tool-ui.ts",
+      "initialBlob": "5970b1ea57aba517a223ded5c196ab3ebca133f1",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "src/ui/rolling-activity.ts",
+      "initialBlob": "10c2ad0a2b8161b8b5b325707e32d25bd4cb5ed4",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "src/ui/sdk-task-rows.ts",
+      "initialBlob": "f76d7f295123b136a1e2082c1d384f5fc5b1e9c9",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "src/ui/settled-execute-render.ts",
+      "initialBlob": "d8134b728f86ecd669820d7922f459350e78adc8",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "src/ui/startup.ts",
+      "initialBlob": "3e98efaa1c3aec6d77cdb4c8f7f9ffa42e8f2f49",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "src/ui/subagent-settings.ts",
+      "initialBlob": "db6c10db1b02db15c995c20c2029ea6f9cb180c1",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "src/ui/task-monitor.ts",
+      "initialBlob": "9670404b405f1ce9149fa5c882956f92a0cd9889",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "src/ui/task-rows.ts",
+      "initialBlob": "6c4aaf00d8ca9275ed7dcfe7070fa5eb0e6a8179",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "tests/action-label-wiring.test.ts",
+      "initialBlob": "d832b5e79f4dc55c772394e88ad5890c5594cd68",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "tests/activity-runtime-acceptance-test.py",
+      "initialBlob": "ff2cea841882e0d28f20efc8314127b3afac029f",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "tests/activity-terminal-acceptance-test.py",
+      "initialBlob": "63f85dddf6e0c0890d2cc2b8c23e3ff8ac37c08b",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "tests/background-interrupt-tui.test.ts",
+      "initialBlob": "dcfc5d699293bf0adff7c09d0766b2b36d19f909",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "tests/background-ux-tui.test.ts",
+      "initialBlob": "8b58841438e433e4f5cd95783ec097883b9d43ae",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "tests/cli.test.ts",
+      "initialBlob": "70002a8662ff8db59fa74014040bb2544af9f464",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "tests/context-usage-cache.test.ts",
+      "initialBlob": "199e737c751b91cc07848c4c52fc0bef173cdc67",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "tests/conversation-density.test.ts",
+      "initialBlob": "e58898c0494a2673216105420c234d2be53960fa",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "tests/diagnostics.test.ts",
+      "initialBlob": "d58d7850cbe8b802a66c7049b161476b1beb955d",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "tests/editor.test.ts",
+      "initialBlob": "ffcfee2b78b774f93bd4f47fb0b8ed0f71d0615d",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "tests/execute-row-render-performance.test.ts",
+      "initialBlob": "2abeb55df0a90d7f1c064ac48febe4f2ecc25de6",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "tests/execution-previews-tui.test.ts",
+      "initialBlob": "5ff3275f99b27de84faed1e746a40fceaff393e5",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "tests/execution-previews.test.ts",
+      "initialBlob": "8e4b6c11e870f65c670ff089d68223f759f559b4",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "tests/fixtures/terminal-interaction-report.ts",
+      "initialBlob": "f557387fc34a01cf8051532a246cd363241e76bd",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "tests/footer.test.ts",
+      "initialBlob": "44e272d01ed9552d2083fc4951cfc58700cb8bc2",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "tests/fullscreen-editor-tui.test.ts",
+      "initialBlob": "0765cd545300592af1d228e5fc3c4a5abcc94ecd",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "tests/fullscreen-editor.test.ts",
+      "initialBlob": "31d089bc93325dda108e3e30b11b82ec604e54a9",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "tests/long-thread-pty-latency.test.ts",
+      "initialBlob": "ee7d4d4ae5ad75052551d01df53a362ceeaa2b4e",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "tests/long-thread-tui.test.ts",
+      "initialBlob": "eb883c6d1d32cce8830ae43727f4b211a8484dca",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "tests/rolling-activity-disk.test.ts",
+      "initialBlob": "16109794da03297d71f74968b134a2c9e7929bf4",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "tests/rolling-activity.test.ts",
+      "initialBlob": "d7fd169b04f7e8041287a022458bdfe24cd4fc26",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "tests/scroll-layout-render.test.ts",
+      "initialBlob": "a9cb7bece4e3c57da06b925be3d8d375e19cd3a7",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "tests/sdk-large-text-tui.test.ts",
+      "initialBlob": "f8bace9a51cf3ee12315a3cf3fef24c1e342bd10",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "tests/sdk-markdown-blocks.test.ts",
+      "initialBlob": "d69a3da5367fb93fdc4c47336260d74c0fc10bfd",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "tests/sdk-text-wrap-performance.test.ts",
+      "initialBlob": "ef27b8c491eb4f7f0d3af9da42c023be709eaec7",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "tests/settled-execute-render.test.ts",
+      "initialBlob": "3451aa3fdb6adf55f912719befe93918a1418650",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "tests/startup-tui.test.ts",
+      "initialBlob": "400c8cec0e31e00ca42ae4581de2c9e6dcf4b873",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "tests/startup.test.ts",
+      "initialBlob": "06e1ab4b62941e35f3b67aad7f3e7097f63d15e7",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "tests/task-rows.test.ts",
+      "initialBlob": "020528a4b2ce3105e8d0c203cee2c9e13273cf96",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "tests/tasks-ui-proof-tooling.test.py",
+      "initialBlob": "c1873f4566134f30ceab13bbd9314c40bc41c5fe",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "tests/terminal-interactions-cli.test.ts",
+      "initialBlob": "45005f3443bbbd98a85ad66cc0e31b59a8a33c0c",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "tests/terminal-interactions-report.test.ts",
+      "initialBlob": "cfc814a308ee4706e83669beb49d53d7e4a84f4d",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "tests/terminal-perf-action-profiler.test.ts",
+      "initialBlob": "9ba463bccc121cc8700bcd29f5b98be1ceaea9ce",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "tests/terminal-perf-cli.test.ts",
+      "initialBlob": "c8b2c787299512988880a71e71da14e912c2ae6e",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "tests/terminal-perf-navigation.test.ts",
+      "initialBlob": "a1e645587fbdc2b87426d83410d9c40fe3ef3f5a",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "tests/terminal-perf-options.test.ts",
+      "initialBlob": "53addac02c4655f7b3b8948ff18b52c3409b6812",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "tests/terminal-perf-profiler.test.ts",
+      "initialBlob": "7cb1ce3c1390f701e65cc245a7deb03fa10c8360",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "tests/terminal-perf-report.test.ts",
+      "initialBlob": "d1d2bab26a9c5244c85d8ef610ad7ca615f5dacf",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "tests/terminal-perf-send.test.ts",
+      "initialBlob": "1af5df2851173b7588355c9ab3b50ff3e9924d5d",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "tests/terminal-perf-t3-config.test.ts",
+      "initialBlob": "f81c727c864b16e2d7a243d0ce2764654e0cafbb",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "tests/terminal-perf-tool-events.test.ts",
+      "initialBlob": "fbbc00c6ccae356bf334930e102cee43534c1ec5",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "tests/terminal-perf-tools.test.ts",
+      "initialBlob": "fc51f95e6eede1cd6df28a1e7dec2122a0151dd3",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "tests/terminal-perf-workloads.test.ts",
+      "initialBlob": "162a5a3c74695d6edefe695eb9d5e4c4a52c0ed3",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "tests/tui-harness.test.ts",
+      "initialBlob": "b806b4944004e9d8806779d271da1b0c8ded8297",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "tests/tui-helpers.test.ts",
+      "initialBlob": "e64a66d456b1a43ea29f404e9e8113b5cba48156",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "tests/tui-helpers.ts",
+      "initialBlob": "b45f178e90e91b492f62d9eb4a86eeb2c23c02e6",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    },
+    {
+      "focus": "tests/tui-stop-restoration.test.ts",
+      "initialBlob": "a3a127ef7f44792d9b31b7944ad6ce6f74014c13",
+      "status": "pending",
+      "primary": [],
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integrationState": "pending"
+    }
+  ],
+  "extraFiles": []
+}
