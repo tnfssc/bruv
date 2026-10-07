@@ -63,7 +63,7 @@
     {
       "focus": "site/assets/brand/bruv-wordmark-light.svg",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judging",
+      "state": "accepted-unchanged",
       "primary": [
         {
           "id": "task_8e8b5dd8",
@@ -78,15 +78,21 @@
         {
           "id": "task_08863fc0",
           "candidate": "2ff0f2c0c985dedb7aa545ccca6bb84b8d15a631",
-          "state": "running"
+          "state": "completed",
+          "verdict": "NO CHANGE NEEDED",
+          "evidence": "Accessible SVG root and shared ink/transform visibly own four letters; direct README/build fallback references. Judge XML/labels/dimensions/variant equality plus2 tests/63 assertions. Tests reference assets/cells,not light-SVG pixels;no browser/build.",
+          "objections": []
         }
       ],
-      "initialBlob": "24eb77aa30fe79688b85c3c1272d4a4dda664cf6"
+      "initialBlob": "24eb77aa30fe79688b85c3c1272d4a4dda664cf6",
+      "acceptedBlob": "24eb77aa30fe79688b85c3c1272d4a4dda664cf6",
+      "changedRelatedPaths": [],
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded"
     },
     {
       "focus": "site/assets/brand/bruv-wordmark.svg",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "candidate-awaiting-judge",
+      "state": "judging",
       "primary": [
         {
           "id": "task_e142ec25",
@@ -97,7 +103,13 @@
           "result": "Unchanged accessible SVG root/shared fill-transform/four paths; traced README/generator/terminal cells/HTML/build copy.2 tests/63 assertions;dark/light differ only fill;no raster/browser."
         }
       ],
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_ac6fe577",
+          "candidate": "b561da257dcfa98464b66377ae61aff1503e8695",
+          "state": "running"
+        }
+      ],
       "initialBlob": "b9d5ea8571d64d060b3400c32ad0aa5d4282fef7"
     },
     {
@@ -154,11 +166,13 @@
     {
       "focus": "site/brand.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "candidate-awaiting-judge",
       "primary": [
         {
           "id": "task_4f28d450",
-          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d"
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d",
+          "commit": "18fb3b71fee4cb3734eef1c27a93e03a3a73646c",
+          "result": "Unchanged terminal->layout->wordmark(width)->48/28/24 rows; explicit selection,no hidden state.1 test/43 assertions;no build/browser/generator."
         }
       ],
       "judges": [],
@@ -330,8 +344,15 @@
     {
       "focus": "site/index.html",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_1510f666",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_1510f666",
+          "branch": "bruv/primary-site-index.html-1510f666",
+          "base": "4679f3868a540fe2664d34487027b81af8dcf1ce"
+        }
+      ],
       "judges": [],
       "initialBlob": "65aedee36320f9fb48ca7db09b5aaaa81fec3ee3"
     },

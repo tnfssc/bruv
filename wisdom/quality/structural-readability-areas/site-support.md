@@ -41,3 +41,5 @@ site/scripts/html-animation.test.ts: withDemoPage owns context lifetime includin
 site/.gitignore: Explicit installed-dependency/generated-output exclusions follow install/build/preview/deploy ownership; source and assets remain visible. Judge reproduced 10 probes including nested directories and non-exclusions; no build/browser/deploy claim.
 
 site/assets/brand/bruv-icon.svg: One accessible glyph with local theme fill/lean transform/even-odd counter is direct; build copies and metadata links it. Judge 10 build tests do not prove favicon copying/geometry/theme rendering; no browser/full build.
+
+site/assets/brand/bruv-wordmark-light.svg: Accessible SVG root and shared ink/transform visibly own four letters; direct README/build fallback references. Judge XML/labels/dimensions/variant equality plus2 tests/63 assertions. Tests reference assets/cells,not light-SVG pixels;no browser/build.
