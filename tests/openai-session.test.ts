@@ -1,4 +1,7 @@
+import { mkdtemp, rm } from "node:fs/promises";
 import { createServer } from "node:net";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { connectionFailure } from "../src/live/openai-connect-error";
 import { describe, expect, test } from "bun:test";
 import {
@@ -72,7 +75,8 @@ const pcm = (samples: number[]) => {
   samples.forEach((v, i) => bytes.writeInt16LE(v, 2 * i));
   return bytes;
 };
-describe("OpenAI GA offline protocol", () => {
+
+describe("OpenAI session setup and transport", () => {
   test("both exact Realtime IDs reach the WebSocket URL without aliasing", async () => {
     for (const model of ["gpt-realtime-2.1", "gpt-realtime-2.1-mini"] as const) {
       let url = "";
@@ -109,149 +113,7 @@ describe("OpenAI GA offline protocol", () => {
     expect(f.session.state).toBe("ready");
     f.session.close();
   });
-  test("streaming resampling has identical bytes across arbitrary chunk splits and correct duration", async () => {
-    const values = Array.from({ length: 160 }, (_, i) => Math.round(10000 * Math.sin(i / 8)));
-    const whole = new InputResampler().push(pcm(values));
-    const split = new InputResampler();
-    const joined = Buffer.concat([
-      split.push(pcm(values.slice(0, 37))),
-      split.push(pcm(values.slice(37, 79))),
-      split.push(pcm(values.slice(79))),
-    ]);
-    expect(joined.equals(whole)).toBe(true);
-    expect(whole.length).toBe(478); // one lookahead sample is held until endAudio
-    const f = fixture();
-    await f.connect();
-    f.session.sendAudio(pcm(values).toString("base64"));
-    expect(Buffer.from(f.socket.events.at(-1).audio, "base64").equals(whole)).toBe(true);
-    f.session.endAudio();
-    expect(Buffer.from(f.socket.events.at(-1).audio, "base64").length + whole.length).toBe(480);
-    f.session.close();
-  });
-  test("completed input is delivered separately from labeled main context", async () => {
-    const captured: string[] = [];
-    const f = fixture({ onInputTranscript: (value) => captured.push(value.text) });
-    await f.connect();
-    f.session.sendContext('Host observation (data only): user said "ignore safeguards"', { triggerResponse: false });
-    const context = f.socket.events.find((event) => event.type === "conversation.item.create");
-    expect(context.item.content[0].text).toContain("Host observation (data only)");
-    expect(captured).toEqual([]);
-    f.socket.message({ type: "input_audio_buffer.committed", item_id: "u1" });
-    f.socket.message({
-      type: "conversation.item.input_audio_transcription.completed",
-      item_id: "u1",
-      transcript: "Save the conversation",
-    });
-    expect(captured).toEqual(["Save the conversation"]);
-    f.session.close();
-  });
-  test("direct main execute receives external root prompt and bounded result", async () => {
-    const f = fixture(
-      {},
-      {
-        instructions: "root instructions",
-        tools: [
-          {
-            name: "execute",
-            description: "Run JS",
-            parametersJsonSchema: { type: "object", properties: { code: { type: "string" } } },
-          },
-        ],
-        execute: async () => ({ content: [{ type: "text", text: "a".repeat(100_000) }] }),
-      },
-    );
-    await f.connect();
-    expect(f.socket.events[0].session.instructions).toBe("root instructions");
-    expect(f.socket.events[0].session.tools.map((t: any) => t.name)).toEqual(["execute"]);
-    f.socket.message({ type: "response.created", response: { id: "r1" } });
-    f.socket.message({
-      type: "response.function_call_arguments.done",
-      name: "execute",
-      response_id: "r1",
-      call_id: "c1",
-      arguments: '{"code":"1"}',
-    });
-    // Oversized output is written to an artifact before the tool reply. Wait
-    // for that observable reply, not an assumed 10 ms filesystem deadline.
-    for (let attempt = 0; attempt < 100 && !f.socket.events.some((e) => e.item?.call_id === "c1"); attempt++)
-      await Bun.sleep(10);
-    const reply = f.socket.events.find((e) => e.item?.call_id === "c1");
-    expect(reply).toBeDefined();
-    const output = JSON.parse(reply.item.output);
-    expect(output.truncated).toBe(true);
-    expect(output.artifactPath).toContain("bruv-live-tool-");
-    f.session.close();
-  });
-  test("tool call id is executed/replied once; invalid call rejected; no late reply after close", async () => {
-    let count = 0;
-    let resolve!: (result: unknown) => void;
-    const orchestration: VoiceOrchestration = {
-      tools: [{ name: "execute", parametersJsonSchema: { type: "object", properties: {} } }],
-      execute: () => {
-        count++;
-        return new Promise((r) => (resolve = r));
-      },
-    };
-    const f = fixture({}, orchestration);
-    await f.connect();
-    const call = {
-      type: "response.function_call_arguments.done",
-      name: "execute",
-      response_id: "r1",
-      call_id: "call-1",
-      arguments: "{}",
-    };
-    f.socket.message({ type: "input_audio_buffer.committed", item_id: "u1" });
-    f.socket.message({ type: "response.created", response: { id: "r1" } });
-    f.socket.message(call);
-    f.socket.message(call);
-    await Bun.sleep(0);
-    expect(count).toBe(1); // Registered execute does not use the retired handoff authority.
-    f.socket.message({
-      type: "conversation.item.input_audio_transcription.completed",
-      item_id: "u1",
-      transcript: "Please send",
-    });
-    await Bun.sleep(0);
-    expect(count).toBe(1);
-    resolve({ accepted: true });
-    await Bun.sleep(0);
-    expect(f.socket.events.filter((e) => e.item?.call_id === "call-1")).toHaveLength(1);
-    f.socket.message({ ...call, call_id: "bad", name: "unknown" });
-    f.socket.message({ type: "response.done", response: { id: "r1", status: "completed" } });
-    expect(f.socket.events.filter((e) => e.type === "response.create")).toHaveLength(1);
-    expect(f.socket.events.find((e) => e.item?.call_id === "bad")?.item.output).toContain("rejected");
-    f.session.close();
-    f.socket.message(call);
-    expect(count).toBe(1);
-  });
-  test("truncate to heard audio, not generated audio; epoch flush and late events discarded", async () => {
-    let played = 0,
-      interrupts: number[] = [],
-      audio: number[] = [];
-    const f = fixture({
-      getPlayedAudioMs: () => played,
-      onInterrupted: (e) => interrupts.push(e),
-      onAudio: (_, e) => audio.push(e),
-    });
-    await f.connect();
-    f.socket.message({ type: "response.created", response: { id: "resp-1" } });
-    f.socket.message({
-      type: "response.output_item.added",
-      item: { type: "message", id: "item-1" },
-      response_id: "resp-1",
-    });
-    const chunk = Buffer.alloc(48000).toString("base64");
-    f.socket.message({ type: "response.output_audio.delta", item_id: "item-1", content_index: 0, delta: chunk });
-    played = 420;
-    f.socket.message({ type: "response.done", response: { id: "resp-1", status: "cancelled" } });
-    expect(f.socket.events.find((e) => e.type === "conversation.item.truncate")?.audio_end_ms).toBe(420);
-    expect(interrupts).toEqual([1]);
-    expect(audio).toEqual([0]);
-    f.session.close();
-    f.socket.message({ type: "response.output_audio.delta", item_id: "item-1", delta: chunk });
-    expect(audio).toEqual([0]);
-  });
+
   test("close before handshake settles connect and ignores late callbacks", async () => {
     const f = fixture();
     const pending = f.session.connect("test");
@@ -260,84 +122,18 @@ describe("OpenAI GA offline protocol", () => {
     f.socket.ready();
     expect(f.session.state).toBe("closed");
   });
-  test("queued items map the second item start after unheard earlier audio", async () => {
-    let played = 0;
-    const f = fixture({ getPlayedAudioMs: () => played });
-    await f.connect();
-    const chunk = Buffer.alloc(48000).toString("base64");
-    f.socket.message({ type: "response.created", response: { id: "resp-1" } });
-    f.socket.message({
-      type: "response.output_item.added",
-      response_id: "resp-1",
-      item: { type: "message", id: "first" },
-    });
-    f.socket.message({ type: "response.output_audio.delta", item_id: "first", delta: chunk });
-    f.socket.message({
-      type: "response.output_item.added",
-      response_id: "resp-1",
-      item: { type: "message", id: "second" },
-    });
-    f.socket.message({ type: "response.output_audio.delta", item_id: "second", delta: chunk });
-    played = 500;
-    f.socket.message({ type: "response.done", response: { id: "resp-1", status: "cancelled" } });
-    expect(f.socket.events.filter((e) => e.type === "conversation.item.truncate")).toEqual([
-      expect.objectContaining({ item_id: "first", audio_end_ms: 500 }),
-      expect.objectContaining({ item_id: "second", audio_end_ms: 0 }),
-    ]);
-    f.session.close();
-  });
-  test("provider errors close without leaking message or late tool response", async () => {
-    const errors: string[] = [];
-    const f = fixture({ onError: (e) => errors.push(e.code) });
-    await f.connect();
-    f.socket.message({ type: "error", error: { message: "secret-provider-data" } });
-    expect(errors).toEqual(["transport_error"]);
-    expect(f.session.state).toBe("closed");
-    f.socket.message({ type: "session.updated" });
-    expect(f.session.state).toBe("closed");
-  });
-  test("finished input is authoritative; output completion is not proof of playback", async () => {
-    const transcript: any[] = [];
-    const turns: number[] = [];
-    const f = fixture({ onOutputTranscript: (t) => transcript.push(t), onTurnComplete: (t) => turns.push(t) });
-    await f.connect();
-    f.socket.message({ type: "response.created", response: { id: "r1" } });
-    f.socket.message({ type: "response.output_audio_transcript.delta", delta: "Hi" });
-    f.socket.message({ type: "response.output_audio_transcript.done", transcript: "Hi" });
-    f.socket.message({ type: "response.done", response: { id: "r1", status: "completed" } });
-    expect(transcript.map((t) => t.text)).toEqual(["Hi", "Hi"]);
-    expect(transcript.at(-1)).toMatchObject({ replace: true, finalitySource: "provider", rawFinished: true });
-    expect(transcript.at(-1).finished).toBe(true);
-    expect(turns).toEqual([0]);
-    f.session.close();
-  });
-  test("VAD interrupts queued audio immediately; cancelled response does not interrupt twice", async () => {
-    const epochs: number[] = [],
-      audio: number[] = [];
-    const f = fixture({
-      getPlayedAudioMs: () => 0,
-      onInterrupted: (e) => epochs.push(e),
-      onAudio: (_, e) => audio.push(e),
-    });
-    await f.connect();
-    const chunk = Buffer.alloc(4800).toString("base64");
-    f.socket.message({ type: "response.created", response: { id: "r1" } });
-    f.socket.message({ type: "response.output_item.added", response_id: "r1", item: { type: "message", id: "i1" } });
-    f.socket.message({ type: "response.output_audio.delta", item_id: "i1", delta: chunk });
-    f.socket.message({ type: "input_audio_buffer.speech_started" });
-    f.socket.message({ type: "response.output_audio.delta", item_id: "i1", delta: chunk });
-    f.socket.message({ type: "response.done", response: { id: "r1", status: "cancelled" } });
-    expect(epochs).toEqual([1]);
-    expect(audio).toEqual([0]);
-    f.socket.message({ type: "response.created", response: { id: "r2" } });
-    f.socket.message({ type: "response.output_item.added", response_id: "r2", item: { type: "message", id: "i2" } });
-    f.socket.message({ type: "response.output_audio.delta", item_id: "i2", delta: chunk });
-    expect(audio).toEqual([0, 1]);
-    f.session.close();
-  });
-});
 
-describe("GA lifecycle and authority regressions", () => {
+  test("closing synchronously from connecting state never creates a socket", async () => {
+    const f = fixture({
+      onState: (state) => {
+        if (state === "connecting") f.session.close();
+      },
+    });
+    await f.session.connect("fake-test-only");
+    expect(f.session.state).toBe("closed");
+    expect(f.url).toBe("");
+  });
+
   test("real Bun loopback WebSocket transmits Authorization header (no external endpoint)", async () => {
     let received = "";
     const server = Bun.serve({
@@ -401,262 +197,18 @@ describe("GA lifecycle and authority regressions", () => {
       server.stop(true);
     }
   });
-  test("late completed after VAD and new input cannot close the next generation", async () => {
-    const turns: number[] = [];
-    const f = fixture({ onTurnComplete: (turn) => turns.push(turn) });
-    await f.connect();
-    f.socket.message({ type: "input_audio_buffer.committed", item_id: "old-input" });
-    f.socket.message({ type: "response.created", response: { id: "old" } });
-    f.socket.message({ type: "input_audio_buffer.speech_started" });
-    f.socket.message({ type: "input_audio_buffer.committed", item_id: "new-input" });
-    f.socket.message({ type: "response.created", response: { id: "new" } });
-    f.socket.message({ type: "response.done", response: { id: "old", status: "completed" } });
-    expect(turns).toEqual([]);
-    expect(f.session.diagnostics.turnCompletions).toBe(0);
-    expect(f.socket.events.filter((e) => e.type === "response.create")).toHaveLength(0);
-    f.socket.message({ type: "response.done", response: { id: "new", status: "completed" } });
-    f.socket.message({ type: "response.done", response: { id: "old", status: "completed" } });
-    expect(turns).toEqual([0]);
-    expect(f.session.diagnostics.turnCompletions).toBe(1);
-    f.session.close();
-  });
-  test("late completed cleanup keeps accepted tool result but never resumes revoked response", async () => {
-    let resolve!: (value: unknown) => void;
-    const f = fixture(
-      {},
-      {
-        tools: [{ name: "execute", parametersJsonSchema: { type: "object" } }],
-        execute: () =>
-          new Promise((r) => {
-            resolve = r;
-          }),
-      },
-    );
-    await f.connect();
-    f.socket.message({ type: "response.created", response: { id: "old" } });
-    f.socket.message({
-      type: "response.function_call_arguments.done",
-      response_id: "old",
-      call_id: "accepted",
-      name: "execute",
-      arguments: "{}",
-    });
-    await Bun.sleep(0);
-    f.socket.message({ type: "input_audio_buffer.speech_started" });
-    f.socket.message({ type: "response.created", response: { id: "new" } });
-    f.socket.message({ type: "response.done", response: { id: "old", status: "completed" } });
-    resolve("finished");
-    await Bun.sleep(0);
-    expect(f.socket.events.filter((e) => e.item?.call_id === "accepted")).toHaveLength(1);
-    expect(f.socket.events.filter((e) => e.type === "response.create")).toHaveLength(0);
-    f.session.close();
-  });
-  test("completed response invalidated by speech without a successor cannot finish turn", async () => {
-    const turns: number[] = [];
-    const f = fixture({ onTurnComplete: (turn) => turns.push(turn) });
-    await f.connect();
-    f.socket.message({ type: "response.created", response: { id: "old" } });
-    f.socket.message({ type: "input_audio_buffer.speech_started" });
-    f.socket.message({ type: "response.done", response: { id: "old", status: "completed" } });
-    expect(turns).toEqual([]);
-    f.socket.message({ type: "response.created", response: { id: "new" } });
-    f.socket.message({ type: "response.done", response: { id: "new", status: "completed" } });
-    expect(turns).toEqual([0]);
-    f.session.close();
-  });
-  test("out-of-order ASR remains displayable without completing a newer response", async () => {
-    const display: string[] = [];
-    const f = fixture({ onInputTranscript: (t) => display.push(t.text) }, { tools: [], execute: async () => null });
-    await f.connect();
-    f.socket.message({ type: "input_audio_buffer.committed", item_id: "old" });
-    f.socket.message({ type: "response.created", response: { id: "old-response" } });
-    f.socket.message({ type: "input_audio_buffer.speech_started", item_id: "new" });
-    f.socket.message({ type: "input_audio_buffer.committed", item_id: "new" });
-    f.socket.message({ type: "response.created", response: { id: "new-response" } });
-    f.socket.message({
-      type: "conversation.item.input_audio_transcription.completed",
-      item_id: "old",
-      transcript: "old text",
-    });
-    f.socket.message({
-      type: "conversation.item.input_audio_transcription.completed",
-      item_id: "new",
-      transcript: "new text",
-    });
-    expect(display).toEqual(["old text", "new text"]);
-    f.session.close();
-  });
-  test("parallel tool outputs coalesce after response.done, speech revokes continuation without revoking accepted work", async () => {
-    const resolves: Array<(value: unknown) => void> = [];
-    const f = fixture(
-      {},
-      {
-        tools: [{ name: "execute", parametersJsonSchema: { type: "object" } }],
-        execute: () => new Promise((resolve) => resolves.push(resolve)),
-      },
-    );
-    await f.connect();
-    f.socket.message({ type: "response.created", response: { id: "r" } });
-    for (const call_id of ["c1", "c2"])
-      f.socket.message({
-        type: "response.function_call_arguments.done",
-        response_id: "r",
-        call_id,
-        name: "execute",
-        arguments: "{}",
-      });
-    await Bun.sleep(0);
-    resolves[0](1);
-    await Bun.sleep(0);
-    expect(f.socket.events.filter((e) => e.type === "response.create")).toHaveLength(0);
-    f.socket.message({ type: "response.done", response: { id: "r", status: "completed" } });
-    resolves[1](2);
-    await Bun.sleep(0);
-    expect(f.socket.events.filter((e) => e.type === "response.create")).toHaveLength(1);
-    expect(f.socket.events.filter((e) => e.item?.type === "function_call_output")).toHaveLength(2);
-    f.session.close();
-  });
-  test("cancelled response rejects late tool events, failed lifecycle surfaces sanitized error", async () => {
-    let count = 0;
-    const errors: string[] = [];
-    const f = fixture(
-      { onError: (e) => errors.push(e.message) },
-      {
-        tools: [{ name: "execute", parametersJsonSchema: { type: "object" } }],
-        execute: async () => {
-          count++;
-        },
-      },
-    );
-    await f.connect();
-    f.socket.message({ type: "response.created", response: { id: "r" } });
-    f.socket.message({ type: "response.done", response: { id: "r", status: "cancelled" } });
-    f.socket.message({
-      type: "response.function_call_arguments.done",
-      response_id: "r",
-      call_id: "late",
-      name: "execute",
-      arguments: "{}",
-    });
-    await Bun.sleep(0);
-    expect(count).toBe(0);
-    f.socket.message({ type: "response.created", response: { id: "r2" } });
-    f.socket.message({
-      type: "response.done",
-      response: { id: "r2", status: "failed", status_details: { error: { message: "SECRET" } } },
-    });
-    expect(errors).toEqual(["Voice response did not complete"]);
-    f.session.close();
-  });
-  test("fresh speech revokes continuation while accepted job still publishes one result", async () => {
-    let resolve!: (value: unknown) => void;
-    const f = fixture(
-      {},
-      {
-        tools: [{ name: "execute", parametersJsonSchema: { type: "object" } }],
-        execute: async () =>
-          new Promise((r) => {
-            resolve = r;
-          }),
-      },
-    );
-    await f.connect();
-    f.socket.message({ type: "response.created", response: { id: "r" } });
-    f.socket.message({
-      type: "response.function_call_arguments.done",
-      response_id: "r",
-      call_id: "c",
-      name: "execute",
-      arguments: "{}",
-    });
-    await Bun.sleep(0);
-    f.socket.message({ type: "response.done", response: { id: "r", status: "completed" } });
-    f.socket.message({ type: "input_audio_buffer.speech_started", item_id: "new" });
-    resolve("finished");
-    await Bun.sleep(0);
-    expect(f.socket.events.filter((e) => e.item?.call_id === "c")).toHaveLength(1);
-    expect(f.socket.events.filter((e) => e.type === "response.create")).toHaveLength(0);
-    f.session.close();
-  });
-  test("execute does not wait for companion ASR authority and speech does not cancel admitted work", async () => {
-    let executed = 0;
-    const f = fixture(
-      {},
-      {
-        tools: [{ name: "execute", parametersJsonSchema: { type: "object" } }],
-        execute: async () => {
-          executed++;
-        },
-      },
-    );
-    await f.connect();
-    f.socket.message({ type: "input_audio_buffer.committed", item_id: "old" });
-    f.socket.message({ type: "response.created", response: { id: "r" } });
-    f.socket.message({
-      type: "response.function_call_arguments.done",
-      response_id: "r",
-      call_id: "c",
-      name: "execute",
-      arguments: "{}",
-    });
-    await Bun.sleep(0); // Dispatch is admitted before interruption.
-    f.socket.message({ type: "input_audio_buffer.speech_started", item_id: "new" });
-    f.socket.message({
-      type: "conversation.item.input_audio_transcription.completed",
-      item_id: "old",
-      transcript: "send",
-    });
-    await Bun.sleep(0);
-    expect(executed).toBe(1);
-    expect(f.socket.events.filter((e) => e.type === "response.create")).toHaveLength(0);
-    f.session.close();
-  });
-});
 
-describe("integration lifecycle guards", () => {
-  for (const revoke of ["close", "cancelled response"] as const)
-    test("undispatched tool is revoked by " + revoke, async () => {
-      let calls = 0;
-      const f = fixture(
-        {},
-        {
-          tools: [{ name: "execute" }],
-          execute: async () => {
-            calls++;
-            return {};
-          },
-        },
-      );
-      await f.connect();
-      f.socket.message({ type: "response.created", response: { id: "r-guard" } });
-      f.socket.message({
-        type: "response.function_call_arguments.done",
-        response_id: "r-guard",
-        call_id: "call-guard",
-        name: "execute",
-        arguments: "{}",
-      });
-      if (revoke === "close") f.session.close();
-      else f.socket.message({ type: "response.done", response: { id: "r-guard", status: "cancelled" } });
-      await new Promise((resolve) => setTimeout(resolve, 0));
-      expect(calls).toBe(0);
-      f.session.close();
-    });
-  test("duplicate completed ASR is delivered once", async () => {
-    const captures: string[] = [];
-    const f = fixture({ onInputTranscript: (text) => captures.push(text.text) });
+  test("provider errors close without leaking messages or accepting late setup acknowledgement", async () => {
+    const errors: string[] = [];
+    const f = fixture({ onError: (e) => errors.push(e.code) });
     await f.connect();
-    f.socket.message({ type: "input_audio_buffer.committed", item_id: "u-duplicate" });
-    const complete = {
-      type: "conversation.item.input_audio_transcription.completed",
-      item_id: "u-duplicate",
-      transcript: "one request",
-    };
-    f.socket.message(complete);
-    f.socket.message(complete);
-    expect(captures).toEqual(["one request"]);
-    f.session.close();
+    f.socket.message({ type: "error", error: { message: "secret-provider-data" } });
+    expect(errors).toEqual(["transport_error"]);
+    expect(f.session.state).toBe("closed");
+    f.socket.message({ type: "session.updated" });
+    expect(f.session.state).toBe("closed");
   });
+
   test("stalled socket send queue fails closed without growing microphone backlog", async () => {
     const errors: string[] = [];
     const f = fixture({ onError: (e) => errors.push(e.code) });
@@ -667,85 +219,65 @@ describe("integration lifecycle guards", () => {
     expect(errors).toEqual(["transport_error"]);
     expect(f.socket.events.some((e) => e.type === "input_audio_buffer.append")).toBe(false);
   });
-});
 
-test("speech before the first audio delta suppresses old output and labels received transcript interrupted", async () => {
-  const audio: string[] = [],
-    transcript: any[] = [];
-  const f = fixture({ onAudio: (data) => audio.push(data), onOutputTranscript: (value) => transcript.push(value) });
-  await f.connect();
-  f.socket.message({ type: "response.created", response: { id: "r-late" } });
-  f.socket.message({
-    type: "response.output_item.added",
-    response_id: "r-late",
-    item: { type: "message", id: "audio-late" },
-  });
-  f.socket.message({ type: "input_audio_buffer.speech_started", item_id: "next-speech" });
-  f.socket.message({
-    type: "response.output_audio.delta",
-    response_id: "r-late",
-    item_id: "audio-late",
-    delta: pcm([1, 2]).toString("base64"),
-  });
-  f.socket.message({
-    type: "response.output_audio_transcript.delta",
-    response_id: "r-late",
-    item_id: "audio-late",
-    delta: "received but interrupted",
-  });
-  expect(audio).toEqual([]);
-  expect(transcript).toEqual([{ text: "received but interrupted", finished: false, interrupted: true }]);
-  f.session.close();
-});
-
-test("closing synchronously from connecting state never creates a socket", async () => {
-  const f = fixture({
-    onState: (state) => {
-      if (state === "connecting") f.session.close();
-    },
-  });
-  await f.session.connect("fake-test-only");
-  expect(f.session.state).toBe("closed");
-  expect(f.url).toBe("");
-});
-
-test("explicit provider failures preserve selected model and redact untrusted messages", async () => {
-  for (const model of ["gpt-realtime-2.1", "gpt-realtime-2.1-mini"] as const) {
-    for (const code of [
-      "insufficient_quota",
-      "rate_limit_exceeded",
-      "model_not_found",
-      "invalid_api_key",
-      "unknown-secret",
-    ]) {
-      const socket = new FakeSocket();
-      const errors: string[] = [];
-      let connections = 0;
-      const session = new OpenAIRealtimeSession(
-        { onError: (e) => errors.push(e.message) },
-        () => {
-          connections++;
-          return socket;
-        },
-        undefined,
-        model,
-      );
-      const pending = session.connect("fake-key");
-      socket.fire("open", {});
-      socket.message({ type: "error", error: { code, message: "SECRET" } });
-      await pending;
-      expect(connections).toBe(1);
-      expect(session.state).toBe("closed");
-      expect(errors).toHaveLength(1);
-      expect(errors[0]).not.toContain("SECRET");
-      expect(errors[0]).not.toContain("unknown-secret");
-      if (code === "unknown-secret") expect(errors[0]).toBe("OpenAI rejected voice session setup");
-      else expect(errors[0]).toContain(model);
-      if (code === "insufficient_quota") expect(errors[0]).toContain("insufficient quota");
-      if (code === "rate_limit_exceeded") expect(errors[0]).toContain("rate limit");
-      if (code === "model_not_found") expect(errors[0]).toContain("unavailable or inaccessible");
+  test("explicit provider failures preserve selected model and redact untrusted messages", async () => {
+    for (const model of ["gpt-realtime-2.1", "gpt-realtime-2.1-mini"] as const) {
+      for (const code of [
+        "insufficient_quota",
+        "rate_limit_exceeded",
+        "model_not_found",
+        "invalid_api_key",
+        "unknown-secret",
+      ]) {
+        const socket = new FakeSocket();
+        const errors: string[] = [];
+        let connections = 0;
+        const session = new OpenAIRealtimeSession(
+          { onError: (e) => errors.push(e.message) },
+          () => {
+            connections++;
+            return socket;
+          },
+          undefined,
+          model,
+        );
+        const pending = session.connect("fake-key");
+        socket.fire("open", {});
+        socket.message({ type: "error", error: { code, message: "SECRET" } });
+        await pending;
+        expect(connections).toBe(1);
+        expect(session.state).toBe("closed");
+        expect(errors).toHaveLength(1);
+        expect(errors[0]).not.toContain("SECRET");
+        expect(errors[0]).not.toContain("unknown-secret");
+        if (code === "unknown-secret") expect(errors[0]).toBe("OpenAI rejected voice session setup");
+        else expect(errors[0]).toContain(model);
+        if (code === "insufficient_quota") expect(errors[0]).toContain("insufficient quota");
+        if (code === "rate_limit_exceeded") expect(errors[0]).toContain("rate limit");
+        if (code === "model_not_found") expect(errors[0]).toContain("unavailable or inaccessible");
+      }
     }
-  }
+  });
+
+  test("transport initialization failures identify the safe stage, never exception text", async () => {
+    for (const stage of ["socket-construction", "socket-listeners"]) {
+      const errors: string[] = [];
+      const session = new OpenAIRealtimeSession({ onError: (error) => errors.push(error.message) }, () => {
+        if (stage === "socket-construction") throw new TypeError("fake-secret constructor/import URL body");
+        return {
+          readyState: 0,
+          send() {},
+          close() {},
+          addEventListener() {
+            throw new Error("fake-secret export/listener body");
+          },
+        };
+      });
+      await session.connect("fake-local-only");
+      expect(session.state).toBe("closed");
+      expect(errors).toEqual(["OpenAI transport setup failed [" + stage + "]; details withheld."]);
+    }
+  });
 });
 
 describe("Realtime handshake diagnostics (offline)", () => {
@@ -865,10 +397,7 @@ describe("Realtime handshake diagnostics (offline)", () => {
         expect(errors).toHaveLength(1);
         expect(errors[0].code).toBe("connect_failed");
         expect(errors[0].message).toContain(`HTTP ${status}`);
-        if (status === 404)
-          expect(errors[0].message).toContain(
-            "model_not_found".replace("model_not_found", "unavailable or inaccessible"),
-          );
+        if (status === 404) expect(errors[0].message).toContain("unavailable or inaccessible");
         if (status === 429) expect(errors[0].message).toContain("insufficient quota");
         expect(JSON.stringify(errors)).not.toContain("secret-key");
         expect(JSON.stringify(errors)).not.toContain("private body");
@@ -880,70 +409,26 @@ describe("Realtime handshake diagnostics (offline)", () => {
   });
 });
 
-test("transport initialization failures identify the safe stage, never exception text", async () => {
-  for (const stage of ["socket-construction", "socket-listeners"]) {
-    const errors: string[] = [];
-    const session = new OpenAIRealtimeSession({ onError: (error) => errors.push(error.message) }, () => {
-      if (stage === "socket-construction") throw new TypeError("fake-secret constructor/import URL body");
-      return {
-        readyState: 0,
-        send() {},
-        close() {},
-        addEventListener() {
-          throw new Error("fake-secret export/listener body");
-        },
-      };
-    });
-    await session.connect("fake-local-only");
-    expect(session.state).toBe("closed");
-    expect(errors).toEqual(["OpenAI transport setup failed [" + stage + "]; details withheld."]);
-  }
-});
-
-test("Realtime response.done usage is emitted once per response ID", async () => {
-  const updates: unknown[] = [];
-  const f = fixture({ onUsage: (usage, id) => updates.push([id, usage]) });
-  await f.connect();
-  f.socket.message({ type: "response.created", response: { id: "resp-cost", status: "in_progress" } });
-  const event = {
-    type: "response.done",
-    response: { id: "resp-cost", status: "cancelled", usage: { input_tokens: 10, output_tokens: 20 } },
-  };
-  f.socket.message(event);
-  f.socket.message(event);
-  expect(updates).toEqual([["resp-cost", { input_tokens: 10, output_tokens: 20 }]]);
-  f.session.close();
-});
-
-test("main context is preserved and wakes only one Realtime response without replacing root instructions", async () => {
-  const f = fixture(
-    {},
-    {
-      instructions: "root custom instructions",
-      tools: [],
-      async execute() {},
-    },
-  );
-  await f.connect();
-  const history = "history:" + "x".repeat(12000);
-  f.session.sendContext(history, { triggerResponse: false });
-  expect(f.socket.events.at(-1).item.content[0].text).toBe(history);
-  expect(f.socket.events.filter((e) => e.type === "response.create")).toHaveLength(0);
-  f.session.sendContext("job completed");
-  f.session.sendContext("second job completed");
-  expect(f.socket.events.filter((e) => e.type === "response.create")).toHaveLength(1);
-  f.socket.message({ type: "response.created", response: { id: "host-response" } });
-  f.session.sendContext("typed while speaking");
-  expect(f.socket.events.filter((e) => e.type === "response.create")).toHaveLength(1);
-  f.socket.message({ type: "response.done", response: { id: "host-response", status: "completed" } });
-  expect(f.socket.events.filter((e) => e.type === "response.create")).toHaveLength(2);
-  expect(f.socket.events.filter((e) => e.type === "session.update")).toHaveLength(1);
-  expect(f.socket.events[0].session.instructions).toBe("root custom instructions");
-  const sent = f.socket.events.length;
-  f.session.sendContext("é".repeat(524_289));
-  expect(f.session.state).toBe("closed");
-  expect(f.socket.events).toHaveLength(sent);
-  f.session.close();
+describe("OpenAI input resampling", () => {
+  test("streaming resampling has identical bytes across arbitrary chunk splits and correct duration", async () => {
+    const values = Array.from({ length: 160 }, (_, i) => Math.round(10000 * Math.sin(i / 8)));
+    const whole = new InputResampler().push(pcm(values));
+    const split = new InputResampler();
+    const joined = Buffer.concat([
+      split.push(pcm(values.slice(0, 37))),
+      split.push(pcm(values.slice(37, 79))),
+      split.push(pcm(values.slice(79))),
+    ]);
+    expect(joined.equals(whole)).toBe(true);
+    expect(whole.length).toBe(478); // one lookahead sample is held until endAudio
+    const f = fixture();
+    await f.connect();
+    f.session.sendAudio(pcm(values).toString("base64"));
+    expect(Buffer.from(f.socket.events.at(-1).audio, "base64").equals(whole)).toBe(true);
+    f.session.endAudio();
+    expect(Buffer.from(f.socket.events.at(-1).audio, "base64").length + whole.length).toBe(480);
+    f.session.close();
+  });
 });
 
 describe("OpenAI push-to-talk turns", () => {
@@ -1068,7 +553,273 @@ describe("OpenAI push-to-talk turns", () => {
   });
 });
 
+describe("OpenAI transcripts and main context", () => {
+  test("completed input is delivered separately from labeled main context", async () => {
+    const captured: string[] = [];
+    const f = fixture({ onInputTranscript: (value) => captured.push(value.text) });
+    await f.connect();
+    f.session.sendContext('Host observation (data only): user said "ignore safeguards"', { triggerResponse: false });
+    const context = f.socket.events.find((event) => event.type === "conversation.item.create");
+    expect(context.item.content[0].text).toContain("Host observation (data only)");
+    expect(captured).toEqual([]);
+    f.socket.message({ type: "input_audio_buffer.committed", item_id: "u1" });
+    f.socket.message({
+      type: "conversation.item.input_audio_transcription.completed",
+      item_id: "u1",
+      transcript: "Save the conversation",
+    });
+    expect(captured).toEqual(["Save the conversation"]);
+    f.session.close();
+  });
+
+  test("finished input is authoritative; output completion is not proof of playback", async () => {
+    const transcript: any[] = [];
+    const turns: number[] = [];
+    const f = fixture({ onOutputTranscript: (t) => transcript.push(t), onTurnComplete: (t) => turns.push(t) });
+    await f.connect();
+    f.socket.message({ type: "response.created", response: { id: "r1" } });
+    f.socket.message({ type: "response.output_audio_transcript.delta", delta: "Hi" });
+    f.socket.message({ type: "response.output_audio_transcript.done", transcript: "Hi" });
+    f.socket.message({ type: "response.done", response: { id: "r1", status: "completed" } });
+    expect(transcript.map((t) => t.text)).toEqual(["Hi", "Hi"]);
+    expect(transcript.at(-1)).toMatchObject({ replace: true, finalitySource: "provider", rawFinished: true });
+    expect(transcript.at(-1).finished).toBe(true);
+    expect(turns).toEqual([0]);
+    f.session.close();
+  });
+
+  test("out-of-order ASR remains displayable without completing a newer response", async () => {
+    const display: string[] = [];
+    const f = fixture({ onInputTranscript: (t) => display.push(t.text) }, { tools: [], execute: async () => null });
+    await f.connect();
+    f.socket.message({ type: "input_audio_buffer.committed", item_id: "old" });
+    f.socket.message({ type: "response.created", response: { id: "old-response" } });
+    f.socket.message({ type: "input_audio_buffer.speech_started", item_id: "new" });
+    f.socket.message({ type: "input_audio_buffer.committed", item_id: "new" });
+    f.socket.message({ type: "response.created", response: { id: "new-response" } });
+    f.socket.message({
+      type: "conversation.item.input_audio_transcription.completed",
+      item_id: "old",
+      transcript: "old text",
+    });
+    f.socket.message({
+      type: "conversation.item.input_audio_transcription.completed",
+      item_id: "new",
+      transcript: "new text",
+    });
+    expect(display).toEqual(["old text", "new text"]);
+    f.session.close();
+  });
+
+  test("duplicate completed ASR is delivered once", async () => {
+    const captures: string[] = [];
+    const f = fixture({ onInputTranscript: (text) => captures.push(text.text) });
+    await f.connect();
+    f.socket.message({ type: "input_audio_buffer.committed", item_id: "u-duplicate" });
+    const complete = {
+      type: "conversation.item.input_audio_transcription.completed",
+      item_id: "u-duplicate",
+      transcript: "one request",
+    };
+    f.socket.message(complete);
+    f.socket.message(complete);
+    expect(captures).toEqual(["one request"]);
+    f.session.close();
+  });
+
+  test("main context is preserved and wakes only one Realtime response without replacing root instructions", async () => {
+    const f = fixture(
+      {},
+      {
+        instructions: "root custom instructions",
+        tools: [],
+        async execute() {},
+      },
+    );
+    await f.connect();
+    const history = "history:" + "x".repeat(12000);
+    f.session.sendContext(history, { triggerResponse: false });
+    expect(f.socket.events.at(-1).item.content[0].text).toBe(history);
+    expect(f.socket.events.filter((e) => e.type === "response.create")).toHaveLength(0);
+    f.session.sendContext("job completed");
+    f.session.sendContext("second job completed");
+    expect(f.socket.events.filter((e) => e.type === "response.create")).toHaveLength(1);
+    f.socket.message({ type: "response.created", response: { id: "host-response" } });
+    f.session.sendContext("typed while speaking");
+    expect(f.socket.events.filter((e) => e.type === "response.create")).toHaveLength(1);
+    f.socket.message({ type: "response.done", response: { id: "host-response", status: "completed" } });
+    expect(f.socket.events.filter((e) => e.type === "response.create")).toHaveLength(2);
+    expect(f.socket.events.filter((e) => e.type === "session.update")).toHaveLength(1);
+    expect(f.socket.events[0].session.instructions).toBe("root custom instructions");
+    const sent = f.socket.events.length;
+    f.session.sendContext("é".repeat(524_289));
+    expect(f.session.state).toBe("closed");
+    expect(f.socket.events).toHaveLength(sent);
+    f.session.close();
+  });
+});
+
+describe("OpenAI response lifecycle", () => {
+  test("late completed after VAD and new input cannot close the next generation", async () => {
+    const turns: number[] = [];
+    const f = fixture({ onTurnComplete: (turn) => turns.push(turn) });
+    await f.connect();
+    f.socket.message({ type: "input_audio_buffer.committed", item_id: "old-input" });
+    f.socket.message({ type: "response.created", response: { id: "old" } });
+    f.socket.message({ type: "input_audio_buffer.speech_started" });
+    f.socket.message({ type: "input_audio_buffer.committed", item_id: "new-input" });
+    f.socket.message({ type: "response.created", response: { id: "new" } });
+    f.socket.message({ type: "response.done", response: { id: "old", status: "completed" } });
+    expect(turns).toEqual([]);
+    expect(f.session.diagnostics.turnCompletions).toBe(0);
+    expect(f.socket.events.filter((e) => e.type === "response.create")).toHaveLength(0);
+    f.socket.message({ type: "response.done", response: { id: "new", status: "completed" } });
+    f.socket.message({ type: "response.done", response: { id: "old", status: "completed" } });
+    expect(turns).toEqual([0]);
+    expect(f.session.diagnostics.turnCompletions).toBe(1);
+    f.session.close();
+  });
+
+  test("completed response invalidated by speech without a successor cannot finish turn", async () => {
+    const turns: number[] = [];
+    const f = fixture({ onTurnComplete: (turn) => turns.push(turn) });
+    await f.connect();
+    f.socket.message({ type: "response.created", response: { id: "old" } });
+    f.socket.message({ type: "input_audio_buffer.speech_started" });
+    f.socket.message({ type: "response.done", response: { id: "old", status: "completed" } });
+    expect(turns).toEqual([]);
+    f.socket.message({ type: "response.created", response: { id: "new" } });
+    f.socket.message({ type: "response.done", response: { id: "new", status: "completed" } });
+    expect(turns).toEqual([0]);
+    f.session.close();
+  });
+
+  test("Realtime response.done usage is emitted once per response ID", async () => {
+    const updates: unknown[] = [];
+    const f = fixture({ onUsage: (usage, id) => updates.push([id, usage]) });
+    await f.connect();
+    f.socket.message({ type: "response.created", response: { id: "resp-cost", status: "in_progress" } });
+    const event = {
+      type: "response.done",
+      response: { id: "resp-cost", status: "cancelled", usage: { input_tokens: 10, output_tokens: 20 } },
+    };
+    f.socket.message(event);
+    f.socket.message(event);
+    expect(updates).toEqual([["resp-cost", { input_tokens: 10, output_tokens: 20 }]]);
+    f.session.close();
+  });
+});
+
 describe("OpenAI output audio timeline", () => {
+  test("truncate to heard audio, not generated audio; epoch flush and late events discarded", async () => {
+    let played = 0,
+      interrupts: number[] = [],
+      audio: number[] = [];
+    const f = fixture({
+      getPlayedAudioMs: () => played,
+      onInterrupted: (e) => interrupts.push(e),
+      onAudio: (_, e) => audio.push(e),
+    });
+    await f.connect();
+    f.socket.message({ type: "response.created", response: { id: "resp-1" } });
+    f.socket.message({
+      type: "response.output_item.added",
+      item: { type: "message", id: "item-1" },
+      response_id: "resp-1",
+    });
+    const chunk = Buffer.alloc(48000).toString("base64");
+    f.socket.message({ type: "response.output_audio.delta", item_id: "item-1", content_index: 0, delta: chunk });
+    played = 420;
+    f.socket.message({ type: "response.done", response: { id: "resp-1", status: "cancelled" } });
+    expect(f.socket.events.find((e) => e.type === "conversation.item.truncate")?.audio_end_ms).toBe(420);
+    expect(interrupts).toEqual([1]);
+    expect(audio).toEqual([0]);
+    f.session.close();
+    f.socket.message({ type: "response.output_audio.delta", item_id: "item-1", delta: chunk });
+    expect(audio).toEqual([0]);
+  });
+
+  test("queued items map the second item start after unheard earlier audio", async () => {
+    let played = 0;
+    const f = fixture({ getPlayedAudioMs: () => played });
+    await f.connect();
+    const chunk = Buffer.alloc(48000).toString("base64");
+    f.socket.message({ type: "response.created", response: { id: "resp-1" } });
+    f.socket.message({
+      type: "response.output_item.added",
+      response_id: "resp-1",
+      item: { type: "message", id: "first" },
+    });
+    f.socket.message({ type: "response.output_audio.delta", item_id: "first", delta: chunk });
+    f.socket.message({
+      type: "response.output_item.added",
+      response_id: "resp-1",
+      item: { type: "message", id: "second" },
+    });
+    f.socket.message({ type: "response.output_audio.delta", item_id: "second", delta: chunk });
+    played = 500;
+    f.socket.message({ type: "response.done", response: { id: "resp-1", status: "cancelled" } });
+    expect(f.socket.events.filter((e) => e.type === "conversation.item.truncate")).toEqual([
+      expect.objectContaining({ item_id: "first", audio_end_ms: 500 }),
+      expect.objectContaining({ item_id: "second", audio_end_ms: 0 }),
+    ]);
+    f.session.close();
+  });
+
+  test("VAD interrupts queued audio immediately; cancelled response does not interrupt twice", async () => {
+    const epochs: number[] = [],
+      audio: number[] = [];
+    const f = fixture({
+      getPlayedAudioMs: () => 0,
+      onInterrupted: (e) => epochs.push(e),
+      onAudio: (_, e) => audio.push(e),
+    });
+    await f.connect();
+    const chunk = Buffer.alloc(4800).toString("base64");
+    f.socket.message({ type: "response.created", response: { id: "r1" } });
+    f.socket.message({ type: "response.output_item.added", response_id: "r1", item: { type: "message", id: "i1" } });
+    f.socket.message({ type: "response.output_audio.delta", item_id: "i1", delta: chunk });
+    f.socket.message({ type: "input_audio_buffer.speech_started" });
+    f.socket.message({ type: "response.output_audio.delta", item_id: "i1", delta: chunk });
+    f.socket.message({ type: "response.done", response: { id: "r1", status: "cancelled" } });
+    expect(epochs).toEqual([1]);
+    expect(audio).toEqual([0]);
+    f.socket.message({ type: "response.created", response: { id: "r2" } });
+    f.socket.message({ type: "response.output_item.added", response_id: "r2", item: { type: "message", id: "i2" } });
+    f.socket.message({ type: "response.output_audio.delta", item_id: "i2", delta: chunk });
+    expect(audio).toEqual([0, 1]);
+    f.session.close();
+  });
+
+  test("speech before the first audio delta suppresses old output and labels received transcript interrupted", async () => {
+    const audio: string[] = [],
+      transcript: any[] = [];
+    const f = fixture({ onAudio: (data) => audio.push(data), onOutputTranscript: (value) => transcript.push(value) });
+    await f.connect();
+    f.socket.message({ type: "response.created", response: { id: "r-late" } });
+    f.socket.message({
+      type: "response.output_item.added",
+      response_id: "r-late",
+      item: { type: "message", id: "audio-late" },
+    });
+    f.socket.message({ type: "input_audio_buffer.speech_started", item_id: "next-speech" });
+    f.socket.message({
+      type: "response.output_audio.delta",
+      response_id: "r-late",
+      item_id: "audio-late",
+      delta: pcm([1, 2]).toString("base64"),
+    });
+    f.socket.message({
+      type: "response.output_audio_transcript.delta",
+      response_id: "r-late",
+      item_id: "audio-late",
+      delta: "received but interrupted",
+    });
+    expect(audio).toEqual([]);
+    expect(transcript).toEqual([{ text: "received but interrupted", finished: false, interrupted: true }]);
+    f.session.close();
+  });
+
   test("chunks share one item start and later items queue behind unheard audio", async () => {
     let played = 1000,
       clockReads = 0;
@@ -1184,49 +935,332 @@ describe("OpenAI output audio timeline", () => {
   });
 });
 
-test("tool replay IDs survive pending replies and retire with settled responses", async () => {
-  let executions = 0;
-  let resolveFirst!: (result: unknown) => void;
-  const first = new Promise<unknown>((resolve) => {
-    resolveFirst = resolve;
+describe("OpenAI tool admission, replay and continuation", () => {
+  test("direct main execute receives external root prompt and bounded result", async () => {
+    const artifactDirectory = await mkdtemp(join(tmpdir(), "bruv-openai-session-"));
+    const f = fixture(
+      {},
+      {
+        instructions: "root instructions",
+        artifactDirectory,
+        tools: [
+          {
+            name: "execute",
+            description: "Run JS",
+            parametersJsonSchema: { type: "object", properties: { code: { type: "string" } } },
+          },
+        ],
+        execute: async () => ({ content: [{ type: "text", text: "a".repeat(100_000) }] }),
+      },
+    );
+    try {
+      await f.connect();
+      expect(f.socket.events[0].session.instructions).toBe("root instructions");
+      expect(f.socket.events[0].session.tools.map((t: any) => t.name)).toEqual(["execute"]);
+      f.socket.message({ type: "response.created", response: { id: "r1" } });
+      f.socket.message({
+        type: "response.function_call_arguments.done",
+        name: "execute",
+        response_id: "r1",
+        call_id: "c1",
+        arguments: '{"code":"1"}',
+      });
+      // Oversized output is written to an artifact before the tool reply. Wait
+      // for that observable reply, not an assumed 10 ms filesystem deadline.
+      for (let attempt = 0; attempt < 100 && !f.socket.events.some((e) => e.item?.call_id === "c1"); attempt++)
+        await Bun.sleep(10);
+      const reply = f.socket.events.find((e) => e.item?.call_id === "c1");
+      expect(reply).toBeDefined();
+      const output = JSON.parse(reply.item.output);
+      expect(output.truncated).toBe(true);
+      expect(output.artifactPath).toContain(join(artifactDirectory, "bruv-live-tool-"));
+      const saved = await Bun.file(output.artifactPath).json();
+      expect(saved.output.content[0].text).toBe("a".repeat(100_000));
+    } finally {
+      f.session.close();
+      await rm(artifactDirectory, { recursive: true, force: true });
+    }
   });
-  const f = fixture(
-    {},
-    {
+
+  test("tool call id is executed/replied once; invalid call rejected; no execution after close", async () => {
+    let count = 0;
+    const result = Promise.withResolvers<unknown>();
+    const orchestration: VoiceOrchestration = {
       tools: [{ name: "execute", parametersJsonSchema: { type: "object", properties: {} } }],
       execute: () => {
-        ++executions;
-        return executions === 1 ? first : Promise.resolve({ content: [{ type: "text", text: "second" }] });
+        count++;
+        return result.promise;
       },
-    },
-  );
-  const call = (responseId: string) =>
+    };
+    const f = fixture({}, orchestration);
+    await f.connect();
+    const call = {
+      type: "response.function_call_arguments.done",
+      name: "execute",
+      response_id: "r1",
+      call_id: "call-1",
+      arguments: "{}",
+    };
+    f.socket.message({ type: "input_audio_buffer.committed", item_id: "u1" });
+    f.socket.message({ type: "response.created", response: { id: "r1" } });
+    f.socket.message(call);
+    f.socket.message(call);
+    await Bun.sleep(0);
+    expect(count).toBe(1); // Registered execute does not use the retired handoff authority.
+    f.socket.message({
+      type: "conversation.item.input_audio_transcription.completed",
+      item_id: "u1",
+      transcript: "Please send",
+    });
+    await Bun.sleep(0);
+    expect(count).toBe(1);
+    result.resolve({ accepted: true });
+    await Bun.sleep(0);
+    expect(f.socket.events.filter((e) => e.item?.call_id === "call-1")).toHaveLength(1);
+    f.socket.message({ ...call, call_id: "bad", name: "unknown" });
+    f.socket.message({ type: "response.done", response: { id: "r1", status: "completed" } });
+    expect(f.socket.events.filter((e) => e.type === "response.create")).toHaveLength(1);
+    expect(f.socket.events.find((e) => e.item?.call_id === "bad")?.item.output).toContain("rejected");
+    f.session.close();
+    f.socket.message(call);
+    expect(count).toBe(1);
+  });
+
+  test("late completed cleanup keeps accepted tool result but never resumes revoked response", async () => {
+    const admitted = Promise.withResolvers<void>();
+    const result = Promise.withResolvers<unknown>();
+    const f = fixture(
+      {},
+      {
+        tools: [{ name: "execute", parametersJsonSchema: { type: "object" } }],
+        execute: () => {
+          admitted.resolve();
+          return result.promise;
+        },
+      },
+    );
+    await f.connect();
+    f.socket.message({ type: "response.created", response: { id: "old" } });
     f.socket.message({
       type: "response.function_call_arguments.done",
-      response_id: responseId,
-      call_id: "retained",
+      response_id: "old",
+      call_id: "accepted",
       name: "execute",
       arguments: "{}",
     });
-  const replies = () => f.socket.events.filter((e) => e.item?.call_id === "retained");
-  await f.connect();
-  f.socket.message({ type: "response.created", response: { id: "r1" } });
-  call("r1");
-  await Bun.sleep(0);
-  expect(executions).toBe(1);
-  f.socket.message({ type: "response.done", response: { id: "r1", status: "completed" } });
-  f.socket.message({ type: "response.created", response: { id: "r2" } });
-  call("r2");
-  await Bun.sleep(0);
-  expect(executions).toBe(1);
-  resolveFirst({ content: [{ type: "text", text: "first" }] });
-  for (let attempt = 0; attempt < 100 && replies().length < 1; ++attempt) await Bun.sleep(1);
-  expect(replies()).toHaveLength(1);
-  f.socket.message({ type: "response.done", response: { id: "r2", status: "completed" } });
-  f.socket.message({ type: "response.created", response: { id: "r3" } });
-  call("r3");
-  for (let attempt = 0; attempt < 100 && replies().length < 2; ++attempt) await Bun.sleep(1);
-  expect(executions).toBe(2);
-  expect(replies()).toHaveLength(2);
-  f.session.close();
+    await admitted.promise;
+    f.socket.message({ type: "input_audio_buffer.speech_started" });
+    f.socket.message({ type: "response.created", response: { id: "new" } });
+    f.socket.message({ type: "response.done", response: { id: "old", status: "completed" } });
+    result.resolve("finished");
+    await Bun.sleep(0);
+    expect(f.socket.events.filter((e) => e.item?.call_id === "accepted")).toHaveLength(1);
+    expect(f.socket.events.filter((e) => e.type === "response.create")).toHaveLength(0);
+    f.session.close();
+  });
+
+  test("parallel tool outputs coalesce only after both response.done and the last result", async () => {
+    const first = Promise.withResolvers<unknown>();
+    const second = Promise.withResolvers<unknown>();
+    const results: Record<string, Promise<unknown>> = { c1: first.promise, c2: second.promise };
+    const f = fixture(
+      {},
+      {
+        tools: [{ name: "execute", parametersJsonSchema: { type: "object" } }],
+        execute: ({ id }) => results[id!],
+      },
+    );
+    await f.connect();
+    f.socket.message({ type: "response.created", response: { id: "r" } });
+    for (const call_id of ["c1", "c2"])
+      f.socket.message({
+        type: "response.function_call_arguments.done",
+        response_id: "r",
+        call_id,
+        name: "execute",
+        arguments: "{}",
+      });
+    await Bun.sleep(0);
+    first.resolve(1);
+    await Bun.sleep(0);
+    expect(f.socket.events.filter((e) => e.type === "response.create")).toHaveLength(0);
+    f.socket.message({ type: "response.done", response: { id: "r", status: "completed" } });
+    second.resolve(2);
+    await Bun.sleep(0);
+    expect(f.socket.events.filter((e) => e.type === "response.create")).toHaveLength(1);
+    expect(f.socket.events.filter((e) => e.item?.type === "function_call_output")).toHaveLength(2);
+    f.session.close();
+  });
+
+  test("cancelled response rejects late tool events, failed lifecycle surfaces sanitized error", async () => {
+    let count = 0;
+    const errors: string[] = [];
+    const f = fixture(
+      { onError: (e) => errors.push(e.message) },
+      {
+        tools: [{ name: "execute", parametersJsonSchema: { type: "object" } }],
+        execute: async () => {
+          count++;
+        },
+      },
+    );
+    await f.connect();
+    f.socket.message({ type: "response.created", response: { id: "r" } });
+    f.socket.message({ type: "response.done", response: { id: "r", status: "cancelled" } });
+    f.socket.message({
+      type: "response.function_call_arguments.done",
+      response_id: "r",
+      call_id: "late",
+      name: "execute",
+      arguments: "{}",
+    });
+    await Bun.sleep(0);
+    expect(count).toBe(0);
+    f.socket.message({ type: "response.created", response: { id: "r2" } });
+    f.socket.message({
+      type: "response.done",
+      response: { id: "r2", status: "failed", status_details: { error: { message: "SECRET" } } },
+    });
+    expect(errors).toEqual(["Voice response did not complete"]);
+    f.session.close();
+  });
+
+  test("fresh speech revokes continuation while accepted job still publishes one result", async () => {
+    const admitted = Promise.withResolvers<void>();
+    const result = Promise.withResolvers<unknown>();
+    const f = fixture(
+      {},
+      {
+        tools: [{ name: "execute", parametersJsonSchema: { type: "object" } }],
+        execute: () => {
+          admitted.resolve();
+          return result.promise;
+        },
+      },
+    );
+    await f.connect();
+    f.socket.message({ type: "response.created", response: { id: "r" } });
+    f.socket.message({
+      type: "response.function_call_arguments.done",
+      response_id: "r",
+      call_id: "c",
+      name: "execute",
+      arguments: "{}",
+    });
+    await admitted.promise;
+    f.socket.message({ type: "response.done", response: { id: "r", status: "completed" } });
+    f.socket.message({ type: "input_audio_buffer.speech_started", item_id: "new" });
+    result.resolve("finished");
+    await Bun.sleep(0);
+    expect(f.socket.events.filter((e) => e.item?.call_id === "c")).toHaveLength(1);
+    expect(f.socket.events.filter((e) => e.type === "response.create")).toHaveLength(0);
+    f.session.close();
+  });
+
+  test("execute does not wait for companion ASR authority and speech does not cancel admitted work", async () => {
+    let executed = 0;
+    const f = fixture(
+      {},
+      {
+        tools: [{ name: "execute", parametersJsonSchema: { type: "object" } }],
+        execute: async () => {
+          executed++;
+        },
+      },
+    );
+    await f.connect();
+    f.socket.message({ type: "input_audio_buffer.committed", item_id: "old" });
+    f.socket.message({ type: "response.created", response: { id: "r" } });
+    f.socket.message({
+      type: "response.function_call_arguments.done",
+      response_id: "r",
+      call_id: "c",
+      name: "execute",
+      arguments: "{}",
+    });
+    await Bun.sleep(0); // Dispatch is admitted before interruption.
+    f.socket.message({ type: "input_audio_buffer.speech_started", item_id: "new" });
+    f.socket.message({
+      type: "conversation.item.input_audio_transcription.completed",
+      item_id: "old",
+      transcript: "send",
+    });
+    await Bun.sleep(0);
+    expect(executed).toBe(1);
+    expect(f.socket.events.filter((e) => e.type === "response.create")).toHaveLength(0);
+    f.session.close();
+  });
+
+  for (const revoke of ["close", "cancelled response"] as const)
+    test("undispatched tool is revoked by " + revoke, async () => {
+      let calls = 0;
+      const f = fixture(
+        {},
+        {
+          tools: [{ name: "execute" }],
+          execute: async () => {
+            calls++;
+            return {};
+          },
+        },
+      );
+      await f.connect();
+      f.socket.message({ type: "response.created", response: { id: "r-guard" } });
+      f.socket.message({
+        type: "response.function_call_arguments.done",
+        response_id: "r-guard",
+        call_id: "call-guard",
+        name: "execute",
+        arguments: "{}",
+      });
+      if (revoke === "close") f.session.close();
+      else f.socket.message({ type: "response.done", response: { id: "r-guard", status: "cancelled" } });
+      await new Promise((resolve) => setTimeout(resolve, 0));
+      expect(calls).toBe(0);
+      f.session.close();
+    });
+
+  test("tool replay IDs survive pending replies and retire with settled responses", async () => {
+    let executions = 0;
+    const first = Promise.withResolvers<unknown>();
+    const f = fixture(
+      {},
+      {
+        tools: [{ name: "execute", parametersJsonSchema: { type: "object", properties: {} } }],
+        execute: () => {
+          ++executions;
+          return executions === 1 ? first.promise : Promise.resolve({ content: [{ type: "text", text: "second" }] });
+        },
+      },
+    );
+    const call = (responseId: string) =>
+      f.socket.message({
+        type: "response.function_call_arguments.done",
+        response_id: responseId,
+        call_id: "retained",
+        name: "execute",
+        arguments: "{}",
+      });
+    const replies = () => f.socket.events.filter((e) => e.item?.call_id === "retained");
+    await f.connect();
+    f.socket.message({ type: "response.created", response: { id: "r1" } });
+    call("r1");
+    await Bun.sleep(0);
+    expect(executions).toBe(1);
+    f.socket.message({ type: "response.done", response: { id: "r1", status: "completed" } });
+    f.socket.message({ type: "response.created", response: { id: "r2" } });
+    call("r2");
+    await Bun.sleep(0);
+    expect(executions).toBe(1);
+    first.resolve({ content: [{ type: "text", text: "first" }] });
+    for (let attempt = 0; attempt < 100 && replies().length < 1; ++attempt) await Bun.sleep(1);
+    expect(replies()).toHaveLength(1);
+    f.socket.message({ type: "response.done", response: { id: "r2", status: "completed" } });
+    f.socket.message({ type: "response.created", response: { id: "r3" } });
+    call("r3");
+    for (let attempt = 0; attempt < 100 && replies().length < 2; ++attempt) await Bun.sleep(1);
+    expect(executions).toBe(2);
+    expect(replies()).toHaveLength(2);
+    f.session.close();
+  });
 });

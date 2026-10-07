@@ -1521,13 +1521,20 @@
       "judgeRounds": [
         {
           "id": "task_4cb31324",
-          "status": "running",
+          "status": "complete",
           "candidate": "af9b22ff882959f601e8748f75cf296e4fbfa7d1",
-          "base": "ffafbca7bdd95d535b73d915a3211eca801b7479"
+          "base": "ffafbca7bdd95d535b73d915a3211eca801b7479",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Contiguous contracts remove scattered reconstruction; test-owned deferred results and ID-keyed parallel results clarify lifetime. Admission waits independently verified after dispatched before revocation; close-before-dispatch retained. Artifact cleanup fix reproduced.",
+          "checks": "53 pass/324 assertions; schema dependency blocked; baseline leaks 100050-byte artifact vs candidate zero entries. All45 declarations (46 expanded cases) retained;37 bodies movement-only.",
+          "acceptedBlobs": {
+            "tests/openai-session.test.ts": "db32c13aeccdc9c9a8e7f991fc7a2442ee1575c8"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "judge running",
+      "acceptedBlob": "db32c13aeccdc9c9a8e7f991fc7a2442ee1575c8",
+      "integration": "integrated accepted exact primary candidate",
       "relatedPatchJudgment": {
         "judgeId": "task_5c3c9aed",
         "verdict": "ACCEPT",
