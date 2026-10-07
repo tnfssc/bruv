@@ -2166,7 +2166,7 @@
       "focus": "tests/transcript-snapshots.test.ts",
       "initialBlob": null,
       "originCandidate": "dfd632869cc21aaf0b20cb3e732e14258929b910",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_08a471b0",
@@ -2186,11 +2186,15 @@
           "id": "task_6e5c5f73",
           "candidate": "f45666020f9de3ccf6e27934077664726665918c",
           "base": "4b1df2f3343aab4fe418037aefdefbce5d99ca90",
-          "status": "running"
+          "status": "complete",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "Private TMPDIR/env ownership precedes fixture import, wrapper drains output/exit before private cleanup and preserves shared snapshots. Linear visible effects need no abstraction; deadline is not child-kill ownership.",
+          "checks": "Independent isolation/exit/output/private cleanup checks performed; no forced-timeout kill guarantee. Future fixture join needs actual combined judgment, active task_a19d2f25 includes wrapper."
         }
       ],
-      "acceptedBlob": null,
-      "integration": "integrated-related-primary-pending",
+      "acceptedBlob": "d6cd4d7bf0cc594be8f2cdc75eea6ae69f2b73a2",
+      "integration": "unchanged-at-area-tip",
       "relatedPatchReview": {
         "candidate": "dfd632869cc21aaf0b20cb3e732e14258929b910",
         "judge": "task_35e27b6b",
