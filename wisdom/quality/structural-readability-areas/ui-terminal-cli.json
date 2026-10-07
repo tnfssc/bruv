@@ -133,7 +133,7 @@
     {
       "focus": "scripts/ansi_video_renderer.py",
       "initialBlob": "81a25813f084b89e7f58988d6bb05e02237ac948",
-      "status": "rework-running",
+      "status": "rework-awaiting-judge-slot",
       "primary": [
         {
           "id": "task_32c7f556",
@@ -171,17 +171,17 @@
       "changedRelatedPaths": [
         "tests/ansi-video-renderer.test.py"
       ],
-      "result": "Candidate separates ANSI color parsing/glyph drawing/frame composition/video encoding; snapshot color state local, fonts video-lifetime, unused bold bookkeeping removed.",
+      "result": "Fresh rework restores post-audit timeline lookup; regression reproduces rejected sample-save exception, passes original base and repaired source. Retains coherent renderer structure.",
       "checks": [
-        "7 Python contracts on base/candidate",
-        "4 Bun scenario tests",
-        "Real five-frame ffmpeg PNG/pixels/MP4/audit equality",
+        "Rejected candidate7 pass+new regression fail",
+        "Original base/rework8 tests pass",
+        "Real6-frame audit/PNG/MP4/decodedRGB equality",
         "diff"
       ],
       "limits": [
         "No Docker/compiled CLI recapture/product/full build; exception cleanup unchanged"
       ],
-      "priority": "next-primary: fresh rework then fresh judge",
+      "priority": "next-judge: fresh ANSI rework full prior rejection context",
       "reworks": [
         {
           "id": "task_283b2f40",
@@ -189,7 +189,8 @@
           "branch": "bruv/fresh-ansi-renderer-rework-after-callbac-283b2f40",
           "launchBase": "5e507f309981a85cf90105fd33b8ad66ed00fb39",
           "priorCandidate": "15e0abb0dc551c00523d84c928e363f2acaae3f9",
-          "respondsTo": "task_c420e381"
+          "respondsTo": "task_c420e381",
+          "commit": "f72d5f0a9eea957f45cddd71695e6fad53cb164e"
         }
       ]
     },
@@ -205,11 +206,19 @@
     {
       "focus": "scripts/benchmark-task-row-render.ts",
       "initialBlob": "ae42ddf511434a63a309d1d4fbc023d366d938fa",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_c9f5fced",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_c9f5fced",
+          "branch": "bruv/primary-readability-scripts-benchmark-ta-c9f5fced",
+          "launchBase": "53cfb1e81e44d5ff23f81cabb3b21853d15d38b8"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "launchBase": "53cfb1e81e44d5ff23f81cabb3b21853d15d38b8"
     },
     {
       "focus": "scripts/tasks-ui-native-proof.py",
@@ -2438,16 +2447,25 @@
     {
       "focus": "tests/terminal-perf-action-profiler.test.ts",
       "initialBlob": "9ba463bccc121cc8700bcd29f5b98be1ceaea9ce",
-      "status": "primary-running",
+      "status": "judging",
       "primary": [
         {
           "id": "task_b9c5eb3e",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_b9c5eb3e",
           "branch": "bruv/primary-readability-tests-terminal-perf--b9c5eb3e",
-          "launchBase": "5e507f309981a85cf90105fd33b8ad66ed00fb39"
+          "launchBase": "5e507f309981a85cf90105fd33b8ad66ed00fb39",
+          "commit": "4bec0ca300a19bd4ee0b9f25438c1d8da4a42ef2"
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_432725ee",
+          "base": "5e507f309981a85cf90105fd33b8ad66ed00fb39",
+          "candidate": "4bec0ca300a19bd4ee0b9f25438c1d8da4a42ef2",
+          "verdict": "pending",
+          "priorRelatedJudge": "task_40ff7535"
+        }
+      ],
       "acceptedBlob": null,
       "integrationState": "related patch integrated; primary focus pending",
       "relatedPatchJudgments": [
@@ -2458,7 +2476,15 @@
           "blob": "4d02e0adb5d1eed02f4c5a1be49de460092d5a15"
         }
       ],
-      "launchBase": "5e507f309981a85cf90105fd33b8ad66ed00fb39"
+      "launchBase": "5e507f309981a85cf90105fd33b8ad66ed00fb39",
+      "changedRelatedPaths": [],
+      "result": "Candidate separates renderer/clock fixture creation from instrumentation so six customized tests no longer attach/dispose unused profiler before real one.",
+      "checks": [
+        "Baseline16 tests/145 assertions",
+        "Candidate profiler pair33/247",
+        "All timing/assertion statements unchanged",
+        "format/lint/diff"
+      ]
     },
     {
       "focus": "tests/terminal-perf-cli.test.ts",
@@ -2490,8 +2516,15 @@
     {
       "focus": "tests/terminal-perf-profiler.test.ts",
       "initialBlob": "7cb1ce3c1390f701e65cc245a7deb03fa10c8360",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_6b781769",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_6b781769",
+          "branch": "bruv/primary-readability-tests-terminal-perf--6b781769",
+          "launchBase": "53cfb1e81e44d5ff23f81cabb3b21853d15d38b8"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integrationState": "related patch integrated; primary pending",
@@ -2502,7 +2535,8 @@
           "verdict": "ACCEPT",
           "blob": "708996371dabfb105ba97e010979b60c3af5b271"
         }
-      ]
+      ],
+      "launchBase": "53cfb1e81e44d5ff23f81cabb3b21853d15d38b8"
     },
     {
       "focus": "tests/terminal-perf-report.test.ts",
