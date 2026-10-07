@@ -152,7 +152,9 @@ test("production CI caches downloads only and delegates paired validation to the
     for (const job of Object.values(parsed.jobs)) {
       if (filename === "ci.yml")
         for (const step of job.steps.filter((step) => step.uses?.startsWith("actions/cache")))
-          expect(step.with?.path).toBe("${{ runner.temp }}/bruv-bun-cache");
+          expect(["${{ runner.temp }}/bruv-bun-cache", "${{ runner.temp }}/bruv-apt-cache/*.deb"]).toContain(
+            step.with?.path ?? "",
+          );
       for (const step of job.steps.filter(
         (step) => step.uses?.startsWith("actions/cache") && step.with?.path === "${{ runner.temp }}/bruv-bun-cache",
       )) {
@@ -194,14 +196,20 @@ test("both CI lanes install ffmpeg before running PCM conversion tests", async (
     jobs: Record<string, { steps: { run?: string }[] }>;
   };
   for (const [job, install, gate] of [
-    ["test", "sudo apt-get update && sudo apt-get install -y ffmpeg", "bun run ci"],
+    ["test", "bash scripts/install-ci-linux-tools.sh --native-audio", "bun run ci"],
     ["live-macos", "brew install ffmpeg", "bun run ci:macos"],
   ] as const) {
     const steps = parsed.jobs[job]!.steps;
     const setup = steps.findIndex((step) => step.run?.includes(install));
     expect(setup).toBeGreaterThanOrEqual(0);
-    expect(steps[setup]!.run).toContain("command -v ffmpeg >/dev/null ||");
-    expect(steps[setup]!.run).toContain("ffmpeg -version");
+    if (job === "live-macos") {
+      expect(steps[setup]!.run).toContain("command -v ffmpeg >/dev/null ||");
+      expect(steps[setup]!.run).toContain("ffmpeg -version");
+    } else {
+      const installer = await Bun.file(resolve(import.meta.dir, "../scripts/install-ci-linux-tools.sh")).text();
+      expect(installer).toContain("packages=(tmux ffmpeg)");
+      expect(installer).toContain("ffmpeg -version");
+    }
     expect(steps.findIndex((step) => step.run === gate)).toBeGreaterThan(setup);
   }
 });

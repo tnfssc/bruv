@@ -86,6 +86,7 @@ test("captured replay exercises real session, native startup and model context w
     expect(result.passed).toBe(true);
     expect(result.metrics.map((row) => row.step)).toEqual([0, 1, 2, 3, 4, 5, 6, 7]);
     expect(result.journalEntries).toBeGreaterThanOrEqual(1);
+    expect(result.metrics.map((row) => row.stage)).toContain("connector-storage-restored");
     expect(result.metrics.map((row) => row.stage)).toContain("native-startup-restored");
     expect(result.metrics.map((row) => row.stage)).toContain("model-context-prepared");
     expect((await readFile(snapshot, "utf8")).startsWith(text)).toBe(true);
