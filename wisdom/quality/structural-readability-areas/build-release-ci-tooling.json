@@ -1265,25 +1265,43 @@
     {
       "focus": "tests/ci-runner.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judge-running",
       "primary": [
         {
           "id": "task_d6fe839f",
           "launchBase": "cb84937d401f032eaf5ff8ec7f4e2a3c3e6fb283",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_d6fe839f",
           "branch": "bruv/primary-tests-ci-runner.test.ts-d6fe839f",
+          "state": "completed",
+          "commit": "3dea9c6855478074b139a4087136dc5f022b8786"
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_562c8dbd",
+          "base": "cb84937d401f032eaf5ff8ec7f4e2a3c3e6fb283",
+          "candidate": "3dea9c6855478074b139a4087136dc5f022b8786",
           "state": "running"
         }
       ],
-      "judges": [],
       "relatedPaths": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "readingResult": "One decoded invocation record replaces synchronized transcripts/indexing;named failure/releaseoptions,explicit per-scenario cleanup.",
+      "checks": "8tests85assertions;tsc/formatpass;existingActionlintwarning;cleanup/offline-envmutationsfail;no fullbuild."
     },
     {
       "focus": "tests/ci-selective-workflow.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_7308b752",
+          "launchBase": "e4e418734f62fd5586662165c1d62353fbeffdcd",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_7308b752",
+          "branch": "bruv/primary-tests-ci-selective-workflow.test-7308b752",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null
@@ -1627,8 +1645,16 @@
     {
       "focus": "tests/native-node-path.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_9358bad2",
+          "launchBase": "e4e418734f62fd5586662165c1d62353fbeffdcd",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_9358bad2",
+          "branch": "bruv/primary-tests-native-node-path.test.ts-9358bad2",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null
@@ -1846,19 +1872,29 @@
     {
       "focus": "tests/release-launcher-gate.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judge-running",
       "primary": [
         {
           "id": "task_2db23507",
           "launchBase": "cb84937d401f032eaf5ff8ec7f4e2a3c3e6fb283",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_2db23507",
           "branch": "bruv/primary-tests-release-launcher-gate.test-2db23507",
+          "state": "completed",
+          "commit": "cd9def98e7e76e55129e4caf7229e11ac7097825"
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_a8a68815",
+          "base": "cb84937d401f032eaf5ff8ec7f4e2a3c3e6fb283",
+          "candidate": "cd9def98e7e76e55129e4caf7229e11ac7097825",
           "state": "running"
         }
       ],
-      "judges": [],
       "relatedPaths": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "readingResult": "Fresh valid fixture per named rejection replaces aggregate mutation/repair sequence;checksumupdates explicit;adds actualstalechecksum,bothlayoutdirections,targetlist,shippedtemplate coverage.",
+      "checks": "21tests47expectations;tsc/Biome/diffpass;no native/fullbuild/live."
     },
     {
       "focus": "tests/release-workflows.test.ts",
