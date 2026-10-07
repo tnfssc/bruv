@@ -467,7 +467,7 @@
     {
       "focus": "src/tasks/foreground-stop.ts",
       "initialBlob": "f58ab9393447ade92677a85bb1f882b73f5662ea",
-      "status": "awaiting-judge",
+      "status": "judge-running",
       "primary": {
         "id": "task_de66cfbe",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_de66cfbe",
@@ -475,7 +475,14 @@
         "base": "4fdd0c0a1aeb7b02265b6a81055957fb805a2465",
         "commit": "f90c2951fd7aabf089fc27be8686a0a18abd9e8e"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_0a1a68a9",
+          "status": "running",
+          "candidate": "f90c2951fd7aabf089fc27be8686a0a18abd9e8e",
+          "base": "4fdd0c0a1aeb7b02265b6a81055957fb805a2465"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending",
       "launchBase": "4fdd0c0a1aeb7b02265b6a81055957fb805a2465",
@@ -596,11 +603,18 @@
     {
       "focus": "src/tasks/session-costs.ts",
       "initialBlob": "70f770b65f897dc4980fef34ba2092a0c2b2430b",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_bc2d06ee",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_bc2d06ee",
+        "branch": "bruv/primary-src-tasks-session-costs.ts-bc2d06ee",
+        "base": "7d2ade817ce1887dea78ec597722a1dbf99b155e",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "launchBase": "7d2ade817ce1887dea78ec597722a1dbf99b155e"
     },
     {
       "focus": "src/tasks/subagent-profiles.ts",
@@ -738,18 +752,24 @@
     {
       "focus": "src/tasks/task-owner.ts",
       "initialBlob": "b52d3b274bfcc6dc95c05b42bc38d7a45791d3c9",
-      "status": "primary-running",
+      "status": "awaiting-judge",
       "primary": {
         "id": "task_59432ef6",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_59432ef6",
         "branch": "bruv/primary-src-tasks-task-owner.ts-59432ef6",
         "base": "f2882f8d5f1758aea9530f2c91fab98d00a79de8",
-        "commit": null
+        "commit": "7b48e8a6200974188b0da429386ed956da5da8b7"
       },
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending",
-      "launchBase": "f2882f8d5f1758aea9530f2c91fab98d00a79de8"
+      "launchBase": "f2882f8d5f1758aea9530f2c91fab98d00a79de8",
+      "changedRelatedPaths": [],
+      "readingResult": "No-change: observer attaches existing session manager; causal-owner guarded projection checkpoint append never recreates jobs; shutdown waits manager then unsubscribes/drains observer.",
+      "checks": [
+        "attachment8 pass65 assertions",
+        "isolated wrapper pass; no full build/liveSSH/compiledCLI"
+      ]
     },
     {
       "focus": "src/tasks/task-title.ts",
@@ -1102,7 +1122,7 @@
     {
       "focus": "tests/questions-runtime.test.ts",
       "initialBlob": "b21ea93a204464e814c4721a6ef9c1d955c63479",
-      "status": "judge-running",
+      "status": "accepted",
       "primary": {
         "id": "task_6e3500b8",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_6e3500b8",
@@ -1113,14 +1133,22 @@
       "judgeRounds": [
         {
           "id": "task_438a45c6",
-          "status": "running",
+          "status": "complete",
           "candidate": "d7db460494622a348d9bd8a34224ad64388fcfbf",
           "base": "4fdd0c0a1aeb7b02265b6a81055957fb805a2465",
-          "priorRelatedJudge": "task_d8a065ce"
+          "priorRelatedJudge": "task_d8a065ce",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Per-attachment callbacks and complete outbox separate delivery from shared durable session; old/new restart and concurrent claimant evidence explicit; direct zero-send strengthens swallowed throwing-stub check.",
+          "checks": [
+            "all13 scenarios retained57→60 assertions",
+            "independent11 questions tests57 assertions; five-file run blocked dependency linkage",
+            "writer75/371 not independently reproduced"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending",
+      "acceptedBlob": "b169fd351936889ff19f0ccb42955130b5122c30",
+      "integration": "full test candidate diff integrated; supersedes supplemental blob",
       "relatedAcceptance": {
         "judge": "task_d8a065ce",
         "candidate": "62e05bf77001c4fe0705fa95898dc9877b38b606",
@@ -1286,13 +1314,13 @@
     {
       "focus": "tests/task-manager.test.ts",
       "initialBlob": "ca3938554cf07fcaf5f5bfa73426e46997c57f57",
-      "status": "primary-running",
+      "status": "awaiting-judge",
       "primary": {
         "id": "task_d2a99d2b",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_d2a99d2b",
         "branch": "bruv/primary-tests-task-manager.test.ts-d2a99d2b",
         "base": "fda4a8a43d47d12ea75706b50dc053c0c9d1affd",
-        "commit": null
+        "commit": "bda0a5d07f39e2f3ad038e30623b7107d57c7e02"
       },
       "judgeRounds": [],
       "acceptedBlob": null,
@@ -1304,7 +1332,14 @@
         "verdict": "ACCEPT",
         "primaryStillRequired": true
       },
-      "launchBase": "fda4a8a43d47d12ea75706b50dc053c0c9d1affd"
+      "launchBase": "fda4a8a43d47d12ea75706b50dc053c0c9d1affd",
+      "changedRelatedPaths": [],
+      "readingResult": "No-change after whole-file focus: cleanup/cursor/cancel/escalation/delivery/preparation/activation journeys explicit; controller isolation regression retained.",
+      "checks": [
+        "manager30/238",
+        "adjacent lifecycle/termination/progress15/67",
+        "format/lint/diff pass"
+      ]
     },
     {
       "focus": "tests/task-monitor-source.test.ts",

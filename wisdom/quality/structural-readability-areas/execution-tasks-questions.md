@@ -43,3 +43,7 @@ Fresh primary `task_b5390314` and judge `task_d1f6dac2` accept test blob `95801c
 ## Task-manager rejection resolved
 
 Fresh rework `task_e5da5ab0` / `5eb5ac44` retains admission refactor and projects every public summary field with nested copies. Fresh judge `task_a01fd3d7` independently reproduced controller leak on base/original and verified no escape plus manager-owned stop/settlement/single delivery. ACCEPT, 37 independent tests/275 assertions; broader six-suite retry blocked dependency resolution. Explicit inherited-defect behavior correction, not neutral cleanup. Full judged manager/test patch integrated; original rejection retained. Manager test still needs primary focus.
+
+## Runtime test primary accepted
+
+Fresh primary `task_6e3500b8` / judge `task_438a45c6` accept `b169fd351936889ff19f0ccb42955130b5122c30`: each attachment owns callbacks/full outbox; shared session remains durable. Restart/concurrent claim evidence visible; zero-send assertion replaces swallowed throwing stub. All 13 scenarios retained, 57→60 assertions. Full test diff imported, runtime untouched; focused combined rerun pending next batch.

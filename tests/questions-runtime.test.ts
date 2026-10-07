@@ -6,8 +6,6 @@ import { registerQuestionRuntime } from "../src/questions/runtime";
 
 function harness() {
   const dir = mkdtempSync(join(tmpdir(), "bruv-question-runtime-"));
-  const handlers = new Map<string, (event: any, ctx: any) => void>();
-  const sent: Array<{ message: any; options: any }> = [];
   let idle = false,
     owner = false,
     supported = true,
@@ -20,30 +18,36 @@ function harness() {
     getBranch: () => [{ id: "root" }, ...(leaf === "root" ? [] : [{ id: leaf }])],
   };
   const ctx: any = { sessionManager: manager, isIdle: () => idle, signal: undefined };
-  const pi = {
-    on: (name: string, fn: (event: any, ctx: any) => void) => {
-      handlers.set(name, fn);
-    },
-    sendMessage: (message: any, options: any) => {
-      sent.push({ message, options });
-    },
-  };
-  const runtime = registerQuestionRuntime(pi as any, {
-    supported: () => supported,
-    hasMainToolOwner: () => owner,
-  });
-  const emit = (name: string, context = ctx, event: any = {}) => handlers.get(name)!(event, context);
-  emit("session_start");
+  // Each registration is a new host attachment to the same durable session.
+  function registerRuntime() {
+    const handlers = new Map<string, (event: any, ctx: any) => void>();
+    const sent: Array<{ message: any; options: any }> = [];
+    const pi = {
+      on: (name: string, fn: (event: any, ctx: any) => void) => {
+        handlers.set(name, fn);
+      },
+      sendMessage: (message: any, options: any) => {
+        sent.push({ message, options });
+      },
+    };
+    const runtime = registerQuestionRuntime(pi as any, {
+      supported: () => supported,
+      hasMainToolOwner: () => owner,
+    });
+    const emit = (name: string, context = ctx, event: any = {}) => handlers.get(name)!(event, context);
+    return { runtime, sent, emit };
+  }
+  const initial = registerRuntime();
+  initial.emit("session_start");
   const tick = async () => {
     await new Promise((resolve) => setTimeout(resolve, 0));
   };
   const cleanup = () => rmSync(dir, { recursive: true, force: true });
   return {
-    runtime,
+    ...initial,
+    registerRuntime,
     ctx,
     manager,
-    sent,
-    emit,
     tick,
     cleanup,
     idle: (v: boolean) => {
@@ -107,14 +111,15 @@ test("restart keeps durable answers but does not replay; explicit resume dispatc
     await h.runtime.commands(h.ctx).handle("questions.answer", { id: q.id, answer: "Saved" });
     h.runtime.pause();
     h.idle(true);
-    const pi: any = { on: () => {}, sendMessage: (message: any) => h.sent.push({ message, options: {} }) };
-    const fresh = registerQuestionRuntime(pi, { supported: () => true, hasMainToolOwner: () => false });
-    expect(fresh.service.get(h.ctx, q.id).answer).toBe("Saved");
+    const fresh = h.registerRuntime();
+    expect(fresh.runtime.service.get(h.ctx, q.id).answer).toBe("Saved");
     await h.tick();
     expect(h.sent).toHaveLength(0);
-    await fresh.commands(h.ctx).handle("questions.resume", { id: q.id });
+    expect(fresh.sent).toHaveLength(0);
+    await fresh.runtime.commands(h.ctx).handle("questions.resume", { id: q.id });
     await h.tick();
-    expect(h.sent).toHaveLength(1);
+    expect(fresh.sent).toHaveLength(1);
+    expect(h.sent).toHaveLength(0);
   } finally {
     h.cleanup();
   }
@@ -223,16 +228,9 @@ test("durable dispatch claim fences a restart after host acceptance but failed r
     expect(h.sent).toHaveLength(1);
     expect(h.sent[0]!.message.display).toBe(false);
     expect(h.runtime.service.get(h.ctx, q.id).delivery).toBe("dispatching");
-    const fresh = registerQuestionRuntime(
-      {
-        on: () => {},
-        sendMessage: () => {
-          throw new Error("duplicate");
-        },
-      } as any,
-      { supported: () => true },
-    );
-    await expect(fresh.commands(h.ctx).handle("questions.resume", { id: q.id })).rejects.toThrow("uncertain");
+    const fresh = h.registerRuntime();
+    await expect(fresh.runtime.commands(h.ctx).handle("questions.resume", { id: q.id })).rejects.toThrow("uncertain");
+    expect(fresh.sent).toHaveLength(0);
     expect(h.sent).toHaveLength(1);
   } finally {
     h.cleanup();
@@ -277,19 +275,15 @@ test("answering a pending question after restart saves it without guessing owner
   const h = harness();
   try {
     const q = await h.runtime.service.ask(h.ctx, { text: "Old checkpoint?" });
-    const sent: any[] = [];
-    const fresh = registerQuestionRuntime({ on: () => {}, sendMessage: (m: any) => sent.push(m) } as any, {
-      supported: () => true,
-      hasMainToolOwner: () => false,
-    });
+    const fresh = h.registerRuntime();
     h.idle(true);
-    await fresh.commands(h.ctx).handle("questions.answer", { id: q.id, answer: "A" });
+    await fresh.runtime.commands(h.ctx).handle("questions.answer", { id: q.id, answer: "A" });
     await h.tick();
-    expect(sent).toHaveLength(0);
-    expect(fresh.service.get(h.ctx, q.id).delivery).toBe("resume-needed");
-    await fresh.commands(h.ctx).handle("questions.resume", { id: q.id });
+    expect(fresh.sent).toHaveLength(0);
+    expect(fresh.runtime.service.get(h.ctx, q.id).delivery).toBe("resume-needed");
+    await fresh.runtime.commands(h.ctx).handle("questions.resume", { id: q.id });
     await h.tick();
-    expect(sent).toHaveLength(1);
+    expect(fresh.sent).toHaveLength(1);
   } finally {
     h.cleanup();
   }
@@ -302,24 +296,23 @@ test("two attached runtimes cannot claim the same saved reply twice", async () =
     h.runtime.pause();
     await h.runtime.commands(h.ctx).handle("questions.answer", { id: q.id, answer: "A" });
     h.idle(true);
-    const sent: any[] = [];
-    const factory = () =>
-      registerQuestionRuntime({ on: () => {}, sendMessage: (m: any) => sent.push(m) } as any, {
-        supported: () => true,
-        hasMainToolOwner: () => false,
-      });
-    const a = factory(),
-      b = factory();
+    const a = h.registerRuntime();
+    const b = h.registerRuntime();
     await Promise.allSettled([
-      a.commands(h.ctx).handle("questions.resume", { id: q.id }),
-      b.commands(h.ctx).handle("questions.resume", { id: q.id }),
+      a.runtime.commands(h.ctx).handle("questions.resume", { id: q.id }),
+      b.runtime.commands(h.ctx).handle("questions.resume", { id: q.id }),
     ]);
     await h.tick();
     await h.tick();
-    expect(sent).toHaveLength(1);
-    const saved = a.service.get(h.ctx, q.id);
+    expect([...a.sent, ...b.sent]).toHaveLength(1);
+    const saved = a.runtime.service.get(h.ctx, q.id);
     await expect(
-      b.service.setDelivery(h.ctx, { id: saved.id, owner: saved.owner, version: saved.version, delivery: "queued" }),
+      b.runtime.service.setDelivery(h.ctx, {
+        id: saved.id,
+        owner: saved.owner,
+        version: saved.version,
+        delivery: "queued",
+      }),
     ).rejects.toThrow("already claimed");
   } finally {
     h.cleanup();
