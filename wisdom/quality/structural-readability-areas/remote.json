@@ -163,14 +163,38 @@
     {
       "focus": "src/remote/capability-runtime.ts",
       "initialBlob": "3e7b26feb5787add6c809baf9a3c92ba02e88a91",
-      "status": "primary-running",
-      "judgeRounds": [],
+      "status": "judging",
+      "judgeRounds": [
+        {
+          "id": "task_f6ad3799",
+          "status": "running",
+          "candidate": "0a2bb6899a72abd1ab7b184cf84bf6d2126364d9",
+          "context": "Original primary plus fresh combination preserving accepted services test edits; no earlier source acceptance."
+        }
+      ],
       "launchBase": "f5df927f7b17cc8c723fbcc8ae4eabc6a2dbfef5",
       "primary": {
         "id": "task_efc7153f",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_efc7153f",
-        "branch": "bruv/remote-primary-capability-runtime-efc7153f"
-      }
+        "branch": "bruv/remote-primary-capability-runtime-efc7153f",
+        "commit": "f5df927f7b17cc8c723fbcc8ae4eabc6a2dbfef5"
+      },
+      "result": "persistIntent owns exact replay/changed intent conflict; persistMarker first-record-wins; admission result chain replaces deferred gate/manual release.",
+      "changedRelatedPaths": [
+        "tests/remote-capability-runtime.test.ts"
+      ],
+      "checks": "12 pass/146 assertions; added tests pass baseline; format/lint/diff pass.",
+      "reworks": [
+        {
+          "id": "task_b95e28d8",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_b95e28d8",
+          "branch": "bruv/remote-combine-capability-runtime-candid-b95e28d8",
+          "launchBase": "0a2bb6899a72abd1ab7b184cf84bf6d2126364d9",
+          "reason": "Integrate primary candidate with accepted services-related test additions before first independent judgment.",
+          "commit": "0a2bb6899a72abd1ab7b184cf84bf6d2126364d9",
+          "response": "Committed combined candidate; independent judgment remains pending.\n\n- **Base:** `0a2bb6899a72abd1ab7b184cf84bf6d2126364d9`\n- **Candidate:** `33088eba8459d07a139130e3fe1b5166fb92e6d2`\n- **Branch:** `bruv/remote-combine-capability-runtime-candid-b95e28d8`\n\n**Changed paths**\n- `src/remote/capability-runtime.ts`\n- `tests/remote-capability-runtime.test.ts`\n- `wisdom/quality/structural-readability-worker.md`\n\n**Before → after**\n- Repeated publication catch blocks required readers to distinguish immutable-intent replay from irreversible markers throughout the file. `persistIntent` now owns exact replay/conflict handling; `persistMarker` owns first-record-wins.\n- Admission used a separate deferred gate and manual release. It now chains the actual admission result, retaining rejection-neutral queue completion and identity-checked tail cleanup.\n- Combined tests retain every accepted services assertion plus the original candidate’s grant-conflict, marker, and admission-recovery regressions. Both contributors’ test bodies were verified intact.\n\nRuntime matches original candidate `52dbf0a027436b6cfd3760551cc1fc60924d9d3f` exactly. Accepted services source is untouched.\n\n**Proof:** combined six-file suite **86 pass, 1,367 assertions**; standalone runtime **12 pass, 85 assertions**; actual `bun run check`, focused format/lint, and diff checks passed. Existing lint warnings remain.\n\nNo redesign or incidental fixes. Note records overlap and limits; values unchanged. Clean tree; no push/PR. No authenticated SSH/provider or compiled-runtime validation claimed."
+        }
+      ]
     },
     {
       "focus": "src/remote/client.ts",
@@ -395,8 +419,14 @@
     {
       "focus": "src/remote/repository-wire.ts",
       "initialBlob": "24ff5f07fa4e85cbe898cf022d81cb507c0dbf90",
-      "status": "pending",
-      "judgeRounds": []
+      "status": "primary-running",
+      "judgeRounds": [],
+      "launchBase": "0a2bb6899a72abd1ab7b184cf84bf6d2126364d9",
+      "primary": {
+        "id": "task_b4da79f3",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_b4da79f3",
+        "branch": "bruv/remote-primary-repository-wire-b4da79f3"
+      }
     },
     {
       "focus": "src/remote/repository.md",
@@ -440,14 +470,40 @@
     {
       "focus": "src/remote/root-client.ts",
       "initialBlob": "936ef53c07b9a1d4fcf3c201479c65f29c90d0fe",
-      "status": "primary-running",
-      "judgeRounds": [],
+      "status": "rework-running",
+      "judgeRounds": [
+        {
+          "id": "task_86eaaad6",
+          "status": "completed",
+          "candidate": "78a0c7cd351e3226921f4f4c361c8809f3fcbf21",
+          "verdict": "ACCEPT",
+          "reason": "Locked state acquisition and source upload are coherent operations with visible durable writes; startup identity/admission clearer. Judge found no safety reduction but reproduced changed concurrent command order.",
+          "checks": "Candidate client 8 pass/46 assertions; store/transport 9 pass/89; remaining dependency loading failures. Probes: baseline concurrent abort then startup prompt; candidate startup prompt then abort. Checkpoints/replay preserved.",
+          "coordinatorObjection": "Not behavior-neutral: writer did not test/document ordering change as intentional observed fix. Preserve original startup reservation/admission lock boundary rather than smuggling scheduling change into readability. Source not integrated."
+        }
+      ],
       "launchBase": "78a0c7cd351e3226921f4f4c361c8809f3fcbf21",
       "primary": {
         "id": "task_a812b85a",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_a812b85a",
-        "branch": "bruv/remote-primary-root-client-a812b85a"
-      }
+        "branch": "bruv/remote-primary-root-client-a812b85a",
+        "commit": "78a0c7cd351e3226921f4f4c361c8809f3fcbf21"
+      },
+      "changedRelatedPaths": [
+        "tests/remote-root-client.test.ts"
+      ],
+      "result": "withState centralizes lock/read; source upload separated. Startup one-lock consolidation changed observable concurrent command order, requiring preservation rework.",
+      "checks": "Worker 60 pass/364 assertions; independent client/store/transport 17 pass/135; concurrency change reproduced by judge.",
+      "integrationState": "not integrated; coordinator requests preserving baseline startup lock boundary despite judge ACCEPT",
+      "reworks": [
+        {
+          "id": "task_8c9c6147",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_8c9c6147",
+          "branch": "bruv/remote-rework-root-client-startup-orderi-8c9c6147",
+          "launchBase": "0a2bb6899a72abd1ab7b184cf84bf6d2126364d9",
+          "reason": "Preserve baseline concurrent startup/abort ordering and two-lock boundary; original judge ACCEPT but coordinator blocks unrequested scheduling change."
+        }
+      ]
     },
     {
       "focus": "src/remote/root-contract.ts",
@@ -520,8 +576,22 @@
     {
       "focus": "src/remote/root-presenter.ts",
       "initialBlob": "9e4d0c6095a3790f3608b921d8ed8092611e91df",
-      "status": "pending",
-      "judgeRounds": []
+      "status": "judging",
+      "judgeRounds": [
+        {
+          "id": "task_29eea7cb",
+          "status": "running",
+          "candidate": "0a2bb6899a72abd1ab7b184cf84bf6d2126364d9"
+        }
+      ],
+      "launchBase": "0a2bb6899a72abd1ab7b184cf84bf6d2126364d9",
+      "primary": {
+        "id": "task_790d1377",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_790d1377",
+        "branch": "bruv/remote-primary-root-presenter-790d1377",
+        "commit": "0a2bb6899a72abd1ab7b184cf84bf6d2126364d9"
+      },
+      "workerResponse": "Candidate committed; ready for independent judgment.\n\n- **Base:** `0a2bb6899a72abd1ab7b184cf84bf6d2126364d9`\n- **Candidate:** `f8ba5c9248fdd3a9d048e926a1cfb6e8b70a1696`\n- **Branch:** `bruv/remote-primary-root-presenter-790d1377`\n\n**Changed paths**\n- `src/remote/root-presenter.ts`\n- `tests/remote-root-presenter.test.ts`\n- `wisdom/quality/structural-readability-worker.md`\n\n**Before → after walkthrough:** CLI startup opens the presenter; `/questions` or polled SDK dialogs open a picker, sometimes followed by text input. Previously both UI constructors independently managed mounting, cancellation, promise settlement, and prompt-focus restoration, while routing/teardown tracked separate `modal` and `cancelModal` variables. Now one local `showModal` operation owns mounting/settlement, and one active handle pairs component with cancellation. Detach still marks closed before local cancellation, preventing server-dialog responses. Ledger, permission, replay, polling, and source-return logic is unchanged.\n\n**Proof:** 34 focused tests passed, 181 assertions. Baseline source also passed the shipped-flow subset with new tests. Scoped formatting and diff checks passed; lint exited zero with warnings.\n\nNo root-client/test overlap. Values unchanged; compact worker note recorded. No full build/typecheck, live SSH/provider, or physical-terminal claim. Clean worktree; no push/PR."
     },
     {
       "focus": "src/remote/root-runtime.ts",
@@ -923,12 +993,16 @@
     {
       "focus": "tests/remote-client.test.ts",
       "initialBlob": "b7f7ba5ecb51b1dec96fe07d6cc5be4ddee790bc",
-      "status": "judging",
+      "status": "rework-running",
       "judgeRounds": [
         {
           "id": "task_43df06c7",
-          "status": "running",
-          "candidate": "d4e376614fb4d3ea13231e304bbe565e597056ea"
+          "status": "completed",
+          "candidate": "d4e376614fb4d3ea13231e304bbe565e597056ea",
+          "verdict": "REJECT",
+          "reason": "Intrinsic readability and improvement accepted, but five introduced TypeScript errors: Transport request is Record<string,unknown>; r.op check does not narrow to RemoteRequest. Lines 32/362 typed launch/answer recording and unknown indexing; line 370 unknown taskId pushed string[].",
+          "rework": "Fixture-local request typing at launch/answer/sync observation boundaries. Preserve on-disk snapshots/pre-POST assertions, callback-owned child cleanup, byte-identical prior page/integration regressions. Do not change production Transport or add framework.",
+          "checks": "Focused compiler reproduced errors; related accepted blob passes same invocation. Candidate runtime package-load blocked. Not integrated."
         }
       ],
       "relatedAcceptance": {
@@ -945,7 +1019,17 @@
       },
       "result": "Pre-POST persistence evidence captured at transport boundary rather than inferred post-failure; mutation versus sync records separate; lock probe lifetime callback-owned; child scripts show acquire/crash phases.",
       "checks": "23 pass/126 assertions; old tests survived omitting pre-POST saves while new fail at explicit evidence; production restored; format/lint/diff pass.",
-      "changedRelatedPaths": []
+      "changedRelatedPaths": [],
+      "integrationState": "REJECTED candidate retained, not integrated; area remains earlier related accepted ba03c0e blob",
+      "reworks": [
+        {
+          "id": "task_11672539",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_11672539",
+          "branch": "bruv/remote-rework-client-test-typing-11672539",
+          "launchBase": "0a2bb6899a72abd1ab7b184cf84bf6d2126364d9",
+          "reason": "task_43df06c7 REJECT: five request-boundary TypeScript errors; keep readability/evidence gains."
+        }
+      ]
     },
     {
       "focus": "tests/remote-descendant-environment.test.ts",
@@ -1028,8 +1112,17 @@
     {
       "focus": "tests/remote-owner-lifecycle.test.ts",
       "initialBlob": "1bb5b51b9e308c53cebf8d2b62f70372c1b2d613",
-      "status": "primary-running",
-      "judgeRounds": [],
+      "status": "accepted",
+      "judgeRounds": [
+        {
+          "id": "task_52da150f",
+          "status": "completed",
+          "candidate": "f5df927f7b17cc8c723fbcc8ae4eabc6a2dbfef5",
+          "verdict": "ACCEPT",
+          "reason": "task.run owns child start/exercise/gate release/final join before HOME cleanup; scripts expose settlement, stale-ledger reply and cancellation sequence; all 33 assertion statements retained.",
+          "checks": "Judge candidate Biome/diff pass, partial runtime dependency-blocked; base/area 11/106 not candidate proof. Actual code and lifecycle contracts inspected."
+        }
+      ],
       "relatedAcceptance": {
         "judge": "task_b276db50",
         "blob": "c56dff8b6c27b39df0b6ad545f763be2820a6fc4",
@@ -1039,8 +1132,14 @@
       "primary": {
         "id": "task_053c976a",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74-5442693331ce-task_053c976a",
-        "branch": "bruv/remote-primary-owner-lifecycle-tests-053c976a"
-      }
+        "branch": "bruv/remote-primary-owner-lifecycle-tests-053c976a",
+        "commit": "f5df927f7b17cc8c723fbcc8ae4eabc6a2dbfef5"
+      },
+      "acceptedBlob": "53027e2cc777c7fddfabe9b0420d1d134dab6130",
+      "integrationState": "accepted exact primary test patch applied; prior related blob superseded",
+      "result": "Scenario scripts show execution order; task.run centralizes gate release and awaited owner completion before fixture cleanup, including failure paths.",
+      "checks": "Worker baseline/candidate 10 pass/38 assertions; combined 11/106; 33 static assertions unchanged; failure cleanup probe passed.",
+      "changedRelatedPaths": []
     },
     {
       "focus": "tests/remote-owner.test.ts",
