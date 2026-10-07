@@ -373,7 +373,11 @@
           "id": "task_229853f3",
           "candidate": "99438e18ec5dde7fdbff4c937edf67c663723834",
           "base": "7c82b6171079e23e80badc6b521c2765fc8c2f9d",
-          "status": "running"
+          "status": "complete",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Discriminated journal contract matches parser validation and locally proves set/update carry snapshots; store assertion removal justified. Final reconciled blobs still require judgment.",
+          "checks": "Focused types compilation and diff pass; runtime suite dependency-blocked."
         }
       ],
       "acceptedBlob": null,
@@ -465,7 +469,7 @@
     {
       "focus": "src/history/types.ts",
       "initialBlob": "4f47ce0c473b8e2f03d11590cc9952e5a739907b",
-      "status": "judge-pending",
+      "status": "judging",
       "primary": [
         {
           "id": "task_90c49aec",
@@ -480,7 +484,14 @@
           "checks": "15 history tests/50 assertions; focused format/lint pass; no typecheck/build claim."
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_bbbdce1d",
+          "candidate": "520137fbe51b09be0d9cb0c7a8833b90630f80bf",
+          "base": "94e6edf6f19a0b270b6ac35c72b2a427d9be1295",
+          "status": "running"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending"
     },
