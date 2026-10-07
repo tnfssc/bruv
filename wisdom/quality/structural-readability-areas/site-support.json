@@ -169,16 +169,24 @@
     {
       "focus": "site/layout.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judging",
       "primary": [
         {
           "id": "task_c8710829",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_c8710829",
           "branch": "bruv/primary-site-layout.ts-c8710829",
-          "base": "a91050017527e1dade52382f0908aefc28ddf981"
+          "base": "a91050017527e1dade52382f0908aefc28ddf981",
+          "commit": "c2a5542a924202243771bc68252cb61c0113cfc6",
+          "result": "composeLanding owns document flow; demoPanel returns positioned content/end; sections explicitly advance max(copyEnd,panel.end), replacing mutable cursor rewind. layout owns clipping/hits/overlays/ANSI. 17 tests and 64 complete output baseline comparisons pass. Missing demos.ts ./type baseline typecheck blocker unchanged."
         }
       ],
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_b7d332ee",
+          "candidate": "c2a5542a924202243771bc68252cb61c0113cfc6",
+          "state": "running"
+        }
+      ],
       "initialBlob": "0ec60a65bd36d939f302323b7a5fd63ab170046b"
     },
     {
@@ -222,8 +230,15 @@
     {
       "focus": "site/scripts/animation.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_5d88706f",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_5d88706f",
+          "branch": "bruv/primary-site-scripts-animation.ts-5d88706f",
+          "base": "cf13efaae464c80b2b1b6b1137be43a885ac05fd"
+        }
+      ],
       "judges": [],
       "initialBlob": "74f85bf8a7d44a454349084978f1dc4858ed9063"
     },
@@ -276,16 +291,24 @@
     {
       "focus": "site/scripts/capture-demo-source.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judging",
       "primary": [
         {
           "id": "task_82201d2d",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_82201d2d",
           "branch": "bruv/primary-site-scripts-capture-demo-source-82201d2d",
-          "base": "d4f7c77e7ce188ce78a8a2a041e1dff34c62a20e"
+          "base": "d4f7c77e7ce188ce78a8a2a041e1dff34c62a20e",
+          "commit": "9099a7b7ee45aa8a8648bb66dbac38ec507288de",
+          "result": "createCsvReviewReplay(home) owns fixture creation, returns persisted session path; main shows settings -> replay -> isolated launch -> validated captures -> provenance -> cleanup. Baseline/candidate real tmux/unshare offline captures/provenance byte-identical; focused test 1/14 assertions passed. Safety flags/transcript/timing/validation/teardown unchanged."
         }
       ],
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_53b78b16",
+          "candidate": "9099a7b7ee45aa8a8648bb66dbac38ec507288de",
+          "state": "running"
+        }
+      ],
       "initialBlob": "68b0dc7db1ccdf38a27ea84dcdbd98168f99570c"
     },
     {
@@ -330,8 +353,15 @@
     {
       "focus": "site/scripts/extract-cells.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_f07c6c88",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d-5442693331ce-task_f07c6c88",
+          "branch": "bruv/primary-site-scripts-extract-cells.ts-f07c6c88",
+          "base": "cf13efaae464c80b2b1b6b1137be43a885ac05fd"
+        }
+      ],
       "judges": [],
       "initialBlob": "53e23a4d0a50dd36efdcb1f4f972a11f5cc1ff13"
     },
@@ -394,7 +424,7 @@
     {
       "focus": "site/scripts/validate.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judging",
+      "state": "accepted-integrated",
       "primary": [
         {
           "id": "task_feb44467",
@@ -409,10 +439,16 @@
         {
           "id": "task_012c74d4",
           "candidate": "2ae1bd3d0e19fd395227c9a39e9700e56d8eb2d2",
-          "state": "running"
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "evidence": "Desktop/mobile/fallback each own browser journey and return evidence. Assertions/waits/inputs/capture/report/cleanup preserved. Judge 13 tests/123314 assertions; browser/TS parity writer-reported.",
+          "objections": []
         }
       ],
-      "initialBlob": "f4efd413bc0cb47bbcc2bd922bc4c33184e33066"
+      "initialBlob": "f4efd413bc0cb47bbcc2bd922bc4c33184e33066",
+      "acceptedBlob": "31ae70389bba2af920c96f41f2bcb2292ee53292",
+      "changedRelatedPaths": [],
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded"
     },
     {
       "focus": "site/scroll.ts",
