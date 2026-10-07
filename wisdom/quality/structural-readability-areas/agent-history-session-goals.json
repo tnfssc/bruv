@@ -135,14 +135,31 @@
     {
       "focus": "src/agent/cache-countdown.ts",
       "initialBlob": "c5a780a01a4498c8a34385509ec3ca1d846b2c79",
-      "status": "primary-running",
+      "status": "judging",
       "primary": [
         {
           "id": "task_06296bc0",
-          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7"
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_06296bc0",
+          "branch": "bruv/primary-cache-countdown-06296bc0",
+          "launchBase": "f137390727d3dd67f956e3bbba52c10ebfa294b9",
+          "commit": "b2b130e3fc239ec1677fa356c295ad8be1725e6a",
+          "changedPaths": [
+            "src/agent/cache-countdown.ts",
+            "tests/cache-countdown.test.ts",
+            "wisdom/quality/structural-readability-worker.md"
+          ],
+          "result": "CacheRequestObserver owns session subscription/request/HTTP-terminal evidence lifetime; takeAttempt consumes unique request atomically; registration retains settings/event adapter. Native operation ID no fabricated SDK attempt.",
+          "checks": "34 countdown/footer tests/330 assertions baseline and candidate; lifecycle/subscription/error/aborted checks; focused format/lint/diff pass; identical 8 missing-assets tsc errors."
         }
       ],
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_7fc83ddf",
+          "candidate": "b2b130e3fc239ec1677fa356c295ad8be1725e6a",
+          "base": "f137390727d3dd67f956e3bbba52c10ebfa294b9",
+          "status": "running"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending"
     },
@@ -460,8 +477,15 @@
     {
       "focus": "src/history/service.ts",
       "initialBlob": "60389949b2e69dbbfc6f2f73948369cb893f6abc",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_f75129c8",
+          "launchBase": "d890f4873ceef903e9bd14d9fb6f3a28993caa84",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_f75129c8",
+          "branch": "bruv/primary-history-service-f75129c8"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending"
