@@ -503,7 +503,7 @@
     {
       "focus": "scripts/find-ci-baseline.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judge-running",
       "primary": [
         {
           "id": "task_706aaff1",
@@ -526,13 +526,23 @@
           "launchBase": "956a90ee75a8931e7336fb611802ca6aeecccad1",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_8a5f8213",
           "branch": "bruv/fresh-primary-ci-baseline-after-retained-8a5f8213",
-          "state": "running",
-          "role": "fresh-retry"
+          "state": "completed",
+          "role": "fresh-retry",
+          "commit": "7e41d1be224fc6b5b51c4f8af37ca889d2f9b2a3"
         }
       ],
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_149c9180",
+          "base": "956a90ee75a8931e7336fb611802ca6aeecccad1",
+          "candidate": "7e41d1be224fc6b5b51c4f8af37ca889d2f9b2a3",
+          "state": "running"
+        }
+      ],
       "relatedPaths": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "readingResult": "Unchanged proposed: linear checkout validation/workflow identity/trusted successful push filter/ancestry journey;predicate and deadline-sharing coherent.",
+      "checks": "19baseline/selector+4workflow tests;focusedtsc/Biome pass;stale release-source expectation separately fixed in judged selective-workflow candidate8bc3a8c4."
     },
     {
       "focus": "scripts/generate-third-party-notices.ts",
@@ -1238,8 +1248,16 @@
     {
       "focus": "tests/architecture.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_66f5eec2",
+          "launchBase": "4f71d1b0e2cb25e1abd126730484ead7212aff82",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_66f5eec2",
+          "branch": "bruv/primary-tests-architecture.test.ts-66f5eec2",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null
@@ -1247,19 +1265,29 @@
     {
       "focus": "tests/ci-remote-cli-source.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judge-running",
       "primary": [
         {
           "id": "task_0c5ce992",
           "launchBase": "956a90ee75a8931e7336fb611802ca6aeecccad1",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_0c5ce992",
           "branch": "bruv/primary-tests-ci-remote-cli-source.test.-0c5ce992",
+          "state": "completed",
+          "commit": "844f69c0e432948fa8f0ab144f70e9d6d65aadff"
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_65a4c618",
+          "base": "956a90ee75a8931e7336fb611802ca6aeecccad1",
+          "candidate": "844f69c0e432948fa8f0ab144f70e9d6d65aadff",
           "state": "running"
         }
       ],
-      "judges": [],
       "relatedPaths": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "readingResult": "Independently named request rejection cases/scoped homes/specific errors/single response parsing;reject before owner-state creation.",
+      "checks": "4focuspass,tsc/Biome/diff;combined Python candidate4pass;unrelated stale release expectation now fixed."
     },
     {
       "focus": "tests/ci-remote-offline-source-pty.py",
@@ -1334,7 +1362,7 @@
     {
       "focus": "tests/ci-selective-workflow.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-running",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_7308b752",
@@ -1350,13 +1378,21 @@
           "id": "task_fd6b7e52",
           "base": "e4e418734f62fd5586662165c1d62353fbeffdcd",
           "candidate": "8bc3a8c4fe417d921d644f7d03f52e8cd16489b2",
-          "state": "running"
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "evidence": "Named accepted CI tuples and isolated admission/dependency rejection journeys replace mutable reset loops. Invalid events, unsuccessful/missing manual prep/source/helper/package/browser/mac gates reject consumers;stale release-source keys corrected without weakening authority.",
+          "checks": "Independent75 focus97combined;focusedtsc/Biome/diffpass. Local expression eval not hostedActions/build/publication.",
+          "acceptedBlobs": {
+            "tests/ci-selective-workflow.test.ts": "25486b26fff7f6fb5d6a65d98e83c906ba4e3d38"
+          }
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "25486b26fff7f6fb5d6a65d98e83c906ba4e3d38",
       "readingResult": "Named acceptedtuples/isolated rejections/admission vsdependency contracts replace positional outcome/resetloops;comparison inputs identify invalidSHA. Explicitfix stale releasejob expectation to current acceptedrelease-source authority.",
-      "checks": "75focus97combinedtests;tsc/Biome/diffpass;no hostedActions."
+      "checks": "75focus97combinedtests;tsc/Biome/diffpass;no hostedActions.",
+      "integrationState": "Full focus patch integrated;workflow/selector unchanged;stale release-source test expectation fixed explicitly."
     },
     {
       "focus": "tests/ci-selective.test.ts",
@@ -1403,8 +1439,16 @@
     {
       "focus": "tests/compiled-bun-fixture.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_ad105ef8",
+          "launchBase": "4f71d1b0e2cb25e1abd126730484ead7212aff82",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_ad105ef8",
+          "branch": "bruv/primary-tests-compiled-bun-fixture.ts-ad105ef8",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null
