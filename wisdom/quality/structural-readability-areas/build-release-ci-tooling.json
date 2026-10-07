@@ -2014,7 +2014,7 @@
     {
       "focus": "tests/product-identity.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-running",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_0c3e11ef",
@@ -2030,13 +2030,21 @@
           "id": "task_b7a011bf",
           "base": "2ef3dcded18b316ecaa74fb1c6a083f13f17a69b",
           "candidate": "7acb4cf61b4f3f169be9480439e9d6458972bd36",
-          "state": "running"
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "evidence": "Separate metadata contracts and named route/flag probes each freshHOME eliminate prior-bootstrap/order assumptions. Completeassetmap strengthens enumeration;sentinel/namespace/stdoutstderr/version/no-semver retained.",
+          "checks": "Independent10tests19assertions;Biome/focusedtsc/diffpass;reused area binariesSHAexact. Linuxcompiledsmoke not freshbuild/crosstarget/release/network/live.",
+          "acceptedBlobs": {
+            "tests/product-identity.test.ts": "b9e4e9ae5d8185883f905c42d4459d4c213847c5"
+          }
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "b9e4e9ae5d8185883f905c42d4459d4c213847c5",
       "readingResult": "Separate metadata contracts,complete releaseassets and named route/flag probes each with fresh isolatedhome replace mixed assertions/nested sharedhome.",
-      "checks": "10focuspass;Biome/tsc/diff;reused actualareapair,norebuild;no productionchanges."
+      "checks": "10focuspass;Biome/tsc/diff;reused actualareapair,norebuild;no productionchanges.",
+      "integrationState": "Fullfocuspatch integrated;productionunchanged;noteexcluded."
     },
     {
       "focus": "tests/production-packaging.test.ts",
@@ -2292,19 +2300,29 @@
     {
       "focus": "tests/tooling-fixtures.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judge-running",
       "primary": [
         {
           "id": "task_8c70c1f6",
           "launchBase": "2ef3dcded18b316ecaa74fb1c6a083f13f17a69b",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_8c70c1f6",
           "branch": "bruv/primary-tests-tooling-fixtures.test.ts-8c70c1f6",
+          "state": "completed",
+          "commit": "45d98000efd2a22cc368b0f54880072781015065"
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_900a3c32",
+          "base": "2ef3dcded18b316ecaa74fb1c6a083f13f17a69b",
+          "candidate": "45d98000efd2a22cc368b0f54880072781015065",
           "state": "running"
         }
       ],
-      "judges": [],
       "relatedPaths": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "readingResult": "Readable embedded childprograms/controlled partial-line delivery/protocol-field assertions replace escaped assembly/timingfragmentation/positional expectations.",
+      "checks": "8tests101assertions;tsc/Biome/diff;trustdenial/prompt/malformedJSON/cleanup retained;timeout/text/toolSSE strengthened. Gaps unseededsecret/RPCargv-env-earlyexit unasserted."
     },
     {
       "focus": "tests/update-release-shape.test.ts",
@@ -2318,8 +2336,16 @@
     {
       "focus": "tests/update-self-fixture.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_1fdcbe47",
+          "launchBase": "452205ec0667aad35ef854a9862d4b5182143095",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_1fdcbe47",
+          "branch": "bruv/primary-tests-update-self-fixture.ts-1fdcbe47",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null
@@ -2327,19 +2353,29 @@
     {
       "focus": "tests/update-v0.16.3-fixture.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judge-running",
       "primary": [
         {
           "id": "task_bf44caf8",
           "launchBase": "2ef3dcded18b316ecaa74fb1c6a083f13f17a69b",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_bf44caf8",
           "branch": "bruv/primary-frozen-historical-updater-fixtur-bf44caf8",
+          "state": "completed",
+          "commit": "b8add67b80728e1c662a702d276020a375570072"
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_4e5800d8",
+          "base": "2ef3dcded18b316ecaa74fb1c6a083f13f17a69b",
+          "candidate": "b8add67b80728e1c662a702d276020a375570072",
           "state": "running"
         }
       ],
-      "judges": [],
       "relatedPaths": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "readingResult": "Unchanged intentional historical authority;validate/stagechecksumprobe/backuprecheck/connectorfirstreplace/reverserollback-or-recovery is one lifetime.",
+      "checks": "v0.16.3:src/update.ts and migrationparent byteidentical;5tests38assertions plus frozencompiledverifier area pair0.16.14 checksum/secondrename rollback."
     },
     {
       "focus": "tests/update.test.ts",
