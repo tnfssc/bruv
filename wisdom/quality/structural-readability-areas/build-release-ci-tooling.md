@@ -96,3 +96,5 @@ Native runner test primary:typed scenarios/readable child,owned fixture cleanup 
 EXTRA setup-native test primary completed:ordered argv/checksum observations,independent exact-cutoff failures. Judge task_6e25dc37 ACCEPTe1bf5ce;15/85combined,all4postfetch oldpartialenv failures reproduced. Only SDKAPI usesrealNode;downloads/checksumexecution/extraction stubbed.
 
 Browser tests:explicitoutcomes/orderedtraces,duplicate shell and recheckproof;task_d53adce7 ACCEPT80b148a,31/376. Verifier tests:namedpair/per-runupdater/readableidentity;task_3bcf763e ACCEPT9d3d678,7/50frozencompiledfixturechecks. BroaderBiome unchangedimport-ordererror remains,not whollygreen. No actualbrowser/publishedbinaryproof.
+
+Shared helper NO CHANGE NEEDED task_f7319ebc45e0d907;13tests and1MiBbothstreams/exit/environment/spawn probes. Sanitization only Herdr—not credentials/network;run has no timeout/cancellation/processtree cleanup. Boundaries honest.

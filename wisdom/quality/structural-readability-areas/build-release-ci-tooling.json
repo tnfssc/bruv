@@ -1471,7 +1471,7 @@
     {
       "focus": "tests/helpers.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-running",
+      "state": "accepted-unchanged",
       "primary": [
         {
           "id": "task_9dd6501e",
@@ -1487,13 +1487,18 @@
           "id": "task_f7319ebc",
           "base": "86a61a54cbebef3222c17ec53ef60f4f1d8da474",
           "candidate": "563d135c927828318186eea7a1e2efdb299c3629",
-          "state": "running"
+          "state": "completed",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "evidence": "One envcopy/sanitize then subprocess+concurrent streams+exit boundary;callers own builds/interactivecancel/tmuxfixturelifetimes. Sanitizing Herdr identity not providercredential/network isolation.",
+          "checks": "Independent13tests actualprivatetmux/assets/history/childcancel;probesimmutableenv/default/explicitreplacementcwd/2x1MiBstreams exit7/spawnrejection;Biome/isolatedtscpass. No timeout/cancel/processtree guarantee/fullbuild/compiled/live."
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "45e0d90785aa81576dfdd1687cf44451b546dde4",
       "readingResult": "Unchanged env isolation→spawn→concurrent output drain→exit;build/fixture/interactivecancellation/tmuxlifetimes caller-owned,appropriate boundary.",
-      "checks": "18focus tests,Biome,isolatedstricttscpass;no build/compiledintegration/live."
+      "checks": "18focus tests,Biome,isolatedstricttscpass;no build/compiledintegration/live.",
+      "integrationState": "Unchangedfocusmatchestip;notesexcluded."
     },
     {
       "focus": "tests/install-download.test.ts",
