@@ -11,3 +11,7 @@ Proof/limits: initial inventory loaded from assignments and coverage. No runtime
 Question service separates remote creation from reconciliation; task manager separates reservation lifetime from process admission; execution unifies first-wins cancellation state and resource ownership. These remain candidates, not accepted code. Exact worker branches, commits, judge IDs and proof limits are in JSON. Three further primaries run on output-buffer, agent-session and questions runtime.
 
 Cross-area coordination: question-service candidate also changes `tests/remote-question-bridge.test.ts` (remote area), adding pending refresh, frozen intent and receipt/closure journeys. Keep the coherent test patch if accepted; remote primary owner must cover its final blob. No sibling notes changed.
+
+## Accepted execution patch
+
+Judge `task_b4813ac3` accepted executor `9ed85835`: one first-wins record replaces synchronized termination flags; cancellation owns subscription/timers while ACK commitment remains visible before teardown. Exact executor and test blobs recorded in JSON. Applied full source/test diff, excluding worker note. Test file still needs its own fresh primary. Writer: 72 focused passes; judge independently ran 13 output-capture checks but other suites lacked dependency/WASM setup. Combined batch gate remains pending.

@@ -196,6 +196,51 @@ describe("execute process lifecycle and output", () => {
     ]);
   });
 
+  test.skipIf(process.platform === "win32")(
+    "keeps timeout ownership through synchronous bridge cancellation",
+    async () => {
+      const controller = new AbortController();
+      let bridgeCancelled = false;
+      const result = await executeIsolated(
+        'process.on("SIGTERM", () => {}); try { await shell("wait"); } catch {} await new Promise(() => {});',
+        directory,
+        controller.signal,
+        1_200,
+        {
+          executablePath: binary,
+          killGraceMs: 100,
+          jobHandler: (_method, _params, bridgeSignal) =>
+            new Promise((_resolve, reject) => {
+              bridgeSignal.addEventListener(
+                "abort",
+                () => {
+                  bridgeCancelled = bridgeSignal.aborted;
+                  // Cancellation observers may synchronously request session shutdown.
+                  controller.abort("shutdown");
+                  reject(new Error("Bridge cancelled"));
+                },
+                { once: true },
+              );
+            }),
+        },
+      );
+      expect(bridgeCancelled).toBe(true);
+      expect(controller.signal.reason).toBe("shutdown");
+      expect(result.timedOut).toBe(true);
+      expect(result.cancelled).toBe(false);
+      expect(result.termination?.cause).toBe("timeout");
+      expect(result.signal).toBe("SIGKILL");
+      expect(inspectDiagnostics(result).records).toContainEqual({
+        version: 1,
+        generated: expect.any(String),
+        component: "jobs",
+        code: "timeout",
+        outcome: "cancelled",
+        cancellation: "timeout",
+      });
+    },
+  );
+
   test.skipIf(process.platform === "win32")("cancels a running process and escalates", async () => {
     const controller = new AbortController();
     const pending = execute(`await Bun.write("ready", "yes"); ${hang}`, controller.signal);
