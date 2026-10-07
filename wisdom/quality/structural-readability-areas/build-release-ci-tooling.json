@@ -466,7 +466,7 @@
     {
       "focus": "scripts/validate-release-tag.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-running",
+      "state": "accepted-unchanged",
       "primary": [
         {
           "id": "task_36d64ea6",
@@ -482,13 +482,18 @@
           "id": "task_81661b13",
           "base": "81837423373d8b661a6a116f66cf3e7a490e4fc8",
           "candidate": "0efbf76510761f9386728fb112e6195ddc7b5058",
-          "state": "running"
+          "state": "completed",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "evidence": "Pure type/version gate then exact tag comparison, separate direct CLI input/environment/package/error boundary. Actual note selector and workflow caller preserve ordering; extra wrappers unnecessary.",
+          "checks": "Independent3 pass14 assertions plus unsupported/permissive syntax, missing/empty tag, env fallback, argument precedence/stdout/exit probe. Existing not-full-SemVer grammar and package runtime errors retained. No full build/hosted."
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "00417d20e23db978be592c23e4a31be88493cc76",
       "readingResult": "Unchanged pure version/type guard→exact tag comparison; separate CLI input/package/diagnostics/exit boundary; extra wrappers cosmetic.",
-      "checks": "3 focused pass; standalone tsc/format/contract probe pass;3 existing lint infos; no build."
+      "checks": "3 focused pass; standalone tsc/format/contract probe pass;3 existing lint infos; no build.",
+      "integrationState": "Unchanged focus equals area tip, local note excluded."
     },
     {
       "focus": "scripts/verify-release-launchers.ts",
@@ -759,7 +764,7 @@
     {
       "focus": "tests/install-local.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-running",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_70f09987",
@@ -775,19 +780,28 @@
           "id": "task_5442746a",
           "base": "dced757aa8b8b52369822c3dee2278454e16689b",
           "candidate": "cb9fe054e6ebf24fa082dc5f9ab831f1bd31ba1b",
-          "state": "running"
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "evidence": "Build policy→verification→publication/rollback phase suites; chronological trace proves ordering, multiline faults expose triggers; all17 previous cases retained plus staged binding/bytes/modes and SIGTERM143 restoration.",
+          "checks": "Independent18/65 focus22/81 candidate-related; combined current download40/161; strict tsc/Biome/diff pass. Shell fixtures not native/full build; signal window retained.",
+          "acceptedBlobs": {
+            "tests/install-local.test.ts": "51a27b0bc8d0f3da78baddee0ab0eab27a048468"
+          }
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "51a27b0bc8d0f3da78baddee0ab0eab27a048468",
       "relatedPatchJudgment": {
         "id": "task_fa23cd76",
         "verdict": "ACCEPT",
         "blob": "501a2d5272f9a22acfbc295e0a0222cb48d423e0",
-        "primaryStillRequired": true
+        "primaryStillRequired": false,
+        "superseded": true
       },
       "readingResult": "Phase-organized tests replace mixed phases/escaped fixture strings; ordered build/probe trace replaces separate logs; explicit staged binding and permanent SIGTERM rollback coverage, all old cases retained.",
-      "checks": "Focus18/65; related22/81 using older download script; strict tsc/format/lint/diff pass; no full/native/live."
+      "checks": "Focus18/65; related22/81 using older download script; strict tsc/format/lint/diff pass; no full/native/live.",
+      "integrationState": "Full source test patch integrated; worker report excluded; installer production unchanged."
     },
     {
       "focus": "tests/manual-release.test.ts",

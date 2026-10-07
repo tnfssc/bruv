@@ -42,3 +42,5 @@ Publication-test primary: one byte-backed fixture, named cases, awaited fetch-re
 Updater-test primary: contract suites and typed per-artifact fixture inputs, explicit mutation timing. Judge task_ee4235b6 ACCEPT6569bd7; 36 definitions/116 static assertion sites retained. Independent mutation check proves URL assertions stronger (baseline masks removed validation, candidate fails).51/177 focus64/230 candidate-related checks.
 
 Combined a472a64c seven-suite batch: **138 pass,0 fail,628 assertions**, including private compiled updater fixtures (task_f6b41b88). Not application build or full gate.
+
+Local-installer-test primary: phase suites and one chronological build/probe trace; explicit staged binding plus permanent SIGTERM restoration case. Judge task_5442746a ACCEPT51a27b0, all17 prior cases retained;18/65 focus,40/161 with current accepted download pair. No native proof.
