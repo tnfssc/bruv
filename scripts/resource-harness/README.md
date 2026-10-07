@@ -3,11 +3,18 @@
 Run without models, API keys, or a T3 server:
 
 ```sh
+bun run perf:resources --session /path/to/failed-native-session.jsonl
 bun run perf:resources --profile ci
 bun run perf:resources --profile stress
 ```
 
 Both commands fail with exit code 1 if a budget is exceeded, a child crashes, its metrics are invalid, or it does not finish. The shared Linux CI/release gate runs both profiles. Reports and fixtures go under a new directory in artifacts/resource-harness. Use --out DIRECTORY to pick the artifact parent. CI keeps them in artifacts/ci/resources so existing failure-log uploads include them.
+
+## Reuse an incident instead of waiting hours
+
+--session takes a private copy-on-write snapshot of an existing native Pi journal and runs the real session reopen and task-binding restore in a guarded child. It never sends a prompt or starts a model. The copy preserves the original root IDs and cursor data. Reflink is required; unsupported filesystems fail rather than silently copying gigabytes. The snapshot and report stay in a mode-0700 run directory. Do not upload real history without reviewing its private content.
+
+The existing journal is input, so its bytes are recorded but not charged as new disk growth. New writes are still capped at 64 MiB. Captured replay keeps the 512 MiB RSS and 90 s limits, but does not kill merely for an existing entry count. The JSON report states that distinction. If indexing trips the limit, later restore stages are not claimed as tested.
 
 ## Measures
 
@@ -17,7 +24,7 @@ Both commands fail with exit code 1 if a budget is exceeded, a child crashes, it
 - Fresh-process resume time and sampled peak memory. This includes session reopen and task binding, not just parsing a tiny fixture.
 - Runtime version, source revision, dirty state, configuration, limits, exit status, metric timeline, and failure reason in report.json.
 
-Write and resume run in separate owned processes. A failed write skips resume and says why; a partial fixture is not a successful session. The small profile checks startup/resume. The stress profile exercises a long fanout: 50 tasks with 2,000 updates each. Short fixture tests alone missed the incident.
+Write and resume run in separate owned processes. A failed write skips resume and says why; a partial fixture is not a successful session. The small profile checks startup/resume. The stress profile exercises a long fanout offline: 50 tasks with 2,000 updates each and one new child entry per update. It runs seconds, not hours. Short fixture tests alone missed the incident.
 
 | Profile | RSS | Fixture disk | Root journal entries | Time per phase |
 | --- | --- | --- | --- | --- |

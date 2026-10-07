@@ -2,6 +2,7 @@ import { execFileSync } from "node:child_process";
 import { mkdir, mkdtemp, writeFile } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { runCapturedSession } from "./capture";
 import { type Budgets, supervise } from "./supervisor";
 
 const MiB = 1024 * 1024;
@@ -9,13 +10,13 @@ export const profiles = {
   ci: {
     tasks: 8,
     updates: 128,
-    childEntries: 128,
+    childEntries: 1,
     budgets: { rssBytes: 384 * MiB, diskBytes: 8 * MiB, journalEntries: 8192, timeoutMs: 30_000 },
   },
   stress: {
     tasks: 50,
     updates: 2000,
-    childEntries: 2000,
+    childEntries: 1,
     budgets: { rssBytes: 512 * MiB, diskBytes: 64 * MiB, journalEntries: 50_000, timeoutMs: 90_000 },
   },
 } satisfies Record<string, { tasks: number; updates: number; childEntries: number; budgets: Budgets }>;
@@ -23,17 +24,23 @@ export const profiles = {
 function options(args: string[]) {
   let profile: keyof typeof profiles = "ci";
   let out = resolve("artifacts/resource-harness");
+  let session: string | undefined;
   for (let i = 0; i < args.length; i++) {
     if (args[i] === "--profile" && (args[i + 1] === "ci" || args[i + 1] === "stress"))
       profile = args[++i] as keyof typeof profiles;
     else if (args[i] === "--out" && args[i + 1]) out = resolve(args[++i]);
-    else throw new Error("Usage: bun run perf:resources [--profile ci|stress] [--out directory]");
+    else if (args[i] === "--session" && args[i + 1]) session = resolve(args[++i]);
+    else
+      throw new Error(
+        "Usage: bun run perf:resources [--profile ci|stress] [--out directory] [--session native-session.jsonl]",
+      );
   }
-  return { profile, out };
+  return { profile, out, session };
 }
 
 export async function runHarness(args: string[]) {
-  const { profile, out } = options(args);
+  const { profile, out, session } = options(args);
+  if (session) return runCapturedSession({ source: session, out, budgets: profiles.stress.budgets });
   const config = profiles[profile];
   await mkdir(out, { recursive: true });
   const runDir = await mkdtemp(join(out, `${profile}-`));

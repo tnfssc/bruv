@@ -26,7 +26,7 @@ semantics and limits are in [the workload README](../../scripts/resource-harness
 Small integration tests inspect the real JSONL ledger. With two tasks, four rounds,
 and three child entries per round, current binding writes ten checkpoints containing
 70 total child-ID references; each child's latest cursor has 13 IDs. Resume appends
-two checkpoints at revision 6, without duplicating derived child rows. Tests verify
+two checkpoints at revision 6, without duplicating derived child rows. The first workload tests encoded the current amplification counts. Parent integration removed those exact-growth assertions so a fix can write fewer checkpoints. Tests still verify
 root bytes are preserved as an exact prefix and child/native originals have unchanged
 SHA-256 hashes. A zero-child-entry workload separately checks event/checkpoint counts
 and batched metrics. Inputs/reuse/mismatched resume counts are bounded and reject
@@ -34,7 +34,7 @@ without overwriting originals. Tests run fresh child processes with 10-second li
 
 The amplification count is deterministic; RSS/time are secondary and machine-dependent.
 Do not use a passing small test as proof this survives incident scale. No production
-fix is made here. Large workloads still need supervisor-enforced RSS/wall/disk budgets.
+fix is made here. The integrated supervisor now enforces RSS/wall/disk budgets. Parent replay uses an actual CoW copy of the failed journal; see [harness evidence](task-history-resource-harness.md).
 
 ## Checks
 

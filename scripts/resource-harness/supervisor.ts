@@ -76,6 +76,7 @@ export async function supervise(options: {
   dir: string;
   phase: string;
   budgets: Budgets;
+  baselineDiskBytes?: number;
 }): Promise<ResourceRun> {
   const started = performance.now();
   const child = spawn(options.command[0], options.command.slice(1), { stdio: ["ignore", "pipe", "pipe"] });
@@ -102,7 +103,8 @@ export async function supervise(options: {
   };
   const check = () => {
     if (result.peakRssBytes > options.budgets.rssBytes) fail("RSS budget exceeded");
-    if (result.diskBytes > options.budgets.diskBytes) fail("Fixture disk budget exceeded");
+    if (result.diskBytes - (options.baselineDiskBytes ?? 0) > options.budgets.diskBytes)
+      fail("Fixture disk budget exceeded");
     if (result.journalEntries > options.budgets.journalEntries) fail("Journal entry budget exceeded");
   };
   let pending = "";
