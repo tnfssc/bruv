@@ -150,7 +150,7 @@
     {
       "focus": "site/assets/cli-settings.txt",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judging",
+      "state": "accepted-unchanged",
       "primary": [
         {
           "id": "task_a55e7213",
@@ -165,10 +165,16 @@
         {
           "id": "task_f29c1365",
           "candidate": "12fc1cec879428a41139b35049fbcd74cbe559a2",
-          "state": "running"
+          "state": "completed",
+          "verdict": "NO CHANGE NEEDED",
+          "evidence": "Authentic PTY bytes are replay evidence,not code to prettify; producer->emulator->crop->captured-cell consumer traced independently,not current shipped demos. Judge1 test/7 assertions and SHA256 c0ffce1b2681a451bf29f071fe01fc1ea8a35d6c776256276b266c61f641301a. No replay/recapture/build/provider claim.",
+          "objections": []
         }
       ],
-      "initialBlob": "179a9a789d36e72a522e7bdb518b5ff69015f569"
+      "initialBlob": "179a9a789d36e72a522e7bdb518b5ff69015f569",
+      "acceptedBlob": "179a9a789d36e72a522e7bdb518b5ff69015f569",
+      "changedRelatedPaths": [],
+      "integration": "exact accepted blob verified; no overlapping source changes; local note excluded"
     },
     {
       "focus": "site/assets/settings-cells.json",
@@ -223,7 +229,7 @@
     {
       "focus": "site/capture.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "candidate-awaiting-judge",
+      "state": "judging",
       "primary": [
         {
           "id": "task_a8322d06",
@@ -234,7 +240,13 @@
           "result": "reflowMenuRow owns label/value alignment+fallback,wrapRow styled line splitting; settingsCapture native output or decode/dispatch instead of interleaved fit/continue.10 tests/123298 assertions,widths1-110 complete baseline output parity incl source/full-width identity;TS/format/lint pass. Only tests currently call capture;not current shipped demo path."
         }
       ],
-      "judges": [],
+      "judges": [
+        {
+          "id": "task_bdc898a5",
+          "candidate": "f1fbca6a73dbd788dd994fd40d9ddb37cbb0c691",
+          "state": "running"
+        }
+      ],
       "initialBlob": "f8f9b368b4326c6883d70f3c74d40cfbfe4f8cc7"
     },
     {

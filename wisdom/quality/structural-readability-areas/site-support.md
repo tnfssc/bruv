@@ -51,3 +51,5 @@ site/assets/brand/bruv-wordmark.svg: Accessible root/shared fill-transform/four 
 site/assets/brand/wordmark-cells.json: Width-keyed glyph rows directly express generated raster output; generator/brand selector/layout/terminal responsibilities separate. Judge1 test/43 assertions proves glyph presence/width,not SVG fidelity;no regeneration/browser/build.
 
 site/assets/settings-cells.json: Explicit provenance/crop/ordered glyph-style runs retain captured effects without indirection; trace ends in capture tests,not shipped demos. Judge2 tests/99 assertions,source SHA256 and base blob match. No fresh emulator fidelity/browser/build.
+
+site/assets/cli-settings.txt: Authentic PTY bytes are replay evidence,not code to prettify; producer->emulator->crop->captured-cell consumer traced independently,not current shipped demos. Judge1 test/7 assertions and SHA256 c0ffce1b2681a451bf29f071fe01fc1ea8a35d6c776256276b266c61f641301a. No replay/recapture/build/provider claim.
