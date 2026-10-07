@@ -110,10 +110,17 @@
     {
       "focus": "native/live-linux/tests/protocol.py",
       "initialBlob": "266caf808d098fac5a3c4b834c73f428b9fd19b6",
-      "primary": null,
+      "primary": {
+        "id": "task_113b4141",
+        "launchBase": "fb00db79c282b970b827370a88e45146dd85fcef",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_113b4141",
+        "branch": "bruv/primary-native-live-linux-tests-protocol-113b4141",
+        "status": "running",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "related accepted patch integrated; own primary focus pending",
+      "integration": "primary running",
       "relatedPatchJudgment": {
         "judgeId": "task_13282f24",
         "verdict": "ACCEPT",
@@ -1331,17 +1338,20 @@
         "launchBase": "08dc3dd7c0e48cbb811c003b70592b7e51628b55",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6-5442693331ce-task_fc3af74e",
         "branch": "bruv/primary-native-live-linux-tests-playback-fc3af74e",
-        "status": "running",
-        "commit": null
+        "status": "candidate ready",
+        "commit": "74ae2a442c5cb787d3666eeb5a1bc942c02319cf"
       },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "primary running",
+      "integration": "awaiting judge slot",
       "relatedPatchJudgment": {
         "judgeId": "task_13282f24",
         "verdict": "ACCEPT",
         "blob": "c0e51f58392b76f16021a44393b32a7955b3dac4"
-      }
+      },
+      "relatedPaths": [],
+      "readingResult": "Six independent contract scenarios replace one shared buffer history; purposeful ring fill/rejection/wrap/drain/reuse and generation/flush-priority journeys remain together; assertion helper verifies each frame flags/ramp.",
+      "checks": "Baseline and candidate strict ASan/UBSan standalone harness pass; diff check pass. No device/provider/macOS/concurrency/root suite proof."
     }
   ],
   "sharedBrief": "ONGOING whole-repo structural readability task. User rejected shallow rename/comment sweep and required independent judgment. Read wisdom/values.md and wisdom/quality/structural-readability-{guidance,owner-pilot,repo-wide}.md. Maximize actual ease of understanding, not diff count/names/smaller files/boilerplate. Identify concrete mental bookkeeping, trace real callers/shipped paths. Simplify tangled responsibilities, branching/hidden state, unrelated lifetimes, needless indirection/dead machinery. Coherent domain operations and visible effects, not arbitrary splitting/context bags/registries/state-machine frameworks. Good names/comments/types help but are insufficient when structure remains tangled. Already clear code may stay unchanged. Preserve purposeful permission/replay/cancellation/delivery/data-loss/protocol contracts; no invented safety reductions, speculative defenses/dependencies/feature cuts/weakened tests. Explicitly report and test observed incidental fixes. Green tests support safety, not readability. Source focus is not edit-only-one-file restriction: coherent related edits allowed, report overlaps and all changed paths. No push/PR. No global/other area notes/values edits. Shared read-only dependencies /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules. Bun /home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin/bun; use /bin/bash PATH set inside quoted script (automatic fish setup failure known). No per-worker massive builds. Device/provider/macOS gaps honest.",
