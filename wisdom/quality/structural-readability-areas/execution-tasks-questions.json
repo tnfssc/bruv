@@ -311,18 +311,31 @@
     {
       "focus": "src/tasks/agent-progress.ts",
       "initialBlob": "8089026a5b78616d952d89fc91f466fd757e0490",
-      "status": "primary-running",
+      "status": "judge-running",
       "primary": {
         "id": "task_717608b7",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_717608b7",
         "branch": "bruv/primary-src-tasks-agent-progress.ts-717608b7",
         "base": "f256384cb549f1987e9b32969ae3c09069454b53",
-        "commit": null
+        "commit": "5c3d27c435dddab11810de524dbbef94bc27856b"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_c2bc3a8f",
+          "status": "running",
+          "candidate": "5c3d27c435dddab11810de524dbbef94bc27856b",
+          "base": "f256384cb549f1987e9b32969ae3c09069454b53"
+        }
+      ],
       "acceptedBlob": null,
       "integration": "pending",
-      "launchBase": "f256384cb549f1987e9b32969ae3c09069454b53"
+      "launchBase": "f256384cb549f1987e9b32969ae3c09069454b53",
+      "changedRelatedPaths": [],
+      "readingResult": "No-change: JSONL framing, tool/handoff/reply projection and process settlement separated; inspect text and retained answer tails intentionally differ.",
+      "checks": [
+        "39 pass236 assertions progress/buffer/manager",
+        "no full build/provider/SSH"
+      ]
     },
     {
       "focus": "src/tasks/agent-session.ts",
@@ -400,27 +413,41 @@
     {
       "focus": "src/tasks/completion-notification.ts",
       "initialBlob": "d9cb46b93e636ab2da2b01f2534ef5eb6b66d9ae",
-      "status": "primary-running",
+      "status": "awaiting-judge",
       "primary": {
         "id": "task_672581ab",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_672581ab",
         "branch": "bruv/primary-src-tasks-completion-notificatio-672581ab",
         "base": "f256384cb549f1987e9b32969ae3c09069454b53",
+        "commit": "81fea008fb3a637c997b470c534584a4447c4b7f"
+      },
+      "judgeRounds": [],
+      "acceptedBlob": null,
+      "integration": "pending",
+      "launchBase": "f256384cb549f1987e9b32969ae3c09069454b53",
+      "changedRelatedPaths": [],
+      "readingResult": "No-change: detailed results reserve omitted-ID space; large batches use five compact previews. Delivery/replay/cancellation/timer lifetimes remain with callers.",
+      "checks": [
+        "23 tests116 assertions; Biome pass",
+        "12 caller-budget probes bounded and retained IDs",
+        "no full build"
+      ]
+    },
+    {
+      "focus": "src/tasks/foreground-stop.ts",
+      "initialBlob": "f58ab9393447ade92677a85bb1f882b73f5662ea",
+      "status": "primary-running",
+      "primary": {
+        "id": "task_de66cfbe",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_de66cfbe",
+        "branch": "bruv/primary-src-tasks-foreground-stop.ts-de66cfbe",
+        "base": "4fdd0c0a1aeb7b02265b6a81055957fb805a2465",
         "commit": null
       },
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending",
-      "launchBase": "f256384cb549f1987e9b32969ae3c09069454b53"
-    },
-    {
-      "focus": "src/tasks/foreground-stop.ts",
-      "initialBlob": "f58ab9393447ade92677a85bb1f882b73f5662ea",
-      "status": "pending",
-      "primary": null,
-      "judgeRounds": [],
-      "acceptedBlob": null,
-      "integration": "pending"
+      "launchBase": "4fdd0c0a1aeb7b02265b6a81055957fb805a2465"
     },
     {
       "focus": "src/tasks/job-attention.ts",
@@ -944,8 +971,14 @@
     {
       "focus": "tests/questions-runtime.test.ts",
       "initialBlob": "b21ea93a204464e814c4721a6ef9c1d955c63479",
-      "status": "pending",
-      "primary": null,
+      "status": "primary-running",
+      "primary": {
+        "id": "task_6e3500b8",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_6e3500b8",
+        "branch": "bruv/primary-tests-questions-runtime.test.ts-6e3500b8",
+        "base": "4fdd0c0a1aeb7b02265b6a81055957fb805a2465",
+        "commit": null
+      },
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending",
@@ -955,7 +988,8 @@
         "blob": "bad43b9ac8424c73931d650acde46bf2dafb3df0",
         "verdict": "ACCEPT",
         "primaryStillRequired": true
-      }
+      },
+      "launchBase": "4fdd0c0a1aeb7b02265b6a81055957fb805a2465"
     },
     {
       "focus": "tests/questions-sdk.test.ts",
