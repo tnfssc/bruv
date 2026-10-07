@@ -307,19 +307,29 @@
     {
       "focus": "package.json",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "primary-running",
+      "state": "judge-running",
       "primary": [
         {
           "id": "task_140be4ea",
           "launchBase": "b1892d9c6c972a84d58689d0ef99226ed1091043",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_140be4ea",
           "branch": "bruv/primary-package.json-140be4ea",
+          "state": "completed",
+          "commit": "6ff0cb52b1afe5e70c6a6d7402fa8e38040e9982"
+        }
+      ],
+      "judges": [
+        {
+          "id": "task_7aa03035",
+          "base": "b1892d9c6c972a84d58689d0ef99226ed1091043",
+          "candidate": "6ff0cb52b1afe5e70c6a6d7402fa8e38040e9982",
           "state": "running"
         }
       ],
-      "judges": [],
       "relatedPaths": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "readingResult": "Unchanged script preparation/build sequencing explicit, orchestration delegated to dedicated entrypoints; aliases/dependency churn no benefit.",
+      "checks": "33tests443assertions;format/lintpass;script/patchpaths checked;no build."
     },
     {
       "focus": "scripts/build-pair.ts",
@@ -1100,8 +1110,16 @@
     {
       "focus": "tests/dependency-updates.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
-      "primary": [],
+      "state": "primary-running",
+      "primary": [
+        {
+          "id": "task_81d46e58",
+          "launchBase": "a4cb693637b4c13370d776a2a42104847ce6de69",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828-5442693331ce-task_81d46e58",
+          "branch": "bruv/primary-tests-dependency-updates.test.ts-81d46e58",
+          "state": "running"
+        }
+      ],
       "judges": [],
       "relatedPaths": [],
       "acceptedBlob": null,
@@ -1655,7 +1673,7 @@
     {
       "focus": "tests/generate-third-party-notices.test.ts",
       "initialBase": "911a433455175b5af5db6bc909c220f2693ffd24",
-      "state": "judge-running",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_075a5f2c",
@@ -1671,11 +1689,18 @@
           "id": "task_00d188a5",
           "base": "cda898ee9cace88b9b290431abea7bb90d52d389",
           "candidate": "9eee3db6b9574820a465695dcafd3f9073112007",
-          "state": "running"
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "evidence": "Independent graph/optional-peer/render scenarios remove mixed fixture reconstruction; package-bound declarations and reverse discovery order strengthen output sorting proof; all cycle/version/COPYING/ordering/helper-exclusion/repeatability/fallback/budget checks retained.",
+          "checks": "Independent6focus27assertions3relatedfailure4assertions;Biome/strict tsc/diffpass;no full/realgraph rerun.",
+          "acceptedBlobs": {
+            "tests/generate-third-party-notices.test.ts": "13c3bd3e7a94b90202089ca216d25cd5e422c7b7"
+          }
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "13c3bd3e7a94b90202089ca216d25cd5e422c7b7",
       "origin": {
         "primary": "task_18c3b50a",
         "candidate": "a6950a24b187330b9832fe6bc26a762826a6beb0"
@@ -1684,10 +1709,12 @@
         "id": "task_9e042be2",
         "verdict": "ACCEPT",
         "blob": "a727a8c127babe0ff6bdb9173258699abd97d6fa",
-        "primaryStillRequired": true
+        "primaryStillRequired": false,
+        "superseded": true
       },
       "readingResult": "Three independent graph/optional-peer/render scenarios replace mixed fixture; rendering assertions bind license declarations to packages and separate discovery/output ordering.",
-      "checks": "6focus4relatedrelease tests;Biome/strict tsc/diff pass;no build."
+      "checks": "6focus4relatedrelease tests;Biome/strict tsc/diff pass;no build.",
+      "integrationState": "Full focus patch integrated; NEW path now has genuine primary and independent final focus judgment;noteexcluded."
     }
   ],
   "crossAreaNeeds": [],
