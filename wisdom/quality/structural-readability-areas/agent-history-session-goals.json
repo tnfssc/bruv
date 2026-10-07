@@ -1474,7 +1474,7 @@
     {
       "focus": "tests/history.test.ts",
       "initialBlob": "d0b30b8f4e642de05f16f838c741087ed8d64186",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_396dabdf",
@@ -1495,11 +1495,15 @@
           "id": "task_01b94654",
           "candidate": "6e78787852d27ce9fc861d9fcac45d488172035b",
           "base": "36d0938cc67e32ab8b9d3f4f866604f981b44d27",
-          "status": "running"
+          "status": "complete",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "reason": "Independent page/read/branch and file-loading scenarios remove unrelated state dependencies; real shake records replace synthetic facade; named entry identities clarify ordering. Operations/authority/assertions stay visible, all original contracts preserved.",
+          "checks": "Independent disk retrieval pass; direct suite missing Pi dependencies; full source/tests/callers/diff inspected, diff clean."
         }
       ],
-      "acceptedBlob": null,
-      "integration": "pending",
+      "acceptedBlob": "2613abbf1434c98127489b87575149ca7d507406",
+      "integration": "integrated-exact-candidate",
       "relatedPatchReview": {
         "candidate": "3e75dd44ee0e8109ed4191fe7397ec1d0459bfc9",
         "judge": "task_150357ad",
