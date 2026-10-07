@@ -962,13 +962,20 @@
       "judgeRounds": [
         {
           "id": "task_3ac00f12",
-          "status": "running",
+          "status": "complete",
           "candidate": "ad1dfa9d42fc87c397fe92e691127958201e0f1a",
-          "base": "3faae10fe2fb393f921117b47ebc565299db873e"
+          "base": "3faae10fe2fb393f921117b47ebc565299db873e",
+          "verdict": "NO CHANGE NEEDED",
+          "objections": [],
+          "reason": "Fixedguidance rendering of sanitized nativephase/detail,not rawhelpertext;unknown remainsfailure. Direct switch has no hiddenstate/lifetimes warrantingregistry/extraction;actual bridge/extension/nativecallers traced.",
+          "checks": "Independent21tests139assertions,diffclean;injectedprocess/audio+native source only,no macOS/device/provider/compiledCLI.",
+          "acceptedBlobs": {
+            "src/live/diagnostics.ts": "40dc0fdf0b0a29da00c52827af7ba3eba6461b0b"
+          }
         }
       ],
-      "acceptedBlob": null,
-      "integration": "judge running",
+      "acceptedBlob": "40dc0fdf0b0a29da00c52827af7ba3eba6461b0b",
+      "integration": "accepted unchanged blob matches area tip",
       "relatedPaths": [],
       "readingResult": "Unchanged nativephase/detail->bridge sanitize->extension ignores helpertext->fixedguidance switch;unknowncodes remainfailures;no hiddenstate/lifetimes tosplit.",
       "checks": "21tests139assertions/diffclean;mockedaudioUI/native source only,no macOS/device/provider/compiledCLI."
@@ -984,9 +991,16 @@
         "status": "candidate ready",
         "commit": "7f72408d2e97646332d752d423d96ccbf56d310c"
       },
-      "judgeRounds": [],
+      "judgeRounds": [
+        {
+          "id": "task_51a3b4e4",
+          "status": "running",
+          "candidate": "7f72408d2e97646332d752d423d96ccbf56d310c",
+          "base": "16182b5898049994a37630cbfbf761eb6b7b982b"
+        }
+      ],
       "acceptedBlob": null,
-      "integration": "awaiting judge slot",
+      "integration": "judge running",
       "relatedPaths": [
         "tests/editor-push-to-talk.test.ts"
       ],
