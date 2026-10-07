@@ -7,7 +7,8 @@
   "branch": "bruv/whole-repo-structural-readability-ui-ter-f8e968d6",
   "limits": [
     "No source or runtime acceptance yet.",
-    "Live/provider/device/SSH checks must remain explicit limits."
+    "Live/provider/device/SSH checks must remain explicit limits.",
+    "Automatic setup reported fish cannot find bun (exit 127); workers have explicit Bun path and shared dependency instructions."
   ],
   "crossAreaNeeds": [],
   "files": [
@@ -104,11 +105,19 @@
     {
       "focus": "scripts/terminal-perf/action-profiler.ts",
       "initialBlob": "833e1e060db3eeffde361abc7c260aaca53bd8f8",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_6ffa8972",
+          "launchBase": "2d32ad47535cba26a4e163c8adb346ec51a8e7cf",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_6ffa8972",
+          "branch": "bruv/primary-readability-scripts-terminal-per-6ffa8972"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "launchBase": "2d32ad47535cba26a4e163c8adb346ec51a8e7cf"
     },
     {
       "focus": "scripts/terminal-perf/artifacts.ts",
@@ -347,11 +356,19 @@
     {
       "focus": "src/cli.ts",
       "initialBlob": "cbad51b1148eb0e4401b95d3e20bb3574f293c53",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_75c8d308",
+          "launchBase": "2d32ad47535cba26a4e163c8adb346ec51a8e7cf",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_75c8d308",
+          "branch": "bruv/primary-readability-src-cli.ts-75c8d308"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "launchBase": "2d32ad47535cba26a4e163c8adb346ec51a8e7cf"
     },
     {
       "focus": "src/diagnostics-extension.ts",
@@ -401,11 +418,19 @@
     {
       "focus": "src/ui/editor.ts",
       "initialBlob": "6f91ff6f6b3fe970e4fc9b821a687f6a0ba2f666",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_ff96b465",
+          "launchBase": "2d32ad47535cba26a4e163c8adb346ec51a8e7cf",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_ff96b465",
+          "branch": "bruv/primary-readability-src-ui-editor.ts-ff96b465"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "launchBase": "2d32ad47535cba26a4e163c8adb346ec51a8e7cf"
     },
     {
       "focus": "src/ui/execution-previews.ts",
