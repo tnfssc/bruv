@@ -26,7 +26,8 @@
     "smoke:live-onboarding": "bun ./scripts/live-onboarding-smoke.ts",
     "build:claude-compat": "bun ./scripts/build-claude-compat.ts",
     "perf:terminal": "bun ./scripts/terminal-perf.ts",
-    "perf:interactions": "bun ./scripts/terminal-interactions.ts"
+    "perf:interactions": "bun ./scripts/terminal-interactions.ts",
+    "perf:resources": "bun ./scripts/resource-harness/run.ts"
   },
   "dependencies": {
     "@earendil-works/pi-ai": "1.0.3",

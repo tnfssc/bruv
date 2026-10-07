@@ -1,9 +1,11 @@
 import { createHash } from "node:crypto";
-import { readFile } from "node:fs/promises";
 import type { ExtensionFactory, SessionEntry } from "@earendil-works/pi-coding-agent";
 import type tasksExtension from "../agent/extension";
+import type { EntryMetadata } from "../history/disk-entry-store";
+import { getDiskBackedBranch, visitDiskBackedBranch } from "../history/session-manager";
 import type { LocalTaskLaunchIdentity, TaskEvent, TaskSummary } from "../tasks/task-manager";
 import type { TaskOwnerAttachment, TaskOwnerBinding } from "../tasks/task-owner";
+import { childJournalEntries } from "./task-child-journal";
 import {
   type ChildBody,
   type ChildFrame,
@@ -38,8 +40,8 @@ export interface TaskBindingOptions {
   emit(frame: NativeTaskFrame | AgentCallFrame): void | Promise<void>;
   /** Public message translation belongs to the existing wire owner. */
   translateChildEntry?(source: ChildEntrySource): ChildBody[] | Promise<ChildBody[]>;
-  /** Write real derived SDK child history BEFORE exposing a child frame. */
-  writeChildFrame?(source: ChildEntrySource, frame: ChildFrame): void | Promise<void>;
+  /** Write real SDK child history BEFORE exposing a frame; false suppresses an already-durable replay. */
+  writeChildFrame?(source: ChildEntrySource, frame: ChildFrame): void | boolean | Promise<void | boolean>;
   diagnostic?(message: string): void;
 }
 interface Cursor {
@@ -49,7 +51,11 @@ interface Cursor {
   checkpoint?: TaskProjectionCheckpoint;
   agentCall: boolean;
   agentResult: boolean;
-  childEntries: string[];
+  /** Legacy snapshots only; consumed once and never written again. */
+  childEntries?: string[];
+  childOffset?: number;
+  /** Original legacy cursor retained until its child journal can be migrated. */
+  legacyCursorId?: string;
   tokens: number;
   toolUses: number;
   measuredUsage: boolean;
@@ -97,12 +103,53 @@ export function bindNativeTasks(
   };
   // Actual root Pi custom entries are the checkpoint authority. Loading a cursor
   // never recreates a process or inserts a job into the manager.
-  for (const entry of owner.context.sessionManager.getBranch()) {
-    if (entry.type !== "custom" || entry.customType !== TASK_BINDING_ENTRY) continue;
+  const manager = owner.context.sessionManager;
+  const rootKey = JSON.stringify([options.root.namespace, options.root.sourceSessionId, options.root.sessionId]);
+  const latest = new Map<string, EntryMetadata>();
+  let needsLegacyScan = false;
+  const indexed = visitDiskBackedBranch(manager, (meta) => {
+    if (meta.type === "custom" && meta.customType === TASK_BINDING_ENTRY) {
+      // Supplied by the history owner while indexing both old and new originals.
+      const key = meta.taskProjection;
+      if (!key) needsLegacyScan = true;
+      else if (key.rootKey === rootKey && !latest.has(key.jobId)) latest.set(key.jobId, meta);
+    }
+  });
+  const restore = (entry: SessionEntry) => {
+    if (entry.type !== "custom" || entry.customType !== TASK_BINDING_ENTRY) return;
     const saved = entry.data as SavedCursor;
-    if (saved?.root && sameRoot(saved.root, options.root) && saved.cursor?.link?.jobId)
-      cursors.set(saved.cursor.link.jobId, structuredClone(saved.cursor));
+    if (saved?.root && sameRoot(saved.root, options.root) && saved.cursor?.link?.jobId) {
+      const cursor = structuredClone(saved.cursor);
+      if (cursor.childEntries) cursor.legacyCursorId = entry.id;
+      else if (cursor.legacyCursorId) {
+        const original = manager.getEntry(cursor.legacyCursorId);
+        if (original?.type !== "custom" || original.customType !== TASK_BINDING_ENTRY)
+          throw new Error("Legacy task cursor original is unavailable");
+        cursor.childEntries = structuredClone((original.data as SavedCursor).cursor.childEntries);
+      }
+      cursors.set(cursor.link.jobId, cursor);
+    }
+  };
+  if (indexed && !needsLegacyScan) {
+    for (const meta of latest.values()) {
+      const entry = manager.getEntry(meta.id);
+      if (entry) restore(entry);
+    }
+  } else {
+    // Native/in-memory managers keep their existing API. Disk managers without
+    // keyed metadata stream one custom entry at a time, not the whole root.
+    const branch = getDiskBackedBranch(manager);
+    if (branch) {
+      for (const meta of branch) {
+        if (meta.type === "custom" && meta.customType === TASK_BINDING_ENTRY) {
+          const entry = manager.getEntry(meta.id);
+          if (entry) restore(entry);
+        }
+      }
+    } else for (const entry of manager.getBranch()) restore(entry);
   }
+  const dirty = new Set<Cursor>();
+  const savedRevision = new Map([...cursors.values()].map((cursor) => [cursor, cursor.revision]));
   const enqueue = (run: () => Promise<void>) => {
     queue = queue
       .then(async () => {
@@ -113,11 +160,15 @@ export function bindNativeTasks(
         options.diagnostic?.("Native task binding delivery failed: " + String(error));
       });
   };
-  const save = (cursor: Cursor) =>
+  const save = (cursor: Cursor) => {
+    const { childEntries: _legacy, ...checkpoint } = cursor;
     owner.appendEntry(TASK_BINDING_ENTRY, {
       root: options.root,
-      cursor: structuredClone(cursor),
+      cursor: structuredClone(checkpoint),
     } satisfies SavedCursor);
+    dirty.delete(cursor);
+    savedRevision.set(cursor, cursor.revision);
+  };
   const link = (task: TaskSummary): TaskLink | undefined => {
     const launch = task.launchIdentity;
     if (!launch || launch.sourceSessionId !== owner.sourceSessionId) {
@@ -157,52 +208,47 @@ export function bindNativeTasks(
     if (cursor.link.kind !== "worker") return frames;
     if (!options.writeChildFrame)
       gap("history", "No native child history writer bound; SDK child replay is unavailable.");
-    let contents: string;
-    try {
-      contents = await readFile(cursor.link.child.sourceSessionId, "utf8");
-    } catch (error) {
-      if ((error as NodeJS.ErrnoException).code === "ENOENT") {
-        gap(
-          "child:" + task.id,
-          "Child journal unavailable for " + task.id + "; no child messages inferred from stdout.",
-        );
-        return frames;
-      }
-      throw error;
-    }
     const seen = new Set(cursor.childEntries);
-    // A final incomplete line is an in-flight journal append, not a public message.
-    for (const line of contents.slice(0, contents.lastIndexOf("\n") + 1).split("\n")) {
-      if (!line) continue;
-      const entry = JSON.parse(line) as SessionEntry;
-      if (entry.type !== "message" || seen.has(entry.id)) continue;
-      const source: ChildEntrySource = { link: cursor.link, entry };
-      if (options.translateChildEntry) {
-        const bodies = await options.translateChildEntry(source);
-        for (const [index, body] of bodies.entries()) {
-          const frame = projectChildFrame(cursor.link, {
-            sourceSessionId: cursor.link.child.sourceSessionId,
-            eventId: entry.id + ":" + index,
-            body,
-          })!;
-          await options.writeChildFrame?.(source, frame);
-          frames.push(frame);
+    try {
+      for await (const { entry, endOffset } of childJournalEntries(
+        cursor.link.child.sourceSessionId,
+        cursor.childOffset ?? 0,
+      )) {
+        if (entry?.type === "message" && !seen.has(entry.id)) {
+          const source: ChildEntrySource = { link: cursor.link, entry };
+          if (options.translateChildEntry) {
+            const bodies = await options.translateChildEntry(source);
+            for (const [index, body] of bodies.entries()) {
+              const frame = projectChildFrame(cursor.link, {
+                sourceSessionId: cursor.link.child.sourceSessionId,
+                eventId: entry.id + ":" + index,
+                body,
+              })!;
+              const written = await options.writeChildFrame?.(source, frame);
+              if (written !== false) frames.push(frame);
+            }
+          } else gap("translator", "No child journal translator bound; exact child frames/history are unavailable.");
+          const message = entry.message;
+          if (message.role === "assistant") {
+            const usage = message.usage;
+            if (
+              usage &&
+              [usage.input, usage.output, usage.cacheRead, usage.cacheWrite].every((n) => Number.isFinite(n) && n >= 0)
+            ) {
+              cursor.tokens += usage.input + usage.output + usage.cacheRead + usage.cacheWrite;
+              cursor.measuredUsage = true;
+            }
+            cursor.toolUses += message.content.filter((part) => part.type === "toolCall").length;
+          }
+          seen.add(entry.id);
         }
-      } else gap("translator", "No child journal translator bound; exact child frames/history are unavailable.");
-      const message = entry.message;
-      if (message.role === "assistant") {
-        const usage = message.usage;
-        if (
-          usage &&
-          [usage.input, usage.output, usage.cacheRead, usage.cacheWrite].every((n) => Number.isFinite(n) && n >= 0)
-        ) {
-          cursor.tokens += usage.input + usage.output + usage.cacheRead + usage.cacheWrite;
-          cursor.measuredUsage = true;
-        }
-        cursor.toolUses += message.content.filter((part) => part.type === "toolCall").length;
+        cursor.childOffset = endOffset;
       }
-      cursor.childEntries.push(entry.id);
-      seen.add(entry.id);
+      delete cursor.childEntries;
+      delete cursor.legacyCursorId;
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
+      gap("child:" + task.id, "Child journal unavailable for " + task.id + "; no child messages inferred from stdout.");
     }
     return frames;
   };
@@ -250,7 +296,7 @@ export function bindNativeTasks(
         revision: 0,
         agentCall: false,
         agentResult: false,
-        childEntries: [],
+        childOffset: 0,
         tokens: 0,
         toolUses: 0,
         measuredUsage: false,
@@ -262,6 +308,12 @@ export function bindNativeTasks(
       JSON.stringify(cursor.launch) !== JSON.stringify(task.launchIdentity)
     )
       throw new Error("Job launch identity changed");
+    const semanticBefore = JSON.stringify([
+      cursor.checkpoint?.phase,
+      cursor.checkpoint?.isBackgrounded,
+      cursor.agentCall,
+      cursor.agentResult,
+    ]);
     const eventId = task.id + ":" + ++cursor.revision + ":" + event.type;
     const worker = cursor.link.kind === "worker";
     if (worker && !cursor.agentCall) {
@@ -354,7 +406,16 @@ export function bindNativeTasks(
       });
       cursor.agentResult = true;
     }
-    save(cursor);
+    dirty.add(cursor);
+    const semanticAfter = JSON.stringify([
+      cursor.checkpoint?.phase,
+      cursor.checkpoint?.isBackgrounded,
+      cursor.agentCall,
+      cursor.agentResult,
+    ]);
+    // Progress is replayable; launch/terminal/causal boundaries are durable now.
+    if (semanticBefore !== semanticAfter || cursor.revision - (savedRevision.get(cursor) ?? cursor.revision) >= 64)
+      save(cursor);
     await roster(eventId);
   };
   const unsubscribe = owner.manager.subscribe((event) => {
@@ -374,6 +435,7 @@ export function bindNativeTasks(
       }
       await queue;
       if (failure) throw failure;
+      for (const cursor of dirty) save(cursor);
     },
   };
 }

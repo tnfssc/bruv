@@ -1,10 +1,6 @@
-import { createClaudeCompatLiveFrontend } from "./live-frontend";
-import { bindNativeTasks } from "./task-binding";
-import { nativeTaskId } from "./task-projection";
 import { randomUUID } from "node:crypto";
-import type { Message } from "@earendil-works/pi-ai";
 import { join, resolve } from "node:path";
-import type { Api, ImageContent, Model } from "@earendil-works/pi-ai";
+import type { Api, ImageContent, Message, Model } from "@earendil-works/pi-ai";
 import {
   type AgentSession,
   createAgentSession,
@@ -18,19 +14,22 @@ import {
 import type { TSchema } from "typebox";
 import { Compile } from "typebox/compile";
 import bruvPackage from "../../package.json";
-import { COMPAT_PROTOCOL_VERSION } from "./launch";
 import { T3_MCP_BEARER_ENV, T3_MCP_URL_ENV } from "../delegation-environment";
 import { currentMainOwner } from "../live/main-owner";
 import { assertBruvPiHost } from "../pi-host";
 import { withBruvSystemPrompt } from "../system-prompt";
 import { bindNativeChildExecutable } from "./binding";
 import { createClaudeCompatCommands } from "./commands";
-import { createClaudeCompatHumanControls } from "./human-controls";
-import type { NativeHistory } from "./history";
-import type { InjectedMcpSession } from "./mcp";
-import type { PermissionRequest, PermissionDecision } from "./permissions";
-import type { ClaudeCompatTransport } from "./transport";
 import { type CompatFrame, createClaudeCompatFrontend } from "./frontend";
+import type { NativeHistory } from "./history";
+import { createClaudeCompatHumanControls } from "./human-controls";
+import { COMPAT_PROTOCOL_VERSION } from "./launch";
+import { createClaudeCompatLiveFrontend } from "./live-frontend";
+import type { InjectedMcpSession } from "./mcp";
+import type { PermissionDecision, PermissionRequest } from "./permissions";
+import { bindNativeTasks } from "./task-binding";
+import { nativeTaskId } from "./task-projection";
+import type { ClaudeCompatTransport } from "./transport";
 
 export interface CompatUserMessage {
   type: "user";
@@ -412,13 +411,14 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
                     sourceSessionId: link.child.sourceSessionId,
                     sourceCallId: link.launchToolUseId,
                   });
-                  await child.append({
+                  const written = await child.appendWithResult({
                     sourceMessageId: entry.id,
                     type: frame.type,
                     message: frame.message,
                     timestamp: entry.timestamp,
                     uuid: frame.uuid,
                   });
+                  return written.appended;
                 },
                 diagnostic: (message) => options.diagnostic?.(new Error(message)),
               }),

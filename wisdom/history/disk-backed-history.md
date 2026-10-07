@@ -36,3 +36,23 @@ bun test --preload ./scripts/history-storage-preload.ts tests/history*.test.ts
 First compares native/adapted managers with 136 MiB originals and 17 compactions. It checks original SHA-256 after reopen. It measures append/reset/resume. Second completes 16 real `AgentSession.compact()` calls through offline extension hook with 128 MiB original messages. This is real SDK lifecycle soak. It does not test provider-summary quality.
 
 On measured Linux/Bun run, reopened retained heap was about **136 MiB lower** than native. Real SDK soak kept about **18–23 MiB JSC heap** across 128 MiB originals and two compacted context messages. Reset/resume returned to about 19 MiB. Full-array SDK compaction caused large temporary/allocator RSS around 0.9 GiB. It later reclaimed much of that. Measures support bounded old-history cache residency. They do not show bounded total app RSS. Exact final commands/results: `wisdom/resources/resource-fixes-history.md`.
+
+## Existing native task journals: metadata reopen (2026-10-07)
+
+The captured original was 11,884,666,735 bytes with 634,329 valid rows, dominated by repeated native task cursor snapshots. This was not just a task-binding writer problem: original reopen tripped the unchanged 512 MiB RSS watchdog before indexing completed (549.9 MiB, 16.4 s).
+
+The resident index needs IDs, parent links, timestamps, physical offsets/lengths and small type-specific settings, not custom payloads or message content. Reopen validates/skips JSON directly from bytes and decodes only indexed fields. It does not build discarded snapshot graphs or a full JS string per row. JSONL line assembly reuses a growing buffer. Selected tokens are decoded from their own byte views. String-copy-only and full-row-string selective scans still exceeded the captured budget during investigation: a bounded serialized cache does not bound scanner allocations.
+
+Custom rows share type vocabulary and canonical parent ID strings. Canonical ISO timestamps are stored as milliseconds and reconstructed exactly on access; noncanonical timestamps retain their original spelling. SDK internal maps/metadata share the owner index instead of duplicating it. Native reset/branch methods mutate maps in place, so they detach the SDK map first; failure recovery must keep the previous owner intact.
+
+No journal format change, sidecar, history deletion, expiry or lossy cleanup was introduced. Original retrieval still parses original indexed bytes. Skipped JSON grammar is validated, including deep nesting, escapes, numeric syntax and duplicate-property last-value semantics. Malformed rows keep the loader ignore behavior. Migration/rewrite/publication behavior remains.
+
+Retrieval walks auxiliary links but counts/loads only message records and manual-shake exclusion records. More than 100,000 old task checkpoints must not crowd conversation messages out of search or materialize snapshot bodies. Actual candidate, exclusion, text-byte and part limits remain. Search refs and cursor leaf IDs stay pinned to the original branch, including auxiliary cursor leaves.
+
+Task-binding API: `getLatestDiskBackedCustomEntry(manager, customType, accept = () => true)` in `src/history/session-manager.ts`. Active branch, newest-first; materializes only matching custom types and stops at the first accepted record. Returns custom entry, `null` for no match, `undefined` for an unowned manager (use native fallback). It never selects an inactive sibling checkpoint.
+
+Guarded local capture `artifacts/resource-harness/captured-3esH9I/report.json` indexed all 634,329 rows at 443.0 MiB RSS / 89.4 MiB reported heap in 40.35 s, source bytes unchanged. Standalone replay then failed at 548.3 MiB while the **old task-binding restore** materialized history; cursor restore did not complete. Another worker owns that integration. Parent must run the combined commit through the unchanged watchdog; no end-to-end pass is claimed here. Captures/reports remain private local evidence, not committed.
+
+Focused tests cover >100,000 auxiliary rows, targeted latest custom selection, inactive branches, preserved originals/search refs, live shake exclusions, shared-map failure recovery, exact timestamp access, JSON grammar and SDK lifecycle parity. Values stayed unchanged: measured-resource and safe-recovery values already describe the lesson. See [resource harness](../resources/task-history-resource-harness.md).
+
+Validation: 40 direct history tests across 11 files passed, including native/adapted SDK lifecycle parity and failed-reset/branch recovery. TypeScript passed. Focused Biome passed with existing adapter warnings and no errors; diff whitespace check passed. No task-binding or harness-cap edits. Full application/resource gate awaits parent integration.

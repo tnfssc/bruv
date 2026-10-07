@@ -61,6 +61,8 @@ test("Linux builds the pair without preparing or validating bundled web", () => 
     "run format:check",
     "run lint",
     "run check",
+    "run perf:resources --profile ci --out " + join(root, "artifacts/ci/resources"),
+    "run perf:resources --profile stress --out " + join(root, "artifacts/ci/resources"),
     "run build",
     "scripts/offline-openai-default-transport.ts",
     "test --parallel=3 ./tests",
@@ -86,7 +88,22 @@ test("Release log destination uses the same Linux commands, env and owned temp",
   const ci = run("linux");
   const release = run("linux", "", "artifacts/release/ci");
   expect(release.result.status).toBe(0);
-  expect(release.calls.map((line) => line.split("|")[2])).toEqual(ci.calls.map((line) => line.split("|")[2]));
+  const normalized = (calls: string[], root: string, logs: string) =>
+    calls.map((line) => line.split("|")[2]!.replace(join(root, logs), "<log-dir>").replace(logs, "<log-dir>"));
+  expect(normalized(release.calls, release.root, "artifacts/release/ci")).toEqual(
+    normalized(ci.calls, ci.root, "artifacts/ci"),
+  );
+  for (const { root, calls, logs } of [
+    { root: ci.root, calls: ci.calls, logs: join(ci.root, "artifacts/ci") },
+    { root: release.root, calls: release.calls, logs: "artifacts/release/ci" },
+  ])
+    for (const profile of ["ci", "stress"])
+      expect(
+        calls.some(
+          (line) =>
+            line.split("|")[2] === "run perf:resources --profile " + profile + " --out " + join(logs, "resources"),
+        ),
+      ).toBe(true);
   for (const { root, calls } of [ci, release]) {
     expect(calls.every((line) => line.split("|")[1] === root)).toBe(true);
   }
@@ -125,25 +142,42 @@ test("production CI caches downloads only and delegates paired validation to the
   expect(workflow).not.toContain("PNPM_CONFIG_STORE_DIR");
   expect(workflow).not.toContain("pnpm/action-setup");
   expect(workflow).not.toContain("Compute pinned web producer key");
-  const parsed = Bun.YAML.parse(workflow) as {
-    jobs: Record<string, { steps: { uses?: string; run?: string; with?: Record<string, string> }[] }>;
-  };
-  let downloadCaches = 0;
-  for (const job of Object.values(parsed.jobs)) {
-    for (const step of job.steps.filter((step) => step.uses?.startsWith("actions/cache"))) {
-      downloadCaches++;
-      expect(step.with?.path).toBe("${{ runner.temp }}/bruv-bun-cache");
-      expect(step.with?.key).toContain("bun-1.4.2-");
+  const cacheWorkflows = ["ci.yml", "release.yml"];
+  for (const filename of cacheWorkflows) {
+    const text = await Bun.file(resolve(import.meta.dir, "../.github/workflows/" + filename)).text();
+    const parsed = Bun.YAML.parse(text) as {
+      jobs: Record<string, { steps: { uses?: string; run?: string; with?: Record<string, string> }[] }>;
+    };
+    let downloadCaches = 0;
+    for (const job of Object.values(parsed.jobs)) {
+      if (filename === "ci.yml")
+        for (const step of job.steps.filter((step) => step.uses?.startsWith("actions/cache")))
+          expect(step.with?.path).toBe("${{ runner.temp }}/bruv-bun-cache");
+      for (const step of job.steps.filter(
+        (step) => step.uses?.startsWith("actions/cache") && step.with?.path === "${{ runner.temp }}/bruv-bun-cache",
+      )) {
+        downloadCaches++;
+        expect(step.with?.path).toBe("${{ runner.temp }}/bruv-bun-cache");
+        expect(step.with?.key).toBe(
+          "bun-download-v2-1.4.2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('bun.lock', 'package.json') }}",
+        );
+        expect(step.with?.["restore-keys"]).toBe("bun-download-v2-1.4.2-${{ runner.os }}-${{ runner.arch }}-");
+        expect(step.with?.key).not.toContain("bun-1.4.2-");
+        expect(step.with?.["restore-keys"]).not.toContain("bun-1.4.2-");
+      }
     }
+    expect(downloadCaches).toBeGreaterThan(0);
   }
-  expect(downloadCaches).toBeGreaterThan(0);
-  expect(parsed.jobs.test!.steps.some((step) => step.run === "bun run ci")).toBe(true);
+  const ci = Bun.YAML.parse(workflow) as { jobs: Record<string, { steps: { run?: string }[] }> };
+  expect(ci.jobs.test!.steps.some((step) => step.run === "bun run ci")).toBe(true);
   const runner = await Bun.file(resolve(import.meta.dir, "../scripts/ci.sh")).text();
   for (const gate of [
     "bun install --frozen-lockfile",
     "bun run format:check",
     "bun run lint",
     "bun run check",
+    'bun run perf:resources --profile ci --out "$log_dir/resources"',
+    'bun run perf:resources --profile stress --out "$log_dir/resources"',
     "bun run build",
     "bun scripts/offline-openai-default-transport.ts",
     "bun test --parallel=3 ./tests",

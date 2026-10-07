@@ -38,6 +38,8 @@ fi
 run_step 'Format check' format.log "$root" bun run format:check
 run_step 'Lint' lint.log "$root" bun run lint
 run_step 'Typecheck' typecheck.log "$root" bun run check
+run_step 'Task history resource smoke and resume' resources-ci.log "$root" bun run perf:resources --profile ci --out "$log_dir/resources"
+run_step 'Long task history resource budget' resources-stress.log "$root" bun run perf:resources --profile stress --out "$log_dir/resources"
 run_step 'Build paired Bruv binaries (no bundled T3)' build.log "$root" bun run build
 run_step 'Offline default OpenAI transport' openai-transport.log "$root" bun scripts/offline-openai-default-transport.ts
 run_step 'Complete root tests (three bounded workers)' tests.log "$root" env BRUV_RUN_LLM_TESTS=0 bun test --parallel=3 ./tests

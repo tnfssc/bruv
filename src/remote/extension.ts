@@ -1,3 +1,4 @@
+import { selectDiskBackedBranchEntries } from "../history/session-manager";
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { registerRemoteRuntime } from "./runtime";
 import { RemoteClient } from "./client";
@@ -194,7 +195,17 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
     attention.reset();
     initialSnapshot = true;
     activeInSession.clear();
-    for (const entry of (ctx.sessionManager?.getBranch?.() ?? []) as any[])
+    const entries =
+      (ctx.sessionManager &&
+        selectDiskBackedBranchEntries(
+          ctx.sessionManager,
+          (meta) =>
+            meta.type === "custom" &&
+            (meta.customType === "bruv-remote-active" || meta.customType === "bruv-remote-attention"),
+        )) ??
+      ctx.sessionManager?.getBranch?.() ??
+      [];
+    for (const entry of entries as any[])
       if (
         entry.type === "custom" &&
         entry.customType === "bruv-remote-active" &&
@@ -202,7 +213,7 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
       )
         activeInSession.add(entry.data.taskId);
     attention.restore(
-      (ctx.sessionManager?.getBranch?.() ?? [])
+      entries
         .filter((entry: any) => entry.type === "custom" && entry.customType === "bruv-remote-attention")
         .map((entry: any) => entry.data?.key)
         .filter((key: unknown): key is string => typeof key === "string"),

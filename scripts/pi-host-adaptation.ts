@@ -39,7 +39,7 @@ export const piHostPatches: readonly Patch[] = [
     originalSha256: "f48f91efc303fc7b826f0ce02ba6eb70fcc271d31671f0f68f562fdd8c6885e6",
     adaptedSha256: "4a3d92e391f2205174c71cfd30a8aed771ad9f560b80c0c6e662322f8e846e83",
     replacements: [
-      [`  \${APP_NAME} mcp <command>             Check MCP servers, sign in to or out of OAuth servers\n`, ""],
+      ["  ${APP_NAME} mcp <command>             Check MCP servers, sign in to or out of OAuth servers\n", ""],
       ["install/remove/uninstall/update/list/config/auth/mcp", "install/remove/uninstall/update/list/config/auth"],
       ["//# sourceMappingURL=args.js.map", "export const bruvHostAdapted = true;\n//# sourceMappingURL=args.js.map"],
     ],
@@ -47,7 +47,7 @@ export const piHostPatches: readonly Patch[] = [
   {
     path: "dist/core/session-manager.js",
     originalSha256: "9d01f720b803bf21d79e2b56de14d35a02316b9e22e8825fb007252a2f45f27a",
-    adaptedSha256: "344b8310365240a6e7e5573d95c8543f256bf5dadb964e954583efbe5ce75202",
+    adaptedSha256: "afa016a7535a8e6f57d516e3449cd1be3b56f08c07b05c32864b432e1c84add4",
     replacements: [
       [
         '        const rl = createInterface({\n            input: createReadStream(filePath, { encoding: "utf8", signal }),',
@@ -56,6 +56,10 @@ export const piHostPatches: readonly Patch[] = [
       [
         '        for await (const line of rl) {\n            const entry = parseSessionEntryLine(line);\n            if (!entry)\n                continue;\n            if (!header) {\n                if (entry.type !== "session")\n                    return null;\n                header = entry;\n                continue;\n            }\n            // Extract session name (use latest, including explicit clears)\n            if (entry.type === "session_info") {\n                name = entry.name?.trim() || undefined;\n            }\n            if (entry.type !== "message")\n                continue;\n            messageCount++;\n            const activityTime = getMessageActivityTime(entry);\n            if (typeof activityTime === "number") {\n                lastActivityTime = Math.max(lastActivityTime ?? 0, activityTime);\n            }\n            const message = entry.message;\n            if (!isMessageWithContent(message))\n                continue;\n            if (message.role !== "user" && message.role !== "assistant")\n                continue;\n            const textContent = extractTextContent(message);\n            if (!textContent)\n                continue;\n            allMessages.push(textContent);\n            if (!firstMessage && message.role === "user") {\n                firstMessage = textContent;\n            }\n        }\n',
         '        try {\n            for await (const line of rl) {\n                const entry = parseSessionEntryLine(line);\n                if (!entry)\n                    continue;\n                if (!header) {\n                    if (entry.type !== "session")\n                        return null;\n                    header = entry;\n                    continue;\n                }\n                // Extract session name (use latest, including explicit clears)\n                if (entry.type === "session_info") {\n                    name = entry.name?.trim() || undefined;\n                }\n                if (entry.type !== "message")\n                    continue;\n                messageCount++;\n                const activityTime = getMessageActivityTime(entry);\n                if (typeof activityTime === "number") {\n                    lastActivityTime = Math.max(lastActivityTime ?? 0, activityTime);\n                }\n                const message = entry.message;\n                if (!isMessageWithContent(message))\n                    continue;\n                if (message.role !== "user" && message.role !== "assistant")\n                    continue;\n                const textContent = extractTextContent(message);\n                if (!textContent)\n                    continue;\n                allMessages.push(textContent);\n                if (!firstMessage && message.role === "user") {\n                    firstMessage = textContent;\n                }\n            }\n        } finally {\n            rl.close();\n            input.destroy();\n        }\n',
+      ],
+      [
+        '    getEntries() {\n        return this.fileEntries.filter((e) => e.type !== "session");\n    }\n',
+        '    getEntries() {\n        return this.fileEntries.filter((e) => e.type !== "session");\n    }\n    /** Indexed model/settings selection; disk-backed adapters avoid original bodies. */\n    getSessionSettingsBranch() { return this.getBranch(); }\n    /** Compaction-aware model entries in original branch order. */\n    getModelContextBranch() { return this.getBranch(); }\n    /** Private contiguous branch for in-memory model-context previews. */\n    getContextPreviewBranch() { return this.getBranch(); }\n    /** Original custom rows of one type on the active branch. */\n    getLatestCustomEntryOnBranch(customType, accept) {\n        return this.getBranch().reverse().find((entry) => entry.type === "custom" && entry.customType === customType && accept(entry));\n    }\n',
       ],
     ],
   },
@@ -78,11 +82,11 @@ export const piHostPatches: readonly Patch[] = [
       ],
     ],
   },
-  // Native input identity travels with Pi's actual user object through its own queues.
+  // Native input identity and bounded model-context readers stay at the SDK seam.
   {
     path: "dist/core/agent-session.js",
     originalSha256: "35ca1dabd54d98c236c9601b569c2856b726ade392d06b2eaaf50158f48913ab",
-    adaptedSha256: "b6675dce26fc39803b1fe1f9deb1261cb1efc701b585cecd0ac280085dbd8eb6",
+    adaptedSha256: "c25468db7f3b81050df032bccb6013266414b2adbab0fddbf131b59dae76d9d3",
     replacements: [
       [
         "await this._queueFollowUp(expandedText, currentImages);",
@@ -130,6 +134,47 @@ export const piHostPatches: readonly Patch[] = [
         "//# sourceMappingURL=agent-session.js.map",
         "export const bruvInputIdentityAdapted = true;\n//# sourceMappingURL=agent-session.js.map",
       ],
+      [
+        "getBranchSelection(this.sessionManager.getBranch(), getModel)",
+        "getBranchSelection(this.sessionManager.getSessionSettingsBranch(), getModel)",
+      ],
+      [
+        "estimateProjectedContextTokens(projection, this.sessionManager.getBranch()).tokens",
+        "estimateProjectedContextTokens(projection, this.sessionManager.getModelContextBranch()).tokens",
+      ],
+      [
+        "getVirtualModelState(this.sessionManager.getBranch(), model.provider, model.id)",
+        "this.sessionManager.getLatestCustomEntryOnBranch(VIRTUAL_MODEL_STATE_ENTRY, (entry) => entry.data?.provider === model.provider && entry.data.modelId === model.id)?.data?.state",
+      ],
+      ["[...this.sessionManager.getBranch()].reverse()", "this.sessionManager.getModelContextBranch().reverse()"],
+      [
+        "getLatestCompactionEntry(this.sessionManager.getBranch())",
+        "getLatestCompactionEntry(this.sessionManager.getModelContextBranch())",
+      ],
+      [
+        "        const branch = this.sessionManager.getBranch();\n        const assistantIndex",
+        "        const branch = this.sessionManager.getModelContextBranch();\n        const assistantIndex",
+      ],
+      [
+        "        const projection = this.sessionManager.buildSessionProjection();\n        const branch = this.sessionManager.getBranch();",
+        "        const projection = this.sessionManager.buildSessionProjection();\n        const branch = (this.sessionManager.getModelContextBranch?.() ?? this.sessionManager.getBranch());",
+      ],
+      [
+        "        const manager = SessionManager.inMemory(this._cwd, undefined, [header, ...this.sessionManager.getBranch()]);",
+        "        const manager = SessionManager.inMemory(this._cwd, undefined, [header, ...this.sessionManager.getContextPreviewBranch()]);",
+      ],
+      [
+        "            const settings = this.settingsManager.getCompactionSettings(model);\n            const pathEntries = this.sessionManager.getBranch();",
+        "            const settings = this.settingsManager.getCompactionSettings(model);\n            const pathEntries = this.sessionManager.getContextPreviewBranch();",
+      ],
+      [
+        "            if (!model) {\n                return false;\n            }\n            const pathEntries = this.sessionManager.getBranch();",
+        "            if (!model) {\n                return false;\n            }\n            const pathEntries = this.sessionManager.getContextPreviewBranch();",
+      ],
+      [
+        "estimateProjectedContextTokens(manager.buildSessionProjection(), manager.getBranch()).tokens",
+        "estimateProjectedContextTokens(manager.buildSessionProjection(), manager.getModelContextBranch()).tokens",
+      ],
     ],
   },
   {
@@ -152,6 +197,32 @@ export const piHostPatches: readonly Patch[] = [
       [
         "//# sourceMappingURL=agent-session.d.ts.map",
         "export declare const bruvInputIdentityAdapted = true;\n//# sourceMappingURL=agent-session.d.ts.map",
+      ],
+    ],
+  },
+  {
+    path: "dist/core/session-manager.d.ts",
+    originalSha256: "ea12a33701dca952d7b0860243397d30783252317e5d8b147aead6f8a1324d64",
+    adaptedSha256: "51208200645f89e331998b608bff2c195b42ee6aa5dcb5e9de8143df57c6f895",
+    replacements: [
+      [
+        "    getEntries(): SessionEntry[];",
+        '    getEntries(): SessionEntry[];\n    getSessionSettingsBranch(): SessionEntry[];\n    getModelContextBranch(): SessionEntry[];\n    getContextPreviewBranch(): SessionEntry[];\n    getLatestCustomEntryOnBranch(customType: string, accept: (entry: Extract<SessionEntry, { type: "custom" }>) => boolean): Extract<SessionEntry, { type: "custom" }> | undefined;',
+      ],
+    ],
+  },
+  {
+    path: "dist/core/sdk.js",
+    originalSha256: "fe643170de3d259c7e06179d9e18270a009dfb54df915f6e3de515425b8d009b",
+    adaptedSha256: "605c7d9def7478cfc0bbc30af70adf59a34b6ea678d5e64132bb0c724497d2b1",
+    replacements: [
+      [
+        "const hasThinkingEntry = sessionManager.getBranch().some",
+        "const hasThinkingEntry = sessionManager.getSessionSettingsBranch().some",
+      ],
+      [
+        "getBranchSelection(sessionManager.getBranch(),",
+        "getBranchSelection(sessionManager.getSessionSettingsBranch(),",
       ],
     ],
   },

@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, test } from "bun:test";
 import { access, mkdtemp, readFile, rm, stat, truncate, writeFile } from "node:fs/promises";
-import { join } from "node:path";
 import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { SessionManager } from "@earendil-works/pi-coding-agent";
 import { HistoryService } from "../src/history/service";
 import { MANUAL_SHAKE_ENTRY, MANUAL_SHAKE_VERSION } from "../src/history/shake-record";
@@ -310,7 +310,14 @@ describe("original history", () => {
 
   test("fails closed when active-branch traversal exceeds its work bound", async () => {
     const manager = SessionManager.inMemory("/project") as any;
-    manager.getBranch = () => new Array(100_001);
+    manager.getBranch = () =>
+      Array.from({ length: 100_001 }, (_, index) => ({
+        type: "message",
+        id: String(index),
+        parentId: null,
+        timestamp: "t",
+        message: user("x"),
+      }));
     await expect(new HistoryService().search({ query: "x" }, { sessionManager: manager })).rejects.toThrow(
       "100000-entry limit",
     );
