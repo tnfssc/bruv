@@ -33,3 +33,5 @@ Latest configured assets+tsc passed at df656c0c;10 combined bridge/questions/cli
 Automatic fish setup fails mise trust/bun127; workers use Bun /home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin with Bash and read-only shared dependencies /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules. Configured check is bun run check, not nonexistent typecheck alias. Biome format/lint separate from inherited organizeImports check warnings. Area node_modules symlink is untracked; generated dist from an accidental judge build is not acceptance proof. Clean only owned generated artifacts before final audit. Last disk check124GiB free. No push or separate PR; parent integrates PR45.
 
 Parser tests own-primary199fe91c ACCEPT task_ea570b89 at725ebe43: contract-grouped inline assertions retain25 baseline/13 seed argument cases;19/56 independent. Delivery unchanged21d37bd7 independently accepted task_2852e3a3 (10/52 candidate and5/37 current).
+
+Observation tests own-primary1bbf7d18 ACCEPT task_158bd70e at24928f2d: projection bounds and persisted-summary decoder fixtures independent; all28 assertion calls retained;31/174 independent.

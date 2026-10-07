@@ -1,6 +1,6 @@
 import { expect, test } from "bun:test";
 import type { RemoteTask } from "../src/remote/client";
-import { clearRemoteJobEvents, remoteJobEvents } from "../src/remote/job-events";
+import { clearRemoteJobEvents, type RemoteJobObservation, remoteJobEvents } from "../src/remote/job-events";
 import {
   publishRemoteJobObservations,
   remoteJobObservation,
@@ -173,7 +173,7 @@ test("cancelled carries the latest completed assistant text, not later tool or p
   expect(t.events).toEqual(events);
 });
 
-test("cached result bounds include JSON escaping; summary also reads persisted block content", () => {
+test("cached result bounds include JSON escaping", () => {
   const t = task("escaped", "/parent");
   t.task = { taskId: t.taskId, state: "done" };
   t.events = [
@@ -184,18 +184,28 @@ test("cached result bounds include JSON escaping; summary also reads persisted b
   expect(content.length).toBeGreaterThan(0);
   expect(JSON.stringify(content).length).toBeLessThanOrEqual(1400);
   expect(observation.preview!.length).toBeLessThanOrEqual(4000);
-  observation.preview = JSON.stringify({
-    repository: { status: "review", reason: "Tracked file changed" },
-    error: "offline",
-    lastAssistant: {
-      message: {
-        content: [{ type: "text", text: "Saved result" }, { type: "toolCall" }, { type: "text", text: "Next line" }],
+});
+
+test("completion summaries decode persisted blocks and preserve malformed preview text", () => {
+  const observation: RemoteJobObservation = {
+    ownerId: "owner",
+    epoch: "epoch",
+    taskId: "escaped",
+    state: "done",
+    preview: JSON.stringify({
+      repository: { status: "review", reason: "Tracked file changed" },
+      error: "offline",
+      lastAssistant: {
+        message: {
+          content: [{ type: "text", text: "Saved result" }, { type: "toolCall" }, { type: "text", text: "Next line" }],
+        },
       },
-    },
-  });
+    }),
+  };
   expect(remoteCompletionSummary(observation, "ssh:escaped")).toBe(
     "ssh:escaped cached done; return review; error offline — Saved result\nNext line; Tracked file changed",
   );
-  observation.preview = "not JSON";
-  expect(remoteCompletionSummary(observation, "ssh:escaped")).toBe("ssh:escaped cached done — not JSON");
+  expect(remoteCompletionSummary({ ...observation, preview: "not JSON" }, "ssh:escaped")).toBe(
+    "ssh:escaped cached done — not JSON",
+  );
 });

@@ -366,8 +366,14 @@
     {
       "focus": "src/remote/job-events.ts",
       "initialBlob": "38774795309a62bf685943a7784d348584f26504",
-      "status": "candidate-awaiting-judge",
-      "judgeRounds": [],
+      "status": "judging",
+      "judgeRounds": [
+        {
+          "id": "task_af2942c6",
+          "status": "running",
+          "candidate": "25dec5b190c514a8ee88c77092398896b85e1e9f"
+        }
+      ],
       "launchBase": "a7830f7d2541164f5170e2323a3e621e5de1f35d",
       "primary": {
         "id": "task_573d7ca9",
@@ -1558,12 +1564,15 @@
     {
       "focus": "tests/remote-job-observations.test.ts",
       "initialBlob": "874b1d89a9c77153b030b59d43a219e7cda701ec",
-      "status": "judging",
+      "status": "accepted",
       "judgeRounds": [
         {
           "id": "task_158bd70e",
-          "status": "running",
-          "candidate": "1bbf7d18a2c366201dea50cb9bc84d6fc5c57e76"
+          "status": "completed",
+          "candidate": "1bbf7d18a2c366201dea50cb9bc84d6fc5c57e76",
+          "verdict": "ACCEPT",
+          "reason": "Projection bounds and persisted summary decoder have independent fixtures; malformed preview separate value eliminates unrelated fixture mutation, all28 assertion invocations retained.",
+          "checks": "Independent31 pass/174; seed scenarios verbatim after type import normalization; format/lint/diff pass, no full/live."
         }
       ],
       "relatedIntegration": {
@@ -1581,7 +1590,9 @@
       },
       "result": "Independent serialized bound observation, persisted-summary fixture, malformed preview value replace unrelated preview mutations; authority/cancellation/result assertions unchanged.",
       "checks": "Baseline30/candidate31 tests both174 assertions; format/lint/diff pass.",
-      "changedRelatedPaths": []
+      "changedRelatedPaths": [],
+      "acceptedBlob": "24928f2d696e5e8a633127a6f60afec98289090c",
+      "integrationState": "exact own-primary test patch, related acceptance superseded"
     },
     {
       "focus": "tests/remote-jobs-e2e.test.ts",
