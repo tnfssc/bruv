@@ -348,8 +348,15 @@
     {
       "focus": "src/agent/last-used-cli-model.ts",
       "initialBlob": "09d386f26bb6aa3e28e07e4b4d7800f92d8c0491",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_9d8cd3c0",
+          "launchBase": "ddc4ad72c1125d125f83e9eaee2530e40b57e2a2",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_9d8cd3c0",
+          "branch": "bruv/primary-last-used-cli-model-persistence-9d8cd3c0"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending"
@@ -1148,11 +1155,17 @@
     {
       "focus": "src/session/identity.ts",
       "initialBlob": "12d42ff85ad0c1524bb85bafeeb668fed2a42b26",
-      "status": "primary-running",
+      "status": "judge-pending",
       "primary": [
         {
           "id": "task_743c2cfa",
-          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7"
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7",
+          "commit": "ddc4ad72c1125d125f83e9eaee2530e40b57e2a2",
+          "changedPaths": [
+            "wisdom/quality/structural-readability-worker.md"
+          ],
+          "result": "Unchanged durable manager path or existing ID gives stable attribution; child parent link/cost/footer/connector consumers separate from restore/replay/native authority. No hidden state/mixed lifetimes.",
+          "checks": "11 tests/37 assertions; format/lint/diff pass with2 infos; broader unchanged compat task-binding test521 fails tasks undefined; no typecheck/build/live claims."
         }
       ],
       "judgeRounds": [],
@@ -2355,6 +2368,13 @@
       "need": "If integrated, assigned primary owner must cover final hash; parent reconcile related test overlaps.",
       "judge": "task_0acb5c07",
       "verdict": "ACCEPT"
+    },
+    {
+      "file": "tests/claude-compat-task-binding.test.ts",
+      "owner": "compatibility-t3",
+      "state": "observed-unrelated-check-failure",
+      "need": "Session identity primary broader compatibility test failed unchanged at line521: tasks undefined. No edits; parent/assigned owner investigate combined fixture/source compatibility. Focused identity11/37 passed.",
+      "candidate": "ddc4ad72c1125d125f83e9eaee2530e40b57e2a2"
     }
   ],
   "batchChecks": [
