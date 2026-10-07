@@ -299,7 +299,7 @@
     {
       "focus": "mise.toml",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "judge-running",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_f31c9cfd",
@@ -315,13 +315,18 @@
           "id": "task_a39f170d",
           "base": "cda898ee9cace88b9b290431abea7bb90d52d389",
           "candidate": "4bbc468d880786deab95a1d8fa394aeb0c071b55",
-          "state": "running"
+          "state": "completed",
+          "verdict": "ACCEPT",
+          "objections": [],
+          "evidence": "Flat pin table already readable;removed obsolete bundled-T3 pnpm authority comment after retirement/current consumer proof. pnpm still intentionally provisioned live/dependency workflows,Node native sqlite gates,Bun package/t3.",
+          "checks": "Independentpins unchanged10Bun5Node2pnpm,1pin test150assertions;fullworkflow21pass2fail absentdeps (writer23not independently reproduced);diffpass;no install/hosted/build."
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "a0de5dad9cb229123d4b8f5f7935042e0a01dbde",
       "readingResult": "Flat three-pin table unchanged structurally; obsolete T3 pnpm authority comment removed to avoid retired bundled-build detour,values unchanged.",
-      "checks": "23workflowtests;parsed pins baseline/all4workflows10Bun5Node2pnpm occurrences equal;no globalenv/build."
+      "checks": "23workflowtests;parsed pins baseline/all4workflows10Bun5Node2pnpm occurrences equal;no globalenv/build.",
+      "integrationState": "Exact one-comment correction integrated,no pin change;noteexcluded."
     },
     {
       "focus": "package.json",
