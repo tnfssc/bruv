@@ -277,13 +277,21 @@
     {
       "focus": "src/goals/store.ts",
       "initialBlob": "65bf58713c66da88994d4d67dead877af2fcdcd0",
-      "status": "primary-running",
+      "status": "judge-pending",
       "primary": [
         {
           "id": "task_fda16f5b",
           "launchBase": "f3c522bfac81cc605156e8f870ca32f5e2394a53",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_fda16f5b",
-          "branch": "bruv/primary-src-goals-store.ts-fda16f5b"
+          "branch": "bruv/primary-src-goals-store.ts-fda16f5b",
+          "commit": "550ce6425a3d92d1b0300bc48bd9cfe69737da91",
+          "changedPaths": [
+            "src/goals/store.ts",
+            "tests/goals.test.ts",
+            "wisdom/quality/structural-readability-worker.md"
+          ],
+          "result": "Replay explicitly ignores, accepts, or revokes authority with one revocation/diagnostic boundary.",
+          "checks": "32 focused tests/153 assertions; new replay tests pass baseline too; focused TypeScript/format/diff pass; 3 baseline lint warnings; SDK absent dist/bruv blocked."
         }
       ],
       "judgeRounds": [],
@@ -1184,8 +1192,15 @@
     {
       "focus": "tests/session-input.test.ts",
       "initialBlob": "58e94fbc168a6db197f9869d84c08d7c4e3e123e",
-      "status": "pending",
-      "primary": [],
+      "status": "primary-running",
+      "primary": [
+        {
+          "id": "task_fe11d531",
+          "launchBase": "8edba9abaeca2ef09f01b2d445fd9b7c8c927cc8",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_fe11d531",
+          "branch": "bruv/primary-deleted-session-input-tests-fe11d531"
+        }
+      ],
       "judgeRounds": [],
       "acceptedBlob": null,
       "integration": "pending",
