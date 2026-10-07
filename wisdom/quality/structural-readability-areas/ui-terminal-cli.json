@@ -3042,7 +3042,7 @@
       "focus": "tests/ui-cleanup-probe.test.py",
       "kind": "new-test",
       "initialBlob": null,
-      "status": "rework-judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_09dea81c",
@@ -3076,17 +3076,31 @@
           "id": "task_ce1af6b4",
           "base": "a86d8fc7b58bd35b8b977d46e059a0335418838d",
           "candidate": "a2c2b9f33764fde811d082c1fbf812c46b5cee15",
-          "verdict": "pending",
+          "verdict": "ACCEPT",
           "priorJudge": "task_3bc6b56e",
           "priorVerdict": "REJECT",
           "priorFindings": [
             "Phase-local clock.side_effect replaces unconsumed observations, weakening timeout negative: mutant reads time once per wait then retries forever passes candidate all8 but baseline fails StopIteration. Before replacing clock observations assert cumulative call counts1after start,3after READY,4after SECOND; rerun negative control."
           ],
-          "writerResponse": "Cumulative clock-call assertions1/3/4; same stale-clock mutant now rejected at READY, all original contracts retained"
+          "writerResponse": "Cumulative clock-call assertions1/3/4; same stale-clock mutant now rejected at READY, all original contracts retained",
+          "objections": [],
+          "reviewedBlobs": {
+            "tests/ui-cleanup-probe.test.py": "4d6e5207586f61dfc1662548d2395830eac5ef0f"
+          },
+          "resolvedPriorFindings": "Cumulative clock counts consume observations before replacement. Independent stale-clock mutant original failsStopIteration/rejected passes/rework fails2!=3atREADY.",
+          "evidence": "Request-keyed response expectations remove index/list translation; phase-local clocks expose retry/deadline with preserved consumption negative. Whole eight-contract file readable.",
+          "checks": [
+            "Independent8focused+13adjacent pass",
+            "Three-version mutant and six identical AST bodies/all8contracts18predicates/production bytes unchanged",
+            "compile/help/diff"
+          ],
+          "limits": [
+            "Inherited10real screen failures; no product acceptance/new terminal run/full build"
+          ]
         }
       ],
-      "acceptedBlob": null,
-      "integrationState": "Original related test remains integrated; rejected primary candidate NOT integrated",
+      "acceptedBlob": "4d6e5207586f61dfc1662548d2395830eac5ef0f",
+      "integrationState": "fresh rework round2 accepted and integrated; original rejected candidate retained",
       "relatedPatchJudgments": [
         {
           "id": "task_988afb2b",
@@ -3116,8 +3130,7 @@
           "respondsTo": "task_3bc6b56e",
           "commit": "a2c2b9f33764fde811d082c1fbf812c46b5cee15"
         }
-      ],
-      "priority": "next-judge fresh cleanup-test rework"
+      ]
     },
     {
       "focus": "tests/tasks-ui-proof-build.test.ts",
