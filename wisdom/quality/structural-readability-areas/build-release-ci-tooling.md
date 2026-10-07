@@ -62,3 +62,7 @@ Dependency-workflow-test primary: step-local contracts, isolated real bundle sce
 Manual-test primary: isolated release states and owned repository lifetime, named admission/identity cases, byte retry/no-mutation refusals. Judge task_69fdb98c ACCEPT9fdf9ef;28/166focus52withpublisher. Explicit follow-up: rejudge fixture compatibility if pending preparer script changes; no hosted evaluator claim.
 
 Release-workflow-test primary: separate owned-job build/helper/assets contracts and required named-step lookup. Judge task_f9136eba ACCEPTffcf474;23/351 vs baseline21/339, wrong-job validation mutation caught2 tests previously missed. Lint warning attribution corrected:4 at both base/candidate. Static only, no hosted gate.
+
+Manual preparer: shared numeric ordering and one package snapshot. Judge task_706382eb ACCEPT5822e205 plus explicit combined fixture compatibility9fdf9ef (28/166), resolving manual-test follow-up. Independent numeric probes2/104; committed multi-tag coverage remains nonblocking gap.
+
+Dependency updater first candidate REJECT task_98fc9caa: inherited constructor appears as missing lock version after normalization. Not integrated. Fresh rework task_d9eeb4d5 owns full candidate+regression fix; earlier candidate/branch retained.
