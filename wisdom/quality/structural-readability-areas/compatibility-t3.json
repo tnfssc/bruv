@@ -1,0 +1,675 @@
+{
+  "area": "compatibility-t3",
+  "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
+  "initialAreaCommit": "59413c532e6422983f611915e509e8421aa2f363",
+  "workspace": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d",
+  "branch": "bruv/whole-repo-structural-readability-compat-dc14408d",
+  "files": [
+    {
+      "file": "scripts/bruv-claude-compat.sh",
+      "initialBlob": "e3fc96419050e349c3beb8f9043a47e61b8443e0",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "scripts/build-claude-compat.ts",
+      "initialBlob": "288ab823259a840b1f8b547d4366406d0340c963",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "scripts/claude-compat-launcher.ts",
+      "initialBlob": "42cadbf1870ff31d75b1d2d137c7d405a3e5b285",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "scripts/claude-native-acceptance/app-delegation-driver.mjs",
+      "initialBlob": "b155c48a81e9f9206dff243ce82caa5f1ce3f762",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "scripts/claude-native-acceptance/app-delegation-model.mjs",
+      "initialBlob": "cd31945f84240e89773e227fd0db20d8a5d0d6e0",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "scripts/claude-native-acceptance/driver.mjs",
+      "initialBlob": "882479646781146d901ab1b87e5d3a99865d8509",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "scripts/claude-native-acceptance/history-driver.mjs",
+      "initialBlob": "659797ad2ec3eede386464076c949ad0f700cf6c",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "scripts/claude-native-acceptance/history-model.mjs",
+      "initialBlob": "9446986b74d6df6bf6b4bdaddd5e3de7aa8740a6",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "scripts/claude-native-acceptance/history-replay.mjs",
+      "initialBlob": "0ccc3cc8c75866a526eb1f6928a936b0752c5496",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "scripts/claude-native-acceptance/history-run.mjs",
+      "initialBlob": "fb51c5b023103a4928903ce846abccd608e35a10",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "scripts/claude-native-acceptance/human-driver.mjs",
+      "initialBlob": "92e5682af10e949649d0f87236c00b412f02a3df",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "scripts/claude-native-acceptance/model.mjs",
+      "initialBlob": "974c4c41cd0b921a6b8bb569137a349d95135492",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "scripts/claude-native-acceptance/run-subagent.mjs",
+      "initialBlob": "333a6297626d5bedcd9aecd72757c436ce3f51ef",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "scripts/claude-native-acceptance/run.mjs",
+      "initialBlob": "949bb21f489de722a85735d22d5dabd27f6413a0",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "scripts/claude-native-acceptance/runtime-smoke.mjs",
+      "initialBlob": "f13d18e4883ef5fcc47aa785039ceee334cce15f",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "scripts/claude-native-acceptance/subagent-driver.mjs",
+      "initialBlob": "b3a839d892d5d6ea15b4bc23a32504ce22a29103",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "scripts/claude-native-acceptance/subagent-model.mjs",
+      "initialBlob": "26c60744b7399e669da090a7c33e8a767d0bd61d",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "scripts/claude-native-acceptance/subagent-return-evidence.mjs",
+      "initialBlob": "89a45efad86898aea8b5202b63b3a5bcdf523ac1",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "scripts/claude-native-acceptance/tap.mjs",
+      "initialBlob": "5f8db4ace61b0211f53f5959653a2bf6f0dc2f26",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "scripts/claude-native-acceptance/worker.mjs",
+      "initialBlob": "766989628f65993cbde352037144c85dc25e316f",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "scripts/claude-native-acceptance/wrapper-sdk-smoke.mjs",
+      "initialBlob": "93411cd8380fc52c7f69afc866bff5bf7912b156",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "src/claude-compat/app-worker.ts",
+      "initialBlob": "a69edf87092ec0a5dc77bacd0150da6062722c76",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "src/claude-compat/arguments.ts",
+      "initialBlob": "61a99f162b7328d9f937d10ec33691a9b47bd645",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "src/claude-compat/binding.ts",
+      "initialBlob": "38964c2b098bc5e68f36594e9bdae4e03930f631",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "src/claude-compat/cli.ts",
+      "initialBlob": "fdc3bb4a35f2f52b9a7d970aac5213681ffa0f85",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "src/claude-compat/commands.ts",
+      "initialBlob": "f50902cd03e53ac8a58906b24d4ef01e532c55f8",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "src/claude-compat/frontend.ts",
+      "initialBlob": "72795e199794f3aaac8ca266277289b498235b52",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "src/claude-compat/history.ts",
+      "initialBlob": "a89c8a44b0fb136a21e4f11fd6213f07a8cf60a7",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "src/claude-compat/human-controls.ts",
+      "initialBlob": "dceabf00172ab6f8c57fcb462315e48bf6427256",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "src/claude-compat/launch.ts",
+      "initialBlob": "ec7515100c4560c03f473214973d9705380f927a",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "src/claude-compat/live-frontend.ts",
+      "initialBlob": "e1e8e088837528826765e9f5e101fc577aa99c81",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "src/claude-compat/mcp.ts",
+      "initialBlob": "01284c27fd7f3b9bfae7ec13b08f88bc78c3646d",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "src/claude-compat/permissions.ts",
+      "initialBlob": "77083e6264957aa744ef1e895d6ab537ec575c97",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "src/claude-compat/preflight.ts",
+      "initialBlob": "8d220bba36b3b6edbf7b131e60b45a3ad89792cf",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "src/claude-compat/runtime.ts",
+      "initialBlob": "40db8189be3b9179ae67df78548a55cf48043cdc",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "src/claude-compat/task-binding.ts",
+      "initialBlob": "f278a6a219b3b5fc5f710d97f3a2905748b9d670",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "src/claude-compat/task-projection.ts",
+      "initialBlob": "6c04a462ddfc040f2aaaee6c263d829fbf62499f",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "src/claude-compat/transport.ts",
+      "initialBlob": "2955f0309942c4d94a591065f9d315cc4592c02a",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "src/t3/README.md",
+      "initialBlob": "3e491ecd1339adf477200f359e4ecca07961aef1",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "src/t3/tasks/events.ts",
+      "initialBlob": "fee21123a7d6380e5d4ffee96fb6815471a3d47b",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "src/t3/tasks/launch-identity.ts",
+      "initialBlob": "4162ee435592ca0bc00890499e6195006cf93225",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "src/t3/tasks/local-notifications.ts",
+      "initialBlob": "76e02ef84211c59caf17457745a5fc5ed11dbf03",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "src/t3/tasks/mcp-client.ts",
+      "initialBlob": "b00156caaeb4ba5fe15e0f3c7fb8eff472d282ce",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "src/t3/tasks/native-task.ts",
+      "initialBlob": "9152be57bb326b4f919518efe6d13be4b10c363b",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "src/t3/web/launcher.ts",
+      "initialBlob": "8df201a2dfb5785bb79e2ec6c4831bc80b974049",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "tests/claude-compat-app-worker.test.ts",
+      "initialBlob": "1e4988bd5b469c795b0a760d8ee268d8d0e581e0",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "tests/claude-compat-command-lifecycle.test.ts",
+      "initialBlob": "94869a21d9887a385befc82ee9a45c8a757c47e4",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "tests/claude-compat-commands.test.ts",
+      "initialBlob": "e506ca3fda50eaebad675cf026e8948b8e4e128e",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "tests/claude-compat-compiled.test.ts",
+      "initialBlob": "5dd980739861ee24d0210c7db9734787f43973bd",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "tests/claude-compat-composition.test.ts",
+      "initialBlob": "0551197d52af008fbc723a70d9b157bb870ffc96",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "tests/claude-compat-defaults.test.ts",
+      "initialBlob": "03cbe81b5655cb248754441d870562fde4794397",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "tests/claude-compat-history.test.ts",
+      "initialBlob": "291daa0d1e8d8c9df89f68de6cf11a48642f2902",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "tests/claude-compat-human-controls.test.ts",
+      "initialBlob": "8dc79ae1e34631b7c6e55a6f3fad6fdb994ff647",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "tests/claude-compat-launch.test.ts",
+      "initialBlob": "43bb031ffd0b2d74bdc83b48c13434161c33547a",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "tests/claude-compat-launcher.test.ts",
+      "initialBlob": "f7c05c44d24a00a4795933f726df3e1c30733365",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "tests/claude-compat-live-frontend.test.ts",
+      "initialBlob": "054ebbdd6ea64619c791db411fec83f2c49c627c",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "tests/claude-compat-preflight.test.ts",
+      "initialBlob": "45b60bcac768374ee21c786853c35ab2a763ede3",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "tests/claude-compat-prompt-ownership.test.ts",
+      "initialBlob": "77df78bd7770d1c81f753dd5b29be8fea0799d78",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "tests/claude-compat-retry.test.ts",
+      "initialBlob": "b47243122091cbf6159182f3a856508bdc5b4b51",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "tests/claude-compat-runtime.test.ts",
+      "initialBlob": "5429ce6b5e28b1b1dcde77a0c4e1f75d19a398ef",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "tests/claude-compat-task-binding.test.ts",
+      "initialBlob": "88bae66b92d33c773eb63314188b667b96b66447",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "tests/claude-compat-task-projection.test.ts",
+      "initialBlob": "da89cdcea508117e2cbefe3d91d35670c3a71d9d",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "tests/claude-compat-transport.test.ts",
+      "initialBlob": "136ce557bfba92d0c1baedbf32efe1980e2d2d8b",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "tests/claude-compat/credential-isolation.test.ts",
+      "initialBlob": "5b0fd64bdd1a91b1bf8bb228393724152bff4ec4",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "tests/claude-compat/fixtures/http-mcp-lifecycle.ts",
+      "initialBlob": "2885a3af02f178caee3a18d89fda257fa8ef49cb",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "tests/claude-compat/fixtures/stdio-mcp.ts",
+      "initialBlob": "3dcb59b21e85d47867b3acbd715778117bf8733b",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "tests/claude-compat/mcp.test.ts",
+      "initialBlob": "35c79565ff48cb3976226b305697ca63cd122619",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "tests/claude-compat/native-adapter-prompt-ownership.ts.txt",
+      "initialBlob": "5ea45ec68845bb716a76b40c94407a36e2c590f9",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "tests/claude-compat/permissions.test.ts",
+      "initialBlob": "47e60ac228641c4cd9e1299a250d83731ce126f5",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "tests/claude-native-acceptance-chronology.test.mjs",
+      "initialBlob": "49f0c09654bffd751ad8941db83ab3a2b94f1318",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "tests/claude-native-acceptance-model.test.mjs",
+      "initialBlob": "0b993a6daeef0eb081aca96e1d202ff802e8e151",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "tests/claude-native-app-delegation-model.test.mjs",
+      "initialBlob": "1cf00502ad018790f014c2cb3740e3fb38366ec6",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "tests/claude-native-command-idle.test.mjs",
+      "initialBlob": "3bd6117eca7ceb80078fb3d22eef42a398560edd",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "tests/claude-native-history-model.test.mjs",
+      "initialBlob": "d5f7bf0c5df506d5e38fca62409df9239258b3ce",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "tests/claude-native-subagent-model.test.mjs",
+      "initialBlob": "7312e31703cb656c2ba1d743b815887c2e018c82",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "tests/claude-native-subagent-return.test.mjs",
+      "initialBlob": "58d83d7f782388c516f3897eb8cb6a364de866a4",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "tests/fixtures/claude-task-worker.ts",
+      "initialBlob": "21bf893d3fffed763700fa4cf96a3ceb135f7c00",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "tests/t3/local-notifications.test.ts",
+      "initialBlob": "a3076eba307fac9850dad74c870d4673dfc2db78",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "tests/t3/native-routing.test.ts",
+      "initialBlob": "1902efb0c30480cc156329da0a1ceaa420afd3e8",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "tests/t3/production-bridge.test.ts",
+      "initialBlob": "3fe602a2184e31bfe3cb6bd96937bd6208b6dfd8",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "tests/t3/web-launcher-process.test.ts",
+      "initialBlob": "7a393249d4cd32e63f236ca44eedc2a83440d7d5",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "tests/t3/web-launcher.test.ts",
+      "initialBlob": "f786918777c6f2073e1a6afa4b5e7658b67dbb86",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    },
+    {
+      "file": "tests/t3/web-task-events.test.ts",
+      "initialBlob": "f09ea82bc1e8c407aabc7e377f1dbd02e4debbd6",
+      "status": "pending",
+      "primary": null,
+      "judges": [],
+      "acceptedBlob": null
+    }
+  ],
+  "extraFiles": [],
+  "crossAreaNeeds": []
+}
