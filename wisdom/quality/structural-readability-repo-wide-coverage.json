@@ -2325,11 +2325,13 @@
     {
       "file": "scripts/probe-live-recorded.ts",
       "initialBlob": "3c15dce87ad6cef0b8687c9d2dfeb793a48c9b3a",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_37841a12",
       "sourceCommit": "49118d0e1bcffc27ca6b2c71b87cc2504065a67d",
-      "judgeIds": [],
-      "resumeState": "needs-judge",
+      "judgeIds": [
+        "task_9b1f4ffa"
+      ],
+      "resumeState": "accepted-joined",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
       "area": "live-native-audio",
       "primaryCommit": "49118d0e1bcffc27ca6b2c71b87cc2504065a67d",
@@ -2366,6 +2368,22 @@
         "Invalid transcript preparation now fails before prompt/config/credential loading rather than after it; JSON output property order moves model after metadata, with unchanged field names/values.",
         "Automatic setup unsupported host-hash failure reported in preserved reconciliation remains unrerun and unbypassed; it is not rendered green.",
         "No delegation, recovery, cleanup, destructive Git operations, old-worktree mutations, wisdom edits, push, PR or merge. Parent owns aggregate wisdom and external runtime-model verification."
+      ],
+      "acceptedBlob": "fe4b9afb1795931b5f658ac4589b8da4bdcf4518",
+      "result": "Compared the entire candidate entrypoint with primary base 0b1faebd03e5eb7711dbcba5a58453564a28cc36, which is also its parent. The base validated colon-delimited strings, split them again for source preflight, then split them again during execution; snapshot/input text was reconstructed separately for validation, hashes and wire items. The candidate parses trial specs once and gives prepareTrial one coherent responsibility: selecting source text, validating it, choosing instructions, constructing ordered items and hashing those exact strings. Its return is a concrete prepared request plus publication metadata, not an invented shared context bag. The top-level map completes all source-backed preparation before prompt/config/credential function calls. The final loop reads as invoke and publish rather than rebuild and invoke. This is an actual authority and phase-boundary improvement, not rename-only cleanup. Unchanged decision: retain content normalization, snapshot projection and the study transport in their existing owners; their compact transformations and socket lifetime already have coherent jobs and need no additional abstraction for this focus.",
+      "systemReason": "Traced the explicit CLI entrypoint through probeArgs/readStudy/studyTarget, prompt preview, Live config/credential construction, studyTrial and JSON publication, and inspected its test caller. Opt-in, explicit source/study/disclosure and 1–24 trial gate remain. All configured historical user indices and original system sections are still validated. Fresh prepares only the target user item and a null snapshot hash; snapshot first prepares the bounded projected user-context item; replay adds the same stripped nonempty provisional assistant transcripts in source order between that snapshot and the target. Baseline uses the recorded root; grounding appends the existing instruction text. Hashes now use the same prepared root/instruction/target/context strings sent to studyTrial. Prompt preview still supplies exactly one execute schema, and the provider must be OpenAI before credential resolution. Trials remain sequential with the same model, 25-second deadline and 2000-character speech cap. Unchanged transport sends prepared items after session.updated, intercepts tool calls with synthetic output rather than executing code, bounds response continuation, closes at terminal/error/deadline, and returns results. Publication still excludes responses and includes privateOutput, metadata, model, calls/speech/errors. No other maintained code caller was found; the test caller exercises invalid-plan rejection. Unchanged decision: no change needed to these consent, projection, mock-dispatch and transport boundaries; preparing complete requests earlier does not require moving their distinct responsibilities into prepareTrial.",
+      "checks": [
+        "Read wisdom/values.md, structural-readability-guidance.md, repository review ledger/coverage and live-native-audio ledger with the pending focus row.",
+        "Verified candidate parent equals the supplied primary base; diff name-status lists only the focus as changed. Read its full pinned candidate and base source, not checkout HEAD.",
+        "Read the pinned argument/source gate, full study transport and test caller; inspected prompt assembly and deferred config/credential source boundaries without invoking them. Verified all six related code paths have identical parent/candidate blobs.",
+        "git diff --check 0b1faebd03e5eb7711dbcba5a58453564a28cc36 49118d0e1bcffc27ca6b2c71b87cc2504065a67d completed with no output.",
+        "Exact accepted focus blob obtained from candidate Git tree. No source edits or delegated jobs."
+      ],
+      "limits": [
+        "Static structural judgment only. No setup, tests, builds, paid provider calls, real credential reads or physical-device interaction were performed. Parent owns audited isolated runtime gates.",
+        "No authentication, audio/device, compiled CLI, provider behavior or actual runtime execution claim. Existing test source does not demonstrate source-backed preparation ordering at runtime.",
+        "Historical target indices/cutoff and projection assumptions remain study-specific. privateOutput is a disclosure marker, not enforcement of private stdout storage.",
+        "Automatic worktree setup outcome is not independently verified here; no setup failure recovery or bypass was attempted."
       ]
     },
     {

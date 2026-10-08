@@ -11,9 +11,8 @@ import { createPromptPreview } from "../src/prompt-preview";
 
 if (process.env.BRUV_CAPABILITY_PROBE !== "1") throw Error("Explicitly opt into paid probe");
 const input = probeArgs(process.argv.slice(2), "recorded");
-const plan = input.trials;
-if (!plan.length || plan.length > 24) throw Error("Pass 1–24 explicit trials");
-for (const spec of plan) {
+if (!input.trials.length || input.trials.length > 24) throw Error("Pass 1–24 explicit trials");
+const plan = input.trials.map((spec) => {
   const [target, context, variant, extra] = spec.split(":");
   if (
     extra ||
@@ -22,21 +21,13 @@ for (const spec of plan) {
     !["baseline", "grounding"].includes(variant)
   )
     throw Error("Invalid trial: " + spec);
-}
+  return { target, context, variant };
+});
 const allowed = readStudy(input.source!);
 for (const idx of Object.values(study.targets)) studyTarget(allowed, idx);
 const frame = allowed.find((x) => x.message?.role === "system")?.message?.sections;
 if (!frame?.preamble || !frame?.cwd) throw Error("Missing original Live root");
 const root = frame.preamble + "\n\n" + frame.cwd; // Original recorded sections; content is empty.
-const prompt = await createPromptPreview({ rootMode: "orchestrator", message: "Synthetic probe for tool schema only" });
-const declared = prompt.tools.find((x) => x.name === "execute");
-if (prompt.tools.length !== 1 || !declared) throw Error("Execute-only tool required");
-const tool = { type: "function", name: "execute", description: declared.description, parameters: declared.parameters };
-const config = await loadLiveConfig();
-if (config.provider !== "openai") throw Error("Configured provider is not OpenAI");
-const credential = await createDefaultLiveCredentialService(undefined, config.provider);
-const key = await credential.loadKey();
-if (!key) throw Error("No configured credential");
 const grounding =
   "\n\nIn Live you are still the main agent. execute is available now; use it for authorized actions, including shell() or subagent() inside execute. Voice input does not remove host tools. Call a tool before claiming work done; do not imply a mocked response proves runtime execution.";
 const targets: Record<string, number> = study.targets;
@@ -57,33 +48,27 @@ function snapshot(index: number) {
     serialized
   );
 }
-for (const spec of plan) {
-  const [target, context] = spec.split(":");
+function prepareTrial({ target, context, variant }: (typeof plan)[number], trial: number) {
   const idx = targets[target];
-  if (context !== "fresh") snapshot(idx);
-  if (!content(allowed[idx].message.content)) throw Error("Empty target transcript: " + target);
-}
-for (let n = 0; n < plan.length; n++) {
-  const [target, context, variant] = plan[n].split(":");
-  const idx = targets[target as keyof typeof targets];
+  const contextText = context === "fresh" ? null : snapshot(idx);
+  const inputText = content(allowed[idx].message.content);
+  if (!inputText) throw Error("Empty target transcript: " + target);
   const instructions = root + (variant === "grounding" ? grounding : "");
-  const result = {
-    trial: n + 1,
+  const metadata = {
+    trial,
     target,
     context,
     variant,
-    model: config.model,
     rootHash: createHash("sha256").update(root).digest("hex"),
     instructionHash: createHash("sha256").update(instructions).digest("hex"),
-    inputHash: createHash("sha256").update(content(allowed[idx].message.content)).digest("hex"),
-    snapshotHash: context === "fresh" ? null : createHash("sha256").update(snapshot(idx)).digest("hex"),
+    inputHash: createHash("sha256").update(inputText).digest("hex"),
+    snapshotHash: contextText === null ? null : createHash("sha256").update(contextText).digest("hex"),
   };
   const items: object[] = [];
-
-  if (context !== "fresh")
+  if (contextText !== null)
     items.push({
       type: "conversation.item.create",
-      item: { type: "message", role: "user", content: [{ type: "input_text", text: snapshot(idx) }] },
+      item: { type: "message", role: "user", content: [{ type: "input_text", text: contextText }] },
     });
   if (context === "replay")
     for (const x of allowed.slice(4, idx).filter((x) => x.customType === "live-provisional")) {
@@ -102,10 +87,24 @@ for (let n = 0; n < plan.length; n++) {
     item: {
       type: "message",
       role: "user",
-      content: [{ type: "input_text", text: content(allowed[idx].message.content) }],
+      content: [{ type: "input_text", text: inputText }],
     },
   });
+  return { metadata, instructions, items };
+}
 
+// Prepare and validate the entire source-backed plan before loading credentials or opening a trial.
+const trials = plan.map((spec, n) => prepareTrial(spec, n + 1));
+const prompt = await createPromptPreview({ rootMode: "orchestrator", message: "Synthetic probe for tool schema only" });
+const declared = prompt.tools.find((x) => x.name === "execute");
+if (prompt.tools.length !== 1 || !declared) throw Error("Execute-only tool required");
+const tool = { type: "function", name: "execute", description: declared.description, parameters: declared.parameters };
+const config = await loadLiveConfig();
+if (config.provider !== "openai") throw Error("Configured provider is not OpenAI");
+const credential = await createDefaultLiveCredentialService(undefined, config.provider);
+const key = await credential.loadKey();
+if (!key) throw Error("No configured credential");
+for (const { metadata, instructions, items } of trials) {
   const trialResult = await studyTrial({
     model: config.model,
     key,
@@ -133,6 +132,5 @@ for (let n = 0; n < plan.length; n++) {
             },
   });
   const { responses: _responses, ...output } = trialResult;
-  Object.assign(result, output);
-  console.log(JSON.stringify({ privateOutput: true, ...result }));
+  console.log(JSON.stringify({ privateOutput: true, ...metadata, model: config.model, ...output }));
 }

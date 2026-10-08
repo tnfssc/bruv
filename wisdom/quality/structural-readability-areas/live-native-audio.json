@@ -1126,16 +1126,19 @@
       "initialBlob": "3c15dce87ad6cef0b8687c9d2dfeb793a48c9b3a",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "fe4b9afb1795931b5f658ac4589b8da4bdcf4518",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "fe4b9afb1795931b5f658ac4589b8da4bdcf4518",
         "primaryId": "task_37841a12",
         "primaryCommit": "49118d0e1bcffc27ca6b2c71b87cc2504065a67d",
-        "judgeIds": [],
+        "judgeIds": [
+          "task_9b1f4ffa"
+        ],
         "sourceCommit": "49118d0e1bcffc27ca6b2c71b87cc2504065a67d",
-        "state": "needs-judge",
-        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+        "state": "accepted-joined",
+        "reason": "Compared the entire candidate entrypoint with primary base 0b1faebd03e5eb7711dbcba5a58453564a28cc36, which is also its parent. The base validated colon-delimited strings, split them again for source preflight, then split them again during execution; snapshot/input text was reconstructed separately for validation, hashes and wire items. The candidate parses trial specs once and gives prepareTrial one coherent responsibility: selecting source text, validating it, choosing instructions, constructing ordered items and hashing those exact strings. Its return is a concrete prepared request plus publication metadata, not an invented shared context bag. The top-level map completes all source-backed preparation before prompt/config/credential function calls. The final loop reads as invoke and publish rather than rebuild and invoke. This is an actual authority and phase-boundary improvement, not rename-only cleanup. Unchanged decision: retain content normalization, snapshot projection and the study transport in their existing owners; their compact transformations and socket lifetime already have coherent jobs and need no additional abstraction for this focus."
       }
     },
     {
@@ -5058,7 +5061,7 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 86,
-    "pending": 64
+    "accepted": 87,
+    "pending": 63
   }
 }
