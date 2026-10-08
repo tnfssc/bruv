@@ -317,6 +317,19 @@
         "branch": "bruv/pr45-primary-1-remote-focuses-0ebb2fc5",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
+      },
+      {
+        "id": "task_9a31ccf2",
+        "stage": "judge",
+        "focus": [
+          "tests/fixtures/remote-e2e/Dockerfile",
+          "tests/fixtures/remote-e2e/entrypoint.sh",
+          "tests/fixtures/remote-e2e/fake-provider.ts"
+        ],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_9a31ccf2",
+        "branch": "bruv/pr45-judge-3-remote-focuses-9a31ccf2",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
       }
     ]
   },
@@ -2075,7 +2088,7 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_411a1025",
         "branch": "bruv/pr45-judge-3-agent-history-session-goals-411a1025",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled"
       },
       {
         "id": "task_230772ed",
@@ -2084,7 +2097,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_230772ed",
         "branch": "bruv/pr45-primary-3-agent-history-session-goa-230772ed",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "0257d78607a61856035239f24fa6f2924c300d6e"
       },
       {
         "id": "task_4fd8c261",

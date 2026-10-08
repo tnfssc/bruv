@@ -3708,38 +3708,39 @@
     {
       "focus": "tests/saved-transcript-startup.test.ts",
       "initialBlob": "05a44fa4e35f729976a42e4ccf3c71fc26392e63",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "b0c5bdfa1c30f881d06d95fc4878c904cb66729a",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
         "acceptedBlob": "b0c5bdfa1c30f881d06d95fc4878c904cb66729a",
         "primaryId": "task_1c106c8b",
         "primaryCommit": "51a6af6dd26478a4df1501fa858d1edf2d5f3ec6",
-        "judgeIds": [],
+        "judgeIds": ["task_411a1025"],
         "sourceCommit": "51a6af6dd26478a4df1501fa858d1edf2d5f3ec6",
-        "state": "needs-judge",
-        "reason": "No dedicated primary/final independent focus judgment."
+        "state": "accepted-joined",
+        "reason": "Read the entire candidate test and its diff against 4341f0aeaf94a5503c30c1d4696a80994a6f42bb, then the complete startup fixture. The real reading burden was ambient process authority: the old environment spread made a reader reconstruct which user home/config/SDK and terminal state the SDK child might touch. Each scenario now visibly creates one retained mkdtemp root, derives and creates its HOME/config/SDK/temp directories, then launches the absolute fixture argv with that root as cwd and an explicit environment. The same callback owns filesystem readiness, launch, concurrent stdout/stderr/exit draining, and result assertions. This is an ownership/lifetime improvement rather than rename churn. Deterministic terminal settings are local to that child; no generic runner or context bag separates the effects from the scenario."
       }
     },
     {
       "focus": "tests/session-boundaries.test.ts",
       "initialBlob": "8faeaa42e6685e95367ad6a168a084457ab7f84f",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "8faeaa42e6685e95367ad6a168a084457ab7f84f",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "8faeaa42e6685e95367ad6a168a084457ab7f84f",
         "primaryId": "task_1c106c8b",
         "primaryCommit": "51a6af6dd26478a4df1501fa858d1edf2d5f3ec6",
-        "judgeIds": [],
+        "judgeIds": ["task_411a1025"],
         "sourceCommit": "51a6af6dd26478a4df1501fa858d1edf2d5f3ec6",
-        "state": "needs-judge",
-        "reason": "No dedicated primary/final independent focus judgment."
+        "state": "accepted-joined",
+        "reason": "Read all three tests from the exact candidate, not the evidence summary. The first is deliberately layer-wide: enumerate direct TypeScript files in src/session and reject direct imports of provider/task implementations. The other two name single architectural owners and place their positive and negative assertions together: agent extension must compose main-owner and SessionHost without importing provider sessions; history service must import shake-record without importing the manual-shake command. Those different authorities are already obvious at the call sites. A shared source-check table or regex helper would make the reader reconstruct which checks belong to which owner and would not resolve an observed journey problem. Keeping this intrinsic focus byte-identical is the correct structural decision."
       }
     },
     {
@@ -3752,11 +3753,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_230772ed",
+        "primaryCommit": "0257d78607a61856035239f24fa6f2924c300d6e",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary",
+        "sourceCommit": "0257d78607a61856035239f24fa6f2924c300d6e",
+        "state": "needs-judge",
         "reason": "No dedicated primary/final independent focus judgment."
       }
     },
@@ -3818,11 +3819,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_230772ed",
+        "primaryCommit": "0257d78607a61856035239f24fa6f2924c300d6e",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary",
+        "sourceCommit": "0257d78607a61856035239f24fa6f2924c300d6e",
+        "state": "needs-judge",
         "reason": "No dedicated primary/final independent focus judgment."
       }
     },
@@ -3843,11 +3844,11 @@
       },
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_230772ed",
+        "primaryCommit": "0257d78607a61856035239f24fa6f2924c300d6e",
         "judgeIds": ["task_a731e652"],
-        "sourceCommit": "1430519dd7dbda93b9ccf79b2e8f33690ddbd6a4",
-        "state": "pending-primary",
+        "sourceCommit": "0257d78607a61856035239f24fa6f2924c300d6e",
+        "state": "needs-judge",
         "reason": "No dedicated primary/final independent focus judgment. Related-patch review is evidence only; dedicated focus coverage remains required."
       }
     },
@@ -4516,15 +4517,17 @@
       "focus": "tests/main-agent-mode-sdk.probe.ts",
       "initialBlob": null,
       "introducedBy": "953636ca924944dbf67f42af22a9c7870fe212ac",
-      "state": "pending",
-      "acceptedBlob": null,
+      "state": "accepted",
+      "acceptedBlob": "e364aad3607a688681d6b7c4a099d19097c5a1c4",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
         "acceptedBlob": "e364aad3607a688681d6b7c4a099d19097c5a1c4",
         "primaryId": "task_125d5689",
         "primaryCommit": "c8a6fbaa9603fda560f1c4a9fef45b073be46b53",
+        "judgeIds": ["task_411a1025"],
         "sourceCommit": "c8a6fbaa9603fda560f1c4a9fef45b073be46b53",
-        "state": "needs-judge"
+        "state": "accepted-joined",
+        "reason": "Read the complete probe at the exact candidate and followed its parent test and SDK fixture helper. The probe already presents each journey as construction options, ordinary/command/custom-message requests, then assertions. beforeEach makes the root identity assumption visible and confined to the isolated child; afterEach delegates session disposal to the helper that constructed them. The helper appropriately owns project/auth/resource-loader setup, intercepted provider responses, and actual durable session reopening rather than exposing a shared context bag of incidental setup. Mode/model/thinking preservation, frame hook placement, collision examples, project wisdom paths, restored modes, and child /mode restriction remain at the tests that explain their consequences. There is no unresolved structural burden requiring another extraction. This is an explicit independent final-blob decision for the unchanged probe, not acceptance inferred from the two changed tests."
       }
     }
   ],
@@ -4666,7 +4669,7 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 123,
-    "pending": 9
+    "accepted": 126,
+    "pending": 6
   }
 }
