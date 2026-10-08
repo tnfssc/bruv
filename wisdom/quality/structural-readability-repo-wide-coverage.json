@@ -3849,13 +3849,43 @@
       "initialBlob": "c050db1227585d0f71f7c2156f0a94128a808491",
       "status": "pending",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_a3e07d2e",
+      "primaryCommit": "90ccd9b7c34cc154608614eb2d7e52c0e0006225",
       "judgeIds": [],
-      "sourceCommit": "53fb4d9732dcf0c337b797b05a104199ccf1a273",
+      "sourceCommit": "90ccd9b7c34cc154608614eb2d7e52c0e0006225",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
-      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
+      "primaryBase": "d20c4ed1bc39a43d8fc90960d45858b5836f1419",
+      "primaryResult": "captureSelectorConfirmation now owns the mounted-selector capture and returns its measurement result. The resume override reads as await real disk resume, await confirmation capture, return original resume result. The capture shows dispatch timing, awaited lifecycle timing, post-lifecycle frame drain and verification in order, with both temporary hooks restored together in finally. Existing no-selector/no-navigation assertions, offline summary suppression, actual Enter callback path, timing/output fields and peak-scope disclaimers are preserved.",
+      "primaryPaths": [
+        "scripts/terminal-perf/selector-lifecycle-probe.ts"
+      ],
+      "primaryChecks": [
+        {
+          "name": "Scoped evidence and actual caller reading",
+          "result": "Read values/readability guidance, focus rows from preserved reconciliation and current area/coverage ledgers; traced runOfflineNavigationSdkProbe disk-file resume, SDK showTreeSelector async onSelect and TreeList.handleInput Enter dispatch; read probe invocation references."
+        },
+        {
+          "name": "Repository formatter",
+          "result": "Passed: biome format --write on changed source only, via node child_process argv; exit 0, no fixes applied.",
+          "executable": "/home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/@biomejs/biome/bin/biome",
+          "retainedEnvironmentRoot": "/tmp/pr45-selector-format-hFKqTa"
+        },
+        {
+          "name": "git diff --check",
+          "result": "Passed, exit 0."
+        },
+        {
+          "name": "Source-only commit",
+          "result": "One changed source path; no active Git commit hooks found before committing."
+        }
+      ],
+      "primaryLimits": [
+        "No tests, builds, setup or runtime probe executed; parent owns audited isolated batch gates.",
+        "Independent exact-candidate judgment remains parent-owned.",
+        "No wisdom files changed; aggregate wisdom remains parent-owned."
+      ]
     },
     {
       "file": "scripts/terminal-perf/selector-lifecycle.test.ts",

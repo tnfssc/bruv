@@ -1091,7 +1091,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_a3e07d2e",
         "branch": "bruv/pr45-primary-scripts-terminal-perf-selec-a3e07d2e",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "90ccd9b7c34cc154608614eb2d7e52c0e0006225"
       },
       {
         "id": "task_b483c184",
@@ -1118,6 +1119,19 @@
         "focus": "scripts/terminal-perf/tool-event-workloads.ts",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_cf54811f",
         "branch": "bruv/pr45-primary-scripts-terminal-perf-tool--cf54811f",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_a1139c9a",
+        "stage": "judge",
+        "focus": [
+          "scripts/terminal-perf/interaction-tool-events.test.ts",
+          "scripts/terminal-perf/selector-lifecycle-behavior.ts",
+          "scripts/terminal-perf/selector-lifecycle.test.ts"
+        ],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_a1139c9a",
+        "branch": "bruv/pr45-judge-3-ui-terminal-cli-focuses-a1139c9a",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
       }
