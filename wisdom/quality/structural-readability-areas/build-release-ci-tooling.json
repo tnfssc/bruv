@@ -2908,7 +2908,7 @@
     {
       "focus": "tests/update.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_27b632e4",
@@ -2935,7 +2935,7 @@
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "42694f0b853d3aa57106655a102cca7df44d4f38",
       "relatedPatchJudgment": {
         "id": "task_170d10bf",
         "verdict": "ACCEPT",
@@ -2947,13 +2947,14 @@
       "checks": "Base/candidate51 tests177 assertions; combined64/230; strict tsc/format/diff pass; existing lint warning; no full build/platform.",
       "integrationState": "Full test patch integrated; local note excluded; production updater unchanged.",
       "resume": {
-        "status": "pending",
-        "acceptedBlob": "6569bd7e550e94dcd82b41da3774848f4347eae2",
+        "status": "accepted",
+        "acceptedBlob": "42694f0b853d3aa57106655a102cca7df44d4f38",
         "primaryId": "task_d91c78aa",
         "primaryCommit": "85e042ccba417424a7368754ebf2238406e69fac",
-        "judgeIds": ["task_ee4235b6"],
+        "judgeIds": ["task_ee4235b6", "task_1e4be27d"],
         "sourceCommit": "85e042ccba417424a7368754ebf2238406e69fac",
-        "state": "needs-judge"
+        "state": "accepted-joined",
+        "reason": "Read the entire candidate tests/update.test.ts and its exact diff against cff11fa6979a29782772c6182bfe8c39126bf131. The private compiled integration now makes process authority and fixture lifetime visible at the call sites: each test creates its own mkdtemp root, establishes ownedFixtureEnv before launch, and passes explicit argv/cwd/env through compilation, compiled execution, and installed version checks. Absolute source paths permit the fixture cwd without implicitly depending on repository cwd. The updater test deliberately stops using target(), so its retained compiled root cannot enter the unit-test dirs cleanup set. Runner execution layers only PATH=/nonexistent and the three required payload/target paths onto the owned environment. This directly resolves the prior compile/probe-boundary objection without adding wrappers, context bags, renames, or weakening assertions. Unchanged unit journeys still cover release authority, installation layout, repair, checksum integrity, staged pair identity, concurrent-change rejection, connector-first publication, and rollback outcomes."
       }
     },
     {
@@ -3590,7 +3591,7 @@
     "retainedWorktrees": "Per-file primary[].path and branch retained, including stopped/rejected attempts."
   },
   "resumeStatus": {
-    "accepted": 73,
-    "pending": 1
+    "accepted": 74,
+    "pending": 0
   }
 }

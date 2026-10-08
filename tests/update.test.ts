@@ -15,6 +15,7 @@ import {
 } from "node:fs/promises";
 import { basename, dirname, join } from "node:path";
 import { type UpdateDeps, UPDATE_ASSETS, isCompiledInvocation, updateAssetFor, updateBruv } from "../src/update";
+import { ownedFixtureEnv } from "./helpers";
 
 const body = new TextEncoder().encode("new compiled bruv");
 const connectorBody = new TextEncoder().encode("new compiled connector");
@@ -634,22 +635,24 @@ describe("pair publication and recovery", () => {
   });
 });
 
+// Compiled fixtures retain their owned roots for inspection, outside the unit-test cleanup set.
 describe("private compiled updater integration", () => {
   test("real private compiled Bun fixture is accepted and lookalikes are rejected", async () => {
     expect(isCompiledInvocation("file:///tmp/$bunfs/source.ts")).toBe(false);
     expect(isCompiledInvocation("file:///project-$bunfs/source.ts")).toBe(false);
     const dir = await mkdtemp("/var/tmp/bruv-compiled-fixture-");
-    dirs.add(dir);
+    const env = ownedFixtureEnv(dir);
     const out = join(dir, "fixture");
     const build = Bun.spawn(
-      [process.execPath, "build", "--compile", "tests/compiled-bun-fixture.ts", "--outfile", out],
-      { stdout: "ignore", stderr: "pipe", env: { ...process.env, TMPDIR: "/var/tmp", HERDR_ENV: "0" } },
+      [process.execPath, "build", "--compile", join(import.meta.dir, "compiled-bun-fixture.ts"), "--outfile", out],
+      { cwd: dir, env, stdout: "ignore", stderr: "pipe" },
     );
     expect(await build.exited).toBe(0);
     const run = Bun.spawn([out], {
+      cwd: dir,
+      env,
       stdout: "pipe",
       stderr: "pipe",
-      env: { ...process.env, TMPDIR: "/var/tmp", HERDR_ENV: "0" },
     });
     const result = JSON.parse(await new Response(run.stdout).text());
     expect(result.url.startsWith("file:///$bunfs/")).toBe(true);
@@ -659,7 +662,10 @@ describe("private compiled updater integration", () => {
   });
 
   test("compiled updater verifies staged distinct versions and updates a non-running temporary pair", async () => {
-    const x = await target();
+    const dir = await mkdtemp("/var/tmp/bruv-update-compiled-");
+    const x = { dir, path: join(dir, "bruv") };
+    const env = ownedFixtureEnv(dir);
+    await writeFile(x.path, "old", { mode: 0o754 });
     const runner = join(x.dir, "updater-runner");
     const normalPayload = join(x.dir, "normal-payload");
     const connectorPayload = join(x.dir, "connector-payload");
@@ -669,15 +675,16 @@ describe("private compiled updater integration", () => {
     await writeFile(normalPayload, normal);
     await writeFile(connectorPayload, connector);
     const build = Bun.spawn(
-      [process.execPath, "build", "--compile", "tests/update-self-fixture.ts", "--outfile", runner],
-      { stdout: "ignore", stderr: "pipe" },
+      [process.execPath, "build", "--compile", join(import.meta.dir, "update-self-fixture.ts"), "--outfile", runner],
+      { cwd: dir, env, stdout: "ignore", stderr: "pipe" },
     );
     const errors = await new Response(build.stderr).text();
     expect(await build.exited, errors).toBe(0);
     const runnerBytes = await readFile(runner);
     const child = Bun.spawn([runner], {
+      cwd: dir,
       env: {
-        HOME: x.dir,
+        ...env,
         PATH: "/nonexistent",
         BRUV_TEST_UPDATE_TARGET: x.path,
         BRUV_TEST_UPDATE_PAYLOAD: normalPayload,
@@ -700,7 +707,7 @@ describe("private compiled updater integration", () => {
       [x.path, "0.3.0"],
       [join(x.dir, "bruv-claude-compat"), "Bruv connector"],
     ]) {
-      const check = Bun.spawn([path!, "--version"], { stdout: "pipe", stderr: "pipe" });
+      const check = Bun.spawn([path!, "--version"], { cwd: dir, env, stdout: "pipe", stderr: "pipe" });
       expect((await new Response(check.stdout).text()).trim()).toBe(version!);
       expect(await check.exited).toBe(0);
     }

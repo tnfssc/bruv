@@ -3519,6 +3519,15 @@
         "model": "openai-codex/gpt-6.1-sol",
         "status": "handled",
         "sourceCommit": "eed9d67a5b58cc407f34e49f770c74a68503466e"
+      },
+      {
+        "id": "task_6818ffa9",
+        "stage": "judge",
+        "focus": ["tests/root-owner.test.ts"],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_6818ffa9",
+        "branch": "bruv/pr45-judge-1-execution-tasks-questions-f-6818ffa9",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
       }
     ]
   },
@@ -4350,7 +4359,7 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_1e4be27d",
         "branch": "bruv/pr45-judge-1-build-release-ci-tooling-fo-1e4be27d",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled"
       }
     ]
   },

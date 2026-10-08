@@ -23426,11 +23426,11 @@
     {
       "file": "tests/update.test.ts",
       "initialBlob": "5490c14c48b525e3d3838da271c3ae510d3749ab",
-      "status": "pending",
+      "status": "accepted",
       "area": "build-release-ci-tooling",
-      "acceptedBlob": "6569bd7e550e94dcd82b41da3774848f4347eae2",
+      "acceptedBlob": "42694f0b853d3aa57106655a102cca7df44d4f38",
       "primaryId": "task_d91c78aa",
-      "judgeIds": ["task_ee4235b6"],
+      "judgeIds": ["task_ee4235b6", "task_1e4be27d"],
       "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json",
       "priorAcceptedIntegrationProof": [
         {
@@ -23441,7 +23441,7 @@
           "finalJudge": "task_5d582a15"
         }
       ],
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "sourceCommit": "85e042ccba417424a7368754ebf2238406e69fac",
       "resumeRework": {
         "candidate": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
@@ -23486,6 +23486,24 @@
         "Requested undefined/wisdom/quality/structural-readability-areas/build-release-ci-tooling-resume-reconciliation.json and normalized wisdom/quality/structural-readability-areas/build-release-ci-tooling-resume-reconciliation.json both absent (ENOENT). Used supplied exact rejection and assigned preserved area-ledger row instead.",
         "Retained formatter fixture: /var/tmp/pr45-update-format-TSE2Q1. Tests will retain /var/tmp/bruv-compiled-fixture-* and /var/tmp/bruv-update-compiled-*; not created here because tests were not run. Durable source provenance is this worktree and the exact sourceCommit/sourceBlobs.",
         "No recovery investigation, credentials inspection, cleanup/deletion commands, user-data mutation, delegation, dependency writes/reinstallation, publication or unrelated source edits. Wisdom and values left unchanged: parent owns aggregate wisdom."
+      ],
+      "result": "Read the entire candidate tests/update.test.ts and its exact diff against cff11fa6979a29782772c6182bfe8c39126bf131. The private compiled integration now makes process authority and fixture lifetime visible at the call sites: each test creates its own mkdtemp root, establishes ownedFixtureEnv before launch, and passes explicit argv/cwd/env through compilation, compiled execution, and installed version checks. Absolute source paths permit the fixture cwd without implicitly depending on repository cwd. The updater test deliberately stops using target(), so its retained compiled root cannot enter the unit-test dirs cleanup set. Runner execution layers only PATH=/nonexistent and the three required payload/target paths onto the owned environment. This directly resolves the prior compile/probe-boundary objection without adding wrappers, context bags, renames, or weakening assertions. Unchanged unit journeys still cover release authority, installation layout, repair, checksum integrity, staged pair identity, concurrent-change rejection, connector-first publication, and rollback outcomes.",
+      "systemReason": "Followed tests/helpers.ts ownedFixtureEnv to its newly created HOME, XDG config/cache/data, SDK, temp, Bun, npm, and Git configuration/hook paths; it constructs an environment rather than copying process.env. Followed both exercised callers of tests/update-self-fixture.ts, including the separate runtime suite. That suite already builds/runs/probes with owned env, fixture cwd, and explicit argv, retains the root, and checks source refusal, failed staging, reusable real-pair publication, and unchanged runner/payload hashes. The runner uses a closed in-memory fetch with exact paired hashes, requires explicit fixture target/payload paths, and leaves compiled detection and actual binary probes real. In src/update.ts, pairProbe copies only the runner's already-owned process environment, removes the launcher override, then adds the staged normal path only for the connector probe. runBinary uses explicit argv/env and inherits that runner's fixture cwd. Namespace/lookalike rejection, real staged --version/--bruv-version checks, both installed-byte assertions, unchanged-runner bytes, final distinct version outputs, and no-staging-leftovers assertion all remain. Production publication/security decisions are unchanged.",
+      "checks": [
+        "Exact candidate/base git diff and name-status inspection: only tests/update.test.ts changed.",
+        "Exact candidate Git blob resolved with git rev-parse: 42694f0b853d3aa57106655a102cca7df44d4f38.",
+        "Whole intrinsic focus read from git show candidate:path, plus helper, compiled namespace fixture, private runner, separate runner caller suite, and relevant updater implementation authorities.",
+        "Candidate git grep found both private runner build callers; inspected both rather than treating the separate suite as coverage for this caller.",
+        "git diff --check for the exact candidate/base focus completed with exit code 0 and no diagnostics.",
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Reviewed source-visible filesystem/network effects only; no setup, tests, builds, dependency mutation, credentials, cleanup, or delegation performed."
+      ],
+      "limits": [
+        "Static actual-code verdict, not runtime proof. Parent owns audited isolated gates; compiled behavior and reusable real product pair were not executed here.",
+        "The unchanged unit-test real shell-probe paths still use the test process environment through production pairProbe; they are not private compiled-fixture callers and were expressly outside the requested rework. Parent must isolate any suite execution.",
+        "Retained fixture roots are source-described /var/tmp mkdtemp roots; no runtime fixtures were created in this review. Durable review provenance is /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_1e4be27d and the exact candidate/base Git objects, not a /tmp checkout.",
+        "Parent verifies runtime agent.model openai-codex/gpt-6.1-sol; this review does not independently attest runtime model metadata or live auth/device behavior.",
+        "No wisdom edits: parent owns aggregate wisdom; the sole new untracked artifact is .pr45-judge-result.json."
       ]
     },
     {
@@ -26490,9 +26508,9 @@
     "baselineFiles": 766,
     "finalGate": "pending; incomplete focus coverage",
     "liveAuth": "unverified/failing; preserved",
-    "accepted": 837,
+    "accepted": 838,
     "total": 839,
-    "pending": 2,
+    "pending": 1,
     "sourceExtras": 73,
     "checkout": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
     "branch": "bruv/readability-pr45-sol-continuation",
