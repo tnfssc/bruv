@@ -14251,34 +14251,83 @@
       "file": "tests/live-auth-lifecycle.test.ts",
       "initialBlob": "05d9ebf1bdff9f49b9ab4a06a2fbdc67564eca9b",
       "status": "pending",
-      "primaryId": null,
-      "sourceCommit": null,
+      "primaryId": "task_9f4d5386",
+      "sourceCommit": "49842eeb431b8eda05ed62efd7e40c29419ffce4",
       "judgeIds": [],
-      "resumeState": "own_primary_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "49842eeb431b8eda05ed62efd7e40c29419ffce4",
+      "primaryBase": "49842eeb431b8eda05ed62efd7e40c29419ffce4",
+      "primaryResult": "Keep current bytes. Read all tests from explicit import/unrelated-provider preservation through existing-key/OAuth guards, lock-boundary competing OAuth writer, concurrent imports, pre-write abort, ambient key non-persistence, corrupt storage preservation, metadata-only status, configured-directory factory, early abort, and canonical OpenAI isolation. Followed credentials.ts: status inspects stored metadata before runtime resolution, import checks eligibility before reading live.env and uses conditional AuthStorage.modify rather than replacing login, loadKey refuses OAuth, and the lazy factory uses canonical auth.json without catalogue refresh. Followed extension defaults/provider/model readiness/start callers. Tests visibly exercise these distinct authorities without a cross-test context bag or hidden mutation helper. No preserved candidate or rejection exists for this focus.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read the complete assigned focus and its assigned reconciliation row; no other coverage/area rows reviewed.",
+        "git diff --check passed; source worktree unchanged; Git HEAD and focus blobs resolved exactly.",
+        "Reviewed fixture effects statically: mkdtemp auth directories, fake credentials only, ModelRuntime creation with explicit auth store/no models path/no refresh, owned-dir afterEach rm, and temporary GEMINI_API_KEY/BRUV_CODING_AGENT_DIR changes restored in finally. Did not execute."
+      ],
+      "primaryLimits": [
+        "Primary reading only, not an independent judgment. Parent owns fresh independent judgments and audited isolated gates.",
+        "No setup, tests, builds, dependency writes, credential access, live auth/device access, delegation, recovery work, cleanup commands, or publication performed.",
+        "No changed source paths, so no formatter invocation or new source commit; sourceCommit identifies the existing exact reviewed HEAD. Result artifact intentionally untracked. Wisdom/values unchanged: no new structural lesson justified.",
+        "Runtime/environment isolation and imported SDK effects remain for parent audit; no credential command references or default credential factory were executed."
+      ]
     },
     {
       "file": "tests/live-capture-gate.test.ts",
       "initialBlob": "f0ba15732398870ba1d0882f466f5c788133b1f2",
       "status": "pending",
-      "primaryId": null,
-      "sourceCommit": "b01dac0216dfa47d3b40e57f92c6021ea530e368",
+      "primaryId": "task_9f4d5386",
+      "sourceCommit": "49842eeb431b8eda05ed62efd7e40c29419ffce4",
       "judgeIds": ["task_660502a4"],
-      "resumeState": "related_actual_code_accepted_own_primary_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Retain exact related-path actual-code acceptance; it is not completion of this file’s distinct primary/fresh focus-judge requirement.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "49842eeb431b8eda05ed62efd7e40c29419ffce4",
+      "primaryBase": "49842eeb431b8eda05ed62efd7e40c29419ffce4",
+      "primaryResult": "Keep current bytes, including the accepted related candidate. Read candidate b01dac0216dfa47d3b40e57f92c6021ea530e368 via git show: its focus blob e14d5006f3c1c8cd2ad1ca4d88c2f5021753c817 exactly matches HEAD. Reconciliation records only related-path ACCEPT task_660502a4 under native/live/main.swift, not this focus’s own acceptance; no rejection/rework exists. Independently followed main.swift command cutoff -> LiveOutput.captureGate queue.sync -> ll_capture_gate before discardCapture; tap acquisition tagging and drain stale-tag rejection; AudioCore cutoff/current-epoch/push/pop logic; and Linux applyCaptureGate -> fresh gateTimed snapshot -> CaptureGate frontier acceptance with its C++ and C fixtures. The test ordering exposes that gate transitions discard backlog without stopping the engine. Existing security/order assertions remain untouched.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read the complete assigned focus and its assigned reconciliation row; no other coverage/area rows reviewed.",
+        "git diff --check passed; source worktree unchanged; Git HEAD and focus blobs resolved exactly.",
+        "git show preserved candidate and git rev-parse HEAD/candidate focus blobs verified exact identity. No candidate restoration required.",
+        "Reviewed effects statically: compiler argv writes a binary only under mkdtemp, then runs that binary; helper finally rm targets only its owned directory. Native fixtures exercise memory-only gate/ring behavior; source assertions use readFile. Did not invoke any compiler/test process."
+      ],
+      "primaryLimits": [
+        "Primary reading only, not an independent judgment. Parent owns fresh independent judgments and audited isolated gates.",
+        "No setup, tests, builds, dependency writes, credential access, live auth/device access, delegation, recovery work, cleanup commands, or publication performed.",
+        "No changed source paths, so no formatter invocation or new source commit; sourceCommit identifies the existing exact reviewed HEAD. Result artifact intentionally untracked. Wisdom/values unchanged: no new structural lesson justified.",
+        "Existing helper inherits process env and removes its owned fixture; parent must audit isolated argv/env and retained fixtures before any gate execution. No macOS/Xcode, Linux audio-device, or native build verification performed.",
+        "Preserved evidence mentions inherited native stop/caller played mismatch; retained as evidence, not investigated or treated as a new focus change."
+      ]
     },
     {
       "file": "tests/live-config.test.ts",
       "initialBlob": "5eda639ce13db2cd96fdaa74f6b8ef03b3da4865",
       "status": "pending",
-      "primaryId": null,
-      "sourceCommit": null,
+      "primaryId": "task_9f4d5386",
+      "sourceCommit": "49842eeb431b8eda05ed62efd7e40c29419ffce4",
       "judgeIds": [],
-      "resumeState": "own_primary_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "49842eeb431b8eda05ed62efd7e40c29419ffce4",
+      "primaryBase": "49842eeb431b8eda05ed62efd7e40c29419ffce4",
+      "primaryResult": "Keep current bytes. Read the complete focus plus config.ts and providers.ts: load defaults only on ENOENT, parse validates current provider/model/mode and drops obsolete fields, save validates then writes a same-directory 0600 temporary file and renames it. Followed extension load/save callers, where load failure leaves selection unchanged and save completion precedes selected-state update. Existing tests keep parser policy and persistence consequences distinct rather than introducing a generic table/context fixture; extracting the two small round trips would conceal their default/selection sequences for negligible gain. No preserved candidate or rejection exists for this focus.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read the complete assigned focus and its assigned reconciliation row; no other coverage/area rows reviewed.",
+        "git diff --check passed; source worktree unchanged; Git HEAD and focus blobs resolved exactly.",
+        "Reviewed effects statically: explicit fixture paths under mkdtemp are passed to load/save; saves write and rename only fixture-local settings/temp files, and test finally rm targets its own directory. No auth/network/device APIs involved; nothing executed."
+      ],
+      "primaryLimits": [
+        "Primary reading only, not an independent judgment. Parent owns fresh independent judgments and audited isolated gates.",
+        "No setup, tests, builds, dependency writes, credential access, live auth/device access, delegation, recovery work, cleanup commands, or publication performed.",
+        "No changed source paths, so no formatter invocation or new source commit; sourceCommit identifies the existing exact reviewed HEAD. Result artifact intentionally untracked. Wisdom/values unchanged: no new structural lesson justified."
+      ]
     },
     {
       "file": "tests/live-conversation.test.ts",
