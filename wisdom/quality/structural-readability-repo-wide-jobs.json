@@ -29,6 +29,16 @@
         "branch": "bruv/pr45-fresh-judge-remote-4-candidates-7f35b9db",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "handled"
+      },
+      {
+        "id": "task_3af9f8fa",
+        "stage": "primary",
+        "focus": "scripts/loopback-parent-fixture.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_3af9f8fa",
+        "branch": "bruv/pr45-primary-scripts-loopback-parent-fix-3af9f8fa",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled",
+        "sourceCommit": "7075ead9e0cc3f5611aeb0337dc4ade36bb532ae"
       }
     ]
   },
@@ -265,6 +275,51 @@
         "model": "openai-codex/gpt-6.1-sol",
         "status": "handled",
         "sourceCommit": "6d9ea74620176d80b99b58ddf384b87d1766e6ce"
+      },
+      {
+        "id": "task_791af44a",
+        "stage": "judge",
+        "focus": "scripts/live-onboarding-smoke.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_791af44a",
+        "branch": "bruv/pr45-judge-scripts-live-onboarding-smoke-791af44a",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled"
+      },
+      {
+        "id": "task_9622e292",
+        "stage": "judge",
+        "focus": "scripts/live-openai-offline-smoke.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_9622e292",
+        "branch": "bruv/pr45-judge-scripts-live-openai-offline-s-9622e292",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled"
+      },
+      {
+        "id": "task_3d78cf6d",
+        "stage": "judge",
+        "focus": "scripts/live-probe-input.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_3d78cf6d",
+        "branch": "bruv/pr45-judge-scripts-live-probe-input.ts-3d78cf6d",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled"
+      },
+      {
+        "id": "task_0ff194eb",
+        "stage": "judge",
+        "focus": "scripts/live-startup-fixture.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_0ff194eb",
+        "branch": "bruv/pr45-judge-scripts-live-startup-fixture.-0ff194eb",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled"
+      },
+      {
+        "id": "task_f2207257",
+        "stage": "judge",
+        "focus": "scripts/live-study-trial.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_f2207257",
+        "branch": "bruv/pr45-judge-scripts-live-study-trial.ts-f2207257",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled"
       }
     ]
   },

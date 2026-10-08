@@ -972,16 +972,19 @@
       "initialBlob": "f02f07cca5ad453ba39de2fe1b0b6b396cc0c1bb",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "f02f07cca5ad453ba39de2fe1b0b6b396cc0c1bb",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "f02f07cca5ad453ba39de2fe1b0b6b396cc0c1bb",
         "primaryId": "task_b212b992",
         "primaryCommit": "6d9ea74620176d80b99b58ddf384b87d1766e6ce",
-        "judgeIds": [],
+        "judgeIds": [
+          "task_791af44a"
+        ],
         "sourceCommit": "6d9ea74620176d80b99b58ddf384b87d1766e6ce",
-        "state": "needs-judge",
-        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+        "state": "accepted-joined",
+        "reason": "Independent actual-code reading supports leaving the focus unchanged. The prerequisite checks precede fixture allocation; directory/home/bin/socket names make resource ownership concrete. Four small tmux helpers expose transport, key input, captured frames and bounded waits without hiding scenario decisions. The one try/finally contains fixture creation, the isolated compiled launch, explicit Import input, observation (not selection) of Start voice, cancellation, suggestions, and persisted evidence in execution order. Assertions sit beside the corresponding rendered outcomes; exact auth content, both 0600 modes, source preservation and the audio invocation sentinel are grouped at the end. No reader must reconstruct the scenario from a registry, shared context bag or scattered phase callbacks. The primary base equals the candidate, and the focus blob also equals its immediate parent; this is an intrinsic unchanged-code judgment, not a claim of structural improvement."
       }
     },
     {
@@ -989,16 +992,19 @@
       "initialBlob": "c900eaef25ae1b5501a4da8ee24b29854241b78d",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "c900eaef25ae1b5501a4da8ee24b29854241b78d",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "c900eaef25ae1b5501a4da8ee24b29854241b78d",
         "primaryId": "task_52d3eb17",
         "primaryCommit": "6d9ea74620176d80b99b58ddf384b87d1766e6ce",
-        "judgeIds": [],
+        "judgeIds": [
+          "task_9622e292"
+        ],
         "sourceCommit": "6d9ea74620176d80b99b58ddf384b87d1766e6ce",
-        "state": "needs-judge",
-        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+        "state": "accepted-joined",
+        "reason": "Independent reading supports leaving the focus unchanged. Its two direct journeys already colocate stimulus, authority, observations and cleanup. The first loopback fetch verifies a literal fake bearer header; its WebSocket handler checks realtime session type and 24000-Hz input rate, records configuration and returns session.updated. Immediately after connect the script checks readiness plus configuration, sends synthetic PCM, checks an observed append and closes the session before stopping its server in finally. The second journey lists status/code pairs explicitly and gives each iteration its own rejection server, error collection, session and finally. Adjacent assertions require one status-bearing error, exclude private-body and fake-key text, and require allowlisted quota meaning for 429. Extracting these short blocks behind scenario helpers or a shared context would add navigation without exposing a currently hidden decision. Candidate equals the supplied primary base; the focus also has the same blob in the candidate parent b1c808dff4f455852b764d63eaa025fd2d3a3335."
       }
     },
     {
@@ -1006,16 +1012,19 @@
       "initialBlob": "30da7b239c9a9bf9ef9fdfa05be474de72253f57",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "9fc9b1a38afb2b0f1b099cd881fc545b21e1e37a",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "9fc9b1a38afb2b0f1b099cd881fc545b21e1e37a",
         "primaryId": "task_84975626",
         "primaryCommit": "c1ed27e01a7c06643e017d7c1cf90ff183a80b28",
-        "judgeIds": [],
+        "judgeIds": [
+          "task_3d78cf6d"
+        ],
         "sourceCommit": "c1ed27e01a7c06643e017d7c1cf90ff183a80b28",
-        "state": "needs-judge",
-        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+        "state": "accepted-joined",
+        "reason": "Actual candidate improves two concrete reading journeys. In base/parent 6d9ea74620176d80b99b58ddf384b87d1766e6ce, readStudy interleaves decoding/framing with a semantic line callback that mutates entries and stopped; both framing loops and EOF processing must consult that callback-owned flag. Candidate readStudy now visibly owns JSON.parse, string timestamp admission, lexical cutoff, entry-count admission and empty-prefix rejection in one short loop. Its break expresses the selection decision directly. Private readStudyLines owns the descriptor, 4096-byte fetches, fatal streaming UTF-8 decoding, fetched-byte and line/carry limits, blank-line skipping and final unterminated-line emission. Yield is a meaningful transport/semantic boundary, not an arbitrary extraction or shared context bag. A cutoff break or JSON/timestamp/entry-limit consumer throw closes the iterator and runs its descriptor-owning finally; normal EOF and framing errors also close there. Unchanged decision: probeArgs and studyTarget need no change. The former already has a readable flag scan followed by explicit mode/source/study/disclosure gates; the latter directly validates the indexed user turn and permitted content shape. Retain those existing authorities rather than force cosmetic changes."
       }
     },
     {
@@ -1023,16 +1032,19 @@
       "initialBlob": "57daaf09ced917e5130a196b1410cf0b6aa257cc",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "57daaf09ced917e5130a196b1410cf0b6aa257cc",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "57daaf09ced917e5130a196b1410cf0b6aa257cc",
         "primaryId": "task_c43537b9",
         "primaryCommit": "6d9ea74620176d80b99b58ddf384b87d1766e6ce",
-        "judgeIds": [],
+        "judgeIds": [
+          "task_0ff194eb"
+        ],
         "sourceCommit": "6d9ea74620176d80b99b58ddf384b87d1766e6ce",
-        "state": "needs-judge",
-        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+        "state": "accepted-joined",
+        "reason": "Independent reading of the pinned candidate supports keeping the focus unchanged. startupWordCounts exposes presence separately from ordered subsequence retention; missing words leave later diagnostics visible, and numeric 7 is diagnostic rather than accepted as seven. pcmCounts owns the PCM16LE scan. naturalFixturePcm keeps the 480,000-byte/even-input check, explicit mono 24-to-16 kHz ffmpeg command, 1,200 ms silence tail, nonzero-speech check, output-size check and duration check together. fixtureCommand owns pipe input, output/exit observation and its four-second kill timer. generateNaturalFixture is one coherent response lifetime: local audio chunks/byte count and transcript, completion latch, callbacks, deadline, connect/readiness, text trigger, validation, result and finally teardown. These are effects of one operation rather than scattered authorities. Extracting callback fragments or adding a shared context bag would make this short journey harder to follow."
       }
     },
     {
@@ -1040,16 +1052,19 @@
       "initialBlob": "63d6fd9dd0bdeead65c912d63ac4b50e7a60bb0c",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "63d6fd9dd0bdeead65c912d63ac4b50e7a60bb0c",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "63d6fd9dd0bdeead65c912d63ac4b50e7a60bb0c",
         "primaryId": "task_a848477f",
         "primaryCommit": "6d9ea74620176d80b99b58ddf384b87d1766e6ce",
-        "judgeIds": [],
+        "judgeIds": [
+          "task_f2207257"
+        ],
         "sourceCommit": "6d9ea74620176d80b99b58ddf384b87d1766e6ce",
-        "state": "needs-judge",
-        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+        "state": "accepted-joined",
+        "reason": "Independent reading of the exact candidate finds a coherent small transport, not a cosmetic candidate awaiting structural improvement. Its options expose caller-owned inputs and synthetic output policy; one result and one socket stay local to the trial. Startup is readable in execution order: construct socket, register deadline and listeners, send session.update on open, then send ordered items and response.create on session.updated. The single message callback keeps each protocol consequence beside its event: ignore non-JSON frames, append transcript deltas, decode function arguments, record a call and send its synthetic output. The optional string coercion and JSON parse fallback are explicit. pending is set by the function-call event and consumed only at response.done, where response counting and the fewer-than-three continuation rule appear together. No reader must chase a context bag or reconstruct distributed continuation authority. end owns idempotence, deadline cancellation, initiating close and promise resolution; joining and clipping speech are visibly after the await. Extracting these event branches merely to give them names would disperse this readable protocol journey without solving a present structural problem. Candidate and primary base are identical, and focus bytes also equal the commit parent and the preserved initial blob; this is an unchanged-code acceptance, not a claimed readability improvement."
       }
     },
     {
@@ -5036,7 +5051,7 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 80,
-    "pending": 70
+    "accepted": 85,
+    "pending": 65
   }
 }
