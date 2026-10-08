@@ -1764,7 +1764,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_fdd5f204",
         "branch": "bruv/pr45-primary-3-execution-tasks-questions-fdd5f204",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "9a568679ae641766995b7f4332b056edfd617a45"
       },
       {
         "id": "task_187e7fa2",

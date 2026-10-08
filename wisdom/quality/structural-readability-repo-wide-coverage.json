@@ -14020,12 +14020,35 @@
       "initialBlob": "f5ad044150b0be9a1dbca3de6dec9c72fc143463",
       "status": "pending",
       "area": "execution-tasks-questions",
-      "resumeState": "pending-primary",
-      "primaryId": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_fdd5f204",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "9a568679ae641766995b7f4332b056edfd617a45",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
-      "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage."
+      "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage.",
+      "primaryCommit": "9a568679ae641766995b7f4332b056edfd617a45",
+      "primaryBase": "0b42e92c1905ed9e7828f64dc4a0aa67864df90b",
+      "primaryResult": "withPrivateRootRuntime now owns the environment, question/root runtime startup, assertion callback, session shutdown and restoration as one coherent lifetime. The authority test itself reads as the request/outcome sequence: list, reject unauthorized token, reject stale version/owner, accept pinned reply, preserve one delivery on replay, dispatch stop, then close. The assertion journey is byte-identical. Environment restoration runs even if shutdown throws. All four tests shut down their runtime, while fixture directories remain available for ledger inspection. The configured-service callback/sync test, incomplete cancellation result, and terminal task-row anti-regression snapshot keep their original assertions. No product source changed.",
+      "primaryPaths": ["tests/root-runtime.test.ts"],
+      "primaryChecks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md; read full assigned test sources and relevant implementation/caller journeys.",
+        "Assigned reconciliation rows each have candidate:null, no judge rounds, and pending-primary; no preserved candidate bytes needed.",
+        "git diff --check passed before commit; source-only commit inspected; no active non-sample commit hooks.",
+        "No tests, setup, or builds executed.",
+        "Private IPC assertion body byte-identical to parent HEAD before edit.",
+        "Other three test bodies byte-identical after accounting for replacement of fixture deletion with session_shutdown.",
+        "Required Biome format --write succeeded: one changed source path, no further formatting fixes."
+      ],
+      "primaryLimits": [
+        "Parent owns independent judgment and audited isolated test gates; source reading is not runtime proof.",
+        "changedPaths lists the complete source scope of the shared commit for every decision; only the root-runtime focus changed.",
+        "No credential/device access, network requests, dependency writes, deletion commands, cleanup commands, destructive Git, push, PR, merge, recovery work, or delegation.",
+        "Commit signing disabled for this local commit because repository signing configuration is enabled; no signing credential accessed.",
+        "Formatter provenance: durable code worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_fdd5f204; retained owned formatter fixture /tmp/pr45-root-runtime-format-mxuzFl with fresh HOME/XDG config/cache/data/SDK/TMPDIR; absolute Biome binary invoked via child_process argv only on tests/root-runtime.test.ts.",
+        "Wisdom/values unchanged: parent owns aggregate wisdom; no worker note pile.",
+        "Still uses a fake RootJobs adapter and context; real task cancellation/provider/native/SSH settlement not verified.",
+        "Runtime socket lifecycle was source-reviewed (private fixture path, shutdown unlinks socket); actual socket behavior not executed."
+      ]
     },
     {
       "file": "tests/saved-transcript-startup.test.ts",
@@ -14110,24 +14133,69 @@
       "initialBlob": "cda7fbe6aede6fc1648ba563e149d6a1e782e62d",
       "status": "pending",
       "area": "execution-tasks-questions",
-      "resumeState": "pending-primary",
-      "primaryId": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_fdd5f204",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "9a568679ae641766995b7f4332b056edfd617a45",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
-      "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage."
+      "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage.",
+      "primaryCommit": "9a568679ae641766995b7f4332b056edfd617a45",
+      "primaryBase": "0b42e92c1905ed9e7828f64dc4a0aa67864df90b",
+      "primaryResult": "No structural edit justified. The test locally exposes the sums ($0.875, then worker append to $1.000), checks expanded token/total text, and relaunches the same persisted root to prove resume intent. Root usage is created explicitly; descendant lineage and excluded unrelated cost are readable at the point of creation. Traced footer installation to SessionCostTracker, coarse idle polling, render request on cost change, compact/detailed total composition and disposal. Extracting the two child constructors or the one launch block would hide short, meaningful fixture differences rather than clarify a journey. This focus remains unchanged; the shared commit changes only the root-runtime fixture.",
+      "primaryPaths": ["tests/root-runtime.test.ts"],
+      "primaryChecks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md; read full assigned test sources and relevant implementation/caller journeys.",
+        "Assigned reconciliation rows each have candidate:null, no judge rounds, and pending-primary; no preserved candidate bytes needed.",
+        "git diff --check passed before commit; source-only commit inspected; no active non-sample commit hooks.",
+        "No tests, setup, or builds executed.",
+        "Unchanged focus Git blob equals reconciliation baseline cda7fbe6aede6fc1648ba563e149d6a1e782e62d.",
+        "Reviewed helper effects: run uses Bun.spawn argv; tmux command receives a shell-quoted offline launch, and frameContaining throws when the required frame does not arrive."
+      ],
+      "primaryLimits": [
+        "Parent owns independent judgment and audited isolated test gates; source reading is not runtime proof.",
+        "changedPaths lists the complete source scope of the shared commit for every decision; only the root-runtime focus changed.",
+        "No credential/device access, network requests, dependency writes, deletion commands, cleanup commands, destructive Git, push, PR, merge, recovery work, or delegation.",
+        "Commit signing disabled for this local commit because repository signing configuration is enabled; no signing credential accessed.",
+        "Formatter provenance: durable code worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_fdd5f204; retained owned formatter fixture /tmp/pr45-root-runtime-format-mxuzFl with fresh HOME/XDG config/cache/data/SDK/TMPDIR; absolute Biome binary invoked via child_process argv only on tests/root-runtime.test.ts.",
+        "Wisdom/values unchanged: parent owns aggregate wisdom; no worker note pile.",
+        "Existing unchanged TUI test inherits process environment through run/tmuxRunner and creates real tmux/CLI processes; it overrides HOME and BRUV_CODING_AGENT_DIR but not every config/SDK variable. Parent must audit/isolate env before any gate.",
+        "Existing finally kills only its uniquely named tmux server and removes the owned mkdtemp home. Under retained-fixture policy this must not be executed as-is without a parent-approved gate fixture strategy.",
+        "Built dist/bruv, terminal interaction, SDK writes, idle rendering, resume and offline-network behavior unverified; no build/test or auth access attempted."
+      ]
     },
     {
       "file": "tests/session-costs.test.ts",
       "initialBlob": "6969bb9ed10e0a05b4cfb22c90aafcde4b9b0426",
       "status": "pending",
       "area": "execution-tasks-questions",
-      "resumeState": "pending-primary",
-      "primaryId": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_fdd5f204",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "9a568679ae641766995b7f4332b056edfd617a45",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
-      "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage."
+      "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage.",
+      "primaryCommit": "9a568679ae641766995b7f4332b056edfd617a45",
+      "primaryBase": "0b42e92c1905ed9e7828f64dc4a0aa67864df90b",
+      "primaryResult": "No structural edit justified. Descendant/ordinary-branch/cycle exclusion is one visible graph; split-record append keeps both halves next to the intervening refresh; fallback metadata and nested discovery stay local; fork rejection shows the exact copied metadata mismatch; negative/deduplicated usage, truncation and atomic replacement, concurrent refresh promise identity, missing root and failed-compaction custom usage each retain their own causal sequence. Traced tracker metadata prefix parsing, reachable descendant construction, inode/size reset, partial-line carry and per-session entry-id accumulation. Moving setup or mutations into additional fixture abstractions would conceal the concrete boundaries these tests explain. This focus remains unchanged; the shared commit changes only the root-runtime fixture.",
+      "primaryPaths": ["tests/root-runtime.test.ts"],
+      "primaryChecks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md; read full assigned test sources and relevant implementation/caller journeys.",
+        "Assigned reconciliation rows each have candidate:null, no judge rounds, and pending-primary; no preserved candidate bytes needed.",
+        "git diff --check passed before commit; source-only commit inspected; no active non-sample commit hooks.",
+        "No tests, setup, or builds executed.",
+        "Unchanged focus Git blob equals reconciliation baseline 6969bb9ed10e0a05b4cfb22c90aafcde4b9b0426.",
+        "Reviewed filesystem effects: all transcript append/write/rename/mkdir paths come from fixture mkdtemp; tracker reads only the explicit fixture directory, opens files read-only and closes handles."
+      ],
+      "primaryLimits": [
+        "Parent owns independent judgment and audited isolated test gates; source reading is not runtime proof.",
+        "changedPaths lists the complete source scope of the shared commit for every decision; only the root-runtime focus changed.",
+        "No credential/device access, network requests, dependency writes, deletion commands, cleanup commands, destructive Git, push, PR, merge, recovery work, or delegation.",
+        "Commit signing disabled for this local commit because repository signing configuration is enabled; no signing credential accessed.",
+        "Formatter provenance: durable code worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_fdd5f204; retained owned formatter fixture /tmp/pr45-root-runtime-format-mxuzFl with fresh HOME/XDG config/cache/data/SDK/TMPDIR; absolute Biome binary invoked via child_process argv only on tests/root-runtime.test.ts.",
+        "Wisdom/values unchanged: parent owns aggregate wisdom; no worker note pile.",
+        "Existing afterEach removes only tracked owned mkdtemp directories; inspected but not executed. Parent retained-fixture gates must account for this unchanged cleanup.",
+        "Incremental parsing, replacement, coalescing and SDK integration are source-reviewed only, not test-verified."
+      ]
     },
     {
       "file": "tests/session-identity.test.ts",
