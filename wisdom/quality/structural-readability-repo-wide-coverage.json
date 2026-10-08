@@ -8910,39 +8910,142 @@
       "initialBlob": "eb93fe2c9282b071f3948958d990f3e3b6923659",
       "status": "pending",
       "area": "agent-history-session-goals",
-      "resumeState": "pending-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_f6b24bd0",
+      "primaryCommit": "dabb7111b9bece9b6273fcee10405206142d0abe",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "dabb7111b9bece9b6273fcee10405206142d0abe",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
-      "pendingReason": "No dedicated primary/final independent focus judgment."
+      "pendingReason": "No dedicated primary/final independent focus judgment.",
+      "primaryBase": "19fb4c36e4dbccd0d243771185dfb304b18f343b",
+      "primaryResult": "One file-local streamAfterPayloadCapture operation now owns the sentinel prerequisite, synthetic reply, SDK-error forwarding, caught-error conversion, and terminal event/end pairing. Scenario-local callbacks retain actual serializer selection, header/payload transformations, blocking fetch guards, capture observations, and reply contents. Fresh-frame unexpected-result throwing remains local and unchanged; provider-prefix scenarios still forward the SDK result unchanged on unexpected capture failure. The scenario assertions and session lifetimes remain inline and unchanged. No external fixture framework or runtime source edits.",
+      "primaryPaths": ["tests/cache-affine-compaction-sdk.test.ts"],
+      "primaryChecks": [
+        {
+          "check": "Scoped provenance",
+          "result": "Focus present; preserved reconciliation row and repository coverage row both pending-primary, with no prior primary/source commit or rejected focus candidate. No historical candidate copied or branch merged."
+        },
+        {
+          "check": "Caller and boundary reading",
+          "result": "Read extension registration, phase1 fixture, prepareCurrentConversation fresh/effective-frame reconciliation, SDK Anthropic/Codex onPayload boundaries, and AgentSession prompt/compact entry points."
+        },
+        {
+          "check": "Repository formatter",
+          "result": "Passed: read-only /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/@biomejs/biome/bin/biome format --write on the focus only, via node child_process argv. No further formatter changes. Fresh HOME/XDG_CONFIG_HOME/TMPDIR retained at /tmp/pr45-sdk-format-O2F6bT."
+        },
+        {
+          "check": "Assertion and guard preservation",
+          "result": "Static comparison found all expect statement text unchanged. Both network-count increments, unexpected-network throws, sentinel throws, SSE transports, disabled refresh settings, session disposal, and original fixture-owned cleanup statements preserved. No repository test executed."
+        },
+        {
+          "check": "git diff --check",
+          "result": "Passed before commit; only assigned source path committed."
+        }
+      ],
+      "primaryLimits": [
+        "No setup, tests, builds, device, credential, or network access performed; runtime gates are parent-owned.",
+        "Optional TypeScript syntax-parser inspection unavailable: existing dependency path /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/typescript/lib/typescript.js returned ENOENT. Biome parsed/formatted the source successfully; no type-check claim.",
+        "Independent fresh judgment remains parent-owned.",
+        "No per-worker wisdom/values edits: existing guidance covers this change; parent writes aggregate wisdom."
+      ]
     },
     {
       "file": "tests/cache-affine-compaction.test.ts",
       "initialBlob": "20236a300c5f611a16f6ec950c00aac31a29ffd1",
       "status": "pending",
       "area": "agent-history-session-goals",
-      "resumeState": "pending-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_b1e39ec2",
+      "primaryCommit": "cef8af98763ac2be8e0ff5bc3cf5d1908c9c2353",
       "judgeIds": ["task_2020f326"],
-      "sourceCommit": "6765c847fd17806b697ec1bede8a8260ac9123d0",
+      "sourceCommit": "cef8af98763ac2be8e0ff5bc3cf5d1908c9c2353",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
-      "pendingReason": "No dedicated primary/final independent focus judgment. Related-patch review is evidence only; dedicated focus coverage remains required."
+      "pendingReason": "No dedicated primary/final independent focus judgment. Related-patch review is evidence only; dedicated focus coverage remains required.",
+      "primaryBase": "19fb4c36e4dbccd0d243771185dfb304b18f343b",
+      "primaryResult": "Reused the existing session-owned summaryAttemptHarness for three independent paid-response journeys: unusable response checkpoint, failed checkpoint with secret-safe notices, and abort after accepted payload while checkpoint storage fails. Each names and installs its own fault at the real extension appendEntry or provider callback; each asserts one provider request and one checkpoint attempt where applicable. The harness accepts the compaction event so the abort signal stays explicit. Related cancellation cases now share one describe block adjacent to that fixture; preserved candidate assertions are unchanged apart from nesting. Traced production registerCacheAffineCompaction in extension.ts, the manager-owned bindInstructionContinuitySession seam, and recordCancelledUsage: checkpoint ownership is per returned cancelled response, not a dependency on a preceding successful checkpoint.",
+      "primaryPaths": ["tests/cache-affine-compaction.test.ts"],
+      "primaryChecks": [
+        {
+          "kind": "preserved-candidate",
+          "result": "Initial focus blob faf1ca8647b6c9b5540ceb8a970f834a1443c550 matched preserved 6765c847fd17806b697ec1bede8a8260ac9123d0 evidence; no restoration or old branch merge needed."
+        },
+        {
+          "kind": "formatter",
+          "command": [
+            "/home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/@biomejs/biome/bin/biome",
+            "format",
+            "--write",
+            "tests/cache-affine-compaction.test.ts"
+          ],
+          "result": "exit 0, formatted only focus source",
+          "retainedEnvironment": "/tmp/pr45-cache-affine-format-UweYBA"
+        },
+        {
+          "kind": "git diff --check",
+          "result": "passed before commit"
+        },
+        {
+          "kind": "static-preservation",
+          "result": "Original trailing provider-rejection, dispatch-uncertainty, projection-failure, and notification-failure cases byte-equal after removing added describe indentation. Original cancellation, usage payload, checkpoint once-per-attempt, storage notice, and private-error redaction assertions retained in separated cases."
+        },
+        {
+          "kind": "scope",
+          "result": "Source-only commit changes exactly the focus path; no production changes."
+        }
+      ],
+      "primaryLimits": [
+        "No setup, repository tests, or builds run as requested; parent owns audited isolated batch gates and independent fresh judgment.",
+        "Fresh formatter HOME/config/TMPDIR/SDK directories retained; no cleanup, credential access, signing, push, PR, or merge. Source commit is unsigned.",
+        "Wisdom and values unchanged; parent owns aggregate wisdom."
+      ]
     },
     {
       "file": "tests/cache-countdown-sdk.test.ts",
       "initialBlob": "04f59de886ea0b272ef89e9126a423da750dc86c",
       "status": "pending",
       "area": "agent-history-session-goals",
-      "resumeState": "pending-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_ef29e337",
+      "primaryCommit": "d2b3af51370804e9bd939a8ac375fcbeca456ed1",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "d2b3af51370804e9bd939a8ac375fcbeca456ed1",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
-      "pendingReason": "No dedicated primary/final independent focus judgment."
+      "pendingReason": "No dedicated primary/final independent focus judgment.",
+      "primaryBase": "c221985053a8cdeae857fc334aa85eac05f1550b",
+      "primaryResult": "scriptedProvider owns transport hook sequencing, assistant stream completion/error, and its network counter. createSdkSession owns offline runtime and extension/session wiring. A discriminated ScriptedResponse names each tested hook path at its call site; HTTP rejection still emits the original successful terminal event so response-based suppression remains exercised. Existing assertions, disk-resume checks, auth isolation, disposal, and fixture cleanup are unchanged.",
+      "primaryPaths": ["tests/cache-countdown-sdk.test.ts"],
+      "primaryChecks": [
+        {
+          "kind": "reading",
+          "result": "Read wisdom/values.md and structural-readability-guidance.md; inspected only assigned focus row from preserved area reconciliation and repository coverage. Focus existed at baseline blob 04f59de886ea0b272ef89e9126a423da750dc86c; no candidate adoption or old branch merge."
+        },
+        {
+          "kind": "caller-trace",
+          "result": "Traced local fixture callers, tasks extension registration in src/agent/extension.ts, request/response/terminal authorities in src/agent/cache-countdown.ts, and installed SDK core/sdk.js hook composition. Related source files remain unchanged."
+        },
+        {
+          "kind": "formatter",
+          "result": "Passed: repository Biome format --write tests/cache-countdown-sdk.test.ts using node child_process argv and fresh isolated HOME/XDG_CONFIG_HOME/TMPDIR/SDK environment.",
+          "retainedIsolation": "/tmp/pr45-cache-sdk-format-zhERB1"
+        },
+        {
+          "kind": "static-preservation",
+          "result": "Exact whitespace-normalized comparison confirmed all test bodies unchanged except explicit scenario calls, and scripted stream body unchanged except scenario dispatch predicates/status selection."
+        },
+        {
+          "kind": "diff-check",
+          "result": "git diff --check passed before commit."
+        },
+        {
+          "kind": "source-scope",
+          "result": "Commit contains only tests/cache-countdown-sdk.test.ts; no executable commit hooks present."
+        }
+      ],
+      "primaryLimits": [
+        "No setup, tests, builds, or runtime credential/device access performed; parent owns audited isolated batch gates. Static comparisons do not establish runtime correctness.",
+        "Independent fresh exact-candidate judgment remains parent-owned. No self-model introspection.",
+        "No wisdom or values edits: aggregate wisdom remains parent-owned."
+      ]
     },
     {
       "file": "tests/cache-countdown-tui.test.ts",
