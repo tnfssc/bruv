@@ -47,7 +47,7 @@ function evidence() {
   };
   const names = [
     "Docs-only feedback (not executable validation)",
-    "Full validation / Linux x64",
+    ...[1, 2, 3].map((shard) => `Full validation / Linux x64 (${shard}/3)`),
     "Full validation / Linux native audio (no hardware)",
     "Full validation / macOS Live (no devices or API)",
     "CI policy",
@@ -172,7 +172,7 @@ test("incomplete, duplicate, wrong-attempt or wrong-SHA job evidence falls back"
       f.jobs[1]!.steps[0]!.conclusion = "skipped";
     },
     (f: ReturnType<typeof evidence>) => {
-      f.jobs[4]!.steps[0]!.conclusion = "failure";
+      f.jobs.find((job) => job.name === "CI policy")!.steps[0]!.conclusion = "failure";
     },
   ]) {
     const f = evidence();
@@ -205,4 +205,17 @@ test("CLI uses prepared RELEASE_SHA rather than dispatch GITHUB_SHA and writes a
   });
   expect(result).toContain("six-minute deadline");
   await expect(Bun.file(output).text()).resolves.toBe("reused=false\n");
+});
+
+test("release reuse needs all three successful native shard gates, not an old unsharded job", async () => {
+  for (const shard of [1, 2, 3]) {
+    const f = evidence();
+    const job = f.jobs.find((job) => job.name === "Full validation / Linux x64 (" + shard + "/3)")!;
+    job.steps[0]!.conclusion = "skipped";
+    expect(await findReleaseCi(repo, sha, "token", cwd, api(f).fetcher)).toBeUndefined();
+  }
+  const old = evidence();
+  old.jobs = old.jobs.filter((job) => !job.name.startsWith("Full validation / Linux x64"));
+  old.jobs.push({ ...evidence().jobs[1]!, name: "Full validation / Linux x64" });
+  expect(await findReleaseCi(repo, sha, "token", cwd, api(old).fetcher)).toBeUndefined();
 });

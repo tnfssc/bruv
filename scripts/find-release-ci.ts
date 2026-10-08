@@ -2,9 +2,10 @@ import { spawnSync } from "node:child_process";
 import { appendFileSync } from "node:fs";
 
 const workflowPath = ".github/workflows/ci.yml";
-const requiredJobs = [
+const linuxJobs = [1, 2, 3].map((shard) => `Full validation / Linux x64 (${shard}/3)`);
+export const releaseCiJobNames: readonly string[] = [
   "Docs-only feedback (not executable validation)",
-  "Full validation / Linux x64",
+  ...linuxJobs,
   "Full validation / Linux native audio (no hardware)",
   "Full validation / macOS Live (no devices or API)",
   "CI policy",
@@ -94,7 +95,7 @@ export async function findReleaseCi(
       const result = await get(`${base}/runs/${run.id}/attempts/${run.run_attempt}/jobs?per_page=100`);
       if (!Array.isArray(result.jobs) || result.total_count !== result.jobs.length || result.jobs.length > 100) return;
       const jobs = result.jobs as Job[];
-      const full = requiredJobs.every((name) => {
+      const full = releaseCiJobNames.every((name) => {
         const matches = jobs.filter((job) => job?.name === name);
         const job = matches[0];
         return (
@@ -114,7 +115,7 @@ export async function findReleaseCi(
       };
       if (
         full &&
-        stepSucceeded(requiredJobs[1], "Shared Linux CI gate (paired binaries, external T3)") &&
+        linuxJobs.every((name) => stepSucceeded(name, "Shared Linux CI gate (paired binaries, external T3)")) &&
         stepSucceeded("CI policy", "Require the planned validation outcomes")
       ) {
         return { runId: run.id, attempt: run.run_attempt };

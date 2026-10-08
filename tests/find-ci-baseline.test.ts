@@ -299,5 +299,6 @@ test("CI push planning uses the fail-closed helper; Release has no develop plan"
   const release = readFileSync(".github/workflows/release.yml", "utf8");
   expect(release).not.toContain("find-ci-baseline");
   expect(release).not.toContain("ci-selective");
-  expect(release).not.toContain("actions: read");
+  expect(release).toContain("actions: read");
+  expect(release).toContain("bun scripts/find-release-ci.ts");
 });

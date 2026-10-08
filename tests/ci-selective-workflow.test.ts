@@ -41,6 +41,7 @@ function enabled(
     "needs",
     "steps",
     "always",
+    "cancelled",
     "startsWith",
     "contains",
     "return " + expression.slice(3, -3).replace(/needs\.([\w-]+)/g, 'needs["$1"]'),
@@ -49,6 +50,7 @@ function enabled(
     needs,
     steps,
     () => true,
+    () => false,
     (s: string, prefix: string) => s.startsWith(prefix),
     (s: string, part: string) => s.includes(part),
   );

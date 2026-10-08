@@ -563,9 +563,15 @@ test("release reuses only proven exact-SHA full CI and bounds the identical fall
   expect(release.steps.indexOf(install)).toBeLessThan(release.steps.indexOf(gate));
   const ci = await readWorkflow("ci");
   const lookup = await read("scripts/find-release-ci.ts");
-  for (const id of ["feedback", "test", "native-linux", "live-macos", "required"]) {
-    expect(lookup).toContain(JSON.stringify(ci.jobs[id]!.name));
-  }
+  const { releaseCiJobNames } = await import("../scripts/find-release-ci");
+  expect(releaseCiJobNames).toEqual([
+    ci.jobs.feedback!.name!,
+    // biome-ignore lint/suspicious/noTemplateCurlyInString: literal GitHub matrix expression
+    ...[1, 2, 3].map((shard) => ci.jobs.test!.name!.replace("${{ matrix.shard }}", String(shard))),
+    ci.jobs["native-linux"]!.name!,
+    ci.jobs["live-macos"]!.name!,
+    ci.jobs.required!.name!,
+  ]);
   expect(lookup).toContain(
     JSON.stringify(namedStep(ci.jobs.test!, "Shared Linux CI gate (paired binaries, external T3)").name),
   );
