@@ -573,8 +573,8 @@ export class DiskEntryStore {
     >
   >();
 
-  private indexMetadata(entry: SessionEntry, offset: number, length: number, ownStrings = true): EntryMetadata {
-    const meta = metadata(entry, offset, length, ownStrings);
+  /** Intern vocabulary and task keys only after the record is committed. */
+  private registerMetadata(meta: EntryMetadata, entry: SessionEntry): EntryMetadata {
     if (meta.customType === TASK_PROJECTION_CUSTOM_TYPE) {
       const data = (
         entry as SessionEntry & {
@@ -758,7 +758,7 @@ export class DiskEntryStore {
     this.cacheBytes = 0;
   }
 
-  append(entry: SessionEntry): void {
+  append(entry: SessionEntry): EntryMetadata {
     const fd = openSync(this.activePath, "a+");
     let location: { offset: number; length: number; bytes: Buffer };
     let meta: EntryMetadata;
@@ -793,11 +793,12 @@ export class DiskEntryStore {
     } finally {
       closeSync(fd);
     }
-    meta = this.indexMetadata(entry, location.offset, location.length);
+    this.registerMetadata(meta, entry);
     this.entries.push(meta);
     this.byId.set(meta.id, meta);
     this.remember(location.bytes, meta);
     this.hasConversation ||= meta.messageRole === "user" || meta.messageRole === "assistant";
+    return meta;
   }
 
   private publish(): void {
@@ -866,7 +867,10 @@ export class DiskEntryStore {
         }
         // Selected tokens were decoded from their own byte views, not a full-row
         // JS string. They already own their small backing storage.
-        const meta = this.indexMetadata(entry as SessionEntry, offset, length, false);
+        const meta = this.registerMetadata(
+          metadata(entry as SessionEntry, offset, length, false),
+          entry as SessionEntry,
+        );
         this.entries.push(meta);
         this.byId.set(meta.id, meta);
         this.hasConversation ||= meta.messageRole === "user" || meta.messageRole === "assistant";

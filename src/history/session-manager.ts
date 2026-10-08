@@ -311,55 +311,6 @@ export function selectDiskBackedBranchEntries(
   return indexed ? entries.reverse() : undefined;
 }
 
-/** Select indexed candidates from the same branch/context as the public APIs.
- * Undefined means an unowned manager: callers must keep their native fallback.
- * Context indices matter: only index zero can be a replayed checkpoint.
- */
-export function selectDiskBackedEntries(
-  manager: object,
-  scope: "branch" | "context",
-  select: (metadata: EntryMetadata, index: number) => boolean,
-): SessionEntry[] | undefined {
-  const owned = states.get(manager as SessionManager);
-  if (!owned) return undefined;
-  let length = 0;
-  let compact: EntryMetadata | undefined;
-  let compactAt = -1;
-  let keptAt = -1;
-  let keptSystems = 0;
-  visitDiskBackedBranch(manager, (meta) => {
-    const at = length++;
-    if (scope === "branch") return;
-    if (!compact && meta.type === "compaction") {
-      compact = meta;
-      compactAt = at;
-    }
-    if (compact && at > compactAt && keptAt < 0 && meta.type === "message" && meta.messageRole === "system")
-      keptSystems++;
-    if (compact && meta.id === compact.firstKeptEntryId) keptAt = at;
-  });
-  const keptCount = keptAt > compactAt ? keptAt - compactAt - keptSystems : 0;
-  const contextCount = compact ? compactAt + 1 + keptCount : length;
-  const selected: { metadata: EntryMetadata; index: number }[] = [];
-  let position = 0;
-  let keptSeen = 0;
-  visitDiskBackedBranch(manager, (meta) => {
-    const at = position++;
-    let index = length - at - 1;
-    if (compact) {
-      if (at === compactAt) index = 0;
-      else if (at < compactAt) index = contextCount - at - 1;
-      else {
-        if (at > keptAt || (meta.type === "message" && meta.messageRole === "system")) return;
-        index = keptCount - keptSeen++;
-      }
-    }
-    if (select(meta, index)) selected.push({ metadata: meta, index });
-  });
-  selected.sort((a, b) => a.index - b.index);
-  return selected.map(({ metadata }) => owned.store.materialize(metadata));
-}
-
 /** Only entries which affect model context are parsed. Settings live in the index.
  * Two bounded parent walks locate the kept range before collecting it: even a
  * missing firstKeptEntryId must not buffer all summarized message metadata.
@@ -569,17 +520,9 @@ export function installDiskBackedSessionManager(): void {
       original.appendEntry.call(this, entry);
       return;
     }
-    const previousCount = owned.store.entries.length;
-    try {
-      owned.store.append(entry);
-    } catch (error) {
-      // Publication may fail after the complete entry reached the private
-      // spool. Preserve the SDK's advanced leaf/index so a retry keeps its tree.
-      if (owned.store.entries.length !== previousCount) syncIndexes(this, owned);
-      throw error;
-    }
+    const meta = owned.store.append(entry);
     const target = internals(this);
-    publishEntryMetadata(target, owned.store.entries.at(-1)!);
+    publishEntryMetadata(target, meta);
     target.flushed = owned.store.flushed;
   };
 
