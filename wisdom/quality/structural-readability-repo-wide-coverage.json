@@ -11328,13 +11328,43 @@
       "initialBlob": "f557387fc34a01cf8051532a246cd363241e76bd",
       "status": "pending",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_da678f51",
+      "primaryCommit": "44289959a4278e76c3c1fd77c6ad6e17b68b090b",
       "judgeIds": [],
-      "sourceCommit": "53fb4d9732dcf0c337b797b05a104199ccf1a273",
+      "sourceCommit": "44289959a4278e76c3c1fd77c6ad6e17b68b090b",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
-      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
+      "primaryBase": "44289959a4278e76c3c1fd77c6ad6e17b68b090b",
+      "primaryResult": "Keep reportFixture unchanged. Every call constructs its complete mutable InteractionRun afresh, including nested arrays and the evidence object; callers intentionally edit only that instance. One tools/short/reveal case and iteration 0 match repetitions: 1. The adjacent missing boundary and sample limits disclose why there is no contiguousSyncMs. Outer 7/inner 6 and frame 5 remain distinct from elapsed/ack 1000, provider wait 900 and heartbeat 99; report accounting takes a maximum, and callers explicitly verify a 7 ms peak and equality failure. The raw/test.json reference visibly matches its evidence key, which dashboard callers follow and hostile-data tests replace. Report/options/CLI/dashboard callers need different localized edits, not an override API. Extracting builders, constants or shared mutable templates would force additional navigation or weaken isolation without resolving a real reading burden. Preserved evidence marks this file NOT REVIEWED/needs-primary, with no rejected dedicated candidate; its baseline, area and joined blobs all match the present source. This is a primary no-change recommendation, not independent acceptance.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        {
+          "kind": "actual-source-reading",
+          "result": "Read whole fixture, all four importing test callers, full interaction-report contract/accounting/validation module, values and structural guidance."
+        },
+        {
+          "kind": "preserved-evidence",
+          "candidate": "53fb4d9732dcf0c337b797b05a104199ccf1a273",
+          "candidateBlob": "f557387fc34a01cf8051532a246cd363241e76bd",
+          "result": "Assigned reconciliation row and blob inventory: no dedicated prior candidate/rejection; exact current fixture equals candidate bytes and f557387fc34a01cf8051532a246cd363241e76bd."
+        },
+        {
+          "kind": "static-effects-review",
+          "result": "Fixture is allocation-only, type import has no runtime effect. Existing CLI/options tests spawn processes and write owned mkdtemp paths; their cleanup and inherited spawn environment were inspected only, never run. Parent must own isolated audited gates."
+        },
+        {
+          "kind": "git-byte-check",
+          "result": "Working fixture bytes equal HEAD fixture bytes; current and preserved candidate Git blobs identical."
+        }
+      ],
+      "primaryLimits": [
+        "No source edits; no source commit created. sourceCommit is exact inspected HEAD. No formatter invocation because there are no changed source paths.",
+        "No tests, setup, builds, installs, network/auth/device/credential probes, delegation, deletion or cleanup; dependencies and previous worktrees remain untouched.",
+        "Static reading only, not runtime or independent quality acceptance. Parent owns fresh independent judgment and any audited isolated gates.",
+        "Only .pr45-primary-result.json written, untracked, in this durable task worktree; no per-worker wisdom notes or values changes.",
+        "Runtime agent.model verification is parent-owned."
+      ]
     },
     {
       "file": "tests/footer.test.ts",
