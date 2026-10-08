@@ -7029,13 +7029,28 @@
       "initialBlob": "045cd12b2a85c7f0516f99e218fe500b18c8eace",
       "status": "pending",
       "area": "agent-history-session-goals",
-      "resumeState": "pending-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_42da07de",
+      "primaryCommit": "5a3e0105872fcd64383c8533469f47ce771e0789",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "5a3e0105872fcd64383c8533469f47ce771e0789",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
-      "pendingReason": "No dedicated primary/final independent focus judgment."
+      "pendingReason": "No dedicated primary/final independent focus judgment.",
+      "primaryBase": "5a3e0105872fcd64383c8533469f47ce771e0789",
+      "primaryResult": "tsconfig.json includes src/**/*.ts, which includes this ambient .d.ts declaration. src/prompts.ts imports Markdown with type: text and immediately applies string operations; src/goals/extension.ts and src/typescript/definition.ts likewise consume default text exports. Compaction, live, and wisdom consumers use the same import contract. The declaration has no orchestration, mutable state, lifetimes, competing authorities, or hidden branch to untangle. Splitting, wrapping, renaming, or adding explanatory machinery would increase the journey rather than clarify it. Preserved reconciliation, area ledger, and repo-wide coverage focus rows show pending-primary with no earlier candidate or rejected decision; the present blob matches the preserved baseline. No candidate import was required.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Inspected only focus evidence/rows for reconciliation, area baseline ledger and repo-wide coverage; no existing focus candidate.",
+        "Read tsconfig.json and actual Markdown import/string-consumption paths in prompts, goals, execute definition, compaction, live and wisdom.",
+        "Read-only git status and source blob comparison; source worktree unchanged."
+      ],
+      "primaryLimits": [
+        "No tests, setup, or builds run: parent owns audited isolated batch gates.",
+        "No formatter invocation: no changed source paths and no source commit to create.",
+        "Independent final judgment remains with parent; no self-introspection or delegation performed.",
+        "Wisdom and values unchanged: no new general lesson; parent owns aggregate wisdom."
+      ]
     },
     {
       "file": "src/prompts/native-compaction.md",
