@@ -16554,12 +16554,12 @@
     {
       "file": "tests/session-identity.test.ts",
       "initialBlob": "fd17ddccd24c8e9626817fdb6a73bcb0c5f9f4cc",
-      "status": "pending",
+      "status": "accepted",
       "area": "agent-history-session-goals",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_230772ed",
       "primaryCommit": "0257d78607a61856035239f24fa6f2924c300d6e",
-      "judgeIds": [],
+      "judgeIds": ["task_c0fe8a88"],
       "sourceCommit": "0257d78607a61856035239f24fa6f2924c300d6e",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
       "pendingReason": "No dedicated primary/final independent focus judgment.",
@@ -16578,6 +16578,21 @@
         "Runtime agent.model verification remains parent-owned; no live auth/device proof.",
         "Complete combined commit source scope is listed in changedPaths even for an unchanged focus.",
         "Existing SessionManager.create(process.cwd()) creates the default session directory; future parent gates must provide owned mkdtemp HOME/config/SDK via explicit argv/env. It was not executed here."
+      ],
+      "acceptedBlob": "fd17ddccd24c8e9626817fdb6a73bcb0c5f9f4cc",
+      "result": "The entire test is one short identity comparison journey: create a persistent Pi manager and assert both native path components; create an ephemeral manager beside its assertions; compare its directory to the persistent one, reread for stability, compare another manager for uniqueness, then confirm no real session file exists. Keeping the two modes together makes the shared directory contract immediate. A fixture wrapper or split tests would force readers to reconstruct that comparison. Exact base/candidate blob equality confirms this is an unchanged-focus decision, not acceptance inferred from the prompt edit.",
+      "systemReason": "src/session/identity.ts first returns a real session file and manager directory (or dirname). Only absent real files lead to the stable session ID, resolved cwd encoding and manager/default agent directory; the synthetic .bruv-ephemeral-ID path is attribution, never a write. Pi create allocates a persistent path and creates its directory; inMemory creates no persistent file. Footer tracker installation keys descendant cost by this file/directory pair; job-service prepares children with this parent file, and native binding routes only matching owner parentSessionFile values. The installed disk-backed adapter preserves the public identity getters and leaves in-memory managers alone. These journeys support the test being a cohesive cross-mode specification without structural edits.",
+      "checks": [
+        "Read whole focus at exact candidate and compared base blobs: identical fd17ddccd24c8e9626817fdb6a73bcb0c5f9f4cc.",
+        "Read all identity callers returned by candidate git grep; inspected Pi allocation/getters and relevant adapter activation boundaries.",
+        "Reviewed the only candidate change, tests/system-prompt.test.ts, separately below; git diff --check returned no diagnostics.",
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md."
+      ],
+      "limits": [
+        "Static actual-code review only; no setup, tests, builds, model calls, live authentication or device work performed. Parent owns audited isolated runtime gates and agent.model verification.",
+        "Repository evidence read with git show/diff at exact candidate versus a1a45b3c26fac604060d3fbf22ba1f37642d06e6, not checkout HEAD. Durable judge worktree: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_c0fe8a88. Existing worktrees and candidate evidence preserved.",
+        "Shared installed Pi 1.0.3 implementations inspected read-only; no dependency reinstall/adaptation. Their local package metadata defaults to .pi. Parent SDK prompt gate must select owned prepared Bruv package metadata (.bruv) before SDK imports, as shipped entry points do via PI_PACKAGE_DIR. No gate result claimed.",
+        "Persistent SessionManager.create(process.cwd()) can mkdir in the default agent directory. The parent must provide explicit argv/env with owned retained fs.mkdtemp HOME/config/SDK before running this unchanged test. This review did not invoke it."
       ]
     },
     {
@@ -16663,12 +16678,12 @@
     {
       "file": "tests/sol-model-catalog.test.ts",
       "initialBlob": "c9a98a6406361ae955b4e484c6ac6b1395d4f3f4",
-      "status": "pending",
+      "status": "accepted",
       "area": "agent-history-session-goals",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_230772ed",
       "primaryCommit": "0257d78607a61856035239f24fa6f2924c300d6e",
-      "judgeIds": [],
+      "judgeIds": ["task_c0fe8a88"],
       "sourceCommit": "0257d78607a61856035239f24fa6f2924c300d6e",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
       "pendingReason": "No dedicated primary/final independent focus judgment.",
@@ -16687,6 +16702,21 @@
         "Runtime agent.model verification remains parent-owned; no live auth/device proof.",
         "Complete combined commit source scope is listed in changedPaths even for an unchanged focus.",
         "Existing offline tests were not executed; account access and model requests remain unverified. Shared dependencies were read only."
+      ],
+      "acceptedBlob": "c9a98a6406361ae955b4e484c6ac6b1395d4f3f4",
+      "result": "Read the entire file: the first test centralizes exhaustive catalog expectations with a small provider tuple only for actual API/baseUrl/minimal-thinking differences. The second owns its fake OAuth/runtime-key auth, registry availability assertion, offline refresh override, real selector construction, filtered object/render check, Enter callback and finally disposal. Nothing requires chasing hidden fixture policy or reconstructing resource lifetime. Keeping the refresh override immediately before selector creation exposes the otherwise surprising constructor effect. This focus is byte-identical to base; no readability change is warranted.",
+      "systemReason": "Pi ModelRegistry is a synchronous facade over ModelRuntime snapshots, not a separate catalog authority. ModelRuntime.create with modelsPath:null chooses an in-memory model store; supplied in-memory credentials and allowModelNetwork:false keep construction offline. The selector reads availability immediately and then launches background refresh; its coordinator calls runtime.refresh, so overriding that method before construction correctly extends the offline constraint to that path. Enter returns the exact selected model, and dispose aborts refresh/clears the timer. The SDK interactive-mode caller uses the same component and passes its result to session.setModel. Bruv native preflight also constructs this runtime with offline initial availability. Thus the assertions target real catalog-to-selection behavior, not account access, and the inline lifetime is the right structure.",
+      "checks": [
+        "Read whole candidate focus and compared base blob: identical c9a98a6406361ae955b4e484c6ac6b1395d4f3f4.",
+        "Read registry facade, runtime creation/refresh, selector constructor/snapshot/abort lifetime and real interactive selection caller.",
+        "Inspected fake credential strings only; did not read credential files or request provider access.",
+        "Candidate changes only the prompt test, independently evaluated in its own decision."
+      ],
+      "limits": [
+        "Static actual-code review only; no setup, tests, builds, model calls, live authentication or device work performed. Parent owns audited isolated runtime gates and agent.model verification.",
+        "Repository evidence read with git show/diff at exact candidate versus a1a45b3c26fac604060d3fbf22ba1f37642d06e6, not checkout HEAD. Durable judge worktree: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_c0fe8a88. Existing worktrees and candidate evidence preserved.",
+        "Shared installed Pi 1.0.3 implementations inspected read-only; no dependency reinstall/adaptation. Their local package metadata defaults to .pi. Parent SDK prompt gate must select owned prepared Bruv package metadata (.bruv) before SDK imports, as shipped entry points do via PI_PACKAGE_DIR. No gate result claimed.",
+        "No proof of provider entitlement or successful requests. Parent should isolate config/HOME and inherited provider environment explicitly even though credentials/model store are in memory; theme/keybinding SDK initialization remains runtime-global. No tests or cleanup run."
       ]
     },
     {
@@ -17071,12 +17101,12 @@
     {
       "file": "tests/system-prompt.test.ts",
       "initialBlob": "dc36d8396fc1d5350784e9af2bf0ea922e1b5fa0",
-      "status": "pending",
+      "status": "accepted",
       "area": "agent-history-session-goals",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_230772ed",
       "primaryCommit": "0257d78607a61856035239f24fa6f2924c300d6e",
-      "judgeIds": ["task_a731e652"],
+      "judgeIds": ["task_a731e652", "task_c0fe8a88"],
       "sourceCommit": "0257d78607a61856035239f24fa6f2924c300d6e",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
       "pendingReason": "No dedicated primary/final independent focus judgment. Related-patch review is evidence only; dedicated focus coverage remains required.",
@@ -17098,6 +17128,23 @@
         "Complete combined commit source scope is listed in changedPaths even for an unchanged focus.",
         "SDK integration coverage is source-only and not executed. Current native runtime still obtains its fallback through withBruvSystemPrompt([])[1]; this focus tests the direct selector API and Pi discovery, not an end-to-end runtime fix.",
         "Future tests must run under the parent-owned explicit argv/env isolated HOME/config/SDK gate; helper writes only fresh mkdtemp project/agent paths and retains them."
+      ],
+      "acceptedRelatedJudges": ["task_c0fe8a88"],
+      "acceptedBlob": "d873111e2674f9e12366c89659deae21bf0e05c4",
+      "result": "The change resolves an actual reading burden: the old override test mutates one filesystem through trust assertions, then removes the project file to switch to global-only policy. The candidate separates same-array preservation from exact fallback injection, names each trust scenario beside its args, gives positional authorization its own assertion, and uses a fresh global-only fixture. The small systemPromptFiles helper owns only directory/file construction; it hides neither trust nor loader decisions. The SDK table declares the complete file set, trust and expected base in each row; DefaultResourceLoader construction, disabled-resource flags, reload and result assertion remain visible in the test body. All old explicit-prompt, positional insertion, trust/denial and config assertions survive; short-flag denial and real SDK discovery/precedence assertions are added. This is coherent fixture/policy separation, not rename churn or a context bag.",
+      "systemReason": "src/system-prompt.ts decides fallback eligibility using project file existence plus trust, or any global file. CLI transport independently owns config exemption, pre-- explicit options, last trust override and insertion before positional args. src/cli.ts feeds that array to Pi main; the native runtime feeds the same policy result to DefaultResourceLoader while preserving an auxiliary fixed prompt. SDK resource-loader reload preserves SettingsManager trust and discovers trusted project SYSTEM.md before global SYSTEM.md; an explicit Bruv fallback bypasses discovery. The five SDK outcomes therefore test the policy-to-discovery handoff with the actual loader, including untrusted project/global precedence. Bruv entry points set package metadata before SDK initialization, matching the .bruv fixture paths. No runtime source changes occur in this candidate.",
+      "checks": [
+        "Read whole candidate focus and complete primary-base diff; only changed path is tests/system-prompt.test.ts, from dc36d8396fc1d5350784e9af2bf0ea922e1b5fa0 to d873111e2674f9e12366c89659deae21bf0e05c4.",
+        "Inspected candidate CLI/native policy callers, fallback implementation and prompt construction, SDK trust/discovery/reload behavior, and shipped PI_PACKAGE_DIR branding order.",
+        "Reviewed filesystem effects statically: helper creates only fresh mkdtemp descendants and retains them; removed cleanup is not executed. SettingsManager is in memory and all optional resource categories are disabled.",
+        "Inspected bunfig/test preload and prepare-assets effects without running them; preparation writes dependency adaptations/assets, so no gate was launched against shared dependencies.",
+        "git diff --check at exact base/candidate returned no diagnostics; no runtime/test result used as readability evidence."
+      ],
+      "limits": [
+        "Static actual-code review only; no setup, tests, builds, model calls, live authentication or device work performed. Parent owns audited isolated runtime gates and agent.model verification.",
+        "Repository evidence read with git show/diff at exact candidate versus a1a45b3c26fac604060d3fbf22ba1f37642d06e6, not checkout HEAD. Durable judge worktree: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_c0fe8a88. Existing worktrees and candidate evidence preserved.",
+        "Shared installed Pi 1.0.3 implementations inspected read-only; no dependency reinstall/adaptation. Their local package metadata defaults to .pi. Parent SDK prompt gate must select owned prepared Bruv package metadata (.bruv) before SDK imports, as shipped entry points do via PI_PACKAGE_DIR. No gate result claimed.",
+        "No fixtures created by this review. Candidate fixture roots use fs.mkdtemp under tmpdir and are retained; candidate provenance remains the durable commit/worktree. Parent gates must additionally own process HOME/config/SDK and explicit argv/env; disabled loader flags alone are not a complete process-isolation claim."
       ]
     },
     {
@@ -20972,9 +21019,9 @@
     "baselineFiles": 766,
     "finalGate": "pending; incomplete focus coverage",
     "liveAuth": "unverified/failing; preserved",
-    "accepted": 738,
+    "accepted": 741,
     "total": 834,
-    "pending": 96,
+    "pending": 93,
     "sourceExtras": 68,
     "checkout": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
     "branch": "bruv/readability-pr45-sol-continuation",

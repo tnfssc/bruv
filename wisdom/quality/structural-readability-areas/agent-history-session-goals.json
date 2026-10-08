@@ -3746,19 +3746,20 @@
     {
       "focus": "tests/session-identity.test.ts",
       "initialBlob": "fd17ddccd24c8e9626817fdb6a73bcb0c5f9f4cc",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "fd17ddccd24c8e9626817fdb6a73bcb0c5f9f4cc",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "fd17ddccd24c8e9626817fdb6a73bcb0c5f9f4cc",
         "primaryId": "task_230772ed",
         "primaryCommit": "0257d78607a61856035239f24fa6f2924c300d6e",
-        "judgeIds": [],
+        "judgeIds": ["task_c0fe8a88"],
         "sourceCommit": "0257d78607a61856035239f24fa6f2924c300d6e",
-        "state": "needs-judge",
-        "reason": "No dedicated primary/final independent focus judgment."
+        "state": "accepted-joined",
+        "reason": "The entire test is one short identity comparison journey: create a persistent Pi manager and assert both native path components; create an ephemeral manager beside its assertions; compare its directory to the persistent one, reread for stability, compare another manager for uniqueness, then confirm no real session file exists. Keeping the two modes together makes the shared directory contract immediate. A fixture wrapper or split tests would force readers to reconstruct that comparison. Exact base/candidate blob equality confirms this is an unchanged-focus decision, not acceptance inferred from the prompt edit."
       }
     },
     {
@@ -3812,28 +3813,29 @@
     {
       "focus": "tests/sol-model-catalog.test.ts",
       "initialBlob": "c9a98a6406361ae955b4e484c6ac6b1395d4f3f4",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "c9a98a6406361ae955b4e484c6ac6b1395d4f3f4",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "c9a98a6406361ae955b4e484c6ac6b1395d4f3f4",
         "primaryId": "task_230772ed",
         "primaryCommit": "0257d78607a61856035239f24fa6f2924c300d6e",
-        "judgeIds": [],
+        "judgeIds": ["task_c0fe8a88"],
         "sourceCommit": "0257d78607a61856035239f24fa6f2924c300d6e",
-        "state": "needs-judge",
-        "reason": "No dedicated primary/final independent focus judgment."
+        "state": "accepted-joined",
+        "reason": "Read the entire file: the first test centralizes exhaustive catalog expectations with a small provider tuple only for actual API/baseUrl/minimal-thinking differences. The second owns its fake OAuth/runtime-key auth, registry availability assertion, offline refresh override, real selector construction, filtered object/render check, Enter callback and finally disposal. Nothing requires chasing hidden fixture policy or reconstructing resource lifetime. Keeping the refresh override immediately before selector creation exposes the otherwise surprising constructor effect. This focus is byte-identical to base; no readability change is warranted."
       }
     },
     {
       "focus": "tests/system-prompt.test.ts",
       "initialBlob": "dc36d8396fc1d5350784e9af2bf0ea922e1b5fa0",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "d873111e2674f9e12366c89659deae21bf0e05c4",
       "integration": "pending",
       "relatedPatchReview": {
         "candidate": "1430519dd7dbda93b9ccf79b2e8f33690ddbd6a4",
@@ -3843,13 +3845,14 @@
         "primaryFocusStillRequired": true
       },
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "d873111e2674f9e12366c89659deae21bf0e05c4",
         "primaryId": "task_230772ed",
         "primaryCommit": "0257d78607a61856035239f24fa6f2924c300d6e",
-        "judgeIds": ["task_a731e652"],
+        "judgeIds": ["task_a731e652", "task_c0fe8a88"],
         "sourceCommit": "0257d78607a61856035239f24fa6f2924c300d6e",
-        "state": "needs-judge",
-        "reason": "No dedicated primary/final independent focus judgment. Related-patch review is evidence only; dedicated focus coverage remains required."
+        "state": "accepted-joined",
+        "reason": "The change resolves an actual reading burden: the old override test mutates one filesystem through trust assertions, then removes the project file to switch to global-only policy. The candidate separates same-array preservation from exact fallback injection, names each trust scenario beside its args, gives positional authorization its own assertion, and uses a fresh global-only fixture. The small systemPromptFiles helper owns only directory/file construction; it hides neither trust nor loader decisions. The SDK table declares the complete file set, trust and expected base in each row; DefaultResourceLoader construction, disabled-resource flags, reload and result assertion remain visible in the test body. All old explicit-prompt, positional insertion, trust/denial and config assertions survive; short-flag denial and real SDK discovery/precedence assertions are added. This is coherent fixture/policy separation, not rename churn or a context bag."
       }
     },
     {
@@ -4669,7 +4672,7 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 126,
-    "pending": 6
+    "accepted": 129,
+    "pending": 3
   }
 }

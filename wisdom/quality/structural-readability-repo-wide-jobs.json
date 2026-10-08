@@ -380,6 +380,18 @@
         "branch": "bruv/pr45-primary-3-remote-focuses-56130606",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
+      },
+      {
+        "id": "task_b143960d",
+        "stage": "primary",
+        "focus": [
+          "tests/fixtures/remote-placement-e2e/sshd_config",
+          "tests/fixtures/remote-placement-e2e/subagents.json"
+        ],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_b143960d",
+        "branch": "bruv/pr45-primary-2-remote-focuses-b143960d",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
       }
     ]
   },
@@ -2167,7 +2179,7 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_c0fe8a88",
         "branch": "bruv/pr45-judge-3-agent-history-session-goals-c0fe8a88",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled"
       },
       {
         "id": "task_8e99c74c",
