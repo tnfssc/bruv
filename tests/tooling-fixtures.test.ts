@@ -38,7 +38,7 @@ test("network-none fixture isolates secrets/config and owns only its scratch roo
     expect(fixture.env).not.toHaveProperty(forbidden);
   expect(
     JSON.parse(fixture.run(process.execPath, ["-e", "console.log(JSON.stringify(process.env))"], { env })).HOME,
-  ).toBe(fixture.env.HOME);
+  ).toBe(env.HOME);
   expect(() =>
     fixture.run(process.execPath, ["-e", "console.error('intentional failure');process.exit(7)"], { env }),
   ).toThrow("intentional failure");

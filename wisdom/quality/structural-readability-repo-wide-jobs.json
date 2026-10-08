@@ -656,6 +656,19 @@
         "branch": "bruv/pr45-judge-1-remote-focuses-102b12bc",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "handled"
+      },
+      {
+        "id": "task_7b708818",
+        "stage": "primary",
+        "focus": [
+          "scripts/loopback-parent-fixture.ts",
+          "scripts/remote-capability-pty-e2e.ts",
+          "scripts/remote-e2e.ts"
+        ],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_7b708818",
+        "branch": "bruv/pr45-primary-3-remote-focuses-7b708818",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
       }
     ]
   },
@@ -3452,7 +3465,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_7f50bbb5",
         "branch": "bruv/pr45-primary-1-execution-tasks-questions-7f50bbb5",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "3ce466109e6c814265868a3e80fbdfc1f1f090cb"
       }
     ]
   },
@@ -4246,7 +4260,7 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_7385eff9",
         "branch": "bruv/pr45-judge-1-build-release-ci-tooling-fo-7385eff9",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled"
       }
     ]
   },

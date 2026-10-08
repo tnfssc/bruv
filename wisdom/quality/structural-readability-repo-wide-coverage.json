@@ -22841,11 +22841,11 @@
     {
       "file": "tests/tooling-fixtures.test.ts",
       "initialBlob": "cce26be612e4adc4b7fc70bd9d8c69782bc4d35b",
-      "status": "pending",
+      "status": "accepted",
       "area": "build-release-ci-tooling",
-      "acceptedBlob": "fd2ba3a77915061356f260161bf1ec68a298141b",
+      "acceptedBlob": "d3d11812d352a8ce3b81ed562b7f07231d85c610",
       "primaryId": "task_4515d507",
-      "judgeIds": ["task_900a3c32"],
+      "judgeIds": ["task_900a3c32", "task_7385eff9"],
       "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json",
       "priorAcceptedIntegrationProof": [
         {
@@ -22856,7 +22856,7 @@
           "finalJudge": "task_1351df8b"
         }
       ],
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "sourceCommit": "124a8d0406ec3cc344fa73b882fc93dc969f8385",
       "resumeBatch": "owned-remaining-tooling-fixture-environments",
       "resumeRework": {
@@ -22949,6 +22949,21 @@
           ],
           "readingReason": "Read the whole focus from network-none ownership through loopback SSE/text/tool behavior, RPC line buffering/trust/prompt/timeout/child close, canonical output ancestry and malformed-JSON refusal. The RPC repair is substantive: the normal test passes ownedFixtureEnv(root), the malformed driver receives cwd and the same explicit environment, and its serialized fixtureRpc options carry that environment to the RPC child. fixtureRpc now takes env as caller-owned authority and passes it unchanged instead of silently spreading process.env. Removing root afterEach cleanup retains evidence. However, the first test now creates two deliberately distinct HOME authorities and still asserts that they are equal, so the intended cleanup/evidence journey is broken before it reaches cleanup."
         }
+      ],
+      "result": "Read the entire exact candidate focus, not checkout HEAD. Against primaryBase da069c0878939a4790c64579b1f5e894b946a62d the sole change is the child HOME comparison from fixture.env.HOME to env.HOME. The first test deliberately separates retainedRoot/home (ownedFixtureEnv authority passed to both children) from retainedRoot/scratch/home (networkNoneFixture default authority). networkNoneFixture.raw passes options.env unchanged, so the new comparison now describes the actual child. Independent scratch HOME/agent/global-config and forbidden-authority assertions remain. The intentional exit-7 diagnostic and no-container assertion still precede cleanup; cleanup removes only the nested owned scratch, then retained env.HOME and unrelated evidence are checked. Retained mkdtemp roots are not removed by afterEach. The unchanged remaining journey still checks fixture-only loopback model configuration, endpoint/method rejection, text and execute-tool SSE plus DONE, and stops the provider in finally. The RPC test waits for a withheld newline before any event, completes the request, observes denied trust and prompt serialization, retains stderr/timeout context, then registers close before killing and awaiting the child. Canonical ancestry rejects the repository itself and symlink descendants even for future paths. The malformed-JSON driver receives root cwd and owned env and serializes that same env into fixtureRpc; a nonzero driver exit and explicit diagnostic remain required. The specific prior rejection is resolved without weakening assertions or expanding cleanup. No additional structural rewrite is needed for this explicit authority/lifetime journey.",
+      "systemReason": "Inspected every supplied related candidate source path and its retained repair against rework primaryBase 536742e519e83977ddad1c5073882b5249013865, as well as the exact primaryBase delta. fixtureRpc requires caller-owned env and passes it directly to spawn instead of inheriting process.env; line framing, trust denial, child registration, prompt sending and timeout diagnostics remain coherent. All three remote launchRpc callers supply rpcEnv made by ownedFixtureEnv(FIXTURE_DROP_DIR), layering only the fixture SSH bin PATH, agent directories and Docker endpoint. The shell caller establishes FIXTURE_DROP_DIR and HOME at the matching fixture root/home, so provider models, state paths and RPC HOME remain aligned; placement-parent tool code uses that HOME rather than requiring leaked fixture controls. Caller-owned child registries/provider shutdown remain in their orchestration. Read complete setup-native-release-gate and smoke-script tests: their isolated envs and retained roots preserve setup argv boundaries, pinned checksum/API and failure-order/handoff assertions, and paired smoke success/failure/probe/argument/build-reuse checks. Those six paths are retained unchanged from the current primaryBase; blob inclusion records exact integration evidence for this one focus, not acceptance of additional unassigned focuses.",
+      "checks": [
+        "Read-only git show/diff of candidate 124a8d0406ec3cc344fa73b882fc93dc969f8385 against primaryBase da069c0878939a4790c64579b1f5e894b946a62d; confirmed one-line assertion repair.",
+        "Read-only comparison of the seven supplied source paths against rework base 536742e519e83977ddad1c5073882b5249013865; inspected retained environment-contract and fixture-retention repairs.",
+        "Static authority/lifetime trace through ownedFixtureEnv, networkNoneFixture.raw/run/cleanup/canonical output checking, loopbackParent, fixtureRpc, placementReply and every fixtureRpc call site.",
+        "Collected all seven exact Git blob hashes with git rev-parse candidate:path.",
+        "No setup, tests, builds, live authentication, networking probes, cleanup commands or delegation executed. Only the requested untracked result artifact was written."
+      ],
+      "limits": [
+        "Static actual-source judgment only. Parent owns audited isolated runtime gates and verification of runtime agent.model openai-codex/gpt-6.1-sol; neither runtime nor model identity was verified here.",
+        "Durable provenance: review ran in existing /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_7385eff9. Candidate source was read directly from Git objects; no /tmp code checkout or fixture was created, no existing worktree/candidate evidence or shared dependency was changed.",
+        "Existing shell wrappers contain traps and process-environment-sensitive behavior; they were only read, never invoked. This acceptance does not authorize executing those wrappers or certify all remote scenario bodies. No live auth/device checks were performed.",
+        "Safety for ALL descendants: NO sudo, recovery investigation, user secrets, shell deletion/cleanup commands, inherited HOME/config/SDK cleanup, nested shell traps, destructive git, or user-data mutation. User already recovered data and requested no recovery work. Tests must use explicit process argv/env and owned fs.mkdtemp fixture HOME/config/SDK; retain them, do not delete. Review filesystem/network effects BEFORE tests/setup. Existing test-code cleanup of provably owned temporary paths may be inspected but NEVER run a shell trap or inherited HOME removal. Need live auth/device? Report unverified, don't access credentials. Propagate these constraints verbatim. Independent code/review agents get durable worktrees, not /tmp code checkouts. Keep existing worktrees and candidate evidence. Test/source fixtures may use /tmp, but document durable provenance. Parent verifies runtime agent.model openai-codex/gpt-6.1-sol; native normal leaves only, no delegation. Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md. Do NOT run setup, tests, builds: parent owns audited isolated gates. Shared dependencies are read-only; no reinstall or guard bypass. Preserve old worktrees/candidate edits. No push/new PR/merge, publication is parent-owned."
       ]
     },
     {
@@ -26202,10 +26217,29 @@
       "initialBlob": "absent",
       "area": "execution-tasks-questions",
       "status": "pending",
-      "resumeState": "needs-primary-final-blob",
-      "sourceCommit": "af63383a0fb05cba759d32b21788c03f7a3cffa7",
+      "resumeState": "needs-judge",
+      "sourceCommit": "3ce466109e6c814265868a3e80fbdfc1f1f090cb",
       "acceptedRelatedJudges": ["task_686802a6"],
-      "acceptedBlob": "16e90314c1d218b04e99644340d8d5220c2ba060"
+      "acceptedBlob": "16e90314c1d218b04e99644340d8d5220c2ba060",
+      "primaryId": "task_7f50bbb5",
+      "primaryCommit": "3ce466109e6c814265868a3e80fbdfc1f1f090cb",
+      "primaryBase": "3ce466109e6c814265868a3e80fbdfc1f1f090cb",
+      "primaryResult": "Retain the exact candidate already present at HEAD, including its companion tests/worktree-workspace.test.ts launcher (both blobs are identical to af63383a0fb05cba759d32b21788c03f7a3cffa7). The launcher creates one retained mkdtemp runtime, supplies ownedFixtureEnv and explicit Bun argv/env, and only then dynamically imports this focus. This separates runtime authority from per-case assertions without a context bag. Read all 472 focus lines: JSONC/schema and original-byte hashing; pinned clean commit and argv-safe branch creation; early batch-branch rejection; invalid refs/task IDs/collisions/branch reuse; cancellable preparation; setup-inclusive deadline; synchronous setup before activation despite denied child trust; asynchronous activation before setup failure; sibling-preserving batch failure. Traced JobService reservation/setup/activation and prepareAgentSession: each service context routes journals into the case-owned sessions directory, the setup task is managed, and manager shutdown drains running tasks. The sync/async cases explicitly assert retained session headers; the async case also asserts owned HOME/SDK forwarding. Keeping repeated small launch contexts inline makes each scenario authority visible; extracting another generic helper would hide the trust/session differences without simplifying a scattered decision. No new source changes, imports, assertions removed, or old branch merged.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        "Actual whole-focus source reading and relevant caller/ownership tracing; no verdict inferred from test counts.",
+        "git rev-parse confirms focus blob 16e90314c1d218b04e99644340d8d5220c2ba060 and companion launcher match the preserved candidate exactly.",
+        "Read candidate commit metadata and exact companion-launcher diff, including removed environment restoration and owned-repository cleanup; did not execute old fixture code.",
+        "Inspected filesystem/process effects: per-case Git writes, markers, retained worktrees and session journals are beneath the child-owned mkdtemp runtime; launcher environment is allowlisted by ownedFixtureEnv; production child environment forwards those isolated HOME/config/SDK paths.",
+        "Supplied reconciliation JSON was parsed and searched only for the assigned focus/candidate: neither is present, so there is no focus-specific rejection to claim or address.",
+        "No changed source paths: formatter not needed, no new source commit created, sourceCommit identifies the exact existing HEAD."
+      ],
+      "primaryLimits": [
+        "No setup, tests, builds, live auth/device checks, dependency installation, credential access, cleanup, recovery work, publication, or delegation performed. Parent owns audited isolated runtime gates and fresh independent judgment.",
+        "The supplied reconciliation file (observedAt 2026-10-08T00:09:47.669Z) has neither this focus nor candidate hash; source-based primary decision proceeds from the exact preserved candidate, not an invented prior acceptance/rejection.",
+        "No per-worker wisdom changes; parent owns aggregate wisdom. Values unchanged because this decision follows existing ownership, truthful-proof and safety guidance.",
+        "No test fixture was executed or created. Durable source provenance is this existing worktree and sourceCommit; the existing launcher retains any future mkdtemp fixture plus launch.json/stdout.log/stderr.log."
+      ]
     },
     {
       "file": "tests/job-bridge-credentials.fixture.ts",
@@ -26276,9 +26310,9 @@
     "baselineFiles": 766,
     "finalGate": "pending; incomplete focus coverage",
     "liveAuth": "unverified/failing; preserved",
-    "accepted": 833,
+    "accepted": 834,
     "total": 839,
-    "pending": 6,
+    "pending": 5,
     "sourceExtras": 73,
     "checkout": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
     "branch": "bruv/readability-pr45-sol-continuation",

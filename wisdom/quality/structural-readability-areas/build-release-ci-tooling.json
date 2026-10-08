@@ -2738,7 +2738,7 @@
     {
       "focus": "tests/tooling-fixtures.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_8c70c1f6",
@@ -2765,18 +2765,19 @@
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "d3d11812d352a8ce3b81ed562b7f07231d85c610",
       "readingResult": "Readable embedded childprograms/controlled partial-line delivery/protocol-field assertions replace escaped assembly/timingfragmentation/positional expectations.",
       "checks": "8tests101assertions;tsc/Biome/diff;trustdenial/prompt/malformedJSON/cleanup retained;timeout/text/toolSSE strengthened. Gaps unseededsecret/RPCargv-env-earlyexit unasserted.",
       "integrationState": "Fullfocuspatch integrated;sharedhelpers unchanged;noteexcluded.",
       "resume": {
-        "status": "pending",
-        "acceptedBlob": "fd2ba3a77915061356f260161bf1ec68a298141b",
+        "status": "accepted",
+        "acceptedBlob": "d3d11812d352a8ce3b81ed562b7f07231d85c610",
         "primaryId": "task_4515d507",
         "primaryCommit": "124a8d0406ec3cc344fa73b882fc93dc969f8385",
-        "judgeIds": ["task_900a3c32"],
+        "judgeIds": ["task_900a3c32", "task_7385eff9"],
         "sourceCommit": "124a8d0406ec3cc344fa73b882fc93dc969f8385",
-        "state": "needs-judge"
+        "state": "accepted-joined",
+        "reason": "Read the entire exact candidate focus, not checkout HEAD. Against primaryBase da069c0878939a4790c64579b1f5e894b946a62d the sole change is the child HOME comparison from fixture.env.HOME to env.HOME. The first test deliberately separates retainedRoot/home (ownedFixtureEnv authority passed to both children) from retainedRoot/scratch/home (networkNoneFixture default authority). networkNoneFixture.raw passes options.env unchanged, so the new comparison now describes the actual child. Independent scratch HOME/agent/global-config and forbidden-authority assertions remain. The intentional exit-7 diagnostic and no-container assertion still precede cleanup; cleanup removes only the nested owned scratch, then retained env.HOME and unrelated evidence are checked. Retained mkdtemp roots are not removed by afterEach. The unchanged remaining journey still checks fixture-only loopback model configuration, endpoint/method rejection, text and execute-tool SSE plus DONE, and stops the provider in finally. The RPC test waits for a withheld newline before any event, completes the request, observes denied trust and prompt serialization, retains stderr/timeout context, then registers close before killing and awaiting the child. Canonical ancestry rejects the repository itself and symlink descendants even for future paths. The malformed-JSON driver receives root cwd and owned env and serializes that same env into fixtureRpc; a nonzero driver exit and explicit diagnostic remain required. The specific prior rejection is resolved without weakening assertions or expanding cleanup. No additional structural rewrite is needed for this explicit authority/lifetime journey."
       }
     },
     {
@@ -3586,7 +3587,7 @@
     "retainedWorktrees": "Per-file primary[].path and branch retained, including stopped/rejected attempts."
   },
   "resumeStatus": {
-    "accepted": 73,
-    "pending": 1
+    "accepted": 74,
+    "pending": 0
   }
 }
