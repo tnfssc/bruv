@@ -3875,11 +3875,11 @@
       "integrationState": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_5cb6271d",
+        "primaryCommit": "7227c21e506566c57f3ffd55f99c87a1572a3080",
         "judgeIds": [],
-        "sourceCommit": "53fb4d9732dcf0c337b797b05a104199ccf1a273",
-        "state": "needs-primary",
+        "sourceCommit": "7227c21e506566c57f3ffd55f99c87a1572a3080",
+        "state": "needs-judge",
         "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
       }
     },
@@ -3951,11 +3951,11 @@
       "integrationState": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_5cb6271d",
+        "primaryCommit": "7227c21e506566c57f3ffd55f99c87a1572a3080",
         "judgeIds": [],
-        "sourceCommit": "53fb4d9732dcf0c337b797b05a104199ccf1a273",
-        "state": "needs-primary",
+        "sourceCommit": "7227c21e506566c57f3ffd55f99c87a1572a3080",
+        "state": "needs-judge",
         "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
       }
     },
@@ -4722,8 +4722,10 @@
       "resume": {
         "status": "pending",
         "acceptedBlob": "ce36ecd7c404612c9a4ee1ce6bfb81f73820a290",
-        "sourceCommit": "13ca09c5f7eafdb52b9e7a11a6d9068dd54a5834",
-        "state": "needs-primary-final-blob"
+        "primaryId": "task_5cb6271d",
+        "primaryCommit": "7227c21e506566c57f3ffd55f99c87a1572a3080",
+        "sourceCommit": "7227c21e506566c57f3ffd55f99c87a1572a3080",
+        "state": "needs-judge"
       }
     }
   ],

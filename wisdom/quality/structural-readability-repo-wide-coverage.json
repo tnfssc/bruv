@@ -15967,13 +15967,29 @@
       "initialBlob": "53addac02c4655f7b3b8948ff18b52c3409b6812",
       "status": "pending",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_5cb6271d",
+      "primaryCommit": "7227c21e506566c57f3ffd55f99c87a1572a3080",
       "judgeIds": [],
-      "sourceCommit": "53fb4d9732dcf0c337b797b05a104199ccf1a273",
+      "sourceCommit": "7227c21e506566c57f3ffd55f99c87a1572a3080",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
-      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
+      "primaryBase": "7227c21e506566c57f3ffd55f99c87a1572a3080",
+      "primaryResult": "No structural journey burden found. The first test makes default budget/scales/strict assertions locally, then places samples=3, warmup=0, repeated scales and repeated case filters beside their expected deduped scales/accumulated cases, ending with the fractional-budget assertion. The second directly lists invalid argv (zero samples, negative warmup, fractional integer count, malformed scales, NaN budget, missing case value, unknown option) and applies the same throw assertion to each. Reading parseOptions shows one value reader, one numeric validator and a direct switch; CLI consumption uses these parsed fields directly. There is no process lifetime, shared mutation, deferred assertion or hidden setup to untangle. Extracting builders or parameterized context records would add navigation without clarifying authority. Preserve all existing success/failure assertions and existing bytes.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        "Read assigned focus row and blobInventory row in /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_6aa89530/wisdom/quality/structural-readability-areas/ui-terminal-cli-resume-reconciliation.json; no prior primary/rejection recorded.",
+        "git show 53fb4d9732dcf0c337b797b05a104199ccf1a273:tests/terminal-perf-options.test.ts inspected; candidate/current blob both 53addac02c4655f7b3b8948ff18b52c3409b6812; git diff candidate HEAD -- focus empty.",
+        "Static effects review: focus only calls synchronous parseOptions on in-memory argv; no filesystem/network/process effects in that function. CLI source inspected, not executed."
+      ],
+      "primaryLimits": [
+        "Primary reading only; parent owns fresh independent judgments and audited isolated runtime gates.",
+        "No tests, setup, builds, formatter, provider/device/auth probes or dependency mutation performed. No changed source paths require formatting.",
+        "No source edits or new source commit: sourceCommit is exact retained checkout HEAD, not a newly produced candidate. Artifact remains untracked.",
+        "No delegation, deletion, cleanup, recovery investigation, secrets access, destructive git, publication or user-data mutation. Existing durable worktrees and candidate evidence retained.",
+        "Source reviewed in this durable worktree; terminal fixture code uses retained fs.mkdtemp roots under tmpdir and callers write fixture provenance to artifacts. No fixtures were executed.",
+        "Runtime agent.model verification is parent-owned; not asserted here. Wisdom/values and structural-readability guidance read; aggregate wisdom is parent-owned."
+      ]
     },
     {
       "file": "tests/terminal-perf-profiler.test.ts",
@@ -15994,13 +16010,30 @@
       "initialBlob": "d1d2bab26a9c5244c85d8ef610ad7ca615f5dacf",
       "status": "pending",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_5cb6271d",
+      "primaryCommit": "7227c21e506566c57f3ffd55f99c87a1572a3080",
       "judgeIds": [],
-      "sourceCommit": "53fb4d9732dcf0c337b797b05a104199ccf1a273",
+      "sourceCommit": "7227c21e506566c57f3ffd55f99c87a1572a3080",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
-      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
+      "primaryBase": "7227c21e506566c57f3ffd55f99c87a1572a3080",
+      "primaryResult": "Keep this direct fixture-and-assertion structure. fixture returns a fresh typed run with one input-100 case: cold 9 and steady 1,2,8 against budget 8, with layout durations at half frame time. These values directly explain cold/steady failures, steady median 2 and phase maximum 4. Independent tests keep nearest-rank and exact-budget boundaries, invalid distribution samples, cold visibility, and matched-run mutations next to their assertions. Baseline steady maximum changes to 6 before the delta assertion; CPU/parameter changes then explicitly show warnings and skipped comparison. The separate warming-context test inserts an earlier case and checks null cold delta plus text n/a. The content test adds current then baseline cold hashes and checks the two distinct evidence warnings. Dashboard description mutations exercise script escape and literal replacement, directly matching JSON escape and callback substitution in dashboard. Each test owns fresh local state; no shared fixture lifetime or remote/filesystem effects exist. Grouping the trailing cold tests or adding helpers would be cosmetic, not resolve a scattered authority. All security and accounting assertions remain intact.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        "Read assigned focus row and blobInventory row in /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_6aa89530/wisdom/quality/structural-readability-areas/ui-terminal-cli-resume-reconciliation.json; no prior primary/rejection recorded.",
+        "git show 53fb4d9732dcf0c337b797b05a104199ccf1a273:tests/terminal-perf-report.test.ts inspected; candidate/current blob both d1d2bab26a9c5244c85d8ef610ad7ca615f5dacf; git diff candidate HEAD -- focus empty.",
+        "Static effects review: tests call pure report computations and dashboard string generation on local fixtures; do not start a browser/server/provider or write files. Report/dashboard sources inspected, not executed."
+      ],
+      "primaryLimits": [
+        "Primary reading only; parent owns fresh independent judgments and audited isolated runtime gates.",
+        "No tests, setup, builds, formatter, provider/device/auth probes or dependency mutation performed. No changed source paths require formatting.",
+        "No source edits or new source commit: sourceCommit is exact retained checkout HEAD, not a newly produced candidate. Artifact remains untracked.",
+        "No delegation, deletion, cleanup, recovery investigation, secrets access, destructive git, publication or user-data mutation. Existing durable worktrees and candidate evidence retained.",
+        "Source reviewed in this durable worktree; terminal fixture code uses retained fs.mkdtemp roots under tmpdir and callers write fixture provenance to artifacts. No fixtures were executed.",
+        "Runtime agent.model verification is parent-owned; not asserted here. Wisdom/values and structural-readability guidance read; aggregate wisdom is parent-owned.",
+        "Existing assertions do not prove every warning branch or actual browser behavior; no added coverage or runtime claims."
+      ]
     },
     {
       "file": "tests/terminal-perf-send.test.ts",
@@ -17919,10 +17952,29 @@
       "initialBlob": "absent",
       "area": "ui-terminal-cli",
       "status": "pending",
-      "resumeState": "needs-primary-final-blob",
-      "sourceCommit": "13ca09c5f7eafdb52b9e7a11a6d9068dd54a5834",
+      "resumeState": "needs-judge",
+      "sourceCommit": "7227c21e506566c57f3ffd55f99c87a1572a3080",
       "acceptedRelatedJudges": ["task_10416205"],
-      "acceptedBlob": "ce36ecd7c404612c9a4ee1ce6bfb81f73820a290"
+      "acceptedBlob": "ce36ecd7c404612c9a4ee1ce6bfb81f73820a290",
+      "primaryId": "task_5cb6271d",
+      "primaryCommit": "7227c21e506566c57f3ffd55f99c87a1572a3080",
+      "primaryBase": "7227c21e506566c57f3ffd55f99c87a1572a3080",
+      "primaryResult": "Keep the already-present candidate bytes. The helper has a single straight journey: create retained owned home and socket name; define explicit HOME/XDG/cache/data/TMPDIR/Bruv/Pi SDK environment; create those owned directories; write owned tmux.conf; return an argv-based tmux launcher and env -i pane-command builder. run forwards the supplied environment to Bun.spawn and concurrently drains stdout/stderr/exit. Callers keep semantic work outside this helper: saved sessions and frame assertions belong to the TUI test, loopback held-provider and timing boundaries belong to latency. Both callers publish fixture home/socket provenance and own kill-server in finally; latency additionally closes its owned HTTP server. Thus filesystem authority, process environment and server shutdown ownership can be followed without reconstructing a scattered setup. Adding lifecycle/context wrappers would obscure rather than improve these separate responsibilities. Exact current and candidate blob match; no bring-forward or rework necessary. This is a fresh primary no-change decision, not acceptance borrowed from another focus.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        "Read preserved reconciliation /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_6aa89530/wisdom/quality/structural-readability-areas/ui-terminal-cli-resume-reconciliation.json; helper has no dedicated evidence row. Relevant caller rows are NOT REVIEWED, not helper acceptance.",
+        "git show 13ca09c5f7eafdb52b9e7a11a6d9068dd54a5834:tests/terminal-process-fixture.ts inspected; candidate/current blob both ce36ecd7c404612c9a4ee1ce6bfb81f73820a290; git diff candidate HEAD -- focus empty.",
+        "Filesystem/network review (static only): helper creates owned retained directories/config, no removal or network; callers launch isolated tmux and compiled CLI, seed owned sessions, write repo artifacts; latency listens on loopback and may write explicitly supplied BRUV_LATENCY_OUTPUT. No runtime effects exercised."
+      ],
+      "primaryLimits": [
+        "Primary reading only; parent owns fresh independent judgments and audited isolated runtime gates.",
+        "No tests, setup, builds, formatter, provider/device/auth probes or dependency mutation performed. No changed source paths require formatting.",
+        "No source edits or new source commit: sourceCommit is exact retained checkout HEAD, not a newly produced candidate. Artifact remains untracked.",
+        "No delegation, deletion, cleanup, recovery investigation, secrets access, destructive git, publication or user-data mutation. Existing durable worktrees and candidate evidence retained.",
+        "Source reviewed in this durable worktree; terminal fixture code uses retained fs.mkdtemp roots under tmpdir and callers write fixture provenance to artifacts. No fixtures were executed.",
+        "Runtime agent.model verification is parent-owned; not asserted here. Wisdom/values and structural-readability guidance read; aggregate wisdom is parent-owned.",
+        "tmux argument execution, SDK behavior and isolated environment effectiveness are not runtime-verified; live authentication/device access is unverified."
+      ]
     }
   ],
   "completedAreas": {
