@@ -86,7 +86,10 @@ test("Linux protocol gate builds the real 1.x helper and uses only a private Pul
   const fixture = steps.find((step) => step.name?.startsWith("Capture-origin protocol"))!;
   expect(fixture.if).toBeUndefined();
   const run = fixture.run!;
-  expect(run).toContain("webrtc-audio-processing-1.3.tar.gz");
+  expect(run).toContain(
+    "https://deb.debian.org/debian/pool/main/w/webrtc-audio-processing/webrtc-audio-processing_1.3.orig.tar.gz",
+  );
+  expect(run.indexOf("sha256sum --check")).toBeLessThan(run.indexOf("tar -xzf"));
   expect(run).toContain("95552fc17faa0202133707bbb3727e8c2cf64d4266fe31bfdb2298d769c1db75");
   expect(run).toContain("sha256sum --check");
   expect(run).toContain("--wrap-mode=nofallback");

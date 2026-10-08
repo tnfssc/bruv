@@ -13,10 +13,14 @@ function runCi({
   lane = "linux",
   failCommand = "",
   logDirectory = "",
+  shard,
+  nativeSuite = false,
 }: {
   lane?: "linux" | "macos";
   failCommand?: string;
   logDirectory?: string;
+  shard?: string;
+  nativeSuite?: boolean;
 } = {}) {
   const root = mkdtempSync(join(tmpdir(), "bruv-ci-runner-"));
   fixtures.push(root);
@@ -34,15 +38,35 @@ printf '%s|%s|%s\n' "$PWD" "$TMPDIR" "$*" >> "$CALLS"
 test -d "$TMPDIR" || exit 38
 printf 'owned transient state' > "$TMPDIR/owned-session"
 if [[ "$*" == "$FAIL" ]]; then echo intentional-failure; exit 37; fi
-if [[ "$*" == "test --parallel=3 ./tests" ]]; then echo "llm=$BRUV_RUN_LLM_TESTS"; fi
+if [[ "$1" == test ]]; then
+  echo "llm=$BRUV_RUN_LLM_TESTS"
+  if [[ "$NATIVE_SUITE" == 1 ]]; then exec "$REAL_BUN" "$@"; fi
+fi
 echo "completed $*"
 `;
   writeFileSync(join(bin, "bun"), stub, { mode: 0o755 });
+  if (nativeSuite) {
+    mkdirSync(join(root, "tests"));
+    for (let i = 0; i < 12; i++) {
+      writeFileSync(
+        join(root, "tests", `partition-${i}.test.ts`),
+        `import { test, expect } from "bun:test";
+import { appendFileSync } from "node:fs";
+test("partition-${i}", () => { expect(1 + 1).toBe(2); appendFileSync(process.env.PARTITION_LOG!, "${i}\\n"); });`,
+      );
+    }
+  }
   const callsPath = join(root, "calls");
+  const env = { ...process.env };
+  delete env.CI_TEST_SHARD;
+  if (shard !== undefined) env.CI_TEST_SHARD = shard;
   const result = spawnSync(process.execPath, ["run", lane === "linux" ? "ci" : "ci:macos"], {
     cwd: root,
     env: {
-      ...process.env,
+      ...env,
+      REAL_BUN: process.execPath,
+      NATIVE_SUITE: nativeSuite ? "1" : "0",
+      PARTITION_LOG: join(root, "partition.log"),
       PATH: bin + ":" + process.env.PATH,
       CALLS: callsPath,
       FAIL: failCommand,
@@ -52,13 +76,10 @@ echo "completed $*"
     },
     encoding: "utf8",
   });
-  const calls = readFileSync(callsPath, "utf8")
-    .trim()
-    .split("\n")
-    .map((line) => {
-      const [cwd, tempDirectory, command] = line.split("|");
-      return { cwd: cwd!, tempDirectory: tempDirectory!, command: command! };
-    });
+  const calls = (existsSync(callsPath) ? readFileSync(callsPath, "utf8").trim().split("\n") : []).map((line) => {
+    const [cwd, tempDirectory, command] = line.split("|");
+    return { cwd: cwd!, tempDirectory: tempDirectory!, command: command! };
+  });
   return { root, parentTmp, result, calls };
 }
 
@@ -233,3 +254,62 @@ test("both CI lanes install ffmpeg before running PCM conversion tests", async (
     expect(steps.findIndex((step) => step.run === gate)).toBeGreaterThan(setup);
   }
 });
+
+for (const shard of ["1/3", "2/3", "3/3"]) {
+  test("Linux shard " + shard + " keeps every gate and three bounded workers", () => {
+    const complete = runCi();
+    const sharded = runCi({ shard });
+    expectOwnedTempCleaned(sharded);
+    expect(sharded.result.status).toBe(0);
+    expect(sharded.calls.map((call) => call.command)).toEqual(
+      complete.calls.map((call) =>
+        call.command
+          .replace(join(complete.root, "artifacts/ci/resources"), join(sharded.root, "artifacts/ci/resources"))
+          .replace("test --parallel=3 ./tests", "test --parallel=3 ./tests --shard=" + shard),
+      ),
+    );
+    expect(readFileSync(join(sharded.root, "artifacts/ci/tests.log"), "utf8")).toContain("llm=0");
+  });
+}
+
+test("failed sharded tests retain logs and prevent smoke", () => {
+  const run = runCi({ shard: "2/3", failCommand: "test --parallel=3 ./tests --shard=2/3" });
+  expectOwnedTempCleaned(run);
+  expect(run.result.status).toBe(37);
+  expect(run.calls.at(-1)?.command).toBe("test --parallel=3 ./tests --shard=2/3");
+  expect(readFileSync(join(run.root, "artifacts/ci/tests.log"), "utf8")).toContain("intentional-failure");
+});
+
+for (const shard of ["", "0/3", "4/3", "1/2", "1", "1/3 --only", "01/3"]) {
+  test("invalid shard fails closed before installing: " + JSON.stringify(shard), () => {
+    const run = runCi({ shard });
+    expect(run.result.status).toBe(2);
+    expect(run.calls).toEqual([]);
+    expect(run.result.stderr).toContain("CI_TEST_SHARD must be");
+  });
+}
+
+test("macOS does not silently accept a Linux shard", () => {
+  const run = runCi({ lane: "macos", shard: "1/3" });
+  expect(run.result.status).toBe(2);
+  expect(run.calls).toEqual([]);
+});
+
+test("native Bun shards form a disjoint complete partition of the unsharded runner", () => {
+  const complete = runCi({ nativeSuite: true });
+  expect(complete.result.status).toBe(0);
+  const executed = (root: string) => readFileSync(join(root, "partition.log"), "utf8").trim().split("\n").sort();
+  const whole = executed(complete.root);
+  expect(whole).toHaveLength(12);
+  const combined: string[] = [];
+  for (const shard of ["1/3", "2/3", "3/3"]) {
+    const run = runCi({ shard, nativeSuite: true });
+    expect(run.result.status).toBe(0);
+    expectOwnedTempCleaned(run);
+    const subset = executed(run.root);
+    expect(subset.length).toBeGreaterThan(0);
+    for (const id of subset) expect(combined).not.toContain(id);
+    combined.push(...subset);
+  }
+  expect(combined.sort()).toEqual(whole);
+}, 15_000);

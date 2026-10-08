@@ -85,7 +85,11 @@ jobs:
         run: bun scripts/ci-selective.ts --base "$BASE" --run
 
   test:
-    name: Full validation / Linux x64
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3]
+    name: Full validation / Linux x64 (${{ matrix.shard }}/3)
     needs: feedback
     if: ${{ needs.feedback.outputs.full == 'true' }}
     runs-on: ubuntu-24.04
@@ -122,15 +126,17 @@ jobs:
         timeout-minutes: 5
         run: bash scripts/install-ci-linux-tools.sh
       - name: Shared Linux CI gate (paired binaries, external T3)
-        # Healthy runs take about three minutes. Bound a stalled test runner, not each test.
+        # Keep the complete prechecks/build/smoke on every shard; bound the whole gate, not each test.
         timeout-minutes: 6
         shell: bash
+        env:
+          CI_TEST_SHARD: ${{ matrix.shard }}/3
         run: bun run ci
       - name: Upload failure logs
         if: failure()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: ci-failure-logs
+          name: ci-failure-logs-linux-${{ matrix.shard }}-of-3
           path: artifacts/ci/
           if-no-files-found: warn
           retention-days: 14
@@ -177,7 +183,8 @@ jobs:
           }
           trap cleanup EXIT
           # Noble ships WebRTC 0.3, but the real helper requires the 1.x API.
-          curl --fail --location https://freedesktop.org/software/pulseaudio/webrtc-audio-processing/webrtc-audio-processing-1.3.tar.gz -o "$fixture/apm.tar.gz"
+          # Debian mirrors the byte-identical upstream archive; freedesktop blocks some CI IPs (418).
+          curl --fail --location https://deb.debian.org/debian/pool/main/w/webrtc-audio-processing/webrtc-audio-processing_1.3.orig.tar.gz -o "$fixture/apm.tar.gz"
           echo "95552fc17faa0202133707bbb3727e8c2cf64d4266fe31bfdb2298d769c1db75  $fixture/apm.tar.gz" | sha256sum --check
           tar -xzf "$fixture/apm.tar.gz" -C "$fixture"
           meson setup "$fixture/build" "$fixture/webrtc-audio-processing-1.3" --prefix="$fixture/apm" --libdir=lib --buildtype=release --wrap-mode=nofallback
@@ -287,6 +294,7 @@ jobs:
             printf 'Planning or docs checks did not succeed: %s\n' "$FEEDBACK" >&2
             exit 1
           fi
+          # needs.test.result requires the entire Linux shard matrix to succeed.
           # The only accepted combinations are plan mode/full + ordinary Linux/native Linux/macOS results.
           case "$MODE:$FULL:$LINUX:$NATIVE:$MACOS" in
             full:true:success:success:success) ;;

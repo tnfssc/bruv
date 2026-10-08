@@ -10,6 +10,17 @@ if [[ "$lane" != linux && "$lane" != macos || $# -gt 1 ]]; then
   exit 2
 fi
 
+# Only ordinary Linux CI opts into the three-way native Bun partition.
+# No environment setting means the complete suite (including local / Release runs).
+test_shard_args=()
+if [[ "${CI_TEST_SHARD+x}" == x ]]; then
+  if [[ "$lane" != linux || ! "$CI_TEST_SHARD" =~ ^[123]/3$ ]]; then
+    echo 'CI_TEST_SHARD must be 1/3, 2/3, or 3/3 in the Linux lane' >&2
+    exit 2
+  fi
+  test_shard_args=("--shard=$CI_TEST_SHARD")
+fi
+
 # Isolate transient session files from prior runs and real user sessions.
 run_tmp="$(mktemp -d "${TMPDIR:-/tmp}/bruv-ci.XXXXXX")"
 export TMPDIR="$run_tmp"
@@ -42,5 +53,5 @@ run_step 'Task history resource smoke and resume' resources-ci.log "$root" bun r
 run_step 'Long task history resource budget' resources-stress.log "$root" bun run perf:resources --profile stress --out "$log_dir/resources"
 run_step 'Build paired Bruv binaries (no bundled T3)' build.log "$root" bun run build
 run_step 'Offline default OpenAI transport' openai-transport.log "$root" bun scripts/offline-openai-default-transport.ts
-run_step 'Complete root tests (three bounded workers)' tests.log "$root" env BRUV_RUN_LLM_TESTS=0 bun test --parallel=3 ./tests
+run_step "Root tests ${CI_TEST_SHARD:-complete suite} (three bounded workers)" tests.log "$root" env BRUV_RUN_LLM_TESTS=0 bun test --parallel=3 ./tests "${test_shard_args[@]}"
 run_step 'Standalone paired smoke test' smoke.log "$root" bun run smoke -- --reuse-build

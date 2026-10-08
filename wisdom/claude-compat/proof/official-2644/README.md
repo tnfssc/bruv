@@ -1,5 +1,9 @@
 # Unchanged official T3 2644: bounded revalidation
 
+The official launcher now calls the actual exported harness functions and selects
+its driver through replay config, not launcher-source slicing. See
+[launcher boundary fix and v0.16.20 six-suite proof](../../official-proof-launcher-boundary.md).
+
 This follows task561a43a1's exact result-boundary queue-race note. Official 2623 failed the first zero-model command idle gate; its waiter-recheck counterfactual was diagnostic only. **No instrumented binary or upstream source edit is used here.**
 
 ## Pins

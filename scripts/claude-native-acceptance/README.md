@@ -1,5 +1,9 @@
 # Native connector acceptance
 
+The official launcher now calls the actual exported harness functions and selects
+its driver through replay config, not launcher-source slicing. See
+[launcher boundary fix and v0.16.20 six-suite proof](../../wisdom/claude-compat/official-proof-launcher-boundary.md).
+
 ## Current release contract: unchanged official 2644
 
 The active target is **v0.0.46-nightly.20261004.2644**, not older 2623.

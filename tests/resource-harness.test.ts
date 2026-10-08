@@ -76,6 +76,48 @@ describe("resource workload supervisor", () => {
       }
     }
   });
+  test("process exit during RSS read is harmless but permission errors still fail", async () => {
+    if (process.platform !== "linux") return;
+    const dir = await mkdtemp(join(tmpdir(), "bruv-resource-process-race-"));
+    dirs.push(dir);
+    const supervisor = resolve(import.meta.dir, "../scripts/resource-harness/supervisor.ts");
+    for (const code of ["ENOENT", "ESRCH", "EACCES"]) {
+      const source = `
+        import { mock } from "bun:test";
+        import * as fs from "node:fs/promises";
+        const originalRead = fs.readFile;
+        mock.module("node:fs/promises", () => ({ ...fs, readFile: async (path, ...args) => {
+          if (String(path).startsWith("/proc/") && String(path).endsWith("/status")) {
+            throw Object.assign(new Error("RSS read race"), { code: ${JSON.stringify(code)} });
+          }
+          return originalRead(path, ...args);
+        }}));
+        const { supervise } = await import(${JSON.stringify(supervisor)});
+        console.log(JSON.stringify(await supervise({
+          command: [process.execPath, "-e", ${JSON.stringify(`await Bun.sleep(250); ${complete}`)}],
+          dir: ${JSON.stringify(dir)}, phase: "write", budgets: ${JSON.stringify(budgets)}
+        })));
+      `;
+      const child = Bun.spawn([process.execPath, "-e", source], { stdout: "pipe", stderr: "pipe" });
+      const [stdout, stderr, exitCode] = await Promise.all([
+        new Response(child.stdout).text(),
+        new Response(child.stderr).text(),
+        child.exited,
+      ]);
+      expect(stderr).toBe("");
+      expect(exitCode).toBe(0);
+      const result = JSON.parse(stdout);
+      if (code === "EACCES") {
+        expect(result.passed).toBe(false);
+        expect(result.violations).toContain("Resource sampling failed: Error: RSS read race");
+      } else {
+        expect(result.passed).toBe(true);
+        expect(result.completed).toBe(true);
+        expect(result.violations).toEqual([]);
+        expect(result.samples.length).toBeGreaterThan(0);
+      }
+    }
+  });
   test("records a completed workload and externally measures fixture bytes", async () => {
     const result = await run(complete);
     expect(result.passed).toBe(true);

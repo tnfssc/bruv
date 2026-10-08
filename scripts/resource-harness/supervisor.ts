@@ -62,7 +62,9 @@ async function residentBytes(pid: number): Promise<number | null> {
     const match = status.match(/^VmRSS:\s+(\d+) kB$/m);
     return match ? Number(match[1]) * 1024 : null;
   } catch (error) {
-    if ((error as NodeJS.ErrnoException).code === "ENOENT") return null;
+    // The child can exit between opening /proc/status and reading it.
+    const code = (error as NodeJS.ErrnoException).code;
+    if (code === "ENOENT" || code === "ESRCH") return null;
     throw error;
   }
 }
