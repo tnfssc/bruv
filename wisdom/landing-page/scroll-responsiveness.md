@@ -34,7 +34,7 @@ A bounded sparse-canvas probe found a Ghostty row-join artifact: 16 differing pi
 
 ## Bounded evidence and checks
 
-Saved evidence is separate from the existing hero/capture artifacts: [validation/scroll/](validation/scroll/). Chromium 153.0.8010.12 on Linux. probe-scroll.ts loads the real minified bundle and WASM; a test-only route hook instruments its Terminal instance (nothing shipped). Actual page.mouse.wheel and CDP touch input exercise Chromium input. A separately labelled dispatched 100-event burst models events arriving in one task. Samples, write times/bytes and selected screenshots during the wheel sequence are retained.
+Historical validation captures and samples are recoverable at Git revision `baf2fcd5`. Chromium 153.0.8010.12 on Linux. probe-scroll.ts loads the real minified bundle and WASM; a test-only route hook instruments its Terminal instance (nothing shipped). Actual page.mouse.wheel and CDP touch input exercise Chromium input. A separately labelled dispatched 100-event burst models events arriving in one task.
 
 Baseline revision: 380add833b4644e1abdc749c90e8f60090bf3941. Final after evidence comes from the implementation in this commit.
 

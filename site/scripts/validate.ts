@@ -7,7 +7,7 @@ import { build } from "./build";
 import { preview } from "./preview";
 import { launchBrowser } from "./browser";
 import type { Browser, Page } from "playwright-core";
-const evidence = resolve(import.meta.dir, "../../wisdom/landing-page/validation/install/regression");
+const evidence = resolve(import.meta.dir, "../../artifacts/landing-page/install/regression");
 
 async function ready(page: Page) {
   await page.locator('#terminal[data-ready="true"]').waitFor();

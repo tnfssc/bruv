@@ -77,7 +77,7 @@ bun run test:scroll
 bun run test:install
 ```
 
-The full site test checks layout, playback, scrolling, startup fallback and installer/copy behavior. Animation checks take longer because they sample complete loops. Browser checks write evidence under `wisdom/landing-page/validation/`; review changed captures before committing them.
+The full site test checks layout, playback, scrolling, startup fallback and installer/copy behavior. Animation checks take longer because they sample complete loops. Browser checks write ephemeral evidence under the ignored repository-root `artifacts/landing-page/` directory; review captures there when diagnosing a failure, but do not commit generated outputs.
 
 Inspect desktop plus 320px and 390px layouts. Check a full loop, header links, hover/focus/touch controls, and HTML. Tests use Chromium; physical phones, Safari/Firefox and manual screen-reader review remain separate checks. Installer tests use fixtures, not a real installation.
 

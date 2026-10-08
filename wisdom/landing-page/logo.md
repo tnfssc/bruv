@@ -37,7 +37,7 @@ The 320px browser has 29 terminal columns and 25 content columns, so its logo
 uses a 24-column render; wider phones use 28 and desktop uses 48.
 Final full site checks passed: 31 tests and the Chromium validator, including
 mouse/keyboard/touch, cell rendering, no-JS content, and startup failure.
-Desktop/mobile/HTML review images are in validation/logo/. Auto-written older
+Historical desktop/mobile/HTML review images are recoverable at Git revision `baf2fcd5`. Auto-written older
 test captures were restored to avoid rewriting unrelated proof.
 No deployment or Safari/Firefox test.
 

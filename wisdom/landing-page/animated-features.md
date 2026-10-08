@@ -27,4 +27,4 @@ HTML: semantic content and complete transcripts ship in the document for crawler
 
 ## Verification
 
-Focused tests and browser evidence go in validation/polish. See polish-checkpoint.md for final commands, preview, checks and remaining limits. No merge/deploy is authorized. Values unchanged: the existing values already require the requested mechanism, source-backed evidence, simple shared ownership and an inspectable handoff.
+Focused test output is ephemeral under ignored `artifacts/landing-page/polish/`; durable conclusions remain here. See polish-checkpoint.md for final commands and remaining limits. No merge/deploy is authorized. Values unchanged: the existing values already require the requested mechanism, source-backed evidence, simple shared ownership and an inspectable handoff.

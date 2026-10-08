@@ -44,7 +44,7 @@ From site: bun install --frozen-lockfile, bun run build, bun run test. PORT=0 bu
 - [image-theme-research.md](image-theme-research.md): upstream Ghostty image limitations and official Vesper source. We now render capture cells, not image protocols.
 - [terminal-research.md](terminal-research.md): original actual-terminal requirement and renderer selection.
 - writing-sources/: saved user-requested anti-slop skill and source material. Keep prose specific and short.
-- validation/polish/: current focused screenshots/checks. Other validation folders are historical.
+- Generated browser screenshots and checks are ephemeral under the ignored repository-root `artifacts/landing-page/`; durable conclusions belong in these notes. Historical captures are recoverable from Git revision `baf2fcd5`.
 
 Canvas reading/selecting/find relies on the semantic HTML representation. Physical phones and Safari/Firefox remain untested; automated checks are not a manual screen-reader audit. Values already cover this task; no forced values edit.
 

@@ -52,7 +52,7 @@ Checks: 8 focused unit tests / 385 assertions; real Chromium desktop 1440×960 a
 
 The probe reads the actual bundled terminal buffer: 840 desktop capture cells, 629 at 390px and 551 at 320px have the expected glyph/foreground/background. One canvas only. Every viewport's text matches full ANSI layout; the canvas equals a forced full reference paint after scrolling/resizing. This proves capture cells, not image overlay alignment. Unit checks prove narrow glyph/style sequence equals the source crop and raw transcript SHA matches metadata.
 
-Evidence: validation/single-page/checks.json plus desktop.png, desktop-scroll.png, mobile-390.png, mobile-390-capture.png, mobile-390-end.png, and corresponding mobile-320 images. Images were opened and visually reviewed: readable 29-column settings on 320px, 37-column settings on 390px, no overlapping controls or horizontal overflow; desktop supporting copy sits beside the capture. The capture scrolls behind the fixed header/footer without corrupting cells. Parent must still inspect the preview before the final user response.
+Historical checks and desktop/mobile screenshots are recoverable at Git revision `baf2fcd5`. Images were opened and visually reviewed: readable 29-column settings on 320px, 37-column settings on 390px, no overlapping controls or horizontal overflow; desktop supporting copy sits beside the capture. The capture scrolls behind the fixed header/footer without corrupting cells. Parent must still inspect the preview before the final user response.
 
 Formatting and git diff --check pass. No unrelated root CLI suite or broad research was run.
 
