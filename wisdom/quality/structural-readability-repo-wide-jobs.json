@@ -1537,6 +1537,16 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_7c18a737",
         "branch": "bruv/pr45-primary-tests-activity-terminal-acc-7c18a737",
         "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled",
+        "sourceCommit": "1a4cb197350046754f9814b5c63ee09c0e86c7e7"
+      },
+      {
+        "id": "task_bc4cf36e",
+        "stage": "primary",
+        "focus": "tests/background-interrupt-tui.test.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_bc4cf36e",
+        "branch": "bruv/pr45-primary-tests-background-interrupt--bc4cf36e",
+        "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
       }
     ]
