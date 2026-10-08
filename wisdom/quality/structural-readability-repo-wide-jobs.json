@@ -1095,7 +1095,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_0516aa0a",
         "branch": "bruv/pr45-primary-src-prompts-native-compacti-0516aa0a",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "ff4e61d7a5026de562b438eb23b768ee3337917d"
       },
       {
         "id": "task_6699937f",
@@ -1113,6 +1114,15 @@
         "focus": "src/prompts/orchestrator.md",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_a045de37",
         "branch": "bruv/pr45-primary-src-prompts-orchestrator.md-a045de37",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_3c851044",
+        "stage": "primary",
+        "focus": "src/prompts/system.md",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_3c851044",
+        "branch": "bruv/pr45-primary-src-prompts-system.md-3c851044",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
       }
@@ -1447,6 +1457,15 @@
         "branch": "bruv/pr45-judge-1-ui-terminal-cli-focuses-e3b69325",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "handled"
+      },
+      {
+        "id": "task_8cf00221",
+        "stage": "primary",
+        "focus": "scripts/terminal-perf/selector-lifecycle.test.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_8cf00221",
+        "branch": "bruv/pr45-primary-scripts-terminal-perf-selec-8cf00221",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
       }
     ]
   },

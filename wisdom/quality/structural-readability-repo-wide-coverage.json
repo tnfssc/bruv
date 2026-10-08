@@ -7092,13 +7092,44 @@
       "initialBlob": "238e6ec4fd3014e47545ff7512f32377bf7749e0",
       "status": "pending",
       "area": "agent-history-session-goals",
-      "resumeState": "pending-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_0516aa0a",
+      "primaryCommit": "ff4e61d7a5026de562b438eb23b768ee3337917d",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "ff4e61d7a5026de562b438eb23b768ee3337917d",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
-      "pendingReason": "No dedicated primary/final independent focus judgment."
+      "pendingReason": "No dedicated primary/final independent focus judgment.",
+      "primaryBase": "ff4e61d7a5026de562b438eb23b768ee3337917d",
+      "primaryResult": "Traced native-compaction.md -> NATIVE_CODEX_SUMMARY (trimEnd) -> compaction result summary, with pending-job runtime state appended separately (src/agent/native-compaction.ts:34,739-762). Replay compatibility checks API/provider only (485-486); the transport shim uses the selected model while keeping persisted model provenance untouched (488-497). Context registration blocks incompatible checkpoints (808-830), and session_before_tree cancels branch summaries over native state (885-905). Extension registration establishes the native compaction handler between manual-shake and cache-affine handlers (src/agent/extension.ts:264-286). This confirms the notice already groups the policy a resumed reader needs; adding headings/bullets or moving policy into unrelated helpers would not reduce a real reconstruction burden. No rejected candidate/rework exists for this focus in supplied reconciliation evidence; focus baseline and joined bytes match, so no candidate import was needed.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        {
+          "kind": "read-only source inspection",
+          "result": "Read wisdom/values.md and structural-readability-guidance.md; inspected only focus records from supplied reconciliation and area/repo-wide ledgers."
+        },
+        {
+          "kind": "caller trace",
+          "result": "Checked notice import, publication, replay authority, checkpoint model provenance, branch-summary safety, and extension registration in existing callers."
+        },
+        {
+          "kind": "assertion inspection (not execution)",
+          "result": "tests/native-compaction.test.ts:305-340 preserves checkpoint item/provenance across model switch and distinguishes foreign API/provider; no assertions or guards changed."
+        },
+        {
+          "kind": "source identity",
+          "result": "Focus Git blob 238e6ec4fd3014e47545ff7512f32377bf7749e0 matches reconciliation baseline 238e6ec4fd3014e47545ff7512f32377bf7749e0."
+        },
+        {
+          "kind": "working tree",
+          "result": "Initially clean; no source changes or source commit created."
+        }
+      ],
+      "primaryLimits": [
+        "No tests, setup, builds, network/credential/device access, or delegation performed; parent owns isolated gates and independent judgment.",
+        "Formatter not invoked because there are no changed source paths and no commit to format; formatter availability was not checked.",
+        "No runtime behavior claim beyond static caller/assertion inspection.",
+        "Wisdom and values unchanged: no new general lesson; parent owns aggregate wisdom."
+      ]
     },
     {
       "file": "src/prompts/normal.md",
