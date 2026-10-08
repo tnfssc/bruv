@@ -14,6 +14,8 @@ type WorkflowStep = {
   uses?: string;
   run?: string;
   if?: string;
+  id?: string;
+  "timeout-minutes"?: number;
   env?: Record<string, string>;
   with?: Record<string, string | number | boolean>;
 };
@@ -526,7 +528,7 @@ test("CI and Release share one ordinary Linux gate before final release packagin
   expect(release.steps.indexOf(validation)).toBeLessThan(release.steps.indexOf(gate));
   expect(release.steps.indexOf(gate)).toBeLessThan(release.steps.indexOf(helper));
   expect(commands(release)).not.toMatch(
-    /bun (install|test)\b|bun run (format:check|lint|check|smoke)\b|offline-openai-default-transport/,
+    /bun test\b|bun run (format:check|lint|check|smoke)\b|offline-openai-default-transport/,
   );
   const upload = namedStep(release, "Upload failure logs");
   expect(upload.if).toBe("failure()");
@@ -534,4 +536,37 @@ test("CI and Release share one ordinary Linux gate before final release packagin
   expect(gate.env?.CI_LOG_DIR).toStartWith("artifacts/release/");
   expect(namedStep(release, "Document native audio licensing").run).toContain("NATIVE LIVE AUDIO HELPER");
   expect(namedStep(release, "Document native audio licensing").run).toContain("repository MIT LICENSE");
+});
+
+test("release reuses only proven exact-SHA full CI and bounds the identical fallback gate", async () => {
+  const workflow = await readWorkflow("release");
+  const release = workflow.jobs.release!;
+  const evidence = namedStep(release, "Find successful full CI for the exact release SHA");
+  const install = namedStep(release, "Install locked dependencies after CI reuse");
+  const gate = namedStep(release, "Shared ordinary Linux gate");
+  expect(release.permissions).toEqual({ contents: "read", actions: "read" });
+  // biome-ignore lint/suspicious/noTemplateCurlyInString: literal GitHub expression
+  expect(release.env?.RELEASE_SHA).toBe("${{ needs.release-source.outputs.sha }}");
+  expect(evidence.id).toBe("ci-evidence");
+  expect(evidence.run).toBe("bun scripts/find-release-ci.ts");
+  expect(evidence["timeout-minutes"]).toBe(1);
+  // biome-ignore lint/suspicious/noTemplateCurlyInString: literal GitHub expression
+  expect(evidence.env).toEqual({ GH_TOKEN: "${{ github.token }}" });
+  // biome-ignore lint/suspicious/noTemplateCurlyInString: literal GitHub expression
+  expect(install.if).toBe("${{ steps.ci-evidence.outputs.reused == 'true' }}");
+  expect(install.run).toBe("bun install --frozen-lockfile");
+  // biome-ignore lint/suspicious/noTemplateCurlyInString: literal GitHub expression
+  expect(gate.if).toBe("${{ steps.ci-evidence.outputs.reused != 'true' }}");
+  expect(gate["timeout-minutes"]).toBe(6);
+  expect(gate.run).toBe("bun run ci");
+  expect(release.steps.indexOf(evidence)).toBeLessThan(release.steps.indexOf(install));
+  expect(release.steps.indexOf(install)).toBeLessThan(release.steps.indexOf(gate));
+  const ci = await readWorkflow("ci");
+  const lookup = await read("scripts/find-release-ci.ts");
+  for (const id of ["feedback", "test", "native-linux", "live-macos", "required"]) {
+    expect(lookup).toContain(JSON.stringify(ci.jobs[id]!.name));
+  }
+  expect(lookup).toContain(
+    JSON.stringify(namedStep(ci.jobs.test!, "Shared Linux CI gate (paired binaries, external T3)").name),
+  );
 });

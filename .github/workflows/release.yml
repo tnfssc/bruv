@@ -117,6 +117,9 @@ jobs:
     needs: [release-source, mac-helper]
     if: ${{ always() && needs.release-source.result == 'success' && needs.mac-helper.result == 'success' }}
     name: Linux, macOS, and Android release
+    permissions:
+      contents: read
+      actions: read
     runs-on: ubuntu-24.04
     env:
       RELEASE_SHA: ${{ needs.release-source.outputs.sha }}
@@ -167,7 +170,20 @@ jobs:
           /tmp/live-capture-gate-test
           clang++ -std=c++17 -Wall -Wextra -Werror -fsanitize=address,undefined native/live-linux/tests/capture-gate.cpp -o /tmp/live-linux-capture-gate-test
           /tmp/live-linux-capture-gate-test
+      - name: Find successful full CI for the exact release SHA
+        id: ci-evidence
+        shell: bash
+        timeout-minutes: 1
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: bun scripts/find-release-ci.ts
+      - name: Install locked dependencies after CI reuse
+        if: ${{ steps.ci-evidence.outputs.reused == 'true' }}
+        shell: bash
+        run: bun install --frozen-lockfile
       - name: Shared ordinary Linux gate
+        if: ${{ steps.ci-evidence.outputs.reused != 'true' }}
+        timeout-minutes: 6
         shell: bash
         env:
           CI_LOG_DIR: artifacts/release/ci

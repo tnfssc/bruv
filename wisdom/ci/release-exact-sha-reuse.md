@@ -51,3 +51,55 @@ Tradeoff: same-job smoke reuse is a small, local change; cross-run reuse adds a 
 ## 2026-09-30 follow-up
 
 See [current speedups and measured baseline](speedups-2026-09-30.md). Download stores now have tool/OS/arch-scoped restore prefixes (never compiled or patched state); exact-SHA reuse also supports manual releases at the **prepared** commit, not dispatch head. Final Linux browser boot/reload remains mandatory with a cached pinned headless-only harness and missing-library dependency fallback. Gains remain conditional; no new hosted timing has been claimed.
+
+## 2026-10-08: ordinary gate reuse, not release asset reuse
+
+The current workflow no longer has the historical cross-run release-asset
+reuse implementation above. The surviving CI lookup, find-ci-baseline.ts,
+finds an ancestor for docs classification; it is not release admission proof.
+Do not use an ancestor or a docs-only successful CI policy to skip Release tests.
+
+Release now uses scripts/find-release-ci.ts against the prepared RELEASE_SHA
+from release-source (never the manual dispatch head). The checked-out HEAD must
+match. Read-only Actions API evidence must identify the repository's ci.yml,
+a completed successful develop push for that exact SHA, and one complete
+job listing for the pinned run attempt. Planning, ordinary Linux, native Linux,
+macOS Live and CI policy must each succeed exactly once; the ordinary shared
+gate and policy enforcement steps must also have executed successfully.
+Docs-only, skipped/cancelled/failed, wrong SHA/repository/workflow/attempt,
+incomplete pagination and API uncertainty all fall back. Lookup has a 15-second
+overall budget, one page of 20 candidate runs and at most three job listings.
+The workflow adds only actions: read beside contents: read in the build job.
+
+Reuse skips only bun run ci. A frozen dependency install still runs before
+packaging. Otherwise the identical shared gate runs with its existing release
+log destination and a mandatory six-minute step deadline. Its failure/timeout
+prevents packaging and publication; existing failure-log upload remains.
+Version validation, sanitized capture-origin checks, real Mac helper, all
+four final target builds, checksums/source/notices/launcher verification,
+actual Linux browser/external T3 acceptance and both-platform updater checks
+are unchanged. Only publish retains contents: write, and it still needs every
+final artifact job to succeed. No scripts/ci.sh or test-runner edits belong here.
+
+Read-only hosted observation: Release run 37831183075/job 113497119876 was
+still in progress at SHA 7ad5d03536c5ed83e3874712e6b163c7fb99ea35. CI push run
+37831109349 attempt 1 at that same SHA had all five required jobs and the
+ordinary/policy steps successful. Its real API fields match the lookup's
+contracts. This establishes available evidence, not a hosted run of this change
+or a measured wall-time saving. Manual preparation of a new version commit
+without successful full CI naturally takes the bounded fallback.
+
+Focused fixtures cover exact SHA, full versus docs, provenance, pinned attempts,
+missing/duplicate/incomplete/failing lanes and steps, API failures, checkout
+mismatch, absent credentials and prepared-SHA CLI fallback. Workflow contracts
+cover permissions, dependency install, complementary reuse/fallback conditions,
+mandatory six-minute deadline and preserved final gates. No full local gate,
+actual release build/native acceptance, publish, push or PR was performed.
+Values unchanged: valid reuse, one owner, preserving shipped-path proof and
+honest measurement already cover this change.
+
+Local focused result: 90 passed, 0 failed, 714 assertions across
+find-release-ci, release-workflows, ci-runner, smoke-script and publish-release
+contracts. Isolated TypeScript checks for the new script/test, changed-code
+formatting, new-script/test lint and git diff --check passed. These are fixture
+and orchestration checks; hosted reuse and timeout/log delivery remain unproved.
