@@ -14247,39 +14247,90 @@
       "initialBlob": "a9cb7bece4e3c57da06b925be3d8d375e19cd3a7",
       "status": "pending",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_3c2b4389",
+      "primaryCommit": "93c66a662c7fc498a0f5aee0c3bb824bf4156cc0",
       "judgeIds": [],
-      "sourceCommit": "3603e341a47541a137c95c675106c9568374fde1",
+      "sourceCommit": "93c66a662c7fc498a0f5aee0c3bb824bf4156cc0",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
-      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
+      "primaryBase": "ae69e082a942073837b9f5a8b3154b174515a4f3",
+      "primaryResult": "Keep the focus byte-for-byte. Tracing renderLayoutFrame confirms its cache is created per frame; ScrollView.updateLayout owns follow-end/clamping; current scrollContentLines are the authority consumed by selection and refreshed search. The tests expose those relationships directly, including current content after replacement and width changes. Extracting the sequence or fake terminal would hide the chronology without removing a scattered decision or lifetime. Other two batch focuses changed; full combined source scope is listed here for exact review.",
+      "primaryPaths": ["tests/sdk-large-text-tui.test.ts", "tests/sdk-markdown-blocks.test.ts"],
+      "primaryChecks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md; read each entire assigned focus and relevant dependency/helper callers.",
+        "Read only assigned rows/blob-inventory entries in preserved reconciliation: all three NOT REVIEWED / needs-primary, with no dedicated candidate or rejection. git diff of candidate 3603e341a47541a137c95c675106c9568374fde1 against starting HEAD for these paths was empty.",
+        "Repository Biome format --write executed only on the two changed source paths, via child_process argv and explicit isolated env. Retained fixture /tmp/pr45-nearby-format-k7txoW; provenance.json records durable code worktree, executable, argv and env. Formatter exited 0.",
+        "git diff --check passed. Manually compared old/new guards, thresholds, UI frame expectations, ANSI assertion and saved message equality; none removed.",
+        "Audited effects without running tests: shared run uses Bun.spawn argv and supplied env; frame helpers only capture/poll; SessionManager.create receives explicit fixture session directory and open receives the returned file; changed large-text test uses allowlisted tmux env and env -i for CLI, owned HOME/config/cache/data/tmp/SDK paths, unique tmux socket, and retains fixture files. Only unique fixture tmux server is stopped.",
+        "Inspected commit hooks directory: sample hooks only; committed exactly the two changed test sources. No setup, test, build, reinstall, live auth/device access, cleanup, delegation, push, PR or merge."
+      ],
+      "primaryLimits": [
+        "No tests/setup/build were run; parent owns audited isolated runtime gates and fresh independent readability judgments. Compiled CLI/tmux startup and rendering remain runtime-unverified, including the explicit allowlisted environment.",
+        "No live authentication or device behavior verified; only a literal offline placeholder is in the fixture environment.",
+        "Runtime agent.model verification is parent-owned; no descendants were launched.",
+        "No per-worker wisdom notes or values edits: parent owns the aggregate wisdom. Existing candidate evidence and worktrees preserved."
+      ]
     },
     {
       "file": "tests/sdk-large-text-tui.test.ts",
       "initialBlob": "f8bace9a51cf3ee12315a3cf3fef24c1e342bd10",
       "status": "pending",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_3c2b4389",
+      "primaryCommit": "93c66a662c7fc498a0f5aee0c3bb824bf4156cc0",
       "judgeIds": [],
-      "sourceCommit": "3603e341a47541a137c95c675106c9568374fde1",
+      "sourceCommit": "93c66a662c7fc498a0f5aee0c3bb824bf4156cc0",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
-      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
+      "primaryBase": "ae69e082a942073837b9f5a8b3154b174515a4f3",
+      "primaryResult": "seedLargeTextSession now owns the complete saved-message setup and returns the authoritative session file. launchOfflineCli owns quoted argv assembly and the checked tmux new-session operation. The test itself shows the explicit owned environment once, uses it for both tmux and a cleared-env CLI launch, and reads as preparation -> loaded -> oldest -> bottom -> resize/rich ANSI -> type -> persisted equality. All original frame, ANSI and content assertions remain. Owned fixture HOME/config/SDK/temp state is retained and fixtureHome is written to evidence.json; no shared helper was edited.",
+      "primaryPaths": ["tests/sdk-large-text-tui.test.ts", "tests/sdk-markdown-blocks.test.ts"],
+      "primaryChecks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md; read each entire assigned focus and relevant dependency/helper callers.",
+        "Read only assigned rows/blob-inventory entries in preserved reconciliation: all three NOT REVIEWED / needs-primary, with no dedicated candidate or rejection. git diff of candidate 3603e341a47541a137c95c675106c9568374fde1 against starting HEAD for these paths was empty.",
+        "Repository Biome format --write executed only on the two changed source paths, via child_process argv and explicit isolated env. Retained fixture /tmp/pr45-nearby-format-k7txoW; provenance.json records durable code worktree, executable, argv and env. Formatter exited 0.",
+        "git diff --check passed. Manually compared old/new guards, thresholds, UI frame expectations, ANSI assertion and saved message equality; none removed.",
+        "Audited effects without running tests: shared run uses Bun.spawn argv and supplied env; frame helpers only capture/poll; SessionManager.create receives explicit fixture session directory and open receives the returned file; changed large-text test uses allowlisted tmux env and env -i for CLI, owned HOME/config/cache/data/tmp/SDK paths, unique tmux socket, and retains fixture files. Only unique fixture tmux server is stopped.",
+        "Inspected commit hooks directory: sample hooks only; committed exactly the two changed test sources. No setup, test, build, reinstall, live auth/device access, cleanup, delegation, push, PR or merge."
+      ],
+      "primaryLimits": [
+        "No tests/setup/build were run; parent owns audited isolated runtime gates and fresh independent readability judgments. Compiled CLI/tmux startup and rendering remain runtime-unverified, including the explicit allowlisted environment.",
+        "No live authentication or device behavior verified; only a literal offline placeholder is in the fixture environment.",
+        "Runtime agent.model verification is parent-owned; no descendants were launched.",
+        "No per-worker wisdom notes or values edits: parent owns the aggregate wisdom. Existing candidate evidence and worktrees preserved."
+      ]
     },
     {
       "file": "tests/sdk-markdown-blocks.test.ts",
       "initialBlob": "d69a3da5367fb93fdc4c47336260d74c0fc10bfd",
       "status": "pending",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_3c2b4389",
+      "primaryCommit": "93c66a662c7fc498a0f5aee0c3bb824bf4156cc0",
       "judgeIds": [],
-      "sourceCommit": "3603e341a47541a137c95c675106c9568374fde1",
+      "sourceCommit": "93c66a662c7fc498a0f5aee0c3bb824bf4156cc0",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
-      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
+      "primaryBase": "ae69e082a942073837b9f5a8b3154b174515a4f3",
+      "primaryResult": "measurePlainBlockWork now owns exactly one synchronous lexer observation: save/install the global hook, forbid both original whole-block matchers, collect line-predicate work, assert the complete raw token, and restore the hook in finally even if an assertion throws. Both tests call that same authority and retain their own scale/count/max/units thresholds. Reference-token/link equivalence, non-GFM/pedantic cases, rich ANSI/unicode wrapping/cache checks and subclass own-hook behavior remain untouched. Reading GfmBlockTokenizer/scanParagraph and Markdown.render confirms that the measured predicate/forbidden regexes and width/cache checks still address the shipped dependency behavior.",
+      "primaryPaths": ["tests/sdk-large-text-tui.test.ts", "tests/sdk-markdown-blocks.test.ts"],
+      "primaryChecks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md; read each entire assigned focus and relevant dependency/helper callers.",
+        "Read only assigned rows/blob-inventory entries in preserved reconciliation: all three NOT REVIEWED / needs-primary, with no dedicated candidate or rejection. git diff of candidate 3603e341a47541a137c95c675106c9568374fde1 against starting HEAD for these paths was empty.",
+        "Repository Biome format --write executed only on the two changed source paths, via child_process argv and explicit isolated env. Retained fixture /tmp/pr45-nearby-format-k7txoW; provenance.json records durable code worktree, executable, argv and env. Formatter exited 0.",
+        "git diff --check passed. Manually compared old/new guards, thresholds, UI frame expectations, ANSI assertion and saved message equality; none removed.",
+        "Audited effects without running tests: shared run uses Bun.spawn argv and supplied env; frame helpers only capture/poll; SessionManager.create receives explicit fixture session directory and open receives the returned file; changed large-text test uses allowlisted tmux env and env -i for CLI, owned HOME/config/cache/data/tmp/SDK paths, unique tmux socket, and retains fixture files. Only unique fixture tmux server is stopped.",
+        "Inspected commit hooks directory: sample hooks only; committed exactly the two changed test sources. No setup, test, build, reinstall, live auth/device access, cleanup, delegation, push, PR or merge."
+      ],
+      "primaryLimits": [
+        "No tests/setup/build were run; parent owns audited isolated runtime gates and fresh independent readability judgments. Compiled CLI/tmux startup and rendering remain runtime-unverified, including the explicit allowlisted environment.",
+        "No live authentication or device behavior verified; only a literal offline placeholder is in the fixture environment.",
+        "Runtime agent.model verification is parent-owned; no descendants were launched.",
+        "No per-worker wisdom notes or values edits: parent owns the aggregate wisdom. Existing candidate evidence and worktrees preserved."
+      ]
     },
     {
       "file": "tests/sdk-text-wrap-performance.test.ts",
