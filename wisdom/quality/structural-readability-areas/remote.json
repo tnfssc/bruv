@@ -1191,11 +1191,11 @@
       },
       "resume": {
         "status": "pending",
-        "primaryId": "task_fa7d4319",
-        "primaryCommit": null,
+        "primaryId": "task_ddda5faa",
+        "primaryCommit": "697e09e2b0654eebff54ce466322d0e2ab5db787",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary-killed-no-candidate",
+        "sourceCommit": "697e09e2b0654eebff54ce466322d0e2ab5db787",
+        "state": "needs-judge",
         "reason": "Saved job ended killed with exit143; worktree HEAD equals launch base and working tree has no preserved edit. Ledger running status is stale."
       },
       "acceptedBlob": null

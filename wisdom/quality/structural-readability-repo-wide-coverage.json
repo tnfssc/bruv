@@ -7213,13 +7213,42 @@
       "initialBlob": "90e5d9625f8af05c4c3c5dee290e72b3b9353025",
       "status": "pending",
       "area": "remote",
-      "resumeState": "pending-primary-killed-no-candidate",
-      "primaryId": "task_fa7d4319",
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_ddda5faa",
+      "primaryCommit": "697e09e2b0654eebff54ce466322d0e2ab5db787",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "697e09e2b0654eebff54ce466322d0e2ab5db787",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
-      "pendingReason": "Saved job ended killed with exit143; worktree HEAD equals launch base and working tree has no preserved edit. Ledger running status is stale."
+      "pendingReason": "Saved job ended killed with exit143; worktree HEAD equals launch base and working tree has no preserved edit. Ledger running status is stale.",
+      "primaryBase": "092ecd7771c8d64383a22eae46143c4735f8dbf3",
+      "primaryResult": "The guide now follows client capture → owner verification/launch → owner export/client preservation → client integration. Each phase identifies its authority and stop condition. The return outcome table separates task completion from repository application, and the receipt subsection makes uncertain application and reconnect retention discoverable. Explicit-source behavior is documented from existing capture/integration code. All prior safety, review, serialization, artifact and verification-boundary assertions remain; no runtime code or tests changed.",
+      "primaryPaths": ["src/remote/repository.md"],
+      "primaryChecks": [
+        {
+          "kind": "reading",
+          "result": "Read wisdom/values.md and structural-readability guidance; filtered assignment/coverage/area evidence to the focus. Reconciliation records stopped task_fa7d4319 with no candidate; focus exists at the original blob, so no predecessor bytes or branch were imported."
+        },
+        {
+          "kind": "caller-trace",
+          "result": "Traced captureRepository/collectRepositoryResult/integrateRepositoryResult through repository-wire.ts, root-client.ts, repository-download.ts and source-approval.ts. Checked terminal export fence, local result path, source provenance, review checks, worktree-only apply and durable receipts."
+        },
+        {
+          "kind": "diff",
+          "result": "git diff --check passed before commit; source-only commit changes exactly src/remote/repository.md."
+        },
+        {
+          "kind": "formatter",
+          "command": "/home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/@biomejs/biome/bin/biome format --write src/remote/repository.md",
+          "result": "Attempted via node child_process argv with fresh retained HOME/config/TMPDIR directories. Exit 1: Formatted 0 files; provided Markdown path was ignored/no files processed.",
+          "retainedEnvironment": "/tmp/pr45-repository-guide-format-8NMgui"
+        }
+      ],
+      "primaryLimits": [
+        "Repository formatter executable is available, but does not process the assigned Markdown path under current configuration; no alternate formatter or configuration bypass used.",
+        "No setup, tests or builds run; parent owns audited isolated batch gates. No automatic setup failure was bypassed.",
+        "Independent exact-candidate readability judgment remains for the parent to launch.",
+        "No per-worker wisdom edits; parent owns aggregate wisdom."
+      ]
     },
     {
       "file": "src/remote/repository.ts",
