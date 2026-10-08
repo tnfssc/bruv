@@ -3739,6 +3739,38 @@
         "state": "accepted-joined",
         "reason": "Compared the whole candidate test and exact diff against primary base 4d5a00544d80550f83b16a8650be97c78257602d, which is also the candidate parent. Previously each scenario interleaved stand-in installation, synchronous child execution, evidence interpretation and a finally that recovered an observation to delete its reported scope. The candidate makes the scenario read as runFailedReplay -> expected process failure -> assertRunnerFinalization -> assertRetainedReplayProof only for the non-corrupt case. These are coherent effect/proof boundaries, not cosmetic names or a shared context bag: runFailedReplay alone owns fresh fixture/HOME/config/tmp allocation, explicit child environment and stand-in stop request; assertion helpers consume only the retained proof path and do not mutate reported scopes. All final-evidence ordering, privacy, scope-removal, model closure, failure, wake-count and profile assertions remain. Unchanged decision: retain the two boolean fault scenarios, imports, runner binding and generated health/browser stand-ins. The health program visibly writes its PID and synthetic evidence, contacts the actual loopback model, then exposes readiness; the browser program throws at newContext and records the pre-release observation at close, with result corruption confined to its owned proof file. Their inline generated source makes the process boundary visible and needs no framework or additional extraction."
       }
+    },
+    {
+      "focus": "tests/claude-native-history-replay.test.mjs",
+      "initialBlob": null,
+      "introducedBy": null,
+      "state": "pending",
+      "acceptedBlob": null,
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary-untracked",
+        "reason": "Untracked related test preserved in interrupted history-replay worker; absent from committed and preserved area ledger and area/joined trees. Requires its own primary and independent readability judgment. No import permission."
+      }
+    },
+    {
+      "focus": "wisdom/quality/structural-readability-worker.md",
+      "initialBlob": null,
+      "introducedBy": null,
+      "state": "pending",
+      "acceptedBlob": null,
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "evidence-artifact-not-code-candidate",
+        "reason": "Two candidate-only worker reports contain different blobs at acba9037 and 38206e59; references retained under candidateArtifacts, excluded from source pending counts. Neither report grants acceptance or integration permission."
+      }
     }
   ],
   "crossAreaNeeds": [

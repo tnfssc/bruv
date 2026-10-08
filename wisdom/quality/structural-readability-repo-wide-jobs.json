@@ -1053,6 +1053,24 @@
         "branch": "bruv/pr45-judge-scripts-terminal-perf-audit-p-c15d8d4d",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
+      },
+      {
+        "id": "task_c80b6e38",
+        "stage": "primary",
+        "focus": "scripts/terminal-perf/navigation-workloads.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_c80b6e38",
+        "branch": "bruv/pr45-primary-scripts-terminal-perf-navig-c80b6e38",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_72c25417",
+        "stage": "primary",
+        "focus": "scripts/terminal-perf/selector-lifecycle-behavior.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_72c25417",
+        "branch": "bruv/pr45-primary-scripts-terminal-perf-selec-72c25417",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
       }
     ]
   },

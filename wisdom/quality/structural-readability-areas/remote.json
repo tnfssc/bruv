@@ -4331,5 +4331,65 @@
   "resumeStatus": {
     "accepted": 81,
     "pending": 41
-  }
+  },
+  "extraFiles": [
+    {
+      "focus": "tests/remote-cancellation.test.ts",
+      "initialBlob": null,
+      "introducedBy": "e58f7fee0d98e85e44266fbd6c10b0f934a4ba4b",
+      "state": "accepted",
+      "acceptedBlob": "a1a198779b4e9cf1bd48b7459e3e0c3b0adcb901",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "a1a198779b4e9cf1bd48b7459e3e0c3b0adcb901",
+        "primaryId": "task_4bcaf84b",
+        "primaryCommit": "806d97adfb0b2e04c9aa8beeb650cc9ca0780fbd",
+        "judgeIds": [
+          "task_9c33e422",
+          "task_7be6f9c9"
+        ],
+        "sourceCommit": "e58f7fee0d98e85e44266fbd6c10b0f934a4ba4b",
+        "state": "accepted-exact-joined",
+        "reason": "Supported toBe expected-value type overload preserves exact reference identity assertion and all readable fixture/order evidence; no casts or production change."
+      }
+    },
+    {
+      "focus": "tests/root-store.test.ts",
+      "initialBlob": null,
+      "introducedBy": "6e6d31119a460ec92657c656203bd805729cd043",
+      "state": "accepted",
+      "acceptedBlob": "b1f3cc8f7b18c1aa5d3a8895324792e7cfec59d8",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "b1f3cc8f7b18c1aa5d3a8895324792e7cfec59d8",
+        "primaryId": "task_1dae7d84",
+        "primaryCommit": "6e6d31119a460ec92657c656203bd805729cd043",
+        "judgeIds": [
+          "task_7ef7eb4e"
+        ],
+        "sourceCommit": "6e6d31119a460ec92657c656203bd805729cd043",
+        "state": "accepted-exact-joined",
+        "reason": "Explicit append/observe transcript and reconnect cursors replace mentally executing a second pruning algorithm; all eight inputs, outcomes, gaps, sequence and isolation assertions preserved."
+      }
+    },
+    {
+      "focus": "tests/fixtures/remote-e2e/recovery-ssh.sh",
+      "initialBlob": null,
+      "introducedBy": "07c2ce9c71929b9f1de2521f9f1b50a08b94a936",
+      "state": "accepted",
+      "acceptedBlob": "d7e8d093f900e4d5654636badd1f72d96041aa09",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "d7e8d093f900e4d5654636badd1f72d96041aa09",
+        "primaryId": "task_4f024748",
+        "primaryCommit": "07c2ce9c71929b9f1de2521f9f1b50a08b94a936",
+        "judgeIds": [
+          "task_477023ef"
+        ],
+        "sourceCommit": "07c2ce9c71929b9f1de2521f9f1b50a08b94a936",
+        "state": "accepted-joined",
+        "reason": "Independent reading of the exact candidate, not checkout HEAD. Primary base equals candidate, so there is no new primary patch. Compared candidate to its parent 2f8ff38457efdc332578a24731b6cda7d42f3985: the helper is newly added and the harness replaces the expanding protocol heredoc with a copied helper and one exec binding. This is a meaningful existing structural boundary: setup chooses fixture authorities, while this directly readable POSIX shell file owns forwarding and deliberate response loss without a second shell-dollar interpretation layer. The config and evidence-directory arguments are removed before forwarding the original SSH argv. Within each short branch, arming, owner response verification, evidence publication, sentinel consumption, diagnostic and failure exit are adjacent. Ordinary forwarding remains the final control path; non-control invocation directly execs real SSH. Keeping the two domain branches explicit is preferable to a generalized transport helper or context bag. Unchanged decision: this focus already presents its complete operation and effects clearly; further extraction would scatter that short journey. The related harness also remains readable as ordered fixture setup, readiness, mode selection and environment handoff."
+      }
+    }
+  ]
 }

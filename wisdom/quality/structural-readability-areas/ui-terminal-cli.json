@@ -5123,6 +5123,54 @@
         "state": "accepted-not-joined",
         "reason": "Existing primary-focus ACCEPT by task_a8281cbe at ff0ececc2e4c74dd103ecaa54113e726fda8e346; exact candidate and surviving-area blob verified. Pinned joined tree lacks this accepted blob; parent owns joining. No new review or test execution."
       }
+    },
+    {
+      "focus": "scripts/terminal-perf/navigation-history.ts",
+      "initialBlob": null,
+      "introducedBy": null,
+      "state": "pending",
+      "acceptedBlob": null,
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "needs-primary",
+        "reason": "Untracked helper blob bedf45729fe64d9fbfb6639d6d2dd5c3138742f8 in preserved /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_09b8c468, from incomplete navigation primary task_09b8c468. No committed source candidate, separate primary-focus coverage, or actual-code judge. Preserve; do not join."
+      }
+    },
+    {
+      "focus": "scripts/terminal-perf/navigation-sdk-probe.ts",
+      "initialBlob": null,
+      "introducedBy": null,
+      "state": "pending",
+      "acceptedBlob": null,
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "needs-primary",
+        "reason": "Untracked helper blob 43e30a2d7094921bc195e788f4897b4920054980 in preserved /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_09b8c468, from incomplete navigation primary task_09b8c468. No committed source candidate, separate primary-focus coverage, or actual-code judge. Preserve; do not join."
+      }
+    },
+    {
+      "focus": "scripts/terminal-perf/navigation-terminal.ts",
+      "initialBlob": null,
+      "introducedBy": null,
+      "state": "pending",
+      "acceptedBlob": null,
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "needs-primary",
+        "reason": "Untracked helper blob d2643f1280f9769585963939a597ea3154b96dce in preserved /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_09b8c468, from incomplete navigation primary task_09b8c468. No committed source candidate, separate primary-focus coverage, or actual-code judge. Preserve; do not join."
+      }
     }
   ],
   "batchChecks": [

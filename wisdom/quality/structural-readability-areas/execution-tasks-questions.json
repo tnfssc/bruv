@@ -4680,5 +4680,65 @@
   "resumeStatus": {
     "accepted": 76,
     "pending": 25
-  }
+  },
+  "extraFiles": [
+    {
+      "focus": "tests/cli-rpc-soak.test.ts",
+      "initialBlob": null,
+      "introducedBy": "0336dbb2799d12b2687ab54a8d33dc8433c92038",
+      "state": "accepted",
+      "acceptedBlob": "8033fbac221f5b02522e23927ece9e4b780458f8",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "8033fbac221f5b02522e23927ece9e4b780458f8",
+        "primaryId": "task_aa059444",
+        "judgeIds": [
+          "task_63fdd057",
+          "task_9baa1135"
+        ],
+        "sourceCommit": "0336dbb2799d12b2687ab54a8d33dc8433c92038",
+        "state": "accepted-not-joined",
+        "reason": "Retain NO CHANGE NEEDED by task_63fdd057: the recorded accepted blob equals the actual focus blob at reviewed commit 0336dbb2799d12b2687ab54a8d33dc8433c92038. Joined tree does not contain that exact accepted blob; an accepted source batch remains to join, not a fresh quality review. Latest area tree also matches the recorded accepted blob."
+      }
+    },
+    {
+      "focus": "scripts/task-placement-clean-video.test.py",
+      "initialBlob": null,
+      "introducedBy": "2a432cf15b0f127206418988d7a369bc14f5de43",
+      "state": "accepted",
+      "acceptedBlob": "9a9533ca57ebb1ca843cb847ea2f70148d4f139e",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "9a9533ca57ebb1ca843cb847ea2f70148d4f139e",
+        "primaryId": "task_909be9d8",
+        "judgeIds": [
+          "task_36be47e2",
+          "task_56bbfab7"
+        ],
+        "sourceCommit": "2a432cf15b0f127206418988d7a369bc14f5de43",
+        "state": "accepted-not-joined",
+        "reason": "Retain ACCEPT by task_36be47e2: the recorded accepted blob equals the actual focus blob at reviewed commit 2a432cf15b0f127206418988d7a369bc14f5de43. Joined tree does not contain that exact accepted blob; an accepted source batch remains to join, not a fresh quality review. Latest area tree also matches the recorded accepted blob."
+      }
+    },
+    {
+      "focus": "scripts/task-placement-clean-capture.test.ts",
+      "initialBlob": null,
+      "introducedBy": "534986d4e14abf86b189fce1e3b88f746aa086c7",
+      "state": "accepted",
+      "acceptedBlob": "83cafd1bb95ca575ac2e08f8c748313975f0bb1f",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "83cafd1bb95ca575ac2e08f8c748313975f0bb1f",
+        "primaryId": "task_e04c4e92",
+        "judgeIds": [
+          "task_33a4cc92",
+          "task_abf8fcb1",
+          "task_626cfea3"
+        ],
+        "sourceCommit": "534986d4e14abf86b189fce1e3b88f746aa086c7",
+        "state": "accepted-joined",
+        "reason": "Read complete focus and paired capture producer. The recording fixture is a narrowly owned command/evidence recorder, not a production context bag: its failure switches exercise visible start, pane-capture and exit transitions. Direct command arrays expose literal input, fixed PTY dimensions and capture-before-pane-removal order. Raw viewport/scrollback files are compared separately from the stripped assertion view, and reopening deliberately preserves the timeline. Failure scenarios distinguish nonzero detach, missing pane and failed start instead of treating all as generic cleanup. The native PTY scenario owns its socket, temporary directories and explicit environment in the same body. This complete file is already structurally coherent; no additional primary source edit is needed."
+      }
+    }
+  ]
 }
