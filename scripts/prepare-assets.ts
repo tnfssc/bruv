@@ -1,4 +1,4 @@
-import { preparePiHost } from "./pi-host-adaptation";
+import { preparePiHostWithRecovery } from "./pi-host-recovery";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -9,7 +9,7 @@ const photonRoot = join(root, "node_modules/@silvia-odwyer/photon-node");
 const output = join(root, "runtime-assets");
 const { version } = (await Bun.file(join(root, "package.json")).json()) as { version: string };
 
-await preparePiHost(piRoot);
+await preparePiHostWithRecovery(root, piRoot);
 
 const assets: Array<[string, string]> = [
   ["dist/modes/interactive/theme/dark.json", "theme/dark.json"],
