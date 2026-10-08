@@ -14791,12 +14791,28 @@
       "initialBlob": "427713203db5f91472a7703b441c207d90123f7e",
       "status": "pending",
       "area": "execution-tasks-questions",
-      "resumeState": "pending-primary",
-      "primaryId": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_f991354d",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "88cbf9b4adcbb6d3b8296a9b1c2d89d243d7ff37",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
-      "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage."
+      "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage.",
+      "primaryCommit": "88cbf9b4adcbb6d3b8296a9b1c2d89d243d7ff37",
+      "primaryBase": "79994b467143b7f77ffa3c5c791483a9249e430b",
+      "primaryResult": "No focus bytes changed. Retained independent tests because short-write injection, real kernel contention, killed-holder release, and compiled ABI execution exercise distinct authorities and must remain visible rather than be hidden behind a generic writer/child context. In particular, the live-holder test keeps readiness, blocked-record absence, kill/exit observation, successful after-record, and absent pathname lock in one ordered journey. The symlink target and protected mode assertions remain explicit. The combined changed scope below is solely the nearby TUI fixture refactor, not a claimed lifecycle improvement.",
+      "primaryPaths": ["tests/task-monitor-tui-fixture.ts", "tests/task-monitor-tui.test.ts"],
+      "primaryChecks": [
+        "Read complete assigned focus files and assigned reconciliation rows; each row has no preserved candidate, no rejected round, and no own primary judgment. No old candidate bytes or branches imported.",
+        "Read relevant implementation/caller journeys; no test, setup, build, dependency install, live auth/device, network request, or delegated agent was run.",
+        "Biome format --write used child_process argv on only tests/task-monitor-tui.test.ts and tests/task-monitor-tui-fixture.ts; final exit 0, no fixes remaining. Retained fresh environments: /tmp/pr45-task-monitor-format-oAqT3k and /tmp/pr45-task-monitor-format-final-JjmdQR.",
+        "git diff --cached --check passed before source-only commit. Default hooks directory contains only .sample files. Signing was disabled for this commit invocation to avoid user credential access.",
+        "Complete changedPaths is the combined batch scope in every decision, including unchanged focuses, so the independent judge can see every changed source/helper byte.",
+        "Committed lifecycle focus hash still equals the assigned baseline 427713203db5f91472a7703b441c207d90123f7e."
+      ],
+      "primaryLimits": [
+        "No lifecycle runtime proof here: the existing focus spawns Bun children, holds/kills a child, builds a compiled executable, and rmSyncs only its own mkdtemp fixtures. These effects were inspected, never executed; parent owns the audited isolated gate and retained fixture policy.",
+        "Independent judgment and runtime agent.model verification remain parent-owned."
+      ]
     },
     {
       "file": "tests/task-manager.test.ts",
@@ -14816,24 +14832,60 @@
       "initialBlob": "70e2cf3f3df3568b48df82627f88cf9767276478",
       "status": "pending",
       "area": "execution-tasks-questions",
-      "resumeState": "pending-primary",
-      "primaryId": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_f991354d",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "88cbf9b4adcbb6d3b8296a9b1c2d89d243d7ff37",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
-      "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage."
+      "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage.",
+      "primaryCommit": "88cbf9b4adcbb6d3b8296a9b1c2d89d243d7ff37",
+      "primaryBase": "79994b467143b7f77ffa3c5c791483a9249e430b",
+      "primaryResult": "No focus bytes changed. Kept the explicit deferred-promise disposal tests: finishList/finishOutput and dispose are deliberately ordered at the call site, so the reader can see why a late read must not publish or issue SSH stop. The narrow-height confirmation test keeps zero-row suppression, epoch drift, and owner preflight visibly separate rather than folding them into a table or generic scenario harness. panelFor already expresses the single panel-owned adapter cleanup boundary, while the final real TaskManager test preserves its separate shutdown boundary and completion-delivery assertion. Additional extraction would hide important timing/ownership evidence, not shorten the semantic journey.",
+      "primaryPaths": ["tests/task-monitor-tui-fixture.ts", "tests/task-monitor-tui.test.ts"],
+      "primaryChecks": [
+        "Read complete assigned focus files and assigned reconciliation rows; each row has no preserved candidate, no rejected round, and no own primary judgment. No old candidate bytes or branches imported.",
+        "Read relevant implementation/caller journeys; no test, setup, build, dependency install, live auth/device, network request, or delegated agent was run.",
+        "Biome format --write used child_process argv on only tests/task-monitor-tui.test.ts and tests/task-monitor-tui-fixture.ts; final exit 0, no fixes remaining. Retained fresh environments: /tmp/pr45-task-monitor-format-oAqT3k and /tmp/pr45-task-monitor-format-final-JjmdQR.",
+        "git diff --cached --check passed before source-only commit. Default hooks directory contains only .sample files. Signing was disabled for this commit invocation to avoid user credential access.",
+        "Complete changedPaths is the combined batch scope in every decision, including unchanged focuses, so the independent judge can see every changed source/helper byte.",
+        "Committed merged-source focus hash still equals the assigned baseline 70e2cf3f3df3568b48df82627f88cf9767276478."
+      ],
+      "primaryLimits": [
+        "No source-test runtime proof here: remote adapters are in-memory fakes; timer/subscription effects and the final real shell-command spawn were inspected. The latter inherits the parent process environment through TaskManager, so any parent execution must supply an audited owned environment. No real SSH was contacted.",
+        "Independent judgment and runtime agent.model verification remain parent-owned."
+      ]
     },
     {
       "file": "tests/task-monitor-tui.test.ts",
       "initialBlob": "26bf71c2c66519461448a29dcbefa01dafe6b6db",
       "status": "pending",
       "area": "execution-tasks-questions",
-      "resumeState": "pending-primary",
-      "primaryId": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_f991354d",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "88cbf9b4adcbb6d3b8296a9b1c2d89d243d7ff37",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
-      "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage."
+      "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage.",
+      "primaryCommit": "88cbf9b4adcbb6d3b8296a9b1c2d89d243d7ff37",
+      "primaryBase": "79994b467143b7f77ffa3c5c791483a9249e430b",
+      "primaryResult": "Moved native terminal lifetime to withTaskMonitorTerminal and the controlled provider plus submit-handler readiness to withLiveJobTui in one nearby test-only helper. /ps now starts at sending the work prompt, follows ALPHA identity through inspect and back, selects BETA, proves opening confirmation is non-destructive, then proves only BETA leaves the running set and is recorded cancelled. /resume still creates root/child in place and visibly follows picker selection, confirmation identity and cancellation. The helper owns its own HOME/config/cache/data/state/runtime/TMPDIR/SDK tree and isolated tmux socket, disables inherited tmux config, launches the binary with explicit process argv/env (no shell launch string), binds the fake provider to loopback, brackets all provider writes/readiness under server shutdown and all callbacks under terminal shutdown, and retains fixture files instead of removing HOME. The marker plus harmless submit probe and zero-provider-request assertion remain intact; transport framing is no longer interleaved with task selection semantics.",
+      "primaryPaths": ["tests/task-monitor-tui-fixture.ts", "tests/task-monitor-tui.test.ts"],
+      "primaryChecks": [
+        "Read complete assigned focus files and assigned reconciliation rows; each row has no preserved candidate, no rejected round, and no own primary judgment. No old candidate bytes or branches imported.",
+        "Read relevant implementation/caller journeys; no test, setup, build, dependency install, live auth/device, network request, or delegated agent was run.",
+        "Biome format --write used child_process argv on only tests/task-monitor-tui.test.ts and tests/task-monitor-tui-fixture.ts; final exit 0, no fixes remaining. Retained fresh environments: /tmp/pr45-task-monitor-format-oAqT3k and /tmp/pr45-task-monitor-format-final-JjmdQR.",
+        "git diff --cached --check passed before source-only commit. Default hooks directory contains only .sample files. Signing was disabled for this commit invocation to avoid user credential access.",
+        "Complete changedPaths is the combined batch scope in every decision, including unchanged focuses, so the independent judge can see every changed source/helper byte.",
+        "Static comparison preserved all prior assertion statements except the two inline new-session exit checks, which are now the shared start() code==0 assertion with stderr diagnostic. No assertion was removed from the UI journeys.",
+        "Installed tmux manual confirms new-session accepts multiple shell-command arguments and executes them directly without sh -c. No tmux process was launched for this check.",
+        "Read all final changed helper/test code and staged diff; process/network/filesystem effects remain test-only, owned fixture creation, loopback fake provider, scoped terminal start/stop and the pre-existing controlled live job loops."
+      ],
+      "primaryLimits": [
+        "Runtime behavior remains unverified: no built binary, tmux TUI, provider server, compile, tests, setup or build was executed. Parent must run the isolated native gates; existing dist binary requirement and 20-second test budgets are unchanged.",
+        "Future /resume fixture preparation imports the SDK in the gate process; parent must start that process with an owned HOME/config/SDK as instructed. The terminal child environment is explicitly isolated by this helper.",
+        "Test fixtures are created under fs.mkdtemp when the parent runs gates and retained. Durable source provenance is this worktree and exact sourceCommit/blobs, not a /tmp code checkout.",
+        "Independent judgment and runtime agent.model verification remain parent-owned."
+      ]
     },
     {
       "file": "tests/task-monitor.test.ts",
