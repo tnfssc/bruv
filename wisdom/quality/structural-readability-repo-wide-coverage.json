@@ -2324,13 +2324,14 @@
     {
       "file": "scripts/probe-live-controlled.ts",
       "initialBlob": "7000ee28bed1449a679449a65bc3359cb4c126dd",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_852c860e",
       "sourceCommit": "928f75078f241c21609ed1cc5c75dbea71436e2b",
       "judgeIds": [
-        "task_a8982f00"
+        "task_a8982f00",
+        "task_4c8d7aef"
       ],
-      "resumeState": "needs-rejudge",
+      "resumeState": "accepted-joined",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
       "area": "live-native-audio",
       "primaryCommit": "b50efbd7ce8edab4a938f43c2ff333459fb420c2",
@@ -2365,32 +2366,20 @@
         "No old branch merge/restoration was needed: focus exists and preserved reconciliation has no surviving proposed source commit or accepted candidate.",
         "Source changes only committed. No related edits, assertion changes, per-worker wisdom, push, PR or merge. Parent owns aggregate wisdom; values/guidance unchanged."
       ],
-      "acceptedBlob": "74b94682acfd7e8681e12baff2930b4a076343b0",
-      "result": "Compared actual candidate source with primary base 0b1faebd03e5eb7711dbcba5a58453564a28cc36, which is also its sole parent. The base makes the reader reconnect three condition splits, repeated historical serialization, duplicate target-selection expressions for hashes and payloads, and three separate wire-frame constructions inside the paid loop. The candidate removes that reconstruction: parseCondition returns validated semantic fields once; the bounded trials map owns instructions, target selection, optional snapshot selection, ordered semantic messages, uniform wire framing and hashes of those exact selected strings. The dispatch loop consumes this prepared payload, adds session-specific metadata and publishes the result. This is a meaningful authority/lifetime separation, not a rename or context bag. Fresh uses only the target; prior copies the four existing user/assistant refusal turns then appends the target; snapshot appends the context-as-data user message then the historical target. Uniform framing still maps user to input_text and assistant to output_text. Unchanged decision: retain the small content/snapshot helpers, instruction variants, prior-refusal text and shared transport instead of introducing more helpers or a generic trial framework; their existing responsibilities are already clear. The moved preparation makes snapshot validation failures occur before Live config/key loading rather than after it, consistent with the stated preparation boundary.",
-      "systemReason": "Followed the standalone CLI entry point and its actual dependencies/assertions at the candidate commit. Paid opt-in and probeArgs explicit source/study/disclosure authority still precede private-source access; all conditions are validated before readStudy. Synthetic mode still cannot select historical snapshots. Historical input still checks both original user targets, requires root preamble/cwd, uses the bounded retained prefix and snapshot size cap, and serializes prior context as data rather than replaying calls. Synthetic root and execute-only schema still come from offline createPromptPreview. All trial payloads now exist before loadLiveConfig and createDefaultLiveCredentialService/loadKey are called. OpenAI requirement, configured-key requirement, sequential await of studyTrial, trial numbering/order, condition strings, model and root/instruction/tool/target/snapshot hashes, privateOutput and merged transport-result fields remain intact. Read studyTrial through session.updated item dispatch, synthetic function-call output, response continuation and deadline/error/close termination: execute code is recorded and intercepted, never evaluated; 25-second deadline and 2,000-character speech limit are unchanged. Existing input tests assert invalid plans fail before source/credentials, and shared transport tests describe ordered items and intercepted outputs. These were read, not run. No behavioral/device/provider execution claim is made.",
+      "acceptedBlob": "e451a8408f4bd0466f9100af49840cbd134cf3ae",
+      "result": "The exact source has an intelligible preparation/dispatch boundary: parseCondition produces validated semantic fields before source reading; trials selects target and optional snapshot once, orders semantic messages, applies one wire framing operation, and hashes those same selected strings. Dispatch does not reconstruct conditions or transcript selection. The small content/snapshot helpers and instruction variants remain local and understandable; no context bag or generic trial framework is needed. Compared with the initial ledger blob 7000ee28bed1449a679449a65bc3359cb4c126dd, this removes repeated parsing, snapshot serialization and parallel target expressions. Important provenance distinction: the supplied primaryBase already contains that structural refactor; the exact candidate delta from ca4a39af is only removal of redundant parentheses. Acceptance is of the independently read complete source, not a claim that this formatting follow-up itself improves structure.",
+      "systemReason": "This is a directly invoked CLI script, not an application callback. The environment opt-in and probeArgs explicit source/study/disclosure gates precede private-source reading; condition count is bounded to 1–48. Synthetic fresh/prior requests use local fixture targets; historical audio/followup require snapshot context, validate both retained user targets and the original root, and reject oversized snapshots or empty selected transcripts before config/key loading. Fresh sends the target alone; prior sends the four refusal turns then target; snapshot sends context-as-data then the historical target. User/assistant framing remains input_text/output_text. Instruction, target, snapshot and refusal fixture text are unchanged against the initial blob. loadLiveConfig and canonical OpenAI key loading follow preparation, then sequential studyTrial calls retain model/hash/result fields and privateOutput. The actual transport sends these items after session.updated and returns synthetic function-call outputs through mockOutput; it never evaluates returned execute code. These are source observations, not paid-session or credential validation.",
       "checks": [
-        {
-          "name": "Exact-commit source and parent comparison",
-          "status": "completed",
-          "details": "git log confirms primary base equals parent; git diff lists only scripts/probe-live-controlled.ts as changed source. Read the whole focus and diff, plus candidate dependency/caller boundaries and existing assertions; related source paths are unchanged."
-        },
-        {
-          "name": "git diff --check primary-base..candidate",
-          "status": "passed",
-          "details": "Exit 0; no whitespace errors."
-        },
-        {
-          "name": "Guidance and ledger review",
-          "status": "completed",
-          "details": "Read wisdom/values.md, structural-readability-guidance.md, repo-wide structural-readability guidance/ledger and live-native-audio area context/focus records. Primary explanation was context only, not acceptance evidence."
-        }
+        "Read complete candidate focus from exact Git commit, supplied-base diff and initial ledger blob; inspected every changed source path (focus only).",
+        "Read probeArgs/readStudy/studyTarget, studyTrial dispatch/interception, prompt preview construction, config loader and credential-service source; git grep found only the direct CLI invocation in relevant source/package paths.",
+        "Static string comparison confirmed identical instruction variants, target fixtures, snapshot helper and refusal fixtures against initial ledger blob.",
+        "git diff --check ca4a39af1b7b3f729c7d04504cd22f2ab880ed13..928f75078f241c21609ed1cc5c75dbea71436e2b returned clean; accepted blob resolved with git rev-parse.",
+        "Read values/readability guidance and only corresponding repo-wide/area ledger rows; historical judgments were context, not acceptance evidence."
       ],
       "limits": [
-        "No source edits, delegation, setup, tests or builds performed. Only the requested untracked judgment artifact was written.",
-        "No secrets/config files read, credentials loaded, provider requests, device access, recovery, cleanup or destructive Git operations performed.",
-        "Runtime/isolated batch gates belong to the parent; this verdict is structural actual-code reading, not a typecheck or runtime-test pass.",
-        "Unchanged related paths were reviewed as system context, not assigned independent whole-file acceptance.",
-        "Runtime agent-model verification is parent-owned; no self-introspection attempted."
+        "No setup, tests, builds, formatter, paid provider session, credential service, private transcript or device access performed. Parent owns audited isolated batch gates.",
+        "Source inspection does not establish authenticated API access or runtime/device behavior. Parent externally verifies agent.model; no self-introspection performed.",
+        "No source, tests, ledgers or wisdom edited; no delegation, push, PR, merge, recovery, cleanup or destructive Git operation. Recorded earlier setup host-hash failure was not rerun or bypassed."
       ],
       "previousAcceptedBlob": "74b94682acfd7e8681e12baff2930b4a076343b0",
       "originalPrimaryBase": "0b1faebd03e5eb7711dbcba5a58453564a28cc36",
@@ -6271,11 +6260,13 @@
     {
       "file": "src/live/setup.ts",
       "initialBlob": "728e62f964f69adb6228d1fbae8b9f536836d1eb",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_1a43b3b3",
       "sourceCommit": "aafa007249fb4e924ecbdf11bd4825e3445e88b7",
-      "judgeIds": [],
-      "resumeState": "needs-judge",
+      "judgeIds": [
+        "task_4c8d7aef"
+      ],
+      "resumeState": "accepted-joined",
       "pendingReason": "Primary was allocated, but no candidate commit or completed focus judgment is recorded. Preserve its worktree; do not treat the stale running status as proof of current execution.",
       "area": "live-native-audio",
       "primaryCommit": "aafa007249fb4e924ecbdf11bd4825e3445e88b7",
@@ -6294,16 +6285,32 @@
         "No changed source paths or source commit to create; formatter was therefore not invoked (no changed-path formatting target).",
         "Historical automatic-setup host-hash failure remains historical evidence, not rerun or bypassed.",
         "Wisdom and values unchanged: no new lesson; parent owns aggregate wisdom."
+      ],
+      "acceptedBlob": "728e62f964f69adb6228d1fbae8b9f536836d1eb",
+      "result": "runLiveSetup already expresses the configuration journey in one short, linear loop. Status inspection, the configured-key menu, eligibility-gated missing/OAuth instructions, explicit import/recheck/cancel selection and retry after import are visible where their consequences occur. explained only suppresses repeated instructions; it does not authorize anything. Abort checks after status and selection and the loop condition after import keep authorization local. Splitting this into branch helpers or a state framework would hide a readable sequence rather than eliminate reconstruction. The exact unchanged blob deserves retention, not cosmetic cleanup.",
+      "systemReason": "Both actual extension callers were traced at this candidate. /live provider owns its entry controller and sequence/session/leaf identity, passes allowStart=false and never starts a Run from setup. Explicit /live start or /live setup owns startup, checks identity after each await, obtains the key and constructs/starts Run outside runLiveSetup only after the appropriate authorization. An existing configured/stored key presents Start voice/Done (Done only in provider configuration); readiness here is credential configuration, not verified API access. Missing credentials offer import only when status.canImport and the migration file exists; OAuth cannot import. Import success loops back through status and requires a separate Start voice choice; failure gives a generic warning and remains cancellable. The credential service, not the menu, owns safe file reading and guarded non-replacing import through locked credentials.modify with a second status check. Stop/session events abort setup; identity checks prevent late UI results from starting another branch/session.",
+      "checks": [
+        "Read complete setup source at exact candidate; supplied base is the same commit and has no changed paths.",
+        "Read both runLiveSetup callers, explicit startup ownership/identity checks, stop/session cancellation and credential status/load/import implementation without invoking any service.",
+        "Verified candidate setup blob equals initial ledger blob 728e62f964f69adb6228d1fbae8b9f536836d1eb; related credential/extension blobs match those independently traced for the other candidates.",
+        "Read values/readability guidance and corresponding repo-wide/area ledger rows; no counts or green tests used as acceptance evidence."
+      ],
+      "limits": [
+        "No setup, tests, builds, formatter, credentials, user secrets, provider or device access performed; parent owns runtime gates.",
+        "No claim of authenticated API readiness, real import execution or voice startup correctness. Parent externally verifies agent.model.",
+        "No source or wisdom changes, delegation, recovery or cleanup; earlier recorded setup failure remains unverified and was not bypassed."
       ]
     },
     {
       "file": "src/live/speaker-check.ts",
       "initialBlob": "783d0aaaf7ae22808aad5cc8f00914a1e9610637",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_c13efc43",
       "sourceCommit": "cb813e8544a802eeda0afe0e01ae45f8b89eacb0",
-      "judgeIds": [],
-      "resumeState": "needs-judge",
+      "judgeIds": [
+        "task_4c8d7aef"
+      ],
+      "resumeState": "accepted-joined",
       "pendingReason": "Primary was allocated, but no candidate commit or completed focus judgment is recorded. Preserve its worktree; do not treat the stale running status as proof of current execution.",
       "area": "live-native-audio",
       "primaryCommit": "cb813e8544a802eeda0afe0e01ae45f8b89eacb0",
@@ -6338,6 +6345,21 @@
         "Reconciliation records an automatic setup unsupported Pi host session-manager.js hash failure; this worker did not rerun or bypass it.",
         "No physical/native-provider/AEC-performance proof is claimed. No model self-introspection performed; parent verifies agent.model externally.",
         "No wisdom files edited; parent owns aggregate wisdom."
+      ],
+      "acceptedBlob": "141bd8d0d32972a110cbf4655b8f1e2caf82f8be",
+      "result": "The refactor separates two real lifetimes rather than arbitrary blocks: runSpeakerCheck owns deadline, factory acquisition, terminal helper callbacks, failure normalization, late acquisition close and bounded stop/close; measureSpeakerReturn owns capture callbacks, PCM/reference/frame storage, baseline/playback/tail measurement and zeroing. The acquisition callback is narrow and effectful, not a shared context bag: measurement installs capture observers before the owner launches native audio. waitForAudio makes bounded waiting explicit and processingConfiguration keeps static native configuration separate from waveform evidence. Overflow/pending playback outcomes now occur before correlation work. Reference generation, full-rate lag search, signal thresholds and public result/signature are preserved; their existing cohesive numerical implementation needs no new abstraction.",
+      "systemReason": "The exact extension caller requires a local interactive terminal, excludes overlapping Live/diagnostic work and obtains explicit consent before passing the default LiveAudio.launch factory. Sequence ownership protects late consent; speakerProbe abort and identity checks suppress late publication, and stop/session events cancel the diagnostic. Inside runSpeakerCheck, external cancellation and the six-second deadline feed one controller; factory/start/play waiting is bounded, a late factory handle remains owned and is closed, and normal/error/abort exits share bounded shutdown. Measurement caps capture at four seconds, records overflow, interpolates the 16k reference into 24k playback frames, measures baseline and tail, and rejects incomplete/queued windows before waveform interpretation. Its finally disables capture and clears PCM/reference/frame before owner stop/close can deliver more callbacks. LiveAudio.start explicitly opens devices; play acknowledges pipe acceptance rather than physical playback, and stop/close owns native termination. The existing submission-relative lag caveat and speaker-summary static/numeric-only output remain intact; native configuration flags are not promoted to AEC-performance evidence. No flush or additional audio state framework is introduced.",
+      "checks": [
+        "Read complete candidate focus and full supplied-base diff; only src/live/speaker-check.ts changes.",
+        "Read actual consent/dispatch/publication/cancellation caller and native launch, start, play, stop, close and terminal-callback implementation; read speaker-summary consumer.",
+        "Static prefix comparison confirmed reference generation and analyzeSpeakerCheck identical to f988b37e1a2ab6421cb7ee87edfa69cf35ee6c90.",
+        "git diff --check f988b37e1a2ab6421cb7ee87edfa69cf35ee6c90..cb813e8544a802eeda0afe0e01ae45f8b89eacb0 returned clean; resolved exact accepted blob with git rev-parse. No old worktree or dirty test edits imported.",
+        "Read values/readability guidance and corresponding focus ledger evidence; independently evaluated source instead of treating recorded preservation or test evidence as a verdict."
+      ],
+      "limits": [
+        "No tests, setup, builds, native helper launch, device operations, provider connection, credentials or runtime checks performed; parent owns audited batch gates.",
+        "Bounds apply to waits and owned shutdown requests, not proof that arbitrary native operations or physical device shutdown have completed. No AEC, barge-in or audio-quality claim.",
+        "No source, tests, wisdom, old worktrees or uncommitted candidates modified; no delegation, cleanup, recovery, push, PR or merge. Earlier setup host-hash failure was not rerun or bypassed. Parent externally verifies agent.model."
       ]
     },
     {
@@ -14225,13 +14247,15 @@
       "file": "scripts/terminal-perf/navigation-history.ts",
       "initialBlob": "absent",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_130d6085",
       "primaryCommit": "ca4a39af1b7b3f729c7d04504cd22f2ab880ed13",
-      "judgeIds": [],
+      "judgeIds": [
+        "task_529a783b"
+      ],
       "sourceCommit": "ca4a39af1b7b3f729c7d04504cd22f2ab880ed13",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
-      "status": "pending",
+      "status": "accepted",
       "pendingReason": "Untracked helper blob bedf45729fe64d9fbfb6639d6d2dd5c3138742f8 in preserved /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_09b8c468, from incomplete navigation primary task_09b8c468. No committed source candidate, separate primary-focus coverage, or actual-code judge. Preserve; do not join.",
       "acceptedRelatedJudges": [
         "task_cc27bf98"
@@ -14272,24 +14296,43 @@
         "No tests, setup, builds, runtime probes, push, merge or PR actions run; parent owns isolated batch gates.",
         "Independent exact-candidate judgment remains for the parent to launch.",
         "No wisdom or values edits: no new lesson and parent owns aggregate wisdom."
+      ],
+      "result": "The function exposes its whole fixture contract in construction order: validate size, allocate its own root, write the session header, build the alternating u/a parent chain, append alternate at u0, persist JSONL, then return both leaves, byte count, body hash and disposal. The hash exclusion is visible beside the temporary cwd header; no independent graph or lifetime policy is scattered across helpers. Extracting this linear construction would obscure rather than consolidate ownership.",
+      "systemReason": "Scheduled setup opens the returned file and explicitly branches to primaryLeaf; branch-switch and session-reopen alternate between the returned leaves before rebuilding visible messages. Both scheduled teardown and the SDK finally release disk-backed managers before history.dispose. The SDK navigate/resume/fork journey consumes the same two-leaf contract, and the CLI fingerprints this source through the public navigation-workloads entrypoint. Read fixture assertions for persistence, deterministic body hash and alternate parent u0; acceptance is based on these actual journeys, not their execution status.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read only the three assigned focus rows/evidence in repo-wide coverage and ui-terminal-cli area ledgers; did not use prior related acceptance as the verdict.",
+        "Read immutable candidate source with git show, rather than judging checkout HEAD.",
+        "Read actual navigation-workloads setup, sampling, input/resize, branch-switch, reopen, public reexports, CLI dispatch/fingerprints and teardown.",
+        "Read existing terminal-perf-navigation fixture assertions as contract evidence only; no tests executed.",
+        "Read baseline SDK source and its exact diff to d7a44119cc7148769f1042a0929eec7121203f2e; history and its workload consumers have no changes in that candidate.",
+        "Resolved the exact focus blob from ca4a39af1b7b3f729c7d04504cd22f2ab880ed13; candidate equals supplied primaryBase, so there are no changed related source paths."
+      ],
+      "limits": [
+        "Static actual-code judgment only; no setup, tests, builds, formatter, runtime/network/provider/device probe or credential access performed. Parent owns audited isolated batch gates.",
+        "No source edits, delegation, recovery, cleanup, destructive Git operations, push, PR or merge. Existing worktrees and unrelated work preserved.",
+        "No wisdom or values edits; parent owns aggregate wisdom. Model identity verification belongs to parent jobs.inspect.",
+        "The fixture does not catch allocation/write failures to dispose a partially created root; existing failure handling is unchanged and not a new readability regression."
       ]
     },
     {
       "file": "scripts/terminal-perf/navigation-sdk-probe.ts",
       "initialBlob": "absent",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_7ac8ab0a",
       "primaryCommit": "d7a44119cc7148769f1042a0929eec7121203f2e",
-      "judgeIds": [],
+      "judgeIds": [
+        "task_529a783b"
+      ],
       "sourceCommit": "d7a44119cc7148769f1042a0929eec7121203f2e",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
-      "status": "pending",
+      "status": "accepted",
       "pendingReason": "Untracked helper blob 43e30a2d7094921bc195e788f4897b4920054980 in preserved /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_09b8c468, from incomplete navigation primary task_09b8c468. No committed source candidate, separate primary-focus coverage, or actual-code judge. Preserve; do not join.",
       "acceptedRelatedJudges": [
         "task_cc27bf98"
       ],
-      "acceptedBlob": "bc1696b741ddb83b2712d4b9576bbece9c8c186b",
+      "acceptedBlob": "481ff7b573d31037866b107623c8b18aeeed6970",
       "primaryBase": "ca4a39af1b7b3f729c7d04504cd22f2ab880ed13",
       "primaryResult": "A file-local InteractiveNavigationCapture owns the renderer/terminal/profiler association, reset, shared snapshot, stage/input records, input drain measurement, and profiler disposal. The orchestrator retains actual app/runtime ownership, operation labels, exact selector/navigation order, init and awaited lifecycle timing, and lifecycle drain timing. Both capture paths now use one snapshot implementation and return the same evidence fields. Noninteractive output remains empty appInput/appStages. Fetch/provider prohibitions, isolated history/auth paths, disabled resources, cancellation assertion, environment restoration and disk-manager disposal are unchanged.",
       "primaryPaths": [
@@ -14317,19 +14360,41 @@
         "No setup, tests, builds or live SDK/provider/device access run; parent owns audited isolated batch gates and independent exact-candidate judgment.",
         "Structural improvement is a primary proposal, not an independent acceptance verdict. Existing app-stop/disposal failure behavior and pre-try history-open lifetime were left unchanged outside the observed capture-reading burden.",
         "No per-worker wisdom edits; parent owns aggregate wisdom."
+      ],
+      "result": "InteractiveNavigationCapture gives one concrete owner to the renderer/terminal/profiler association, resets, snapshots, stage/input evidence and profiler disposal. Previously stage capture reached through app plus optional appTerminal/appProfiler while input capture independently repeated output/screen/frame collection. The candidate removes that reconstruction: both paths consume the same snapshot and record shape. This is a bounded measurement owner, not an orchestrator context bag. The outer function still visibly orders construction/init, named key actions, awaitable navigation/resume/fork, final context and teardown.",
+      "systemReason": "Traced initialized input actions and lifecycle call wrapper: operation labels are set before sync instrumentation; input duration stops on callback return, then the explicitly non-CPU 40ms drain precedes evidence; lifecycle initial-sync and awaited elapsed timing remain outside capture, with its reset before the action and stage after the drain. CLI, interaction-worker, interaction-normalize and selector-lifecycle-probe consume the same appInput/appStages fields; noninteractive arrays remain empty. Installed InteractiveMode rebind applies settings without replacing this renderer during resume/fork, matching the capture association. Profiler snapshot copies frames; dispose restores its patches. The runtime factory still instruments each replacement manager, disables resources/tools, rejects fetch/provider access, and retains app/runtime shutdown, scoped environment restoration and disk-store-before-history disposal. Only the probe source changes against the supplied primaryBase.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read only the three assigned focus rows/evidence in repo-wide coverage and ui-terminal-cli area ledgers; did not use prior related acceptance as the verdict.",
+        "Read immutable candidate source with git show, rather than judging checkout HEAD.",
+        "Read actual navigation-workloads setup, sampling, input/resize, branch-switch, reopen, public reexports, CLI dispatch/fingerprints and teardown.",
+        "Read existing terminal-perf-navigation fixture assertions as contract evidence only; no tests executed.",
+        "Read the entire exact candidate probe, baseline capture state/paths, and git diff ca4a39af1b7b3f729c7d04504cd22f2ab880ed13..d7a44119cc7148769f1042a0929eec7121203f2e; the only changed source path is scripts/terminal-perf/navigation-sdk-probe.ts.",
+        "Read profiler snapshot/clear/dispose, disk-manager disposal, actual worker and normalization evidence consumers, and selector probe lifecycle instrumentation.",
+        "Read installed pi-coding-agent runtime switchSession/fork/dispose and InteractiveMode injected-terminal construction, init, rebind/settings and stop; read installed pi-tui start/stop via allowed existing node_modules, read-only.",
+        "Resolved exact candidate focus blob 481ff7b573d31037866b107623c8b18aeeed6970 (not the baseline blob still recorded in ledger)."
+      ],
+      "limits": [
+        "Static actual-code judgment only; no setup, tests, builds, formatter, runtime/network/provider/device probe or credential access performed. Parent owns audited isolated batch gates.",
+        "No source edits, delegation, recovery, cleanup, destructive Git operations, push, PR or merge. Existing worktrees and unrelated work preserved.",
+        "No wisdom or values edits; parent owns aggregate wisdom. Model identity verification belongs to parent jobs.inspect.",
+        "Existing history/manager setup occurs before the try, and app.stop throwing can skip profiler/runtime disposal in the inner try; unchanged failure behavior is outside this capture-focused change.",
+        "Counting terminal and fixed drain are explicitly offline fixture evidence, not PTY/backpressure, complete async continuation CPU, authenticated or device UX proof."
       ]
     },
     {
       "file": "scripts/terminal-perf/navigation-terminal.ts",
       "initialBlob": "absent",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_1e242769",
       "primaryCommit": "ca4a39af1b7b3f729c7d04504cd22f2ab880ed13",
-      "judgeIds": [],
+      "judgeIds": [
+        "task_529a783b"
+      ],
       "sourceCommit": "ca4a39af1b7b3f729c7d04504cd22f2ab880ed13",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
-      "status": "pending",
+      "status": "accepted",
       "pendingReason": "Untracked helper blob d2643f1280f9769585963939a597ea3154b96dce in preserved /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_09b8c468, from incomplete navigation primary task_09b8c468. No committed source candidate, separate primary-focus coverage, or actual-code judge. Preserve; do not join.",
       "acceptedRelatedJudges": [
         "task_cc27bf98"
@@ -14351,6 +14416,23 @@
         "No repository tests, setup, builds, provider/device/network probes or credential access performed; parent owns audited isolated batch gates and independent judge.",
         "No delegation, push, PR, merge, destructive git operations, recovery or cleanup. Preserved worktrees and unrelated accepted work remain untouched.",
         "No per-worker wisdom or values edits; parent owns aggregate wisdom and there is no new general lesson requiring a values change."
+      ],
+      "result": "The helper keeps its transport state and lifetime together: start stores callbacks, send requires a live input callback and dispatches directly, stop clears both callbacks, and all ANSI output methods append through write. The declaration says this is a counting transport after decoding, so drainInput and setProgress having no transport effects are locally understandable. There is no scattered semantic or measurement authority to repair by extraction.",
+      "systemReason": "Scheduled workload resets writes at sample boundaries, measures send around the actual callback, updates dimensions before resize, mounts TuiAltScreen and stops it before profiler/disk/history disposal. The SDK injects the helper into InteractiveMode, waits for init before key dispatch, samples its writes with the associated renderer and stops the app in finally. Installed TUI.start registers input/resize callbacks and TUI.stop cancels render scheduling and invokes terminal.stop. Renderer scheduling, instrumentation and SDK/disk ownership correctly remain outside this minimal transport.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read only the three assigned focus rows/evidence in repo-wide coverage and ui-terminal-cli area ledgers; did not use prior related acceptance as the verdict.",
+        "Read immutable candidate source with git show, rather than judging checkout HEAD.",
+        "Read actual navigation-workloads setup, sampling, input/resize, branch-switch, reopen, public reexports, CLI dispatch/fingerprints and teardown.",
+        "Read existing terminal-perf-navigation fixture assertions as contract evidence only; no tests executed.",
+        "Read the exact baseline SDK caller plus candidate diff; terminal behavior and dispatch order are unchanged by the capture extraction.",
+        "Read installed pi-tui Terminal interface and TUI.start/TUI.stop using allowed existing dependencies read-only.",
+        "Resolved exact focus blob d2643f1280f9769585963939a597ea3154b96dce from ca4a39af1b7b3f729c7d04504cd22f2ab880ed13; candidate equals supplied primaryBase, so there are no changed related source paths."
+      ],
+      "limits": [
+        "Static actual-code judgment only; no setup, tests, builds, formatter, runtime/network/provider/device probe or credential access performed. Parent owns audited isolated batch gates.",
+        "No source edits, delegation, recovery, cleanup, destructive Git operations, push, PR or merge. Existing worktrees and unrelated work preserved.",
+        "No wisdom or values edits; parent owns aggregate wisdom. Model identity verification belongs to parent jobs.inspect."
       ]
     },
     {

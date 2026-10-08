@@ -1112,19 +1112,20 @@
       "initialBlob": "7000ee28bed1449a679449a65bc3359cb4c126dd",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "e451a8408f4bd0466f9100af49840cbd134cf3ae",
       "integration": "pending",
       "resume": {
-        "status": "pending",
-        "acceptedBlob": "74b94682acfd7e8681e12baff2930b4a076343b0",
+        "status": "accepted",
+        "acceptedBlob": "e451a8408f4bd0466f9100af49840cbd134cf3ae",
         "primaryId": "task_852c860e",
         "primaryCommit": "b50efbd7ce8edab4a938f43c2ff333459fb420c2",
         "judgeIds": [
-          "task_a8982f00"
+          "task_a8982f00",
+          "task_4c8d7aef"
         ],
         "sourceCommit": "928f75078f241c21609ed1cc5c75dbea71436e2b",
-        "state": "needs-rejudge",
-        "reason": "Compared actual candidate source with primary base 0b1faebd03e5eb7711dbcba5a58453564a28cc36, which is also its sole parent. The base makes the reader reconnect three condition splits, repeated historical serialization, duplicate target-selection expressions for hashes and payloads, and three separate wire-frame constructions inside the paid loop. The candidate removes that reconstruction: parseCondition returns validated semantic fields once; the bounded trials map owns instructions, target selection, optional snapshot selection, ordered semantic messages, uniform wire framing and hashes of those exact selected strings. The dispatch loop consumes this prepared payload, adds session-specific metadata and publishes the result. This is a meaningful authority/lifetime separation, not a rename or context bag. Fresh uses only the target; prior copies the four existing user/assistant refusal turns then appends the target; snapshot appends the context-as-data user message then the historical target. Uniform framing still maps user to input_text and assistant to output_text. Unchanged decision: retain the small content/snapshot helpers, instruction variants, prior-refusal text and shared transport instead of introducing more helpers or a generic trial framework; their existing responsibilities are already clear. The moved preparation makes snapshot validation failures occur before Live config/key loading rather than after it, consistent with the stated preparation boundary."
+        "state": "accepted-joined",
+        "reason": "The exact source has an intelligible preparation/dispatch boundary: parseCondition produces validated semantic fields before source reading; trials selects target and optional snapshot once, orders semantic messages, applies one wire framing operation, and hashes those same selected strings. Dispatch does not reconstruct conditions or transcript selection. The small content/snapshot helpers and instruction variants remain local and understandable; no context bag or generic trial framework is needed. Compared with the initial ledger blob 7000ee28bed1449a679449a65bc3359cb4c126dd, this removes repeated parsing, snapshot serialization and parallel target expressions. Important provenance distinction: the supplied primaryBase already contains that structural refactor; the exact candidate delta from ca4a39af is only removal of redundant parentheses. Acceptance is of the independently read complete source, not a claim that this formatting follow-up itself improves structure."
       }
     },
     {
@@ -2546,16 +2547,19 @@
         "commit": null
       },
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "728e62f964f69adb6228d1fbae8b9f536836d1eb",
       "integration": "primary running",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "728e62f964f69adb6228d1fbae8b9f536836d1eb",
         "primaryId": "task_1a43b3b3",
         "primaryCommit": "aafa007249fb4e924ecbdf11bd4825e3445e88b7",
-        "judgeIds": [],
+        "judgeIds": [
+          "task_4c8d7aef"
+        ],
         "sourceCommit": "aafa007249fb4e924ecbdf11bd4825e3445e88b7",
-        "state": "needs-judge",
-        "reason": "Primary was allocated, but no candidate commit or completed focus judgment is recorded. Preserve its worktree; do not treat the stale running status as proof of current execution."
+        "state": "accepted-joined",
+        "reason": "runLiveSetup already expresses the configuration journey in one short, linear loop. Status inspection, the configured-key menu, eligibility-gated missing/OAuth instructions, explicit import/recheck/cancel selection and retry after import are visible where their consequences occur. explained only suppresses repeated instructions; it does not authorize anything. Abort checks after status and selection and the loop condition after import keep authorization local. Splitting this into branch helpers or a state framework would hide a readable sequence rather than eliminate reconstruction. The exact unchanged blob deserves retention, not cosmetic cleanup."
       }
     },
     {
@@ -2570,16 +2574,19 @@
         "commit": null
       },
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "141bd8d0d32972a110cbf4655b8f1e2caf82f8be",
       "integration": "primary running",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "141bd8d0d32972a110cbf4655b8f1e2caf82f8be",
         "primaryId": "task_c13efc43",
         "primaryCommit": "cb813e8544a802eeda0afe0e01ae45f8b89eacb0",
-        "judgeIds": [],
+        "judgeIds": [
+          "task_4c8d7aef"
+        ],
         "sourceCommit": "cb813e8544a802eeda0afe0e01ae45f8b89eacb0",
-        "state": "needs-judge",
-        "reason": "Primary was allocated, but no candidate commit or completed focus judgment is recorded. Preserve its worktree; do not treat the stale running status as proof of current execution."
+        "state": "accepted-joined",
+        "reason": "The refactor separates two real lifetimes rather than arbitrary blocks: runSpeakerCheck owns deadline, factory acquisition, terminal helper callbacks, failure normalization, late acquisition close and bounded stop/close; measureSpeakerReturn owns capture callbacks, PCM/reference/frame storage, baseline/playback/tail measurement and zeroing. The acquisition callback is narrow and effectful, not a shared context bag: measurement installs capture observers before the owner launches native audio. waitForAudio makes bounded waiting explicit and processingConfiguration keeps static native configuration separate from waveform evidence. Overflow/pending playback outcomes now occur before correlation work. Reference generation, full-rate lag search, signal thresholds and public result/signature are preserved; their existing cohesive numerical implementation needs no new abstraction."
       }
     },
     {
@@ -5077,7 +5084,7 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 90,
-    "pending": 60
+    "accepted": 93,
+    "pending": 57
   }
 }

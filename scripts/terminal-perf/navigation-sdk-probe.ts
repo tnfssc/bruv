@@ -25,6 +25,76 @@ import { attachTerminalProfiler, type TerminalFrameSample } from "./profiler";
 const hash = (value: string | Uint8Array) => createHash("sha256").update(value).digest("hex");
 type SyncSegment = { name: string; durationMs: number; startedAtMs: number };
 
+type InteractiveStage = {
+  name: string;
+  frames: TerminalFrameSample[];
+  screenHash: string;
+  outputHash: string;
+  outputBytes: number;
+};
+type InteractiveInput = InteractiveStage & {
+  durationMs: number;
+  schedulerDelayMs: number | null;
+};
+
+/** Keeps each frame snapshot paired with the terminal writes and screen it describes. */
+class InteractiveNavigationCapture {
+  readonly stages: InteractiveStage[] = [];
+  readonly inputs: InteractiveInput[] = [];
+  private readonly profiler: ReturnType<typeof attachTerminalProfiler>;
+
+  constructor(
+    private readonly renderer: TuiAltScreen,
+    private readonly terminal: NavigationTerminal,
+  ) {
+    this.profiler = attachTerminalProfiler(renderer, { capacity: 128 });
+  }
+
+  reset() {
+    this.profiler.clear();
+    this.terminal.writes = [];
+  }
+
+  private snapshot() {
+    const frames = this.profiler.snapshot().frames;
+    const output = this.terminal.writes.join("");
+    return {
+      frames,
+      screenHash: hash((this.renderer as unknown as { previousScreen: string[] }).previousScreen.join("\n")),
+      outputHash: hash(output),
+      outputBytes: Buffer.byteLength(output),
+    };
+  }
+
+  captureStage(name: string) {
+    this.stages.push({ name, ...this.snapshot() });
+  }
+
+  async captureInput(name: string, action: () => void) {
+    this.reset();
+    const start = performance.now();
+    action();
+    const returnedAtMs = performance.now();
+    const durationMs = returnedAtMs - start;
+    // This wait is only an offline capture drain, NOT scheduler latency or CPU evidence.
+    await Bun.sleep(40);
+    const sample = this.snapshot();
+    this.inputs.push({
+      name,
+      durationMs,
+      schedulerDelayMs:
+        sample.frames[0] && sample.frames[0].startedAtMs >= returnedAtMs
+          ? sample.frames[0].startedAtMs - returnedAtMs
+          : null,
+      ...sample,
+    });
+  }
+
+  dispose() {
+    this.profiler.dispose();
+  }
+}
+
 /** Real offline AgentSession API probe. Async elapsed is NOT synchronous CPU work. */
 export async function runOfflineNavigationSdkProbe(size = 4, options: { interactive?: boolean } = {}) {
   installDiskBackedSessionManager();
@@ -52,35 +122,7 @@ export async function runOfflineNavigationSdkProbe(size = 4, options: { interact
   };
   globalThis.fetch = Object.assign(forbiddenFetch, { preconnect: forbiddenFetch });
   let app: InteractiveMode | undefined;
-  let appTerminal: NavigationTerminal | undefined;
-  const appStages: Array<{
-    name: string;
-    frames: TerminalFrameSample[];
-    screenHash: string;
-    outputHash: string;
-    outputBytes: number;
-  }> = [];
-  const captureStage = (name: string) => {
-    const renderer = (app as unknown as { renderer: TuiAltScreen }).renderer;
-    const output = appTerminal!.writes.join("");
-    appStages.push({
-      name,
-      frames: appProfiler!.snapshot().frames,
-      screenHash: hash((renderer as unknown as { previousScreen: string[] }).previousScreen.join("\n")),
-      outputHash: hash(output),
-      outputBytes: Buffer.byteLength(output),
-    });
-  };
-  let appProfiler: ReturnType<typeof attachTerminalProfiler> | undefined;
-  const appInput: Array<{
-    name: string;
-    durationMs: number;
-    schedulerDelayMs: number | null;
-    screenHash: string;
-    outputHash: string;
-    outputBytes: number;
-    frames: TerminalFrameSample[];
-  }> = [];
+  let appCapture: InteractiveNavigationCapture | undefined;
   const priorAgentDir = process.env.PI_CODING_AGENT_DIR;
   process.env.PI_CODING_AGENT_DIR = history.root;
   const priorAssetDir = process.env.PI_PACKAGE_DIR;
@@ -137,7 +179,6 @@ export async function runOfflineNavigationSdkProbe(size = 4, options: { interact
     });
     if (options.interactive) {
       const terminal = new NavigationTerminal(80, 24);
-      appTerminal = terminal;
       operation = "InteractiveMode.constructor";
       app = sync(
         operation,
@@ -155,37 +196,19 @@ export async function runOfflineNavigationSdkProbe(size = 4, options: { interact
         instance[name] = (...args: unknown[]) => sync("InteractiveMode." + name, () => original(...args));
       }
       const renderer = instance.renderer as TuiAltScreen;
-      appProfiler = attachTerminalProfiler(renderer, { capacity: 128 });
+      const capture = new InteractiveNavigationCapture(renderer, terminal);
+      appCapture = capture;
       operation = "InteractiveMode.init";
       const start = performance.now();
       const pending = app.init();
       const initialSyncMs = performance.now() - start;
       await pending;
       elapsed.push({ name: operation, startedAtMs: start, initialSyncMs, elapsedMs: performance.now() - start });
-      captureStage(operation);
+      capture.captureStage(operation);
       // Actual app keybinding and actual app selector entrypoints on a constructed, initialized mode.
-      const input = async (name: string, action: () => void) => {
+      const input = (name: string, action: () => void) => {
         operation = name;
-        appProfiler!.clear();
-        terminal.writes = [];
-        const start = performance.now();
-        sync(name, action);
-        const returnedAtMs = performance.now();
-        const durationMs = returnedAtMs - start;
-        // This wait is only an offline capture drain, NOT scheduler latency or CPU evidence.
-        await Bun.sleep(40);
-        const frames = appProfiler!.snapshot().frames;
-        const output = terminal.writes.join("");
-        appInput.push({
-          name,
-          durationMs,
-          schedulerDelayMs:
-            frames[0] && frames[0].startedAtMs >= returnedAtMs ? frames[0].startedAtMs - returnedAtMs : null,
-          screenHash: hash((renderer as unknown as { previousScreen: string[] }).previousScreen.join("\n")),
-          outputHash: hash(output),
-          outputBytes: Buffer.byteLength(output),
-          frames,
-        });
+        return capture.captureInput(name, () => sync(name, action));
       };
       await input("InteractiveMode.ctrl-o", () => terminal.send("\x0f"));
       await input("InteractiveMode.showSessionSelector", () => (instance.showSessionSelector as () => void).call(app));
@@ -196,17 +219,16 @@ export async function runOfflineNavigationSdkProbe(size = 4, options: { interact
     // Awaited lifecycle elapsed is not CPU. These sync method spans can overlap (nested calls).
     const call = async (name: string, action: () => Promise<unknown>) => {
       operation = name;
-      appProfiler?.clear();
-      if (appTerminal) appTerminal.writes = [];
+      appCapture?.reset();
       const start = performance.now();
       const pending = action();
       const initialSyncMs = performance.now() - start;
       const result = await pending;
       elapsed.push({ name, startedAtMs: start, elapsedMs: performance.now() - start, initialSyncMs });
-      if (appProfiler) {
+      if (appCapture) {
         // Capture pending real app renders after lifecycle completion; this drain is not CPU time.
         await Bun.sleep(40);
-        captureStage(name);
+        appCapture.captureStage(name);
       }
       if ((result as { cancelled?: boolean }).cancelled) throw new Error(name + " unexpectedly cancelled");
     };
@@ -238,8 +260,8 @@ export async function runOfflineNavigationSdkProbe(size = 4, options: { interact
       size,
       providerCalls,
       fetchCalls,
-      appInput,
-      appStages,
+      appInput: appCapture?.inputs ?? [],
+      appStages: appCapture?.stages ?? [],
       appCaptureDrainMs: options.interactive ? 40 : undefined,
       segments,
       elapsed,
@@ -254,7 +276,7 @@ export async function runOfflineNavigationSdkProbe(size = 4, options: { interact
     operation = "teardown";
     try {
       app?.stop();
-      appProfiler?.dispose();
+      appCapture?.dispose();
       await owner?.dispose();
     } finally {
       if (options.interactive && priorAssetDir !== undefined) process.env.PI_PACKAGE_DIR = priorAssetDir;
