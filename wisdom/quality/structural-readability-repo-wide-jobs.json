@@ -462,6 +462,14 @@
         "branch": "bruv/pr45-judge-scripts-probe-live-startup-au-b60b90b8",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
+      },
+      {
+        "id": "task_695f21d3",
+        "stage": "judge",
+        "focus": "scripts/probe-openai-realtime-setup.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
       }
     ]
   },
@@ -732,7 +740,7 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_785ec99c",
         "branch": "bruv/pr45-judge-scripts-history-storage-probe-785ec99c",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled"
       }
     ]
   },
