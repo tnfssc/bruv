@@ -10909,12 +10909,12 @@
     {
       "file": "tests/execution-previews-tui.test.ts",
       "initialBlob": "5ff3275f99b27de84faed1e746a40fceaff393e5",
-      "status": "pending",
+      "status": "accepted",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_87465dfb",
       "primaryCommit": "a692919690de307dfa03f219b1a94aebbbbc274f",
-      "judgeIds": [],
+      "judgeIds": ["task_409a3482"],
       "sourceCommit": "a692919690de307dfa03f219b1a94aebbbbc274f",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
       "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
@@ -10938,17 +10938,31 @@
         "Git signing disabled only for this source commit (-c commit.gpgsign=false) to avoid accessing signing credentials; no hook/validation guard bypassed. Only sample hooks exist.",
         "Formatter fixture retained at /tmp/pr45-preview-format-dniIvB. Its exact argv/stdout/stderr provenance is embedded in this result artifact. Durable source provenance is the worktree and sourceCommit/sourceBlobs. No fixture cleanup performed.",
         "No per-worker wisdom edits; aggregate wisdom and runtime agent.model verification belong to parent."
+      ],
+      "acceptedBlob": "5ff3275f99b27de84faed1e746a40fceaff393e5",
+      "result": "The actual terminal journey is already linear: one owned HOME/socket, local appendTool transport that records call/result pairs, adjacent successful and failing seeds, then the task-complete seed and regular/offline launch. The compact frame simultaneously establishes label/status, hidden command/output evidence and exactly one settled row. Resize keeps width/hidden-output assertions local; Ctrl-O then exposes those same seeded command, result and task details from scrollback. Seed construction and expansion are not competing authorities. Extracting a fixture context or moving seeds elsewhere would add navigation without clarifying a decision. Exact base/candidate diff confirms this focus is unchanged; the companion unit grouping is assessed separately.",
+      "systemReason": "registerExecuteTool supplies args, labels, shared render state, padding and partial/error flags to executeInputPreview/executeOutputPreview; resultVisible suppresses the native call slot after settlement. Structured status plus actionError owns failure evidence; expansion restores source/text. task-complete is registered through completionPreview, with SDK task-row projection preserving native expanded rendering and image children. The test uses regular mode deliberately because expanded evidence exceeds the viewport, not as a substitute for fullscreen behavior. No launch flags, fixture effects or assertions changed.",
+      "checks": [
+        "Read exact candidate files with git show and compared git diff from b52104104ad2664353d205e9a81e267f122deace, not checkout HEAD. Only candidate-changed source path is tests/execution-previews.test.ts; inspected it in full.",
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Static base/candidate case comparison: same-name bodies preserve statements after reviewed wrapping/trailing commas; mixed failure case splits into unchanged task and execute statement sequences. git diff --check is clean. No test result is claimed.",
+        "Read all 144 candidate focus lines, terminal helper polling/quoting/spawn behavior, renderer wiring, completion dispatch and SDK row integration. Exact focus blob is unchanged from primaryBase."
+      ],
+      "limits": [
+        "Static review only. No setup, tests, builds, network calls, credential/device access, dependency installs, source edits, cleanup or delegation performed. Parent owns audited isolated runtime gates and runtime model verification.",
+        "Durable review provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_409a3482; candidate a692919690de307dfa03f219b1a94aebbbbc274f, primary base b52104104ad2664353d205e9a81e267f122deace. Existing worktrees and candidate evidence retained. No temporary code checkout used.",
+        "Inspected fixture effects without running them: TUI tests create mkdtemp HOME/session or paste/config paths, launch dist/bruv offline with placeholder auth through a named tmux socket, then kill that socket server and remove their owned HOME in existing finally blocks. Fullscreen fixture also writes durable artifacts/tui frames. tests/helpers.ts copies inherited process.env; preview fixture has no explicit tmux config. Parent gates must supply audited explicit argv/env with owned mkdtemp HOME/config/SDK, retain fixtures, and not execute inherited-config or shell cleanup. dist binary, native terminal rendering and external SDK behavior are not runtime-verified here."
       ]
     },
     {
       "file": "tests/execution-previews.test.ts",
       "initialBlob": "8e4b6c11e870f65c670ff089d68223f759f559b4",
-      "status": "pending",
+      "status": "accepted",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_87465dfb",
       "primaryCommit": "a692919690de307dfa03f219b1a94aebbbbc274f",
-      "judgeIds": [],
+      "judgeIds": ["task_409a3482"],
       "sourceCommit": "a692919690de307dfa03f219b1a94aebbbbc274f",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
       "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
@@ -10972,6 +10986,21 @@
         "Git signing disabled only for this source commit (-c commit.gpgsign=false) to avoid accessing signing credentials; no hook/validation guard bypassed. Only sample hooks exist.",
         "Formatter fixture retained at /tmp/pr45-preview-format-dniIvB. Its exact argv/stdout/stderr provenance is embedded in this result artifact. Durable source provenance is the worktree and sourceCommit/sourceBlobs. No fixture cleanup performed.",
         "No per-worker wisdom edits; aggregate wisdom and runtime agent.model verification belong to parent."
+      ],
+      "acceptedRelatedJudges": ["task_409a3482"],
+      "acceptedBlob": "d3d4b20bff13843a3d5bb8c977bdeec591d71de9",
+      "result": "This is a real journey reorganization, not just suite labels. The base made a reader cross task-notification and content tests to reconstruct shared-state settlement, partial spinner updates and settled invalidation. Candidate brings initial/call state, call/result composition, default labels, partial state, caching/invalidation, handoff and outcome precedence into one lifecycle neighborhood. Content/padding/expansion follows under its separate authority. Task presentation now runs from collapsed attention hiding and expanded evidence through failure/title ordering, incomplete metadata and narrow-width risk preservation to SSH fallback and sanitization. Producer-level full-batch omissions, timeout classification and provenance filtering form a separate diagnostic neighborhood rather than interrupting renderer cases. The mixed failure case is split at its existing task/execute boundary with the original statements intact. The narrow registration test remains by itself and the hostile-input width comparison remains visibly cross-renderer; no helper abstraction or context bag hides assertion decisions.",
+      "systemReason": "The suite boundaries follow existing production owners: mutable execute state and immutable settled components in execution-previews.ts; metadata/status normalization and omission summaries in task-rows.ts; completionDiagnosticDetails at the notification producer, counting the full batch before capping rows and stripping output from attention provenance. The registration seam tests configured padding without invoking settings IO; attention hiding does not remove notification dispatch or expanded evidence. Failure/timeout/cancellation/unknown precedence, SSH observation uncertainty, control-sequence sanitization, widths, image representation and output-save warnings remain asserted. No production source changes were introduced.",
+      "checks": [
+        "Read exact candidate files with git show and compared git diff from b52104104ad2664353d205e9a81e267f122deace, not checkout HEAD. Only candidate-changed source path is tests/execution-previews.test.ts; inspected it in full.",
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Static base/candidate case comparison: same-name bodies preserve statements after reviewed wrapping/trailing commas; mixed failure case splits into unchanged task and execute statement sequences. git diff --check is clean. No test result is claimed.",
+        "Read all 653 candidate focus lines, reviewed the original mixed failure case and formatting-only differences, and traced unchanged producer/renderer callers. Readability verdict is based on these authority/journey boundaries, not test counts or a batch summary."
+      ],
+      "limits": [
+        "Static review only. No setup, tests, builds, network calls, credential/device access, dependency installs, source edits, cleanup or delegation performed. Parent owns audited isolated runtime gates and runtime model verification.",
+        "Durable review provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_409a3482; candidate a692919690de307dfa03f219b1a94aebbbbc274f, primary base b52104104ad2664353d205e9a81e267f122deace. Existing worktrees and candidate evidence retained. No temporary code checkout used.",
+        "Inspected fixture effects without running them: TUI tests create mkdtemp HOME/session or paste/config paths, launch dist/bruv offline with placeholder auth through a named tmux socket, then kill that socket server and remove their owned HOME in existing finally blocks. Fullscreen fixture also writes durable artifacts/tui frames. tests/helpers.ts copies inherited process.env; preview fixture has no explicit tmux config. Parent gates must supply audited explicit argv/env with owned mkdtemp HOME/config/SDK, retain fixtures, and not execute inherited-config or shell cleanup. dist binary, native terminal rendering and external SDK behavior are not runtime-verified here."
       ]
     },
     {
@@ -11597,12 +11626,12 @@
     {
       "file": "tests/fullscreen-editor-tui.test.ts",
       "initialBlob": "0765cd545300592af1d228e5fc3c4a5abcc94ecd",
-      "status": "pending",
+      "status": "accepted",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_87465dfb",
       "primaryCommit": "a692919690de307dfa03f219b1a94aebbbbc274f",
-      "judgeIds": [],
+      "judgeIds": ["task_409a3482"],
       "sourceCommit": "a692919690de307dfa03f219b1a94aebbbbc274f",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
       "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
@@ -11626,6 +11655,20 @@
         "Git signing disabled only for this source commit (-c commit.gpgsign=false) to avoid accessing signing credentials; no hook/validation guard bypassed. Only sample hooks exist.",
         "Formatter fixture retained at /tmp/pr45-preview-format-dniIvB. Its exact argv/stdout/stderr provenance is embedded in this result artifact. Durable source provenance is the worktree and sourceCommit/sourceBlobs. No fixture cleanup performed.",
         "No per-worker wisdom edits; aggregate wisdom and runtime agent.model verification belong to parent."
+      ],
+      "acceptedBlob": "0765cd545300592af1d228e5fc3c4a5abcc94ecd",
+      "result": "The actual readiness-versus-geometry distinction is explicit and worth keeping: hasCompleteDraft removes only the prompt gutter and checks all visible content, while its two local unit cases show both prefix rejection and acceptance of geometrically wrong complete drafts. Each mode then owns one HOME/socket/config, polling function, paste transport and frame record. In the wrapped-two case the prefix-only frame is captured and rejected before the remainder arrives; after semantic readiness, row count, blank rows, fullscreen footer anchoring and multiline layout are asserted independently. The 500ms startup-binding wait and 550ms clear-shortcut explanation remain in the same terminal lifetime, followed by settings replacing the editor and Escape restoring prompt/footer adjacency. Finally exports exactly that record and ends the owned server/fixture. A terminal context extraction would obscure this sequence without removing a scattered authority. Exact base/candidate diff confirms this focus is unchanged.",
+      "systemReason": "CompactEditor delegates paste, editing and shortcuts to native CustomEditor while replacing border rows with a fixed two-column prompt gutter. Its render identifies and removes only the native top/bottom border hooks, retaining editable/autocomplete rows. installStartupEditor installs that same compact editor before native init binds actions, and createCompactUI respects an existing editor while owning footer installation/disposal. The test distinguishes regular/footer adjacency from fullscreen bottom anchoring and native settings replacement; semantic readiness cannot wait away a layout regression. The companion unit grouping does not change these callers, timing, dialog restoration, transport or fixture effects.",
+      "checks": [
+        "Read exact candidate files with git show and compared git diff from b52104104ad2664353d205e9a81e267f122deace, not checkout HEAD. Only candidate-changed source path is tests/execution-previews.test.ts; inspected it in full.",
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Static base/candidate case comparison: same-name bodies preserve statements after reviewed wrapping/trailing commas; mixed failure case splits into unchanged task and execute statement sequences. git diff --check is clean. No test result is claimed.",
+        "Read all 152 candidate focus lines and relevant native-editor startup, render and footer callers. Exact focus blob is unchanged from primaryBase."
+      ],
+      "limits": [
+        "Static review only. No setup, tests, builds, network calls, credential/device access, dependency installs, source edits, cleanup or delegation performed. Parent owns audited isolated runtime gates and runtime model verification.",
+        "Durable review provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_409a3482; candidate a692919690de307dfa03f219b1a94aebbbbc274f, primary base b52104104ad2664353d205e9a81e267f122deace. Existing worktrees and candidate evidence retained. No temporary code checkout used.",
+        "Inspected fixture effects without running them: TUI tests create mkdtemp HOME/session or paste/config paths, launch dist/bruv offline with placeholder auth through a named tmux socket, then kill that socket server and remove their owned HOME in existing finally blocks. Fullscreen fixture also writes durable artifacts/tui frames. tests/helpers.ts copies inherited process.env; preview fixture has no explicit tmux config. Parent gates must supply audited explicit argv/env with owned mkdtemp HOME/config/SDK, retain fixtures, and not execute inherited-config or shell cleanup. dist binary, native terminal rendering and external SDK behavior are not runtime-verified here."
       ]
     },
     {
@@ -17794,9 +17837,9 @@
     "baselineFiles": 766,
     "finalGate": "pending; incomplete focus coverage",
     "liveAuth": "unverified/failing; preserved",
-    "accepted": 659,
+    "accepted": 662,
     "total": 823,
-    "pending": 164,
+    "pending": 161,
     "sourceExtras": 57,
     "checkout": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
     "branch": "bruv/readability-pr45-sol-continuation",

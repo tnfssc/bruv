@@ -2402,7 +2402,7 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_409a3482",
         "branch": "bruv/pr45-judge-3-ui-terminal-cli-focuses-409a3482",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled"
       },
       {
         "id": "task_10416205",
@@ -2446,6 +2446,45 @@
         "focus": ["tests/startup.test.ts", "tests/terminal-perf-cli.test.ts", "tests/terminal-perf-navigation.test.ts"],
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_beae5cf1",
         "branch": "bruv/pr45-primary-3-ui-terminal-cli-focuses-beae5cf1",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_5cb6271d",
+        "stage": "primary",
+        "focus": [
+          "tests/terminal-process-fixture.ts",
+          "tests/terminal-perf-options.test.ts",
+          "tests/terminal-perf-report.test.ts"
+        ],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_5cb6271d",
+        "branch": "bruv/pr45-primary-3-ui-terminal-cli-focuses-5cb6271d",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_c3dcbd93",
+        "stage": "primary",
+        "focus": [
+          "tests/terminal-perf-send.test.ts",
+          "tests/terminal-perf-t3-config.test.ts",
+          "tests/terminal-perf-tool-events.test.ts"
+        ],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_c3dcbd93",
+        "branch": "bruv/pr45-primary-3-ui-terminal-cli-focuses-c3dcbd93",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_16837afc",
+        "stage": "primary",
+        "focus": [
+          "tests/terminal-perf-tools.test.ts",
+          "tests/terminal-perf-workloads.test.ts",
+          "tests/tui-harness.test.ts"
+        ],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_16837afc",
+        "branch": "bruv/pr45-primary-3-ui-terminal-cli-focuses-16837afc",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
       }

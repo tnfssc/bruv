@@ -3030,37 +3030,39 @@
     {
       "focus": "tests/execution-previews-tui.test.ts",
       "initialBlob": "5ff3275f99b27de84faed1e746a40fceaff393e5",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "5ff3275f99b27de84faed1e746a40fceaff393e5",
       "integrationState": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "5ff3275f99b27de84faed1e746a40fceaff393e5",
         "primaryId": "task_87465dfb",
         "primaryCommit": "a692919690de307dfa03f219b1a94aebbbbc274f",
-        "judgeIds": [],
+        "judgeIds": ["task_409a3482"],
         "sourceCommit": "a692919690de307dfa03f219b1a94aebbbbc274f",
-        "state": "needs-judge",
-        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+        "state": "accepted-joined",
+        "reason": "The actual terminal journey is already linear: one owned HOME/socket, local appendTool transport that records call/result pairs, adjacent successful and failing seeds, then the task-complete seed and regular/offline launch. The compact frame simultaneously establishes label/status, hidden command/output evidence and exactly one settled row. Resize keeps width/hidden-output assertions local; Ctrl-O then exposes those same seeded command, result and task details from scrollback. Seed construction and expansion are not competing authorities. Extracting a fixture context or moving seeds elsewhere would add navigation without clarifying a decision. Exact base/candidate diff confirms this focus is unchanged; the companion unit grouping is assessed separately."
       }
     },
     {
       "focus": "tests/execution-previews.test.ts",
       "initialBlob": "8e4b6c11e870f65c670ff089d68223f759f559b4",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "d3d4b20bff13843a3d5bb8c977bdeec591d71de9",
       "integrationState": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "d3d4b20bff13843a3d5bb8c977bdeec591d71de9",
         "primaryId": "task_87465dfb",
         "primaryCommit": "a692919690de307dfa03f219b1a94aebbbbc274f",
-        "judgeIds": [],
+        "judgeIds": ["task_409a3482"],
         "sourceCommit": "a692919690de307dfa03f219b1a94aebbbbc274f",
-        "state": "needs-judge",
-        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+        "state": "accepted-joined",
+        "reason": "This is a real journey reorganization, not just suite labels. The base made a reader cross task-notification and content tests to reconstruct shared-state settlement, partial spinner updates and settled invalidation. Candidate brings initial/call state, call/result composition, default labels, partial state, caching/invalidation, handoff and outcome precedence into one lifecycle neighborhood. Content/padding/expansion follows under its separate authority. Task presentation now runs from collapsed attention hiding and expanded evidence through failure/title ordering, incomplete metadata and narrow-width risk preservation to SSH fallback and sanitization. Producer-level full-batch omissions, timeout classification and provenance filtering form a separate diagnostic neighborhood rather than interrupting renderer cases. The mixed failure case is split at its existing task/execute boundary with the original statements intact. The narrow registration test remains by itself and the hostile-input width comparison remains visibly cross-renderer; no helper abstraction or context bag hides assertion decisions."
       }
     },
     {
@@ -3149,19 +3151,20 @@
     {
       "focus": "tests/fullscreen-editor-tui.test.ts",
       "initialBlob": "0765cd545300592af1d228e5fc3c4a5abcc94ecd",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "0765cd545300592af1d228e5fc3c4a5abcc94ecd",
       "integrationState": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "0765cd545300592af1d228e5fc3c4a5abcc94ecd",
         "primaryId": "task_87465dfb",
         "primaryCommit": "a692919690de307dfa03f219b1a94aebbbbc274f",
-        "judgeIds": [],
+        "judgeIds": ["task_409a3482"],
         "sourceCommit": "a692919690de307dfa03f219b1a94aebbbbc274f",
-        "state": "needs-judge",
-        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+        "state": "accepted-joined",
+        "reason": "The actual readiness-versus-geometry distinction is explicit and worth keeping: hasCompleteDraft removes only the prompt gutter and checks all visible content, while its two local unit cases show both prefix rejection and acceptance of geometrically wrong complete drafts. Each mode then owns one HOME/socket/config, polling function, paste transport and frame record. In the wrapped-two case the prefix-only frame is captured and rejected before the remainder arrives; after semantic readiness, row count, blank rows, fullscreen footer anchoring and multiline layout are asserted independently. The 500ms startup-binding wait and 550ms clear-shortcut explanation remain in the same terminal lifetime, followed by settings replacing the editor and Escape restoring prompt/footer adjacency. Finally exports exactly that record and ends the owned server/fixture. A terminal context extraction would obscure this sequence without removing a scattered authority. Exact base/candidate diff confirms this focus is unchanged."
       }
     },
     {
@@ -4829,7 +4832,7 @@
     }
   },
   "resumeStatus": {
-    "accepted": 90,
-    "pending": 23
+    "accepted": 93,
+    "pending": 20
   }
 }
