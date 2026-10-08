@@ -95,7 +95,7 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_46bb6641",
         "branch": "bruv/pr45-judge-scripts-remote-capability-pty-46bb6641",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled"
       },
       {
         "id": "task_51a0ee46",
@@ -121,6 +121,15 @@
         "focus": "scripts/remote-placement-e2e.ts",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_dbde3103",
         "branch": "bruv/pr45-primary-scripts-remote-placement-e2-dbde3103",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_f2c831a6",
+        "stage": "judge",
+        "focus": "scripts/remote-e2e.sh",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_f2c831a6",
+        "branch": "bruv/pr45-judge-scripts-remote-e2e.sh-f2c831a6",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
       }

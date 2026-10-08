@@ -2563,12 +2563,14 @@
     {
       "file": "scripts/remote-capability-pty-e2e.ts",
       "initialBlob": "9d766840abdeaa12b164aae3f0d8f682cc3825c5",
-      "status": "pending",
+      "status": "accepted",
       "area": "remote",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_58c7d1fa",
       "primaryCommit": "bc41663916e35b9e376c6427c50312ccb0765abb",
-      "judgeIds": [],
+      "judgeIds": [
+        "task_46bb6641"
+      ],
       "sourceCommit": "bc41663916e35b9e376c6427c50312ccb0765abb",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
       "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
@@ -2589,6 +2591,38 @@
         "The allowed shared dependency path did not resolve typescript during an attempted static AST read; no installation was attempted. Bun syntax scan and source-byte preservation checks are not typechecking or runtime proof.",
         "Existing fixture behavior remains: process.env inheritance, provider/setup before the outer try, disposable-owner request removal in the stale-request scenario, and existing shutdown methods. No new isolation/lifecycle/security assurance is claimed.",
         "No per-worker wisdom edits; parent owns aggregate wisdom. No delegation, push, PR creation/merge, or deletion/cleanup commands were performed."
+      ],
+      "acceptedBlob": "41a45a1f07e3a516df9fb8c1514f720296fd5903",
+      "result": "Read the actual candidate and its primary base/direct parent 955feded55c7125658094bbef862244ee9b5941e, not checkout HEAD. Previously one long try mixed normal owned-placement policy proof, diagnostic request creation, PTY snapshot behavior, grant authority and revocation authority. The candidate exposes those five substantive journeys in order at lines 363–381. verifyOwnedPlacement keeps target discovery, decoded task identity, terminal-state observation and destination execution evidence together. seedDiagnosticCapabilityRequests keeps diagnostic launch, request lookup, unsupported-request injection and synchronization together and returns the task ID. startCapabilityPtyAndVerifySnapshot owns PTY startup and the displayed snapshot versus explicit-refresh experiment. verifyGrantRequiresHumanConsent keeps unsupported denial, displayed scope, Escape, stale-request denial/restoration, No, Yes and grant-ledger checks in one authority journey. verifyRevokeRequiresHumanConsent keeps cancel/confirm actions, ledger checks and final visible results together. This is a navigable behavioral decomposition, not rename-only cleanup or a context framework. The task ID and observing RPC fixture are explicit parameters; no new mutable state is introduced. Unchanged decision: retain the existing narrow pane/key/select/evidence helpers, task-filtered grant inventory and single outer shutdown owner. Their jobs are already clear and splitting each UI action from its assertion would make these journeys harder to read. The helpers deliberately share one fixture HOME and tmux pane; sequential calls, rather than a reusable independent-phase API, are appropriate here.",
+      "systemReason": "Followed scripts/remote-e2e.sh into the compiled CLI harness: it supplies a disposable HOME, fixture agent directory and fixture SSH configuration, then selects this script through REMOTE_E2E_SCRIPT. loopbackParent supplies a fake local provider; fixtureRpc registers each child in rpcChildren, observes events and explicitly denies RPC confirmation requests. The owned-placement probe uses placement-parent.ts to discover an authorized fixture target and launch a normal async SSH child; fake-provider.ts checks normal/depth1 policy and delegation denial before the destination shell marker is observed. That path remains distinct from the unowned diagnostic capability task. The PTY exercises src/remote/extension.ts: the picker takes a request snapshot, inbox refresh explicitly syncs, unsupported kinds cannot reach confirmation, grant confirmation displays repository/owner/kind scope, and a fresh task/request/scope check precedes grantCapabilities. services.ts and ClientCapabilityStore persist task-scoped grants and revoked markers, matching the harness ledger observations rather than deriving authority from displayed remote requests. Revocation confirmation is separate from grant confirmation and ends local authority before best-effort owner notification. The candidate preserves this full order, all evidence calls and assertions, the early owned-child SIGKILL, and the outer finally that kills all registered RPC children, stops the provider and shuts down the private tmux server. Unchanged related-source decision: no caller, fixture, menu or capability-service edit is needed for this extraction; the fixture return type exactly matches the passed RPC observers. These are static journey findings, not claims that real authorization, credentials, devices or the runtime flow were exercised.",
+      "checks": [
+        {
+          "kind": "guidance-and-ledgers",
+          "result": "Read wisdom/values.md, structural-readability-guidance.md, repo-wide scope/assignment/coverage context and remote area ledger, including the pending focus record and safety-pause history."
+        },
+        {
+          "kind": "git-scope-and-identity",
+          "result": "Candidate direct parent equals the supplied primary base. git diff --name-status reports exactly one changed source path, the focus. Recorded its exact candidate blob."
+        },
+        {
+          "kind": "static-preservation",
+          "result": "Compared each of the five journey operation bodies against the base: all are textually preserved. Fixture/helper prefix and outer finally are textually identical. Reviewed the added return of diagnostic task ID and sequential awaited orchestration."
+        },
+        {
+          "kind": "git-diff-check",
+          "result": "git diff --check primary-base candidate passed."
+        },
+        {
+          "kind": "execution",
+          "result": "No setup, repository tests, builds, fixture execution, credential/device access, recovery, source edits, delegation or destructive operations. Only read-only Git/filesystem inspection and this untracked result-file write."
+        }
+      ],
+      "limits": [
+        "Readability ACCEPT only; runtime, typecheck and isolated batch gates remain parent-owned and were not run here. No real-auth or device proof.",
+        "The phases intentionally depend on the single shared PTY and their displayed-menu entry state; they are not independently invocable test cases.",
+        "Existing fixture initialization before the try and fixed UI sleeps/marker polling are preserved, not newly repaired or runtime-validated.",
+        "The unchanged shell launcher contains EXIT cleanup and destructive fixture teardown. It was read, never executed; parent safety audit must govern any runtime use. No automatic setup failure was bypassed.",
+        "Only the focus is a changed-source acceptance. Related paths were traced at the relevant contracts/authority sections, not given whole-file acceptance. Wisdom and values were not edited; parent owns aggregate wisdom."
       ]
     },
     {

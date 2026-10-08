@@ -41,18 +41,21 @@
     {
       "focus": "scripts/remote-capability-pty-e2e.ts",
       "initialBlob": "9d766840abdeaa12b164aae3f0d8f682cc3825c5",
-      "status": "pending",
+      "status": "accepted",
       "judgeRounds": [],
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "41a45a1f07e3a516df9fb8c1514f720296fd5903",
         "primaryId": "task_58c7d1fa",
         "primaryCommit": "bc41663916e35b9e376c6427c50312ccb0765abb",
-        "judgeIds": [],
+        "judgeIds": [
+          "task_46bb6641"
+        ],
         "sourceCommit": "bc41663916e35b9e376c6427c50312ccb0765abb",
-        "state": "needs-judge",
-        "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+        "state": "accepted-joined",
+        "reason": "Read the actual candidate and its primary base/direct parent 955feded55c7125658094bbef862244ee9b5941e, not checkout HEAD. Previously one long try mixed normal owned-placement policy proof, diagnostic request creation, PTY snapshot behavior, grant authority and revocation authority. The candidate exposes those five substantive journeys in order at lines 363–381. verifyOwnedPlacement keeps target discovery, decoded task identity, terminal-state observation and destination execution evidence together. seedDiagnosticCapabilityRequests keeps diagnostic launch, request lookup, unsupported-request injection and synchronization together and returns the task ID. startCapabilityPtyAndVerifySnapshot owns PTY startup and the displayed snapshot versus explicit-refresh experiment. verifyGrantRequiresHumanConsent keeps unsupported denial, displayed scope, Escape, stale-request denial/restoration, No, Yes and grant-ledger checks in one authority journey. verifyRevokeRequiresHumanConsent keeps cancel/confirm actions, ledger checks and final visible results together. This is a navigable behavioral decomposition, not rename-only cleanup or a context framework. The task ID and observing RPC fixture are explicit parameters; no new mutable state is introduced. Unchanged decision: retain the existing narrow pane/key/select/evidence helpers, task-filtered grant inventory and single outer shutdown owner. Their jobs are already clear and splitting each UI action from its assertion would make these journeys harder to read. The helpers deliberately share one fixture HOME and tmux pane; sequential calls, rather than a reusable independent-phase API, are appropriate here."
       },
-      "acceptedBlob": null
+      "acceptedBlob": "41a45a1f07e3a516df9fb8c1514f720296fd5903"
     },
     {
       "focus": "scripts/remote-e2e.sh",
@@ -4308,7 +4311,7 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 73,
-    "pending": 48
+    "accepted": 74,
+    "pending": 47
   }
 }
