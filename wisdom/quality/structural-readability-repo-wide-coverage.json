@@ -12019,12 +12019,12 @@
     {
       "file": "tests/fixtures/remote-typed-root-placement/Dockerfile",
       "initialBlob": "159f0b8598cbcd3aa0df75c6766681ed87d8284c",
-      "status": "pending",
+      "status": "accepted",
       "area": "remote",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_7db56f55",
       "primaryCommit": "22d3e51fb98828a0b2fb0d29f5f001692b00c7f1",
-      "judgeIds": [],
+      "judgeIds": ["task_2aa0deb6"],
       "sourceCommit": "22d3e51fb98828a0b2fb0d29f5f001692b00c7f1",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
       "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
@@ -12042,17 +12042,30 @@
         "No source changes or new commit. Artifact remains untracked in the durable assigned worktree; old worktrees and candidate evidence preserved.",
         "No new wisdom/values edits: existing simplicity/ownership guidance already covers the decision; parent owns aggregate wisdom.",
         "Dockerfile contains rm -rf in an image RUN instruction. It was read only, never built or executed; this decision is not authorization to execute its cleanup. Parent must audit filesystem/network effects before any gate."
+      ],
+      "acceptedBlob": "159f0b8598cbcd3aa0df75c6766681ed87d8284c",
+      "result": "Read all 15 lines from the pinned blob. The recipe exposes its dependency order directly: ARG/FROM establish the base; USER/RUN prepare destinations; COPY runtime, scenario/provider/proxy, model/settings, child profile, sshd configuration and startup script place each input with its consumer; the last RUN marks executable files and writes the host-identity marker; ENV selects the server agent directory and ENTRYPOINT selects the shell script. There is no obscured control flow or repeated decision that a helper, stage split or path rename would clarify. Leaving it unchanged is a file-specific readability decision, not acceptance from the empty diff.",
+      "systemReason": "Traced networkNoneFixture.buildOfflineImage: it inspects the cached base into a sha256 image ID, checks sshd/git, stages options.files plus Bun and optional compiled bruv, and builds with ROOT_PLACEMENT_BASE=<image ID>, network none and pull false. startContainer binds only generated fixture keys and uses network none/pull never. The root runner maps every copied input, asserts inspected NetworkMode and checks typed-root-host in probe mode; clean-capture intentionally reuses this Dockerfile/entrypoint/SSH transport while replacing provider/scenario/model/profile inputs. sshd_config and entrypoint destinations agree. Static fixture assertions retain no apt-get/no runtime tmux and SSH no-TTY/no-forwarding requirements. The recipe remains the coherent placement authority.",
+      "checks": [
+        "Read exact candidate with git show 22d3e51fb98828a0b2fb0d29f5f001692b00c7f1:<path>; git diff --name-status 22d3e51fb98828a0b2fb0d29f5f001692b00c7f1 22d3e51fb98828a0b2fb0d29f5f001692b00c7f1 is empty (primaryBase equals candidate); no candidate-changed related source paths exist.",
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Static actual-source inspection only; no setup, tests, builds, fixture startup, Docker operations, network requests, credential access or delegation."
+      ],
+      "limits": [
+        "No runtime proof is claimed; parent owns audited isolated gates and runtime agent.model verification (openai-codex/gpt-6.1-sol).",
+        "Durable review worktree: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_2aa0deb6; pinned candidate evidence retained; no temporary code checkout or source edits.",
+        "Reviewed filesystem/network effects without executing them: Docker recipe removes base-layer /root/.bruv, /fixture and /tmp contents; harness cleanup removes its supplied root and owned Docker objects; harness.start resolves Docker context with inherited HOME when DOCKER_HOST is absent. Parent must audit these existing operations before any gate; this review is not execution authorization."
       ]
     },
     {
       "file": "tests/fixtures/remote-typed-root-placement/entrypoint.sh",
       "initialBlob": "e5680c805f076bcae5e02be77e20def1970aff9d",
-      "status": "pending",
+      "status": "accepted",
       "area": "remote",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_7db56f55",
       "primaryCommit": "22d3e51fb98828a0b2fb0d29f5f001692b00c7f1",
-      "judgeIds": [],
+      "judgeIds": ["task_2aa0deb6"],
       "sourceCommit": "22d3e51fb98828a0b2fb0d29f5f001692b00c7f1",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
       "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
@@ -12070,17 +12083,31 @@
         "No source changes or new commit. Artifact remains untracked in the durable assigned worktree; old worktrees and candidate evidence preserved.",
         "No new wisdom/values edits: existing simplicity/ownership guidance already covers the decision; parent owns aggregate wisdom.",
         "Provider background process is not independently supervised by this script; container/harness lifecycle owns teardown. No claim of runtime supervision or signal behavior verification."
+      ],
+      "acceptedBlob": "e5680c805f076bcae5e02be77e20def1970aff9d",
+      "result": "Read the complete six-line shell script from the pinned blob. set -eu makes key-copy failures terminate startup; each install names both its mounted source and mode-600 destination. The background Bun provider names its log sink in the same line, then exec puts foreground sshd in the container main-process role with its explicit config. This already shows ownership and sequencing without hiding effects behind startup helpers. I would not add a readiness supervisor here for readability.",
+      "systemReason": "Dockerfile creates /run/sshd and installs the script as the image entrypoint; startContainer mounts generated host/private and client/public keys read-only at /keys. sshd_config consumes exactly /run/sshd/hostkey and /run/sshd/client.pub and forbids password authentication, TTY and forwarding. connectPinnedSsh owns the generated identity, pinned known_hosts and SSH readiness polling; harness.start separately polls the provider health endpoint after SSH is ready. Both typed-root and clean-capture use that harness. The root runner preserves provider stdout/stderr and Docker logs before harness teardown. Readiness therefore has one existing harness authority; no script-local loop or supervisor is needed for this assigned readability task.",
+      "checks": [
+        "Read exact candidate with git show 22d3e51fb98828a0b2fb0d29f5f001692b00c7f1:<path>; git diff --name-status 22d3e51fb98828a0b2fb0d29f5f001692b00c7f1 22d3e51fb98828a0b2fb0d29f5f001692b00c7f1 is empty (primaryBase equals candidate); no candidate-changed related source paths exist.",
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Static actual-source inspection only; no setup, tests, builds, fixture startup, Docker operations, network requests, credential access or delegation."
+      ],
+      "limits": [
+        "No runtime proof is claimed; parent owns audited isolated gates and runtime agent.model verification (openai-codex/gpt-6.1-sol).",
+        "Durable review worktree: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_2aa0deb6; pinned candidate evidence retained; no temporary code checkout or source edits.",
+        "Reviewed filesystem/network effects without executing them: Docker recipe removes base-layer /root/.bruv, /fixture and /tmp contents; harness cleanup removes its supplied root and owned Docker objects; harness.start resolves Docker context with inherited HOME when DOCKER_HOST is absent. Parent must audit these existing operations before any gate; this review is not execution authorization.",
+        "Background provider lifetime is tied to this fixture container, not actively supervised by sshd; this unchanged design was not exercised."
       ]
     },
     {
       "file": "tests/fixtures/remote-typed-root-placement/fake-provider.ts",
       "initialBlob": "e0be25e37e1014caeeb403c56a7c4b046936a9b5",
-      "status": "pending",
+      "status": "accepted",
       "area": "remote",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_7db56f55",
       "primaryCommit": "22d3e51fb98828a0b2fb0d29f5f001692b00c7f1",
-      "judgeIds": [],
+      "judgeIds": ["task_2aa0deb6"],
       "sourceCommit": "22d3e51fb98828a0b2fb0d29f5f001692b00c7f1",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
       "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
@@ -12099,6 +12126,20 @@
         "No new wisdom/values edits: existing simplicity/ownership guidance already covers the decision; parent owns aggregate wisdom.",
         "Malformed JSON and request-log write failures remain outside the scenario catch; no speculative validation or fallback added.",
         "Loopback/provider/log effects were reviewed statically only; no listener launched and no fixture /tmp paths written."
+      ],
+      "acceptedBlob": "e0be25e37e1014caeeb403c56a7c4b046936a9b5",
+      "result": "Read the entire listener and followed its scenario implementation. The fetch journey is contiguous: loopback listener, GET /health readiness branch, method/path rejection, JSON parsing, request-evidence append, synchronous scenario-to-SSE response, then the scenario error log plus HTTP 400. Routing/framing stays here while response decisions stay in scenario.ts. The try boundary deliberately starts after parsing and evidence persistence, so wrapping the whole handler or extracting a logger/response helper would change or conceal that distinction rather than resolve a reading burden. No refactor is needed.",
+      "systemReason": "models.json points openai-completions at loopback:18765/v1 and distinguishes typed-root/typed-root-normal; settings selects the root model and subagents.json selects the normal model. scenario.response derives fixture actions from model, user markers and tool-call history, rejects unexpected models, and verifies saved human question answers rather than supplying them. scenario.stream synchronously emits chat.completion.chunk frames with tool_calls/stop finish reason and [DONE], matching the adapter SSE content type. entrypoint starts this provider inside the no-network container; harness.start polls the exact /health URL. The root runner verifies both model requests and role/worktree markers in inference JSONL, rejects recorded scenario errors and preserves inference/error/provider logs. Clean-capture substitutes a different provider/scenario with the same transport contract rather than coupling this provider to presentation decisions.",
+      "checks": [
+        "Read exact candidate with git show 22d3e51fb98828a0b2fb0d29f5f001692b00c7f1:<path>; git diff --name-status 22d3e51fb98828a0b2fb0d29f5f001692b00c7f1 22d3e51fb98828a0b2fb0d29f5f001692b00c7f1 is empty (primaryBase equals candidate); no candidate-changed related source paths exist.",
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Static actual-source inspection only; no setup, tests, builds, fixture startup, Docker operations, network requests, credential access or delegation."
+      ],
+      "limits": [
+        "No runtime proof is claimed; parent owns audited isolated gates and runtime agent.model verification (openai-codex/gpt-6.1-sol).",
+        "Durable review worktree: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_2aa0deb6; pinned candidate evidence retained; no temporary code checkout or source edits.",
+        "Reviewed filesystem/network effects without executing them: Docker recipe removes base-layer /root/.bruv, /fixture and /tmp contents; harness cleanup removes its supplied root and owned Docker objects; harness.start resolves Docker context with inherited HOME when DOCKER_HOST is absent. Parent must audit these existing operations before any gate; this review is not execution authorization.",
+        "Malformed JSON and failed evidence writes are outside the explicit scenario error boundary; framework response behavior was not tested. No live provider authentication/device behavior was verified or accessed."
       ]
     },
     {
@@ -21509,9 +21550,9 @@
     "baselineFiles": 766,
     "finalGate": "pending; incomplete focus coverage",
     "liveAuth": "unverified/failing; preserved",
-    "accepted": 753,
+    "accepted": 756,
     "total": 835,
-    "pending": 82,
+    "pending": 79,
     "sourceExtras": 69,
     "checkout": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
     "branch": "bruv/readability-pr45-sol-continuation",

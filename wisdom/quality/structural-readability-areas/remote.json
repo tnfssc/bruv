@@ -2160,50 +2160,53 @@
     {
       "focus": "tests/fixtures/remote-typed-root-placement/Dockerfile",
       "initialBlob": "159f0b8598cbcd3aa0df75c6766681ed87d8284c",
-      "status": "pending",
+      "status": "accepted",
       "judgeRounds": [],
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "159f0b8598cbcd3aa0df75c6766681ed87d8284c",
         "primaryId": "task_7db56f55",
         "primaryCommit": "22d3e51fb98828a0b2fb0d29f5f001692b00c7f1",
-        "judgeIds": [],
+        "judgeIds": ["task_2aa0deb6"],
         "sourceCommit": "22d3e51fb98828a0b2fb0d29f5f001692b00c7f1",
-        "state": "needs-judge",
-        "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+        "state": "accepted-joined",
+        "reason": "Read all 15 lines from the pinned blob. The recipe exposes its dependency order directly: ARG/FROM establish the base; USER/RUN prepare destinations; COPY runtime, scenario/provider/proxy, model/settings, child profile, sshd configuration and startup script place each input with its consumer; the last RUN marks executable files and writes the host-identity marker; ENV selects the server agent directory and ENTRYPOINT selects the shell script. There is no obscured control flow or repeated decision that a helper, stage split or path rename would clarify. Leaving it unchanged is a file-specific readability decision, not acceptance from the empty diff."
       },
-      "acceptedBlob": null
+      "acceptedBlob": "159f0b8598cbcd3aa0df75c6766681ed87d8284c"
     },
     {
       "focus": "tests/fixtures/remote-typed-root-placement/entrypoint.sh",
       "initialBlob": "e5680c805f076bcae5e02be77e20def1970aff9d",
-      "status": "pending",
+      "status": "accepted",
       "judgeRounds": [],
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "e5680c805f076bcae5e02be77e20def1970aff9d",
         "primaryId": "task_7db56f55",
         "primaryCommit": "22d3e51fb98828a0b2fb0d29f5f001692b00c7f1",
-        "judgeIds": [],
+        "judgeIds": ["task_2aa0deb6"],
         "sourceCommit": "22d3e51fb98828a0b2fb0d29f5f001692b00c7f1",
-        "state": "needs-judge",
-        "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+        "state": "accepted-joined",
+        "reason": "Read the complete six-line shell script from the pinned blob. set -eu makes key-copy failures terminate startup; each install names both its mounted source and mode-600 destination. The background Bun provider names its log sink in the same line, then exec puts foreground sshd in the container main-process role with its explicit config. This already shows ownership and sequencing without hiding effects behind startup helpers. I would not add a readiness supervisor here for readability."
       },
-      "acceptedBlob": null
+      "acceptedBlob": "e5680c805f076bcae5e02be77e20def1970aff9d"
     },
     {
       "focus": "tests/fixtures/remote-typed-root-placement/fake-provider.ts",
       "initialBlob": "e0be25e37e1014caeeb403c56a7c4b046936a9b5",
-      "status": "pending",
+      "status": "accepted",
       "judgeRounds": [],
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "e0be25e37e1014caeeb403c56a7c4b046936a9b5",
         "primaryId": "task_7db56f55",
         "primaryCommit": "22d3e51fb98828a0b2fb0d29f5f001692b00c7f1",
-        "judgeIds": [],
+        "judgeIds": ["task_2aa0deb6"],
         "sourceCommit": "22d3e51fb98828a0b2fb0d29f5f001692b00c7f1",
-        "state": "needs-judge",
-        "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+        "state": "accepted-joined",
+        "reason": "Read the entire listener and followed its scenario implementation. The fetch journey is contiguous: loopback listener, GET /health readiness branch, method/path rejection, JSON parsing, request-evidence append, synchronous scenario-to-SSE response, then the scenario error log plus HTTP 400. Routing/framing stays here while response decisions stay in scenario.ts. The try boundary deliberately starts after parsing and evidence persistence, so wrapping the whole handler or extracting a logger/response helper would change or conceal that distinction rather than resolve a reading burden. No refactor is needed."
       },
-      "acceptedBlob": null
+      "acceptedBlob": "e0be25e37e1014caeeb403c56a7c4b046936a9b5"
     },
     {
       "focus": "tests/fixtures/remote-typed-root-placement/models.json",
@@ -4139,8 +4142,8 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 98,
-    "pending": 24
+    "accepted": 101,
+    "pending": 21
   },
   "extraFiles": [
     {
