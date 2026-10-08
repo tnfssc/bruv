@@ -2375,7 +2375,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_14e54bf3",
         "branch": "bruv/pr45-primary-3-ui-terminal-cli-focuses-14e54bf3",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "591968f724dc8456caee006ac7de8fd25de7420e"
       },
       {
         "id": "task_5883fa01",
@@ -2413,6 +2414,15 @@
         ],
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_10416205",
         "branch": "bruv/pr45-judge-3-ui-terminal-cli-focuses-10416205",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_8440f279",
+        "stage": "primary",
+        "focus": ["tests/fixtures/context-usage-cache-scenario.mjs"],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_8440f279",
+        "branch": "bruv/pr45-primary-1-ui-terminal-cli-focuses-8440f279",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
       }

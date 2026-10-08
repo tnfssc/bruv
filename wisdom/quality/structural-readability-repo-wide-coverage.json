@@ -14512,13 +14512,31 @@
       "initialBlob": "ef27b8c491eb4f7f0d3af9da42c023be709eaec7",
       "status": "pending",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_14e54bf3",
+      "primaryCommit": "591968f724dc8456caee006ac7de8fd25de7420e",
       "judgeIds": [],
-      "sourceCommit": "3603e341a47541a137c95c675106c9568374fde1",
+      "sourceCommit": "591968f724dc8456caee006ac7de8fd25de7420e",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
-      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
+      "primaryBase": "5ca3455425acb5d485f7faebaace5510b1c4bcdc",
+      "primaryResult": "createOriginalSdkReference now owns the copied utility, reverse application, import redirection and construction of the complete original SDK reference. It returns utils/Text/Markdown together only after loading the shared reversed utility; the hook merely publishes that reference. Git apply uses explicit argv and a fresh owned HOME/config/agent/TMPDIR environment, mutates only the retained fixture copy, and writes provenance. The differential corpus, full large-content render/cache/resize/invalidate comparisons and segmentation-yield assertions remain intact. Read the actual SDK Text render/cache path, Markdown render/invalidate path and utility patch early-width/ASCII segmentation branches; this is reference lifetime/authority grouping, not a renamed corpus or new layout oracle. No earlier rejected primary candidate exists in the assigned evidence row.",
+      "primaryPaths": ["tests/sdk-text-wrap-performance.test.ts", "tests/startup-tui.test.ts"],
+      "primaryChecks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Inspected assigned reconciliation rows 78-80 and corresponding blob inventory: each is needs-primary / NOT REVIEWED with no dedicated primary candidate or independent rejection verdict.",
+        "git diff --check exited 0 after final formatting.",
+        "Biome format --write on the two changed source paths only, via node:child_process argv, exited 0. Fresh retained HOME/config/agent/TMPDIR fixtures: /tmp/bruv-pr45-format-07LbDx and /tmp/bruv-pr45-format-8BTI5h; each has provenance.json pointing to this durable worktree.",
+        "Inspected filesystem/process effects before any possible gate; no tests, setup or builds executed. Source commit contains only the two listed test source files.",
+        "Exact git show 3603e341a47541a137c95c675106c9568374fde1:tests/sdk-text-wrap-performance.test.ts matched the entire pre-edit working file. Inspected original fixture cleanup but did not execute it."
+      ],
+      "primaryLimits": [
+        "Primary reading decisions only; parent owns fresh independent judgments and audited isolated runtime gates. No test, setup, build, typecheck, live auth/device, provider or network validation performed.",
+        "No delegation, sudo, recovery work, deletion/cleanup command, inherited HOME/config/SDK cleanup, shell traps, destructive git, push, PR, merge, dependency mutation, reinstall or guard bypass. Existing worktrees and candidate evidence retained.",
+        "No per-worker wisdom edits; parent owns aggregate wisdom. Runtime agent.model verification remains parent-owned.",
+        "changedPaths is the complete combined source commit scope for EACH decision, including sibling-focus edits. The settled-render focus itself remains byte-identical.",
+        "SDK reference fixture retained in fs.mkdtemp bruv-wrap-reference-*; provenance.json records worktree and installed SDK path. No reference import or reverse patch executed during this task. Shared dependencies remain read-only."
+      ]
     },
     {
       "file": "tests/session-boundaries.test.ts",
@@ -14662,13 +14680,31 @@
       "initialBlob": "3451aa3fdb6adf55f912719befe93918a1418650",
       "status": "pending",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_14e54bf3",
+      "primaryCommit": "591968f724dc8456caee006ac7de8fd25de7420e",
       "judgeIds": [],
-      "sourceCommit": "c64e61660792a2c6fd13ecdce964b12895fda5f0",
+      "sourceCommit": "591968f724dc8456caee006ac7de8fd25de7420e",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
-      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
+      "primaryBase": "5ca3455425acb5d485f7faebaace5510b1c4bcdc",
+      "primaryResult": "Keep this focus byte-identical. The production installer caches only completed execute tools without native images, invalidates in native updateDisplay and guards restoration ownership. Read native ToolExecutionComponent updateResult/setExpanded/setShowImages/invalidate/handleMouse, CLI install/restore order, preview expansion/partial behavior and density/task-row wrapper lifetimes. These callers explain why the tests keep lifecycle transitions adjacent and the mouse/task overlays above the cached shell. Each install is paired with an explicit finally restore, and the manual restore in the first test deliberately verifies post-uninstall render work rather than being removable duplication. Its synthetic /tmp constructor cwd is not a spawned process or filesystem fixture operation in the exercised text render paths; this focus launches no commands and creates/removes no directories. No source improvement warranted, not an acceptance inferred from test counts.",
+      "primaryPaths": ["tests/sdk-text-wrap-performance.test.ts", "tests/startup-tui.test.ts"],
+      "primaryChecks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Inspected assigned reconciliation rows 78-80 and corresponding blob inventory: each is needs-primary / NOT REVIEWED with no dedicated primary candidate or independent rejection verdict.",
+        "git diff --check exited 0 after final formatting.",
+        "Biome format --write on the two changed source paths only, via node:child_process argv, exited 0. Fresh retained HOME/config/agent/TMPDIR fixtures: /tmp/bruv-pr45-format-07LbDx and /tmp/bruv-pr45-format-8BTI5h; each has provenance.json pointing to this durable worktree.",
+        "Inspected filesystem/process effects before any possible gate; no tests, setup or builds executed. Source commit contains only the two listed test source files.",
+        "Exact git show c64e61660792a2c6fd13ecdce964b12895fda5f0:tests/settled-execute-render.test.ts matched the whole working file. Final focus blob remains 3451aa3fdb6adf55f912719befe93918a1418650."
+      ],
+      "primaryLimits": [
+        "Primary reading decisions only; parent owns fresh independent judgments and audited isolated runtime gates. No test, setup, build, typecheck, live auth/device, provider or network validation performed.",
+        "No delegation, sudo, recovery work, deletion/cleanup command, inherited HOME/config/SDK cleanup, shell traps, destructive git, push, PR, merge, dependency mutation, reinstall or guard bypass. Existing worktrees and candidate evidence retained.",
+        "No per-worker wisdom edits; parent owns aggregate wisdom. Runtime agent.model verification remains parent-owned.",
+        "changedPaths is the complete combined source commit scope for EACH decision, including sibling-focus edits. The settled-render focus itself remains byte-identical.",
+        "No runtime claim about native mouse dispatch, image behavior, theme restoration or adapter cache performance."
+      ]
     },
     {
       "file": "tests/setup.ts",
@@ -14708,13 +14744,32 @@
       "initialBlob": "400c8cec0e31e00ca42ae4581de2c9e6dcf4b873",
       "status": "pending",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_14e54bf3",
+      "primaryCommit": "591968f724dc8456caee006ac7de8fd25de7420e",
       "judgeIds": [],
-      "sourceCommit": "149c9922bd7213e196dc24a7d86d905df9b2cfc6",
+      "sourceCommit": "591968f724dc8456caee006ac7de8fd25de7420e",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
-      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
+      "primaryBase": "5ca3455425acb5d485f7faebaace5510b1c4bcdc",
+      "primaryResult": "createStartupProcess owns one retained mkdtemp home, owned config/cache/data/state/tmp/SDK paths, an explicit non-credential environment and one offline CLI command. It exposes only transport launch/client operations and the fixture/evidence paths needed by the scenarios; tmux and script remain separate real transports, not a fake terminal model. The tmux server uses a private socket under that home and /dev/null configuration; both transports receive explicit argv/env. Scenarios still own their skill fixture setup, frame/click-free autocomplete assertions, alternate-screen checks, evidence and shutdown. Nested finally guarantees the private tmux server stop even if evidence persistence fails, without filesystem deletion. Artifact fixture.json records retained home and durable worktree provenance. Read shared capture/poll/quoting/process helpers and startup policy/editor hooks plus CLI integration. All diagnostic, promotion, skill-command, compact-first-paint and fullscreen/regular assertions are preserved. No dedicated rejection evidence exists for this candidate.",
+      "primaryPaths": ["tests/sdk-text-wrap-performance.test.ts", "tests/startup-tui.test.ts"],
+      "primaryChecks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Inspected assigned reconciliation rows 78-80 and corresponding blob inventory: each is needs-primary / NOT REVIEWED with no dedicated primary candidate or independent rejection verdict.",
+        "git diff --check exited 0 after final formatting.",
+        "Biome format --write on the two changed source paths only, via node:child_process argv, exited 0. Fresh retained HOME/config/agent/TMPDIR fixtures: /tmp/bruv-pr45-format-07LbDx and /tmp/bruv-pr45-format-8BTI5h; each has provenance.json pointing to this durable worktree.",
+        "Inspected filesystem/process effects before any possible gate; no tests, setup or builds executed. Source commit contains only the two listed test source files.",
+        "Exact git show 149c9922bd7213e196dc24a7d86d905df9b2cfc6:tests/startup-tui.test.ts matched the whole pre-edit working file. Original mkdtemp-owned cleanup inspected but not executed; candidate bytes were not merged from any old branch."
+      ],
+      "primaryLimits": [
+        "Primary reading decisions only; parent owns fresh independent judgments and audited isolated runtime gates. No test, setup, build, typecheck, live auth/device, provider or network validation performed.",
+        "No delegation, sudo, recovery work, deletion/cleanup command, inherited HOME/config/SDK cleanup, shell traps, destructive git, push, PR, merge, dependency mutation, reinstall or guard bypass. Existing worktrees and candidate evidence retained.",
+        "No per-worker wisdom edits; parent owns aggregate wisdom. Runtime agent.model verification remains parent-owned.",
+        "changedPaths is the complete combined source commit scope for EACH decision, including sibling-focus edits. The settled-render focus itself remains byte-identical.",
+        "No startup binary, tmux, script or PTY launched. Parent must check the new explicit environment and retained private-socket transports in audited gates; built dist/bruv remains required by these existing integration tests.",
+        "Future test fixture writes are confined to mkdtemp bruv-startup-* and a unique artifacts/tui directory in the durable worktree, linked by fixture.json. Fixtures are retained, not deleted."
+      ]
     },
     {
       "file": "tests/startup.test.ts",
