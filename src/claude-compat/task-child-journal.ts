@@ -1,6 +1,11 @@
 import { open } from "node:fs/promises";
 import type { SessionEntry } from "@earendil-works/pi-coding-agent";
 
+import type { NativeHistory } from "./history";
+import { nativeAssistantCost } from "./message-usage";
+import type { ChildEntrySource } from "./task-binding";
+import { type ChildFrame, nativeTaskId } from "./task-projection";
+
 /** Tail an append-only child journal. In-flight final lines are retried next time. */
 export async function* childJournalEntries(
   path: string,
@@ -46,4 +51,27 @@ export async function* childJournalEntries(
   } finally {
     await file.close();
   }
+}
+
+/** The same durable writer used before runtime child frames are exposed. */
+export async function writeNativeChildFrame(
+  history: NativeHistory | undefined,
+  { link, entry }: ChildEntrySource,
+  frame: ChildFrame,
+): Promise<boolean | undefined> {
+  if (!history || frame.type === "stream_event") return;
+  const child = await history.child({
+    taskId: nativeTaskId(link),
+    sourceSessionId: link.child.sourceSessionId,
+    sourceCallId: link.launchToolUseId,
+  });
+  const written = await child.appendWithResult({
+    sourceMessageId: entry.id,
+    type: frame.type,
+    message: frame.message,
+    ...(entry.message.role === "assistant" ? nativeAssistantCost(entry.message) : {}),
+    timestamp: entry.timestamp,
+    uuid: frame.uuid,
+  });
+  return written.appended;
 }

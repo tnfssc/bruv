@@ -175,7 +175,7 @@ describe.skipIf(!existsSync(sdkPath) && process.env.BRUV_REQUIRE_CLAUDE_SDK !== 
           { type: "tool_result", tool_use_id: "actual-tool", content: "already-ran", is_error: false },
         ]),
       );
-      const checkpoint = await history.append(assistant("pi-finish"));
+      const checkpoint = await history.append(assistant("pi-finish", undefined, { costUSD: 0.019 }));
       await history.append(user("pi-excluded", "must not be imported"));
       const child = await history.child({
         taskId: "task_actual",
@@ -198,6 +198,7 @@ describe.skipIf(!existsSync(sdkPath) && process.env.BRUV_REQUIRE_CLAUDE_SDK !== 
       expect(conversation.every((e) => ![u, a, r, checkpoint].includes(e.uuid!))).toBe(true);
       expect(conversation.map((e) => e.parentUuid)).toEqual([null, ...conversation.slice(0, -1).map((e) => e.uuid)]);
       expect(conversation[1]!.bruv?.sourceMessageId).toBe("pi-tool");
+      expect(conversation[3]!.costUSD).toBe(0.019);
       await expect(NativeHistory.open(forkOptions)).rejects.toThrow("import SDK forks");
       const result = await importNativeHistory({ ...forkOptions, sessionDir: join(dir, "new-pi") });
       expect(result.ownership).toBe("imported-history-only");
