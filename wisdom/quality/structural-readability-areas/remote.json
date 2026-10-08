@@ -3695,7 +3695,7 @@
     {
       "focus": "tests/root-placement-policy.test.ts",
       "initialBlob": "a4d822bf2938bd980be47974618467ccd21a1971",
-      "status": "pending",
+      "status": "accepted",
       "judgeRounds": [],
       "launchBase": "6dab803ed890711836c3d13c14762be8f92456d1",
       "primary": {
@@ -3704,15 +3704,16 @@
         "branch": "bruv/remote-primary-root-placement-policy-tes-eb38bde6"
       },
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "a4d822bf2938bd980be47974618467ccd21a1971",
         "primaryId": "task_44e1a40c",
         "primaryCommit": "7138cd065b32fded3b962d6fdce2799f5ce5db82",
-        "judgeIds": [],
+        "judgeIds": ["task_19508c94"],
         "sourceCommit": "7138cd065b32fded3b962d6fdce2799f5ce5db82",
-        "state": "needs-judge",
-        "reason": "Saved job ended killed with exit143; worktree HEAD equals launch base and working tree has no preserved edit. Ledger running status is stale."
+        "state": "accepted-joined",
+        "reason": "Read the entire exact-candidate focus. Two direct allow assertions establish ordinary main startup and depth-zero server placement. The adjacent rejection loop enumerates depth one with orchestrator role, depth two, invalid depth, URL-only scope, and bearer-only scope; every row retains the cannot reset assertion. It is immediately evident which authority conditions permit or prohibit startup. The tiny loop shares only an assertion, not policy interpretation. A table harness or extracted helper would add navigation without exposing any hidden decision. No structural change is needed."
       },
-      "acceptedBlob": null
+      "acceptedBlob": "a4d822bf2938bd980be47974618467ccd21a1971"
     }
   ],
   "extras": [
@@ -4153,8 +4154,8 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 112,
-    "pending": 10
+    "accepted": 113,
+    "pending": 9
   },
   "extraFiles": [
     {

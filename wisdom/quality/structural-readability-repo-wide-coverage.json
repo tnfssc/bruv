@@ -17030,12 +17030,12 @@
     {
       "file": "tests/root-placement-policy.test.ts",
       "initialBlob": "a4d822bf2938bd980be47974618467ccd21a1971",
-      "status": "pending",
+      "status": "accepted",
       "area": "remote",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_44e1a40c",
       "primaryCommit": "7138cd065b32fded3b962d6fdce2799f5ce5db82",
-      "judgeIds": [],
+      "judgeIds": ["task_19508c94"],
       "sourceCommit": "7138cd065b32fded3b962d6fdce2799f5ce5db82",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
       "pendingReason": "Saved job ended killed with exit143; worktree HEAD equals launch base and working tree has no preserved edit. Ledger running status is stale.",
@@ -17071,6 +17071,21 @@
         "No source changed and no new commit created; sourceCommit is the existing exact worktree HEAD. Formatter requirement is inapplicable with no changed source paths.",
         "No descendants launched. Parent remains responsible for runtime model verification.",
         "No wisdom/values edits: no new lesson; parent owns aggregate wisdom. Artifact is untracked and intentionally retained."
+      ],
+      "acceptedBlob": "a4d822bf2938bd980be47974618467ccd21a1971",
+      "result": "Read the entire exact-candidate focus. Two direct allow assertions establish ordinary main startup and depth-zero server placement. The adjacent rejection loop enumerates depth one with orchestrator role, depth two, invalid depth, URL-only scope, and bearer-only scope; every row retains the cannot reset assertion. It is immediately evident which authority conditions permit or prohibit startup. The tiny loop shares only an assertion, not policy interpretation. A table harness or extracted helper would add navigation without exposing any hidden decision. No structural change is needed.",
+      "systemReason": "Followed exact-candidate src/remote/root-options.ts into src/cli.ts and src/remote/root-cli.ts. The parser keeps omitted or explicit local placement on the local startup route, while named placement is dispatched to runRemoteRoot before runLocalConversation and Pi main. assertRootStartupContext converts the supplied depth with Number, demands safe integer zero, and rejects either nonempty scope marker independently; the orchestrator role is not an exception. runRemoteRoot invokes that guard as its first statement, before validating/resolving the pinned target, constructing/reading RemoteClient, opening RootClient, writing placement output, ensureCreated, or presentation. Inspected downstream effect boundaries: RemoteClient.read reads cached state; RootClient.open can spawn Git and persist under its state directory, and ensureCreated can upload pinned source and send create requests. Those operations lie after the startup guard. The focus makes this policy readable without changing these security assertions. Candidate equals supplied primaryBase, so there are no candidate-changed related source paths.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Used git show on exact commit for whole focus, whole root-cli and root-options, relevant CLI dispatch/local bootstrap, and downstream client effect boundaries; did not substitute checkout HEAD.",
+        "git diff --name-status primaryBase candidate was empty (both are 7138cd065b32fded3b962d6fdce2799f5ce5db82); git ls-tree/rev-parse confirmed exact focus blob.",
+        "Static inspection only. No setup, tests, builds, auth, device probes, source edits, dependency changes, cleanup, delegation, or publication performed."
+      ],
+      "limits": [
+        "No runtime assertion execution or end-to-end guard-order proof; parent owns audited isolated gates. Focus exercises the guard directly rather than CLI dispatch.",
+        "Live auth/device behavior and runtime agent.model were not verified; parent owns model verification.",
+        "Durable review provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_19508c94. Candidate/worktree retained; only this untracked result artifact written. No test/source fixtures created.",
+        "No new wisdom note or values edits; this review corroborates existing structural guidance."
       ]
     },
     {
@@ -22136,9 +22151,9 @@
     "baselineFiles": 766,
     "finalGate": "pending; incomplete focus coverage",
     "liveAuth": "unverified/failing; preserved",
-    "accepted": 767,
+    "accepted": 768,
     "total": 835,
-    "pending": 68,
+    "pending": 67,
     "sourceExtras": 69,
     "checkout": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
     "branch": "bruv/readability-pr45-sol-continuation",

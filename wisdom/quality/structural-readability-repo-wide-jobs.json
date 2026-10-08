@@ -636,7 +636,7 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_19508c94",
         "branch": "bruv/pr45-judge-1-remote-focuses-19508c94",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled"
       }
     ]
   },
@@ -1061,6 +1061,19 @@
         "branch": "bruv/pr45-judge-3-live-native-audio-focuses-4c8d7aef",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "handled"
+      },
+      {
+        "id": "task_e1c14025",
+        "stage": "primary",
+        "focus": [
+          "tests/current-pipeline-live.test.ts",
+          "tests/editor-push-to-talk.test.ts",
+          "tests/goals-live.test.ts"
+        ],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_e1c14025",
+        "branch": "bruv/pr45-primary-3-live-native-audio-focuses-e1c14025",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
       }
     ]
   },
