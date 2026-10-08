@@ -59,6 +59,99 @@ bool get(json_object* o, const char* key, json_type type, json_object** value) {
   return json_object_object_get_ex(o, key, value) && json_object_get_type(*value) == type;
 }
 
+// 24k -> 16k band-limited conversion: a small 3:2 FIR, instead of
+// interpolating samples (which aliases 8-12k energy into the AEC reference).
+array<int16_t, 160> echoReference(const array<uint8_t, 480>& bytes) {
+  array<int16_t, 160> ref{};
+  for (int i = 0; i < 160; ++i) {
+    double center = i * 1.5;
+    double sum = 0, weight = 0;
+    for (int tap = -8; tap <= 8; ++tap) {
+      int j = int(center) + tap;
+      double x = j - center;
+      double sinc = x == 0 ? 1 : sin(3.141592653589793 * x * 2 / 3) / (3.141592653589793 * x * 2 / 3);
+      double window = 0.5 + 0.5 * cos(3.141592653589793 * x / 9);
+      double w = sinc * window;
+      sum += load(bytes.data() + 2*clamp(j, 0, 239)) * w;
+      weight += w;
+    }
+    ref[i] = int16_t(clamp(lround(sum / weight), -32768L, 32767L));
+  }
+  return ref;
+}
+
+// Command thread owns generation changes; the audio thread drains frames. All
+// ring and pending-flush changes cross that boundary through these operations.
+class PlaybackBuffer {
+public:
+  enum class AppendResult { Queued, WrongGeneration, Full };
+  struct Frame {
+    array<uint8_t, 480> bytes{};
+    bool flush = false;
+    bool hasAudio = false;
+  };
+
+  bool flush(int nextGeneration, bool active) {
+    lock_guard<mutex> lock(mutex_);
+    if (nextGeneration <= generation_) return false;
+    generation_ = nextGeneration;
+    head_ = size_ = 0;
+    flushPending_ = active;
+    return true;
+  }
+  // The command decoder has already validated complete, canonical PCM16.
+  AppendResult append(int generation, const uint8_t* bytes, size_t byteCount) {
+    lock_guard<mutex> lock(mutex_);
+    if (generation != generation_) return AppendResult::WrongGeneration;
+    size_t samples = byteCount / 2;
+    if (samples > ring_.size() - size_) return AppendResult::Full;
+    for (size_t i = 0; i < samples; ++i)
+      ring_[(head_ + size_ + i) % ring_.size()] = load(bytes + 2*i);
+    size_ += samples;
+    return AppendResult::Queued;
+  }
+  Frame takeFrame() {
+    lock_guard<mutex> lock(mutex_);
+    Frame frame;
+    if (flushPending_) {
+      flushPending_ = false;
+      frame.flush = true;
+      return frame;
+    }
+    for (size_t i = 0; i < frame.bytes.size() / 2; ++i) {
+      if (!size_) break; // Remaining samples are silence, also sent to the AEC.
+      frame.hasAudio = true;
+      store(frame.bytes.data() + 2*i, ring_[head_]);
+      head_ = (head_ + 1) % ring_.size();
+      --size_;
+    }
+    return frame;
+  }
+  bool takeFlush() {
+    lock_guard<mutex> lock(mutex_);
+    bool pending = flushPending_;
+    flushPending_ = false;
+    return pending;
+  }
+  int queuedMs() {
+    lock_guard<mutex> lock(mutex_);
+    return int(size_ / 24);
+  }
+  void clear() {
+    lock_guard<mutex> lock(mutex_);
+    head_ = size_ = 0;
+    flushPending_ = false;
+    // Generation survives stop/start: an old command must not become current.
+  }
+
+private:
+  mutex mutex_;
+  array<int16_t, 24000> ring_{}; // One second max; no playback-path allocation.
+  size_t head_ = 0, size_ = 0;
+  int generation_ = 0;
+  bool flushPending_ = false;
+};
+
 struct Live {
   const char *source, *sink;
   pa_mainloop* loop = nullptr;
@@ -67,16 +160,12 @@ struct Live {
   unique_ptr<webrtc::AudioProcessing> apm;
   thread worker;
   atomic<bool> running{false}, ready{false};
-  mutex queue;
+  PlaybackBuffer playback;
   mutex captureCommands;
   int desiredCaptureEpoch = -2, lastCaptureEpoch = -1;
   uint64_t captureRevision = 0, appliedCaptureRevision = 0;
   CaptureGate captureGate;
   pa_operation* gateTiming = nullptr;
-  array<int16_t, 24000> ring{}; // One second max; never allocate on playback path.
-  size_t head = 0, size = 0;
-  int generation = 0;
-  bool flushPending = false;
   vector<uint8_t> capture;
   size_t captureHead = 0;
   int lastQueued = -1;
@@ -123,9 +212,7 @@ struct Live {
     ready = false;
     if (worker.joinable()) worker.join(); // pa_mainloop_iterate(0): no blocking device calls.
     closePulse();
-    lock_guard<mutex> lock(queue);
-    head = size = 0;
-    flushPending = false;
+    playback.clear();
   }
   void start() {
     if (running) { error("state", "Audio already started"); return; }
@@ -161,8 +248,7 @@ struct Live {
                                       nullptr, nullptr) >= 0;
   }
   void reportQueue(bool force = false) {
-    int ms;
-    { lock_guard<mutex> lock(queue); ms = int(size / 24); }
+    int ms = playback.queuedMs();
     pa_usec_t latency = 0; int negative = 0;
     if (ready && chrono::steady_clock::now() < audioUntil &&
         pa_stream_get_latency(outputStream, &latency, &negative) == 0 && !negative)
@@ -174,53 +260,30 @@ struct Live {
       event("{\"type\":\"played\",\"queuedMs\":" + to_string(ms) + "}");
     }
   }
+  bool flushPlaybackDevice() {
+    pa_operation* op = pa_stream_flush(outputStream, nullptr, nullptr);
+    if (!op) { fail("audio_output"); return false; }
+    pa_operation_unref(op);
+    return true;
+  }
   void render() {
     if (!ready) return;
     while (running && pa_stream_writable_size(outputStream) >= 480) {
-      array<uint8_t, 480> bytes{};
-      bool flush = false;
-      bool hasAudio = false;
-      {
-        lock_guard<mutex> lock(queue);
-        flush = flushPending;
-        if (flush) { flushPending = false; }
-        else for (int i = 0; i < 240; ++i) {
-          int16_t s = 0;
-          if (size) { hasAudio = true; s = ring[head]; head = (head + 1) % ring.size(); --size; }
-          store(bytes.data() + 2*i, s);
-        }
-      }
-      if (flush) {
-        pa_operation* op = pa_stream_flush(outputStream, nullptr, nullptr);
-        if (!op) { fail("audio_output"); return; }
-        pa_operation_unref(op);
+      auto frame = playback.takeFrame();
+      if (frame.flush) {
+        if (!flushPlaybackDevice()) return;
         if (apm->Initialize() != 0) { fail("audio_processing"); return; }
         continue;
       }
-      // 24k -> 16k band-limited conversion: a small 3:2 FIR, instead of
-      // interpolating samples (which aliases 8-12k energy into the AEC reference).
-      array<int16_t, 160> ref{};
-      for (int i = 0; i < 160; ++i) {
-        double center = i * 1.5;
-        double sum = 0, weight = 0;
-        for (int tap = -8; tap <= 8; ++tap) {
-          int j = int(center) + tap;
-          double x = j - center;
-          double sinc = x == 0 ? 1 : sin(3.141592653589793 * x * 2 / 3) / (3.141592653589793 * x * 2 / 3);
-          double window = 0.5 + 0.5 * cos(3.141592653589793 * x / 9);
-          double w = sinc * window;
-          sum += load(bytes.data() + 2*clamp(j, 0, 239)) * w;
-          weight += w;
-        }
-        ref[i] = int16_t(clamp(lround(sum / weight), -32768L, 32767L));
-      }
+      const auto& bytes = frame.bytes;
+      auto ref = echoReference(bytes);
       if (apm->ProcessReverseStream(ref.data(), {16000, 1}, {16000, 1}, ref.data()) != 0) {
         fail("audio_processing"); return;
       }
       if (pa_stream_write(outputStream, bytes.data(), bytes.size(), nullptr, 0, PA_SEEK_RELATIVE) < 0) {
         fail("audio_output"); return;
       }
-      if (hasAudio) {
+      if (frame.hasAudio) {
         pa_usec_t latency = 0; int negative = 0;
         if (pa_stream_get_latency(outputStream, &latency, &negative) < 0 || negative) latency = 20000;
         audioUntil = chrono::steady_clock::now() + chrono::microseconds(latency + 10000);
@@ -286,43 +349,46 @@ struct Live {
       if (!gateTiming) fail("capture_gate");
     }
   }
+  // Called only by the audio thread: open once, validate readiness, then uncork.
+  bool updateStreams() {
+    auto state = pa_context_get_state(context);
+    if (state == PA_CONTEXT_FAILED || state == PA_CONTEXT_TERMINATED) { fail("audio_device"); return false; }
+    if (state == PA_CONTEXT_READY && !input) {
+      if (!openStreams()) { fail("audio_start"); return false; }
+    }
+    if (input) {
+      auto a = pa_stream_get_state(input), b = pa_stream_get_state(outputStream);
+      if (a == PA_STREAM_FAILED || b == PA_STREAM_FAILED || a == PA_STREAM_TERMINATED || b == PA_STREAM_TERMINATED) {
+        fail("audio_device"); return false;
+      }
+      if (!ready && a == PA_STREAM_READY && b == PA_STREAM_READY) {
+        // Pulse may choose a different endpoint even with an explicit name.
+        // Verify both endpoints before announcing ready and uncorking capture.
+        const char* actualSource = pa_stream_get_device_name(input);
+        const char* actualSink = pa_stream_get_device_name(outputStream);
+        if (!actualSource || !actualSink ||
+            pa_stream_get_device_index(input) == PA_INVALID_INDEX ||
+            pa_stream_get_device_index(outputStream) == PA_INVALID_INDEX ||
+            (source && strcmp(source, actualSource)) || (sink && strcmp(sink, actualSink))) {
+          fail("audio_device"); return false;
+        }
+        ready = true;
+        event("{\"type\":\"ready\"}"); // never deliver capture before ready
+        pa_operation* inOp = pa_stream_cork(input, 0, nullptr, nullptr);
+        pa_operation* outOp = pa_stream_cork(outputStream, 0, nullptr, nullptr);
+        if (!inOp || !outOp) { if (inOp) pa_operation_unref(inOp); if (outOp) pa_operation_unref(outOp); fail("audio_device"); return false; }
+        pa_operation_unref(inOp); pa_operation_unref(outOp);
+      }
+    }
+    return true;
+  }
   void pump() {
-    bool opening = false;
     while (running) {
       applyCaptureGate();
       if (!running) break;
       int result = 0;
       if (pa_mainloop_iterate(loop, 0, &result) < 0) { fail("audio_device"); break; }
-      auto state = pa_context_get_state(context);
-      if (state == PA_CONTEXT_FAILED || state == PA_CONTEXT_TERMINATED) { fail("audio_device"); break; }
-      if (state == PA_CONTEXT_READY && !opening) {
-        opening = true;
-        if (!openStreams()) { fail("audio_start"); break; }
-      }
-      if (opening) {
-        auto a = pa_stream_get_state(input), b = pa_stream_get_state(outputStream);
-        if (a == PA_STREAM_FAILED || b == PA_STREAM_FAILED || a == PA_STREAM_TERMINATED || b == PA_STREAM_TERMINATED) {
-          fail("audio_device"); break;
-        }
-        if (!ready && a == PA_STREAM_READY && b == PA_STREAM_READY) {
-          // Pulse may choose a different endpoint even with an explicit name. Both streams
-          // remain corked until the server reports the actual device and index.
-          const char* actualSource = pa_stream_get_device_name(input);
-          const char* actualSink = pa_stream_get_device_name(outputStream);
-          if (!actualSource || !actualSink ||
-              pa_stream_get_device_index(input) == PA_INVALID_INDEX ||
-              pa_stream_get_device_index(outputStream) == PA_INVALID_INDEX ||
-              (source && strcmp(source, actualSource)) || (sink && strcmp(sink, actualSink))) {
-            fail("audio_device"); break;
-          }
-          ready = true;
-          event("{\"type\":\"ready\"}"); // never deliver capture before ready
-          pa_operation* inOp = pa_stream_cork(input, 0, nullptr, nullptr);
-          pa_operation* outOp = pa_stream_cork(outputStream, 0, nullptr, nullptr);
-          if (!inOp || !outOp) { if (inOp) pa_operation_unref(inOp); if (outOp) pa_operation_unref(outOp); fail("audio_device"); break; }
-          pa_operation_unref(inOp); pa_operation_unref(outOp);
-        }
-      }
+      if (!updateStreams()) break;
       armCaptureGate();
       if (chrono::steady_clock::now() - startTime > chrono::seconds(5) && !ready) {
         fail("audio_start"); break;
@@ -333,12 +399,8 @@ struct Live {
           fail("audio_device"); break;
         }
         // Flush even if Pulse has no writable space.
-        bool flush;
-        { lock_guard<mutex> lock(queue); flush = flushPending; if (flush) flushPending = false; }
-        if (flush) {
-          pa_operation* op = pa_stream_flush(outputStream, nullptr, nullptr);
-          if (!op) { fail("audio_output"); break; }
-          pa_operation_unref(op);
+        if (playback.takeFlush()) {
+          if (!flushPlaybackDevice()) break;
           packetHalf = 0;
           if (apm->Initialize() != 0) { fail("audio_processing"); break; }
           audioUntil = {};
@@ -351,28 +413,49 @@ struct Live {
       this_thread::sleep_for(chrono::milliseconds(2));
     }
   }
+  void setCaptureGate(json_object* obj) {
+    json_object* value;
+    if (!json_object_object_get_ex(obj, "epoch", &value)) { error("capture_gate", "Missing hold epoch"); return; }
+    int epoch = -1;
+    if (value && json_object_get_type(value) != json_type_null) {
+      if (json_object_get_type(value) != json_type_int) { error("capture_gate", "Invalid hold epoch"); return; }
+      int64_t n = json_object_get_int64(value);
+      if (n < 0 || n > INT32_MAX) { error("capture_gate", "Invalid hold epoch"); return; }
+      epoch = int(n);
+    }
+    lock_guard<mutex> lock(captureCommands);
+    if (epoch >= 0) {
+      if (epoch <= lastCaptureEpoch) { error("capture_gate", "Hold epoch must increase"); return; }
+      lastCaptureEpoch = epoch;
+    }
+    desiredCaptureEpoch = epoch; ++captureRevision;
+  }
+  void play(json_object* obj, int generation) {
+    if (!ready) { error("state", "Start audio before play"); return; }
+    json_object* d;
+    if (!get(obj, "data", json_type_string, &d)) { error("play", "Invalid PCM16 data or generation"); return; }
+    const char* text = json_object_get_string(d);
+    size_t len = json_object_get_string_len(d);
+    if (!len || len > 64000 || len % 4) { error("play", "Invalid PCM16 data or generation"); return; }
+    size_t n = 0;
+    guchar* bytes = g_base64_decode(text, &n);
+    gchar* canonical = g_base64_encode(bytes, n);
+    bool valid = !strcmp(text, canonical) && n && n <= 48000 && n % 2 == 0;
+    g_free(canonical);
+    if (!valid) { g_free(bytes); error("play", "Invalid PCM16 data or generation"); return; }
+    auto result = playback.append(generation, bytes, n);
+    g_free(bytes);
+    if (result == PlaybackBuffer::AppendResult::WrongGeneration)
+      error("play", "Invalid PCM16 data or generation");
+    else if (result == PlaybackBuffer::AppendResult::Full)
+      error("playback_full", "Playback ring full; tail dropped");
+    // Pump emits current queue depth, including Pulse's pending render latency.
+  }
   void command(json_object* obj) {
     json_object* t;
     if (!get(obj, "type", json_type_string, &t)) { error("protocol", "Missing type"); return; }
     const char* action = json_object_get_string(t);
-    if (!strcmp(action, "capture_gate")) {
-      json_object* value;
-      if (!json_object_object_get_ex(obj, "epoch", &value)) { error("capture_gate", "Missing hold epoch"); return; }
-      int epoch = -1;
-      if (value && json_object_get_type(value) != json_type_null) {
-        if (json_object_get_type(value) != json_type_int) { error("capture_gate", "Invalid hold epoch"); return; }
-        int64_t n = json_object_get_int64(value);
-        if (n < 0 || n > INT32_MAX) { error("capture_gate", "Invalid hold epoch"); return; }
-        epoch = int(n);
-      }
-      lock_guard<mutex> lock(captureCommands);
-      if (epoch >= 0) {
-        if (epoch <= lastCaptureEpoch) { error("capture_gate", "Hold epoch must increase"); return; }
-        lastCaptureEpoch = epoch;
-      }
-      desiredCaptureEpoch = epoch; ++captureRevision;
-      return;
-    }
+    if (!strcmp(action, "capture_gate")) { setCaptureGate(obj); return; }
     if (!strcmp(action, "start")) { start(); return; }
     if (!strcmp(action, "stop")) { stop(); event("{\"type\":\"stopped\"}"); return; }
     if (!strcmp(action, "flush") || !strcmp(action, "play")) {
@@ -381,32 +464,10 @@ struct Live {
       int64_t gen = json_object_get_int64(g);
       if (gen < 0 || gen > INT32_MAX) { error("generation", "Invalid generation"); return; }
       if (!strcmp(action, "flush")) {
-        lock_guard<mutex> lock(queue);
-        if (gen <= generation) { error("generation", "Flush generation must increase"); return; }
-        generation = int(gen); head = size = 0; flushPending = running;
+        if (!playback.flush(int(gen), running)) error("generation", "Flush generation must increase");
         return;
       }
-      if (!ready) { error("state", "Start audio before play"); return; }
-      json_object* d;
-      if (!get(obj, "data", json_type_string, &d)) { error("play", "Invalid PCM16 data or generation"); return; }
-      const char* text = json_object_get_string(d);
-      size_t len = json_object_get_string_len(d);
-      if (!len || len > 64000 || len % 4) { error("play", "Invalid PCM16 data or generation"); return; }
-      size_t n = 0;
-      guchar* bytes = g_base64_decode(text, &n);
-      gchar* canonical = g_base64_encode(bytes, n);
-      bool valid = !strcmp(text, canonical) && n && n <= 48000 && n % 2 == 0;
-      g_free(canonical);
-      if (!valid) { g_free(bytes); error("play", "Invalid PCM16 data or generation"); return; }
-      {
-        lock_guard<mutex> lock(queue);
-        if (gen != generation) { g_free(bytes); error("play", "Invalid PCM16 data or generation"); return; }
-        if (n/2 > ring.size() - size) { g_free(bytes); error("playback_full", "Playback ring full; tail dropped"); return; }
-        for (size_t i = 0; i < n/2; ++i) ring[(head + size + i) % ring.size()] = load(bytes + 2*i);
-        size += n/2;
-      }
-      g_free(bytes);
-      // Pump emits current queue depth, including Pulse's pending render latency.
+      play(obj, int(gen));
       return;
     }
     error("protocol", "Unknown command");
@@ -446,4 +507,5 @@ int main(int argc, char** argv) {
     json_tokener_free(tok);
   }
   live.stop();
+  return 0;
 }

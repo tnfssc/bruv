@@ -36,7 +36,24 @@ The amplification count is deterministic; RSS/time are secondary and machine-dep
 Do not use a passing small test as proof this survives incident scale. No production
 fix is made here. The integrated supervisor now enforces RSS/wall/disk budgets. Parent replay uses an actual CoW copy of the failed journal; see [harness evidence](task-history-resource-harness.md).
 
-## Checks
+## Single authoritative child writer (PR45 repair)
+
+The workload now delegates directly to `writeNativeChildFrame` in
+`src/claude-compat/task-child-journal.ts`, as runtime does. That owner keeps
+stream exclusion, causal child identity, append/replay deduplication, and the
+`appended` result together. The removed copy omitted assistant cost; the workload
+now records the production cost semantics, including the fixture's known zero.
+The text-only synthetic translator stays local, but its identical four-field
+usage mapping now calls `nativeAssistantUsage`. Message content and synthetic
+stop reason are unchanged.
+
+Repair validation: source comparison and `git diff --check` only; no workload,
+install/setup retry, tests, or format/type commands were run. Parent owns safe
+integrated checks and the independent quality rejudge. Actual worker model:
+`openai-codex/gpt-6.1-sol` (native-session model-change record). Values unchanged:
+this applies the existing single-owner and truthful-evidence guidance.
+
+## Checks (earlier workload evidence)
 
 - `bun test tests/resource-harness-workload.test.ts tests/claude-compat-task-binding.test.ts`: 4 pass, 0 fail (719 assertions, including isolated connector tests).
 - `bunx tsc --noEmit`: passes.

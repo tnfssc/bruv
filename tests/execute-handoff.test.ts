@@ -164,3 +164,134 @@ for (const message of [42, "", "   ", "x".repeat(2001)])
       mock.mockRestore();
     }
   });
+
+test("accepted handoff cannot hide execution failure or its published launch", async () => {
+  let tool!: ToolDefinition;
+  const launches: unknown[] = [];
+  const mock = spyOn(execution, "executeIsolated").mockImplementation(async (_c, _w, _s, _t, options) => {
+    const signal = new AbortController().signal;
+    await options!.jobHandler!("shell", {}, signal);
+    await options!.jobHandler!("handoff", { message: "Waiting for a dependency" }, signal);
+    return {
+      exitCode: 1,
+      stdout: "",
+      stderr: "failed after handoff",
+      stdoutLost: false,
+      stderrLost: false,
+      timedOut: false,
+      cancelled: false,
+      images: [],
+    };
+  });
+  try {
+    registerExecuteTool(
+      {
+        registerTool(value: ToolDefinition) {
+          tool = value;
+        },
+        on() {},
+        events: { emit: (_event: string, launch: unknown) => launches.push(launch) },
+      } as unknown as ExtensionAPI,
+      async () => ({ id: "surviving-job", kind: "command", status: "running", background: true }),
+    );
+    const pending = tool.execute("failed-handoff", { code: "", label: "Start dependency" }, undefined, undefined, {
+      cwd: process.cwd(),
+    } as ExtensionToolContext);
+    await expect(pending).rejects.toThrow("failed after handoff");
+    await expect(pending).rejects.toThrow("Background jobs: surviving-job");
+    await expect(pending).rejects.not.toThrow("Execution handed off");
+    expect(launches).toEqual([
+      {
+        sessionId: undefined,
+        row: {
+          id: "surviving-job",
+          source: "local",
+          sourceCallId: "failed-handoff",
+          title: "Start dependency",
+          status: "running",
+          terminal: false,
+        },
+      },
+    ]);
+  } finally {
+    mock.mockRestore();
+  }
+});
+
+test("overlapping execute invocations keep handoff and launch evidence with their owner", async () => {
+  let tool!: ToolDefinition;
+  const finishes = new Map<string, () => void>();
+  const launches: unknown[] = [];
+  const waitSignals = new Map<string, AbortSignal>();
+  const mock = spyOn(execution, "executeIsolated").mockImplementation(async (code, _w, _s, _t, options) => {
+    const finished = new Promise<void>((resolve) => finishes.set(code, resolve));
+    const signal = new AbortController().signal;
+    await options!.jobHandler!("shell", { command: code }, signal);
+    if (code === "one") await options!.jobHandler!("handoff", { message: "One is waiting" }, signal);
+    await finished;
+    return {
+      exitCode: 0,
+      stdout: "",
+      stderr: "",
+      stdoutLost: false,
+      stderrLost: false,
+      timedOut: false,
+      cancelled: false,
+      images: [],
+    };
+  });
+  try {
+    registerExecuteTool(
+      {
+        registerTool(value: ToolDefinition) {
+          tool = value;
+        },
+        on() {},
+        events: { emit: (_event: string, launch: unknown) => launches.push(launch) },
+      } as unknown as ExtensionAPI,
+      async (_ctx, _method, params, signal) => {
+        const id = (params as { command: string }).command;
+        waitSignals.set(id, signal);
+        return { id, kind: "command", status: "running", background: true };
+      },
+    );
+    const run = (code: string) =>
+      tool.execute(code, { code, label: "Launch " + code }, undefined, undefined, {
+        cwd: process.cwd(),
+        sessionManager: { getSessionId: () => "session-" + code },
+      } as unknown as ExtensionToolContext);
+    const one = run("one");
+    const two = run("two");
+    try {
+      finishes.get("two")!();
+      const resultTwo = await two;
+      finishes.get("one")!();
+      const resultOne = await one;
+      expect(waitSignals.get("one")!.aborted).toBe(true);
+      expect(waitSignals.get("two")!.aborted).toBe(false);
+      expect(resultTwo).not.toHaveProperty("terminate");
+      expect(resultTwo.details).not.toHaveProperty("handoff");
+      expect(resultTwo.details).toMatchObject({
+        backgroundJobs: ["two"],
+        taskRows: [{ id: "two", sourceCallId: "two", title: "Launch two" }],
+      });
+      expect(resultOne).toHaveProperty("terminate", true);
+      expect(resultOne.details).toMatchObject({
+        handoff: "One is waiting",
+        backgroundJobs: ["one"],
+        taskRows: [{ id: "one", sourceCallId: "one", title: "Launch one" }],
+      });
+      expect(launches).toMatchObject([
+        { sessionId: "session-one", row: { id: "one", sourceCallId: "one" } },
+        { sessionId: "session-two", row: { id: "two", sourceCallId: "two" } },
+      ]);
+    } finally {
+      // Release and drain both owners before restoring the shared execution spy,
+      // including when one call fails while the other is still waiting.
+      for (const finish of finishes.values()) finish();
+      await Promise.allSettled([one, two]);
+    }
+  } finally {
+    mock.mockRestore();
+  }
+});

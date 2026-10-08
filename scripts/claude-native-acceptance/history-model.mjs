@@ -1,10 +1,121 @@
 // Loopback deterministic model; all native frames come from the actual connector.
-import http from "node:http";
 import assert from "node:assert/strict";
+import http from "node:http";
+
 import { modelId } from "./model.mjs";
+
+function textResponse(content) {
+  return { role: "assistant", content };
+}
+
+function executeResponse(code, sequence) {
+  return {
+    role: "assistant",
+    tool_calls: [
+      {
+        index: 0,
+        id: "history_" + sequence,
+        type: "function",
+        function: {
+          name: "execute",
+          arguments: JSON.stringify({ label: "Native history actual tool exchange", code }),
+        },
+      },
+    ],
+  };
+}
+
+// Decide only from the supplied conversation. Forks import context, not a model
+// session's progress or root authority; the child must inspect its own authority.
+function historyReply(body, counter, nextToolSequence) {
+  const messages = body.messages ?? [];
+  const lastUser = messages.findLastIndex((m) => m.role === "user");
+  const user = JSON.stringify(messages[lastUser]?.content ?? "");
+  const results = messages
+    .slice(lastUser + 1)
+    .filter((m) => m.role === "tool")
+    .map((m) => JSON.stringify(m.content))
+    .join("\n");
+  const all = JSON.stringify(messages);
+
+  if (
+    user.includes("Write what next agent needs to continue the work.") &&
+    user.includes("Summarize the whole conversation above.")
+  ) {
+    // Background summaries are genuine model requests, not another user action.
+    const markers = [...new Set(all.match(/HISTORY_[A-Z_]+|orchid-73/g) ?? [])];
+    return textResponse("## Goal\nLocal native history acceptance.\n## Critical Context\n" + markers.join(" "));
+  }
+  if (!body.tools?.length) return textResponse("Local native history acceptance");
+
+  if (user.includes("HISTORY_SEED")) {
+    if (results.includes("HISTORY_TOOL_COMPLETED"))
+      return textResponse("HISTORY_CHECKPOINT: original secret is orchid-73; completed tool recorded.");
+    return executeResponse(
+      `const fs = await import("node:fs/promises");
+await fs.appendFile(${JSON.stringify(counter)}, "root-tool\\n");
+const q = await questions.ask({
+  text: "Native history root-only saved question (do not answer)",
+  dedupKey: "history-root-authority",
+  choices: ["Retain unanswered"],
+  allowFreeText: false,
+});
+const j = await shell("/usr/bin/printf HISTORY_ROOT_JOB_COMPLETED", { waitSeconds: 3 });
+console.log("HISTORY_ROOT_AUTHORITY", JSON.stringify({ question: q, job: j }));
+console.log("HISTORY_TOOL_COMPLETED orchid-73");`,
+      nextToolSequence,
+    );
+  }
+  if (user.includes("HISTORY_ROOT_FUTURE")) return textResponse("HISTORY_ROOT_FUTURE_RESPONSE: original branch only.");
+
+  if (user.includes("HISTORY_CHILD_CONTINUE")) {
+    assert.ok(
+      all.includes("orchid-73") && all.includes("HISTORY_TOOL_COMPLETED") && all.includes("HISTORY_CHECKPOINT"),
+      "fork has complete checkpoint context",
+    );
+    assert.ok(!all.includes("HISTORY_ROOT_FUTURE"), "fork excludes later root branch");
+    if (results) {
+      assert.ok(results.includes("HISTORY_AUTHORITY_EMPTY"), "real child authority inspection");
+      return textResponse("HISTORY_CHILD_CONTEXT_OK orchid-73");
+    }
+    return executeResponse(
+      `const j = await jobs.list({ count: 100 });
+const q = await questions.list();
+console.log("HISTORY_AUTHORITY_INSPECTION", JSON.stringify({ jobs: j, questions: q }));
+if ((j.jobs ?? []).length || (Array.isArray(q) ? q : q.questions ?? []).length)
+  throw Error("Inherited authority");
+console.log("HISTORY_AUTHORITY_EMPTY");`,
+      nextToolSequence,
+    );
+  }
+  if (user.includes("HISTORY_CHILD_FUTURE")) {
+    assert.ok(
+      all.includes("HISTORY_CHILD_CONTEXT_OK") && !all.includes("HISTORY_ROOT_FUTURE"),
+      "later turn stays on hydrated child branch",
+    );
+    return textResponse("HISTORY_CHILD_FUTURE_RESPONSE: removable later turn.");
+  }
+  if (user.includes("HISTORY_AFTER_ROLLBACK")) {
+    assert.ok(
+      all.includes("orchid-73") && all.includes("HISTORY_CHILD_CONTEXT_OK"),
+      "rollback retained selected child context",
+    );
+    assert.ok(!all.includes("HISTORY_CHILD_FUTURE"), "rollback excludes discarded turn");
+    return textResponse("HISTORY_ROLLBACK_CONTEXT_OK orchid-73");
+  }
+  if (user.includes("HISTORY_REOPEN")) {
+    assert.ok(
+      all.includes("HISTORY_ROLLBACK_CONTEXT_OK") && !all.includes("HISTORY_CHILD_FUTURE"),
+      "reopen correct branch",
+    );
+    return textResponse("HISTORY_REOPEN_CONTEXT_OK orchid-73");
+  }
+  throw Error("Unrecognized history prompt: " + user.slice(0, 120));
+}
+
 export async function startHistoryModel({ counter }) {
   const records = [];
-  let sequence = 0;
+  let toolSequence = 0;
   const server = http.createServer(async (req, res) => {
     if (req.method !== "POST" || req.url !== "/v1/chat/completions") {
       res.writeHead(404);
@@ -17,86 +128,9 @@ export async function startHistoryModel({ counter }) {
       for await (const b of req) input += b;
       body = JSON.parse(input);
       assert.equal(body.model, modelId);
-      const messages = body.messages ?? [];
-      const i = messages.findLastIndex((m) => m.role === "user");
-      const user = JSON.stringify(messages[i]?.content ?? "");
-      const results = messages
-        .slice(i + 1)
-        .filter((m) => m.role === "tool")
-        .map((m) => JSON.stringify(m.content))
-        .join("\n");
-      const all = JSON.stringify(messages);
-      let delta;
-      const text = (content) => ({ role: "assistant", content });
-      const tool = (code) => ({
-        role: "assistant",
-        tool_calls: [
-          {
-            index: 0,
-            id: "history_" + ++sequence,
-            type: "function",
-            function: {
-              name: "execute",
-              arguments: JSON.stringify({ label: "Native history actual tool exchange", code }),
-            },
-          },
-        ],
-      });
-      if (
-        user.includes("Write what next agent needs to continue the work.") &&
-        user.includes("Summarize the whole conversation above.")
-      ) {
-        // Bruv requests background summaries after turns. This is a genuine model
-        // request, not another user action or a reason to fabricate native events.
-        const markers = [...new Set(all.match(/HISTORY_[A-Z_]+|orchid-73/g) ?? [])];
-        delta = text("## Goal\nLocal native history acceptance.\n## Critical Context\n" + markers.join(" "));
-      } else if (!body.tools?.length) delta = text("Local native history acceptance");
-      else if (user.includes("HISTORY_SEED"))
-        delta = results.includes("HISTORY_TOOL_COMPLETED")
-          ? text("HISTORY_CHECKPOINT: original secret is orchid-73; completed tool recorded.")
-          : tool(
-              'const fs=await import("node:fs/promises");await fs.appendFile(' +
-                JSON.stringify(counter) +
-                "," +
-                JSON.stringify("root-tool\n") +
-                ');const q=await questions.ask({text:"Native history root-only saved question (do not answer)",dedupKey:"history-root-authority",choices:["Retain unanswered"],allowFreeText:false});const j=await shell("/usr/bin/printf HISTORY_ROOT_JOB_COMPLETED",{waitSeconds:3});console.log("HISTORY_ROOT_AUTHORITY",JSON.stringify({question:q,job:j}));console.log("HISTORY_TOOL_COMPLETED orchid-73");',
-            );
-      else if (user.includes("HISTORY_ROOT_FUTURE"))
-        delta = text("HISTORY_ROOT_FUTURE_RESPONSE: original branch only.");
-      else if (user.includes("HISTORY_CHILD_CONTINUE")) {
-        assert.ok(
-          all.includes("orchid-73") && all.includes("HISTORY_TOOL_COMPLETED") && all.includes("HISTORY_CHECKPOINT"),
-          "fork has complete checkpoint context",
-        );
-        assert.ok(!all.includes("HISTORY_ROOT_FUTURE"), "fork excludes later root branch");
-        if (results) {
-          assert.ok(results.includes("HISTORY_AUTHORITY_EMPTY"), "real child authority inspection");
-          delta = text("HISTORY_CHILD_CONTEXT_OK orchid-73");
-        } else
-          delta = tool(
-            'const j=await jobs.list({count:100});const q=await questions.list();console.log("HISTORY_AUTHORITY_INSPECTION",JSON.stringify({jobs:j,questions:q}));if((j.jobs??[]).length|| (Array.isArray(q)?q:q.questions??[]).length)throw Error("Inherited authority");console.log("HISTORY_AUTHORITY_EMPTY");',
-          );
-      } else if (user.includes("HISTORY_CHILD_FUTURE")) {
-        assert.ok(
-          all.includes("HISTORY_CHILD_CONTEXT_OK") && !all.includes("HISTORY_ROOT_FUTURE"),
-          "later turn stays on hydrated child branch",
-        );
-        delta = text("HISTORY_CHILD_FUTURE_RESPONSE: removable later turn.");
-      } else if (user.includes("HISTORY_AFTER_ROLLBACK")) {
-        assert.ok(
-          all.includes("orchid-73") && all.includes("HISTORY_CHILD_CONTEXT_OK"),
-          "rollback retained selected child context",
-        );
-        assert.ok(!all.includes("HISTORY_CHILD_FUTURE"), "rollback excludes discarded turn");
-        delta = text("HISTORY_ROLLBACK_CONTEXT_OK orchid-73");
-      } else if (user.includes("HISTORY_REOPEN")) {
-        assert.ok(
-          all.includes("HISTORY_ROLLBACK_CONTEXT_OK") && !all.includes("HISTORY_CHILD_FUTURE"),
-          "reopen correct branch",
-        );
-        delta = text("HISTORY_REOPEN_CONTEXT_OK orchid-73");
-      } else throw Error("Unrecognized history prompt: " + user.slice(0, 120));
-      records.push({ sequence: records.length + 1, messages, delta });
+      const delta = historyReply(body, counter, toolSequence + 1);
+      if (delta.tool_calls) toolSequence++;
+      records.push({ sequence: records.length + 1, messages: body.messages ?? [], delta });
       res.writeHead(200, { "content-type": "text/event-stream" });
       const chunk = (d, f) => ({
         id: "history-local-" + records.length,

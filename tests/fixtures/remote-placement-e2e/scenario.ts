@@ -16,8 +16,25 @@ export const execute = (id: string, code: string) => ({
   tool_calls: [{ index: 0, id, type: "function", function: { name: "execute", arguments: JSON.stringify({ code }) } }],
 });
 const say = (content: string) => ({ role: "assistant", content });
-const inspectHelper =
-  'async function inspectAll(id){const pages=[];let offset=0;for(let n=0;n<200;n++){const page=await jobs.inspect(id,{offset,limit:5000});pages.push(page);if(!page.hasMore)return {...pages[0],output:pages.map(p=>p.output).join(""),pages:pages.length};if(!(page.nextOffset>offset))throw Error("inspection cursor failed to advance");offset=page.nextOffset;}throw Error("fixture result exceeded 1 MiB inspection bound");} ';
+type Side = "clean" | "drift";
+
+// Embedded in result-reading actions, never executed by the inference provider.
+const inspectHelper = `
+async function inspectAll(id) {
+  const pages = [];
+  let offset = 0;
+  for (let n = 0; n < 200; n++) {
+    const page = await jobs.inspect(id, {offset, limit:5000});
+    pages.push(page);
+    if (!page.hasMore)
+      return {...pages[0], output:pages.map(p => p.output).join(""), pages:pages.length};
+    if (!(page.nextOffset > offset)) throw Error("inspection cursor failed to advance");
+    offset = page.nextOffset;
+  }
+  throw Error("fixture result exceeded 1 MiB inspection bound");
+}
+`;
+
 export function response(body: RequestBody): object {
   const all = text(body);
   const drift =
@@ -25,130 +42,182 @@ export function response(body: RequestBody): object {
     all.includes("PLACEMENT_START_DRIFT") ||
     all.includes("PLACEMENT_NORMAL_CHILD_DRIFT");
   const side = drift ? "drift" : "clean";
-  const expected = drift ? "PLACEMENT_REMOTE_RETURN" : "PLACEMENT_TRACKED_DIRTY";
-  const question = drift ? "PLACEMENT_DRIFT_QUESTION" : QUESTION;
-  if (body.model === "placement-parent") {
-    const lastUser = (body.messages ?? []).filter((m) => m.role === "user").at(-1);
-    const query = (JSON.stringify(lastUser?.content) ?? "").match(/PLACEMENT_QUERY_QUESTIONS_([0-9]+)/)?.[1];
-    if (query) {
-      const id = "question-query-" + query;
-      if (!called(body, id))
-        return execute(
-          id,
-          'const questionsSnapshot=await questions.list();console.log(questionsSnapshot);await Bun.write(process.env.HOME+"/placement-human-questions.json",JSON.stringify(questionsSnapshot));',
-        );
-      return say("PLACEMENT_QUESTIONS_CAPTURED_" + query);
-    }
-
-    // The harness, not inference, supplies the one human /remote connect command.
-    if (!all.includes("PLACEMENT_START_")) return say("PLACEMENT_PARENT_READY");
-    const launch = "placement-launch-" + side;
-    const inspect = "placement-inspect-" + side;
-    if (!called(body, launch))
-      return execute(
-        launch,
-        'const state=await jobs.targets(); const target=state.targets.find(t=>t.name==="' +
-          ALIAS +
-          '"&&t.authorized); if(!target) throw Error("fixture target not human-pinned"); ' +
-          'const job=await subagent({type:"orchestrator",target:target.name,prompt:"PLACEMENT_ORCHESTRATOR_' +
-          side.toUpperCase() +
-          '",workspace:{kind:"worktree"},waitSeconds:0}); console.log(job); ' +
-          'await Bun.write(process.env.HOME+"/placement-job-' +
-          side +
-          '.json",JSON.stringify(job));',
-      );
-    // A real task-complete delivery must precede inspection. Never relaunch on restart.
-    if (userHas(body, "PLACEMENT_ORCHESTRATOR_DONE_" + side.toUpperCase()) && !called(body, inspect))
-      return execute(
-        inspect,
-        inspectHelper +
-          'const launch=JSON.parse(await Bun.file(process.env.HOME+"/placement-job-' +
-          side +
-          '.json").text()); ' +
-          "const list=await jobs.list({count:100}); const result=await inspectAll(launch.id); console.log({list,status:result.status,tail:result.output.slice(-2000)}); " +
-          'await Bun.write(process.env.HOME+"/placement-result-' +
-          side +
-          '.json",JSON.stringify({list,result}));',
-      );
-    if (called(body, inspect)) return say("PLACEMENT_PARENT_RESULT_" + side.toUpperCase());
-    return say("PLACEMENT_PARENT_YIELDED_" + side.toUpperCase());
+  switch (body.model) {
+    case "placement-parent":
+      return parentResponse(body, side);
+    case "placement-orchestrator":
+      return orchestratorResponse(body, side);
+    case "placement-normal":
+      return normalResponse(body, side);
+    default:
+      throw Error("unexpected model: " + body.model + "; destination profile must be used");
   }
-  if (body.model === "placement-orchestrator") {
-    if (!called(body, "orch-start"))
-      return execute(
-        "orch-start",
-        "const proof=await shell(" +
-          JSON.stringify(
-            'set -eux; test "$BRUV_SUBAGENT_TYPE" = orchestrator; test "$BRUV_SUBAGENT_DEPTH" = 1; test -n "$BRUV_REMOTE_RUNTIME_STATE"; test -f /opt/fixture/placement-host; grep -qx "' +
-              expected +
-              '" tracked.txt; test ! -e never-upload.txt; test "$(git rev-list --count HEAD)" = 1; test -z "$(git remote)"; pwd > /tmp/placement-orchestrator-' +
-              side +
-              "-cwd; echo PLACEMENT_REMOTE_TOOLS_OK",
-          ) +
-          ",{waitSeconds:3}); if(proof.exitCode!==0) throw Error(JSON.stringify(proof)); console.log(proof); " +
-          'const job=await subagent({type:"normal",prompt:"PLACEMENT_NORMAL_CHILD_' +
-          side.toUpperCase() +
-          '",workspace:{kind:"worktree"},waitSeconds:0}); console.log(job); await Bun.write("/tmp/placement-child-' +
-          side +
-          '.json",JSON.stringify(job));',
-      );
-    if (!called(body, "orch-question")) {
-      if (!userHas(body, "PLACEMENT_NORMAL_DONE_" + side.toUpperCase()))
-        return say("PLACEMENT_ORCHESTRATOR_WAITING_CHILD");
-      return execute(
-        "orch-question",
-        inspectHelper +
-          'const child=JSON.parse(await Bun.file("/tmp/placement-child-' +
-          side +
-          '.json").text()); const result=await inspectAll(child.id); console.log({status:result.status,tail:result.output.slice(-2000)}); await Bun.write("/tmp/placement-child-result-' +
-          side +
-          '.json",JSON.stringify(result)); ' +
-          'const q=await questions.ask({text:"' +
-          question +
-          '",choices:["' +
-          ANSWER +
-          '"],allowFreeText:true,dedupKey:"placement-' +
-          side +
-          '"}); console.log(q); await questions.block({id:q.id,owner:q.owner,version:q.version,checkpoint:"Only the human may approve the safe return",foreground:true});',
-      );
-    }
-    if (!called(body, "orch-finish") && userHas(body, ANSWER))
-      return execute(
-        "orch-finish",
-        'const ledger=await questions.list(); const rows=Array.isArray(ledger)?ledger:ledger.questions; const q=rows.find(q=>q.text==="' +
-          question +
-          '"); if(!q||q.answer!=="' +
-          ANSWER +
-          '") throw Error("missing real saved human answer"); ' +
-          'await questions.resolve({id:q.id,owner:q.owner,version:q.version,reason:"used explicit human approval"}); ' +
-          'await Bun.write("tracked.txt","' +
-          (drift ? "PLACEMENT_REMOTE_DRIFT_RETURN" : "PLACEMENT_REMOTE_RETURN") +
-          '\\n"); console.log("PLACEMENT_USED_REAL_ANSWER_' +
-          side.toUpperCase() +
-          '");',
-      );
-    if (called(body, "orch-finish")) return say("PLACEMENT_ORCHESTRATOR_DONE_" + side.toUpperCase());
-    return say("PLACEMENT_WAITING_FOR_REAL_HUMAN");
-  }
-  if (body.model === "placement-normal") {
-    if (!called(body, "normal-tools"))
-      return execute(
-        "normal-tools",
-        "const proof=await shell(" +
-          JSON.stringify(
-            'set -eux; test "$BRUV_SUBAGENT_TYPE" = normal; test "$BRUV_SUBAGENT_DEPTH" = 2; test -f /opt/fixture/placement-host; test -f .git; grep -qx "' +
-              expected +
-              '" tracked.txt; test ! -e never-upload.txt; pwd > /tmp/placement-normal-' +
-              side +
-              "-cwd; echo PLACEMENT_NORMAL_REMOTE_WORKTREE_OK",
-          ) +
-          ",{waitSeconds:3}); if(proof.exitCode!==0) throw Error(JSON.stringify(proof)); console.log(proof); " +
-          'let refused=false; try { await subagent({type:"normal",prompt:"PLACEMENT_FORBIDDEN_GRANDCHILD",workspace:{kind:"worktree"}}); } catch(error) {refused=true; console.log("PLACEMENT_NORMAL_ROLE_REFUSED",String(error));} if(!refused) throw Error("normal worker unexpectedly delegated");',
-      );
-    return say("PLACEMENT_NORMAL_DONE_" + side.toUpperCase());
-  }
-  throw Error("unexpected model: " + body.model + "; destination profile must be used");
 }
+
+// The parent observes human-pinned placement and terminal delivery; it never connects or answers.
+function parentResponse(body: RequestBody, side: Side): object {
+  const lastUser = (body.messages ?? []).filter((m) => m.role === "user").at(-1);
+  const query = (JSON.stringify(lastUser?.content) ?? "").match(/PLACEMENT_QUERY_QUESTIONS_([0-9]+)/)?.[1];
+  if (query) {
+    const id = "question-query-" + query;
+    if (!called(body, id))
+      return execute(
+        id,
+        `
+const questionsSnapshot = await questions.list();
+console.log(questionsSnapshot);
+await Bun.write(process.env.HOME+"/placement-human-questions.json", JSON.stringify(questionsSnapshot));
+`,
+      );
+    return say("PLACEMENT_QUESTIONS_CAPTURED_" + query);
+  }
+
+  // The harness, not inference, supplies the one human /remote connect command.
+  if (!text(body).includes("PLACEMENT_START_")) return say("PLACEMENT_PARENT_READY");
+  if (!called(body, "placement-launch-" + side)) return launchOrchestrator(side);
+  // A real task-complete delivery must precede inspection. Never relaunch on restart.
+  if (userHas(body, "PLACEMENT_ORCHESTRATOR_DONE_" + side.toUpperCase()) && !called(body, "placement-inspect-" + side))
+    return inspectOrchestratorResult(side);
+  if (called(body, "placement-inspect-" + side)) return say("PLACEMENT_PARENT_RESULT_" + side.toUpperCase());
+  return say("PLACEMENT_PARENT_YIELDED_" + side.toUpperCase());
+}
+
+function launchOrchestrator(side: Side): object {
+  return execute(
+    "placement-launch-" + side,
+    `
+const state = await jobs.targets();
+const target = state.targets.find(t => t.name===${JSON.stringify(ALIAS)}&&t.authorized);
+if (!target) throw Error("fixture target not human-pinned");
+const job = await subagent({type:"orchestrator",target:target.name,prompt:"PLACEMENT_ORCHESTRATOR_${side.toUpperCase()}",workspace:{kind:"worktree"},waitSeconds:0});
+console.log(job);
+await Bun.write(process.env.HOME+"/placement-job-${side}.json", JSON.stringify(job));
+`,
+  );
+}
+
+function inspectOrchestratorResult(side: Side): object {
+  return execute(
+    "placement-inspect-" + side,
+    inspectHelper +
+      `
+const launch = JSON.parse(await Bun.file(process.env.HOME+"/placement-job-${side}.json").text());
+const list = await jobs.list({count:100});
+const result = await inspectAll(launch.id);
+console.log({list, status:result.status, tail:result.output.slice(-2000)});
+await Bun.write(process.env.HOME+"/placement-result-${side}.json", JSON.stringify({list,result}));
+`,
+  );
+}
+
+// The destination orchestrator owns the child and gates its tracked edit on a saved human answer.
+function orchestratorResponse(body: RequestBody, side: Side): object {
+  if (!called(body, "orch-start")) return startOrchestrator(side);
+  if (!called(body, "orch-question")) {
+    if (!userHas(body, "PLACEMENT_NORMAL_DONE_" + side.toUpperCase()))
+      return say("PLACEMENT_ORCHESTRATOR_WAITING_CHILD");
+    return requestReturnApproval(side);
+  }
+  if (!called(body, "orch-finish") && userHas(body, ANSWER)) return applyApprovedReturn(side);
+  if (called(body, "orch-finish")) return say("PLACEMENT_ORCHESTRATOR_DONE_" + side.toUpperCase());
+  return say("PLACEMENT_WAITING_FOR_REAL_HUMAN");
+}
+
+function startOrchestrator(side: Side): object {
+  const expected = side === "drift" ? "PLACEMENT_REMOTE_RETURN" : "PLACEMENT_TRACKED_DIRTY";
+  const proof = `
+set -eux
+test "$BRUV_SUBAGENT_TYPE" = orchestrator
+test "$BRUV_SUBAGENT_DEPTH" = 1
+test -n "$BRUV_REMOTE_RUNTIME_STATE"
+test -f /opt/fixture/placement-host
+grep -qx "${expected}" tracked.txt
+test ! -e never-upload.txt
+test "$(git rev-list --count HEAD)" = 1
+test -z "$(git remote)"
+pwd > /tmp/placement-orchestrator-${side}-cwd
+echo PLACEMENT_REMOTE_TOOLS_OK
+`;
+  return execute(
+    "orch-start",
+    `
+const proof = await shell(${JSON.stringify(proof)}, {waitSeconds:3});
+if (proof.exitCode!==0) throw Error(JSON.stringify(proof));
+console.log(proof);
+const job = await subagent({type:"normal",prompt:"PLACEMENT_NORMAL_CHILD_${side.toUpperCase()}",workspace:{kind:"worktree"},waitSeconds:0});
+console.log(job);
+await Bun.write("/tmp/placement-child-${side}.json", JSON.stringify(job));
+`,
+  );
+}
+
+function requestReturnApproval(side: Side): object {
+  const question = side === "drift" ? "PLACEMENT_DRIFT_QUESTION" : QUESTION;
+  return execute(
+    "orch-question",
+    inspectHelper +
+      `
+const child = JSON.parse(await Bun.file("/tmp/placement-child-${side}.json").text());
+const result = await inspectAll(child.id);
+console.log({status:result.status, tail:result.output.slice(-2000)});
+await Bun.write("/tmp/placement-child-result-${side}.json", JSON.stringify(result));
+const q = await questions.ask({text:${JSON.stringify(question)},choices:[${JSON.stringify(ANSWER)}],allowFreeText:true,dedupKey:"placement-${side}"});
+console.log(q);
+await questions.block({id:q.id,owner:q.owner,version:q.version,checkpoint:"Only the human may approve the safe return",foreground:true});
+`,
+  );
+}
+
+function applyApprovedReturn(side: Side): object {
+  const question = side === "drift" ? "PLACEMENT_DRIFT_QUESTION" : QUESTION;
+  const returned = side === "drift" ? "PLACEMENT_REMOTE_DRIFT_RETURN" : "PLACEMENT_REMOTE_RETURN";
+  return execute(
+    "orch-finish",
+    `
+const ledger = await questions.list();
+const rows = Array.isArray(ledger) ? ledger : ledger.questions;
+const q = rows.find(q => q.text===${JSON.stringify(question)});
+if (!q || q.answer!==${JSON.stringify(ANSWER)}) throw Error("missing real saved human answer");
+await questions.resolve({id:q.id,owner:q.owner,version:q.version,reason:"used explicit human approval"});
+await Bun.write("tracked.txt", ${JSON.stringify(returned + "\n")});
+console.log("PLACEMENT_USED_REAL_ANSWER_${side.toUpperCase()}");
+`,
+  );
+}
+
+// A normal leaf verifies its worktree and the role boundary; it cannot create descendants.
+function normalResponse(body: RequestBody, side: Side): object {
+  if (called(body, "normal-tools")) return say("PLACEMENT_NORMAL_DONE_" + side.toUpperCase());
+  const expected = side === "drift" ? "PLACEMENT_REMOTE_RETURN" : "PLACEMENT_TRACKED_DIRTY";
+  const proof = `
+set -eux
+test "$BRUV_SUBAGENT_TYPE" = normal
+test "$BRUV_SUBAGENT_DEPTH" = 2
+test -f /opt/fixture/placement-host
+test -f .git
+grep -qx "${expected}" tracked.txt
+test ! -e never-upload.txt
+pwd > /tmp/placement-normal-${side}-cwd
+echo PLACEMENT_NORMAL_REMOTE_WORKTREE_OK
+`;
+  return execute(
+    "normal-tools",
+    `
+const proof = await shell(${JSON.stringify(proof)}, {waitSeconds:3});
+if (proof.exitCode!==0) throw Error(JSON.stringify(proof));
+console.log(proof);
+let refused = false;
+try {
+  await subagent({type:"normal",prompt:"PLACEMENT_FORBIDDEN_GRANDCHILD",workspace:{kind:"worktree"}});
+} catch (error) {
+  refused = true;
+  console.log("PLACEMENT_NORMAL_ROLE_REFUSED", String(error));
+}
+if (!refused) throw Error("normal worker unexpectedly delegated");
+`,
+  );
+}
+
 export function stream(body: RequestBody): string {
   const delta = response(body);
   const emit = (delta: object, finish_reason: string | null) => ({

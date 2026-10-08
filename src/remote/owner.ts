@@ -6,6 +6,8 @@ import { OwnerCapabilityMailbox } from "./capability-runtime";
 import { capabilityNeeds } from "./services";
 import { Database } from "bun:sqlite";
 import { spawn } from "node:child_process";
+import { OwnerChild } from "./owner-child";
+import { OwnerRpcOutput } from "./owner-rpc";
 import { createHash, randomUUID } from "node:crypto";
 import {
   closeSync,
@@ -126,6 +128,37 @@ function intent(req: Extract<RemoteRequest, { op: "launch" }>, profile: RemoteTa
 const MAX_JOURNAL = 32 * 1024 * 1024;
 const MAX_LINE = 512 * 1024;
 const MAX_PAGE = 2 * 1024 * 1024; // below the SSH client's 4 MB response cap
+/** A fresh owner writes contiguous, bounded rows; only fsynced rows advance the sequence. */
+class OwnerEventJournal {
+  private readonly descriptor: number;
+  private sequence = 0;
+
+  constructor(taskId: string) {
+    const path = join(location(taskId), "events.jsonl");
+    // Never append from sequence one to an earlier owner's journal.
+    if (existsSync(path) && statSync(path).size) throw new Error("Existing journal; cannot replay owner");
+    this.descriptor = openSync(path, "a", 0o600);
+  }
+
+  append(event: unknown): void {
+    const line = JSON.stringify({ seq: this.sequence + 1, event }) + "\n";
+    if (Buffer.byteLength(line) > MAX_LINE || fstatSync(this.descriptor).size + Buffer.byteLength(line) > MAX_JOURNAL)
+      throw new Error("RPC journal limit exceeded");
+    const bytes = Buffer.from(line);
+    for (let offset = 0; offset < bytes.length; ) {
+      const written = writeSync(this.descriptor, bytes, offset, bytes.length - offset);
+      if (!written) throw new Error("Short journal write");
+      offset += written;
+    }
+    fsyncSync(this.descriptor);
+    this.sequence++;
+  }
+
+  close(): void {
+    closeSync(this.descriptor);
+  }
+}
+
 function events(id: string, cursor = 0) {
   if (!Number.isSafeInteger(cursor) || cursor < 0) throw new Error("Invalid cursor");
   const path = join(location(id), "events.jsonl");
@@ -360,78 +393,7 @@ export async function handleRemoteRequest(req: RemoteRequest, executable = proce
         return error("journal_gap", String(e));
       }
     }
-    if (req.op === "answer") {
-      location(req.taskId);
-      if (!existsSync(statePath(req.taskId))) return error("not_found", "Unknown taskId");
-      const value = saved(req.taskId);
-      if (value.task.state !== "running")
-        return error("not_running", "Remote session is not running; answer was not sent");
-      if (
-        !/^[a-zA-Z0-9_-]{1,128}$/.test(req.replyId) ||
-        typeof req.text !== "string" ||
-        !req.text.trim() ||
-        Buffer.byteLength(req.text) > 16_384 ||
-        !Number.isSafeInteger(req.version) ||
-        !req.owner ||
-        typeof req.owner.sessionId !== "string" ||
-        typeof req.owner.branchId !== "string" ||
-        typeof req.id !== "string"
-      )
-        return error("invalid_answer", "Invalid targeted native reply");
-      const receipt = join(location(req.taskId), "answers", req.replyId + ".json");
-      if (existsSync(receipt)) {
-        const prior = read<{ request: typeof req; status: "delivered" | "uncertain" }>(receipt);
-        if (JSON.stringify(prior.request) !== JSON.stringify(req))
-          return error("answer_conflict", "Reply ID reused with different intent");
-        if (prior.status === "uncertain") {
-          // Receipt is committed before the command slot. Recover that exact pre-dispatch
-          // crash window, but never rewrite an existing (possibly dispatched) same-ID slot.
-          const slotPath = join(location(req.taskId), "answer.json");
-          const slot = existsSync(slotPath) ? read<{ replyId: string }>(slotPath) : undefined;
-          const oldReceipt = slot ? join(location(req.taskId), "answers", slot.replyId + ".json") : undefined;
-          const oldDelivered =
-            oldReceipt && existsSync(oldReceipt) && read<{ status: string }>(oldReceipt).status === "delivered";
-          if (!slot || (slot.replyId !== req.replyId && oldDelivered)) {
-            durableJsonReplace(slotPath, req);
-            value.task.reply = { replyId: req.replyId, status: "uncertain" };
-            persist(req.taskId, value);
-          }
-        }
-        return {
-          task: { ...value.task, reply: { replyId: req.replyId, status: prior.status } },
-          ...events(req.taskId),
-        };
-      }
-      const questions = value.task.questions;
-      if (
-        !Array.isArray(questions) ||
-        !questions.some((item) => {
-          const q = item as { id?: string; status?: string; version?: number; owner?: typeof req.owner };
-          return (
-            q.id === req.id &&
-            q.status === "pending" &&
-            q.version === req.version &&
-            q.owner?.sessionId === req.owner.sessionId &&
-            q.owner?.branchId === req.owner.branchId
-          );
-        })
-      )
-        return error("stale_question", "Question is not pending at this owner/version; sync before answering");
-      const path = join(location(req.taskId), "answer.json");
-      if (existsSync(path)) {
-        const prior = read<typeof req>(path);
-        if (prior.replyId !== req.replyId && value.task.reply?.status !== "delivered")
-          return error("answer_conflict", "Previous reply outcome remains uncertain");
-        if (prior.replyId === req.replyId && JSON.stringify({ ...prior, dispatch: undefined }) !== JSON.stringify(req))
-          return error("answer_conflict", "Reply intent conflict");
-      }
-      mkdirSync(dirname(receipt), { recursive: true, mode: 0o700 });
-      durableJsonReplace(receipt, { request: req, status: "uncertain" });
-      durableJsonReplace(path, req);
-      value.task.reply = { replyId: req.replyId, status: "uncertain" };
-      persist(req.taskId, value);
-      return { task: value.task, ...events(req.taskId) };
-    }
+    if (req.op === "answer") return new NativeAnswerDelivery(req.taskId).accept(req);
     if (req.op === "sync") {
       location(req.taskId);
       if (!existsSync(statePath(req.taskId))) return error("not_found", "Unknown taskId");
@@ -475,6 +437,220 @@ export async function handleRemoteRequest(req: RemoteRequest, executable = proce
   });
 }
 
+type NativeAnswer = Extract<RemoteRequest, { op: "answer" }>;
+type AnswerSlot = NativeAnswer & { dispatch?: string };
+
+/** Receipt = accepted intent/result; slot = at-most-once dispatch; ledger = delivery proof. */
+class NativeAnswerDelivery {
+  private readonly directory: string;
+  private readonly slotPath: string;
+
+  constructor(private readonly taskId: string) {
+    this.directory = location(taskId);
+    this.slotPath = join(this.directory, "answer.json");
+  }
+
+  // Called inside the request transaction. Receipt must precede slot publication.
+  accept(req: NativeAnswer): RemoteResponse {
+    if (!existsSync(statePath(req.taskId))) return error("not_found", "Unknown taskId");
+    const value = saved(req.taskId);
+    if (value.task.state !== "running")
+      return error("not_running", "Remote session is not running; answer was not sent");
+    if (
+      !/^[a-zA-Z0-9_-]{1,128}$/.test(req.replyId) ||
+      typeof req.text !== "string" ||
+      !req.text.trim() ||
+      Buffer.byteLength(req.text) > 16_384 ||
+      !Number.isSafeInteger(req.version) ||
+      !req.owner ||
+      typeof req.owner.sessionId !== "string" ||
+      typeof req.owner.branchId !== "string" ||
+      typeof req.id !== "string"
+    )
+      return error("invalid_answer", "Invalid targeted native reply");
+    const receipt = join(this.directory, "answers", req.replyId + ".json");
+    if (existsSync(receipt)) {
+      const prior = read<{ request: typeof req; status: "delivered" | "uncertain" }>(receipt);
+      if (JSON.stringify(prior.request) !== JSON.stringify(req))
+        return error("answer_conflict", "Reply ID reused with different intent");
+      if (prior.status === "uncertain") {
+        // Receipt is committed before the command slot. Recover that exact pre-dispatch
+        // crash window, but never rewrite an existing (possibly dispatched) same-ID slot.
+        const slotPath = this.slotPath;
+        const slot = existsSync(slotPath) ? read<{ replyId: string }>(slotPath) : undefined;
+        const oldReceipt = slot ? join(this.directory, "answers", slot.replyId + ".json") : undefined;
+        const oldDelivered =
+          oldReceipt && existsSync(oldReceipt) && read<{ status: string }>(oldReceipt).status === "delivered";
+        if (!slot || (slot.replyId !== req.replyId && oldDelivered)) {
+          durableJsonReplace(slotPath, req);
+          value.task.reply = { replyId: req.replyId, status: "uncertain" };
+          persist(req.taskId, value);
+        }
+      }
+      return {
+        task: { ...value.task, reply: { replyId: req.replyId, status: prior.status } },
+        ...events(req.taskId),
+      };
+    }
+    const questions = value.task.questions;
+    if (
+      !Array.isArray(questions) ||
+      !questions.some((item) => {
+        const q = item as { id?: string; status?: string; version?: number; owner?: typeof req.owner };
+        return (
+          q.id === req.id &&
+          q.status === "pending" &&
+          q.version === req.version &&
+          q.owner?.sessionId === req.owner.sessionId &&
+          q.owner?.branchId === req.owner.branchId
+        );
+      })
+    )
+      return error("stale_question", "Question is not pending at this owner/version; sync before answering");
+    const path = this.slotPath;
+    if (existsSync(path)) {
+      const prior = read<typeof req>(path);
+      if (prior.replyId !== req.replyId && value.task.reply?.status !== "delivered")
+        return error("answer_conflict", "Previous reply outcome remains uncertain");
+      if (prior.replyId === req.replyId && JSON.stringify({ ...prior, dispatch: undefined }) !== JSON.stringify(req))
+        return error("answer_conflict", "Reply intent conflict");
+    }
+    mkdirSync(dirname(receipt), { recursive: true, mode: 0o700 });
+    durableJsonReplace(receipt, { request: req, status: "uncertain" });
+    durableJsonReplace(path, req);
+    value.task.reply = { replyId: req.replyId, status: "uncertain" };
+    persist(req.taskId, value);
+    return { task: value.task, ...events(req.taskId) };
+  }
+
+  dispatch(send: (command: unknown) => void): void {
+    if (!existsSync(this.slotPath)) return;
+    const request = read<AnswerSlot>(this.slotPath);
+    if (request.dispatch) return;
+    // A crash after this marker cannot authorize a replay into another session.
+    request.dispatch = "uncertain";
+    durableJsonReplace(this.slotPath, request);
+    send({
+      id: "remote-answer-" + request.replyId,
+      type: "prompt",
+      message: "/remote-native-answer " + Buffer.from(JSON.stringify(request)).toString("base64url"),
+    });
+  }
+
+  async acknowledge(responseId: string, success: boolean): Promise<void> {
+    const request = read<AnswerSlot>(this.slotPath);
+    if (responseId !== "remote-answer-" + request.replyId) return;
+    let delivered = false;
+    try {
+      delivered =
+        success &&
+        read<
+          Array<{
+            id: string;
+            replyId?: string;
+            replyVersion?: number;
+            status: string;
+            delivery?: string;
+          }>
+        >(join(this.directory, "session.jsonl.questions.json")).some(
+          (q) =>
+            q.id === request.id &&
+            q.replyId === request.replyId &&
+            q.replyVersion === request.version &&
+            q.status === "answered" &&
+            q.delivery === "delivered",
+        );
+    } catch {
+      // An RPC success without matching native-ledger evidence is uncertain.
+    }
+    await locked(async () => {
+      const current = saved(this.taskId);
+      if (current.task.state !== "running") return;
+      current.task.reply = { replyId: request.replyId, status: delivered ? "delivered" : "uncertain" };
+      const { dispatch: _dispatch, ...accepted } = request;
+      durableJsonReplace(join(this.directory, "answers", request.replyId + ".json"), {
+        request: accepted,
+        status: current.task.reply.status,
+      });
+      persist(this.taskId, current);
+    });
+  }
+
+  get questionInFlight(): string | undefined {
+    return existsSync(this.slotPath) ? read<AnswerSlot>(this.slotPath).id : undefined;
+  }
+}
+
+type OwnerRpcEvent = {
+  type?: string;
+  id?: string;
+  success?: boolean;
+  data?: { model?: { provider?: string; id?: string }; thinkingLevel?: string };
+  message?: { stopReason?: string; errorMessage?: string };
+};
+
+type NativeSettlement =
+  | { kind: "work-pending" }
+  | { kind: "questions-pending"; questions: unknown[]; textOutputGap?: string }
+  | { kind: "complete"; questions: unknown[]; textOutputGap?: string };
+
+function nativeSettlement(runtimePath: string): NativeSettlement {
+  // The extension writes this before agent_settled. A yielded turn is not task completion.
+  const runtime = read<{
+    settled: boolean;
+    activeJobs?: number;
+    pendingMessages?: boolean;
+    questions?: unknown[];
+    textOutputGap?: string;
+    error?: string;
+  }>(runtimePath);
+  if (!runtime.settled || runtime.error || typeof runtime.activeJobs !== "number" || !Array.isArray(runtime.questions))
+    throw new Error(runtime.error || "Missing native runtime checkpoint");
+  if (runtime.activeJobs > 0 || runtime.pendingMessages) return { kind: "work-pending" };
+  return {
+    kind: runtime.questions.length ? "questions-pending" : "complete",
+    questions: runtime.questions,
+    textOutputGap: runtime.textOutputGap,
+  };
+}
+
+async function publishQuestions(taskId: string, questions: unknown[]): Promise<void> {
+  await locked(async () => {
+    const current = saved(taskId);
+    if (current.task.state !== "running") return;
+    current.task.questions = questions;
+    persist(taskId, current);
+  });
+}
+
+class OwnerCancellation {
+  private requestedAt = 0;
+  constructor(private readonly taskId: string) {}
+
+  get requested(): boolean {
+    return this.requestedAt !== 0;
+  }
+
+  poll(
+    send: (command: unknown) => void,
+    record: (event: unknown) => void,
+  ): "none" | "waiting" | "settled" | "unconfirmed" | "timed-out" {
+    if (!existsSync(join(location(this.taskId), "cancel.json"))) return "none";
+    if (!this.requestedAt) {
+      this.requestedAt = Date.now();
+      record({ type: "cancel_requested" });
+      send({ id: "remote-cancel", type: "prompt", message: "/bruv-remote-cancel" });
+    }
+    const reportPath = join(location(this.taskId), "cancel-report.json");
+    if (existsSync(reportPath)) {
+      const report = read<{ settled?: boolean }>(reportPath);
+      record({ type: "cancel_report", report });
+      return report.settled === true ? "settled" : "unconfirmed";
+    }
+    return Date.now() - this.requestedAt > 20_000 ? "timed-out" : "waiting";
+  }
+}
+
 async function publishTerminal(taskId: string, result: Saved) {
   await locked(async () => {
     const current = saved(taskId);
@@ -493,57 +669,50 @@ async function publishTerminal(taskId: string, result: Saved) {
 export async function runOwnerTask(taskId: string, executable = process.execPath): Promise<void> {
   location(taskId);
   // A launched owner owns only its recorded PID. Never run an uncertain accepted task again.
-  let initial = saved(taskId);
-  for (let i = 0; i < 100 && (!initial.pid || !initial.startTime); i++) {
+  let taskSnapshot = saved(taskId);
+  for (let i = 0; i < 100 && (!taskSnapshot.pid || !taskSnapshot.startTime); i++) {
     await Bun.sleep(20);
-    initial = saved(taskId);
+    taskSnapshot = saved(taskId);
   }
   if (
-    initial.pid !== process.pid ||
-    initial.boot !== boot() ||
-    initial.startTime !== processInfo(process.pid).startTime ||
-    initial.task.state !== "accepted"
+    taskSnapshot.pid !== process.pid ||
+    taskSnapshot.boot !== boot() ||
+    taskSnapshot.startTime !== processInfo(process.pid).startTime ||
+    taskSnapshot.task.state !== "accepted"
   )
     return;
-  const path = join(location(taskId), "events.jsonl");
-  let journal: number | undefined;
-  if (initial.task.cancelRequested || existsSync(join(location(taskId), "cancel.json"))) {
-    initial.task.state = "cancelled";
-    await publishTerminal(taskId, initial);
+  let journal: OwnerEventJournal | undefined;
+  if (taskSnapshot.task.cancelRequested || existsSync(join(location(taskId), "cancel.json"))) {
+    taskSnapshot.task.state = "cancelled";
+    await publishTerminal(taskId, taskSnapshot);
     return;
   }
-  let child: ReturnType<typeof spawn> | undefined;
+  let ownedChild: OwnerChild | undefined;
+  let controlTimer: ReturnType<typeof setInterval> | undefined;
   let failure: string | undefined;
+  let ownerError: string | undefined;
   let timer: ReturnType<typeof setTimeout> | undefined;
-  let shutdownTimer: ReturnType<typeof setTimeout> | undefined;
-  const stopChild = (graceful = false) => {
-    if (!child?.pid) return;
-    if (graceful) child.stdin?.end();
-    else child.kill();
-    shutdownTimer ??= setTimeout(() => child?.kill("SIGKILL"), 2_000);
+  let exitCode: number | null | undefined;
+  let nativeSettled = false;
+  let promptSent = false;
+  let modelError: string | undefined;
+  let cancelled = false;
+  const cancellation = new OwnerCancellation(taskId);
+  const pendingWrites = new Set<Promise<void>>();
+  const stopChild = (graceful = false) => ownedChild?.stop(graceful);
+  const fail = (detail: string, graceful = false) => {
+    failure = detail;
+    stopChild(graceful);
   };
   try {
-    // A preexisting or malformed journal is not safe to append from sequence one.
-    if (existsSync(path) && statSync(path).size) throw new Error("Existing journal; cannot replay owner");
-    journal = openSync(path, "a", 0o600);
-    let seq = 0;
+    const writer = new OwnerEventJournal(taskId);
+    journal = writer;
     const record = (event: unknown) => {
       if (failure) return;
       try {
-        const line = JSON.stringify({ seq: seq + 1, event }) + "\n";
-        if (Buffer.byteLength(line) > MAX_LINE || fstatSync(journal!).size + Buffer.byteLength(line) > MAX_JOURNAL)
-          throw new Error("RPC journal limit exceeded");
-        const bytes = Buffer.from(line);
-        for (let offset = 0; offset < bytes.length; ) {
-          const written = writeSync(journal!, bytes, offset, bytes.length - offset);
-          if (!written) throw new Error("Short journal write");
-          offset += written;
-        }
-        fsyncSync(journal!);
-        seq++;
+        writer.append(event);
       } catch (e) {
-        failure = "Journal write failed: " + String(e);
-        stopChild();
+        fail("Journal write failed: " + String(e));
       }
     };
     await locked(async () => {
@@ -554,7 +723,7 @@ export async function runOwnerTask(taskId: string, executable = process.execPath
       current.task.state = "running";
       persist(taskId, current);
     });
-    const { model, thinking } = initial.task.profile;
+    const { model, thinking } = taskSnapshot.task.profile;
     const slash = model.indexOf("/");
     const session = join(location(taskId), "session.jsonl");
     const args = [
@@ -569,229 +738,132 @@ export async function runOwnerTask(taskId: string, executable = process.execPath
     ];
     if (thinking) args.push("--thinking", thinking);
     const runtimePath = join(location(taskId), "runtime.json");
-    child = spawn(executable, args, {
-      cwd: initial.task.repoPath,
-      stdio: ["pipe", "pipe", "pipe"],
-      env: { ...remoteChildEnvironment(process.env, initial.task.placement), BRUV_REMOTE_RUNTIME_STATE: runtimePath },
+    ownedChild = new OwnerChild(executable, args, {
+      cwd: taskSnapshot.task.repoPath,
+      env: {
+        ...remoteChildEnvironment(process.env, taskSnapshot.task.placement),
+        BRUV_REMOTE_RUNTIME_STATE: runtimePath,
+      },
     });
-    let buffer = "";
-    let ended = false;
-    let promptSent = false;
-    let modelError: string | undefined;
-    const checkpoints: Promise<unknown>[] = [];
-    // A single durable reply slot. Mark dispatching before sending: after a crash the
-    // owner must never replay a possibly accepted command into a second session.
-    let cancellationAt = 0;
-    let cancelled = false;
-    const answerTimer = setInterval(() => {
-      if (existsSync(join(location(taskId), "cancel.json")) && child?.stdin?.writable) {
-        if (!cancellationAt) {
-          cancellationAt = Date.now();
-          record({ type: "cancel_requested" });
-          child.stdin.write(
-            JSON.stringify({ id: "remote-cancel", type: "prompt", message: "/bruv-remote-cancel" }) + "\n",
-          );
-        }
-        const reportFile = join(location(taskId), "cancel-report.json");
-        if (existsSync(reportFile)) {
-          const report = read<{ settled?: boolean }>(reportFile);
-          cancelled = report.settled === true;
-          if (!cancelled) failure = "Cancellation acknowledged but native work exit is unconfirmed";
-          record({ type: "cancel_report", report });
-          stopChild(true);
-          return;
-        }
-        if (Date.now() - cancellationAt > 20_000) {
-          failure = "Cancellation outcome unknown: native checkpoint unavailable";
-          stopChild();
-          return;
-        }
-      }
-      if (failure || ended || !promptSent || !child?.stdin?.writable) return;
-      const path = join(location(taskId), "answer.json");
-      if (!existsSync(path)) return;
-      try {
-        const request = read<Extract<RemoteRequest, { op: "answer" }> & { dispatch?: string }>(path);
-        if (request.dispatch) return;
-        request.dispatch = "uncertain";
-        durableJsonReplace(path, request);
-        child.stdin.write(
-          JSON.stringify({
-            id: "remote-answer-" + request.replyId,
-            type: "prompt",
-            message: "/remote-native-answer " + Buffer.from(JSON.stringify(request)).toString("base64url"),
-          }) + "\n",
-        );
-      } catch (error) {
-        failure = "Native answer dispatch uncertain: " + String(error);
-        stopChild();
-      }
-    }, 200);
-    answerTimer.unref();
-
-    child.stdout!.setEncoding("utf8");
-    child.stdout!.on("data", (chunk: string) => {
-      if (failure) return;
-      buffer += chunk;
-      if (Buffer.byteLength(buffer) > MAX_LINE && !buffer.includes("\n")) {
-        failure = "RPC line limit exceeded";
-        stopChild();
+    const child = ownedChild.process;
+    const output = new OwnerRpcOutput(MAX_LINE);
+    const send = (command: unknown) => child.stdin.write(JSON.stringify(command) + "\n");
+    const persistBeforeExit = (write: Promise<void>, detail: string) => {
+      const pending = write.catch((error) => fail(detail + String(error)));
+      pendingWrites.add(pending);
+      void pending.then(() => pendingWrites.delete(pending));
+    };
+    const answers = new NativeAnswerDelivery(taskId);
+    controlTimer = setInterval(() => {
+      if (!child.stdin?.writable) return;
+      const outcome = cancellation.poll(send, record);
+      if (outcome === "settled" || outcome === "unconfirmed") {
+        cancelled = outcome === "settled";
+        if (!cancelled) failure = "Cancellation acknowledged but native work exit is unconfirmed";
+        stopChild(true);
         return;
       }
-      let pos: number;
-      while (!failure && (pos = buffer.indexOf("\n")) !== -1) {
-        const line = buffer.slice(0, pos);
-        buffer = buffer.slice(pos + 1);
-        if (Buffer.byteLength(line) > MAX_LINE) {
-          failure = "RPC line limit exceeded";
-          stopChild();
-          break;
-        }
-        let event: any;
-        try {
-          event = JSON.parse(line);
-        } catch {
-          failure = "Invalid RPC JSON output";
-          stopChild();
-          break;
-        }
-        record(event);
-        if (event?.type === "response" && event.id === "remote-config") {
-          const effective = event.data?.model;
-          if (
-            !event.success ||
-            effective?.provider !== model.slice(0, slash) ||
-            effective?.id !== model.slice(slash + 1) ||
-            event.data?.thinkingLevel !== thinking
-          ) {
-            failure =
-              "Remote CLI selected a different or unavailable model/thinking configuration; prompt was not sent";
-            stopChild(true);
-            continue;
-          }
-          if (!promptSent) {
-            if (existsSync(join(location(taskId), "cancel.json"))) continue;
-            promptSent = true;
-            child?.stdin?.write(
-              JSON.stringify({
-                id: "remote-prompt",
-                type: "prompt",
-                message: read<{ prompt: string }>(join(location(taskId), "request.json")).prompt,
-              }) + "\n",
-            );
-          }
-        }
-        if (event?.type === "response" && typeof event.id === "string" && event.id.startsWith("remote-answer-")) {
-          const request = read<Extract<RemoteRequest, { op: "answer" }>>(join(location(taskId), "answer.json"));
-          const ledger = join(location(taskId), "session.jsonl.questions.json");
-          if (event.id !== "remote-answer-" + request.replyId) continue;
-          let delivered = false;
-          try {
-            delivered =
-              event.success === true &&
-              read<Array<{ id: string; replyId?: string; replyVersion?: number; status: string; delivery?: string }>>(
-                ledger,
-              ).some(
-                (q) =>
-                  q.id === request.id &&
-                  q.replyId === request.replyId &&
-                  q.replyVersion === request.version &&
-                  q.status === "answered" &&
-                  q.delivery === "delivered",
-              );
-          } catch {
-            /* missing or unreadable native ledger is uncertain */
-          }
-          checkpoints.push(
-            locked(async () => {
-              const current = saved(taskId);
-              if (current.task.state !== "running") return;
-              current.task.reply = { replyId: request.replyId, status: delivered ? "delivered" : "uncertain" };
-              const { dispatch: _dispatch, ...accepted } = request as typeof request & { dispatch?: string };
-              durableJsonReplace(join(location(taskId), "answers", request.replyId + ".json"), {
-                request: accepted,
-                status: current.task.reply.status,
-              });
-              persist(taskId, current);
-            }).catch((e) => {
-              failure = "Native reply result persistence failed: " + String(e);
-              stopChild();
-            }),
-          );
-        }
-        if (event?.type === "message_end") {
-          const message = event.message;
-          if (message?.stopReason === "error" || message?.stopReason === "aborted" || message?.errorMessage)
-            modelError = String(message.errorMessage || message.stopReason);
-        }
-        if (event?.type === "agent_start") {
-          ended = false;
-          modelError = undefined;
-        }
-        if (event?.type === "agent_settled") {
-          if (existsSync(join(location(taskId), "cancel.json"))) continue;
-          // The normal extension checkpoint runs before RPC agent_settled. A yielded
-          // model turn must not close the CLI and kill its still-running jobs.
-          try {
-            const runtime = read<{
-              settled: boolean;
-              activeJobs?: number;
-              pendingMessages?: boolean;
-              questions?: unknown[];
-              textOutputGap?: string;
-              error?: string;
-            }>(runtimePath);
-            if (
-              !runtime.settled ||
-              runtime.error ||
-              typeof runtime.activeJobs !== "number" ||
-              !Array.isArray(runtime.questions)
-            )
-              throw new Error(runtime.error || "Missing native runtime checkpoint");
-            if (runtime.activeJobs > 0 || runtime.pendingMessages) continue;
-            initial.task.questions = runtime.questions;
-            initial.task.textOutputGap = runtime.textOutputGap;
-            if (runtime.questions.length) {
-              checkpoints.push(
-                locked(async () => {
-                  const current = saved(taskId);
-                  if (current.task.state === "running") {
-                    current.task.questions = runtime.questions;
-                    persist(taskId, current);
-                  }
-                }).catch((e) => {
-                  failure = "Question checkpoint failed: " + String(e);
-                  stopChild();
-                }),
-              );
-              continue;
-            }
-            ended = true;
-          } catch (error) {
-            failure = "Cannot verify remote task completion: " + String(error);
-          }
-          stopChild(true);
-        }
+      if (outcome === "timed-out") {
+        fail("Cancellation outcome unknown: native checkpoint unavailable");
+        return;
       }
-      if (Buffer.byteLength(buffer) > MAX_LINE) {
-        failure = "RPC line limit exceeded";
-        stopChild();
+      if (failure || nativeSettled || !promptSent) return;
+      try {
+        answers.dispatch(send);
+      } catch (error) {
+        fail("Native answer dispatch uncertain: " + String(error));
+      }
+    }, 200);
+    controlTimer.unref();
+
+    child.stdout.setEncoding("utf8");
+    const verifyConfigurationAndSendPrompt = (event: OwnerRpcEvent) => {
+      const effective = event.data?.model;
+      if (
+        !event.success ||
+        effective?.provider !== model.slice(0, slash) ||
+        effective?.id !== model.slice(slash + 1) ||
+        event.data?.thinkingLevel !== thinking
+      ) {
+        fail("Remote CLI selected a different or unavailable model/thinking configuration; prompt was not sent", true);
+        return;
+      }
+      if (promptSent || existsSync(join(location(taskId), "cancel.json"))) return;
+      promptSent = true;
+      send({
+        id: "remote-prompt",
+        type: "prompt",
+        message: read<{ prompt: string }>(join(location(taskId), "request.json")).prompt,
+      });
+    };
+
+    const settleNativeTurn = () => {
+      if (existsSync(join(location(taskId), "cancel.json"))) return;
+      try {
+        const settlement = nativeSettlement(runtimePath);
+        if (settlement.kind === "work-pending") return;
+        taskSnapshot.task.questions = settlement.questions;
+        taskSnapshot.task.textOutputGap = settlement.textOutputGap;
+        if (settlement.kind === "questions-pending") {
+          persistBeforeExit(publishQuestions(taskId, settlement.questions), "Question checkpoint failed: ");
+          return;
+        }
+        nativeSettled = true;
+      } catch (error) {
+        fail("Cannot verify remote task completion: " + String(error), true);
+        return;
+      }
+      stopChild(true);
+    };
+
+    const routeEvent = (event: any) => {
+      if (event?.type === "response") {
+        if (event.id === "remote-config") verifyConfigurationAndSendPrompt(event);
+        else if (typeof event.id === "string" && event.id.startsWith("remote-answer-"))
+          persistBeforeExit(
+            answers.acknowledge(event.id, event.success === true),
+            "Native reply result persistence failed: ",
+          );
+        return;
+      }
+      if (event?.type === "message_end") {
+        const message = event.message;
+        if (message?.stopReason === "error" || message?.stopReason === "aborted" || message?.errorMessage)
+          modelError = String(message.errorMessage || message.stopReason);
+      } else if (event?.type === "agent_start") {
+        nativeSettled = false;
+        modelError = undefined;
+      } else if (event?.type === "agent_settled") settleNativeTurn();
+    };
+
+    child.stdout.on("data", (chunk: string) => {
+      if (failure) return;
+      try {
+        for (const event of output.push(chunk)) {
+          record(event);
+          if (failure) break;
+          routeEvent(event as OwnerRpcEvent | null);
+          if (failure) break;
+        }
+      } catch (error) {
+        fail(error instanceof Error ? error.message : String(error));
       }
     });
-    child.stderr!.setEncoding("utf8");
-    child.stderr!.on("data", (chunk: string) => record({ type: "stderr", text: chunk }));
-    child.stdin!.on("error", () => {
+    child.stderr.setEncoding("utf8");
+    child.stderr.on("data", (chunk: string) => record({ type: "stderr", text: chunk }));
+    child.stdin.on("error", () => {
       /* child exit is handled below */
     });
-    child.stdin!.write(JSON.stringify({ id: "remote-config", type: "get_state" }) + "\n");
+    send({ id: "remote-config", type: "get_state" });
     const watchdog = () => {
       // A native question waits for a human, not a one-hour RPC turn deadline.
       // A dispatched answer is uncertain if it does not settle within the deadline.
-      const answerFile = join(location(taskId), "answer.json");
-      const slot = existsSync(answerFile) ? read<{ id: string }>(answerFile) : undefined;
+      const questionInFlight = answers.questionInFlight;
       if (
-        initial.task.questions?.some(
-          (q) => (q as { status?: string; id?: string }).status === "pending" && (q as { id?: string }).id !== slot?.id,
+        taskSnapshot.task.questions?.some(
+          (q) =>
+            (q as { status?: string; id?: string }).status === "pending" &&
+            (q as { id?: string }).id !== questionInFlight,
         )
       ) {
         timer = setTimeout(watchdog, 60 * 60 * 1000);
@@ -801,40 +873,57 @@ export async function runOwnerTask(taskId: string, executable = process.execPath
       stopChild();
     };
     timer = setTimeout(watchdog, 60 * 60 * 1000);
-    const code = await new Promise<number | null>((resolve, reject) => {
-      child!.on("error", reject);
-      child!.on("close", resolve);
-    });
-    clearInterval(answerTimer);
-    await Promise.all(checkpoints);
-    if (buffer.length && !failure) failure = "Truncated RPC output";
-    const ledger = session + ".questions.json";
-    const pendingQuestion =
+    exitCode = await ownedChild.waitForExit();
+    if (output.truncated && !failure) failure = "Truncated RPC output";
+  } catch (error) {
+    ownerError = String(error);
+  } finally {
+    // No polling or watchdog survives teardown. Escalation stays owned until close.
+    if (timer) clearTimeout(timer);
+    if (controlTimer) clearInterval(controlTimer);
+    await ownedChild?.release();
+    await Promise.all(pendingWrites);
+    journal?.close();
+  }
+
+  let pendingQuestion = false;
+  try {
+    const ledger = join(location(taskId), "session.jsonl.questions.json");
+    pendingQuestion =
+      !ownerError &&
       existsSync(ledger) &&
       read<Array<{ status: string; delivery?: string }>>(ledger).some(
         (q) => q.status === "pending" || (q.status === "answered" && q.delivery !== "delivered"),
       );
-    initial.task.state = cancelled
+  } catch (error) {
+    ownerError = String(error);
+  }
+  taskSnapshot.task.state = ownerError
+    ? "unknown"
+    : cancelled
       ? "cancelled"
-      : code === 0 && promptSent && ended && !failure && !modelError && !pendingQuestion && !cancellationAt
+      : exitCode === 0 &&
+          promptSent &&
+          nativeSettled &&
+          !failure &&
+          !modelError &&
+          !pendingQuestion &&
+          !cancellation.requested
         ? "done"
         : "unknown";
-    if (initial.task.state === "unknown")
-      initial.task.error =
-        failure ||
-        modelError ||
-        (pendingQuestion
-          ? "Native question unresolved when remote session exited"
-          : "RPC exited without verified native settlement (exit " + code + ")");
-    await publishTerminal(taskId, initial);
-  } catch (e) {
-    stopChild();
-    initial.task.state = "unknown";
-    initial.task.error = failure || String(e);
-    await publishTerminal(taskId, initial);
-  } finally {
-    if (timer) clearTimeout(timer);
-    if (shutdownTimer) clearTimeout(shutdownTimer);
-    if (journal !== undefined) closeSync(journal);
+  if (taskSnapshot.task.state === "unknown")
+    taskSnapshot.task.error =
+      failure ||
+      ownerError ||
+      modelError ||
+      (pendingQuestion
+        ? "Native question unresolved when remote session exited"
+        : "RPC exited without verified native settlement (exit " + exitCode + ")");
+  try {
+    await publishTerminal(taskId, taskSnapshot);
+  } catch (error) {
+    taskSnapshot.task.state = "unknown";
+    taskSnapshot.task.error = failure || String(error);
+    await publishTerminal(taskId, taskSnapshot);
   }
 }

@@ -1,5 +1,5 @@
 import { test, expect } from "bun:test";
-import { mkdtempSync, rmSync } from "node:fs";
+import { mkdtempSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
@@ -13,6 +13,7 @@ import {
   type RootJobs,
 } from "../src/remote/root-runtime";
 function fixture() {
+  // Retain this owned directory so isolated test gates can inspect the durable ledger.
   const directory = mkdtempSync(join(tmpdir(), "root-ipc-"));
   const events = new Map<string, Array<(...args: any[]) => any>>(),
     messages: unknown[] = [],
@@ -48,9 +49,6 @@ function fixture() {
     async emit(event: string) {
       for (const handler of events.get(event) ?? []) await handler({}, ctx);
     },
-    cleanup() {
-      rmSync(directory, { recursive: true, force: true });
-    },
   };
 }
 const jobs: Omit<RootJobs, "questions"> = {
@@ -61,7 +59,9 @@ const jobs: Omit<RootJobs, "questions"> = {
         ? { jobs: [] }
         : { method, params },
 };
-test("private IPC exposes actual persisted questions with trusted pinned human answer, not slash/model text", async () => {
+async function withPrivateRootRuntime(
+  check: (f: ReturnType<typeof fixture>, socket: string, token: string) => Promise<void>,
+) {
   const f = fixture(),
     socket = join(f.directory, "r.sock"),
     token = "trusted-owner-token";
@@ -76,6 +76,25 @@ test("private IPC exposes actual persisted questions with trusted pinned human a
   try {
     registerRootRuntime(f.pi, { ...jobs, questions: f.questions });
     await f.emit("session_start");
+    await check(f, socket, token);
+  } finally {
+    try {
+      await f.emit("session_shutdown");
+    } finally {
+      if (oldType === undefined) delete process.env.BRUV_SUBAGENT_TYPE;
+      else process.env.BRUV_SUBAGENT_TYPE = oldType;
+      if (oldDepth === undefined) delete process.env.BRUV_SUBAGENT_DEPTH;
+      else process.env.BRUV_SUBAGENT_DEPTH = oldDepth;
+      if (oldSocket === undefined) delete process.env.BRUV_ROOT_RUNTIME_SOCKET;
+      else process.env.BRUV_ROOT_RUNTIME_SOCKET = oldSocket;
+      if (oldToken === undefined) delete process.env.BRUV_ROOT_RUNTIME_TOKEN;
+      else process.env.BRUV_ROOT_RUNTIME_TOKEN = oldToken;
+    }
+  }
+}
+
+test("private IPC exposes actual persisted questions with trusted pinned human answer, not slash/model text", async () => {
+  await withPrivateRootRuntime(async (f, socket, token) => {
     expect(f.commands).toEqual([]);
     const service = f.questions.service;
     const question = await service.ask(f.ctx, { text: "Approve this?", choices: ["yes", "no"], allowFreeText: false });
@@ -133,18 +152,7 @@ test("private IPC exposes actual persisted questions with trusted pinned human a
       params: { id: "job-on-server" },
     });
     expect(await rootFacetRequest(socket, token, { kind: "close" })).toMatchObject({ settled: true });
-  } finally {
-    await f.emit("session_shutdown");
-    if (oldType === undefined) delete process.env.BRUV_SUBAGENT_TYPE;
-    else process.env.BRUV_SUBAGENT_TYPE = oldType;
-    if (oldDepth === undefined) delete process.env.BRUV_SUBAGENT_DEPTH;
-    else process.env.BRUV_SUBAGENT_DEPTH = oldDepth;
-    if (oldSocket === undefined) delete process.env.BRUV_ROOT_RUNTIME_SOCKET;
-    else process.env.BRUV_ROOT_RUNTIME_SOCKET = oldSocket;
-    if (oldToken === undefined) delete process.env.BRUV_ROOT_RUNTIME_TOKEN;
-    else process.env.BRUV_ROOT_RUNTIME_TOKEN = oldToken;
-    f.cleanup();
-  }
+  });
 });
 test("configured ordinary QuestionService owns native/SSH continuation with no backend duplicate message", async () => {
   const f = fixture();
@@ -178,7 +186,7 @@ test("configured ordinary QuestionService owns native/SSH continuation with no b
     expect(f.messages).toHaveLength(0);
     expect(service.get(f.ctx, question.id).replyId).toBe("pinned-reply");
   } finally {
-    f.cleanup();
+    await f.emit("session_shutdown");
   }
 });
 test("close does not certify incomplete cancellation discovery or active children", async () => {
@@ -191,7 +199,7 @@ test("close does not certify incomplete cancellation discovery or active childre
     );
     expect(result).toMatchObject({ settled: false, error: "Root cancellation discovery incomplete" });
   } finally {
-    f.cleanup();
+    await f.emit("session_shutdown");
   }
 });
 
@@ -217,6 +225,6 @@ test("root facet snapshots project durable typed task rows and retain call owner
     expect(value.taskRows).toEqual([failed]);
     expect(value.jobs).toEqual([]);
   } finally {
-    f.cleanup();
+    await f.emit("session_shutdown");
   }
 });

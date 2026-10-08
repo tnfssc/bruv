@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdir, mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { reportFixture } from "./fixtures/terminal-interaction-report";
@@ -16,23 +16,45 @@ async function run(...args: string[]) {
 test("report mode preserves budget, compares baseline and strictly gates saved evidence", async () => {
   const dir = await mkdtemp(join(tmpdir(), "interactions-report-"));
   try {
-    const source = join(dir, "source.json"),
-      out = join(dir, "report");
+    const source = join(dir, "source.json");
+    const baselineOut = join(dir, "baseline");
+    const strictOut = join(dir, "strict");
+    const permissiveOut = join(dir, "permissive");
+    const invalidReportOut = join(dir, "invalid-report");
+    const unknownCaseOut = join(dir, "unknown-case");
     await Bun.write(source, JSON.stringify(reportFixture()));
-    expect((await run("--report", source, "--baseline", source, "--strict", "--out", out)).exit).toBe(0);
-    expect((await Bun.file(join(out, "run.json")).json()).budgetMs).toBe(8);
-    const fail = await run("--report", source, "--budget", "7", "--strict", "--out", out);
+
+    const compared = await run("--report", source, "--baseline", source, "--strict", "--out", baselineOut);
+    expect(compared.exit).toBe(0);
+    expect((await Bun.file(join(baselineOut, "run.json")).json()).budgetMs).toBe(8);
+    const html = await Bun.file(join(baselineOut, "index.html")).text();
+    expect(html).toContain("Baseline comparison");
+    const data = JSON.parse(html.match(/<script id="interaction-data" type="application\/json">(.*?)<\/script>/s)![1]);
+    expect(data.comparison).not.toBeNull();
+    expect(data.comparison.warnings).toEqual([]);
+    expect(data.comparison.cases.map((c: { id: string }) => c.id)).toEqual(["tools/short/reveal"]);
+
+    // The longest observed span is exactly 7 ms: strict means below, not at, the budget.
+    const fail = await run("--report", source, "--budget", "7", "--strict", "--out", strictOut);
     expect(fail.exit).toBe(1);
     expect(fail.stdout).toContain("OBSERVED CPU MISSES");
-    expect((await run("--report", source, "--budget", "7", "--out", out)).exit).toBe(0);
-    expect(await Bun.file(join(out, "index.html")).text()).toContain("Baseline comparison");
+    expect((await Bun.file(join(strictOut, "run.json")).json()).budgetMs).toBe(7);
+    const permissive = await run("--report", source, "--budget", "7", "--out", permissiveOut);
+    expect(permissive.exit).toBe(0);
+    expect((await Bun.file(join(permissiveOut, "run.json")).json()).budgetMs).toBe(7);
+    expect((await Bun.file(source).json()).budgetMs).toBe(8);
+
     await Bun.write(source, '{"schemaVersion":"bogus"}');
-    expect((await run("--report", source, "--out", out)).exit).toBe(2);
-    expect((await run("--cases", "bad", "--out", out)).exit).toBe(2);
+    expect((await run("--report", source, "--out", invalidReportOut)).exit).toBe(2);
+    expect((await run("--cases", "bad", "--out", unknownCaseOut)).exit).toBe(2);
+    for (const out of [invalidReportOut, unknownCaseOut])
+      for (const name of ["run.json", "report.txt", "index.html"])
+        expect(await Bun.file(join(out, name)).exists()).toBe(false);
   } finally {
     await rm(dir, { recursive: true, force: true });
   }
 }, 30000);
+
 test("real repeated serial cases preserve raw evidence and separate cold/init from actions", async () => {
   const dir = await mkdtemp(join(tmpdir(), "interactions-repeat-"));
   try {
@@ -47,7 +69,21 @@ test("real repeated serial cases preserve raw evidence and separate cold/init fr
     expect(result.stderr).not.toContain("child exited");
     expect(result.exit).toBe(0);
     const report = await Bun.file(join(dir, "run.json")).json();
-    expect(Object.keys(report.evidence)).toHaveLength(8);
+    expect(Object.keys(report.evidence)).toEqual([
+      "raw/send-short-0.json",
+      "raw/send-short-1.json",
+      "raw/send-bruv-short-0.json",
+      "raw/send-bruv-short-1.json",
+      "raw/tools-short-0.json",
+      "raw/tools-short-1.json",
+      "raw/navigation-search-0.json",
+      "raw/navigation-search-1.json",
+    ]);
+    expect(await Bun.file(join(dir, "partial.json")).json()).toEqual(report);
+    for (const key of Object.keys(report.evidence)) {
+      expect(await Bun.file(join(dir, key)).json()).toEqual(report.evidence[key]);
+      expect(await Bun.file(join(dir, key + ".log")).exists()).toBe(true);
+    }
     expect(report.cases.every((c: { samples: unknown[] }) => c.samples.length === 2)).toBe(true);
     expect(report.sources.fingerprint).toMatch(/^[a-f0-9]{64}$/);
     const send = report.evidence["raw/send-short-0.json"];
@@ -81,3 +117,28 @@ test("strict saved-report mode cannot pass missing observations", async () => {
     await rm(dir, { recursive: true, force: true });
   }
 });
+
+test("worker failure keeps diagnostics and the preceding checkpoint without publishing a report", async () => {
+  const dir = await mkdtemp(join(tmpdir(), "interactions-worker-failure-"));
+  try {
+    // Let the first case succeed, then prevent the second worker from writing its evidence.
+    const blocked = join(dir, "raw/tools-short-0.json");
+    await mkdir(blocked, { recursive: true });
+    const result = await run("--cases", "send/short,tools/short", "--out", dir);
+    expect(result.exit).toBe(2);
+    expect(result.stderr).toContain("tools/short child exited 2");
+    const log = await Bun.file(blocked + ".log").text();
+    expect(log).toContain("EISDIR");
+    expect(result.stderr).toContain(log.trim());
+    const partial = await Bun.file(join(dir, "partial.json")).json();
+    expect(Object.keys(partial.evidence)).toEqual(["raw/send-short-0.json"]);
+    expect(partial.cases.every((c: { id: string }) => c.id.startsWith("send/short/"))).toBe(true);
+    expect(await Bun.file(join(dir, "raw/send-short-0.json")).json()).toEqual(
+      partial.evidence["raw/send-short-0.json"],
+    );
+    for (const name of ["run.json", "report.txt", "index.html"])
+      expect(await Bun.file(join(dir, name)).exists()).toBe(false);
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+}, 30000);

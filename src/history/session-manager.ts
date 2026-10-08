@@ -163,38 +163,43 @@ function internals(manager: SessionManager): ManagerInternals {
   return manager as unknown as ManagerInternals;
 }
 
-function syncIndexes(manager: SessionManager, store: DiskEntryStore): void {
+/** Publish one committed journal entry into the SDK's metadata-only view. */
+function publishEntryMetadata(target: ManagerInternals, meta: EntryMetadata): void {
+  const skeleton = meta as unknown as SessionEntry;
+  target.fileEntries.push(skeleton);
+  target.byId.set(meta.id, skeleton);
+  target.leafId = meta.id;
+  if (meta.type !== "label" || !meta.targetId) return;
+  if (meta.label) {
+    target.labelsById.set(meta.targetId, meta.label);
+    target.labelTimestampsById.set(meta.targetId, meta.timestamp);
+  } else {
+    target.labelsById.delete(meta.targetId);
+    target.labelTimestampsById.delete(meta.targetId);
+  }
+}
+
+function syncIndexes(manager: SessionManager, owned: ManagerState): void {
   const target = internals(manager);
-  // The SDK's internal indexes only need metadata; share the owned index
-  // instead of allocating a second object/map for every old checkpoint.
-  target.fileEntries = [store.header, ...(store.entries as unknown as SessionEntry[])];
-  const owned = states.get(manager);
-  if (owned) owned.skeletonEntries = target.fileEntries;
+  const { store } = owned;
+  target.fileEntries = owned.skeletonEntries = [store.header];
   target.byId = store.byId as unknown as Map<string, SessionEntry>;
   target.labelsById = new Map();
   target.labelTimestampsById = new Map();
-  for (const meta of store.entries) {
-    if (meta.type !== "label" || !meta.targetId) continue;
-    if (meta.label) {
-      target.labelsById.set(meta.targetId, meta.label);
-      target.labelTimestampsById.set(meta.targetId, meta.timestamp);
-    } else {
-      target.labelsById.delete(meta.targetId);
-      target.labelTimestampsById.delete(meta.targetId);
-    }
-  }
+  target.leafId = null;
+  for (const meta of store.entries) publishEntryMetadata(target, meta);
   target.sessionId = store.header.id;
   target.sessionFile = store.targetPath;
-  target.leafId = store.entries.at(-1)?.id ?? null;
   target.flushed = store.flushed;
 }
 
 function adopt(manager: SessionManager, store: DiskEntryStore): SessionManager {
   states.get(manager)?.store.dispose();
   abandonedManagers.unregister(manager);
-  states.set(manager, { store });
+  const owned = { store };
+  syncIndexes(manager, owned);
+  states.set(manager, owned);
   abandonedManagers.register(manager, store, manager);
-  syncIndexes(manager, store);
   return manager;
 }
 
@@ -211,7 +216,7 @@ function recoverStateOnFailure<T>(manager: SessionManager, operation: () => T): 
   } catch (error) {
     if (previous) {
       states.set(manager, previous);
-      syncIndexes(manager, previous.store);
+      syncIndexes(manager, previous);
       internals(manager).leafId = previousLeaf;
     }
     throw error;
@@ -306,55 +311,6 @@ export function selectDiskBackedBranchEntries(
   return indexed ? entries.reverse() : undefined;
 }
 
-/** Select indexed candidates from the same branch/context as the public APIs.
- * Undefined means an unowned manager: callers must keep their native fallback.
- * Context indices matter: only index zero can be a replayed checkpoint.
- */
-export function selectDiskBackedEntries(
-  manager: object,
-  scope: "branch" | "context",
-  select: (metadata: EntryMetadata, index: number) => boolean,
-): SessionEntry[] | undefined {
-  const owned = states.get(manager as SessionManager);
-  if (!owned) return undefined;
-  let length = 0;
-  let compact: EntryMetadata | undefined;
-  let compactAt = -1;
-  let keptAt = -1;
-  let keptSystems = 0;
-  visitDiskBackedBranch(manager, (meta) => {
-    const at = length++;
-    if (scope === "branch") return;
-    if (!compact && meta.type === "compaction") {
-      compact = meta;
-      compactAt = at;
-    }
-    if (compact && at > compactAt && keptAt < 0 && meta.type === "message" && meta.messageRole === "system")
-      keptSystems++;
-    if (compact && meta.id === compact.firstKeptEntryId) keptAt = at;
-  });
-  const keptCount = keptAt > compactAt ? keptAt - compactAt - keptSystems : 0;
-  const contextCount = compact ? compactAt + 1 + keptCount : length;
-  const selected: { metadata: EntryMetadata; index: number }[] = [];
-  let position = 0;
-  let keptSeen = 0;
-  visitDiskBackedBranch(manager, (meta) => {
-    const at = position++;
-    let index = length - at - 1;
-    if (compact) {
-      if (at === compactAt) index = 0;
-      else if (at < compactAt) index = contextCount - at - 1;
-      else {
-        if (at > keptAt || (meta.type === "message" && meta.messageRole === "system")) return;
-        index = keptCount - keptSeen++;
-      }
-    }
-    if (select(meta, index)) selected.push({ metadata: meta, index });
-  });
-  selected.sort((a, b) => a.index - b.index);
-  return selected.map(({ metadata }) => owned.store.materialize(metadata));
-}
-
 /** Only entries which affect model context are parsed. Settings live in the index.
  * Two bounded parent walks locate the kept range before collecting it: even a
  * missing firstKeptEntryId must not buffer all summarized message metadata.
@@ -435,14 +391,14 @@ function openStore(path: string): DiskEntryStore {
   return DiskEntryStore.open(path, DEFAULT_SESSION_CACHE_BYTES);
 }
 
-/**
- * Put the 0.99.x disk-backed implementation on the SDK class. Call this before
- * importing or calling the SDK CLI main function. Leave in-memory managers alone.
+/** Own the SDK token estimate cache, independently of journal publication.
+ * Projection construction supplies its result; footer reads reuse the estimate.
  */
-export function installDiskBackedSessionManager(): void {
-  if (installed) return;
-  installed = true;
-
+function installDiskBackedContextUsage(): (
+  manager: SessionManager,
+  projection: SessionProjection,
+  path: EntryMetadata[],
+) => void {
   // Keep only the numeric SDK estimate. Request preparation already builds the
   // projection; seed this cache there so the following footer frame never has to
   // rebuild it. Routed model limits affect presentation, not estimated tokens.
@@ -458,7 +414,7 @@ export function installDiskBackedSessionManager(): void {
       tokens: number | null;
     }
   >();
-  const cacheContextTokens = (manager: SessionManager, tokens: number | null) => {
+  const rememberTokens = (manager: SessionManager, tokens: number | null) => {
     const current = internals(manager);
     contextUsageCache.set(manager, {
       sessionId: current.sessionId,
@@ -500,7 +456,7 @@ export function installDiskBackedSessionManager(): void {
           const entry = owned.store.materialize(newest) as Extract<SessionEntry, { type: "message" }>;
           tokens += estimateTokens(entry.message);
         }
-        cacheContextTokens(manager, tokens);
+        rememberTokens(manager, tokens);
       } else {
         manager.buildSessionProjection();
         tokens = contextUsageCache.get(manager)!.tokens;
@@ -508,6 +464,33 @@ export function installDiskBackedSessionManager(): void {
     }
     return { tokens, contextWindow, percent: tokens === null ? null : (tokens / contextWindow) * 100 };
   };
+
+  return (manager, projection, path) => {
+    // The pinned SDK estimator inspects branch type/id only (compaction and
+    // usage positions). Give it the projection we already built plus its selected
+    // metadata view, never a second materialized branch. A positive dummy
+    // window obtains tokens even before the routed model is available.
+    const usage = originalContextUsage.call({
+      _limitsModel: () => ({ contextWindow: 1 }),
+      sessionManager: {
+        buildSessionProjection: () => projection,
+        getBranch: () => path as unknown as SessionEntry[],
+        getModelContextBranch: () => path as unknown as SessionEntry[],
+      },
+    } as unknown as AgentSession)!;
+    rememberTokens(manager, usage.tokens);
+  };
+}
+
+/**
+ * Put the 0.99.x disk-backed implementation on the SDK class. Call this before
+ * importing or calling the SDK CLI main function. Leave in-memory managers alone.
+ */
+export function installDiskBackedSessionManager(): void {
+  if (installed) return;
+  installed = true;
+
+  const recordContextUsage = installDiskBackedContextUsage();
 
   const klass: any = SessionManager;
   const prototype: any = SessionManager.prototype;
@@ -537,29 +520,10 @@ export function installDiskBackedSessionManager(): void {
       original.appendEntry.call(this, entry);
       return;
     }
-    const previousCount = owned.store.entries.length;
-    try {
-      owned.store.append(entry);
-    } catch (error) {
-      // Publication may fail after the complete entry reached the private
-      // spool. Preserve the SDK's advanced leaf/index so a retry keeps its tree.
-      if (owned.store.entries.length !== previousCount) syncIndexes(this, owned.store);
-      throw error;
-    }
+    const meta = owned.store.append(entry);
     const target = internals(this);
-    const meta = owned.store.entries.at(-1)!;
-    target.fileEntries.push(meta as unknown as SessionEntry);
-    target.leafId = meta.id;
+    publishEntryMetadata(target, meta);
     target.flushed = owned.store.flushed;
-    if (meta.type === "label" && meta.targetId) {
-      if (meta.label) {
-        target.labelsById.set(meta.targetId, meta.label);
-        target.labelTimestampsById.set(meta.targetId, meta.timestamp);
-      } else {
-        target.labelsById.delete(meta.targetId);
-        target.labelTimestampsById.delete(meta.targetId);
-      }
-    }
   };
 
   prototype._rewriteFile = function (this: SessionManager): void {
@@ -746,19 +710,7 @@ export function installDiskBackedSessionManager(): void {
       thinkingLevel: selected.thinkingLevel,
       model: selected.model,
     };
-    // The pinned SDK estimator inspects branch type/id only (compaction and
-    // usage positions). Give it the projection we already built plus temporary
-    // metadata skeletons, never a second materialized branch. A positive dummy
-    // window obtains tokens even before the routed model is available.
-    const usage = originalContextUsage.call({
-      _limitsModel: () => ({ contextWindow: 1 }),
-      sessionManager: {
-        buildSessionProjection: () => projection,
-        getBranch: () => selected.branch as unknown as SessionEntry[],
-        getModelContextBranch: () => selected.branch as unknown as SessionEntry[],
-      },
-    } as unknown as AgentSession)!;
-    cacheContextTokens(this, usage.tokens);
+    recordContextUsage(this, projection, selected.branch);
     return projection;
   };
   prototype.buildSessionContext = function (this: SessionManager): SessionContext {

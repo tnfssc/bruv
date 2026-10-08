@@ -1,4 +1,5 @@
 import { loopbackParent, fixtureRpc } from "./loopback-parent-fixture";
+import { ownedFixtureEnv } from "../tests/helpers";
 /** Drive the compiled normal CLI PTY; RPC only seeds disposable native owner tasks. */
 import { spawn, spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
@@ -10,11 +11,16 @@ const container = process.env.FIXTURE_CONTAINER!;
 const home = homedir();
 const statePath = join(home, ".bruv/remote/state.json");
 const agentDir = process.env.BRUV_CODING_AGENT_DIR!;
+// remote-e2e.sh owns this root and its SSH/Docker fixture settings.
+const rpcEnv = ownedFixtureEnv(process.env.FIXTURE_DROP_DIR!);
+rpcEnv.PATH = join(process.env.FIXTURE_DROP_DIR!, "bin") + ":" + rpcEnv.PATH;
+rpcEnv.BRUV_CODING_AGENT_DIR = agentDir;
+rpcEnv.PI_CODING_AGENT_DIR = agentDir;
+rpcEnv.DOCKER_HOST = process.env.DOCKER_HOST!;
 process.env.GIT_CONFIG_GLOBAL = "/dev/null";
 process.env.GIT_CONFIG_SYSTEM = "/dev/null";
 process.env.GIT_CONFIG_NOSYSTEM = "1";
 const rpcChildren: ReturnType<typeof spawn>[] = [];
-const provider = loopbackParent(agentDir);
 const state = () =>
   JSON.parse(readFileSync(statePath, "utf8")) as {
     connection?: unknown;
@@ -47,23 +53,24 @@ const state = () =>
     >;
   };
 const launchRepo = join(home, "launch-source");
-mkdirSync(launchRepo, { recursive: true });
-writeFileSync(join(launchRepo, "README.md"), "isolated placement source\n");
-for (const args of [
-  ["init", "-q"],
-  ["add", "README.md"],
-  ["-c", "user.name=Fixture", "-c", "user.email=fixture@example.invalid", "commit", "-qm", "base"],
-]) {
-  const result = spawnSync("git", ["-C", launchRepo, ...args], { encoding: "utf8" });
-  assert.equal(result.status, 0, result.stderr);
-}
-assert(!existsSync(join(home, ".git")), "HOME must not become source Git repository");
+const prepareLaunchRepository = () => {
+  mkdirSync(launchRepo, { recursive: true });
+  writeFileSync(join(launchRepo, "README.md"), "isolated placement source\n");
+  for (const args of [
+    ["init", "-q"],
+    ["add", "README.md"],
+    ["-c", "user.name=Fixture", "-c", "user.email=fixture@example.invalid", "commit", "-qm", "base"],
+  ]) {
+    const result = spawnSync("git", ["-C", launchRepo, ...args], { encoding: "utf8" });
+    assert.equal(result.status, 0, result.stderr);
+  }
+  assert(!existsSync(join(home, ".git")), "HOME must not become source Git repository");
+};
 const launchRpc = (cwd = launchRepo, diagnostic = false) =>
   fixtureRpc({
     bruv,
     cwd,
-    home,
-    agentDir,
+    env: rpcEnv,
     children: rpcChildren,
     noSession: diagnostic,
     timeoutDetail: (events) =>
@@ -142,7 +149,9 @@ const until = async (needle: string, timeout = 12000) => {
   throw Error("PTY missing " + needle + "\n" + pane());
 };
 const quote = (value: string) => "'" + value.replaceAll("'", "'\\''") + "'";
+const provider = loopbackParent(agentDir);
 try {
+  prepareLaunchRepository();
   assert.equal(spawnSync("ssh", ["-F", process.env.FIXTURE_SSH_CONFIG!, "fixture-owner", "true"]).status, 0);
   const rpc = launchRpc(launchRepo, true);
   rpc.send("/remote connect fixture-owner /usr/local/bin/bruv");

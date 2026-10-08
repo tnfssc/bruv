@@ -139,6 +139,26 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
     }
     throw new Error("Fixture checkpoint timed out");
   }
+  // Keep native-source provenance and compilation separate from the runtime race.
+  // When a live adapter source is supplied, verify it still matches the pinned predicates.
+  async function loadNativeAdapterResultClassifier() {
+    const pinned = await readFile(resolve("tests/claude-compat/native-adapter-prompt-ownership.ts.txt"), "utf8");
+    if (process.env.BRUV_T3_CLAUDE_ADAPTER_SOURCE) {
+      const adapterSource = await readFile(process.env.BRUV_T3_CLAUDE_ADAPTER_SOURCE, "utf8");
+      const echoFn = adapterSource.slice(
+        adapterSource.indexOf("function claudeEchoedPromptUuids("),
+        adapterSource.indexOf("// The prompt uuid a command_lifecycle"),
+      );
+      const classify = adapterSource.slice(
+        adapterSource.indexOf("function isClaudeResultForOtherTurn("),
+        adapterSource.indexOf("function isClaudeTaskNotificationOriginResult("),
+      );
+      expect(pinned.trimEnd().endsWith((echoFn + classify).trimEnd())).toBe(true);
+    }
+    const js = new Bun.Transpiler({ loader: "ts" }).transformSync(pinned + ";return isClaudeResultForOtherTurn");
+    return new Function(js)();
+  }
+
   test("autonomous result cannot settle a native human prompt still in Pi preflight", async () => {
     const { runtime, frames } = await fixture();
     await init(runtime);
@@ -208,22 +228,7 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
     expect(frames.find((f) => f.type === "stream_event")?.user_message_uuid).toBe(
       "00000000-0000-4000-8000-000000000001",
     );
-    // Exact unmodified adapter UUID/origin decision, extracted below.
-    const pinned = await readFile(resolve("tests/claude-compat/native-adapter-prompt-ownership.ts.txt"), "utf8");
-    if (process.env.BRUV_T3_CLAUDE_ADAPTER_SOURCE) {
-      const adapterSource = await readFile(process.env.BRUV_T3_CLAUDE_ADAPTER_SOURCE, "utf8");
-      const echoFn = adapterSource.slice(
-        adapterSource.indexOf("function claudeEchoedPromptUuids("),
-        adapterSource.indexOf("// The prompt uuid a command_lifecycle"),
-      );
-      const classify = adapterSource.slice(
-        adapterSource.indexOf("function isClaudeResultForOtherTurn("),
-        adapterSource.indexOf("function isClaudeTaskNotificationOriginResult("),
-      );
-      expect(pinned.trimEnd().endsWith((echoFn + classify).trimEnd())).toBe(true);
-    }
-    const js = new Bun.Transpiler({ loader: "ts" }).transformSync(pinned + ";return isClaudeResultForOtherTurn");
-    const classify = new Function(js)();
+    const classify = await loadNativeAdapterResultClassifier();
     const foreign = frames.filter((f) => f.type === "result")[1];
     const detected = classify({
       message: foreign,

@@ -20,6 +20,69 @@ await mkdir(out, { recursive: true });
 try {
   await mkdir(join(home, ".bruv/agent"), { recursive: true });
   await Bun.write(join(home, ".bruv/agent/settings.json"), JSON.stringify({ theme: "dark" }));
+  const sessionFile = createCsvReviewReplay(home);
+  const command = [
+    "env",
+    "-i",
+    "HOME=" + home,
+    "PATH=/usr/bin:/bin",
+    "TERM=xterm-256color",
+    "COLORTERM=truecolor",
+    "LANG=C.UTF-8",
+    "BRUV_CODING_AGENT_DIR=" + join(home, ".bruv/agent"),
+    "unshare",
+    "--user",
+    "--map-root-user",
+    "--net",
+    binary,
+    "--tui-mode",
+    "fullscreen",
+    "--offline",
+    "--no-approve",
+    "--session",
+    sessionFile,
+    "--provider",
+    "openai",
+    "--model",
+    "gpt-4o",
+  ]
+    .map(q)
+    .join(" ");
+  run(["new-session", "-d", "-s", "demo", "-x", "80", "-y", "32", "-c", home, command]);
+  await Bun.sleep(1800);
+  for (const cols of [80, 38]) {
+    run(["resize-window", "-t", "demo", "-x", String(cols), "-y", "32"]);
+    await Bun.sleep(300);
+    const raw = run(["capture-pane", "-t", "demo", "-p", "-e"]);
+    if (!raw.includes("1 tool called")) throw new Error("Expected reference UI did not load: " + raw);
+    await Bun.write(
+      join(out, "offline-" + cols + ".ansi"),
+      raw.replaceAll(home, "/demo-project").replaceAll(home.split("/").at(-1)!, "csv-app"),
+    );
+  }
+  await Bun.write(
+    join(out, "provenance.json"),
+    JSON.stringify(
+      {
+        script: "site/scripts/capture-demo-source.ts",
+        binarySha256: new Bun.CryptoHasher("sha256").update(await Bun.file(binary).arrayBuffer()).digest("hex"),
+        kind: "Offline scripted session replay in the real compiled TUI",
+        network: "unshare network namespace; --offline; empty environment and isolated HOME",
+        commandsExecuted: false,
+      },
+      null,
+      2,
+    ) + "\n",
+  );
+  console.log("Saved real offline UI reference at " + out);
+} finally {
+  try {
+    run(["kill-server"]);
+  } catch {}
+  await rm(home, { recursive: true, force: true });
+}
+
+function createCsvReviewReplay(home: string): string {
   const session = SessionManager.create(home, join(home, "sessions"));
   const usage = {
     input: 0,
@@ -75,63 +138,5 @@ try {
       text: "CSV import now streams rows. Regression tests pass. The fix is on its own branch; review the diff before merging.",
     },
   ]);
-  const command = [
-    "env",
-    "-i",
-    "HOME=" + home,
-    "PATH=/usr/bin:/bin",
-    "TERM=xterm-256color",
-    "COLORTERM=truecolor",
-    "LANG=C.UTF-8",
-    "BRUV_CODING_AGENT_DIR=" + join(home, ".bruv/agent"),
-    "unshare",
-    "--user",
-    "--map-root-user",
-    "--net",
-    binary,
-    "--tui-mode",
-    "fullscreen",
-    "--offline",
-    "--no-approve",
-    "--session",
-    session.getSessionFile(),
-    "--provider",
-    "openai",
-    "--model",
-    "gpt-4o",
-  ]
-    .map(q)
-    .join(" ");
-  run(["new-session", "-d", "-s", "demo", "-x", "80", "-y", "32", "-c", home, command]);
-  await Bun.sleep(1800);
-  for (const cols of [80, 38]) {
-    run(["resize-window", "-t", "demo", "-x", String(cols), "-y", "32"]);
-    await Bun.sleep(300);
-    const raw = run(["capture-pane", "-t", "demo", "-p", "-e"]);
-    if (!raw.includes("1 tool called")) throw new Error("Expected reference UI did not load: " + raw);
-    await Bun.write(
-      join(out, "offline-" + cols + ".ansi"),
-      raw.replaceAll(home, "/demo-project").replaceAll(home.split("/").at(-1)!, "csv-app"),
-    );
-  }
-  await Bun.write(
-    join(out, "provenance.json"),
-    JSON.stringify(
-      {
-        script: "site/scripts/capture-demo-source.ts",
-        binarySha256: new Bun.CryptoHasher("sha256").update(await Bun.file(binary).arrayBuffer()).digest("hex"),
-        kind: "Offline scripted session replay in the real compiled TUI",
-        network: "unshare network namespace; --offline; empty environment and isolated HOME",
-        commandsExecuted: false,
-      },
-      null,
-      2,
-    ) + "\n",
-  );
-  console.log("Saved real offline UI reference at " + out);
-} finally {
-  try {
-    run(["kill-server"]);
-  } catch {}
-  await rm(home, { recursive: true, force: true });
+  return session.getSessionFile();
 }

@@ -43,81 +43,89 @@ test("after-child marker is a separate real provider reply, not a reused earlier
     "ROOT_AFTER_CHILD_REAL",
   );
 });
-test("failure evidence retains correlation and committed source/status, excludes auth and prompt text", async () => {
-  const root = await fs.mkdtemp(path.join(os.tmpdir(), "subagent-return-test-"));
-  try {
-    const agent = path.join(root, "agent"),
-      base = path.join(root, "t3-runtime", "t3-base");
-    await fs.mkdir(path.join(agent, "native-sessions"), { recursive: true });
-    await fs.mkdir(path.join(base, "userdata", "logs", "provider"), { recursive: true });
-    await fs.writeFile(
-      path.join(base, "userdata", "logs", "provider", "events.thread.log"),
-      "[fixture] NTIVE: " +
-        JSON.stringify({
-          providerSessionId: "provider-session",
-          event: {
-            direction: "incoming",
-            payload: {
-              type: "result",
-              session_id: "same-root",
-              user_message_uuid: "human",
-              origin: { kind: "human" },
-              result: "ROOT_AFTER_CHILD_REAL secret prompt",
-              environment: { secret: "secret-token" },
-            },
-          },
-        }) +
-        "\n",
-    );
-    const source = path.join(agent, "source.jsonl"),
-      wire = path.join(root, "wire.ndjson");
-    await fs.writeFile(
-      source,
+// Seed the linked wire, journal, provider and database sources with private fields
+// alongside the correlation/status fields that the capture is allowed to retain.
+async function seedLinkedReturnEvidence(root) {
+  const agent = path.join(root, "agent"),
+    base = path.join(root, "t3-runtime", "t3-base");
+  await fs.mkdir(path.join(agent, "native-sessions"), { recursive: true });
+  await fs.mkdir(path.join(base, "userdata", "logs", "provider"), { recursive: true });
+  await fs.writeFile(
+    path.join(base, "userdata", "logs", "provider", "events.thread.log"),
+    "[fixture] NTIVE: " +
       JSON.stringify({
-        id: "source-1",
-        type: "message",
-        message: {
-          role: "assistant",
-          content: [{ type: "text", text: "ROOT_COMPLETION_ONCE_REAL secret prompt" }],
-        },
-      }) + "\n",
-    );
-    await fs.writeFile(path.join(agent, "native-sessions", "same-root.json"), JSON.stringify({ file: source }));
-    await fs.writeFile(
-      wire,
-      [
-        { kind: "lifecycle", owner: 1234, value: { event: "spawn", pid: 1234, flags: ["--input-format"] } },
-        {
-          ...frame(
-            { type: "user", uuid: "human", message: { content: "ACCEPT_LOCAL_AFTER_CHILD secret prompt" } },
-            "stdin",
-          ),
-          owner: 1234,
-        },
-        {
-          ...frame({
+        providerSessionId: "provider-session",
+        event: {
+          direction: "incoming",
+          payload: {
             type: "result",
-            uuid: "res",
             session_id: "same-root",
             user_message_uuid: "human",
             origin: { kind: "human" },
-            result: "ROOT_AFTER_CHILD_REAL",
-          }),
-          owner: 1234,
+            result: "ROOT_AFTER_CHILD_REAL secret prompt",
+            environment: { secret: "secret-token" },
+          },
         },
-      ]
-        .map(JSON.stringify)
-        .join("\n") + "\n",
-    );
-    const db = new DatabaseSync(path.join(base, "state.sqlite"));
-    db.exec(
-      "CREATE TABLE orchestration_v2_projection_runs (run_id TEXT, status TEXT, payload_json TEXT);" +
-        "INSERT INTO orchestration_v2_projection_runs VALUES ('run-1', 'running', 'secret prompt');" +
-        "CREATE TABLE auth (id TEXT, token TEXT); INSERT INTO auth VALUES ('auth-id', 'secret-token');" +
-        "CREATE TABLE orchestration_events (sequence INTEGER,event_type TEXT,stream_id TEXT,occurred_at TEXT,payload_json TEXT,metadata_json TEXT,application_event_version INTEGER);" +
-        `INSERT INTO orchestration_events VALUES (7,'run.updated','thread','fixture','{"status":"running","secret":"secret prompt"}','{"runId":"run-1"}',2);`,
-    );
-    db.close();
+      }) +
+      "\n",
+  );
+  const source = path.join(agent, "source.jsonl"),
+    wire = path.join(root, "wire.ndjson");
+  await fs.writeFile(
+    source,
+    JSON.stringify({
+      id: "source-1",
+      type: "message",
+      message: {
+        role: "assistant",
+        content: [{ type: "text", text: "ROOT_COMPLETION_ONCE_REAL secret prompt" }],
+      },
+    }) + "\n",
+  );
+  await fs.writeFile(path.join(agent, "native-sessions", "same-root.json"), JSON.stringify({ file: source }));
+  await fs.writeFile(
+    wire,
+    [
+      { kind: "lifecycle", owner: 1234, value: { event: "spawn", pid: 1234, flags: ["--input-format"] } },
+      {
+        ...frame(
+          { type: "user", uuid: "human", message: { content: "ACCEPT_LOCAL_AFTER_CHILD secret prompt" } },
+          "stdin",
+        ),
+        owner: 1234,
+      },
+      {
+        ...frame({
+          type: "result",
+          uuid: "res",
+          session_id: "same-root",
+          user_message_uuid: "human",
+          origin: { kind: "human" },
+          result: "ROOT_AFTER_CHILD_REAL",
+        }),
+        owner: 1234,
+      },
+    ]
+      .map(JSON.stringify)
+      .join("\n") + "\n",
+  );
+  const db = new DatabaseSync(path.join(base, "state.sqlite"));
+  db.exec(
+    "CREATE TABLE orchestration_v2_projection_runs (run_id TEXT, status TEXT, payload_json TEXT);" +
+      "INSERT INTO orchestration_v2_projection_runs VALUES ('run-1', 'running', 'secret prompt');" +
+      "CREATE TABLE auth (id TEXT, token TEXT); INSERT INTO auth VALUES ('auth-id', 'secret-token');" +
+      "CREATE TABLE orchestration_events (sequence INTEGER,event_type TEXT,stream_id TEXT,occurred_at TEXT,payload_json TEXT,metadata_json TEXT,application_event_version INTEGER);" +
+      `INSERT INTO orchestration_events VALUES (7,'run.updated','thread','fixture','{"status":"running","secret":"secret prompt"}','{"runId":"run-1"}',2);`,
+  );
+  db.close();
+}
+
+test("failure evidence retains correlation and committed source/status, excludes auth and prompt text", async () => {
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), "subagent-return-test-"));
+  try {
+    await seedLinkedReturnEvidence(root);
+    const agent = path.join(root, "agent"),
+      wire = path.join(root, "wire.ndjson");
     const page = {
       url: () => "http://fixture/same-root",
       getByRole: (_, { name }) => ({ isVisible: async () => name === "Stop generation" }),

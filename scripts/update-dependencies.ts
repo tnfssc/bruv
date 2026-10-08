@@ -13,6 +13,7 @@ export interface UpdateOptions {
 
 const fixtureRepository = "tnfssc/die-dependency-pr-fixture-20260930";
 const sections = ["dependencies", "devDependencies"] as const;
+const protectedToolchainPackage = "@types/bun";
 
 /** Explicit names allow Bun to update exact pins and cross major versions too. */
 export function selectDependencyNames(manifest: DependencyManifest, options: UpdateOptions = {}): string[] {
@@ -25,7 +26,7 @@ export function selectDependencyNames(manifest: DependencyManifest, options: Upd
     if (!names.includes("resolve.exports")) throw new Error("Fixture requires root dependency resolve.exports");
     return ["resolve.exports"];
   }
-  return names.filter((name) => name !== "@types/bun");
+  return names.filter((name) => name !== protectedToolchainPackage);
 }
 
 /** Check root Pi declarations only; no vendor hashes or migrations belong here. */
@@ -40,28 +41,36 @@ export function validatePiAlignment(manifest: DependencyManifest): void {
   }
 }
 
-export function markdownVersionSummary(before: DependencyManifest, after: DependencyManifest): string {
-  const rows: string[] = [];
+/** Only a valid update can produce the review artifact. */
+export function validateDependencyUpdate(before: DependencyManifest, after: DependencyManifest): void {
   for (const section of sections) {
-    const oldVersions = before[section] ?? {};
-    const newVersions = after[section] ?? {};
-    const names = [...new Set([...Object.keys(oldVersions), ...Object.keys(newVersions)])].sort();
-    for (const name of names) {
-      if (oldVersions[name] !== newVersions[name]) {
-        rows.push(
-          "| " +
-            section +
-            " | " +
-            name +
-            " | " +
-            (oldVersions[name] ?? "—") +
-            " | " +
-            (newVersions[name] ?? "—") +
-            " |",
-        );
-      }
+    if (before[section]?.[protectedToolchainPackage] !== after[section]?.[protectedToolchainPackage]) {
+      throw new Error("bun update changed the protected @types/bun toolchain version");
     }
   }
+  validatePiAlignment(after);
+}
+
+type Versions = Record<string, string | undefined>;
+
+/** Compare own package entries in name order; absent entries have no version. */
+function versionChanges(before: Versions, after: Versions) {
+  return [...new Set([...Object.keys(before), ...Object.keys(after)])]
+    .sort()
+    .map((name) => ({
+      name,
+      before: Object.hasOwn(before, name) ? before[name] : undefined,
+      after: Object.hasOwn(after, name) ? after[name] : undefined,
+    }))
+    .filter((change) => change.before !== change.after);
+}
+
+export function markdownVersionSummary(before: DependencyManifest, after: DependencyManifest): string {
+  const rows = sections.flatMap((section) =>
+    versionChanges(before[section] ?? {}, after[section] ?? {}).map(
+      (change) => `| ${section} | ${change.name} | ${change.before ?? "—"} | ${change.after ?? "—"} |`,
+    ),
+  );
   if (rows.length === 0) {
     return "# Dependency version updates\n\nNo root dependency version declarations changed. Any dependency changes are lockfile-only.\n";
   }
@@ -75,15 +84,18 @@ export function markdownVersionSummary(before: DependencyManifest, after: Depend
   ].join("\n");
 }
 
+/** Ignore lockfile metadata: only the resolved package identifier is a version. */
+function resolvedVersions(lockText: string): Versions {
+  type Lock = { packages: Record<string, [string, ...unknown[]]> };
+  const { packages } = Bun.JSONC.parse(lockText) as Lock;
+  return Object.fromEntries(Object.entries(packages).map(([name, entry]) => [name, entry?.[0]]));
+}
+
 /** Include transitive changes too: root declarations can stay unchanged. */
 export function markdownLockSummary(beforeText: string, afterText: string): string {
-  type Lock = { packages: Record<string, [string, ...unknown[]]> };
-  const before = (Bun.JSONC.parse(beforeText) as Lock).packages;
-  const after = (Bun.JSONC.parse(afterText) as Lock).packages;
-  const rows = [...new Set([...Object.keys(before), ...Object.keys(after)])]
-    .sort()
-    .filter((name) => before[name]?.[0] !== after[name]?.[0])
-    .map((name) => "| " + name + " | " + (before[name]?.[0] ?? "—") + " | " + (after[name]?.[0] ?? "—") + " |");
+  const rows = versionChanges(resolvedVersions(beforeText), resolvedVersions(afterText)).map(
+    (change) => `| ${change.name} | ${change.before ?? "—"} | ${change.after ?? "—"} |`,
+  );
   if (rows.length === 0)
     return "\n## Lockfile packages\n\nNo resolved package versions changed; review any lockfile metadata diff.\n";
   return [
@@ -120,12 +132,7 @@ if (import.meta.main) {
       if (exitCode !== 0) throw new Error(`bun update failed with exit code ${exitCode}`);
     }
     const after = (await manifestFile.json()) as DependencyManifest;
-    for (const section of sections) {
-      if (before[section]?.["@types/bun"] !== after[section]?.["@types/bun"]) {
-        throw new Error("bun update changed the protected @types/bun toolchain version");
-      }
-    }
-    validatePiAlignment(after);
+    validateDependencyUpdate(before, after);
     const artifactDir = new URL("../artifacts/dependency-update/", import.meta.url);
     await mkdir(artifactDir, { recursive: true });
     await Bun.write(

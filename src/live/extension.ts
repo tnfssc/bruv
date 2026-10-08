@@ -27,7 +27,7 @@ import { PlaybackScheduler } from "./playback";
 import { LIVE_PROVIDERS, type LiveModelId, OPENAI_LIVE_MODEL, OPENAI_REALTIME_MODELS } from "./providers";
 import { VoiceSession } from "./session";
 import { runLiveSetup } from "./setup";
-import { liveLocalOnly } from "./status";
+import { compactLiveStatus, liveLocalOnly } from "./status";
 import type { VoiceCallbacks, VoiceOrchestration, VoiceProvider } from "./types";
 
 const ID = "bruv-live";
@@ -163,7 +163,6 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
     private gptCaptureMs = 0;
     private gptSpeechEpoch = 0;
 
-    orchestration?: VoiceOrchestration;
     private inputUtterance = "";
     owner?: MainOwner;
     private outputUtterance = "";
@@ -289,22 +288,14 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
         this.renderTimer = undefined;
       }
       this.lastRender = Date.now();
-      const status =
-        this.state !== "running"
-          ? "Voice · connecting"
-          : this.inputMode === "continuous"
-            ? this.speaking
-              ? "Speaking · mic on"
-              : "Voice · mic on"
-            : this.heldEpoch !== null
-              ? "Listening · release Space to finish"
-              : !this.talkEditor
-                ? "Voice · input unavailable"
-                : this.speaking
-                  ? "Speaking · hold Space to reply"
-                  : this.thinking
-                    ? "Thinking · hold Space to speak"
-                    : "Voice · hold Space to speak";
+      const status = compactLiveStatus({
+        running: this.state === "running",
+        inputMode: this.inputMode,
+        talking: this.heldEpoch !== null,
+        inputAvailable: Boolean(this.talkEditor),
+        speaking: this.speaking,
+        thinking: this.thinking,
+      });
       if (status !== this.lastStatus) {
         this.ctx.ui.setStatus(ID, status);
         this.lastStatus = status;
@@ -442,29 +433,9 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
     async start(key: string) {
       let stage = "main-owner";
       try {
-        const deliver = (text: string, options?: { triggerResponse?: boolean }) => {
-          if (!this.alive) return;
-          // Already heard/produced by the frontend; persist for the coder without echoing it.
-          if (text.startsWith('{"source":"gpt_live_provisional"')) return;
-          if (this.gpt?.state === "ready") {
-            this.gptBridge?.saveContext(Math.floor(this.gptCaptureMs));
-            for (const chunk of gptLiveContext(text)) {
-              if (!this.gpt.observation(chunk, options?.triggerResponse === true)) {
-                this.fail("GPT-Live context delivery capacity reached; reconnect voice. Coding work is unchanged.");
-                return;
-              }
-            }
-          } else if (this.voice?.state === "ready") this.voice.sendContext?.(text, options);
-          else {
-            this.initialContextBytes += Buffer.byteLength(text);
-            if (this.initialContextBytes > 1_048_576)
-              throw new Error("Initial Live context exceeds 1 MiB; resume in text");
-            this.initialContext.push({ text, options });
-          }
-        };
         this.owner = await deps.owner(pi, this.ctx, {
-          onContext: deliver,
-          onInput: deliver,
+          onContext: (text, options) => this.deliverOwnerContext(text, options),
+          onInput: (text) => this.deliverOwnerContext(text),
           onMessage: (message) => presentCanonicalVoiceMessage(this.ctx.sessionManager, message),
           onError: (message) => this.fail(message),
           signal: this.controller.signal,
@@ -473,251 +444,17 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
           this.owner.close();
           return;
         }
-        this.orchestration = this.owner.orchestration;
+        const orchestration = this.owner.orchestration;
         if (this.model === OPENAI_LIVE_MODEL) this.owner.delegatedVoice = true;
         stage = "audio-helper";
-        // Hello does not open devices. Provider setup must succeed BEFORE audio.start().
-        this.audioLaunchPending = true;
-        this.audio = await deps.audio(
-          {
-            capture: (pcm, epoch) => {
-              if (
-                this.alive &&
-                this.state === "running" &&
-                (this.inputMode === "continuous" || (this.heldEpoch !== null && epoch === this.heldEpoch))
-              ) {
-                this.inputFrames++;
-                if (this.gpt) {
-                  const transition = this.gptPlayback?.capture(pcm);
-                  if (transition === "started") {
-                    this.gptSpeechEpoch++;
-                    this.gptBridge?.interrupt();
-                    this.owner?.interrupt();
-                    this.transcriptLog.finish("Voice", "interrupted");
-                  }
-                  this.gpt.appendMicrophone(pcm);
-                  this.gptCaptureMs += pcm.length / 32;
-                } else this.voice?.sendAudio(pcm.toString("base64"));
-                this.render();
-              }
-            },
-            played: (ms) => {
-              if (this.alive) {
-                this.queuedMs = ms;
-                if (ms > 0) this.heardQueue = true;
-                this.playback.nativeQueued(ms);
-                this.drain();
-                this.render();
-              }
-            },
-            error: (code, _message, detail) => this.fail(audioDiagnostic(code, detail)),
-            closed: () => {
-              if (this.alive) this.fail(audioDiagnostic("helper_failure"));
-            },
-          },
-          this.controller.signal,
-        );
-        this.audioLaunchPending = false;
-        if (!this.alive) {
-          await this.audio.stop().catch(() => {});
-          try {
-            await this.audio.close();
-          } catch {
-            /* late launch already aborted */
-          }
-          this.audio = undefined;
-          return;
-        }
+        const audio = await this.launchAudio();
+        if (!audio || !this.alive) return;
         stage = "provider-construction";
-        if (this.model === OPENAI_LIVE_MODEL) {
-          this.gptCaptureMs = 0;
-          this.gptBridge = new GptLiveDelegationBridge({
-            context: () => ({
-              sessionId: this.sessionId,
-              selectedModel: this.ctx.model?.id,
-              cwd: this.ctx.cwd,
-            }),
-            submitContextual: async (id, snapshot) => {
-              if (!this.alive || !this.owner?.delegate) return { clarification: true };
-              const speech = gptLiveRequest(snapshot);
-              if (!speech) return { clarification: true };
-              const speechEpoch = this.gptSpeechEpoch;
-              // Admission precedes completion; do not await long-running work on the socket callback.
-              let admitted = false;
-              const operation = this.owner.delegate(id, speech, snapshot, () => {
-                admitted = true;
-                this.gptAdmittedUserText = speech;
-                this.transcriptLog.finish("You", "turn-boundary");
-              });
-              if (!admitted) {
-                void operation.catch(() => {});
-                return { clarification: true };
-              }
-              void operation.then(
-                () => {
-                  if (this.alive && this.gptSpeechEpoch === speechEpoch)
-                    this.gpt?.commentary(
-                      id,
-                      "Configured coding-agent turn ended; consult session history for its outcome.",
-                    );
-                },
-                () => {
-                  if (this.alive)
-                    this.gpt?.commentary(id, "Coding-agent delegation failed; check session history before retrying.");
-                },
-              );
-              return { queued: true };
-            },
-          });
-          this.gptPlayback = new GptLivePlaybackRecovery({
-            send: (frame, epoch) =>
-              this.audio ? this.audio.play(frame, epoch) : Promise.reject(new Error("Audio unavailable")),
-            flush: (epoch) => (this.audio ? this.audio.flush(epoch) : Promise.reject(new Error("Audio unavailable"))),
-            onError: () => this.fail("GPT-Live playback failed"),
-            onState: (state) => {
-              if (!this.alive) return;
-              this.speaking = state.pendingBytes > 0 || state.inFlight || state.nativeQueuedMs > 0;
-              this.render();
-            },
-          });
-          this.gpt = (deps.gptSession ?? ((callbacks) => new GPTLiveSession(callbacks)))({
-            onInputTranscript: (fragment) => {
-              if (!this.alive) return;
-              if (this.gptTranscriptIdle) clearTimeout(this.gptTranscriptIdle);
-              this.gptTranscriptIdle = undefined;
-              this.gptBridge?.addFragment({ ...fragment, text: fragment.delta });
-              this.owner?.sendContext(
-                JSON.stringify({
-                  source: "gpt_live_provisional",
-                  role: "user",
-                  ...fragment,
-                  uncertain: true,
-                }),
-                { customType: "live-transcript" },
-              );
-              this.transcriptLog.receive("You", { text: fragment.delta, finished: false });
-              this.render();
-            },
-            onOutputTranscript: (fragment) => {
-              if (!this.alive) return;
-              this.owner?.sendContext(
-                JSON.stringify({
-                  source: "gpt_live_provisional",
-                  role: "assistant",
-                  ...fragment,
-                  uncertain: true,
-                  playbackVerified: false,
-                }),
-                { customType: "live-transcript" },
-              );
-              this.transcriptLog.receive("Voice", { text: fragment.delta, finished: false });
-              this.noteGptTranscriptActivity();
-              this.render();
-            },
-            onDelegation: (event) => {
-              if (!this.alive) return;
-              void this.gptBridge?.handleCreated(event).then((result) => {
-                if (this.alive && result?.kind === "queued") this.gpt?.commentary(event.id, result.commentary);
-                else if (this.alive && result?.kind === "clarification")
-                  this.gpt?.commentary(event.id, result.commentary);
-              });
-            },
-            onAudio: (pcm) => {
-              if (this.alive) {
-                this.gptPlayback?.output(Buffer.from(pcm));
-                this.noteGptTranscriptActivity();
-              }
-            },
-            onUsage: (usage) => this.cost.usage(usage),
-            onError: (message) => this.fail(message),
-            onClosed: () => {
-              if (this.alive) this.fail("GPT-Live provider closed");
-            },
-          });
-        } else {
-          this.voice = deps.voice(
-            {
-              onAudio: (pcm, epoch) => this.output(pcm, epoch),
-              onUsage: (usage, id) => {
-                if (this.provider === "google") this.cost.gemini(usage);
-                else this.cost.usage(usage, id);
-              },
-              getPlayedAudioMs: () => this.playback.playedMs,
-              onInterrupted: (epoch) => this.interrupt(epoch),
-              onInteractionStatus: (status) => {
-                if (!this.alive) return;
-                this.thinking = status === "IN_PROGRESS";
-                this.render();
-              },
-              onTurnComplete: () => {
-                if (this.provider === "google") this.cost.turnComplete();
-                if (this.alive) {
-                  this.owner?.turnComplete();
-                  this.outputUtterance = "";
-                  this.transcriptLog.finish("Voice", "turn-boundary");
-                  this.transcriptLog.finish("You", "partial");
-                  this.turns++;
-                  this.generationFinished = true;
-                  this.playback.turnComplete(this.generation);
-                  this.drain();
-                  this.render();
-                }
-              },
-              onInputActivity: () => {
-                if (!this.alive) return;
-                this.owner?.beginInput?.();
-                this.inputUtterance = "";
-                this.transcriptLog.finish("You", "partial");
-              },
-              onInputTranscript: (t) => {
-                if (!this.alive) return;
-                // Provider deltas are drafts, not final user instructions. OpenAI
-                // completed ASR and model-contract Gemini envelopes replace the draft.
-                this.inputUtterance =
-                  this.provider === "openai" || t.replace || t.finalitySource === "model_contract"
-                    ? t.text
-                    : this.inputUtterance + t.text;
-                this.owner?.inputTranscript(this.inputUtterance, t.finished === true);
-                if (t.finished) {
-                  this.completedInputTranscripts++;
-                  this.inputUtterance = "";
-                }
-                this.transcriptLog.receive("You", {
-                  ...t,
-                  replace: t.replace || t.finalitySource === "model_contract",
-                });
-                this.render();
-              },
-              onOutputTranscript: (t) => {
-                if (!this.alive) return;
-                this.outputUtterance =
-                  t.replace || t.finalitySource === "model_contract" ? t.text : this.outputUtterance + t.text;
-                this.owner?.outputTranscript(this.outputUtterance, t.finished === true && !t.interrupted);
-                if (t.finished && !t.interrupted) this.outputUtterance = "";
-                if (t.interrupted) {
-                  this.owner?.interrupt();
-                  this.outputUtterance = "";
-                }
-                this.transcriptLog.receive(
-                  "Voice",
-                  t.interrupted
-                    ? { ...t, finished: false }
-                    : { ...t, replace: t.replace || t.finalitySource === "model_contract" },
-                );
-                if (t.interrupted) this.transcriptLog.finish("Voice", "interrupted");
-                this.render();
-              },
-              // Realtime messages are locally classified; raw transport/provider text never crosses this boundary.
-              onError: (e) => this.fail("Provider " + e.code + (this.provider === "openai" ? ": " + e.message : "")),
-            },
-            this.orchestration,
-            this.provider,
-            this.model,
-            this.inputMode,
-          );
-        }
-        const provider = this.gpt ?? this.voice!;
-        if (this.inputMode === "push-to-talk" && (!this.audio.setCaptureGate || !this.voice?.endAudio))
+        const provider =
+          this.model === OPENAI_LIVE_MODEL
+            ? this.configureDelegatedConversation()
+            : this.configureToolConversation(orchestration);
+        if (this.inputMode === "push-to-talk" && (!audio.setCaptureGate || !this.voice?.endAudio))
           throw new Error("Push-to-talk controls unavailable");
         stage = "provider-connect";
         await provider.connect(key);
@@ -727,20 +464,16 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
           return;
         }
         for (const update of this.initialContext) {
-          if (this.gpt) {
-            for (const chunk of gptLiveContext(update.text)) {
-              if (!this.gpt.observation(chunk, update.options?.triggerResponse === true))
-                throw new Error("GPT-Live initial context capacity reached");
-            }
-          } else this.voice?.sendContext?.(update.text, update.options);
+          if (!this.sendProviderContext(update.text, update.options))
+            throw new Error("GPT-Live initial context capacity reached");
         }
         this.initialContext = [];
         this.initialContextBytes = 0;
         if (!this.alive) return;
         this.state = "running"; // capture may arrive synchronously inside audio.start()
         stage = "audio-start";
-        if (this.inputMode === "push-to-talk") await this.audio.setCaptureGate!(null);
-        await this.audio.start();
+        if (this.inputMode === "push-to-talk") await audio.setCaptureGate!(null);
+        await audio.start();
         if (!this.alive) return;
         if (this.gpt) this.gptPlayback?.start();
         else this.playback.start();
@@ -759,6 +492,273 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
                 : audioLaunchDiagnostic(),
           );
       }
+    }
+    private deliverOwnerContext(text: string, options?: { triggerResponse?: boolean }) {
+      if (!this.alive) return;
+      // Already heard/produced by the frontend; persist for the coder without echoing it.
+      if (text.startsWith('{"source":"gpt_live_provisional"')) return;
+      if (this.gpt?.state === "ready" || this.voice?.state === "ready") {
+        if (this.gpt) this.gptBridge?.saveContext(Math.floor(this.gptCaptureMs));
+        if (!this.sendProviderContext(text, options))
+          this.fail("GPT-Live context delivery capacity reached; reconnect voice. Coding work is unchanged.");
+      } else {
+        this.initialContextBytes += Buffer.byteLength(text);
+        if (this.initialContextBytes > 1_048_576) throw new Error("Initial Live context exceeds 1 MiB; resume in text");
+        this.initialContext.push({ text, options });
+      }
+    }
+    // Live delivery and startup replay use the same provider protocol, but only live
+    // delivery adds a delegation context snapshot (before sending the observation).
+    private sendProviderContext(text: string, options?: { triggerResponse?: boolean }): boolean {
+      if (this.gpt) {
+        for (const chunk of gptLiveContext(text)) {
+          if (!this.gpt.observation(chunk, options?.triggerResponse === true)) return false;
+        }
+      } else this.voice?.sendContext?.(text, options);
+      return true;
+    }
+    private async launchAudio(): Promise<NativeAudio | undefined> {
+      // Hello does not open devices. Provider setup must succeed BEFORE audio.start().
+      this.audioLaunchPending = true;
+      this.audio = await deps.audio(
+        {
+          capture: (pcm, epoch) => {
+            if (
+              this.alive &&
+              this.state === "running" &&
+              (this.inputMode === "continuous" || (this.heldEpoch !== null && epoch === this.heldEpoch))
+            ) {
+              this.inputFrames++;
+              if (this.gpt) {
+                const transition = this.gptPlayback?.capture(pcm);
+                if (transition === "started") {
+                  this.gptSpeechEpoch++;
+                  this.gptBridge?.interrupt();
+                  this.owner?.interrupt();
+                  this.transcriptLog.finish("Voice", "interrupted");
+                }
+                this.gpt.appendMicrophone(pcm);
+                this.gptCaptureMs += pcm.length / 32;
+              } else this.voice?.sendAudio(pcm.toString("base64"));
+              this.render();
+            }
+          },
+          played: (ms) => {
+            if (this.alive) {
+              this.queuedMs = ms;
+              if (ms > 0) this.heardQueue = true;
+              this.playback.nativeQueued(ms);
+              this.drain();
+              this.render();
+            }
+          },
+          error: (code, _message, detail) => this.fail(audioDiagnostic(code, detail)),
+          closed: () => {
+            if (this.alive) this.fail(audioDiagnostic("helper_failure"));
+          },
+        },
+        this.controller.signal,
+      );
+      this.audioLaunchPending = false;
+      if (!this.alive) {
+        await this.audio.stop().catch(() => {});
+        try {
+          await this.audio.close();
+        } catch {
+          /* late launch already aborted */
+        }
+        this.audio = undefined;
+        return undefined;
+      }
+      return this.audio;
+    }
+    private configureDelegatedConversation(): GPTLiveSession {
+      this.gptCaptureMs = 0;
+      this.gptBridge = new GptLiveDelegationBridge({
+        context: () => ({
+          sessionId: this.sessionId,
+          selectedModel: this.ctx.model?.id,
+          cwd: this.ctx.cwd,
+        }),
+        submitContextual: async (id, snapshot) => {
+          if (!this.alive || !this.owner?.delegate) return { clarification: true };
+          const speech = gptLiveRequest(snapshot);
+          if (!speech) return { clarification: true };
+          const speechEpoch = this.gptSpeechEpoch;
+          // Admission precedes completion; do not await long-running work on the socket callback.
+          let admitted = false;
+          const operation = this.owner.delegate(id, speech, snapshot, () => {
+            admitted = true;
+            this.gptAdmittedUserText = speech;
+            this.transcriptLog.finish("You", "turn-boundary");
+          });
+          if (!admitted) {
+            void operation.catch(() => {});
+            return { clarification: true };
+          }
+          void operation.then(
+            () => {
+              if (this.alive && this.gptSpeechEpoch === speechEpoch)
+                this.gpt?.commentary(
+                  id,
+                  "Configured coding-agent turn ended; consult session history for its outcome.",
+                );
+            },
+            () => {
+              if (this.alive)
+                this.gpt?.commentary(id, "Coding-agent delegation failed; check session history before retrying.");
+            },
+          );
+          return { queued: true };
+        },
+      });
+      this.gptPlayback = new GptLivePlaybackRecovery({
+        send: (frame, epoch) =>
+          this.audio ? this.audio.play(frame, epoch) : Promise.reject(new Error("Audio unavailable")),
+        flush: (epoch) => (this.audio ? this.audio.flush(epoch) : Promise.reject(new Error("Audio unavailable"))),
+        onError: () => this.fail("GPT-Live playback failed"),
+        onState: (state) => {
+          if (!this.alive) return;
+          this.speaking = state.pendingBytes > 0 || state.inFlight || state.nativeQueuedMs > 0;
+          this.render();
+        },
+      });
+      this.gpt = (deps.gptSession ?? ((callbacks) => new GPTLiveSession(callbacks)))({
+        onInputTranscript: (fragment) => {
+          if (!this.alive) return;
+          if (this.gptTranscriptIdle) clearTimeout(this.gptTranscriptIdle);
+          this.gptTranscriptIdle = undefined;
+          this.gptBridge?.addFragment({ ...fragment, text: fragment.delta });
+          this.owner?.sendContext(
+            JSON.stringify({
+              source: "gpt_live_provisional",
+              role: "user",
+              ...fragment,
+              uncertain: true,
+            }),
+            { customType: "live-transcript" },
+          );
+          this.transcriptLog.receive("You", { text: fragment.delta, finished: false });
+          this.render();
+        },
+        onOutputTranscript: (fragment) => {
+          if (!this.alive) return;
+          this.owner?.sendContext(
+            JSON.stringify({
+              source: "gpt_live_provisional",
+              role: "assistant",
+              ...fragment,
+              uncertain: true,
+              playbackVerified: false,
+            }),
+            { customType: "live-transcript" },
+          );
+          this.transcriptLog.receive("Voice", { text: fragment.delta, finished: false });
+          this.noteGptTranscriptActivity();
+          this.render();
+        },
+        onDelegation: (event) => {
+          if (!this.alive) return;
+          void this.gptBridge?.handleCreated(event).then((result) => {
+            if (this.alive && result?.kind === "queued") this.gpt?.commentary(event.id, result.commentary);
+            else if (this.alive && result?.kind === "clarification") this.gpt?.commentary(event.id, result.commentary);
+          });
+        },
+        onAudio: (pcm) => {
+          if (this.alive) {
+            this.gptPlayback?.output(Buffer.from(pcm));
+            this.noteGptTranscriptActivity();
+          }
+        },
+        onUsage: (usage) => this.cost.usage(usage),
+        onError: (message) => this.fail(message),
+        onClosed: (finalized, usage) => {
+          if (usage !== undefined) this.cost.usage(usage);
+          this.cost.close(finalized);
+          if (this.alive) this.fail("GPT-Live provider closed");
+        },
+      });
+      return this.gpt;
+    }
+    private configureToolConversation(orchestration: VoiceOrchestration): NativeVoice {
+      this.voice = deps.voice(
+        {
+          onAudio: (pcm, epoch) => this.output(pcm, epoch),
+          onUsage: (usage, id) => this.cost.usage(usage, id),
+          getPlayedAudioMs: () => this.playback.playedMs,
+          onInterrupted: (epoch) => this.interrupt(epoch),
+          onInteractionStatus: (status) => {
+            if (!this.alive) return;
+            this.thinking = status === "IN_PROGRESS";
+            this.render();
+          },
+          onTurnComplete: () => {
+            if (this.provider === "google") this.cost.turnComplete();
+            if (this.alive) {
+              this.owner?.turnComplete();
+              this.outputUtterance = "";
+              this.transcriptLog.finish("Voice", "turn-boundary");
+              this.transcriptLog.finish("You", "partial");
+              this.turns++;
+              this.generationFinished = true;
+              this.playback.turnComplete(this.generation);
+              this.drain();
+              this.render();
+            }
+          },
+          onInputActivity: () => {
+            if (!this.alive) return;
+            this.owner?.beginInput?.();
+            this.inputUtterance = "";
+            this.transcriptLog.finish("You", "partial");
+          },
+          onInputTranscript: (t) => {
+            if (!this.alive) return;
+            // Provider deltas are drafts, not final user instructions. OpenAI
+            // completed ASR and model-contract Gemini envelopes replace the draft.
+            this.inputUtterance =
+              this.provider === "openai" || t.replace || t.finalitySource === "model_contract"
+                ? t.text
+                : this.inputUtterance + t.text;
+            this.owner?.inputTranscript(this.inputUtterance, t.finished === true);
+            if (t.finished) {
+              this.completedInputTranscripts++;
+              this.inputUtterance = "";
+            }
+            this.transcriptLog.receive("You", {
+              ...t,
+              replace: t.replace || t.finalitySource === "model_contract",
+            });
+            this.render();
+          },
+          onOutputTranscript: (t) => {
+            if (!this.alive) return;
+            this.outputUtterance =
+              t.replace || t.finalitySource === "model_contract" ? t.text : this.outputUtterance + t.text;
+            this.owner?.outputTranscript(this.outputUtterance, t.finished === true && !t.interrupted);
+            if (t.finished && !t.interrupted) this.outputUtterance = "";
+            if (t.interrupted) {
+              this.owner?.interrupt();
+              this.outputUtterance = "";
+            }
+            this.transcriptLog.receive(
+              "Voice",
+              t.interrupted
+                ? { ...t, finished: false }
+                : { ...t, replace: t.replace || t.finalitySource === "model_contract" },
+            );
+            if (t.interrupted) this.transcriptLog.finish("Voice", "interrupted");
+            this.render();
+          },
+          // Realtime messages are locally classified; raw transport/provider text never crosses this boundary.
+          onError: (e) => this.fail("Provider " + e.code + (this.provider === "openai" ? ": " + e.message : "")),
+        },
+        orchestration,
+        this.provider,
+        this.model,
+        this.inputMode,
+      );
+      return this.voice;
     }
   }
   registerLiveStop(pi, async (request) => {
@@ -834,7 +834,7 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
                 " · main owner " +
                 (current.owner ? "connected" : "unavailable") +
                 " · tools configured " +
-                (current.orchestration?.tools.length ?? 0) +
+                (current.owner?.orchestration.tools.length ?? 0) +
                 " · completed input transcripts " +
                 current.completedInputTranscripts +
                 " · native VP " +

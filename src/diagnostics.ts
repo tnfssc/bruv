@@ -133,7 +133,13 @@ const CORE_KEYS = new Set([
 ]);
 const DURABLE_KEYS = new Set([...CORE_KEYS, "version", "generated"]);
 
-type State = DiagnosticsSnapshot & {
+/** A fresh activation starts with no live observations or health counts. */
+function emptySnapshot(): DiagnosticsSnapshot {
+  return { records: [], accepted: 0, dropped: 0, invalid: 0, deduplicated: 0, budgetDropped: 0, writeFailures: 0 };
+}
+
+type State = {
+  snapshot: DiagnosticsSnapshot;
   sink?: (type: string, data: unknown) => void;
   seen: Set<string>;
   generation: number;
@@ -145,13 +151,7 @@ function state(owner: object): State {
   let value = states.get(owner);
   if (!value) {
     value = {
-      records: [],
-      accepted: 0,
-      dropped: 0,
-      invalid: 0,
-      deduplicated: 0,
-      budgetDropped: 0,
-      writeFailures: 0,
+      snapshot: emptySnapshot(),
       seen: new Set(),
       generation: 0,
       durableUsed: 0,
@@ -213,6 +213,34 @@ function dedupKey(record: DiagnosticRecord): string {
   return JSON.stringify(stable);
 }
 
+/** Durable acceptance is separate from the live ring, with its own lifetime budget. */
+function persistDiagnostic(current: State, record: DiagnosticRecord): void {
+  if (!current.sink) return;
+  const key = dedupKey(record);
+  if (current.seen.has(key)) {
+    current.snapshot.deduplicated++;
+    current.snapshot.dropped++;
+    return;
+  }
+  if (current.durableUsed >= DURABLE_BUDGET || current.writing) {
+    current.snapshot.budgetDropped++;
+    current.snapshot.dropped++;
+    return;
+  }
+  // Reserve before writing: a throwing/reentrant store cannot induce retries or recursion.
+  current.seen.add(key);
+  current.durableUsed++;
+  current.writing = true;
+  try {
+    current.sink(DIAGNOSTIC_ENTRY_TYPE, record);
+  } catch {
+    current.snapshot.writeFailures++;
+    current.snapshot.dropped++;
+  } finally {
+    current.writing = false;
+  }
+}
+
 export function recordDiagnostic(owner: object, input: DiagnosticInput): void {
   // This API sits on inference error paths: even hostile getters/proxies and reentrant sinks must not escape.
   try {
@@ -220,37 +248,15 @@ export function recordDiagnostic(owner: object, input: DiagnosticInput): void {
     const current = state(owner);
     const record = validate(input);
     if (!record) {
-      current.invalid++;
-      current.dropped++;
+      current.snapshot.invalid++;
+      current.snapshot.dropped++;
       return;
     }
-    current.accepted++;
-    current.records.push(record);
-    if (current.records.length > RING_LIMIT) current.records.splice(0, current.records.length - RING_LIMIT);
-    if (!current.sink) return;
-    const key = dedupKey(record);
-    if (current.seen.has(key)) {
-      current.deduplicated++;
-      current.dropped++;
-      return;
-    }
-    if (current.durableUsed >= DURABLE_BUDGET || current.writing) {
-      current.budgetDropped++;
-      current.dropped++;
-      return;
-    }
-    // Reserve before writing: a throwing/reentrant store cannot induce retries or recursion.
-    current.seen.add(key);
-    current.durableUsed++;
-    current.writing = true;
-    try {
-      current.sink(DIAGNOSTIC_ENTRY_TYPE, record);
-    } catch {
-      current.writeFailures++;
-      current.dropped++;
-    } finally {
-      current.writing = false;
-    }
+    const snapshot = current.snapshot;
+    snapshot.accepted++;
+    snapshot.records.push(record);
+    if (snapshot.records.length > RING_LIMIT) snapshot.records.splice(0, snapshot.records.length - RING_LIMIT);
+    persistDiagnostic(current, record);
   } catch {
     // Diagnostics are strictly best effort and can never disrupt inference.
   }
@@ -276,14 +282,7 @@ export function attachDiagnosticSink(
   const current = state(owner);
   const generation = ++current.generation;
   current.sink = append;
-  current.records = [];
-  current.accepted =
-    current.dropped =
-    current.invalid =
-    current.deduplicated =
-    current.budgetDropped =
-    current.writeFailures =
-      0;
+  current.snapshot = emptySnapshot();
   current.seen.clear();
   current.durableUsed = 0;
   current.writing = false;
@@ -299,17 +298,8 @@ export function attachDiagnosticSink(
 
 export function inspectDiagnostics(owner: object): DiagnosticsSnapshot {
   const current = states.get(owner);
-  if (!current)
-    return { records: [], accepted: 0, dropped: 0, invalid: 0, deduplicated: 0, budgetDropped: 0, writeFailures: 0 };
-  return Object.freeze({
-    records: current.records.slice(),
-    accepted: current.accepted,
-    dropped: current.dropped,
-    invalid: current.invalid,
-    deduplicated: current.deduplicated,
-    budgetDropped: current.budgetDropped,
-    writeFailures: current.writeFailures,
-  });
+  if (!current) return emptySnapshot();
+  return Object.freeze({ ...current.snapshot, records: current.snapshot.records.slice() });
 }
 
 /** Replay backward up to the scan cap. scanLimited reports possible loss at that cap. */

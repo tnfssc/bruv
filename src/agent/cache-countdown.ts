@@ -193,6 +193,165 @@ export class CacheCountdown {
   }
 }
 
+type CacheModel = Pick<Model<any>, "provider" | "id">;
+type CacheAttempt = {
+  operationId: string;
+  model: CacheModel;
+  startedAt: number;
+};
+
+/** Session-scoped evidence, separate from the durable observations and TTL setting. */
+class CacheRequestObserver {
+  private owner: object | undefined;
+  private unsubscribe = () => {};
+  private attempts = new Set<CacheAttempt>();
+  // An HTTP response and assistant ending can describe the same request without
+  // a shared token. Its terminal event must not be assigned to a newer request.
+  private httpTerminalDebt = new Map<string, number>();
+
+  constructor(
+    private pi: ExtensionAPI,
+    private countdown: CacheCountdown,
+  ) {}
+
+  startSession(ctx: ExtensionContext) {
+    this.unsubscribe();
+    this.countdown.restore(ctx);
+    this.attempts.clear();
+    this.httpTerminalDebt.clear();
+    this.owner = ctx.sessionManager && typeof ctx.sessionManager === "object" ? ctx.sessionManager : undefined;
+    if (this.owner) {
+      this.unsubscribe = subscribeProviderAttempts(this.owner, (event) => {
+        // Fetch dispatch alone does not prove provider acceptance.
+        if (event.observedAt === "response") this.record(event.operationId, event.model, event.timestamp, "response");
+      });
+    }
+  }
+
+  stopSession() {
+    this.unsubscribe();
+    this.unsubscribe = () => {};
+    this.owner = undefined;
+    this.attempts.clear();
+    this.httpTerminalDebt.clear();
+  }
+
+  requestStarted(model: CacheModel | undefined) {
+    if (!model) return;
+    this.attempts.add({
+      operationId: randomUUID(),
+      model: { provider: model.provider, id: model.id },
+      startedAt: Date.now(),
+    });
+  }
+
+  httpResponse(status: number, model: CacheModel | undefined) {
+    const attempt = this.takeAttempt(model);
+    if (!attempt) return;
+    // Even a rejected response has a trailing terminal event. When the SDK
+    // omits identity, use the request snapshot to suppress that event.
+    const responseModel = model ?? attempt.model;
+    const key = this.modelKey(responseModel);
+    this.httpTerminalDebt.set(key, (this.httpTerminalDebt.get(key) ?? 0) + 1);
+    if (!Number.isInteger(status) || status < 200 || status >= 300) {
+      this.diagnostic({
+        component: "cache",
+        code: CACHE_HTTP_REJECTED,
+        outcome: "noop",
+        operationId: attempt.operationId,
+        dispatch: "response",
+        ...(Number.isInteger(status) && status >= 100 && status <= 599 ? { httpStatus: status } : {}),
+      });
+      return;
+    }
+    this.record(attempt.operationId, responseModel, Date.now(), "response");
+  }
+
+  assistantEnded(model: CacheModel | undefined, stopReason: string) {
+    const attempt = this.takeTerminalAttempt(model);
+    if (!attempt || stopReason === "error" || stopReason === "aborted") return;
+    // Successful terminal events cover WebSockets. Request start is conservative:
+    // streaming time is never added to the displayed TTL.
+    this.record(attempt.operationId, model ?? attempt.model, attempt.startedAt, "initiated");
+  }
+
+  private modelKey(model: CacheModel) {
+    return model.provider + "/" + model.id;
+  }
+
+  private candidates(model: CacheModel) {
+    return [...this.attempts].filter(
+      (attempt) => attempt.model.provider === model.provider && attempt.model.id === model.id,
+    );
+  }
+
+  private block(blocked: CacheAttempt[]) {
+    for (const attempt of blocked) this.attempts.delete(attempt);
+    this.diagnostic({
+      component: "cache",
+      code: CACHE_CORRELATION_UNAVAILABLE,
+      outcome: "blocked",
+      dispatch: "unknown",
+      count: blocked.length,
+    });
+  }
+
+  private takeAttempt(model: CacheModel | undefined): CacheAttempt | undefined {
+    // Model-less HTTP responses require exactly one outstanding snapshot.
+    // Overlap must discard every candidate, never guess by insertion order.
+    const matches = model ? this.candidates(model) : [...this.attempts];
+    if (matches.length === 1) {
+      const attempt = matches[0];
+      this.attempts.delete(attempt);
+      return attempt;
+    }
+    if (matches.length > 1) this.block(matches);
+    return undefined;
+  }
+
+  private takeTerminalAttempt(model: CacheModel | undefined): CacheAttempt | undefined {
+    if (model) {
+      const key = this.modelKey(model);
+      const debt = this.httpTerminalDebt.get(key) ?? 0;
+      if (debt > 0) {
+        if (debt === 1) this.httpTerminalDebt.delete(key);
+        else this.httpTerminalDebt.set(key, debt - 1);
+        // An overlapping request for the same model makes this ending ambiguous.
+        // Drop it as well rather than consuming the newer request's evidence.
+        const overlapping = this.candidates(model);
+        if (overlapping.length > 0) this.block(overlapping);
+        return undefined;
+      }
+    }
+    return this.takeAttempt(model);
+  }
+
+  private diagnostic(input: Parameters<typeof recordDiagnostic>[1]) {
+    if (this.owner) recordDiagnostic(this.owner, input);
+  }
+
+  private record(operationId: string, model: CacheModel, timestamp: number, dispatch: "response" | "initiated") {
+    try {
+      this.countdown.record(this.pi, model, timestamp);
+      this.diagnostic({
+        component: "cache",
+        code: CACHE_OBSERVATION_RECORDED,
+        outcome: "success",
+        operationId,
+        dispatch,
+      });
+    } catch {
+      this.diagnostic({
+        component: "observer",
+        code: CACHE_OBSERVER_FAILED,
+        outcome: "failed",
+        operationId,
+        dispatch,
+      });
+    }
+  }
+}
+
 export function registerCacheCountdown(pi: ExtensionAPI, countdown: CacheCountdown, path = cacheSettingsPath()): void {
   let loadError: Error | undefined;
   const ready = loadCacheSettings(path)
@@ -200,95 +359,9 @@ export function registerCacheCountdown(pi: ExtensionAPI, countdown: CacheCountdo
     .catch((error) => {
       loadError = error instanceof Error ? error : new Error(String(error));
     });
-  let unsubscribe = () => {};
-  let owner: object | undefined;
-  type Attempt = {
-    operationId: string;
-    model: Pick<Model<any>, "provider" | "id">;
-    startedAt: number;
-  };
-  const attempts = new Map<string, Attempt>();
-  // HTTP response hooks and assistant terminal hooks can both describe the same
-  // request, but expose no shared correlation token. Remember HTTP-observed
-  // models so a later terminal event can never be reassigned to an overlapping
-  // WebSocket attempt.
-  const httpTerminalDebt = new Map<string, number>();
-  const modelKey = (model: Pick<Model<any>, "provider" | "id">) => model.provider + "/" + model.id;
-  const diagnostic = (input: Parameters<typeof recordDiagnostic>[1]) => {
-    if (owner) recordDiagnostic(owner, input);
-  };
-  const record = (
-    attempt: Attempt,
-    model: Pick<Model<any>, "provider" | "id">,
-    timestamp: number,
-    dispatch: "response" | "initiated",
-  ) => {
-    try {
-      countdown.record(pi, model, timestamp);
-      diagnostic({
-        component: "cache",
-        code: CACHE_OBSERVATION_RECORDED,
-        outcome: "success",
-        operationId: attempt.operationId,
-        dispatch,
-      });
-    } catch {
-      diagnostic({
-        component: "observer",
-        code: CACHE_OBSERVER_FAILED,
-        outcome: "failed",
-        operationId: attempt.operationId,
-        dispatch,
-      });
-    }
-  };
-  const candidates = (model: Pick<Model<any>, "provider" | "id">): Attempt[] =>
-    [...attempts.values()].filter(
-      (attempt) => attempt.model.provider === model.provider && attempt.model.id === model.id,
-    );
-  const block = (blocked: Attempt[]) => {
-    for (const attempt of blocked) attempts.delete(attempt.operationId);
-    diagnostic({
-      component: "cache",
-      code: CACHE_CORRELATION_UNAVAILABLE,
-      outcome: "blocked",
-      dispatch: "unknown",
-      count: blocked.length,
-    });
-  };
-  const correlate = (model: Pick<Model<any>, "provider" | "id"> | undefined): Attempt | undefined => {
-    // The SDK's HTTP hook has no model identity. Its response can only be
-    // attributed when exactly one request snapshot is outstanding. With
-    // overlap, discard every candidate rather than guessing by insertion order.
-    if (!model) {
-      if (attempts.size === 1) return attempts.values().next().value;
-      if (attempts.size > 1) block([...attempts.values()]);
-      return undefined;
-    }
-    const matches = candidates(model);
-    if (matches.length === 1) return matches[0];
-    if (matches.length > 1) block(matches);
-    return undefined;
-  };
+  const observer = new CacheRequestObserver(pi, countdown);
   pi.on("session_start", async (_event, ctx) => {
-    unsubscribe();
-    countdown.restore(ctx);
-    attempts.clear();
-    httpTerminalDebt.clear();
-    owner = ctx.sessionManager && typeof ctx.sessionManager === "object" ? ctx.sessionManager : undefined;
-    if (owner) {
-      unsubscribe = subscribeProviderAttempts(owner, (event) => {
-        // Dispatch only proves that fetch was invoked. It does not prove that
-        // the provider accepted the request (a later HTTP 401 is one example).
-        if (event.observedAt === "response")
-          record(
-            { operationId: event.operationId, model: event.model, startedAt: event.timestamp },
-            event.model,
-            event.timestamp,
-            "response",
-          );
-      });
-    }
+    observer.startSession(ctx);
     await ready;
     if (loadError)
       ctx.ui?.notify?.(
@@ -296,48 +369,11 @@ export function registerCacheCountdown(pi: ExtensionAPI, countdown: CacheCountdo
         "warning",
       );
   });
-  pi.on("session_shutdown", () => {
-    unsubscribe();
-    unsubscribe = () => {};
-    owner = undefined;
-    attempts.clear();
-    httpTerminalDebt.clear();
-  });
-  pi.on("before_provider_request", (_event, ctx) => {
-    const model = ctx.model;
-    if (!model) return;
-    const attempt: Attempt = {
-      operationId: randomUUID(),
-      model: { provider: model.provider, id: model.id },
-      startedAt: Date.now(),
-    };
-    attempts.set(attempt.operationId, attempt);
-  });
+  pi.on("session_shutdown", () => observer.stopSession());
+  pi.on("before_provider_request", (_event, ctx) => observer.requestStarted(ctx.model));
   pi.on("after_provider_response", (event) => {
-    const response = event as typeof event & { model?: Pick<Model<any>, "provider" | "id"> };
-    const attempt = correlate(response.model);
-    if (!attempt) return;
-    attempts.delete(attempt.operationId);
-    // A terminal message follows an HTTP response, including a rejected one.
-    // Key that debt by the request snapshot when the SDK omits model identity,
-    // so the terminal hook cannot turn a rejected response into an observation.
-    const responseModel = response.model ?? attempt.model;
-    const key = modelKey(responseModel);
-    httpTerminalDebt.set(key, (httpTerminalDebt.get(key) ?? 0) + 1);
-    if (!Number.isInteger(response.status) || response.status < 200 || response.status >= 300) {
-      diagnostic({
-        component: "cache",
-        code: CACHE_HTTP_REJECTED,
-        outcome: "noop",
-        operationId: attempt.operationId,
-        dispatch: "response",
-        ...(Number.isInteger(response.status) && response.status >= 100 && response.status <= 599
-          ? { httpStatus: response.status }
-          : {}),
-      });
-      return;
-    }
-    record(attempt, responseModel, Date.now(), "response");
+    const response = event as typeof event & { model?: CacheModel };
+    observer.httpResponse(response.status, response.model);
   });
   pi.on("message_end", (event) => {
     if (event.message.role !== "assistant") return;
@@ -346,27 +382,7 @@ export function registerCacheCountdown(pi: ExtensionAPI, countdown: CacheCountdo
       typeof message.provider === "string" && typeof message.model === "string"
         ? { provider: message.provider, id: message.model }
         : undefined;
-    if (model) {
-      const key = modelKey(model);
-      const debt = httpTerminalDebt.get(key) ?? 0;
-      if (debt > 0) {
-        if (debt === 1) httpTerminalDebt.delete(key);
-        else httpTerminalDebt.set(key, debt - 1);
-        // If another request for the same model started before this terminal
-        // hook arrived, the hook could belong to either request. Drop every
-        // matching candidate rather than falsely consuming the newer one.
-        const overlapping = candidates(model);
-        if (overlapping.length > 0) block(overlapping);
-        return;
-      }
-    }
-    const attempt = correlate(model);
-    if (!attempt) return;
-    attempts.delete(attempt.operationId);
-    if (event.message.stopReason === "error" || event.message.stopReason === "aborted") return;
-    // A successful terminal event covers WebSocket transports. Request start is
-    // conservative: streaming time is never added to the displayed TTL.
-    record(attempt, model ?? attempt.model, attempt.startedAt, "initiated");
+    observer.assistantEnded(model, event.message.stopReason);
   });
   pi.on("model_select", () => countdown.modelChanged());
   pi.registerCommand("cache-ttl", {

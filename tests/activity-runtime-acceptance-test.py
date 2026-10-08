@@ -4,6 +4,8 @@ import importlib.util
 from pathlib import Path
 import unittest
 import sys
+import json
+import tempfile
 
 sys.dont_write_bytecode = True
 
@@ -68,6 +70,69 @@ class EvidenceTests(unittest.TestCase):
             expected = [("send", "/questions resume q_fixture")]
             if extra_enter: expected.append(("key", "Enter"))
             self.assertEqual(commands, expected)
+
+    def test_long_thread_preparation_installs_linked_original_records(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "sessions").mkdir()
+            state_path = root / "state.json"
+            state = {"binary": "/owner/dist/bruv", "socket": "private-fixture", "provider_pid": 123, "session": "old"}
+            state_path.write_text(json.dumps(state))
+
+            journal, original_lines = runner.prepare_long_thread(root)
+
+            self.assertEqual(journal, root / "sessions" / "acceptance-long.jsonl")
+            self.assertEqual(json.loads(state_path.read_text()), {**state, "session": str(journal)})
+            self.assertFalse((root / "requests.jsonl").exists())
+            self.assertEqual(original_lines, journal.read_text().splitlines())
+            records = [json.loads(line) for line in original_lines]
+            self.assertEqual(len(records), 2102)
+            self.assertEqual(records[0]["type"], "session")
+            self.assertEqual(records[0]["version"], 3)
+            self.assertEqual(records[0]["cwd"], str(root / "project"))
+            entries = records[1:]
+            self.assertEqual(entries[0]["parentId"], None)
+            self.assertEqual([entry["parentId"] for entry in entries[1:]], [entry["id"] for entry in entries[:-1]])
+            for turn in range(100):
+                self.assert_saved_turn(entries[turn * 21:(turn + 1) * 21], turn)
+            self.assertEqual(entries[-1]["message"]["stopReason"], "stop")
+            self.assertEqual(entries[-1]["message"]["content"], [{"type": "text", "text": "LONG_THREAD_READY"}])
+            with journal.open("a") as f:
+                f.write('{"type":"appended-evidence"}\n')
+            self.assertEqual(journal.read_text().splitlines()[:-1], original_lines)
+
+    def assert_saved_turn(self, turn_entries, turn):
+        """Each saved turn contains one user message and ten linked tool exchanges."""
+        self.assertEqual(turn_entries[0]["message"]["content"], "Saved turn " + str(turn))
+        for tool in range(10):
+            call = turn_entries[1 + tool * 2]["message"]
+            result = turn_entries[2 + tool * 2]["message"]
+            cid = f"saved-{turn}-{tool}"
+            token = "DETAIL_" + cid
+            self.assertEqual(call["content"], [{
+                "type": "toolCall",
+                "id": cid,
+                "name": "execute",
+                "arguments": {
+                    "label": "Read saved file " + cid,
+                    "code": 'console.log("' + token + '")',
+                },
+            }])
+            self.assertEqual(
+                (call["role"], call["api"], call["provider"], call["model"], call["stopReason"]),
+                ("assistant", "openai-responses", "activity-fixture", "acceptance", "toolUse"),
+            )
+            self.assertEqual(
+                (result["role"], result["toolCallId"], result["toolName"], result["isError"]),
+                ("toolResult", cid, "execute", False),
+            )
+            self.assertEqual(result["content"], [{"type": "text", "text": token}])
+            self.assertEqual(result["details"], {
+                "exitCode": 0,
+                "stdout": token,
+                "stderr": "",
+                "images": [],
+            })
 
     def test_row_only_check_rejects_expanded_native_details(self):
         run = runner.Run(Path("/unused"), Path("/owner/dist/bruv"))

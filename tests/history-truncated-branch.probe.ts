@@ -11,7 +11,6 @@ import {
   getLatestDiskBackedCustomEntry,
   installDiskBackedSessionManager,
   selectDiskBackedBranchEntries,
-  selectDiskBackedEntries,
   visitDiskBackedBranch,
 } from "../src/history/session-manager";
 
@@ -92,9 +91,15 @@ function check(file: string, newest: string[], contextId: string | null) {
       selectDiskBackedBranchEntries(manager, () => true)!.map((row) => row.id),
       oldest,
     );
+    // Shipped context omits plain auxiliary custom records, even at a gap or cycle.
+    const contextIds = contextId ? [contextId] : [];
     assert.deepEqual(
-      selectDiskBackedEntries(manager, "context", () => true)!.map((row) => row.id),
-      oldest,
+      manager.buildContextEntries().map((row) => row.id),
+      contextIds,
+    );
+    assert.deepEqual(
+      manager.buildSessionProjection().entries.map((row) => row.sourceEntry.id),
+      contextIds,
     );
     const candidates: string[] = [];
     assert.equal(

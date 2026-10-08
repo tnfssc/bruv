@@ -11,7 +11,7 @@ const sha = (x: string | Buffer) => createHash("sha256").update(x).digest("hex")
 const root = mkdtempSync(join(tmpdir(), "bruv-disk-footer-profile-"));
 const samples: any[] = [],
   managers: SessionManager[] = [];
-function sync<T>(name: string, payloadBytes: number, fn: () => T): T {
+function measureSync<T>(name: string, payloadBytes: number, fn: () => T) {
   const parses: any[] = [],
     decodes: any[] = [],
     materializations: any[] = [];
@@ -44,14 +44,23 @@ function sync<T>(name: string, payloadBytes: number, fn: () => T): T {
   const start = performance.now();
   try {
     const result = fn();
-    samples.push({ name, payloadBytes, syncMs: performance.now() - start, parses, decodes, materializations });
-    return result;
+    const sample = { name, payloadBytes, syncMs: performance.now() - start, parses, decodes, materializations };
+    return { result, sample };
   } finally {
     JSON.parse = parse;
     Buffer.prototype.toString = decode;
     DiskEntryStore.prototype.materialize = materialize;
   }
 }
+function measureBranch(name: string, payloadBytes: number, manager: SessionManager, expectedText: string) {
+  const { result: entries, sample } = measureSync(name, payloadBytes, () => manager.getBranch());
+  // Validation and hashing stay outside the measured synchronous span.
+  const actual = (entries.find((entry) => entry.type === "message" && entry.message.role === "toolResult") as any)
+    .message.content[0].text;
+  if (actual !== expectedText) throw new Error("truncated/altered full content");
+  return { ...sample, contentBytes: Buffer.byteLength(actual), contentHash: sha(actual) };
+}
+
 try {
   installDiskBackedSessionManager();
   for (const payloadBytes of [2097152, 8388608]) {
@@ -73,27 +82,24 @@ try {
       timestamp: 2,
     });
     child.appendMessage({ role: "user", content: "done", timestamp: 3 });
-    const validate = (entries: any[]) => {
-      const actual = entries.find((e) => e.message?.role === "toolResult").message.content[0].text;
-      if (actual !== text) throw new Error("truncated/altered full content");
-      return { contentBytes: Buffer.byteLength(actual), contentHash: sha(actual) };
-    };
     for (let iteration = 0; iteration < 2; iteration++) {
-      const entries = sync("getBranch." + iteration, payloadBytes, () => child.getBranch());
-      Object.assign(samples.at(-1), validate(entries));
+      samples.push(measureBranch("getBranch." + iteration, payloadBytes, child, text));
     }
-    const reopened = sync("open", payloadBytes, () => SessionManager.open(child.getSessionFile()!));
+    const { result: reopened, sample: openSample } = measureSync("open", payloadBytes, () =>
+      SessionManager.open(child.getSessionFile()!),
+    );
     managers.push(reopened);
+    samples.push(openSample);
     for (let iteration = 0; iteration < 2; iteration++) {
-      const entries = sync("reopened.getBranch." + iteration, payloadBytes, () => reopened.getBranch());
-      Object.assign(samples.at(-1), validate(entries));
+      samples.push(measureBranch("reopened.getBranch." + iteration, payloadBytes, reopened, text));
     }
     const tracker = new SessionCostTracker(parent.getSessionFile()!, dir);
     const consume = (tracker as any).consume;
     (tracker as any).consume = function (session: any, chunk: Buffer) {
       const pendingBytesBefore = session.pendingLength;
-      sync("cost.consume", payloadBytes, () => consume.call(this, session, chunk));
-      Object.assign(samples.at(-1), {
+      const { sample } = measureSync("cost.consume", payloadBytes, () => consume.call(this, session, chunk));
+      samples.push({
+        ...sample,
         pendingBytesBefore,
         chunkBytes: chunk.length,
         pendingBytesAfter: session.pendingLength,

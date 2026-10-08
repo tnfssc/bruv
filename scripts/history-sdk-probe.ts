@@ -1,4 +1,8 @@
-/** Isolated real AgentSession.compact() soak. No network, user sessions or installed binary. */
+/**
+ * Run with bun scripts/history-sdk-probe.ts. Isolated SDK compaction/reset/resume soak.
+ * The extension supplies the summary: no provider, user sessions or installed binary.
+ * Heap growth checks retained JSC history residency, not peak allocations or bounded RSS.
+ */
 
 import { heapStats } from "bun:jsc";
 import { randomBytes } from "node:crypto";
@@ -13,10 +17,8 @@ import {
   SessionManager,
   SettingsManager,
 } from "@earendil-works/pi-coding-agent";
-import { installDiskBackedSessionManager } from "../src/history/session-manager";
+import { disposeDiskBackedSessionManager, installDiskBackedSessionManager } from "../src/history/session-manager";
 
-installDiskBackedSessionManager();
-const dir = await mkdtemp(join(tmpdir(), "bruv-history-sdk-soak-"));
 const model = getModel("anthropic", "claude-sonnet-4-5")!;
 const usage = {
   input: 10,
@@ -26,20 +28,8 @@ const usage = {
   totalTokens: 11,
   cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: 0 },
 };
-let session: Awaited<ReturnType<typeof createAgentSession>>["session"] | undefined;
-const manager = SessionManager.create(dir, dir);
-let tail = "";
-let compactions = 0;
-let originals = 0;
-const samples: Array<{
-  label: string;
-  heapMiB: number;
-  rssMiB: number;
-  fileMiB: number;
-  contextMessages: number;
-  compactions: number;
-}> = [];
-async function sample(label: string) {
+
+async function sample(label: string, manager: SessionManager, compactions: number): Promise<number> {
   await Bun.sleep(20);
   Bun.gc(true);
   await Bun.sleep(20);
@@ -54,10 +44,14 @@ async function sample(label: string) {
     contextMessages: manager.buildSessionContext().messages.length,
     compactions,
   };
-  samples.push(value);
   console.log(JSON.stringify(value));
+  return value.heapMiB;
 }
-try {
+
+async function runCompactionSoak(dir: string, manager: SessionManager) {
+  // Only the live SDK phase owns these hook inputs and observations.
+  let tail = "";
+  let compactions = 0;
   const runtime = await ModelRuntime.create({
     authPath: join(dir, "auth.json"),
     modelsPath: null,
@@ -87,7 +81,7 @@ try {
     ],
   });
   await loader.reload();
-  ({ session } = await createAgentSession({
+  const { session } = await createAgentSession({
     cwd: dir,
     agentDir: dir,
     resourceLoader: loader,
@@ -98,71 +92,87 @@ try {
       compaction: { enabled: false, keepRecentTokens: 128, reserveTokens: 8192 },
     }),
     thinkingLevel: "off",
-  }));
-  await sample("baseline");
-  let first = "";
-  for (let batch = 1; batch <= 16; batch++) {
-    for (let i = 0; i < 32; i++) {
-      const id = manager.appendMessage({
-        role: "user",
-        content: randomBytes(192 * 1024).toString("base64"),
+  });
+
+  try {
+    const baselineHeapMiB = await sample("baseline", manager, compactions);
+    let firstOriginalId = "";
+    let originals = 0;
+    for (let batch = 1; batch <= 16; batch++) {
+      for (let i = 0; i < 32; i++) {
+        const id = manager.appendMessage({
+          role: "user",
+          content: randomBytes(192 * 1024).toString("base64"),
+          timestamp: Date.now(),
+        });
+        firstOriginalId ||= id;
+        originals++;
+      }
+      manager.appendMessage({
+        role: "assistant",
+        api: model.api,
+        provider: model.provider,
+        model: model.id,
+        content: [{ type: "text", text: "Stored original batch" }],
+        stopReason: "stop",
+        usage,
         timestamp: Date.now(),
       });
-      first ||= id;
-      originals++;
+      tail = manager.appendMessage({ role: "user", content: "retained tail " + batch, timestamp: Date.now() });
+      await session.compact();
+      if (manager.buildSessionContext().messages.length !== 2) throw new Error("Compacted context changed");
+      if (batch % 4 === 0) await sample("after real compaction " + batch, manager, compactions);
     }
-    manager.appendMessage({
-      role: "assistant",
-      api: model.api,
-      provider: model.provider,
-      model: model.id,
-      content: [{ type: "text", text: "Stored original batch" }],
-      stopReason: "stop",
-      usage,
-      timestamp: Date.now(),
-    });
-    tail = manager.appendMessage({ role: "user", content: "retained tail " + batch, timestamp: Date.now() });
-    await session.compact();
-    if (manager.buildSessionContext().messages.length !== 2) throw new Error("Compacted context changed");
-    if (batch % 4 === 0) await sample("after real compaction " + batch);
+    if (compactions !== 16) throw new Error("SDK did not complete every compaction");
+    return { firstOriginalId, originals, compactions, baselineHeapMiB };
+  } finally {
+    session.dispose();
   }
-  if (compactions !== 16) throw new Error("SDK did not complete every compaction");
-  const path = manager.getSessionFile()!;
-  session.dispose();
-  session = undefined;
-  manager.newSession();
-  await sample("reset");
-  manager.setSessionFile(path);
-  await sample("resume");
-  const entry = manager.getEntry(first);
-  if (
-    entry?.type !== "message" ||
-    entry.message.role !== "user" ||
-    typeof entry.message.content !== "string" ||
-    entry.message.content.length !== 256 * 1024
-  )
-    throw new Error("Original history lost on resume");
-  const resumedId = manager.appendMessage({ role: "user", content: "post-resume append", timestamp: Date.now() });
-  manager.appendContextEdit(resumedId, { content: "post-resume edited" });
-  manager.setSessionFile(path);
-  const projection = manager.buildSessionProjection();
-  if (projection.messages.length !== 3) throw new Error("Resume append lost");
-  if (!projection.entries.some(({ sourceEntry }) => sourceEntry.type === "context_edit"))
-    throw new Error("Context edit provenance lost on resume");
-  if (!projection.messages.some((message) => message.role === "user" && message.content === "post-resume edited"))
-    throw new Error("Context edit projection lost on resume");
-  if (manager.buildSessionContext().messages.length !== projection.messages.length)
-    throw new Error("Session context diverged from projection");
-  await sample("resume append");
-  const baseline = samples[0]!;
-  const last = samples.at(-1)!;
-  if (last.heapMiB - baseline.heapMiB > 32)
-    throw new Error("Historical heap grew by more than 32 MiB for 128 MiB of original text");
-  console.log(
-    JSON.stringify({ ok: true, originals, compactions, heapGrowthMiB: +(last.heapMiB - baseline.heapMiB).toFixed(2) }),
-  );
+}
+
+async function runProbe(dir: string) {
+  const manager = SessionManager.create(dir, dir);
+  try {
+    const { firstOriginalId, originals, compactions, baselineHeapMiB } = await runCompactionSoak(dir, manager);
+    // The SDK session is disposed; only the manager participates in reset and replay.
+    const path = manager.getSessionFile()!;
+    manager.newSession();
+    await sample("reset", manager, compactions);
+    manager.setSessionFile(path);
+    await sample("resume", manager, compactions);
+    const entry = manager.getEntry(firstOriginalId);
+    if (
+      entry?.type !== "message" ||
+      entry.message.role !== "user" ||
+      typeof entry.message.content !== "string" ||
+      entry.message.content.length !== 256 * 1024
+    )
+      throw new Error("Original history lost on resume");
+    const resumedId = manager.appendMessage({ role: "user", content: "post-resume append", timestamp: Date.now() });
+    manager.appendContextEdit(resumedId, { content: "post-resume edited" });
+    manager.setSessionFile(path);
+    const projection = manager.buildSessionProjection();
+    if (projection.messages.length !== 3) throw new Error("Resume append lost");
+    if (!projection.entries.some(({ sourceEntry }) => sourceEntry.type === "context_edit"))
+      throw new Error("Context edit provenance lost on resume");
+    if (!projection.messages.some((message) => message.role === "user" && message.content === "post-resume edited"))
+      throw new Error("Context edit projection lost on resume");
+    if (manager.buildSessionContext().messages.length !== projection.messages.length)
+      throw new Error("Session context diverged from projection");
+
+    const finalHeapMiB = await sample("resume append", manager, compactions);
+    const heapGrowthMiB = finalHeapMiB - baselineHeapMiB;
+    if (heapGrowthMiB > 32) throw new Error("Historical heap grew by more than 32 MiB for 128 MiB of original text");
+    console.log(JSON.stringify({ ok: true, originals, compactions, heapGrowthMiB: +heapGrowthMiB.toFixed(2) }));
+  } finally {
+    disposeDiskBackedSessionManager(manager);
+  }
+}
+
+installDiskBackedSessionManager();
+const dir = await mkdtemp(join(tmpdir(), "bruv-history-sdk-soak-"));
+try {
+  await runProbe(dir);
 } finally {
-  session?.dispose();
-  manager.newSession();
   await rm(dir, { recursive: true, force: true });
 }

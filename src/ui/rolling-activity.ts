@@ -102,7 +102,7 @@ function isBoundary(child: Component): boolean {
   }
   return !(child instanceof ToolExecutionComponent) && !isJobNotice(child);
 }
-type Group = { key: string; tools: ToolExecutionComponent[]; items: ActivityItem[]; expanded: boolean };
+type Group = { identity: string; tools: ToolExecutionComponent[]; items: ActivityItem[]; expanded: boolean };
 const controllers = new Set<ActivityController>();
 
 export class ActivityController {
@@ -156,19 +156,18 @@ export class ActivityController {
     }
     const membership = this.membership;
     const previous = this.groupsByItem;
-    const groups = new Map<string, Group>();
+    const groups: Group[] = [];
     const groupsByItem = new Map<ActivityItem, Group>();
     const children = new Set(this.host.chatContainer.children);
     let fallback = "legacy";
-    let segment = 0;
-    let lastIdentity: string | undefined;
-    const segmentCalls = new Set<string>();
+    // A group is one contiguous run, not every item with the same journal identity.
+    let current: Group | undefined;
+    const currentCallIds = new Set<string>();
     for (const [index, child] of this.host.chatContainer.children.entries()) {
       if (isBoundary(child)) {
         fallback = "boundary-" + index;
-        segment++;
-        lastIdentity = undefined;
-        segmentCalls.clear();
+        current = undefined;
+        currentCallIds.clear();
         continue;
       }
       if (!(child instanceof ToolExecutionComponent) && !isJobNotice(child)) continue;
@@ -181,38 +180,31 @@ export class ActivityController {
           ? taskRowsFromDetails((child as unknown as NoticeShape).message.details)
           : [];
       const joinsSource =
-        noticeRows.length > 0 && noticeRows.every((row) => row.sourceCallId && segmentCalls.has(row.sourceCallId));
+        noticeRows.length > 0 && noticeRows.every((row) => row.sourceCallId && currentCallIds.has(row.sourceCallId));
       const identity = state
         ? this.liveKey && this.liveIds.has(state.toolCallId)
           ? this.liveKey
           : (membership.get(state.toolCallId) ?? fallback)
-        : joinsSource && lastIdentity
-          ? lastIdentity
+        : joinsSource && current?.identity
+          ? current.identity
           : "notices";
-      if (lastIdentity !== undefined && lastIdentity !== identity) {
-        segment++;
-        segmentCalls.clear();
-      }
-      if (state) segmentCalls.add(state.toolCallId);
-      lastIdentity = identity;
-      const key = identity + ":" + segment;
-      let group = groups.get(key);
-      if (!group) {
+      if (!current || current.identity !== identity) {
+        currentCallIds.clear();
         const old = previous.get(child);
-        group = { key, tools: [], items: [], expanded: old?.expanded ?? state?.expanded ?? false };
-        groups.set(key, group);
+        current = { identity, tools: [], items: [], expanded: old?.expanded ?? state?.expanded ?? false };
+        groups.push(current);
       }
-      group.items.push(child);
-      if (child instanceof ToolExecutionComponent) group.tools.push(child);
-      groupsByItem.set(child, group);
+      if (state) currentCallIds.add(state.toolCallId);
+      current.items.push(child);
+      if (child instanceof ToolExecutionComponent) current.tools.push(child);
+      groupsByItem.set(child, current);
       this.adapt(child);
       if (state?.result?.details?.handoff) {
-        segment++;
-        lastIdentity = undefined;
-        segmentCalls.clear();
+        current = undefined;
+        currentCallIds.clear();
       }
     }
-    this.groups = [...groups.values()];
+    this.groups = groups;
     this.groupsByItem = groupsByItem;
     for (const item of this.adapted.keys()) if (!children.has(item)) this.restore(item);
   }

@@ -102,6 +102,58 @@ describe("tool-event interactions", () => {
     sample.inputLatenessMs = [999];
     expect(samplePeakSync(sample)).toBe(8);
   });
+  test("reconciles direct-burst counters separately from subscribed callbacks and scheduled frames", () => {
+    const e = evidence();
+    e.callbacks.push({
+      ...e.callbacks[0]!,
+      source: "subscribed-session",
+      index: 1,
+      startMs: 32,
+      endMs: 32,
+      updateDisplayCount: 2,
+      renderResultCount: 1,
+    });
+    e.counts.callback = 2;
+    e.counts.updateDisplay = 3;
+    e.counts.renderResult = 1;
+    const sample = normalizeInteraction("tools/events/normal", { evidence: e }, 3, "raw/mixed.json")[0]!.samples[0]!;
+    expect(sample.spans.map((s) => s.durationMs)).toEqual([1, 0, 1]);
+    expect(sample.work.callbackCount).toBe(2);
+    expect(sample.work.burstCallbackCount).toBe(1);
+    expect(sample.work.frameCount).toBe(1);
+    expect(sample.work.burstFrameCount).toBe(0);
+    expect(sample.contiguousSyncMs).toBe(8);
+    expect(sample.rawEvidence).toBe("raw/mixed.json");
+    expect(sample.iteration).toBe(3);
+  });
+  test("rejects inconsistent counters and invalid timing before reporting a burst", () => {
+    for (const mutate of [
+      (e: ToolEventEvidence) => {
+        e.counts.input++;
+      },
+      (e: ToolEventEvidence) => {
+        e.burst.updateDisplayCount++;
+      },
+      (e: ToolEventEvidence) => {
+        e.burst.frameCount++;
+      },
+      (e: ToolEventEvidence) => {
+        e.callbacks[0]!.endMs = 9;
+      },
+      (e: ToolEventEvidence) => {
+        e.frames[0]!.startMs = Number.NaN;
+      },
+      (e: ToolEventEvidence) => {
+        e.inputs[0]!.returnedAtMs = Number.POSITIVE_INFINITY;
+      },
+    ]) {
+      const e = evidence();
+      mutate(e);
+      expect(() => normalizeInteraction("tools/events/normal", { evidence: e }, 0, "raw")).toThrow(
+        "tools/events/normal malformed event timing/count evidence",
+      );
+    }
+  });
   test("rejects missing final visible state, network activity, and lost traces", () => {
     for (const mutate of [
       (e: ToolEventEvidence) => {

@@ -2,6 +2,7 @@ import { placementReply } from "../tests/fixtures/remote-e2e/placement-parent";
 import { spawn } from "node:child_process";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+import type { Readable } from "node:stream";
 export function loopbackParent(agentDir: string, onCall?: () => void) {
   const provider = Bun.serve({
     hostname: "127.0.0.1",
@@ -46,16 +47,34 @@ export function loopbackParent(agentDir: string, onCall?: () => void) {
 
   return provider;
 }
+function readRpcEvents(stdout: Readable, onEvent: (event: any) => void) {
+  let buffer = "";
+  stdout.on("data", (chunk: Buffer) => {
+    buffer += String(chunk);
+    for (let pos; (pos = buffer.indexOf("\n")) !== -1; ) {
+      const line = buffer.slice(0, pos);
+      buffer = buffer.slice(pos + 1);
+      if (line) {
+        try {
+          onEvent(JSON.parse(line));
+        } catch {
+          throw new Error("Invalid RPC JSON: " + line);
+        }
+      }
+    }
+  });
+}
+
 export function fixtureRpc(options: {
   bruv: string;
   cwd: string;
-  home: string;
-  agentDir: string;
+  // The caller owns the fixture environment and its retained HOME/config/SDK root.
+  env: Record<string, string>;
   children: ReturnType<typeof spawn>[];
   noSession?: boolean;
   timeoutDetail: (events: any[]) => string;
 }) {
-  const { bruv, cwd, home, agentDir } = options;
+  const { bruv, cwd, env } = options;
   const child = spawn(
     bruv,
     [
@@ -69,31 +88,18 @@ export function fixtureRpc(options: {
     ],
     {
       cwd,
-      env: { ...process.env, HOME: home, BRUV_CODING_AGENT_DIR: agentDir },
+      env,
       stdio: ["pipe", "pipe", "pipe"],
     },
   );
   options.children.push(child);
   const events: any[] = [];
-  let stderr = "",
-    buffer = "";
+  let stderr = "";
   child.stderr.on("data", (chunk: Buffer) => (stderr += String(chunk)));
-  child.stdout.on("data", (chunk: Buffer) => {
-    buffer += String(chunk);
-    for (let pos; (pos = buffer.indexOf("\n")) !== -1; ) {
-      const line = buffer.slice(0, pos);
-      buffer = buffer.slice(pos + 1);
-      if (line) {
-        try {
-          const event = JSON.parse(line);
-          events.push(event);
-          if (event.type === "extension_ui_request" && event.method === "confirm")
-            child.stdin.write(JSON.stringify({ type: "extension_ui_response", id: event.id, confirmed: false }) + "\n");
-        } catch {
-          throw new Error("Invalid RPC JSON: " + line);
-        }
-      }
-    }
+  readRpcEvents(child.stdout, (event) => {
+    events.push(event);
+    if (event.type === "extension_ui_request" && event.method === "confirm")
+      child.stdin.write(JSON.stringify({ type: "extension_ui_response", id: event.id, confirmed: false }) + "\n");
   });
   const send = (message: string) => child.stdin.write(JSON.stringify({ type: "prompt", message }) + "\n");
   const wait = async (predicate: () => boolean, label: string, limit = 20_000) => {

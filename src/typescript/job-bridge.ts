@@ -473,12 +473,13 @@ export function serveJobBridge(
   let lastId = 0;
   let closed = false;
   const controller = new AbortController();
-  type ServedRequest = {
-    controller?: AbortController;
-    method: string;
-    ownsResult: boolean;
-    reply: "pending" | "sent" | "acked" | "failed";
-  };
+  type ServedRequest =
+    | {
+        controller: AbortController;
+        reply: "pending" | "sent" | "foreground-sent" | "foreground-acked";
+      }
+    // Failed replies retain only an ACK token, never notification ownership.
+    | { controller?: never; reply: "failed" };
   const requests = new Map<number, ServedRequest>();
   // Only successful foreground launch results transfer notification ownership.
   // Background launch replies and every other helper method are ordinary RPCs.
@@ -513,7 +514,7 @@ export function serveJobBridge(
     // reject them from the worker exit status; all other requests lost delivery.
     let lost = 0;
     for (const [id, request] of requests) {
-      if (request.reply === "acked") continue;
+      if (request.reply === "foreground-acked") continue;
       lost++;
       request.controller?.abort();
       requests.delete(id);
@@ -543,7 +544,8 @@ export function serveJobBridge(
     // ACK from swallowing the task's session completion notification.
     if (commitAcknowledgements) {
       for (const request of requests.values()) {
-        if (request.reply === "acked") request.controller?.signal.dispatchEvent(new Event(JOB_RESPONSE_ACK_EVENT));
+        if (request.reply === "foreground-acked")
+          request.controller.signal.dispatchEvent(new Event(JOB_RESPONSE_ACK_EVENT));
       }
     }
     abortRequests();
@@ -558,7 +560,7 @@ export function serveJobBridge(
     abortRequests();
     socket.destroy(bridgeError(reason, code, dispatch));
   };
-  const send = (id: number, response: Response, delivered = true) => {
+  const send = (id: number, method: string, response: Response, delivered = true) => {
     const request = requests.get(id);
     if (!request || closed || socket.destroyed) {
       request?.controller?.abort();
@@ -588,12 +590,10 @@ export function serveJobBridge(
     // A fallback reply does not contain the selected foreground result, so it
     // cannot own completion even if the worker acknowledges the error frame.
     if (fallback) {
-      request.reply = "failed";
+      requests.set(id, { reply: "failed" });
       request.controller?.abort();
-      request.controller = undefined;
     } else {
-      request.ownsResult = ownsForegroundResult(request.method, response.result);
-      request.reply = "sent";
+      request.reply = ownsForegroundResult(method, response.result) ? "foreground-sent" : "sent";
     }
     try {
       socket.write(line, (error) => {
@@ -608,6 +608,60 @@ export function serveJobBridge(
       request.controller?.abort();
       requests.delete(id);
     }
+  };
+
+  const acknowledgeRequest = (id: number): boolean => {
+    const request = requests.get(id);
+    if (!request || request.reply === "pending" || request.reply === "foreground-acked") {
+      // Early, unknown and replayed ACKs release all outstanding listeners.
+      fail("Unknown or duplicate job bridge acknowledgement id", "protocol_invalid", "response");
+      return false;
+    }
+    switch (request.reply) {
+      case "failed":
+        // Delivery of an error frame only releases its protocol token.
+        requests.delete(id);
+        break;
+      case "sent":
+        // Ordinary RPCs, including stop-work, take effect immediately on ACK.
+        request.controller.signal.dispatchEvent(new Event(JOB_RESPONSE_ACK_EVENT));
+        requests.delete(id);
+        break;
+      case "foreground-sent":
+        // Launch notification ownership waits for a successful worker exit.
+        request.reply = "foreground-acked";
+        break;
+    }
+    return true;
+  };
+
+  const dispatchRequest = (request: Request): boolean => {
+    if (
+      !Number.isSafeInteger(request.id) ||
+      request.id <= lastId ||
+      typeof request.method !== "string" ||
+      !("params" in request)
+    ) {
+      fail("Invalid job bridge request envelope", "protocol_invalid", "initiated");
+      return false;
+    }
+    lastId = request.id;
+    const requestController = new AbortController();
+    enableJobResponseAcknowledgement(requestController.signal);
+    if (executeInvocationId)
+      withJobRequestIdentity(requestController.signal, { executeInvocationId, callIndex: request.id });
+    requests.set(request.id, {
+      controller: requestController,
+      reply: "pending",
+    });
+    if (controller.signal.aborted) requestController.abort();
+    void Promise.resolve()
+      .then(() => handler(request.method, request.params, requestController.signal))
+      .then(
+        (result) => send(request.id, request.method, { id: request.id, result: result === undefined ? null : result }),
+        (error) => send(request.id, request.method, { id: request.id, error: message(error) }, false),
+      );
+    return true;
   };
 
   socket.on("data", (chunk: Buffer) => {
@@ -633,62 +687,9 @@ export function serveJobBridge(
             fail("Invalid job bridge acknowledgement", "protocol_invalid", "response");
             return false;
           }
-          const request = requests.get(acknowledgement.ack);
-          // ACK before a normal reply, replayed ACK, and unknown ACK are protocol
-          // failures. abortRequests() also releases every TaskManager listener.
-          if (!request) {
-            fail("Unknown or duplicate job bridge acknowledgement id", "protocol_invalid", "response");
-            return false;
-          }
-          if (request.reply === "failed") {
-            // Keep only the protocol token until delivery is acknowledged. The
-            // controller was already aborted when the failed reply was formed.
-            requests.delete(acknowledgement.ack);
-            return true;
-          }
-          if (request.reply !== "sent") {
-            fail("Unknown or duplicate job bridge acknowledgement id", "protocol_invalid", "response");
-            return false;
-          }
-          if (!request.ownsResult) {
-            // Non-launch helper replies own no foreground completion. Their ACK
-            // is final, so release cancellation wrappers immediately.
-            request.controller?.signal.dispatchEvent(new Event(JOB_RESPONSE_ACK_EVENT));
-            requests.delete(acknowledgement.ack);
-            return true;
-          }
-          request.reply = "acked";
-          return true;
+          return acknowledgeRequest(acknowledgement.ack);
         }
-        const request = value as Request;
-        if (
-          !Number.isSafeInteger(request.id) ||
-          request.id <= lastId ||
-          typeof request.method !== "string" ||
-          !("params" in request)
-        ) {
-          fail("Invalid job bridge request envelope", "protocol_invalid", "initiated");
-          return false;
-        }
-        lastId = request.id;
-        const requestController = new AbortController();
-        enableJobResponseAcknowledgement(requestController.signal);
-        if (executeInvocationId)
-          withJobRequestIdentity(requestController.signal, { executeInvocationId, callIndex: request.id });
-        requests.set(request.id, {
-          controller: requestController,
-          method: request.method,
-          ownsResult: false,
-          reply: "pending",
-        });
-        if (controller.signal.aborted) requestController.abort();
-        void Promise.resolve()
-          .then(() => handler(request.method, request.params, requestController.signal))
-          .then(
-            (result) => send(request.id, { id: request.id, result: result === undefined ? null : result }),
-            (error) => send(request.id, { id: request.id, error: message(error) }, false),
-          );
-        return true;
+        return dispatchRequest(value as Request);
       },
       () => fail("Job bridge request exceeded 1 MB", "frame_oversize", "initiated"),
     );

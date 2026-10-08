@@ -1,11 +1,14 @@
 import { afterAll, expect, test } from "bun:test";
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import type { ExtensionContext } from "@earendil-works/pi-coding-agent";
+import { RemoteClient } from "../src/remote/client";
+import { createRemoteJobsAdapter, type RemoteJobsAdapter, sshJobId, sshTaskId } from "../src/remote/jobs";
+import type { T3TaskAdapter } from "../src/t3/tasks/native-task";
 import { JobService } from "../src/tasks/job-service";
 import { TaskManager } from "../src/tasks/task-manager";
-import { RemoteClient } from "../src/remote/client";
-import { createRemoteJobsAdapter, sshJobId, sshTaskId } from "../src/remote/jobs";
+
 const dirs: string[] = [];
 afterAll(async () => {
   for (const dir of dirs) await rm(dir, { recursive: true, force: true });
@@ -40,6 +43,82 @@ async function fixture() {
     },
   };
 }
+type JobCall = (method: string, params: unknown) => Promise<unknown>;
+type JobPage = { jobs: Array<{ id: string }>; nextCursor?: string | number; total: number };
+
+async function withSessionJobs(
+  remoteJobs: RemoteJobsAdapter,
+  sessionFile: string,
+  nativeTaskIds: string[] | undefined,
+  work: (call: JobCall) => Promise<void>,
+) {
+  const manager = new TaskManager(() => {});
+  const native = (nativeTaskIds ?? []).map((taskId) => ({
+    version: 1 as const,
+    taskId,
+    childThreadId: `thread-${taskId}`,
+    status: "running" as const,
+    profile: "normal" as const,
+    depth: 1,
+  }));
+  const nativeFactory = (): T3TaskAdapter => ({
+    list: async ({ cursor = "0", count = 20 } = {}) => {
+      const offset = Number(cursor);
+      const tasks = native.slice(offset, offset + count);
+      return {
+        tasks,
+        total: native.length,
+        nextCursor: offset + tasks.length < native.length ? String(offset + tasks.length) : undefined,
+      };
+    },
+    launch: async () => {
+      throw Error("unexpected native launch");
+    },
+    observe: async () => {
+      throw Error("unexpected native observe");
+    },
+    cancel: async () => {
+      throw Error("unexpected native cancel");
+    },
+    close: async () => {},
+  });
+  // undefined means no native bridge; [] means an authenticated bridge with no tasks.
+  const service = new JobService(
+    manager,
+    () => ({ depth: 0 }),
+    undefined,
+    undefined,
+    undefined,
+    undefined,
+    nativeTaskIds !== undefined ? { T3_MCP_URL: "http://localhost:8080", T3_MCP_BEARER_TOKEN: "test" } : {},
+    nativeTaskIds !== undefined ? nativeFactory : undefined,
+    undefined,
+    remoteJobs,
+  );
+  const ctx = { cwd: process.cwd(), sessionManager: { getSessionFile: () => sessionFile } } as ExtensionContext;
+  const signal = new AbortController().signal;
+  try {
+    await work((method, params) => service.handle(method, params, ctx, signal));
+  } finally {
+    await manager.shutdown();
+  }
+}
+
+async function collectJobIds(call: JobCall, expectedTotal: number) {
+  const ids: string[] = [];
+  let cursor: string | number | undefined;
+  let pages = 0;
+  do {
+    const page = (await call("jobs.list", { count: 2, ...(cursor !== undefined ? { cursor } : {}) })) as JobPage;
+    expect(page.total).toBe(expectedTotal);
+    expect(page.jobs.length).toBeLessThanOrEqual(2);
+    ids.push(...page.jobs.map((job) => job.id));
+    cursor = page.nextCursor;
+    expect(++pages).toBeLessThan(10);
+  } while (cursor !== undefined);
+  return ids;
+}
+
 test("SSH namespace reverses safely, session ownership is durable before launch and retries cannot steal", async () => {
   const { client, adapter, setOffline } = await fixture();
   expect(sshTaskId(sshJobId("task_1"))).toBe("task_1");
@@ -62,7 +141,7 @@ test("cached inspect is bounded, offline stopWork is partial and completed jobs 
   const state = await client.read();
   state.tasks.task_2!.events = [{ seq: 1, event: "é".repeat(10000) }];
   state.tasks.task_2!.task = { taskId: "task_2", state: "running" };
-  await import("node:fs/promises").then(({ writeFile }) => writeFile(client.path, JSON.stringify(state)));
+  await writeFile(client.path, JSON.stringify(state));
   const id = sshJobId("task_2");
   const page = await adapter.inspect("session-A", id, 0, 30);
   expect(Buffer.byteLength(page.output)).toBeLessThanOrEqual(30);
@@ -72,7 +151,7 @@ test("cached inspect is bounded, offline stopWork is partial and completed jobs 
   expect((await adapter.stopWork("session-A")).outcome).toBe("partial");
   const next = await client.read();
   next.tasks.task_2!.task!.state = "done";
-  await import("node:fs/promises").then(({ writeFile }) => writeFile(client.path, JSON.stringify(next)));
+  await writeFile(client.path, JSON.stringify(next));
   expect((await adapter.list("session-A"))[0]?.status).toBe("completed");
   expect((await adapter.stopWork("session-A")).jobs).toEqual([]);
 });
@@ -80,96 +159,30 @@ test("cached inspect is bounded, offline stopWork is partial and completed jobs 
 test("JobService paginates local then SSH without duplicates, rejects unsupported SSH methods", async () => {
   const { client, adapter } = await fixture();
   for (let i = 0; i < 4; i++) await client.launch("/repo", "prompt" + i, "id" + i, undefined, "session-A");
-  const manager = new TaskManager(() => {});
-  const service = new JobService(
-    manager,
-    () => ({ depth: 0 }),
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    {},
-    undefined,
-    undefined,
-    adapter,
-  );
-  const ctx = { cwd: process.cwd(), sessionManager: { getSessionFile: () => "session-A" } } as any;
-  const signal = new AbortController().signal;
-  try {
-    const local = (await service.handle("shell", { command: "printf local", waitSeconds: 1 }, ctx, signal)) as {
-      id: string;
-    };
-    let cursor: string | number | undefined;
-    const ids: string[] = [];
-    do {
-      const page = (await service.handle(
-        "jobs.list",
-        { count: 2, ...(cursor !== undefined ? { cursor } : {}) },
-        ctx,
-        signal,
-      )) as { jobs: Array<{ id: string }>; nextCursor?: string | number; total: number };
-      expect(page.total).toBe(5);
-      ids.push(...page.jobs.map((job) => job.id));
-      cursor = page.nextCursor;
-    } while (cursor !== undefined);
-    expect(ids).toEqual([local.id, ...[0, 1, 2, 3].map((i) => sshJobId("id" + i))]);
-    for (const method of ["jobs.input", "jobs.closeInput", "jobs.snooze", "jobs.setWatch"])
-      await expect(
-        service.handle(method, { id: sshJobId("id0"), data: "x", minutes: 1, enabled: false }, ctx, signal),
-      ).rejects.toThrow();
-  } finally {
-    await manager.shutdown();
-  }
+  await withSessionJobs(adapter, "session-A", undefined, async (call) => {
+    const local = (await call("shell", { command: "printf local", waitSeconds: 1 })) as { id: string };
+    expect(await collectJobIds(call, 5)).toEqual([local.id, ...[0, 1, 2, 3].map((i) => sshJobId("id" + i))]);
+    const id = sshJobId("id0");
+    await expect(call("jobs.input", { id, data: "x" })).rejects.toThrow("unsupported for SSH jobs");
+    await expect(call("jobs.closeInput", { id })).rejects.toThrow("unsupported for SSH jobs");
+    await expect(call("jobs.snooze", { id, minutes: 1 })).rejects.toThrow("unsupported for SSH jobs");
+    await expect(call("jobs.setWatch", { id, enabled: false })).rejects.toThrow("unsupported for SSH jobs");
+  });
 });
 
 test("three-source pagination crosses native to SSH without skipping or repeating", async () => {
   const { client, adapter } = await fixture();
   for (let i = 0; i < 3; i++) await client.launch("/repo", "prompt" + i, "ssh" + i, undefined, "session-A");
-  const manager = new TaskManager(() => {});
-  const native = Array.from({ length: 3 }, (_, i) => ({ taskId: "native" + i, status: "running" }));
-  const factory = () => ({
-    list: async ({ cursor, count }: { cursor: string; count: number }) => {
-      const offset = Number(cursor);
-      const page = native.slice(offset, offset + count);
-      return {
-        tasks: page,
-        total: native.length,
-        nextCursor: offset + page.length < native.length ? String(offset + page.length) : undefined,
-      };
-    },
-    close: async () => {},
+  await withSessionJobs(adapter, "session-A", ["native0", "native1", "native2"], async (call) => {
+    expect(await collectJobIds(call, 6)).toEqual([
+      "native0",
+      "native1",
+      "native2",
+      sshJobId("ssh0"),
+      sshJobId("ssh1"),
+      sshJobId("ssh2"),
+    ]);
   });
-  const service = new JobService(
-    manager,
-    () => ({ depth: 0 }),
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    { T3_MCP_URL: "http://localhost:8080", T3_MCP_BEARER_TOKEN: "test" },
-    factory as any,
-    undefined,
-    adapter,
-  );
-  const ctx = { cwd: process.cwd(), sessionManager: { getSessionFile: () => "session-A" } } as any;
-  try {
-    const ids: string[] = [];
-    let cursor: string | number | undefined;
-    do {
-      const page = (await service.handle(
-        "jobs.list",
-        { count: 2, ...(cursor !== undefined ? { cursor } : {}) },
-        ctx,
-        new AbortController().signal,
-      )) as { jobs: Array<{ id: string }>; nextCursor?: string | number; total: number };
-      expect(page.total).toBe(6);
-      ids.push(...page.jobs.map((job) => job.id));
-      cursor = page.nextCursor;
-    } while (cursor !== undefined);
-    expect(ids).toEqual(["native0", "native1", "native2", sshJobId("ssh0"), sshJobId("ssh1"), sshJobId("ssh2")]);
-  } finally {
-    await manager.shutdown();
-  }
 });
 
 for (const [localCount, nativeCount, sshCount] of [
@@ -185,129 +198,32 @@ for (const [localCount, nativeCount, sshCount] of [
   test(`native pagination preserves every phase (local=${localCount}, native=${nativeCount}, SSH=${sshCount})`, async () => {
     const { client, adapter } = await fixture();
     for (let i = 0; i < sshCount; i++) await client.launch("/repo", "prompt", "ssh" + i, undefined, "session-A");
-    const manager = new TaskManager(() => {});
-    const native = Array.from({ length: nativeCount }, (_, i) => ({ taskId: "native" + i, status: "running" }));
-    const factory = () => ({
-      list: async ({ cursor, count }: { cursor: string; count: number }) => {
-        const offset = Number(cursor);
-        const tasks = native.slice(offset, offset + count);
-        return {
-          tasks,
-          total: native.length,
-          nextCursor: offset + tasks.length < native.length ? String(offset + tasks.length) : undefined,
-        };
-      },
-      close: async () => {},
-    });
-    const service = new JobService(
-      manager,
-      () => ({ depth: 0 }),
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      { T3_MCP_URL: "http://localhost:8080", T3_MCP_BEARER_TOKEN: "test" },
-      factory as any,
-      undefined,
-      adapter,
-    );
-    const ctx = { cwd: process.cwd(), sessionManager: { getSessionFile: () => "session-A" } } as any;
-    const signal = new AbortController().signal;
-    try {
+    const nativeIds = Array.from({ length: nativeCount }, (_, i) => "native" + i);
+    await withSessionJobs(adapter, "session-A", nativeIds, async (call) => {
       const locals: string[] = [];
       for (let i = 0; i < localCount; i++)
-        locals.push(
-          ((await service.handle("shell", { command: "printf local", waitSeconds: 1 }, ctx, signal)) as { id: string })
-            .id,
-        );
-      const ids: string[] = [];
-      let cursor: string | undefined;
-      let pages = 0;
-      do {
-        const page = (await service.handle("jobs.list", { count: 2, ...(cursor ? { cursor } : {}) }, ctx, signal)) as {
-          jobs: Array<{ id: string }>;
-          nextCursor?: string;
-          total: number;
-        };
-        expect(page.total).toBe(localCount + nativeCount + sshCount);
-        expect(page.jobs.length).toBeLessThanOrEqual(2);
-        ids.push(...page.jobs.map((job) => job.id));
-        cursor = page.nextCursor;
-        expect(++pages).toBeLessThan(10);
-      } while (cursor);
-      expect(ids).toEqual([
+        locals.push(((await call("shell", { command: "printf local", waitSeconds: 1 })) as { id: string }).id);
+      expect(await collectJobIds(call, localCount + nativeCount + sshCount)).toEqual([
         ...locals,
-        ...native.map((task) => task.taskId),
+        ...nativeIds,
         ...Array.from({ length: sshCount }, (_, i) => sshJobId("ssh" + i)),
       ]);
-    } finally {
-      await manager.shutdown();
-    }
+    });
   });
 
 test("mixed pages pin totals across a local-only first page, bound cursors and discriminate raw SSH IDs", async () => {
   const { client, adapter } = await fixture();
   await client.launch("/repo", "prompt", "same", undefined, "session-A");
-  const manager = new TaskManager(() => {});
-  const factory = () => ({
-    list: async ({ cursor, count }: { cursor: string; count: number }) => {
-      const native = [
-        { taskId: "native0", status: "running" },
-        { taskId: "native1", status: "running" },
-      ];
-      const start = Number(cursor);
-      const tasks = native.slice(start, start + count);
-      return { tasks, total: 2, nextCursor: start + tasks.length < 2 ? String(start + tasks.length) : undefined };
-    },
-    observe: async () => {
-      throw Error("unexpected native observe");
-    },
-    cancel: async () => {
-      throw Error("unexpected native cancel");
-    },
-    close: async () => {},
-  });
-  const service = new JobService(
-    manager,
-    () => ({ depth: 0 }),
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    { T3_MCP_URL: "http://localhost:8080", T3_MCP_BEARER_TOKEN: "test" },
-    factory as any,
-    undefined,
-    adapter,
-  );
-  const ctx = { cwd: process.cwd(), sessionManager: { getSessionFile: () => "session-A" } } as any;
-  const signal = new AbortController().signal;
-  try {
+  await withSessionJobs(adapter, "session-A", ["native0", "native1"], async (call) => {
     const locals: string[] = [];
     for (let i = 0; i < 3; i++)
-      locals.push(
-        ((await service.handle("shell", { command: "printf local", waitSeconds: 1 }, ctx, signal)) as { id: string })
-          .id,
-      );
-    let cursor: string | undefined;
-    const ids: string[] = [];
-    do {
-      const page = (await service.handle("jobs.list", { count: 2, ...(cursor ? { cursor } : {}) }, ctx, signal)) as {
-        jobs: Array<{ id: string }>;
-        nextCursor?: string;
-        total: number;
-      };
-      expect(page.total).toBe(6);
-      ids.push(...page.jobs.map((job) => job.id));
-      cursor = page.nextCursor;
-    } while (cursor);
-    expect(ids).toEqual([...locals, "native0", "native1", sshJobId("same")]);
+      locals.push(((await call("shell", { command: "printf local", waitSeconds: 1 })) as { id: string }).id);
+    expect(await collectJobIds(call, 6)).toEqual([...locals, "native0", "native1", sshJobId("same")]);
     for (const method of ["jobs.inspect", "jobs.stop"])
-      await expect(service.handle(method, { id: "same" }, ctx, signal)).rejects.toThrow("ssh: namespace");
-    await expect(service.handle("jobs.inspect", { id: "missing" }, ctx, signal)).rejects.toThrow("Unknown job");
-    await expect(service.handle("jobs.list", { cursor: "jobs-v2." + "x".repeat(2100) }, ctx, signal)).rejects.toThrow();
-  } finally {
-    await manager.shutdown();
-  }
+      await expect(call(method, { id: "same" })).rejects.toThrow("ssh: namespace");
+    await expect(call("jobs.inspect", { id: "missing" })).rejects.toThrow("Unknown job");
+    await expect(call("jobs.list", { cursor: "jobs-v2." + "x".repeat(2100) })).rejects.toThrow();
+  });
 });
 
 test("confirmed cancelled work is terminal, and cached transcript gaps are surfaced", async () => {
@@ -320,7 +236,7 @@ test("confirmed cancelled work is terminal, and cached transcript gaps are surfa
     { seq: 2, event: "later" },
     { seq: 4, event: "gap" },
   ];
-  await import("node:fs/promises").then(({ writeFile }) => writeFile(client.path, JSON.stringify(state)));
+  await writeFile(client.path, JSON.stringify(state));
   expect((await adapter.stopWork("session-A")).jobs).toEqual([]);
   const page = await adapter.inspect("session-A", sshJobId("cancelled"));
   expect(page.status).toBe("cancelled");
@@ -335,7 +251,7 @@ test("confirmed cancellation without a terminal observation remains pending offl
   const state = await client.read();
   state.tasks.confirm!.cancelDelivery = { status: "confirmed" };
   state.tasks.confirm!.task = { taskId: "confirm", state: "running" };
-  await import("node:fs/promises").then(({ writeFile }) => writeFile(client.path, JSON.stringify(state)));
+  await writeFile(client.path, JSON.stringify(state));
   setOffline(true);
   const report = await adapter.stopWork("session-A");
   expect(report.outcome).toBe("pending");
@@ -346,32 +262,15 @@ test("new SSH launches cannot shift a paginated snapshot even when their IDs sor
   const { client, adapter } = await fixture();
   await client.launch("/repo", "one", "z-first", undefined, "session");
   await client.launch("/repo", "two", "y-second", undefined, "session");
-  const manager = new TaskManager(() => {});
-  const service = new JobService(
-    manager,
-    () => ({ depth: 0 }),
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    {},
-    undefined,
-    undefined,
-    adapter,
-  );
-  const ctx = { sessionManager: { getSessionFile: () => "session" } } as any;
-  const signal = new AbortController().signal;
-  try {
-    const first = (await service.handle("jobs.list", { count: 1 }, ctx, signal)) as any;
-    expect(first.jobs[0].id).toBe(sshJobId("z-first"));
+  await withSessionJobs(adapter, "session", undefined, async (call) => {
+    const first = (await call("jobs.list", { count: 1 })) as JobPage;
+    expect(first.jobs[0]!.id).toBe(sshJobId("z-first"));
     await client.launch("/repo", "three", "a-new", undefined, "session");
-    const second = (await service.handle("jobs.list", { count: 1, cursor: first.nextCursor }, ctx, signal)) as any;
-    expect(second.jobs[0].id).toBe(sshJobId("y-second"));
+    const second = (await call("jobs.list", { count: 1, cursor: first.nextCursor })) as JobPage;
+    expect(second.jobs[0]!.id).toBe(sshJobId("y-second"));
     expect(second.nextCursor).toBeUndefined();
     expect((await adapter.list("session")).map((j) => j.id)).toEqual(["z-first", "y-second", "a-new"].map(sshJobId));
-  } finally {
-    await manager.shutdown();
-  }
+  });
 });
 
 test("the SSH journal starts at sequence one, not a lost-output gap", async () => {
@@ -379,7 +278,7 @@ test("the SSH journal starts at sequence one, not a lost-output gap", async () =
   await client.launch("/repo", "one", "one", undefined, "session");
   const state = await client.read();
   state.tasks.one!.events = [{ seq: 1, event: { text: "complete first event" } }];
-  await Bun.write(client.path, JSON.stringify(state));
+  await writeFile(client.path, JSON.stringify(state));
   const page = await adapter.inspect("session", sshJobId("one"), 0, 5000);
   expect(page.outputLost).toBe(false);
   expect(page.transcriptGap).toBeUndefined();

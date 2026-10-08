@@ -11,6 +11,7 @@ import {
   createAssistantMessageEventStream,
 } from "@earendil-works/pi-ai";
 import {
+  type AgentSession,
   createAgentSession,
   DefaultResourceLoader,
   ModelRuntime,
@@ -51,15 +52,6 @@ export interface PromptPreview {
   tools: Tool[];
   messages: TranscriptContext["messages"];
 }
-
-const usage = {
-  input: 0,
-  output: 0,
-  cacheRead: 0,
-  cacheWrite: 0,
-  totalTokens: 0,
-  cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: 0 },
-};
 
 async function exists(path: string): Promise<boolean> {
   try {
@@ -109,24 +101,6 @@ export async function createPromptPreview(options: PromptPreviewOptions = {}): P
     const projectSystemPath = join(cwd, ".bruv", "SYSTEM.md");
     const projectSystemSelected = !!selectedProject && (await exists(projectSystemPath));
     const selectedSystemPrompt = projectSystemSelected ? await readFile(projectSystemPath, "utf8") : bruvSystemPrompt();
-    // The preview role is explicit and must not inherit the caller's own child
-    // environment (for example when this script is launched from execute). The
-    // production extension reads identity synchronously when its factory runs.
-    const previewExtension: typeof asynchronousTasksExtension = (pi, extensionOptions) => {
-      const priorDepth = process.env.BRUV_SUBAGENT_DEPTH;
-      const priorType = process.env.BRUV_SUBAGENT_TYPE;
-      process.env.BRUV_SUBAGENT_DEPTH = role === "root" ? "0" : "1";
-      if (role === "root") delete process.env.BRUV_SUBAGENT_TYPE;
-      else process.env.BRUV_SUBAGENT_TYPE = role;
-      try {
-        asynchronousTasksExtension(pi, extensionOptions);
-      } finally {
-        if (priorDepth === undefined) delete process.env.BRUV_SUBAGENT_DEPTH;
-        else process.env.BRUV_SUBAGENT_DEPTH = priorDepth;
-        if (priorType === undefined) delete process.env.BRUV_SUBAGENT_TYPE;
-        else process.env.BRUV_SUBAGENT_TYPE = priorType;
-      }
-    };
     // Empty in-memory settings prevent project package resolution/configuration
     // from doing work during an otherwise read-only offline preview.
     const settingsManager = SettingsManager.inMemory({}, { projectTrusted: true });
@@ -143,7 +117,7 @@ export async function createPromptPreview(options: PromptPreviewOptions = {}): P
       noPromptTemplates: true,
       noThemes: true,
       systemPrompt: selectedSystemPrompt,
-      extensionFactories: [{ name: "bruv-tasks", factory: previewExtension }],
+      extensionFactories: [{ name: "bruv-tasks", factory: previewTasksExtension(role) }],
     });
     await loader.reload();
 
@@ -167,30 +141,10 @@ export async function createPromptPreview(options: PromptPreviewOptions = {}): P
       tools: ["execute"],
     }));
 
-    let captured: TranscriptContext | undefined;
-    let streamCalls = 0;
-    session.agent.streamFunction = (_model, context) => {
-      streamCalls++;
-      captured = context;
-      const message: AssistantMessage = {
-        role: "assistant",
-        content: [{ type: "text", text: "offline prompt preview captured" }],
-        api: "openai-codex-responses",
-        provider: "openai-codex",
-        model: "gpt-5.6-luna",
-        usage,
-        stopReason: "stop",
-        timestamp: Date.now(),
-      };
-      const stream = createAssistantMessageEventStream();
-      stream.push({ type: "start", partial: message });
-      stream.push({ type: "done", reason: "stop", message });
-      return stream;
-    };
-
-    await session.prompt(options.message ?? "Preview this request without sending it to a model.");
-    if (!captured || streamCalls !== 1) throw new Error("Prompt preview did not capture exactly one provider context");
-    const context = captured;
+    const context = await captureOfflineTurn(
+      session,
+      options.message ?? "Preview this request without sending it to a model.",
+    );
     const projectLabel = selectedProject
       ? `Selected external project context: ${cwd}`
       : "Isolated temporary context (default): external project context is excluded";
@@ -231,4 +185,60 @@ export async function createPromptPreview(options: PromptPreviewOptions = {}): P
     session?.dispose();
     await rm(scratch, { recursive: true, force: true });
   }
+}
+
+function previewTasksExtension(role: PreviewRole): typeof asynchronousTasksExtension {
+  // The preview role is explicit and must not inherit the caller's own child
+  // environment (for example when this script is launched from execute). The
+  // production extension reads identity synchronously when its factory runs.
+  return (pi, extensionOptions) => {
+    const priorDepth = process.env.BRUV_SUBAGENT_DEPTH;
+    const priorType = process.env.BRUV_SUBAGENT_TYPE;
+    process.env.BRUV_SUBAGENT_DEPTH = role === "root" ? "0" : "1";
+    if (role === "root") delete process.env.BRUV_SUBAGENT_TYPE;
+    else process.env.BRUV_SUBAGENT_TYPE = role;
+    try {
+      asynchronousTasksExtension(pi, extensionOptions);
+    } finally {
+      if (priorDepth === undefined) delete process.env.BRUV_SUBAGENT_DEPTH;
+      else process.env.BRUV_SUBAGENT_DEPTH = priorDepth;
+      if (priorType === undefined) delete process.env.BRUV_SUBAGENT_TYPE;
+      else process.env.BRUV_SUBAGENT_TYPE = priorType;
+    }
+  };
+}
+
+/** Install the network boundary, run production assembly, and require one captured request. */
+async function captureOfflineTurn(session: AgentSession, message: string): Promise<TranscriptContext> {
+  let captured: TranscriptContext | undefined;
+  let streamCalls = 0;
+  session.agent.streamFunction = (_model, context) => {
+    streamCalls++;
+    captured = context;
+    const message: AssistantMessage = {
+      role: "assistant",
+      content: [{ type: "text", text: "offline prompt preview captured" }],
+      api: "openai-codex-responses",
+      provider: "openai-codex",
+      model: "gpt-5.6-luna",
+      usage: {
+        input: 0,
+        output: 0,
+        cacheRead: 0,
+        cacheWrite: 0,
+        totalTokens: 0,
+        cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: 0 },
+      },
+      stopReason: "stop",
+      timestamp: Date.now(),
+    };
+    const stream = createAssistantMessageEventStream();
+    stream.push({ type: "start", partial: message });
+    stream.push({ type: "done", reason: "stop", message });
+    return stream;
+  };
+
+  await session.prompt(message);
+  if (!captured || streamCalls !== 1) throw new Error("Prompt preview did not capture exactly one provider context");
+  return captured;
 }

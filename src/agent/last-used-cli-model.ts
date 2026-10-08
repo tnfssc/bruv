@@ -1,8 +1,8 @@
 import {
-  SettingsManager,
   type ExtensionAPI,
   type ExtensionContext,
   type ModelSelectEvent,
+  SettingsManager,
   type ThinkingLevelSelectEvent,
 } from "@earendil-works/pi-coding-agent";
 
@@ -52,8 +52,11 @@ export function registerLastUsedCliModel(
     }
   });
 
-  // Pi emits this for the thinking picker and cycle key. Startup and history
-  // restoration assign session state directly, without emitting this event.
+  // Pi emits this when setThinkingLevel changes the effective level, including
+  // thinking picker/cycle actions and model selection/cycling. The event has no
+  // source or persistence-consent flag, so root TUI model changes can also rewrite
+  // the startup thinking default. Startup and history restoration initialize
+  // session state directly, without emitting this event.
   pi.on("thinking_level_select", async (event, ctx) => {
     if (!isRootSession() || ctx.mode !== "tui") return;
 

@@ -259,12 +259,17 @@ jobs:
           MACOS: ${{ needs.live-macos.result }}
         run: |
           set -euo pipefail
-          [[ "$FEEDBACK" == success ]] || exit 1
-          if [[ "$FULL" == true && "$MODE" == full ]]; then
-            [[ "$LINUX" == success && "$MACOS" == success ]] || exit 1
-          elif [[ "$FULL" == false && "$MODE" == docs ]]; then
-            [[ "$LINUX" == skipped && "$MACOS" == skipped ]] || exit 1
-          else
-            echo 'Missing or inconsistent validation plan' >&2
+          if [[ "$FEEDBACK" != success ]]; then
+            printf 'Planning or docs checks did not succeed: %s\n' "$FEEDBACK" >&2
             exit 1
           fi
+          # The only accepted combinations are plan mode/full + Linux/macOS results.
+          case "$MODE:$FULL:$LINUX:$MACOS" in
+            full:true:success:success) ;;
+            docs:false:skipped:skipped) ;;
+            *)
+              printf 'Rejected CI plan/results: mode=%s full=%s Linux=%s macOS=%s\n' \
+                "$MODE" "$FULL" "$LINUX" "$MACOS" >&2
+              exit 1
+              ;;
+          esac

@@ -36,26 +36,86 @@ export function interactionDashboard(run: InteractionRun, baseline?: Interaction
 <details><summary>Complete raw fixture + profiler evidence</summary><pre id="raw"></pre></details>
 <script id="interaction-data" type="application/json">${escapeInteractionJson(data)}</script>
 <script>
-const data=JSON.parse(document.getElementById('interaction-data').textContent);
-const el=id=>document.getElementById(id), pretty=v=>JSON.stringify(v,null,2), ms=v=>v==null?'n/a':v.toFixed(3)+' ms';
-el('meta').textContent=data.run.startedAt+' | strict observed budget < '+data.run.budgetMs+' ms | repetitions '+data.run.config.repetitions;
-el('environment').textContent=pretty({environment:data.run.environment,config:data.run.config,sources:data.run.sources,limits:data.run.limits});
-el('comparison').textContent=data.comparison?pretty(data.comparison):'No baseline supplied. Use --baseline run.json (works offline in report mode).';
-let selected;
-function sample(){if(!selected)return; const s=selected.samples[Number(el('samples').value)];
- el('sample').textContent=pretty(s);
- const spans=s.spans.concat(s.frameMs.map((durationMs,i)=>({name:'full frame '+i,kind:'frame',durationMs})));
- if(s.contiguousSyncMs!=null)spans.push({name:'full contiguous slice',durationMs:s.contiguousSyncMs});
- el('slow').textContent=pretty(spans.sort((a,b)=>b.durationMs-a.durationMs).slice(0,20));
- el('raw').textContent=pretty(data.run.evidence[s.rawEvidence]);
+const data = JSON.parse(document.getElementById('interaction-data').textContent);
+const el = id => document.getElementById(id);
+const pretty = value => JSON.stringify(value, null, 2);
+const ms = value => value == null ? 'n/a' : value.toFixed(3) + ' ms';
+
+el('meta').textContent = data.run.startedAt + ' | strict observed budget < ' + data.run.budgetMs + ' ms | repetitions ' + data.run.config.repetitions;
+el('environment').textContent = pretty({environment: data.run.environment, config: data.run.config, sources: data.run.sources, limits: data.run.limits});
+el('comparison').textContent = data.comparison ? pretty(data.comparison) : 'No baseline supplied. Use --baseline run.json (works offline in report mode).';
+
+function slowObservedSpans(sample) {
+  const spans = sample.spans.concat(sample.frameMs.map((durationMs, i) => ({name: 'full frame ' + i, kind: 'frame', durationMs})));
+  if (sample.contiguousSyncMs != null) {
+    spans.push({name: 'full contiguous slice', durationMs: sample.contiguousSyncMs});
+  }
+  return spans.sort((a, b) => b.durationMs - a.durationMs).slice(0, 20);
 }
-function choose(row){selected=row;el('detail-title').textContent=row.id;el('scope').textContent=pretty({scope:row.scope,parameters:row.parameters});el('samples').replaceChildren();
- row.samples.forEach((s,i)=>{const o=document.createElement('option');o.value=i;o.textContent='repetition '+s.iteration+' / '+s.phase+' / '+ms(s.peakSyncMs);el('samples').append(o)});sample();}
-function draw(){el('rows').replaceChildren();data.rows.filter(r=>(el('group').value==='all'||r.group===el('group').value)&&r.id.includes(el('filter').value)).forEach(r=>{
- const tr=document.createElement('tr'),s=r.summary,b=document.createElement('button');b.textContent=r.id;b.onclick=()=>choose(r);
- const values=[b,ms(s.peakSync.p95)+' / '+ms(s.peakSync.max),s.peakSync.overBudget+'/'+s.peakSync.count,ms(s.mutation.max)+' / '+ms(s.frames?.max),ms(s.ack?.max),ms(s.inputLateness?.max),[...new Set(r.samples.map(x=>x.boundary))].join(', ')];
- values.forEach((v,i)=>{const td=document.createElement('td');if(v instanceof Node)td.append(v);else td.textContent=v;if(i===2&&s.peakSync.overBudget)td.className='miss';tr.append(td)});el('rows').append(tr);
- });}
-el('group').onchange=draw;el('filter').oninput=draw;el('samples').onchange=sample;draw();if(data.rows.length)choose(data.rows[0]);
+
+function showSample(sample) {
+  el('sample').textContent = pretty(sample);
+  el('slow').textContent = pretty(slowObservedSpans(sample));
+  el('raw').textContent = pretty(data.run.evidence[sample.rawEvidence]);
+}
+
+function showCase(row) {
+  el('detail-title').textContent = row.id;
+  el('scope').textContent = pretty({scope: row.scope, parameters: row.parameters});
+  const samples = el('samples');
+  samples.replaceChildren();
+  row.samples.forEach((sample, i) => {
+    const option = document.createElement('option');
+    option.value = i;
+    option.textContent = 'repetition ' + sample.iteration + ' / ' + sample.phase + ' / ' + ms(sample.peakSyncMs);
+    samples.append(option);
+  });
+  // The picker belongs to this case; filtering the table leaves its drill-down intact.
+  const showSelectedSample = () => showSample(row.samples[Number(samples.value)]);
+  samples.onchange = showSelectedSample;
+  showSelectedSample();
+}
+
+function textCell(text, className = '') {
+  const cell = document.createElement('td');
+  cell.textContent = text;
+  cell.className = className;
+  return cell;
+}
+
+function caseRow(row) {
+  const tr = document.createElement('tr');
+  const button = document.createElement('button');
+  button.textContent = row.id;
+  button.onclick = () => showCase(row);
+  const caseCell = document.createElement('td');
+  caseCell.append(button);
+  const summary = row.summary;
+  tr.append(caseCell);
+  tr.append(textCell(ms(summary.peakSync.p95) + ' / ' + ms(summary.peakSync.max)));
+  tr.append(textCell(summary.peakSync.overBudget + '/' + summary.peakSync.count, summary.peakSync.overBudget ? 'miss' : ''));
+  tr.append(textCell(ms(summary.mutation.max) + ' / ' + ms(summary.frames?.max)));
+  tr.append(textCell(ms(summary.ack?.max)));
+  tr.append(textCell(ms(summary.inputLateness?.max)));
+  tr.append(textCell([...new Set(row.samples.map(sample => sample.boundary))].join(', ')));
+  return tr;
+}
+
+function drawCases() {
+  const group = el('group').value;
+  const filter = el('filter').value;
+  const rows = el('rows');
+  rows.replaceChildren();
+  for (const row of data.rows) {
+    if ((group === 'all' || row.group === group) && row.id.includes(filter)) {
+      rows.append(caseRow(row));
+    }
+  }
+}
+
+el('group').onchange = drawCases;
+el('filter').oninput = drawCases;
+drawCases();
+if (data.rows.length) showCase(data.rows[0]);
 </script></html>`;
 }

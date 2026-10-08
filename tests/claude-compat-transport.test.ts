@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import { once } from "node:events";
 import { PassThrough, Writable } from "node:stream";
 import { ClaudeCompatTransport, type TransportOptions } from "../src/claude-compat/transport";
 
@@ -10,9 +11,9 @@ function deferred<T = void>() {
   return { promise, resolve };
 }
 
-function harness(options: Partial<TransportOptions> = {}) {
+function harness(options: Partial<Omit<TransportOptions, "input" | "stderr">> = {}) {
   const input = new PassThrough();
-  const output = new PassThrough();
+  const output = options.output ?? new PassThrough();
   const stderr = new PassThrough();
   const lines: any[] = [];
   const logs: string[] = [];
@@ -26,7 +27,7 @@ function harness(options: Partial<TransportOptions> = {}) {
     }
   });
   stderr.on("data", (chunk) => logs.push(chunk.toString()));
-  const transport = new ClaudeCompatTransport({ input, output, stderr, onUser: () => {}, controls: {}, ...options });
+  const transport = new ClaudeCompatTransport({ onUser: () => {}, controls: {}, ...options, input, output, stderr });
   const run = transport.run();
   // A rejection is still inspected by each test, but never becomes unhandled.
   void run.catch(() => {});
@@ -67,6 +68,39 @@ describe("Claude-compatible NDJSON transport", () => {
     h.input.end();
     await h.run;
     expect(received).toEqual([user, user]);
+    expect(h.lines).toEqual([]);
+  });
+
+  test("separate input reads retain partial UTF-8 and reset the byte budget per frame", async () => {
+    const received: unknown[] = [];
+    const frame = Buffer.from(JSON.stringify(user));
+    const split = frame.indexOf(Buffer.from("😀")) + 1;
+    const h = harness({
+      maxFrameBytes: frame.length + 1,
+      onUser: (message) => {
+        received.push(message);
+      },
+    });
+    h.input.write(frame.subarray(0, split));
+    await tick();
+    expect(received).toEqual([]);
+    h.input.write(Buffer.concat([frame.subarray(split), Buffer.from("\r\n \n\n"), frame.subarray(0, split)]));
+    await tick();
+    expect(received).toEqual([user]);
+    h.input.end(frame.subarray(split));
+    await h.run;
+    expect(received).toEqual([user, user]);
+    expect(h.logs).toEqual([]);
+    expect(h.lines).toEqual([]);
+  });
+
+  test("fragmented frame limits count whitespace and CR before trimming", async () => {
+    const h = harness({ maxFrameBytes: 5 });
+    h.input.write("   ");
+    await tick();
+    h.input.end("  \r\n");
+    await expect(h.run).rejects.toThrow("Transport input frame limit exceeded");
+    expect(h.logs).toEqual([]);
     expect(h.lines).toEqual([]);
   });
 
@@ -122,8 +156,9 @@ describe("Claude-compatible NDJSON transport", () => {
       },
       controls: { interrupt: () => {} },
     });
+    const permissionSent = once(h.output, "data");
     h.write(user);
-    await tick();
+    await permissionSent;
     expect(h.lines[0]).toEqual(
       control("permission-id", {
         subtype: "can_use_tool",
@@ -132,8 +167,9 @@ describe("Claude-compatible NDJSON transport", () => {
         input: { file_path: "/tmp/example" },
       }),
     );
+    const interruptAcknowledged = once(h.output, "data");
     h.write(control("interrupt-id", { subtype: "interrupt" }));
-    await tick();
+    await interruptAcknowledged;
     expect(h.lines[1]).toEqual(success("interrupt-id"));
     h.write(success("unrelated", { behavior: "deny", message: "not this request" }));
     h.write(
@@ -194,9 +230,10 @@ describe("Claude-compatible NDJSON transport", () => {
   });
 
   test("EOF rejects pending callbacks, drains accepted output, and rejects new callbacks", async () => {
+    const finishUser = deferred();
     const h = harness({
       onUser: async () => {
-        await tick();
+        await finishUser.promise;
         await h.transport.send({ type: "result", uuid: "kept" });
       },
     });
@@ -204,6 +241,8 @@ describe("Claude-compatible NDJSON transport", () => {
     h.write(user);
     h.input.end();
     await expect(pending).rejects.toThrow("input ended");
+    // EOF has been read; the accepted handler can still write before run finishes.
+    finishUser.resolve();
     await h.run;
     expect(h.lines.at(-1)).toEqual({ type: "result", uuid: "kept" });
     await expect(h.transport.request({ subtype: "can_use_tool" })).rejects.toThrow("input ended");
@@ -230,33 +269,32 @@ describe("Claude-compatible NDJSON transport", () => {
   });
 
   test("writes are ordered and wait for real stream backpressure", async () => {
-    const chunks: string[] = [];
-    const releases: Array<() => void> = [];
+    const writes: Array<{ frame: string; release: () => void }> = [];
     const output = new Writable({
       highWaterMark: 1,
       write(chunk, _encoding, callback) {
-        chunks.push(chunk.toString());
-        releases.push(() => callback());
+        writes.push({ frame: chunk.toString(), release: () => callback() });
       },
     });
     const h = harness({ output });
+    expect(h.output).toBe(output);
     let completed = false;
     const first = h.transport.send({ type: "result", uuid: "one" }).then(() => {
       completed = true;
     });
     const second = h.transport.send({ type: "result", uuid: "two" });
     await tick();
-    expect(chunks.length).toBe(1);
+    expect(writes.length).toBe(1);
     expect(completed).toBe(false);
-    releases.shift()!();
+    writes[0].release();
     await first;
     await tick();
-    expect(chunks.length).toBe(2);
-    releases.shift()!();
+    expect(writes.length).toBe(2);
+    writes[1].release();
     await second;
     h.input.end();
     await h.run;
-    expect(chunks.map((x) => JSON.parse(x).uuid)).toEqual(["one", "two"]);
+    expect(writes.map((write) => JSON.parse(write.frame).uuid)).toEqual(["one", "two"]);
   });
 
   test("malformed frames use stderr, never fabricated stdout envelopes", async () => {
@@ -321,21 +359,26 @@ describe("Claude-compatible NDJSON transport", () => {
   });
 
   test("active handler budget returns a correlated error without accepting extra work", async () => {
+    const entered = deferred();
     const gate = deferred<Record<string, unknown>>();
     let interrupts = 0;
     const h = harness({
       maxActiveHandlers: 1,
       controls: {
-        initialize: () => gate.promise,
+        initialize: () => {
+          entered.resolve();
+          return gate.promise;
+        },
         interrupt: () => {
           interrupts++;
         },
       },
     });
     h.write(control("init", { subtype: "initialize" }));
-    await tick();
+    await entered.promise;
+    const rejected = once(h.output, "data");
     h.write(control("interrupt", { subtype: "interrupt" }));
-    await tick();
+    await rejected;
     expect(h.lines[0].response).toEqual({
       subtype: "error",
       request_id: "interrupt",
@@ -348,17 +391,17 @@ describe("Claude-compatible NDJSON transport", () => {
   });
 
   test("queued-write byte budget rejects extra output during backpressure", async () => {
-    let release!: () => void;
+    const written = deferred<() => void>();
     const output = new Writable({
       highWaterMark: 1,
       write(_chunk, _encoding, callback) {
-        release = () => callback();
+        written.resolve(() => callback());
       },
     });
     const h = harness({ output, maxQueuedWriteBytes: 50 });
     const first = h.transport.send({ type: "result", uuid: "one" });
     await expect(h.transport.send({ type: "result", uuid: "two" })).rejects.toThrow("output limit");
-    await tick();
+    const release = await written.promise;
     release();
     await first;
     h.input.end();

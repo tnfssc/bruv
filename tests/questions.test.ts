@@ -1,5 +1,5 @@
-import { test, expect } from "bun:test";
-import { mkdtempSync, rmSync, writeFileSync, unlinkSync } from "node:fs";
+import { expect, test } from "bun:test";
+import { mkdtempSync, rmSync, unlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { QuestionService } from "../src/questions/service";
@@ -7,7 +7,7 @@ import { QuestionService } from "../src/questions/service";
 function fixture() {
   const dir = mkdtempSync(join(tmpdir(), "bruv-questions-"));
   let leaf = "root";
-  let entries: Array<{ id: string; parentId: string | null; type?: string; customType?: string }> = [
+  const entries: Array<{ id: string; parentId: string | null; type?: string; customType?: string }> = [
     { id: "root", parentId: null },
   ];
   const file = join(dir, "s.jsonl");
@@ -45,11 +45,11 @@ function fixture() {
     },
   };
 }
-test("nonblocking, context, choices, explicit block and resolution survive reload", async () => {
+test("a nonblocking question can be blocked, answered idempotently, and queued across reloads", async () => {
   const f = fixture();
   try {
-    const s = new QuestionService();
-    const q = await s.ask(f.ctx, {
+    const service = new QuestionService();
+    const question = await service.ask(f.ctx, {
       text: "Pick",
       choices: ["A", "B"],
       allowFreeText: false,
@@ -58,88 +58,149 @@ test("nonblocking, context, choices, explicit block and resolution survive reloa
       reason: "Need input",
       dedupKey: "k",
     });
-    expect(q.blocked).toBeUndefined();
-    expect(new QuestionService().get(f.ctx, q.id).requester).toBe("analyst");
-    const b = await s.block(f.ctx, {
-      id: q.id,
-      owner: q.owner,
-      version: q.version,
+    expect(question.blocked).toBeUndefined();
+    expect(new QuestionService().get(f.ctx, question.id).requester).toBe("analyst");
+    const blocked = await service.block(f.ctx, {
+      id: question.id,
+      owner: question.owner,
+      version: question.version,
       checkpoint: "Await selection",
       foreground: true,
       taskIds: ["t1"],
     });
-    expect(b.blocked?.checkpoint).toBe("Await selection");
-    await expect(s.answer(f.ctx, { id: q.id, owner: q.owner, version: b.version, text: "wrong" })).rejects.toThrow(
-      "choice",
-    );
-    const a = await s.answer(f.ctx, { id: q.id, owner: q.owner, version: b.version, text: "A", replyId: "ui-event-1" });
-    expect(a.delivery).toBe("resume-needed");
-    expect(a.replyId).toBe("ui-event-1");
-    expect(
-      await s.answer(f.ctx, { id: q.id, owner: q.owner, version: b.version, text: "A", replyId: "ui-event-1" }),
-    ).toEqual(a);
+    expect(blocked.blocked?.checkpoint).toBe("Await selection");
     await expect(
-      s.answer(f.ctx, { id: q.id, owner: q.owner, version: b.version, text: "B", replyId: "ui-event-1" }),
-    ).rejects.toThrow("Stale");
-    const delivered = await s.setDelivery(f.ctx, { id: q.id, owner: q.owner, version: a.version, delivery: "queued" });
-    expect(new QuestionService().get(f.ctx, q.id).delivery).toBe("queued");
-    expect(delivered.version).toBe(a.version + 1);
-    expect(() => s.handle("questions.answer", { id: q.id }, f.ctx)).toThrow("UI reply only");
-    const other = await s.ask(f.ctx, { text: "Optional", choices: ["Y"], allowFreeText: true });
-    expect(
-      (await s.resolve(f.ctx, { id: other.id, owner: other.owner, version: 1, reason: "No longer needed" }))
-        .resolutionReason,
-    ).toBe("No longer needed");
+      service.answer(f.ctx, { id: question.id, owner: question.owner, version: blocked.version, text: "wrong" }),
+    ).rejects.toThrow("choice");
+    const reply = {
+      id: question.id,
+      owner: question.owner,
+      version: blocked.version,
+      text: "A",
+      replyId: "ui-event-1",
+    };
+    const answered = await service.answer(f.ctx, reply);
+    expect(answered.delivery).toBe("resume-needed");
+    expect(answered.replyId).toBe("ui-event-1");
+    expect(await service.answer(f.ctx, reply)).toEqual(answered);
+    await expect(service.answer(f.ctx, { ...reply, text: "B" })).rejects.toThrow("Stale");
+    const queued = await service.setDelivery(f.ctx, {
+      id: question.id,
+      owner: question.owner,
+      version: answered.version,
+      delivery: "queued",
+    });
+    expect(new QuestionService().get(f.ctx, question.id).delivery).toBe("queued");
+    expect(queued.version).toBe(answered.version + 1);
   } finally {
     f.cleanup();
   }
 });
-test("dedup after progress, sibling fork is read-only, navigation during lock wait", async () => {
+
+test("optional questions can be resolved without letting agent tools supply an answer", async () => {
   const f = fixture();
   try {
-    const s = new QuestionService();
-    const q = await s.ask(f.ctx, { text: "What?", dedupKey: "request" });
+    const service = new QuestionService();
+    const question = await service.ask(f.ctx, { text: "Optional", choices: ["Y"], allowFreeText: true });
+    expect(() => service.handle("questions.answer", { id: question.id }, f.ctx)).toThrow("UI reply only");
+    const resolved = await service.resolve(f.ctx, {
+      id: question.id,
+      owner: question.owner,
+      version: question.version,
+      reason: "No longer needed",
+    });
+    expect(resolved.resolutionReason).toBe("No longer needed");
+  } finally {
+    f.cleanup();
+  }
+});
+
+test("dedup follows the owner's continuation, but a sibling fork creates its own question", async () => {
+  const f = fixture();
+  try {
+    const service = new QuestionService();
+    const question = await service.ask(f.ctx, { text: "What?", dedupKey: "request" });
     f.move("original", "root");
     f.move("progress", "original");
-    expect((await s.ask(f.ctx, { text: "What?", dedupKey: "request" })).id).toBe(q.id);
+    expect((await service.ask(f.ctx, { text: "What?", dedupKey: "request" })).id).toBe(question.id);
     f.move("sibling", "root");
-    expect(s.get(f.ctx, q.id).id).toBe(q.id);
-    await expect(s.answer(f.ctx, { id: q.id, owner: q.owner, version: 1, text: "no" })).rejects.toThrow("owner branch");
-    expect((await s.ask(f.ctx, { text: "What?", dedupKey: "request" })).id).not.toBe(q.id);
+    expect(service.get(f.ctx, question.id).id).toBe(question.id);
+    await expect(
+      service.answer(f.ctx, { id: question.id, owner: question.owner, version: question.version, text: "no" }),
+    ).rejects.toThrow("owner branch");
+    expect((await service.ask(f.ctx, { text: "What?", dedupKey: "request" })).id).not.toBe(question.id);
+  } finally {
+    f.cleanup();
+  }
+});
+
+test("answer revalidates navigation after waiting for the question ledger lock", async () => {
+  const f = fixture();
+  try {
+    const service = new QuestionService();
+    const question = await service.ask(f.ctx, { text: "What?" });
+    f.move("original", "root");
+    f.move("progress", "original");
+    f.move("sibling", "root");
     f.navigate("progress");
     const lock = f.file + ".questions.json.lock";
     writeFileSync(lock, "held");
-    const pending = s.answer(f.ctx, { id: q.id, owner: q.owner, version: 1, text: "late" });
+    const pending = service.answer(f.ctx, {
+      id: question.id,
+      owner: question.owner,
+      version: question.version,
+      text: "late",
+    });
     await Bun.sleep(40);
     f.navigate("sibling");
     unlinkSync(lock);
     await expect(pending).rejects.toThrow("navigation changed");
-    expect(s.get(f.ctx, q.id).status).toBe("pending");
+    expect(service.get(f.ctx, question.id).status).toBe("pending");
   } finally {
     f.cleanup();
   }
 });
-test("bounded ledger and answer/cancel race without loss", async () => {
+
+test("concurrent answer and cancellation accept exactly one mutation without losing ledger records", async () => {
   const f = fixture();
   try {
-    const s = new QuestionService();
-    const first = await s.ask(f.ctx, { text: "First" });
-    for (let i = 1; i < 20; i++) await s.ask(f.ctx, { text: "Question " + i });
-    await expect(s.ask(f.ctx, { text: "overflow" })).rejects.toThrow("Too many");
+    const service = new QuestionService();
+    const question = await service.ask(f.ctx, { text: "First" });
+    for (let i = 1; i < 20; i++) await service.ask(f.ctx, { text: "Question " + i });
     const outcomes = await Promise.allSettled([
-      s.answer(f.ctx, { id: first.id, owner: first.owner, version: 1, text: "yes" }),
-      s.cancel(f.ctx, { id: first.id, owner: first.owner, version: 1 }),
+      service.answer(f.ctx, { id: question.id, owner: question.owner, version: question.version, text: "yes" }),
+      service.cancel(f.ctx, { id: question.id, owner: question.owner, version: question.version }),
     ]);
-    expect(outcomes.map((x) => x.status).sort()).toEqual(["fulfilled", "rejected"]);
-    expect(new QuestionService().list(f.ctx).length).toBe(20);
-    const room = await s.ask(f.ctx, { text: "room" });
-    await s.cancel(f.ctx, { id: room.id, owner: room.owner, version: 1 });
+    expect(outcomes.map((outcome) => outcome.status).sort()).toEqual(["fulfilled", "rejected"]);
+    const reloaded = new QuestionService();
+    expect(reloaded.list(f.ctx).length).toBe(20);
+    const winner = outcomes.find((outcome) => outcome.status === "fulfilled")!;
+    expect(reloaded.get(f.ctx, question.id).status).toBe(winner.value.status);
+    expect(reloaded.get(f.ctx, question.id).version).toBe(question.version + 1);
+  } finally {
+    f.cleanup();
+  }
+});
+
+test("pending and total ledger limits reject new questions without dropping saved history", async () => {
+  const f = fixture();
+  try {
+    const service = new QuestionService();
+    const first = await service.ask(f.ctx, { text: "First" });
+    for (let i = 1; i < 20; i++) await service.ask(f.ctx, { text: "Question " + i });
+    await expect(service.ask(f.ctx, { text: "overflow" })).rejects.toThrow("Too many");
+    await service.answer(f.ctx, { id: first.id, owner: first.owner, version: first.version, text: "yes" });
+    const room = await service.ask(f.ctx, { text: "room" });
+    await service.cancel(f.ctx, { id: room.id, owner: room.owner, version: room.version });
     for (let i = 0; i < 199; i++) {
-      const q = await s.ask(f.ctx, { text: "terminal " + i });
-      await s.cancel(f.ctx, { id: q.id, owner: q.owner, version: 1 });
+      const question = await service.ask(f.ctx, { text: "terminal " + i });
+      await service.cancel(f.ctx, { id: question.id, owner: question.owner, version: question.version });
     }
-    await expect(s.ask(f.ctx, { text: "ledger full" })).rejects.toThrow("ledger full");
-    expect(new QuestionService().list(f.ctx).length).toBe(220);
+    await expect(service.ask(f.ctx, { text: "ledger full" })).rejects.toThrow("ledger full");
+    const reloaded = new QuestionService();
+    expect(reloaded.list(f.ctx).length).toBe(220);
+    expect(reloaded.get(f.ctx, first.id).status).toBe("answered");
+    expect(reloaded.get(f.ctx, first.id).answer).toBe("yes");
   } finally {
     f.cleanup();
   }

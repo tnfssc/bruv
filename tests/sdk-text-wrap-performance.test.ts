@@ -1,34 +1,51 @@
-import { afterAll, beforeAll, expect, test } from "bun:test";
-import { mkdtemp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { beforeAll, expect, test } from "bun:test";
+import { mkdtemp, mkdir, readFile, writeFile } from "node:fs/promises";
 import { createRequire } from "node:module";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { Markdown, Text, visibleWidth, wrapTextWithAnsi, truncateToWidth } from "@earendil-works/pi-tui";
 
-const sdk = dirname(createRequire(import.meta.url).resolve("@earendil-works/pi-tui"));
-let dir: string;
-let reference: Pick<typeof import("@earendil-works/pi-tui"), "visibleWidth" | "wrapTextWithAnsi" | "truncateToWidth">;
-let ReferenceText: typeof Text;
-let ReferenceMarkdown: typeof Markdown;
+type LayoutUtilities = Pick<
+  typeof import("@earendil-works/pi-tui"),
+  "visibleWidth" | "wrapTextWithAnsi" | "truncateToWidth"
+>;
 
 // Reverse only our installed utility hunk: this is the real 1.1.0 implementation, not an invented oracle.
-beforeAll(async () => {
-  dir = await mkdtemp(join(tmpdir(), "bruv-wrap-reference-"));
-  await mkdir(join(dir, "dist"));
+// All writes and git apply belong to this retained fixture; installed dependencies stay read-only.
+async function createOriginalSdkReference() {
+  const sdk = dirname(createRequire(import.meta.url).resolve("@earendil-works/pi-tui"));
+  const dir = await mkdtemp(join(tmpdir(), "bruv-wrap-reference-"));
+  for (const child of ["dist", "home", "config", "agent", "tmp"]) await mkdir(join(dir, child));
+  await writeFile(join(dir, "provenance.json"), JSON.stringify({ worktree: dirname(import.meta.dir), sdk }));
   await writeFile(join(dir, "dist/utils.js"), await readFile(join(sdk, "utils.js")));
   const patch = await readFile(join(import.meta.dir, "../patches/@earendil-works%2Fpi-tui@1.1.0.patch"), "utf8");
   const utility =
     "diff --git a/dist/utils.js b/dist/utils.js\n" +
     patch.split("diff --git a/dist/utils.js b/dist/utils.js\n")[1].split("diff --git ")[0];
   await writeFile(join(dir, "utility.patch"), utility);
-  const applied = Bun.spawnSync(["git", "apply", "--reverse", "utility.patch"], { cwd: dir });
+  const applied = Bun.spawnSync(["git", "apply", "--reverse", "utility.patch"], {
+    cwd: dir,
+    env: {
+      PATH: process.env.PATH,
+      HOME: join(dir, "home"),
+      XDG_CONFIG_HOME: join(dir, "config"),
+      BRUV_CODING_AGENT_DIR: join(dir, "agent"),
+      PI_CODING_AGENT_DIR: join(dir, "agent"),
+      TMPDIR: join(dir, "tmp"),
+      GIT_CONFIG_NOSYSTEM: "1",
+      GIT_CONFIG_GLOBAL: join(dir, "config/gitconfig"),
+    },
+  });
   expect(applied.exitCode).toBe(0);
+
+  // Original Text/Markdown must share the reversed utility, while other imports
+  // still resolve to installed SDK dependencies (including external packages).
   const require = createRequire(join(sdk, "utils.js"));
-  async function moduleFile(file: string, isUtility = false) {
-    const source = await readFile(join(sdk, file), "utf8");
-    const original = isUtility ? await readFile(join(dir, "dist/utils.js"), "utf8") : source;
-    const resolved = original.replace(/(from\s+|import\s*)(["'])([^"']+)\2/g, (_match, prefix, quote, specifier) => {
+  async function loadModule(file: string) {
+    const destination = file === "utils.js" ? join(dir, "dist/utils.js") : join(dir, file.replaceAll("/", "-"));
+    const source = await readFile(file === "utils.js" ? destination : join(sdk, file), "utf8");
+    const resolved = source.replace(/(from\s+|import\s*)(["'])([^"']+)\2/g, (_match, prefix, quote, specifier) => {
       const target = specifier.endsWith("/utils.js")
         ? join(dir, "dist/utils.js")
         : specifier.startsWith(".")
@@ -36,16 +53,19 @@ beforeAll(async () => {
           : require.resolve(specifier);
       return prefix + quote + pathToFileURL(target).href + quote;
     });
-    const destination = isUtility ? join(dir, "dist/utils.js") : join(dir, file.replaceAll("/", "-"));
     await writeFile(destination, resolved);
     return import(pathToFileURL(destination).href);
   }
-  reference = await moduleFile("utils.js", true);
-  ReferenceText = (await moduleFile("components/text.js")).Text;
-  ReferenceMarkdown = (await moduleFile("components/markdown.js")).Markdown;
-});
-afterAll(async () => {
-  if (dir) await rm(dir, { recursive: true, force: true });
+  return {
+    utils: (await loadModule("utils.js")) as LayoutUtilities,
+    Text: (await loadModule("components/text.js")).Text as typeof Text,
+    Markdown: (await loadModule("components/markdown.js")).Markdown as typeof Markdown,
+  };
+}
+
+let original: Awaited<ReturnType<typeof createOriginalSdkReference>>;
+beforeAll(async () => {
+  original = await createOriginalSdkReference();
 });
 
 const fragments = [
@@ -102,10 +122,10 @@ for (let i = 0; i < 200; i++) {
 
 test("wrapping, width and truncation exactly match original Unicode/ANSI layout", () => {
   for (const text of corpus) {
-    expect(visibleWidth(text)).toBe(reference.visibleWidth(text));
+    expect(visibleWidth(text)).toBe(original.utils.visibleWidth(text));
     for (const width of [0, 1, 2, 3, 7, 16, 80, 2.5]) {
-      expect(wrapTextWithAnsi(text, width)).toEqual(reference.wrapTextWithAnsi(text, width));
-      expect(truncateToWidth(text, width)).toBe(reference.truncateToWidth(text, width));
+      expect(wrapTextWithAnsi(text, width)).toEqual(original.utils.wrapTextWithAnsi(text, width));
+      expect(truncateToWidth(text, width)).toBe(original.utils.truncateToWidth(text, width));
     }
   }
 });
@@ -139,14 +159,14 @@ test("actual SDK Text and Markdown render full large content, tail/cache and res
   for (const source of sources) {
     for (const kind of ["text", "markdown"]) {
       const actual = kind === "text" ? new Text(source, 1, 1) : new Markdown(source, 1, 1, theme);
-      const original = kind === "text" ? new ReferenceText(source, 1, 1) : new ReferenceMarkdown(source, 1, 1, theme);
+      const reference = kind === "text" ? new original.Text(source, 1, 1) : new original.Markdown(source, 1, 1, theme);
       for (const width of [100, 46]) {
         const rendered = actual.render(width);
-        expect(rendered).toEqual(original.render(width));
+        expect(rendered).toEqual(reference.render(width));
         expect(actual.render(width)).toBe(rendered);
         actual.invalidate();
-        original.invalidate();
-        expect(actual.render(width)).toEqual(original.render(width));
+        reference.invalidate();
+        expect(actual.render(width)).toEqual(reference.render(width));
       }
     }
   }
@@ -178,7 +198,7 @@ function graphemeWork(render: () => unknown) {
 
 test("actual SDK ASCII long-word layout avoids segmentation rather than deferring it", () => {
   const source = "a".repeat(32768);
-  const old = graphemeWork(() => new ReferenceText(source, 0, 0).render(80));
+  const old = graphemeWork(() => new original.Text(source, 0, 0).render(80));
   const next = graphemeWork(() => new Text(source, 0, 0).render(80));
   expect(old.yields).toBeGreaterThanOrEqual(source.length);
   expect(next.yields).toBe(0);
@@ -186,9 +206,9 @@ test("actual SDK ASCII long-word layout avoids segmentation rather than deferrin
 
 test("Unicode wrap-fit checks stop early without caching partial widths", () => {
   const source = "UNIQUE_WRAP_WIDTH_" + "x界🙂".repeat(8192);
-  const old = graphemeWork(() => reference.wrapTextWithAnsi(source, 100));
+  const old = graphemeWork(() => original.utils.wrapTextWithAnsi(source, 100));
   const next = graphemeWork(() => wrapTextWithAnsi(source, 100));
   expect(next.yields).toBeLessThan(old.yields - 24000);
-  expect(visibleWidth(source)).toBe(reference.visibleWidth(source));
+  expect(visibleWidth(source)).toBe(original.utils.visibleWidth(source));
   expect(visibleWidth(source)).toBe("UNIQUE_WRAP_WIDTH_".length + 8192 * 5);
 });

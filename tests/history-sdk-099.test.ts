@@ -1,13 +1,5 @@
-import { run as runProcess } from "./helpers";
-import { afterEach, expect, test } from "bun:test";
-import { mkdtemp, rm } from "node:fs/promises";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
-
-const roots: string[] = [];
-afterEach(async () => {
-  await Promise.all(roots.splice(0).map((root) => rm(root, { recursive: true, force: true })));
-});
+import { expect, test } from "bun:test";
+import { createHistoryFixture, runHistoryProcess } from "./history-process";
 
 // Run each variant in a fresh process: the disk adapter patches the SDK prototype.
 const scenario = String.raw`
@@ -17,7 +9,7 @@ if (process.env.ADAPTER === "1") {
   installDiskBackedSessionManager();
 }
 const { SessionManager } = await import("@earendil-works/pi-coding-agent");
-const manager = SessionManager.create(process.env.ROOT, process.env.ROOT);
+const manager = SessionManager.create(process.env.HISTORY_ROOT, process.env.HISTORY_ROOT);
 const file = manager.getSessionFile();
 const snapshots = [];
 const snapshot = (stage) => snapshots.push({
@@ -39,7 +31,7 @@ snapshot("user");
 const diskAfterUser = readFileSync(file, "utf8").trim().split("\n").map(line => JSON.parse(line).type);
 manager.appendSessionInfo("Second name");
 snapshot("renamed");
-const reopened = SessionManager.open(file, process.env.ROOT);
+const reopened = SessionManager.open(file, process.env.HISTORY_ROOT);
 const reopenedState = {
   name: reopened.getSessionName(), count: reopened.getEntryCount(), entries: reopened.getEntries().length,
   leafIsName: reopened.getLeafEntry()?.type === "session_info",
@@ -56,30 +48,31 @@ console.log(JSON.stringify({ snapshots, diskAfterUser, reopenedState, userOnlyBr
 `;
 
 async function run(root: string, adapted: boolean) {
-  const { stdout, stderr, code } = await runProcess([process.execPath, "-e", scenario], {
-    cwd: join(import.meta.dir, ".."),
-    env: { ...process.env, ROOT: root, ADAPTER: adapted ? "1" : "0" },
-  });
+  const { stdout, stderr, code } = await runHistoryProcess(root, ["-e", scenario], { ADAPTER: adapted ? "1" : "0" });
   expect(code, stderr).toBe(0);
   return JSON.parse(stdout.trim().split("\n").at(-1)!);
 }
 
 test("Pi 1.0.0: first-user publication, direct session name and O(1) entry count match native SDK", async () => {
-  const nativeRoot = await mkdtemp(join(tmpdir(), "pi-099-native-"));
-  const adaptedRoot = await mkdtemp(join(tmpdir(), "pi-099-adapted-"));
-  roots.push(nativeRoot, adaptedRoot);
+  const nativeRoot = await createHistoryFixture("pi-099-native-");
+  const adaptedRoot = await createHistoryFixture("pi-099-adapted-");
   const [native, adapted] = await Promise.all([run(nativeRoot, false), run(adaptedRoot, true)]);
   expect(adapted).toEqual(native);
-  expect(adapted.snapshots.map((s: { exists: boolean }) => s.exists)).toEqual([
-    false,
-    false,
-    false,
-    true,
-    true,
-    true,
-    false,
+  expect(
+    adapted.snapshots.map(({ stage, exists, count }: { stage: string; exists: boolean; count: number }) => ({
+      stage,
+      exists,
+      count,
+    })),
+  ).toEqual([
+    { stage: "new", exists: false, count: 0 },
+    { stage: "setup", exists: false, count: 3 },
+    { stage: "cleared", exists: false, count: 4 },
+    { stage: "user", exists: true, count: 5 },
+    { stage: "renamed", exists: true, count: 6 },
+    { stage: "branch", exists: true, count: 7 },
+    { stage: "new session", exists: false, count: 0 },
   ]);
-  expect(adapted.snapshots.map((s: { count: number }) => s.count)).toEqual([0, 3, 4, 5, 6, 7, 0]);
   expect(adapted.diskAfterUser).toEqual([
     "session",
     "model_change",

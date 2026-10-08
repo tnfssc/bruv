@@ -39,55 +39,15 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
     else process.env.BRUV_SUBAGENT_DEPTH = originalDepth;
   });
 
-  function harness(overrides: Partial<ClaudeCompatLiveOptions> = {}) {
-    const events = new Map<string, (value: unknown) => void>();
-    const lifecycle = new Map<string, ((...args: any[]) => any)[]>();
+  // Device/provider doubles own capture callbacks and teardown controls. No session
+  // owner is installed here: the real-root test must exercise acquireMainOwner.
+  function fakeLiveResources() {
     const calls: string[] = [];
-    const notices: string[] = [];
-    const requests: any[] = [];
-    let command: any;
     let config = { ...defaultLiveConfig(), inputMode: "continuous" as "continuous" | "push-to-talk" };
     let audioCallbacks: any;
     let voiceCallbacks: any;
     let releaseAudio: (() => void) | undefined;
     let audioCloseError = false;
-    let answer: (request: any) => Promise<any> = async (request) => {
-      const question = request.input.questions[0];
-      return {
-        behavior: "allow",
-        toolUseID: request.tool_use_id,
-        updatedInput: { answers: { [question.question]: question.options[0].label } },
-      };
-    };
-    const manager = {
-      getSessionId: () => "canonical-root",
-      getSessionFile: () => "/fake/canonical.jsonl",
-      getLeafId: () => "leaf-1",
-    };
-    const ctx = {
-      sessionManager: manager,
-      mode: "rpc",
-      hasUI: false,
-      isIdle: () => true,
-      ui: { notify: () => {}, setStatus: () => {}, setWidget: () => {} },
-    } as unknown as ExtensionContext;
-    const api = {
-      events: {
-        on: (name: string, fn: any) => {
-          events.set(name, fn);
-          return () => events.delete(name);
-        },
-        emit: (name: string, value: unknown) => events.get(name)?.(value),
-      },
-      registerMessageRenderer() {},
-      registerCommand: (_name: string, value: any) => {
-        command = value;
-      },
-      on: (name: string, fn: any) => {
-        lifecycle.set(name, [...(lifecycle.get(name) ?? []), fn]);
-      },
-      appendEntry: () => {},
-    } as any;
     const dependencies: any = {
       config: {
         load: async () => config,
@@ -107,24 +67,6 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
           throw new Error("must not import");
         },
       }),
-      owner: async (_pi: any, context: any, callbacks: any) => {
-        calls.push("owner");
-        expect(context.sessionManager).toBe(manager);
-        expect(context.hasUI).toBe(false);
-        expect(context.mode).toBe("rpc");
-        return {
-          orchestration: { instructions: "Canonical root", tools: [], execute: async () => ({ ok: true }) },
-          typedInput: callbacks.onInput,
-          sendContext: callbacks.onContext,
-          close: () => calls.push("owner.close"),
-          stopForeground: () => calls.push("owner.stopForeground"),
-          released: Promise.resolve(),
-          interrupt: () => calls.push("owner.interrupt"),
-          turnComplete: () => {},
-          inputTranscript: () => {},
-          outputTranscript: () => {},
-        };
-      },
       voice: (callbacks: any) => {
         calls.push("provider");
         voiceCallbacks = callbacks;
@@ -170,6 +112,87 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
         return "Fake device check";
       },
     };
+    return {
+      dependencies,
+      calls,
+      capture: () => audioCallbacks?.capture(Buffer.alloc(640)),
+      interrupt: () => voiceCallbacks?.onInterrupted(1),
+      waitClose: () => {
+        releaseAudio = () => {};
+      },
+      release: () => releaseAudio?.(),
+      failClose: () => {
+        audioCloseError = true;
+      },
+    };
+  }
+
+  function harness(overrides: Partial<ClaudeCompatLiveOptions> = {}) {
+    const events = new Map<string, (value: unknown) => void>();
+    const lifecycle = new Map<string, ((...args: any[]) => any)[]>();
+    const resources = fakeLiveResources();
+    const { calls } = resources;
+    const notices: string[] = [];
+    const requests: any[] = [];
+    let command: any;
+    let answer: (request: any) => Promise<any> = async (request) => {
+      const question = request.input.questions[0];
+      return {
+        behavior: "allow",
+        toolUseID: request.tool_use_id,
+        updatedInput: { answers: { [question.question]: question.options[0].label } },
+      };
+    };
+    const manager = {
+      getSessionId: () => "canonical-root",
+      getSessionFile: () => "/fake/canonical.jsonl",
+      getLeafId: () => "leaf-1",
+    };
+    const ctx = {
+      sessionManager: manager,
+      mode: "rpc",
+      hasUI: false,
+      isIdle: () => true,
+      ui: { notify: () => {}, setStatus: () => {}, setWidget: () => {} },
+    } as unknown as ExtensionContext;
+    const api = {
+      events: {
+        on: (name: string, fn: any) => {
+          events.set(name, fn);
+          return () => events.delete(name);
+        },
+        emit: (name: string, value: unknown) => events.get(name)?.(value),
+      },
+      registerMessageRenderer() {},
+      registerCommand: (_name: string, value: any) => {
+        command = value;
+      },
+      on: (name: string, fn: any) => {
+        lifecycle.set(name, [...(lifecycle.get(name) ?? []), fn]);
+      },
+      appendEntry: () => {},
+    } as any;
+    const dependencies: any = {
+      ...resources.dependencies,
+      owner: async (_pi: any, context: any, callbacks: any) => {
+        calls.push("owner");
+        expect(context.sessionManager).toBe(manager);
+        expect(context.hasUI).toBe(false);
+        expect(context.mode).toBe("rpc");
+        return {
+          orchestration: { instructions: "Canonical root", tools: [], execute: async () => ({ ok: true }) },
+          typedInput: callbacks.onInput,
+          sendContext: callbacks.onContext,
+          close: () => calls.push("owner.close"),
+          stopForeground: () => calls.push("owner.stopForeground"),
+          released: Promise.resolve(),
+          interrupt: () => calls.push("owner.interrupt"),
+          turnComplete: () => {},
+          inputTranscript: () => {},
+          outputTranscript: () => {},
+        };
+      },
+    };
     const frontend = createClaudeCompatLiveFrontend({
       localAudio: { host: hostname() },
       humanChoices: true,
@@ -184,11 +207,11 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
     });
     frontend.factory(api);
     return {
+      ...resources,
       frontend,
       api,
       ctx,
       manager,
-      calls,
       notices,
       requests,
       dependencies,
@@ -201,15 +224,6 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
       },
       changeLeaf: () => {
         manager.getLeafId = () => "leaf-2";
-      },
-      capture: () => audioCallbacks?.capture(Buffer.alloc(640)),
-      interrupt: () => voiceCallbacks?.onInterrupted(1),
-      waitClose: () => {
-        releaseAudio = () => {};
-      },
-      release: () => releaseAudio?.(),
-      failClose: () => {
-        audioCloseError = true;
       },
     };
   }
@@ -399,7 +413,7 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
     });
 
     test("missing credentials use existing secure setup, never an input/key transcript", async () => {
-      const base = harness();
+      const base = fakeLiveResources();
       const h = harness({
         dependencies: {
           ...base.dependencies,
@@ -500,10 +514,9 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
     test("real connector Pi root is the Live owner: no companion agent and no configured model call", async () => {
       const dir = await mkdtemp(join(tmpdir(), "bruv-native-live-"));
       let runtime: Awaited<ReturnType<typeof createClaudeCompatRuntime>> | undefined;
-      const h = harness();
-      // Native Live audio/key/provider are all fake; unlike the fixture owner, use
-      // the actual acquireMainOwner on the actual connector session below.
-      const { owner: _fakeOwner, ...dependencies } = h.dependencies;
+      const resources = fakeLiveResources();
+      const notices: string[] = [];
+      // Leave owner unspecified so the native frontend acquires the actual Pi root.
       const live = createClaudeCompatLiveFrontend({
         localAudio: { host: hostname() },
         humanChoices: true,
@@ -515,8 +528,8 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
             updatedInput: { answers: { [q.question]: q.options[0].label } },
           };
         },
-        notify: (text) => h.notices.push(text),
-        dependencies,
+        notify: (text) => notices.push(text),
+        dependencies: resources.dependencies,
       });
       try {
         await writeFile(
@@ -549,8 +562,8 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
           { type: "control_request", request_id: "initialize", request: { subtype: "initialize" } },
           new AbortController().signal,
         );
-        // The old composition still installs CLI Live; the parent must replace it.
-        // Select our explicit final registration, also valid once only native Live remains.
+        // Runtime registers native Live too; select the final test registration
+        // so these device/provider doubles run against its actual canonical session.
         const inheritedHasUI = runtime.session.extensionRunner.createContext().hasUI;
         const command = runtime.session.extensionRunner
           .getRegisteredCommands()
@@ -565,9 +578,9 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
           new AbortController().signal,
         );
         const manager = runtime.session.sessionManager;
-        expect(h.notices.join()).toContain("Live listening");
+        expect(notices.join()).toContain("Live listening");
         expect(currentMainOwner(manager)).toBeDefined();
-        expect(h.calls).toContain("audio.start");
+        expect(resources.calls).toContain("audio.start");
         expect(runtime.session.extensionRunner.createContext().hasUI).toBe(inheritedHasUI);
         expect(runtime.session.extensionRunner.createContext().mode).toBe("rpc");
         expect(modelCalls).toBe(0);
@@ -579,9 +592,9 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
           },
           new AbortController().signal,
         );
-        expect(h.notices).toContain("Live off. Agent jobs unchanged.");
-        expect(h.calls).toContain("audio.close");
-        expect(h.calls).toContain("provider.close");
+        expect(notices).toContain("Live off. Agent jobs unchanged.");
+        expect(resources.calls).toContain("audio.close");
+        expect(resources.calls).toContain("provider.close");
         expect(currentMainOwner(manager)).toBeUndefined();
       } finally {
         await runtime?.close();

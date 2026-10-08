@@ -134,8 +134,29 @@ export function analyzeSpeakerCheck(
   };
 }
 
+type SpeakerCheckAudio = Awaited<ReturnType<SpeakerCheckAudioFactory>>;
+
+// A native operation may never settle. Abort bounds our wait, not the operation itself.
+async function waitForAudio<T>(promise: Promise<T>, signal: AbortSignal): Promise<T> {
+  if (signal.aborted) {
+    void promise.catch(() => {});
+    throw abortError();
+  }
+  let abort!: () => void;
+  const interrupted = new Promise<never>((_, reject) => {
+    abort = () => reject(abortError());
+    signal.addEventListener("abort", abort, { once: true });
+  });
+  try {
+    return await Promise.race([promise, interrupted]);
+  } finally {
+    signal.removeEventListener("abort", abort);
+  }
+}
+
 /** Only call after explicit consent. Factory is exactly LiveDependencies.audio's signature.
- * 6s deadline, bounded capture and stop, zero PCM finally; no recordings or raw samples returned.
+ * Owns the helper, including late factory completion, a 6s deadline and bounded shutdown.
+ * Measurement owns and clears its PCM; no recordings or raw samples are returned.
  */
 export async function runSpeakerCheck(
   audioFactory: SpeakerCheckAudioFactory,
@@ -146,131 +167,44 @@ export async function runSpeakerCheck(
   const onAbort = () => controller.abort();
   signal.addEventListener("abort", onAbort, { once: true });
   const deadline = setTimeout(() => controller.abort(), 6000);
-  const pcm = new Int16Array(MAX_SAMPLES),
-    reference = speakerCheckReference();
-  const frame = Buffer.alloc(((RENDER_RATE * FRAME_MS) / 1000) * 2);
-  let length = 0,
-    closed = false,
-    accepting = true,
-    overflow = false,
-    queuedMs = 0,
-    failure: Error | undefined;
-  let audio: Awaited<ReturnType<SpeakerCheckAudioFactory>> | undefined;
-  const callbacks: AudioCallbacks = {
-    capture(chunk) {
-      if (!accepting) return;
-      if (length + Math.floor(chunk.length / 2) > MAX_SAMPLES) overflow = true;
-      const count = Math.min(Math.floor(chunk.length / 2), MAX_SAMPLES - length);
-      for (let i = 0; i < count; i++) pcm[length + i] = chunk.readInt16LE(i * 2);
-      length += count;
-    },
-    played: (ms) => {
-      queuedMs = ms;
-    },
-    error: () => {
-      failure = new Error("Speaker check audio helper failed");
-      controller.abort();
-    },
-    closed: () => {
-      closed = true;
-      controller.abort();
-    },
-  };
-  // Guard uncooperative factories and mocked/native writes. Listener removed on settle.
-  const guarded = async <T>(promise: Promise<T>): Promise<T> => {
-    if (controller.signal.aborted) {
-      void promise.catch(() => {});
-      throw abortError();
-    }
-    let abort!: () => void;
-    const interrupted = new Promise<never>((_, reject) => {
-      abort = () => reject(abortError());
-      controller.signal.addEventListener("abort", abort, { once: true });
-    });
-    try {
-      return await Promise.race([promise, interrupted]);
-    } finally {
-      controller.signal.removeEventListener("abort", abort);
-    }
-  };
+  let closed = false;
+  let failure: Error | undefined;
+  let audio: SpeakerCheckAudio | undefined;
   try {
-    // Retain ownership of a factory that settles after timeout, even after this function returns.
-    const launched = audioFactory(callbacks, controller.signal);
-    void launched
-      .then((late) => {
-        if (controller.signal.aborted && late !== audio) {
-          try {
-            late.close();
-          } catch {}
-        }
-      })
-      .catch(() => {});
-    audio = await guarded(launched);
-    await guarded(audio.start());
-    await sleep(BASE_MS, controller.signal);
-    const playStart = length;
-    for (let part = 0; part < PLAY_MS / FRAME_MS; part++) {
-      for (let j = 0; j < frame.length / 2; j++) {
-        const position = (((part * frame.length) / 2 + j) * RATE) / RENDER_RATE;
-        const index = Math.floor(position),
-          fraction = position - index;
-        const value =
-          (reference[index] ?? 0) * (1 - fraction) + (reference[index + 1] ?? reference[index] ?? 0) * fraction;
-        frame.writeInt16LE(Math.round(value), j * 2);
-      }
-      await guarded(audio.play(frame, 0));
-      await sleep(FRAME_MS, controller.signal);
-    }
-    await sleep(TAIL_MS, controller.signal);
-    if (controller.signal.aborted) throw abortError();
-    const result = analyzeSpeakerCheck(
-      pcm.subarray(Math.max(0, playStart - (BASE_MS * RATE) / 1000), playStart),
-      pcm.subarray(playStart, length),
-      reference,
-    );
-    const native = audio.diagnostics.ready;
-    const ready =
-      native &&
-      typeof native.voiceProcessingEnabled === "boolean" &&
-      typeof native.voiceProcessingBypassed === "boolean" &&
-      Number.isInteger(native.captureRate) &&
-      native.captureRate >= 8000 &&
-      native.captureRate <= 192000 &&
-      Number.isInteger(native.renderRate) &&
-      native.renderRate >= 8000 &&
-      native.renderRate <= 192000
-        ? native
-        : undefined;
-    return {
-      ...(overflow
-        ? { status: "inconclusive" as const, reason: "capture_overflow" as const }
-        : queuedMs > 100
-          ? { status: "inconclusive" as const, reason: "playback_pending" as const }
-          : result),
-      ...(ready
-        ? {
-            processing: {
-              voiceProcessingEnabled: ready.voiceProcessingEnabled,
-              voiceProcessingBypassed: ready.voiceProcessingBypassed,
-              captureRate: ready.captureRate,
-              renderRate: ready.renderRate,
-              ...(Number.isInteger(ready.captureChannels) && ready.captureChannels! > 0 && ready.captureChannels! <= 256
-                ? { captureChannels: ready.captureChannels }
-                : {}),
-              ...(Number.isInteger(ready.renderChannels) && ready.renderChannels! > 0 && ready.renderChannels! <= 256
-                ? { renderChannels: ready.renderChannels }
-                : {}),
-            },
+    return await measureSpeakerReturn(async (callbacks) => {
+      const launched = audioFactory(
+        {
+          ...callbacks,
+          error: () => {
+            failure = new Error("Speaker check audio helper failed");
+            controller.abort();
+          },
+          closed: () => {
+            closed = true;
+            controller.abort();
+          },
+        },
+        controller.signal,
+      );
+      // Retain ownership if the factory settles after our aborted wait has returned.
+      void launched
+        .then((late) => {
+          if (controller.signal.aborted && late !== audio) {
+            try {
+              late.close();
+            } catch {}
           }
-        : {}),
-    };
+        })
+        .catch(() => {});
+      audio = await waitForAudio(launched, controller.signal);
+      return audio;
+    }, controller.signal);
   } catch {
     throw failure ?? (controller.signal.aborted ? abortError() : new Error("Speaker check audio failed"));
   } finally {
     clearTimeout(deadline);
     signal.removeEventListener("abort", onAbort);
     controller.abort();
-    accepting = false;
     const ownedAudio = audio;
     if (ownedAudio && !closed) {
       let timer: ReturnType<typeof setTimeout> | undefined;
@@ -292,8 +226,100 @@ export async function runSpeakerCheck(
     } catch {
       /* best effort */
     }
+  }
+}
+
+/** Capture spans baseline, submitted stimulus and tail. The submission boundary is
+ * not a hardware render tap; this finite measurement says nothing about physical AEC.
+ * Acquire through the owner so capture callbacks exist before native launch/start.
+ */
+async function measureSpeakerReturn(
+  openAudio: (callbacks: Pick<AudioCallbacks, "capture" | "played">) => Promise<SpeakerCheckAudio>,
+  signal: AbortSignal,
+): Promise<SpeakerCheckResult> {
+  const pcm = new Int16Array(MAX_SAMPLES);
+  const reference = speakerCheckReference();
+  const frame = Buffer.alloc(((RENDER_RATE * FRAME_MS) / 1000) * 2);
+  let length = 0;
+  let accepting = true;
+  let overflow = false;
+  let queuedMs = 0;
+  try {
+    const audio = await openAudio({
+      capture(chunk) {
+        if (!accepting) return;
+        if (length + Math.floor(chunk.length / 2) > MAX_SAMPLES) overflow = true;
+        const count = Math.min(Math.floor(chunk.length / 2), MAX_SAMPLES - length);
+        for (let i = 0; i < count; i++) pcm[length + i] = chunk.readInt16LE(i * 2);
+        length += count;
+      },
+      played: (ms) => {
+        queuedMs = ms;
+      },
+    });
+    await waitForAudio(audio.start(), signal);
+    await sleep(BASE_MS, signal);
+    const playStart = length;
+    for (let part = 0; part < PLAY_MS / FRAME_MS; part++) {
+      for (let j = 0; j < frame.length / 2; j++) {
+        const position = (((part * frame.length) / 2 + j) * RATE) / RENDER_RATE;
+        const index = Math.floor(position),
+          fraction = position - index;
+        const value =
+          (reference[index] ?? 0) * (1 - fraction) + (reference[index + 1] ?? reference[index] ?? 0) * fraction;
+        frame.writeInt16LE(Math.round(value), j * 2);
+      }
+      await waitForAudio(audio.play(frame, 0), signal);
+      await sleep(FRAME_MS, signal);
+    }
+    await sleep(TAIL_MS, signal);
+    if (signal.aborted) throw abortError();
+
+    // Reject incomplete windows before interpreting the captured waveform.
+    const result: Omit<SpeakerCheckResult, "processing"> = overflow
+      ? { status: "inconclusive", reason: "capture_overflow" }
+      : queuedMs > 100
+        ? { status: "inconclusive", reason: "playback_pending" }
+        : analyzeSpeakerCheck(
+            pcm.subarray(Math.max(0, playStart - (BASE_MS * RATE) / 1000), playStart),
+            pcm.subarray(playStart, length),
+            reference,
+          );
+    const processing = processingConfiguration(audio.diagnostics.ready);
+    return { ...result, ...(processing ? { processing } : {}) };
+  } finally {
+    // Native stop/close can deliver more callbacks; none may refill the cleared buffer.
+    accepting = false;
     pcm.fill(0);
     reference.fill(0);
     frame.fill(0);
   }
+}
+
+/** Validate configuration separately from signal evidence: enabled is not effective AEC. */
+function processingConfiguration(native: SpeakerCheckAudio["diagnostics"]["ready"]): SpeakerCheckResult["processing"] {
+  if (
+    !native ||
+    typeof native.voiceProcessingEnabled !== "boolean" ||
+    typeof native.voiceProcessingBypassed !== "boolean" ||
+    !Number.isInteger(native.captureRate) ||
+    native.captureRate < 8000 ||
+    native.captureRate > 192000 ||
+    !Number.isInteger(native.renderRate) ||
+    native.renderRate < 8000 ||
+    native.renderRate > 192000
+  )
+    return undefined;
+  return {
+    voiceProcessingEnabled: native.voiceProcessingEnabled,
+    voiceProcessingBypassed: native.voiceProcessingBypassed,
+    captureRate: native.captureRate,
+    renderRate: native.renderRate,
+    ...(Number.isInteger(native.captureChannels) && native.captureChannels! > 0 && native.captureChannels! <= 256
+      ? { captureChannels: native.captureChannels }
+      : {}),
+    ...(Number.isInteger(native.renderChannels) && native.renderChannels! > 0 && native.renderChannels! <= 256
+      ? { renderChannels: native.renderChannels }
+      : {}),
+  };
 }

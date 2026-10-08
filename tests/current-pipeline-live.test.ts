@@ -12,6 +12,64 @@ import {
 } from "@earendil-works/pi-coding-agent";
 import phase1Fixture from "./phase1-compaction-fixture";
 
+// Each synthetic tool result includes the surrounding messages that compaction
+// must preserve across a durable reopen, without actually executing the tool.
+function appendToolFixture(
+  manager: SessionManager,
+  model: ReturnType<typeof getModels>[number],
+  value: string,
+  id: string,
+) {
+  const zero = {
+    input: 0,
+    output: 0,
+    cacheRead: 0,
+    cacheWrite: 0,
+    totalTokens: 0,
+    cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: 0 },
+  };
+  manager.appendMessage({
+    role: "assistant",
+    api: model.api,
+    provider: model.provider,
+    model: model.id,
+    usage: zero,
+    content: [{ type: "toolCall", id, name: "execute", arguments: { code: 'console.log("synthetic fixture")' } }],
+    stopReason: "toolUse",
+    timestamp: Date.now(),
+  });
+  manager.appendMessage({
+    role: "toolResult",
+    toolCallId: id,
+    toolName: "execute",
+    content: [
+      {
+        type: "text",
+        text: "Historical tool fixture detail. ".repeat(300) + "\nPRIVATE_REDACT_ME\nCURRENT_VALUE=" + value,
+      },
+    ],
+    isError: false,
+    timestamp: Date.now(),
+  });
+  manager.appendMessage({
+    role: "user",
+    content:
+      "Preserve CURRENT_VALUE. No real work or tools needed. Recent padding: " +
+      "Maintain the exact fixture value. ".repeat(180),
+    timestamp: Date.now(),
+  });
+  manager.appendMessage({
+    role: "assistant",
+    api: model.api,
+    provider: model.provider,
+    model: model.id,
+    usage: zero,
+    content: [{ type: "text", text: "Fixture noted." }],
+    stopReason: "stop",
+    timestamp: Date.now(),
+  });
+}
+
 test.skipIf(process.env.BRUV_RUN_LLM_TESTS !== "1")(
   "current pipeline live: fresh resume and uncaptured tool results",
   async () => {
@@ -29,63 +87,13 @@ test.skipIf(process.env.BRUV_RUN_LLM_TESTS !== "1")(
         modelsPath: null,
         refreshOnCreate: false,
       });
-      const zero = {
-        input: 0,
-        output: 0,
-        cacheRead: 0,
-        cacheWrite: 0,
-        totalTokens: 0,
-        cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: 0 },
-      };
       let manager = SessionManager.create(dir, join(dir, "sessions"));
-      function addTool(value: string, id: string) {
-        manager.appendMessage({
-          role: "assistant",
-          api: model!.api,
-          provider: model!.provider,
-          model: model!.id,
-          usage: zero,
-          content: [{ type: "toolCall", id, name: "execute", arguments: { code: 'console.log("synthetic fixture")' } }],
-          stopReason: "toolUse",
-          timestamp: Date.now(),
-        });
-        manager.appendMessage({
-          role: "toolResult",
-          toolCallId: id,
-          toolName: "execute",
-          content: [
-            {
-              type: "text",
-              text: "Historical tool fixture detail. ".repeat(300) + "\nPRIVATE_REDACT_ME\nCURRENT_VALUE=" + value,
-            },
-          ],
-          isError: false,
-          timestamp: Date.now(),
-        });
-        manager.appendMessage({
-          role: "user",
-          content:
-            "Preserve CURRENT_VALUE. No real work or tools needed. Recent padding: " +
-            "Maintain the exact fixture value. ".repeat(180),
-          timestamp: Date.now(),
-        });
-        manager.appendMessage({
-          role: "assistant",
-          api: model!.api,
-          provider: model!.provider,
-          model: model!.id,
-          usage: zero,
-          content: [{ type: "text", text: "Fixture noted." }],
-          stopReason: "stop",
-          timestamp: Date.now(),
-        });
-      }
       manager.appendMessage({
         role: "user",
         content: "This is a synthetic memory fixture; preserve the CURRENT_VALUE from tool output.",
         timestamp: 1,
       });
-      addTool("sequoia-bronze-318", "call_fresh_fixture");
+      appendToolFixture(manager, model, "sequoia-bronze-318", "call_fresh_fixture");
       const file = manager.getSessionFile()!;
       manager = SessionManager.open(file);
       async function open() {
@@ -176,7 +184,7 @@ test.skipIf(process.env.BRUV_RUN_LLM_TESTS !== "1")(
       evidence.phase = "ordinary-recall";
       await session.prompt("What is CURRENT_VALUE? Reply with its exact value only, no tools.");
       expect(evidence.requests.at(-1).text).toContain("sequoia-bronze-318");
-      addTool("harbor-amber-641", "call_uncaptured_fixture");
+      appendToolFixture(manager, model, "harbor-amber-641", "call_uncaptured_fixture");
       session.agent.state.messages = manager.buildSessionContext().messages;
       evidence.phase = "uncaptured-tool-compaction";
       const second = await session.compact();

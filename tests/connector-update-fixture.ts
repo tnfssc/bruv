@@ -7,6 +7,8 @@ const version = process.env.BRUV_TEST_RELEASE_VERSION ?? "99.0.0";
 const asset = updateAssetFor(process.platform, process.arch)!;
 const connectorAsset = asset.replace(/^bruv-/, "bruv-claude-compat-");
 const base = "https://github.com/tnfssc/bruv/releases/download/v" + version + "/";
+// Only the downloaded normal executable is a version-probe stand-in. The connector
+// bytes below come from the same launcher generator used by the shipping build.
 const normal = new TextEncoder().encode(
   [
     "#!/bin/sh",
@@ -19,26 +21,28 @@ const normal = new TextEncoder().encode(
   ].join("\n"),
 );
 const connector = new Uint8Array(await readFile(process.env.BRUV_TEST_LAUNCHER!));
-const bytes = new Map([
+// Advertised assets and downloadable bodies come from the same release files.
+const files = new Map<string, string | Uint8Array<ArrayBuffer>>();
+for (const [name, body] of [
   [asset, normal],
   [connectorAsset, connector],
-]);
-const names = [asset, asset + ".sha256", connectorAsset, connectorAsset + ".sha256"];
+] as const) {
+  const hash =
+    process.env.BRUV_TEST_BAD_CHECKSUM === name ? "0".repeat(64) : createHash("sha256").update(body).digest("hex");
+  files.set(name, body);
+  files.set(name + ".sha256", hash + "  " + name + "\n");
+}
 globalThis.fetch = (async (url: RequestInfo | URL) => {
   const address = String(url);
   if (process.env.BRUV_TEST_FETCH_LOG) await appendFile(process.env.BRUV_TEST_FETCH_LOG, address + "\n");
   if (address === "https://api.github.com/repos/tnfssc/bruv/releases/latest")
     return Response.json({
       tag_name: "v" + version,
-      assets: names.map((name) => ({ name, browser_download_url: base + name })),
+      assets: Array.from(files.keys(), (name) => ({ name, browser_download_url: base + name })),
     });
-  for (const [name, body] of bytes) {
-    if (address === base + name) return new Response(body);
-    if (address === base + name + ".sha256") {
-      const hash =
-        process.env.BRUV_TEST_BAD_CHECKSUM === name ? "0".repeat(64) : createHash("sha256").update(body).digest("hex");
-      return new Response(hash + "  " + name + "\n");
-    }
+  if (address.startsWith(base)) {
+    const body = files.get(address.slice(base.length));
+    if (body !== undefined) return new Response(body);
   }
   throw new Error("Offline fixture rejected unexpected URL: " + address);
 }) as typeof fetch;

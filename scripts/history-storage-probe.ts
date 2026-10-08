@@ -53,6 +53,98 @@ async function collectGc(): Promise<void> {
   Bun.gc(true);
 }
 
+async function captureSnapshot(mode: Mode, manager: SessionManager, label: string): Promise<Snapshot> {
+  await collectGc();
+  const entries = (manager as unknown as { fileEntries: ProbeEntry[] }).fileEntries;
+  let retainedFullTextBytes = 0;
+  if (entries)
+    for (const entry of entries)
+      if (entry?.type === "message") retainedFullTextBytes += textBytes(entry.message?.content);
+  const metadataBytes = entries
+    ? Buffer.byteLength(
+        JSON.stringify(
+          entries.map((entry) => {
+            if (entry?.type === "session") return entry;
+            const { type, id, parentId, timestamp } = entry;
+            return { type, id, parentId, timestamp };
+          }),
+        ),
+      )
+    : 0;
+  const usage = process.memoryUsage();
+  const heap = heapStats();
+  const context = manager.buildSessionContext();
+  return {
+    label,
+    entries: entries?.length ?? 0,
+    metadataBytes,
+    retainedFullTextBytes,
+    configuredCacheLimitBytes: mode === "adapted" ? CACHE_LIMIT_BYTES : null,
+    contextBytes: Buffer.byteLength(JSON.stringify(context)),
+    heapMiB: +(usage.heapUsed / MIB).toFixed(2),
+    jscHeapMiB: +(heap.heapSize / MIB).toFixed(2),
+    rssMiB: +(usage.rss / MIB).toFixed(2),
+  };
+}
+
+// This phase returns only measurements and disk coordinates. The populated
+// manager and generated bodies leave scope before the reopen GC boundary.
+async function writeCompactedFixture(mode: Mode, manager: SessionManager) {
+  let originalBytes = 0;
+  let firstId = "";
+  let firstHash = "";
+  const snapshots = [await captureSnapshot(mode, manager, "baseline")];
+  for (let batch = 0; batch < BATCHES; batch++) {
+    for (let index = 0; index < BODIES_PER_BATCH; index++) {
+      const prefix = `batch=${batch};entry=${index};`;
+      const body =
+        prefix +
+        randomBytes(Math.ceil(((BODY_BYTES - prefix.length) * 3) / 4))
+          .toString("base64")
+          .slice(0, BODY_BYTES - prefix.length);
+      originalBytes += Buffer.byteLength(body);
+      const id = manager.appendMessage({ role: "user", content: body, timestamp: batch * 100 + index });
+      if (!firstId) {
+        firstId = id;
+        firstHash = createHash("sha256").update(body).digest("hex");
+        manager.appendMessage({
+          role: "assistant",
+          content: [{ type: "text", text: "initial flush" }],
+          api: "openai-responses",
+          provider: "probe",
+          model: "probe",
+          usage: {
+            input: 1,
+            output: 1,
+            cacheRead: 0,
+            cacheWrite: 0,
+            totalTokens: 2,
+            cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: 0 },
+          },
+          stopReason: "stop",
+          timestamp: 1,
+        });
+      }
+    }
+    const kept = manager.appendMessage({ role: "user", content: `kept tail ${batch}`, timestamp: batch * 100 + 90 });
+    manager.appendCompaction(`small summary ${batch}`, kept, 1_000_000);
+    if (batch === 0 || batch === 7 || batch === BATCHES - 1)
+      snapshots.push(await captureSnapshot(mode, manager, `after-compaction-${batch + 1}`));
+  }
+  if (originalBytes < ORIGINAL_BYTES_MIN) throw new Error(`probe generated only ${originalBytes} original bytes`);
+  const file = manager.getSessionFile();
+  if (!file) throw new Error("persistent manager has no session file");
+  const fileBytes = statSync(file).size;
+  const contextBeforeReopen = Buffer.byteLength(JSON.stringify(manager.buildSessionContext()));
+  return { file, fileBytes, contextBeforeReopen, originalBytes, firstId, firstHash, snapshots };
+}
+
+function snapshotByLabel(snapshots: Snapshot[], label: string): Snapshot {
+  const snapshot = snapshots.find((snapshot) => snapshot.label === label);
+  if (!snapshot) throw new Error("missing heap snapshots");
+  return snapshot;
+}
+
 async function child(mode: Mode): Promise<void> {
   if (mode === "adapted") {
     const { installDiskBackedSessionManager } = await import("../src/history/session-manager");
@@ -61,121 +153,38 @@ async function child(mode: Mode): Promise<void> {
   const { SessionManager } = await import("@earendil-works/pi-coding-agent");
   const root = mkdtempSync(join(tmpdir(), `bruv-history-storage-${mode}-`));
   const sessions = join(root, "sessions");
-  let manager: SessionManager | undefined = SessionManager.create(root, sessions);
-  let originalBytes = 0;
-  let firstId = "";
-  let firstHash = "";
-  const snapshots: Snapshot[] = [];
-
-  const snapshot = async (label: string) => {
-    await collectGc();
-    const entries = (manager as unknown as { fileEntries: ProbeEntry[] } | undefined)?.fileEntries;
-    let retainedFullTextBytes = 0;
-    if (entries)
-      for (const entry of entries)
-        if (entry?.type === "message") retainedFullTextBytes += textBytes(entry.message?.content);
-    const metadataBytes = entries
-      ? Buffer.byteLength(
-          JSON.stringify(
-            entries.map((entry) => {
-              if (entry?.type === "session") return entry;
-              const { type, id, parentId, timestamp } = entry;
-              return { type, id, parentId, timestamp };
-            }),
-          ),
-        )
-      : 0;
-    const usage = process.memoryUsage();
-    const heap = heapStats();
-    const context = manager ? manager.buildSessionContext() : undefined;
-    snapshots.push({
-      label,
-      entries: entries?.length ?? 0,
-      metadataBytes,
-      retainedFullTextBytes,
-      configuredCacheLimitBytes: mode === "adapted" ? CACHE_LIMIT_BYTES : null,
-      contextBytes: context ? Buffer.byteLength(JSON.stringify(context)) : 0,
-      heapMiB: +(usage.heapUsed / MIB).toFixed(2),
-      jscHeapMiB: +(heap.heapSize / MIB).toFixed(2),
-      rssMiB: +(usage.rss / MIB).toFixed(2),
-    });
-  };
 
   try {
-    await snapshot("baseline");
-    for (let batch = 0; batch < BATCHES; batch++) {
-      for (let index = 0; index < BODIES_PER_BATCH; index++) {
-        const prefix = `batch=${batch};entry=${index};`;
-        const body =
-          prefix +
-          randomBytes(Math.ceil(((BODY_BYTES - prefix.length) * 3) / 4))
-            .toString("base64")
-            .slice(0, BODY_BYTES - prefix.length);
-        originalBytes += Buffer.byteLength(body);
-        const id = manager.appendMessage({ role: "user", content: body, timestamp: batch * 100 + index });
-        if (!firstId) {
-          firstId = id;
-          firstHash = createHash("sha256").update(body).digest("hex");
-          manager.appendMessage({
-            role: "assistant",
-            content: [{ type: "text", text: "initial flush" }],
-            api: "openai-responses",
-            provider: "probe",
-            model: "probe",
-            usage: {
-              input: 1,
-              output: 1,
-              cacheRead: 0,
-              cacheWrite: 0,
-              totalTokens: 2,
-              cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: 0 },
-            },
-            stopReason: "stop",
-            timestamp: 1,
-          });
-        }
-      }
-      const kept = manager.appendMessage({ role: "user", content: `kept tail ${batch}`, timestamp: batch * 100 + 90 });
-      manager.appendCompaction(`small summary ${batch}`, kept, 1_000_000);
-      if (batch === 0 || batch === 7 || batch === BATCHES - 1) await snapshot(`after-compaction-${batch + 1}`);
-    }
-    if (originalBytes < ORIGINAL_BYTES_MIN) throw new Error(`probe generated only ${originalBytes} original bytes`);
-    const file = manager.getSessionFile();
-    if (!file) throw new Error("persistent manager has no session file");
-    const fileBytes = statSync(file).size;
-    const contextBeforeReopen = Buffer.byteLength(JSON.stringify(manager.buildSessionContext()));
-    manager = undefined;
+    const fixture = await writeCompactedFixture(mode, SessionManager.create(root, sessions));
     await collectGc();
-    manager = SessionManager.open(file, sessions);
-    await snapshot("reopened");
-    const reopenedOriginal = (manager.getEntry(firstId) as { message?: { content?: unknown } } | undefined)?.message
-      ?.content;
+    const manager = SessionManager.open(fixture.file, sessions);
+    const reopened = await captureSnapshot(mode, manager, "reopened");
+    const reopenedOriginal = (manager.getEntry(fixture.firstId) as { message?: { content?: unknown } } | undefined)
+      ?.message?.content;
     const originalSurvived =
-      typeof reopenedOriginal === "string" && createHash("sha256").update(reopenedOriginal).digest("hex") === firstHash;
-    await snapshot("after-original-read");
-    const baseline = snapshots[0];
-    const reopened = snapshots.at(-2);
-    if (!baseline || !reopened) throw new Error("missing heap snapshots");
+      typeof reopenedOriginal === "string" &&
+      createHash("sha256").update(reopenedOriginal).digest("hex") === fixture.firstHash;
+    const afterOriginalRead = await captureSnapshot(mode, manager, "after-original-read");
+    const baseline = snapshotByLabel(fixture.snapshots, "baseline");
     const heapGrowthMiB = +(reopened.heapMiB - baseline.heapMiB).toFixed(2);
     const result = {
       mode,
-      originalMiB: +(originalBytes / MIB).toFixed(2),
-      fileMiB: +(fileBytes / MIB).toFixed(2),
+      originalMiB: +(fixture.originalBytes / MIB).toFixed(2),
+      fileMiB: +(fixture.fileBytes / MIB).toFixed(2),
       compactions: BATCHES,
-      contextKiB: +(contextBeforeReopen / 1024).toFixed(2),
+      contextKiB: +(fixture.contextBeforeReopen / 1024).toFixed(2),
       originalSurvived,
       heapGrowthMiB,
-      snapshots,
+      snapshots: [...fixture.snapshots, reopened, afterOriginalRead],
     };
     if (mode === "adapted") {
       if (!originalSurvived) throw new Error("original text did not survive reopen");
-      if (contextBeforeReopen >= MIB) throw new Error("compacted context is unexpectedly large");
+      if (fixture.contextBeforeReopen >= MIB) throw new Error("compacted context is unexpectedly large");
       if (reopened.retainedFullTextBytes !== 0) throw new Error("adapted manager retained full history bodies");
       if (heapGrowthMiB >= 64) throw new Error(`adapted heap grew ${heapGrowthMiB} MiB`);
     }
     console.log(JSON.stringify(result));
   } finally {
-    manager = undefined;
     rmSync(root, { recursive: true, force: true });
   }
 }
@@ -209,7 +218,7 @@ else {
         comparison: {
           reopenedHeapReductionMiB: +(native.heapGrowthMiB - adapted.heapGrowthMiB).toFixed(2),
           originalMiB: adapted.originalMiB,
-          adaptedRetainedFullTextBytes: adapted.snapshots.at(-2).retainedFullTextBytes,
+          adaptedRetainedFullTextBytes: snapshotByLabel(adapted.snapshots, "reopened").retainedFullTextBytes,
           contextKiB: adapted.contextKiB,
         },
       },

@@ -1,5 +1,5 @@
 import { test, expect } from "bun:test";
-import { mkdtemp, rm, readFile, writeFile } from "node:fs/promises";
+import { mkdtemp, readFile, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { getKeybindings, visibleWidth } from "@earendil-works/pi-tui";
@@ -33,16 +33,34 @@ function panel(profiles = parseProfiles({}), available = models) {
     "medium",
   );
   const send = (...keys: string[]) => keys.forEach((key) => component.handleInput(key));
-  return { component, send, result: () => result, closed: () => closed };
+  return {
+    component,
+    send,
+    selectedLine: () => component.render(100).find((line) => line.startsWith("→ ")),
+    save: () => saveFromOverview(component),
+    result: () => result,
+    closed: () => closed,
+  };
 }
+// Saving is an overview action, independent of which settings row a picker returns to.
+function saveFromOverview(component: SubagentSettingsPanel) {
+  expect(component.render(100).join("\n")).toContain("Sub-agent profiles");
+  component.handleInput("\x1b[6~"); // page down clamps to Cancel
+  component.handleInput(UP);
+  expect(component.render(100).find((line) => line.startsWith("→ "))).toContain("Save");
+  component.handleInput(ENTER);
+}
+
 test("fuzzy model/provider search, independent settings and selection preservation", () => {
   const ui = panel();
   ui.send(ENTER, "beta cod", ENTER); // fast model, search, select
   expect(ui.component.render(100).join("\n")).toContain("beta/coder");
   ui.send(DOWN, ENTER, DOWN, ENTER); // fast thinking -> off
+  expect(ui.selectedLine()).toContain("fast thinking");
   // Returning to fast thinking retains row 1; next row is normal model.
   ui.send(DOWN, ENTER, "alpha", ENTER);
-  ui.send(DOWN, DOWN, DOWN, DOWN, ENTER); // row 2 -> Save
+  expect(ui.selectedLine()).toContain("normal model");
+  ui.save();
   expect(ui.result()).toEqual({
     fast: { model: "beta/coder", thinking: "off" },
     normal: { model: "alpha/quick" },
@@ -52,16 +70,62 @@ test("fuzzy model/provider search, independent settings and selection preservati
 test("escape from picker returns to the same row; escape from overview discards", () => {
   const original = parseProfiles({ normal: { model: "beta/coder" } });
   const ui = panel(original);
-  ui.send(DOWN, DOWN, ENTER, "alpha", ENTER, ENTER); // normal model, edit, reopen
+  ui.send(DOWN, DOWN, ENTER); // normal model
+  ui.send("alpha", ENTER);
+  expect(ui.selectedLine()).toContain("normal model");
+  ui.send(ENTER); // reopen the edited row
   expect(ui.component.render(100).join("\n")).toContain("normal · model");
   ui.send(ESC, ESC);
   expect(ui.closed()).toBe(true);
   expect(ui.result()).toBeUndefined();
   expect(original.normal.model).toBe("beta/coder");
 });
+test("reopening pickers selects the draft value and clears the previous model search", () => {
+  const original = parseProfiles({ normal: { model: "beta/coder", thinking: "high" } });
+  const ui = panel(original);
+  const selectedLine = ui.selectedLine;
+  ui.send(DOWN, DOWN, ENTER);
+  expect(selectedLine()).toContain("coder");
+  ui.send("alpha", ENTER);
+  expect(selectedLine()).toContain("normal model");
+  ui.send(ENTER);
+  expect(selectedLine()).toContain("quick");
+  expect(ui.component.render(100).join("\n")).toContain("coder"); // search was cleared
+  ui.send(ESC, DOWN, ENTER);
+  expect(selectedLine()).toContain("high");
+  ui.send(UP, ENTER, ENTER);
+  expect(selectedLine()).toContain("medium");
+  ui.send(ESC);
+  expect(selectedLine()).toContain("normal thinking");
+  ui.save();
+  expect(ui.result()?.normal).toEqual({ model: "alpha/quick", thinking: "medium" });
+  expect(original.normal).toEqual({ model: "beta/coder", thinking: "high" });
+});
+test("page navigation clamps to the active list and Cancel discards the edited draft", () => {
+  const original = parseProfiles({});
+  const ui = panel(original);
+  const PAGE_DOWN = "\x1b[6~",
+    PAGE_UP = "\x1b[5~";
+  const selectedLine = ui.selectedLine;
+  ui.send(PAGE_DOWN);
+  expect(selectedLine()).toContain("Cancel");
+  ui.send(PAGE_UP, ENTER, PAGE_DOWN);
+  expect(selectedLine()).toContain("coder");
+  ui.send(ENTER);
+  expect(selectedLine()).toContain("fast model");
+  expect(ui.component.render(100).join("\n")).toContain("beta/coder");
+  ui.send(PAGE_DOWN, ENTER);
+  expect(ui.closed()).toBe(true);
+  expect(ui.result()).toBeUndefined();
+  expect(original.fast).toEqual({});
+});
 test("inherit resets model and thinking without manual IDs", () => {
   const ui = panel(parseProfiles({ fast: { model: "alpha/quick", thinking: "high" } }));
-  ui.send(ENTER, UP, ENTER, DOWN, ENTER, ...Array(5).fill(UP), ENTER, ...Array(5).fill(DOWN), ENTER);
+  ui.send(ENTER, UP, ENTER); // replace the configured model with inheritance
+  expect(ui.selectedLine()).toContain("fast model");
+  ui.send(DOWN, ENTER, ...Array(5).fill(UP), ENTER); // high -> inherit thinking
+  expect(ui.selectedLine()).toContain("fast thinking");
+  ui.save();
   expect(ui.result()?.fast).toEqual({});
 });
 test("empty search results cannot select; empty catalog still supports inheritance", () => {
@@ -76,7 +140,8 @@ test("unavailable configured model remains visible and can be retained", () => {
   const ui = panel(parseProfiles({ fast: { model: "custom/missing" } }));
   ui.send(ENTER);
   expect(ui.component.render(120).join("\n")).toContain("unavailable");
-  ui.send(ENTER, ...Array(6).fill(DOWN), ENTER);
+  ui.send(ENTER); // keep the unavailable model
+  ui.save();
   expect(ui.result()?.fast.model).toBe("custom/missing");
 });
 test("narrow rendering stays within width and model input receives focus", () => {
@@ -90,11 +155,8 @@ test("narrow rendering stays within width and model input receives focus", () =>
 });
 async function fixture(run: (path: string) => Promise<void>) {
   const dir = await mkdtemp(join(tmpdir(), "bruv-profile-ui-"));
-  try {
-    await run(join(dir, "subagents.json"));
-  } finally {
-    await rm(dir, { recursive: true, force: true });
-  }
+  // Retain the owned fixture for inspection by the isolated parent gate.
+  await run(join(dir, "subagents.json"));
 }
 function command(path: string, action: (component: SubagentSettingsPanel) => void) {
   let handler: any;
@@ -132,9 +194,10 @@ function command(path: string, action: (component: SubagentSettingsPanel) => voi
 }
 test("command persists only on Save", () =>
   fixture(async (path) => {
-    const dialog = command(path, (component) =>
-      [ENTER, "beta", ENTER, ...Array(6).fill(DOWN), ENTER].forEach((key) => component.handleInput(key)),
-    );
+    const dialog = command(path, (component) => {
+      [ENTER, "beta", ENTER].forEach((key) => component.handleInput(key));
+      saveFromOverview(component);
+    });
     await dialog.run();
     expect((await loadProfiles(path)).fast.model).toBe("beta/coder");
     expect(dialog.notices[0]?.[0]).toContain("Saved");
@@ -167,6 +230,7 @@ test("provider/model search prefers the exact model over a shorter prefix", () =
     { provider: "openai", id: "gpt-4", name: "GPT-4" },
     { provider: "openai", id: "gpt-4o", name: "GPT-4o" },
   ]);
-  ui.send(ENTER, ..."openai gpt-4o", ENTER, ...Array(6).fill(DOWN), ENTER);
+  ui.send(ENTER, ..."openai gpt-4o", ENTER);
+  ui.save();
   expect(ui.result()?.fast.model).toBe("openai/gpt-4o");
 });

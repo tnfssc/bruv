@@ -23,31 +23,14 @@ export function placementReply(messages: Message[]) {
   const text = typeof user?.content === "string" ? user.content : JSON.stringify(user?.content);
   const prompt = text?.match(/REMOTE_FIXTURE_[A-Za-z_]+/)?.[0];
   if (!prompt) return { role: "assistant", content: "LOCAL_FIXTURE_ACK" };
-  if (text?.includes("PLACEMENT_STOP")) {
-    const callId = "fixture-placement-stop";
-    if (messages.some((m) => m.role === "tool" && m.tool_call_id === callId))
-      return { role: "assistant", content: "LOCAL_FIXTURE_ACK" };
-    return {
-      role: "assistant",
-      tool_calls: [
-        {
-          index: 0,
-          id: callId,
-          type: "function",
-          function: {
-            name: "execute",
-            arguments: JSON.stringify({
-              code: 'const proof=JSON.parse(await Bun.file(process.env.HOME+"/placement-REMOTE_FIXTURE_CANCEL.json").text()); console.log(await jobs.stop(proof.launch.id));',
-            }),
-          },
-        },
-      ],
-    };
-  }
+  const stop = text?.includes("PLACEMENT_STOP") ?? false;
   const retry = text?.includes("PLACEMENT_RETRY") ?? false;
-  const callId = "fixture-placement-" + prompt + (retry ? "-retry" : "");
+  const callId = stop ? "fixture-placement-stop" : "fixture-placement-" + prompt + (retry ? "-retry" : "");
   if (messages.some((m) => m.role === "tool" && m.tool_call_id === callId))
     return { role: "assistant", content: "LOCAL_FIXTURE_ACK" };
+  const code = stop
+    ? 'const proof=JSON.parse(await Bun.file(process.env.HOME+"/placement-REMOTE_FIXTURE_CANCEL.json").text()); console.log(await jobs.stop(proof.launch.id));'
+    : placementCode(prompt, retry);
   return {
     role: "assistant",
     tool_calls: [
@@ -55,7 +38,7 @@ export function placementReply(messages: Message[]) {
         index: 0,
         id: callId,
         type: "function",
-        function: { name: "execute", arguments: JSON.stringify({ code: placementCode(prompt, retry) }) },
+        function: { name: "execute", arguments: JSON.stringify({ code }) },
       },
     ],
   };

@@ -3,7 +3,7 @@ import { getEventListeners } from "node:events";
 import { Duplex, PassThrough } from "node:stream";
 import { inspectDiagnostics } from "../src/diagnostics";
 import { installJobGlobals, MAX_JOB_BRIDGE_FRAME_BYTES, serveJobBridge } from "../src/typescript/job-bridge";
-import { withJobCancellation } from "../src/job-delivery";
+import { JOB_RESPONSE_ACK_EVENT, withJobCancellation } from "../src/job-delivery";
 
 function socket() {
   return new Duplex({
@@ -32,13 +32,16 @@ for (const [frame, code] of [
         new AbortController().signal,
         owner,
       );
-      stream.push(Buffer.from(frame));
-      await Bun.sleep(1);
-      expect(calls).toBe(0);
-      const records = inspectDiagnostics(owner).records;
-      expect(records.some((record) => record.code === code)).toBe(true);
-      expect(JSON.stringify(records)).not.toContain("secret");
-      bridge.close();
+      try {
+        stream.push(Buffer.from(frame));
+        await Bun.sleep(1);
+        expect(calls).toBe(0);
+        const records = inspectDiagnostics(owner).records;
+        expect(records.some((record) => record.code === code)).toBe(true);
+        expect(JSON.stringify(records)).not.toContain("secret");
+      } finally {
+        bridge.close();
+      }
     },
   );
 }
@@ -64,52 +67,66 @@ test("invalid ACK and parent cancellation release requests exactly once with dis
       abort.signal,
       owner,
     );
-    stream.push(Buffer.from(JSON.stringify({ id: 1, method: "shell", params: { command: "secret" } }) + "\n"));
-    await Bun.sleep(1);
-    if (cause === "ack") stream.push(Buffer.from('{"ack":1}\n'));
-    else abort.abort(cause);
-    await Bun.sleep(1);
-    bridge.close();
-    bridge.close();
-    expect(released).toBe(1);
-    const records = inspectDiagnostics(owner).records;
-    const code = cause === "ack" ? "protocol_invalid" : cause === "caller" ? "caller_aborted" : cause;
-    expect(records.some((record) => record.code === code)).toBe(true);
-    expect(JSON.stringify(records)).not.toContain("secret");
+    try {
+      stream.push(Buffer.from(JSON.stringify({ id: 1, method: "shell", params: { command: "secret" } }) + "\n"));
+      await Bun.sleep(1);
+      if (cause === "ack") stream.push(Buffer.from('{"ack":1}\n'));
+      else abort.abort(cause);
+      await Bun.sleep(1);
+      bridge.close();
+      bridge.close();
+      expect(released).toBe(1);
+      const records = inspectDiagnostics(owner).records;
+      const code = cause === "ack" ? "protocol_invalid" : cause === "caller" ? "caller_aborted" : cause;
+      expect(records.some((record) => record.code === code)).toBe(true);
+      expect(JSON.stringify(records)).not.toContain("secret");
+    } finally {
+      bridge.close();
+    }
   }
 });
 
+const jobGlobalNames = [
+  "shell",
+  "subagent",
+  "handoff",
+  "remote",
+  "history",
+  "goal",
+  "live",
+  "questions",
+  "jobs",
+] as const;
+
+/** Own the socket and every global replaced by installJobGlobals, including absent globals. */
+async function withJobClient(stream: Duplex, run: (client: ReturnType<typeof installJobGlobals>) => Promise<void>) {
+  const saved = jobGlobalNames.map((name) => [name, Object.getOwnPropertyDescriptor(globalThis, name)] as const);
+  try {
+    await run(installJobGlobals(stream));
+  } finally {
+    stream.destroy();
+    for (const [name, descriptor] of saved) {
+      if (descriptor) Object.defineProperty(globalThis, name, descriptor);
+      else Reflect.deleteProperty(globalThis, name);
+    }
+  }
+}
+
 test("client EPIPE has a stable symbolic category rather than generic disconnect", async () => {
-  const saved = Object.fromEntries(
-    ["shell", "subagent", "handoff", "history", "goal", "jobs"].map((key) => [key, (globalThis as any)[key]]),
-  );
   const stream = new Duplex({
     read() {},
     write(_chunk, _encoding, callback) {
       callback(Object.assign(new Error("secret"), { code: "EPIPE" }));
     },
   });
-  const client = installJobGlobals(stream);
-  try {
+  await withJobClient(stream, async (client) => {
     const error = await globalThis.shell("secret-command").catch((error) => error);
     expect(error).toBeInstanceOf(Error);
     expect((error as Error & { code: string }).code).toBe("bridge_epipe");
     expect((error as Error).message).not.toContain("secret");
     await client.finish();
-  } finally {
-    stream.destroy();
-    for (const [key, value] of Object.entries(saved)) (globalThis as any)[key] = value;
-  }
+  });
 });
-
-function saveJobGlobals() {
-  const saved = Object.fromEntries(
-    ["shell", "subagent", "handoff", "history", "goal", "jobs"].map((key) => [key, (globalThis as any)[key]]),
-  );
-  return () => {
-    for (const [key, value] of Object.entries(saved)) (globalThis as any)[key] = value;
-  };
-}
 
 test("client and server reject an accumulated oversized frame before concatenating it", async () => {
   const originalConcat = Buffer.concat;
@@ -122,26 +139,24 @@ test("client and server reject an accumulated oversized frame before concatenati
     const serverSocket = socket(),
       owner = {};
     const bridge = serveJobBridge(serverSocket, async () => null, new AbortController().signal, owner);
-    serverSocket.push(Buffer.alloc(Math.floor(MAX_JOB_BRIDGE_FRAME_BYTES / 2), 120));
-    serverSocket.push(Buffer.alloc(Math.ceil(MAX_JOB_BRIDGE_FRAME_BYTES / 2) + 1, 120));
-    await Bun.sleep(1);
-    expect(inspectDiagnostics(owner).records.some((record) => record.code === "frame_oversize")).toBe(true);
-    bridge.close();
-
-    const restore = saveJobGlobals();
-    const clientSocket = socket();
-    const client = installJobGlobals(clientSocket);
     try {
+      serverSocket.push(Buffer.alloc(Math.floor(MAX_JOB_BRIDGE_FRAME_BYTES / 2), 120));
+      serverSocket.push(Buffer.alloc(Math.ceil(MAX_JOB_BRIDGE_FRAME_BYTES / 2) + 1, 120));
+      await Bun.sleep(1);
+      expect(inspectDiagnostics(owner).records.some((record) => record.code === "frame_oversize")).toBe(true);
+    } finally {
+      bridge.close();
+    }
+
+    const clientSocket = socket();
+    await withJobClient(clientSocket, async (client) => {
       const request = globalThis.shell("echo ok");
       clientSocket.push(Buffer.alloc(Math.floor(MAX_JOB_BRIDGE_FRAME_BYTES / 2), 120));
       clientSocket.push(Buffer.alloc(Math.ceil(MAX_JOB_BRIDGE_FRAME_BYTES / 2) + 1, 120));
       const error = await request.catch((reason) => reason);
       expect((error as Error & { code: string }).code).toBe("frame_oversize");
       await client.finish();
-    } finally {
-      clientSocket.destroy();
-      restore();
-    }
+    });
   } finally {
     concat.mockRestore();
   }
@@ -161,15 +176,16 @@ test("client and server accept multi-frame chunks larger than one frame limit", 
     },
     new AbortController().signal,
   );
-  serverSocket.push(Buffer.from(requests));
-  await Bun.sleep(1);
-  expect(calls).toBe(2);
-  bridge.close();
-
-  const restore = saveJobGlobals();
-  const clientSocket = socket();
-  const client = installJobGlobals(clientSocket);
   try {
+    serverSocket.push(Buffer.from(requests));
+    await Bun.sleep(1);
+    expect(calls).toBe(2);
+  } finally {
+    bridge.close();
+  }
+
+  const clientSocket = socket();
+  await withJobClient(clientSocket, async (client) => {
     const first = globalThis.shell("one");
     const second = globalThis.shell("two");
     const responses = [1, 2].map((id) => JSON.stringify({ id, result: payload }) + "\n").join("");
@@ -178,10 +194,7 @@ test("client and server accept multi-frame chunks larger than one frame limit", 
     expect(await first).toBe(payload);
     expect(await second).toBe(payload);
     await client.finish();
-  } finally {
-    clientSocket.destroy();
-    restore();
-  }
+  });
 });
 
 function bridgePair(): { server: Duplex; worker: Duplex } {
@@ -276,3 +289,97 @@ test("failed RPCs release controllers while foreground ACK ownership stays provi
     worker.destroy();
   }
 });
+
+for (const commit of [false, true]) {
+  test(
+    "foreground batch ACK survives transport end but transfers ownership only on committed close: " + commit,
+    async () => {
+      const { server, worker } = bridgePair();
+      const events: string[] = [];
+      const bridge = serveJobBridge(
+        server,
+        async (_method, _params, signal) => {
+          signal.addEventListener(JOB_RESPONSE_ACK_EVENT, () => events.push("ack"));
+          signal.addEventListener("abort", () => events.push("abort"));
+          return [{ background: true }, { background: false }];
+        },
+        new AbortController().signal,
+      );
+      try {
+        const response = nextFrame(worker);
+        worker.write('{"id":1,"method":"subagent","params":{}}\n');
+        expect(await response).toEqual({ id: 1, result: [{ background: true }, { background: false }] });
+        worker.write('{"ack":1}\n');
+        // Exercise the same end callback that runs before executeIsolated sees
+        // worker close. Receipt must neither commit nor relinquish ownership.
+        const ended = new Promise<void>((resolve) => server.once("end", resolve));
+        worker.end();
+        await ended;
+        expect(events).toEqual([]);
+        bridge.close(commit);
+        bridge.close(commit);
+        expect(events).toEqual(commit ? ["ack", "abort"] : ["abort"]);
+      } finally {
+        bridge.close();
+        worker.destroy();
+      }
+    },
+  );
+}
+
+test("replayed foreground ACK rejects the protocol and restores notification ownership", async () => {
+  const { server, worker } = bridgePair();
+  const owner = {};
+  const events: string[] = [];
+  const bridge = serveJobBridge(
+    server,
+    async (_method, _params, signal) => {
+      signal.addEventListener(JOB_RESPONSE_ACK_EVENT, () => events.push("ack"));
+      signal.addEventListener("abort", () => events.push("abort"));
+      return { background: false };
+    },
+    new AbortController().signal,
+    owner,
+  );
+  try {
+    const response = nextFrame(worker);
+    worker.write('{"id":1,"method":"shell","params":{}}\n');
+    expect(await response).toEqual({ id: 1, result: { background: false } });
+    const closed = new Promise<void>((resolve) => server.once("close", resolve));
+    worker.write('{"ack":1}\n{"ack":1}\n');
+    await closed;
+    bridge.close(true);
+    expect(events).toEqual(["abort"]);
+    expect(inspectDiagnostics(owner).records.some((record) => record.code === "protocol_invalid")).toBe(true);
+  } finally {
+    bridge.close();
+    worker.destroy();
+  }
+});
+
+for (const fail of [false, true]) {
+  test("client fixture restores every installed global after " + (fail ? "failure" : "success"), async () => {
+    const saved = jobGlobalNames.map((name) => [name, Object.getOwnPropertyDescriptor(globalThis, name)] as const);
+    const stream = socket();
+    const failure = new Error("fixture body failed");
+    try {
+      const run = withJobClient(stream, async (client) => {
+        if (fail) throw failure;
+        await client.finish();
+      });
+      if (fail) await expect(run).rejects.toBe(failure);
+      else await run;
+      expect(stream.destroyed).toBe(true);
+      for (const [name, descriptor] of saved) {
+        expect(Object.getOwnPropertyDescriptor(globalThis, name)).toEqual(descriptor);
+      }
+    } finally {
+      // Keep this regression from contaminating later tests if restoration breaks.
+      stream.destroy();
+      for (const [name, descriptor] of saved) {
+        if (descriptor) Object.defineProperty(globalThis, name, descriptor);
+        else Reflect.deleteProperty(globalThis, name);
+      }
+    }
+  });
+}

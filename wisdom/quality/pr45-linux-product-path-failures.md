@@ -1,0 +1,17 @@
+# PR45 Linux product-path failures
+
+Failed hosted head: `8359b01d8ead52b1b96acf1d490497e85095ec02`. Read [product handoff](pr45-product-first-handoff.md) and values before this scoped repair. Actual worker model is `openai-codex/gpt-6.1-sol`, high thinking, task `task_0b2f5b5a` (current worker session header verified). This is implementation proof, not another independent broad review.
+
+## Findings and product effects
+
+- **Fast mode is a product regression.** Accepted parent `a0d9ef19` checked support without reading OAuth before the compatibility refusal. Develop parent `22ad5f50` added the OAuth read before that refusal; integration retained it. Missing runtime then throws instead of reporting the pinned-seam error. Move the existing compatibility gate ahead of the read for command and explicit host enable; inherited startup also short-circuits the read. No premium entry is created without the seam. Existing consent, auth, tier and branch gates remain. The same test now also covers host enable and inherited missing-runtime startup.
+- **SDK prompt failures are fixture metadata mismatches.** Raw SDK import caches upstream `.pi` metadata; fixtures wrote `.bruv/SYSTEM.md`. Both parents’ CLI sets `PI_PACKAGE_DIR` before dynamic SDK import. The failed head’s prompt helper/CLI matches the accepted parent. Run loader checks in fresh children with Bruv runtime metadata set before import. Keep all expected Bruv/project/global values and trust/precedence assertions. Product prompt selection is unchanged.
+- **PTY failure is a fixture resource mismatch.** Pi shows the untrusted banner only when trust-requiring project resources exist. The fixture seeded remote state, not such resources, and inherited checkout cwd. Local ancestor `/home/tnfssc/.agents/skills` hid this: original local probe passed, but a retained resource-free project under `/tmp` reproduced the exact missing banner. Seed an owned project `.bruv/SYSTEM.md`, launch there, and own the SDK paths. Keep banner, inbox, pre-confirmation grant, durable revoke and offline-owner assertions unchanged. Retain this fixture rather than deleting it. No remote product routing change is needed.
+
+## Proof and limits
+
+Evidence: `/home/tnfssc/.bruv/agent/watchers/pr45-owned-product-groups-1uM6Hf` (argv/env manifests, red/green logs, both-parent source comparison). Before repair, prompt/fast checks reproduced three failures. The ancestor-free PTY probe reproduced the fourth. Final three focused files pass **58 tests / 326 expectations**, including source-only offline PTY; direct `tsc --noEmit` and scoped formatting pass. Synthetic credentials and mock transports only; no provider/auth/device or live SSH calls.
+
+Checks use a new retained HOME/config/SDK/cache/env, never the parent’s HOME. Final fixture temp root: `/tmp/pr45-product-final-owned-FxFE6V`. Existing JS cleanup was inspected: only its exact mkdtemp-owned paths run. Failed autosetup dependencies remain at `node_modules.autosetup-retained`; this tree links the validated parent dependencies and owns a copied runtime-assets tree. No shared preparation, hash change or dependency write occurred.
+
+No full CI, hosted rerun, macOS, compiled build or release claim. Other failure groups belong to the parent/other worker. No helpers, acceptance/replay tests, CI gates or other-worker scopes changed; no push/merge/release. Values unchanged: existing product-first, fixture ownership and honest-proof guidance covers these findings.

@@ -45,7 +45,7 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
     expect(code, stdout + stderr).toBe(0);
   }, 120000);
 } else {
-  async function fixture() {
+  async function compatibilitySession() {
     installDiskBackedSessionManager();
     const dir = await mkdtemp(join(tmpdir(), "bruv-real-task-binding-"));
     let session = SessionManager.create(dir, dir);
@@ -58,24 +58,13 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
       model: { provider: "anthropic", id: "claude-sonnet-4-5" },
       sessionManager: session,
     } as unknown as ExtensionContext;
-    const notifications: TaskInspection[] = [];
-    const manager = new TaskManager((task) => {
-      notifications.push(task);
-    }, 15);
     const profiles = join(dir, "profiles.json");
     await writeFile(profiles, JSON.stringify({ fast: { model: "anthropic/claude-sonnet-4-5", thinking: "off" } }));
     await writeFile(join(dir, "auth.json"), JSON.stringify({ anthropic: { type: "api_key", key: "offline-fixture" } }));
-    const service = new JobService(manager, () => ({ depth: 0 }), undefined, profiles);
     const frames: (NativeTaskFrame | AgentCallFrame)[] = [];
     const history: { source: string; entry: string; frame: unknown }[] = [];
     const diagnostics: string[] = [];
     const root = { namespace: "bruv:test", sourceSessionId: sessionFile, sessionId: randomUUID() };
-    const owner = {
-      manager,
-      context: ctx,
-      sourceSessionId: sessionFile,
-      appendEntry: (type: string, data: unknown) => session.appendCustomEntry(type, data),
-    };
     const options = {
       root,
       emit: (frame: NativeTaskFrame | AgentCallFrame) => {
@@ -94,36 +83,76 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
         history.push({ source: link.child.sourceSessionId, entry: entry.id, frame });
       },
     };
-    const binding = bindNativeTasks(owner, options);
-    const request = (call: string, index = 1) =>
-      withJobRequestIdentity(new AbortController().signal, { executeInvocationId: call, callIndex: index });
     return {
       dir,
       session,
       ctx,
-      manager,
-      service,
+      profiles,
       frames,
       history,
       diagnostics,
-      notifications,
       root,
-      owner,
       options,
-      binding,
-      request,
       async close() {
-        await manager.shutdown();
-        await binding.close();
         disposeDiskBackedSessionManager(session);
         await rm(dir, { recursive: true, force: true });
       },
     };
   }
+
+  async function taskOwnerFixture() {
+    const compat = await compatibilitySession();
+    const notifications: TaskInspection[] = [];
+    const manager = new TaskManager((task) => {
+      notifications.push(task);
+    }, 15);
+    const service = new JobService(manager, () => ({ depth: 0 }), undefined, compat.profiles);
+    const owner = {
+      manager,
+      context: compat.ctx,
+      sourceSessionId: compat.root.sourceSessionId,
+      appendEntry: (type: string, data: unknown) => compat.session.appendCustomEntry(type, data),
+    };
+    const binding = bindNativeTasks(owner, compat.options);
+    return {
+      ...compat,
+      manager,
+      service,
+      notifications,
+      owner,
+      binding,
+      request: (call: string, index = 1) =>
+        withJobRequestIdentity(new AbortController().signal, { executeInvocationId: call, callIndex: index }),
+      async close() {
+        await manager.shutdown();
+        await binding.close();
+        await compat.close();
+      },
+    };
+  }
+
+  // Replace only the executable for agent launches: JobService still supplies the
+  // child identity/prompt/profile, and TaskManager still owns process lifetime.
+  function useRealWorkerProcess(manager: TaskManager) {
+    const spawn = manager.spawn.bind(manager);
+    return spyOn(manager, "spawn").mockImplementation((launch) =>
+      launch.kind === "agent"
+        ? spawn({
+            ...launch,
+            command: process.execPath,
+            args: [
+              resolve("tests/fixtures/claude-task-worker.ts"),
+              launch.agent!.sessionFile,
+              launch.launchIdentity!.prompt!,
+            ],
+          })
+        : spawn(launch),
+    );
+  }
   const subtype = (frames: any[], name: string) => frames.filter((frame) => frame.subtype === name);
 
   test("actual JobService shell causal launch, background handoff, complete roster and confirmed late exit", async () => {
-    const f = await fixture();
+    const f = await taskOwnerFixture();
     try {
       const task = (await f.service.handle(
         "shell",
@@ -162,7 +191,7 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
   });
 
   test("actual shell failures and stop requests project ONLY confirmed process close", async () => {
-    const f = await fixture();
+    const f = await taskOwnerFixture();
     try {
       const failed = (await f.service.handle(
         "shell",
@@ -194,7 +223,7 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
   });
 
   test("real local worker subprocess, actual Pi journal/model usage, distinct Agent identity and exact history source", async () => {
-    const f = await fixture();
+    const f = await taskOwnerFixture();
     const configDir = join(f.dir, "isolated-native-config");
     const native = await NativeHistory.open({
       configDir,
@@ -213,6 +242,12 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
       message: { role: "user", content: "launch the actual requested work" },
       timestamp: new Date().toISOString(),
     });
+    const emit = f.options.emit;
+    f.options.emit = (frame) => {
+      if ((frame.type === "assistant" || frame.type === "user") && frame.parent_tool_use_id !== null)
+        expect(f.history.some((entry: any) => entry.frame.uuid === frame.uuid)).toBe(true);
+      emit(frame);
+    };
     const recordChild = f.options.writeChildFrame;
     f.options.writeChildFrame = async (source, frame) => {
       const writer = await native.child({
@@ -229,21 +264,7 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
       });
       recordChild(source, frame);
     };
-    const originalSpawn = f.manager.spawn.bind(f.manager);
-    // The unbundled test runner is not the production Bruv executable. Replace ONLY
-    // its command line with a real Pi child harness, retaining JobService's prepared
-    // child identity/prompt/profile and all manager process/lifecycle ownership.
-    const spawn = spyOn(f.manager, "spawn").mockImplementation((launch) =>
-      originalSpawn({
-        ...launch,
-        command: process.execPath,
-        args: [
-          resolve("tests/fixtures/claude-task-worker.ts"),
-          launch.agent!.sessionFile,
-          launch.launchIdentity!.prompt!,
-        ],
-      }),
-    );
+    const spawn = useRealWorkerProcess(f.manager);
     try {
       const task = (await f.service.handle(
         "subagent",
@@ -317,6 +338,23 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
       const child = f.frames.find(
         (frame: any) => frame.type === "assistant" && frame.parent_tool_use_id === agentId,
       ) as any;
+      const started = subtype(f.frames, "task_started")[0];
+      const terminal = subtype(f.frames, "task_notification").at(-1);
+      expect(f.frames.indexOf(call)).toBeLessThan(f.frames.indexOf(started));
+      expect(f.frames.indexOf(started)).toBeLessThan(f.frames.indexOf(launchAck));
+      expect(f.frames.indexOf(child)).toBeLessThan(f.frames.indexOf(terminal));
+      // A restored terminal cursor must not announce or return the Agent call again.
+      await f.binding.close();
+      const restored = bindNativeTasks(f.owner, f.options);
+      try {
+        await restored.flush();
+        expect(f.frames.filter((frame) => frame.uuid === call.uuid)).toHaveLength(1);
+        expect(f.frames.filter((frame) => frame.uuid === launchAck.uuid)).toHaveLength(1);
+        expect(f.frames.filter((frame) => frame.uuid === terminal.uuid)).toHaveLength(1);
+        expect(f.history).toHaveLength(2);
+      } finally {
+        await restored.close();
+      }
       expect(child.message.content).toEqual([
         { type: "text", text: "actual worker answer: the actual requested work" },
       ]);
@@ -364,7 +402,7 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
   }, 20000);
 
   test("reattach cursors do not resurrect jobs or emit fake starts; owner mismatch rejected", async () => {
-    const f = await fixture();
+    const f = await taskOwnerFixture();
     try {
       const task = (await f.service.handle(
         "shell",
@@ -402,7 +440,7 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
   });
 
   test("actual SDK execute bridge binds two shells and a real Pi worker without label inference", async () => {
-    const f = await fixture();
+    const f = await compatibilitySession();
     let session: Awaited<ReturnType<typeof createAgentSession>>["session"] | undefined;
     const observed: any[] = [];
     let tasks: TaskManager | undefined;
@@ -411,7 +449,6 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
     // This test creates its own root SDK session; do not inherit the outer test-runner worker profile.
     for (const [key] of environment) delete process.env[key];
     try {
-      await f.binding.close(); // This fixture authority is not installed into the SDK session.
       const runner = join(f.dir, "execute-runner");
       await writeFile(
         runner,
@@ -482,20 +519,7 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
               tasks: { executablePath: runner, profilesPath: join(f.dir, "profiles.json") },
               root: (owner) => {
                 tasks = owner.manager;
-                const original = tasks.spawn.bind(tasks);
-                const spy = spyOn(tasks, "spawn").mockImplementation((launch) =>
-                  launch.kind === "agent"
-                    ? original({
-                        ...launch,
-                        command: process.execPath,
-                        args: [
-                          resolve("tests/fixtures/claude-task-worker.ts"),
-                          launch.agent!.sessionFile,
-                          launch.launchIdentity!.prompt!,
-                        ],
-                      })
-                    : original(launch),
-                );
+                const spy = useRealWorkerProcess(tasks);
                 restoreSpawn = () => spy.mockRestore();
                 return { ...f.root, sourceSessionId: owner.sourceSessionId };
               },
@@ -573,7 +597,7 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
   }, 20000);
 
   test("full opaque shell roster retains the other running job after one real exit", async () => {
-    const f = await fixture();
+    const f = await taskOwnerFixture();
     try {
       const a = (await f.service.handle(
         "shell",
@@ -604,7 +628,7 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
   });
 
   test("failed OS spawn never creates a fictitious live native task", async () => {
-    const f = await fixture();
+    const f = await taskOwnerFixture();
     try {
       const task = f.manager.spawn({
         kind: "command",
@@ -627,7 +651,7 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
   });
 
   test("already-exited async launch never also becomes an inline ACK-owned result", async () => {
-    const f = await fixture();
+    const f = await taskOwnerFixture();
     try {
       const task = f.manager.spawn({
         kind: "command",

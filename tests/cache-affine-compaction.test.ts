@@ -401,76 +401,6 @@ describe("extension lifecycle", () => {
     expect(result.compaction.details).not.toHaveProperty("summaryScope");
   });
 
-  test("cancels rather than duplicating inference after a paid unusable response", async () => {
-    const handlers = new Map<string, Function>();
-    const attempts: any[] = [];
-    const notices: Array<[string, string]> = [];
-    let appendCalls = 0;
-    let throwAppend = false;
-    let abortOnResponse: AbortController | undefined;
-    const pi = {
-      appendEntry: (type: string, data: any) => {
-        appendCalls++;
-        if (throwAppend) throw new Error("private disk failure");
-        attempts.push({ type, data });
-      },
-      on: (n: string, f: Function) => handlers.set(n, f),
-      getActiveTools: () => [],
-      getAllTools: () => [],
-    } as any;
-    registerCacheAffineCompaction(pi);
-    const ctx = {
-      model,
-      thinkingLevel: "high",
-      getSystemPrompt: () => "s",
-      ui: { notify: (message: string, level: string) => notices.push([message, level]) },
-      sessionManager: { getLeafId: () => "4", getSessionId: () => "stable-session" },
-      modelRegistry: {
-        completeSimple: async (_m: any, _context: any, options: any) => {
-          options.onPayload({
-            input: [
-              { role: "user", content: "old" },
-              { role: "assistant", content: "new" },
-            ],
-          });
-          abortOnResponse?.abort();
-          return {
-            role: "assistant",
-            api: model.api,
-            provider: "p",
-            model: "m",
-            timestamp: 1,
-            stopReason: "length",
-            usage,
-            content: [{ type: "text", text: "partial" }],
-          };
-        },
-      },
-    } as any;
-    wireProvider(ctx, pi);
-    await handlers.get("context")!({ messages: entries.map((entry) => entry.message) }, ctx);
-    await handlers.get("before_provider_request")!({ payload: { input: [{ role: "user", content: "old" }] } }, ctx);
-    expect(await handlers.get("session_before_compact")!(event(), ctx)).toEqual({ cancel: true });
-    expect(notices[0]?.[0]).toContain("avoid duplicate inference");
-    expect(attempts).toEqual([
-      { type: "bruv-compaction-attempt", data: { strategy: "cache-affine-plaintext", stopReason: "length", usage } },
-    ]);
-    throwAppend = true;
-    const callsBeforeFailure = appendCalls;
-    expect(await handlers.get("session_before_compact")!(event(), ctx)).toEqual({ cancel: true });
-    expect(appendCalls).toBe(callsBeforeFailure + 1);
-    expect(notices.some(([message]) => message.includes("usage checkpoint could not be written"))).toBe(true);
-    expect(notices.at(-1)?.[0]).toContain("avoid duplicate inference");
-    expect(JSON.stringify(notices)).not.toContain("private disk failure");
-    const abortController = new AbortController();
-    abortOnResponse = abortController;
-    const callsBeforeAbort = appendCalls;
-    expect(await handlers.get("session_before_compact")!(event({ signal: abortController.signal }), ctx)).toEqual({
-      cancel: true,
-    });
-    expect(appendCalls).toBe(callsBeforeAbort + 1);
-  });
-
   test("makes unavailable preparation observable without flattening raw history", async () => {
     const handlers = new Map<string, Function>();
     const notices: string[] = [];
@@ -616,5 +546,182 @@ describe("instruction frame ownership lifecycle", () => {
     expect(setCurrentInstructionFrame(owner, "cross-session-leak")).toBe(false);
     owner.switchTo("old-session");
     expect(setCurrentInstructionFrame(owner, "revived-frame")).toBe(false);
+  });
+});
+
+function summaryAttemptHarness(
+  complete: (options: any) => Promise<any>,
+  pendingJobs: () => readonly { id: string; kind: string; status: string }[] = () => [],
+) {
+  const handlers = new Map<string, Function>();
+  const attempts: any[] = [];
+  const notices: string[] = [];
+  let requests = 0;
+  const pi = {
+    on: (name: string, handler: Function) => handlers.set(name, handler),
+    getActiveTools: () => [],
+    getAllTools: () => [],
+    appendEntry: (type: string, data: unknown) => attempts.push({ type, data }),
+  } as any;
+  registerCacheAffineCompaction(pi, pendingJobs);
+  const ctx = {
+    model,
+    thinkingLevel: "high",
+    getSystemPrompt: () => "s",
+    sessionManager: { getSessionId: () => "stable-session" },
+    ui: { notify: (message: string) => notices.push(message) },
+    modelRegistry: {
+      completeSimple: async (_model: any, _context: any, options: any) => {
+        requests++;
+        return complete(options);
+      },
+    },
+  } as any;
+  wireProvider(ctx, pi);
+  return {
+    compact: async (compactEvent = event()) => {
+      await handlers.get("context")!({ messages: [] }, ctx);
+      return handlers.get("session_before_compact")!(compactEvent, ctx);
+    },
+    pi,
+    attempts,
+    notices,
+    ui: ctx.ui,
+    diagnostics: () => inspectDiagnostics(ctx.sessionManager).records,
+    requests: () => requests,
+  };
+}
+
+describe("cancelled summary attempts", () => {
+  test("a paid unusable response is checkpointed without duplicate inference", async () => {
+    const harness = summaryAttemptHarness(async (options) => {
+      await options.onPayload({
+        input: [
+          { role: "user", content: "old" },
+          { role: "assistant", content: "new" },
+        ],
+      });
+      return { ...assistant("partial"), stopReason: "length" };
+    });
+    expect(await harness.compact()).toEqual({ cancel: true });
+    expect(harness.requests()).toBe(1);
+    expect(harness.notices[0]).toContain("avoid duplicate inference");
+    expect(harness.attempts).toEqual([
+      { type: "bruv-compaction-attempt", data: { strategy: "cache-affine-plaintext", stopReason: "length", usage } },
+    ]);
+  });
+
+  test("a failed paid-usage checkpoint cancels without retrying or exposing the storage error", async () => {
+    const harness = summaryAttemptHarness(async (options) => {
+      await options.onPayload({
+        input: [
+          { role: "user", content: "old" },
+          { role: "assistant", content: "new" },
+        ],
+      });
+      return { ...assistant("partial"), stopReason: "length" };
+    });
+    let appendCalls = 0;
+    harness.pi.appendEntry = () => {
+      appendCalls++;
+      throw new Error("private disk failure");
+    };
+    expect(await harness.compact()).toEqual({ cancel: true });
+    expect(harness.requests()).toBe(1);
+    expect(appendCalls).toBe(1);
+    expect(harness.notices.some((message) => message.includes("usage checkpoint could not be written"))).toBe(true);
+    expect(harness.notices.at(-1)).toContain("avoid duplicate inference");
+    expect(JSON.stringify(harness.notices)).not.toContain("private disk failure");
+  });
+
+  test("a late abort still attempts the paid-usage checkpoint once even when storage fails", async () => {
+    const controller = new AbortController();
+    const harness = summaryAttemptHarness(async (options) => {
+      await options.onPayload({
+        input: [
+          { role: "user", content: "old" },
+          { role: "assistant", content: "new" },
+        ],
+      });
+      controller.abort();
+      return { ...assistant("partial"), stopReason: "length" };
+    });
+    let appendCalls = 0;
+    harness.pi.appendEntry = () => {
+      appendCalls++;
+      throw new Error("private disk failure");
+    };
+    expect(await harness.compact(event({ signal: controller.signal }))).toEqual({ cancel: true });
+    expect(harness.requests()).toBe(1);
+    expect(appendCalls).toBe(1);
+  });
+
+  test.each([false, true])(
+    "final wire rejection cancels before inference (provider returns error: %s)",
+    async (swallow) => {
+      const harness = summaryAttemptHarness(async (options) => {
+        try {
+          await options.onPayload({ max_output_tokens: model.contextWindow });
+        } catch (error) {
+          if (!swallow) throw error;
+        }
+        return { ...assistant(""), stopReason: "error", usage: { ...usage, totalTokens: 0 } };
+      });
+      expect(await harness.compact()).toEqual({ cancel: true });
+      expect(harness.requests()).toBe(1);
+      expect(harness.attempts).toEqual([]);
+      expect(harness.diagnostics().at(-1)).toMatchObject({
+        code: "capacity_insufficient",
+        dispatch: "none",
+        outcome: "blocked",
+      });
+      expect(harness.notices.at(-1)).toContain("rejected before inference");
+    },
+  );
+
+  test("an accepted request remains uncertain even if a later payload is rejected", async () => {
+    const harness = summaryAttemptHarness(async (options) => {
+      await options.onPayload({ max_output_tokens: 8192 });
+      await options.onPayload({ max_output_tokens: model.contextWindow });
+      throw new Error("unreachable");
+    });
+    expect(await harness.compact()).toEqual({ cancel: true });
+    expect(harness.requests()).toBe(1);
+    expect(harness.attempts).toEqual([]);
+    expect(harness.diagnostics().at(-1)).toMatchObject({ code: "provider_failed", dispatch: "unknown" });
+    expect(harness.notices.at(-1)).toContain("avoid duplicate inference");
+  });
+
+  test("failure to project a paid summary checkpoints usage once without another inference", async () => {
+    const harness = summaryAttemptHarness(
+      async (options) => {
+        await options.onPayload({ max_output_tokens: 8192 });
+        return assistant("valid summary");
+      },
+      () => {
+        throw new Error("job observer failed");
+      },
+    );
+    expect(await harness.compact()).toEqual({ cancel: true });
+    expect(harness.requests()).toBe(1);
+    expect(harness.attempts).toEqual([
+      { type: "bruv-compaction-attempt", data: { strategy: "cache-affine-plaintext", stopReason: "stop", usage } },
+    ]);
+    expect(harness.diagnostics().at(-1)).toMatchObject({ code: "provider_failed", dispatch: "response" });
+    expect(harness.notices.at(-1)).toContain("avoid duplicate inference");
+  });
+
+  test("failed notifications do not erase paid-attempt cancellation or retry its usage write", async () => {
+    const harness = summaryAttemptHarness(async (options) => {
+      await options.onPayload({ max_output_tokens: 8192 });
+      return { ...assistant("partial summary"), stopReason: "length" };
+    });
+    harness.ui.notify = () => {
+      throw new Error("notification unavailable");
+    };
+    expect(await harness.compact()).toEqual({ cancel: true });
+    expect(harness.requests()).toBe(1);
+    expect(harness.attempts).toHaveLength(1);
+    expect(harness.diagnostics().at(-1)).toMatchObject({ code: "response_invalid", dispatch: "response" });
   });
 });

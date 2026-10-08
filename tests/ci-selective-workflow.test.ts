@@ -13,7 +13,14 @@ type Step = {
   env?: Record<string, string>;
   with?: Record<string, unknown>;
 };
-type Job = { name?: string; if?: string; needs?: string | string[]; steps: Step[]; outputs?: Record<string, string> };
+type Job = {
+  name?: string;
+  if?: string;
+  needs?: string | string[];
+  permissions?: Record<string, string>;
+  steps: Step[];
+  outputs?: Record<string, string>;
+};
 type Workflow = { on: Record<string, unknown>; permissions: Record<string, string>; jobs: Record<string, Job> };
 const load = (name: string) =>
   Bun.YAML.parse(readFileSync(new URL("../.github/workflows/" + name + ".yml", import.meta.url), "utf8")) as Workflow;
@@ -46,14 +53,15 @@ function enabled(
 const shell = (command: string, env: Record<string, string>, cwd?: string) =>
   spawnSync("bash", ["-euo", "pipefail", "-c", command], { cwd, env: { ...process.env, ...env }, encoding: "utf8" });
 
-test("unconditional routine checks, nightly and manual full reconciliation", () => {
-  expect(ci.on.pull_request).toBeDefined();
+test("routine CI triggers cannot filter changes or bypass required validation", () => {
+  expect(ci.on.pull_request).toBeNull();
   expect(ci.on.push).toEqual({ branches: ["develop"] });
-  expect(ci.on.workflow_dispatch).toBeDefined();
+  expect(ci.on.workflow_dispatch).toBeNull();
   expect(ci.on.schedule).toEqual([{ cron: "17 3 * * *" }]);
   expect(ci.on.pull_request_target).toBeUndefined();
   expect(ci.permissions).toEqual({ contents: "read" });
   expect(ci.jobs.feedback!.if).toBeUndefined();
+  expect(ci.jobs.feedback!.permissions).toEqual({ contents: "read", actions: "read" });
   // biome-ignore lint/suspicious/noTemplateCurlyInString: literal GitHub expression
   expect(ci.jobs.required!.if).toBe("${{ always() }}");
   expect(ci.jobs.required!.needs).toEqual(["feedback", "test", "live-macos"]);
@@ -64,6 +72,9 @@ test("unconditional routine checks, nightly and manual full reconciliation", () 
     expect(enabled(job.if!, {}, { feedback: { outputs: { full: "true" } } })).toBe(true);
     expect(enabled(job.if!, {}, { feedback: { outputs: { full: "false" } } })).toBe(false);
   }
+});
+
+test("nightly and manual planning always request full reconciliation", () => {
   const root = mkdtempSync(join(tmpdir(), "bruv-reconcile-"));
   try {
     for (const event of ["schedule", "workflow_dispatch"]) {
@@ -100,87 +111,145 @@ test("fast feedback plans and executes in one Bun-only job without full provisio
   expect(run.run).toBe('bun scripts/ci-selective.ts --base "$BASE" --run');
   for (const [mode, full, expected] of [
     ["docs", "false", true],
-    ["selected", "false", true],
+    ["selected", "false", false],
     ["full", "true", false],
     ["", "", false],
   ] as const) {
-    expect(enabled(run.if!, {}, {}, { plan: { outputs: { mode, full } } })).toBe(mode === "docs" && full === "false");
+    expect(enabled(run.if!, {}, {}, { plan: { outputs: { mode, full } } })).toBe(expected);
   }
 });
 
-test("aggregate rejects every failed, cancelled, skipped or inconsistent required outcome", () => {
-  const command = ci.jobs.required!.steps[0]!.run!;
-  const run = (mode: string, full: string, feedback: string, linux: string, macos: string) =>
-    shell(command, { MODE: mode, FULL: full, FEEDBACK: feedback, LINUX: linux, MACOS: macos }).status;
-  for (const mode of ["docs"]) expect(run(mode, "false", "success", "skipped", "skipped")).toBe(0);
-  expect(run("full", "true", "success", "success", "success")).toBe(0);
-  for (const bad of ["skipped", "failure", "cancelled", ""]) {
-    expect(run("selected", "false", bad, "skipped", "skipped")).not.toBe(0);
-    expect(run("full", "true", bad, "success", "success")).not.toBe(0);
-    expect(run("full", "true", "success", bad, "success")).not.toBe(0);
-    expect(run("full", "true", "success", "success", bad)).not.toBe(0);
-  }
-  for (const [mode, full] of [
-    ["", ""],
-    ["docs", "true"],
-    ["full", "false"],
-    ["docs", ""],
-    ["unknown", "false"],
-  ])
-    expect(run(mode!, full!, "success", "skipped", "skipped")).not.toBe(0);
+// The required job accepts exactly these two complete plan/result tuples.
+const acceptedOutcomes = [
+  {
+    name: "docs classifier only",
+    env: { MODE: "docs", FULL: "false", FEEDBACK: "success", LINUX: "skipped", MACOS: "skipped" },
+  },
+  {
+    name: "full executable validation",
+    env: { MODE: "full", FULL: "true", FEEDBACK: "success", LINUX: "success", MACOS: "success" },
+  },
+];
+const outcomeAlternatives = {
+  MODE: ["docs", "full", "selected", "unknown", ""],
+  FULL: ["true", "false", ""],
+  FEEDBACK: ["failure", "cancelled", "skipped", ""],
+  LINUX: ["success", "skipped", "failure", "cancelled", ""],
+  MACOS: ["success", "skipped", "failure", "cancelled", ""],
+};
+const aggregate = step(ci.jobs.required!, "Require the planned validation outcomes");
+test("CI policy consumes all authoritative plan and dependency outcomes", () => {
+  expect(aggregate.env).toEqual({
+    // biome-ignore lint/suspicious/noTemplateCurlyInString: literal GitHub expression
+    FEEDBACK: "${{ needs.feedback.result }}",
+    // biome-ignore lint/suspicious/noTemplateCurlyInString: literal GitHub expression
+    MODE: "${{ needs.feedback.outputs.mode }}",
+    // biome-ignore lint/suspicious/noTemplateCurlyInString: literal GitHub expression
+    FULL: "${{ needs.feedback.outputs.full }}",
+    // biome-ignore lint/suspicious/noTemplateCurlyInString: literal GitHub expression
+    LINUX: "${{ needs.test.result }}",
+    // biome-ignore lint/suspicious/noTemplateCurlyInString: literal GitHub expression
+    MACOS: "${{ needs.live-macos.result }}",
+  });
 });
+test("CI policy rejects a wholly missing plan even when docs checks succeeded", () => {
+  expect(
+    shell(aggregate.run!, { MODE: "", FULL: "", FEEDBACK: "success", LINUX: "skipped", MACOS: "skipped" }).status,
+  ).toBe(1);
+});
+for (const { name, env } of acceptedOutcomes) {
+  test("CI policy accepts " + name, () => {
+    expect(shell(aggregate.run!, env).status).toBe(0);
+  });
+  // Change one field at a time; no result is reset or inherited from another case.
+  for (const field of Object.keys(outcomeAlternatives) as (keyof typeof outcomeAlternatives)[]) {
+    for (const value of outcomeAlternatives[field]) {
+      if (value === env[field]) continue;
+      test("CI policy rejects " + name + " with " + field + "=" + JSON.stringify(value), () => {
+        expect(shell(aggregate.run!, { ...env, [field]: value }).status).toBe(1);
+      });
+    }
+  }
+}
 
-test("only manual and stable tag releases package; all publication gates fail closed", () => {
+test("release triggers and dependencies route publication through source admission", () => {
   expect(release.on.push).toEqual({ tags: ["v*"] });
   expect(release.on.workflow_dispatch).toBeDefined();
   expect(release.on.pull_request).toBeUndefined();
   expect(Object.keys(release.jobs)).toEqual([
     "prepare-manual",
+    "release-source",
     "mac-helper",
     "release",
     "linux-browser-boot",
     "mac-release-smoke",
     "publish",
   ]);
-  for (const [event, ref, allowed] of [
-    ["push", "refs/heads/develop", false],
-    ["pull_request", "refs/pull/1/merge", false],
-    ["push", "refs/tags/v1.0.0-beta.1", false],
-    ["push", "refs/tags/v1.0.0", true],
-    ["workflow_dispatch", "refs/heads/develop", true],
-    ["workflow_dispatch", "refs/heads/main", false],
-  ] as const) {
+  expect(release.jobs["release-source"]!.needs).toBe("prepare-manual");
+  expect(release.jobs["mac-helper"]!.needs).toBe("release-source");
+  expect(release.jobs.release!.needs).toEqual(["release-source", "mac-helper"]);
+  expect(release.jobs["linux-browser-boot"]!.needs).toEqual(["release", "release-source"]);
+  expect(release.jobs["mac-release-smoke"]!.needs).toEqual(["release", "release-source"]);
+  expect(release.jobs.publish!.needs).toEqual(["release", "linux-browser-boot", "mac-release-smoke", "release-source"]);
+});
+
+const releaseEvents = [
+  { event: "push", ref: "refs/heads/develop", prepared: false, admitted: false },
+  { event: "pull_request", ref: "refs/pull/1/merge", prepared: false, admitted: false },
+  { event: "push", ref: "refs/tags/v1.0.0-beta.1", prepared: false, admitted: false },
+  { event: "push", ref: "refs/tags/v1.0.0", prepared: false, admitted: true },
+  { event: "workflow_dispatch", ref: "refs/heads/develop", prepared: true, admitted: true },
+  { event: "workflow_dispatch", ref: "refs/heads/main", prepared: false, admitted: false },
+];
+for (const { event, ref, prepared, admitted } of releaseEvents) {
+  test("release admission for " + event + " " + ref, () => {
     const github = { event_name: event, ref, ref_name: ref.split("/").at(-1)! };
-    const prepared = event === "workflow_dispatch" && ref === "refs/heads/develop";
     const needs = {
       "prepare-manual": { result: prepared ? "success" : "skipped" },
+      "release-source": { result: admitted ? "success" : "skipped" },
       "mac-helper": { result: "success" },
       release: { result: "success" },
       "linux-browser-boot": { result: "success" },
       "mac-release-smoke": { result: "success" },
     };
     expect(enabled(release.jobs["prepare-manual"]!.if!, github, needs)).toBe(prepared);
+    expect(enabled(release.jobs["release-source"]!.if!, github, needs)).toBe(admitted);
     for (const id of ["mac-helper", "release", "publish"])
-      expect(enabled(release.jobs[id]!.if!, github, needs)).toBe(allowed);
-    if (!allowed) continue;
-    for (const result of ["failure", "cancelled", "skipped"]) {
-      for (const id of ["release", "linux-browser-boot", "mac-release-smoke"] as const) {
-        needs[id].result = result;
-        expect(enabled(release.jobs.publish!.if!, github, needs)).toBe(false);
-        needs[id].result = "success";
-      }
-      needs["mac-helper"].result = result;
-      expect(enabled(release.jobs.release!.if!, github, needs)).toBe(false);
-      needs["mac-helper"].result = "success";
-      if (prepared) {
-        needs["prepare-manual"].result = result;
-        for (const id of ["mac-helper", "release", "publish"])
-          expect(enabled(release.jobs[id]!.if!, github, needs)).toBe(false);
-        needs["prepare-manual"].result = "success";
-      }
-    }
+      expect(enabled(release.jobs[id]!.if!, github, needs)).toBe(admitted);
+  });
+}
+
+const unsuccessfulResults = ["failure", "cancelled", "skipped", ""];
+for (const result of unsuccessfulResults) {
+  test("manual release admission rejects preparation result " + JSON.stringify(result), () => {
+    const github = { event_name: "workflow_dispatch", ref: "refs/heads/develop", ref_name: "develop" };
+    expect(enabled(release.jobs["release-source"]!.if!, github, { "prepare-manual": { result } })).toBe(false);
+  });
+}
+
+// Consumer gates depend on job outcomes, not on repeating the event admission expression.
+const successfulReleaseNeeds = {
+  "release-source": { result: "success" },
+  "mac-helper": { result: "success" },
+  release: { result: "success" },
+  "linux-browser-boot": { result: "success" },
+  "mac-release-smoke": { result: "success" },
+};
+const releaseFailureGates = [
+  { dependency: "release-source", consumers: ["mac-helper", "release", "publish"] },
+  { dependency: "mac-helper", consumers: ["release"] },
+  { dependency: "release", consumers: ["linux-browser-boot", "mac-release-smoke", "publish"] },
+  { dependency: "linux-browser-boot", consumers: ["publish"] },
+  { dependency: "mac-release-smoke", consumers: ["publish"] },
+];
+for (const { dependency, consumers } of releaseFailureGates) {
+  for (const result of unsuccessfulResults) {
+    test("release consumers reject " + dependency + "=" + JSON.stringify(result), () => {
+      const needs = { ...successfulReleaseNeeds, [dependency]: { result } };
+      for (const id of consumers) expect(enabled(release.jobs[id]!.if!, {}, needs)).toBe(false);
+    });
   }
-});
+}
 
 test("PR comparison keeps tested merge parent; missing trusted push baseline requires full", () => {
   const root = mkdtempSync(join(tmpdir(), "bruv-merge-plan-"));
@@ -193,27 +262,34 @@ test("PR comparison keeps tested merge parent; missing trusted push baseline req
     git("init", "-b", "main");
     git("config", "user.email", "ci@example.com");
     git("config", "user.name", "CI");
-    writeFileSync(join(root, "initial"), "initial");
-    git("add", ".");
-    git("commit", "-m", "initial");
-    const initial = git("rev-parse", "HEAD");
+    const commitFile = (path: string, content: string) => {
+      writeFileSync(join(root, path), content);
+      git("add", ".");
+      git("commit", "-m", content);
+      return git("rev-parse", "HEAD");
+    };
+    const initial = commitFile("initial", "initial");
     git("checkout", "-b", "feature");
-    writeFileSync(join(root, "feature"), "feature");
-    git("add", ".");
-    git("commit", "-m", "feature");
-    const head = git("rev-parse", "HEAD");
+    const head = commitFile("feature", "feature");
     git("checkout", "main");
-    writeFileSync(join(root, "target"), "target advanced");
-    git("add", ".");
-    git("commit", "-m", "advance target");
-    const target = git("rev-parse", "HEAD");
+    const target = commitFile("target", "target advanced");
     git("merge", "--no-ff", "feature", "-m", "tested merge");
     const merge = git("rev-parse", "HEAD");
     const command = step(ci.jobs.feedback!, "Resolve complete comparison").run!.replace(
       "bun scripts/find-ci-baseline.ts",
       JSON.stringify(process.execPath) + " " + JSON.stringify(join(process.cwd(), "scripts/find-ci-baseline.ts")),
     );
-    const run = (event: string, prHead = head, expectedHead = merge, before = initial) => {
+    const resolveBase = ({
+      event,
+      prHead = head,
+      expectedHead = merge,
+      before = initial,
+    }: {
+      event: string;
+      prHead?: string;
+      expectedHead?: string;
+      before?: string;
+    }) => {
       const output = join(root, "output");
       writeFileSync(output, "");
       expect(
@@ -223,6 +299,7 @@ test("PR comparison keeps tested merge parent; missing trusted push baseline req
             EVENT: event,
             PR_HEAD: prHead,
             EXPECTED_HEAD: expectedHead,
+            // A push payload SHA is not authority to skip validation.
             BEFORE: before,
             GH_TOKEN: "",
             GITHUB_OUTPUT: output,
@@ -232,18 +309,18 @@ test("PR comparison keeps tested merge parent; missing trusted push baseline req
       ).toBe(0);
       return readFileSync(output, "utf8");
     };
-    expect(run("pull_request")).toBe("base=" + target + "\n");
-    expect(run("pull_request", initial)).toBe("base=\n");
-    expect(run("pull_request", head, initial)).toBe("base=\n");
-    expect(run("push")).toBe("base=\n");
-    expect(run("push", head, merge, "0".repeat(40))).toBe("base=\n");
-    expect(run("schedule")).toBe("base=\n");
+    expect(resolveBase({ event: "pull_request" })).toBe("base=" + target + "\n");
+    expect(resolveBase({ event: "pull_request", prHead: initial })).toBe("base=\n");
+    expect(resolveBase({ event: "pull_request", expectedHead: initial })).toBe("base=\n");
+    expect(resolveBase({ event: "push" })).toBe("base=\n");
+    expect(resolveBase({ event: "push", before: "0".repeat(40) })).toBe("base=\n");
+    expect(resolveBase({ event: "schedule" })).toBe("base=\n");
     // A commit with valid parents but a tree unlike GitHub's actual merge must be full.
     const wrong = git("commit-tree", initial + "^{tree}", "-p", target, "-p", head, "-m", "wrong merge tree");
     git("checkout", "--detach", wrong);
-    expect(run("pull_request", head, wrong)).toBe("base=\n");
+    expect(resolveBase({ event: "pull_request", expectedHead: wrong })).toBe("base=\n");
     git("checkout", "--detach", head);
-    expect(run("pull_request", head, head)).toBe("base=\n");
+    expect(resolveBase({ event: "pull_request", expectedHead: head })).toBe("base=\n");
   } finally {
     rmSync(root, { recursive: true, force: true });
   }

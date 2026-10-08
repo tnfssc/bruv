@@ -1,15 +1,46 @@
-import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
+import test from "node:test";
 import {
-  startWorkerModel,
   reply,
-  workerModels,
+  startWorkerModel,
   workerId,
+  workerInstance,
+  workerModels,
   workerProvider,
+  workerSlug,
 } from "../scripts/claude-native-acceptance/app-delegation-model.mjs";
+
+import { modelId } from "../scripts/claude-native-acceptance/model.mjs";
+
+// Tool outputs below are transcript fixtures, not evidence of a native runtime.
+function request(model, user) {
+  return {
+    model,
+    __sequence: 1,
+    tools: ["__orchestrator_capabilities", "__delegate_task", "__task_status", "__task_cancel", "execute"].map(
+      (name) => ({ function: { name: name === "execute" ? name : "mcp__t3-code" + name } }),
+    ),
+    messages: [{ role: "user", content: user }],
+  };
+}
+// Rejected outputs fork the transcript without advancing the successful journey.
+function withToolResult(body, value) {
+  return {
+    ...body,
+    messages: [...body.messages, { role: "tool", content: typeof value === "string" ? value : JSON.stringify(value) }],
+  };
+}
+function called(delta) {
+  return { name: delta.tool_calls[0].function.name, input: JSON.parse(delta.tool_calls[0].function.arguments) };
+}
+async function stateDirectory(t) {
+  const state = await fs.mkdtemp(path.join(os.tmpdir(), "native-app-journey-"));
+  t.after(() => fs.rm(state, { recursive: true, force: true }));
+  return state;
+}
 
 test("normal fixture is a distinct exact reasoning provider with a supported summary API", () => {
   const model = workerModels(1234).providers[workerProvider];
@@ -75,4 +106,132 @@ test("root cancellation re-reads actual nonterminal status before confirming and
   } finally {
     await fs.rm(state, { recursive: true, force: true });
   }
+});
+
+test("root launch checks capabilities, preserves request identity, and records only the returned native task", async (t) => {
+  const state = await stateDirectory(t);
+  for (const scenario of ["done", "cancel"]) {
+    let body = request(modelId, "APP_DELEGATE_" + scenario.toUpperCase());
+    assert.equal(called(await reply(body, { state })).name, "mcp__t3-code__orchestrator_capabilities");
+    await assert.rejects(
+      reply(withToolResult(body, "No configured worker"), { state }),
+      /capabilities omit named worker.model/,
+    );
+    const capabilities = workerInstance + " " + workerSlug;
+    body = withToolResult(body, capabilities);
+    const launch = called(await reply(body, { state }));
+    assert.equal(launch.name, "mcp__t3-code__delegate_task");
+    assert.equal(launch.input.clientRequestId, "actual-native-" + scenario);
+    assert.equal(launch.input.title, "Native normal " + scenario);
+    assert.match(launch.input.task, new RegExp("APP_CHILD_" + scenario.toUpperCase()));
+    assert.equal(await fs.readFile(path.join(state, "capabilities.json"), "utf8"), capabilities);
+    await assert.rejects(
+      reply(withToolResult(body, { taskId: "incomplete" }), { state }),
+      /did not return a taskId.childThreadId/,
+    );
+    const task = { taskId: "fixture-" + scenario, childThreadId: "fixture-child-" + scenario };
+    body = withToolResult(body, [{ type: "text", text: JSON.stringify(task) }]);
+    assert.equal((await reply(body, { state })).content, "APP_TASK_PENDING_REAL_" + scenario);
+    assert.deepEqual(JSON.parse(await fs.readFile(path.join(state, scenario + ".task.json"), "utf8")), task);
+  }
+});
+
+test("normal worker must pass both delegation denials and scope checks before release and result", async (t) => {
+  const state = await stateDirectory(t);
+  for (const scenario of ["done", "cancel"]) {
+    let body = request(workerId, "APP_CHILD_" + scenario.toUpperCase());
+    const task = { taskId: "fixture-" + scenario, childThreadId: "fixture-child" };
+    await fs.writeFile(path.join(state, scenario + ".task.json"), JSON.stringify(task));
+    assert.deepEqual(called(await reply(body, { state })), {
+      name: "mcp__t3-code__delegate_task",
+      input: { task: "Worker must be denied", clientRequestId: "worker-denied" },
+    });
+    await assert.rejects(reply(withToolResult(body, "Admitted"), { state }), /Worker delegation was not denied/);
+    body = withToolResult(body, "normal workers cannot delegate");
+    assert.match(called(await reply(body, { state })).input.code, /await subagent/);
+    await assert.rejects(
+      reply(withToolResult(body, "unexpected admission"), { state }),
+      /Normal local worker delegation admitted/,
+    );
+    body = withToolResult(body, "LOCAL_WORKER_DENIAL_REAL Only orchestrator agents can delegate");
+    assert.match(called(await reply(body, { state })).input.code, /CHILD_SCOPE_REAL/);
+    await assert.rejects(
+      reply(withToolResult(body, 'CHILD_SCOPE_REAL {"rootControls":["T3_ROOT"],"jobs":0}'), { state }),
+      /Root controls leaked into execute/,
+    );
+    body = withToolResult(body, 'CHILD_SCOPE_REAL {"rootControls":[],"jobs":0}');
+    assert.deepEqual(called(await reply(body, { state })), {
+      name: "mcp__t3-code__task_status",
+      input: { taskId: task.taskId },
+    });
+    await assert.rejects(
+      reply(withToolResult(body, { ...task, status: "running" }), { state }),
+      /Child credential could read root app task/,
+    );
+    await assert.rejects(fs.access(path.join(state, scenario + ".started")), { code: "ENOENT" });
+    body = withToolResult(body, "does not belong to thread");
+    await fs.writeFile(path.join(state, scenario + ".release"), "fixture release");
+    assert.equal((await reply(body, { state })).content, "APP_CHILD_RESULT_REAL_" + scenario);
+    assert.match(
+      await fs.readFile(path.join(state, scenario + ".scope-denial.json"), "utf8"),
+      /does not belong to thread/,
+    );
+    assert.match(await fs.readFile(path.join(state, scenario + ".started"), "utf8"), /reached scoped execute/);
+  }
+});
+
+test("completion turn inspects the saved native ID and requires the returned child result before acknowledgement", async (t) => {
+  const state = await stateDirectory(t);
+  const task = { taskId: "fixture-done", childThreadId: "fixture-child" };
+  await fs.writeFile(path.join(state, "done.task.json"), JSON.stringify(task));
+  let body = request(modelId, "APP_DELEGATE_DONE");
+  body = withToolResult(body, "earlier launch result");
+  body = {
+    ...body,
+    messages: [...body.messages, { role: "user", content: "fixture native completion wake" }],
+  };
+  assert.deepEqual(called(await reply(body, { state })), {
+    name: "mcp__t3-code__task_status",
+    input: { taskId: task.taskId },
+  });
+  await assert.rejects(
+    reply(withToolResult(body, { ...task, status: "completed" }), { state }),
+    /task_status omitted child result/,
+  );
+  await assert.rejects(fs.access(path.join(state, "done.status.json")), { code: "ENOENT" });
+  body = withToolResult(body, { ...task, status: "completed", result: "APP_CHILD_RESULT_REAL_done" });
+  assert.equal((await reply(body, { state })).content, "APP_COMPLETION_ACK_REAL");
+  const evidence = await fs.readFile(path.join(state, "done.status.json"), "utf8");
+  assert.match(evidence, /APP_CHILD_RESULT_REAL_done/);
+  assert.doesNotMatch(evidence, /earlier launch result/);
+});
+
+test("cancellation rejects other terminal states and duplicate Bruv ownership", async (t) => {
+  const state = await stateDirectory(t);
+  const task = { taskId: "fixture-cancel", childThreadId: "fixture-child" };
+  await fs.writeFile(path.join(state, "cancel.task.json"), JSON.stringify(task));
+  let body = request(modelId, "APP_CANCEL");
+  assert.deepEqual(called(await reply(body, { state })), {
+    name: "mcp__t3-code__task_cancel",
+    input: { taskId: task.taskId },
+  });
+  body = withToolResult(body, { ...task, status: "cancel_requested" });
+  assert.deepEqual(called(await reply(body, { state })), {
+    name: "mcp__t3-code__task_status",
+    input: { taskId: task.taskId },
+  });
+  await assert.rejects(
+    reply(withToolResult(body, { ...task, status: "completed" }), { state }),
+    /Unexpected actual native cancellation terminal: completed/,
+  );
+  body = withToolResult(body, { ...task, status: "interrupted" });
+  assert.match(called(await reply(body, { state })).input.code, /jobs.list/);
+  await assert.rejects(
+    reply(withToolResult(body, 'ROOT_JOBS_REAL [{"id":"duplicate"}]'), { state }),
+    /duplicated in root Bruv registry/,
+  );
+  await assert.rejects(fs.access(path.join(state, "cancel.status.json")), { code: "ENOENT" });
+  body = withToolResult(body, "ROOT_JOBS_REAL []");
+  assert.equal((await reply(body, { state })).content, "APP_CANCEL_CONFIRMED_REAL");
+  assert.match(await fs.readFile(path.join(state, "cancel.status.json"), "utf8"), /ROOT_JOBS_REAL \[\]/);
 });

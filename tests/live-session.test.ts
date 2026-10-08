@@ -278,7 +278,7 @@ describe("voice-only SDK session", () => {
     expect(out).toEqual([{ code: "transcript_limit", message: "Voice transcription limit exceeded" }]);
     expect(s.state).toBe("closed");
   });
-  test("close during pending connect cancels immediately, late result closed, no callbacks", async () => {
+  test("close during pending connect cancels immediately and closes a late connection without callbacks", async () => {
     const h = harness();
     const out: unknown[] = [];
     const s = new VoiceSession({ onReady: () => out.push("ready"), onError: (e) => out.push(e) }, h.adapter);
@@ -290,15 +290,17 @@ describe("voice-only SDK session", () => {
     h.params.callbacks.onmessage(msg({ serverContent: { inputTranscription: { text: "secret" } } }));
     expect(out).toEqual([]);
     expect(h.closes).toBe(1);
-    const k = harness();
-    const next = new VoiceSession({}, k.adapter);
-    const p = next.connect("key");
-    next.close();
-    await p;
-    k.reject();
+  });
+  test("close during pending connect consumes a late SDK rejection", async () => {
+    const h = harness();
+    const s = new VoiceSession({}, h.adapter);
+    const pending = s.connect("key");
+    s.close();
+    await pending;
+    h.reject();
     await Promise.resolve();
   });
-  test("SDK close/error, goAway and reentrant callbacks cannot revive session or escape", async () => {
+  test("SDK close followed by error reports one failure even when terminal callbacks throw", async () => {
     const h = harness();
     const out: unknown[] = [];
     const s = new VoiceSession(
@@ -326,36 +328,42 @@ describe("voice-only SDK session", () => {
       { code: "disconnected", message: "Voice connection closed" },
     ]);
     expect(h.closes).toBe(1);
-    const k = harness();
+  });
+  test("throwing audio callback becomes a sanitized transport failure without escaping the SDK", async () => {
+    const h = harness();
     const errors: unknown[] = [];
-    const second = new VoiceSession(
+    const s = new VoiceSession(
       {
         onAudio: () => {
           throw Error("secret");
         },
         onError: (e) => errors.push(e),
       },
-      k.adapter,
+      h.adapter,
     );
-    const q = second.connect("key");
-    k.ready();
-    await q;
-    expect(() => k.params.callbacks.onmessage(msg({ serverContent: audio() }))).not.toThrow();
+    const pending = s.connect("key");
+    h.ready();
+    await pending;
+    expect(() => h.params.callbacks.onmessage(msg({ serverContent: audio() }))).not.toThrow();
     expect(errors).toEqual([{ code: "transport_error", message: "Voice callback failed" }]);
-    const x = harness();
-    const third = new VoiceSession({ onReady: () => third.close() }, x.adapter);
-    const r = third.connect("key");
-    x.ready();
-    await r;
-    expect(third.state).toBe("closed");
-    expect(x.closes).toBe(1);
-    const y = harness();
+  });
+  test("onReady can close the newly accepted connection reentrantly", async () => {
+    const h = harness();
+    const s = new VoiceSession({ onReady: () => s.close() }, h.adapter);
+    const pending = s.connect("key");
+    h.ready();
+    await pending;
+    expect(s.state).toBe("closed");
+    expect(h.closes).toBe(1);
+  });
+  test("provider goAway reports sanitized session expiry", async () => {
+    const h = harness();
     const expiry: unknown[] = [];
-    const fourth = new VoiceSession({ onError: (e) => expiry.push(e) }, y.adapter);
-    const z = fourth.connect("key");
-    y.ready();
-    await z;
-    y.params.callbacks.onmessage(msg({ goAway: { timeLeft: "3s" } }));
+    const s = new VoiceSession({ onError: (e) => expiry.push(e) }, h.adapter);
+    const pending = s.connect("key");
+    h.ready();
+    await pending;
+    h.params.callbacks.onmessage(msg({ goAway: { timeLeft: "3s" } }));
     expect(expiry).toEqual([{ code: "expiring", message: "Voice session expiring; start a new session" }]);
   });
   test("setup never completes: bounded timeout, no late mic or duplicate failure", async () => {
@@ -384,7 +392,7 @@ describe("voice-only SDK session", () => {
       globalThis.setTimeout = original;
     }
   });
-  test("send reentrant close and onState connecting close prevent late mic", async () => {
+  test("onState connecting can close before SDK connection or mic input", async () => {
     const h = harness();
     const s = new VoiceSession(
       {
@@ -397,15 +405,17 @@ describe("voice-only SDK session", () => {
     await s.connect("key");
     expect(s.state).toBe("closed");
     expect(h.sends).toEqual([]);
-    const k = harness();
-    const second = new VoiceSession({}, k.adapter);
-    const p = second.connect("key");
-    k.ready();
-    await p;
-    k.setOnSend(() => second.close());
-    second.sendAudio("AAAAAA==");
-    expect(second.state).toBe("closed");
-    expect(k.closes).toBe(1);
+  });
+  test("reentrant close during audio send closes the connection once", async () => {
+    const h = harness();
+    const s = new VoiceSession({}, h.adapter);
+    const pending = s.connect("key");
+    h.ready();
+    await pending;
+    h.setOnSend(() => s.close());
+    s.sendAudio("AAAAAA==");
+    expect(s.state).toBe("closed");
+    expect(h.closes).toBe(1);
   });
 });
 

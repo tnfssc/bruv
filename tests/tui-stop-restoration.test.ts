@@ -10,6 +10,20 @@ import {
 
 const zonePrefix = /^(?:\x1b\]133;[ABC](?:\x07|\x1b\\))+/;
 const hash = (text: string) => createHash("sha256").update(text).digest("hex");
+
+// Model the pre-cache pipeline independently of the fixture's render/reset counters.
+// Reset before clipping: clipping can intentionally omit the reset sequence.
+function uncachedTranscript(lines: string[], width: number, resetRows: (rows: string[]) => string[]) {
+  const rows = resetRows(lines.map((line) => line.replace(zonePrefix, "").replaceAll(CURSOR_MARKER, ""))).map((line) =>
+    isImageLine(line) || visibleWidth(line) <= width ? line : sliceByColumn(line, 0, width, true),
+  );
+  let result = "\x1b[?2026h\x1b[?1049l\x1b[?7l";
+  rows.forEach((line, row) => {
+    result += (row > 0 ? "\r\n" : "") + "\r\x1b[2K" + line;
+  });
+  return result + "\x1b[0m\x1b[?7h\r\n\x1b[?25h\x1b[?2026l";
+}
+
 function fixture(lines: string[], width: number) {
   const writes: string[] = [];
   const terminal = {
@@ -26,29 +40,16 @@ function fixture(lines: string[], width: number) {
     renders++;
     return lines;
   };
-  const resets = tui.applyLineResets.bind(tui);
+  // Keep the original transform so the oracle bypasses the observed-work spy.
+  const resetRows: (rows: string[]) => string[] = tui.applyLineResets.bind(tui);
   tui.applyLineResets = (rows: string[]) => {
     resetLines += rows.length;
-    return resets(rows);
+    return resetRows(rows);
   };
   tui.doRender = () => {
     throw new Error("stop must not draw a frame");
   };
-  const reference = () => {
-    // Independent reference for the pre-cache stop pipeline, including the exact
-    // reset-before-clipping order (clipping can intentionally omit the reset).
-    const rows = resets(lines.map((line) => line.replace(zonePrefix, "").replaceAll(CURSOR_MARKER, ""))).map(
-      (line: string) =>
-        isImageLine(line) || visibleWidth(line) <= terminal.columns
-          ? line
-          : sliceByColumn(line, 0, terminal.columns, true),
-    );
-    let result = "\x1b[?2026h\x1b[?1049l\x1b[?7l";
-    rows.forEach((line: string, row: number) => {
-      result += (row > 0 ? "\r\n" : "") + "\r\x1b[2K" + line;
-    });
-    return result + "\x1b[0m\x1b[?7h\r\n\x1b[?25h\x1b[?2026l";
-  };
+  const reference = () => uncachedTranscript(lines, terminal.columns, resetRows);
   const restore = (preserveScreen = false) => {
     tui.altScreenActive = true;
     tui.afterTerminalStop({ preserveScreen });

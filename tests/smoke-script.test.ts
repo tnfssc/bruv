@@ -1,92 +1,166 @@
-import { afterEach, expect, test } from "bun:test";
-import { chmod, mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { expect, test } from "bun:test";
+import { chmod, copyFile, mkdir, mkdtemp, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
+import { ownedFixtureEnv } from "./helpers";
+
 const script = join(import.meta.dir, "..", "scripts/smoke.sh");
-const roots: string[] = [];
-afterEach(async () => {
-  for (const root of roots.splice(0)) await rm(root, { recursive: true, force: true });
-});
+
+const buildDriver = `#!/bin/sh
+set -eu
+if [ "$1" = run ] && [ "$2" = build ]; then
+  echo build >> builds
+  cp fixture-bruv dist/bruv
+  cp fixture-connector dist/bruv-claude-compat
+elif [ "$1" = -e ]; then
+  echo 1.2.3
+else
+  exit 1
+fi
+`;
+
+const bruv = `#!/bin/sh
+set -eu
+# env -i clears inherited settings, but leaves cwd unchanged. Log probes there.
+[ "$PATH" = /nonexistent ]
+[ -z "\${BRUV_SMOKE_PARENT_ENV+x}" ]
+printf '%s\\n' "$*" >> probes
+case "$1" in
+  --version) /bin/mkdir -p "$HOME/.bruv"; echo 1.2.3 ;;
+  --help) /bin/mkdir -p "$HOME/.bruv"; echo "bruv - AI coding assistant" ;;
+  web) echo "Setup guide only." ;;
+  claude-compat)
+    shift
+    case "$1" in
+      --bruv-version) echo "bruv-claude-compat 1.2.3" ;;
+      --version) echo "Bruv connector" ;;
+    esac ;;
+esac
+`;
+
+const connector = `#!/bin/sh
+dir=\${0%/*}
+exec "$dir/bruv" claude-compat "$@"
+`;
 
 async function fixture() {
   const root = await mkdtemp(join(tmpdir(), "bruv-smoke-test-"));
-  roots.push(root);
-  await mkdir(join(root, "bin"));
-  await mkdir(join(root, "dist"));
-  await writeFile(
-    join(root, "bin/bun"),
-    '#!/bin/sh\nif [ "$1" = run ] && [ "$2" = build ]; then\n  echo build >> builds\n  cp fixture-bruv dist/bruv\n  cp fixture-connector dist/bruv-claude-compat\n  exit\nfi\nif [ "$1" = -e ]; then\n  echo 1.2.3\n  exit\nfi\nexit 1\n',
-    { mode: 0o755 },
-  );
-  await writeFile(
-    join(root, "fixture-bruv"),
-    '#!/bin/sh\ncase "$1" in\n  --version) /bin/mkdir -p "$HOME/.bruv"; echo 1.2.3 ;;\n  --help) /bin/mkdir -p "$HOME/.bruv"; echo "bruv - AI coding assistant" ;;\n  web) echo "Setup guide only." ;;\n  claude-compat) shift; case "$1" in --bruv-version) echo "bruv-claude-compat 1.2.3" ;; --version) echo "Bruv connector" ;; esac ;;\nesac\n',
-    { mode: 0o755 },
-  );
-  await writeFile(join(root, "fixture-connector"), '#!/bin/sh\ndir=${0%/*}\nexec "$dir/bruv" claude-compat "$@"\n', {
-    mode: 0o755,
-  });
-  const run = (args: string[] = []) =>
-    Bun.spawnSync(["/bin/sh", script, ...args], {
+  const fixtureEnv = ownedFixtureEnv(root);
+  const smokeTemps = join(root, "smoke-temps");
+  for (const dir of ["bin", "dist", "smoke-temps"]) await mkdir(join(root, dir));
+  await writeFile(join(root, "bin/bun"), buildDriver, { mode: 0o755 });
+  await writeFile(join(root, "fixture-bruv"), bruv, { mode: 0o755 });
+  await writeFile(join(root, "fixture-connector"), connector, { mode: 0o755 });
+
+  const installPair = async () => {
+    await copyFile(join(root, "fixture-bruv"), join(root, "dist/bruv"));
+    await copyFile(join(root, "fixture-connector"), join(root, "dist/bruv-claude-compat"));
+  };
+  const run = async (args: string[] = []) => {
+    const result = Bun.spawnSync(["/bin/sh", script, ...args], {
       cwd: root,
-      env: { ...process.env, PATH: join(root, "bin") + ":/usr/bin:/bin" },
+      env: {
+        ...fixtureEnv,
+        PATH: join(root, "bin") + ":" + fixtureEnv.PATH,
+        TMPDIR: smokeTemps,
+        BRUV_SMOKE_PARENT_ENV: "must not reach probes",
+      },
       stdout: "pipe",
       stderr: "pipe",
     });
-  const builds = async () => (await readFile(join(root, "builds"), "utf8")).trim().split("\n").length;
-  return { root, run, builds };
+    // The smoke script owns its temporary pair; retain the surrounding fixture for inspection.
+    expect(await readdir(smokeTemps)).toEqual([]);
+    return result;
+  };
+  const buildCount = async () => {
+    const log = Bun.file(join(root, "builds"));
+    return (await log.exists()) ? (await log.text()).trim().split("\n").length : 0;
+  };
+  return { root, run, buildCount, installPair };
 }
 
-test("standalone smoke builds by default, while explicit reuse keeps the same CLI checks without rebuilding", async () => {
-  const { root, run, builds } = await fixture();
-  expect(run().exitCode).toBe(0);
-  expect(await builds()).toBe(1);
-  expect(run(["--reuse-build"]).exitCode).toBe(0);
-  expect(await builds()).toBe(1);
-  // Reuse must still check the product and compatibility versions and side-effect-free web guidance.
-  await writeFile(join(root, "dist/bruv-claude-compat"), '#!/bin/sh\necho "bruv-claude-compat wrong-version"\n', {
-    mode: 0o755,
-  });
-  expect(run(["--reuse-build"]).exitCode).not.toBe(0);
-  await writeFile(
-    join(root, "dist/bruv-claude-compat"),
-    '#!/bin/sh\ncase "$1" in --bruv-version) echo "bruv-claude-compat 1.2.3" ;; --version) echo "wrong compatibility identity" ;; esac\n',
-    { mode: 0o755 },
-  );
-  expect(run(["--reuse-build"]).exitCode).not.toBe(0);
-  await writeFile(join(root, "dist/bruv-claude-compat"), await readFile(join(root, "fixture-connector")), {
-    mode: 0o755,
-  });
-  await writeFile(
-    join(root, "dist/bruv"),
-    (await readFile(join(root, "fixture-bruv"), "utf8")).replace("Setup guide only.", "bundled web"),
-    { mode: 0o755 },
-  );
-  expect(run(["--reuse-build"]).exitCode).not.toBe(0);
-  // Reuse must still execute the CLI version/help assertions.
-  await writeFile(join(root, "dist/bruv"), "#!/bin/sh\necho wrong-version\n", { mode: 0o755 });
-  expect(run(["--reuse-build"]).exitCode).not.toBe(0);
-  expect(await builds()).toBe(1);
-});
+const expectedProbes = ["--version", "--help", "claude-compat --bruv-version", "claude-compat --version", "web"];
 
-test("reuse requires an executable pair and invalid arguments cannot trigger a build", async () => {
-  const { root, run } = await fixture();
-  expect(run(["--reuse-build"]).exitCode).not.toBe(0);
-  await writeFile(join(root, "dist/bruv"), "not executable");
-  expect(run(["--reuse-build"]).exitCode).not.toBe(0);
-  await writeFile(join(root, "dist/bruv"), await readFile(join(root, "fixture-bruv")), { mode: 0o755 });
-  await chmod(join(root, "dist/bruv"), 0o755);
-  expect(run(["--reuse-build"]).stderr.toString()).toContain("requires executable ./dist/bruv-claude-compat");
-  await writeFile(join(root, "dist/bruv-claude-compat"), "not executable", { mode: 0o644 });
-  expect(run(["--reuse-build"]).exitCode).not.toBe(0);
-  for (const args of [["--unknown"], ["--reuse-build", "--unknown"], ["--", "--reuse-build"]]) {
-    const result = run(args);
+for (const reuse of [false, true]) {
+  test(
+    reuse ? "reuse runs every paired probe without building" : "default smoke builds then runs every paired probe",
+    async () => {
+      const { root, run, buildCount, installPair } = await fixture();
+      if (reuse) await installPair();
+      const result = await run(reuse ? ["--reuse-build"] : []);
+      expect(result.exitCode).toBe(0);
+      expect(result.stderr.toString()).toBe("");
+      expect(result.stdout.toString()).toBe(
+        "bruv paired standalone smoke test passed (not native parity acceptance)\n",
+      );
+      expect(await buildCount()).toBe(reuse ? 0 : 1);
+      expect((await readFile(join(root, "probes"), "utf8")).trim().split("\n")).toEqual(expectedProbes);
+    },
+  );
+}
+
+// Each bad probe starts with a healthy pair: a prior failure cannot mask the next assertion.
+for (const [name, source, lastProbe] of [
+  ["product version mismatch", bruv.replace("echo 1.2.3", "echo wrong-version"), "--help"],
+  ["product help mismatch", bruv.replace("bruv - AI coding assistant", "wrong help"), "--help"],
+  [
+    "connector product version mismatch",
+    bruv.replace("bruv-claude-compat 1.2.3", "bruv-claude-compat wrong-version"),
+    "claude-compat --bruv-version",
+  ],
+  [
+    "connector identity mismatch",
+    bruv.replace("Bruv connector", "wrong compatibility identity"),
+    "claude-compat --version",
+  ],
+  [
+    "connector stderr",
+    bruv.replace('echo "Bruv connector"', 'echo "Bruv connector"; echo warning >&2'),
+    "claude-compat --version",
+  ],
+  ["web guidance mismatch", bruv.replace("Setup guide only.", "bundled web"), "web"],
+]) {
+  test(`reuse rejects ${name} and cleans its temporary pair`, async () => {
+    const { root, run, buildCount, installPair } = await fixture();
+    await installPair();
+    await writeFile(join(root, "dist/bruv"), source);
+    const result = await run(["--reuse-build"]);
+    expect(result.exitCode).not.toBe(0);
+    expect(result.stdout.toString()).not.toContain("smoke test passed");
+    const probes = (await readFile(join(root, "probes"), "utf8")).trim().split("\n");
+    expect(probes).toEqual(expectedProbes.slice(0, expectedProbes.indexOf(lastProbe) + 1));
+    expect(await buildCount()).toBe(0);
+  });
+}
+
+for (const binary of ["bruv", "bruv-claude-compat"]) {
+  for (const state of ["missing", "not executable"]) {
+    test(`reuse requires ${binary} to be present and executable (${state})`, async () => {
+      const { root, run, buildCount, installPair } = await fixture();
+      await installPair();
+      const path = join(root, "dist", binary);
+      if (state === "missing") await rm(path);
+      else await chmod(path, 0o644);
+      const result = await run(["--reuse-build"]);
+      expect(result.exitCode).toBe(1);
+      expect(result.stderr.toString()).toContain(`requires executable ./dist/${binary}`);
+      expect(await buildCount()).toBe(0);
+      expect(await Bun.file(join(root, "probes")).exists()).toBe(false);
+    });
+  }
+}
+
+for (const args of [["--unknown"], ["--reuse-build", "--unknown"], ["--", "--reuse-build"]]) {
+  test(`invalid arguments cannot trigger a build: ${args.join(" ")}`, async () => {
+    const { root, run, buildCount } = await fixture();
+    const result = await run(args);
     expect(result.exitCode).toBe(2);
     expect(result.stderr.toString()).toContain("usage:");
-  }
-  expect(await Bun.file(join(root, "builds")).exists()).toBe(false);
-});
+    expect(await buildCount()).toBe(0);
+    expect(await Bun.file(join(root, "probes")).exists()).toBe(false);
+  });
+}
 
 test("CI and release smoke reuse their preceding build", async () => {
   const ci = await Bun.file(join(import.meta.dir, "..", ".github/workflows/ci.yml")).text();

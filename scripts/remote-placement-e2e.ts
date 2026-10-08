@@ -160,6 +160,14 @@ try {
       tmux("new-session", "-d", "-s", "placement", "-x", "120", "-y", "40", "-c", repo, command);
       ptyStarted = true;
     };
+    const restartParent = async (label: string, settleMs: number) => {
+      tmux("kill-session", "-t", "placement");
+      ptyStarted = false;
+      await Bun.sleep(500);
+      start();
+      await wait(label, () => pane().includes("placement-parent"));
+      await Bun.sleep(settleMs);
+    };
     start();
     await wait("compiled CLI initial model", () => pane().includes("placement-parent"));
     await Bun.sleep(2000);
@@ -191,74 +199,80 @@ try {
       await Bun.sleep(6000);
       await captureQuestions();
     };
+    const assertServerChildWorktree = () => {
+      assert.equal(
+        ssh("cat /tmp/placement-orchestrator-clean-cwd").startsWith("/root/"),
+        true,
+        "orchestrator did not use isolated server snapshot",
+      );
+      const orchCwd = ssh("cat /tmp/placement-orchestrator-clean-cwd"),
+        childCwd = ssh("cat /tmp/placement-normal-clean-cwd");
+      assert.notEqual(childCwd, orchCwd, "normal child failed to create its own worktree");
+      const childResult = JSON.parse(ssh("cat /tmp/placement-child-result-clean.json"));
+      assert.equal(childResult.status, "completed");
+      assert(JSON.stringify(childResult).includes("PLACEMENT_NORMAL_DONE_CLEAN"));
+    };
+    // The public question and source ledger are distinct authorities. Keep their
+    // identity checks, client-only restart and explicit human approval in one journey.
+    const answerCleanQuestionAfterRestart = async (taskId: string) => {
+      assert(question(QUESTION), "ordinary questions.list omitted the remote child question");
+      const q = question(QUESTION);
+      assert.equal(q.status, "pending");
+      assert(q.owner && Number.isInteger(q.version), "question lost owner/version provenance");
+      const remoteQ = ownerQuestions(taskId).find((row: any) => row.text === QUESTION);
+      assert(remoteQ, "missing source remote question");
+      for (const identity of [taskId, remoteQ.id, remoteQ.owner.sessionId, remoteQ.owner.branchId])
+        assert(JSON.stringify(q).includes(identity), "ordinary question lost remote provenance: " + identity);
+      const objects = (value: any): any[] =>
+        value && typeof value === "object" ? [value, ...Object.values(value).flatMap(objects)] : [];
+      assert(
+        objects(q).some(
+          (row) =>
+            Object.entries(row).some(
+              ([key, value]) => key.toLowerCase().includes("version") && value === remoteQ.version,
+            ) &&
+            JSON.stringify(row).includes(remoteQ.owner.sessionId) &&
+            JSON.stringify(row).includes(remoteQ.owner.branchId),
+        ),
+        "ordinary question lost source owner/version routing",
+      );
+      writeFileSync(
+        join(artifacts, "question-provenance.json"),
+        JSON.stringify({ parent: q, remote: remoteQ }, null, 2),
+      );
+      assertServerChildWorktree();
+      capture("02-question-before-restart");
+      // Kill only the parent client. Server work must retain the same task and question.
+      await restartParent("compiled client restarted", 2000);
+      assert.equal(JSON.stringify(state().connection), pinned);
+      assert.deepEqual(Object.keys(state().tasks), [taskId]);
+      await captureQuestions();
+      assert.equal(question(QUESTION)?.id, q.id, "restart changed ordinary question identity");
+      assert.equal(question(QUESTION).status, "pending");
+      assert.deepEqual(question(QUESTION).owner, q.owner);
+      assert.equal(question(QUESTION).version, q.version);
+      type("/questions");
+      await wait("ordinary questions menu", () => pane().includes("Questions ·") && pane().includes(QUESTION));
+      capture("03-ordinary-questions-menu");
+      key("Escape");
+      await Bun.sleep(150);
+      assert.equal(
+        ownerQuestions(taskId).find((row: any) => row.id === remoteQ.id).status,
+        "pending",
+        "Escape guessed an answer",
+      );
+      type("/questions");
+      await wait("ordinary question picker", () => pane().includes("Questions ·"));
+      key("Enter");
+      await wait("human answer choice", () => pane().includes("→ " + ANSWER));
+      capture("04-explicit-human-choice");
+      key("Enter");
+    };
     type("PLACEMENT_START_CLEAN launch normal subagent to pinned target");
     await wait("exactly one normal placed task", () => Object.keys(state().tasks).length === 1);
     const cleanId = Object.keys(state().tasks)[0];
     await waitOwnerQuestion(cleanId);
-    assert(question(QUESTION), "ordinary questions.list omitted the remote child question");
-    const q = question(QUESTION);
-    assert.equal(q.status, "pending");
-    assert(q.owner && Number.isInteger(q.version), "question lost owner/version provenance");
-    const remoteQ = ownerQuestions(cleanId).find((row: any) => row.text === QUESTION);
-    assert(remoteQ, "missing source remote question");
-    for (const identity of [cleanId, remoteQ.id, remoteQ.owner.sessionId, remoteQ.owner.branchId])
-      assert(JSON.stringify(q).includes(identity), "ordinary question lost remote provenance: " + identity);
-    const objects = (value: any): any[] =>
-      value && typeof value === "object" ? [value, ...Object.values(value).flatMap(objects)] : [];
-    assert(
-      objects(q).some(
-        (row) =>
-          Object.entries(row).some(
-            ([key, value]) => key.toLowerCase().includes("version") && value === remoteQ.version,
-          ) &&
-          JSON.stringify(row).includes(remoteQ.owner.sessionId) &&
-          JSON.stringify(row).includes(remoteQ.owner.branchId),
-      ),
-      "ordinary question lost source owner/version routing",
-    );
-    writeFileSync(join(artifacts, "question-provenance.json"), JSON.stringify({ parent: q, remote: remoteQ }, null, 2));
-    assert.equal(
-      ssh("cat /tmp/placement-orchestrator-clean-cwd").startsWith("/root/"),
-      true,
-      "orchestrator did not use isolated server snapshot",
-    );
-    const orchCwd = ssh("cat /tmp/placement-orchestrator-clean-cwd"),
-      childCwd = ssh("cat /tmp/placement-normal-clean-cwd");
-    assert.notEqual(childCwd, orchCwd, "normal child failed to create its own worktree");
-    const childResult = JSON.parse(ssh("cat /tmp/placement-child-result-clean.json"));
-    assert.equal(childResult.status, "completed");
-    assert(JSON.stringify(childResult).includes("PLACEMENT_NORMAL_DONE_CLEAN"));
-    capture("02-question-before-restart");
-    // Kill only the parent client. Server work must retain the same task and question.
-    tmux("kill-session", "-t", "placement");
-    ptyStarted = false;
-    await Bun.sleep(500);
-    start();
-    await wait("compiled client restarted", () => pane().includes("placement-parent"));
-    await Bun.sleep(2000);
-    assert.equal(JSON.stringify(state().connection), pinned);
-    assert.deepEqual(Object.keys(state().tasks), [cleanId]);
-    await captureQuestions();
-    assert.equal(question(QUESTION)?.id, q.id, "restart changed ordinary question identity");
-    assert.equal(question(QUESTION).status, "pending");
-    assert.deepEqual(question(QUESTION).owner, q.owner);
-    assert.equal(question(QUESTION).version, q.version);
-    type("/questions");
-    await wait("ordinary questions menu", () => pane().includes("Questions ·") && pane().includes(QUESTION));
-    capture("03-ordinary-questions-menu");
-    key("Escape");
-    await Bun.sleep(150);
-    assert.equal(
-      ownerQuestions(cleanId).find((row: any) => row.id === remoteQ.id).status,
-      "pending",
-      "Escape guessed an answer",
-    );
-    type("/questions");
-    await wait("ordinary question picker", () => pane().includes("Questions ·"));
-    key("Enter");
-    await wait("human answer choice", () => pane().includes("→ " + ANSWER));
-    capture("04-explicit-human-choice");
-    key("Enter");
+    await answerCleanQuestionAfterRestart(cleanId);
     await wait(
       "safe clean result returned",
       () => readFileSync(join(repo, "tracked.txt"), "utf8") === "PLACEMENT_REMOTE_RETURN\n",
@@ -322,12 +336,7 @@ try {
     // No manual remote sync/answer/inbox is part of this task lifecycle.
     await Bun.sleep(12000);
     assert.equal(completions().length, count, "repeat automatic observation delivered duplicate normal completion");
-    tmux("kill-session", "-t", "placement");
-    ptyStarted = false;
-    await Bun.sleep(500);
-    start();
-    await wait("second reconnect", () => pane().includes("placement-parent"));
-    await Bun.sleep(6000);
+    await restartParent("second reconnect", 6000);
     assert.equal(completions().length, count, "reconnect replayed a consumed completion");
     assert.equal(Object.keys(state().tasks).length, 2, "restart duplicated remote task");
     const ownerCount = ssh("find /root/.bruv/remote-owner/tasks -mindepth 1 -maxdepth 1 -type d | wc -l");

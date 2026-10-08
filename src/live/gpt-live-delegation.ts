@@ -57,18 +57,95 @@ function boundedData(value: unknown, max = 3800): string {
 export const GPT_LIVE_FRAGMENT_BYTES = 64 * 1024;
 const fragmentBytes = (fragment: LiveFragment) => Buffer.byteLength(JSON.stringify(fragment), "utf8") + 1;
 
+interface SpeechEntry {
+  fragment: LiveFragment;
+  use: "available" | "pending" | "consumed";
+  retained: boolean;
+}
+interface SpeechAdmission {
+  entries: SpeechEntry[];
+  fragments: LiveFragment[];
+  priorSpeechEndMs?: number;
+}
+type SpeechPreparation =
+  | { kind: "ready"; admission: SpeechAdmission }
+  | { kind: "pending-loss" }
+  | { kind: "future-loss" }
+  | { kind: "incomplete" };
+
+/** Retains provisional evidence until admission, not until the coding agent finishes. */
+class ProvisionalSpeech {
+  private entries: SpeechEntry[] = [];
+  private retainedBytes = 2;
+  private omittedFragments = 0;
+  private omittedThroughMs = -1;
+  private pendingEvictions = 0;
+  private admittedThroughMs = -1;
+
+  add(fragment: LiveFragment): void {
+    // Corrections remain separate evidence in arrival order, with their original timeline.
+    const entry: SpeechEntry = { fragment: { ...fragment }, use: "available", retained: true };
+    this.entries.push(entry);
+    this.retainedBytes += fragmentBytes(entry.fragment);
+    while (this.retainedBytes > GPT_LIVE_FRAGMENT_BYTES) {
+      const removed = this.entries.shift()!;
+      this.retainedBytes -= fragmentBytes(removed.fragment);
+      removed.retained = false;
+      if (removed.use === "pending") this.pendingEvictions++;
+      else if (removed.use === "available") this.recordOmission(removed.fragment);
+    }
+  }
+
+  prepareAdmission(offsetMs: number): SpeechPreparation {
+    // Only admission can decide whether evicted pending evidence is missing.
+    if (this.pendingEvictions) return { kind: "pending-loss" };
+    const selected = this.entries.filter((entry) => entry.use === "available" && entry.fragment.endMs <= offsetMs);
+    if (this.omittedFragments > 0) {
+      // An old delegation cannot acknowledge newer loss and unlock its suffix.
+      if (
+        offsetMs < this.omittedThroughMs ||
+        this.entries.some((entry) => entry.use !== "consumed" && entry.fragment.endMs > offsetMs)
+      )
+        return { kind: "future-loss" };
+      // Retire the incomplete attempt without admission. A fresh repeat can recover.
+      for (const entry of selected) entry.use = "consumed";
+      this.omittedFragments = 0;
+      this.omittedThroughMs = -1;
+      return { kind: "incomplete" };
+    }
+    for (const entry of selected) entry.use = "pending";
+    return {
+      kind: "ready",
+      admission: {
+        entries: selected,
+        fragments: selected.map((entry) => ({ ...entry.fragment })),
+        ...(this.admittedThroughMs >= 0 ? { priorSpeechEndMs: this.admittedThroughMs } : {}),
+      },
+    };
+  }
+
+  settleAdmission(admission: SpeechAdmission, admitted: boolean): void {
+    for (const entry of admission.entries) {
+      entry.use = admitted ? "consumed" : "available";
+      if (admitted) this.admittedThroughMs = Math.max(this.admittedThroughMs, entry.fragment.endMs);
+      if (!entry.retained) {
+        this.pendingEvictions--;
+        // Accepted evidence already lives in ordinary agent history; only rejection loses it.
+        if (!admitted) this.recordOmission(entry.fragment);
+      }
+    }
+  }
+
+  private recordOmission(fragment: LiveFragment): void {
+    this.omittedFragments++;
+    this.omittedThroughMs = Math.max(this.omittedThroughMs, fragment.endMs);
+  }
+}
+
 /** One instance per Live connection. Closing invalidates results but never cancels backend work. */
 export class GptLiveDelegationBridge {
-  private fragments: LiveFragment[] = [];
-  private retainedBytes = 2;
-  private omitted = 0;
-  private omittedThroughMs = -1;
-  private readonly consumedFragments = new WeakSet<LiveFragment>();
-  private readonly pendingFragments = new WeakSet<LiveFragment>();
-  private readonly pendingEvicted = new Set<LiveFragment>();
-  private consumedOmitted = 0;
+  private readonly speech = new ProvisionalSpeech();
   private revision = 0;
-  private admittedThroughMs = -1;
   private epoch = 0;
   private closed = false;
   private readonly attempted = new Set<string>();
@@ -104,22 +181,8 @@ export class GptLiveDelegationBridge {
       !fragment.text.length
     )
       return;
-    // Corrections can arrive late. Keep order of arrival and retain timeline coordinates.
-    const retained = { ...fragment };
-    this.fragments.push(retained);
-    this.retainedBytes += fragmentBytes(retained);
+    this.speech.add(fragment);
     this.revision++;
-    while (this.retainedBytes > GPT_LIVE_FRAGMENT_BYTES) {
-      const removed = this.fragments.shift()!;
-      this.retainedBytes -= fragmentBytes(removed);
-      if (this.pendingFragments.has(removed)) this.pendingEvicted.add(removed);
-      else if (!this.consumedFragments.has(removed)) this.recordOmission(removed);
-    }
-  }
-
-  private recordOmission(fragment: LiveFragment): void {
-    this.omitted++;
-    this.omittedThroughMs = Math.max(this.omittedThroughMs, fragment.endMs);
   }
 
   /** Barge-in only invalidates spoken results. It does not stop the host agent or its jobs. */
@@ -151,67 +214,42 @@ export class GptLiveDelegationBridge {
     const revision = this.revision;
     const context = [...this.contexts].reverse().find((entry) => entry.offsetMs <= event.offsetMs);
     if (!context) return { kind: "unavailable", id };
-    // Admission still decides whether evicted pending speech is missing. Do not
-    // dispatch a suffix while that decision is unresolved.
-    if (this.pendingEvicted.size)
+    const prepared = this.speech.prepareAdmission(event.offsetMs);
+    if (prepared.kind === "pending-loss")
       return {
         kind: "clarification",
         id,
         revision,
         commentary: "I'm still checking whether the earlier request was accepted. Please try again in a moment.",
       };
-    const omittedAtCapture = this.omitted;
-    const selected = this.fragments.filter(
-      (fragment) =>
-        !this.consumedFragments.has(fragment) &&
-        !this.pendingFragments.has(fragment) &&
-        fragment.endMs <= event.offsetMs,
-    );
-    const snapshot: DelegationSnapshot = {
-      delegationId: id,
-      offsetMs: event.offsetMs,
-      revision,
-      ...(this.admittedThroughMs >= 0 ? { priorSpeechEndMs: this.admittedThroughMs } : {}),
-      fragments: selected.map((f) => ({ ...f })),
-      omittedFragments: Math.max(0, omittedAtCapture - this.consumedOmitted),
-      uncertain: true,
-      hostContext: context.data,
-      hostContextOffsetMs: context.offsetMs,
-      contextClock: "local-capture-approximate",
-    };
-    if (snapshot.omittedFragments > 0) {
-      // An old delegation cannot acknowledge newer loss and unlock its suffix.
-      if (
-        event.offsetMs < this.omittedThroughMs ||
-        this.fragments.some((fragment) => !this.consumedFragments.has(fragment) && fragment.endMs > event.offsetMs)
-      )
-        return { kind: "unavailable", id };
-      // Never execute an unsafe suffix. Retire this incomplete attempt so a
-      // fresh repeat can recover; it was NOT admitted to the coding agent.
-      for (const fragment of selected) this.consumedFragments.add(fragment);
-      this.consumedOmitted = omittedAtCapture;
-      this.omittedThroughMs = -1;
+    if (prepared.kind === "future-loss") return { kind: "unavailable", id };
+    if (prepared.kind === "incomplete")
       return {
         kind: "clarification",
         id,
         revision,
         commentary: "I couldn't retain the whole request. Please repeat it.",
       };
-    }
-    for (const fragment of selected) this.pendingFragments.add(fragment);
+    const { admission } = prepared;
+    const snapshot: DelegationSnapshot = {
+      delegationId: id,
+      offsetMs: event.offsetMs,
+      revision,
+      ...(admission.priorSpeechEndMs !== undefined ? { priorSpeechEndMs: admission.priorSpeechEndMs } : {}),
+      fragments: admission.fragments,
+      omittedFragments: 0,
+      uncertain: true,
+      hostContext: context.data,
+      hostContextOffsetMs: context.offsetMs,
+      contextClock: "local-capture-approximate",
+    };
+    let admitted = false;
     try {
       // No synthetic tool names, task text, cancellation, or exact speech check.
       const result = await this.host.submitContextual(id, snapshot);
-      if (result && "queued" in result && result.queued === true) {
-        for (const fragment of selected) {
-          this.consumedFragments.add(fragment);
-          this.admittedThroughMs = Math.max(this.admittedThroughMs, fragment.endMs);
-        }
-        this.consumedOmitted = Math.max(this.consumedOmitted, omittedAtCapture);
-      }
+      admitted = !!(result && "queued" in result && result.queued === true);
       if (this.closed || this.epoch !== epoch || this.revision !== revision) return { kind: "stale", id };
-      if (result && "queued" in result && result.queued === true)
-        return { kind: "queued", id, revision, commentary: "Passed your request to the current agent." };
+      if (admitted) return { kind: "queued", id, revision, commentary: "Passed your request to the current agent." };
       if (result && "clarification" in result && result.clarification === true)
         return { kind: "clarification", id, revision, commentary: "Could you clarify your request?" };
       return { kind: "unavailable", id };
@@ -221,13 +259,8 @@ export class GptLiveDelegationBridge {
       // Do not expose raw errors or untrusted backend output as speech.
       return { kind: "unavailable", id };
     } finally {
-      for (const fragment of selected) {
-        this.pendingFragments.delete(fragment);
-        // Evicted pending evidence is lost only if admission failed; an admitted
-        // request already carries it in ordinary agent history.
-        if (this.pendingEvicted.has(fragment) && !this.consumedFragments.has(fragment)) this.recordOmission(fragment);
-        this.pendingEvicted.delete(fragment);
-      }
+      // Settle real admission even when correction, barge-in or closure silenced its result.
+      this.speech.settleAdmission(admission, admitted);
     }
   }
 }

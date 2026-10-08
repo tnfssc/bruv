@@ -10,6 +10,26 @@ export async function httpMcpLifecycleFixture({ timeout = 2000 }: { timeout?: nu
   const requests: { method: string; rpc?: string; session?: string }[] = [];
   let rejectDelete = false;
   let deleteDelay = 0;
+
+  async function createSessionTransport() {
+    const transport = new StreamableHTTPServerTransport({
+      sessionIdGenerator: randomUUID,
+      enableJsonResponse: true,
+      onsessioninitialized: (id) => {
+        sessions.set(id, transport);
+      },
+      onsessionclosed: (id) => {
+        sessions.delete(id);
+      },
+    });
+    const server = new McpServer({ name: "lifecycle-fixture", version: "1" });
+    server.registerTool("echo", { inputSchema: { text: z.string() } }, async ({ text }) => ({
+      content: [{ type: "text", text }],
+    }));
+    await server.connect(transport);
+    return transport;
+  }
+
   const http = createServer(async (req, res) => {
     const chunks: Buffer[] = [];
     for await (const chunk of req) chunks.push(chunk);
@@ -22,21 +42,7 @@ export async function httpMcpLifecycleFixture({ timeout = 2000 }: { timeout?: nu
     }
     let transport = session ? sessions.get(session) : undefined;
     if (!transport && body?.method === "initialize") {
-      transport = new StreamableHTTPServerTransport({
-        sessionIdGenerator: randomUUID,
-        enableJsonResponse: true,
-        onsessioninitialized: (id) => {
-          sessions.set(id, transport!);
-        },
-        onsessionclosed: (id) => {
-          sessions.delete(id);
-        },
-      });
-      const server = new McpServer({ name: "lifecycle-fixture", version: "1" });
-      server.registerTool("echo", { inputSchema: { text: z.string() } }, async ({ text }) => ({
-        content: [{ type: "text", text }],
-      }));
-      await server.connect(transport);
+      transport = await createSessionTransport();
     }
     if (!transport) {
       res.writeHead(404).end();

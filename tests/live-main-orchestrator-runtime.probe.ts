@@ -42,7 +42,7 @@ test("voice-facing declaration dispatches to existing execute tool and child run
         getSessionFile: () => join(cwd, "fixture.jsonl"),
       },
     } as unknown as ExtensionToolContext;
-    // The provider declaration here is deliberately only a test adapter; current Live does not advertise execute.
+    // This synthetic provider declaration is only a test adapter, not evidence of production Live advertisement or admission.
     const declaration = { name: tool.name, parametersJsonSchema: tool.parameters };
     expect(declaration.parametersJsonSchema).toBe(tool.parameters);
     expect(JSON.stringify(declaration.parametersJsonSchema)).toContain("outputByteLimit");

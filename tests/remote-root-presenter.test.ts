@@ -1,9 +1,17 @@
-import { expect, test } from "bun:test";
+import { expect, spyOn, test } from "bun:test";
+import { mkdtempSync } from "node:fs";
+import { ownedFixtureEnv } from "./helpers";
+import { type Component, type Editor, ProcessTerminal, TuiMainScreen } from "@earendil-works/pi-tui";
 import { parseStreamingJson } from "@earendil-works/pi-ai";
 import { taskRowFromLaunch, taskRowsFromDetails, taskRowsFromSessionEntries } from "../src/ui/task-rows";
-import type { RootObservation } from "../src/remote/root-contract";
+import type { RootCommand, RootDialog, RootObservation } from "../src/remote/root-contract";
 import { dispatchRootFacet } from "../src/remote/root-runtime";
-import { RootControls, type RootPresentationControls, RootTranscript } from "../src/remote/root-presenter";
+import {
+  presentRemoteRoot,
+  RootControls,
+  type RootPresentationControls,
+  RootTranscript,
+} from "../src/remote/root-presenter";
 
 function replay(messages: unknown[], extraEvents: unknown[] = []): RootObservation {
   const events = [...messages.map((message) => ({ type: "message_end", message })), ...extraEvents];
@@ -18,11 +26,8 @@ function replay(messages: unknown[], extraEvents: unknown[] = []): RootObservati
   };
 }
 
-function fixture(receipt: Record<string, unknown> = {}) {
+function remoteReplies(receipt: Record<string, unknown> = {}) {
   const commands: any[] = [];
-  const picks: string[] = [];
-  const notices: string[] = [];
-  const titles: string[] = [];
   const question = {
     id: "not-a-routine-copy-id",
     text: "Choose implementation",
@@ -31,20 +36,28 @@ function fixture(receipt: Record<string, unknown> = {}) {
     status: "pending",
     choices: ["first", "second"],
   };
-  let detached = false;
-  const client: any = {
+  const client = {
     read: () => ({ commands: {}, target: { name: "builder" } }),
-    command: async (command: any) => {
+    command: async (command: RootCommand) => {
       commands.push(command);
       return { commandId: "c", state: "completed", ...receipt };
     },
-    result: async (command: any) => {
+    result: async (command: RootCommand) => {
       commands.push(command);
       if (command.kind === "questions.list") return { questions: [question] };
       if (command.kind === "jobs.list") return { jobs: [{ id: "job", title: "Run tests", status: "running" }] };
       return { output: "test progress" };
     },
   };
+  return { client, commands, question };
+}
+
+function fixture(receipt: Record<string, unknown> = {}) {
+  const remote = remoteReplies(receipt);
+  const picks: string[] = [];
+  const notices: string[] = [];
+  const titles: string[] = [];
+  let detached = false;
   const ui: RootPresentationControls = {
     choose: async (title) => {
       titles.push(title);
@@ -55,12 +68,11 @@ function fixture(receipt: Record<string, unknown> = {}) {
     detach: () => (detached = true),
   };
   return {
-    commands,
+    ...remote,
     picks,
     notices,
     titles,
-    question,
-    controls: new RootControls(client, ui),
+    controls: new RootControls(remote.client as any, ui),
     detached: () => detached,
   };
 }
@@ -780,4 +792,183 @@ test("root resume correlates unnamed shells to execute labels before command pre
   ]);
   t.details = true;
   expect(t.render(120, 0).join("\n")).toContain("RAW_LAUNCH_SOURCE");
+});
+
+// Mount shipped listeners/focus/input dispatch; intercept both render schedulers at doRender.
+function mountedPresentation(dialog?: RootDialog) {
+  // Retain this owned fixture: constructors must not inspect inherited config or terminal log paths.
+  const directory = mkdtempSync("/tmp/bruv-root-presentation-");
+  const env = {
+    ...ownedFixtureEnv(directory),
+    PI_TUI_DEBUG: "0",
+    PI_TUI_DEBUG_REDRAW: "0",
+    PI_TUI_WRITE_LOG: "",
+    COLUMNS: "80",
+    LINES: "24",
+  };
+  const previousEnv = Object.keys(env).map((key) => [key, process.env[key]] as const);
+  Object.assign(process.env, env);
+  const remote = remoteReplies();
+  const record = replay([]).record;
+  record.dialogs = dialog ? [dialog] : [];
+  let root!: Component;
+  let focus!: Component;
+  let terminalInput!: (data: string) => void;
+  let detached = false;
+  const focuses: Component[] = [];
+  const addChild = TuiMainScreen.prototype.addChild;
+  const setFocus = TuiMainScreen.prototype.setFocus;
+  const spies = [
+    spyOn(ProcessTerminal.prototype, "start").mockImplementation((onInput) => {
+      terminalInput = onInput;
+    }),
+    spyOn(ProcessTerminal.prototype, "stop").mockImplementation(() => {}),
+    spyOn(ProcessTerminal.prototype, "write").mockImplementation(() => {}),
+    spyOn(ProcessTerminal.prototype, "hideCursor").mockImplementation(() => {}),
+    spyOn(ProcessTerminal.prototype, "showCursor").mockImplementation(() => {}),
+    // doRender is protected in TypeScript, but is the shared runtime boundary for
+    // requestRender, requestImmediateRender and renderNow. Never enter its diagnostics.
+    spyOn(TuiMainScreen.prototype as unknown as { doRender(): void }, "doRender").mockImplementation(() => {}),
+    spyOn(TuiMainScreen.prototype, "addChild").mockImplementation(function (this: TuiMainScreen, component) {
+      addChild.call(this, component);
+      root = component;
+    }),
+    spyOn(TuiMainScreen.prototype, "setFocus").mockImplementation(function (this: TuiMainScreen, component) {
+      setFocus.call(this, component);
+      focus = component!;
+      focuses.push(focus);
+    }),
+  ];
+  const running = presentRemoteRoot(
+    {
+      ...remote.client,
+      read: () => ({ ...remote.client.read(), record, events: [], sourceLabel: "saved", cacheStart: 1 }),
+      reconcile: async () => [],
+      observe: async () => ({ ...replay([]), record }),
+      detach: async () => {
+        detached = true;
+      },
+    } as any,
+    { pollMs: 1 },
+  );
+  const editor = focus as Editor;
+  // Terminal I/O and frame painting are fake; input routing and render scheduling stay shipped.
+  const key = (data: string) => terminalInput(data);
+  return {
+    ...remote,
+    root,
+    editor,
+    key,
+    focuses,
+    focus: () => focus,
+    frame: () => root.render(80).join("\n"),
+    detached: () => detached,
+    async close() {
+      key("\x04");
+      try {
+        await running;
+      } finally {
+        for (const spy of spies) spy.mockRestore();
+        for (const [key, value] of previousEnv) {
+          if (value === undefined) delete process.env[key];
+          else process.env[key] = value;
+        }
+      }
+    },
+  };
+}
+async function waitForPresentation(predicate: () => boolean) {
+  for (let attempt = 0; attempt < 100 && !predicate(); attempt++) await Bun.sleep(1);
+  expect(predicate()).toBe(true);
+}
+
+test("shipped terminal input submits through the focused editor, not root fallback", async () => {
+  const p = mountedPresentation();
+  const rootInput = spyOn(p.root, "handleInput");
+  try {
+    p.key("Do work");
+    expect(p.editor.getText()).toBe("Do work");
+    p.key("\r");
+    await waitForPresentation(() => p.editor.getText() === "");
+    expect(p.commands).toEqual([{ kind: "prompt", text: "Do work" }]);
+    expect(rootInput).not.toHaveBeenCalled();
+  } finally {
+    rootInput.mockRestore();
+    await p.close();
+  }
+  expect(p.detached()).toBe(true);
+});
+
+test("shipped question flow restores prompt focus between selection and free-text answer", async () => {
+  const p = mountedPresentation();
+  try {
+    p.key("/questions");
+    p.key("\r");
+    await waitForPresentation(() => p.focus() !== p.editor);
+    expect(p.frame()).toContain("Human questions");
+    p.key("\r");
+    await waitForPresentation(() => p.frame().includes("Type an answer"));
+    p.key("\x1b[B");
+    p.key("\x1b[B");
+    p.key("\r");
+    await waitForPresentation(() => !p.frame().includes("Type an answer"));
+    expect(p.focuses.slice(-2)[0]).toBe(p.editor);
+    p.key("a human answer");
+    p.key("\r");
+    await waitForPresentation(() => p.commands.some((command) => command.kind === "questions.answer"));
+    expect(p.commands.at(-1)).toEqual({
+      kind: "questions.answer",
+      id: p.question.id,
+      owner: p.question.owner,
+      version: p.question.version,
+      text: "a human answer",
+      replyId: expect.any(String),
+    });
+    expect(p.focus()).toBe(p.editor);
+    await waitForPresentation(() => p.editor.getText() === "");
+  } finally {
+    await p.close();
+  }
+  expect(p.detached()).toBe(true);
+});
+
+test("shipped picker cancellation restores prompt; Ctrl-C outside the modal still aborts", async () => {
+  const p = mountedPresentation();
+  try {
+    p.key("/questions");
+    p.key("\r");
+    await waitForPresentation(() => p.focus() !== p.editor);
+    p.key("\x03");
+    expect(p.focus()).toBe(p.editor);
+    await waitForPresentation(() => p.editor.getText() === "");
+    expect(p.commands.map((command) => command.kind)).toEqual(["questions.list"]);
+    p.key("\x03");
+    await waitForPresentation(() => p.commands.some((command) => command.kind === "abort"));
+  } finally {
+    await p.close();
+  }
+});
+
+test("shipped dialog Escape cancels remotely but detach during text input never responds", async () => {
+  const cancelled = mountedPresentation({ id: "confirm", method: "confirm", title: "Proceed?" });
+  try {
+    await waitForPresentation(() => cancelled.focus() !== cancelled.editor);
+    cancelled.key("\x1b");
+    await waitForPresentation(() => cancelled.commands.length === 1);
+    expect(cancelled.commands).toEqual([{ kind: "ui.respond", id: "confirm", cancelled: true }]);
+    expect(cancelled.focus()).toBe(cancelled.editor);
+  } finally {
+    await cancelled.close();
+  }
+  const detached = mountedPresentation({ id: "input", method: "input", title: "Your answer" });
+  try {
+    await waitForPresentation(() => detached.focus() !== detached.editor);
+    detached.key("not submitted");
+    expect(detached.frame()).toContain("not submitted");
+  } finally {
+    await detached.close();
+  }
+  expect(detached.commands).toEqual([]);
+  expect(detached.detached()).toBe(true);
+  expect(detached.focus()).toBe(detached.editor);
 });

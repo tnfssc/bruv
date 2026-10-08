@@ -1,4 +1,5 @@
 import { expect, test } from "bun:test";
+import { createHash } from "node:crypto";
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -18,8 +19,25 @@ installSelectorLifecycle();
 
 test("selector projection matches pinned pre-patch geometry and 80/20-column output", () => {
   const result = selectorBehavior(TreeSelectorComponent);
-  // Captured from the pinned 1.0.3 selector before this patch (14 scenario states).
-  expect(result.hash).toBe("285c955d33fdedc527cc7faccd560f1bc630fc097a7049161806197b4aeff685");
+  // Retain the pinned 1.0.3 golden for the 13 rendered replay states. Its final
+  // capture had misplaced constructor arguments (default filter, missing selection).
+  // Freeze that historical tail for the digest; check the corrected scenario directly.
+  const historicalSnapshots = [
+    ...result.snapshots.slice(0, -1),
+    {
+      name: "hidden-ancestor-and-tool-leaf",
+      selected: "second-leaf",
+      ids: ["root", "main", "call", "result", "leaf", "alternate", "alt-leaf", "second-leaf"],
+    },
+  ];
+  expect(createHash("sha256").update(JSON.stringify(historicalSnapshots)).digest("hex")).toBe(
+    "285c955d33fdedc527cc7faccd560f1bc630fc097a7049161806197b4aeff685",
+  );
+  expect(result.snapshots.at(-1)).toEqual({
+    name: "hidden-ancestor-and-tool-leaf",
+    selected: "root", // The requested settings entry is hidden: select its visible ancestor.
+    ids: ["root", "main", "call", "leaf", "alternate", "alt-leaf", "second-leaf"],
+  });
   expect(result.snapshots).toHaveLength(14);
   expect(result.accepted).toBe("alternate");
   expect(result.cancelled).toBe(1);
@@ -44,6 +62,44 @@ test("native session entry count retains in-memory semantics", () => {
 
 test("disk count reads metadata, includes inactive branch compactions, and never rewrites history", () => {
   const root = mkdtempSync(join(tmpdir(), "bruv-selector-count-"));
+  try {
+    const file = writeBranchedHistory(root);
+    const manager = SessionManager.open(file);
+    const getEntries = manager.getEntries;
+    try {
+      const before = readFileSync(file);
+      manager.getEntries = () => {
+        throw new Error("body replay forbidden for count");
+      };
+      expect(manager.getLeafId()).toBe("alternate");
+      expect(manager.getEntryCountByType("compaction")).toBe(1);
+      expect(manager.getEntryCountByType("message")).toBe(2);
+      manager.branch("user");
+      expect(manager.getEntryCountByType("compaction")).toBe(1);
+      manager.appendCompaction("new summary", "user", 20);
+      expect(manager.getEntryCountByType("compaction")).toBe(2);
+      // Append only: all existing bytes remain intact.
+      expect(readFileSync(file).subarray(0, before.length)).toEqual(before);
+    } finally {
+      manager.getEntries = getEntries;
+      disposeDiskBackedSessionManager(manager);
+    }
+
+    // Reopen without the replay guard to verify persisted counts and bodies.
+    const reopened = SessionManager.open(file);
+    try {
+      expect(reopened.getEntryCountByType("compaction")).toBe(2);
+      expect(reopened.getEntries().filter((e) => e.type === "message")).toHaveLength(2);
+    } finally {
+      disposeDiskBackedSessionManager(reopened);
+    }
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+// The alternate message leaves the existing compaction on an inactive branch.
+function writeBranchedHistory(root: string): string {
   const file = join(root, "history.jsonl");
   const timestamp = "2026-01-01T00:00:00.000Z";
   writeFileSync(
@@ -77,32 +133,5 @@ test("disk count reads metadata, includes inactive branch compactions, and never
       .map((entry) => JSON.stringify(entry))
       .join("\n") + "\n",
   );
-  const manager = SessionManager.open(file);
-  const before = readFileSync(file);
-  const getEntries = manager.getEntries;
-  manager.getEntries = () => {
-    throw new Error("body replay forbidden for count");
-  };
-  try {
-    expect(manager.getLeafId()).toBe("alternate");
-    expect(manager.getEntryCountByType("compaction")).toBe(1);
-    expect(manager.getEntryCountByType("message")).toBe(2);
-    manager.branch("user");
-    expect(manager.getEntryCountByType("compaction")).toBe(1);
-    manager.appendCompaction("new summary", "user", 20);
-    expect(manager.getEntryCountByType("compaction")).toBe(2);
-    // Append only: all existing bytes remain intact.
-    expect(readFileSync(file).subarray(0, before.length)).toEqual(before);
-  } finally {
-    manager.getEntries = getEntries;
-    disposeDiskBackedSessionManager(manager);
-    const reopened = SessionManager.open(file);
-    try {
-      expect(reopened.getEntryCountByType("compaction")).toBe(2);
-      expect(reopened.getEntries().filter((e) => e.type === "message")).toHaveLength(2);
-    } finally {
-      disposeDiskBackedSessionManager(reopened);
-      rmSync(root, { recursive: true, force: true });
-    }
-  }
-});
+  return file;
+}

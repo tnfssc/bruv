@@ -1124,6 +1124,38 @@ test("save warning survives a busy collapsed header and remains a header click t
   expect(render()).toHaveLength(2);
 });
 
+test("revisited journal identities remain separate runs with independent expansion", () => {
+  const { chat, state, render } = setup([user("u1"), calls("a", "c"), user("u2"), calls("b")]);
+  const first = tool("a");
+  const middle = tool("b");
+  const last = tool("c");
+  chat.addChild(first);
+  chat.addChild(middle);
+  chat.addChild(last);
+  expect(render()).toEqual(["1 tool called", "1 tool called", "1 tool called"]);
+  expect(state.groups.map((group) => group.identity)).toEqual(["u1", "u2", "u1"]);
+  expect(state.groups.map((group) => group.items)).toEqual([[first], [middle], [last]]);
+  state.toggle(state.groups[0]!);
+  render();
+  expect(state.groups.map((group) => group.expanded)).toEqual([true, false, false]);
+});
+
+test("handoff ends a run and its source-call eligibility even when identity continues", () => {
+  const { chat, state, render } = setup([user("u1"), calls("a", "b")]);
+  const handoff = tool("a", { handoff: "Need your answer" });
+  const next = tool("b");
+  const late = notice("task-complete", "LATE_DETAIL", {
+    tasks: [{ id: "job", kind: "command", status: "completed", launchIdentity: { sourceCallId: "a" } }],
+  });
+  chat.addChild(handoff);
+  chat.addChild(next);
+  chat.addChild(late);
+  render();
+  expect(state.groups.map((group) => group.identity)).toEqual(["u1", "u1", "notices"]);
+  expect(state.groups.map((group) => group.items)).toEqual([[handoff], [next], [late]]);
+  expect(state.groups.map((group) => state.count(group))).toEqual([1, 1, 0]);
+});
+
 test("adjacent callbacks join only their proven source group without adding a tool call", () => {
   const { chat, state, render } = setup();
   chat.addChild(tool("origin"));

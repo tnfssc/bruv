@@ -1,5 +1,5 @@
 import { spawnSync } from "node:child_process";
-import { mkdtempSync, writeFileSync, rmSync, existsSync } from "node:fs";
+import { mkdtempSync, mkdirSync, writeFileSync, renameSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { shouldDrop } from "./fixtures/remote-typed-root-placement/reply-loss";
 import { describe, expect, test } from "bun:test";
@@ -306,52 +306,63 @@ describe("typed root failure acceptance guards", () => {
   });
 });
 
-test("reply-loss relay really forwards once, discards bytes and gates status until release", () => {
-  const dir = mkdtempSync(join(process.env.TMPDIR ?? "/tmp", "typed-root-relay-test-"));
-  try {
-    const fakeSSH = join(dir, "fake-ssh");
-    // Isolated executable stand-in tests relay mechanics, NOT backend/SSH acceptance.
-    writeFileSync(
-      fakeSSH,
-      "#!/bin/sh\ncat > " +
-        JSON.stringify(join(dir, "forwarded.json")) +
-        '\nprintf \'%s\' \'{"commandId":"lost","state":"completed"}\'\n',
-      { mode: 0o700 },
-    );
-    writeFileSync(join(dir, "armed"), "fixture only");
-    const request = { op: "command", commandId: "lost", command: { kind: "prompt", text: "ROOT_REPLY_LOSS once" } };
-    const relay = (input: any) =>
-      spawnSync(
-        process.execPath,
-        [
-          new URL("./fixtures/remote-typed-root-placement/reply-loss.ts", import.meta.url).pathname,
-          fakeSSH,
-          "/nonexistent-fixture-config",
-          dir,
-          "fixture",
-          "bruv --remote-root-control",
-        ],
-        { input: JSON.stringify(input) + "\n", encoding: "utf8" },
-      );
-    const loss = relay(request);
-    expect(loss.status).toBe(255);
-    expect(loss.stdout).toBe("");
-    expect(JSON.parse(readFileSync(join(dir, "forwarded.json"), "utf8"))).toEqual(request);
-    const saved = JSON.parse(readFileSync(join(dir, "lost.json"), "utf8"));
-    expect(saved.request).toEqual(request);
-    expect(saved.response).toEqual({ commandId: "lost", state: "completed" });
-    rmSync(join(dir, "forwarded.json"));
-    const status = { op: "command-status", commandId: "lost" };
-    expect(relay(status).status).toBe(255);
-    expect(existsSync(join(dir, "forwarded.json"))).toBe(false);
-    rmSync(join(dir, "armed"));
-    const reconciled = relay(status);
-    expect(reconciled.status).toBe(0);
-    expect(JSON.parse(reconciled.stdout)).toEqual(saved.response);
-    expect(JSON.parse(readFileSync(join(dir, "forwarded.json"), "utf8"))).toEqual(status);
-  } finally {
-    rmSync(dir, { recursive: true, force: true });
+// Transport invocation owns only this retained mkdtemp fixture, never the caller's home/config/SDK.
+function relayRequest(fakeSSH: string, dir: string, input: unknown) {
+  const env = {
+    PATH: "/usr/bin:/bin",
+    HOME: join(dir, "home"),
+    XDG_CONFIG_HOME: join(dir, "config"),
+    BRUV_CODING_AGENT_DIR: join(dir, "sdk"),
+    TMPDIR: join(dir, "tmp"),
+  };
+  for (const path of [env.HOME, env.XDG_CONFIG_HOME, env.BRUV_CODING_AGENT_DIR, env.TMPDIR]) {
+    mkdirSync(path, { recursive: true });
   }
+  return spawnSync(
+    process.execPath,
+    [
+      new URL("./fixtures/remote-typed-root-placement/reply-loss.ts", import.meta.url).pathname,
+      fakeSSH,
+      "/nonexistent-fixture-config",
+      dir,
+      "fixture",
+      "bruv --remote-root-control",
+    ],
+    { cwd: dir, env, input: JSON.stringify(input) + "\n", encoding: "utf8" },
+  );
+}
+
+test("reply-loss relay really forwards once, discards bytes and gates status until release", () => {
+  // Retain fixture artifacts even on failure for the parent's isolated gate audit.
+  const dir = mkdtempSync(join(process.env.TMPDIR ?? "/tmp", "typed-root-relay-test-"));
+  const fakeSSH = join(dir, "fake-ssh");
+  // Isolated executable stand-in tests relay mechanics, NOT backend/SSH acceptance.
+  writeFileSync(
+    fakeSSH,
+    "#!/bin/sh\ncat > " +
+      JSON.stringify(join(dir, "forwarded.json")) +
+      '\nprintf \'%s\' \'{"commandId":"lost","state":"completed"}\'\n',
+    { mode: 0o700 },
+  );
+  writeFileSync(join(dir, "armed"), "fixture only");
+  const request = { op: "command", commandId: "lost", command: { kind: "prompt", text: "ROOT_REPLY_LOSS once" } };
+  const relay = (input: unknown) => relayRequest(fakeSSH, dir, input);
+  const loss = relay(request);
+  expect(loss.status).toBe(255);
+  expect(loss.stdout).toBe("");
+  expect(JSON.parse(readFileSync(join(dir, "forwarded.json"), "utf8"))).toEqual(request);
+  const saved = JSON.parse(readFileSync(join(dir, "lost.json"), "utf8"));
+  expect(saved.request).toEqual(request);
+  expect(saved.response).toEqual({ commandId: "lost", state: "completed" });
+  renameSync(join(dir, "forwarded.json"), join(dir, "forwarded-before-status.json"));
+  const status = { op: "command-status", commandId: "lost" };
+  expect(relay(status).status).toBe(255);
+  expect(existsSync(join(dir, "forwarded.json"))).toBe(false);
+  renameSync(join(dir, "armed"), join(dir, "released"));
+  const reconciled = relay(status);
+  expect(reconciled.status).toBe(0);
+  expect(JSON.parse(reconciled.stdout)).toEqual(saved.response);
+  expect(JSON.parse(readFileSync(join(dir, "forwarded.json"), "utf8"))).toEqual(status);
 });
 
 test("modal transitions inspect the live screen rather than stale terminal scrollback", () => {

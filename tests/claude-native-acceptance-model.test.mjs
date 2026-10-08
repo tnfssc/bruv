@@ -107,7 +107,7 @@ test("human permission scenarios request actual side effects, never native packe
     const code = JSON.parse(call.function.arguments).code;
     assert.match(code, /await Bun.write/);
     assert.ok(code.includes("/isolated/state/permission-"));
-    assert.ok(code.includes(JSON.stringify(scenario)));
+    assert.ok(code.includes(JSON.stringify("/isolated/state/permission-" + scenario + ".effect")));
     assert.doesNotMatch(code, /control_request|control_response|task_started/);
   }
   assert.throws(() => reply(request("HUMAN_PERMISSION_unknown"), options), /Unknown permission/);
@@ -117,11 +117,11 @@ test("saved human question uses durable ask/block and explicit answer resolve", 
   const ask = JSON.parse(reply(request("HUMAN_QUESTION_ASK"), options).tool_calls[0].function.arguments).code;
   assert.match(ask, /questions.ask/);
   assert.match(ask, /questions.block/);
-  assert.match(ask, /owner:q.owner,version:q.version/);
+  assert.match(ask, /owner:\s*q.owner,\s*version:\s*q.version/);
   assert.doesNotMatch(ask, /questions.answer/);
   const use = JSON.parse(reply(request("Saved answer for question"), options).tool_calls[0].function.arguments).code;
   assert.match(use, /questions.list/);
-  assert.match(use, /q.status!=="answered"/);
+  assert.match(use, /q.status\s*!==\s*"answered"/);
   assert.match(use, /questions.resolve/);
   assert.equal(
     reply(request("Saved answer for question", [{ role: "tool", content: "QUESTION_RESOLVED_ACTUAL" }]), options)
@@ -162,10 +162,176 @@ test("truncated actual cancellation notice uses the ID written by its real execu
       reply(request("ACCEPT_CANCEL"), { ...options, state }).tool_calls[0].function.arguments,
     ).code;
     assert.ok(code.includes(JSON.stringify(path.join(state, "cancel.job-id"))));
-    assert.ok(code.includes("job.id); console.log(JSON.stringify(await jobs.stop"));
+    assert.match(code, /job.id\);\s*console.log\(JSON.stringify\(await jobs.stop/);
     await fs.writeFile(path.join(state, "cancel.job-id"), "task_12345678");
     assert.throws(() => reply(request(notice), { ...options, state }), /Unrecognized acceptance request/);
   } finally {
     await fs.rm(state, { recursive: true, force: true });
   }
+});
+
+test("overlapping async replies retain their own SSE and success/error record sequence", async () => {
+  let release, slowEntered, failedEntered;
+  const gate = new Promise((resolve) => {
+    release = resolve;
+  });
+  const slowStarted = new Promise((resolve) => {
+    slowEntered = resolve;
+  });
+  const failedStarted = new Promise((resolve) => {
+    failedEntered = resolve;
+  });
+  const model = await startModel({
+    reply: async (body) => {
+      const user = body.messages[0].content;
+      if (user === "slow") {
+        slowEntered();
+        await gate;
+      }
+      if (user === "failed") {
+        failedEntered();
+        await gate;
+        throw Error("delayed failure");
+      }
+      return { role: "assistant", content: user + ":" + body.__sequence };
+    },
+  });
+  const post = (user) =>
+    fetch("http://127.0.0.1:" + model.port + "/v1/chat/completions", {
+      method: "POST",
+      body: JSON.stringify(request(user)),
+    }).then(async (response) => ({ status: response.status, text: await response.text() }));
+  try {
+    const slow = post("slow");
+    await slowStarted;
+    const failed = post("failed");
+    await failedStarted;
+    const fast = await post("fast");
+    release();
+    const [slowResponse, failedResponse] = await Promise.all([slow, failed]);
+    for (const [response, sequence, content] of [
+      [slowResponse, 1, "slow:1"],
+      [fast, 3, "fast:3"],
+    ]) {
+      assert.equal(response.status, 200);
+      const chunks = response.text.trim().split("\n\n");
+      assert.equal(chunks.pop(), "data: [DONE]");
+      const frames = chunks.map((chunk) => JSON.parse(chunk.slice(6)));
+      assert.deepEqual(
+        frames.map((frame) => frame.id),
+        Array(2).fill("local-acceptance-" + sequence),
+      );
+      assert.equal(frames[0].choices[0].delta.content, content);
+      assert.equal(model.records.find((record) => record.delta?.content === content).sequence, sequence);
+    }
+    assert.equal(failedResponse.status, 400);
+    assert.equal(JSON.parse(failedResponse.text).error.message, "delayed failure");
+    assert.deepEqual(
+      model.records.find((record) => record.error),
+      { sequence: 2, error: "delayed failure" },
+    );
+  } finally {
+    release();
+    await model.close();
+  }
+});
+
+const AsyncFunction = Object.getPrototypeOf(async () => {}).constructor;
+function exerciseCode(user, names) {
+  const code = JSON.parse(reply(request(user), options).tool_calls[0].function.arguments).code;
+  return new AsyncFunction(...names, code);
+}
+
+test("cancellation program saves its owned ID before stop and waits for terminal inspection", async () => {
+  const events = [];
+  let inspections = 0;
+  await exerciseCode("ACCEPT_CANCEL", ["shell", "Bun", "jobs", "console"])(
+    async (command, config) => {
+      events.push(["shell", command, config]);
+      return { id: "task_owned", background: true };
+    },
+    { write: async (path, id) => events.push(["write", path, id]) },
+    {
+      stop: async (id) => {
+        events.push(["stop", id]);
+        return { status: "pending" };
+      },
+      inspect: async (id) => {
+        const status = ++inspections === 1 ? "running" : "killed";
+        events.push(["inspect", id, status]);
+        return { id, status };
+      },
+    },
+    { log: (...args) => events.push(["log", ...args]) },
+  );
+  assert.deepEqual(events[0], [
+    "shell",
+    JSON.stringify(process.execPath) +
+      " " +
+      JSON.stringify(options.worker) +
+      " " +
+      JSON.stringify(options.state) +
+      " cancel",
+    { waitSeconds: 0 },
+  ]);
+  assert.deepEqual(events[1], ["write", options.state + "/cancel.job-id", "task_owned"]);
+  assert.deepEqual(events[2], ["stop", "task_owned"]);
+  assert.deepEqual(
+    events.filter((event) => event[0] === "inspect"),
+    [
+      ["inspect", "task_owned", "running"],
+      ["inspect", "task_owned", "killed"],
+    ],
+  );
+  assert.deepEqual(events.at(-1), [
+    "log",
+    "CANCEL_INSPECT_REAL",
+    JSON.stringify({ id: "task_owned", status: "killed" }),
+  ]);
+});
+
+test("saved-question programs block the returned authority and resolve only an explicit answered choice", async () => {
+  const q = { id: "q_actual", owner: "human", version: 7, dedupKey: "human-controls-acceptance" };
+  const events = [];
+  const questions = {
+    ask: async (args) => {
+      events.push(["ask", args]);
+      return q;
+    },
+    block: async (args) => events.push(["block", args]),
+    list: async () => [q],
+    resolve: async (args) => {
+      events.push(["resolve", args]);
+      return { status: "resolved" };
+    },
+  };
+  const console = { log: (...args) => events.push(["log", ...args]) };
+  await exerciseCode("HUMAN_QUESTION_ASK", ["questions", "console"])(questions, console);
+  assert.deepEqual(events[0], [
+    "ask",
+    {
+      text: "Acceptance saved human question",
+      dedupKey: "human-controls-acceptance",
+      choices: ["Use local fixture", "Cancel"],
+      allowFreeText: false,
+    },
+  ]);
+  assert.deepEqual(events[1], [
+    "block",
+    { id: q.id, owner: q.owner, version: q.version, checkpoint: "Use the saved human answer", foreground: false },
+  ]);
+  const useAnswer = exerciseCode("Saved answer for question", ["questions", "console"]);
+  await assert.rejects(useAnswer(questions, console), /No saved human answer/);
+  assert.equal(
+    events.some((event) => event[0] === "resolve"),
+    false,
+  );
+  q.status = "answered";
+  q.answer = "Use local fixture";
+  await useAnswer(questions, console);
+  assert.deepEqual(events.at(-2), [
+    "resolve",
+    { id: q.id, owner: q.owner, version: q.version, reason: "Acceptance used explicit saved human answer" },
+  ]);
+  assert.deepEqual(events.at(-1), ["log", "QUESTION_RESOLVED_ACTUAL", JSON.stringify({ status: "resolved" })]);
 });

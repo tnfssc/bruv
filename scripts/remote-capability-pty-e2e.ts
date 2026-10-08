@@ -1,4 +1,5 @@
 import { loopbackParent, fixtureRpc } from "./loopback-parent-fixture";
+import { ownedFixtureEnv } from "../tests/helpers";
 /** Drive the compiled normal CLI PTY; RPC only seeds disposable native owner tasks. */
 import { spawn, spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
@@ -9,6 +10,12 @@ const bruv = process.env.BRUV_BIN!;
 const home = homedir();
 const statePath = join(home, ".bruv/remote/state.json");
 const agentDir = process.env.BRUV_CODING_AGENT_DIR!;
+// remote-e2e.sh owns this root and its SSH/Docker fixture settings.
+const rpcEnv = ownedFixtureEnv(process.env.FIXTURE_DROP_DIR!);
+rpcEnv.PATH = join(process.env.FIXTURE_DROP_DIR!, "bin") + ":" + rpcEnv.PATH;
+rpcEnv.BRUV_CODING_AGENT_DIR = agentDir;
+rpcEnv.PI_CODING_AGENT_DIR = agentDir;
+rpcEnv.DOCKER_HOST = process.env.DOCKER_HOST!;
 process.env.GIT_CONFIG_GLOBAL = "/dev/null";
 process.env.GIT_CONFIG_SYSTEM = "/dev/null";
 process.env.GIT_CONFIG_NOSYSTEM = "1";
@@ -61,8 +68,7 @@ const launchRpc = (cwd = launchRepo, diagnostic = false) =>
   fixtureRpc({
     bruv,
     cwd,
-    home,
-    agentDir,
+    env: rpcEnv,
     children: rpcChildren,
     noSession: diagnostic,
     timeoutDetail: (events) =>
@@ -168,11 +174,7 @@ const select = async (label: string) => {
   };
   if (next[label]) await until(next[label]!);
 };
-try {
-  assert.equal(ssh("true").status, 0, "disposable owner unreachable");
-  const rpc = launchRpc(launchRepo, true);
-  rpc.send("/remote connect fixture-owner /usr/local/bin/bruv");
-  await rpc.wait(() => existsSync(statePath) && !!state().connection, "owner connection");
+async function verifyOwnedPlacement() {
   // The migrated agent path is independently exercised; never force owned jobs into the legacy diagnostic inbox.
   const owned = launchRpc();
   owned.send("REMOTE_FIXTURE_REPO_PROBE");
@@ -198,7 +200,9 @@ try {
     "PROOF normal agent jobs.targets/subagent(target): normal/depth1, delegation denied, real destination shell and terminal result",
   );
   owned.child.kill("SIGKILL");
+}
 
+async function seedDiagnosticCapabilityRequests(rpc: ReturnType<typeof fixtureRpc>) {
   // Human unowned diagnostic task: legacy capability UI must remain covered, not mapped into owned jobs.
   rpc.send("/remote launch /fixture/repo REMOTE_FIXTURE_CAPABILITY_PTY");
   await rpc.wait(
@@ -225,6 +229,10 @@ try {
   assert.equal(injected.status, 0, injected.stderr);
   rpc.send("/remote sync " + id);
   await rpc.wait(() => needs(id).some((n) => n.kind === "shell.execute"), "unsupported owner fixture surfaced");
+  return id;
+}
+
+async function startCapabilityPtyAndVerifySnapshot(id: string) {
   const cmd = [
     "env",
     "HOME=" + home,
@@ -272,7 +280,9 @@ try {
   await until("Request: tool:git-diff");
   await until("tracked.txt");
   evidence("refreshed-requests");
+}
 
+async function verifyGrantRequiresHumanConsent(id: string, rpc: ReturnType<typeof fixtureRpc>) {
   // Unsupported request must be visible but must not be silently granted.
   await select("shell.execute");
   await until("Invalid capability kind; no grant sent");
@@ -330,6 +340,9 @@ try {
   await until("Task · REMOTE_FIXTURE_CAPABILITY_PTY");
   await until("Local capability granted");
   evidence("grant-result");
+}
+
+async function verifyRevokeRequiresHumanConsent(id: string, rpc: ReturnType<typeof fixtureRpc>) {
   await openCapabilities();
   await until("Revoke: repo.read");
   await select("Revoke: repo.read");
@@ -351,6 +364,19 @@ try {
   await rpc.wait(() => !granted(id).some((g) => g.kinds.includes("repo.read")), "explicit revoke", 20000);
   await until("Local capability revoked");
   evidence("revoke-result");
+}
+
+try {
+  assert.equal(ssh("true").status, 0, "disposable owner unreachable");
+  const rpc = launchRpc(launchRepo, true);
+  rpc.send("/remote connect fixture-owner /usr/local/bin/bruv");
+  await rpc.wait(() => existsSync(statePath) && !!state().connection, "owner connection");
+  await verifyOwnedPlacement();
+
+  const id = await seedDiagnosticCapabilityRequests(rpc);
+  await startCapabilityPtyAndVerifySnapshot(id);
+  await verifyGrantRequiresHumanConsent(id, rpc);
+  await verifyRevokeRequiresHumanConsent(id, rpc);
   console.log(
     "PASS compiled tmux/Docker remote capability human menu: request details, unsupported denial, scoped confirmation, Escape/No/Yes, revoke cancellation/confirmation",
   );

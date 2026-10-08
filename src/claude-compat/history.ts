@@ -326,11 +326,8 @@ function userBlock(block: Record<string, any>): TextContent | ImageContent {
   }
   throw new Error("Unsupported native user/result content: " + block.type);
 }
-/** Strict conversation import. Unsupported compaction/attachments and incomplete tools fail before writing. */
-export function nativeHistoryToPi(
-  entries: NativeEntry[],
-  sessionId: string,
-): { messages: Message[]; nativeUuids: string[] } {
+/** Select the last root leaf by parent links, not by transcript prose or source IDs. */
+function activeRootConversation(entries: NativeEntry[], sessionId: string): NativeEntry[] {
   uuid(sessionId);
   const conversation = entries.filter(
     (entry) =>
@@ -367,9 +364,17 @@ export function nativeHistoryToPi(
       throw new Error("Missing transcript parent");
     entry = byId.get(entry.parentUuid);
   }
-  chain.reverse();
-  const messages: Message[] = [],
-    nativeUuids: string[] = [];
+  return chain.reverse();
+}
+
+/** Strict conversation import. Unsupported compaction/attachments and incomplete tools fail before writing. */
+export function nativeHistoryToPi(
+  entries: NativeEntry[],
+  sessionId: string,
+): { messages: Message[]; nativeUuids: string[] } {
+  const chain = activeRootConversation(entries, sessionId);
+  // One native user record can expand into several Pi user/tool-result messages.
+  const converted: { message: Message; nativeUuid: string }[] = [];
   const calls = new Map<string, string>();
   const pending = new Set<string>();
   for (const item of chain) {
@@ -380,9 +385,8 @@ export function nativeHistoryToPi(
     const timestamp = Date.parse(text(item.timestamp));
     if (!Number.isFinite(timestamp)) throw new Error("Invalid transcript timestamp");
     const blocks = contentBlocks(message.content);
-    const push = (value: Message) => {
-      messages.push(value);
-      nativeUuids.push(item.uuid!);
+    const push = (message: Message) => {
+      converted.push({ message, nativeUuid: item.uuid! });
     };
     if (item.type === "assistant") {
       const content: AssistantMessage["content"] = blocks.map((block) => {
@@ -469,7 +473,10 @@ export function nativeHistoryToPi(
   }
   if (pending.size)
     throw new Error("Cannot import an incomplete tool exchange: imported tools must never be reexecuted");
-  return { messages, nativeUuids };
+  return {
+    messages: converted.map((entry) => entry.message),
+    nativeUuids: converted.map((entry) => entry.nativeUuid),
+  };
 }
 
 export interface NativeImportResult {

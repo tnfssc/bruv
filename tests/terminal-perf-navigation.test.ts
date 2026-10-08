@@ -1,8 +1,8 @@
 import { describe, expect, test } from "bun:test";
 import { createToolWorkload } from "../scripts/terminal-perf/tool-workloads";
-import { existsSync, mkdtempSync, rmSync } from "node:fs";
-import { tmpdir } from "node:os";
+import { existsSync } from "node:fs";
 import { join } from "node:path";
+import { createTerminalPerfProcessFixture } from "./helpers/terminal-perf-process";
 import { disposeDiskBackedSessionManager } from "../src/history/session-manager";
 import { SessionManager } from "@earendil-works/pi-coding-agent";
 import {
@@ -173,12 +173,8 @@ describe("scheduled provider-free navigation workloads", () => {
       if (SessionManager.open !== open) throw new Error("Scoped open instrumentation leaked");
       console.log(JSON.stringify(result));
     `;
-    const child = Bun.spawn([process.execPath, "--eval", script], { stdout: "pipe", stderr: "pipe" });
-    const [exitCode, stdout, stderr] = await Promise.all([
-      child.exited,
-      new Response(child.stdout).text(),
-      new Response(child.stderr).text(),
-    ]);
+    const fixture = await createTerminalPerfProcessFixture();
+    const { exitCode, stdout, stderr } = await fixture.run(["--eval", script]);
     expect({ exitCode, stderr: exitCode ? stderr : "" }).toEqual({ exitCode: 0, stderr: "" });
     const result = JSON.parse(stdout) as Awaited<
       ReturnType<typeof import("../scripts/terminal-perf/navigation-workloads").runOfflineNavigationSdkProbe>
@@ -200,47 +196,44 @@ describe("scheduled provider-free navigation workloads", () => {
     expect(result.scope).toContain("no InteractiveMode");
   });
   test("initialized InteractiveMode terminal seam runs provider-free in an isolated process", async () => {
-    const root = mkdtempSync(join(tmpdir(), "navigation-interactive-test-"));
-    const report = join(root, "report.json");
-    try {
-      const child = Bun.spawn(
-        [process.execPath, "scripts/terminal-perf/navigation-workloads.ts", "--interactive-sdk", "--out", report],
-        { stdout: "pipe", stderr: "pipe" },
-      );
-      const [exitCode, stderr] = await Promise.all([child.exited, new Response(child.stderr).text()]);
-      expect({ exitCode, stderr: exitCode ? stderr : "" }).toEqual({ exitCode: 0, stderr: "" });
-      const result = await Bun.file(report).json();
-      expect(result.providerCalls).toBe(0);
-      expect(result.scope).toContain("real initialized InteractiveMode");
-      expect(result.messages).toBe(8);
-      expect(result.appInput.map((s: { name: string }) => s.name)).toEqual([
-        "InteractiveMode.ctrl-o",
-        "InteractiveMode.showSessionSelector",
-        "InteractiveMode.session-selector.cancel",
-        "InteractiveMode.showTreeSelector",
-        "InteractiveMode.tree-selector.cancel",
-      ]);
-      for (const input of result.appInput) {
-        expect(input.frames.length).toBeGreaterThan(0);
-        expect(input.screenHash).toMatch(/^[a-f0-9]{64}$/);
-        expect(input.outputBytes).toBeGreaterThan(0);
-      }
-      for (const name of [
-        "InteractiveMode.init",
-        "InteractiveMode.handleResumeSession(disk-file)",
-        "AgentSessionRuntime.fork(primary,at)",
-      ]) {
-        expect(result.appStages.find((s: { name: string }) => s.name === name).frames.length).toBeGreaterThan(0);
-      }
-      expect(
-        result.segments.some(
-          (s: { name: string; operation: string }) =>
-            s.name === "InteractiveMode.renderInitialMessages" &&
-            s.operation === "InteractiveMode.handleResumeSession(disk-file)",
-        ),
-      ).toBe(true);
-    } finally {
-      rmSync(root, { recursive: true, force: true });
+    const fixture = await createTerminalPerfProcessFixture();
+    const report = join(fixture.root, "report.json");
+    const { exitCode, stderr } = await fixture.run([
+      "scripts/terminal-perf/navigation-workloads.ts",
+      "--interactive-sdk",
+      "--out",
+      report,
+    ]);
+    expect({ exitCode, stderr: exitCode ? stderr : "" }).toEqual({ exitCode: 0, stderr: "" });
+    const result = await Bun.file(report).json();
+    expect(result.providerCalls).toBe(0);
+    expect(result.scope).toContain("real initialized InteractiveMode");
+    expect(result.messages).toBe(8);
+    expect(result.appInput.map((s: { name: string }) => s.name)).toEqual([
+      "InteractiveMode.ctrl-o",
+      "InteractiveMode.showSessionSelector",
+      "InteractiveMode.session-selector.cancel",
+      "InteractiveMode.showTreeSelector",
+      "InteractiveMode.tree-selector.cancel",
+    ]);
+    for (const input of result.appInput) {
+      expect(input.frames.length).toBeGreaterThan(0);
+      expect(input.screenHash).toMatch(/^[a-f0-9]{64}$/);
+      expect(input.outputBytes).toBeGreaterThan(0);
     }
+    for (const name of [
+      "InteractiveMode.init",
+      "InteractiveMode.handleResumeSession(disk-file)",
+      "AgentSessionRuntime.fork(primary,at)",
+    ]) {
+      expect(result.appStages.find((s: { name: string }) => s.name === name).frames.length).toBeGreaterThan(0);
+    }
+    expect(
+      result.segments.some(
+        (s: { name: string; operation: string }) =>
+          s.name === "InteractiveMode.renderInitialMessages" &&
+          s.operation === "InteractiveMode.handleResumeSession(disk-file)",
+      ),
+    ).toBe(true);
   });
 });

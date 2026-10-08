@@ -8,6 +8,7 @@ artifact prefix and never needs credentials or Internet access.
 from __future__ import annotations
 
 import argparse
+from contextlib import contextmanager
 import http.server
 import json
 import os
@@ -16,7 +17,6 @@ import shlex
 import shutil
 import socket
 import subprocess
-import sys
 import threading
 import time
 import uuid
@@ -110,92 +110,125 @@ def strip_ansi(s: str) -> str:
     return ANSI_RE.sub("", s).replace("\r", "")
 
 
-def main() -> int:
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--binary", default="dist/bruv", help="compiled bruv binary to exercise")
-    ap.add_argument("--artifact-prefix", default="artifacts/ui-cleanup-final")
-    ap.add_argument("--timeout", type=float, default=35.0)
-    args = ap.parse_args()
-    root = Path(__file__).resolve().parent.parent
-    binary = Path(args.binary)
-    if not binary.is_absolute(): binary = (root / binary).resolve()
-    if not binary.is_file(): ap.error(f"binary not found: {binary}")
-    if not shutil.which("tmux"): ap.error("tmux is required")
-    prefix = Path(args.artifact_prefix)
-    if not prefix.is_absolute(): prefix = root / prefix
-    prefix.parent.mkdir(parents=True, exist_ok=True)
-    token = uuid.uuid4().hex
-    home = prefix.parent / ("ui-cleanup-work-" + token)
-    agent_dir, tmpdir = home / ".bruv" / "agent", home / "tmp"
-    agent_dir.mkdir(parents=True); tmpdir.mkdir()
-    fixture = Fixture(); fixture.start()
-    models = {"providers":{"fixture":{"baseUrl":f"http://127.0.0.1:{fixture.port}/v1",
-        "api":"openai-completions","apiKey":"fixture",
-        "models":[{"id":"fixture-model","name":"fixture","reasoning":True,
-                   "contextWindow":32000,"maxTokens":2000}]}}}
-    (agent_dir / "models.json").write_text(json.dumps(models), encoding="utf-8")
-    tmux_conf = home / "tmux.conf"
-    tmux_conf.write_text("set -g extended-keys on\nset -g extended-keys-format csi-u\nset -g history-limit 20000\n", encoding="utf-8")
-    session = "probe"
-    tmux = ["tmux", "-S", str(home / "tmux.sock")]
-    env = os.environ.copy(); env.update({"HOME":str(home), "BRUV_CODING_AGENT_DIR":str(agent_dir),
-        "TMPDIR":str(tmpdir), "PI_OFFLINE":"1", "NO_COLOR":"0", "TERM":"xterm-256color"})
-    launch = [str(binary), "--no-session", "--no-approve", "--offline", "--provider", "fixture",
-              "--model", "fixture-model", "--thinking", "medium", "FIRST_USER_MARKER"]
-    command = "env " + " ".join(shlex.quote(k+"="+env[k]) for k in
-        ["HOME","BRUV_CODING_AGENT_DIR","TMPDIR","PI_OFFLINE","NO_COLOR","TERM"]) + " " + " ".join(map(shlex.quote, launch))
-    plain = ansi = ""; assertions: dict[str, object] = {}; error = None
-    deadline = time.monotonic() + args.timeout
-    def capture(esc=False, history=True):
-        cmd = tmux + ["capture-pane", "-p"]
-        if esc: cmd.append("-e")
-        if history: cmd += ["-S", "-"]
-        cmd += ["-t", session]
-        return run(cmd, timeout=3).stdout
-    def wait_for(marker: str):
-        while time.monotonic() < deadline:
+class Terminal:
+    """Commands for the probe's private tmux server, with one scenario deadline."""
+
+    def __init__(self, home: Path, binary: Path, timeout: float):
+        self.home = home
+        self.binary = binary
+        self.tmux = ["tmux", "-S", str(home / "tmux.sock")]
+        self.timeout = timeout
+
+    def start(self):
+        env = os.environ.copy()
+        env.update({"HOME": str(self.home), "BRUV_CODING_AGENT_DIR": str(self.home / ".bruv" / "agent"),
+                    "TMPDIR": str(self.home / "tmp"), "PI_OFFLINE": "1", "NO_COLOR": "0", "TERM": "xterm-256color"})
+        launch = [str(self.binary), "--no-session", "--no-approve", "--offline", "--provider", "fixture",
+                  "--model", "fixture-model", "--thinking", "medium", "FIRST_USER_MARKER"]
+        command = "env " + " ".join(shlex.quote(k + "=" + env[k]) for k in
+            ["HOME", "BRUV_CODING_AGENT_DIR", "TMPDIR", "PI_OFFLINE", "NO_COLOR", "TERM"])
+        command += " " + " ".join(map(shlex.quote, launch))
+        self.deadline = time.monotonic() + self.timeout
+        run(self.tmux + ["-f", str(self.home / "tmux.conf"), "new-session", "-d", "-s", "probe",
+                         "-x", "120", "-y", "36", "-c", str(self.home), command], env=env)
+
+    def capture(self, esc=False, history=True):
+        cmd = self.tmux + ["capture-pane", "-p"]
+        if esc:
+            cmd.append("-e")
+        if history:
+            cmd += ["-S", "-"]
+        return run(cmd + ["-t", "probe"], timeout=3).stdout
+
+    def wait_for(self, marker: str):
+        while time.monotonic() < self.deadline:
             try:
-                text = capture(history=False)
-                if marker in strip_ansi(text): return
+                if marker in strip_ansi(self.capture(history=False)):
+                    return
             except subprocess.CalledProcessError:
                 pass
             time.sleep(.08)
         raise TimeoutError(f"timed out waiting for {marker}")
+
+    def send_keys(self, *keys: str):
+        run(self.tmux + ["send-keys", "-t", "probe", *keys], timeout=3)
+
+    def stop(self):
+        # Teardown remains best effort; it is not proof that child work exited.
+        try:
+            run(self.tmux + ["kill-server"], timeout=3, check=False)
+        except Exception:
+            pass
+
+
+@contextmanager
+def isolated_terminal(binary: Path, prefix: Path, timeout: float):
+    """Own the disposable HOME, loopback fixture and private tmux server together."""
+    home = prefix.parent / ("ui-cleanup-work-" + uuid.uuid4().hex)
     try:
-        run(tmux+["-f", str(tmux_conf), "new-session","-d","-s",session,"-x","120","-y","36","-c",str(home),command], env=env)
-        wait_for('Read fixture output')
-        active_plain, active_ansi = capture(False), capture(True)
+        agent_dir, tmpdir = home / ".bruv" / "agent", home / "tmp"
+        agent_dir.mkdir(parents=True)
+        tmpdir.mkdir()
+        terminal = Terminal(home, binary, timeout)
+        fixture = Fixture()
+        fixture.start()
+        try:
+            models = {"providers": {"fixture": {"baseUrl": f"http://127.0.0.1:{fixture.port}/v1",
+                "api": "openai-completions", "apiKey": "fixture",
+                "models": [{"id": "fixture-model", "name": "fixture", "reasoning": True,
+                            "contextWindow": 32000, "maxTokens": 2000}]}}}
+            (agent_dir / "models.json").write_text(json.dumps(models), encoding="utf-8")
+            (home / "tmux.conf").write_text(
+                "set -g extended-keys on\nset -g extended-keys-format csi-u\nset -g history-limit 20000\n",
+                encoding="utf-8")
+            yield terminal, fixture.records
+        finally:
+            terminal.stop()
+            fixture.stop()
+    finally:
+        shutil.rmtree(home, ignore_errors=True)
+
+
+def exercise_terminal(terminal: Terminal, prefix: Path):
+    """Capture the in-flight, expanded and settled frames; retain evidence on error."""
+    plain = ansi = ""
+    assertions: dict[str, bool] = {}
+    error = None
+    try:
+        terminal.start()
+        terminal.wait_for('Read fixture output')
+        active_plain, active_ansi = terminal.capture(False), terminal.capture(True)
         Path(str(prefix)+"-inflight-plain.txt").write_text(active_plain, encoding="utf-8")
         Path(str(prefix)+"-inflight-ansi.txt").write_text(active_ansi, encoding="utf-8")
         assertions["inflight_row"] = len(re.findall(r'^\s*Read fixture output\s*$', strip_ansi(active_plain), re.MULTILINE)) == 1
         assertions["inflight_quiet"] = not re.search(r'\b(executing|executed|Running|completed)\b', strip_ansi(active_plain))
-        wait_for("FINAL_FIRST_MARKER")
-        run(tmux+["send-keys","-t",session,"C-o"], timeout=3)
+        terminal.wait_for("FINAL_FIRST_MARKER")
+        terminal.send_keys("C-o")
         time.sleep(.25)
-        expanded = capture(False)
+        expanded = terminal.capture(False)
         Path(str(prefix)+"-expanded-plain.txt").write_text(expanded, encoding="utf-8")
         assertions["expanded_source"] = 'console.log("SUCCESS_OUTPUT"); await Bun.sleep(1200)' in expanded
         assertions["expanded_output"] = any(x.strip() == "SUCCESS_OUTPUT" for x in expanded.splitlines())
-        run(tmux+["send-keys","-t",session,"C-o"], timeout=3)
+        terminal.send_keys("C-o")
         time.sleep(.25)
-        run(tmux+["send-keys","-t",session,"-l","SECOND_USER_MARKER"], timeout=3)
-        run(tmux+["send-keys","-t",session,"Enter"], timeout=3)
-        wait_for("FINAL_BATCH_MARKER")
+        terminal.send_keys("-l","SECOND_USER_MARKER")
+        terminal.send_keys("Enter")
+        terminal.wait_for("FINAL_BATCH_MARKER")
         time.sleep(.5)
-        plain, ansi = capture(False), capture(True)
+        plain, ansi = terminal.capture(False), terminal.capture(True)
     except Exception as exc:
         error = f"{type(exc).__name__}: {exc}"
-        try: plain, ansi = capture(False), capture(True)
+        try: plain, ansi = terminal.capture(False), terminal.capture(True)
         except Exception: pass
-    finally:
-        try: run(tmux+["kill-server"], timeout=3, check=False)
-        except Exception: pass
-        fixture.stop()
-        shutil.rmtree(home, ignore_errors=True)
+    return plain, ansi, assertions, error
+
+
+def settled_assertions(plain: str, ansi: str, request_count: int) -> dict[str, bool]:
     clean = strip_ansi(plain)
     lines = [x.rstrip() for x in clean.splitlines()]
     def has(pattern): return re.search(pattern, clean, re.MULTILINE) is not None
-    assertions["six_bounded_requests"] = len(fixture.records) == 6
+    assertions: dict[str, bool] = {}
+    assertions["six_bounded_requests"] = request_count == 6
     assertions["success_row"] = len(re.findall(r'^\s*Read fixture output\s*$', clean, re.MULTILINE)) == 1
     assertions["settled_quiet_actions"] = not re.search(r'\b(executing|executed|Running)\b', clean)
     assertions["error_row"] = has(r'^\s*✗ Failed · Trigger expected error\s*$')
@@ -219,10 +252,30 @@ def main() -> int:
     assertions["markers_present"] = all(x in clean for x in ["THINK_FIRST_MARKER","FINAL_FIRST_MARKER","THINK_BATCH_MARKER","FINAL_BATCH_MARKER"])
     assertions["no_unexpected_request"] = "UNEXPECTED_REQUEST_MARKER" not in clean
     assertions["ansi_evidence"] = chr(27) + "[" in ansi
+    return assertions
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--binary", default="dist/bruv", help="compiled bruv binary to exercise")
+    ap.add_argument("--artifact-prefix", default="artifacts/ui-cleanup-final")
+    ap.add_argument("--timeout", type=float, default=35.0)
+    args = ap.parse_args()
+    root = Path(__file__).resolve().parent.parent
+    binary = Path(args.binary)
+    if not binary.is_absolute(): binary = (root / binary).resolve()
+    if not binary.is_file(): ap.error(f"binary not found: {binary}")
+    if not shutil.which("tmux"): ap.error("tmux is required")
+    prefix = Path(args.artifact_prefix)
+    if not prefix.is_absolute(): prefix = root / prefix
+    prefix.parent.mkdir(parents=True, exist_ok=True)
+    with isolated_terminal(binary, prefix, args.timeout) as (terminal, records):
+        plain, ansi, assertions, error = exercise_terminal(terminal, prefix)
+    assertions.update(settled_assertions(plain, ansi, len(records)))
     (Path(str(prefix)+"-plain.txt")).write_text(plain, encoding="utf-8")
     (Path(str(prefix)+"-ansi.txt")).write_text(ansi, encoding="utf-8")
-    (Path(str(prefix)+"-requests.json")).write_text(json.dumps(fixture.records, indent=2)+"\n", encoding="utf-8")
-    report = {"binary":str(binary), "error":error, "request_count":len(fixture.records),
+    (Path(str(prefix)+"-requests.json")).write_text(json.dumps(records, indent=2)+"\n", encoding="utf-8")
+    report = {"binary":str(binary), "error":error, "request_count":len(records),
               "assertions":assertions, "passed":error is None and all(assertions.values())}
     (Path(str(prefix)+"-report.json")).write_text(json.dumps(report, indent=2)+"\n", encoding="utf-8")
     print(json.dumps(report, indent=2))

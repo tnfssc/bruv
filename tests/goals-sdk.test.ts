@@ -3,7 +3,13 @@ import { expect, test } from "bun:test";
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
-import { type AssistantMessage, createAssistantMessageEventStream, getModel } from "@earendil-works/pi-ai/compat";
+import {
+  type Api,
+  type Model,
+  type AssistantMessage,
+  createAssistantMessageEventStream,
+  getModel,
+} from "@earendil-works/pi-ai/compat";
 import {
   createAgentSession,
   DefaultResourceLoader,
@@ -24,6 +30,30 @@ const usage = {
   totalTokens: 2,
   cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: 0 },
 };
+
+// Scripts choose lifecycle actions; this provider fixture only delivers their result.
+function offlineResponse(
+  model: Model<Api>,
+  content: AssistantMessage["content"],
+  stopReason: AssistantMessage["stopReason"],
+) {
+  const message: AssistantMessage = {
+    role: "assistant",
+    api: model.api,
+    provider: model.provider,
+    model: model.id,
+    content,
+    stopReason,
+    usage,
+    timestamp: Date.now(),
+  };
+  const stream = createAssistantMessageEventStream();
+  queueMicrotask(() => {
+    stream.push({ type: "done", reason: message.stopReason as any, message });
+    stream.end(message);
+  });
+  return stream;
+}
 
 test("real offline assembly changes only messages across goal set, update, and clear", async () => {
   const dir = await mkdtemp(join(tmpdir(), "bruv-goal-context-sdk-"));
@@ -55,22 +85,7 @@ test("real offline assembly changes only messages across goal set, update, and c
         index < scripts.length
           ? [{ type: "toolCall", id: "goal_context_" + index, name: "execute", arguments: { code: scripts[index] } }]
           : [{ type: "text", text: "Lifecycle captured." }];
-      const message: AssistantMessage = {
-        role: "assistant",
-        api: model.api,
-        provider: model.provider,
-        model: model.id,
-        content,
-        stopReason: index < scripts.length ? "toolUse" : "stop",
-        usage,
-        timestamp: Date.now(),
-      };
-      const stream = createAssistantMessageEventStream();
-      queueMicrotask(() => {
-        stream.push({ type: "done", reason: message.stopReason as any, message });
-        stream.end(message);
-      });
-      return stream;
+      return offlineResponse(model, content, index < scripts.length ? "toolUse" : "stop");
     };
     runtime.stream = scripted as any;
     runtime.streamSimple = scripted as any;
@@ -151,7 +166,6 @@ test("real SDK reconciles helper waiting through task-complete and completes", a
     const scripted = (_model: any, context: TranscriptContext) => {
       calls++;
       prompts.push(JSON.stringify(context));
-      const stream = createAssistantMessageEventStream();
       const content: any[] =
         calls === 1
           ? [
@@ -181,21 +195,7 @@ test("real SDK reconciles helper waiting through task-complete and completes", a
                 },
               ]
             : [{ type: "text", text: "Done." }];
-      const message: AssistantMessage = {
-        role: "assistant",
-        api: model.api,
-        provider: model.provider,
-        model: model.id,
-        content,
-        stopReason: calls <= 2 ? "toolUse" : "stop",
-        usage,
-        timestamp: Date.now(),
-      };
-      queueMicrotask(() => {
-        stream.push({ type: "done", reason: message.stopReason as any, message });
-        stream.end(message);
-      });
-      return stream;
+      return offlineResponse(model, content, calls <= 2 ? "toolUse" : "stop");
     };
     runtime.stream = scripted as any;
     runtime.streamSimple = scripted as any;
@@ -391,22 +391,7 @@ async function runRealPrintCompletionCycles(recordMilestones: boolean) {
       } else {
         content = [{ type: "text", text: "Paused goal respected; no more jobs." }];
       }
-      const message: AssistantMessage = {
-        role: "assistant",
-        api: model.api,
-        provider: model.provider,
-        model: model.id,
-        content,
-        stopReason: content[0]?.type === "toolCall" ? "toolUse" : "stop",
-        usage,
-        timestamp: Date.now(),
-      };
-      const stream = createAssistantMessageEventStream();
-      queueMicrotask(() => {
-        stream.push({ type: "done", reason: message.stopReason as any, message });
-        stream.end(message);
-      });
-      return stream;
+      return offlineResponse(model, content, content[0]?.type === "toolCall" ? "toolUse" : "stop");
     };
     runtime.stream = scripted as any;
     runtime.streamSimple = scripted as any;

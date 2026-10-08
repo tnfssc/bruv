@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+// Actual built connector + normal Bruv async workers; deterministic loopback inference only.
 import fs from "node:fs/promises";
 import path from "node:path";
 import os from "node:os";
@@ -19,19 +21,49 @@ const proof = path.resolve(process.env.PROOF_OUTPUT ?? ".cache/claude-local-suba
 await fs.mkdir(path.dirname(proof), { recursive: true });
 await fs.mkdir(proof);
 const root = await fs.mkdtemp(path.join(os.tmpdir(), "bruv-native-acceptance-"));
-const state = path.join(root, "state"),
-  agent = path.join(root, "agent"),
-  home = path.join(root, "home");
-const pinnedConnector = path.join(root, "actual-connector");
-let model,
-  child,
-  passed = false;
+let model;
+let passed = false;
 try {
   await fs.chmod(root, 0o700);
-  for (const dir of [state, agent, home]) await fs.mkdir(dir);
+  const pinnedConnector = path.join(root, "actual-connector");
   // Pin the actual artifact, not a synthetic executable, while sibling builds continue.
   await fs.copyFile(connector, pinnedConnector);
   await fs.chmod(pinnedConnector, 0o755);
+  await recordInvocation(pinnedConnector);
+
+  const state = path.join(root, "state");
+  await fs.mkdir(state);
+  model = await startModel({ state });
+  const config = await configureFixture(pinnedConnector, model.port);
+  await runReplay(root, config.env.HOME, config.env.BRUV_ACCEPTANCE_CONFIG);
+  verifyModelDelivery(model.records);
+  await verifyChildHistory(config.env.BRUV_CODING_AGENT_DIR, proof);
+  passed = true;
+} finally {
+  // The replay driver captures final-provider evidence; runReplay waits for close before retaining proof.
+  // Retain projections while private state exists; a proof-write failure must still release the scope.
+  try {
+    await stopFixtureWorkers(path.join(root, "state"));
+    await retainProof(model?.records, passed);
+  } finally {
+    try {
+      if (model) await model.close();
+    } finally {
+      await fs.rm(root, { recursive: true, force: true });
+      await fs.writeFile(
+        path.join(proof, "cleanup.json"),
+        JSON.stringify({
+          temporaryScopedStateRemoved: true,
+          realCredentialsUsed: false,
+          integratedReplayPassed: passed,
+        }) + "\n",
+      );
+    }
+  }
+}
+console.log("Integrated native acceptance proof: " + proof);
+
+async function recordInvocation(pinnedConnector) {
   await fs.writeFile(
     path.join(proof, "invocation.json"),
     JSON.stringify(
@@ -51,8 +83,14 @@ try {
       2,
     ) + "\n",
   );
-  model = await startModel({ state });
-  await fs.writeFile(path.join(agent, "models.json"), JSON.stringify(modelsConfig(model.port)));
+}
+
+async function configureFixture(pinnedConnector, modelPort) {
+  const state = path.join(root, "state");
+  const agent = path.join(root, "agent");
+  const home = path.join(root, "home");
+  for (const dir of [agent, home]) await fs.mkdir(dir);
+  await fs.writeFile(path.join(agent, "models.json"), JSON.stringify(modelsConfig(modelPort)));
   // Health probes have no --model; configure the fixture default explicitly.
   await fs.writeFile(
     path.join(agent, "settings.json"),
@@ -69,9 +107,13 @@ try {
     }),
   );
   await fs.copyFile(path.join(home, ".bruv", "subagents.json"), path.join(proof, "profiles.json"));
+  const tap = path.join(root, "connector-tap");
+  await fs.copyFile(path.join(here, "tap.mjs"), tap);
+  await fs.chmod(tap, 0o755);
   const config = {
     connector: pinnedConnector,
     connectorArgs: JSON.parse(process.env.BRUV_CONNECTOR_ARGS_JSON ?? "[]"),
+    tap,
     wire: path.join(root, "wire.ndjson"),
     state,
     proof,
@@ -87,11 +129,10 @@ try {
     },
   };
   await fs.writeFile(config.env.BRUV_ACCEPTANCE_CONFIG, JSON.stringify(config), { mode: 0o600 });
-  const tap = path.join(root, "connector-tap");
-  await fs.copyFile(path.join(here, "tap.mjs"), tap);
-  await fs.chmod(tap, 0o755);
-  config.tap = tap;
-  await fs.writeFile(config.env.BRUV_ACCEPTANCE_CONFIG, JSON.stringify(config), { mode: 0o600 });
+  return config;
+}
+
+async function runReplay(root, home, configFile) {
   const template = path.resolve(here, "../../wisdom/claude-compat/proof/native-ui-fixture/replay.mjs");
   const replay = path.join(root, "replay.mjs");
   const { pathToFileURL } = await import("node:url");
@@ -109,7 +150,7 @@ try {
     PATH: [path.dirname(process.execPath), "/usr/bin", "/bin"].join(path.delimiter),
     HOME: home,
     ...(process.env.TMPDIR ? { TMPDIR: process.env.TMPDIR } : {}),
-    BRUV_ACCEPTANCE_CONFIG: config.env.BRUV_ACCEPTANCE_CONFIG,
+    BRUV_ACCEPTANCE_CONFIG: configFile,
     PROOF_OUTPUT: proof,
   };
   if (!process.env.FIXTURE_PORT) {
@@ -119,24 +160,38 @@ try {
     await new Promise((resolve) => reservation.close(resolve));
   }
   for (const key of ["T3_UPSTREAM", "BROWSER_PATH", "FIXTURE_PORT"]) if (process.env[key]) env[key] = process.env[key];
-  child = spawn(process.execPath, [replay], { env, stdio: "inherit" });
+  const child = spawn(process.execPath, [replay], { env, stdio: "inherit" });
   const code = await new Promise((resolve, reject) => {
     child.once("error", reject);
     child.once("close", resolve);
   });
   if (code !== 0) throw Error("Integrated native replay failed with exit " + code);
-  if (model.records.some((r) => r.error)) throw Error("Local model endpoint rejected a request");
-  if (model.records.filter((r) => r.delta?.content === "ROOT_COMPLETION_ONCE_REAL").length !== 1)
+}
+
+function verifyModelDelivery(records) {
+  if (records.some((r) => r.error)) throw Error("Local model endpoint rejected a request");
+  if (records.filter((r) => r.delta?.content === "ROOT_COMPLETION_ONCE_REAL").length !== 1)
     throw Error("Expected exactly one actual worker completion wake");
-  const launch = model.records.filter((r) => r.delta?.tool_calls?.[0]?.function.arguments.includes("subagent({"));
+  const launch = records.filter((r) => r.delta?.tool_calls?.[0]?.function.arguments.includes("subagent({"));
   if (launch.length !== 3) throw Error("Duplicate root subagent tool launch");
-  if (model.records.filter((r) => r.delta?.content === "ROOT_KILLED_COMPLETION_REAL").length !== 1)
+  if (records.filter((r) => r.delta?.content === "ROOT_KILLED_COMPLETION_REAL").length !== 1)
     throw Error("Expected exactly one real killed-job completion wake");
-  if (model.records.filter((r) => r.delta?.content === "ROOT_AFTER_CHILD_REAL").length !== 1)
+  if (records.filter((r) => r.delta?.content === "ROOT_AFTER_CHILD_REAL").length !== 1)
     throw Error("Expected exactly one actual same-root reply after child view return");
-  await verifyChildHistory(agent, proof);
-  passed = true;
-} finally {
+}
+
+async function stopFixtureWorkers(state) {
+  // Scoped worker cleanup; verify command line and state before touching any PID.
+  for (const scenario of ["child", "cancel", "stop"]) {
+    try {
+      const pid = Number(await fs.readFile(path.join(state, scenario + ".ready"), "utf8"));
+      const cmd = await fs.readFile("/proc/" + pid + "/cmdline", "utf8");
+      if (cmd.includes(normalBinary) && cmd.includes("--execute-worker")) process.kill(pid, "SIGTERM");
+    } catch {}
+  }
+}
+
+async function retainProof(records, passed) {
   let result = { integratedAcceptance: true };
   try {
     result = JSON.parse(await fs.readFile(path.join(proof, "result.json"), "utf8"));
@@ -148,23 +203,13 @@ try {
         ...result,
         passed,
         killedJobCompletionWakeCount:
-          model?.records.filter((r) => r.delta?.content === "ROOT_KILLED_COMPLETION_REAL").length ?? 0,
-        modelCompletionWakeCount:
-          model?.records.filter((r) => r.delta?.content === "ROOT_COMPLETION_ONCE_REAL").length ?? 0,
+          records?.filter((r) => r.delta?.content === "ROOT_KILLED_COMPLETION_REAL").length ?? 0,
+        modelCompletionWakeCount: records?.filter((r) => r.delta?.content === "ROOT_COMPLETION_ONCE_REAL").length ?? 0,
       },
       null,
       2,
     ) + "\n",
   );
-  if (child && child.exitCode === null) child.kill("SIGTERM");
-  // Scoped worker cleanup; verify command line and state before touching any PID.
-  for (const scenario of ["child", "cancel", "stop"]) {
-    try {
-      const pid = Number(await fs.readFile(path.join(state, scenario + ".ready"), "utf8"));
-      const cmd = await fs.readFile("/proc/" + pid + "/cmdline", "utf8");
-      if (cmd.includes(normalBinary) && cmd.includes("--execute-worker")) process.kill(pid, "SIGTERM");
-    } catch {}
-  }
   try {
     const { projectWire } = await import("./driver.mjs");
     const wire = (await fs.readFile(path.join(root, "wire.ndjson"), "utf8"))
@@ -179,11 +224,11 @@ try {
         .join("\n") + "\n",
     );
   } catch {}
-  if (model) {
+  if (records) {
     await fs.writeFile(
       path.join(proof, "model-projection.json"),
       JSON.stringify(
-        model.records.map((r) => ({
+        records.map((r) => ({
           sequence: r.sequence,
           model: r.model,
           error: r.error,
@@ -194,7 +239,6 @@ try {
         2,
       ) + "\n",
     );
-    await model.close();
   }
   for (const file of await fs.readdir(proof)) {
     if (file.endsWith(".txt")) {
@@ -202,14 +246,7 @@ try {
       await fs.writeFile(path.join(proof, file), text.replaceAll(root, "<FIXTURE>"));
     }
   }
-  await fs.rm(root, { recursive: true, force: true });
-  await fs.writeFile(
-    path.join(proof, "cleanup.json"),
-    JSON.stringify({ temporaryScopedStateRemoved: true, realCredentialsUsed: false, integratedReplayPassed: passed }) +
-      "\n",
-  );
 }
-console.log("Integrated native acceptance proof: " + proof);
 
 async function verifyChildHistory(agent, proof) {
   const { pathToFileURL } = await import("node:url");

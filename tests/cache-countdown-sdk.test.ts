@@ -21,25 +21,19 @@ const usage = {
   totalTokens: 2,
   cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: 0 },
 };
-async function make(root: string, rejectPayload = false, noHttpHook = false, responseStatus = 200) {
+type ScriptedResponse = { kind: "http"; status: number } | { kind: "terminal-only" } | { kind: "payload-rejection" };
+
+function scriptedProvider(response: ScriptedResponse) {
   let network = 0;
-  const model = getModel("anthropic", "claude-sonnet-4-5")!;
-  const runtime = await ModelRuntime.create({
-    authPath: join(root, "auth.json"),
-    modelsPath: null,
-    refreshOnCreate: false,
-  });
-  runtime.hasConfiguredAuth = () => true;
-  runtime.getAuth = (async () => ({ auth: { apiKey: "offline" } })) as any;
   const stream = (m: any, _c: any, o: any) => {
     const out = createAssistantMessageEventStream();
     void (async () => {
       // Real runtime-provided provider hooks surround the request at this seam.
       await o?.onPayload?.({ model: m.id, input: [] }, m);
-      if (rejectPayload) throw new Error("payload rejected before fetch");
+      if (response.kind === "payload-rejection") throw new Error("payload rejected before fetch");
       await o?.transformHeaders?.({});
       network++;
-      if (!noHttpHook) await o?.onResponse?.({ status: responseStatus, headers: {} }, m);
+      if (response.kind === "http") await o?.onResponse?.({ status: response.status, headers: {} }, m);
       const message: AssistantMessage = {
         role: "assistant",
         api: m.api,
@@ -69,8 +63,26 @@ async function make(root: string, rejectPayload = false, noHttpHook = false, res
     });
     return out;
   };
-  runtime.stream = stream as any;
-  runtime.streamSimple = stream as any;
+  return {
+    stream,
+    get network() {
+      return network;
+    },
+  };
+}
+
+async function createSdkSession(root: string, response: ScriptedResponse = { kind: "http", status: 200 }) {
+  const provider = scriptedProvider(response);
+  const model = getModel("anthropic", "claude-sonnet-4-5")!;
+  const runtime = await ModelRuntime.create({
+    authPath: join(root, "auth.json"),
+    modelsPath: null,
+    refreshOnCreate: false,
+  });
+  runtime.hasConfiguredAuth = () => true;
+  runtime.getAuth = (async () => ({ auth: { apiKey: "offline" } })) as any;
+  runtime.stream = provider.stream as any;
+  runtime.streamSimple = provider.stream as any;
   const manager = SessionManager.create(root, join(root, "sessions"));
   const loader = new DefaultResourceLoader({
     cwd: root,
@@ -105,7 +117,7 @@ async function make(root: string, rejectPayload = false, noHttpHook = false, res
     session,
     manager,
     get network() {
-      return network;
+      return provider.network;
     },
   };
 }
@@ -113,8 +125,8 @@ async function make(root: string, rejectPayload = false, noHttpHook = false, res
 test("SDK provider pipeline records only the calling agent and survives disk resume", async () => {
   const root = await mkdtemp(join(tmpdir(), "bruv-cache-sdk-"));
   try {
-    const a = await make(join(root, "a")),
-      b = await make(join(root, "b"));
+    const a = await createSdkSession(join(root, "a")),
+      b = await createSdkSession(join(root, "b"));
     await a.session.prompt("one actual request");
     const calls = () => a.manager.getEntries().filter((e) => e.type === "custom" && e.customType === CACHE_CALL_ENTRY);
     expect(calls()).toHaveLength(1);
@@ -144,7 +156,7 @@ test("SDK provider pipeline records only the calling agent and survives disk res
 test("payload rejection before fetch does not reset the estimate", async () => {
   const root = await mkdtemp(join(tmpdir(), "bruv-cache-reject-"));
   try {
-    const run = await make(root, true);
+    const run = await createSdkSession(root, { kind: "payload-rejection" });
     await run.session.prompt("reject before network").catch(() => {});
     expect(run.network).toBe(0);
     expect(
@@ -159,7 +171,7 @@ test("payload rejection before fetch does not reset the estimate", async () => {
 test("successful terminal observation covers transports without an HTTP hook", async () => {
   const root = await mkdtemp(join(tmpdir(), "bruv-cache-terminal-"));
   try {
-    const run = await make(root, false, true);
+    const run = await createSdkSession(root, { kind: "terminal-only" });
     await run.session.prompt("scripted WebSocket success");
     expect(run.network).toBe(1);
     const calls = run.manager.getEntries().filter((e) => e.type === "custom" && e.customType === CACHE_CALL_ENTRY);
@@ -175,7 +187,7 @@ test("actual SDK HTTP hook does not record rejected responses", async () => {
   const root = await mkdtemp(join(tmpdir(), "bruv-cache-http-reject-"));
   try {
     for (const status of [401, 429, 500]) {
-      const run = await make(join(root, String(status)), false, false, status);
+      const run = await createSdkSession(join(root, String(status)), { kind: "http", status });
       await run.session.prompt("rejected HTTP response");
       expect(run.network).toBe(1);
       expect(

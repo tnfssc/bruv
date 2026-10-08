@@ -76,6 +76,29 @@ class FixtureTests(unittest.TestCase):
             self.assertIn("env -i", args[-1])
             self.assertNotIn("kill-session", args)
 
+    def test_replay_call_identity_and_saved_answer_take_precedence(self):
+        body = request("Ask about notes", ["ask-question|replayed"])
+        body["input"].append({"role": "user", "content": "Saved answer: Keep concise"})
+        items = fixture.fixture(body, self.root)
+        self.assertEqual([i["call_id"] for i in items], ["resolve-question"])
+        body["input"].append({"type": "function_call_output", "call_id": "resolve-question|replayed", "output": "Used your preference"})
+        settled = fixture.fixture(body, self.root)
+        self.assertEqual(len(settled), 1)
+        self.assertEqual(settled[0]["phase"], "final_answer")
+        self.assertIn("preference is saved", settled[0]["content"][0]["text"])
+
+    def test_scenario_priority_and_errors_survive_mixed_history(self):
+        body = request("Inspect grouped records. Run lifecycle checks. Ask about notes. Keep concise.")
+        self.assertEqual(fixture.fixture(body, self.root)[0]["call_id"], "record-a")
+        body = request("Run lifecycle checks. Ask about notes. Keep concise.", ["launch-lifecycle"])
+        body["input"].append({"role": "user", "content": "Cancel fixture check"})
+        self.assertEqual(fixture.fixture(body, self.root)[0]["call_id"], "cancel-lifecycle")
+        body["input"].append({"type": "function_call_output", "call_id": "cancel-lifecycle", "output": "Execution failed: cancelled action failed"})
+        failed = fixture.fixture(body, self.root)
+        self.assertEqual(len(failed), 1)
+        self.assertEqual(failed[0]["phase"], "final_answer")
+        self.assertIn("fixture action failed", failed[0]["content"][0]["text"])
+
     def test_guide_count_and_original_evidence(self):
         calls = []
         outputs = []

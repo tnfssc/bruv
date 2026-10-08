@@ -168,6 +168,45 @@ function isPositiveSafeInteger(value: unknown): value is number {
   return typeof value === "number" && Number.isSafeInteger(value) && value > 0;
 }
 
+/** Accept one untrusted record; report its decoded size for channel accounting. */
+function decodeImageRecord(record: string): { image: ChannelImageContent; byteLength: number } {
+  let value: (Partial<ImageContent> & { resize?: unknown }) | null;
+  try {
+    value = JSON.parse(record);
+  } catch {
+    throw new Error("Invalid JSON in image output record");
+  }
+  if (!value || value.type !== "image" || typeof value.data !== "string" || typeof value.mimeType !== "string")
+    throw new Error("Invalid image output record");
+  // Validate canonical base64; Buffer.from alone silently accepts bad input.
+  if (value.data.length > Math.ceil(MAX_IMAGE_BYTES / 3) * 4)
+    throw new Error("Image output exceeds the per-image byte limit");
+  if (/[^A-Za-z0-9+/=]/.test(value.data)) throw new Error("Invalid image base64");
+  const bytes = Buffer.from(value.data, "base64");
+  checkOutputSize(bytes.length);
+  if (bytes.toString("base64") !== value.data || imageMimeType(bytes) !== value.mimeType)
+    throw new Error("Image output MIME type or encoding mismatch");
+  let resize: ImageResizeMetadata | undefined;
+  if ("resize" in value) {
+    const candidate = value.resize as Partial<ImageResizeMetadata> | null;
+    if (
+      !candidate ||
+      !isPositiveSafeInteger(candidate.originalWidth) ||
+      !isPositiveSafeInteger(candidate.originalHeight) ||
+      !isPositiveSafeInteger(candidate.width) ||
+      !isPositiveSafeInteger(candidate.height) ||
+      candidate.width > candidate.originalWidth ||
+      candidate.height > candidate.originalHeight
+    )
+      throw new Error("Invalid image resize metadata");
+    resize = candidate as ImageResizeMetadata;
+  }
+  return {
+    image: { type: "image", mimeType: value.mimeType, data: value.data, ...(resize ? { resize } : {}) },
+    byteLength: bytes.length,
+  };
+}
+
 /** Validate on the parent. The helper is convenient, not a trust boundary. */
 export function decodeImageChannel(buffer: Buffer): ChannelImageContent[] {
   if (buffer.length > MAX_IMAGE_CHANNEL_BYTES) throw new Error("Image output channel exceeded its byte limit");
@@ -175,41 +214,13 @@ export function decodeImageChannel(buffer: Buffer): ChannelImageContent[] {
   if (buffer[buffer.length - 1] !== 10) throw new Error("Incomplete image output record");
   const records = buffer.toString("utf8").slice(0, -1).split("\n");
   if (records.length > MAX_IMAGES) throw new Error(`Image output exceeds ${MAX_IMAGES} images`);
+  const images: ChannelImageContent[] = [];
   let total = 0;
-  return records.map((record) => {
-    let value: (Partial<ImageContent> & { resize?: unknown }) | null;
-    try {
-      value = JSON.parse(record);
-    } catch {
-      throw new Error("Invalid JSON in image output record");
-    }
-    if (!value || value.type !== "image" || typeof value.data !== "string" || typeof value.mimeType !== "string")
-      throw new Error("Invalid image output record");
-    // Validate canonical base64; Buffer.from alone silently accepts bad input.
-    if (value.data.length > Math.ceil(MAX_IMAGE_BYTES / 3) * 4)
-      throw new Error("Image output exceeds the per-image byte limit");
-    if (/[^A-Za-z0-9+/=]/.test(value.data)) throw new Error("Invalid image base64");
-    const bytes = Buffer.from(value.data, "base64");
-    checkOutputSize(bytes.length);
-    if (bytes.toString("base64") !== value.data || imageMimeType(bytes) !== value.mimeType)
-      throw new Error("Image output MIME type or encoding mismatch");
-    let resize: ImageResizeMetadata | undefined;
-    if ("resize" in value) {
-      const candidate = value.resize as Partial<ImageResizeMetadata> | null;
-      if (
-        !candidate ||
-        !isPositiveSafeInteger(candidate.originalWidth) ||
-        !isPositiveSafeInteger(candidate.originalHeight) ||
-        !isPositiveSafeInteger(candidate.width) ||
-        !isPositiveSafeInteger(candidate.height) ||
-        candidate.width > candidate.originalWidth ||
-        candidate.height > candidate.originalHeight
-      )
-        throw new Error("Invalid image resize metadata");
-      resize = candidate as ImageResizeMetadata;
-    }
-    total += bytes.length;
+  for (const record of records) {
+    const { image, byteLength } = decodeImageRecord(record);
+    total += byteLength;
     if (total > MAX_TOTAL_IMAGE_BYTES) throw new Error("Image output exceeded its total byte limit");
-    return { type: "image", mimeType: value.mimeType, data: value.data, ...(resize ? { resize } : {}) };
-  });
+    images.push(image);
+  }
+  return images;
 }

@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdtemp } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { type AssistantMessage, createAssistantMessageEventStream, getModel } from "@earendil-works/pi-ai/compat";
@@ -13,6 +13,54 @@ import {
 import tasks from "../src/agent/extension";
 import { buildShakePlan, registerManualShake } from "../src/agent/manual-shake";
 import { MANUAL_SHAKE_ENTRY } from "../src/history/shake-record";
+
+type SessionOptions = NonNullable<Parameters<typeof createAgentSession>[0]>;
+type LoaderOptions = NonNullable<ConstructorParameters<typeof DefaultResourceLoader>[0]>;
+
+// Opening owns loader/runtime wiring and a partially bound session. Tests own
+// the returned session, provider interception, and retained temporary fixtures.
+async function openShakeSession(
+  dir: string,
+  manager: SessionManager,
+  options: Pick<SessionOptions, "model" | "settingsManager" | "modelRuntime"> &
+    Pick<LoaderOptions, "extensionFactories"> = {},
+) {
+  const runtime =
+    options.modelRuntime ??
+    (await ModelRuntime.create({
+      authPath: join(dir, "auth.json"),
+      modelsPath: null,
+      refreshOnCreate: false,
+    }));
+  runtime.hasConfiguredAuth = () => true;
+  const loader = new DefaultResourceLoader({
+    cwd: dir,
+    agentDir: dir,
+    noExtensions: true,
+    noSkills: true,
+    noThemes: true,
+    noPromptTemplates: true,
+    extensionFactories: options.extensionFactories ?? [{ name: "bruv-tasks", factory: tasks }],
+  });
+  await loader.reload();
+  const { session } = await createAgentSession({
+    cwd: dir,
+    agentDir: dir,
+    resourceLoader: loader,
+    model: options.model ?? getModel("openai", "gpt-4o"),
+    modelRuntime: runtime,
+    sessionManager: manager,
+    settingsManager: options.settingsManager ?? SettingsManager.inMemory({ compaction: { enabled: false } }),
+    tools: ["execute"],
+  });
+  try {
+    await session.bindExtensions({ mode: "print" });
+    return session;
+  } catch (error) {
+    session.dispose();
+    throw error;
+  }
+}
 
 const smallUsage = {
   input: 20,
@@ -99,20 +147,8 @@ for (const changedSide of ["result", "call"] as const) {
       manager.appendMessage({ role: "user", content: "task", timestamp: 1 });
       appendTrace(manager, "stable", "stable-result");
       appendTrace(manager, "target", "RAW_SECRET_RESULT");
-      const runtime = await ModelRuntime.create({
-        authPath: join(dir, "auth.json"),
-        modelsPath: null,
-        refreshOnCreate: false,
-      });
-      runtime.hasConfiguredAuth = () => true;
       const notices: string[] = [];
-      const loader = new DefaultResourceLoader({
-        cwd: dir,
-        agentDir: dir,
-        noExtensions: true,
-        noSkills: true,
-        noThemes: true,
-        noPromptTemplates: true,
+      session = await openShakeSession(dir, manager, {
         extensionFactories: [
           {
             name: "redact",
@@ -145,18 +181,6 @@ for (const changedSide of ["result", "call"] as const) {
           { name: "bruv-tasks", factory: tasks },
         ],
       });
-      await loader.reload();
-      ({ session } = await createAgentSession({
-        cwd: dir,
-        agentDir: dir,
-        resourceLoader: loader,
-        model: getModel("openai", "gpt-4o"),
-        modelRuntime: runtime,
-        sessionManager: manager,
-        settingsManager: SettingsManager.inMemory({ compaction: { enabled: false } }),
-        tools: ["execute"],
-      }));
-      await session.bindExtensions({ mode: "print" });
       const contexts: any[] = [];
       session.agent.streamFunction = (_model: any, context: any) => {
         contexts.push(structuredClone(context.messages));
@@ -187,7 +211,6 @@ for (const changedSide of ["result", "call"] as const) {
       }
     } finally {
       session?.dispose();
-      await rm(dir, { recursive: true, force: true });
     }
   });
 }
@@ -207,39 +230,16 @@ test("actual SDK preserves first post-shake overflow compaction and retries once
       } as any);
       manager.appendMessage(assistant([{ type: "text", text: "retained reply " + index }], staleUsage));
     }
-    const runtime = await ModelRuntime.create({
-      authPath: join(dir, "auth.json"),
-      modelsPath: null,
-      refreshOnCreate: false,
-    });
-    runtime.hasConfiguredAuth = () => true;
-    const loader = new DefaultResourceLoader({
-      cwd: dir,
-      agentDir: dir,
-      noExtensions: true,
-      noSkills: true,
-      noThemes: true,
-      noPromptTemplates: true,
-      extensionFactories: [{ name: "bruv-tasks", factory: tasks }],
-    });
-    await loader.reload();
     // Pi 0.87 estimates recovery context from its durable projection after
     // omitting the failed attempt. Leave room for that conservative raw estimate.
     const model = { ...getModel("openai", "gpt-4o")!, contextWindow: 20000, maxTokens: 4000 };
-    ({ session } = await createAgentSession({
-      cwd: dir,
-      agentDir: dir,
-      resourceLoader: loader,
+    session = await openShakeSession(dir, manager, {
       model,
-      modelRuntime: runtime,
-      sessionManager: manager,
       settingsManager: SettingsManager.inMemory({
         compaction: { enabled: true, reserveTokens: 5000, keepRecentTokens: 200 },
         retry: { enabled: false },
       }),
-      tools: ["execute"],
-    }));
-    await session.bindExtensions({ mode: "print" });
+    });
     await session.prompt("/shake");
 
     const contexts: any[] = [];
@@ -294,7 +294,6 @@ test("actual SDK preserves first post-shake overflow compaction and retries once
     expect(omitted.map((entry) => entry.type === "context_edit" && entry.targetId)).toContain(toolResultId);
   } finally {
     session?.dispose();
-    await rm(dir, { recursive: true, force: true });
   }
 }, 10_000);
 
@@ -305,38 +304,15 @@ test("actual SDK uses post-shake context for pre-request automatic compaction th
     const manager = SessionManager.inMemory(dir);
     manager.appendMessage({ role: "user", content: "small task", timestamp: 1 });
     appendTrace(manager, "large", "trace ".repeat(3000));
-    const runtime = await ModelRuntime.create({
-      authPath: join(dir, "auth.json"),
-      modelsPath: null,
-      refreshOnCreate: false,
-    });
-    runtime.hasConfiguredAuth = () => true;
-    const loader = new DefaultResourceLoader({
-      cwd: dir,
-      agentDir: dir,
-      noExtensions: true,
-      noSkills: true,
-      noThemes: true,
-      noPromptTemplates: true,
-      extensionFactories: [{ name: "bruv-tasks", factory: tasks }],
-    });
-    await loader.reload();
     // Threshold is 8k, but leave enough room for the SDK compactor to prepare
     // its summary request; a tight context can cancel compaction before dispatch.
     const model = { ...getModel("openai", "gpt-4o")!, contextWindow: 20000, maxTokens: 4000 };
-    ({ session } = await createAgentSession({
-      cwd: dir,
-      agentDir: dir,
-      resourceLoader: loader,
+    session = await openShakeSession(dir, manager, {
       model,
-      modelRuntime: runtime,
-      sessionManager: manager,
       settingsManager: SettingsManager.inMemory({
         compaction: { enabled: true, reserveTokens: 12000, keepRecentTokens: 200 },
       }),
-      tools: ["execute"],
-    }));
-    await session.bindExtensions({ mode: "print" });
+    });
     expect(session.model.contextWindow).toBe(20000);
     expect(session.autoCompactionEnabled).toBe(true);
     const contexts: any[] = [];
@@ -393,7 +369,6 @@ test("actual SDK uses post-shake context for pre-request automatic compaction th
     expect(totals).toContain(0.03);
   } finally {
     session?.dispose();
-    await rm(dir, { recursive: true, force: true });
   }
 }, 10_000);
 
@@ -414,15 +389,9 @@ test("actual SDK aborts provider dispatch after a carry-forward persistence fail
       modelsPath: null,
       refreshOnCreate: false,
     });
-    runtime.hasConfiguredAuth = () => true;
     runtime.getAuth = (async () => ({ auth: { apiKey: "offline-key" } })) as any;
-    const loader = new DefaultResourceLoader({
-      cwd: dir,
-      agentDir: dir,
-      noExtensions: true,
-      noSkills: true,
-      noThemes: true,
-      noPromptTemplates: true,
+    session = await openShakeSession(dir, manager, {
+      modelRuntime: runtime,
       extensionFactories: [
         {
           name: "shake-failure",
@@ -441,18 +410,6 @@ test("actual SDK aborts provider dispatch after a carry-forward persistence fail
         },
       ],
     });
-    await loader.reload();
-    ({ session } = await createAgentSession({
-      cwd: dir,
-      agentDir: dir,
-      resourceLoader: loader,
-      model: getModel("openai", "gpt-4o"),
-      modelRuntime: runtime,
-      sessionManager: manager,
-      settingsManager: SettingsManager.inMemory({ compaction: { enabled: false } }),
-      tools: ["execute"],
-    }));
-    await session.bindExtensions({ mode: "print" });
     const priorLeaf = manager.getLeafId();
     await session._extensionRunner.emit({
       type: "session_compact",
@@ -474,6 +431,5 @@ test("actual SDK aborts provider dispatch after a carry-forward persistence fail
   } finally {
     session?.dispose();
     globalThis.fetch = originalFetch;
-    await rm(dir, { recursive: true, force: true });
   }
 });

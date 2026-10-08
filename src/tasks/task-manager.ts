@@ -200,47 +200,57 @@ export class TaskManager {
   }
 
   spawn(launch: TaskLaunch): TaskSummary {
-    return this.#spawn(launch);
+    this.#assertAcceptingTasks();
+    const id = launch.id ?? "task_" + randomUUID().slice(0, 8);
+    if (this.#tasks.has(id)) throw new Error("Duplicate task ID");
+    const child = this.#spawnChild(launch);
+    const task = this.#createTask(
+      {
+        id,
+        ...(launch.launchIdentity ? { launchIdentity: { ...launch.launchIdentity } } : {}),
+        ...(launch.title === undefined ? {} : { title: launch.title }),
+        agent: launch.agent ? { ...launch.agent, phase: "starting", events: 0 } : undefined,
+        workspace: launch.workspace ? { ...launch.workspace } : undefined,
+        kind: launch.kind,
+        command: launch.displayCommand,
+        cwd: launch.cwd,
+        pid: child.pid,
+        stdinOpen: !launch.closeStdin,
+      },
+      launch.notifyOnComplete ?? true,
+    );
+    task.process = child;
+    this.#tasks.set(id, task);
+    this.#diagnostic({ component: "jobs", code: "JOBS_TASK_SPAWNED", outcome: "success", taskId: id });
+    this.#taskChild({ taskId: id, kind: launch.kind, sessionFile: launch.agent?.sessionFile });
+    this.#emit({ type: "spawned", task: this.#summary(task) });
+    this.#observeProcess(task, child, launch.closeStdin);
+    this.#startDeadline(task, launch.timeoutMs);
+    return this.#summary(task);
   }
 
   /** Reserve the final child ID before workspace Git and setup begin. */
   prepareAgent(launch: AgentPreparationLaunch): TaskSummary {
-    if (this.#shuttingDown) throw new Error("Task manager is shutting down");
+    this.#assertAcceptingTasks();
     if (this.#tasks.has(launch.id)) throw new Error("Duplicate task ID");
-    let resolveCompletion!: (task: TaskInspection) => void;
-    const completion = new Promise<TaskInspection>((resolve) => {
-      resolveCompletion = resolve;
-    });
-    const preparationController = new AbortController();
-    const task: ManagedTask = {
-      id: launch.id,
-      ...(launch.launchIdentity ? { launchIdentity: { ...launch.launchIdentity } } : {}),
-      ...(launch.title === undefined ? {} : { title: launch.title }),
-      workspace: { ...launch.workspace, preparationStatus: "preparing" },
-      kind: "agent",
-      command: launch.displayCommand,
-      cwd: launch.cwd,
-      status: "running",
-      startedAt: new Date().toISOString(),
-      baseOffset: 0,
-      outputEnd: 0,
-      timedOut: false,
-      lastActivityAt: new Date().toISOString(),
-      stdinOpen: false,
-      output: new BoundedOutputBuffer(MAX_CAPTURE_BYTES),
-      killRequested: false,
-      notifyOnComplete: launch.notifyOnComplete ?? false,
-      completion,
-      resolveCompletion,
-      preparationController,
-    };
+    const task = this.#createTask(
+      {
+        id: launch.id,
+        ...(launch.launchIdentity ? { launchIdentity: { ...launch.launchIdentity } } : {}),
+        ...(launch.title === undefined ? {} : { title: launch.title }),
+        workspace: { ...launch.workspace, preparationStatus: "preparing" },
+        kind: "agent",
+        command: launch.displayCommand,
+        cwd: launch.cwd,
+        stdinOpen: false,
+      },
+      launch.notifyOnComplete ?? false,
+    );
+    task.preparationController = new AbortController();
     this.#tasks.set(task.id, task);
     this.#diagnostic({ component: "jobs", code: "JOBS_TASK_SPAWNED", outcome: "success", taskId: task.id });
     this.#emit({ type: "spawned", task: this.#summary(task) });
-    if (launch.timeoutMs) {
-      task.timeout = setTimeout(() => this.kill(task.id, "timeout"), launch.timeoutMs);
-      task.timeout.unref?.();
-    }
+    this.#startDeadline(task, launch.timeoutMs);
     return this.#summary(task);
   }
 
@@ -268,7 +278,25 @@ export class TaskManager {
   }
 
   activatePreparedAgent(id: string, launch: Omit<TaskLaunch, "id" | "kind">): TaskSummary {
-    return this.#spawn({ ...launch, id, kind: "agent" }, true);
+    this.#assertAcceptingTasks();
+    const task = this.#requireRunning(id);
+    if (!task.preparationController || task.process) throw new Error("Task " + id + " is not preparing");
+    const child = this.#spawnChild(launch);
+    // Keep the reservation's identity, output, waiters, delivery policy and deadline.
+    task.agent = launch.agent ? { ...launch.agent, phase: "starting", events: 0 } : undefined;
+    task.workspace = launch.workspace ? { ...launch.workspace, preparationStatus: "ready" } : undefined;
+    if (launch.title !== undefined) task.title = launch.title;
+    task.command = launch.displayCommand;
+    task.cwd = launch.cwd;
+    task.pid = child.pid;
+    task.stdinOpen = !launch.closeStdin;
+    task.process = child;
+    task.preparationController = undefined;
+    this.#taskChild({ taskId: id, kind: "agent", sessionFile: launch.agent?.sessionFile });
+    this.#emit({ type: "updated", task: this.#summary(task) });
+    this.#observeProcess(task, child, launch.closeStdin);
+    this.#startDeadline(task, launch.timeoutMs);
+    return this.#summary(task);
   }
 
   failPreparedAgent(id: string, error: unknown): TaskSummary {
@@ -288,69 +316,56 @@ export class TaskManager {
     return this.#summary(task);
   }
 
-  #spawn(launch: TaskLaunch, activatingPrepared = false): TaskSummary {
+  #assertAcceptingTasks(): void {
     if (this.#shuttingDown) throw new Error("Task manager is shutting down");
-    const id = launch.id ?? "task_" + randomUUID().slice(0, 8);
-    const prepared = activatingPrepared ? this.#requireRunning(id) : undefined;
-    if (prepared && (!prepared.preparationController || prepared.process))
-      throw new Error("Task " + id + " is not preparing");
-    if (!activatingPrepared && this.#tasks.has(id)) throw new Error("Duplicate task ID");
-    const child = spawn(launch.command, launch.args ?? [], {
+  }
+
+  #createTask(
+    summary: Pick<
+      TaskSummary,
+      "id" | "launchIdentity" | "title" | "agent" | "workspace" | "kind" | "command" | "cwd" | "pid" | "stdinOpen"
+    >,
+    notifyOnComplete: boolean,
+  ): ManagedTask {
+    let resolveCompletion!: (task: TaskInspection) => void;
+    const completion = new Promise<TaskInspection>((resolve) => {
+      resolveCompletion = resolve;
+    });
+    return {
+      ...summary,
+      status: "running",
+      startedAt: new Date().toISOString(),
+      baseOffset: 0,
+      outputEnd: 0,
+      timedOut: false,
+      lastActivityAt: new Date().toISOString(),
+      output: new BoundedOutputBuffer(MAX_CAPTURE_BYTES),
+      killRequested: false,
+      notifyOnComplete,
+      completion,
+      resolveCompletion,
+    };
+  }
+
+  #spawnChild(launch: Omit<TaskLaunch, "id" | "kind">): ChildProcessWithoutNullStreams {
+    return spawn(launch.command, launch.args ?? [], {
       cwd: launch.cwd,
       env: scrubT3BridgeEnvironment(launch.env ?? process.env),
       shell: false,
       detached: process.platform !== "win32",
       stdio: ["pipe", "pipe", "pipe"],
     });
-    let task: ManagedTask;
-    if (prepared) {
-      task = prepared;
-      task.agent = launch.agent ? { ...launch.agent, phase: "starting", events: 0 } : undefined;
-      task.workspace = launch.workspace ? { ...launch.workspace, preparationStatus: "ready" } : undefined;
-      if (launch.title !== undefined) task.title = launch.title;
-      task.command = launch.displayCommand;
-      task.cwd = launch.cwd;
-      task.pid = child.pid;
-      task.stdinOpen = !launch.closeStdin;
-      task.process = child;
-      task.preparationController = undefined;
-      this.#taskChild({ taskId: id, kind: launch.kind, sessionFile: launch.agent?.sessionFile });
-      this.#emit({ type: "updated", task: this.#summary(task) });
-    } else {
-      let resolveCompletion!: (task: TaskInspection) => void;
-      const completion = new Promise<TaskInspection>((resolve) => {
-        resolveCompletion = resolve;
-      });
-      task = {
-        id,
-        ...(launch.launchIdentity ? { launchIdentity: { ...launch.launchIdentity } } : {}),
-        ...(launch.title === undefined ? {} : { title: launch.title }),
-        agent: launch.agent ? { ...launch.agent, phase: "starting", events: 0 } : undefined,
-        workspace: launch.workspace ? { ...launch.workspace } : undefined,
-        kind: launch.kind,
-        command: launch.displayCommand,
-        cwd: launch.cwd,
-        pid: child.pid,
-        status: "running",
-        startedAt: new Date().toISOString(),
-        baseOffset: 0,
-        outputEnd: 0,
-        timedOut: false,
-        lastActivityAt: new Date().toISOString(),
-        stdinOpen: !launch.closeStdin,
-        process: child,
-        output: new BoundedOutputBuffer(MAX_CAPTURE_BYTES),
-        killRequested: false,
-        notifyOnComplete: launch.notifyOnComplete ?? true,
-        completion,
-        resolveCompletion,
-      };
-      this.#tasks.set(id, task);
-      this.#diagnostic({ component: "jobs", code: "JOBS_TASK_SPAWNED", outcome: "success", taskId: id });
-      this.#taskChild({ taskId: id, kind: launch.kind, sessionFile: launch.agent?.sessionFile });
-      this.#emit({ type: "spawned", task: this.#summary(task) });
+  }
+
+  #startDeadline(task: ManagedTask, timeoutMs?: number): void {
+    if (timeoutMs && !task.timeout) {
+      task.timeout = setTimeout(() => this.kill(task.id, "timeout"), timeoutMs);
+      task.timeout.unref?.();
     }
-    if (launch.closeStdin) child.stdin.end();
+  }
+
+  #observeProcess(task: ManagedTask, child: ChildProcessWithoutNullStreams, closeStdin?: boolean): void {
+    if (closeStdin) child.stdin.end();
     // Intentionally merge stdout and stderr for now. Stream labels and strict
     // cross-stream ordering require a structured output format; add that later.
     const progress = task.agent
@@ -390,7 +405,7 @@ export class TaskManager {
       task.status = task.killRequested ? "killed" : code === 0 && !progress?.failed ? "completed" : "failed";
       task.stdinOpen = false;
       if (task.agent) task.agent.phase = task.status;
-      const inspection = this.inspect(id, Math.max(task.baseOffset, task.outputEnd - MAX_INSPECT_BYTES));
+      const inspection = this.inspect(task.id, Math.max(task.baseOffset, task.outputEnd - MAX_INSPECT_BYTES));
       // Notifications carry the answer, while inspect retains the activity log.
       if (progress && task.status === "completed" && progress.final.retainedBytes) {
         const answer = progress.final.read(progress.final.baseOffset, MAX_INSPECT_BYTES).buffer;
@@ -401,15 +416,6 @@ export class TaskManager {
       task.process = undefined;
       this.#publishCompletion(task, inspection);
     });
-
-    if (launch.timeoutMs && !task.timeout) {
-      task.timeout = setTimeout(() => {
-        this.kill(id, "timeout");
-      }, launch.timeoutMs);
-      task.timeout.unref?.();
-    }
-
-    return this.#summary(task);
   }
 
   /** Give monitors and goal mode running snapshots, never process handles. */
@@ -787,25 +793,29 @@ export class TaskManager {
   }
 
   #summary(task: ManagedTask): TaskSummary {
-    const {
-      completionOutput: _completionOutput,
-      process: _process,
-      output: _output,
-      timeout: _timeout,
-      killTimer: _killTimer,
-      killRequested: _killRequested,
-      notifyOnComplete: _notifyOnComplete,
-      completion: _completion,
-      resolveCompletion: _resolveCompletion,
-      ...summary
-    } = task;
+    // Public metadata is an allowlist: adding manager-owned state cannot expose it.
     return {
-      ...summary,
+      id: task.id,
+      kind: task.kind,
+      title: task.title,
+      command: task.command,
+      cwd: task.cwd,
+      pid: task.pid,
+      status: task.status,
+      startedAt: task.startedAt,
+      completedAt: task.completedAt,
+      exitCode: task.exitCode,
+      signal: task.signal,
+      baseOffset: task.baseOffset,
+      outputEnd: task.outputEnd,
+      timedOut: task.timedOut,
+      lastActivityAt: task.lastActivityAt,
+      stdinOpen: task.stdinOpen,
       background: task.notifyOnComplete,
-      ...(summary.launchIdentity ? { launchIdentity: { ...summary.launchIdentity } } : {}),
-      ...(summary.agent ? { agent: { ...summary.agent } } : {}),
-      ...(summary.workspace ? { workspace: { ...summary.workspace } } : {}),
-      ...(summary.termination ? { termination: { ...summary.termination } } : {}),
+      ...(task.launchIdentity ? { launchIdentity: { ...task.launchIdentity } } : {}),
+      ...(task.agent ? { agent: { ...task.agent } } : {}),
+      ...(task.workspace ? { workspace: { ...task.workspace } } : {}),
+      ...(task.termination ? { termination: { ...task.termination } } : {}),
     };
   }
 }

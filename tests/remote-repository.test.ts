@@ -1,5 +1,5 @@
 import { test, expect } from "bun:test";
-import { mkdtempSync, readFileSync, writeFileSync, mkdirSync, rmSync } from "node:fs";
+import { existsSync, mkdtempSync, readFileSync, writeFileSync, mkdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { captureRepository, collectRepositoryResult, integrateRepositoryResult } from "../src/remote/repository";
@@ -18,64 +18,174 @@ function fixture() {
   git(root, "-c", "user.name=T", "-c", "user.email=t@example.invalid", "commit", "-qm", "base");
   return { dir, root };
 }
-test("capture current tracked state and safe return without touching staged index", () => {
+test("current tracked snapshot returns into the worktree without changing the staged index", () => {
   const { dir, root } = fixture();
   try {
     writeFileSync(join(root, "file"), "staged\n");
     git(root, "add", "file");
     writeFileSync(join(root, "file"), "current\n");
     writeFileSync(join(root, "other"), "untracked");
-    expect(() => captureRepository(root, join(dir, "refused"), ["other-not-approved"])).toThrow();
+    const stagedIndex = git(root, "ls-files", "--stage");
+
     const manifest = captureRepository(root, join(dir, "artifacts"));
-    expect(manifest.omittedUntracked).toEqual(["other"]);
     const checkout = join(dir, "artifacts", "snapshot-checkout");
+    expect(manifest.omittedUntracked).toEqual(["other"]);
     expect(readFileSync(join(checkout, "file"), "utf8")).toBe("current\n");
+    expect(git(checkout, "rev-list", "--count", "HEAD")).toBe("1");
+    expect(git(root, "ls-files", "--stage")).toBe(stagedIndex);
+    expect(readFileSync(join(root, "file"), "utf8")).toBe("current\n");
+
     writeFileSync(join(checkout, "file"), "remote\n");
     const result = collectRepositoryResult(checkout, manifest.snapshot, join(dir, "result.patch"));
-    const before = git(root, "ls-files", "--stage");
-    expect(integrateRepositoryResult(root, manifest, result, join(dir, "receipts")).status).toBe("applied");
+    const outcome = integrateRepositoryResult(root, manifest, result, join(dir, "receipts"));
+    expect(outcome).toMatchObject({ status: "applied", artifact: result.patch });
+    expect(JSON.parse(readFileSync(outcome.receipt!, "utf8"))).toEqual({
+      status: "applied",
+      snapshot: manifest.snapshot,
+      sha256: result.sha256,
+    });
     expect(readFileSync(join(root, "file"), "utf8")).toBe("remote\n");
-    expect(git(root, "ls-files", "--stage")).toBe(before);
-    expect(integrateRepositoryResult(root, manifest, result, join(dir, "receipts")).status).toBe("review");
-  } finally {
-    rmSync(dir, { recursive: true, force: true });
-  }
-});
-test("local drift, remote creations and remote untracked bytes are review only", () => {
-  const { dir, root } = fixture();
-  try {
-    const m = captureRepository(root, join(dir, "artifacts"));
-    const checkout = join(dir, "artifacts", "snapshot-checkout");
-    writeFileSync(join(checkout, "file"), "remote\n");
-    const result = collectRepositoryResult(checkout, m.snapshot, join(dir, "p"));
-    writeFileSync(join(root, "file"), "local\n");
-    expect(integrateRepositoryResult(root, m, result, join(dir, "receipts")).status).toBe("review");
-    expect(readFileSync(join(root, "file"), "utf8")).toBe("local\n");
-    writeFileSync(join(root, "file"), "base\n");
-    writeFileSync(join(checkout, "new"), "bytes");
-    const untracked = collectRepositoryResult(checkout, m.snapshot, join(dir, "p2"));
-    expect(integrateRepositoryResult(root, m, untracked, join(dir, "receipts")).status).toBe("review");
-    git(checkout, "add", "new");
-    const created = collectRepositoryResult(checkout, m.snapshot, join(dir, "p3"));
-    expect(integrateRepositoryResult(root, m, created, join(dir, "receipts")).status).toBe("review");
+    expect(git(root, "ls-files", "--stage")).toBe(stagedIndex);
+    expect(integrateRepositoryResult(root, manifest, result, join(dir, "receipts"))).toMatchObject({
+      status: "review",
+      reason: expect.stringContaining("changed since capture"),
+      artifact: result.patch,
+    });
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }
 });
 
-test("explicit untracked transfer and hidden tracked edits", () => {
+test("an apply receipt prevents retry even when the local worktree returns to the captured state", () => {
+  const { dir, root } = fixture();
+  try {
+    const manifest = captureRepository(root, join(dir, "artifacts"));
+    const checkout = join(dir, "artifacts", "snapshot-checkout");
+    writeFileSync(join(checkout, "file"), "remote\n");
+    const result = collectRepositoryResult(checkout, manifest.snapshot, join(dir, "result.patch"));
+    const applied = integrateRepositoryResult(root, manifest, result, join(dir, "receipts"));
+    expect(applied.status).toBe("applied");
+    const receipt = readFileSync(applied.receipt!, "utf8");
+
+    writeFileSync(join(root, "file"), "base\n");
+    expect(integrateRepositoryResult(root, manifest, result, join(dir, "receipts"))).toEqual({
+      status: "review",
+      reason: "result already attempted; inspect receipt and worktree",
+      artifact: result.patch,
+      receipt: applied.receipt,
+    });
+    expect(readFileSync(join(root, "file"), "utf8")).toBe("base\n");
+    expect(readFileSync(applied.receipt!, "utf8")).toBe(receipt);
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("local tracked drift preserves the local edit and leaves the remote patch for review", () => {
+  const { dir, root } = fixture();
+  try {
+    const manifest = captureRepository(root, join(dir, "artifacts"));
+    const checkout = join(dir, "artifacts", "snapshot-checkout");
+    writeFileSync(join(checkout, "file"), "remote\n");
+    const result = collectRepositoryResult(checkout, manifest.snapshot, join(dir, "result.patch"));
+    const patch = readFileSync(result.patch);
+
+    writeFileSync(join(root, "file"), "local\n");
+    expect(integrateRepositoryResult(root, manifest, result, join(dir, "receipts"))).toEqual({
+      status: "review",
+      reason: "local HEAD, index or tracked work changed since capture",
+      artifact: result.patch,
+    });
+    expect(readFileSync(join(root, "file"), "utf8")).toBe("local\n");
+    expect(readFileSync(result.patch)).toEqual(patch);
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("remote untracked bytes are exported for review, not applied locally", () => {
+  const { dir, root } = fixture();
+  try {
+    const manifest = captureRepository(root, join(dir, "artifacts"));
+    const checkout = join(dir, "artifacts", "snapshot-checkout");
+    writeFileSync(join(checkout, "file"), "remote\n");
+    writeFileSync(join(checkout, "new"), "bytes");
+    const result = collectRepositoryResult(checkout, manifest.snapshot, join(dir, "result.patch"));
+    expect(result.untracked).toEqual(["new"]);
+    const patch = readFileSync(result.patch, "utf8");
+    expect(patch).toContain("+remote");
+    expect(patch).toContain("+bytes");
+    expect(integrateRepositoryResult(root, manifest, result, join(dir, "receipts"))).toEqual({
+      status: "review",
+      reason: "remote untracked files are preserved in the review patch; manual review required",
+      artifact: result.patch,
+    });
+    expect(readFileSync(join(root, "file"), "utf8")).toBe("base\n");
+    expect(existsSync(join(root, "new"))).toBe(false);
+    expect(readFileSync(result.patch, "utf8")).toBe(patch);
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("a remote staged creation requires review even with no remote untracked files", () => {
+  const { dir, root } = fixture();
+  try {
+    const manifest = captureRepository(root, join(dir, "artifacts"));
+    const checkout = join(dir, "artifacts", "snapshot-checkout");
+    writeFileSync(join(checkout, "file"), "remote\n");
+    writeFileSync(join(checkout, "new"), "bytes");
+    git(checkout, "add", "new");
+    const result = collectRepositoryResult(checkout, manifest.snapshot, join(dir, "result.patch"));
+    expect(result.untracked).toEqual([]);
+    const patch = readFileSync(result.patch);
+    expect(integrateRepositoryResult(root, manifest, result, join(dir, "receipts"))).toEqual({
+      status: "review",
+      reason: "creation, deletion or mode change requires review",
+      artifact: result.patch,
+    });
+    expect(readFileSync(join(root, "file"), "utf8")).toBe("base\n");
+    expect(existsSync(join(root, "new"))).toBe(false);
+    expect(readFileSync(result.patch)).toEqual(patch);
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("untracked capture requires exact approval and leaves the selected source file intact", () => {
   const { dir, root } = fixture();
   try {
     writeFileSync(join(root, "approved"), "selected");
-    const m = captureRepository(root, join(dir, "artifacts"), ["approved"]);
-    expect(readFileSync(join(dir, "artifacts", "snapshot-checkout", "approved"), "utf8")).toBe("selected");
-    expect(m.omittedUntracked).toEqual([]);
+    expect(() => captureRepository(root, join(dir, "refused"), ["other-not-approved"])).toThrow(
+      "approval must name exact regular paths",
+    );
+    const manifest = captureRepository(root, join(dir, "artifacts"), ["approved"]);
+    const checkout = join(dir, "artifacts", "snapshot-checkout");
+    expect(manifest.selectedUntracked).toEqual(["approved"]);
+    expect(manifest.omittedUntracked).toEqual([]);
+    expect(readFileSync(join(checkout, "approved"), "utf8")).toBe("selected");
     expect(readFileSync(join(root, "approved"), "utf8")).toBe("selected");
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("hidden tracked index flags block return rather than trusting an unreadable local baseline", () => {
+  const { dir, root } = fixture();
+  try {
+    const manifest = captureRepository(root, join(dir, "artifacts"));
     const checkout = join(dir, "artifacts", "snapshot-checkout");
     writeFileSync(join(checkout, "file"), "remote\n");
-    const result = collectRepositoryResult(checkout, m.snapshot, join(dir, "patch"));
+    const result = collectRepositoryResult(checkout, manifest.snapshot, join(dir, "result.patch"));
+    const patch = readFileSync(result.patch);
     git(root, "update-index", "--assume-unchanged", "file");
-    expect(integrateRepositoryResult(root, m, result, join(dir, "receipts")).status).toBe("review");
+    expect(integrateRepositoryResult(root, manifest, result, join(dir, "receipts"))).toEqual({
+      status: "review",
+      reason: "local repository state unsupported or unreadable; inspect before return",
+      artifact: result.patch,
+    });
+    expect(readFileSync(join(root, "file"), "utf8")).toBe("base\n");
+    expect(readFileSync(result.patch)).toEqual(patch);
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }

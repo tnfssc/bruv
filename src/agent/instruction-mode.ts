@@ -13,13 +13,13 @@ function parsedMode(value: unknown): MainAgentMode | undefined {
     : undefined;
 }
 
-function sessionOwner(sessionId: string | undefined): string {
+function sessionOwner(ctx: ExtensionContext): string {
   // The marker must survive a process restart so an unchanged resumed frame is
   // byte-identical (and therefore cache-affine). The digest keeps session IDs
   // opaque if a prompt is logged or inspected.
   return createHash("sha256")
     .update("bruv-main-agent-mode\0")
-    .update(sessionId ?? "")
+    .update(ctx.sessionManager?.getSessionId?.() ?? "")
     .digest("hex");
 }
 
@@ -53,19 +53,8 @@ function persistedMode(ctx: ExtensionContext): MainAgentMode {
 export function registerInstructionMode(pi: ExtensionAPI, isRoot: () => boolean) {
   let mode: MainAgentMode = "orchestrator";
   let ui: ExtensionContext["ui"] | undefined;
-  let owner = sessionOwner(undefined);
-  let sessionId: string | undefined;
-  let explicitCustom = false;
   const status = () => ui?.setStatus("bruv-mode", isRoot() ? "mode: " + mode : undefined);
   const describe = () => mode + " (instructions only; model and thinking unchanged)";
-  const resetFrameIdentity = (ctx: ExtensionContext) => {
-    const nextId = ctx.sessionManager?.getSessionId?.();
-    if (nextId !== sessionId) {
-      sessionId = nextId;
-      owner = sessionOwner(nextId);
-      explicitCustom = false;
-    }
-  };
 
   pi.registerCommand("mode", {
     description: "Show or switch main-agent instruction mode (fast, normal, orchestrator)",
@@ -76,7 +65,6 @@ export function registerInstructionMode(pi: ExtensionAPI, isRoot: () => boolean)
     },
     handler: async (args, ctx) => {
       ui = ctx.ui;
-      resetFrameIdentity(ctx);
       if (!isRoot()) {
         ctx.ui.notify(
           "/mode is available only to the main agent; this child keeps its fixed role and delegation depth.",
@@ -106,11 +94,9 @@ export function registerInstructionMode(pi: ExtensionAPI, isRoot: () => boolean)
           return;
         }
         mode = next;
-        if (!explicitCustom) {
-          updateCurrentInstructionFrame(ctx.sessionManager as object, (prompt) =>
-            replaceMainAgentGuidance(prompt, mode, owner),
-          );
-        }
+        updateCurrentInstructionFrame(ctx.sessionManager as object, (prompt) =>
+          replaceMainAgentGuidance(prompt, mode, sessionOwner(ctx)),
+        );
       }
       status();
       ctx.ui.notify("Main-agent mode: " + describe() + ".", "info");
@@ -119,26 +105,21 @@ export function registerInstructionMode(pi: ExtensionAPI, isRoot: () => boolean)
 
   return {
     get: () => mode,
-    /** Record whether this frame is a user override and create bruv's owned block. */
-    guidance(ctx: ExtensionContext, custom: boolean): string {
-      resetFrameIdentity(ctx);
-      explicitCustom = custom;
-      return custom ? "" : mainAgentGuidance(mode, owner);
+    /** Create Bruv's owned region; explicit user prompts bypass this in the framing hook. */
+    guidance(ctx: ExtensionContext): string {
+      return mainAgentGuidance(mode, sessionOwner(ctx));
     },
     refresh(ctx: ExtensionContext) {
-      resetFrameIdentity(ctx);
       mode = isRoot() ? persistedMode(ctx) : "orchestrator";
     },
     sessionStart(ctx: ExtensionContext) {
       ui = ctx.ui;
-      resetFrameIdentity(ctx);
       mode = isRoot() ? persistedMode(ctx) : "orchestrator";
       status();
     },
     shutdown() {
       ui?.setStatus("bruv-mode", undefined);
       ui = undefined;
-      explicitCustom = false;
     },
   };
 }

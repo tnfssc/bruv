@@ -1,9 +1,9 @@
+import type { EntryMetadata } from "../history/disk-entry-store";
+import { getDiskBackedBranch, visitDiskBackedBranch } from "../history/session-manager";
 import { createHash } from "node:crypto";
 import type { ExtensionFactory, SessionEntry } from "@earendil-works/pi-coding-agent";
 import type tasksExtension from "../agent/extension";
-import type { EntryMetadata } from "../history/disk-entry-store";
-import { getDiskBackedBranch, visitDiskBackedBranch } from "../history/session-manager";
-import type { LocalTaskLaunchIdentity, TaskEvent, TaskSummary } from "../tasks/task-manager";
+import type { LocalTaskLaunchIdentity, TaskEvent, TaskInspection, TaskSummary } from "../tasks/task-manager";
 import type { TaskOwnerAttachment, TaskOwnerBinding } from "../tasks/task-owner";
 import { childJournalEntries } from "./task-child-journal";
 import {
@@ -203,7 +203,7 @@ export function bindNativeTasks(
       spawnDepth: task.agent.depth,
     };
   };
-  const children = async (task: TaskSummary, cursor: Cursor) => {
+  const replayChildJournal = async (task: TaskSummary, cursor: Cursor) => {
     const frames: ChildFrame[] = [];
     if (cursor.link.kind !== "worker") return frames;
     if (!options.writeChildFrame)
@@ -276,8 +276,7 @@ export function bindNativeTasks(
       rosterKey = key;
     }
   };
-  const observe = async (event: TaskEvent) => {
-    const task = event.task;
+  const registerTaskCursor = (task: TaskSummary): Cursor | undefined => {
     const actualLink = link(task);
     if (!actualLink) return;
     let cursor = cursors.get(task.id);
@@ -308,6 +307,76 @@ export function bindNativeTasks(
       JSON.stringify(cursor.launch) !== JSON.stringify(task.launchIdentity)
     )
       throw new Error("Job launch identity changed");
+    return cursor;
+  };
+
+  const announceAgentCall = async (task: TaskSummary, cursor: Cursor) => {
+    if (cursor.link.kind !== "worker" || cursor.agentCall) return;
+    const workerLink = cursor.link;
+    await options.emit({
+      type: "assistant",
+      bruv: { ...cursor.launch, jobId: task.id },
+      session_id: options.root.sessionId,
+      parent_tool_use_id: null,
+      uuid: nativeTaskMessageId(cursor.link, "launch", "agent-call"),
+      message: {
+        id: nativeTaskMessageId(cursor.link, "launch", "agent-call"),
+        type: "message",
+        role: "assistant",
+        stop_reason: "tool_use",
+        stop_sequence: null,
+        content: [
+          {
+            type: "tool_use",
+            id: workerLink.launchToolUseId,
+            name: "Agent",
+            input: {
+              prompt: workerLink.prompt,
+              subagent_type: workerLink.subagentType,
+              ...(task.title ? { description: task.title } : {}),
+            },
+          },
+        ],
+      },
+    });
+    cursor.agentCall = true;
+  };
+
+  const returnAgentResult = async (task: TaskSummary, cursor: Cursor, result?: TaskInspection) => {
+    if (cursor.link.kind !== "worker" || cursor.agentResult || !(task.background || task.completedAt)) return;
+    await options.emit({
+      type: "user",
+      bruv: { ...cursor.launch, jobId: task.id },
+      session_id: options.root.sessionId,
+      parent_tool_use_id: null,
+      uuid: nativeTaskMessageId(cursor.link, "launch", "agent-result"),
+      message: {
+        role: "user",
+        content: [
+          {
+            type: "tool_result",
+            tool_use_id: cursor.link.launchToolUseId,
+            // Native text tool results are not parsed as objects by the pinned adapter.
+            content:
+              (task.background && !task.completedAt ? "Async agent launched successfully.\n" : "") +
+              JSON.stringify({
+                id: task.id,
+                status: task.status,
+                background: !!task.background,
+                ...(result ? { output: result.output, exitCode: result.exitCode } : {}),
+              }),
+            is_error: task.status === "failed",
+          },
+        ],
+      },
+    });
+    cursor.agentResult = true;
+  };
+
+  const observe = async (event: TaskEvent) => {
+    const task = event.task;
+    const cursor = registerTaskCursor(task);
+    if (!cursor) return;
     const semanticBefore = JSON.stringify([
       cursor.checkpoint?.phase,
       cursor.checkpoint?.isBackgrounded,
@@ -315,38 +384,8 @@ export function bindNativeTasks(
       cursor.agentResult,
     ]);
     const eventId = task.id + ":" + ++cursor.revision + ":" + event.type;
-    const worker = cursor.link.kind === "worker";
-    if (worker && !cursor.agentCall) {
-      const workerLink = cursor.link as Extract<TaskLink, { kind: "worker" }>;
-      await options.emit({
-        type: "assistant",
-        bruv: { ...cursor.launch, jobId: task.id },
-        session_id: options.root.sessionId,
-        parent_tool_use_id: null,
-        uuid: nativeTaskMessageId(cursor.link, "launch", "agent-call"),
-        message: {
-          id: nativeTaskMessageId(cursor.link, "launch", "agent-call"),
-          type: "message",
-          role: "assistant",
-          stop_reason: "tool_use",
-          stop_sequence: null,
-          content: [
-            {
-              type: "tool_use",
-              id: workerLink.launchToolUseId,
-              name: "Agent",
-              input: {
-                prompt: workerLink.prompt,
-                subagent_type: workerLink.subagentType,
-                ...(task.title ? { description: task.title } : {}),
-              },
-            },
-          ],
-        },
-      });
-      cursor.agentCall = true;
-    }
-    const childFrames = await children(task, cursor);
+    await announceAgentCall(task, cursor);
+    const childFrames = await replayChildJournal(task, cursor);
     const result = task.completedAt ? await owner.manager.wait(task.id) : undefined;
     const projection = projectLocalTask(
       cursor.link,
@@ -367,6 +406,7 @@ export function bindNativeTasks(
       },
       cursor.checkpoint,
     );
+    // Expose child messages before terminal notification, but after task start/progress.
     for (const frame of projection.frames.filter(
       (frame) => !(frame.type === "system" && frame.subtype === "task_notification"),
     ))
@@ -377,35 +417,7 @@ export function bindNativeTasks(
     ))
       await options.emit(frame);
     cursor.checkpoint = projection.checkpoint;
-    if (worker && !cursor.agentResult && (task.background || task.completedAt)) {
-      await options.emit({
-        type: "user",
-        bruv: { ...cursor.launch, jobId: task.id },
-        session_id: options.root.sessionId,
-        parent_tool_use_id: null,
-        uuid: nativeTaskMessageId(cursor.link, "launch", "agent-result"),
-        message: {
-          role: "user",
-          content: [
-            {
-              type: "tool_result",
-              tool_use_id: cursor.link.launchToolUseId,
-              // Native text tool results are not parsed as objects by the pinned adapter.
-              content:
-                (task.background && !task.completedAt ? "Async agent launched successfully.\n" : "") +
-                JSON.stringify({
-                  id: task.id,
-                  status: task.status,
-                  background: !!task.background,
-                  ...(result ? { output: result.output, exitCode: result.exitCode } : {}),
-                }),
-              is_error: task.status === "failed",
-            },
-          ],
-        },
-      });
-      cursor.agentResult = true;
-    }
+    await returnAgentResult(task, cursor, result);
     dirty.add(cursor);
     const semanticAfter = JSON.stringify([
       cursor.checkpoint?.phase,

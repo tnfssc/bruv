@@ -24,8 +24,7 @@ const WARMUP_GAP_MS = 1200;
  * protects a negotiated terminal whose release packet is lost in routing.
  */
 export class EditorPushToTalk {
-  private warmup: WarmupSpace[] = [];
-  private firstSpaceAt = 0;
+  private warmup: { at: number; undo: WarmupSpace }[] = [];
   private lastSpaceAt = 0;
   private talking = false;
   private timer?: ReturnType<typeof setTimeout>;
@@ -77,58 +76,67 @@ export class EditorPushToTalk {
       this.blockedRepeat = false; // explicit new Space press
       this.warmup = []; // earlier presses are taps, even if their releases were lost
     }
-    if (this.blockedRepeat && repeat) return true;
     if (this.talking) {
       this.lastSpaceAt = now;
       this.armIdle();
       return true;
     }
     const gap = now - this.lastSpaceAt;
+    if (this.blockedRepeat) {
+      if (repeat) return true;
+      if (gap < REPEAT_IDLE_MS) {
+        // Legacy repeat looks like a tap. Keep it text after cancellation,
+        // but don't consider it warmup for reopening the microphone.
+        insertSpace();
+        this.lastSpaceAt = now;
+        return true;
+      }
+      this.blockedRepeat = false;
+    }
     if (gap > WARMUP_GAP_MS) this.warmup = [];
     else if (!repeat && this.warmup.length >= 2 && gap > LEGACY_REPEAT_GAP_MS) {
       // Earlier slow taps are draft, not this hold's warmup. Only the latest
       // press can precede a new auto-repeat delay.
       this.warmup = this.warmup.slice(-1);
-      this.firstSpaceAt = this.lastSpaceAt;
     }
-    if (this.blockedRepeat && gap < REPEAT_IDLE_MS) {
-      // Plain legacy repeats cannot be distinguished from rapid taps. Keep
-      // them text after cancellation, but don't reopen the microphone.
-      insertSpace();
-      this.lastSpaceAt = now;
-      return true;
-    }
-    this.blockedRepeat = false;
     if (repeat && !this.warmup.length) return true; // attach/focus during an existing hold
+    const first = this.warmup[0];
     const held =
-      this.warmup.length > 0 &&
-      (repeat || (this.warmup.length >= 2 && now - this.firstSpaceAt >= LEGACY_HOLD_MS && gap <= LEGACY_REPEAT_GAP_MS));
-    if (held) {
-      const spaces = this.warmup;
-      this.warmup = [];
-      // No wholesale setText: only undo our own unchanged Space insertions.
-      for (const undo of spaces.slice().reverse()) {
-        if (!undo()) {
-          this.blockedRepeat = true;
-          return false;
-        }
-      }
-      this.talking = true;
-      this.lastSpaceAt = now;
-      this.options.onTalking(true);
-      if (this.disposed) return true;
-      this.options.onHint?.("Speaking · hold Space");
-      this.armIdle();
-      return true;
-    }
+      first && (repeat || (this.warmup.length >= 2 && now - first.at >= LEGACY_HOLD_MS && gap <= LEGACY_REPEAT_GAP_MS));
+    if (held) return this.startTalking(now);
+    this.typeWarmupSpace(now, insertSpace);
+    return true;
+  }
+
+  /** Until repeat proves a hold, Spaces are ordinary editor insertions. */
+  private typeWarmupSpace(now: number, insertSpace: () => WarmupSpace | undefined): void {
     const undo = insertSpace();
     if (!undo) {
       this.cancel();
-      return true;
+      return;
     }
-    if (!this.warmup.length) this.firstSpaceAt = now;
-    this.warmup.push(undo);
+    this.warmup.push({ at: now, undo });
     this.lastSpaceAt = now;
+  }
+
+  /** Acquire capture only after restoring our unchanged warmup insertions. */
+  private startTalking(now: number): boolean {
+    const spaces = this.warmup;
+    this.warmup = [];
+    // Consume newest first: each undo expects the draft left by the one after it.
+    // Never replace the whole draft, and never open capture if a guard fails.
+    for (const { undo } of spaces.reverse()) {
+      if (!undo()) {
+        this.blockedRepeat = true;
+        return false; // leave this packet to normal editor handling
+      }
+    }
+    this.talking = true;
+    this.lastSpaceAt = now;
+    this.options.onTalking(true);
+    if (this.disposed) return true;
+    this.options.onHint?.("Speaking · hold Space");
+    this.armIdle();
     return true;
   }
 

@@ -121,15 +121,7 @@ function rewriteImports(javascript: string, entryFilename: string): string {
   return output;
 }
 
-export async function runTypeScriptFromStdin(): Promise<void> {
-  const source = await Bun.stdin.text();
-  if (!source.trim()) throw new Error("No TypeScript source was provided");
-
-  const cwd = process.cwd();
-  const entryFilename = join(cwd, "__bruv_execute__.ts");
-  await init();
-
-  let registerEsmGraph: (filename: string) => void;
+function installExecuteRequire(entryFilename: string, registerEsmGraph: (filename: string) => void): NodeJS.Require {
   const resolveRequirePackage = (specifier: string, from: string, paths?: string[]): string => {
     let lastError: unknown;
     for (const searchFrom of paths ?? [from]) {
@@ -148,34 +140,30 @@ export async function runTypeScriptFromStdin(): Promise<void> {
 
   // Keep CommonJS evaluation and caching in Bun's native loader. Only package
   // selection is customized, and every require remains anchored to its real file.
-  const createBoundRequire = (filename: string): NodeJS.Require => {
-    const nativeRequire = createRequire(filename);
-    const resolveRequire = (specifier: string, options?: { paths?: string[] }) => {
-      if (
-        isBuiltin(specifier) ||
-        specifier === "bun" ||
-        specifier.startsWith(".") ||
-        specifier.startsWith("/") ||
-        specifier.includes(":")
-      ) {
-        return nativeRequire.resolve(specifier, options);
-      }
-      return resolveRequirePackage(specifier, dirname(filename), options?.paths);
-    };
-    // Resolve before evaluating: never retry an evaluation error using an ESM
-    // fallback, which could swallow the original exception or run code twice.
-    const bound = ((specifier: string) => {
-      const resolved = resolveRequire(specifier);
-      if (isEsmJavaScript(resolved)) registerEsmGraph(resolved);
-      return nativeRequire(resolved);
-    }) as NodeJS.Require;
-    bound.resolve = resolveRequire as NodeJS.RequireResolve;
-    bound.cache = nativeRequire.cache;
-    bound.extensions = nativeRequire.extensions;
-    bound.main = nativeRequire.main;
-    return bound;
+  const nativeRequire = createRequire(entryFilename);
+  const resolveRequire = (specifier: string, options?: { paths?: string[] }) => {
+    if (
+      isBuiltin(specifier) ||
+      specifier === "bun" ||
+      specifier.startsWith(".") ||
+      specifier.startsWith("/") ||
+      specifier.includes(":")
+    ) {
+      return nativeRequire.resolve(specifier, options);
+    }
+    return resolveRequirePackage(specifier, dirname(entryFilename), options?.paths);
   };
-  const executeRequire = createBoundRequire(entryFilename);
+  // Resolve before evaluating: never retry an evaluation error using an ESM
+  // fallback, which could swallow the original exception or run code twice.
+  const bound = ((specifier: string) => {
+    const resolved = resolveRequire(specifier);
+    if (isEsmJavaScript(resolved)) registerEsmGraph(resolved);
+    return nativeRequire(resolved);
+  }) as NodeJS.Require;
+  bound.resolve = resolveRequire as NodeJS.RequireResolve;
+  bound.cache = nativeRequire.cache;
+  bound.extensions = nativeRequire.extensions;
+  bound.main = nativeRequire.main;
 
   // Bun's compiled CommonJS loader can omit filesystem packages from its
   // internal resolution table. Intercept resolution only; loading, wrappers,
@@ -201,13 +189,112 @@ export async function runTypeScriptFromStdin(): Promise<void> {
     ) {
       resolved = nativeResolveFilename.call(this, request, parent, isMain, options);
     } else {
-      const from = parent?.filename ? dirname(parent.filename) : cwd;
+      const from = parent?.filename ? dirname(parent.filename) : dirname(entryFilename);
       const paths = (options as { paths?: string[] } | undefined)?.paths;
       resolved = resolveRequirePackage(request, from, paths);
     }
     if (isEsmJavaScript(resolved)) registerEsmGraph(resolved);
     return resolved;
   };
+
+  return bound;
+}
+
+function registerStaticEsmDependencies(
+  javascript: string,
+  filename: string,
+  registerEsmGraph: (filename: string) => void,
+): void {
+  const from = dirname(filename);
+  const [imports] = parseModules(javascript);
+  for (const imported of imports) {
+    if (imported.type !== "static" && imported.type !== "reexport-star") continue;
+    const specifier = imported.specifier;
+    let dependency: string;
+    if (isBuiltin(specifier) || specifier === "bun" || specifier.includes(":")) {
+      if (!specifier.startsWith("file:")) continue;
+      dependency = fileURLToPath(specifier);
+    } else {
+      dependency =
+        specifier.startsWith(".") || specifier.startsWith("/")
+          ? resolve(from, specifier)
+          : specifier.startsWith("#")
+            ? resolvePackageImport(specifier, from)
+            : resolveInstalledPackage(specifier, from);
+    }
+    registerEsmGraph(dependency);
+  }
+}
+
+// Each execute child registers only its reachable ESM graph, not whole package
+// directories or every ".js" file. CommonJS evaluation and caching stay native.
+// Record a file before walking dependencies so cycles share its registration.
+// Dynamic import and require extend this graph immediately before loading.
+function createEsmGraphRegistrar(): (filename: string) => void {
+  const registered = new Set<string>();
+  const registerEsmGraph = (filename: string) => {
+    filename = resolve(filename);
+    if (existsSync(filename)) filename = realpathSync.native(filename);
+    if (registered.has(filename) || !isEsmJavaScript(filename)) return;
+    registered.add(filename);
+    const contents = readFileSync(filename, "utf8");
+    const extension = extname(filename);
+    // es-module-lexer accepts JavaScript, not TypeScript. Erase types first so
+    // type-only imports (including missing ones) never enter the runtime graph.
+    const moduleJavascript =
+      extension === ".ts" || extension === ".tsx"
+        ? new Bun.Transpiler({ loader: extension === ".tsx" ? "tsx" : "ts", target: "bun" }).transformSync(contents)
+        : contents;
+    registerStaticEsmDependencies(moduleJavascript, filename, registerEsmGraph);
+    const loader = extension === ".jsx" ? "jsx" : "js";
+    const filter = new RegExp("^" + filename.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "$");
+    Bun.plugin({
+      name: `bruv-execute-esm-${crypto.randomUUID()}`,
+      setup(builder) {
+        builder.onLoad({ filter }, () => ({ contents: rewriteImports(moduleJavascript, filename), loader }));
+      },
+    });
+  };
+
+  return registerEsmGraph;
+}
+
+function installPackageResolvers(registerEsmGraph: (filename: string) => void): void {
+  Bun.plugin({
+    name: `bruv-execute-resolver-${crypto.randomUUID()}`,
+    setup(builder) {
+      builder.onResolve({ filter: /^[^./#]/ }, (args) => {
+        if (isBuiltin(args.path) || args.path === "bun" || args.path.includes(":")) return;
+        const path = resolveInstalledPackage(args.path, dirname(args.importer), args.kind === "require-call");
+        if (isEsmJavaScript(path)) registerEsmGraph(path);
+        return { path };
+      });
+      builder.onResolve({ filter: /^#/ }, (args) => {
+        const path = resolvePackageImport(args.path, dirname(args.importer), args.kind === "require-call");
+        if (isEsmJavaScript(path)) registerEsmGraph(path);
+        return { path };
+      });
+      builder.onResolve({ filter: /^\./ }, (args) => {
+        if (args.kind !== "dynamic-import") return;
+        const path = resolve(dirname(args.importer), args.path);
+        if (!existsSync(path) || !isEsmJavaScript(path)) return;
+        registerEsmGraph(path);
+        return { path };
+      });
+    },
+  });
+}
+
+export async function runTypeScriptFromStdin(): Promise<void> {
+  const source = await Bun.stdin.text();
+  if (!source.trim()) throw new Error("No TypeScript source was provided");
+
+  const cwd = process.cwd();
+  const entryFilename = join(cwd, "__bruv_execute__.ts");
+  await init();
+
+  const registerEsmGraph = createEsmGraphRegistrar();
+  const executeRequire = installExecuteRequire(entryFilename, registerEsmGraph);
 
   const images = createImageHelper(process.env[IMAGE_CHANNEL_ENV] === "1");
   const jobs = installJobGlobals(openWorkerJobBridge());
@@ -247,82 +334,9 @@ export async function runTypeScriptFromStdin(): Promise<void> {
   const transpiled = transpiler.transformSync(source);
   const javascript = rewriteImports(transpiled, entryFilename);
 
-  // Register only the statically reachable ESM graph. A broad ".js" onLoad
-  // also captures CommonJS and destroys module.exports semantics; walking every
-  // package directory is similarly unacceptable. Dynamic imports extend this
-  // graph immediately before importing their target.
-  Bun.plugin({
-    name: `bruv-execute-resolver-${crypto.randomUUID()}`,
-    setup(builder) {
-      builder.onResolve({ filter: /^[^./#]/ }, (args) => {
-        if (isBuiltin(args.path) || args.path === "bun" || args.path.includes(":")) return;
-        const path = resolveInstalledPackage(args.path, dirname(args.importer), args.kind === "require-call");
-        if (isEsmJavaScript(path)) registerEsmGraph(path);
-        return { path };
-      });
-      builder.onResolve({ filter: /^#/ }, (args) => {
-        const path = resolvePackageImport(args.path, dirname(args.importer), args.kind === "require-call");
-        if (isEsmJavaScript(path)) registerEsmGraph(path);
-        return { path };
-      });
-      builder.onResolve({ filter: /^\./ }, (args) => {
-        if (args.kind !== "dynamic-import") return;
-        const path = resolve(dirname(args.importer), args.path);
-        if (!existsSync(path) || !isEsmJavaScript(path)) return;
-        registerEsmGraph(path);
-        return { path };
-      });
-    },
-  });
-
-  const registered = new Set<string>();
-  const resolveImport = (specifier: string, fromFile: string): string | undefined => {
-    if (isBuiltin(specifier) || specifier === "bun" || specifier.includes(":")) {
-      return specifier.startsWith("file:") ? fileURLToPath(specifier) : undefined;
-    }
-    const from = dirname(fromFile);
-    return specifier.startsWith(".") || specifier.startsWith("/")
-      ? resolve(from, specifier)
-      : specifier.startsWith("#")
-        ? resolvePackageImport(specifier, from)
-        : resolveInstalledPackage(specifier, from);
-  };
-  registerEsmGraph = (filename: string) => {
-    filename = resolve(filename);
-    if (existsSync(filename)) filename = realpathSync.native(filename);
-    if (registered.has(filename) || !isEsmJavaScript(filename)) return;
-    registered.add(filename);
-    const contents = readFileSync(filename, "utf8");
-    const extension = extname(filename);
-    // es-module-lexer accepts JavaScript, not TypeScript. Erase types first so
-    // type-only imports (including missing ones) never enter the runtime graph.
-    const moduleJavascript =
-      extension === ".ts" || extension === ".tsx"
-        ? new Bun.Transpiler({ loader: extension === ".tsx" ? "tsx" : "ts", target: "bun" }).transformSync(contents)
-        : contents;
-    const [imports] = parseModules(moduleJavascript);
-    for (const imported of imports) {
-      if (imported.type !== "static" && imported.type !== "reexport-star") continue;
-      const dependency = resolveImport(imported.specifier, filename);
-      if (dependency) registerEsmGraph(dependency);
-    }
-    const loader = extension === ".jsx" ? "jsx" : "js";
-    const filter = new RegExp("^" + filename.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "$");
-    Bun.plugin({
-      name: `bruv-execute-esm-${crypto.randomUUID()}`,
-      setup(builder) {
-        builder.onLoad({ filter }, () => ({ contents: rewriteImports(moduleJavascript, filename), loader }));
-      },
-    });
-  };
-
+  installPackageResolvers(registerEsmGraph);
   // The entry itself is in memory, but its static targets need rewriting.
-  const [entryImports] = parseModules(transpiled);
-  for (const imported of entryImports) {
-    if (imported.type !== "static" && imported.type !== "reexport-star") continue;
-    const dependency = resolveImport(imported.specifier, entryFilename);
-    if (dependency) registerEsmGraph(dependency);
-  }
+  registerStaticEsmDependencies(transpiled, entryFilename, registerEsmGraph);
 
   const moduleUrl = `data:text/javascript;base64,${Buffer.from(javascript).toString("base64")}`;
   try {

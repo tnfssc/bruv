@@ -1,13 +1,13 @@
-import { test, expect } from "bun:test";
+import { expect, test } from "bun:test";
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { QuestionService, type Question } from "../src/questions/service";
-import { RemoteQuestionBridge, publishRemoteQuestionState } from "../src/remote/question-bridge";
 import { registerQuestionRuntime } from "../src/questions/runtime";
+import { type Question, QuestionService } from "../src/questions/service";
+import { RemoteClient, type RemoteState } from "../src/remote/client";
 import remoteExtension from "../src/remote/extension";
 import { clearRemoteJobEvents } from "../src/remote/job-events";
-import { RemoteClient, type RemoteState } from "../src/remote/client";
+import { publishRemoteQuestionState, RemoteQuestionBridge } from "../src/remote/question-bridge";
 
 function harness() {
   const dir = mkdtempSync(join(tmpdir(), "bruv-remote-question-"));
@@ -91,6 +91,41 @@ function harness() {
   };
 }
 
+// The questions runtime and remote extension share one host session. Keep every
+// hook and await them in registration order, as the extension runner does.
+function questionSession(h: ReturnType<typeof harness>) {
+  const handlers = new Map<string, Array<(event: {}, ctx: any) => unknown>>();
+  const sent: any[] = [];
+  const pi: any = {
+    on(name: string, handler: (event: {}, ctx: any) => unknown) {
+      const existing = handlers.get(name) ?? [];
+      existing.push(handler);
+      handlers.set(name, existing);
+    },
+    registerCommand() {},
+    sendMessage: (...args: any[]) => sent.push(args),
+  };
+  const runtime = registerQuestionRuntime(pi, { supported: () => true });
+  runtime.configureRemote(h.client);
+  const emit = async (name: string) => {
+    for (const handler of handlers.get(name) ?? []) await handler({}, h.ctx);
+  };
+  return {
+    pi,
+    runtime,
+    sent,
+    start: () => emit("session_start"),
+    settle: () => emit("agent_settled"),
+    shutdown: async () => {
+      try {
+        await emit("session_shutdown");
+      } finally {
+        clearRemoteJobEvents(h.ctx.sessionManager.getSessionFile());
+      }
+    },
+  };
+}
+
 test("real human question mirrors durably once, preserving remote provenance and parent ownership", async () => {
   const h = harness();
   try {
@@ -108,6 +143,112 @@ test("real human question mirrors durably once, preserving remote provenance and
       owner: h.native.owner,
       version: 3,
     });
+    expect(h.calls).toHaveLength(0);
+  } finally {
+    h.cleanup();
+  }
+});
+
+test("pending snapshots reconcile durably without recreating or renotifying a mirror", async () => {
+  const h = harness();
+  try {
+    const asked: Question[] = [];
+    h.service.onAsked = (q) => {
+      expect(h.service.get(h.ctx, q.id).version).toBe(q.version);
+      asked.push(q);
+    };
+    h.native.text = "  Initial decision  ";
+    await h.bridge.sync(h.ctx);
+    const initial = h.service.list(h.ctx)[0]!;
+    expect(initial.text).toBe("Initial decision");
+    expect(initial.version).toBe(1);
+    expect(initial.choices).toEqual(["Yes", "No"]);
+    await h.bridge.sync(h.ctx);
+    expect(h.service.get(h.ctx, initial.id)).toEqual(initial);
+
+    Object.assign(h.native, {
+      version: 4,
+      text: "  Revised decision  ",
+      choices: ["Later"],
+      allowFreeText: true,
+      reason: "More context",
+    });
+    await h.bridge.sync(h.ctx);
+    const revised = h.service.get(h.ctx, initial.id);
+    expect(revised).toMatchObject({
+      id: initial.id,
+      version: 2,
+      text: "Revised decision",
+      choices: ["Later"],
+      allowFreeText: true,
+      reason: "More context",
+      remote: { version: 4, observedVersion: 4, observedStatus: "pending" },
+    });
+    await h.bridge.sync(h.ctx);
+    expect(new QuestionService().get(h.ctx, initial.id)).toEqual(revised);
+    expect(asked).toHaveLength(1);
+    expect(h.calls).toHaveLength(0);
+  } finally {
+    h.cleanup();
+  }
+});
+
+test("saved reply freezes question details while observations, receipts and closure reconcile", async () => {
+  const h = harness();
+  try {
+    await h.bridge.sync(h.ctx);
+    let q = h.service.list(h.ctx)[0]!;
+    q = await h.service.answer(h.ctx, { ...h.mutation(q), text: "Yes", replyId: "human-reply" });
+    q = await h.service.claimRemoteReply(h.ctx, h.mutation(q));
+    q = await h.service.finishRemoteReply(h.ctx, {
+      ...h.mutation(q),
+      replyId: q.replyId!,
+      delivered: false,
+      error: "response lost",
+    });
+    Object.assign(h.native, {
+      version: 4,
+      text: "Different question",
+      choices: ["Different"],
+      allowFreeText: true,
+      reason: "Changed remotely",
+      replyId: "another-reply",
+      delivery: "delivered",
+    });
+    await h.bridge.sync(h.ctx);
+    const observed = h.service.get(h.ctx, q.id);
+    expect(observed).toMatchObject({
+      status: "answered",
+      text: q.text,
+      choices: q.choices,
+      allowFreeText: false,
+      answer: "Yes",
+      replyId: "human-reply",
+      replyVersion: q.replyVersion,
+      delivery: "dispatching",
+      remote: { version: 3, observedVersion: 4, replyState: "uncertain", error: "response lost" },
+    });
+    expect(observed.reason).toBeUndefined();
+    expect(observed.version).toBe(q.version + 1);
+    await h.bridge.sync(h.ctx);
+    expect(h.service.get(h.ctx, q.id)).toEqual(observed);
+
+    // A matching delivery receipt takes precedence over a closed snapshot.
+    Object.assign(h.native, { status: "resolved", replyId: "human-reply" });
+    await h.bridge.sync(h.ctx);
+    const delivered = h.service.get(h.ctx, q.id);
+    expect(delivered.status).toBe("answered");
+    expect(delivered.delivery).toBe("delivered");
+    expect(delivered.remote).toMatchObject({ version: 3, observedStatus: "resolved", replyState: "delivered" });
+    expect(delivered.remote!.error).toBeUndefined();
+
+    Object.assign(h.native, { replyId: "another-reply" });
+    await h.bridge.sync(h.ctx);
+    const closed = new QuestionService().get(h.ctx, q.id);
+    expect(closed.status).toBe("resolved");
+    expect(closed.answer).toBe("Yes");
+    expect(closed.remote!.version).toBe(3);
+    expect(closed.delivery).toBe("delivered");
     expect(h.calls).toHaveLength(0);
   } finally {
     h.cleanup();
@@ -278,16 +419,10 @@ test("sibling branch sees history only and cannot duplicate the mirror or answer
 
 test("ordinary /questions command routes remote human answer without a parent answer turn", async () => {
   const h = harness();
-  const handlers = new Map<string, any>(),
-    sent: any[] = [];
-  const runtime = registerQuestionRuntime(
-    { on: (name: string, fn: any) => handlers.set(name, fn), sendMessage: (...args: any[]) => sent.push(args) } as any,
-    { supported: () => true },
-  );
-  runtime.configureRemote(h.client);
+  const session = questionSession(h);
   try {
-    await handlers.get("session_start")({}, h.ctx);
-    const commands = runtime.commands(h.ctx);
+    await session.start();
+    const commands = session.runtime.commands(h.ctx);
     const q = (await commands.handle("questions.list")) as Question[];
     const result = (await commands.handle("questions.answer", {
       id: q[0]!.id,
@@ -297,38 +432,34 @@ test("ordinary /questions command routes remote human answer without a parent an
     })) as Question;
     expect(result.remote!.replyState).toBe("delivered");
     expect(h.calls).toHaveLength(1);
-    await handlers.get("agent_settled")({}, h.ctx);
-    expect(sent).toHaveLength(0);
+    await session.settle();
+    expect(session.sent).toHaveLength(0);
     const replay = (await commands.handle("questions.resume", { id: result.id })) as Question;
     expect(replay.replyId).toBe(result.replyId);
     expect(h.calls).toHaveLength(1);
   } finally {
-    handlers.get("session_shutdown")({}, h.ctx);
+    await session.shutdown();
     h.cleanup();
   }
 });
 
 test("existing remote poll publishes into normal questions and stops after shutdown", async () => {
-  const h = harness(),
-    handlers = new Map<string, any>();
-  const runtime = registerQuestionRuntime(
-    { on: (n: string, fn: any) => handlers.set(n, fn), sendMessage() {} } as any,
-    { supported: () => true },
-  );
-  runtime.configureRemote(h.client);
+  const h = harness();
+  const session = questionSession(h);
   try {
     h.state.tasks.t!.task!.questions = [];
-    await handlers.get("session_start")({}, h.ctx);
-    expect(runtime.service.list(h.ctx)).toHaveLength(0);
+    await session.start();
+    expect(session.runtime.service.list(h.ctx)).toHaveLength(0);
     h.state.tasks.t!.task!.questions = [h.native];
     await publishRemoteQuestionState(h.ctx, h.state);
-    expect(runtime.service.list(h.ctx)).toHaveLength(1);
-    await handlers.get("session_shutdown")({}, h.ctx);
+    expect(session.runtime.service.list(h.ctx)).toHaveLength(1);
+    await session.shutdown();
     h.native.text = "changed after shutdown";
     h.native.version++;
     await publishRemoteQuestionState(h.ctx, h.state);
-    expect(runtime.service.list(h.ctx)[0]!.text).toBe("Real human decision?");
+    expect(session.runtime.service.list(h.ctx)[0]!.text).toBe("Real human decision?");
   } finally {
+    await session.shutdown();
     h.cleanup();
   }
 });
@@ -431,33 +562,76 @@ test("pinned real client control reconciles explicit same-ID retry against owner
 });
 
 test("remote extension polling feeds the owning normal questions runtime, not a second inbox", async () => {
-  const h = harness(),
-    handlers = new Map<string, Array<(...args: any[]) => any>>();
-  const pi: any = {
-    on: (name: string, fn: any) => handlers.set(name, [...(handlers.get(name) ?? []), fn]),
-    registerCommand() {},
-    sendMessage() {},
-  };
-  const runtime = registerQuestionRuntime(pi, { supported: () => true });
-  runtime.configureRemote(h.client);
+  const h = harness();
+  const session = questionSession(h);
+  const releasePoll = Promise.withResolvers<void>();
   h.state.tasks.t!.task!.questions = [];
   const client: any = {
     ...h.client,
     status: h.client.read,
     syncActive: async () => {
+      await releasePoll.promise;
       h.state.tasks.t!.task!.questions = [h.native];
     },
   };
-  remoteExtension(pi, client);
+  remoteExtension(session.pi, client);
   try {
-    for (const fn of handlers.get("session_start")!) await fn({}, h.ctx);
-    await Bun.sleep(10);
-    expect(runtime.service.list(h.ctx)).toHaveLength(1);
-    expect(runtime.service.list(h.ctx)[0]!.remote!.id).toBe(h.native.id);
+    await session.start();
+    expect(session.runtime.service.list(h.ctx)).toHaveLength(0);
+    const published = Promise.withResolvers<void>();
+    const unsubscribe = session.runtime.commands(h.ctx).subscribe(() => published.resolve());
+    try {
+      releasePoll.resolve();
+      await published.promise;
+      expect(session.runtime.service.list(h.ctx)).toHaveLength(1);
+      expect(session.runtime.service.list(h.ctx)[0]!.remote!.id).toBe(h.native.id);
+      expect(h.calls).toHaveLength(0);
+    } finally {
+      unsubscribe();
+    }
+  } finally {
+    // Shutdown invalidates the extension's in-flight refresh before releasing
+    // a held poll on an assertion failure; it cannot publish into a dead session.
+    await session.shutdown();
+    releasePoll.resolve();
+    h.cleanup();
+  }
+});
+
+test("remote extension discards a poll that finishes after its owning session shuts down", async () => {
+  const h = harness();
+  const session = questionSession(h);
+  const pollStarted = Promise.withResolvers<void>();
+  const pollFinished = Promise.withResolvers<void>();
+  let statusReads = 0;
+  h.state.tasks.t!.task!.questions = [];
+  const client: any = {
+    ...h.client,
+    syncActive: () => {
+      pollStarted.resolve();
+      return pollFinished.promise;
+    },
+    status: async () => {
+      statusReads++;
+      return h.client.read();
+    },
+  };
+  remoteExtension(session.pi, client);
+  try {
+    await session.start();
+    await pollStarted.promise;
+    await session.shutdown();
+    h.state.tasks.t!.task!.questions = [h.native];
+    pollFinished.resolve();
+    // refresh() is already awaiting this promise: its generation check runs
+    // before this continuation, without a timer or a second publication path.
+    await pollFinished.promise;
+    expect(statusReads).toBe(1); // Startup baseline only; no post-poll cache read.
+    expect(session.runtime.service.list(h.ctx)).toHaveLength(0);
     expect(h.calls).toHaveLength(0);
   } finally {
-    for (const fn of handlers.get("session_shutdown")!) await fn({}, h.ctx);
-    clearRemoteJobEvents(h.ctx.sessionManager.getSessionFile());
+    await session.shutdown();
+    pollFinished.resolve();
     h.cleanup();
   }
 });

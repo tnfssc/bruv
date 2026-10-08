@@ -39,18 +39,22 @@ mkdir -p "$bin_dir" "$(dirname "$notice_dir")" || fail 'Cannot create user insta
 bin_dir=$(CDPATH= cd -- "$bin_dir" && pwd -P) || fail 'Cannot resolve install directory.'
 lock=$bin_dir/.bruv-install-lock
 mkdir "$lock" 2>/dev/null || fail "Another install is running (lock: $lock)."
-stage=; notice_stage=; committed=0; keep=0; bruv_changed=0; compat_changed=0; notices_changed=0
+stage=; notice_stage=
+committed=0; bruv_changed=0; compat_changed=0; notices_changed=0
+restore_binary() {
+  if [ -f "$2" ]; then mv -f "$2" "$1"
+  else rm -f "$1"; fi
+}
 cleanup() {
   code=$?
+  keep=0
   trap - 0 INT TERM HUP
   if [ "$committed" = 0 ] && [ -n "$stage" ]; then
     if [ "$bruv_changed" = 1 ]; then
-      if [ -f "$stage/bruv.previous" ]; then mv -f "$stage/bruv.previous" "$bin_dir/bruv" || keep=1
-      else rm -f "$bin_dir/bruv" || keep=1; fi
+      restore_binary "$bin_dir/bruv" "$stage/bruv.previous" || keep=1
     fi
     if [ "$compat_changed" = 1 ]; then
-      if [ -f "$stage/compat.previous" ]; then mv -f "$stage/compat.previous" "$bin_dir/bruv-claude-compat" || keep=1
-      else rm -f "$bin_dir/bruv-claude-compat" || keep=1; fi
+      restore_binary "$bin_dir/bruv-claude-compat" "$stage/compat.previous" || keep=1
     fi
     if [ "$notices_changed" = 1 ]; then
       rm -rf "$notice_dir" || keep=1
@@ -74,30 +78,40 @@ fetch() {
   curl -fsSL --proto '=https' --proto-redir '=https' "$url/$1" -o "$2" || fail "Missing or unavailable $tag asset: $1. Installed pair unchanged."
   [ -s "$2" ] || fail "Empty asset: $1."
 }
-for name in bruv-$platform bruv-claude-compat-$platform; do
-  fetch "$name" "$stage/$name"
-  fetch "$name.sha256" "$stage/$name.sha256"
-  # Require one checksum for exactly this filename; never trust arbitrary -c paths.
-  expected=$(awk -v name="$name" 'NF == 2 && length($1) == 64 && $1 !~ /[^a-fA-F0-9]/ && ($2 == name || $2 == "*" name) {print tolower($1); n++} END {if (NR != 1 || n != 1) exit 1}' "$stage/$name.sha256") || fail "Invalid checksum manifest: $name."
-  actual=$(digest "$stage/$name")
-  [ "$actual" = "$expected" ] || fail "Checksum verification failed: $name. Installed pair unchanged."
-done
+# Release asset names stop here: all later operations use the installed pair names.
+fetch_verified_binary() (
+  asset=$1; candidate=$2
+  fetch "$asset" "$candidate"
+  fetch "$asset.sha256" "$candidate.sha256"
+  # Require one checksum for exactly this asset; never trust arbitrary -c paths.
+  expected=$(awk -v name="$asset" '
+    NF == 2 && length($1) == 64 && $1 !~ /[^a-fA-F0-9]/ &&
+      ($2 == name || $2 == "*" name) { print tolower($1); n++ }
+    END { if (NR != 1 || n != 1) exit 1 }
+  ' "$candidate.sha256") || fail "Invalid checksum manifest: $asset."
+  actual=$(digest "$candidate")
+  [ "$actual" = "$expected" ] || fail "Checksum verification failed: $asset. Installed pair unchanged."
+)
+fetch_verified_binary "bruv-$platform" "$stage/bruv"
+fetch_verified_binary "bruv-claude-compat-$platform" "$stage/bruv-claude-compat"
 for name in LICENSE THIRD_PARTY_NOTICES.md THIRD_PARTY_LICENSES.txt SOURCE.txt; do
   fetch "$name" "$stage/notices/$name"
 done
-chmod 755 "$stage/bruv-$platform" "$stage/bruv-claude-compat-$platform"
+chmod 755 "$stage/bruv" "$stage/bruv-claude-compat"
 chmod 644 "$stage/notices/"*
 chmod 755 "$stage/notices"
-# Both downloads are verified before either is executed. Isolate version probes.
-probe() { unset BRUV_CLAUDE_COMPAT_BRUV_PATH; HOME="$stage/probe" XDG_CONFIG_HOME="$stage/probe/config" XDG_CACHE_HOME="$stage/probe/cache" XDG_DATA_HOME="$stage/probe/data" "$@"; }
-[ "$(probe "$stage/bruv-$platform" --version)" = "$version" ] || fail "Bruv version does not match $tag."
-[ "$(
+# Both downloads are verified before either is executed. Probe only this pair,
+# with private user directories and no inherited connector path override.
+probe_staged_pair() (
   unset BRUV_CLAUDE_COMPAT_BRUV_PATH
-  HOME="$stage/probe" XDG_CONFIG_HOME="$stage/probe/config" \
-    XDG_CACHE_HOME="$stage/probe/cache" XDG_DATA_HOME="$stage/probe/data" \
-    BRUV_CLAUDE_COMPAT_BRUV_PATH="$stage/bruv-$platform" "$stage/bruv-claude-compat-$platform" --bruv-version
-)" = "bruv-claude-compat $version" ] || fail "Connector version does not match $tag."
-if [ "$platform" = darwin-arm64 ]; then probe "$stage/bruv-$platform" --live-self-test || fail 'macOS helper self-test failed.'; fi
+  HOME="$stage/probe"
+  XDG_CONFIG_HOME="$HOME/config"; XDG_CACHE_HOME="$HOME/cache"; XDG_DATA_HOME="$HOME/data"
+  export HOME XDG_CONFIG_HOME XDG_CACHE_HOME XDG_DATA_HOME
+  [ "$("$stage/bruv" --version)" = "$version" ] || fail "Bruv version does not match $tag."
+  [ "$(BRUV_CLAUDE_COMPAT_BRUV_PATH="$stage/bruv" "$stage/bruv-claude-compat" --bruv-version)" = "bruv-claude-compat $version" ] || fail "Connector version does not match $tag."
+  if [ "$platform" = darwin-arm64 ]; then "$stage/bruv" --live-self-test || fail 'macOS helper self-test failed.'; fi
+)
+probe_staged_pair
 # Stop running Bruv/T3 sessions before replacing a pair. Preserve originals for rollback.
 for name in bruv bruv-claude-compat; do
   target=$bin_dir/$name
@@ -113,13 +127,14 @@ if [ -d "$notice_dir" ]; then cp -Rp "$notice_dir" "$stage/notices.previous"; fi
 notice_stage=$(mktemp -d "$(dirname "$notice_dir")/.bruv-notices.XXXXXX")
 cp -R "$stage/notices/." "$notice_stage/"
 chmod 755 "$notice_stage"
+# Mark each target before its replacement attempt so interruption also rolls back.
 notices_changed=1
 rm -rf "$notice_dir"
 if ! mv "$notice_stage" "$notice_dir"; then rm -rf "$notice_stage"; fail 'Cannot install notices.'; fi
 compat_changed=1
-mv -f "$stage/bruv-claude-compat-$platform" "$bin_dir/bruv-claude-compat" || fail 'Cannot install connector; restoring previous pair.'
+mv -f "$stage/bruv-claude-compat" "$bin_dir/bruv-claude-compat" || fail 'Cannot install connector; restoring previous pair.'
 bruv_changed=1
-mv -f "$stage/bruv-$platform" "$bin_dir/bruv" || fail 'Cannot install Bruv; restoring previous pair.'
+mv -f "$stage/bruv" "$bin_dir/bruv" || fail 'Cannot install Bruv; restoring previous pair.'
 committed=1
 printf 'Installed Bruv %s and matching bruv-claude-compat in %s\nNotices: %s\n' "$version" "$bin_dir" "$notice_dir"
 case ":${PATH:-}:" in *":$bin_dir:"*) ;; *) printf 'Add %s to PATH to run bruv. No shell profiles changed.\n' "$bin_dir" ;; esac

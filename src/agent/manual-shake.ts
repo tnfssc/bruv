@@ -186,6 +186,71 @@ function removableAssistantBlockCount(message: AgentMessage): number {
     .length;
 }
 
+type ProtocolMessage = { entryId: string; message: AgentMessage };
+// First positions detect reversed pairs; final entries retain the original
+// duplicate association. Duplicate IDs still make their calls ineligible.
+type ToolOccurrence = { firstIndex: number; lastEntryId: string };
+
+/** Pairing evidence is shared by new checkpoints and replay. Planning refuses
+ * an ambiguous window; replay can still authorize unrelated complete groups. */
+function analyzeToolProtocol(messages: readonly ProtocolMessage[]) {
+  const calls = new Map<string, ToolOccurrence>();
+  const results = new Map<string, ToolOccurrence>();
+  const duplicateCalls = new Set<string>();
+  const duplicateResults = new Set<string>();
+  messages.forEach(({ entryId, message }, index) => {
+    if (
+      message.role === "assistant" &&
+      Array.isArray(message.content) &&
+      message.content.some((part) => isRecord(part) && part.type === "toolCall" && !validId(part.id))
+    )
+      duplicateCalls.add("<invalid-tool-call-id>");
+    if (message.role === "toolResult" && !toolResultId(message)) duplicateResults.add("<invalid-tool-result-id>");
+    for (const call of toolCalls(message)) {
+      const prior = calls.get(call.id);
+      if (prior) {
+        duplicateCalls.add(call.id);
+        prior.lastEntryId = entryId;
+      } else calls.set(call.id, { firstIndex: index, lastEntryId: entryId });
+    }
+    const resultId = toolResultId(message);
+    if (resultId) {
+      const prior = results.get(resultId);
+      if (prior) {
+        duplicateResults.add(resultId);
+        prior.lastEntryId = entryId;
+      } else results.set(resultId, { firstIndex: index, lastEntryId: entryId });
+    }
+  });
+  const unresolvedToolCallIds = [...calls].flatMap(([id, call]) => {
+    const result = results.get(id);
+    return !result || result.firstIndex <= call.firstIndex ? [id] : [];
+  });
+  const orphanToolResultIds = [...results].flatMap(([id, result]) => {
+    const call = calls.get(id);
+    return !call || result.firstIndex <= call.firstIndex ? [id] : [];
+  });
+  unresolvedToolCallIds.push(...duplicateCalls);
+  orphanToolResultIds.push(...duplicateResults);
+
+  const groups = new Map<string, Set<string>>();
+  const pairedResultEntryIds = new Set<string>();
+  for (const [id, call] of calls) {
+    const result = results.get(id);
+    if (!result) continue;
+    const group = groups.get(call.lastEntryId) ?? new Set([call.lastEntryId]);
+    group.add(result.lastEntryId);
+    groups.set(call.lastEntryId, group);
+    pairedResultEntryIds.add(result.lastEntryId);
+  }
+  return {
+    groups,
+    pairedResultEntryIds,
+    unresolvedToolCallIds: [...new Set(unresolvedToolCallIds)],
+    orphanToolResultIds: [...new Set(orphanToolResultIds)],
+  };
+}
+
 /** Build a deterministic protocol-paired plan from active context entries. */
 export function buildShakePlan(
   entries: readonly SessionEntry[],
@@ -197,40 +262,10 @@ export function buildShakePlan(
   // Compaction removes old entries from active context. Do not carry their IDs forever.
   const assistantIds = new Set((prior?.assistantEntryIds ?? []).filter((id) => activeEntryIds.has(id)));
   const resultIds = new Set((prior?.toolResultEntryIds ?? []).filter((id) => activeEntryIds.has(id)));
-  const calls = new Map<string, { entryId: string; index: number }>();
-  const results = new Map<string, { entryId: string; index: number }>();
-  const duplicateCalls = new Set<string>();
-  const duplicateResults = new Set<string>();
-  entries.forEach((entry, index) => {
-    if (entry.type !== "message") return;
-    if (
-      entry.message.role === "assistant" &&
-      Array.isArray(entry.message.content) &&
-      entry.message.content.some((part) => isRecord(part) && part.type === "toolCall" && !validId(part.id))
-    )
-      duplicateCalls.add("<invalid-tool-call-id>");
-    if (entry.message.role === "toolResult" && !toolResultId(entry.message))
-      duplicateResults.add("<invalid-tool-result-id>");
-    for (const call of toolCalls(entry.message)) {
-      if (calls.has(call.id)) duplicateCalls.add(call.id);
-      else calls.set(call.id, { entryId: entry.id, index });
-    }
-    const resultId = toolResultId(entry.message);
-    if (resultId) {
-      if (results.has(resultId)) duplicateResults.add(resultId);
-      else results.set(resultId, { entryId: entry.id, index });
-    }
-  });
-  const unresolvedToolCallIds = [...calls].flatMap(([id, call]) => {
-    const result = results.get(id);
-    return !result || result.index <= call.index ? [id] : [];
-  });
-  const orphanToolResultIds = [...results].flatMap(([id, result]) => {
-    const call = calls.get(id);
-    return !call || result.index <= call.index ? [id] : [];
-  });
-  unresolvedToolCallIds.push(...duplicateCalls);
-  orphanToolResultIds.push(...duplicateResults);
+  const protocol = analyzeToolProtocol(
+    entries.flatMap((entry) => (entry.type === "message" ? [{ entryId: entry.id, message: entry.message }] : [])),
+  );
+  const { unresolvedToolCallIds, orphanToolResultIds } = protocol;
   let removedAssistantBlocks = 0;
   let removedToolResults = 0;
   if (!unresolvedToolCallIds.length && !orphanToolResultIds.length) {
@@ -242,7 +277,7 @@ export function buildShakePlan(
         removedAssistantBlocks += count;
       }
       const resultId = toolResultId(entry.message);
-      if (resultId && calls.has(resultId) && !resultIds.has(entry.id)) {
+      if (resultId && protocol.pairedResultEntryIds.has(entry.id) && !resultIds.has(entry.id)) {
         resultIds.add(entry.id);
         removedToolResults++;
       }
@@ -273,7 +308,7 @@ export function buildShakePlan(
   };
 }
 
-type SourceMessage = { entry: SessionEntry; message: AgentMessage; json: string };
+type SourceMessage = ProtocolMessage & { json: string };
 
 /** Match only clear, unchanged incoming copies. Never restore raw session content
  * because of a redaction or rewrite. */
@@ -312,6 +347,55 @@ function exactOccurrenceMatches(
   return matches;
 }
 
+/** Authorize whole execution groups against the transformed copies, not raw
+ * history alone. A redacted/omitted result keeps its call and reasoning intact. */
+function matchedShakeEntryIds(
+  source: readonly SourceMessage[],
+  matches: ReadonlyMap<number, number>,
+  record: ShakeRecord,
+): Set<string> {
+  const selectedAssistants = new Set(record.assistantEntryIds);
+  const selectedResults = new Set(record.toolResultEntryIds);
+  const protocol = analyzeToolProtocol(source);
+  const sourceIndexesByEntry = new Map<string, number[]>();
+  source.forEach((item, index) => {
+    const indexes = sourceIndexesByEntry.get(item.entryId) ?? [];
+    indexes.push(index);
+    sourceIndexesByEntry.set(item.entryId, indexes);
+  });
+  const exactEntry = (entryId: string) =>
+    (sourceIndexesByEntry.get(entryId) ?? []).every((index) => matches.has(index));
+  // Validate each protocol group, not the whole window: an unrelated pending
+  // or archived orphan must not prevent projection of a complete shaken group.
+  const invalidProtocolIds = new Set([...protocol.unresolvedToolCallIds, ...protocol.orphanToolResultIds]);
+  const unsafeAssistants = new Set(
+    source.flatMap(({ entryId, message }) =>
+      message.role === "assistant" &&
+      message.content.some(
+        (part) => isRecord(part) && part.type === "toolCall" && (!validId(part.id) || invalidProtocolIds.has(part.id)),
+      )
+        ? [entryId]
+        : [],
+    ),
+  );
+  const eligibleEntries = new Set<string>();
+  for (const assistantEntryId of selectedAssistants) {
+    if (unsafeAssistants.has(assistantEntryId)) continue;
+    const group = protocol.groups.get(assistantEntryId) ?? new Set([assistantEntryId]);
+    // A marker is atomic at the protocol-group level. In particular, never
+    // remove selected tool calls unless every associated result was also
+    // explicitly selected by the durable record.
+    const fullySelected = [...group].every((entryId) => entryId === assistantEntryId || selectedResults.has(entryId));
+    if (fullySelected && [...group].every(exactEntry)) for (const entryId of group) eligibleEntries.add(entryId);
+  }
+  // A result is removable only through its exact call/result group.
+  for (const resultEntryId of selectedResults) {
+    if (!protocol.pairedResultEntryIds.has(resultEntryId)) eligibleEntries.delete(resultEntryId);
+  }
+
+  return eligibleEntries;
+}
+
 function projection(
   incoming: readonly AgentMessage[],
   entries: readonly SessionEntry[],
@@ -326,90 +410,39 @@ function projection(
 } {
   entries = activeShakeEntries(entries);
   const source: SourceMessage[] = entries.flatMap((entry) =>
-    sessionEntryToContextMessages(entry).map((message) => ({ entry, message, json: JSON.stringify(message) })),
+    sessionEntryToContextMessages(entry).map((message) => ({
+      entryId: entry.id,
+      message,
+      json: JSON.stringify(message),
+    })),
   );
   const matches = exactOccurrenceMatches(incoming, source);
   for (const [sourceIndex, incomingIndex] of matches) {
     if (isNativeShim(incoming[incomingIndex]!)) matches.delete(sourceIndex);
   }
-  const incomingToSource = new Map([...matches].map(([sourceIndex, incomingIndex]) => [incomingIndex, sourceIndex]));
   const selectedAssistants = new Set(record.assistantEntryIds);
   const selectedResults = new Set(record.toolResultEntryIds);
-  const callEntryById = new Map<string, string>();
-  const resultEntryById = new Map<string, string>();
-  for (const item of source) {
-    for (const call of toolCalls(item.message)) callEntryById.set(call.id, item.entry.id);
-    const resultId = toolResultId(item.message);
-    if (resultId) resultEntryById.set(resultId, item.entry.id);
-  }
-  const groups = new Map<string, Set<string>>();
-  const assistantByResultEntry = new Map<string, string>();
-  for (const [id, assistantEntryId] of callEntryById) {
-    const resultEntryId = resultEntryById.get(id);
-    if (!resultEntryId) continue;
-    const group = groups.get(assistantEntryId) ?? new Set([assistantEntryId]);
-    group.add(resultEntryId);
-    groups.set(assistantEntryId, group);
-    assistantByResultEntry.set(resultEntryId, assistantEntryId);
-  }
-  const sourceIndexesByEntry = new Map<string, number[]>();
-  source.forEach((item, index) => {
-    const indexes = sourceIndexesByEntry.get(item.entry.id) ?? [];
-    indexes.push(index);
-    sourceIndexesByEntry.set(item.entry.id, indexes);
-  });
-  const exactEntry = (entryId: string) =>
-    (sourceIndexesByEntry.get(entryId) ?? []).every((index) => matches.has(index));
-  // Validate each protocol group, not the whole window: an unrelated pending
-  // or archived orphan must not prevent projection of a complete shaken group.
-  const plan = buildShakePlan(entries, record.sessionId, record);
-  const invalidProtocolIds = new Set([...plan.unresolvedToolCallIds, ...plan.orphanToolResultIds]);
-  const unsafeAssistants = new Set(
-    source.flatMap(({ entry, message }) =>
-      message.role === "assistant" &&
-      message.content.some(
-        (part) => isRecord(part) && part.type === "toolCall" && (!validId(part.id) || invalidProtocolIds.has(part.id)),
-      )
-        ? [entry.id]
-        : [],
-    ),
-  );
-  const eligibleEntries = new Set<string>();
-  for (const assistantEntryId of selectedAssistants) {
-    if (unsafeAssistants.has(assistantEntryId)) continue;
-    const group = groups.get(assistantEntryId) ?? new Set([assistantEntryId]);
-    // A marker is atomic at the protocol-group level. In particular, never
-    // remove selected tool calls unless every associated result was also
-    // explicitly selected by the durable record.
-    const fullySelected = [...group].every((entryId) => entryId === assistantEntryId || selectedResults.has(entryId));
-    if (fullySelected && [...group].every(exactEntry)) for (const entryId of group) eligibleEntries.add(entryId);
-  }
-  // A result is removable only through its exact call/result group.
-  for (const resultEntryId of selectedResults) {
-    if (!assistantByResultEntry.has(resultEntryId)) eligibleEntries.delete(resultEntryId);
-  }
+  const eligibleEntries = matchedShakeEntryIds(source, matches, record);
 
   let removedAssistantBlocks = 0;
   let removedToolResults = 0;
-  const byIncoming = incoming.map((message, incomingIndex): AgentMessage[] => {
-    const sourceIndex = incomingToSource.get(incomingIndex);
-    if (sourceIndex === undefined) return [message];
-    const sourceMessage = source[sourceIndex];
-    if (!sourceMessage) return [message];
-    const entryId = sourceMessage.entry.id;
-    if (selectedResults.has(entryId) && eligibleEntries.has(entryId)) {
+  const byIncoming = incoming.map((message) => [message]);
+  for (const [sourceIndex, incomingIndex] of matches) {
+    const { entryId } = source[sourceIndex]!;
+    if (!eligibleEntries.has(entryId)) continue;
+    const message = incoming[incomingIndex]!;
+    if (selectedResults.has(entryId)) {
       removedToolResults++;
-      return [];
+      byIncoming[incomingIndex] = [];
+    } else if (message.role === "assistant" && selectedAssistants.has(entryId)) {
+      const content = message.content.filter((part) => {
+        const remove = isRecord(part) && (part.type === "thinking" || part.type === "toolCall");
+        if (remove) removedAssistantBlocks++;
+        return !remove;
+      });
+      byIncoming[incomingIndex] = content.length ? [{ ...message, content } as AgentMessage] : [];
     }
-    if (message.role !== "assistant" || !selectedAssistants.has(entryId) || !eligibleEntries.has(entryId))
-      return [message];
-    const content = message.content.filter((part) => {
-      const remove = isRecord(part) && (part.type === "thinking" || part.type === "toolCall");
-      if (remove) removedAssistantBlocks++;
-      return !remove;
-    });
-    return content.length ? [{ ...message, content } as AgentMessage] : [];
-  });
+  }
   return {
     messages: byIncoming.flat(),
     byIncoming,
@@ -438,7 +471,11 @@ export function projectShakenRequiredMessages(
   record: ShakeRecord,
 ): AgentMessage[] {
   const source: SourceMessage[] = activeShakeEntries(entries).flatMap((entry) =>
-    sessionEntryToContextMessages(entry).map((message) => ({ entry, message, json: JSON.stringify(message) })),
+    sessionEntryToContextMessages(entry).map((message) => ({
+      entryId: entry.id,
+      message,
+      json: JSON.stringify(message),
+    })),
   );
   const matches = exactOccurrenceMatches(required, source);
   const requiredToSource = new Map([...matches].map(([sourceIndex, requiredIndex]) => [requiredIndex, sourceIndex]));
@@ -526,6 +563,20 @@ function matchedShakeRecord(
       ]),
     ],
   };
+}
+
+/** Publish the projection only after its append succeeds. A failed append must
+ * leave the active branch where it was; a committed checkpoint clears the
+ * carry-forward dispatch block. Callers retain their own fallback/UI policy. */
+function commitShakeCheckpoint(pi: ExtensionAPI, ctx: ExtensionContext, record: ShakeRecord): void {
+  const priorLeaf = ctx.sessionManager.getLeafId();
+  try {
+    pi.appendEntry(MANUAL_SHAKE_ENTRY, record);
+  } catch (error) {
+    restoreLeaf(ctx.sessionManager, priorLeaf);
+    throw error;
+  }
+  projectionFailures.delete(ctx.sessionManager as object);
 }
 
 async function currentTransformedContext(
@@ -730,14 +781,11 @@ export function registerManualShake(pi: ExtensionAPI, invalidateProviderSnapshot
     const beforeChars = contextCharacters(beforeMessages);
     const afterChars = contextCharacters(projected.messages);
     if (!shouldShakeBeforeCompaction(beforeMessages, projected.messages)) return;
-    const priorLeaf = ctx.sessionManager.getLeafId();
     try {
-      pi.appendEntry(MANUAL_SHAKE_ENTRY, matchedShakeRecord(entries, snapshot.sessionId, plan.record, projected));
+      commitShakeCheckpoint(pi, ctx, matchedShakeRecord(entries, snapshot.sessionId, plan.record, projected));
     } catch {
-      restoreLeaf(ctx.sessionManager, priorLeaf);
       return;
     }
-    projectionFailures.delete(ctx.sessionManager as object);
     compactionShakeApplications.set(
       ctx.sessionManager as object,
       (compactionShakeApplications.get(ctx.sessionManager as object) ?? 0) + 1,
@@ -786,10 +834,8 @@ export function registerManualShake(pi: ExtensionAPI, invalidateProviderSnapshot
       projectionFailures.delete(ctx.sessionManager as object);
       return;
     }
-    const priorLeaf = ctx.sessionManager.getLeafId();
     try {
-      pi.appendEntry(MANUAL_SHAKE_ENTRY, record);
-      projectionFailures.delete(ctx.sessionManager as object);
+      commitShakeCheckpoint(pi, ctx, record);
       shakeDiagnostic(
         ctx,
         SHAKE_CARRY_FORWARD_SUCCEEDED,
@@ -798,7 +844,6 @@ export function registerManualShake(pi: ExtensionAPI, invalidateProviderSnapshot
         record.assistantEntryIds.length + record.toolResultEntryIds.length,
       );
     } catch {
-      restoreLeaf(ctx.sessionManager, priorLeaf);
       const failure = new Error(
         "Manual-shake checkpoint could not be carried forward after compaction. Refusing to expose context until the session is reloaded or a checkpoint is persisted.",
       );
@@ -895,12 +940,10 @@ export function registerManualShake(pi: ExtensionAPI, invalidateProviderSnapshot
       }
       const before = estimateContext(beforeMessages);
       const after = estimateContext(projected.messages);
-      const priorLeaf = ctx.sessionManager.getLeafId();
       try {
         // Only persist newly proven matches, never IDs of excluded hook output.
-        pi.appendEntry(MANUAL_SHAKE_ENTRY, matchedShakeRecord(entries, snapshot.sessionId, plan.record, projected));
+        commitShakeCheckpoint(pi, ctx, matchedShakeRecord(entries, snapshot.sessionId, plan.record, projected));
       } catch {
-        restoreLeaf(ctx.sessionManager, priorLeaf);
         shakeDiagnostic(ctx, SHAKE_CHECKPOINT_PERSIST_FAILED, "failed", operationId);
         ctx.ui.notify(
           "Shake refused: the projection checkpoint could not be persisted; no context was changed.",
@@ -908,7 +951,6 @@ export function registerManualShake(pi: ExtensionAPI, invalidateProviderSnapshot
         );
         return;
       }
-      projectionFailures.delete(ctx.sessionManager as object);
       invalidateProviderSnapshot();
       shakeDiagnostic(
         ctx,

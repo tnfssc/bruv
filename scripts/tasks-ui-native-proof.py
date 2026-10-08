@@ -6,6 +6,7 @@ Screenshots are full, text-identical ANSI terminal replays (see screenshot helpe
 not edited images, desktop photographs, or render-unit-test fixture output.
 """
 import argparse
+from contextlib import contextmanager
 import hashlib
 import http.server
 import json
@@ -180,6 +181,133 @@ def audit(frames, task_id="task_proof"):
 def run(cmd, *, env=None, timeout=10, check=True):
     return subprocess.run(cmd, env=env, text=True, capture_output=True, timeout=timeout, check=check)
 
+class NativeCapture:
+    """Own the disposable PTY, inference fixture, and captured terminal evidence."""
+    def __init__(self, bun, timeout, out):
+        self.bun, self.timeout, self.out = bun, timeout, out
+        self.timeline, self.frames = [], {}
+
+    @contextmanager
+    def session(self):
+        tmpbase = Path(os.environ.get("TMPDIR", "/tmp"))
+        with tempfile.TemporaryDirectory(prefix="tasks-ui-proof-", dir=tmpbase) as directory:
+            home = Path(directory)
+            agent, self.repo, temp = home / "agent", home / "repo", home / "tmp"
+            conf = home / "tmux.conf"
+            # No inherited tokens, roles/depth, proxies, SSH agent or user config.
+            # Tool scripts and session-only trust stay in this disposable repo.
+            self.env = {"PATH":"/usr/bin:/bin:" + str(Path(self.bun).parent), "HOME":str(home),
+                        "SHELL":"/bin/sh", "TMPDIR":str(temp), "TERM":"xterm-256color", "LANG":"C.UTF-8",
+                        "BRUV_CODING_AGENT_DIR":str(agent), "PI_OFFLINE":"1", "NO_COLOR":"0",
+                        "XDG_CONFIG_HOME":str(home / "config"), "XDG_CACHE_HOME":str(home / "cache"),
+                        "XDG_STATE_HOME":str(home / "state"), "GIT_CONFIG_GLOBAL":"/dev/null", "GIT_CONFIG_NOSYSTEM":"1"}
+            self.tmux = ["tmux", "-f", str(conf), "-S", str(home / "tmux.sock")]
+            self.fixture = Fixture(self.timeout)
+            try:
+                self.fixture.start()
+                for d in [agent, self.repo, temp]: d.mkdir()
+                (self.repo / "GUIDE.md").write_text("Install, run, and open the local app.\n")
+                (self.repo / "background-check.sh").write_text(
+                    'set -eu\n: > background-started\nwhile [ ! -f background-release ]; do sleep 0.05; done\nprintf "Checks passed.\n"\n')
+                (agent / "settings.json").write_text(json.dumps({"hideThinkingBlock":True}))
+                (agent / "models.json").write_text(json.dumps({"providers":{"proof":{
+                    "baseUrl":f"http://127.0.0.1:{self.fixture.server.server_address[1]}/v1",
+                    "api":"openai-completions", "apiKey":"local-proof-only", "models":[{
+                        "id":"proof-model", "name":"proof-model", "reasoning":True,
+                        "contextWindow":32000, "maxTokens":2000,
+                        "cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0}}]}}}))
+                conf.write_text("set -g extended-keys on\nset -g extended-keys-format csi-u\nset -g history-limit 20000\n")
+                self.deadline = time.monotonic() + self.timeout
+                yield self
+            finally:
+                # Startup and capture failures have the same cleanup owner.
+                try:
+                    if self.repo.is_dir():
+                        for name in ["action-release", "background-release"]: (self.repo / name).touch()
+                finally:
+                    try: run(self.tmux + ["kill-server"], env=self.env, check=False)
+                    finally: self.fixture.stop()
+
+    def launch(self, binary):
+        # --approve is only a session trust override for our disposable fixture cwd.
+        command = "env -i " + " ".join(shlex.quote(k + "=" + v) for k,v in self.env.items()) + " " + " ".join(map(shlex.quote, [
+            str(binary), "--no-session", "--approve", "--offline", "--provider", "proof",
+            "--model", "proof-model", "--thinking", "medium", "Read the project guide."]))
+        run(self.tmux + ["new-session", "-d", "-x", "110", "-y", "40", "-s", "proof", "-c", str(self.repo), command], env=self.env)
+
+    def pane(self, history=False):
+        cmd = self.tmux + ["capture-pane", "-e", "-p", "-t", "proof"]
+        if history: cmd += ["-S", "-"]
+        return run(cmd, env=self.env, timeout=3).stdout
+
+    def wait(self, name, predicate):
+        while time.monotonic() < self.deadline:
+            if self.fixture.errors: raise RuntimeError("; ".join(self.fixture.errors))
+            if predicate(): return
+            time.sleep(.05)
+        raise TimeoutError(name)
+
+    def capture(self, step):
+        # Render debounce has time to process the acknowledged SDK event.
+        time.sleep(.25)
+        viewport, scrollback = self.pane(), self.pane(True)
+        self.frames[step] = {"viewport":viewport, "scrollback":scrollback}
+        for kind, data in [("viewport.ansi",viewport), ("viewport",plain(viewport)),
+                           ("scrollback.ansi",scrollback), ("scrollback",plain(scrollback))]:
+            (self.out / (step + "." + kind + ".txt")).write_text(data)
+        self.timeline.append({"step":step,"capturedAt":time.time(), "nativeViewportSha256":hashlib.sha256(viewport.encode()).hexdigest()})
+        (self.out / "timeline.json").write_text(json.dumps(self.timeline, indent=2) + "\n")
+
+    def stage(self, name):
+        self.wait(name, lambda: self.fixture.arrived[name].is_set())
+        self.capture(name)
+        self.fixture.released[name].set()
+
+    def send_keys(self, *keys):
+        run(self.tmux + ["send-keys", "-t", "proof", *keys], env=self.env)
+
+    def type_text(self, message):
+        self.send_keys("-l", message)
+        self.send_keys("Enter")
+
+
+def capture_scenario(proof, binary, task_launch):
+    proof.launch(binary)
+    proof.stage("spinner-only"); proof.stage("partial-label"); proof.stage("label-code-stream")
+    proof.wait("actual foreground execution", lambda: (proof.repo / "action-started").exists())
+    proof.capture("foreground-running")
+    (proof.repo / "action-release").touch()
+    proof.wait("foreground reply", lambda: "The guide is ready." in plain(proof.pane()))
+    proof.capture("foreground-success")
+    proof.send_keys("C-o")
+    proof.capture("expanded-ctrl-o")
+    proof.send_keys("C-o")
+    proof.type_text("Read the restricted guide.")
+    proof.stage("code-first")
+    proof.wait("failed action reply", lambda: "The restricted guide could not be read." in plain(proof.pane()))
+    proof.capture("concise-failure")
+    proof.type_text("Run the project checks in the background.")
+    proof.wait("background launch result", lambda: (proof.repo / "background-started").exists() and proof.fixture.arrived["background-launch-result"].is_set())
+    # Keep launch evidence even if a later capture fails.
+    task_launch.update(json.loads((proof.repo / "background-task.json").read_text()))
+    if not re.fullmatch(r"task_[\w-]+", task_launch.get("id", "")) or task_launch.get("title"):
+        raise RuntimeError("Expected actual untitled shell launch identity")
+    proof.capture("background-launched")
+    proof.fixture.released["background-launch-result"].set()
+    proof.wait("background running reply", lambda: "The checks are running." in plain(proof.pane()))
+    proof.capture("background-running")
+    (proof.repo / "background-release").touch()
+    proof.wait("background terminal delivery", lambda: "The checks passed." in plain(proof.pane()))
+    proof.capture("background-success")
+
+
+def render_screenshots(bun, out, timeline):
+    result = run([bun, str(ROOT / "scripts/tasks-ui-proof-screenshots.ts"), str(out)], timeout=60, check=False)
+    (out / "screenshot-log.txt").write_text(result.stdout + result.stderr)
+    if result.returncode: raise RuntimeError("Screenshot helper failed; see screenshot-log.txt")
+    return all((out / (frame["step"] + ".png")).is_file() for frame in timeline)
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--build-record", required=True)
@@ -195,109 +323,18 @@ def main():
     if not re.fullmatch(r"[a-f0-9]{40}", record["sourceCommit"]): ap.error("Missing source commit")
     out = Path(args.out).resolve()
     out.mkdir(parents=True, exist_ok=False)
-    fixture = Fixture(args.timeout)
-    timeline, frames, error, screenshots = [], {}, None, False
-    task_launch = {}
-    tmpbase = Path(os.environ.get("TMPDIR", "/tmp"))
-    home = Path(tempfile.mkdtemp(prefix="tasks-ui-proof-", dir=tmpbase))
-    agent, repo, temp = home / "agent", home / "repo", home / "tmp"
-    for d in [agent, repo, temp]: d.mkdir()
-    (repo / "GUIDE.md").write_text("Install, run, and open the local app.\n")
-    (repo / "background-check.sh").write_text(
-        'set -eu\n: > background-started\nwhile [ ! -f background-release ]; do sleep 0.05; done\nprintf "Checks passed.\\n"\n')
-    (agent / "settings.json").write_text(json.dumps({"hideThinkingBlock":True}))
-    fixture.start()
-    (agent / "models.json").write_text(json.dumps({"providers":{"proof":{
-        "baseUrl":f"http://127.0.0.1:{fixture.server.server_address[1]}/v1",
-        "api":"openai-completions", "apiKey":"local-proof-only", "models":[{
-            "id":"proof-model", "name":"proof-model", "reasoning":True,
-            "contextWindow":32000, "maxTokens":2000,
-            "cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0}}]}}}))
-    conf = home / "tmux.conf"
-    conf.write_text("set -g extended-keys on\nset -g extended-keys-format csi-u\nset -g history-limit 20000\n")
-    # An explicit allowlist: no inherited tokens, DIE role/depth, proxies, SSH agent,
-    # or real user configuration. All tool scripts run in the disposable repo.
-    env = {"PATH":"/usr/bin:/bin:" + str(Path(args.bun).parent), "HOME":str(home),
-           "SHELL":"/bin/sh", "TMPDIR":str(temp), "TERM":"xterm-256color", "LANG":"C.UTF-8",
-           "BRUV_CODING_AGENT_DIR":str(agent), "PI_OFFLINE":"1", "NO_COLOR":"0",
-           "XDG_CONFIG_HOME":str(home / "config"), "XDG_CACHE_HOME":str(home / "cache"),
-           "XDG_STATE_HOME":str(home / "state"), "GIT_CONFIG_GLOBAL":"/dev/null", "GIT_CONFIG_NOSYSTEM":"1"}
-    tmux = ["tmux", "-f", str(conf), "-S", str(home / "tmux.sock")]
-    deadline = time.monotonic() + args.timeout
-    def pane(history=False):
-        cmd = tmux + ["capture-pane", "-e", "-p", "-t", "proof"]
-        if history: cmd += ["-S", "-"]
-        return run(cmd, env=env, timeout=3).stdout
-    def wait(name, predicate):
-        while time.monotonic() < deadline:
-            if fixture.errors: raise RuntimeError("; ".join(fixture.errors))
-            if predicate(): return
-            time.sleep(.05)
-        raise TimeoutError(name)
-    def capture(step):
-        # Render debounce has time to process the acknowledged SDK event.
-        time.sleep(.25)
-        viewport, scrollback = pane(), pane(True)
-        frames[step] = {"viewport":viewport, "scrollback":scrollback}
-        for kind, data in [("viewport.ansi",viewport), ("viewport",plain(viewport)),
-                           ("scrollback.ansi",scrollback), ("scrollback",plain(scrollback))]:
-            (out / (step + "." + kind + ".txt")).write_text(data)
-        timeline.append({"step":step,"capturedAt":time.time(), "nativeViewportSha256":hashlib.sha256(viewport.encode()).hexdigest()})
-        (out / "timeline.json").write_text(json.dumps(timeline, indent=2) + "\n")
-    def stage(name):
-        wait(name, lambda: fixture.arrived[name].is_set())
-        capture(name)
-        fixture.released[name].set()
-    def type_text(message):
-        run(tmux + ["send-keys", "-t", "proof", "-l", message], env=env)
-        run(tmux + ["send-keys", "-t", "proof", "Enter"], env=env)
-    try:
-        # --approve is only a session trust override for our disposable fixture cwd.
-        # --no-approve forces an unrelated project-trust warning into every screen.
-        command = "env -i " + " ".join(shlex.quote(k + "=" + v) for k,v in env.items()) + " " + " ".join(map(shlex.quote, [
-            str(binary), "--no-session", "--approve", "--offline", "--provider", "proof",
-            "--model", "proof-model", "--thinking", "medium", "Read the project guide."]))
-        run(tmux + ["new-session", "-d", "-x", "110", "-y", "40", "-s", "proof", "-c", str(repo), command], env=env)
-        stage("spinner-only"); stage("partial-label"); stage("label-code-stream")
-        wait("actual foreground execution", lambda: (repo / "action-started").exists())
-        capture("foreground-running")
-        (repo / "action-release").touch()
-        wait("foreground reply", lambda: "The guide is ready." in plain(pane()))
-        capture("foreground-success")
-        run(tmux + ["send-keys", "-t", "proof", "C-o"], env=env)
-        capture("expanded-ctrl-o")
-        run(tmux + ["send-keys", "-t", "proof", "C-o"], env=env)
-        type_text("Read the restricted guide.")
-        stage("code-first")
-        wait("failed action reply", lambda: "The restricted guide could not be read." in plain(pane()))
-        capture("concise-failure")
-        type_text("Run the project checks in the background.")
-        wait("background launch result", lambda: (repo / "background-started").exists() and fixture.arrived["background-launch-result"].is_set())
-        task_launch = json.loads((repo / "background-task.json").read_text())
-        if not re.fullmatch(r"task_[\w-]+", task_launch.get("id", "")) or task_launch.get("title"):
-            raise RuntimeError("Expected actual untitled shell launch identity")
-        capture("background-launched")
-        fixture.released["background-launch-result"].set()
-        wait("background running reply", lambda: "The checks are running." in plain(pane()))
-        capture("background-running")
-        (repo / "background-release").touch()
-        wait("background terminal delivery", lambda: "The checks passed." in plain(pane()))
-        capture("background-success")
-        if not args.no_screenshots:
-            r = run([args.bun, str(ROOT / "scripts/tasks-ui-proof-screenshots.ts"), str(out)], timeout=60, check=False)
-            (out / "screenshot-log.txt").write_text(r.stdout + r.stderr)
-            if r.returncode: raise RuntimeError("Screenshot helper failed; see screenshot-log.txt")
-            screenshots = all((out / (t["step"] + ".png")).is_file() for t in timeline)
-    except Exception as exc:
-        error = f"{type(exc).__name__}: {exc}"
-        try: capture("error-state")
-        except Exception: pass
-    finally:
-        # Release owned execution barriers even if a capture/screenshot failed.
-        for name in ["action-release", "background-release"]: (repo / name).touch()
-        run(tmux + ["kill-server"], env=env, check=False)
-        fixture.stop()
-        shutil.rmtree(home)
+    proof = NativeCapture(args.bun, args.timeout, out)
+    error, screenshots, task_launch = None, False, {}
+    with proof.session():
+        try:
+            capture_scenario(proof, binary, task_launch)
+            if not args.no_screenshots:
+                screenshots = render_screenshots(args.bun, out, proof.timeline)
+        except Exception as exc:
+            error = f"{type(exc).__name__}: {exc}"
+            try: proof.capture("error-state")
+            except Exception: pass
+    frames, fixture = proof.frames, proof.fixture
     checks = audit(frames, task_launch.get("id", "MISSING_TYPED_ID")) if all(s in frames for s in ["spinner-only","partial-label","label-code-stream","foreground-running","foreground-success","expanded-ctrl-o","code-first","concise-failure","background-launched","background-running","background-success"]) else {}
     checks["seven_bounded_sdk_requests"] = len(fixture.records) == 7 and not fixture.errors
     checks["screenshots_complete"] = screenshots

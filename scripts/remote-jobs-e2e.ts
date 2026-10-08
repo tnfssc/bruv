@@ -41,6 +41,7 @@ git("commit", "-qm", "initial");
 writeFileSync(join(repo, "README.md"), "REMOTE_JOBS_CURRENT_SOURCE\n");
 assert(!existsSync(join(home, ".git")), "must never Git-init HOME");
 const statePath = join(home, ".bruv/remote/state.json");
+// Every parent, including reconnects, is registered here for the final cleanup.
 const clients: ReturnType<typeof spawn>[] = [];
 // The only provider lives in the Docker fixture. This host process is a real CLI client.
 mkdirSync(agentDir, { recursive: true });
@@ -107,8 +108,16 @@ const ssh = (command: string) =>
     encoding: "utf8",
     timeout: 6000,
   });
-try {
-  assert.equal(ssh("true").status, 0, "pinned fixture SSH unavailable");
+
+type RpcClient = ReturnType<typeof launch>;
+const completionMessages = (client: RpcClient) =>
+  client.events.filter((e) => e.type === "message_end" && e.message?.customType === "task-complete");
+
+function taskId(jobId: string): string {
+  return Buffer.from(jobId.slice(4), "base64url").toString();
+}
+
+function assertPrintJsonBoundary() {
   // Exercise the compiled CLI's non-interactive JSON boundary as well as its RPC lifecycle.
   const printed = spawnSync(
     process.env.BRUV_BIN!,
@@ -132,44 +141,38 @@ try {
   );
   assert.equal(printed.status, 0, "print/json CLI failed: " + printed.stderr + printed.stdout);
   assert(printed.stdout.includes("REMOTE_JOBS_PRINT_JSON_OK"), "print/json response missing: " + printed.stdout);
-  const a = launch("A", join(home, "a.jsonl")),
-    b = launch("B", join(home, "b.jsonl"));
-  a.send("/remote connect fixture-owner /usr/local/bin/bruv");
-  await a.wait(() => existsSync(statePath) && !!JSON.parse(readFileSync(statePath, "utf8")).connection, "connect");
-  a.send("REMOTE_JOBS_PROOF_A launch using execute");
-  await a.wait(() => existsSync(join(home, "jobs-A.json")), "first async placement launch");
-  const launchA = JSON.parse(readFileSync(join(home, "jobs-A.json"), "utf8"));
-  const jobA: string = launchA.launch.id;
-  const idA = Buffer.from(jobA.slice(4), "base64url").toString();
-  b.send("REMOTE_JOBS_PROOF_B launch using execute");
-  await b.wait(() => existsSync(join(home, "jobs-B.json")), "second async placement launch");
-  const launchB = JSON.parse(readFileSync(join(home, "jobs-B.json"), "utf8"));
-  const jobB: string = launchB.launch.id;
-  const idB = Buffer.from(jobB.slice(4), "base64url").toString();
-  assert.equal(Object.keys(state().tasks).length, 2, "placement created duplicate tasks");
-  assert.equal(state().tasks[idA]?.jobSessionFile, join(home, "a.jsonl"));
-  assert.equal(state().tasks[idB]?.jobSessionFile, join(home, "b.jsonl"));
-  for (const result of [launchA, launchB]) {
-    assert(result.discovery.targets.some((t: any) => t.name === "fixture-owner" && t.authorized && t.kind === "ssh"));
-    assert.equal(result.launch.background, true);
-  }
-  assert(idA && idB && idA !== idB);
-  for (const [client, side] of [
-    [a, "A"],
-    [b, "B"],
-  ] as const) {
-    await client.wait(
-      () => client.events.some((e) => e.type === "tool_execution_end" && e.toolName === "execute" && !e.isError),
-      "real execute launch",
-    );
-    await client.wait(
-      () =>
-        client.events.some(
-          (e) => e.type === "message_end" && JSON.stringify(e).includes("REMOTE_JOBS_PARENT_YIELDED_" + side),
-        ),
-      "parent yielded",
-    );
-  }
+}
+
+async function placeRemoteJob(client: RpcClient, side: "A" | "B"): Promise<string> {
+  client.send("REMOTE_JOBS_PROOF_" + side + " launch using execute");
+  const resultPath = join(home, "jobs-" + side + ".json");
+  await client.wait(
+    () => existsSync(resultPath),
+    side === "A" ? "first async placement launch" : "second async placement launch",
+  );
+  const result = JSON.parse(readFileSync(resultPath, "utf8"));
+  assert(result.discovery.targets.some((t: any) => t.name === "fixture-owner" && t.authorized && t.kind === "ssh"));
+  assert.equal(result.launch.background, true);
+  return result.launch.id;
+}
+
+async function waitForParentYield(client: RpcClient, side: "A" | "B") {
+  await client.wait(
+    () => client.events.some((e) => e.type === "tool_execution_end" && e.toolName === "execute" && !e.isError),
+    "real execute launch",
+  );
+  await client.wait(
+    () =>
+      client.events.some(
+        (e) => e.type === "message_end" && JSON.stringify(e).includes("REMOTE_JOBS_PARENT_YIELDED_" + side),
+      ),
+    "parent yielded",
+  );
+}
+
+async function assertRemoteCompletions(a: RpcClient, b: RpcClient, jobA: string, jobB: string) {
+  const idA = taskId(jobA),
+    idB = taskId(jobB);
   await a.wait(() => state().tasks[idA]?.task?.state === "done", "A remote terminal", 90000);
   await b.wait(() => state().tasks[idB]?.task?.state === "done", "B remote terminal", 90000);
   await a.wait(
@@ -182,63 +185,57 @@ try {
     "B existing completion coordinator wake",
     45000,
   );
-  const complete = (client: typeof a) =>
-    client.events.filter((e) => e.type === "message_end" && e.message?.customType === "task-complete");
-  assert(complete(a).length && complete(b).length, "missing existing task-complete envelope");
+  assert(completionMessages(a).length && completionMessages(b).length, "missing existing task-complete envelope");
   assert(
-    JSON.stringify(complete(a)).includes("SSH jobs completed:") &&
-      JSON.stringify(complete(b)).includes("SSH jobs completed:"),
+    JSON.stringify(completionMessages(a)).includes("SSH jobs completed:") &&
+      JSON.stringify(completionMessages(b)).includes("SSH jobs completed:"),
     "missing real SSH completion content",
   );
   assert(
-    !JSON.stringify(complete(a)).includes(idB) &&
-      !JSON.stringify(complete(b)).includes(idA) &&
-      !JSON.stringify(complete(a)).includes(jobB) &&
-      !JSON.stringify(complete(b)).includes(jobA),
+    !JSON.stringify(completionMessages(a)).includes(idB) &&
+      !JSON.stringify(completionMessages(b)).includes(idA) &&
+      !JSON.stringify(completionMessages(a)).includes(jobB) &&
+      !JSON.stringify(completionMessages(b)).includes(jobA),
     "cross-session task completion leaked",
   );
   assert(
-    JSON.stringify(complete(a)).includes(jobA) && JSON.stringify(complete(b)).includes(jobB),
+    JSON.stringify(completionMessages(a)).includes(jobA) && JSON.stringify(completionMessages(b)).includes(jobB),
     "completion lost stable jobs ID",
   );
-  for (const [client, side, own, foreign] of [
-    [a, "A", jobA, jobB],
-    [b, "B", jobB, jobA],
-  ] as const) {
-    client.send("REMOTE_JOBS_CHECK " + own + " " + foreign);
-    await client.wait(
-      () => existsSync(join(home, "check-" + side + ".json")),
-      "session isolation / unknown job checks",
-    );
-    const check = JSON.parse(readFileSync(join(home, "check-" + side + ".json"), "utf8"));
-    assert.equal(check.inspected.id, own);
-    assert.equal(check.rejected.length, 4);
-    await client.wait(
-      () =>
-        client.events.some(
-          (e) => e.type === "message_end" && JSON.stringify(e).includes("REMOTE_JOBS_CHECKED_" + side),
-        ),
-      "probe yielded",
-    );
-    const sourceProof = ssh(
-      "test -f /tmp/fixture-jobs-proof-" + side + " && test -f /tmp/fixture-owner-finished-" + side,
-    );
-    assert.equal(
-      sourceProof.status,
-      0,
-      "current-source shell and owner continuation did not finish: " + sourceProof.stderr,
-    );
-    const policy = ssh("cat /tmp/fixture-jobs-policy-" + side);
-    assert.equal(policy.status, 0, policy.stderr);
-    assert(policy.stdout.includes("Only orchestrator agents can delegate"));
-  }
-  const countA = complete(a).length,
-    countB = complete(b).length;
+}
+
+async function assertJobAccessAndOwnerExecution(client: RpcClient, side: "A" | "B", own: string, foreign: string) {
+  client.send("REMOTE_JOBS_CHECK " + own + " " + foreign);
+  await client.wait(() => existsSync(join(home, "check-" + side + ".json")), "session isolation / unknown job checks");
+  const check = JSON.parse(readFileSync(join(home, "check-" + side + ".json"), "utf8"));
+  assert.equal(check.inspected.id, own);
+  assert.equal(check.rejected.length, 4);
+  await client.wait(
+    () =>
+      client.events.some((e) => e.type === "message_end" && JSON.stringify(e).includes("REMOTE_JOBS_CHECKED_" + side)),
+    "probe yielded",
+  );
+  const sourceProof = ssh(
+    "test -f /tmp/fixture-jobs-proof-" + side + " && test -f /tmp/fixture-owner-finished-" + side,
+  );
+  assert.equal(
+    sourceProof.status,
+    0,
+    "current-source shell and owner continuation did not finish: " + sourceProof.stderr,
+  );
+  const policy = ssh("cat /tmp/fixture-jobs-policy-" + side);
+  assert.equal(policy.status, 0, policy.stderr);
+  assert(policy.stdout.includes("Only orchestrator agents can delegate"));
+}
+
+async function assertNoCompletionRedelivery(a: RpcClient, b: RpcClient, idA: string, idB: string) {
+  const countA = completionMessages(a).length,
+    countB = completionMessages(b).length;
   a.send("/remote sync " + idA);
   b.send("/remote sync " + idB);
   await Bun.sleep(1500);
-  assert.equal(complete(a).length, countA, "repeat sync redelivered A");
-  assert.equal(complete(b).length, countB, "repeat sync redelivered B");
+  assert.equal(completionMessages(a).length, countA, "repeat sync redelivered A");
+  assert.equal(completionMessages(b).length, countB, "repeat sync redelivered B");
   a.child.kill("SIGKILL");
   b.child.kill("SIGKILL");
   const ar = launch("A-reconnect", join(home, "a.jsonl")),
@@ -246,7 +243,36 @@ try {
   ar.send("/remote status");
   br.send("/remote status");
   await Bun.sleep(2000);
-  assert(!complete(ar).length && !complete(br).length, "reconnect redelivered completed task");
+  assert(!completionMessages(ar).length && !completionMessages(br).length, "reconnect redelivered completed task");
+}
+
+try {
+  assert.equal(ssh("true").status, 0, "pinned fixture SSH unavailable");
+  assertPrintJsonBoundary();
+  const a = launch("A", join(home, "a.jsonl")),
+    b = launch("B", join(home, "b.jsonl"));
+  a.send("/remote connect fixture-owner /usr/local/bin/bruv");
+  await a.wait(() => existsSync(statePath) && !!JSON.parse(readFileSync(statePath, "utf8")).connection, "connect");
+
+  const jobA = await placeRemoteJob(a, "A"),
+    jobB = await placeRemoteJob(b, "B");
+  const idA = taskId(jobA),
+    idB = taskId(jobB);
+  assert.equal(Object.keys(state().tasks).length, 2, "placement created duplicate tasks");
+  assert.equal(state().tasks[idA]?.jobSessionFile, join(home, "a.jsonl"));
+  assert.equal(state().tasks[idB]?.jobSessionFile, join(home, "b.jsonl"));
+  assert(idA && idB && idA !== idB);
+  for (const [client, side] of [
+    [a, "A"],
+    [b, "B"],
+  ] as const) {
+    await waitForParentYield(client, side);
+  }
+
+  await assertRemoteCompletions(a, b, jobA, jobB);
+  await assertJobAccessAndOwnerExecution(a, "A", jobA, jobB);
+  await assertJobAccessAndOwnerExecution(b, "B", jobB, jobA);
+  await assertNoCompletionRedelivery(a, b, idA, idB);
   assert.equal(git("status", "--porcelain").trim(), "M README.md", "cache or artifacts landed inside source");
   console.log(
     "PASS compiled CLI print/json boundary; normal CLI execute jobs.targets/subagent(target) -> two parent yields -> Docker remote terminal -> existing task-complete parent wake, stable IDs, isolated/unknown jobs, normal depth1 role policy, repeat sync and reconnect",

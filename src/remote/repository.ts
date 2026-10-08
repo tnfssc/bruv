@@ -132,6 +132,37 @@ export interface RepositorySnapshot {
   bundle: string;
   manifest: string;
 }
+/** Assemble task input in the detached checkout, then replace HEAD with a history-free commit. */
+function createOrphanSnapshot(root: string, checkout: string, trackedDiff: Buffer, selected: string[]): void {
+  if (trackedDiff.length) git(checkout, ["apply", "--index", "--binary", "-"], trackedDiff);
+  for (const p of selected) {
+    const target = join(checkout, p);
+    mkdirSync(dirname(target), { recursive: true });
+    writeFileSync(target, snapshotFile(root, p), { mode: 0o600 });
+    chmodSync(target, statSync(join(root, p)).mode & 0o777);
+    git(checkout, ["add", "--", p]);
+  }
+  // Transfer only an orphan snapshot, never reachable local history or deleted secrets.
+  const tree = text(git(checkout, ["write-tree"]));
+  for (const row of names(git(checkout, ["ls-tree", "-rlz", tree]))) {
+    if (!/^(100644|100755) blob /.test(row) || sensitiveRepoPath(row.split("\t")[1]!))
+      throw Error("Snapshot tree contains unsupported or credential/config paths");
+  }
+  const commit = text(
+    git(checkout, [
+      "-c",
+      "user.name=Remote snapshot",
+      "-c",
+      "user.email=snapshot@example.invalid",
+      "commit-tree",
+      tree,
+      "-m",
+      "Immutable task input",
+    ]),
+  );
+  git(checkout, ["update-ref", "HEAD", commit]);
+}
+
 /** artifactDir must be a new durable private directory OUTSIDE the repository. */
 export function captureRepository(
   repo: string,
@@ -192,34 +223,7 @@ export function captureRepository(
     sourceCommit,
     "--",
   ]);
-  const diff = options.baseRef === undefined ? sourceDiff : Buffer.alloc(0);
-  if (diff.length) git(checkout, ["apply", "--index", "--binary", "-"], diff);
-  for (const p of selected) {
-    const target = join(checkout, p);
-    mkdirSync(dirname(target), { recursive: true });
-    writeFileSync(target, snapshotFile(root, p), { mode: 0o600 });
-    chmodSync(target, statSync(join(root, p)).mode & 0o777);
-    git(checkout, ["add", "--", p]);
-  }
-  // Transfer only an orphan snapshot, never reachable local history or deleted secrets.
-  const tree = text(git(checkout, ["write-tree"]));
-  for (const row of names(git(checkout, ["ls-tree", "-rlz", tree]))) {
-    if (!/^(100644|100755) blob /.test(row) || sensitiveRepoPath(row.split("\t")[1]!))
-      throw Error("Snapshot tree contains unsupported or credential/config paths");
-  }
-  const commit = text(
-    git(checkout, [
-      "-c",
-      "user.name=Remote snapshot",
-      "-c",
-      "user.email=snapshot@example.invalid",
-      "commit-tree",
-      tree,
-      "-m",
-      "Immutable task input",
-    ]),
-  );
-  git(checkout, ["update-ref", "HEAD", commit]);
+  createOrphanSnapshot(root, checkout, options.baseRef === undefined ? sourceDiff : Buffer.alloc(0), selected);
   if (
     fingerprint(root) !== base ||
     JSON.stringify(untracked(root)) !== JSON.stringify(available) ||

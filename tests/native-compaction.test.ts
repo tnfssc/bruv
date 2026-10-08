@@ -1004,9 +1004,13 @@ describe("fail-closed checkpoint lifecycle", () => {
     }
   });
 
-  test("session changes during deferred HTTP prevent a checkpoint in the new session", async () => {
-    const manager = SessionManager.inMemory();
-    manager.appendMessage({ role: "user", content: "ordinary", timestamp: 1 });
+  // These scenarios differ only in who invalidates the pinned attempt. Keep
+  // dispatch, late response, publication checks, and transport teardown together.
+  async function expectInvalidatedHttpAttempt(
+    manager: SessionManager,
+    invalidate: (h: ReturnType<typeof harness>) => void,
+    expectedEntries: ReturnType<SessionManager["getEntries"]>,
+  ) {
     const h = harness(manager, model);
     h.ctx.modelRegistry.getApiKeyAndHeaders = async () => ({
       ok: true,
@@ -1030,15 +1034,20 @@ describe("fail-closed checkpoint lifecycle", () => {
       },
     };
     let resolveFetch!: (response: Response) => void;
+    let markDispatched!: () => void;
+    const dispatched = new Promise<void>((resolve) => (markDispatched = resolve));
     const oldFetch = globalThis.fetch;
-    globalThis.fetch = (() => new Promise<Response>((resolve) => (resolveFetch = resolve))) as any;
+    globalThis.fetch = (() =>
+      new Promise<Response>((resolve) => {
+        resolveFetch = resolve;
+        markDispatched();
+      })) as any;
     const observed: any[] = [];
     const unsubscribe = subscribeProviderAttempts(manager, (value) => observed.push(value));
     try {
       const pending = h.handlers.get("session_before_compact")!(event, h.ctx);
-      while (!resolveFetch) await Promise.resolve();
-      manager.newSession();
-      h.handlers.get("session_start")!({ type: "session_start" }, h.ctx);
+      await dispatched;
+      invalidate(h);
       const item = { type: "compaction", id: "cmp_stale", encrypted_content: "opaque" };
       const body =
         "data: " +
@@ -1051,65 +1060,54 @@ describe("fail-closed checkpoint lifecycle", () => {
       expect(await pending).toEqual({ cancel: true });
       expect(observed.map((value) => value.observedAt)).toEqual(["dispatch"]);
       expect(h.entries).toEqual([]);
-      expect(manager.getEntries()).toEqual([]);
+      expect(manager.getEntries()).toEqual(expectedEntries);
     } finally {
       unsubscribe();
       globalThis.fetch = oldFetch;
     }
+  }
+
+  test("session changes during deferred HTTP prevent a checkpoint in the new session", async () => {
+    const manager = SessionManager.inMemory();
+    manager.appendMessage({ role: "user", content: "ordinary", timestamp: 1 });
+    await expectInvalidatedHttpAttempt(
+      manager,
+      (h) => {
+        manager.newSession();
+        h.handlers.get("session_start")!({ type: "session_start" }, h.ctx);
+      },
+      [],
+    );
   });
 
   test("model selection during deferred HTTP rejects a stale native compaction even within Codex", async () => {
     const manager = SessionManager.inMemory();
     manager.appendMessage({ role: "user", content: "ordinary", timestamp: 1 });
-    const h = harness(manager, model);
-    h.ctx.modelRegistry.getApiKeyAndHeaders = async () => ({
-      ok: true,
-      headers: { Authorization: "Bearer hidden", "chatgpt-account-id": "acct" },
-    });
-    h.handlers.get("context")!({ messages: manager.buildSessionContext().messages }, h.ctx);
-    h.handlers.get("before_provider_headers")!({ headers: {} }, h.ctx);
-    h.handlers.get("before_provider_request")!({ payload }, h.ctx);
     const branch = manager.getBranch();
-    const event: any = {
-      type: "session_before_compact",
-      branchEntries: branch,
-      signal: new AbortController().signal,
-      preparation: {
-        firstKeptEntryId: branch[0].id,
-        messagesToSummarize: [],
-        turnPrefixMessages: [],
-        tokensBefore: 10,
-        fileOps: { read: new Set(), written: new Set(), edited: new Set() },
-        settings: { enabled: true, reserveTokens: 1, keepRecentTokens: 1 },
+    await expectInvalidatedHttpAttempt(
+      manager,
+      (h) => {
+        h.ctx.model = { ...model, id: "other" };
+        h.handlers.get("model_select")!({ type: "model_select", model: h.ctx.model }, h.ctx);
       },
-    };
-    let resolveFetch!: (response: Response) => void;
-    const oldFetch = globalThis.fetch;
-    globalThis.fetch = (() => new Promise<Response>((resolve) => (resolveFetch = resolve))) as any;
-    const observed: any[] = [];
-    const unsubscribe = subscribeProviderAttempts(manager, (value) => observed.push(value));
-    try {
-      const pending = h.handlers.get("session_before_compact")!(event, h.ctx);
-      while (!resolveFetch) await Promise.resolve();
-      h.ctx.model = { ...model, id: "other" };
-      h.handlers.get("model_select")!({ type: "model_select", model: h.ctx.model }, h.ctx);
-      const item = { type: "compaction", id: "cmp_stale", encrypted_content: "opaque" };
-      const body =
-        "data: " +
-        JSON.stringify({
-          type: "response.completed",
-          response: { status: "completed", output: [item], usage: { input_tokens: 4, output_tokens: 1 } },
-        }) +
-        "\n\n";
-      resolveFetch(new Response(body, { status: 200 }));
-      expect(await pending).toEqual({ cancel: true });
-      expect(observed.map((value) => value.observedAt)).toEqual(["dispatch"]);
-      expect(h.entries).toEqual([]);
-      expect(manager.getEntries()).toEqual(branch);
-    } finally {
-      unsubscribe();
-      globalThis.fetch = oldFetch;
-    }
+      branch,
+    );
+  });
+
+  test("shake invalidation during deferred HTTP rejects a response even when session, leaf, model and thinking are unchanged", async () => {
+    const manager = SessionManager.inMemory();
+    manager.appendMessage({ role: "user", content: "ordinary", timestamp: 1 });
+    const branch = manager.getBranch();
+    await expectInvalidatedHttpAttempt(
+      manager,
+      (h) => {
+        h.capture.invalidateCapture();
+        expect(h.capture.hasFreshCapture()).toBe(false);
+        expect(h.ctx.model).toBe(model);
+        expect(manager.getLeafId()).toBe(branch.at(-1)!.id);
+      },
+      branch,
+    );
   });
 
   test("constructs provider-equivalent OAuth and cache headers", () => {

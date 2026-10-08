@@ -6,13 +6,6 @@ import { createHash } from "node:crypto";
 import { readFile, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 
-const dir = resolve(process.argv[2] ?? "");
-if (process.argv.length !== 3) throw Error("Usage: bun scripts/tasks-ui-proof-screenshots.ts CAPTURE_DIR");
-const modulePath = process.env.PLAYWRIGHT_CORE;
-const executablePath = process.env.CHROMIUM_BIN;
-if (!modulePath || !executablePath)
-  throw Error("Set PLAYWRIGHT_CORE and CHROMIUM_BIN to installed cached assets; no downloads");
-const { chromium } = await import(modulePath);
 const esc = (s: string) =>
   s.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
 // biome-ignore lint/suspicious/noControlCharactersInRegex: native tmux captures contain ANSI SGR controls.
@@ -117,39 +110,63 @@ function replay(text: string) {
   }
   return html;
 }
+function renderViewportDocument(screen: string, font: string) {
+  return (
+    '<!doctype html><meta charset="utf-8"><style>@font-face{font-family:terminal;src:url(data:font/ttf;base64,' +
+    font +
+    ")}body{margin:0;background:black;color:#e5e5e5}pre{box-sizing:border-box;margin:0;padding:12px;font:16px/22px terminal,monospace;white-space:pre;width:max-content;min-width:100vw;min-height:100vh}</style><pre>" +
+    replay(screen) +
+    "</pre>"
+  );
+}
+
+const hash = (bytes: Uint8Array) => createHash("sha256").update(bytes).digest("hex");
+
+async function captureScreenshots(
+  captureDir: string,
+  timeline: { step: string }[],
+  font: string,
+  modulePath: string,
+  executablePath: string,
+) {
+  const { chromium } = await import(modulePath);
+  const screenshotHashes: Record<string, string> = {};
+  const browser = await chromium.launch({
+    executablePath,
+    headless: true,
+    args: ["--no-sandbox", "--disable-dev-shm-usage"],
+  });
+  try {
+    const page = await browser.newPage({ viewport: { width: 1400, height: 1000 }, deviceScaleFactor: 1 });
+    await page.route("**/*", (route: { abort(): Promise<void> }) => route.abort());
+    for (const frame of timeline) {
+      const screen = await readFile(join(captureDir, frame.step + ".viewport.ansi.txt"), "utf8");
+      const html = renderViewportDocument(screen, font);
+      await writeFile(join(captureDir, frame.step + ".html"), html);
+      await page.setContent(html);
+      await page.evaluate(() => document.fonts.ready);
+      if ((await page.locator("pre").innerText()) !== screen.replace(SGR, ""))
+        throw Error("Replay changed viewport text");
+      const png = await page.screenshot({ path: join(captureDir, frame.step + ".png"), fullPage: true });
+      screenshotHashes[frame.step] = hash(png);
+    }
+  } finally {
+    await browser.close();
+  }
+  return screenshotHashes;
+}
+
+const dir = resolve(process.argv[2] ?? "");
+if (process.argv.length !== 3) throw Error("Usage: bun scripts/tasks-ui-proof-screenshots.ts CAPTURE_DIR");
+const modulePath = process.env.PLAYWRIGHT_CORE;
+const executablePath = process.env.CHROMIUM_BIN;
+if (!modulePath || !executablePath)
+  throw Error("Set PLAYWRIGHT_CORE and CHROMIUM_BIN to installed cached assets; no downloads");
 const timeline = JSON.parse(await readFile(join(dir, "timeline.json"), "utf8"));
 const font = (
   await readFile(process.env.TERMINAL_FONT ?? "/usr/share/fonts/TTF/MesloLGMDZNerdFontMono-Regular.ttf")
 ).toString("base64");
-const screenshotHashes: Record<string, string> = {};
-const hash = (bytes: Uint8Array) => createHash("sha256").update(bytes).digest("hex");
-const browser = await chromium.launch({
-  executablePath,
-  headless: true,
-  args: ["--no-sandbox", "--disable-dev-shm-usage"],
-});
-try {
-  const page = await browser.newPage({ viewport: { width: 1400, height: 1000 }, deviceScaleFactor: 1 });
-  await page.route("**/*", (route: { abort(): Promise<void> }) => route.abort());
-  for (const frame of timeline) {
-    const screen = await readFile(join(dir, frame.step + ".viewport.ansi.txt"), "utf8");
-    const html =
-      '<!doctype html><meta charset="utf-8"><style>@font-face{font-family:terminal;src:url(data:font/ttf;base64,' +
-      font +
-      ")}body{margin:0;background:black;color:#e5e5e5}pre{box-sizing:border-box;margin:0;padding:12px;font:16px/22px terminal,monospace;white-space:pre;width:max-content;min-width:100vw;min-height:100vh}</style><pre>" +
-      replay(screen) +
-      "</pre>";
-    await writeFile(join(dir, frame.step + ".html"), html);
-    await page.setContent(html);
-    await page.evaluate(() => document.fonts.ready);
-    if ((await page.locator("pre").innerText()) !== screen.replace(SGR, ""))
-      throw Error("Replay changed viewport text");
-    const png = await page.screenshot({ path: join(dir, frame.step + ".png"), fullPage: true });
-    screenshotHashes[frame.step] = hash(png);
-  }
-} finally {
-  await browser.close();
-}
+const screenshotHashes = await captureScreenshots(dir, timeline, font, modulePath, executablePath);
 await writeFile(
   join(dir, "screenshots.json"),
   JSON.stringify(

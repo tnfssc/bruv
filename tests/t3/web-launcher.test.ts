@@ -63,7 +63,7 @@ test("guide retains history limitations and safe paired updates without parent w
   expect(guide).toContain("Update T3 separately");
 });
 
-test("web only prints setup for accepted flags and explicitly rejects former server flags", async () => {
+test("web only prints setup for accepted flags", async () => {
   const log = spyOn(console, "log").mockImplementation(() => {});
   const error = spyOn(console, "error").mockImplementation(() => {});
   try {
@@ -74,7 +74,16 @@ test("web only prints setup for accepted flags and explicitly rejects former ser
       expect(log).toHaveBeenCalledWith(externalT3Guide());
     }
     expect(error).not.toHaveBeenCalled();
-    log.mockClear();
+  } finally {
+    log.mockRestore();
+    error.mockRestore();
+  }
+});
+
+test("web rejects former server flags without printing setup", async () => {
+  const log = spyOn(console, "log").mockImplementation(() => {});
+  const error = spyOn(console, "error").mockImplementation(() => {});
+  try {
     expect(await runWeb(["--port", "3773"])).toBe(2);
     expect(log).not.toHaveBeenCalled();
     expect(error).toHaveBeenCalledWith(

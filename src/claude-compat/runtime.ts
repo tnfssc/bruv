@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import type { AgentMessage } from "@earendil-works/pi-agent-core";
 import { join, resolve } from "node:path";
 import type { Api, ImageContent, Message, Model } from "@earendil-works/pi-ai";
 import {
@@ -137,6 +138,80 @@ function nativeContent(content: unknown): unknown[] {
   );
 }
 
+/** Root history and child frames share the same Pi-to-native message body. */
+function nativeMessage(
+  message: AgentMessage,
+): { role: "user" | "assistant"; content: unknown[]; model?: string } | undefined {
+  switch (message.role) {
+    case "user":
+      return { role: "user", content: nativeContent(message.content) };
+    case "assistant":
+      return {
+        role: "assistant",
+        content: nativeContent(message.content),
+        model: message.provider + "/" + message.model,
+      };
+    case "toolResult":
+      return {
+        role: "user",
+        content: [
+          {
+            type: "tool_result",
+            tool_use_id: message.toolCallId,
+            content: nativeContent(message.content),
+            is_error: message.isError,
+          },
+        ],
+      };
+    default:
+      return undefined;
+  }
+}
+
+/** Mirror canonical appends in order; the returned drain reports the first write failure. */
+function mirrorNativeHistory(
+  manager: SessionManager,
+  history: NativeHistory,
+  messageUuid: (message: object) => string,
+  parentUuid: string | undefined,
+): () => Promise<void> {
+  let pending: Promise<unknown> = Promise.resolve();
+  let failure: unknown;
+  const append = manager.appendMessage.bind(manager);
+  manager.appendMessage = (message: Message) => {
+    const entryId = append(message);
+    const native = nativeMessage(message);
+    if (native) {
+      const uuid = messageUuid(message);
+      const parent = parentUuid;
+      parentUuid = uuid;
+      pending = pending
+        .then(() =>
+          history.append({
+            sourceMessageId: entryId,
+            type: native.role,
+            message: {
+              ...native,
+              ...(message.role === "assistant" ? { id: uuid, usage: nativeAssistantUsage(message) } : {}),
+            },
+            ...(message.role === "assistant" ? nativeAssistantCost(message) : {}),
+            timestamp: new Date(message.timestamp).toISOString(),
+            uuid,
+            ...(parent === undefined ? {} : { parentUuid: parent }),
+          }),
+        )
+        .catch((error) => {
+          failure ??= error;
+        });
+    }
+    return entryId;
+  };
+  return async () => {
+    await pending;
+    if (failure) throw failure;
+  };
+}
+
 /** Local-only setup validation. No session, history, task owner, tools or provider request. */
 export async function preflightClaudeCompatModel(options: ClaudeCompatRuntimeOptions) {
   const settings =
@@ -244,56 +319,9 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
     }
     return id;
   };
-  let historyTail: Promise<unknown> = Promise.resolve();
-  let historyError: unknown;
-  let historyParent = options.historyParentUuid;
-  if (options.history) {
-    const append = manager.appendMessage.bind(manager);
-    manager.appendMessage = (message: Message) => {
-      const entryId = append(message);
-      const role = message.role;
-      if (role === "user" || role === "assistant" || role === "toolResult") {
-        const type = role === "assistant" ? "assistant" : "user";
-        const content =
-          role === "toolResult"
-            ? [
-                {
-                  type: "tool_result",
-                  tool_use_id: message.toolCallId,
-                  content: nativeContent(message.content),
-                  is_error: message.isError,
-                },
-              ]
-            : nativeContent(message.content);
-        const uuid = messageUuid(message);
-        const native = {
-          role: type,
-          content,
-          ...(role === "assistant"
-            ? { id: uuid, model: message.provider + "/" + message.model, usage: nativeAssistantUsage(message) }
-            : {}),
-        };
-        const parentUuid = historyParent;
-        historyParent = uuid;
-        historyTail = historyTail
-          .then(() =>
-            options.history!.append({
-              sourceMessageId: entryId,
-              type,
-              message: native,
-              ...(role === "assistant" ? nativeAssistantCost(message) : {}),
-              timestamp: new Date(message.timestamp).toISOString(),
-              uuid,
-              ...(parentUuid === undefined ? {} : { parentUuid }),
-            }),
-          )
-          .catch((error) => {
-            historyError ??= error;
-          });
-      }
-      return entryId;
-    };
-  }
+  const flushHistory = options.history
+    ? mirrorNativeHistory(manager, options.history, messageUuid, options.historyParentUuid)
+    : undefined;
   const human =
     options.request && !options.auxiliary && manager.getSessionFile()
       ? createClaudeCompatHumanControls({ request: options.request, diagnostic: options.diagnostic })
@@ -358,30 +386,13 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
                 emit: (frame) => options.emit({ ...frame }),
                 translateChildEntry: ({ entry }) => {
                   const message = entry.message;
-                  if (message.role === "user")
-                    return [{ type: "user", message: { role: "user", content: nativeContent(message.content) } }];
-                  if (message.role === "toolResult")
-                    return [
-                      {
-                        type: "user",
-                        message: {
-                          role: "user",
-                          content: [
-                            {
-                              type: "tool_result",
-                              tool_use_id: message.toolCallId,
-                              content: nativeContent(message.content),
-                              is_error: message.isError,
-                            },
-                          ],
-                        },
-                      },
-                    ];
-                  if (message.role !== "assistant") return [];
-                  const content =
-                    options.thinkingDisplay === "omitted"
-                      ? message.content.filter((part) => part.type !== "thinking")
-                      : message.content;
+                  const native = nativeMessage(
+                    message.role === "assistant" && options.thinkingDisplay === "omitted"
+                      ? { ...message, content: message.content.filter((part) => part.type !== "thinking") }
+                      : message,
+                  );
+                  if (!native) return [];
+                  if (message.role !== "assistant") return [{ type: "user", message: native }];
                   return [
                     {
                       type: "assistant",
@@ -389,8 +400,8 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
                         id: entry.id,
                         type: "message",
                         role: "assistant",
-                        model: message.provider + "/" + message.model,
-                        content: nativeContent(content),
+                        model: native.model,
+                        content: native.content,
                         stop_reason:
                           message.stopReason === "toolUse"
                             ? "tool_use"
@@ -572,9 +583,8 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
       unsubscribe();
       session.dispose();
       releaseChildExecutable?.();
-      for (const result of await Promise.allSettled([frontend.flush(), historyTail, options.mcp?.close()]))
+      for (const result of await Promise.allSettled([frontend.flush(), options.mcp?.close(), flushHistory?.()]))
         if (result.status === "rejected") errors.push(result.reason);
-      if (historyError) errors.push(historyError);
       if (errors.length) throw new AggregateError(errors, "Connector teardown failed");
     })();
     return closePromise;
@@ -776,8 +786,7 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
       await run;
       if (handled) frontend.commandHandled(checkpoint);
       await frontend.flush();
-      await historyTail;
-      if (historyError) throw historyError;
+      await flushHistory?.();
     } catch (error) {
       frontend.fail(error);
       await frontend.flush();

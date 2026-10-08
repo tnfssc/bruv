@@ -102,6 +102,59 @@ test("replayed terminal truth cannot regress to old running or unknown owner sna
   expect(formatTaskRow(map.get(taskRowKey(row()))!)).toBe("✓ Run tests");
   expect(taskRowsFromDetails(JSON.parse(JSON.stringify({ taskRows: [...map.values()] })))).toHaveLength(1);
 });
+test("stale lifecycle snapshots still refresh metadata without replacing terminal evidence", () => {
+  const map = new Map<string, TaskRow>();
+  const terminal = row("one", "failed", { exitCode: 7, timedOut: true });
+  upsertTaskRow(map, terminal);
+  for (const stale of [row("one"), { ...row("one", "unknown"), terminal: true }]) {
+    const next = {
+      ...stale,
+      title: "  Updated\nname  ",
+      fallbackTitle: "  New\npreview  ",
+      sourceCallId: "new-call",
+      exitCode: 0,
+      timedOut: false,
+    };
+    const merged = upsertTaskRow(map, next);
+    expect(merged).toEqual({
+      ...terminal,
+      title: "Updated name",
+      fallbackTitle: "New preview",
+      sourceCallId: "new-call",
+    });
+    expect(map.get(taskRowKey(next))).toBe(merged);
+    expect(merged).not.toBe(terminal);
+    expect(next.title).toBe("  Updated\nname  ");
+    expect(terminal.title).toBe("Run tests");
+  }
+});
+test("terminal unknown can be resolved while omitted metadata and evidence survive partial updates", () => {
+  const map = new Map<string, TaskRow>();
+  const unknown: TaskRow = {
+    id: "ssh:remote",
+    source: "ssh",
+    status: "unknown",
+    terminal: true,
+    title: "  Earlier\nname  ",
+    fallbackTitle: "  Earlier\npreview  ",
+    sourceCallId: "launch-call",
+    exitCode: 7,
+  };
+  upsertTaskRow(map, unknown);
+  const merged = upsertTaskRow(map, {
+    id: unknown.id,
+    source: unknown.source,
+    status: "failed",
+    terminal: true,
+    title: " ",
+    fallbackTitle: " ",
+    sourceCallId: "",
+  });
+  expect(merged).toEqual({ ...unknown, status: "failed", title: "Earlier name", fallbackTitle: "Earlier preview" });
+  expect(formatTaskRow(merged)).toBe("✗ Earlier name — exit 7");
+  expect(upsertTaskRow(map, { ...merged, status: "cancelled", exitCode: 9 }).status).toBe("cancelled");
+  expect(map.get(taskRowKey(unknown))?.exitCode).toBe(9);
+});
 test("real SDK execute row updates in place, preserves prose and expansion, hides completion duplicate", () => {
   restores.push(installSdkTaskRows(theme));
   const parent = new Container();
@@ -187,6 +240,30 @@ for (const installFirst of [true, false]) {
     },
   );
 }
+test("frame ownership expires after a failed native render and uninstall clears activity facts", () => {
+  const stop = installSdkTaskRows(theme);
+  restores.push(stop);
+  const parent = new Container();
+  const launch = tool([row()]);
+  parent.addChild(launch);
+  parent.addChild({
+    render: () => {
+      throw new Error("native body failed");
+    },
+    invalidate() {},
+  });
+  expect(() => parent.render(100)).toThrow("native body failed");
+  expect(getActivityTaskRows(launch)).toHaveLength(1);
+  // Direct SDK rendering outside the parent frame must not retain its task overlay.
+  expect(plain(launch.render(100))).toContain("LAUNCH OUTPUT");
+  parent.children.pop();
+  expect(plain(parent.render(100))).toEqual(["↗ Run tests"]);
+  stop();
+  restores.pop();
+  expect(getActivityTaskRows(launch)).toBeUndefined();
+  expect(launch.render).toBe(ToolExecutionComponent.prototype.render);
+});
+
 test("shutdown and reinstall use only the new session snapshot and restore SDK renders", () => {
   const originalAdd = Container.prototype.addChild;
   const originalRender = Container.prototype.render;

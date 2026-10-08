@@ -1,9 +1,9 @@
+import { AsyncLocalStorage } from "node:async_hooks";
+import { type Context, lazyStream, type Model, normalizeContext } from "@earendil-works/pi-ai";
+import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
+import { recordDiagnostic } from "../diagnostics.js";
 import { getLatestDiskBackedCustomEntry } from "../history/session-manager";
 import { restoreLeaf } from "../session/restore-leaf";
-import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
-import { AsyncLocalStorage } from "node:async_hooks";
-import { lazyStream, normalizeContext, type Context, type Model } from "@earendil-works/pi-ai";
-import { recordDiagnostic } from "../diagnostics.js";
 
 export const NATIVE_FAST_CHILD_ENV = "BRUV_SUBAGENT_NATIVE_FAST";
 export const NATIVE_FAST_ENTRY = "bruv-native-fast-mode";
@@ -75,9 +75,7 @@ export async function withStandardProviderTier<T>(run: () => Promise<T>): Promis
   return standardTierScope.run(true, run);
 }
 
-// Exact model aliases evidenced by the provider documentation/source snapshot.
-// Do not broaden these with family-prefix matching: similarly named mini/Spark
-// models do not inherit native fast-mode support.
+// Consent belongs to one session/provider/model on the active branch.
 type Setting = {
   version: 2;
   oauth: boolean;
@@ -189,6 +187,29 @@ function currentSetting(ctx: ExtensionContext, model = ctx.model): Setting | und
   return found.kind === "valid" ? found.value : undefined;
 }
 
+// An append can mutate the branch before throwing. Failed opt-out must also
+// suppress prior consent in memory until a later successful checkpoint.
+function persistSetting(pi: ExtensionAPI, manager: ExtensionContext["sessionManager"], entry: Setting): boolean {
+  const scope = settingScope(entry.sessionId, entry.provider, entry.model);
+  const priorLeaf = (manager as { getLeafId?: () => string | null }).getLeafId?.();
+  try {
+    pi.appendEntry(NATIVE_FAST_ENTRY, entry);
+  } catch {
+    restoreLeaf(manager, priorLeaf);
+    if (!entry.enabled) {
+      let scopes = volatileOptOuts.get(manager as object);
+      if (!scopes) {
+        scopes = new Set();
+        volatileOptOuts.set(manager as object, scopes);
+      }
+      scopes.add(scope);
+    }
+    return false;
+  }
+  volatileOptOuts.get(manager as object)?.delete(scope);
+  return true;
+}
+
 export function nativeFastSupport(
   model: Pick<Model<any>, "provider" | "id" | "api" | "baseUrl">,
   oauth = false,
@@ -254,9 +275,63 @@ type RequestAuthorization = {
   operationId: OperationId;
   manager: object;
 };
+type RequestTierPolicy = Pick<RequestAuthorization, "tier" | "blocked">;
+
+// Compaction is request-local; otherwise the newest branch authorization wins.
+function requestTierPolicy(ctx: ExtensionContext, model: Model<any>, sessionId: string): RequestTierPolicy | undefined {
+  if (standardTierScope.getStore() && officialSurface(model)) return { tier: "default" };
+  const found = resolveSetting(ctx, model, sessionId);
+  if (found.kind === "absent") return;
+  if (found.kind === "invalid")
+    return {
+      blocked:
+        "Native fast mode rejected a malformed or unsupported authorization record; run /fast on or /fast off again.",
+    };
+  const active = found.value;
+  if (!active.enabled)
+    return {
+      tier: "default",
+      ...(officialSurface(model)
+        ? {}
+        : { blocked: "Native fast opt-out no longer matches an official provider surface." }),
+    };
+  const oauth = ctx.modelRegistry.isUsingOAuth(model);
+  const support = nativeFastSupport(model, oauth);
+  if (active.oauth !== oauth)
+    return { blocked: "Native fast mode authentication surface changed; run /fast on again." };
+  if (!active.costAcknowledged) return { blocked: "Native fast mode authorization is missing; run /fast on again." };
+  if (!support.supported) return { blocked: support.reason };
+  if (!authSurfaceMatches(ctx, support.surface, model))
+    return {
+      blocked:
+        support.surface === "codex"
+          ? "Codex fast mode requires ChatGPT OAuth sign-in."
+          : "OpenAI API fast mode requires API-key authentication.",
+    };
+  return { tier: support.tier };
+}
+
+function captureRequestAuthorization(
+  ctx: ExtensionContext | undefined,
+  model: Model<any>,
+  requestedSessionId: unknown,
+): RequestAuthorization | undefined {
+  if (!ctx || typeof requestedSessionId !== "string" || requestedSessionId !== ctx.sessionManager.getSessionId())
+    return;
+  const policy = requestTierPolicy(ctx, model, requestedSessionId);
+  if (!policy) return;
+  return {
+    operationId: crypto.randomUUID(),
+    manager: ctx.sessionManager as object,
+    provider: model.provider,
+    model: model.id,
+    ...policy,
+    oauth: ctx.modelRegistry.isUsingOAuth(model),
+  };
+}
+
 type FastController = {
   context?: ExtensionContext;
-  capture(model: Model<any>, sessionId: unknown): RequestAuthorization | undefined;
 };
 type RuntimeSeam = {
   streamSimple: (model: Model<any>, context: Context, options?: Record<string, any>) => unknown;
@@ -264,7 +339,6 @@ type RuntimeSeam = {
   isUsingOAuth: (provider: string) => boolean;
 };
 type RuntimePatch = {
-  original: RuntimeSeam["streamSimple"];
   wrapper: RuntimeSeam["streamSimple"];
   controllers: Set<FastController>;
   ownDescriptor?: PropertyDescriptor;
@@ -274,9 +348,100 @@ const runtimePatches = new WeakMap<object, RuntimePatch>();
 const COMPATIBILITY_ERROR =
   "Native fast mode is unavailable: pinned Pi 1.1.0 ModelRuntime compatibility seam is missing.";
 
+// One immutable authorization covers preparation, payload hooks, and transport.
+function streamAuthorizedRequest(
+  runtime: RuntimeSeam,
+  model: Model<any>,
+  context: Context,
+  options: Record<string, any> | undefined,
+  authorization: RequestAuthorization,
+) {
+  // Match ModelRuntime before bypassing its streamSimple dispatch: providers
+  // take transcript messages, not separate systemPrompt and tools fields.
+  const transcript = normalizeContext(context);
+  const priorPayload = options?.onPayload;
+  const guardedOptions = {
+    ...options,
+    ...(authorization.tier === undefined ? {} : { serviceTier: authorization.tier }),
+    onPayload: async (payload: unknown, payloadModel: Model<any>) => {
+      if (authorization.blocked) {
+        fastDiagnostic(authorization.manager, FAST_GUARD_BLOCKED_AUTHORIZATION, "blocked", authorization.operationId);
+        throw new Error(authorization.blocked);
+      }
+      if (authorization.tier === undefined) {
+        fastDiagnostic(authorization.manager, FAST_GUARD_MISSING_TIER, "blocked", authorization.operationId);
+        throw new Error("Native fast mode authorization did not select a provider tier.");
+      }
+      if (!record(payload)) {
+        fastDiagnostic(authorization.manager, FAST_GUARD_INVALID_PAYLOAD, "blocked", authorization.operationId);
+        throw new Error("Native fast mode rejected a non-object provider payload before dispatch.");
+      }
+      // Snapshot injection happens before the complete extension hook pipeline.
+      // No hook can cause us to re-read mutable session/model state.
+      payload.service_tier = authorization.tier;
+      const finalPayload = priorPayload ? await priorPayload(payload, payloadModel) : payload;
+      if (!record(finalPayload)) {
+        fastDiagnostic(authorization.manager, FAST_GUARD_INVALID_PAYLOAD, "blocked", authorization.operationId);
+        throw new Error("Native fast mode rejected a non-object provider payload before dispatch.");
+      }
+      if (finalPayload.model !== authorization.model) {
+        fastDiagnostic(authorization.manager, FAST_GUARD_MODEL_MISMATCH, "blocked", authorization.operationId);
+        throw new Error("Native fast mode rejected a provider payload for a different model before dispatch.");
+      }
+      if (finalPayload.service_tier !== authorization.tier) {
+        fastDiagnostic(authorization.manager, FAST_GUARD_TIER_MUTATION, "blocked", authorization.operationId);
+        throw new Error("Native fast mode rejected a late service-tier mutation before dispatch.");
+      }
+      return finalPayload;
+    },
+  };
+  return lazyStream(model, async () => {
+    const prepared = await runtime.prepareRequest(model, guardedOptions);
+    if (
+      !prepared ||
+      typeof prepared.provider?.streamSimple !== "function" ||
+      prepared.provider.id !== authorization.provider ||
+      prepared.model?.provider !== authorization.provider ||
+      prepared.model?.id !== authorization.model ||
+      runtime.isUsingOAuth(authorization.provider) !== authorization.oauth
+    ) {
+      fastDiagnostic(authorization.manager, FAST_GUARD_IDENTITY_MISMATCH, "blocked", authorization.operationId);
+      throw new Error("Native fast mode request identity or authentication changed before provider dispatch.");
+    }
+    if (authorization.blocked) {
+      fastDiagnostic(authorization.manager, FAST_GUARD_BLOCKED_AUTHORIZATION, "blocked", authorization.operationId);
+      throw new Error(authorization.blocked);
+    }
+    if (authorization.tier === undefined) {
+      fastDiagnostic(authorization.manager, FAST_GUARD_MISSING_TIER, "blocked", authorization.operationId);
+      throw new Error("Native fast mode authorization did not select a provider tier.");
+    }
+    if (authorization.tier !== "default") {
+      const actualSupport = nativeFastSupport(prepared.model, authorization.oauth);
+      if (!actualSupport.supported || actualSupport.tier !== authorization.tier) {
+        fastDiagnostic(authorization.manager, FAST_GUARD_UNSUPPORTED_ENDPOINT, "blocked", authorization.operationId);
+        throw new Error("Native fast mode actual provider endpoint is not authorized for this request.");
+      }
+    }
+    if (authorization.tier !== "default" && authorization.provider === "openai") {
+      // Consent follows the resolved credential, not only the registry snapshot.
+      const key = prepared.options?.apiKey;
+      const headers = { ...prepared.model.headers, ...prepared.options?.headers };
+      const authOverride = Object.entries(headers).some(
+        ([name, value]) => name.toLowerCase() === "authorization" && value !== "Bearer " + key,
+      );
+      if (typeof key !== "string" || !key || !key.startsWith("sk-") !== authorization.oauth || authOverride) {
+        fastDiagnostic(authorization.manager, FAST_GUARD_IDENTITY_MISMATCH, "blocked", authorization.operationId);
+        throw new Error("Native fast mode resolved credentials do not match the authorized authentication surface.");
+      }
+    }
+    return prepared.provider.streamSimple(prepared.model, transcript, prepared.options);
+  });
+}
+
 /** Pi's extension emitter catches hook failures. Patch only this extension
  * context's runtime instance. Restore it when the last controller leaves. The
- * pinned Pi 0.85 seam is prepareRequest, then provider.streamSimple with the
+ * pinned Pi 1.1.0 seam is prepareRequest, then provider.streamSimple with the
  * final onPayload pipeline. */
 function attachConcreteRequestGuard(runtime: unknown, controller: FastController): string | undefined {
   if (!record(runtime)) return COMPATIBILITY_ERROR;
@@ -294,15 +459,11 @@ function attachConcreteRequestGuard(runtime: unknown, controller: FastController
     return;
   }
   const original = seam.streamSimple;
-  const patch: RuntimePatch = {
-    original,
-    wrapper: original,
-    controllers: new Set([controller]),
-    ownDescriptor: Object.getOwnPropertyDescriptor(runtime, "streamSimple"),
-  };
+  const controllers = new Set([controller]);
+  const ownDescriptor = Object.getOwnPropertyDescriptor(runtime, "streamSimple");
   const wrapper: RuntimeSeam["streamSimple"] = function (this: RuntimeSeam, model, context, options) {
-    const authorizations = [...patch.controllers]
-      .map((candidate) => candidate.capture(model, options?.sessionId))
+    const authorizations = [...controllers]
+      .map((candidate) => captureRequestAuthorization(candidate.context, model, options?.sessionId))
       .filter((value): value is RequestAuthorization => value !== undefined);
     if (authorizations.length === 0) return original.call(this, model, context, options);
     const authorization = authorizations[0];
@@ -311,104 +472,21 @@ function attachConcreteRequestGuard(runtime: unknown, controller: FastController
         fastDiagnostic(authorization.manager, FAST_GUARD_AMBIGUOUS_AUTHORIZATION, "blocked", authorization.operationId);
         throw new Error("Native fast mode found ambiguous request authorization before dispatch.");
       });
-    // Match ModelRuntime before bypassing its streamSimple dispatch: providers
-    // take transcript messages, not separate systemPrompt and tools fields.
-    const transcript = normalizeContext(context);
-    const priorPayload = options?.onPayload;
-    const guardedOptions = {
-      ...options,
-      ...(authorization.tier === undefined ? {} : { serviceTier: authorization.tier }),
-      onPayload: async (payload: unknown, payloadModel: Model<any>) => {
-        if (authorization.blocked) {
-          fastDiagnostic(authorization.manager, FAST_GUARD_BLOCKED_AUTHORIZATION, "blocked", authorization.operationId);
-          throw new Error(authorization.blocked);
-        }
-        if (authorization.tier === undefined) {
-          fastDiagnostic(authorization.manager, FAST_GUARD_MISSING_TIER, "blocked", authorization.operationId);
-          throw new Error("Native fast mode authorization did not select a provider tier.");
-        }
-        if (!record(payload)) {
-          fastDiagnostic(authorization.manager, FAST_GUARD_INVALID_PAYLOAD, "blocked", authorization.operationId);
-          throw new Error("Native fast mode rejected a non-object provider payload before dispatch.");
-        }
-        // Snapshot injection happens before the complete extension hook pipeline.
-        // No hook can cause us to re-read mutable session/model state.
-        payload.service_tier = authorization.tier;
-        const finalPayload = priorPayload ? await priorPayload(payload, payloadModel) : payload;
-        if (!record(finalPayload)) {
-          fastDiagnostic(authorization.manager, FAST_GUARD_INVALID_PAYLOAD, "blocked", authorization.operationId);
-          throw new Error("Native fast mode rejected a non-object provider payload before dispatch.");
-        }
-        if (finalPayload.model !== authorization.model) {
-          fastDiagnostic(authorization.manager, FAST_GUARD_MODEL_MISMATCH, "blocked", authorization.operationId);
-          throw new Error("Native fast mode rejected a provider payload for a different model before dispatch.");
-        }
-        if (finalPayload.service_tier !== authorization.tier) {
-          fastDiagnostic(authorization.manager, FAST_GUARD_TIER_MUTATION, "blocked", authorization.operationId);
-          throw new Error("Native fast mode rejected a late service-tier mutation before dispatch.");
-        }
-        return finalPayload;
-      },
-    };
-    return lazyStream(model, async () => {
-      const prepared = await this.prepareRequest(model, guardedOptions);
-      if (
-        !prepared ||
-        typeof prepared.provider?.streamSimple !== "function" ||
-        prepared.provider.id !== authorization.provider ||
-        prepared.model?.provider !== authorization.provider ||
-        prepared.model?.id !== authorization.model ||
-        this.isUsingOAuth(authorization.provider) !== authorization.oauth
-      ) {
-        fastDiagnostic(authorization.manager, FAST_GUARD_IDENTITY_MISMATCH, "blocked", authorization.operationId);
-        throw new Error("Native fast mode request identity or authentication changed before provider dispatch.");
-      }
-      if (authorization.blocked) {
-        fastDiagnostic(authorization.manager, FAST_GUARD_BLOCKED_AUTHORIZATION, "blocked", authorization.operationId);
-        throw new Error(authorization.blocked);
-      }
-      if (authorization.tier === undefined) {
-        fastDiagnostic(authorization.manager, FAST_GUARD_MISSING_TIER, "blocked", authorization.operationId);
-        throw new Error("Native fast mode authorization did not select a provider tier.");
-      }
-      if (authorization.tier !== "default") {
-        const actualSupport = nativeFastSupport(prepared.model, authorization.oauth);
-        if (!actualSupport.supported || actualSupport.tier !== authorization.tier) {
-          fastDiagnostic(authorization.manager, FAST_GUARD_UNSUPPORTED_ENDPOINT, "blocked", authorization.operationId);
-          throw new Error("Native fast mode actual provider endpoint is not authorized for this request.");
-        }
-      }
-      if (authorization.tier !== "default" && authorization.provider === "openai") {
-        // The pinned Responses transport selects ChatGPT behavior from the actual
-        // credential, not ModelRegistry's login snapshot. Explicit request auth
-        // overrides must not silently move consent to the other billing surface.
-        const key = prepared.options?.apiKey;
-        const headers = { ...prepared.model.headers, ...prepared.options?.headers };
-        const authOverride = Object.entries(headers).some(
-          ([name, value]) => name.toLowerCase() === "authorization" && value !== "Bearer " + key,
-        );
-        if (typeof key !== "string" || !key || !key.startsWith("sk-") !== authorization.oauth || authOverride) {
-          fastDiagnostic(authorization.manager, FAST_GUARD_IDENTITY_MISMATCH, "blocked", authorization.operationId);
-          throw new Error("Native fast mode resolved credentials do not match the authorized authentication surface.");
-        }
-      }
-      return prepared.provider.streamSimple(prepared.model, transcript, prepared.options);
-    });
+    return streamAuthorizedRequest(this, model, context, options, authorization);
   };
-  patch.wrapper = wrapper;
   try {
     seam.streamSimple = wrapper;
   } catch {
-    if (patch.ownDescriptor) Object.defineProperty(runtime, "streamSimple", patch.ownDescriptor);
+    if (ownDescriptor) Object.defineProperty(runtime, "streamSimple", ownDescriptor);
     else delete (runtime as { streamSimple?: unknown }).streamSimple;
     return COMPATIBILITY_ERROR;
   }
   if (seam.streamSimple !== wrapper) {
-    if (patch.ownDescriptor) Object.defineProperty(runtime, "streamSimple", patch.ownDescriptor);
+    if (ownDescriptor) Object.defineProperty(runtime, "streamSimple", ownDescriptor);
     else delete (runtime as { streamSimple?: unknown }).streamSimple;
     return COMPATIBILITY_ERROR;
   }
-  runtimePatches.set(runtime, patch);
+  runtimePatches.set(runtime, { wrapper, controllers, ownDescriptor });
 }
 
 function detachConcreteRequestGuard(runtime: object, controller: FastController): void {
@@ -428,71 +506,7 @@ export function registerNativeFastMode(pi: ExtensionAPI) {
   let ui: ExtensionContext["ui"] | undefined;
   let inheritFast = process.env[NATIVE_FAST_CHILD_ENV] === "1" && Number(process.env.BRUV_SUBAGENT_DEPTH) > 0;
   delete process.env[NATIVE_FAST_CHILD_ENV];
-  const controller: FastController = {
-    capture(model, requestedSessionId) {
-      const ctx = controller.context;
-      if (!ctx || typeof requestedSessionId !== "string" || requestedSessionId !== ctx.sessionManager.getSessionId())
-        return;
-      if (standardTierScope.getStore() && officialSurface(model)) {
-        return {
-          operationId: crypto.randomUUID(),
-          manager: ctx.sessionManager as object,
-          provider: model.provider,
-          model: model.id,
-          tier: "default",
-          oauth: ctx.modelRegistry.isUsingOAuth(model),
-        };
-      }
-      const found = resolveSetting(ctx, model, requestedSessionId);
-      if (found.kind === "absent") return;
-      if (found.kind === "invalid")
-        return {
-          operationId: crypto.randomUUID(),
-          manager: ctx.sessionManager as object,
-          provider: model.provider,
-          model: model.id,
-          oauth: ctx.modelRegistry.isUsingOAuth(model),
-          blocked:
-            "Native fast mode rejected a malformed or unsupported authorization record; run /fast on or /fast off again.",
-        };
-      const active = found.value;
-      if (!active.enabled) {
-        return {
-          operationId: crypto.randomUUID(),
-          manager: ctx.sessionManager as object,
-          provider: model.provider,
-          model: model.id,
-          tier: "default",
-          oauth: ctx.modelRegistry.isUsingOAuth(model),
-          ...(officialSurface(model)
-            ? {}
-            : { blocked: "Native fast opt-out no longer matches an official provider surface." }),
-        };
-      }
-      const support = nativeFastSupport(model, ctx.modelRegistry.isUsingOAuth(model));
-      const blocked =
-        active.oauth !== ctx.modelRegistry.isUsingOAuth(model)
-          ? "Native fast mode authentication surface changed; run /fast on again."
-          : !active.costAcknowledged
-            ? "Native fast mode authorization is missing; run /fast on again."
-            : !support.supported
-              ? support.reason
-              : !authSurfaceMatches(ctx, support.surface, model)
-                ? support.surface === "codex"
-                  ? "Codex fast mode requires ChatGPT OAuth sign-in."
-                  : "OpenAI API fast mode requires API-key authentication."
-                : undefined;
-      return {
-        operationId: crypto.randomUUID(),
-        manager: ctx.sessionManager as object,
-        provider: model.provider,
-        model: model.id,
-        ...(blocked ? {} : { tier: support.supported ? support.tier : undefined }),
-        oauth: ctx.modelRegistry.isUsingOAuth(model),
-        ...(blocked ? { blocked } : {}),
-      };
-    },
-  };
+  const controller: FastController = {};
   let boundRuntime: object | undefined;
   const bindContext = (ctx: ExtensionContext): string | undefined => {
     controller.context = ctx;
@@ -513,34 +527,19 @@ export function registerNativeFastMode(pi: ExtensionAPI) {
     ui?.setStatus("bruv-native-fast", active ? statusText(active.enabled) : undefined);
   };
 
-  const persistSelection = (ctx: ExtensionContext, enabled: boolean) => {
-    const model = ctx.model!;
-    const sessionId = ctx.sessionManager.getSessionId();
-    const priorLeaf = (ctx.sessionManager as { getLeafId?: () => string | null }).getLeafId?.();
-    try {
-      pi.appendEntry(NATIVE_FAST_ENTRY, {
-        version: ENTRY_VERSION,
-        oauth: ctx.modelRegistry.isUsingOAuth(model),
-        sessionId,
-        provider: model.provider,
-        model: model.id,
-        enabled,
-        costAcknowledged: enabled,
-        timestamp: Date.now(),
-      } satisfies Setting);
-    } catch {
-      restoreLeaf(ctx.sessionManager, priorLeaf);
-      if (!enabled) {
-        let scopes = volatileOptOuts.get(ctx.sessionManager as object);
-        if (!scopes) {
-          scopes = new Set();
-          volatileOptOuts.set(ctx.sessionManager as object, scopes);
-        }
-        scopes.add(settingScope(sessionId, model.provider, model.id));
-      }
-      throw new Error("Could not persist native fast mode; the requested setting was not activated.");
-    }
-    volatileOptOuts.get(ctx.sessionManager as object)?.delete(settingScope(sessionId, model.provider, model.id));
+  // Callers admit the model and billing consent; this owns the resulting checkpoint.
+  const persistSelection = (ctx: ExtensionContext, model: Model<any>, enabled: boolean): boolean => {
+    const entry: Setting = {
+      version: ENTRY_VERSION,
+      oauth: ctx.modelRegistry.isUsingOAuth(model),
+      sessionId: ctx.sessionManager.getSessionId(),
+      provider: model.provider,
+      model: model.id,
+      enabled,
+      costAcknowledged: enabled,
+      timestamp: Date.now(),
+    };
+    return persistSetting(pi, ctx.sessionManager, entry);
   };
 
   // Only explicit host user selection may call this: true is premium billing
@@ -549,9 +548,9 @@ export function registerNativeFastMode(pi: ExtensionAPI) {
     const ctx = controller.context;
     if (!ctx?.model) throw new Error("Select a model before changing native fast mode");
     const compatibilityError = bindContext(ctx);
+    if (enabled && compatibilityError) throw new Error(compatibilityError);
     const support = nativeFastSupport(ctx.model, ctx.modelRegistry.isUsingOAuth(ctx.model));
     if (enabled) {
-      if (compatibilityError) throw new Error(compatibilityError);
       if (!support.supported) throw new Error(support.reason);
       if (!authSurfaceMatches(ctx, support.surface))
         throw new Error("Native fast mode authentication surface mismatch");
@@ -560,7 +559,8 @@ export function registerNativeFastMode(pi: ExtensionAPI) {
       // No authorization is created on those surfaces.
       return;
     }
-    persistSelection(ctx, enabled);
+    if (!persistSelection(ctx, ctx.model, enabled))
+      throw new Error("Could not persist native fast mode; the requested setting was not activated.");
     refreshStatus(ctx);
   };
 
@@ -602,6 +602,11 @@ export function registerNativeFastMode(pi: ExtensionAPI) {
         provider: model.provider,
         model: model.id,
       };
+      if (action === "on" && compatibilityError) {
+        commandDiagnostic(ctx, FAST_REFUSED_COMPATIBILITY, "blocked", operationId);
+        ctx.ui.notify(compatibilityError, "error");
+        return;
+      }
       const support = nativeFastSupport(model, ctx.modelRegistry.isUsingOAuth(model));
       if (action === "off" && !officialSurface(model)) {
         commandDiagnostic(ctx, FAST_REFUSED_UNSUPPORTED, "blocked", operationId);
@@ -614,11 +619,6 @@ export function registerNativeFastMode(pi: ExtensionAPI) {
       if (action === "on" && !support.supported) {
         commandDiagnostic(ctx, FAST_REFUSED_UNSUPPORTED, "blocked", operationId);
         ctx.ui.notify(support.reason, "error");
-        return;
-      }
-      if (action === "on" && compatibilityError) {
-        commandDiagnostic(ctx, FAST_REFUSED_COMPATIBILITY, "blocked", operationId);
-        ctx.ui.notify(compatibilityError, "error");
         return;
       }
       if (action === "on") {
@@ -669,9 +669,7 @@ export function registerNativeFastMode(pi: ExtensionAPI) {
         );
         return;
       }
-      try {
-        persistSelection(ctx, action === "on");
-      } catch {
+      if (!persistSelection(ctx, currentModel, action === "on")) {
         commandDiagnostic(ctx, FAST_CHECKPOINT_PERSIST_FAILED, "failed", operationId);
         ctx.ui.notify("Could not persist native fast mode; the requested setting was not activated.", "error");
         return;
@@ -691,7 +689,8 @@ export function registerNativeFastMode(pi: ExtensionAPI) {
     if (inheritFast) {
       inheritFast = false;
       const model = ctx.model;
-      const support = model && nativeFastSupport(model, ctx.modelRegistry.isUsingOAuth(model));
+      const support =
+        !compatibilityError && model ? nativeFastSupport(model, ctx.modelRegistry.isUsingOAuth(model)) : undefined;
       if (
         !compatibilityError &&
         model &&
@@ -699,16 +698,10 @@ export function registerNativeFastMode(pi: ExtensionAPI) {
         authSurfaceMatches(ctx, support.surface) &&
         resolveSetting(ctx).kind === "absent"
       ) {
-        pi.appendEntry(NATIVE_FAST_ENTRY, {
-          version: ENTRY_VERSION,
-          oauth: ctx.modelRegistry.isUsingOAuth(model),
-          sessionId: ctx.sessionManager.getSessionId(),
-          provider: model.provider,
-          model: model.id,
-          enabled: true,
-          costAcknowledged: true,
-          timestamp: Date.now(),
-        } satisfies Setting);
+        if (!persistSelection(ctx, model, true)) {
+          commandDiagnostic(ctx, FAST_CHECKPOINT_PERSIST_FAILED, "failed", crypto.randomUUID());
+          ctx.ui.notify("Could not persist inherited native fast mode; Fast was not activated.", "error");
+        }
       }
     }
     refreshStatus(ctx);

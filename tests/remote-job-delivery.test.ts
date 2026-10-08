@@ -5,6 +5,15 @@ import { join } from "node:path";
 import { RemoteJobDeliveryOutbox } from "../src/remote/job-delivery";
 import { clearRemoteJobEvents, remoteJobEvents } from "../src/remote/job-events";
 
+function withOutboxConnection<T>(sessionFile: string, use: (box: RemoteJobDeliveryOutbox) => T): T {
+  const box = new RemoteJobDeliveryOutbox(sessionFile);
+  try {
+    return use(box);
+  } finally {
+    box.close();
+  }
+}
+
 const terminal = { ownerId: "pinned", epoch: "epoch1", taskId: "job", state: "done" as const, preview: "initial" };
 describe("session-scoped SSH observations and delivery", () => {
   test("ownership source is isolated; stale unknown cannot reopen terminal", () => {
@@ -25,24 +34,28 @@ describe("session-scoped SSH observations and delivery", () => {
     const root = mkdtempSync(join(tmpdir(), "remote-delivery-"));
     try {
       const file = join(root, "session");
-      let box = new RemoteJobDeliveryOutbox(file);
-      box.enqueue({ ...terminal, state: "unknown" });
-      expect(box.pending()).toEqual([]);
-      box.enqueue(terminal);
-      box.enqueue({ ...terminal, preview: "later artifact update" });
-      const first = box.pending();
-      expect(first).toHaveLength(1);
-      expect(first[0].observation.preview).toBe("initial");
-      box.failed(first, 100);
-      expect(box.pending(101)).toHaveLength(0);
-      box.close();
-      box = new RemoteJobDeliveryOutbox(file);
-      box.replay(); // crash between dispatch and ACK may redeliver the SAME id
-      expect(box.pending()[0].id).toBe(first[0].id);
-      box.delivered(box.pending());
-      box.enqueue(terminal);
-      expect(box.pending()).toEqual([]);
-      box.close();
+      const first = withOutboxConnection(file, (box) => {
+        box.enqueue({ ...terminal, state: "unknown" });
+        expect(box.pending()).toEqual([]);
+        box.enqueue(terminal);
+        box.enqueue({ ...terminal, preview: "later artifact update" });
+        const rows = box.claim(100);
+        expect(rows).toHaveLength(1);
+        expect(rows[0].observation.preview).toBe("initial");
+        box.failed(rows, 100);
+        expect(box.pending(101)).toHaveLength(0);
+        return rows;
+      });
+      withOutboxConnection(file, (box) => {
+        expect(box.pending(101)).toHaveLength(0);
+        box.replay(101);
+        const retry = box.claim(101);
+        expect(retry[0].id).toBe(first[0].id);
+        expect(retry[0].observation).toEqual(first[0].observation);
+        box.delivered(retry);
+        box.enqueue(terminal);
+        expect(box.pending()).toEqual([]);
+      });
     } finally {
       rmSync(root, { recursive: true, force: true });
     }
@@ -74,27 +87,28 @@ test("durable claims fence concurrent dispatch; uncertain crashes replay only af
 test("actionable waits dedup across refresh/restart and terminal supersedes queued waits", () => {
   const root = mkdtempSync(join(tmpdir(), "remote-attention-")),
     file = join(root, "session");
-  let box = new RemoteJobDeliveryOutbox(file);
+  const wait = { ...terminal, state: "running" as const, actionable: "question q version 2" };
   try {
-    const wait = { ...terminal, state: "running" as const, actionable: "question q version 2" };
-    box.enqueue(wait);
-    box.enqueue({ ...wait, preview: "new transcript" });
-    expect(box.pending()).toHaveLength(1);
-    expect(box.pending()[0].kind).toBe("attention");
-    box.delivered(box.claim());
-    box.close();
-    box = new RemoteJobDeliveryOutbox(file);
-    box.enqueue(wait);
-    expect(box.pending()).toEqual([]);
-    box.enqueue({ ...wait, actionable: "question q version 3" });
-    expect(box.pending()).toHaveLength(1);
-    box.enqueue(terminal);
-    expect(box.pending().map((row) => row.kind)).toEqual(["completion"]);
+    withOutboxConnection(file, (box) => {
+      box.enqueue(wait);
+      box.enqueue({ ...wait, preview: "new transcript" });
+      expect(box.pending()).toHaveLength(1);
+      expect(box.pending()[0].kind).toBe("attention");
+      box.delivered(box.claim());
+    });
+    withOutboxConnection(file, (box) => {
+      box.enqueue(wait);
+      expect(box.pending()).toEqual([]);
+      box.enqueue({ ...wait, actionable: "question q version 3" });
+      expect(box.pending()).toHaveLength(1);
+      box.enqueue(terminal);
+      expect(box.pending().map((row) => row.kind)).toEqual(["completion"]);
+    });
   } finally {
-    box.close();
     rmSync(root, { recursive: true, force: true });
   }
 });
+
 test("dispatch failures remain retryable with stable id and a bounded automatic attempt budget", () => {
   const root = mkdtempSync(join(tmpdir(), "remote-retry-")),
     file = join(root, "session");

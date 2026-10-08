@@ -1,28 +1,28 @@
 #!/usr/bin/env python3
-"""Pipe saturation must fail the helper, never silently drop frames or truncate JSON."""
+"""Unread stdout must fail the helper, not block or silently drop events."""
 import subprocess
 import sys
-import threading
+import tempfile
 
-p = subprocess.Popen([sys.argv[1]], stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                     stderr=subprocess.PIPE)
-errors = []
-def flood():
-    try:
-        for _ in range(20000):
-            p.stdin.write(b'{}\n')
-            p.stdin.flush()
-    except BrokenPipeError:
-        pass
-    except Exception as exc:
-        errors.append(exc)
-t = threading.Thread(target=flood, daemon=True)
-t.start()
-try:
-    assert p.wait(timeout=5) == 74, 'stdout backpressure did not terminate the helper'
-    assert b'backpressure' in p.stderr.read()
-    assert not errors, errors
+
+def check_backpressure(helper_path):
+    # Each missing-type command produces an error event. Preload the bounded
+    # replay so feeding stdin cannot block the test's five-second exit check.
+    with tempfile.TemporaryFile() as commands:
+        commands.write(b'{}\n' * 20000)
+        commands.seek(0)
+        # Context exit reaps the child and closes both output pipes on failure too.
+        with subprocess.Popen([helper_path], stdin=commands, stdout=subprocess.PIPE,
+                              stderr=subprocess.PIPE) as helper:
+            # Deliberately leave stdout unread until the child is reaped.
+            try:
+                assert helper.wait(timeout=5) == 74, 'stdout backpressure did not terminate the helper'
+                assert b'backpressure' in helper.stderr.read()
+            finally:
+                if helper.poll() is None:
+                    helper.kill()
+
+
+if __name__ == '__main__':
+    check_backpressure(sys.argv[1])
     print('backpressure OK')
-finally:
-    if p.poll() is None: p.kill()
-    p.wait()

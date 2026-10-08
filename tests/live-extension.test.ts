@@ -42,27 +42,8 @@ const editorTheme: EditorTheme = {
 };
 
 const tick = () => new Promise((resolve) => setTimeout(resolve, 0));
-function setup(overrides: Partial<LiveDependencies> = {}, continuousFixture = true) {
-  let handler!: (args: string, ctx: any) => Promise<void>;
-  let complete!: (prefix: string) => { value: string; label: string }[] | null;
-  let shutdown!: () => void;
-  let sessionStart!: () => void;
-  let beforeTree!: () => Promise<void>;
-  let voiceCallbacks!: VoiceCallbacks;
-  let ownerCallbacks: any;
-  let orchestration: VoiceOrchestration | undefined;
-  const contexts: string[] = [];
-  const ownerEvents: any[] = [];
-  let ownerCloses = 0;
-  let ownerAcquires = 0;
-  let audioCallbacks!: AudioCallbacks;
-  let keyCalls = 0,
-    launches = 0,
-    starts = 0,
-    closes = 0,
-    sends = 0;
-  let endedAudio = 0;
-  const captureGates: Array<number | null> = [];
+// Real SDK terminal routing is separate from the simulated Live dependency boundaries.
+function createSharedEditor() {
   const terminalWrites: string[] = [];
   const terminal = {
     rows: 24,
@@ -86,7 +67,6 @@ function setup(overrides: Partial<LiveDependencies> = {}, continuousFixture = tr
   );
   tui.addChild(editor);
   tui.setFocus(editor);
-  activeEditor = editor;
   const dialogKeys: string[] = [];
   const dialog = {
     render: () => [],
@@ -96,6 +76,60 @@ function setup(overrides: Partial<LiveDependencies> = {}, continuousFixture = tr
     },
     focused: false,
   };
+  return {
+    editor,
+    onTerminalInput: (handler: TuiInputListener) => tui.addInputListener(handler),
+    input: (data: string) => raw.handleTerminalInput(data),
+    focusDialog: () => tui.setFocus(dialog),
+    focusEditor: () => tui.setFocus(editor),
+    dialogKeys,
+    terminalWrites,
+  };
+}
+
+// Each hold belongs to one startup boundary. Reaching it is observable before cancellation.
+function createStartupHold() {
+  let arrive!: () => void;
+  let resume!: () => void;
+  const reached = new Promise<void>((resolve) => {
+    arrive = resolve;
+  });
+  const resumed = new Promise<void>((resolve) => {
+    resume = resolve;
+  });
+  return {
+    reached,
+    resume,
+    wait: () => {
+      arrive();
+      return resumed;
+    },
+  };
+}
+
+function setup(overrides: Partial<LiveDependencies> = {}, continuousFixture = true) {
+  let handler!: (args: string, ctx: any) => Promise<void>;
+  let complete!: (prefix: string) => { value: string; label: string }[] | null;
+  let shutdown!: () => void;
+  let sessionStart!: () => void;
+  let beforeTree!: () => Promise<void>;
+  let voiceCallbacks!: VoiceCallbacks;
+  let ownerCallbacks: any;
+  let orchestration: VoiceOrchestration | undefined;
+  const contexts: string[] = [];
+  const ownerEvents: any[] = [];
+  let ownerCloses = 0;
+  let ownerAcquires = 0;
+  let audioCallbacks!: AudioCallbacks;
+  let keyCalls = 0,
+    launches = 0,
+    starts = 0,
+    closes = 0,
+    sends = 0;
+  let endedAudio = 0;
+  const captureGates: Array<number | null> = [];
+  const sharedEditor = createSharedEditor();
+  activeEditor = sharedEditor.editor;
   let customCalls = 0;
   const played: { length: number; generation: number }[] = [];
   const flushes: number[] = [];
@@ -104,9 +138,8 @@ function setup(overrides: Partial<LiveDependencies> = {}, continuousFixture = tr
   const notices: string[] = [];
   let consent = true;
   let accepted = true;
-  let deferred = false;
-  let resolveConnect!: () => void;
-  let resolveLaunch!: (value: any) => void;
+  let helperHold: ReturnType<typeof createStartupHold> | undefined;
+  let providerHold: ReturnType<typeof createStartupHold> | undefined;
   const audio = {
     setCaptureGate: async (epoch: number | null) => {
       captureGates.push(epoch);
@@ -193,10 +226,7 @@ function setup(overrides: Partial<LiveDependencies> = {}, continuousFixture = tr
         },
         close: () => {},
         connect: async () => {
-          if (deferred)
-            await new Promise<void>((resolve) => {
-              resolveConnect = resolve;
-            });
+          if (providerHold) await providerHold.wait();
           if (!accepted) throw new Error("SECRET");
         },
       };
@@ -204,10 +234,7 @@ function setup(overrides: Partial<LiveDependencies> = {}, continuousFixture = tr
     audio: async (callbacks) => {
       launches++;
       audioCallbacks = callbacks;
-      if (deferred)
-        return new Promise((resolve) => {
-          resolveLaunch = resolve;
-        });
+      if (helperHold) await helperHold.wait();
       return audio;
     },
     ...overrides,
@@ -252,7 +279,7 @@ function setup(overrides: Partial<LiveDependencies> = {}, continuousFixture = tr
     },
     mode: "tui",
     ui: {
-      onTerminalInput: (handler: TuiInputListener) => tui.addInputListener(handler),
+      onTerminalInput: sharedEditor.onTerminalInput,
       custom: async () => {
         customCalls++;
         throw new Error("Live must use the shared editor, not a talk panel");
@@ -279,11 +306,7 @@ function setup(overrides: Partial<LiveDependencies> = {}, continuousFixture = tr
     run: (arg: string) => handler(arg, ctx),
     complete: (prefix: string) => complete(prefix),
     contexts,
-    input: (data: string) => raw.handleTerminalInput(data),
-    editor,
-    focusDialog: () => tui.setFocus(dialog),
-    focusEditor: () => tui.setFocus(editor),
-    dialogKeys,
+    ...sharedEditor,
     get customCalls() {
       return customCalls;
     },
@@ -291,7 +314,6 @@ function setup(overrides: Partial<LiveDependencies> = {}, continuousFixture = tr
       return endedAudio;
     },
     captureGates,
-    terminalWrites,
     ownerEvents,
     get ownerAcquires() {
       return ownerAcquires;
@@ -339,11 +361,8 @@ function setup(overrides: Partial<LiveDependencies> = {}, continuousFixture = tr
     reject: () => {
       accepted = false;
     },
-    defer: () => {
-      deferred = true;
-    },
-    resolveLaunch: () => resolveLaunch(audio),
-    resolveConnect: () => resolveConnect(),
+    pauseHelperLaunch: () => (helperHold = createStartupHold()),
+    pauseProviderConnect: () => (providerHold = createStartupHold()),
   };
 }
 describe("Live voice", () => {
@@ -491,15 +510,15 @@ describe("Live voice", () => {
   }
   test("self-stop does not claim teardown of a still-pending audio launch", async () => {
     const t = setup();
-    t.defer();
+    const hold = t.pauseHelperLaunch();
     const start = t.run("start");
-    await tick();
+    await hold.reached;
     expect(await t.stop()).toEqual({
       stopped: false,
       errors: ["Audio startup has not finished; teardown is not yet observed"],
       jobsUnchanged: true,
     });
-    t.resolveLaunch();
+    hold.resume();
     await start;
     await tick();
     expect(t.closes).toBe(1);
@@ -606,16 +625,13 @@ describe("Live voice", () => {
   for (const stage of ["helper", "provider"]) {
     test("bare Live cancels pending " + stage + " without late activation", async () => {
       const t = setup();
-      t.defer();
+      const hold = stage === "helper" ? t.pauseHelperLaunch() : t.pauseProviderConnect();
       const starting = t.run("");
-      await tick();
-      if (stage === "provider") {
-        t.resolveLaunch();
-        await tick();
-      }
+      await hold.reached;
+      expect(t.launches).toBe(1);
+      expect(t.starts).toBe(0);
       await t.run("");
-      if (stage === "helper") t.resolveLaunch();
-      else t.resolveConnect();
+      hold.resume();
       await starting;
       expect(t.starts).toBe(0);
       expect(t.closes).toBe(1);
@@ -734,11 +750,11 @@ describe("Live voice", () => {
   });
   test("stop while helper hello is pending disposes late helper without opening devices", async () => {
     const t = setup();
-    t.defer();
+    const hold = t.pauseHelperLaunch();
     const starting = t.run("start");
-    await tick();
+    await hold.reached;
     await t.run("stop");
-    t.resolveLaunch();
+    hold.resume();
     await starting;
     expect([t.keyCalls, t.starts, t.closes]).toEqual([1, 0, 1]);
   });
@@ -787,11 +803,11 @@ describe("Live voice", () => {
   });
   test("session change aborts pending mic-check before devices open", async () => {
     const t = setup();
-    t.defer();
+    const hold = t.pauseHelperLaunch();
     const checking = t.run("mic-check");
-    await tick();
+    await hold.reached;
     t.sessionStart();
-    t.resolveLaunch();
+    hold.resume();
     await checking;
     expect([t.launches, t.starts, t.keyCalls, t.closes]).toEqual([1, 0, 0, 1]);
   });
@@ -1480,6 +1496,62 @@ test("extended thinking stays busy across filler turn completion until provider 
   await t.run("stop");
 });
 
+test("GPT-Live terminal duration is billed even without interim usage", async () => {
+  let callbacks!: import("../src/live/gpt-live-session").GPTLiveCallbacks;
+  const f = setup({
+    config: { load: async () => ({ provider: "openai", model: "gpt-live-1" }), save: async () => {} },
+    gptSession: (cb) => {
+      callbacks = cb;
+      return {
+        state: "ready",
+        connect: async () => {},
+        appendMicrophone: () => true,
+        observation: () => true,
+        commentary: () => true,
+        close: async () => callbacks.onClosed?.(true, { seconds: 18 }),
+      } as any;
+    },
+  });
+  await f.run("start");
+  expect((await f.stop()).stopped).toBe(true);
+  expect(f.transcriptEntries.filter((entry) => entry.type === "bruv-live-cost").map((entry) => entry.data)).toEqual([
+    { cost: (18 * 0.05) / 60 },
+    { cost: 0, unknown: true },
+  ]);
+});
+
+test("GPT-Live bills cumulative snapshots once and includes terminal usage during stop", async () => {
+  let callbacks!: import("../src/live/gpt-live-session").GPTLiveCallbacks;
+  const f = setup({
+    config: { load: async () => ({ provider: "openai", model: "gpt-live-1" }), save: async () => {} },
+    gptSession: (cb) => {
+      callbacks = cb;
+      return {
+        state: "ready",
+        connect: async () => {},
+        appendMicrophone: () => true,
+        observation: () => true,
+        commentary: () => true,
+        close: async () => callbacks.onClosed?.(true, { seconds: 18 }),
+      } as any;
+    },
+  });
+  await f.run("start");
+  callbacks.onUsage?.({ seconds: 12 });
+  callbacks.onUsage?.({ seconds: 15 });
+  callbacks.onUsage?.({ seconds: 15 });
+  callbacks.onUsage?.({ seconds: 13 });
+  const costs = () => f.transcriptEntries.filter((entry) => entry.type === "bruv-live-cost").map((entry) => entry.data);
+  expect(costs().map((entry) => Number(entry.cost.toFixed(8)))).toEqual([0.01, 0.0025]);
+  expect((await f.stop()).stopped).toBe(true);
+  expect(costs().map((entry) => [Number(entry.cost.toFixed(8)), entry.unknown])).toEqual([
+    [0.01, undefined],
+    [0.0025, undefined],
+    [0.0025, undefined],
+    [0, true], // Backend charges remain unavailable, even with terminal duration.
+  ]);
+});
+
 test("GPT-Live routes client delegation to selected main owner, keeps transcript provisional and voice stop leaves work untouched", async () => {
   let callbacks: any;
   const observations: any[] = [];
@@ -1674,6 +1746,95 @@ test("real Realtime session accepts a 50-second reply below the playback queue b
   expect(t.status.at(-1)).toBeDefined();
   expect(t.closes).toBe(0);
   expect(await t.stop()).toEqual({ stopped: true, errors: [], jobsUnchanged: true });
+});
+
+test("tool-provider seam replays owner context before devices start and revokes delivery on stop", async () => {
+  const events: string[] = [];
+  const updates: Array<{ text: string; options?: { triggerResponse?: boolean } }> = [];
+  let deliver!: (text: string, options?: { triggerResponse?: boolean }) => void;
+  let input!: (text: string) => void;
+  let state: "connecting" | "ready" = "connecting";
+  const orchestration: VoiceOrchestration = {
+    instructions: "current root authority",
+    tools: [],
+    execute: async () => ({}),
+  };
+  const f = setup({
+    owner: async (_pi, _ctx, callbacks) => {
+      deliver = callbacks!.onContext!;
+      input = callbacks!.onInput!;
+      deliver("Queued completion reply", { triggerResponse: true });
+      input("Queued typed input");
+      deliver('{"source":"gpt_live_provisional","text":"already heard"}');
+      return {
+        orchestration,
+        close() {},
+        stopForeground() {},
+        released: Promise.resolve(),
+      } as any;
+    },
+    voice: (_callbacks, authority) => {
+      expect(authority).toBe(orchestration);
+      events.push("provider-created");
+      return {
+        get state() {
+          return state;
+        },
+        generation: 0,
+        connect: async () => {
+          events.push("provider-connect");
+          deliver("Connecting reply", { triggerResponse: false });
+          state = "ready";
+        },
+        sendContext: (text, options) => {
+          events.push(text);
+          updates.push({ text, options });
+        },
+        sendAudio: () => {
+          events.push("microphone");
+        },
+        close: async () => {},
+      };
+    },
+    audio: async (callbacks) => {
+      events.push("helper-hello");
+      return {
+        diagnostics: { queuedMs: 0, captureFrames: 0, capturedBytes: 0 },
+        start: async () => {
+          events.push("audio-start");
+          callbacks.capture?.(Buffer.alloc(320));
+        },
+        play: async () => {},
+        flush: async () => {},
+        stop: async () => {},
+        close: async () => {},
+      };
+    },
+  });
+  await f.run("start");
+  expect(events).toEqual([
+    "helper-hello",
+    "provider-created",
+    "provider-connect",
+    "Queued completion reply",
+    "Queued typed input",
+    "Connecting reply",
+    "audio-start",
+    "microphone",
+  ]);
+  deliver("Ready completion reply", { triggerResponse: true });
+  input("Ready typed input");
+  expect(updates).toEqual([
+    { text: "Queued completion reply", options: { triggerResponse: true } },
+    { text: "Queued typed input", options: undefined },
+    { text: "Connecting reply", options: { triggerResponse: false } },
+    { text: "Ready completion reply", options: { triggerResponse: true } },
+    { text: "Ready typed input", options: undefined },
+  ]);
+  await f.run("stop");
+  deliver("Stale completion reply", { triggerResponse: true });
+  input("Stale typed input");
+  expect(updates).toHaveLength(5);
 });
 
 test("GPT-Live replays connecting replies as commentary without speaking ordinary context", async () => {

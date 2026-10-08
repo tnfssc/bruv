@@ -1,148 +1,13 @@
 import { expect, test } from "bun:test";
-import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
-import { tmpdir } from "node:os";
-import { join, resolve } from "node:path";
+import { join } from "node:path";
 import { SessionManager } from "@earendil-works/pi-coding-agent";
 import { prepareAgentSession } from "../src/tasks/agent-session";
-import { capturePane, frameContaining, pollFrame, shellQuote as quote, tmuxRunner } from "./tui-helpers";
+import { frameContaining, pollFrame } from "./tui-helpers";
+import { withLiveJobTui, withTaskMonitorTerminal } from "./task-monitor-tui-fixture";
 
 test("real TUI /ps selects live jobs and only stops the confirmed target", async () => {
-  const home = await mkdtemp(join(tmpdir(), "bruv-ps-tui-")),
-    agentDir = join(home, ".bruv", "agent");
-  await mkdir(agentDir, { recursive: true });
-  let requests = 0;
-  const server = Bun.serve({
-    port: 0,
-    async fetch(request) {
-      requests++;
-      await request.json();
-      const first = requests === 1;
-      const delta = first
-        ? {
-            role: "assistant",
-            tool_calls: [
-              {
-                index: 0,
-                id: "fixture_call",
-                type: "function",
-                function: {
-                  name: "execute",
-                  arguments: JSON.stringify({
-                    // Job liveness must depend on test actions, not scheduler or PTY latency.
-                    code: `const a=await shell("sh -c 'while :; do echo ALPHA-live; sleep 1; done'",{waitSeconds:0}); const b=await shell("sh -c 'while :; do echo BETA-live; sleep 1; done'",{waitSeconds:0}); console.log(a.id,b.id)`,
-                  }),
-                },
-              },
-            ],
-          }
-        : { role: "assistant", content: "FIXTURE_READY" };
-      const finish = first ? "tool_calls" : "stop",
-        model = "fixture-model",
-        created = Math.floor(Date.now() / 1000);
-      const events = [
-        {
-          id: "fixture",
-          object: "chat.completion.chunk",
-          created,
-          model,
-          choices: [{ index: 0, delta, finish_reason: null }],
-        },
-        {
-          id: "fixture",
-          object: "chat.completion.chunk",
-          created,
-          model,
-          choices: [{ index: 0, delta: {}, finish_reason: finish }],
-        },
-      ];
-      return new Response(
-        events.map((value) => "data: " + JSON.stringify(value) + "\n\n").join("") + "data: [DONE]\n\n",
-        { headers: { "content-type": "text/event-stream" } },
-      );
-    },
-  });
-  await writeFile(
-    join(agentDir, "models.json"),
-    JSON.stringify({
-      providers: {
-        fixture: {
-          baseUrl: "http://127.0.0.1:" + server.port + "/v1",
-          api: "openai-completions",
-          apiKey: "fixture",
-          models: [{ id: "fixture-model", name: "fixture", contextWindow: 32000, maxTokens: 1000 }],
-        },
-      },
-    }),
-  );
-  // This extension is a controlled slow startup step. Registration alone does not
-  // mean it is ready. The safe command handshake below proves that the normal
-  // submit handler accepts extension commands.
-  const readinessMarker = join(home, "startup-readiness.marker");
-  const readinessExtension = join(home, "startup-readiness.ts");
-  await writeFile(
-    readinessExtension,
-    `export default async function (pi) {
-  await new Promise((resolve) => setTimeout(resolve, 5500));
-  pi.registerCommand("bruv-test-ready", {
-    description: "TUI startup handshake",
-    handler: async (_args, ctx) => ctx.ui.notify("BRUV_TEST_READY", "info"),
-  });
-  await Bun.write(${JSON.stringify(readinessMarker)}, "registered");
-}`,
-  );
-  const socket = "bruv-ps-" + process.pid + "-" + Date.now(),
-    name = "ps";
-  const tmux = tmuxRunner(socket);
-  const capture = async () => (await capturePane(tmux, name)).stdout;
-  try {
-    const binary = resolve(import.meta.dir, "../dist/bruv"),
-      launch = [
-        "env",
-        "HOME=" + home,
-        "BRUV_CODING_AGENT_DIR=" + agentDir,
-        binary,
-        "--no-approve",
-        "--no-session",
-        "--provider",
-        "fixture",
-        "--model",
-        "fixture-model",
-        "--extension",
-        readinessExtension,
-      ]
-        .map(quote)
-        .join(" ");
-    expect((await tmux("new-session", "-d", "-s", name, "-x", "100", "-y", "30", "-c", home, launch)).code).toBe(0);
-    let frame = "";
-    const startupDeadline = Date.now() + 30_000;
-    while (Date.now() < startupDeadline) {
-      frame = await capture();
-      if (frame.includes("fixture-model")) break;
-      await Bun.sleep(50);
-    }
-    expect(frame).toContain("fixture-model");
-
-    // Do not use handleStartupSubmit's status as readiness: the SDK only sets
-    // that status *after* a premature submit. The fixture's explicit marker is
-    // written after its command is registered. Only its UI response below proves
-    // that managed-tool setup and the editor submit-handler transition finished.
-    while (Date.now() < startupDeadline) {
-      if (await Bun.file(readinessMarker).exists()) break;
-      await Bun.sleep(50);
-    }
-    expect(await Bun.file(readinessMarker).exists()).toBe(true);
-    await tmux("send-keys", "-t", name, "-l", "/bruv-test-ready");
-    // This is a harmless command probe, not a prompt: retrying it cannot start
-    // another job. It is complete only when the real submit handler accepts it.
-    while (Date.now() < startupDeadline) {
-      await tmux("send-keys", "-t", name, "Enter");
-      frame = await capture();
-      if (frame.includes("BRUV_TEST_READY")) break;
-      await Bun.sleep(50);
-    }
-    expect(frame).toContain("BRUV_TEST_READY");
-    // The readiness probe is not an LLM turn and must not create duplicate work.
-    expect(requests).toBe(0);
+  await withLiveJobTui(async ({ tmux, capture, target: name }) => {
+    let frame: string;
     await tmux("send-keys", "-t", name, "-l", "start");
     await tmux("send-keys", "-t", name, "Enter");
     frame = await pollFrame(capture, (frame) => frame.includes("FIXTURE_READY"), 120);
@@ -219,44 +84,22 @@ test("real TUI /ps selects live jobs and only stops the confirmed target", async
     frame = await frameContaining(capture, "⊘ sh -c 'while :; do echo BETA-live; sleep 1; done' — cancelled");
     expect(frame).not.toContain("⊘ sh -c 'while :; do echo ALPHA-live; sleep 1; done' — cancelled");
     expect(frame).not.toContain("console.log");
-  } finally {
-    server.stop(true);
-    await tmux("kill-server").catch(() => ({ code: 1, stdout: "", stderr: "" }));
-    await rm(home, { recursive: true, force: true });
-  }
+  });
 }, 20000);
 
 test("real TUI /resume selects a durable child and requires explicit confirmation", async () => {
-  const home = await mkdtemp(join(tmpdir(), "bruv-resume-tui-")),
-    sessions = join(home, "sessions");
-  const root = SessionManager.create(home, sessions),
-    rootFile = root.getSessionFile()!;
-  const child = await prepareAgentSession(home, sessions, {
-    type: "fast",
-    model: "p/model",
-    depth: 1,
-    parentSessionFile: rootFile,
-  });
-  const socket = "bruv-resume-" + process.pid + "-" + Date.now(),
-    name = "resume";
-  const tmux = tmuxRunner(socket);
+  await withTaskMonitorTerminal("bruv-resume-tui-", async ({ home, start, tmux, capture, target: name }) => {
+    const sessions = join(home, "sessions");
+    const root = SessionManager.create(home, sessions),
+      rootFile = root.getSessionFile()!;
+    const child = await prepareAgentSession(home, sessions, {
+      type: "fast",
+      model: "p/model",
+      depth: 1,
+      parentSessionFile: rootFile,
+    });
 
-  const capture = async () => (await capturePane(tmux, name)).stdout;
-  try {
-    const binary = resolve(import.meta.dir, "../dist/bruv");
-    const launch = [
-      "env",
-      "HOME=" + home,
-      "BRUV_CODING_AGENT_DIR=" + join(home, ".bruv", "agent"),
-      binary,
-      "--offline",
-      "--no-approve",
-      "--session",
-      rootFile,
-    ]
-      .map(quote)
-      .join(" ");
-    expect((await tmux("new-session", "-d", "-s", name, "-x", "100", "-y", "30", "-c", home, launch)).code).toBe(0);
+    await start("--offline", "--no-approve", "--session", rootFile);
     let frame = await pollFrame(capture, (frame) => frame.includes("/model"), 100);
     await tmux("send-keys", "-t", name, "-l", "/resume");
     await tmux("send-keys", "-t", name, "Enter");
@@ -271,8 +114,5 @@ test("real TUI /resume selects a durable child and requires explicit confirmatio
     await Bun.sleep(600);
     frame = await capture();
     expect(frame).not.toContain("Enter worker child (fast) session?");
-  } finally {
-    await tmux("kill-server").catch(() => ({ code: 1, stdout: "", stderr: "" }));
-    await rm(home, { recursive: true, force: true });
-  }
+  });
 }, 20000);

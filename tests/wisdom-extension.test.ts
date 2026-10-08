@@ -1,12 +1,16 @@
-import { afterEach, describe, expect, test } from "bun:test";
-import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { describe, expect, test } from "bun:test";
+import { execFile } from "node:child_process";
+import { promisify } from "node:util";
+import { mkdir, mkdtemp, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import type { ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { registerProjectWisdom } from "../src/wisdom/extension";
 import { projectWisdomDir } from "../src/wisdom/location";
 
-function fixture(root = true, cwd = "/repo", trusted = true) {
+const execFileAsync = promisify(execFile);
+
+function fixture(root: boolean | ((ctx: ExtensionContext) => boolean) = true, cwd = "/repo", trusted = true) {
   const commands = new Map<
     string,
     { description: string; handler: (args: string, ctx: ExtensionContext) => Promise<void> }
@@ -28,7 +32,7 @@ function fixture(root = true, cwd = "/repo", trusted = true) {
       handlers.set(name, existing);
     },
   } as any;
-  registerProjectWisdom(pi, { isRoot: () => root });
+  registerProjectWisdom(pi, { isRoot: typeof root === "function" ? root : () => root });
   return { commands, handlers, notices, ctx };
 }
 
@@ -75,6 +79,36 @@ describe("project wisdom extension", () => {
     expect(f.handlers.get("before_agent_start")![0]({ systemPrompt: "base" }, f.ctx)).toBeUndefined();
   });
 
+  test("a failed root authority check denies both effects before asking for trust", async () => {
+    const f = fixture(() => {
+      throw new Error("identity unavailable");
+    });
+    f.ctx.isProjectTrusted = () => {
+      throw new Error("child must not resolve project settings");
+    };
+    expect(f.handlers.get("before_agent_start")![0]({ systemPrompt: "base" }, f.ctx)).toBeUndefined();
+    expect(f.notices).toEqual([]);
+    await f.commands.get("wisdom")!.handler("", f.ctx);
+    expect(f.notices).toEqual([
+      { message: "Project wisdom is unavailable outside the root agent.", severity: "warning" },
+    ]);
+  });
+
+  test("root eligibility is checked at each effect, not captured at registration", async () => {
+    let root = true;
+    const f = fixture(() => root);
+    const beforeStart = f.handlers.get("before_agent_start")![0];
+    expect(beforeStart({ systemPrompt: "base" }, f.ctx).systemPrompt).toStartWith("base\n\n");
+    root = false;
+    expect(beforeStart({ systemPrompt: "base" }, f.ctx)).toBeUndefined();
+    await f.commands.get("wisdom")!.handler("", f.ctx);
+    expect(f.notices.at(-1)?.severity).toBe("warning");
+    root = true;
+    await f.commands.get("wisdom")!.handler("", f.ctx);
+    expect(f.notices.at(-1)?.message).toContain("Project wisdom lives in /repo/wisdom/.");
+    expect(beforeStart({ systemPrompt: "base" }, f.ctx).systemPrompt).toStartWith("base\n\n");
+  });
+
   test("/wisdom reports the durable location", async () => {
     const f = fixture(true);
     await f.commands.get("wisdom")!.handler("", f.ctx);
@@ -94,14 +128,9 @@ describe("project wisdom extension", () => {
   });
 });
 
-const projects: string[] = [];
-afterEach(async () => {
-  for (const directory of projects.splice(0)) await rm(directory, { recursive: true, force: true });
-});
-
+// Retain owned mkdtemp fixtures for inspection by the parent gate.
 async function project(config?: unknown, gitMarker = true) {
   const root = await mkdtemp(join(tmpdir(), "bruv-wisdom-"));
-  projects.push(root);
   const nested = join(root, "src", "feature");
   await mkdir(nested, { recursive: true });
   // Git worktrees use a file here rather than a directory.
@@ -111,6 +140,30 @@ async function project(config?: unknown, gitMarker = true) {
     await writeFile(join(root, ".bruv", "settings.json"), JSON.stringify(config));
   }
   return { root, nested };
+}
+
+// Each subprocess starts with only its owned HOME/config/SDK state, never caller credentials.
+async function isolatedProcessEnv(root: string): Promise<Record<string, string>> {
+  const home = join(root, "home");
+  const config = join(root, "config");
+  const cache = join(root, "cache");
+  const sdk = join(root, "sdk");
+  const temporary = join(root, "tmp");
+  for (const directory of [home, config, cache, sdk, temporary]) await mkdir(directory);
+  return {
+    PATH: process.env.PATH ?? "",
+    HOME: home,
+    USERPROFILE: home,
+    XDG_CONFIG_HOME: config,
+    XDG_CACHE_HOME: cache,
+    PI_CODING_AGENT_DIR: sdk,
+    TMPDIR: temporary,
+    TMP: temporary,
+    TEMP: temporary,
+    GIT_CONFIG_NOSYSTEM: "1",
+    GIT_CONFIG_GLOBAL: join(home, ".gitconfig"),
+    BRUV_SUBAGENT_DEPTH: "0",
+  };
 }
 
 describe("project wisdomDir setting", () => {
@@ -132,10 +185,30 @@ describe("project wisdomDir setting", () => {
     expect(result.systemPrompt).not.toContain("wisdom/values.md");
   });
 
+  test("each effect resolves current trust and settings without reading wisdom contents", async () => {
+    const p = await project({ wisdomDir: "notes/$&" });
+    const f = fixture(true, p.nested, false);
+    const beforeStart = f.handlers.get("before_agent_start")![0];
+    expect(beforeStart({ systemPrompt: "base" }, f.ctx).systemPrompt).toContain(
+      `Project wisdom lives in ${join(p.root, "wisdom")}/.`,
+    );
+    f.ctx.isProjectTrusted = () => true;
+    const configured = beforeStart({ systemPrompt: "base" }, f.ctx).systemPrompt;
+    expect(configured).toContain(`Project wisdom lives in ${join(p.root, "notes/$&")}/.`);
+    expect(configured).toContain(`Values live in ${join(p.root, "notes/$&", "values.md")}.`);
+    await writeFile(join(p.root, ".bruv", "settings.json"), JSON.stringify({ wisdomDir: "new-notes" }));
+    await f.commands.get("wisdom")!.handler("", f.ctx);
+    expect(f.notices.at(-1)?.message).toContain(`Project wisdom lives in ${join(p.root, "new-notes")}/.`);
+    expect(beforeStart({ systemPrompt: "base" }, f.ctx).systemPrompt).toContain(
+      `Values live in ${join(p.root, "new-notes", "values.md")}.`,
+    );
+  });
+
   test("a delegated worktree resolves the tracked setting inside its own checkout", async () => {
     const p = await project({ wisdomDir: "docs/agent-notes" }, false);
+    const env = await isolatedProcessEnv(p.root);
     function git(...args: string[]) {
-      const result = Bun.spawnSync(["git", ...args], { cwd: p.root, stdout: "pipe", stderr: "pipe" });
+      const result = Bun.spawnSync(["git", ...args], { cwd: p.root, env, stdout: "pipe", stderr: "pipe" });
       if (result.exitCode !== 0) throw new Error(result.stderr.toString());
     }
     git("init", "-q");
@@ -166,3 +239,41 @@ describe("project wisdomDir setting", () => {
     expect(() => projectWisdomDir(p.nested, true)).toThrow("wisdomDir must be a non-empty string");
   });
 });
+
+for (const firstEffect of ["prompt", "command"] as const) {
+  test(`production SDK resolves a late-attached child before the first wisdom ${firstEffect}`, async () => {
+    const p = await project();
+    const env = await isolatedProcessEnv(p.root);
+    const { stdout } = await execFileAsync(
+      process.execPath,
+      [join(import.meta.dir, "fixtures/wisdom-extension-sdk.ts"), p.root, firstEffect],
+      { cwd: p.root, env, encoding: "utf8", timeout: 15_000, killSignal: "SIGKILL" },
+    );
+    const line = stdout.split("\n").find((line) => line.startsWith("WISDOM_SDK_RESULT "));
+    expect(line).toBeDefined();
+    const sdk = JSON.parse(line!.slice("WISDOM_SDK_RESULT ".length)) as {
+      prompts: string[];
+      notices: Array<{ message: string; severity?: string }>;
+      commandPromptCount: number;
+    };
+    if (firstEffect === "command") {
+      expect(sdk.notices).toContainEqual({
+        message: "Project wisdom is unavailable outside the root agent.",
+        severity: "warning",
+      });
+      expect(sdk.notices.some(({ message }) => message.startsWith("Project wisdom lives in"))).toBe(false);
+      expect(sdk.commandPromptCount).toBe(0);
+    }
+    expect(sdk.prompts).toHaveLength(2);
+    expect(
+      sdk.prompts.map((prompt) => ({
+        childRole: prompt.includes("You are a normal sub-agent"),
+        wisdom: prompt.includes("Project wisdom lives in"),
+        values: prompt.includes("Values live in"),
+      })),
+    ).toEqual([
+      { childRole: true, wisdom: false, values: false },
+      { childRole: true, wisdom: false, values: false },
+    ]);
+  }, 20_000);
+}

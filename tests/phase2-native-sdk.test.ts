@@ -30,6 +30,109 @@ const usage = {
 };
 const sentinel = "phase2-offline-serializer";
 
+// Native compaction uses the HTTP seam; ordinary turns below use the SDK serializer seam.
+function nativeCompactionResponse(requestNumber: number, mode: "success" | "failure"): Response {
+  if (mode === "failure")
+    return new Response(
+      "data: " +
+        JSON.stringify({
+          type: "response.completed",
+          response: {
+            status: "completed",
+            output: [{ type: "message" }],
+            usage: { input_tokens: 100, output_tokens: 10 },
+          },
+        }) +
+        "\n\n",
+    );
+  const item = {
+    type: "compaction",
+    id: "cmp_fixture_" + requestNumber,
+    encrypted_content: "opaque-fixture-" + requestNumber,
+  };
+  return new Response(
+    "data: " +
+      JSON.stringify({ type: "response.output_item.done", item }) +
+      "\n\ndata: " +
+      JSON.stringify({
+        type: "response.completed",
+        response: {
+          status: "completed",
+          output: [item],
+          usage: {
+            input_tokens: 100,
+            input_tokens_details: { cached_tokens: 80, cache_write_tokens: 0 },
+            output_tokens: 10,
+            total_tokens: 110,
+          },
+        },
+      }) +
+      "\n\n",
+    { headers: { "content-type": "text/event-stream" } },
+  );
+}
+
+// Run the real provider serializer and extension hooks, but stop before dispatch.
+function captureOrdinaryRequests(sent: any[]) {
+  function fixtureStream(m: any, context: any, options: any) {
+    const events = createAssistantMessageEventStream();
+    void (async () => {
+      let error: string | undefined;
+      if (options?.signal?.aborted) error = "aborted";
+      else {
+        const headers = (await options?.transformHeaders?.(options.headers ?? {})) ?? options?.headers;
+        const captured = await (m.api === "anthropic-messages" ? anthropic : codex)
+          .streamSimple(m, context, {
+            ...options,
+            headers,
+            apiKey: token,
+            transport: "sse",
+            fetch: (async () => {
+              throw Error("ordinary request escaped offline capture");
+            }) as any,
+            onPayload: async (payload: any) => {
+              const changed = await options?.onPayload?.(payload, m);
+              sent.push(structuredClone(changed ?? payload));
+              throw Error(sentinel);
+            },
+          })
+          .result();
+        if (!captured.errorMessage?.includes(sentinel)) error = captured.errorMessage ?? "serializer failed";
+      }
+      const message: AssistantMessage = {
+        role: "assistant",
+        api: m.api,
+        provider: m.provider,
+        model: m.id,
+        content: error ? [] : [{ type: "text", text: "Fixture response." }],
+        stopReason: error ? "aborted" : "stop",
+        errorMessage: error,
+        usage,
+        timestamp: Date.now(),
+      };
+      if (error) events.push({ type: "error", reason: "aborted", error: message });
+      else events.push({ type: "done", reason: "stop", message });
+      events.end(message);
+    })().catch((error) => {
+      const message: any = {
+        role: "assistant",
+        api: m.api,
+        provider: m.provider,
+        model: m.id,
+        content: [],
+        stopReason: "error",
+        errorMessage: String(error),
+        usage,
+        timestamp: Date.now(),
+      };
+      events.push({ type: "error", reason: "error", error: message });
+      events.end(message);
+    });
+    return events;
+  }
+  return fixtureStream;
+}
+
 test("native Codex real SDK: auth, Astra checkpoint to Sol, repeat, disk resume, and provider guard", async () => {
   const dir = await mkdtemp(join(tmpdir(), "bruv-native-sdk-"));
   const originalFetch = globalThis.fetch;
@@ -50,44 +153,7 @@ test("native Codex real SDK: auth, Astra checkpoint to Sol, repeat, disk resume,
       const body = JSON.parse(init.body);
       compactRequests.push(body);
       expect(body.input.at(-1)).toEqual({ type: "compaction_trigger" });
-      if (nativeMode === "failure")
-        return new Response(
-          "data: " +
-            JSON.stringify({
-              type: "response.completed",
-              response: {
-                status: "completed",
-                output: [{ type: "message" }],
-                usage: { input_tokens: 100, output_tokens: 10 },
-              },
-            }) +
-            "\n\n",
-        );
-      const item = {
-        type: "compaction",
-        id: "cmp_fixture_" + compactRequests.length,
-        encrypted_content: "opaque-fixture-" + compactRequests.length,
-      };
-      return new Response(
-        "data: " +
-          JSON.stringify({ type: "response.output_item.done", item }) +
-          "\n\ndata: " +
-          JSON.stringify({
-            type: "response.completed",
-            response: {
-              status: "completed",
-              output: [item],
-              usage: {
-                input_tokens: 100,
-                input_tokens_details: { cached_tokens: 80, cache_write_tokens: 0 },
-                output_tokens: 10,
-                total_tokens: 110,
-              },
-            },
-          }) +
-          "\n\n",
-        { headers: { "content-type": "text/event-stream" } },
-      );
+      return nativeCompactionResponse(compactRequests.length, nativeMode);
     }) as typeof fetch;
     const runtime = await ModelRuntime.create({
       authPath: join(dir, "auth.json"),
@@ -97,62 +163,7 @@ test("native Codex real SDK: auth, Astra checkpoint to Sol, repeat, disk resume,
     runtime.hasConfiguredAuth = () => true;
     runtime.checkAuth = (async () => true) as any;
     runtime.getAuth = (async () => ({ auth: { apiKey: token } })) as any;
-    function fixtureStream(m: any, context: any, options: any) {
-      const events = createAssistantMessageEventStream();
-      void (async () => {
-        let error: string | undefined;
-        if (options?.signal?.aborted) error = "aborted";
-        else {
-          const headers = (await options?.transformHeaders?.(options.headers ?? {})) ?? options?.headers;
-          const captured = await (m.api === "anthropic-messages" ? anthropic : codex)
-            .streamSimple(m, context, {
-              ...options,
-              headers,
-              apiKey: token,
-              transport: "sse",
-              fetch: (async () => {
-                throw Error("ordinary request escaped offline capture");
-              }) as any,
-              onPayload: async (payload: any) => {
-                const changed = await options?.onPayload?.(payload, m);
-                sent.push(structuredClone(changed ?? payload));
-                throw Error(sentinel);
-              },
-            })
-            .result();
-          if (!captured.errorMessage?.includes(sentinel)) error = captured.errorMessage ?? "serializer failed";
-        }
-        const message: AssistantMessage = {
-          role: "assistant",
-          api: m.api,
-          provider: m.provider,
-          model: m.id,
-          content: error ? [] : [{ type: "text", text: "Fixture response." }],
-          stopReason: error ? "aborted" : "stop",
-          errorMessage: error,
-          usage,
-          timestamp: Date.now(),
-        };
-        if (error) events.push({ type: "error", reason: "aborted", error: message });
-        else events.push({ type: "done", reason: "stop", message });
-        events.end(message);
-      })().catch((error) => {
-        const message: any = {
-          role: "assistant",
-          api: m.api,
-          provider: m.provider,
-          model: m.id,
-          content: [],
-          stopReason: "error",
-          errorMessage: String(error),
-          usage,
-          timestamp: Date.now(),
-        };
-        events.push({ type: "error", reason: "error", error: message });
-        events.end(message);
-      });
-      return events;
-    }
+    const fixtureStream = captureOrdinaryRequests(sent);
     runtime.streamSimple = fixtureStream as any;
     async function open(manager: SessionManager) {
       // Each SDK session gets a fresh offline transport seam; do not inherit

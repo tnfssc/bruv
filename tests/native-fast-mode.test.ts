@@ -1,67 +1,40 @@
 import { AuthStorage } from "../node_modules/@earendil-works/pi-coding-agent/dist/core/auth-storage.js";
-import { restoreLeaf } from "../src/session/restore-leaf";
-import { normalizeContext } from "@earendil-works/pi-ai";
 import { expect, test } from "bun:test";
-import { zstdDecompressSync } from "node:zlib";
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { getModel } from "@earendil-works/pi-ai/compat";
+import { zstdDecompressSync } from "node:zlib";
+import { normalizeContext } from "@earendil-works/pi-ai";
 import * as codex from "@earendil-works/pi-ai/api/openai-codex-responses";
 import * as openai from "@earendil-works/pi-ai/api/openai-responses";
+import { getModel } from "@earendil-works/pi-ai/compat";
 import {
   ModelRegistry,
   createAgentSession,
   DefaultResourceLoader,
+  type InlineExtension,
   ModelRuntime,
   SessionManager,
 } from "@earendil-works/pi-coding-agent";
-import { inspectDiagnostics } from "../src/diagnostics";
 import {
   FAST_CHECKPOINT_PERSIST_FAILED,
   FAST_GUARD_TIER_MUTATION,
   FAST_REFUSED_AUTH,
   FAST_REFUSED_STALE,
+  NATIVE_FAST_CHILD_ENV,
   NATIVE_FAST_ENTRY,
+  nativeFastEnabled,
   nativeFastSupport,
   registerNativeFastMode,
-  nativeFastEnabled,
-  NATIVE_FAST_CHILD_ENV,
   withStandardProviderTier,
 } from "../src/agent/native-fast-mode";
+import { inspectDiagnostics } from "../src/diagnostics";
+import { restoreLeaf } from "../src/session/restore-leaf";
 
-function harness(
-  model: any,
-  options: {
-    mode?: string;
-    accept?: boolean;
-    oauth?: boolean;
-    sessionId?: string;
-    confirm?: () => Promise<boolean>;
-    appendFails?: boolean;
-  } = {},
-) {
-  const entries: any[] = [],
-    notices: any[] = [],
-    statuses: any[] = [];
-  const hooks = new Map<string, any[]>();
-  let command: any;
-  const pi = {
-    registerFlag() {},
-    getFlag: () => options.accept ?? false,
-    registerCommand(name: string, value: any) {
-      if (name === "fast") command = value;
-    },
-    on(name: string, handler: any) {
-      hooks.set(name, [...(hooks.get(name) ?? []), handler]);
-    },
-    appendEntry(customType: string, data: any) {
-      if (options.appendFails) throw new Error("private persistence detail");
-      entries.push({ type: "custom", customType, data });
-    },
-  } as any;
-  const runtime = {
-    isUsingOAuth: (provider: string) => options.oauth ?? provider === "openai-codex",
+// The seam is fake, but serialization runs through the actual provider adapters.
+function providerRuntime(oauth?: boolean) {
+  return {
+    isUsingOAuth: (provider: string) => oauth ?? provider === "openai-codex",
     async prepareRequest(requestModel: any, requestOptions: any) {
       return {
         provider: {
@@ -77,28 +50,127 @@ function harness(
       return api.streamSimple(model, context, requestOptions);
     },
   };
+}
+
+function harness(
+  model: any,
+  options: {
+    mode?: string;
+    oauth?: boolean;
+    accept?: boolean;
+    sessionId?: string;
+    confirm?: () => Promise<boolean>;
+    runtime?: ModelRuntime | ReturnType<typeof providerRuntime>;
+    sessionManager?: SessionManager;
+    appendEntry?: (customType: string, data: any) => void;
+  } = {},
+) {
+  const entries: any[] = [],
+    notices: any[] = [],
+    statuses: any[] = [];
+  const hooks = new Map<string, any[]>();
+  let command: any;
+  const sessionManager = options.sessionManager ?? {
+    getSessionId: () => options.sessionId ?? "session-a",
+    getBranch: () => entries,
+    getEntries: () => entries,
+  };
+  const appendEntry =
+    options.appendEntry ??
+    (options.sessionManager
+      ? options.sessionManager.appendCustomEntry.bind(options.sessionManager)
+      : (customType: string, data: any) => entries.push({ type: "custom", customType, data }));
+  const pi = {
+    registerFlag() {},
+    getFlag: () => options.accept ?? false,
+    registerCommand(name: string, value: any) {
+      if (name === "fast") command = value;
+    },
+    on(name: string, handler: any) {
+      hooks.set(name, [...(hooks.get(name) ?? []), handler]);
+    },
+    appendEntry,
+  } as any;
+  const runtime = options.runtime ?? providerRuntime(options.oauth);
   const ctx = {
     mode: options.mode ?? "tui",
     model,
-    modelRegistry: { runtime, isUsingOAuth: (value: any) => runtime.isUsingOAuth(value.provider) },
-    sessionManager: {
-      getSessionId: () => options.sessionId ?? "session-a",
-      getBranch: () => entries,
-      getEntries: () => entries,
+    modelRegistry: {
+      runtime,
+      isUsingOAuth(value: any) {
+        return this.runtime.isUsingOAuth(value.provider);
+      },
     },
+    sessionManager,
     ui: {
       confirm: options.confirm ?? (async () => true),
       notify: (message: string, kind: string) => notices.push({ message, kind }),
       setStatus: (key: string, value?: string) => statuses.push({ key, value }),
     },
   } as any;
-  registerNativeFastMode(pi);
+  const registration = registerNativeFastMode(pi);
   const emit = async (name: string, event: any = {}) => {
-    let value;
+    let value: unknown;
     for (const handler of hooks.get(name) ?? []) value = await handler(event, ctx);
     return value;
   };
-  return { command, ctx, entries, notices, statuses, emit, runtime };
+  return {
+    runtime,
+    command,
+    ctx,
+    notices,
+    statuses,
+    emit,
+    registration,
+    get entries() {
+      return sessionManager.getBranch();
+    },
+  };
+}
+
+async function createOfflineSession(
+  dir: string,
+  model: any,
+  manager: SessionManager,
+  options: { oauth?: boolean; extensions?: InlineExtension[] } = {},
+) {
+  const loader = new DefaultResourceLoader({
+    cwd: dir,
+    agentDir: dir,
+    noExtensions: true,
+    noSkills: true,
+    noThemes: true,
+    noPromptTemplates: true,
+    extensionFactories: [
+      {
+        name: "native-fast",
+        factory: (pi) => {
+          registerNativeFastMode(pi);
+        },
+      },
+      ...(options.extensions ?? []),
+    ],
+  });
+  await loader.reload();
+  const runtime = await ModelRuntime.create({
+    authPath: join(dir, "auth.json"),
+    modelsPath: null,
+    refreshOnCreate: false,
+  });
+  runtime.hasConfiguredAuth = () => true;
+  runtime.isUsingOAuth = () => options.oauth ?? false;
+  runtime.getAuth = (async () => ({ auth: { apiKey: "sk-offline-key" } })) as any;
+  return (
+    await createAgentSession({
+      cwd: dir,
+      agentDir: dir,
+      resourceLoader: loader,
+      modelRuntime: runtime,
+      model,
+      sessionManager: manager,
+      tools: [],
+    })
+  ).session;
 }
 
 function sse(serviceTier: string | undefined) {
@@ -120,6 +192,13 @@ const CODEX_TOKEN = [
   "x",
 ].join(".");
 
+async function decodeRequestBody(init: any) {
+  const bytes = Buffer.from(await new Response(init.body).arrayBuffer());
+  const json =
+    init.headers.get("content-encoding") === "zstd" ? zstdDecompressSync(bytes).toString() : bytes.toString();
+  return JSON.parse(json);
+}
+
 async function wirePayload(
   h: ReturnType<typeof harness>,
   model = h.ctx.model,
@@ -133,7 +212,7 @@ async function wirePayload(
   } = {},
 ): Promise<any> {
   let body: any;
-  await h.runtime
+  await h.ctx.modelRegistry.runtime
     .streamSimple(
       model,
       { systemPrompt: "sys", messages: [{ role: "user", content: "hi", timestamp: 1 }], tools: [] },
@@ -145,10 +224,7 @@ async function wirePayload(
         onPayload: options.onPayload,
         onProviderStreamEvent: options.onProviderStreamEvent,
         fetch: (async (_url: any, init: any) => {
-          const bytes = Buffer.from(await new Response(init.body).arrayBuffer());
-          body = JSON.parse(
-            init.headers.get("content-encoding") === "zstd" ? zstdDecompressSync(bytes).toString() : bytes.toString(),
-          );
+          body = await decodeRequestBody(init);
           return sse(options.responseTier === null ? undefined : (options.responseTier ?? "priority"));
         }) as typeof fetch,
       },
@@ -169,8 +245,7 @@ test("Codex fast settings preserve runtime system prompt and tools", async () =>
       });
       runtime.isUsingOAuth = () => true;
       runtime.getAuth = (async () => ({ auth: { apiKey: CODEX_TOKEN } })) as any;
-      const h = harness(model, { mode: "print", accept: true });
-      h.ctx.modelRegistry.runtime = runtime;
+      const h = harness(model, { mode: "print", accept: true, runtime });
       await h.command.handler(action, h.ctx);
       let body: any;
       const response = await runtime
@@ -185,12 +260,7 @@ test("Codex fast settings preserve runtime system prompt and tools", async () =>
             transport: "sse",
             sessionId: "session-a",
             fetch: (async (_url: any, init: any) => {
-              const bytes = Buffer.from(await new Response(init.body).arrayBuffer());
-              body = JSON.parse(
-                init.headers.get("content-encoding") === "zstd"
-                  ? zstdDecompressSync(bytes).toString()
-                  : bytes.toString(),
-              );
+              body = await decodeRequestBody(init);
               return sse(action === "on" ? "priority" : "default");
             }) as typeof fetch,
           },
@@ -233,6 +303,36 @@ for (const provider of ["openai", "openai-codex"] as const) {
     }
   });
 }
+
+test("a shared runtime rejects competing authorizations and restores only after its last owner leaves", async () => {
+  const model = getModel("openai", "gpt-5.3-codex")!;
+  const runtime = providerRuntime();
+  const first = harness(model, { mode: "print", accept: true, runtime });
+  const second = harness(model, { mode: "print", accept: true, runtime });
+  const originalDescriptor = Object.getOwnPropertyDescriptor(runtime, "streamSimple");
+  let preparations = 0;
+  const prepare = runtime.prepareRequest;
+  runtime.prepareRequest = async (...args) => {
+    preparations++;
+    return prepare(...args);
+  };
+
+  await first.command.handler("on", first.ctx);
+  const guard = runtime.streamSimple;
+  await second.command.handler("on", second.ctx);
+  expect(runtime.streamSimple).toBe(guard);
+  expect(await wirePayload(first)).toBeUndefined();
+  expect(preparations).toBe(0);
+
+  await second.emit("session_shutdown");
+  expect(runtime.streamSimple).toBe(guard);
+  expect((await wirePayload(first)).service_tier).toBe("priority");
+  expect(preparations).toBe(1);
+
+  await first.emit("session_shutdown");
+  expect(Object.getOwnPropertyDescriptor(runtime, "streamSimple")).toEqual(originalDescriptor);
+  expect((await wirePayload(first)).service_tier).toBeUndefined();
+});
 
 test("native fast rejects unofficial provider and endpoint routing", () => {
   const custom = { ...getModel("openai", "gpt-5.3-codex")!, provider: "gateway" };
@@ -290,6 +390,8 @@ test("enabling and restoring fast fail visibly without the pinned runtime seam",
   expect(h.entries).toEqual([]);
   expect(h.notices.at(-1)).toMatchObject({ kind: "error" });
   expect(h.notices.at(-1).message).toContain("pinned Pi 1.1.0");
+  expect(() => h.registration.setWithCostConsent(true)).toThrow("pinned Pi 1.1.0");
+  expect(h.entries).toEqual([]);
 
   h.entries.push({
     type: "custom",
@@ -308,19 +410,41 @@ test("enabling and restoring fast fail visibly without the pinned runtime seam",
   await h.emit("session_start");
   expect(h.notices.at(-1)).toMatchObject({ kind: "error" });
   expect(h.notices.at(-1).message).toContain("compatibility seam is missing");
+
+  const savedFast = process.env[NATIVE_FAST_CHILD_ENV];
+  const savedDepth = process.env.BRUV_SUBAGENT_DEPTH;
+  try {
+    process.env[NATIVE_FAST_CHILD_ENV] = "1";
+    process.env.BRUV_SUBAGENT_DEPTH = "1";
+    const child = harness(model, { mode: "print", accept: true });
+    child.ctx.modelRegistry.runtime = undefined;
+    await child.emit("session_start");
+    expect(child.entries).toEqual([]);
+  } finally {
+    if (savedFast === undefined) delete process.env[NATIVE_FAST_CHILD_ENV];
+    else process.env[NATIVE_FAST_CHILD_ENV] = savedFast;
+    if (savedDepth === undefined) delete process.env.BRUV_SUBAGENT_DEPTH;
+    else process.env.BRUV_SUBAGENT_DEPTH = savedDepth;
+  }
 });
 
 test("consent is rejected if session, branch, or model changes while confirmation is open", async () => {
   const model = getModel("openai-codex", "gpt-5.6-luna")!;
-  let release!: (accepted: boolean) => void;
-  const h = harness(model, { confirm: () => new Promise((resolve) => (release = resolve)) });
+  const confirming = Promise.withResolvers<void>();
+  const decision = Promise.withResolvers<boolean>();
+  const h = harness(model, {
+    confirm: () => {
+      confirming.resolve();
+      return decision.promise;
+    },
+  });
   h.ctx.sessionManager.getLeafId = () => "leaf-a";
   const pending = h.command.handler("on", h.ctx);
-  await Promise.resolve();
+  await confirming.promise;
   h.ctx.model = getModel("openai-codex", "gpt-5.5")!;
   h.ctx.sessionManager.getSessionId = () => "session-b";
   h.ctx.sessionManager.getLeafId = () => "leaf-b";
-  release(true);
+  decision.resolve(true);
   await pending;
   expect(h.entries).toEqual([]);
   expect(h.notices.at(-1).message).toContain("became stale");
@@ -359,7 +483,7 @@ test("actual Pi streamSimple OpenAI serialization carries Codex-compatible prior
   const h = harness(model, { mode: "print", accept: true });
   await h.command.handler("on", h.ctx);
   let body: any;
-  const result = await h.runtime
+  const result = await h.ctx.modelRegistry.runtime
     .streamSimple(
       model,
       { systemPrompt: "sys", messages: [{ role: "user", content: "hi", timestamp: 1 }], tools: [] },
@@ -387,14 +511,7 @@ test("actual Pi streamSimple Codex SSE serialization carries priority and preser
   const h = harness(model, { mode: "print", accept: true });
   await h.command.handler("on", h.ctx);
   let body: any;
-  const token = [
-    Buffer.from("{}").toString("base64url"),
-    Buffer.from(JSON.stringify({ "https://api.openai.com/auth": { chatgpt_account_id: "acct" } })).toString(
-      "base64url",
-    ),
-    "x",
-  ].join(".");
-  await h.runtime
+  await h.ctx.modelRegistry.runtime
     .streamSimple(
       model,
       normalizeContext({
@@ -403,14 +520,11 @@ test("actual Pi streamSimple Codex SSE serialization carries priority and preser
         tools: [],
       }),
       {
-        apiKey: token,
+        apiKey: CODEX_TOKEN,
         transport: "sse",
         reasoning: "low",
         fetch: (async (_url: any, init: any) => {
-          const bytes = Buffer.from(await new Response(init.body).arrayBuffer());
-          body = JSON.parse(
-            init.headers.get("content-encoding") === "zstd" ? zstdDecompressSync(bytes).toString() : bytes.toString(),
-          );
+          body = await decodeRequestBody(init);
           return sse("priority");
         }) as typeof fetch,
         sessionId: "session-a",
@@ -456,14 +570,7 @@ test("actual Pi streamSimple Codex WebSocket frame carries priority", async () =
   }
   try {
     globalThis.WebSocket = FixtureWebSocket as any;
-    const token = [
-      Buffer.from("{}").toString("base64url"),
-      Buffer.from(JSON.stringify({ "https://api.openai.com/auth": { chatgpt_account_id: "acct" } })).toString(
-        "base64url",
-      ),
-      "x",
-    ].join(".");
-    const response = await h.runtime
+    const response = await h.ctx.modelRegistry.runtime
       .streamSimple(
         model,
         normalizeContext({
@@ -472,7 +579,7 @@ test("actual Pi streamSimple Codex WebSocket frame carries priority", async () =
           tools: [],
         }),
         {
-          apiKey: token,
+          apiKey: CODEX_TOKEN,
           transport: "websocket",
           sessionId: "session-a",
         },
@@ -502,49 +609,29 @@ test("actual ModelRuntime request snapshot ignores model changes during delayed 
         refreshOnCreate: false,
       });
       runtime.isUsingOAuth = () => false;
-      let release!: () => void;
+      const preparing = Promise.withResolvers<void>();
+      const resumeAuth = Promise.withResolvers<void>();
       runtime.getAuth = (async () => {
-        await new Promise<void>((resolve) => (release = resolve));
+        preparing.resolve();
+        await resumeAuth.promise;
         return { auth: { apiKey: "sk-offline-key" } };
       }) as any;
-      const entries: any[] = [
-        {
-          type: "custom",
-          customType: NATIVE_FAST_ENTRY,
-          data: {
-            version: 2,
-            oauth: false,
-            sessionId: "session-a",
-            provider: authorizedModel.provider,
-            model: authorizedModel.id,
-            enabled: true,
-            costAcknowledged: true,
-            timestamp: 1,
-          },
+      const h = harness(base, { runtime });
+      h.entries.push({
+        type: "custom",
+        customType: NATIVE_FAST_ENTRY,
+        data: {
+          version: 2,
+          oauth: false,
+          sessionId: "session-a",
+          provider: authorizedModel.provider,
+          model: authorizedModel.id,
+          enabled: true,
+          costAcknowledged: true,
+          timestamp: 1,
         },
-      ];
-      const hooks = new Map<string, any[]>();
-      const pi = {
-        registerFlag() {},
-        getFlag: () => false,
-        registerCommand() {},
-        on(name: string, handler: any) {
-          hooks.set(name, [...(hooks.get(name) ?? []), handler]);
-        },
-        appendEntry() {},
-      } as any;
-      const ctx = {
-        model: base,
-        modelRegistry: { runtime, isUsingOAuth: () => false },
-        sessionManager: {
-          getSessionId: () => "session-a",
-          getBranch: () => entries,
-          getEntries: () => entries,
-        },
-        ui: { notify() {}, setStatus() {} },
-      } as any;
-      registerNativeFastMode(pi);
-      for (const handler of hooks.get("session_start") ?? []) await handler({}, ctx);
+      });
+      await h.emit("session_start");
       let body: any;
       globalThis.fetch = (async (_url: any, init: any) => {
         body = JSON.parse(init.body);
@@ -557,13 +644,13 @@ test("actual ModelRuntime request snapshot ignores model changes during delayed 
           { sessionId: "session-a", onPayload: async (payload) => payload },
         )
         .result();
-      while (!release) await Promise.resolve();
-      ctx.model = other;
-      release();
+      await preparing.promise;
+      h.ctx.model = other;
+      resumeAuth.resolve();
       await pending;
       expect(body.model).toBe(base.id);
       expect(body.service_tier).toBe(authorizedModel === base ? "priority" : undefined);
-      for (const handler of hooks.get("session_shutdown") ?? []) await handler({}, ctx);
+      await h.emit("session_shutdown");
     }
   } finally {
     globalThis.fetch = originalFetch;
@@ -589,54 +676,23 @@ test("real AgentSession ModelRuntime guard survives swallowed hook throws and st
       costAcknowledged: true,
       timestamp: 1,
     });
-    const loader = new DefaultResourceLoader({
-      cwd: dir,
-      agentDir: dir,
-      noExtensions: true,
-      noSkills: true,
-      noThemes: true,
-      noPromptTemplates: true,
-      extensionFactories: [
-        {
-          name: "native-fast",
-          factory: (pi) => {
-            registerNativeFastMode(pi);
-          },
-        },
-        {
-          name: "late-tier-mutator",
-          factory: (pi) =>
-            pi.on("before_provider_request", (event) => {
-              (event.payload as any).service_tier = "default";
-              throw new Error("swallowed late hook failure");
-            }),
-        },
-      ],
-    });
-    await loader.reload();
-    const runtime = await ModelRuntime.create({
-      authPath: join(dir, "auth.json"),
-      modelsPath: null,
-      refreshOnCreate: false,
-    });
-    runtime.hasConfiguredAuth = () => true;
-    runtime.isUsingOAuth = () => false;
-    runtime.getAuth = (async () => ({ auth: { apiKey: "sk-offline-key" } })) as any;
     globalThis.fetch = (async () => {
       dispatches++;
       return sse("fast");
     }) as unknown as typeof fetch;
-    session = (
-      await createAgentSession({
-        cwd: dir,
-        agentDir: dir,
-        resourceLoader: loader,
-        modelRuntime: runtime,
-        model,
-        sessionManager: manager,
-        tools: [],
-      })
-    ).session;
+    session = await createOfflineSession(dir, model, manager, {
+      extensions: [
+        {
+          name: "late-tier-mutator",
+          factory: (pi) => {
+            pi.on("before_provider_request", (event) => {
+              (event.payload as any).service_tier = "default";
+              throw new Error("swallowed late hook failure");
+            });
+          },
+        },
+      ],
+    });
     await session.bindExtensions({ mode: "print" });
     await session.prompt("prove no dispatch");
     expect(dispatches).toBe(0);
@@ -679,46 +735,11 @@ for (const scenario of ["corrupt-record", "wrong-auth", "unsupported-endpoint"] 
         costAcknowledged: true,
         timestamp: 1,
       });
-      const loader = new DefaultResourceLoader({
-        cwd: dir,
-        agentDir: dir,
-        noExtensions: true,
-        noSkills: true,
-        noThemes: true,
-        noPromptTemplates: true,
-        extensionFactories: [
-          {
-            name: "native-fast",
-            factory: (pi) => {
-              registerNativeFastMode(pi);
-            },
-          },
-        ],
-      });
-      await loader.reload();
-      const runtime = await ModelRuntime.create({
-        authPath: join(dir, "auth.json"),
-        modelsPath: null,
-        refreshOnCreate: false,
-      });
-      runtime.hasConfiguredAuth = () => true;
-      runtime.isUsingOAuth = () => scenario === "wrong-auth";
-      runtime.getAuth = (async () => ({ auth: { apiKey: "sk-offline-key" } })) as any;
       globalThis.fetch = (async () => {
         dispatches++;
         return sse("fast");
       }) as unknown as typeof fetch;
-      session = (
-        await createAgentSession({
-          cwd: dir,
-          agentDir: dir,
-          resourceLoader: loader,
-          modelRuntime: runtime,
-          model,
-          sessionManager: manager,
-          tools: [],
-        })
-      ).session;
+      session = await createOfflineSession(dir, model, manager, { oauth: scenario === "wrong-auth" });
       await session.bindExtensions({ mode: "print" });
       await session.prompt("must fail closed");
       expect(dispatches).toBe(0);
@@ -755,7 +776,13 @@ test("fast refusals and the concrete tier guard emit privacy-bounded static diag
 
 test("fast checkpoint append failure is a controlled refusal with no setting", async () => {
   const model = getModel("openai", "gpt-5.3-codex")!;
-  const h = harness(model, { mode: "print", accept: true, appendFails: true });
+  const h = harness(model, {
+    mode: "print",
+    accept: true,
+    appendEntry() {
+      throw new Error("private persistence detail");
+    },
+  });
   await h.command.handler("on", h.ctx);
   expect(h.entries).toEqual([]);
   expect(h.notices.at(-1)).toMatchObject({ kind: "error" });
@@ -769,39 +796,20 @@ test("append-then-throw restores the active leaf and cannot enable premium fast 
   manager.appendMessage({ role: "user", content: "before", timestamp: 1 });
   const priorLeaf = manager.getLeafId();
   const model = getModel("openai", "gpt-5.3-codex")!;
-  let command: any;
-  const runtime: any = {
-    isUsingOAuth: () => false,
-    prepareRequest: async () => {
-      throw new Error("not used");
-    },
-    streamSimple: () => {
-      throw new Error("not used");
-    },
-  };
-  const registration = registerNativeFastMode({
-    registerFlag() {},
-    getFlag: () => true,
-    registerCommand: (_name: string, value: any) => (command = value),
-    on() {},
-    appendEntry: (type: string, data: any) => {
+  const h = harness(model, {
+    mode: "print",
+    accept: true,
+    sessionManager: manager,
+    appendEntry(type, data) {
       manager.appendCustomEntry(type, data);
       throw new Error("private persistence detail");
     },
-  } as any);
-  const notices: any[] = [];
-  const ctx: any = {
-    mode: "print",
-    model,
-    sessionManager: manager,
-    modelRegistry: { runtime, isUsingOAuth: () => false },
-    ui: { notify: (message: string, kind: string) => notices.push({ message, kind }), setStatus() {} },
-  };
-  await command.handler("on", ctx);
+  });
+  await h.command.handler("on", h.ctx);
   expect(manager.getLeafId()).toBe(priorLeaf);
-  expect(registration.currentSetting(ctx)).toBeUndefined();
+  expect(h.registration.currentSetting(h.ctx)).toBeUndefined();
   expect(manager.getBranch().some((entry: any) => entry.customType === NATIVE_FAST_ENTRY)).toBe(false);
-  expect(JSON.stringify(notices)).not.toContain("private persistence detail");
+  expect(JSON.stringify(h.notices)).not.toContain("private persistence detail");
 });
 
 test("append-then-throw while opting out keeps prior premium consent unusable", async () => {
@@ -818,40 +826,22 @@ test("append-then-throw while opting out keeps prior premium consent unusable", 
     timestamp: 1,
   });
   const priorLeaf = manager.getLeafId();
-  let command: any;
   let failWrite = true;
-  const runtime: any = {
-    isUsingOAuth: () => false,
-    prepareRequest: async () => {
-      throw new Error("not used");
-    },
-    streamSimple: () => {
-      throw new Error("not used");
-    },
-  };
-  const registration = registerNativeFastMode({
-    registerFlag() {},
-    getFlag: () => true,
-    registerCommand: (_name: string, value: any) => (command = value),
-    on() {},
-    appendEntry: (type: string, data: any) => {
+  const h = harness(model, {
+    mode: "print",
+    accept: true,
+    sessionManager: manager,
+    appendEntry(type, data) {
       manager.appendCustomEntry(type, data);
       if (failWrite) throw new Error("disk");
     },
-  } as any);
-  const ctx: any = {
-    mode: "print",
-    model,
-    sessionManager: manager,
-    modelRegistry: { runtime, isUsingOAuth: () => false },
-    ui: { notify() {}, setStatus() {} },
-  };
-  await command.handler("off", ctx);
+  });
+  await h.command.handler("off", h.ctx);
   expect(manager.getLeafId()).toBe(priorLeaf);
-  expect(registration.currentSetting(ctx)).toMatchObject({ enabled: false, costAcknowledged: false });
+  expect(h.registration.currentSetting(h.ctx)).toMatchObject({ enabled: false, costAcknowledged: false });
   failWrite = false;
-  await command.handler("on", ctx);
-  expect(registration.currentSetting(ctx)).toMatchObject({ enabled: true, costAcknowledged: true });
+  await h.command.handler("on", h.ctx);
+  expect(h.registration.currentSetting(h.ctx)).toMatchObject({ enabled: true, costAcknowledged: true });
 });
 
 // All three failure paths use this same best-effort view restoration.
@@ -909,6 +899,104 @@ test("fast leaves raw response-tier events available to existing observers", asy
   });
   expect(completed).toEqual(["default"]);
   expect(h.statuses.at(-1).value).toBe(" fast on");
+});
+
+test("host, command and inherited Fast selections publish the same model-bound consent", async () => {
+  const savedFast = process.env[NATIVE_FAST_CHILD_ENV];
+  const savedDepth = process.env.BRUV_SUBAGENT_DEPTH;
+  try {
+    const model = getModel("openai-codex", "gpt-5.6-luna")!;
+    const host = harness(model);
+    await host.emit("model_select");
+    host.registration.setWithCostConsent(true);
+    const command = harness(model, { mode: "print", accept: true });
+    await command.command.handler("on", command.ctx);
+    process.env[NATIVE_FAST_CHILD_ENV] = "1";
+    process.env.BRUV_SUBAGENT_DEPTH = "1";
+    const child = harness(model);
+    await child.emit("session_start");
+    const expected = {
+      version: 2,
+      oauth: true,
+      sessionId: "session-a",
+      provider: model.provider,
+      model: model.id,
+      enabled: true,
+      costAcknowledged: true,
+      timestamp: expect.any(Number),
+    };
+    expect(host.entries[0].data).toEqual(expected);
+    expect(command.entries[0].data).toEqual(expected);
+    expect(child.entries[0].data).toEqual(expected);
+    host.registration.setWithCostConsent(false);
+    expect(host.registration.currentSetting(host.ctx)).toMatchObject({ enabled: false, costAcknowledged: false });
+  } finally {
+    if (savedFast === undefined) delete process.env[NATIVE_FAST_CHILD_ENV];
+    else process.env[NATIVE_FAST_CHILD_ENV] = savedFast;
+    if (savedDepth === undefined) delete process.env.BRUV_SUBAGENT_DEPTH;
+    else process.env.BRUV_SUBAGENT_DEPTH = savedDepth;
+  }
+});
+
+test("host opt-out persistence failure throws but suppresses prior premium consent", async () => {
+  const manager = SessionManager.inMemory();
+  const model = getModel("openai", "gpt-5.3-codex")!;
+  let failWrite = false;
+  const h = harness(model, {
+    sessionManager: manager,
+    appendEntry(type, data) {
+      manager.appendCustomEntry(type, data);
+      if (failWrite) throw new Error("private persistence detail");
+    },
+  });
+  await h.emit("model_select");
+  h.registration.setWithCostConsent(true);
+  const priorLeaf = manager.getLeafId();
+  failWrite = true;
+  expect(() => h.registration.setWithCostConsent(false)).toThrow(
+    "Could not persist native fast mode; the requested setting was not activated.",
+  );
+  expect(manager.getLeafId()).toBe(priorLeaf);
+  expect(nativeFastEnabled(h.ctx)).toBe(false);
+  expect(h.registration.currentSetting(h.ctx)).toMatchObject({ enabled: false, costAcknowledged: false });
+});
+
+test("inherited Fast append failure rolls back, reports startup refusal and is not retried", async () => {
+  const savedFast = process.env[NATIVE_FAST_CHILD_ENV];
+  const savedDepth = process.env.BRUV_SUBAGENT_DEPTH;
+  try {
+    process.env[NATIVE_FAST_CHILD_ENV] = "1";
+    process.env.BRUV_SUBAGENT_DEPTH = "1";
+    const manager = SessionManager.inMemory();
+    manager.appendMessage({ role: "user", content: "before", timestamp: 1 });
+    const priorLeaf = manager.getLeafId();
+    let attempts = 0;
+    const h = harness(getModel("openai", "gpt-5.3-codex")!, {
+      sessionManager: manager,
+      appendEntry(type, data) {
+        attempts++;
+        manager.appendCustomEntry(type, data);
+        throw new Error("private persistence detail");
+      },
+    });
+    await h.emit("session_start");
+    expect(manager.getLeafId()).toBe(priorLeaf);
+    expect(h.registration.currentSetting(h.ctx)).toBeUndefined();
+    expect(h.notices.at(-1)).toMatchObject({ kind: "error" });
+    expect(h.statuses.at(-1)).toEqual({ key: "bruv-native-fast", value: undefined });
+    expect(inspectDiagnostics(manager).records.at(-1)).toMatchObject({
+      code: FAST_CHECKPOINT_PERSIST_FAILED,
+      outcome: "failed",
+    });
+    expect(JSON.stringify(h.notices)).not.toContain("private persistence detail");
+    await h.emit("session_start");
+    expect(attempts).toBe(1);
+  } finally {
+    if (savedFast === undefined) delete process.env[NATIVE_FAST_CHILD_ENV];
+    else process.env[NATIVE_FAST_CHILD_ENV] = savedFast;
+    if (savedDepth === undefined) delete process.env.BRUV_SUBAGENT_DEPTH;
+    else process.env.BRUV_SUBAGENT_DEPTH = savedDepth;
+  }
 });
 
 test("parent fast consent bootstraps a distinct supported child and its descendants", async () => {

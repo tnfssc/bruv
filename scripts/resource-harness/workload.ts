@@ -5,8 +5,10 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { SessionManager } from "@earendil-works/pi-coding-agent";
 import { NativeHistory } from "../../src/claude-compat/history";
+import { nativeAssistantUsage } from "../../src/claude-compat/message-usage";
 import { bindNativeTasks, type ChildEntrySource } from "../../src/claude-compat/task-binding";
-import { type ChildBody, nativeTaskId } from "../../src/claude-compat/task-projection";
+import { writeNativeChildFrame } from "../../src/claude-compat/task-child-journal";
+import type { ChildBody } from "../../src/claude-compat/task-projection";
 import {
   disposeDiskBackedSessionManager,
   getDiskBackedEntryMetadata,
@@ -104,12 +106,7 @@ function translateChildEntry({ entry }: ChildEntrySource): ChildBody[] {
         content: message.content,
         stop_reason: "end_turn",
         stop_sequence: null,
-        usage: {
-          input_tokens: message.usage.input,
-          output_tokens: message.usage.output,
-          cache_read_input_tokens: message.usage.cacheRead,
-          cache_creation_input_tokens: message.usage.cacheWrite,
-        },
+        usage: nativeAssistantUsage(message),
       },
     },
   ];
@@ -254,23 +251,7 @@ async function main(options: Options) {
       root: fixture.root,
       emit: () => {}, // Do not retain wire frames: no artificial transport backlog.
       translateChildEntry,
-      writeChildFrame: async ({ link, entry }, frame) => {
-        if (frame.type === "stream_event") return;
-        // Match runtime.ts: ask the real history owner for each derived child write.
-        const writer = await native.child({
-          taskId: nativeTaskId(link),
-          sourceSessionId: link.child.sourceSessionId,
-          sourceCallId: link.launchToolUseId,
-        });
-        const written = await writer.appendWithResult({
-          sourceMessageId: entry.id,
-          type: frame.type,
-          message: frame.message,
-          timestamp: entry.timestamp,
-          uuid: frame.uuid,
-        });
-        return written.appended;
-      },
+      writeChildFrame: (source, frame) => writeNativeChildFrame(native, source, frame),
       diagnostic: (message) => {
         throw new Error(message);
       },

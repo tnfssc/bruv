@@ -65,11 +65,36 @@ export function replaceMainAgentGuidance(prompt: string, mode: MainAgentMode, ow
  * project context, skills, and cwd.
  */
 export function bruvSystemPrompt(): string {
-  const guidelines = executeGuidance;
-  return identity.trimEnd() + "\n\nGuidelines:\n" + guidelines.map((line) => "- " + line).join("\n");
+  return `${identity.trimEnd()}\n\nGuidelines:\n${reference.trimEnd()}`;
 }
 
 /** Return true only for Bruv's injected base. All other custom prompts belong to the user. */
 export function isBruvSystemPrompt(options: Pick<BuildSystemPromptOptions, "customPrompt"> | undefined): boolean {
   return options?.customPrompt === bruvSystemPrompt();
+}
+
+function hasUserSystemPrompt(options: Pick<BuildSystemPromptOptions, "customPrompt"> | undefined): boolean {
+  return !!options?.customPrompt && !isBruvSystemPrompt(options);
+}
+
+/** Pi has already assembled context, skills, cwd and append text. Only add Bruv's framing. */
+export function withMainAgentGuidance(
+  prompt: string,
+  options: Pick<BuildSystemPromptOptions, "customPrompt"> | undefined,
+  modeGuidance: () => string,
+): string {
+  // A root custom base owns the entire frame, including whether it has a mode region.
+  if (hasUserSystemPrompt(options)) return prompt;
+  return `${prompt}\n\n${collaborationGuidance()}\n\n${modeGuidance()}`;
+}
+
+export function withSubagentGuidance(
+  prompt: string,
+  options: Pick<BuildSystemPromptOptions, "customPrompt"> | undefined,
+  role: string,
+): string {
+  // A worker keeps its role on every base; a custom base still owns collaboration policy.
+  const roleGuidance = subagentGuidance(role);
+  if (hasUserSystemPrompt(options)) return `${prompt}\n\n${roleGuidance}`;
+  return `${prompt}\n\n${collaborationGuidance()}\n\n${roleGuidance}`;
 }

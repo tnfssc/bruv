@@ -10,6 +10,8 @@ import {
   SessionManager,
   SettingsManager,
 } from "@earendil-works/pi-coding-agent";
+import { latestShakeRecord } from "../src/agent/manual-shake";
+import { NATIVE_FAST_ENTRY } from "../src/agent/native-fast-mode";
 import {
   attachDiagnosticSink,
   diagnosticRecorder,
@@ -19,9 +21,7 @@ import {
   scanDiagnosticRecords,
 } from "../src/diagnostics";
 import { registerOperationDiagnostics } from "../src/diagnostics-extension";
-import { latestShakeRecord } from "../src/agent/manual-shake";
 import { MANUAL_SHAKE_ENTRY } from "../src/history/shake-record";
-import { NATIVE_FAST_ENTRY } from "../src/agent/native-fast-mode";
 
 const valid = { component: "provider", code: "provider_failed", outcome: "failed" } as const;
 const entry = (data: unknown) => ({ type: "custom", customType: "bruv-diagnostic", data });
@@ -109,6 +109,60 @@ test("ring, durable budget, dedup, throwing and reentrant sinks stay bounded", (
   recordDiagnostic(reentrantOwner, valid);
   expect(reentrantWrites).toBe(1);
   expect(inspectDiagnostics(reentrantOwner)).toMatchObject({ budgetDropped: 1, dropped: 1 });
+});
+
+test("live observations include failed and duplicate persistence, and remain available after detach", () => {
+  const owner = {};
+  let writes = 0;
+  const detach = attachDiagnosticSink(owner, () => {
+    writes++;
+    throw new Error("disk full");
+  });
+  recordDiagnostic(owner, valid);
+  recordDiagnostic(owner, valid);
+  const beforeDetach = inspectDiagnostics(owner);
+  expect(beforeDetach).toMatchObject({
+    accepted: 2,
+    dropped: 2,
+    invalid: 0,
+    deduplicated: 1,
+    budgetDropped: 0,
+    writeFailures: 1,
+  });
+  expect(beforeDetach.records).toHaveLength(2);
+  detach();
+  recordDiagnostic(owner, { ...valid, count: 1 });
+  expect(writes).toBe(1);
+  expect(inspectDiagnostics(owner)).toMatchObject({ accepted: 3, dropped: 2 });
+  expect(inspectDiagnostics(owner).records).toHaveLength(3);
+  expect(beforeDetach.records).toHaveLength(2);
+  expect(beforeDetach.accepted).toBe(2);
+});
+
+test("reattachment resets the live view, seeds durable dedup, and ignores old detachers", () => {
+  const owner = {};
+  const persisted: any[] = [];
+  const oldDetach = attachDiagnosticSink(owner, (_type, data) => persisted.push(entry(data)));
+  const oldRecorder = diagnosticRecorder(owner);
+  recordDiagnostic(owner, valid);
+  recordDiagnostic(owner, { ...valid, code: "unreviewed" });
+  let writes = 0;
+  attachDiagnosticSink(owner, () => writes++, persisted);
+  expect(inspectDiagnostics(owner)).toEqual(inspectDiagnostics({}));
+  oldDetach();
+  oldRecorder({ ...valid, count: 2 });
+  recordDiagnostic(owner, valid);
+  recordDiagnostic(owner, { ...valid, count: 1 });
+  expect(writes).toBe(1);
+  expect(inspectDiagnostics(owner)).toMatchObject({
+    accepted: 2,
+    dropped: 1,
+    invalid: 0,
+    deduplicated: 1,
+    budgetDropped: 0,
+    writeFailures: 0,
+  });
+  expect(inspectDiagnostics(owner).records).toHaveLength(2);
 });
 
 test("reload seeds the lifetime durable cap and scoped recorders expire", () => {

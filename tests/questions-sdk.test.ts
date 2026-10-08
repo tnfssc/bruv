@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdtemp } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { createAssistantMessageEventStream, getModel } from "@earendil-works/pi-ai/compat";
@@ -13,47 +13,53 @@ import {
 import { registerQuestionRuntime } from "../src/questions/runtime";
 import { registerQuestions } from "../src/questions/extension";
 
+// Keep provider/auth stubbing separate from the real SDK command and persistence path.
+async function createOfflineModelRuntime(dir: string, contexts: string[]) {
+  const model = getModel("anthropic", "claude-sonnet-4-5")!;
+  const modelRuntime = await ModelRuntime.create({
+    authPath: join(dir, "auth.json"),
+    modelsPath: null,
+    refreshOnCreate: false,
+  });
+  modelRuntime.hasConfiguredAuth = () => true;
+  modelRuntime.getAuth = (async () => ({ auth: { apiKey: "offline" } })) as any;
+  const stream = (_model: any, context: any) => {
+    contexts.push(JSON.stringify(context.messages));
+    const message: any = {
+      role: "assistant",
+      api: model.api,
+      provider: model.provider,
+      model: model.id,
+      content: [{ type: "text", text: contexts.length === 1 ? "Independent work complete" : "Saved answer used" }],
+      stopReason: "stop",
+      usage: {
+        input: 1,
+        output: 1,
+        cacheRead: 0,
+        cacheWrite: 0,
+        totalTokens: 2,
+        cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: 0 },
+      },
+      timestamp: Date.now(),
+    };
+    const events = createAssistantMessageEventStream();
+    queueMicrotask(() => {
+      events.push({ type: "done", reason: "stop", message });
+      events.end(message);
+    });
+    return events;
+  };
+  modelRuntime.stream = stream as any;
+  modelRuntime.streamSimple = stream as any;
+  return { model, modelRuntime };
+}
+
 test("real Pi command delivers saved reply in one new turn without a visible metadata bubble", async () => {
   const dir = await mkdtemp(join(tmpdir(), "bruv-questions-sdk-"));
   let session: any;
   try {
-    const model = getModel("anthropic", "claude-sonnet-4-5")!;
-    const modelRuntime = await ModelRuntime.create({
-      authPath: join(dir, "auth.json"),
-      modelsPath: null,
-      refreshOnCreate: false,
-    });
-    modelRuntime.hasConfiguredAuth = () => true;
-    modelRuntime.getAuth = (async () => ({ auth: { apiKey: "offline" } })) as any;
-    const contexts: any[] = [];
-    const stream = (_model: any, context: any) => {
-      contexts.push(JSON.stringify(context.messages));
-      const message: any = {
-        role: "assistant",
-        api: model.api,
-        provider: model.provider,
-        model: model.id,
-        content: [{ type: "text", text: contexts.length === 1 ? "Independent work complete" : "Saved answer used" }],
-        stopReason: "stop",
-        usage: {
-          input: 1,
-          output: 1,
-          cacheRead: 0,
-          cacheWrite: 0,
-          totalTokens: 2,
-          cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: 0 },
-        },
-        timestamp: Date.now(),
-      };
-      const events = createAssistantMessageEventStream();
-      queueMicrotask(() => {
-        events.push({ type: "done", reason: "stop", message });
-        events.end(message);
-      });
-      return events;
-    };
-    modelRuntime.stream = stream as any;
-    modelRuntime.streamSimple = stream as any;
+    const contexts: string[] = [];
+    const { model, modelRuntime } = await createOfflineModelRuntime(dir, contexts);
     const manager = SessionManager.create(dir, join(dir, "sessions"));
     let questions!: ReturnType<typeof registerQuestionRuntime>, ctx: any;
     const loader = new DefaultResourceLoader({
@@ -105,6 +111,6 @@ test("real Pi command delivers saved reply in one new turn without a visible met
     expect(contexts).toHaveLength(2);
   } finally {
     session?.dispose();
-    await rm(dir, { recursive: true, force: true });
+    // Retain this owned fixture directory for isolated batch-gate inspection.
   }
 }, 15000);

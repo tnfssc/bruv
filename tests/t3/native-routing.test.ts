@@ -8,7 +8,7 @@ import * as z from "zod/mini";
 import { JobService } from "../../src/tasks/job-service";
 import { T3LaunchIdentityLedger } from "../../src/t3/tasks/launch-identity";
 import { McpAmbiguousResponseError } from "../../src/t3/tasks/mcp-client";
-import { T3NativeTaskAdapter, T3TaskResultSchema } from "../../src/t3/tasks/native-task";
+import { T3NativeTaskAdapter, T3TaskResultSchema, type T3TaskAdapter } from "../../src/t3/tasks/native-task";
 import { TaskManager } from "../../src/tasks/task-manager";
 import { serveJobBridge } from "../../src/typescript/job-bridge";
 import { getJobRequestIdentity, withJobRequestIdentity } from "../../src/job-delivery";
@@ -446,80 +446,59 @@ test("execute response ACK needs no launch sidecar", async () => {
   }
 });
 
-test("identical concurrent native calls get distinct durable intents and replay by execute ordinal", async () => {
-  const dir = await mkdtemp(join(tmpdir(), "bruv-native-concurrent-replay-"));
-  const sessionFile = join(dir, "parent.jsonl");
-  await writeFile(sessionFile, "");
-  const ledgerPath = sessionFile + ".t3-launches-v1.json";
-  const environment = {
-    T3_MCP_URL: "http://backend.invalid/mcp",
-    T3_MCP_BEARER_TOKEN: "server-issued",
+// Each exchange reopens the service for the same execute invocation. Arrival order
+// is controlled at the bridge boundary, not by changing the logical call ordinals.
+async function executeConcurrentNativeCalls(
+  sessionFile: string,
+  firstCallIndex: number,
+  launch: T3TaskAdapter["launch"],
+) {
+  const manager = new TaskManager(() => {});
+  let releaseFirstCall!: () => void;
+  const firstCallArrived = new Promise<void>((resolve) => {
+    releaseFirstCall = resolve;
+  });
+  const adapter: T3TaskAdapter = {
+    launch(input, signal) {
+      // Unblock the other request only once the first reaches the native adapter.
+      if (getJobRequestIdentity(signal!)!.callIndex === firstCallIndex) releaseFirstCall();
+      return launch(input, signal);
+    },
+    observe: async () => fixture.observe.result,
+    cancel: async () => fixture.cancel.result,
+    list: async () => fixture.list.result,
+    close: async () => {},
   };
-  const originalIds = new Map<number, string>();
-  const replayedIds = new Map<number, string>();
-  const managers: TaskManager[] = [];
-
-  const run = async (replay: boolean) => {
-    const manager = new TaskManager(() => {});
-    managers.push(manager);
-    // Force opposite adapter arrival orders without relying on filesystem timing.
-    const delayedCallIndex = replay ? 2 : 1;
-    let releaseDelayedCall!: () => void;
-    const otherCallArrived = new Promise<void>((resolve) => {
-      releaseDelayedCall = resolve;
-    });
-    const adapter = {
-      async launch(input: any, signal: AbortSignal) {
-        const { callIndex } = getJobRequestIdentity(signal)!;
-        const ids = replay ? replayedIds : originalIds;
-        expect(ids.has(callIndex)).toBe(false);
-        ids.set(callIndex, input.clientRequestId);
-        if (callIndex !== delayedCallIndex) releaseDelayedCall();
-        if (!replay) throw new Error("ambiguous launch response");
-        if (input.clientRequestId !== originalIds.get(callIndex))
-          throw new Error("replay did not recover its durable call identity");
-        return {
-          ...fixture.launch.result,
-          taskId: "native-task-" + callIndex,
-          childThreadId: "child-thread-" + callIndex,
-          profile: "normal",
-          depth: 2,
-        };
-      },
-      observe: async () => fixture.observe.result,
-      cancel: async () => fixture.cancel.result,
-      list: async () => fixture.list.result,
-      close: async () => {},
-    };
-    const service = new JobService(
-      manager,
-      // Scoped routing must not consult this local policy.
-      () => ({ depth: 99, type: "fast" }),
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      environment,
-      () => adapter,
-    );
-    const writes: string[] = [];
-    const stream = new Duplex({
-      read() {},
-      write(chunk, _encoding, callback) {
-        writes.push(chunk.toString("utf8"));
-        callback();
-      },
-    });
-    const bridge = serveJobBridge(
-      stream,
-      async (method, params, signal) => {
-        if (getJobRequestIdentity(signal)!.callIndex === delayedCallIndex) await otherCallArrived;
-        return service.handle(method, params, context(sessionFile), signal);
-      },
-      new AbortController().signal,
-      undefined,
-      "durable-execute-tool-call",
-    );
+  const service = new JobService(
+    manager,
+    // Scoped routing must not consult this local policy.
+    () => ({ depth: 99, type: "fast" }),
+    undefined,
+    undefined,
+    undefined,
+    undefined,
+    { T3_MCP_URL: "http://backend.invalid/mcp", T3_MCP_BEARER_TOKEN: "server-issued" },
+    () => adapter,
+  );
+  const writes: string[] = [];
+  const stream = new Duplex({
+    read() {},
+    write(chunk, _encoding, callback) {
+      writes.push(chunk.toString("utf8"));
+      callback();
+    },
+  });
+  const bridge = serveJobBridge(
+    stream,
+    async (method, params, signal) => {
+      if (getJobRequestIdentity(signal)!.callIndex !== firstCallIndex) await firstCallArrived;
+      return service.handle(method, params, context(sessionFile), signal);
+    },
+    new AbortController().signal,
+    undefined,
+    "durable-execute-tool-call",
+  );
+  try {
     stream.push(
       JSON.stringify({
         id: 1,
@@ -541,20 +520,49 @@ test("identical concurrent native calls get distinct durable intents and replay 
       .split("\n")
       .filter(Boolean)
       .map((line) => JSON.parse(line));
+    return responses;
+  } finally {
     bridge.close(false);
     stream.destroy();
-    return responses;
-  };
+    await manager.shutdown();
+  }
+}
+
+test("identical concurrent native calls get distinct durable intents and replay by execute ordinal", async () => {
+  const dir = await mkdtemp(join(tmpdir(), "bruv-native-concurrent-replay-"));
+  const sessionFile = join(dir, "parent.jsonl");
+  await writeFile(sessionFile, "");
+  const ledgerPath = sessionFile + ".t3-launches-v1.json";
+  const originalIds = new Map<number, string>();
+  const replayedIds = new Map<number, string>();
 
   try {
-    const failed = await run(false);
+    const failed = await executeConcurrentNativeCalls(sessionFile, 2, async (input, signal) => {
+      const { callIndex } = getJobRequestIdentity(signal!)!;
+      expect(originalIds.has(callIndex)).toBe(false);
+      originalIds.set(callIndex, input.clientRequestId);
+      throw new Error("ambiguous launch response");
+    });
     expect(failed).toHaveLength(2);
     expect(failed.every((response) => typeof response.error === "string")).toBe(true);
     expect([...originalIds.keys()]).toEqual([2, 1]);
     expect(new Set(originalIds.values()).size).toBe(2);
     expect(await Bun.file(ledgerPath).exists()).toBe(false);
 
-    const recovered = await run(true);
+    const recovered = await executeConcurrentNativeCalls(sessionFile, 1, async (input, signal) => {
+      const { callIndex } = getJobRequestIdentity(signal!)!;
+      expect(replayedIds.has(callIndex)).toBe(false);
+      replayedIds.set(callIndex, input.clientRequestId);
+      if (input.clientRequestId !== originalIds.get(callIndex))
+        throw new Error("replay did not recover its durable call identity");
+      return {
+        ...fixture.launch.result,
+        taskId: "native-task-" + callIndex,
+        childThreadId: "child-thread-" + callIndex,
+        profile: "normal",
+        depth: 2,
+      };
+    });
     expect([...replayedIds.keys()]).toEqual([1, 2]);
     expect(recovered).toHaveLength(2);
     expect(new Set(recovered.map((response) => response.id)).size).toBe(2);
@@ -575,7 +583,6 @@ test("identical concurrent native calls get distinct durable intents and replay 
       });
     }
   } finally {
-    await Promise.all(managers.map((manager) => manager.shutdown()));
     await rm(dir, { recursive: true, force: true });
   }
 });

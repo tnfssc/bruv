@@ -2,7 +2,7 @@
 import fs from "node:fs/promises";
 import http from "node:http";
 import path from "node:path";
-import { modelId, modelSlug, modelsConfig } from "./model.mjs";
+import { modelId, modelsConfig } from "./model.mjs";
 export const workerProvider = "bruv-worker-acceptance",
   workerId = "local-normal-v1",
   workerSlug = workerProvider + "/" + workerId;
@@ -54,103 +54,119 @@ function objects(messages) {
   return out;
 }
 export async function reply(body, { state }) {
-  const messages = body.messages ?? [],
-    last = messages.findLastIndex((m) => m.role === "user"),
-    user = text(messages[last] ?? {});
-  const tools = messages.slice(last + 1).filter((m) => m.role === "tool"),
-    results = tools.map(text).join("\n");
   if (!body.tools?.length) return content("Local delegation acceptance");
-  if (body.model === workerId) {
-    const scenario = user.includes("APP_CHILD_CANCEL") ? "cancel" : "done";
-    if (!tools.length)
-      return tool(body, "__delegate_task", { task: "Worker must be denied", clientRequestId: "worker-denied" });
-    if (!results.includes("normal workers cannot delegate"))
-      throw Error("Worker delegation was not denied: " + results.slice(0, 250));
-    if (tools.length === 1)
-      return tool(body, "execute", {
-        label: "Attempt local worker delegation",
-        code: 'try { await subagent({prompt:"Must be denied",type:"normal"}); throw Error("unexpected admission"); } catch(e) { console.log("LOCAL_WORKER_DENIAL_REAL",e.message); }',
-      });
-    if (!results.includes("Only orchestrator agents can delegate"))
-      throw Error("Normal local worker delegation admitted: " + results.slice(-300));
-    if (tools.length === 2)
-      return tool(body, "execute", {
-        label: "Inspect scoped child environment",
-        code: 'console.log("CHILD_SCOPE_REAL", JSON.stringify({rootControls:Object.keys(process.env).filter(k=>/^(T3_|BRUV_T3_|BRUV_ROOT_|BRUV_REMOTE_ROOT_)/.test(k)),jobs:(await jobs.list({count:100})).jobs.length}));',
-      });
-    if (!results.includes('"rootControls":[],"jobs":0'))
-      throw Error("Root controls leaked into execute: " + results.slice(-300));
-    if (tools.length === 3) {
-      const until = Date.now() + 10000;
-      let task;
-      while (Date.now() < until) {
-        try {
-          task = JSON.parse(await fs.readFile(path.join(state, scenario + ".task.json"), "utf8"));
-          break;
-        } catch {}
-        await new Promise((r) => setTimeout(r, 50));
-      }
-      if (!task) throw Error("Root launch result unavailable for child-scope check");
-      return tool(body, "__task_status", { taskId: task.taskId });
-    }
-    if (!results.includes("does not belong to thread"))
-      throw Error("Child credential could read root app task: " + results.slice(-400));
-    await fs.writeFile(path.join(state, scenario + ".scope-denial.json"), results);
-    await fs.writeFile(path.join(state, scenario + ".started"), "real normal child model reached scoped execute");
-    const until = Date.now() + 45000;
+  const messages = body.messages ?? [];
+  const lastUser = messages.findLastIndex((m) => m.role === "user");
+  const user = text(messages[lastUser] ?? {});
+  const tools = messages.slice(lastUser + 1).filter((m) => m.role === "tool");
+
+  // Normal children must fail both delegation routes and root-task access.
+  if (body.model === workerId)
+    return checkNormalWorkerScopeAndWait(body, state, tools, user.includes("APP_CHILD_CANCEL") ? "cancel" : "done");
+  if (body.model !== modelId) throw Error("Unexpected app-delegation model: " + body.model);
+
+  // Root tools operate on native app-owned tasks, never Bruv registry jobs.
+  if (user.includes("APP_DELEGATE_"))
+    return launchAppTask(body, state, tools, user.includes("APP_DELEGATE_CANCEL") ? "cancel" : "done");
+  if (user.includes("APP_CANCEL")) return cancelAppTask(body, state, tools);
+  // Native completion delivery wakes this root; task_status inspects/ACKs the saved ID.
+  return acknowledgeAppCompletion(body, state, tools);
+}
+
+// Each operation advances from the current turn's tool transcript, not a separate stage counter.
+async function checkNormalWorkerScopeAndWait(body, state, tools, scenario) {
+  const results = tools.map(text).join("\n");
+  if (!tools.length)
+    return tool(body, "__delegate_task", { task: "Worker must be denied", clientRequestId: "worker-denied" });
+  if (!results.includes("normal workers cannot delegate"))
+    throw Error("Worker delegation was not denied: " + results.slice(0, 250));
+  if (tools.length === 1)
+    return tool(body, "execute", {
+      label: "Attempt local worker delegation",
+      code: 'try { await subagent({prompt:"Must be denied",type:"normal"}); throw Error("unexpected admission"); } catch(e) { console.log("LOCAL_WORKER_DENIAL_REAL",e.message); }',
+    });
+  if (!results.includes("Only orchestrator agents can delegate"))
+    throw Error("Normal local worker delegation admitted: " + results.slice(-300));
+  if (tools.length === 2)
+    return tool(body, "execute", {
+      label: "Inspect scoped child environment",
+      code: 'console.log("CHILD_SCOPE_REAL", JSON.stringify({rootControls:Object.keys(process.env).filter(k=>/^(T3_|BRUV_T3_|BRUV_ROOT_|BRUV_REMOTE_ROOT_)/.test(k)),jobs:(await jobs.list({count:100})).jobs.length}));',
+    });
+  if (!results.includes('"rootControls":[],"jobs":0'))
+    throw Error("Root controls leaked into execute: " + results.slice(-300));
+  if (tools.length === 3) {
+    const until = Date.now() + 10000;
+    let task;
     while (Date.now() < until) {
       try {
-        await fs.access(path.join(state, scenario + ".release"));
-        return content("APP_CHILD_RESULT_REAL_" + scenario);
+        task = JSON.parse(await fs.readFile(path.join(state, scenario + ".task.json"), "utf8"));
+        break;
       } catch {}
-      await new Promise((r) => setTimeout(r, 100));
+      await new Promise((r) => setTimeout(r, 50));
     }
-    throw Error("Child release timed out");
+    if (!task) throw Error("Root launch result unavailable for child-scope check");
+    return tool(body, "__task_status", { taskId: task.taskId });
   }
-  if (body.model !== modelId) throw Error("Unexpected model: " + body.model);
-  if (user.includes("APP_DELEGATE_")) {
-    const scenario = user.includes("APP_DELEGATE_CANCEL") ? "cancel" : "done";
-    if (!tools.length) return tool(body, "__orchestrator_capabilities", {});
-    if (tools.length === 1) {
-      await fs.writeFile(path.join(state, "capabilities.json"), results);
-      if (!results.includes(workerInstance) || !results.includes(workerSlug))
-        throw Error("Real capabilities omit named worker/model");
-      await fs.writeFile(path.join(state, "capabilities.json"), results);
-      return tool(body, "__delegate_task", {
-        task:
-          "APP_CHILD_" +
-          (scenario === "cancel" ? "CANCEL" : "DONE") +
-          ": exercise denied delegation and scoped credentials, then wait for release.",
-        title: "Native normal " + scenario,
-        clientRequestId: "actual-native-" + scenario,
-      });
-    }
-    const task = objects(tools).find((o) => o.taskId && o.childThreadId);
-    if (!task) throw Error("Native server did not return a taskId/childThreadId: " + results.slice(-600));
-    await fs.writeFile(path.join(state, scenario + ".task.json"), JSON.stringify(task));
-    return content("APP_TASK_PENDING_REAL_" + scenario);
+  if (!results.includes("does not belong to thread"))
+    throw Error("Child credential could read root app task: " + results.slice(-400));
+  await fs.writeFile(path.join(state, scenario + ".scope-denial.json"), results);
+  await fs.writeFile(path.join(state, scenario + ".started"), "real normal child model reached scoped execute");
+  const until = Date.now() + 45000;
+  while (Date.now() < until) {
+    try {
+      await fs.access(path.join(state, scenario + ".release"));
+      return content("APP_CHILD_RESULT_REAL_" + scenario);
+    } catch {}
+    await new Promise((r) => setTimeout(r, 100));
   }
-  if (user.includes("APP_CANCEL")) {
-    const task = JSON.parse(await fs.readFile(path.join(state, "cancel.task.json"), "utf8"));
-    if (!tools.length) return tool(body, "__task_cancel", { taskId: task.taskId });
-    if (tools.length === 1) return tool(body, "__task_status", { taskId: task.taskId });
-    const latest = objects(tools).findLast((o) => o.taskId === task.taskId && o.childThreadId && o.status);
-    if (!latest || ["running", "pending", "cancel_requested"].includes(latest.status)) {
-      await new Promise((r) => setTimeout(r, 100));
-      return tool(body, "__task_status", { taskId: task.taskId });
-    }
-    if (latest.status !== "interrupted")
-      throw Error("Unexpected actual native cancellation terminal: " + latest.status);
-    if (!results.includes("ROOT_JOBS_REAL"))
-      return tool(body, "execute", {
-        label: "Inspect actual root job registry",
-        code: 'console.log("ROOT_JOBS_REAL", JSON.stringify((await jobs.list({count:100})).jobs));',
-      });
-    if (!results.includes("ROOT_JOBS_REAL []")) throw Error("App-owned native task duplicated in root Bruv registry");
-    await fs.writeFile(path.join(state, "cancel.status.json"), results);
-    return content("APP_CANCEL_CONFIRMED_REAL");
+  throw Error("Child release timed out");
+}
+
+async function launchAppTask(body, state, tools, scenario) {
+  const results = tools.map(text).join("\n");
+  if (!tools.length) return tool(body, "__orchestrator_capabilities", {});
+  if (tools.length === 1) {
+    await fs.writeFile(path.join(state, "capabilities.json"), results);
+    if (!results.includes(workerInstance) || !results.includes(workerSlug))
+      throw Error("Real capabilities omit named worker/model");
+    return tool(body, "__delegate_task", {
+      task:
+        "APP_CHILD_" +
+        (scenario === "cancel" ? "CANCEL" : "DONE") +
+        ": exercise denied delegation and scoped credentials, then wait for release.",
+      title: "Native normal " + scenario,
+      clientRequestId: "actual-native-" + scenario,
+    });
   }
-  // Completion delivery is native app-owned. The next turn inspects/ACKs the real ID.
+  const task = objects(tools).find((o) => o.taskId && o.childThreadId);
+  if (!task) throw Error("Native server did not return a taskId/childThreadId: " + results.slice(-600));
+  await fs.writeFile(path.join(state, scenario + ".task.json"), JSON.stringify(task));
+  return content("APP_TASK_PENDING_REAL_" + scenario);
+}
+
+async function cancelAppTask(body, state, tools) {
+  const results = tools.map(text).join("\n");
+  const task = JSON.parse(await fs.readFile(path.join(state, "cancel.task.json"), "utf8"));
+  if (!tools.length) return tool(body, "__task_cancel", { taskId: task.taskId });
+  if (tools.length === 1) return tool(body, "__task_status", { taskId: task.taskId });
+  const latest = objects(tools).findLast((o) => o.taskId === task.taskId && o.childThreadId && o.status);
+  if (!latest || ["running", "pending", "cancel_requested"].includes(latest.status)) {
+    await new Promise((r) => setTimeout(r, 100));
+    return tool(body, "__task_status", { taskId: task.taskId });
+  }
+  if (latest.status !== "interrupted") throw Error("Unexpected actual native cancellation terminal: " + latest.status);
+  if (!results.includes("ROOT_JOBS_REAL"))
+    return tool(body, "execute", {
+      label: "Inspect actual root job registry",
+      code: 'console.log("ROOT_JOBS_REAL", JSON.stringify((await jobs.list({count:100})).jobs));',
+    });
+  if (!results.includes("ROOT_JOBS_REAL []")) throw Error("App-owned native task duplicated in root Bruv registry");
+  await fs.writeFile(path.join(state, "cancel.status.json"), results);
+  return content("APP_CANCEL_CONFIRMED_REAL");
+}
+
+async function acknowledgeAppCompletion(body, state, tools) {
+  const results = tools.map(text).join("\n");
   const task = JSON.parse(await fs.readFile(path.join(state, "done.task.json"), "utf8"));
   if (!tools.length) return tool(body, "__task_status", { taskId: task.taskId });
   if (!results.includes("APP_CHILD_RESULT_REAL_done"))

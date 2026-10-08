@@ -31,6 +31,51 @@ const jwt =
   enc({ "https://api.openai.com/auth": { chatgpt_account_id: "offline-test" } }) +
   ".signature";
 
+// The real SDK must serialize and hit the capture sentinel before the fixture
+// supplies a reply. Keep this synthetic stream lifecycle separate from each
+// scenario's payload transforms and observations.
+function streamAfterPayloadCapture(
+  model: Pick<AssistantMessage, "api" | "provider"> & { id: string },
+  capture: () => Promise<AssistantMessage>,
+  replyText: () => string,
+) {
+  const output = createAssistantMessageEventStream();
+  const messageFrame = {
+    role: "assistant" as const,
+    api: model.api,
+    provider: model.provider,
+    model: model.id,
+    usage,
+  };
+  void (async () => {
+    const observed = await capture();
+    if (!observed.errorMessage?.includes(sentinel)) {
+      output.push({ type: "error", reason: "error", error: observed });
+      output.end(observed);
+      return;
+    }
+    const message: AssistantMessage = {
+      ...messageFrame,
+      content: [{ type: "text", text: replyText() }],
+      stopReason: "stop",
+      timestamp: Date.now(),
+    };
+    output.push({ type: "done", reason: "stop", message });
+    output.end(message);
+  })().catch((error) => {
+    const message: AssistantMessage = {
+      ...messageFrame,
+      content: [],
+      stopReason: "error",
+      errorMessage: String(error),
+      timestamp: Date.now(),
+    };
+    output.push({ type: "error", reason: "error", error: message });
+    output.end(message);
+  });
+  return output;
+}
+
 for (const [provider, id, api] of [
   ["openai-codex", "gpt-5.6-luna", codex],
   ["anthropic", "claude-sonnet-4-5", anthropic],
@@ -57,65 +102,32 @@ for (const [provider, id, api] of [
       runtime.getAuth = (async () => ({ auth: { apiKey: provider === "openai-codex" ? jwt : "offline-key" } })) as any;
       let compacting = false;
       function fixture(serializer: any, m: any, context: any, options: any) {
-        const output = createAssistantMessageEventStream();
-        void (async () => {
-          const headers = (await options?.transformHeaders?.(options?.headers ?? {})) ?? options?.headers;
-          const observed = await serializer(m, context, {
-            ...options,
-            headers,
-            apiKey: provider === "openai-codex" ? jwt : "offline-key",
-            transport: "sse",
-            fetch: async () => {
-              networkCalls++;
-              throw Error("unexpected network");
-            },
-            onPayload: async (payload: any) => {
-              attempts.push(structuredClone(payload));
-              const result = await options?.onPayload?.(payload, m);
-              captured.push({ compacting, headers, payload: structuredClone(result ?? payload) });
-              throw Error(sentinel);
-            },
-          }).result();
-          if (!observed.errorMessage?.includes(sentinel)) {
-            output.push({ type: "error", reason: "error", error: observed });
-            output.end(observed);
-            return;
-          }
-          const message: AssistantMessage = {
-            role: "assistant",
-            api: m.api,
-            provider: m.provider,
-            model: m.id,
-            content: [
-              {
-                type: "text",
-                text: compacting
-                  ? "## Goal\nPreserve fixture state.\n## Critical Context\nfixture-checkpoint"
-                  : "Fixture acknowledged.",
+        return streamAfterPayloadCapture(
+          m,
+          async () => {
+            const headers = (await options?.transformHeaders?.(options?.headers ?? {})) ?? options?.headers;
+            return serializer(m, context, {
+              ...options,
+              headers,
+              apiKey: provider === "openai-codex" ? jwt : "offline-key",
+              transport: "sse",
+              fetch: async () => {
+                networkCalls++;
+                throw Error("unexpected network");
               },
-            ],
-            stopReason: "stop",
-            usage,
-            timestamp: Date.now(),
-          };
-          output.push({ type: "done", reason: "stop", message });
-          output.end(message);
-        })().catch((e) => {
-          const message: any = {
-            role: "assistant",
-            api: m.api,
-            provider: m.provider,
-            model: m.id,
-            content: [],
-            stopReason: "error",
-            errorMessage: String(e),
-            usage,
-            timestamp: Date.now(),
-          };
-          output.push({ type: "error", reason: "error", error: message });
-          output.end(message);
-        });
-        return output;
+              onPayload: async (payload: any) => {
+                attempts.push(structuredClone(payload));
+                const result = await options?.onPayload?.(payload, m);
+                captured.push({ compacting, headers, payload: structuredClone(result ?? payload) });
+                throw Error(sentinel);
+              },
+            }).result();
+          },
+          () =>
+            compacting
+              ? "## Goal\nPreserve fixture state.\n## Critical Context\nfixture-checkpoint"
+              : "Fixture acknowledged.",
+        );
       }
       // Exercise the real simple/native provider option mappings, rather than a
       // mock complete() that accepts options the real serializer would ignore.
@@ -265,55 +277,31 @@ for (const explicitSelection of [false, true]) {
       });
       runtime.hasConfiguredAuth = () => true;
       runtime.getAuth = (async () => ({ auth: { apiKey: "offline-key" } })) as any;
-      const fixture = (m: any, context: any, options: any) => {
-        const output = createAssistantMessageEventStream();
-        void (async () => {
-          const observed = await anthropic
-            .streamSimple(m, context, {
-              ...options,
-              apiKey: "offline-key",
-              transport: "sse",
-              fetch: async () => {
-                networkCalls++;
-                throw Error("unexpected network");
-              },
-              onPayload: async (payload: any) => {
-                const transformed = (await options?.onPayload?.(payload, m)) ?? payload;
-                payloads.push(structuredClone(transformed));
-                throw Error(sentinel);
-              },
-            })
-            .result();
-          if (!observed.errorMessage?.includes(sentinel)) throw Error(observed.errorMessage);
-          const message: AssistantMessage = {
-            role: "assistant",
-            api: m.api,
-            provider: m.provider,
-            model: m.id,
-            content: [{ type: "text", text: "## Goal\nKeep fresh framing." }],
-            stopReason: "stop",
-            usage,
-            timestamp: Date.now(),
-          };
-          output.push({ type: "done", reason: "stop", message });
-          output.end(message);
-        })().catch((error) => {
-          const message: any = {
-            role: "assistant",
-            api: m.api,
-            provider: m.provider,
-            model: m.id,
-            content: [],
-            stopReason: "error",
-            errorMessage: String(error),
-            usage,
-            timestamp: Date.now(),
-          };
-          output.push({ type: "error", reason: "error", error: message });
-          output.end(message);
-        });
-        return output;
-      };
+      const fixture = (m: any, context: any, options: any) =>
+        streamAfterPayloadCapture(
+          m,
+          async () => {
+            const observed = await anthropic
+              .streamSimple(m, context, {
+                ...options,
+                apiKey: "offline-key",
+                transport: "sse",
+                fetch: async () => {
+                  networkCalls++;
+                  throw Error("unexpected network");
+                },
+                onPayload: async (payload: any) => {
+                  const transformed = (await options?.onPayload?.(payload, m)) ?? payload;
+                  payloads.push(structuredClone(transformed));
+                  throw Error(sentinel);
+                },
+              })
+              .result();
+            if (!observed.errorMessage?.includes(sentinel)) throw Error(observed.errorMessage);
+            return observed;
+          },
+          () => "## Goal\nKeep fresh framing.",
+        );
       runtime.streamSimple = fixture as any;
       const realProvider = runtime.getProvider("anthropic")!;
       runtime.getProvider = (() => ({ ...realProvider, streamSimple: fixture })) as any;

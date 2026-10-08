@@ -34,47 +34,46 @@ export function probeArgs(args: string[], mode: "recorded" | "controlled") {
 
 export function readStudy(source: string): any[] {
   const entries: any[] = [];
+  for (const text of readStudyLines(source)) {
+    const entry = JSON.parse(text);
+    if (typeof entry?.timestamp !== "string") throw Error("Missing timestamp");
+    if (entry.timestamp >= study.cutoff) break;
+    entries.push(entry);
+    if (entries.length > 2048) throw Error("Too many entries");
+  }
+  if (!entries.length) throw Error("Empty study prefix");
+  return entries;
+}
+
+/** Owns bounded UTF-8/JSONL framing; closing the iterator also closes the file. */
+function* readStudyLines(source: string): Generator<string> {
   const fd = openSync(source, "r");
   const decoder = new TextDecoder("utf-8", { fatal: true });
   const block = Buffer.alloc(4096);
-  let carry = "",
-    total = 0,
-    stopped = false;
-  const line = (text: string) => {
-    if (!text) return;
-    if (Buffer.byteLength(text) > 262144) throw Error("JSONL line exceeds 256 KiB");
-    const entry = JSON.parse(text);
-    if (typeof entry?.timestamp !== "string") throw Error("Missing timestamp");
-    if (entry.timestamp >= study.cutoff) {
-      stopped = true;
-      return;
-    }
-    entries.push(entry);
-    if (entries.length > 2048) throw Error("Too many entries");
-  };
+  let carry = "";
+  let total = 0;
   try {
-    while (!stopped) {
+    while (true) {
       const count = readSync(fd, block, 0, block.length, null);
       if (!count) break;
       total += count;
       if (total > 8 * 1024 * 1024) throw Error("Source prefix exceeds 8 MiB");
       carry += decoder.decode(block.subarray(0, count), { stream: true });
       let end: number;
-      while (!stopped && (end = carry.indexOf("\n")) >= 0) {
-        line(carry.slice(0, end));
+      while ((end = carry.indexOf("\n")) >= 0) {
+        const text = carry.slice(0, end);
         carry = carry.slice(end + 1);
+        if (Buffer.byteLength(text) > 262144) throw Error("JSONL line exceeds 256 KiB");
+        if (text) yield text;
       }
       if (Buffer.byteLength(carry) > 262144) throw Error("JSONL line exceeds 256 KiB");
     }
-    if (!stopped) {
-      carry += decoder.decode();
-      line(carry);
-    }
+    carry += decoder.decode();
+    if (Buffer.byteLength(carry) > 262144) throw Error("JSONL line exceeds 256 KiB");
+    if (carry) yield carry;
   } finally {
     closeSync(fd);
   }
-  if (!entries.length) throw Error("Empty study prefix");
-  return entries;
 }
 
 export function studyTarget(entries: any[], index: number) {

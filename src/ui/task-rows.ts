@@ -78,19 +78,13 @@ export function taskRowFromRemote(value: unknown): TaskRow | undefined {
 export function upsertTaskRow(rows: Map<string, TaskRow>, next: TaskRow): TaskRow {
   const key = taskRowKey(next);
   const old = rows.get(key);
-  if (old?.terminal && (!next.terminal || (old.status !== "unknown" && next.status === "unknown"))) {
-    const row = {
-      ...old,
-      title: clean(next.title) || clean(old.title) || undefined,
-      fallbackTitle: clean(next.fallbackTitle) || clean(old.fallbackTitle) || undefined,
-      sourceCallId: next.sourceCallId || old.sourceCallId,
-    };
-    rows.set(key, row);
-    return row;
-  }
+  // Keep established terminal evidence, but still accept refreshed display/ownership metadata.
+  const lifecycle =
+    old?.terminal && (!next.terminal || (old.status !== "unknown" && next.status === "unknown"))
+      ? old
+      : { ...old, ...next };
   const row = {
-    ...old,
-    ...next,
+    ...lifecycle,
     title: clean(next.title) || clean(old?.title) || undefined,
     fallbackTitle: clean(next.fallbackTitle) || clean(old?.fallbackTitle) || undefined,
     sourceCallId: next.sourceCallId || old?.sourceCallId,

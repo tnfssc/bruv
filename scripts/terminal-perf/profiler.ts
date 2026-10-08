@@ -57,6 +57,62 @@ type Method = (...args: unknown[]) => unknown;
 type Instance = Record<string, unknown>;
 const attached = new WeakSet<object>();
 
+interface PendingRenderRequestBatch {
+  requestedAt: number;
+  requestCount: number;
+  inputAt?: number;
+  inputCount: number;
+  lastInputId: number;
+}
+
+/** Coalesces requests until frame entry; input association lasts only for synchronous dispatch. */
+class PendingRenderRequests {
+  private pending: PendingRenderRequestBatch | undefined;
+  private input: { id: number; at: number } | undefined;
+  private inputSequence = 0;
+
+  constructor(private now: () => number) {}
+
+  duringInput(original: Method, receiver: Instance, args: unknown[]): unknown {
+    const previous = this.input;
+    this.input = { id: ++this.inputSequence, at: this.now() };
+    try {
+      return original.apply(receiver, args);
+    } finally {
+      this.input = previous;
+    }
+  }
+
+  record() {
+    this.pending ??= { requestedAt: this.now(), requestCount: 0, inputCount: 0, lastInputId: 0 };
+    const batch = this.pending;
+    batch.requestCount++;
+    if (this.input && this.input.id !== batch.lastInputId) {
+      batch.inputAt ??= this.input.at;
+      batch.inputCount++;
+      batch.lastInputId = this.input.id;
+    }
+  }
+
+  consume(
+    startedAt: number,
+  ): Pick<TerminalFrameSample, "requestCount" | "requestDelayMs" | "inputCount" | "inputDelayMs"> {
+    const batch = this.pending;
+    // Requests made by rendering start a new batch, even within the same input dispatch.
+    this.clear();
+    return {
+      requestCount: batch?.requestCount ?? 0,
+      requestDelayMs: batch ? startedAt - batch.requestedAt : null,
+      inputCount: batch?.inputCount ?? 0,
+      inputDelayMs: batch?.inputAt === undefined ? null : startedAt - batch.inputAt,
+    };
+  }
+
+  clear() {
+    this.pending = undefined;
+  }
+}
+
 // Pi 1.1.0: fullscreen renderLayoutFrame is imported and its diff is inline.
 // Regular mode's render(width) is a usable whole-document rendering boundary.
 // These shared helpers are observable; none alone represents a complete diff.
@@ -112,13 +168,7 @@ export function attachTerminalProfiler(
     outsideFrameWriteCount = 0;
   let disposed = false;
   let frame: TerminalFrameSample | undefined;
-  let pendingRequestAt: number | undefined;
-  let pendingRequestCount = 0;
-  let pendingInputAt: number | undefined;
-  let pendingInputCount = 0;
-  let inputSequence = 0,
-    lastAssociatedInput = 0;
-  let input: { id: number; at: number } | undefined;
+  const requests = new PendingRenderRequests(now);
   const stack: { childMs: number }[] = [];
   const restores: (() => void)[] = [];
 
@@ -139,14 +189,6 @@ export function attachTerminalProfiler(
       if (descriptor) Object.defineProperty(object, key, descriptor);
       else delete object[key];
     });
-  }
-
-  function resetPending() {
-    pendingRequestAt = undefined;
-    pendingRequestCount = 0;
-    pendingInputAt = undefined;
-    pendingInputCount = 0;
-    lastAssociatedInput = 0;
   }
 
   function phase(name: string, original: Method): Method {
@@ -194,7 +236,7 @@ export function attachTerminalProfiler(
       writeCount = 0;
       outsideFrameOutputBytes = 0;
       outsideFrameWriteCount = 0;
-      resetPending();
+      requests.clear();
     },
     dispose() {
       if (disposed) return;
@@ -202,7 +244,7 @@ export function attachTerminalProfiler(
       for (const restore of restores.reverse()) restore();
       attached.delete(target);
       attached.delete(terminal);
-      resetPending();
+      requests.clear();
     },
   };
 
@@ -223,16 +265,12 @@ export function attachTerminalProfiler(
             startedAtMs: start,
             durationMs: 0,
             failed: false,
-            requestCount: pendingRequestCount,
-            requestDelayMs: pendingRequestAt === undefined ? null : start - pendingRequestAt,
-            inputCount: pendingInputCount,
-            inputDelayMs: pendingInputAt === undefined ? null : start - pendingInputAt,
+            ...requests.consume(start),
             writeCount: 0,
             outputBytes: 0,
             phasesMs: {},
             unattributedMs: 0,
           };
-          resetPending();
           frame = active;
           try {
             return original.apply(this, args);
@@ -285,13 +323,7 @@ export function attachTerminalProfiler(
         (original) =>
           function (this: Instance, ...args: unknown[]) {
             if (!disposed && !this.stopped) {
-              pendingRequestAt ??= now();
-              pendingRequestCount++;
-              if (input && input.id !== lastAssociatedInput) {
-                pendingInputAt ??= input.at;
-                pendingInputCount++;
-                lastAssociatedInput = input.id;
-              }
+              requests.record();
             }
             return original.apply(this, args);
           },
@@ -303,13 +335,7 @@ export function attachTerminalProfiler(
       (original) =>
         function (this: Instance, ...args: unknown[]) {
           if (disposed) return original.apply(this, args);
-          const previous = input;
-          input = { id: ++inputSequence, at: now() };
-          try {
-            return original.apply(this, args);
-          } finally {
-            input = previous;
-          }
+          return requests.duringInput(original, this, args);
         },
     );
   } catch (error) {

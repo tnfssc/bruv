@@ -12,7 +12,7 @@ import { join } from "node:path";
 import { getModel } from "@earendil-works/pi-ai/compat";
 import { AgentSession, createAgentSession, DefaultResourceLoader, ModelRuntime, SessionManager, SettingsManager } from "@earendil-works/pi-coding-agent";
 import { DiskEntryStore } from "./src/history/disk-entry-store.ts";
-import { installDiskBackedSessionManager, disposeDiskBackedSessionManager, selectDiskBackedEntries } from "./src/history/session-manager.ts";
+import { installDiskBackedSessionManager, disposeDiskBackedSessionManager } from "./src/history/session-manager.ts";
 const root=process.env.ROOT;
 const adapted=process.env.ADAPTED === "1";
 const model=getModel("openai","gpt-4o");
@@ -117,10 +117,9 @@ for (const [name,leaf] of [["original",user],["edits",edited],["unknown",unknown
   assert(JSON.stringify(compactPreview.messages).includes("boundary summary"));
   const contextEntries=manager.buildContextEntries();
   if(adapted) assert.equal(contextEntries.some((entry)=>entry.type==="custom" && auxTypes.includes(entry.customType)),false);
-  if (adapted) {
-    const selected=selectDiskBackedEntries(manager,"context",(meta,index)=>index===0 && meta.type==="compaction");
-    assert.equal(selected.length,name==="unknown" || name==="known" || name==="repeated" ? 1 : 0);
-  }
+  const compacted=name==="unknown" || name==="known" || name==="repeated";
+  assert.equal(contextEntries[0]?.type==="compaction",compacted);
+  assert.equal(projection.entries[0]?.sourceEntry.type==="compaction",compacted);
   result.push({name,messages:simplify(projection.messages),thinkingLevel:projection.thinkingLevel,model:projection.model,usage:session.getContextUsage()});
 }
 assert.equal(result.find((row)=>row.name==="unknown").usage.tokens,null);

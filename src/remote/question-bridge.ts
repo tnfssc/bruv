@@ -45,6 +45,10 @@ function sameOwner(a: QuestionOwner, b: QuestionOwner) {
   return a.sessionId === b.sessionId && a.branchId === b.branchId;
 }
 
+function samePinnedOwner(remote: Question["remote"], task: RemoteTask): boolean {
+  return !!remote && remote.host === task.host && remote.ownerId === task.ownerId && remote.epoch === task.epoch;
+}
+
 /** Mirrors real human ledgers only. Child clarification belongs in parent context, not here. */
 export class RemoteQuestionBridge {
   constructor(
@@ -58,56 +62,65 @@ export class RemoteQuestionBridge {
     const mirrors = this.service.list(ctx);
     for (const task of Object.values(state.tasks)) {
       if (task.jobSessionFile !== file || !task.host || !task.ownerId || !task.epoch) continue;
-      const parentOwner = (task as RemoteTask & { jobQuestionOwner?: QuestionOwner }).jobQuestionOwner;
+      const parentOwner = task.jobQuestionOwner;
       if (
         parentOwner &&
         (parentOwner.sessionId !== ctx.sessionManager.getSessionId() ||
           !ctx.sessionManager.getBranch().some((e) => e.id === parentOwner.branchId))
       )
         continue;
-      for (const q of questions(task)) {
-        const exists = mirrors.some(
-          (m) =>
-            m.remote?.taskId === task.taskId &&
-            m.remote.host === task.host &&
-            m.remote.ownerId === task.ownerId &&
-            m.remote.epoch === task.epoch &&
-            m.remote.id === q.id &&
-            sameOwner(m.remote.owner, q.owner),
-        );
-        if (q.status !== "pending" && !exists) continue;
-        await this.service.reflectRemote(
-          ctx,
-          {
-            taskId: task.taskId,
-            host: task.host,
-            ownerId: task.ownerId,
-            epoch: task.epoch,
-            id: q.id,
-            owner: q.owner,
-            version: q.version,
-            taskState: task.task?.state,
-          },
-          q,
-          parentOwner,
-        );
-      }
-      // The owner receipt also reconciles a lost answer response; never infer from transcript text.
-      const receipt = task.task?.reply as { replyId?: string; status?: string } | undefined;
-      if (receipt?.status === "delivered") {
-        for (const m of this.service.list(ctx)) {
-          if (
-            !m.readOnly &&
-            m.remote?.taskId === task.taskId &&
-            m.remote.host === task.host &&
-            m.remote.ownerId === task.ownerId &&
-            m.remote.epoch === task.epoch &&
-            m.replyId === receipt.replyId &&
-            m.remote.replyState === "uncertain"
-          )
-            await this.service.finishRemoteReply(ctx, { ...m, replyId: m.replyId!, delivered: true });
-        }
-      }
+      await this.reflectQuestions(
+        ctx,
+        task,
+        mirrors.filter((m) => m.remote?.taskId === task.taskId && samePinnedOwner(m.remote, task)),
+        parentOwner,
+      );
+      await this.reconcileDeliveredReply(ctx, task);
+    }
+  }
+
+  private async reflectQuestions(
+    ctx: QuestionContext,
+    task: RemoteTask,
+    existing: Question[],
+    parentOwner?: QuestionOwner,
+  ): Promise<void> {
+    for (const q of questions(task)) {
+      // Import pending questions, but only update already-mirrored closed questions.
+      if (q.status !== "pending" && !existing.some((m) => m.remote?.id === q.id && sameOwner(m.remote.owner, q.owner)))
+        continue;
+      await this.service.reflectRemote(
+        ctx,
+        {
+          taskId: task.taskId,
+          host: task.host,
+          ownerId: task.ownerId,
+          epoch: task.epoch,
+          id: q.id,
+          owner: q.owner,
+          version: q.version,
+          taskState: task.task?.state,
+        },
+        q,
+        parentOwner,
+      );
+    }
+  }
+
+  private async reconcileDeliveredReply(ctx: QuestionContext, task: RemoteTask): Promise<void> {
+    // The owner receipt reconciles a lost answer response; never infer from transcript text.
+    const receipt = task.task?.reply as { replyId?: string; status?: string } | undefined;
+    if (receipt?.status !== "delivered") return;
+    // Read after projection: native snapshots may have changed the local reply state.
+    for (const m of this.service.list(ctx)) {
+      if (
+        !m.readOnly &&
+        m.remote?.taskId === task.taskId &&
+        samePinnedOwner(m.remote, task) &&
+        m.replyId === receipt.replyId &&
+        m.remote.replyState === "uncertain"
+      )
+        await this.service.finishRemoteReply(ctx, { ...m, replyId: m.replyId!, delivered: true });
     }
   }
   /** Only call after QuestionService.answer from the explicit /questions human route. */
@@ -121,13 +134,7 @@ export class RemoteQuestionBridge {
       throw new Error("Remote answer outcome uncertain; reconnect to reconcile the ledger. No duplicate answer sent.");
     const state = await this.client.read(),
       task = state.tasks[q.remote.taskId];
-    if (
-      !task ||
-      task.jobSessionFile !== ctx.sessionManager.getSessionFile() ||
-      task.host !== q.remote.host ||
-      task.ownerId !== q.remote.ownerId ||
-      task.epoch !== q.remote.epoch
-    )
+    if (!task || task.jobSessionFile !== ctx.sessionManager.getSessionFile() || !samePinnedOwner(q.remote, task))
       throw new Error("Pinned remote question owner unavailable; human reply remains saved");
     const pending = questions(task).find((r) => r.id === q.remote!.id && sameOwner(r.owner, q.remote!.owner));
     if (

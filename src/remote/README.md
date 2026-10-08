@@ -1,8 +1,22 @@
-# SSH backend for placed tasks
+# Remote placement over SSH
 
-## Ordinary delegation
+## Choose the journey
 
-After one-time human setup of a pinned named SSH target, use the normal task API:
+| Intent | Entry point | Who owns the run |
+| --- | --- | --- |
+| Delegate a task to a server | `subagent({ target, ... })`, then ordinary `jobs` and `/questions` | The durable parent session owns the task; the destination owner runs it. |
+| Put the main agent on a server | `bruv --place <authorized-name>` | The server owns the root session; the local CLI is its thin presentation client. |
+| Authorize a target or recover a saved task | Human `/remote` controls | Setup is human-owned. Diagnostics read/reconcile saved owner and task identities. |
+
+These are not interchangeable launch APIs. Agent `remote.launch` and `remote.launchRepository` reject; they cannot bypass normal delegation policy. Main-agent placement is a startup choice, not a way for a delegated/scoped agent to reset its role or depth.
+
+## Delegate a task
+
+### Authorize once, launch through normal delegation
+
+A human first uses `/remote connect <user@host-or-configured-alias> [absolute-remote-bruv-path]`. This pins the SSH connection and owner identity in OS-user-wide state; it is not per-task permission to change hosts. `jobs.targets()` exposes the saved authorized name. That cached authorization and the owner's reported auth configuration are **not verified connectivity or provider API access**.
+
+`target` must exactly match the pinned `connection.host`. The reserved name `local` means current-runtime execution; an SSH host actually named `local` is addressed as `ssh:local`.
 
 ```ts
 await subagent({
@@ -13,50 +27,104 @@ await subagent({
 });
 ```
 
-Target is separate from role and workspace. Omit target for current-runtime execution: local roots stay local; deliberately server-placed agents keep descendants there. No per-task SSH connection ceremony. The destination uses its installed Bruv and configured profile/model. Placement never resets delegation depth or turns workers into orchestrators.
+Target, role and workspace are separate choices:
 
-Use normal jobs to observe, inspect and cancel, and ordinary human questions to answer decisions. Refresh and safe repository return happen automatically. Closing the client detaches; reopening observes the same saved task. An unreachable run is unknown, not failed and not permission to launch a duplicate. Agent remote.launch/launchRepository helpers reject: all routine launches pass normal delegation policy.
+- Omit target (or use `local`) to stay in the current runtime. A deliberately server-placed agent's descendants stay on that server by default. Scoped native tasks reject explicit cross-placement.
+- Placement preserves delegation depth and role restrictions; workers do not become orchestrators by moving. The destination uses its installed Bruv and configured profile/model, not the parent's local model. Explicit SSH `model`/`thinking` overrides are pinned launch intent.
+- SSH launches are async-only: omit `waitSeconds` or use `0`. `timeoutSeconds` is unsupported; request cancellation with `jobs.stop(id)`.
 
-The SSH workspace is an isolated snapshot-backed checkout. Default source includes current tracked edits; explicit baseRef selects that source revision. Git history and credentials are not transferred. This is not equivalent to a full-history local Git worktree. Untracked paths need explicit human approval; omission is reported. Return applies only against the pinned safe parent baseline; conflicts and ambiguity stay as review artifacts.
+### Pin the source before dispatch
 
-Full scope includes main-agent remote sessions with a thin client; implementation and root acceptance must complete before release. A fleet UI is not required. Ownership is relative to the parent session/runtime, not a presumed laptop.
+Both SSH workspace kinds use an isolated snapshot-backed checkout, not a full-history local Git worktree. Default source includes current **tracked** edits; explicit `workspace.baseRef` selects that revision instead. Git history and parent runtime credentials are not transferred. Known credential/config paths are rejected, but snapshot checks are not content secret scanning.
 
-Only human /remote connect changes the SSH alias. Strict host-key checking stays enabled; SSH agent, X11 and credential delegation are disabled. New local capability grants remain human-owned setup, never an automatic task answer.
+Untracked inclusion is a separate human decision. Optional `source: { includeUntracked: ["path"] }` requests exact paths; it does not grant transfer. Launch returns a tracked pending job and a source-approval retry task ID. After a saved human answer, retry the unchanged intent with that `source.retryTaskId`. Approved bytes stay pinned; retry does not silently recapture changed files. Default omission is reported. Explicit historical base plus current untracked inclusion is rejected.
 
-## Legacy expert diagnostics and setup
+### Observe and act in the owning parent session
 
-The commands below are retained for explicit setup and backend diagnosis, not the everyday placed-task lifecycle.
+The parent is recorded before SSH dispatch. Normal `jobs.list/inspect/stop/stopWork` project that session's tasks under `ssh:<base64url-taskId>` IDs. Use the exact jobs ID there; low-level remote diagnostics use raw `taskId`. Old unowned tasks remain human `/remote` cache entries, not another session's jobs.
 
-In the normal interactive CLI, `/remote` opens a searchable inbox (type to filter, arrows, Enter; Esc backs without changes). Pending questions open selectable choices or a custom answer editor; tasks show readable prompt/state and a cached transcript, with explicit sync, reconciliation and confirmed cancellation where available. Transcript pages show readable user/assistant turns and tool calls/results, numbered cached events, next offsets and gap warnings. Use `/remote transcript [taskId] [offset] raw` to inspect original event JSON explicitly; the machine `remote.transcript` operation always returns original events (50 per page). Offline controls are labeled unavailable; saved uncertain answers are not offered as new unanswered questions. Command completion supplies task/question labels with stable IDs. Explicit commands remain available.
+- Inspection reads bounded cached journal output, with staleness and gaps. It is not live status or proof of exit. SSH jobs do not support stdin, closeInput, watch or snooze.
+- Remote human questions project into the owning parent's `/questions` ledger. Human reply dispatch preserves the pinned native owner/version and immutable reply ID. Saved, uncertain and delivered are different states; transcript text is not an answer or permission.
+- `jobs.stop` and `jobs.stopWork` request cancellation. Only confirmed native settlement plus owner exit is cancelled. Offline, partial or pending reports do not mean stopped; an unreachable run is unknown, not failed or permission to launch a duplicate elsewhere.
+- Refresh attempts reconciliation and safe repository return automatically. Closing the client detaches, not cancels; resuming the owning session discovers the saved run.
 
-- `/remote connect fixture-owner /usr/local/bin/bruv`: choose an already configured SSH alias (our acceptance fixture is disposable Docker Linux). Server normal model/profile is reported. Discovery does not copy credentials or verify provider access.
-- `/remote launch <absolute-remote-repo> <prompt>` uses an existing remote checkout.
-- `/remote launch-repo <prompt>` snapshots current-repo tracked staged/unstaged work, without changing the local index/work or sending local history. Untracked paths require human approval; default/refusal omits them. `/remote launch-repo-json` accepts an object with prompt, optional include path array, taskId, model and thinking. Known credential/config paths are rejected; this is not content secret scanning.
-- Active work refreshes automatically in bounded batches. Closing the client detaches, not cancels. Reopening catches up from the saved cursor. Progress, questions, capability needs, completion, safe return/review and text-artifact availability appear in the conversation.
-- `/remote answer <text>` targets the sole pending question; otherwise use `/remote answer <taskId> <questionId> <text>`. Native owner/version and a persisted reply ID are pinned. Uncertain is not delivered; a lost reply never authorizes a replacement answer.
-- `/remote grant [taskId] repo.read tool:git-status tool:git-diff skill:review` explicitly authorizes named read-only capabilities in the current local repo. No home, arbitrary shell or credential grant. Skills read `.agents/skills/<name>/SKILL.md`, not arbitrary skill execution. `/remote revoke <taskId> <grantId>` revokes locally before contacting the owner.
-- In remote execute, `remote.requestCapability({kind,input,requestId?})` records a missing grant and genuinely waits while blocked/offline. Try existing remote capabilities first.
-- `/remote cancel [taskId]` requests scoped native job cancellation and foreground abort. Only confirmed native settlement plus owner exit is cancelled; partial/unconfirmed cancellation is unknown.
-- `/remote status`, `/remote sync [taskId]`, `/remote transcript [taskId] [offset]` and `/remote retry [taskId]` remain recovery/offline controls. A single active task is selected automatically. Retry retains the same ID; unknown owner outcomes are not relaunched elsewhere.
+Terminal observations and actionable human waits feed the existing agent completion batch and print/JSON parent boundary. Refresh is discovery, not a second completion inbox; artifact refreshes do not resend terminal output. The per-session outbox deduplicates and leases dispatch attempts, **not guaranteed end-to-end delivery**: host dispatch acceptance is not an atomic parent-response ACK. A crash can replay an uncertain envelope, and the host's volatile accepted queue remains an unproven loss window. See [jobs integration and recovery limits](../../wisdom/remote-workspaces/jobs-integration.md). Live remains execute-only.
 
-Agent execute exposes status, launch, launchRepository, sync, transcript, cancel and requestCapability. It cannot connect, grant, approve untracked transfer or answer human questions. Launch model/thinking overrides are explicit and pinned; otherwise the remote normal profile is used.
+## Place the main-agent session
 
-## Return and offline records
+After the same human target authorization, start the thin client:
 
-Successful snapshot tasks fetch a digest-verified patch. Automatic return requires unchanged local HEAD/index/tracked fingerprint, regular tracked-file content edits and a clean apply check. Existing staged index stays staged. Local drift, creations/deletions/mode changes and untracked additions retain a review patch instead. Ordinary remote untracked bytes are included in that patch. Receipts prevent blind reapply after interruption. This is conservative apply, not an atomic transaction with an editor or hostile-writer sandbox.
+```sh
+bruv --place fixture-owner
+```
 
-RPC conversation/tool events are saved with their cursor. Execute stdout/stderr spill files, the task-owned journal and scoped native job text are separately cached with hashes and local paths. Native job buffers are copied before owner exit. Retention gaps, changed files, limits and failed copies remain explicit: never call an incomplete cache complete. Repository return and text sync report failures independently.
+This branches before normal local agent startup: the destination runs the root agent, provider and tools. The client presents its conversation, questions and jobs. Ownership is relative to that parent session/runtime, not a presumed laptop.
 
-## Bounds and scope
+The default source is a tracked snapshot from the current repository. `--remote-source <local-path>` selects another source; repeated `--remote-include <path>` explicitly approves untracked paths. Alternatively, `--remote-repo <absolute-server-path>` uses an existing destination repository, with no snapshot return to the local repo. The existing-server repository choice cannot be combined with local source or untracked-inclusion flags. `--model`/`--thinking` pin root overrides; project trust is an explicit `--approve`/`--no-approve` choice.
 
-Eight active owner tasks; 100 retained owner/client task slots; 128 MiB snapshot/checkouts and client cache; 32 MiB event journal; 512 KiB event rows; 256 KiB transfer pages. Text artifacts: 10 MiB/file, 128 MiB/catalog, 256 files. Capabilities: 16 KiB reply, 32 pending, 1024 retained requests/task and 64 grant records. Ordinary runtime/capability waits have explicit deadlines; pending human questions retain their owner. Limits refuse with errors, not quiet truncation or guessed success.
+Reopening the same authorized target/local-source-root pointer reuses its saved root. Target/owner epoch, source and supplied model/trust intent are checked rather than silently retargeted. `--remote-fresh` explicitly starts a new root; it is not recovery permission after an unknown outcome.
 
-Sparse checkout, skip-worktree/assume-unchanged, unmerged index, tracked symlinks/gitlinks and configured clean/smudge filters are not automatically handed off. Trusted repo roots and SSH owner are assumed. State/cache are OS-user-wide, stated on connect.
+The attached controls have different effects:
 
-Validation here is Linux Docker/SSH with an explicitly deterministic fake provider and native CLI/unit tests. **No Mac, real-provider deployment, publication, installation or release claim.** Parent owns release gates.
+| Control | Effect |
+| --- | --- |
+| `/questions` | Select a pending server question and answer its actual owner/version. |
+| `/ps` | Inspect server jobs; cancellation is an explicit confirmed choice. |
+| `/abort` (Ctrl-C outside a modal) | Request abort, keeping the presentation attached. Request receipt alone is not proof all work stopped. |
+| `/close` | Request root close; source return waits for confirmed closed, successful root state. |
+| `/detach` (Ctrl-D) | Leave the presentation without aborting or answering pending dialogs. |
 
-## Session jobs
+Commands retain durable identities and reconcile their receipts; unknown outcomes are not automatically replaced. Reconnect can present saved observations while offline. This describes the shipped root path, not release or live-provider acceptance.
 
-A launch made from a durable CLI session records that parent before SSH dispatch. Its cached projection appears in jobs.list/inspect/stop/stopWork under a disjoint ssh: job ID (base64url of raw taskId). Keep raw taskId for remote methods. Old unowned tasks remain human /remote cache entries, not another session's jobs. SSH inspect is bounded cached journal output with staleness/gaps; stdin/watch/snooze are unsupported. Offline stopWork may be partial or pending, not stopped.
+## Human setup and expert recovery
 
-Owned terminal and human-action waits feed the existing agent completion batch and print/JSON parent boundary. Remote refresh is discovery, not a second completion inbox; artifact refreshes do not resend terminal output. A durable per-session outbox deduplicates and leases dispatch attempts. Host dispatch acceptance is not a proven atomic parent-response ACK: a crash can replay an uncertain envelope, and a host's volatile accepted queue remains an unproven loss window. See ../../wisdom/remote-workspaces/jobs-integration.md for recovery, UI merge seams and proof. Live remains execute-only.
+Only human `/remote connect` changes the pinned SSH alias. Strict host-key checking stays enabled; SSH agent, X11 and credential delegation are disabled. Setup grants never come from worker text or an inferred task answer.
+
+For local read-only access from an owned remote task:
+
+- `/remote grant [taskId] repo.read tool:git-status tool:git-diff skill:review` explicitly authorizes named capabilities in the current local repository. No home, arbitrary shell or credential grant. Skills read `.agents/skills/<name>/SKILL.md`, not arbitrary skill execution.
+- `/remote revoke <taskId> <grantId>` revokes locally before contacting the owner.
+- Remote execute uses `remote.requestCapability({ kind, input, requestId? })`. Try destination tools first. Missing grants are recorded and genuinely wait while blocked/offline; an agent cannot create the human grant. See [capability integration](CAPABILITY-INTEGRATION.md) for request/reply ownership.
+
+The remaining `/remote` controls are expert task diagnostics, not the normal delegation journey:
+
+| Command | Purpose and boundary |
+| --- | --- |
+| `/remote` or `/remote status` | Inbox/recovery UI or cached summary. A menu is a snapshot; explicit refresh reloads it. |
+| `/remote sync [taskId]` | Reconcile a saved task with its pinned owner. Failure leaves uncertainty visible. |
+| `/remote transcript [taskId] [offset] [raw]` | Page cached events; `raw` is an explicit expert view. |
+| `/remote retry [taskId]` | Reuse the saved task ID/intent, or sync an accepted launch. Conflicting replay may refuse; unknown runs are not relaunched elsewhere. |
+| `/remote cancel [taskId]` | Request scoped native cancellation and foreground abort, subject to the same settlement/exit boundary. |
+| `/remote answer <text>` | Legacy human reply to the sole pending question; otherwise specify `<taskId> <questionId> <text>`. Owner/version and reply ID remain pinned; uncertain is not delivered. Ordinary owned tasks use `/questions`. |
+
+A sole active task can be selected automatically. Human expert launch controls also remain: `/remote launch <absolute-server-repo-path> <prompt>`, `/remote launch-repo <prompt>`, and `/remote launch-repo-json {"prompt":"...","include":["path"]}`. The repository form defaults to tracked files and requires explicit human approval for untracked inclusion. These expert commands do not give the agent a direct launch bypass. Agent remote operations provide `status`, `sync`, `transcript`, `cancel` and `requestCapability`, not connect, grant, untracked approval or human answers.
+
+## Repository return and offline records
+
+Task completion, repository return and text availability are separate outcomes:
+
+1. A successful snapshot task fetches a digest-verified patch; a placed root requires confirmed closed successful state. Existing-server-repository runs have no local snapshot return. Patch generation alone never establishes task completion.
+2. Automatic apply requires unchanged local HEAD/index/tracked fingerprint, regular tracked-file content edits and a clean apply check. Existing staged index stays staged. Local drift, creations/deletions/mode changes and untracked additions retain a **review patch**, not a success claim. Ordinary regular remote untracked bytes are included in that review patch.
+3. Durable receipts prevent blind reapply after interruption. Do not discard receipts to force retry. This is conservative apply, not an atomic transaction with an editor or hostile-writer sandbox. [Repository handoff details](repository.md) describe capture and return separately from transport ownership.
+
+RPC conversation/tool events are cached with a cursor. Execute stdout/stderr spill files, task-owned journals and scoped native job text are separately cached with hashes and local paths. Native job buffers are copied before owner exit. Retention gaps, changed files, limits and failed copies remain explicit: never call an incomplete cache complete. Repository return and text sync report failures independently.
+
+## Follow the implementation
+
+Read the caller first, then the operation owner; do not treat a cached projection as its authority.
+
+| Journey / effect | Reading path |
+| --- | --- |
+| Normal delegation policy and durable launch identity | [job-service.ts](../tasks/job-service.ts) → [jobs.ts](jobs.ts) → [source-approval.ts](source-approval.ts) / [repository-wire.ts](repository-wire.ts) → [client.ts](client.ts) / [owner.ts](owner.ts). [placement.ts](placement.ts) checks role/depth at both ends. |
+| Parent questions and completion delivery | [extension.ts](extension.ts) refresh → [question-bridge.ts](question-bridge.ts) / [job-observations.ts](job-observations.ts) → [agent extension](../agent/extension.ts) and [job-delivery.ts](job-delivery.ts). |
+| Main-agent startup, presentation and server authority | [cli.ts](../cli.ts) → [root-options.ts](root-options.ts) / [root-cli.ts](root-cli.ts) → [root-client.ts](root-client.ts) / [root-presenter.ts](root-presenter.ts); server [root-entry.ts](root-entry.ts) → [root-owner.ts](root-owner.ts) / [root-runtime.ts](root-runtime.ts). |
+| Human recovery vs agent operations | [extension.ts](extension.ts) owns human commands; [operations.ts](operations.ts) rejects legacy agent launches; [services.ts](services.ts) coordinates capability grants/replies. |
+| Safe return vs cached text | [repository-wire.ts](repository-wire.ts) / [root-client.ts](root-client.ts) call [repository.ts](repository.ts); [artifacts.ts](artifacts.ts) and [job-artifacts.ts](job-artifacts.ts) verify/cache text independently. |
+
+## Bounds and evidence limits
+
+Task-owner bounds (the root session has a separate store): eight active, 100 retained owner/client task slots. Snapshot/checkouts and client cache: 128 MiB. Event journal: 32 MiB, 512 KiB rows. Repository/text transfer pages: 256 KiB. Text artifacts: 10 MiB/file, 128 MiB/catalog, 256 files. Capabilities: 16 KiB reply, 32 pending, 1024 retained requests/task, 64 grant records. Ordinary runtime/capability waits have explicit deadlines; pending human questions retain their owner. Refusals and retention gaps are explicit, not guessed success or complete-output claims.
+
+Sparse checkout, skip-worktree/assume-unchanged, unmerged index, tracked symlinks/gitlinks and configured clean/smudge filters are not automatically handed off. Trusted repository roots and SSH owner are assumed. State/cache are OS-user-wide, stated on connect.
+
+Existing validation evidence is Linux Docker/SSH with an explicitly deterministic fake provider and native CLI/unit tests. **No Mac, real-provider deployment, publication, installation or release claim.** This overview is not live verification; parent owns release gates.

@@ -8,65 +8,82 @@ import { installDiskBackedSessionManager, disposeDiskBackedSessionManager } from
 import { SessionCostTracker } from "../../../src/tasks/session-costs";
 import { createTaskLifecycleRecorder, taskLifecycleFile } from "../../../src/tasks/task-lifecycle";
 const sha = (data: string | Uint8Array) => createHash("sha256").update(data).digest("hex");
-const root = mkdtempSync(join(tmpdir(), "bruv-disk-callback-audit-"));
-const samples: any[] = [],
-  managers: SessionManager[] = [];
-try {
-  installDiskBackedSessionManager();
-  for (const payloadBytes of [4096, 2097152, 8388608]) {
-    const dir = join(root, String(payloadBytes));
-    const parent = SessionManager.create(root, dir);
-    managers.push(parent);
-    parent.appendMessage({ role: "user", content: "audit parent", timestamp: 1 });
-    const child = SessionManager.create(root, dir, { parentSession: parent.getSessionFile()! });
-    managers.push(child);
-    child.appendCustomEntry("bruv-agent", { parentSessionFile: parent.getSessionFile() });
-    child.appendMessage({ role: "user", content: "audit child", timestamp: 1 });
-    const text = "0123456789abcdef".repeat(payloadBytes / 16);
-    child.appendMessage({
-      role: "toolResult",
-      toolCallId: "audit",
-      toolName: "execute",
-      content: [{ type: "text", text }],
-      isError: false,
-      timestamp: 2,
+
+// The refresh includes disk waits; only consume entry-to-return is synchronous callback work.
+async function measureCostRefresh(tracker: SessionCostTracker) {
+  const callbackSamples: any[] = [];
+  const nativeConsume = (tracker as any).consume;
+  (tracker as any).consume = function (session: any, chunk: Buffer) {
+    const pendingBytesBefore = session.pendingLength;
+    const start = performance.now();
+    nativeConsume.call(this, session, chunk);
+    const syncMs = performance.now() - start;
+    callbackSamples.push({
+      syncMs,
+      chunkBytes: chunk.length,
+      pendingBytesBefore,
+      pendingBytesAfter: session.pendingLength,
     });
-    for (let iteration = 0; iteration < 3; iteration++) {
-      const tracker = new SessionCostTracker(parent.getSessionFile()!, dir);
-      const callbackSamples: any[] = [];
-      const nativeConsume = (tracker as any).consume;
-      (tracker as any).consume = function (session: any, chunk: Buffer) {
-        const pendingBytesBefore = session.pendingLength;
-        const start = performance.now();
-        nativeConsume.call(this, session, chunk);
-        const syncMs = performance.now() - start;
-        callbackSamples.push({
-          syncMs,
-          chunkBytes: chunk.length,
-          pendingBytesBefore,
-          pendingBytesAfter: session.pendingLength,
-        });
-      };
-      const start = performance.now();
-      const result = await tracker.refresh();
-      const refreshElapsedMs = performance.now() - start;
-      if (result !== 0 || callbackSamples.length === 0 || callbackSamples.at(-1).pendingBytesAfter !== 0)
-        throw new Error("cost scan skipped/incomplete");
-      samples.push({
-        name: "footer.SessionCostTracker.refresh",
-        payloadBytes,
-        inputHash: sha(text),
-        iteration,
-        fixture: "one-parent-one-child-one-large-tool-result-v1",
-        refreshElapsedMs,
-        elapsedScope: "whole async operation including disk wait and uninstrumented work; NOT CPU time",
-        callbackScope: "synchronous consume entry-to-return after each awaited file read",
-        callbackSamples,
-        scannedBytes: callbackSamples.reduce((n, s) => n + s.chunkBytes, 0),
-        descendantCost: result,
+  };
+  const start = performance.now();
+  const result = await tracker.refresh();
+  const refreshElapsedMs = performance.now() - start;
+  if (result !== 0 || callbackSamples.length === 0 || callbackSamples.at(-1).pendingBytesAfter !== 0)
+    throw new Error("cost scan skipped/incomplete");
+  return {
+    refreshElapsedMs,
+    elapsedScope: "whole async operation including disk wait and uninstrumented work; NOT CPU time",
+    callbackScope: "synchronous consume entry-to-return after each awaited file read",
+    callbackSamples,
+    scannedBytes: callbackSamples.reduce((n, s) => n + s.chunkBytes, 0),
+    descendantCost: result,
+  };
+}
+
+async function auditSessionCosts(root: string) {
+  const samples: any[] = [];
+  const managers: SessionManager[] = [];
+  try {
+    installDiskBackedSessionManager();
+    for (const payloadBytes of [4096, 2097152, 8388608]) {
+      const dir = join(root, String(payloadBytes));
+      const parent = SessionManager.create(root, dir);
+      managers.push(parent);
+      parent.appendMessage({ role: "user", content: "audit parent", timestamp: 1 });
+      const child = SessionManager.create(root, dir, { parentSession: parent.getSessionFile()! });
+      managers.push(child);
+      child.appendCustomEntry("bruv-agent", { parentSessionFile: parent.getSessionFile() });
+      child.appendMessage({ role: "user", content: "audit child", timestamp: 1 });
+      const text = "0123456789abcdef".repeat(payloadBytes / 16);
+      child.appendMessage({
+        role: "toolResult",
+        toolCallId: "audit",
+        toolName: "execute",
+        content: [{ type: "text", text }],
+        isError: false,
+        timestamp: 2,
       });
+      for (let iteration = 0; iteration < 3; iteration++) {
+        const tracker = new SessionCostTracker(parent.getSessionFile()!, dir);
+        const measurement = await measureCostRefresh(tracker);
+        samples.push({
+          name: "footer.SessionCostTracker.refresh",
+          payloadBytes,
+          inputHash: sha(text),
+          iteration,
+          fixture: "one-parent-one-child-one-large-tool-result-v1",
+          ...measurement,
+        });
+      }
     }
+    return samples;
+  } finally {
+    for (const manager of managers) disposeDiskBackedSessionManager(manager);
   }
+}
+
+function auditLifecycleRecords(root: string) {
+  const samples: any[] = [];
   let failures = 0;
   const recorder = createTaskLifecycleRecorder(join(root, "lifecycle-session.jsonl"), () => {
     failures++;
@@ -99,6 +116,14 @@ try {
     outputBytes: Buffer.byteLength(lifecycleOutput),
     outputHash: sha(lifecycleOutput),
   };
+  return { samples, lifecycleWork };
+}
+
+const root = mkdtempSync(join(tmpdir(), "bruv-disk-callback-audit-"));
+try {
+  const costSamples = await auditSessionCosts(root);
+  const { samples: lifecycleSamples, lifecycleWork } = auditLifecycleRecords(root);
+  const samples = [...costSamples, ...lifecycleSamples];
   const sourceFiles = [
     "scripts/terminal-perf/audit-probes/disk-callbacks.ts",
     "src/tasks/session-costs.ts",
@@ -134,6 +159,5 @@ try {
           Math.max(...s.callbackSamples.map((x: any) => x.syncMs)).toFixed(3),
     );
 } finally {
-  for (const manager of managers) disposeDiskBackedSessionManager(manager);
   rmSync(root, { recursive: true, force: true });
 }

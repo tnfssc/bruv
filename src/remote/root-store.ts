@@ -2,7 +2,14 @@ import { Database } from "bun:sqlite";
 import { mkdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { homedir } from "node:os";
-import type { RootIntent, RootRecord, RootCommand, RootCommandReceipt, RootObservation } from "./root-contract";
+import type {
+  RootIntent,
+  RootRecord,
+  RootCommand,
+  RootCommandReceipt,
+  RootObservation,
+  RootDialog,
+} from "./root-contract";
 
 export const rootDirectory = () => join(process.env.HOME ?? homedir(), ".bruv", "remote-owner", "roots");
 export function rootId(id: unknown): asserts id is string {
@@ -127,10 +134,11 @@ export class RootStore {
   }
   claimCommand(session: string): { command: RootCommand; receipt: RootCommandReceipt } | undefined {
     return this.transaction(() => {
-      const rows = this.db
-        .query("SELECT id,intent,receipt FROM commands WHERE session=? ORDER BY ordinal")
-        .all(session) as Array<{ id: string; intent: string; receipt: string }>;
-      const row = rows.find((r) => JSON.parse(r.receipt).state === "queued");
+      const row = this.db
+        .query(
+          "SELECT id,intent FROM commands WHERE session=? AND json_extract(receipt,'$.state')='queued' ORDER BY ordinal LIMIT 1",
+        )
+        .get(session) as { id: string; intent: string } | null;
       if (!row) return;
       const receipt: RootCommandReceipt = { commandId: row.id, state: "dispatching" };
       // The claim is committed before any runtime write. A lost write stays unknown.
@@ -144,13 +152,12 @@ export class RootStore {
       if (r.record.state === "closed") return;
       r.record = { ...r.record, state: "unknown", error: r.record.error ?? error };
       this.save(r);
-      const rows = this.db.query("SELECT id,receipt FROM commands WHERE session=?").all(session) as Array<{
-        id: string;
-        receipt: string;
-      }>;
-      for (const row of rows)
-        if (["queued", "dispatching"].includes(JSON.parse(row.receipt).state))
-          this.finish(session, { commandId: row.id, state: "unknown", error });
+      this.db
+        .query(
+          `UPDATE commands SET receipt=json_object('commandId',id,'state','unknown','error',?)
+           WHERE session=? AND json_extract(receipt,'$.state') IN ('queued','dispatching')`,
+        )
+        .run(error, session);
     });
   }
   append(session: string, event: unknown) {
@@ -159,35 +166,30 @@ export class RootStore {
     if (bytes > 512 * 1024) throw Error("Root event gap: oversized event");
     this.transaction(() => {
       const r = this.get(session);
+      // Pending dialogs are durable state, not a view rebuilt from the bounded journal.
+      r.record = withPendingDialogs(r.record, event);
       r.seq++;
-      const e = event as { type?: string; id?: string; method?: string };
-      if (
-        e?.type === "extension_ui_request" &&
-        typeof e.id === "string" &&
-        ["select", "confirm", "input", "editor"].includes(e.method ?? "")
-      ) {
-        const dialogs = r.record.dialogs ?? [];
-        if (dialogs.length >= 20 && !dialogs.some((d) => d.id === e.id)) throw Error("Too many pending root dialogs");
-        r.record.dialogs = [...dialogs.filter((d) => d.id !== e.id), event as import("./root-contract").RootDialog];
-      }
-      if (e?.type === "root_ui_response") r.record.dialogs = (r.record.dialogs ?? []).filter((d) => d.id !== e.id);
       this.save(r);
       this.db.query("INSERT INTO events(session,seq,event,bytes) VALUES(?,?,?,?)").run(session, r.seq, text, bytes);
-      let total = (
-        this.db.query("SELECT COALESCE(SUM(bytes),0) AS n FROM events WHERE session=?").get(session) as { n: number }
-      ).n;
-      if (total > this.eventBudget) {
-        const rows = this.db.query("SELECT seq,bytes FROM events WHERE session=? ORDER BY seq").all(session) as Array<{
-          seq: number;
-          bytes: number;
-        }>;
-        for (const row of rows) {
-          if (total <= this.eventBudget) break;
-          this.db.query("DELETE FROM events WHERE session=? AND seq=?").run(session, row.seq);
-          total -= row.bytes;
-        }
-      }
+      this.retainEventSuffix(session);
     });
+  }
+  private retainEventSuffix(session: string) {
+    const total = this.db.query("SELECT COALESCE(SUM(bytes),0) AS n FROM events WHERE session=?").get(session) as {
+      n: number;
+    };
+    if (!(total.n > this.eventBudget)) return;
+    // Keep the newest contiguous suffix that fits. Even the newest event may be evicted.
+    this.db
+      .query(
+        `DELETE FROM events WHERE session=? AND seq IN (
+           SELECT seq FROM (
+             SELECT seq, SUM(bytes) OVER (ORDER BY seq DESC) AS suffixBytes
+             FROM events WHERE session=?
+           ) WHERE suffixBytes>?
+         )`,
+      )
+      .run(session, session, this.eventBudget);
   }
   observe(session: string, cursor: number): RootObservation {
     if (!Number.isSafeInteger(cursor) || cursor < 0) throw Error("Invalid root cursor");
@@ -212,4 +214,20 @@ export class RootStore {
       return { record: r.record, events, cursor: next, hasMore: next < r.seq };
     });
   }
+}
+
+function withPendingDialogs(record: RootRecord, event: unknown): RootRecord {
+  const e = event as { type?: string; id?: string; method?: string };
+  if (
+    e?.type === "extension_ui_request" &&
+    typeof e.id === "string" &&
+    ["select", "confirm", "input", "editor"].includes(e.method ?? "")
+  ) {
+    const dialogs = record.dialogs ?? [];
+    if (dialogs.length >= 20 && !dialogs.some((d) => d.id === e.id)) throw Error("Too many pending root dialogs");
+    return { ...record, dialogs: [...dialogs.filter((d) => d.id !== e.id), event as RootDialog] };
+  }
+  if (e?.type === "root_ui_response")
+    return { ...record, dialogs: (record.dialogs ?? []).filter((d) => d.id !== e.id) };
+  return record;
 }
