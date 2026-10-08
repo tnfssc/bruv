@@ -169,7 +169,7 @@ test("main Live owns first-turn instructions, actual execute and background comp
   const instructions = f.owner.orchestration.instructions ?? "";
   expect(instructions).toContain("VERTICAL_PROJECT_GUIDANCE");
   expect(instructions).toContain("VERTICAL_CUSTOM_APPEND");
-  expect(instructions).toContain("You lead work.");
+  expect(instructions).toContain("Delegating independent code or PR work? Give it a worktree.");
   expect(instructions).toContain("shell 3 seconds");
   expect(f.owner.orchestration.tools.map((t) => t.name)).toEqual(["execute"]);
   f.owner.inputTranscript("Launch isolated local marker job");
@@ -306,7 +306,7 @@ test("custom root prompt is byte-identical to ordinary prompt assembly before fi
   expect(livePrompt).toContain("VERTICAL_CUSTOM_ROOT_SYSTEM");
   expect(livePrompt).toContain("VERTICAL_PROJECT_GUIDANCE");
   // User-owned custom root prompt retains the ordinary override semantics.
-  expect(livePrompt).not.toContain("You lead work.");
+  expect(livePrompt).not.toContain("Delegating independent code or PR work? Give it a worktree.");
   f.owner.close();
   await f.owner.released;
   let ordinaryPrompt: string | undefined;

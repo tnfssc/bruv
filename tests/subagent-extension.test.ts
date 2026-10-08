@@ -417,8 +417,8 @@ test("root values are part of the agent frame and explicit user prompts retain p
   const framed = await e.fire("before_agent_start", { systemPrompt: "base", systemPromptOptions: {} }, ctx);
   expect(framed.systemPrompt).toContain("Working together");
   expect(framed.systemPrompt).toContain("Quick work? Finish it.");
-  expect(framed.systemPrompt).toContain("You lead work.");
-  expect(framed.systemPrompt).toContain("Put their work together for user.");
+  expect(framed.systemPrompt).toContain("Delegating independent code or PR work? Give it a worktree.");
+  expect(framed.systemPrompt).toContain("Save the worktree path and branch");
   expect(framed.systemPrompt).not.toContain("behavioral instructions only");
   const custom = await e.fire(
     "before_agent_start",
@@ -462,7 +462,7 @@ test("session lifecycle resets resumed child identity when returning to root", a
     ],
   });
   let framed = await e.fire("before_agent_start", { systemPrompt: "base", systemPromptOptions: {} }, root);
-  expect(framed.systemPrompt).toContain("You lead work.");
+  expect(framed.systemPrompt).toContain("Delegating independent code or PR work? Give it a worktree.");
   await e.fire("session_shutdown", {}, root);
   await e.fire("session_start", {}, child);
   framed = await e.fire("before_agent_start", { systemPrompt: "base", systemPromptOptions: {} }, child);
@@ -470,7 +470,7 @@ test("session lifecycle resets resumed child identity when returning to root", a
   await e.fire("session_shutdown", {}, child);
   await e.fire("session_start", {}, root);
   framed = await e.fire("before_agent_start", { systemPrompt: "base", systemPromptOptions: {} }, root);
-  expect(framed.systemPrompt).toContain("You lead work.");
+  expect(framed.systemPrompt).toContain("Delegating independent code or PR work? Give it a worktree.");
   expect(framed.systemPrompt).not.toContain("You are a normal sub-agent");
   await e.fire("session_shutdown", {}, root);
 });
