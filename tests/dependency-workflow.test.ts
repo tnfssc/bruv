@@ -1,7 +1,8 @@
 import { expect, test } from "bun:test";
-import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { ownedFixtureEnv } from "./helpers";
 
 type WorkflowStep = {
   name?: string;
@@ -113,8 +114,8 @@ test("downloaded candidate is verified without credentials before any remote wri
   expect(freshness).toBeLessThan(publish.run!.indexOf("git push"));
 });
 
-async function command(cwd: string, args: string[], env: Record<string, string> = {}) {
-  const child = Bun.spawn(args, { cwd, env: { ...process.env, ...env }, stdout: "pipe", stderr: "pipe" });
+async function command(cwd: string, args: string[], env: Record<string, string>) {
+  const child = Bun.spawn(args, { cwd, env, stdout: "pipe", stderr: "pipe" });
   const [exitCode, stdout, stderr] = await Promise.all([
     child.exited,
     new Response(child.stdout).text(),
@@ -134,42 +135,39 @@ async function withCandidate(changedFiles: string[], check: (candidate: Candidat
   const root = await mkdtemp(join(tmpdir(), "bruv-dependency-workflow-"));
   const repository = join(root, "source");
   const publisher = join(root, "publisher");
-  try {
-    await mkdir(repository);
-    await mkdir(join(publisher, "candidate"), { recursive: true });
-    const git = async (cwd: string, ...args: string[]) => {
-      const result = await command(cwd, ["git", ...args]);
-      expect(result.exitCode, result.stderr).toBe(0);
-      return result.stdout.trim();
-    };
-    await git(repository, "init");
-    await git(repository, "config", "user.name", "Workflow test");
-    await git(repository, "config", "user.email", "workflow@example.invalid");
-    for (const file of ["package.json", "bun.lock", "unexpected.txt"]) {
-      await writeFile(join(repository, file), "base\n");
-    }
-    await git(repository, "add", ".");
-    await git(repository, "commit", "-m", "base");
-    const base = await git(repository, "rev-parse", "HEAD");
-    await git(publisher, "init");
-    await git(publisher, "fetch", "--depth=1", repository, base);
-    await git(publisher, "checkout", "FETCH_HEAD");
-
-    for (const file of changedFiles) {
-      await writeFile(join(repository, file), "updated\n");
-    }
-    await git(repository, "commit", "-am", "candidate");
-    const sha = await git(repository, "rev-parse", "HEAD");
-    await git(repository, "bundle", "create", join(publisher, "candidate", "candidate.bundle"), "HEAD", "^" + base);
-    const script = stepNamed(publication, "Verify downloaded candidate identity and allowed files").run!;
-    await check({
-      base,
-      sha,
-      verify: (BASE, SHA) => command(publisher, ["/bin/bash", "-c", script], { BASE, SHA }),
-    });
-  } finally {
-    await rm(root, { recursive: true, force: true });
+  const env = ownedFixtureEnv(root);
+  await mkdir(repository);
+  await mkdir(join(publisher, "candidate"), { recursive: true });
+  const git = async (cwd: string, ...args: string[]) => {
+    const result = await command(cwd, ["git", ...args], env);
+    expect(result.exitCode, result.stderr).toBe(0);
+    return result.stdout.trim();
+  };
+  await git(repository, "init");
+  await git(repository, "config", "user.name", "Workflow test");
+  await git(repository, "config", "user.email", "workflow@example.invalid");
+  for (const file of ["package.json", "bun.lock", "unexpected.txt"]) {
+    await writeFile(join(repository, file), "base\n");
   }
+  await git(repository, "add", ".");
+  await git(repository, "commit", "-m", "base");
+  const base = await git(repository, "rev-parse", "HEAD");
+  await git(publisher, "init");
+  await git(publisher, "fetch", "--depth=1", repository, base);
+  await git(publisher, "checkout", "FETCH_HEAD");
+
+  for (const file of changedFiles) {
+    await writeFile(join(repository, file), "updated\n");
+  }
+  await git(repository, "commit", "-am", "candidate");
+  const sha = await git(repository, "rev-parse", "HEAD");
+  await git(repository, "bundle", "create", join(publisher, "candidate", "candidate.bundle"), "HEAD", "^" + base);
+  const script = stepNamed(publication, "Verify downloaded candidate identity and allowed files").run!;
+  await check({
+    base,
+    sha,
+    verify: (BASE, SHA) => command(publisher, ["/bin/bash", "-c", script], { ...env, BASE, SHA }),
+  });
 }
 
 test("candidate verification accepts a dependency-only bundle", async () => {

@@ -1114,12 +1114,15 @@
     {
       "file": "scripts/find-ci-baseline.ts",
       "initialBlob": "fb773c5dff9e139a4773d05af38956eebf9d29c2",
-      "status": "accepted",
+      "status": "pending",
       "area": "build-release-ci-tooling",
-      "acceptedBlob": "fb773c5dff9e139a4773d05af38956eebf9d29c2",
+      "acceptedBlob": "5796c92a32d55d195d2097012530dbd9c310e785",
       "primaryId": "task_8a5f8213",
       "judgeIds": ["task_149c9180"],
-      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json",
+      "resumeState": "needs-primary-final-blob",
+      "sourceCommit": "4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7",
+      "acceptedRelatedJudges": ["task_7b313d31"]
     },
     {
       "file": "scripts/fixtures/task-placement-clean/fake-provider.ts",
@@ -10883,11 +10886,11 @@
     {
       "file": "tests/dependency-updates.test.ts",
       "initialBlob": "3930e75b6257455b375509c9e90e0f70c533df55",
-      "status": "pending",
+      "status": "accepted",
       "area": "build-release-ci-tooling",
-      "acceptedBlob": "da5d3d5056c91024797839ef57544af184a603bf",
+      "acceptedBlob": "ead2728b0407a3efde4f529fc9663b88f5403985",
       "primaryId": "task_ad282ca7",
-      "judgeIds": ["task_f509c814"],
+      "judgeIds": ["task_f509c814", "task_7b313d31"],
       "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json",
       "priorAcceptedIntegrationProof": [
         {
@@ -10898,7 +10901,7 @@
           "finalJudge": "task_5c03f5eb"
         }
       ],
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "sourceCommit": "4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7",
       "resumeBatch": "owned-subprocess-fixture-environments",
       "resumeRework": {
@@ -10954,16 +10957,32 @@
         "Existing installer scripts and scripts/ci.sh contain cleanup traps; fault fixtures also contain signal/rollback operations. They were inspected, never executed here. Parent must audit any proposed gate under the supplied safety constraints. Fixture-root cleanup is removed; assertions about product-owned staging cleanup remain.",
         "The general offlineTestEnv/run helper and the production findCiBaseline CLI default continue their prior behavior outside these scoped fixture launches. Broad caller migration is intentionally not part of this bounded batch.",
         "Fixtures deliberately retain their mkdtemp roots; any eventual lifecycle policy belongs to the parent/user. Shared dependencies remain read-only. No wisdom notes changed; parent owns aggregate wisdom."
+      ],
+      "result": "ACCEPT after following the complete selection, fixture permission, Pi alignment, protected toolchain, root summary, and transitive lock summary journeys. The CLI denial now visibly allocates its own retained mkdtemp root, uses absolute updater argv, and supplies ownedFixtureEnv plus only the declared repository/event denial inputs. The reader no longer has to infer whether this subprocess borrows the test runner's credential/configuration authority. The error and exit assertions remain, as do all unchanged semantic assertions; this is authority ownership, not suite renaming.",
+      "systemReason": "Read scripts/update-dependencies.ts through import.meta.main: manifest and lock are read by module-relative paths before selectDependencyNames rejects the production repository fixture dispatch. Rejection precedes Bun update spawn and artifact mkdir/write, so moving cwd to the fixture does not weaken the denial or redirect the updater to a fake manifest. ownedFixtureEnv excludes GitHub/provider/parent Git configuration authority and owns HOME/XDG/SDK/cache/temp. The child root is retained and no cleanup path is introduced.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read every candidate-changed source path and its primaryBase diff; checked exact Git blob identities.",
+        "Reviewed effects without executing candidate code; no tests/setup/builds run.",
+        "Inspected the denied child launch and the source updater's read-only-before-denial / write-after-permission ordering.",
+        "Compared all assertions with primaryBase: no selection, protection, alignment, or summary assertion was removed."
+      ],
+      "limits": [
+        "Static actual-source judgment only. No setup, tests, builds, installer execution, fixture compilation, auth/device access, dependency reinstall, or publication performed. Passing execution is not claimed; parent owns audited isolated gates.",
+        "Durable provenance: existing worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_7b313d31; all candidate source read from exact Git objects at 4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7 and diffed against 07dfb599f3f4b5d945f39a661e8cc658ed3ffa54, not inferred from checkout HEAD. Worktrees and candidate evidence retained. Only this untracked artifact written.",
+        "Parent must verify runtime agent.model openai-codex/gpt-6.1-sol; this leaf did not independently attest runtime model metadata and launched no descendants.",
+        "Safety for ALL descendants: NO sudo, recovery investigation, user secrets, shell deletion/cleanup commands, inherited HOME/config/SDK cleanup, nested shell traps, destructive git, or user-data mutation. User already recovered data and requested no recovery work. Tests must use explicit process argv/env and owned fs.mkdtemp fixture HOME/config/SDK; retain them, do not delete. Review filesystem/network effects BEFORE tests/setup. Existing test-code cleanup of provably owned temporary paths may be inspected but NEVER run a shell trap or inherited HOME removal. Need live auth/device? Report unverified, don't access credentials. Propagate these constraints verbatim. Independent code/review agents get durable worktrees, not /tmp code checkouts. Keep existing worktrees and candidate evidence.",
+        "Do NOT run setup, tests, builds: parent owns audited isolated gates. Shared dependencies are read-only; no reinstall or guard bypass. Preserve old worktrees/candidate edits. No push/new PR/merge, publication is parent-owned. No per-worker wisdom note pile; return exact artifact untracked, parent writes aggregate wisdom."
       ]
     },
     {
       "file": "tests/dependency-workflow.test.ts",
       "initialBlob": "c35086a0333024c2fa0cf6a230ac43d098e597dc",
-      "status": "pending",
+      "status": "accepted",
       "area": "build-release-ci-tooling",
-      "acceptedBlob": "5d0f15a6b6e30e64707e6ec76e29af0f3ddd15a7",
+      "acceptedBlob": "58138e9118ea63d430b0703e71f55bccd30acee5",
       "primaryId": "task_ad282ca7",
-      "judgeIds": ["task_35b870b5"],
+      "judgeIds": ["task_35b870b5", "task_7b313d31"],
       "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json",
       "priorAcceptedIntegrationProof": [
         {
@@ -10974,7 +10993,7 @@
           "finalJudge": "task_5c03f5eb"
         }
       ],
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "sourceCommit": "4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7",
       "resumeBatch": "owned-subprocess-fixture-environments",
       "resumeRework": {
@@ -11030,6 +11049,23 @@
         "Existing installer scripts and scripts/ci.sh contain cleanup traps; fault fixtures also contain signal/rollback operations. They were inspected, never executed here. Parent must audit any proposed gate under the supplied safety constraints. Fixture-root cleanup is removed; assertions about product-owned staging cleanup remain.",
         "The general offlineTestEnv/run helper and the production findCiBaseline CLI default continue their prior behavior outside these scoped fixture launches. Broad caller migration is intentionally not part of this bounded batch.",
         "Fixtures deliberately retain their mkdtemp roots; any eventual lifecycle policy belongs to the parent/user. Shared dependencies remain read-only. No wisdom notes changed; parent owns aggregate wisdom."
+      ],
+      "acceptedRelatedJudges": ["task_7b313d31"],
+      "result": "ACCEPT after reading the full workflow contract assertions and all four real-bundle scenarios. withCandidate owns one root and environment before either repository is initialized; command now requires env, every Git command receives the same literal owned environment, and the Bash verification receives only its added BASE/SHA inputs. Source and publisher checkouts remain separate from configuration directories, and the root is retained after the callback. The real base-only fetch, candidate commit, bundle, and rejection cases make the lifetime and authority legible rather than hiding them in a context bag.",
+      "systemReason": "Read actual dependency-updates.yml validation, packaging, verification and publication steps. The test executes only the verification script, which verifies the bundle, fetches it locally, compares candidate and parent identities, and allows only package.json/bun.lock. Publication credentials and remote writes remain in a later step and are not part of this fixture. Fixed tool PATH, owned HOME/global Git config, GIT_CONFIG_NOSYSTEM and an empty owned hooksPath prevent inherited GIT_DIR/GIT_WORK_TREE/config/hooks/signing/credential authority from redirecting initialization, commits or verification. No assertion about permissions, pinning, notices, ordering, bounded artifacts, freshness, or exact candidate identity was dropped.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read every candidate-changed source path and its primaryBase diff; checked exact Git blob identities.",
+        "Reviewed effects without executing candidate code; no tests/setup/builds run.",
+        "Traced init/config/add/commit/fetch/checkout/bundle and Bash command launches to the owned env.",
+        "Inspected the four acceptance/rejection cases and all unchanged workflow assertions against actual YAML; no publication commands executed."
+      ],
+      "limits": [
+        "Static actual-source judgment only. No setup, tests, builds, installer execution, fixture compilation, auth/device access, dependency reinstall, or publication performed. Passing execution is not claimed; parent owns audited isolated gates.",
+        "Durable provenance: existing worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_7b313d31; all candidate source read from exact Git objects at 4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7 and diffed against 07dfb599f3f4b5d945f39a661e8cc658ed3ffa54, not inferred from checkout HEAD. Worktrees and candidate evidence retained. Only this untracked artifact written.",
+        "Parent must verify runtime agent.model openai-codex/gpt-6.1-sol; this leaf did not independently attest runtime model metadata and launched no descendants.",
+        "Safety for ALL descendants: NO sudo, recovery investigation, user secrets, shell deletion/cleanup commands, inherited HOME/config/SDK cleanup, nested shell traps, destructive git, or user-data mutation. User already recovered data and requested no recovery work. Tests must use explicit process argv/env and owned fs.mkdtemp fixture HOME/config/SDK; retain them, do not delete. Review filesystem/network effects BEFORE tests/setup. Existing test-code cleanup of provably owned temporary paths may be inspected but NEVER run a shell trap or inherited HOME removal. Need live auth/device? Report unverified, don't access credentials. Propagate these constraints verbatim. Independent code/review agents get durable worktrees, not /tmp code checkouts. Keep existing worktrees and candidate evidence.",
+        "Do NOT run setup, tests, builds: parent owns audited isolated gates. Shared dependencies are read-only; no reinstall or guard bypass. Preserve old worktrees/candidate edits. No push/new PR/merge, publication is parent-owned. No per-worker wisdom note pile; return exact artifact untracked, parent writes aggregate wisdom."
       ]
     },
     {
@@ -11332,11 +11368,11 @@
     {
       "file": "tests/find-ci-baseline.test.ts",
       "initialBlob": "fd1e1f5453615cc3a854db18d8e554ac7b3d94f4",
-      "status": "pending",
+      "status": "accepted",
       "area": "build-release-ci-tooling",
-      "acceptedBlob": "a96d35ae74558f9b440dda3a486e19d2bd00a8d5",
+      "acceptedBlob": "261fb5661fa8657bb6c3e0c9004614fb3e8ad99c",
       "primaryId": "task_ad282ca7",
-      "judgeIds": ["task_aa63512d"],
+      "judgeIds": ["task_aa63512d", "task_7b313d31"],
       "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json",
       "priorAcceptedIntegrationProof": [
         {
@@ -11347,7 +11383,7 @@
           "finalJudge": "task_5c03f5eb"
         }
       ],
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "sourceCommit": "4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7",
       "resumeBatch": "owned-subprocess-fixture-environments",
       "resumeRework": {
@@ -11403,6 +11439,24 @@
         "Existing installer scripts and scripts/ci.sh contain cleanup traps; fault fixtures also contain signal/rollback operations. They were inspected, never executed here. Parent must audit any proposed gate under the supplied safety constraints. Fixture-root cleanup is removed; assertions about product-owned staging cleanup remain.",
         "The general offlineTestEnv/run helper and the production findCiBaseline CLI default continue their prior behavior outside these scoped fixture launches. Broad caller migration is intentionally not part of this bounded batch.",
         "Fixtures deliberately retain their mkdtemp roots; any eventual lifecycle policy belongs to the parent/user. Shared dependencies remain read-only. No wisdom notes changed; parent owns aggregate wisdom."
+      ],
+      "acceptedRelatedJudges": ["task_7b313d31"],
+      "result": "ACCEPT after following each evidence class: source changes carried across failed/cancelled pushes, docs-only success, authenticated mocked HTTP requests, foreign/unfinished/invalid runs, API uncertainty, divergent commits, missing objects/blobs, invalid checkout/input, and shared deadlines. checkout now places real Git history in root/checkout while HOME/config/cache/SDK/hooks live outside that commit input subtree. The same explicit env reaches fixture Git, every findCiBaseline call, and selection, with the existing assertions intact. This removes the scattered assumption that a cwd alone owns Git and selector writes.",
+      "systemReason": "Read the whole changed scripts/find-ci-baseline.ts and connected ci-selective.ts plus CI push caller. The final env argument passes directly to spawnSync; production defaults retain their existing behavior. Workflow/repository/status/event/SHA/type/ancestry filtering, head exclusion, bounded history, deadline and silent fail-closed handling are unchanged. The selector inherits only the already-isolated child env, creates artifacts under the owned checkout, and has no inherited GITHUB_OUTPUT/GITHUB_STEP_SUMMARY destination. Mock fetchers carry only a synthetic test token; real Git still supplies checkout, commit-object and ancestor proof. No hosted API or selector execution was performed.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read every candidate-changed source path and its primaryBase diff; checked exact Git blob identities.",
+        "Reviewed effects without executing candidate code; no tests/setup/builds run.",
+        "Checked all findCiBaseline test invocations supply f.env; HTTP is mocked while Git remains real.",
+        "Inspected selector Git/status/artifact output decisions and unchanged production CLI default.",
+        "Compared every evidence and shared-deadline assertion with primaryBase; none removed."
+      ],
+      "limits": [
+        "Static actual-source judgment only. No setup, tests, builds, installer execution, fixture compilation, auth/device access, dependency reinstall, or publication performed. Passing execution is not claimed; parent owns audited isolated gates.",
+        "Durable provenance: existing worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_7b313d31; all candidate source read from exact Git objects at 4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7 and diffed against 07dfb599f3f4b5d945f39a661e8cc658ed3ffa54, not inferred from checkout HEAD. Worktrees and candidate evidence retained. Only this untracked artifact written.",
+        "Parent must verify runtime agent.model openai-codex/gpt-6.1-sol; this leaf did not independently attest runtime model metadata and launched no descendants.",
+        "Safety for ALL descendants: NO sudo, recovery investigation, user secrets, shell deletion/cleanup commands, inherited HOME/config/SDK cleanup, nested shell traps, destructive git, or user-data mutation. User already recovered data and requested no recovery work. Tests must use explicit process argv/env and owned fs.mkdtemp fixture HOME/config/SDK; retain them, do not delete. Review filesystem/network effects BEFORE tests/setup. Existing test-code cleanup of provably owned temporary paths may be inspected but NEVER run a shell trap or inherited HOME removal. Need live auth/device? Report unverified, don't access credentials. Propagate these constraints verbatim. Independent code/review agents get durable worktrees, not /tmp code checkouts. Keep existing worktrees and candidate evidence.",
+        "Do NOT run setup, tests, builds: parent owns audited isolated gates. Shared dependencies are read-only; no reinstall or guard bypass. Preserve old worktrees/candidate edits. No push/new PR/merge, publication is parent-owned. No per-worker wisdom note pile; return exact artifact untracked, parent writes aggregate wisdom."
       ]
     },
     {
@@ -13727,11 +13781,11 @@
     {
       "file": "tests/helpers.ts",
       "initialBlob": "45e0d90785aa81576dfdd1687cf44451b546dde4",
-      "status": "pending",
+      "status": "accepted",
       "area": "build-release-ci-tooling",
-      "acceptedBlob": "45e0d90785aa81576dfdd1687cf44451b546dde4",
+      "acceptedBlob": "c1df969d356af8fec87002a62cc053f1c6cd08f0",
       "primaryId": "task_ad282ca7",
-      "judgeIds": ["task_f7319ebc"],
+      "judgeIds": ["task_f7319ebc", "task_7b313d31"],
       "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json",
       "priorAcceptedIntegrationProof": [
         {
@@ -13742,7 +13796,7 @@
           "finalJudge": "task_5c03f5eb"
         }
       ],
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "sourceCommit": "4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7",
       "resumeBatch": "owned-subprocess-fixture-environments",
       "resumeRework": {
@@ -13798,6 +13852,24 @@
         "Existing installer scripts and scripts/ci.sh contain cleanup traps; fault fixtures also contain signal/rollback operations. They were inspected, never executed here. Parent must audit any proposed gate under the supplied safety constraints. Fixture-root cleanup is removed; assertions about product-owned staging cleanup remain.",
         "The general offlineTestEnv/run helper and the production findCiBaseline CLI default continue their prior behavior outside these scoped fixture launches. Broad caller migration is intentionally not part of this bounded batch.",
         "Fixtures deliberately retain their mkdtemp roots; any eventual lifecycle policy belongs to the parent/user. Shared dependencies remain read-only. No wisdom notes changed; parent owns aggregate wisdom."
+      ],
+      "acceptedRelatedJudges": ["task_7b313d31"],
+      "result": "ACCEPT after reading the entire helper and tracing its integration into each assigned fixture. ownedFixtureEnv(root) is a small local authority constructor, not a general context object: it creates a few directories beneath the caller's mkdtemp root and returns a literal environment without reading process.env. HOME/XDG/SDK/Bun/npm/temp locations, system tools, offline Herdr mode and Git configuration/hooks ownership are visible together. Callers still own cwd, argv, scenario variables and retained lifetime. Existing offlineTestEnv and run semantics remain untouched, so the new owner does not silently alter independent tests.",
+      "systemReason": "The new fixtures explicitly call ownedFixtureEnv and do not fall back through the existing optional-env run helper. Git system/global configuration is isolated, hooksPath resolves to an empty owned directory, and inherited repository, signing, credential, provider and output-destination variables are absent. Bun/compiler launches use absolute process.execPath; installer fixtures prepend only their own tool directory. Reviewed the separate Pi-host offline helper assertions/callers to distinguish the preserved legacy offline wrapper from the stronger targeted fixture environment. The function neither mutates global environment nor deletes any root.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read every candidate-changed source path and its primaryBase diff; checked exact Git blob identities.",
+        "Reviewed effects without executing candidate code; no tests/setup/builds run.",
+        "Inspected every returned environment key and directory creation: none derives from inherited HOME/config/SDK/provider/Git authority.",
+        "Followed all new helper callers and their per-scenario additions.",
+        "Verified offlineTestEnv/run remain unchanged and independently scoped."
+      ],
+      "limits": [
+        "Static actual-source judgment only. No setup, tests, builds, installer execution, fixture compilation, auth/device access, dependency reinstall, or publication performed. Passing execution is not claimed; parent owns audited isolated gates.",
+        "Durable provenance: existing worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_7b313d31; all candidate source read from exact Git objects at 4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7 and diffed against 07dfb599f3f4b5d945f39a661e8cc658ed3ffa54, not inferred from checkout HEAD. Worktrees and candidate evidence retained. Only this untracked artifact written.",
+        "Parent must verify runtime agent.model openai-codex/gpt-6.1-sol; this leaf did not independently attest runtime model metadata and launched no descendants.",
+        "Safety for ALL descendants: NO sudo, recovery investigation, user secrets, shell deletion/cleanup commands, inherited HOME/config/SDK cleanup, nested shell traps, destructive git, or user-data mutation. User already recovered data and requested no recovery work. Tests must use explicit process argv/env and owned fs.mkdtemp fixture HOME/config/SDK; retain them, do not delete. Review filesystem/network effects BEFORE tests/setup. Existing test-code cleanup of provably owned temporary paths may be inspected but NEVER run a shell trap or inherited HOME removal. Need live auth/device? Report unverified, don't access credentials. Propagate these constraints verbatim. Independent code/review agents get durable worktrees, not /tmp code checkouts. Keep existing worktrees and candidate evidence.",
+        "Do NOT run setup, tests, builds: parent owns audited isolated gates. Shared dependencies are read-only; no reinstall or guard bypass. Preserve old worktrees/candidate edits. No push/new PR/merge, publication is parent-owned. No per-worker wisdom note pile; return exact artifact untracked, parent writes aggregate wisdom."
       ]
     },
     {
@@ -14513,11 +14585,11 @@
     {
       "file": "tests/install-download.test.ts",
       "initialBlob": "a19f4472fe7ab7f1cb083244ce20b4b3cf4be3d2",
-      "status": "pending",
+      "status": "accepted",
       "area": "build-release-ci-tooling",
-      "acceptedBlob": "e04230d818b527658f16eda023aa190bbb1b4f89",
+      "acceptedBlob": "a848bb837b8adef3c3147179b311a391958515dd",
       "primaryId": "task_ad282ca7",
-      "judgeIds": ["task_bdc5b9c4", "task_9233d5f2"],
+      "judgeIds": ["task_bdc5b9c4", "task_9233d5f2", "task_7b313d31"],
       "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json",
       "priorAcceptedIntegrationProof": [
         {
@@ -14528,7 +14600,7 @@
           "finalJudge": "task_5c03f5eb"
         }
       ],
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "sourceCommit": "4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7",
       "resumeBatch": "owned-subprocess-fixture-environments",
       "resumeRework": {
@@ -14584,16 +14656,34 @@
         "Existing installer scripts and scripts/ci.sh contain cleanup traps; fault fixtures also contain signal/rollback operations. They were inspected, never executed here. Parent must audit any proposed gate under the supplied safety constraints. Fixture-root cleanup is removed; assertions about product-owned staging cleanup remain.",
         "The general offlineTestEnv/run helper and the production findCiBaseline CLI default continue their prior behavior outside these scoped fixture launches. Broad caller migration is intentionally not part of this bounded batch.",
         "Fixtures deliberately retain their mkdtemp roots; any eventual lifecycle policy belongs to the parent/user. Shared dependencies remain read-only. No wisdom notes changed; parent owns aggregate wisdom."
+      ],
+      "acceptedRelatedJudges": ["task_7b313d31"],
+      "result": "ACCEPT after reading both download entrypoint scenarios from mocked assets through checksum checks, staged version/private-directory probes, pair publication, modes/notices, relative paths, rename failure, interruption and failed rollback backup assertions. sandbox creates one owned environment and returns it for the standalone launcher version probe; the latter now has the owned cwd and no inherited HOME/provider configuration. Deliberately wrong XDG inputs stay under the root while still testing that staged probes replace them. withSandbox retains the root. No checksum, no-probe, pair identity, publication or rollback assertion was discarded.",
+      "systemReason": "Read both actual installer entrypoints (identical blobs/content) and the connector launcher. Test curl/id/uname wrappers are fixture-owned; curl copies declared local assets rather than making network requests. Installer install/notices/stage paths are rooted by explicit HOME/BRUV_INSTALL_DIR, private staged probes remain enforced, and the launcher resolves the sibling pair with its override cleared. Existing shell traps/rollback deletion paths were inspected only, never executed. The standalone probe reuses the literal env rather than restoring parent configuration; failure and interruption wrappers can affect only the fixture installer process and owned install paths.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read every candidate-changed source path and its primaryBase diff; checked exact Git blob identities.",
+        "Reviewed effects without executing candidate code; no tests/setup/builds run.",
+        "Reviewed every fixture tool wrapper and installer filesystem/network effect before any execution; none was run.",
+        "Confirmed both entrypoints retain identical content and the probe uses cwd root plus returned owned env.",
+        "Compared all pair/checksum/notices/private-probe/rollback assertions with primaryBase."
+      ],
+      "limits": [
+        "Static actual-source judgment only. No setup, tests, builds, installer execution, fixture compilation, auth/device access, dependency reinstall, or publication performed. Passing execution is not claimed; parent owns audited isolated gates.",
+        "Durable provenance: existing worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_7b313d31; all candidate source read from exact Git objects at 4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7 and diffed against 07dfb599f3f4b5d945f39a661e8cc658ed3ffa54, not inferred from checkout HEAD. Worktrees and candidate evidence retained. Only this untracked artifact written.",
+        "Parent must verify runtime agent.model openai-codex/gpt-6.1-sol; this leaf did not independently attest runtime model metadata and launched no descendants.",
+        "Safety for ALL descendants: NO sudo, recovery investigation, user secrets, shell deletion/cleanup commands, inherited HOME/config/SDK cleanup, nested shell traps, destructive git, or user-data mutation. User already recovered data and requested no recovery work. Tests must use explicit process argv/env and owned fs.mkdtemp fixture HOME/config/SDK; retain them, do not delete. Review filesystem/network effects BEFORE tests/setup. Existing test-code cleanup of provably owned temporary paths may be inspected but NEVER run a shell trap or inherited HOME removal. Need live auth/device? Report unverified, don't access credentials. Propagate these constraints verbatim. Independent code/review agents get durable worktrees, not /tmp code checkouts. Keep existing worktrees and candidate evidence.",
+        "Do NOT run setup, tests, builds: parent owns audited isolated gates. Shared dependencies are read-only; no reinstall or guard bypass. Preserve old worktrees/candidate edits. No push/new PR/merge, publication is parent-owned. No per-worker wisdom note pile; return exact artifact untracked, parent writes aggregate wisdom."
       ]
     },
     {
       "file": "tests/install-local.test.ts",
       "initialBlob": "ffaeaac0f918c7921dac2ccc60cdb68c21039fc6",
-      "status": "pending",
+      "status": "accepted",
       "area": "build-release-ci-tooling",
-      "acceptedBlob": "51a27b0bc8d0f3da78baddee0ab0eab27a048468",
+      "acceptedBlob": "fc7a19004f17230189a4d0c70021cfa14065ac2e",
       "primaryId": "task_ad282ca7",
-      "judgeIds": ["task_5442746a"],
+      "judgeIds": ["task_5442746a", "task_7b313d31"],
       "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json",
       "priorAcceptedIntegrationProof": [
         {
@@ -14604,7 +14694,7 @@
           "finalJudge": "task_5c03f5eb"
         }
       ],
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "sourceCommit": "4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7",
       "resumeBatch": "owned-subprocess-fixture-environments",
       "resumeRework": {
@@ -14660,6 +14750,24 @@
         "Existing installer scripts and scripts/ci.sh contain cleanup traps; fault fixtures also contain signal/rollback operations. They were inspected, never executed here. Parent must audit any proposed gate under the supplied safety constraints. Fixture-root cleanup is removed; assertions about product-owned staging cleanup remain.",
         "The general offlineTestEnv/run helper and the production findCiBaseline CLI default continue their prior behavior outside these scoped fixture launches. Broad caller migration is intentionally not part of this bounded batch.",
         "Fixtures deliberately retain their mkdtemp roots; any eventual lifecycle policy belongs to the parent/user. Shared dependencies remain read-only. No wisdom notes changed; parent owns aggregate wisdom."
+      ],
+      "acceptedRelatedJudges": ["task_7b313d31"],
+      "result": "ACCEPT after reading the full build/host ordering, staged pair verification, unsafe target, publication and rollback journeys. run constructs an explicit environment from its retained sandbox root and adds only the fixture tools, install/host/log and declared failure inputs. The shared afterEach deletion machinery is removed; the one exact owned dist connector removal remains part of the missing-payload scenario. Root ownership and subprocess configuration are visible at the launch, without moving the failure semantics into an abstraction. All ordering, bytes/modes, staged binding, symlink, rename, SIGTERM and retained backup assertions remain.",
+      "systemReason": "Read scripts/install-local.sh through build selection, staging, pair probes, target validation, backups, connector-first publication and rollback. In these tests the copied installer, payloads, build/helper commands, uname and mv wrappers are all rooted in the sandbox. HOME/XDG/SDK/temp writes cannot fall through to inherited paths, tool PATH does not inherit parent overrides, and product probes use stand-ins. Existing installer shell traps and owned stage cleanup were inspected but not executed. Build simulation still verifies the original Mac helper ordering and ordinary build behavior; environment isolation does not replace the substantive install assertions.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read every candidate-changed source path and its primaryBase diff; checked exact Git blob identities.",
+        "Reviewed effects without executing candidate code; no tests/setup/builds run.",
+        "Traced every run(root, additions) call and wrapper to explicit sandbox inputs.",
+        "Inspected the retained exact dist/bruv-claude-compat removal as test setup, not parent data cleanup.",
+        "Compared build ordering, pair publication, safety and rollback assertions with primaryBase; no tests/builds/installer shell traps run."
+      ],
+      "limits": [
+        "Static actual-source judgment only. No setup, tests, builds, installer execution, fixture compilation, auth/device access, dependency reinstall, or publication performed. Passing execution is not claimed; parent owns audited isolated gates.",
+        "Durable provenance: existing worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_7b313d31; all candidate source read from exact Git objects at 4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7 and diffed against 07dfb599f3f4b5d945f39a661e8cc658ed3ffa54, not inferred from checkout HEAD. Worktrees and candidate evidence retained. Only this untracked artifact written.",
+        "Parent must verify runtime agent.model openai-codex/gpt-6.1-sol; this leaf did not independently attest runtime model metadata and launched no descendants.",
+        "Safety for ALL descendants: NO sudo, recovery investigation, user secrets, shell deletion/cleanup commands, inherited HOME/config/SDK cleanup, nested shell traps, destructive git, or user-data mutation. User already recovered data and requested no recovery work. Tests must use explicit process argv/env and owned fs.mkdtemp fixture HOME/config/SDK; retain them, do not delete. Review filesystem/network effects BEFORE tests/setup. Existing test-code cleanup of provably owned temporary paths may be inspected but NEVER run a shell trap or inherited HOME removal. Need live auth/device? Report unverified, don't access credentials. Propagate these constraints verbatim. Independent code/review agents get durable worktrees, not /tmp code checkouts. Keep existing worktrees and candidate evidence.",
+        "Do NOT run setup, tests, builds: parent owns audited isolated gates. Shared dependencies are read-only; no reinstall or guard bypass. Preserve old worktrees/candidate edits. No push/new PR/merge, publication is parent-owned. No per-worker wisdom note pile; return exact artifact untracked, parent writes aggregate wisdom."
       ]
     },
     {
@@ -22723,11 +22831,11 @@
     {
       "file": "tests/update-self-fixture.test.ts",
       "initialBlob": "absent",
-      "status": "pending",
+      "status": "accepted",
       "area": "build-release-ci-tooling",
-      "acceptedBlob": "06c4344c3274180322ba17971dc91486149f7a09",
+      "acceptedBlob": "29f15040214d714a4e8dda774d0aa1539852357c",
       "primaryId": "task_ad282ca7",
-      "judgeIds": ["task_efae7e17"],
+      "judgeIds": ["task_efae7e17", "task_7b313d31"],
       "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json",
       "priorAcceptedIntegrationProof": [
         {
@@ -22738,7 +22846,7 @@
           "finalJudge": "task_35a208fa"
         }
       ],
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "sourceCommit": "4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7",
       "resumeBatch": "owned-subprocess-fixture-environments",
       "resumeRework": {
@@ -22793,6 +22901,24 @@
         "Existing installer scripts and scripts/ci.sh contain cleanup traps; fault fixtures also contain signal/rollback operations. They were inspected, never executed here. Parent must audit any proposed gate under the supplied safety constraints. Fixture-root cleanup is removed; assertions about product-owned staging cleanup remain.",
         "The general offlineTestEnv/run helper and the production findCiBaseline CLI default continue their prior behavior outside these scoped fixture launches. Broad caller migration is intentionally not part of this bounded batch.",
         "Fixtures deliberately retain their mkdtemp roots; any eventual lifecycle policy belongs to the parent/user. Shared dependencies remain read-only. No wisdom notes changed; parent owns aggregate wisdom."
+      ],
+      "acceptedRelatedJudges": ["task_7b313d31"],
+      "result": "ACCEPT after reading the complete metadata/transport loop and source-versus-compiled runtime fixture. beforeAll establishes a retained mkdtemp root and owned env before compilation. run requires env and fixes cwd to that root, including the preliminary reusable product --version probe that previously leaked parent HOME. Fixture runner/source invocations receive that owner plus explicit target/payload/version inputs; installed product and connector probes keep it with the deliberate /nonexistent PATH. Real reusable pair, private compiled runner, source refusal, wrong-version unchanged install, no-staging directory and runner/payload digest assertions all remain.",
+      "systemReason": "Read tests/update-self-fixture.ts, src/update.ts compiled-authority/staging/probe/rollback paths and src/cli.ts configureBruvRuntime startup. Normal --version still materializes runtime assets under homedir(), now the owned fixture HOME, not the user's HOME. The private fetcher is a closed in-memory release and rejects undeclared URLs; compiled detection remains real. pairProbe copies the fixture process env, so descendant staged product/connector probes inherit only owned HOME/XDG/SDK and explicit fixture inputs. Target writes are confined to separately created install directories; reusable payloads and runner are only read/probed and their original hashes remain asserted. No compiled runner, product probe, device or live authentication was executed.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read every candidate-changed source path and its primaryBase diff; checked exact Git blob identities.",
+        "Reviewed effects without executing candidate code; no tests/setup/builds run.",
+        "Traced all compilation/product/source/runner/installed-pair commands to required owned env and cwd.",
+        "Inspected normal CLI HOME materialization and updater descendant probe environment inheritance.",
+        "Compared real-pair, transport, compiled-authority, unchanged-install, no-staging and digest assertions with primaryBase."
+      ],
+      "limits": [
+        "Static actual-source judgment only. No setup, tests, builds, installer execution, fixture compilation, auth/device access, dependency reinstall, or publication performed. Passing execution is not claimed; parent owns audited isolated gates.",
+        "Durable provenance: existing worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_7b313d31; all candidate source read from exact Git objects at 4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7 and diffed against 07dfb599f3f4b5d945f39a661e8cc658ed3ffa54, not inferred from checkout HEAD. Worktrees and candidate evidence retained. Only this untracked artifact written.",
+        "Parent must verify runtime agent.model openai-codex/gpt-6.1-sol; this leaf did not independently attest runtime model metadata and launched no descendants.",
+        "Safety for ALL descendants: NO sudo, recovery investigation, user secrets, shell deletion/cleanup commands, inherited HOME/config/SDK cleanup, nested shell traps, destructive git, or user-data mutation. User already recovered data and requested no recovery work. Tests must use explicit process argv/env and owned fs.mkdtemp fixture HOME/config/SDK; retain them, do not delete. Review filesystem/network effects BEFORE tests/setup. Existing test-code cleanup of provably owned temporary paths may be inspected but NEVER run a shell trap or inherited HOME removal. Need live auth/device? Report unverified, don't access credentials. Propagate these constraints verbatim. Independent code/review agents get durable worktrees, not /tmp code checkouts. Keep existing worktrees and candidate evidence.",
+        "Do NOT run setup, tests, builds: parent owns audited isolated gates. Shared dependencies are read-only; no reinstall or guard bypass. Preserve old worktrees/candidate edits. No push/new PR/merge, publication is parent-owned. No per-worker wisdom note pile; return exact artifact untracked, parent writes aggregate wisdom."
       ]
     },
     {
@@ -25147,9 +25273,9 @@
     "baselineFiles": 766,
     "finalGate": "pending; incomplete focus coverage",
     "liveAuth": "unverified/failing; preserved",
-    "accepted": 829,
+    "accepted": 835,
     "total": 836,
-    "pending": 7,
+    "pending": 1,
     "sourceExtras": 70,
     "checkout": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
     "branch": "bruv/readability-pr45-sol-continuation",

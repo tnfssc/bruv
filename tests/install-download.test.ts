@@ -1,8 +1,9 @@
 import { describe, expect, test } from "bun:test";
 import { createHash } from "node:crypto";
-import { access, mkdir, mkdtemp, readFile, readdir, rm, stat, writeFile } from "node:fs/promises";
+import { access, mkdir, mkdtemp, readFile, readdir, stat, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
+import { ownedFixtureEnv } from "./helpers";
 
 const normal = `#!/bin/sh
 case "$1" in
@@ -56,12 +57,12 @@ esac
 `,
     { mode: 0o755 },
   );
+  const fixtureEnv = ownedFixtureEnv(root);
   const run = async (env: Record<string, string> = {}) => {
     const child = Bun.spawn(["sh", resolve(import.meta.dir, installer)], {
       cwd: root,
       env: {
-        ...process.env,
-        HOME: join(root, "home"),
+        ...fixtureEnv,
         BRUV_INSTALL_DIR: join(root, "bin"),
         ASSETS: join(root, "assets"),
         PATH: join(root, "tools") + ":/usr/bin:/bin",
@@ -77,7 +78,7 @@ esac
     ]);
     return { output, errors, code };
   };
-  return { root, binDir, assetsDir, noticesDir, run, launcher };
+  return { root, binDir, assetsDir, noticesDir, run, launcher, env: fixtureEnv };
 }
 
 async function withSandbox(
@@ -85,11 +86,7 @@ async function withSandbox(
   exercise: (fixture: Awaited<ReturnType<typeof sandbox>>) => Promise<void>,
 ) {
   const root = await mkdtemp(join(tmpdir(), "bruv-download-install-"));
-  try {
-    await exercise(await sandbox(root, installer));
-  } finally {
-    await rm(root, { recursive: true, force: true });
-  }
+  await exercise(await sandbox(root, installer));
 }
 
 async function mockMove(root: string, operation: string) {
@@ -113,7 +110,7 @@ exec /bin/mv "$@"
 
 describe.each(["../install.sh", "../scripts/install.sh"])("download entrypoint %s", (installer) => {
   test("publishes the verified pair and launcher identity, ignoring inherited override", () =>
-    withSandbox(installer, async ({ binDir, run, launcher }) => {
+    withSandbox(installer, async ({ root, binDir, run, launcher, env }) => {
       const result = await run({ BRUV_CLAUDE_COMPAT_BRUV_PATH: "/wrong-bruv" });
       expect(result.code, result.errors).toBe(0);
       expect((await readdir(binDir)).sort()).toEqual(["bruv", "bruv-claude-compat"]);
@@ -121,7 +118,8 @@ describe.each(["../install.sh", "../scripts/install.sh"])("download entrypoint %
       expect(await readFile(join(binDir, "bruv-claude-compat"), "utf8")).toBe(launcher);
       const version = Bun.spawn([join(binDir, "bruv-claude-compat"), "--version"], {
         // Check the fixture sibling, not the CLI selected by the parent agent session.
-        env: { ...process.env, BRUV_CLAUDE_COMPAT_BRUV_PATH: "" },
+        cwd: root,
+        env: { ...env, BRUV_CLAUDE_COMPAT_BRUV_PATH: "" },
         stdout: "pipe",
         stderr: "pipe",
       });
@@ -183,7 +181,7 @@ describe.each(["../install.sh", "../scripts/install.sh"])("download entrypoint %
     }));
 
   test("version probes use private directories and an explicit staged connector pair", () =>
-    withSandbox(installer, async ({ assetsDir, run }) => {
+    withSandbox(installer, async ({ root, assetsDir, run }) => {
       const checks = `case "$0" in */.bruv-install.*/bruv) ;; *) exit 1;; esac
 case "$HOME" in */.bruv-install.*/probe) ;; *) exit 1;; esac
 [ "$XDG_CONFIG_HOME" = "$HOME/config" ] && [ "$XDG_CACHE_HOME" = "$HOME/cache" ] && [ "$XDG_DATA_HOME" = "$HOME/data" ] || exit 1
@@ -192,9 +190,9 @@ if [ "$1" = --version ]; then [ -z "\${BRUV_CLAUDE_COMPAT_BRUV_PATH:-}" ] || exi
       await writeAsset(assetsDir, "bruv-linux-x64", normal.replace("#!/bin/sh\n", "#!/bin/sh\n" + checks));
       const result = await run({
         BRUV_CLAUDE_COMPAT_BRUV_PATH: "/wrong-bruv",
-        XDG_CONFIG_HOME: "/wrong-config",
-        XDG_CACHE_HOME: "/wrong-cache",
-        XDG_DATA_HOME: "/wrong-data",
+        XDG_CONFIG_HOME: join(root, "wrong-config"),
+        XDG_CACHE_HOME: join(root, "wrong-cache"),
+        XDG_DATA_HOME: join(root, "wrong-data"),
       });
       expect(result.code, result.errors).toBe(0);
     }));

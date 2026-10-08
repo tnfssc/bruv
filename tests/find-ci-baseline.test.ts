@@ -1,25 +1,24 @@
-import { afterEach, describe, expect, spyOn, test } from "bun:test";
+import { describe, expect, spyOn, test } from "bun:test";
 import { execFileSync } from "node:child_process";
-import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { findCiBaseline } from "../scripts/find-ci-baseline";
+import { ownedFixtureEnv } from "./helpers";
 
 const repo = "owner/project";
 const workflow = { id: 7, path: ".github/workflows/ci.yml" };
 const workflowUrl = `https://api.github.com/repos/${repo}/actions/workflows/ci.yml`;
 const historyUrl = `https://api.github.com/repos/${repo}/actions/workflows/7/runs?event=push&branch=develop&status=success&per_page=100`;
 const token = "private-test-token";
-const dirs: string[] = [];
-afterEach(() => {
-  for (const dir of dirs.splice(0)) rmSync(dir, { recursive: true, force: true });
-});
 
 // A validated commit, an unchecked source push, then a docs-only HEAD.
 function checkout() {
-  const cwd = mkdtempSync(join(tmpdir(), "ci-baseline-"));
-  dirs.push(cwd);
-  const git = (...args: string[]) => execFileSync("git", args, { cwd, encoding: "utf8" }).trim();
+  const root = mkdtempSync(join(tmpdir(), "ci-baseline-"));
+  const env = ownedFixtureEnv(root);
+  const cwd = join(root, "checkout");
+  mkdirSync(cwd);
+  const git = (...args: string[]) => execFileSync("git", args, { cwd, env, encoding: "utf8" }).trim();
   git("init", "-q");
   writeFileSync(join(cwd, ".gitignore"), "artifacts/\n");
   git("config", "user.email", "test@example.org");
@@ -34,7 +33,7 @@ function checkout() {
   const validated = commit("README.md", "initial");
   const source = commit("src/core.ts", "unchecked source");
   const head = commit("README.md", "docs only");
-  return { cwd, git, commit, validated, source, head };
+  return { cwd, env, git, commit, validated, source, head };
 }
 
 function successfulPush(sha: string, overrides = {}) {
@@ -65,12 +64,12 @@ function githubHistory(runs: unknown[], metadata: unknown = workflow) {
   return { requests, fetcher };
 }
 
-function selection(cwd: string, base: string) {
+function selection(cwd: string, base: string, env: Record<string, string>) {
   return JSON.parse(
     execFileSync(process.execPath, [join(process.cwd(), "scripts/ci-selective.ts"), "--base", base], {
       cwd,
       encoding: "utf8",
-      env: { ...process.env, GITHUB_OUTPUT: "", GITHUB_STEP_SUMMARY: "" },
+      env,
     }),
   );
 }
@@ -83,20 +82,20 @@ describe("baseline determines which source changes CI must validate", () => {
       successfulPush(f.source, { conclusion }),
       successfulPush(f.validated),
     ]);
-    const baseline = await findCiBaseline(repo, f.head, token, f.cwd, api.fetcher);
+    const baseline = await findCiBaseline(repo, f.head, token, f.cwd, api.fetcher, f.env);
     expect(baseline).toBe(f.validated);
     expect(f.git("diff", "--name-only", baseline!, f.head)).toContain("src/core.ts");
     expect(f.git("diff", "--name-only", f.source, f.head)).toBe("README.md");
-    expect(selection(f.cwd, baseline!).full).toBe(true);
-    expect(selection(f.cwd, f.source).mode).toBe("docs");
+    expect(selection(f.cwd, baseline!, f.env).full).toBe(true);
+    expect(selection(f.cwd, f.source, f.env).mode).toBe("docs");
   });
 
   test("newest successful prior source push permits docs-only comparison, never HEAD itself", async () => {
     const f = checkout();
     const api = githubHistory([successfulPush(f.head), successfulPush(f.source), successfulPush(f.validated)]);
-    const baseline = await findCiBaseline(repo, f.head, token, f.cwd, api.fetcher);
+    const baseline = await findCiBaseline(repo, f.head, token, f.cwd, api.fetcher, f.env);
     expect(baseline).toBe(f.source);
-    expect(selection(f.cwd, baseline!).mode).toBe("docs");
+    expect(selection(f.cwd, baseline!, f.env).mode).toBe("docs");
   });
 });
 
@@ -104,7 +103,7 @@ describe("GitHub evidence must describe our completed CI push", () => {
   test("two authenticated requests to the hosted workflow and bounded successful develop history", async () => {
     const f = checkout();
     const api = githubHistory([successfulPush(f.validated)]);
-    expect(await findCiBaseline(repo, f.head, token, f.cwd, api.fetcher)).toBe(f.validated);
+    expect(await findCiBaseline(repo, f.head, token, f.cwd, api.fetcher, f.env)).toBe(f.validated);
     expect(api.requests.map(({ url }) => url)).toEqual([workflowUrl, historyUrl]);
     for (const { init } of api.requests) {
       expect(init?.headers).toEqual({ Authorization: `Bearer ${token}`, Accept: "application/vnd.github+json" });
@@ -127,16 +126,23 @@ describe("GitHub evidence must describe our completed CI push", () => {
   ])("%s is skipped, not trusted", async (_reason, overrides) => {
     const f = checkout();
     const rejected = successfulPush(f.source, overrides);
-    expect(await findCiBaseline(repo, f.head, token, f.cwd, githubHistory([rejected]).fetcher)).toBeUndefined();
+    expect(await findCiBaseline(repo, f.head, token, f.cwd, githubHistory([rejected]).fetcher, f.env)).toBeUndefined();
     expect(
-      await findCiBaseline(repo, f.head, token, f.cwd, githubHistory([rejected, successfulPush(f.validated)]).fetcher),
+      await findCiBaseline(
+        repo,
+        f.head,
+        token,
+        f.cwd,
+        githubHistory([rejected, successfulPush(f.validated)]).fetcher,
+        f.env,
+      ),
     ).toBe(f.validated);
   });
 
   test("GitHub's repository-qualified workflow path is valid", async () => {
     const f = checkout();
     const run = successfulPush(f.source, { path: `${repo}/${workflow.path}@refs/heads/develop` });
-    expect(await findCiBaseline(repo, f.head, token, f.cwd, githubHistory([run]).fetcher)).toBe(f.source);
+    expect(await findCiBaseline(repo, f.head, token, f.cwd, githubHistory([run]).fetcher, f.env)).toBe(f.source);
   });
 
   test.each([
@@ -146,7 +152,7 @@ describe("GitHub evidence must describe our completed CI push", () => {
   ])("workflow metadata: %s stops before requesting history", async (_reason, metadata) => {
     const f = checkout();
     const api = githubHistory([successfulPush(f.validated)], metadata);
-    expect(await findCiBaseline(repo, f.head, token, f.cwd, api.fetcher)).toBeUndefined();
+    expect(await findCiBaseline(repo, f.head, token, f.cwd, api.fetcher, f.env)).toBeUndefined();
     expect(api.requests.map(({ url }) => url)).toEqual([workflowUrl]);
   });
 });
@@ -167,7 +173,7 @@ describe("API uncertainty requires full validation", () => {
     const stderr = spyOn(console, "error").mockImplementation(() => {});
     const stdout = spyOn(console, "log").mockImplementation(() => {});
     try {
-      expect(await findCiBaseline(repo, f.head, token, f.cwd, fetcher)).toBeUndefined();
+      expect(await findCiBaseline(repo, f.head, token, f.cwd, fetcher, f.env)).toBeUndefined();
       expect(stderr).not.toHaveBeenCalled();
       expect(stdout).not.toHaveBeenCalled();
     } finally {
@@ -179,7 +185,7 @@ describe("API uncertainty requires full validation", () => {
   test.each([0, 101])("%i runs cannot provide a baseline", async (count) => {
     const f = checkout();
     const api = githubHistory(Array.from({ length: count }, () => successfulPush(f.validated)));
-    expect(await findCiBaseline(repo, f.head, token, f.cwd, api.fetcher)).toBeUndefined();
+    expect(await findCiBaseline(repo, f.head, token, f.cwd, api.fetcher, f.env)).toBeUndefined();
     expect(api.requests).toHaveLength(2);
   });
 });
@@ -191,10 +197,10 @@ describe("Git must prove the candidate is a local ancestor commit", () => {
     const divergent = f.commit("other.txt", "diverged");
     f.git("checkout", "-q", "--detach", f.head);
     expect(
-      await findCiBaseline(repo, f.head, token, f.cwd, githubHistory([successfulPush(divergent)]).fetcher),
+      await findCiBaseline(repo, f.head, token, f.cwd, githubHistory([successfulPush(divergent)]).fetcher, f.env),
     ).toBeUndefined();
     const api = githubHistory([successfulPush(divergent), successfulPush(f.validated)]);
-    expect(await findCiBaseline(repo, f.head, token, f.cwd, api.fetcher)).toBe(f.validated);
+    expect(await findCiBaseline(repo, f.head, token, f.cwd, api.fetcher, f.env)).toBe(f.validated);
   });
 
   test("missing objects and blobs are not ancestor commits", async () => {
@@ -202,7 +208,7 @@ describe("Git must prove the candidate is a local ancestor commit", () => {
     const blob = f.git("rev-parse", "HEAD:README.md");
     for (const sha of ["0".repeat(40), blob]) {
       expect(
-        await findCiBaseline(repo, f.head, token, f.cwd, githubHistory([successfulPush(sha)]).fetcher),
+        await findCiBaseline(repo, f.head, token, f.cwd, githubHistory([successfulPush(sha)]).fetcher, f.env),
       ).toBeUndefined();
     }
   });
@@ -212,7 +218,7 @@ describe("Git must prove the candidate is a local ancestor commit", () => {
     const api = githubHistory([successfulPush(f.validated)]);
     const head = problem === "different HEAD" ? f.validated : f.head;
     const cwd = problem === "missing checkout" ? join(f.cwd, "missing") : f.cwd;
-    expect(await findCiBaseline(repo, head, token, cwd, api.fetcher)).toBeUndefined();
+    expect(await findCiBaseline(repo, head, token, cwd, api.fetcher, f.env)).toBeUndefined();
     expect(api.requests).toHaveLength(0);
   });
 
@@ -224,7 +230,7 @@ describe("Git must prove the candidate is a local ancestor commit", () => {
     const f = checkout();
     const api = githubHistory([successfulPush(f.validated)]);
     const input = { repo, head: f.head, token, ...invalid };
-    expect(await findCiBaseline(input.repo, input.head, input.token, f.cwd, api.fetcher)).toBeUndefined();
+    expect(await findCiBaseline(input.repo, input.head, input.token, f.cwd, api.fetcher, f.env)).toBeUndefined();
     expect(api.requests).toHaveLength(0);
   });
 });
@@ -251,7 +257,7 @@ describe("one deadline covers both HTTP requests and Git ancestry proof", () => 
       });
     };
     try {
-      expect(await findCiBaseline(repo, f.head, token, f.cwd, fetcher)).toBeUndefined();
+      expect(await findCiBaseline(repo, f.head, token, f.cwd, fetcher, f.env)).toBeUndefined();
       expect(timeout.mock.calls.map(([milliseconds]) => milliseconds)).toEqual([15_000, 10]);
       expect(historySignals).toHaveLength(1);
       expect(historySignals[0]!.aborted).toBe(true);
@@ -273,7 +279,7 @@ describe("one deadline covers both HTTP requests and Git ancestry proof", () => 
       return response;
     };
     try {
-      expect(await findCiBaseline(repo, f.head, token, f.cwd, fetcher)).toBeUndefined();
+      expect(await findCiBaseline(repo, f.head, token, f.cwd, fetcher, f.env)).toBeUndefined();
       expect(timeout.mock.calls.map(([milliseconds]) => milliseconds)).toEqual(
         stage === "workflow" ? [15_000] : [15_000, 9_000],
       );

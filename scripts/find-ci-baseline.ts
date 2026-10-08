@@ -22,13 +22,14 @@ export async function findCiBaseline(
   token: string,
   cwd = process.cwd(),
   fetcher: (url: string, init?: RequestInit) => Promise<Response> = fetch,
+  env: NodeJS.ProcessEnv = process.env,
 ): Promise<string | undefined> {
   if (!/^[\w.-]+\/[\w.-]+$/.test(repo) || !shaPattern.test(head) || !token) return;
   const deadline = Date.now() + 15_000;
   const git = (args: string[]) => {
     const remaining = deadline - Date.now();
     if (remaining <= 0) throw new Error("budget exhausted");
-    const result = spawnSync("git", args, { cwd, encoding: "utf8", timeout: Math.min(1_000, remaining) });
+    const result = spawnSync("git", args, { cwd, env, encoding: "utf8", timeout: Math.min(1_000, remaining) });
     if (result.error || result.status === null) throw new Error("git unavailable");
     return result;
   };

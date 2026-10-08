@@ -1,9 +1,10 @@
-import { afterAll, beforeAll, describe, expect, test } from "bun:test";
+import { beforeAll, describe, expect, test } from "bun:test";
 import { createHash } from "node:crypto";
-import { mkdtemp, readdir, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, readdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { RELEASES_URL, UPDATE_ASSETS } from "../src/update";
 import { createFixtureReleaseFetch } from "./update-self-fixture";
+import { ownedFixtureEnv } from "./helpers";
 
 type ExecutablePair = { bruv: string; connector: string };
 type Installation = ExecutablePair & { directory: string };
@@ -47,20 +48,19 @@ describe("private updater fixture runtime", () => {
   let dir: string;
   let runner: string;
   let runnerHash: string;
+  let env: Record<string, string>;
   const source = join(import.meta.dir, "update-self-fixture.ts");
   beforeAll(async () => {
     dir = await mkdtemp("/var/tmp/bruv-self-fixture-");
+    env = ownedFixtureEnv(dir);
     runner = join(dir, "updater-runner");
-    const build = await run([process.execPath, "build", "--compile", source, "--outfile", runner]);
+    const build = await run([process.execPath, "build", "--compile", source, "--outfile", runner], env);
     expect(build.code, build.stderr).toBe(0);
     runnerHash = digest(await readFile(runner));
   });
-  afterAll(async () => {
-    if (dir) await rm(dir, { recursive: true, force: true });
-  });
 
-  async function run(command: string[], env?: NodeJS.ProcessEnv) {
-    const child = Bun.spawn(command, { env, stdout: "pipe", stderr: "pipe" });
+  async function run(command: string[], env: Record<string, string>) {
+    const child = Bun.spawn(command, { cwd: dir, env, stdout: "pipe", stderr: "pipe" });
     const [stdout, stderr, code] = await Promise.all([
       new Response(child.stdout).text(),
       new Response(child.stderr).text(),
@@ -86,7 +86,7 @@ describe("private updater fixture runtime", () => {
 
   function fixtureEnv(installed: Installation, payloads: ExecutablePair, version = "0.3.0") {
     return {
-      HOME: dir,
+      ...env,
       PATH: "/nonexistent",
       BRUV_TEST_UPDATE_TARGET: installed.bruv,
       BRUV_TEST_UPDATE_PAYLOAD: payloads.bruv,
@@ -121,7 +121,7 @@ describe("private updater fixture runtime", () => {
     const pair = process.env.BRUV_TEST_UPDATE_PAIR_DIR ?? join(import.meta.dir, "..", "dist");
     const normal = join(pair, "bruv");
     const connector = join(pair, "bruv-claude-compat");
-    const product = await run([normal, "--version"]);
+    const product = await run([normal, "--version"], env);
     expect(product.code, product.stderr).toBe(0);
     const version = product.stdout.trim();
     const normalHash = digest(await readFile(normal));
@@ -132,7 +132,7 @@ describe("private updater fixture runtime", () => {
     expect(JSON.parse(result.stdout)).toEqual({ status: "updated", version, path: installed.bruv });
     expect(digest(await readFile(installed.bruv))).toBe(normalHash);
     expect(digest(await readFile(installed.connector))).toBe(connectorHash);
-    const installedEnv = { HOME: dir, PATH: "/nonexistent" };
+    const installedEnv = { ...env, PATH: "/nonexistent" };
     const installedProduct = await run([installed.bruv, "--version"], installedEnv);
     const installedConnector = await run([installed.connector, "--bruv-version"], installedEnv);
     expect(installedProduct.code, installedProduct.stderr).toBe(0);

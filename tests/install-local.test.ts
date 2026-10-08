@@ -1,10 +1,10 @@
-import { afterEach, describe, expect, test } from "bun:test";
+import { describe, expect, test } from "bun:test";
 import { chmod, cp, mkdir, mkdtemp, readdir, readFile, rm, stat, symlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { ownedFixtureEnv } from "./helpers";
 
 const installer = join(import.meta.dir, "..", "scripts/install-local.sh");
-const roots: string[] = [];
 const candidate = `#!/bin/sh
 echo "probe $1" >> "$INSTALL_LOG"
 case "$1" in
@@ -20,10 +20,6 @@ paired_bruv="$(dirname "$0")/bruv"
 [ "\${BRUV_CLAUDE_COMPAT_BRUV_PATH:-}" = "$paired_bruv" ] || exit 98
 exec "$paired_bruv" "$@"
 `;
-afterEach(async () => {
-  await Promise.all(roots.splice(0).map((root) => rm(root, { recursive: true, force: true })));
-});
-
 async function writeShell(root: string, path: string, body: string) {
   await writeFile(join(root, path), "#!/bin/sh\n" + body, { mode: 0o755 });
 }
@@ -35,7 +31,6 @@ async function seedInstalledPair(root: string) {
 
 async function sandbox() {
   const root = await mkdtemp(join(tmpdir(), "bruv-install-"));
-  roots.push(root);
   for (const dir of ["scripts", "dist", "tools", "bin"]) await mkdir(join(root, dir));
   await cp(installer, join(root, "scripts/install-local.sh"));
   await chmod(join(root, "scripts/install-local.sh"), 0o755);
@@ -60,9 +55,8 @@ async function run(root: string, env: Record<string, string> = {}) {
   const proc = Bun.spawn(["sh", join(root, "scripts/install-local.sh")], {
     cwd: root,
     env: {
-      ...process.env,
-      PATH: join(root, "tools") + ":" + process.env.PATH,
-      HOME: join(root, "home"),
+      ...ownedFixtureEnv(root),
+      PATH: join(root, "tools") + ":/usr/bin:/bin",
       BRUV_INSTALL_DIR: join(root, "bin"),
       BRUV_SKIP_BUILD: "1",
       HOST_OS: "Linux",

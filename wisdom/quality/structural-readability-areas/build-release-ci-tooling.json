@@ -576,7 +576,7 @@
     {
       "focus": "scripts/find-ci-baseline.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted",
+      "state": "pending",
       "primary": [
         {
           "id": "task_706aaff1",
@@ -620,15 +620,17 @@
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": "fb773c5dff9e139a4773d05af38956eebf9d29c2",
+      "acceptedBlob": null,
       "readingResult": "Unchanged proposed: linear checkout validation/workflow identity/trusted successful push filter/ancestry journey;predicate and deadline-sharing coherent.",
       "checks": "19baseline/selector+4workflow tests;focusedtsc/Biome pass;stale release-source expectation separately fixed in judged selective-workflow candidate8bc3a8c4.",
       "integrationState": "Unchanged focus matches area;only candidate note excluded;prior stalled attempts not coverage.",
       "resume": {
-        "status": "accepted",
-        "acceptedBlob": "fb773c5dff9e139a4773d05af38956eebf9d29c2",
+        "status": "pending",
+        "acceptedBlob": "5796c92a32d55d195d2097012530dbd9c310e785",
         "primaryId": "task_8a5f8213",
-        "judgeIds": ["task_149c9180"]
+        "judgeIds": ["task_149c9180"],
+        "sourceCommit": "4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7",
+        "state": "needs-primary-final-blob"
       }
     },
     {
@@ -1807,7 +1809,7 @@
     {
       "focus": "tests/dependency-updates.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_81d46e58",
@@ -1834,7 +1836,7 @@
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "ead2728b0407a3efde4f529fc9663b88f5403985",
       "relatedPatchJudgment": {
         "id": "task_68106474",
         "verdict": "ACCEPT",
@@ -1846,19 +1848,20 @@
       "checks": "14→30tests,same46assertions;focus/Biome/tsc/diffpass;own-entry mutation fails all4 constructor cases;production untouched.",
       "integrationState": "Full focus patch integrated; accepted updater own-entry fix unchanged;noteexcluded.",
       "resume": {
-        "status": "pending",
-        "acceptedBlob": "da5d3d5056c91024797839ef57544af184a603bf",
+        "status": "accepted",
+        "acceptedBlob": "ead2728b0407a3efde4f529fc9663b88f5403985",
         "primaryId": "task_ad282ca7",
         "primaryCommit": "4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7",
-        "judgeIds": ["task_f509c814"],
+        "judgeIds": ["task_f509c814", "task_7b313d31"],
         "sourceCommit": "4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7",
-        "state": "needs-judge"
+        "state": "accepted-joined",
+        "reason": "ACCEPT after following the complete selection, fixture permission, Pi alignment, protected toolchain, root summary, and transitive lock summary journeys. The CLI denial now visibly allocates its own retained mkdtemp root, uses absolute updater argv, and supplies ownedFixtureEnv plus only the declared repository/event denial inputs. The reader no longer has to infer whether this subprocess borrows the test runner's credential/configuration authority. The error and exit assertions remain, as do all unchanged semantic assertions; this is authority ownership, not suite renaming."
       }
     },
     {
       "focus": "tests/dependency-workflow.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_c708fc82",
@@ -1885,7 +1888,7 @@
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "58138e9118ea63d430b0703e71f55bccd30acee5",
       "relatedPatchJudgment": {
         "id": "task_69a61924",
         "verdict": "ACCEPT",
@@ -1897,19 +1900,20 @@
       "checks": "11focus39combined workflow tests;Biome/tsc/diff pass;no hosted/build.",
       "integrationState": "Full focus patch integrated without overlap; worker report excluded;workflow unchanged.",
       "resume": {
-        "status": "pending",
-        "acceptedBlob": "5d0f15a6b6e30e64707e6ec76e29af0f3ddd15a7",
+        "status": "accepted",
+        "acceptedBlob": "58138e9118ea63d430b0703e71f55bccd30acee5",
         "primaryId": "task_ad282ca7",
         "primaryCommit": "4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7",
-        "judgeIds": ["task_35b870b5"],
+        "judgeIds": ["task_35b870b5", "task_7b313d31"],
         "sourceCommit": "4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7",
-        "state": "needs-judge"
+        "state": "accepted-joined",
+        "reason": "ACCEPT after reading the full workflow contract assertions and all four real-bundle scenarios. withCandidate owns one root and environment before either repository is initialized; command now requires env, every Git command receives the same literal owned environment, and the Bash verification receives only its added BASE/SHA inputs. Source and publisher checkouts remain separate from configuration directories, and the root is retained after the callback. The real base-only fetch, candidate commit, bundle, and rejection cases make the lifetime and authority legible rather than hiding them in a context bag."
       }
     },
     {
       "focus": "tests/find-ci-baseline.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_109390aa",
@@ -1936,24 +1940,25 @@
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "261fb5661fa8657bb6c3e0c9004614fb3e8ad99c",
       "readingResult": "Named trust-boundary groups replace anonymous rejectionloops/mixedfailures;realGit/selector retained;endpointauth/commitvsblob/shareddeadlineabort added.",
       "checks": "35focus47combined;strictfocus tsc/Biome/diff;finderunchanged. HTTPstub,no hostedAPI/forcedGithang/fullbuild.",
       "integrationState": "Full focuspatch integrated;finder source unchanged;noteexcluded.",
       "resume": {
-        "status": "pending",
-        "acceptedBlob": "a96d35ae74558f9b440dda3a486e19d2bd00a8d5",
+        "status": "accepted",
+        "acceptedBlob": "261fb5661fa8657bb6c3e0c9004614fb3e8ad99c",
         "primaryId": "task_ad282ca7",
         "primaryCommit": "4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7",
-        "judgeIds": ["task_aa63512d"],
+        "judgeIds": ["task_aa63512d", "task_7b313d31"],
         "sourceCommit": "4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7",
-        "state": "needs-judge"
+        "state": "accepted-joined",
+        "reason": "ACCEPT after following each evidence class: source changes carried across failed/cancelled pushes, docs-only success, authenticated mocked HTTP requests, foreign/unfinished/invalid runs, API uncertainty, divergent commits, missing objects/blobs, invalid checkout/input, and shared deadlines. checkout now places real Git history in root/checkout while HOME/config/cache/SDK/hooks live outside that commit input subtree. The same explicit env reaches fixture Git, every findCiBaseline call, and selection, with the existing assertions intact. This removes the scattered assumption that a cwd alone owns Git and selector writes."
       }
     },
     {
       "focus": "tests/helpers.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_9dd6501e",
@@ -1977,24 +1982,25 @@
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "c1df969d356af8fec87002a62cc053f1c6cd08f0",
       "readingResult": "Unchanged env isolation→spawn→concurrent output drain→exit;build/fixture/interactivecancellation/tmuxlifetimes caller-owned,appropriate boundary.",
       "checks": "18focus tests,Biome,isolatedstricttscpass;no build/compiledintegration/live.",
       "integrationState": "Unchangedfocusmatchestip;notesexcluded.",
       "resume": {
-        "status": "pending",
-        "acceptedBlob": "45e0d90785aa81576dfdd1687cf44451b546dde4",
+        "status": "accepted",
+        "acceptedBlob": "c1df969d356af8fec87002a62cc053f1c6cd08f0",
         "primaryId": "task_ad282ca7",
         "primaryCommit": "4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7",
-        "judgeIds": ["task_f7319ebc"],
+        "judgeIds": ["task_f7319ebc", "task_7b313d31"],
         "sourceCommit": "4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7",
-        "state": "needs-judge"
+        "state": "accepted-joined",
+        "reason": "ACCEPT after reading the entire helper and tracing its integration into each assigned fixture. ownedFixtureEnv(root) is a small local authority constructor, not a general context object: it creates a few directories beneath the caller's mkdtemp root and returns a literal environment without reading process.env. HOME/XDG/SDK/Bun/npm/temp locations, system tools, offline Herdr mode and Git configuration/hooks ownership are visible together. Callers still own cwd, argv, scenario variables and retained lifetime. Existing offlineTestEnv and run semantics remain untouched, so the new owner does not silently alter independent tests."
       }
     },
     {
       "focus": "tests/install-download.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_7936354f",
@@ -2032,7 +2038,7 @@
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "a848bb837b8adef3c3147179b311a391958515dd",
       "relatedPatchJudgment": {
         "id": "task_7be1ff38",
         "verdict": "ACCEPT",
@@ -2044,19 +2050,20 @@
       "checks": "22/106 sequential+concurrent candidate; related48/204; strict tsc/format/lint/diff pass; no build/live downloads.",
       "integrationState": "Prior primary coverage retained; later related final blob e04230d8 independently rejudged task_9233d5f2 with changed root.",
       "resume": {
-        "status": "pending",
-        "acceptedBlob": "e04230d818b527658f16eda023aa190bbb1b4f89",
+        "status": "accepted",
+        "acceptedBlob": "a848bb837b8adef3c3147179b311a391958515dd",
         "primaryId": "task_ad282ca7",
         "primaryCommit": "4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7",
-        "judgeIds": ["task_bdc5b9c4", "task_9233d5f2"],
+        "judgeIds": ["task_bdc5b9c4", "task_9233d5f2", "task_7b313d31"],
         "sourceCommit": "4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7",
-        "state": "needs-judge"
+        "state": "accepted-joined",
+        "reason": "ACCEPT after reading both download entrypoint scenarios from mocked assets through checksum checks, staged version/private-directory probes, pair publication, modes/notices, relative paths, rename failure, interruption and failed rollback backup assertions. sandbox creates one owned environment and returns it for the standalone launcher version probe; the latter now has the owned cwd and no inherited HOME/provider configuration. Deliberately wrong XDG inputs stay under the root while still testing that staged probes replace them. withSandbox retains the root. No checksum, no-probe, pair identity, publication or rollback assertion was discarded."
       }
     },
     {
       "focus": "tests/install-local.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_70f09987",
@@ -2083,7 +2090,7 @@
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "fc7a19004f17230189a4d0c70021cfa14065ac2e",
       "relatedPatchJudgment": {
         "id": "task_fa23cd76",
         "verdict": "ACCEPT",
@@ -2095,13 +2102,14 @@
       "checks": "Focus18/65; related22/81 using older download script; strict tsc/format/lint/diff pass; no full/native/live.",
       "integrationState": "Full source test patch integrated; worker report excluded; installer production unchanged.",
       "resume": {
-        "status": "pending",
-        "acceptedBlob": "51a27b0bc8d0f3da78baddee0ab0eab27a048468",
+        "status": "accepted",
+        "acceptedBlob": "fc7a19004f17230189a4d0c70021cfa14065ac2e",
         "primaryId": "task_ad282ca7",
         "primaryCommit": "4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7",
-        "judgeIds": ["task_5442746a"],
+        "judgeIds": ["task_5442746a", "task_7b313d31"],
         "sourceCommit": "4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7",
-        "state": "needs-judge"
+        "state": "accepted-joined",
+        "reason": "ACCEPT after reading the full build/host ordering, staged pair verification, unsafe target, publication and rollback journeys. run constructs an explicit environment from its retained sandbox root and adds only the fixture tools, install/host/log and declared failure inputs. The shared afterEach deletion machinery is removed; the one exact owned dist connector removal remains part of the missing-payload scenario. Root ownership and subprocess configuration are visible at the launch, without moving the failure semantics into an abstraction. All ordering, bytes/modes, staged binding, symlink, rename, SIGTERM and retained backup assertions remain."
       }
     },
     {
@@ -3171,7 +3179,7 @@
     {
       "focus": "tests/update-self-fixture.test.ts",
       "initialBase": "452205ec0667aad35ef854a9862d4b5182143095",
-      "state": "pending",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_0ecce4b1",
@@ -3208,16 +3216,17 @@
       "introducedBy": "task_1fdcbe47",
       "readingResult": "Explicitartifact-byte pairs/exactmetadata/namedinstallation-payload pairs/shared unchangedinstall assertion replace positional indexes/duplicateinvariants.",
       "checks": "60tests;tsc/Biome/diff;closedtransport/sourcecompiledcontrast/staging/realpairbytes/runnerpayloadhash retained,sourcefixture unchanged.",
-      "acceptedBlob": null,
+      "acceptedBlob": "29f15040214d714a4e8dda774d0aa1539852357c",
       "integrationState": "Ownprimary patch integrated after freshfinalblobjudge;fixture sourceunchanged;noteexcluded.",
       "resume": {
-        "status": "pending",
-        "acceptedBlob": "06c4344c3274180322ba17971dc91486149f7a09",
+        "status": "accepted",
+        "acceptedBlob": "29f15040214d714a4e8dda774d0aa1539852357c",
         "primaryId": "task_ad282ca7",
         "primaryCommit": "4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7",
-        "judgeIds": ["task_efae7e17"],
+        "judgeIds": ["task_efae7e17", "task_7b313d31"],
         "sourceCommit": "4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7",
-        "state": "needs-judge"
+        "state": "accepted-joined",
+        "reason": "ACCEPT after reading the complete metadata/transport loop and source-versus-compiled runtime fixture. beforeAll establishes a retained mkdtemp root and owned env before compilation. run requires env and fixes cwd to that root, including the preliminary reusable product --version probe that previously leaked parent HOME. Fixture runner/source invocations receive that owner plus explicit target/payload/version inputs; installed product and connector probes keep it with the deliberate /nonexistent PATH. Real reusable pair, private compiled runner, source refusal, wrong-version unchanged install, no-staging directory and runner/payload digest assertions all remain."
       }
     },
     {
@@ -3564,7 +3573,7 @@
     "retainedWorktrees": "Per-file primary[].path and branch retained, including stopped/rejected attempts."
   },
   "resumeStatus": {
-    "accepted": 67,
-    "pending": 7
+    "accepted": 73,
+    "pending": 1
   }
 }

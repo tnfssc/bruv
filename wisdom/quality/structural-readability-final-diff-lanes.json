@@ -3005,7 +3005,7 @@
       ],
       "chars": 93592,
       "lines": 2169,
-      "status": "running",
+      "status": "accepted",
       "jobId": "task_fe09d3e3",
       "model": "openai-codex/gpt-6.1-sol",
       "workspace": {
@@ -3020,6 +3020,141 @@
         "setupTaskId": "task_114f4de6",
         "setupStatus": "running",
         "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      },
+      "result": {
+        "lane": "lane-18",
+        "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
+        "candidate": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "verdict": "ACCEPT",
+        "diffReadPaths": [
+          "tests/claude-compat/mcp.test.ts",
+          "tests/claude-compat/permissions.test.ts",
+          "tests/claude-native-acceptance-capture.test.mjs",
+          "tests/claude-native-acceptance-chronology.test.mjs",
+          "tests/claude-native-acceptance-model.test.mjs",
+          "tests/claude-native-acceptance-replay-finalization.test.mjs",
+          "tests/claude-native-acceptance-runner.test.mjs",
+          "tests/claude-native-acceptance-subagent-run.test.mjs",
+          "tests/claude-native-acceptance-tap.test.mjs",
+          "tests/claude-native-app-delegation-driver.test.mjs",
+          "tests/claude-native-app-delegation-model.test.mjs"
+        ],
+        "contextReadPaths": [
+          "src/claude-compat/mcp.ts",
+          "src/claude-compat/permissions.ts",
+          "src/claude-compat/cli.ts",
+          "src/claude-compat/runtime.ts",
+          "src/claude-compat/app-worker.ts",
+          "tests/claude-compat/fixtures/http-mcp-lifecycle.ts",
+          "scripts/claude-native-acceptance/model.mjs",
+          "scripts/claude-native-acceptance/tap.mjs",
+          "scripts/claude-native-acceptance/worker.mjs",
+          "scripts/claude-native-acceptance/run.mjs",
+          "scripts/claude-native-acceptance/run-subagent.mjs",
+          "scripts/claude-native-acceptance/driver.mjs",
+          "scripts/claude-native-acceptance/app-delegation-model.mjs",
+          "scripts/claude-native-acceptance/app-delegation-driver.mjs",
+          "scripts/claude-native-acceptance/subagent-driver.mjs",
+          "scripts/claude-native-acceptance/subagent-return-evidence.mjs",
+          "wisdom/claude-compat/proof/native-ui-fixture/replay.mjs",
+          "tests/claude-compat/mcp.test.ts",
+          "tests/claude-compat/permissions.test.ts",
+          "tests/claude-native-acceptance-chronology.test.mjs",
+          "tests/claude-native-acceptance-model.test.mjs",
+          "tests/claude-native-app-delegation-model.test.mjs"
+        ],
+        "sourceBlobs": {
+          "tests/claude-compat/mcp.test.ts": "7e2b7fb68df577da37497fc6ce526157cf332620",
+          "tests/claude-compat/permissions.test.ts": "87e6a419036b7718b96a0220885a302924b62b72",
+          "tests/claude-native-acceptance-capture.test.mjs": "a7575f3ed9050c9cfe84512824cb49b43f99a6fa",
+          "tests/claude-native-acceptance-chronology.test.mjs": "16c6b651b6581e920910bf789ae5f96207de5219",
+          "tests/claude-native-acceptance-model.test.mjs": "341241ef6dc769bc102678cea91c9f3e4ec19b16",
+          "tests/claude-native-acceptance-replay-finalization.test.mjs": "5969cc3ab7ef036cc9b0409e7ce6c1a53c3f5700",
+          "tests/claude-native-acceptance-runner.test.mjs": "88b1c6fa88075bc38d4bd8502f7b1559a3979c0d",
+          "tests/claude-native-acceptance-subagent-run.test.mjs": "ab3e9589c3ce3b9fb17e15666028bd2471797894",
+          "tests/claude-native-acceptance-tap.test.mjs": "e103fd37a27fe8094f5c136e75a36d15809cb24a",
+          "tests/claude-native-app-delegation-driver.test.mjs": "6d10b9ac0f9c37f4e65887e2690488d25440f1b4",
+          "tests/claude-native-app-delegation-model.test.mjs": "6ede1b80de7086f185214a1add3684ed43746d01"
+        },
+        "sourceJourneys": [
+          {
+            "paths": [
+              "tests/claude-compat/mcp.test.ts",
+              "tests/claude-compat/fixtures/http-mcp-lifecycle.ts",
+              "src/claude-compat/mcp.ts",
+              "src/claude-compat/runtime.ts",
+              "src/claude-compat/cli.ts"
+            ],
+            "readingReason": "The extracted createPeer keeps the SDK registrations and failure envelope intact, including the intentional raw OrchestratorMcpFailure response that bypasses the peer success schema. Explicit started/release/finished promises replace time-based slow-call guesses; reverse-order session cleanup precedes host teardown, which releases stranded handlers. The lease test now observes server admission on each initialize but tools/list only on initial discovery.",
+            "systemReason": "The implementation keeps a catalog independently of app HTTP leases; runtime flushes the previous result before resume and parks before publishing result. Calls still pass tool authorization and active-run/worker policy, then make exactly one RPC. Lease teardown never becomes task cancellation or Bruv job ownership."
+          },
+          {
+            "paths": [
+              "tests/claude-compat/permissions.test.ts",
+              "src/claude-compat/permissions.ts",
+              "tests/claude-native-acceptance-model.test.mjs",
+              "scripts/claude-native-acceptance/model.mjs"
+            ],
+            "readingReason": "Split permission tests preserve each prior assertion against the same arbitrary-TypeScript request; the constructor opt-in is separated from per-call decisions. Generated cancellation and question code is executed against explicit mocks, not merely matched as text. Cancellation saves the returned job ID before stop and waits for terminal inspection; question block/resolve uses the returned id/owner/version and only the exact answered choice.",
+            "systemReason": "Disallow precedence, plan read-only enforcement, dontAsk approval, dangerous constructor opt-in and stale-answer authority remain distinct. The new tests exercise those boundaries without interpreting a pending stop as confirmed termination or manufacturing a human answer. Async SSE testing verifies request-local sequence ownership across overlapping successful and failed replies."
+          },
+          {
+            "paths": [
+              "tests/claude-native-acceptance-capture.test.mjs",
+              "tests/claude-native-acceptance-chronology.test.mjs",
+              "scripts/claude-native-acceptance/driver.mjs",
+              "wisdom/claude-compat/proof/native-ui-fixture/replay.mjs"
+            ],
+            "readingReason": "Each EventEmitter page gets its own capture closure, sequence and cancellation run identity. Binary frames and inherited hashes are exercised; persisted rows are read by ordinal from a closed owned SQLite fixture, with raw bytes checked unchanged. Baseline chronology deletion was read: its missing-ack and moved-completion assertions are reproduced as separate, explicit tests.",
+            "systemReason": "The actual replay carries the observation to exercise and flushCapture, including browser-setup failure before an observation exists. Disclosure targets the observed run, not a recycled DOM slot, and chronology uses rendered top ordering. Exported evidence uses hashes/known markers rather than private text; the no-observation case writes an empty live projection without losing persisted evidence."
+          },
+          {
+            "paths": [
+              "tests/claude-native-acceptance-runner.test.mjs",
+              "tests/claude-native-acceptance-replay-finalization.test.mjs",
+              "tests/claude-native-acceptance-subagent-run.test.mjs",
+              "scripts/claude-native-acceptance/run.mjs",
+              "scripts/claude-native-acceptance/run-subagent.mjs",
+              "wisdom/claude-compat/proof/native-ui-fixture/replay.mjs",
+              "scripts/claude-native-acceptance/subagent-driver.mjs",
+              "scripts/claude-native-acceptance/subagent-return-evidence.mjs",
+              "scripts/claude-native-acceptance/worker.mjs"
+            ],
+            "readingReason": "Runner fixtures explicitly replace model/browser/external binary IO and label themselves offline, while preserving orchestration code. The generated replay test executes the shipped generation block with checked anchors and real import substitutions. The subagent runner test follows the entire runner/generator/driver/collector failure path and distinguishes ordinary browser failure from result-publication EISDIR. Browser-close probes verify evidence and private state are still present at that boundary.",
+            "systemReason": "The shared replay flushes driver evidence before browser/server closure and runtime removal. The subagent driver falls back to scoped config when exercise never ran; the collector joins wire lifecycle, provider logs and read-only persistence while private files exist. Runner finally chains close both models and release scope even on proof failure. Worker-stop testing separates a command-line/state-matching owned worker from an unrelated fixture process, rather than letting harness fallback cleanup count as runner success."
+          },
+          {
+            "paths": [
+              "tests/claude-native-acceptance-tap.test.mjs",
+              "scripts/claude-native-acceptance/tap.mjs",
+              "scripts/claude-native-acceptance/app-delegation-driver.mjs"
+            ],
+            "readingReason": "The executable tap is exercised through owned connector programs. Tests distinguish byte forwarding from evidence decoding: UTF-8 split chunks remain byte-exact, complete lines become records, and unterminated tails do not. The root allowlist, worker diagnostics, credential digest, actual signal exit and spawn failure are inspected against the implementation.",
+            "systemReason": "The tap remains passive: native packets come from the connector, not synthesized fixtures. Scope evidence exports credential digests rather than credentials and records launch options independently of native task state. Test evidence is explicitly not native protocol acceptance."
+          },
+          {
+            "paths": [
+              "tests/claude-native-app-delegation-driver.test.mjs",
+              "tests/claude-native-app-delegation-model.test.mjs",
+              "scripts/claude-native-acceptance/app-delegation-driver.mjs",
+              "scripts/claude-native-acceptance/app-delegation-model.mjs",
+              "src/claude-compat/app-worker.ts",
+              "src/claude-compat/cli.ts",
+              "src/claude-compat/mcp.ts"
+            ],
+            "readingReason": "Model transcript helpers build explicit turns and fork rejected outputs without advancing the successful journey. Launch requires named worker capabilities and records returned task/child IDs. The child journey requires native and local delegation denial, root-control/job isolation, parent-task credential denial and release. Completion inspects the saved task and returned result; cancellation polls nonterminal native status and requires interrupted plus an empty Bruv registry. Driver fixtures separately seed native task and child-thread rows, lookup references, transcripts and scope evidence.",
+            "systemReason": "prepare writes matching ordinary normal profile, operator-owned worker policy, distinct provider instance and worker home; CLI/app-worker consume that policy to pin target/model/effort and prohibit normal delegation. Driver verification treats lookup files as selectors only: SQLite projections establish completed/interrupted plus ACK/disposal, origin, lineage and model selection; process evidence establishes launch isolation. Negative tests retain authoritative evidence and prohibit success publication rather than allowing transcript claims to override native authority."
+          }
+        ],
+        "integrationReadingReason": "Within this assigned test lane, the integrated changes preserve prior assertions and make the important ownership/lifetime distinctions easier to read: catalog versus lease, runtime job versus native app task, observed browser data versus persisted authority, and offline orchestration proof versus live native acceptance. The additions are sizeable, but helpers remain local domain fixtures rather than generic context bags or a parallel product state machine. The shipped-source replay extraction has deliberate textual coupling, bounded by anchor and import checks; it tests the actual join rather than duplicating a generator. No blocking cross-file contradiction or behavior regression was found in the read assigned diff and exercised contexts. This is a lane source judgment, not a whole-repository or live-acceptance sign-off.",
+        "objections": [],
+        "limits": [
+          "All eleven assigned baseline-to-candidate diffs were read completely, including deletions; no assigned unread gaps. Context source was read in the portions needed for the journeys, not asserted to be a complete read of every large related file. CLI context: trusted app-worker/model/MCP admission. Runtime context: result lease release and before_agent_start flush/resume. Subagent driver context: exercise configuration ownership, verify publication and flushCapture. Replay context: initialization/import selection, owned runtime setup, browser exercise/failure finalization and releaseRuntime.",
+          "Read-only review: no delegation, tests, setup, build, install, formatter, auth/device activity, credential access, recovery work, shell cleanup, or source edits. No unsupported Pi preparation was attempted or retried. The only requested write is this untracked lane-result file.",
+          "Existing fixture filesystem/process/network effects were inspected, not executed. In particular tap.test.mjs currently spreads process.env into fixture processes; runner/replay fixtures also contain owned temporary cleanup. They were not run under this task. Any later test execution must use the requested explicit argv/env and owned retained mkdtemp HOME/config/SDK safety envelope; this result does not authorize inherited-environment execution or cleanup.",
+          "No native browser, live provider, SDK authentication or external T3 authority was verified. Offline stand-ins and deterministic transcript/SQLite fixtures do not establish live native acceptance.",
+          "Durable provenance: source read from the existing worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_fe09d3e3 at candidate af3602cf3d5b62641450c7cc24bb0350334b6652 and exact baseline Git objects. Existing worktree and candidate evidence preserved; no /tmp code checkout or test fixture was created. Independent focus/judge artifacts, coverage counts and green-test reports were not used."
+        ]
       }
     },
     {
@@ -3037,7 +3172,7 @@
       ],
       "chars": 82626,
       "lines": 1937,
-      "status": "running",
+      "status": "accepted",
       "jobId": "task_03cfeee1",
       "model": "openai-codex/gpt-6.1-sol",
       "workspace": {
@@ -3052,6 +3187,134 @@
         "setupTaskId": "task_b2f9e786",
         "setupStatus": "running",
         "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      },
+      "result": {
+        "lane": "lane-19",
+        "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
+        "candidate": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "verdict": "ACCEPT",
+        "diffReadPaths": [
+          "tests/claude-native-history-driver.test.mjs",
+          "tests/claude-native-history-model.test.mjs",
+          "tests/claude-native-history-replay.test.mjs",
+          "tests/claude-native-history-runner.test.mjs",
+          "tests/claude-native-replay.test.mjs",
+          "tests/claude-native-subagent-model.test.mjs",
+          "tests/claude-native-subagent-return.test.mjs",
+          "tests/fixtures/claude-task-worker.ts"
+        ],
+        "contextReadPaths": [
+          "scripts/claude-native-acceptance/history-driver.mjs",
+          "scripts/claude-native-acceptance/history-model.mjs",
+          "scripts/claude-native-acceptance/history-replay.mjs",
+          "scripts/claude-native-acceptance/history-run.mjs",
+          "scripts/claude-native-acceptance/subagent-model.mjs",
+          "scripts/claude-native-acceptance/subagent-driver.mjs",
+          "scripts/claude-native-acceptance/subagent-return-evidence.mjs",
+          "scripts/claude-native-acceptance/driver.mjs",
+          "scripts/claude-native-acceptance/run-subagent.mjs",
+          "wisdom/claude-compat/proof/native-ui-fixture/replay.mjs",
+          "src/claude-compat/history.ts",
+          "src/claude-compat/binding.ts",
+          "src/questions/service.ts",
+          "src/typescript/job-bridge.ts",
+          "src/tasks/job-service.ts",
+          "tests/claude-compat-task-binding.test.ts",
+          "tests/fixtures/claude-task-worker.ts",
+          "tests/claude-native-subagent-return.test.mjs"
+        ],
+        "sourceBlobs": {
+          "tests/claude-native-history-driver.test.mjs": "037272598de0eec7e762f5b5798975a6f5691590",
+          "tests/claude-native-history-model.test.mjs": "65182c0864566a36fd88490c9141261b756af194",
+          "tests/claude-native-history-replay.test.mjs": "097f9cd64ee4e225b745ab0fc16c877cb6b25a3a",
+          "tests/claude-native-history-runner.test.mjs": "0b2c252a17719c8f541319ff164db6c26e136196",
+          "tests/claude-native-replay.test.mjs": "7c0a3efb66c13ebb5ffe00ff6ed117dc0d428fa7",
+          "tests/claude-native-subagent-model.test.mjs": "893576c1f15e397763fea21915accb8619e49442",
+          "tests/claude-native-subagent-return.test.mjs": "471c38aa3fa4a77c6a17aabaf747b88401e6f942",
+          "tests/fixtures/claude-task-worker.ts": "be824d461a8f5ed253532defa6f05aca893179b4"
+        },
+        "sourceJourneys": [
+          {
+            "paths": [
+              "tests/claude-native-history-driver.test.mjs",
+              "scripts/claude-native-acceptance/history-driver.mjs",
+              "src/claude-compat/history.ts",
+              "src/claude-compat/binding.ts"
+            ],
+            "readingReason": "Read the entire added disk fixture, collect/reconcile/verify implementation, and actual importNativeHistory/resumeImported and binding resume-at ownership branches. encodeSession intentionally represents imported canonical IDs separately from retained native provenance; child import-map resolution is the same direction used by the real binding.",
+            "systemReason": "Tests preserve fresh-session import rather than task/owner adoption. They inspect root hash stability, complete paired execute results, durable child mappings, missing/malformed evidence, and rollback parent-chain exclusion. Fabricated disk records are explicitly not native replay acceptance."
+          },
+          {
+            "paths": [
+              "tests/claude-native-history-model.test.mjs",
+              "scripts/claude-native-acceptance/history-model.mjs",
+              "src/questions/service.ts",
+              "src/typescript/job-bridge.ts",
+              "src/tasks/job-service.ts",
+              "src/claude-compat/binding.ts"
+            ],
+            "readingReason": "Read post/request lifetime, generated root and child programs, SSE sequence behavior and verifyHistoryModelRecords pairing. Followed questions and jobs bridge dispatch and actual question session/ancestor filtering. Read fresh imported manager selection as the source of distinct authority.",
+            "systemReason": "Changing shared rootExchange arrays to independently constructed transcripts fixes test mutation aliasing: corrupting root pairing no longer silently corrupts imported child pairing. Root append precedes saved question and shell result, child inspection never creates authority, and compaction drops imported context only after the first inspection request has seen its paired result."
+          },
+          {
+            "paths": [
+              "tests/claude-native-history-replay.test.mjs",
+              "scripts/claude-native-acceptance/history-replay.mjs"
+            ],
+            "readingReason": "Read all fake executable/browser/driver programs and their explicit spawn/config boundaries against exclusive root acquisition, prepare, binary hash check, browser nesting, server close/escalation and failure snapshots in the shipped replay.",
+            "systemReason": "Mocks replace external boundaries, not replay acquisition/release. Tests distinguish preexisting unowned state from owned runtime, require verification while state exists, and observe browser/server order across setup, spawn, launch, exercise and shutdown failures. Parent-secret sentinel is intentionally excluded from server config.env; isolated HOME/config/SDK directories are fixture-owned."
+          },
+          {
+            "paths": [
+              "tests/claude-native-history-runner.test.mjs",
+              "scripts/claude-native-acceptance/history-run.mjs",
+              "scripts/claude-native-acceptance/driver.mjs"
+            ],
+            "readingReason": "Read complete runner implementation and all added process/socket/config stubs, plus actual wire projection and setup excerpts and baseline publication ordering. Trace shared config from scoped input pinning through runReplay into retainHistoryProof and nested model-close/root-release.",
+            "systemReason": "Assertions inspect before harness cleanup, so the test cannot make a leaking runner appear clean. They verify environment allowlisting, pinned bytes, private config mode, redaction and state availability through model close even on parse/projection failures. The explicitly asserted passed=true on a projection-publication failure means replay/model checks passed, not that the process succeeded; the nonzero exit remains required and this result-field distinction already exists in baseline publication semantics."
+          },
+          {
+            "paths": [
+              "tests/claude-native-replay.test.mjs",
+              "wisdom/claude-compat/proof/native-ui-fixture/replay.mjs",
+              "scripts/claude-native-acceptance/run-subagent.mjs",
+              "scripts/claude-native-acceptance/subagent-driver.mjs",
+              "scripts/claude-native-acceptance/subagent-return-evidence.mjs",
+              "scripts/claude-native-acceptance/driver.mjs"
+            ],
+            "readingReason": "Read entire replay template and test relocation bindings, actual run-subagent relocation, generic flushCapture and subagent observedConfig/flushCapture fallback, and complete return evidence collector.",
+            "systemReason": "The relocated template keeps exactly the two bindings its real launcher rewrites. Optional capture is not mistaken for mandatory driver finalization: a subagent driver with no capture export still flushes provider evidence before browser/server/runtime teardown. Synthetic projection tests assert its deliberately different safe-field seam and never claim real connector acceptance."
+          },
+          {
+            "paths": [
+              "tests/claude-native-subagent-model.test.mjs",
+              "scripts/claude-native-acceptance/subagent-model.mjs",
+              "tests/claude-native-subagent-return.test.mjs",
+              "scripts/claude-native-acceptance/subagent-driver.mjs",
+              "scripts/claude-native-acceptance/subagent-return-evidence.mjs"
+            ],
+            "readingReason": "Read generated child, cancellation and Stop programs and the complete assigned return-evidence extraction, with actual same-root reply/consumed-prompt gates and evidence readers.",
+            "systemReason": "Tests distinguish an acknowledged stop report from observed killed status and leave native Stop cancellation to its owning runtime. Quoted state paths remain data. seedLinkedReturnEvidence groups four linked evidence sources without weakening their correlation/status checks or admitting auth/prompt payloads; final collection without a page still retains cross-source echoes."
+          },
+          {
+            "paths": [
+              "tests/fixtures/claude-task-worker.ts",
+              "tests/claude-compat-task-binding.test.ts"
+            ],
+            "readingReason": "Read complete current worker and baseline setup, plus unchanged real-worker spawn substitution, journal source, launch acknowledgment, terminal usage and restoration assertions.",
+            "systemReason": "installOfflineModelTransport is a named cohesive extraction at the same execution point: identical stream event order, 40ms scheduling, answer, usage=23 and fetch refusal. Real SessionManager/AgentSession ownership and disposal remain outside the transport helper; the caller still passes the actual task session file and prompt."
+          }
+        ],
+        "integrationReadingReason": "Bounded acceptance of all eight assigned diffs, including deletions. The additions make previously entangled evidence, generated-program behavior and lifetime edges directly inspectable through small scenario-specific helpers. They do not introduce a generic context bag or restore scheduler/question authority from copied transcripts. Endpoint, fabricated evidence, executable replay lifecycle and actual subprocess journal fixtures remain explicitly separate kinds of proof. Tests are verbose because they retain observable boundaries, but acquisition, proof-before-release and fresh imported ownership align with the actual related callers read. Existing assertions in the edited tests are preserved; regex changes accommodate emitted program formatting, not weakened cancellation semantics. No concrete blocking cross-file contradiction found in this lane; this is not a repository-wide sign-off.",
+        "objections": [],
+        "limits": [
+          "Source-only review. No tests, setup, builds, install, formatter, authentication, device access, secret access, unsupported Pi preparation retry/bypass, source edits, cleanup or delegation performed. Only this requested untracked report was written.",
+          "All 82626 assigned diff characters were read in contiguous slices through the end; no unread assigned diff gaps. Review uses exact baseline/candidate Git objects, not prior judgments, coverage counts or green tests.",
+          "Related context is intentionally selective: complete history driver/model/replay/runner, subagent model, replay template and return-evidence collector; selected generic driver setup/projection/flush, subagent driver ownership/gates/finalization, run-subagent relocation, native history import/load, binding import/resume-at, job/question dispatch and owner filters, and unchanged worker caller/assertions. No claim to reading all source in those larger modules.",
+          "Actual native connector/UI/browser/provider/auth execution and installed Pi API compatibility are unverified. Offline doubles and fabricated records in these tests cannot establish native acceptance.",
+          "Existing test-code removals of owned mkdtemp paths and runtime release behavior were inspected only, never executed; no user data, inherited HOME/config/SDK or worktree was removed. Durable source provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_03cfeee1 at af3602cf3d5b62641450c7cc24bb0350334b6652. Tests may create /tmp-owned fixtures; none were created or run in this review.",
+          "Only lane-19 is accepted. Parent must integrate other lanes and cross-domain judgments."
+        ]
       }
     },
     {
@@ -3067,7 +3330,7 @@
       ],
       "chars": 62851,
       "lines": 1405,
-      "status": "running",
+      "status": "accepted",
       "jobId": "task_559b6d8e",
       "model": "openai-codex/gpt-6.1-sol",
       "workspace": {
@@ -3082,6 +3345,116 @@
         "setupTaskId": "task_f1fd8dec",
         "setupStatus": "running",
         "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      },
+      "result": {
+        "lane": "lane-20",
+        "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
+        "candidate": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "verdict": "ACCEPT",
+        "diffReadPaths": [
+          "tests/t3/local-notifications.test.ts",
+          "tests/t3/native-routing.test.ts",
+          "tests/t3/production-bridge.test.ts",
+          "tests/t3/web-launcher.test.ts",
+          "tests/t3/web-task-events.test.ts",
+          "wisdom/claude-compat/proof/native-ui-fixture/replay.mjs"
+        ],
+        "contextReadPaths": [
+          "src/t3/tasks/local-notifications.ts",
+          "src/t3/tasks/mcp-client.ts",
+          "src/t3/tasks/native-task.ts",
+          "src/tasks/job-service.ts",
+          "src/t3/tasks/launch-identity.ts",
+          "src/job-delivery.ts",
+          "src/typescript/job-bridge.ts",
+          "src/tasks/task-manager.ts",
+          "src/agent/extension.ts",
+          "src/t3/tasks/events.ts",
+          "src/t3/web/launcher.ts",
+          "scripts/claude-native-acceptance/run.mjs",
+          "scripts/claude-native-acceptance/driver.mjs",
+          "scripts/claude-native-acceptance/app-delegation-driver.mjs",
+          "wisdom/claude-compat/proof/native-ui-fixture/native-actions.mjs"
+        ],
+        "sourceBlobs": {
+          "tests/t3/local-notifications.test.ts": "d646cd04f78933f4a57f0b3b6a91f7654a2bd459",
+          "tests/t3/native-routing.test.ts": "f882c78ba7a3197f0ea77bc42c061b1394ceee74",
+          "tests/t3/production-bridge.test.ts": "53c4bb22298c15e81dd6123b3d5508b86100c6ef",
+          "tests/t3/web-launcher.test.ts": "f6c1cb1d59f5c32c936016fbb1841f69b6064a6b",
+          "tests/t3/web-task-events.test.ts": "95a7f1c9831296f560d4fbbc8786c6a55817cf36",
+          "wisdom/claude-compat/proof/native-ui-fixture/replay.mjs": "7bf21b4f548c0acd9dbfea13a3f5a451f7170f0e"
+        },
+        "sourceJourneys": [
+          {
+            "paths": [
+              "tests/t3/local-notifications.test.ts",
+              "src/t3/tasks/local-notifications.ts",
+              "src/t3/tasks/mcp-client.ts",
+              "src/agent/extension.ts"
+            ],
+            "readingReason": "The new deliveryWithClient helper replaces repeated transport construction only; it returns a fresh wrapper for each attempt while leaving call/close effects in each test. Outbox-only tests remain separate. Existing persistence, stable ambiguous replay, enqueue-during-ACK, outage retry, capacity and Stop assertions survive the reorganization. Added cases assert matching terminal ACKs, close-before-retirement, attention supersession and interrupted delivery retention. Test finally blocks release blocked requests before stop and stop before owned fixture removal.",
+            "systemReason": "Delivery persists before start, prioritizes completion, rechecks stable notification IDs, closes its client in finally before acknowledging the row, and stop cancels timers and closes the active client. Extension attach/close awaits old delivery stop and constructs a session-affine mailbox; native completion/attention never falls back to an unowned Pi turn. The helper and tests agree with that ownership journey and do not introduce a second mailbox policy."
+          },
+          {
+            "paths": [
+              "tests/t3/native-routing.test.ts",
+              "src/typescript/job-bridge.ts",
+              "src/job-delivery.ts",
+              "src/tasks/job-service.ts",
+              "src/t3/tasks/launch-identity.ts",
+              "src/t3/tasks/native-task.ts",
+              "src/tasks/task-manager.ts"
+            ],
+            "readingReason": "executeConcurrentNativeCalls names the exchange rather than hiding assertions in a replay boolean. Its explicit firstCallIndex gates arrival at the adapter, not ordinal assignment. The test still forces original [2,1] and replay [1,2], compares exact derived IDs for each ordinal, checks absence of a new sidecar and checks both response IDs/results. Per-exchange finally now closes bridge/stream and shuts down its manager instead of accumulating managers in the outer test.",
+            "systemReason": "serveJobBridge attaches executeInvocationId plus envelope ID before dispatch; JobService fingerprints that identity plus batch index, consults the session ledger and routes through the scoped adapter before local policy. The ledger derives IDs while honoring existing mappings; backend profile/depth remain authoritative. Earlier manager shutdown does not remove identity state: this native path returns backend projections without spawning local tasks, and adapter close is already owned by JobService."
+          },
+          {
+            "paths": [
+              "tests/t3/production-bridge.test.ts",
+              "src/t3/tasks/mcp-client.ts",
+              "src/t3/tasks/native-task.ts"
+            ],
+            "readingReason": "Replacing nested Response/Headers proxies with one bound headers.get override exposes the single observed session-header effect. Splitting timeout, caller cancellation and auth rejection preserves each prior assertion with isolated setup. The new late-404 test holds both old-session requests, lets the first complete replacement initialization, then releases the late response and asserts no third handshake and deletion of the replacement session.",
+            "systemReason": "MCP send captures requestSession into McpHttpError. Reconnect ignores an expired old session once a different replacement is initialized; connect owns the shared handshake, and close aborts/settles in-flight work before deleting the acquired session. NativeTaskAdapter only replays McpAmbiguousResponseError once with the same launch arguments, not caller abort or HTTP 401. These distinct test journeys match the actual transport and mutation-replay boundaries."
+          },
+          {
+            "paths": [
+              "tests/t3/web-task-events.test.ts",
+              "src/t3/tasks/events.ts",
+              "src/agent/extension.ts",
+              "src/tasks/task-manager.ts"
+            ],
+            "readingReason": "The old flag-off writers threw, but emitter write errors are deliberately swallowed; observing an empty lines array now detects forbidden traffic instead of accidentally accepting it. Added update suppression, bounded public agent metadata and recovery after a failed notice assert the existing small lifecycle contract directly.",
+            "systemReason": "The extension subscribes one emitter to manager events. Only spawned/completed are projected, only explicitly enabled RPC writes raw NDJSON, and sessionFile/depth are not projected. Transport failure cannot prevent task execution or a later completed notice. These tests improve evidence without widening the public event schema or adding lifecycle state."
+          },
+          {
+            "paths": [
+              "tests/t3/web-launcher.test.ts",
+              "src/t3/web/launcher.ts"
+            ],
+            "readingReason": "Separating accepted setup flags from rejected former server flags retains return-code/log/error assertions and gives each console spy a finally-scoped restore. The rejection test now begins with pristine spies instead of relying on an intervening mockClear.",
+            "systemReason": "runWeb still only prints externalT3Guide for accepted help/setup flags and returns 2 with the same diagnostic for unsupported flags. No server launch or hidden setup behavior is introduced."
+          },
+          {
+            "paths": [
+              "wisdom/claude-compat/proof/native-ui-fixture/replay.mjs",
+              "scripts/claude-native-acceptance/run.mjs",
+              "scripts/claude-native-acceptance/driver.mjs",
+              "scripts/claude-native-acceptance/app-delegation-driver.mjs",
+              "wisdom/claude-compat/proof/native-ui-fixture/native-actions.mjs"
+            ],
+            "readingReason": "The large diff contains real lifetime changes as well as expanded formatting: setup now occurs inside the owned-runtime try, capture returns a per-page observation passed explicitly to exercise and flushCapture, and releaseRuntime uses nested finally blocks to release remaining resources if one close fails. prepareRuntime, openNativeComposer and proof/failure publishing name concrete phases rather than introducing a generic context bag. All removed inline onboarding, native actions, synthetic proof filtering and failure fields have corresponding current logic.",
+            "systemReason": "The unchanged run.mjs caller creates a mkdtemp root and explicit allowlisted argv/env, writes config and launches replay; config HOME points to that owned parent fixture. Replay exclusively creates its child runtime before any cleanup, preserves ordinary pairing/onboarding and keeps synthetic and real drivers separate. driver.capture returns an observation with cancellationRunId and flush; driver.exercise uses that same observation to expand the cancellation run after reload, and persisted/live evidence is flushed before browser/server closure and private-state removal. App-delegation driver exports no capture/flush hook, so optional calls remain appropriate. Resource ownership is clearer and the per-run observation agrees with the integrated driver API."
+          }
+        ],
+        "integrationReadingReason": "ACCEPT for this bounded lane. Fresh complete baseline-to-candidate diffs, including deletions, were read for all six assigned paths. Actual caller/authority/lifetime context supports the reorganizations: test-only helpers centralize construction/exchange ownership without centralizing assertions, event tests now observe a previously swallowed effect, and replay phases plus per-run observation align with driver consumers. Public routing, notification identity, native policy authority, event privacy and synthetic-versus-real proof semantics are retained. No concrete cross-file contradiction, missing new owner or outsized abstraction was found in the reviewed journeys; the larger replay diff yields a more legible phase/lifetime spine rather than a new framework.",
+        "objections": [],
+        "limits": [
+          "Source-only judgment; no tests, setup, builds, installs, formatters, live auth/device checks, network probes, credentials or recovery work performed. Unsupported Pi preparation was not retried or bypassed. No delegation.",
+          "All assigned diffs fully read; no assigned unread gap. Related sources were read at the actual exercised boundaries, not universally in full. No whole-repository sign-off and no runtime success claim.",
+          "No previous review artifacts, summaries, coverage counts or green tests used as verdict evidence. Exact Git objects were read at baseline/candidate; HEAD was candidate and tracked worktree status was clean before writing this untracked result.",
+          "Durable provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_559b6d8e. Candidate and existing worktrees preserved. Only .pr45-final-lane-result.json written. Owned temporary cleanup code was inspected, never executed; no temporary test fixtures were created or deleted."
+        ]
       }
     },
     {
@@ -3099,7 +3472,7 @@
       ],
       "chars": 99447,
       "lines": 2334,
-      "status": "running",
+      "status": "accepted",
       "jobId": "task_776b09ce",
       "model": "openai-codex/gpt-6.1-sol",
       "workspace": {
@@ -3114,6 +3487,118 @@
         "setupTaskId": "task_35d02d58",
         "setupStatus": "running",
         "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      },
+      "result": {
+        "lane": "lane-21",
+        "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
+        "candidate": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "verdict": "ACCEPT",
+        "diffReadPaths": [
+          "scripts/fixtures/task-placement-clean/scenario.ts",
+          "scripts/leak-audit/cli-rpc-soak.ts",
+          "scripts/leak-audit/execution-runtime.ts",
+          "scripts/task-placement-clean-capture.test.ts",
+          "scripts/task-placement-clean-capture.ts",
+          "scripts/task-placement-clean-scenario.test.ts",
+          "scripts/task-placement-clean-video.py",
+          "scripts/task-placement-clean-video.test.py"
+        ],
+        "contextReadPaths": [
+          "scripts/network-none-fixture.ts",
+          "scripts/ansi_video_renderer.py",
+          "scripts/fixtures/task-placement-clean/fake-provider.ts",
+          "scripts/fixtures/task-placement-clean/models.json",
+          "scripts/fixtures/task-placement-clean/subagents.json",
+          "scripts/fixtures/task-placement-clean/settings.json",
+          "tests/fixtures/remote-typed-root-placement/Dockerfile",
+          "tests/fixtures/remote-typed-root-placement/entrypoint.sh",
+          "tests/cli-rpc-soak.test.ts",
+          "src/typescript/execution.ts",
+          "src/typescript/job-bridge.ts",
+          "src/questions/service.ts",
+          "src/questions/runtime.ts",
+          "src/remote/runtime.ts",
+          "src/remote/root-runtime.ts",
+          "src/remote/root-presenter.ts",
+          "src/cli.ts",
+          "package.json"
+        ],
+        "sourceBlobs": {
+          "scripts/fixtures/task-placement-clean/scenario.ts": "0bba6b0130a774fd2298f85a6e32fa72248d4e23",
+          "scripts/leak-audit/cli-rpc-soak.ts": "e814f9e34419f15ad60f2066c380ab7d12107685",
+          "scripts/leak-audit/execution-runtime.ts": "4aa62fc619c272ae73a45011e2fc1ce41b770812",
+          "scripts/task-placement-clean-capture.test.ts": "83cafd1bb95ca575ac2e08f8c748313975f0bb1f",
+          "scripts/task-placement-clean-capture.ts": "9cee9d131e3bda752cce6998ad42e1dc19e194b1",
+          "scripts/task-placement-clean-scenario.test.ts": "e43c159807ee2375c22588620077989ccf9eae7d",
+          "scripts/task-placement-clean-video.py": "b81ab0621fe7e72fa6f9d6ad701cac29f727bfcf",
+          "scripts/task-placement-clean-video.test.py": "9a9533ca57ebb1ca843cb847ea2f70148d4f139e"
+        },
+        "sourceJourneys": [
+          {
+            "paths": [
+              "scripts/fixtures/task-placement-clean/scenario.ts",
+              "scripts/fixtures/task-placement-clean/fake-provider.ts",
+              "scripts/task-placement-clean-scenario.test.ts",
+              "src/typescript/job-bridge.ts",
+              "src/questions/service.ts",
+              "src/questions/runtime.ts",
+              "src/remote/root-runtime.ts",
+              "src/remote/root-presenter.ts"
+            ],
+            "readingReason": "Followed deterministic helper launch, question ask/block, trusted UI answer, resumed parent list/resolve, and NOTES write. Multiline generated code retains execute IDs, labels, serialized constants, saved owner/version and resolve-before-write ordering. The SSE serializer and provider still expose the same delta and completion framing; the added scenario assertions inspect the actual emitted code rather than inventing an alternate progression.",
+            "systemReason": "Question authority remains in the trusted UI/service routes: the tool bridge exposes no questions.answer helper; block and resolve use session/branch ownership and CAS versions. Root presenter refreshes the question before answering. Runtime saves the answer as display:false custom context and triggers a new turn; the fixture does not resume a suspended execute stack or send a second answer."
+          },
+          {
+            "paths": [
+              "scripts/task-placement-clean-capture.ts",
+              "scripts/task-placement-clean-capture.test.ts",
+              "scripts/network-none-fixture.ts",
+              "tests/fixtures/remote-typed-root-placement/Dockerfile",
+              "tests/fixtures/remote-typed-root-placement/entrypoint.sh",
+              "src/remote/root-presenter.ts"
+            ],
+            "readingReason": "Compared deleted inline PTY functions with PresentationTerminal and its main caller through start, readiness, literal typing, detach, reopen and final cleanup. Fixed 120x40 PTY, remain-on-exit options, unfiltered viewport/scrollback captures, timeline fields, detach-zero-exit assertion and capture-before-kill ordering are retained. Import now avoids executing main, allowing direct class inspection in tests. Server/root state, source-return assertions and capture receipt stay with main rather than being hidden inside the terminal class.",
+            "systemReason": "The terminal owns only PTY lifetime and shots; it does not acquire remote task/question authority. Main still authorizes only the isolated named fixture, records same root after reopen, checks source remains unchanged before /close, and inspects actual child placement and returned NOTES afterward. The shared fixture has explicit argv, disposable HOME/config and socket isolation and network-none Docker construction; nothing was executed during this review."
+          },
+          {
+            "paths": [
+              "scripts/task-placement-clean-capture.ts",
+              "scripts/task-placement-clean-video.py",
+              "scripts/task-placement-clean-video.test.py",
+              "scripts/ansi_video_renderer.py",
+              "src/questions/runtime.ts"
+            ],
+            "readingReason": "Followed producer timeline/viewport/diagnostic files and server journal into raw marker checks, private-question proof, disclosed HOME substitution, screens JSONL, every-frame audit, shared renderer, ffprobe/full decode/atom check and final receipt. Extracted helpers preserve reject-versus-record distinctions for scheduled views, unused evidence, full scrollback and failed takes. prepare_replay now copies rows instead of mutating source_timeline but produces the same screens and final hold frame. Receipt fields and renderer call arguments retain the existing interface.",
+            "systemReason": "Privacy is checked on original default captures before redaction/rendering, using actual hidden message content, reply key and owner IDs. Successful decode precedes the final receipt. Added Python tests intentionally mock encoding and do not serve as real playback proof; the source path through the shared encoder was inspected separately."
+          },
+          {
+            "paths": [
+              "scripts/leak-audit/cli-rpc-soak.ts",
+              "tests/cli-rpc-soak.test.ts",
+              "src/cli.ts"
+            ],
+            "readingReason": "Compared complete old globals/queue/event retention with SoakRpcSession and the sequential soak caller. The single end waiter is valid because every normal or abort turn is awaited before another starts, and registration still precedes prompt. Full events retention becomes eventCount plus failedResponses, retaining report semantics without the measurement harness itself retaining all events. Turn deadline is cleared even on prompt rejection; finish drains stdin, child exit and both output streams; finally disposes the exact owned child before stopping the loopback server.",
+            "systemReason": "Mixed/new-only cycle schedules, abort delay, compact tolerances, samples, report fields and failure exit policy remain intact. The existing CLI-protocol fixture caller was read for fragmented JSONL, prompt/abort and rejection journeys, not used as a green-test verdict. Actual CLI hands ordinary mode to the external Pi SDK; SDK startup/protocol execution was not attempted."
+          },
+          {
+            "paths": [
+              "scripts/leak-audit/execution-runtime.ts",
+              "src/typescript/execution.ts",
+              "src/typescript/job-bridge.ts"
+            ],
+            "readingReason": "Compared all deleted probes against auditExecutionRuntime: same warm/short/spill/timeout/abort/bridge/descendant/final loops and assertions. The options type derives the real jobHandler signature, replacing positional any plumbing; per-caller-abort timeout is now cleared in finally. Root/session, observations and owned descendants are scoped to this invocation. Read executeIsolated launch, cancellation, bridge close, stream drains and process-group kill to check what the probe is actually observing.",
+            "systemReason": "The production execute lifetime still owns process groups and bridge cancellation; the probe owns only observed child PIDs and its mkdtemp root. Group descendants are killed on leader exit, timeout and abort causes remain first-wins, and output artifacts finalize after both pumps. These observations are explicitly not assertions that process-wide RSS/heap proves live-object leakage."
+          }
+        ],
+        "integrationReadingReason": "All eight assigned baseline-to-candidate diffs, including deletions and both added test files, were fully read fresh. The integrated separation is coherent: deterministic inference remains in scenario, transport logs remain in provider, PTY evidence remains in a small terminal owner, durable server checks remain in capture main, auditing/rendering phases remain in focused Python helpers, and leak probes retain their real runtime callers. Classes/closures correspond to concrete lifetimes rather than giant cross-domain context bags. Public script invocation, evidence/report formats and actual effect ordering are preserved; imports becoming side-effect-free in capture/video intentionally enable direct testing. This materially reduces source-reading burden without obscuring authority boundaries. No blocking integration contradiction was found in this lane; this is not whole-repository sign-off.",
+        "objections": [],
+        "limits": [
+          "Read-only source review except this explicitly requested untracked result. No delegation; no tests, setup, build, install, formatter, auth/device/provider access, secret access, recovery work, cleanup or source edits were performed. Unsupported Pi preparation was neither retried nor bypassed.",
+          "Assigned diff unread gaps: none. Related contexts were read only as needed (targeted portions for large runtime/CLI/question files), not attested as a full-repository review. Source references are the candidate checkout at af3602cf3d5b62641450c7cc24bb0350334b6652 in the existing durable lane worktree, with baseline retrieved from Git; candidate and worktree were preserved.",
+          "Native CLI/Pi compatibility, live auth/devices, Docker/SSH capture and actual ffmpeg playback remain unverified by execution. Test source was assessed for calls/assertions; neither previous independent judgments nor green tests/artifacts were consulted as evidence.",
+          "Pre-existing operational limits remain: execution-runtime inherits the production execute environment and removes its owned mkdtemp fixture; cli-rpc-soak spreads process.env while overriding HOME/agent dirs; native fixture tests remove their owned temp directories. None were run. Future execution under this task would require explicit argv/env and owned mkdtemp HOME/config/SDK fixtures retained without cleanup.",
+          "The shared renderer has a pre-existing exceptional-path limitation: frame-audit exceptions occur after encoder creation and do not have a finally closing/waiting the subprocess. Candidate and baseline renderer tails were compared; this is not introduced by this lane, and the mocked dirty-caption test is not real encoder-teardown evidence."
+        ]
       }
     },
     {
@@ -3132,7 +3617,7 @@
       ],
       "chars": 96140,
       "lines": 2299,
-      "status": "running",
+      "status": "accepted",
       "jobId": "task_b5b3574c",
       "model": "openai-codex/gpt-6.1-sol",
       "workspace": {
@@ -3144,6 +3629,130 @@
         "baseOid": "af3602cf3d5b62641450c7cc24bb0350334b6652",
         "branch": "bruv/pr45-final-integrated-diff-lane-22-execu-b5b3574c",
         "preparationStatus": "preparing"
+      },
+      "result": {
+        "lane": "lane-22",
+        "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
+        "candidate": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "verdict": "ACCEPT",
+        "diffReadPaths": [
+          "src/questions/extension.ts",
+          "src/questions/runtime.ts",
+          "src/questions/service.ts",
+          "src/tasks/job-attention.ts",
+          "src/tasks/job-service.ts",
+          "src/tasks/resume-safeguards.ts",
+          "src/tasks/task-manager.ts",
+          "src/typescript/execution.ts",
+          "src/typescript/extension.ts"
+        ],
+        "contextReadPaths": [
+          "src/questions/extension.ts",
+          "src/questions/runtime.ts",
+          "src/questions/service.ts",
+          "src/tasks/job-attention.ts",
+          "src/tasks/job-service.ts",
+          "src/tasks/resume-safeguards.ts",
+          "src/tasks/task-manager.ts",
+          "src/typescript/execution.ts",
+          "src/typescript/extension.ts",
+          "src/agent/extension.ts",
+          "src/remote/question-bridge.ts",
+          "src/goals/extension.ts",
+          "src/live/main-owner.ts",
+          "src/tasks/worktree-workspace.ts",
+          "src/tasks/agent-session.ts",
+          "src/job-delivery.ts",
+          "src/typescript/job-bridge.ts",
+          "src/ui/task-rows.ts",
+          "src/claude-compat/binding.ts"
+        ],
+        "sourceBlobs": {
+          "src/questions/extension.ts": "4bd8d2bc1025d7607604c9a12877aaf79be36578",
+          "src/questions/runtime.ts": "2487208b21425f197644bd308d3a27fe25608bbc",
+          "src/questions/service.ts": "e93ab8b86ff77c01f6fb355abd86ee7840b82a2c",
+          "src/tasks/job-attention.ts": "616cb27912bd78283f5fd9007e63757f6e4c7ace",
+          "src/tasks/job-service.ts": "27ce9ecdf3610353fd50d65c165999d07bfa99e8",
+          "src/tasks/resume-safeguards.ts": "129841b52c862394340238e73d5c19ecd1d46816",
+          "src/tasks/task-manager.ts": "ca04acea4b9220de46fd19b8f40e4a669e027a39",
+          "src/typescript/execution.ts": "2504db7ab88d35fdbdb6db8d3379e2d9df0c0f6f",
+          "src/typescript/extension.ts": "3542bf968fc6fdf8c06c82d149a15f3e9e95eac7"
+        },
+        "sourceJourneys": [
+          {
+            "paths": [
+              "src/questions/extension.ts",
+              "src/questions/runtime.ts",
+              "src/questions/service.ts",
+              "src/live/main-owner.ts",
+              "src/goals/extension.ts",
+              "src/agent/extension.ts"
+            ],
+            "readingReason": "Followed the displayed question snapshot through promptAnswer, commands.handle owner/version validation, service.answer and onAnswered, ParentQuestionContinuations.answerSaved/flush/dispatchAnswer, and the durable queued -> dispatching -> delivered transitions. Read unchanged ledger locking, branch ownership, setDelivery, main-owner query, goal gating, and stopWork pause wiring. The extracted class preserves the pre/post-await session and epoch fences, idle/main-owner checks, first-created-here automatic queue policy and explicit manual resume rules. Tool questions.answer remains forbidden. UI choice/editor cancellation and detail strings preserve baseline behavior.",
+            "systemReason": "A saved human reply still starts one new parent turn, never an old execute stack or native child. Stop/navigation invalidate in-memory delivery and uncertain durable dispatch remains non-replayable. The class genuinely owns the continuation state instead of scattering it through registration callbacks; small event methods introduce some indirection but no independent competing owner or broad context bag."
+          },
+          {
+            "paths": [
+              "src/questions/service.ts",
+              "src/questions/runtime.ts",
+              "src/questions/extension.ts",
+              "src/remote/question-bridge.ts"
+            ],
+            "readingReason": "Followed RemoteQuestionBridge.sync/reflectQuestions into reflectRemote and reconcileRemoteQuestion, then explicit CLI answer into claimRemoteReply, dispatch and receipt reconciliation. Compared the complete removed mutation logic with the new pure reconciliation helper, including the creation path and changed/version bookkeeping. remoteIdentity keeps task/host/pinned owner/epoch/question/branch identity; observations update observedVersion/status while a saved reply retains its target version/text. Delivered matching receipt and closed-status priorities match the baseline. UI renderAnswerDelivery continues to distinguish remote observation from local human answer.",
+            "systemReason": "Remote observations remain provenance, not answer authority. Human-only dispatch and immutable reply identity survive the helper extraction. The pure reconciliation helper makes the two distinct versions (observed and reply target) easier to reason about, without duplicating transport authority or introducing new global state."
+          },
+          {
+            "paths": [
+              "src/tasks/job-service.ts",
+              "src/tasks/task-manager.ts",
+              "src/tasks/worktree-workspace.ts",
+              "src/tasks/agent-session.ts",
+              "src/tasks/resume-safeguards.ts",
+              "src/claude-compat/binding.ts"
+            ],
+            "readingReason": "Followed subagent input/policy and native/SSH routing before the local worktree helper; then reserved IDs, preparation signals, one batch source pin, createWorktree onPlanned metadata, managed setup spawn/setupTaskId, role-marked persistent child session, and activatePreparedAgent. Read manager kill/failPreparedAgent/settlePrepared/shutdown to check setup cancellation and waiter/deadline lifetime; read the unchanged executable-routing prototype wrapper. Activation retains the reservation rather than rebuilding it, including deadline, launch identity, output, completion promise and background policy. Async setup updates eventual status; blocking setup gates activation and removes its abort listener.",
+            "systemReason": "The extracted worktree methods retain the original authority boundary and durable cancellable identities; no accidental local escape from scoped-native/SSH policy. Explicit spawn versus activation removes the overloaded boolean path. TaskSummary now allowlists all declared public metadata and excludes preparationController and manager-owned handles; task rows and attention consumers still receive their required fields. Setup/worktree/session filesystem effects were inspected, not invoked."
+          },
+          {
+            "paths": [
+              "src/typescript/extension.ts",
+              "src/typescript/execution.ts",
+              "src/typescript/job-bridge.ts",
+              "src/job-delivery.ts",
+              "src/tasks/task-manager.ts",
+              "src/ui/task-rows.ts",
+              "src/agent/extension.ts"
+            ],
+            "readingReason": "Followed execute launch through ExecuteDelivery.waitSignal/recordLaunches, withJobCancellation identity and delivery-signal propagation, serveJobBridge per-request signals/provisional ACKs, and TaskManager.foreground ownership transfer. Read isolated execution completion handlers, cancellation.watch and close, plus execute shutdown/stopForeground and stopWork ACK-before-foreground-stop wiring. executionCancellation captures the first cause and owns its listener/escalation/deadline cleanup; clean completion commits ACKs before controller close. ExecuteDelivery still publishes launch rows before eventual failure, rejects error executions, and makes handoff terminate only a successful invocation.",
+            "systemReason": "Local handoff cancels foreground waits without stopping managed jobs or pretending a bridge disconnect. Failed worker completion restores notification ownership; clean ACK transfers it. The two new owners are scoped to one invocation/process and reduce interleaved result-formatting/cancellation state, not generic frameworks. First-cause diagnostic classification now follows the captured termination cause rather than a later caller-signal reason."
+          },
+          {
+            "paths": [
+              "src/tasks/job-attention.ts",
+              "src/tasks/task-manager.ts",
+              "src/agent/extension.ts"
+            ],
+            "readingReason": "Followed spawned/activity/completed manager events into scheduler state, deadline scheduling, takeDueReasons, authoritative pending snapshots, bounded inspect, notice consumers and waitForNotice. Read scheduler snooze/setWatch/dispose and agent session teardown. Failed inspection now lives with its task state and resets on successful inspection; due checkpoints are still consumed before inspection, avoiding a retry spin. Completion removes state; disposal clears timer/subscription and releases waiters.",
+            "systemReason": "Attention remains evidence-only and does not kill jobs. One scheduler owns deadlines and failure episodes; replacing the separate failure-ID set removes a parallel lifetime structure while preserving diagnostics and periodic review behavior. The unchanged notification consumer still sends through the appropriate session/native delivery route."
+          },
+          {
+            "paths": [
+              "src/tasks/resume-safeguards.ts",
+              "src/tasks/agent-session.ts",
+              "src/agent/extension.ts"
+            ],
+            "readingReason": "Read role-marker creation, bounded role parsing/cache/decorate, picker installation, resume confirmation and session-start/shutdown uninstallation. The root refcount map now determines first install/last release; adapters capture original methods in closures and restore only if still installed, preserving another extension wrapper. Unknown/worker/orchestrator gating remains unchanged; decoration itself does not confer root authority.",
+            "systemReason": "The refactor removes redundant install counters and mutable original/adapter globals while preserving multiple active-directory ownership and idempotent release. Child session identity still travels in persistent source metadata and is independently restored by the agent integration."
+          }
+        ],
+        "integrationReadingReason": "Fresh baseline-to-integrated-candidate review of every assigned diff, including deleted code, with actual candidate caller/authority/lifetime context. The refactors are cohesive ownership extractions: parent-answer continuation state, execute result evidence, process cancellation, worktree orchestration and explicit spawn/activation each have a concrete owner. Helpers retain existing public inputs/results and ordering; no cross-file contradiction or missing owner found in the exercised paths. The TaskSummary allowlist is a substantive boundary improvement. The added small class/event indirections are outweighed by clearer state lifetimes and reduced interleaving; there is no large generic abstraction or untyped context bag introduced. ACCEPT is limited to this lane, not whole-repository sign-off.",
+        "objections": [],
+        "limits": [
+          "Source-only review. No tests, setup, builds, installs, formatters, auth/device operations, network access, source edits, deletion/cleanup or recovery work were run. Unsupported Pi preparation was not retried or bypassed. No delegation or descendants were launched. Only the requested untracked result file was written.",
+          "All assigned baseline-to-candidate diffs were fully read in bounded chunks; no assigned unread gaps. Related source was read in relevant ranges, not attested as whole-file/whole-repository coverage.",
+          "No prior primary/judge artifacts, coverage summaries or green tests were used as verdict evidence.",
+          "Live provider/device access, SDK execution and runtime timing remain unverified under the read-only constraint. Candidate and existing worktree were preserved; durable provenance is this worktree at the exact candidate commit and the recorded Git blobs."
+        ]
       }
     },
     {
@@ -3165,7 +3774,22 @@
       ],
       "chars": 98037,
       "lines": 2305,
-      "status": "pending"
+      "status": "running",
+      "jobId": "task_23a62ae9",
+      "model": "openai-codex/gpt-6.1-sol",
+      "workspace": {
+        "kind": "worktree",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_23a62ae9",
+        "worktreePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_23a62ae9",
+        "sourcePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
+        "baseRef": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "baseOid": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "branch": "bruv/pr45-final-integrated-diff-lane-23-execu-23a62ae9",
+        "preparationStatus": "ready",
+        "setupTaskId": "task_22f7b384",
+        "setupStatus": "running",
+        "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      }
     },
     {
       "id": "lane-24",
@@ -3183,7 +3807,22 @@
       ],
       "chars": 98683,
       "lines": 2554,
-      "status": "pending"
+      "status": "running",
+      "jobId": "task_748fb453",
+      "model": "openai-codex/gpt-6.1-sol",
+      "workspace": {
+        "kind": "worktree",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_748fb453",
+        "worktreePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_748fb453",
+        "sourcePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
+        "baseRef": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "baseOid": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "branch": "bruv/pr45-final-integrated-diff-lane-24-execu-748fb453",
+        "preparationStatus": "ready",
+        "setupTaskId": "task_122b6008",
+        "setupStatus": "running",
+        "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      }
     },
     {
       "id": "lane-25",
@@ -3203,7 +3842,22 @@
       ],
       "chars": 96387,
       "lines": 2214,
-      "status": "pending"
+      "status": "running",
+      "jobId": "task_b4f421dc",
+      "model": "openai-codex/gpt-6.1-sol",
+      "workspace": {
+        "kind": "worktree",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_b4f421dc",
+        "worktreePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_b4f421dc",
+        "sourcePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
+        "baseRef": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "baseOid": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "branch": "bruv/pr45-final-integrated-diff-lane-25-execu-b4f421dc",
+        "preparationStatus": "ready",
+        "setupTaskId": "task_4566440e",
+        "setupStatus": "running",
+        "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      }
     },
     {
       "id": "lane-26",
@@ -3218,7 +3872,22 @@
       ],
       "chars": 57695,
       "lines": 1455,
-      "status": "pending"
+      "status": "running",
+      "jobId": "task_32ea1bed",
+      "model": "openai-codex/gpt-6.1-sol",
+      "workspace": {
+        "kind": "worktree",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_32ea1bed",
+        "worktreePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_32ea1bed",
+        "sourcePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
+        "baseRef": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "baseOid": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "branch": "bruv/pr45-final-integrated-diff-lane-26-execu-32ea1bed",
+        "preparationStatus": "ready",
+        "setupTaskId": "task_7f821bea",
+        "setupStatus": "running",
+        "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      }
     },
     {
       "id": "lane-27",
@@ -3241,7 +3910,22 @@
       ],
       "chars": 91257,
       "lines": 2144,
-      "status": "pending"
+      "status": "running",
+      "jobId": "task_c657b9f6",
+      "model": "openai-codex/gpt-6.1-sol",
+      "workspace": {
+        "kind": "worktree",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_c657b9f6",
+        "worktreePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_c657b9f6",
+        "sourcePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
+        "baseRef": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "baseOid": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "branch": "bruv/pr45-final-integrated-diff-lane-27-live--c657b9f6",
+        "preparationStatus": "ready",
+        "setupTaskId": "task_48c82944",
+        "setupStatus": "running",
+        "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      }
     },
     {
       "id": "lane-28",

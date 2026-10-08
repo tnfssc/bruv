@@ -1,4 +1,8 @@
 import { describe, expect, test } from "bun:test";
+import { mkdtemp } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { ownedFixtureEnv } from "./helpers";
 import {
   markdownLockSummary,
   markdownVersionSummary,
@@ -77,12 +81,16 @@ describe("fixture update permission", () => {
   });
 
   test("CLI denies fixture before spawning an update", async () => {
-    const child = Bun.spawn([process.execPath, "scripts/update-dependencies.ts", "--fixture"], {
-      cwd: new URL("../", import.meta.url).pathname,
-      env: { ...process.env, GITHUB_REPOSITORY: "tnfssc/bruv", GITHUB_EVENT_NAME: "workflow_dispatch" },
-      stdout: "pipe",
-      stderr: "pipe",
-    });
+    const root = await mkdtemp(join(tmpdir(), "bruv-denied-dependency-update-"));
+    const child = Bun.spawn(
+      [process.execPath, join(import.meta.dir, "../scripts/update-dependencies.ts"), "--fixture"],
+      {
+        cwd: root,
+        env: { ...ownedFixtureEnv(root), GITHUB_REPOSITORY: "tnfssc/bruv", GITHUB_EVENT_NAME: "workflow_dispatch" },
+        stdout: "pipe",
+        stderr: "pipe",
+      },
+    );
     expect(await child.exited).toBe(1);
     expect(await new Response(child.stderr).text()).toContain("--fixture is only allowed");
   });

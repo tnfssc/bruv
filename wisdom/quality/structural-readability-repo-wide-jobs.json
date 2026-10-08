@@ -4039,6 +4039,23 @@
         "model": "openai-codex/gpt-6.1-sol",
         "status": "handled",
         "sourceCommit": "4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7"
+      },
+      {
+        "id": "task_7b313d31",
+        "stage": "judge",
+        "focus": [
+          "tests/dependency-updates.test.ts",
+          "tests/dependency-workflow.test.ts",
+          "tests/find-ci-baseline.test.ts",
+          "tests/helpers.ts",
+          "tests/install-download.test.ts",
+          "tests/install-local.test.ts",
+          "tests/update-self-fixture.test.ts"
+        ],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_7b313d31",
+        "branch": "bruv/pr45-judge-7-build-release-ci-tooling-fo-7b313d31",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled"
       }
     ]
   },
