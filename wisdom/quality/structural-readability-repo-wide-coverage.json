@@ -13877,12 +13877,57 @@
       "initialBlob": "823b81438fe53e0bab52108e9ae3ca9733acfedb",
       "status": "pending",
       "area": "execution-tasks-questions",
-      "resumeState": "pending-primary",
-      "primaryId": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_d848af48",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "9415644f7dd7f71ae14b289930077652d39dbfb7",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
-      "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage."
+      "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage.",
+      "primaryCommit": "9415644f7dd7f71ae14b289930077652d39dbfb7",
+      "primaryBase": "cfd8136a69452f4c4460626f17cb9d4c4a1d3653",
+      "primaryResult": "Separated the source fixture capture and exact-replay upload operations, then made transport isolation and result-export authorization separate scenarios. Upload assertions still explicitly verify the root-owned checkout, dirty tracked bytes, one-commit history and exclusion of unapproved files. The export scenario starts with the same uploaded snapshot and keeps the exact no-root, accepted, unknown, failed-close and successful-close checks plus snapshot/content/digest assertions. No new state container or production abstraction. Complete-file reading also covered create/command replay, detach/observe redaction, unsettled and clean/failed close, pending prompt versus abort, owner-death/crash uncertainty, journal gaps, identity/command/model rejection, duplicate ownership and UI-dialog replay/reconnect. These unchanged scenarios already keep their stimulus, persisted consequence and fake-owner drain visible together; their existing duplication does not require reconstructing an authority across files.",
+      "primaryPaths": ["tests/root-owner.test.ts"],
+      "primaryChecks": [
+        {
+          "kind": "source-reading",
+          "result": "Read wisdom/values.md and structural-readability-guidance.md; inspected only focus ledger/evidence rows. Evidence records no prior candidate; focus already existed, so no old branch or candidate bytes were imported."
+        },
+        {
+          "kind": "caller-trace",
+          "paths": [
+            "src/remote/root-client.ts",
+            "src/remote/root-owner.ts",
+            "src/remote/repository.ts",
+            "src/remote/repository-wire.ts"
+          ],
+          "result": "Client uploads pinned source before create and gates return on successful closed root; owner maps closed/exitCode 0 to done for repository result; wire separates upload replay from completion-gated result export."
+        },
+        {
+          "kind": "formatter",
+          "result": "Required read-only Biome executable invoked with node child_process argv on tests/root-owner.test.ts only; formatted one file, no fixes applied.",
+          "retainedFixture": "/tmp/pr45-root-owner-format-6CEauZ",
+          "environment": "Fresh retained HOME, XDG_CONFIG_HOME, TMPDIR; PATH=/usr/bin:/bin."
+        },
+        {
+          "kind": "static-preservation",
+          "result": "Leading owner scenarios and trailing UI-dialog scenarios byte-identical; checkout assertions and export authorization/content/digest block byte-identical; upload replay body unchanged except indentation and replacing direct f.options with options parameter."
+        },
+        {
+          "kind": "git-diff-check",
+          "result": "Passed."
+        },
+        {
+          "kind": "commit-safety",
+          "result": "Inspected configured/default hooks directory; no active hooks. Commit contains only the focus source file.",
+          "durableWorktree": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_d848af48"
+        }
+      ],
+      "primaryLimits": [
+        "No tests, setup or builds run: parent owns audited isolated batch gates. Static preservation and formatter are not runtime or independent readability acceptance.",
+        "Reviewed snapshot fixture effects before any possible runtime gate: local Git init/commit/capture/clone and root-owned persistence/result writes; existing owned-temporary-path cleanup remains source-only and was not executed. Snapshot setup now runs independently for each of the two authority scenarios.",
+        "Parent runtime gate must supply explicit process argv/env and fresh retained owned HOME/config/SDK fixtures; current source Git helpers still inherit that gate environment. No inherited HOME/config/SDK mutation or cleanup, shell deletion/traps, recovery work, credential/device access, setup bypass, push, merge, or delegation performed.",
+        "Independent fresh judge is parent-owned. No per-worker wisdom changes; parent writes aggregate wisdom."
+      ]
     },
     {
       "file": "tests/root-placement-options.test.ts",
