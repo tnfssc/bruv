@@ -3832,10 +3832,10 @@
     {
       "focus": "tests/system-prompt.test.ts",
       "initialBlob": "dc36d8396fc1d5350784e9af2bf0ea922e1b5fa0",
-      "status": "accepted",
+      "status": "pending",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": "d873111e2674f9e12366c89659deae21bf0e05c4",
+      "acceptedBlob": null,
       "integration": "pending",
       "relatedPatchReview": {
         "candidate": "1430519dd7dbda93b9ccf79b2e8f33690ddbd6a4",
@@ -3845,13 +3845,13 @@
         "primaryFocusStillRequired": true
       },
       "resume": {
-        "status": "accepted",
+        "status": "pending",
         "acceptedBlob": "d873111e2674f9e12366c89659deae21bf0e05c4",
         "primaryId": "task_230772ed",
         "primaryCommit": "0257d78607a61856035239f24fa6f2924c300d6e",
         "judgeIds": ["task_a731e652", "task_c0fe8a88"],
-        "sourceCommit": "0257d78607a61856035239f24fa6f2924c300d6e",
-        "state": "accepted-joined",
+        "sourceCommit": null,
+        "state": "needs-rework",
         "reason": "The change resolves an actual reading burden: the old override test mutates one filesystem through trust assertions, then removes the project file to switch to global-only policy. The candidate separates same-array preservation from exact fallback injection, names each trust scenario beside its args, gives positional authorization its own assertion, and uses a fresh global-only fixture. The small systemPromptFiles helper owns only directory/file construction; it hides neither trust nor loader decisions. The SDK table declares the complete file set, trust and expected base in each row; DefaultResourceLoader construction, disabled-resource flags, reload and result assertion remain visible in the test body. All old explicit-prompt, positional insertion, trust/denial and config assertions survive; short-flag denial and real SDK discovery/precedence assertions are added. This is coherent fixture/policy separation, not rename churn or a context bag."
       }
     },
@@ -4692,7 +4692,7 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 133,
-    "pending": 0
+    "accepted": 132,
+    "pending": 1
   }
 }

@@ -2269,11 +2269,11 @@
       "judgeRounds": [],
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_0717149c",
+        "primaryCommit": "2107b1e2f9ff44024bb6ef3f98b64f9ff1ee053a",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary-unstarted",
+        "sourceCommit": "2107b1e2f9ff44024bb6ef3f98b64f9ff1ee053a",
+        "state": "needs-judge",
         "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
       },
       "acceptedBlob": null
@@ -2285,11 +2285,11 @@
       "judgeRounds": [],
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_0717149c",
+        "primaryCommit": "2107b1e2f9ff44024bb6ef3f98b64f9ff1ee053a",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary-unstarted",
+        "sourceCommit": "2107b1e2f9ff44024bb6ef3f98b64f9ff1ee053a",
+        "state": "needs-judge",
         "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
       },
       "acceptedBlob": null
@@ -2301,11 +2301,11 @@
       "judgeRounds": [],
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_0717149c",
+        "primaryCommit": "2107b1e2f9ff44024bb6ef3f98b64f9ff1ee053a",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary-unstarted",
+        "sourceCommit": "2107b1e2f9ff44024bb6ef3f98b64f9ff1ee053a",
+        "state": "needs-judge",
         "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
       },
       "acceptedBlob": null
@@ -3700,11 +3700,11 @@
       },
       "resume": {
         "status": "pending",
-        "primaryId": "task_eb38bde6",
-        "primaryCommit": null,
+        "primaryId": "task_44e1a40c",
+        "primaryCommit": "7138cd065b32fded3b962d6fdce2799f5ce5db82",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary-killed-no-candidate",
+        "sourceCommit": "7138cd065b32fded3b962d6fdce2799f5ce5db82",
+        "state": "needs-judge",
         "reason": "Saved job ended killed with exit143; worktree HEAD equals launch base and working tree has no preserved edit. Ledger running status is stale."
       },
       "acceptedBlob": null

@@ -12327,39 +12327,84 @@
       "initialBlob": "54ed191ca3a9a15aabdb54b2d1337ff2b382df7f",
       "status": "pending",
       "area": "remote",
-      "resumeState": "pending-primary-unstarted",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_0717149c",
+      "primaryCommit": "2107b1e2f9ff44024bb6ef3f98b64f9ff1ee053a",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "2107b1e2f9ff44024bb6ef3f98b64f9ff1ee053a",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
-      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
+      "primaryBase": "7018ba2782c462a523f74b4e608a495c22f3cdcb",
+      "primaryResult": "The exported response now shows the ordered normal-worker branch, fail-closed root profile check, failure scenarios and root start -> child delivery -> human question -> saved answer -> second-turn journey together, before the generated programs. Stage-local builders expose server effects as multiline programs; shared snapshotChecks owns identical tracked/omitted/approved-path and orphan-history checks, while root/normal role and depth checks remain visible at their respective starts. askAfterChild keeps bounded inspection and completion validation before ask/block; useHumanAnswer keeps saved-ledger authority and resolve before mutation. Marker IDs, dispatch precedence, shell checks, child depth/delegation refusal, proof paths, source return values and SSE boundaries are preserved by source inspection.",
+      "primaryPaths": ["tests/fixtures/remote-typed-root-placement/scenario.ts"],
+      "primaryChecks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md; read complete assigned source and relevant fixture provider, container, harness and assertion callers without executing them.",
+        "Assigned reconciliation rows 76/77/78: pending-primary-unstarted, no preserved primary candidate or rejected candidate for these focuses; all source files present.",
+        "Reviewed filesystem/network effects in fixture callers: provider writes container /tmp logs, programs write container /tmp proofs and snapshot tracked.txt, proxy connects container loopback:2222. Existing Dockerfile deletion and fixture test rmSync were only read; neither executed.",
+        "Repository Biome format --write ran only on scenario.ts via child_process argv, exit 0; explicit owned HOME/XDG_CONFIG_HOME/XDG_CACHE_HOME/XDG_DATA_HOME/TMPDIR/SDK env retained at /tmp/pr45-typed-root-format-uhIC08 (formatter-provenance.json and formatter-final.json). Durable source provenance is this worktree and exact sourceCommit.",
+        "git diff --check passed before source-only commit; Git hooks directory inspected and contained only inactive .sample files. No setup, tests, builds, auth, device, or credential access performed."
+      ],
+      "primaryLimits": [
+        "Parent owns audited isolated tests/build/acceptance gates and fresh independent actual-code judgments; source/generated-program runtime behavior has not been executed here.",
+        "Generated programs retain compact spellings required by existing string assertions (shell prefix, workspace literal, second-turn comparison); multiline program formatting changes generated source whitespace, not intended effects.",
+        "No wisdom files changed: parent owns aggregate wisdom; no new value rule needed. No delegation or additional worktree creation. Parent owns runtime agent.model verification."
+      ]
     },
     {
       "file": "tests/fixtures/remote-typed-root-placement/settings.json",
       "initialBlob": "ec9b88eda601f80ee98cb3b69305df6552b504e8",
       "status": "pending",
       "area": "remote",
-      "resumeState": "pending-primary-unstarted",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_0717149c",
+      "primaryCommit": "2107b1e2f9ff44024bb6ef3f98b64f9ff1ee053a",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "2107b1e2f9ff44024bb6ef3f98b64f9ff1ee053a",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
-      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
+      "primaryBase": "7018ba2782c462a523f74b4e608a495c22f3cdcb",
+      "primaryResult": "Kept the object unchanged. Dockerfile and runner inclusion locate the settings on the server; models.json defines the same typed-root ID, subagents.json selects typed-root-normal for the normal leaf, and response explicitly rejects an unexpected root model. Adding helpers, renaming fields or wrapping this literal would obscure rather than clarify the server-selected root/child distinction.",
+      "primaryPaths": ["tests/fixtures/remote-typed-root-placement/scenario.ts"],
+      "primaryChecks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md; read complete assigned source and relevant fixture provider, container, harness and assertion callers without executing them.",
+        "Assigned reconciliation rows 76/77/78: pending-primary-unstarted, no preserved primary candidate or rejected candidate for these focuses; all source files present.",
+        "Reviewed filesystem/network effects in fixture callers: provider writes container /tmp logs, programs write container /tmp proofs and snapshot tracked.txt, proxy connects container loopback:2222. Existing Dockerfile deletion and fixture test rmSync were only read; neither executed.",
+        "Repository Biome format --write ran only on scenario.ts via child_process argv, exit 0; explicit owned HOME/XDG_CONFIG_HOME/XDG_CACHE_HOME/XDG_DATA_HOME/TMPDIR/SDK env retained at /tmp/pr45-typed-root-format-uhIC08 (formatter-provenance.json and formatter-final.json). Durable source provenance is this worktree and exact sourceCommit.",
+        "git diff --check passed before source-only commit; Git hooks directory inspected and contained only inactive .sample files. No setup, tests, builds, auth, device, or credential access performed."
+      ],
+      "primaryLimits": [
+        "Parent owns audited isolated tests/build/acceptance gates and fresh independent actual-code judgments; source/generated-program runtime behavior has not been executed here.",
+        "Generated programs retain compact spellings required by existing string assertions (shell prefix, workspace literal, second-turn comparison); multiline program formatting changes generated source whitespace, not intended effects.",
+        "No wisdom files changed: parent owns aggregate wisdom; no new value rule needed. No delegation or additional worktree creation. Parent owns runtime agent.model verification."
+      ]
     },
     {
       "file": "tests/fixtures/remote-typed-root-placement/ssh-proxy.ts",
       "initialBlob": "ca71c9208be0329bb6b36b75ed2fe61a1ec5a5a5",
       "status": "pending",
       "area": "remote",
-      "resumeState": "pending-primary-unstarted",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_0717149c",
+      "primaryCommit": "2107b1e2f9ff44024bb6ef3f98b64f9ff1ee053a",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "2107b1e2f9ff44024bb6ef3f98b64f9ff1ee053a",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
-      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
+      "primaryBase": "7018ba2782c462a523f74b4e608a495c22f3cdcb",
+      "primaryResult": "Kept the direct transport program unchanged. Dockerfile installs this exact file and the harness selects it through real SSH ProxyCommand. Socket lifetime and both byte directions are locally visible, with no emulated SSH/RPC or protocol authority in this file; extraction would add a lookup without reducing any reconstruction burden.",
+      "primaryPaths": ["tests/fixtures/remote-typed-root-placement/scenario.ts"],
+      "primaryChecks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md; read complete assigned source and relevant fixture provider, container, harness and assertion callers without executing them.",
+        "Assigned reconciliation rows 76/77/78: pending-primary-unstarted, no preserved primary candidate or rejected candidate for these focuses; all source files present.",
+        "Reviewed filesystem/network effects in fixture callers: provider writes container /tmp logs, programs write container /tmp proofs and snapshot tracked.txt, proxy connects container loopback:2222. Existing Dockerfile deletion and fixture test rmSync were only read; neither executed.",
+        "Repository Biome format --write ran only on scenario.ts via child_process argv, exit 0; explicit owned HOME/XDG_CONFIG_HOME/XDG_CACHE_HOME/XDG_DATA_HOME/TMPDIR/SDK env retained at /tmp/pr45-typed-root-format-uhIC08 (formatter-provenance.json and formatter-final.json). Durable source provenance is this worktree and exact sourceCommit.",
+        "git diff --check passed before source-only commit; Git hooks directory inspected and contained only inactive .sample files. No setup, tests, builds, auth, device, or credential access performed."
+      ],
+      "primaryLimits": [
+        "Parent owns audited isolated tests/build/acceptance gates and fresh independent actual-code judgments; source/generated-program runtime behavior has not been executed here.",
+        "Generated programs retain compact spellings required by existing string assertions (shell prefix, workspace literal, second-turn comparison); multiline program formatting changes generated source whitespace, not intended effects.",
+        "No wisdom files changed: parent owns aggregate wisdom; no new value rule needed. No delegation or additional worktree creation. Parent owns runtime agent.model verification."
+      ]
     },
     {
       "file": "tests/fixtures/remote-typed-root-placement/sshd_config",
@@ -16736,13 +16781,46 @@
       "initialBlob": "a4d822bf2938bd980be47974618467ccd21a1971",
       "status": "pending",
       "area": "remote",
-      "resumeState": "pending-primary-killed-no-candidate",
-      "primaryId": "task_eb38bde6",
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_44e1a40c",
+      "primaryCommit": "7138cd065b32fded3b962d6fdce2799f5ce5db82",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "7138cd065b32fded3b962d6fdce2799f5ce5db82",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
-      "pendingReason": "Saved job ended killed with exit143; worktree HEAD equals launch base and working tree has no preserved edit. Ledger running status is stale."
+      "pendingReason": "Saved job ended killed with exit143; worktree HEAD equals launch base and working tree has no preserved edit. Ledger running status is stale.",
+      "priorPrimaryLineage": [
+        {
+          "primaryId": "task_eb38bde6",
+          "sourceCommit": null
+        }
+      ],
+      "primaryBase": "7138cd065b32fded3b962d6fdce2799f5ce5db82",
+      "primaryResult": "Keep the test intact. Empty env and explicit depth-zero server env establish that main placement itself is allowed. Depth one (even orchestrator), depth two, and invalid depth establish that placement cannot reset delegation; either scoped URL or bearer token separately establishes that scope cannot be reset. assertRootStartupContext in src/remote/root-cli.ts converts the supplied depth, requires safe integer zero, and rejects either scope marker with the asserted message. runRemoteRoot calls it first, before named-target resolution, client creation, output, or presentation. src/cli.ts routes remote placement to runRemoteRoot before local conversation startup. The whole policy journey is visible without helper indirection; splitting this compact sequence into a table harness or extra helpers would add navigation without clarifying authority. All existing security assertions are preserved.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        {
+          "kind": "actual-source-reading",
+          "result": "Read entire focus, entire src/remote/root-cli.ts, and src/cli.ts placement routing; searched all references to assertRootStartupContext."
+        },
+        {
+          "kind": "preserved-evidence",
+          "result": "Read assigned focus reconciliation rows: no recoverable candidate, no prior rejection, no integration performed."
+        },
+        {
+          "kind": "guidance",
+          "result": "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md."
+        },
+        {
+          "kind": "git-provenance",
+          "result": "Recorded exact HEAD and Git blobs; verified clean tracked working tree before artifact creation."
+        }
+      ],
+      "primaryLimits": [
+        "No setup, tests, builds, formatter, live auth/device, or network probes run. Parent owns audited isolated gates and independent judgment.",
+        "No source changed and no new commit created; sourceCommit is the existing exact worktree HEAD. Formatter requirement is inapplicable with no changed source paths.",
+        "No descendants launched. Parent remains responsible for runtime model verification.",
+        "No wisdom/values edits: no new lesson; parent owns aggregate wisdom. Artifact is untracked and intentionally retained."
+      ]
     },
     {
       "file": "tests/root-runtime.test.ts",
@@ -17710,13 +17788,13 @@
     {
       "file": "tests/system-prompt.test.ts",
       "initialBlob": "dc36d8396fc1d5350784e9af2bf0ea922e1b5fa0",
-      "status": "accepted",
+      "status": "pending",
       "area": "agent-history-session-goals",
-      "resumeState": "accepted-joined",
+      "resumeState": "needs-rework",
       "primaryId": "task_230772ed",
       "primaryCommit": "0257d78607a61856035239f24fa6f2924c300d6e",
       "judgeIds": ["task_a731e652", "task_c0fe8a88"],
-      "sourceCommit": "0257d78607a61856035239f24fa6f2924c300d6e",
+      "sourceCommit": null,
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
       "pendingReason": "No dedicated primary/final independent focus judgment. Related-patch review is evidence only; dedicated focus coverage remains required.",
       "primaryBase": "a1a45b3c26fac604060d3fbf22ba1f37642d06e6",
@@ -17754,7 +17832,46 @@
         "Repository evidence read with git show/diff at exact candidate versus a1a45b3c26fac604060d3fbf22ba1f37642d06e6, not checkout HEAD. Durable judge worktree: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_c0fe8a88. Existing worktrees and candidate evidence preserved.",
         "Shared installed Pi 1.0.3 implementations inspected read-only; no dependency reinstall/adaptation. Their local package metadata defaults to .pi. Parent SDK prompt gate must select owned prepared Bruv package metadata (.bruv) before SDK imports, as shipped entry points do via PI_PACKAGE_DIR. No gate result claimed.",
         "No fixtures created by this review. Candidate fixture roots use fs.mkdtemp under tmpdir and are retained; candidate provenance remains the durable commit/worktree. Parent gates must additionally own process HOME/config/SDK and explicit argv/env; disabled loader flags alone are not a complete process-isolation claim."
-      ]
+      ],
+      "priorAcceptedValidationProof": [
+        {
+          "sourceCommit": "0257d78607a61856035239f24fa6f2924c300d6e",
+          "primaryId": "task_230772ed",
+          "judgeIds": ["task_a731e652", "task_c0fe8a88"],
+          "acceptedBlob": "d873111e2674f9e12366c89659deae21bf0e05c4",
+          "reason": "Preserved readability acceptance; concrete parent compiler failure requires exact source rework, not an invented independent REJECT."
+        }
+      ],
+      "validationFailure": {
+        "kind": "noEmit",
+        "blob": "d873111e2674f9e12366c89659deae21bf0e05c4",
+        "log": "/tmp/pr45-continuation-history-complete-types-mE6FEC/typecheck.log",
+        "errors": [
+          "line42 TS2345/TS2769 readonly scenario args supplied to mutable string[] contracts",
+          "line51 TS2345 readonly scenario args supplied to mutable string[] contract"
+        ],
+        "required": "Resolve concrete scenario/API array-mutability mismatch without changing assertion bodies or production CLI semantics."
+      },
+      "resumeRework": {
+        "candidate": "0257d78607a61856035239f24fa6f2924c300d6e",
+        "primaryId": "task_230772ed",
+        "primaryBase": "a1a45b3c26fac604060d3fbf22ba1f37642d06e6",
+        "validation": {
+          "kind": "noEmit",
+          "blob": "d873111e2674f9e12366c89659deae21bf0e05c4",
+          "log": "/tmp/pr45-continuation-history-complete-types-mE6FEC/typecheck.log",
+          "errors": [
+            "line42 TS2345/TS2769 readonly scenario args supplied to mutable string[] contracts",
+            "line51 TS2345 readonly scenario args supplied to mutable string[] contract"
+          ],
+          "required": "Resolve concrete scenario/API array-mutability mismatch without changing assertion bodies or production CLI semantics."
+        },
+        "objections": [
+          "line42 TS2345/TS2769 readonly scenario args supplied to mutable string[] contracts",
+          "line51 TS2345 readonly scenario args supplied to mutable string[] contract"
+        ],
+        "readingReason": "Joined compiler detects real typed scenario/API contract mismatch."
+      }
     },
     {
       "file": "tests/t3/local-notifications.test.ts",
@@ -21739,9 +21856,9 @@
     "baselineFiles": 766,
     "finalGate": "pending; incomplete focus coverage",
     "liveAuth": "unverified/failing; preserved",
-    "accepted": 763,
+    "accepted": 762,
     "total": 835,
-    "pending": 72,
+    "pending": 73,
     "sourceExtras": 69,
     "checkout": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
     "branch": "bruv/readability-pr45-sol-continuation",

@@ -500,7 +500,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_0717149c",
         "branch": "bruv/pr45-primary-3-remote-focuses-0717149c",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "2107b1e2f9ff44024bb6ef3f98b64f9ff1ee053a"
       },
       {
         "id": "task_b9789736",
@@ -562,7 +563,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_44e1a40c",
         "branch": "bruv/pr45-primary-1-remote-focuses-44e1a40c",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "7138cd065b32fded3b962d6fdce2799f5ce5db82"
       },
       {
         "id": "task_21b49933",
