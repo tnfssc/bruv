@@ -1091,7 +1091,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_acf92c62",
         "branch": "bruv/pr45-primary-tests-claude-compat-permiss-acf92c62",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "32f74750aa95c64bdaff46e1e7ff6f16727e10a8"
       },
       {
         "id": "task_3f207ca0",
@@ -1099,6 +1100,19 @@
         "focus": "tests/claude-native-acceptance-chronology.test.mjs",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_3f207ca0",
         "branch": "bruv/pr45-primary-tests-claude-native-accepta-3f207ca0",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_00a65847",
+        "stage": "judge",
+        "focus": [
+          "tests/claude-compat/fixtures/http-mcp-lifecycle.ts",
+          "tests/claude-compat/fixtures/stdio-mcp.ts",
+          "tests/claude-compat/native-adapter-prompt-ownership.ts.txt"
+        ],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_00a65847",
+        "branch": "bruv/pr45-judge-3-compatibility-t3-focuses-00a65847",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
       }

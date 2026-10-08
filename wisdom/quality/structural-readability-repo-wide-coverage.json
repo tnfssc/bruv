@@ -9984,13 +9984,47 @@
       "initialBlob": "47e60ac228641c4cd9e1299a250d83731ce126f5",
       "status": "pending",
       "area": "compatibility-t3",
-      "resumeState": "pending-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_acf92c62",
+      "primaryCommit": "32f74750aa95c64bdaff46e1e7ff6f16727e10a8",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "32f74750aa95c64bdaff46e1e7ff6f16727e10a8",
       "report": "wisdom/quality/structural-readability-areas/compatibility-t3.json",
-      "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+      "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection.",
+      "primaryBase": "4b56178b12a30141480aae5b580680f4c2805d66",
+      "primaryResult": "Separated the three independent authority boundaries into self-contained tests. The dontAsk test still compares the two approval states together; the deny-list test shows conflicting rules before a separate request/assertion; dangerous-mode validation now visibly happens synchronously during construction. All original request fields, policy options, expected decisions, callback checks, plan/read-only checks, and stale-allow cancellation assertion remain. Other test bodies stay unchanged because each already owns a coherent security journey. Preserved reconciliation and area/repo-wide focus rows record pending-primary with no prior primary or rejected candidate; this is a fresh candidate, not a rework or branch recovery.",
+      "primaryPaths": ["tests/claude-compat/permissions.test.ts"],
+      "primaryChecks": [
+        {
+          "name": "Guidance and focus-only evidence",
+          "result": "Read wisdom/values.md and structural-readability-guidance.md; inspected the exact reconciliation/area/repo-wide focus records."
+        },
+        {
+          "name": "Actual caller trace",
+          "result": "Read createPermissionPolicy, binding policy construction/callback, runtime native tool authorization/effect classification, and MCP request authorization/cancellation gate."
+        },
+        {
+          "name": "Static assertion preservation review",
+          "result": "Manually compared original and final source: unchanged deny/allow inputs and expectations, synchronous constructor error, Bash callback identity, plan callback suppression/read-only allowance, and post-callback abort rejection. No production edits."
+        },
+        {
+          "name": "Repository formatter",
+          "result": "Required read-only Biome executable invoked through node child_process argv with fresh retained HOME/config/TMPDIR/cache under /tmp/pr45-permissions-format-AzJNAp; exit 0, one changed source path formatted, no fixes applied."
+        },
+        {
+          "name": "git diff --check",
+          "result": "Passed before commit."
+        },
+        {
+          "name": "Source-only commit",
+          "result": "Only focus source path staged and committed; active Git hooks directory contained no non-sample hooks."
+        }
+      ],
+      "primaryLimits": [
+        "No setup, repository tests, or builds run, as requested; audited isolated batch gates remain parent-owned.",
+        "Independent fresh judge and external runtime model verification remain parent-owned.",
+        "No wisdom edits: aggregate wisdom is parent-owned. No delegation, merge, push, recovery, cleanup, or user-secret access."
+      ]
     },
     {
       "file": "tests/claude-native-acceptance-chronology.test.mjs",
