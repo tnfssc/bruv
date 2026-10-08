@@ -15220,11 +15220,11 @@
     {
       "file": "tests/live-long-audio.test.ts",
       "initialBlob": "37efad69fcf9882df32c37d02b99324bb39a1803",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_fe506a23",
       "sourceCommit": "eda21cbb163553d0af6c7cfe2bcf8d83578d3008",
-      "judgeIds": [],
-      "resumeState": "needs-judge",
+      "judgeIds": ["task_829d301a"],
+      "resumeState": "accepted-joined",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
       "area": "live-native-audio",
       "primaryCommit": "eda21cbb163553d0af6c7cfe2bcf8d83578d3008",
@@ -15242,16 +15242,32 @@
         "An attempted in-process TypeScript AST parser inspection found the installed typescript package exposes version metadata only; no AST/typecheck validation was obtained. Biome successfully parsed the changed file for formatting.",
         "Read-only side-effect inspection: integration fixture allocates its own mkdtemp session/auth paths and removes that owned root in afterEach; it launches shell marker/cancellation jobs, mutates then restores two BRUV depth/type environment variables, and optionally writes BRUV_LIVE_INPUT_CAPTURE outside the fixture. Parent gates must use explicit argv and owned HOME/config/SDK/temp, retain fixtures, and leave BRUV_LIVE_INPUT_CAPTURE unset or set only to an owned fixture path. scripts/ci.sh contains an install and cleanup trap and was read only, never run.",
         "Full changed source scope is repeated for every decision for bounded independent review. Unchanged decisions mean their focus bytes were not edited; the batch source change is only tests/live-main-integration.test.ts. No wisdom or values edits; parent owns aggregation."
+      ],
+      "acceptedBlob": "37efad69fcf9882df32c37d02b99324bb39a1803",
+      "result": "Read the whole exact-candidate focus. Clock owns time/timers; tick settles promises; playback owns start, frame counting, errors and 20ms pacing. response registers the OpenAI response/item once and returns only its producer; stream pairs each second of production with a second of draining and checks retained bytes locally. The individual journeys remain directly readable: >48s one-response output; completed tool response -> actual continuation -> next response; VAD revocation -> cancelled/failed response -> fresh output; malformed packet -> closed state with no playback. Gemini keeps its own adapter/connection callbacks next to the long-output -> interruption -> next packet -> odd-PCM failure journey. The separate stalled-send test explicitly owns its never-resolving promise and shows one in-flight frame, exact pending cap, one overflow error, stale epoch rejection, explicit interruption recovery and close. These are different producer/drain and stalled-sink lifetimes, not a hidden common scenario needing extraction.",
+      "systemReason": "PlaybackScheduler.enqueue accounts only retained PCM, excludes the taken 960-byte frame, and latches one overflow error. Its pump serializes writes and its interrupt clears queued bytes/overflow while flushing the new epoch; close clears retention without pretending the unresolved old send settled. OpenAI response.created/output_item.added establishes item authority, output_audio.delta validates bounded/even PCM and forwards the current epoch, continueResponse waits for completed response and settled tool results, and VAD invalidates old response authority. Gemini increments playback epoch before interruption callbacks and rejects malformed PCM without any streamed-turn total-duration budget. Candidate changes only main-integration offline assistant envelopes; no coupling to this audio fixture or those production paths was introduced.",
+      "checks": [
+        "Read exact candidate/base Git diff: only tests/live-main-integration.test.ts changed; inspected its full candidate source and all changed hunks.",
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read-only git diff --check on primaryBase..candidate returned no findings. No test/build/setup command executed.",
+        "Both focus files reported unchanged were compared byte-for-byte against primaryBase; this focus is identical.",
+        "Read relevant playback enqueue/interrupt/pump/write-settlement and provider response/audio/interruption/continuation branches at candidate."
+      ],
+      "limits": [
+        "No setup, tests, builds, provider requests, credential reads, microphone/device access, dependency changes, cleanup, source edits, publication or delegation were performed. This is an independent static structural/semantic review, not runtime gate evidence. Parent owns audited isolated gates and runtime agent.model verification.",
+        "Durable provenance: review performed in /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_829d301a; evidence read with git show/diff at exact candidate eda21cbb163553d0af6c7cfe2bcf8d83578d3008 against primaryBase f65c6b2f3867a4ae87275b0b3516ecc46acee963, not checkout HEAD. Existing worktree and candidate evidence retained. Installed Pi AI/agent-core 1.0.3 implementation was inspected read-only as supplementary consumer evidence, not asserted to be a fresh isolated install.",
+        "Safety for ALL descendants: NO sudo, recovery investigation, user secrets, shell deletion/cleanup commands, inherited HOME/config/SDK cleanup, nested shell traps, destructive git, or user-data mutation. User already recovered data and requested no recovery work. Tests must use explicit process argv/env and owned fs.mkdtemp fixture HOME/config/SDK; retain them, do not delete. Review filesystem/network effects BEFORE tests/setup. Existing test-code cleanup of provably owned temporary paths may be inspected but NEVER run a shell trap or inherited HOME removal. Need live auth/device? Report unverified, don't access credentials. Propagate these constraints verbatim. Independent code/review agents get durable worktrees, not /tmp code checkouts. Keep existing worktrees and candidate evidence.",
+        "Paced/stalled behavior and provider callbacks were reasoned from source only; audible playback, hardware, real provider traffic and runtime tests remain unverified."
       ]
     },
     {
       "file": "tests/live-macos-ci.test.ts",
       "initialBlob": "53f420190ad67578a63e274c8f6060639b7a8942",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_fe506a23",
       "sourceCommit": "eda21cbb163553d0af6c7cfe2bcf8d83578d3008",
-      "judgeIds": [],
-      "resumeState": "needs-judge",
+      "judgeIds": ["task_829d301a"],
+      "resumeState": "accepted-joined",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
       "area": "live-native-audio",
       "primaryCommit": "eda21cbb163553d0af6c7cfe2bcf8d83578d3008",
@@ -15269,16 +15285,32 @@
         "An attempted in-process TypeScript AST parser inspection found the installed typescript package exposes version metadata only; no AST/typecheck validation was obtained. Biome successfully parsed the changed file for formatting.",
         "Read-only side-effect inspection: integration fixture allocates its own mkdtemp session/auth paths and removes that owned root in afterEach; it launches shell marker/cancellation jobs, mutates then restores two BRUV depth/type environment variables, and optionally writes BRUV_LIVE_INPUT_CAPTURE outside the fixture. Parent gates must use explicit argv and owned HOME/config/SDK/temp, retain fixtures, and leave BRUV_LIVE_INPUT_CAPTURE unset or set only to an owned fixture path. scripts/ci.sh contains an install and cleanup trap and was read only, never run.",
         "Full changed source scope is repeated for every decision for bounded independent review. Unchanged decisions mean their focus bytes were not edited; the batch source change is only tests/live-main-integration.test.ts. No wisdom or values edits; parent owns aggregation."
+      ],
+      "acceptedBlob": "53f420190ad67578a63e274c8f6060639b7a8942",
+      "result": "Read the whole short exact-candidate test and followed each literal assertion to its actual owner. It identifies the live-macos workflow job, checks PTY tooling and ci:macos invocation, isolates the macOS runner branch, places prepare:assets before deterministic Live tests, and keeps no-build/no-reuse-web checks alongside that order. It then follows both execute-controls and main-integration references to the source CLI wrapper, whose exec explicitly forwards \"$@\". This single linear workflow -> lane -> test fixture -> CLI journey has no dispersed lifetime or authority to consolidate; extracting single-use readers would conceal rather than clarify the contract.",
+      "systemReason": "The actual workflow runs live-macos on macos-15 as a separate no-device/API lane and invokes bun run ci:macos. package.json maps this to scripts/ci.sh macos; that branch prepares assets, runs the offline source transport probe, runs Live tests, and exits before the Linux full-build lane. The existing execute-controls fixture directly selects the wrapper, while main-integration retains BRUV_PROBE_EXECUTABLE -> existsSync(compiled) -> wrapper selection. The wrapper execs src/cli.ts with all arguments, and CLI recognizes the internal TypeScript runner argument. Candidate offlineAssistantStream extraction leaves that source fallback, file references and transport/execute plumbing untouched.",
+      "checks": [
+        "Read exact candidate/base Git diff: only tests/live-main-integration.test.ts changed; inspected its full candidate source and all changed hunks.",
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read-only git diff --check on primaryBase..candidate returned no findings. No test/build/setup command executed.",
+        "This focus is byte-identical to primaryBase.",
+        "Inspected actual macOS workflow block, runner branch, asset preparation source, wrapper exec, source CLI internal dispatch and isolated execution argv/env."
+      ],
+      "limits": [
+        "No setup, tests, builds, provider requests, credential reads, microphone/device access, dependency changes, cleanup, source edits, publication or delegation were performed. This is an independent static structural/semantic review, not runtime gate evidence. Parent owns audited isolated gates and runtime agent.model verification.",
+        "Durable provenance: review performed in /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_829d301a; evidence read with git show/diff at exact candidate eda21cbb163553d0af6c7cfe2bcf8d83578d3008 against primaryBase f65c6b2f3867a4ae87275b0b3516ecc46acee963, not checkout HEAD. Existing worktree and candidate evidence retained. Installed Pi AI/agent-core 1.0.3 implementation was inspected read-only as supplementary consumer evidence, not asserted to be a fresh isolated install.",
+        "Safety for ALL descendants: NO sudo, recovery investigation, user secrets, shell deletion/cleanup commands, inherited HOME/config/SDK cleanup, nested shell traps, destructive git, or user-data mutation. User already recovered data and requested no recovery work. Tests must use explicit process argv/env and owned fs.mkdtemp fixture HOME/config/SDK; retain them, do not delete. Review filesystem/network effects BEFORE tests/setup. Existing test-code cleanup of provably owned temporary paths may be inspected but NEVER run a shell trap or inherited HOME removal. Need live auth/device? Report unverified, don't access credentials. Propagate these constraints verbatim. Independent code/review agents get durable worktrees, not /tmp code checkouts. Keep existing worktrees and candidate evidence.",
+        "The existing CI runner installs dependencies and owns a temporary-directory EXIT cleanup trap; prepare-assets also calls SDK adaptation and writes runtime assets. These effects were inspected, never executed. Main/execute-controls child execution inherits a scrubbed process environment, so parent must provide the required owned HOME/config/SDK environment before gates. No claim of macOS execution or native helper/device validation."
       ]
     },
     {
       "file": "tests/live-main-integration.test.ts",
       "initialBlob": "950dd13e9775f57f61cbf37aacc8b1d78446913c",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_fe506a23",
       "sourceCommit": "eda21cbb163553d0af6c7cfe2bcf8d83578d3008",
-      "judgeIds": [],
-      "resumeState": "needs-judge",
+      "judgeIds": ["task_829d301a"],
+      "resumeState": "accepted-joined",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
       "area": "live-native-audio",
       "primaryCommit": "eda21cbb163553d0af6c7cfe2bcf8d83578d3008",
@@ -15296,6 +15328,24 @@
         "An attempted in-process TypeScript AST parser inspection found the installed typescript package exposes version metadata only; no AST/typecheck validation was obtained. Biome successfully parsed the changed file for formatting.",
         "Read-only side-effect inspection: integration fixture allocates its own mkdtemp session/auth paths and removes that owned root in afterEach; it launches shell marker/cancellation jobs, mutates then restores two BRUV depth/type environment variables, and optionally writes BRUV_LIVE_INPUT_CAPTURE outside the fixture. Parent gates must use explicit argv and owned HOME/config/SDK/temp, retain fixtures, and leave BRUV_LIVE_INPUT_CAPTURE unset or set only to an owned fixture path. scripts/ci.sh contains an install and cleanup trap and was read only, never run.",
         "Full changed source scope is repeated for every decision for bounded independent review. Unchanged decisions mean their focus bytes were not edited; the batch source change is only tests/live-main-integration.test.ts. No wisdom or values edits; parent owns aggregation."
+      ],
+      "acceptedRelatedJudges": ["task_829d301a"],
+      "acceptedBlob": "f686e6b4980a927b418525ff76f1a99240a0ee4f",
+      "result": "Read the entire exact-candidate integration file and every base-to-candidate hunk, including unchanged fixture/resource setup, cleanup registration, owner acquisition/release, source fallback, first-turn policy/hooks, canonical tool-pair serialization, ASR revocation, stale-session failures, deduplicated side effects, dynamic-policy fail-closed behavior, Gemini wire execution, stop ordering, passive-history separation and full spoken-delegation scenario. The new file-local offlineAssistantStream is one coherent operation: construct the selected-model assistant envelope with zero usage and publish its matching terminal event. It removes repeated wire-contract bookkeeping from six distinct model-stub journeys without moving their scenario decisions. Prompt capture and context capture stay local. Async step selection still visibly chooses toolCall/toolUse then queued text/stop then verified completion/stop. Stop-both now visibly returns empty aborted/error, extra-turn text/stop, or initial toolCall/toolUse instead of mutating one prebuilt message. It adds no shared context bag, state or lifecycle abstraction and makes the fixture contract easier to inspect once.",
+      "systemReason": "Pi AssistantMessageEventStream marks either done or error complete and resolves result() from message/error respectively; the agent-loop terminal consumer handles a stream with no start event by appending/emitting the final assistant message. An aborted stopReason ends the agent loop before any tool calls; toolUse content goes through ordinary tool execution/continuation. Thus helper outputs preserve the prior direct-terminal stub protocol, provider/model identity, content, zero usage, timestamp and stop reasons. MainOwner delegates through serialized ordinary session.prompt turns, admits task-complete/task-attention continuations rather than passive transcript fragments, sanitizes provider speech while preserving hidden raw provenance, and keeps voice close distinct from explicit foreground abort. Production execute retains scoped live.stop routing and stop-work cancellation. The extraction does not alter those authorities, their calls, safety assertions, execution literals or prompt/history projection. The changed stop-both return branches preserve the earlier abort-first outcome and call-count semantics.",
+      "checks": [
+        "Read exact candidate/base Git diff: only tests/live-main-integration.test.ts changed; inspected its full candidate source and all changed hunks.",
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read-only git diff --check on primaryBase..candidate returned no findings. No test/build/setup command executed.",
+        "Manually compared all changed message envelopes/terminal events and scenario bodies to primaryBase, including aborted error-vs-done distinction.",
+        "Supplementary static selector comparison: assertion/title/execute-code lines remain identical after trimming indentation; initial raw comparison differed only in indentation in the moved toolCall payload. No acceptance inferred from counts.",
+        "Inspected installed read-only SDK terminal-event union, EventStream push/result completion and agent-loop done/error/aborted/toolCall consumers; inspected candidate owner delegation/notification/close/stopForeground and GPT extension admission callbacks."
+      ],
+      "limits": [
+        "No setup, tests, builds, provider requests, credential reads, microphone/device access, dependency changes, cleanup, source edits, publication or delegation were performed. This is an independent static structural/semantic review, not runtime gate evidence. Parent owns audited isolated gates and runtime agent.model verification.",
+        "Durable provenance: review performed in /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_829d301a; evidence read with git show/diff at exact candidate eda21cbb163553d0af6c7cfe2bcf8d83578d3008 against primaryBase f65c6b2f3867a4ae87275b0b3516ecc46acee963, not checkout HEAD. Existing worktree and candidate evidence retained. Installed Pi AI/agent-core 1.0.3 implementation was inspected read-only as supplementary consumer evidence, not asserted to be a fresh isolated install.",
+        "Safety for ALL descendants: NO sudo, recovery investigation, user secrets, shell deletion/cleanup commands, inherited HOME/config/SDK cleanup, nested shell traps, destructive git, or user-data mutation. User already recovered data and requested no recovery work. Tests must use explicit process argv/env and owned fs.mkdtemp fixture HOME/config/SDK; retain them, do not delete. Review filesystem/network effects BEFORE tests/setup. Existing test-code cleanup of provably owned temporary paths may be inspected but NEVER run a shell trap or inherited HOME removal. Need live auth/device? Report unverified, don't access credentials. Propagate these constraints verbatim. Independent code/review agents get durable worktrees, not /tmp code checkouts. Keep existing worktrees and candidate evidence.",
+        "Fixture creates an owned mkdtemp directory and registers rm of that exact directory; no fixture or cleanup was run. Fixture-specific auth path does not itself establish isolated inherited HOME/config/SDK, and optional BRUV_LIVE_INPUT_CAPTURE can write an external path. Parent must audit/override these before runtime gates. No compile/typecheck or runtime semantic equivalence test performed."
       ]
     },
     {
@@ -15749,34 +15799,80 @@
       "file": "tests/live-session.test.ts",
       "initialBlob": "f677fece47f695dec08e9a37dc204d10205bb67d",
       "status": "pending",
-      "primaryId": null,
-      "sourceCommit": null,
+      "primaryId": "task_db399ada",
+      "sourceCommit": "a279172aa6a4de06c9b3b71cb2f5482c3fa980fe",
       "judgeIds": [],
-      "resumeState": "own_primary_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "a279172aa6a4de06c9b3b71cb2f5482c3fa980fe",
+      "primaryBase": "7ef6114d48429e11eda75a691ec1f4cfdf2337bd",
+      "primaryResult": "Split those three bundles into eight independently named cases, each with its own local harness, session, connect/settle sequence, and existing outcome assertions. Late resolution versus late rejection, SDK terminal events versus consumer callback failure, onReady reentrancy versus provider expiry, and pre-connect versus in-send cancellation now have explicit scenario boundaries. The setupComplete/readiness test intentionally still shows its pending connect inline; the interrupt packet ordering, transcript security limits, timeout try/finally, and audio wire assertions are untouched. This is separation of independent lifetime journeys, not an abstraction or harness rename pass.",
+      "primaryPaths": ["tests/live-session.test.ts"],
+      "primaryChecks": [
+        "Read the entire focus and session implementation; traced extension voice factory and startup caller, injected SDK types, and tool-result filesystem effects.",
+        "Manually compared original and final changed cases; all original protocol/error/state/close-count assertions and fake key/error values remain, with local identifiers adjusted only for separated cases.",
+        "Biome format --write tests/live-session.test.ts exited 0, no fixes applied; used requested read-only shared binary via child_process argv and retained isolated environment.",
+        "git diff --check passed before commit; source commit contains only tests/live-session.test.ts."
+      ],
+      "primaryLimits": [
+        "No repository tests, setup, builds, device access, provider calls, or credential access were performed; parent owns audited isolated runtime gates and fresh independent judgments.",
+        "Formatter alone ran with child_process argv and explicit owned HOME/config/cache/data/state/TMPDIR/SDK environment. Retained fixture: /tmp/pr45-live-session-format-D4FuuX; durable code provenance is this worktree and sourceCommit.",
+        "Runtime agent.model verification remains parent-owned. No delegation, cleanup/deletion, dependency mutation, publication, or wisdom edits. Existing worktrees and candidate bytes were preserved.",
+        "Initial evidence tool call accidentally emitted the full reconciliation JSON into truncated capture; all subsequent evidence inspection and decisions used only assigned rows."
+      ]
     },
     {
       "file": "tests/live-setup-diagnostics.test.ts",
       "initialBlob": "79f3cd7334d0ea0ac781e03c385ccffa8ab0ce16",
       "status": "pending",
-      "primaryId": null,
-      "sourceCommit": "b01dac0216dfa47d3b40e57f92c6021ea530e368",
+      "primaryId": "task_db399ada",
+      "sourceCommit": "a279172aa6a4de06c9b3b71cb2f5482c3fa980fe",
       "judgeIds": ["task_660502a4"],
-      "resumeState": "related_actual_code_accepted_own_primary_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Retain exact related-path actual-code acceptance; it is not completion of this file’s distinct primary/fresh focus-judge requirement.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "a279172aa6a4de06c9b3b71cb2f5482c3fa980fe",
+      "primaryBase": "7ef6114d48429e11eda75a691ec1f4cfdf2337bd",
+      "primaryResult": "Keep the complete 69-line test unchanged. The ordered operation arrays and adjacent assertions expose the relevant sequencing directly; extracting source-slicing or generic ordering helpers would move the contract away from the reader. Read LiveOutput startPolling/finishStop and Live open/stop and audioDiagnostic allowlisted NSError detail, so the retained decision is actual-source reasoning, not inherited judge acceptance. Verified the focus exactly matches preserved candidate b01dac0216dfa47d3b40e57f92c6021ea530e368 (blob dfebe3a0f48e57f513209583119326744dff4afd), including its barrier assertions. No own-focus rejection/rework evidence exists in its assigned row. Session-test changes are the complete other source scope of this batch, not diagnostics edits.",
+      "primaryPaths": ["tests/live-session.test.ts"],
+      "primaryChecks": [
+        "Read the whole focus, exact candidate diff, relevant Swift hardware/queue lifecycles, diagnostic implementation, and extension diagnostic call sites.",
+        "HEAD focus blob equals candidate focus blob dfebe3a0f48e57f513209583119326744dff4afd; candidate already present, so no import or branch merge.",
+        "Source-only batch diff checked; no formatter applied to this unchanged path."
+      ],
+      "primaryLimits": [
+        "No repository tests, setup, builds, device access, provider calls, or credential access were performed; parent owns audited isolated runtime gates and fresh independent judgments.",
+        "Formatter alone ran with child_process argv and explicit owned HOME/config/cache/data/state/TMPDIR/SDK environment. Retained fixture: /tmp/pr45-live-session-format-D4FuuX; durable code provenance is this worktree and sourceCommit.",
+        "Runtime agent.model verification remains parent-owned. No delegation, cleanup/deletion, dependency mutation, publication, or wisdom edits. Existing worktrees and candidate bytes were preserved.",
+        "Initial evidence tool call accidentally emitted the full reconciliation JSON into truncated capture; all subsequent evidence inspection and decisions used only assigned rows."
+      ]
     },
     {
       "file": "tests/live-setup.test.ts",
       "initialBlob": "ea963544724a2198f8a4650a55ad12a1cfb5e978",
       "status": "pending",
-      "primaryId": null,
-      "sourceCommit": null,
+      "primaryId": "task_db399ada",
+      "sourceCommit": "a279172aa6a4de06c9b3b71cb2f5482c3fa980fe",
       "judgeIds": [],
-      "resumeState": "own_primary_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "a279172aa6a4de06c9b3b71cb2f5482c3fa980fe",
+      "primaryBase": "7ef6114d48429e11eda75a691ec1f4cfdf2337bd",
+      "primaryResult": "Keep the whole 112-line setup focus unchanged. Credentials.status/importLiveEnv and ui.select replacements expose precisely where cancellation lands; the explicit importAvailable callbacks separate file availability from credential state, and dialog/import assertions stay next to each action. runLiveSetup owns only configuration and returns a boolean; the extension caller resolves a key only after an alive/start check, while provider-only configuration disables start. That authority separation is already readable without another fixture wrapper, scenario table, or method extraction. No preserved candidate or own-focus rejection exists in its assigned row. Session-test changes are the complete other source scope of this batch, not setup edits.",
+      "primaryPaths": ["tests/live-session.test.ts"],
+      "primaryChecks": [
+        "Read entire focus, runLiveSetup, LiveCredentialService/status contract and path/read effects, extension provider-only setup and start authorization caller.",
+        "Confirmed focus remains original blob ea963544724a2198f8a4650a55ad12a1cfb5e978 and key-resolution prohibition, failed-import redaction, OAuth preservation, and abort assertions remain untouched.",
+        "Source-only batch diff checked; no formatter applied to this unchanged path."
+      ],
+      "primaryLimits": [
+        "No repository tests, setup, builds, device access, provider calls, or credential access were performed; parent owns audited isolated runtime gates and fresh independent judgments.",
+        "Formatter alone ran with child_process argv and explicit owned HOME/config/cache/data/state/TMPDIR/SDK environment. Retained fixture: /tmp/pr45-live-session-format-D4FuuX; durable code provenance is this worktree and sourceCommit.",
+        "Runtime agent.model verification remains parent-owned. No delegation, cleanup/deletion, dependency mutation, publication, or wisdom edits. Existing worktrees and candidate bytes were preserved.",
+        "Initial evidence tool call accidentally emitted the full reconciliation JSON into truncated capture; all subsequent evidence inspection and decisions used only assigned rows."
+      ]
     },
     {
       "file": "tests/live-speaker-check.test.ts",
@@ -23712,9 +23808,9 @@
     "baselineFiles": 766,
     "finalGate": "pending; incomplete focus coverage",
     "liveAuth": "unverified/failing; preserved",
-    "accepted": 804,
+    "accepted": 807,
     "total": 836,
-    "pending": 32,
+    "pending": 29,
     "sourceExtras": 70,
     "checkout": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
     "branch": "bruv/readability-pr45-sol-continuation",

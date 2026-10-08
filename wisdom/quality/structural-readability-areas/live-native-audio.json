@@ -3554,16 +3554,17 @@
       "initialBlob": "37efad69fcf9882df32c37d02b99324bb39a1803",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "37efad69fcf9882df32c37d02b99324bb39a1803",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "37efad69fcf9882df32c37d02b99324bb39a1803",
         "primaryId": "task_fe506a23",
         "primaryCommit": "eda21cbb163553d0af6c7cfe2bcf8d83578d3008",
-        "judgeIds": [],
+        "judgeIds": ["task_829d301a"],
         "sourceCommit": "eda21cbb163553d0af6c7cfe2bcf8d83578d3008",
-        "state": "needs-judge",
-        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+        "state": "accepted-joined",
+        "reason": "Read the whole exact-candidate focus. Clock owns time/timers; tick settles promises; playback owns start, frame counting, errors and 20ms pacing. response registers the OpenAI response/item once and returns only its producer; stream pairs each second of production with a second of draining and checks retained bytes locally. The individual journeys remain directly readable: >48s one-response output; completed tool response -> actual continuation -> next response; VAD revocation -> cancelled/failed response -> fresh output; malformed packet -> closed state with no playback. Gemini keeps its own adapter/connection callbacks next to the long-output -> interruption -> next packet -> odd-PCM failure journey. The separate stalled-send test explicitly owns its never-resolving promise and shows one in-flight frame, exact pending cap, one overflow error, stale epoch rejection, explicit interruption recovery and close. These are different producer/drain and stalled-sink lifetimes, not a hidden common scenario needing extraction."
       }
     },
     {
@@ -3571,16 +3572,17 @@
       "initialBlob": "53f420190ad67578a63e274c8f6060639b7a8942",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "53f420190ad67578a63e274c8f6060639b7a8942",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "53f420190ad67578a63e274c8f6060639b7a8942",
         "primaryId": "task_fe506a23",
         "primaryCommit": "eda21cbb163553d0af6c7cfe2bcf8d83578d3008",
-        "judgeIds": [],
+        "judgeIds": ["task_829d301a"],
         "sourceCommit": "eda21cbb163553d0af6c7cfe2bcf8d83578d3008",
-        "state": "needs-judge",
-        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+        "state": "accepted-joined",
+        "reason": "Read the whole short exact-candidate test and followed each literal assertion to its actual owner. It identifies the live-macos workflow job, checks PTY tooling and ci:macos invocation, isolates the macOS runner branch, places prepare:assets before deterministic Live tests, and keeps no-build/no-reuse-web checks alongside that order. It then follows both execute-controls and main-integration references to the source CLI wrapper, whose exec explicitly forwards \"$@\". This single linear workflow -> lane -> test fixture -> CLI journey has no dispersed lifetime or authority to consolidate; extracting single-use readers would conceal rather than clarify the contract."
       }
     },
     {
@@ -3588,16 +3590,17 @@
       "initialBlob": "950dd13e9775f57f61cbf37aacc8b1d78446913c",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "f686e6b4980a927b418525ff76f1a99240a0ee4f",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "f686e6b4980a927b418525ff76f1a99240a0ee4f",
         "primaryId": "task_fe506a23",
         "primaryCommit": "eda21cbb163553d0af6c7cfe2bcf8d83578d3008",
-        "judgeIds": [],
+        "judgeIds": ["task_829d301a"],
         "sourceCommit": "eda21cbb163553d0af6c7cfe2bcf8d83578d3008",
-        "state": "needs-judge",
-        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+        "state": "accepted-joined",
+        "reason": "Read the entire exact-candidate integration file and every base-to-candidate hunk, including unchanged fixture/resource setup, cleanup registration, owner acquisition/release, source fallback, first-turn policy/hooks, canonical tool-pair serialization, ASR revocation, stale-session failures, deduplicated side effects, dynamic-policy fail-closed behavior, Gemini wire execution, stop ordering, passive-history separation and full spoken-delegation scenario. The new file-local offlineAssistantStream is one coherent operation: construct the selected-model assistant envelope with zero usage and publish its matching terminal event. It removes repeated wire-contract bookkeeping from six distinct model-stub journeys without moving their scenario decisions. Prompt capture and context capture stay local. Async step selection still visibly chooses toolCall/toolUse then queued text/stop then verified completion/stop. Stop-both now visibly returns empty aborted/error, extra-turn text/stop, or initial toolCall/toolUse instead of mutating one prebuilt message. It adds no shared context bag, state or lifecycle abstraction and makes the fixture contract easier to inspect once."
       }
     },
     {
@@ -3912,10 +3915,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
+        "primaryId": "task_db399ada",
+        "primaryCommit": "a279172aa6a4de06c9b3b71cb2f5482c3fa980fe",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "own_primary_pending",
+        "sourceCommit": "a279172aa6a4de06c9b3b71cb2f5482c3fa980fe",
+        "state": "needs-judge",
         "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
       }
     },
@@ -3933,10 +3937,11 @@
       },
       "resume": {
         "status": "pending",
-        "primaryId": null,
+        "primaryId": "task_db399ada",
+        "primaryCommit": "a279172aa6a4de06c9b3b71cb2f5482c3fa980fe",
         "judgeIds": ["task_660502a4"],
-        "sourceCommit": "b01dac0216dfa47d3b40e57f92c6021ea530e368",
-        "state": "related_actual_code_accepted_own_primary_pending",
+        "sourceCommit": "a279172aa6a4de06c9b3b71cb2f5482c3fa980fe",
+        "state": "needs-judge",
         "reason": "Retain exact related-path actual-code acceptance; it is not completion of this file’s distinct primary/fresh focus-judge requirement."
       }
     },
@@ -3949,10 +3954,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
+        "primaryId": "task_db399ada",
+        "primaryCommit": "a279172aa6a4de06c9b3b71cb2f5482c3fa980fe",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "own_primary_pending",
+        "sourceCommit": "a279172aa6a4de06c9b3b71cb2f5482c3fa980fe",
+        "state": "needs-judge",
         "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
       }
     },
@@ -4863,7 +4869,7 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 119,
-    "pending": 32
+    "accepted": 122,
+    "pending": 29
   }
 }

@@ -156,6 +156,36 @@ async function fixture(options: { hooks?: boolean; customPrompt?: string; dynami
   };
 }
 
+// Keep Pi's offline response envelope and terminal event together. Scenarios
+// choose content and stop reason; no provider or text-model request is made here.
+function offlineAssistantStream(
+  model: Pick<AssistantMessage, "api" | "provider"> & { id: string },
+  content: AssistantMessage["content"],
+  stopReason: "stop" | "toolUse" | "aborted" = "stop",
+) {
+  const message: AssistantMessage = {
+    role: "assistant",
+    api: model.api,
+    provider: model.provider,
+    model: model.id,
+    timestamp: Date.now(),
+    content,
+    stopReason,
+    usage: {
+      input: 0,
+      output: 0,
+      cacheRead: 0,
+      cacheWrite: 0,
+      totalTokens: 0,
+      cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: 0 },
+    },
+  };
+  const stream = createAssistantMessageEventStream();
+  if (stopReason === "aborted") stream.push({ type: "error", reason: stopReason, error: message });
+  else stream.push({ type: "done", reason: stopReason, message });
+  return stream;
+}
+
 async function until(check: () => boolean, timeout = 5000) {
   const start = Date.now();
   while (!check()) {
@@ -312,26 +342,9 @@ test("custom root prompt is byte-identical to ordinary prompt assembly before fi
   let ordinaryPrompt: string | undefined;
   f.session.agent.streamFunction = (_model, context) => {
     ordinaryPrompt = getCurrentSystemPrompt(context.messages);
-    const message = {
-      role: "assistant",
-      content: [{ type: "text", text: "offline" }],
-      api: "openai-codex-responses",
-      provider: "openai-codex",
-      model: "gpt-5.6-luna",
-      usage: {
-        input: 0,
-        output: 0,
-        cacheRead: 0,
-        cacheWrite: 0,
-        totalTokens: 0,
-        cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: 0 },
-      },
-      stopReason: "stop",
-      timestamp: Date.now(),
-    } as AssistantMessage;
-    const stream = createAssistantMessageEventStream();
-    stream.push({ type: "done", reason: "stop", message });
-    return stream;
+    return offlineAssistantStream({ api: "openai-codex-responses", provider: "openai-codex", id: "gpt-5.6-luna" }, [
+      { type: "text", text: "offline" },
+    ]);
   };
   await f.session.prompt("first ordinary text turn after Live");
   expect(ordinaryPrompt).toBe(livePrompt);
@@ -644,26 +657,7 @@ test("paired backend survives production input routing: voice and typed turns ea
   let calls = 0;
   f.session.agent.streamFunction = ((model: any) => {
     calls++;
-    const stream = createAssistantMessageEventStream();
-    const message: any = {
-      role: "assistant",
-      api: model.api,
-      provider: model.provider,
-      model: model.id,
-      timestamp: Date.now(),
-      stopReason: "stop",
-      usage: {
-        input: 0,
-        output: 0,
-        cacheRead: 0,
-        cacheWrite: 0,
-        totalTokens: 0,
-        cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: 0 },
-      },
-      content: [{ type: "text", text: "CANONICAL_PAIRED_RESULT_" + calls }],
-    };
-    stream.push({ type: "done", reason: "stop", message });
-    return stream;
+    return offlineAssistantStream(model, [{ type: "text", text: "CANONICAL_PAIRED_RESULT_" + calls }]);
   }) as any;
   await f.owner.delegate!("spoken-1", "Provisional spoken request with provenance");
   await f.session.prompt("Typed request through production input handler");
@@ -695,29 +689,7 @@ test("delegated OSC52 speech keeps hidden raw audit and safe canonical prompt/di
   const observed: any[] = [];
   f.session.agent.streamFunction = ((model: any, context: any) => {
     observed.push(structuredClone(context.messages));
-    const stream = createAssistantMessageEventStream();
-    stream.push({
-      type: "done",
-      reason: "stop",
-      message: {
-        role: "assistant",
-        api: model.api,
-        provider: model.provider,
-        model: model.id,
-        timestamp: Date.now(),
-        stopReason: "stop",
-        usage: {
-          input: 0,
-          output: 0,
-          cacheRead: 0,
-          cacheWrite: 0,
-          totalTokens: 0,
-          cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: 0 },
-        },
-        content: [{ type: "text", text: "Offline answer" }],
-      } as any,
-    });
-    return stream;
+    return offlineAssistantStream(model, [{ type: "text", text: "Offline answer" }]);
   }) as any;
   await f.owner.delegate!(snapshot.delegationId, raw, snapshot);
   // Retrying the same raw source must not append a second audit or canonical request.
@@ -768,39 +740,23 @@ test("paired backend resumes from production async task notification without inv
   let calls = 0;
   f.session.agent.streamFunction = ((model: any, context: any) => {
     const step = ++calls;
-    const stream = createAssistantMessageEventStream();
     if (step >= 3) expect(JSON.stringify(context.messages)).toContain("PAIRED_ASYNC_REAL_MARKER");
-    const message: any = {
-      role: "assistant",
-      api: model.api,
-      provider: model.provider,
-      model: model.id,
-      timestamp: Date.now(),
-      stopReason: step === 1 ? "toolUse" : "stop",
-      usage: {
-        input: 0,
-        output: 0,
-        cacheRead: 0,
-        cacheWrite: 0,
-        totalTokens: 0,
-        cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: 0 },
-      },
-      content:
-        step === 1
-          ? [
-              {
-                type: "toolCall",
-                id: "paired-async-launch",
-                name: "execute",
-                arguments: {
-                  code: 'console.log(await shell("sleep 0.2; printf PAIRED_ASYNC_REAL_MARKER", {waitSeconds:0}))',
-                },
+    return offlineAssistantStream(
+      model,
+      step === 1
+        ? [
+            {
+              type: "toolCall",
+              id: "paired-async-launch",
+              name: "execute",
+              arguments: {
+                code: 'console.log(await shell("sleep 0.2; printf PAIRED_ASYNC_REAL_MARKER", {waitSeconds:0}))',
               },
-            ]
-          : [{ type: "text", text: step === 2 ? "Background work queued." : "PAIRED_ASYNC_VERIFIED_COMPLETION" }],
-    };
-    stream.push({ type: "done", reason: step === 1 ? "toolUse" : "stop", message });
-    return stream;
+            },
+          ]
+        : [{ type: "text", text: step === 2 ? "Background work queued." : "PAIRED_ASYNC_VERIFIED_COMPLETION" }],
+      step === 1 ? "toolUse" : "stop",
+    );
   }) as any;
   await f.owner.delegate!("spoken-async", "Launch the requested background marker job");
   await until(() => f.contexts.some((text) => text.includes("PAIRED_ASYNC_VERIFIED_COMPLETION")), 8000);
@@ -826,23 +782,14 @@ test("paired execute can stop voice then work through the production scoped help
   let observedAbort = false;
   f.session.agent.streamFunction = ((model: any, _context: any, options: any) => {
     if (!options?.signal?.aborted) calls++;
-    const stream = createAssistantMessageEventStream();
-    const message: any = {
-      role: "assistant",
-      api: model.api,
-      provider: model.provider,
-      model: model.id,
-      timestamp: Date.now(),
-      stopReason: "toolUse",
-      usage: {
-        input: 0,
-        output: 0,
-        cacheRead: 0,
-        cacheWrite: 0,
-        totalTokens: 0,
-        cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: 0 },
-      },
-      content: [
+    if (options?.signal?.aborted) {
+      observedAbort = true;
+      return offlineAssistantStream(model, [], "aborted");
+    }
+    if (calls > 1) return offlineAssistantStream(model, [{ type: "text", text: "Unexpected extra model turn" }]);
+    return offlineAssistantStream(
+      model,
+      [
         {
           type: "toolCall",
           id: "paired-stop-both",
@@ -853,20 +800,8 @@ test("paired execute can stop voice then work through the production scoped help
           },
         },
       ],
-    };
-    if (options?.signal?.aborted) {
-      observedAbort = true;
-      message.content = [];
-      message.stopReason = "aborted";
-      stream.push({ type: "error", reason: "aborted", error: message });
-      return stream;
-    }
-    if (calls > 1) {
-      message.content = [{ type: "text", text: "Unexpected extra model turn" }];
-      message.stopReason = "stop";
-    }
-    stream.push({ type: "done", reason: calls > 1 ? "stop" : "toolUse", message });
-    return stream;
+      "toolUse",
+    );
   }) as any;
   await f.owner.delegate!("explicit-both-stop", "Explicit user request: stop voice then current-session work");
   await f.owner.released;
@@ -947,29 +882,7 @@ test("GPT Live spoken delegation reaches Pi as one clean provisional request", a
   f.session.agent.streamFunction = ((model: any, context: any) => {
     const messages = structuredClone(context.messages);
     observed.push(messages);
-    const stream = createAssistantMessageEventStream();
-    stream.push({
-      type: "done",
-      reason: "stop",
-      message: {
-        role: "assistant",
-        api: model.api,
-        provider: model.provider,
-        model: model.id,
-        timestamp: Date.now(),
-        stopReason: "stop",
-        usage: {
-          input: 0,
-          output: 0,
-          cacheRead: 0,
-          cacheWrite: 0,
-          totalTokens: 0,
-          cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: 0 },
-        },
-        content: [{ type: "text", text: "The repo status is clean." }],
-      } as any,
-    });
-    return stream;
+    return offlineAssistantStream(model, [{ type: "text", text: "The repo status is clean." }]);
   }) as any;
   // A pre-existing passive transport record must stay durable but not enter the model input.
   f.owner.sendContext(
