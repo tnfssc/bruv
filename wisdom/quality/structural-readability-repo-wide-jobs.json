@@ -992,7 +992,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_76686bee",
         "branch": "bruv/pr45-primary-tests-claude-compat-prompt--76686bee",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "ea98bbb6e6ff3f43040459667e10e59141cbd5f6"
       },
       {
         "id": "task_d6335a2d",
@@ -1024,7 +1025,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_b79ef546",
         "branch": "bruv/pr45-primary-tests-claude-compat-credent-b79ef546",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "b24a271aa7b555aef7edd146a754fa6128fe295d"
       },
       {
         "id": "task_04a2f81a",
@@ -1045,6 +1047,15 @@
         "focus": "tests/claude-compat/fixtures/http-mcp-lifecycle.ts",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_376be59e",
         "branch": "bruv/pr45-primary-tests-claude-compat-fixture-376be59e",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_c0e52552",
+        "stage": "primary",
+        "focus": "tests/claude-compat/fixtures/stdio-mcp.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_c0e52552",
+        "branch": "bruv/pr45-primary-tests-claude-compat-fixture-c0e52552",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
       }

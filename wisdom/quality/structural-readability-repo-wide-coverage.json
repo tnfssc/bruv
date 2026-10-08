@@ -9667,13 +9667,42 @@
       "initialBlob": "77df78bd7770d1c81f753dd5b29be8fea0799d78",
       "status": "pending",
       "area": "compatibility-t3",
-      "resumeState": "pending-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_76686bee",
+      "primaryCommit": "ea98bbb6e6ff3f43040459667e10e59141cbd5f6",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "ea98bbb6e6ff3f43040459667e10e59141cbd5f6",
       "report": "wisdom/quality/structural-readability-areas/compatibility-t3.json",
-      "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+      "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection.",
+      "primaryBase": "aaa5daaa024bf26b37acd9f29ca6d85312c2d5a8",
+      "primaryResult": "Extracted loadNativeAdapterResultClassifier as one coherent provenance/loading operation. The race scenario now proceeds directly from early stream echo to classifying the autonomous result against the pending human UUID, followed by the existing call/init/result assertions. Pinned-source comparison remains conditional on the same environment variable, compilation and classification use the same bytes and arguments, and every existing expect statement is unchanged. Traced runtime.onUser admission and message-identity capture, the runtime message_start subscriber calling frontend.consumeUser, frontend promptEcho and settlement publication, and the exact pinned native predicate. Queue-consumption and distinct-reply/settlement journeys remain unchanged; there was no additional observed burden requiring related edits.",
+      "primaryPaths": ["tests/claude-compat-prompt-ownership.test.ts"],
+      "primaryChecks": [
+        {
+          "name": "repository formatter",
+          "result": "pass",
+          "details": "Invoked /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/@biomejs/biome/bin/biome with node child_process argv: format --write tests/claude-compat-prompt-ownership.test.ts. Only changed source path formatted; no fixes needed. Fresh retained HOME/config/cache/data/TMPDIR under /tmp/pr45-prompt-ownership-format-QIoKUe."
+        },
+        {
+          "name": "git diff --check",
+          "result": "pass"
+        },
+        {
+          "name": "assertion source preservation",
+          "result": "pass",
+          "details": "Compared complete expect statements before/after, ignoring whitespace and source order; identical. This is preservation evidence, not a readability acceptance criterion."
+        },
+        {
+          "name": "manual caller and evidence inspection",
+          "result": "complete",
+          "details": "Read values and structural guidance, focus-only area/repo-wide ledger rows, preserved reconciliation focus row, runtime/frontend caller paths, and pinned native adapter predicates."
+        }
+      ],
+      "primaryLimits": [
+        "No setup, tests, builds, push, PR, merge, or delegation performed. Runtime validation remains with the parent audited batch gates; no readability judge verdict is claimed.",
+        "Optional TypeScript parser inspection could not load the existing dependency; its lib/typescript.js path is absent. Biome successfully parsed/formatted the changed source.",
+        "Wisdom and values unchanged: this is a bounded application of existing authority-separation guidance; parent owns aggregate wisdom."
+      ]
     },
     {
       "file": "tests/claude-compat-retry.test.ts",
@@ -9781,13 +9810,44 @@
       "initialBlob": "5b0fd64bdd1a91b1bf8bb228393724152bff4ec4",
       "status": "pending",
       "area": "compatibility-t3",
-      "resumeState": "pending-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_b79ef546",
+      "primaryCommit": "b24a271aa7b555aef7edd146a754fa6128fe295d",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "b24a271aa7b555aef7edd146a754fa6128fe295d",
       "report": "wisdom/quality/structural-readability-areas/compatibility-t3.json",
-      "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+      "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection.",
+      "primaryBase": "b24a271aa7b555aef7edd146a754fa6128fe295d",
+      "primaryResult": "The shared environment lists fake root controls, provider keys and workspace state together; the independent child expression observes forbidden controls and provider retention without importing the scrubber. The factory test makes the policy distinction explicit: ordinary scrubbing retains BRUV_REMOTE_RUNTIME_STATE, agent/remote scrubbing removes it, remote defaults are checked, source input remains unchanged, and in-place root scrubbing matches the copied result. TaskManager.spawn reaches #spawnChild, which scrubs even explicit env; both command and agent results are awaited and inspected before the local finally shuts down the manager. The TypeScript test creates its launcher, installs/restores the fixture env locally, calls executeIsolated (which scrubs before spawning and feeds the runner on stdin), then checks exit/output. The SSH test puts its local fake ssh first in PATH, calls sshControl (which scrubs the bootstrap env), asserts observed output, and locally restores env/removes only its created directory. Destination child policy is checked directly by remoteChildEnvironment in the factory test, not claimed as a real SSH destination run. installEnv snapshots precisely the keys it sets and returns restoration; both callers visibly pair it with finally. Extracting these brief, deliberately different paths into a lifecycle wrapper would hide the boundary-specific launch behavior rather than resolve a demonstrated burden. Retained all assertions and security semantics byte-for-byte.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        {
+          "kind": "read-only-source-review",
+          "result": "Read values.md and structural-readability-guidance.md, the full focus, focus-only repo/area ledger entries, and preserved resume-reconciliation focus evidence."
+        },
+        {
+          "kind": "candidate-lineage",
+          "result": "Focus exists and HEAD/working blob both equal the preserved baseline/joined blob 5b0fd64bdd1a91b1bf8bb228393724152bff4ec4. Evidence row is pending-primary with null prior primary/judges; no focus-specific preserved candidate reference or rejection found. Rework evidence is null; no old branch or candidate bytes imported."
+        },
+        {
+          "kind": "caller-trace",
+          "result": "Reviewed src/delegation-environment.ts; src/remote/placement.ts remoteChildEnvironment; src/remote/ssh.ts sshControl spawn boundary; src/tasks/task-manager.ts spawn/#spawnChild/wait/shutdown; src/typescript/execution.ts executeIsolated spawn/stdin path and src/typescript/runner.ts runner stdin entry; src/claude-compat/cli.ts post-binding in-place scrub caller."
+        },
+        {
+          "kind": "git-integrity",
+          "result": "Initial working tree clean; git diff --check empty; git hash-object focus equals HEAD focus blob. No source edits or commit created."
+        },
+        {
+          "kind": "formatter",
+          "result": "Not invoked: there are no changed source paths to format."
+        }
+      ],
+      "primaryLimits": [
+        "No setup, tests or builds run, per parent-owned audited batch-gate instruction. Runtime behavior is not independently validated by this review.",
+        "No credentials, devices, real SSH host, recovery action, or cleanup command used.",
+        "Independent readability judgment and external runtime model verification remain parent-owned.",
+        "Wisdom/values unchanged; parent owns aggregate wisdom, and this no-change decision introduces no new lesson."
+      ]
     },
     {
       "file": "tests/claude-compat/fixtures/http-mcp-lifecycle.ts",
