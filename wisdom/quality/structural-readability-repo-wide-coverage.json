@@ -2324,17 +2324,17 @@
     {
       "file": "scripts/probe-live-controlled.ts",
       "initialBlob": "7000ee28bed1449a679449a65bc3359cb4c126dd",
-      "status": "accepted",
+      "status": "pending",
       "primaryId": "task_852c860e",
-      "sourceCommit": "b50efbd7ce8edab4a938f43c2ff333459fb420c2",
+      "sourceCommit": "928f75078f241c21609ed1cc5c75dbea71436e2b",
       "judgeIds": [
         "task_a8982f00"
       ],
-      "resumeState": "accepted-joined",
+      "resumeState": "needs-rejudge",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
       "area": "live-native-audio",
       "primaryCommit": "b50efbd7ce8edab4a938f43c2ff333459fb420c2",
-      "primaryBase": "0b1faebd03e5eb7711dbcba5a58453564a28cc36",
+      "primaryBase": "ca4a39af1b7b3f729c7d04504cd22f2ab880ed13",
       "primaryResult": "Conditions are decoded and validated once before private-source access. A bounded preparation phase selects each target and optional snapshot once, orders semantic messages, frames them uniformly, and hashes exactly those selected strings. All prepared trials exist before config/credentials are loaded; the sequential paid-session loop only dispatches each prepared payload and publishes its metadata/result. Fresh, prior-refusal and historical-snapshot journeys retain their message ordering, instructions, output fields and intercepted-execute behavior.",
       "primaryPaths": [
         "scripts/probe-live-controlled.ts"
@@ -2391,7 +2391,11 @@
         "Runtime/isolated batch gates belong to the parent; this verdict is structural actual-code reading, not a typecheck or runtime-test pass.",
         "Unchanged related paths were reviewed as system context, not assigned independent whole-file acceptance.",
         "Runtime agent-model verification is parent-owned; no self-introspection attempted."
-      ]
+      ],
+      "previousAcceptedBlob": "74b94682acfd7e8681e12baff2930b4a076343b0",
+      "originalPrimaryBase": "0b1faebd03e5eb7711dbcba5a58453564a28cc36",
+      "formatRejudge": true,
+      "forceJudge": true
     },
     {
       "file": "scripts/probe-live-recorded.ts",
@@ -6580,13 +6584,29 @@
       "initialBlob": "c25d436553cfa087a560c0647287cdc64f16880c",
       "status": "pending",
       "area": "agent-history-session-goals",
-      "resumeState": "pending-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_28dca32b",
+      "primaryCommit": "423581639d147c9981fb9a7b5c3afcdc3727aa07",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "423581639d147c9981fb9a7b5c3afcdc3727aa07",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
-      "pendingReason": "No dedicated primary/final independent focus judgment."
+      "pendingReason": "No dedicated primary/final independent focus judgment.",
+      "primaryBase": "423581639d147c9981fb9a7b5c3afcdc3727aa07",
+      "primaryResult": "Traced fast.md text import to subagentGuidance(\"fast\") in src/prompts.ts (template choice, trailing-newline removal, role interpolation), then withSubagentGuidance and src/agent/extension.ts before_agent_start. Both default and custom bases retain worker-role prose; only the default adds collaboration policy. The focus remains the complete, direct contribution instruction, not delegation or session-continuity policy. Existing tests/prompts.test.ts explicitly preserves this prose and interpolation contract. Splitting the four short sentences or moving policy into the template would add indirection or change scope without improving this reading journey. Reconciliation and area/repo-wide focus rows contain no prior focus candidate or completed judgment; current focus blob equals baseline.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Used focus-filtered reconciliation and area/repo-wide ledger evidence for the decision.",
+        "Read actual prompt rendering and before_agent_start caller; inspected existing relevant assertions without running tests.",
+        "Verified focus present and Git blob matches c25d436553cfa087a560c0647287cdc64f16880c baseline.",
+        "No source edits; no commit or formatter invocation necessary."
+      ],
+      "primaryLimits": [
+        "No setup, tests, or builds run; parent owns isolated batch gates.",
+        "Independent exact-blob judgment and runtime-model verification are parent-owned.",
+        "No wisdom/values edits: no new general lesson; parent writes aggregate wisdom.",
+        "Initial reconciliation output mistakenly included the broad document and hit the capture limit; subsequent evidence inspection was filtered to this focus. No unrelated candidates were imported or changed."
+      ]
     },
     {
       "file": "src/prompts/goal-continuation.md",

@@ -63,3 +63,5 @@ Checkpoint1c5fdc5a:553 accepted/821 (506 baseline,47 extras),268 pending; curren
 Joined typecheck and22Node/Bash parse-only syntax checks passed in retained /tmp/pr45-types-syntax-555-hwAKau. Scheduler batches at most3coherent exact candidates per fresh independent judge, never shares primary ownership, and retains six total leaves. New helpers are reconciled into area extra-file ledgers as well as global coverage.
 
 Unfinished network-fixture judge task_d2ae9701 stopped143 after30min/114236events receiving model response, no judgment artifact and no further code-reading output since01:59:30Z. Tree preserved; no verdict inferred. Replacement independent Sol judge required; candidate37d38736 remains withheld until actual-code acceptance.
+
+Scoped terminal fixture batch8pass/46assertions in /tmp/pr45-terminal-fixtures-563-qtK8Fr, before later navigation/tool-event join; rejected selector-behavior candidate remained unjoined. Controlled-probe formatter difference is now corrected but exact new hash is pending fresh independent rejudgment with original primary lineage retained.

@@ -1112,18 +1112,18 @@
       "initialBlob": "7000ee28bed1449a679449a65bc3359cb4c126dd",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": "74b94682acfd7e8681e12baff2930b4a076343b0",
+      "acceptedBlob": null,
       "integration": "pending",
       "resume": {
-        "status": "accepted",
+        "status": "pending",
         "acceptedBlob": "74b94682acfd7e8681e12baff2930b4a076343b0",
         "primaryId": "task_852c860e",
         "primaryCommit": "b50efbd7ce8edab4a938f43c2ff333459fb420c2",
         "judgeIds": [
           "task_a8982f00"
         ],
-        "sourceCommit": "b50efbd7ce8edab4a938f43c2ff333459fb420c2",
-        "state": "accepted-joined",
+        "sourceCommit": "928f75078f241c21609ed1cc5c75dbea71436e2b",
+        "state": "needs-rejudge",
         "reason": "Compared actual candidate source with primary base 0b1faebd03e5eb7711dbcba5a58453564a28cc36, which is also its sole parent. The base makes the reader reconnect three condition splits, repeated historical serialization, duplicate target-selection expressions for hashes and payloads, and three separate wire-frame constructions inside the paid loop. The candidate removes that reconstruction: parseCondition returns validated semantic fields once; the bounded trials map owns instructions, target selection, optional snapshot selection, ordered semantic messages, uniform wire framing and hashes of those exact selected strings. The dispatch loop consumes this prepared payload, adds session-specific metadata and publishes the result. This is a meaningful authority/lifetime separation, not a rename or context bag. Fresh uses only the target; prior copies the four existing user/assistant refusal turns then appends the target; snapshot appends the context-as-data user message then the historical target. Uniform framing still maps user to input_text and assistant to output_text. Unchanged decision: retain the small content/snapshot helpers, instruction variants, prior-refusal text and shared transport instead of introducing more helpers or a generic trial framework; their existing responsibilities are already clear. The moved preparation makes snapshot validation failures occur before Live config/key loading rather than after it, consistent with the stated preparation boundary."
       }
     },
@@ -5077,7 +5077,7 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 91,
-    "pending": 59
+    "accepted": 90,
+    "pending": 60
   }
 }

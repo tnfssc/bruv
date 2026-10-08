@@ -1909,11 +1909,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_28dca32b",
+        "primaryCommit": "423581639d147c9981fb9a7b5c3afcdc3727aa07",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary",
+        "sourceCommit": "423581639d147c9981fb9a7b5c3afcdc3727aa07",
+        "state": "needs-judge",
         "reason": "No dedicated primary/final independent focus judgment."
       }
     },
