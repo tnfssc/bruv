@@ -20,6 +20,8 @@ export interface NativeHistoryAppend {
   sourceMessageId: string;
   type: "user" | "assistant";
   message: Record<string, unknown>;
+  /** Actual Pi usage total, omitted when unknown. */
+  costUSD?: number;
   timestamp: string;
   uuid?: string;
   /** Omit for linear append; null starts a branch; otherwise an already stored native UUID. */
@@ -102,6 +104,7 @@ interface NativeRecord {
   parentUuid?: string | null;
   type: string;
   messageHash: string;
+  costUSD?: number;
 }
 
 /** Import maps are bookkeeping; looking for one must not load every task snapshot. */
@@ -184,6 +187,7 @@ export class NativeHistory {
             parentUuid: entry.parentUuid,
             type: entry.type,
             messageHash: messageHash(entry.message),
+            ...(typeof entry.costUSD === "number" ? { costUSD: entry.costUSD } : {}),
           });
         if (entry.type !== "user" && entry.type !== "assistant") continue;
         if (
@@ -211,12 +215,20 @@ export class NativeHistory {
         throw new Error("Actual source identities are required");
       if (!Number.isFinite(Date.parse(input.timestamp))) throw new Error("Invalid transcript timestamp");
       if (input.message.role !== input.type) throw new Error("Transcript role/type mismatch");
+      if (
+        input.costUSD !== undefined &&
+        (input.type !== "assistant" || !Number.isFinite(input.costUSD) || input.costUSD < 0)
+      )
+        throw new Error("Invalid assistant transcript cost");
       const priorId = this.sourceUuids.get(input.sourceMessageId);
       const prior = priorId ? this.records.get(priorId) : undefined;
       if (prior) {
+        // Legacy entries stay immutable: absence of cost is not permission to backfill.
+        // For priced entries, a replay cannot change or erase their recorded cost.
         if (
           prior.type !== input.type ||
           prior.messageHash !== messageHash(input.message) ||
+          (prior.costUSD !== undefined && prior.costUSD !== input.costUSD) ||
           (input.uuid && prior.uuid !== input.uuid) ||
           (input.parentUuid !== undefined && input.parentUuid !== prior.parentUuid)
         ) {
@@ -238,10 +250,17 @@ export class NativeHistory {
         isSidechain: this.sidechain,
         cwd: this.options.cwd,
         message: JSON.parse(JSON.stringify(input.message)),
+        ...(input.costUSD === undefined ? {} : { costUSD: input.costUSD }),
         bruv: { sourceSessionId: this.options.sourceSessionId, sourceMessageId: input.sourceMessageId },
       };
       await appendFile(this.filePath, JSON.stringify(entry) + "\n", { mode: 0o600 });
-      this.records.set(id, { uuid: id, parentUuid, type: input.type, messageHash: messageHash(entry.message) });
+      this.records.set(id, {
+        uuid: id,
+        parentUuid,
+        type: input.type,
+        messageHash: messageHash(entry.message),
+        ...(input.costUSD === undefined ? {} : { costUSD: input.costUSD }),
+      });
       this.lastMessageUuid = id;
       this.sourceUuids.set(input.sourceMessageId, id);
       return { uuid: id, appended: true };

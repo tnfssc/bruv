@@ -26,9 +26,10 @@ import { createClaudeCompatHumanControls } from "./human-controls";
 import { COMPAT_PROTOCOL_VERSION } from "./launch";
 import { createClaudeCompatLiveFrontend } from "./live-frontend";
 import type { InjectedMcpSession } from "./mcp";
+import { nativeAssistantCost, nativeAssistantUsage } from "./message-usage";
 import type { PermissionDecision, PermissionRequest } from "./permissions";
 import { bindNativeTasks } from "./task-binding";
-import { nativeTaskId } from "./task-projection";
+import { writeNativeChildFrame } from "./task-child-journal";
 import type { ClaudeCompatTransport } from "./transport";
 
 export interface CompatUserMessage {
@@ -267,7 +268,9 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
         const native = {
           role: type,
           content,
-          ...(role === "assistant" ? { model: message.provider + "/" + message.model } : {}),
+          ...(role === "assistant"
+            ? { model: message.provider + "/" + message.model, usage: nativeAssistantUsage(message) }
+            : {}),
         };
         const uuid = messageUuid(message);
         const parentUuid = historyParent;
@@ -278,6 +281,7 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
               sourceMessageId: entryId,
               type,
               message: native,
+              ...(role === "assistant" ? nativeAssistantCost(message) : {}),
               timestamp: new Date(message.timestamp).toISOString(),
               uuid,
               ...(parentUuid === undefined ? {} : { parentUuid }),
@@ -394,32 +398,12 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
                               ? "max_tokens"
                               : "end_turn",
                         stop_sequence: null,
-                        usage: {
-                          input_tokens: message.usage.input,
-                          output_tokens: message.usage.output,
-                          cache_read_input_tokens: message.usage.cacheRead,
-                          cache_creation_input_tokens: message.usage.cacheWrite,
-                        },
+                        usage: nativeAssistantUsage(message),
                       },
                     },
                   ];
                 },
-                writeChildFrame: async ({ link, entry }, frame) => {
-                  if (!options.history || frame.type === "stream_event") return;
-                  const child = await options.history.child({
-                    taskId: nativeTaskId(link),
-                    sourceSessionId: link.child.sourceSessionId,
-                    sourceCallId: link.launchToolUseId,
-                  });
-                  const written = await child.appendWithResult({
-                    sourceMessageId: entry.id,
-                    type: frame.type,
-                    message: frame.message,
-                    timestamp: entry.timestamp,
-                    uuid: frame.uuid,
-                  });
-                  return written.appended;
-                },
+                writeChildFrame: (source, frame) => writeNativeChildFrame(options.history, source, frame),
                 diagnostic: (message) => options.diagnostic?.(new Error(message)),
               }),
           }),
