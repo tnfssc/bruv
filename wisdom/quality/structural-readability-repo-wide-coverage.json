@@ -10868,26 +10868,68 @@
       "initialBlob": "5ff3275f99b27de84faed1e746a40fceaff393e5",
       "status": "pending",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_87465dfb",
+      "primaryCommit": "a692919690de307dfa03f219b1a94aebbbbc274f",
       "judgeIds": [],
-      "sourceCommit": "149c9922bd7213e196dc24a7d86d905df9b2cfc6",
+      "sourceCommit": "a692919690de307dfa03f219b1a94aebbbbc274f",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
-      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
+      "primaryBase": "b52104104ad2664353d205e9a81e267f122deace",
+      "primaryResult": "Keep this focus unchanged. Successful and failing seeds sit together before launch; hidden-detail and one-row assertions stay together before resize, then expansion reveals those same seeds. Extracting the seed builder or adding a terminal context would add a jump without removing an authority decision. The companion unit-test grouping is the only batch source change; no TUI assertions, launch flags or fixture effects edited.",
+      "primaryPaths": ["tests/execution-previews.test.ts"],
+      "primaryChecks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read whole assigned tests and scoped reconciliation rows/blob inventory: all three needs-primary, NOT REVIEWED, with no dedicated preserved rejection. Candidate bytes match pre-edit HEAD for each focus; none absent or restored.",
+        "Read relevant renderer/state/cache implementation, execute renderCall/renderResult registration, diagnostic aggregation/notification publication, editor render/startup/footer ownership, and TUI capture/poll/process helpers.",
+        "Reviewed filesystem/network effects statically; no tests/setup/builds run.",
+        "Biome format --write invoked through child_process.execFile argv on tests/execution-previews.test.ts only, with fresh fs.mkdtemp HOME/XDG config/cache/data/TMPDIR/SDK directories and explicit minimal env. Formatted 1 file in 12ms. Fixed 1 file.",
+        "Static source comparison: all 37 original callback bodies match after normalizing comments, whitespace and optional trailing commas; mixed task/execute failure case split by owner. Assertions and fixture values preserved. Not runtime validation.",
+        "git diff --check passed. Source-only commit changes exactly tests/execution-previews.test.ts. Each decision changedPaths records complete coherent batch scope, even where that decision focus is unchanged.",
+        "Candidate 149c9922bd7213e196dc24a7d86d905df9b2cfc6 focus blob equals preserved/current unchanged 5ff3275f99b27de84faed1e746a40fceaff393e5."
+      ],
+      "primaryLimits": [
+        "No tests, setup, builds, typecheck, network/provider/device probes or credential access. Runtime behavior remains unverified; parent owns audited isolated gates and fresh independent judgments.",
+        "No delegation, shared dependency writes, recovery work, deletion/cleanup commands, destructive git, merge, push or publication. Old worktrees and evidence retained.",
+        "Existing TUI tests were read, not executed: they start offline dist/bruv in dedicated tmux sockets, create owned mkdtemp homes/session/paste files, and remove only those homes via existing fs.rm in finally. Fullscreen also writes uniquely named artifact frames. They still inherit environment through tests/helpers.ts; this pass does not certify them as compliant isolated gates. Parent must audit argv/env and retain owned HOME/config/SDK fixtures before running.",
+        "Git signing disabled only for this source commit (-c commit.gpgsign=false) to avoid accessing signing credentials; no hook/validation guard bypassed. Only sample hooks exist.",
+        "Formatter fixture retained at /tmp/pr45-preview-format-dniIvB. Its exact argv/stdout/stderr provenance is embedded in this result artifact. Durable source provenance is the worktree and sourceCommit/sourceBlobs. No fixture cleanup performed.",
+        "No per-worker wisdom edits; aggregate wisdom and runtime agent.model verification belong to parent."
+      ]
     },
     {
       "file": "tests/execution-previews.test.ts",
       "initialBlob": "8e4b6c11e870f65c670ff089d68223f759f559b4",
       "status": "pending",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_87465dfb",
+      "primaryCommit": "a692919690de307dfa03f219b1a94aebbbbc274f",
       "judgeIds": [],
-      "sourceCommit": "93ddce0018aae9e6abc7c17a143b1a60e076c2be",
+      "sourceCommit": "a692919690de307dfa03f219b1a94aebbbbc274f",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
-      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
+      "primaryBase": "b52104104ad2664353d205e9a81e267f122deace",
+      "primaryResult": "Grouped existing cases into execute call/result lifecycle, execute content/labels/layout, task completion/attention, and completion diagnostic metadata suites. Lifecycle reads initial spinner, shared-state one-row settlement, partial updates, settled invalidation, handoff and outcome precedence. Task presentation now has a contiguous journey for attention hiding, failure/unknown outcomes, ordered titles, truncation risk markers and SSH fallback; diagnostics owns capped full-batch failure/timeout and provenance preservation. Split only the mixed failure case by owner, preserving original statements. Kept the narrow tool wiring case and intentional cross-renderer control/width comparison standalone. No production helper changes or abstraction layer.",
+      "primaryPaths": ["tests/execution-previews.test.ts"],
+      "primaryChecks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read whole assigned tests and scoped reconciliation rows/blob inventory: all three needs-primary, NOT REVIEWED, with no dedicated preserved rejection. Candidate bytes match pre-edit HEAD for each focus; none absent or restored.",
+        "Read relevant renderer/state/cache implementation, execute renderCall/renderResult registration, diagnostic aggregation/notification publication, editor render/startup/footer ownership, and TUI capture/poll/process helpers.",
+        "Reviewed filesystem/network effects statically; no tests/setup/builds run.",
+        "Biome format --write invoked through child_process.execFile argv on tests/execution-previews.test.ts only, with fresh fs.mkdtemp HOME/XDG config/cache/data/TMPDIR/SDK directories and explicit minimal env. Formatted 1 file in 12ms. Fixed 1 file.",
+        "Static source comparison: all 37 original callback bodies match after normalizing comments, whitespace and optional trailing commas; mixed task/execute failure case split by owner. Assertions and fixture values preserved. Not runtime validation.",
+        "git diff --check passed. Source-only commit changes exactly tests/execution-previews.test.ts. Each decision changedPaths records complete coherent batch scope, even where that decision focus is unchanged.",
+        "Candidate 93ddce0018aae9e6abc7c17a143b1a60e076c2be focus blob matched pre-edit 8e4b6c11e870f65c670ff089d68223f759f559b4."
+      ],
+      "primaryLimits": [
+        "No tests, setup, builds, typecheck, network/provider/device probes or credential access. Runtime behavior remains unverified; parent owns audited isolated gates and fresh independent judgments.",
+        "No delegation, shared dependency writes, recovery work, deletion/cleanup commands, destructive git, merge, push or publication. Old worktrees and evidence retained.",
+        "Existing TUI tests were read, not executed: they start offline dist/bruv in dedicated tmux sockets, create owned mkdtemp homes/session/paste files, and remove only those homes via existing fs.rm in finally. Fullscreen also writes uniquely named artifact frames. They still inherit environment through tests/helpers.ts; this pass does not certify them as compliant isolated gates. Parent must audit argv/env and retain owned HOME/config/SDK fixtures before running.",
+        "Git signing disabled only for this source commit (-c commit.gpgsign=false) to avoid accessing signing credentials; no hook/validation guard bypassed. Only sample hooks exist.",
+        "Formatter fixture retained at /tmp/pr45-preview-format-dniIvB. Its exact argv/stdout/stderr provenance is embedded in this result artifact. Durable source provenance is the worktree and sourceCommit/sourceBlobs. No fixture cleanup performed.",
+        "No per-worker wisdom edits; aggregate wisdom and runtime agent.model verification belong to parent."
+      ]
     },
     {
       "file": "tests/find-ci-baseline.test.ts",
@@ -11500,13 +11542,34 @@
       "initialBlob": "0765cd545300592af1d228e5fc3c4a5abcc94ecd",
       "status": "pending",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_87465dfb",
+      "primaryCommit": "a692919690de307dfa03f219b1a94aebbbbc274f",
       "judgeIds": [],
-      "sourceCommit": "966dd055ab098a2ec699f0ea044fc00aac4df770",
+      "sourceCommit": "a692919690de307dfa03f219b1a94aebbbbc274f",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
-      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
+      "primaryBase": "b52104104ad2664353d205e9a81e267f122deace",
+      "primaryResult": "Keep this focus unchanged. Helpers already separate semantic readiness, terminal polling and paste transport; mode differences are local footer/launch checks, not hidden policy. The partial-paste checkpoint demonstrates the prefix-only bug before completing the draft and asserting geometry. The 500/550ms shortcut timing explanations and dialog restoration remain in one linear lifetime. One local record owns frames exported in finally. Extraction would obscure content-versus-layout separation or add a fixture context without removing a real reading burden. The only batch edit is the companion execution-preview unit test.",
+      "primaryPaths": ["tests/execution-previews.test.ts"],
+      "primaryChecks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read whole assigned tests and scoped reconciliation rows/blob inventory: all three needs-primary, NOT REVIEWED, with no dedicated preserved rejection. Candidate bytes match pre-edit HEAD for each focus; none absent or restored.",
+        "Read relevant renderer/state/cache implementation, execute renderCall/renderResult registration, diagnostic aggregation/notification publication, editor render/startup/footer ownership, and TUI capture/poll/process helpers.",
+        "Reviewed filesystem/network effects statically; no tests/setup/builds run.",
+        "Biome format --write invoked through child_process.execFile argv on tests/execution-previews.test.ts only, with fresh fs.mkdtemp HOME/XDG config/cache/data/TMPDIR/SDK directories and explicit minimal env. Formatted 1 file in 12ms. Fixed 1 file.",
+        "Static source comparison: all 37 original callback bodies match after normalizing comments, whitespace and optional trailing commas; mixed task/execute failure case split by owner. Assertions and fixture values preserved. Not runtime validation.",
+        "git diff --check passed. Source-only commit changes exactly tests/execution-previews.test.ts. Each decision changedPaths records complete coherent batch scope, even where that decision focus is unchanged.",
+        "Candidate 966dd055ab098a2ec699f0ea044fc00aac4df770 focus blob equals preserved/current unchanged 0765cd545300592af1d228e5fc3c4a5abcc94ecd."
+      ],
+      "primaryLimits": [
+        "No tests, setup, builds, typecheck, network/provider/device probes or credential access. Runtime behavior remains unverified; parent owns audited isolated gates and fresh independent judgments.",
+        "No delegation, shared dependency writes, recovery work, deletion/cleanup commands, destructive git, merge, push or publication. Old worktrees and evidence retained.",
+        "Existing TUI tests were read, not executed: they start offline dist/bruv in dedicated tmux sockets, create owned mkdtemp homes/session/paste files, and remove only those homes via existing fs.rm in finally. Fullscreen also writes uniquely named artifact frames. They still inherit environment through tests/helpers.ts; this pass does not certify them as compliant isolated gates. Parent must audit argv/env and retain owned HOME/config/SDK fixtures before running.",
+        "Git signing disabled only for this source commit (-c commit.gpgsign=false) to avoid accessing signing credentials; no hook/validation guard bypassed. Only sample hooks exist.",
+        "Formatter fixture retained at /tmp/pr45-preview-format-dniIvB. Its exact argv/stdout/stderr provenance is embedded in this result artifact. Durable source provenance is the worktree and sourceCommit/sourceBlobs. No fixture cleanup performed.",
+        "No per-worker wisdom edits; aggregate wisdom and runtime agent.model verification belong to parent."
+      ]
     },
     {
       "file": "tests/fullscreen-editor.test.ts",
