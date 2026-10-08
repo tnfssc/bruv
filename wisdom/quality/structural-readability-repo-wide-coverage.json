@@ -3741,12 +3741,12 @@
     {
       "file": "scripts/terminal-perf/selector-lifecycle.test.ts",
       "initialBlob": "0799d40669ad0f61af0bd252affa18ff53e2ffa0",
-      "status": "pending",
+      "status": "accepted",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_8cf00221",
       "primaryCommit": "9d3a4eb28e1ec4c616c144298add327756d9f42f",
-      "judgeIds": ["task_a1139c9a"],
+      "judgeIds": ["task_a1139c9a", "task_f6b4ec29"],
       "sourceCommit": "9d3a4eb28e1ec4c616c144298add327756d9f42f",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
       "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
@@ -3782,20 +3782,30 @@
         "No wisdom or values edits: parent owns aggregate wisdom; no new lesson beyond existing ownership/readability guidance."
       ],
       "acceptedBlob": "2bebb69d99d71d2dd09e5ac4bc36df31a7796f71",
-      "result": "The disk scenario now shows its two manager lifetimes in execution order: write the branched fixture, open and prohibit getEntries, check whole-journal counts/branch/append and the unchanged byte prefix, restore/dispose, then reopen and check persistence. Assertions no longer run inside cleanup. The outer fixture lifetime includes writing, both opens and both disposals, so cleanup ownership is readable even on assertion failure. writeBranchedHistory isolates coherent journal construction rather than hiding assertions or introducing a context bag.",
-      "systemReason": "Followed the exact candidate through CLI installer ordering, installSelectorLifecycle, SessionManager adoption/open, getDiskBackedEntryMetadata, indexed append/getEntries and disposal, DiskEntryStore open/append, and the native branch/count/append contract. Counts use all owned metadata, not the active branch, while in-memory managers retain the original getEntries-based method. branch only moves the leaf; append adds an indexed entry and journal bytes. Reopening uses persisted metadata and then materializes bodies, after the replay guard is removed. The patched renderInitialMessages caller consumes this whole-journal compaction count instead of replaying all bodies. Thus the reorganized scenario exposes the actual production authority and persistence boundary.",
+      "result": "NO CHANGE NEEDED for this primary focus: the journal test keeps setup, guarded first-manager assertions, restoration/disposal, and the separate persistence reopen in chronological order. writeBranchedHistory isolates only the concrete inactive-branch fixture, not the evidence. The native in-memory fallback is a separate short test. The golden test explicitly distinguishes the 13 rendered historical captures from the corrected final ancestor-selection scenario; its hard-coded historical tail is not substituted for that final assertion. Additional related-path judgment: ACCEPT scripts/terminal-perf/selector-lifecycle-behavior.ts at this candidate. Its branching-tree constructor, linear interaction replay, and finally-owned keybinding restoration are coherent boundaries rather than cosmetic renames or a context bag. Read its complete candidate blob and complete source diff.",
+      "systemReason": "Read exact-candidate src/cli.ts installer order, selector-lifecycle.ts, relevant session-manager.ts ownership/adopt/open/getEntries/count/append/dispose paths, and disk-entry-store.ts indexing/open/append/dispose. CLI installs the owned journal adapter before the count override and SDK session creation. The override counts the existing whole-journal metadata and falls back to the original method for in-memory managers; branching changes the leaf, not that count. Native renderInitialMessages consumes this count for its compaction notice, matching the inactive-branch assertion. Traced the sole selectorBehavior caller, installed TreeSelectorComponent/TreeList constructor slots, no-tools filtering and nearest-visible ancestor selection. The added undefined callback slot makes setting/no-tools reach their real parameters and explains root selection; the historical digest and corrected direct assertion have different documented jobs.",
       "checks": [
-        "Read complete exact focus, original baseline and full diff; only changed source path is the focus.",
-        "Static text comparison confirmed all expect statement strings and the serialized branched fixture construction unchanged.",
-        "Read native in-memory fallback and branch semantics, owned metadata getter, open/adoption, append/index publication, body materialization, disposal, CLI ordering and patched production count consumer.",
-        "git diff --check primaryBase..candidate returned exit 0.",
-        "Resolved exact focus Git blob; shared adapter/patch blobs are identical across the listed candidates."
+        {
+          "kind": "exact-source",
+          "result": "Read focus using git show 9d3a4eb28e1ec4c616c144298add327756d9f42f:scripts/terminal-perf/selector-lifecycle.test.ts; acceptedBlobs are git rev-parse identities from that commit, not checkout HEAD."
+        },
+        {
+          "kind": "changed-source",
+          "result": "Inspected every non-wisdom changed source path in the candidate parent diff: scripts/terminal-perf/selector-lifecycle-behavior.ts, scripts/terminal-perf/selector-lifecycle.test.ts."
+        },
+        {
+          "kind": "guidance-and-ledgers",
+          "result": "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md. Inspected only these assigned focus rows/evidence in repo-wide coverage and ui-terminal-cli area ledgers; previous verdicts were not used as source-quality proof."
+        },
+        {
+          "kind": "runtime-gates",
+          "result": "Not run, as instructed. Verdict is based on intrinsic and system code reading, not counts or passing tests."
+        }
       ],
       "limits": [
-        "Static code review only: no setup, tests, builds, formatter, or runtime probes run; parent owns audited isolated batch gates.",
-        "Only these focus records and their evidence were inspected in repository/area ledgers. No source, other candidate, old worktree, wisdom, or values edits.",
-        "Installed dependency source was read-only from the supplied shared dependency location; no host-hash/setup validation was performed.",
-        "This accepts the count-test lifetime refactor, not the separate selectorBehavior final scenario rejected above. The exact test candidate still contains the old behavior helper; joining or repairing that separate focus and any resulting golden expectation changes remain parent-owned."
+        "Structural source review only. No setup, tests, builds, formatter execution, runtime acceptance, network, credential/device access, delegation, destructive operations or cleanup performed. Parent owns audited isolated batch gates.",
+        "Dependency implementation was read-only from the authorized existing node_modules; it was not executed or treated as proof of runtime success.",
+        "Source and unrelated accepted work were not edited. Only the requested untracked judge report was written. Parent owns aggregate wisdom; guidance and values remain unchanged."
       ],
       "acceptedRelatedJudges": ["task_e3b69325"]
     },
@@ -8484,12 +8494,12 @@
     {
       "file": "tests/action-label-wiring.test.ts",
       "initialBlob": "d832b5e79f4dc55c772394e88ad5890c5594cd68",
-      "status": "pending",
+      "status": "accepted",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_4582ca5b",
       "primaryCommit": "7fb091b1597c0cfba275caaf32db05b03c11e711",
-      "judgeIds": [],
+      "judgeIds": ["task_f6b4ec29"],
       "sourceCommit": "7fb091b1597c0cfba275caaf32db05b03c11e711",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
       "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
@@ -8527,6 +8537,32 @@
         "Static reading is not a runtime or independent judge verdict.",
         "No source commit created because decision preserves existing source.",
         "No wisdom edits: parent owns aggregate wisdom; no new structural lesson required."
+      ],
+      "acceptedBlob": "d832b5e79f4dc55c772394e88ad5890c5594cd68",
+      "result": "NO CHANGE NEEDED: registeredTool captures the real declaration with explicit zero output padding; plain only strips terminal presentation. The tool test exposes the dependent transition sequence (args complete, execution started, settled success, expansion showing source/output, collapse, failure). The completion scenario keeps the title-bearing task metadata separate from formatted diagnostic evidence, and deliberately supplies a command that is not the title. Attention details and checkpoint text remain together. Keeping the two explicit renderer callbacks makes the exact kind/details/padding forwarding visible; a shared generic component fixture would conceal the wiring being checked.",
+      "systemReason": "Read exact-candidate registerExecuteTool, executeDeclaration/schema, completionDiagnosticDetails, production renderer registrations and notification publication, executeInputPreview/executeOutputPreview/completionPreview, task-row title/status conversion and formatCompletionNotification. Traced the installed native ToolExecutionComponent transition/render callbacks and CustomMessageComponent rebuild path. The tested callbacks match production, but the test never invokes execute. Zero padding avoids settings lookup. Collapsed status/title comes from structured results/task metadata; expansion retains original source or evidence. Routine attention remains agent-facing but has no collapsed human row. No duplicate authority or mismatched rendering lifecycle was found.",
+      "checks": [
+        {
+          "kind": "exact-source",
+          "result": "Read focus using git show 7fb091b1597c0cfba275caaf32db05b03c11e711:tests/action-label-wiring.test.ts; acceptedBlobs are git rev-parse identities from that commit, not checkout HEAD."
+        },
+        {
+          "kind": "changed-source",
+          "result": "Candidate parent diff changes only wisdom/review records; no changed source path. Independently read the unchanged focus and its system journey."
+        },
+        {
+          "kind": "guidance-and-ledgers",
+          "result": "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md. Inspected only these assigned focus rows/evidence in repo-wide coverage and ui-terminal-cli area ledgers; previous verdicts were not used as source-quality proof."
+        },
+        {
+          "kind": "runtime-gates",
+          "result": "Not run, as instructed. Verdict is based on intrinsic and system code reading, not counts or passing tests."
+        }
+      ],
+      "limits": [
+        "Structural source review only. No setup, tests, builds, formatter execution, runtime acceptance, network, credential/device access, delegation, destructive operations or cleanup performed. Parent owns audited isolated batch gates.",
+        "Dependency implementation was read-only from the authorized existing node_modules; it was not executed or treated as proof of runtime success.",
+        "Source and unrelated accepted work were not edited. Only the requested untracked judge report was written. Parent owns aggregate wisdom; guidance and values remain unchanged."
       ]
     },
     {
@@ -8583,12 +8619,12 @@
     {
       "file": "tests/activity-terminal-acceptance-test.py",
       "initialBlob": "63f85dddf6e0c0890d2cc2b8c23e3ff8ac37c08b",
-      "status": "pending",
+      "status": "accepted",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_7c18a737",
       "primaryCommit": "1a4cb197350046754f9814b5c63ee09c0e86c7e7",
-      "judgeIds": ["task_c4ad6e75"],
+      "judgeIds": ["task_c4ad6e75", "task_f6b4ec29"],
       "sourceCommit": "1a4cb197350046754f9814b5c63ee09c0e86c7e7",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
       "pendingReason": "Existing related-path ACCEPT by task_c4ad6e75 at b02afcce77ccd1ebb021dc6230641ab0294ce68e, blob 2ee90a527228a19b6ebf3cad78ad5b9fc8ff7a3d; exact candidate verified. Related blob already joined. Dedicated primary-focus acceptance is missing.",
@@ -8621,6 +8657,32 @@
         "No repository tests, setup, builds, runtime acceptance, credentials, device/network probes, delegation, cleanup, or destructive operations performed. Parent owns audited batch gates and independent judgment.",
         "Structural source reading is not runtime acceptance; existing unrelated work and all assertions/security boundaries are unchanged.",
         "No new wisdom/value edits: parent owns aggregate wisdom; this review produced no new general lesson."
+      ],
+      "acceptedBlob": "2ee90a527228a19b6ebf3cad78ad5b9fc8ff7a3d",
+      "result": "NO CHANGE NEEDED: this fixture test module visibly distinguishes editor submission, grouped history, jobs, reopening, saved-answer replay, mixed-history priority, guide evidence, event framing, foreground continuation and observed failure. Each conversation mutates its own history inline next to the expected outcome. Replay normalization is tested with both ask and resolve identities; mixed-history tests expose request priority and then append cancellation and failure before inspecting the final answer. Small request construction and accumulated call IDs do not hide transitions. Splitting the module or inventing a conversation runner would increase reconstruction without removing an observed readability burden.",
+      "systemReason": "Read exact-candidate scripts/activity-terminal-acceptance.py tool/prose constructors, retained-history dispatch, all seven scenario handlers, events, HTTP fixture dispatch, tmux/draft_ready/send and launch. The dispatcher strips replay suffixes from completed call IDs, checks errors before scenario success, then uses explicit retained user requests for priority. Saved-answer delivery selects resolution rather than asking again. send captures until the exact editor draft is visible before Enter; reopening uses private-socket respawn-pane and env -i rather than destroying the server. Traced scripts/activity-runtime-acceptance.py import, subprocess harness command, frame waiting, grouped-row scenario and saved-question resume/reopen consumption. The module labels itself fixture checks rather than runtime acceptance, and the system caller retains that distinction.",
+      "checks": [
+        {
+          "kind": "exact-source",
+          "result": "Read focus using git show 1a4cb197350046754f9814b5c63ee09c0e86c7e7:tests/activity-terminal-acceptance-test.py; acceptedBlobs are git rev-parse identities from that commit, not checkout HEAD."
+        },
+        {
+          "kind": "changed-source",
+          "result": "Candidate parent diff changes only wisdom/review records; no changed source path. Independently read the unchanged focus and its system journey."
+        },
+        {
+          "kind": "guidance-and-ledgers",
+          "result": "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md. Inspected only these assigned focus rows/evidence in repo-wide coverage and ui-terminal-cli area ledgers; previous verdicts were not used as source-quality proof."
+        },
+        {
+          "kind": "runtime-gates",
+          "result": "Not run, as instructed. Verdict is based on intrinsic and system code reading, not counts or passing tests."
+        }
+      ],
+      "limits": [
+        "Structural source review only. No setup, tests, builds, formatter execution, runtime acceptance, network, credential/device access, delegation, destructive operations or cleanup performed. Parent owns audited isolated batch gates.",
+        "Dependency implementation was read-only from the authorized existing node_modules; it was not executed or treated as proof of runtime success.",
+        "Source and unrelated accepted work were not edited. Only the requested untracked judge report was written. Parent owns aggregate wisdom; guidance and values remain unchanged."
       ]
     },
     {

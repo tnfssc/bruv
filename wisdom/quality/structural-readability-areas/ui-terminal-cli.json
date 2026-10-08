@@ -1377,20 +1377,20 @@
     {
       "focus": "scripts/terminal-perf/selector-lifecycle.test.ts",
       "initialBlob": "0799d40669ad0f61af0bd252affa18ff53e2ffa0",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "2bebb69d99d71d2dd09e5ac4bc36df31a7796f71",
       "integrationState": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
         "acceptedBlob": "2bebb69d99d71d2dd09e5ac4bc36df31a7796f71",
         "primaryId": "task_8cf00221",
         "primaryCommit": "9d3a4eb28e1ec4c616c144298add327756d9f42f",
-        "judgeIds": ["task_a1139c9a"],
+        "judgeIds": ["task_a1139c9a", "task_f6b4ec29"],
         "sourceCommit": "9d3a4eb28e1ec4c616c144298add327756d9f42f",
-        "state": "needs-judge",
-        "reason": "The disk scenario now shows its two manager lifetimes in execution order: write the branched fixture, open and prohibit getEntries, check whole-journal counts/branch/append and the unchanged byte prefix, restore/dispose, then reopen and check persistence. Assertions no longer run inside cleanup. The outer fixture lifetime includes writing, both opens and both disposals, so cleanup ownership is readable even on assertion failure. writeBranchedHistory isolates coherent journal construction rather than hiding assertions or introducing a context bag."
+        "state": "accepted-joined",
+        "reason": "NO CHANGE NEEDED for this primary focus: the journal test keeps setup, guarded first-manager assertions, restoration/disposal, and the separate persistence reopen in chronological order. writeBranchedHistory isolates only the concrete inactive-branch fixture, not the evidence. The native in-memory fallback is a separate short test. The golden test explicitly distinguishes the 13 rendered historical captures from the corrected final ancestor-selection scenario; its hard-coded historical tail is not substituted for that final assertion. Additional related-path judgment: ACCEPT scripts/terminal-perf/selector-lifecycle-behavior.ts at this candidate. Its branching-tree constructor, linear interaction replay, and finally-owned keybinding restoration are coherent boundaries rather than cosmetic renames or a context bag. Read its complete candidate blob and complete source diff."
       }
     },
     {
@@ -2674,19 +2674,20 @@
     {
       "focus": "tests/action-label-wiring.test.ts",
       "initialBlob": "d832b5e79f4dc55c772394e88ad5890c5594cd68",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "d832b5e79f4dc55c772394e88ad5890c5594cd68",
       "integrationState": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "d832b5e79f4dc55c772394e88ad5890c5594cd68",
         "primaryId": "task_4582ca5b",
         "primaryCommit": "7fb091b1597c0cfba275caaf32db05b03c11e711",
-        "judgeIds": [],
+        "judgeIds": ["task_f6b4ec29"],
         "sourceCommit": "7fb091b1597c0cfba275caaf32db05b03c11e711",
-        "state": "needs-judge",
-        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+        "state": "accepted-joined",
+        "reason": "NO CHANGE NEEDED: registeredTool captures the real declaration with explicit zero output padding; plain only strips terminal presentation. The tool test exposes the dependent transition sequence (args complete, execution started, settled success, expansion showing source/output, collapse, failure). The completion scenario keeps the title-bearing task metadata separate from formatted diagnostic evidence, and deliberately supplies a command that is not the title. Attention details and checkpoint text remain together. Keeping the two explicit renderer callbacks makes the exact kind/details/padding forwarding visible; a shared generic component fixture would conceal the wiring being checked."
       }
     },
     {
@@ -2718,10 +2719,10 @@
     {
       "focus": "tests/activity-terminal-acceptance-test.py",
       "initialBlob": "63f85dddf6e0c0890d2cc2b8c23e3ff8ac37c08b",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "2ee90a527228a19b6ebf3cad78ad5b9fc8ff7a3d",
       "integrationState": "related patch accepted; primary pending",
       "relatedPatchJudgments": [
         {
@@ -2732,13 +2733,14 @@
         }
       ],
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "2ee90a527228a19b6ebf3cad78ad5b9fc8ff7a3d",
         "primaryId": "task_7c18a737",
         "primaryCommit": "1a4cb197350046754f9814b5c63ee09c0e86c7e7",
-        "judgeIds": ["task_c4ad6e75"],
+        "judgeIds": ["task_c4ad6e75", "task_f6b4ec29"],
         "sourceCommit": "1a4cb197350046754f9814b5c63ee09c0e86c7e7",
-        "state": "needs-judge",
-        "reason": "Existing related-path ACCEPT by task_c4ad6e75 at b02afcce77ccd1ebb021dc6230641ab0294ce68e, blob 2ee90a527228a19b6ebf3cad78ad5b9fc8ff7a3d; exact candidate verified. Related blob already joined. Dedicated primary-focus acceptance is missing."
+        "state": "accepted-joined",
+        "reason": "NO CHANGE NEEDED: this fixture test module visibly distinguishes editor submission, grouped history, jobs, reopening, saved-answer replay, mixed-history priority, guide evidence, event framing, foreground continuation and observed failure. Each conversation mutates its own history inline next to the expected outcome. Replay normalization is tested with both ask and resolve identities; mixed-history tests expose request priority and then append cancellation and failure before inspecting the final answer. Small request construction and accumulated call IDs do not hide transitions. Splitting the module or inventing a conversation runner would increase reconstruction without removing an observed readability burden."
       }
     },
     {
@@ -4786,7 +4788,7 @@
     }
   },
   "resumeStatus": {
-    "accepted": 75,
-    "pending": 36
+    "accepted": 78,
+    "pending": 33
   }
 }
