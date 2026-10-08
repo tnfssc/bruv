@@ -10883,22 +10883,86 @@
     {
       "file": "tests/dependency-updates.test.ts",
       "initialBlob": "3930e75b6257455b375509c9e90e0f70c533df55",
-      "status": "accepted",
+      "status": "pending",
       "area": "build-release-ci-tooling",
       "acceptedBlob": "da5d3d5056c91024797839ef57544af184a603bf",
       "primaryId": "task_81d46e58",
       "judgeIds": ["task_f509c814"],
-      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json",
+      "priorAcceptedIntegrationProof": [
+        {
+          "primaryId": "task_81d46e58",
+          "judgeIds": ["task_f509c814"],
+          "acceptedBlob": "da5d3d5056c91024797839ef57544af184a603bf",
+          "finalLane": "lane-10",
+          "finalJudge": "task_5c03f5eb"
+        }
+      ],
+      "resumeState": "needs-rework",
+      "sourceCommit": null,
+      "resumeBatch": "owned-subprocess-fixture-environments",
+      "resumeRework": {
+        "candidate": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "primaryId": "task_81d46e58",
+        "judgeId": "task_5c03f5eb",
+        "objections": [
+          {
+            "paths": [
+              "tests/dependency-workflow.test.ts:116-170",
+              "tests/find-ci-baseline.test.ts:19-34,68-75",
+              "tests/dependency-updates.test.ts:79-85",
+              "tests/install-download.test.ts:59-72,122-127",
+              "tests/install-local.test.ts:59-73",
+              "tests/helpers.ts"
+            ],
+            "readingProblem": "The new workflow command() always launches with {...process.env,...env}; withCandidate provides no owned HOME/XDG/config environment before git init/config/add/commit/fetch or the Bash verification script. Inherited GIT_DIR/GIT_WORK_TREE can redirect supposedly fixture-owned Git writes to a non-fixture repository, and inherited HOME/XDG/GIT_CONFIG_* permit global hooks, signing and credential configuration. Expanded baseline checkout Git also has no explicit env; its selector only clears GitHub output destinations. Installer runs own HOME but still spread inherited config/SDK authority, and the standalone launcher version child restores inherited HOME. This contradicts the owned-fixture constraint and the workflow test assertion that verification runs without credentials. Connector run(env()) shows the integration already has a simpler explicit-environment pattern. No harmful process was run; this is established from source authority flow, not an observed user-environment exploit.",
+            "requiredResult": "Give each subprocess fixture an explicit allowlisted environment with HOME and configuration/cache/data/SDK paths underneath its fs.mkdtemp root, retaining only tools and declared test variables needed by that child. Do not forward inherited Git repository/config/hook/signing/credential authority into Git fixture initialization or verification. Use that same owned environment for the baseline Git/selector and installer/launcher subprocess lifetimes; keep denied updater CLI execution credential-free as well. A small local fixture-environment function is enough; do not introduce a generalized context framework. Verify safety by source inspection before any approved execution."
+          }
+        ],
+        "readingReason": "Concrete integrated subprocess authority escape, no claim harmful processes executed. Coherent group shares one small explicit fixture-environment owner; preserve every original assertion and real-pair requirement."
+      }
     },
     {
       "file": "tests/dependency-workflow.test.ts",
       "initialBlob": "c35086a0333024c2fa0cf6a230ac43d098e597dc",
-      "status": "accepted",
+      "status": "pending",
       "area": "build-release-ci-tooling",
       "acceptedBlob": "5d0f15a6b6e30e64707e6ec76e29af0f3ddd15a7",
       "primaryId": "task_c708fc82",
       "judgeIds": ["task_35b870b5"],
-      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json",
+      "priorAcceptedIntegrationProof": [
+        {
+          "primaryId": "task_c708fc82",
+          "judgeIds": ["task_35b870b5"],
+          "acceptedBlob": "5d0f15a6b6e30e64707e6ec76e29af0f3ddd15a7",
+          "finalLane": "lane-10",
+          "finalJudge": "task_5c03f5eb"
+        }
+      ],
+      "resumeState": "needs-rework",
+      "sourceCommit": null,
+      "resumeBatch": "owned-subprocess-fixture-environments",
+      "resumeRework": {
+        "candidate": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "primaryId": "task_c708fc82",
+        "judgeId": "task_5c03f5eb",
+        "objections": [
+          {
+            "paths": [
+              "tests/dependency-workflow.test.ts:116-170",
+              "tests/find-ci-baseline.test.ts:19-34,68-75",
+              "tests/dependency-updates.test.ts:79-85",
+              "tests/install-download.test.ts:59-72,122-127",
+              "tests/install-local.test.ts:59-73",
+              "tests/helpers.ts"
+            ],
+            "readingProblem": "The new workflow command() always launches with {...process.env,...env}; withCandidate provides no owned HOME/XDG/config environment before git init/config/add/commit/fetch or the Bash verification script. Inherited GIT_DIR/GIT_WORK_TREE can redirect supposedly fixture-owned Git writes to a non-fixture repository, and inherited HOME/XDG/GIT_CONFIG_* permit global hooks, signing and credential configuration. Expanded baseline checkout Git also has no explicit env; its selector only clears GitHub output destinations. Installer runs own HOME but still spread inherited config/SDK authority, and the standalone launcher version child restores inherited HOME. This contradicts the owned-fixture constraint and the workflow test assertion that verification runs without credentials. Connector run(env()) shows the integration already has a simpler explicit-environment pattern. No harmful process was run; this is established from source authority flow, not an observed user-environment exploit.",
+            "requiredResult": "Give each subprocess fixture an explicit allowlisted environment with HOME and configuration/cache/data/SDK paths underneath its fs.mkdtemp root, retaining only tools and declared test variables needed by that child. Do not forward inherited Git repository/config/hook/signing/credential authority into Git fixture initialization or verification. Use that same owned environment for the baseline Git/selector and installer/launcher subprocess lifetimes; keep denied updater CLI execution credential-free as well. A small local fixture-environment function is enough; do not introduce a generalized context framework. Verify safety by source inspection before any approved execution."
+          }
+        ],
+        "readingReason": "Concrete integrated subprocess authority escape, no claim harmful processes executed. Coherent group shares one small explicit fixture-environment owner; preserve every original assertion and real-pair requirement."
+      }
     },
     {
       "file": "tests/diagnostics.test.ts",
@@ -11200,12 +11264,44 @@
     {
       "file": "tests/find-ci-baseline.test.ts",
       "initialBlob": "fd1e1f5453615cc3a854db18d8e554ac7b3d94f4",
-      "status": "accepted",
+      "status": "pending",
       "area": "build-release-ci-tooling",
       "acceptedBlob": "a96d35ae74558f9b440dda3a486e19d2bd00a8d5",
       "primaryId": "task_109390aa",
       "judgeIds": ["task_aa63512d"],
-      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json",
+      "priorAcceptedIntegrationProof": [
+        {
+          "primaryId": "task_109390aa",
+          "judgeIds": ["task_aa63512d"],
+          "acceptedBlob": "a96d35ae74558f9b440dda3a486e19d2bd00a8d5",
+          "finalLane": "lane-10",
+          "finalJudge": "task_5c03f5eb"
+        }
+      ],
+      "resumeState": "needs-rework",
+      "sourceCommit": null,
+      "resumeBatch": "owned-subprocess-fixture-environments",
+      "resumeRework": {
+        "candidate": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "primaryId": "task_109390aa",
+        "judgeId": "task_5c03f5eb",
+        "objections": [
+          {
+            "paths": [
+              "tests/dependency-workflow.test.ts:116-170",
+              "tests/find-ci-baseline.test.ts:19-34,68-75",
+              "tests/dependency-updates.test.ts:79-85",
+              "tests/install-download.test.ts:59-72,122-127",
+              "tests/install-local.test.ts:59-73",
+              "tests/helpers.ts"
+            ],
+            "readingProblem": "The new workflow command() always launches with {...process.env,...env}; withCandidate provides no owned HOME/XDG/config environment before git init/config/add/commit/fetch or the Bash verification script. Inherited GIT_DIR/GIT_WORK_TREE can redirect supposedly fixture-owned Git writes to a non-fixture repository, and inherited HOME/XDG/GIT_CONFIG_* permit global hooks, signing and credential configuration. Expanded baseline checkout Git also has no explicit env; its selector only clears GitHub output destinations. Installer runs own HOME but still spread inherited config/SDK authority, and the standalone launcher version child restores inherited HOME. This contradicts the owned-fixture constraint and the workflow test assertion that verification runs without credentials. Connector run(env()) shows the integration already has a simpler explicit-environment pattern. No harmful process was run; this is established from source authority flow, not an observed user-environment exploit.",
+            "requiredResult": "Give each subprocess fixture an explicit allowlisted environment with HOME and configuration/cache/data/SDK paths underneath its fs.mkdtemp root, retaining only tools and declared test variables needed by that child. Do not forward inherited Git repository/config/hook/signing/credential authority into Git fixture initialization or verification. Use that same owned environment for the baseline Git/selector and installer/launcher subprocess lifetimes; keep denied updater CLI execution credential-free as well. A small local fixture-environment function is enough; do not introduce a generalized context framework. Verify safety by source inspection before any approved execution."
+          }
+        ],
+        "readingReason": "Concrete integrated subprocess authority escape, no claim harmful processes executed. Coherent group shares one small explicit fixture-environment owner; preserve every original assertion and real-pair requirement."
+      }
     },
     {
       "file": "tests/fixtures/claude-task-worker.ts",
@@ -13529,12 +13625,44 @@
     {
       "file": "tests/helpers.ts",
       "initialBlob": "45e0d90785aa81576dfdd1687cf44451b546dde4",
-      "status": "accepted",
+      "status": "pending",
       "area": "build-release-ci-tooling",
       "acceptedBlob": "45e0d90785aa81576dfdd1687cf44451b546dde4",
       "primaryId": "task_9dd6501e",
       "judgeIds": ["task_f7319ebc"],
-      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json",
+      "priorAcceptedIntegrationProof": [
+        {
+          "primaryId": "task_9dd6501e",
+          "judgeIds": ["task_f7319ebc"],
+          "acceptedBlob": "45e0d90785aa81576dfdd1687cf44451b546dde4",
+          "finalLane": "lane-10",
+          "finalJudge": "task_5c03f5eb"
+        }
+      ],
+      "resumeState": "needs-rework",
+      "sourceCommit": null,
+      "resumeBatch": "owned-subprocess-fixture-environments",
+      "resumeRework": {
+        "candidate": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "primaryId": "task_9dd6501e",
+        "judgeId": "task_5c03f5eb",
+        "objections": [
+          {
+            "paths": [
+              "tests/dependency-workflow.test.ts:116-170",
+              "tests/find-ci-baseline.test.ts:19-34,68-75",
+              "tests/dependency-updates.test.ts:79-85",
+              "tests/install-download.test.ts:59-72,122-127",
+              "tests/install-local.test.ts:59-73",
+              "tests/helpers.ts"
+            ],
+            "readingProblem": "The new workflow command() always launches with {...process.env,...env}; withCandidate provides no owned HOME/XDG/config environment before git init/config/add/commit/fetch or the Bash verification script. Inherited GIT_DIR/GIT_WORK_TREE can redirect supposedly fixture-owned Git writes to a non-fixture repository, and inherited HOME/XDG/GIT_CONFIG_* permit global hooks, signing and credential configuration. Expanded baseline checkout Git also has no explicit env; its selector only clears GitHub output destinations. Installer runs own HOME but still spread inherited config/SDK authority, and the standalone launcher version child restores inherited HOME. This contradicts the owned-fixture constraint and the workflow test assertion that verification runs without credentials. Connector run(env()) shows the integration already has a simpler explicit-environment pattern. No harmful process was run; this is established from source authority flow, not an observed user-environment exploit.",
+            "requiredResult": "Give each subprocess fixture an explicit allowlisted environment with HOME and configuration/cache/data/SDK paths underneath its fs.mkdtemp root, retaining only tools and declared test variables needed by that child. Do not forward inherited Git repository/config/hook/signing/credential authority into Git fixture initialization or verification. Use that same owned environment for the baseline Git/selector and installer/launcher subprocess lifetimes; keep denied updater CLI execution credential-free as well. A small local fixture-environment function is enough; do not introduce a generalized context framework. Verify safety by source inspection before any approved execution."
+          }
+        ],
+        "readingReason": "Concrete integrated subprocess authority escape, no claim harmful processes executed. Coherent group shares one small explicit fixture-environment owner; preserve every original assertion and real-pair requirement."
+      }
     },
     {
       "file": "tests/helpers/live-startup-audio-queue.ts",
@@ -14249,22 +14377,86 @@
     {
       "file": "tests/install-download.test.ts",
       "initialBlob": "a19f4472fe7ab7f1cb083244ce20b4b3cf4be3d2",
-      "status": "accepted",
+      "status": "pending",
       "area": "build-release-ci-tooling",
       "acceptedBlob": "e04230d818b527658f16eda023aa190bbb1b4f89",
       "primaryId": "task_7936354f",
       "judgeIds": ["task_bdc5b9c4", "task_9233d5f2"],
-      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json",
+      "priorAcceptedIntegrationProof": [
+        {
+          "primaryId": "task_7936354f",
+          "judgeIds": ["task_bdc5b9c4", "task_9233d5f2"],
+          "acceptedBlob": "e04230d818b527658f16eda023aa190bbb1b4f89",
+          "finalLane": "lane-10",
+          "finalJudge": "task_5c03f5eb"
+        }
+      ],
+      "resumeState": "needs-rework",
+      "sourceCommit": null,
+      "resumeBatch": "owned-subprocess-fixture-environments",
+      "resumeRework": {
+        "candidate": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "primaryId": "task_7936354f",
+        "judgeId": "task_5c03f5eb",
+        "objections": [
+          {
+            "paths": [
+              "tests/dependency-workflow.test.ts:116-170",
+              "tests/find-ci-baseline.test.ts:19-34,68-75",
+              "tests/dependency-updates.test.ts:79-85",
+              "tests/install-download.test.ts:59-72,122-127",
+              "tests/install-local.test.ts:59-73",
+              "tests/helpers.ts"
+            ],
+            "readingProblem": "The new workflow command() always launches with {...process.env,...env}; withCandidate provides no owned HOME/XDG/config environment before git init/config/add/commit/fetch or the Bash verification script. Inherited GIT_DIR/GIT_WORK_TREE can redirect supposedly fixture-owned Git writes to a non-fixture repository, and inherited HOME/XDG/GIT_CONFIG_* permit global hooks, signing and credential configuration. Expanded baseline checkout Git also has no explicit env; its selector only clears GitHub output destinations. Installer runs own HOME but still spread inherited config/SDK authority, and the standalone launcher version child restores inherited HOME. This contradicts the owned-fixture constraint and the workflow test assertion that verification runs without credentials. Connector run(env()) shows the integration already has a simpler explicit-environment pattern. No harmful process was run; this is established from source authority flow, not an observed user-environment exploit.",
+            "requiredResult": "Give each subprocess fixture an explicit allowlisted environment with HOME and configuration/cache/data/SDK paths underneath its fs.mkdtemp root, retaining only tools and declared test variables needed by that child. Do not forward inherited Git repository/config/hook/signing/credential authority into Git fixture initialization or verification. Use that same owned environment for the baseline Git/selector and installer/launcher subprocess lifetimes; keep denied updater CLI execution credential-free as well. A small local fixture-environment function is enough; do not introduce a generalized context framework. Verify safety by source inspection before any approved execution."
+          }
+        ],
+        "readingReason": "Concrete integrated subprocess authority escape, no claim harmful processes executed. Coherent group shares one small explicit fixture-environment owner; preserve every original assertion and real-pair requirement."
+      }
     },
     {
       "file": "tests/install-local.test.ts",
       "initialBlob": "ffaeaac0f918c7921dac2ccc60cdb68c21039fc6",
-      "status": "accepted",
+      "status": "pending",
       "area": "build-release-ci-tooling",
       "acceptedBlob": "51a27b0bc8d0f3da78baddee0ab0eab27a048468",
       "primaryId": "task_70f09987",
       "judgeIds": ["task_5442746a"],
-      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json",
+      "priorAcceptedIntegrationProof": [
+        {
+          "primaryId": "task_70f09987",
+          "judgeIds": ["task_5442746a"],
+          "acceptedBlob": "51a27b0bc8d0f3da78baddee0ab0eab27a048468",
+          "finalLane": "lane-10",
+          "finalJudge": "task_5c03f5eb"
+        }
+      ],
+      "resumeState": "needs-rework",
+      "sourceCommit": null,
+      "resumeBatch": "owned-subprocess-fixture-environments",
+      "resumeRework": {
+        "candidate": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "primaryId": "task_70f09987",
+        "judgeId": "task_5c03f5eb",
+        "objections": [
+          {
+            "paths": [
+              "tests/dependency-workflow.test.ts:116-170",
+              "tests/find-ci-baseline.test.ts:19-34,68-75",
+              "tests/dependency-updates.test.ts:79-85",
+              "tests/install-download.test.ts:59-72,122-127",
+              "tests/install-local.test.ts:59-73",
+              "tests/helpers.ts"
+            ],
+            "readingProblem": "The new workflow command() always launches with {...process.env,...env}; withCandidate provides no owned HOME/XDG/config environment before git init/config/add/commit/fetch or the Bash verification script. Inherited GIT_DIR/GIT_WORK_TREE can redirect supposedly fixture-owned Git writes to a non-fixture repository, and inherited HOME/XDG/GIT_CONFIG_* permit global hooks, signing and credential configuration. Expanded baseline checkout Git also has no explicit env; its selector only clears GitHub output destinations. Installer runs own HOME but still spread inherited config/SDK authority, and the standalone launcher version child restores inherited HOME. This contradicts the owned-fixture constraint and the workflow test assertion that verification runs without credentials. Connector run(env()) shows the integration already has a simpler explicit-environment pattern. No harmful process was run; this is established from source authority flow, not an observed user-environment exploit.",
+            "requiredResult": "Give each subprocess fixture an explicit allowlisted environment with HOME and configuration/cache/data/SDK paths underneath its fs.mkdtemp root, retaining only tools and declared test variables needed by that child. Do not forward inherited Git repository/config/hook/signing/credential authority into Git fixture initialization or verification. Use that same owned environment for the baseline Git/selector and installer/launcher subprocess lifetimes; keep denied updater CLI execution credential-free as well. A small local fixture-environment function is enough; do not introduce a generalized context framework. Verify safety by source inspection before any approved execution."
+          }
+        ],
+        "readingReason": "Concrete integrated subprocess authority escape, no claim harmful processes executed. Coherent group shares one small explicit fixture-environment owner; preserve every original assertion and real-pair requirement."
+      }
     },
     {
       "file": "tests/instruction-continuity-sdk.test.ts",
@@ -22327,12 +22519,43 @@
     {
       "file": "tests/update-self-fixture.test.ts",
       "initialBlob": "absent",
-      "status": "accepted",
+      "status": "pending",
       "area": "build-release-ci-tooling",
       "acceptedBlob": "06c4344c3274180322ba17971dc91486149f7a09",
       "primaryId": "task_0ecce4b1",
       "judgeIds": ["task_efae7e17"],
-      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json",
+      "priorAcceptedIntegrationProof": [
+        {
+          "primaryId": "task_0ecce4b1",
+          "judgeIds": ["task_efae7e17"],
+          "acceptedBlob": "06c4344c3274180322ba17971dc91486149f7a09",
+          "finalLane": "lane-12",
+          "finalJudge": "task_35a208fa"
+        }
+      ],
+      "resumeState": "needs-rework",
+      "sourceCommit": null,
+      "resumeBatch": "owned-subprocess-fixture-environments",
+      "resumeRework": {
+        "candidate": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "primaryId": "task_0ecce4b1",
+        "judgeId": "task_35a208fa",
+        "objections": [
+          {
+            "paths": [
+              "tests/update-self-fixture.test.ts:62-63",
+              "tests/update-self-fixture.test.ts:120-125",
+              "src/cli.ts:117",
+              "src/cli.ts:175-211",
+              "scripts/ci.sh"
+            ],
+            "readingProblem": "run() accepts an optional env and the new real-pair test calls run([normal, \"--version\"]) without one. Bun.spawn therefore inherits the parent HOME/config/provider environment. Normal src/cli.ts calls configureBruvRuntime before handing normal arguments to Pi; that function materializes .bruv/runtime/<version> assets under homedir(). Consequently this preliminary version lookup can mutate the real user HOME before any fixtureEnv is used. The same optional-env helper is used for compilation. Root tests are included by the shared local/CI gate, which isolates TMPDIR but not HOME.",
+            "requiredResult": "Give every spawned command in this new runtime fixture an explicit environment rooted in its mkdtemp directory, including compilation and the preliminary reusable-product --version probe. Isolate HOME and config/SDK locations and avoid inherited provider/BRUV authority; make the helper require env or close over an owned base env so omission cannot reintroduce this observed leak. Preserve the real pair, runner and original installation assertions; do not probe user credentials or remove inherited HOME/config/SDK."
+          }
+        ],
+        "readingReason": "Concrete integrated subprocess authority escape, no claim harmful processes executed. Coherent group shares one small explicit fixture-environment owner; preserve every original assertion and real-pair requirement."
+      }
     },
     {
       "file": "tests/update-release-shape.md",
@@ -24672,9 +24895,9 @@
     "baselineFiles": 766,
     "finalGate": "pending; incomplete focus coverage",
     "liveAuth": "unverified/failing; preserved",
-    "accepted": 835,
+    "accepted": 828,
     "total": 836,
-    "pending": 1,
+    "pending": 8,
     "sourceExtras": 70,
     "checkout": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
     "branch": "bruv/readability-pr45-sol-continuation",

@@ -1807,7 +1807,7 @@
     {
       "focus": "tests/dependency-updates.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted",
+      "state": "pending",
       "primary": [
         {
           "id": "task_81d46e58",
@@ -1834,7 +1834,7 @@
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": "da5d3d5056c91024797839ef57544af184a603bf",
+      "acceptedBlob": null,
       "relatedPatchJudgment": {
         "id": "task_68106474",
         "verdict": "ACCEPT",
@@ -1846,16 +1846,18 @@
       "checks": "14→30tests,same46assertions;focus/Biome/tsc/diffpass;own-entry mutation fails all4 constructor cases;production untouched.",
       "integrationState": "Full focus patch integrated; accepted updater own-entry fix unchanged;noteexcluded.",
       "resume": {
-        "status": "accepted",
+        "status": "pending",
         "acceptedBlob": "da5d3d5056c91024797839ef57544af184a603bf",
         "primaryId": "task_81d46e58",
-        "judgeIds": ["task_f509c814"]
+        "judgeIds": ["task_f509c814"],
+        "sourceCommit": null,
+        "state": "needs-rework"
       }
     },
     {
       "focus": "tests/dependency-workflow.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted",
+      "state": "pending",
       "primary": [
         {
           "id": "task_c708fc82",
@@ -1882,7 +1884,7 @@
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": "5d0f15a6b6e30e64707e6ec76e29af0f3ddd15a7",
+      "acceptedBlob": null,
       "relatedPatchJudgment": {
         "id": "task_69a61924",
         "verdict": "ACCEPT",
@@ -1894,16 +1896,18 @@
       "checks": "11focus39combined workflow tests;Biome/tsc/diff pass;no hosted/build.",
       "integrationState": "Full focus patch integrated without overlap; worker report excluded;workflow unchanged.",
       "resume": {
-        "status": "accepted",
+        "status": "pending",
         "acceptedBlob": "5d0f15a6b6e30e64707e6ec76e29af0f3ddd15a7",
         "primaryId": "task_c708fc82",
-        "judgeIds": ["task_35b870b5"]
+        "judgeIds": ["task_35b870b5"],
+        "sourceCommit": null,
+        "state": "needs-rework"
       }
     },
     {
       "focus": "tests/find-ci-baseline.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted",
+      "state": "pending",
       "primary": [
         {
           "id": "task_109390aa",
@@ -1930,21 +1934,23 @@
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": "a96d35ae74558f9b440dda3a486e19d2bd00a8d5",
+      "acceptedBlob": null,
       "readingResult": "Named trust-boundary groups replace anonymous rejectionloops/mixedfailures;realGit/selector retained;endpointauth/commitvsblob/shareddeadlineabort added.",
       "checks": "35focus47combined;strictfocus tsc/Biome/diff;finderunchanged. HTTPstub,no hostedAPI/forcedGithang/fullbuild.",
       "integrationState": "Full focuspatch integrated;finder source unchanged;noteexcluded.",
       "resume": {
-        "status": "accepted",
+        "status": "pending",
         "acceptedBlob": "a96d35ae74558f9b440dda3a486e19d2bd00a8d5",
         "primaryId": "task_109390aa",
-        "judgeIds": ["task_aa63512d"]
+        "judgeIds": ["task_aa63512d"],
+        "sourceCommit": null,
+        "state": "needs-rework"
       }
     },
     {
       "focus": "tests/helpers.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted",
+      "state": "pending",
       "primary": [
         {
           "id": "task_9dd6501e",
@@ -1968,21 +1974,23 @@
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": "45e0d90785aa81576dfdd1687cf44451b546dde4",
+      "acceptedBlob": null,
       "readingResult": "Unchanged env isolation→spawn→concurrent output drain→exit;build/fixture/interactivecancellation/tmuxlifetimes caller-owned,appropriate boundary.",
       "checks": "18focus tests,Biome,isolatedstricttscpass;no build/compiledintegration/live.",
       "integrationState": "Unchangedfocusmatchestip;notesexcluded.",
       "resume": {
-        "status": "accepted",
+        "status": "pending",
         "acceptedBlob": "45e0d90785aa81576dfdd1687cf44451b546dde4",
         "primaryId": "task_9dd6501e",
-        "judgeIds": ["task_f7319ebc"]
+        "judgeIds": ["task_f7319ebc"],
+        "sourceCommit": null,
+        "state": "needs-rework"
       }
     },
     {
       "focus": "tests/install-download.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted",
+      "state": "pending",
       "primary": [
         {
           "id": "task_7936354f",
@@ -2020,7 +2028,7 @@
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": "e04230d818b527658f16eda023aa190bbb1b4f89",
+      "acceptedBlob": null,
       "relatedPatchJudgment": {
         "id": "task_7be1ff38",
         "verdict": "ACCEPT",
@@ -2032,16 +2040,18 @@
       "checks": "22/106 sequential+concurrent candidate; related48/204; strict tsc/format/lint/diff pass; no build/live downloads.",
       "integrationState": "Prior primary coverage retained; later related final blob e04230d8 independently rejudged task_9233d5f2 with changed root.",
       "resume": {
-        "status": "accepted",
+        "status": "pending",
         "acceptedBlob": "e04230d818b527658f16eda023aa190bbb1b4f89",
         "primaryId": "task_7936354f",
-        "judgeIds": ["task_bdc5b9c4", "task_9233d5f2"]
+        "judgeIds": ["task_bdc5b9c4", "task_9233d5f2"],
+        "sourceCommit": null,
+        "state": "needs-rework"
       }
     },
     {
       "focus": "tests/install-local.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted",
+      "state": "pending",
       "primary": [
         {
           "id": "task_70f09987",
@@ -2068,7 +2078,7 @@
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": "51a27b0bc8d0f3da78baddee0ab0eab27a048468",
+      "acceptedBlob": null,
       "relatedPatchJudgment": {
         "id": "task_fa23cd76",
         "verdict": "ACCEPT",
@@ -2080,10 +2090,12 @@
       "checks": "Focus18/65; related22/81 using older download script; strict tsc/format/lint/diff pass; no full/native/live.",
       "integrationState": "Full source test patch integrated; worker report excluded; installer production unchanged.",
       "resume": {
-        "status": "accepted",
+        "status": "pending",
         "acceptedBlob": "51a27b0bc8d0f3da78baddee0ab0eab27a048468",
         "primaryId": "task_70f09987",
-        "judgeIds": ["task_5442746a"]
+        "judgeIds": ["task_5442746a"],
+        "sourceCommit": null,
+        "state": "needs-rework"
       }
     },
     {
@@ -3153,7 +3165,7 @@
     {
       "focus": "tests/update-self-fixture.test.ts",
       "initialBase": "452205ec0667aad35ef854a9862d4b5182143095",
-      "state": "accepted",
+      "state": "pending",
       "primary": [
         {
           "id": "task_0ecce4b1",
@@ -3190,13 +3202,15 @@
       "introducedBy": "task_1fdcbe47",
       "readingResult": "Explicitartifact-byte pairs/exactmetadata/namedinstallation-payload pairs/shared unchangedinstall assertion replace positional indexes/duplicateinvariants.",
       "checks": "60tests;tsc/Biome/diff;closedtransport/sourcecompiledcontrast/staging/realpairbytes/runnerpayloadhash retained,sourcefixture unchanged.",
-      "acceptedBlob": "06c4344c3274180322ba17971dc91486149f7a09",
+      "acceptedBlob": null,
       "integrationState": "Ownprimary patch integrated after freshfinalblobjudge;fixture sourceunchanged;noteexcluded.",
       "resume": {
-        "status": "accepted",
+        "status": "pending",
         "acceptedBlob": "06c4344c3274180322ba17971dc91486149f7a09",
         "primaryId": "task_0ecce4b1",
-        "judgeIds": ["task_efae7e17"]
+        "judgeIds": ["task_efae7e17"],
+        "sourceCommit": null,
+        "state": "needs-rework"
       }
     },
     {
@@ -3543,7 +3557,7 @@
     "retainedWorktrees": "Per-file primary[].path and branch retained, including stopped/rejected attempts."
   },
   "resumeStatus": {
-    "accepted": 74,
-    "pending": 0
+    "accepted": 67,
+    "pending": 7
   }
 }

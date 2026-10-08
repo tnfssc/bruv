@@ -1504,7 +1504,7 @@
       ],
       "chars": 87360,
       "lines": 1892,
-      "status": "running",
+      "status": "accepted",
       "jobId": "task_464a96fe",
       "model": "openai-codex/gpt-6.1-sol",
       "workspace": {
@@ -1519,6 +1519,166 @@
         "setupTaskId": "task_c4f0bc89",
         "setupStatus": "running",
         "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      },
+      "result": {
+        "lane": "lane-09",
+        "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
+        "candidate": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "verdict": "ACCEPT",
+        "diffReadPaths": [
+          "scripts/setup-native-release-gate.sh",
+          "scripts/update-dependencies.ts",
+          "scripts/verify-release-launchers.ts",
+          "scripts/verify-update.ts",
+          "src/update.ts",
+          "tests/ci-remote-cli-source.test.ts",
+          "tests/ci-remote-offline-source-pty.py",
+          "tests/ci-runner.test.ts",
+          "tests/ci-selective-workflow.test.ts",
+          "tests/ci-selective.test.ts",
+          "tests/connector-update-fixture.ts"
+        ],
+        "contextReadPaths": [
+          "src/update.ts",
+          "src/cli.ts",
+          "src/system-prompt.ts",
+          "scripts/claude-compat-launcher.ts",
+          "scripts/bruv-claude-compat.sh",
+          "scripts/build-claude-compat.ts",
+          "scripts/build-pair.ts",
+          "scripts/verify-update-probe.ts",
+          "scripts/ci.sh",
+          "scripts/ci-selective.ts",
+          "scripts/find-ci-baseline.ts",
+          "scripts/run-native-release-gate.mjs",
+          "wisdom/claude-compat/proof/official-2644/fetch-official.mjs",
+          ".github/workflows/ci.yml",
+          ".github/workflows/release.yml",
+          ".github/workflows/dependency-updates.yml",
+          "package.json",
+          "tests/connector-update.test.ts",
+          "tests/update-v0.16.3-fixture.ts",
+          "tests/dependency-updates.test.ts",
+          "src/remote/entry.ts",
+          "src/remote/owner.ts",
+          "src/remote/client.ts",
+          "src/remote/menu.ts",
+          "src/remote/extension.ts",
+          "src/remote/services.ts",
+          "src/remote/capability-runtime.ts",
+          "src/remote/human-rendering.ts"
+        ],
+        "sourceBlobs": {
+          "scripts/setup-native-release-gate.sh": "9d6cfd866efee6fbc40ae2947f9a733216568f59",
+          "scripts/update-dependencies.ts": "109d8d0ff7a8a595a081377126c7a968830164a7",
+          "scripts/verify-release-launchers.ts": "9fd1db0e1baa21cc4a69d5edc702f962eb82173d",
+          "scripts/verify-update.ts": "88994dc94c3236cbe0398d152565d401cc6b4012",
+          "src/update.ts": "18439821dc68983f7f315f3c6b31fa5f7b320a3b",
+          "tests/ci-remote-cli-source.test.ts": "2b8ba4bd8fef50f0e235b16a6d7d404a82f4ea9c",
+          "tests/ci-remote-offline-source-pty.py": "27df96e51274e622ee761637d580160ca90405d7",
+          "tests/ci-runner.test.ts": "7b18e15b1fd1497570f6094f4a41b6b99f1c7de6",
+          "tests/ci-selective-workflow.test.ts": "25486b26fff7f6fb5d6a65d98e83c906ba4e3d38",
+          "tests/ci-selective.test.ts": "05b7307be28cfe9ae42a5d263b19d483e2f53d9f",
+          "tests/connector-update-fixture.ts": "11fbb1c606d69a7d5df227b963f8a2a088005ce9"
+        },
+        "sourceJourneys": [
+          {
+            "paths": [
+              "src/cli.ts",
+              "src/update.ts",
+              "scripts/bruv-claude-compat.sh"
+            ],
+            "readingReason": "Root CLI normalizes claude-compat update into the same updateBruv call. fetchStablePair still resolves four exact official URLs before inspecting the installation. inspectInstalledPair retains realpath, regular-file/single-link checks and optional sibling lstat. installedConnectorMatches retains old installed-only --version fallback; pairProbe removes inherited launcher overrides and provides an explicit staged bruv override. stageVerifiedExecutable preserves SHA256/filename checks and permissions. installReleasePair owns staging, backups, sameFile recheck, connector-first publication and reverse rollback; baseline rollback source was compared directly.",
+            "systemReason": "The extracted helpers express release authority, installation identity and publication lifetime separately without transferring mutable transaction ownership to callers. Current/newer/available/updated results, no-downgrade repair policy and onDownload ordering are source-equivalent. Check-only exits before staging/downloads. No changed cleanup boundary or missing rollback owner found."
+          },
+          {
+            "paths": [
+              "scripts/verify-release-launchers.ts",
+              "scripts/claude-compat-launcher.ts",
+              "scripts/bruv-claude-compat.sh",
+              "scripts/build-pair.ts",
+              "scripts/build-claude-compat.ts",
+              "scripts/verify-update.ts",
+              "scripts/verify-update-probe.ts",
+              "tests/update-v0.16.3-fixture.ts",
+              "tests/connector-update-fixture.ts",
+              "tests/connector-update.test.ts",
+              ".github/workflows/release.yml"
+            ],
+            "readingReason": "Paired build reaches the shipping shell generator. Packaging verification checks target shebang/mode/checksum, then probes suffixed and canonical layouts in separate owned directories with explicit /bin/sh argv, HOME and no PATH executable fallback. The real-release updater gate reads both staged assets before creating its owned installation, compiles a fake-fetch runner, corrupts each checksum, injects the second publication failure, then verifies both byte hashes and product flags. Its legacy runner still uses the frozen updater --version probe, matching the launcher private-stage compatibility branch. Connector fixture now advertises and serves binary/checksum bodies from the same map; its downloaded normal binary is explicitly a version stand-in, unlike verify-update actual release bytes.",
+            "systemReason": "Named installedPair records replace parallel arrays and preserve normal/connector association through hashes, rollback assertions and flags. Packaging and process probes have narrow purposes and stronger per-layout isolation. The fixture does not accidentally become claimed release proof; the release workflow separately calls both current and legacy gates. No identity/asset contradiction found."
+          },
+          {
+            "paths": [
+              "scripts/update-dependencies.ts",
+              "tests/dependency-updates.test.ts",
+              ".github/workflows/dependency-updates.yml",
+              "package.json"
+            ],
+            "readingReason": "Workflow runs the updater before committing package.json/bun.lock and shared CI validation. Command still uses explicit Bun update --latest package names, excluding protected @types/bun, with fixture admission tied to repository/event. validateDependencyUpdate remains before artifact creation and checks both sections plus Pi alignment. Both markdown summaries now use sorted own-entry changes; resolvedVersions retains only lock entry[0]. Constructor addition/removal assertions were inspected as code, not test results.",
+            "systemReason": "A single validation boundary prevents an invalid update from producing a review summary. Reusing a small versionChanges helper removes duplicated comparison logic and fixes inherited-property versions without inventing an update context object or vendor migration responsibility. Summary text/order/truncation semantics otherwise remain intact."
+          },
+          {
+            "paths": [
+              "tests/ci-selective.test.ts",
+              "tests/ci-selective-workflow.test.ts",
+              "scripts/ci-selective.ts",
+              "scripts/find-ci-baseline.ts",
+              ".github/workflows/ci.yml",
+              ".github/workflows/release.yml"
+            ],
+            "readingReason": "Git fixture helpers now give each planning case its own repository, and docs-runner fixtures execute a tiny fixture test rather than recursively running this suite. plan checks baseline/head/cleanliness and both tree modes; publishSelection writes outputs before runDocsChecks rechecks cleanliness. New cases exercise dirty publication, failed selected checks and full-plan refusal. Workflow assertions read authoritative mode/full/results wiring: actual CI accepts only docs:false:skipped:skipped or full:true:success:success after feedback success. Trusted push baseline lookup rejects missing token, mismatched workflow/repository and nonancestor runs. Release consumers follow the admitted release-source outcome; source SHA/tag outputs are used by downstream checkouts.",
+            "systemReason": "The tests now describe the actual two-mode planner instead of implicitly admitting selected execution. Outcome mutation cases do not inherit mutations, and release preparation/admission/publication checks mirror the actual authority chain rather than duplicating event admission in every consumer. Helpers are fixture-scoped, not a generalized workflow engine. No route from missing plan or failed admission to successful required validation/publication found."
+          },
+          {
+            "paths": [
+              "tests/ci-runner.test.ts",
+              "scripts/ci.sh",
+              "package.json",
+              ".github/workflows/ci.yml",
+              ".github/workflows/dependency-updates.yml"
+            ],
+            "readingReason": "Package ci and ci:macos route to the shared runner. runCi copies that runner into an owned fixture and substitutes a recording Bun executable. Records retain gate cwd, owned TMPDIR and command; expectOwnedTempCleaned checks one child directory and preservation of a sibling sentinel. Existing runner owns mktemp allocation/EXIT cleanup and pipefail/log tee. Failure tests still require exact failing exit, retained gate log and no later smoke command.",
+            "systemReason": "Object parameters and structured records replace positional strings and repeated splitting; cleanup assertions are explicit at every affected call. Linux and device-free macOS command ordering remains covered as source contracts, and release log redirection still uses the same gate implementation. No changed production cleanup or gate ownership introduced."
+          },
+          {
+            "paths": [
+              "tests/ci-remote-cli-source.test.ts",
+              "tests/ci-remote-offline-source-pty.py",
+              "src/cli.ts",
+              "src/system-prompt.ts",
+              "src/remote/entry.ts",
+              "src/remote/owner.ts",
+              "src/remote/client.ts",
+              "src/remote/menu.ts",
+              "src/remote/extension.ts",
+              "src/remote/services.ts",
+              "src/remote/capability-runtime.ts",
+              "src/remote/human-rendering.ts"
+            ],
+            "readingReason": "CLI remote-control awaits entry validation before owner dispatch; owner() creates state only after that boundary. Separate malformed/extra-field/unknown-op cases require one JSON response and absence of remote-owner. PTY seeding supplies cached done task and a local grant but no connection; taskOwned therefore denies new authority while local capabilities remain revocable. Extension requires confirmation, rechecks the grant, and notifies only the same pinned owner. Service persists ClientCapabilityStore .revoked before notification; rendering honestly reports owner not notified. Python source_terminal owns child and PTY lifetime inside its fixture home; wait_for uses fresh transcript slices and EOF/EIO handling instead of fixed post-command sleeps.",
+            "systemReason": "The source journey supports local durable revoke, not SSH delivery or cancellation. Splitting seeding/lifetime/assertions clarifies who owns state and process resources, including launch/assertion failure paths. No confirmation bypass or inferred online authority introduced. Root CLI passes --no-approve into the external Pi main path; external renderer execution remains unverified."
+          },
+          {
+            "paths": [
+              "scripts/setup-native-release-gate.sh",
+              "wisdom/claude-compat/proof/official-2644/fetch-official.mjs",
+              "scripts/run-native-release-gate.mjs",
+              ".github/workflows/release.yml"
+            ],
+            "readingReason": "Linux release job installs its browser harness then invokes native setup. Fetch contract refuses an existing destination, verifies pinned release metadata, archive checksum and extracted binary. Setup still checks exactly one browser and pinned SDK archive/API, but now appends all three GITHUB_ENV inputs only after all checks. Native gate consumes those same names, rechecks SDK package/version and official binary, then composes its suites.",
+            "systemReason": "Delayed handoff improves ownership: a failed SDK check cannot publish a partially verified dependency set. No caller expects the earlier partial environment export. This remains explicit release-CI preparation, not an application installer, and was inspected only."
+          }
+        ],
+        "integrationReadingReason": "ACCEPT for this bounded lane on fresh source inspection. All eleven assigned baseline-to-candidate diffs, including deletions, were read completely in bounded slices. Integration retains public updater and validation policies while making release/installation identities and fixture lifetimes more explicit. Helpers are narrow and locally composed: no new huge context bag, hidden transaction owner, or cross-file contradictory authority was found. Test expansion has concrete failure-boundary value rather than standing in for production source reasoning. This is not whole-repository sign-off.",
+        "objections": [],
+        "limits": [
+          "Read-only source review only: no tests, builds, installs, setup, formatting, live auth/device access, credential reads, cleanup, delegation or recovery work. No unsupported Pi preparation was retried or bypassed. Only the explicitly requested untracked result file was written.",
+          "No previous review artifacts, coverage counts, summaries or green tests were used as verdict evidence. Related files were read in relevant portions, not attested as completely reviewed.",
+          "External Pi source/runtime assets are not present in this checkout at the inspected paths. PTY trust-dialog text/cadence and runtime execution, native Android execution, live SSH/device/auth behavior and network provenance are unverified dynamically; root argument forwarding and checked-in authority paths were inspected. No assigned diff gaps remain.",
+          "Cleanup code and workflow shell traps were inspected but never executed. Temporary fixture lifetime analysis does not authorize running existing inherited-environment tests here.",
+          "Durable provenance: review performed in /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_464a96fe at candidate af3602cf3d5b62641450c7cc24bb0350334b6652. Existing worktree and candidate evidence retained; no /tmp code checkout or fixture was created."
+        ]
       }
     },
     {
@@ -1535,7 +1695,7 @@
       ],
       "chars": 98319,
       "lines": 2099,
-      "status": "running",
+      "status": "rejected",
       "jobId": "task_5c03f5eb",
       "model": "openai-codex/gpt-6.1-sol",
       "workspace": {
@@ -1550,6 +1710,134 @@
         "setupTaskId": "task_8dd6e1f0",
         "setupStatus": "running",
         "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      },
+      "result": {
+        "lane": "lane-10",
+        "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
+        "candidate": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "verdict": "REJECT",
+        "diffReadPaths": [
+          "tests/connector-update.test.ts",
+          "tests/dependency-updates.test.ts",
+          "tests/dependency-workflow.test.ts",
+          "tests/find-ci-baseline.test.ts",
+          "tests/generate-third-party-notices.test.ts",
+          "tests/install-download.test.ts",
+          "tests/install-local.test.ts"
+        ],
+        "contextReadPaths": [
+          "tests/helpers.ts",
+          "tests/connector-update-fixture.ts",
+          "scripts/claude-compat-launcher.ts",
+          "scripts/bruv-claude-compat.sh",
+          "src/update.ts",
+          "src/cli.ts",
+          "src/claude-compat/cli.ts",
+          "scripts/update-dependencies.ts",
+          ".github/workflows/dependency-updates.yml",
+          "scripts/find-ci-baseline.ts",
+          "scripts/ci-selective.ts",
+          ".github/workflows/ci.yml",
+          ".github/workflows/release.yml",
+          "scripts/generate-third-party-notices.ts",
+          "install.sh",
+          "scripts/install.sh",
+          "scripts/install-local.sh",
+          "scripts/ci.sh",
+          "package.json"
+        ],
+        "sourceBlobs": {
+          "tests/connector-update.test.ts": "049c8cd3dcc817bcb8452ea564f22ca8644a59ba",
+          "tests/dependency-updates.test.ts": "da5d3d5056c91024797839ef57544af184a603bf",
+          "tests/dependency-workflow.test.ts": "5d0f15a6b6e30e64707e6ec76e29af0f3ddd15a7",
+          "tests/find-ci-baseline.test.ts": "a96d35ae74558f9b440dda3a486e19d2bd00a8d5",
+          "tests/generate-third-party-notices.test.ts": "13c3bd3e7a94b90202089ca216d25cd5e422c7b7",
+          "tests/install-download.test.ts": "e04230d818b527658f16eda023aa190bbb1b4f89",
+          "tests/install-local.test.ts": "51a27b0bc8d0f3da78baddee0ab0eab27a048468"
+        },
+        "sourceJourneys": [
+          {
+            "paths": [
+              "tests/connector-update.test.ts",
+              "tests/helpers.ts",
+              "tests/connector-update-fixture.ts",
+              "scripts/claude-compat-launcher.ts",
+              "scripts/bruv-claude-compat.sh",
+              "src/cli.ts",
+              "src/claude-compat/cli.ts",
+              "src/update.ts"
+            ],
+            "readingReason": "Read the complete entry-contract and pair-installation rewrite, then followed the compiled fixture fetch substitution, shipping launcher generation and sibling binding, root update alias rewrite/early exit, connector product-version early return, and updater metadata/layout/checksum/probe/publication/rollback lifetime. The two-field installedBytes result and explicit Entry union reduce repeated opaque argument arrays without introducing a generic harness.",
+            "systemReason": "The tests preserve normal/subcommand/launcher help and rejection, source refusal, metadata-only check, successful paired publication, same-version repair and honest failure. New assertions distinguish product identity from Claude identity and pin request order, both checksums and stage cleanup. Synthetic downloaded normal bytes are explicitly not shipping proof. Environment for these fixture children is an owned HOME plus non-PATH Bruv, passed through offlineTestEnv rather than merged with inherited process.env."
+          },
+          {
+            "paths": [
+              "tests/install-download.test.ts",
+              "tests/install-local.test.ts",
+              "install.sh",
+              "scripts/install.sh",
+              "scripts/install-local.sh",
+              "scripts/bruv-claude-compat.sh"
+            ],
+            "readingReason": "Read both complete installer-test diffs including removed assertions. Followed writeAsset and mockMove to actual canonical stage names, both downloader entrypoints (actual source bytes compared equal), checksum-before-probe order, private probe directories, connector-first publication, mode-preserving backups, signal traps, reverse rollback and retained stages on restoration failure. Followed the copied local installer, fake build/helper tools and absolute staged launcher override.",
+            "systemReason": "The new parameterized download cases cover both public shell entrypoints with the same behavior contract. The local log now establishes build-before-probe sequencing, retains prior failure cases and avoids the removed inaccurate atomicity claim. Helpers remain small and local. Rollback fault patterns match real source arguments and stage prefixes. These are offline synthetic executables, not release, audio or provider evidence. Inherited fixture process authority remains inconsistent with the explicit connector fixture, as recorded in the objection."
+          },
+          {
+            "paths": [
+              "tests/dependency-updates.test.ts",
+              "scripts/update-dependencies.ts",
+              "tests/dependency-workflow.test.ts",
+              ".github/workflows/dependency-updates.yml",
+              "scripts/ci.sh",
+              "package.json"
+            ],
+            "readingReason": "Read full selection/validation/summary changes and the complete workflow-test rewrite. Followed protected toolchain validation and Pi alignment into the actual update CLI before review-artifact writing; own-property version changes serve both root and lock summaries. Followed workflow candidate commit through shared CI/notices, bundle packaging, credential-free identity/path verification, freshness guard and token-bearing publication. New withCandidate executes only the actual verification step in local Git repositories, not the publishing step.",
+            "systemReason": "Splitting broad string-presence tests into permission, ordering and named-step assertions improves failure attribution. Real bundles test base/candidate identity and file allowlisting; Candidate carries only base, sha and verify, not a large context bag. Root constructor cases and sorted 200-row cap exercise the common summary helper directly. The intended read/write credential separation is coherent in the workflow, but the new local Git test does not own its inherited environment, undermining its claimed boundary."
+          },
+          {
+            "paths": [
+              "tests/find-ci-baseline.test.ts",
+              "scripts/find-ci-baseline.ts",
+              "scripts/ci-selective.ts",
+              ".github/workflows/ci.yml",
+              ".github/workflows/release.yml"
+            ],
+            "readingReason": "Read the full baseline-test rewrite and actual baseline helper/selector. Followed mocked HTTP evidence through exact hosted-workflow authentication, bounded develop push history, local object type and ancestry checks, the shared 15-second deadline, and actual selector subprocess output in fixture artifacts. Inspected the CI comparison/planning caller and Release admission prefix, and searched actual Release bytes for the forbidden selective references.",
+            "systemReason": "The source-failure followed by docs push journey still selects the last validated ancestor and requires full CI, while successful source pushes permit docs-only. New per-case evidence rejection and remaining-budget tests retain prior fail-closed behavior with clearer domain grouping. Fixture .gitignore owns selector artifacts; no real API token or network is used in these tests. Checkout Git and selector env still inherit user Git authority, covered by the objection."
+          },
+          {
+            "paths": [
+              "tests/generate-third-party-notices.test.ts",
+              "scripts/generate-third-party-notices.ts",
+              ".github/workflows/dependency-updates.yml",
+              "package.json"
+            ],
+            "readingReason": "Read the entire new notice test file and entire generator. Followed ascending package resolution and realpaths, name/version deduplication through a cycle and nested shared versions, required versus installed optional/peer traversal, sorted notice rendering, packaged-before-curated-before-explicit-Pi fallback, input/render byte accounting and the final output write.",
+            "systemReason": "The new tests build an owned package tree and call the actual exported generator without child processes, live installs or mocked generator internals. They demonstrate deterministic rendering and a rendered-budget rejection preserving prior output; the dependency workflow invokes this same generator after CI before packaging. No framework-sized abstraction or ownership ambiguity was added here."
+          }
+        ],
+        "integrationReadingReason": "All seven assigned baseline-to-candidate diffs were read completely, including deletions. The integrated test organization is materially easier to read: domain describes, narrow fixture helpers, exact public output/version/rollback assertions and real caller journeys replace aggregate checks without discarding prior contracts. The production authority boundaries examined fit those assertions. One substantive fixture-ownership problem prevents acceptance: new Git-backed workflow tests spread the entire parent environment, and the expanded baseline fixture uses the same unowned Git/config authority. This is not a style objection or a demand for exhaustive matrices; cwd under mkdtemp does not bound Git destinations, hooks or credentials. Scope is this lane, not a repository sign-off.",
+        "objections": [
+          {
+            "paths": [
+              "tests/dependency-workflow.test.ts:116-170",
+              "tests/find-ci-baseline.test.ts:19-34,68-75",
+              "tests/dependency-updates.test.ts:79-85",
+              "tests/install-download.test.ts:59-72,122-127",
+              "tests/install-local.test.ts:59-73",
+              "tests/helpers.ts"
+            ],
+            "readingProblem": "The new workflow command() always launches with {...process.env,...env}; withCandidate provides no owned HOME/XDG/config environment before git init/config/add/commit/fetch or the Bash verification script. Inherited GIT_DIR/GIT_WORK_TREE can redirect supposedly fixture-owned Git writes to a non-fixture repository, and inherited HOME/XDG/GIT_CONFIG_* permit global hooks, signing and credential configuration. Expanded baseline checkout Git also has no explicit env; its selector only clears GitHub output destinations. Installer runs own HOME but still spread inherited config/SDK authority, and the standalone launcher version child restores inherited HOME. This contradicts the owned-fixture constraint and the workflow test assertion that verification runs without credentials. Connector run(env()) shows the integration already has a simpler explicit-environment pattern. No harmful process was run; this is established from source authority flow, not an observed user-environment exploit.",
+            "requiredResult": "Give each subprocess fixture an explicit allowlisted environment with HOME and configuration/cache/data/SDK paths underneath its fs.mkdtemp root, retaining only tools and declared test variables needed by that child. Do not forward inherited Git repository/config/hook/signing/credential authority into Git fixture initialization or verification. Use that same owned environment for the baseline Git/selector and installer/launcher subprocess lifetimes; keep denied updater CLI execution credential-free as well. A small local fixture-environment function is enough; do not introduce a generalized context framework. Verify safety by source inspection before any approved execution."
+          }
+        ],
+        "limits": [
+          "No tests, setup, builds, installs, formatters, auth, devices, secrets or source edits were performed. No unsupported Pi preparation was attempted, retried or bypassed. No delegation or external review artifacts were used. Only the requested untracked result was written.",
+          "Complete assigned diffs were read from exact Git endpoints; initial shell output was truncated, so all assigned diffs were reread from direct Git stdout in contiguous bounded slices. There are no unread assigned diff gaps.",
+          "Context was read where required, not whole current source everywhere: complete updater/generator/selector/dependency helper/fixture/installer/workflow bodies; early root dispatch/bootstrap boundary; connector version early return; CI comparison/planning prefix; Release admission prefix plus actual-source selective-reference search; package.json script references. No claim to have read remaining CLI/runtime/workflow bodies.",
+          "Candidate HEAD and tracked source were preserved in the existing durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_5c03f5eb. No fixture directories were created or removed by this review. Live auth/device behavior and actual runtime outcomes are unverified.",
+          "Safety for ALL descendants: NO sudo, recovery investigation, user secrets, shell deletion/cleanup commands, inherited HOME/config/SDK cleanup, nested shell traps, destructive git, or user-data mutation. User already recovered data and requested no recovery work. Tests must use explicit process argv/env and owned fs.mkdtemp fixture HOME/config/SDK; retain them, do not delete. Review filesystem/network effects BEFORE tests/setup. Existing test-code cleanup of provably owned temporary paths may be inspected but NEVER run a shell trap or inherited HOME removal. Need live auth/device? Report unverified, don't access credentials. Propagate these constraints verbatim. Independent code/review agents get durable worktrees, not /tmp code checkouts. Keep existing worktrees and candidate evidence. Test/source fixtures may use /tmp, but document durable provenance."
+        ]
       }
     },
     {
@@ -1569,7 +1857,7 @@
       ],
       "chars": 99910,
       "lines": 2147,
-      "status": "running",
+      "status": "accepted",
       "jobId": "task_394ceedb",
       "model": "openai-codex/gpt-6.1-sol",
       "workspace": {
@@ -1584,6 +1872,165 @@
         "setupTaskId": "task_2e04ce0d",
         "setupStatus": "running",
         "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      },
+      "result": {
+        "lane": "lane-11",
+        "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
+        "candidate": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "verdict": "ACCEPT",
+        "diffReadPaths": [
+          "tests/manual-release.test.ts",
+          "tests/native-release-gate.test.ts",
+          "tests/offline-process-isolation.test.ts",
+          "tests/prepare-assets.test.ts",
+          "tests/product-identity.test.ts",
+          "tests/production-packaging.test.ts",
+          "tests/publish-release.test.ts",
+          "tests/release-browser-setup.test.ts",
+          "tests/release-launcher-gate.test.ts",
+          "tests/release-workflows.test.ts"
+        ],
+        "contextReadPaths": [
+          "scripts/prepare-manual-release.ts",
+          "scripts/publish-release.ts",
+          "scripts/build-pair.ts",
+          "scripts/build-claude-compat.ts",
+          "scripts/claude-compat-launcher.ts",
+          "scripts/bruv-claude-compat.sh",
+          "scripts/verify-release-launchers.ts",
+          "scripts/prepare-assets.ts",
+          "scripts/pi-host-adaptation.ts",
+          "scripts/run-native-release-gate.mjs",
+          "scripts/setup-release-browser.sh",
+          "scripts/setup-native-release-gate.sh",
+          "wisdom/claude-compat/proof/official-2644/fetch-official.mjs",
+          "tests/helpers.ts",
+          "tests/tui-helpers.ts",
+          ".github/workflows/release.yml",
+          ".github/workflows/ci.yml",
+          ".github/workflows/live.yml",
+          "scripts/ci.sh",
+          "package.json",
+          "src/cli.ts",
+          "src/claude-compat/cli.ts",
+          "src/update.ts"
+        ],
+        "sourceBlobs": {
+          "tests/manual-release.test.ts": "9fdf9ef3fc1b9cb88a95e49ca012d78b86561024",
+          "tests/native-release-gate.test.ts": "6762793bbfc261db8c55f7aba82d685c4b146d9b",
+          "tests/offline-process-isolation.test.ts": "2ff5cc4eda8213e4b91e5a632132c490d73ce04a",
+          "tests/prepare-assets.test.ts": "6c6ae2ca09e7f769d3f2ec4dde252ed58d792170",
+          "tests/product-identity.test.ts": "b9e4e9ae5d8185883f905c42d4459d4c213847c5",
+          "tests/production-packaging.test.ts": "aec669688b9fb751badf5e307ca0101fddc26b98",
+          "tests/publish-release.test.ts": "ace4cea386836a04f36cedee9d29c4624191fffc",
+          "tests/release-browser-setup.test.ts": "80b148a19e03c2e30b008964bdbcadc883cd9651",
+          "tests/release-launcher-gate.test.ts": "da1a4e566b38096580f59ed59f15d57f18ef0641",
+          "tests/release-workflows.test.ts": "ffcf4742d5aadb88e1ed76996e43df81e3dc079d"
+        },
+        "sourceJourneys": [
+          {
+            "paths": [
+              "tests/manual-release.test.ts",
+              "tests/release-workflows.test.ts",
+              "scripts/prepare-manual-release.ts",
+              ".github/workflows/release.yml"
+            ],
+            "readingReason": "Read all deleted monolithic scenario/assertions and their replacement scenarios. The local repository helper retains one commit beyond v0.15.2 and sets the same identity locally instead of per commit; preparation still copies and runs the actual script. Separate checks now distinguish idempotence, reviewed-note preservation, empty-note refusal before version mutation, and absence of new commits. The scoped Actions-expression evaluator matches the actual boolean predicates and output fallbacks; it is not an Actions emulator.",
+            "systemReason": "Preparation emits the prepared SHA/tag; release-source is the sole admission/output handoff. Helper, build, native gates and publish check out its SHA. The workflow tests changed prerequisite expectations to that real ownership graph rather than retaining the old prepare-manual dependencies. Admission and failure-state scenarios fit the actual workflow, including skipped manual preparation on tag pushes."
+          },
+          {
+            "paths": [
+              "tests/publish-release.test.ts",
+              "scripts/publish-release.ts",
+              ".github/workflows/release.yml",
+              "tests/production-packaging.test.ts"
+            ],
+            "readingReason": "Read complete new CLI replay fixture and replaced decision/fetch tests. Bytes, size and digest come from one finite releaseFiles fixture. Known subprocess argv and fetch reads consume a serialized expected-effect transcript, while assertions require no remaining steps or unexpected-effect errors. The fetch replacement now awaits the rejection assertion before restoring fetch. This is a bounded publication harness, not an oversized reusable context bag.",
+            "systemReason": "Actual publication confirms the remote peeled tag, checks current develop before manual push, computes local asset digests, repairs only drafts, verifies repaired bytes, publishes, and re-reads public status. The replay sequences match those calls and enforce that wrong tags, stale develop, wrong bytes, incomplete repairs and public-release omissions cannot proceed to later known effects. Production packaging separately constrains the supported pair/checksum/notices asset inventory, so generating fixtures from assetNames alone is not the only inventory assertion."
+          },
+          {
+            "paths": [
+              "tests/production-packaging.test.ts",
+              "tests/release-launcher-gate.test.ts",
+              "scripts/build-pair.ts",
+              "scripts/build-claude-compat.ts",
+              "scripts/claude-compat-launcher.ts",
+              "scripts/bruv-claude-compat.sh",
+              "scripts/verify-release-launchers.ts",
+              ".github/workflows/release.yml"
+            ],
+            "readingReason": "The baseline singleton command-list API becomes one command, and the test now checks the whole forwarded argv. Read the baseline and candidate paired builder plus the unchanged downstream connector builder. The CLI fixture verifies repository cwd, stdin/stdout/stderr and nonzero child status. Launcher mutations are now independent fixtures rather than successive edits to one stateful fixture; both hand-written dispatch and the actual shipped template are checked.",
+            "systemReason": "One build-claude-compat invocation prepares assets and builds the normal sibling exactly once, then writes the tiny launcher. The verifier tests both suffixed and installed layouts with only their matching sibling and an explicit private HOME/PATH; checksums, interpreter, execute mode, PID preservation, empty/spaced/glob arguments and exit status remain enforced. The workflow runs that gate before artifact staging and separately checks the Android ELF interpreter. Host POSIX probes explicitly do not claim native Android execution."
+          },
+          {
+            "paths": [
+              "tests/native-release-gate.test.ts",
+              "scripts/run-native-release-gate.mjs",
+              "tests/production-packaging.test.ts",
+              "scripts/setup-native-release-gate.sh",
+              "wisdom/claude-compat/proof/official-2644/fetch-official.mjs",
+              ".github/workflows/release.yml"
+            ],
+            "readingReason": "Read the entire native orchestration diff, actual runner, fake child code and its explicit SDK/proof environment. Setup ownership now surrounds construction as well as assertions. FixtureOptions has two small, scenario-specific controls; typed call records replace repeated JSON parsing without hiding suite flags. New fixtures deliberately write passing evidence before failure, signal or binary mutation.",
+            "systemReason": "The runner strips stale suite flags, requires the pinned history SDK, verifies the upstream binary before and after each closed child, then accepts result evidence. Exit authority and binary authority override passing JSON as the added tests expect. Existing proof cannot be overwritten and no aggregate gate.json is written after failure. Real workflow setup and acceptance stay separate because GITHUB_ENV handoff takes effect in the next step. Fake unit paths/results are explicitly orchestration-only, not acceptance evidence."
+          },
+          {
+            "paths": [
+              "tests/prepare-assets.test.ts",
+              "scripts/prepare-assets.ts",
+              "scripts/pi-host-adaptation.ts",
+              "scripts/build-claude-compat.ts",
+              "scripts/ci.sh"
+            ],
+            "readingReason": "Read the complete replacement of the shared runtime-assets mutation test with copied fixture inputs. The preparation script computes every input/output from its script directory, so copying it and its adaptation module into the fixture actually redirects writes. Pi is copied rather than intentionally linked; the adapter entrypoint validates version and all patch hashes before writes. Fixed old timestamps make unchanged-byte rewrites observable without a scheduling sleep.",
+            "systemReason": "Asset preparation still emits the exact runtime inventory and version metadata consumed by the build/CLI. The test no longer deliberately runs adaptation or asset writes in the shared repository. It retains both initial generation and second-run no-rewrite checks. Unsupported Pi remains a fail-closed preparation boundary, not an excuse to bypass adaptation."
+          },
+          {
+            "paths": [
+              "tests/product-identity.test.ts",
+              "tests/offline-process-isolation.test.ts",
+              "tests/helpers.ts",
+              "tests/tui-helpers.ts",
+              "src/cli.ts",
+              "src/claude-compat/cli.ts",
+              "scripts/bruv-claude-compat.sh",
+              "src/update.ts",
+              "package.json"
+            ],
+            "readingReason": "Read full product identity and offline isolation diffs and the relevant CLI bootstrap/identity branches. Exact update inventory replaces the self-derived per-entry assertion. Identity scenarios each get a fresh HOME and an unavailable PATH, and explicitly unset the launcher override. The offline test passes hostile Herdr fields as an environment argument instead of mutating parent process.env; shared shell quoting and frame matching retain the actual launch/poll behavior.",
+            "systemReason": "Normal help materializes Bruv metadata in its HOME namespace without modifying the legacy sentinel. Connector version flags short-circuit before runtime construction and expose label-only display identity separately from the Bruv product version; the actual launcher selects its sibling. run() clones the supplied environment, disables Herdr and removes host socket/pane identity while preserving the explicit placeholder API key. The socket observer proves only startup plus a short post-kill window, as now documented, not all descendant lifetimes or general network isolation."
+          },
+          {
+            "paths": [
+              "tests/release-workflows.test.ts",
+              ".github/workflows/release.yml",
+              ".github/workflows/ci.yml",
+              ".github/workflows/live.yml",
+              "scripts/ci.sh"
+            ],
+            "readingReason": "Read all deletions and additions in the large workflow-test diff. Small local Workflow types/readWorkflow/commands/namedStep helpers replace repeated casts and whole-text slicing. Replacements locate actual jobs/steps and retain ordering, permissions, pins, download-only cache, target, helper, updater, notice and no-sidecar requirements rather than asserting arbitrary YAML text placement.",
+            "systemReason": "CI and release call the same Linux gate exactly once; validation precedes it, final helper/target packaging follows it, failure artifacts contain its log directory, and publication waits for both final payload gates. Parsed named-step checks align with the real workflow and retain the separate device-free macOS lane. No new global workflow abstraction or hidden configuration ownership was introduced."
+          },
+          {
+            "paths": [
+              "tests/release-browser-setup.test.ts",
+              "scripts/setup-release-browser.sh",
+              ".github/workflows/release.yml",
+              "scripts/setup-native-release-gate.sh"
+            ],
+            "readingReason": "Read the entire browser-setup diff and actual shell script. Named fixture options replace an overloaded mode switch; separate before/after library reports make recheck authority explicit. Fake bun and ldd commands record argv while downloaded shells and GITHUB_ENV are confined to the fixture. Independent assertions now distinguish download exit, dependency-install exit, ldd failure, zero/multiple shells and still-missing libraries.",
+            "systemReason": "The actual setup pins playwright-core, exports browser paths, requires exactly one headless shell, runs ldd, installs dependencies only for an explicit missing-library report, then rechecks. Recorded call ordering and exact output exports match that sequence. The release workflow consumes this setup in a separate step before native setup/acceptance. Fatal ldd is not converted into a dependency installer path, and an unsuccessful dependency repair cannot reach the later gate. This fixture tests orchestration without a browser download or a real installer."
+          }
+        ],
+        "integrationReadingReason": "ACCEPT for this bounded test-source lane. All ten complete baseline-to-candidate diffs, including deletions, were read afresh. Local helpers reduce repeated setup and stateful multi-scenario reading, and new authority checks align with the actual release admission, publication, build, launcher and native-gate implementations. The larger publication fixture is justified by the real git/gh/API lifecycle and remains local and finite. No source-backed cross-file behavioral contradiction or lane-blocking reading-burden regression was found. This is not whole-repository approval or a test-pass claim.",
+        "objections": [],
+        "limits": [
+          "Read-only source review; no tests, setup, builds, installs, formatter, auth, device, network fetch, dependency preparation or cleanup commands were run. Automatic unsupported Pi preparation was neither attempted, retried nor bypassed. Only the requested untracked result artifact was written. No agents delegated.",
+          "Durable provenance: existing worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_394ceedb, HEAD at exact candidate. Temporary fixture code was inspected as tracked source only; no fixtures were instantiated or deleted.",
+          "Context scope: src/cli.ts identity dispatch and normal bootstrap/help paths; src/claude-compat/cli.ts non-run identity short circuit; src/update.ts repository/asset map; package.json identity, scripts and dependency pins; scripts/pi-host-adaptation.ts preparation/validation boundary and initial patch declaration, not every patch anchor. Unchanged unrelated internals are not attested. Assigned diff unread gaps: none.",
+          "Existing subprocess fixtures are not general environment or network sandboxes: several copy process.env, manual git inherits configuration, and offlineTestEnv removes Herdr identity only. No execution safety or live/provider credential isolation is claimed by this verdict. Auth/device/native acceptance and actual supported dependency/build behavior remain unverified.",
+          "Safety for ALL descendants: NO sudo, recovery investigation, user secrets, shell deletion/cleanup commands, inherited HOME/config/SDK cleanup, nested shell traps, destructive git, or user-data mutation. User already recovered data and requested no recovery work. Tests must use explicit process argv/env and owned fs.mkdtemp fixture HOME/config/SDK; retain them, do not delete. Review filesystem/network effects BEFORE tests/setup. Existing test-code cleanup of provably owned temporary paths may be inspected but NEVER run a shell trap or inherited HOME removal. Need live auth/device? Report unverified, don't access credentials. Propagate these constraints verbatim. Independent code/review agents get durable worktrees, not /tmp code checkouts. Keep existing worktrees and candidate evidence. Test/source fixtures may use /tmp, but document durable provenance."
+        ]
       }
     },
     {
@@ -1600,7 +2047,7 @@
       ],
       "chars": 62387,
       "lines": 1367,
-      "status": "running",
+      "status": "rejected",
       "jobId": "task_35a208fa",
       "model": "openai-codex/gpt-6.1-sol",
       "workspace": {
@@ -1615,6 +2062,123 @@
         "setupTaskId": "task_97fa393a",
         "setupStatus": "running",
         "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      },
+      "result": {
+        "lane": "lane-12",
+        "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
+        "candidate": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "verdict": "REJECT",
+        "diffReadPaths": [
+          "tests/setup-native-release-gate.test.ts",
+          "tests/smoke-script.test.ts",
+          "tests/tooling-fixtures.test.ts",
+          "tests/update-release-shape.md",
+          "tests/update-release-shape.test.ts",
+          "tests/update-self-fixture.test.ts",
+          "tests/update-self-fixture.ts"
+        ],
+        "contextReadPaths": [
+          "scripts/setup-native-release-gate.sh",
+          "scripts/smoke.sh",
+          "scripts/loopback-parent-fixture.ts",
+          "scripts/network-none-fixture.ts",
+          "scripts/claude-compat-launcher.ts",
+          "scripts/bruv-claude-compat.sh",
+          "src/update.ts",
+          "src/cli.ts",
+          "tests/update.test.ts",
+          "tests/fixtures/remote-e2e/placement-parent.ts",
+          "scripts/remote-pty-e2e.ts",
+          "scripts/ci.sh",
+          "package.json",
+          ".github/workflows/ci.yml",
+          ".github/workflows/release.yml"
+        ],
+        "sourceBlobs": {
+          "tests/setup-native-release-gate.test.ts": "e1bf5ce576f4f1ddec4c42c86e6b32637ceb5267",
+          "tests/smoke-script.test.ts": "b0b5232653b47e05d11275766e5f9ede4229e561",
+          "tests/tooling-fixtures.test.ts": "0e9728fccb32c1657f09e6d305ac14a10d1621ba",
+          "tests/update-release-shape.md": "b117a5a3499c9169edad37d9514810ebded9b6b1",
+          "tests/update-release-shape.test.ts": "2803b32f5712f44343edb649aaffbbce2fe29921",
+          "tests/update-self-fixture.test.ts": "06c4344c3274180322ba17971dc91486149f7a09",
+          "tests/update-self-fixture.ts": "a6959fca4cf82247d0f82207b4a0a69f28b1c87d"
+        },
+        "sourceJourneys": [
+          {
+            "paths": [
+              "tests/setup-native-release-gate.test.ts",
+              "scripts/setup-native-release-gate.sh",
+              ".github/workflows/release.yml"
+            ],
+            "readingReason": "The argv-recording stubs surround the real script and SDK export probe rather than reimplementing setup. The script creates the runtime/playwright symlink before the fetch stub, so readlinkSync in the test helper remains valid even for the fetch-failure case. All failure cases inspect the unchanged GITHUB_ENV handoff.",
+            "systemReason": "Pinned checksum and SDK API authority precede the three-path release handoff. Download/extraction are fake in the unit fixture, not evidence of live upstream availability."
+          },
+          {
+            "paths": [
+              "tests/smoke-script.test.ts",
+              "scripts/smoke.sh",
+              "scripts/ci.sh",
+              ".github/workflows/ci.yml",
+              ".github/workflows/release.yml"
+            ],
+            "readingReason": "Fresh installed shell pairs isolate each negative case. Probe logs match the real ordering (version and help both run before version assertion), and the temporary directory assertion observes the script-owned trap before fixture afterEach. Shared CI builds before root tests and reuse smoke.",
+            "systemReason": "Default build and explicit reuse retain the same paired public identity/version and side-effect-free web probes. env -i in the script protects runtime probes from inherited configuration; these were inspected, never executed."
+          },
+          {
+            "paths": [
+              "tests/tooling-fixtures.test.ts",
+              "scripts/loopback-parent-fixture.ts",
+              "scripts/network-none-fixture.ts",
+              "tests/fixtures/remote-e2e/placement-parent.ts",
+              "scripts/remote-pty-e2e.ts"
+            ],
+            "readingReason": "The loopback response checks now follow the actual placementReply tool/text frames and finish reasons. RPC tests replace a timer-dependent partial line with a child-controlled newline handshake, inspect explicit denied trust and prompt events, and subscribe to close before kill. The unchanged PTY caller supplies the real bruv/home/agentDir plus its own child and provider lifetime.",
+            "systemReason": "Transport parsing, trust refusal and diagnostic ownership remain with the small fixture helper; scenario orchestration stays in callers. The network-none unit case does not start Docker or SSH and verifies only its owned scratch cleanup."
+          },
+          {
+            "paths": [
+              "tests/update-release-shape.test.ts",
+              "tests/update-release-shape.md",
+              "src/update.ts",
+              "scripts/claude-compat-launcher.ts",
+              "scripts/bruv-claude-compat.sh"
+            ],
+            "readingReason": "The former path-only fake probe and test-owned tar preflight are deleted. Staged-byte probes now model synthetic normal ELF/Mach-O identity plus the actual generated shell connector and selected normal sibling. Request log assertions follow four-asset metadata resolution, named checksums, version probes and macOS helper selection; concurrent rename callbacks exercise both ownership checks before either publish.",
+            "systemReason": "This is substantially stronger pair/authority evidence without claiming native binary boot. Documentation accurately distinguishes simulated staged probes from real execution and preserves concurrent-owner bytes. The mutable release map is local fixture state rather than a production context bag."
+          },
+          {
+            "paths": [
+              "tests/update-self-fixture.ts",
+              "tests/update-self-fixture.test.ts",
+              "tests/update.test.ts",
+              "src/update.ts",
+              "src/cli.ts"
+            ],
+            "readingReason": "The helper separates pure closed transport from import.meta.main execution, derives host asset names, emits matching metadata/hash URLs and keeps compiled-authority detection and default probes real. The existing compiled shell-payload caller remains compatible with the default 0.3.0. The new real-pair caller, however, omits env for its preliminary product version probe.",
+            "systemReason": "Private runner/payload/installation ownership is clearly separated, but normal CLI initialization writes embedded runtime assets before --version handling; an inherited HOME probe escapes that ownership. This is an integrated safety defect, not a test-style preference."
+          }
+        ],
+        "integrationReadingReason": "Complete assigned diffs, including deletions, were freshly read against the exact baseline and candidate. Most changes reduce intrinsic burden: fresh negative smoke fixtures avoid failure masking, RPC handshakes remove timing assumptions, and release fixtures describe the same paired authority as the real updater. No large abstraction or cross-domain context bag was introduced. Reject this lane because the new reusable-real-pair test crosses its owned-filesystem boundary on a real normal CLI probe. This is a lane judgment, not whole-repository approval.",
+        "objections": [
+          {
+            "paths": [
+              "tests/update-self-fixture.test.ts:62-63",
+              "tests/update-self-fixture.test.ts:120-125",
+              "src/cli.ts:117",
+              "src/cli.ts:175-211",
+              "scripts/ci.sh"
+            ],
+            "readingProblem": "run() accepts an optional env and the new real-pair test calls run([normal, \"--version\"]) without one. Bun.spawn therefore inherits the parent HOME/config/provider environment. Normal src/cli.ts calls configureBruvRuntime before handing normal arguments to Pi; that function materializes .bruv/runtime/<version> assets under homedir(). Consequently this preliminary version lookup can mutate the real user HOME before any fixtureEnv is used. The same optional-env helper is used for compilation. Root tests are included by the shared local/CI gate, which isolates TMPDIR but not HOME.",
+            "requiredResult": "Give every spawned command in this new runtime fixture an explicit environment rooted in its mkdtemp directory, including compilation and the preliminary reusable-product --version probe. Isolate HOME and config/SDK locations and avoid inherited provider/BRUV authority; make the helper require env or close over an owned base env so omission cannot reintroduce this observed leak. Preserve the real pair, runner and original installation assertions; do not probe user credentials or remove inherited HOME/config/SDK."
+          }
+        ],
+        "limits": [
+          "READ-ONLY source review; only the requested untracked result JSON was written. No tests, setup, builds, install, formatter, auth/device access, network probes, recovery investigation, deletion/cleanup, unsupported Pi preparation retry or delegation performed.",
+          "No prior primary/judge artifacts, coverage counts, summaries or green tests were used as a verdict.",
+          "All seven assigned diffs were fully read; no assigned unread gaps. Context was read only as needed: src/cli.ts normal entry/configureBruvRuntime, tests/update.test.ts compiled-fixture caller, scripts/remote-pty-e2e.ts RPC/provider lifecycle excerpt, package.json scripts/version and workflow CI/native-setup call sites. These files are not attested in full. Other listed helper/script context was read in full.",
+          "Live upstream availability, native target boot, auth/device behavior and actual test outcomes remain unverified. Synthetic platform tests explicitly do not prove published binary execution.",
+          "Durable provenance: review performed in the existing candidate worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_35a208fa using exact candidate Git blobs; candidate HEAD preserved. Inspected /tmp and /var/tmp fixture paths were source descriptions only, not created or cleaned."
+        ]
       }
     },
     {
@@ -1626,7 +2190,7 @@
       ],
       "chars": 53532,
       "lines": 1156,
-      "status": "running",
+      "status": "accepted",
       "jobId": "task_76f77dde",
       "model": "openai-codex/gpt-6.1-sol",
       "workspace": {
@@ -1641,6 +2205,89 @@
         "setupTaskId": "task_5602ba47",
         "setupStatus": "running",
         "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      },
+      "result": {
+        "lane": "lane-13",
+        "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
+        "candidate": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "verdict": "ACCEPT",
+        "diffReadPaths": [
+          "tests/update.test.ts",
+          "tests/verify-update.test.ts"
+        ],
+        "contextReadPaths": [
+          "tests/update.test.ts",
+          "tests/verify-update.test.ts",
+          "src/update.ts",
+          "src/cli.ts",
+          "scripts/verify-update.ts",
+          "scripts/verify-update-probe.ts",
+          "scripts/bruv-claude-compat.sh",
+          "tests/update-self-fixture.ts",
+          "tests/compiled-bun-fixture.ts",
+          "tests/update-v0.16.3-fixture.ts"
+        ],
+        "sourceBlobs": {
+          "tests/update.test.ts": "6569bd7e550e94dcd82b41da3774848f4347eae2",
+          "tests/verify-update.test.ts": "9d3d678072b9e5994e3653c91e05f0d31cc8daa2"
+        },
+        "sourceJourneys": [
+          {
+            "paths": [
+              "tests/update.test.ts",
+              "src/update.ts",
+              "src/cli.ts"
+            ],
+            "readingReason": "Read the complete test diff including removed positions, both full baseline and candidate updater implementations, and the public CLI update branch at both revisions. Fixture options now separate bruv and connector artifacts, use the public UpdateDeps type, and deliberately hash expected rather than corrupt returned bytes. Official URL rejection now supplies all four assets and checks the particular normal-asset error instead of allowing an unrelated missing-connector rejection.",
+            "systemReason": "fetchStablePair still resolves exact official metadata for both binaries and checksums before layout inspection, download or publication. Source invocation and unsupported-host guards remain before fetch. The CLI still supplies check/currentVersion/onDownload and interprets the same four statuses. Current/newer metadata-only behavior, same-version repair, and no-downgrade behavior remain explicitly asserted; helper extraction preserves their ordering."
+          },
+          {
+            "paths": [
+              "tests/update.test.ts",
+              "src/update.ts",
+              "scripts/bruv-claude-compat.sh"
+            ],
+            "readingReason": "Followed moved installed fallback and override tests and staged pair tests through pairProbe, installedConnectorMatches, installReleasePair, and the actual shell launcher. Read unchanged staged connector and macOS helper assertion bodies, not just relocation hunks.",
+            "systemReason": "Installed probes strip inherited BRUV_CLAUDE_COMPAT_BRUV_PATH; staged connector probes bind it to the verified candidate normal executable. Installed-only legacy fallback remains distinct from strict staged --bruv-version checks, and macOS live-helper probing still precedes publication. Tests distinguish product identity from the label-only connector --version, matching the launcher authority path."
+          },
+          {
+            "paths": [
+              "tests/update.test.ts",
+              "src/update.ts"
+            ],
+            "readingReason": "Followed the added event-order test and moved concurrency, first/second rename, and rollback-failure tests into stageVerifiedExecutable and installReleasePair. Compared baseline staging, backups, identity checks, connector-first publication, reversed rollback and final cleanup directly with candidate source.",
+            "systemReason": "The new assertion records sequential downloads/probes/publication and reads both original installed files during probes and both backup files at publication. It checks the real lifetime boundary rather than merely a returned success. Existing tests retain missing/existing connector rollback, concurrent creation/change protection, permission/layout/mode preservation and retained-backup diagnostics. The transaction owner still holds stage, replaced entries and keepRecovery locally; extraction has not split responsibility for rollback or cleanup."
+          },
+          {
+            "paths": [
+              "tests/verify-update.test.ts",
+              "scripts/verify-update.ts",
+              "scripts/verify-update-probe.ts",
+              "scripts/bruv-claude-compat.sh",
+              "tests/update-v0.16.3-fixture.ts"
+            ],
+            "readingReason": "Read complete verification-test diff and current gate implementation, baseline gate ownership/path excerpts, diagnostic serializer, launcher and frozen updater staging/publication/rollback/probe excerpts. Named normal/connector fixture paths and named current/frozen updater choice replace positional indexes and a boolean. Inspected mismatch diagnostic assertions and added empty-TMPDIR assertions.",
+            "systemReason": "Generated fixture normal implements both normal --version and connector product/display identities. Gate validates both staged checksums before allocating its work directory, compiles the selected updater, injects corrupt checksums and normal-rename failure, and checks byte preservation before replacement. install is canonicalized with realpath, so rename injection still identifies the normal target through an aliased TMPDIR. Gate finally removes only its own mkdtemp directory; outer fixture owns its root. The launcher staged --version special case coheres with frozen updater probes, whereas current updater uses --bruv-version; post-publication identity remains label-only."
+          },
+          {
+            "paths": [
+              "tests/update.test.ts",
+              "tests/update-self-fixture.ts",
+              "tests/compiled-bun-fixture.ts",
+              "src/update.ts"
+            ],
+            "readingReason": "Read relocated private compiled-integration tests and full candidate fixture sources. The compiled self-fixture builds an in-memory official release map and requires explicit target/payload paths; compiled invocation fixture actually invokes the real namespace predicate.",
+            "systemReason": "Relocation preserves real compiled detection, real staged process probes, non-running temporary installation replacement and the check that the runner itself is unchanged. The helper is a closed transport fixture, not a substitute for updater ownership or authority checks."
+          }
+        ],
+        "integrationReadingReason": "Within this lane the integrated code preserves the baseline behavioral assertions while improving navigation by lifecycle phase: invocation/authority, layout, selection/repair, artifact integrity, staged verification, publication/recovery and compiled integration. Typed per-artifact fixture options replace an untyped mixed option bag without introducing a generic framework. Named gate artifacts and updater modes remove positional/boolean interpretation. The updater helpers expose concrete release/pair boundaries and retain transaction lifetime in one function, rather than spreading cleanup across an abstraction or context bag. The added source-level order and temporary-directory assertions fit the actual integrated caller/launcher/gate paths. No substantive cross-file contradiction or lost ownership was found in these journeys; this is not whole-repository approval.",
+        "objections": [],
+        "limits": [
+          "Both assigned baseline-to-candidate diffs were fully read including deletions: 46,281 and 7,251 characters respectively. No assigned unread gaps. Context paths are actual Git source, not prior judgments, coverage summaries or test results. Context scope is full candidate src/update.ts, scripts/verify-update.ts, scripts/verify-update-probe.ts, launcher and two private compiled fixtures; full baseline updater; selected public CLI branches, baseline gate ownership/path excerpts and frozen updater staging/rollback/probe excerpts. No attestation to unread parts of those excerpted files or other lanes.",
+          "Read-only review; no tests/setup/build/install/formatter/auth/device/network access, unsupported Pi preparation, delegation, shell cleanup or source edits were performed. Only this requested untracked result file was written. No recovery investigation or user-data mutation.",
+          "Existing cleanup code was inspected only: outer tests track mkdtemp roots, gate removes its allocated directory, updater retains its stage on rollback failure. Existing build/test subprocesses sometimes inherit process.env; they were not executed or treated as safe authorization. Any later test execution must independently obey explicit argv/env and owned fixture HOME/config/SDK plus retained fixtures. Live auth/device and platform runtime behavior remain unverified.",
+          "Durable provenance: reviewed candidate HEAD af3602cf3d5b62641450c7cc24bb0350334b6652 in /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_76f77dde. No temporary code checkout, worktree removal or candidate mutation."
+        ]
       }
     },
     {
@@ -2392,5 +3039,8 @@
       "jobId": "task_49b63983",
       "reason": "Concrete inherited-env SDK failure-probe objection; reserve next free slot for fresh source primary/judge."
     }
-  ]
+  ],
+  "pausedForRework": {
+    "reason": "Record new concrete fixture-authority objections before refilling."
+  }
 }
