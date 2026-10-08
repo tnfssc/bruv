@@ -3745,13 +3745,74 @@
       "initialBlob": "d01398743c5affb8cc99babeae794e3f0dfe95a7",
       "status": "pending",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-primary",
-      "primaryId": "task_09b8c468",
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_c80b6e38",
+      "primaryCommit": "e453ab85d74a043ddd10171d806c4fd9ebe7a6cc",
       "judgeIds": [],
-      "sourceCommit": "53fb4d9732dcf0c337b797b05a104199ccf1a273",
+      "sourceCommit": "e453ab85d74a043ddd10171d806c4fd9ebe7a6cc",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
-      "pendingReason": "Assigned task_09b8c468; no completed primary candidate commit or independent actual-code verdict. Historical primary-running label is not completion. Retained uncommitted candidate(s): task_09b8c468 blob e883e7a503892e16661c936b246b72b905caa194 in /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_09b8c468. Not importable or accepted."
+      "pendingReason": "Assigned task_09b8c468; no completed primary candidate commit or independent actual-code verdict. Historical primary-running label is not completion. Retained uncommitted candidate(s): task_09b8c468 blob e883e7a503892e16661c936b246b72b905caa194 in /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_09b8c468. Not importable or accepted.",
+      "primaryBase": "4134d99b0c4024dedd0f1a4eb4e16d7faa52ca09",
+      "primaryResult": "The focus now owns scheduled component setup/step/dispose and preserves the public probe API and CLI. navigation-sdk-probe owns its runtime, provider/network prohibition, instrumentation, InteractiveMode capture, and finally teardown. navigation-history owns the deterministic on-disk fixture; navigation-terminal owns counting transport. Both owners depend on those concrete shared seams, not each other. The CLI fingerprints every extracted implementation. Actual callers retain their original imports and evidence shapes. Preserved task_09b8c468 evidence and focus-specific ledger rows were read; no branch was merged, old candidate worktrees were not modified, and no unaccepted test edits were imported. Independent exact-candidate judgment remains the parent’s next step.",
+      "primaryPaths": [
+        "scripts/terminal-perf/navigation-workloads.ts",
+        "scripts/terminal-perf/navigation-history.ts",
+        "scripts/terminal-perf/navigation-sdk-probe.ts",
+        "scripts/terminal-perf/navigation-terminal.ts"
+      ],
+      "primaryChecks": [
+        {
+          "check": "Required repository formatter via node child_process argv, changed source paths only",
+          "result": "pass",
+          "command": "/home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/@biomejs/biome/bin/biome format --write scripts/terminal-perf/navigation-workloads.ts scripts/terminal-perf/navigation-history.ts scripts/terminal-perf/navigation-sdk-probe.ts scripts/terminal-perf/navigation-terminal.ts",
+          "environment": "Fresh retained isolated HOME/config/TMPDIR/cache/SDK directories under /tmp/pr45-navigation-format-M2UkR2; minimal explicit environment",
+          "output": "Formatted 4 files in 6ms. Fixed 4 files."
+        },
+        {
+          "check": "Read-only whitespace-insensitive relocation comparisons against pre-change HEAD",
+          "result": "pass",
+          "details": [
+            "Scheduled component owner unchanged",
+            "SDK probe body unchanged",
+            "History fixture and message constants unchanged",
+            "Terminal transport unchanged except export visibility"
+          ]
+        },
+        {
+          "check": "Existing tests/terminal-perf-navigation.test.ts Git hash unchanged",
+          "result": "pass"
+        },
+        {
+          "check": "Actual caller trace",
+          "result": "read",
+          "paths": [
+            "scripts/terminal-perf/interaction-worker.ts",
+            "scripts/terminal-perf/interaction-normalize.ts",
+            "scripts/terminal-perf/selector-lifecycle-probe.ts",
+            "tests/terminal-perf-navigation.test.ts"
+          ],
+          "details": "Public reexports retain runOfflineNavigationSdkProbe and createNavigationHistory; scheduled APIs and inferred evidence types remain available at the original entrypoint."
+        },
+        {
+          "check": "CLI source fingerprints include all extracted helper paths",
+          "result": "pass"
+        },
+        {
+          "check": "git diff --check before commit",
+          "result": "pass"
+        },
+        {
+          "check": "Commit scope",
+          "result": "pass",
+          "details": "Source-only commit contains exactly the focus and three helpers; no active commit hooks were present."
+        }
+      ],
+      "primaryLimits": [
+        "No setup, repository tests, or builds run, as required; runtime verification belongs to the parent’s audited isolated batch gates.",
+        "Static preservation checks are not runtime proof or an independent readability verdict.",
+        "Commit signing was disabled for this commit only with git -c commit.gpgsign=false to avoid configured credential/device access; no signing configuration was changed.",
+        "No wisdom edits; parent owns aggregate wisdom."
+      ]
     },
     {
       "file": "scripts/terminal-perf/options.ts",

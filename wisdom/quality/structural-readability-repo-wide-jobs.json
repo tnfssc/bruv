@@ -1072,7 +1072,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_c80b6e38",
         "branch": "bruv/pr45-primary-scripts-terminal-perf-navig-c80b6e38",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "e453ab85d74a043ddd10171d806c4fd9ebe7a6cc"
       },
       {
         "id": "task_72c25417",
@@ -1132,6 +1133,15 @@
         ],
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_a1139c9a",
         "branch": "bruv/pr45-judge-3-ui-terminal-cli-focuses-a1139c9a",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_97f9b348",
+        "stage": "primary",
+        "focus": "scripts/terminal-perf/tool-workloads.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_97f9b348",
+        "branch": "bruv/pr45-primary-scripts-terminal-perf-tool--97f9b348",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
       }
