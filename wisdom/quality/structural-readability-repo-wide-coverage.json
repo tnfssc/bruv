@@ -2491,11 +2491,13 @@
     {
       "file": "scripts/probe-openai-realtime-setup.ts",
       "initialBlob": "336872179296264402c6bac5fc5c7feaa1c8d244",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_023dc437",
       "sourceCommit": "aa7a32b6aea3c5299d5252c9bf0062d177873b60",
-      "judgeIds": [],
-      "resumeState": "needs-judge",
+      "judgeIds": [
+        "task_695f21d3"
+      ],
+      "resumeState": "accepted-joined",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
       "area": "live-native-audio",
       "primaryCommit": "aa7a32b6aea3c5299d5252c9bf0062d177873b60",
@@ -2515,6 +2517,19 @@
         "No runtime, syntax/typecheck, formatting tool, paid-provider or device validation performed, as directed. Existing assertions and helper source remain untouched.",
         "Preserved reconciliation records automatic setup host-hash failure; not rerun, bypassed, or claimed resolved.",
         "No worker wisdom added and values unchanged; parent owns aggregate wisdom. Historical worktrees, dirty candidates and lineage preserved."
+      ],
+      "acceptedBlob": "14b7e6e362168526b4b111bf0d6e415b023d8b3a",
+      "result": "Read the actual candidate and primary base/parent (both 888ded5094541ff18d832174ebb191dfd5b1cc6c), not checkout HEAD. The old top-level try combined private-file authorization, assignment parsing, observation callbacks, connection timing and cleanup with session/deadline bindings outside it. The new entry point visibly sequences validated-key loading and one setup operation. readProbeKey contains the complete file/type/owner/mode/size and assignment/format decision, and returns only the validated key. runSetupProbe locally owns the session, timer and handshake/setup observations and keeps their construction, connect race, report and finally together. This is a real authority/lifetime boundary rather than a rename or arbitrary extraction: no shared context bag, export or cross-file helper is introduced. Success, validation failure and rejected/timed-out setup can each be followed without reconstructing top-level resource state.",
+      "systemReason": "Opt-out still exits 2 before the dynamic setup orchestration import or key read. Opt-in validation still uses lstat and the same private regular owned-file and key rules. Valid input creates one production defaultSocket session with gpt-realtime-2.1-mini and setupProbeOrchestration. The unchanged socket adapter performs one authenticated upgrade without redirects, reports bounded rejection metadata and owns rejection-response cancellation. Its open event records handshake independently; OpenAIRealtimeSession sends session.update and onReady is emitted only after session.updated. HTTP rejection is distinguished from setup rejection; connectionFailure and voiceProviderFailure provide sanitized metadata before the unchanged script regex selects printable identifiers. connect resolves for both ready and failure observations, so the summary is not itself a success assertion. The 28-second outer deadline still races connect (which also owns its existing 15-second deadline). Finally clears the probe deadline and closes the session; production close invalidates serials and settles pending connect, preventing late callbacks reopening the probe. The outer catch now runs after finally, so a teardown exception joins the generic no-details failure report rather than escaping the old finally; this small explicit ordering change is coherent. Unchanged decision: no change needed to production transport, provider sanitization, orchestration denial, schema or callers for this local readability boundary. The probe still calls connect only, never audio or response creation; setupProbeOrchestration uses the ordinary execute schema but denies dispatch. Related paid acceptance and offline schema/prompt callers remain compatible.",
+      "checks": [
+        "Read wisdom/values.md, structural-readability-guidance.md, repository-wide scope/assignment/coverage/jobs context and live-native-audio focus ledger; read supplied primary rationale without treating it as acceptance evidence.",
+        "git rev-parse verified candidate parent equals primary base; base-to-candidate and parent-to-candidate diffs both change only the focus source path. Read full focus versions and the changed diff, plus actual dependency lifecycle and related callers at candidate revision. Related source/caller paths have no base-to-candidate changes.",
+        "git diff --check against primary base passed. git ls-tree verified exact committed accepted blob. Only result JSON was written; no source edits."
+      ],
+      "limits": [
+        "Static structural judgment only. No setup, tests, builds, runtime/typecheck/formatter execution, paid provider access, credential file access, device access or delegation performed. Parent owns isolated batch gates and external model verification.",
+        "No real authentication, provider acceptance, device or full-system runtime claim. Import remains outside the generic catch and the summary remains before close, as visible in actual code; no speculative restructuring requested.",
+        "Automatic setup host-hash failures recorded by existing work remain unresolved and unbypassed. Historical worktrees/uncommitted candidates were preserved; no recovery, cleanup, push, PR, merge or wisdom edits."
       ]
     },
     {

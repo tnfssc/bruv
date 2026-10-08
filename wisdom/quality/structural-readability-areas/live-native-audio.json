@@ -1172,16 +1172,19 @@
       "initialBlob": "336872179296264402c6bac5fc5c7feaa1c8d244",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "14b7e6e362168526b4b111bf0d6e415b023d8b3a",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "14b7e6e362168526b4b111bf0d6e415b023d8b3a",
         "primaryId": "task_023dc437",
         "primaryCommit": "aa7a32b6aea3c5299d5252c9bf0062d177873b60",
-        "judgeIds": [],
+        "judgeIds": [
+          "task_695f21d3"
+        ],
         "sourceCommit": "aa7a32b6aea3c5299d5252c9bf0062d177873b60",
-        "state": "needs-judge",
-        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+        "state": "accepted-joined",
+        "reason": "Read the actual candidate and primary base/parent (both 888ded5094541ff18d832174ebb191dfd5b1cc6c), not checkout HEAD. The old top-level try combined private-file authorization, assignment parsing, observation callbacks, connection timing and cleanup with session/deadline bindings outside it. The new entry point visibly sequences validated-key loading and one setup operation. readProbeKey contains the complete file/type/owner/mode/size and assignment/format decision, and returns only the validated key. runSetupProbe locally owns the session, timer and handshake/setup observations and keeps their construction, connect race, report and finally together. This is a real authority/lifetime boundary rather than a rename or arbitrary extraction: no shared context bag, export or cross-file helper is introduced. Success, validation failure and rejected/timed-out setup can each be followed without reconstructing top-level resource state."
       }
     },
     {
@@ -5072,7 +5075,7 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 90,
-    "pending": 60
+    "accepted": 91,
+    "pending": 59
   }
 }

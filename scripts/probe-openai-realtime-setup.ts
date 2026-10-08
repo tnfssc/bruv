@@ -9,10 +9,14 @@ if (process.env.BRUV_REALTIME_SETUP_PROBE !== "1") {
   process.exit(2);
 }
 const { setupProbeOrchestration } = await import("../src/live/setup-probe");
-const path = join(homedir(), ".bruv", "openai-test.env");
-let session: OpenAIRealtimeSession | undefined;
-let deadline: ReturnType<typeof setTimeout> | undefined;
 try {
+  const key = await readProbeKey(join(homedir(), ".bruv", "openai-test.env"));
+  await runSetupProbe(key);
+} catch {
+  console.log("probe: local validation or deadline failure; no raw details emitted");
+}
+
+async function readProbeKey(path: string): Promise<string> {
   const stat = await lstat(path);
   if (
     !stat.isFile() ||
@@ -29,46 +33,52 @@ try {
   let key = matches[0]!.slice("OPENAI_API_KEY=".length).trim();
   if ((key.startsWith('"') && key.endsWith('"')) || (key.startsWith("'") && key.endsWith("'"))) key = key.slice(1, -1);
   if (!/^sk-[A-Za-z0-9_-]{10,}$/.test(key)) throw new Error("invalid key format");
+  return key;
+}
+
+async function runSetupProbe(key: string): Promise<void> {
+  let session: OpenAIRealtimeSession | undefined;
+  let deadline: ReturnType<typeof setTimeout> | undefined;
   let outcome = "no setup result";
   let handshake = "not confirmed";
-  session = new OpenAIRealtimeSession(
-    {
-      onReady: () => {
-        handshake = "upgraded";
-        outcome = "session.updated accepted";
+  try {
+    session = new OpenAIRealtimeSession(
+      {
+        onReady: () => {
+          handshake = "upgraded";
+          outcome = "session.updated accepted";
+        },
+        onError: ({ message }) => {
+          const status = /HTTP (\d{3})/.exec(message)?.[1];
+          if (status) {
+            handshake = "HTTP " + status + " rejected";
+            outcome = "setup not reached";
+          } else {
+            // The production transport open event independently records the handshake.
+            const details = /\((code [a-z_]+|type [a-z_]+|field [a-zA-Z0-9_.\[\]]+)(?:, [^)]+)*\)/.exec(message)?.[0];
+            outcome = "setup rejected" + (details ?? " (no safe provider identifiers)");
+          }
+        },
       },
-      onError: ({ message }) => {
-        const status = /HTTP (\d{3})/.exec(message)?.[1];
-        if (status) {
-          handshake = "HTTP " + status + " rejected";
-          outcome = "setup not reached";
-        } else {
-          // The production transport open event independently records the handshake.
-          const details = /\((code [a-z_]+|type [a-z_]+|field [a-zA-Z0-9_.\[\]]+)(?:, [^)]+)*\)/.exec(message)?.[0];
-          outcome = "setup rejected" + (details ?? " (no safe provider identifiers)");
-        }
+      (url, headers) => {
+        const socket = defaultSocket(url, headers);
+        socket.addEventListener("open", () => {
+          handshake = "upgraded";
+        });
+        return socket;
       },
-    },
-    (url, headers) => {
-      const socket = defaultSocket(url, headers);
-      socket.addEventListener("open", () => {
-        handshake = "upgraded";
-      });
-      return socket;
-    },
-    setupProbeOrchestration(),
-    "gpt-realtime-2.1-mini",
-  );
-  await Promise.race([
-    session.connect(key),
-    new Promise<never>((_, reject) => {
-      deadline = setTimeout(() => reject(new Error("deadline")), 28000);
-    }),
-  ]);
-  console.log("handshake: " + handshake + "; setup: " + outcome);
-} catch {
-  console.log("probe: local validation or deadline failure; no raw details emitted");
-} finally {
-  if (deadline) clearTimeout(deadline);
-  session?.close();
+      setupProbeOrchestration(),
+      "gpt-realtime-2.1-mini",
+    );
+    await Promise.race([
+      session.connect(key),
+      new Promise<never>((_, reject) => {
+        deadline = setTimeout(() => reject(new Error("deadline")), 28000);
+      }),
+    ]);
+    console.log("handshake: " + handshake + "; setup: " + outcome);
+  } finally {
+    if (deadline) clearTimeout(deadline);
+    session?.close();
+  }
 }
