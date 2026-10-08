@@ -46,6 +46,7 @@
         "focus": "scripts/loopback-parent-fixture.ts",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_2c94381e",
         "branch": "bruv/pr45-judge-scripts-loopback-parent-fixtu-2c94381e",
+        "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
       },
       {
@@ -54,6 +55,7 @@
         "focus": "scripts/network-none-fixture.ts",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_e3461f0e",
         "branch": "bruv/pr45-primary-scripts-network-none-fixtur-e3461f0e",
+        "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
       }
     ]
@@ -343,6 +345,7 @@
         "focus": "scripts/offline-openai-default-transport.ts",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_d54f9cf5",
         "branch": "bruv/pr45-primary-scripts-offline-openai-defa-d54f9cf5",
+        "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
       },
       {
@@ -351,6 +354,7 @@
         "focus": "scripts/probe-live-capability.ts",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_93771cb4",
         "branch": "bruv/pr45-primary-scripts-probe-live-capabili-93771cb4",
+        "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
       },
       {
@@ -359,6 +363,7 @@
         "focus": "scripts/probe-live-controlled.ts",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_852c860e",
         "branch": "bruv/pr45-primary-scripts-probe-live-controll-852c860e",
+        "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
       },
       {
@@ -367,6 +372,7 @@
         "focus": "scripts/probe-live-recorded.ts",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_37841a12",
         "branch": "bruv/pr45-primary-scripts-probe-live-recorded-37841a12",
+        "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
       }
     ]
