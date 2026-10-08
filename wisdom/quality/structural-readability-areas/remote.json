@@ -13,9 +13,7 @@
         "acceptedBlob": "114f0e3a35d30037c0aae2bbed3d4d2544151529",
         "primaryId": "task_3af9f8fa",
         "primaryCommit": "7075ead9e0cc3f5611aeb0337dc4ade36bb532ae",
-        "judgeIds": [
-          "task_2c94381e"
-        ],
+        "judgeIds": ["task_2c94381e"],
         "sourceCommit": "7075ead9e0cc3f5611aeb0337dc4ade36bb532ae",
         "state": "accepted-joined",
         "reason": "Intrinsic: fixtureRpc reads in execution order: spawn the fixture RPC child, register it with the caller, observe stderr, record decoded events and deny every confirm request, then expose prompt submission and polling diagnostics. The private readRpcEvents operation separately owns the stdout buffer, extraction of complete nonempty newline-delimited records, synchronous JSON delivery and the existing parse/callback error boundary. Before this change the reader had to descend through buffer slicing and JSON framing to discover event recording and confirmation denial. The candidate removes that concrete transport/policy nesting without a context bag, exported framework or name-only cleanup. The helper has one real responsibility and its buffer lifetime is local to one stdout subscription. Unchanged decision: loopbackParent is already a coherent local provider operation (route validation, placement response, SSE formatting, fixture model registration and return of the provider); NO CHANGE NEEDED for that operation or the existing exported API."
@@ -32,9 +30,7 @@
         "acceptedBlob": "9bf16423feba68972ca1e16b8e8a64d23606fc1e",
         "primaryId": "task_e3461f0e",
         "primaryCommit": "37d387369bd426a42bfc57b337af3a63205f3fdf",
-        "judgeIds": [
-          "task_eadbfc56"
-        ],
+        "judgeIds": ["task_eadbfc56"],
         "sourceCommit": "37d387369bd426a42bfc57b337af3a63205f3fdf",
         "state": "accepted-joined",
         "reason": "The baseline start() interleaves cached-image validation, runtime/key staging, image acquisition, container acquisition, SSH pinning/wrapper construction and two readiness checks in one long body. The candidate exposes three coherent lexical operations, not arbitrary named blocks: buildOfflineImage owns the validated base digest and staging/build transaction; startContainer owns network-none container acquisition; connectPinnedSsh owns the pinned transport/configuration, optional reply-loss wrapper, PATH installation and SSH readiness, returning the direct SSH command. start() now makes the validation/acquisition/readiness order legible. Success-only image/container ownership flags remain beside these operations and the existing cleanup owner; no context bag, alternate implementation or new state is introduced. The helper bodies retain inspectable concrete commands and security decisions."
@@ -51,9 +47,7 @@
         "acceptedBlob": "41a45a1f07e3a516df9fb8c1514f720296fd5903",
         "primaryId": "task_58c7d1fa",
         "primaryCommit": "bc41663916e35b9e376c6427c50312ccb0765abb",
-        "judgeIds": [
-          "task_46bb6641"
-        ],
+        "judgeIds": ["task_46bb6641"],
         "sourceCommit": "bc41663916e35b9e376c6427c50312ccb0765abb",
         "state": "accepted-joined",
         "reason": "Read the actual candidate and its primary base/direct parent 955feded55c7125658094bbef862244ee9b5941e, not checkout HEAD. Previously one long try mixed normal owned-placement policy proof, diagnostic request creation, PTY snapshot behavior, grant authority and revocation authority. The candidate exposes those five substantive journeys in order at lines 363–381. verifyOwnedPlacement keeps target discovery, decoded task identity, terminal-state observation and destination execution evidence together. seedDiagnosticCapabilityRequests keeps diagnostic launch, request lookup, unsupported-request injection and synchronization together and returns the task ID. startCapabilityPtyAndVerifySnapshot owns PTY startup and the displayed snapshot versus explicit-refresh experiment. verifyGrantRequiresHumanConsent keeps unsupported denial, displayed scope, Escape, stale-request denial/restoration, No, Yes and grant-ledger checks in one authority journey. verifyRevokeRequiresHumanConsent keeps cancel/confirm actions, ledger checks and final visible results together. This is a navigable behavioral decomposition, not rename-only cleanup or a context framework. The task ID and observing RPC fixture are explicit parameters; no new mutable state is introduced. Unchanged decision: retain the existing narrow pane/key/select/evidence helpers, task-filtered grant inventory and single outer shutdown owner. Their jobs are already clear and splitting each UI action from its assertion would make these journeys harder to read. The helpers deliberately share one fixture HOME and tmux pane; sequential calls, rather than a reusable independent-phase API, are appropriate here."
@@ -70,9 +64,7 @@
         "acceptedBlob": "16923a78b5f4d2444f7688f9baedacdcffb5b0e7",
         "primaryId": "task_d97a3bd7",
         "primaryCommit": "9861bea3333905083427acbc86253977c3218ac4",
-        "judgeIds": [
-          "task_f2c831a6"
-        ],
+        "judgeIds": ["task_f2c831a6"],
         "sourceCommit": "9861bea3333905083427acbc86253977c3218ac4",
         "state": "accepted-joined",
         "reason": "Independent actual-code reading against primary base 699eca9333f36b48410f76e24022e03bf46eaa8f, which is also the candidate parent. Previously a reader had to interpret a recovery protocol inside an expanding Bash heredoc, distinguish setup-time tmp substitution from escaped runtime shell variables, and then resume Docker/SSH orchestration. The candidate makes that real authority boundary visible: the harness selects recovery only after readiness, copies the fixture helper, and generates a single exec binding the pinned config and evidence directory. The helper receives those two authorities explicitly, shifts them out of the original SSH argv, and directly presents the complete request/response-loss operation. Both changed files are intrinsically readable: the helper has two short domain branches, with acceptance verification, evidence publication, sentinel consumption, diagnostic and exit 42 together, followed by the ordinary forwarding path. This is not a rename-only or arbitrary extraction: it removes a second shell interpretation layer from protocol reading without introducing a framework or shared context. Unchanged decision: retain the linear Docker setup, key pinning, readiness loops, ordinary SSH shim and final environment handoff; their order and lifetime are already directly visible, and further splitting would scatter rather than clarify this fixture."
@@ -89,9 +81,7 @@
         "acceptedBlob": "70da0667aecc5d2f6d3542562277f58b1fd99656",
         "primaryId": "task_51a0ee46",
         "primaryCommit": "24026dc1b1249c085668b140d644ea528f188e8e",
-        "judgeIds": [
-          "task_21f18195"
-        ],
+        "judgeIds": ["task_21f18195"],
         "sourceCommit": "24026dc1b1249c085668b140d644ea528f188e8e",
         "state": "accepted-joined",
         "reason": "Read the actual candidate file in full and compared its diff and primary-base implementation; the candidate parent is exactly primary base 07d54f20849e244898eebbe6a3c072a97dfb29fd. This is structural progress, not a rename pass: the executable orchestration now exposes SSH trust verification, owner/reconnect/question proof, repository/granted-work proof, and server-offline transcript proof in their required order. cli/reconnect/question state stays inside its scenario; localRepo, staged-index baseline, replacement repoRpc and repository/capability/cancellation task IDs stay inside the repository scenario; only the original owner task ID is passed between scenario operations. The safe launch now calls launchWithUntrackedOmission explicitly instead of triggering an authority-changing branch hidden inside generic nextTask. Both launch paths reuse only task observation and stable-ID verification. Unchanged decision: bootstrap, fixtureRpc/loopback provider helpers, scenario assertions and shared final cleanup need no change for this reading problem. Keeping repository return, capability reconnect, cancellation and artifact caching together is justified by their shared repository/RPC lifetime; further wrapper layers or a context bag would make this journey harder to follow."
@@ -108,9 +98,7 @@
         "acceptedBlob": "41523344401e8573f56b5dff5f9443798de0cd47",
         "primaryId": "task_40c1becc",
         "primaryCommit": "208cedce3b6aeeb781db32fc97c26948ab8baed8",
-        "judgeIds": [
-          "task_69c923f9"
-        ],
+        "judgeIds": ["task_69c923f9"],
         "sourceCommit": "208cedce3b6aeeb781db32fc97c26948ab8baed8",
         "state": "accepted-joined",
         "reason": "Compared the actual candidate with dc52072c1ba954f246476d1acd1311c0f47f0a7d, which is also its direct parent. The former single try body required reading transport probes, result-file parsing, completion events, SSH evidence and reconnect mechanics inline to reconstruct the journey. The candidate leaves a readable ordering in the try body: print boundary, connect, place A/B, correlate persisted sessions, observe both parent yields, prove terminal delivery/isolation, check each session and owner execution, then check sync/reconnect deduplication. The extracted operations have concrete proof responsibilities, not arbitrary blocks or a context bag. placeRemoteJob owns discovery/background assertions and returns only the stable jobs ID; taskId owns decoding for persisted-state correlation. assertRemoteCompletions keeps remote terminal state, parent wake acknowledgement, envelope content and own/foreign IDs together rather than conflating done with delivered. The two explicit access-proof calls preserve A-before-B order. Unchanged decision: NO CHANGE NEEDED for fixture setup, launch JSON framing/send/wait diagnostics, process registration and final teardown; their local ownership is already clear. Their code is unchanged except an explanatory registry comment, and reconnects still pass through launch into the same clients registry."
@@ -127,9 +115,7 @@
         "acceptedBlob": "644ccb436f5f4bf97fd6544f2081698dc55851d1",
         "primaryId": "task_dbde3103",
         "primaryCommit": "1f646d49f88f012e1fb29e8c561e7792d962c6b9",
-        "judgeIds": [
-          "task_7f7551b5"
-        ],
+        "judgeIds": ["task_7f7551b5"],
         "sourceCommit": "1f646d49f88f012e1fb29e8c561e7792d962c6b9",
         "state": "accepted-joined",
         "reason": "Intrinsic: the runner has identifiable fixture, provider, terminal, question, clean-return, drift-return, completion and final evidence phases. The new approval operation owns the two distinct public/source question snapshots q and remoteQ for their entire useful lifetime: provenance, client restart, identity/owner/version stability, Escape leaving the source ledger pending, and explicit terminal approval. They no longer remain incidental variables in the outer orchestration. The clean journey now visibly launches, waits for the persisted question, performs restart-and-answer, and separately observes safe return/jobs completion. assertServerChildWorktree isolates destination checkout and child-result evidence without moving its execution point. restartParent owns the actual client teardown, ptyStarted transition, delay, relaunch, readiness and caller-selected settling for both reconnects; it neither reconnects the server nor duplicates scenario assertions. This is coherent lifetime grouping rather than rename-only change or a context-bag framework. Unchanged decision: retain the direct drift-review, descriptor, completion-journal, probe and final evidence sequences; those express separate ordered contracts clearly and do not need forced abstractions."
@@ -146,9 +132,7 @@
         "acceptedBlob": "cf4ce7432215744ebfd4cbb11cac89a421716854",
         "primaryId": "task_1bad7144",
         "primaryCommit": "9c449135513eeb5e5cfa8f20e0371d0fe03abf9f",
-        "judgeIds": [
-          "task_2fd31271"
-        ],
+        "judgeIds": ["task_2fd31271"],
         "sourceCommit": "9c449135513eeb5e5cfa8f20e0371d0fe03abf9f",
         "state": "accepted-joined",
         "reason": "Compared the actual candidate with primary base c7a21355e87abe213aeb2b2b3ef06456a17b56e1, which is also its direct parent. Previously the provider was acquired near the globals and live during top-level repository preparation, well before the try/finally. The candidate declares helpers first, then visibly pairs returned-provider acquisition with try/finally. Its first protected operation, prepareLaunchRepository, coherently owns directory creation, fixture content, Git initialization/add/commit assertions and the HOME-not-repository assertion. This is a meaningful lifetime boundary, not merely a renamed block: preparation failures now flow into existing teardown. No framework, shared context bag or exported helper is introduced. Unchanged decision: retain the chronological PTY assertion journey and its local navigation/evidence helpers; that order explains actual interactions, stale snapshots, cancellation and offline observations without needing another orchestration abstraction."
@@ -165,9 +149,7 @@
         "acceptedBlob": "379a52fc59755bd7eddfaa2f9d00c35ac3d2adcb",
         "primaryId": "task_927bcc06",
         "primaryCommit": "688dd7ab7c441ea13f4a248c4044a1a7455f6be5",
-        "judgeIds": [
-          "task_7d28ea98"
-        ],
+        "judgeIds": ["task_7d28ea98"],
         "sourceCommit": "688dd7ab7c441ea13f4a248c4044a1a7455f6be5",
         "state": "accepted-joined",
         "reason": "The base already keeps each scenario contiguous, so extraction alone is not proof of improvement. Actual candidate reading nevertheless gains a useful orchestration boundary: the final try now exposes connect -> launch identity proof -> answer identity proof -> session ownership proof -> shared finally without requiring the reader to scan the long assertion sequence to find its phases. Each operation has a complete semantic journey, not an arbitrary chunk: accepted taskId and owner PID/startTime survive a dropped launch response and retry; accepted replyId/answer survive response loss, sync and same-answer retry; original/new session files survive /new, external answer and /resume while pane, scrollback and journal assertions check non-adoption. Local identities no longer visually span the other proofs. The RPC-lifetime comment explains the otherwise non-obvious cross-session sender dependency. I considered NO CHANGE NEEDED because the original bodies were already readable; ACCEPT is warranted for the newly explicit scenario/lifetime overview, not for renaming or test counts. Unchanged decision: retain the direct fixture setup, transport/state helpers and shared cleanup; no context bag, additional framework, unrelated edits or additional extraction is needed."
@@ -184,9 +166,7 @@
         "acceptedBlob": "4f665e1e6ff707ec44e8f33e6180f8d6bd178367",
         "primaryId": "task_4c34a8a9",
         "primaryCommit": "75b23bf68ac8c0a7ef5a35b07d28f53b8cb65222",
-        "judgeIds": [
-          "task_b27cf32c"
-        ],
+        "judgeIds": ["task_b27cf32c"],
         "sourceCommit": "75b23bf68ac8c0a7ef5a35b07d28f53b8cb65222",
         "state": "accepted-joined",
         "reason": "Compared actual candidate Git source against primary base acb7cba8b7f38ccc4b364e3c86011e6ff948e7f7, which is also its direct parent; the sole changed source path is the focus. The base interleaved two distinct lifetimes in the fault-root orchestration. Candidate lines 253-300 make uncertain prompt delivery one readable operation: persisted unknown receipt, captured evidence, detach, release of the reply-loss gate, same-root reattach, same command identity completed, status/no-resend/work-once evidence, and no active-source outcome. Lines 303-354 give cancellation its own complete lifetime: background job identity, observed live process, ordinary picker inspection, human Cancel plus confirmation, completed stop receipt, independently observed process disappearance, authoritative terminal inspection, and a still-running root without source return. Each returns its actual evidence ID, not a context bag. Lines 578-605 now visibly prepare the third root, order recovery then cancellation, detach without close, check unchanged local diff, and publish both IDs. This is a coherent structural extraction rather than rename-only cleanup. Unchanged decision: keep the existing harness/transport, evidence assertions, clean/drift scenario, unsupported-mode rejection and receipt publication boundaries as they are; their distinct authorities are already explicit and this candidate need not widen into them."
@@ -233,10 +213,7 @@
         "acceptedBlob": "f18a61b58ae574fc9b8e7eb0ecccceecf3603de7",
         "primaryId": "task_f826530f",
         "primaryCommit": "4692a8e499f837c736f9053cb95e0dd2baf2776d",
-        "judgeIds": [
-          "task_8e2a9b7a",
-          "task_7f35b9db"
-        ],
+        "judgeIds": ["task_8e2a9b7a", "task_7f35b9db"],
         "sourceCommit": "4692a8e499f837c736f9053cb95e0dd2baf2776d",
         "state": "accepted-joined",
         "reason": "The primary base mixes ordinary delegation, expert diagnostics and eventual root-session scope in consecutive prose. This candidate reorganizes the document around three different user intents and their actual authorities. Authorization, source pinning, owning-parent observation, root attachment and repository return each have their own coherent sequence. The command/effect tables distinguish abort, close and detach rather than merely renaming headings. The implementation map supplies caller-to-owner reading paths; the separate bounds section no longer interrupts the ordinary launch journey. The additional length buys explicit ownership and outcome distinctions, not a shared context bag or cosmetic cleanup."
@@ -265,9 +242,7 @@
       },
       "launchBase": "434f845b0084f093fc425e7e5d32e0222836aa77",
       "result": "Catalog validated before file work; syncArtifactFile owns cached digest reuse or download/verification/atomic replacement; manifest incremental progress and completion remain in orchestration.",
-      "changedRelatedPaths": [
-        "tests/remote-artifacts.test.ts"
-      ],
+      "changedRelatedPaths": ["tests/remote-artifacts.test.ts"],
       "checks": "Baseline/candidate extended suite 7 pass/64 assertions; format/diff pass, lint unchanged diagnostics.",
       "acceptedBlob": "9423a07b44ad7df48ce6d3b29fc2b228c8cddaad",
       "integrationState": "accepted patch including related test, no overlap",
@@ -276,9 +251,7 @@
         "acceptedBlob": "9423a07b44ad7df48ce6d3b29fc2b228c8cddaad",
         "primaryId": "task_8d554dba",
         "primaryCommit": "12a09d8f8c05398cbbbe80b10ae8e2f82837e914",
-        "judgeIds": [
-          "task_4b41ba14"
-        ],
+        "judgeIds": ["task_4b41ba14"],
         "sourceCommit": "12a09d8f8c05398cbbbe80b10ae8e2f82837e914",
         "state": "accepted-exact-joined",
         "reason": "File cache verification/download/atomic replacement now separate from incomplete manifest/progress/completion orchestration; all protocol and identity checks retained."
@@ -305,9 +278,7 @@
         "branch": "bruv/remote-primary-cancellation-3ca50561",
         "commit": "8677e1f44ec5d15c40fdc7af724648e03a29f224"
       },
-      "changedRelatedPaths": [
-        "tests/remote-cancellation.test.ts"
-      ],
+      "changedRelatedPaths": ["tests/remote-cancellation.test.ts"],
       "result": "Timed request, complete output-capturing scan and bounded settlement wait separated; handler exposes cancellation request/foreground abort/host settlement/report publication.",
       "checks": "14 pass/59 assertions; new contract tests pass baseline, Biome/diff pass.",
       "acceptedBlob": "17cd66cb16a8a3b5af3dd90b50bf86f7fd522d62",
@@ -317,9 +288,7 @@
         "acceptedBlob": "17cd66cb16a8a3b5af3dd90b50bf86f7fd522d62",
         "primaryId": "task_3ca50561",
         "primaryCommit": "8677e1f44ec5d15c40fdc7af724648e03a29f224",
-        "judgeIds": [
-          "task_bac9b4e3"
-        ],
+        "judgeIds": ["task_bac9b4e3"],
         "sourceCommit": "8677e1f44ec5d15c40fdc7af724648e03a29f224",
         "state": "accepted-exact-joined",
         "reason": "Timed request, complete output-capturing scan and bounded settlement wait now own separate lifetimes; handler shows request/abort/inspection/publication. Checkpoint remains distinct from owner-confirmed child exit."
@@ -356,9 +325,7 @@
         "acceptedBlob": "c5669679c832b8fb3896ca6e9e33d5099f0842b2",
         "primaryId": "task_2e4d80de",
         "primaryCommit": "28fd359f161e2c5b5773ed16102fa55e8664b4a5",
-        "judgeIds": [
-          "task_3469e5e5"
-        ],
+        "judgeIds": ["task_3469e5e5"],
         "sourceCommit": "28fd359f161e2c5b5773ed16102fa55e8664b4a5",
         "state": "accepted-exact-joined",
         "reason": "Single bounded-read operation: filesystem confinement separated from caller permission, descriptor immediately try/finally owned, reply persistence/replay/cancellation separated."
@@ -396,9 +363,7 @@
         }
       },
       "result": "persistIntent owns exact replay/changed intent conflict; persistMarker first-record-wins; admission result chain replaces deferred gate/manual release.",
-      "changedRelatedPaths": [
-        "tests/remote-capability-runtime.test.ts"
-      ],
+      "changedRelatedPaths": ["tests/remote-capability-runtime.test.ts"],
       "checks": "12 pass/146 assertions; added tests pass baseline; format/lint/diff pass.",
       "reworks": [
         {
@@ -422,9 +387,7 @@
         "acceptedBlob": "4bbb64ff4d098157cd34868561e286c8292abfe8",
         "primaryId": "task_efc7153f",
         "primaryCommit": "52dbf0a027436b6cfd3760551cc1fc60924d9d3f",
-        "judgeIds": [
-          "task_f6ad3799"
-        ],
+        "judgeIds": ["task_f6ad3799"],
         "sourceCommit": "33088eba8459d07a139130e3fe1b5166fb92e6d2",
         "state": "accepted-exact-joined",
         "reason": "Intent replay/conflict versus first-marker publication explicit. Admission chain follows actual operation result, rejection-neutral tail and identity cleanup retain progress and do not serialize reply wait."
@@ -461,9 +424,7 @@
         }
       },
       "result": "sync exposes fetch/page acceptance/durable save inside lock then servicing outside; acceptTranscriptPage owns validation-before-mutation and snapshot/receipt reconciliation.",
-      "changedRelatedPaths": [
-        "tests/remote-client.test.ts"
-      ],
+      "changedRelatedPaths": ["tests/remote-client.test.ts"],
       "checks": "100 pass/1439 assertions across 6 suites; two added checks pass baseline; format/lint/diff pass, inherited import check errors.",
       "acceptedBlob": "f67a509e62c355e55eb5f2abacf9ad06b2488666",
       "integrationState": "accepted source+test patch applied without overlap",
@@ -472,9 +433,7 @@
         "acceptedBlob": "f67a509e62c355e55eb5f2abacf9ad06b2488666",
         "primaryId": "task_6f52d2e9",
         "primaryCommit": "4b540816a639f8af3043785e355ea253b43b4dac",
-        "judgeIds": [
-          "task_f7fa308f"
-        ],
+        "judgeIds": ["task_f7fa308f"],
         "sourceCommit": "4b540816a639f8af3043785e355ea253b43b4dac",
         "state": "accepted-exact-joined",
         "reason": "sync exposes full locked fetch/accept/save lifetime then releases before service integrations; whole-page validation/terminal preservation/reply reconciliation coherently owned by acceptTranscriptPage."
@@ -511,9 +470,7 @@
         "acceptedBlob": "480530ef23018ee846026752d20de8187ccef116",
         "primaryId": "task_04354ffc",
         "primaryCommit": "a1f6a91076462efde4e2601c403c27a92b9f9e23",
-        "judgeIds": [
-          "task_5747a210"
-        ],
+        "judgeIds": ["task_5747a210"],
         "sourceCommit": "a1f6a91076462efde4e2601c403c27a92b9f9e23",
         "state": "accepted-exact-joined",
         "reason": "Private staging descriptor and parent-directory descriptor have explicit try/finally lifetimes; write/fsync/rename/directory fsync publication order visible, caller intent authority remains separate."
@@ -550,9 +507,7 @@
         "acceptedBlob": "0b91d537ef578345eb58938f014f1f7e7d05c2e5",
         "primaryId": "task_03f678fa",
         "primaryCommit": "e9674b1b8468e74288f6ae2dabe297d2d752e13e",
-        "judgeIds": [
-          "task_1a846ca2"
-        ],
+        "judgeIds": ["task_1a846ca2"],
         "sourceCommit": "e9674b1b8468e74288f6ae2dabe297d2d752e13e",
         "state": "accepted-exact-joined",
         "reason": "Single bounded stdin→parse/ownership validation→await owner→encode→await stdout flush path; transport errors distinct from owner identity/replay/execution authority."
@@ -582,18 +537,13 @@
       "workerResponse": "Candidate committed; **pending independent judgment**.\n\n- Base: `d37b6be992205ef995555d9156f1cadf0899cda7`\n- Candidate: `096b0168e4ab31641d2ffa5462510a6f151507a0`\n- Branch: `bruv/remote-primary-extension-e6af1dbe`\n- Clean worktree; no push/PR.\n\n**Changed paths**\n- `src/remote/extension.ts`\n- `tests/remote-extension.test.ts`\n- `tests/remote-session-switch.test.ts`\n- `wisdom/quality/structural-readability-worker.md`\n\n**Before → after**\n- Startup previously rewired independently mutable context/file/UI/generation/history/timer fields. Each observation now owns one session’s publication lifetime, history, timer and picker effects.\n- Polling still serializes shared cache I/O, but captures its observation owner. Closing that owner fences late publication; draining old I/O requests the replacement observation.\n- A held session-A picker previously gave session B a “menu snapshot” footer, then cleared B’s status. Its cleanup now belongs only to A.\n\nOwned jobs/questions and legacy attention retain their separate routes. Human permission, reply/replay identity and pinned cancellation checks remain intact.\n\n**Proof**\n- 86 focused tests passed; 1,287 assertions.\n- Baseline: 39 passed, one expected regression failure, showing B’s stale banner followed by `undefined`.\n- Scoped strict TypeScript and formatting passed; lint exited successfully with warnings.\n- Existing menu assertions retained, driven through the interval callback.\n\nNo edits to active operations/menu worker files or pending human-rendering/bridge contributions. Related tests remain pending dedicated coverage. No full-gate, live-SSH or compiled-CLI claim. Values unchanged; existing ownership/proof values cover the lesson.",
       "acceptedBlob": "8e159095769935a38f0d9cb5babb827009de4295",
       "integrationState": "exact full source/two-related-test patch applied; combined current recheck launched",
-      "changedRelatedPaths": [
-        "tests/remote-extension.test.ts",
-        "tests/remote-session-switch.test.ts"
-      ],
+      "changedRelatedPaths": ["tests/remote-extension.test.ts", "tests/remote-session-switch.test.ts"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "8e159095769935a38f0d9cb5babb827009de4295",
         "primaryId": "task_e6af1dbe",
         "primaryCommit": "096b0168e4ab31641d2ffa5462510a6f151507a0",
-        "judgeIds": [
-          "task_63a628f1"
-        ],
+        "judgeIds": ["task_63a628f1"],
         "sourceCommit": "096b0168e4ab31641d2ffa5462510a6f151507a0",
         "state": "accepted-exact-not-joined",
         "reason": "Observation owns real session history/poll publication/timer/footer lifetime, shared IO serializes separately; closing fences stale IO and picker cleanup. Observed A-picker clearing B status regression fixed through lifetime ownership; permission/reply/cancel authority unchanged."
@@ -623,17 +573,13 @@
       "workerResponse": "Committed candidate for independent judgment.\n\n- **Base:** `a7830f7d2541164f5170e2323a3e621e5de1f35d`\n- **Candidate:** `f8ea2a7905704611e8be3a049299c28e652fdbcc`\n- **Branch:** `bruv/remote-primary-human-rendering-3a4c1736`\n\n**Changed paths**\n- `src/remote/human-rendering.ts`\n- `tests/remote-human-rendering.test.ts`\n- `wisdom/quality/structural-readability-worker.md`\n\n**Concrete before → after**\n- Tool events repeatedly interpreted their kind to select labels, payloads, body formatting and metadata. Dispatch now visibly selects arguments/result/partialResult once; `toolResultRow` owns result-content and metadata rendering.\n- Lifecycle envelopes fabricated `message_end` events and recursively entered event dispatch. They now render messages directly through `messageRow`, retaining row identity and unfamiliar-envelope fallback.\n\nTraced the shipped extension → cached transcript page → renderer path. Permission receipts, answer/grant ownership, cancellation/delivery semantics, raw rendering and attention replay remain unchanged.\n\n**Proof:** Existing baseline: 49 tests passed. New exact-output checks passed before refactoring. Candidate: **51 passed, 0 failed, 1,162 assertions**. Formatting and diff checks passed; lint exited 0 with 20 warnings/70 infos.\n\n**Overlap:** Related renderer test is pending in `remote.json`, without active task IDs; coordinator reconciliation needed. No extension/menu edits.\n\nClean working tree; no push/PR. No full-build, live SSH or PTY claim. Values unchanged; focused worker note recorded.",
       "acceptedBlob": "8b014ef87a77115e1f8b665372741c6ccda116e0",
       "integrationState": "exact full source/related-test patch applied",
-      "changedRelatedPaths": [
-        "tests/remote-human-rendering.test.ts"
-      ],
+      "changedRelatedPaths": ["tests/remote-human-rendering.test.ts"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "8b014ef87a77115e1f8b665372741c6ccda116e0",
         "primaryId": "task_3a4c1736",
         "primaryCommit": "f8ea2a7905704611e8be3a049299c28e652fdbcc",
-        "judgeIds": [
-          "task_1cfa60a3"
-        ],
+        "judgeIds": ["task_1cfa60a3"],
         "sourceCommit": "f8ea2a7905704611e8be3a049299c28e652fdbcc",
         "state": "accepted-exact-joined",
         "reason": "Tool kind selects args/result/partial once; result content+metadata coherent, lifecycle envelopes render messages directly rather than fabricating recursive events; exact fallback/row/raw behavior preserved."
@@ -663,17 +609,13 @@
       "workerResponse": "Committed; clean tree. No push/PR.\n\n- **Base:** `a7830f7d2541164f5170e2323a3e621e5de1f35d`\n- **Candidate:** `66543af9dba1d12000377998018ee52126cc02ae`\n- **Branch:** `bruv/remote-primary-job-artifacts-b2c19617`\n\n**Changed paths**\n- `src/remote/job-artifacts.ts`\n- `tests/remote-job-artifacts.test.ts`\n- `wisdom/quality/structural-readability-worker.md`\n\n**Before → after:** A single batch loop mixed shared gap state, recoverable pagination failures, and fatal filesystem publication. Now each job’s read returns its text/gap, publication owns write→fsync→close→rename, and the batch visibly processes jobs serially while retaining the last gap. Inspection failure still publishes the captured prefix plus exact marker; disk failure still rejects before processing later jobs. Runtime/cancellation callers remain unchanged.\n\n**Proof:** Added regressions passed against original source. Candidate artifact/runtime/cancellation suites: **14 pass, 0 fail**; offline artifact consumer suite: **11 pass, 0 fail**. Formatting, lint, and diff checks passed; five inherited informational lint suggestions remain.\n\n**Overlap:** Related artifact tests are pending primary coverage in `remote.json`; no active primary is recorded there. Accepted caller areas were untouched.\n\nIndependent judgment remains required. No full build/typecheck or live SSH proof. Worker wisdom added; values unchanged.",
       "acceptedBlob": "3a6de6bdc028e1be29be5faa977d7c1fcf7502e7",
       "integrationState": "exact full source/related-test patch applied",
-      "changedRelatedPaths": [
-        "tests/remote-job-artifacts.test.ts"
-      ],
+      "changedRelatedPaths": ["tests/remote-job-artifacts.test.ts"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "3a6de6bdc028e1be29be5faa977d7c1fcf7502e7",
         "primaryId": "task_b2c19617",
         "primaryCommit": "66543af9dba1d12000377998018ee52126cc02ae",
-        "judgeIds": [
-          "task_1352e407"
-        ],
+        "judgeIds": ["task_1352e407"],
         "sourceCommit": "66543af9dba1d12000377998018ee52126cc02ae",
         "state": "accepted-exact-joined",
         "reason": "Per-job text/gap separates recoverable inspection from fatal publication; serial batch retains last gap, descriptor write/fsync/close/rename lifetime explicit. Runtime capture-before-checkpoint and cancellation contracts preserved."
@@ -710,9 +652,7 @@
         "acceptedBlob": "21d37bd7fca5f9bb0e75e7c99fac103008f4aba4",
         "primaryId": "task_e51c82ae",
         "primaryCommit": "2256c36c7187c528bfe8cf91ec835ad3c3fe5dbd",
-        "judgeIds": [
-          "task_2852e3a3"
-        ],
+        "judgeIds": ["task_2852e3a3"],
         "sourceCommit": "2256c36c7187c528bfe8cf91ec835ad3c3fe5dbd",
         "state": "accepted-exact-joined",
         "reason": "Coherent SQL durable enqueue/attention retirement, immediate claims, token-fenced delivery/failure, retry/replay operations; host acceptance distinct from task completion and end-to-end acknowledgment."
@@ -749,9 +689,7 @@
         "acceptedBlob": "38774795309a62bf685943a7784d348584f26504",
         "primaryId": "task_573d7ca9",
         "primaryCommit": "25dec5b190c514a8ee88c77092398896b85e1e9f",
-        "judgeIds": [
-          "task_af2942c6"
-        ],
+        "judgeIds": ["task_af2942c6"],
         "sourceCommit": "25dec5b190c514a8ee88c77092398896b85e1e9f",
         "state": "accepted-exact-joined",
         "reason": "Volatile identity/fence/dedup/store/notification belongs together; publication identity is not authorization, held source handles survive clearing, durable outbox remains separate."
@@ -786,9 +724,7 @@
         "acceptedBlob": "400739e5b9ed05b27483b7e6ecd1aa9f6ae11361",
         "primaryId": "task_f53ebeab",
         "primaryCommit": "b6b2dbe5eb292d0811bd004b8cef76253efb27c2",
-        "judgeIds": [
-          "task_c32ab4fa"
-        ],
+        "judgeIds": ["task_c32ab4fa"],
         "sourceCommit": "b6b2dbe5eb292d0811bd004b8cef76253efb27c2",
         "state": "accepted-exact-joined",
         "reason": "Terminal versus active projection selected at output sites rather than preparing/discarding both; coherent result/wait/decoding/bounding operations retain attribution and human authority."
@@ -817,9 +753,7 @@
       },
       "result": "prepareLaunchRequest resolves replay ownership/durable approval into explicit request; launch exposes approval gate, trusted dispatch, uncertain outcomes, ownership and raced cancellation.",
       "checks": "46 pass, 270 assertions; focused TS/Biome pass, 9 existing lint warnings; no full build/SSH/provider/CLI parity.",
-      "changedRelatedPaths": [
-        "tests/remote-source-approval.test.ts"
-      ],
+      "changedRelatedPaths": ["tests/remote-source-approval.test.ts"],
       "acceptedBlob": "44ce0a37abc61ef5d63f0e4a3f00b59915b74da0",
       "integrationState": "candidate patch applied with related test; exact index hashes verified",
       "resume": {
@@ -827,9 +761,7 @@
         "acceptedBlob": "44ce0a37abc61ef5d63f0e4a3f00b59915b74da0",
         "primaryId": "task_e65b0fab",
         "primaryCommit": "b13219c979026976ae9acf72a3248c8ad18a0138",
-        "judgeIds": [
-          "task_35f0c540"
-        ],
+        "judgeIds": ["task_35f0c540"],
         "sourceCommit": "b13219c979026976ae9acf72a3248c8ad18a0138",
         "state": "accepted-exact-joined",
         "reason": "Explicit resolved launch request removes mutable parameter/closure ownership reconstruction. Approval gate, allowlisted trusted snapshot, retained unknown dispatch and raced cancellation remain visible."
@@ -859,17 +791,13 @@
       "workerResponse": "Candidate committed; ready for independent judgment.\n\n- **Base:** `d37b6be992205ef995555d9156f1cadf0899cda7`\n- **Candidate:** `6057b48d0c40d0db58af7f067e01b9f6a31bfbec`\n- **Branch:** `bruv/remote-primary-menu-9d2cb15e`\n\n**Changed paths**\n- `src/remote/menu.ts`\n- `tests/remote-menu.test.ts`\n- `wisdom/quality/structural-readability-worker.md`\n\n**Before → after walkthrough**\n\nPreviously, nested array spreads mixed offline access, local revocation, uncertain-delivery reconciliation, and fresh-task cancellation. The caller’s `online` argument actually represented a pinned host/owner/epoch match.\n\nNow the action sequence visibly:\n1. Offers cached views and local capability revocation.\n2. Returns when the pinned owner is unavailable.\n3. Offers sync and saved-identity reconciliation—even after failed sync.\n4. Offers cancellation only for an error-free active task.\n\nThus a stale uncertain reply remains reconcilable without becoming a new question; a foreign owner connection permits only cached access and local revocation. Question routing and its unavailable description now share one decision.\n\nDispatch authority, session-generation guards, picker snapshots, replay identities, cancellation and delivery contracts remain unchanged. No incidental behavior fix.\n\n**Proof:** 71 tests passed, 0 failed, 1,232 assertions across menu, extension and client suites. Added checks also passed before source editing. Changed-file Biome checks and `git diff --check` pass; lint warnings remain.\n\nNo active operations/untracked-preview/human-rendering overlap; no extension edits. Clean worktree. No full build/live SSH claim, push or PR.",
       "acceptedBlob": "9bf68769d6fdee30d80c956d8ae4c003ce0f2a78",
       "integrationState": "exact full source/related-test patch applied",
-      "changedRelatedPaths": [
-        "tests/remote-menu.test.ts"
-      ],
+      "changedRelatedPaths": ["tests/remote-menu.test.ts"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "9bf68769d6fdee30d80c956d8ae4c003ce0f2a78",
         "primaryId": "task_9d2cb15e",
         "primaryCommit": "6057b48d0c40d0db58af7f067e01b9f6a31bfbec",
-        "judgeIds": [
-          "task_fed65650"
-        ],
+        "judgeIds": ["task_fed65650"],
         "sourceCommit": "6057b48d0c40d0db58af7f067e01b9f6a31bfbec",
         "state": "accepted-exact-not-joined",
         "reason": "Cached/local actions before pinned-owner gate, saved-identity reconciliation before freshness-only cancellation, one question availability decision drives routing/wording. Menu projection remains separate from dispatch authority."
@@ -906,9 +834,7 @@
         "acceptedBlob": "67cf54865eeee7c16e178470b9fcd076d0d41747",
         "primaryId": "task_7fa15931",
         "primaryCommit": "fb80b584e985cb6112a203ac0cee7b928a6d0c33",
-        "judgeIds": [
-          "task_2b542a5b"
-        ],
+        "judgeIds": ["task_2b542a5b"],
         "sourceCommit": "fb80b584e985cb6112a203ac0cee7b928a6d0c33",
         "state": "accepted-exact-joined",
         "reason": "Direct dispatcher leaves execute confirmation/publication, client durable intent and sync, service grant/mailbox lifetime with actual owners. Legacy launch refuses; transcript event-count bounded cached projection."
@@ -961,10 +887,7 @@
         "acceptedBlob": "a2f8ad4ef9089369dd4dc1e6beef10244ce378ef",
         "primaryId": "task_4e578c3e",
         "primaryCommit": "d9b1b50ea6e9eec12a9f7bfa43fd3ab70d5e239f",
-        "judgeIds": [
-          "task_3fe528f2",
-          "task_280ab6b7"
-        ],
+        "judgeIds": ["task_3fe528f2", "task_280ab6b7"],
         "sourceCommit": "d9b1b50ea6e9eec12a9f7bfa43fd3ab70d5e239f",
         "state": "accepted-exact-joined",
         "reason": "Close guard/error/escalation/nonrejecting cleanup promise encode necessary distinctions. Owner retains cancellation/settlement policy and terminal publication after child release/persistence drain."
@@ -1008,10 +931,7 @@
         "acceptedBlob": "982d5b8fce885d5bd81d2aa76e753caa1e3be5c2",
         "primaryId": "task_1d39197a",
         "primaryCommit": "3e1f4edbefd216d5b5a5d701d162610a9a3c1568",
-        "judgeIds": [
-          "task_ac4bfb3b",
-          "task_69fda549"
-        ],
+        "judgeIds": ["task_ac4bfb3b", "task_69fda549"],
         "sourceCommit": "3e1f4edbefd216d5b5a5d701d162610a9a3c1568",
         "state": "accepted-exact-joined",
         "reason": "Framer owns suffix/byte limit/newline lazy yield; child reader owns decoding/drain/finish and owner journal/publication remains separate. Inherited pilot not used as acceptance."
@@ -1049,9 +969,7 @@
       },
       "result": "OwnerEventJournal owns descriptor/sequence/replay guard/full writes/fsync; runner append failure stops child; release/drain/close order retained before terminal publication.",
       "checks": "56 pass/373 assertions across five suites; two new journal checks pass baseline; format/lint/diff pass warnings.",
-      "changedRelatedPaths": [
-        "tests/remote-owner-lifecycle.test.ts"
-      ],
+      "changedRelatedPaths": ["tests/remote-owner-lifecycle.test.ts"],
       "acceptedBlob": "9b79cdbf1fd65046575b469cc2017b1b3d75b747",
       "integrationState": "accepted source+related lifecycle tests applied; exact blobs",
       "resume": {
@@ -1059,9 +977,7 @@
         "acceptedBlob": "9b79cdbf1fd65046575b469cc2017b1b3d75b747",
         "primaryId": "task_d98e8afe",
         "primaryCommit": "c2fc7873a5df0e9b293dfe1ee88f943636086ef8",
-        "judgeIds": [
-          "task_b276db50"
-        ],
+        "judgeIds": ["task_b276db50"],
         "sourceCommit": "c2fc7873a5df0e9b293dfe1ee88f943636086ef8",
         "state": "accepted-exact-joined",
         "reason": "Journal descriptor/sequence/replay refusal/limits/full writes/fsync belong to one resource-owning operation; existing answer/native settlement/child boundaries need no churn. Combined cancellation/artifacts/client contracts inspected compatible."
@@ -1098,9 +1014,7 @@
         "acceptedBlob": "c27e168ec203a643ed30def19cf8edbfd53abb09",
         "primaryId": "task_abc863bb",
         "primaryCommit": "ffb65d9db1c2ab2923e11c0715f2bfd5840f4afe",
-        "judgeIds": [
-          "task_c7aba3df"
-        ],
+        "judgeIds": ["task_c7aba3df"],
         "sourceCommit": "ffb65d9db1c2ab2923e11c0715f2bfd5840f4afe",
         "state": "accepted-exact-joined",
         "reason": "Ordered stateless permission/workspace policy and explicit scrubbed child role/depth/native-fast; target/profile resolution and saved replay intent belong to callers."
@@ -1137,9 +1051,7 @@
         "acceptedBlob": "49a053687e54a3ce0085d5a4c0c6d40673aa77fc",
         "primaryId": "task_9e238598",
         "primaryCommit": "3ed25d6edf5adbbde51ee6169894bcd6d4636693",
-        "judgeIds": [
-          "task_31905010"
-        ],
+        "judgeIds": ["task_31905010"],
         "sourceCommit": "3ed25d6edf5adbbde51ee6169894bcd6d4636693",
         "state": "accepted-exact-joined",
         "reason": "Readable operation-specific wire contract preserves visible fences, reply owner/version/id, cancellation intent vs terminal, snapshot vs pages; aliases would add navigation."
@@ -1176,9 +1088,7 @@
         "acceptedBlob": "bdd08a0a376c20d71172ffd7c6b728e8301141e1",
         "primaryId": "task_2ff5dd20",
         "primaryCommit": "4fdf931cc855a1cef5e5e56aa75ce044af8a865e",
-        "judgeIds": [
-          "task_7e7ebdea"
-        ],
+        "judgeIds": ["task_7e7ebdea"],
         "sourceCommit": "4fdf931cc855a1cef5e5e56aa75ce044af8a865e",
         "state": "accepted-exact-joined",
         "reason": "Admission → task-scoped projection → receipt reconciliation with initial versus fresh snapshots preserved; pinned authority and claim-before-send unchanged."
@@ -1215,9 +1125,7 @@
         "acceptedBlob": "c03eb8b1827d8f1c9f58449966dd0b4c1b1c0f0a",
         "primaryId": "task_1f1c3409",
         "primaryCommit": "a2692e801884e7deda5ceda42a55f310ee1e71bd",
-        "judgeIds": [
-          "task_0dc615f7"
-        ],
+        "judgeIds": ["task_0dc615f7"],
         "sourceCommit": "a2692e801884e7deda5ceda42a55f310ee1e71bd",
         "state": "accepted-exact-joined",
         "reason": "One coherent bounded page download/identity validation and final digest verification; caller owns terminal approval, pinned request, patch persistence, repository lock and integration."
@@ -1264,9 +1172,7 @@
         "acceptedBlob": "64475e6cd3a0b363dfcdcdcb9ea936e83082d6f7",
         "primaryId": "task_b4da79f3",
         "primaryCommit": "755b63c0fbed29dfb20f4236e39c3387b108761e",
-        "judgeIds": [
-          "task_6ea69bdc"
-        ],
+        "judgeIds": ["task_6ea69bdc"],
         "sourceCommit": "755b63c0fbed29dfb20f4236e39c3387b108761e",
         "state": "accepted-exact-joined",
         "reason": "Upload receipt/replay/persistence/ready separate from digest/destructive checkout construction; launch obtains immutable handoff before upload/dispatch, return fences unchanged."
@@ -1325,9 +1231,7 @@
         "acceptedBlob": "88b0c7fd48b6844e2c25cb3853465a0d65c5b9c3",
         "primaryId": "task_91f9307a",
         "primaryCommit": "56906c4565e6a2a0b667e105b8d8cb613bf5e414",
-        "judgeIds": [
-          "task_944616f9"
-        ],
+        "judgeIds": ["task_944616f9"],
         "sourceCommit": "56906c4565e6a2a0b667e105b8d8cb613bf5e414",
         "state": "accepted-exact-joined",
         "reason": "History-free snapshot construction now owns patch/copy/tree validation/orphan HEAD; capture retains authorization/provenance/stability/publication. Collection/integration remain coherent."
@@ -1364,9 +1268,7 @@
         "acceptedBlob": "5c1ea1bcf7042888c9c1e340fb3ab1e79579b64f",
         "primaryId": "task_6ad5ae14",
         "primaryCommit": "1c67ef0ec81cdb06459c430d835a498e53a7d941",
-        "judgeIds": [
-          "task_a832a816"
-        ],
+        "judgeIds": ["task_a832a816"],
         "sourceCommit": "1c67ef0ec81cdb06459c430d835a498e53a7d941",
         "state": "accepted-exact-joined",
         "reason": "Visible sequential authority/target/open/source/create/present orchestration delegates replay and modal/poll lifetimes to actual owners; extraction would hide simple path."
@@ -1412,9 +1314,7 @@
           "reason": "Summary regex matched introductory candidate word then Base hash. Corrected from retained committed worktree HEAD; source accepted hashes always recorded independently from judge."
         }
       },
-      "changedRelatedPaths": [
-        "tests/remote-root-client.test.ts"
-      ],
+      "changedRelatedPaths": ["tests/remote-root-client.test.ts"],
       "result": "withState centralizes lock/read; source upload separated. Startup one-lock consolidation changed observable concurrent command order, requiring preservation rework.",
       "checks": "Worker 60 pass/364 assertions; independent client/store/transport 17 pass/135; concurrency change reproduced by judge.",
       "integrationState": "only ordering-preserving rework applied, original changed-order candidate never joined",
@@ -1435,10 +1335,7 @@
         "acceptedBlob": "7670632c58bcccd97dad7f5e49e654f4eb79a4c0",
         "primaryId": "task_a812b85a",
         "primaryCommit": "f1ecb41079440ac99349f7607d318bdeb99ea5a3",
-        "judgeIds": [
-          "task_86eaaad6",
-          "task_b04a86e2"
-        ],
+        "judgeIds": ["task_86eaaad6", "task_b04a86e2"],
         "sourceCommit": "613bf20cad676a4e38ad99c2b8cc5b8c8167c11f",
         "state": "accepted-exact-joined",
         "reason": "Locked fresh-state acquisition and pinned upload are coherent, durable writes visible. Startup explicitly reserves then admits in separate lock turns; independent probes confirm original abort→prompt ordering, status-only recovery and no resend."
@@ -1475,9 +1372,7 @@
         "acceptedBlob": "e9aceffe5f97333dfc828000fd59b40bab8fadee",
         "primaryId": "task_d0eb6d5d",
         "primaryCommit": "c969abd66d3d13f2fb98415f3cd87d81470d6ad6",
-        "judgeIds": [
-          "task_473ab1c5"
-        ],
+        "judgeIds": ["task_473ab1c5"],
         "sourceCommit": "c969abd66d3d13f2fb98415f3cd87d81470d6ad6",
         "state": "accepted-exact-joined",
         "reason": "Pinned creation authority, command receipt versus session settlement, detach versus abort/close, sequenced observations and successful-closure data return are distinct discoverable protocol concepts."
@@ -1514,9 +1409,7 @@
         "acceptedBlob": "727f150cfcf105e5faef09c6af419393f71f931d",
         "primaryId": "task_717a7437",
         "primaryCommit": "bec424285135d23fe400d6c3e03142c99176bf75",
-        "judgeIds": [
-          "task_b0d1026c"
-        ],
+        "judgeIds": ["task_b0d1026c"],
         "sourceCommit": "bec424285135d23fe400d6c3e03142c99176bf75",
         "state": "accepted-exact-joined",
         "reason": "Bounded one-request/await semantic owner/encode failures/await stdout sequence is coherent; response-delivery rejection outside catch ensures no second false response and nonzero exit."
@@ -1544,9 +1437,7 @@
         "commit": "ac44370fe3f3fb7de540fbb598cb1a0e77abcfe8"
       },
       "workerResponse": "Candidate ready for independent judgment.\n\n- Base: `8f9797abb9b4bbf6e443740368321320aacade21`\n- Candidate: `ac44370fe3f3fb7de540fbb598cb1a0e77abcfe8`\n- Branch: `bruv/remote-primary-root-options-59933a23`\n\nChanged paths:\n- `src/remote/root-options.ts`\n- `tests/root-placement-options.test.ts`\n- `wisdom/quality/structural-readability-worker.md`\n\n**Before:** Named startup required joining boolean dispatch, a value-option whitelist, shared consumption and a separate effect chain. `--place` was consumed without an effect branch.\n\n**After:** One switch shows each accepted flag’s consumption and effect. For `--offline --place builder --remote-source /repo --remote-include new`, the reader follows explicit offline, placement, source and include cases. Shared value validation retains singleton-duplicate rejection and repeatable includes. Local pass-through and source-choice exclusion remain unchanged.\n\n**Proof:** 18 focused tests passed, 88 assertions. Expanded parser tests also passed against the base: 7 tests, 26 assertions. Formatting and diff checks passed; existing lint diagnostics remain.\n\nNo active overlap found in the ledger. Authorization/replay/cancellation/persistence owners untouched. No full build, live-provider or authenticated-SSH proof. Clean worktree; no push or PR.",
-      "changedRelatedPaths": [
-        "tests/root-placement-options.test.ts"
-      ],
+      "changedRelatedPaths": ["tests/root-placement-options.test.ts"],
       "acceptedBlob": "60f9e73e5dab10306beb9240f26ee1479582cb49",
       "integrationState": "exact accepted full source/related-test patch applied",
       "resume": {
@@ -1554,9 +1445,7 @@
         "acceptedBlob": "60f9e73e5dab10306beb9240f26ee1479582cb49",
         "primaryId": "task_59933a23",
         "primaryCommit": "ac44370fe3f3fb7de540fbb598cb1a0e77abcfe8",
-        "judgeIds": [
-          "task_d1dd2209"
-        ],
+        "judgeIds": ["task_d1dd2209"],
         "sourceCommit": "ac44370fe3f3fb7de540fbb598cb1a0e77abcfe8",
         "state": "accepted-exact-joined",
         "reason": "One switch co-locates flag consumption/effect; shared singleton/value validation and repeatable includes retain parser semantics. --place assignment repeats already-selected value, not feature fix."
@@ -1592,9 +1481,7 @@
           "reason": "Summary regex matched introductory candidate word then Base hash. Corrected from retained committed worktree HEAD; source accepted hashes always recorded independently from judge."
         }
       },
-      "changedRelatedPaths": [
-        "tests/root-owner.test.ts"
-      ],
+      "changedRelatedPaths": ["tests/root-owner.test.ts"],
       "result": "requestClose owns admission fencing/queue clearing/settlement/end with pending-close evidence; exit requires settled evidence/clean exit/nonunknown before closure publication; unread in-flight promise set removed preserving concurrency.",
       "checks": "58 pass/347 assertions; regressions pass baseline; focused strict TS/format/diff pass, lint existing diagnostics.",
       "acceptedBlob": "0f0e9fcee2856618b80a033f436397c52f3356e9",
@@ -1604,9 +1491,7 @@
         "acceptedBlob": "0f0e9fcee2856618b80a033f436397c52f3356e9",
         "primaryId": "task_79081a53",
         "primaryCommit": "770c112fcdd39d6ed3a9a43f593209e5218ac43f",
-        "judgeIds": [
-          "task_e77399ef"
-        ],
+        "judgeIds": ["task_e77399ef"],
         "sourceCommit": "770c112fcdd39d6ed3a9a43f593209e5218ac43f",
         "state": "accepted-exact-joined",
         "reason": "Close operation groups durable admission fence/queue clear/settlement/pending evidence/end; exit requires clean process result and nonunknown state before closure publication. Concurrent prompt/abort retained, unused tracking removed."
@@ -1644,9 +1529,7 @@
       },
       "acceptedBlob": "98c70fb74f5e40d6f281463a75d4c0106240c860",
       "integrationState": "accepted source+related test patch applied without overlap",
-      "changedRelatedPaths": [
-        "tests/remote-root-presenter.test.ts"
-      ],
+      "changedRelatedPaths": ["tests/remote-root-presenter.test.ts"],
       "result": "One local showModal lifetime and paired active handle replace separate picker/editor settlement and modal/cancel state.",
       "checks": "Worker 34 pass/181 assertions; new shipped-flow subset passed baseline; format/lint/diff pass.",
       "resume": {
@@ -1654,9 +1537,7 @@
         "acceptedBlob": "98c70fb74f5e40d6f281463a75d4c0106240c860",
         "primaryId": "task_790d1377",
         "primaryCommit": "f8ba5c9248fdd3a9d048e926a1cfb6e8b70a1696",
-        "judgeIds": [
-          "task_29eea7cb"
-        ],
+        "judgeIds": ["task_29eea7cb"],
         "sourceCommit": "f8ba5c9248fdd3a9d048e926a1cfb6e8b70a1696",
         "state": "accepted-exact-joined",
         "reason": "showModal owns mount/settle/focus/render and paired component/cancel lifetime; question/editor builders own interaction only. Local cancellation separate from server ui.respond, detach closes before cancel."
@@ -1693,9 +1574,7 @@
         "acceptedBlob": "c10a7a7c45510373e30d9d2385045f9fad23fa93",
         "primaryId": "task_05879739",
         "primaryCommit": "216602412f172476fa0e2946fa1f26cb5f9aa418",
-        "judgeIds": [
-          "task_a90ee127"
-        ],
+        "judgeIds": ["task_a90ee127"],
         "sourceCommit": "216602412f172476fa0e2946fa1f26cb5f9aa418",
         "state": "accepted-exact-joined",
         "reason": "Shared session context and serial ordering distinct from per-connection framing; question service owns answer replay, runtime owns continuation; close settlement distinct from owner exit; acknowledged rejection distinct from unknown delivery."
@@ -1732,9 +1611,7 @@
         }
       },
       "result": "SQLite selects oldest queued receipt, transactional unresolved settlement, explicit durable dialog transition/sequence/event/bounded journal suffix.",
-      "changedRelatedPaths": [
-        "tests/root-store.test.ts"
-      ],
+      "changedRelatedPaths": ["tests/root-store.test.ts"],
       "checks": "53 pass/302 assertions; seven new tests pass unchanged baseline; focused strict TS/format/diff pass.",
       "acceptedBlob": "109babbf1e78a7575570000e6dd8a7181bbb67ca",
       "integrationState": "accepted full patch applied without overlap",
@@ -1743,9 +1620,7 @@
         "acceptedBlob": "109babbf1e78a7575570000e6dd8a7181bbb67ca",
         "primaryId": "task_15f8e7d9",
         "primaryCommit": "c5912090ccf01564ea7e43556ca6210da9734b58",
-        "judgeIds": [
-          "task_ab8da392"
-        ],
+        "judgeIds": ["task_ab8da392"],
         "sourceCommit": "c5912090ccf01564ea7e43556ca6210da9734b58",
         "state": "accepted-exact-joined",
         "reason": "Database directly selects queued commands and settles unresolved receipts; append separates durable dialog lifetime from sequence/event/suffix retention. SQL adds reading cost but removes mutable pruning reconstruction."
@@ -1782,9 +1657,7 @@
         "acceptedBlob": "c73012514dbcb2efc3ca12d8198d777fc7892f96",
         "primaryId": "task_948b327d",
         "primaryCommit": "41f81273d6c43fb8cbf50fd114cff9ee9ee5119e",
-        "judgeIds": [
-          "task_8650ec09"
-        ],
+        "judgeIds": ["task_8650ec09"],
         "sourceCommit": "41f81273d6c43fb8cbf50fd114cff9ee9ee5119e",
         "state": "accepted-exact-joined",
         "reason": "Type boundary selects hidden root endpoint and delegates byte transport; client owns durable identity/status recovery, SSH owns invocation lifecycle. No hidden state/lifetime in adapter."
@@ -1816,17 +1689,13 @@
       "integrationState": "accepted whole source+runtime tests applied without overlap",
       "result": "captureNativeJobEvidence owns output-preserving scan before settlement assembly/publication; answer replay remains unchanged; shared existing durable writer owns descriptor sequence.",
       "checks": "Worker focused 20 pass/83, runtime+owner 4/81; added tests pass baseline; format/lint/diff pass.",
-      "changedRelatedPaths": [
-        "tests/remote-runtime.test.ts"
-      ],
+      "changedRelatedPaths": ["tests/remote-runtime.test.ts"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "87b03ef3cc853ca66bbc6edbf0b1b36de4ee2586",
         "primaryId": "task_8e982299",
         "primaryCommit": "edb1318b65ad68d88f987aa87785414787168991",
-        "judgeIds": [
-          "task_e1ab9585"
-        ],
+        "judgeIds": ["task_e1ab9585"],
         "sourceCommit": "edb1318b65ad68d88f987aa87785414787168991",
         "state": "accepted-exact-joined",
         "reason": "Complete output-preserving job scan owns pagination/liveness/gaps; handler visibly awaits evidence before checkpoint publication. Shared durable writer removes duplicate descriptor ownership with same flush/close/rename/directory fsync order."
@@ -1863,9 +1732,7 @@
         "acceptedBlob": "81dff39ca5ffff8d61eaffceb6535a946361e3e1",
         "primaryId": "task_c4d61278",
         "primaryCommit": "9635328b201c2f02a4d7b206a06eb3c74d677f86",
-        "judgeIds": [
-          "task_cf362947"
-        ],
+        "judgeIds": ["task_cf362947"],
         "sourceCommit": "9635328b201c2f02a4d7b206a06eb3c74d677f86",
         "state": "accepted-exact-joined",
         "reason": "Pure per-component sensitive path policy is explicit; capture/export and capability callers own refusal and independent grant/traversal checks."
@@ -1894,9 +1761,7 @@
       "launchBase": "9f121a62e78309f351d12e1ff4933a0cf72281e7",
       "result": "Capability delivery transaction owns identity/revocation/durable replay/delivery; collection remains orchestration. Child entry visibly records need/waits authority/removes need/executes.",
       "checks": "79 candidate tests pass; lifecycle tests pass baseline; format/lint/diff pass; no full/live.",
-      "changedRelatedPaths": [
-        "tests/remote-capability-runtime.test.ts"
-      ],
+      "changedRelatedPaths": ["tests/remote-capability-runtime.test.ts"],
       "acceptedBlob": "ac156252a9d73d6deb4963c78c7d14fe903ca8ca",
       "integrationState": "accepted source+related tests applied without overlap; active capability-runtime worker informed in launch brief",
       "resume": {
@@ -1904,9 +1769,7 @@
         "acceptedBlob": "ac156252a9d73d6deb4963c78c7d14fe903ca8ca",
         "primaryId": "task_4a268808",
         "primaryCommit": "d9db2f5f806ab216b77820ec25aa5cff4d7c2c26",
-        "judgeIds": [
-          "task_662f378f"
-        ],
+        "judgeIds": ["task_662f378f"],
         "sourceCommit": "d9db2f5f806ab216b77820ec25aa5cff4d7c2c26",
         "state": "accepted-exact-joined",
         "reason": "Capability identity/revocation/frozen reply/persistence/delivery is cohesive transaction before independent result collection; child entry exposes need creation, authority wait, need removal and mailbox execution."
@@ -1934,9 +1797,7 @@
         "commit": "a200ff7d130dc9b16f20666e011dc49c42f55e3a"
       },
       "result": "prepare exposes replay check, pinned source reuse, cancellation gate, missing question attachment and answer acceptance; each phase owns durable write with provenance/CLI reply checks at decision.",
-      "changedRelatedPaths": [
-        "tests/remote-source-approval.test.ts"
-      ],
+      "changedRelatedPaths": ["tests/remote-source-approval.test.ts"],
       "checks": "45 pass/267 assertions; format/diff/lint pass warnings; no full/live SSH.",
       "acceptedBlob": "304543857f2151ebf3168939ab7e9c74c0289f57",
       "integrationState": "accepted full patch applied from integrated jobs base; no overlap",
@@ -1945,9 +1806,7 @@
         "acceptedBlob": "304543857f2151ebf3168939ab7e9c74c0289f57",
         "primaryId": "task_fbe1ebfa",
         "primaryCommit": "a200ff7d130dc9b16f20666e011dc49c42f55e3a",
-        "judgeIds": [
-          "task_72f3d841"
-        ],
+        "judgeIds": ["task_72f3d841"],
         "sourceCommit": "a200ff7d130dc9b16f20666e011dc49c42f55e3a",
         "state": "accepted-exact-joined",
         "reason": "Pin persistence, question attachment and answer acceptance are coherent durable phases. Replay/provenance/authentic CLI reply/frozen decision/cancellation checks remain ordered and visible."
@@ -1984,9 +1843,7 @@
         "acceptedBlob": "1bff87d9d5b0de383721212b9dd03f5c4a6723d5",
         "primaryId": "task_0f525d7e",
         "primaryCommit": "43b4fcab51d1d04941d2549d3a466ae52f90c567",
-        "judgeIds": [
-          "task_bddb2d5c"
-        ],
+        "judgeIds": ["task_bddb2d5c"],
         "sourceCommit": "43b4fcab51d1d04941d2549d3a466ae52f90c567",
         "state": "accepted-exact-joined",
         "reason": "Single transaction shows hardened target/argv/environment, request framing, bounded output and limit-triggered TERM/KILL before close; callers retain identity/replay authority. Error handler rejects immediately, not universal close settlement."
@@ -2023,9 +1880,7 @@
         "acceptedBlob": "f38709acfcbd963f923a5966b59f8bae238a34a7",
         "primaryId": "task_5b649c22",
         "primaryCommit": "0f7f128e0b6e7f61f50ef39c1fcebb87e5800b42",
-        "judgeIds": [
-          "task_8878385c"
-        ],
+        "judgeIds": ["task_8878385c"],
         "sourceCommit": "0f7f128e0b6e7f61f50ef39c1fcebb87e5800b42",
         "state": "accepted-exact-joined",
         "reason": "Bounded Git inventory/overflow/read cancellation/exit observation/disclosure cohesive; complete-name versus count and incomplete-no-approvable-path rules visible, permission/capture separate."
@@ -2499,9 +2354,7 @@
         "acceptedBlob": "1d819e294b230a85d08adfc9a4e37e323169cf12",
         "primaryId": "task_5534811b",
         "primaryCommit": "1d9361ec50fc1a8e9e353000cab6111c7bb70a96",
-        "judgeIds": [
-          "task_2b562570"
-        ],
+        "judgeIds": ["task_2b562570"],
         "sourceCommit": "1d9361ec50fc1a8e9e353000cab6111c7bb70a96",
         "state": "accepted-exact-joined",
         "reason": "Separate owner/client rejection fixture lifetimes and page-offset mutation remove shared damage/repair/callback-counter reconstruction; coherent failure-progress-retry journey retained."
@@ -2537,9 +2390,7 @@
         "acceptedBlob": "701ed0dd3fc42525eee5c8d18ad00d347c9d8de7",
         "primaryId": "task_fdfb5c4d",
         "primaryCommit": null,
-        "judgeIds": [
-          "task_7f35b9db"
-        ],
+        "judgeIds": ["task_7f35b9db"],
         "sourceCommit": "d6cc065a4a03d1c1f0877d0f6b715a072678d23f",
         "state": "accepted-joined",
         "reason": "The base combines unrelated denial cases behind a global directory registry, afterEach and a repo helper that hides fixture contents. The candidate separates repository confinement from bounded UTF-8 regular-file reads. Each test visibly creates, uses and finally releases its own exact temporary root; setup stays beside the assertions that depend on it. Awaited individual rejection expressions make asynchronous observation finish before finally cleanup. Concrete errors describe the denied operation without making a reader decode a name loop. This is an ownership/lifetime and semantic grouping improvement, not more coverage as a verdict."
@@ -2589,9 +2440,7 @@
         "acceptedBlob": "bb79598d6c168ff5654a48adfe6d0ce57623ace8",
         "primaryId": "task_669bdb5e",
         "primaryCommit": "189f56e3a914e24dc04a6a795f4bc7a562498b98",
-        "judgeIds": [
-          "task_d83b6e0b"
-        ],
+        "judgeIds": ["task_d83b6e0b"],
         "sourceCommit": "189f56e3a914e24dc04a6a795f4bc7a562498b98",
         "state": "accepted-exact-joined",
         "reason": "Independent abort/deadline/revocation/terminal authority/request lifetimes prove intended fence rather than prior cancellation/revocation; frozen delivery oracle explicit; prior combined services/mailbox journeys retained."
@@ -2680,10 +2529,7 @@
         "acceptedBlob": "2439a5752941a42426a09c94e8d57c19ab97b792",
         "primaryId": "task_e6c82233",
         "primaryCommit": "e2e6c5d581e0f1e6408f174641eb69e452cab382",
-        "judgeIds": [
-          "task_43df06c7",
-          "task_45f4b422"
-        ],
+        "judgeIds": ["task_43df06c7", "task_45f4b422"],
         "sourceCommit": "4e396c2449478a2e089c79138bb2691ebdb0dbb1",
         "state": "accepted-exact-joined",
         "reason": "Actual pre-POST on-disk evidence and separate mutation/sync observations clarify durability; callback owns lock-probe child lifetime. Three fixture request assertions resolve every prior typing rejection without production Transport changes."
@@ -2720,9 +2566,7 @@
         "acceptedBlob": "0e3cac11755e9d99447cd9534fab27233c11c8c8",
         "primaryId": "task_910a2946",
         "primaryCommit": "ab55b1c089a743738e1fe046aa77add971102964",
-        "judgeIds": [
-          "task_51e54f55"
-        ],
+        "judgeIds": ["task_51e54f55"],
         "sourceCommit": "ab55b1c089a743738e1fe046aa77add971102964",
         "state": "accepted-exact-joined",
         "reason": "Direct local input/full output assertions separate descendant checkpoint removal from helper retention/root authority scrub; parent remains untouched, placement child role/depth separately owned."
@@ -2759,9 +2603,7 @@
         "acceptedBlob": "cfca9558c97cbd4602fd0a56f280cc54c550a584",
         "primaryId": "task_982447c4",
         "primaryCommit": "c7d5ba507585363d5746f420cd1d7599551b3f1d",
-        "judgeIds": [
-          "task_6c797669"
-        ],
+        "judgeIds": ["task_6c797669"],
         "sourceCommit": "c7d5ba507585363d5746f420cd1d7599551b3f1d",
         "state": "accepted-exact-joined",
         "reason": "Local spies/real call-through and fixture ownership expose write/flush/rename/directory order and prior JSON retention after injected write failure; no extraction needed."
@@ -2818,9 +2660,7 @@
         "acceptedBlob": "7e50a41c7e50a7427a569518127b07d5495a69e5",
         "primaryId": "task_8735b4f9",
         "primaryCommit": "a873b060bfca9dd8496ad7124f60f79f85ccc0b8",
-        "judgeIds": [
-          "task_94bacc30"
-        ],
+        "judgeIds": ["task_94bacc30"],
         "sourceCommit": "a873b060bfca9dd8496ad7124f60f79f85ccc0b8",
         "state": "accepted-exact-not-joined",
         "reason": "Mount owns actual registration/start/command/awaited disposal, reloads keep journal sharing separate, held picker released/joined before shutdown. All166 baseline assertion expressions retained plus2; real observation timers17→0."
@@ -2863,9 +2703,7 @@
         "acceptedBlob": "934fd9474f74760174321a58cd8433e7f153a446",
         "primaryId": "task_933c4fad",
         "primaryCommit": "4bb5612c8d98551e429ec502ad349278ea0a3695",
-        "judgeIds": [
-          "task_68a7048b"
-        ],
+        "judgeIds": ["task_68a7048b"],
         "sourceCommit": "4bb5612c8d98551e429ec502ad349278ea0a3695",
         "state": "accepted-exact-not-joined",
         "reason": "Event and independently literal expected row co-located, whole page header/order/IDs/whitespace/footer/raw preserved; no duplicate semantic formatter."
@@ -2906,9 +2744,7 @@
         "acceptedBlob": "ddf5627e13734cf75624b367c9f0ad1ee8f30578",
         "primaryId": "task_481ce7c4",
         "primaryCommit": "6257b1c0f9587f3b9d691067803d3528fbd11f0d",
-        "judgeIds": [
-          "task_cb1c250e"
-        ],
+        "judgeIds": ["task_cb1c250e"],
         "sourceCommit": "6257b1c0f9587f3b9d691067803d3528fbd11f0d",
         "state": "accepted-exact-not-joined",
         "reason": "Complete pagination independent of each retention signal, exact warning/initial cursor/tail without incomplete marker; all order/gap/permissions/prefix/page/UTF8/disk assertions retained, accurate staging-open title."
@@ -2943,9 +2779,7 @@
         "acceptedBlob": "84ddbfc71b55c348a76622fb6ce1dabc6ef17d47",
         "primaryId": "task_3f195746",
         "primaryCommit": "b44aec55ec5e50d6adc22a6023876b4370b51039",
-        "judgeIds": [
-          "task_bef6bb0e"
-        ],
+        "judgeIds": ["task_bef6bb0e"],
         "sourceCommit": "b44aec55ec5e50d6adc22a6023876b4370b51039",
         "state": "accepted-exact-not-joined",
         "reason": "Lexical connection scopes retain only durable envelope evidence across reopen; same blocked timestamp proves replay effect, real claim/fail/replay/claim/delivered operations and all lease/retry/attention assertions retained."
@@ -2988,9 +2822,7 @@
         "acceptedBlob": "24928f2d696e5e8a633127a6f60afec98289090c",
         "primaryId": "task_0e0a9a10",
         "primaryCommit": "1bbf7d18a2c366201dea50cb9bc84d6fc5c57e76",
-        "judgeIds": [
-          "task_158bd70e"
-        ],
+        "judgeIds": ["task_158bd70e"],
         "sourceCommit": "1bbf7d18a2c366201dea50cb9bc84d6fc5c57e76",
         "state": "accepted-exact-joined",
         "reason": "Projection bounds and persisted summary decoder have independent fixtures; malformed preview separate value eliminates unrelated fixture mutation, all28 assertion invocations retained."
@@ -3057,9 +2889,7 @@
         "acceptedBlob": "c471c6f5bda18fb011b3d472a82e818fe1256a1d",
         "primaryId": "task_c136c442",
         "primaryCommit": "a7d47c6c504cae28a076068309e6808eda64cfce",
-        "judgeIds": [
-          "task_b9aed0ec"
-        ],
+        "judgeIds": ["task_b9aed0ec"],
         "sourceCommit": "a7d47c6c504cae28a076068309e6808eda64cfce",
         "state": "accepted-exact-not-joined",
         "reason": "Scoped service setup/bridge/dispatcher and awaited manager shutdown, typed native pagination and traversal; temporal between-page launch stays explicit. Valid unsupported requests reach SSH denial instead of schema false positive."
@@ -3102,9 +2932,7 @@
         "acceptedBlob": "c1b63f8ebbb23ebcfe29e075d8a1895bad50420a",
         "primaryId": "task_545c3af2",
         "primaryCommit": "d04d417cb16f4c50cec20d44f0dc5477f949baf8",
-        "judgeIds": [
-          "task_1d505493"
-        ],
+        "judgeIds": ["task_1d505493"],
         "sourceCommit": "d04d417cb16f4c50cec20d44f0dc5477f949baf8",
         "state": "accepted-exact-not-joined",
         "reason": "Fresh typed local fixtures and literal action/question rows separate owner/freshness/local grants; saved→uncertain→failed-sync reply lifetime explicit; original checks retained/strengthened, duplicate local grant assertion consolidated."
@@ -3171,9 +2999,7 @@
         "acceptedBlob": "53027e2cc777c7fddfabe9b0420d1d134dab6130",
         "primaryId": "task_053c976a",
         "primaryCommit": "06949897bf648f505f3673d809e8726bc281962c",
-        "judgeIds": [
-          "task_52da150f"
-        ],
+        "judgeIds": ["task_52da150f"],
         "sourceCommit": "06949897bf648f505f3673d809e8726bc281962c",
         "state": "accepted-exact-joined",
         "reason": "task.run owns child start/exercise/gate release/final join before HOME cleanup; scripts expose settlement, stale-ledger reply and cancellation sequence; all 33 assertion statements retained."
@@ -3208,9 +3034,7 @@
         "acceptedBlob": "4a03e2e758cc4144c58c59d198c3361849db6e70",
         "primaryId": "task_10c579dd",
         "primaryCommit": "7659ac93329fe10991562a67bdd48b300a3095bb",
-        "judgeIds": [
-          "task_244509e5"
-        ],
+        "judgeIds": ["task_244509e5"],
         "sourceCommit": "7659ac93329fe10991562a67bdd48b300a3095bb",
         "state": "accepted-exact-not-joined",
         "reason": "Independent identity/profile/reply journeys, current PID/start claim fixture, joined live cancellation and gate-release/runner-close before HOME cleanup; all50 baseline assertion expressions retained plus3."
@@ -3289,10 +3113,7 @@
         "acceptedBlob": "13008d703348c30efa47f3d5687440e31f33f4b3",
         "primaryId": "task_bce19675",
         "primaryCommit": "99d9f3b8bb81688b6304ff4bf43fc8a5da0e33c5",
-        "judgeIds": [
-          "task_7e8aadb0",
-          "task_7f35b9db"
-        ],
+        "judgeIds": ["task_7e8aadb0", "task_7f35b9db"],
         "sourceCommit": "99d9f3b8bb81688b6304ff4bf43fc8a5da0e33c5",
         "state": "accepted-joined",
         "reason": "The base puts root admission, nested profile branching, parent refusal, malformed/exhausted depth, default environment and workspace validation into one test. The candidate gives these separate semantic homes, removes the per-profile if/else, and keeps concrete placement values and expected child environment beside each policy. The omitted-placement case makes copying versus mutation visible alongside owner-authority stripping and ordinary server environment preservation. Small loops still represent homogeneous alternatives rather than a generalized matrix/context object. The gain is being able to read one authority boundary at a time, not the expanded assertion set or revised names."
@@ -3330,9 +3151,7 @@
         "acceptedBlob": "f0e7f19962f8be7a5e2efd3c64308369ab34f256",
         "primaryId": "task_4cf5a2f7",
         "primaryCommit": "1406a1c6aeee538cb12bfc42e32d120385773389",
-        "judgeIds": [
-          "task_9172c217"
-        ],
+        "judgeIds": ["task_9172c217"],
         "sourceCommit": "1406a1c6aeee538cb12bfc42e32d120385773389",
         "state": "accepted-exact-joined",
         "reason": "Ordered multicast session fixture exposes startup/settlement/awaited shutdown; polling waits for real runtime publication and held-poll shutdown proves generation invalidation, not arbitrary IO drain."
@@ -3391,11 +3210,7 @@
         "acceptedBlob": "622c60f8a89b1b866745b6409dd0d7ec0681e814",
         "primaryId": "task_974c50bb",
         "primaryCommit": "0bc50fed66bda6d3e390dc699b6e5cfb9167e32d",
-        "judgeIds": [
-          "task_731b02f6",
-          "task_704df491",
-          "task_7f35b9db"
-        ],
+        "judgeIds": ["task_731b02f6", "task_704df491", "task_7f35b9db"],
         "sourceCommit": "3436ea74d1a372575def44618e7ecfd706db6300",
         "state": "accepted-joined",
         "reason": "Read the entire exact candidate, not just the typed matcher change or an accepted predecessor. The primary diff only adds the failAt/offsets row type; I do not credit that as structural progress. The existing structure needs no rewrite: pages(patch) has a coherent purpose as a canonical paginated descriptor/byte fixture, and each test locally perturbs one protocol property. Offset traces make later-page refusal and fresh retry visible; root error labels are checked separately. Concrete fixtures, requested offsets and offline state remain local, with no lifecycle framework or context bag. This unchanged structure is intrinsically readable, so the exact candidate blob is accepted."
@@ -3432,9 +3247,7 @@
         "acceptedBlob": "8732aee86472ffce2562b4e1091791555b14e594",
         "primaryId": "task_e361a5e4",
         "primaryCommit": "b3a2d961220d0529924a7e9b8b12ff7bfddbfe24",
-        "judgeIds": [
-          "task_8564390f"
-        ],
+        "judgeIds": ["task_8564390f"],
         "sourceCommit": "b3a2d961220d0529924a7e9b8b12ff7bfddbfe24",
         "state": "accepted-exact-joined",
         "reason": "Local capture/upload/result, failed-upload saved intent retry and approved bytes/tamper scenarios expose actual authority/effects; async settles before temp cleanup, no fixture extraction needed."
@@ -3469,9 +3282,7 @@
         "acceptedBlob": "93e78bb2b4d80f1aff37acbdcbf1ce02773a4df3",
         "primaryId": "task_5ac068d2",
         "primaryCommit": "4f47f7c85d83a58a32b388c8fb71ec58cc87af7b",
-        "judgeIds": [
-          "task_edfe5062"
-        ],
+        "judgeIds": ["task_edfe5062"],
         "sourceCommit": "4f47f7c85d83a58a32b388c8fb71ec58cc87af7b",
         "state": "accepted-exact-not-joined",
         "reason": "Independent refusal/approval/index fixtures expose retained patches/untouched files; restored-worktree retry reaches receipt fence while immediate retry still proves drift; staged index and receipt identities explicit."
@@ -3513,9 +3324,7 @@
         "acceptedBlob": "4dc8a822d189b03ed87b13067ec8c4dcd0edd389",
         "primaryId": "task_0336c340",
         "primaryCommit": "81252d4c9681a5e397e136a52f293f5ed999932d",
-        "judgeIds": [
-          "task_9e1c68cc"
-        ],
+        "judgeIds": ["task_9e1c68cc"],
         "sourceCommit": "81252d4c9681a5e397e136a52f293f5ed999932d",
         "state": "accepted-exact-joined",
         "reason": "Owner effects and transport response loss separate; missing status goes through logged protocol; independent reserved/admitted recovery fixtures remove hidden history resets. Exact abort→prompt/status-only/no-resend and source protection retained."
@@ -3567,9 +3376,7 @@
         "acceptedBlob": "b4ed20c02e76380b8f9b5435bb482d50268a3a07",
         "primaryId": "task_d3ae9262",
         "primaryCommit": "77ea8f3a80698debf5ffe36ce5f501076f266888",
-        "judgeIds": [
-          "task_20e04838"
-        ],
+        "judgeIds": ["task_20e04838"],
         "sourceCommit": "77ea8f3a80698debf5ffe36ce5f501076f266888",
         "state": "accepted-exact-joined",
         "reason": "Fake remote response ownership separated from scripted/mounted UI; input follows terminal callback→listeners→focused component rather than wrong root fallback. Question/cancel/detach journeys preserve authority and cleanup."
@@ -3606,9 +3413,7 @@
         "acceptedBlob": "19e7050bac7fe90e61475a884641f056be1e4f78",
         "primaryId": "task_26cb0748",
         "primaryCommit": "55a94e1edf6448a2fba272073a89eb206d9c3c0e",
-        "judgeIds": [
-          "task_b7050702"
-        ],
+        "judgeIds": ["task_b7050702"],
         "sourceCommit": "55a94e1edf6448a2fba272073a89eb206d9c3c0e",
         "state": "accepted-exact-joined",
         "reason": "Fixture pairs actual adapters/control flags, isolated child/fake SSH capture then explicit quoting/safety evidence; successful lifetime direct, no shared environment mutation."
@@ -3666,9 +3471,7 @@
         "acceptedBlob": "fe29cd1cfb93ec39984d2fd2e3babc5054c29260",
         "primaryId": "task_a9d68611",
         "primaryCommit": "cac155c2d54ef9b7eff6385e248d24c27421c4d3",
-        "judgeIds": [
-          "task_5783d9c9"
-        ],
+        "judgeIds": ["task_5783d9c9"],
         "sourceCommit": "cac155c2d54ef9b7eff6385e248d24c27421c4d3",
         "state": "accepted-exact-joined",
         "reason": "Explicit staged capture barrier proves checkpoint waits for artifact persistence, cleanup releases/drains before state removal; failed pagination produces error not completion. Current fixtures coherent, no scenario framework needed."
@@ -3709,9 +3512,7 @@
         "acceptedBlob": "088d70b619c279a1d220504ccc87c44818912f58",
         "primaryId": "task_10805649",
         "primaryCommit": "a2a7680653896fdc67a85ef8c1f6afd55a00ccef",
-        "judgeIds": [
-          "task_94dcb963"
-        ],
+        "judgeIds": ["task_94dcb963"],
         "sourceCommit": "a2a7680653896fdc67a85ef8c1f6afd55a00ccef",
         "state": "accepted-exact-not-joined",
         "reason": "Exact held A IO/queued B/final read boundaries replace partial counters/retry sleep, gates released in cleanup; snapshot and picker completion separate, strict histories catch trailing undefined late clear."
@@ -3760,9 +3561,7 @@
         "acceptedBlob": "df9e4dfb8b79785aadfe43dd8cf5f8ccafb3acb9",
         "primaryId": "task_4c586c13",
         "primaryCommit": "1e346f081833b86ab8445efdbfc66cb35e5ba9c3",
-        "judgeIds": [
-          "task_f56506f5"
-        ],
+        "judgeIds": ["task_f56506f5"],
         "sourceCommit": "1e346f081833b86ab8445efdbfc66cb35e5ba9c3",
         "state": "accepted-exact-joined",
         "reason": "Independent question/fixture lifetimes separate denial/cancellation and stale-reply/integrity; named human choices no longer mislabel cancellation as approval."
@@ -3799,9 +3598,7 @@
         "acceptedBlob": "091e6877a8e4fe1be2040c3693f1e62bbbd5b899",
         "primaryId": "task_128c041a",
         "primaryCommit": "12609922e6ea4ea00c467d9371a71b96a6b4ae58",
-        "judgeIds": [
-          "task_93503fec"
-        ],
+        "judgeIds": ["task_93503fec"],
         "sourceCommit": "12609922e6ea4ea00c467d9371a71b96a6b4ae58",
         "state": "accepted-exact-joined",
         "reason": "Explicit isolated fake flood peer/wrapper/watchdog/successful exit/error/cleanup journey, no hidden transport authority or need for extraction."
@@ -3860,9 +3657,7 @@
         "acceptedBlob": "725ebe43d07c2c3d17142ce140b9aebe46bc3fbf",
         "primaryId": "task_c13c26b1",
         "primaryCommit": "199fe91cdc4bba1573e3ed5c590292090cfa7f3f",
-        "judgeIds": [
-          "task_ea570b89"
-        ],
+        "judgeIds": ["task_ea570b89"],
         "sourceCommit": "199fe91cdc4bba1573e3ed5c590292090cfa7f3f",
         "state": "accepted-exact-joined",
         "reason": "Inline local dispatch/source selection/startup intent/attachment contracts replace unrelated rejection loop; all25 baseline and13 original argument cases retained, complete-result assertions stronger."
@@ -3945,9 +3740,7 @@
           "changedRelatedPaths": []
         }
       ],
-      "priorAcceptedBlobs": [
-        "d294d93ec8ee707f600fd055acda2c6c7e5b0d03"
-      ]
+      "priorAcceptedBlobs": ["d294d93ec8ee707f600fd055acda2c6c7e5b0d03"]
     },
     {
       "focus": "tests/root-store.test.ts",
@@ -4227,11 +4020,7 @@
   "parentIntegrationCheckpoint": {
     "tip": "695ade32",
     "state": "clean join accepted; all accepted remote blob hashes unchanged; whole configured typecheck and 92-test authority suite pass",
-    "commonChanges": [
-      "src/questions/runtime.ts",
-      "src/questions/service.ts",
-      "src/tasks/job-service.ts"
-    ],
+    "commonChanges": ["src/questions/runtime.ts", "src/questions/service.ts", "src/tasks/job-service.ts"],
     "remoteRelatedIncoming": [
       {
         "file": "tests/remote-question-bridge.test.ts",
@@ -4350,10 +4139,7 @@
         "acceptedBlob": "a1a198779b4e9cf1bd48b7459e3e0c3b0adcb901",
         "primaryId": "task_4bcaf84b",
         "primaryCommit": "806d97adfb0b2e04c9aa8beeb650cc9ca0780fbd",
-        "judgeIds": [
-          "task_9c33e422",
-          "task_7be6f9c9"
-        ],
+        "judgeIds": ["task_9c33e422", "task_7be6f9c9"],
         "sourceCommit": "e58f7fee0d98e85e44266fbd6c10b0f934a4ba4b",
         "state": "accepted-exact-joined",
         "reason": "Supported toBe expected-value type overload preserves exact reference identity assertion and all readable fixture/order evidence; no casts or production change."
@@ -4370,9 +4156,7 @@
         "acceptedBlob": "b1f3cc8f7b18c1aa5d3a8895324792e7cfec59d8",
         "primaryId": "task_1dae7d84",
         "primaryCommit": "6e6d31119a460ec92657c656203bd805729cd043",
-        "judgeIds": [
-          "task_7ef7eb4e"
-        ],
+        "judgeIds": ["task_7ef7eb4e"],
         "sourceCommit": "6e6d31119a460ec92657c656203bd805729cd043",
         "state": "accepted-exact-joined",
         "reason": "Explicit append/observe transcript and reconnect cursors replace mentally executing a second pruning algorithm; all eight inputs, outcomes, gaps, sequence and isolation assertions preserved."
@@ -4389,9 +4173,7 @@
         "acceptedBlob": "d7e8d093f900e4d5654636badd1f72d96041aa09",
         "primaryId": "task_4f024748",
         "primaryCommit": "07c2ce9c71929b9f1de2521f9f1b50a08b94a936",
-        "judgeIds": [
-          "task_477023ef"
-        ],
+        "judgeIds": ["task_477023ef"],
         "sourceCommit": "07c2ce9c71929b9f1de2521f9f1b50a08b94a936",
         "state": "accepted-joined",
         "reason": "Independent reading of the exact candidate, not checkout HEAD. Primary base equals candidate, so there is no new primary patch. Compared candidate to its parent 2f8ff38457efdc332578a24731b6cda7d42f3985: the helper is newly added and the harness replaces the expanding protocol heredoc with a copied helper and one exec binding. This is a meaningful existing structural boundary: setup chooses fixture authorities, while this directly readable POSIX shell file owns forwarding and deliberate response loss without a second shell-dollar interpretation layer. The config and evidence-directory arguments are removed before forwarding the original SSH argv. Within each short branch, arming, owner response verification, evidence publication, sentinel consumption, diagnostic and failure exit are adjacent. Ordinary forwarding remains the final control path; non-control invocation directly execs real SSH. Keeping the two domain branches explicit is preferable to a generalized transport helper or context bag. Unchanged decision: this focus already presents its complete operation and effects clearly; further extraction would scatter that short journey. The related harness also remains readable as ordered fixture setup, readiness, mode selection and environment handoff."

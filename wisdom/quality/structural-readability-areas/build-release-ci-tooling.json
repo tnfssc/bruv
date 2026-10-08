@@ -41,9 +41,7 @@
         "status": "accepted",
         "acceptedBlob": "65bbe845d312eb73e8b77b4ef5f7beee4a1c97cb",
         "primaryId": "task_a31d93bd",
-        "judgeIds": [
-          "task_064019e9"
-        ]
+        "judgeIds": ["task_064019e9"]
       }
     },
     {
@@ -84,9 +82,7 @@
         "status": "accepted",
         "acceptedBlob": "8f1798300f04ecf1317570abb5b8868422f140b9",
         "primaryId": "task_f5563536",
-        "judgeIds": [
-          "task_884543de"
-        ]
+        "judgeIds": ["task_884543de"]
       }
     },
     {
@@ -119,9 +115,7 @@
           }
         }
       ],
-      "relatedPaths": [
-        "tests/dependency-workflow.test.ts"
-      ],
+      "relatedPaths": ["tests/dependency-workflow.test.ts"],
       "acceptedBlob": "8d6139ce1417bcf9d58c87750a78f049ac58721b",
       "readingResult": "Bundle verification separated from authenticated publishing shell scope; verification before token exposure, freshness stays immediately before leased push; controls/values retained.",
       "checks": "34pass;targeted tsc/Biome/nine Bash blocks syntax/diff pass; real Git identity/parent/file restrictions; no hosted/build.",
@@ -130,9 +124,7 @@
         "status": "accepted",
         "acceptedBlob": "8d6139ce1417bcf9d58c87750a78f049ac58721b",
         "primaryId": "task_6b0e313c",
-        "judgeIds": [
-          "task_69a61924"
-        ]
+        "judgeIds": ["task_69a61924"]
       }
     },
     {
@@ -166,10 +158,7 @@
           }
         }
       ],
-      "relatedPaths": [
-        "tests/manual-release.test.ts",
-        "tests/release-workflows.test.ts"
-      ],
+      "relatedPaths": ["tests/manual-release.test.ts", "tests/release-workflows.test.ts"],
       "acceptedBlob": "72a12eb6a00a934c436ce9ff6982123c10320564",
       "readingResult": "One read-only release-source job replaces repeated admission predicates and SHA/tag reconstruction; preserves manual prep/publication authority and payload/gates. Explicit cost: additional Ubuntu runner startup.",
       "checks": "66 focused tests; tsc/format/diff pass,5 existing Actions-literal lint warnings; no hosted/platform/build.",
@@ -178,9 +167,7 @@
         "status": "accepted",
         "acceptedBlob": "72a12eb6a00a934c436ce9ff6982123c10320564",
         "primaryId": "task_bc9b05c3",
-        "judgeIds": [
-          "task_265f1748"
-        ]
+        "judgeIds": ["task_265f1748"]
       }
     },
     {
@@ -218,9 +205,7 @@
         "status": "accepted",
         "acceptedBlob": "b76078bd2295d5a07314030b6a1a6ac4248288c7",
         "primaryId": "task_63f2878d",
-        "judgeIds": [
-          "task_599df207"
-        ]
+        "judgeIds": ["task_599df207"]
       }
     },
     {
@@ -258,9 +243,7 @@
         "status": "accepted",
         "acceptedBlob": "c9ab9a6f17498d2c7f0c62fc8538128ddef546a1",
         "primaryId": "task_e7133eda",
-        "judgeIds": [
-          "task_6ac6a0f9"
-        ]
+        "judgeIds": ["task_6ac6a0f9"]
       }
     },
     {
@@ -298,9 +281,7 @@
         "status": "accepted",
         "acceptedBlob": "8370a0154a62bcc247a0a211d376458a7751d717",
         "primaryId": "task_bd9983c7",
-        "judgeIds": [
-          "task_b2bc2474"
-        ]
+        "judgeIds": ["task_b2bc2474"]
       }
     },
     {
@@ -343,9 +324,7 @@
           }
         }
       ],
-      "relatedPaths": [
-        "tests/install-download.test.ts"
-      ],
+      "relatedPaths": ["tests/install-download.test.ts"],
       "acceptedBlob": "125933e061095c79bd5e2f16c68d384e8a2c9013",
       "readingResult": "Root now canonical staged pair, private probe subshell and restore-or-remove operation; remains standalone. Candidate matches accepted scripts/install.sh exactly; shared test comment claiming old root staging is stale.",
       "checks": "Base/candidate22pass;syntax/diffpass;mocked Linux only.",
@@ -355,9 +334,7 @@
         "status": "accepted",
         "acceptedBlob": "125933e061095c79bd5e2f16c68d384e8a2c9013",
         "primaryId": "task_f94ad569",
-        "judgeIds": [
-          "task_9233d5f2"
-        ]
+        "judgeIds": ["task_9233d5f2"]
       }
     },
     {
@@ -395,9 +372,7 @@
         "status": "accepted",
         "acceptedBlob": "a0de5dad9cb229123d4b8f5f7935042e0a01dbde",
         "primaryId": "task_f31c9cfd",
-        "judgeIds": [
-          "task_a39f170d"
-        ]
+        "judgeIds": ["task_a39f170d"]
       }
     },
     {
@@ -435,9 +410,7 @@
         "status": "accepted",
         "acceptedBlob": "555c3c153c503ba09efe2ebaaef2c5afdeca4da4",
         "primaryId": "task_140be4ea",
-        "judgeIds": [
-          "task_7aa03035"
-        ]
+        "judgeIds": ["task_7aa03035"]
       }
     },
     {
@@ -470,9 +443,7 @@
           }
         }
       ],
-      "relatedPaths": [
-        "tests/production-packaging.test.ts"
-      ],
+      "relatedPaths": ["tests/production-packaging.test.ts"],
       "acceptedBlob": "3cfc224480eb04bd7019ec365b919fb031fef6c0",
       "readingResult": "Singleton command matrix/generic execution loop becomes one command and one visible spawn; argument/output/failure propagation unchanged.",
       "checks": "18 focused tests including child cwd/argv/IO/exit probes; changed-file tsc/format/diff pass; existing lint diagnostics. No full build.",
@@ -481,9 +452,7 @@
         "status": "accepted",
         "acceptedBlob": "3cfc224480eb04bd7019ec365b919fb031fef6c0",
         "primaryId": "task_fb3e9b39",
-        "judgeIds": [
-          "task_438d5e06"
-        ]
+        "judgeIds": ["task_438d5e06"]
       }
     },
     {
@@ -521,9 +490,7 @@
         "status": "accepted",
         "acceptedBlob": "6162c89981b835927c7636d56bd3b054b9c17bba",
         "primaryId": "task_df95845d",
-        "judgeIds": [
-          "task_ee123d58"
-        ]
+        "judgeIds": ["task_ee123d58"]
       }
     },
     {
@@ -556,9 +523,7 @@
           }
         }
       ],
-      "relatedPaths": [
-        "tests/ci-selective.test.ts"
-      ],
+      "relatedPaths": ["tests/ci-selective.test.ts"],
       "acceptedBlob": "1995804abd171d6f2d73d107b79ba5aee0b57120",
       "readingResult": "Reference-diff eligibility predicate replaces building report to decide metadata inspection; two-tree operation owns blockers; CLI plan→publish→execute with shared freshness rule.",
       "checks": "Base/candidate 16 pass/231 assertions; format/isolated strict tsc/diff pass, baseline lint warnings unchanged; no hosted/full gate.",
@@ -567,9 +532,7 @@
         "status": "accepted",
         "acceptedBlob": "1995804abd171d6f2d73d107b79ba5aee0b57120",
         "primaryId": "task_e1108b07",
-        "judgeIds": [
-          "task_36d1647b"
-        ]
+        "judgeIds": ["task_36d1647b"]
       }
     },
     {
@@ -607,9 +570,7 @@
         "status": "accepted",
         "acceptedBlob": "ffeab90a9248f3de7591633b6088ae6afd6889a4",
         "primaryId": "task_ec82b387",
-        "judgeIds": [
-          "task_23554482"
-        ]
+        "judgeIds": ["task_23554482"]
       }
     },
     {
@@ -667,9 +628,7 @@
         "status": "accepted",
         "acceptedBlob": "fb773c5dff9e139a4773d05af38956eebf9d29c2",
         "primaryId": "task_8a5f8213",
-        "judgeIds": [
-          "task_149c9180"
-        ]
+        "judgeIds": ["task_149c9180"]
       }
     },
     {
@@ -702,9 +661,7 @@
           }
         }
       ],
-      "relatedPaths": [
-        "tests/generate-third-party-notices.test.ts"
-      ],
+      "relatedPaths": ["tests/generate-third-party-notices.test.ts"],
       "acceptedBlob": "10cc8165ebff6cb5821490b6cbebfae901000fa8",
       "readingResult": "Explicit license alternatives, graph collection, effect-free rendering and visible output publication replace interleaved traversal/fallback/render/write; unused entry directory removed.",
       "checks": "37tests549assertions;newtests pass base;tsc/Biome/diff pass;real bundle211packages657015bytes identical. No full build.",
@@ -713,9 +670,7 @@
         "status": "accepted",
         "acceptedBlob": "10cc8165ebff6cb5821490b6cbebfae901000fa8",
         "primaryId": "task_18c3b50a",
-        "judgeIds": [
-          "task_9e042be2"
-        ]
+        "judgeIds": ["task_9e042be2"]
       }
     },
     {
@@ -748,9 +703,7 @@
           }
         }
       ],
-      "relatedPaths": [
-        "tests/install-local.test.ts"
-      ],
+      "relatedPaths": ["tests/install-local.test.ts"],
       "acceptedBlob": "ef8220b9c0b3bf364d5c4515f8fa7764f9ee13ff",
       "readingResult": "Candidate unifies separate replacement flags/commit state/path aliases into successful-rename journal; clearing journal commits pair. Explicit recovery backup rename compat.previous → bruv-claude-compat.previous.",
       "checks": "17 pass/61 assertions; bash syntax/strict tsc/format/diff pass; two unchanged lint warnings. No build/smoke/mac/device. Existing rename/signal window retained. Worker note untracked in retained candidate checkout.",
@@ -759,9 +712,7 @@
         "status": "accepted",
         "acceptedBlob": "ef8220b9c0b3bf364d5c4515f8fa7764f9ee13ff",
         "primaryId": "task_56171a8b",
-        "judgeIds": [
-          "task_fa23cd76"
-        ]
+        "judgeIds": ["task_fa23cd76"]
       }
     },
     {
@@ -794,9 +745,7 @@
           }
         }
       ],
-      "relatedPaths": [
-        "tests/install-download.test.ts"
-      ],
+      "relatedPaths": ["tests/install-download.test.ts"],
       "acceptedBlob": "125933e061095c79bd5e2f16c68d384e8a2c9013",
       "readingResult": "Maps downloaded platform asset names to canonical staged pair; explicit pair probes isolated; shared binary restoration operation retains interruption flags. Explicit incidental fixes: absolute destination resolution and inherited connector-override isolation. Judge correction: relative destination alone worked at base when override cleared; normalization is necessary prerequisite of NEW explicit staged-path binding, not an old independent relative-path defect.",
       "checks": "36 pass140 assertions; shell syntax/Biome/tsc/diff pass; no build/live release/platform.",
@@ -805,9 +754,7 @@
         "status": "accepted",
         "acceptedBlob": "125933e061095c79bd5e2f16c68d384e8a2c9013",
         "primaryId": "task_7cb4f7d8",
-        "judgeIds": [
-          "task_7be1ff38"
-        ]
+        "judgeIds": ["task_7be1ff38"]
       }
     },
     {
@@ -845,9 +792,7 @@
         "status": "accepted",
         "acceptedBlob": "6cb6ac67d3e10c91a47b412769efdbf67245d57d",
         "primaryId": "task_5746779b",
-        "judgeIds": [
-          "task_e71379a8"
-        ]
+        "judgeIds": ["task_e71379a8"]
       }
     },
     {
@@ -891,9 +836,7 @@
         "status": "accepted",
         "acceptedBlob": "5822e205569312022b3f453469049e3dfb7f271e",
         "primaryId": "task_50c3fd8e",
-        "judgeIds": [
-          "task_706382eb"
-        ]
+        "judgeIds": ["task_706382eb"]
       }
     },
     {
@@ -926,9 +869,7 @@
           }
         }
       ],
-      "relatedPaths": [
-        "tests/publish-release.test.ts"
-      ],
+      "relatedPaths": ["tests/publish-release.test.ts"],
       "acceptedBlob": "5ffbb5141171cc6857ffd67b7f7eef971754c5a5",
       "readingResult": "verifyRemoteTag owns stale-develop/push/reuse policy; readExpectedAssets hashes bytes; ensureCompleteRelease repairs permissible drafts and returns verified immutable snapshot; main publishes then independently verifies public state.",
       "checks": "37 pass/391 assertions; 16 CLI baseline characterization pass/54 assertions incl ten new cases; strict tsc/format/lint/diff pass, no authenticated publication/full build.",
@@ -937,9 +878,7 @@
         "status": "accepted",
         "acceptedBlob": "5ffbb5141171cc6857ffd67b7f7eef971754c5a5",
         "primaryId": "task_36e9172d",
-        "judgeIds": [
-          "task_517172cd"
-        ]
+        "judgeIds": ["task_517172cd"]
       }
     },
     {
@@ -972,9 +911,7 @@
           }
         }
       ],
-      "relatedPaths": [
-        "tests/native-release-gate.test.ts"
-      ],
+      "relatedPaths": ["tests/native-release-gate.test.ts"],
       "acceptedBlob": "1037e58051ec59f325a31ed2945655eb9434b21e",
       "readingResult": "runVerifiedSuite owns process lifecycle→binary authority→evidence admission; named suite entries/final orchestration expose ordering; strict checks/cancellation/provenance/protocol unchanged.",
       "checks": "12/12and58/58testbatches;focusedtsc/format/lint/syntax/diffpass;no actualnative/build/download.",
@@ -983,9 +920,7 @@
         "status": "accepted",
         "acceptedBlob": "1037e58051ec59f325a31ed2945655eb9434b21e",
         "primaryId": "task_e8c99be3",
-        "judgeIds": [
-          "task_83089869"
-        ]
+        "judgeIds": ["task_83089869"]
       }
     },
     {
@@ -1023,9 +958,7 @@
         "status": "accepted",
         "acceptedBlob": "702067fdd441ace705964ea3df7c8b70a8975801",
         "primaryId": "task_5013c91b",
-        "judgeIds": [
-          "task_6cb6e619"
-        ]
+        "judgeIds": ["task_6cb6e619"]
       }
     },
     {
@@ -1058,9 +991,7 @@
           }
         }
       ],
-      "relatedPaths": [
-        "tests/setup-native-release-gate.test.ts"
-      ],
+      "relatedPaths": ["tests/setup-native-release-gate.test.ts"],
       "acceptedBlob": "9d6cfd866efee6fbc40ae2947f9a733216568f59",
       "readingResult": "Preparation/SDK checks lead to one final environment handoff rather than exports interleaved before verification;explicit reproduced fix SDK failure no partial gate configuration export.",
       "checks": "65testspass;newregressionsfailbaseline;tsc/Biome/bashsyntax/diffpass;no downloads/build/realbinarygates.",
@@ -1069,9 +1000,7 @@
         "status": "accepted",
         "acceptedBlob": "9d6cfd866efee6fbc40ae2947f9a733216568f59",
         "primaryId": "task_2837e782",
-        "judgeIds": [
-          "task_1e479592"
-        ]
+        "judgeIds": ["task_1e479592"]
       }
     },
     {
@@ -1109,9 +1038,7 @@
         "status": "accepted",
         "acceptedBlob": "59ab77ba5d9eda96013afb287181eadaa16332b9",
         "primaryId": "task_6d47ada5",
-        "judgeIds": [
-          "task_2a8f8b95"
-        ]
+        "judgeIds": ["task_2a8f8b95"]
       }
     },
     {
@@ -1149,9 +1076,7 @@
         "status": "accepted",
         "acceptedBlob": "097f5cb9d15f5c6db5b7643aad74aa851ac7163b",
         "primaryId": "task_9bca7048",
-        "judgeIds": [
-          "task_8b4ae038"
-        ]
+        "judgeIds": ["task_8b4ae038"]
       }
     },
     {
@@ -1213,9 +1138,7 @@
           }
         }
       ],
-      "relatedPaths": [
-        "tests/dependency-updates.test.ts"
-      ],
+      "relatedPaths": ["tests/dependency-updates.test.ts"],
       "acceptedBlob": "109d8d0ff7a8a595a081377126c7a968830164a7",
       "readingResult": "Shared ordered comparison/explicit lock-version normalization/grouped policy validation replace duplicate version ordering and inline post-update checks.",
       "checks": "16 focusedpass;tsc/Biome/diff pass;no registry/GitHub/build",
@@ -1225,9 +1148,7 @@
         "status": "accepted",
         "acceptedBlob": "109d8d0ff7a8a595a081377126c7a968830164a7",
         "primaryId": "task_d9eeb4d5",
-        "judgeIds": [
-          "task_68106474"
-        ]
+        "judgeIds": ["task_68106474"]
       }
     },
     {
@@ -1265,9 +1186,7 @@
         "status": "accepted",
         "acceptedBlob": "00417d20e23db978be592c23e4a31be88493cc76",
         "primaryId": "task_36d64ea6",
-        "judgeIds": [
-          "task_81661b13"
-        ]
+        "judgeIds": ["task_81661b13"]
       }
     },
     {
@@ -1308,9 +1227,7 @@
         "status": "accepted",
         "acceptedBlob": "9fd1db0e1baa21cc4a69d5edc702f962eb82173d",
         "primaryId": "task_644a204a",
-        "judgeIds": [
-          "task_dc2eea02"
-        ]
+        "judgeIds": ["task_dc2eea02"]
       }
     },
     {
@@ -1348,9 +1265,7 @@
         "status": "accepted",
         "acceptedBlob": "d33b6f17e311bd423ffbbc42ab5707a9259da29f",
         "primaryId": "task_4cc3ea11",
-        "judgeIds": [
-          "task_e49b32f4"
-        ]
+        "judgeIds": ["task_e49b32f4"]
       }
     },
     {
@@ -1383,9 +1298,7 @@
           }
         }
       ],
-      "relatedPaths": [
-        "tests/verify-update.test.ts"
-      ],
+      "relatedPaths": ["tests/verify-update.test.ts"],
       "acceptedBlob": "88994dc94c3236cbe0398d152565d401cc6b4012",
       "readingResult": "Explicit installed-pair contracts replace positional arrays;readable generated compiled-runner source replaces compressed fragments;compile/frozenfixture/checksum/rollback/diagnostic/cleanup retained.",
       "checks": "109combinedtests,7finalverifier/probetests;tsc/format/lint/diffpass;fulltsc missinggeneratedassets;fixturesnotproduction/no live.",
@@ -1394,9 +1307,7 @@
         "status": "accepted",
         "acceptedBlob": "88994dc94c3236cbe0398d152565d401cc6b4012",
         "primaryId": "task_47004efe",
-        "judgeIds": [
-          "task_073fd75a"
-        ]
+        "judgeIds": ["task_073fd75a"]
       }
     },
     {
@@ -1434,9 +1345,7 @@
         "status": "accepted",
         "acceptedBlob": "522afc0a9deafebc2c1994f69426fddb7da3bf75",
         "primaryId": "task_af4e93ee",
-        "judgeIds": [
-          "task_ceeaba0d"
-        ]
+        "judgeIds": ["task_ceeaba0d"]
       }
     },
     {
@@ -1469,9 +1378,7 @@
           }
         }
       ],
-      "relatedPaths": [
-        "tests/update.test.ts"
-      ],
+      "relatedPaths": ["tests/update.test.ts"],
       "acceptedBlob": "18439821dc68983f7f315f3c6b31fa5f7b320a3b",
       "readingResult": "Candidate separates release validation/installed-pair repair policy from staging and rollback; named bruv/connector pair replaces positional arrays; connector-first publication explicit.",
       "checks": "73 focused pass/367 assertions incl compiled updater/routing; new phase-order case baseline pass 1/10; focused typecheck/format/lint pass with existing warnings; no full build/live/native macOS.",
@@ -1480,9 +1387,7 @@
         "status": "accepted",
         "acceptedBlob": "18439821dc68983f7f315f3c6b31fa5f7b320a3b",
         "primaryId": "task_d0b99b87",
-        "judgeIds": [
-          "task_170d10bf"
-        ]
+        "judgeIds": ["task_170d10bf"]
       }
     },
     {
@@ -1520,9 +1425,7 @@
         "status": "accepted",
         "acceptedBlob": "12872bad81fa69a18124acfb6050bf084d4abd69",
         "primaryId": "task_a20a31fc",
-        "judgeIds": [
-          "task_42469010"
-        ]
+        "judgeIds": ["task_42469010"]
       }
     },
     {
@@ -1563,9 +1466,7 @@
         "status": "accepted",
         "acceptedBlob": "fe6b52be2dde66bf1ab7aad6b1b327d419f0acea",
         "primaryId": "task_66f5eec2",
-        "judgeIds": [
-          "task_bdc1d4a5"
-        ]
+        "judgeIds": ["task_bdc1d4a5"]
       }
     },
     {
@@ -1606,9 +1507,7 @@
         "status": "accepted",
         "acceptedBlob": "2b8ba4bd8fef50f0e235b16a6d7d404a82f4ea9c",
         "primaryId": "task_0c5ce992",
-        "judgeIds": [
-          "task_65a4c618"
-        ]
+        "judgeIds": ["task_65a4c618"]
       }
     },
     {
@@ -1649,9 +1548,7 @@
         "status": "accepted",
         "acceptedBlob": "27df96e51274e622ee761637d580160ca90405d7",
         "primaryId": "task_d96a560c",
-        "judgeIds": [
-          "task_11e13c7d"
-        ]
+        "judgeIds": ["task_11e13c7d"]
       }
     },
     {
@@ -1692,9 +1589,7 @@
         "status": "accepted",
         "acceptedBlob": "7b18e15b1fd1497570f6094f4a41b6b99f1c7de6",
         "primaryId": "task_d6fe839f",
-        "judgeIds": [
-          "task_562c8dbd"
-        ]
+        "judgeIds": ["task_562c8dbd"]
       }
     },
     {
@@ -1735,9 +1630,7 @@
         "status": "accepted",
         "acceptedBlob": "25486b26fff7f6fb5d6a65d98e83c906ba4e3d38",
         "primaryId": "task_7308b752",
-        "judgeIds": [
-          "task_fd6b7e52"
-        ]
+        "judgeIds": ["task_fd6b7e52"]
       }
     },
     {
@@ -1785,9 +1678,7 @@
         "status": "accepted",
         "acceptedBlob": "05b7307be28cfe9ae42a5d263b19d483e2f53d9f",
         "primaryId": "task_bf42118e",
-        "judgeIds": [
-          "task_10e3096b"
-        ]
+        "judgeIds": ["task_10e3096b"]
       }
     },
     {
@@ -1828,9 +1719,7 @@
         "status": "accepted",
         "acceptedBlob": "986f142853337c47db7f610939d4fdaebd2ae1bc",
         "primaryId": "task_ad105ef8",
-        "judgeIds": [
-          "task_0f0570b0"
-        ]
+        "judgeIds": ["task_0f0570b0"]
       }
     },
     {
@@ -1871,9 +1760,7 @@
         "status": "accepted",
         "acceptedBlob": "11fbb1c606d69a7d5df227b963f8a2a088005ce9",
         "primaryId": "task_1c667037",
-        "judgeIds": [
-          "task_cab47470"
-        ]
+        "judgeIds": ["task_cab47470"]
       }
     },
     {
@@ -1914,9 +1801,7 @@
         "status": "accepted",
         "acceptedBlob": "049c8cd3dcc817bcb8452ea564f22ca8644a59ba",
         "primaryId": "task_23398c8b",
-        "judgeIds": [
-          "task_4a768c2f"
-        ]
+        "judgeIds": ["task_4a768c2f"]
       }
     },
     {
@@ -1964,9 +1849,7 @@
         "status": "accepted",
         "acceptedBlob": "da5d3d5056c91024797839ef57544af184a603bf",
         "primaryId": "task_81d46e58",
-        "judgeIds": [
-          "task_f509c814"
-        ]
+        "judgeIds": ["task_f509c814"]
       }
     },
     {
@@ -2014,9 +1897,7 @@
         "status": "accepted",
         "acceptedBlob": "5d0f15a6b6e30e64707e6ec76e29af0f3ddd15a7",
         "primaryId": "task_c708fc82",
-        "judgeIds": [
-          "task_35b870b5"
-        ]
+        "judgeIds": ["task_35b870b5"]
       }
     },
     {
@@ -2057,9 +1938,7 @@
         "status": "accepted",
         "acceptedBlob": "a96d35ae74558f9b440dda3a486e19d2bd00a8d5",
         "primaryId": "task_109390aa",
-        "judgeIds": [
-          "task_aa63512d"
-        ]
+        "judgeIds": ["task_aa63512d"]
       }
     },
     {
@@ -2097,9 +1976,7 @@
         "status": "accepted",
         "acceptedBlob": "45e0d90785aa81576dfdd1687cf44451b546dde4",
         "primaryId": "task_9dd6501e",
-        "judgeIds": [
-          "task_f7319ebc"
-        ]
+        "judgeIds": ["task_f7319ebc"]
       }
     },
     {
@@ -2158,10 +2035,7 @@
         "status": "accepted",
         "acceptedBlob": "e04230d818b527658f16eda023aa190bbb1b4f89",
         "primaryId": "task_7936354f",
-        "judgeIds": [
-          "task_bdc5b9c4",
-          "task_9233d5f2"
-        ]
+        "judgeIds": ["task_bdc5b9c4", "task_9233d5f2"]
       }
     },
     {
@@ -2209,9 +2083,7 @@
         "status": "accepted",
         "acceptedBlob": "51a27b0bc8d0f3da78baddee0ab0eab27a048468",
         "primaryId": "task_70f09987",
-        "judgeIds": [
-          "task_5442746a"
-        ]
+        "judgeIds": ["task_5442746a"]
       }
     },
     {
@@ -2269,10 +2141,7 @@
         "status": "accepted",
         "acceptedBlob": "9fdf9ef3fc1b9cb88a95e49ca012d78b86561024",
         "primaryId": "task_cceff3bf",
-        "judgeIds": [
-          "task_69fdb98c",
-          "task_706382eb"
-        ]
+        "judgeIds": ["task_69fdb98c", "task_706382eb"]
       }
     },
     {
@@ -2323,9 +2192,7 @@
         "status": "accepted",
         "acceptedBlob": "48730a38d9ff63ce62e12886fc9f5b3ab5de7fed",
         "primaryId": "task_62d9a185",
-        "judgeIds": [
-          "task_179e47de"
-        ]
+        "judgeIds": ["task_179e47de"]
       }
     },
     {
@@ -2373,9 +2240,7 @@
         "status": "accepted",
         "acceptedBlob": "6762793bbfc261db8c55f7aba82d685c4b146d9b",
         "primaryId": "task_d230f8cd",
-        "judgeIds": [
-          "task_3098ce67"
-        ]
+        "judgeIds": ["task_3098ce67"]
       }
     },
     {
@@ -2443,9 +2308,7 @@
         "status": "accepted",
         "acceptedBlob": "2ff5cc4eda8213e4b91e5a632132c490d73ce04a",
         "primaryId": "task_21c70b4e",
-        "judgeIds": [
-          "task_cfbac1d2"
-        ]
+        "judgeIds": ["task_cfbac1d2"]
       }
     },
     {
@@ -2486,9 +2349,7 @@
         "status": "accepted",
         "acceptedBlob": "6c6ae2ca09e7f769d3f2ec4dde252ed58d792170",
         "primaryId": "task_eee3ca81",
-        "judgeIds": [
-          "task_a43b5841"
-        ]
+        "judgeIds": ["task_a43b5841"]
       }
     },
     {
@@ -2529,9 +2390,7 @@
         "status": "accepted",
         "acceptedBlob": "b9e4e9ae5d8185883f905c42d4459d4c213847c5",
         "primaryId": "task_0c3e11ef",
-        "judgeIds": [
-          "task_b7a011bf"
-        ]
+        "judgeIds": ["task_b7a011bf"]
       }
     },
     {
@@ -2575,9 +2434,7 @@
         "status": "accepted",
         "acceptedBlob": "aec669688b9fb751badf5e307ca0101fddc26b98",
         "primaryId": "task_93f789d2",
-        "judgeIds": [
-          "task_5bc6b47f"
-        ]
+        "judgeIds": ["task_5bc6b47f"]
       }
     },
     {
@@ -2625,9 +2482,7 @@
         "status": "accepted",
         "acceptedBlob": "ace4cea386836a04f36cedee9d29c4624191fffc",
         "primaryId": "task_5bfa31b4",
-        "judgeIds": [
-          "task_d35c8509"
-        ]
+        "judgeIds": ["task_d35c8509"]
       }
     },
     {
@@ -2668,9 +2523,7 @@
         "status": "accepted",
         "acceptedBlob": "80b148a19e03c2e30b008964bdbcadc883cd9651",
         "primaryId": "task_6553f324",
-        "judgeIds": [
-          "task_d53adce7"
-        ]
+        "judgeIds": ["task_d53adce7"]
       }
     },
     {
@@ -2711,9 +2564,7 @@
         "status": "accepted",
         "acceptedBlob": "da1a4e566b38096580f59ed59f15d57f18ef0641",
         "primaryId": "task_2db23507",
-        "judgeIds": [
-          "task_a8a68815"
-        ]
+        "judgeIds": ["task_a8a68815"]
       }
     },
     {
@@ -2761,9 +2612,7 @@
         "status": "accepted",
         "acceptedBlob": "ffcf4742d5aadb88e1ed76996e43df81e3dc079d",
         "primaryId": "task_3d7fb50a",
-        "judgeIds": [
-          "task_f9136eba"
-        ]
+        "judgeIds": ["task_f9136eba"]
       }
     },
     {
@@ -2801,9 +2650,7 @@
         "status": "accepted",
         "acceptedBlob": "d3c71348546664337fd231e07e3f5b7034da02ba",
         "primaryId": "task_c6585fe4",
-        "judgeIds": [
-          "task_6d717faf"
-        ]
+        "judgeIds": ["task_6d717faf"]
       }
     },
     {
@@ -2853,9 +2700,7 @@
         "status": "accepted",
         "acceptedBlob": "b0b5232653b47e05d11275766e5f9ede4229e561",
         "primaryId": "task_d0d9d3eb",
-        "judgeIds": [
-          "task_f209f608"
-        ]
+        "judgeIds": ["task_f209f608"]
       }
     },
     {
@@ -2896,9 +2741,7 @@
         "status": "accepted",
         "acceptedBlob": "0e9728fccb32c1657f09e6d305ac14a10d1621ba",
         "primaryId": "task_8c70c1f6",
-        "judgeIds": [
-          "task_900a3c32"
-        ]
+        "judgeIds": ["task_900a3c32"]
       }
     },
     {
@@ -2931,9 +2774,7 @@
           }
         }
       ],
-      "relatedPaths": [
-        "tests/update-release-shape.md"
-      ],
+      "relatedPaths": ["tests/update-release-shape.md"],
       "acceptedBlob": "2803b32f5712f44343edb649aaffbbce2fe29921",
       "readingResult": "Explicit metadata/payloadmutations and actualemittedlauncher/stagedsiblingidentity replace diskfixtures/filename-onlyprobes;bothsiblings+cleanup failures,tarrejectactualupdater.",
       "checks": "34focus92combined;tsc/Biome;actualLinuxpair default-runner installpass;crossplatformsimulated.",
@@ -2942,9 +2783,7 @@
         "status": "accepted",
         "acceptedBlob": "2803b32f5712f44343edb649aaffbbce2fe29921",
         "primaryId": "task_dc6a6799",
-        "judgeIds": [
-          "task_811b18de"
-        ]
+        "judgeIds": ["task_811b18de"]
       }
     },
     {
@@ -2977,9 +2816,7 @@
           }
         }
       ],
-      "relatedPaths": [
-        "tests/update-self-fixture.test.ts"
-      ],
+      "relatedPaths": ["tests/update-self-fixture.test.ts"],
       "acceptedBlob": "a6959fca4cf82247d0f82207b4a0a69f28b1c87d",
       "readingResult": "Closed releaseconstruction + explicit runner replaces interleaved URL/execution;explicitfix runtimeasset selection insteadLinuxx64;optionalversion for realpair(default0.3.0).",
       "checks": "58tests258assertions;tsc/Biome;new tests/update-self-fixture.test.ts transport/sourceauthority/cleanup/compiledactualpair installation;frozenunchanged.",
@@ -2988,9 +2825,7 @@
         "status": "accepted",
         "acceptedBlob": "a6959fca4cf82247d0f82207b4a0a69f28b1c87d",
         "primaryId": "task_1fdcbe47",
-        "judgeIds": [
-          "task_81083bad"
-        ]
+        "judgeIds": ["task_81083bad"]
       }
     },
     {
@@ -3031,9 +2866,7 @@
         "status": "accepted",
         "acceptedBlob": "a97a2d229678e12335a802823dbca5a8c78c0285",
         "primaryId": "task_bf44caf8",
-        "judgeIds": [
-          "task_4e5800d8"
-        ]
+        "judgeIds": ["task_4e5800d8"]
       }
     },
     {
@@ -3081,9 +2914,7 @@
         "status": "accepted",
         "acceptedBlob": "6569bd7e550e94dcd82b41da3774848f4347eae2",
         "primaryId": "task_27b632e4",
-        "judgeIds": [
-          "task_ee4235b6"
-        ]
+        "judgeIds": ["task_ee4235b6"]
       }
     },
     {
@@ -3124,9 +2955,7 @@
         "status": "accepted",
         "acceptedBlob": "f8e9a96777f6c92a2ef823b56d70375db0271d66",
         "primaryId": "task_7b923de0",
-        "judgeIds": [
-          "task_17380c61"
-        ]
+        "judgeIds": ["task_17380c61"]
       }
     },
     {
@@ -3174,9 +3003,7 @@
         "status": "accepted",
         "acceptedBlob": "9d3d678072b9e5994e3653c91e05f0d31cc8daa2",
         "primaryId": "task_6b28b190",
-        "judgeIds": [
-          "task_3bcf763e"
-        ]
+        "judgeIds": ["task_3bcf763e"]
       }
     },
     {
@@ -3214,9 +3041,7 @@
         "status": "accepted",
         "acceptedBlob": "b984b24eea2a441adca35f80564e94c869658551",
         "primaryId": "task_357ea541",
-        "judgeIds": [
-          "task_4c5a1d2a"
-        ]
+        "judgeIds": ["task_4c5a1d2a"]
       }
     }
   ],
@@ -3270,9 +3095,7 @@
         "status": "accepted",
         "acceptedBlob": "13c3bd3e7a94b90202089ca216d25cd5e422c7b7",
         "primaryId": "task_075a5f2c",
-        "judgeIds": [
-          "task_00d188a5"
-        ]
+        "judgeIds": ["task_00d188a5"]
       }
     },
     {
@@ -3324,9 +3147,7 @@
         "status": "accepted",
         "acceptedBlob": "e1bf5ce576f4f1ddec4c42c86e6b32637ceb5267",
         "primaryId": "task_29efc903",
-        "judgeIds": [
-          "task_6e25dc37"
-        ]
+        "judgeIds": ["task_6e25dc37"]
       }
     },
     {
@@ -3375,9 +3196,7 @@
         "status": "accepted",
         "acceptedBlob": "06c4344c3274180322ba17971dc91486149f7a09",
         "primaryId": "task_0ecce4b1",
-        "judgeIds": [
-          "task_efae7e17"
-        ]
+        "judgeIds": ["task_efae7e17"]
       }
     },
     {
@@ -3426,9 +3245,7 @@
         "status": "accepted",
         "acceptedBlob": "b117a5a3499c9169edad37d9514810ebded9b6b1",
         "primaryId": "task_cdc39c59",
-        "judgeIds": [
-          "task_c158deef"
-        ]
+        "judgeIds": ["task_c158deef"]
       }
     }
   ],

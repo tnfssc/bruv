@@ -46,9 +46,7 @@
         "acceptedBlob": "d8df6d268182f2f00087218756390eef7f6ca9e3",
         "primaryId": "task_2724586d",
         "primaryCommit": "b00744a30869de866bdcc6b8e87011e73d50c07e",
-        "judgeIds": [
-          "task_efa4fabb"
-        ],
+        "judgeIds": ["task_efa4fabb"],
         "sourceCommit": "b00744a30869de866bdcc6b8e87011e73d50c07e",
         "state": "accepted-exact-not-joined",
         "reason": "Saved final original review and candidate/area hashes match. Live compaction owns SDK session; manager-only reset/replay follows; sampling returns observation rather than retained ledger; separate manager/directory finalizers make actual lifetime visible. Joined tree differs; parent integration p..."
@@ -65,9 +63,7 @@
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_9bbf5aee",
           "branch": "bruv/primary-history-storage-preload-boundary-9bbf5aee",
           "commit": "cc3a45f5700d05d60ed35c56ba1a89d7f3e1276d",
-          "changedPaths": [
-            "wisdom/quality/structural-readability-worker.md"
-          ],
+          "changedPaths": ["wisdom/quality/structural-readability-worker.md"],
           "result": "No change: import installer and synchronously install, no selection/cleanup ownership or wrapper needed.",
           "checks": "41 preloaded SDK/history tests;6 contract suites; activation/idempotence smoke and Biome pass. Initial assets/transient timeout retried unchanged commands, no build/tsc/live/native parity."
         }
@@ -91,9 +87,7 @@
         "acceptedBlob": "8f7b5e5783bd2486eb7b0bc7f9952e080457617e",
         "primaryId": "task_9bbf5aee",
         "primaryCommit": "cc3a45f5700d05d60ed35c56ba1a89d7f3e1276d",
-        "judgeIds": [
-          "task_dc60f489"
-        ],
+        "judgeIds": ["task_dc60f489"],
         "sourceCommit": "cc3a45f5700d05d60ed35c56ba1a89d7f3e1276d",
         "state": "accepted-joined",
         "reason": "Saved final original review and candidate/area hashes match. Preload sole synchronous installer activation clear; no owned selection/teardown state. Integration contract verified against actual preload/startup/SDK/native isolation and cleanup consumers, not whole-history acceptance."
@@ -111,9 +105,7 @@
           "branch": "bruv/primary-history-storage-diagnostic-owner-b0eea86b",
           "status": "killed",
           "reason": "No durable output since14:39 across10/20/30min attention checkpoints; one partial source diff retained. Stop response still running, backend phase receiving model response with lastError AggregateError Parse error. Do not infer exit; wait terminal acknowledgement before recovery slot.",
-          "changedPaths": [
-            "scripts/history-storage-probe.ts"
-          ],
+          "changedPaths": ["scripts/history-storage-probe.ts"],
           "exitCode": 143,
           "terminalEvidence": "task_b0eea86b killed completion received; partial worktree retained, no candidate acceptance."
         },
@@ -134,10 +126,7 @@
         "acceptedBlob": "fb8bcf35ccb52d9edd8c06b634c0ff034b69d78c",
         "primaryId": "task_e6e6e804",
         "primaryCommit": "8f89c50a021b0f98ff5cd8d570a04f6610f27b5f",
-        "judgeIds": [
-          "task_1925c521",
-          "task_785ec99c"
-        ],
+        "judgeIds": ["task_1925c521", "task_785ec99c"],
         "sourceCommit": "4438e83819248bc7e36fd94c206b56fe563c94f8",
         "state": "accepted-joined",
         "reason": "Accept the actual final code, not a claimed new structural improvement over the supplied primary base. The candidate parent is exactly 89d2aa8e47b2b4e52470e39cec6cfab5417f86a0; their sole diff wraps the reopenedOriginal optional chain. Both already have the same coherent structure. captureSnapshot receives the exact live manager and returns a label plus scalar measurements, without capturing mutable manager state or publishing to an outer list. writeCompactedFixture owns baseline sampling, body generation, first-assistant persistence flush, compaction/checkpoint sampling and fixture metadata publication. Its return contains disk coordinates, IDs/hash and measurements, not the populated manager, parsed entries or original bodies. child visibly sequences fixture completion, GC, reopen, pre-read sampling, original SHA-256 verification, post-read sampling, adapted-only assertions, JSON publication and finally cleanup. The reopened sample is directly bound and baseline/comparison selection is labeled. The preserved task_b0eea86b uncommitted source was read without mutation; it already proposed the substantive lifetime separation. Against its older launch base 58fb7fcdabd7885b6fad39ff5eacd2b5c495bfa7, the final design removes the optional manager reassignment and snapshot closure spanning create/reopen lifetimes, manual nulling and positional sample reconstruction. That historical improvement is not a delta of this formatter candidate. Unchanged decision: no further structural rewrite is needed for textBytes, collectGc, the generation loop or run; their narrow operations and authority are already legible. The fixture return is a completed result, not a mutable context bag."
@@ -154,9 +143,7 @@
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_fda08b6d",
           "branch": "bruv/primary-session-journal-leak-audit-fda08b6d",
           "commit": "8c1b33bedd5d34ba5d84bfe3d87f1429e3268c40",
-          "changedPaths": [
-            "wisdom/quality/structural-readability-worker.md"
-          ],
+          "changedPaths": ["wisdom/quality/structural-readability-worker.md"],
           "result": "No change: manual SDK in-memory probe, not shipped disk adapter; compaction retains originals, reset clears journal/index while retaining manager. Clear measurement phases, no resource-release claim.",
           "checks": "7 output schemas/counts; retention/reset assertions;23 history tests67 assertions; focusedformat/tsc/diff pass; lint5warnings1info unchanged; no diskcleanup/fullbuild."
         }
@@ -180,9 +167,7 @@
         "acceptedBlob": "e1c6629766f6f6511f2d347887310a885d455b92",
         "primaryId": "task_fda08b6d",
         "primaryCommit": "8c1b33bedd5d34ba5d84bfe3d87f1429e3268c40",
-        "judgeIds": [
-          "task_4f7e5e8f"
-        ],
+        "judgeIds": ["task_4f7e5e8f"],
         "sourceCommit": "8c1b33bedd5d34ba5d84bfe3d87f1429e3268c40",
         "state": "accepted-joined",
         "reason": "Saved final original review and candidate/area hashes match. In-memory SDK diagnostic phases/manager retention/reset are direct, not shipped disk-store cleanup. Measurement code need not invent resource-release ownership; no structural burden found."
@@ -199,9 +184,7 @@
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_b29d8757",
           "branch": "bruv/primary-pinned-sdk-adaptation-pipeline-b29d8757",
           "commit": "50aac7df5a8f3664d516edd4d1684db59e5c7b50",
-          "changedPaths": [
-            "wisdom/quality/structural-readability-worker.md"
-          ],
+          "changedPaths": ["wisdom/quality/structural-readability-worker.md"],
           "result": "No change: pinned recipe input/output checks, pure transform drift rejection and batch preflight before sole write loop coherent; runtime readiness separate. Preflight does not roll back subsequent write failure.",
           "checks": "6 focused tests56 assertions5 filtered;7 installed adaptations verified read-only; Biome/diff pass; ownedWASM copy; no build/typecheck/compiled/live/device."
         }
@@ -225,9 +208,7 @@
         "acceptedBlob": "f0a19b44b776154c3308e02c5781824c30c40f1d",
         "primaryId": "task_b29d8757",
         "primaryCommit": "50aac7df5a8f3664d516edd4d1684db59e5c7b50",
-        "judgeIds": [
-          "task_672ed13a"
-        ],
+        "judgeIds": ["task_672ed13a"],
         "sourceCommit": "50aac7df5a8f3664d516edd4d1684db59e5c7b50",
         "state": "accepted-joined",
         "reason": "Saved final original review and candidate/area hashes match. Pinned recipes expose exact changes, pure transform rejects drift and batch validates before sole writes; runtime readiness separate, no IO rollback claimed."
@@ -274,9 +255,7 @@
         "acceptedBlob": "7a5766139559355f8ca7be138c9e436d54020f01",
         "primaryId": "task_178021e9",
         "primaryCommit": "d92a2a69dd455f3c9980f03255f51de76bbc171c",
-        "judgeIds": [
-          "task_910065b6"
-        ],
+        "judgeIds": ["task_910065b6"],
         "sourceCommit": "d92a2a69dd455f3c9980f03255f51de76bbc171c",
         "state": "accepted-exact-not-joined",
         "reason": "Saved final original review and candidate/area hashes match. Linear parser remains direct; runtime capture initializes only after successful parsing, so help/errors no longer require transitive production assets. Equivalent role predicate and parser semantics preserved. Joined tree differs; paren..."
@@ -293,10 +272,7 @@
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_f5ba33fd",
           "branch": "bruv/primary-src-agent-readme.md-f5ba33fd",
           "commit": "cc7e03d0427c25a75f14d535a6a168a6ffc0c33d",
-          "changedPaths": [
-            "src/agent/README.md",
-            "wisdom/quality/structural-readability-worker.md"
-          ],
+          "changedPaths": ["src/agent/README.md", "wisdom/quality/structural-readability-worker.md"],
           "result": "Separate entrypoints, attachment/dispatch/delivery/detach, and context policy; link actual operation owners.",
           "checks": "8 focused tests/49 assertions; 21 links resolve; diff/control checks; no Markdown lint supported."
         },
@@ -308,10 +284,7 @@
           "branch": "bruv/rework-agent-readme-ownership-map-92562cf3",
           "priorCandidate": "cc7e03d0427c25a75f14d535a6a168a6ffc0c33d",
           "commit": "22538fc2778f389d8331126ccc19fbe1ba57f7fe",
-          "changedPaths": [
-            "src/agent/README.md",
-            "wisdom/quality/structural-readability-worker.md"
-          ],
+          "changedPaths": ["src/agent/README.md", "wisdom/quality/structural-readability-worker.md"],
           "result": "Clarifies local task formatters versus extension mixed assembly/budgets/destinations and remote completion summary owner; resolves first judge objection.",
           "checks": "22 relative links; no NUL; diff check; docs-only no runtime gate."
         },
@@ -323,10 +296,7 @@
           "branch": "bruv/rework-agent-map-for-notification-owner-c4082476",
           "priorCandidate": "22538fc2778f389d8331126ccc19fbe1ba57f7fe",
           "commit": "e5241b6b3919a8a62daa9c4a9f6003396ee0223d",
-          "changedPaths": [
-            "src/agent/README.md",
-            "wisdom/quality/structural-readability-worker.md"
-          ],
+          "changedPaths": ["src/agent/README.md", "wisdom/quality/structural-readability-worker.md"],
           "result": "Update reading map for createJobNotifications attachment/delivery/settlement/close and separate snapshot retention lifetime; preserve local task vs extension assembly vs remote summary ownership.",
           "checks": "63 existing tests/305 assertions; 30 links; byte/fence/whitespace checks; docs Biome unsupported; isolated TMPDIR/local assets, no build/typecheck."
         }
@@ -418,13 +388,7 @@
         "acceptedBlob": "613be07a1fc8c96a91487f30764fa5f213b7182c",
         "primaryId": "task_c4082476",
         "primaryCommit": "e5241b6b3919a8a62daa9c4a9f6003396ee0223d",
-        "judgeIds": [
-          "task_0cfbdfd3",
-          "task_8739dae2",
-          "task_b5e28075",
-          "task_7f8422ea",
-          "task_b7cd3a68"
-        ],
+        "judgeIds": ["task_0cfbdfd3", "task_8739dae2", "task_b5e28075", "task_7f8422ea", "task_b7cd3a68"],
         "sourceCommit": "d95ff345b6246fb81e7941e6acea8587d39a2bb1",
         "state": "accepted-joined",
         "reason": "Saved final original review and candidate/area hashes match. Currentcontext -> failclosed identity restoration -> wisdom eligibility removes registration-order/stale-depth dependency for command/prompt. Whole final task/notification/framing extension remains coherent; README semantic map accurate."
@@ -472,9 +436,7 @@
         "acceptedBlob": "1b4656ebb9765af61b459073d4eeeb6ceffa1d06",
         "primaryId": "task_f6a2cf6a",
         "primaryCommit": "6765c847fd17806b697ec1bede8a8260ac9123d0",
-        "judgeIds": [
-          "task_2020f326"
-        ],
+        "judgeIds": ["task_2020f326"],
         "sourceCommit": "6765c847fd17806b697ec1bede8a8260ac9123d0",
         "state": "accepted-joined",
         "reason": "Saved final original review and candidate/area hashes match. Inference/projection returns classified outcome/response receipt; hook owns one cancelled-usage append attempt plus diagnostic/notification/cancel. Wire acceptance not erased by later rejection. Actual SDK reproduction confirms notifier..."
@@ -522,9 +484,7 @@
         "acceptedBlob": "e77c355972a0581e3773f8cabd457fe4424a55ee",
         "primaryId": "task_06296bc0",
         "primaryCommit": "b2b130e3fc239ec1677fa356c295ad8be1725e6a",
-        "judgeIds": [
-          "task_7fc83ddf"
-        ],
+        "judgeIds": ["task_7fc83ddf"],
         "sourceCommit": "b2b130e3fc239ec1677fa356c295ad8be1725e6a",
         "state": "accepted-joined",
         "reason": "Saved final original review and candidate/area hashes match. Observer owns request/subscription/HTTP-terminal debt lifetime apart from settings/durable countdown. Atomic select+consume, grouped terminal debt/ambiguity disposal, native real-operation evidence remove cross-hook reconstruction witho..."
@@ -611,12 +571,7 @@
         "acceptedBlob": "d639bcdedadbd503cac1c2ce6739177b385d1dc3",
         "primaryId": "task_f10ebf0a",
         "primaryCommit": "8472ed2449ce129f1929ac5c60867cf34dfd2f0e",
-        "judgeIds": [
-          "task_0acb5c07",
-          "task_7f8422ea",
-          "task_b7cd3a68",
-          "task_eef5d289"
-        ],
+        "judgeIds": ["task_0acb5c07", "task_7f8422ea", "task_b7cd3a68", "task_eef5d289"],
         "sourceCommit": "d95ff345b6246fb81e7941e6acea8587d39a2bb1",
         "state": "accepted-exact-not-joined",
         "reason": "Saved final original review and candidate/area hashes match. Currentcontext -> failclosed identity restoration -> wisdom eligibility removes registration-order/stale-depth dependency for command/prompt. Whole final task/notification/framing extension remains coherent; README semantic map accurate..."
@@ -633,9 +588,7 @@
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_9489bfd1",
           "branch": "bruv/primary-instruction-continuity-9489bfd1",
           "commit": "e1ce1259975e663d8f091564175612a85dafa92f",
-          "changedPaths": [
-            "wisdom/quality/structural-readability-worker.md"
-          ],
+          "changedPaths": ["wisdom/quality/structural-readability-worker.md"],
           "result": "No change: bound session, manager-scoped frame and per-run options are distinct real lifetimes; lifecycle and generation guards make authority explicit without added indirection.",
           "checks": "6 focused files 102 pass/639 assertions; focused format/lint/diff pass; assets copied for rerun; no build/typecheck/compiled/live proof."
         }
@@ -659,9 +612,7 @@
         "acceptedBlob": "51020264675b38641611920f0adb4e4c4c03664a",
         "primaryId": "task_9489bfd1",
         "primaryCommit": "e1ce1259975e663d8f091564175612a85dafa92f",
-        "judgeIds": [
-          "task_7a60dd3f"
-        ],
+        "judgeIds": ["task_7a60dd3f"],
         "sourceCommit": "e1ce1259975e663d8f091564175612a85dafa92f",
         "state": "accepted-joined",
         "reason": "Saved final original review and candidate/area hashes match. Actual private SDK adapter separates bound-session ownership, manager/session-scoped frame and per-run options; prompt/compaction/hooks synchronize final frames, replacement/shutdown invalidate old authority, root custom/child roles sta..."
@@ -711,9 +662,7 @@
         "acceptedBlob": "bcb44e0107f9dedc6ed401bb74ebb20431861cb5",
         "primaryId": "task_146763c6",
         "primaryCommit": "b56b4b3a99499178ace1cacba5538760fdc0a656",
-        "judgeIds": [
-          "task_00bd7047"
-        ],
+        "judgeIds": ["task_00bd7047"],
         "sourceCommit": "b56b4b3a99499178ace1cacba5538760fdc0a656",
         "state": "accepted-joined",
         "reason": "Saved final original review and candidate/area hashes match. Removes duplicate frame lifecycle: owner digest derives from context; custom flag never true in shipped caller. Actual manager/session authority, root custom/child isolation, marker replacement and persistence ordering remain explicit."
@@ -730,9 +679,7 @@
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_9d8cd3c0",
           "branch": "bruv/primary-last-used-cli-model-persistence-9d8cd3c0",
           "commit": "f2547578087fdb398df7a2bbaa7bfdb0ca36c1dc",
-          "changedPaths": [
-            "wisdom/quality/structural-readability-worker.md"
-          ],
+          "changedPaths": ["wisdom/quality/structural-readability-worker.md"],
           "result": "No change candidate: root TUI guard, exact preference update, awaited flush and error notification already local; short parallel handlers need no indirection.",
           "checks": "7 tests/28 assertions; format/lint pass2warnings; stronger Biome import-order error baseline; no compile/build.",
           "limits": "Observed comment caveat: Pi thinking-selection also fires on model-induced effective thinking changes; picker-only comment understates upstream event surface. Needs judge actual-code decision, no behavior fix claimed."
@@ -744,10 +691,7 @@
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_e862a0d8",
           "branch": "bruv/rework-cli-preference-event-contract-com-e862a0d8",
           "commit": "e7fe2eec0a44aa69a41ded01a6862217fdb7a7b7",
-          "changedPaths": [
-            "src/agent/last-used-cli-model.ts",
-            "wisdom/quality/structural-readability-worker.md"
-          ],
+          "changedPaths": ["src/agent/last-used-cli-model.ts", "wisdom/quality/structural-readability-worker.md"],
           "result": "Adjacent comment now documents effective-level/model-change event provenance and no source/consent discriminator, startup/restoration distinction; mechanical import ordering only otherwise.",
           "checks": "7 tests28 assertions; Biome/diff pass2baseline warnings; no fullbuild/typecheck/liveTUI."
         }
@@ -783,10 +727,7 @@
         "acceptedBlob": "38ae1734383f3d55a388a9f2f28af122d6ff3e8a",
         "primaryId": "task_e862a0d8",
         "primaryCommit": "e7fe2eec0a44aa69a41ded01a6862217fdb7a7b7",
-        "judgeIds": [
-          "task_8d8d65eb",
-          "task_b1432f83"
-        ],
+        "judgeIds": ["task_8d8d65eb", "task_b1432f83"],
         "sourceCommit": "e7fe2eec0a44aa69a41ded01a6862217fdb7a7b7",
         "state": "accepted-exact-not-joined",
         "reason": "Saved final original review and candidate/area hashes match. Prior rejection fully answered: comment accurately exposes effective thinking events from model changes with no source/consent discriminator and distinct event-free initialization. Different handler authority stays explicit; no runtime ..."
@@ -834,9 +775,7 @@
         "acceptedBlob": "51bbeaf48a9a3fab8d9cdfb58eca338c92350337",
         "primaryId": "task_dd5dc858",
         "primaryCommit": "16e685366452845e2faff7fe7fbee57c6cdc5a6e",
-        "judgeIds": [
-          "task_c5c84c0c"
-        ],
+        "judgeIds": ["task_c5c84c0c"],
         "sourceCommit": "16e685366452845e2faff7fe7fbee57c6cdc5a6e",
         "state": "accepted-joined",
         "reason": "Saved final original review and candidate/area hashes match. Protocol evidence/plan/match/authorize/rewrite/commit responsibilities distinct; replay no longer plans checkpoint just for ambiguity. Original occurrence/redaction/duplicate/order safety and native full-window coverage preserved. One c..."
@@ -884,9 +823,7 @@
         "acceptedBlob": "629695696d1bedafc6147cfac485600ed878e664",
         "primaryId": "task_ec8e3840",
         "primaryCommit": "08e00ae3c0aa5603288096ddb7d5a3ab73a8c682",
-        "judgeIds": [
-          "task_7caa7713"
-        ],
+        "judgeIds": ["task_7caa7713"],
         "sourceCommit": "08e00ae3c0aa5603288096ddb7d5a3ab73a8c682",
         "state": "accepted-joined",
         "reason": "Saved final original review and candidate/area hashes match. Registration owns capture/replay/admission; one attempt owns pinned scope through auth/transport/settlement without capture mutation. Stale scope, billable cancelled/failed usage, response evidence and no postlaunch plaintext fallback p..."
@@ -949,10 +886,7 @@
         "acceptedBlob": "07e4935305ca0bca5cd66c7042b15757d87877bf",
         "primaryId": "task_fd75f63a",
         "primaryCommit": "e4a406a62b1e3715cc8f50b3e5bb5661644c8bb1",
-        "judgeIds": [
-          "task_167d27b3",
-          "task_4cfa8579"
-        ],
+        "judgeIds": ["task_167d27b3", "task_4cfa8579"],
         "sourceCommit": "4b7d3e5b47687be57c96e4035265b5c2ce1ec3c5",
         "state": "accepted-joined",
         "reason": "Saved final original review and candidate/area hashes match. Fixture uses actual shared runtime/persistence authority, explicit consent/preparation signals and direct rollback fault injection; all 108 assertions/test declarations remain. Final source policy/authorization/guard/rollback/last-owner..."
@@ -969,9 +903,7 @@
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_1b7e035c",
           "branch": "bruv/primary-provider-attempt-evidence-1b7e035c",
           "commit": "5e95045dec145d784639b23f578741539586a603",
-          "changedPaths": [
-            "wisdom/quality/structural-readability-worker.md"
-          ],
+          "changedPaths": ["wisdom/quality/structural-readability-worker.md"],
           "result": "No change: native compaction owns request/session/generation validity; boundary records evidence and isolates listener failures; cache observer accepts response only, not dispatch.",
           "checks": "54 tests/255 assertions; focused format/diff pass; lint 5 baseline warnings; no compile/build/live provider."
         }
@@ -995,9 +927,7 @@
         "acceptedBlob": "cfa8d0941c92b30f72653ff89f36a84a98aafabe",
         "primaryId": "task_1b7e035c",
         "primaryCommit": "5e95045dec145d784639b23f578741539586a603",
-        "judgeIds": [
-          "task_075c1281"
-        ],
+        "judgeIds": ["task_075c1281"],
         "sourceCommit": "5e95045dec145d784639b23f578741539586a603",
         "state": "accepted-joined",
         "reason": "Saved final original review and candidate/area hashes match. Owner-keyed subscription/evidence broker is coherent; native producer owns generation/scope/validated-output authority and cache consumer ignores dispatch. Listener failure isolation and cleanup explicit, no need to merge lifetimes."
@@ -1014,9 +944,7 @@
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_b7e1aa63",
           "branch": "bruv/primary-src-goals-controller.ts-b7e1aa63",
           "commit": "ffdfb910",
-          "changedPaths": [
-            "wisdom/quality/structural-readability-worker.md"
-          ],
+          "changedPaths": ["wisdom/quality/structural-readability-worker.md"],
           "result": "No source change: tracking localizes helper-first-turn exemption, waiting handoff accounting, explicit progress and strikes across reminders.",
           "checks": "28 goal tests, 133 assertions; focused Biome passed; no build/SDK/live checks."
         }
@@ -1040,9 +968,7 @@
         "acceptedBlob": "b46d074e022db912d2ea6565730a27879f83a361",
         "primaryId": "task_b7e1aa63",
         "primaryCommit": "ffdfb910fa126b9eca765d6fbfcc5a3b2b2ceb6b",
-        "judgeIds": [
-          "task_61e44d61"
-        ],
+        "judgeIds": ["task_61e44d61"],
         "sourceCommit": "ffdfb910",
         "state": "accepted-joined",
         "reason": "Saved final original review and candidate/area hashes match. Transient accounting stays distinct from persistence/delivery; automatic/helper starts, per-run strikes and settled scheduling are explicit. First helper ordinary run exemption and waiting handoff accounting remain localized."
@@ -1091,9 +1017,7 @@
         "acceptedBlob": "90e7ddd369fad8b41c6cf53a2114b85c4bda5af1",
         "primaryId": "task_28c52a22",
         "primaryCommit": "3768ecd10500006ffdfed8bc12202224a483636a",
-        "judgeIds": [
-          "task_4a2a31dd"
-        ],
+        "judgeIds": ["task_4a2a31dd"],
         "sourceCommit": "3768ecd10500006ffdfed8bc12202224a483636a",
         "state": "accepted-joined",
         "reason": "Saved final original review and candidate/area hashes match. GoalReminders coherently owns transport tokens/epoch/generation/bounded pending IDs, separate from store and controller. Hooks retain visible transport-only invalidation vs full accounting reset. Exact payload, queue/navigation/restart,..."
@@ -1138,10 +1062,7 @@
           "candidate": "0f29a6e2742eed1fa99fe34c67b15e3cb7d8d072",
           "base": "f137390727d3dd67f956e3bbba52c10ebfa294b9",
           "status": "complete",
-          "priorVerdicts": [
-            "task_229853f3 ACCEPT exact types candidate",
-            "task_46beb0fa ACCEPT replay candidate"
-          ],
+          "priorVerdicts": ["task_229853f3 ACCEPT exact types candidate", "task_46beb0fa ACCEPT replay candidate"],
           "writerResponse": "Combine discriminated durable GoalEntry with accepted replay without touching store: old assertion site already removed; restored-entry view deliberately validates unknown payload apart from durable envelope.",
           "verdict": "ACCEPT",
           "objections": [],
@@ -1161,10 +1082,7 @@
         "acceptedBlob": "bd72fa6cc6e8ccfebde0677faa87ccff9be764d2",
         "primaryId": "task_fda16f5b",
         "primaryCommit": "550ce6425a3d92d1b0300bc48bd9cfe69737da91",
-        "judgeIds": [
-          "task_46beb0fa",
-          "task_d72cbe58"
-        ],
+        "judgeIds": ["task_46beb0fa", "task_d72cbe58"],
         "sourceCommit": "0f29a6e2742eed1fa99fe34c67b15e3cb7d8d072",
         "state": "accepted-joined",
         "reason": "Saved final original review and candidate/area hashes match. Durable journal variants match writes; validated replay result deliberately omits envelope. Removed assertion site genuinely disappeared in accepted replay; combined authority/diagnostics/waiting/write ordering contracts remain explicit."
@@ -1198,10 +1116,7 @@
           "branch": "bruv/reconcile-goal-journal-contract-30334bdd",
           "priorCandidate": "99438e18ec5dde7fdbff4c937edf67c663723834",
           "commit": "0f29a6e2742eed1fa99fe34c67b15e3cb7d8d072",
-          "changedPaths": [
-            "src/goals/types.ts",
-            "wisdom/quality/structural-readability-worker.md"
-          ],
+          "changedPaths": ["src/goals/types.ts", "wisdom/quality/structural-readability-worker.md"],
           "result": "Combine discriminated durable GoalEntry with accepted replay without touching store: old assertion site already removed; restored-entry view deliberately validates unknown payload apart from durable envelope.",
           "checks": "31 goal tests/145 assertions; static baseline fails/candidate passes; focused Biome/diff pass; 8 generated-asset tsc baseline errors unchanged."
         }
@@ -1222,10 +1137,7 @@
           "candidate": "0f29a6e2742eed1fa99fe34c67b15e3cb7d8d072",
           "base": "f137390727d3dd67f956e3bbba52c10ebfa294b9",
           "status": "complete",
-          "priorVerdicts": [
-            "task_229853f3 ACCEPT exact types candidate",
-            "task_46beb0fa ACCEPT replay candidate"
-          ],
+          "priorVerdicts": ["task_229853f3 ACCEPT exact types candidate", "task_46beb0fa ACCEPT replay candidate"],
           "writerResponse": "Combine discriminated durable GoalEntry with accepted replay without touching store: old assertion site already removed; restored-entry view deliberately validates unknown payload apart from durable envelope.",
           "verdict": "ACCEPT",
           "objections": [],
@@ -1244,10 +1156,7 @@
         "acceptedBlob": "8ccbe88cc95296fc9fa4c224c72c7cf2c447c5bd",
         "primaryId": "task_30334bdd",
         "primaryCommit": "0f29a6e2742eed1fa99fe34c67b15e3cb7d8d072",
-        "judgeIds": [
-          "task_229853f3",
-          "task_d72cbe58"
-        ],
+        "judgeIds": ["task_229853f3", "task_d72cbe58"],
         "sourceCommit": "0f29a6e2742eed1fa99fe34c67b15e3cb7d8d072",
         "state": "accepted-joined",
         "reason": "Saved final original review and candidate/area hashes match. Durable journal variants match writes; validated replay result deliberately omits envelope. Removed assertion site genuinely disappeared in accepted replay; combined authority/diagnostics/waiting/write ordering contracts remain explicit."
@@ -1264,9 +1173,7 @@
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_841fe796",
           "branch": "bruv/primary-agent-state-persistence-841fe796",
           "commit": "f57af221d2c5558b34d3db7959bd91d7898efd7f",
-          "changedPaths": [
-            "wisdom/quality/structural-readability-worker.md"
-          ],
+          "changedPaths": ["wisdom/quality/structural-readability-worker.md"],
           "result": "No change: pane-state reporting, not persisted role/model state. Root/TUI eligibility, reporter authority, event precedence, serialized/coalesced delivery, cancellation/quit release coherent.",
           "checks": "12 tests34 assertions; Biome check0 with3 existing infos; generated WASM supplied from shared deps; no build/typecheck/liveHerdr/Windows."
         }
@@ -1290,9 +1197,7 @@
         "acceptedBlob": "652dc28d948e82a263b789da4a2ec5dbb09d4296",
         "primaryId": "task_841fe796",
         "primaryCommit": "f57af221d2c5558b34d3db7959bd91d7898efd7f",
-        "judgeIds": [
-          "task_740befb5"
-        ],
+        "judgeIds": ["task_740befb5"],
         "sourceCommit": "f57af221d2c5558b34d3db7959bd91d7898efd7f",
         "state": "accepted-joined",
         "reason": "Saved final original review and candidate/area hashes match. Pane reporter claim/event precedence and coalesced serialized delivery/quit lifetime already coherent. Splitting class or shared state framework would not resolve a reading problem."
@@ -1340,9 +1245,7 @@
         "acceptedBlob": "4bba42698529fdc9183ecd6e93110ab3b4484cff",
         "primaryId": "task_93e226ba",
         "primaryCommit": "32cbff38aa54ff05659ea2365134f016ff8c4055",
-        "judgeIds": [
-          "task_0426dce8"
-        ],
+        "judgeIds": ["task_0426dce8"],
         "sourceCommit": "32cbff38aa54ff05659ea2365134f016ff8c4055",
         "state": "accepted-joined",
         "reason": "Saved final original review and candidate/area hashes match. Single transaction descriptor owns write/publication/rollback; indexes/cache advance only on success. Removed flags derive from active path and immediate publication invariant. Collision and cleanup contracts preserved."
@@ -1359,9 +1262,7 @@
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_1e7ee0c8",
           "branch": "bruv/primary-history-selector-lifecycle-1e7ee0c8",
           "commit": "313f21095386e99beda79404e94aefc4c05da23c",
-          "changedPaths": [
-            "wisdom/quality/structural-readability-worker.md"
-          ],
+          "changedPaths": ["wisdom/quality/structural-readability-worker.md"],
           "result": "No change: idempotent count override reads owned existing metadata or delegates native SDK; does not own picker selection/disposal. Actual CLI install/picker cancellation/runtime switch/storage lifetimes separate.",
           "checks": "14 history tests/62 assertions; direct probe18 verifies idempotence/fallback/metadata-only/whole-journal/dispose-reopen bytes; format/lint/diff pass; no TUI/GC/typecheck/build."
         }
@@ -1385,9 +1286,7 @@
         "acceptedBlob": "97954cd9e305bbecae9fbfdedac034e8a52cf4c4",
         "primaryId": "task_1e7ee0c8",
         "primaryCommit": "313f21095386e99beda79404e94aefc4c05da23c",
-        "judgeIds": [
-          "task_2011e8a7"
-        ],
+        "judgeIds": ["task_2011e8a7"],
         "sourceCommit": "313f21095386e99beda79404e94aefc4c05da23c",
         "state": "accepted-joined",
         "reason": "Saved final original review and candidate/area hashes match. Metadata-count override has one installation lifetime and native fallback; picker selection/disposal belong elsewhere. Metadata-only count avoids body hydration with clear authority."
@@ -1435,9 +1334,7 @@
         "acceptedBlob": "7ccf86cf97d5e1b35a5382d1b6a8b62aca041a9c",
         "primaryId": "task_f75129c8",
         "primaryCommit": "3e75dd44ee0e8109ed4191fe7397ec1d0459bfc9",
-        "judgeIds": [
-          "task_150357ad"
-        ],
+        "judgeIds": ["task_150357ad"],
         "sourceCommit": "3e75dd44ee0e8109ed4191fe7397ec1d0459bfc9",
         "state": "accepted-joined",
         "reason": "Saved final original review and candidate/area hashes match. Retrieval preparation owns cursor/ancestry/snapshot/live exclusions together; sorting uses visible provenance not generator side map. Read retains full scan and original UTF-16, permission/ref/cursor/live exclusion contracts."
@@ -1485,9 +1382,7 @@
         "acceptedBlob": "d7032c57091c90f661c37edd3b69bf27f0835243",
         "primaryId": "task_f9b9fc58",
         "primaryCommit": "a6bc2c45ad4f18f5bede511ca33e4eb690c26b36",
-        "judgeIds": [
-          "task_4b35440e"
-        ],
+        "judgeIds": ["task_4b35440e"],
         "sourceCommit": "a6bc2c45ad4f18f5bede511ca33e4eb690c26b36",
         "state": "accepted-joined",
         "reason": "Saved final original review and candidate/area hashes match. Unified append/rebuild metadata publisher; explicit owner in syncIndexes; accounting installer owns cache validation/native estimate/projection recording. Append/publication/recovery, skeleton identity, replay and disposal remain purpos..."
@@ -1504,9 +1399,7 @@
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_ce232122",
           "branch": "bruv/primary-persisted-shake-record-ce232122",
           "commit": "976ba477d57be183677d200913cca5c810d42908",
-          "changedPaths": [
-            "wisdom/quality/structural-readability-worker.md"
-          ],
+          "changedPaths": ["wisdom/quality/structural-readability-worker.md"],
           "result": "No change: exact schema then field/ID bounds then serialized-byte cap linear. Callers intentionally own different invalid-marker selection/projection/native coverage/history exclusion consequences.",
           "checks": "96 tests/454 assertions; focused format/lint pass; initial SDK missingWASM resolved by local assets; no typecheck/build/live/platform."
         }
@@ -1530,9 +1423,7 @@
         "acceptedBlob": "5ebffcfca9e7666fb500825428a99033150e8b63",
         "primaryId": "task_ce232122",
         "primaryCommit": "976ba477d57be183677d200913cca5c810d42908",
-        "judgeIds": [
-          "task_776b93a2"
-        ],
+        "judgeIds": ["task_776b93a2"],
         "sourceCommit": "976ba477d57be183677d200913cca5c810d42908",
         "state": "accepted-joined",
         "reason": "Saved final original review and candidate/area hashes match. Exact schema/version/ID/byte validation is linear; manual newest-authority, native full coverage and history cumulative live exclusions intentionally differ in caller-owned consequences. No central framework would reduce reader reconstr..."
@@ -1549,9 +1440,7 @@
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_90c49aec",
           "branch": "bruv/primary-history-types-90c49aec",
           "commit": "520137fbe51b09be0d9cb0c7a8833b90630f80bf",
-          "changedPaths": [
-            "wisdom/quality/structural-readability-worker.md"
-          ],
+          "changedPaths": ["wisdom/quality/structural-readability-worker.md"],
           "result": "No change: four explicit interfaces separate provenance, match, search/read page results; permission/cursor authority stays in service.",
           "checks": "15 history tests/50 assertions; focused format/lint pass; no typecheck/build claim."
         }
@@ -1575,9 +1464,7 @@
         "acceptedBlob": "4f47ce0c473b8e2f03d11590cc9952e5a739907b",
         "primaryId": "task_90c49aec",
         "primaryCommit": "520137fbe51b09be0d9cb0c7a8833b90630f80bf",
-        "judgeIds": [
-          "task_bbbdce1d"
-        ],
+        "judgeIds": ["task_bbbdce1d"],
         "sourceCommit": "520137fbe51b09be0d9cb0c7a8833b90630f80bf",
         "state": "accepted-joined",
         "reason": "Saved final original review and candidate/area hashes match. Four evidence contracts separate provenance, match/read ranges and page/scan completeness. Permission, session/branch authority and live exclusions stay explicitly in service; shared provenance is evidence not context bag."
@@ -1594,9 +1481,7 @@
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_dad4fc12",
           "branch": "bruv/primary-pi-host-integration-dad4fc12",
           "commit": "f41b2a9eb367298f703309897930711b7d8c20cd",
-          "changedPaths": [
-            "wisdom/quality/structural-readability-worker.md"
-          ],
+          "changedPaths": ["wisdom/quality/structural-readability-worker.md"],
           "result": "No change: prep owns pinned version/hash validation; one fail-closed startup assertion before session creation, no duplication of object identity/projection/history/teardown ownership.",
           "checks": "Host/sourceCLI9 tests90 assertions; isolated compat3/33; format/lint/diff pass; unfiltered2 compiled failures missing dist/bruv, no fresh build/typecheck/live claim."
         }
@@ -1620,9 +1505,7 @@
         "acceptedBlob": "db2f1392adacf1d649e960bf7aaaf837200f66d2",
         "primaryId": "task_dad4fc12",
         "primaryCommit": "f41b2a9eb367298f703309897930711b7d8c20cd",
-        "judgeIds": [
-          "task_43ae3d21"
-        ],
+        "judgeIds": ["task_43ae3d21"],
         "sourceCommit": "f41b2a9eb367298f703309897930711b7d8c20cd",
         "state": "accepted-joined",
         "reason": "Saved final original review and candidate/area hashes match. Prepared SDK registry/markers runtime assertion is one fail-closed prerequisite, separate from preparation hash/version authority and actual session owners."
@@ -1669,9 +1552,7 @@
         "acceptedBlob": "2bfc8a1e7288a43f140742a6895073e70dc34052",
         "primaryId": "task_321320f8",
         "primaryCommit": "904c6fb51b2fb62a4c91580e0120d5eabc1c0f7b",
-        "judgeIds": [
-          "task_10247cc9"
-        ],
+        "judgeIds": ["task_10247cc9"],
         "sourceCommit": "904c6fb51b2fb62a4c91580e0120d5eabc1c0f7b",
         "state": "accepted-exact-not-joined",
         "reason": "Saved final original review and candidate/area hashes match. Project/session cleanup remains outer; temporary role environment restoration and offline capture/fake completion/exact-context validation are complete shorter lifetimes, not alternative assembler. Joined tree differs; parent integratio..."
@@ -1720,9 +1601,7 @@
         "acceptedBlob": "784be0e71de6893f04168ddbd2b4f2c42dc99723",
         "primaryId": "task_263c3f6a",
         "primaryCommit": "42bec26abf11007f2b0781e1771224c1d5fa63c0",
-        "judgeIds": [
-          "task_7f8422ea"
-        ],
+        "judgeIds": ["task_7f8422ea"],
         "sourceCommit": "42bec26abf11007f2b0781e1771224c1d5fa63c0",
         "state": "accepted-exact-not-joined",
         "reason": "Saved final original review and candidate/area hashes match. Complete root/worker framing belongs with text/base ownership; extension visibly selects after identity/mode/continuity. Direct embedded Markdown removes strip/re-add. Entire final extension retains coherent notification/task lifecycle ..."
@@ -1739,9 +1618,7 @@
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_014fb077",
           "branch": "bruv/primary-background-handoff-shipped-promp-014fb077",
           "commit": "2b4e68216d85eceb3126db02b27f86acdeac121a",
-          "changedPaths": [
-            "wisdom/quality/structural-readability-worker.md"
-          ],
+          "changedPaths": ["wisdom/quality/structural-readability-worker.md"],
           "result": "No change: embedded Markdown/bounded ID substitution/execute receipt; job cancellation/attention/delivery authority remains separate in services, no hidden turn instructions.",
           "checks": "85 tests540 assertions8 focused files; exactbytes/diff pass; assetssetup resolved; offline/mock routing only no authSSH/live/build/typecheck/fullgate."
         }
@@ -1765,9 +1642,7 @@
         "acceptedBlob": "c46390ba223aa38f28fb9cae3d04b8f9dbe8fda4",
         "primaryId": "task_014fb077",
         "primaryCommit": "2b4e68216d85eceb3126db02b27f86acdeac121a",
-        "judgeIds": [
-          "task_4e71a5a2"
-        ],
+        "judgeIds": ["task_4e71a5a2"],
         "sourceCommit": "2b4e68216d85eceb3126db02b27f86acdeac121a",
         "state": "accepted-joined",
         "reason": "Saved final original review and candidate/area hashes match. Embedded handoff receipt and bounded ID substitution convey observation without permission/cancellation/delivery ownership; service/manager/dispatch remain actual authorities. Expansion would duplicate their contracts."
@@ -1784,9 +1659,7 @@
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_8fa02408",
           "branch": "bruv/primary-compaction-job-continuity-prompt-8fa02408",
           "commit": "05618a9bc05091b9b7ac2ba76042c2f332fd188f",
-          "changedPaths": [
-            "wisdom/quality/structural-readability-worker.md"
-          ],
+          "changedPaths": ["wisdom/quality/structural-readability-worker.md"],
           "result": "No change: time-qualified local running job snapshot substituted on native/cache success, preserved beside opaque replay; manual compact hooks yes, qualifying manual-shake bypass. Observation not task authority/accounting.",
           "checks": "103 focusedtests472 assertions;diff/clean; missingassets resolved readonly; no build/tsc/live/SSH/compiledparity."
         }
@@ -1806,9 +1679,7 @@
         "acceptedBlob": "e896596cd3979381dd5e174aa023e9e89b4f8ae6",
         "primaryId": "task_8fa02408",
         "primaryCommit": "05618a9bc05091b9b7ac2ba76042c2f332fd188f",
-        "judgeIds": [
-          "task_14606708"
-        ],
+        "judgeIds": ["task_14606708"],
         "sourceCommit": "05618a9bc05091b9b7ac2ba76042c2f332fd188f",
         "state": "accepted-joined",
         "reason": "Recovered final original review; ledger running state is stale. Completed saved actual-code review of shipped historical job snapshot; source unchanged. Ledger still says running; final delivery found in original session."
@@ -1825,9 +1696,7 @@
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_cc512c91",
           "branch": "bruv/primary-shipped-compaction-summary-promp-cc512c91",
           "commit": "ae1b0da452ca0c98c86f14a7b8a26ef2a405b2b1",
-          "changedPaths": [
-            "wisdom/quality/structural-readability-worker.md"
-          ],
+          "changedPaths": ["wisdom/quality/structural-readability-worker.md"],
           "result": "Nochange: bounded checkpoint summary instructions for entire framed transformed history/retainedtail/literal focus; native opaque route doesnot consume prompt, fallback/cancel callerowned; originals/retrieval permissions/replay historyowned.",
           "checks": "97 tests458 assertions5 focusedcompaction/historyfiles;diff/clean; offlinefixtures no live/build/compileclaim."
         }
@@ -1847,10 +1716,7 @@
         "acceptedBlob": "130bda9935d6bccd28182ce185dcd88601fb3a04",
         "primaryId": "task_cc512c91",
         "primaryCommit": "ae1b0da452ca0c98c86f14a7b8a26ef2a405b2b1",
-        "judgeIds": [
-          "task_43d520e7",
-          "task_59bb105b"
-        ],
+        "judgeIds": ["task_43d520e7", "task_59bb105b"],
         "sourceCommit": "ae1b0da452ca0c98c86f14a7b8a26ef2a405b2b1",
         "state": "accepted-joined",
         "reason": "The exact candidate prompt is unchanged from the supplied baseline and primary parent. It already exposes one coherent operation: produce a continuation checkpoint, not execute historical orders. The opening goal, explicit retention list, fixed Markdown outline, and final no-tools/no-continuation boundary make the reader journey direct. Goals and constraints precede progress; decisions, next steps, and critical recovery facts follow. The separate live-job/ownership/wait requirements and older-checkpoint retention make continuation needs visible without an abstract context bag. A rename, helper extraction, or added prose framework would not reduce an observed reconstruction burden. This is independent unchanged acceptance, not acceptance of the worker safety report or a claim of structural improvement."
@@ -1876,9 +1742,7 @@
         "acceptedBlob": "dd844844a683b300dad8dba1debe58505a2eb06c",
         "primaryId": "task_46d9c538",
         "primaryCommit": "0d3ffc7abfff084cac5d6322d861174011a3f62d",
-        "judgeIds": [
-          "task_5f25d07a"
-        ],
+        "judgeIds": ["task_5f25d07a"],
         "sourceCommit": "0d3ffc7abfff084cac5d6322d861174011a3f62d",
         "state": "accepted-joined",
         "reason": "The baseline interleaves local execution, Live teardown, question mutations, delegation and a long SSH paragraph. The candidate makes four actual reading journeys visible: code/output/images; delegated launch authority; observation/cancellation; human questions. In particular, a reader stopping a job no longer has to mine the Live paragraph, and SSH cached-inspection/unsupported-operation constraints now live with observation rather than authorization. Child clarification and permission ownership conclude the human-question journey. This is substantive organization of the embedded instruction, not a rename-only improvement."
@@ -1897,9 +1761,7 @@
         "acceptedBlob": "9b9292bd6b0f8cfa09a44a672a310aaba3b972b5",
         "primaryId": "task_33bb0613",
         "primaryCommit": "2b1f80cee46cb252803c00d2f3bcdb4aca517c5d",
-        "judgeIds": [
-          "task_5f25d07a"
-        ],
+        "judgeIds": ["task_5f25d07a"],
         "sourceCommit": "2b1f80cee46cb252803c00d2f3bcdb4aca517c5d",
         "state": "accepted-joined",
         "reason": "Common launch controls now precede a coherent delegation decision: target authorization, destination overrides, workspace snapshot choice, untracked-source human approval and retry identity, setup ownership, then placement-specific async restrictions. Previously the model override paragraph followed Live teardown, and source approval was a final detached bullet. Choosing an SSH launch required reconstructing those decisions across unrelated sections. The candidate puts them together before result handling, while preserving the subsequent observation, questions, history and Live journeys."
@@ -1918,9 +1780,7 @@
         "acceptedBlob": "c25d436553cfa087a560c0647287cdc64f16880c",
         "primaryId": "task_28dca32b",
         "primaryCommit": "423581639d147c9981fb9a7b5c3afcdc3727aa07",
-        "judgeIds": [
-          "task_5f25d07a"
-        ],
+        "judgeIds": ["task_5f25d07a"],
         "sourceCommit": "423581639d147c9981fb9a7b5c3afcdc3727aa07",
         "state": "accepted-joined",
         "reason": "This focus is already one complete, direct contribution instruction: identify the worker role, find the answer, show its source, distinguish uncertainty. No authority or lifetime is scattered inside it, and the sequence reads naturally as a single short paragraph. Splitting it or importing delegation/session policy would create structure without resolving a real reading burden."
@@ -1939,9 +1799,7 @@
         "acceptedBlob": "dded389e7892946fb0cffafb289373d9f39025d8",
         "primaryId": "task_9a4b847e",
         "primaryCommit": "42f9383ee4339b32ab48a4d8480d881c71e5a6a2",
-        "judgeIds": [
-          "task_b73b5610"
-        ],
+        "judgeIds": ["task_b73b5610"],
         "sourceCommit": "42f9383ee4339b32ab48a4d8480d881c71e5a6a2",
         "state": "accepted-joined",
         "reason": "The two sentences perform one job: identify why this turn exists and direct useful forward work rather than a recap. There is no scattered decision inside the prompt to reorganize. Adding policy or sections would obscure its deliberately small signaling role."
@@ -1960,9 +1818,7 @@
         "acceptedBlob": "52b8fdd03d753167b92aba03f175bd85ac2a193c",
         "primaryId": "task_e558d8f5",
         "primaryCommit": "39eafce01057503d50bc3386b23bc220ee88f4b9",
-        "judgeIds": [
-          "task_b73b5610"
-        ],
+        "judgeIds": ["task_b73b5610"],
         "sourceCommit": "39eafce01057503d50bc3386b23bc220ee88f4b9",
         "state": "accepted-joined",
         "reason": "The existing list gives a compact usable journey: helper inventory, opt-in persistence, evidence-based progress, criterion-backed completion, and an explicit blocked decision. The imperative wording leaves the agent responsible for checking evidence without burying that responsibility in implementation detail. More headings or helper explanations would not resolve an observed reading burden."
@@ -1981,9 +1837,7 @@
         "acceptedBlob": "f546be3a70ee901eb6436de7f73b8ce2866d2166",
         "primaryId": "task_38e8aa10",
         "primaryCommit": "39eafce01057503d50bc3386b23bc220ee88f4b9",
-        "judgeIds": [
-          "task_b73b5610"
-        ],
+        "judgeIds": ["task_b73b5610"],
         "sourceCommit": "39eafce01057503d50bc3386b23bc220ee88f4b9",
         "state": "accepted-joined",
         "reason": "Despite being a paragraph, the instruction has a clear authority sequence: delegate application work, use the configured agent controls, distinguish queued/partial results from stopping, distinguish speech interruption from work or microphone shutdown, require confirmation before success claims, and keep quoted observations outside instruction and request authority. These are short direct constraints around one delegated voice role, not an implementation journey that needs a new abstraction."
@@ -2002,9 +1856,7 @@
         "acceptedBlob": "190938830aaf2a635d8313f46af0ac170d79290c",
         "primaryId": "task_8f111c40",
         "primaryCommit": "39eafce01057503d50bc3386b23bc220ee88f4b9",
-        "judgeIds": [
-          "task_adf35d77"
-        ],
+        "judgeIds": ["task_adf35d77"],
         "sourceCommit": "39eafce01057503d50bc3386b23bc220ee88f4b9",
         "state": "accepted-joined",
         "reason": "The text has one responsibility: identify the assistant and product. It contains no task dispatch, user-base selection, mode state, or worker policy to reconstruct. src/prompts.ts makes the composition visible in bruvSystemPrompt(): this identity is first, then the separately imported execute reference under Guidelines. Moving the sentence or adding a heading would not clarify a scattered decision."
@@ -2023,9 +1875,7 @@
         "acceptedBlob": "277d037d993483c369a44713ab6ea0de95427fe5",
         "primaryId": "task_67227421",
         "primaryCommit": "95650e95d72d022bbd3e31646ed529a46f1a764b",
-        "judgeIds": [
-          "task_adf35d77"
-        ],
+        "judgeIds": ["task_adf35d77"],
         "sourceCommit": "95650e95d72d022bbd3e31646ed529a46f1a764b",
         "state": "accepted-joined",
         "reason": "The retained prompt separates three jobs: conversational/help and honest progress guidance, the boundary between captured host speech/context and agent execution, and explicit cancellation/privacy. Passing work puts request identity, completed-speech authority, context honesty, and non-replay together. Respect the user distinguishes interruption from job cancellation. There is no demonstrated intrinsic reconstruction burden that a reorder, rename, or new prompt module would remove."
@@ -2044,9 +1894,7 @@
         "acceptedBlob": "adfaaf70a70bf709a070cef53f29b94505c999b7",
         "primaryId": "task_3cd885b2",
         "primaryCommit": "95650e95d72d022bbd3e31646ed529a46f1a764b",
-        "judgeIds": [
-          "task_adf35d77"
-        ],
+        "judgeIds": ["task_adf35d77"],
         "sourceCommit": "95650e95d72d022bbd3e31646ed529a46f1a764b",
         "state": "accepted-joined",
         "reason": "The three paragraphs already follow the decision journey: the main agent owns leadership and integration; independent code/PR work is isolated while research/shared edits stay in the current workspace; the launch example and returned-path rule lead into durable placement and recording branch/path for continuation. This puts the isolation choice and its consequences together without conflating them with mode persistence or child-role policy. More headings or another helper would add navigation without exposing a missing authority."
@@ -2171,9 +2019,7 @@
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_bb3cc0b8",
           "branch": "bruv/primary-src-session-host-access.ts-bb3cc0b8",
           "commit": "10ae751bb3481fd648093db7f31af241aa070782",
-          "changedPaths": [
-            "wisdom/quality/structural-readability-worker.md"
-          ],
+          "changedPaths": ["wisdom/quality/structural-readability-worker.md"],
           "result": "Unchanged weak-map host adapter uses canonical identity; lifecycle owners stay in extension attach/detach.",
           "checks": "2 cross-wrapper/checkpoint tests 19 assertions; 1 stop-confirmation test 4 assertions; focused format/lint/diff pass."
         }
@@ -2197,9 +2043,7 @@
         "acceptedBlob": "b5a5b4f018035a73c1261785c34b2fd75b057e61",
         "primaryId": "task_bb3cc0b8",
         "primaryCommit": "10ae751bb3481fd648093db7f31af241aa070782",
-        "judgeIds": [
-          "task_ed71d544"
-        ],
+        "judgeIds": ["task_ed71d544"],
         "sourceCommit": "10ae751bb3481fd648093db7f31af241aa070782",
         "state": "accepted-joined",
         "reason": "Saved final original review and candidate/area hashes match. One call-local synchronous bus lookup crosses extension wrappers without owning cache/scheduler/session lifetime; owning extension checks manager identity and clears host on shutdown. Shipped remote consumers inspect jobs without acquir..."
@@ -2249,9 +2093,7 @@
         "acceptedBlob": "cc31676e84612ee72967b28da46f401efcfc4407",
         "primaryId": "task_9fef6998",
         "primaryCommit": "7f466cef21871ee373a158c35f58f85e19861166",
-        "judgeIds": [
-          "task_9ae7f05e"
-        ],
+        "judgeIds": ["task_9ae7f05e"],
         "sourceCommit": "7f466cef21871ee373a158c35f58f85e19861166",
         "state": "accepted-joined",
         "reason": "Saved final original review and candidate/area hashes match. Snapshot filesystem retention has separate process-shared expiry/locking/budget lifetime from host branch/scope checks and delivery. Retained path replaces misleading creation metadata. Native polling tracks IDs and one completion decis..."
@@ -2266,9 +2108,7 @@
           "id": "task_743c2cfa",
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_743c2cfa",
           "commit": "b5a177e68e2705c9ad68004938618b6cb53a2c60",
-          "changedPaths": [
-            "wisdom/quality/structural-readability-worker.md"
-          ],
+          "changedPaths": ["wisdom/quality/structural-readability-worker.md"],
           "result": "Unchanged durable manager path or existing ID gives stable attribution; child parent link/cost/footer/connector consumers separate from restore/replay/native authority. No hidden state/mixed lifetimes.",
           "checks": "11 tests/37 assertions; format/lint/diff pass with2 infos; broader unchanged compat task-binding test521 fails tasks undefined; no typecheck/build/live claims.",
           "branch": "bruv/primary-session-identity-743c2cfa",
@@ -2294,9 +2134,7 @@
         "acceptedBlob": "12d42ff85ad0c1524bb85bafeeb668fed2a42b26",
         "primaryId": "task_743c2cfa",
         "primaryCommit": "b5a177e68e2705c9ad68004938618b6cb53a2c60",
-        "judgeIds": [
-          "task_cbe6a2c8"
-        ],
+        "judgeIds": ["task_cbe6a2c8"],
         "sourceCommit": "b5a177e68e2705c9ad68004938618b6cb53a2c60",
         "state": "accepted-joined",
         "reason": "Saved final original review and candidate/area hashes match. Stateless helper prefers durable path else stable existing ID attribution, no allocation/write/authority. Child parent metadata/footer/connector consumers distinct from native/SSH persisted-session authority and replay/history identity."
@@ -2344,9 +2182,7 @@
         "acceptedBlob": "absent",
         "primaryId": "task_aeae3a68",
         "primaryCommit": "35218b896296c97fd6f43cec7b324047a9ff3f9c",
-        "judgeIds": [
-          "task_ea00ebd0"
-        ],
+        "judgeIds": ["task_ea00ebd0"],
         "sourceCommit": "35218b896296c97fd6f43cec7b324047a9ff3f9c",
         "state": "accepted-deletion-joined",
         "reason": "Explicit deletion judgment, not a missing hash. Independent 775-module baseline import scan and package/build tracing found only deleted test consumer. Actual input/replay/cancellation authority is MainOwner and GPT delegation; removed test asserted only unused API, not shipped safety."
@@ -2363,9 +2199,7 @@
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_7a84499f",
           "branch": "bruv/primary-session-operation-contracts-7a84499f",
           "commit": "a285b48cd5f6879568f7514beb9f72bd5510f0dc",
-          "changedPaths": [
-            "wisdom/quality/structural-readability-worker.md"
-          ],
+          "changedPaths": ["wisdom/quality/structural-readability-worker.md"],
           "result": "No change: contracts route to owning host replay/scope/existing task authority; cancellation confirmation distinct from observation, current Live uses MainOwner not facade.",
           "checks": "27 tests/169 assertions; focused format/lint/diff pass; isolated TMPDIR/assets rerun after shared budget/missing asset failures; no build/typecheck/provider/SSH."
         }
@@ -2389,9 +2223,7 @@
         "acceptedBlob": "b007de00a379d4f69fdd42594c4e608c7635a85a",
         "primaryId": "task_7a84499f",
         "primaryCommit": "a285b48cd5f6879568f7514beb9f72bd5510f0dc",
-        "judgeIds": [
-          "task_864426d0"
-        ],
+        "judgeIds": ["task_864426d0"],
         "sourceCommit": "a285b48cd5f6879568f7514beb9f72bd5510f0dc",
         "state": "accepted-joined",
         "reason": "Saved final original review and candidate/area hashes match. Session operation facade preserves owning-host replay/scope and task authority; cancellation confirmation distinct from observation, actual Live MainOwner path remains separate. Contracts already expose effects without hidden lifetime."
@@ -2408,9 +2240,7 @@
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_6d6e2568",
           "branch": "bruv/primary-session-leaf-restoration-6d6e2568",
           "commit": "8f868493f1a28ce307445964ddb38f1b70e667cb",
-          "changedPaths": [
-            "wisdom/quality/structural-readability-worker.md"
-          ],
+          "changedPaths": ["wisdom/quality/structural-readability-worker.md"],
           "result": "Unchanged clear unavailable/empty/branched snapshots and active-view-only restoration; failure policy belongs to fast/shake/compaction callers, SDK entries intact.",
           "checks": "104 tests/527 assertions; real SDK probe9 assertions; focused format/lint/diff pass; assets prepared after import failure; no compile/build/live."
         }
@@ -2434,9 +2264,7 @@
         "acceptedBlob": "bba39bd21c27e5fc846e54654e3a7c2ad1f9f38c",
         "primaryId": "task_6d6e2568",
         "primaryCommit": "8f868493f1a28ce307445964ddb38f1b70e667cb",
-        "judgeIds": [
-          "task_58208ff4"
-        ],
+        "judgeIds": ["task_58208ff4"],
         "sourceCommit": "8f868493f1a28ce307445964ddb38f1b70e667cb",
         "state": "accepted-joined",
         "reason": "Saved final original review and candidate/area hashes match. Unavailable/empty/branched view snapshots explicit; helper restores active view without deleting durable entries or absorbing caller-owned failure policy."
@@ -2484,9 +2312,7 @@
         "acceptedBlob": "2084f1006598cbc074b94465e751e4ab568453b2",
         "primaryId": "task_308d89c5",
         "primaryCommit": "c3c3f816323828d4a44d5ae0d311c52a6b62698d",
-        "judgeIds": [
-          "task_91f2cc12"
-        ],
+        "judgeIds": ["task_91f2cc12"],
         "sourceCommit": "c3c3f816323828d4a44d5ae0d311c52a6b62698d",
         "state": "accepted-exact-not-joined",
         "reason": "Saved final original review and candidate/area hashes match. One speaker-owned draft explicitly represents invariant formerly reconstructed across two slots; receive boundaries/append retention/flush persistence clear, actual Live/GPT/replay/host authority preserved. Joined tree differs; parent i..."
@@ -2535,9 +2361,7 @@
         "acceptedBlob": "f581007216760dcdc2f77dfe8dc65415b3c64789",
         "primaryId": "task_e1bfb465",
         "primaryCommit": "1430519dd7dbda93b9ccf79b2e8f33690ddbd6a4",
-        "judgeIds": [
-          "task_a731e652"
-        ],
+        "judgeIds": ["task_a731e652"],
         "sourceCommit": "1430519dd7dbda93b9ccf79b2e8f33690ddbd6a4",
         "state": "accepted-exact-not-joined",
         "reason": "Saved final original review and candidate/area hashes match. SDK directly selects Bruv fallback or Pi discovery with actual trust, no CLI argv-index simulation. CLI retains bypass/trust/insertion responsibility; complete related runtime authority/isolation/drain unchanged. Joined tree differs; pa..."
@@ -2554,10 +2378,7 @@
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_39d152ef",
           "branch": "bruv/primary-wisdom-extension-effects-39d152ef",
           "commit": "4532fc23a20dcec998e4c419642f02130a6665ff",
-          "changedPaths": [
-            "tests/wisdom-extension.test.ts",
-            "wisdom/quality/structural-readability-worker.md"
-          ],
+          "changedPaths": ["tests/wisdom-extension.test.ts", "wisdom/quality/structural-readability-worker.md"],
           "result": "Source unchanged: live root authority then current trust/configured location then notice or prompt append already direct. Tests expose changing authority, fresh trust/settings and literal substitution.",
           "checks": "37 tests245 assertions6 files; production-source preview wisdom once all root modes/absent child roles; Biome/diff pass; no full tsc/build/live/device/SSH."
         },
@@ -2619,10 +2440,7 @@
         "acceptedBlob": "fccd4d3b7dea180016373d025ee580ec242e37c3",
         "primaryId": "task_7a48140a",
         "primaryCommit": "d95ff345b6246fb81e7941e6acea8587d39a2bb1",
-        "judgeIds": [
-          "task_5fa23d85",
-          "task_b7cd3a68"
-        ],
+        "judgeIds": ["task_5fa23d85", "task_b7cd3a68"],
         "sourceCommit": "d95ff345b6246fb81e7941e6acea8587d39a2bb1",
         "state": "accepted-exact-not-joined",
         "reason": "Saved final original review and candidate/area hashes match. Currentcontext -> failclosed identity restoration -> wisdom eligibility removes registration-order/stale-depth dependency for command/prompt. Whole final task/notification/framing extension remains coherent; README semantic map accurate..."
@@ -2639,10 +2457,7 @@
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_4e40c20e",
           "branch": "bruv/primary-wisdom-location-resolution-4e40c20e",
           "commit": "07fafa2a65e73e99654c5a998c2bd3d0226a70e6",
-          "changedPaths": [
-            "tests/wisdom-location.test.ts",
-            "wisdom/quality/structural-readability-worker.md"
-          ],
+          "changedPaths": ["tests/wisdom-location.test.ts", "wisdom/quality/structural-readability-worker.md"],
           "result": "Source unchanged: lexical ancestor selection separated from trust-gated read/validation/path resolution. Added characterization tests, no claimed structural source change.",
           "checks": "28 tests165 assertions plus configuredSDK1/3; focused Biome/strictTS pass; UID1000 permission case ran, skips root; no global build/macOS/live."
         }
@@ -2687,10 +2502,7 @@
         "acceptedBlob": "909717075aaac02a273286168e712faf0269f7ab",
         "primaryId": "task_4e40c20e",
         "primaryCommit": "07fafa2a65e73e99654c5a998c2bd3d0226a70e6",
-        "judgeIds": [
-          "task_f581c0d2",
-          "task_757a9fcd"
-        ],
+        "judgeIds": ["task_f581c0d2", "task_757a9fcd"],
         "sourceCommit": "7f90e64158460e947fd85693457fccfde658e0d9",
         "state": "accepted-joined",
         "reason": "Saved final original review and candidate/area hashes match. Full final unchanged resolver re-read: lexical ancestor selection, trust-gated settings read, ENOENT-only default, validation and readonly path resolve coherent. Original related-test objection independently resolved."
@@ -2769,9 +2581,7 @@
         "status": "pending",
         "primaryId": null,
         "primaryCommit": null,
-        "judgeIds": [
-          "task_2020f326"
-        ],
+        "judgeIds": ["task_2020f326"],
         "sourceCommit": "6765c847fd17806b697ec1bede8a8260ac9123d0",
         "state": "pending-primary",
         "reason": "No dedicated primary/final independent focus judgment. Related-patch review is evidence only; dedicated focus coverage remains required."
@@ -2824,10 +2634,7 @@
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_5bc31e3d",
           "branch": "bruv/primary-cache-countdown-tests-5bc31e3d",
           "commit": "03755e5b3097404d6c9ce755407754702cdaeb04",
-          "changedPaths": [
-            "tests/cache-countdown.test.ts",
-            "wisdom/quality/structural-readability-worker.md"
-          ],
+          "changedPaths": ["tests/cache-countdown.test.ts", "wisdom/quality/structural-readability-worker.md"],
           "checks": "Baseline 12/61; candidate 19/67; countdown+SDK+native+footer 87/546 pass; format/lint/diff pass; known goal-test TS2554 baseline persists.",
           "result": "Split four unrelated correlation histories and combined command/subscription/delivery/persistence scenarios. Local fixture captures real SDK registrations/effects; domain callbacks/assertions remain visible, session lifecycle stays chronological."
         }
@@ -2858,10 +2665,7 @@
         "acceptedBlob": "0e9faeaa1de954835aea36d309bede70079c9ec6",
         "primaryId": "task_5bc31e3d",
         "primaryCommit": "03755e5b3097404d6c9ce755407754702cdaeb04",
-        "judgeIds": [
-          "task_79840549",
-          "task_7fc83ddf"
-        ],
+        "judgeIds": ["task_79840549", "task_7fc83ddf"],
         "sourceCommit": "03755e5b3097404d6c9ce755407754702cdaeb04",
         "state": "accepted-joined",
         "reason": "Saved final original review and candidate/area hashes match. Independent request histories remove cumulative append/debt bookkeeping; capture fixture records real registrations not policy. Settings/evidence and persistence/delivery lifetimes separate, session replacement chronology retained; timi..."
@@ -2968,10 +2772,7 @@
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_6d7a5ed8",
           "branch": "bruv/primary-goal-behavior-tests-6d7a5ed8",
           "commit": "2e323383ea64470abbc17605d7838f50cc461954",
-          "changedPaths": [
-            "tests/goals.test.ts",
-            "wisdom/quality/structural-readability-worker.md"
-          ],
+          "changedPaths": ["tests/goals.test.ts", "wisdom/quality/structural-readability-worker.md"],
           "result": "Shared goal runtime fixture owns mocked plumbing; tests visibly sequence handoff, run end, settlement, completion and assertions. Command-before-start scenario now really skips startup and rejects unconditional-start mutation.",
           "checks": "31 tests/147 assertions; baseline 145; format/diff pass; 2 verified baseline lint warnings; no typecheck/build."
         },
@@ -2983,10 +2784,7 @@
           "branch": "bruv/reconcile-goal-behavior-test-coverage-9a60ee5b",
           "priorCandidate": "2e323383ea64470abbc17605d7838f50cc461954",
           "commit": "cf81cf961f870a8835854de8a268a928cf1c8abc",
-          "changedPaths": [
-            "tests/goals.test.ts",
-            "wisdom/quality/structural-readability-worker.md"
-          ],
+          "changedPaths": ["tests/goals.test.ts", "wisdom/quality/structural-readability-worker.md"],
           "result": "Reconcile runtime-fixture primary with four accepted extension regression scenarios; preserve all domain order/assertions, genuine before-start correction and bounded payload retention.",
           "checks": "Baseline 35 goals/171 assertions; final related 39 pass/206 assertions; startup mutation fails; format/diff pass, inherited lint warning; no build/typecheck."
         },
@@ -2998,10 +2796,7 @@
           "branch": "bruv/rework-goal-test-required-rpc-argument-1ac39db6",
           "priorCandidate": "cf81cf961f870a8835854de8a268a928cf1c8abc",
           "commit": "3ae9918527f5233e52e6683774e02438e37bf31f",
-          "changedPaths": [
-            "tests/goals.test.ts",
-            "wisdom/quality/structural-readability-worker.md"
-          ],
+          "changedPaths": ["tests/goals.test.ts", "wisdom/quality/structural-readability-worker.md"],
           "result": "Pass explicit undefined RPC params to required GoalRuntime.handle contract, preserving genuine before-start assertion and reminder invalidation. No production change.",
           "checks": "Baseline tsc TS2554 reproduced; candidate full tsc pass; 35 goal tests/173 assertions; format/diff pass; unchanged lint warning."
         }
@@ -3022,10 +2817,7 @@
           "candidate": "cf81cf961f870a8835854de8a268a928cf1c8abc",
           "base": "a37d5f5da6cff9a28002861fc9a98c0ee332731c",
           "status": "complete",
-          "priorVerdicts": [
-            "task_a7f9ce2d ACCEPT primary fixture",
-            "task_4a2a31dd ACCEPT extension regressions"
-          ],
+          "priorVerdicts": ["task_a7f9ce2d ACCEPT primary fixture", "task_4a2a31dd ACCEPT extension regressions"],
           "writerResponse": "Reconcile runtime-fixture primary with four accepted extension regression scenarios; preserve all domain order/assertions, genuine before-start correction and bounded payload retention.",
           "verdict": "ACCEPT",
           "objections": [],
@@ -3043,11 +2835,7 @@
           "candidate": "3ae9918527f5233e52e6683774e02438e37bf31f",
           "base": "fcbade1c776f50c86bdd29dd5d365936d3a6fa5d",
           "status": "complete",
-          "priorVerdicts": [
-            "task_a7f9ce2d ACCEPT",
-            "task_4a2a31dd ACCEPT",
-            "task_134ecfd8 ACCEPT combined"
-          ],
+          "priorVerdicts": ["task_a7f9ce2d ACCEPT", "task_4a2a31dd ACCEPT", "task_134ecfd8 ACCEPT combined"],
           "priorObjections": [
             "Observed tsc TS2554 tests/goals.test.ts:560: h.runtime.handle(\"goal.get\") lacks required second argument. Fresh file-worker correction and new actual-code judge required. Runtime tests pass but compile does not."
           ],
@@ -3074,12 +2862,7 @@
         "acceptedBlob": "fa176b1df06db3887321f0c3452a18cd92d4b9e1",
         "primaryId": "task_1ac39db6",
         "primaryCommit": "3ae9918527f5233e52e6683774e02438e37bf31f",
-        "judgeIds": [
-          "task_a7f9ce2d",
-          "task_134ecfd8",
-          "task_d26b0999",
-          "task_4a2a31dd"
-        ],
+        "judgeIds": ["task_a7f9ce2d", "task_134ecfd8", "task_d26b0999", "task_4a2a31dd"],
         "sourceCommit": "3ae9918527f5233e52e6683774e02438e37bf31f",
         "state": "accepted-joined",
         "reason": "Saved final original review and candidate/area hashes match. Explicit undefined matches required RPC method/params contract without weakening genuine before-start assertion; all final fixture/controller/store/transport journeys remain clear, no production/API change."
@@ -3297,11 +3080,7 @@
         "acceptedBlob": "7f0efbed4f5941360e28ede13c2c3d4027ec1da9",
         "primaryId": "task_3073210f",
         "primaryCommit": "eaac149b84b707785584990ea9204a3d6b68905a",
-        "judgeIds": [
-          "task_6fc46161",
-          "task_cc13d7e2",
-          "task_0426dce8"
-        ],
+        "judgeIds": ["task_6fc46161", "task_cc13d7e2", "task_0426dce8"],
         "sourceCommit": "0100f6e726bea78b391b356fe9c9e8846e133719",
         "state": "accepted-joined",
         "reason": "Saved final original review and candidate/area hashes match. Fixture linear mock/import/write/failure/byte rollback/retry/reopen journey already clear; parent owns roots/drained child exit while child owns mocked module cache. Full final code reviewed independently."
@@ -3326,9 +3105,7 @@
         "status": "pending",
         "primaryId": null,
         "primaryCommit": null,
-        "judgeIds": [
-          "task_4b35440e"
-        ],
+        "judgeIds": ["task_4b35440e"],
         "sourceCommit": "a6bc2c45ad4f18f5bede511ca33e4eb690c26b36",
         "state": "pending-primary",
         "reason": "No dedicated primary/final independent focus judgment. Related-patch review is evidence only; dedicated focus coverage remains required."
@@ -3363,10 +3140,7 @@
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_396dabdf",
           "branch": "bruv/primary-history-behavior-tests-396dabdf",
           "commit": "6e78787852d27ce9fc861d9fcac45d488172035b",
-          "changedPaths": [
-            "tests/history.test.ts",
-            "wisdom/quality/structural-readability-worker.md"
-          ],
+          "changedPaths": ["tests/history.test.ts", "wisdom/quality/structural-readability-worker.md"],
           "result": "Independent history contract scenarios replace combined setup/order assumptions; identifiable entries and real SDK shake records replace numeric slots/synthetic session facade. Cross-session permission remains explicit per call.",
           "checks": "Baseline 17 tests/59 assertions; final 23/67 pass; focused format/lint/type/diff pass with prepared assets; no full gate/build."
         }
@@ -3397,10 +3171,7 @@
         "acceptedBlob": "2613abbf1434c98127489b87575149ca7d507406",
         "primaryId": "task_396dabdf",
         "primaryCommit": "6e78787852d27ce9fc861d9fcac45d488172035b",
-        "judgeIds": [
-          "task_01b94654",
-          "task_150357ad"
-        ],
+        "judgeIds": ["task_01b94654", "task_150357ad"],
         "sourceCommit": "6e78787852d27ce9fc861d9fcac45d488172035b",
         "state": "accepted-joined",
         "reason": "Saved final original review and candidate/area hashes match. Independent page/read/branch and file-loading scenarios remove unrelated state dependencies; real shake records replace synthetic facade; named entry identities clarify ordering. Operations/authority/assertions stay visible, all origina..."
@@ -3474,10 +3245,7 @@
         "acceptedBlob": "83ee0e37976b48d52ce63c562248e3373224f8aa",
         "primaryId": "task_5d4de9b9",
         "primaryCommit": "7600a5871c87dbdc8a5ad33a06f3aff8629fe30c",
-        "judgeIds": [
-          "task_eef5d289",
-          "task_00bd7047"
-        ],
+        "judgeIds": ["task_eef5d289", "task_00bd7047"],
         "sourceCommit": "7600a5871c87dbdc8a5ad33a06f3aff8629fe30c",
         "state": "accepted-joined",
         "reason": "Saved final original review and candidate/area hashes match. Started-session fixture owns command wiring/observations, independent frame/command/history scenarios expose relevant state. Real branch/reopen lives explicit; refresh seam now actually tested."
@@ -3592,9 +3360,7 @@
         "status": "pending",
         "primaryId": null,
         "primaryCommit": null,
-        "judgeIds": [
-          "task_c5c84c0c"
-        ],
+        "judgeIds": ["task_c5c84c0c"],
         "sourceCommit": "16e685366452845e2faff7fe7fbee57c6cdc5a6e",
         "state": "pending-primary",
         "reason": "No dedicated primary/final independent focus judgment. Related-patch review is evidence only; dedicated focus coverage remains required."
@@ -3637,9 +3403,7 @@
         "status": "pending",
         "primaryId": null,
         "primaryCommit": null,
-        "judgeIds": [
-          "task_7caa7713"
-        ],
+        "judgeIds": ["task_7caa7713"],
         "sourceCommit": "08e00ae3c0aa5603288096ddb7d5a3ab73a8c682",
         "state": "pending-primary",
         "reason": "No dedicated primary/final independent focus judgment. Related-patch review is evidence only; dedicated focus coverage remains required."
@@ -3695,10 +3459,7 @@
         "acceptedBlob": "ab607b97df359dd53b1897dfe5596e59206dab33",
         "primaryId": "task_efb8e91c",
         "primaryCommit": "4b7d3e5b47687be57c96e4035265b5c2ce1ec3c5",
-        "judgeIds": [
-          "task_4cfa8579",
-          "task_167d27b3"
-        ],
+        "judgeIds": ["task_4cfa8579", "task_167d27b3"],
         "sourceCommit": "4b7d3e5b47687be57c96e4035265b5c2ce1ec3c5",
         "state": "accepted-joined",
         "reason": "Saved final original review and candidate/area hashes match. Fixture uses actual shared runtime/persistence authority, explicit consent/preparation signals and direct rollback fault injection; all 108 assertions/test declarations remain. Final source policy/authorization/guard/rollback/last-owner..."
@@ -3849,9 +3610,7 @@
         "status": "pending",
         "primaryId": null,
         "primaryCommit": null,
-        "judgeIds": [
-          "task_10247cc9"
-        ],
+        "judgeIds": ["task_10247cc9"],
         "sourceCommit": "904c6fb51b2fb62a4c91580e0120d5eabc1c0f7b",
         "state": "pending-primary",
         "reason": "No dedicated primary/final independent focus judgment. Related-patch review is evidence only; dedicated focus coverage remains required."
@@ -3876,9 +3635,7 @@
         "status": "pending",
         "primaryId": null,
         "primaryCommit": null,
-        "judgeIds": [
-          "task_7f8422ea"
-        ],
+        "judgeIds": ["task_7f8422ea"],
         "sourceCommit": "42bec26abf11007f2b0781e1771224c1d5fa63c0",
         "state": "pending-primary",
         "reason": "No dedicated primary/final independent focus judgment. Related-patch review is evidence only; dedicated focus coverage remains required."
@@ -3967,9 +3724,7 @@
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_fe11d531",
           "branch": "bruv/primary-deleted-session-input-tests-fe11d531",
           "commit": "27dacc46efd49f6863ebaaef7244f25a0fb50e87",
-          "changedPaths": [
-            "wisdom/quality/structural-readability-worker.md"
-          ],
+          "changedPaths": ["wisdom/quality/structural-readability-worker.md"],
           "result": "Independently retain deletion: original tests exercised orphan TTL/size/single-use API, not actual shipped MainOwner/GPT paths. Remaining tests cover real finality/replay/stop/speech-loss, not imaginary replacement TTL.",
           "checks": "9 focused suites 185 pass/972 assertions; format/lint pass with 4 existing warnings; biome check 6 pre-existing import-order diagnostics, no fixes; no build/typecheck."
         }
@@ -4000,10 +3755,7 @@
         "acceptedBlob": "absent",
         "primaryId": "task_fe11d531",
         "primaryCommit": "27dacc46efd49f6863ebaaef7244f25a0fb50e87",
-        "judgeIds": [
-          "task_4b90b765",
-          "task_ea00ebd0"
-        ],
+        "judgeIds": ["task_4b90b765", "task_ea00ebd0"],
         "sourceCommit": "27dacc46efd49f6863ebaaef7244f25a0fb50e87",
         "state": "accepted-deletion-joined",
         "reason": "Explicit deletion judgment, not a missing hash. Independent historical search and shipped admission/delegation tracing confirms orphan-only tests; removed TTL/size/revoke policies not claimed reimplemented. Absence removes misleading second authority."
@@ -4046,9 +3798,7 @@
         "status": "pending",
         "primaryId": null,
         "primaryCommit": null,
-        "judgeIds": [
-          "task_a731e652"
-        ],
+        "judgeIds": ["task_a731e652"],
         "sourceCommit": "1430519dd7dbda93b9ccf79b2e8f33690ddbd6a4",
         "state": "pending-primary",
         "reason": "No dedicated primary/final independent focus judgment. Related-patch review is evidence only; dedicated focus coverage remains required."
@@ -4109,9 +3859,7 @@
         "status": "pending",
         "primaryId": null,
         "primaryCommit": null,
-        "judgeIds": [
-          "task_b7cd3a68"
-        ],
+        "judgeIds": ["task_b7cd3a68"],
         "sourceCommit": "d95ff345b6246fb81e7941e6acea8587d39a2bb1",
         "state": "pending-primary",
         "reason": "No dedicated primary/final independent focus judgment. Related-patch review is evidence only; dedicated focus coverage remains required."
@@ -4131,10 +3879,7 @@
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_d44d38b0",
           "branch": "bruv/primary-short-write-fixture-d44d38b0",
           "commit": "0100f6e726bea78b391b356fe9c9e8846e133719",
-          "changedPaths": [
-            "tests/history-storage-io.test.ts",
-            "wisdom/quality/structural-readability-worker.md"
-          ],
+          "changedPaths": ["tests/history-storage-io.test.ts", "wisdom/quality/structural-readability-worker.md"],
           "result": "Fixture unchanged: linear partial-write failure/byte rollback/retry; fault counters child-owned, parent awaits drained exit before temp cleanup. Related parent import order fixed only.",
           "checks": "Focused combined Biome/tsc pass; fixture 1 pass/6 assertions; parent/history 24 pass/91 assertions; compatibility 12 pass/58 assertions; diff clean; no physical disk-exhaustion proof."
         }
@@ -4170,10 +3915,7 @@
         "acceptedBlob": "a738fc9cace7df491e9267a165a326e2b61511e6",
         "primaryId": "task_d44d38b0",
         "primaryCommit": "0100f6e726bea78b391b356fe9c9e8846e133719",
-        "judgeIds": [
-          "task_cc13d7e2",
-          "task_6fc46161"
-        ],
+        "judgeIds": ["task_cc13d7e2", "task_6fc46161"],
         "sourceCommit": "0100f6e726bea78b391b356fe9c9e8846e133719",
         "state": "accepted-joined",
         "reason": "Saved final original review and candidate/area hashes match. Fixture linear mock/import/write/failure/byte rollback/retry/reopen journey already clear; parent owns roots/drained child exit while child owns mocked module cache. Full final code reviewed independently."
@@ -4191,9 +3933,7 @@
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_d007bea3",
           "branch": "bruv/primary-cleanup-failure-fixture-d007bea3",
           "commit": "bf821d9a48f8f20d05e487545df72db2cd119b51",
-          "changedPaths": [
-            "wisdom/quality/structural-readability-worker.md"
-          ],
+          "changedPaths": ["wisdom/quality/structural-readability-worker.md"],
           "result": "Unchanged linear child-only one-shot fault: pending store -> first-user publication despite unlink failure -> assistant append -> reopened IDs; extra abstractions obscure flow.",
           "checks": "Direct fixture and parent 10 tests/43 assertions pass; timing probe 12 assertions proves fault after target/spool inode identity; fixture assertion negative control fails parent; focused format/lint pass.",
           "limits": "Bun normal test termination left redundant pending link and observed exit listener not invoked; no exit cleanup proof or behavior fix."
@@ -4225,10 +3965,7 @@
         "acceptedBlob": "baddd5ace399fa55d0903aad88ee4821905d1c22",
         "primaryId": "task_d007bea3",
         "primaryCommit": "bf821d9a48f8f20d05e487545df72db2cd119b51",
-        "judgeIds": [
-          "task_8dcf7bd3",
-          "task_6fc46161"
-        ],
+        "judgeIds": ["task_8dcf7bd3", "task_6fc46161"],
         "sourceCommit": "bf821d9a48f8f20d05e487545df72db2cd119b51",
         "state": "accepted-joined",
         "reason": "Saved final original review and candidate/area hashes match. One-shot pending unlink fault precedes store import in isolated child; publication completion and consumed fault explicitly checked, then append/reopen. Parent waits drained exit before cleanup, failure propagates."
@@ -4286,10 +4023,7 @@
         "acceptedBlob": "be5d94bde803903b1cc6d25132f17a9d63a6cb09",
         "primaryId": "task_3b6b9b8d",
         "primaryCommit": "dfd632869cc21aaf0b20cb3e732e14258929b910",
-        "judgeIds": [
-          "task_35e27b6b",
-          "task_9ae7f05e"
-        ],
+        "judgeIds": ["task_35e27b6b", "task_9ae7f05e"],
         "sourceCommit": "dfd632869cc21aaf0b20cb3e732e14258929b910",
         "state": "accepted-joined",
         "reason": "Saved final original review and candidate/area hashes match. Locked transaction stages now reclaim/account, verify/renew existing before admission, then exclusive write/rollback; helper lifetimes/domain meaning reduce reconstruction without changing retention safety. Fixture/wrapper lifetimes and..."
@@ -4307,10 +4041,7 @@
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_e8c1f4a2",
           "branch": "bruv/primary-snapshot-filesystem-contracts-fi-e8c1f4a2",
           "commit": "b8e3ca50e2975b03255962af351f20c1dad57f16",
-          "changedPaths": [
-            "tests/fixtures/transcript-snapshots.ts",
-            "wisdom/quality/structural-readability-worker.md"
-          ],
+          "changedPaths": ["tests/fixtures/transcript-snapshots.ts", "wisdom/quality/structural-readability-worker.md"],
           "result": "Fault mocks end beside tested operations; real fs assertions run after restoration; held-lock failure cleanup releases/drains in-flight request; independent scenarios get independent setup. Observed teardown pending-work defect fixed in fixture only.",
           "checks": "Isolated fixture 15/55; wrapper 1 pass; strict focused type/format/lint/diff pass; injected assertion baseline pending vs candidate settled; marker refusal preserves sentinel; no full compile/platform claim."
         }
@@ -4344,10 +4075,7 @@
         "acceptedBlob": "2eaf2608f31112be616f737b64e8413e29b8c2b1",
         "primaryId": "task_e8c1f4a2",
         "primaryCommit": "b8e3ca50e2975b03255962af351f20c1dad57f16",
-        "judgeIds": [
-          "task_a19d2f25",
-          "task_35e27b6b"
-        ],
+        "judgeIds": ["task_a19d2f25", "task_35e27b6b"],
         "sourceCommit": "b8e3ca50e2975b03255962af351f20c1dad57f16",
         "state": "accepted-joined",
         "reason": "Saved final original review and candidate/area hashes match. Each mock ends locally before real-fs assertions; held-lock case owns release/drain even on assertion failure; independent unsafe/stale scenarios separate setup. Independent injected failure reproduces old pending work vs final settled ..."
@@ -4365,9 +4093,7 @@
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_08a471b0",
           "branch": "bruv/primary-snapshot-isolated-runner-08a471b0",
           "commit": "f45666020f9de3ccf6e27934077664726665918c",
-          "changedPaths": [
-            "wisdom/quality/structural-readability-worker.md"
-          ],
+          "changedPaths": ["wisdom/quality/structural-readability-worker.md"],
           "result": "No change: parent creates private root/env, awaits child output/exit, reports failure then removes only private root. Fixture owns isolated store contracts, no hidden scenario behavior.",
           "checks": "Two concurrent parent runs pass; fixture 13/52; refusal preserves outer sentinel; injected exit17 streams/cleanup verified; focused type/format/lint/diff pass; full tsc known assets/goal error, no timeout-kill claim."
         }
@@ -4412,11 +4138,7 @@
         "acceptedBlob": "d6cd4d7bf0cc594be8f2cdc75eea6ae69f2b73a2",
         "primaryId": "task_08a471b0",
         "primaryCommit": "f45666020f9de3ccf6e27934077664726665918c",
-        "judgeIds": [
-          "task_6e5c5f73",
-          "task_a19d2f25",
-          "task_35e27b6b"
-        ],
+        "judgeIds": ["task_6e5c5f73", "task_a19d2f25", "task_35e27b6b"],
         "sourceCommit": "b8e3ca50e2975b03255962af351f20c1dad57f16",
         "state": "accepted-joined",
         "reason": "Saved final original review and candidate/area hashes match. Each mock ends locally before real-fs assertions; held-lock case owns release/drain even on assertion failure; independent unsafe/stale scenarios separate setup. Independent injected failure reproduces old pending work vs final settled ..."
@@ -4433,10 +4155,7 @@
           "branch": "bruv/primary-wisdom-path-tests-and-rejected-p-673d9338",
           "role": "fresh-extra-primary-and-related-rework",
           "commit": "7f90e64158460e947fd85693457fccfde658e0d9",
-          "changedPaths": [
-            "tests/wisdom-location.test.ts",
-            "wisdom/quality/structural-readability-worker.md"
-          ],
+          "changedPaths": ["tests/wisdom-location.test.ts", "wisdom/quality/structural-readability-worker.md"],
           "result": "Fresh whole-test primary imported exact earlier candidate tests; only vacuous directory absence assertion repaired using lstat ENOENT. Resolver unchanged.",
           "checks": "Real resolver mkdir mutation: old assertion passed, fixed failed; mutation removed.17 tests47 assertions including nonroot permissions; Biome/scopedstrictTS/diff pass; no wholebuild/platform/provider."
         }
@@ -4463,9 +4182,7 @@
         "acceptedBlob": "9ee4c9225a0306ac1f2489174524a932142b838e",
         "primaryId": "task_673d9338",
         "primaryCommit": "7f90e64158460e947fd85693457fccfde658e0d9",
-        "judgeIds": [
-          "task_757a9fcd"
-        ],
+        "judgeIds": ["task_757a9fcd"],
         "sourceCommit": "7f90e64158460e947fd85693457fccfde658e0d9",
         "state": "accepted-exact-not-joined",
         "reason": "Saved final original review and candidate/area hashes match. Whole new test fixture/cleanup/lexical marker/trust/permission journeys clear; lstat ENOENT repairs directory false-pass, BOM/parent-relative contracts intact. Joined tree differs; parent integration pending."
@@ -4523,10 +4240,7 @@
         "acceptedBlob": "bd738142f9c2cb7dd0b1652b47294b63fe25788f",
         "primaryId": "task_156435a8",
         "primaryCommit": "177e687eb82c0768d209db8695f2bc78af2539b4",
-        "judgeIds": [
-          "task_b1d3b7fc",
-          "task_efa4fabb"
-        ],
+        "judgeIds": ["task_b1d3b7fc", "task_efa4fabb"],
         "sourceCommit": "177e687eb82c0768d209db8695f2bc78af2539b4",
         "state": "accepted-exact-not-joined",
         "reason": "Saved final original review and candidate/area hashes match. Parent launch/drain/assert separated from typed child fault/disposal/physicalspool-before-rm/exit observation; real diagnostic scenario coherent and sourceunchanged. Exact candidate177e confirmed despite launch metadata delay. Joined tr..."
@@ -4542,10 +4256,7 @@
           "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_accb5b9d",
           "branch": "bruv/primary-preview-cli-subprocess-contracts-accb5b9d",
           "commit": "f79bfad28ea57d33b0e63d042161d76e652f6f79",
-          "changedPaths": [
-            "tests/prompt-preview-cli.test.ts",
-            "wisdom/quality/structural-readability-worker.md"
-          ],
+          "changedPaths": ["tests/prompt-preview-cli.test.ts", "wisdom/quality/structural-readability-worker.md"],
           "result": "Parsing tests each own cold checkout through one operation, explicit subprocesscwd replaces globalfixture/hooks/cwd inference; missingWASM capture proves coldness, output/exitdrain/assertions retained.",
           "checks": "11 CLI/API tests195 assertions;Biome/tsc/diff pass; baselinecold2pass3capturefail, preparedbaselinepass; no fullbuild/compiled/networkmetadata proof."
         }
@@ -4578,10 +4289,7 @@
         "acceptedBlob": "6996b5def3b6f2bc4a7297e8b50140b636928b2e",
         "primaryId": "task_accb5b9d",
         "primaryCommit": "f79bfad28ea57d33b0e63d042161d76e652f6f79",
-        "judgeIds": [
-          "task_71b4db6a",
-          "task_910065b6"
-        ],
+        "judgeIds": ["task_71b4db6a", "task_910065b6"],
         "sourceCommit": "f79bfad28ea57d33b0e63d042161d76e652f6f79",
         "state": "accepted-exact-not-joined",
         "reason": "Saved final original review and candidate/area hashes match. Each cold checkout owns create/copy/genuine missing-WASM precondition/awaited checks/finally; subprocesscwd explicit, concurrent output+exit drained before cleanup. Scenario assertions remain direct, shared lifecycle reconstruction remo..."
@@ -4614,10 +4322,7 @@
         "acceptedBlob": "8dc54fdbef477552d6dbb3559cebb797c79ee267",
         "primaryId": "task_9e79f658",
         "primaryCommit": "ce7032a68d76defd3b2f40c6bb630f5b8824c0af",
-        "judgeIds": [
-          "task_b1d3b7fc",
-          "task_f3981982"
-        ],
+        "judgeIds": ["task_b1d3b7fc", "task_f3981982"],
         "sourceCommit": "ce7032a68d76defd3b2f40c6bb630f5b8824c0af",
         "state": "accepted-joined",
         "reason": "Compared actual candidate with primary base 25bb96f0b70a2afad8875dc00ce34412861bac6e, which is also its parent. The sole changed source is the restored 69-line preload; the base lacks it despite an existing test caller. Read the complete fixture, caller test and script, then the manager registration/adoption/append/reset/disposal paths and real store pending/append/publication/disposal/exit cleanup. Intrinsically NO CHANGE NEEDED after restoration: the sequential groups express capture of one real store and physical spool, observation after real dispose, first-message failure before publication, snapshot before real directory removal, optional counterfactual, and synchronous exit assertions. Their few local observations correspond to those distinct boundaries rather than a scattered policy or shared context bag. Extraction or a naming-only rewrite would conceal this short journey without relocating an authority. ACCEPT records restoring the missing caller dependency, not a claim of a new structural refactor."
@@ -4742,10 +4447,7 @@
     "areaMerge": "515de6bed83e5c86f2bb12ec7f6bd14ef76eb012",
     "reason": "Second parent judged aggregate clean merge-tree and merge; accepted area blob audit unchanged.",
     "changedAcceptedBlobs": [],
-    "acceptedDeletionsVerifiedAbsent": [
-      "src/session/input.ts",
-      "tests/session-input.test.ts"
-    ],
+    "acceptedDeletionsVerifiedAbsent": ["src/session/input.ts", "tests/session-input.test.ts"],
     "auditCorrection": "Initial generic blob audit reported expected absent paths as mismatches; explicit ls-tree confirms both still absent. No accepted source blob or deletion changed."
   },
   "auditCheckpoint": {

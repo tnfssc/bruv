@@ -44,9 +44,7 @@
         "status": "accepted",
         "acceptedBlob": "e0be25e37e1014caeeb403c56a7c4b046936a9b5",
         "primaryId": "task_15c2f619",
-        "judgeIds": [
-          "task_d44580c4"
-        ],
+        "judgeIds": ["task_d44580c4"],
         "sourceCommit": "974450ede40c7c55f70002457fcacfbccaa22acb",
         "state": "accepted-joined",
         "reason": "Retain NO CHANGE NEEDED by task_d44580c4: the recorded accepted blob equals the actual focus blob at reviewed commit 974450ede40c7c55f70002457fcacfbccaa22acb. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
@@ -93,9 +91,7 @@
         "status": "accepted",
         "acceptedBlob": "c84a95a5c122e5e94128004cea6607e770db1195",
         "primaryId": "task_7fd7969e",
-        "judgeIds": [
-          "task_6a31ae26"
-        ],
+        "judgeIds": ["task_6a31ae26"],
         "sourceCommit": "cc7e3543e3f5f9d528bb9fa82544a6705b2df85b",
         "state": "accepted-joined",
         "reason": "Retain NO CHANGE NEEDED by task_6a31ae26: the recorded accepted blob equals the actual focus blob at reviewed commit cc7e3543e3f5f9d528bb9fa82544a6705b2df85b. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
@@ -147,9 +143,7 @@
         "status": "accepted",
         "acceptedBlob": "0bba6b0130a774fd2298f85a6e32fa72248d4e23",
         "primaryId": "task_c163c18d",
-        "judgeIds": [
-          "task_58a442b6"
-        ],
+        "judgeIds": ["task_58a442b6"],
         "sourceCommit": "c320f627d8afad6cbfbce09906a0e0325dcffb13",
         "state": "accepted-not-joined",
         "reason": "Retain ACCEPT by task_58a442b6: the recorded accepted blob equals the actual focus blob at reviewed commit c320f627d8afad6cbfbce09906a0e0325dcffb13. Joined tree does not contain that exact accepted blob; an accepted source batch remains to join, not a fresh quality review. Latest area tree also matches the recorded accepted blob."
@@ -188,18 +182,12 @@
       "launchBase": "95ed08535cb29627f887833a6a9ff2f779e5f50e",
       "changedRelatedPaths": [],
       "readingResult": "Nochange direct3field destinationroot demo/studio/off separate from normalhelper profile+explicitflags; capture installation clear.",
-      "checks": [
-        "15/61",
-        "offline real configresolution pass",
-        "no providerSSH/capture/compiledparity"
-      ],
+      "checks": ["15/61", "offline real configresolution pass", "no providerSSH/capture/compiledparity"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "27af5ec1fdc3b8ae4a2457af4ca0de2de7ea1550",
         "primaryId": "task_c1888063",
-        "judgeIds": [
-          "task_4f093186"
-        ],
+        "judgeIds": ["task_4f093186"],
         "sourceCommit": "4a234671fb8e480d77e1e719a7afb4bc6c334059",
         "state": "accepted-joined",
         "reason": "Retain NO CHANGE NEEDED by task_4f093186: the recorded accepted blob equals the actual focus blob at reviewed commit 4a234671fb8e480d77e1e719a7afb4bc6c334059. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
@@ -237,17 +225,12 @@
       "launchBase": "95ed08535cb29627f887833a6a9ff2f779e5f50e",
       "changedRelatedPaths": [],
       "readingResult": "Nochange destinationprofile normal demo/helper/off resolves targetless worktree task separately from root studio; direct JSON no tangle.",
-      "checks": [
-        "8/33 offline actualJSON/profile/provider/scenario wiring",
-        "no binary/Docker/providerSSH"
-      ],
+      "checks": ["8/33 offline actualJSON/profile/provider/scenario wiring", "no binary/Docker/providerSSH"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "dbac92aeba134a96c4548de4ad435087468af091",
         "primaryId": "task_eb67d51d",
-        "judgeIds": [
-          "task_374ff85d"
-        ],
+        "judgeIds": ["task_374ff85d"],
         "sourceCommit": "a153ff14b92b969ed846932b2dfb809b108196a0",
         "state": "accepted-joined",
         "reason": "Retain NO CHANGE NEEDED by task_374ff85d: the recorded accepted blob equals the actual focus blob at reviewed commit a153ff14b92b969ed846932b2dfb809b108196a0. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
@@ -286,18 +269,12 @@
       "launchBase": "a162e56cc49a21401275253ed445b6027dbc248a",
       "changedRelatedPaths": [],
       "readingResult": "No-change: real request→cancellation wrapper→responseACK→listener cleanup, success close and unconditional teardown together; no extraction needed.",
-      "checks": [
-        "existing10000-request probe exit0 in914ms allsamples0listeners",
-        "protocol14/368",
-        "no build"
-      ],
+      "checks": ["existing10000-request probe exit0 in914ms allsamples0listeners", "protocol14/368", "no build"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "ee2233f4c87685c6df576910efe671a5c7540634",
         "primaryId": "task_cd5dc6c2",
-        "judgeIds": [
-          "task_265d13f3"
-        ],
+        "judgeIds": ["task_265d13f3"],
         "sourceCommit": "d174794cecc988c95a077c7586a92c858ca5bf72",
         "state": "accepted-joined",
         "reason": "Retain NO CHANGE NEEDED by task_265d13f3: the recorded accepted blob equals the actual focus blob at reviewed commit d174794cecc988c95a077c7586a92c858ca5bf72. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
@@ -336,10 +313,7 @@
       "acceptedBlob": "e814f9e34419f15ad60f2066c380ab7d12107685",
       "integration": "full coherent script and new test diff integrated",
       "launchBase": "7fbe619959f9863e7dc9aa8f7248993382739ebf",
-      "changedRelatedPaths": [
-        "scripts/leak-audit/cli-rpc-soak.ts",
-        "tests/cli-rpc-soak.test.ts"
-      ],
+      "changedRelatedPaths": ["scripts/leak-audit/cli-rpc-soak.ts", "tests/cli-rpc-soak.test.ts"],
       "readingResult": "RPC session owns subprocess/correlations/drains; perturn endwait; soak scheduling/cleanup explicit instead of globalcallbacks/queues/catch reconstruction.",
       "checks": [
         "5 tests38 assertions",
@@ -352,9 +326,7 @@
         "status": "accepted",
         "acceptedBlob": "e814f9e34419f15ad60f2066c380ab7d12107685",
         "primaryId": "task_22687cca",
-        "judgeIds": [
-          "task_9baa1135"
-        ],
+        "judgeIds": ["task_9baa1135"],
         "sourceCommit": "89605c0477f7ccd000a1d7ad97eb671ca08ecc4f",
         "state": "accepted-not-joined",
         "reason": "Retain ACCEPT by task_9baa1135: the recorded accepted blob equals the actual focus blob at reviewed commit 89605c0477f7ccd000a1d7ad97eb671ca08ecc4f. Joined tree does not contain that exact accepted blob; an accepted source batch remains to join, not a fresh quality review. Latest area tree also matches the recorded accepted blob."
@@ -392,9 +364,7 @@
       "acceptedBlob": "4aa62fc619c272ae73a45011e2fc1ce41b770812",
       "integration": "full audit source diff integrated",
       "launchBase": "7fbe619959f9863e7dc9aa8f7248993382739ebf",
-      "changedRelatedPaths": [
-        "scripts/leak-audit/execution-runtime.ts"
-      ],
+      "changedRelatedPaths": ["scripts/leak-audit/execution-runtime.ts"],
       "readingResult": "Audit operation owns artifacts/PIDs/cleanup; per-execution abort/descendant lifetimes scoped and named timeout/bridge options expose effects. Workload/phase/assertions retained.",
       "checks": [
         "baseline+candidate bounded343 executions each;10labels8FDs6bridgeaborts0descendants",
@@ -407,9 +377,7 @@
         "status": "accepted",
         "acceptedBlob": "4aa62fc619c272ae73a45011e2fc1ce41b770812",
         "primaryId": "task_bf95f257",
-        "judgeIds": [
-          "task_9bfea73b"
-        ],
+        "judgeIds": ["task_9bfea73b"],
         "sourceCommit": "db26839716843264d2b04407245826d2ad453bf0",
         "state": "accepted-joined",
         "reason": "Retain ACCEPT by task_9bfea73b: the recorded accepted blob equals the actual focus blob at reviewed commit db26839716843264d2b04407245826d2ad453bf0. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
@@ -461,9 +429,7 @@
         "status": "accepted",
         "acceptedBlob": "9cee9d131e3bda752cce6998ad42e1dc19e194b1",
         "primaryId": "task_4ff5b981",
-        "judgeIds": [
-          "task_abf8fcb1"
-        ],
+        "judgeIds": ["task_abf8fcb1"],
         "sourceCommit": "6cc5ce747acbe49adcea90944af3d777f1f89db7",
         "state": "accepted-not-joined",
         "reason": "Retain ACCEPT by task_abf8fcb1: the recorded accepted blob equals the actual focus blob at reviewed commit 6cc5ce747acbe49adcea90944af3d777f1f89db7. Joined tree does not contain that exact accepted blob; an accepted source batch remains to join, not a fresh quality review. Latest area tree also matches the recorded accepted blob."
@@ -507,18 +473,12 @@
       "launchBase": "dcdfadf47464ea6a325e4bb7be06ff2bf8edc2b7",
       "changedRelatedPaths": [],
       "readingResult": "Nochange coherent generated question owner/version/block and notes ordered effects; explicit parent/helper histories/receipts drive7SSEturns.",
-      "checks": [
-        "6/69",
-        "no capture/provider/UI/SSH/build"
-      ],
+      "checks": ["6/69", "no capture/provider/UI/SSH/build"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "e43c159807ee2375c22588620077989ccf9eae7d",
         "primaryId": "task_5b667ce2",
-        "judgeIds": [
-          "task_1eb489ad",
-          "task_58a442b6"
-        ],
+        "judgeIds": ["task_1eb489ad", "task_58a442b6"],
         "sourceCommit": "061f938d26f53c5b95a08968ac4a8f0804289b71",
         "state": "accepted-not-joined",
         "reason": "Retain NO CHANGE NEEDED by task_1eb489ad: the recorded accepted blob equals the actual focus blob at reviewed commit 061f938d26f53c5b95a08968ac4a8f0804289b71. Joined tree does not contain that exact accepted blob; an accepted source batch remains to join, not a fresh quality review. Latest area tree also matches the recorded accepted blob."
@@ -556,10 +516,7 @@
       "acceptedBlob": "b81ab0621fe7e72fa6f9d6ad701cac29f727bfcf",
       "integration": "full source/new test patch integrated",
       "launchBase": "e317b9a8c4a1a203d3bf25172cdc7c614128411e",
-      "changedRelatedPaths": [
-        "scripts/task-placement-clean-video.py",
-        "scripts/task-placement-clean-video.test.py"
-      ],
+      "changedRelatedPaths": ["scripts/task-placement-clean-video.py", "scripts/task-placement-clean-video.test.py"],
       "readingResult": "Artifact roles explicit; replay prep no source row mutation; frame-audit state scoped render; main privacy→prepare→render→encodedverify→receipt visible.",
       "checks": [
         "5focused tests",
@@ -571,9 +528,7 @@
         "status": "accepted",
         "acceptedBlob": "b81ab0621fe7e72fa6f9d6ad701cac29f727bfcf",
         "primaryId": "task_577e2124",
-        "judgeIds": [
-          "task_56bbfab7"
-        ],
+        "judgeIds": ["task_56bbfab7"],
         "sourceCommit": "7b57e9cdd80a0b5cf8d457145b896a0c1387e517",
         "state": "accepted-not-joined",
         "reason": "Retain ACCEPT by task_56bbfab7: the recorded accepted blob equals the actual focus blob at reviewed commit 7b57e9cdd80a0b5cf8d457145b896a0c1387e517. Joined tree does not contain that exact accepted blob; an accepted source batch remains to join, not a fresh quality review. Latest area tree also matches the recorded accepted blob."
@@ -611,18 +566,12 @@
       "launchBase": "739da40a80981fc3f47aff84b0958f94448c4ccb",
       "changedRelatedPaths": [],
       "readingResult": "No-change: copied root scrub, inplace startup mutation and freshchild isolation explicit; helpers retain owner checkpoint while fresh agents remove/replace policy, native strips root before startup.",
-      "checks": [
-        "23 pass130 assertions",
-        "startup selection filtered15",
-        "no build/liveSSH/compiledparity"
-      ],
+      "checks": ["23 pass130 assertions", "startup selection filtered15", "no build/liveSSH/compiledparity"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "352e1f7710a97911faf7aaefca724bb4536f20ff",
         "primaryId": "task_238b6364",
-        "judgeIds": [
-          "task_36f1a10b"
-        ],
+        "judgeIds": ["task_36f1a10b"],
         "sourceCommit": "90791397e19f73ad7616526b96671befb4579dfa",
         "state": "accepted-joined",
         "reason": "Retain NO CHANGE NEEDED by task_36f1a10b: the recorded accepted blob equals the actual focus blob at reviewed commit 90791397e19f73ad7616526b96671befb4579dfa. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
@@ -668,9 +617,7 @@
         "status": "accepted",
         "acceptedBlob": "4b91a38bcfba713ea26a3b7094d9eecdbcd877fb",
         "primaryId": "task_4035e0d2",
-        "judgeIds": [
-          "task_77427ce5"
-        ],
+        "judgeIds": ["task_77427ce5"],
         "sourceCommit": "0eeeb3af1f6fc852290d91042ddae1f658928598",
         "state": "accepted-joined",
         "reason": "Retain NO CHANGE NEEDED by task_77427ce5: the recorded accepted blob equals the actual focus blob at reviewed commit 0eeeb3af1f6fc852290d91042ddae1f658928598. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
@@ -707,17 +654,12 @@
       "launchBase": "2a08ef5a27397c374a848dc8bfeb6eddb9e1b559",
       "changedRelatedPaths": [],
       "readingResult": "No source change: bounded FIFO chunks and logical offsets own one coherent lifetime; traced task inspection, delivery and image callers.",
-      "checks": [
-        "39 tests pass / 236 assertions",
-        "image path source-traced only; no full build"
-      ],
+      "checks": ["39 tests pass / 236 assertions", "image path source-traced only; no full build"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "6f32c9b2f02426c3db598e7ec773aa3eb3aeb721",
         "primaryId": "task_0f4f4f90",
-        "judgeIds": [
-          "task_4a8a08b3"
-        ],
+        "judgeIds": ["task_4a8a08b3"],
         "sourceCommit": "433ad79868127c2bf53257053e93eb9f599d0150",
         "state": "accepted-joined",
         "reason": "Retain NO CHANGE NEEDED by task_4a8a08b3: the recorded accepted blob equals the actual focus blob at reviewed commit 433ad79868127c2bf53257053e93eb9f599d0150. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
@@ -753,10 +695,7 @@
       "acceptedBlob": "4bd8d2bc1025d7607604c9a12877aaf79be36578",
       "integration": "full source/test candidate diff integrated",
       "launchBase": "39c5f9b3baa1a25b2cd248ad01a22b5a7df9a77d",
-      "changedRelatedPaths": [
-        "src/questions/extension.ts",
-        "tests/questions-extension.test.ts"
-      ],
+      "changedRelatedPaths": ["src/questions/extension.ts", "tests/questions-extension.test.ts"],
       "readingResult": "promptAnswer owns UI retry/Escape only; inbox explicitly submits displayed owner/version through runtime. Detail projections separate saved intent/uncertain delivery/remote observations.",
       "checks": [
         "31 pass139 assertions incl real Pi command",
@@ -768,9 +707,7 @@
         "status": "accepted",
         "acceptedBlob": "4bd8d2bc1025d7607604c9a12877aaf79be36578",
         "primaryId": "task_4c9d577a",
-        "judgeIds": [
-          "task_d615005a"
-        ],
+        "judgeIds": ["task_d615005a"],
         "sourceCommit": "b319684abb95ad0f172303d2699e8f1dbb26b2d8",
         "state": "accepted-joined",
         "reason": "Retain ACCEPT by task_d615005a: the recorded accepted blob equals the actual focus blob at reviewed commit b319684abb95ad0f172303d2699e8f1dbb26b2d8. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
@@ -808,17 +745,12 @@
       "launchBase": "f256384cb549f1987e9b32969ae3c09069454b53",
       "changedRelatedPaths": [],
       "readingResult": "No-change: picker owns filtering/selection/resize restoration/detail paging; adapter owns mounting/editor retries/owner-version submission.",
-      "checks": [
-        "18 picker/extension tests /220 assertions",
-        "no full build/compiled TUI"
-      ],
+      "checks": ["18 picker/extension tests /220 assertions", "no full build/compiled TUI"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "b3e4f1c4c717ddd9d1091c46e8f3b46b67b9c900",
         "primaryId": "task_b3e92305",
-        "judgeIds": [
-          "task_0cb4a524"
-        ],
+        "judgeIds": ["task_0cb4a524"],
         "sourceCommit": "27c0eda3b2533c39a88047af57c5c7b84ae1fb67",
         "state": "accepted-joined",
         "reason": "Retain NO CHANGE NEEDED by task_0cb4a524: the recorded accepted blob equals the actual focus blob at reviewed commit 27c0eda3b2533c39a88047af57c5c7b84ae1fb67. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
@@ -856,10 +788,7 @@
       "acceptedBlob": "2487208b21425f197644bd308d3a27fe25608bbc",
       "integration": "full source/test diff integrated; judge checked combined accepted service",
       "launchBase": "2a08ef5a27397c374a848dc8bfeb6eddb9e1b559",
-      "changedRelatedPaths": [
-        "src/questions/runtime.ts",
-        "tests/questions-runtime.test.ts"
-      ],
+      "changedRelatedPaths": ["src/questions/runtime.ts", "tests/questions-runtime.test.ts"],
       "readingResult": "One private reply-delivery owner groups admission/resume/session fencing/queue/block/claim-send-ACK; registration retains native/remote authority.",
       "checks": [
         "55 tests/269 assertions",
@@ -870,9 +799,7 @@
         "status": "accepted",
         "acceptedBlob": "2487208b21425f197644bd308d3a27fe25608bbc",
         "primaryId": "task_b64cab37",
-        "judgeIds": [
-          "task_d8a065ce"
-        ],
+        "judgeIds": ["task_d8a065ce"],
         "sourceCommit": "62e05bf77001c4fe0705fa95898dc9877b38b606",
         "state": "accepted-joined",
         "reason": "Retain ACCEPT by task_d8a065ce: the recorded accepted blob equals the actual focus blob at reviewed commit 62e05bf77001c4fe0705fa95898dc9877b38b606. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
@@ -908,10 +835,7 @@
       "acceptedBlob": "e93ab8b86ff77c01f6fb355abd86ee7840b82a2c",
       "integration": "integrated full source/test diff",
       "launchBase": "5c80eec3bb5235a2f417f6ad45ed65389fefd22e",
-      "changedRelatedPaths": [
-        "src/questions/service.ts",
-        "tests/remote-question-bridge.test.ts"
-      ],
+      "changedRelatedPaths": ["src/questions/service.ts", "tests/remote-question-bridge.test.ts"],
       "readingResult": "Separate new remote mirror creation from existing value reconciliation, frozen intent, receipt precedence and persistence.",
       "checks": [
         "45 focused passes / 242 assertions",
@@ -924,9 +848,7 @@
         "status": "accepted",
         "acceptedBlob": "e93ab8b86ff77c01f6fb355abd86ee7840b82a2c",
         "primaryId": "task_53fcc8ba",
-        "judgeIds": [
-          "task_e49ceb90"
-        ],
+        "judgeIds": ["task_e49ceb90"],
         "sourceCommit": "775567e6b75c8287d789e7fa58487c0cbed11b18",
         "state": "accepted-joined",
         "reason": "Retain ACCEPT by task_e49ceb90: the recorded accepted blob equals the actual focus blob at reviewed commit 775567e6b75c8287d789e7fa58487c0cbed11b18. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
@@ -964,17 +886,12 @@
       "launchBase": "f256384cb549f1987e9b32969ae3c09069454b53",
       "changedRelatedPaths": [],
       "readingResult": "No-change: JSONL framing, tool/handoff/reply projection and process settlement separated; inspect text and retained answer tails intentionally differ.",
-      "checks": [
-        "39 pass236 assertions progress/buffer/manager",
-        "no full build/provider/SSH"
-      ],
+      "checks": ["39 pass236 assertions progress/buffer/manager", "no full build/provider/SSH"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "8089026a5b78616d952d89fc91f466fd757e0490",
         "primaryId": "task_717608b7",
-        "judgeIds": [
-          "task_c2bc3a8f"
-        ],
+        "judgeIds": ["task_c2bc3a8f"],
         "sourceCommit": "5c3d27c435dddab11810de524dbbef94bc27856b",
         "state": "accepted-joined",
         "reason": "Retain NO CHANGE NEEDED by task_c2bc3a8f: the recorded accepted blob equals the actual focus blob at reviewed commit 5c3d27c435dddab11810de524dbbef94bc27856b. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
@@ -1011,18 +928,13 @@
       "integration": "unchanged blob matches area tip",
       "launchBase": "2a08ef5a27397c374a848dc8bfeb6eddb9e1b559",
       "readingResult": "No-change: identity creation → exclusive header persistence → reopen → metadata/title → identity return → dispose private managers. Runtime task lifetime remains with callers.",
-      "checks": [
-        "41 tests /208 assertions",
-        "source blob unchanged; no compiled CLI/build"
-      ],
+      "checks": ["41 tests /208 assertions", "source blob unchanged; no compiled CLI/build"],
       "changedRelatedPaths": [],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "5a5ec14b5753ce0e7ec7a92aabaf2149a5a40245",
         "primaryId": "task_c55b1950",
-        "judgeIds": [
-          "task_c4737848"
-        ],
+        "judgeIds": ["task_c4737848"],
         "sourceCommit": "2e08b83504872a0bfb69b7bd76fb3ceb6a4c42bf",
         "state": "accepted-joined",
         "reason": "Retain NO CHANGE NEEDED by task_c4737848: the recorded accepted blob equals the actual focus blob at reviewed commit 2e08b83504872a0bfb69b7bd76fb3ceb6a4c42bf. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
@@ -1048,10 +960,7 @@
           "verdict": "NO CHANGE NEEDED",
           "objections": [],
           "reason": "Two deadlines, flush detachment, discard/reset lifecycle are explicit; caller retains delivery/replay authority. No scattered scheduler lifetime.",
-          "checks": [
-            "independent 5 pass/11 assertions",
-            "no full runtime/provider/SSH claim"
-          ]
+          "checks": ["independent 5 pass/11 assertions", "no full runtime/provider/SSH claim"]
         }
       ],
       "acceptedBlob": "3a08f369781a076686869017cda722559704d55c",
@@ -1059,17 +968,12 @@
       "launchBase": "efcfa889dca72ad5eedfaf07d4e5420e80ad10f7",
       "changedRelatedPaths": [],
       "readingResult": "No change: two explicit deadlines; flush detaches batch before delivery, dispose gates/discards, reset reopens; callers own delivery/replay.",
-      "checks": [
-        "5 focused tests /11 assertions",
-        "no full build/runtime acceptance"
-      ],
+      "checks": ["5 focused tests /11 assertions", "no full build/runtime acceptance"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "3a08f369781a076686869017cda722559704d55c",
         "primaryId": "task_48abdba4",
-        "judgeIds": [
-          "task_37002b64"
-        ],
+        "judgeIds": ["task_37002b64"],
         "sourceCommit": "48d5d9aee20b0298f5d392bdfab95e70e6904546",
         "state": "accepted-joined",
         "reason": "Retain NO CHANGE NEEDED by task_37002b64: the recorded accepted blob equals the actual focus blob at reviewed commit 48d5d9aee20b0298f5d392bdfab95e70e6904546. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
@@ -1116,9 +1020,7 @@
         "status": "accepted",
         "acceptedBlob": "d9cb46b93e636ab2da2b01f2534ef5eb6b66d9ae",
         "primaryId": "task_672581ab",
-        "judgeIds": [
-          "task_1a568352"
-        ],
+        "judgeIds": ["task_1a568352"],
         "sourceCommit": "81fea008fb3a637c997b470c534584a4447c4b7f",
         "state": "accepted-joined",
         "reason": "Retain NO CHANGE NEEDED by task_1a568352: the recorded accepted blob equals the actual focus blob at reviewed commit 81fea008fb3a637c997b470c534584a4447c4b7f. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
@@ -1156,17 +1058,12 @@
       "launchBase": "4fdd0c0a1aeb7b02265b6a81055957fb805a2465",
       "changedRelatedPaths": [],
       "readingResult": "No change: admission→await delivery ACK→listener release→authority validation→cancel request; ACK distinct from completion for ordinary/live owner.",
-      "checks": [
-        "16 tests367 assertions incl source CLI ACK-before-cancel",
-        "no build"
-      ],
+      "checks": ["16 tests367 assertions incl source CLI ACK-before-cancel", "no build"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "f58ab9393447ade92677a85bb1f882b73f5662ea",
         "primaryId": "task_de66cfbe",
-        "judgeIds": [
-          "task_0a1a68a9"
-        ],
+        "judgeIds": ["task_0a1a68a9"],
         "sourceCommit": "f90c2951fd7aabf089fc27be8686a0a18abd9e8e",
         "state": "accepted-joined",
         "reason": "Retain NO CHANGE NEEDED by task_0a1a68a9: the recorded accepted blob equals the actual focus blob at reviewed commit f90c2951fd7aabf089fc27be8686a0a18abd9e8e. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
@@ -1203,10 +1100,7 @@
       "acceptedBlob": "616cb27912bd78283f5fd9007e63757f6e4c7ace",
       "integration": "full source/test diff integrated",
       "launchBase": "8b0b918042918037a96f996bd29f91e2624a166a",
-      "changedRelatedPaths": [
-        "src/tasks/job-attention.ts",
-        "tests/job-attention.test.ts"
-      ],
+      "changedRelatedPaths": ["src/tasks/job-attention.ts", "tests/job-attention.test.ts"],
       "readingResult": "Timer consumes checkpoints→inspects pending tasks→publishes evidence→reschedules; failure episodes owned by job lifetime rather than separate ID set; shared quiet eligibility.",
       "checks": [
         "strengthened baseline11/70",
@@ -1218,9 +1112,7 @@
         "status": "accepted",
         "acceptedBlob": "616cb27912bd78283f5fd9007e63757f6e4c7ace",
         "primaryId": "task_0a24c1f9",
-        "judgeIds": [
-          "task_846bbe75"
-        ],
+        "judgeIds": ["task_846bbe75"],
         "sourceCommit": "0fb97677f66f54b55ee5902568f77d805139915a",
         "state": "accepted-joined",
         "reason": "Retain ACCEPT by task_846bbe75: the recorded accepted blob equals the actual focus blob at reviewed commit 0fb97677f66f54b55ee5902568f77d805139915a. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
@@ -1256,10 +1148,7 @@
       "acceptedBlob": "27ce9ecdf3610353fd50d65c165999d07bfa99e8",
       "integration": "full source/test patch integrated; judge checked combined manager authority projection",
       "launchBase": "62cfd14185774a6357c0f758bd82234f5c20344f",
-      "changedRelatedPaths": [
-        "src/tasks/job-service.ts",
-        "tests/worktree-workspace.test.ts"
-      ],
+      "changedRelatedPaths": ["src/tasks/job-service.ts", "tests/worktree-workspace.test.ts"],
       "readingResult": "Reserve→pin once→prepare/setup/activate→bounded wait operations replace interwoven worktree dispatch; cleanup and setup ownership grouped, manager/native/SSH authority preserved.",
       "checks": [
         "114 tests930 assertions",
@@ -1271,9 +1160,7 @@
         "status": "accepted",
         "acceptedBlob": "27ce9ecdf3610353fd50d65c165999d07bfa99e8",
         "primaryId": "task_0d4cb273",
-        "judgeIds": [
-          "task_6181fd8e"
-        ],
+        "judgeIds": ["task_6181fd8e"],
         "sourceCommit": "62b8e7949c68612fdf86dcd8599120650b313ed0",
         "state": "accepted-joined",
         "reason": "Retain ACCEPT by task_6181fd8e: the recorded accepted blob equals the actual focus blob at reviewed commit 62b8e7949c68612fdf86dcd8599120650b313ed0. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
@@ -1311,18 +1198,12 @@
       "launchBase": "ed0131d292f50902ecb57f62817b07040463557c",
       "changedRelatedPaths": [],
       "readingResult": "No-change: local launch installs handler; repeated SIGTERM drains captured manager once then exit143; session shutdown drains before detaching.",
-      "checks": [
-        "bridge2 pass",
-        "manager shutdown/process-group5 pass",
-        "no build/compiledCLI"
-      ],
+      "checks": ["bridge2 pass", "manager shutdown/process-group5 pass", "no build/compiledCLI"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "f82ba2130660c667cbe8b66ab9b4921ffcee5cb4",
         "primaryId": "task_2553ce4b",
-        "judgeIds": [
-          "task_83f11296"
-        ],
+        "judgeIds": ["task_83f11296"],
         "sourceCommit": "5636d39579a15719f30f68d06df283042dd3570b",
         "state": "accepted-joined",
         "reason": "Retain NO CHANGE NEEDED by task_83f11296: the recorded accepted blob equals the actual focus blob at reviewed commit 5636d39579a15719f30f68d06df283042dd3570b. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
@@ -1359,10 +1240,7 @@
       "acceptedBlob": "129841b52c862394340238e73d5c19ecd1d46816",
       "integration": "full source/test diff integrated",
       "launchBase": "fda4a8a43d47d12ea75706b50dc053c0c9d1affd",
-      "changedRelatedPaths": [
-        "src/tasks/resume-safeguards.ts",
-        "tests/resume-safeguards.test.ts"
-      ],
+      "changedRelatedPaths": ["src/tasks/resume-safeguards.ts", "tests/resume-safeguards.test.ts"],
       "readingResult": "Root references own first install/last release; original/adaptor methods share restoration closure instead of installation count + four method slots.",
       "checks": [
         "new lifetime test baseline and candidate pass",
@@ -1373,9 +1251,7 @@
         "status": "accepted",
         "acceptedBlob": "129841b52c862394340238e73d5c19ecd1d46816",
         "primaryId": "task_ac6cadbe",
-        "judgeIds": [
-          "task_021ccfb2"
-        ],
+        "judgeIds": ["task_021ccfb2"],
         "sourceCommit": "3de74516c210a58442656ed67a6e8584d987c302",
         "state": "accepted-joined",
         "reason": "Retain ACCEPT by task_021ccfb2: the recorded accepted blob equals the actual focus blob at reviewed commit 3de74516c210a58442656ed67a6e8584d987c302. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
@@ -1414,17 +1290,12 @@
       "launchBase": "7d2ade817ce1887dea78ec597722a1dbf99b155e",
       "changedRelatedPaths": [],
       "readingResult": "No-change: bounded lineage discovery→descendant closure→incremental deduplicated usage→total; footer owns polling/disposal, readers own handles/partial bytes.",
-      "checks": [
-        "33 tests302 assertions costs/history-disk-footer/footer",
-        "no compiledCLI/build"
-      ],
+      "checks": ["33 tests302 assertions costs/history-disk-footer/footer", "no compiledCLI/build"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "70f770b65f897dc4980fef34ba2092a0c2b2430b",
         "primaryId": "task_bc2d06ee",
-        "judgeIds": [
-          "task_fe953df2"
-        ],
+        "judgeIds": ["task_fe953df2"],
         "sourceCommit": "e8dcbeb63e0f1d23cf9707d20e0fc8461f71065b",
         "state": "accepted-joined",
         "reason": "Retain NO CHANGE NEEDED by task_fe953df2: the recorded accepted blob equals the actual focus blob at reviewed commit e8dcbeb63e0f1d23cf9707d20e0fc8461f71065b. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
@@ -1462,18 +1333,12 @@
       "launchBase": "02e36f3372b5072d65fa39e4c2148827a1969a25",
       "changedRelatedPaths": [],
       "readingResult": "No-change: load/panel/explicitSave/validated private temp/atomic rename; local delegation→profile resolution; SSH destination/native backend authority separate.",
-      "checks": [
-        "44 pass260 assertions six files",
-        "TUI rerun area binary passed",
-        "no full build/liveSSH"
-      ],
+      "checks": ["44 pass260 assertions six files", "TUI rerun area binary passed", "no full build/liveSSH"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "2a117125b2f25e592cad2c1bb4c720fda0832e64",
         "primaryId": "task_f2d9d1fa",
-        "judgeIds": [
-          "task_ee69dc68"
-        ],
+        "judgeIds": ["task_ee69dc68"],
         "sourceCommit": "5079a29ca42fea67cf655a1f91d6ba7e0eb72ccc",
         "state": "accepted-joined",
         "reason": "Retain NO CHANGE NEEDED by task_ee69dc68: the recorded accepted blob equals the actual focus blob at reviewed commit 5079a29ca42fea67cf655a1f91d6ba7e0eb72ccc. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
@@ -1510,17 +1375,12 @@
       "launchBase": "9c2abd811dae310c924836ca33c0d175e80cbba2",
       "changedRelatedPaths": [],
       "readingResult": "No-change: mode gate→load→isolated panel draft→explicit Save→atomic persistence→notice. Cancel never writes; launches reread profiles.",
-      "checks": [
-        "14 settings/profile tests90 assertions",
-        "diff clean; no full build/liveprovider"
-      ],
+      "checks": ["14 settings/profile tests90 assertions", "diff clean; no full build/liveprovider"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "56af9b3b1a9fc016caf842984e5d67577c726197",
         "primaryId": "task_92739d50",
-        "judgeIds": [
-          "task_05218d53"
-        ],
+        "judgeIds": ["task_05218d53"],
         "sourceCommit": "c97cd7845c2d85a49815e118dae6f5da8cb5e701",
         "state": "accepted-joined",
         "reason": "Retain NO CHANGE NEEDED by task_05218d53: the recorded accepted blob equals the actual focus blob at reviewed commit c97cd7845c2d85a49815e118dae6f5da8cb5e701. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
@@ -1558,18 +1418,12 @@
       "launchBase": "8b0b918042918037a96f996bd29f91e2624a166a",
       "changedRelatedPaths": [],
       "readingResult": "No-change: owner-bound manager snapshot→protected index; shutdown→stopping/completed metadata; append/protection/compaction/cleanup stay one transaction.",
-      "checks": [
-        "recorder7/37",
-        "extension shutdown1/7",
-        "minimal compiled recorder+SIGKILL recovery not full CLI"
-      ],
+      "checks": ["recorder7/37", "extension shutdown1/7", "minimal compiled recorder+SIGKILL recovery not full CLI"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "606cc77e964e261f87c5c5777210584772e32747",
         "primaryId": "task_da66c8c9",
-        "judgeIds": [
-          "task_8f95bce7"
-        ],
+        "judgeIds": ["task_8f95bce7"],
         "sourceCommit": "b7e4deeca847f6201d0f117580923b5503da9a60",
         "state": "accepted-joined",
         "reason": "Retain NO CHANGE NEEDED by task_8f95bce7: the recorded accepted blob equals the actual focus blob at reviewed commit b7e4deeca847f6201d0f117580923b5503da9a60. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
@@ -1619,10 +1473,7 @@
       "acceptedBlob": "ca04acea4b9220de46fd19b8f40e4a669e027a39",
       "integration": "full accepted rework source/test diff integrated; original rejected candidate retained",
       "launchBase": "5c80eec3bb5235a2f417f6ad45ed65389fefd22e",
-      "changedRelatedPaths": [
-        "src/tasks/task-manager.ts",
-        "tests/task-manager.test.ts"
-      ],
+      "changedRelatedPaths": ["src/tasks/task-manager.ts", "tests/task-manager.test.ts"],
       "readingResult": "Separate new task admission, reservation activation and shared process observation; retained reservation identity/deadline/waiters are visible.",
       "checks": [
         "77 focused passes / 489 assertions",
@@ -1652,10 +1503,7 @@
         "status": "accepted",
         "acceptedBlob": "ca04acea4b9220de46fd19b8f40e4a669e027a39",
         "primaryId": "task_53df8c4c",
-        "judgeIds": [
-          "task_08e2c508",
-          "task_a01fd3d7"
-        ],
+        "judgeIds": ["task_08e2c508", "task_a01fd3d7"],
         "sourceCommit": "5eb5ac44b5ef72ddc095bd8cd20ae9827bc82dc3",
         "state": "accepted-joined",
         "reason": "Retain ACCEPT by task_a01fd3d7: the recorded accepted blob equals the actual focus blob at reviewed commit 5eb5ac44b5ef72ddc095bd8cd20ae9827bc82dc3. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
@@ -1701,9 +1549,7 @@
         "status": "accepted",
         "acceptedBlob": "00775b8a24575435eb6b98c7d88929b58cfec333",
         "primaryId": "task_622c59be",
-        "judgeIds": [
-          "task_35e693c9"
-        ],
+        "judgeIds": ["task_35e693c9"],
         "sourceCommit": "12b464febcc8110d66f5f3bd291279be3d659ce0",
         "state": "accepted-joined",
         "reason": "Retain NO CHANGE NEEDED by task_35e693c9: the recorded accepted blob equals the actual focus blob at reviewed commit 12b464febcc8110d66f5f3bd291279be3d659ce0. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
@@ -1740,17 +1586,12 @@
       "launchBase": "eb0e877718005a15d0e7604f3538098627c65730",
       "changedRelatedPaths": [],
       "readingResult": "No-change: nonTUI refusal before allocation, session-captured /ps, panel closes adapter not jobs, confirmed stop rechecks identity/owner and preserves pending semantics.",
-      "checks": [
-        "18 pass143 assertions",
-        "diff pass; no realTUI rerun/fullbuild/authSSH"
-      ],
+      "checks": ["18 pass143 assertions", "diff pass; no realTUI rerun/fullbuild/authSSH"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "27acfb4e8b82ff387afbd53c59cfa399481632df",
         "primaryId": "task_276c367a",
-        "judgeIds": [
-          "task_901a796a"
-        ],
+        "judgeIds": ["task_901a796a"],
         "sourceCommit": "c9e944995c92d27bc5c95b18d9cb40ccd9bd8230",
         "state": "accepted-joined",
         "reason": "Retain NO CHANGE NEEDED by task_901a796a: the recorded accepted blob equals the actual focus blob at reviewed commit c9e944995c92d27bc5c95b18d9cb40ccd9bd8230. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
@@ -1788,17 +1629,12 @@
       "launchBase": "f2882f8d5f1758aea9530f2c91fab98d00a79de8",
       "changedRelatedPaths": [],
       "readingResult": "No-change: observer attaches existing session manager; causal-owner guarded projection checkpoint append never recreates jobs; shutdown waits manager then unsubscribes/drains observer.",
-      "checks": [
-        "attachment8 pass65 assertions",
-        "isolated wrapper pass; no full build/liveSSH/compiledCLI"
-      ],
+      "checks": ["attachment8 pass65 assertions", "isolated wrapper pass; no full build/liveSSH/compiledCLI"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "b52d3b274bfcc6dc95c05b42bc38d7a45791d3c9",
         "primaryId": "task_59432ef6",
-        "judgeIds": [
-          "task_5c2c90d3"
-        ],
+        "judgeIds": ["task_5c2c90d3"],
         "sourceCommit": "7b48e8a6200974188b0da429386ed956da5da8b7",
         "state": "accepted-joined",
         "reason": "Retain NO CHANGE NEEDED by task_5c2c90d3: the recorded accepted blob equals the actual focus blob at reviewed commit 7b48e8a6200974188b0da429386ed956da5da8b7. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
@@ -1824,10 +1660,7 @@
           "verdict": "NO CHANGE NEEDED",
           "objections": [],
           "reason": "Explicit title vs fallback normalizer simple; launch metadata separate from durable identity/status; replay owning execute labels only supersede fallback, terminal status typed not prose.",
-          "checks": [
-            "matching area40 pass505 assertions",
-            "diff clean; no liveprovider/authSSH/nativebackend/fullgate"
-          ]
+          "checks": ["matching area40 pass505 assertions", "diff clean; no liveprovider/authSSH/nativebackend/fullgate"]
         }
       ],
       "acceptedBlob": "868dbe84394877707260f5531554b4f419a4f08f",
@@ -1835,17 +1668,12 @@
       "launchBase": "a5af6dc16d2128b4493a26341b5e319496076574",
       "changedRelatedPaths": [],
       "readingResult": "No-change: explicit title normalization/fallback preview precedence is coherent across local/native/SSH launch and transcript inspection/completion.",
-      "checks": [
-        "40 pass505 assertions title/taskrow/JobService",
-        "no build"
-      ],
+      "checks": ["40 pass505 assertions title/taskrow/JobService", "no build"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "868dbe84394877707260f5531554b4f419a4f08f",
         "primaryId": "task_08ee1258",
-        "judgeIds": [
-          "task_855d0a91"
-        ],
+        "judgeIds": ["task_855d0a91"],
         "sourceCommit": "0f5c3dcca6b3fed2968cd3276964f0b2ff0b2cef",
         "state": "accepted-joined",
         "reason": "Retain NO CHANGE NEEDED by task_855d0a91: the recorded accepted blob equals the actual focus blob at reviewed commit 0f5c3dcca6b3fed2968cd3276964f0b2ff0b2cef. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
@@ -1884,18 +1712,12 @@
       "launchBase": "d079a845b05dc8ec0fa80ac75b0fcc6cf35d6d23",
       "changedRelatedPaths": [],
       "readingResult": "No-change: local marker-sizing loop owns truncation; JobService and completion preview returned copies, not stored originals/delivery ownership.",
-      "checks": [
-        "15 tests135 assertions",
-        "36 shipped-limit boundary probes",
-        "no build/fullCI"
-      ],
+      "checks": ["15 tests135 assertions", "36 shipped-limit boundary probes", "no build/fullCI"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "49fa24c1655726289c36f55ba530187554d1bb9c",
         "primaryId": "task_b8e22edf",
-        "judgeIds": [
-          "task_ea5e9a6f"
-        ],
+        "judgeIds": ["task_ea5e9a6f"],
         "sourceCommit": "2468f27a3ab522bef68d6eda1ef53796c701ed2e",
         "state": "accepted-joined",
         "reason": "Retain NO CHANGE NEEDED by task_ea5e9a6f: the recorded accepted blob equals the actual focus blob at reviewed commit 2468f27a3ab522bef68d6eda1ef53796c701ed2e. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
@@ -1933,17 +1755,12 @@
       "launchBase": "d5623c8e9d529384108765b2ae2604f493c0c60d",
       "changedRelatedPaths": [],
       "readingResult": "No-change: one batch source/config pin; validation→planned publication→Git creation explicit; service/manager retain setup/cancel/deadline/activation.",
-      "checks": [
-        "13 pass50 assertions",
-        "format/diff pass; no build/liveprovider/compiledCLI"
-      ],
+      "checks": ["13 pass50 assertions", "format/diff pass; no build/liveprovider/compiledCLI"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "76fe2987f9f644571d9b478ba835254f1fe988da",
         "primaryId": "task_2d59fe31",
-        "judgeIds": [
-          "task_866a3bd6"
-        ],
+        "judgeIds": ["task_866a3bd6"],
         "sourceCommit": "7edb33c9c4a7716c772deed6644cc0bdd09f1088",
         "state": "accepted-joined",
         "reason": "Retain NO CHANGE NEEDED by task_866a3bd6: the recorded accepted blob equals the actual focus blob at reviewed commit 7edb33c9c4a7716c772deed6644cc0bdd09f1088. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
@@ -1981,17 +1798,12 @@
       "launchBase": "1b7977e10031ccc622c0b30f7359e04a912e2db4",
       "changedRelatedPaths": [],
       "readingResult": "No-change: Zod definition→converted registration declaration while execution separately parses; Live reuses schema but owns validation/admission/cancel; setup probe declaration denies execution.",
-      "checks": [
-        "schema1/10 plus5 adapter assertions",
-        "diff pass; no staleDist/build/provider"
-      ],
+      "checks": ["schema1/10 plus5 adapter assertions", "diff pass; no staleDist/build/provider"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "d9d4667861de79f9c1947396164f07adc0f23d85",
         "primaryId": "task_9f98ded3",
-        "judgeIds": [
-          "task_87f3fbc6"
-        ],
+        "judgeIds": ["task_87f3fbc6"],
         "sourceCommit": "4894e9ad7736db769ac89495ad045247aba907bb",
         "state": "accepted-joined",
         "reason": "Retain NO CHANGE NEEDED by task_87f3fbc6: the recorded accepted blob equals the actual focus blob at reviewed commit 4894e9ad7736db769ac89495ad045247aba907bb. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
@@ -2039,9 +1851,7 @@
         "status": "accepted",
         "acceptedBlob": "7d850644a24233284f0dc1dba04e3c7096f400a5",
         "primaryId": "task_58ef2195",
-        "judgeIds": [
-          "task_f4dcc4bc"
-        ],
+        "judgeIds": ["task_f4dcc4bc"],
         "sourceCommit": "e6c1dbdb4583531c763033773492c0b320ad0b69",
         "state": "accepted-joined",
         "reason": "Retain NO CHANGE NEEDED by task_f4dcc4bc: the recorded accepted blob equals the actual focus blob at reviewed commit e6c1dbdb4583531c763033773492c0b320ad0b69. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
@@ -2079,18 +1889,12 @@
       "launchBase": "4f28172f2d4c8430b0138a415f2d338138ee7ef9",
       "changedRelatedPaths": [],
       "readingResult": "No-change: guarded nonError conversion, Error message/stack reconciliation and diagnostic bounds; CLI sanitizes URL/stderr/exit1; caller owns execution cancellation/delivery.",
-      "checks": [
-        "3 tests7 assertions",
-        "2 sourceCLI probes",
-        "Biome/diff pass; no build/staledist proof"
-      ],
+      "checks": ["3 tests7 assertions", "2 sourceCLI probes", "Biome/diff pass; no build/staledist proof"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "a8d9b7c059051f55ce1d197b5c2842d164abc7a5",
         "primaryId": "task_60592667",
-        "judgeIds": [
-          "task_5f71aa25"
-        ],
+        "judgeIds": ["task_5f71aa25"],
         "sourceCommit": "a9c686b1c083d57296c65e3feb59da8a20d0e4de",
         "state": "accepted-joined",
         "reason": "Retain NO CHANGE NEEDED by task_5f71aa25: the recorded accepted blob equals the actual focus blob at reviewed commit a9c686b1c083d57296c65e3feb59da8a20d0e4de. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
@@ -2125,10 +1929,7 @@
       "acceptedBlob": "2504db7ab88d35fdbdb6db8d3379e2d9df0c0f6f",
       "integration": "integrated exact candidate diff",
       "launchBase": "5c80eec3bb5235a2f417f6ad45ed65389fefd22e",
-      "changedRelatedPaths": [
-        "src/typescript/execution.ts",
-        "tests/typescript-execution.test.ts"
-      ],
+      "changedRelatedPaths": ["src/typescript/execution.ts", "tests/typescript-execution.test.ts"],
       "readingResult": "One first-wins cancellation record owns listeners/timers and derives ACK eligibility, flags and diagnostics.",
       "checks": [
         "72 focused passes / 353 assertions",
@@ -2141,9 +1942,7 @@
         "status": "accepted",
         "acceptedBlob": "2504db7ab88d35fdbdb6db8d3379e2d9df0c0f6f",
         "primaryId": "task_dc0e00cd",
-        "judgeIds": [
-          "task_b4813ac3"
-        ],
+        "judgeIds": ["task_b4813ac3"],
         "sourceCommit": "9ed8583588dbe49928f662156437612997417036",
         "state": "accepted-joined",
         "reason": "Retain ACCEPT by task_b4813ac3: the recorded accepted blob equals the actual focus blob at reviewed commit 9ed8583588dbe49928f662156437612997417036. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
@@ -2179,10 +1978,7 @@
       "acceptedBlob": "3542bf968fc6fdf8c06c82d149a15f3e9e95eac7",
       "integration": "full source/handoff-test candidate diff integrated",
       "launchBase": "b457ae3d2e0b852a62258799beb66a10f73a1171",
-      "changedRelatedPaths": [
-        "src/typescript/extension.ts",
-        "tests/execute-handoff.test.ts"
-      ],
+      "changedRelatedPaths": ["src/typescript/extension.ts", "tests/execute-handoff.test.ts"],
       "readingResult": "One invocation owner groups handoff and launched-result projection; recordLaunches immediate publication and finish retains background evidence on failure. Session shutdown/cancel/diagnostics/live stop remain registration-owned.",
       "checks": [
         "109 pass736 assertions",
@@ -2195,9 +1991,7 @@
         "status": "accepted",
         "acceptedBlob": "3542bf968fc6fdf8c06c82d149a15f3e9e95eac7",
         "primaryId": "task_032f5c01",
-        "judgeIds": [
-          "task_cee52f91"
-        ],
+        "judgeIds": ["task_cee52f91"],
         "sourceCommit": "081b8862213c79f947489cd5becb63d1ff680f5a",
         "state": "accepted-joined",
         "reason": "Retain ACCEPT by task_cee52f91: the recorded accepted blob equals the actual focus blob at reviewed commit 081b8862213c79f947489cd5becb63d1ff680f5a. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
@@ -2233,10 +2027,7 @@
       "acceptedBlob": "0a762301d2a0acfbdfee65d553121800a36fbbc0",
       "integration": "full source/test candidate diff integrated; compiled image update next batch",
       "launchBase": "64250a1477cb7ca25ed40a3e4e17c60de08c854d",
-      "changedRelatedPaths": [
-        "src/typescript/images.ts",
-        "tests/typescript-images.test.ts"
-      ],
+      "changedRelatedPaths": ["src/typescript/images.ts", "tests/typescript-images.test.ts"],
       "readingResult": "Record validator returns trusted content/decoded size; channel loop owns aggregate accounting and atomic acceptance instead of stateful callback. Malformed later record rejects all.",
       "checks": [
         "18 pass107 assertions",
@@ -2248,9 +2039,7 @@
         "status": "accepted",
         "acceptedBlob": "0a762301d2a0acfbdfee65d553121800a36fbbc0",
         "primaryId": "task_5f2762ae",
-        "judgeIds": [
-          "task_2d0765d2"
-        ],
+        "judgeIds": ["task_2d0765d2"],
         "sourceCommit": "066f319f7741234a589fbc9d89d46a2be1a076d2",
         "state": "accepted-joined",
         "reason": "Retain ACCEPT by task_2d0765d2: the recorded accepted blob equals the actual focus blob at reviewed commit 066f319f7741234a589fbc9d89d46a2be1a076d2. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
@@ -2286,10 +2075,7 @@
       "acceptedBlob": "d40b9d66d1c674f46e1a2ad28c390e2e39377a8f",
       "integration": "full source/protocol test diff integrated",
       "launchBase": "7a99d536c8be21afa20521148843a2d85f3c96b3",
-      "changedRelatedPaths": [
-        "src/typescript/job-bridge.ts",
-        "tests/job-bridge-protocol.test.ts"
-      ],
+      "changedRelatedPaths": ["src/typescript/job-bridge.ts", "tests/job-bridge-protocol.test.ts"],
       "readingResult": "Explicit delivery phases replace crossing status/ownership/controller flags; ACK operation exposes immediate ordinary cleanup vs provisional foreground; failed replies only ACK tokens; request dispatch separate from framing.",
       "checks": [
         "62 pass566 assertions",
@@ -2301,9 +2087,7 @@
         "status": "accepted",
         "acceptedBlob": "d40b9d66d1c674f46e1a2ad28c390e2e39377a8f",
         "primaryId": "task_10057488",
-        "judgeIds": [
-          "task_849e9ce1"
-        ],
+        "judgeIds": ["task_849e9ce1"],
         "sourceCommit": "9d80aab5646300b24ae57999007d62463e6bb6b5",
         "state": "accepted-joined",
         "reason": "Retain ACCEPT by task_849e9ce1: the recorded accepted blob equals the actual focus blob at reviewed commit 9d80aab5646300b24ae57999007d62463e6bb6b5. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
@@ -2340,10 +2124,7 @@
       "acceptedBlob": "09646b097d3f6b343e5ee21009c3d8c4b85424c9",
       "integration": "full source/test candidate diff integrated",
       "launchBase": "7a99d536c8be21afa20521148843a2d85f3c96b3",
-      "changedRelatedPaths": [
-        "src/typescript/output-capture.ts",
-        "tests/execute-output-capture.test.ts"
-      ],
+      "changedRelatedPaths": ["src/typescript/output-capture.ts", "tests/execute-output-capture.test.ts"],
       "readingResult": "StreamPreview owns decoding/character retention; capture owns serialized byte selection/prefix/spill/files/errors. Append visibly chooses file write vs prefix+first spill.",
       "checks": [
         "capture+execution41/184",
@@ -2355,9 +2136,7 @@
         "status": "accepted",
         "acceptedBlob": "09646b097d3f6b343e5ee21009c3d8c4b85424c9",
         "primaryId": "task_105272bf",
-        "judgeIds": [
-          "task_0321bbc2"
-        ],
+        "judgeIds": ["task_0321bbc2"],
         "sourceCommit": "c88c37a075d16cd5ba9b1abc7f0354264406b337",
         "state": "accepted-joined",
         "reason": "Retain ACCEPT by task_0321bbc2: the recorded accepted blob equals the actual focus blob at reviewed commit c88c37a075d16cd5ba9b1abc7f0354264406b337. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
@@ -2394,9 +2173,7 @@
       "acceptedBlob": "38b68c6d2f3f42a8ef8c9f03ffc004e235df2b6e",
       "integration": "full diff integrated; fresh joined build and ORIGINAL runner/bridge suites passed task_e6a5072d",
       "launchBase": "d5623c8e9d529384108765b2ae2604f493c0c60d",
-      "changedRelatedPaths": [
-        "src/typescript/runner.ts"
-      ],
+      "changedRelatedPaths": ["src/typescript/runner.ts"],
       "readingResult": "Runner visibly installs loader, prepares dependencies, executes, drains jobs/images; native module loading/cache owns one lifetime instead of interleaved boot machinery.",
       "checks": [
         "format/lint/tsc pass1 inherited info",
@@ -2409,9 +2186,7 @@
         "status": "accepted",
         "acceptedBlob": "38b68c6d2f3f42a8ef8c9f03ffc004e235df2b6e",
         "primaryId": "task_e65a5513",
-        "judgeIds": [
-          "task_5c8f3c0f"
-        ],
+        "judgeIds": ["task_5c8f3c0f"],
         "sourceCommit": "7758b00c032100018a3548e9e7a6dfa3beaab6e8",
         "state": "accepted-joined",
         "reason": "Retain ACCEPT by task_5c8f3c0f: the recorded accepted blob equals the actual focus blob at reviewed commit 7758b00c032100018a3548e9e7a6dfa3beaab6e8. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
@@ -2456,9 +2231,7 @@
         "status": "accepted",
         "acceptedBlob": "d5f84212da90759f76bccd2671f281e1327150bc",
         "primaryId": "task_8be5867c",
-        "judgeIds": [
-          "task_ef8a996d"
-        ],
+        "judgeIds": ["task_ef8a996d"],
         "sourceCommit": "76bab441ee54bd11b6a871893e1900d4c460e6c2",
         "state": "accepted-joined",
         "reason": "Retain NO CHANGE NEEDED by task_ef8a996d: the recorded accepted blob equals the actual focus blob at reviewed commit 76bab441ee54bd11b6a871893e1900d4c460e6c2. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
@@ -2504,9 +2277,7 @@
         "status": "accepted",
         "acceptedBlob": "f6d95e20d621a4897f82623836a2a68771772eff",
         "primaryId": "task_b74d589c",
-        "judgeIds": [
-          "task_998df675"
-        ],
+        "judgeIds": ["task_998df675"],
         "sourceCommit": "bb47fc31535eab195aa9e40d0525ecc1837e553b",
         "state": "accepted-joined",
         "reason": "Retain NO CHANGE NEEDED by task_998df675: the recorded accepted blob equals the actual focus blob at reviewed commit bb47fc31535eab195aa9e40d0525ecc1837e553b. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
@@ -2534,9 +2305,7 @@
       "acceptedBlob": "9472dcc594a0cc7bbf2459cfbfb2876181603b79",
       "integration": "pending",
       "launchBase": "05e9825e5056fe3a4f1eaa16a8f8497c68e6f92f",
-      "changedRelatedPaths": [
-        "tests/attention-sdk.test.ts"
-      ],
+      "changedRelatedPaths": ["tests/attention-sdk.test.ts"],
       "readingResult": "Scoped observation owns counterinstall/restore finally; explicit launch/attention/stop replysequence, stopreason derived from content not duplicate callnumber authority; SDKregistration visible.",
       "checks": [
         "base/candidate1/7 all7assertionlines exact",
@@ -2547,10 +2316,7 @@
         "status": "accepted",
         "acceptedBlob": "9472dcc594a0cc7bbf2459cfbfb2876181603b79",
         "primaryId": "task_d3480bb9",
-        "judgeIds": [
-          "task_2bb42000",
-          "task_997edac5"
-        ],
+        "judgeIds": ["task_2bb42000", "task_997edac5"],
         "sourceCommit": "5ec16db73e8709b410be7f081ec22371d8429ec0",
         "state": "accepted-joined",
         "reason": "ACCEPT: the complete file now separates three real responsibilities: prototype instrumentation, provider reply framing, and the SDK attention scenario. observeTaskManagerWaits owns both installations, the idempotent unsubscribe accounting, their counts, and restoration; the test visibly restores it in finally after session disposal. This is a focused observation lifetime, not a generic context bag. assistantReply derives stopReason from content instead of maintaining a second calls===1/7 decision in message metadata. The scenario reads directly as launch on call 1, receive attention, stop on call 7, then inspect subscription ownership. These are structural authority/lifetime improvements, not renames or assertion-count gains. The short deterministic call-number schedule remains readable for this single scenario."
@@ -2589,9 +2355,7 @@
       "acceptedBlob": "75416a24e996677d943dd8dd4fa64f3f35fc112a",
       "integration": "full accepted test diff integrated; liveUX known failing not releaseaccepted",
       "launchBase": "f736f9d464a299cf3196c72c9b68cdfcb32fd23a",
-      "changedRelatedPaths": [
-        "tests/background-ux.test.ts"
-      ],
+      "changedRelatedPaths": ["tests/background-ux.test.ts"],
       "readingResult": "Assertions consume collected observations; fixture/processwatchdog/stream/transcript/cleanup lifetimes coherent separate operations; original16assertions retained.",
       "checks": [
         "3pass1optinskip format/diffpass",
@@ -2603,9 +2367,7 @@
         "status": "accepted",
         "acceptedBlob": "75416a24e996677d943dd8dd4fa64f3f35fc112a",
         "primaryId": "task_96ff687b",
-        "judgeIds": [
-          "task_3f0a8566"
-        ],
+        "judgeIds": ["task_3f0a8566"],
         "sourceCommit": "0c397649dc523023440370b0f000ddeff56731b6",
         "state": "accepted-not-joined",
         "reason": "Retain ACCEPT by task_3f0a8566: the recorded accepted blob equals the actual focus blob at reviewed commit 0c397649dc523023440370b0f000ddeff56731b6. Joined tree does not contain that exact accepted blob; an accepted source batch remains to join, not a fresh quality review. Latest area tree also matches the recorded accepted blob. Structural acceptance is retained, but authenticated original root-yield timing remains known failing; baseline real-root timing was also late. Offline passing checks do not establish live-UX/product acceptance."
@@ -2644,17 +2406,12 @@
       "launchBase": "e4cb8721b00386800f9b71cc84f38948aff89207",
       "changedRelatedPaths": [],
       "readingResult": "Nochange explicit burstorder/continuousarrival/callbackfailure/reset/disposal localfixtures; sharedharness adds indirection. Manager→extensionbatching→delivery/nativebypass traced.",
-      "checks": [
-        "5/11 focused",
-        "diff/cleanpass productionpaths readnotexecuted"
-      ],
+      "checks": ["5/11 focused", "diff/cleanpass productionpaths readnotexecuted"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "dc4068b79af8fe351ffbdc86ca308c2638d85aa2",
         "primaryId": "task_913d7474",
-        "judgeIds": [
-          "task_fae830d2"
-        ],
+        "judgeIds": ["task_fae830d2"],
         "sourceCommit": "bc5dc4ca6cb1def7f6ee799f45d25259cafe4471",
         "state": "accepted-joined",
         "reason": "Retain NO CHANGE NEEDED by task_fae830d2: the recorded accepted blob equals the actual focus blob at reviewed commit bc5dc4ca6cb1def7f6ee799f45d25259cafe4471. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
@@ -2692,17 +2449,12 @@
       "launchBase": "6b376f8e618a5829f89f96867ea2d138954e2b58",
       "changedRelatedPaths": [],
       "readingResult": "Nochange fresh localpayloads4sync arrangeformatassert journeys: omissionsIDs/boundedcommandends/smallbatchcomplete/killeddiagnostic; snapshots→delivery→UIreaders traced.",
-      "checks": [
-        "4/68",
-        "unchangedsource/diff pass no binary/build/livedelivery"
-      ],
+      "checks": ["4/68", "unchangedsource/diff pass no binary/build/livedelivery"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "47021c716155f3933a2e2332e77a02439ebc9f7d",
         "primaryId": "task_05623fad",
-        "judgeIds": [
-          "task_4acbcb8f"
-        ],
+        "judgeIds": ["task_4acbcb8f"],
         "sourceCommit": "668cecd2178c7fefe7427ffc749fd07a04b52d1b",
         "state": "accepted-joined",
         "reason": "Retain NO CHANGE NEEDED by task_4acbcb8f: the recorded accepted blob equals the actual focus blob at reviewed commit 668cecd2178c7fefe7427ffc749fd07a04b52d1b. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
@@ -2732,9 +2484,7 @@
       "acceptedBlob": "583b76c9419da55f9bc2101519b2013104f7fdc5",
       "integration": "pending",
       "launchBase": "d75bb3afd56ae308683f3744ac0b496913f2507f",
-      "changedRelatedPaths": [
-        "tests/cooperative-handoff.test.ts"
-      ],
+      "changedRelatedPaths": ["tests/cooperative-handoff.test.ts"],
       "readingResult": "Case owns scenario calls/expectedcontinuation; smallreplyoperation owns wireconstruction; setup/disposal visible; newassertions bothcalls execute+bothresults sessionstate.",
       "checks": [
         "focus2/8 joinedhandoff12/47",
@@ -2746,10 +2496,7 @@
         "status": "accepted",
         "acceptedBlob": "583b76c9419da55f9bc2101519b2013104f7fdc5",
         "primaryId": "task_153d501f",
-        "judgeIds": [
-          "task_817e6a43",
-          "task_997edac5"
-        ],
+        "judgeIds": ["task_817e6a43", "task_997edac5"],
         "sourceCommit": "8510667a3684cedaa0f8d99fdfba467a4b614587",
         "state": "accepted-joined",
         "reason": "ACCEPT: compared with the complete baseline, the boolean allYield no longer simultaneously encodes a case label, per-call termination policy, and expected request count. Each named scenario states which calls hand off and its expected continuation; the tool implementation reads that policy locally. assistantReply is a small coherent provider-wire constructor, leaving the first two-call batch and subsequent text reply directly visible in the scenario. Setup, registered-tool substitution, prompt, result observation, and disposal remain together. Recording the executed codes and showing both persisted tool results makes the batch journey explicit, but the verdict rests on the separation of wire framing from batch policy, not extra assertions."
@@ -2789,18 +2536,12 @@
       "launchBase": "d75bb3afd56ae308683f3744ac0b496913f2507f",
       "changedRelatedPaths": [],
       "readingResult": "Nochange local fixtures missingmessage/headerframes hostilegetters/fallback oversizedstring/prefixtruncation; formatter→CLIredaction→capturedisplay traced.",
-      "checks": [
-        "3/7",
-        "6suppliedbinaryprobespass disposableHOME+SDKdirverifiedclean",
-        "no build/fullsuite"
-      ],
+      "checks": ["3/7", "6suppliedbinaryprobespass disposableHOME+SDKdirverifiedclean", "no build/fullsuite"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "5794b3579cc56a54507239584508e75c73a2052d",
         "primaryId": "task_e507efe5",
-        "judgeIds": [
-          "task_d4658734"
-        ],
+        "judgeIds": ["task_d4658734"],
         "sourceCommit": "d4b93bfb760f155a1a611bf852bc3b8a3be723fb",
         "state": "accepted-joined",
         "reason": "Retain NO CHANGE NEEDED by task_d4658734: the recorded accepted blob equals the actual focus blob at reviewed commit d4b93bfb760f155a1a611bf852bc3b8a3be723fb. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
@@ -2844,24 +2585,15 @@
         "primaryStillRequired": true
       },
       "launchBase": "241e60a4ed3b07887724c5605d86ef29aedc00bc",
-      "changedRelatedPaths": [
-        "tests/execute-handoff.test.ts"
-      ],
+      "changedRelatedPaths": ["tests/execute-handoff.test.ts"],
       "readingResult": "Concurrent invocation test releases AND drains both calls before restoring spy; prior released gates but call1 still unsettled on injected call2 failure. Existing evidence/validation/failure assertions retained.",
-      "checks": [
-        "baseline/candidate focus10/39",
-        "four suites33/441",
-        "format/lint/diff pass; no tsc/build/fullgate"
-      ],
+      "checks": ["baseline/candidate focus10/39", "four suites33/441", "format/lint/diff pass; no tsc/build/fullgate"],
       "incidentalFix": "Reproduced test teardown overlap with injected call2 failure; draining outstanding invocations before spy restoration preserves original failure/background notice.",
       "resume": {
         "status": "accepted",
         "acceptedBlob": "4c64cdd32dcefa46258e47612c2fa2ab02c72122",
         "primaryId": "task_c5b89dde",
-        "judgeIds": [
-          "task_8ed2ab8e",
-          "task_cee52f91"
-        ],
+        "judgeIds": ["task_8ed2ab8e", "task_cee52f91"],
         "sourceCommit": "0f04b677427acd928f44731e043264ff19293b18",
         "state": "accepted-joined",
         "reason": "Retain ACCEPT by task_8ed2ab8e: the recorded accepted blob equals the actual focus blob at reviewed commit 0f04b677427acd928f44731e043264ff19293b18. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
@@ -2888,10 +2620,7 @@
           "verdict": "NO CHANGE NEEDED",
           "objections": [],
           "reason": "Complete test journeys expose decoded preview vs artifact bytes/error/budget and filesystem effects without fixture machinery; root cleanup/descriptor ownership visible, pump-before-close caller traced.",
-          "checks": [
-            "independent candidate16/65 incl Linux descriptors",
-            "diff clean; no fresh compiledCLI/fullgate"
-          ]
+          "checks": ["independent candidate16/65 incl Linux descriptors", "diff clean; no fresh compiledCLI/fullgate"]
         }
       ],
       "acceptedBlob": "315f7fcd90966bafccad4c9d4c7f978ad77c4cbc",
@@ -2906,19 +2635,12 @@
       "launchBase": "6bd1ff8d9f3ed41bdf98c641e8c3518b3449ab73",
       "changedRelatedPaths": [],
       "readingResult": "No-change complete file: decoder-end spill/raw bytes, ordered shared budget, preview tails/storage errors and pump-before-close journeys explicit.",
-      "checks": [
-        "capture16/65",
-        "focused execution4/25",
-        "format/lint/diff pass; older child runner no fresh parity"
-      ],
+      "checks": ["capture16/65", "focused execution4/25", "format/lint/diff pass; older child runner no fresh parity"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "315f7fcd90966bafccad4c9d4c7f978ad77c4cbc",
         "primaryId": "task_341d3c1d",
-        "judgeIds": [
-          "task_6cb5fad6",
-          "task_0321bbc2"
-        ],
+        "judgeIds": ["task_6cb5fad6", "task_0321bbc2"],
         "sourceCommit": "9ac5bfece6800ec7265d6958644120f84bba0519",
         "state": "accepted-joined",
         "reason": "Retain NO CHANGE NEEDED by task_6cb5fad6: the recorded accepted blob equals the actual focus blob at reviewed commit 9ac5bfece6800ec7265d6958644120f84bba0519. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
@@ -2946,9 +2668,7 @@
       "acceptedBlob": "4e7e1e827071e62d00a2410a56886a8ca3f5e371",
       "integration": "pending",
       "launchBase": "9623825730d1276d0e021f781cca213a36d0c092",
-      "changedRelatedPaths": [
-        "tests/foreground-execution-sdk.test.ts"
-      ],
+      "changedRelatedPaths": ["tests/foreground-execution-sdk.test.ts"],
       "readingResult": "One fixture owns registration/SDKcontext/render/redraw/executorshutdown instead of separate UI and actualSDK paths; savedoutput+owner-cancelthroughworkerexit assertions direct.",
       "checks": [
         "15/82",
@@ -2960,10 +2680,7 @@
         "status": "accepted",
         "acceptedBlob": "4e7e1e827071e62d00a2410a56886a8ca3f5e371",
         "primaryId": "task_849aedc0",
-        "judgeIds": [
-          "task_427ef8b3",
-          "task_997edac5"
-        ],
+        "judgeIds": ["task_427ef8b3", "task_997edac5"],
         "sourceCommit": "73bb044bbeafa24e7128bb2e9c6bb1aa45d49422",
         "state": "accepted-joined",
         "reason": "ACCEPT: the complete file has one registration fixture tying the captured definition, SDK runToolCall adapter, ToolExecutionComponent, render observation, and foreground owner to the same args/cwd/session manager. This replaces the separate bespoke registration/execution/render path in the baseline failure case. The options bind that fixture lifetime rather than becoming a shared arbitrary context bag. executorFixture adds only the real executable/session/output scope; LIFO asynchronous teardown explicitly awaits session_shutdown before removing that scope. Tests can now read execute -> inspect outcome -> feed outcome to the same component, or execute -> wait for worker readiness -> reject foreign owner -> stop owner -> await exit. That coherent shared ownership and teardown are substantive improvements independently of the new scenarios or stronger types. The unchanged visual cases still state their rendered expectations directly."
@@ -2984,9 +2701,7 @@
       "acceptedBlob": "c31ecda9b9ad9f38dd858faaf5c44be2c6991e33",
       "integration": "pending",
       "launchBase": "464f1904521196d2fe42adc7c8b2a88709fb7297",
-      "changedRelatedPaths": [
-        "tests/foreground-stop.test.ts"
-      ],
+      "changedRelatedPaths": ["tests/foreground-stop.test.ts"],
       "readingResult": "Independent cases replace hidden flags/counters+4lifetimes; request→authority/deliverychange→ACK→hostcall/observations visible. Existingassertionsretain/strengthen plusleaf+voiceowner cases actualchecks.",
       "checks": [
         "24/397 focused",
@@ -2997,9 +2712,7 @@
         "status": "accepted",
         "acceptedBlob": "c31ecda9b9ad9f38dd858faaf5c44be2c6991e33",
         "primaryId": "task_14ad038b",
-        "judgeIds": [
-          "task_997edac5"
-        ],
+        "judgeIds": ["task_997edac5"],
         "sourceCommit": "d22418eb4bec42aadabab33e24e809c55f9879cf",
         "state": "accepted-joined",
         "reason": "ACCEPT: the complete candidate replaces opaque mutable idle/session/fail flags, an abort counter, broad any casting, and four intertwined fixture lifetimes with a narrow host/delivery fixture and independently readable scenarios. Host getter/abort mocks expose the authority being changed in each case; requestStop and acknowledgeDelivery expose the protocol boundary rather than hiding it in start/ack/counter helpers. Each case shows request -> authority or delivery change -> acknowledgement -> host call and observation. The public acknowledgement-enabling function replaces knowledge of its internal symbol. The fixture holds one coherent request environment, not a subsystem context bag. This materially reduces reconstruction of lifetimes; the separate branch and voice-owner journeys help describe the authority model rather than serving as a coverage-based verdict."
@@ -3031,9 +2744,7 @@
         "status": "accepted",
         "acceptedBlob": "7f1792f86e6968f6af61905539c915541cfdc91a",
         "primaryId": "task_6806027d",
-        "judgeIds": [
-          "task_626cfea3"
-        ],
+        "judgeIds": ["task_626cfea3"],
         "sourceCommit": "50c65bcac6b35f53273288beed83b27e5669c47e",
         "state": "accepted-joined",
         "reason": "Complete file has one small, linear encoding journey: row-major callback RGB values enter zero-initialized filter-0 scanlines, which are deflated into IDAT, framed by IHDR/IEND and per-chunk CRCs. crc32 owns the polynomial walk; the local chunk function owns length/type/payload/CRC framing. PNG signature, header byte positions and channel indexing are format facts, not scattered decisions needing a context bag or rename pass. Default red pixels and optional dimensions/pixel callback give callers a direct contract. Leaving this unchanged is justified by cohesive encoding authority and an immediately traceable byte lifetime."
@@ -3079,19 +2790,12 @@
       "launchBase": "4c0e427a70cc663ed51f3863131f713eaf5f00c8",
       "changedRelatedPaths": [],
       "readingResult": "No change after whole-file focus: activity/deadline/batch, snooze/watch eligibility, completion cleanup and inspection failure/checkpoint/recovery explicit; manager retains stop/settlement.",
-      "checks": [
-        "focus11/70",
-        "sourceSDK1/7",
-        "Biome/diff pass; shared binary before attention so no compiled parity"
-      ],
+      "checks": ["focus11/70", "sourceSDK1/7", "Biome/diff pass; shared binary before attention so no compiled parity"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "dc777477cb0379b14073fba859471e30406134d8",
         "primaryId": "task_49f70753",
-        "judgeIds": [
-          "task_d655e78f",
-          "task_846bbe75"
-        ],
+        "judgeIds": ["task_d655e78f", "task_846bbe75"],
         "sourceCommit": "58aead918c9cd290b432e1c08d9b697b57d740e4",
         "state": "accepted-joined",
         "reason": "Retain NO CHANGE NEEDED by task_d655e78f: the recorded accepted blob equals the actual focus blob at reviewed commit 58aead918c9cd290b432e1c08d9b697b57d740e4. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
@@ -3118,11 +2822,7 @@
           "verdict": "ACCEPT",
           "objections": [],
           "reason": "Fixture owns globals snapshot/install/scenario/socketdestroy/exactdescriptor restore, not protocol operations. Judge reproduced original remote/live/questions leaks and candidate success/failure restoration incl absent/nonenumerable; all12 scenarios and assertions retained.",
-          "checks": [
-            "independent16/379",
-            "strict tsc/Biome/diff pass",
-            "sourceprotocol not fullbinary/provider"
-          ]
+          "checks": ["independent16/379", "strict tsc/Biome/diff pass", "sourceprotocol not fullbinary/provider"]
         }
       ],
       "acceptedBlob": "4c2ec710464729b919dec726c538d391fda19336",
@@ -3135,9 +2835,7 @@
         "primaryStillRequired": true
       },
       "launchBase": "64250a1477cb7ca25ed40a3e4e17c60de08c854d",
-      "changedRelatedPaths": [
-        "tests/job-bridge-protocol.test.ts"
-      ],
+      "changedRelatedPaths": ["tests/job-bridge-protocol.test.ts"],
       "readingResult": "One fixture owns install/socket teardown/exact globals restore; prior9 installed globals only6 restored. Server close in finally; all protocol authority assertions retained.",
       "checks": [
         "base12/347",
@@ -3150,10 +2848,7 @@
         "status": "accepted",
         "acceptedBlob": "4c2ec710464729b919dec726c538d391fda19336",
         "primaryId": "task_6e7d0428",
-        "judgeIds": [
-          "task_b123eb27",
-          "task_849e9ce1"
-        ],
+        "judgeIds": ["task_b123eb27", "task_849e9ce1"],
         "sourceCommit": "c9bbbce5a4f1f00a261e93e922e6341e056f0f56",
         "state": "accepted-joined",
         "reason": "Retain ACCEPT by task_b123eb27: the recorded accepted blob equals the actual focus blob at reviewed commit c9bbbce5a4f1f00a261e93e922e6341e056f0f56. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
@@ -3206,9 +2901,7 @@
             "Judge reproduced removed /tmp/bruv-jobs-depth-3jiE8h but surviving real ~/.bruv/agent/sessions/--tmp-bruv-jobs-depth-3jiE8h-- child JSONL.",
             "Restore policy fixture sessionManager.getSessionDir()=>dir and getSessionFile()=>undefined; assert prepared child session path in dir, retain shutdown-before-rm and all existing assertions. No production/framework change."
           ],
-          "checks": [
-            "independent13 pass70 assertions green despite reproduced persistence leak"
-          ]
+          "checks": ["independent13 pass70 assertions green despite reproduced persistence leak"]
         },
         {
           "id": "task_2ae89e04",
@@ -3231,9 +2924,7 @@
       "acceptedBlob": "761b16045499f37ce8b52682464b75f864f37ea9",
       "integration": "full coherent accepted candidate diff integrated",
       "launchBase": "1475ea9c468e343de12524cf8fbbd6f5da3ef83b",
-      "changedRelatedPaths": [
-        "tests/job-service.test.ts"
-      ],
+      "changedRelatedPaths": ["tests/job-service.test.ts"],
       "readingResult": "One mutable fabricated-receipt test split into three isolated profile/delegation/nativefast journeys using real manager receipts/waits/exit/cleanup, substituting child execution only.",
       "checks": [
         "focus13/70",
@@ -3260,10 +2951,7 @@
         "status": "accepted",
         "acceptedBlob": "761b16045499f37ce8b52682464b75f864f37ea9",
         "primaryId": "task_51bb34f2",
-        "judgeIds": [
-          "task_207ccf5d",
-          "task_2ae89e04"
-        ],
+        "judgeIds": ["task_207ccf5d", "task_2ae89e04"],
         "sourceCommit": "a7e7c1de30189ac337e9fec9c3599e9c2e42a53d",
         "state": "accepted-not-joined",
         "reason": "Retain ACCEPT by task_2ae89e04: the recorded accepted blob equals the actual focus blob at reviewed commit a7e7c1de30189ac337e9fec9c3599e9c2e42a53d. Joined tree does not contain that exact accepted blob; an accepted source batch remains to join, not a fresh quality review. Latest area tree also matches the recorded accepted blob."
@@ -3286,18 +2974,12 @@
       "launchBase": "3fc00c2732f544ba63d4a2e22449184a90bd29f7",
       "changedRelatedPaths": [],
       "readingResult": "Nochange focus is2FAKEsignal tests not actualprocessfixture; ownermanager2signals→onedrain→exit, siblinguntouched/detachedinactive/pendingdrainpreventsExit explicit. Productionprocesspaths traced.",
-      "checks": [
-        "focus2/8",
-        "separateexisting realprocess shutdown/cancel6/21",
-        "no sourcechange/build/areadist"
-      ],
+      "checks": ["focus2/8", "separateexisting realprocess shutdown/cancel6/21", "no sourcechange/build/areadist"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "dc6c745a929c920ced66d8458f8a552cc9ad5863",
         "primaryId": "task_7053ba4f",
-        "judgeIds": [
-          "task_626cfea3"
-        ],
+        "judgeIds": ["task_626cfea3"],
         "sourceCommit": "669dc0c10ce67e6b7eea4c00b8e03072a559d675",
         "state": "accepted-joined",
         "reason": "Complete file exposes signal ownership without OS-process machinery: FakeAgent owns its emitter, jobs, shutdown count, exit record and disposer. The first scenario puts owned and sibling managers side by side and follows duplicate SIGTERM to one drain and one exit. The second first removes a listener, then holds shutdown unresolved and explicitly releases it before exit is observable. These are two short, direct lifetime journeys, not helpers concealing arbitrary steps. The opening fake-tree disclaimer accurately distinguishes model behavior from real process termination. No extraction or rename-only cleanup would resolve an actual reading burden here."
@@ -3318,9 +3000,7 @@
       "acceptedBlob": "f53aeae5875cfa1d8828885a3b319b58328c3916",
       "integration": "pending",
       "launchBase": "3fc00c2732f544ba63d4a2e22449184a90bd29f7",
-      "changedRelatedPaths": [
-        "tests/output-buffer.test.ts"
-      ],
+      "changedRelatedPaths": ["tests/output-buffer.test.ts"],
       "readingResult": "Complete readresults expose bytes/nextoffset/loss/pagination vs partialcursorinference; storage assertions copyownership/retention/appendoffset afterrelease. No productionchange.",
       "checks": [
         "6/31 focus6/49 managerconsumers",
@@ -3331,9 +3011,7 @@
         "status": "accepted",
         "acceptedBlob": "f53aeae5875cfa1d8828885a3b319b58328c3916",
         "primaryId": "task_9379fe09",
-        "judgeIds": [
-          "task_626cfea3"
-        ],
+        "judgeIds": ["task_626cfea3"],
         "sourceCommit": "9c9958375854208322c442c11ff397c51ff83508",
         "state": "accepted-joined",
         "reason": "Read the entire baseline and candidate. This is substantive contract organization, not merely renamed tests: byte cursors/output loss are separated from bounded owned storage. Adjacent complete read-result objects make bytes, absolute cursor, loss and pagination legible together rather than forcing inference from selective assertions. Prefix release now shows the partially retained UTF-8 bytes, full release, and a later append continuing the original byte timeline. Ownership is visible in mutations of both incoming and returned buffers. Ordered decimal tail bytes make the tiny-write journey readable; the oversized-write scenario shows displacement of preexisting output and copy ownership. Local literal expectations are appropriate here: a shared context or assertion helper would hide the precise contract."
@@ -3402,9 +3080,7 @@
         "primaryStillRequired": true
       },
       "launchBase": "b457ae3d2e0b852a62258799beb66a10f73a1171",
-      "changedRelatedPaths": [
-        "tests/questions-extension.test.ts"
-      ],
+      "changedRelatedPaths": ["tests/questions-extension.test.ts"],
       "readingResult": "Chronological UI scripts verify prompt/retry/Escape/notice instead of reconstructing queue responses; ledger-change regression proves displayed owner/version submission.",
       "checks": [
         "focus15/74;related45/377",
@@ -3416,10 +3092,7 @@
         "status": "accepted",
         "acceptedBlob": "dcd59fc37732014cf809153c65036fe79582fdbd",
         "primaryId": "task_353749fb",
-        "judgeIds": [
-          "task_5abbe0b2",
-          "task_d615005a"
-        ],
+        "judgeIds": ["task_5abbe0b2", "task_d615005a"],
         "sourceCommit": "76e6e6a0c785229849c14c3d4cdae56d7bb9899a",
         "state": "accepted-joined",
         "reason": "Retain ACCEPT by task_5abbe0b2: the recorded accepted blob equals the actual focus blob at reviewed commit 76e6e6a0c785229849c14c3d4cdae56d7bb9899a. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
@@ -3504,9 +3177,7 @@
         "primaryStillRequired": true
       },
       "launchBase": "4fdd0c0a1aeb7b02265b6a81055957fb805a2465",
-      "changedRelatedPaths": [
-        "tests/questions-runtime.test.ts"
-      ],
+      "changedRelatedPaths": ["tests/questions-runtime.test.ts"],
       "readingResult": "Each registration owns callbacks and full message outbox while sharing durable session storage; restart/race tests no longer rebuild inconsistent host adapters or mixed outboxes.",
       "checks": [
         "all13 tests retained; assertions57→60",
@@ -3517,10 +3188,7 @@
         "status": "accepted",
         "acceptedBlob": "b169fd351936889ff19f0ccb42955130b5122c30",
         "primaryId": "task_6e3500b8",
-        "judgeIds": [
-          "task_438a45c6",
-          "task_d8a065ce"
-        ],
+        "judgeIds": ["task_438a45c6", "task_d8a065ce"],
         "sourceCommit": "d7db460494622a348d9bd8a34224ad64388fcfbf",
         "state": "accepted-joined",
         "reason": "Retain ACCEPT by task_438a45c6: the recorded accepted blob equals the actual focus blob at reviewed commit d7db460494622a348d9bd8a34224ad64388fcfbf. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
@@ -3590,22 +3258,14 @@
       "acceptedBlob": "6baf85f21deab6c3d694f54aeba957d665bb3391",
       "integration": "full primary test diff integrated",
       "launchBase": "1475ea9c468e343de12524cf8fbbd6f5da3ef83b",
-      "changedRelatedPaths": [
-        "tests/questions.test.ts"
-      ],
+      "changedRelatedPaths": ["tests/questions.test.ts"],
       "readingResult": "Three mixed tests→six independent lifecycle/replay,authority,dedup,lockwaitnavigation,race,capacity journeys; persisted race/version and retained capacity answer checked;8 branch/diagnostic tests byte-identical.",
-      "checks": [
-        "focus14/61 baseline11/57",
-        "sixfile integration50/392",
-        "Biome/tsc/diff pass; no build"
-      ],
+      "checks": ["focus14/61 baseline11/57", "sixfile integration50/392", "Biome/tsc/diff pass; no build"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "6baf85f21deab6c3d694f54aeba957d665bb3391",
         "primaryId": "task_e678c58b",
-        "judgeIds": [
-          "task_67d501cd"
-        ],
+        "judgeIds": ["task_67d501cd"],
         "sourceCommit": "ae3387d53e9f40c074eb0b3eceefd62844ad5caa",
         "state": "accepted-joined",
         "reason": "Retain ACCEPT by task_67d501cd: the recorded accepted blob equals the actual focus blob at reviewed commit ae3387d53e9f40c074eb0b3eceefd62844ad5caa. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
@@ -3651,9 +3311,7 @@
         "primaryStillRequired": true
       },
       "launchBase": "d079a845b05dc8ec0fa80ac75b0fcc6cf35d6d23",
-      "changedRelatedPaths": [
-        "tests/resume-safeguards.test.ts"
-      ],
+      "changedRelatedPaths": ["tests/resume-safeguards.test.ts"],
       "readingResult": "Required named lifecycle callbacks replace untyped optional map dispatch; finally teardown fixes reproduced adapter leakage on aborted test; typed foreign wrappers forward real SDK row.",
       "checks": [
         "7 journeys47 static assertions retained",
@@ -3666,10 +3324,7 @@
         "status": "accepted",
         "acceptedBlob": "54ab26258f93b8600e178f3f62dfbce8e0311334",
         "primaryId": "task_4a71daea",
-        "judgeIds": [
-          "task_0b6d754e",
-          "task_021ccfb2"
-        ],
+        "judgeIds": ["task_0b6d754e", "task_021ccfb2"],
         "sourceCommit": "64815c5467793ca8e062db7f212fabd4ffc6fb09",
         "state": "accepted-joined",
         "reason": "Retain ACCEPT by task_0b6d754e: the recorded accepted blob equals the actual focus blob at reviewed commit 64815c5467793ca8e062db7f212fabd4ffc6fb09. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
@@ -3896,10 +3551,7 @@
           "status": "complete",
           "candidate": "bda0a5d07f39e2f3ad038e30623b7107d57c7e02",
           "base": "fda4a8a43d47d12ea75706b50dc053c0c9d1affd",
-          "priorRelatedJudges": [
-            "task_08e2c508",
-            "task_a01fd3d7"
-          ],
+          "priorRelatedJudges": ["task_08e2c508", "task_a01fd3d7"],
           "verdict": "NO CHANGE NEEDED",
           "objections": [],
           "reason": "Whole-file child cleanup/cursors/cancellation/delivery/activation journeys remain direct; authority regression enumerates public snapshots/events, mutates copies, then uses manager.kill to prove owned settlement. Earlier leak resolved without hidden fixture framework.",
@@ -3921,19 +3573,12 @@
       "launchBase": "fda4a8a43d47d12ea75706b50dc053c0c9d1affd",
       "changedRelatedPaths": [],
       "readingResult": "No-change after whole-file focus: cleanup/cursor/cancel/escalation/delivery/preparation/activation journeys explicit; controller isolation regression retained.",
-      "checks": [
-        "manager30/238",
-        "adjacent lifecycle/termination/progress15/67",
-        "format/lint/diff pass"
-      ],
+      "checks": ["manager30/238", "adjacent lifecycle/termination/progress15/67", "format/lint/diff pass"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "5da9d43a261d342a14d7bdadfc12eb767e2ef3b5",
         "primaryId": "task_d2a99d2b",
-        "judgeIds": [
-          "task_69e81429",
-          "task_a01fd3d7"
-        ],
+        "judgeIds": ["task_69e81429", "task_a01fd3d7"],
         "sourceCommit": "bda0a5d07f39e2f3ad038e30623b7107d57c7e02",
         "state": "accepted-joined",
         "reason": "Retain NO CHANGE NEEDED by task_69e81429: the recorded accepted blob equals the actual focus blob at reviewed commit bda0a5d07f39e2f3ad038e30623b7107d57c7e02. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
@@ -4062,9 +3707,7 @@
         "primaryStillRequired": true
       },
       "launchBase": "6b773014c742fd6c78beeb2dc0a3035a82fa56f2",
-      "changedRelatedPaths": [
-        "tests/typescript-execution.test.ts"
-      ],
+      "changedRelatedPaths": ["tests/typescript-execution.test.ts"],
       "readingResult": "Narrow registration adapter captures lifecycle callbacks by event identity and emitted rows; shutdown/restart tests no longer reconstruct registration callback order/map.",
       "checks": [
         "baseline and candidate 25 tests/119 assertions",
@@ -4075,10 +3718,7 @@
         "status": "accepted",
         "acceptedBlob": "95801cca1074a934009985ab6f1c24e903b961f5",
         "primaryId": "task_b5390314",
-        "judgeIds": [
-          "task_d1f6dac2",
-          "task_b4813ac3"
-        ],
+        "judgeIds": ["task_d1f6dac2", "task_b4813ac3"],
         "sourceCommit": "4203889ec83d22f2e4e373e0d7988f82077a9e94",
         "state": "accepted-joined",
         "reason": "Retain ACCEPT by task_d1f6dac2: the recorded accepted blob equals the actual focus blob at reviewed commit 4203889ec83d22f2e4e373e0d7988f82077a9e94. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
@@ -4122,9 +3762,7 @@
         "primaryStillRequired": true
       },
       "launchBase": "65e63c95e0526c6ae3d3c64993e2de8f875699b8",
-      "changedRelatedPaths": [
-        "tests/typescript-images.test.ts"
-      ],
+      "changedRelatedPaths": ["tests/typescript-images.test.ts"],
       "readingResult": "Execution cases own temp workspace instead of global hooks covering pure validators; header detection/record trust/channel accounting grouped separately from delivery. All assertions retained.",
       "checks": [
         "baseline18/107 candidate19/107",
@@ -4135,10 +3773,7 @@
         "status": "accepted",
         "acceptedBlob": "c812a1a951d36405c07022c0aaf61963bc51bdd6",
         "primaryId": "task_cf585928",
-        "judgeIds": [
-          "task_c0294795",
-          "task_2d0765d2"
-        ],
+        "judgeIds": ["task_c0294795", "task_2d0765d2"],
         "sourceCommit": "4e012a7723635492f49eb27bfd292f3b052dda53",
         "state": "accepted-joined",
         "reason": "Retain ACCEPT by task_c0294795: the recorded accepted blob equals the actual focus blob at reviewed commit 4e012a7723635492f49eb27bfd292f3b052dda53. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
@@ -4216,9 +3851,7 @@
         "primaryStillRequired": true
       },
       "launchBase": "1526684d66cf3328219a975ad5a3e4b8dd25f0d9",
-      "changedRelatedPaths": [
-        "tests/worktree-workspace.test.ts"
-      ],
+      "changedRelatedPaths": ["tests/worktree-workspace.test.ts"],
       "readingResult": "Fixture owns manager shutdown before temporary worktree root restoration; scenario operations/assertions and Git/setup/cancel/sibling journeys remain explicit.",
       "checks": [
         "baseline13/50; paired24/117",
@@ -4229,10 +3862,7 @@
         "status": "accepted",
         "acceptedBlob": "7a01e214fe52d9bd144d6e0171b03a22e6863f01",
         "primaryId": "task_f4444bc8",
-        "judgeIds": [
-          "task_83034949",
-          "task_6181fd8e"
-        ],
+        "judgeIds": ["task_83034949", "task_6181fd8e"],
         "sourceCommit": "59fbfcc9b5a88a1488e9f8ce39bb122d1c67da12",
         "state": "accepted-joined",
         "reason": "Retain ACCEPT by task_83034949: the recorded accepted blob equals the actual focus blob at reviewed commit 59fbfcc9b5a88a1488e9f8ce39bb122d1c67da12. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
@@ -4295,10 +3925,7 @@
       "launchBase": "9bcdba2c7e0c81d1fbbbe42b3754fdb3e607b439",
       "changedRelatedPaths": [],
       "readingResult": "Nochange fixture JSONL emission/reportdrain/abort/rejection/cleanup coherent; helper extraction scatters lifetime; actual RPChandlers traced.",
-      "checks": [
-        "5/38",
-        "no new compiledsoak/fullgate"
-      ]
+      "checks": ["5/38", "no new compiledsoak/fullgate"]
     },
     {
       "focus": "scripts/task-placement-clean-video.test.py",
@@ -4340,9 +3967,7 @@
         "scope": "full patch supporting evidence; own primary pending"
       },
       "launchBase": "d9243ab25ded703ba280ca361effdc34778f99d9",
-      "changedRelatedPaths": [
-        "scripts/task-placement-clean-video.test.py"
-      ],
+      "changedRelatedPaths": ["scripts/task-placement-clean-video.test.py"],
       "readingResult": "CLI argv/output owner separated from encodingmocks; fresh rejection fixtures avoid mutation/reset coupling; question mutation reads savedrootJSON not in-memoryalias.",
       "checks": [
         "9tests existingassertionsretained",
@@ -4425,12 +4050,7 @@
         "tests/questions-tui.test.ts"
       ],
       "proof": "All tests passed on own paired binary; focused format/lint/diff exited 0. Lint retains 7 warnings/20 infos.",
-      "totals": [
-        " 120 pass",
-        " 0 fail",
-        " 630 expect() calls",
-        "Ran 120 tests across 9 files. [29.44s]"
-      ]
+      "totals": [" 120 pass", " 0 fail", " 630 expect() calls", "Ran 120 tests across 9 files. [29.44s]"]
     },
     {
       "job": "task_321e5898",
@@ -4692,10 +4312,7 @@
         "status": "accepted",
         "acceptedBlob": "8033fbac221f5b02522e23927ece9e4b780458f8",
         "primaryId": "task_aa059444",
-        "judgeIds": [
-          "task_63fdd057",
-          "task_9baa1135"
-        ],
+        "judgeIds": ["task_63fdd057", "task_9baa1135"],
         "sourceCommit": "0336dbb2799d12b2687ab54a8d33dc8433c92038",
         "state": "accepted-not-joined",
         "reason": "Retain NO CHANGE NEEDED by task_63fdd057: the recorded accepted blob equals the actual focus blob at reviewed commit 0336dbb2799d12b2687ab54a8d33dc8433c92038. Joined tree does not contain that exact accepted blob; an accepted source batch remains to join, not a fresh quality review. Latest area tree also matches the recorded accepted blob."
@@ -4711,10 +4328,7 @@
         "status": "accepted",
         "acceptedBlob": "9a9533ca57ebb1ca843cb847ea2f70148d4f139e",
         "primaryId": "task_909be9d8",
-        "judgeIds": [
-          "task_36be47e2",
-          "task_56bbfab7"
-        ],
+        "judgeIds": ["task_36be47e2", "task_56bbfab7"],
         "sourceCommit": "2a432cf15b0f127206418988d7a369bc14f5de43",
         "state": "accepted-not-joined",
         "reason": "Retain ACCEPT by task_36be47e2: the recorded accepted blob equals the actual focus blob at reviewed commit 2a432cf15b0f127206418988d7a369bc14f5de43. Joined tree does not contain that exact accepted blob; an accepted source batch remains to join, not a fresh quality review. Latest area tree also matches the recorded accepted blob."
@@ -4730,11 +4344,7 @@
         "status": "accepted",
         "acceptedBlob": "83cafd1bb95ca575ac2e08f8c748313975f0bb1f",
         "primaryId": "task_e04c4e92",
-        "judgeIds": [
-          "task_33a4cc92",
-          "task_abf8fcb1",
-          "task_626cfea3"
-        ],
+        "judgeIds": ["task_33a4cc92", "task_abf8fcb1", "task_626cfea3"],
         "sourceCommit": "534986d4e14abf86b189fce1e3b88f746aa086c7",
         "state": "accepted-joined",
         "reason": "Read complete focus and paired capture producer. The recording fixture is a narrowly owned command/evidence recorder, not a production context bag: its failure switches exercise visible start, pane-capture and exit transitions. Direct command arrays expose literal input, fixed PTY dimensions and capture-before-pane-removal order. Raw viewport/scrollback files are compared separately from the stripped assertion view, and reopening deliberately preserves the timeline. Failure scenarios distinguish nonzero detach, missing pane and failed start instead of treating all as generic cleanup. The native PTY scenario owns its socket, temporary directories and explicit environment in the same body. This complete file is already structurally coherent; no additional primary source edit is needed."

@@ -64,9 +64,7 @@
       "acceptedBlob": "b567863d0802af842a39af34935c9528ef4edc4f",
       "integrationState": "integrated exact judged candidate",
       "launchBase": "d6d7a1f961f75feeea462e19d0e333da29ffd9f0",
-      "changedRelatedPaths": [
-        "tests/activity-runtime-acceptance-test.py"
-      ],
+      "changedRelatedPaths": ["tests/activity-runtime-acceptance-test.py"],
       "result": "Candidate isolates long-thread journal construction/parent-link/session installation fixture from unchanged terminal and replay acceptance journey.",
       "checks": [
         "Both focused Python suites 11 tests each",
@@ -74,17 +72,13 @@
         "UI/replay/process/report AST identical",
         "syntax/diff"
       ],
-      "limits": [
-        "Preparation proof only; no compiled product/visual/full build"
-      ],
+      "limits": ["Preparation proof only; no compiled product/visual/full build"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "b567863d0802af842a39af34935c9528ef4edc4f",
         "primaryId": "task_8217bb2e",
         "primaryCommit": "98bd940bd8dc870efa814074b7c038649d4df706",
-        "judgeIds": [
-          "task_150f5c27"
-        ],
+        "judgeIds": ["task_150f5c27"],
         "sourceCommit": "98bd940bd8dc870efa814074b7c038649d4df706",
         "state": "accepted-joined",
         "reason": "Existing primary-focus ACCEPT by task_150f5c27 at 98bd940bd8dc870efa814074b7c038649d4df706; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
@@ -121,34 +115,26 @@
             "Seven scenario bodies/evidence/existing test ASTs equal",
             "Real loopback HTTP framing/log check; help/syntax/diff"
           ],
-          "limits": [
-            "No compiled terminal/ANSI visual/full build/product acceptance"
-          ]
+          "limits": ["No compiled terminal/ANSI visual/full build/product acceptance"]
         }
       ],
       "acceptedBlob": "8760c4c386ebb251f9d4bcce65f73d68820d8f54",
       "integrationState": "integrated exact judged candidate",
       "launchBase": "2ebd9fd9b43f358eabf5351ab01fb4b4af4e855b",
-      "changedRelatedPaths": [
-        "tests/activity-terminal-acceptance-test.py"
-      ],
+      "changedRelatedPaths": ["tests/activity-terminal-acceptance-test.py"],
       "result": "Candidate fixture exposes extraction/failure priority/ordered routing, with scenario-local retained-call progression instead of one mixed generator.",
       "checks": [
         "13 terminal tests and 10 unchanged runtime-helper tests",
         "Base/candidate fixture and SSE equality across 44 histories",
         "Lifecycle/transport AST identical; syntax/help/diff"
       ],
-      "limits": [
-        "Fixture-only no compiled terminal/visual acceptance"
-      ],
+      "limits": ["Fixture-only no compiled terminal/visual acceptance"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "8760c4c386ebb251f9d4bcce65f73d68820d8f54",
         "primaryId": "task_28f2469a",
         "primaryCommit": "b02afcce77ccd1ebb021dc6230641ab0294ce68e",
-        "judgeIds": [
-          "task_c4ad6e75"
-        ],
+        "judgeIds": ["task_c4ad6e75"],
         "sourceCommit": "b02afcce77ccd1ebb021dc6230641ab0294ce68e",
         "state": "accepted-joined",
         "reason": "Existing primary-focus ACCEPT by task_c4ad6e75 at b02afcce77ccd1ebb021dc6230641ab0294ce68e; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
@@ -222,9 +208,7 @@
       "acceptedBlob": "b692fce492c0c227e42e9cc4645ce4bded57b27a",
       "integrationState": "fresh rework integrated only after round2 ACCEPT; rejected attempt retained",
       "launchBase": "10c405fe18f54e15e915efe5d9a98ee37144f798",
-      "changedRelatedPaths": [
-        "tests/ansi-video-renderer.test.py"
-      ],
+      "changedRelatedPaths": ["tests/ansi-video-renderer.test.py"],
       "result": "Fresh rework restores post-audit timeline lookup; regression reproduces rejected sample-save exception, passes original base and repaired source. Retains coherent renderer structure.",
       "checks": [
         "Rejected candidate7 pass+new regression fail",
@@ -232,9 +216,7 @@
         "Real6-frame audit/PNG/MP4/decodedRGB equality",
         "diff"
       ],
-      "limits": [
-        "No Docker/compiled CLI recapture/product/full build; exception cleanup unchanged"
-      ],
+      "limits": ["No Docker/compiled CLI recapture/product/full build; exception cleanup unchanged"],
       "reworks": [
         {
           "id": "task_283b2f40",
@@ -251,10 +233,7 @@
         "acceptedBlob": "b692fce492c0c227e42e9cc4645ce4bded57b27a",
         "primaryId": "task_283b2f40",
         "primaryCommit": "f72d5f0a9eea957f45cddd71695e6fad53cb164e",
-        "judgeIds": [
-          "task_c420e381",
-          "task_73d21038"
-        ],
+        "judgeIds": ["task_c420e381", "task_73d21038"],
         "sourceCommit": "f72d5f0a9eea957f45cddd71695e6fad53cb164e",
         "state": "accepted-joined",
         "reason": "Existing primary-focus ACCEPT by task_73d21038 at f72d5f0a9eea957f45cddd71695e6fad53cb164e; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution. Final fresh rework writer task_283b2f40; original rejected primary task_32c7f556/15e0abb0dc551c00523d84c928e363f2acaae3f9 retained in evidence."
@@ -307,17 +286,13 @@
         "Success and synthetic render-failure restoration/temp-history cleanup harness",
         "Biome/diff"
       ],
-      "limits": [
-        "No speed/build/typecheck"
-      ],
+      "limits": ["No speed/build/typecheck"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "4a3883306c3a8437a15dbceaf93eae751204c4e0",
         "primaryId": "task_98c25ed9",
         "primaryCommit": "0b04211f5d594e631d2a171807ecba84dc5e45f4",
-        "judgeIds": [
-          "task_e562a5b1"
-        ],
+        "judgeIds": ["task_e562a5b1"],
         "sourceCommit": "0b04211f5d594e631d2a171807ecba84dc5e45f4",
         "state": "accepted-joined",
         "reason": "Existing primary-focus ACCEPT by task_e562a5b1 at 0b04211f5d594e631d2a171807ecba84dc5e45f4; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
@@ -352,9 +327,7 @@
             "95tests/1101assertions",
             "diff clean"
           ],
-          "limits": [
-            "No performance gain/build/gate/compiled terminal/provider/SSH/platform"
-          ]
+          "limits": ["No performance gain/build/gate/compiled terminal/provider/SSH/platform"]
         }
       ],
       "acceptedBlob": "ae42ddf511434a63a309d1d4fbc023d366d938fa",
@@ -362,21 +335,14 @@
       "launchBase": "53cfb1e81e44d5ff23f81cabb3b21853d15d38b8",
       "changedRelatedPaths": [],
       "result": "No-change: per-case setup,3warmups,counter reset,7renders,median/JSON,finally restoration explicit.",
-      "checks": [
-        "Nine ordered benchmark rows snapshots/frame1/1/0",
-        "95tests/1101assertions"
-      ],
-      "limits": [
-        "No performance/build"
-      ],
+      "checks": ["Nine ordered benchmark rows snapshots/frame1/1/0", "95tests/1101assertions"],
+      "limits": ["No performance/build"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "ae42ddf511434a63a309d1d4fbc023d366d938fa",
         "primaryId": "task_c9f5fced",
         "primaryCommit": "5cbafa0c84777290a9c0d56da036fd524fec748d",
-        "judgeIds": [
-          "task_21c6d061"
-        ],
+        "judgeIds": ["task_21c6d061"],
         "sourceCommit": "5cbafa0c84777290a9c0d56da036fd524fec748d",
         "state": "accepted-joined",
         "reason": "Existing primary-focus NO CHANGE NEEDED by task_21c6d061 at 5cbafa0c84777290a9c0d56da036fd524fec748d; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
@@ -424,18 +390,14 @@
       "acceptedBlob": "176b6ca6eab97b4bb6e8c31a053e8ee9ec8f8cf2",
       "integrationState": "exact candidate integrated",
       "launchBase": "707f4bd21ed39a68fefd177edebafc0c265b4088",
-      "changedRelatedPaths": [
-        "tests/tasks-ui-proof-tooling.test.py"
-      ],
+      "changedRelatedPaths": ["tests/tasks-ui-proof-tooling.test.py"],
       "result": "Candidate moves disposable resources into NativeCapture.session, eleven stages/barriers into capture_scenario, screenshot processing separate, provenance/final audit visible in main. Independently inspect resource/error cleanup and reproduce explicit incidental bug fix: config-write/tmux teardown base leaks home/server thread candidate zero. Keep source/binary/hash provenance, official-T3 separation, mandatory visual review/fixture bounds/audit authority. Related builder OUTPUT_BINARY-only already judged task_f9504048; not inherited consumer acceptance. Worker22Python and4stubbed builder20assertions, loopbackSSE/tmuxPython-stub; no real CLI/screenshot acceptance.",
       "resume": {
         "status": "accepted",
         "acceptedBlob": "176b6ca6eab97b4bb6e8c31a053e8ee9ec8f8cf2",
         "primaryId": "task_a993bd35",
         "primaryCommit": "ed7351634195cff3a1f32926008c1072d3ca7a84",
-        "judgeIds": [
-          "task_fca35838"
-        ],
+        "judgeIds": ["task_fca35838"],
         "sourceCommit": "ed7351634195cff3a1f32926008c1072d3ca7a84",
         "state": "accepted-not-joined",
         "reason": "Existing primary-focus ACCEPT by task_fca35838 at ed7351634195cff3a1f32926008c1072d3ca7a84; exact candidate and surviving-area blob verified. Pinned joined tree lacks this accepted blob; parent owns joining. No new review or test execution."
@@ -485,9 +447,7 @@
             "Real read-only Pi preflight with stub prep/compile; pre-existing archive symlink inode/target/bytes unchanged",
             "Focused strict TS/Biome/diff"
           ],
-          "limits": [
-            "Stub compile/assets no real native build/PTY/screenshots/full gate/release acceptance"
-          ]
+          "limits": ["Stub compile/assets no real native build/PTY/screenshots/full gate/release acceptance"]
         }
       ],
       "acceptedBlob": "c6710c2ffd68ce9f89521bda3249f9ed64f8b18f",
@@ -496,28 +456,16 @@
       "coordinatorReviewTargets": [
         "Worker checkpoint removes REAL_WEB_ARCHIVE positional arg, archive symlink/hash provenance, updates wisdom/tasks-ui/native-proof-tooling.md. Fresh judge must trace every actual caller/embed path and prove archive machinery unshipped/irrelevant, not drop purposeful provenance or silently change compatibility; deletion/CLI behavior explicit."
       ],
-      "changedRelatedPaths": [
-        "tests/tasks-ui-proof-build.test.ts",
-        "wisdom/tasks-ui/native-proof-tooling.md"
-      ],
+      "changedRelatedPaths": ["tests/tasks-ui-proof-build.test.ts", "wisdom/tasks-ui/native-proof-tooling.md"],
       "result": "Fresh retry traced archive arg/link/hash as unconsumed by compile or proof consumer; explicitly removes dead archive contract, retains source and binary provenance, updates docs/tests.",
-      "checks": [
-        "32Bun/438assertions",
-        "13Python",
-        "Focused strict TS/Biome/diff",
-        "Build/assets test stubs only"
-      ],
-      "limits": [
-        "No real native build/PTY/screenshots"
-      ],
+      "checks": ["32Bun/438assertions", "13Python", "Focused strict TS/Biome/diff", "Build/assets test stubs only"],
+      "limits": ["No real native build/PTY/screenshots"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "c6710c2ffd68ce9f89521bda3249f9ed64f8b18f",
         "primaryId": "task_259c27b0",
         "primaryCommit": "85e990227aa93c12c16337f7a23a686b77661eda",
-        "judgeIds": [
-          "task_f9504048"
-        ],
+        "judgeIds": ["task_f9504048"],
         "sourceCommit": "85e990227aa93c12c16337f7a23a686b77661eda",
         "state": "accepted-joined",
         "reason": "Existing primary-focus ACCEPT by task_f9504048 at 85e990227aa93c12c16337f7a23a686b77661eda; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
@@ -548,9 +496,7 @@
         "acceptedBlob": "1e17035bcea3692265434818cf51d1f98bdb5685",
         "primaryId": "task_48469090",
         "primaryCommit": "70ed7b9be7d505db9c65ca09eab71a1d0843f6b3",
-        "judgeIds": [
-          "task_050e83e0"
-        ],
+        "judgeIds": ["task_050e83e0"],
         "sourceCommit": "70ed7b9be7d505db9c65ca09eab71a1d0843f6b3",
         "state": "accepted-joined",
         "reason": "Compared the actual candidate against primary base 1c5fdc5a8a8953164c2914738af32941fbb07399, which is also its immediate parent; the focus is the only changed source path. In the base, CLI validation/import precede the ANSI interpreter, while document composition, browser ownership, frame effects, and provenance publication share a top-level run. In the candidate, the bottom-level journey is contiguous: validate the invocation and cached-asset paths, load timeline/font, await captureScreenshots, then publish screenshots.json and the success count. renderViewportDocument owns the exact embedded-font/style/pre composition and delegates ANSI interpretation to replay. captureScreenshots visibly owns module import, launch, one network-blocked page, sequential frame reads and HTML writes, font readiness, text-identity assertion, full-page PNG capture and hashes, finally-close, then return. This extraction groups an actual resource lifetime and separates pure composition from browser effects; it is not merely renamed blocks or a context-bag framework. Unchanged decision: retain the existing local esc/ansi/replay implementation and manifest code, rather than splitting individual SGR branches or adding a rendering abstraction. Their state and output rules are already contiguous and remain byte-identical."
@@ -581,10 +527,7 @@
             "tests/terminal-interactions-cli.test.ts": "19ba98790a5c96bcac30a340e540ab4323df1a2a"
           },
           "evidence": "Worker spawn/timeout/pipe observation/logging/raw evidence loading owns one child lifetime, while serial normalization/merge/checkpoint remains in parent. Return unknown keeps semantic validation outside.",
-          "checks": [
-            "Independent 20 tests /125 assertions",
-            "Pinned format/lint/diff"
-          ],
+          "checks": ["Independent 20 tests /125 assertions", "Pinned format/lint/diff"],
           "limits": [
             "No baseline run/timeout firing/signal/abnormal stream/full build/typecheck/provider/PTY/paint",
             "Promise.all rejection can precede observation settlement; timer clearing is not termination; writes non-atomic, reused dir may retain old finals"
@@ -594,27 +537,16 @@
       "acceptedBlob": "3dc3648e06896880f7e8ec92326c03e7075e78c3",
       "integrationState": "integrated unchanged from independently judged candidate",
       "launchBase": "efb6bcc801cc821e92cfb5e0c7709823f2e1e890",
-      "changedRelatedPaths": [
-        "tests/terminal-interactions-cli.test.ts"
-      ],
+      "changedRelatedPaths": ["tests/terminal-interactions-cli.test.ts"],
       "result": "Candidate groups spawn/timeout/exit and pipe drain/diagnostic persistence/raw evidence acceptance; repetition loop retains merge/checkpoint responsibilities.",
-      "checks": [
-        "20 tests /125 assertions",
-        "4 expanded CLI tests pass exact base",
-        "format/lint/diff"
-      ],
-      "limits": [
-        "Timeout escalation/signal cancellation untested",
-        "No build/typecheck/provider/paint"
-      ],
+      "checks": ["20 tests /125 assertions", "4 expanded CLI tests pass exact base", "format/lint/diff"],
+      "limits": ["Timeout escalation/signal cancellation untested", "No build/typecheck/provider/paint"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "3dc3648e06896880f7e8ec92326c03e7075e78c3",
         "primaryId": "task_5ef7a768",
         "primaryCommit": "a536d856e661f353bd1bf690ec8e0902ee6660f1",
-        "judgeIds": [
-          "task_16ed90d7"
-        ],
+        "judgeIds": ["task_16ed90d7"],
         "sourceCommit": "a536d856e661f353bd1bf690ec8e0902ee6660f1",
         "state": "accepted-joined",
         "reason": "Existing primary-focus ACCEPT by task_16ed90d7 at a536d856e661f353bd1bf690ec8e0902ee6660f1; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
@@ -661,21 +593,14 @@
       "launchBase": "595c5739a106609b3588835fdc8146724941c6e2",
       "changedRelatedPaths": [],
       "result": "No-change: cold capture, warmup, steady sampling, nested cleanup/callback drain/reporting/exit status already visibly sequenced.",
-      "checks": [
-        "36 tests /513 assertions",
-        "12-case serial CLI smoke/help/broken-workload reporting"
-      ],
-      "limits": [
-        "No build/performance-speed claim"
-      ],
+      "checks": ["36 tests /513 assertions", "12-case serial CLI smoke/help/broken-workload reporting"],
+      "limits": ["No build/performance-speed claim"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "696dd170594931b9907916079576e46666367030",
         "primaryId": "task_6c37950b",
         "primaryCommit": "44c24d4a6651d9671b6a90dca91df7fa183c8159",
-        "judgeIds": [
-          "task_219f2747"
-        ],
+        "judgeIds": ["task_219f2747"],
         "sourceCommit": "44c24d4a6651d9671b6a90dca91df7fa183c8159",
         "state": "accepted-joined",
         "reason": "Existing primary-focus NO CHANGE NEEDED by task_219f2747 at 44c24d4a6651d9671b6a90dca91df7fa183c8159; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
@@ -719,26 +644,20 @@
       "acceptedBlob": "062743f9b9d3f410ff09eda39e76db21b717e11a",
       "integrationState": "integrated unchanged from judged candidate",
       "launchBase": "2d32ad47535cba26a4e163c8adb346ec51a8e7cf",
-      "changedRelatedPaths": [
-        "tests/terminal-perf-action-profiler.test.ts"
-      ],
+      "changedRelatedPaths": ["tests/terminal-perf-action-profiler.test.ts"],
       "result": "Candidate isolates frame/request correlation from span accounting in local FrameAttribution owner; pending judgment.",
       "checks": [
         "57 focused tests, 1422 assertions",
         "Reentrant regression passes exact baseline and candidate",
         "Focused TypeScript, Biome and diff checks"
       ],
-      "limits": [
-        "No full build/gate, live-provider/device check or performance claim."
-      ],
+      "limits": ["No full build/gate, live-provider/device check or performance claim."],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "062743f9b9d3f410ff09eda39e76db21b717e11a",
         "primaryId": "task_6ffa8972",
         "primaryCommit": "84108130c3b7f3ba70e166dac04e53bfde0f7dcb",
-        "judgeIds": [
-          "task_40ff7535"
-        ],
+        "judgeIds": ["task_40ff7535"],
         "sourceCommit": "84108130c3b7f3ba70e166dac04e53bfde0f7dcb",
         "state": "accepted-joined",
         "reason": "Existing primary-focus ACCEPT by task_40ff7535 at 84108130c3b7f3ba70e166dac04e53bfde0f7dcb; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
@@ -784,21 +703,14 @@
       "launchBase": "0a37f05e8b69b59dffc4250ea8b1a54e51732017",
       "changedRelatedPaths": [],
       "result": "No-change: import owns parse/duplicate/summary-validation; export mkdir/four writes direct, staging would change failure ordering.",
-      "checks": [
-        "7tests/50assertions",
-        "2isolated probes/14assertions"
-      ],
-      "limits": [
-        "Nontransactional partial writes/overwrites unchanged; no build"
-      ],
+      "checks": ["7tests/50assertions", "2isolated probes/14assertions"],
+      "limits": ["Nontransactional partial writes/overwrites unchanged; no build"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "eeac78ef15a882ca01423dfaf4c1ada83c10f861",
         "primaryId": "task_47a4d9cd",
         "primaryCommit": "a70327eb16d622fbed9460d467ac2fb08f692150",
-        "judgeIds": [
-          "task_83710623"
-        ],
+        "judgeIds": ["task_83710623"],
         "sourceCommit": "a70327eb16d622fbed9460d467ac2fb08f692150",
         "state": "accepted-joined",
         "reason": "Existing primary-focus NO CHANGE NEEDED by task_83710623 at a70327eb16d622fbed9460d467ac2fb08f692150; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
@@ -817,9 +729,7 @@
         "acceptedBlob": "34edf29c6932231369b0229665db3ddeb35338a5",
         "primaryId": "task_8399b33f",
         "primaryCommit": "bb1e19e3e94cc135cec9ca5b0efddcf9b8985edf",
-        "judgeIds": [
-          "task_d870409a"
-        ],
+        "judgeIds": ["task_d870409a"],
         "sourceCommit": "bb1e19e3e94cc135cec9ca5b0efddcf9b8985edf",
         "state": "accepted-joined",
         "reason": "Compared the complete actual candidate with primary base 854bbae75d0873baf463a76746cc2acb5cbacebd, which is also its immediate parent. The sole changed source is the focus. In the base, one top-level try block interleaves session construction, consume interception, refresh timing, lifecycle recording, persisted-output validation and publication, with manager disposal distant from its final reader. The candidate introduces coherent effect-owning operations rather than renames: measureCostRefresh installs consume instrumentation, awaits exactly one refresh, checks completeness and returns the annotated measurement; auditSessionCosts constructs fixtures and repetitions and disposes all registered managers in its own finally; auditLifecycleRecords owns the recorder, its failure counter, persisted line-count assertion and output summary. Top-level reading now directly exposes the two checked audits, cost-before-lifecycle ordering, publication and root ownership. Considered leaving the small standalone script unchanged, but these boundaries materially reduce the reader reconstruction of measurement scope and resource lifetime. Retained any-typed samples, private consume instrumentation, reporting code and fixture constants do not warrant extra cleanup for this assignment."
@@ -838,9 +748,7 @@
         "acceptedBlob": "a62119275cf02374bfd2d0eee57d0af20c1d413f",
         "primaryId": "task_6e013db2",
         "primaryCommit": "f5c0f12c124dfe25baa57ae05d942e9f6c1be03a",
-        "judgeIds": [
-          "task_c15d8d4d"
-        ],
+        "judgeIds": ["task_c15d8d4d"],
         "sourceCommit": "f5c0f12c124dfe25baa57ae05d942e9f6c1be03a",
         "state": "accepted-joined",
         "reason": "The base is also the candidate parent (585e1a97e484483f42d5dde29417880fae28d754). In the base, journal instrumentation and its resources surround unrelated terminal measurements and report publication. The actual candidate gives auditJournal one visible lifetime: create its exact temporary root, collect original/reopened managers, install materialize accounting, record append/branch/projection/open samples, then restore materialize, dispose managers and remove that root in its own finally. auditTerminalStop contains the coherent native-message fixture, layout/focus setup, render instrumentation, excluded setup frame, counter reset, synchronous stop and restoration assertions. The two top-level calls now show phase order before publishing. This is a real ownership/lifetime improvement, not merely renaming or hiding arbitrary blocks. Unchanged decision: retain the shared synchronous segment helper, deterministic fixtures/fingerprints and simple top-level report publication; these already expose the relevant timing and provenance policy without needing a new reporting abstraction or context bag."
@@ -885,26 +793,16 @@
       "acceptedBlob": "b47c5df84073db71231d1d19208b382cee337402",
       "integrationState": "exact candidate integrated",
       "launchBase": "a58d7f02d1b2bca9a291c5c370d69c92e9f429f1",
-      "changedRelatedPaths": [
-        "tests/terminal-perf-dashboard.test.ts"
-      ],
+      "changedRelatedPaths": ["tests/terminal-perf-dashboard.test.ts"],
       "result": "Candidate separates selected samples/metric charting from independent total-duration spike ranking and local SVG append ownership.",
-      "checks": [
-        "11tests/90assertions",
-        "11DOM states match exact base",
-        "FocusedTS/Biome/diff"
-      ],
-      "limits": [
-        "No real browser paint/build/latency"
-      ],
+      "checks": ["11tests/90assertions", "11DOM states match exact base", "FocusedTS/Biome/diff"],
+      "limits": ["No real browser paint/build/latency"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "b47c5df84073db71231d1d19208b382cee337402",
         "primaryId": "task_64e62042",
         "primaryCommit": "61cbca24222af36731506d0117559bbbf4c2679e",
-        "judgeIds": [
-          "task_0d31b493"
-        ],
+        "judgeIds": ["task_0d31b493"],
         "sourceCommit": "61cbca24222af36731506d0117559bbbf4c2679e",
         "state": "accepted-not-joined",
         "reason": "Existing primary-focus ACCEPT by task_0d31b493 at 61cbca24222af36731506d0117559bbbf4c2679e; exact candidate and surviving-area blob verified. Pinned joined tree lacks this accepted blob; parent owns joining. No new review or test execution."
@@ -956,9 +854,7 @@
         "acceptedBlob": "9440f4128b7ec6f9dd429e456aca592ca32e5e14",
         "primaryId": "task_747857d1",
         "primaryCommit": "55a45d69c6aa994badbfdc4c55d6a7a0478283c6",
-        "judgeIds": [
-          "task_ab6bca78"
-        ],
+        "judgeIds": ["task_ab6bca78"],
         "sourceCommit": "55a45d69c6aa994badbfdc4c55d6a7a0478283c6",
         "state": "accepted-joined",
         "reason": "Existing primary-focus NO CHANGE NEEDED by task_ab6bca78 at 55a45d69c6aa994badbfdc4c55d6a7a0478283c6; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
@@ -1005,18 +901,14 @@
       "acceptedBlob": "1142c9e4554230643455f275f492e44829c90ab5",
       "integrationState": "exact candidate integrated",
       "launchBase": "a8b32ecc882a7a11960a661a9006c1d6d868131c",
-      "changedRelatedPaths": [
-        "tests/terminal-interaction-dashboard.test.ts"
-      ],
+      "changedRelatedPaths": ["tests/terminal-interaction-dashboard.test.ts"],
       "result": "Candidate separates filtering/row render/selection-owned sample callback and descending non-additive top-span sort; replaces ambient selected row. Preserve escaping/security/nullable metrics/thresholds/baselines. New DOM test needs later primary. Worker30tests and5DOMtests pass exact base; broader32pass one missing photon WASM setup failure. No real browser/paint/latency.",
       "resume": {
         "status": "accepted",
         "acceptedBlob": "1142c9e4554230643455f275f492e44829c90ab5",
         "primaryId": "task_3236664c",
         "primaryCommit": "a97abdcb67cd2597bd0c3a6ca3c9a0320d7aa7f5",
-        "judgeIds": [
-          "task_a52a6008"
-        ],
+        "judgeIds": ["task_a52a6008"],
         "sourceCommit": "a97abdcb67cd2597bd0c3a6ca3c9a0320d7aa7f5",
         "state": "accepted-not-joined",
         "reason": "Existing primary-focus ACCEPT by task_a52a6008 at a97abdcb67cd2597bd0c3a6ca3c9a0320d7aa7f5; exact candidate and surviving-area blob verified. Pinned joined tree lacks this accepted blob; parent owns joining. No new review or test execution."
@@ -1071,17 +963,13 @@
         "Five offline worker records normalize identically base/candidate",
         "format/lint/diff"
       ],
-      "limits": [
-        "No build/typecheck/latency"
-      ],
+      "limits": ["No build/typecheck/latency"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "03425e9333f88fd84f0aa26bc11a78a294ae3d0f",
         "primaryId": "task_5fb34446",
         "primaryCommit": "e5654ea0d0f92812e5a1bf526f78057f631d4189",
-        "judgeIds": [
-          "task_23bf0f9f"
-        ],
+        "judgeIds": ["task_23bf0f9f"],
         "sourceCommit": "e5654ea0d0f92812e5a1bf526f78057f631d4189",
         "state": "accepted-joined",
         "reason": "Existing primary-focus ACCEPT by task_23bf0f9f at e5654ea0d0f92812e5a1bf526f78057f631d4189; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
@@ -1118,33 +1006,22 @@
             "Help/list precedence probes",
             "format/lint/diff"
           ],
-          "limits": [
-            "No build/typecheck/provider/device/PTY/performance"
-          ]
+          "limits": ["No build/typecheck/provider/device/PTY/performance"]
         }
       ],
       "acceptedBlob": "0d8768c9e6995b8954c9c05b298ac5e33f3ddbec",
       "integrationState": "exact candidate integrated",
       "launchBase": "c0f402b8e1a5a531c9de49afab12d45dbd6a75a2",
-      "changedRelatedPaths": [
-        "tests/terminal-interactions-options.test.ts"
-      ],
+      "changedRelatedPaths": ["tests/terminal-interactions-options.test.ts"],
       "result": "Candidate one switch owns option recognition/consumption/validation/assignment instead of boolean branches+whitelist+policy switch.",
-      "checks": [
-        "29tests/263assertions",
-        "format/lint/diff"
-      ],
-      "limits": [
-        "No build/typecheck/live/device/PTY"
-      ],
+      "checks": ["29tests/263assertions", "format/lint/diff"],
+      "limits": ["No build/typecheck/live/device/PTY"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "0d8768c9e6995b8954c9c05b298ac5e33f3ddbec",
         "primaryId": "task_1d27744f",
         "primaryCommit": "650cf810bda828c13f3e18b0df3ae577ba86cef5",
-        "judgeIds": [
-          "task_4c71fe7d"
-        ],
+        "judgeIds": ["task_4c71fe7d"],
         "sourceCommit": "650cf810bda828c13f3e18b0df3ae577ba86cef5",
         "state": "accepted-not-joined",
         "reason": "Existing primary-focus ACCEPT by task_4c71fe7d at 650cf810bda828c13f3e18b0df3ae577ba86cef5; exact candidate and surviving-area blob verified. Pinned joined tree lacks this accepted blob; parent owns joining. No new review or test execution."
@@ -1180,17 +1057,13 @@
             "12 exact-base error/order differential contracts",
             "Focused strict TS --ignoreConfig; format/lint/diff"
           ],
-          "limits": [
-            "No full build/live/device/broad runtime; initial fixture setup issues corrected"
-          ]
+          "limits": ["No full build/live/device/broad runtime; initial fixture setup issues corrected"]
         }
       ],
       "acceptedBlob": "c65d7a19f9e30836a378c88f12a3493a41031e5b",
       "integrationState": "integrated exact independently judged primary candidate",
       "launchBase": "10c405fe18f54e15e915efe5d9a98ee37144f798",
-      "changedRelatedPaths": [
-        "tests/terminal-interactions-report.test.ts"
-      ],
+      "changedRelatedPaths": ["tests/terminal-interactions-report.test.ts"],
       "result": "Candidate separates run identity, per-case repetitions, evidence links and span validation ownership; preserves validation ordering/messages/values and report accounting.",
       "checks": [
         "20 tests /117 assertions",
@@ -1203,9 +1076,7 @@
         "acceptedBlob": "c65d7a19f9e30836a378c88f12a3493a41031e5b",
         "primaryId": "task_5930e394",
         "primaryCommit": "d5fadc4552948bf4041af05249ccb577b313b269",
-        "judgeIds": [
-          "task_e42d2c99"
-        ],
+        "judgeIds": ["task_e42d2c99"],
         "sourceCommit": "d5fadc4552948bf4041af05249ccb577b313b269",
         "state": "accepted-joined",
         "reason": "Existing primary-focus ACCEPT by task_e42d2c99 at d5fadc4552948bf4041af05249ccb577b313b269; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
@@ -1232,10 +1103,7 @@
         "acceptedBlob": "2e0e6eb8783ba3fcce9fde642717064f933dd67f",
         "primaryId": "task_efdf5c1a",
         "primaryCommit": "4fb1ae370ec111a0c5a7c1a2ccf216588244eb48",
-        "judgeIds": [
-          "task_23bf0f9f",
-          "task_a1139c9a"
-        ],
+        "judgeIds": ["task_23bf0f9f", "task_a1139c9a"],
         "sourceCommit": "4fb1ae370ec111a0c5a7c1a2ccf216588244eb48",
         "state": "accepted-joined",
         "reason": "The complete typed evidence fixture makes the distinct callback, scheduled-frame, input, burst, visibility and trace authorities inspectable together. Each scenario owns a fresh fixture. The mixed-source scenario modifies only total counts and a subscribed callback, so its adjacent total/burst assertions explain the distinction without an abstraction layer. Mutation loops each alter one evidence field immediately before normalization. The peak assertion explicitly changes input lateness without changing CPU peak. These are already coherent reading journeys, not a scattered lifetime or authority problem."
@@ -1271,9 +1139,7 @@
             "Joined CLI 43 raw/193 normalized cases, init/action IDs separate, lifecycle provider/fetch zero",
             "Unknown case exits 2 no artifact"
           ],
-          "limits": [
-            "No full build/compiled CLI/provider/PTY/performance proof"
-          ]
+          "limits": ["No full build/compiled CLI/provider/PTY/performance proof"]
         }
       ],
       "acceptedBlob": "479071932b154974ea189736685241aa5f1995c5",
@@ -1286,17 +1152,13 @@
         "All 43 catalog CLI cases produced 193 normalized cases",
         "Unknown worker exits 2 without JSON"
       ],
-      "limits": [
-        "No build/provider/compiled CLI/PTY/performance"
-      ],
+      "limits": ["No build/provider/compiled CLI/PTY/performance"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "479071932b154974ea189736685241aa5f1995c5",
         "primaryId": "task_8e35cbf3",
         "primaryCommit": "0975c6b36cb08cf00bbc697c414746d09d0e10f1",
-        "judgeIds": [
-          "task_5064dcca"
-        ],
+        "judgeIds": ["task_5064dcca"],
         "sourceCommit": "0975c6b36cb08cf00bbc697c414746d09d0e10f1",
         "state": "accepted-joined",
         "reason": "Existing primary-focus NO CHANGE NEEDED by task_5064dcca at 0975c6b36cb08cf00bbc697c414746d09d0e10f1; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
@@ -1322,9 +1184,7 @@
         "acceptedBlob": "6a3240454997193b22f04167d3b7df5ef06b341c",
         "primaryId": "task_c80b6e38",
         "primaryCommit": "e453ab85d74a043ddd10171d806c4fd9ebe7a6cc",
-        "judgeIds": [
-          "task_cc27bf98"
-        ],
+        "judgeIds": ["task_cc27bf98"],
         "sourceCommit": "e453ab85d74a043ddd10171d806c4fd9ebe7a6cc",
         "state": "accepted-joined",
         "reason": "The separation is structural, not a name/count change. The focus has one scheduled-component lifetime: mount disk-backed content and concrete UI, dispatch the selected action, await doRender return, publish frame/state evidence, then release that fixture. All fourteen unchanged action decisions remain together, including branch rebuilds, input paths, theme restoration and cold-render scope. The SDK probe is a different complete lifetime: runtime factory and managers, forbidden provider/fetch seams, optional initialized InteractiveMode, input/lifecycle captures, final context, and nested finally teardown. History construction owns its deterministic two-leaf disk fixture; the counting terminal owns transport callbacks and writes. Neither lifetime imports the other; both use those concrete shared seams without a context bag. All four changed source files are readable coherent owners."
@@ -1354,14 +1214,8 @@
             "scripts/terminal-perf/options.ts": "9d123b4f21a13ef603be8c89b2eb9e16a68e1463"
           },
           "evidence": "Fresh defaults, primitive parsing and local validation visible; runner owns union selection, report runner distinguishes explicit override from defaults and strict boundaries.",
-          "checks": [
-            "Independent 9 tests /60 assertions",
-            "63 supplemental reader-journey assertions",
-            "diff check"
-          ],
-          "limits": [
-            "No full build/typecheck/platform/provider/PTY/paint/speed; artifacts nontransactional"
-          ]
+          "checks": ["Independent 9 tests /60 assertions", "63 supplemental reader-journey assertions", "diff check"],
+          "limits": ["No full build/typecheck/platform/provider/PTY/paint/speed; artifacts nontransactional"]
         }
       ],
       "acceptedBlob": "9d123b4f21a13ef603be8c89b2eb9e16a68e1463",
@@ -1369,17 +1223,13 @@
       "launchBase": "2ebd9fd9b43f358eabf5351ab01fb4b4af4e855b",
       "changedRelatedPaths": [],
       "result": "No-change: defaults/validation, runner-owned union selection and explicit budget override remain direct.",
-      "checks": [
-        "9 options/report/CLI tests /60 assertions"
-      ],
+      "checks": ["9 options/report/CLI tests /60 assertions"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "9d123b4f21a13ef603be8c89b2eb9e16a68e1463",
         "primaryId": "task_61e4e31c",
         "primaryCommit": "b17800456f856f9314ab01b6387210c2f3376592",
-        "judgeIds": [
-          "task_be297c64"
-        ],
+        "judgeIds": ["task_be297c64"],
         "sourceCommit": "b17800456f856f9314ab01b6387210c2f3376592",
         "state": "accepted-joined",
         "reason": "Existing primary-focus NO CHANGE NEEDED by task_be297c64 at b17800456f856f9314ab01b6387210c2f3376592; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
@@ -1416,34 +1266,22 @@
             "Equivalence clock/guard/reentrancy/clear/dispose/identity probe 1/55",
             "Pinned format/lint/diff"
           ],
-          "limits": [
-            "No build/typecheck/latency/performance/provider/device/packaged CLI"
-          ]
+          "limits": ["No build/typecheck/latency/performance/provider/device/packaged CLI"]
         }
       ],
       "acceptedBlob": "067127cee9b9abfbb30d5fac247b1c6edafa70a5",
       "integrationState": "integrated unchanged from judged candidate",
       "launchBase": "efb6bcc801cc821e92cfb5e0c7709823f2e1e890",
-      "changedRelatedPaths": [
-        "tests/terminal-perf-profiler.test.ts"
-      ],
+      "changedRelatedPaths": ["tests/terminal-perf-profiler.test.ts"],
       "result": "Candidate PendingRenderRequests owns synchronous input scope, request recording/frame consumption and clear/dispose reset instead of eight scattered closure vars.",
-      "checks": [
-        "95 tests /5044 assertions",
-        "New characterization tests pass base",
-        "format/lint/diff"
-      ],
-      "limits": [
-        "No build/typecheck/performance/live/device/packaged CLI"
-      ],
+      "checks": ["95 tests /5044 assertions", "New characterization tests pass base", "format/lint/diff"],
+      "limits": ["No build/typecheck/performance/live/device/packaged CLI"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "067127cee9b9abfbb30d5fac247b1c6edafa70a5",
         "primaryId": "task_98eabc08",
         "primaryCommit": "ec5417038093c7fe3cd22fc353ba27ef8cda3dbe",
-        "judgeIds": [
-          "task_5e042418"
-        ],
+        "judgeIds": ["task_5e042418"],
         "sourceCommit": "ec5417038093c7fe3cd22fc353ba27ef8cda3dbe",
         "state": "accepted-joined",
         "reason": "Existing primary-focus ACCEPT by task_5e042418 at ec5417038093c7fe3cd22fc353ba27ef8cda3dbe; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
@@ -1473,10 +1311,7 @@
             "scripts/terminal-perf/report.ts": "2fcf24ca57d3c81087a237150258a6ec944bbefa"
           },
           "evidence": "Frame capture/import/summary/budget and baseline comparison decisions local, independent pure transforms; interaction reports reuse distributions while owning nullable evidence/gates.",
-          "checks": [
-            "Independent 22 tests /122 assertions",
-            "Exact blob/diff check"
-          ],
+          "checks": ["Independent 22 tests /122 assertions", "Exact blob/diff check"],
           "limits": [
             "Serialized identity order-sensitive; environment/content differences warn rather than suppress steady comparisons",
             "No build/browser/device/provider/SSH/performance claim"
@@ -1488,21 +1323,14 @@
       "launchBase": "f52931303dd0e226144ce3eb7a490867b8c1f146",
       "changedRelatedPaths": [],
       "result": "No-change: frame import/construction, cold/steady summary/budgets, baseline matching and dashboard/interaction consumers explicit.",
-      "checks": [
-        "22 tests /122 assertions",
-        "diff check"
-      ],
-      "limits": [
-        "No build/performance/device/provider"
-      ],
+      "checks": ["22 tests /122 assertions", "diff check"],
+      "limits": ["No build/performance/device/provider"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "2fcf24ca57d3c81087a237150258a6ec944bbefa",
         "primaryId": "task_598e86e4",
         "primaryCommit": "1eaa132f032d736f33a9e0a43fff483f2aaab17c",
-        "judgeIds": [
-          "task_7b633bb8"
-        ],
+        "judgeIds": ["task_7b633bb8"],
         "sourceCommit": "1eaa132f032d736f33a9e0a43fff483f2aaab17c",
         "state": "accepted-joined",
         "reason": "Existing primary-focus NO CHANGE NEEDED by task_7b633bb8 at 1eaa132f032d736f33a9e0a43fff483f2aaab17c; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
@@ -1521,9 +1349,7 @@
         "acceptedBlob": "9c18d2aceee6255a1fd03d378c8a95cc0b8d3881",
         "primaryId": "task_9b8ded9d",
         "primaryCommit": "e7ca3aac5f5bc3504768293001910810e90e49a1",
-        "judgeIds": [
-          "task_e3b69325"
-        ],
+        "judgeIds": ["task_e3b69325"],
         "sourceCommit": "e7ca3aac5f5bc3504768293001910810e90e49a1",
         "state": "accepted-joined",
         "reason": "The actual candidate separates three coherent responsibilities rather than hiding arbitrary blocks: selectorBehavior owns temporary global keybindings with visible try/finally; createBranchingTree owns deterministic topology and labels; replaySelectorBehavior retains a linear, locally readable input/capture sequence. The fixture remains independent of the navigation harness. Deliberate private-state access is identified at its boundary. The injected constructor now uses the real component type, and the final constructor explicitly leaves the label callback slot empty before selecting the hidden settings entry and requesting no-tools. The related caller is also accepted: golden hashing belongs with assertions, its frozen historical tail is explicitly labeled as the old misconfigured capture, and the corrected final capture is asserted separately instead of claiming the unchanged digest proves it."
@@ -1542,9 +1368,7 @@
         "acceptedBlob": "4eb5fec67d1f24e91ab6779e4c563d725f33ba69",
         "primaryId": "task_a3e07d2e",
         "primaryCommit": "90ccd9b7c34cc154608614eb2d7e52c0e0006225",
-        "judgeIds": [
-          "task_cc27bf98"
-        ],
+        "judgeIds": ["task_cc27bf98"],
         "sourceCommit": "90ccd9b7c34cc154608614eb2d7e52c0e0006225",
         "state": "accepted-joined",
         "reason": "captureSelectorConfirmation owns an intelligible measurement lifetime: mount the real selector without summary work, drain its initial frame, install render/onSelect observation, dispatch Enter, require and await the actual selection promise, stop lifecycle elapsed timing, drain completed UI frames, and separately hash the transcript. Both temporary hooks are now restored in the same finally on success or failure. The resume override no longer mixes runtime resumption, selector instrumentation and evidence assembly: it awaits original resume, awaits confirmation capture, and returns the original result. Returning the capture result replaces outer evidence mutation with a clear boundary while keeping the unchanged phase instrumentation and reporting decisions visible."
@@ -1561,13 +1385,11 @@
       "resume": {
         "status": "pending",
         "acceptedBlob": "2bebb69d99d71d2dd09e5ac4bc36df31a7796f71",
-        "primaryId": "task_b483c184",
-        "primaryCommit": "2e9f506b874a0acd793f20c4acef448af8b900d1",
-        "judgeIds": [
-          "task_a1139c9a"
-        ],
-        "sourceCommit": "e7ca3aac5f5bc3504768293001910810e90e49a1",
-        "state": "needs-primary-final-blob",
+        "primaryId": "task_8cf00221",
+        "primaryCommit": "9d3a4eb28e1ec4c616c144298add327756d9f42f",
+        "judgeIds": ["task_a1139c9a"],
+        "sourceCommit": "9d3a4eb28e1ec4c616c144298add327756d9f42f",
+        "state": "needs-judge",
         "reason": "The disk scenario now shows its two manager lifetimes in execution order: write the branched fixture, open and prohibit getEntries, check whole-journal counts/branch/append and the unchanged byte prefix, restore/dispose, then reopen and check persistence. Assertions no longer run inside cleanup. The outer fixture lifetime includes writing, both opens and both disposals, so cleanup ownership is readable even on assertion failure. writeBranchedHistory isolates coherent journal construction rather than hiding assertions or introducing a context bag."
       }
     },
@@ -1591,9 +1413,7 @@
         "acceptedBlob": "6aa16ff8235430a58997714cf78d5b9b86f967b1",
         "primaryId": "task_02db43ac",
         "primaryCommit": "ce1847e3d30652f65fd5f9dfa2a3d30ee09f6df7",
-        "judgeIds": [
-          "task_98534795"
-        ],
+        "judgeIds": ["task_98534795"],
         "sourceCommit": "ce1847e3d30652f65fd5f9dfa2a3d30ee09f6df7",
         "state": "accepted-joined",
         "reason": "Read the entire candidate and its extraction against f7b5619450bcb7c0b40e5e2194d7303c6a905b9a. SendObservation gives evidence a genuine file-local owner: collection lifetime, synchronous-prefix span nesting, provider observations, event/frame acknowledgment matching and final serialization now live together. createSendWorkload still owns SDK resources, wrapper restoration, real input dispatch and pending work. The action reads as begin observation -> paste/Enter -> await callbacks/prompt/visible frame -> finish observation -> journal accounting, rather than interleaving evidence algorithms with dispatch. This is a coherent authority split, not a name-only cleanup or generic context bag."
@@ -1612,9 +1432,7 @@
         "acceptedBlob": "26d3f60fb2442da57cf53dee465edf536614c57c",
         "primaryId": "task_cf54811f",
         "primaryCommit": "8f42a48aa839d206de7294d67e6bdd632eef5f7c",
-        "judgeIds": [
-          "task_cc27bf98"
-        ],
+        "judgeIds": ["task_cc27bf98"],
         "sourceCommit": "8f42a48aa839d206de7294d67e6bdd632eef5f7c",
         "state": "accepted-joined",
         "reason": "The two helpers separate genuinely different authorities rather than arbitrary code chunks. dispatchToolBurst is synchronous and owns the contiguous measurement slice, direct callback provenance, restoration to subscribed provenance, final component capture and per-burst counters. sendEditorThroughSession owns the real getUserInput/session.prompt path and its provider, scheduled-frame and callback-settlement waits. action now reads in temporal order: queue ready input before blocking work, inject the burst, drain backlogged input, exercise tool visibility and scrolling, await real subscribed send, then stop collection and assemble evidence. The unchanged callback wrapper, frame recorder, payload construction, setup prohibitions and disposal remain legible around that orchestration; no generic runner or context bag was introduced."
@@ -1633,9 +1451,7 @@
         "acceptedBlob": "c47e1af5bec976d7f09e10248940f135ce78fe4c",
         "primaryId": "task_97f9b348",
         "primaryCommit": "2a5ec2d174ca8e799c16ea39184716293e366c9c",
-        "judgeIds": [
-          "task_98534795"
-        ],
+        "judgeIds": ["task_98534795"],
         "sourceCommit": "2a5ec2d174ca8e799c16ea39184716293e366c9c",
         "state": "accepted-joined",
         "reason": "Read the entire candidate and primary-base diff. The three extracted operations have distinct effects: install terminal/tool adapters with restoration registration, construct consistent settled transcript/components/task rows, and attach activity/scroll/layout with disposal. Their fixture-local closures use the existing owner state, not a new context container. setup now exposes exclusivity, reset, measured preparation order, readiness/publication and failure disposal together. This materially improves the lifecycle journey even though the action switch and payload algorithms appropriately remain unchanged."
@@ -1670,9 +1486,7 @@
             "18mixed-start/gaps/backwards/fallback/order/units/metadata/nonmutation/artifact assertions",
             "blob/diff"
           ],
-          "limits": [
-            "No viewer/build/fullsuite/paint/responsiveness/latency"
-          ]
+          "limits": ["No viewer/build/fullsuite/paint/responsiveness/latency"]
         }
       ],
       "acceptedBlob": "2cae4e67ca3341e12927116d7ec45dfd81ec957f",
@@ -1684,17 +1498,13 @@
         "24tests/152assertions",
         "Synthetic order/mixed timestamp/fallback/units/budget/serialization/nonmutation checks"
       ],
-      "limits": [
-        "No build/viewer/performance"
-      ],
+      "limits": ["No build/viewer/performance"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "2cae4e67ca3341e12927116d7ec45dfd81ec957f",
         "primaryId": "task_fb8832c3",
         "primaryCommit": "6d00f91a29bd8b1567331d36bddb7ce0fc954d4f",
-        "judgeIds": [
-          "task_36396b4b"
-        ],
+        "judgeIds": ["task_36396b4b"],
         "sourceCommit": "6d00f91a29bd8b1567331d36bddb7ce0fc954d4f",
         "state": "accepted-joined",
         "reason": "Existing primary-focus NO CHANGE NEEDED by task_36396b4b at 6d00f91a29bd8b1567331d36bddb7ce0fc954d4f; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
@@ -1739,9 +1549,7 @@
       ],
       "acceptedBlob": "a27a6dd7eb5239f3bdb9c0ac011a2eecf433cfce",
       "integrationState": "exact candidate integrated",
-      "changedRelatedPaths": [
-        "tests/terminal-perf-workloads.test.ts"
-      ],
+      "changedRelatedPaths": ["tests/terminal-perf-workloads.test.ts"],
       "result": "Setup separates conversation from terminal/adapter/activity/first-render ownership; cold/steady share screen-diff/write-drain accounting; failed setup resources reusable",
       "checks": [
         "54tests2870assertions",
@@ -1753,9 +1561,7 @@
         "acceptedBlob": "a27a6dd7eb5239f3bdb9c0ac011a2eecf433cfce",
         "primaryId": "task_a342c31d",
         "primaryCommit": "747c31b8e52eff45ab2c585e5974eeb9d50cd85a",
-        "judgeIds": [
-          "task_d455a9d6"
-        ],
+        "judgeIds": ["task_d455a9d6"],
         "sourceCommit": "747c31b8e52eff45ab2c585e5974eeb9d50cd85a",
         "state": "accepted-not-joined",
         "reason": "Existing primary-focus ACCEPT by task_d455a9d6 at 747c31b8e52eff45ab2c585e5974eeb9d50cd85a; exact candidate and surviving-area blob verified. Pinned joined tree lacks this accepted blob; parent owns joining. No new review or test execution."
@@ -1774,9 +1580,7 @@
         "acceptedBlob": "97b105de113aa23d912aa57f4f3dae012f9ef587",
         "primaryId": "task_5e579abb",
         "primaryCommit": "73163cda2b7e472576c04d5adbb278ecefec368c",
-        "judgeIds": [
-          "task_98534795"
-        ],
+        "judgeIds": ["task_98534795"],
         "sourceCommit": "73163cda2b7e472576c04d5adbb278ecefec368c",
         "state": "accepted-joined",
         "reason": "Read the exact candidate bytes. The purpose comment and three adjacent settings express one keyboard protocol boundary: enable extended keys, select CSI-u encoding and advertise terminal extkeys support. There are no competing authorities, separated lifetimes or hidden control flow here. Additional sections, helper files or renaming would add ceremony without solving a reading problem."
@@ -1823,23 +1627,14 @@
       "launchBase": "c7393dd2f5482d130c35ddc4d91316b444ba5fd8",
       "changedRelatedPaths": [],
       "result": "No-change candidate: startup/watchdog, input/capture/recording and capture-before-stop ownership explicit.",
-      "checks": [
-        "4 tests /23 assertions",
-        "Isolated real tmux fixture",
-        "Biome"
-      ],
-      "limits": [
-        "Used shared prebuilt CLI read-only, not freshly compiled base binary",
-        "No build"
-      ],
+      "checks": ["4 tests /23 assertions", "Isolated real tmux fixture", "Biome"],
+      "limits": ["Used shared prebuilt CLI read-only, not freshly compiled base binary", "No build"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "2fe85b0ba6b79f86d3bca3ca3ee4c187a82b610f",
         "primaryId": "task_7f3c2fe5",
         "primaryCommit": "e5880ac872c2d04ef90194ca3c5964437cb4efab",
-        "judgeIds": [
-          "task_fdd2cd2a"
-        ],
+        "judgeIds": ["task_fdd2cd2a"],
         "sourceCommit": "e5880ac872c2d04ef90194ca3c5964437cb4efab",
         "state": "accepted-joined",
         "reason": "Existing primary-focus NO CHANGE NEEDED by task_fdd2cd2a at e5880ac872c2d04ef90194ca3c5964437cb4efab; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
@@ -1884,9 +1679,7 @@
       "acceptedBlob": "c68a4a4b1d55f6fa3ebde54cd408f5196a1ad8ce",
       "integrationState": "integrated exact independently judged candidate",
       "launchBase": "086c29b0ddd3df29cefb22cc8795df658c2da1cb",
-      "changedRelatedPaths": [
-        "tests/ui-cleanup-probe.test.py"
-      ],
+      "changedRelatedPaths": ["tests/ui-cleanup-probe.test.py"],
       "result": "Candidate separates tmux/capture/cleanup/validation, reporting after teardown; explicit observed configuration-write failure leak fixed for fixture thread/temp home.",
       "checks": [
         "8 new Python tests +13 adjacent proof tooling",
@@ -1895,17 +1688,13 @@
         "Real shared-binary base/candidate same10 screen failures and6 requests",
         "syntax/help/diff"
       ],
-      "limits": [
-        "No terminal acceptance/current-source build; real probe baseline/candidate failures retained"
-      ],
+      "limits": ["No terminal acceptance/current-source build; real probe baseline/candidate failures retained"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "c68a4a4b1d55f6fa3ebde54cd408f5196a1ad8ce",
         "primaryId": "task_96febf21",
         "primaryCommit": "caed7a396d78adb86e2b4e2294806491cb62a0b3",
-        "judgeIds": [
-          "task_988afb2b"
-        ],
+        "judgeIds": ["task_988afb2b"],
         "sourceCommit": "caed7a396d78adb86e2b4e2294806491cb62a0b3",
         "state": "accepted-joined",
         "reason": "Existing primary-focus ACCEPT by task_988afb2b at caed7a396d78adb86e2b4e2294806491cb62a0b3; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
@@ -1951,26 +1740,20 @@
       "acceptedBlob": "b961477ed8253a6b69a65cf972905895b4eed010",
       "integrationState": "integrated unchanged from judged candidate",
       "launchBase": "2d32ad47535cba26a4e163c8adb346ec51a8e7cf",
-      "changedRelatedPaths": [
-        "tests/cli.test.ts"
-      ],
+      "changedRelatedPaths": ["tests/cli.test.ts"],
       "result": "Candidate separates runtime configuration, remote entry dispatch, local conversation lifetime and help transformation.",
       "checks": [
         "6 source boundary checks pass base/candidate",
         "87 adapter/prompt/placement checks",
         "Biome/diff checks"
       ],
-      "limits": [
-        "No full build/typecheck, compiled CLI, live/provider, authenticated SSH or interactive TTY checks."
-      ],
+      "limits": ["No full build/typecheck, compiled CLI, live/provider, authenticated SSH or interactive TTY checks."],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "b961477ed8253a6b69a65cf972905895b4eed010",
         "primaryId": "task_75c8d308",
         "primaryCommit": "f27f3d73c76d754b0c19bdc0d561657fc5f66b0b",
-        "judgeIds": [
-          "task_db22e114"
-        ],
+        "judgeIds": ["task_db22e114"],
         "sourceCommit": "f27f3d73c76d754b0c19bdc0d561657fc5f66b0b",
         "state": "accepted-joined",
         "reason": "Existing primary-focus ACCEPT by task_db22e114 at f27f3d73c76d754b0c19bdc0d561657fc5f66b0b; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
@@ -2000,10 +1783,7 @@
             "src/diagnostics-extension.ts": "51f2655613a4022bf3b3742d0c2de4524711e002"
           },
           "evidence": "Activation lifetime, guarded append/leaf restoration and bounded command inspection remain locally understandable; native SDK limitations explicit, not hidden behind blanket guarantees.",
-          "checks": [
-            "Independent 13 tests /573 assertions",
-            "Actual core/test/caller/SDK persistence inspection"
-          ],
+          "checks": ["Independent 13 tests /573 assertions", "Actual core/test/caller/SDK persistence inspection"],
           "limits": [
             "Restoration not atomic; post-append failure may leave child active; reopen may select child",
             "Detach removes persistence not all observation; SDK getEntries still materializes full entries despite bounded replay scan",
@@ -2016,20 +1796,14 @@
       "launchBase": "f4d0b160ac48c05be77276e1afb1295690fc1fde",
       "changedRelatedPaths": [],
       "result": "No-change candidate: activation ownership, guarded append/leaf restoration, shutdown capture and bounded inspection already local.",
-      "checks": [
-        "13 diagnostics tests /573 assertions"
-      ],
-      "limits": [
-        "No build/provider"
-      ],
+      "checks": ["13 diagnostics tests /573 assertions"],
+      "limits": ["No build/provider"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "51f2655613a4022bf3b3742d0c2de4524711e002",
         "primaryId": "task_ce10c8d9",
         "primaryCommit": "c7ce40535fb494bdadac75ae970755e48a379e39",
-        "judgeIds": [
-          "task_bb4b2bf5"
-        ],
+        "judgeIds": ["task_bb4b2bf5"],
         "sourceCommit": "c7ce40535fb494bdadac75ae970755e48a379e39",
         "state": "accepted-joined",
         "reason": "Existing primary-focus NO CHANGE NEEDED by task_bb4b2bf5 at c7ce40535fb494bdadac75ae970755e48a379e39; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
@@ -2060,10 +1834,7 @@
             "tests/diagnostics.test.ts": "48a273afdc220bd4984fbc18739015dc4a86c88a"
           },
           "evidence": "Live bounded observation precedes durable acceptance visibly; dedup/budget/reentry reservation and sink finally form one operation. Snapshot shape no longer maintained across three paths. Privacy allowlist, ring/write/replay bounds and generation guards preserved.",
-          "checks": [
-            "15 independent assertions privacy/budget/reentry/reset/stale handles/replay",
-            "diff check"
-          ],
+          "checks": ["15 independent assertions privacy/budget/reentry/reset/stale handles/replay", "diff check"],
           "limits": [
             "Four-suite independent run failed dependency loading, 0 pass/4 import errors",
             "No full gate/typecheck/packaged CLI/provider/SSH/device"
@@ -2073,25 +1844,16 @@
       "acceptedBlob": "208b251b5b7130114fbd4813aa83259798119f83",
       "integrationState": "integrated unchanged from judged candidate",
       "launchBase": "d7358730889bcc702110e71fae0e18c4bea3a840",
-      "changedRelatedPaths": [
-        "tests/diagnostics.test.ts"
-      ],
+      "changedRelatedPaths": ["tests/diagnostics.test.ts"],
       "result": "Candidate separates live bounded observations from durable acceptance, and centralizes initialization/reset snapshot shape; judgment pending.",
-      "checks": [
-        "58 tests /840 assertions",
-        "Focused TypeScript/Biome/diff checks"
-      ],
-      "limits": [
-        "No full build/provider/packaged-runtime proof"
-      ],
+      "checks": ["58 tests /840 assertions", "Focused TypeScript/Biome/diff checks"],
+      "limits": ["No full build/provider/packaged-runtime proof"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "208b251b5b7130114fbd4813aa83259798119f83",
         "primaryId": "task_123df133",
         "primaryCommit": "54ebccd6eeedc055d6832461c3fe4e4e9bae859b",
-        "judgeIds": [
-          "task_50dcf5f6"
-        ],
+        "judgeIds": ["task_50dcf5f6"],
         "sourceCommit": "54ebccd6eeedc055d6832461c3fe4e4e9bae859b",
         "state": "accepted-joined",
         "reason": "Existing primary-focus ACCEPT by task_50dcf5f6 at 54ebccd6eeedc055d6832461c3fe4e4e9bae859b; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
@@ -2121,10 +1883,7 @@
             "src/ui/action-label.ts": "290d620d94ba2c45b195cc5c220ae0894bf95056"
           },
           "evidence": "Label fallback/sanitization and error evidence precedence are adjacent pure decisions; callers separately own status/clipping/animation. Additional helper/policy abstraction would obscure visible precedence.",
-          "checks": [
-            "12 independent direct assertions",
-            "Pinned Biome format/diff check"
-          ],
+          "checks": ["12 independent direct assertions", "Pinned Biome format/diff check"],
           "limits": [
             "Four suite independent runs blocked by unresolved dependencies; writer 112-pass report not independently reproduced",
             "No build/interactive/provider/SSH"
@@ -2141,17 +1900,13 @@
         "12 direct formatter assertions",
         "Biome format"
       ],
-      "limits": [
-        "No full build, interactive capture, provider or SSH checks."
-      ],
+      "limits": ["No full build, interactive capture, provider or SSH checks."],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "290d620d94ba2c45b195cc5c220ae0894bf95056",
         "primaryId": "task_7482f459",
         "primaryCommit": "3d5d0ae28d7ddd8fbbc16e390e164724ec72b53e",
-        "judgeIds": [
-          "task_8d1d090b"
-        ],
+        "judgeIds": ["task_8d1d090b"],
         "sourceCommit": "3d5d0ae28d7ddd8fbbc16e390e164724ec72b53e",
         "state": "accepted-joined",
         "reason": "Existing primary-focus NO CHANGE NEEDED by task_8d1d090b at 3d5d0ae28d7ddd8fbbc16e390e164724ec72b53e; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
@@ -2197,13 +1952,8 @@
       "launchBase": "3e588f8d9d2d6a413a03089234803fb6a8385a30",
       "changedRelatedPaths": [],
       "result": "No-change: SDK canonical ownership, lazy native body projection and installer-owned registration teardown are explicit separate authorities.",
-      "checks": [
-        "78 tests /713 assertions",
-        "format/diff"
-      ],
-      "limits": [
-        "No build/live/PTY; joins must be checked after active SDK/density changes"
-      ],
+      "checks": ["78 tests /713 assertions", "format/diff"],
+      "limits": ["No build/live/PTY; joins must be checked after active SDK/density changes"],
       "joinJudgments": [
         {
           "id": "task_060d7edf",
@@ -2217,9 +1967,7 @@
         "acceptedBlob": "90fe58e67e209ca8c64219ac0e60c8c7f1788dd8",
         "primaryId": "task_5c8f0f5d",
         "primaryCommit": "64bd85472711c2d5c6469466641b14107d4d532f",
-        "judgeIds": [
-          "task_f92fc2a1"
-        ],
+        "judgeIds": ["task_f92fc2a1"],
         "sourceCommit": "64bd85472711c2d5c6469466641b14107d4d532f",
         "state": "accepted-joined",
         "reason": "Existing primary-focus NO CHANGE NEEDED by task_f92fc2a1 at 64bd85472711c2d5c6469466641b14107d4d532f; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
@@ -2264,19 +2012,14 @@
       "acceptedBlob": "c343f2b045e2fd95c37943d8ddd2aab9d6611def",
       "integrationState": "exact primary accepted blob and SDK/density combined join accepted",
       "launchBase": "756cbb9f216616e36d6fd26cc238759fb37b6444",
-      "changedRelatedPaths": [
-        "tests/conversation-density.test.ts"
-      ],
+      "changedRelatedPaths": ["tests/conversation-density.test.ts"],
       "result": "Candidate separates layout/mouse adaptation and assistant source/presentation/streaming restoration, replacing mixed restoration records with owned restorers.",
       "checks": [
         "88 tests /683 assertions",
         "27 exact-base characterization tests /237 assertions",
         "Source-only TypeScript and pinned format/lint/diff"
       ],
-      "limits": [
-        "Broader Biome check unchanged import-order assist",
-        "No full build/gate/interactive/platform proof"
-      ],
+      "limits": ["Broader Biome check unchanged import-order assist", "No full build/gate/interactive/platform proof"],
       "joinJudgments": [
         {
           "id": "task_060d7edf",
@@ -2290,9 +2033,7 @@
         "acceptedBlob": "c343f2b045e2fd95c37943d8ddd2aab9d6611def",
         "primaryId": "task_19cd167f",
         "primaryCommit": "1071775f8f3c9c120ddc639d60c267d4acd8ef1f",
-        "judgeIds": [
-          "task_203052f5"
-        ],
+        "judgeIds": ["task_203052f5"],
         "sourceCommit": "1071775f8f3c9c120ddc639d60c267d4acd8ef1f",
         "state": "accepted-joined",
         "reason": "Existing primary-focus ACCEPT by task_203052f5 at 1071775f8f3c9c120ddc639d60c267d4acd8ef1f; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
@@ -2323,17 +2064,13 @@
             "tests/editor-voice-integration.test.ts": "95453da9cb3f0827a96b955c60f854e905939dac"
           },
           "evidence": "Attachment visibly owns controller/hook/reporting lifetime; watcher pairs input/focus cancellation with restoration; reporting helper pairs Kitty and fullscreen-owned modes. No observable cleanup reorder effect in inspected SDK.",
-          "limits": [
-            "Judge rerun failed module resolution using NODE_PATH; no independent test-pass claim."
-          ]
+          "limits": ["Judge rerun failed module resolution using NODE_PATH; no independent test-pass claim."]
         }
       ],
       "acceptedBlob": "fba6c9f74fc9af07f8a11368455e63cf46f5e4eb",
       "integrationState": "integrated unchanged from judged candidate",
       "launchBase": "2d32ad47535cba26a4e163c8adb346ec51a8e7cf",
-      "changedRelatedPaths": [
-        "tests/editor-voice-integration.test.ts"
-      ],
+      "changedRelatedPaths": ["tests/editor-voice-integration.test.ts"],
       "result": "Accepted coherent lifetime boundaries, not arbitrary extraction: controller disposal remains first, reporting restoration last; listener ordering and abort/idempotence preserved.",
       "checks": [
         "40 editor/startup/controller tests",
@@ -2341,17 +2078,13 @@
         "15 expanded tests against baseline",
         "focused Biome and diff check"
       ],
-      "limits": [
-        "No full build/typecheck, compiled CLI, tmux, provider or physical-device acceptance."
-      ],
+      "limits": ["No full build/typecheck, compiled CLI, tmux, provider or physical-device acceptance."],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "fba6c9f74fc9af07f8a11368455e63cf46f5e4eb",
         "primaryId": "task_ff96b465",
         "primaryCommit": "58af8f98e82c5d0ad6e34422cc2aafb9f5126ba7",
-        "judgeIds": [
-          "task_14234cb0"
-        ],
+        "judgeIds": ["task_14234cb0"],
         "sourceCommit": "58af8f98e82c5d0ad6e34422cc2aafb9f5126ba7",
         "state": "accepted-joined",
         "reason": "Existing primary-focus ACCEPT by task_14234cb0 at 58af8f98e82c5d0ad6e34422cc2aafb9f5126ba7; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
@@ -2381,13 +2114,8 @@
             "src/ui/execution-previews.ts": "7510d94b1cb34373854df0680caf60e017c83834"
           },
           "evidence": "Construction visibly selects partial/expanded/settled views; live mutable spinner path ends early and shared running-row renderer expresses cache policy. Actual Pi rebuild-on-update/expansion/invalidation preserves shipped updates; warning reads stay live.",
-          "checks": [
-            "Independent 130 tests /13465 assertions",
-            "Biome format/diff"
-          ],
-          "limits": [
-            "No full build/typecheck/CLI/TUI/provider/device proof"
-          ]
+          "checks": ["Independent 130 tests /13465 assertions", "Biome format/diff"],
+          "limits": ["No full build/typecheck/CLI/TUI/provider/device proof"]
         }
       ],
       "acceptedBlob": "7510d94b1cb34373854df0680caf60e017c83834",
@@ -2395,13 +2123,8 @@
       "launchBase": "4f808ab2263b80475eddcbc772a48570afa438bd",
       "changedRelatedPaths": [],
       "result": "Candidate chooses partial/handoff/transcript/outcome view at component creation instead of mixing mutable spinner handling into width callback; shared live spinner row.",
-      "checks": [
-        "121 tests /13414 assertions",
-        "focused format/lint/diff"
-      ],
-      "limits": [
-        "No full build/typecheck/compiled TUI/provider/device"
-      ],
+      "checks": ["121 tests /13414 assertions", "focused format/lint/diff"],
+      "limits": ["No full build/typecheck/compiled TUI/provider/device"],
       "joinJudgments": [
         {
           "id": "task_060d7edf",
@@ -2415,9 +2138,7 @@
         "acceptedBlob": "7510d94b1cb34373854df0680caf60e017c83834",
         "primaryId": "task_52ca0e94",
         "primaryCommit": "828e13116b668825a7d24cf4247e2b56e3ed49b9",
-        "judgeIds": [
-          "task_9a76656a"
-        ],
+        "judgeIds": ["task_9a76656a"],
         "sourceCommit": "828e13116b668825a7d24cf4247e2b56e3ed49b9",
         "state": "accepted-joined",
         "reason": "Existing primary-focus ACCEPT by task_9a76656a at 828e13116b668825a7d24cf4247e2b56e3ed49b9; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
@@ -2453,17 +2174,13 @@
             "Biome format/lint exit 0 with unchanged advisories",
             "diff check"
           ],
-          "limits": [
-            "No full build/typecheck/compiled TUI/device/provider"
-          ]
+          "limits": ["No full build/typecheck/compiled TUI/device/provider"]
         }
       ],
       "acceptedBlob": "3d3aa8960033208e5b7c137bbdc3e20da4becfc6",
       "integrationState": "integrated unchanged from judged candidate",
       "launchBase": "85d3d852913bc59905b9c81e21d2fbe28d4332c1",
-      "changedRelatedPaths": [
-        "tests/footer.test.ts"
-      ],
+      "changedRelatedPaths": ["tests/footer.test.ts"],
       "result": "Candidate separates cost polling/cache deadlines into observers owning each clock, shared redraw path and installation lifetime gate.",
       "checks": [
         "43 focused tests",
@@ -2475,9 +2192,7 @@
         "acceptedBlob": "3d3aa8960033208e5b7c137bbdc3e20da4becfc6",
         "primaryId": "task_b0090f89",
         "primaryCommit": "23d4c95aa626e1ef2e84308c792bffc4b1b130e6",
-        "judgeIds": [
-          "task_05ce27ca"
-        ],
+        "judgeIds": ["task_05ce27ca"],
         "sourceCommit": "23d4c95aa626e1ef2e84308c792bffc4b1b130e6",
         "state": "accepted-joined",
         "reason": "Existing primary-focus ACCEPT by task_05ce27ca at 23d4c95aa626e1ef2e84308c792bffc4b1b130e6; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
@@ -2523,14 +2238,8 @@
       "launchBase": "c18d20532ffe409cccc86719081ba8d0e0fba286",
       "changedRelatedPaths": [],
       "result": "No-change candidate: native reconstruction/filtering, collapse removal of only owned status pair, and conditional owned-method restoration are local.",
-      "checks": [
-        "34 tests /272 assertions",
-        "Ownership probe 8 assertions",
-        "format/diff"
-      ],
-      "limits": [
-        "No build/typecheck/packaged/visual proof"
-      ],
+      "checks": ["34 tests /272 assertions", "Ownership probe 8 assertions", "format/diff"],
+      "limits": ["No build/typecheck/packaged/visual proof"],
       "joinJudgments": [
         {
           "id": "task_060d7edf",
@@ -2544,9 +2253,7 @@
         "acceptedBlob": "5970b1ea57aba517a223ded5c196ab3ebca133f1",
         "primaryId": "task_022db18e",
         "primaryCommit": "34143eafe466f0f402e62382e3a03b6a602dedde",
-        "judgeIds": [
-          "task_a1a59af9"
-        ],
+        "judgeIds": ["task_a1a59af9"],
         "sourceCommit": "34143eafe466f0f402e62382e3a03b6a602dedde",
         "state": "accepted-joined",
         "reason": "Existing primary-focus NO CHANGE NEEDED by task_a1a59af9 at 34143eafe466f0f402e62382e3a03b6a602dedde; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
@@ -2578,10 +2285,7 @@
             "tests/rolling-activity-disk.test.ts": "343ee9ee808ac7cbca4d822e520476ef92ba7ee8"
           },
           "evidence": "Ordered contiguous groups replace synthetic map key/counter/last-identity reconstruction; boundaries explicitly clear current run. Expansion and component identity remain owned by stable components, callback provenance and native boundaries unchanged.",
-          "checks": [
-            "Disk test independently passes",
-            "Diff whitespace passes"
-          ],
+          "checks": ["Disk test independently passes", "Diff whitespace passes"],
           "limits": [
             "Four independent Bun suites blocked during imports; 119 writer passes not independently confirmed",
             "No full build/typecheck/CLI/live/provider/device/SSH/latency"
@@ -2591,19 +2295,14 @@
       "acceptedBlob": "66cf00a2db4b52746cc4595c4eab964acd863e42",
       "integrationState": "exact primary accepted blob and SDK/density combined join accepted",
       "launchBase": "bbdb5ecb5188b24392d17ceb4bfa2914bc2d1dfb",
-      "changedRelatedPaths": [
-        "tests/rolling-activity.test.ts",
-        "tests/rolling-activity-disk.test.ts"
-      ],
+      "changedRelatedPaths": ["tests/rolling-activity.test.ts", "tests/rolling-activity-disk.test.ts"],
       "result": "Candidate replaces synthetic map keys/segment counters/last identity with explicit contiguous activity runs and boundary resets.",
       "checks": [
         "119 focused tests /3274 assertions",
         "focused format/diff check",
         "lint exit 0 with existing diagnostics"
       ],
-      "limits": [
-        "No build/typecheck/compiled CLI/live/device/provider/SSH/latency proof"
-      ],
+      "limits": ["No build/typecheck/compiled CLI/live/device/provider/SSH/latency proof"],
       "joinJudgments": [
         {
           "id": "task_060d7edf",
@@ -2617,9 +2316,7 @@
         "acceptedBlob": "66cf00a2db4b52746cc4595c4eab964acd863e42",
         "primaryId": "task_f8eb0cae",
         "primaryCommit": "8aaffbf961e73dbedafd111ad18a21faf3a1bfdb",
-        "judgeIds": [
-          "task_a6caab27"
-        ],
+        "judgeIds": ["task_a6caab27"],
         "sourceCommit": "8aaffbf961e73dbedafd111ad18a21faf3a1bfdb",
         "state": "accepted-joined",
         "reason": "Existing primary-focus ACCEPT by task_a6caab27 at 8aaffbf961e73dbedafd111ad18a21faf3a1bfdb; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
@@ -2668,34 +2365,26 @@
             "Lifetime characterization against base 1 test /6 assertions",
             "Biome format/lint/diff"
           ],
-          "limits": [
-            "No full build/typecheck/CLI/provider/SSH/physical-terminal/GC-timing"
-          ]
+          "limits": ["No full build/typecheck/CLI/provider/SSH/physical-terminal/GC-timing"]
         }
       ],
       "acceptedBlob": "12dd2d82132e1997f9ca53903172babf28586e9b",
       "integrationState": "integrated exact judged candidate and combined join",
       "launchBase": "3e588f8d9d2d6a413a03089234803fb6a8385a30",
-      "changedRelatedPaths": [
-        "tests/task-rows.test.ts"
-      ],
+      "changedRelatedPaths": ["tests/task-rows.test.ts"],
       "result": "Candidate separates typed sibling/live/replay frame ownership, collapsed native body presentation, and adapter publication/restoration lifetime.",
       "checks": [
         "123 tests /13429 assertions across six suites",
         "New lifetime test passes exact base",
         "format/lint/diff"
       ],
-      "limits": [
-        "No full build/typecheck/CLI/live/SSH/device"
-      ],
+      "limits": ["No full build/typecheck/CLI/live/SSH/device"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "12dd2d82132e1997f9ca53903172babf28586e9b",
         "primaryId": "task_5d9a622d",
         "primaryCommit": "9dab0b950dde5fffdb3bfeb00bea85bdf969b5c7",
-        "judgeIds": [
-          "task_060d7edf"
-        ],
+        "judgeIds": ["task_060d7edf"],
         "sourceCommit": "9dab0b950dde5fffdb3bfeb00bea85bdf969b5c7",
         "state": "accepted-joined",
         "reason": "Existing primary-focus ACCEPT by task_060d7edf at 9dab0b950dde5fffdb3bfeb00bea85bdf969b5c7; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
@@ -2741,13 +2430,8 @@
       "launchBase": "f4d0b160ac48c05be77276e1afb1295690fc1fde",
       "changedRelatedPaths": [],
       "result": "No-change: eligibility, single-width cache, SDK lifecycle eviction and owned-method restoration are explicit in one closure.",
-      "checks": [
-        "58 tests /791 assertions",
-        "format/lint/diff"
-      ],
-      "limits": [
-        "No full build; pending SDK/density joins need final combined review"
-      ],
+      "checks": ["58 tests /791 assertions", "format/lint/diff"],
+      "limits": ["No full build; pending SDK/density joins need final combined review"],
       "joinJudgments": [
         {
           "id": "task_060d7edf",
@@ -2761,9 +2445,7 @@
         "acceptedBlob": "d8134b728f86ecd669820d7922f459350e78adc8",
         "primaryId": "task_cde04507",
         "primaryCommit": "655dd9f6908f34b82927f97a04b468c4e5051d53",
-        "judgeIds": [
-          "task_ac462b2f"
-        ],
+        "judgeIds": ["task_ac462b2f"],
         "sourceCommit": "655dd9f6908f34b82927f97a04b468c4e5051d53",
         "state": "accepted-joined",
         "reason": "Existing primary-focus NO CHANGE NEEDED by task_ac462b2f at 655dd9f6908f34b82927f97a04b468c4e5051d53; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
@@ -2793,10 +2475,7 @@
             "src/ui/startup.ts": "3e98efaa1c3aec6d77cdb4c8f7f9ffa42e8f2f49"
           },
           "evidence": "Quiet startup override and editor replacement have separate scoped lifetimes; replacement visibly preserves native settings/draft ownership, registers factory, then calls native init. Getter/conditional restoration explicit.",
-          "checks": [
-            "Independent 125 tests /859 assertions",
-            "Pinned Biome check and diff check"
-          ],
+          "checks": ["Independent 125 tests /859 assertions", "Pinned Biome check and diff check"],
           "limits": [
             "Startup simulates native initialization; Live mocks getter",
             "No build/typecheck/compiled PTY/provider/device/SSH"
@@ -2808,21 +2487,14 @@
       "launchBase": "d7e889d63db0f7a6971e75725bbe4144d7b7b4b6",
       "changedRelatedPaths": [],
       "result": "No-change candidate: editor replacement groups guard, settings/draft preservation, ownership updates, factory registration and native init.",
-      "checks": [
-        "95 tests /527 assertions",
-        "Focused Biome/diff"
-      ],
-      "limits": [
-        "No full build/compiled PTY/device/provider/SSH"
-      ],
+      "checks": ["95 tests /527 assertions", "Focused Biome/diff"],
+      "limits": ["No full build/compiled PTY/device/provider/SSH"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "3e98efaa1c3aec6d77cdb4c8f7f9ffa42e8f2f49",
         "primaryId": "task_b0e54e09",
         "primaryCommit": "8d0911b585c89320ccee5d5b3c3981beb357e4a0",
-        "judgeIds": [
-          "task_f31c7dbc"
-        ],
+        "judgeIds": ["task_f31c7dbc"],
         "sourceCommit": "8d0911b585c89320ccee5d5b3c3981beb357e4a0",
         "state": "accepted-joined",
         "reason": "Existing primary-focus NO CHANGE NEEDED by task_f31c7dbc at 8d0911b585c89320ccee5d5b3c3981beb357e4a0; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
@@ -2858,34 +2530,22 @@
             "Strict focused source typecheck",
             "Biome format/diff"
           ],
-          "limits": [
-            "No full build/compiled PTY/authenticated provider"
-          ]
+          "limits": ["No full build/compiled PTY/authenticated provider"]
         }
       ],
       "acceptedBlob": "e8e8acee76a03e64ed27a50ce9bc886f1e8d05fd",
       "integrationState": "integrated unchanged from judged candidate",
       "launchBase": "808375961557a918570c0a7d0ed7bf966fb1f487",
-      "changedRelatedPaths": [
-        "tests/subagent-settings-ui.test.ts"
-      ],
+      "changedRelatedPaths": ["tests/subagent-settings-ui.test.ts"],
       "result": "Candidate picker state owns return row instead of split screen/type/row fields and hidden rebuild selection restoration.",
-      "checks": [
-        "16 tests /105 assertions",
-        "Focused source typecheck/format/diff",
-        "lint exit 0 existing advisories"
-      ],
-      "limits": [
-        "No full build/compiled PTY"
-      ],
+      "checks": ["16 tests /105 assertions", "Focused source typecheck/format/diff", "lint exit 0 existing advisories"],
+      "limits": ["No full build/compiled PTY"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "e8e8acee76a03e64ed27a50ce9bc886f1e8d05fd",
         "primaryId": "task_3ec62165",
         "primaryCommit": "f14b45ab14702f6e697aca70b3d929d7a55c6dac",
-        "judgeIds": [
-          "task_2c6056ba"
-        ],
+        "judgeIds": ["task_2c6056ba"],
         "sourceCommit": "f14b45ab14702f6e697aca70b3d929d7a55c6dac",
         "state": "accepted-joined",
         "reason": "Existing primary-focus ACCEPT by task_2c6056ba at f14b45ab14702f6e697aca70b3d929d7a55c6dac; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
@@ -2936,17 +2596,13 @@
         "Temporary exact-base comparison: 500 identical frames, inspection args and stop decisions",
         "Biome check existing warnings/diff"
       ],
-      "limits": [
-        "No build/typecheck/packaged TUI/provider/authenticated SSH; dist absent"
-      ],
+      "limits": ["No build/typecheck/packaged TUI/provider/authenticated SSH; dist absent"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "eab5344adabce4d6aa098c044af1c55efcc7f904",
         "primaryId": "task_8f7cb2e9",
         "primaryCommit": "95d39e5cce2b60fc40d687fb0c7bb4c7a1b5142e",
-        "judgeIds": [
-          "task_77087f04"
-        ],
+        "judgeIds": ["task_77087f04"],
         "sourceCommit": "95d39e5cce2b60fc40d687fb0c7bb4c7a1b5142e",
         "state": "accepted-joined",
         "reason": "Existing primary-focus ACCEPT by task_77087f04 at 95d39e5cce2b60fc40d687fb0c7bb4c7a1b5142e; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
@@ -2982,26 +2638,20 @@
             "30 candidate tests against exact base /446 assertions",
             "Pinned Biome format/lint and diff check"
           ],
-          "limits": [
-            "No full build/gate/compiled terminal/live provider/authenticated SSH"
-          ]
+          "limits": ["No full build/gate/compiled terminal/live provider/authenticated SSH"]
         }
       ],
       "acceptedBlob": "fe08b5d617e02ae6ec57c4fc479f3433977f34ed",
       "integrationState": "exact primary accepted blob and SDK/density combined join accepted",
       "launchBase": "808375961557a918570c0a7d0ed7bf966fb1f487",
-      "changedRelatedPaths": [
-        "tests/task-rows.test.ts"
-      ],
+      "changedRelatedPaths": ["tests/task-rows.test.ts"],
       "result": "Candidate chooses lifecycle authority once, refreshes metadata once and publishes once instead of duplicated merge/write branches.",
       "checks": [
         "106 tests /965 assertions across four suites",
         "30 task-row tests pass baseline",
         "format/diff/lint exit 0, eight existing infos"
       ],
-      "limits": [
-        "No full build/live/authenticated SSH/compiled CLI"
-      ],
+      "limits": ["No full build/live/authenticated SSH/compiled CLI"],
       "joinJudgments": [
         {
           "id": "task_060d7edf",
@@ -3015,9 +2665,7 @@
         "acceptedBlob": "fe08b5d617e02ae6ec57c4fc479f3433977f34ed",
         "primaryId": "task_3856c420",
         "primaryCommit": "eeb7a1d09e39e95ba7aecff9f09c98c21b4997f1",
-        "judgeIds": [
-          "task_24064ab2"
-        ],
+        "judgeIds": ["task_24064ab2"],
         "sourceCommit": "eeb7a1d09e39e95ba7aecff9f09c98c21b4997f1",
         "state": "accepted-joined",
         "reason": "Existing primary-focus ACCEPT by task_24064ab2 at eeb7a1d09e39e95ba7aecff9f09c98c21b4997f1; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
@@ -3061,9 +2709,7 @@
         "status": "pending",
         "primaryId": null,
         "primaryCommit": null,
-        "judgeIds": [
-          "task_150f5c27"
-        ],
+        "judgeIds": ["task_150f5c27"],
         "sourceCommit": "98bd940bd8dc870efa814074b7c038649d4df706",
         "state": "needs-primary",
         "reason": "Existing related-path ACCEPT by task_150f5c27 at 98bd940bd8dc870efa814074b7c038649d4df706, blob 0f1dd3b4c1ae423fc0528c369c0a33efc71f6dc8; exact candidate verified. Related blob already joined. Dedicated primary-focus acceptance is missing."
@@ -3089,9 +2735,7 @@
         "status": "pending",
         "primaryId": null,
         "primaryCommit": null,
-        "judgeIds": [
-          "task_c4ad6e75"
-        ],
+        "judgeIds": ["task_c4ad6e75"],
         "sourceCommit": "b02afcce77ccd1ebb021dc6230641ab0294ce68e",
         "state": "needs-primary",
         "reason": "Existing related-path ACCEPT by task_c4ad6e75 at b02afcce77ccd1ebb021dc6230641ab0294ce68e, blob 2ee90a527228a19b6ebf3cad78ad5b9fc8ff7a3d; exact candidate verified. Related blob already joined. Dedicated primary-focus acceptance is missing."
@@ -3163,10 +2807,7 @@
             "Pinned Biome format/lint",
             "candidate and original CLI patch diff checks"
           ],
-          "limits": [
-            "Nine compiled cases unrun; no dist build",
-            "No provider/SSH/TTY/device"
-          ]
+          "limits": ["Nine compiled cases unrun; no dist build", "No provider/SSH/TTY/device"]
         }
       ],
       "acceptedBlob": "528e6e7735b03cdd9812839b8c18657884904713",
@@ -3182,22 +2823,14 @@
       "launchBase": "868ad04a4bc7bf245bb63eeb87767e7d55769691",
       "result": "Fresh primary no-change: fixture home/child/cleanup lifetime and compiled/source contracts keep bookkeeping local.",
       "changedRelatedPaths": [],
-      "checks": [
-        "6 source tests /42 assertions",
-        "Biome format/lint/diff"
-      ],
-      "limits": [
-        "9 compiled cases not run; need batch artifacts"
-      ],
+      "checks": ["6 source tests /42 assertions", "Biome format/lint/diff"],
+      "limits": ["9 compiled cases not run; need batch artifacts"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "528e6e7735b03cdd9812839b8c18657884904713",
         "primaryId": "task_f5df93a3",
         "primaryCommit": "3564daa6efa343e79ef9e5ddf6f1d34d6bd8f5b5",
-        "judgeIds": [
-          "task_a07a60a3",
-          "task_db22e114"
-        ],
+        "judgeIds": ["task_a07a60a3", "task_db22e114"],
         "sourceCommit": "3564daa6efa343e79ef9e5ddf6f1d34d6bd8f5b5",
         "state": "accepted-joined",
         "reason": "Existing primary-focus NO CHANGE NEEDED by task_a07a60a3 at 3564daa6efa343e79ef9e5ddf6f1d34d6bd8f5b5; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
@@ -3240,10 +2873,7 @@
           "base": "5ae62b2e32a076821c5c28aeef53100b2f8c7689",
           "candidate": "cf43fa6ef2bcbb84d142fbd3478300d85d7a0bf6",
           "verdict": "ACCEPT",
-          "priorRelatedJudges": [
-            "task_203052f5",
-            "task_060d7edf"
-          ],
+          "priorRelatedJudges": ["task_203052f5", "task_060d7edf"],
           "objections": [],
           "reviewedBlobs": {
             "tests/conversation-density.test.ts": "a3500820b45fc6b2223b3fc7770027ad4f601474"
@@ -3256,9 +2886,7 @@
             "Failure injection base add/remove/clear leaked, candidate restored",
             "format/lint/diff"
           ],
-          "limits": [
-            "No build/typecheck/provider/PTY/device"
-          ]
+          "limits": ["No build/typecheck/provider/PTY/device"]
         }
       ],
       "acceptedBlob": "a3500820b45fc6b2223b3fc7770027ad4f601474",
@@ -3289,18 +2917,13 @@
         "Failure probes show base leak/candidate cleanup",
         "format/lint/diff"
       ],
-      "limits": [
-        "Test fixture behavior fix explicit; no production edits/full build"
-      ],
+      "limits": ["Test fixture behavior fix explicit; no production edits/full build"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "a3500820b45fc6b2223b3fc7770027ad4f601474",
         "primaryId": "task_9bb57a1e",
         "primaryCommit": "cf43fa6ef2bcbb84d142fbd3478300d85d7a0bf6",
-        "judgeIds": [
-          "task_32a06541",
-          "task_203052f5"
-        ],
+        "judgeIds": ["task_32a06541", "task_203052f5"],
         "sourceCommit": "cf43fa6ef2bcbb84d142fbd3478300d85d7a0bf6",
         "state": "accepted-joined",
         "reason": "Existing primary-focus ACCEPT by task_32a06541 at cf43fa6ef2bcbb84d142fbd3478300d85d7a0bf6; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
@@ -3331,13 +2954,8 @@
             "tests/diagnostics.test.ts": "48a273afdc220bd4984fbc18739015dc4a86c88a"
           },
           "evidence": "Privacy traps, ring/write/replay boundaries, reentrant reservations and generation lifetimes have explicit local assertions. Actual SDK owned-session restoration distinguishes pre-append refusal from post-append failure.",
-          "checks": [
-            "Independent 13 tests /573 assertions",
-            "Biome three files/diff"
-          ],
-          "limits": [
-            "No full suite/build/live/authenticated SSH/macOS/device/compiled CLI"
-          ]
+          "checks": ["Independent 13 tests /573 assertions", "Biome three files/diff"],
+          "limits": ["No full suite/build/live/authenticated SSH/macOS/device/compiled CLI"]
         }
       ],
       "acceptedBlob": "48a273afdc220bd4984fbc18739015dc4a86c88a",
@@ -3353,19 +2971,13 @@
       "launchBase": "c18d20532ffe409cccc86719081ba8d0e0fba286",
       "changedRelatedPaths": [],
       "result": "No-change candidate: explicit privacy/replay/budget/generation/reentry and SDK leaf-restoration journeys with local assertions.",
-      "checks": [
-        "13 tests /573 assertions",
-        "format/diff"
-      ],
+      "checks": ["13 tests /573 assertions", "format/diff"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "48a273afdc220bd4984fbc18739015dc4a86c88a",
         "primaryId": "task_28d3f49e",
         "primaryCommit": "d2bf06b4b75226b367e8889279889527f076dab8",
-        "judgeIds": [
-          "task_a3ac95db",
-          "task_50dcf5f6"
-        ],
+        "judgeIds": ["task_a3ac95db", "task_50dcf5f6"],
         "sourceCommit": "d2bf06b4b75226b367e8889279889527f076dab8",
         "state": "accepted-joined",
         "reason": "Existing primary-focus NO CHANGE NEEDED by task_a3ac95db at d2bf06b4b75226b367e8889279889527f076dab8; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
@@ -3492,9 +3104,7 @@
             "Same prior 4-suite base 43/365 vs candidate 44/366",
             "Biome format/lint/diff"
           ],
-          "limits": [
-            "No build/typecheck/interactive/compiled CLI/provider/device/SSH"
-          ]
+          "limits": ["No build/typecheck/interactive/compiled CLI/provider/device/SSH"]
         }
       ],
       "acceptedBlob": "92878255d0c02ce9e906782e8757269a63221b9b",
@@ -3515,18 +3125,13 @@
         "Related observers 43 pass /363 assertions",
         "Biome format/lint/diff"
       ],
-      "limits": [
-        "Mocked only, no interactive CLI/provider/build/typecheck"
-      ],
+      "limits": ["Mocked only, no interactive CLI/provider/build/typecheck"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "92878255d0c02ce9e906782e8757269a63221b9b",
         "primaryId": "task_f4f7731b",
         "primaryCommit": "ecfd5a67ecdf054839b97e811999447f4f75da21",
-        "judgeIds": [
-          "task_dc793fa7",
-          "task_05ce27ca"
-        ],
+        "judgeIds": ["task_dc793fa7", "task_05ce27ca"],
         "sourceCommit": "ecfd5a67ecdf054839b97e811999447f4f75da21",
         "state": "accepted-joined",
         "reason": "Existing primary-focus ACCEPT by task_dc793fa7 at ecfd5a67ecdf054839b97e811999447f4f75da21; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
@@ -3633,9 +3238,7 @@
             "Three ordinary negatives retained; expanded-owner negative exposes weakening",
             "Biome/diff"
           ],
-          "limits": [
-            "Artificial mutant not production bug; no build/typecheck/compiled/provider/SSH"
-          ]
+          "limits": ["Artificial mutant not production bug; no build/typecheck/compiled/provider/SSH"]
         },
         {
           "id": "task_28221777",
@@ -3701,11 +3304,7 @@
         "acceptedBlob": "a502768eb70247ad2caceed71f88c1c6aa82533d",
         "primaryId": "task_2031ace4",
         "primaryCommit": "496389243e523220cae31f698ac02922890a578f",
-        "judgeIds": [
-          "task_6f3b1071",
-          "task_28221777",
-          "task_a6caab27"
-        ],
+        "judgeIds": ["task_6f3b1071", "task_28221777", "task_a6caab27"],
         "sourceCommit": "496389243e523220cae31f698ac02922890a578f",
         "state": "accepted-not-joined",
         "reason": "Existing primary-focus ACCEPT by task_28221777 at 496389243e523220cae31f698ac02922890a578f; exact candidate and surviving-area blob verified. Pinned joined tree lacks this accepted blob; parent owns joining. No new review or test execution. Final fresh rework writer task_2031ace4; original rejected primary task_1b754cf4/ad493ccc4986fb5c18bc708590a38232c84621bd retained in evidence."
@@ -3736,10 +3335,7 @@
             "tests/rolling-activity.test.ts": "dcd301abaa75cadf31522a28357a2fa68f08f820"
           },
           "evidence": "Local native fixture/command stubs expose contiguous grouping, callback provenance, permission/handoff boundaries, native expansion, scroll anchors and bounded rendering; abstraction adds navigation not clarity.",
-          "checks": [
-            "Independent48/267; disk companion1/4plus subprocess",
-            "Pinned format/diff"
-          ],
+          "checks": ["Independent48/267; disk companion1/4plus subprocess", "Pinned format/diff"],
           "limits": [
             "No build/typecheck/gate/compiled/live/device/provider/SSH/latency; companion not primary coverage"
           ]
@@ -3758,19 +3354,13 @@
       "launchBase": "28e3431334aaaf6888f1ce638057cc44eece8081",
       "changedRelatedPaths": [],
       "result": "No-change: ordered groups/provenance/permission/handoff/visibility/native expansion/scroll/render budget contracts local.",
-      "checks": [
-        "48tests/267assertions",
-        "format/diff"
-      ],
+      "checks": ["48tests/267assertions", "format/diff"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "dcd301abaa75cadf31522a28357a2fa68f08f820",
         "primaryId": "task_635acd35",
         "primaryCommit": "68e4045e79c099bd1397fb8f36e62b13d41fce80",
-        "judgeIds": [
-          "task_b0411e3d",
-          "task_a6caab27"
-        ],
+        "judgeIds": ["task_b0411e3d", "task_a6caab27"],
         "sourceCommit": "68e4045e79c099bd1397fb8f36e62b13d41fce80",
         "state": "accepted-joined",
         "reason": "Existing primary-focus NO CHANGE NEEDED by task_b0411e3d at 68e4045e79c099bd1397fb8f36e62b13d41fce80; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
@@ -3922,10 +3512,7 @@
           "base": "10c405fe18f54e15e915efe5d9a98ee37144f798",
           "candidate": "1b66a8d1dc898e2953e963da9f4af5b663bafd86",
           "verdict": "ACCEPT",
-          "priorRelatedJudges": [
-            "task_24064ab2",
-            "task_060d7edf"
-          ],
+          "priorRelatedJudges": ["task_24064ab2", "task_060d7edf"],
           "unresolved": "Observed TS2741 missing Component.invalidate in prior accepted related test; primary repairs one-line fixture only",
           "objections": [],
           "reviewedBlobs": {
@@ -3938,9 +3525,7 @@
             "Six-file UI join149/13662",
             "format/lint/diff"
           ],
-          "limits": [
-            "No build/full runtime/live/PTY"
-          ]
+          "limits": ["No build/full runtime/live/PTY"]
         }
       ],
       "acceptedBlob": "d2b90b93184b0a257924201768a79283208f9dd8",
@@ -3972,11 +3557,7 @@
         "acceptedBlob": "d2b90b93184b0a257924201768a79283208f9dd8",
         "primaryId": "task_e44a3fd7",
         "primaryCommit": "1b66a8d1dc898e2953e963da9f4af5b663bafd86",
-        "judgeIds": [
-          "task_c584a1d4",
-          "task_24064ab2",
-          "task_060d7edf"
-        ],
+        "judgeIds": ["task_c584a1d4", "task_24064ab2", "task_060d7edf"],
         "sourceCommit": "1b66a8d1dc898e2953e963da9f4af5b663bafd86",
         "state": "accepted-joined",
         "reason": "Existing primary-focus ACCEPT by task_c584a1d4 at 1b66a8d1dc898e2953e963da9f4af5b663bafd86; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
@@ -4006,13 +3587,8 @@
             "tests/tasks-ui-proof-tooling.test.py": "5f4204a1afdf344f2e20858e98270ea2ff76b9eb"
           },
           "evidence": "Server/client/patch scopes and gate/barrier/cleanup assertions causal and local; fresh screen mutations and explicit mechanics-vs-appearance boundaries. Further extraction hides genuine causal relationships.",
-          "checks": [
-            "Independent22Python0skips4.058s realSSE/tmuxPythonstub",
-            "diff/clean"
-          ],
-          "limits": [
-            "No compiledCLI/SDKproduct/browser/genuinePNG/11screenvisual/fullbuild"
-          ]
+          "checks": ["Independent22Python0skips4.058s realSSE/tmuxPythonstub", "diff/clean"],
+          "limits": ["No compiledCLI/SDKproduct/browser/genuinePNG/11screenvisual/fullbuild"]
         }
       ],
       "acceptedBlob": "5f4204a1afdf344f2e20858e98270ea2ff76b9eb",
@@ -4032,19 +3608,13 @@
         }
       ],
       "result": "No-change genuine primary: fixture/patch lifetimes/SSE/tmuxstub/barriers/provenance/audit/cleanup regression ownership causal assertions clear",
-      "checks": [
-        "22Python0skips",
-        "diff/clean"
-      ],
+      "checks": ["22Python0skips", "diff/clean"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "5f4204a1afdf344f2e20858e98270ea2ff76b9eb",
         "primaryId": "task_921c1b1e",
         "primaryCommit": "c6fd15afdb82262758a71652a94d755d9ed3de38",
-        "judgeIds": [
-          "task_6512e607",
-          "task_fca35838"
-        ],
+        "judgeIds": ["task_6512e607", "task_fca35838"],
         "sourceCommit": "c6fd15afdb82262758a71652a94d755d9ed3de38",
         "state": "accepted-not-joined",
         "reason": "Existing primary-focus NO CHANGE NEEDED by task_6512e607 at c6fd15afdb82262758a71652a94d755d9ed3de38; exact candidate and surviving-area blob verified. Pinned joined tree lacks this accepted blob; parent owns joining. No new review or test execution."
@@ -4110,10 +3680,7 @@
         "acceptedBlob": "157c77305cba239e6c5e2ee273f5d1d4f72eb93d",
         "primaryId": "task_58841b38",
         "primaryCommit": "03a4c651a1a8967ecfe8090b1f7377ce9af6d511",
-        "judgeIds": [
-          "task_9704585a",
-          "task_16ed90d7"
-        ],
+        "judgeIds": ["task_9704585a", "task_16ed90d7"],
         "sourceCommit": "03a4c651a1a8967ecfe8090b1f7377ce9af6d511",
         "state": "accepted-joined",
         "reason": "Existing primary-focus ACCEPT by task_9704585a at 03a4c651a1a8967ecfe8090b1f7377ce9af6d511; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
@@ -4149,9 +3716,7 @@
             "Semantic input comparison, meaningful combined scenarios preserved",
             "Biome check/diff"
           ],
-          "limits": [
-            "No build/typecheck/provider/paint/compiled parity/latency"
-          ]
+          "limits": ["No build/typecheck/provider/paint/compiled parity/latency"]
         }
       ],
       "acceptedBlob": "bc294fef540ca659193c1016c537260cff5ec247",
@@ -4167,23 +3732,14 @@
       "launchBase": "e2858e433821f359346cac97b1547653ebb9f13e",
       "changedRelatedPaths": [],
       "result": "Candidate groups report contracts into coherent suites; malformed/repetition/identity negatives fresh named fixtures, deliberate multi-invalid order scenarios retained.",
-      "checks": [
-        "40tests/213assertions",
-        "Report/normalizer136assertions retained",
-        "Biome/diff"
-      ],
-      "limits": [
-        "No build/typecheck/latency"
-      ],
+      "checks": ["40tests/213assertions", "Report/normalizer136assertions retained", "Biome/diff"],
+      "limits": ["No build/typecheck/latency"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "bc294fef540ca659193c1016c537260cff5ec247",
         "primaryId": "task_374aa134",
         "primaryCommit": "92a6e31512ade19844c2ec80bcc089fd24143141",
-        "judgeIds": [
-          "task_b8bd6e1b",
-          "task_e42d2c99"
-        ],
+        "judgeIds": ["task_b8bd6e1b", "task_e42d2c99"],
         "sourceCommit": "92a6e31512ade19844c2ec80bcc089fd24143141",
         "state": "accepted-not-joined",
         "reason": "Existing primary-focus ACCEPT by task_b8bd6e1b at 92a6e31512ade19844c2ec80bcc089fd24143141; exact candidate and surviving-area blob verified. Pinned joined tree lacks this accepted blob; parent owns joining. No new review or test execution."
@@ -4219,9 +3775,7 @@
             "Base16/145; candidate profiler pair33/247",
             "format/lint/diff"
           ],
-          "limits": [
-            "No build/typecheck/provider/device/SSH/performance"
-          ]
+          "limits": ["No build/typecheck/provider/device/SSH/performance"]
         }
       ],
       "acceptedBlob": "46abbafdc26b90a509b33f330bca9c13b348545a",
@@ -4248,10 +3802,7 @@
         "acceptedBlob": "46abbafdc26b90a509b33f330bca9c13b348545a",
         "primaryId": "task_b9c5eb3e",
         "primaryCommit": "4bec0ca300a19bd4ee0b9f25438c1d8da4a42ef2",
-        "judgeIds": [
-          "task_432725ee",
-          "task_40ff7535"
-        ],
+        "judgeIds": ["task_432725ee", "task_40ff7535"],
         "sourceCommit": "4bec0ca300a19bd4ee0b9f25438c1d8da4a42ef2",
         "state": "accepted-joined",
         "reason": "Existing primary-focus ACCEPT by task_432725ee at 4bec0ca300a19bd4ee0b9f25438c1d8da4a42ef2; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
@@ -4336,10 +3887,7 @@
             "tests/terminal-perf-profiler.test.ts": "708996371dabfb105ba97e010979b60c3af5b271"
           },
           "evidence": "Local fixture clocks and real Pi next-tick tests expose batching/eviction/timing boundaries, errors and descriptor restoration; generic fixture extraction would hide clock differences.",
-          "checks": [
-            "Independent focus17/102; composition4/52; action16/145",
-            "Pinned format/lint/diff"
-          ],
+          "checks": ["Independent focus17/102; composition4/52; action16/145", "Pinned format/lint/diff"],
           "limits": [
             "Broader Biome check existing import-order assist fails",
             "No build/typecheck/full suite/CLI/PTY/device/platform/latency"
@@ -4359,24 +3907,14 @@
       "launchBase": "53cfb1e81e44d5ff23f81cabb3b21853d15d38b8",
       "changedRelatedPaths": [],
       "result": "No-change: local clocks, frame-consumed request/input scopes, real Pi scheduling/timing/native errors/descriptor restoration have explicit test ownership.",
-      "checks": [
-        "17focus/102assertions",
-        "4composition/52assertions",
-        "format/lint/diff"
-      ],
-      "limits": [
-        "Broader biome check existing import-order assist",
-        "No build"
-      ],
+      "checks": ["17focus/102assertions", "4composition/52assertions", "format/lint/diff"],
+      "limits": ["Broader biome check existing import-order assist", "No build"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "708996371dabfb105ba97e010979b60c3af5b271",
         "primaryId": "task_6b781769",
         "primaryCommit": "68ea091b9d1751f98c5c6ca5aa96591c05662c94",
-        "judgeIds": [
-          "task_74718e8d",
-          "task_5e042418"
-        ],
+        "judgeIds": ["task_74718e8d", "task_5e042418"],
         "sourceCommit": "68ea091b9d1751f98c5c6ca5aa96591c05662c94",
         "state": "accepted-joined",
         "reason": "Existing primary-focus NO CHANGE NEEDED by task_74718e8d at 68ea091b9d1751f98c5c6ca5aa96591c05662c94; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
@@ -4498,9 +4036,7 @@
         "status": "pending",
         "primaryId": null,
         "primaryCommit": null,
-        "judgeIds": [
-          "task_d455a9d6"
-        ],
+        "judgeIds": ["task_d455a9d6"],
         "sourceCommit": "747c31b8e52eff45ab2c585e5974eeb9d50cd85a",
         "state": "needs-primary",
         "reason": "Existing related-path ACCEPT by task_d455a9d6 at 747c31b8e52eff45ab2c585e5974eeb9d50cd85a, blob d274acb072ed06375c1ee234379d57a32aa026cb; exact candidate verified. Related blob not joined; parent may join only with its existing narrow judgment. Dedicated primary-focus acceptance is missing."
@@ -4666,10 +4202,7 @@
           "base": "57c0d3c3bfc9b1fcd00dce2a9534c5ccc490dc9f",
           "candidate": "e684683cd2ab8d675e88f557c49763b5ff279780",
           "verdict": "ACCEPT",
-          "priorSourceJudges": [
-            "task_c420e381 REJECT",
-            "task_73d21038 ACCEPT rework"
-          ],
+          "priorSourceJudges": ["task_c420e381 REJECT", "task_73d21038 ACCEPT rework"],
           "objections": [],
           "reviewedBlobs": {
             "tests/ansi-video-renderer.test.py": "d720b8a1abde5a6517400921639390f46387f3dd"
@@ -4682,9 +4215,7 @@
             "All5patches restore success/encoder/audit failures",
             "diff clean"
           ],
-          "limits": [
-            "Mocked rendering only; no real encoding/build/CLI/provider/SSH/visual/product"
-          ]
+          "limits": ["Mocked rendering only; no real encoding/build/CLI/provider/SSH/visual/product"]
         }
       ],
       "acceptedBlob": "d720b8a1abde5a6517400921639390f46387f3dd",
@@ -4697,18 +4228,13 @@
         "Timeline replacement fails rejected original renderer, passes accepted production",
         "Patch restoration/isolation probe and diff"
       ],
-      "limits": [
-        "No media/visual/product/build"
-      ],
+      "limits": ["No media/visual/product/build"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "d720b8a1abde5a6517400921639390f46387f3dd",
         "primaryId": "task_c89c25be",
         "primaryCommit": "e684683cd2ab8d675e88f557c49763b5ff279780",
-        "judgeIds": [
-          "task_73d21038",
-          "task_c7691cb3"
-        ],
+        "judgeIds": ["task_73d21038", "task_c7691cb3"],
         "sourceCommit": "e684683cd2ab8d675e88f557c49763b5ff279780",
         "state": "accepted-joined",
         "reason": "Existing primary-focus ACCEPT by task_c7691cb3 at e684683cd2ab8d675e88f557c49763b5ff279780; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
@@ -4740,13 +4266,8 @@
             "tests/terminal-interactions-normalize.test.ts": "96a49888775e77328e9cbeb1f416f2b5347b345b"
           },
           "evidence": "Local synthetic records expose disjoint init/action, zero vs unknown, lifecycle evidence precedence and peak-not-sum accounting; no hidden fixture authority or needed abstraction.",
-          "checks": [
-            "Independent3primary/68assertions,24combined/164assertions",
-            "Pinned Biome check/diff"
-          ],
-          "limits": [
-            "Synthetic durations not latency; no fresh workload/typecheck/build/provider/network/PTY"
-          ]
+          "checks": ["Independent3primary/68assertions,24combined/164assertions", "Pinned Biome check/diff"],
+          "limits": ["Synthetic durations not latency; no fresh workload/typecheck/build/provider/network/PTY"]
         }
       ],
       "acceptedBlob": "96a49888775e77328e9cbeb1f416f2b5347b345b",
@@ -4762,20 +4283,13 @@
       "launchBase": "29ea20c0ccfece95029f0eef1c7d6c137abc37f1",
       "changedRelatedPaths": [],
       "result": "No-change: local synthetic records expose init/action, zero/null, lifecycle input/stage precedence and teardown exclusion directly.",
-      "checks": [
-        "3primary/68assertions",
-        "24related/164assertions",
-        "Biome/diff"
-      ],
+      "checks": ["3primary/68assertions", "24related/164assertions", "Biome/diff"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "96a49888775e77328e9cbeb1f416f2b5347b345b",
         "primaryId": "task_c93f9a76",
         "primaryCommit": "694eb962f1db0458cf6bb395b25e9c8ab7f46a70",
-        "judgeIds": [
-          "task_0d381a57",
-          "task_23bf0f9f"
-        ],
+        "judgeIds": ["task_0d381a57", "task_23bf0f9f"],
         "sourceCommit": "694eb962f1db0458cf6bb395b25e9c8ab7f46a70",
         "state": "accepted-joined",
         "reason": "Existing primary-focus NO CHANGE NEEDED by task_0d381a57 at 694eb962f1db0458cf6bb395b25e9c8ab7f46a70; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
@@ -4811,9 +4325,7 @@
             "Six bodies AST unchanged; production unchanged",
             "Negative control reproduced baseline rejection vs candidate pass"
           ],
-          "limits": [
-            "Real inherited probes still ten screen failures; no product acceptance"
-          ]
+          "limits": ["Real inherited probes still ten screen failures; no product acceptance"]
         },
         {
           "id": "task_ce1af6b4",
@@ -4837,9 +4349,7 @@
             "Three-version mutant and six identical AST bodies/all8contracts18predicates/production bytes unchanged",
             "compile/help/diff"
           ],
-          "limits": [
-            "Inherited10real screen failures; no product acceptance/new terminal run/full build"
-          ]
+          "limits": ["Inherited10real screen failures; no product acceptance/new terminal run/full build"]
         }
       ],
       "acceptedBlob": "4d6e5207586f61dfc1662548d2395830eac5ef0f",
@@ -4860,9 +4370,7 @@
         "Original mutant StopIteration; rejected candidate passes; rework fails2!=3atREADY",
         "Six bodies AST identical;8contracts/18predicate names retained"
       ],
-      "limits": [
-        "No new terminal run; prior ten screen failures remain"
-      ],
+      "limits": ["No new terminal run; prior ten screen failures remain"],
       "reworks": [
         {
           "id": "task_3a95a2db",
@@ -4879,11 +4387,7 @@
         "acceptedBlob": "4d6e5207586f61dfc1662548d2395830eac5ef0f",
         "primaryId": "task_3a95a2db",
         "primaryCommit": "a2c2b9f33764fde811d082c1fbf812c46b5cee15",
-        "judgeIds": [
-          "task_3bc6b56e",
-          "task_ce1af6b4",
-          "task_988afb2b"
-        ],
+        "judgeIds": ["task_3bc6b56e", "task_ce1af6b4", "task_988afb2b"],
         "sourceCommit": "a2c2b9f33764fde811d082c1fbf812c46b5cee15",
         "state": "accepted-joined",
         "reason": "Existing primary-focus ACCEPT by task_ce1af6b4 at a2c2b9f33764fde811d082c1fbf812c46b5cee15; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution. Final fresh rework writer task_3a95a2db; original rejected primary task_09dea81c/e6e787e74a42fc4228198cf91cc26d8285162ec8 retained in evidence."
@@ -4937,23 +4441,14 @@
       "launchBase": "b3ba838f312025822bf41e69da23c4ada4c9579f",
       "changedRelatedPaths": [],
       "result": "No-change: owned fixture cleanup, local source reset between preflight errors, compile/source-mutation failure with no published record explicit.",
-      "checks": [
-        "4tests/20assertions",
-        "format/lint",
-        "Read-only host/symlink preservation stub probe"
-      ],
-      "limits": [
-        "Stubs not real native/UI proof"
-      ],
+      "checks": ["4tests/20assertions", "format/lint", "Read-only host/symlink preservation stub probe"],
+      "limits": ["Stubs not real native/UI proof"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "d132c1709bbc03d1e3851dd2e6886ed50fc8bf0d",
         "primaryId": "task_eed22df6",
         "primaryCommit": "fd1e6f44a2c88c3f1ac311087b90efb65f6e980d",
-        "judgeIds": [
-          "task_f9504048",
-          "task_db1c285c"
-        ],
+        "judgeIds": ["task_f9504048", "task_db1c285c"],
         "sourceCommit": "fd1e6f44a2c88c3f1ac311087b90efb65f6e980d",
         "state": "accepted-joined",
         "reason": "Existing primary-focus NO CHANGE NEEDED by task_db1c285c at fd1e6f44a2c88c3f1ac311087b90efb65f6e980d; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
@@ -4991,10 +4486,7 @@
             "tests/terminal-interactions-options.test.ts": "716e22bf607d13777996f2aabdc0479a4f37b329"
           },
           "evidence": "Defaults/explicit budget, token consumption/errors, selector authority and saved-report child/temp lifetime coherent; unusable selectors and altered dimensions prove preserved saved config with independent artifact dirs.",
-          "checks": [
-            "Independent38tests195assertions",
-            "Exactdiagnostic/value probes, hash/diff/clean"
-          ],
+          "checks": ["Independent38tests195assertions", "Exactdiagnostic/value probes, hash/diff/clean"],
           "limits": [
             "Existing test timeout not forced childteardown",
             "No build/typecheck/compiledCLI/provider/SSH/platform/paint"
@@ -5004,19 +4496,13 @@
       "acceptedBlob": "716e22bf607d13777996f2aabdc0479a4f37b329",
       "integrationState": "new-file genuine primary and fresh judge accepted unchanged final blob",
       "result": "No-change primary: defaults/budget, token consumption, negative diagnostics, catalog authority, child/temp lifetime coherent.",
-      "checks": [
-        "38tests/195assertions after localWASM copy",
-        "Whitespace"
-      ],
+      "checks": ["38tests/195assertions after localWASM copy", "Whitespace"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "716e22bf607d13777996f2aabdc0479a4f37b329",
         "primaryId": "task_22861d44",
         "primaryCommit": "e033b0e3cbe52a0b0a40e54e8e30f523042b1b6a",
-        "judgeIds": [
-          "task_4c71fe7d",
-          "task_9cc2ecb4"
-        ],
+        "judgeIds": ["task_4c71fe7d", "task_9cc2ecb4"],
         "sourceCommit": "e033b0e3cbe52a0b0a40e54e8e30f523042b1b6a",
         "state": "accepted-not-joined",
         "reason": "Existing primary-focus NO CHANGE NEEDED by task_9cc2ecb4 at e033b0e3cbe52a0b0a40e54e8e30f523042b1b6a; exact candidate and surviving-area blob verified. Pinned joined tree lacks this accepted blob; parent owns joining. No new review or test execution."
@@ -5054,10 +4540,7 @@
             "tests/terminal-perf-dashboard.test.ts": "3fb03fa6b61f5a7d088b5611738e0b0c2f29d917"
           },
           "evidence": "Fixture→isolatedVM/DOM→directevents→literalassertions already coherent; selection/chart/hover/ranking/security payload contracts locally legible.",
-          "checks": [
-            "Independent10tests62assertions",
-            "ReadonlyBiome/diff/clean/hash"
-          ],
+          "checks": ["Independent10tests62assertions", "ReadonlyBiome/diff/clean/hash"],
           "limits": [
             "Stub lazyIDs/seededdefault/numerictextContent may conceal markup/browser differences; not CSS/layout/paint/focus/dispatched-events proof",
             "Missing numeric phases not interaction null/unmeasured",
@@ -5068,19 +4551,13 @@
       "acceptedBlob": "3fb03fa6b61f5a7d088b5611738e0b0c2f29d917",
       "integrationState": "new-file dedicated primary and fresh judge accepted unchanged final blob",
       "result": "No-change primary: fixture→isolated DOM/VM→events→literal assertions visible; stubs not browser markup wiring/paint",
-      "checks": [
-        "10tests/62assertions",
-        "Biomecheck"
-      ],
+      "checks": ["10tests/62assertions", "Biomecheck"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "3fb03fa6b61f5a7d088b5611738e0b0c2f29d917",
         "primaryId": "task_f492439a",
         "primaryCommit": "29a206f7105f8b3d9e078be4eb6dc21d4710f04e",
-        "judgeIds": [
-          "task_0d31b493",
-          "task_a9e71449"
-        ],
+        "judgeIds": ["task_0d31b493", "task_a9e71449"],
         "sourceCommit": "29a206f7105f8b3d9e078be4eb6dc21d4710f04e",
         "state": "accepted-not-joined",
         "reason": "Existing primary-focus NO CHANGE NEEDED by task_a9e71449 at 29a206f7105f8b3d9e078be4eb6dc21d4710f04e; exact candidate and surviving-area blob verified. Pinned joined tree lacks this accepted blob; parent owns joining. No new review or test execution."
@@ -5137,20 +4614,13 @@
       },
       "integrationState": "new-file genuine primary and fresh judge accepted final test improvement",
       "result": "Candidate test improvement exposes parsed browserdata immutability assertion; original serialized-input assertion insensitive to in-place sort",
-      "checks": [
-        "33tests104assertions",
-        "Base in-place mutant passes;candidate fails",
-        "Biome"
-      ],
+      "checks": ["33tests104assertions", "Base in-place mutant passes;candidate fails", "Biome"],
       "resume": {
         "status": "accepted",
         "acceptedBlob": "c1200835ac2ef2ba622ebe0b2de0e7de7063fe98",
         "primaryId": "task_b25f56dc",
         "primaryCommit": "ff0ececc2e4c74dd103ecaa54113e726fda8e346",
-        "judgeIds": [
-          "task_a52a6008",
-          "task_a8281cbe"
-        ],
+        "judgeIds": ["task_a52a6008", "task_a8281cbe"],
         "sourceCommit": "ff0ececc2e4c74dd103ecaa54113e726fda8e346",
         "state": "accepted-not-joined",
         "reason": "Existing primary-focus ACCEPT by task_a8281cbe at ff0ececc2e4c74dd103ecaa54113e726fda8e346; exact candidate and surviving-area blob verified. Pinned joined tree lacks this accepted blob; parent owns joining. No new review or test execution."
@@ -5167,9 +4637,7 @@
         "acceptedBlob": "bedf45729fe64d9fbfb6639d6d2dd5c3138742f8",
         "primaryId": "task_130d6085",
         "primaryCommit": "ca4a39af1b7b3f729c7d04504cd22f2ab880ed13",
-        "judgeIds": [
-          "task_529a783b"
-        ],
+        "judgeIds": ["task_529a783b"],
         "sourceCommit": "ca4a39af1b7b3f729c7d04504cd22f2ab880ed13",
         "state": "accepted-joined",
         "reason": "The function exposes its whole fixture contract in construction order: validate size, allocate its own root, write the session header, build the alternating u/a parent chain, append alternate at u0, persist JSONL, then return both leaves, byte count, body hash and disposal. The hash exclusion is visible beside the temporary cwd header; no independent graph or lifetime policy is scattered across helpers. Extracting this linear construction would obscure rather than consolidate ownership."
@@ -5186,9 +4654,7 @@
         "acceptedBlob": "481ff7b573d31037866b107623c8b18aeeed6970",
         "primaryId": "task_7ac8ab0a",
         "primaryCommit": "d7a44119cc7148769f1042a0929eec7121203f2e",
-        "judgeIds": [
-          "task_529a783b"
-        ],
+        "judgeIds": ["task_529a783b"],
         "sourceCommit": "d7a44119cc7148769f1042a0929eec7121203f2e",
         "state": "accepted-joined",
         "reason": "InteractiveNavigationCapture gives one concrete owner to the renderer/terminal/profiler association, resets, snapshots, stage/input evidence and profiler disposal. Previously stage capture reached through app plus optional appTerminal/appProfiler while input capture independently repeated output/screen/frame collection. The candidate removes that reconstruction: both paths consume the same snapshot and record shape. This is a bounded measurement owner, not an orchestrator context bag. The outer function still visibly orders construction/init, named key actions, awaitable navigation/resume/fork, final context and teardown."
@@ -5205,9 +4671,7 @@
         "acceptedBlob": "d2643f1280f9769585963939a597ea3154b96dce",
         "primaryId": "task_1e242769",
         "primaryCommit": "ca4a39af1b7b3f729c7d04504cd22f2ab880ed13",
-        "judgeIds": [
-          "task_529a783b"
-        ],
+        "judgeIds": ["task_529a783b"],
         "sourceCommit": "ca4a39af1b7b3f729c7d04504cd22f2ab880ed13",
         "state": "accepted-joined",
         "reason": "The helper keeps its transport state and lifetime together: start stores callbacks, send requires a live input callback and dispatches directly, stop clears both callbacks, and all ANSI output methods append through write. The declaration says this is a counting transport after decoding, so drainInput and setProgress having no transport effects are locally understandable. There is no scattered semantic or measurement authority to repair by extraction."
@@ -5268,9 +4732,7 @@
       "scope": "Combined UI causal-state/adapter +terminal parser/report/dashboard +full tsc+7pathformat/lint",
       "status": "pass",
       "log": "runtime-assets/readability-batch5.log",
-      "proof": [
-        "165 pass\n 0 fail\n 1322 expect() calls\nRan 165 tests across 12 files. [7.52s]"
-      ],
+      "proof": ["165 pass\n 0 fail\n 1322 expect() calls\nRan 165 tests across 12 files. [7.52s]"],
       "static": "Full tsc +7pathformat/lint pass;3existing informational lint diagnostics"
     },
     {
@@ -5279,9 +4741,7 @@
       "scope": "Post-third-parent-merge nativeproof22Python +Bun proofbuilder/dashboard/report/options +fulltsc+2pathformatlint",
       "status": "pass",
       "log": "runtime-assets/readability-batch6.log",
-      "proof": [
-        "43 pass\n 0 fail\n 190 expect() calls\nRan 43 tests across 4 files. [539.00ms]"
-      ],
+      "proof": ["43 pass\n 0 fail\n 190 expect() calls\nRan 43 tests across 4 files. [539.00ms]"],
       "python": "22Python0skips",
       "static": "Fulltsc+2pathformat/lint pass;1existinginfo"
     }
@@ -5313,9 +4773,7 @@
       "src/ui/rolling-activity.ts": "66cf00a2db4b52746cc4595c4eab964acd863e42",
       "src/ui/execution-previews.ts": "7510d94b1cb34373854df0680caf60e017c83834"
     },
-    "limits": [
-      "No full build/typecheck/CLI/provider/SSH/physical-terminal/GC-timing"
-    ],
+    "limits": ["No full build/typecheck/CLI/provider/SSH/physical-terminal/GC-timing"],
     "laterTestRepair": {
       "judge": "task_c584a1d4",
       "blob": "d2b90b93184b0a257924201768a79283208f9dd8",
