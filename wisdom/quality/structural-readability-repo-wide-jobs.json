@@ -307,7 +307,7 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_9cf44661",
         "branch": "bruv/pr45-judge-3-remote-focuses-9cf44661",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled"
       },
       {
         "id": "task_0ebb2fc5",
@@ -365,6 +365,19 @@
         ],
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_b0f63162",
         "branch": "bruv/pr45-primary-3-remote-focuses-b0f63162",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_56130606",
+        "stage": "primary",
+        "focus": [
+          "tests/fixtures/remote-placement-e2e/models.json",
+          "tests/fixtures/remote-placement-e2e/scenario.ts",
+          "tests/fixtures/remote-placement-e2e/ssh-proxy.ts"
+        ],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_56130606",
+        "branch": "bruv/pr45-primary-3-remote-focuses-56130606",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
       }

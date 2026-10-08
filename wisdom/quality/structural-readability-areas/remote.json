@@ -176,18 +176,19 @@
     {
       "focus": "src/remote/CAPABILITY-INTEGRATION.md",
       "initialBlob": "152542f9ed3fbbe64bfa70019aa84873f3be7063",
-      "status": "pending",
+      "status": "accepted",
       "judgeRounds": [],
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "f89276b72f091ffc5c4d647628e3befa1334943b",
         "primaryId": "task_9b6af1ac",
         "primaryCommit": "a9296ce2c6de0c23f127cc5ebf29d38b4dcf4ec8",
-        "judgeIds": [],
+        "judgeIds": ["task_9cf44661"],
         "sourceCommit": "a9296ce2c6de0c23f127cc5ebf29d38b4dcf4ec8",
-        "state": "needs-judge",
-        "reason": "Saved job ended killed with exit143; worktree HEAD equals launch base and working tree has no preserved edit. Ledger running status is stale."
+        "state": "accepted-joined",
+        "reason": "The baseline mixed a production-wiring sentence with a contradictory not-yet-wired warning and combined child execution with owner control hooks. The candidate replaces that reconstruction burden with explicit authority/storage boundaries and a five-step human grant → child wait → owner sync → frozen client reply → durable owner acceptance/child observation journey. Separating owner hooks, child wait and client-local serving makes the process boundary visible. Replay, revocation and task-end decisions remain adjacent to their consequences; this is structural reading improvement, not rename churn."
       },
-      "acceptedBlob": null
+      "acceptedBlob": "f89276b72f091ffc5c4d647628e3befa1334943b"
     },
     {
       "focus": "src/remote/README.md",
@@ -1181,7 +1182,7 @@
     {
       "focus": "src/remote/repository.md",
       "initialBlob": "90e5d9625f8af05c4c3c5dee290e72b3b9353025",
-      "status": "pending",
+      "status": "accepted",
       "judgeRounds": [],
       "launchBase": "6dab803ed890711836c3d13c14762be8f92456d1",
       "primary": {
@@ -1190,15 +1191,16 @@
         "branch": "bruv/remote-primary-repository-guide-fa7d4319"
       },
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "c61021d88b4267389d3d4a4327045bf54b539c6e",
         "primaryId": "task_ddda5faa",
         "primaryCommit": "697e09e2b0654eebff54ce466322d0e2ab5db787",
-        "judgeIds": [],
+        "judgeIds": ["task_9cf44661"],
         "sourceCommit": "697e09e2b0654eebff54ce466322d0e2ab5db787",
-        "state": "needs-judge",
-        "reason": "Saved job ended killed with exit143; worktree HEAD equals launch base and working tree has no preserved edit. Ledger running status is stale."
+        "state": "accepted-joined",
+        "reason": "The formerly dense numbered paragraphs become four authority-labelled phases, each with a launch/export/apply stop condition. Source selection is discoverable before transfer, the return table separates repository application from task completion, and a dedicated receipt section explains uncertain apply and reconnect retention. The initial module/caller boundary prevents confusing byte download with permission to apply. Existing safety assertions remain explicit rather than being replaced by headings alone."
       },
-      "acceptedBlob": null
+      "acceptedBlob": "c61021d88b4267389d3d4a4327045bf54b539c6e"
     },
     {
       "focus": "src/remote/repository.ts",
@@ -1940,18 +1942,19 @@
     {
       "focus": "tests/fixtures/remote-e2e/models.json",
       "initialBlob": "449f47e499f8fa715b248f18a532415010004c52",
-      "status": "pending",
+      "status": "accepted",
       "judgeRounds": [],
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "449f47e499f8fa715b248f18a532415010004c52",
         "primaryId": "task_e2bf3034",
         "primaryCommit": "b11251c468f51c5a3f772e37c37306b783862fd5",
-        "judgeIds": [],
+        "judgeIds": ["task_9cf44661"],
         "sourceCommit": "b11251c468f51c5a3f772e37c37306b783862fd5",
-        "state": "needs-judge",
-        "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+        "state": "accepted-joined",
+        "reason": "The entire small JSON already places the loopback URL/port, OpenAI-completions API, explicitly fake key, model identity and token bounds together in one provider record. No scattered authority or lifetime decisions need restructuring. Its candidate blob equals the assigned baseline blob exactly; this judgment follows reading the actual configuration and consumers, not merely its unchanged status. The related placement-parent.ts change is independently suitable: stop versus launch selects only the code/ID, while the duplicate acknowledgement test and execute tool-call envelope have one shared home."
       },
-      "acceptedBlob": null
+      "acceptedBlob": "449f47e499f8fa715b248f18a532415010004c52"
     },
     {
       "focus": "tests/fixtures/remote-e2e/placement-parent.ts",
@@ -1960,6 +1963,7 @@
       "judgeRounds": [],
       "resume": {
         "status": "pending",
+        "acceptedBlob": "7b0319dca327f046657a13f42b110ffbee42fba4",
         "primaryId": "task_e2bf3034",
         "primaryCommit": "b11251c468f51c5a3f772e37c37306b783862fd5",
         "judgeIds": [],
@@ -4127,8 +4131,8 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 86,
-    "pending": 36
+    "accepted": 89,
+    "pending": 33
   },
   "extraFiles": [
     {

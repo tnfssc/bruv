@@ -6927,12 +6927,12 @@
     {
       "file": "src/remote/CAPABILITY-INTEGRATION.md",
       "initialBlob": "152542f9ed3fbbe64bfa70019aa84873f3be7063",
-      "status": "pending",
+      "status": "accepted",
       "area": "remote",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_9b6af1ac",
       "primaryCommit": "a9296ce2c6de0c23f127cc5ebf29d38b4dcf4ec8",
-      "judgeIds": [],
+      "judgeIds": ["task_9cf44661"],
       "sourceCommit": "a9296ce2c6de0c23f127cc5ebf29d38b4dcf4ec8",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
       "pendingReason": "Saved job ended killed with exit143; worktree HEAD equals launch base and working tree has no preserved edit. Ledger running status is stale.",
@@ -6969,6 +6969,21 @@
         "Biome did not process the Markdown focus; formatting could not be applied to this file with the mandated formatter.",
         "No setup, tests, builds, provider/device/credential checks, push, PR or merge performed; parent owns audited gates and independent exact-candidate judgment.",
         "No worker wisdom files changed; parent owns aggregate wisdom."
+      ],
+      "acceptedBlob": "f89276b72f091ffc5c4d647628e3befa1334943b",
+      "result": "The baseline mixed a production-wiring sentence with a contradictory not-yet-wired warning and combined child execution with owner control hooks. The candidate replaces that reconstruction burden with explicit authority/storage boundaries and a five-step human grant → child wait → owner sync → frozen client reply → durable owner acceptance/child observation journey. Separating owner hooks, child wait and client-local serving makes the process boundary visible. Replay, revocation and task-end decisions remain adjacent to their consequences; this is structural reading improvement, not rename churn.",
+      "systemReason": "At this exact candidate, extension.ts exposes human grant paths; operations.ts admits requestCapability but no agent grant. services.ts records a missing-grant need, waits in the child using owner-pinned BRUV_REMOTE_RUNTIME_STATE, then executes the mailbox with the same ID. owner.ts serializes authenticated identity/epoch-fenced control, checks live state/task identity, exposes pending needs on sync and marks terminal on cancellation/publication. client.ts releases its cache lock before serviceRemoteTask; services.ts freezes request/reply before control delivery and revokes locally before reporting ownerNotified. capability-runtime.ts rejects altered replay bytes and cancelled/revoked/terminal replies, persists immutable fsynced records, and enforces the documented 1024/32/64 bounds. ClientCapabilityStore and capabilities.ts retain exact read scopes, credential/path denial, regular-file/symlink checks, fatal UTF-8/output bounds and the concurrent-ancestor caveat. The guide now describes the actual child-owned Promise instead of the baseline owner-owned claim without removing security constraints or implying restart relaunch authority.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Enumerated exact candidate changed paths with git diff --name-only against the assigned primaryBase; read every changed source path and whole intrinsic focus.",
+        "git diff --check against assigned primaryBase returned no findings; not used as a readability verdict.",
+        "Compared full guide/diff against 092ecd7771c8d64383a22eae46143c4735f8dbf3; sole changed path is the focus. Traced grant, wait, sync servicing, replay, revoke and terminal branches in candidate source."
+      ],
+      "limits": [
+        "Safety for ALL descendants: NO sudo, recovery investigation, user secrets, shell deletion/cleanup commands, inherited HOME/config/SDK cleanup, nested shell traps, destructive git, or user-data mutation. User already recovered data and requested no recovery work. Tests must use explicit process argv/env and owned fs.mkdtemp fixture HOME/config/SDK; retain them, do not delete. Review filesystem/network effects BEFORE tests/setup. Existing test-code cleanup of provably owned temporary paths may be inspected but NEVER run a shell trap or inherited HOME removal. Need live auth/device? Report unverified, don't access credentials. Propagate these constraints verbatim. Independent code/review agents get durable worktrees, not /tmp code checkouts. Keep existing worktrees and candidate evidence. Test/source fixtures may use /tmp, but document durable provenance. Parent verifies runtime agent.model openai-codex/gpt-6.1-sol; native normal leaves only, no delegation.",
+        "Do NOT run setup, tests, builds: parent owns audited isolated gates. Shared dependencies are read-only; no reinstall or guard bypass. Preserve old worktrees/candidate edits. No push/new PR/merge, publication is parent-owned.",
+        "Static actual-source review only. No fixtures executed, no network/auth/device access, no descendants launched. Runtime agent.model verification remains parent-owned; this review does not attest it.",
+        "Durable review provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_9cf44661. All candidate source was read with git show at the specified commit, not checkout HEAD. No source or wisdom edits; only this untracked artifact written."
       ]
     },
     {
@@ -7359,12 +7374,12 @@
     {
       "file": "src/remote/repository.md",
       "initialBlob": "90e5d9625f8af05c4c3c5dee290e72b3b9353025",
-      "status": "pending",
+      "status": "accepted",
       "area": "remote",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_ddda5faa",
       "primaryCommit": "697e09e2b0654eebff54ce466322d0e2ab5db787",
-      "judgeIds": [],
+      "judgeIds": ["task_9cf44661"],
       "sourceCommit": "697e09e2b0654eebff54ce466322d0e2ab5db787",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
       "pendingReason": "Saved job ended killed with exit143; worktree HEAD equals launch base and working tree has no preserved edit. Ledger running status is stale.",
@@ -7396,6 +7411,21 @@
         "No setup, tests or builds run; parent owns audited isolated batch gates. No automatic setup failure was bypassed.",
         "Independent exact-candidate readability judgment remains for the parent to launch.",
         "No per-worker wisdom edits; parent owns aggregate wisdom."
+      ],
+      "acceptedBlob": "c61021d88b4267389d3d4a4327045bf54b539c6e",
+      "result": "The formerly dense numbered paragraphs become four authority-labelled phases, each with a launch/export/apply stop condition. Source selection is discoverable before transfer, the return table separates repository application from task completion, and a dedicated receipt section explains uncertain apply and reconnect retention. The initial module/caller boundary prevents confusing byte download with permission to apply. Existing safety assertions remain explicit rather than being replaced by headings alone.",
+      "systemReason": "Read repository.ts through capture, orphan snapshot assembly, export and integration. captureRepository selects current tracked diff by default, uses baseRef as explicit source provenance, rejects mixing explicit source with untracked input, verifies fingerprint/untracked stability and exports a history-free baseline. repository-wire.ts pins the launch descriptor, bounds/digest-checks upload, verifies HEAD and orphan history before launch, and only exports results for done tasks. repository-download.ts verifies page identity/digest/snapshot but does not establish completion. Both repository-wire.ts returnRepository and root-client.ts returnSource independently gate successful completion, download a local patch, serialize integration and retain an outcome. integrateRepositoryResult fences snapshot/digest and local HEAD/index/work, sends remote untracked/new/deleted/mode/invalid/conflicting results to review, and rejects nonempty explicit-source patches when matchesCurrent is false. It writes attempting before worktree-only apply, reports uncertain apply as review, retains receipts and never applies to the staged index. These concrete paths support the reorganized guide; its artifact-retention instructions remain caller responsibilities, not a new runtime atomicity claim.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Enumerated exact candidate changed paths with git diff --name-only against the assigned primaryBase; read every changed source path and whole intrinsic focus.",
+        "git diff --check against assigned primaryBase returned no findings; not used as a readability verdict.",
+        "Compared full guide/diff against 092ecd7771c8d64383a22eae46143c4735f8dbf3; sole changed path is the focus. Read full repository.ts and the relevant production launch/checkout/export/download/return functions, including unchanged review and receipt decisions."
+      ],
+      "limits": [
+        "Safety for ALL descendants: NO sudo, recovery investigation, user secrets, shell deletion/cleanup commands, inherited HOME/config/SDK cleanup, nested shell traps, destructive git, or user-data mutation. User already recovered data and requested no recovery work. Tests must use explicit process argv/env and owned fs.mkdtemp fixture HOME/config/SDK; retain them, do not delete. Review filesystem/network effects BEFORE tests/setup. Existing test-code cleanup of provably owned temporary paths may be inspected but NEVER run a shell trap or inherited HOME removal. Need live auth/device? Report unverified, don't access credentials. Propagate these constraints verbatim. Independent code/review agents get durable worktrees, not /tmp code checkouts. Keep existing worktrees and candidate evidence. Test/source fixtures may use /tmp, but document durable provenance. Parent verifies runtime agent.model openai-codex/gpt-6.1-sol; native normal leaves only, no delegation.",
+        "Do NOT run setup, tests, builds: parent owns audited isolated gates. Shared dependencies are read-only; no reinstall or guard bypass. Preserve old worktrees/candidate edits. No push/new PR/merge, publication is parent-owned.",
+        "Static actual-source review only. No fixtures executed, no network/auth/device access, no descendants launched. Runtime agent.model verification remains parent-owned; this review does not attest it.",
+        "Durable review provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_9cf44661. All candidate source was read with git show at the specified commit, not checkout HEAD. No source or wisdom edits; only this untracked artifact written."
       ]
     },
     {
@@ -11368,12 +11398,12 @@
     {
       "file": "tests/fixtures/remote-e2e/models.json",
       "initialBlob": "449f47e499f8fa715b248f18a532415010004c52",
-      "status": "pending",
+      "status": "accepted",
       "area": "remote",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_e2bf3034",
       "primaryCommit": "b11251c468f51c5a3f772e37c37306b783862fd5",
-      "judgeIds": [],
+      "judgeIds": ["task_9cf44661"],
       "sourceCommit": "b11251c468f51c5a3f772e37c37306b783862fd5",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
       "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
@@ -11407,6 +11437,22 @@
         "Inspected scripts/remote-e2e.sh effects: fixture key generation, Docker build/container, loopback port publication, SSH/curl probes and cleanup traps. Not executed; parent must use audited isolated gates, not run those shell traps.",
         "No delegation. Runtime agent.model verification belongs to parent.",
         "No wisdom files changed; parent owns aggregate note. Durable code provenance is this retained Git worktree and exact source commit; formatter-only temporary environment is retained at /tmp/pr45-remote-fixture-format-0DK3gT."
+      ],
+      "acceptedBlob": "449f47e499f8fa715b248f18a532415010004c52",
+      "result": "The entire small JSON already places the loopback URL/port, OpenAI-completions API, explicitly fake key, model identity and token bounds together in one provider record. No scattered authority or lifetime decisions need restructuring. Its candidate blob equals the assigned baseline blob exactly; this judgment follows reading the actual configuration and consumers, not merely its unchanged status. The related placement-parent.ts change is independently suitable: stop versus launch selects only the code/ID, while the duplicate acknowledgement test and execute tool-call envelope have one shared home.",
+      "systemReason": "Dockerfile copies this models.json into the fixture-owned agent directory and selects fixture/fixture-model via subagents.json. entrypoint.sh starts the fake provider on port 18765; fake-provider.ts serves /v1/chat/completions with OpenAI-compatible SSE and fixture-model identity, without outbound provider requests. This fixed owner endpoint is distinct from loopback-parent-fixture.ts, which writes an ephemeral local parent endpoint and streams placementReply results. Read all of placement-parent.ts and its exact diff: latest-user marker selection and no-marker acknowledgement are unchanged; PLACEMENT_STOP retains priority, fixed call ID and exact jobs.stop ID from the cancellation proof; normal/retry IDs and source-approval retryTaskId remain unchanged; matching tool results suppress a second execution. placementCode still requires an authorized pinned fixture-owner SSH target and a stable async SSH launch before saving proof. The three migrated runners use the shared parent provider; remote-e2e.ts uses the retry and stop markers. Unchanged tests explicitly assert target authorization, stable SSH IDs, source preflight/retry identity and exact cancellation. The candidate simplifies the common response envelope without weakening those decisions or changing the focus configuration.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Enumerated exact candidate changed paths with git diff --name-only against the assigned primaryBase; read every changed source path and whole intrinsic focus.",
+        "git diff --check against assigned primaryBase returned no findings; not used as a readability verdict.",
+        "Compared against a1a45b3c26fac604060d3fbf22ba1f37642d06e6; only changed path is placement-parent.ts. models.json baseline and candidate both resolve to 449f47e499f8fa715b248f18a532415010004c52.",
+        "Read full focus, full related changed source and exact diff; statically traced no-marker, launch, retry, stop, and tool-result acknowledgement paths. Read fixture setup/runner effects; did not execute setup, generated code or tests."
+      ],
+      "limits": [
+        "Safety for ALL descendants: NO sudo, recovery investigation, user secrets, shell deletion/cleanup commands, inherited HOME/config/SDK cleanup, nested shell traps, destructive git, or user-data mutation. User already recovered data and requested no recovery work. Tests must use explicit process argv/env and owned fs.mkdtemp fixture HOME/config/SDK; retain them, do not delete. Review filesystem/network effects BEFORE tests/setup. Existing test-code cleanup of provably owned temporary paths may be inspected but NEVER run a shell trap or inherited HOME removal. Need live auth/device? Report unverified, don't access credentials. Propagate these constraints verbatim. Independent code/review agents get durable worktrees, not /tmp code checkouts. Keep existing worktrees and candidate evidence. Test/source fixtures may use /tmp, but document durable provenance. Parent verifies runtime agent.model openai-codex/gpt-6.1-sol; native normal leaves only, no delegation.",
+        "Do NOT run setup, tests, builds: parent owns audited isolated gates. Shared dependencies are read-only; no reinstall or guard bypass. Preserve old worktrees/candidate edits. No push/new PR/merge, publication is parent-owned.",
+        "Static actual-source review only. No fixtures executed, no network/auth/device access, no descendants launched. Runtime agent.model verification remains parent-owned; this review does not attest it.",
+        "Durable review provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_9cf44661. All candidate source was read with git show at the specified commit, not checkout HEAD. No source or wisdom edits; only this untracked artifact written."
       ]
     },
     {
@@ -11451,7 +11497,9 @@
         "Inspected scripts/remote-e2e.sh effects: fixture key generation, Docker build/container, loopback port publication, SSH/curl probes and cleanup traps. Not executed; parent must use audited isolated gates, not run those shell traps.",
         "No delegation. Runtime agent.model verification belongs to parent.",
         "No wisdom files changed; parent owns aggregate note. Durable code provenance is this retained Git worktree and exact source commit; formatter-only temporary environment is retained at /tmp/pr45-remote-fixture-format-0DK3gT."
-      ]
+      ],
+      "acceptedRelatedJudges": ["task_9cf44661"],
+      "acceptedBlob": "7b0319dca327f046657a13f42b110ffbee42fba4"
     },
     {
       "file": "tests/fixtures/remote-e2e/sshd_config",
@@ -20924,9 +20972,9 @@
     "baselineFiles": 766,
     "finalGate": "pending; incomplete focus coverage",
     "liveAuth": "unverified/failing; preserved",
-    "accepted": 735,
+    "accepted": 738,
     "total": 834,
-    "pending": 99,
+    "pending": 96,
     "sourceExtras": 68,
     "checkout": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
     "branch": "bruv/readability-pr45-sol-continuation",
