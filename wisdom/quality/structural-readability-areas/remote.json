@@ -3107,18 +3107,19 @@
     {
       "focus": "tests/remote-placement-legacy-launch.test.ts",
       "initialBlob": "c829765e9417a9808e6663003f6e088d13b61da8",
-      "status": "pending",
+      "status": "accepted",
       "judgeRounds": [],
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "c829765e9417a9808e6663003f6e088d13b61da8",
         "primaryId": "task_e53d5663",
         "primaryCommit": "92f9a1d03312d29239a09c39f6843959a5f813a9",
-        "judgeIds": [],
+        "judgeIds": ["task_0acb4189"],
         "sourceCommit": "92f9a1d03312d29239a09c39f6843959a5f813a9",
-        "state": "needs-judge",
-        "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+        "state": "accepted-joined",
+        "reason": "The entire unchanged test has one authority: an injected client's launch counter. The two awaited rejection checks deliberately share that counter, then one final zero-launch assertion proves neither legacy entry point crossed the launch boundary. There is no hidden setup/lifetime to reconstruct or benefit from splitting the rejection checks into helpers. Exact base/candidate blobs match. I also separately read the two related changed test files rather than treating this unchanged decision as batch acceptance."
       },
-      "acceptedBlob": null
+      "acceptedBlob": "c829765e9417a9808e6663003f6e088d13b61da8"
     },
     {
       "focus": "tests/remote-placement.test.ts",
@@ -3454,18 +3455,19 @@
     {
       "focus": "tests/remote-runner-placement-fixture.test.ts",
       "initialBlob": "5273a14f9828b786ae844471460651e9bfa6305f",
-      "status": "pending",
+      "status": "accepted",
       "judgeRounds": [],
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "31204a6799b7fa386e5f6f3f3b4a9d65e38de431",
         "primaryId": "task_e53d5663",
         "primaryCommit": "92f9a1d03312d29239a09c39f6843959a5f813a9",
-        "judgeIds": [],
+        "judgeIds": ["task_0acb4189"],
         "sourceCommit": "92f9a1d03312d29239a09c39f6843959a5f813a9",
-        "state": "needs-judge",
-        "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+        "state": "accepted-joined",
+        "reason": "Read the full injected AsyncFunction harness and followed placementReply to placementCode and back to tool acknowledgement. The original single test made the reader pass through all successful prompt deliveries before reaching two different rejection authorities. The candidate's describe group separates successful launch/delivery, invalid discovery, and invalid launch results without changing the execution seam. Source preflight/retry now stays together while saved-launch exact-ID cancellation owns its own test. This is useful journey scoping, not merely renamed labels: failure in one authority no longer prevents the other test bodies from reaching their assertions. All nine prompt cases, full-name equality, serialized launch evidence, tool-call acknowledgement, three discovery cases, two result cases, source retry assertions, exact stop ID and prohibited-launch source scan remain."
       },
-      "acceptedBlob": null
+      "acceptedBlob": "31204a6799b7fa386e5f6f3f3b4a9d65e38de431"
     },
     {
       "focus": "tests/remote-runtime.test.ts",
@@ -3639,18 +3641,19 @@
     {
       "focus": "tests/remote-typed-root-placement-fixture.test.ts",
       "initialBlob": "f4283873d51805a234ae99ebdafef71a5ba54ffb",
-      "status": "pending",
+      "status": "accepted",
       "judgeRounds": [],
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "dfc49901bdb6bc66d7b5e73a778ea7c04e9acd6c",
         "primaryId": "task_e53d5663",
         "primaryCommit": "92f9a1d03312d29239a09c39f6843959a5f813a9",
-        "judgeIds": [],
+        "judgeIds": ["task_0acb4189"],
         "sourceCommit": "92f9a1d03312d29239a09c39f6843959a5f813a9",
-        "state": "needs-judge",
-        "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+        "state": "accepted-joined",
+        "reason": "Read the whole focus, including unchanged root/normal role checks, real-user-answer versus assistant/tool markers, second-turn no-replay, drift provenance, parse/SSE checks, receipt weakening cases, infrastructure guards, cancellation, reply-loss and modal-screen checks. In the changed relay test, transport invocation is now a coherent relayRequest operation exposing executable argv, cwd and owned HOME/config/SDK/tmp env in one place. The test itself reads in order: arm, send and lose the real fake-executable reply, verify forwarded request and saved receipt, move prior-forward evidence aside, verify gated status did not forward, release the gate by renaming its marker, then verify successful status response and forwarding. The mkdtemp lifetime is explicit and retained even on failure. Removing finally cleanup and preserving marker/evidence files is a substantive ownership/lifetime change, not a generic context abstraction. Original assertions remain unchanged."
       },
-      "acceptedBlob": null
+      "acceptedBlob": "dfc49901bdb6bc66d7b5e73a778ea7c04e9acd6c"
     },
     {
       "focus": "tests/root-placement-options.test.ts",
@@ -4157,8 +4160,8 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 116,
-    "pending": 6
+    "accepted": 119,
+    "pending": 3
   },
   "extraFiles": [
     {
