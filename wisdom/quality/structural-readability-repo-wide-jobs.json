@@ -1112,7 +1112,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_02db43ac",
         "branch": "bruv/pr45-primary-scripts-terminal-perf-send--02db43ac",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "ce1847e3d30652f65fd5f9dfa2a3d30ee09f6df7"
       },
       {
         "id": "task_cf54811f",
@@ -1152,6 +1153,19 @@
         "focus": "scripts/tmux.conf",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_5e579abb",
         "branch": "bruv/pr45-primary-scripts-tmux.conf-5e579abb",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_cc27bf98",
+        "stage": "judge",
+        "focus": [
+          "scripts/terminal-perf/navigation-workloads.ts",
+          "scripts/terminal-perf/selector-lifecycle-probe.ts",
+          "scripts/terminal-perf/tool-event-workloads.ts"
+        ],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_cc27bf98",
+        "branch": "bruv/pr45-judge-3-ui-terminal-cli-focuses-cc27bf98",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
       }

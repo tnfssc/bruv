@@ -1574,11 +1574,11 @@
       "integrationState": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": "task_14da3c96",
-        "primaryCommit": null,
+        "primaryId": "task_02db43ac",
+        "primaryCommit": "ce1847e3d30652f65fd5f9dfa2a3d30ee09f6df7",
         "judgeIds": [],
-        "sourceCommit": "53fb4d9732dcf0c337b797b05a104199ccf1a273",
-        "state": "needs-primary",
+        "sourceCommit": "ce1847e3d30652f65fd5f9dfa2a3d30ee09f6df7",
+        "state": "needs-judge",
         "reason": "Assigned task_14da3c96; no completed primary candidate commit or independent actual-code verdict. Historical primary-running label is not completion. Retained uncommitted candidate(s): task_14da3c96 blob 22f5d101ccacd5b717ff679795ceabe0e9b926a9 in /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_14da3c96. Not importable or accepted."
       }
     },

@@ -4009,13 +4009,58 @@
       "initialBlob": "52343cd8ba377fd60e745ecbc0d66c1e7afda918",
       "status": "pending",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-primary",
-      "primaryId": "task_14da3c96",
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_02db43ac",
+      "primaryCommit": "ce1847e3d30652f65fd5f9dfa2a3d30ee09f6df7",
       "judgeIds": [],
-      "sourceCommit": "53fb4d9732dcf0c337b797b05a104199ccf1a273",
+      "sourceCommit": "ce1847e3d30652f65fd5f9dfa2a3d30ee09f6df7",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
-      "pendingReason": "Assigned task_14da3c96; no completed primary candidate commit or independent actual-code verdict. Historical primary-running label is not completion. Retained uncommitted candidate(s): task_14da3c96 blob 22f5d101ccacd5b717ff679795ceabe0e9b926a9 in /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_14da3c96. Not importable or accepted."
+      "pendingReason": "Assigned task_14da3c96; no completed primary candidate commit or independent actual-code verdict. Historical primary-running label is not completion. Retained uncommitted candidate(s): task_14da3c96 blob 22f5d101ccacd5b717ff679795ceabe0e9b926a9 in /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_14da3c96. Not importable or accepted.",
+      "primaryBase": "f7b5619450bcb7c0b40e5e2194d7303c6a905b9a",
+      "primaryResult": "A file-local SendObservation owns collection start/stop, synchronous-prefix spans, provider wait observations, acknowledgment/frame matching, and post-action serialization. createSendWorkload remains the single owner of SDK setup, real paste/Enter dispatch, pending prompt drain, wrappers and teardown. finish consumes recorded writes rather than the terminal object. The action now visibly begins observation, dispatches and awaits the real callbacks/frame, then closes observation before hashing and journal-stat work. Sequential and single-action guards, held-provider release, reverse cleanup order, private-method descriptors, local-only mock-provider admission, no-resource loading, output/write snapshot boundaries, and all existing test assertions remain unchanged. Built on the preserved uncommitted proposal after checking its exact 22f5d101ccacd5b717ff679795ceabe0e9b926a9 blob; this is a replacement primary proposal, not acceptance of previous work.",
+      "primaryPaths": [
+        "scripts/terminal-perf/send-workloads.ts"
+      ],
+      "primaryChecks": [
+        {
+          "kind": "source-reading",
+          "detail": "Read values/guidance and focus-only ledger/reconciliation evidence; traced interaction-worker.ts lifecycle, interaction-normalize.ts visible acknowledgment and metric consumption, tests/terminal-perf-send.test.ts preserved expectations, and pinned SDK getUserInput/prompt/queue_update/follow-up routes. No test execution."
+        },
+        {
+          "kind": "formatter",
+          "executable": "/home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/@biomejs/biome/bin/biome",
+          "args": [
+            "format",
+            "--write",
+            "scripts/terminal-perf/send-workloads.ts"
+          ],
+          "retainedEnvRoot": "/tmp/pr45-send-format-GDAfr6",
+          "status": 0,
+          "stdout": "Formatted 1 file in 10ms. No fixes applied.\n",
+          "stderr": ""
+        },
+        {
+          "kind": "diff-check",
+          "command": "git diff --check",
+          "exitCode": 0
+        },
+        {
+          "kind": "commit-scope",
+          "paths": [
+            "scripts/terminal-perf/send-workloads.ts"
+          ]
+        },
+        {
+          "kind": "commit-hooks",
+          "detail": "core.hooksPath unset; resolved hooks directory contained no active hooks."
+        }
+      ],
+      "primaryLimits": [
+        "No setup, tests, builds, runtime performance probe, or independent judgment run; parent owns audited isolated batch gates and a different fresh judge.",
+        "Automatic worktree setup result was not exposed to this worker; no setup was retried or bypassed.",
+        "Formatter isolation directories retained at /tmp/pr45-send-format-GDAfr6.",
+        "No related source/helper edits, no old-branch merge, no push/PR/merge, no wisdom changes (parent owns aggregate wisdom)."
+      ]
     },
     {
       "file": "scripts/terminal-perf/tool-event-workloads.ts",
