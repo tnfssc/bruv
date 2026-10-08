@@ -1186,7 +1186,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_21d9b2c8",
         "branch": "bruv/pr45-primary-tests-t3-web-launcher.test.-21d9b2c8",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "b5ea2257584c31e38810f6e99dd4c57cd24c3ec1"
       },
       {
         "id": "task_2a5cad2b",
@@ -1203,6 +1204,19 @@
         "focus": "tests/claude-native-history-driver.test.mjs",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_e186a894",
         "branch": "bruv/pr45-primary-tests-claude-native-history-e186a894",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_235c5542",
+        "stage": "judge",
+        "focus": [
+          "tests/claude-native-subagent-return.test.mjs",
+          "tests/fixtures/claude-task-worker.ts",
+          "tests/t3/web-launcher-process.test.ts"
+        ],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_235c5542",
+        "branch": "bruv/pr45-judge-3-compatibility-t3-focuses-235c5542",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
       }

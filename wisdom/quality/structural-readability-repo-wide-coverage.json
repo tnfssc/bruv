@@ -14007,13 +14007,41 @@
       "initialBlob": "f786918777c6f2073e1a6afa4b5e7658b67dbb86",
       "status": "pending",
       "area": "compatibility-t3",
-      "resumeState": "pending-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_21d9b2c8",
+      "primaryCommit": "b5ea2257584c31e38810f6e99dd4c57cd24c3ec1",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "b5ea2257584c31e38810f6e99dd4c57cd24c3ec1",
       "report": "wisdom/quality/structural-readability-areas/compatibility-t3.json",
-      "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+      "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection.",
+      "primaryBase": "bf847b4e968f2f33de93e3acf88d3a28ed16af4e",
+      "primaryResult": "Accepted setup output and rejected server flags now have independent test-owned spy lifetimes and finally restoration. The rejection journey starts from fresh spies, so its no-setup-output assertion is local rather than dependent on clearing earlier successes. Guide assertions and production code are unchanged; no shared helper/context or new runtime behavior was introduced.",
+      "primaryPaths": ["tests/t3/web-launcher.test.ts"],
+      "primaryChecks": [
+        {
+          "name": "repository formatter",
+          "command": "/home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/@biomejs/biome/bin/biome format --write tests/t3/web-launcher.test.ts",
+          "result": "exit 0; no fixes applied; node child_process argv with fresh isolated retained HOME/config/TMPDIR/SDK directories",
+          "retainedEnvironment": "/tmp/pr45-web-launcher-format-7INk5D"
+        },
+        {
+          "name": "static assertion preservation",
+          "result": "All 51 original expect statements preserved byte-for-byte in the same sequence. Both independent CLI contracts restore both spies in finally."
+        },
+        {
+          "name": "git diff --check",
+          "result": "passed before commit"
+        },
+        {
+          "name": "scope inspection",
+          "result": "Only the focus source path changed. CLI forwards arguments to runWeb and propagates its exit code; runWeb prints guide for accepted flags and returns 2 before printing guide for other flags."
+        }
+      ],
+      "primaryLimits": [
+        "No tests, setup, or builds run; parent owns audited isolated runtime gates.",
+        "Reconciliation and focus ledger rows record pending-primary, with no prior file-specific candidate or rejected evidence to import.",
+        "Independent judge remains parent-owned."
+      ]
     },
     {
       "file": "tests/t3/web-task-events.test.ts",
