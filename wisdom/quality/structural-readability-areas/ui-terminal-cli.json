@@ -3066,19 +3066,20 @@
     {
       "focus": "tests/fixtures/terminal-interaction-report.ts",
       "initialBlob": "f557387fc34a01cf8051532a246cd363241e76bd",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "f557387fc34a01cf8051532a246cd363241e76bd",
       "integrationState": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "f557387fc34a01cf8051532a246cd363241e76bd",
         "primaryId": "task_da678f51",
         "primaryCommit": "44289959a4278e76c3c1fd77c6ad6e17b68b090b",
-        "judgeIds": [],
+        "judgeIds": ["task_5883fa01"],
         "sourceCommit": "44289959a4278e76c3c1fd77c6ad6e17b68b090b",
-        "state": "needs-judge",
-        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+        "state": "accepted-joined",
+        "reason": "Read the entire literal, then followed callers that mutate budget, repetition count, nested samples/spans and evidence. Each function invocation constructs all mutable containers anew; the single case and iteration 0 agree with repetitions 1. The missing boundary and adjacent limit explain omission of contiguousSyncMs. Outer 7/inner 6 and frame 5 are deliberately distinct from elapsed/ack 1000, wait 900 and heartbeat 99. The raw/test.json evidence key and sample reference are visible together in one small factory. Splitting values/builders or adding overrides would hide those relationships rather than remove a scattered decision or lifetime."
       }
     },
     {
@@ -3166,55 +3167,58 @@
     {
       "focus": "tests/fullscreen-editor.test.ts",
       "initialBlob": "31d089bc93325dda108e3e30b11b82ec604e54a9",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "31d089bc93325dda108e3e30b11b82ec604e54a9",
       "integrationState": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "31d089bc93325dda108e3e30b11b82ec604e54a9",
         "primaryId": "task_26e600d2",
         "primaryCommit": "13ca09c5f7eafdb52b9e7a11a6d9068dd54a5834",
-        "judgeIds": [],
+        "judgeIds": ["task_10416205"],
         "sourceCommit": "13ca09c5f7eafdb52b9e7a11a6d9068dd54a5834",
-        "state": "needs-judge",
-        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+        "state": "accepted-joined",
+        "reason": "The actual unchanged file already exposes three separate journeys without scattered decisions. Its one fixture constructs CompactEditor in the same Container passed to the native viewport and paints a fixed 120x40 frame. The first test places each empty, wrapped, or multiline draft beside its row expectation, mutates input, paints, then checks the footer, occupied prompt rows, last transcript row and follow-end state. The second explicitly moves the transcript to start and end while checking that draft and footer stay docked. The third retains the actual editor slot and walks compact -> native bordered editor -> native dialog -> compact; each change checks the live 1/3/3/1 reservation and corresponding painted rows. Hiding any of those changes behind another helper would make the journey less direct."
       }
     },
     {
       "focus": "tests/long-thread-pty-latency.test.ts",
       "initialBlob": "ee7d4d4ae5ad75052551d01df53a362ceeaa2b4e",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "add8c01df6baacaadce826d1c9f62533cc698645",
       "integrationState": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "add8c01df6baacaadce826d1c9f62533cc698645",
         "primaryId": "task_26e600d2",
         "primaryCommit": "13ca09c5f7eafdb52b9e7a11a6d9068dd54a5834",
-        "judgeIds": [],
+        "judgeIds": ["task_10416205"],
         "sourceCommit": "13ca09c5f7eafdb52b9e7a11a6d9068dd54a5834",
-        "state": "needs-judge",
-        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+        "state": "accepted-joined",
+        "reason": "The base interleaved a large historical-message builder into the short/long measurement loop and repeated send/poll/time/clear operations for idle and held echo. In the candidate, seedSession owns only the complete historical message/tool records plus readiness sentinel; the test still visibly chooses turns, records entry/byte counts, launches, waits for readiness and performs warmup. sampleEditorEcho now owns the complete repeated measurement operation: send literal token, bound visibility polling, assert actual echo, stop timing, then clear and verify clearing. The two call sites explicitly retain different 100ms idle and 0ms held settling outside the timing boundary. The remaining journey is readable in order: idle echo, submit, confirm one held request, held echo, spinner-only transition observations, release response, then explicit budgets. Poll bounds, startup/request assertions, spinner minimum observation, result fields and both echo budget checks remain; returning the pre-clear frame preserves held-echo evidence. These are coherent operations, not arbitrary block hiding or renaming."
       }
     },
     {
       "focus": "tests/long-thread-tui.test.ts",
       "initialBlob": "eb883c6d1d32cce8830ae43727f4b211a8484dca",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "ddef39df022daaaef6a44732283a258f43914870",
       "integrationState": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "ddef39df022daaaef6a44732283a258f43914870",
         "primaryId": "task_26e600d2",
         "primaryCommit": "13ca09c5f7eafdb52b9e7a11a6d9068dd54a5834",
-        "judgeIds": [],
+        "judgeIds": ["task_10416205"],
         "sourceCommit": "13ca09c5f7eafdb52b9e7a11a6d9068dd54a5834",
-        "state": "needs-judge",
-        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+        "state": "accepted-joined",
+        "reason": "Read the full candidate journey and exact base diff independently. createSavedThread removes the 100-turn/1000-result construction from the interaction narrative while retaining every assistant/toolResult shape and LONG_THREAD_READY sentinel. The test now reads directly as load/warmup, draft input, oldest/end navigation, anchor-preserving expansion and recollapse, narrow resize, same-session process reopen, oldest/latest expanded detail checks, then regular-mode label/detail behavior and persisted-history verification. paneFrames binds a target to the pre-existing frameContaining assertion and artifact write once; it removes the separately assembled regular-mode capture/write pipeline without moving semantic assertions away from their actions. Reusing the launch argv for respawn and extending it only with regular-mode flags clarifies what differs. All original detail regexes, collapse checks, 48-column checks and 2101-message/1000-result/content assertions remain; regular typed draft now also receives a retained frame. The extractions resolve real navigation and duplicated evidence ownership rather than introducing a shared application context."
       }
     },
     {
@@ -3377,37 +3381,39 @@
     {
       "focus": "tests/scroll-layout-render.test.ts",
       "initialBlob": "a9cb7bece4e3c57da06b925be3d8d375e19cd3a7",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "a9cb7bece4e3c57da06b925be3d8d375e19cd3a7",
       "integrationState": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "a9cb7bece4e3c57da06b925be3d8d375e19cd3a7",
         "primaryId": "task_3c2b4389",
         "primaryCommit": "93c66a662c7fc498a0f5aee0c3bb824bf4156cc0",
-        "judgeIds": [],
+        "judgeIds": ["task_5883fa01"],
         "sourceCommit": "93c66a662c7fc498a0f5aee0c3bb824bf4156cc0",
-        "state": "needs-judge",
-        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+        "state": "accepted-joined",
+        "reason": "Read all three tests and the documentFixture/InputTerminal implementations. The first test makes frame lifetime legible by recording each render width across initial, unchanged, replaced, manually anchored and resized frames; assertions explicitly relate scrollContentLines, child lines, viewport height and scrollTop. The second deliberately contrasts natural measurement/gutter behavior, direct render and horizontal width allocation. The final test exposes real fullscreen mouse selection, replacement, search opening, resize and replacement chronology with an owned fake terminal/copy callback and finally stop. No extraction is needed: hiding that sequence would make the authoritative current-content transitions harder to read."
       }
     },
     {
       "focus": "tests/sdk-large-text-tui.test.ts",
       "initialBlob": "f8bace9a51cf3ee12315a3cf3fef24c1e342bd10",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "f568e6a6ed1ba369e55cc6cddba32ba54d6078d2",
       "integrationState": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "f568e6a6ed1ba369e55cc6cddba32ba54d6078d2",
         "primaryId": "task_3c2b4389",
         "primaryCommit": "93c66a662c7fc498a0f5aee0c3bb824bf4156cc0",
-        "judgeIds": [],
+        "judgeIds": ["task_5883fa01"],
         "sourceCommit": "93c66a662c7fc498a0f5aee0c3bb824bf4156cc0",
-        "state": "needs-judge",
-        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+        "state": "accepted-joined",
+        "reason": "Compared the entire focus with the exact primaryBase. Previously the long setup mixed saved-message construction and shell launch details into the interaction chronology. seedLargeTextSession now owns both saved messages and returns the one session-file authority later opened for persisted equality; launchOfflineCli owns quoting, cleared environment argv and checked tmux startup. The test visibly owns its fixture environment once and reads as prepare -> loaded -> oldest -> bottom -> resize/rich ANSI -> type -> persisted equality. The extracts represent distinct coherent effects, not renames or a shared context bag. Frame polling, markers, ANSI bold assertion, editable draft and complete saved-message equality are unchanged."
       }
     },
     {
@@ -3420,11 +3426,12 @@
       "integrationState": "pending",
       "resume": {
         "status": "pending",
+        "acceptedBlob": "09c98ee174874df966466af24d868502ecfa7004",
         "primaryId": "task_3c2b4389",
         "primaryCommit": "93c66a662c7fc498a0f5aee0c3bb824bf4156cc0",
         "judgeIds": [],
         "sourceCommit": "93c66a662c7fc498a0f5aee0c3bb824bf4156cc0",
-        "state": "needs-judge",
+        "state": "needs-primary-final-blob",
         "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
       }
     },
@@ -4694,7 +4701,22 @@
       "resume": {
         "status": "pending",
         "acceptedBlob": "ab1ae7f18b7f556ca7e85d3a9b2bb37b7cf0d646",
-        "sourceCommit": "f8b4781e6b57fc00f6055e351c281217fa73dcac",
+        "primaryId": "task_8440f279",
+        "primaryCommit": "c98fa76bd85f4e6e3a12af6c3f2356fd55285825",
+        "sourceCommit": "c98fa76bd85f4e6e3a12af6c3f2356fd55285825",
+        "state": "needs-judge"
+      }
+    },
+    {
+      "focus": "tests/terminal-process-fixture.ts",
+      "initialBlob": null,
+      "introducedBy": "13ca09c5f7eafdb52b9e7a11a6d9068dd54a5834",
+      "state": "pending",
+      "acceptedBlob": null,
+      "resume": {
+        "status": "pending",
+        "acceptedBlob": "ce36ecd7c404612c9a4ee1ce6bfb81f73820a290",
+        "sourceCommit": "13ca09c5f7eafdb52b9e7a11a6d9068dd54a5834",
         "state": "needs-primary-final-blob"
       }
     }
@@ -4807,7 +4829,7 @@
     }
   },
   "resumeStatus": {
-    "accepted": 84,
-    "pending": 28
+    "accepted": 90,
+    "pending": 23
   }
 }

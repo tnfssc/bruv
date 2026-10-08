@@ -1,9 +1,9 @@
 import { expect, test } from "bun:test";
-import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
-import { tmpdir } from "node:os";
+import { mkdir, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { SessionManager } from "@earendil-works/pi-coding-agent";
-import { capturePane, frameContaining, shellQuote, tmuxRunner } from "./tui-helpers";
+import { capturePane, frameContaining } from "./tui-helpers";
+import { createTerminalProcessFixture } from "./terminal-process-fixture";
 
 const usage = {
   input: 0,
@@ -14,83 +14,83 @@ const usage = {
   cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: 0 },
 };
 
+function createSavedThread(home: string) {
+  const session = SessionManager.create(home, join(home, "sessions"));
+  for (let turn = 0; turn < 100; turn++) {
+    session.appendMessage({ role: "user", content: "Saved turn " + turn, timestamp: Date.now() });
+    for (let tool = 0; tool < 10; tool++) {
+      const id = "saved-" + turn + "-" + tool;
+      session.appendMessage({
+        role: "assistant",
+        content: [
+          {
+            type: "toolCall",
+            id,
+            name: "execute",
+            arguments: { label: "Read saved file " + id, code: 'console.log("DETAIL_' + id + '")' },
+          },
+        ],
+        api: "openai-completions",
+        provider: "openai",
+        model: "gpt-4o",
+        usage,
+        stopReason: "toolUse",
+        timestamp: Date.now(),
+      });
+      session.appendMessage({
+        role: "toolResult",
+        toolCallId: id,
+        toolName: "execute",
+        content: [{ type: "text", text: "DETAIL_" + id }],
+        details: { exitCode: 0, stdout: "DETAIL_" + id, stderr: "", images: [] },
+        isError: false,
+        timestamp: Date.now(),
+      });
+    }
+  }
+  session.appendMessage({
+    role: "assistant",
+    content: [{ type: "text", text: "LONG_THREAD_READY" }],
+    api: "openai-completions",
+    provider: "openai",
+    model: "gpt-4o",
+    usage,
+    stopReason: "stop",
+    timestamp: Date.now(),
+  });
+  return session;
+}
+
 test("long saved thread keeps history, editor input, and native tool details usable", async () => {
-  const home = await mkdtemp(join(tmpdir(), "bruv-long-thread-"));
-  const socket = "bruv-long-thread-" + process.pid + "-" + Date.now();
-  const tmux = tmuxRunner(socket, join(home, "tmux.conf"));
+  const { home, socket, tmux, paneCommand } = await createTerminalProcessFixture("bruv-long-thread-");
   const artifacts = resolve(import.meta.dir, "../artifacts/tui", socket);
-  const capture = async () => (await capturePane(tmux, "long-thread")).stdout;
-  const frame = async (name: string, expected: string | string[]) => {
+  const paneFrames = (target: string) => async (name: string, expected: string | string[]) => {
+    const capture = async () => (await capturePane(tmux, target)).stdout;
     const text = await frameContaining(capture, expected, 200);
     await writeFile(join(artifacts, name + ".txt"), text);
     return text;
   };
+  const frame = paneFrames("long-thread");
   try {
     await mkdir(artifacts, { recursive: true });
-    await writeFile(join(home, "tmux.conf"), "set -g extended-keys on\nset -g extended-keys-format csi-u\n");
-    const session = SessionManager.create(home, join(home, "sessions"));
-    for (let turn = 0; turn < 100; turn++) {
-      session.appendMessage({ role: "user", content: "Saved turn " + turn, timestamp: Date.now() });
-      for (let tool = 0; tool < 10; tool++) {
-        const id = "saved-" + turn + "-" + tool;
-        session.appendMessage({
-          role: "assistant",
-          content: [
-            {
-              type: "toolCall",
-              id,
-              name: "execute",
-              arguments: { label: "Read saved file " + id, code: 'console.log("DETAIL_' + id + '")' },
-            },
-          ],
-          api: "openai-completions",
-          provider: "openai",
-          model: "gpt-4o",
-          usage,
-          stopReason: "toolUse",
-          timestamp: Date.now(),
-        });
-        session.appendMessage({
-          role: "toolResult",
-          toolCallId: id,
-          toolName: "execute",
-          content: [{ type: "text", text: "DETAIL_" + id }],
-          details: { exitCode: 0, stdout: "DETAIL_" + id, stderr: "", images: [] },
-          isError: false,
-          timestamp: Date.now(),
-        });
-      }
-    }
-    session.appendMessage({
-      role: "assistant",
-      content: [{ type: "text", text: "LONG_THREAD_READY" }],
-      api: "openai-completions",
-      provider: "openai",
-      model: "gpt-4o",
-      usage,
-      stopReason: "stop",
-      timestamp: Date.now(),
-    });
-    const launch = [
-      "env",
-      "HOME=" + home,
-      "BRUV_CODING_AGENT_DIR=" + join(home, ".bruv", "agent"),
-      "HERDR_ENV=0",
-      "OPENAI_API_KEY=offline-test-placeholder",
-      resolve(import.meta.dir, "../dist/bruv"),
-      "--offline",
-      "--no-approve",
-      "--session",
-      session.getSessionFile()!,
-      "--provider",
-      "openai",
-      "--model",
-      "gpt-4o",
-    ]
-      .map(shellQuote)
-      .join(" ");
+    await writeFile(join(artifacts, "fixture.json"), JSON.stringify({ home, socket }, null, 2));
+    const session = createSavedThread(home);
+    const launch = paneCommand(
+      [
+        resolve(import.meta.dir, "../dist/bruv"),
+        "--offline",
+        "--no-approve",
+        "--session",
+        session.getSessionFile()!,
+        "--provider",
+        "openai",
+        "--model",
+        "gpt-4o",
+      ],
+      { OPENAI_API_KEY: "offline-test-placeholder" },
+    );
     expect(
-      (await tmux("new-session", "-d", "-s", "long-thread", "-x", "100", "-y", "30", "-c", home, launch)).code,
+      (await tmux("new-session", "-d", "-s", "long-thread", "-x", "100", "-y", "30", "-c", home, ...launch)).code,
     ).toBe(0);
     await frame("loaded", "LONG_THREAD_READY");
     // The initial frame can precede shortcut setup.
@@ -120,7 +120,7 @@ test("long saved thread keeps history, editor input, and native tool details usa
     await tmux("resize-window", "-t", "long-thread", "-x", "100", "-y", "30");
     // Respawn the CLI, not the tmux server: killing its last session races
     // tmux exit-empty teardown against creation of the next session.
-    expect((await tmux("respawn-pane", "-k", "-t", "long-thread", "-c", home, launch)).code).toBe(0);
+    expect((await tmux("respawn-pane", "-k", "-t", "long-thread", "-c", home, ...launch)).code).toBe(0);
     const reopened = await frame("reopened", ["LONG_THREAD_READY", "10 tools called"]);
     expect(reopened).not.toContain("DETAIL_saved-99-9");
     await tmux("send-keys", "-t", "long-thread", "-l", "reopened-draft");
@@ -139,29 +139,25 @@ test("long saved thread keeps history, editor input, and native tool details usa
     // Individual collapsed labels belong to ordinary scrollback mode, not
     // collapsed activity groups. Keep the original native label/detail proof
     // on the very same saved session in that mode as well.
-    const regularLaunch = launch + " --tui-mode regular";
+    const regularLaunch = [...launch, "--tui-mode", "regular"];
     expect(
-      (await tmux("new-session", "-d", "-s", "regular", "-x", "100", "-y", "30", "-c", home, regularLaunch)).code,
+      (await tmux("new-session", "-d", "-s", "regular", "-x", "100", "-y", "30", "-c", home, ...regularLaunch)).code,
     ).toBe(0);
-    const regularCapture = async () => (await capturePane(tmux, "regular")).stdout;
-    const regularCollapsed = await frameContaining(
-      regularCapture,
-      ["LONG_THREAD_READY", "Read saved file saved-99-9"],
-      200,
-    );
-    await writeFile(join(artifacts, "regular-collapsed.txt"), regularCollapsed);
+    const regularFrame = paneFrames("regular");
+    const regularCollapsed = await regularFrame("regular-collapsed", [
+      "LONG_THREAD_READY",
+      "Read saved file saved-99-9",
+    ]);
     expect(regularCollapsed).toContain("Read saved file saved-99-9");
     expect(regularCollapsed).not.toContain("DETAIL_saved-99-9");
     expect(regularCollapsed).not.toContain("10 tools called");
     await tmux("send-keys", "-t", "regular", "-l", "regular-draft");
-    await frameContaining(regularCapture, "regular-draft", 200);
+    await regularFrame("regular-typed", "regular-draft");
     await tmux("send-keys", "-t", "regular", "C-o");
-    const regularExpanded = await frameContaining(regularCapture, ["DETAIL_saved-99-9", "regular-draft"], 200);
-    await writeFile(join(artifacts, "regular-expanded.txt"), regularExpanded);
+    const regularExpanded = await regularFrame("regular-expanded", ["DETAIL_saved-99-9", "regular-draft"]);
     expect(regularExpanded).toMatch(/^\s*DETAIL_saved-99-9\s*$/m);
     await tmux("send-keys", "-t", "regular", "C-o");
-    const regularRecollapsed = await frameContaining(regularCapture, "Read saved file saved-99-9", 200);
-    await writeFile(join(artifacts, "regular-recollapsed.txt"), regularRecollapsed);
+    const regularRecollapsed = await regularFrame("regular-recollapsed", "Read saved file saved-99-9");
     expect(regularRecollapsed).not.toContain("DETAIL_saved-99-9");
 
     // Frames test real interaction and preservation, not machine-specific timing.
@@ -175,6 +171,5 @@ test("long saved thread keeps history, editor input, and native tool details usa
         expect(entry.message.content).toEqual([{ type: "text", text: "DETAIL_" + entry.message.toolCallId }]);
   } finally {
     await tmux("kill-server");
-    await rm(home, { recursive: true, force: true });
   }
 }, 60000);

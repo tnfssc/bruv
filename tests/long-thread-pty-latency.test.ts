@@ -1,10 +1,11 @@
 import { test, expect } from "bun:test";
-import { mkdtemp, mkdir, rm, writeFile, stat } from "node:fs/promises";
-import { tmpdir, availableParallelism, loadavg } from "node:os";
+import { mkdir, writeFile, stat } from "node:fs/promises";
+import { availableParallelism, loadavg } from "node:os";
 import { join, resolve } from "node:path";
 import { createServer } from "node:http";
 import { SessionManager } from "@earendil-works/pi-coding-agent";
-import { capturePane, shellQuote, tmuxRunner } from "./tui-helpers";
+import { capturePane } from "./tui-helpers";
+import { createTerminalProcessFixture } from "./terminal-process-fixture";
 import { run } from "./helpers";
 
 // Real compiled-terminal measurement. Capture polling is intentionally recorded (not presented as exact key/frame timestamps).
@@ -19,12 +20,129 @@ const usage = {
 const quantile = (xs: number[], q: number) =>
   xs.slice().sort((a, b) => a - b)[Math.min(xs.length - 1, Math.max(0, Math.ceil(xs.length * q) - 1))];
 
+function seedSession(home: string, size: "short" | "long", turns: number) {
+  const manager = SessionManager.create(home, join(home, "sessions"));
+  for (let turn = 0; turn < turns; turn++) {
+    manager.appendMessage({
+      role: "user",
+      content: `Question ${turn}: summarize the rollout constraints and failure modes. Include a concise recommendation.`,
+      timestamp: Date.now(),
+    });
+    manager.appendMessage({
+      role: "assistant",
+      content: [
+        {
+          type: "text",
+          text: `## Decision ${turn}\n\nWe should preserve the existing API contract while reducing repeated work. The rollout needs staged validation, observable latency budgets, and a rollback path. Risks include stale caches, concurrent updates, partial failures, and misleading success signals.\n\n### Evidence and tradeoffs\nThe implementation should avoid rescanning unchanged historical records on every animation frame. Keep ownership and invalidation explicit; tests should exercise updates, errors, and pagination rather than just the happy path.\n\n`.repeat(
+            4,
+          ),
+        },
+      ],
+      api: "openai-completions",
+      provider: "openai",
+      model: "gpt-4o",
+      usage,
+      stopReason: "stop",
+      timestamp: Date.now(),
+    });
+    for (let j = 0; j < (size === "short" ? 1 : 5); j++) {
+      const id = `saved-${turn}-${j}`;
+      manager.appendMessage({
+        role: "assistant",
+        content: [
+          {
+            type: "toolCall",
+            id,
+            name: "execute",
+            arguments: { label: `Inspect module ${turn}/${j}`, code: "cat src/ui/task-list.ts" },
+          },
+        ],
+        api: "openai-completions",
+        provider: "openai",
+        model: "gpt-4o",
+        usage,
+        stopReason: "toolUse",
+        timestamp: Date.now(),
+      });
+      manager.appendMessage({
+        role: "toolResult",
+        toolCallId: id,
+        toolName: "execute",
+        content: [
+          {
+            type: "text",
+            text: `--- source excerpt ${turn}/${j} ---\nfunction updateVisibleRows(state) {\n  const items = state.messages.filter(message => message.visible);\n  return items.map(renderMarkdownAndToolResult).join("\n");\n}\n`.repeat(
+              8,
+            ),
+          },
+        ],
+        details: {
+          exitCode: 0,
+          stdout: "tool output: parsed 184 files; 12 warnings; no changes",
+          stderr: "",
+          images: [],
+        },
+        isError: false,
+        timestamp: Date.now(),
+      });
+    }
+  }
+  manager.appendMessage({
+    role: "assistant",
+    content: [{ type: "text", text: "HISTORY_READY_" + size }],
+    api: "openai-completions",
+    provider: "openai",
+    model: "gpt-4o",
+    usage,
+    stopReason: "stop",
+    timestamp: Date.now(),
+  });
+  return manager;
+}
+
+type Tmux = Awaited<ReturnType<typeof createTerminalProcessFixture>>["tmux"];
+
+// Measure send-to-visible echo only. Draft clearing and inter-sample settling are
+// outside the timing boundary, identically for idle and held-provider samples.
+async function sampleEditorEcho(tmux: Tmux, prefix: string, samples: number, settlingMs: number) {
+  const durations: number[] = [];
+  let frame = "";
+  for (let k = 0; k < samples; k++) {
+    const token = prefix + "_" + k;
+    const sent = performance.now();
+    await tmux("send-keys", "-t", "measure", "-l", token);
+    let echoed = false;
+    for (let poll = 0; poll < 250; poll++) {
+      frame = (await capturePane(tmux, "measure")).stdout;
+      if (frame.includes(token)) {
+        echoed = true;
+        break;
+      }
+      await Bun.sleep(20);
+    }
+    expect(echoed, "input token " + token + " must appear in terminal echo").toBe(true);
+    durations.push(performance.now() - sent);
+
+    await tmux("send-keys", "-t", "measure", "C-u");
+    let cleared = false;
+    for (let poll = 0; poll < 250; poll++) {
+      const text = (await capturePane(tmux, "measure")).stdout;
+      if (!text.includes(token)) {
+        cleared = true;
+        break;
+      }
+      await Bun.sleep(20);
+    }
+    if (!cleared) throw new Error("Editor did not clear " + token);
+    if (settlingMs) await Bun.sleep(settlingMs);
+  }
+  return { durations, frame };
+}
+
 test("installed/candidate CLI PTY key echo and loading-frame cadence", async () => {
-  const home = await mkdtemp(join(tmpdir(), "bruv-pty-latency-"));
-  const socket = "bruv-latency-" + process.pid;
-  const tmux = tmuxRunner(socket, join(home, "tmux.conf"));
+  const { home, socket, env, tmux, paneCommand } = await createTerminalProcessFixture("bruv-pty-latency-");
   const binary = resolve(process.env.BRUV_BIN || resolve(import.meta.dir, "../dist/bruv"));
-  const binaryVersion = await run([binary, "--version"]);
+  const binaryVersion = await run([binary, "--version"], { cwd: home, env });
   expect(binaryVersion.code).toBe(0);
   const hasher = new Bun.CryptoHasher("sha256");
   for await (const chunk of Bun.file(binary).stream()) hasher.update(chunk);
@@ -69,106 +187,27 @@ test("installed/candidate CLI PTY key echo and loading-frame cadence", async () 
         },
       }),
     );
-    await writeFile(join(home, "tmux.conf"), "set -g extended-keys on\nset -g extended-keys-format csi-u\n");
-    for (const size of ["short", "long"]) {
-      const manager = SessionManager.create(home, join(home, "sessions"));
+    await writeFile(join(artifacts, "fixture.json"), JSON.stringify({ home, socket }, null, 2));
+    for (const size of ["short", "long"] as const) {
       const turns = size === "short" ? 2 : Number(process.env.BRUV_LATENCY_LONG_TURNS || 100);
-      for (let turn = 0; turn < turns; turn++) {
-        manager.appendMessage({
-          role: "user",
-          content: `Question ${turn}: summarize the rollout constraints and failure modes. Include a concise recommendation.`,
-          timestamp: Date.now(),
-        });
-        manager.appendMessage({
-          role: "assistant",
-          content: [
-            {
-              type: "text",
-              text: `## Decision ${turn}\n\nWe should preserve the existing API contract while reducing repeated work. The rollout needs staged validation, observable latency budgets, and a rollback path. Risks include stale caches, concurrent updates, partial failures, and misleading success signals.\n\n### Evidence and tradeoffs\nThe implementation should avoid rescanning unchanged historical records on every animation frame. Keep ownership and invalidation explicit; tests should exercise updates, errors, and pagination rather than just the happy path.\n\n`.repeat(
-                4,
-              ),
-            },
-          ],
-          api: "openai-completions",
-          provider: "openai",
-          model: "gpt-4o",
-          usage,
-          stopReason: "stop",
-          timestamp: Date.now(),
-        });
-        for (let j = 0; j < (size === "short" ? 1 : 5); j++) {
-          const id = `saved-${turn}-${j}`;
-          manager.appendMessage({
-            role: "assistant",
-            content: [
-              {
-                type: "toolCall",
-                id,
-                name: "execute",
-                arguments: { label: `Inspect module ${turn}/${j}`, code: "cat src/ui/task-list.ts" },
-              },
-            ],
-            api: "openai-completions",
-            provider: "openai",
-            model: "gpt-4o",
-            usage,
-            stopReason: "toolUse",
-            timestamp: Date.now(),
-          });
-          manager.appendMessage({
-            role: "toolResult",
-            toolCallId: id,
-            toolName: "execute",
-            content: [
-              {
-                type: "text",
-                text: `--- source excerpt ${turn}/${j} ---\nfunction updateVisibleRows(state) {\n  const items = state.messages.filter(message => message.visible);\n  return items.map(renderMarkdownAndToolResult).join("\n");\n}\n`.repeat(
-                  8,
-                ),
-              },
-            ],
-            details: {
-              exitCode: 0,
-              stdout: "tool output: parsed 184 files; 12 warnings; no changes",
-              stderr: "",
-              images: [],
-            },
-            isError: false,
-            timestamp: Date.now(),
-          });
-        }
-      }
-      manager.appendMessage({
-        role: "assistant",
-        content: [{ type: "text", text: "HISTORY_READY_" + size }],
-        api: "openai-completions",
-        provider: "openai",
-        model: "gpt-4o",
-        usage,
-        stopReason: "stop",
-        timestamp: Date.now(),
-      });
+      const manager = seedSession(home, size, turns);
       const seedEntries = manager.getEntryCount();
       const seedBytes = (await stat(manager.getSessionFile()!)).size;
       const launchedAt = Date.now();
-      const cmd = [
-        "env",
-        `HOME=${home}`,
-        `BRUV_CODING_AGENT_DIR=${join(home, ".bruv", "agent")}`,
-        "PI_OFFLINE=0",
-        "HERDR_ENV=0",
-        binary,
-        "--no-approve",
-        "--session",
-        manager.getSessionFile()!,
-        "--provider",
-        "fixture",
-        "--model",
-        "fixture-model",
-      ]
-        .map(shellQuote)
-        .join(" ");
-      const created = await tmux("new-session", "-d", "-s", "measure", "-x", "100", "-y", "32", "-c", home, cmd);
+      const cmd = paneCommand(
+        [
+          binary,
+          "--no-approve",
+          "--session",
+          manager.getSessionFile()!,
+          "--provider",
+          "fixture",
+          "--model",
+          "fixture-model",
+        ],
+        { PI_OFFLINE: "0" },
+      );
+      const created = await tmux("new-session", "-d", "-s", "measure", "-x", "100", "-y", "32", "-c", home, ...cmd);
       expect(created.code).toBe(0);
       let frame = "";
       for (let i = 0; i < 300; i++) {
@@ -179,34 +218,7 @@ test("installed/candidate CLI PTY key echo and loading-frame cadence", async () 
       expect(frame).toContain("HISTORY_READY_" + size);
       const startupMs = Date.now() - launchedAt;
       await Bun.sleep(800); // startup/editor warmup, same for both cases
-      const clearDraft = async (token: string) => {
-        await tmux("send-keys", "-t", "measure", "C-u");
-        for (let poll = 0; poll < 250; poll++) {
-          const text = (await capturePane(tmux, "measure")).stdout;
-          if (!text.includes(token)) return;
-          await Bun.sleep(20);
-        }
-        throw new Error("Editor did not clear " + token);
-      };
-      const echo: number[] = [];
-      for (let k = 0; k < samples; k++) {
-        const token = `ECHO_${size}_${k}`;
-        const sent = performance.now();
-        await tmux("send-keys", "-t", "measure", "-l", token);
-        let echoed = false;
-        for (let poll = 0; poll < 250; poll++) {
-          frame = (await capturePane(tmux, "measure")).stdout;
-          if (frame.includes(token)) {
-            echoed = true;
-            break;
-          }
-          await Bun.sleep(20);
-        }
-        expect(echoed, `input token ${token} must appear in terminal echo`).toBe(true);
-        echo.push(performance.now() - sent);
-        await clearDraft(token);
-        await Bun.sleep(100);
-      }
+      const { durations: echo } = await sampleEditorEcho(tmux, `ECHO_${size}`, samples, 100);
       // Submit a request and sample actual tmux terminal frames during the held provider response.
       // Measure echo while generation is held, not just on an idle editor.
       const priorRequests = requestCount;
@@ -219,25 +231,9 @@ test("installed/candidate CLI PTY key echo and loading-frame cadence", async () 
       expect(requestCount).toBe(priorRequests + 1);
       expect(heldRequestCount).toBe(priorRequests + 1);
       const requestSetupMs = performance.now() - submittedAt;
-      const echoDuring: number[] = [];
-      for (let k = 0; k < samples; k++) {
-        const token = `HELD_${size}_${k}`;
-        const sent = performance.now();
-        await tmux("send-keys", "-t", "measure", "-l", token);
-        let echoed = false;
-        for (let poll = 0; poll < 250; poll++) {
-          frame = (await capturePane(tmux, "measure")).stdout;
-          if (frame.includes(token)) {
-            echoed = true;
-            break;
-          }
-          await Bun.sleep(20);
-        }
-        expect(echoed, `held input ${token} must echo`).toBe(true);
-        echoDuring.push(performance.now() - sent);
-        if (k === samples - 1) await writeFile(join(artifacts, size + "-held-echo.txt"), frame);
-        await clearDraft(token);
-      }
+      const heldEcho = await sampleEditorEcho(tmux, `HELD_${size}`, samples, 0);
+      const echoDuring = heldEcho.durations;
+      await writeFile(join(artifacts, size + "-held-echo.txt"), heldEcho.frame);
       // Spinner cadence: compare spinner-only row signatures, not arbitrary changed terminal frames.
       const spinnerGlyphs = "⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏";
       const loadingStart = performance.now();
@@ -266,7 +262,7 @@ test("installed/candidate CLI PTY key echo and loading-frame cadence", async () 
       expect(spinnerSamples.length).toBeGreaterThan(2);
       runs.push({
         size,
-        turns: size === "short" ? 2 : Number(process.env.BRUV_LATENCY_LONG_TURNS || 100),
+        turns,
         seedEntries,
         seedBytes,
         elapsedStartupMs: startupMs,
@@ -355,6 +351,5 @@ test("installed/candidate CLI PTY key echo and loading-frame cadence", async () 
     await tmux("kill-server");
     server.closeAllConnections();
     server.close();
-    await rm(home, { recursive: true, force: true });
   }
 }, 180000);

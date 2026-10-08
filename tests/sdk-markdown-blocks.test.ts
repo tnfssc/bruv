@@ -68,28 +68,35 @@ test("non-GFM and pedantic parsers retain their original rules", () => {
         expect(fast(options).lexer(source)).toEqual(reference(options).lexer(source));
       }
 });
+// Own the global regex hook for one lexer call, including assertion failures.
+// Both callers forbid whole-block matchers and verify the complete raw token.
+function measurePlainBlockWork(source: string) {
+  const originalExec = RegExp.prototype.exec;
+  const rules = Lexer.rules.block.gfm;
+  const work = { calls: 0, units: 0, max: 0 };
+  RegExp.prototype.exec = function (text: string) {
+    expect(this.source).not.toBe(rules.lheading.source);
+    expect(this.source).not.toBe(rules.paragraph.source);
+    if (this.source.startsWith("^(?!")) {
+      work.calls++;
+      work.units += text.length;
+      work.max = Math.max(work.max, text.length);
+    }
+    return originalExec.call(this, text);
+  };
+  try {
+    expect(fast().lexer(source)[0].raw).toBe(source);
+    return work;
+  } finally {
+    RegExp.prototype.exec = originalExec;
+  }
+}
+
 test("plain block work is line-bounded and scales linearly", () => {
-  const originalExec = RegExp.prototype.exec,
-    rules = Lexer.rules.block.gfm;
   const measurements: Array<{ calls: number; units: number; max: number }> = [];
   for (const n of [2000, 4000, 8000]) {
-    const source = "deterministic pasted line\n".repeat(n),
-      work = { calls: 0, units: 0, max: 0 };
-    RegExp.prototype.exec = function (text: string) {
-      expect(this.source).not.toBe(rules.lheading.source);
-      expect(this.source).not.toBe(rules.paragraph.source);
-      if (this.source.startsWith("^(?!")) {
-        work.calls++;
-        work.units += text.length;
-        work.max = Math.max(work.max, text.length);
-      }
-      return originalExec.call(this, text);
-    };
-    try {
-      expect(fast().lexer(source)[0].raw).toBe(source);
-    } finally {
-      RegExp.prototype.exec = originalExec;
-    }
+    const source = "deterministic pasted line\n".repeat(n);
+    const work = measurePlainBlockWork(source);
     expect(work.calls).toBe(n - 1);
     expect(work.max).toBeLessThanOrEqual(52);
     expect(work.units).toBeLessThanOrEqual(source.length * 2);
@@ -101,22 +108,8 @@ test("plain block work is line-bounded and scales linearly", () => {
   }
 });
 test("a megabyte single line avoids both whole-block matchers", () => {
-  const originalExec = RegExp.prototype.exec,
-    rules = Lexer.rules.block.gfm;
-  let predicateCalls = 0;
-  RegExp.prototype.exec = function (text: string) {
-    expect(this.source).not.toBe(rules.lheading.source);
-    expect(this.source).not.toBe(rules.paragraph.source);
-    if (this.source.startsWith("^(?!")) predicateCalls++;
-    return originalExec.call(this, text);
-  };
-  const source = "a".repeat(1 << 20);
-  try {
-    expect(fast().lexer(source)[0].raw).toBe(source);
-  } finally {
-    RegExp.prototype.exec = originalExec;
-  }
-  expect(predicateCalls).toBe(0);
+  const work = measurePlainBlockWork("a".repeat(1 << 20));
+  expect(work.calls).toBe(0);
 });
 test("short and long lines keep rich ANSI wrapping and complete text", () => {
   const identity = (s: string) => s;

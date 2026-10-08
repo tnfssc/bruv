@@ -11470,12 +11470,12 @@
     {
       "file": "tests/fixtures/terminal-interaction-report.ts",
       "initialBlob": "f557387fc34a01cf8051532a246cd363241e76bd",
-      "status": "pending",
+      "status": "accepted",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_da678f51",
       "primaryCommit": "44289959a4278e76c3c1fd77c6ad6e17b68b090b",
-      "judgeIds": [],
+      "judgeIds": ["task_5883fa01"],
       "sourceCommit": "44289959a4278e76c3c1fd77c6ad6e17b68b090b",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
       "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
@@ -11508,6 +11508,20 @@
         "Static reading only, not runtime or independent quality acceptance. Parent owns fresh independent judgment and any audited isolated gates.",
         "Only .pr45-primary-result.json written, untracked, in this durable task worktree; no per-worker wisdom notes or values changes.",
         "Runtime agent.model verification is parent-owned."
+      ],
+      "acceptedBlob": "f557387fc34a01cf8051532a246cd363241e76bd",
+      "result": "Read the entire literal, then followed callers that mutate budget, repetition count, nested samples/spans and evidence. Each function invocation constructs all mutable containers anew; the single case and iteration 0 agree with repetitions 1. The missing boundary and adjacent limit explain omission of contiguousSyncMs. Outer 7/inner 6 and frame 5 are deliberately distinct from elapsed/ack 1000, wait 900 and heartbeat 99. The raw/test.json evidence key and sample reference are visible together in one small factory. Splitting values/builders or adding overrides would hide those relationships rather than remove a scattered decision or lifetime.",
+      "systemReason": "samplePeakSync takes a maximum of contiguous/mutation/frame/span observations, not elapsed/provider/heartbeat totals; accounting callers explicitly require peak 7 and strict equality failure at budget 7. validateInteractionCase checks requested repetition coverage, own raw-evidence keys and complete-boundary duration while preserving mutable input identity. Report/options/CLI callers need different local mutations. Dashboard repeatedCases clones samples/cases and adds evidence keys; detail rendering dereferences evidence[sample.rawEvidence], while hostile-data callers replace only their local evidence. This pure factory already exposes the relevant system contracts and has no filesystem/network effects.",
+      "checks": [
+        "Exact candidate equals exact primaryBase; their tracked diff is empty.",
+        "Read whole intrinsic focus via git show and followed actual caller mutations, maximum accounting, evidence dereference and validation ordering.",
+        "Read only the three assigned area/coverage ledger entries: this focus is pending/needs-primary, with matching initial blob, not an existing independent acceptance.",
+        "No test execution: inspected existing caller subprocess and owned-temp cleanup code only. Those unchanged integration callers are not certified as isolated executable gates."
+      ],
+      "limits": [
+        "Static actual-source judgment only: no setup, tests, builds, dependency writes/reinstall, auth/device access, network probes, cleanup, source edits, commits, push, PR or merge performed. Parent owns audited isolated execution gates and runtime agent.model verification.",
+        "Read-only installed pi-tui/pi-coding-agent 1.0.3 implementations were supporting caller evidence; candidate package pins and patches were read with git show. Installed dependency contents and compiled binary were not independently rebuilt or certified against candidate.",
+        "Review and artifact provenance is this retained durable bruv Git worktree; no /tmp code checkout or delegated descendants. Test fixture HOME is mkdtemp under tmpdir and retained by candidate; artifact output remains under the durable worktree artifacts/tui path."
       ]
     },
     {
@@ -11617,12 +11631,12 @@
     {
       "file": "tests/fullscreen-editor.test.ts",
       "initialBlob": "31d089bc93325dda108e3e30b11b82ec604e54a9",
-      "status": "pending",
+      "status": "accepted",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_26e600d2",
       "primaryCommit": "13ca09c5f7eafdb52b9e7a11a6d9068dd54a5834",
-      "judgeIds": [],
+      "judgeIds": ["task_10416205"],
       "sourceCommit": "13ca09c5f7eafdb52b9e7a11a6d9068dd54a5834",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
       "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
@@ -11648,6 +11662,22 @@
         "Durable code provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_26e600d2 at 13ca09c5f7eafdb52b9e7a11a6d9068dd54a5834. New helper is committed in this worktree; /tmp paths hold formatter fixtures only, not agent code checkouts. Runtime terminal fixtures were not executed. Future runs record retained fixture HOME/socket in artifacts/.../fixture.json.",
         "Parent runtime gates must provide an owned isolated parent process environment before SDK imports, prebuilt candidate binary, and owned BRUV_LATENCY_OUTPUT if enabled. That existing optional output setting remains unchanged; no output path or binary was exercised here.",
         "No wisdom/values edits: the parent owns aggregate wisdom, and the existing values already cover ownership, fixture isolation, truthful proof and whole-interaction latency."
+      ],
+      "acceptedBlob": "31d089bc93325dda108e3e30b11b82ec604e54a9",
+      "result": "The actual unchanged file already exposes three separate journeys without scattered decisions. Its one fixture constructs CompactEditor in the same Container passed to the native viewport and paints a fixed 120x40 frame. The first test places each empty, wrapped, or multiline draft beside its row expectation, mutates input, paints, then checks the footer, occupied prompt rows, last transcript row and follow-end state. The second explicitly moves the transcript to start and end while checking that draft and footer stay docked. The third retains the actual editor slot and walks compact -> native bordered editor -> native dialog -> compact; each change checks the live 1/3/3/1 reservation and corresponding painted rows. Hiding any of those changes behind another helper would make the journey less direct.",
+      "systemReason": "Read candidate CompactEditor.render and installStartupEditor, the candidate viewport adaptation, installed native createChatViewport and its InteractiveMode mounting/dialog callers. CompactEditor drops just the two native border rows and owns a two-column prompt gutter; startup swaps the child inside the existing editor Container rather than replacing its identity. The viewport derives minSize from the current single child marker on each read, and native selector/dialog lifecycle reuses that Container. Thus the third journey exercises a real replacement seam, not a stale startup constant. The candidate and base fullscreen test blob are identical. The two neighboring changed tests and their new process fixture were separately read; this focus neither imports nor depends on that fixture, so no edit is warranted here.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read exact candidate files with git show and all candidate changes with git diff from primaryBase 44289959a4278e76c3c1fd77c6ad6e17b68b090b; the entire changed-path set is the two long-thread tests and terminal-process-fixture.ts.",
+        "Read candidate tests/helpers.ts and tests/tui-helpers.ts: explicit options.env replaces inherited environment before Bun.spawn; capturePane and frameContaining retain real-pane polling and missing-frame failure.",
+        "Static git diff --check primaryBase candidate returned exit 0. Git rev-parse candidate:path supplies the recorded blob IDs; no verdict derives from passing tests.",
+        "Review provenance: durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_10416205. No code checkout or source copy was made under /tmp; no test fixtures were instantiated by this judge.",
+        "Confirmed fullscreen candidate and primaryBase both resolve to blob 31d089bc93325dda108e3e30b11b82ec604e54a9; read its entire intrinsic source, including all assertions."
+      ],
+      "limits": [
+        "No setup, tests, builds, dependency writes/reinstallation, credential access, live auth/device work, cleanup/deletion, source edits, delegation, commits, push, PR, or merge performed. Runtime gates and agent.model verification remain parent-owned.",
+        "This is an independent structural/static code review, not runtime evidence for tmux direct-argv launches, fullscreen interaction, provider access, or measured budgets.",
+        "Native installed dependency files were inspected read-only as relevant implementation context. The installed chat-viewport.js SHA-256 d8935ff445ff638165a4f11dba32eddea46191377894a8b644ee1511ef36e48f matches the exact candidate scripts/pi-host-adaptation.ts pin; other installed native files are not Git candidate blobs."
       ]
     },
     {
@@ -12757,12 +12787,12 @@
     {
       "file": "tests/long-thread-pty-latency.test.ts",
       "initialBlob": "ee7d4d4ae5ad75052551d01df53a362ceeaa2b4e",
-      "status": "pending",
+      "status": "accepted",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_26e600d2",
       "primaryCommit": "13ca09c5f7eafdb52b9e7a11a6d9068dd54a5834",
-      "judgeIds": [],
+      "judgeIds": ["task_10416205"],
       "sourceCommit": "13ca09c5f7eafdb52b9e7a11a6d9068dd54a5834",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
       "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
@@ -12788,17 +12818,37 @@
         "Durable code provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_26e600d2 at 13ca09c5f7eafdb52b9e7a11a6d9068dd54a5834. New helper is committed in this worktree; /tmp paths hold formatter fixtures only, not agent code checkouts. Runtime terminal fixtures were not executed. Future runs record retained fixture HOME/socket in artifacts/.../fixture.json.",
         "Parent runtime gates must provide an owned isolated parent process environment before SDK imports, prebuilt candidate binary, and owned BRUV_LATENCY_OUTPUT if enabled. That existing optional output setting remains unchanged; no output path or binary was exercised here.",
         "No wisdom/values edits: the parent owns aggregate wisdom, and the existing values already cover ownership, fixture isolation, truthful proof and whole-interaction latency."
+      ],
+      "acceptedRelatedJudges": ["task_10416205"],
+      "acceptedBlob": "add8c01df6baacaadce826d1c9f62533cc698645",
+      "result": "The base interleaved a large historical-message builder into the short/long measurement loop and repeated send/poll/time/clear operations for idle and held echo. In the candidate, seedSession owns only the complete historical message/tool records plus readiness sentinel; the test still visibly chooses turns, records entry/byte counts, launches, waits for readiness and performs warmup. sampleEditorEcho now owns the complete repeated measurement operation: send literal token, bound visibility polling, assert actual echo, stop timing, then clear and verify clearing. The two call sites explicitly retain different 100ms idle and 0ms held settling outside the timing boundary. The remaining journey is readable in order: idle echo, submit, confirm one held request, held echo, spinner-only transition observations, release response, then explicit budgets. Poll bounds, startup/request assertions, spinner minimum observation, result fields and both echo budget checks remain; returning the pre-clear frame preserves held-echo evidence. These are coherent operations, not arbitrary block hiding or renaming.",
+      "systemReason": "Read both consumers and the entire new terminal-process-fixture.ts, plus exact subprocess/frame helpers and candidate CLI startup. The fixture creates one retained mkdtemp HOME and owned XDG/TMPDIR/Bruv/Pi SDK directories before launches; tmux receives explicit argv/env/cwd and its own config/socket, and paneCommand uses env -i plus explicit program arguments rather than shell-quoted commands or inherited credentials. Binary --version uses the same private environment. CLI runtime materialization is beneath homedir(), making that environment significant. The test, not the fixture, still owns tmux shutdown and the loopback HTTP provider lifetime: consume request, hold SSE headers until measurements finish, verify count/path, release responses and close server connections in finally. Native working-indicator propagation reaches CompactEditor, whose render selects the spinner in the prompt gutter, matching spinner-only signatures. Retention and fixture.json provenance replace deletion without hiding ownership. No assertion/security weakening was found in the exact diff.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read exact candidate files with git show and all candidate changes with git diff from primaryBase 44289959a4278e76c3c1fd77c6ad6e17b68b090b; the entire changed-path set is the two long-thread tests and terminal-process-fixture.ts.",
+        "Read candidate tests/helpers.ts and tests/tui-helpers.ts: explicit options.env replaces inherited environment before Bun.spawn; capturePane and frameContaining retain real-pane polling and missing-frame failure.",
+        "Static git diff --check primaryBase candidate returned exit 0. Git rev-parse candidate:path supplies the recorded blob IDs; no verdict derives from passing tests.",
+        "Review provenance: durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_10416205. No code checkout or source copy was made under /tmp; no test fixtures were instantiated by this judge.",
+        "Read the entire 355-line intrinsic candidate latency source, including unchanged provider setup/hold/release, spinner calculation, failure-frame evidence, optional budgets and final shutdown.",
+        "Audited filesystem/network effects statically: owned session/model/config/runtime writes; retained artifacts/latency/<socket>-<timestamp>/fixture.json records HOME/socket; HTTP listener is 127.0.0.1 with fake fixture key. No fixture or network server was launched."
+      ],
+      "limits": [
+        "No setup, tests, builds, dependency writes/reinstallation, credential access, live auth/device work, cleanup/deletion, source edits, delegation, commits, push, PR, or merge performed. Runtime gates and agent.model verification remain parent-owned.",
+        "This is an independent structural/static code review, not runtime evidence for tmux direct-argv launches, fullscreen interaction, provider access, or measured budgets.",
+        "Native installed dependency files were inspected read-only as relevant implementation context. The installed chat-viewport.js SHA-256 d8935ff445ff638165a4f11dba32eddea46191377894a8b644ee1511ef36e48f matches the exact candidate scripts/pi-host-adaptation.ts pin; other installed native files are not Git candidate blobs.",
+        "Parent gates must keep the existing optional BRUV_LATENCY_OUTPUT unset or pointed to an explicitly owned output path; this unchanged setting can direct writeFile outside the fixture.",
+        "Latency intentionally launches with PI_OFFLINE=0 for its loopback provider. An explicit private environment is not a general network sandbox; parent owns any loopback-only network isolation and budget selection. Retained fixture HOME may be under tmpdir(), but durable provenance is written under repository artifacts; no runtime artifact paths are claimed by this judge."
       ]
     },
     {
       "file": "tests/long-thread-tui.test.ts",
       "initialBlob": "eb883c6d1d32cce8830ae43727f4b211a8484dca",
-      "status": "pending",
+      "status": "accepted",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_26e600d2",
       "primaryCommit": "13ca09c5f7eafdb52b9e7a11a6d9068dd54a5834",
-      "judgeIds": [],
+      "judgeIds": ["task_10416205"],
       "sourceCommit": "13ca09c5f7eafdb52b9e7a11a6d9068dd54a5834",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
       "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
@@ -12824,6 +12874,25 @@
         "Durable code provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_26e600d2 at 13ca09c5f7eafdb52b9e7a11a6d9068dd54a5834. New helper is committed in this worktree; /tmp paths hold formatter fixtures only, not agent code checkouts. Runtime terminal fixtures were not executed. Future runs record retained fixture HOME/socket in artifacts/.../fixture.json.",
         "Parent runtime gates must provide an owned isolated parent process environment before SDK imports, prebuilt candidate binary, and owned BRUV_LATENCY_OUTPUT if enabled. That existing optional output setting remains unchanged; no output path or binary was exercised here.",
         "No wisdom/values edits: the parent owns aggregate wisdom, and the existing values already cover ownership, fixture isolation, truthful proof and whole-interaction latency."
+      ],
+      "acceptedRelatedJudges": ["task_10416205"],
+      "acceptedBlob": "ddef39df022daaaef6a44732283a258f43914870",
+      "result": "Read the full candidate journey and exact base diff independently. createSavedThread removes the 100-turn/1000-result construction from the interaction narrative while retaining every assistant/toolResult shape and LONG_THREAD_READY sentinel. The test now reads directly as load/warmup, draft input, oldest/end navigation, anchor-preserving expansion and recollapse, narrow resize, same-session process reopen, oldest/latest expanded detail checks, then regular-mode label/detail behavior and persisted-history verification. paneFrames binds a target to the pre-existing frameContaining assertion and artifact write once; it removes the separately assembled regular-mode capture/write pipeline without moving semantic assertions away from their actions. Reusing the launch argv for respawn and extending it only with regular-mode flags clarifies what differs. All original detail regexes, collapse checks, 48-column checks and 2101-message/1000-result/content assertions remain; regular typed draft now also receives a retained frame. The extractions resolve real navigation and duplicated evidence ownership rather than introducing a shared application context.",
+      "systemReason": "Read candidate CLI installation and rolling-activity grouping/render/expansion/anchor code, native layout and expansion callers, and the entire shared fixture plus its latency consumer. Saved user messages define activity membership and the ten tool calls form each fullscreen group; collapsed group headers hide native bodies, while expansion preserves the reading anchor through the next layout. The rolling adapter only applies to fullscreen, explaining why the regular pane must still prove individual labels and native detail rendering. The test correctly keeps those two expectations distinct. Respawn reopens the identical saved branch without terminating the last tmux session/server, preserving the documented exit-empty race avoidance. Explicit pane argv/env and owned cwd/HOME/XDG/SDK directories prevent inherited user configuration from being the session authority. The test owns named-server shutdown, while the retained fixture and artifacts/tui/<socket>/fixture.json preserve inspectable session/frame provenance. No assertion loss or ownership conflict was found.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read exact candidate files with git show and all candidate changes with git diff from primaryBase 44289959a4278e76c3c1fd77c6ad6e17b68b090b; the entire changed-path set is the two long-thread tests and terminal-process-fixture.ts.",
+        "Read candidate tests/helpers.ts and tests/tui-helpers.ts: explicit options.env replaces inherited environment before Bun.spawn; capturePane and frameContaining retain real-pane polling and missing-frame failure.",
+        "Static git diff --check primaryBase candidate returned exit 0. Git rev-parse candidate:path supplies the recorded blob IDs; no verdict derives from passing tests.",
+        "Review provenance: durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_10416205. No code checkout or source copy was made under /tmp; no test fixtures were instantiated by this judge.",
+        "Read all 175 intrinsic candidate lines, all original-to-candidate changes, and relevant unchanged fullscreen/regular branch, reopen, frame and persistence assertions.",
+        "Audited effects without execution: SessionManager.create receives owned HOME and explicit session directory; SessionManager.open derives the directory from that saved file. Pane launches are offline with an explicit fake API key, retained private directories, and explicit arguments; only the test-owned named tmux server is shut down."
+      ],
+      "limits": [
+        "No setup, tests, builds, dependency writes/reinstallation, credential access, live auth/device work, cleanup/deletion, source edits, delegation, commits, push, PR, or merge performed. Runtime gates and agent.model verification remain parent-owned.",
+        "This is an independent structural/static code review, not runtime evidence for tmux direct-argv launches, fullscreen interaction, provider access, or measured budgets.",
+        "Native installed dependency files were inspected read-only as relevant implementation context. The installed chat-viewport.js SHA-256 d8935ff445ff638165a4f11dba32eddea46191377894a8b644ee1511ef36e48f matches the exact candidate scripts/pi-host-adaptation.ts pin; other installed native files are not Git candidate blobs.",
+        "Neither real narrow-terminal frames nor tmux respawn/regular-mode behavior were executed here. Parent audited isolated gates must verify them and retain their fixture HOME plus repository frame/provenance artifacts."
       ]
     },
     {
@@ -14420,12 +14489,12 @@
     {
       "file": "tests/scroll-layout-render.test.ts",
       "initialBlob": "a9cb7bece4e3c57da06b925be3d8d375e19cd3a7",
-      "status": "pending",
+      "status": "accepted",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_3c2b4389",
       "primaryCommit": "93c66a662c7fc498a0f5aee0c3bb824bf4156cc0",
-      "judgeIds": [],
+      "judgeIds": ["task_5883fa01"],
       "sourceCommit": "93c66a662c7fc498a0f5aee0c3bb824bf4156cc0",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
       "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
@@ -14445,17 +14514,31 @@
         "No live authentication or device behavior verified; only a literal offline placeholder is in the fixture environment.",
         "Runtime agent.model verification is parent-owned; no descendants were launched.",
         "No per-worker wisdom notes or values edits: parent owns the aggregate wisdom. Existing candidate evidence and worktrees preserved."
+      ],
+      "acceptedBlob": "a9cb7bece4e3c57da06b925be3d8d375e19cd3a7",
+      "result": "Read all three tests and the documentFixture/InputTerminal implementations. The first test makes frame lifetime legible by recording each render width across initial, unchanged, replaced, manually anchored and resized frames; assertions explicitly relate scrollContentLines, child lines, viewport height and scrollTop. The second deliberately contrasts natural measurement/gutter behavior, direct render and horizontal width allocation. The final test exposes real fullscreen mouse selection, replacement, search opening, resize and replacement chronology with an owned fake terminal/copy callback and finally stop. No extraction is needed: hiding that sequence would make the authoritative current-content transitions harder to read.",
+      "systemReason": "Followed pi-tui layout renderCached and renderLayoutFrame: the width-keyed cache is newly allocated per frame, natural measurement uses that same cache, and scroll layout shares the content array while updateLayout owns following-end/clamping. Followed fullscreen getActiveSelectionText and refreshSearch: both consume the current layout scrollContentLines, not an old document snapshot. Thus the replacement/resize assertions exercise the relevant unchanged decisions directly. Also inspected both complete candidate-changed tests and their exact primaryBase diff: seedLargeTextSession returns the explicit fixture session file; launchOfflineCli owns quoted env -i command and checked tmux startup, with fixture process/config/SDK/temp paths retained. measurePlainBlockWork owns RegExp.prototype.exec installation, matcher exclusions, raw-token assertion and finally restoration for exactly one synchronous lexer call; both callers retain their separate scaling and zero-call expectations. Reference tokens/options, rich ANSI/content and subclass-hook assertions remain.",
+      "checks": [
+        "git diff from ae69e082a942073837b9f5a8b3154b174515a4f3 to exact candidate confirms this focus byte-for-byte unchanged and exactly two related changed paths.",
+        "Inspected every candidate-changed source path in full and its base diff, without treating their edits as an improvement to this unchanged focus.",
+        "Read frame-cache creation, scroll-state update, current selection source and refreshed search source in read-only pinned-version dependency implementation.",
+        "git diff --check on exact primaryBase/candidate passed (static whitespace check only). No tests/setup/builds run."
+      ],
+      "limits": [
+        "Static actual-source judgment only: no setup, tests, builds, dependency writes/reinstall, auth/device access, network probes, cleanup, source edits, commits, push, PR or merge performed. Parent owns audited isolated execution gates and runtime agent.model verification.",
+        "Read-only installed pi-tui/pi-coding-agent 1.0.3 implementations were supporting caller evidence; candidate package pins and patches were read with git show. Installed dependency contents and compiled binary were not independently rebuilt or certified against candidate.",
+        "Review and artifact provenance is this retained durable bruv Git worktree; no /tmp code checkout or delegated descendants. Test fixture HOME is mkdtemp under tmpdir and retained by candidate; artifact output remains under the durable worktree artifacts/tui path."
       ]
     },
     {
       "file": "tests/sdk-large-text-tui.test.ts",
       "initialBlob": "f8bace9a51cf3ee12315a3cf3fef24c1e342bd10",
-      "status": "pending",
+      "status": "accepted",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_3c2b4389",
       "primaryCommit": "93c66a662c7fc498a0f5aee0c3bb824bf4156cc0",
-      "judgeIds": [],
+      "judgeIds": ["task_5883fa01"],
       "sourceCommit": "93c66a662c7fc498a0f5aee0c3bb824bf4156cc0",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
       "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
@@ -14475,6 +14558,21 @@
         "No live authentication or device behavior verified; only a literal offline placeholder is in the fixture environment.",
         "Runtime agent.model verification is parent-owned; no descendants were launched.",
         "No per-worker wisdom notes or values edits: parent owns the aggregate wisdom. Existing candidate evidence and worktrees preserved."
+      ],
+      "acceptedRelatedJudges": ["task_5883fa01"],
+      "acceptedBlob": "f568e6a6ed1ba369e55cc6cddba32ba54d6078d2",
+      "result": "Compared the entire focus with the exact primaryBase. Previously the long setup mixed saved-message construction and shell launch details into the interaction chronology. seedLargeTextSession now owns both saved messages and returns the one session-file authority later opened for persisted equality; launchOfflineCli owns quoting, cleared environment argv and checked tmux startup. The test visibly owns its fixture environment once and reads as prepare -> loaded -> oldest -> bottom -> resize/rich ANSI -> type -> persisted equality. The extracts represent distinct coherent effects, not renames or a shared context bag. Frame polling, markers, ANSI bold assertion, editable draft and complete saved-message equality are unchanged.",
+      "systemReason": "Followed run/ offlineTestEnv into explicit Bun.spawn argv/env/cwd and capturePane/frameContaining into polling and failure reporting. All tmux operations use a unique named socket, owned config and fixture cwd/env; the shell payload quotes every token and uses env -i with the same HOME/config/cache/data/temp/SDK paths, fake key and offline mode. SessionManager.create receives explicit fixture cwd/sessionDir; open derives its directory from that returned fixture file. Compiled CLI dispatch installs its disk-backed adapter and materializes runtime assets under homedir, which this launch binds to fixture HOME; adapter open retains the supplied file authority. Candidate retains fixture HOME rather than deleting it and records fixtureHome in durable evidence. The related markdown test changes coherently centralize the global regex hook lifetime in one synchronous try/finally operation, preserving matcher prohibitions/raw equality and independent scaling/zero-call assertions; the actual candidate tokenizer patch explains the line-bounded predicate being measured.",
+      "checks": [
+        "Exact primaryBase/candidate diff inspected; changed source scope is only this focus and tests/sdk-markdown-blocks.test.ts, whose whole intrinsic source and diff were also read.",
+        "Static filesystem/process review: mkdtemp fixture retained; explicit process argv/env; owned HOME/XDG/SDK/TMPDIR and tmux config/cwd; no deletion or shell traps in candidate focus. Artifact writes are under this durable checkout artifacts/tui unique socket directory.",
+        "Traced actual helpers, SessionManager create/open path authority, compiled runtime asset root and disk-backed adapter open; inspected offline SDK initialization without running it.",
+        "git diff --check on exact primaryBase/candidate passed. Existing assertion content preserved by source comparison; no execution claims."
+      ],
+      "limits": [
+        "Static actual-source judgment only: no setup, tests, builds, dependency writes/reinstall, auth/device access, network probes, cleanup, source edits, commits, push, PR or merge performed. Parent owns audited isolated execution gates and runtime agent.model verification.",
+        "Read-only installed pi-tui/pi-coding-agent 1.0.3 implementations were supporting caller evidence; candidate package pins and patches were read with git show. Installed dependency contents and compiled binary were not independently rebuilt or certified against candidate.",
+        "Review and artifact provenance is this retained durable bruv Git worktree; no /tmp code checkout or delegated descendants. Test fixture HOME is mkdtemp under tmpdir and retained by candidate; artifact output remains under the durable worktree artifacts/tui path."
       ]
     },
     {
@@ -14482,7 +14580,7 @@
       "initialBlob": "d69a3da5367fb93fdc4c47336260d74c0fc10bfd",
       "status": "pending",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-judge",
+      "resumeState": "needs-primary-final-blob",
       "primaryId": "task_3c2b4389",
       "primaryCommit": "93c66a662c7fc498a0f5aee0c3bb824bf4156cc0",
       "judgeIds": [],
@@ -14505,7 +14603,9 @@
         "No live authentication or device behavior verified; only a literal offline placeholder is in the fixture environment.",
         "Runtime agent.model verification is parent-owned; no descendants were launched.",
         "No per-worker wisdom notes or values edits: parent owns the aggregate wisdom. Existing candidate evidence and worktrees preserved."
-      ]
+      ],
+      "acceptedRelatedJudges": ["task_5883fa01"],
+      "acceptedBlob": "09c98ee174874df966466af24d868502ecfa7004"
     },
     {
       "file": "tests/sdk-text-wrap-performance.test.ts",
@@ -17642,10 +17742,39 @@
       "initialBlob": "absent",
       "area": "ui-terminal-cli",
       "status": "pending",
-      "resumeState": "needs-primary-final-blob",
-      "sourceCommit": "f8b4781e6b57fc00f6055e351c281217fa73dcac",
+      "resumeState": "needs-judge",
+      "sourceCommit": "c98fa76bd85f4e6e3a12af6c3f2356fd55285825",
       "acceptedRelatedJudges": ["task_dd0e6b80"],
-      "acceptedBlob": "ab1ae7f18b7f556ca7e85d3a9b2bb37b7cf0d646"
+      "acceptedBlob": "ab1ae7f18b7f556ca7e85d3a9b2bb37b7cf0d646",
+      "primaryId": "task_8440f279",
+      "primaryCommit": "c98fa76bd85f4e6e3a12af6c3f2356fd55285825",
+      "primaryBase": "c98fa76bd85f4e6e3a12af6c3f2356fd55285825",
+      "primaryResult": "No additional structural change is warranted. Top-level installation order captures originalUsage before diskUsage and installs shake last, making the three authorities explicit. expected() independently uses the SDK public projection builder and full branch rather than the manager cache-seeding method. Two small assertion operations distinguish invalidation from request/projection seeding; eight named phases keep mutations beside their expectations, and the final ordered call list exposes the single-session lifetime. In particular, system+user preparation asserts both actual submitted context and first-footer reuse; compaction preserves unknown tokens; the shake phase keeps InvalidShakeRecordError validation and branches away from the malformed marker; routed-limit assertions separately check unchanged tokens and changed percent without recalculation. The launcher owns a retained mkdtemp HOME/config/SDK/session/TMPDIR and one child owns all prototype patches. Further splitting or wrapping shared counters would obscure the intentional chronological session journey or introduce a context bag without reducing a real reading burden. This is a primary actual-source no-change decision, not independent judge approval.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read whole assigned fixture and whole tests/context-usage-cache.test.ts and tests/helpers.ts; inspected relevant cache, shake, footer, disposal and installed SDK request-preparation code.",
+        "Read only relevant parent launcher evidence row from supplied reconciliation after locating the absent fixture entry.",
+        "Exact git blob comparison: fixture ab1ae7f18b7f556ca7e85d3a9b2bb37b7cf0d646 and launcher 4541f123bbcc359b72d2fccb02643798559c7732 match f8b4781e6b57fc00f6055e351c281217fa73dcac; git diff for both paths against candidate is empty.",
+        "No source changes; formatter not applicable and no new source commit created."
+      ],
+      "primaryLimits": [
+        "No tests, setup, builds, provider/device/network/auth access, recovery work, deletion, dependency writes, delegation, push, merge or publication. Parent owns audited isolated gates, runtime model verification and fresh independent judgment.",
+        "Runtime behavior and installed SDK compatibility remain unverified; source inspection and blob equality are not test proof.",
+        "Read source disposal code only; did not execute its spool unlink operation. No temporary fixtures were created or removed.",
+        "Durable review provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_8440f279. Candidate evidence and existing worktrees preserved.",
+        "Only .pr45-primary-result.json is written, intentionally untracked. No wisdom or values edits: no new general lesson, and parent owns aggregate wisdom."
+      ]
+    },
+    {
+      "file": "tests/terminal-process-fixture.ts",
+      "initialBlob": "absent",
+      "area": "ui-terminal-cli",
+      "status": "pending",
+      "resumeState": "needs-primary-final-blob",
+      "sourceCommit": "13ca09c5f7eafdb52b9e7a11a6d9068dd54a5834",
+      "acceptedRelatedJudges": ["task_10416205"],
+      "acceptedBlob": "ce36ecd7c404612c9a4ee1ce6bfb81f73820a290"
     }
   ],
   "completedAreas": {
@@ -17665,10 +17794,10 @@
     "baselineFiles": 766,
     "finalGate": "pending; incomplete focus coverage",
     "liveAuth": "unverified/failing; preserved",
-    "accepted": 653,
-    "total": 822,
-    "pending": 169,
-    "sourceExtras": 56,
+    "accepted": 659,
+    "total": 823,
+    "pending": 164,
+    "sourceExtras": 57,
     "checkout": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
     "branch": "bruv/readability-pr45-sol-continuation",
     "scheduler": "/home/tnfssc/.bruv/worktrees/pr45-flow-c2a2fd8a.mjs"

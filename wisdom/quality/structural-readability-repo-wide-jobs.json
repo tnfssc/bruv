@@ -2389,7 +2389,7 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_5883fa01",
         "branch": "bruv/pr45-judge-3-ui-terminal-cli-focuses-5883fa01",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled"
       },
       {
         "id": "task_409a3482",
@@ -2415,7 +2415,7 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_10416205",
         "branch": "bruv/pr45-judge-3-ui-terminal-cli-focuses-10416205",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled"
       },
       {
         "id": "task_8440f279",
@@ -2423,6 +2423,29 @@
         "focus": ["tests/fixtures/context-usage-cache-scenario.mjs"],
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_8440f279",
         "branch": "bruv/pr45-primary-1-ui-terminal-cli-focuses-8440f279",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled",
+        "sourceCommit": "c98fa76bd85f4e6e3a12af6c3f2356fd55285825"
+      },
+      {
+        "id": "task_9b67e0db",
+        "stage": "judge",
+        "focus": [
+          "tests/sdk-markdown-blocks.test.ts",
+          "tests/sdk-text-wrap-performance.test.ts",
+          "tests/settled-execute-render.test.ts"
+        ],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_9b67e0db",
+        "branch": "bruv/pr45-judge-3-ui-terminal-cli-focuses-9b67e0db",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_beae5cf1",
+        "stage": "primary",
+        "focus": ["tests/startup.test.ts", "tests/terminal-perf-cli.test.ts", "tests/terminal-perf-navigation.test.ts"],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_beae5cf1",
+        "branch": "bruv/pr45-primary-3-ui-terminal-cli-focuses-beae5cf1",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
       }
