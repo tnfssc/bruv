@@ -1848,10 +1848,11 @@
       "resume": {
         "status": "pending",
         "acceptedBlob": "da5d3d5056c91024797839ef57544af184a603bf",
-        "primaryId": "task_81d46e58",
+        "primaryId": "task_ad282ca7",
+        "primaryCommit": "4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7",
         "judgeIds": ["task_f509c814"],
-        "sourceCommit": null,
-        "state": "needs-rework"
+        "sourceCommit": "4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7",
+        "state": "needs-judge"
       }
     },
     {
@@ -1898,10 +1899,11 @@
       "resume": {
         "status": "pending",
         "acceptedBlob": "5d0f15a6b6e30e64707e6ec76e29af0f3ddd15a7",
-        "primaryId": "task_c708fc82",
+        "primaryId": "task_ad282ca7",
+        "primaryCommit": "4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7",
         "judgeIds": ["task_35b870b5"],
-        "sourceCommit": null,
-        "state": "needs-rework"
+        "sourceCommit": "4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7",
+        "state": "needs-judge"
       }
     },
     {
@@ -1941,10 +1943,11 @@
       "resume": {
         "status": "pending",
         "acceptedBlob": "a96d35ae74558f9b440dda3a486e19d2bd00a8d5",
-        "primaryId": "task_109390aa",
+        "primaryId": "task_ad282ca7",
+        "primaryCommit": "4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7",
         "judgeIds": ["task_aa63512d"],
-        "sourceCommit": null,
-        "state": "needs-rework"
+        "sourceCommit": "4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7",
+        "state": "needs-judge"
       }
     },
     {
@@ -1981,10 +1984,11 @@
       "resume": {
         "status": "pending",
         "acceptedBlob": "45e0d90785aa81576dfdd1687cf44451b546dde4",
-        "primaryId": "task_9dd6501e",
+        "primaryId": "task_ad282ca7",
+        "primaryCommit": "4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7",
         "judgeIds": ["task_f7319ebc"],
-        "sourceCommit": null,
-        "state": "needs-rework"
+        "sourceCommit": "4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7",
+        "state": "needs-judge"
       }
     },
     {
@@ -2042,10 +2046,11 @@
       "resume": {
         "status": "pending",
         "acceptedBlob": "e04230d818b527658f16eda023aa190bbb1b4f89",
-        "primaryId": "task_7936354f",
+        "primaryId": "task_ad282ca7",
+        "primaryCommit": "4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7",
         "judgeIds": ["task_bdc5b9c4", "task_9233d5f2"],
-        "sourceCommit": null,
-        "state": "needs-rework"
+        "sourceCommit": "4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7",
+        "state": "needs-judge"
       }
     },
     {
@@ -2092,10 +2097,11 @@
       "resume": {
         "status": "pending",
         "acceptedBlob": "51a27b0bc8d0f3da78baddee0ab0eab27a048468",
-        "primaryId": "task_70f09987",
+        "primaryId": "task_ad282ca7",
+        "primaryCommit": "4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7",
         "judgeIds": ["task_5442746a"],
-        "sourceCommit": null,
-        "state": "needs-rework"
+        "sourceCommit": "4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7",
+        "state": "needs-judge"
       }
     },
     {
@@ -3207,10 +3213,11 @@
       "resume": {
         "status": "pending",
         "acceptedBlob": "06c4344c3274180322ba17971dc91486149f7a09",
-        "primaryId": "task_0ecce4b1",
+        "primaryId": "task_ad282ca7",
+        "primaryCommit": "4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7",
         "judgeIds": ["task_efae7e17"],
-        "sourceCommit": null,
-        "state": "needs-rework"
+        "sourceCommit": "4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7",
+        "state": "needs-judge"
       }
     },
     {

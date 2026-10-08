@@ -4037,7 +4037,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_ad282ca7",
         "branch": "bruv/pr45-primary-7-build-release-ci-tooling--ad282ca7",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7"
       }
     ]
   },

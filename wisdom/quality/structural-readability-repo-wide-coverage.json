@@ -10886,7 +10886,7 @@
       "status": "pending",
       "area": "build-release-ci-tooling",
       "acceptedBlob": "da5d3d5056c91024797839ef57544af184a603bf",
-      "primaryId": "task_81d46e58",
+      "primaryId": "task_ad282ca7",
       "judgeIds": ["task_f509c814"],
       "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json",
       "priorAcceptedIntegrationProof": [
@@ -10898,8 +10898,8 @@
           "finalJudge": "task_5c03f5eb"
         }
       ],
-      "resumeState": "needs-rework",
-      "sourceCommit": null,
+      "resumeState": "needs-judge",
+      "sourceCommit": "4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7",
       "resumeBatch": "owned-subprocess-fixture-environments",
       "resumeRework": {
         "candidate": "af3602cf3d5b62641450c7cc24bb0350334b6652",
@@ -10920,7 +10920,41 @@
           }
         ],
         "readingReason": "Concrete integrated subprocess authority escape, no claim harmful processes executed. Coherent group shares one small explicit fixture-environment owner; preserve every original assertion and real-pair requirement."
-      }
+      },
+      "priorPrimaryLineage": [
+        {
+          "primaryId": "task_81d46e58",
+          "sourceCommit": null
+        }
+      ],
+      "primaryCommit": "4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7",
+      "primaryBase": "07dfb599f3f4b5d945f39a661e8cc658ed3ffa54",
+      "primaryResult": "The denied CLI child now starts by absolute script argv in a retained mkdtemp cwd and receives ownedFixtureEnv plus only the declared repository/event denial inputs. The credential-free environment and owned cwd are visible at the launch; the source updater still reads its existing manifest/lock and rejects fixture permission before update/publication. All selection, protection, Pi, summary and CLI denial assertions remain; no cosmetic suite rewrite.",
+      "primaryPaths": [
+        "tests/dependency-updates.test.ts",
+        "tests/dependency-workflow.test.ts",
+        "tests/find-ci-baseline.test.ts",
+        "tests/helpers.ts",
+        "tests/install-download.test.ts",
+        "tests/install-local.test.ts",
+        "tests/update-self-fixture.test.ts",
+        "scripts/find-ci-baseline.ts"
+      ],
+      "primaryChecks": [
+        "Read full focus source, relevant subprocess callers, wisdom/values.md and wisdom/quality/structural-readability-guidance.md. Focused environment authority was source-inspected before formatter/commit execution; adjacent updater/gate effects were also inspected before handoff. No test/setup/build was executed.",
+        "Compared all seven focus files with exact rejected candidate af3602cf3d5b62641450c7cc24bb0350334b6652 before editing: identical bytes. Read supplied rejection evidence and only matching rows in build-release-ci-tooling.json.",
+        "Inspected environment flow at each targeted spawn/exec boundary, baseline internal Git, normal CLI homedir runtime initialization, updater denial-before-update flow and installer/launcher filesystem/network behavior. Child auth/config is constructed from owned roots; declared pair/template paths are read-only inputs.",
+        "Applied required Biome format --write through node:child_process explicit argv to exactly the eight changed source paths, with fresh retained HOME/XDG/SDK/TMPDIR /tmp/pr45-fixture-format-MatcqC. Formatter reported 8 files formatted, 3 fixed.",
+        "git diff --check passed. Final source inspection found no inherited process.env spreads in the focused fixtures; original literal test names remained. This is supporting static inspection, not runtime proof or a readability verdict.",
+        "Source-only commit 4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7 in durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_ad282ca7. Inspection Git used explicit owned environment in retained /tmp/pr45-fixture-source-audit-62dY0Y; no cleanup/deletion or destructive Git commands executed."
+      ],
+      "primaryLimits": [
+        "Runtime tests, compilation/builds, setup, live/device authentication, network release provenance and independent judgments are unverified and parent-owned. No credentials accessed; no descendants launched; parent owns runtime model verification.",
+        "Requested undefined/wisdom/quality/structural-readability-areas/build-release-ci-tooling-resume-reconciliation.json was absent. The non-undefined local path and checked matching task worktrees also lacked it. Used exact preserved candidate bytes, supplied per-focus objections and assigned local ledger rows; no old branch merged.",
+        "Existing installer scripts and scripts/ci.sh contain cleanup traps; fault fixtures also contain signal/rollback operations. They were inspected, never executed here. Parent must audit any proposed gate under the supplied safety constraints. Fixture-root cleanup is removed; assertions about product-owned staging cleanup remain.",
+        "The general offlineTestEnv/run helper and the production findCiBaseline CLI default continue their prior behavior outside these scoped fixture launches. Broad caller migration is intentionally not part of this bounded batch.",
+        "Fixtures deliberately retain their mkdtemp roots; any eventual lifecycle policy belongs to the parent/user. Shared dependencies remain read-only. No wisdom notes changed; parent owns aggregate wisdom."
+      ]
     },
     {
       "file": "tests/dependency-workflow.test.ts",
@@ -10928,7 +10962,7 @@
       "status": "pending",
       "area": "build-release-ci-tooling",
       "acceptedBlob": "5d0f15a6b6e30e64707e6ec76e29af0f3ddd15a7",
-      "primaryId": "task_c708fc82",
+      "primaryId": "task_ad282ca7",
       "judgeIds": ["task_35b870b5"],
       "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json",
       "priorAcceptedIntegrationProof": [
@@ -10940,8 +10974,8 @@
           "finalJudge": "task_5c03f5eb"
         }
       ],
-      "resumeState": "needs-rework",
-      "sourceCommit": null,
+      "resumeState": "needs-judge",
+      "sourceCommit": "4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7",
       "resumeBatch": "owned-subprocess-fixture-environments",
       "resumeRework": {
         "candidate": "af3602cf3d5b62641450c7cc24bb0350334b6652",
@@ -10962,7 +10996,41 @@
           }
         ],
         "readingReason": "Concrete integrated subprocess authority escape, no claim harmful processes executed. Coherent group shares one small explicit fixture-environment owner; preserve every original assertion and real-pair requirement."
-      }
+      },
+      "priorPrimaryLineage": [
+        {
+          "primaryId": "task_c708fc82",
+          "sourceCommit": null
+        }
+      ],
+      "primaryCommit": "4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7",
+      "primaryBase": "07dfb599f3f4b5d945f39a661e8cc658ed3ffa54",
+      "primaryResult": "withCandidate allocates one owned environment before either repository is initialized. command requires env; every real Git call receives that environment, and verification receives it plus only BASE/SHA. Git system/global configuration is isolated, hooks resolve to an empty owned directory, and parent repository/token authority is absent. Both checkouts, real bundle, SHA/parent/file checks and all four original acceptance/rejection cases remain. The scenario root is retained, not removed in finally.",
+      "primaryPaths": [
+        "tests/dependency-updates.test.ts",
+        "tests/dependency-workflow.test.ts",
+        "tests/find-ci-baseline.test.ts",
+        "tests/helpers.ts",
+        "tests/install-download.test.ts",
+        "tests/install-local.test.ts",
+        "tests/update-self-fixture.test.ts",
+        "scripts/find-ci-baseline.ts"
+      ],
+      "primaryChecks": [
+        "Read full focus source, relevant subprocess callers, wisdom/values.md and wisdom/quality/structural-readability-guidance.md. Focused environment authority was source-inspected before formatter/commit execution; adjacent updater/gate effects were also inspected before handoff. No test/setup/build was executed.",
+        "Compared all seven focus files with exact rejected candidate af3602cf3d5b62641450c7cc24bb0350334b6652 before editing: identical bytes. Read supplied rejection evidence and only matching rows in build-release-ci-tooling.json.",
+        "Inspected environment flow at each targeted spawn/exec boundary, baseline internal Git, normal CLI homedir runtime initialization, updater denial-before-update flow and installer/launcher filesystem/network behavior. Child auth/config is constructed from owned roots; declared pair/template paths are read-only inputs.",
+        "Applied required Biome format --write through node:child_process explicit argv to exactly the eight changed source paths, with fresh retained HOME/XDG/SDK/TMPDIR /tmp/pr45-fixture-format-MatcqC. Formatter reported 8 files formatted, 3 fixed.",
+        "git diff --check passed. Final source inspection found no inherited process.env spreads in the focused fixtures; original literal test names remained. This is supporting static inspection, not runtime proof or a readability verdict.",
+        "Source-only commit 4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7 in durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_ad282ca7. Inspection Git used explicit owned environment in retained /tmp/pr45-fixture-source-audit-62dY0Y; no cleanup/deletion or destructive Git commands executed."
+      ],
+      "primaryLimits": [
+        "Runtime tests, compilation/builds, setup, live/device authentication, network release provenance and independent judgments are unverified and parent-owned. No credentials accessed; no descendants launched; parent owns runtime model verification.",
+        "Requested undefined/wisdom/quality/structural-readability-areas/build-release-ci-tooling-resume-reconciliation.json was absent. The non-undefined local path and checked matching task worktrees also lacked it. Used exact preserved candidate bytes, supplied per-focus objections and assigned local ledger rows; no old branch merged.",
+        "Existing installer scripts and scripts/ci.sh contain cleanup traps; fault fixtures also contain signal/rollback operations. They were inspected, never executed here. Parent must audit any proposed gate under the supplied safety constraints. Fixture-root cleanup is removed; assertions about product-owned staging cleanup remain.",
+        "The general offlineTestEnv/run helper and the production findCiBaseline CLI default continue their prior behavior outside these scoped fixture launches. Broad caller migration is intentionally not part of this bounded batch.",
+        "Fixtures deliberately retain their mkdtemp roots; any eventual lifecycle policy belongs to the parent/user. Shared dependencies remain read-only. No wisdom notes changed; parent owns aggregate wisdom."
+      ]
     },
     {
       "file": "tests/diagnostics.test.ts",
@@ -11267,7 +11335,7 @@
       "status": "pending",
       "area": "build-release-ci-tooling",
       "acceptedBlob": "a96d35ae74558f9b440dda3a486e19d2bd00a8d5",
-      "primaryId": "task_109390aa",
+      "primaryId": "task_ad282ca7",
       "judgeIds": ["task_aa63512d"],
       "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json",
       "priorAcceptedIntegrationProof": [
@@ -11279,8 +11347,8 @@
           "finalJudge": "task_5c03f5eb"
         }
       ],
-      "resumeState": "needs-rework",
-      "sourceCommit": null,
+      "resumeState": "needs-judge",
+      "sourceCommit": "4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7",
       "resumeBatch": "owned-subprocess-fixture-environments",
       "resumeRework": {
         "candidate": "af3602cf3d5b62641450c7cc24bb0350334b6652",
@@ -11301,7 +11369,41 @@
           }
         ],
         "readingReason": "Concrete integrated subprocess authority escape, no claim harmful processes executed. Coherent group shares one small explicit fixture-environment owner; preserve every original assertion and real-pair requirement."
-      }
+      },
+      "priorPrimaryLineage": [
+        {
+          "primaryId": "task_109390aa",
+          "sourceCommit": null
+        }
+      ],
+      "primaryCommit": "4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7",
+      "primaryBase": "07dfb599f3f4b5d945f39a661e8cc658ed3ffa54",
+      "primaryResult": "checkout now owns a retained root with a separate checkout directory and owned env, so fixture configuration/cache/SDK paths cannot become commit inputs. Initialization/commit/diff Git, all sixteen findCiBaseline call sites, and the selector receive that same env. The production helper gains one final environment argument passed directly to spawnSync; its ordinary CLI default is unchanged. HTTP evidence, synthetic token-only mocked requests, fail-closed cases, divergent/blob proofs, docs-vs-full decisions and shared-deadline assertions remain intact.",
+      "primaryPaths": [
+        "tests/dependency-updates.test.ts",
+        "tests/dependency-workflow.test.ts",
+        "tests/find-ci-baseline.test.ts",
+        "tests/helpers.ts",
+        "tests/install-download.test.ts",
+        "tests/install-local.test.ts",
+        "tests/update-self-fixture.test.ts",
+        "scripts/find-ci-baseline.ts"
+      ],
+      "primaryChecks": [
+        "Read full focus source, relevant subprocess callers, wisdom/values.md and wisdom/quality/structural-readability-guidance.md. Focused environment authority was source-inspected before formatter/commit execution; adjacent updater/gate effects were also inspected before handoff. No test/setup/build was executed.",
+        "Compared all seven focus files with exact rejected candidate af3602cf3d5b62641450c7cc24bb0350334b6652 before editing: identical bytes. Read supplied rejection evidence and only matching rows in build-release-ci-tooling.json.",
+        "Inspected environment flow at each targeted spawn/exec boundary, baseline internal Git, normal CLI homedir runtime initialization, updater denial-before-update flow and installer/launcher filesystem/network behavior. Child auth/config is constructed from owned roots; declared pair/template paths are read-only inputs.",
+        "Applied required Biome format --write through node:child_process explicit argv to exactly the eight changed source paths, with fresh retained HOME/XDG/SDK/TMPDIR /tmp/pr45-fixture-format-MatcqC. Formatter reported 8 files formatted, 3 fixed.",
+        "git diff --check passed. Final source inspection found no inherited process.env spreads in the focused fixtures; original literal test names remained. This is supporting static inspection, not runtime proof or a readability verdict.",
+        "Source-only commit 4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7 in durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_ad282ca7. Inspection Git used explicit owned environment in retained /tmp/pr45-fixture-source-audit-62dY0Y; no cleanup/deletion or destructive Git commands executed."
+      ],
+      "primaryLimits": [
+        "Runtime tests, compilation/builds, setup, live/device authentication, network release provenance and independent judgments are unverified and parent-owned. No credentials accessed; no descendants launched; parent owns runtime model verification.",
+        "Requested undefined/wisdom/quality/structural-readability-areas/build-release-ci-tooling-resume-reconciliation.json was absent. The non-undefined local path and checked matching task worktrees also lacked it. Used exact preserved candidate bytes, supplied per-focus objections and assigned local ledger rows; no old branch merged.",
+        "Existing installer scripts and scripts/ci.sh contain cleanup traps; fault fixtures also contain signal/rollback operations. They were inspected, never executed here. Parent must audit any proposed gate under the supplied safety constraints. Fixture-root cleanup is removed; assertions about product-owned staging cleanup remain.",
+        "The general offlineTestEnv/run helper and the production findCiBaseline CLI default continue their prior behavior outside these scoped fixture launches. Broad caller migration is intentionally not part of this bounded batch.",
+        "Fixtures deliberately retain their mkdtemp roots; any eventual lifecycle policy belongs to the parent/user. Shared dependencies remain read-only. No wisdom notes changed; parent owns aggregate wisdom."
+      ]
     },
     {
       "file": "tests/fixtures/claude-task-worker.ts",
@@ -13628,7 +13730,7 @@
       "status": "pending",
       "area": "build-release-ci-tooling",
       "acceptedBlob": "45e0d90785aa81576dfdd1687cf44451b546dde4",
-      "primaryId": "task_9dd6501e",
+      "primaryId": "task_ad282ca7",
       "judgeIds": ["task_f7319ebc"],
       "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json",
       "priorAcceptedIntegrationProof": [
@@ -13640,8 +13742,8 @@
           "finalJudge": "task_5c03f5eb"
         }
       ],
-      "resumeState": "needs-rework",
-      "sourceCommit": null,
+      "resumeState": "needs-judge",
+      "sourceCommit": "4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7",
       "resumeBatch": "owned-subprocess-fixture-environments",
       "resumeRework": {
         "candidate": "af3602cf3d5b62641450c7cc24bb0350334b6652",
@@ -13662,7 +13764,41 @@
           }
         ],
         "readingReason": "Concrete integrated subprocess authority escape, no claim harmful processes executed. Coherent group shares one small explicit fixture-environment owner; preserve every original assertion and real-pair requirement."
-      }
+      },
+      "priorPrimaryLineage": [
+        {
+          "primaryId": "task_9dd6501e",
+          "sourceCommit": null
+        }
+      ],
+      "primaryCommit": "4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7",
+      "primaryBase": "07dfb599f3f4b5d945f39a661e8cc658ed3ffa54",
+      "primaryResult": "Added ownedFixtureEnv(root), which creates only directories below a caller-owned retained mkdtemp root and constructs a literal environment with system tools, owned HOME/XDG/SDK/Bun/npm/temp locations, offline Herdr mode and isolated Git configuration/hooks/no-prompt policy. No parent environment is read by this function. Existing offlineTestEnv/run behavior and their independent callers/assertions are preserved; the targeted subprocess fixtures explicitly use the new owner. No general context object or global environment mutation.",
+      "primaryPaths": [
+        "tests/dependency-updates.test.ts",
+        "tests/dependency-workflow.test.ts",
+        "tests/find-ci-baseline.test.ts",
+        "tests/helpers.ts",
+        "tests/install-download.test.ts",
+        "tests/install-local.test.ts",
+        "tests/update-self-fixture.test.ts",
+        "scripts/find-ci-baseline.ts"
+      ],
+      "primaryChecks": [
+        "Read full focus source, relevant subprocess callers, wisdom/values.md and wisdom/quality/structural-readability-guidance.md. Focused environment authority was source-inspected before formatter/commit execution; adjacent updater/gate effects were also inspected before handoff. No test/setup/build was executed.",
+        "Compared all seven focus files with exact rejected candidate af3602cf3d5b62641450c7cc24bb0350334b6652 before editing: identical bytes. Read supplied rejection evidence and only matching rows in build-release-ci-tooling.json.",
+        "Inspected environment flow at each targeted spawn/exec boundary, baseline internal Git, normal CLI homedir runtime initialization, updater denial-before-update flow and installer/launcher filesystem/network behavior. Child auth/config is constructed from owned roots; declared pair/template paths are read-only inputs.",
+        "Applied required Biome format --write through node:child_process explicit argv to exactly the eight changed source paths, with fresh retained HOME/XDG/SDK/TMPDIR /tmp/pr45-fixture-format-MatcqC. Formatter reported 8 files formatted, 3 fixed.",
+        "git diff --check passed. Final source inspection found no inherited process.env spreads in the focused fixtures; original literal test names remained. This is supporting static inspection, not runtime proof or a readability verdict.",
+        "Source-only commit 4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7 in durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_ad282ca7. Inspection Git used explicit owned environment in retained /tmp/pr45-fixture-source-audit-62dY0Y; no cleanup/deletion or destructive Git commands executed."
+      ],
+      "primaryLimits": [
+        "Runtime tests, compilation/builds, setup, live/device authentication, network release provenance and independent judgments are unverified and parent-owned. No credentials accessed; no descendants launched; parent owns runtime model verification.",
+        "Requested undefined/wisdom/quality/structural-readability-areas/build-release-ci-tooling-resume-reconciliation.json was absent. The non-undefined local path and checked matching task worktrees also lacked it. Used exact preserved candidate bytes, supplied per-focus objections and assigned local ledger rows; no old branch merged.",
+        "Existing installer scripts and scripts/ci.sh contain cleanup traps; fault fixtures also contain signal/rollback operations. They were inspected, never executed here. Parent must audit any proposed gate under the supplied safety constraints. Fixture-root cleanup is removed; assertions about product-owned staging cleanup remain.",
+        "The general offlineTestEnv/run helper and the production findCiBaseline CLI default continue their prior behavior outside these scoped fixture launches. Broad caller migration is intentionally not part of this bounded batch.",
+        "Fixtures deliberately retain their mkdtemp roots; any eventual lifecycle policy belongs to the parent/user. Shared dependencies remain read-only. No wisdom notes changed; parent owns aggregate wisdom."
+      ]
     },
     {
       "file": "tests/helpers/live-startup-audio-queue.ts",
@@ -14380,7 +14516,7 @@
       "status": "pending",
       "area": "build-release-ci-tooling",
       "acceptedBlob": "e04230d818b527658f16eda023aa190bbb1b4f89",
-      "primaryId": "task_7936354f",
+      "primaryId": "task_ad282ca7",
       "judgeIds": ["task_bdc5b9c4", "task_9233d5f2"],
       "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json",
       "priorAcceptedIntegrationProof": [
@@ -14392,8 +14528,8 @@
           "finalJudge": "task_5c03f5eb"
         }
       ],
-      "resumeState": "needs-rework",
-      "sourceCommit": null,
+      "resumeState": "needs-judge",
+      "sourceCommit": "4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7",
       "resumeBatch": "owned-subprocess-fixture-environments",
       "resumeRework": {
         "candidate": "af3602cf3d5b62641450c7cc24bb0350334b6652",
@@ -14414,7 +14550,41 @@
           }
         ],
         "readingReason": "Concrete integrated subprocess authority escape, no claim harmful processes executed. Coherent group shares one small explicit fixture-environment owner; preserve every original assertion and real-pair requirement."
-      }
+      },
+      "priorPrimaryLineage": [
+        {
+          "primaryId": "task_7936354f",
+          "sourceCommit": null
+        }
+      ],
+      "primaryCommit": "4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7",
+      "primaryBase": "07dfb599f3f4b5d945f39a661e8cc658ed3ffa54",
+      "primaryResult": "sandbox builds one explicit owned environment, adds only asset/install/tool and scenario inputs to installer runs, and returns that same environment for the standalone launcher probe in the owned cwd. The deliberately wrong XDG inputs in the private-probe test are now owned root paths, retaining the assertion that the installer replaces them. Both entrypoints, checksums/no-probe failures, staged pair binding, version mismatch, relative directory, rename/signal rollback, modes/notices and retained-backup assertions remain. withSandbox retains its root rather than deleting it.",
+      "primaryPaths": [
+        "tests/dependency-updates.test.ts",
+        "tests/dependency-workflow.test.ts",
+        "tests/find-ci-baseline.test.ts",
+        "tests/helpers.ts",
+        "tests/install-download.test.ts",
+        "tests/install-local.test.ts",
+        "tests/update-self-fixture.test.ts",
+        "scripts/find-ci-baseline.ts"
+      ],
+      "primaryChecks": [
+        "Read full focus source, relevant subprocess callers, wisdom/values.md and wisdom/quality/structural-readability-guidance.md. Focused environment authority was source-inspected before formatter/commit execution; adjacent updater/gate effects were also inspected before handoff. No test/setup/build was executed.",
+        "Compared all seven focus files with exact rejected candidate af3602cf3d5b62641450c7cc24bb0350334b6652 before editing: identical bytes. Read supplied rejection evidence and only matching rows in build-release-ci-tooling.json.",
+        "Inspected environment flow at each targeted spawn/exec boundary, baseline internal Git, normal CLI homedir runtime initialization, updater denial-before-update flow and installer/launcher filesystem/network behavior. Child auth/config is constructed from owned roots; declared pair/template paths are read-only inputs.",
+        "Applied required Biome format --write through node:child_process explicit argv to exactly the eight changed source paths, with fresh retained HOME/XDG/SDK/TMPDIR /tmp/pr45-fixture-format-MatcqC. Formatter reported 8 files formatted, 3 fixed.",
+        "git diff --check passed. Final source inspection found no inherited process.env spreads in the focused fixtures; original literal test names remained. This is supporting static inspection, not runtime proof or a readability verdict.",
+        "Source-only commit 4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7 in durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_ad282ca7. Inspection Git used explicit owned environment in retained /tmp/pr45-fixture-source-audit-62dY0Y; no cleanup/deletion or destructive Git commands executed."
+      ],
+      "primaryLimits": [
+        "Runtime tests, compilation/builds, setup, live/device authentication, network release provenance and independent judgments are unverified and parent-owned. No credentials accessed; no descendants launched; parent owns runtime model verification.",
+        "Requested undefined/wisdom/quality/structural-readability-areas/build-release-ci-tooling-resume-reconciliation.json was absent. The non-undefined local path and checked matching task worktrees also lacked it. Used exact preserved candidate bytes, supplied per-focus objections and assigned local ledger rows; no old branch merged.",
+        "Existing installer scripts and scripts/ci.sh contain cleanup traps; fault fixtures also contain signal/rollback operations. They were inspected, never executed here. Parent must audit any proposed gate under the supplied safety constraints. Fixture-root cleanup is removed; assertions about product-owned staging cleanup remain.",
+        "The general offlineTestEnv/run helper and the production findCiBaseline CLI default continue their prior behavior outside these scoped fixture launches. Broad caller migration is intentionally not part of this bounded batch.",
+        "Fixtures deliberately retain their mkdtemp roots; any eventual lifecycle policy belongs to the parent/user. Shared dependencies remain read-only. No wisdom notes changed; parent owns aggregate wisdom."
+      ]
     },
     {
       "file": "tests/install-local.test.ts",
@@ -14422,7 +14592,7 @@
       "status": "pending",
       "area": "build-release-ci-tooling",
       "acceptedBlob": "51a27b0bc8d0f3da78baddee0ab0eab27a048468",
-      "primaryId": "task_70f09987",
+      "primaryId": "task_ad282ca7",
       "judgeIds": ["task_5442746a"],
       "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json",
       "priorAcceptedIntegrationProof": [
@@ -14434,8 +14604,8 @@
           "finalJudge": "task_5c03f5eb"
         }
       ],
-      "resumeState": "needs-rework",
-      "sourceCommit": null,
+      "resumeState": "needs-judge",
+      "sourceCommit": "4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7",
       "resumeBatch": "owned-subprocess-fixture-environments",
       "resumeRework": {
         "candidate": "af3602cf3d5b62641450c7cc24bb0350334b6652",
@@ -14456,7 +14626,41 @@
           }
         ],
         "readingReason": "Concrete integrated subprocess authority escape, no claim harmful processes executed. Coherent group shares one small explicit fixture-environment owner; preserve every original assertion and real-pair requirement."
-      }
+      },
+      "priorPrimaryLineage": [
+        {
+          "primaryId": "task_70f09987",
+          "sourceCommit": null
+        }
+      ],
+      "primaryCommit": "4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7",
+      "primaryBase": "07dfb599f3f4b5d945f39a661e8cc658ed3ffa54",
+      "primaryResult": "run now starts from ownedFixtureEnv(root), prepends only that fixture’s tool directory to the fixed system tool PATH, and adds the existing declared install/host/log/failure variables. Home/config/cache/data/SDK/temp writes stay within the retained scenario root. Shared afterEach root deletion is removed; the exact owned connector removal used to simulate a missing payload remains. Build ordering, staged override, pair bytes/modes, symlink rejection, publication failures, SIGTERM restoration and failed rollback backup assertions are unchanged.",
+      "primaryPaths": [
+        "tests/dependency-updates.test.ts",
+        "tests/dependency-workflow.test.ts",
+        "tests/find-ci-baseline.test.ts",
+        "tests/helpers.ts",
+        "tests/install-download.test.ts",
+        "tests/install-local.test.ts",
+        "tests/update-self-fixture.test.ts",
+        "scripts/find-ci-baseline.ts"
+      ],
+      "primaryChecks": [
+        "Read full focus source, relevant subprocess callers, wisdom/values.md and wisdom/quality/structural-readability-guidance.md. Focused environment authority was source-inspected before formatter/commit execution; adjacent updater/gate effects were also inspected before handoff. No test/setup/build was executed.",
+        "Compared all seven focus files with exact rejected candidate af3602cf3d5b62641450c7cc24bb0350334b6652 before editing: identical bytes. Read supplied rejection evidence and only matching rows in build-release-ci-tooling.json.",
+        "Inspected environment flow at each targeted spawn/exec boundary, baseline internal Git, normal CLI homedir runtime initialization, updater denial-before-update flow and installer/launcher filesystem/network behavior. Child auth/config is constructed from owned roots; declared pair/template paths are read-only inputs.",
+        "Applied required Biome format --write through node:child_process explicit argv to exactly the eight changed source paths, with fresh retained HOME/XDG/SDK/TMPDIR /tmp/pr45-fixture-format-MatcqC. Formatter reported 8 files formatted, 3 fixed.",
+        "git diff --check passed. Final source inspection found no inherited process.env spreads in the focused fixtures; original literal test names remained. This is supporting static inspection, not runtime proof or a readability verdict.",
+        "Source-only commit 4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7 in durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_ad282ca7. Inspection Git used explicit owned environment in retained /tmp/pr45-fixture-source-audit-62dY0Y; no cleanup/deletion or destructive Git commands executed."
+      ],
+      "primaryLimits": [
+        "Runtime tests, compilation/builds, setup, live/device authentication, network release provenance and independent judgments are unverified and parent-owned. No credentials accessed; no descendants launched; parent owns runtime model verification.",
+        "Requested undefined/wisdom/quality/structural-readability-areas/build-release-ci-tooling-resume-reconciliation.json was absent. The non-undefined local path and checked matching task worktrees also lacked it. Used exact preserved candidate bytes, supplied per-focus objections and assigned local ledger rows; no old branch merged.",
+        "Existing installer scripts and scripts/ci.sh contain cleanup traps; fault fixtures also contain signal/rollback operations. They were inspected, never executed here. Parent must audit any proposed gate under the supplied safety constraints. Fixture-root cleanup is removed; assertions about product-owned staging cleanup remain.",
+        "The general offlineTestEnv/run helper and the production findCiBaseline CLI default continue their prior behavior outside these scoped fixture launches. Broad caller migration is intentionally not part of this bounded batch.",
+        "Fixtures deliberately retain their mkdtemp roots; any eventual lifecycle policy belongs to the parent/user. Shared dependencies remain read-only. No wisdom notes changed; parent owns aggregate wisdom."
+      ]
     },
     {
       "file": "tests/instruction-continuity-sdk.test.ts",
@@ -22522,7 +22726,7 @@
       "status": "pending",
       "area": "build-release-ci-tooling",
       "acceptedBlob": "06c4344c3274180322ba17971dc91486149f7a09",
-      "primaryId": "task_0ecce4b1",
+      "primaryId": "task_ad282ca7",
       "judgeIds": ["task_efae7e17"],
       "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json",
       "priorAcceptedIntegrationProof": [
@@ -22534,8 +22738,8 @@
           "finalJudge": "task_35a208fa"
         }
       ],
-      "resumeState": "needs-rework",
-      "sourceCommit": null,
+      "resumeState": "needs-judge",
+      "sourceCommit": "4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7",
       "resumeBatch": "owned-subprocess-fixture-environments",
       "resumeRework": {
         "candidate": "af3602cf3d5b62641450c7cc24bb0350334b6652",
@@ -22555,7 +22759,41 @@
           }
         ],
         "readingReason": "Concrete integrated subprocess authority escape, no claim harmful processes executed. Coherent group shares one small explicit fixture-environment owner; preserve every original assertion and real-pair requirement."
-      }
+      },
+      "priorPrimaryLineage": [
+        {
+          "primaryId": "task_0ecce4b1",
+          "sourceCommit": null
+        }
+      ],
+      "primaryCommit": "4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7",
+      "primaryBase": "07dfb599f3f4b5d945f39a661e8cc658ed3ffa54",
+      "primaryResult": "beforeAll constructs an owned environment immediately after mkdtemp and supplies it to compilation. run requires an explicit env and uses the owned cwd; the preliminary real product probe, fixture runner/source paths, and installed normal/connector probes all receive that environment (plus declared updater inputs or the existing /nonexistent PATH). Both PI and Bruv SDK locations are owned. Runtime fixture roots are retained. Real reusable pair, private compiled runner, source/compiled authority contrast, metadata/transport checks, installation bytes, no-staging directory assertions and runner/payload digest preservation all remain.",
+      "primaryPaths": [
+        "tests/dependency-updates.test.ts",
+        "tests/dependency-workflow.test.ts",
+        "tests/find-ci-baseline.test.ts",
+        "tests/helpers.ts",
+        "tests/install-download.test.ts",
+        "tests/install-local.test.ts",
+        "tests/update-self-fixture.test.ts",
+        "scripts/find-ci-baseline.ts"
+      ],
+      "primaryChecks": [
+        "Read full focus source, relevant subprocess callers, wisdom/values.md and wisdom/quality/structural-readability-guidance.md. Focused environment authority was source-inspected before formatter/commit execution; adjacent updater/gate effects were also inspected before handoff. No test/setup/build was executed.",
+        "Compared all seven focus files with exact rejected candidate af3602cf3d5b62641450c7cc24bb0350334b6652 before editing: identical bytes. Read supplied rejection evidence and only matching rows in build-release-ci-tooling.json.",
+        "Inspected environment flow at each targeted spawn/exec boundary, baseline internal Git, normal CLI homedir runtime initialization, updater denial-before-update flow and installer/launcher filesystem/network behavior. Child auth/config is constructed from owned roots; declared pair/template paths are read-only inputs.",
+        "Applied required Biome format --write through node:child_process explicit argv to exactly the eight changed source paths, with fresh retained HOME/XDG/SDK/TMPDIR /tmp/pr45-fixture-format-MatcqC. Formatter reported 8 files formatted, 3 fixed.",
+        "git diff --check passed. Final source inspection found no inherited process.env spreads in the focused fixtures; original literal test names remained. This is supporting static inspection, not runtime proof or a readability verdict.",
+        "Source-only commit 4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7 in durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_ad282ca7. Inspection Git used explicit owned environment in retained /tmp/pr45-fixture-source-audit-62dY0Y; no cleanup/deletion or destructive Git commands executed."
+      ],
+      "primaryLimits": [
+        "Runtime tests, compilation/builds, setup, live/device authentication, network release provenance and independent judgments are unverified and parent-owned. No credentials accessed; no descendants launched; parent owns runtime model verification.",
+        "Requested undefined/wisdom/quality/structural-readability-areas/build-release-ci-tooling-resume-reconciliation.json was absent. The non-undefined local path and checked matching task worktrees also lacked it. Used exact preserved candidate bytes, supplied per-focus objections and assigned local ledger rows; no old branch merged.",
+        "Existing installer scripts and scripts/ci.sh contain cleanup traps; fault fixtures also contain signal/rollback operations. They were inspected, never executed here. Parent must audit any proposed gate under the supplied safety constraints. Fixture-root cleanup is removed; assertions about product-owned staging cleanup remain.",
+        "The general offlineTestEnv/run helper and the production findCiBaseline CLI default continue their prior behavior outside these scoped fixture launches. Broad caller migration is intentionally not part of this bounded batch.",
+        "Fixtures deliberately retain their mkdtemp roots; any eventual lifecycle policy belongs to the parent/user. Shared dependencies remain read-only. No wisdom notes changed; parent owns aggregate wisdom."
+      ]
     },
     {
       "file": "tests/update-release-shape.md",

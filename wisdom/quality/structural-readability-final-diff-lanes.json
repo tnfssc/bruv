@@ -2307,7 +2307,7 @@
       ],
       "chars": 99455,
       "lines": 2190,
-      "status": "running",
+      "status": "accepted",
       "jobId": "task_46225dd8",
       "model": "openai-codex/gpt-6.1-sol",
       "workspace": {
@@ -2322,6 +2322,130 @@
         "setupTaskId": "task_62f7cd21",
         "setupStatus": "running",
         "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      },
+      "result": {
+        "lane": "lane-14",
+        "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
+        "candidate": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "verdict": "ACCEPT",
+        "diffReadPaths": [
+          "scripts/claude-native-acceptance/app-delegation-driver.mjs",
+          "scripts/claude-native-acceptance/app-delegation-model.mjs",
+          "scripts/claude-native-acceptance/driver.mjs",
+          "scripts/claude-native-acceptance/history-driver.mjs",
+          "scripts/claude-native-acceptance/history-model.mjs",
+          "scripts/claude-native-acceptance/history-replay.mjs",
+          "scripts/claude-native-acceptance/history-run.mjs",
+          "scripts/claude-native-acceptance/human-driver.mjs",
+          "scripts/claude-native-acceptance/model.mjs",
+          "scripts/claude-native-acceptance/run-subagent.mjs"
+        ],
+        "contextReadPaths": [
+          "scripts/claude-native-acceptance/app-delegation-driver.mjs",
+          "scripts/claude-native-acceptance/app-delegation-model.mjs",
+          "scripts/claude-native-acceptance/driver.mjs",
+          "scripts/claude-native-acceptance/history-driver.mjs",
+          "scripts/claude-native-acceptance/history-model.mjs",
+          "scripts/claude-native-acceptance/history-replay.mjs",
+          "scripts/claude-native-acceptance/history-run.mjs",
+          "scripts/claude-native-acceptance/human-driver.mjs",
+          "scripts/claude-native-acceptance/model.mjs",
+          "scripts/claude-native-acceptance/run-subagent.mjs",
+          "scripts/claude-native-acceptance/run.mjs",
+          "wisdom/claude-compat/proof/native-ui-fixture/replay.mjs",
+          "scripts/claude-native-acceptance/subagent-driver.mjs",
+          "scripts/claude-native-acceptance/subagent-model.mjs",
+          "src/claude-compat/app-worker.ts",
+          "src/tasks/job-service.ts",
+          "src/claude-compat/history.ts",
+          "src/claude-compat/binding.ts",
+          "src/claude-compat/human-controls.ts",
+          "src/questions/runtime.ts"
+        ],
+        "sourceBlobs": {
+          "scripts/claude-native-acceptance/app-delegation-driver.mjs": "63a5a5703e731c0b141753a138ecbfd6974db514",
+          "scripts/claude-native-acceptance/app-delegation-model.mjs": "3bd2f8206676320c0bdb28e800db9ee9d9389d7f",
+          "scripts/claude-native-acceptance/driver.mjs": "2982fe9d1bc4651248115a82f5aff9014c4a4b46",
+          "scripts/claude-native-acceptance/history-driver.mjs": "6b8bef41775398be3293f16eb3f248d061a6d2b7",
+          "scripts/claude-native-acceptance/history-model.mjs": "beca9ab506641797c648aab54dc51908108b54e1",
+          "scripts/claude-native-acceptance/history-replay.mjs": "416646505069c09f31812412ef55a0ba5ab16553",
+          "scripts/claude-native-acceptance/history-run.mjs": "9940f5dc0a94aed48f0312463450ef10a0464539",
+          "scripts/claude-native-acceptance/human-driver.mjs": "3fddd662b31503d6ab756c096c3d996792531f16",
+          "scripts/claude-native-acceptance/model.mjs": "7dbf41d3d38502dc29c44cedc5a24603a408a25b",
+          "scripts/claude-native-acceptance/run-subagent.mjs": "16300ead040e2d9f6daf3e2fa17af4001ae4dfd6"
+        },
+        "sourceJourneys": [
+          {
+            "paths": [
+              "scripts/claude-native-acceptance/run.mjs",
+              "scripts/claude-native-acceptance/app-delegation-model.mjs",
+              "scripts/claude-native-acceptance/app-delegation-driver.mjs",
+              "src/claude-compat/app-worker.ts",
+              "src/tasks/job-service.ts"
+            ],
+            "readingReason": "Root reply now dispatches launch, cancellation and completion ACK separately; normal-worker scope checks remain transcript-driven. The driver separates native DB state from connector-process evidence. readNativeTasks retains the read-only database finally-close and done/cancel ordering; count returns from verified native rows rather than an out-of-scope task locator array. The duplicate capabilities write is removed, not the capability assertion.",
+            "systemReason": "run.mjs supplies the root model and distinct worker Responses endpoint. prepare pins the normal instance/model/effort and role/depth policies; app-worker admits only explicit root orchestrators and the local job service denies normal delegation. Child denial, root-ID lookup, denied root-task access, release gating, task_status ACK, cancel interrupted terminal and empty Bruv root registry checks all survive. Native DB completionDelivery acknowledged/disposed remains authoritative, while wire traces prove credential isolation and no late cancelled-child result."
+          },
+          {
+            "paths": [
+              "scripts/claude-native-acceptance/driver.mjs",
+              "wisdom/claude-compat/proof/native-ui-fixture/replay.mjs",
+              "scripts/claude-native-acceptance/run.mjs"
+            ],
+            "readingReason": "capture now owns its item array, cancellation run ID and sequence in a per-page closure and returns a live getter plus flush. Shared replay actually stores that return and passes it both to exercise and finally-flush. The two disclosure calls use the getter rather than a stale snapshot or removed module global.",
+            "systemReason": "Websocket capture is installed before composer navigation; cancellation run identity still selects the precise recycled timeline row. Finalization runs before browser/server/state release. The no-observation case retains persisted DB evidence after early browser setup failure. Wire verification does not require the later capture files, so moving state into the observation object does not reverse verification dependencies or mix consecutive captures."
+          },
+          {
+            "paths": [
+              "scripts/claude-native-acceptance/history-run.mjs",
+              "scripts/claude-native-acceptance/history-replay.mjs",
+              "scripts/claude-native-acceptance/history-driver.mjs",
+              "scripts/claude-native-acceptance/history-model.mjs",
+              "src/claude-compat/binding.ts",
+              "src/claude-compat/history.ts"
+            ],
+            "readingReason": "One explicit config now feeds tap, child replay and final collect, including setup failures. collect separates source reading, durable-map reconciliation, wire projection and evidence writing without changing the result shape. historyReply is synchronous and transcript-driven; tool IDs advance only for tool responses, as before.",
+            "systemReason": "The browser fork/rollback journey still compares root bytes, proves stored tools are not reexecuted and asks the fresh child to inspect jobs/questions. binding imports into a fresh canonical manager, branches through direct provenance or durable nativeUuid/piEntryId maps, and history validates imported mappings against actual messages. The collector uses those same identities; original raw canonical hashes are computed before export redaction. Root and child authority markers remain contextual evidence, not live authority."
+          },
+          {
+            "paths": [
+              "scripts/claude-native-acceptance/history-run.mjs",
+              "scripts/claude-native-acceptance/history-replay.mjs"
+            ],
+            "readingReason": "The replay exposes preparation, server, browser and failure-capture phases instead of interleaving all resources in one top-level block. Ownership is established by exclusive mkdir outside cleanup; the pinned binary hash check precedes acquisition. Log/server/browser now have nested release scopes. Runner proof retention and model close/root release are likewise nested.",
+            "systemReason": "Server spawn is awaited, readiness observes both exit and signal, SIGTERM has a bounded wait then SIGKILL, and actual close precedes log close and private-state removal. Browser close remains enclosed by server/root release even when it fails. Runner awaits replay close before collecting scoped history. Neither helper adopts an inherited HOME or reuses an existing runtime root. These are source observations only; none of these cleanup paths were executed."
+          },
+          {
+            "paths": [
+              "scripts/claude-native-acceptance/human-driver.mjs",
+              "scripts/claude-native-acceptance/driver.mjs",
+              "scripts/claude-native-acceptance/model.mjs",
+              "src/claude-compat/human-controls.ts",
+              "src/questions/runtime.ts"
+            ],
+            "readingReason": "Human exercise now names permission and saved-question phases and factors repeated reopen navigation into a thread-specific helper. Initial model/Supervised selection moved after helper definitions but still executes before every scenario; helper declarations perform no UI work. The saved-question identity/owner/version assertions, Stop, explicit reopen/resume and once-only resolution remain in order.",
+            "systemReason": "driver dispatches humanControls without needing cancellation observation. model emits the same execute side effect only behind actual consent and resolves only the exact answered ledger entry in a new saved-answer turn. Native question callbacks still require explicit correlated human selection; defer/denial/abort are not answers. Runtime dispatch is tied to current session/epoch/branch and records delivery before and after the new turn. The refactor does not conflate permission approval with answering or revive a stopped dialog."
+          },
+          {
+            "paths": [
+              "scripts/claude-native-acceptance/model.mjs",
+              "scripts/claude-native-acceptance/run-subagent.mjs",
+              "scripts/claude-native-acceptance/subagent-model.mjs",
+              "scripts/claude-native-acceptance/subagent-driver.mjs",
+              "wisdom/claude-compat/proof/native-ui-fixture/replay.mjs"
+            ],
+            "readingReason": "Main startModel now retains request-local sequence across an awaited reply, preventing another request from changing the recorded sequence/chunk ID. Cancellation correlation moved intact into a named helper, and generated execute strings became readable multiline source. run-subagent names configuration, replay, delivery checks, worker signaling and proof retention while preserving SDK history/source validation.",
+            "systemReason": "The subagent runner uses its separate subagent-model endpoint, explicit scoped profiles and credential-free replay env; the shared template still matches the exact import strings being rewritten to durable driver/action module URLs. subagent-driver flushCapture remains callable with shared replay finalization arguments and collects final provider evidence before runtime release; the runner waits for normal replay close before delivery/history checks and proof retention. Request-local sequence changes do not introduce a progress counter into model scenario selection."
+          }
+        ],
+        "integrationReadingReason": "ACCEPT for this bounded lane. The integrated code preserves the acceptance drivers' public prepare/exercise/verify/flush contracts and proof structures, with the capture return-value change matched by its real shared-replay caller. Named helpers expose genuine authority boundaries (native state versus connector traces), phase boundaries (permission versus saved answer), and resource lifetimes (server/browser/log/root), rather than introducing generic abstraction layers or oversized context bags. Transcript-driven fixture decisions and fresh canonical-history ownership remain consistent across extracted helpers. The modest additional call navigation buys local reasoning and fixes shared capture/request-sequence ownership. No actionable cross-file regression or material reading-burden objection found in the fully read assigned diff and exercised related context.",
+        "objections": [],
+        "limits": [
+          "Lane-only judgment, not whole-repository or whole-PR sign-off. All ten assigned baseline-to-candidate diffs, including deletions, were fully read; no assigned diff gaps remain. Related source context was read selectively in exercised ranges, not attested as full-file/full-repository coverage.",
+          "Read-only source review: no tests, setup, builds, installation, formatter, auth/device access, secret access, recovery investigation, or source edits. No unsupported Pi preparation was retried or bypassed. No delegation or descendants were launched.",
+          "Only mutation is this requested untracked result file. Existing durable worktree and exact candidate evidence preserved; assigned working files checked against candidate Git blob identities. No fixtures were created or cleanup code executed. Runtime/auth/device behavior is unverified; existing artifacts, summaries and green tests were not used as verdict evidence.",
+          "Durable review provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_46225dd8, HEAD af3602cf3d5b62641450c7cc24bb0350334b6652."
+        ]
       }
     },
     {
@@ -2345,7 +2469,7 @@
       ],
       "chars": 98275,
       "lines": 2289,
-      "status": "running",
+      "status": "accepted",
       "jobId": "task_994f8d54",
       "model": "openai-codex/gpt-6.1-sol",
       "workspace": {
@@ -2360,6 +2484,141 @@
         "setupTaskId": "task_60d5a150",
         "setupStatus": "running",
         "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      },
+      "result": {
+        "lane": "lane-15",
+        "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
+        "candidate": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "verdict": "ACCEPT",
+        "diffReadPaths": [
+          "scripts/claude-native-acceptance/run.mjs",
+          "scripts/claude-native-acceptance/runtime-smoke.mjs",
+          "scripts/claude-native-acceptance/subagent-driver.mjs",
+          "scripts/claude-native-acceptance/subagent-model.mjs",
+          "scripts/claude-native-acceptance/subagent-return-evidence.mjs",
+          "scripts/claude-native-acceptance/tap.mjs",
+          "scripts/claude-native-acceptance/wrapper-sdk-smoke.mjs",
+          "src/claude-compat/arguments.ts",
+          "src/claude-compat/binding.ts",
+          "src/claude-compat/cli.ts",
+          "src/claude-compat/commands.ts",
+          "src/claude-compat/frontend.ts",
+          "src/claude-compat/history.ts",
+          "src/claude-compat/human-controls.ts"
+        ],
+        "contextReadPaths": [
+          "scripts/claude-native-acceptance/run.mjs",
+          "scripts/claude-native-acceptance/runtime-smoke.mjs",
+          "scripts/claude-native-acceptance/subagent-driver.mjs",
+          "scripts/claude-native-acceptance/subagent-model.mjs",
+          "scripts/claude-native-acceptance/subagent-return-evidence.mjs",
+          "scripts/claude-native-acceptance/tap.mjs",
+          "scripts/claude-native-acceptance/wrapper-sdk-smoke.mjs",
+          "src/claude-compat/arguments.ts",
+          "src/claude-compat/binding.ts",
+          "src/claude-compat/cli.ts",
+          "src/claude-compat/commands.ts",
+          "src/claude-compat/frontend.ts",
+          "src/claude-compat/history.ts",
+          "src/claude-compat/human-controls.ts",
+          "scripts/claude-native-acceptance/driver.mjs",
+          "scripts/claude-native-acceptance/run-subagent.mjs",
+          "wisdom/claude-compat/proof/native-ui-fixture/replay.mjs",
+          "src/claude-compat/runtime.ts",
+          "src/claude-compat/transport.ts",
+          "src/questions/runtime.ts",
+          "src/questions/extension.ts"
+        ],
+        "sourceBlobs": {
+          "scripts/claude-native-acceptance/run.mjs": "5e917258ac272c39fc3e29bc70187633e4b855c4",
+          "scripts/claude-native-acceptance/runtime-smoke.mjs": "614b3fac5c116306d2e0ec7cbc5b81a1b15dc5f2",
+          "scripts/claude-native-acceptance/subagent-driver.mjs": "e0e020bb0e860bb6ea3d417f1d9e4883138ae232",
+          "scripts/claude-native-acceptance/subagent-model.mjs": "89591d8f077afa20b6e507cf03189b63539ddad2",
+          "scripts/claude-native-acceptance/subagent-return-evidence.mjs": "c8763df7ac177766e8ab065a13b290ae836399b0",
+          "scripts/claude-native-acceptance/tap.mjs": "020964ccf3a3106c95b7d6de69bf41d0002e77d1",
+          "scripts/claude-native-acceptance/wrapper-sdk-smoke.mjs": "7eca00b0192bd3acdd0041d22230e2b7a8cbb426",
+          "src/claude-compat/arguments.ts": "f84dc294d18bb530a4147da1d02abe3baf2ac05e",
+          "src/claude-compat/binding.ts": "4d1a2ba1658c36e7516651d2cb8c6f2555117853",
+          "src/claude-compat/cli.ts": "c3d9050ff5912bb22e961b72c52717b5cb3aede4",
+          "src/claude-compat/commands.ts": "b242e3cc8afa0f536e415b0fa41cc6d6154baa35",
+          "src/claude-compat/frontend.ts": "557693c15cc2ce9e8db9d339dc708bb799e0242c",
+          "src/claude-compat/history.ts": "ed43998ab87580bf595ee2b78f4bb929de62ee09",
+          "src/claude-compat/human-controls.ts": "2d8fe9d62992a87370438cae5cde46da043fa823"
+        },
+        "sourceJourneys": [
+          {
+            "paths": [
+              "src/claude-compat/arguments.ts",
+              "src/claude-compat/cli.ts",
+              "src/claude-compat/runtime.ts",
+              "src/claude-compat/transport.ts"
+            ],
+            "readingReason": "Followed launch validation into factory request/emit binding, transportBound, EOF/signal cancellation, transport callback abortion and runtime close. Removed verbose/strictMcp fields had no source consumers; CLI flags still consume toggles, and protocol output/injected-only MCP semantics remain unchanged. CLI now keeps one close promise, awaits it at finally, reports teardown failure as exit 1 and retains successful signal exits 143/130.",
+            "systemReason": "Launch authority is still validated before runtime/state access. Transport owns packet requests; runtime owns Pi admission, session abortion and teardown. The refactor removes duplicated exit/close branches rather than adding another shutdown owner."
+          },
+          {
+            "paths": [
+              "src/claude-compat/frontend.ts",
+              "src/claude-compat/runtime.ts",
+              "src/claude-compat/commands.ts"
+            ],
+            "readingReason": "Traced runtime consumed-user identity subscription into begin/onEvent/end, assistant stream publication, result usage, retry/terminal errors, notices, and command lifecycle. RunResult contains only per-root-run accounting/failure state and is replaced at begin; result remains readable after settlement. Provider retry success still clears only provider failure. Root human commands retain validated session/root/text admission and native notices rather than becoming model tools.",
+            "systemReason": "Canonical Pi events still own start/settle and consumed human/task-notification attribution. Stream publication and usage accounting are separated locally; no child-token aggregation, alternate event scheduler, context bag or fabricated API latency is introduced."
+          },
+          {
+            "paths": [
+              "src/claude-compat/human-controls.ts",
+              "src/claude-compat/commands.ts",
+              "src/claude-compat/runtime.ts",
+              "src/questions/runtime.ts",
+              "src/questions/extension.ts",
+              "src/claude-compat/cli.ts",
+              "src/claude-compat/transport.ts"
+            ],
+            "readingReason": "Followed parent NATIVE_QUESTION_ACCESS lease acceptance, port subscription, refresh/version dialog replacement, explicit /bruv questions open, request callback correlation, questions.answer owner/version and runtime result flush/interrupt/dispose. The lease captures its own port and closed bit; callbacks also check abort. Defer/deny never becomes a saved answer. Outer flush drains a replaced current lease rather than silently accepting the old lease as current.",
+            "systemReason": "Persistence and answer authorization remain in the existing question service command port, not the projection. Lease-local state lowers lifetime ambiguity and protects against an old callback after session replacement. Result publication still waits for the actual human projection while questions.ask remains nonblocking."
+          },
+          {
+            "paths": [
+              "src/claude-compat/binding.ts",
+              "src/claude-compat/history.ts"
+            ],
+            "readingReason": "Read fresh, bound-resume and native-import branches; followed importNativeHistory durable bruv-native-entry-map writing, resumeImported transcript/canonical-message checks, and resumeAt branch selection after complete nativeHistoryToPi checkpoint validation. Replacing imported.entries with the manager durable map is coherent because import writes exactly that map before returning. activeRootConversation preserves identity/parent/leaf checks; paired conversion records keep expanded messages and native UUIDs aligned.",
+            "systemReason": "Imported history remains history-only, not restored task authority. The branch-oriented storage setup makes manager/history ownership explicit and removes parallel message/UUID mutation without changing conversion or incomplete-tool rejection."
+          },
+          {
+            "paths": [
+              "scripts/claude-native-acceptance/run.mjs",
+              "scripts/claude-native-acceptance/driver.mjs",
+              "scripts/claude-native-acceptance/tap.mjs",
+              "wisdom/claude-compat/proof/native-ui-fixture/replay.mjs",
+              "scripts/claude-native-acceptance/runtime-smoke.mjs",
+              "scripts/claude-native-acceptance/wrapper-sdk-smoke.mjs"
+            ],
+            "readingReason": "Traced owned mkdtemp/config setup, remaining config write after tap assignment, explicit replay argv/env, tap byte forwarding, proof publication and owned resource release. Nested finally now releases runtime/models/private root even when proof writing fails. StringDecoder affects evidence decoding only, original bytes still go unchanged to the connector/host. RPC helper retains explicit process env and worker PID/state command-line checks. SDK observer remains distinct from iterator completion; default SDK spawn stays unmodified and Stop/EOF observe actual child close.",
+            "systemReason": "These are local boundaries matching actual ownership: replay process, model endpoints, transcript evidence and process exit. No auth/setup was run; source inspection found no new inherited-HOME cleanup or bypass introduced by these assigned changes. Actual process EOF remains required, not inferred from SDK iterator completion."
+          },
+          {
+            "paths": [
+              "scripts/claude-native-acceptance/subagent-driver.mjs",
+              "scripts/claude-native-acceptance/subagent-model.mjs",
+              "scripts/claude-native-acceptance/subagent-return-evidence.mjs",
+              "scripts/claude-native-acceptance/run-subagent.mjs",
+              "wisdom/claude-compat/proof/native-ui-fixture/replay.mjs"
+            ],
+            "readingReason": "Traced run-subagent replay driver substitution into completed-child same-root return, same-root next prompt before independent cancellation/Stop roots, final flushCapture observedConfig, task/usage/source-binding assertions and evidence capture before replay removes private state. Read generated launch/wait/cancel/Stop execute code and run-subagent record assertions; subagent({ marker remains present. Evidence helpers share one ID namespace, and persistence DBs remain opened read-only.",
+            "systemReason": "Scenario extraction names genuine integration phases without relaxing same-root admission, exactly-once completion, distinct worker launches, terminal cancellation observation, or root/child usage ownership. Evidence source separation retains cross-source correlation instead of introducing competing ownership or false proof from config reloading."
+          }
+        ],
+        "integrationReadingReason": "Within this lane the integrated refactors preserve the observed CLI/protocol, question authority, import/checkpoint and acceptance-proof journeys. Helpers generally reduce the number of simultaneously live facts: explicit storage branches, one per-run accounting object, one question lease and locally named proof/resource phases. Most script changes are decomposition or generated-code readability, not a new abstraction layer. I found no concrete cross-file contradiction or missing new owner requiring rejection in the read assigned diff and exercised source contexts. This is a lane judgment, not whole-repository acceptance.",
+        "objections": [],
+        "limits": [
+          "All 14 assigned baseline-to-candidate diffs were read completely, including deletions, in bounded segments using git diff. Initial shell outputs were capped; complete diffs were reread with read-only execFileSync git calls rather than treating capped previews as coverage. No assigned unread diff gaps remain.",
+          "Related current sources were read at relevant call/authority/lifetime sections, not represented as full-file or whole-repository coverage. No prior review artifacts, counts, summaries or green tests were used as verdict.",
+          "Read-only source review only: no tests, builds, setup, install, formatter, auth/device/credential access, unsupported Pi preparation retry/bypass, recovery work, cleanup/deletion commands, destructive git, delegation or source edits. Only this requested untracked review-result JSON was written. Existing fixture cleanup was inspected, never executed.",
+          "Live provider/SDK/browser behavior is unverified; no fixture processes or network endpoints were started. No test fixtures were created, so fixture retention/provenance requirements were not exercised.",
+          "Durable provenance: review performed in /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_994f8d54 at candidate HEAD af3602cf3d5b62641450c7cc24bb0350334b6652. Candidate and existing worktrees/evidence preserved."
+        ]
       }
     },
     {
@@ -2383,7 +2642,7 @@
       ],
       "chars": 96663,
       "lines": 2249,
-      "status": "running",
+      "status": "accepted",
       "jobId": "task_a3e6f5fd",
       "model": "openai-codex/gpt-6.1-sol",
       "workspace": {
@@ -2398,6 +2657,150 @@
         "setupTaskId": "task_c25efa24",
         "setupStatus": "running",
         "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      },
+      "result": {
+        "lane": "lane-16",
+        "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
+        "candidate": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "verdict": "ACCEPT",
+        "diffReadPaths": [
+          "src/claude-compat/mcp.ts",
+          "src/claude-compat/runtime.ts",
+          "src/claude-compat/task-binding.ts",
+          "src/claude-compat/task-projection.ts",
+          "src/claude-compat/transport.ts",
+          "src/t3/tasks/local-notifications.ts",
+          "src/t3/tasks/mcp-client.ts",
+          "tests/claude-compat-app-worker.test.ts",
+          "tests/claude-compat-arguments.test.ts",
+          "tests/claude-compat-binding.test.ts",
+          "tests/claude-compat-commands.test.ts",
+          "tests/claude-compat-compiled.test.ts",
+          "tests/claude-compat-composition.test.ts",
+          "tests/claude-compat-frontend.test.ts"
+        ],
+        "contextReadPaths": [
+          "src/claude-compat/mcp.ts",
+          "src/claude-compat/runtime.ts",
+          "src/claude-compat/task-binding.ts",
+          "src/claude-compat/task-projection.ts",
+          "src/claude-compat/transport.ts",
+          "src/t3/tasks/local-notifications.ts",
+          "src/t3/tasks/mcp-client.ts",
+          "src/claude-compat/cli.ts",
+          "src/claude-compat/binding.ts",
+          "src/claude-compat/history.ts",
+          "src/claude-compat/commands.ts",
+          "src/claude-compat/frontend.ts",
+          "src/claude-compat/arguments.ts",
+          "src/claude-compat/app-worker.ts",
+          "src/agent/extension.ts",
+          "src/tasks/task-owner.ts",
+          "src/tasks/task-manager.ts",
+          "src/tasks/job-service.ts",
+          "src/t3/tasks/native-task.ts",
+          "tests/claude-compat-composition.test.ts",
+          "tests/claude-compat-compiled.test.ts"
+        ],
+        "sourceBlobs": {
+          "src/claude-compat/mcp.ts": "6c5fb958a3cb79642c8dac28abdd5e24dcddc158",
+          "src/claude-compat/runtime.ts": "10ebd3a80f9b44c2993ae88ef2df629eb6ab5637",
+          "src/claude-compat/task-binding.ts": "f89738896eb0371d634a4cac21b6108cc6c5e48b",
+          "src/claude-compat/task-projection.ts": "8dcf972b448b2da8c19abe4d70c2530e117c7ba0",
+          "src/claude-compat/transport.ts": "7426350d874d2222a7afb61335407f1215fa751d",
+          "src/t3/tasks/local-notifications.ts": "4fb034c350ee11e5c65bd48541b4498478d823f6",
+          "src/t3/tasks/mcp-client.ts": "08a53a63713839260f730a6da8ff4775a72bce99",
+          "tests/claude-compat-app-worker.test.ts": "091ed0b2a4362a34d854c4192bac7a7204e738ad",
+          "tests/claude-compat-arguments.test.ts": "49284980b17450943aaf9fed71f6cbc2dbd74cdd",
+          "tests/claude-compat-binding.test.ts": "35149e461ce949a6a0d48bf591e7c9ba14256916",
+          "tests/claude-compat-commands.test.ts": "44f9c527bee1426cb71d094855db8b493079fd80",
+          "tests/claude-compat-compiled.test.ts": "2b6bf26feeba55363328778e545be62e081cc99e",
+          "tests/claude-compat-composition.test.ts": "37f63e38891f84ea3628b521dcbc35032f5a8e5e",
+          "tests/claude-compat-frontend.test.ts": "3b61902f5d029433cac72a63e9188bd729889f21"
+        },
+        "sourceJourneys": [
+          {
+            "paths": [
+              "src/claude-compat/cli.ts",
+              "src/claude-compat/binding.ts",
+              "src/claude-compat/mcp.ts",
+              "src/claude-compat/runtime.ts",
+              "src/claude-compat/app-worker.ts",
+              "tests/claude-compat-app-worker.test.ts",
+              "tests/claude-compat-composition.test.ts"
+            ],
+            "readingReason": "CLI classifies explicitly injected app-owned MCP and prepares the normal-worker input; mcpFactory registers discovered tools; callTool still authorizes every call, revalidates updated app input against active runtime/provider and pinned worker policy, then sends exactly one SDK call. startConnection now owns authorization/transport creation and returns the registered Connection; discoverTools owns only initial catalog selection. The previous connect(..., false) path is explicitly a lease reacquisition without discovery. Connection timeout and connected transition match the old branches.",
+            "systemReason": "No local job is created for app-owned task results. before_agent_start drains prior native output before resumeAppOwned, and result emission parks app HTTP leases before publishing idle. External MCP retains its ordinary session lifetime. The extracted lifecycle names remove a boolean mode without introducing another owner or catalog refresh."
+          },
+          {
+            "paths": [
+              "src/tasks/task-manager.ts",
+              "src/tasks/task-owner.ts",
+              "src/agent/extension.ts",
+              "src/claude-compat/task-binding.ts",
+              "src/claude-compat/task-projection.ts",
+              "src/claude-compat/runtime.ts",
+              "src/claude-compat/history.ts"
+            ],
+            "readingReason": "TaskManager stores real process/launch identity before spawned events and resolves actual completion inspection before completed events. The extension supplies the single manager/context attachment. registerTaskCursor retains the actual owner/child/launch checks and rejects unregistered historical terminals. announceAgentCall, replayChildJournal and returnAgentResult are the former inline blocks in the same serialized observation order. Child journals are translated and written to derived child history before wire exposure; projection progress/start precedes child frames, terminal notification follows them, then launch result/cursor persistence/roster.",
+            "systemReason": "The helpers do not become schedulers. Pi custom entries remain replay cursors, manager snapshots remain job authority, and app_owned links remain excluded. taskEnvelope/builders only construct wire shapes; projectTask retains stale revision, preparing/unknown, resumed-call and confirmed-terminal rules. Terminal checkpoints and active checkpoint updates are returned instead of incrementally mutated, while bindNativeTasks still owns ordered emission and saved cursors. Extension shutdown drains manager and binding."
+          },
+          {
+            "paths": [
+              "src/claude-compat/binding.ts",
+              "src/claude-compat/history.ts",
+              "src/claude-compat/runtime.ts",
+              "tests/claude-compat-binding.test.ts"
+            ],
+            "readingReason": "nativeStorage persists the fresh canonical header, reopens the same bound Pi file, or imports SDK history through durable nativeUuid-to-Pi-entry maps. resumeAt validates the complete tool context before branching or writing a new index. Runtime nativeMessage shares the former user/assistant/toolResult body translation between root mirror and child frames; the child assistant thinking filter still applies before translation. mirrorNativeHistory calls canonical append first, chains native writes with actual entryId/UUID/parent, remembers the first failure, and its returned drain is used at user completion and teardown.",
+            "systemReason": "The new helper centralizes repeated role mapping rather than introducing a context bag. Derived native history does not replace the canonical session or restore task ownership. Error propagation remains present in both user completion and aggregate shutdown; child writer retains causal metadata and source identities."
+          },
+          {
+            "paths": [
+              "src/claude-compat/transport.ts",
+              "src/claude-compat/cli.ts",
+              "src/claude-compat/runtime.ts"
+            ],
+            "readingReason": "readFrames is the exact former byte accumulation loop, including geometric allocation, byte limit before copy, trimming/empty-line handling, split UTF-8 assembly and final unterminated frame. run still dispatches each yielded line in order and owns EOF pending-request rejection, accepted-handler drain, write drain, error closure and listener disposal. CLI still owns signal/EOF cancellation and awaits runtime close.",
+            "systemReason": "Framing now has only partial-frame state and transport still has cancellation/backpressure/control-correlation authority. The extraction does not create an extra input queue or change user/control dispatch semantics; output errors continue to close transport and enter runtime shutdown."
+          },
+          {
+            "paths": [
+              "src/agent/extension.ts",
+              "src/t3/tasks/local-notifications.ts",
+              "src/t3/tasks/mcp-client.ts",
+              "src/tasks/job-service.ts",
+              "src/t3/tasks/native-task.ts"
+            ],
+            "readingReason": "T3 native local-shell completion/attention edges enqueue to the session-affine durable outbox rather than starting a Pi continuation; capacity is checked before shell launch. Removing #records eliminates a redundant cache: list/add/ack still reread authoritative disk, and commits retain atomic rename/fsync. drain chooses completions first and makes one bounded pass; extracted deliver preserves retry delays, current-row checks, stable notification identity, committed/disposed ACK matching and client closure. Client send unifies POST headers, deadline/owner cancellation, notification body cancellation, session acquisition and matching RPC decoding. connect is now the single owned handshake for both initial admission and 404 recovery, sharing #initializing; late 404s from a replaced initialized session still do not reset it.",
+            "systemReason": "Delivery owns its bounded retry/timer/client lifetime; stop releases pause and closes the in-flight client without removing durable rows. The handshake has owner cancellation while a caller only leaves its wait; close still stops admission, aborts/drains requests then deletes the captured session. JobService owns and closes its adapter per operation; native-task launch retains its separately authorized idempotent ambiguous-response replay, while MCP client itself retries only expired-session 404 once. No new mutation retry or duplicate task owner was introduced."
+          },
+          {
+            "paths": [
+              "src/claude-compat/arguments.ts",
+              "src/claude-compat/commands.ts",
+              "src/claude-compat/frontend.ts",
+              "src/claude-compat/runtime.ts",
+              "tests/claude-compat-arguments.test.ts",
+              "tests/claude-compat-commands.test.ts",
+              "tests/claude-compat-frontend.test.ts",
+              "tests/claude-compat-compiled.test.ts",
+              "tests/claude-compat-composition.test.ts"
+            ],
+            "readingReason": "Argument tests match compatibility-only toggle validation without carrying runtime switches. Command fixture no longer installs unrelated handlers for every test; the real goal/question/mode-handler journey remains in the dedicated test, while added cases exercise dynamic catalog, root/type/text admission, native question routing and ordered projected notifications. Frontend tests match the actual RunResult/begin/end event ownership: agent_settled rather than agent_end ends accounting, a new run replaces accounting but retains cumulative cost, auxiliary mode emits no root frames, and thinking/tool streams preserve original indexes. Compiled response builders preserve fixture wire data and child/parent branching; composition extracts the same explicitly offline model config and splits separate policy assertions.",
+            "systemReason": "Tests improve local reading of independent behaviors without being used as execution evidence. Runtime still binds headless frontend and real extension/session context, not phantom UI or model-invented command output. The test helper extractions are narrow fixture operations, not generalized harness/context bags."
+          }
+        ],
+        "integrationReadingReason": "Scoped ACCEPT from fresh source comparison of all 14 complete assigned diffs, including removals, and relevant candidate/baseline caller/lifetime context. Production edits keep existing authority divisions and ordering while separating wire construction, role mapping, byte framing, handshake, catalog discovery and bounded delivery from their lifecycle owners. The helpers are local, task-named and carry small explicit inputs; no new registry/scheduler/global context abstraction appears. Removing redundant outbox cached state and the reconnect handshake promise reduces system state. Test edits preserve former assertion journeys while isolating concerns and adding direct behavior checks. No blocking behavior regression or ownership contradiction attributable to these assigned integrated changes was found. This is not a whole-repository sign-off.",
+        "objections": [],
+        "limits": [
+          "No tests, setup, builds, installs, formatter, auth/device access, network requests, delegation, source edits or cleanup were performed. Unsupported Pi preparation was not attempted or bypassed. Only the requested untracked review result is written; candidate evidence/worktree is preserved.",
+          "All assigned diff paths were fully read; there are no unread assigned diff gaps. Related modules were read in the concrete ranges needed for the journeys, not attested as exhaustively reviewed. Candidate HEAD matched the exact requested revision before review.",
+          "Live provider access, actual compiled binaries and runtime execution remain unverified. No prior individual-file judgment artifacts, coverage counts or green-test reports informed this verdict.",
+          "Contextual pre-existing gap, not a refactor regression: commands.readHumanCommand accepts text-block arrays (now directly unit-tested), but runtime.onUser only recognizes /bruv commands in string content before parseInput. Baseline runtime has the same string-only gate. The new adapter test therefore does not establish end-to-end block-array command dispatch; parent should not count it as such.",
+          "Inspected fixture effects only: compiled fixtures use owned mkdtemp roots and explicit HOME/SDK paths, while the unchanged composition isolation launcher inherits process.env. No fixture or subprocess was run, and this review does not authorize running that launcher against inherited HOME/config or any unsupported Pi preparation.",
+          "Durable provenance is this existing bruv worktree at candidate af3602cf3d5b62641450c7cc24bb0350334b6652, with sourceBlobs pinned from Git. No /tmp code checkout or new test fixture was created."
+        ]
       }
     },
     {
@@ -2417,7 +2820,7 @@
       ],
       "chars": 92279,
       "lines": 2097,
-      "status": "running",
+      "status": "accepted",
       "jobId": "task_6cce396f",
       "model": "openai-codex/gpt-6.1-sol",
       "workspace": {
@@ -2432,6 +2835,156 @@
         "setupTaskId": "task_12cebe0f",
         "setupStatus": "running",
         "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      },
+      "result": {
+        "lane": "lane-17",
+        "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
+        "candidate": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "verdict": "ACCEPT",
+        "diffReadPaths": [
+          "tests/claude-compat-history.test.ts",
+          "tests/claude-compat-human-controls.test.ts",
+          "tests/claude-compat-launch.test.ts",
+          "tests/claude-compat-live-frontend.test.ts",
+          "tests/claude-compat-prompt-ownership.test.ts",
+          "tests/claude-compat-runtime.test.ts",
+          "tests/claude-compat-task-binding.test.ts",
+          "tests/claude-compat-task-projection.test.ts",
+          "tests/claude-compat-transport.test.ts",
+          "tests/claude-compat/fixtures/http-mcp-lifecycle.ts"
+        ],
+        "contextReadPaths": [
+          "src/claude-compat/history.ts",
+          "src/claude-compat/runtime.ts",
+          "src/claude-compat/cli.ts",
+          "src/claude-compat/transport.ts",
+          "src/claude-compat/human-controls.ts",
+          "src/questions/runtime.ts",
+          "src/questions/service.ts",
+          "src/claude-compat/task-binding.ts",
+          "src/claude-compat/task-projection.ts",
+          "src/tasks/job-service.ts",
+          "src/tasks/task-manager.ts",
+          "tests/fixtures/claude-task-worker.ts",
+          "src/claude-compat/live-frontend.ts",
+          "src/live/extension.ts",
+          "src/live/main-owner.ts",
+          "src/claude-compat/frontend.ts",
+          "tests/claude-compat/native-adapter-prompt-ownership.ts.txt",
+          "src/claude-compat/mcp.ts",
+          "tests/claude-compat-history.test.ts",
+          "tests/claude-compat-human-controls.test.ts",
+          "tests/claude-compat-launch.test.ts",
+          "tests/claude-compat-live-frontend.test.ts",
+          "tests/claude-compat-prompt-ownership.test.ts",
+          "tests/claude-compat-runtime.test.ts",
+          "tests/claude-compat-task-binding.test.ts",
+          "tests/claude-compat-task-projection.test.ts",
+          "tests/claude-compat-transport.test.ts",
+          "tests/claude-compat/fixtures/http-mcp-lifecycle.ts"
+        ],
+        "sourceBlobs": {
+          "tests/claude-compat-history.test.ts": "a7c329a3f4915be3b6dbf9960c9101007f4bcbdd",
+          "tests/claude-compat-human-controls.test.ts": "34e9b716d5cd1f9a6a16e456021641bd7a3aa439",
+          "tests/claude-compat-launch.test.ts": "c882e0b3ac87294b1b6b76e89817362ec608364d",
+          "tests/claude-compat-live-frontend.test.ts": "cfd4d79138691dafd22cd9ee246ac676baf73b9e",
+          "tests/claude-compat-prompt-ownership.test.ts": "a2f85d35bcc60597b0510e601aec7a6cc31cd06f",
+          "tests/claude-compat-runtime.test.ts": "1d98a4025fda59bbb5ccce3da917d58a1fbee364",
+          "tests/claude-compat-task-binding.test.ts": "ab4395a8ac3b3dcb9530d054ead571d8166845ab",
+          "tests/claude-compat-task-projection.test.ts": "477fba2b01fe10243d285cd68d5020714904bfa5",
+          "tests/claude-compat-transport.test.ts": "43115a9a1fa3e50536fc46fd77ca3163134f21ae",
+          "tests/claude-compat/fixtures/http-mcp-lifecycle.ts": "e8f406ce506a6ea94f4935e1f4d971c0087108c1"
+        },
+        "sourceJourneys": [
+          {
+            "paths": [
+              "tests/claude-compat-history.test.ts",
+              "src/claude-compat/history.ts",
+              "tests/claude-compat-runtime.test.ts",
+              "src/claude-compat/runtime.ts",
+              "src/claude-compat/frontend.ts"
+            ],
+            "readingReason": "The SDK helper replaces positional config/project/parentConfig toggles with a narrowly typed explicit environment. Every changed call preserves the former HOME/config/project combination, including the deliberately unaligned HOME-only negative control. Active-chain conversion expands one native mixed user record into several distinct Pi entries with repeated native provenance; resumeImported validates that durable mapping against canonical Pi messages. The runtime test now checks actual stored thinking/signature/tool blocks rather than a string occurrence.",
+            "systemReason": "Canonical append mirroring retains thinking independently of presentation omission. Its serialized queue captures each source entry ID/UUID/parent before append, retains the first error, and drains at turn completion and idempotent close. The held-write test fits this lifetime: results may already be emitted while onUser and teardown still await history; it does not falsely assert a persistence-before-result contract."
+          },
+          {
+            "paths": [
+              "tests/claude-compat-human-controls.test.ts",
+              "src/claude-compat/human-controls.ts",
+              "src/questions/runtime.ts",
+              "src/questions/service.ts",
+              "tests/claude-compat-launch.test.ts",
+              "src/claude-compat/cli.ts",
+              "src/claude-compat/transport.ts"
+            ],
+            "readingReason": "nativeDialogs owns callback capture and per-call allow construction; fixture options name session reuse and injected request authority. The non-abort-honoring double exercises a replaced lease, not a second saved-question implementation. The startup-request test is separated from environment scrubbing without losing either assertion set.",
+            "systemReason": "CLI pairs startup requests with the eventual transport or cancellation. Human-controls replacement closes/releases the old command lease and rejects a late allow even if transport ignores abort. Answer saving still uses saved owner/version through the real question command port; service mutation requires an owned branch. Terminal flush loops across replacement frontends. Helpers do not mint answers from tool text, denial, or defer."
+          },
+          {
+            "paths": [
+              "tests/claude-compat-launch.test.ts",
+              "src/claude-compat/cli.ts",
+              "tests/claude-compat-runtime.test.ts",
+              "src/claude-compat/runtime.ts"
+            ],
+            "readingReason": "sendFrame/endInput remove repeated framing syntax; Promise.withResolvers establishes actual handler entry rather than polling. Added EOF/SIGINT/SIGTERM and separate run/teardown-failure cases read directly against the connector boundary.",
+            "systemReason": "runConnector caches close, begins cancellation immediately, awaits and diagnoses close in finally, removes both signal handlers, and prioritizes teardown failure over successful cancellation status. Runtime close caches the rejected close promise and aggregates first history failure. Test expectations match these public exit/diagnostic semantics, not an injected-factory claim of end-to-end provider verification."
+          },
+          {
+            "paths": [
+              "tests/claude-compat-task-binding.test.ts",
+              "src/tasks/job-service.ts",
+              "src/tasks/task-manager.ts",
+              "tests/fixtures/claude-task-worker.ts",
+              "src/claude-compat/task-binding.ts",
+              "tests/claude-compat-task-projection.test.ts",
+              "src/claude-compat/task-projection.ts"
+            ],
+            "readingReason": "compatibilitySession now creates just the disk-backed session/profiles/projection sinks; taskOwnerFixture separately owns TaskManager, JobService and binding. The execute-bridge test therefore no longer constructs and closes an irrelevant owner. useRealWorkerProcess changes only agent command/argv and preserves launch metadata and shell launches. Projection fixtures use satisfies to preserve discriminants, removing runtime narrowing noise, while explicit completion observations expose revision transitions.",
+            "systemReason": "JobService supplies causal source/prompt/profile and child journal metadata; TaskManager remains the real OS process lifetime authority, with terminal completion on close. Binding writes derived child history before emitting child frames, exposes task start before child output and terminal after child output, and persists agent call/result and journal cursor state. Rebinding terminal cursors does not duplicate calls/results/notifications. Pure projection advances fresh ignored revisions without changing prior lifecycle/background membership and requires explicit resume edges. Opaque roster intentionally excludes workers and removes only confirmed terminal shells/monitors."
+          },
+          {
+            "paths": [
+              "tests/claude-compat-live-frontend.test.ts",
+              "src/claude-compat/live-frontend.ts",
+              "src/live/extension.ts",
+              "src/live/main-owner.ts",
+              "src/claude-compat/runtime.ts"
+            ],
+            "readingReason": "fakeLiveResources isolates device/provider/config doubles from a fake canonical owner. Unit harness adds its owner explicitly; the actual-root test passes resource dependencies without owner. This eliminates the prior construct-a-whole-harness-then-delete-owner pattern.",
+            "systemReason": "Native frontend spreads dependencies into liveExtension; its default owner is acquireMainOwner, invoked with the actual RPC session context. The integration fixture selects its final native Live registration and asserts currentMainOwner for that manager plus no configured model calls. Stop assertions still address resource close and owner release, without treating fake capture/provider as real device/auth verification."
+          },
+          {
+            "paths": [
+              "tests/claude-compat-prompt-ownership.test.ts",
+              "tests/claude-compat/native-adapter-prompt-ownership.ts.txt",
+              "src/claude-compat/runtime.ts",
+              "src/claude-compat/frontend.ts"
+            ],
+            "readingReason": "Classifier extraction moves pinned-source loading, optional source correspondence and transpilation out of the concurrency narrative without altering the exact predicates. The race still holds Pi input preflight and autonomous completion independently.",
+            "systemReason": "Frontend marks human ownership only on consumed input and task-notification origin only on consumed custom messages. The native predicate rejects the foreign autonomous result while the new human UUID is still unconsumed. No job lifecycle frame or newly arrived input is substituted as prompt ownership."
+          },
+          {
+            "paths": [
+              "tests/claude-compat-transport.test.ts",
+              "src/claude-compat/transport.ts",
+              "tests/claude-compat/fixtures/http-mcp-lifecycle.ts",
+              "tests/claude-compat-runtime.test.ts",
+              "src/claude-compat/mcp.ts",
+              "src/claude-compat/runtime.ts"
+            ],
+            "readingReason": "Transport harness now returns the exact injected output and protects its owned input/stderr from option overrides. Event/gate checkpoints observe callback/output progress instead of speculative timer delays. HTTP factory extraction captures one immutable session transport, keeping session initialized/closed map callbacks and server.connect together.",
+            "systemReason": "Byte framing accumulates raw bytes before UTF-8 decoding, counts CR/whitespace before trim and resets per frame. EOF rejects pending callbacks while draining accepted work/writes; real Writable backpressure and budget checks remain exercised. HTTP peer binds only loopback and separates DELETE/session lifetime from explicit host shutdown. Runtime result emission parks app-owned HTTP leases before native result/idle, while MCP release retains configured timeout and reports failed termination. Extraction preserves this ownership and negative-control behavior."
+          }
+        ],
+        "integrationReadingReason": "Fresh complete baseline-to-candidate diffs for all ten assigned paths, including deletions, were read directly from Git, then traced through actual candidate callers and authority/lifetime code. The helpers are local, purpose-shaped fixture partitions rather than new generic context bags or parallel authorities. They reduce conceptual interleaving (resources versus owner, session versus scheduler, adapter provenance versus runtime race, explicit SDK environment versus positional switches). Added assertions strengthen durable provenance, replacement consent, ordered projection and teardown semantics without conflicting with production contracts observed in these journeys. No lane-local source objection; ACCEPT is limited to this assigned integrated review, not a whole-repository sign-off.",
+        "objections": [],
+        "limits": [
+          "Read-only static source review; no tests, setup, build, install, formatter, authentication, device, credential or recovery activity was performed. No unsupported Pi preparation was retried or bypassed. No delegation. Only the requested untracked review JSON is written.",
+          "All assigned diffs fully read; no unread assigned-path gaps. Related current sources were read in relevant sections, not attested as complete files or whole-repository coverage. Baseline context is the actual Git diff, including removed code. No earlier judgment artifacts, coverage summaries or green test results were used.",
+          "Live/provider/device functionality and genuine SDK execution remain unverified. Existing outer test subprocess wrappers inherit process.env, so they were not run; test execution under the requested owned HOME/config/SDK policy is not established by this static review. Inspected recursive cleanup targets are fixture-owned mkdtemp paths; none was executed.",
+          "Durable evidence remains in the existing provided worktree at candidate af3602cf3d5b62641450c7cc24bb0350334b6652. Test fixture paths under tmpdir were inspected as source only; no test fixtures/checkouts were created or removed."
+        ]
       }
     },
     {
@@ -2452,7 +3005,22 @@
       ],
       "chars": 93592,
       "lines": 2169,
-      "status": "pending"
+      "status": "running",
+      "jobId": "task_fe09d3e3",
+      "model": "openai-codex/gpt-6.1-sol",
+      "workspace": {
+        "kind": "worktree",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_fe09d3e3",
+        "worktreePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_fe09d3e3",
+        "sourcePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
+        "baseRef": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "baseOid": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "branch": "bruv/pr45-final-integrated-diff-lane-18-compa-fe09d3e3",
+        "preparationStatus": "ready",
+        "setupTaskId": "task_114f4de6",
+        "setupStatus": "running",
+        "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      }
     },
     {
       "id": "lane-19",
@@ -2469,7 +3037,22 @@
       ],
       "chars": 82626,
       "lines": 1937,
-      "status": "pending"
+      "status": "running",
+      "jobId": "task_03cfeee1",
+      "model": "openai-codex/gpt-6.1-sol",
+      "workspace": {
+        "kind": "worktree",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_03cfeee1",
+        "worktreePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_03cfeee1",
+        "sourcePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
+        "baseRef": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "baseOid": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "branch": "bruv/pr45-final-integrated-diff-lane-19-compa-03cfeee1",
+        "preparationStatus": "ready",
+        "setupTaskId": "task_b2f9e786",
+        "setupStatus": "running",
+        "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      }
     },
     {
       "id": "lane-20",
@@ -2484,7 +3067,22 @@
       ],
       "chars": 62851,
       "lines": 1405,
-      "status": "pending"
+      "status": "running",
+      "jobId": "task_559b6d8e",
+      "model": "openai-codex/gpt-6.1-sol",
+      "workspace": {
+        "kind": "worktree",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_559b6d8e",
+        "worktreePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_559b6d8e",
+        "sourcePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
+        "baseRef": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "baseOid": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "branch": "bruv/pr45-final-integrated-diff-lane-20-compa-559b6d8e",
+        "preparationStatus": "ready",
+        "setupTaskId": "task_f1fd8dec",
+        "setupStatus": "running",
+        "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      }
     },
     {
       "id": "lane-21",
@@ -2501,7 +3099,22 @@
       ],
       "chars": 99447,
       "lines": 2334,
-      "status": "pending"
+      "status": "running",
+      "jobId": "task_776b09ce",
+      "model": "openai-codex/gpt-6.1-sol",
+      "workspace": {
+        "kind": "worktree",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_776b09ce",
+        "worktreePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_776b09ce",
+        "sourcePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
+        "baseRef": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "baseOid": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "branch": "bruv/pr45-final-integrated-diff-lane-21-execu-776b09ce",
+        "preparationStatus": "preparing",
+        "setupTaskId": "task_35d02d58",
+        "setupStatus": "running",
+        "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      }
     },
     {
       "id": "lane-22",
@@ -2519,7 +3132,19 @@
       ],
       "chars": 96140,
       "lines": 2299,
-      "status": "pending"
+      "status": "running",
+      "jobId": "task_b5b3574c",
+      "model": "openai-codex/gpt-6.1-sol",
+      "workspace": {
+        "kind": "worktree",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_b5b3574c",
+        "worktreePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_b5b3574c",
+        "sourcePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
+        "baseRef": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "baseOid": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "branch": "bruv/pr45-final-integrated-diff-lane-22-execu-b5b3574c",
+        "preparationStatus": "preparing"
+      }
     },
     {
       "id": "lane-23",
@@ -3092,12 +3717,23 @@
   ],
   "cap": 6,
   "auxStatus": "completed",
-  "reworkReserve": 2,
+  "reworkReserve": 1,
   "reworkHistory": [
     {
       "lane": "lane-05",
       "jobId": "task_49b63983",
       "reason": "Concrete inherited-env SDK failure-probe objection; reserve next free slot for fresh source primary/judge."
+    }
+  ],
+  "sourceFixBudget": 1,
+  "sourceFixes": [
+    {
+      "file": "tests/history-sdk-probe.test.ts",
+      "primary": "task_8ed15117",
+      "judge": "task_a6351926",
+      "candidate": "5e0fb7ac78fc0efaf669c83cbc4e794c54a78603",
+      "joinedAt": "6be78df0",
+      "integrationStillPending": true
     }
   ]
 }
