@@ -10604,12 +10604,12 @@
     {
       "file": "tests/context-usage-cache.test.ts",
       "initialBlob": "199e737c751b91cc07848c4c52fc0bef173cdc67",
-      "status": "pending",
+      "status": "accepted",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_88e61902",
       "primaryCommit": "f8b4781e6b57fc00f6055e351c281217fa73dcac",
-      "judgeIds": [],
+      "judgeIds": ["task_dd0e6b80"],
       "sourceCommit": "f8b4781e6b57fc00f6055e351c281217fa73dcac",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
       "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
@@ -10633,6 +10633,21 @@
         "Formatter fixtures are retained at /tmp/pr45-cache-format-WpA1T4 and /tmp/pr45-cache-format-TwolsC. Durable source provenance is this worktree and the exact sourceCommit, not a temporary checkout.",
         "Future cache runs retain mkdtemp bruv-context-cache-* roots with explicit owned home/config/sdk/tmp/sessions directories and an allowlisted child environment; no scenario was executed here. Existing disk-manager disposal can unlink its own spool; this existing source path was inspected, not executed.",
         "Preserved reconciliation rows for these focuses say NOT REVIEWED/needs-primary, without a prior dedicated primary or rejection. Current focus bytes matched the supplied preserved candidate commits before edits; no old branch was merged or candidate worktree altered."
+      ],
+      "acceptedBlob": "4541f123bbcc359b72d2fccb02643798559c7732",
+      "result": "Read the entire base raw JavaScript scenario, candidate child harness, and new .mjs fixture. The old string mixed compact assertion helpers with a long mutation stream. The candidate now separates required-recompute and projection-seeded reads into two small helpers with their distinct measurement boundaries visible. Each phase keeps its state change and assertions together: warming whole footers; incremental user then assistant invalidation; actual pre-HTTP preparation after system+user appends; ignored bookkeeping and separately invalidated costs; branch/edit/image/compaction unknown usage; shake freshness and invalid-record rejection; routed limits without re-estimation; and new/session-switched/native owners. The final ordered calls honestly preserve shared branch-history dependence rather than disguising it as isolated tests or passing a context bag. Locally scoped leaf/request snapshots remain with their journeys. This is a real readability improvement beyond formatting or renaming.",
+      "systemReason": "Traced installDiskBackedSessionManager, contextLeaf, the numeric WeakMap, buildSessionProjection seeding, trailing-user incremental estimates, state adoption and native fallback. Also traced CLI-before-extension installation, registerManualShake and its outer freshness cache, and both footer renderers plus the separate append-only footer-cost cache. The fixture captures native usage before installing adapters, computes the oracle from the public SDK projection builder plus full branch, and directly checks the disk read separately from the outer shake read. Native request preparation really invokes the seeding manager projection without making HTTP/auth calls on this plain fixture model. Invalid shake rejection and error-response freshness semantics remain visible and intact. The harness uses explicit child argv and a replacement environment; tests/helpers.ts only adds HERDR_ENV=0 to that supplied environment. HOME/config/SDK/temp/sessions are distinct mkdir children of one owned mkdtemp root, retained rather than removed. Manager disposal only removes its own pending spool and cache, not retained published sessions or inherited locations.",
+      "checks": [
+        "git diff --name-status c0f12f6274e3b1648362a03d5038e7bf39939795 f8b4781e6b57fc00f6055e351c281217fa73dcac: exactly the changed harness and added fixture; inspected both exact candidate blobs and the base harness.",
+        "Manually compared the complete base mutation/assertion stream against each candidate phase and its ordered invocation, including helper resets, native oracle independence, invalid shake throw, routed zero limits, and disposed replacement owner.",
+        "Read child run/offlineTestEnv and disk spool filesystem effects without running them. Formatter configuration includes JavaScript fixture paths; no formatter gate run.",
+        "Optional read-only TypeScript compiler-API comparison could not run because installed TypeScript exports version information but no ScriptTarget/createSourceFile; no automated semantic equivalence claim. Manual actual-source comparison is the basis."
+      ],
+      "limits": [
+        "Static independent review of exact candidate f8b4781e6b57fc00f6055e351c281217fa73dcac against primaryBase c0f12f6274e3b1648362a03d5038e7bf39939795; not checkout HEAD. Durable provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_dd0e6b80. No delegated descendants or /tmp code checkout.",
+        "No setup, tests, builds, formatter, or dependency installation executed; parent owns audited isolated gates. Shared installed SDK 1.0.3 dependencies were read-only corroboration of candidate imports/patches, not runtime proof.",
+        "No live auth/device/network verification, credential access, recovery investigation, deletion/cleanup commands, destructive git, publication, or user-data mutation. Only this requested untracked artifact was written. Existing source, candidates and worktrees preserved. Parent retains runtime agent.model verification responsibility.",
+        "No runtime assertion-preservation, child import execution, or isolation gate was run here; parent must verify those in its audited owned-fixture environment."
       ]
     },
     {
@@ -10763,12 +10778,12 @@
     {
       "file": "tests/editor.test.ts",
       "initialBlob": "ffcfee2b78b774f93bd4f47fb0b8ed0f71d0615d",
-      "status": "pending",
+      "status": "accepted",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_88e61902",
       "primaryCommit": "f8b4781e6b57fc00f6055e351c281217fa73dcac",
-      "judgeIds": [],
+      "judgeIds": ["task_dd0e6b80"],
       "sourceCommit": "f8b4781e6b57fc00f6055e351c281217fa73dcac",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
       "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
@@ -10790,6 +10805,20 @@
         "Formatter fixtures are retained at /tmp/pr45-cache-format-WpA1T4 and /tmp/pr45-cache-format-TwolsC. Durable source provenance is this worktree and the exact sourceCommit, not a temporary checkout.",
         "Future cache runs retain mkdtemp bruv-context-cache-* roots with explicit owned home/config/sdk/tmp/sessions directories and an allowlisted child environment; no scenario was executed here. Existing disk-manager disposal can unlink its own spool; this existing source path was inspected, not executed.",
         "Preserved reconciliation rows for these focuses say NOT REVIEWED/needs-primary, without a prior dedicated primary or rejection. Current focus bytes matched the supplied preserved candidate commits before edits; no old branch was merged or candidate worktree altered."
+      ],
+      "acceptedBlob": "ffcfee2b78b774f93bd4f47fb0b8ed0f71d0615d",
+      "result": "Read every test in the exact candidate editor file and confirmed its blob equals the base. The small editor factory exposes the actual shortcut matcher, padding and embedded status policy; it does not hide a scenario lifetime. Idle gutter/cursor/submit assertions stay in one local journey. The multiline test follows both scroll ends after Unicode wrapping. Native shortcuts/history, control-byte paste sanitation, and large-paste marker expansion/undo are distinct tests with local state. The spinner test explicitly covers empty and drafted status replacement at the same text column. Normal and narrow mouse mappings sit together, while autocomplete keeps provider construction, row layout, pointer selection and Tab acceptance together. No scattered ownership or authority warrants extraction.",
+      "systemReason": "Read the whole CompactEditor and followed its unchanged super.handleInput delegation, voice-free fixture path, renderTopBorder/renderBottomBorder removal, bodyRows bookkeeping, width>2 gutter choice, spinner prefix, and mouse x/y translation. Read the native CustomEditor shortcut authority and native Editor layout, mouse, paste sanitization/marker and undo seams. This explains the seven-row view at 24 terminal rows, preserved DEL versus removed C0 characters, marker expansion and paste-registry undo, and autocomplete row offsets. Startup installs this editor with preserved autocomplete settings; footer fallback uses the same zero-padding/embedded-status policy. The test setup matches those shipped callers. Splitting these short tests or extracting assertion/setup bags would separate behavior from its rationale. Reviewed the two candidate-changed context-cache paths separately; they do not alter this editor path.",
+      "checks": [
+        "Exact Git blob equality across base and candidate: ffcfee2b78b774f93bd4f47fb0b8ed0f71d0615d.",
+        "Whole-file actual-source review plus shipped editor setup and native behavior authorities; no test execution.",
+        "Inspected every candidate-changed related source path: context-cache harness and added .mjs fixture."
+      ],
+      "limits": [
+        "Static independent review of exact candidate f8b4781e6b57fc00f6055e351c281217fa73dcac against primaryBase c0f12f6274e3b1648362a03d5038e7bf39939795; not checkout HEAD. Durable provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_dd0e6b80. No delegated descendants or /tmp code checkout.",
+        "No setup, tests, builds, formatter, or dependency installation executed; parent owns audited isolated gates. Shared installed SDK 1.0.3 dependencies were read-only corroboration of candidate imports/patches, not runtime proof.",
+        "No live auth/device/network verification, credential access, recovery investigation, deletion/cleanup commands, destructive git, publication, or user-data mutation. Only this requested untracked artifact was written. Existing source, candidates and worktrees preserved. Parent retains runtime agent.model verification responsibility.",
+        "Autocomplete retains its existing 30ms wait; scheduling reliability was not verified. These tests do not prove attached voice, real IME/device, or full terminal-host behavior, and this no-change readability verdict makes no such claim."
       ]
     },
     {
@@ -10834,12 +10863,12 @@
     {
       "file": "tests/execute-row-render-performance.test.ts",
       "initialBlob": "2abeb55df0a90d7f1c064ac48febe4f2ecc25de6",
-      "status": "pending",
+      "status": "accepted",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_88e61902",
       "primaryCommit": "f8b4781e6b57fc00f6055e351c281217fa73dcac",
-      "judgeIds": [],
+      "judgeIds": ["task_dd0e6b80"],
       "sourceCommit": "f8b4781e6b57fc00f6055e351c281217fa73dcac",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
       "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
@@ -10861,6 +10890,20 @@
         "Formatter fixtures are retained at /tmp/pr45-cache-format-WpA1T4 and /tmp/pr45-cache-format-TwolsC. Durable source provenance is this worktree and the exact sourceCommit, not a temporary checkout.",
         "Future cache runs retain mkdtemp bruv-context-cache-* roots with explicit owned home/config/sdk/tmp/sessions directories and an allowlisted child environment; no scenario was executed here. Existing disk-manager disposal can unlink its own spool; this existing source path was inspected, not executed.",
         "Preserved reconciliation rows for these focuses say NOT REVIEWED/needs-primary, without a prior dedicated primary or rejection. Current focus bytes matched the supplied preserved candidate commits before edits; no old branch was merged or candidate worktree altered."
+      ],
+      "acceptedBlob": "2abeb55df0a90d7f1c064ac48febe4f2ecc25de6",
+      "result": "Read the complete exact-candidate file and confirmed its blob equals the base. clean/prior deliberately define an independent prior native renderer: sanitize, wrap, decorate, then clip every row. The first local test owns the Unicode/control corpus and width/warning matrix, making both the expected behavior and tested boundary clear. The second owns the clipping spy in try/finally, establishes oracle calls before clearing them, checks zero production calls on fitting rows and exact same-width row-array reuse, then exposes the width-one native fallback. The last test keeps one preview-state replacement sequence in view: FIRST, LATEST with warning, collapsed error caption, partial Running caption, and invalidated old component still showing FIRST. Extracting these into shared assertion/context helpers would hide the important measurement/reset and replacement boundaries.",
+      "systemReason": "Read executeOutputPreview and its component helper, including unchanged partial, expanded, collapsed, handoff and warning decisions. Settled components cache only one width and clear it on invalidate; partial components remain uncached. Expanded production rows use visibleWidth to skip native truncation only when fitting, while prior independently clips every decorated row, preserving narrow oversized grapheme authority. TypeScript extension renderResult passes expanded/isPartial/error/code/state/label and stops settled animations; the native ToolExecutionComponent updateResult/setExpanded/invalidate lifecycle rebuilds result components. The outer settled-execute host cache is also invalidated by updateDisplay and excludes partial/native images. sdk-task-rows retains its handoff-warning ownership. These callers justify testing replacement components rather than mutating a settled result under an unrelated cache. No production change occurred in the candidate, and the independently reviewed context-cache fixture has no execute-render authority.",
+      "checks": [
+        "Exact Git blob equality across base and candidate: 2abeb55df0a90d7f1c064ac48febe4f2ecc25de6.",
+        "Whole-file actual-source review of independent oracle, spy lifetime, result replacement and unchanged shipped rendering decisions; no benchmarks or tests executed.",
+        "Inspected every candidate-changed related source path: context-cache harness and added .mjs fixture."
+      ],
+      "limits": [
+        "Static independent review of exact candidate f8b4781e6b57fc00f6055e351c281217fa73dcac against primaryBase c0f12f6274e3b1648362a03d5038e7bf39939795; not checkout HEAD. Durable provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_dd0e6b80. No delegated descendants or /tmp code checkout.",
+        "No setup, tests, builds, formatter, or dependency installation executed; parent owns audited isolated gates. Shared installed SDK 1.0.3 dependencies were read-only corroboration of candidate imports/patches, not runtime proof.",
+        "No live auth/device/network verification, credential access, recovery investigation, deletion/cleanup commands, destructive git, publication, or user-data mutation. Only this requested untracked artifact was written. Existing source, candidates and worktrees preserved. Parent retains runtime agent.model verification responsibility.",
+        "No measured latency, native-spy execution, full-host frame correctness or live partial-spinner transition proof here. Existing partial-caption test is not a comprehensive spinner lifecycle test; width caching and replacement reasoning were checked in source."
       ]
     },
     {
@@ -17538,6 +17581,16 @@
         "No setup, tests, builds, dependency installation, network connections, live authentication, credential access, or source edits were performed. Runtime behavior, packaged dist/bruv, process-tree shutdown, and timing gates remain unverified here; parent owns audited isolated gates. The caller test timeout is 20 seconds whereas fixture startup deadline is 30 seconds; static readability judgment does not certify that timing envelope.",
         "Durable review provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_63de35f8. Exact candidate Git objects were retained; no temporary code checkout, cleanup, deletion, destructive Git, publication, merge, or wisdom edits. No descendants were launched. Parent owns runtime agent.model verification."
       ]
+    },
+    {
+      "file": "tests/fixtures/context-usage-cache-scenario.mjs",
+      "initialBlob": "absent",
+      "area": "ui-terminal-cli",
+      "status": "pending",
+      "resumeState": "needs-primary-final-blob",
+      "sourceCommit": "f8b4781e6b57fc00f6055e351c281217fa73dcac",
+      "acceptedRelatedJudges": ["task_dd0e6b80"],
+      "acceptedBlob": "ab1ae7f18b7f556ca7e85d3a9b2bb37b7cf0d646"
     }
   ],
   "completedAreas": {
@@ -17557,10 +17610,10 @@
     "baselineFiles": 766,
     "finalGate": "pending; incomplete focus coverage",
     "liveAuth": "unverified/failing; preserved",
-    "accepted": 650,
-    "total": 821,
-    "pending": 171,
-    "sourceExtras": 55,
+    "accepted": 653,
+    "total": 822,
+    "pending": 169,
+    "sourceExtras": 56,
     "checkout": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
     "branch": "bruv/readability-pr45-sol-continuation",
     "scheduler": "/home/tnfssc/.bruv/worktrees/pr45-flow-c2a2fd8a.mjs"

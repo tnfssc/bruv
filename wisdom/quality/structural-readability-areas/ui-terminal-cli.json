@@ -2844,19 +2844,20 @@
     {
       "focus": "tests/context-usage-cache.test.ts",
       "initialBlob": "199e737c751b91cc07848c4c52fc0bef173cdc67",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "4541f123bbcc359b72d2fccb02643798559c7732",
       "integrationState": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "4541f123bbcc359b72d2fccb02643798559c7732",
         "primaryId": "task_88e61902",
         "primaryCommit": "f8b4781e6b57fc00f6055e351c281217fa73dcac",
-        "judgeIds": [],
+        "judgeIds": ["task_dd0e6b80"],
         "sourceCommit": "f8b4781e6b57fc00f6055e351c281217fa73dcac",
-        "state": "needs-judge",
-        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+        "state": "accepted-joined",
+        "reason": "Read the entire base raw JavaScript scenario, candidate child harness, and new .mjs fixture. The old string mixed compact assertion helpers with a long mutation stream. The candidate now separates required-recompute and projection-seeded reads into two small helpers with their distinct measurement boundaries visible. Each phase keeps its state change and assertions together: warming whole footers; incremental user then assistant invalidation; actual pre-HTTP preparation after system+user appends; ignored bookkeeping and separately invalidated costs; branch/edit/image/compaction unknown usage; shake freshness and invalid-record rejection; routed limits without re-estimation; and new/session-switched/native owners. The final ordered calls honestly preserve shared branch-history dependence rather than disguising it as isolated tests or passing a context bag. Locally scoped leaf/request snapshots remain with their journeys. This is a real readability improvement beyond formatting or renaming."
       }
     },
     {
@@ -2991,37 +2992,39 @@
     {
       "focus": "tests/editor.test.ts",
       "initialBlob": "ffcfee2b78b774f93bd4f47fb0b8ed0f71d0615d",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "ffcfee2b78b774f93bd4f47fb0b8ed0f71d0615d",
       "integrationState": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "ffcfee2b78b774f93bd4f47fb0b8ed0f71d0615d",
         "primaryId": "task_88e61902",
         "primaryCommit": "f8b4781e6b57fc00f6055e351c281217fa73dcac",
-        "judgeIds": [],
+        "judgeIds": ["task_dd0e6b80"],
         "sourceCommit": "f8b4781e6b57fc00f6055e351c281217fa73dcac",
-        "state": "needs-judge",
-        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+        "state": "accepted-joined",
+        "reason": "Read every test in the exact candidate editor file and confirmed its blob equals the base. The small editor factory exposes the actual shortcut matcher, padding and embedded status policy; it does not hide a scenario lifetime. Idle gutter/cursor/submit assertions stay in one local journey. The multiline test follows both scroll ends after Unicode wrapping. Native shortcuts/history, control-byte paste sanitation, and large-paste marker expansion/undo are distinct tests with local state. The spinner test explicitly covers empty and drafted status replacement at the same text column. Normal and narrow mouse mappings sit together, while autocomplete keeps provider construction, row layout, pointer selection and Tab acceptance together. No scattered ownership or authority warrants extraction."
       }
     },
     {
       "focus": "tests/execute-row-render-performance.test.ts",
       "initialBlob": "2abeb55df0a90d7f1c064ac48febe4f2ecc25de6",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "2abeb55df0a90d7f1c064ac48febe4f2ecc25de6",
       "integrationState": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "2abeb55df0a90d7f1c064ac48febe4f2ecc25de6",
         "primaryId": "task_88e61902",
         "primaryCommit": "f8b4781e6b57fc00f6055e351c281217fa73dcac",
-        "judgeIds": [],
+        "judgeIds": ["task_dd0e6b80"],
         "sourceCommit": "f8b4781e6b57fc00f6055e351c281217fa73dcac",
-        "state": "needs-judge",
-        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+        "state": "accepted-joined",
+        "reason": "Read the complete exact-candidate file and confirmed its blob equals the base. clean/prior deliberately define an independent prior native renderer: sanitize, wrap, decorate, then clip every row. The first local test owns the Unicode/control corpus and width/warning matrix, making both the expected behavior and tested boundary clear. The second owns the clipping spy in try/finally, establishes oracle calls before clearing them, checks zero production calls on fitting rows and exact same-width row-array reuse, then exposes the width-one native fallback. The last test keeps one preview-state replacement sequence in view: FIRST, LATEST with warning, collapsed error caption, partial Running caption, and invalidated old component still showing FIRST. Extracting these into shared assertion/context helpers would hide the important measurement/reset and replacement boundaries."
       }
     },
     {
@@ -4681,6 +4684,19 @@
         "state": "accepted-joined",
         "reason": "The helper keeps its transport state and lifetime together: start stores callbacks, send requires a live input callback and dispatches directly, stop clears both callbacks, and all ANSI output methods append through write. The declaration says this is a counting transport after decoding, so drainInput and setProgress having no transport effects are locally understandable. There is no scattered semantic or measurement authority to repair by extraction."
       }
+    },
+    {
+      "focus": "tests/fixtures/context-usage-cache-scenario.mjs",
+      "initialBlob": null,
+      "introducedBy": "f8b4781e6b57fc00f6055e351c281217fa73dcac",
+      "state": "pending",
+      "acceptedBlob": null,
+      "resume": {
+        "status": "pending",
+        "acceptedBlob": "ab1ae7f18b7f556ca7e85d3a9b2bb37b7cf0d646",
+        "sourceCommit": "f8b4781e6b57fc00f6055e351c281217fa73dcac",
+        "state": "needs-primary-final-blob"
+      }
     }
   ],
   "batchChecks": [
@@ -4791,7 +4807,7 @@
     }
   },
   "resumeStatus": {
-    "accepted": 81,
-    "pending": 30
+    "accepted": 84,
+    "pending": 28
   }
 }
