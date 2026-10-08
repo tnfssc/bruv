@@ -142,6 +142,14 @@
         "model": "openai-codex/gpt-6.1-sol",
         "status": "handled",
         "sourceCommit": "b80a55a855e65d9bcb4ae8db3bb95d577db79b67"
+      },
+      {
+        "id": "task_27eea40d",
+        "stage": "judge",
+        "focus": "scripts/claude-native-acceptance/worker.mjs",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_27eea40d",
+        "branch": "bruv/pr45-judge-scripts-claude-native-accepta-27eea40d",
+        "status": "running"
       }
     ]
   },
