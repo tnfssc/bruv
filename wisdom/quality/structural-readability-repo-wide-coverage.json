@@ -22790,11 +22790,11 @@
       "file": "tests/history-sdk-probe.test.ts",
       "initialBlob": "absent",
       "area": "agent-history-session-goals",
-      "resumeState": "needs-rework",
-      "primaryId": "task_156435a8",
-      "primaryCommit": "177e687eb82c0768d209db8695f2bc78af2539b4",
+      "resumeState": "needs-judge",
+      "primaryId": "task_8ed15117",
+      "primaryCommit": "5e0fb7ac78fc0efaf669c83cbc4e794c54a78603",
       "judgeIds": ["task_b1d3b7fc", "task_efa4fabb"],
-      "sourceCommit": null,
+      "sourceCommit": "5e0fb7ac78fc0efaf669c83cbc4e794c54a78603",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
       "status": "pending",
       "acceptedBlob": "bd738142f9c2cb7dd0b1652b47294b63fe25788f",
@@ -22826,7 +22826,40 @@
           }
         ],
         "readingReason": "Actual integrated source review identifies inherited HOME/config/SDK environment exception, not evidence of user data access."
-      }
+      },
+      "priorPrimaryLineage": [
+        {
+          "primaryId": "task_156435a8",
+          "sourceCommit": null
+        }
+      ],
+      "primaryBase": "2b3cb2151ffffbffa77b2c696fc8bd60a352cb7f",
+      "primaryResult": "Each failure and negative-control invocation now creates a fresh retained createHistoryFixture from tests/helpers/history-fixture.ts and launches explicit argv through the existing run helper with only fixture.env plus BRUV_TEST_SKIP_MANAGER_DISPOSAL. Reading run -> offlineTestEnv confirms this provided environment replaces inheritance, and run drains both output streams with child exit. The owned fixture isolates HOME, all XDG paths, SDK agent/session paths, and TMPDIR/TMP/TEMP. The script soak directory is nested under that owned TMPDIR; script cleanup and preload disposal/spool-before-rm assertions are unchanged. Outer HOME/config/SDK fixtures have no cleanup path. No helper API or unrelated accepted source changes were needed.",
+      "primaryPaths": ["tests/history-sdk-probe.test.ts"],
+      "primaryChecks": [
+        {
+          "name": "Preserved candidate/source review",
+          "result": "Read whole focus, both owned-fixture helpers, shared run/offlineTestEnv, failure preload and SDK probe. git diff af3602cf3d5b62641450c7cc24bb0350334b6652 HEAD over the relevant paths before editing was empty; rejected candidate bytes were already present. Assigned reconciliation rows include original accepted focus blob bd738142f9c2cb7dd0b1652b47294b63fe25788f."
+        },
+        {
+          "name": "Effects review",
+          "result": "Fixture creation only writes fresh mkdtemp-owned paths. Explicit child environment selects owned import-time defaults; offline scenario uses in-memory settings and script-owned auth/model/session paths. Existing script rm is limited to its own mkdtemp soak directory and unchanged. No scenarios executed."
+        },
+        {
+          "name": "Formatter",
+          "result": "Repository Biome format --write ran through node:child_process explicit argv against only tests/history-sdk-probe.test.ts. Exit 0, Formatted 1 file. Fresh HOME/config/SDK/TMPDIR retained at /tmp/pr45-history-probe-format-aYb6kE with provenance.json pointing to this durable worktree."
+        },
+        {
+          "name": "Source diff",
+          "result": "git diff --check passed before commit. Only tests/history-sdk-probe.test.ts changed; all behavioral assertions and preload/script sources retained. Commit hooks inspected: no active configured/default hooks."
+        }
+      ],
+      "primaryLimits": [
+        "Tests, setup, builds and live auth/device access not run; parent owns audited isolated gates and fresh independent judgment.",
+        "No delegation, cleanup, recovery, dependency writes, push, merge or publication performed. Existing worktrees and candidate evidence preserved.",
+        "Runtime agent.model verification remains parent-owned.",
+        "Values and wisdom guidance read; no wisdom/value source edits or per-worker note added because parent owns aggregate wisdom."
+      ]
     },
     {
       "file": "tests/prompt-preview-cli.test.ts",

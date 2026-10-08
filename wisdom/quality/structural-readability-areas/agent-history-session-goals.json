@@ -4292,11 +4292,11 @@
       "resume": {
         "status": "pending",
         "acceptedBlob": "bd738142f9c2cb7dd0b1652b47294b63fe25788f",
-        "primaryId": "task_156435a8",
-        "primaryCommit": "177e687eb82c0768d209db8695f2bc78af2539b4",
+        "primaryId": "task_8ed15117",
+        "primaryCommit": "5e0fb7ac78fc0efaf669c83cbc4e794c54a78603",
         "judgeIds": ["task_b1d3b7fc", "task_efa4fabb"],
-        "sourceCommit": null,
-        "state": "needs-rework",
+        "sourceCommit": "5e0fb7ac78fc0efaf669c83cbc4e794c54a78603",
+        "state": "needs-judge",
         "reason": "Saved final original review and candidate/area hashes match. Parent launch/drain/assert separated from typed child fault/disposal/physicalspool-before-rm/exit observation; real diagnostic scenario coherent and sourceunchanged. Exact candidate177e confirmed despite launch metadata delay. Joined tr..."
       }
     },

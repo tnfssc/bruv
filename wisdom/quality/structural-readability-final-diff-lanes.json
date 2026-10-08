@@ -1117,7 +1117,7 @@
       ],
       "chars": 81752,
       "lines": 2062,
-      "status": "running",
+      "status": "accepted",
       "jobId": "task_ade8c58b",
       "model": "openai-codex/gpt-6.1-sol",
       "workspace": {
@@ -1132,6 +1132,152 @@
         "setupTaskId": "task_863ad30b",
         "setupStatus": "running",
         "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      },
+      "result": {
+        "lane": "lane-07",
+        "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
+        "candidate": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "verdict": "ACCEPT",
+        "diffReadPaths": [
+          "tests/native-fast-mode.test.ts",
+          "tests/native-shake-sdk.test.ts",
+          "tests/phase2-native-live.test.ts",
+          "tests/phase2-native-sdk.test.ts",
+          "tests/prompt-preview-cli.test.ts",
+          "tests/prompt-preview.test.ts",
+          "tests/prompts.test.ts",
+          "tests/saved-transcript-startup.test.ts",
+          "tests/session-input.test.ts",
+          "tests/system-prompt.test.ts",
+          "tests/transcript-snapshots.test.ts",
+          "tests/wisdom-extension.test.ts",
+          "tests/wisdom-location.test.ts"
+        ],
+        "contextReadPaths": [
+          "src/prompts.ts",
+          "src/system-prompt.ts",
+          "scripts/prompt-preview.ts",
+          "src/prompt-preview.ts",
+          "src/agent/extension.ts",
+          "src/agent/native-fast-mode.ts",
+          "src/session/restore-leaf.ts",
+          "src/agent/manual-shake.ts",
+          "src/agent/native-compaction.ts",
+          "src/agent/cache-affine-compaction.ts",
+          "src/session/input.ts",
+          "src/session/host.ts",
+          "src/session/transcript-snapshots.ts",
+          "src/live/main-owner.ts",
+          "src/wisdom/extension.ts",
+          "src/wisdom/location.ts",
+          "tests/fixtures/saved-transcript-startup.ts",
+          "tests/fixtures/wisdom-extension-sdk.ts",
+          "tests/fixtures/transcript-snapshots.ts",
+          "tests/native-shake-sdk.test.ts",
+          "tests/phase2-native-sdk.test.ts",
+          "tests/phase2-native-live.test.ts",
+          "node_modules/@earendil-works/pi-coding-agent/dist/core/resource-loader.js",
+          "node_modules/@earendil-works/pi-coding-agent/dist/core/agent-session.js",
+          "node_modules/@earendil-works/pi-coding-agent/package.json"
+        ],
+        "sourceBlobs": {
+          "tests/native-fast-mode.test.ts": "ab607b97df359dd53b1897dfe5596e59206dab33",
+          "tests/native-shake-sdk.test.ts": "dfd0eccf82539ffa9ce33ec9ec65e3ecfefba7c7",
+          "tests/phase2-native-live.test.ts": "1252004431edd16a0694f313dce7b10859b3f2d0",
+          "tests/phase2-native-sdk.test.ts": "35880eaccdc43f18adba41d4aa3e211d6cd801c6",
+          "tests/prompt-preview-cli.test.ts": "6996b5def3b6f2bc4a7297e8b50140b636928b2e",
+          "tests/prompt-preview.test.ts": "97799fa3e59268f059079a171b38010070b5661c",
+          "tests/prompts.test.ts": "c921bbe561640e6b889872c18270558de68daad3",
+          "tests/saved-transcript-startup.test.ts": "b0c5bdfa1c30f881d06d95fc4878c904cb66729a",
+          "tests/session-input.test.ts": "absent",
+          "tests/system-prompt.test.ts": "0541138ec5359b8f018ace65c639edfab133f9cf",
+          "tests/transcript-snapshots.test.ts": "d6cd4d7bf0cc594be8f2cdc75eea6ae69f2b73a2",
+          "tests/wisdom-extension.test.ts": "9925e4e230e9c635723337e3e23830fa5c46bfe6",
+          "tests/wisdom-location.test.ts": "9ee4c9225a0306ac1f2489174524a932142b838e"
+        },
+        "sourceJourneys": [
+          {
+            "paths": [
+              "tests/native-fast-mode.test.ts",
+              "src/agent/native-fast-mode.ts",
+              "src/session/restore-leaf.ts"
+            ],
+            "readingReason": "Followed harness runtime selection, modelRegistry OAuth forwarding, real manager branch access, persistence injection and delayed consent/auth promises into production request authorization and runtime wrapper ownership. The new competing-controller test corresponds to the Set/WeakMap patch: ambiguous authorization refuses before preparation; shutdown removes one owner and final shutdown restores the original descriptor.",
+            "systemReason": "Local providerRuntime/createOfflineSession/decodeRequestBody helpers remove repeated adapter and SDK setup without replacing real serialization or hiding the dispatch boundary. Returning registration and the active branch keeps checkpoint rollback assertions attached to the actual manager. Explicit promise handshakes improve lifetime clarity over microtask polling."
+          },
+          {
+            "paths": [
+              "tests/native-shake-sdk.test.ts",
+              "src/agent/manual-shake.ts",
+              "src/agent/native-compaction.ts"
+            ],
+            "readingReason": "Compared every removed nested scenario arrangement with the eight explicit callbacks and read the unchanged harness. Schema mutation and unresolved append now precede harness registration, which only captures manager/context and optionally binds transformContext; no eager plan is computed there. Lost/duplicate shim, changed runtime state, stale branch and provider/API refusals remain distinct arrangements.",
+            "systemReason": "The named scenario map is a bounded test-local abstraction; assertions still verify no shake checkpoint and visible refusal. It does not substitute fixture counts or serializer success for checkpoint authority."
+          },
+          {
+            "paths": [
+              "tests/phase2-native-sdk.test.ts",
+              "tests/phase2-native-live.test.ts",
+              "src/agent/native-compaction.ts",
+              "src/agent/native-fast-mode.ts",
+              "node_modules/@earendil-works/pi-coding-agent/dist/core/agent-session.js"
+            ],
+            "readingReason": "Compared moved native SSE success/failure responses and ordinary SDK capture stream against their deletions, including payload hook execution, sentinel handling, abort/error stream completion and fresh runtime seam reset on reopen. Read the live probe auth setup without opening its auth path; followed explicit manager/runtime/evidence arguments and restoreNotify/dispose across disk reopen.",
+            "systemReason": "Offline and live seams remain separate: ordinary requests run real serializer/hooks but stop before dispatch; native fixture HTTP returns synthetic opaque checkpoints. Live observer restoration is now session-local and avoids repeated notify wrapping. This is fixture readability improvement, not evidence of working live auth or provider behavior."
+          },
+          {
+            "paths": [
+              "tests/prompt-preview-cli.test.ts",
+              "tests/prompt-preview.test.ts",
+              "tests/prompts.test.ts",
+              "tests/system-prompt.test.ts",
+              "scripts/prompt-preview.ts",
+              "src/prompt-preview.ts",
+              "src/prompts.ts",
+              "src/system-prompt.ts",
+              "src/agent/extension.ts",
+              "node_modules/@earendil-works/pi-coding-agent/dist/core/resource-loader.js"
+            ],
+            "readingReason": "Traced CLI help/error parsing before dynamic capture import, explicit role initialization with synchronous environment restoration, isolated runtime/settings/session setup and the stream replacement before prompt. Compared root custom-base ownership and worker role framing to extension before_agent_start; checked SYSTEM.md trust/precedence against SDK discovery, including positional option boundaries.",
+            "systemReason": "Added CLI and SDK tests exercise different real boundaries rather than reimplementing production prompt assembly. Prompt fallback, complete Pi frame, collaboration text and root-owned mode region have separate responsibilities. Selected-project settings/packages are intentionally excluded from preview while explicit SYSTEM/APPEND and context files are included."
+          },
+          {
+            "paths": [
+              "tests/wisdom-extension.test.ts",
+              "tests/wisdom-location.test.ts",
+              "tests/fixtures/wisdom-extension-sdk.ts",
+              "src/wisdom/extension.ts",
+              "src/wisdom/location.ts",
+              "src/agent/extension.ts"
+            ],
+            "readingReason": "Followed fail-closed rootAllowed before trust/location reads; per-effect restoreAgentIdentity scans late-attached child entries. The SDK fixture attaches the marker after bindExtensions and checks command-first and ordinary-turn-first contributions using real accumulated SDK hooks. Location tests match nearest marker, lexical paths, trust-gated settings and non-ENOENT failures.",
+            "systemReason": "Authority is not captured once at registration, and location computation does not read/create wisdom contents. Real child hook ordering is exercised separately from the small fake fixture. The subprocess helper owns HOME/config/cache/SDK/temp state and Git global config, retaining those fixtures."
+          },
+          {
+            "paths": [
+              "tests/saved-transcript-startup.test.ts",
+              "tests/fixtures/saved-transcript-startup.ts",
+              "tests/session-input.test.ts",
+              "src/session/input.ts",
+              "src/live/main-owner.ts",
+              "src/session/host.ts",
+              "tests/transcript-snapshots.test.ts",
+              "tests/fixtures/transcript-snapshots.ts",
+              "src/session/transcript-snapshots.ts"
+            ],
+            "readingReason": "Read the complete CompletedInput test deletion and baseline class, checked its candidate deletion/no surviving CompletedInput references, and read current explicit typed/final input and host request ledger boundaries. Followed startup child argv and allowlisted owned HOME/config/SDK/temp environment into the installed-SDK fixture. Snapshot subprocess TMPDIR is its mkdtemp root; fixture checks that binding before its per-test store removal; production snapshot names/TTL/budget operate beneath tmpdir.",
+            "systemReason": "The removed tests refer to removed authority rather than a silently surviving untested class. Startup isolation no longer inherits caller SDK state. Snapshot filesystem tests isolate a process-shared store rather than risking another session’s queued readers; the wrapper is thin and does not duplicate retention logic."
+          }
+        ],
+        "integrationReadingReason": "Complete assigned baseline-to-candidate diffs, including deletions, were read afresh. Context was read at production authority/dispatch/lifetime seams and unchanged exercised callers, not inferred from previous judgments or green tests. The integrated lane improves intrinsic reading burden through small test-local helpers and explicit phase/ownership boundaries; no new large context bag or contradictory production framing/location rule was found. This ACCEPT is limited to this test-source lane and its inspected source journeys, not a repository-wide sign-off.",
+        "objections": [],
+        "limits": [
+          "No tests, setup, builds, installs, formatters, auth/device flows, credential reads, recovery work, source edits or delegation were performed. Unsupported Pi preparation was not retried or bypassed. Only the requested untracked result file was written.",
+          "All 13 assigned diffs were fully read; no assigned unread gaps. Related context paths represent necessary excerpts, not attestations of complete files or whole-repository review.",
+          "SDK context was read from the already present installation reporting 1.0.3; no preparation or execution verified it. Live provider/auth/device operation remains unverified.",
+          "New preview CLI subprocesses inherit their environment, and the snapshot wrapper spreads process.env; they were NOT executed. Any later validation under the requested safety envelope must supply an outer owned HOME/config/SDK environment and retain fixtures. Inspected cleanup expressions were not run.",
+          "Durable review provenance: existing worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_ade8c58b at the exact candidate. Candidate/worktree evidence preserved; no temporary code checkout or review test fixtures were created."
+        ]
       }
     },
     {
@@ -1155,7 +1301,7 @@
       ],
       "chars": 55364,
       "lines": 1169,
-      "status": "running",
+      "status": "accepted",
       "jobId": "task_d36e701f",
       "model": "openai-codex/gpt-6.1-sol",
       "workspace": {
@@ -1170,6 +1316,174 @@
         "setupTaskId": "task_9411ce04",
         "setupStatus": "running",
         "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      },
+      "result": {
+        "lane": "lane-08",
+        "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
+        "candidate": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "verdict": "ACCEPT",
+        "diffReadPaths": [
+          ".gitattributes",
+          ".github/workflows/ci.yml",
+          ".github/workflows/dependency-updates.yml",
+          ".github/workflows/release.yml",
+          "install.sh",
+          "mise.toml",
+          "scripts/build-pair.ts",
+          "scripts/ci-selective.ts",
+          "scripts/generate-third-party-notices.ts",
+          "scripts/install-local.sh",
+          "scripts/install.sh",
+          "scripts/prepare-manual-release.ts",
+          "scripts/publish-release.ts",
+          "scripts/run-native-release-gate.mjs"
+        ],
+        "contextReadPaths": [
+          ".github/workflows/ci.yml",
+          ".github/workflows/dependency-updates.yml",
+          ".github/workflows/release.yml",
+          ".gitignore",
+          "install.sh",
+          "mise.toml",
+          "package.json",
+          "scripts/build-claude-compat.ts",
+          "scripts/build.ts",
+          "scripts/claude-compat-launcher.ts",
+          "scripts/bruv-claude-compat.sh",
+          "scripts/prepare-assets.ts",
+          "scripts/ci-selective.ts",
+          "scripts/generate-third-party-notices.ts",
+          "scripts/install-local.sh",
+          "scripts/publish-release.ts",
+          "scripts/prepare-manual-release.ts",
+          "scripts/select-release-notes.ts",
+          "scripts/validate-release-tag.ts",
+          "scripts/run-native-release-gate.mjs",
+          "scripts/setup-native-release-gate.sh",
+          "scripts/setup-release-browser.sh",
+          "scripts/claude-native-acceptance/run.mjs",
+          "wisdom/claude-compat/proof/official-2644/run-trace.mjs",
+          "tests/production-packaging.test.ts"
+        ],
+        "sourceBlobs": {
+          ".gitattributes": "65bbe845d312eb73e8b77b4ef5f7beee4a1c97cb",
+          ".github/workflows/ci.yml": "8f1798300f04ecf1317570abb5b8868422f140b9",
+          ".github/workflows/dependency-updates.yml": "8d6139ce1417bcf9d58c87750a78f049ac58721b",
+          ".github/workflows/release.yml": "72a12eb6a00a934c436ce9ff6982123c10320564",
+          "install.sh": "125933e061095c79bd5e2f16c68d384e8a2c9013",
+          "mise.toml": "a0de5dad9cb229123d4b8f5f7935042e0a01dbde",
+          "scripts/build-pair.ts": "3cfc224480eb04bd7019ec365b919fb031fef6c0",
+          "scripts/ci-selective.ts": "1995804abd171d6f2d73d107b79ba5aee0b57120",
+          "scripts/generate-third-party-notices.ts": "10cc8165ebff6cb5821490b6cbebfae901000fa8",
+          "scripts/install-local.sh": "ef8220b9c0b3bf364d5c4515f8fa7764f9ee13ff",
+          "scripts/install.sh": "125933e061095c79bd5e2f16c68d384e8a2c9013",
+          "scripts/prepare-manual-release.ts": "5822e205569312022b3f453469049e3dfb7f271e",
+          "scripts/publish-release.ts": "5ffbb5141171cc6857ffd67b7f7eef971754c5a5",
+          "scripts/run-native-release-gate.mjs": "1037e58051ec59f325a31ed2945655eb9434b21e"
+        },
+        "sourceJourneys": [
+          {
+            "paths": [
+              ".github/workflows/release.yml",
+              "scripts/prepare-manual-release.ts",
+              "scripts/publish-release.ts",
+              "scripts/select-release-notes.ts",
+              "scripts/validate-release-tag.ts"
+            ],
+            "readingReason": "Followed manual dispatch on develop through workflow-source equality check, latest-develop preparation, version/notes commit and release-source outputs. Also followed stable tag pushes through the skipped prepare job and always() admission. The single source job replaces repeated event predicates and SHA/tag fallbacks; every helper/build/smoke/publish checkout consumes its outputs. Version comparison extraction preserves the already-prepared and bump branches.",
+            "systemReason": "Build artifacts and release gates remain tied to the same admitted SHA/tag. Publication still verifies peeled remote commit, latest develop for manual releases, and concurrent tag creation before release API mutation. The expected-byte map and missingReleaseAssets reject mismatched/extra/duplicate assets and incomplete published releases. Only draft missing assets are repaired, then publication is reread. Source selection, asset inspection/repair, and final publication are now separate comprehensible authority steps, not a new context bag."
+          },
+          {
+            "paths": [
+              "package.json",
+              "scripts/build-pair.ts",
+              "scripts/build-claude-compat.ts",
+              "scripts/claude-compat-launcher.ts",
+              "scripts/bruv-claude-compat.sh",
+              "scripts/build.ts",
+              "scripts/prepare-assets.ts",
+              ".github/workflows/release.yml",
+              "tests/production-packaging.test.ts"
+            ],
+            "readingReason": "Followed bun run build to the now-singular paired command, connector build destination validation, asset preparation, one normal compiler invocation, and thin sibling launcher generation. Read actual target/helper option forwarding and suffix conversion; inspected executable/test imports for the renamed export rather than trusting review summaries.",
+            "systemReason": "The former one-element command list and loop had no multiple-build semantics. Singular command reflects the real owner: connector build refreshes the normal sibling exactly once and then writes the launcher. Release target names, Android interpreter, native-helper propagation, inherited I/O and child exit remain aligned. prepare-assets still owns Pi preparation; it was inspected, never executed or bypassed."
+          },
+          {
+            "paths": [
+              "install.sh",
+              "scripts/install.sh",
+              "scripts/install-local.sh",
+              "scripts/bruv-claude-compat.sh",
+              ".github/workflows/release.yml",
+              "scripts/publish-release.ts"
+            ],
+            "readingReason": "Followed release asset names/checksum manifests into canonical stage names, isolated pair probes, original backups, notices replacement, connector rename and normal rename. The launcher resolves its sibling or explicit absolute override, so canonical stage names plus the explicit staged normal override exercise the downloaded pair, not an installed binary. Root and scripts download installers have identical candidate blobs. Followed local installer through its build caller, staged probes and reverse replacement journal.",
+            "systemReason": "Checksum validation remains bound to the release asset filename despite the staging rename. No downloaded binary runs before both hashes pass. Probe HOME/XDG scope and override removal are explicit in one subshell; installed HOME and notice location are not rebound. Download installer rollback marks targets before mutation and retains backups on rollback failure. Local journal removes duplicated per-binary rollback state while retaining its existing success/rollback order and target checks."
+          },
+          {
+            "paths": [
+              "scripts/generate-third-party-notices.ts",
+              "package.json",
+              ".github/workflows/release.yml",
+              ".github/workflows/dependency-updates.yml",
+              "scripts/publish-release.ts",
+              "install.sh"
+            ],
+            "readingReason": "Followed production dependencies through upward package resolution, name/version deduplication, required versus optional/peer traversal, per-package packaged/curated/pinned-Pi attribution, stable rendering, output budget and release/dependency workflow consumers. Read unchanged rendering and graph context as well as all removed code.",
+            "systemReason": "Collection owns the mutable shared byte budget and graph queue; rendering receives only notice-bearing package records, no unused directory or repository metadata. Ordering, missing-license failures, pinned Pi fallback and final byte ceiling remain equivalent. Notices flow into the same published asset allowlist and installer notice directory. The extraction creates useful graph/read/render seams without a huge abstraction or options bag."
+          },
+          {
+            "paths": [
+              "scripts/ci-selective.ts",
+              ".github/workflows/ci.yml",
+              ".gitignore"
+            ],
+            "readingReason": "Followed the actual workflow comparison baseline and tested merge checkout into plan(), reference-path classifier, clean-HEAD and regular-file checks, published selection and docs runner, then required job admission. Read ignored artifacts so publishing selection does not itself invalidate the clean-checkout check.",
+            "systemReason": "Reference-only recognition is now shared instead of inferred via a complete intermediate plan. Invalid/empty/unsafe diffs still request full CI, --run still refuses full plans and rechecks checkout. Both platform jobs still depend on full=true. The final case statement admits exactly the previous two tuples, with feedback success mandatory; diagnostics improve without widening green outcomes."
+          },
+          {
+            "paths": [
+              ".github/workflows/dependency-updates.yml",
+              "scripts/generate-third-party-notices.ts"
+            ],
+            "readingReason": "Followed validate job base/SHA outputs, candidate commit, Linux validation/notices and bundle packaging into the separate write-permission job. Read local bundle verification, FETCH_HEAD equality, one-parent base equality, allowed-file loop, then credential setup, current develop guard, lease push, status and PR update.",
+            "systemReason": "The new step boundary moves downloaded identity/file verification before GH_TOKEN and gh auth setup-git, while retaining credential-free checkout and no dependency execution in the publication job. Publication is still guarded against stale develop and concurrent bot-branch movement. Ownership becomes clearer without changing the candidate being published."
+          },
+          {
+            "paths": [
+              ".github/workflows/release.yml",
+              "scripts/run-native-release-gate.mjs",
+              "scripts/setup-release-browser.sh",
+              "scripts/setup-native-release-gate.sh",
+              "scripts/claude-native-acceptance/run.mjs",
+              "wisdom/claude-compat/proof/official-2644/run-trace.mjs"
+            ],
+            "readingReason": "Followed final paired Linux artifacts, pinned official T3/browser/SDK environment handoff and six suite descriptors into child spawn/close, post-child binary hashing, result.json evidence and final gate.json. Read child runner owned fixture/config and explicit environment plus trace launcher result boundary; no proof output or prior green run served as verdict.",
+            "systemReason": "Suite object fields name/script/flags replace positional triples locally; runVerifiedSuite owns the complete evidence lifetime. An initial binary check still precedes proof directory creation and child launch, each suite checks before and after, and aggregate success is only written after all six. Fresh proof directories remain non-overwriting. This is a bounded domain helper, not generic execution infrastructure."
+          },
+          {
+            "paths": [
+              ".gitattributes",
+              "mise.toml",
+              ".github/workflows/release.yml",
+              ".github/workflows/dependency-updates.yml",
+              "scripts/build.ts"
+            ],
+            "readingReason": "Read the complete small diffs and checked candidate tree absence of integrations/t3/upstream/bruv.patch, actual external-T3 build/release path and bootstrap tool versions.",
+            "systemReason": "Removing the obsolete deleted bundled-T3 patch whitespace exception matches the external, unmodified T3 boundary. Removing the stale pnpm 11.10.0 comment leaves the actual 11.27.1 pin aligned with dependency CI; Bun/Node versions stay aligned with release bootstrap."
+          }
+        ],
+        "integrationReadingReason": "All 14 assigned baseline-to-candidate diffs were read completely, including deletions. Actual caller, authority and lifetime paths show coherent changes: a single admitted release source feeds builds/gates/publication; the singular paired build reflects its one real delegated build; canonical stage naming matches the thin launcher; graph/read/render notice seams and selection/report/run CI seams reduce local branching and duplicated context. Small explicit helpers carry only needed domain state. I found no changed-source behavioral contradiction or missing new owner in this lane. This is a lane-only source judgment, not whole-repository sign-off.",
+        "objections": [],
+        "limits": [
+          "Read-only source review in the existing durable worktree at /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_d36e701f. HEAD was the exact candidate and initial git status was clean; candidate source was not edited. Only this requested untracked result file was written.",
+          "No tests, setup, builds, installs, formatters, network/auth/device operations or credential access were run. Unsupported automatic Pi preparation was not retried or bypassed. No fixture directories were created. No delegation occurred.",
+          "Context paths denote actual source read; some are targeted caller/authority excerpts (CI workflow, package.json, local installer, version preparation and production-packaging tests), not claims of complete source coverage everywhere. Assigned diff has no unread gaps.",
+          "No prior primary/judge artifacts, coverage counts or green tests were used as verdict evidence. A broad symbol search incidentally returned historical wisdom/review-summary lines; they were excluded, and executable caller search was repeated restricted to source/tests/package paths.",
+          "Live release API behavior, hosted GitHub scheduling, downloads, native devices/auth and runtime gates remain unverified; judgment is based on actual source control/data flow.",
+          "Known pre-existing limitation: local installer records successful mv in its journal after the rename, retaining a signal-interruption window unlike download installers which mark before attempts. This refactor does not widen that window; no full transaction or interruption-proof guarantee is asserted.",
+          "Safety maintained: NO sudo, recovery investigation, user secrets, shell deletion/cleanup commands, inherited HOME/config/SDK cleanup, nested shell traps, destructive git, or user-data mutation. User already recovered data and requested no recovery work. Existing cleanup code was inspected only, never executed."
+        ]
       }
     },
     {
@@ -1255,7 +1569,22 @@
       ],
       "chars": 99910,
       "lines": 2147,
-      "status": "pending"
+      "status": "running",
+      "jobId": "task_394ceedb",
+      "model": "openai-codex/gpt-6.1-sol",
+      "workspace": {
+        "kind": "worktree",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_394ceedb",
+        "worktreePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_394ceedb",
+        "sourcePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
+        "baseRef": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "baseOid": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "branch": "bruv/pr45-final-integrated-diff-lane-11-build-394ceedb",
+        "preparationStatus": "ready",
+        "setupTaskId": "task_2e04ce0d",
+        "setupStatus": "running",
+        "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      }
     },
     {
       "id": "lane-12",
@@ -1271,7 +1600,22 @@
       ],
       "chars": 62387,
       "lines": 1367,
-      "status": "pending"
+      "status": "running",
+      "jobId": "task_35a208fa",
+      "model": "openai-codex/gpt-6.1-sol",
+      "workspace": {
+        "kind": "worktree",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_35a208fa",
+        "worktreePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_35a208fa",
+        "sourcePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
+        "baseRef": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "baseOid": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "branch": "bruv/pr45-final-integrated-diff-lane-12-build-35a208fa",
+        "preparationStatus": "ready",
+        "setupTaskId": "task_97fa393a",
+        "setupStatus": "running",
+        "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      }
     },
     {
       "id": "lane-13",
@@ -1282,7 +1626,22 @@
       ],
       "chars": 53532,
       "lines": 1156,
-      "status": "pending"
+      "status": "running",
+      "jobId": "task_76f77dde",
+      "model": "openai-codex/gpt-6.1-sol",
+      "workspace": {
+        "kind": "worktree",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_76f77dde",
+        "worktreePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_76f77dde",
+        "sourcePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
+        "baseRef": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "baseOid": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "branch": "bruv/pr45-final-integrated-diff-lane-13-build-76f77dde",
+        "preparationStatus": "ready",
+        "setupTaskId": "task_5602ba47",
+        "setupStatus": "running",
+        "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      }
     },
     {
       "id": "lane-14",
@@ -2026,9 +2385,12 @@
   ],
   "cap": 6,
   "auxStatus": "completed",
-  "pausedForRework": {
-    "lane": "lane-05",
-    "jobId": "task_49b63983",
-    "reason": "Concrete inherited-env SDK failure-probe objection; reserve next free slot for fresh source primary/judge."
-  }
+  "reworkReserve": 1,
+  "reworkHistory": [
+    {
+      "lane": "lane-05",
+      "jobId": "task_49b63983",
+      "reason": "Concrete inherited-env SDK failure-probe objection; reserve next free slot for fresh source primary/judge."
+    }
+  ]
 }
