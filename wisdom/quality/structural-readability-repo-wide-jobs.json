@@ -966,7 +966,17 @@
         "purpose": "saved exact-blob/review reconciliation (not new judge)"
       }
     ],
-    "resumeFocusWorkers": []
+    "resumeFocusWorkers": [
+      {
+        "id": "task_48469090",
+        "stage": "primary",
+        "focus": "scripts/tasks-ui-proof-screenshots.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_48469090",
+        "branch": "bruv/pr45-primary-scripts-tasks-ui-proof-scre-48469090",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      }
+    ]
   },
   {
     "group": "build-release-ci-tooling",
