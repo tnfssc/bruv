@@ -4002,7 +4002,8 @@
           ],
           "readingReason": "Separating tree construction from the linear replay is coherent, and the entry point now visibly owns global keybindings with try/finally. However, the final named hidden-ancestor-and-tool-leaf scenario still misstates its actual configuration. Its untyped positional constructor call obscures a concrete reader-facing contract error; extracting it unchanged does not resolve that journey."
         }
-      ]
+      ],
+      "forceJudge": true
     },
     {
       "file": "scripts/terminal-perf/selector-lifecycle-probe.ts",
@@ -6781,13 +6782,29 @@
       "initialBlob": "f546be3a70ee901eb6436de7f73b8ce2866d2166",
       "status": "pending",
       "area": "agent-history-session-goals",
-      "resumeState": "pending-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_38e8aa10",
+      "primaryCommit": "39eafce01057503d50bc3386b23bc220ee88f4b9",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "39eafce01057503d50bc3386b23bc220ee88f4b9",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
-      "pendingReason": "No dedicated primary/final independent focus judgment."
+      "pendingReason": "No dedicated primary/final independent focus judgment.",
+      "primaryBase": "39eafce01057503d50bc3386b23bc220ee88f4b9",
+      "primaryResult": "The journey is explicit in one local instruction: application requests, including work/voice stop, delegate to the client; only the configured agent has jobs.stopWork/live.stop; queued intent, partial results and speech interruption do not establish stopping; client confirmation gates success claims; quoted output is data and uncorrelated host observations cannot acquire request identity. GPTLiveSession sends this exact text with client delegation and no Realtime function-tool setup. Its typed context methods distinguish trusted instructions, ID-bound commentary/thinking and null-ID observations. Extension dispatch separately reports admission and agent-turn completion rather than action success. Adding headings or extracting wording would only decorate this already linear authority journey, not resolve scattered decisions.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Focus reconciliation row and area-ledger row agree: pending-primary, no prior candidate/accepted blob; focus exists and matches recorded baseline f546be3a70ee901eb6436de7f73b8ce2866d2166.",
+        "Traced session.start instruction payload, client delegation event validation, typed context/observation authority, extension dispatch/admission/completion feedback.",
+        "Read existing session-start and typed-context assertions; preserved all source and assertions unchanged.",
+        "Verified working focus Git hash equals HEAD focus blob; initial tracked worktree was clean.",
+        "Formatter not invoked: no changed source paths. No source commit made: no source changes."
+      ],
+      "primaryLimits": [
+        "No tests, setup, builds, provider calls or device access run; parent owns audited isolated batch gates.",
+        "This is a primary reading decision, not an independent judge acceptance.",
+        "Wisdom and values unchanged: no new general lesson; parent owns aggregate wisdom."
+      ]
     },
     {
       "file": "src/prompts/identity.md",
