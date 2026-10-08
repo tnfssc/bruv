@@ -15000,17 +15000,18 @@
       "initialBlob": "41a49cda7d40568bdbe2060020d8b2dcdb9ed4b6",
       "status": "pending",
       "area": "execution-tasks-questions",
-      "resumeState": "needs-rework",
-      "primaryId": "task_01035810",
+      "resumeState": "needs-judge",
+      "primaryId": "task_6262ecec",
       "judgeIds": ["task_a3213d3e"],
-      "sourceCommit": null,
+      "sourceCommit": "04c9d2df061d6e15e2c1d347900be71503bb905b",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
       "pendingReason": "Primary was cancelled during the incident. A changed focus blob survives only in the primary working tree, not its HEAD; no completed independent actual-code judgment or accepted blob is recorded. Preserve the uncommitted candidate, dist and runtime-assets without cleanup.",
-      "primaryCommit": "eb8295ac0714ad9b6c4e548cc9130010949c7dd5",
-      "primaryBase": "7032a079cb717c688f7f5ca4a73cc07be082363c",
-      "primaryResult": "One owned fixture-process boundary now encloses all SessionJobs and raw-RPC cases, including the real registered tool. Managed shell/agent children and compiled execute workers consequently inherit only fixture HOME/config/SDK/temp values; an owned SHELL executable removes login startup from service shell children without changing production defaults. The credential case launches a separate named fixture process with synthetic credentials supplied as launch input, not global edits. Existing delivery, cancellation, batch, handoff, RPC and credential assertions are retained in their original sequence; asynchronous manager disposal still owns settlement.",
+      "primaryCommit": "04c9d2df061d6e15e2c1d347900be71503bb905b",
+      "primaryBase": "9bf50c12c46a2eec788c76d19c5f504819b3496a",
+      "primaryResult": "Replaced credential suite re-entry with one explicit standalone assertion entry (tests/job-bridge-credentials.fixture.ts), launched with Bun argv [run, absolute entry] and synthetic credentials as launch input. The entry asserts its synthetic parent inputs, then retains the original worker-exit, scrubbed URL/token object plus visible sentinel/job result, subagent RPC, and token non-disclosure checks using node:assert/strict. The shared runner owns mkdtemp HOME/config/SDK/temp, non-login fixture SHELL, explicit child argv/env, launch/source/output/result evidence, and exit failure. Ordinary suite registration still launches the entire file with unfiltered Bun test argv; it no longer has a scenario marker or name filter. Read all bridge cases: multiplex/error RPC and no implicit output; missing bridge; inline/background input and inspection; delayed and concurrent cancellation ownership; request/response budgets; three-second, zero-wait, timeout and failure separation; pre-ACK disconnect; registered batch ACK wrapping; provisional ACK on bad exit; oversized reply ownership; handoff; partial batch failure; attention/goal/history helpers; and synthetic credential scrubbing. All ordinary bridge source before the credential case is byte-preserved apart from its helper import. SessionJobs asynchronous disposal continues to await manager.shutdown. No production changes or global process.env mutation.",
       "primaryPaths": [
         "tests/job-attention.test.ts",
+        "tests/job-bridge-credentials.fixture.ts",
         "tests/job-bridge.test.ts",
         "tests/job-service.test.ts",
         "tests/owned-process-suite.ts",
@@ -15018,34 +15019,19 @@
         "tests/task-manager.test.ts"
       ],
       "primaryChecks": [
-        {
-          "kind": "exact-rejected-baseline",
-          "result": "Before editing, every focus and the four objection runtime paths matched dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d blobs; no historical branch merged."
-        },
-        {
-          "kind": "source-review",
-          "result": "Read whole focus and assigned reconciliation row; traced process spawn/env and filesystem/session/output ownership. No tests/setup/builds run."
-        },
-        {
-          "kind": "formatter",
-          "result": "Biome format --write via child_process explicit argv/env, changed source paths only; retained evidence /tmp/bruv-pr45-format-osccHc and /tmp/bruv-pr45-format-ZROzHo. Final activation-signature alignment formatted with retained evidence /tmp/bruv-pr45-format-LR0GGL."
-        },
-        {
-          "kind": "assertion-preservation",
-          "result": "Static whitespace-normalized expect statements identical to rejected source (85 statements); not runtime proof or a readability verdict."
-        },
-        {
-          "kind": "git-diff-check",
-          "result": "Passed; coherent source range 7032a079cb717c688f7f5ca4a73cc07be082363c..eb8295ac0714ad9b6c4e548cc9130010949c7dd5 changes exactly the six listed test/helper paths. Source-only commits: 84ace37da3ce9a9ca95ff7e0c189931822257548 then eb8295ac0714ad9b6c4e548cc9130010949c7dd5; integrate both, not only the final two-line signature correction."
-        }
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md; read only the assigned job-bridge row in the retained reconciliation ledger.",
+        "Read exact rejected candidate eb8295ac0714ad9b6c4e548cc9130010949c7dd5 helper and focus; both match launch HEAD 9bf50c12c46a2eec788c76d19c5f504819b3496a.",
+        "Static comparison confirms all ordinary bridge source preceding the credential case is preserved, with only the helper import updated. Reviewed direct shared-helper registration callers; their files remain unchanged this round.",
+        "Repository Biome format --write applied to only the three edited source paths via node:child_process explicit argv and fresh retained HOME/config/SDK/TMPDIR. Exit 0, no fixes. Evidence: /tmp/pr45-bridge-format-xMonw2/launch.json, stdout.log, stderr.log, result.json.",
+        "git diff --check passed. Commit contains only tests/job-bridge.test.ts, tests/owned-process-suite.ts and new tests/job-bridge-credentials.fixture.ts. Reviewed commit hook directory: only inactive .sample files; no hook overrides or execution.",
+        "No tests, setup, builds, dependency installation, live auth/device/network checks, cleanup, recovery investigation or delegation performed."
       ],
       "primaryLimits": [
-        "Fresh independent effects clearance, runtime gates and quality judgments belong to parent; none executed here.",
-        "Compiled binary execution, provider authentication, devices and network access remain unverified; no credentials accessed.",
-        "Fixture execution is Bun-specific and intended for this Linux test environment; suite argv and nested credential scenario have not been run.",
-        "Formatter/commit fixture roots retained; test fixture roots and launch/output evidence will be retained when parent runs audited gates. Source provenance remains this durable worktree and exact commit.",
-        "Existing isolated interactive-terminal source/evidence was untouched. No worktrees or candidate evidence removed, no setup/dependency changes, no push/PR/merge.",
-        "No wisdom or values edits: existing owned-process/safety values apply; parent owns aggregate wisdom and runtime-model verification."
+        "Runtime execution of the new standalone assertion entry and ordinary suites is unverified; parent owns audited isolated gates. No test or assertion-count result is claimed.",
+        "ChangedPaths/sourceBlobs include the complete seven-path coherent candidate scope relative to supplied primaryBase 7032a079cb717c688f7f5ca4a73cc07be082363c. This rework edits only job-bridge.test.ts, owned-process-suite.ts and job-bridge-credentials.fixture.ts; the other four paths are retained prior candidate consumers, unchanged from launch HEAD. They are listed so review does not lose the full supplied source scope.",
+        "Parent must independently judge the revised shared helper individually before authorizing general reuse; this primary result is not an independent acceptance.",
+        "Temporary formatter/commit evidence is retained under /tmp/pr45-bridge-format-xMonw2; source provenance is durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_6262ecec at 04c9d2df061d6e15e2c1d347900be71503bb905b. Runtime fixture roots are created only when parent-authorized gates later run and are retained without deletion.",
+        "No wisdom/values edits: parent owns aggregate wisdom, and the existing isolation/ownership/readability values already cover this correction."
       ],
       "acceptedBlob": "ac3973d96f36dbf054d892077d86e44b1950c759",
       "result": "Read the whole candidate and exact diff from 8f186d90eb5047304492c72c6bc56a7d0f37204d. SessionJobs joins a genuine parent-session lifetime: manager, typed completion sink, JobService dispatch, raw execute entry, registered-tool entry, and awaited shutdown. A reader can now follow foreground completion, background survival/input/inspection, delayed spawn cancellation, concurrent wait cancellation, pre-delivery disconnect, provisional ACK failure, oversized response release, registered batch ACK, partial batch failure, and handoff without reconstructing repeated ownership setup and finally blocks. Timing, abort points, dispatch wrappers, and batch completion barriers stay visible in their scenarios. Raw multiplexing/unavailable-bridge/budget tests and attention/goal/history RPC checks remain separate; the credential scrub assertion and environment restoration remain explicit. This is a coherent lifetime extraction, not a rename-only improvement or context bag.",
@@ -15098,6 +15084,11 @@
           "primaryId": "task_f4f56799",
           "sourceCommit": null,
           "primaryBase": "8f186d90eb5047304492c72c6bc56a7d0f37204d"
+        },
+        {
+          "primaryId": "task_01035810",
+          "sourceCommit": null,
+          "primaryBase": "7032a079cb717c688f7f5ca4a73cc07be082363c"
         }
       ],
       "forceJudge": true,

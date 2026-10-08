@@ -2873,11 +2873,11 @@
       "resume": {
         "status": "pending",
         "acceptedBlob": "ac3973d96f36dbf054d892077d86e44b1950c759",
-        "primaryId": "task_01035810",
-        "primaryCommit": "eb8295ac0714ad9b6c4e548cc9130010949c7dd5",
+        "primaryId": "task_6262ecec",
+        "primaryCommit": "04c9d2df061d6e15e2c1d347900be71503bb905b",
         "judgeIds": ["task_a3213d3e"],
-        "sourceCommit": null,
-        "state": "needs-rework",
+        "sourceCommit": "04c9d2df061d6e15e2c1d347900be71503bb905b",
+        "state": "needs-judge",
         "reason": "Read the whole candidate and exact diff from 8f186d90eb5047304492c72c6bc56a7d0f37204d. SessionJobs joins a genuine parent-session lifetime: manager, typed completion sink, JobService dispatch, raw execute entry, registered-tool entry, and awaited shutdown. A reader can now follow foreground completion, background survival/input/inspection, delayed spawn cancellation, concurrent wait cancellation, pre-delivery disconnect, provisional ACK failure, oversized response release, registered batch ACK, partial batch failure, and handoff without reconstructing repeated ownership setup and finally blocks. Timing, abort points, dispatch wrappers, and batch completion barriers stay visible in their scenarios. Raw multiplexing/unavailable-bridge/budget tests and attention/goal/history RPC checks remain separate; the credential scrub assertion and environment restoration remain explicit. This is a coherent lifetime extraction, not a rename-only improvement or context bag."
       }
     },

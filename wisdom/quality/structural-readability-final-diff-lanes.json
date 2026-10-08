@@ -8045,7 +8045,7 @@
       ],
       "chars": 99875,
       "lines": 2012,
-      "status": "running",
+      "status": "accepted",
       "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
       "jobId": "task_9f34e293",
       "model": "openai-codex/gpt-6.1-sol",
@@ -8061,6 +8061,140 @@
         "setupTaskId": "task_c6be079f",
         "setupStatus": "failed",
         "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      },
+      "result": {
+        "lane": "lane-40",
+        "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
+        "candidate": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "verdict": "ACCEPT",
+        "diffReadPaths": [
+          "tests/fixtures/remote-e2e/fake-provider.ts",
+          "tests/fixtures/remote-e2e/placement-parent.ts",
+          "tests/fixtures/remote-e2e/recovery-ssh.sh",
+          "tests/fixtures/remote-placement-e2e/scenario.ts",
+          "tests/fixtures/remote-typed-root-placement/scenario.ts",
+          "tests/remote-artifacts.test.ts",
+          "tests/remote-cancellation.test.ts",
+          "tests/remote-capabilities.test.ts",
+          "tests/remote-capability-runtime.test.ts",
+          "tests/remote-client.test.ts"
+        ],
+        "contextReadPaths": [
+          "src/remote/client.ts",
+          "src/remote/cancellation.ts",
+          "src/remote/job-artifacts.ts",
+          "src/session/host-access.ts",
+          "src/remote/capabilities.ts",
+          "src/remote/capability-runtime.ts",
+          "src/remote/services.ts",
+          "src/remote/operations.ts",
+          "src/remote/runtime.ts",
+          "src/agent/extension.ts",
+          "src/remote/artifacts.ts",
+          "src/remote/jobs.ts",
+          "src/tasks/job-service.ts",
+          "scripts/loopback-parent-fixture.ts",
+          "scripts/remote-e2e.sh",
+          "scripts/remote-recovery-e2e.ts",
+          "scripts/remote-placement-e2e.ts",
+          "scripts/remote-root-placement-e2e.ts",
+          "tests/fixtures/remote-e2e/entrypoint.sh",
+          "tests/fixtures/remote-placement-e2e/fake-provider.ts",
+          "tests/fixtures/remote-typed-root-placement/fake-provider.ts"
+        ],
+        "sourceBlobs": {
+          "tests/fixtures/remote-e2e/fake-provider.ts": "72d168a3c60ff27c595c8571f5db64a2223bd23a",
+          "tests/fixtures/remote-e2e/placement-parent.ts": "7b0319dca327f046657a13f42b110ffbee42fba4",
+          "tests/fixtures/remote-e2e/recovery-ssh.sh": "d7e8d093f900e4d5654636badd1f72d96041aa09",
+          "tests/fixtures/remote-placement-e2e/scenario.ts": "8aa11f4ce7161b4998e14bf80a96f89460964405",
+          "tests/fixtures/remote-typed-root-placement/scenario.ts": "9130afb6ab3862fe2c7137d9bbe8909f064deaec",
+          "tests/remote-artifacts.test.ts": "1d819e294b230a85d08adfc9a4e37e323169cf12",
+          "tests/remote-cancellation.test.ts": "a1a198779b4e9cf1bd48b7459e3e0c3b0adcb901",
+          "tests/remote-capabilities.test.ts": "701ed0dd3fc42525eee5c8d18ad00d347c9d8de7",
+          "tests/remote-capability-runtime.test.ts": "bb79598d6c168ff5654a48adfe6d0ce57623ace8",
+          "tests/remote-client.test.ts": "2439a5752941a42426a09c94e8d57c19ab97b792"
+        },
+        "sourceJourneys": [
+          {
+            "paths": [
+              "tests/fixtures/remote-e2e/fake-provider.ts",
+              "tests/fixtures/remote-e2e/placement-parent.ts",
+              "scripts/loopback-parent-fixture.ts",
+              "tests/fixtures/remote-e2e/entrypoint.sh",
+              "src/remote/jobs.ts",
+              "src/tasks/job-service.ts"
+            ],
+            "readingReason": "Compared every removed nested response branch with parentReply/workerReply, executeReply and completionStream. Print/probe priority, tool-call IDs, completion-before-yield priority, scenario selection, normal depth proof and worker progress writes retain their baseline ordering. placementReply still recognizes the latest user marker, chooses stop before retry/launch, and acknowledges the same tool ID. Its unchanged placementCode is actually imported by loopbackParent; the Docker owner entrypoint runs the worker provider.",
+            "systemReason": "Discovery derives authorized names from the saved connection; remote jobs validates role/depth and exact pinned target before preparation. The fixture parent neither connects nor silently changes placement. Helpers separate actor decisions from stream framing without an options/context bag; the response-shape finish-reason check is equivalent to the removed stage predicates."
+          },
+          {
+            "paths": [
+              "tests/fixtures/remote-placement-e2e/scenario.ts",
+              "tests/fixtures/remote-typed-root-placement/scenario.ts",
+              "tests/fixtures/remote-placement-e2e/fake-provider.ts",
+              "tests/fixtures/remote-typed-root-placement/fake-provider.ts",
+              "scripts/remote-placement-e2e.ts",
+              "scripts/remote-root-placement-e2e.ts",
+              "src/tasks/job-service.ts"
+            ],
+            "readingReason": "Traced provider request to model dispatch, parent launch and completion inspection, destination orchestrator child start, child terminal delivery, saved question lookup and approved tracked edit. For typed-root, traced normalStart/rootStart through askAfterChild, useHumanAnswer and secondTurn, plus the unchanged running-job and reply-loss programs. Read harness callers for restart/question provenance and real picker continuation; clean/drift snapshot expectations match their caller markers and return stages.",
+            "systemReason": "Tool acknowledgments and actual saved answers still gate stage progress; no refactored helper manufactures an answer or connects. Bounded inspection cursor checks and child completion checks survive. Role-specific routines and small Side arguments replace concatenated embedded programs and one large branch tree, making root-versus-orchestrator lifetime and authority easier to read while preserving generated operations."
+          },
+          {
+            "paths": [
+              "tests/fixtures/remote-e2e/recovery-ssh.sh",
+              "scripts/remote-e2e.sh",
+              "scripts/remote-recovery-e2e.ts",
+              "tests/remote-client.test.ts",
+              "src/remote/client.ts"
+            ],
+            "readingReason": "Compared the extracted shim with the baseline scripts/remote-e2e.sh here-document and candidate installation: config and drop-directory arguments replace baked paths, while request forwarding, accepted-response assertions, one-shot marker moves and exit 42 remain identical. Followed harness lost-launch/lost-answer markers to same-ID retry assertions. In client source followed exclusive/save, launch pin-before-POST, answer pin-before-POST, acceptTranscriptPage, sync and transcript.",
+            "systemReason": "Read-only fixture inspection only, not user recovery work. The extraction stays behind the opt-in simulated fixture shim and does not disturb readiness SSH. New client transport hooks observe durable intent at the actual POST boundary. Invalid later pages retain previously committed pages, unrelated receipts cannot acknowledge an answer, stale running snapshots cannot replace terminal truth, and sync servicing runs after lock release. The crash test read is nonlocking transcript(), so its new pre-kill assertion does not contend with the deliberately blocked writer."
+          },
+          {
+            "paths": [
+              "tests/remote-cancellation.test.ts",
+              "src/remote/cancellation.ts",
+              "src/session/host-access.ts",
+              "src/remote/job-artifacts.ts",
+              "src/remote/runtime.ts",
+              "src/agent/extension.ts"
+            ],
+            "readingReason": "Followed private command registration through the shared event bus to the native jobs.stopWork service, its awaited report, ctx.abort, scoped host lookup, all list pages, terminal job text capture and idle settlement checkpoint. Compared each new test assertion with those actual transitions, including service rejection, repeated cursor and the 50-attempt foreground-active bound.",
+            "systemReason": "Cancellation remains owned by the existing native job service, not a new PID registry. Tests distinguish stop acknowledgment from settlement and job idleness from foreground idleness, and observe the published checkpoint mode/rename. The fixture owns its mkdtemp directory and restores its runtime environment variable. This adds direct lifetime/ordering checks without a competing cancellation abstraction."
+          },
+          {
+            "paths": [
+              "tests/remote-capabilities.test.ts",
+              "tests/remote-capability-runtime.test.ts",
+              "src/remote/capabilities.ts",
+              "src/remote/capability-runtime.ts",
+              "src/remote/services.ts",
+              "src/remote/operations.ts"
+            ],
+            "readingReason": "Traced bounded no-symlink reads, immutable grant/request/reply publication, per-task request serialization, pending admission, abort/deadline cancellation, revoked/terminal fences and same-ID replay. Followed serviceRemoteTask through locally authorized serving, frozen reply publication and retry delivery; requestCapability dispatch reaches requestLocalCapability, which durably records an ungranted need before waiting and later uses the same mailbox request ID.",
+            "systemReason": "Split tests now await precise read failures and keep deadline/revocation/terminal cases independently understandable. Added cases exercise queue release after rejection, unchanged-authority replay versus changed-authority EEXIST, first-wins markers, live-only servicing and frozen-byte retry. Actual services stop before result collection on capability failure and skip locally revoked grants; authority is not inferred from child text. Need/grant/request/reply states correspond to existing owned stores rather than added test-only production state."
+          },
+          {
+            "paths": [
+              "tests/remote-artifacts.test.ts",
+              "src/remote/artifacts.ts",
+              "src/remote/services.ts",
+              "src/remote/client.ts",
+              "src/remote/job-artifacts.ts"
+            ],
+            "readingReason": "Followed owner catalog confinement and digest/offset checks into whole-catalog client validation, verified file reuse, chunk assembly, digest verification, atomic replacement and per-file incomplete-manifest publication. The new second-file failure scenario verifies the first file remains recorded and old second-file bytes remain untouched until successful retry; duplicate catalog rejection occurs before any get.",
+            "systemReason": "The offset-triggered mutation now expresses the actual second-chunk boundary rather than a hidden call counter. Independent owner/client failure tests avoid mutating a shared fixture between unrelated assertions. These checks align with serviceRemoteTask artifact integration errors and the client persisted outcome boundary, without treating cached bytes or a terminal task as proof of complete artifact delivery."
+          }
+        ],
+        "integrationReadingReason": "All ten assigned baseline-to-candidate diffs, including deletions, were fully read directly from Git; source judgments are fresh, not inherited from prior lane artifacts or test outcomes. The fixture refactors preserve action IDs, stage precedence, generated operations, saved-answer gates and actor boundaries while separating response framing, role selection and execution programs. Unit-test restructuring isolates owner/client and cancellation/revocation/terminal concerns and adds observable durable-publication and retry boundaries. Helpers carry only history/body or a small scenario discriminator, not a broad shared context bag. Read caller and production authority/lifetime context across lane boundaries; no concrete cross-file contradiction or missing ownership found in this assigned lane. ACCEPT is a bounded lane source judgment, not whole-repository sign-off.",
+        "objections": [],
+        "limits": [
+          "READ-ONLY source review. No tests, setup, builds, installs, formatter, auth/device access, network requests, source edits, cleanup/deletion, destructive Git, or delegation performed. No unsupported Pi preparation retried or bypassed. Only requested untracked result file is written.",
+          "Runtime correctness, live provider/auth/device behavior and end-to-end execution are unverified. No green tests or previous review artifacts used as acceptance evidence. Related source was read in targeted sections; contextReadPaths is not an attestation of complete files outside assigned diffs.",
+          "Durable provenance: review worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_9f34e293, HEAD equals the exact candidate. Fixture /tmp writes and owned mkdtemp cleanup were inspected as source only, never executed; no user recovery investigation, credentials or data accessed. Worktree and candidate preserved.",
+          "No unread assigned-diff gaps. Parent must integrate other lane judgments and cross-domain fit."
+        ]
       }
     },
     {
@@ -8091,7 +8225,7 @@
         "branch": "bruv/pr45-final-integrated-diff-lane-41-remot-d0c8d984",
         "preparationStatus": "ready",
         "setupTaskId": "task_936b41c4",
-        "setupStatus": "running",
+        "setupStatus": "failed",
         "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
       }
     },
@@ -8124,7 +8258,7 @@
         "branch": "bruv/pr45-final-integrated-diff-lane-42-remot-6603f047",
         "preparationStatus": "ready",
         "setupTaskId": "task_363c5de7",
-        "setupStatus": "running",
+        "setupStatus": "failed",
         "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
       }
     },
@@ -8157,7 +8291,7 @@
         "branch": "bruv/pr45-final-integrated-diff-lane-43-remot-5d43a066",
         "preparationStatus": "ready",
         "setupTaskId": "task_2b08a9f1",
-        "setupStatus": "running",
+        "setupStatus": "failed",
         "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
       }
     },
@@ -8182,8 +8316,23 @@
       ],
       "chars": 85571,
       "lines": 2039,
-      "status": "pending",
-      "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d"
+      "status": "running",
+      "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+      "jobId": "task_e69a2a7b",
+      "model": "openai-codex/gpt-6.1-sol",
+      "workspace": {
+        "kind": "worktree",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_e69a2a7b",
+        "worktreePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_e69a2a7b",
+        "sourcePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
+        "baseRef": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "baseOid": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "branch": "bruv/pr45-final-integrated-diff-lane-44-site--e69a2a7b",
+        "preparationStatus": "ready",
+        "setupTaskId": "task_f08237ef",
+        "setupStatus": "running",
+        "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      }
     },
     {
       "id": "lane-45",
