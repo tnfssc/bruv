@@ -526,7 +526,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_ae21f02d",
         "branch": "bruv/pr45-primary-3-remote-focuses-ae21f02d",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "27099149843befac3accad01a8702a27efebb73f"
       },
       {
         "id": "task_ddbd2881",
@@ -551,6 +552,15 @@
         ],
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_e53d5663",
         "branch": "bruv/pr45-primary-3-remote-focuses-e53d5663",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_44e1a40c",
+        "stage": "primary",
+        "focus": ["tests/root-placement-policy.test.ts"],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_44e1a40c",
+        "branch": "bruv/pr45-primary-1-remote-focuses-44e1a40c",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
       }

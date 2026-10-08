@@ -16043,13 +16043,27 @@
       "initialBlob": "19c4704dcfafad84ca4f9af4547dd31a21197acc",
       "status": "pending",
       "area": "remote",
-      "resumeState": "pending-primary-unstarted",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_ae21f02d",
+      "primaryCommit": "27099149843befac3accad01a8702a27efebb73f",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "27099149843befac3accad01a8702a27efebb73f",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
-      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
+      "primaryBase": "27099149843befac3accad01a8702a27efebb73f",
+      "primaryResult": "Keep inline scenario ownership. Each callback starts exactly one child, concurrently drains stdout/stderr and awaits its exit, asserts exit status with both logs, then checks its own marker. The shell runner defaults to scripts/remote-e2e.ts for RPC and receives REMOTE_E2E_SCRIPT=scripts/remote-pty-e2e.ts for PTY. The corresponding scripts emit their PASS markers after their substantive journeys and terminate child/provider resources in finally. A shared wrapper would move gate/selection/diagnostic/marker reading into an extra API without simplifying these two journeys.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md. Read assigned evidence rows in /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_1adcf635/wisdom/quality/structural-readability-areas/remote-resume-reconciliation.json: pending-primary-unstarted, no candidate/rejection, joined blob equals baseline.",
+        "Read complete actual focus source; trace relevant fixture callers and proof-marker placement without executing them.",
+        "Verified HEAD and focus Git blob with git rev-parse; git diff --name-only and git status --short showed no source changes before writing this artifact."
+      ],
+      "primaryLimits": [
+        "No setup, tests, builds, live authentication, credential access, or publication performed. Runtime behavior unverified; parent owns audited isolated gates and independent judgment.",
+        "No source changed: formatter unnecessary and no empty/source commit created. sourceCommit is the exact inspected HEAD. Artifact remains untracked; no wisdom/value edits because no new general lesson was found.",
+        "No descendants launched; runtime agent.model verification remains parent-owned. Durable source provenance: current assigned Git worktree, not a /tmp checkout.",
+        "Inspected but never executed scripts/remote-e2e.sh: it builds/runs Docker, creates SSH keys, probes loopback SSH/provider, inherits outer environment, and has ERR/EXIT traps including temporary-directory and container/image removal. Its present cleanup traps are not permitted in this task; parent must audit before any gate. No recovery scenario was investigated or run."
+      ]
     },
     {
       "file": "tests/remote-extension.test.ts",
@@ -16126,26 +16140,55 @@
       "initialBlob": "32242e046ef772be7a30fcba19211c4d7d7804ca",
       "status": "pending",
       "area": "remote",
-      "resumeState": "pending-primary-unstarted",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_ae21f02d",
+      "primaryCommit": "27099149843befac3accad01a8702a27efebb73f",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "27099149843befac3accad01a8702a27efebb73f",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
-      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
+      "primaryBase": "27099149843befac3accad01a8702a27efebb73f",
+      "primaryResult": "Keep the adapter as-is. Script selection, process start, failure diagnostics and proof assertion are contiguous. scripts/remote-jobs-e2e.ts owns two parent placements, session-file ownership checks, parent yields, remote completions, exact-ID isolation probes, owner-execution proof, repeat-sync/reconnect non-redelivery, and dirty-source preservation before printing the matching marker. The focus remains a clearly bounded compiled-CLI boundary, not a second implementation of that coordinator journey. Extracting its spawn/drain block would obscure which script and proof this one gate is exercising.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md. Read assigned evidence rows in /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_1adcf635/wisdom/quality/structural-readability-areas/remote-resume-reconciliation.json: pending-primary-unstarted, no candidate/rejection, joined blob equals baseline.",
+        "Read complete actual focus source; trace relevant fixture callers and proof-marker placement without executing them.",
+        "Verified HEAD and focus Git blob with git rev-parse; git diff --name-only and git status --short showed no source changes before writing this artifact."
+      ],
+      "primaryLimits": [
+        "No setup, tests, builds, live authentication, credential access, or publication performed. Runtime behavior unverified; parent owns audited isolated gates and independent judgment.",
+        "No source changed: formatter unnecessary and no empty/source commit created. sourceCommit is the exact inspected HEAD. Artifact remains untracked; no wisdom/value edits because no new general lesson was found.",
+        "No descendants launched; runtime agent.model verification remains parent-owned. Durable source provenance: current assigned Git worktree, not a /tmp checkout.",
+        "Shared shell runner has the Docker/SSH/key-generation and EXIT cleanup effects described for remote-e2e.test.ts; inspected only, not permitted to run under this task. Jobs script creates a fixture repo/config/session evidence under its supplied HOME, spawns compiled parent CLIs and invokes Docker/SSH. Future parent gate needs an audited owned HOME/config/SDK and explicit argv/env."
+      ]
     },
     {
       "file": "tests/remote-jobs-placement-fixture.test.ts",
       "initialBlob": "7ef3fa97e43d987b31806519c2e4e08a029975c7",
       "status": "pending",
       "area": "remote",
-      "resumeState": "pending-primary-unstarted",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_ae21f02d",
+      "primaryCommit": "27099149843befac3accad01a8702a27efebb73f",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "27099149843befac3accad01a8702a27efebb73f",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
-      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
+      "primaryBase": "27099149843befac3accad01a8702a27efebb73f",
+      "primaryResult": "Keep existing boundaries. The sole code(messages) helper owns transport decoding and validates execute tool identity; the provider remains owned by the suite hooks. The launch scenario binds only jobs/subagent/Bun/process/console, captures exact normal async SSH launch arguments and write payload, then tests missing pinned target and invalid async SSH result without touching a filesystem. The inspection scenario locally defines own/foreign IDs and its list/inspect/stop authority, records four rejected attempts and proves accepted foreign stop is rejected by the emitted program. fake-provider.ts parentReply emits precisely these programs for fixture-parent, before the worker branch. A generic capability bag or function wrapper would hide the global injection contract, and splitting out local mocks would force reconstruction of each rejection path. No real structural burden justifies changes; this is not a judgment based on test counts or presumed passing tests.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md. Read assigned evidence rows in /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_1adcf635/wisdom/quality/structural-readability-areas/remote-resume-reconciliation.json: pending-primary-unstarted, no candidate/rejection, joined blob equals baseline.",
+        "Read complete actual focus source; trace relevant fixture callers and proof-marker placement without executing them.",
+        "Verified HEAD and focus Git blob with git rev-parse; git diff --name-only and git status --short showed no source changes before writing this artifact."
+      ],
+      "primaryLimits": [
+        "No setup, tests, builds, live authentication, credential access, or publication performed. Runtime behavior unverified; parent owns audited isolated gates and independent judgment.",
+        "No source changed: formatter unnecessary and no empty/source commit created. sourceCommit is the exact inspected HEAD. Artifact remains untracked; no wisdom/value edits because no new general lesson was found.",
+        "No descendants launched; runtime agent.model verification remains parent-owned. Durable source provenance: current assigned Git worktree, not a /tmp checkout.",
+        "Existing fixture subprocess has explicit argv and restricted PATH/loopback provider env but no owned mkdtemp HOME/config/SDK. Its Bun.write/process bindings in generated execute are fake captures, not disk writes. fixture-parent routing avoids the provider worker branch, which has fixed /tmp progress-file writes. Network would be loopback only. None of these paths were executed; parent must supply/audit retained isolation before its gate.",
+        "Assertions exercise generated fixture programs with stub jobs/subagent globals, not actual SSH jobs authorization/coordinator behavior; the separate compiled jobs E2E caller owns that proof. No assertions or security behavior were weakened."
+      ]
     },
     {
       "file": "tests/remote-jobs.test.ts",
