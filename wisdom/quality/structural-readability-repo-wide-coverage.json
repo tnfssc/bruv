@@ -13979,18 +13979,35 @@
       "file": "scripts/terminal-perf/navigation-terminal.ts",
       "initialBlob": "absent",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-primary-final-blob",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_1e242769",
+      "primaryCommit": "ca4a39af1b7b3f729c7d04504cd22f2ab880ed13",
       "judgeIds": [],
-      "sourceCommit": "e453ab85d74a043ddd10171d806c4fd9ebe7a6cc",
+      "sourceCommit": "ca4a39af1b7b3f729c7d04504cd22f2ab880ed13",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
       "status": "pending",
       "pendingReason": "Untracked helper blob d2643f1280f9769585963939a597ea3154b96dce in preserved /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_09b8c468, from incomplete navigation primary task_09b8c468. No committed source candidate, separate primary-focus coverage, or actual-code judge. Preserve; do not join.",
       "acceptedRelatedJudges": [
         "task_cc27bf98"
       ],
-      "acceptedBlob": "d2643f1280f9769585963939a597ea3154b96dce"
+      "acceptedBlob": "d2643f1280f9769585963939a597ea3154b96dce",
+      "primaryBase": "ca4a39af1b7b3f729c7d04504cd22f2ab880ed13",
+      "primaryResult": "The existing 51-line helper makes the complete transport lifetime local: start stores two callbacks, send checks the started state and immediately dispatches decoded input, stop clears both callbacks, and write records attempted output. ANSI convenience methods all route through write; drainInput and progress intentionally do nothing for this counting transport. navigation-workloads constructs it, mounts TuiAltScreen, resets writes at sample boundaries, calls send inside the measured dispatch span, updates dimensions before invoking resize, and stops the TUI during fixture disposal. navigation-sdk-probe separately injects the same helper into InteractiveMode, clears/samples writes per operation, dispatches keys only after init, and calls app.stop in finally. The actual installed TUI start registers input and resize, while TUI stop invokes terminal.stop. Measurement, renderer scheduling, SDK lifecycle and persistence teardown correctly remain with callers rather than this helper. No scattered authority or lifetime decision needs reconstruction within the focus. Extracting methods or grouping state would add indirection to direct operations, not remove a reading burden. Current tracked focus bytes exactly match preserved candidate blob d2643f1280f9769585963939a597ea3154b96dce; no restoration or old-branch merge is needed. This is a primary no-change decision, not an independent judge verdict.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read focus rows in retained ui-terminal-cli resume reconciliation, area ledger and repo-wide coverage ledger.",
+        "Read focus source and actual navigation-workloads and navigation-sdk-probe dispatch, capture, resize and teardown callers.",
+        "Read installed pi-tui Terminal interface and TUI.start/TUI.stop implementation using existing dependencies read-only.",
+        "Compared current focus Git blob with preserved uncommitted candidate: both d2643f1280f9769585963939a597ea3154b96dce.",
+        "Verified clean source working tree before writing this untracked result."
+      ],
+      "primaryLimits": [
+        "No source edits or source commit; sourceCommit identifies the exact existing candidate HEAD. Formatter is not applicable because there are no changed source paths.",
+        "No repository tests, setup, builds, provider/device/network probes or credential access performed; parent owns audited isolated batch gates and independent judge.",
+        "No delegation, push, PR, merge, destructive git operations, recovery or cleanup. Preserved worktrees and unrelated accepted work remain untouched.",
+        "No per-worker wisdom or values edits; parent owns aggregate wisdom and there is no new general lesson requiring a values change."
+      ]
     },
     {
       "file": "tests/fixtures/history-io-short-writes.ts",

@@ -978,6 +978,19 @@
         "model": "openai-codex/gpt-6.1-sol",
         "status": "handled",
         "sourceCommit": "423581639d147c9981fb9a7b5c3afcdc3727aa07"
+      },
+      {
+        "id": "task_5f25d07a",
+        "stage": "judge",
+        "focus": [
+          "src/prompts/execute-description.md",
+          "src/prompts/execute.md",
+          "src/prompts/fast.md"
+        ],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_5f25d07a",
+        "branch": "bruv/pr45-judge-3-agent-history-session-goals-5f25d07a",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
       }
     ]
   },
@@ -1282,7 +1295,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_1e242769",
         "branch": "bruv/pr45-primary-scripts-terminal-perf-navig-1e242769",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "ca4a39af1b7b3f729c7d04504cd22f2ab880ed13"
       }
     ]
   },
