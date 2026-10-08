@@ -9680,13 +9680,45 @@
       "initialBlob": "b47243122091cbf6159182f3a856508bdc5b4b51",
       "status": "pending",
       "area": "compatibility-t3",
-      "resumeState": "pending-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_7896d05f",
+      "primaryCommit": "7442e2235e8109a0cf06457a24f7ad9604d011a7",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "7442e2235e8109a0cf06457a24f7ad9604d011a7",
       "report": "wisdom/quality/structural-readability-areas/compatibility-t3.json",
-      "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+      "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection.",
+      "primaryBase": "7442e2235e8109a0cf06457a24f7ad9604d011a7",
+      "primaryResult": "The first test shows agent_end(willRetry), retry start, nested agent_start, recovered toolUse, retry confirmation, tool result, and final stop in order. Its intermediate assertions show that message success is not recovery authority and retry confirmation is not settlement. Adjacent cases keep exhaustion, unconfirmed success, abort, interruption and runtime-failure precedence separate. fixture owns only a local frontend/frame collector and normal message_start/message_end pairing; settle owns agent_settled, output draining and the single-result assertion. The root-reset test deliberately bypasses the single-result helper for its second root run. The failed-output test deliberately builds its own throwing emitter and retains rejection, callback-count and no-result assertions. Traced runtime session.subscribe -> frontend.onEvent; frontend begin/end -> RunResult confirms the same retry/root boundaries, while send/flush owns delivery failure separately. Extracting shared retry scenarios would conceal precisely the event authority these tests document. Focus exists at the baseline blob; focus-specific preserved evidence records pending-primary, no candidate or rejection, so no candidate import or rework is applicable.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        {
+          "kind": "read-only-source-review",
+          "paths": [
+            "tests/claude-compat-retry.test.ts",
+            "src/claude-compat/frontend.ts",
+            "src/claude-compat/runtime.ts"
+          ],
+          "result": "Traced retry authority, terminal precedence, root reset, settlement, and failed output delivery; all existing assertions retained byte-for-byte."
+        },
+        {
+          "kind": "focus-ledger-review",
+          "result": "Read only focus-specific rows in repo-wide coverage, assignments, area ledger and external resume reconciliation; baseline/pending-primary and no rejected or preserved focus candidate."
+        },
+        {
+          "kind": "git-identity",
+          "result": "HEAD and working focus blob both b47243122091cbf6159182f3a856508bdc5b4b51."
+        },
+        {
+          "kind": "git-diff-check",
+          "result": "No whitespace errors; no source changes."
+        }
+      ],
+      "primaryLimits": [
+        "No repository tests, setup or builds run: parent owns audited isolated batch gates.",
+        "Formatter not invoked because there are no changed source paths and no source commit to make.",
+        "No independent judge verdict claimed; parent will launch a fresh judge for this exact source identity.",
+        "No wisdom/values edits: no new structural lesson; parent owns aggregate wisdom."
+      ]
     },
     {
       "file": "tests/claude-compat-runtime.test.ts",
