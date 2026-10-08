@@ -1572,7 +1572,7 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_85638752",
         "branch": "bruv/pr45-judge-1-live-native-audio-focuses-85638752",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled"
       },
       {
         "id": "task_1853a075",

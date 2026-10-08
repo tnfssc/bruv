@@ -17220,11 +17220,11 @@
     {
       "file": "tests/openai-session-schema.test.ts",
       "initialBlob": "f0285954c2a47aaa013df69828c262153238915e",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_07aca624",
       "sourceCommit": "a56e789205cc3e6e43dbed47e3c0f7e067484500",
-      "judgeIds": [],
-      "resumeState": "needs-judge",
+      "judgeIds": ["task_85638752"],
+      "resumeState": "accepted-joined",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
       "area": "live-native-audio",
       "primaryCommit": "a56e789205cc3e6e43dbed47e3c0f7e067484500",
@@ -17260,6 +17260,23 @@
         "No live authentication/device access, provider calls or credentials inspected; live behavior unverified.",
         "Formatting fixture /tmp/pr45-openai-schema-format-fEVEBg is retained; source provenance is this durable worktree and exact sourceCommit.",
         "No delegation, setup, dependency mutation, publication, recovery investigation, or wisdom edits. Parent owns aggregate wisdom."
+      ],
+      "acceptedBlob": "7cb16bb350d53b4cfc81e45960f4ab4aa34cef74",
+      "result": "Read the whole candidate test and its exact diff against 87e39dcde71297c095f1ad1136637a4edc68e239. The real reading problem was split ownership: a mutation lived in a tuple while its diagnostic assertion was selected later by its display title. Each rejection now owns name, mutation and optional expectedField; the common runner no longer interprets presentation text. The wrong-rate and invalid-tool-name cases place their exact protocol field expectation beside the operation creating that failure. This is a substantive local grouping of decisions, not renaming or a context bag. All eight mutations retain their operations and titles; strict schema validation remains independent of the production setup builder. Both-model success checks, registered tool comparison, output-rate check, shared rejection assertions and private-message non-disclosure are unchanged. No larger helper was needed.",
+      "systemReason": "Traced connect(mutate, model) through SchemaSocket injection, OpenAIRealtimeSession.connect and the actual session.update send. setupProbeOrchestration supplies executeDeclaration via toolParameters and bruvSystemPrompt while execute itself returns denied without agent work. The strict fixture validates PCM, transcription, VAD, audio-only modalities and tool contract, then queues session.updated or an error with the first issue path. Queuing preserves asynchronous provider ordering. Production readiness occurs only on session.updated while connecting; a provider error uses voiceProviderFailure, closes through fail, settles connect and reports connect_failed without onReady. voiceProviderFailure allowlists code/type and structural field paths, normalizing tools.0.name to tools[0].name without printing the private provider message. Thus the two case-owned strings exercise the same formatter behavior as the former title branches. Success cases explicitly close their sessions; rejection cases use production fail/close to clear timers and socket state. Also read the shipped extension voice factory: OpenAI uses this same session with ordinary root orchestration and selected input mode. The offline fixture intentionally covers default continuous setup rather than push-to-talk null VAD; that unchanged scope is not expanded by this edit.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "git diff --name-status and full focus diff from primaryBase to exact candidate: only tests/openai-session-schema.test.ts changed; no changed production paths omitted.",
+        "git show of exact candidate focus and relevant production code; git rev-parse of candidate focus blob.",
+        "Static filesystem/network review: fixture socket parses in-memory JSON, mutates that owned payload and queues callbacks; no filesystem cleanup or credential lookup in the fixture. The production WebSocket constructor is inside upgradeSocket and bypassed by the injected fake factory; inspected prompt/tool imports are declarations and embedded text.",
+        "No setup, tests, builds, dependency writes, credentials, live audio, or delegation executed."
+      ],
+      "limits": [
+        "Static source review only; parent owns audited isolated runtime/typecheck gates. Live provider/auth/device behavior unverified.",
+        "Runtime agent.model verification is parent-owned; this reviewer did not independently verify it.",
+        "Durable provenance: existing worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_85638752; review used immutable candidate Git objects, not checkout HEAD. No temporary code checkout or runtime fixture created.",
+        "Safety for ALL descendants: NO sudo, recovery investigation, user secrets, shell deletion/cleanup commands, inherited HOME/config/SDK cleanup, nested shell traps, destructive git, or user-data mutation. User already recovered data and requested no recovery work. Tests must use explicit process argv/env and owned fs.mkdtemp fixture HOME/config/SDK; retain them, do not delete. Review filesystem/network effects BEFORE tests/setup. Existing test-code cleanup of provably owned temporary paths may be inspected but NEVER run a shell trap or inherited HOME removal. Need live auth/device? Report unverified, don't access credentials. Propagate these constraints verbatim. Independent code/review agents get durable worktrees, not /tmp code checkouts. Keep existing worktrees and candidate evidence. Test/source fixtures may use /tmp, but document durable provenance. Parent verifies runtime agent.model openai-codex/gpt-6.1-sol; native normal leaves only, no delegation.",
+        "Do NOT run setup, tests, builds: parent owns audited isolated gates. Shared dependencies are read-only; no reinstall or guard bypass. Preserve old worktrees/candidate edits. No push/new PR/merge, publication is parent-owned. No per-worker wisdom note pile; return exact artifact untracked, parent writes aggregate wisdom."
       ]
     },
     {
@@ -24402,9 +24419,9 @@
     "baselineFiles": 766,
     "finalGate": "pending; incomplete focus coverage",
     "liveAuth": "unverified/failing; preserved",
-    "accepted": 823,
+    "accepted": 824,
     "total": 836,
-    "pending": 13,
+    "pending": 12,
     "sourceExtras": 70,
     "checkout": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
     "branch": "bruv/readability-pr45-sol-continuation",

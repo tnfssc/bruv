@@ -147,56 +147,58 @@ describe("OpenAI GA setup schema contract (offline)", () => {
     expect(f.socket.events[0].session.audio.output.format.rate).toBe(24000);
     f.session.close();
   });
-  for (const [name, mutate] of [
-    [
-      "missing output PCM rate",
-      (v: any) => {
+  for (const { name, mutate, expectedField } of [
+    {
+      name: "missing output PCM rate",
+      mutate: (v: any) => {
         delete v.session.audio.output.format.rate;
       },
-    ],
-    [
-      "wrong PCM rate",
-      (v: any) => {
+    },
+    {
+      name: "wrong PCM rate",
+      mutate: (v: any) => {
         v.session.audio.output.format.rate = 16000;
       },
-    ],
-    [
-      "beta-era top-level field",
-      (v: any) => {
+      expectedField: "session.audio.output.format.rate",
+    },
+    {
+      name: "beta-era top-level field",
+      mutate: (v: any) => {
         v.session.output_audio_format = "pcm16";
       },
-    ],
-    [
-      "invalid tool name",
-      (v: any) => {
+    },
+    {
+      name: "invalid tool name",
+      mutate: (v: any) => {
         v.session.tools[0].name = "functions.bad name";
       },
-    ],
-    [
-      "invalid tool schema",
-      (v: any) => {
+      expectedField: "session.tools[0].name",
+    },
+    {
+      name: "invalid tool schema",
+      mutate: (v: any) => {
         v.session.tools[0].parameters.type = "OBJECT";
       },
-    ],
-    [
-      "mixed output modalities",
-      (v: any) => {
+    },
+    {
+      name: "mixed output modalities",
+      mutate: (v: any) => {
         v.session.output_modalities = ["text", "audio"];
       },
-    ],
-    [
-      "invalid tool choice",
-      (v: any) => {
+    },
+    {
+      name: "invalid tool choice",
+      mutate: (v: any) => {
         v.session.tool_choice = "any";
       },
-    ],
-    [
-      "invalid transcription config",
-      (v: any) => {
+    },
+    {
+      name: "invalid transcription config",
+      mutate: (v: any) => {
         v.session.audio.input.transcription = { model: "not-a-transcription-model" };
       },
-    ],
-  ] as const) {
+    },
+  ] satisfies { name: string; mutate: (value: any) => void; expectedField?: string }[]) {
     test("schema fixture rejects " + name + " rather than blindly acknowledging", async () => {
       const f = connect(mutate);
       await f.pending;
@@ -206,8 +208,7 @@ describe("OpenAI GA setup schema contract (offline)", () => {
       expect(f.errors[0].code).toBe("connect_failed");
       expect(f.errors[0].message).toContain("code invalid_value");
       expect(f.errors[0].message).toContain("type invalid_request_error");
-      if (name === "wrong PCM rate") expect(f.errors[0].message).toContain("field session.audio.output.format.rate");
-      if (name === "invalid tool name") expect(f.errors[0].message).toContain("field session.tools[0].name");
+      if (expectedField) expect(f.errors[0].message).toContain("field " + expectedField);
       expect(JSON.stringify(f.errors)).not.toContain("PRIVATE PROVIDER MESSAGE");
     });
   }

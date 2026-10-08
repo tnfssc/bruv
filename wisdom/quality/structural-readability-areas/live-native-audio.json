@@ -4281,16 +4281,17 @@
       "initialBlob": "f0285954c2a47aaa013df69828c262153238915e",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "7cb16bb350d53b4cfc81e45960f4ab4aa34cef74",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "7cb16bb350d53b4cfc81e45960f4ab4aa34cef74",
         "primaryId": "task_07aca624",
         "primaryCommit": "a56e789205cc3e6e43dbed47e3c0f7e067484500",
-        "judgeIds": [],
+        "judgeIds": ["task_85638752"],
         "sourceCommit": "a56e789205cc3e6e43dbed47e3c0f7e067484500",
-        "state": "needs-judge",
-        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+        "state": "accepted-joined",
+        "reason": "Read the whole candidate test and its exact diff against 87e39dcde71297c095f1ad1136637a4edc68e239. The real reading problem was split ownership: a mutation lived in a tuple while its diagnostic assertion was selected later by its display title. Each rejection now owns name, mutation and optional expectedField; the common runner no longer interprets presentation text. The wrong-rate and invalid-tool-name cases place their exact protocol field expectation beside the operation creating that failure. This is a substantive local grouping of decisions, not renaming or a context bag. All eight mutations retain their operations and titles; strict schema validation remains independent of the production setup builder. Both-model success checks, registered tool comparison, output-rate check, shared rejection assertions and private-message non-disclosure are unchanged. No larger helper was needed."
       }
     },
     {
@@ -4901,7 +4902,7 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 138,
-    "pending": 13
+    "accepted": 139,
+    "pending": 12
   }
 }
