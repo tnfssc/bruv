@@ -2857,7 +2857,7 @@
     {
       "focus": "tests/job-bridge.test.ts",
       "initialBlob": "41a49cda7d40568bdbe2060020d8b2dcdb9ed4b6",
-      "status": "pending",
+      "status": "accepted",
       "primary": {
         "id": "task_bf3b25b4",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_bf3b25b4",
@@ -2866,17 +2866,18 @@
         "commit": null
       },
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "fdfd204668c37b58853330109de78d0258e6896c",
       "integration": "pending",
       "launchBase": "3fc00c2732f544ba63d4a2e22449184a90bd29f7",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "fdfd204668c37b58853330109de78d0258e6896c",
         "primaryId": "task_f4f56799",
         "primaryCommit": "b54079d88b5e8336af51204d28f117eacae5b07b",
-        "judgeIds": [],
+        "judgeIds": ["task_a3213d3e"],
         "sourceCommit": "b54079d88b5e8336af51204d28f117eacae5b07b",
-        "state": "needs-judge",
-        "reason": "Primary was cancelled during the incident. A changed focus blob survives only in the primary working tree, not its HEAD; no completed independent actual-code judgment or accepted blob is recorded. Preserve the uncommitted candidate, dist and runtime-assets without cleanup."
+        "state": "accepted-joined",
+        "reason": "Read the whole candidate and exact diff from 8f186d90eb5047304492c72c6bc56a7d0f37204d. SessionJobs joins a genuine parent-session lifetime: manager, typed completion sink, JobService dispatch, raw execute entry, registered-tool entry, and awaited shutdown. A reader can now follow foreground completion, background survival/input/inspection, delayed spawn cancellation, concurrent wait cancellation, pre-delivery disconnect, provisional ACK failure, oversized response release, registered batch ACK, partial batch failure, and handoff without reconstructing repeated ownership setup and finally blocks. Timing, abort points, dispatch wrappers, and batch completion barriers stay visible in their scenarios. Raw multiplexing/unavailable-bridge/budget tests and attention/goal/history RPC checks remain separate; the credential scrub assertion and environment restoration remain explicit. This is a coherent lifetime extraction, not a rename-only improvement or context bag."
       }
     },
     {
@@ -3104,7 +3105,7 @@
     {
       "focus": "tests/questions-interactive-tui.test.ts",
       "initialBlob": "cac19ca7ef48e5b2eb9645242b20ce85149bf557",
-      "status": "pending",
+      "status": "accepted",
       "primary": {
         "id": "task_afee41f2",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_afee41f2",
@@ -3113,17 +3114,18 @@
         "commit": null
       },
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "c4406735dc7210a1e5718bbf1bb782656ec84360",
       "integration": "pending",
       "launchBase": "8ccc505759933a4192d230020db18b032dcca2ac",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "c4406735dc7210a1e5718bbf1bb782656ec84360",
         "primaryId": "task_8acfab2e",
         "primaryCommit": "e441e041aabf7997b3f6a895d623d469a1d7e574",
-        "judgeIds": [],
+        "judgeIds": ["task_a3213d3e"],
         "sourceCommit": "e441e041aabf7997b3f6a895d623d469a1d7e574",
-        "state": "needs-judge",
-        "reason": "Primary cancellation was recorded during the incident; no completed candidate commit or complete-file independent judgment is recorded. Focus working blob currently equals primary HEAD. Preserve the tree and allocate/complete primary work before judging."
+        "state": "accepted-joined",
+        "reason": "Read the whole candidate and exact diff from 8f186d90eb5047304492c72c6bc56a7d0f37204d. openQuestionTerminal owns a single concrete terminal operation: explicit argv/environment, session journal materialization, private socket, input/frame polling, resize and server close including failed startup. Scenarios own QuestionService state and assertions rather than hiding them in the driver. The first continuous journey still demonstrates inbox Escape, choice Escape, submitted Recording, discarded editor draft, submitted free text and real command-registry completion. The narrow stale-picker journey now has one pending question in its own durable session; wide-to-narrow rendering and the open-picker owner/version mutation are adjacent and directly readable. Removing its dependency on two earlier answers improves the intrinsic journey rather than replacing its rendering or stale-version checks."
       }
     },
     {
@@ -3222,19 +3224,20 @@
     {
       "focus": "tests/questions-tui.test.ts",
       "initialBlob": "c05c758c09040f768e443f06da209a98af82dd38",
-      "status": "pending",
+      "status": "accepted",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "eb88eb203ec9b75efb1e1fc61e5569c0092800f5",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "eb88eb203ec9b75efb1e1fc61e5569c0092800f5",
         "primaryId": "task_e086888e",
         "primaryCommit": "6b3af4e72026c86da2ced5f5021d9287a8986799",
-        "judgeIds": [],
+        "judgeIds": ["task_a3213d3e"],
         "sourceCommit": "6b3af4e72026c86da2ced5f5021d9287a8986799",
-        "state": "needs-judge",
-        "reason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage."
+        "state": "accepted-joined",
+        "reason": "Read the entire exact candidate and complete diff from a07c13e5f20348fb4b44e559eb5ac2ad28c16129. questionsTui groups authority over explicit child-process launch/environment, the real composer submission handshake and its owned server/CLI lifetime. The test itself is a continuous readable journey: seed and foreground-block a question, seed an independent one, publish long independent progress, inspect compact pending detail/checkpoint, cancel only the independent question, replace the CLI, inspect the remaining pending/waiting state, and reconcile both durable statuses. The extension fixture is now readable source rather than an opaque one-line string. The driver keeps the exact-command double-Enter condition visible and checked; restart explicitly kills only the CLI session and starts it again on the same socket and same session file. This resolves transport/lifetime reconstruction while keeping semantic assertions local."
       }
     },
     {
@@ -4312,8 +4315,8 @@
     ]
   },
   "resumeStatus": {
-    "accepted": 79,
-    "pending": 22
+    "accepted": 82,
+    "pending": 19
   },
   "extraFiles": [
     {

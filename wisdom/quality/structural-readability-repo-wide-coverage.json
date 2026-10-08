@@ -11850,11 +11850,11 @@
     {
       "file": "tests/job-bridge.test.ts",
       "initialBlob": "41a49cda7d40568bdbe2060020d8b2dcdb9ed4b6",
-      "status": "pending",
+      "status": "accepted",
       "area": "execution-tasks-questions",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_f4f56799",
-      "judgeIds": [],
+      "judgeIds": ["task_a3213d3e"],
       "sourceCommit": "b54079d88b5e8336af51204d28f117eacae5b07b",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
       "pendingReason": "Primary was cancelled during the incident. A changed focus blob survives only in the primary working tree, not its HEAD; no completed independent actual-code judgment or accepted blob is recorded. Preserve the uncommitted candidate, dist and runtime-assets without cleanup.",
@@ -11876,6 +11876,22 @@
         "Initial reconciliation logging was broader than the focus restriction; corrected all subsequent ledger/evidence queries to focus rows only. No evidence files or unrelated source edited.",
         "Formatter fixture and .pr45-format-evidence.json retained; durable source provenance is this worktree commit and the preserved prior candidate path.",
         "Safety for ALL descendants: no sudo, no recovery actions, no deletion/cleanup shell commands, no HOME or inherited SDK/config cleanup, no nested shell traps. Do not read/use user secrets. Use node child_process argv plus explicit isolated env for tests; allocate fresh disposable HOME/config/SDK dirs with fs.mkdtemp and retain them rather than delete. If real credential/device access is required, return that blocker instead of using it. Do not run repository tests or setup without first checking their filesystem/network side effects. Existing dependencies can be used read-only from /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules. Bun is /home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin/bun. Worktree t3 setup may fail because PATH lacks bun; inspect outcome, do not guess. No repetitive full builds for each worker. Limit to SIX concurrent leaf workers total, primary and judge combined. Give independent code/review agents worktrees. Propagate these safety constraints verbatim. No destructive git operations or user-data mutations."
+      ],
+      "acceptedBlob": "fdfd204668c37b58853330109de78d0258e6896c",
+      "result": "Read the whole candidate and exact diff from 8f186d90eb5047304492c72c6bc56a7d0f37204d. SessionJobs joins a genuine parent-session lifetime: manager, typed completion sink, JobService dispatch, raw execute entry, registered-tool entry, and awaited shutdown. A reader can now follow foreground completion, background survival/input/inspection, delayed spawn cancellation, concurrent wait cancellation, pre-delivery disconnect, provisional ACK failure, oversized response release, registered batch ACK, partial batch failure, and handoff without reconstructing repeated ownership setup and finally blocks. Timing, abort points, dispatch wrappers, and batch completion barriers stay visible in their scenarios. Raw multiplexing/unavailable-bridge/budget tests and attention/goal/history RPC checks remain separate; the credential scrub assertion and environment restoration remain explicit. This is a coherent lifetime extraction, not a rename-only improvement or context bag.",
+      "systemReason": "Traced JobService.handle and shell dispatch into TaskManager.foreground: wait expiry/cancellation transfers notification ownership once, completed foreground results attach to the bridge delivery signal, and shutdown drains/kills managed tasks while suppressing session-shutdown notifications. executeIsolated serves the bridge and commits provisional ACKs only at clean worker exit; serveJobBridge aborts ownership on failed/oversized delivery and retains foreground ACKs provisionally. registerExecuteTool still wraps the real dispatch through ExecuteDelivery.waitSignal/withJobCancellation, so handoff cancels waits without pretending completed delivery disconnected. The fixture preserves that wrapper route and leaves its fake batch spawn/foreground operations local to the tests. Shutdown via await using replaces the old finally with the same real manager.shutdown. No production source changed; no security or behavior assertions were dropped.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "git show of the entire exact candidate focus; git diff -U1 against the exact primaryBase, read in full.",
+        "git diff --name-status: only the focus changed; git rev-parse candidate:focus verified the recorded blob.",
+        "git diff --check against primaryBase: exit 0.",
+        "Read relevant dispatch, foreground/ACK, bridge framing/fallback, registered handoff, spawn environment and shutdown implementations at the candidate revision."
+      ],
+      "limits": [
+        "Static actual-source judgment only. No setup, tests, builds, dependency installation, credential access, network request, or live auth/device probe. Parent owns audited isolated runtime gates and verification of agent.model openai-codex/gpt-6.1-sol.",
+        "Existing execute/task subprocesses deliberately inherit scrubbed parent environment and use process.cwd(); this focus does not create its own HOME/config/SDK fixture. Any parent gate must launch the test runner with explicit argv/env and owned retained mkdtemp HOME/config/SDK. The shell strings are the behavior under test, not review commands executed here.",
+        "Compiled dist/bruv correspondence and timing/async-disposal runtime behavior remain unverified.",
+        "Independent judge artifact produced in durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_a3213d3e. Candidates were read with git show/diff by immutable commit, not checkout HEAD. No source edits, delegation, setup, tests, builds, cleanup/deletion, destructive Git, push, PR, merge or publication. Existing worktrees, candidates and shared dependencies preserved. Wisdom unchanged: this task returns only the aggregate-ready review artifact."
       ]
     },
     {
@@ -12996,11 +13012,11 @@
     {
       "file": "tests/questions-interactive-tui.test.ts",
       "initialBlob": "cac19ca7ef48e5b2eb9645242b20ce85149bf557",
-      "status": "pending",
+      "status": "accepted",
       "area": "execution-tasks-questions",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_8acfab2e",
-      "judgeIds": [],
+      "judgeIds": ["task_a3213d3e"],
       "sourceCommit": "e441e041aabf7997b3f6a895d623d469a1d7e574",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
       "pendingReason": "Primary cancellation was recorded during the incident; no completed candidate commit or complete-file independent judgment is recorded. Focus working blob currently equals primary HEAD. Preserve the tree and allocate/complete primary work before judging.",
@@ -13036,6 +13052,22 @@
         "No real credentials, live auth or device access attempted; auth/device behavior unverified.",
         "No old worktrees/evidence removed, no sudo/recovery/cleanup shell commands/destructive git/push/PR/merge used. Source and review evidence remain in the durable assigned worktree; /tmp contains retained formatter/test fixtures only.",
         "No per-worker wisdom edits: parent writes aggregate wisdom."
+      ],
+      "acceptedBlob": "c4406735dc7210a1e5718bbf1bb782656ec84360",
+      "result": "Read the whole candidate and exact diff from 8f186d90eb5047304492c72c6bc56a7d0f37204d. openQuestionTerminal owns a single concrete terminal operation: explicit argv/environment, session journal materialization, private socket, input/frame polling, resize and server close including failed startup. Scenarios own QuestionService state and assertions rather than hiding them in the driver. The first continuous journey still demonstrates inbox Escape, choice Escape, submitted Recording, discarded editor draft, submitted free text and real command-registry completion. The narrow stale-picker journey now has one pending question in its own durable session; wide-to-narrow rendering and the open-picker owner/version mutation are adjacent and directly readable. Removing its dependency on two earlier answers improves the intrinsic journey rather than replacing its rendering or stale-version checks.",
+      "systemReason": "Traced registerQuestions inbox and promptAnswer through QuestionPicker and runtime.commands.handle to QuestionService. Escape returns without persistence; the inbox submits the displayed owner/version snapshot; runtime rejects a changed snapshot before answer mutation, while service.block increments the durable version. QuestionPicker wraps title and selected label against the resized viewport. QuestionService stores its separately locked/atomically replaced ledger beside the session file, so moving session journal write into terminal startup after seeding does not overwrite the questions ledger. The CLI agent extension wires the same runtime to real command registration. Choice/editor/completion and stale-answer assertions and frame polling bounds remain present. The explicit tmux argv/env eliminates shell launch quoting and inherited config; HOME/config/SDK/TMPDIR evidence stays in the owned fixture.",
+      "checks": [
+        "git show of the whole exact candidate focus; complete git diff -U1 against its primaryBase.",
+        "git diff --name-status: only the focus changed; exact focus blob verified with git rev-parse.",
+        "git diff --check against primaryBase: exit 0.",
+        "Read real inbox/editor/picker/command-completion routing, snapshot acceptance check, service owner/version/persistence decisions, agent wiring and frame polling helper.",
+        "Confirmed related question source and tui-helper Git blobs are identical in this candidate and the separately reviewed questions-tui candidate; semantic reading is shared only for those identical source blobs, not for the focus judgments."
+      ],
+      "limits": [
+        "No setup/tests/builds or live auth/device checks. Tmux direct-exec behavior, resize frames and compiled dist/bruv alignment require parent-owned audited isolated runtime gates.",
+        "The separated stale test no longer exercises adding that question to an already running CLI after two answers; it still exercises a real open picker against a concurrent durable block/version mutation. This is an intentional scenario-independence tradeoff, not evidence of external notification behavior.",
+        "FS/process effects were reviewed statically: owned mkdtemp fixture, private -S socket, session/ledger writes and private kill-server, with fixture retention and no deletion. No fixture or terminal was created by this review.",
+        "Independent judge artifact produced in durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_a3213d3e. Candidates were read with git show/diff by immutable commit, not checkout HEAD. No source edits, delegation, setup, tests, builds, cleanup/deletion, destructive Git, push, PR, merge or publication. Existing worktrees, candidates and shared dependencies preserved. Wisdom unchanged: this task returns only the aggregate-ready review artifact."
       ]
     },
     {
@@ -13199,11 +13231,11 @@
     {
       "file": "tests/questions-tui.test.ts",
       "initialBlob": "c05c758c09040f768e443f06da209a98af82dd38",
-      "status": "pending",
+      "status": "accepted",
       "area": "execution-tasks-questions",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_e086888e",
-      "judgeIds": [],
+      "judgeIds": ["task_a3213d3e"],
       "sourceCommit": "6b3af4e72026c86da2ced5f5021d9287a8986799",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
       "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage.",
@@ -13225,6 +13257,22 @@
         "No repository tests, setup or builds run: parent owns audited isolated batch gates. Runtime behavior and native tmux/CLI execution remain unverified.",
         "Optional existing BRUV_QUESTIONS_FRAME output writes its explicitly supplied path; parent gates must unset it or point it into their owned fixture.",
         "No wisdom edits: parent owns aggregate wisdom. No delegation, push, PR, merge, recovery, credential/device access, destructive git or deletion/cleanup shell operations."
+      ],
+      "acceptedBlob": "eb88eb203ec9b75efb1e1fc61e5569c0092800f5",
+      "result": "Read the entire exact candidate and complete diff from a07c13e5f20348fb4b44e559eb5ac2ad28c16129. questionsTui groups authority over explicit child-process launch/environment, the real composer submission handshake and its owned server/CLI lifetime. The test itself is a continuous readable journey: seed and foreground-block a question, seed an independent one, publish long independent progress, inspect compact pending detail/checkpoint, cancel only the independent question, replace the CLI, inspect the remaining pending/waiting state, and reconcile both durable statuses. The extension fixture is now readable source rather than an opaque one-line string. The driver keeps the exact-command double-Enter condition visible and checked; restart explicitly kills only the CLI session and starts it again on the same socket and same session file. This resolves transport/lifetime reconstruction while keeping semantic assertions local.",
+      "systemReason": "Traced near-composer status refresh, compact detail rendering/prefix resolution, cancellation command routing, runtime session attachment, and QuestionService ledger persistence/ownership. Long progress does not resolve the blocked question; cancelling the unblocked second question leaves one waiting question; a fresh CLI reading the same saved session and adjacent ledger must reproduce that state. The driver retains exit-empty off on its private server so replacing the final session does not race automatic server shutdown. Its start remains inside the scenario try/finally, covering launch or option failure with private-server close. Session and question state are not recreated during restart. Explicit execFile argv/environment with /dev/null tmux config removes inherited launch configuration and shell quoting, and no prior detail/status assertion is weakened.",
+      "checks": [
+        "git show of the entire exact candidate focus and full git diff -U1 from its exact primaryBase.",
+        "git diff --name-status: only the focus changed; candidate:focus exact blob verified.",
+        "git diff --check against primaryBase: exit 0.",
+        "Read real status, detail, prefix resolution, cancellation, session lifecycle and persistence callers; read shared frame polling and legacy helper only as source.",
+        "Confirmed identical question-system/helper source blobs with the separately reviewed interactive candidate before reusing that source trace."
+      ],
+      "limits": [
+        "Static review only; no setup/tests/builds, dependency mutation, credential access, or network/device work. Parent-owned isolated gates must verify tmux lifecycle, actual frames, timing and dist/bruv alignment.",
+        "Existing BRUV_QUESTIONS_FRAME can request a write outside the fixture. Parent gate must unset it or explicitly point it to an owned retained evidence file; this review did not perform that write.",
+        "HOME is mkdtemp-owned; config/data/cache/temp/SDK directories are created under it and retained. Private -L tmux server naming and explicit TMPDIR are reviewed as source, not runtime-verified socket placement. No test fixture was created here.",
+        "Independent judge artifact produced in durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_a3213d3e. Candidates were read with git show/diff by immutable commit, not checkout HEAD. No source edits, delegation, setup, tests, builds, cleanup/deletion, destructive Git, push, PR, merge or publication. Existing worktrees, candidates and shared dependencies preserved. Wisdom unchanged: this task returns only the aggregate-ready review artifact."
       ]
     },
     {
