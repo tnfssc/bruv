@@ -6,19 +6,19 @@
     {
       "focus": "scripts/loopback-parent-fixture.ts",
       "initialBlob": "02e74db59339686bf3be7bab19c4cbf3f934808d",
-      "status": "pending",
+      "status": "accepted",
       "judgeRounds": [],
       "resume": {
-        "status": "pending",
+        "status": "accepted",
         "acceptedBlob": "9a33c9296fcd3de7c945d09d5f86d1d82edee687",
         "primaryId": "task_7b708818",
         "primaryCommit": "930db93e8dcd5d38fc224010a1bab44b062bfbae",
-        "judgeIds": ["task_2c94381e"],
+        "judgeIds": ["task_2c94381e", "task_de2d30a6"],
         "sourceCommit": "930db93e8dcd5d38fc224010a1bab44b062bfbae",
-        "state": "needs-judge",
-        "reason": "Intrinsic: fixtureRpc reads in execution order: spawn the fixture RPC child, register it with the caller, observe stderr, record decoded events and deny every confirm request, then expose prompt submission and polling diagnostics. The private readRpcEvents operation separately owns the stdout buffer, extraction of complete nonempty newline-delimited records, synchronous JSON delivery and the existing parse/callback error boundary. Before this change the reader had to descend through buffer slicing and JSON framing to discover event recording and confirmation denial. The candidate removes that concrete transport/policy nesting without a context bag, exported framework or name-only cleanup. The helper has one real responsibility and its buffer lifetime is local to one stdout subscription. Unchanged decision: loopbackParent is already a coherent local provider operation (route validation, placement response, SSE formatting, fixture model registration and return of the provider); NO CHANGE NEEDED for that operation or the existing exported API."
+        "state": "accepted-joined",
+        "reason": "Read the entire intrinsic fixture. loopbackParent (lines 6–49) owns only the loopback fake provider and supplied agentDir/models.json publication: request routing, pure placementReply, call observation and two SSE chunks remain one readable operation. readRpcEvents (50–66) privately owns the partial-line buffer and complete-line delivery; its existing catch wraps both JSON parsing and callback delivery. fixtureRpc (68–115) visibly spawns with explicit argv/cwd/env, registers the child immediately, collects stderr/events, denies every RPC confirm before exposing send/wait, and attaches caller-specific timeout diagnostics. These are coherent boundaries, not arbitrary extraction or a context bag; no intrinsic reading burden calls for another framework."
       },
-      "acceptedBlob": null
+      "acceptedBlob": "9a33c9296fcd3de7c945d09d5f86d1d82edee687"
     },
     {
       "focus": "scripts/network-none-fixture.ts",
@@ -40,19 +40,19 @@
     {
       "focus": "scripts/remote-capability-pty-e2e.ts",
       "initialBlob": "9d766840abdeaa12b164aae3f0d8f682cc3825c5",
-      "status": "pending",
+      "status": "accepted",
       "judgeRounds": [],
       "resume": {
-        "status": "pending",
+        "status": "accepted",
         "acceptedBlob": "3c3a634ce44569602fb7f584b60d97638a4c4e4d",
         "primaryId": "task_7b708818",
         "primaryCommit": "930db93e8dcd5d38fc224010a1bab44b062bfbae",
-        "judgeIds": ["task_46bb6641"],
+        "judgeIds": ["task_46bb6641", "task_de2d30a6"],
         "sourceCommit": "930db93e8dcd5d38fc224010a1bab44b062bfbae",
-        "state": "needs-judge",
-        "reason": "Read the actual candidate and its primary base/direct parent 955feded55c7125658094bbef862244ee9b5941e, not checkout HEAD. Previously one long try mixed normal owned-placement policy proof, diagnostic request creation, PTY snapshot behavior, grant authority and revocation authority. The candidate exposes those five substantive journeys in order at lines 363–381. verifyOwnedPlacement keeps target discovery, decoded task identity, terminal-state observation and destination execution evidence together. seedDiagnosticCapabilityRequests keeps diagnostic launch, request lookup, unsupported-request injection and synchronization together and returns the task ID. startCapabilityPtyAndVerifySnapshot owns PTY startup and the displayed snapshot versus explicit-refresh experiment. verifyGrantRequiresHumanConsent keeps unsupported denial, displayed scope, Escape, stale-request denial/restoration, No, Yes and grant-ledger checks in one authority journey. verifyRevokeRequiresHumanConsent keeps cancel/confirm actions, ledger checks and final visible results together. This is a navigable behavioral decomposition, not rename-only cleanup or a context framework. The task ID and observing RPC fixture are explicit parameters; no new mutable state is introduced. Unchanged decision: retain the existing narrow pane/key/select/evidence helpers, task-filtered grant inventory and single outer shutdown owner. Their jobs are already clear and splitting each UI action from its assertion would make these journeys harder to read. The helpers deliberately share one fixture HOME and tmux pane; sequential calls, rather than a reusable independent-phase API, are appropriate here."
+        "state": "accepted-joined",
+        "reason": "Read setup, state/grant observers, PTY controls, every journey and orchestration. The final try (369–381) exposes the authority order: human connection, independently owned normal placement, diagnostic request seeding, displayed-menu snapshot verification, grant consent, then revoke consent. verifyOwnedPlacement (177–203) keeps authorized-target proof and destination completion/event assertions separate from the unowned diagnostic task created by seedDiagnosticCapabilityRequests (205–233). startCapabilityPtyAndVerifySnapshot (235–283) keeps rendered requests, owner request injection, unchanged open menu, explicit refresh and newly visible request in one journey. verifyGrantRequiresHumanConsent (285–343) keeps unsupported denial, visible scope, Escape, disappearing-request fail-closed check, No, Yes and only-repo.read ledger assertions together. verifyRevokeRequiresHumanConsent (345–367) similarly places Escape and affirmative revoke beside ledger observations. Explicit id/rpc parameters make authority legible without a context bag."
       },
-      "acceptedBlob": null
+      "acceptedBlob": "3c3a634ce44569602fb7f584b60d97638a4c4e4d"
     },
     {
       "focus": "scripts/remote-e2e.sh",
@@ -74,19 +74,19 @@
     {
       "focus": "scripts/remote-e2e.ts",
       "initialBlob": "fe5d531b0210d36871c340023798a4c6acdd8216",
-      "status": "pending",
+      "status": "accepted",
       "judgeRounds": [],
       "resume": {
-        "status": "pending",
+        "status": "accepted",
         "acceptedBlob": "320b3a149d7ad52320e99afc6dadda511e772aef",
         "primaryId": "task_7b708818",
         "primaryCommit": "930db93e8dcd5d38fc224010a1bab44b062bfbae",
-        "judgeIds": ["task_21f18195"],
+        "judgeIds": ["task_21f18195", "task_de2d30a6"],
         "sourceCommit": "930db93e8dcd5d38fc224010a1bab44b062bfbae",
-        "state": "needs-judge",
-        "reason": "Read the actual candidate file in full and compared its diff and primary-base implementation; the candidate parent is exactly primary base 07d54f20849e244898eebbe6a3c072a97dfb29fd. This is structural progress, not a rename pass: the executable orchestration now exposes SSH trust verification, owner/reconnect/question proof, repository/granted-work proof, and server-offline transcript proof in their required order. cli/reconnect/question state stays inside its scenario; localRepo, staged-index baseline, replacement repoRpc and repository/capability/cancellation task IDs stay inside the repository scenario; only the original owner task ID is passed between scenario operations. The safe launch now calls launchWithUntrackedOmission explicitly instead of triggering an authority-changing branch hidden inside generic nextTask. Both launch paths reuse only task observation and stable-ID verification. Unchanged decision: bootstrap, fixtureRpc/loopback provider helpers, scenario assertions and shared final cleanup need no change for this reading problem. Keeping repository return, capability reconnect, cancellation and artifact caching together is justified by their shared repository/RPC lifetime; further wrapper layers or a context bag would make this journey harder to follow."
+        "state": "accepted-joined",
+        "reason": "Read all 425 lines and traced the final orchestration (411–425): verifyPinnedSsh, proveOwnerReconnectAndQuestion, proveRepositoryReturnAndGrantedWork, proveOfflineTranscript. The original taskId is the only scenario return value crossing the journeys; reconnect clients, native question identity, local repository/index state, approval retry, capability task and cancellation task stay with the scenario that exercises them. Within the repository journey, waitForTask owns acceptance/stable-ID observation, nextTask handles ordinary sends, and launchWithUntrackedOmission keeps human waiting, no premature dispatch, parent yield, omission answer and same-ID retry in one explicit operation. Safe tracked return/index preservation, conflict preservation/review artifact, reconnect-before-explicit grants, native cancellation and full cached text checks remain readable in their causal order. No rename churn or broader extraction would improve these ownership boundaries."
       },
-      "acceptedBlob": null
+      "acceptedBlob": "320b3a149d7ad52320e99afc6dadda511e772aef"
     },
     {
       "focus": "scripts/remote-jobs-e2e.ts",
@@ -125,19 +125,19 @@
     {
       "focus": "scripts/remote-pty-e2e.ts",
       "initialBlob": "ff9c6e8a70b09d2134b07c53336b95f56311bf4b",
-      "status": "pending",
+      "status": "accepted",
       "judgeRounds": [],
       "resume": {
-        "status": "pending",
+        "status": "accepted",
         "acceptedBlob": "0557c88c0c4a1044af2ad62f6399fb510c15134a",
         "primaryId": "task_174c8eac",
         "primaryCommit": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
-        "judgeIds": ["task_2fd31271"],
+        "judgeIds": ["task_2fd31271", "task_e21ce00b"],
         "sourceCommit": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
-        "state": "needs-judge",
-        "reason": "Compared the actual candidate with primary base c7a21355e87abe213aeb2b2b3ef06456a17b56e1, which is also its direct parent. Previously the provider was acquired near the globals and live during top-level repository preparation, well before the try/finally. The candidate declares helpers first, then visibly pairs returned-provider acquisition with try/finally. Its first protected operation, prepareLaunchRepository, coherently owns directory creation, fixture content, Git initialization/add/commit assertions and the HOME-not-repository assertion. This is a meaningful lifetime boundary, not merely a renamed block: preparation failures now flow into existing teardown. No framework, shared context bag or exported helper is introduced. Unchanged decision: retain the chronological PTY assertion journey and its local navigation/evidence helpers; that order explains actual interactions, stale snapshots, cancellation and offline observations without needing another orchestration abstraction."
+        "state": "accepted-joined",
+        "reason": "Independently read all 492 lines from the exact candidate Git object, rather than checkout HEAD or the primary summary. The opening state reader and narrow PTY helpers keep transport, owner-ledger reads, frame capture and human assertions distinct. prepareLaunchRepository coherently owns disposable Git initialization and the assertion that HOME never becomes the source repository. All helper declarations precede loopbackParent acquisition, immediately followed by try with repository preparation first; finally visibly owns tmux shutdown, registered RPC child kills and provider.stop(true). The main body is a chronological user journey: diagnostic connection and two pending questions; completion/search/Escape; narrow choice and discarded/custom draft; externally answered stale picker with footer-only change; final assistant rendering; quiet active polling and confirmed cancellation; explicit cached status/sync and event-indexed transcript; long-name search; fresh client and completion-under-picker; separately session-owned placement; owner shutdown and unavailable offline answers including fresh startup; no local question ledger. These decisions are intelligible at their assertion sites. Further extraction would scatter the interaction sequence or obscure precisely which frame/owner transition is checked, not remove an observed structural burden."
       },
-      "acceptedBlob": null
+      "acceptedBlob": "0557c88c0c4a1044af2ad62f6399fb510c15134a"
     },
     {
       "focus": "scripts/remote-recovery-e2e.ts",
@@ -4163,8 +4163,8 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 118,
-    "pending": 4
+    "accepted": 122,
+    "pending": 0
   },
   "extraFiles": [
     {

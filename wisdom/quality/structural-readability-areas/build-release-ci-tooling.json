@@ -2908,7 +2908,7 @@
     {
       "focus": "tests/update.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted",
+      "state": "pending",
       "primary": [
         {
           "id": "task_27b632e4",
@@ -2935,7 +2935,7 @@
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": "6569bd7e550e94dcd82b41da3774848f4347eae2",
+      "acceptedBlob": null,
       "relatedPatchJudgment": {
         "id": "task_170d10bf",
         "verdict": "ACCEPT",
@@ -2947,10 +2947,12 @@
       "checks": "Base/candidate51 tests177 assertions; combined64/230; strict tsc/format/diff pass; existing lint warning; no full build/platform.",
       "integrationState": "Full test patch integrated; local note excluded; production updater unchanged.",
       "resume": {
-        "status": "accepted",
+        "status": "pending",
         "acceptedBlob": "6569bd7e550e94dcd82b41da3774848f4347eae2",
         "primaryId": "task_27b632e4",
-        "judgeIds": ["task_ee4235b6"]
+        "judgeIds": ["task_ee4235b6"],
+        "sourceCommit": null,
+        "state": "needs-rework"
       }
     },
     {
@@ -3587,7 +3589,7 @@
     "retainedWorktrees": "Per-file primary[].path and branch retained, including stopped/rejected attempts."
   },
   "resumeStatus": {
-    "accepted": 74,
-    "pending": 0
+    "accepted": 73,
+    "pending": 1
   }
 }

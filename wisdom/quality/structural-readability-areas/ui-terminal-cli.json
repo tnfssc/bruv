@@ -3317,11 +3317,11 @@
       "resume": {
         "status": "pending",
         "acceptedBlob": "a502768eb70247ad2caceed71f88c1c6aa82533d",
-        "primaryId": "task_2031ace4",
-        "primaryCommit": "496389243e523220cae31f698ac02922890a578f",
+        "primaryId": "task_b89a9b65",
+        "primaryCommit": "da5bae9ae91db435f048c260b11079ae8d72e722",
         "judgeIds": ["task_6f3b1071", "task_28221777", "task_a6caab27"],
-        "sourceCommit": null,
-        "state": "needs-rework",
+        "sourceCommit": "da5bae9ae91db435f048c260b11079ae8d72e722",
+        "state": "needs-judge",
         "reason": "Existing primary-focus ACCEPT by task_28221777 at 496389243e523220cae31f698ac02922890a578f; exact candidate and surviving-area blob verified. Pinned joined tree lacks this accepted blob; parent owns joining. No new review or test execution. Final fresh rework writer task_2031ace4; original rejected primary task_1b754cf4/ad493ccc4986fb5c18bc708590a38232c84621bd retained in evidence."
       }
     },
@@ -4481,11 +4481,11 @@
       "resume": {
         "status": "pending",
         "acceptedBlob": "d132c1709bbc03d1e3851dd2e6886ed50fc8bf0d",
-        "primaryId": "task_eed22df6",
-        "primaryCommit": "fd1e6f44a2c88c3f1ac311087b90efb65f6e980d",
+        "primaryId": "task_b89a9b65",
+        "primaryCommit": "da5bae9ae91db435f048c260b11079ae8d72e722",
         "judgeIds": ["task_f9504048", "task_db1c285c"],
-        "sourceCommit": null,
-        "state": "needs-rework",
+        "sourceCommit": "da5bae9ae91db435f048c260b11079ae8d72e722",
+        "state": "needs-judge",
         "reason": "Existing primary-focus NO CHANGE NEEDED by task_db1c285c at fd1e6f44a2c88c3f1ac311087b90efb65f6e980d; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
       }
     },
