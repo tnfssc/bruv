@@ -22830,7 +22830,7 @@
       "status": "pending",
       "area": "build-release-ci-tooling",
       "acceptedBlob": "fd2ba3a77915061356f260161bf1ec68a298141b",
-      "primaryId": "task_f7db8eb8",
+      "primaryId": "task_4515d507",
       "judgeIds": ["task_900a3c32"],
       "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json",
       "priorAcceptedIntegrationProof": [
@@ -22842,8 +22842,8 @@
           "finalJudge": "task_1351df8b"
         }
       ],
-      "resumeState": "needs-rework",
-      "sourceCommit": null,
+      "resumeState": "needs-judge",
+      "sourceCommit": "124a8d0406ec3cc344fa73b882fc93dc969f8385",
       "resumeBatch": "owned-remaining-tooling-fixture-environments",
       "resumeRework": {
         "candidate": "a1f238b96cc562dfde095f0b486b2d674c410414",
@@ -22867,11 +22867,16 @@
         {
           "primaryId": "task_8c70c1f6",
           "sourceCommit": null
+        },
+        {
+          "primaryId": "task_f7db8eb8",
+          "sourceCommit": null,
+          "primaryBase": "536742e519e83977ddad1c5073882b5249013865"
         }
       ],
-      "primaryCommit": "a1f238b96cc562dfde095f0b486b2d674c410414",
-      "primaryBase": "536742e519e83977ddad1c5073882b5249013865",
-      "primaryResult": "Both RPC tests now supply ownedFixtureEnv(root); the malformed driver receives the same fresh environment explicitly and serializes it for its RPC child. fixtureRpc requires and passes env unchanged, removing hidden inheritance; all three remote RPC script callers construct the same explicit contract from their existing shell-owned root with only fixture SSH PATH, agent dirs and Docker endpoint layered. Buffering gate, false trust response, prompts, stderr timeout detail, malformed JSON refusal, child kill/close and loopback SSE/text/tool assertions remain unchanged. Network-none spawned commands use an owned retained-root environment; their HOME assertion now names that explicit env. Cleanup still proves deletion of its nested scratch and preservation of external evidence, additionally proving the separate owned HOME survives. All mkdtemp roots are retained.",
+      "primaryCommit": "124a8d0406ec3cc344fa73b882fc93dc969f8385",
+      "primaryBase": "da069c0878939a4790c64579b1f5e894b946a62d",
+      "primaryResult": "Changed only the child HOME comparison to env.HOME. Kept independent fixture.env HOME/agent/config and forbidden-authority checks, intentional-failure diagnostic, no-container assertion, scratch deletion, retained env.HOME and external evidence checks. Read the whole focus: loopback writes its fixture-only model and emits text/tool SSE with DONE; normal RPC waits for the withheld newline, denies trust, sends prompts, retains stderr/timeouts, then kills and awaits close; canonical output rejects repository/symlink descendants including future paths; malformed JSON driver receives cwd plus owned env and serializes that same authority for the RPC child. All those assertions remain intact. Read fixtureRpc and all three remote script call sites: env is required and passed unchanged, and each caller constructs its environment from the shell-owned fixture root with only SSH PATH, agent dirs and Docker endpoint layered. Retained the six other candidate source paths unchanged, including the setup/smoke repairs; no old branch was merged. No further structural change is justified beyond restoring the already-explicit authority/lifetime journey.",
       "primaryPaths": [
         "scripts/loopback-parent-fixture.ts",
         "scripts/remote-capability-pty-e2e.ts",
@@ -22882,18 +22887,32 @@
         "tests/tooling-fixtures.test.ts"
       ],
       "primaryChecks": [
-        "Actual whole focus source and relevant RPC/helper/setup/smoke/harness callers read; assigned focus rows only reviewed in build-release-ci-tooling.json.",
-        "Rejected candidate dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d compared against launch HEAD 536742e519e83977ddad1c5073882b5249013865: all three focuses, tests/helpers.ts and scripts/loopback-parent-fixture.ts identical; no old branch merge or candidate transplant.",
-        "Biome format --write via node:child_process argv on exactly seven changed source files, explicit ownedFixtureEnv in retained /tmp/pr45-fixture-format-Fmf2EF; final exit 0, no fixes needed.",
-        "git diff --check exit 0 before source-only commit. Final diff manually reviewed including whitespace-insensitive native setup diff.",
-        "Source-only commit created with explicit owned environment, empty owned hooks path and signing disabled. No setup, tests, builds, dependency writes, live authentication, cleanup commands, push, PR, or merge executed."
+        {
+          "kind": "source-reading",
+          "result": "Exact rejected candidate diff inspected against primaryBase; all seven candidate blobs matched inherited HEAD before this rework. Every fixtureRpc caller was located and read."
+        },
+        {
+          "kind": "formatter",
+          "command": "/home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/@biomejs/biome/bin/biome format --write tests/tooling-fixtures.test.ts",
+          "result": "Exit 0; formatted 1 file, no fixes applied. Invoked via child_process argv with a fresh explicit owned environment."
+        },
+        {
+          "kind": "diff-check",
+          "result": "git diff --check exit 0; rework source diff is one assertion operand. Source-only commit contains tests/tooling-fixtures.test.ts only. changedPaths lists the full preserved seven-path candidate scope for independent review; the other six paths were not re-edited."
+        },
+        {
+          "kind": "durable-provenance",
+          "workspace": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_4515d507",
+          "retainedRuntimeRoot": "/tmp/pr45-tooling-rework-JbSNp1",
+          "result": "Fresh mkdtemp HOME/config/cache/data/SDK/TMPDIR and empty Git hooks retained. Runtime metadata retained under that root. Shared dependencies read-only; no installation."
+        }
       ],
       "primaryLimits": [
-        "Runtime behavior, type checking, native/SDK/providing release gates, SSH/Docker/PTY and auth/device behavior unverified: parent owns audited isolated gates and independent judgment.",
-        "Requested undefined/wisdom/quality/structural-readability-areas/build-release-ci-tooling-resume-reconciliation.json does not exist in this durable worktree. Same-named reconciliation file is also absent from wisdom/quality/structural-readability-areas. Used explicit supplied rejection evidence plus assigned existing ledger rows, not an invented reconciliation result.",
-        "Remote RPC callers require the existing remote-e2e.sh-owned FIXTURE_DROP_DIR/HOME/agent/SSH/Docker fixture. Their unrelated non-RPC subprocesses and shell harness lifecycle were not changed or executed.",
-        "Fixture mkdtemp roots are retained; the network-none cleanup ownership assertion still removes only its nested scratch child in test code. Existing smoke script trap behavior is only source-inspected and its owned-pair cleanup assertion preserved; no shell traps executed.",
-        "Durable code provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_f7db8eb8 at a1f238b96cc562dfde095f0b486b2d674c410414. Formatter scratch /tmp/pr45-fixture-format-Fmf2EF retained, not a code checkout. Parent owns runtime agent.model verification and aggregate wisdom; no per-worker wisdom note added."
+        "Both undefined/wisdom/quality/structural-readability-areas/build-release-ci-tooling-resume-reconciliation.json and the repository-relative wisdom/quality/structural-readability-areas/build-release-ci-tooling-resume-reconciliation.json are absent (ENOENT). Used the supplied focus/rejection evidence and exact preserved Git candidate instead; no broad ledger or recovery investigation.",
+        "No tests, setup, builds, live authentication, Docker, SSH, fixture cleanup, or shell traps were run. Runtime verification and independent judgment belong to the parent.",
+        "scripts/remote-e2e.sh was inspected only for its fixture root contract; its pre-existing shell EXIT cleanup trap is unchanged and was not run.",
+        "Parent owns verification of runtime agent.model openai-codex/gpt-6.1-sol. No delegation or publication performed.",
+        "No per-worker wisdom edits: existing values/guidance already cover explicit ownership and retaining assertions; parent writes aggregate wisdom."
       ],
       "forceJudge": true,
       "acceptedRelatedJudges": ["task_9cd1c88b"],

@@ -2772,11 +2772,11 @@
       "resume": {
         "status": "pending",
         "acceptedBlob": "fd2ba3a77915061356f260161bf1ec68a298141b",
-        "primaryId": "task_f7db8eb8",
-        "primaryCommit": "a1f238b96cc562dfde095f0b486b2d674c410414",
+        "primaryId": "task_4515d507",
+        "primaryCommit": "124a8d0406ec3cc344fa73b882fc93dc969f8385",
         "judgeIds": ["task_900a3c32"],
-        "sourceCommit": null,
-        "state": "needs-rework"
+        "sourceCommit": "124a8d0406ec3cc344fa73b882fc93dc969f8385",
+        "state": "needs-judge"
       }
     },
     {
