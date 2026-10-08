@@ -4056,6 +4056,16 @@
         "branch": "bruv/pr45-judge-7-build-release-ci-tooling-fo-7b313d31",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "handled"
+      },
+      {
+        "id": "task_61e58786",
+        "stage": "primary",
+        "focus": ["scripts/find-ci-baseline.ts"],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_61e58786",
+        "branch": "bruv/pr45-primary-1-build-release-ci-tooling--61e58786",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled",
+        "sourceCommit": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d"
       }
     ]
   },

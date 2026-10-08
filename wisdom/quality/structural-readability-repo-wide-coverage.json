@@ -1117,12 +1117,35 @@
       "status": "pending",
       "area": "build-release-ci-tooling",
       "acceptedBlob": "5796c92a32d55d195d2097012530dbd9c310e785",
-      "primaryId": "task_8a5f8213",
+      "primaryId": "task_61e58786",
       "judgeIds": ["task_149c9180"],
       "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json",
-      "resumeState": "needs-primary-final-blob",
-      "sourceCommit": "4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7",
-      "acceptedRelatedJudges": ["task_7b313d31"]
+      "resumeState": "needs-judge",
+      "sourceCommit": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+      "acceptedRelatedJudges": ["task_7b313d31"],
+      "priorPrimaryLineage": [
+        {
+          "primaryId": "task_8a5f8213",
+          "sourceCommit": "4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7"
+        }
+      ],
+      "primaryCommit": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+      "primaryBase": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+      "primaryResult": "Keep the current source unchanged. findCiBaseline visibly validates inputs and actual checkout HEAD, identifies ci.yml through GitHub metadata, inspects one bounded newest-first page, rejects runs at one contiguous trust boundary, then proves a local commit and ancestry. The Git and HTTP closures share the single deadline; the catch suppresses credential-bearing exceptions and yields uncertainty. The CLI publishes only a SHA or empty stdout; CI passes the empty baseline to ci-selective.plan, which requires full validation, while PR comparison remains separate. Extracting the predicate or closures would distribute this currently local authority and require passing deadline/credential state without simplifying the journey. The exact preserved candidate adds only an optional env argument forwarded to spawnSync; tests explicitly provide ownedFixtureEnv, and production retains process.env. This preserves the original accepted linear structure and isolation capability. Current focus blob exactly equals the supplied candidate; no candidate import, rework, or unrelated edits needed. Available preserved judgment is NO CHANGE NEEDED with no objections; the specified reconciliation file was not available.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        "Static whole-focus/caller/fixture reading; exact candidate comparison: 5796c92a32d55d195d2097012530dbd9c310e785 equals 4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7:scripts/find-ci-baseline.ts.",
+        "Read only assigned focus row in wisdom/quality/structural-readability-areas/build-release-ci-tooling.json; inspected exact 7e41d1be224fc6b5b51c4f8af37ca889d2f9b2a3 primary rationale and candidate-to-current-focus diff. Prior judgment is evidence only, not a fresh test result.",
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Reviewed runtime effects from source: read-only Git queries and two bounded authenticated GitHub requests; no runtime effects exercised. Test fixtures use explicit argv/env and retained mkdtemp roots.",
+        "No changed source paths: formatter not invoked and no source-only commit needed. Existing HEAD is the exact reviewed source commit."
+      ],
+      "primaryLimits": [
+        "Requested undefined/wisdom/quality/structural-readability-areas/build-release-ci-tooling-resume-reconciliation.json and non-undefined variant were absent in this checkout and checked retained Git worktrees/known parent locations. Used the assigned preserved main-ledger row instead; no reconciliation-specific rejection evidence can be claimed.",
+        "No tests, setup, builds, reinstall, live authentication/device/API calls, or independent judgments run; parent owns audited isolated gates and fresh independent judgment.",
+        "No source edits, fixture execution/creation, cleanup, data recovery, shared-dependency mutation, pushes, PRs, or merges. Artifact remains untracked for parent aggregation; existing worktrees and candidate commits retained.",
+        "Durable provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_61e58786 at dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d; supplied candidate 4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7. No temporary code checkout used."
+      ]
     },
     {
       "file": "scripts/fixtures/task-placement-clean/fake-provider.ts",

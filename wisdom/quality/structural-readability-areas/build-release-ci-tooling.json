@@ -627,10 +627,11 @@
       "resume": {
         "status": "pending",
         "acceptedBlob": "5796c92a32d55d195d2097012530dbd9c310e785",
-        "primaryId": "task_8a5f8213",
+        "primaryId": "task_61e58786",
+        "primaryCommit": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
         "judgeIds": ["task_149c9180"],
-        "sourceCommit": "4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7",
-        "state": "needs-primary-final-blob"
+        "sourceCommit": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "state": "needs-judge"
       }
     },
     {
