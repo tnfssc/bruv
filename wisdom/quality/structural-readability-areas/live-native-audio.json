@@ -3203,16 +3203,17 @@
       "initialBlob": "c9d761bbefe7e6f698b946a1a03cd3af2d9590b1",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "c9d761bbefe7e6f698b946a1a03cd3af2d9590b1",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "c9d761bbefe7e6f698b946a1a03cd3af2d9590b1",
         "primaryId": "task_ae2196d9",
         "primaryCommit": "c267d92f7761578deebe7ed4839f86237a1ae5a3",
-        "judgeIds": [],
+        "judgeIds": ["task_aae3b2b5"],
         "sourceCommit": "c267d92f7761578deebe7ed4839f86237a1ae5a3",
-        "state": "needs-judge",
-        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+        "state": "accepted-joined",
+        "reason": "Read all scenarios rather than treating unchanged bytes as acceptance. The opening grouped-draft and replacement tests keep received fragments, viewport bounds, full source persistence and supersession adjacent to stimuli; renderer registration directly compares native assistant/user components and uncertainty labels. ownerFixture supplies only the classic session seam, not a journey context bag. Canonical-final admission checks in-memory commit before presentation, ordinary events once, playback uncertainty, interrupted provisional data, and resumed native rendering in one lifetime. Paired saved text proves passive context exclusion beside replay. Source-reference groups retain original timestamped fragments, empty group markers, full native rendering, distinct interrupted/suppressed boundaries, replay identity and triggerTurn:false without copying text. The real Pi scenario intentionally owns loader registration, private auth path, refreshOnCreate:false, session binding, denied provider streams, subscription, admitted finals, passive marker, and persisted-group rendering locally. The deferred scenario exposes the execute gate and shows no early visible/state message followed by call/result/voice order. Terminal bytes and safe-visible/hidden-audit replay assertions remain explicit. Every owning scenario closes and awaits released, with real-session dispose visible. Extracting a general fixture would conceal the differing delivery authorities; unchanged structure is justified."
       }
     },
     {
@@ -3266,16 +3267,17 @@
       "initialBlob": "2813968a386603df54b51314c4238769805a8b86",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "30ed313e1467bcf553b0354ccd693af7756006bf",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "30ed313e1467bcf553b0354ccd693af7756006bf",
         "primaryId": "task_ae2196d9",
         "primaryCommit": "c267d92f7761578deebe7ed4839f86237a1ae5a3",
-        "judgeIds": [],
+        "judgeIds": ["task_aae3b2b5"],
         "sourceCommit": "c267d92f7761578deebe7ed4839f86237a1ae5a3",
-        "state": "needs-judge",
-        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+        "state": "accepted-joined",
+        "reason": "The changed file has a coherent shared rejection operation, not cosmetic rename churn. expectUnavailableKey captures only loadLiveKey outcome before asserting Error, opaque 0600 guidance and absence of the fake key; success maps to undefined and must fail, unlike the previous malformed-file catch-only check. The private-file scenario retains its successful read then performs permission change, restored permission, symlink and malformed-content stimuli in order, calling that contract at each rejected source. Bounds/directory/missing stimuli use the same contract within their own owned directory. Literal parsing success is distinct from invalid assignment rejection; each invalid source is parsed once, with the captured Error required and checked for disclosure. Source construction, fixture ownership and finally blocks remain local, so the helper centralizes the exact security expectation without hiding lifetimes or failures. All original source cases and assertions are retained or strengthened."
       }
     },
     {
@@ -3283,16 +3285,17 @@
       "initialBlob": "d74bfcc059ab24149feda80784335bdd606ef1e6",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "d74bfcc059ab24149feda80784335bdd606ef1e6",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "d74bfcc059ab24149feda80784335bdd606ef1e6",
         "primaryId": "task_ae2196d9",
         "primaryCommit": "c267d92f7761578deebe7ed4839f86237a1ae5a3",
-        "judgeIds": [],
+        "judgeIds": ["task_aae3b2b5"],
         "sourceCommit": "c267d92f7761578deebe7ed4839f86237a1ae5a3",
-        "state": "needs-judge",
-        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+        "state": "accepted-joined",
+        "reason": "Read all three tests and the actual helper. The first test makes the fake provider recorder and runtime preparation rejection separately visible, then installs the real wrappers and drives preparation failure, four successful SSE calls, and a denied fifth dispatch. The six invocations/four dispatches/evidence assertions explain the boundary rather than merely checking counts: provider options prove preserved transport and forced maxRetries:0. The two readiness tests keep missing-auth short circuit with forbidden getAuth lookup separate from configured auth resolution and the exact 300000ms refresh margin. All fakes are test-local with no global mutation, so lack of restore in this local unit lifetime is not leaked ownership. Further extraction would force the reader to reconstruct where a call fails and what actually reached the provider. The unchanged decision is based on these journeys, not a green suite or ledger status."
       }
     },
     {
@@ -4837,7 +4840,7 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 108,
-    "pending": 43
+    "accepted": 111,
+    "pending": 40
   }
 }

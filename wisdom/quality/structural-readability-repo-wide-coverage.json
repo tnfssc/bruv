@@ -14607,11 +14607,11 @@
     {
       "file": "tests/live-conversation.test.ts",
       "initialBlob": "c9d761bbefe7e6f698b946a1a03cd3af2d9590b1",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_ae2196d9",
       "sourceCommit": "c267d92f7761578deebe7ed4839f86237a1ae5a3",
-      "judgeIds": [],
-      "resumeState": "needs-judge",
+      "judgeIds": ["task_aae3b2b5"],
+      "resumeState": "accepted-joined",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
       "area": "live-native-audio",
       "primaryCommit": "c267d92f7761578deebe7ed4839f86237a1ae5a3",
@@ -14629,6 +14629,20 @@
         "Existing test cleanup was inspected only: rm targets local mkdtemp-owned directories, not inherited HOME/config/SDK. No fixture cleanup was executed. Parent test invocations must supply explicit argv/env and owned fresh retained HOME/config/SDK.",
         "changedPaths lists the complete source scope of this combined batch commit, including the credentials sibling for unchanged-focus decisions. No other source/helper paths changed.",
         "Wisdom and values were read but not edited; the parent owns aggregate wisdom. Runtime agent.model verification is parent-owned."
+      ],
+      "acceptedBlob": "c9d761bbefe7e6f698b946a1a03cd3af2d9590b1",
+      "result": "Read all scenarios rather than treating unchanged bytes as acceptance. The opening grouped-draft and replacement tests keep received fragments, viewport bounds, full source persistence and supersession adjacent to stimuli; renderer registration directly compares native assistant/user components and uncertainty labels. ownerFixture supplies only the classic session seam, not a journey context bag. Canonical-final admission checks in-memory commit before presentation, ordinary events once, playback uncertainty, interrupted provisional data, and resumed native rendering in one lifetime. Paired saved text proves passive context exclusion beside replay. Source-reference groups retain original timestamped fragments, empty group markers, full native rendering, distinct interrupted/suppressed boundaries, replay identity and triggerTurn:false without copying text. The real Pi scenario intentionally owns loader registration, private auth path, refreshOnCreate:false, session binding, denied provider streams, subscription, admitted finals, passive marker, and persisted-group rendering locally. The deferred scenario exposes the execute gate and shows no early visible/state message followed by call/result/voice order. Terminal bytes and safe-visible/hidden-audit replay assertions remain explicit. Every owning scenario closes and awaits released, with real-session dispose visible. Extracting a general fixture would conceal the differing delivery authorities; unchanged structure is justified.",
+      "systemReason": "Traced extension.ts renderer registration/context projection and TranscriptLog grouped sink into conversation.ts and main-owner.ts. record persists and updates state before onMessage; presentCanonicalVoiceMessage emits only subscriber events. LiveHistory defers observations across tool pairs, while delegated sendContext/saveTranscript route passive records through Pi sendCustomMessage with triggerTurn:false. Group rendering reads preceding fragments up to the group boundary; withoutPassiveLiveHistory removes transcript audit records from model context. appendText sanitizes canonical prose and preserves unsafe source as hidden audit; terminal renderer sanitizes independently. Tests follow these different authorities without confusing observation with turn admission. The sole companion edit in credentials is an assertion-contract consolidation reviewed separately, not a conversation behavior change.",
+      "checks": [
+        "Read exact candidate through git show and complete git diff from 50d8449df870b14a6ca79007f49906ffff87fd40; only candidate-changed path is tests/live-credentials.test.ts, inspected in full and against its base.",
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md. Read only the three assigned coverage ledger rows; all are pending/own_primary_pending and do not supply acceptance.",
+        "Filesystem/network effects reviewed statically; no setup, test, build, auth access, provider call, device access, dependency mutation, or cleanup executed.",
+        "git diff --exit-code over this focus and live-dispatch-budget.test.ts reports no diff; candidate focus blob pinned with git rev-parse."
+      ],
+      "limits": [
+        "Static actual-source review only; no passing-runtime claim. Runtime gates and runtime model verification remain parent-owned. Durable review worktree: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_aae3b2b5. Candidate evidence retained in Git; no /tmp code checkout or fixture created.",
+        "Tests contain rm of their own mkdtemp directories; inspected only, never executed. Paid goals-live caller can use inherited auth and refresh credentials; not run. Parent gates must supply owned HOME/config/SDK and explicit argv/env, and retain fixtures. Real Pi/device/auth behavior remains unverified.",
+        "Safety for ALL descendants: NO sudo, recovery investigation, user secrets, shell deletion/cleanup commands, inherited HOME/config/SDK cleanup, nested shell traps, destructive git, or user-data mutation. User already recovered data and requested no recovery work. Tests must use explicit process argv/env and owned fs.mkdtemp fixture HOME/config/SDK; retain them, do not delete. Review filesystem/network effects BEFORE tests/setup. Existing test-code cleanup of provably owned temporary paths may be inspected but NEVER run a shell trap or inherited HOME removal. Need live auth/device? Report unverified, don't access credentials. Propagate these constraints verbatim. Independent code/review agents get durable worktrees, not /tmp code checkouts. Keep existing worktrees and candidate evidence. Test/source fixtures may use /tmp, but document durable provenance. Parent verifies runtime agent.model openai-codex/gpt-6.1-sol; native normal leaves only, no delegation. Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md. Do NOT run setup, tests, builds: parent owns audited isolated gates. Shared dependencies are read-only; no reinstall or guard bypass. Preserve old worktrees/candidate edits. No push/new PR/merge, publication is parent-owned. No per-worker wisdom note pile; return exact artifact untracked, parent writes aggregate wisdom. Read only assigned focus/evidence rows in large coverage/area ledgers. Real structural reading, no rename churn/context bags/huge abstractions. Preserve existing security/assertions. Every focus including unchanged needs its own actual-source journey reasoning, never accept from counts/tests or batch summary."
       ]
     },
     {
@@ -14647,11 +14661,11 @@
     {
       "file": "tests/live-credentials.test.ts",
       "initialBlob": "2813968a386603df54b51314c4238769805a8b86",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_ae2196d9",
       "sourceCommit": "c267d92f7761578deebe7ed4839f86237a1ae5a3",
-      "judgeIds": [],
-      "resumeState": "needs-judge",
+      "judgeIds": ["task_aae3b2b5"],
+      "resumeState": "accepted-joined",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
       "area": "live-native-audio",
       "primaryCommit": "c267d92f7761578deebe7ed4839f86237a1ae5a3",
@@ -14671,16 +14685,31 @@
         "Existing test cleanup was inspected only: rm targets local mkdtemp-owned directories, not inherited HOME/config/SDK. No fixture cleanup was executed. Parent test invocations must supply explicit argv/env and owned fresh retained HOME/config/SDK.",
         "changedPaths lists the complete source scope of this combined batch commit, including the credentials sibling for unchanged-focus decisions. No other source/helper paths changed.",
         "Wisdom and values were read but not edited; the parent owns aggregate wisdom. Runtime agent.model verification is parent-owned."
+      ],
+      "acceptedRelatedJudges": ["task_aae3b2b5"],
+      "acceptedBlob": "30ed313e1467bcf553b0354ccd693af7756006bf",
+      "result": "The changed file has a coherent shared rejection operation, not cosmetic rename churn. expectUnavailableKey captures only loadLiveKey outcome before asserting Error, opaque 0600 guidance and absence of the fake key; success maps to undefined and must fail, unlike the previous malformed-file catch-only check. The private-file scenario retains its successful read then performs permission change, restored permission, symlink and malformed-content stimuli in order, calling that contract at each rejected source. Bounds/directory/missing stimuli use the same contract within their own owned directory. Literal parsing success is distinct from invalid assignment rejection; each invalid source is parsed once, with the captured Error required and checked for disclosure. Source construction, fixture ownership and finally blocks remain local, so the helper centralizes the exact security expectation without hiding lifetimes or failures. All original source cases and assertions are retained or strengthened.",
+      "systemReason": "Read loadLiveKey and parseLiveKey plus canonical credential service/default factory and extension defaults. The loader opens no-follow/nonblocking, verifies regular file, exact private mode, user ownership and size before bounded reading, then wraps all failures in the same opaque 0600 guidance and closes its handle. parseLiveKey is literal-only and has content-free errors. The helper matches that boundary rather than catching expectation failures. Migration reads this file only after the Google import guard, rechecks status, and conditionally modifies canonical auth under its lock; ordinary status/loadKey paths do not consult legacy live.env, and the default runtime disables catalogue/network refresh. No production path or security guard is modified.",
+      "checks": [
+        "Read exact candidate through git show and complete git diff from 50d8449df870b14a6ca79007f49906ffff87fd40; only candidate-changed path is tests/live-credentials.test.ts, inspected in full and against its base.",
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md. Read only the three assigned coverage ledger rows; all are pending/own_primary_pending and do not supply acceptance.",
+        "Filesystem/network effects reviewed statically; no setup, test, build, auth access, provider call, device access, dependency mutation, or cleanup executed.",
+        "Inspected every added/removed line and full focus at exact candidate. Verified malformed-file success cannot silently pass and invalid parser sources are evaluated once. Exact changed blob pinned with git rev-parse."
+      ],
+      "limits": [
+        "Static actual-source review only; no passing-runtime claim. Runtime gates and runtime model verification remain parent-owned. Durable review worktree: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_aae3b2b5. Candidate evidence retained in Git; no /tmp code checkout or fixture created.",
+        "Tests contain rm of their own mkdtemp directories; inspected only, never executed. Paid goals-live caller can use inherited auth and refresh credentials; not run. Parent gates must supply owned HOME/config/SDK and explicit argv/env, and retain fixtures. Real Pi/device/auth behavior remains unverified.",
+        "Safety for ALL descendants: NO sudo, recovery investigation, user secrets, shell deletion/cleanup commands, inherited HOME/config/SDK cleanup, nested shell traps, destructive git, or user-data mutation. User already recovered data and requested no recovery work. Tests must use explicit process argv/env and owned fs.mkdtemp fixture HOME/config/SDK; retain them, do not delete. Review filesystem/network effects BEFORE tests/setup. Existing test-code cleanup of provably owned temporary paths may be inspected but NEVER run a shell trap or inherited HOME removal. Need live auth/device? Report unverified, don't access credentials. Propagate these constraints verbatim. Independent code/review agents get durable worktrees, not /tmp code checkouts. Keep existing worktrees and candidate evidence. Test/source fixtures may use /tmp, but document durable provenance. Parent verifies runtime agent.model openai-codex/gpt-6.1-sol; native normal leaves only, no delegation. Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md. Do NOT run setup, tests, builds: parent owns audited isolated gates. Shared dependencies are read-only; no reinstall or guard bypass. Preserve old worktrees/candidate edits. No push/new PR/merge, publication is parent-owned. No per-worker wisdom note pile; return exact artifact untracked, parent writes aggregate wisdom. Read only assigned focus/evidence rows in large coverage/area ledgers. Real structural reading, no rename churn/context bags/huge abstractions. Preserve existing security/assertions. Every focus including unchanged needs its own actual-source journey reasoning, never accept from counts/tests or batch summary."
       ]
     },
     {
       "file": "tests/live-dispatch-budget.test.ts",
       "initialBlob": "d74bfcc059ab24149feda80784335bdd606ef1e6",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_ae2196d9",
       "sourceCommit": "c267d92f7761578deebe7ed4839f86237a1ae5a3",
-      "judgeIds": [],
-      "resumeState": "needs-judge",
+      "judgeIds": ["task_aae3b2b5"],
+      "resumeState": "accepted-joined",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
       "area": "live-native-audio",
       "primaryCommit": "c267d92f7761578deebe7ed4839f86237a1ae5a3",
@@ -14699,6 +14728,20 @@
         "Existing test cleanup was inspected only: rm targets local mkdtemp-owned directories, not inherited HOME/config/SDK. No fixture cleanup was executed. Parent test invocations must supply explicit argv/env and owned fresh retained HOME/config/SDK.",
         "changedPaths lists the complete source scope of this combined batch commit, including the credentials sibling for unchanged-focus decisions. No other source/helper paths changed.",
         "Wisdom and values were read but not edited; the parent owns aggregate wisdom. Runtime agent.model verification is parent-owned."
+      ],
+      "acceptedBlob": "d74bfcc059ab24149feda80784335bdd606ef1e6",
+      "result": "Read all three tests and the actual helper. The first test makes the fake provider recorder and runtime preparation rejection separately visible, then installs the real wrappers and drives preparation failure, four successful SSE calls, and a denied fifth dispatch. The six invocations/four dispatches/evidence assertions explain the boundary rather than merely checking counts: provider options prove preserved transport and forced maxRetries:0. The two readiness tests keep missing-auth short circuit with forbidden getAuth lookup separate from configured auth resolution and the exact 300000ms refresh margin. All fakes are test-local with no global mutation, so lack of restore in this local unit lifetime is not leaked ownership. Further extraction would force the reader to reconstruct where a call fails and what actually reached the provider. The unchanged decision is based on these journeys, not a green suite or ledger status.",
+      "systemReason": "installLiveDispatchBudget increments runtime invocations before original setup, forces retries off, and guards/records at the provider wrapper immediately before dispatch; restore explicitly owns both originals. assertLiveRuntimeReady checks configured auth before getAuth and requests the refresh margin. Read goals-live.test.ts preflight-before-install and drain/restore teardown, and goals-sdk.test.ts owned-auth setup rejection plus intercepted real-provider smoke and restore ownership. These callers explain why preparation errors must not spend the paid dispatch budget; the unit tests keep those layers visibly separate. Companion credential assertion consolidation has no dispatch/helper changes and was independently inspected.",
+      "checks": [
+        "Read exact candidate through git show and complete git diff from 50d8449df870b14a6ca79007f49906ffff87fd40; only candidate-changed path is tests/live-credentials.test.ts, inspected in full and against its base.",
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md. Read only the three assigned coverage ledger rows; all are pending/own_primary_pending and do not supply acceptance.",
+        "Filesystem/network effects reviewed statically; no setup, test, build, auth access, provider call, device access, dependency mutation, or cleanup executed.",
+        "Unchanged focus confirmed by exact base/candidate diff. Read complete helper and relevant smoke auth/install/restore sections, without executing paid or SDK tests. Exact focus blob pinned with git rev-parse."
+      ],
+      "limits": [
+        "Static actual-source review only; no passing-runtime claim. Runtime gates and runtime model verification remain parent-owned. Durable review worktree: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_aae3b2b5. Candidate evidence retained in Git; no /tmp code checkout or fixture created.",
+        "Tests contain rm of their own mkdtemp directories; inspected only, never executed. Paid goals-live caller can use inherited auth and refresh credentials; not run. Parent gates must supply owned HOME/config/SDK and explicit argv/env, and retain fixtures. Real Pi/device/auth behavior remains unverified.",
+        "Safety for ALL descendants: NO sudo, recovery investigation, user secrets, shell deletion/cleanup commands, inherited HOME/config/SDK cleanup, nested shell traps, destructive git, or user-data mutation. User already recovered data and requested no recovery work. Tests must use explicit process argv/env and owned fs.mkdtemp fixture HOME/config/SDK; retain them, do not delete. Review filesystem/network effects BEFORE tests/setup. Existing test-code cleanup of provably owned temporary paths may be inspected but NEVER run a shell trap or inherited HOME removal. Need live auth/device? Report unverified, don't access credentials. Propagate these constraints verbatim. Independent code/review agents get durable worktrees, not /tmp code checkouts. Keep existing worktrees and candidate evidence. Test/source fixtures may use /tmp, but document durable provenance. Parent verifies runtime agent.model openai-codex/gpt-6.1-sol; native normal leaves only, no delegation. Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md. Do NOT run setup, tests, builds: parent owns audited isolated gates. Shared dependencies are read-only; no reinstall or guard bypass. Preserve old worktrees/candidate edits. No push/new PR/merge, publication is parent-owned. No per-worker wisdom note pile; return exact artifact untracked, parent writes aggregate wisdom. Read only assigned focus/evidence rows in large coverage/area ledgers. Real structural reading, no rename churn/context bags/huge abstractions. Preserve existing security/assertions. Every focus including unchanged needs its own actual-source journey reasoning, never accept from counts/tests or batch summary."
       ]
     },
     {
@@ -23215,9 +23258,9 @@
     "baselineFiles": 766,
     "finalGate": "pending; incomplete focus coverage",
     "liveAuth": "unverified/failing; preserved",
-    "accepted": 793,
+    "accepted": 796,
     "total": 836,
-    "pending": 43,
+    "pending": 40,
     "sourceExtras": 70,
     "checkout": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
     "branch": "bruv/readability-pr45-sol-continuation",
