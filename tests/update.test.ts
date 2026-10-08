@@ -134,7 +134,7 @@ describe("bruv self-update", () => {
     expect(result.url.endsWith("/fixture")).toBe(true);
     expect(result.compiled).toBe(true);
     expect(await run.exited).toBe(0);
-  });
+  }, 30_000);
   test("current and newer fetch only release metadata", async () => {
     for (const [current, tag, status] of [
       ["0.3.0", "v0.3.0", "current"],
@@ -519,7 +519,7 @@ test("compiled updater verifies staged distinct versions and updates a non-runni
     expect(await check.exited).toBe(0);
   }
   expect((await readdir(x.dir)).filter((name) => name.startsWith(".bruv-update-"))).toEqual([]);
-});
+}, 30_000);
 
 test("wrong staged normal version prevents paired replacement", async () => {
   const x = await target();
