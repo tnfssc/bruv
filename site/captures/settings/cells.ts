@@ -1,4 +1,4 @@
-import data from "./assets/settings-cells.json";
+import data from "./settings-cells.json";
 export type Run = { text: string; style: string };
 const blank = { text: " ", style: "38;2;213;220;229;48;2;20;24;32" };
 function pack(cells: Run[], width: number): Run[] {

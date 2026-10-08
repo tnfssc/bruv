@@ -1,7 +1,7 @@
 import { resolve } from "node:path";
 import { createHash } from "node:crypto";
-import { launchBrowser } from "./browser";
-const root = resolve(import.meta.dir, "..");
+import { launchBrowser } from "../browser";
+const root = resolve(import.meta.dir, "../..");
 const terminalSize = { cols: 110, rows: 36 };
 const crop = { x: 0, y: 19, cols: 56, rows: 15 };
 const server = Bun.serve({
@@ -29,7 +29,7 @@ try {
     new URL(route.request().url()).origin === server.url.origin ? route.continue() : route.abort(),
   );
   await page.goto(server.url.href);
-  const text = await Bun.file(resolve(root, "assets/cli-settings.txt")).text();
+  const text = await Bun.file(resolve(root, "captures/settings/cli-settings.txt")).text();
   const rows = await page.evaluate(
     async ({ text, terminalSize, crop }) => {
       // @ts-ignore Browser module is served from the installed, pinned package.
@@ -83,7 +83,7 @@ try {
     cols: crop.cols,
     rows,
   };
-  await Bun.write(resolve(root, "assets/settings-cells.json"), JSON.stringify(data, null, 2) + "\n");
+  await Bun.write(resolve(root, "captures/settings/settings-cells.json"), JSON.stringify(data, null, 2) + "\n");
   console.log("Extracted", rows.length, "rows of faithful glyph/color/style runs from Ghostty.");
 } finally {
   await browser.close();

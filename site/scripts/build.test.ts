@@ -3,11 +3,8 @@ import { siteMetadata, textContent } from "./build";
 import { layout, hitAt, wrap } from "../layout";
 import { wordmark } from "../brand";
 import { siteContent, landing } from "../content";
-import { settingsCapture, type Run } from "../capture";
 import { demoIds, demoFrame, demoDuration, demoTranscript } from "../demos";
 import { advance, inView } from "../playback";
-import data from "../assets/settings-cells.json";
-import { createHash } from "node:crypto";
 describe("single terminal landing", () => {
   test("site copy uses lowercase bruv and no em dashes", async () => {
     const template = await Bun.file(new URL("../index.html", import.meta.url)).text();
@@ -71,13 +68,8 @@ describe("single terminal landing", () => {
       expect(a.hits.some((h) => h.action === "install")).toBe(true);
     }
   });
-  test("capture is actual glyph/style runs, not a reserved image rectangle", () => {
+  test("current landing content stays bounded around the terminal demo", () => {
     for (const width of [32, 40, 72, 110]) {
-      const c = settingsCapture(width);
-      expect(c.cols).toBeLessThanOrEqual(width);
-      expect(c.rows.flat().some((r) => r.text.trim())).toBe(true);
-      expect(c.rows.flat().every((r) => r.style.includes("38;2;"))).toBe(true);
-      for (const row of c.rows) expect(row.reduce((n, r) => n + [...r.text].length, 0)).toBe(c.cols);
       const f = layout(width + 6, 100, { scroll: 0, focus: -1 });
       expect(f.lines.join(" ")).not.toContain("Scripted demos");
       expect(f.hits.find((h) => h.action === "text")?.y).toBe(1);
@@ -136,14 +128,6 @@ describe("single terminal landing", () => {
     expect(inView(30, 23, 3, 32)).toBe(false);
     expect(inView(20, 23, 3, 32)).toBe(false);
     expect(inView(6, 23, 3, 32)).toBe(true);
-  });
-  test("narrow reflow retains every source glyph and its style", async () => {
-    const visible = (rows: Run[][]) =>
-      rows.flatMap((row) => row.flatMap((run) => [...run.text].filter((c) => c.trim()).map((c) => [c, run.style])));
-    for (const width of [29, 32, 37, 48, 56]) expect(visible(settingsCapture(width).rows)).toEqual(visible(data.rows));
-    const raw = await Bun.file(new URL("../assets/cli-settings.txt", import.meta.url)).text();
-    expect(createHash("sha256").update(raw).digest("hex")).toBe(data.sha256);
-    expect(raw).toContain("\x1b[");
   });
   test("semantic HTML is the same concise page, without gallery or route app", () => {
     const html = textContent();

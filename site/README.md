@@ -149,4 +149,4 @@ The installer pins one release, verifies the matched CLI/connector checksums and
 
 ## Handoff
 
-[Landing-page wisdom](../wisdom/landing-page/README.md) records decisions and checks. Old gallery, raster and multi-page screenshots are historical. The `assets` command replays an old settings capture; it is not part of the normal build or current animated demos.
+[Landing-page wisdom](../wisdom/landing-page/README.md) records decisions and checks. Old gallery, raster and multi-page screenshots are historical. The `assets` command regenerates historical data under `captures/settings/`; this is not part of the normal build or current animated demos. Historical capture inputs and fidelity tests live in `captures/settings/`.

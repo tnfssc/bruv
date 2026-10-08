@@ -5,8 +5,8 @@
   "scripts": {
     "build": "bun scripts/build/build.ts",
     "preview": "bun scripts/preview.ts",
-    "assets": "bun scripts/extract-cells.ts",
-    "test": "bun test scripts/build.test.ts scripts/scroll.test.ts demos.test.ts scripts/html-animation.test.ts scripts/startup.test.ts scripts/install.test.ts scripts/install-ui.test.ts && bun scripts/validate.ts",
+    "assets": "bun scripts/captures/extract-cells.ts",
+    "test": "bun test scripts/build.test.ts captures/settings/capture.test.ts scripts/scroll.test.ts demos.test.ts scripts/html-animation.test.ts scripts/startup.test.ts scripts/install.test.ts scripts/install-ui.test.ts && bun scripts/validate.ts",
     "test:scroll": "bun test scripts/scroll.test.ts && bun scripts/validate.ts",
     "test:animation": "bun scripts/animation.ts",
     "test:html": "bun test scripts/html-animation.test.ts",

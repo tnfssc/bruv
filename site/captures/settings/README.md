@@ -1,14 +1,14 @@
-# Current landing capture: terminal cells
+# Historical settings capture pipeline
 
-The single-page landing uses **settings-cells.json**, not the PNGs below. Regenerate from this directory's existing safe ANSI source with cd site && bun run assets (no CLI/model/network call). The extractor's browser permits only its loopback server.
+These retained files document a historical terminal-settings rendering experiment. The current landing does not use or ship this capture. The original safe ANSI source and derived cell data remain here so fidelity checks and regeneration are reproducible. From `site/`, run `bun run assets` (no CLI/model/network call); the extractor browser permits only its loopback server.
 
-scripts/extract-cells.ts replays the complete, unmodified cli-settings.txt bytes through pinned Ghostty Web 0.4.0/WASM at the original 110×36 dimensions. Cursor movement, erase and SGR are interpreted by the emulator, not stripped with a regex. It reads visible buffer cells via getLine/getCell and exports each glyph, resolved RGB foreground/background and supported style flags as grouped runs. The replay uses the original #141820/#d5dce5 capture theme; displayed capture colors are not recolored to Vesper.
+scripts/captures/extract-cells.ts replays the complete, unmodified cli-settings.txt bytes through pinned Ghostty Web 0.4.0/WASM at the original 110×36 dimensions. Cursor movement, erase and SGR are interpreted by the emulator, not stripped with a regex. It reads visible buffer cells via getLine/getCell and exports each glyph, resolved RGB foreground/background and supported style flags as grouped runs. The replay uses the original #141820/#d5dce5 capture theme; displayed capture colors are not recolored to Vesper.
 
 The JSON records the raw source SHA256, source dimensions and exact zero-based crop: x=0, y=19, width=56, height=15. It contains the ten visible menu options with their unchanged values, menu position (1/32), selected-option description and keyboard hint. Startup warnings, prompt/status bars and unused right-hand columns are excluded. This is a labelled **menu excerpt**, not a connected model session or a fabricated conversation.
 
-For narrower widths, capture.ts removes only menu padding, keeps each original value paired with its label, and word-wraps the original description/hint. Every non-space glyph keeps its original order and style; a unit test checks that invariant at 29/32/37/48/56 cells. The visible caption calls the narrow version reflowed. At 320px the current renderer gives a 29-column capture; at 390px it gives 37. It never shrinks wide capture text into an image.
+For narrower widths, captures/settings/cells.ts reflows only menu padding, keeps each original value paired with its label, and word-wraps the original description/hint. Every non-space glyph keeps its original order and style; a unit test checks that invariant at 29/32/37/48/56 cells. Those historical narrow-width checks are retained in captures/settings/capture.test.ts, independently of landing-page tests.
 
-Build bundles this cell data into the terminal JS. layout.ts composes it into the same ANSI grid as the headline, links and prose. There is no raster compositor or shipped PNG. Original PNGs and the older capture-real.ts script below remain historical source evidence only.
+This experiment once rendered the reflowed cells in the landing terminal. The current build does not import this renderer or cell data; the PNGs and capture-real.ts output below are retained as historical source evidence only.
 
 ---
 
@@ -45,10 +45,10 @@ Run from the repository root with installed dependencies available. Set BUN to t
       env -i HOME=/tmp/bruv-real-capture/home PATH=/usr/bin:/bin TERM=xterm-256color unshare --user --map-root-user --net /tmp/bruv-real-capture/bruv --version
       env -i HOME=/tmp/bruv-real-capture/home PATH=/usr/bin:/bin TERM=xterm-256color unshare --user --map-root-user --net /tmp/bruv-real-capture/bruv --help > /tmp/bruv-real-capture/help.txt
     )
-    cp /tmp/bruv-real-capture/help.txt site/assets/cli-help.txt
-    python3 site/scripts/capture-real-pty.py --binary=/tmp/bruv-real-capture/bruv --sandbox=/tmp/bruv-real-capture --output=site/assets/cli-settings.txt
+    cp /tmp/bruv-real-capture/help.txt site/captures/settings/cli-help.txt
+    python3 site/scripts/captures/capture-real-pty.py --binary=/tmp/bruv-real-capture/bruv --sandbox=/tmp/bruv-real-capture --output=site/captures/settings/cli-settings.txt
     # Set package directories and browser to existing local installations.
-    GHOSTTY_WEB_DIR="$GHOSTTY_WEB_DIR" PLAYWRIGHT_CORE_DIR="$PLAYWRIGHT_CORE_DIR" CHROMIUM_BIN="$CHROMIUM_BIN" "$BUN" site/scripts/capture-real.ts
+    GHOSTTY_WEB_DIR="$GHOSTTY_WEB_DIR" PLAYWRIGHT_CORE_DIR="$PLAYWRIGHT_CORE_DIR" CHROMIUM_BIN="$CHROMIUM_BIN" "$BUN" site/scripts/captures/capture-real.ts
 
 The settings acquisition used an equivalent temporary Python PTY probe, now retained as site/scripts/capture-real-pty.py: launch CLI, wait 3 seconds, send the literal local command /settings + Enter, capture until 7 seconds, terminate idle process. It replies only to terminal cursor-position queries with ESC[1;1R. No chat/prompt was submitted and no settings were changed.
 
@@ -77,4 +77,4 @@ Rendering serves only installed emulator files on loopback; browser requests to 
 
 ## Website integration
 
-The completed site now uses its own pinned ghostty-web and playwright-core packages; capture-real.ts defaults to these scoped installations. PNGs, transcripts and this provenance file are copied into the static site assets. The separate website build also bundles its Ghostty runtime/WASM and licenses. The rejected concept illustrations have been removed.
+The capture scripts use the site’s pinned ghostty-web and playwright-core packages. Their browser requests are restricted to loopback. This historical capture pipeline is separate from current landing demos.

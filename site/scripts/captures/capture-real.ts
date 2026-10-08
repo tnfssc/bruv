@@ -4,10 +4,10 @@
  */
 import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
-const ghosttyDir = process.env.GHOSTTY_WEB_DIR || resolve(import.meta.dir, "../node_modules/ghostty-web");
+const ghosttyDir = process.env.GHOSTTY_WEB_DIR || resolve(import.meta.dir, "../../node_modules/ghostty-web");
 const playwrightDir = process.env.PLAYWRIGHT_CORE_DIR || resolve(import.meta.dir, "../node_modules/playwright-core");
 const { chromium } = await import(pathToFileURL(resolve(playwrightDir, "index.mjs")).href);
-const assets = resolve(import.meta.dir, "../assets");
+const assets = resolve(import.meta.dir, "../../captures/settings");
 const captures = [
   { name: "cli-settings", cols: 110, rows: 36, crlf: false },
   { name: "cli-help", cols: 110, rows: 36, crlf: true },
