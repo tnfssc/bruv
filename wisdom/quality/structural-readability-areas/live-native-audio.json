@@ -3920,16 +3920,17 @@
       "initialBlob": "f677fece47f695dec08e9a37dc204d10205bb67d",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "9e7a020ce54ee934ca51bccdfd5f575d777d139a",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "9e7a020ce54ee934ca51bccdfd5f575d777d139a",
         "primaryId": "task_db399ada",
         "primaryCommit": "a279172aa6a4de06c9b3b71cb2f5482c3fa980fe",
-        "judgeIds": [],
+        "judgeIds": ["task_da2fc7e1"],
         "sourceCommit": "a279172aa6a4de06c9b3b71cb2f5482c3fa980fe",
-        "state": "needs-judge",
-        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+        "state": "accepted-joined",
+        "reason": "The previous three cases made the reader carry unrelated connection lifetimes through h/k/x/y and s/second/third/fourth. The candidate creates actual test boundaries, not merely new names: pending cancellation with late resolution has its callback suppression and one-close outcomes beside its own session; late rejection has its own pending connect/cancel/settle; SDK close/error with throwing terminal observers is separate from a throwing audio consumer; onReady reentrant close is separate from goAway expiry; connecting-state cancellation is separate from reentrant audio-send closure. Each now owns its harness and journey. No generic fixture abstraction hides connect/ready/await. The intentionally pending setupComplete test still visibly distinguishes message receipt from SDK acceptance. All original outcome assertions and security/order/wire checks remain in place."
       }
     },
     {
@@ -3937,7 +3938,7 @@
       "initialBlob": "79f3cd7334d0ea0ac781e03c385ccffa8ab0ce16",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "dfebe3a0f48e57f513209583119326744dff4afd",
       "integration": "related accepted patch integrated; own primary focus pending",
       "relatedPatchJudgment": {
         "judgeId": "task_660502a4",
@@ -3945,13 +3946,14 @@
         "blob": "dfebe3a0f48e57f513209583119326744dff4afd"
       },
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "dfebe3a0f48e57f513209583119326744dff4afd",
         "primaryId": "task_db399ada",
         "primaryCommit": "a279172aa6a4de06c9b3b71cb2f5482c3fa980fe",
-        "judgeIds": ["task_660502a4"],
+        "judgeIds": ["task_660502a4", "task_da2fc7e1"],
         "sourceCommit": "a279172aa6a4de06c9b3b71cb2f5482c3fa980fe",
-        "state": "needs-judge",
-        "reason": "Retain exact related-path actual-code acceptance; it is not completion of this file’s distinct primary/fresh focus-judge requirement."
+        "state": "accepted-joined",
+        "reason": "Read the entire focus. The first test puts the native startup operation list next to monotonic source-position assertions, stage coverage and positive/negative NSError sanitization checks. The second follows two explicit barriers: ready must be queued before polling resumes; shutdown must cancel polling, stop hardware and flush the core before finishStop synchronously drains capture and publishes played-zero then stopped. Separate source slices keep each contract local. Extracting a generic ordering/slicing harness would hide the operations the reader needs to compare. Keeping this compact test is justified by its own source journey, not by the session changes or an earlier judge."
       }
     },
     {
@@ -3959,16 +3961,17 @@
       "initialBlob": "ea963544724a2198f8a4650a55ad12a1cfb5e978",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "ea963544724a2198f8a4650a55ad12a1cfb5e978",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "ea963544724a2198f8a4650a55ad12a1cfb5e978",
         "primaryId": "task_db399ada",
         "primaryCommit": "a279172aa6a4de06c9b3b71cb2f5482c3fa980fe",
-        "judgeIds": [],
+        "judgeIds": ["task_da2fc7e1"],
         "sourceCommit": "a279172aa6a4de06c9b3b71cb2f5482c3fa980fe",
-        "state": "needs-judge",
-        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+        "state": "accepted-joined",
+        "reason": "Read the whole focus. The small fixture models credential status, explicit import transition, UI decisions and cancellation without resolving keys (loadKey throws). Configured choice outcomes, missing auth with unavailable import, import followed by Done, OAuth nonreplacement and sanitized import failure each place dialog/import/notice outcomes beside the action. The cancelled-inspection and late-choice case shares the same authorization question and uses two clearly named fixtures with direct method replacement at each await boundary; unlike the former multi-session lifetime bundle it does not require tracking competing sessions/SDK callbacks. Cancelled import separately proves no post-abort menu. Keeping explicit importAvailable callbacks makes availability distinct from credential state. No table/helper expansion is needed."
       }
     },
     {
@@ -4880,7 +4883,7 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 131,
-    "pending": 20
+    "accepted": 134,
+    "pending": 17
   }
 }

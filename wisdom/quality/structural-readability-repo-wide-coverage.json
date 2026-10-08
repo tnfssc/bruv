@@ -15960,11 +15960,11 @@
     {
       "file": "tests/live-session.test.ts",
       "initialBlob": "f677fece47f695dec08e9a37dc204d10205bb67d",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_db399ada",
       "sourceCommit": "a279172aa6a4de06c9b3b71cb2f5482c3fa980fe",
-      "judgeIds": [],
-      "resumeState": "needs-judge",
+      "judgeIds": ["task_da2fc7e1"],
+      "resumeState": "accepted-joined",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
       "area": "live-native-audio",
       "primaryCommit": "a279172aa6a4de06c9b3b71cb2f5482c3fa980fe",
@@ -15982,16 +15982,34 @@
         "Formatter alone ran with child_process argv and explicit owned HOME/config/cache/data/state/TMPDIR/SDK environment. Retained fixture: /tmp/pr45-live-session-format-D4FuuX; durable code provenance is this worktree and sourceCommit.",
         "Runtime agent.model verification remains parent-owned. No delegation, cleanup/deletion, dependency mutation, publication, or wisdom edits. Existing worktrees and candidate bytes were preserved.",
         "Initial evidence tool call accidentally emitted the full reconciliation JSON into truncated capture; all subsequent evidence inspection and decisions used only assigned rows."
+      ],
+      "acceptedBlob": "9e7a020ce54ee934ca51bccdfd5f575d777d139a",
+      "result": "The previous three cases made the reader carry unrelated connection lifetimes through h/k/x/y and s/second/third/fourth. The candidate creates actual test boundaries, not merely new names: pending cancellation with late resolution has its callback suppression and one-close outcomes beside its own session; late rejection has its own pending connect/cancel/settle; SDK close/error with throwing terminal observers is separate from a throwing audio consumer; onReady reentrant close is separate from goAway expiry; connecting-state cancellation is separate from reentrant audio-send closure. Each now owns its harness and journey. No generic fixture abstraction hides connect/ready/await. The intentionally pending setupComplete test still visibly distinguishes message receipt from SDK acceptance. All original outcome assertions and security/order/wire checks remain in place.",
+      "systemReason": "Read VoiceSession end to end and extension factory, Run.start, configureToolConversation, launchAudio and stop resource ownership. connect increments epoch before onState, checks epoch after reentrancy, races SDK acceptance against cancellation, closes late connections and consumes late rejections; only accepted same-epoch connections become ready. fail closes before sanitized error; state/error observers cannot escape, emit converts audio consumer failure to transport_error. close invalidates epoch before observers and SDK close. sendAudio rechecks readiness after manual activity and avoids restoring ended state after a reentrant close. receive processes interruption before same-packet audio, bounds PCM/transcripts and gives goAway a distinct terminal classification. The split cases correspond to these distinct authorities. The shipped caller awaits provider acceptance before opening devices and keeps job cancellation outside voice shutdown.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Inspected exact candidate using git show and full git diff from primaryBase 7ef6114d48429e11eda75a691ec1f4cfdf2337bd; sole changed path is tests/live-session.test.ts.",
+        "Read the complete candidate tests/live-session.test.ts, including unaffected readiness, interruption ordering, transcript/audio limits, context budget and push-to-talk wire assertions.",
+        "git diff --check primaryBase candidate returned exit 0; static whitespace check only.",
+        "Exact accepted blob identities obtained from git ls-tree, not checkout HEAD.",
+        "Full diff inspected: only scenario separation/local variable substitutions and case titles; no original assertions removed.",
+        "Filesystem/network effects reviewed statically: injected adapter prevents real SDK connect; tested small tool results use the non-filesystem branch of voiceToolResult; timer patch retains try/finally."
+      ],
+      "limits": [
+        "No setup, tests, builds, provider connections, credentials access or device access performed. Runtime gates and isolated argv/env plus owned fs.mkdtemp HOME/config/SDK fixtures are parent-owned; no fixtures were needed for this static review.",
+        "All review commands were read-only git/source inspection. Only this requested untracked artifact was written. No cleanup/deletion, dependency mutation, source edits, publication or delegation performed.",
+        "Durable review provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_da2fc7e1; exact candidate retained in Git. No temporary code checkout created.",
+        "Parent must verify runtime agent.model openai-codex/gpt-6.1-sol; this reviewer has no independent runtime model attestation."
       ]
     },
     {
       "file": "tests/live-setup-diagnostics.test.ts",
       "initialBlob": "79f3cd7334d0ea0ac781e03c385ccffa8ab0ce16",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_db399ada",
       "sourceCommit": "a279172aa6a4de06c9b3b71cb2f5482c3fa980fe",
-      "judgeIds": ["task_660502a4"],
-      "resumeState": "needs-judge",
+      "judgeIds": ["task_660502a4", "task_da2fc7e1"],
+      "resumeState": "accepted-joined",
       "pendingReason": "Retain exact related-path actual-code acceptance; it is not completion of this file’s distinct primary/fresh focus-judge requirement.",
       "area": "live-native-audio",
       "primaryCommit": "a279172aa6a4de06c9b3b71cb2f5482c3fa980fe",
@@ -16008,16 +16026,36 @@
         "Formatter alone ran with child_process argv and explicit owned HOME/config/cache/data/state/TMPDIR/SDK environment. Retained fixture: /tmp/pr45-live-session-format-D4FuuX; durable code provenance is this worktree and sourceCommit.",
         "Runtime agent.model verification remains parent-owned. No delegation, cleanup/deletion, dependency mutation, publication, or wisdom edits. Existing worktrees and candidate bytes were preserved.",
         "Initial evidence tool call accidentally emitted the full reconciliation JSON into truncated capture; all subsequent evidence inspection and decisions used only assigned rows."
+      ],
+      "acceptedBlob": "dfebe3a0f48e57f513209583119326744dff4afd",
+      "result": "Read the entire focus. The first test puts the native startup operation list next to monotonic source-position assertions, stage coverage and positive/negative NSError sanitization checks. The second follows two explicit barriers: ready must be queued before polling resumes; shutdown must cancel polling, stop hardware and flush the core before finishStop synchronously drains capture and publishes played-zero then stopped. Separate source slices keep each contract local. Extracting a generic ordering/slicing harness would hide the operations the reader needs to compare. Keeping this compact test is justified by its own source journey, not by the session changes or an earlier judge.",
+      "systemReason": "Read native LiveOutput.startPolling/cancelPolling/finishStop and Live.start/open/setupError/stop, plus audioDiagnostic, LiveAudio event handling/stop and extension audio callbacks. Voice processing precedes negotiated formats and graph connections; startup records a phase before each risky action and unwinds tap/observer/engine on failure. Serial output queue sync initializes polling state before ready, while stop cancels scheduling and tears hardware down before the final queue barrier. TypeScript allows played updates while stopping but only stopped acknowledges stop. Structured bounded allowlisted NSError detail reaches diagnostics; raw helper messages are discarded by extension callbacks. These are the exact source-level contracts the retained tests expose.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Inspected exact candidate using git show and full git diff from primaryBase 7ef6114d48429e11eda75a691ec1f4cfdf2337bd; sole changed path is tests/live-session.test.ts.",
+        "Read the complete candidate tests/live-session.test.ts, including unaffected readiness, interruption ordering, transcript/audio limits, context budget and push-to-talk wire assertions.",
+        "git diff --check primaryBase candidate returned exit 0; static whitespace check only.",
+        "Exact accepted blob identities obtained from git ls-tree, not checkout HEAD.",
+        "Read complete candidate diagnostics focus and its native/TypeScript callers.",
+        "git ls-tree confirms diagnostics blob is identical to primaryBase and b01dac0216dfa47d3b40e57f92c6021ea530e368. Identity is scope evidence, not the readability verdict.",
+        "Filesystem effects: this focus reads repository Swift source and calls a pure diagnostic formatter; no native helper execution performed."
+      ],
+      "limits": [
+        "No setup, tests, builds, provider connections, credentials access or device access performed. Runtime gates and isolated argv/env plus owned fs.mkdtemp HOME/config/SDK fixtures are parent-owned; no fixtures were needed for this static review.",
+        "All review commands were read-only git/source inspection. Only this requested untracked artifact was written. No cleanup/deletion, dependency mutation, source edits, publication or delegation performed.",
+        "Durable review provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_da2fc7e1; exact candidate retained in Git. No temporary code checkout created.",
+        "Parent must verify runtime agent.model openai-codex/gpt-6.1-sol; this reviewer has no independent runtime model attestation.",
+        "Source string ordering checks do not prove AVFoundation runtime sequencing, acoustic behavior or device quality; macOS runtime/self-test gates unverified."
       ]
     },
     {
       "file": "tests/live-setup.test.ts",
       "initialBlob": "ea963544724a2198f8a4650a55ad12a1cfb5e978",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_db399ada",
       "sourceCommit": "a279172aa6a4de06c9b3b71cb2f5482c3fa980fe",
-      "judgeIds": [],
-      "resumeState": "needs-judge",
+      "judgeIds": ["task_da2fc7e1"],
+      "resumeState": "accepted-joined",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
       "area": "live-native-audio",
       "primaryCommit": "a279172aa6a4de06c9b3b71cb2f5482c3fa980fe",
@@ -16034,6 +16072,25 @@
         "Formatter alone ran with child_process argv and explicit owned HOME/config/cache/data/state/TMPDIR/SDK environment. Retained fixture: /tmp/pr45-live-session-format-D4FuuX; durable code provenance is this worktree and sourceCommit.",
         "Runtime agent.model verification remains parent-owned. No delegation, cleanup/deletion, dependency mutation, publication, or wisdom edits. Existing worktrees and candidate bytes were preserved.",
         "Initial evidence tool call accidentally emitted the full reconciliation JSON into truncated capture; all subsequent evidence inspection and decisions used only assigned rows."
+      ],
+      "acceptedBlob": "ea963544724a2198f8a4650a55ad12a1cfb5e978",
+      "result": "Read the whole focus. The small fixture models credential status, explicit import transition, UI decisions and cancellation without resolving keys (loadKey throws). Configured choice outcomes, missing auth with unavailable import, import followed by Done, OAuth nonreplacement and sanitized import failure each place dialog/import/notice outcomes beside the action. The cancelled-inspection and late-choice case shares the same authorization question and uses two clearly named fixtures with direct method replacement at each await boundary; unlike the former multi-session lifetime bundle it does not require tracking competing sessions/SDK callbacks. Cancelled import separately proves no post-abort menu. Keeping explicit importAvailable callbacks makes availability distinct from credential state. No table/helper expansion is needed.",
+      "systemReason": "Read runLiveSetup in full, credential service status/loadKey/importLiveEnv and both extension setup callers. Setup only inspects state and returns an explicit start boolean, checking abort after awaited status and UI choice; imports are opt-in, errors sanitized and loop continuation abort-gated. Credentials separate nonsecret status from loadKey and import uses a guarded conditional modify so existing provider credentials are not replaced. Provider configuration passes allowStart=false. The start/setup caller verifies controller, sequence and session/leaf identity after setup and before loading a key or creating a Run. This readable authority split is already reflected by the fixture’s key-resolution prohibition and cancellation assertions.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Inspected exact candidate using git show and full git diff from primaryBase 7ef6114d48429e11eda75a691ec1f4cfdf2337bd; sole changed path is tests/live-session.test.ts.",
+        "Read the complete candidate tests/live-session.test.ts, including unaffected readiness, interruption ordering, transcript/audio limits, context budget and push-to-talk wire assertions.",
+        "git diff --check primaryBase candidate returned exit 0; static whitespace check only.",
+        "Exact accepted blob identities obtained from git ls-tree, not checkout HEAD.",
+        "Read complete candidate setup focus and configuration/start callers.",
+        "git ls-tree confirms setup focus is unchanged from primaryBase.",
+        "Filesystem/network effects reviewed statically: fixture credential methods are in-memory; import availability is injected on missing/OAuth/import paths. Default credential implementation can read live.env and conditionally mutate canonical auth only when called; it was not executed."
+      ],
+      "limits": [
+        "No setup, tests, builds, provider connections, credentials access or device access performed. Runtime gates and isolated argv/env plus owned fs.mkdtemp HOME/config/SDK fixtures are parent-owned; no fixtures were needed for this static review.",
+        "All review commands were read-only git/source inspection. Only this requested untracked artifact was written. No cleanup/deletion, dependency mutation, source edits, publication or delegation performed.",
+        "Durable review provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_da2fc7e1; exact candidate retained in Git. No temporary code checkout created.",
+        "Parent must verify runtime agent.model openai-codex/gpt-6.1-sol; this reviewer has no independent runtime model attestation."
       ]
     },
     {
@@ -24036,9 +24093,9 @@
     "baselineFiles": 766,
     "finalGate": "pending; incomplete focus coverage",
     "liveAuth": "unverified/failing; preserved",
-    "accepted": 816,
+    "accepted": 819,
     "total": 836,
-    "pending": 20,
+    "pending": 17,
     "sourceExtras": 70,
     "checkout": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
     "branch": "bruv/readability-pr45-sol-continuation",
