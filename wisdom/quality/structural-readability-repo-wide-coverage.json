@@ -2035,12 +2035,14 @@
     {
       "file": "scripts/loopback-parent-fixture.ts",
       "initialBlob": "02e74db59339686bf3be7bab19c4cbf3f934808d",
-      "status": "pending",
+      "status": "accepted",
       "area": "remote",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_3af9f8fa",
       "primaryCommit": "7075ead9e0cc3f5611aeb0337dc4ade36bb532ae",
-      "judgeIds": [],
+      "judgeIds": [
+        "task_2c94381e"
+      ],
       "sourceCommit": "7075ead9e0cc3f5611aeb0337dc4ade36bb532ae",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
       "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
@@ -2082,6 +2084,21 @@
         "Runtime and typecheck evidence pending parent-owned audited isolated batch gates; this is a primary candidate, not independent readability acceptance.",
         "Existing parser error handling still labels callback failures as invalid RPC JSON; preserved rather than introducing an incidental behavior change.",
         "Wisdom and values unchanged; parent owns aggregate wisdom."
+      ],
+      "acceptedBlob": "114f0e3a35d30037c0aae2bbed3d4d2544151529",
+      "result": "Intrinsic: fixtureRpc reads in execution order: spawn the fixture RPC child, register it with the caller, observe stderr, record decoded events and deny every confirm request, then expose prompt submission and polling diagnostics. The private readRpcEvents operation separately owns the stdout buffer, extraction of complete nonempty newline-delimited records, synchronous JSON delivery and the existing parse/callback error boundary. Before this change the reader had to descend through buffer slicing and JSON framing to discover event recording and confirmation denial. The candidate removes that concrete transport/policy nesting without a context bag, exported framework or name-only cleanup. The helper has one real responsibility and its buffer lifetime is local to one stdout subscription. Unchanged decision: loopbackParent is already a coherent local provider operation (route validation, placement response, SSE formatting, fixture model registration and return of the provider); NO CHANGE NEEDED for that operation or the existing exported API.",
+      "systemReason": "Compared the exact primary base 5c3598debf99126b985f46d926d9e39129eb2a4e with the candidate, whose sole parent is that base. The only changed source path is the focus. In remote-e2e.ts, remote-pty-e2e.ts and remote-capability-pty-e2e.ts, callers still create the provider, pass their child collection and diagnostic callback, send prompts, observe event/state predicates and explicitly kill children and stop the provider. noSession remains caller-selected for diagnostic PTY RPCs. remote-e2e also consumes the returned events for tool completion and offline history and uses the provider call counter; neither journey changes. The framing helper invokes the policy synchronously inside the same try/catch, so event order, record-before-denial, unconditional false confirmation, malformed-line failure and callback-error classification are preserved. Partial lines stay buffered and blank lines remain ignored. Child environment, CLI arguments, polling interval, exit/timeout diagnostics, provider response selection and fixture-only model config are unchanged. No lifecycle ownership migrates to the helper. The unchanged provider delegates response decisions to placementReply, which still emits acknowledgement or fixture execute tool calls. The test source exercises partial delivery, denial, prompts, timeout/stderr and malformed JSON; these assertions support the traced contract but are not the basis of the readability verdict.",
+      "checks": [
+        "Read wisdom/values.md and structural-readability-guidance.md; consulted the repo-wide ledger and focus coverage row plus remote area Markdown/JSON ledger. The existing focus row was pending, not treated as prior acceptance.",
+        "Read exact candidate fixture, primary-base fixture/diff, full changed-path inventory and commit ancestry using Git objects, not checkout HEAD.",
+        "Read actual candidate callers at launch, event/diagnostic consumption and shutdown boundaries; read fixture test assertions and placementReply source without executing them.",
+        "Verified candidate focus blob 114f0e3a35d30037c0aae2bbed3d4d2544151529. No additional changed source paths exist."
+      ],
+      "limits": [
+        "Static independent source judgment only. No setup, tests, builds, runtime provider/SSH/device/auth checks or model self-introspection were run. Parent owns isolated batch gates and runtime model verification.",
+        "Existing behavior catches callback failures as Invalid RPC JSON, does not flush an unterminated final line, and retains caller-owned child/provider shutdown; this extraction neither improves nor worsens those contracts.",
+        "fixtureRpc still inherits process.env apart from HOME and BRUV_CODING_AGENT_DIR overrides; no new isolation or real-credential safety claim is made.",
+        "No source or wisdom edits, delegation, push, PR creation/merge, cleanup or recovery. Only this untracked judgment artifact was written."
       ]
     },
     {
