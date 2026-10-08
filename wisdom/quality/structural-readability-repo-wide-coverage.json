@@ -16323,45 +16323,113 @@
       "file": "tests/live-startup-speech-probe.test.ts",
       "initialBlob": "15ef014e3e3b6b833200984a23610f2609af1a30",
       "status": "pending",
-      "primaryId": null,
-      "sourceCommit": null,
+      "primaryId": "task_ec1706fd",
+      "sourceCommit": "27cf9c133dbc943e4aac92286ddfb9a32ca90b5f",
       "judgeIds": [],
-      "resumeState": "own_primary_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "27cf9c133dbc943e4aac92286ddfb9a32ca90b5f",
+      "primaryBase": "b3b3fdb0c8d775cf3d495585725fcbe635f2eb59",
+      "primaryResult": "Keep exact existing focus blob. Followed deliverStartupSpeech into StartupAudioQueue and VoiceSession.connect/sendAudio/endAudio/close, then the explicit probe caller. The deferred release visibly proves no audio before readiness, complete two-chunk PCM and mode-specific buffering/pacing; the finish test distinguishes silence-only from pause/flush; the inline adapter exposes preserved configuration and exact activityStart/audio/activityEnd ordering for manual versus automatic mode. Extracting the local fixture would hide those causal transitions without clarifying ownership. No timing/assertion/security edits.",
+      "primaryPaths": ["tests/live-status.test.ts"],
+      "primaryChecks": [
+        "Read whole assigned test file and relevant implementation/call-site journeys; reviewed only assigned reconciliation rows after initially overbroad ledger output (no unrelated decisions made).",
+        "git diff HEAD^ HEAD --check: passed; commit source scope is only tests/live-status.test.ts.",
+        "Repository Biome format --write tests/live-status.test.ts via child_process argv and fresh explicit isolated env: exit 0, no fixes applied; exact restored candidate blob 21bfe18b88d0e9e78327414ac63d6fabe2cb51ac. Retained formatter fixture /tmp/pr45-live-focus-format-24N5M5/provenance.json points to durable worktree and candidate commit."
+      ],
+      "primaryLimits": [
+        "No tests, setup, builds, installation, device/provider/network calls, credentials, recovery, deletion, delegation, push, PR, or merge. Independent judgments and audited runtime gates belong to parent.",
+        "Formatter only wrote listed source path and used read-only shared executable/dependencies. Temporary HOME/config/cache/SDK/TMPDIR retained. Test filesystem/network execution effects were not fully audited because no tests were launched. Study test source binds an ephemeral loopback server; startup test source uses fake adapters and PCM, not live authentication.",
+        "Related ACCEPT is historical evidence, not this focus's independent verdict. All three own-focus decisions require fresh parent-owned review.",
+        "changedPaths records the complete batch source scope in every decision; no-change means that individual focus remains byte-identical.",
+        "Git commit used per-command core.hooksPath=/dev/null to avoid implicit test/setup/build hooks; no dependency or setup guards were modified.",
+        "Values and wisdom unchanged: parent owns aggregate wisdom; no per-worker notes. Runtime agent.model verification remains parent-owned."
+      ]
     },
     {
       "file": "tests/live-status.test.ts",
       "initialBlob": "db179896d78a7b812017a91ec843399a8a7e70b5",
       "status": "pending",
-      "primaryId": null,
-      "sourceCommit": "931224a0e92a33af036ba65404559b958ff1574a",
+      "primaryId": "task_ec1706fd",
+      "sourceCommit": "27cf9c133dbc943e4aac92286ddfb9a32ca90b5f",
       "judgeIds": ["task_5f68217e"],
-      "resumeState": "related_actual_code_accepted_own_primary_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Retain exact related-path actual-code acceptance; it is not completion of this file’s distinct primary/fresh focus-judge requirement.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "27cf9c133dbc943e4aac92286ddfb9a32ca90b5f",
+      "primaryBase": "b3b3fdb0c8d775cf3d495585725fcbe635f2eb59",
+      "primaryResult": "Restored ONLY tests/live-status.test.ts via git show 931224a0e92a33af036ba65404559b958ff1574a:tests/live-status.test.ts. It is exactly historical accepted blob 21bfe18b88d0e9e78327414ac63d6fabe2cb51ac after formatter. Eligibility assertions remain intact. A single immutable idle presentation fixture supports named examples in priority order: connecting beats all activity; continuous mode reports playback independent of push-to-talk controls/reasoning; held input beats availability/output; unavailable input beats output; available input reports speaking before thinking before idle. Read status.ts and extension local/render caller to verify these are presentation facts, not a second lifecycle owner. No old branch merge or implementation changes.",
+      "primaryPaths": ["tests/live-status.test.ts"],
+      "primaryChecks": [
+        "Read whole assigned test file and relevant implementation/call-site journeys; reviewed only assigned reconciliation rows after initially overbroad ledger output (no unrelated decisions made).",
+        "git diff HEAD^ HEAD --check: passed; commit source scope is only tests/live-status.test.ts.",
+        "Repository Biome format --write tests/live-status.test.ts via child_process argv and fresh explicit isolated env: exit 0, no fixes applied; exact restored candidate blob 21bfe18b88d0e9e78327414ac63d6fabe2cb51ac. Retained formatter fixture /tmp/pr45-live-focus-format-24N5M5/provenance.json points to durable worktree and candidate commit."
+      ],
+      "primaryLimits": [
+        "No tests, setup, builds, installation, device/provider/network calls, credentials, recovery, deletion, delegation, push, PR, or merge. Independent judgments and audited runtime gates belong to parent.",
+        "Formatter only wrote listed source path and used read-only shared executable/dependencies. Temporary HOME/config/cache/SDK/TMPDIR retained. Test filesystem/network execution effects were not fully audited because no tests were launched. Study test source binds an ephemeral loopback server; startup test source uses fake adapters and PCM, not live authentication.",
+        "Related ACCEPT is historical evidence, not this focus's independent verdict. All three own-focus decisions require fresh parent-owned review.",
+        "changedPaths records the complete batch source scope in every decision; no-change means that individual focus remains byte-identical.",
+        "Git commit used per-command core.hooksPath=/dev/null to avoid implicit test/setup/build hooks; no dependency or setup guards were modified.",
+        "Values and wisdom unchanged: parent owns aggregate wisdom; no per-worker notes. Runtime agent.model verification remains parent-owned."
+      ]
     },
     {
       "file": "tests/live-study-trial.test.ts",
       "initialBlob": "0232e36634ac9ff67128d632bb1a8585344c0acc",
       "status": "pending",
-      "primaryId": null,
-      "sourceCommit": null,
+      "primaryId": "task_ec1706fd",
+      "sourceCommit": "27cf9c133dbc943e4aac92286ddfb9a32ca90b5f",
       "judgeIds": [],
-      "resumeState": "own_primary_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "27cf9c133dbc943e4aac92286ddfb9a32ca90b5f",
+      "primaryBase": "b3b3fdb0c8d775cf3d495585725fcbe635f2eb59",
+      "primaryResult": "Keep exact existing focus blob. Followed loopback server/listening -> connection recording -> setup response -> synthetic transcripts/function calls/response.done -> studyTrial result -> client disconnection -> fixture finally termination/server.close. Read studyTrial readiness/item ordering, ignored malformed JSON, synthetic output generation, three-response cap, speech truncation, error/deadline/close end handling and paid-study call sites. Assertions explicitly cover ordered assistant/user items, three continuation responses/call IDs, malformed second call interception, bounded speech and per-mode terminal errors. Moving server behavior away from this fixture or splitting the three terminal modes would scatter the protocol/lifetime that is already visible; no real structural improvement justified.",
+      "primaryPaths": ["tests/live-status.test.ts"],
+      "primaryChecks": [
+        "Read whole assigned test file and relevant implementation/call-site journeys; reviewed only assigned reconciliation rows after initially overbroad ledger output (no unrelated decisions made).",
+        "git diff HEAD^ HEAD --check: passed; commit source scope is only tests/live-status.test.ts.",
+        "Repository Biome format --write tests/live-status.test.ts via child_process argv and fresh explicit isolated env: exit 0, no fixes applied; exact restored candidate blob 21bfe18b88d0e9e78327414ac63d6fabe2cb51ac. Retained formatter fixture /tmp/pr45-live-focus-format-24N5M5/provenance.json points to durable worktree and candidate commit."
+      ],
+      "primaryLimits": [
+        "No tests, setup, builds, installation, device/provider/network calls, credentials, recovery, deletion, delegation, push, PR, or merge. Independent judgments and audited runtime gates belong to parent.",
+        "Formatter only wrote listed source path and used read-only shared executable/dependencies. Temporary HOME/config/cache/SDK/TMPDIR retained. Test filesystem/network execution effects were not fully audited because no tests were launched. Study test source binds an ephemeral loopback server; startup test source uses fake adapters and PCM, not live authentication.",
+        "Related ACCEPT is historical evidence, not this focus's independent verdict. All three own-focus decisions require fresh parent-owned review.",
+        "changedPaths records the complete batch source scope in every decision; no-change means that individual focus remains byte-identical.",
+        "Git commit used per-command core.hooksPath=/dev/null to avoid implicit test/setup/build hooks; no dependency or setup guards were modified.",
+        "Values and wisdom unchanged: parent owns aggregate wisdom; no per-worker notes. Runtime agent.model verification remains parent-owned."
+      ]
     },
     {
       "file": "tests/live-tool-result.test.ts",
       "initialBlob": "6d87f59d24f16d498e320e60d32836f635dfc0f0",
       "status": "pending",
-      "primaryId": null,
-      "sourceCommit": "193fef1e293af8e3f5283bce38a1f5b1f02f8a49",
+      "primaryId": "task_a1f1faff",
+      "sourceCommit": "05093422350fcad87478cf2dd0f22f51047bdae0",
       "judgeIds": ["task_7324a1fb"],
-      "resumeState": "related_actual_code_accepted_own_primary_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Retain exact related-path actual-code acceptance; it is not completion of this file’s distinct primary/fresh focus-judge requirement.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "05093422350fcad87478cf2dd0f22f51047bdae0",
+      "primaryBase": "b3b3fdb0c8d775cf3d495585725fcbe635f2eb59",
+      "primaryResult": "Imported only this test file with git show from 193fef1e293af8e3f5283bce38a1f5b1f02f8a49 (no branch merge). Retained every candidate assertion, including full artifact readback, session path containment, 0700 directory/0600 file modes, exact envelope-inclusive 64 KiB eligibility, UTF-8 bytes versus character previews, and explicit serialization/storage errors. Each artifact-writing scenario now visibly allocates its own mkdtemp directory and passes it to voiceToolResult; no cleanup removes evidence. The setup -> map -> inspect evidence journey is linear in each case without a shared fixture/context abstraction. Inline/null/cyclic cases remain allocation-free. Read both Gemini and OpenAI callers: they pass orchestration.artifactDirectory and own pairing/cancellation outside the mapper; no production changes needed.",
+      "primaryPaths": ["tests/live-tool-result.test.ts"],
+      "primaryChecks": [
+        "Read whole focus and its own assigned reconciliation row; inspected relevant owner/caller code without running it.",
+        "Repository Biome format --write ran only on tests/live-tool-result.test.ts via child_process argv and an allowlisted fresh isolated environment; exit 0: Formatted 1 file in 17ms. No fixes applied.",
+        "git diff --check passed before commit; Git hooks inspected: only inactive .sample hooks, no configured core.hooksPath. Source-only commit scope inspected.",
+        "Static comparison confirmed all exact candidate expect(...) entrypoint lines retained; multiline expected payloads reviewed directly. No test execution."
+      ],
+      "primaryLimits": [
+        "No tests, setup, builds, devices, provider access, credentials, recovery, cleanup, delegation, push, PR, or merge were performed. Parent owns audited isolated gates and fresh independent judgments.",
+        "Runtime agent.model verification remains parent-owned; this worker did not read runtime/credential configuration.",
+        "Formatter fixture HOME/config/cache/data/TMPDIR/SDK directories are retained at /tmp/pr45-live-test-format-xNiy3i; their provenance is recorded here in this durable worktree. Test artifact directories are allocated only when parent runs tests and are intentionally retained.",
+        "Historical related ACCEPT is preserved evidence, not a new own-focus judge verdict. No per-worker wisdom edits; parent owns aggregate wisdom.",
+        "changedPaths in each decision is the complete shared batch source scope; an unchanged focus is explicitly marked no-change."
+      ]
     },
     {
       "file": "tests/live-tools.test.ts",
@@ -16380,23 +16448,58 @@
       "file": "tests/live-transcript.test.ts",
       "initialBlob": "88ce880be802e5949175dcc8c634f892ccb9f894",
       "status": "pending",
-      "primaryId": null,
-      "sourceCommit": null,
+      "primaryId": "task_a1f1faff",
+      "sourceCommit": "05093422350fcad87478cf2dd0f22f51047bdae0",
       "judgeIds": [],
-      "resumeState": "own_primary_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "05093422350fcad87478cf2dd0f22f51047bdae0",
+      "primaryBase": "b3b3fdb0c8d775cf3d495585725fcbe635f2eb59",
+      "primaryResult": "Unchanged after whole-file reading and tracing TranscriptLog.receive -> append/flush -> save/recent -> view. The interleaved case explicitly checks the first speaker closes partial; bounded-chunk and exact-full-final cases expose capacity versus finality; the last case compares pre/post finish frames directly. The model-contract case keeps final, turn-boundary and interrupted statuses visible rather than implying speech was heard. Production extension uses groupTurns:true/draftView with delta and replacement event routing; tests/live-conversation.test.ts separately demonstrates that mode. This focus deliberately checks the default chunked persistence/view contract, not physical hearing or production renderer proof. Extraction, grouping, or renaming would move a short causal sequence away from its assertions, not improve structural reading. Assigned row has no candidate/rejection history.",
+      "primaryPaths": ["tests/live-tool-result.test.ts"],
+      "primaryChecks": [
+        "Read whole focus and its own assigned reconciliation row; inspected relevant owner/caller code without running it.",
+        "Repository Biome format --write ran only on tests/live-tool-result.test.ts via child_process argv and an allowlisted fresh isolated environment; exit 0: Formatted 1 file in 17ms. No fixes applied.",
+        "git diff --check passed before commit; Git hooks inspected: only inactive .sample hooks, no configured core.hooksPath. Source-only commit scope inspected.",
+        "Focus content remains exact baseline blob 88ce880be802e5949175dcc8c634f892ccb9f894; this focus was not formatted."
+      ],
+      "primaryLimits": [
+        "No tests, setup, builds, devices, provider access, credentials, recovery, cleanup, delegation, push, PR, or merge were performed. Parent owns audited isolated gates and fresh independent judgments.",
+        "Runtime agent.model verification remains parent-owned; this worker did not read runtime/credential configuration.",
+        "Formatter fixture HOME/config/cache/data/TMPDIR/SDK directories are retained at /tmp/pr45-live-test-format-xNiy3i; their provenance is recorded here in this durable worktree. Test artifact directories are allocated only when parent runs tests and are intentionally retained.",
+        "Historical related ACCEPT is preserved evidence, not a new own-focus judge verdict. No per-worker wisdom edits; parent owns aggregate wisdom.",
+        "changedPaths in each decision is the complete shared batch source scope; an unchanged focus is explicitly marked no-change."
+      ]
     },
     {
       "file": "tests/live-tui-startup.test.ts",
       "initialBlob": "385cb7985f917b03dd2e21ee12d4ce3904ca8f84",
       "status": "pending",
-      "primaryId": null,
-      "sourceCommit": null,
+      "primaryId": "task_a1f1faff",
+      "sourceCommit": "05093422350fcad87478cf2dd0f22f51047bdae0",
       "judgeIds": [],
-      "resumeState": "own_primary_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "05093422350fcad87478cf2dd0f22f51047bdae0",
+      "primaryBase": "b3b3fdb0c8d775cf3d495585725fcbe635f2eb59",
+      "primaryResult": "Unchanged. Each case places the frame function, sendKey recorder and expected key sequence together. The first asserts no trust keys on a clean ready screen; the second requires Down, Down, Enter before the target fixture appears, matching helper session-only trust handling (never permanent approval). Read actual picker/GPT startup callers: they supply terminal capture and tmux key dispatch to this helper before scenario assertions, whereas this unit focus is entirely in-memory and spawns nothing. Factoring these two small cases into a fixture would obscure the precise transition the test demonstrates. Assigned row has no candidate/rejection history.",
+      "primaryPaths": ["tests/live-tool-result.test.ts"],
+      "primaryChecks": [
+        "Read whole focus and its own assigned reconciliation row; inspected relevant owner/caller code without running it.",
+        "Repository Biome format --write ran only on tests/live-tool-result.test.ts via child_process argv and an allowlisted fresh isolated environment; exit 0: Formatted 1 file in 17ms. No fixes applied.",
+        "git diff --check passed before commit; Git hooks inspected: only inactive .sample hooks, no configured core.hooksPath. Source-only commit scope inspected.",
+        "Focus content remains exact baseline blob 385cb7985f917b03dd2e21ee12d4ce3904ca8f84; this focus was not formatted.",
+        "Read-only effects preflight: focused startup cases record keys in local arrays; helper only polls frames/sends supplied keys/sleeps. No terminal, provider or credentials accessed. Integration callers were inspected, never executed."
+      ],
+      "primaryLimits": [
+        "No tests, setup, builds, devices, provider access, credentials, recovery, cleanup, delegation, push, PR, or merge were performed. Parent owns audited isolated gates and fresh independent judgments.",
+        "Runtime agent.model verification remains parent-owned; this worker did not read runtime/credential configuration.",
+        "Formatter fixture HOME/config/cache/data/TMPDIR/SDK directories are retained at /tmp/pr45-live-test-format-xNiy3i; their provenance is recorded here in this durable worktree. Test artifact directories are allocated only when parent runs tests and are intentionally retained.",
+        "Historical related ACCEPT is preserved evidence, not a new own-focus judge verdict. No per-worker wisdom edits; parent owns aggregate wisdom.",
+        "changedPaths in each decision is the complete shared batch source scope; an unchanged focus is explicitly marked no-change."
+      ]
     },
     {
       "file": "tests/live-tui-startup.ts",
@@ -17066,12 +17169,46 @@
       "file": "tests/openai-session-schema.test.ts",
       "initialBlob": "f0285954c2a47aaa013df69828c262153238915e",
       "status": "pending",
-      "primaryId": null,
-      "sourceCommit": null,
+      "primaryId": "task_07aca624",
+      "sourceCommit": "a56e789205cc3e6e43dbed47e3c0f7e067484500",
       "judgeIds": [],
-      "resumeState": "own_primary_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "a56e789205cc3e6e43dbed47e3c0f7e067484500",
+      "primaryBase": "87e39dcde71297c095f1ad1136637a4edc68e239",
+      "primaryResult": "Kept each rejection mutation and its optional expected diagnostic field in one case record. The shared loop now asserts the case-owned field rather than dispatching on display titles. All eight mutations and test titles are unchanged; the two exact field assertions, common closed/not-ready/connect_failed assertions, provider code/type assertions, and private-message non-disclosure assertion are preserved. Left the strict independent schema, queued fake-server responses, real OpenAI setup path, both-model success checks, setup-probe tool mapping, and explicit session teardown unchanged. Traced OpenAIRealtimeSession.connect through setup send, session.updated readiness, provider error formatting and fail/close; setupProbeOrchestration injects the real execute tool without agent work. No helper or production source was changed.",
+      "primaryPaths": ["tests/openai-session-schema.test.ts"],
+      "primaryChecks": [
+        {
+          "kind": "actual-source-review",
+          "result": "Reviewed whole focus and relevant setup, diagnostic sanitization and failure/close callers; no tests/setup/builds run."
+        },
+        {
+          "kind": "formatter",
+          "fixture": "/tmp/pr45-openai-schema-format-fEVEBg",
+          "command": "/home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/@biomejs/biome/bin/biome",
+          "argv": ["format", "--write", "tests/openai-session-schema.test.ts"],
+          "status": 0,
+          "stdout": "Formatted 1 file in 5ms. No fixes applied.\n",
+          "stderr": "",
+          "result": "Exit 0: Formatted 1 file; no further fixes. Explicit child_process argv; fresh owned HOME/config/TMPDIR retained."
+        },
+        {
+          "kind": "git-diff-check",
+          "result": "Exit 0 before commit."
+        },
+        {
+          "kind": "manual-diff-review",
+          "result": "Only the rejection case representation and field-expectation dispatch changed; source-only commit contains exactly the focus path."
+        }
+      ],
+      "primaryLimits": [
+        "Parent owns audited isolated tests/build gates and fresh independent readability judgment; runtime behavior and TypeScript gate not executed here.",
+        "No live authentication/device access, provider calls or credentials inspected; live behavior unverified.",
+        "Formatting fixture /tmp/pr45-openai-schema-format-fEVEBg is retained; source provenance is this durable worktree and exact sourceCommit.",
+        "No delegation, setup, dependency mutation, publication, recovery investigation, or wisdom edits. Parent owns aggregate wisdom."
+      ]
     },
     {
       "file": "tests/openai-session.test.ts",
