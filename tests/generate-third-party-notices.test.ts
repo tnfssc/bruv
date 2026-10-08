@@ -128,19 +128,19 @@ describe("third-party notice collection and rendering", () => {
 
   test("uses curated notices and only the explicitly pinned Pi upstream fallback", async () => {
     await writePackage(root, {
-      dependencies: { "proxy-agent-negotiate": "1.0.0", "@earendil-works/pi-ai": "1.0.3" },
+      dependencies: { "proxy-agent-negotiate": "1.0.0", "@earendil-works/pi-ai": "1.1.0" },
     });
     await writePackage(join(root, "node_modules/proxy-agent-negotiate"), { name: "proxy-agent-negotiate" });
     await writePackage(join(root, "node_modules/@earendil-works/pi-ai"), {
       name: "@earendil-works/pi-ai",
-      version: "1.0.3",
+      version: "1.1.0",
     });
     await Bun.write(join(root, "third_party/npm/proxy-agent-negotiate.LICENSE"), "curated proxy license\n");
     expect(await generateThirdPartyNotices(root, output)).toBe(2);
     const content = await Bun.file(output).text();
     expect(content).toContain("--- curated proxy-agent-negotiate.LICENSE ---\ncurated proxy license\n");
     expect(content).toContain(
-      "This pinned @earendil-works/pi-ai@1.0.3 package is covered by the Pi upstream license reproduced below.",
+      "This pinned @earendil-works/pi-ai@1.1.0 package is covered by the Pi upstream license reproduced below.",
     );
     expect(content).toContain("PI UPSTREAM LICENSE (applies only to pinned Pi packages identified above)");
     expect(content).toContain("Pi license");
