@@ -1809,6 +1809,15 @@
         "branch": "bruv/pr45-primary-3-execution-tasks-questions-f991354d",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
+      },
+      {
+        "id": "task_d65db709",
+        "stage": "primary",
+        "focus": ["tests/task-monitor.test.ts", "tests/task-title.test.ts", "tests/tool-schema.test.ts"],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_d65db709",
+        "branch": "bruv/pr45-primary-3-execution-tasks-questions-d65db709",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
       }
     ]
   },
