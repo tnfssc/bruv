@@ -11,10 +11,9 @@ import { createPromptPreview } from "../src/prompt-preview";
 
 if (process.env.BRUV_CAPABILITY_PROBE !== "1") throw Error("Set BRUV_CAPABILITY_PROBE=1 for paid sessions");
 const input = probeArgs(process.argv.slice(2), "controlled");
-const conditions = input.trials;
-if (!conditions.length || conditions.length > 48) throw Error("Pass 1–48 explicit conditions");
+if (!input.trials.length || input.trials.length > 48) throw Error("Pass 1–48 explicit conditions");
 const original: Record<string, number> = { audio: study.targets.audio, followup: study.targets.followup };
-for (const spec of conditions) {
+function parseCondition(spec: string) {
   const [lang, context, variant, request = "explicit", extra] = spec.split(":");
   if (
     extra ||
@@ -22,11 +21,13 @@ for (const spec of conditions) {
     !["fresh", "prior", "snapshot"].includes(context) ||
     !["baseline", "guidance", "example", "globals"].includes(variant) ||
     !["explicit", "plain"].includes(request) ||
-    lang in original !== (context === "snapshot") ||
+    (lang in original) !== (context === "snapshot") ||
     (input.synthetic && context === "snapshot")
   )
     throw Error("Invalid condition: " + spec);
+  return { spec, lang, context, variant, request };
 }
+const conditions = input.trials.map(parseCondition);
 const allowed = input.synthetic ? [] : readStudy(input.source!);
 if (!input.synthetic) for (const idx of Object.values(original)) studyTarget(allowed, idx);
 const frame = allowed.find((x) => x.message?.role === "system")?.message?.sections;
@@ -41,10 +42,6 @@ const preview = await createPromptPreview({
 const declared = preview.tools.find((x) => x.name === "execute");
 if (preview.tools.length !== 1 || !declared) throw Error("Execute-only tool required");
 const tool = { type: "function", name: "execute", description: declared.description, parameters: declared.parameters };
-const config = await loadLiveConfig();
-if (config.provider !== "openai") throw Error("OpenAI config required");
-const key = await (await createDefaultLiveCredentialService(undefined, config.provider)).loadKey();
-if (!key) throw Error("No configured credential");
 const hash = (s: string) => createHash("sha256").update(s).digest("hex");
 const guidance =
   "\n\nLive has the same operational scope as the main agent, not just coding. execute runs JS/TS and can use Bun and shell() for filesystem/commands or subagent() for delegated work. On an authorized request to ACT, call execute to attempt the work (or delegate the actual task), rather than only speaking a command recipe or promising action. A previous assistant inability claim is not a permission boundary: check the tools available now. Ask for missing specifics only when needed; report a blocker only after confirming it. Helpers return values; console.log values you need to see. Never claim a tool call succeeded before seeing its result.";
@@ -92,76 +89,61 @@ const prior = [
     text: "I can't directly use agents or commands on your local files. You'd need to run a command yourself.",
   },
 ];
-for (const spec of conditions) {
-  const [lang, context] = spec.split(":");
-  if (context === "snapshot") {
-    snapshot(original[lang]);
-    if (!content(allowed[original[lang]].message.content)) throw Error("Empty target transcript: " + lang);
-  }
-}
-for (let n = 0; n < conditions.length; n++) {
-  const [lang, context, variant, request = "explicit"] = conditions[n].split(":");
+// Prepare every stimulus before credentials or paid sessions. Hash the same text we send.
+const trials = conditions.map(({ spec, lang, context, variant, request }) => {
   const instructions =
     root +
     (variant === "baseline" ? "" : guidance + (variant === "example" ? example : variant === "globals" ? globals : ""));
-  const result = {
-    trial: n + 1,
-    condition: conditions[n],
-    model: config.model,
-    rootHash: hash(root),
-    instructionHash: hash(instructions),
-    toolHash: hash(JSON.stringify(tool)),
-    targetHash: hash(
-      lang in original
-        ? content(allowed[original[lang]].message.content)
-        : request === "plain"
-          ? plain[lang]
-          : target[lang],
-    ),
-    snapshotHash: context === "snapshot" ? hash(snapshot(original[lang])) : null,
-  };
-  const items: object[] = [];
+  const targetText =
+    lang in original
+      ? content(allowed[original[lang]].message.content)
+      : request === "plain"
+        ? plain[lang]
+        : target[lang];
+  const snapshotText = context === "snapshot" ? snapshot(original[lang]) : null;
+  if (context === "snapshot" && !targetText) throw Error("Empty target transcript: " + lang);
 
-  if (context === "snapshot")
-    items.push({
-      type: "conversation.item.create",
-      item: { type: "message", role: "user", content: [{ type: "input_text", text: snapshot(original[lang]) }] },
-    });
-  if (context === "prior")
-    for (const item of prior)
-      items.push({
-        type: "conversation.item.create",
-        item: {
-          type: "message",
-          role: item.role,
-          content: [{ type: item.role === "user" ? "input_text" : "output_text", text: item.text }],
-        },
-      });
-  items.push({
+  const messages = context === "prior" ? [...prior] : [];
+  if (snapshotText !== null) messages.push({ role: "user", text: snapshotText });
+  messages.push({ role: "user", text: targetText });
+  const items = messages.map(({ role, text }) => ({
     type: "conversation.item.create",
     item: {
       type: "message",
-      role: "user",
-      content: [
-        {
-          type: "input_text",
-          text:
-            lang in original
-              ? content(allowed[original[lang]].message.content)
-              : request === "plain"
-                ? plain[lang]
-                : target[lang],
-        },
-      ],
+      role,
+      content: [{ type: role === "user" ? "input_text" : "output_text", text }],
     },
-  });
+  }));
+  return {
+    condition: spec,
+    instructions,
+    items,
+    targetHash: hash(targetText),
+    snapshotHash: snapshotText === null ? null : hash(snapshotText),
+  };
+});
 
+const config = await loadLiveConfig();
+if (config.provider !== "openai") throw Error("OpenAI config required");
+const key = await (await createDefaultLiveCredentialService(undefined, config.provider)).loadKey();
+if (!key) throw Error("No configured credential");
+for (const [n, trial] of trials.entries()) {
+  const result = {
+    trial: n + 1,
+    condition: trial.condition,
+    model: config.model,
+    rootHash: hash(root),
+    instructionHash: hash(trial.instructions),
+    toolHash: hash(JSON.stringify(tool)),
+    targetHash: trial.targetHash,
+    snapshotHash: trial.snapshotHash,
+  };
   const trialResult = await studyTrial({
     model: config.model,
     key,
-    instructions,
+    instructions: trial.instructions,
     tool: tool,
-    items,
+    items: trial.items,
     deadlineMs: 25000,
     speechLimit: 2000,
     mockOutput: () => ({

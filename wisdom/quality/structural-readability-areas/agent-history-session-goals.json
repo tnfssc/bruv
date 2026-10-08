@@ -102,7 +102,7 @@
     {
       "focus": "scripts/history-storage-probe.ts",
       "initialBlob": "2e443cc387a687ffd98506aa489c8b8658683593",
-      "status": "accepted",
+      "status": "pending",
       "primary": [
         {
           "id": "task_b0eea86b",
@@ -127,18 +127,18 @@
         }
       ],
       "judgeRounds": [],
-      "acceptedBlob": "2f9ac52e0ff8bb4425c6f3d348913204dabdaf35",
+      "acceptedBlob": null,
       "integration": "pending",
       "resume": {
-        "status": "accepted",
+        "status": "pending",
         "acceptedBlob": "2f9ac52e0ff8bb4425c6f3d348913204dabdaf35",
         "primaryId": "task_e6e6e804",
         "primaryCommit": "8f89c50a021b0f98ff5cd8d570a04f6610f27b5f",
         "judgeIds": [
           "task_1925c521"
         ],
-        "sourceCommit": "8f89c50a021b0f98ff5cd8d570a04f6610f27b5f",
-        "state": "accepted-joined",
+        "sourceCommit": "4438e83819248bc7e36fd94c206b56fe563c94f8",
+        "state": "needs-rejudge",
         "reason": "Intrinsic final code: captureSnapshot takes the exact live manager and returns only a label and numeric measurements; it neither captures mutable manager state nor mutates a shared snapshot list. writeCompactedFixture owns the complete generation/compaction journey, including baseline and three checkpoint samples, and returns disk coordinates, the first-entry identity/hash and measurements, not the manager, parsed entries or original bodies. child visibly sequences fixture completion, GC, reopen, pre-read sampling, first-original SHA-256 verification, post-read sampling, assertions and publication. Compared with the primary base (also the candidate parent), this removes the reader's need to track one optional manager reassigned across two lifetimes inside a snapshot closure, manually nulled before GC and again in finally. Reopened sampling is directly bound; baseline and cross-process reopened selection no longer require reconstructing array positions. These are coherent lifetime/effect boundaries, not just new names or a context bag. Unchanged decision: textBytes, collectGc, the workload loop and run already express their narrow jobs clearly; no change is needed to their structure."
       }
     },
@@ -4738,7 +4738,7 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 60,
-    "pending": 63
+    "accepted": 59,
+    "pending": 64
   }
 }

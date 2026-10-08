@@ -1092,16 +1092,19 @@
       "initialBlob": "755a16278c22dacfff5bade1859975616a2aefcb",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "c0d4758eaa271a1d83ee39302a2983d171a1ab12",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "c0d4758eaa271a1d83ee39302a2983d171a1ab12",
         "primaryId": "task_93771cb4",
         "primaryCommit": "413747023ebc24e6dbbd9e78a853d962772ad67a",
-        "judgeIds": [],
+        "judgeIds": [
+          "task_0c31380c"
+        ],
         "sourceCommit": "413747023ebc24e6dbbd9e78a853d962772ad67a",
-        "state": "needs-judge",
-        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+        "state": "accepted-joined",
+        "reason": "Compared actual candidate Git source with primary base 0b1faebd03e5eb7711dbcba5a58453564a28cc36, which is also its direct parent; did not infer candidate bytes from checkout HEAD. Baseline required joining an independent name allowlist, prompt table, correction-only branch and nested scenario-name response ternary. Candidate scenario definitions own prompt, optional prior refusal and mock response together. jobs/naturalJobs visibly share syntheticJobs; file/naturalFile/correction share syntheticFile; audio/naturalAudio share syntheticAudio. Correction history ordering now follows the selected stimulus rather than a separate scenario-name decision. plan validates against the actual variant/scenario definitions and passes parsed names to trial without splitting again. trial remains a direct assembly path: select stimulus, compose instructions/hash, append optional assistant then user, call transport, emit private result. This is a substantive removal of scattered scenario authority, not cosmetic names or a context-bag abstraction. No further source change requested: retained variant suffix/description definitions and sequential trial loop are already straightforward."
       }
     },
     {
@@ -1109,16 +1112,19 @@
       "initialBlob": "7000ee28bed1449a679449a65bc3359cb4c126dd",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "74b94682acfd7e8681e12baff2930b4a076343b0",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "74b94682acfd7e8681e12baff2930b4a076343b0",
         "primaryId": "task_852c860e",
         "primaryCommit": "b50efbd7ce8edab4a938f43c2ff333459fb420c2",
-        "judgeIds": [],
+        "judgeIds": [
+          "task_a8982f00"
+        ],
         "sourceCommit": "b50efbd7ce8edab4a938f43c2ff333459fb420c2",
-        "state": "needs-judge",
-        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+        "state": "accepted-joined",
+        "reason": "Compared actual candidate source with primary base 0b1faebd03e5eb7711dbcba5a58453564a28cc36, which is also its sole parent. The base makes the reader reconnect three condition splits, repeated historical serialization, duplicate target-selection expressions for hashes and payloads, and three separate wire-frame constructions inside the paid loop. The candidate removes that reconstruction: parseCondition returns validated semantic fields once; the bounded trials map owns instructions, target selection, optional snapshot selection, ordered semantic messages, uniform wire framing and hashes of those exact selected strings. The dispatch loop consumes this prepared payload, adds session-specific metadata and publishes the result. This is a meaningful authority/lifetime separation, not a rename or context bag. Fresh uses only the target; prior copies the four existing user/assistant refusal turns then appends the target; snapshot appends the context-as-data user message then the historical target. Uniform framing still maps user to input_text and assistant to output_text. Unchanged decision: retain the small content/snapshot helpers, instruction variants, prior-refusal text and shared transport instead of introducing more helpers or a generic trial framework; their existing responsibilities are already clear. The moved preparation makes snapshot validation failures occur before Live config/key loading rather than after it, consistent with the stated preparation boundary."
       }
     },
     {
@@ -1150,10 +1156,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
+        "primaryId": "task_2f550018",
+        "primaryCommit": "e96bbf1f443dac11a4eb1da2b45334e8ca8623a7",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "own_primary_pending",
+        "sourceCommit": "e96bbf1f443dac11a4eb1da2b45334e8ca8623a7",
+        "state": "needs-judge",
         "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
       }
     },
@@ -5061,7 +5068,7 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 87,
-    "pending": 63
+    "accepted": 89,
+    "pending": 61
   }
 }

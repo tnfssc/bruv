@@ -682,7 +682,7 @@
     {
       "file": "scripts/claude-native-acceptance/subagent-driver.mjs",
       "initialBlob": "b3a839d892d5d6ea15b4bc23a32504ce22a29103",
-      "status": "accepted",
+      "status": "pending",
       "primary": {
         "id": "task_3fcde229",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_3fcde229",
@@ -691,18 +691,18 @@
         "commit": null
       },
       "judges": [],
-      "acceptedBlob": "48d0ded793f11d31cece88d1f3da251e61a6daf9",
+      "acceptedBlob": null,
       "launchBase": "0f31ee8bcbb4a6b9cc4e76121fa0aef55d7c52b2",
       "resume": {
-        "status": "accepted",
+        "status": "pending",
         "acceptedBlob": "48d0ded793f11d31cece88d1f3da251e61a6daf9",
         "primaryId": "task_48898268",
         "primaryCommit": "e2da2498bfe0fcb2ea83bc0fb74867b7a2622e20",
         "judgeIds": [
           "task_2aa53476"
         ],
-        "sourceCommit": "e2da2498bfe0fcb2ea83bc0fb74867b7a2622e20",
-        "state": "accepted-joined",
+        "sourceCommit": "89d2aa8e47b2b4e52470e39cec6cfab5417f86a0",
+        "state": "needs-rejudge",
         "reason": "Compared the exact candidate with its parent, which is the supplied primary base, not this worktree HEAD. The base embeds three browser scenarios and four verification authorities in long exported functions. The candidate makes exercise (lines 21–30) expose the prerequisite: completed-child inspection and successful same-root next reply must finish before either independent root is opened. exerciseCompletedChildReturn owns child release, live-card selection, transcript/tool inspection, parent URL identity, bounded composer admission and its finally evidence capture. The cancellation and Stop helpers each retain their own process-exit waits and snapshots. verify (lines 311–363) now reads as explicit browser/wire admission, task lifecycle, root/child usage ownership, persisted launch-source resolution, Stop/Continue, then publication. Helpers return the evidence their caller actually uses; no new framework, context bag or duplicated owner. This is structural journey/authority separation, not merely renaming. Unchanged decision: NO CHANGE NEEDED for checkSameRootReply, checkConsumedPromptOwnership and flushCapture; their byte-identical code already clearly separates session identity, human prompt consumption versus autonomous wake origin, and final provider capture. The proof-publication tail is also byte-identical and should remain unchanged."
       }
     },
@@ -4112,7 +4112,7 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 71,
-    "pending": 27
+    "accepted": 70,
+    "pending": 28
   }
 }

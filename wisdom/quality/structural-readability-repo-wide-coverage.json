@@ -965,18 +965,18 @@
     {
       "file": "scripts/claude-native-acceptance/subagent-driver.mjs",
       "initialBlob": "b3a839d892d5d6ea15b4bc23a32504ce22a29103",
-      "status": "accepted",
+      "status": "pending",
       "area": "compatibility-t3",
-      "resumeState": "accepted-joined",
+      "resumeState": "needs-rejudge",
       "primaryId": "task_48898268",
       "primaryCommit": "e2da2498bfe0fcb2ea83bc0fb74867b7a2622e20",
       "judgeIds": [
         "task_2aa53476"
       ],
-      "sourceCommit": "e2da2498bfe0fcb2ea83bc0fb74867b7a2622e20",
+      "sourceCommit": "89d2aa8e47b2b4e52470e39cec6cfab5417f86a0",
       "report": "wisdom/quality/structural-readability-areas/compatibility-t3.json",
       "pendingReason": "Primary was killed by session shutdown (143); preserved uncommitted code is retained at the worker path. No submitted candidate commit or readability verdict; resume its original scope rather than count it accepted.",
-      "primaryBase": "b80a55a855e65d9bcb4ae8db3bb95d577db79b67",
+      "primaryBase": "753f7a1ffafa5577938649e09ac58a818b64dc64",
       "primaryResult": "exercise now explicitly requires completed-child inspection and same-root next reply before creating the independent cancellation and Stop roots. Each scenario owns its waits, process-exit checks and snapshots; the same-root scenario retains its bounded composer checks and finally capture. verify names the task lifecycle, root/child usage, persisted launch-source resolution and Stop/Continue checks before publishing the unchanged proof payloads. observedConfig still records the live config before exercise, and flushCapture remains byte-identical, including its pre-exercise fallback. The preserved interrupted primary candidate (86ef6f761802edea2844a001ea198a90fe14b87c) was read, its scenario separation retained, and verification authorities were additionally separated; its old worktree was not modified or merged.",
       "primaryPaths": [
         "scripts/claude-native-acceptance/subagent-driver.mjs"
@@ -1039,7 +1039,10 @@
         "Static independent actual-code review only. No repository tests, setup, builds, browser/provider execution, device access, credentials or recovery actions performed. Parent owns audited isolated batch gates and external runtime agent.model verification; no self-introspection or runtime/auth claim.",
         "The preserved interrupted commit 86ef6f761802edea2844a001ea198a90fe14b87c is not present in this worktree Git object database (git diff reported bad object). No fetch/recovery attempted. Its history is context only; the requested candidate and primary base were available and reviewed directly.",
         "No source or wisdom edits, delegation, cleanup, push, PR creation or merge. Existing worktrees and uncommitted candidates preserved. Automatic setup diagnostics remain parent-owned; no setup retry or bypass."
-      ]
+      ],
+      "previousAcceptedBlob": "48d0ded793f11d31cece88d1f3da251e61a6daf9",
+      "originalPrimaryBase": "b80a55a855e65d9bcb4ae8db3bb95d577db79b67",
+      "formatRejudge": true
     },
     {
       "file": "scripts/claude-native-acceptance/subagent-model.mjs",
@@ -1392,18 +1395,18 @@
     {
       "file": "scripts/history-storage-probe.ts",
       "initialBlob": "2e443cc387a687ffd98506aa489c8b8658683593",
-      "status": "accepted",
+      "status": "pending",
       "area": "agent-history-session-goals",
-      "resumeState": "accepted-joined",
+      "resumeState": "needs-rejudge",
       "primaryId": "task_e6e6e804",
       "primaryCommit": "8f89c50a021b0f98ff5cd8d570a04f6610f27b5f",
       "judgeIds": [
         "task_1925c521"
       ],
-      "sourceCommit": "8f89c50a021b0f98ff5cd8d570a04f6610f27b5f",
+      "sourceCommit": "4438e83819248bc7e36fd94c206b56fe563c94f8",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
       "pendingReason": "Primary was killed without a completed focused result; preserve worker state and any uncommitted edits.",
-      "primaryBase": "3782f6ade0c93e7b7ff441dcef2d22849aeddab6",
+      "primaryBase": "89d2aa8e47b2b4e52470e39cec6cfab5417f86a0",
       "primaryResult": "captureSnapshot receives the live manager explicitly and returns only numeric measurements. writeCompactedFixture owns generation and compaction and returns disk coordinates, hashes and measurements, not the populated manager or original bodies; it completes before the reopen GC boundary. child visibly owns adapter installation, the temporary root, reopen, original SHA-256 verification, assertions and final cleanup. Reopened sampling is bound directly; baseline and cross-process comparison use labeled selection. Native/adapted process isolation, 136 MiB/17-compaction workload, output shape, thresholds and owned-root cleanup remain intact. Read the stopped lineage and surviving uncommitted task_b0eea86b candidate without modifying its worktree or merging its branch.",
       "primaryPaths": [
         "scripts/history-storage-probe.ts"
@@ -1439,7 +1442,10 @@
         "Read relevant unchanged adapter/store/SDK paths and retention assertions for integration context; no independent whole-file acceptance of those related paths.",
         "No real authentication, provider, SSH, device or macOS validation. Historical setup/gate successes or failures in ledgers are not reclassified by this review.",
         "Old worktrees and uncommitted partial candidates preserved. No source/wisdom edits or merge; only this untracked result is written."
-      ]
+      ],
+      "previousAcceptedBlob": "2f9ac52e0ff8bb4425c6f3d348913204dabdaf35",
+      "originalPrimaryBase": "3782f6ade0c93e7b7ff441dcef2d22849aeddab6",
+      "formatRejudge": true
     },
     {
       "file": "scripts/install-local.sh",
@@ -2241,11 +2247,13 @@
     {
       "file": "scripts/probe-live-capability.ts",
       "initialBlob": "755a16278c22dacfff5bade1859975616a2aefcb",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_93771cb4",
       "sourceCommit": "413747023ebc24e6dbbd9e78a853d962772ad67a",
-      "judgeIds": [],
-      "resumeState": "needs-judge",
+      "judgeIds": [
+        "task_0c31380c"
+      ],
+      "resumeState": "accepted-joined",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
       "area": "live-native-audio",
       "primaryCommit": "413747023ebc24e6dbbd9e78a853d962772ad67a",
@@ -2277,16 +2285,33 @@
         "No paid provider probe, credential loading, generated code execution, device use or network study performed.",
         "Independent fresh actual-code judgment remains for the parent; this is a primary proposal, not acceptance.",
         "No worker wisdom files or values edits; parent owns aggregate wisdom."
+      ],
+      "acceptedBlob": "c0d4758eaa271a1d83ee39302a2983d171a1ab12",
+      "result": "Compared actual candidate Git source with primary base 0b1faebd03e5eb7711dbcba5a58453564a28cc36, which is also its direct parent; did not infer candidate bytes from checkout HEAD. Baseline required joining an independent name allowlist, prompt table, correction-only branch and nested scenario-name response ternary. Candidate scenario definitions own prompt, optional prior refusal and mock response together. jobs/naturalJobs visibly share syntheticJobs; file/naturalFile/correction share syntheticFile; audio/naturalAudio share syntheticAudio. Correction history ordering now follows the selected stimulus rather than a separate scenario-name decision. plan validates against the actual variant/scenario definitions and passes parsed names to trial without splitting again. trial remains a direct assembly path: select stimulus, compose instructions/hash, append optional assistant then user, call transport, emit private result. This is a substantive removal of scattered scenario authority, not cosmetic names or a context-bag abstraction. No further source change requested: retained variant suffix/description definitions and sequential trial loop are already straightforward.",
+      "systemReason": "Followed CLI admission through config, canonical credential loading, offline production prompt preview, execute-only tool-frame assertion, studyTrial transport and private JSONL output. Paid environment opt-in, root disclosure and 1–24 admission still precede config/credential/preview work; names come from definitions without enlarging the valid scenario/variant set. OpenAI restriction and credential handling are unchanged. Preview still uses an isolated temporary project with no selected external project, in-memory session/settings and a replaced stream boundary; its owned scratch disposal remains in the unchanged helper. Each correction trial supplies assistant refusal before user input; other scenarios supply only user input. Audio mocks only inspect String(code) for subagent(; neither callback nor transport dispatches generated code. Unchanged transport sends ordered items after session.updated, returns synthetic function-call outputs, bounds continuation to three responses, closes on completion/error/deadline and truncates speech. The caller retains 20s deadline, 1400-character speech limit, stringArguments, instruction hash, execute tools field and omission of response count from privateOutput JSONL. Related source/test helpers are unchanged and need no change for this candidate: their existing transport/preview/credential authority stays separate from scenario policy.",
+      "checks": [
+        "Read wisdom/values.md and structural-readability-guidance.md; read repo-wide ledger and PR45 resume context, area ledger context and exact focus coverage row.",
+        "Git parent and base comparison: direct parent equals supplied primary base; only changed source path is scripts/probe-live-capability.ts. Inspected its baseline and candidate contents including all changed portions.",
+        "Candidate-version git grep found the direct script invocation and invalid-plan subprocess caller in tests/live-probe-input.test.ts; read that caller and transport fixture source without execution.",
+        "Read candidate transport, offline preview and config/canonical credential call paths; confirmed related paths have no diff from base.",
+        "Verified accepted focus Git blob c0d4758eaa271a1d83ee39302a2983d171a1ab12. No source edits."
+      ],
+      "limits": [
+        "Static actual-code judgment only. No setup, tests, builds, paid provider call, credentials/config contents, physical device/audio, or real authentication accessed or claimed. Parent owns audited isolated batch gates.",
+        "Existing audio substring recognition is synthetic evidence, not proof of actual delegation or cleanup. Instruction-only prompt hashes still do not cover the variant tool-description override; unchanged output contract, not a new correctness claim.",
+        "No runtime agent-model self-introspection or verification performed; parent externally verifies native normal worker identity. No automatic setup outcome inferred, bypassed, or claimed."
       ]
     },
     {
       "file": "scripts/probe-live-controlled.ts",
       "initialBlob": "7000ee28bed1449a679449a65bc3359cb4c126dd",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_852c860e",
       "sourceCommit": "b50efbd7ce8edab4a938f43c2ff333459fb420c2",
-      "judgeIds": [],
-      "resumeState": "needs-judge",
+      "judgeIds": [
+        "task_a8982f00"
+      ],
+      "resumeState": "accepted-joined",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
       "area": "live-native-audio",
       "primaryCommit": "b50efbd7ce8edab4a938f43c2ff333459fb420c2",
@@ -2320,6 +2345,33 @@
         "No setup, tests, builds, paid provider session, credentials, private transcript or device access run. Parent owns audited isolated runtime/type/format gates and a distinct fresh judge for this exact candidate.",
         "No old branch merge/restoration was needed: focus exists and preserved reconciliation has no surviving proposed source commit or accepted candidate.",
         "Source changes only committed. No related edits, assertion changes, per-worker wisdom, push, PR or merge. Parent owns aggregate wisdom; values/guidance unchanged."
+      ],
+      "acceptedBlob": "74b94682acfd7e8681e12baff2930b4a076343b0",
+      "result": "Compared actual candidate source with primary base 0b1faebd03e5eb7711dbcba5a58453564a28cc36, which is also its sole parent. The base makes the reader reconnect three condition splits, repeated historical serialization, duplicate target-selection expressions for hashes and payloads, and three separate wire-frame constructions inside the paid loop. The candidate removes that reconstruction: parseCondition returns validated semantic fields once; the bounded trials map owns instructions, target selection, optional snapshot selection, ordered semantic messages, uniform wire framing and hashes of those exact selected strings. The dispatch loop consumes this prepared payload, adds session-specific metadata and publishes the result. This is a meaningful authority/lifetime separation, not a rename or context bag. Fresh uses only the target; prior copies the four existing user/assistant refusal turns then appends the target; snapshot appends the context-as-data user message then the historical target. Uniform framing still maps user to input_text and assistant to output_text. Unchanged decision: retain the small content/snapshot helpers, instruction variants, prior-refusal text and shared transport instead of introducing more helpers or a generic trial framework; their existing responsibilities are already clear. The moved preparation makes snapshot validation failures occur before Live config/key loading rather than after it, consistent with the stated preparation boundary.",
+      "systemReason": "Followed the standalone CLI entry point and its actual dependencies/assertions at the candidate commit. Paid opt-in and probeArgs explicit source/study/disclosure authority still precede private-source access; all conditions are validated before readStudy. Synthetic mode still cannot select historical snapshots. Historical input still checks both original user targets, requires root preamble/cwd, uses the bounded retained prefix and snapshot size cap, and serializes prior context as data rather than replaying calls. Synthetic root and execute-only schema still come from offline createPromptPreview. All trial payloads now exist before loadLiveConfig and createDefaultLiveCredentialService/loadKey are called. OpenAI requirement, configured-key requirement, sequential await of studyTrial, trial numbering/order, condition strings, model and root/instruction/tool/target/snapshot hashes, privateOutput and merged transport-result fields remain intact. Read studyTrial through session.updated item dispatch, synthetic function-call output, response continuation and deadline/error/close termination: execute code is recorded and intercepted, never evaluated; 25-second deadline and 2,000-character speech limit are unchanged. Existing input tests assert invalid plans fail before source/credentials, and shared transport tests describe ordered items and intercepted outputs. These were read, not run. No behavioral/device/provider execution claim is made.",
+      "checks": [
+        {
+          "name": "Exact-commit source and parent comparison",
+          "status": "completed",
+          "details": "git log confirms primary base equals parent; git diff lists only scripts/probe-live-controlled.ts as changed source. Read the whole focus and diff, plus candidate dependency/caller boundaries and existing assertions; related source paths are unchanged."
+        },
+        {
+          "name": "git diff --check primary-base..candidate",
+          "status": "passed",
+          "details": "Exit 0; no whitespace errors."
+        },
+        {
+          "name": "Guidance and ledger review",
+          "status": "completed",
+          "details": "Read wisdom/values.md, structural-readability-guidance.md, repo-wide structural-readability guidance/ledger and live-native-audio area context/focus records. Primary explanation was context only, not acceptance evidence."
+        }
+      ],
+      "limits": [
+        "No source edits, delegation, setup, tests or builds performed. Only the requested untracked judgment artifact was written.",
+        "No secrets/config files read, credentials loaded, provider requests, device access, recovery, cleanup or destructive Git operations performed.",
+        "Runtime/isolated batch gates belong to the parent; this verdict is structural actual-code reading, not a typecheck or runtime-test pass.",
+        "Unchanged related paths were reviewed as system context, not assigned independent whole-file acceptance.",
+        "Runtime agent-model verification is parent-owned; no self-introspection attempted."
       ]
     },
     {
@@ -2390,12 +2442,46 @@
       "file": "scripts/probe-live-startup-audio.ts",
       "initialBlob": "7efa411dd2d16d6070ee511416884d1a64309fb1",
       "status": "pending",
-      "primaryId": null,
-      "sourceCommit": null,
+      "primaryId": "task_2f550018",
+      "sourceCommit": "e96bbf1f443dac11a4eb1da2b45334e8ca8623a7",
       "judgeIds": [],
-      "resumeState": "own_primary_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "e96bbf1f443dac11a4eb1da2b45334e8ca8623a7",
+      "primaryBase": "98d6861618aa5fdf731c23c3928337b234ad04d8",
+      "primaryResult": "Credential acquisition and fixture preparation now each own their existing effects in file-local operations. main shows the run policy directly: require paid opt-in, resolve each provider key (continue if unavailable), prepare/cache PCM once (return if generation fails), validate activity policy, dispatch selected modes. The natural-fixture operation keeps generation-only error sanitization distinct from conversion errors, reports the same bounded diagnostics, and does not retry. Existing trial delivery, timeout/cleanup, transcript-retention and automatic/manual/flushed acceptance expressions are unchanged.",
+      "primaryPaths": [
+        "scripts/probe-live-startup-audio.ts"
+      ],
+      "primaryChecks": [
+        {
+          "check": "Read source, callers, wisdom/values.md, structural guidance, focused repository/area ledger rows and supplied reconciliation evidence",
+          "result": "Focus exists with original baseline blob and no prior allocated primary/accepted candidate; no restoration or old-branch merge needed."
+        },
+        {
+          "check": "Complete baseline source comparison using node child_process git argv",
+          "result": "All original source before CLI main (including exported helpers, fixture plan, trial lifecycle and acceptance expressions) unchanged; fixture-only branch, paid-opt-in ordering and top-level redacted failure handler unchanged."
+        },
+        {
+          "check": "Manual paid-run journey review",
+          "result": "Missing credentials still report blocked/zero paid sessions and continue; natural-generation failure still sets exitCode and aborts without retry; conversion/synthesis errors still reach the top-level redacted handler; successful fixture PCM reused across provider/mode trials."
+        },
+        {
+          "check": "git diff --check",
+          "result": "Passed before source-only commit."
+        },
+        {
+          "check": "Optional syntax-only TypeScript source parsing",
+          "result": "Not completed: TypeScript module could not be resolved from the supplied read-only dependency path. No setup or dependency installation attempted."
+        }
+      ],
+      "primaryLimits": [
+        "No setup, repository tests, builds, typecheck, paid sessions, credentials, devices or network probes run; parent owns audited isolated batch gates.",
+        "No independent readability acceptance claimed; parent must launch its separate fresh judge against exact committed bytes.",
+        "No related source/helper changes, assertion weakening, recovery, cleanup, push, PR or merge.",
+        "Wisdom and values unchanged: existing ownership/readability and safety guidance already covers this change; aggregate wisdom belongs to parent."
+      ]
     },
     {
       "file": "scripts/probe-openai-realtime-setup.ts",

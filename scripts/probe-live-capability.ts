@@ -9,6 +9,74 @@ import { loadLiveConfig } from "../src/live/config";
 import { createPromptPreview } from "../src/prompt-preview";
 import { createHash } from "node:crypto";
 
+const guidance =
+  "\n\nYou are the same main Bruv agent in Live. Your execute tool is available in this voice turn. It runs JavaScript in the Bruv host; jobs.list(), shell(), and subagent() are host helpers inside execute, not direct function names. If the user asks for an action, call execute to perform the authorized action before reporting its result. Do not infer inability from the audio interface. If a tool has not run, say so; do not claim work completed. For audio cleanup, delegate to a worker using subagent through execute rather than asking the user to run a command.";
+const intention =
+  "\n\nWhen an authorized request asks you to do something, select the needed execute call now instead of describing a command. Only a tool response confirms an action happened. If you just refused because you thought you lacked filesystem, shell, or audio-processing ability, reassess the available execute tool and attempt the safe requested action. Voice input/output does not remove host tools.";
+const description =
+  "Run JS/TS code in the host's current directory. Top-level await works. Use await jobs.list() for jobs; await shell(command) for shell; await subagent({type:'normal',prompt:'...'}) to delegate tasks including audio cleanup. Calls execute in the real app; this probe mocks results and never executes generated code.";
+function syntheticJobs() {
+  return { jobs: [] };
+}
+
+function syntheticFile() {
+  return { output: "synthetic file says: blue lantern", exitCode: 0 };
+}
+
+function syntheticAudio(code: unknown) {
+  return String(code).includes("subagent(")
+    ? {
+        id: "probe-worker-1",
+        status: "running",
+        background: true,
+        output: "Synthetic delegation accepted; no actual audio processed",
+      }
+    : { error: "Probe intercepted direct audio command; no execution or delegation occurred" };
+}
+
+const scenarios: Record<
+  string,
+  { prompt: string; mockOutput: (code: unknown) => unknown; priorAssistantText?: string }
+> = {
+  jobs: {
+    prompt: "Please list my current jobs. Use the tool and tell me what you find.",
+    mockOutput: syntheticJobs,
+  },
+  naturalJobs: { prompt: "What jobs are running?", mockOutput: syntheticJobs },
+  naturalFile: { prompt: "What does /probe/sandbox/note.txt say?", mockOutput: syntheticFile },
+  naturalAudio: {
+    prompt: "Could you clean up the noise in /probe/sandbox/clip.wav and save a cleaned copy?",
+    mockOutput: syntheticAudio,
+  },
+  file: {
+    prompt:
+      "Please inspect the synthetic file /probe/sandbox/note.txt and tell me its contents. Do it rather than telling me how.",
+    mockOutput: syntheticFile,
+  },
+  audio: {
+    prompt:
+      "Please clean up the audio at /probe/sandbox/clip.wav: remove noise and save a cleaned copy. Delegate the actual cleanup to a worker now; don't just suggest a command.",
+    mockOutput: syntheticAudio,
+  },
+  weather: {
+    prompt:
+      "Please find the current weather for San Francisco using the available tools; if you can't verify it, say so.",
+    mockOutput: () => ({ output: "No weather lookup configured in synthetic probe", exitCode: 1 }),
+  },
+  correction: {
+    prompt:
+      "You just said you can't access the filesystem or shell. Please reconsider your available host tools and inspect /probe/sandbox/note.txt now.",
+    priorAssistantText: "I cannot access the filesystem or shell in voice mode. Please run a command yourself.",
+    mockOutput: syntheticFile,
+  },
+};
+const variants: Record<string, { suffix: string; desc?: string }> = {
+  baseline: { suffix: "" },
+  grounding: { suffix: guidance },
+  intent: { suffix: guidance + intention },
+  description: { suffix: guidance, desc: description },
+};
+
 if (process.env.BRUV_CAPABILITY_PROBE !== "1") throw Error("Set BRUV_CAPABILITY_PROBE=1 for paid probe");
 const args = process.argv.slice(2);
 if (args[0] !== "--disclose-root")
@@ -16,21 +84,13 @@ if (args[0] !== "--disclose-root")
     "Pass --disclose-root: generated root (possibly local paths) will be sent to configured provider; output may echo private context",
   );
 const requested = args.slice(1);
-if (
-  !requested.length ||
-  requested.length > 24 ||
-  requested.some((spec) => {
-    const [v, scenario, extra] = spec.split(":");
-    return (
-      extra ||
-      !["baseline", "grounding", "intent", "description"].includes(v) ||
-      !["jobs", "naturalJobs", "naturalFile", "naturalAudio", "file", "audio", "weather", "correction"].includes(
-        scenario,
-      )
-    );
-  })
-)
-  throw Error("Pass 1–24 valid variant:scenario trials");
+if (!requested.length || requested.length > 24) throw Error("Pass 1–24 valid variant:scenario trials");
+const plan = requested.map((spec) => {
+  const [variant, scenario, extra] = spec.split(":");
+  if (extra || !Object.hasOwn(variants, variant) || !Object.hasOwn(scenarios, scenario))
+    throw Error("Pass 1–24 valid variant:scenario trials");
+  return { variant, scenario };
+});
 const config = await loadLiveConfig();
 if (config.provider !== "openai")
   throw Error("This probe supports only configured OpenAI Live; found " + config.provider + "/" + config.model);
@@ -40,12 +100,6 @@ const key = await service.loadKey(); // Never log or serialize credentials.
 // Offline production prompt assembly in an isolated synthetic session; excludes active project/history.
 const preview = await createPromptPreview({ rootMode: "orchestrator", message: "Synthetic Live capability probe" });
 const root = preview.systemPrompt;
-const guidance =
-  "\n\nYou are the same main Bruv agent in Live. Your execute tool is available in this voice turn. It runs JavaScript in the Bruv host; jobs.list(), shell(), and subagent() are host helpers inside execute, not direct function names. If the user asks for an action, call execute to perform the authorized action before reporting its result. Do not infer inability from the audio interface. If a tool has not run, say so; do not claim work completed. For audio cleanup, delegate to a worker using subagent through execute rather than asking the user to run a command.";
-const intention =
-  "\n\nWhen an authorized request asks you to do something, select the needed execute call now instead of describing a command. Only a tool response confirms an action happened. If you just refused because you thought you lacked filesystem, shell, or audio-processing ability, reassess the available execute tool and attempt the safe requested action. Voice input/output does not remove host tools.";
-const description =
-  "Run JS/TS code in the host's current directory. Top-level await works. Use await jobs.list() for jobs; await shell(command) for shell; await subagent({type:'normal',prompt:'...'}) to delegate tasks including audio cleanup. Calls execute in the real app; this probe mocks results and never executes generated code.";
 const declared = preview.tools.find((t) => t.name === "execute");
 if (preview.tools.length !== 1 || !declared) throw Error("Expected execute-only production tool frame");
 const tool = {
@@ -54,39 +108,21 @@ const tool = {
   description: declared.description,
   parameters: declared.parameters,
 };
-const scenarios: Record<string, string> = {
-  jobs: "Please list my current jobs. Use the tool and tell me what you find.",
-  naturalJobs: "What jobs are running?",
-  naturalFile: "What does /probe/sandbox/note.txt say?",
-  naturalAudio: "Could you clean up the noise in /probe/sandbox/clip.wav and save a cleaned copy?",
-  file: "Please inspect the synthetic file /probe/sandbox/note.txt and tell me its contents. Do it rather than telling me how.",
-  audio:
-    "Please clean up the audio at /probe/sandbox/clip.wav: remove noise and save a cleaned copy. Delegate the actual cleanup to a worker now; don't just suggest a command.",
-  weather:
-    "Please find the current weather for San Francisco using the available tools; if you can't verify it, say so.",
-  correction:
-    "You just said you can't access the filesystem or shell. Please reconsider your available host tools and inspect /probe/sandbox/note.txt now.",
-};
-const variants: Record<string, { suffix: string; desc?: string }> = {
-  baseline: { suffix: "" },
-  grounding: { suffix: guidance },
-  intent: { suffix: guidance + intention },
-  description: { suffix: guidance, desc: description },
-};
-const plan = requested;
-async function trial(spec: string, index: number) {
-  const [v, s] = spec.split(":");
-  const instructions = root + variants[v].suffix;
+
+async function trial(spec: { variant: string; scenario: string }, index: number) {
+  const { variant, scenario } = spec;
+  const stimulus = scenarios[scenario];
+  const instructions = root + variants[variant].suffix;
   const result = {
     trial: index,
-    variant: v,
-    scenario: s,
+    variant,
+    scenario,
     promptHash: createHash("sha256").update(instructions).digest("hex"),
     tools: ["execute"],
   };
   const items: object[] = [];
 
-  if (s === "correction")
+  if (stimulus.priorAssistantText)
     items.push({
       type: "conversation.item.create",
       item: {
@@ -95,40 +131,26 @@ async function trial(spec: string, index: number) {
         content: [
           {
             type: "output_text",
-            text: "I cannot access the filesystem or shell in voice mode. Please run a command yourself.",
+            text: stimulus.priorAssistantText,
           },
         ],
       },
     });
   items.push({
     type: "conversation.item.create",
-    item: { type: "message", role: "user", content: [{ type: "input_text", text: scenarios[s] }] },
+    item: { type: "message", role: "user", content: [{ type: "input_text", text: stimulus.prompt }] },
   });
 
   const trialResult = await studyTrial({
     model: config.model,
     key,
     instructions,
-    tool: { ...tool, description: variants[v].desc ?? tool.description },
+    tool: { ...tool, description: variants[variant].desc ?? tool.description },
     items,
     deadlineMs: 20000,
     speechLimit: 1400,
     stringArguments: true,
-    mockOutput: (code) =>
-      s === "jobs" || s === "naturalJobs"
-        ? { jobs: [] }
-        : s === "file" || s === "correction" || s === "naturalFile"
-          ? { output: "synthetic file says: blue lantern", exitCode: 0 }
-          : s === "audio" || s === "naturalAudio"
-            ? String(code).includes("subagent(")
-              ? {
-                  id: "probe-worker-1",
-                  status: "running",
-                  background: true,
-                  output: "Synthetic delegation accepted; no actual audio processed",
-                }
-              : { error: "Probe intercepted direct audio command; no execution or delegation occurred" }
-            : { output: "No weather lookup configured in synthetic probe", exitCode: 1 },
+    mockOutput: stimulus.mockOutput,
   });
   const { responses: _responses, ...output } = trialResult;
   Object.assign(result, output);
