@@ -1053,6 +1053,7 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
       const line = JSON.stringify(entry);
       expect(mightCarryUsage(line, "claude")).toBe(true);
       const parsed = parseClaudeLine(line);
+      expect(parsed.dedupeKey).toBe(entry.uuid + ":");
       expect(parsed.model).toBe("openai-codex/" + models[i]);
       expect(parsed.reportedCostUsd).toBe(costs[i]);
       expect(parsed.totals).toMatchObject({
@@ -1116,6 +1117,7 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
       const line = JSON.stringify(entry);
       expect(mightCarryUsage(line, "claude")).toBe(true);
       const parsed = parseClaudeLine(line);
+      expect(parsed.dedupeKey).toBe(entry.uuid + ":");
       expect(parsed.model).toBe("anthropic/claude-sonnet-4-5");
       expect(parsed.totals).toMatchObject({
         uncachedInputTokens: 11,

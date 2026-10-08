@@ -8,3 +8,5 @@ Unmodified read-only source copies from official T3 **v0.0.46-nightly.20261005.2
 Inputs supplied for this task: /home/tnfssc/.bruv/cache/t3-unpriced-usageTranscripts.ts and t3-unpriced-usagePricing.ts. These are test fixtures, not a T3 fork or production dependency. Source remains byte-identical. index.ts erases type-only imports with Bun's transpiler and loads the pure exported functions, without installed T3 settings, network, provider calls, or price-table mappings.
 
 Tests send actual written Bruv JSONL through mightCarryUsage and parseClaudeLine, then priceUsage with an empty Map. This exercises the official costUSD -> reportedCostUsd -> providerReported contract independently of Bruv's own implementation. T3 calls the cost source providerReported; Bruv supplies Pi's catalog-priced usage total, not a verified invoice.
+
+Source: https://github.com/pingdotgg/t3code/tree/v0.0.46-nightly.20261005.2702/apps/server/src/usage. Upstream MIT terms and copyright are kept in [LICENSE](LICENSE). These fixtures are tests only and are not embedded in Bruv binaries.

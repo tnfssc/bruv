@@ -265,14 +265,14 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
                 },
               ]
             : nativeContent(message.content);
+        const uuid = messageUuid(message);
         const native = {
           role: type,
           content,
           ...(role === "assistant"
-            ? { model: message.provider + "/" + message.model, usage: nativeAssistantUsage(message) }
+            ? { id: uuid, model: message.provider + "/" + message.model, usage: nativeAssistantUsage(message) }
             : {}),
         };
-        const uuid = messageUuid(message);
         const parentUuid = historyParent;
         historyParent = uuid;
         historyTail = historyTail
