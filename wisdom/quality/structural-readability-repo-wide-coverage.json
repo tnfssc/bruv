@@ -15351,11 +15351,11 @@
     {
       "file": "tests/live-main-orchestrator-runtime.probe.ts",
       "initialBlob": "9f5353942e250a8cf5c73837f6ea2cfc6abd8232",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_3812f224",
       "sourceCommit": "0913ab2e4fd2c5c1c4e9063839336a223a980136",
-      "judgeIds": [],
-      "resumeState": "needs-judge",
+      "judgeIds": ["task_70030326"],
+      "resumeState": "accepted-joined",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
       "area": "live-native-audio",
       "primaryCommit": "0913ab2e4fd2c5c1c4e9063839336a223a980136",
@@ -15419,6 +15419,20 @@
           "sourceCommit": null,
           "primaryBase": "92ce9d1901a1ac8ad9d9e3815b331db4b42ee4b9"
         }
+      ],
+      "acceptedBlob": "1fe3e517c2e8243377f1caa5279ed42639e2e282",
+      "result": "Read both complete local journeys. The first creates its cwd, registers the real execute tool with a denying fake job service, builds a schema-only declaration/dispatch adapter, asserts successful JS execution, forwarded subagent launch, denied shell, runtime error and unknown tool, then removes only its cwd. The second separately owns TaskManager and JobService, registers service-backed execution, asserts an async shell is still running and identified in the reply, awaits that exact job, compares bounded jobs.inspect through execute and direct service, checks output truncation and error propagation, then awaits manager.shutdown before its cwd removal. These authorities and lifetimes remain visible in each scenario; extraction into a shared fixture/context would obscure their difference. The sole edit fixes the previously false universal advertisement claim without changing setup, assertions or lifetime.",
+      "systemReason": "Production main-owner orchestration explicitly advertises execute with the registered schema. Its actual admission awaits transcript/turn preparation, checks owner validity and duplicate identity/capacity, reserves the history pair and delegates to executeRegisteredLiveTool, which checks tool identity, validates args and applies beforeToolCall blocking before tool.execute. registerExecuteTool invokes executeIsolated and bridges to the session job handler. JobService shell launches through TaskManager; its local inspect returns bounded manager output and the manager owns wait/shutdown. setup-probe separately advertises the same schema but always denies diagnostic execution. Thus the new synthetic-adapter disclaimer correctly separates what this offline probe demonstrates from production advertisement/admission, resolving the specific prior objection rather than pretending cosmetic extraction is needed.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Inspected exact candidate with git show and git diff against a3ece760adc29021f94f426fb4b4bd37a26e1d2e, not checkout HEAD. Complete diff changes only the probe declaration comment; all candidate-changed source paths inspected.",
+        "Read complete intrinsic focus file and relevant production caller/owner code. Static source review only; no setup, tests, builds, auth, device access or dependency changes."
+      ],
+      "limits": [
+        "No runtime verification: parent owns audited isolated gates. Production Live provider/device behavior is unverified; no credentials accessed.",
+        "No source edits or cleanup executed. Existing probe rm calls target its own mkdtemp cwd and were inspected only. Its runtime and shell launches inherit scrubbed process.env; future parent gates must supply explicit argv/env and owned retained mkdtemp HOME/config/SDK fixtures.",
+        "Review provenance: exact Git objects in durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_70030326. Preserved candidate evidence and other worktrees. Other uncommitted coverage proposals are not accepted by this exact-commit review.",
+        "Runtime agent.model verification is parent-owned, not independently verified here. No delegation, publication, recovery work or wisdom-note edits."
       ]
     },
     {
@@ -16096,11 +16110,11 @@
     {
       "file": "tests/live-speaker-check.test.ts",
       "initialBlob": "cb257f2e226dcb43a7b284184a4f9016bbf4eb23",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_3812f224",
       "sourceCommit": "0913ab2e4fd2c5c1c4e9063839336a223a980136",
-      "judgeIds": [],
-      "resumeState": "needs-judge",
+      "judgeIds": ["task_70030326"],
+      "resumeState": "accepted-joined",
       "pendingReason": "Related primary left uncommitted bytes for this file; preserve them, allocate this focus its own primary, and obtain exact-code judgment before integration.",
       "area": "live-native-audio",
       "primaryCommit": "0913ab2e4fd2c5c1c4e9063839336a223a980136",
@@ -16135,16 +16149,31 @@
         "No tests, setup, builds, live provider calls, credentials, devices, dependency writes, cleanup, recovery, delegation, publication, merges or pushes. Parent owns audited isolated gates and independent judgments.",
         "Source reading and a comment-only diff are not runtime/provider or physical AEC verification. Existing probe cleanup was inspected but not executed. Formatter fixture remains retained.",
         "Wisdom/values left unchanged: parent owns aggregate wisdom; this batch applies existing authority/ownership guidance."
+      ],
+      "acceptedBlob": "cb257f2e226dcb43a7b284184a4f9016bbf4eb23",
+      "result": "Read the complete unchanged file. A deterministic reference, silent baseline and combined waveform helper expose the meaning of each measurement input. Delayed normalized-correlation/lag/power checks stay with their waveform; off-grid inverted and sparse-phase alias cases visibly distinguish polarity from phase coverage; noise and silence/clipping/short-capture/background cases directly state classification boundaries. fakeAudio contains its timer and play/stop/close counts with the methods that own them. Runner tests keep factory capture callbacks, sanitized output whitelist, abort/hung stop timing, sanitized terminal errors, pre-abort nonlaunch, native configuration values, late factory close, capture overflow/queued playback, uncooperative write, internal deadline and held-buffer clearing beside their assertions. Their event ordering is the point; a parameter table or context bag would force reconstruction without clarifying an authority. The candidate blob equals primaryBase, with no necessary structural repair found.",
+      "systemReason": "Read all of speaker-check.ts and its extension caller. analyzeSpeakerCheck bounds windows and distinguishes levels/normalized phase-independent signal evidence from processing metadata. runSpeakerCheck owns pre-abort refusal, deadline, sanitized helper failures, late-factory completion and bounded stop/close; measureSpeakerReturn separately owns baseline/submission/tail capture, overflow and queue outcomes, validated native metadata and zeroing PCM/reference/frame before native shutdown can deliver callbacks. The tests keep the important ownership crossings explicit instead of hiding them behind fixture setup. Extension speaker-check requires a local idle interactive session and explicit consent; it calls the audio-only runner then publishes a bounded sanitized summary with an explicit non-AEC-quality disclaimer. Configuration is not measurement proof. Extra uncommitted coverage described in supplied evidence is outside this commit and not part of this decision.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Inspected exact candidate with git show and git diff against a3ece760adc29021f94f426fb4b4bd37a26e1d2e, not checkout HEAD. Complete diff changes only the probe declaration comment; all candidate-changed source paths inspected.",
+        "Read complete intrinsic focus file and relevant production caller/owner code. Static source review only; no setup, tests, builds, auth, device access or dependency changes.",
+        "Verified speaker-check focus hash is identical in primaryBase and candidate."
+      ],
+      "limits": [
+        "No runtime verification: parent owns audited isolated gates. Production Live provider/device behavior is unverified; no credentials accessed.",
+        "No source edits or cleanup executed. Existing probe rm calls target its own mkdtemp cwd and were inspected only. Its runtime and shell launches inherit scrubbed process.env; future parent gates must supply explicit argv/env and owned retained mkdtemp HOME/config/SDK fixtures.",
+        "Review provenance: exact Git objects in durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_70030326. Preserved candidate evidence and other worktrees. Other uncommitted coverage proposals are not accepted by this exact-commit review.",
+        "Runtime agent.model verification is parent-owned, not independently verified here. No delegation, publication, recovery work or wisdom-note edits."
       ]
     },
     {
       "file": "tests/live-speaker-summary.test.ts",
       "initialBlob": "24e2b019302b328c4df36199c6c23100b92edf34",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_3812f224",
       "sourceCommit": "0913ab2e4fd2c5c1c4e9063839336a223a980136",
-      "judgeIds": [],
-      "resumeState": "needs-judge",
+      "judgeIds": ["task_70030326"],
+      "resumeState": "accepted-joined",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
       "area": "live-native-audio",
       "primaryCommit": "0913ab2e4fd2c5c1c4e9063839336a223a980136",
@@ -16179,6 +16208,21 @@
         "No tests, setup, builds, live provider calls, credentials, devices, dependency writes, cleanup, recovery, delegation, publication, merges or pushes. Parent owns audited isolated gates and independent judgments.",
         "Source reading and a comment-only diff are not runtime/provider or physical AEC verification. Existing probe cleanup was inspected but not executed. Formatter fixture remains retained.",
         "Wisdom/values left unchanged: parent owns aggregate wisdom; this batch applies existing authority/ownership guidance."
+      ],
+      "acceptedBlob": "24e2b019302b328c4df36199c6c23100b92edf34",
+      "result": "Read both complete unchanged tests. The no_signal case supplies only status, making the paired non-AEC-pass warning, unknown native configuration and non-hardware-reference disclaimer understandable without hidden defaults. The correlated_return case supplies correlation, lag, capture levels and enabled/nonbypassed processing rates locally, then checks actionable WebRTC-investigation wording, rendered correlation, bypass=false and the missing-channel unknown label. The input and its evidence limitations stay adjacent; sharing a result fixture or table would add indirection to two distinct decisions. The focus blob equals primaryBase and needs no structural rewrite.",
+      "systemReason": "Read the complete formatter plus runner and consent-gated extension publication. speakerCheckSummary maps each status to an action, labels unavailable/nonfinite numbers as unknown, independently formats configuration and always states that submitted test PCM is not a measured hardware render tap. runSpeakerCheck returns bounded derived metrics and validated configuration, not raw audio; extension invokes summary only after explicit local consent and appends that this cannot prove barge-in or AEC quality. Each test preserves this distinction between a signal observation, configuration authority and truthful advice rather than conflating a correlated return with absolute quality.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Inspected exact candidate with git show and git diff against a3ece760adc29021f94f426fb4b4bd37a26e1d2e, not checkout HEAD. Complete diff changes only the probe declaration comment; all candidate-changed source paths inspected.",
+        "Read complete intrinsic focus file and relevant production caller/owner code. Static source review only; no setup, tests, builds, auth, device access or dependency changes.",
+        "Verified speaker-summary focus hash is identical in primaryBase and candidate."
+      ],
+      "limits": [
+        "No runtime verification: parent owns audited isolated gates. Production Live provider/device behavior is unverified; no credentials accessed.",
+        "No source edits or cleanup executed. Existing probe rm calls target its own mkdtemp cwd and were inspected only. Its runtime and shell launches inherit scrubbed process.env; future parent gates must supply explicit argv/env and owned retained mkdtemp HOME/config/SDK fixtures.",
+        "Review provenance: exact Git objects in durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_70030326. Preserved candidate evidence and other worktrees. Other uncommitted coverage proposals are not accepted by this exact-commit review.",
+        "Runtime agent.model verification is parent-owned, not independently verified here. No delegation, publication, recovery work or wisdom-note edits."
       ]
     },
     {
@@ -24154,9 +24198,9 @@
     "baselineFiles": 766,
     "finalGate": "pending; incomplete focus coverage",
     "liveAuth": "unverified/failing; preserved",
-    "accepted": 819,
+    "accepted": 822,
     "total": 836,
-    "pending": 17,
+    "pending": 14,
     "sourceExtras": 70,
     "checkout": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
     "branch": "bruv/readability-pr45-sol-continuation",

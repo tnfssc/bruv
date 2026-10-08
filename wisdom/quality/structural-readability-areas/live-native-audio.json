@@ -3608,16 +3608,17 @@
       "initialBlob": "9f5353942e250a8cf5c73837f6ea2cfc6abd8232",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "1fe3e517c2e8243377f1caa5279ed42639e2e282",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "1fe3e517c2e8243377f1caa5279ed42639e2e282",
         "primaryId": "task_3812f224",
         "primaryCommit": "0913ab2e4fd2c5c1c4e9063839336a223a980136",
-        "judgeIds": [],
+        "judgeIds": ["task_70030326"],
         "sourceCommit": "0913ab2e4fd2c5c1c4e9063839336a223a980136",
-        "state": "needs-judge",
-        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+        "state": "accepted-joined",
+        "reason": "Read both complete local journeys. The first creates its cwd, registers the real execute tool with a denying fake job service, builds a schema-only declaration/dispatch adapter, asserts successful JS execution, forwarded subagent launch, denied shell, runtime error and unknown tool, then removes only its cwd. The second separately owns TaskManager and JobService, registers service-backed execution, asserts an async shell is still running and identified in the reply, awaits that exact job, compares bounded jobs.inspect through execute and direct service, checks output truncation and error propagation, then awaits manager.shutdown before its cwd removal. These authorities and lifetimes remain visible in each scenario; extraction into a shared fixture/context would obscure their difference. The sole edit fixes the previously false universal advertisement claim without changing setup, assertions or lifetime."
       }
     },
     {
@@ -3979,16 +3980,17 @@
       "initialBlob": "cb257f2e226dcb43a7b284184a4f9016bbf4eb23",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "cb257f2e226dcb43a7b284184a4f9016bbf4eb23",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "cb257f2e226dcb43a7b284184a4f9016bbf4eb23",
         "primaryId": "task_3812f224",
         "primaryCommit": "0913ab2e4fd2c5c1c4e9063839336a223a980136",
-        "judgeIds": [],
+        "judgeIds": ["task_70030326"],
         "sourceCommit": "0913ab2e4fd2c5c1c4e9063839336a223a980136",
-        "state": "needs-judge",
-        "reason": "Related primary left uncommitted bytes for this file; preserve them, allocate this focus its own primary, and obtain exact-code judgment before integration."
+        "state": "accepted-joined",
+        "reason": "Read the complete unchanged file. A deterministic reference, silent baseline and combined waveform helper expose the meaning of each measurement input. Delayed normalized-correlation/lag/power checks stay with their waveform; off-grid inverted and sparse-phase alias cases visibly distinguish polarity from phase coverage; noise and silence/clipping/short-capture/background cases directly state classification boundaries. fakeAudio contains its timer and play/stop/close counts with the methods that own them. Runner tests keep factory capture callbacks, sanitized output whitelist, abort/hung stop timing, sanitized terminal errors, pre-abort nonlaunch, native configuration values, late factory close, capture overflow/queued playback, uncooperative write, internal deadline and held-buffer clearing beside their assertions. Their event ordering is the point; a parameter table or context bag would force reconstruction without clarifying an authority. The candidate blob equals primaryBase, with no necessary structural repair found."
       }
     },
     {
@@ -3996,16 +3998,17 @@
       "initialBlob": "24e2b019302b328c4df36199c6c23100b92edf34",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "24e2b019302b328c4df36199c6c23100b92edf34",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "24e2b019302b328c4df36199c6c23100b92edf34",
         "primaryId": "task_3812f224",
         "primaryCommit": "0913ab2e4fd2c5c1c4e9063839336a223a980136",
-        "judgeIds": [],
+        "judgeIds": ["task_70030326"],
         "sourceCommit": "0913ab2e4fd2c5c1c4e9063839336a223a980136",
-        "state": "needs-judge",
-        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+        "state": "accepted-joined",
+        "reason": "Read both complete unchanged tests. The no_signal case supplies only status, making the paired non-AEC-pass warning, unknown native configuration and non-hardware-reference disclaimer understandable without hidden defaults. The correlated_return case supplies correlation, lag, capture levels and enabled/nonbypassed processing rates locally, then checks actionable WebRTC-investigation wording, rendered correlation, bypass=false and the missing-channel unknown label. The input and its evidence limitations stay adjacent; sharing a result fixture or table would add indirection to two distinct decisions. The focus blob equals primaryBase and needs no structural rewrite."
       }
     },
     {
@@ -4886,7 +4889,7 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 134,
-    "pending": 17
+    "accepted": 137,
+    "pending": 14
   }
 }
