@@ -16,6 +16,7 @@ type Step = {
   with?: Record<string, unknown>;
 };
 type Job = {
+  strategy?: { "fail-fast": boolean; matrix: { shard: number[] } };
   name?: string;
   if?: string;
   needs?: string | string[];
@@ -346,4 +347,22 @@ test("shared Linux gate bounds a stalled runner without accepting incomplete che
   expect(logs.if).toBe("failure()");
   expect(logs.with?.path).toBe("artifacts/ci/");
   expect(ci.jobs.test!.steps.indexOf(logs)).toBeGreaterThan(ci.jobs.test!.steps.indexOf(gate));
+});
+
+test("ordinary Linux matrix uses all three native shards with separate failure artifacts", () => {
+  const job = ci.jobs.test!;
+  expect(job.strategy).toEqual({ "fail-fast": false, matrix: { shard: [1, 2, 3] } });
+  expect(job.steps.find((s) => s.uses?.startsWith("oven-sh/setup-bun@"))?.with?.["bun-version"]).toBe("1.4.2");
+  // biome-ignore lint/suspicious/noTemplateCurlyInString: literal GitHub expression
+  expect(job.name).toBe("Full validation / Linux x64 (${{ matrix.shard }}/3)");
+  const gate = job.steps.find((s) => s.run === "bun run ci")!;
+  // biome-ignore lint/suspicious/noTemplateCurlyInString: literal GitHub expression
+  expect(gate.env).toEqual({ CI_TEST_SHARD: "${{ matrix.shard }}/3" });
+  // biome-ignore lint/suspicious/noTemplateCurlyInString: literal GitHub expression
+  expect(step(job, "Upload failure logs").with?.name).toBe("ci-failure-logs-linux-${{ matrix.shard }}-of-3");
+  expect(gate["timeout-minutes"]).toBe(6);
+  expect(gate["continue-on-error"]).toBeUndefined();
+  expect(ci.jobs.required!.needs).toContain("test");
+  // biome-ignore lint/suspicious/noTemplateCurlyInString: literal GitHub expression
+  expect(aggregate.env?.LINUX).toBe("${{ needs.test.result }}");
 });
