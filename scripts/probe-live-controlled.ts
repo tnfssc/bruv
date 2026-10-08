@@ -21,7 +21,7 @@ function parseCondition(spec: string) {
     !["fresh", "prior", "snapshot"].includes(context) ||
     !["baseline", "guidance", "example", "globals"].includes(variant) ||
     !["explicit", "plain"].includes(request) ||
-    (lang in original) !== (context === "snapshot") ||
+    lang in original !== (context === "snapshot") ||
     (input.synthetic && context === "snapshot")
   )
     throw Error("Invalid condition: " + spec);
