@@ -3509,6 +3509,15 @@
         "branch": "bruv/pr45-judge-1-execution-tasks-questions-f-09eee4d9",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "handled"
+      },
+      {
+        "id": "task_e7320bb4",
+        "stage": "primary",
+        "focus": ["tests/root-owner.test.ts"],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_e7320bb4",
+        "branch": "bruv/pr45-primary-1-execution-tasks-questions-e7320bb4",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
       }
     ]
   },
@@ -4209,7 +4218,7 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_34625921",
         "branch": "bruv/pr45-judge-2-ui-terminal-cli-focuses-34625921",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled"
       }
     ]
   },
@@ -4330,7 +4339,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_d91c78aa",
         "branch": "bruv/pr45-primary-1-build-release-ci-tooling--d91c78aa",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "85e042ccba417424a7368754ebf2238406e69fac"
       }
     ]
   },

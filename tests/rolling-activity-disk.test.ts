@@ -1,8 +1,8 @@
 import { expect, test } from "bun:test";
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdtemp } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
-import { run } from "./helpers";
+import { ownedFixtureEnv, run } from "./helpers";
 
 // Each journey owns a fresh subprocess: these real SDK adapters patch prototypes.
 const diskActivityFixture = String.raw`
@@ -132,7 +132,8 @@ const expectCachedMembership = (label) => {
 
 async function runDiskActivityJourney(journey: string): Promise<void> {
   const root = await mkdtemp(join(tmpdir(), "bruv-activity-disk-"));
-  // The fixture owns adapter teardown; this test owns the child process and files.
+  const env = { ...ownedFixtureEnv(root), ROOT: root };
+  // The fixture owns adapter teardown; retain its files and isolated HOME/config/SDK for inspection.
   const scenario = `${diskActivityFixture}
 try {
 ${journey}
@@ -145,17 +146,13 @@ ${journey}
 }
 console.log("ok");
 `;
-  try {
-    const result = await run([process.execPath, "-e", scenario], {
-      cwd: resolve(import.meta.dir, ".."),
-      env: { ...process.env, ROOT: root },
-    });
-    expect(result.stderr).toBe("");
-    expect(result.code).toBe(0);
-    expect(result.stdout).toBe("ok\n");
-  } finally {
-    await rm(root, { recursive: true, force: true });
-  }
+  const result = await run([process.execPath, "-e", scenario], {
+    cwd: resolve(import.meta.dir, ".."),
+    env,
+  });
+  expect(result.stderr).toBe("");
+  expect(result.code).toBe(0);
+  expect(result.stdout).toBe("ok\n");
 }
 
 // These are ordered phases, not independent fixtures. Their shared script scope

@@ -2949,10 +2949,11 @@
       "resume": {
         "status": "pending",
         "acceptedBlob": "6569bd7e550e94dcd82b41da3774848f4347eae2",
-        "primaryId": "task_27b632e4",
+        "primaryId": "task_d91c78aa",
+        "primaryCommit": "85e042ccba417424a7368754ebf2238406e69fac",
         "judgeIds": ["task_ee4235b6"],
-        "sourceCommit": null,
-        "state": "needs-rework"
+        "sourceCommit": "85e042ccba417424a7368754ebf2238406e69fac",
+        "state": "needs-judge"
       }
     },
     {

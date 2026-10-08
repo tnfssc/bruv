@@ -6152,19 +6152,19 @@
       ],
       "chars": 57695,
       "lines": 1455,
-      "status": "pending",
-      "jobId": "task_7641420e",
+      "status": "running",
+      "jobId": "task_6d37f4ed",
       "model": "openai-codex/gpt-6.1-sol",
       "workspace": {
         "kind": "worktree",
-        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_7641420e",
-        "worktreePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_7641420e",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_6d37f4ed",
+        "worktreePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_6d37f4ed",
         "sourcePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
-        "baseRef": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
-        "baseOid": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
-        "branch": "bruv/pr45-final-integrated-diff-lane-26-execu-7641420e",
+        "baseRef": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+        "baseOid": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+        "branch": "bruv/pr45-final-integrated-diff-lane-26-execu-6d37f4ed",
         "preparationStatus": "ready",
-        "setupTaskId": "task_0b0c649c",
+        "setupTaskId": "task_6d60ed4a",
         "setupStatus": "running",
         "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
       },
@@ -8132,21 +8132,21 @@
       ],
       "chars": 89787,
       "lines": 1915,
-      "status": "pending",
+      "status": "running",
       "candidateOverride": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
-      "jobId": "task_e516dccb",
+      "jobId": "task_5de6aadd",
       "model": "openai-codex/gpt-6.1-sol",
       "workspace": {
         "kind": "worktree",
-        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_e516dccb",
-        "worktreePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_e516dccb",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_5de6aadd",
+        "worktreePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_5de6aadd",
         "sourcePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
-        "baseRef": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
-        "baseOid": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
-        "branch": "bruv/pr45-final-integrated-diff-lane-37-remot-e516dccb",
+        "baseRef": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+        "baseOid": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+        "branch": "bruv/pr45-final-integrated-diff-lane-37-remot-5de6aadd",
         "preparationStatus": "ready",
-        "setupTaskId": "task_6a80325a",
-        "setupStatus": "failed",
+        "setupTaskId": "task_05fafdea",
+        "setupStatus": "running",
         "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
       },
       "repairHistory": [
@@ -8692,21 +8692,21 @@
       ],
       "chars": 99875,
       "lines": 2012,
-      "status": "pending",
+      "status": "running",
       "candidateOverride": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
-      "jobId": "task_9f34e293",
+      "jobId": "task_3bac1f85",
       "model": "openai-codex/gpt-6.1-sol",
       "workspace": {
         "kind": "worktree",
-        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_9f34e293",
-        "worktreePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_9f34e293",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_3bac1f85",
+        "worktreePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_3bac1f85",
         "sourcePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
-        "baseRef": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
-        "baseOid": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
-        "branch": "bruv/pr45-final-integrated-diff-lane-40-remot-9f34e293",
+        "baseRef": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+        "baseOid": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+        "branch": "bruv/pr45-final-integrated-diff-lane-40-remot-3bac1f85",
         "preparationStatus": "ready",
-        "setupTaskId": "task_c6be079f",
-        "setupStatus": "failed",
+        "setupTaskId": "task_b17c94d5",
+        "setupStatus": "running",
         "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
       },
       "repairHistory": [
@@ -11163,7 +11163,7 @@
   ],
   "cap": 6,
   "auxStatus": "completed",
-  "reworkReserve": 4,
+  "reworkReserve": 3,
   "reworkHistory": [
     {
       "lane": "lane-05",
@@ -11183,8 +11183,5 @@
     }
   ],
   "repairedSourceCandidate": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
-  "currentDiffPaths": 516,
-  "pausedForRework": {
-    "reason": "Record actual remaining updater caller before source-slot rebalance."
-  }
+  "currentDiffPaths": 516
 }

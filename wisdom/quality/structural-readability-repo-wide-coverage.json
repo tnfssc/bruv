@@ -20220,16 +20220,16 @@
     {
       "file": "tests/rolling-activity-disk.test.ts",
       "initialBlob": "16109794da03297d71f74968b134a2c9e7929bf4",
-      "status": "pending",
+      "status": "accepted",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_b89a9b65",
       "primaryCommit": "da5bae9ae91db435f048c260b11079ae8d72e722",
-      "judgeIds": ["task_6f3b1071", "task_28221777", "task_a6caab27"],
+      "judgeIds": ["task_6f3b1071", "task_28221777", "task_a6caab27", "task_34625921"],
       "sourceCommit": "da5bae9ae91db435f048c260b11079ae8d72e722",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
-      "acceptedBlob": "a502768eb70247ad2caceed71f88c1c6aa82533d",
-      "result": "Existing primary-focus ACCEPT by task_28221777 at 496389243e523220cae31f698ac02922890a578f; exact candidate and surviving-area blob verified. Pinned joined tree lacks this accepted blob; parent owns joining. No new review or test execution. Final fresh rework writer task_2031ace4; original rejected primary task_1b754cf4/ad493ccc4986fb5c18bc708590a38232c84621bd retained in evidence.",
+      "acceptedBlob": "78b81cb9dd5879ffbb3140268f40791dce838955",
+      "result": "The child ownership boundary is now visible at the coherent journey runner: mkdtemp allocates root, ownedFixtureEnv(root) supplies the writable HOME/config/SDK authority, ROOT is added explicitly, and run receives that environment instead of caller process.env. The ordered membershipReplay + liveFrames + ownerTransitions script remains one journey, not an independent clean owner fixture or context bag. The only removed lifetime responsibility is parent filesystem deletion; subprocess isolation and child finally disposal/restoration remain. This resolves the specified reading/ownership objection without cosmetic restructuring.",
       "priorAcceptedIntegrationProof": [
         {
           "primaryId": "task_2031ace4",
@@ -20280,6 +20280,21 @@
         "Retained formatter/Git audit environment and static check/format records: /tmp/bruv-pr45-source-audit-IJwWhE. Durable source provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_b89a9b65 at da5bae9ae91db435f048c260b11079ae8d72e722; no /tmp code checkout or descendant delegation.",
         "Future disk and proof tests retain their actual mkdtemp source/evidence and isolated HOME/config/SDK even on failure. Fixture tests were not executed in this worker, so no new runtime proof is claimed.",
         "Stub adaptation/assets/compile checks remain provenance/preflight mechanics, not native UI proof. No native terminal, PTY, release or provider behavior verified."
+      ],
+      "systemReason": "Followed fixture creation through helpers.run -> offlineTestEnv -> Bun.spawn. offlineTestEnv spreads only the supplied allowlist and disables Herdr routing; both pipes and exit are awaited together. ownedFixtureEnv places HOME, XDG config/cache/data, PI/BRUV SDK directories, Bun/npm config/cache, temp and empty Git hooks under root and supplies fixed PATH without caller credentials/config overrides. SDK SessionManager.create receives root for cwd and sessionDir; newSession, same-path rewrite/reload and reset therefore remain within fixture journals. The read-only SDK theme path uses package assets with watcher disabled and owned custom-theme config. ActivityController caches only selected disk membership keyed by metadata identity while rebuilding live children/status/expansion each sync. The preserved sequence exercises ignored append caching, user/assistant and boundary membership, branch roundtrip, live failure/mouse/removal/settlement, then owner rewrite while the group is still expanded with failed e and tools [c,d,e], changed-boundary reread with same IDs, reset/session switch, native in-memory fallback and return to disk. Disk owner replacement adopts a new store, giving a new revision even for unchanged IDs; unknown owners recompute via getBranch. All replay/read-scope/identity/live-state assertions survive. Child finally restores adapters and instrumented materialize and disposes the manager; unchanged disk-store disposal removes only its private pending spools, not fixture HOME or retained published sessions.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read complete exact candidate focus and its diff from primaryBase 4bf5cfab7c7a6b3333afa6249a2f49341aa2c9a4; inspected both candidate-changed files independently.",
+        "Static Git-object comparison confirmed diskActivityFixture and the entire ordered phases plus test invocation are byte-for-byte unchanged from primaryBase.",
+        "Read relevant unchanged system decisions: branch revision/selection, activity membership/live sync, owner adoption/rewrite/reload/reset, scoped adapter restoration, private spool ownership and SDK config/theme/session paths.",
+        "Verified unchanged helper and production-source objects across base/candidate; git diff --check returned no diagnostics.",
+        "Resolved exact accepted blob hashes with git rev-parse candidate:path."
+      ],
+      "limits": [
+        "Static actual-source review only; no setup, tests, builds, provider/device/auth access, recovery work, cleanup commands, shared dependency writes, or delegation performed. Parent owns audited isolated runtime gates.",
+        "Installed SDK implementation was inspected read-only to trace theme/config/session authority; runtime behavior and native UI rendering remain unverified.",
+        "Candidate/base evidence was read using exact Git object IDs in this durable worktree, not inferred from checkout HEAD. Test fixtures may create retained mkdtemp roots when parent runs them; no fixture was created or executed during this review.",
+        "Runtime model verification remains parent-owned; no wisdom/source changes or publication performed."
       ]
     },
     {
@@ -23437,7 +23452,7 @@
       "status": "pending",
       "area": "build-release-ci-tooling",
       "acceptedBlob": "6569bd7e550e94dcd82b41da3774848f4347eae2",
-      "primaryId": "task_27b632e4",
+      "primaryId": "task_d91c78aa",
       "judgeIds": ["task_ee4235b6"],
       "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json",
       "priorAcceptedIntegrationProof": [
@@ -23449,8 +23464,8 @@
           "finalJudge": "task_5d582a15"
         }
       ],
-      "resumeState": "needs-rework",
-      "sourceCommit": null,
+      "resumeState": "needs-judge",
+      "sourceCommit": "85e042ccba417424a7368754ebf2238406e69fac",
       "resumeRework": {
         "candidate": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
         "primaryId": "task_27b632e4",
@@ -23470,7 +23485,31 @@
           }
         ],
         "readingReason": "Existing exercised caller of changed private compiled updater still inherits HOME/config/SDK/Git/runtime preload at compile/probe boundaries. Own each actual fixture/env/argv throughout lifetime, preserve namespace/lookalike/staged/paired-byte/unchanged-runner assertions and retain fixture roots. No tests/setup/builds/provider/cleanup traps."
-      }
+      },
+      "priorPrimaryLineage": [
+        {
+          "primaryId": "task_27b632e4",
+          "sourceCommit": null
+        }
+      ],
+      "primaryCommit": "85e042ccba417424a7368754ebf2238406e69fac",
+      "primaryBase": "cff11fa6979a29782772c6182bfe8c39126bf131",
+      "primaryResult": "Each private integration test now creates a retained mkdtemp root and ownedFixtureEnv before any process launch. Every namespace/updater build, compiled run and installed check supplies explicit argv, an absolute source path where needed, fixture cwd and that owned environment. Runner layers only PATH=/nonexistent and the three explicit fixture payload/target settings. Its real pairProbe inherits the already owned runner environment and cwd; compiled detection and real staged version checks remain untouched. Namespace/lookalike checks, paired byte assertions, runner byte identity and staging assertions remain in place. Unit-test targets and their pre-existing cleanup remain unchanged; these retained compiled roots never join that cleanup set. Existing separate private runner suite already uses the same helper and explicit argv/cwd/env, so helpers and runner callers need no further edits. No new abstraction or rename churn.",
+      "primaryPaths": ["tests/update.test.ts"],
+      "primaryChecks": [
+        "Read the whole assigned focus, private runner, namespace fixture, environment helper and the separate private runner suite; inspected pairProbe/runBinary to trace actual staged children.",
+        "Inspected exact rejected candidate b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0; focus and relevant helpers matched checkout before editing. Read only the assigned focus row in the preserved area ledger and the supplied rejection objection.",
+        "Reviewed filesystem/process effects statically: owned roots hold compilation outputs, HOME/config/cache/data/SDK/temp/Git hooks and mock payloads; private runner transport is closed in memory. No test/setup/build execution.",
+        "Repository Biome format --write via child_process argv on tests/update.test.ts only, with retained fresh owned environment at /var/tmp/pr45-update-format-TSE2Q1: exit 0, no fixes applied.",
+        "git diff --check passed. Static comparison confirmed unit suites unchanged except helper import and all expectation lines unchanged; preservation check, not runtime proof.",
+        "Source-only commit changes tests/update.test.ts only. Git commit used owned environment and empty Git hooks; no hooks/tests/setup/builds ran."
+      ],
+      "primaryLimits": [
+        "Tests, builds, setup and live authentication/device gates were not run; parent owns audited isolated runtime checks and fresh independent judgment. Shell stand-ins remain fixture coverage, not recovered HOME incident reproduction or real shipped-pair proof.",
+        "Requested undefined/wisdom/quality/structural-readability-areas/build-release-ci-tooling-resume-reconciliation.json and normalized wisdom/quality/structural-readability-areas/build-release-ci-tooling-resume-reconciliation.json both absent (ENOENT). Used supplied exact rejection and assigned preserved area-ledger row instead.",
+        "Retained formatter fixture: /var/tmp/pr45-update-format-TSE2Q1. Tests will retain /var/tmp/bruv-compiled-fixture-* and /var/tmp/bruv-update-compiled-*; not created here because tests were not run. Durable source provenance is this worktree and the exact sourceCommit/sourceBlobs.",
+        "No recovery investigation, credentials inspection, cleanup/deletion commands, user-data mutation, delegation, dependency writes/reinstallation, publication or unrelated source edits. Wisdom and values left unchanged: parent owns aggregate wisdom."
+      ]
     },
     {
       "file": "tests/verify-update-probe.test.ts",
@@ -24037,15 +24076,15 @@
       "file": "tests/tasks-ui-proof-build.test.ts",
       "initialBlob": "absent",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_b89a9b65",
       "primaryCommit": "da5bae9ae91db435f048c260b11079ae8d72e722",
-      "judgeIds": ["task_f9504048", "task_db1c285c"],
+      "judgeIds": ["task_f9504048", "task_db1c285c", "task_34625921"],
       "sourceCommit": "da5bae9ae91db435f048c260b11079ae8d72e722",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
-      "status": "pending",
-      "acceptedBlob": "d132c1709bbc03d1e3851dd2e6886ed50fc8bf0d",
-      "result": "Existing primary-focus NO CHANGE NEEDED by task_db1c285c at fd1e6f44a2c88c3f1ac311087b90efb65f6e980d; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution.",
+      "status": "accepted",
+      "acceptedBlob": "141e067a4c21cbc63e45d895f6f639139579becf",
+      "result": "A single ownedFixtureEnv(root) now visibly governs fixture Git setup and builder launch. The local git closure passes env to spawnSync; the Bun closure adds only the deliberate PROOF_STUB mode to that same allowlist. Removing filesystem-cleanup wrappers makes actual source/config/SDK/generated evidence inspectable even after setup or assertion failure. This is a real authority/lifetime correction at the fixture boundary, not a rename or oversized abstraction. All four intrinsic journeys remain direct and distinguish stub provenance checks from native UI proof.",
       "priorAcceptedIntegrationProof": [
         {
           "primaryId": "task_eed22df6",
@@ -24096,6 +24135,21 @@
         "Retained formatter/Git audit environment and static check/format records: /tmp/bruv-pr45-source-audit-IJwWhE. Durable source provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_b89a9b65 at da5bae9ae91db435f048c260b11079ae8d72e722; no /tmp code checkout or descendant delegation.",
         "Future disk and proof tests retain their actual mkdtemp source/evidence and isolated HOME/config/SDK even on failure. Fixture tests were not executed in this worker, so no new runtime proof is claimed.",
         "Stub adaptation/assets/compile checks remain provenance/preflight mechanics, not native UI proof. No native terminal, PTY, release or provider behavior verified."
+      ],
+      "acceptedRelatedJudges": ["task_34625921"],
+      "systemReason": "Followed fixture -> Git init/add/commit/rev-parse -> copied real builder with preload -> nested Git/preflight/preparation/Bun.build/provenance publication. Explicit argv and cwd root accompany isolated env for all fixture children. The existing helper suppresses system/global caller Git config, sets an empty owned hooksPath, noninteractive Git and fixed PATH, and does not forward caller GIT_CONFIG, credential, HOME or SDK overrides. The production builder itself still inherits its process environment for nested Git; here its process was launched under that owned allowlist, so inheritance stays fixture-owned. The repository production builder is read and copied into root; adaptation/assets/build code and the package host under root are fixture stubs. Shared dependencies are not modified. The successful journey still checks source commit/root/clean marker, binary hash, Bun version/timestamp/stdout, exact build options, prepared asset, unchanged adapted host and absence of a web archive. Old two-argument invocation stops before preparation; dirty tracked source stops before preparation, then restoring source exposes the unadapted-host refusal without dependency writes. Stub compile failure and subsequent compile-time tracked-source mutation both fail and withhold the proof record. The stub binary text and comments honestly say this is CLI/provenance mechanics, not a compiled native UI. Roots and evidence are retained; no production builder/shared helper behavior or assertions are weakened.",
+      "checks": [
+        "Read complete exact candidate fixture/tests and full diff from primaryBase 4bf5cfab7c7a6b3333afa6249a2f49341aa2c9a4, including removed cleanup and unchanged failure/publication decisions.",
+        "Read entire production scripts/tasks-ui-proof-build.ts and helpers.ts to trace nested Git environment inheritance and owned HOME/config/SDK/hooks.",
+        "Independently traced each of the four proof journeys and inspected the copied preparation/adaptation/build stubs and their filesystem effects before any execution; no execution was authorized or attempted.",
+        "Verified production builder and shared helper blobs are unchanged from primaryBase; only the two assigned test paths change.",
+        "git diff --check returned no diagnostics; exact accepted blob hashes resolved with git rev-parse candidate:path."
+      ],
+      "limits": [
+        "Static actual-source review only; no setup, tests, builds, provider/device/auth access, recovery work, cleanup commands, shared dependency writes, or delegation performed. Parent owns audited isolated runtime gates.",
+        "Installed SDK implementation was inspected read-only to trace theme/config/session authority; runtime behavior and native UI rendering remain unverified.",
+        "Candidate/base evidence was read using exact Git object IDs in this durable worktree, not inferred from checkout HEAD. Test fixtures may create retained mkdtemp roots when parent runs them; no fixture was created or executed during this review.",
+        "Runtime model verification remains parent-owned; no wisdom/source changes or publication performed."
       ]
     },
     {
@@ -26459,9 +26513,9 @@
     "baselineFiles": 766,
     "finalGate": "pending; incomplete focus coverage",
     "liveAuth": "unverified/failing; preserved",
-    "accepted": 835,
+    "accepted": 837,
     "total": 839,
-    "pending": 4,
+    "pending": 2,
     "sourceExtras": 73,
     "checkout": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
     "branch": "bruv/readability-pr45-sol-continuation",
