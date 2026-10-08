@@ -11779,39 +11779,84 @@
       "initialBlob": "3849fbe167501b2b3c262687524d095988f14b93",
       "status": "pending",
       "area": "remote",
-      "resumeState": "pending-primary-unstarted",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_56130606",
+      "primaryCommit": "45731ea3cb85870c2bc145b1307b5b44e22caf18",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "45731ea3cb85870c2bc145b1307b5b44e22caf18",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
-      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
+      "primaryBase": "0879e2ecf255536afe27ead93375282b9c6a8167",
+      "primaryResult": "Keep the JSON unchanged: destination orchestrator/normal profiles visibly select the listed fixture IDs; the parent harness replaces only its own provider URL and intentionally supplies wrong local descendant profiles to detect escaped placement. Grouping or inventing configuration abstractions would obscure this direct fixture mapping. The related coherent batch change is confined to scenario.ts.",
+      "primaryPaths": ["tests/fixtures/remote-placement-e2e/scenario.ts"],
+      "primaryChecks": [
+        "Read whole assigned source and its focused preserved reconciliation row/evidence: all three pending-primary-unstarted, unchanged baseline blobs, no prior candidates or rejection judgments.",
+        "Manual source/diff review against existing fixture assertion contracts; retained target.authorized check, destination default profiles/target omission, role/depth/worktree/snapshot/untracked checks, child-delivery gate, saved q.answer validation, inspection cursor and 1 MiB bounds, SSE finish/DONE framing.",
+        "Repository Biome formatter via child_process argv on changed source only: exit 0; retained isolated HOME/XDG config/cache/data/state/TMPDIR at /tmp/pr45-placement-format-xiL5x6; provenance.json saved there.",
+        "git diff --check: exit 0 before scoped source-only commit."
+      ],
+      "primaryLimits": [
+        "No setup, tests, builds, generated fixture programs, network/device/auth probes, deletion, or recovery work run. Parent owns audited isolated gates and fresh independent judgment.",
+        "Existing Dockerfile and fixture callers inspected only; their container/temp writes and cleanup were not executed. Formatter alone ran in its retained owned fixture environment; dependencies read-only.",
+        "No independent reviewer or other descendants launched; runtime model verification belongs to parent.",
+        "changedPaths on every decision lists the complete combined source commit scope; only scenario.ts changed, even when the focus decision is no-change. No wisdom/values edits; parent owns aggregate lessons."
+      ]
     },
     {
       "file": "tests/fixtures/remote-placement-e2e/scenario.ts",
       "initialBlob": "364bd429724eafcc4f6d657837c50f1197efcefc",
       "status": "pending",
       "area": "remote",
-      "resumeState": "pending-primary-unstarted",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_56130606",
+      "primaryCommit": "45731ea3cb85870c2bc145b1307b5b44e22caf18",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "45731ea3cb85870c2bc145b1307b5b44e22caf18",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
-      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
+      "primaryBase": "0879e2ecf255536afe27ead93375282b9c6a8167",
+      "primaryResult": "The dispatcher now selects a role journey; parentResponse and orchestratorResponse expose their complete ordered gates without embedded launch/result/approval programs. Their action functions group effects by authority and render generated JS and shell proofs as readable multiline source. normalResponse keeps its single proof and refusal together. Inspection pagination is readable shared generated code, while OpenAI response/SSE framing stays separate and unchanged. This makes the approval barrier and restart/result-delivery path directly traceable without weakening any assertions or adding mutable state/context bags.",
+      "primaryPaths": ["tests/fixtures/remote-placement-e2e/scenario.ts"],
+      "primaryChecks": [
+        "Read whole assigned source and its focused preserved reconciliation row/evidence: all three pending-primary-unstarted, unchanged baseline blobs, no prior candidates or rejection judgments.",
+        "Manual source/diff review against existing fixture assertion contracts; retained target.authorized check, destination default profiles/target omission, role/depth/worktree/snapshot/untracked checks, child-delivery gate, saved q.answer validation, inspection cursor and 1 MiB bounds, SSE finish/DONE framing.",
+        "Repository Biome formatter via child_process argv on changed source only: exit 0; retained isolated HOME/XDG config/cache/data/state/TMPDIR at /tmp/pr45-placement-format-xiL5x6; provenance.json saved there.",
+        "git diff --check: exit 0 before scoped source-only commit."
+      ],
+      "primaryLimits": [
+        "No setup, tests, builds, generated fixture programs, network/device/auth probes, deletion, or recovery work run. Parent owns audited isolated gates and fresh independent judgment.",
+        "Existing Dockerfile and fixture callers inspected only; their container/temp writes and cleanup were not executed. Formatter alone ran in its retained owned fixture environment; dependencies read-only.",
+        "No independent reviewer or other descendants launched; runtime model verification belongs to parent.",
+        "changedPaths on every decision lists the complete combined source commit scope; only scenario.ts changed, even when the focus decision is no-change. No wisdom/values edits; parent owns aggregate lessons."
+      ]
     },
     {
       "file": "tests/fixtures/remote-placement-e2e/ssh-proxy.ts",
       "initialBlob": "ca71c9208be0329bb6b36b75ed2fe61a1ec5a5a5",
       "status": "pending",
       "area": "remote",
-      "resumeState": "pending-primary-unstarted",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_56130606",
+      "primaryCommit": "45731ea3cb85870c2bc145b1307b5b44e22caf18",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "45731ea3cb85870c2bc145b1307b5b44e22caf18",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
-      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
+      "primaryBase": "0879e2ecf255536afe27ead93375282b9c6a8167",
+      "primaryResult": "Keep the relay unchanged. It contains no placement decisions or hidden state to reorganize, and extracting connection/pipe/termination wrappers would force extra navigation rather than reduce a real journey burden. Authentication and host-key policy correctly remain in the SSH caller, not the byte relay. The only changed source in the complete batch remains scenario.ts.",
+      "primaryPaths": ["tests/fixtures/remote-placement-e2e/scenario.ts"],
+      "primaryChecks": [
+        "Read whole assigned source and its focused preserved reconciliation row/evidence: all three pending-primary-unstarted, unchanged baseline blobs, no prior candidates or rejection judgments.",
+        "Manual source/diff review against existing fixture assertion contracts; retained target.authorized check, destination default profiles/target omission, role/depth/worktree/snapshot/untracked checks, child-delivery gate, saved q.answer validation, inspection cursor and 1 MiB bounds, SSE finish/DONE framing.",
+        "Repository Biome formatter via child_process argv on changed source only: exit 0; retained isolated HOME/XDG config/cache/data/state/TMPDIR at /tmp/pr45-placement-format-xiL5x6; provenance.json saved there.",
+        "git diff --check: exit 0 before scoped source-only commit."
+      ],
+      "primaryLimits": [
+        "No setup, tests, builds, generated fixture programs, network/device/auth probes, deletion, or recovery work run. Parent owns audited isolated gates and fresh independent judgment.",
+        "Existing Dockerfile and fixture callers inspected only; their container/temp writes and cleanup were not executed. Formatter alone ran in its retained owned fixture environment; dependencies read-only.",
+        "No independent reviewer or other descendants launched; runtime model verification belongs to parent.",
+        "changedPaths on every decision lists the complete combined source commit scope; only scenario.ts changed, even when the focus decision is no-change. No wisdom/values edits; parent owns aggregate lessons."
+      ]
     },
     {
       "file": "tests/fixtures/remote-placement-e2e/sshd_config",
@@ -11975,39 +12020,78 @@
       "initialBlob": "4010451d3c42d520ae8729f3057198df2f693bcd",
       "status": "pending",
       "area": "remote",
-      "resumeState": "pending-primary-unstarted",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_4b304dcf",
+      "primaryCommit": "ac4bb9b780ef576058f14d763c4b7c542a6ac31b",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "ac4bb9b780ef576058f14d763c4b7c542a6ac31b",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
-      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
+      "primaryBase": "ac4bb9b780ef576058f14d763c4b7c542a6ac31b",
+      "primaryResult": "Keep the literal provider document. One loopback baseUrl, explicit openai-completions protocol and clearly dummy apiKey serve two adjacent complete model records. typed-root is selected by settings; fixture/typed-root-normal by the normal profile; scenario dispatch checks those exact IDs. Replacing repeated limits with generated configuration or moving the model records would hide the standard consumed schema and add an unnecessary navigation step. No rename or formatting churn.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        "Read the entire focus file and focused preserved reconciliation row: pending-primary-unstarted, no candidate/rejection exists, current blob equals preserved baseline.",
+        "Static caller tracing only; no setup, tests, builds, formatter, network requests, live auth, or credential access.",
+        "Verified exact committed focus blob with git rev-parse and clean source working tree."
+      ],
+      "primaryLimits": [
+        "Parent owns fresh independent readability judgments and audited isolated runtime gates. No runtime acceptance is claimed.",
+        "No source edits warranted; no source commit created. sourceCommit identifies the existing exact HEAD. Formatter is inapplicable because changedPaths is empty.",
+        "Durable provenance is this retained Git worktree; no temporary code checkout or fixture process was created."
+      ]
     },
     {
       "file": "tests/fixtures/remote-typed-root-placement/proof.ts",
       "initialBlob": "810ab260d994b27b3526d05f001064d42ef4b680",
       "status": "pending",
       "area": "remote",
-      "resumeState": "pending-primary-unstarted",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_4b304dcf",
+      "primaryCommit": "ac4bb9b780ef576058f14d763c4b7c542a6ac31b",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "ac4bb9b780ef576058f14d763c4b7c542a6ac31b",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
-      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
+      "primaryBase": "ac4bb9b780ef576058f14d763c4b7c542a6ac31b",
+      "primaryResult": "The assertion module already separates each coherent evidence claim. completedCommands centralizes completed-receipt selection; questionsFromReceipt alone unwraps the normal questions facet. assertSameRoot/assertSnapshot retain distinct identity/provenance checks; assertWorkOnce checks each phase plus role/depth/worktree. assertReplyRecovered locally joins command identity, no resend, status reconciliation and one real execution; assertCancelledJob locally links the selected stop receipt to the inspected non-success terminal result. The runner separately owns unknown-before-detach, release, reconnect and actual process-exit observation. Keeping that boundary avoids conflating terminal receipt proof with process-exit proof or hiding assertions in generic helpers/context bags. No structural reconstruction burden warrants an edit.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        "Read the entire focus file and focused preserved reconciliation row: pending-primary-unstarted, no candidate/rejection exists, current blob equals preserved baseline.",
+        "Static caller tracing only; no setup, tests, builds, formatter, network requests, live auth, or credential access.",
+        "Verified exact committed focus blob with git rev-parse and clean source working tree."
+      ],
+      "primaryLimits": [
+        "Parent owns fresh independent readability judgments and audited isolated runtime gates. No runtime acceptance is claimed.",
+        "No source edits warranted; no source commit created. sourceCommit identifies the existing exact HEAD. Formatter is inapplicable because changedPaths is empty.",
+        "Durable provenance is this retained Git worktree; no temporary code checkout or fixture process was created."
+      ]
     },
     {
       "file": "tests/fixtures/remote-typed-root-placement/reply-loss.ts",
       "initialBlob": "48a041d9861a0c53bc93419fadba22540fb9940d",
       "status": "pending",
       "area": "remote",
-      "resumeState": "pending-primary-unstarted",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_4b304dcf",
+      "primaryCommit": "ac4bb9b780ef576058f14d763c4b7c542a6ac31b",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "ac4bb9b780ef576058f14d763c4b7c542a6ac31b",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
-      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
+      "primaryBase": "ac4bb9b780ef576058f14d763c4b7c542a6ac31b",
+      "primaryResult": "The linear runRelay already shows transport consequences at the fault boundary. The non-control early return excludes unrelated SSH; status gating occurs before spawn; saving lost.json happens only after real status-0 SSH delivery and only while armed with no prior loss, with the real parsed response and mode 0600. Both injected failures return 255 without forwarding stdout, and normal responses retain actual streams/status. The caller owns removal of armed after durable unknown/detach; requests.jsonl/lost.json preserve inspection evidence. Splitting these short sequential branches into fault-state objects or scattered predicate/save helpers would obscure the gate-before-delivery and save-before-discard order rather than relieve a real journey burden.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        "Read the entire focus file and focused preserved reconciliation row: pending-primary-unstarted, no candidate/rejection exists, current blob equals preserved baseline.",
+        "Static caller tracing only; no setup, tests, builds, formatter, network requests, live auth, or credential access.",
+        "Verified exact committed focus blob with git rev-parse and clean source working tree."
+      ],
+      "primaryLimits": [
+        "Parent owns fresh independent readability judgments and audited isolated runtime gates. No runtime acceptance is claimed.",
+        "No source edits warranted; no source commit created. sourceCommit identifies the existing exact HEAD. Formatter is inapplicable because changedPaths is empty.",
+        "Durable provenance is this retained Git worktree; no temporary code checkout or fixture process was created."
+      ]
     },
     {
       "file": "tests/fixtures/remote-typed-root-placement/scenario.ts",
