@@ -173,6 +173,8 @@ jobs:
           pactl -f json list sources | python3 -c 'import json,sys; assert {s["name"] for s in json.load(sys.stdin)} == {"bruv_ci_mic.monitor", "bruv_ci_out.monitor"}'
           python3 native/live-linux/tests/capture-protocol.py "$fixture/live-audio-linux" bruv_ci_mic.monitor bruv_ci_out
       - name: Shared Linux CI gate (paired binaries, external T3)
+        # Healthy runs take about three minutes. Bound a stalled test runner, not each test.
+        timeout-minutes: 6
         shell: bash
         run: bun run ci
       - name: Upload failure logs

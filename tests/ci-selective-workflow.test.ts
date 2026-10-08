@@ -5,6 +5,8 @@ import { join } from "node:path";
 import { spawnSync } from "node:child_process";
 
 type Step = {
+  "timeout-minutes"?: number;
+  "continue-on-error"?: boolean;
   name?: string;
   id?: string;
   if?: string;
@@ -324,4 +326,14 @@ test("PR comparison keeps tested merge parent; missing trusted push baseline req
   } finally {
     rmSync(root, { recursive: true, force: true });
   }
+});
+
+test("shared Linux gate bounds a stalled runner without accepting incomplete checks", () => {
+  const gate = ci.jobs.test!.steps.find((s) => s.run === "bun run ci")!;
+  expect(gate["timeout-minutes"]).toBe(6);
+  expect(gate["continue-on-error"]).toBeUndefined();
+  const logs = step(ci.jobs.test!, "Upload failure logs");
+  expect(logs.if).toBe("failure()");
+  expect(logs.with?.path).toBe("artifacts/ci/");
+  expect(ci.jobs.test!.steps.indexOf(logs)).toBeGreaterThan(ci.jobs.test!.steps.indexOf(gate));
 });
