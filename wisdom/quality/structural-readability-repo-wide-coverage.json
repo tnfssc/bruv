@@ -13934,13 +13934,44 @@
       "initialBlob": "1902efb0c30480cc156329da0a1ceaa420afd3e8",
       "status": "pending",
       "area": "compatibility-t3",
-      "resumeState": "pending-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_924e63c3",
+      "primaryCommit": "69363feeeaa83ff4de0eb4061931a4a41150d014",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "69363feeeaa83ff4de0eb4061931a4a41150d014",
       "report": "wisdom/quality/structural-readability-areas/compatibility-t3.json",
-      "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+      "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection.",
+      "primaryBase": "aea5504bc5ab642ca72ab9c14db0582a00c479cd",
+      "primaryResult": "executeConcurrentNativeCalls owns one bridge/service exchange, preserves the execute invocation and call ordinals, controls which call reaches the adapter first, captures framed responses and drains its manager in finally. The test now states the original ambiguous launches and successful replay as separate callbacks adjacent to their assertions; duplicate identity checks are explicit in each phase. Backend effective profile/depth, replay identity guard, response cardinality/correlation, deterministic fingerprint and no-sidecar assertions remain intact. Other tests, including authorization/output secrecy and credential stripping, are byte-identical apart from the adapter type import. The focus exists at the ledger baseline; its preserved row records pending-primary with no candidate/rejection, so no prior candidate bytes were imported.",
+      "primaryPaths": ["tests/t3/native-routing.test.ts"],
+      "primaryChecks": [
+        {
+          "name": "repository formatter",
+          "result": "Passed: exact read-only Biome executable, format --write on focus only via node child_process argv; no fixes required.",
+          "retainedEnvironment": "/tmp/pr45-native-routing-format-6ILE4F"
+        },
+        {
+          "name": "git diff --check",
+          "result": "Passed before commit."
+        },
+        {
+          "name": "static preservation review",
+          "result": "Unrelated prefix/suffix verified byte-identical except adapter type import; no original phase assertion lines lost; shared duplicate check specialized into explicit original/replay checks; replay identity guard retained."
+        },
+        {
+          "name": "caller trace",
+          "result": "Read JobService scoped launch identity derivation and native adapter authority, serveJobBridge request ordinal attachment/framing, and T3TaskAdapter contract."
+        },
+        {
+          "name": "commit scope",
+          "result": "Only assigned focus source committed; commit hooks inspected and absent."
+        }
+      ],
+      "primaryLimits": [
+        "No repository tests, setup or builds run; parent owns audited isolated batch gates and independent judgment.",
+        "Optional TypeScript static parser import failed: ENOENT at /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/typescript/lib/typescript.js; no syntax/type-check result claimed.",
+        "Wisdom and values unchanged: parent writes aggregate wisdom; no new general rule required."
+      ]
     },
     {
       "file": "tests/t3/production-bridge.test.ts",
