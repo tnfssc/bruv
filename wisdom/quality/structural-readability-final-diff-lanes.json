@@ -8727,7 +8727,7 @@
       ],
       "chars": 85571,
       "lines": 2039,
-      "status": "running",
+      "status": "accepted",
       "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
       "jobId": "task_e69a2a7b",
       "model": "openai-codex/gpt-6.1-sol",
@@ -8743,6 +8743,126 @@
         "setupTaskId": "task_f08237ef",
         "setupStatus": "failed",
         "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      },
+      "result": {
+        "lane": "lane-44",
+        "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
+        "candidate": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "verdict": "ACCEPT",
+        "diffReadPaths": [
+          "site/capture.ts",
+          "site/demos.test.ts",
+          "site/demos.ts",
+          "site/html-animation.ts",
+          "site/html-cells.ts",
+          "site/layout.ts",
+          "site/scripts/animation.ts",
+          "site/scripts/build.ts",
+          "site/scripts/capture-demo-source.ts",
+          "site/scripts/extract-cells.ts",
+          "site/scripts/html-animation.test.ts",
+          "site/scripts/install-ui.test.ts",
+          "site/scripts/install.test.ts",
+          "site/scripts/scroll.test.ts"
+        ],
+        "contextReadPaths": [
+          "site/playback.ts",
+          "site/terminal.ts",
+          "site/content.ts",
+          "site/install-command.ts",
+          "site/install-html.ts",
+          "site/index.html",
+          "site/styles.css",
+          "site/scripts/browser.ts",
+          "site/scripts/preview.ts",
+          "site/scripts/build.test.ts",
+          "site/scroll.ts",
+          "scripts/install.sh"
+        ],
+        "sourceBlobs": {
+          "site/capture.ts": "ea72ee5ebc5145f474b9b9e3a2b3f7afeb49f54b",
+          "site/demos.test.ts": "9a554baa5a3a7c3ae6e4d424a6af2cd8fd02c7c8",
+          "site/demos.ts": "5f211cd265a0d4cb8377b5148fa13281f2ccb5fa",
+          "site/html-animation.ts": "611b710f3e082fde979cb1ea86e462445030a2fa",
+          "site/html-cells.ts": "5e434b577ca98a6d08082102cbb39efab63d1fdf",
+          "site/layout.ts": "128855476c64c4b43bd0258b9064f2b44831878c",
+          "site/scripts/animation.ts": "4bea05dabee326db5d3cc42783a45b9f73e66750",
+          "site/scripts/build.ts": "1cf04b95f42c7d500d2dd302f02f48db84273aba",
+          "site/scripts/capture-demo-source.ts": "cb174478a55a37871373add5263eebfb36de2b19",
+          "site/scripts/extract-cells.ts": "0c08612f134666dff26b631ae44408b7bedde80d",
+          "site/scripts/html-animation.test.ts": "ec93e1910b0f9d4d1ff2ea31e9f3c1de61086360",
+          "site/scripts/install-ui.test.ts": "538556abc76aa8bb294950cbc23b64ac8ac1be84",
+          "site/scripts/install.test.ts": "1da41ffef989ec064e62295f04d8352eb5137345",
+          "site/scripts/scroll.test.ts": "5a1025b2f60ae7f6ef6ff55951b79cce6edd55f1"
+        },
+        "sourceJourneys": [
+          {
+            "paths": [
+              "site/demos.ts",
+              "site/demos.test.ts",
+              "site/layout.ts",
+              "site/terminal.ts",
+              "site/playback.ts"
+            ],
+            "readingReason": "Followed actual delegate/background/wisdom shots through transcriptRows, footerRow, demoFrame, demoPanel, composeLanding and viewport projection into terminal paint and activation. Grouping by explicit user-turn boundaries replaces repeated slices/searches; retaining previous across skipped tool blocks preserves original blank-row rules. Interleaved wisdom prose still follows the first aggregate tool count; busy labels still use the latest tool. Footer selection, accent cells, editor reservation, transcript clipping and final-frame clamping remain the same.",
+            "systemReason": "Composition owns document coordinates and panel bounds; layout alone clamps scroll, projects capture coordinates and builds hits/ANSI; terminal owns clock, visibility, input, state and row cache. New panel.end and initial compose y reproduce old increments, so playback visibility, mouse/touch control and fixed header geometry still use the same coordinates. Pick<State> contains only composition inputs, not a new lifetime/context bag."
+          },
+          {
+            "paths": [
+              "site/scripts/build.ts",
+              "site/index.html",
+              "site/html-animation.ts",
+              "site/html-cells.ts",
+              "site/demos.ts",
+              "site/playback.ts",
+              "site/styles.css",
+              "site/scripts/html-animation.test.ts"
+            ],
+            "readingReason": "Followed both renderPage branches into actual template slots and textContent figures, then mountHtmlDemos -> HtmlDemo -> shared cells/playback. Terminal branch keeps plain transcripts and fallback bootstrap; text branch supplies hidden screen/button and animation/install modules. Cell is now explicitly defined/exported in demos instead of importing nonexistent ./type. HTML cell grouping and text escaping are unchanged.",
+            "systemReason": "HtmlDemo owns id/duration, measurements and per-panel playback; mount still owns the single timer, observers and listener teardown. Intersection/document visibility stop scheduling; reduced motion holds final UI until opt-in; measured rendering and fonts-ready behavior match baseline. CSS retains readable transcripts for no-JS/accessibility. withDemoPage keeps browser ownership outside the helper and closes the context even if routing/navigation/check fails; manualClock is removed before passing browser options."
+          },
+          {
+            "paths": [
+              "site/scripts/animation.ts",
+              "site/scripts/install-ui.test.ts",
+              "site/layout.ts",
+              "site/terminal.ts",
+              "site/install-command.ts",
+              "site/install-html.ts",
+              "site/scripts/preview.ts",
+              "site/scripts/browser.ts"
+            ],
+            "readingReason": "Followed terminal dataset publication to snapshot/demoControlPoint/scrollCells and observeTerminal.copyTarget. Helpers still reconstruct the same layout, select toggle/copy hits, convert measured cell coordinates to pointer pixels and read elapsed/paused state. Reduced-motion touch checks retain the same scroll, start and pause sequence. The installer command remains the single GitHub constant, independent of SEO BASE_URL.",
+            "systemReason": "Helpers expose concrete observations rather than hiding actions behind broad scenario contexts. Browser/server finally ownership remains at script/test level; observation routing is installed before navigation. No runtime command evaluation is added to the terminal, which still only writes the static layout. Scroll test splitting isolates accumulators without removing reversal/bounds/reset assertions; unchanged CellScroll remains their authority."
+          },
+          {
+            "paths": [
+              "site/scripts/extract-cells.ts",
+              "site/capture.ts",
+              "site/scripts/build.test.ts",
+              "site/scripts/capture-demo-source.ts"
+            ],
+            "readingReason": "Followed extraction from fixed 110x36 Ghostty replay to the 0,19,56,15 crop and adjacent style runs; crop/size constants now drive both traversal and provenance, replacing a full matrix followed by slicing. Followed settingsCapture menu label/value reflow and word wrapping into unchanged glyph/style-preservation callers. It is a retained capture utility exercised by build tests, not the new landing demo renderer. Followed createCsvReviewReplay back into the exact offline tmux command and capture output.",
+            "systemReason": "Extraction retains the same source hash, crop and run style flags. wrapRow/reflowMenuRow are small local ownership boundaries and preserve glyph order, styles, padding and first-ten-row menu handling. Replay construction returns only the session file; process/network isolation and capture lifetime remain outside it. These scripts are optional evidence producers, not acceptance evidence or authentication paths."
+          },
+          {
+            "paths": [
+              "site/scripts/install.test.ts",
+              "scripts/install.sh"
+            ],
+            "readingReason": "Read generated uname/id/curl/mv mocks, publishRelease, withInstall and all callers against actual installer download verification, isolated probe HOME, paired replacement and rollback. Generated binary/version/checksum bytes and the platform matrix preserve baseline behavior. mockHostCommands and publishRelease separate host simulation from release publication; withInstall owns root creation, child collection, check callback and finally cleanup.",
+            "systemReason": "Callbacks no longer need repeated cleanup blocks, and fixture setup failures now enter the same root-owned finally. Real installer remains responsible for checksum-before-execution and rollback; mocked requests/probes still observe those boundaries. Reviewed cleanup and environment effects without executing them. The fixture still inherits process.env, including possible BRUV_INSTALL_DIR; this pre-existing non-hermetic test environment must not be treated as authorization to run it under inherited user settings."
+          }
+        ],
+        "integrationReadingReason": "Complete assigned baseline-to-candidate diffs, including removed implementations, support a bounded ACCEPT. The main integration boundary is now easier to read: shared scripts/cells produce frames, local panel helpers compose them, viewport renderers own projection or DOM updates, and mount/terminal retain their distinct clocks and input lifetimes. Small concrete helpers replace repeated searches, large closures or repeated fixture cleanup without adding a cross-domain context object or competing authority. Checked real unchanged terminal, playback, installer and template/style callers rather than relying on earlier lane artifacts or tests. No introduced contradiction or behavior regression found in this assigned integration scope.",
+        "objections": [],
+        "limits": [
+          "Source-only lane judgment, not whole-repository sign-off. All fourteen assigned diffs fully read; related source read at the relevant caller/authority/lifetime sections rather than claiming all repository source.",
+          "No tests, setup, builds, installs, formatters, auth/device access, secret inspection, recovery work, delegation or tracked-source edits were performed. Unsupported Pi preparation was neither retried nor bypassed.",
+          "No runtime or live browser/auth verification. Read build deletion of owned site/dist, browser/server creation and asset writes, and optional replay/fixture cleanup as code only; never executed shell traps or deletion/cleanup commands.",
+          "Inherited environment in installer tests is not hermetic (BRUV_INSTALL_DIR can override fixture bin); future execution under this task would require explicit safe argv/env with owned retained HOME/config/SDK fixtures, not running the current tests as-is. This unchanged concern is not a new integration regression.",
+          "Candidate retained unchanged in durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_e69a2a7b. Only requested untracked .pr45-final-lane-result.json was written; sourceBlobs pin exact candidate Git content. No temporary code checkout or test fixture was created."
+        ]
       }
     },
     {
@@ -8768,7 +8888,7 @@
         "branch": "bruv/pr45-final-integrated-diff-lane-45-site--be1a251b",
         "preparationStatus": "ready",
         "setupTaskId": "task_a44e267f",
-        "setupStatus": "running",
+        "setupStatus": "failed",
         "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
       }
     },
@@ -8805,7 +8925,7 @@
         "branch": "bruv/pr45-final-integrated-diff-lane-46-ui-te-6317bbac",
         "preparationStatus": "ready",
         "setupTaskId": "task_bc53e4c2",
-        "setupStatus": "running",
+        "setupStatus": "failed",
         "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
       }
     },
@@ -8843,7 +8963,7 @@
         "branch": "bruv/pr45-final-integrated-diff-lane-47-ui-te-14b1ddb1",
         "preparationStatus": "ready",
         "setupTaskId": "task_a7488298",
-        "setupStatus": "running",
+        "setupStatus": "failed",
         "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
       }
     },
@@ -8986,7 +9106,7 @@
   ],
   "cap": 6,
   "auxStatus": "completed",
-  "reworkReserve": 2,
+  "reworkReserve": 3,
   "reworkHistory": [
     {
       "lane": "lane-05",
@@ -9006,5 +9126,8 @@
     }
   ],
   "repairedSourceCandidate": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
-  "currentDiffPaths": 513
+  "currentDiffPaths": 513,
+  "pausedForRework": {
+    "reason": "Use completed site slot for observed rendering repair/new-helper lineage."
+  }
 }
