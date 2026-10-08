@@ -33,7 +33,7 @@ on testing the real product and leaving usable proof; values need no new rule.
 
 ## Actual external revalidation (2026-10-08)
 
-Fresh **bun run build** from integrated base **067fdf60** plus this harness change:
+Fresh **bun run build** from integrated base **067d648c** plus this harness change:
 
 - Bruv runtime SHA256: 1f29adbf446880d0420fadf3dce047e7f144a282eebecb29dced3c1cb14294c8.
 - Shipped connector launcher SHA256: 55b58718cdfb8f87e7a947b8e67ec4911bf6fb60cb33d2acfe72f67a39d96246.
