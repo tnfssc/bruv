@@ -234,7 +234,7 @@ test("settled error and artifact warning preserve final state through late/dupli
 }, 20000);
 
 test("network guard denies fetch/HTTP/TCP and disposal restores process seams", async () => {
-  const out = await runIsolatedProbe(["tests/ui/fixtures/terminal-perf-tool-event-guard.ts"]);
+  const out = await runIsolatedProbe(["tests/performance/fixtures/terminal-perf-tool-event-guard.ts"]);
   expect(JSON.parse(out)).toEqual({
     denied: [true, true, true, true],
     restored: true,

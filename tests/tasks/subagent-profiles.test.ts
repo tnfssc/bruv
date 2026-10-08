@@ -2,7 +2,13 @@ import { describe, test, expect } from "bun:test";
 import { mkdtemp, rm, writeFile, stat } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { parseProfiles, loadProfiles, saveProfiles, resolveProfile, canDelegate } from "../../src/tasks/subagent-profiles";
+import {
+  parseProfiles,
+  loadProfiles,
+  saveProfiles,
+  resolveProfile,
+  canDelegate,
+} from "../../src/tasks/subagent-profiles";
 
 describe("subagent profiles", () => {
   test("defaults inherit and explicit thinking off is preserved", () => {

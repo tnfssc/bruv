@@ -1,7 +1,10 @@
 // Isolated child of context-usage-cache.test.ts; all files belong to its retained ROOT fixture.
 import { AgentSession, SessionManager, buildSessionProjection } from "@earendil-works/pi-coding-agent";
 import { DiskEntryStore } from "../../../src/history/disk-entry-store.ts";
-import { installDiskBackedSessionManager, disposeDiskBackedSessionManager } from "../../../src/history/session-manager.ts";
+import {
+  installDiskBackedSessionManager,
+  disposeDiskBackedSessionManager,
+} from "../../../src/history/session-manager.ts";
 import { renderCompactFooter, renderDetailedFooter } from "../../../src/ui/footer.ts";
 import { installShakeAccountingAdapter } from "../../../src/agent/manual-shake.ts";
 import { MANUAL_SHAKE_ENTRY, InvalidShakeRecordError } from "../../../src/history/shake-record.ts";

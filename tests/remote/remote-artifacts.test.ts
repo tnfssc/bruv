@@ -2,7 +2,12 @@ import { afterEach, expect, test } from "bun:test";
 import { mkdtempSync, mkdirSync, readFileSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { ARTIFACT_CHUNK, getRemoteArtifact, listRemoteArtifacts, syncRemoteArtifacts } from "../../src/remote/artifacts";
+import {
+  ARTIFACT_CHUNK,
+  getRemoteArtifact,
+  listRemoteArtifacts,
+  syncRemoteArtifacts,
+} from "../../src/remote/artifacts";
 const roots: string[] = [];
 function fixture() {
   const root = mkdtempSync(join(tmpdir(), "bruv-artifact-"));

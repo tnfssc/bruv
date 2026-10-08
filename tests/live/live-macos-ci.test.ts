@@ -8,12 +8,12 @@ test("macOS Live CI prepares source CLI assets without building the web runtime"
   expect(macOSJob).toBeDefined();
   expect(macOSJob).toContain("command -v tmux >/dev/null || brew install tmux");
   expect(macOSJob).toContain("run: bun run ci:macos");
-  const runner = readFileSync(resolve(import.meta.dir, "../../scripts/ci.sh"), "utf8");
+  const runner = readFileSync(resolve(import.meta.dir, "../../scripts/ci/ci.sh"), "utf8");
   const lane = runner.split('if [[ "$lane" == macos ]]; then')[1]!.split("\nfi")[0]!;
   const prepare = lane.indexOf("bun run prepare:assets");
   expect(lane).not.toContain("bun run build");
   expect(macOSJob).not.toContain("--reuse-web");
-  const tests = lane.indexOf("bun test --parallel=3 tests/live-*.test.ts");
+  const tests = lane.indexOf("bun test --parallel=3 tests/live/live-*.test.ts");
   expect(prepare).toBeGreaterThanOrEqual(0);
   expect(tests).toBeGreaterThan(prepare);
   const fixture = readFileSync(resolve(import.meta.dir, "live-execute-controls.test.ts"), "utf8");

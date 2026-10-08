@@ -43,7 +43,7 @@ capture backlog/half-packets are cleared and WebRTC mic processing state reset.
 Unusable timing fails closed. These are native buffer-origin guarantees, not
 claims about opaque device DSP, acoustic echo suppression, or terminal key events.
 
-Focused portable regressions: `bun test tests/live-audio.test.ts tests/live-capture-gate.test.ts`.
+Focused portable regressions: `bun test tests/live/live-audio.test.ts tests/live/live-capture-gate.test.ts`.
 The C ring gate tests run on Linux too; Swift source checks do not substitute for
 macOS compilation and consenting physical-device validation. An opt-in native
 protocol check is `python3 native/live-linux/tests/capture-protocol.py HELPER MIC.monitor SINK`;

@@ -13,8 +13,8 @@ Use direct Bun 1.4.2, not a mise shim:
 export TMPDIR=/home/tnfssc/.bruv/tmp-pi-removal
 BUN=/home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin/bun
 $BUN test tests/remote/remote-typed-root-placement-fixture.test.ts
-$BUN scripts/remote-root-placement-e2e.ts --probe
-BRUV_BIN=/absolute/path/to/combined/compiled/bruv $BUN scripts/remote-root-placement-e2e.ts
+$BUN scripts/remote/remote-root-placement-e2e.ts --probe
+BRUV_BIN=/absolute/path/to/combined/compiled/bruv $BUN scripts/remote/remote-root-placement-e2e.ts
 ~~~
 
 BRUV_BIN is mandatory outside probe mode. It must combine the lead CLI/extension

@@ -54,9 +54,9 @@ test("hosted native gate installs supported Node and invokes the configured runt
   const job = workflow.split("  linux-browser-boot:")[1]!.split("  mac-release-smoke:")[0]!;
   expect(job).toContain("uses: actions/setup-node@");
   expect(job).toContain("node-version: 24.21.0");
-  expect(job).toContain("node scripts/run-native-release-gate.mjs");
+  expect(job).toContain("node scripts/release/run-native-release-gate.mjs");
   expect(job).not.toContain("/usr/bin/node");
   expect(job.indexOf("uses: actions/setup-node@")).toBeLessThan(
-    job.indexOf("run: bash scripts/setup-native-release-gate.sh"),
+    job.indexOf("run: bash scripts/release/setup-native-release-gate.sh"),
   );
 });

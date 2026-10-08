@@ -5,7 +5,7 @@
 - Worker tree: /home/tnfssc/.bruv/worktrees/bruv-a86675007a5e-task_7c7fed9c-a86675007a5e-task_09184036
 - Worker branch: remote/task-placement-proof
 - Worker base: d1df1475d946936a84c5ce5fa398815a32fcf5c0
-- New files only: scripts/remote-placement-e2e.ts, tests/remote-placement-e2e-fixture.test.ts and tests/fixtures/remote-placement-e2e/*.
+- New files only: scripts/remote/remote-placement-e2e.ts, tests/remote/remote-placement-e2e-fixture.test.ts and tests/remote/fixtures/remote-placement-e2e/*.
 - No production, existing runners/assertions, parent status, real credentials/config or video were changed/used.
 
 ## Observed before integration

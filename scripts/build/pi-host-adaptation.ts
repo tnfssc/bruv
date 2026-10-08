@@ -19,14 +19,14 @@ export const piHostPatches: readonly Patch[] = [
     originalSha256: "ed7f805d46160c30db9be874b2350d0bd01f8b390f94a55ec1d8d4ed9474bf9b",
     adaptedSha256: "ec465bb227a60159a8b3aa00e62f794370311a232b839cb104917da7b2651fc8",
     content:
-      'import llamaExtension from "../llama/index.js";\nexport const builtInExtensions = [\n    { name: "llama.cpp", factory: llamaExtension, builtin: true },\n];\n',
+      'import llamaExtension from "./llama/index.js";\nexport const builtInExtensions = [\n    { name: "llama.cpp", factory: llamaExtension, builtin: true },\n];\n',
   },
   {
     path: "dist/main.js",
     originalSha256: "866d65f2d42f74d2bb72ed4a755c8ace1b8a2c497a32cb57cc4db594a4fcb2bf",
     adaptedSha256: "ed4130e11c406a138a0bf4c67fdc190d674ee13d19b49093b4c77f8a741181f0",
     replacements: [
-      ['import { loadMcpCommand } from "../extensions/mcp/cli.lazy.js";\n', ""],
+      ['import { loadMcpCommand } from "./extensions/mcp/cli.lazy.js";\n', ""],
       [
         "        const { runMcpCommand } = await loadMcpCommand();\n        process.exitCode = await runMcpCommand(args.slice(1), { cwd, agentDir });",
         '        console.error("MCP is not a built-in bruv command.");\n        process.exitCode = 1;',

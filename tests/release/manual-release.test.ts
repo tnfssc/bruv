@@ -3,7 +3,7 @@ import { mkdtemp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, expect, test } from "bun:test";
-import { nextReleaseVersion } from "../../scripts/prepare-manual-release";
+import { nextReleaseVersion } from "../../scripts/release/prepare-manual-release";
 
 function git(root: string, ...args: string[]): string {
   const result = spawnSync("git", args, { cwd: root, encoding: "utf8" });
@@ -12,18 +12,18 @@ function git(root: string, ...args: string[]): string {
 }
 
 function prepare(root: string) {
-  return spawnSync(process.execPath, ["scripts/prepare-manual-release.ts"], { cwd: root, encoding: "utf8" });
+  return spawnSync(process.execPath, ["scripts/release/prepare-manual-release.ts"], { cwd: root, encoding: "utf8" });
 }
 
 // Each scenario starts one commit beyond v0.15.2; only its own release state can affect it.
 async function withReleaseRepository(scenario: (root: string) => Promise<void>) {
   const root = await mkdtemp(join(tmpdir(), "bruv-manual-release-"));
   try {
-    await mkdir(join(root, "scripts"));
+    await mkdir(join(root, "scripts/release"), { recursive: true });
     await mkdir(join(root, "support/releases"), { recursive: true });
     await writeFile(
-      join(root, "scripts/prepare-manual-release.ts"),
-      await Bun.file("scripts/prepare-manual-release.ts").text(),
+      join(root, "scripts/release/prepare-manual-release.ts"),
+      await Bun.file("scripts/release/prepare-manual-release.ts").text(),
     );
     await writeFile(join(root, "package.json"), '{"version": "0.15.2"}\n');
     git(root, "init", "-q");
@@ -177,7 +177,7 @@ describe("release workflow", () => {
       expect(release).toContain("--target=" + target);
     }
     expect(release).toContain("--live-helper=./artifacts/release/mac-helper/live-audio");
-    expect(release).toContain("bun scripts/verify-update.ts dist/release/bruv-linux-x64");
+    expect(release).toContain("bun scripts/release/verify-update.ts dist/release/bruv-linux-x64");
     expect(release).toContain("--legacy-updater");
   });
 
@@ -186,8 +186,8 @@ describe("release workflow", () => {
     expect(native.needs).toContain("release");
     expect(native.if).toContain("needs.release.result == 'success'");
     const nativeRuns = native.steps.map((step) => step.run ?? "");
-    expect(nativeRuns).toContain("bash scripts/setup-native-release-gate.sh");
-    const acceptance = nativeRuns.find((run) => run.includes("node scripts/run-native-release-gate.mjs"))!;
+    expect(nativeRuns).toContain("bash scripts/release/setup-native-release-gate.sh");
+    const acceptance = nativeRuns.find((run) => run.includes("node scripts/release/run-native-release-gate.mjs"))!;
     expect(acceptance).toContain(
       'BRUV_CONNECTOR_EXECUTABLE="$GITHUB_WORKSPACE/dist/release/bruv-claude-compat-linux-x64"',
     );
@@ -204,7 +204,7 @@ describe("release workflow", () => {
     expect(mac).toContain("dist/release/bruv-claude-compat-darwin-arm64 --version");
     expect(mac).toContain("dist/release/bruv-claude-compat-darwin-arm64 --bruv-version");
     expect(mac).toContain("Bruv connector");
-    expect(mac).toContain("bun scripts/verify-update.ts dist/release/bruv-darwin-arm64");
+    expect(mac).toContain("bun scripts/release/verify-update.ts dist/release/bruv-darwin-arm64");
     expect(mac).toContain("--legacy-updater");
     expect(mac).toContain("--live-self-test");
   });
@@ -215,8 +215,8 @@ describe("release workflow", () => {
       expect(jobs.publish!.if).toContain("needs." + gate + ".result == 'success'");
     }
     const publish = jobs.publish!.steps.map((step) => step.run ?? "").join("\n");
-    expect(publish).toContain("bun scripts/publish-release.ts");
-    const implementation = await Bun.file("scripts/publish-release.ts").text();
+    expect(publish).toContain("bun scripts/release/publish-release.ts");
+    const implementation = await Bun.file("scripts/release/publish-release.ts").text();
     expect(implementation).toContain('git("push"');
     expect(implementation).toContain("--verify-tag");
     expect(implementation).toContain("bruv-android-arm64.sha256");

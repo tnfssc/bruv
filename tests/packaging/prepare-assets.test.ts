@@ -9,9 +9,9 @@ const root = resolve(import.meta.dir, "../..");
 async function copyPreparationInputs(fixture: string): Promise<void> {
   for (const path of [
     "package.json",
-    "scripts/prepare-assets.ts",
-    "scripts/pi-host-adaptation.ts",
-    "scripts/pi-host-recovery.ts",
+    "scripts/build/prepare-assets.ts",
+    "scripts/build/pi-host-adaptation.ts",
+    "scripts/build/pi-host-recovery.ts",
     "node_modules/@silvia-odwyer/photon-node/photon_rs_bg.wasm",
   ]) {
     const target = join(fixture, path);
@@ -37,7 +37,7 @@ async function filesWithMtimes(assets: string): Promise<Array<{ path: string; mt
 }
 
 async function prepareAssets(fixture: string): Promise<void> {
-  const result = await run([process.execPath, join(fixture, "scripts/prepare-assets.ts")], { cwd: fixture });
+  const result = await run([process.execPath, join(fixture, "scripts/build/prepare-assets.ts")], { cwd: fixture });
   expect(result).toMatchObject({ code: 0 });
 }
 

@@ -3,7 +3,7 @@ import { createHash } from "node:crypto";
 import { chmod, mkdir, mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
-import { assetNames, findRelease, missingReleaseAssets, tagAction } from "../../scripts/publish-release";
+import { assetNames, findRelease, missingReleaseAssets, tagAction } from "../../scripts/release/publish-release";
 
 // Unit decisions and CLI readbacks describe the same bytes written to the temporary release directory.
 const releaseFiles = new Map(assetNames.map((name) => [name, Buffer.from("verified " + name)]));
@@ -119,7 +119,7 @@ const refs = (commit = sha, annotated = false) =>
     : commit + "\trefs/tags/" + tag;
 const remote = (output = refs()) =>
   command("git", ["ls-remote", "--tags", "origin", "refs/tags/" + tag, "refs/tags/" + tag + "^{}"], output);
-const notes = command("bun", ["scripts/select-release-notes.ts", tag], "notes.md");
+const notes = command("bun", ["scripts/release/select-release-notes.ts", tag], "notes.md");
 const base = "https://api.github.com/repos/tnfssc/bruv/releases";
 const releaseRead = (draft: boolean, releaseAssets = assets): Step => ({
   command: "fetch",
@@ -190,7 +190,7 @@ async function runPublication(steps: Step[], event = "push") {
     `,
     );
     const child = Bun.spawn(
-      [process.execPath, "--preload", join(directory, "fetch.ts"), resolve("scripts/publish-release.ts")],
+      [process.execPath, "--preload", join(directory, "fetch.ts"), resolve("scripts/release/publish-release.ts")],
       {
         cwd: directory,
         env: {

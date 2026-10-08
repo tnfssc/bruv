@@ -75,7 +75,7 @@ for (const width of [80, 120])
         .join(" ");
       await writeFile(
         join(home, "tmux.conf"),
-        (await readFile(join(root, "scripts/tmux.conf"), "utf8")) + "\nset -g default-shell /bin/sh\n",
+        (await readFile(join(root, "scripts/tui/tmux.conf"), "utf8")) + "\nset -g default-shell /bin/sh\n",
       );
       expect(
         (await tmux("new-session", "-d", "-s", "ptt", "-x", String(width), "-y", "40", "-c", root, launch)).code,

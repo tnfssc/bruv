@@ -2,8 +2,8 @@ import { expect, test } from "bun:test";
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import type { RootDialog, RootIntent } from "../../src/remote/root-contract";
-import { RootStore } from "../../src/remote/root-store";
+import type { RootDialog, RootIntent } from "../../src/remote/root/contract";
+import { RootStore } from "../../src/remote/root/store";
 
 const intent: RootIntent = {
   ownerId: "owner",

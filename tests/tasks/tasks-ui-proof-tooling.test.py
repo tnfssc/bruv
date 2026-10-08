@@ -10,7 +10,7 @@ import unittest
 from unittest.mock import patch
 import urllib.request
 
-spec = importlib.util.spec_from_file_location("proof", Path(__file__).resolve().parents[2] / "scripts/tasks-ui-native-proof.py")
+spec = importlib.util.spec_from_file_location("proof", Path(__file__).resolve().parents[2] / "scripts/tui/tasks-ui-native-proof.py")
 p = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(p)
 
@@ -310,7 +310,7 @@ class ProofToolingTests(unittest.TestCase):
             (out / "first.png").write_bytes(b"not a PNG; existence mechanics only")
             with patch.object(p, "run", return_value=success) as run:
                 self.assertFalse(p.render_screenshots("/explicit/bun", out, timeline))
-                run.assert_called_once_with(["/explicit/bun", str(p.ROOT / "scripts/tasks-ui-proof-screenshots.ts"), str(out)], timeout=60, check=False)
+                run.assert_called_once_with(["/explicit/bun", str(p.ROOT / "scripts/tui/tasks-ui-proof-screenshots.ts"), str(out)], timeout=60, check=False)
                 (out / "second.png").write_bytes(b"not a PNG; existence mechanics only")
                 self.assertTrue(p.render_screenshots("/explicit/bun", out, timeline))
             self.assertEqual((out / "screenshot-log.txt").read_text(), "stub stdoutstub stderr")

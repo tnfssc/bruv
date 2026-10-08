@@ -2,8 +2,8 @@ import { expect, test } from "bun:test";
 import { mkdtempSync, readFileSync, writeFileSync, existsSync, mkdirSync, symlinkSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { networkNoneFixture, assertFixtureOutputExternal } from "../../scripts/network-none-fixture";
-import { fixtureRpc, loopbackParent } from "../../scripts/loopback-parent-fixture";
+import { networkNoneFixture, assertFixtureOutputExternal } from "../../scripts/fixtures/network-none-fixture";
+import { fixtureRpc, loopbackParent } from "../../scripts/fixtures/loopback-parent-fixture";
 
 import { ownedFixtureEnv } from "../helpers/helpers";
 
@@ -183,7 +183,7 @@ console.log("{bad JSON");
 `,
     { mode: 0o755 },
   );
-  const fixtureModule = new URL("../../scripts/loopback-parent-fixture.ts", import.meta.url).pathname;
+  const fixtureModule = new URL("../../scripts/fixtures/loopback-parent-fixture.ts", import.meta.url).pathname;
   const env = ownedFixtureEnv(root);
   const options = { bruv: binary, cwd: root, env };
   writeFileSync(

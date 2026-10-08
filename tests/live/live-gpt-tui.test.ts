@@ -36,7 +36,7 @@ async function launchGptTui(tmux: ReturnType<typeof tmuxRunner>, home: string, r
     .join(" ");
   await writeFile(
     join(home, "tmux.conf"),
-    (await readFile(join(root, "scripts/tmux.conf"), "utf8")) + "\nset -g default-shell /bin/sh\n",
+    (await readFile(join(root, "scripts/tui/tmux.conf"), "utf8")) + "\nset -g default-shell /bin/sh\n",
   );
   expect((await tmux("new-session", "-d", "-s", "gpt", "-x", "120", "-y", "40", "-c", root, launch)).code).toBe(0);
 }

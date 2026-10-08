@@ -4,16 +4,16 @@ import { join } from "node:path";
 import { createHash } from "node:crypto";
 import { captureRepository } from "../../src/remote/repository";
 import { tmpdir } from "node:os";
-import { RootStore } from "../../src/remote/root-store";
-import { handleRootRequest, runRootOwner, type RootSessionPort } from "../../src/remote/root-owner";
+import { RootStore } from "../../src/remote/root/store";
+import { handleRootRequest, runRootOwner, type RootSessionPort } from "../../src/remote/root/owner";
 import type {
   RootIntent,
   RootRequest,
   RootRecord,
   RootCommandReceipt,
   RootObservation,
-} from "../../src/remote/root-contract";
-import type { RootFacet } from "../../src/remote/root-runtime";
+} from "../../src/remote/root/contract";
+import type { RootFacet } from "../../src/remote/root/runtime";
 import { ownedProcessSuite } from "../helpers/owned-process-suite";
 
 // Repository capture, upload and export spawn real Git children. Their authority

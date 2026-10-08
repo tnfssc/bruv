@@ -3,8 +3,8 @@ import { createHash } from "node:crypto";
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { RootClient, type RootClientOptions } from "../../src/remote/root-client";
-import type { RootCommandReceipt, RootRecord, RootRequest, RootTransport } from "../../src/remote/root-contract";
+import { RootClient, type RootClientOptions } from "../../src/remote/root/client";
+import type { RootCommandReceipt, RootRecord, RootRequest, RootTransport } from "../../src/remote/root/contract";
 
 const dirs: string[] = [];
 afterEach(() => {

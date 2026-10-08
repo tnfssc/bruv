@@ -1,5 +1,8 @@
 import { describe, expect, test } from "bun:test";
-import { formatCompletionNotification, MAX_COMPLETION_NOTIFICATION_CHARS } from "../../src/tasks/completion-notification";
+import {
+  formatCompletionNotification,
+  MAX_COMPLETION_NOTIFICATION_CHARS,
+} from "../../src/tasks/completion-notification";
 import type { TaskInspection } from "../../src/tasks/task-manager";
 
 function completedTask(index: number, output = `output-${index}`): TaskInspection {

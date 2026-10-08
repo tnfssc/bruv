@@ -8,7 +8,7 @@ import unittest
 from unittest.mock import patch
 
 sys.dont_write_bytecode = True
-spec = importlib.util.spec_from_file_location("activity_fixture", Path(__file__).resolve().parents[2] / "scripts/activity-terminal-acceptance.py")
+spec = importlib.util.spec_from_file_location("activity_fixture", Path(__file__).resolve().parents[2] / "scripts/tui/activity-terminal-acceptance.py")
 fixture = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(fixture)
 

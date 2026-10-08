@@ -210,7 +210,7 @@ test.skipIf(!enabled)(
     const name = "background-ux";
     const evidence: Evidence = { startedAt: Date.now(), events: [], toolArgs: [], frameExcerpts: [] };
     const tmux = (...args: string[]) =>
-      run(["tmux", "-L", socket, "-f", resolve(import.meta.dir, "../../scripts/tmux.conf"), ...args]);
+      run(["tmux", "-L", socket, "-f", resolve(import.meta.dir, "../../scripts/tui/tmux.conf"), ...args]);
     const capture = async () => (await tmux("capture-pane", "-p", "-t", name + ":0.0")).stdout;
     const rememberFrame = async (label: string) => {
       const at = Date.now();

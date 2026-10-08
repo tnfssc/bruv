@@ -4,14 +4,14 @@ import { ownedFixtureEnv } from "../helpers/helpers";
 import { type Component, type Editor, ProcessTerminal, TuiMainScreen } from "@earendil-works/pi-tui";
 import { parseStreamingJson } from "@earendil-works/pi-ai";
 import { taskRowFromLaunch, taskRowsFromDetails, taskRowsFromSessionEntries } from "../../src/ui/task-rows";
-import type { RootCommand, RootDialog, RootObservation } from "../../src/remote/root-contract";
-import { dispatchRootFacet } from "../../src/remote/root-runtime";
+import type { RootCommand, RootDialog, RootObservation } from "../../src/remote/root/contract";
+import { dispatchRootFacet } from "../../src/remote/root/runtime";
 import {
   presentRemoteRoot,
   RootControls,
   type RootPresentationControls,
   RootTranscript,
-} from "../../src/remote/root-presenter";
+} from "../../src/remote/root/presenter";
 
 function replay(messages: unknown[], extraEvents: unknown[] = []): RootObservation {
   const events = [...messages.map((message) => ({ type: "message_end", message })), ...extraEvents];

@@ -45,7 +45,7 @@ export function planDiff(changes: Change[], blocker?: string) {
     full,
     changes,
     reasons,
-    commands: full ? [["bash", "scripts/ci/ci.sh", "linux"]] : [["bun", "test", "./tests/ci-selective.test.ts"]],
+    commands: full ? [["bash", "scripts/ci/ci.sh", "linux"]] : [["bun", "test", "./tests/ci/ci-selective.test.ts"]],
     scope: full
       ? "Complete executable validation required."
       : "Lightweight docs classifier checks only; no executable validation is implied.",

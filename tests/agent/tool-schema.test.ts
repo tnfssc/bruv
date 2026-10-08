@@ -1,7 +1,7 @@
 import { test, expect } from "bun:test";
 import * as z from "zod/mini";
 import { validateToolArguments, type JsonObject } from "@earendil-works/pi-ai";
-import { toolParameters } from "../../src/tool-schema";
+import { toolParameters } from "../../src/typescript/tool-schema";
 import extension from "../../src/agent/extension";
 import { setupProbeOrchestration } from "../../src/live/setup-probe";
 

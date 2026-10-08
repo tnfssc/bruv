@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { parseRootPlacementArgs } from "../../src/remote/root-options";
+import { parseRootPlacementArgs } from "../../src/remote/root/options";
 
 describe("local conversation dispatch", () => {
   test("targetless and explicit local preserve normal arguments", () => {

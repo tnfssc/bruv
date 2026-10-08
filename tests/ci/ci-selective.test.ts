@@ -12,7 +12,7 @@ import {
 } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
-import { isDoc, parseDiff, plan, planDiff } from "../../scripts/ci-selective";
+import { isDoc, parseDiff, plan, planDiff } from "../../scripts/ci/ci-selective";
 
 type TestRepository = {
   cwd: string;
@@ -63,7 +63,7 @@ test("docs-only classifier accepts human references, not runtime or executable i
     "README.txt",
     "wisdom/live/prompt.md",
     "wisdom/quality/v1.2.md",
-    "scripts/ci-selective.ts",
+    "scripts/ci/ci-selective.ts",
   ])
     expect(isDoc(path)).toBe(false);
   expect(planDiff([{ status: "M", paths: ["README.md"] }]).mode).toBe("docs");
@@ -75,7 +75,7 @@ test("docs-only classifier accepts human references, not runtime or executable i
   ])
     expect(planDiff([change]).mode).toBe("full");
   expect(planDiff([], "baseline unavailable").mode).toBe("full");
-  expect(planDiff([]).commands).toEqual([["bash", "scripts/ci.sh", "linux"]]);
+  expect(planDiff([]).commands).toEqual([["bash", "scripts/ci/ci.sh", "linux"]]);
 });
 test("NUL diff parser preserves unusual filenames and fails closed", () => {
   expect(parseDiff("M\0README odd.md\0A\0src/a.ts\0")).toEqual([
@@ -176,7 +176,7 @@ test("selected checks", () => {
   });
 }
 
-const selector = resolve("scripts/ci-selective.ts");
+const selector = resolve("scripts/ci/ci-selective.ts");
 function runSelector(cwd: string, base: string, options: { output?: string; fail?: boolean } = {}) {
   return spawnSync(process.execPath, [selector, "--base", base, "--run"], {
     cwd,

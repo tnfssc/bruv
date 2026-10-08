@@ -1,6 +1,6 @@
 # Pi 1.1.0 host patch fixture
 
-1.1.0-originals.json.gz contains a JSON path-to-text map of the nine pinned original files covered by scripts/pi-host-adaptation.ts. Recovery tests decompress this fixture and check every original SHA-256 before use. Tests need no node_modules reads, install, network, or Bun cache.
+1.1.0-originals.json.gz contains a JSON path-to-text map of the nine pinned original files covered by scripts/build/pi-host-adaptation.ts. Recovery tests decompress this fixture and check every original SHA-256 before use. Tests need no node_modules reads, install, network, or Bun cache.
 
 Generated from the actual published @earendil-works/pi-coding-agent 1.1.0 npm tarball in an owned temporary directory, after verifying its SHA-512 against registry metadata. Applied patches/@earendil-works%2Fpi-coding-agent@1.1.0.patch with git apply before collecting files: “original” here means the reviewed Bun-patched source, before runtime host adaptations. All nine files matched the upgrade's existing originalSha256 values, and adaptPiHostFile produced each existing adaptedSha256. No source/result hashes or dependency pins were changed.
 

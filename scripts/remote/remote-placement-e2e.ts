@@ -13,7 +13,7 @@ import {
   writeFileSync,
 } from "node:fs";
 import { join, resolve } from "node:path";
-import { ALIAS, ANSWER, QUESTION, stream } from "../../tests/fixtures/remote-placement-e2e/scenario";
+import { ALIAS, ANSWER, QUESTION, stream } from "../../tests/remote/fixtures/remote-placement-e2e/scenario";
 
 const probe = process.argv.slice(2).includes("--probe");
 assert(
@@ -21,7 +21,7 @@ assert(
   "Only --probe is supported",
 );
 const source = resolve(import.meta.dir, "../..");
-const fixture = join(source, "tests/fixtures/remote-placement-e2e");
+const fixture = join(source, "tests/remote/fixtures/remote-placement-e2e");
 const bun = resolve(process.env.BUN_BIN ?? "/home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin/bun");
 const binary = resolve(process.env.BRUV_BIN ?? join(source, "dist/bruv"));
 const base = process.env.REMOTE_PLACEMENT_BASE_IMAGE;

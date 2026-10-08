@@ -3,7 +3,7 @@ import { copyFile, mkdtemp, readdir, readFile, readlink, rm, symlink, writeFile 
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import product from "../../package.json";
-import { writeConnectorLauncher } from "../../scripts/claude-compat-launcher";
+import { writeConnectorLauncher } from "../../scripts/build/claude-compat-launcher";
 import { RELEASES_URL, updateAssetFor } from "../../src/update";
 import { run } from "../helpers/helpers";
 

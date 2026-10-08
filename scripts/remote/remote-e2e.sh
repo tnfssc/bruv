@@ -13,7 +13,7 @@ umask 077
 ssh-keygen -q -t ed25519 -N '' -f "$tmp/client"
 ssh-keygen -q -t ed25519 -N '' -f "$tmp/hostkey"
 mkdir "$tmp/build" "$tmp/keys" "$tmp/bin" "$tmp/home" "$tmp/home/.ssh" "$tmp/home/.bruv" "$tmp/home/agent"
-cp tests/fixtures/remote-e2e/{Dockerfile,entrypoint.sh,sshd_config,models.json,subagents.json,fake-provider.ts} "$tmp/build/"
+cp tests/remote/fixtures/remote-e2e/{Dockerfile,entrypoint.sh,sshd_config,models.json,subagents.json,fake-provider.ts} "$tmp/build/"
 cp "$BUN_BIN" "$tmp/build/bun"; cp "$BRUV_BIN" "$tmp/build/bruv"
 cp "$tmp/hostkey" "$tmp/client.pub" "$tmp/keys/"
 chmod 644 "$tmp/build"/*; chmod 755 "$tmp/build/bun" "$tmp/build/bruv" "$tmp/build/entrypoint.sh"
@@ -56,7 +56,7 @@ for attempt in {1..50}; do
  sleep .1
 done
 if [[ "${REMOTE_E2E_SCRIPT:-}" == scripts/remote/remote-recovery-e2e.ts ]]; then
-cp tests/fixtures/remote-e2e/recovery-ssh.sh "$tmp/bin/recovery-ssh.sh"
+cp tests/remote/fixtures/remote-e2e/recovery-ssh.sh "$tmp/bin/recovery-ssh.sh"
 cat > "$tmp/bin/ssh" <<EOF
 #!/bin/sh
 exec /bin/sh "$tmp/bin/recovery-ssh.sh" "$tmp/home/.ssh/config" "$tmp" "\$@"

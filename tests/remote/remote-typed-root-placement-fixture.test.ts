@@ -219,8 +219,8 @@ describe("typed root receipt assertions reject weakened evidence", () => {
 describe("typed fixture infrastructure safety", () => {
   const read = (f: string) => readFileSync(new URL("../../" + f, import.meta.url), "utf8");
   test("network none, no local inference, explicit binary, normal picker answer", () => {
-    const runner = read("scripts/remote-root-placement-e2e.ts");
-    expect(read("scripts/network-none-fixture.ts")).toMatch(/"--network",\s*"none"/);
+    const runner = read("scripts/remote/remote-root-placement-e2e.ts");
+    expect(read("scripts/fixtures/network-none-fixture.ts")).toMatch(/"--network",\s*"none"/);
     expect(runner).toContain("process.env.BRUV_BIN");
     expect(runner).not.toContain("parentProvider");
     expect(runner).not.toContain("Bun.serve");
@@ -296,7 +296,7 @@ describe("typed root failure acceptance guards", () => {
     }
   });
   test("runner proves unknown before reconnect and process exit beyond stop acknowledgment", () => {
-    const runner = readFileSync(new URL("../../scripts/remote-root-placement-e2e.ts", import.meta.url), "utf8");
+    const runner = readFileSync(new URL("../../scripts/remote/remote-root-placement-e2e.ts", import.meta.url), "utf8");
     expect(runner).toContain('receipt.state === "unknown"');
     expect(runner).toContain("assertReplyRecovered(");
     expect(runner).toContain("kill -0 $(cat /tmp/root-running-pid)");
@@ -366,7 +366,7 @@ test("reply-loss relay really forwards once, discards bytes and gates status unt
 });
 
 test("modal transitions inspect the live screen rather than stale terminal scrollback", () => {
-  const runner = readFileSync(new URL("../../scripts/remote-root-placement-e2e.ts", import.meta.url), "utf8");
+  const runner = readFileSync(new URL("../../scripts/remote/remote-root-placement-e2e.ts", import.meta.url), "utf8");
   expect(runner).toContain('const screen = () => tmux("capture-pane", "-p", "-t", "root-placement")');
   expect(runner).toContain('screen().includes("/questions") && screen().includes("/close")');
   expect(runner).toContain('screen().includes("Back")');

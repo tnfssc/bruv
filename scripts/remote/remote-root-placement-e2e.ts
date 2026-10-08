@@ -13,7 +13,7 @@ import {
   writeFileSync,
 } from "node:fs";
 import { join, resolve } from "node:path";
-import { ALIAS, ANSWER, questionText } from "../../tests/fixtures/remote-typed-root-placement/scenario";
+import { ALIAS, ANSWER, questionText } from "../../tests/remote/fixtures/remote-typed-root-placement/scenario";
 import {
   assertOnePrompt,
   assertQuestion,
@@ -24,7 +24,7 @@ import {
   questionsFromReceipt,
   assertReplyRecovered,
   assertCancelledJob,
-} from "../../tests/fixtures/remote-typed-root-placement/proof";
+} from "../../tests/remote/fixtures/remote-typed-root-placement/proof";
 
 const probe = process.argv.slice(2).includes("--probe");
 assert(
@@ -32,7 +32,7 @@ assert(
   "Only --probe is supported",
 );
 const source = resolve(import.meta.dir, "../..");
-const fixture = join(source, "tests/fixtures/remote-typed-root-placement");
+const fixture = join(source, "tests/remote/fixtures/remote-typed-root-placement");
 const bun = resolve(process.env.BUN_BIN ?? "/home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin/bun");
 assert(probe || process.env.BRUV_BIN, "Set BRUV_BIN to the actual combined compiled CLI; no implicit candidate");
 const binary = process.env.BRUV_BIN ? resolve(process.env.BRUV_BIN) : "";

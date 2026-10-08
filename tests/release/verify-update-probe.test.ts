@@ -1,6 +1,6 @@
 import { expect, test } from "bun:test";
 import { spawnSync } from "node:child_process";
-import { describeUpdateProbe } from "../../scripts/verify-update-probe";
+import { describeUpdateProbe } from "../../scripts/release/verify-update-probe";
 
 function probe(executable: string, args: string[]) {
   return JSON.parse(describeUpdateProbe(executable, args, spawnSync(executable, args, { encoding: "utf8" })));

@@ -105,7 +105,7 @@ test("cancellation reads the saved launch and uses jobs.stop with its exact ID",
 });
 test("migrated runners contain no prohibited agent launch", async () => {
   for (const runner of ["remote-e2e", "remote-pty-e2e", "remote-capability-pty-e2e"]) {
-    const source = await Bun.file(new URL("../../scripts/" + runner + ".ts", import.meta.url)).text();
+    const source = await Bun.file(new URL("../../scripts/remote/" + runner + ".ts", import.meta.url)).text();
     expect(source).not.toMatch(/remote\.launch/);
   }
 });

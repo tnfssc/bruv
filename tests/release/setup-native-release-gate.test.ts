@@ -74,7 +74,7 @@ ${body}
       { mode: 0o755 },
     );
   }
-  const result = spawnSync("/bin/bash", [join(import.meta.dir, "../../scripts/setup-native-release-gate.sh")], {
+  const result = spawnSync("/bin/bash", [join(import.meta.dir, "../../scripts/release/setup-native-release-gate.sh")], {
     encoding: "utf8",
     cwd: join(import.meta.dir, "../.."),
     env: {

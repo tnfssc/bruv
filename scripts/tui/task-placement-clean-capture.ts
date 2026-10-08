@@ -105,7 +105,7 @@ export class PresentationTerminal {
 async function main() {
   assert.equal(process.argv.length, 2, "No CLI arguments are supported");
   const source = resolve(import.meta.dir, "../..");
-  const fixture = join(source, "tests/fixtures/remote-typed-root-placement");
+  const fixture = join(source, "tests/remote/fixtures/remote-typed-root-placement");
   const presentation = join(source, "scripts/fixtures/task-placement-clean");
   const bun = resolve(process.env.BUN_BIN ?? "/home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin/bun");
   assert(process.env.BRUV_BIN, "Set BRUV_BIN to the actual combined compiled CLI; no implicit candidate");

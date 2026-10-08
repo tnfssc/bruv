@@ -3,7 +3,7 @@ import { mkdtemp, writeFile, rm } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { tmpdir } from "node:os";
 for (const [module, adapter, entrypoint] of [
-  ["src/remote/root-transport.ts", "rootSshTransport", "--remote-root-control"],
+  ["src/remote/root/transport.ts", "rootSshTransport", "--remote-root-control"],
   ["src/remote/ssh.ts", "sshTransport", "--remote-control"],
 ])
   test(`${adapter} uses one JSON request, no TTY/session shell/credentials forwarding`, async () => {

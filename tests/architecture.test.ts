@@ -53,7 +53,7 @@ test("active T3 adapters and agent composition have one maintained home", async 
     "src/t3/tasks/native-task.ts",
     "src/t3/web/launcher.ts",
     "src/claude-compat/cli.ts",
-    "scripts/build-pair.ts",
+    "scripts/build/build-pair.ts",
   ])
     expect({ path, exists: await Bun.file(resolve(root, path)).exists() }).toEqual({ path, exists: true });
   for (const path of [

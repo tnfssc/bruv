@@ -2,7 +2,10 @@ import { stripVTControlCharacters } from "node:util";
 import { expect, test } from "bun:test";
 import { initTheme, ToolExecutionComponent } from "@earendil-works/pi-coding-agent";
 import { Input, type Terminal, TuiAltScreen, TuiMainScreen } from "@earendil-works/pi-tui";
-import { attachTerminalActionProfiler, type ActionProfilerScheduler } from "../../scripts/terminal-perf/action-profiler";
+import {
+  attachTerminalActionProfiler,
+  type ActionProfilerScheduler,
+} from "../../scripts/terminal-perf/action-profiler";
 import { attachTerminalProfiler } from "../../scripts/terminal-perf/profiler";
 
 class ManualScheduler implements ActionProfilerScheduler {

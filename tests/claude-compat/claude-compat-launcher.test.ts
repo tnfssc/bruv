@@ -2,7 +2,11 @@ import { afterEach, beforeEach, expect, test } from "bun:test";
 import { chmod, link, mkdir, mkdtemp, readFile, rm, stat, symlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { connectorLauncher, normalOutputForConnector, writeConnectorLauncher } from "../../scripts/claude-compat-launcher";
+import {
+  connectorLauncher,
+  normalOutputForConnector,
+  writeConnectorLauncher,
+} from "../../scripts/build/claude-compat-launcher";
 
 let home: string;
 beforeEach(async () => {

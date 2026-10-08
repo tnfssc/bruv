@@ -8,7 +8,7 @@ from unittest.mock import Mock, patch
 
 sys.dont_write_bytecode = True
 spec = importlib.util.spec_from_file_location(
-    "ansi_video_renderer", Path(__file__).resolve().parents[2] / "scripts/ansi_video_renderer.py"
+    "ansi_video_renderer", Path(__file__).resolve().parents[2] / "scripts/tui/ansi_video_renderer.py"
 )
 renderer = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(renderer)

@@ -42,7 +42,7 @@ if [[ "$lane" == macos ]]; then
   # This is the separate device-free macOS lane, not the Linux gate.
   run_step 'Prepare assets' macos-assets.log "$root" bun run prepare:assets
   run_step 'Offline OpenAI source probe' macos-openai-transport.log "$root" bun scripts/ci/offline-openai-default-transport.ts --source-only
-  run_step 'Deterministic Live tests' macos-live-tests.log "$root" bun test --parallel=3 tests/live-*.test.ts
+  run_step 'Deterministic Live tests' macos-live-tests.log "$root" bun test --parallel=3 tests/live/live-*.test.ts
   exit 0
 fi
 

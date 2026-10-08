@@ -107,7 +107,7 @@ describe("compiled bruv CLI", () => {
 
   test("installs the verified pair into the requested local bin directory", async () => {
     const installDir = join(home, ".local", "bin");
-    const result = await run([join(root, "scripts/install-local.sh")], {
+    const result = await run([join(root, "scripts/release/install-local.sh")], {
       cwd: root,
       env: {
         ...process.env,

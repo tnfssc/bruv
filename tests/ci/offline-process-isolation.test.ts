@@ -96,7 +96,7 @@ test("test TUI startup sends no Herdr requests from an inherited pane identity",
       (
         await tmux(
           "-f",
-          resolve(import.meta.dir, "../../scripts/tmux.conf"),
+          resolve(import.meta.dir, "../../scripts/tui/tmux.conf"),
           "new-session",
           "-d",
           "-s",

@@ -7,7 +7,8 @@ import { createTerminalPerfProcessFixture } from "./helpers/terminal-perf-proces
 test("terminal frame lab runs real frames, writes all artifacts and compares saved results", async () => {
   const fixture = await createTerminalPerfProcessFixture();
   const directory = fixture.root;
-  const cli = (args: string[]) => fixture.run([resolve(import.meta.dir, "../../scripts/terminal-perf.ts"), ...args]);
+  const cli = (args: string[]) =>
+    fixture.run([resolve(import.meta.dir, "../../scripts/terminal-perf/terminal-perf.ts"), ...args]);
   const listing = await cli(["--list", "--scales", "8"]);
   expect(listing.exitCode).toBe(0);
   expect(listing.stdout).toContain("long-thread/input/8");

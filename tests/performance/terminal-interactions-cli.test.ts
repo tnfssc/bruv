@@ -3,7 +3,7 @@ import { mkdir, mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { reportFixture } from "./fixtures/terminal-interaction-report";
-const cli = resolve(import.meta.dir, "../../scripts/terminal-interactions.ts");
+const cli = resolve(import.meta.dir, "../../scripts/terminal-perf/terminal-interactions.ts");
 async function run(...args: string[]) {
   const p = Bun.spawn([process.execPath, cli, ...args], { stdout: "pipe", stderr: "pipe" });
   const [exit, stdout, stderr] = await Promise.all([

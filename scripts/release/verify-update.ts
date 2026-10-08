@@ -49,7 +49,7 @@ try {
   const runner = join(directory, "runner.ts");
   const updaterSource = resolve(
     import.meta.dir,
-    legacy ? "../../tests/update-v0.16.3-fixture.ts" : "../../src/update.ts",
+    legacy ? "../../tests/release/update-v0.16.3-fixture.ts" : "../../src/update.ts",
   );
   await writeFile(
     runner,

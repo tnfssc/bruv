@@ -37,7 +37,7 @@ test("real TUI /mode reports and switches the root instruction mode", async () =
       (
         await tmux(
           "-f",
-          resolve(import.meta.dir, "../../scripts/tmux.conf"),
+          resolve(import.meta.dir, "../../scripts/tui/tmux.conf"),
           "new-session",
           "-d",
           "-s",

@@ -5,7 +5,12 @@ import { join } from "node:path";
 import { withJobRequestIdentity } from "../../src/job-delivery";
 import { QuestionService } from "../../src/questions/service";
 import { RemoteClient } from "../../src/remote/client";
-import { createRemoteJobsAdapter, type RepositoryLauncher, type SshLaunchRequest, sshJobId } from "../../src/remote/jobs";
+import {
+  createRemoteJobsAdapter,
+  type RepositoryLauncher,
+  type SshLaunchRequest,
+  sshJobId,
+} from "../../src/remote/jobs";
 import { SOURCE_CHOICES, SourceApprovalService, type SourceIntent } from "../../src/remote/source-approval";
 import { JobService } from "../../src/tasks/job-service";
 import { TaskManager } from "../../src/tasks/task-manager";

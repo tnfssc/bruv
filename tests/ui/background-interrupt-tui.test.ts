@@ -40,7 +40,7 @@ test.skipIf(!enabled)(
     const dir = await mkdtemp(join(tmpdir(), "bruv-interrupt-ux-"));
     const socket = "bruv-interrupt-ux-" + process.pid + "-" + Date.now();
     const tmux = (...args: string[]) =>
-      run(["tmux", "-L", socket, "-f", resolve(import.meta.dir, "../../scripts/tmux.conf"), ...args]);
+      run(["tmux", "-L", socket, "-f", resolve(import.meta.dir, "../../scripts/tui/tmux.conf"), ...args]);
     const quote = (s: string) => "'" + s.replaceAll("'", "'\\''") + "'";
     const file = join(dir, "session.jsonl");
     const evidence: any = {};

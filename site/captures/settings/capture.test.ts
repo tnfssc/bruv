@@ -21,4 +21,4 @@ describe("historical settings capture", () => {
     expect(createHash("sha256").update(raw).digest("hex")).toBe(data.sha256);
     expect(raw).toContain("\x1b[");
   });
- });
+});

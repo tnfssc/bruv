@@ -1,4 +1,4 @@
-import { placementReply } from "../../tests/fixtures/remote-e2e/placement-parent";
+import { placementReply } from "../../tests/remote/fixtures/remote-e2e/placement-parent";
 import { spawn } from "node:child_process";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";

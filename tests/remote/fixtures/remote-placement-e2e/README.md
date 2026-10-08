@@ -16,8 +16,8 @@ export REMOTE_PLACEMENT_BASE_IMAGE='cached-local-SSH-fixture-image'
 export BRUV_BIN="$PWD/dist/bruv"
 export REMOTE_PLACEMENT_ARTIFACTS="$TMPDIR/placement-final-proof"
 "$BUN_BIN" test tests/remote/remote-placement-e2e-fixture.test.ts
-"$BUN_BIN" scripts/remote-placement-e2e.ts --probe # Infrastructure only, no CLI proof
-"$BUN_BIN" scripts/remote-placement-e2e.ts         # Real acceptance; fails on unsupported placement
+"$BUN_BIN" scripts/remote/remote-placement-e2e.ts --probe # Infrastructure only, no CLI proof
+"$BUN_BIN" scripts/remote/remote-placement-e2e.ts         # Real acceptance; fails on unsupported placement
 ```
 
 Do not substitute a placeholder packaged-web archive to obtain a binary. Build the parent's actual combined source using its validated local assets. The runner does not build or make packaged-web claims.

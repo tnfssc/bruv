@@ -434,7 +434,7 @@ Phases 1, 2, and 3 are established for the current Linux/Bun baseline as of 2026
 ### Values iteration 2 — decision points
 
 - Simplified registered guidance by 31% (5,664 → 3,907 characters), preserving values, API facts, user workflow ownership, and runtime guards.
-- Added tests/prompt-delivery.test.ts to verify Pi SDK system-prompt assembly. This is not a provider-wire capture.
+- Added tests/prompts/prompt-delivery.test.ts to verify Pi SDK system-prompt assembly. This is not a provider-wire capture.
 - Fixed evaluation budget: two natural nested-agent/TUI pairs with unchanged prompts and criteria. Both pairs failed both cases (0/4 live scenarios): requested nested delegation and responsive handoff remain unreliable. 144 deterministic tests, typecheck/build, smoke and diff checks passed. Not install-ready and not installed.
 
 ### Values iteration 3 — explicit control affordance

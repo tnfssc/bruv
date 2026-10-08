@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { assertRootStartupContext } from "../../src/remote/root-cli";
+import { assertRootStartupContext } from "../../src/remote/root/cli";
 test("main placement cannot be used to reset child or scoped-native policy", () => {
   expect(() => assertRootStartupContext({})).not.toThrow();
   expect(() => assertRootStartupContext({ BRUV_SUBAGENT_DEPTH: "0", BRUV_AGENT_PLACE: "server" })).not.toThrow();

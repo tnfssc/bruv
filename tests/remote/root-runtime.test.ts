@@ -11,7 +11,7 @@ import {
   rootFacetRequest,
   RootFacetAcknowledgedError,
   type RootJobs,
-} from "../../src/remote/root-runtime";
+} from "../../src/remote/root/runtime";
 function fixture() {
   // Retain this owned directory so isolated test gates can inspect the durable ledger.
   const directory = mkdtempSync(join(tmpdir(), "root-ipc-"));

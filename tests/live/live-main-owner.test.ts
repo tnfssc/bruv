@@ -14,7 +14,12 @@ import {
 import { stripTerminalSequences } from "@earendil-works/pi-tui";
 import tasks from "../../src/agent/extension";
 import { bindInstructionContinuitySession } from "../../src/agent/instruction-continuity";
-import { acquireMainOwner, beforeOrdinaryPrompt, currentMainOwner, currentMainToolOwner } from "../../src/live/main-owner";
+import {
+  acquireMainOwner,
+  beforeOrdinaryPrompt,
+  currentMainOwner,
+  currentMainToolOwner,
+} from "../../src/live/main-owner";
 import { bruvSystemPrompt } from "../../src/prompts";
 import { registerExecuteTool } from "../../src/typescript/extension";
 

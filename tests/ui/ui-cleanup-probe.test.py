@@ -12,7 +12,7 @@ from pathlib import Path
 from unittest.mock import Mock, call, patch
 
 spec = importlib.util.spec_from_file_location(
-    "ui_cleanup_probe", Path(__file__).resolve().parents[2] / "scripts" / "ui-cleanup-probe.py")
+    "ui_cleanup_probe", Path(__file__).resolve().parents[2] / "scripts" / "tui" / "ui-cleanup-probe.py")
 p = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(p)
 

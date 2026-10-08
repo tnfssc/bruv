@@ -28,9 +28,9 @@ function runCi({
   const parentTmp = join(root, "temp");
   mkdirSync(parentTmp);
   writeFileSync(join(parentTmp, "user-session"), "leave alone");
-  mkdirSync(join(root, "scripts"));
+  mkdirSync(join(root, "scripts/ci"), { recursive: true });
   mkdirSync(bin);
-  copyFileSync(resolve(import.meta.dir, "../../scripts/ci.sh"), join(root, "scripts/ci.sh"));
+  copyFileSync(resolve(import.meta.dir, "../../scripts/ci/ci.sh"), join(root, "scripts/ci/ci.sh"));
   copyFileSync(resolve(import.meta.dir, "../../package.json"), join(root, "package.json"));
   // Record each gate's working directory and temp ownership alongside its command.
   const stub = `#!/usr/bin/env bash
@@ -105,7 +105,7 @@ test("Linux builds the pair without preparing or validating bundled web", () => 
     "run perf:resources --profile ci --out " + join(root, "artifacts/ci/resources"),
     "run perf:resources --profile stress --out " + join(root, "artifacts/ci/resources"),
     "run build",
-    "scripts/offline-openai-default-transport.ts",
+    "scripts/ci/offline-openai-default-transport.ts",
     "test --parallel=3 ./tests",
     "run smoke -- --reuse-build",
   ]);
@@ -171,8 +171,8 @@ test("macOS lane runs only its device-free source and Live checks", () => {
   expect(calls.map((call) => call.command)).toEqual([
     "install --frozen-lockfile",
     "run prepare:assets",
-    "scripts/offline-openai-default-transport.ts --source-only",
-    "test --parallel=3 tests/live-*.test.ts",
+    "scripts/ci/offline-openai-default-transport.ts --source-only",
+    "test --parallel=3 tests/live/live-*.test.ts",
   ]);
   expect(readFileSync(join(root, "artifacts/ci/macos-live-tests.log"), "utf8")).toContain("completed");
 });
@@ -213,7 +213,7 @@ test("production CI caches downloads only and delegates paired validation to the
   }
   const ci = Bun.YAML.parse(workflow) as { jobs: Record<string, { steps: { run?: string }[] }> };
   expect(ci.jobs.test!.steps.some((step) => step.run === "bun run ci")).toBe(true);
-  const runner = await Bun.file(resolve(import.meta.dir, "../../scripts/ci.sh")).text();
+  const runner = await Bun.file(resolve(import.meta.dir, "../../scripts/ci/ci.sh")).text();
   for (const gate of [
     "bun install --frozen-lockfile",
     "bun run format:check",
@@ -222,7 +222,7 @@ test("production CI caches downloads only and delegates paired validation to the
     'bun run perf:resources --profile ci --out "$log_dir/resources"',
     'bun run perf:resources --profile stress --out "$log_dir/resources"',
     "bun run build",
-    "bun scripts/offline-openai-default-transport.ts",
+    "bun scripts/ci/offline-openai-default-transport.ts",
     "bun test --parallel=3 ./tests",
     "bun run smoke -- --reuse-build",
   ])
@@ -237,7 +237,7 @@ test("both CI lanes install ffmpeg before running PCM conversion tests", async (
     jobs: Record<string, { steps: { run?: string }[] }>;
   };
   for (const [job, install, gate] of [
-    ["test", "bash scripts/install-ci-linux-tools.sh", "bun run ci"],
+    ["test", "bash scripts/ci/install-ci-linux-tools.sh", "bun run ci"],
     ["live-macos", "brew install ffmpeg", "bun run ci:macos"],
   ] as const) {
     const steps = parsed.jobs[job]!.steps;
@@ -247,7 +247,7 @@ test("both CI lanes install ffmpeg before running PCM conversion tests", async (
       expect(steps[setup]!.run).toContain("command -v ffmpeg >/dev/null ||");
       expect(steps[setup]!.run).toContain("ffmpeg -version");
     } else {
-      const installer = await Bun.file(resolve(import.meta.dir, "../../scripts/install-ci-linux-tools.sh")).text();
+      const installer = await Bun.file(resolve(import.meta.dir, "../../scripts/ci/install-ci-linux-tools.sh")).text();
       expect(installer).toContain("ordinary_packages=(tmux ffmpeg)");
       expect(installer).toContain("ffmpeg -version");
     }

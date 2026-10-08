@@ -9,7 +9,7 @@ import {
   selectDependencyNames,
   validateDependencyUpdate,
   validatePiAlignment,
-} from "../../scripts/update-dependencies";
+} from "../../scripts/dependencies/update-dependencies";
 
 const manifest = {
   dependencies: {
@@ -83,7 +83,7 @@ describe("fixture update permission", () => {
   test("CLI denies fixture before spawning an update", async () => {
     const root = await mkdtemp(join(tmpdir(), "bruv-denied-dependency-update-"));
     const child = Bun.spawn(
-      [process.execPath, join(import.meta.dir, "../../scripts/update-dependencies.ts"), "--fixture"],
+      [process.execPath, join(import.meta.dir, "../../scripts/dependencies/update-dependencies.ts"), "--fixture"],
       {
         cwd: root,
         env: { ...ownedFixtureEnv(root), GITHUB_REPOSITORY: "tnfssc/bruv", GITHUB_EVENT_NAME: "workflow_dispatch" },

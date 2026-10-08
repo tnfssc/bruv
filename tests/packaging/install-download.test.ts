@@ -29,7 +29,7 @@ async function sandbox(root: string, installer: string) {
   const assetsDir = join(root, "assets");
   const noticesDir = join(root, "home/.local/share/bruv/notices");
   const launcher = await readFile(
-    process.env.BRUV_TEST_LAUNCHER_TEMPLATE ?? resolve(import.meta.dir, "../../scripts/bruv-claude-compat.sh"),
+    process.env.BRUV_TEST_LAUNCHER_TEMPLATE ?? resolve(import.meta.dir, "../../scripts/build/bruv-claude-compat.sh"),
     "utf8",
   );
   for (const name of ["bin", "tools", "assets", "home"]) await mkdir(join(root, name));
@@ -108,7 +108,7 @@ case "$source" in */.bruv-install.*/bruv) exit 1;; esac
 exec /bin/mv "$@"
 `;
 
-describe.each(["../../install.sh", "../../scripts/install.sh"])("download entrypoint %s", (installer) => {
+describe.each(["../../scripts/install.sh"])("download entrypoint %s", (installer) => {
   test("publishes the verified pair and launcher identity, ignoring inherited override", () =>
     withSandbox(installer, async ({ root, binDir, run, launcher, env }) => {
       const result = await run({ BRUV_CLAUDE_COMPAT_BRUV_PATH: "/wrong-bruv" });

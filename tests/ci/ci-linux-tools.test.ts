@@ -10,7 +10,7 @@ test("Linux fixture install shares cached debs, skips installed packages and bou
     await mkdir(bin);
     const sources = join(dir, "ubuntu.sources");
     await writeFile(sources, "fixture");
-    const source = await Bun.file("scripts/install-ci-linux-tools.sh").text();
+    const source = await Bun.file("scripts/ci/install-ci-linux-tools.sh").text();
     const script = join(dir, "install.sh");
     await writeFile(script, source.replace("sources=/etc/apt/sources.list.d/ubuntu.sources", "sources=" + sources));
     for (const [name, body] of Object.entries({

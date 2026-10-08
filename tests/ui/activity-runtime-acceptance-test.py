@@ -9,7 +9,7 @@ import tempfile
 
 sys.dont_write_bytecode = True
 
-spec = importlib.util.spec_from_file_location("runtime_acceptance", Path(__file__).resolve().parents[2] / "scripts/activity-runtime-acceptance.py")
+spec = importlib.util.spec_from_file_location("runtime_acceptance", Path(__file__).resolve().parents[2] / "scripts/tui/activity-runtime-acceptance.py")
 runner = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(runner)
 

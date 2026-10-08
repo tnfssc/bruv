@@ -5,7 +5,7 @@ import { join } from "node:path";
 
 import { ownedFixtureEnv } from "../helpers/helpers";
 
-const script = join(import.meta.dir, "../..", "scripts/smoke.sh");
+const script = join(import.meta.dir, "../..", "scripts/ci/smoke.sh");
 
 const buildDriver = `#!/bin/sh
 set -eu
@@ -165,7 +165,7 @@ for (const args of [["--unknown"], ["--reuse-build", "--unknown"], ["--", "--reu
 test("CI and release smoke reuse their preceding build", async () => {
   const ci = await Bun.file(join(import.meta.dir, "../..", ".github/workflows/ci.yml")).text();
   expect(ci).toContain("run: bun run ci");
-  const runner = await Bun.file(join(import.meta.dir, "../..", "scripts/ci.sh")).text();
+  const runner = await Bun.file(join(import.meta.dir, "../..", "scripts/ci/ci.sh")).text();
   const build = runner.indexOf("bun run build");
   expect(build).toBeGreaterThan(-1);
   expect(runner.indexOf("bun run smoke -- --reuse-build")).toBeGreaterThan(build);

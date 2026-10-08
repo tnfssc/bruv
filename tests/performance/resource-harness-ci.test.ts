@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import { profiles } from "../../scripts/resource-harness/run";
 
 test("shared Linux release gate runs both resource profiles and retains their artifacts", () => {
-  const gate = readFileSync(new URL("../../scripts/ci.sh", import.meta.url), "utf8");
+  const gate = readFileSync(new URL("../../scripts/ci/ci.sh", import.meta.url), "utf8");
   expect(gate).toContain('bun run perf:resources --profile ci --out "$log_dir/resources"');
   expect(gate).toContain('bun run perf:resources --profile stress --out "$log_dir/resources"');
   expect(gate.indexOf("Long task history resource budget")).toBeLessThan(gate.indexOf("Build paired Bruv binaries"));

@@ -26,7 +26,9 @@ type Job = {
 };
 type Workflow = { on: Record<string, unknown>; permissions: Record<string, string>; jobs: Record<string, Job> };
 const load = (name: string) =>
-  Bun.YAML.parse(readFileSync(new URL("../../.github/workflows/" + name + ".yml", import.meta.url), "utf8")) as Workflow;
+  Bun.YAML.parse(
+    readFileSync(new URL("../../.github/workflows/" + name + ".yml", import.meta.url), "utf8"),
+  ) as Workflow;
 const ci = load("ci");
 const release = load("release");
 const step = (job: Job, name: string) => job.steps.find((s) => s.name === name)!;
@@ -113,7 +115,7 @@ test("fast feedback plans and executes in one Bun-only job without full provisio
     expect(s.run ?? "").not.toContain("${{");
   }
   const run = step(job, "Run docs classifier checks");
-  expect(run.run).toBe('bun scripts/ci-selective.ts --base "$BASE" --run');
+  expect(run.run).toBe('bun scripts/ci/ci-selective.ts --base "$BASE" --run');
   for (const [mode, full, expected] of [
     ["docs", "false", true],
     ["selected", "false", false],
@@ -291,8 +293,8 @@ test("PR comparison keeps tested merge parent; missing trusted push baseline req
     git("merge", "--no-ff", "feature", "-m", "tested merge");
     const merge = git("rev-parse", "HEAD");
     const command = step(ci.jobs.feedback!, "Resolve complete comparison").run!.replace(
-      "bun scripts/find-ci-baseline.ts",
-      JSON.stringify(process.execPath) + " " + JSON.stringify(join(process.cwd(), "scripts/find-ci-baseline.ts")),
+      "bun scripts/ci/find-ci-baseline.ts",
+      JSON.stringify(process.execPath) + " " + JSON.stringify(join(process.cwd(), "scripts/ci/find-ci-baseline.ts")),
     );
     const resolveBase = ({
       event,

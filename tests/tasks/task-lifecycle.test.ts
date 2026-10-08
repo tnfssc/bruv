@@ -11,7 +11,11 @@ import {
 } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { createTaskLifecycleRecorder, taskLifecycleFile, TASK_LIFECYCLE_MAX_BYTES } from "../../src/tasks/task-lifecycle";
+import {
+  createTaskLifecycleRecorder,
+  taskLifecycleFile,
+  TASK_LIFECYCLE_MAX_BYTES,
+} from "../../src/tasks/task-lifecycle";
 
 test("ownership index survives recreation, retains every child past completion preview limit, and stays protected", () => {
   const dir = mkdtempSync(join(tmpdir(), "bruv-lifecycle-"));

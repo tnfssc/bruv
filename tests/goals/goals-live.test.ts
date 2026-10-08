@@ -12,7 +12,11 @@ import {
   SettingsManager,
 } from "@earendil-works/pi-coding-agent";
 import tasks from "../../src/agent/extension";
-import { assertLiveRuntimeReady, installLiveDispatchBudget, type LiveDispatchEvidence } from "../live/live-dispatch-budget";
+import {
+  assertLiveRuntimeReady,
+  installLiveDispatchBudget,
+  type LiveDispatchEvidence,
+} from "../live/live-dispatch-budget";
 
 type LiveSession = Awaited<ReturnType<typeof createAgentSession>>["session"];
 

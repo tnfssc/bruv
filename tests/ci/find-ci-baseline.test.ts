@@ -3,7 +3,7 @@ import { execFileSync } from "node:child_process";
 import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { findCiBaseline } from "../../scripts/find-ci-baseline";
+import { findCiBaseline } from "../../scripts/ci/find-ci-baseline";
 import { ownedFixtureEnv } from "../helpers/helpers";
 
 const repo = "owner/project";
@@ -66,7 +66,7 @@ function githubHistory(runs: unknown[], metadata: unknown = workflow) {
 
 function selection(cwd: string, base: string, env: Record<string, string>) {
   return JSON.parse(
-    execFileSync(process.execPath, [join(process.cwd(), "scripts/ci-selective.ts"), "--base", base], {
+    execFileSync(process.execPath, [join(process.cwd(), "scripts/ci/ci-selective.ts"), "--base", base], {
       cwd,
       encoding: "utf8",
       env,
@@ -293,12 +293,12 @@ describe("one deadline covers both HTTP requests and Git ancestry proof", () => 
 
 test("CI push planning uses the fail-closed helper; Release has no develop plan", () => {
   const ci = readFileSync(".github/workflows/ci.yml", "utf8");
-  expect(ci).toContain("base=$(bun scripts/find-ci-baseline.ts)");
+  expect(ci).toContain("base=$(bun scripts/ci/find-ci-baseline.ts)");
   expect(ci).not.toContain("github.event.before");
   expect(ci).toContain("actions: read");
   const release = readFileSync(".github/workflows/release.yml", "utf8");
   expect(release).not.toContain("find-ci-baseline");
   expect(release).not.toContain("ci-selective");
   expect(release).toContain("actions: read");
-  expect(release).toContain("bun scripts/find-release-ci.ts");
+  expect(release).toContain("bun scripts/release/find-release-ci.ts");
 });

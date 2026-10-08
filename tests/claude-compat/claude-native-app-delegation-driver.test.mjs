@@ -5,7 +5,11 @@ import path from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import test from "node:test";
 import { prepare, projectWire, verify } from "../../scripts/claude-native-acceptance/app-delegation-driver.mjs";
-import { workerInstance, workerModels, workerSlug } from "../../scripts/claude-native-acceptance/app-delegation-model.mjs";
+import {
+  workerInstance,
+  workerModels,
+  workerSlug,
+} from "../../scripts/claude-native-acceptance/app-delegation-model.mjs";
 
 async function temporaryRoot(t) {
   const root = await fs.mkdtemp(path.join(os.tmpdir(), "app-driver-test-"));

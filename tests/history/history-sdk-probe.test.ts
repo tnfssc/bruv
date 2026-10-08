@@ -16,7 +16,7 @@ async function runFailedSoak(skipManagerDisposal = false) {
     stdout,
     stderr,
     code: exitCode,
-  } = await run([process.execPath, "--preload", preload, "scripts/history-sdk-probe.ts"], {
+  } = await run([process.execPath, "--preload", preload, "scripts/history/history-sdk-probe.ts"], {
     cwd: root,
     env: { ...fixture.env, BRUV_TEST_SKIP_MANAGER_DISPOSAL: skipManagerDisposal ? "1" : "0" },
   });

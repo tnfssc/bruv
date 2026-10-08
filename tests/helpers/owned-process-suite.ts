@@ -2,7 +2,7 @@ import { test } from "bun:test";
 import { spawn } from "node:child_process";
 import { mkdtemp, readFile, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { basename, dirname, join } from "node:path";
+import { basename, join } from "node:path";
 import { ownedFixtureEnv } from "./helpers";
 
 const suiteFileEnv = "BRUV_FIXTURE_SUITE_FILE";
@@ -12,7 +12,7 @@ const suiteFileEnv = "BRUV_FIXTURE_SUITE_FILE";
 // Keep each root, launch manifest and output for the parent gate's audit.
 async function runOwnedProcess(file: string, args: string[], environment: Record<string, string>) {
   const root = await mkdtemp(join(tmpdir(), "bruv-owned-suite-"));
-  const cwd = dirname(dirname(file));
+  const cwd = join(import.meta.dir, "../..");
   // JobService passes login flags to SHELL. This owned executable runs the same
   // command with non-login sh: no system/user startup files can redirect HOME.
   const shell = join(root, "fixture-shell");

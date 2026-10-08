@@ -255,10 +255,13 @@ test.skipIf(process.platform !== "linux")(
     try {
       const runner = join(directory, "runner.ts");
       writeFileSync(runner, readFileSync(new URL("./fixtures/remote-owner-error.ts.txt", import.meta.url)));
-      const child = Bun.spawn([process.execPath, runner, new URL("../../src/remote/owner.ts", import.meta.url).pathname], {
-        stdout: "pipe",
-        stderr: "pipe",
-      });
+      const child = Bun.spawn(
+        [process.execPath, runner, new URL("../../src/remote/owner.ts", import.meta.url).pathname],
+        {
+          stdout: "pipe",
+          stderr: "pipe",
+        },
+      );
       const result = JSON.parse(await new Response(child.stdout).text());
       expect(await child.exited).toBe(0);
       expect(await new Response(child.stderr).text()).toBe("");

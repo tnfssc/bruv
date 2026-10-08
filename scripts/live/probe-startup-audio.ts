@@ -8,7 +8,7 @@ import { createDefaultLiveCredentialService, loadLiveKey } from "../../src/live/
 import { OPENAI_VOICE_MODEL, OpenAIRealtimeSession } from "../../src/live/openai-session";
 import { VoiceSession } from "../../src/live/session";
 import type { LiveAdapter, LiveConnection, VoiceCallbacks, VoiceOrchestration } from "../../src/live/types";
-import { StartupAudioQueue } from "../../tests/helpers/live-startup-audio-queue";
+import { StartupAudioQueue } from "../../tests/live/helpers/live-startup-audio-queue";
 import {
   fixtureCommand as command,
   generateNaturalFixture,

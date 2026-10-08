@@ -52,7 +52,7 @@ async function withPickerTerminal(width: number, exercise: (tmux: PickerTmux) =>
       .join(" ");
     await writeFile(
       config,
-      (await readFile(join(root, "scripts/tmux.conf"), "utf8")) + "\nset -g default-shell /bin/sh\n",
+      (await readFile(join(root, "scripts/tui/tmux.conf"), "utf8")) + "\nset -g default-shell /bin/sh\n",
     );
     expect(
       (await tmux("new-session", "-d", "-s", "picker", "-x", String(width), "-y", "40", "-c", root, launch)).code,

@@ -2,9 +2,9 @@ import { describe, expect, test } from "bun:test";
 import { mkdir, mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
-import { generateThirdPartyNotices } from "../../scripts/generate-third-party-notices";
-import { selectReleaseNotes } from "../../scripts/select-release-notes";
-import { validateReleaseTag } from "../../scripts/validate-release-tag";
+import { generateThirdPartyNotices } from "../../scripts/dependencies/generate-third-party-notices";
+import { selectReleaseNotes } from "../../scripts/release/select-release-notes";
+import { validateReleaseTag } from "../../scripts/release/validate-release-tag";
 
 const root = resolve(import.meta.dir, "../..");
 const read = (path: string) => Bun.file(resolve(root, path)).text();
@@ -76,7 +76,7 @@ describe("release automation", () => {
     const native = await read(".github/workflows/live.yml");
     expect(ci).not.toContain("brew install sox");
     expect(ci).toContain("bun run ci:macos");
-    expect(await read("scripts/ci.sh")).toContain("bun test --parallel=3 tests/live-*.test.ts");
+    expect(await read("scripts/ci/ci.sh")).toContain("bun test --parallel=3 tests/live/live-*.test.ts");
     expect(native).not.toContain("inputs.bundle");
     expect(native).not.toContain("live-candidate");
   });
@@ -112,7 +112,7 @@ describe("release automation", () => {
       }
     }
     expect(await read("mise.toml")).toContain('bun = "1.4.2"');
-    const notices = await read("scripts/generate-third-party-notices.ts");
+    const notices = await read("scripts/dependencies/generate-third-party-notices.ts");
     expect(notices).toContain("Bun 1.4.2 runtime");
     expect(notices).toContain("oven-sh/bun/tree/bun-v1.4.2");
   });
@@ -129,7 +129,7 @@ describe("release automation", () => {
       expect(allCaches).toHaveLength(2);
       const apt = allCaches.find((step) => step.with?.path === "${{ runner.temp }}/bruv-apt-cache/*.deb");
       expect(apt?.with?.key).toBe(
-        "ubuntu-24.04-apt-v1-${{ runner.arch }}-${{ hashFiles('scripts/install-ci-linux-tools.sh') }}",
+        "ubuntu-24.04-apt-v1-${{ runner.arch }}-${{ hashFiles('scripts/ci/install-ci-linux-tools.sh') }}",
       );
       expect(apt?.with?.["restore-keys"]).toBeUndefined();
       const caches = allCaches.filter((step) => step.with?.path === "${{ runner.temp }}/bruv-bun-cache");
@@ -154,9 +154,9 @@ describe("release automation", () => {
     expect(native["runs-on"]).toBe(ordinary["runs-on"]);
     expect(native.needs).toBe("feedback");
     expect(native.if).toBe(ordinary.if);
-    expect(namedStep(ordinary, "Install Linux test tooling").run).toBe("bash scripts/install-ci-linux-tools.sh");
+    expect(namedStep(ordinary, "Install Linux test tooling").run).toBe("bash scripts/ci/install-ci-linux-tools.sh");
     expect(namedStep(native, "Install Linux native tooling").run).toBe(
-      "bash scripts/install-ci-linux-tools.sh --native-audio-only",
+      "bash scripts/ci/install-ci-linux-tools.sh --native-audio-only",
     );
     expect(commands(ordinary)).toContain("bun run ci");
     expect(commands(ordinary)).not.toMatch(/fsanitize|capture-protocol|webrtc-audio-processing/);
@@ -170,10 +170,10 @@ describe("release automation", () => {
     expect(cache.with?.path).toBe("${{ runner.temp }}/bruv-apt-cache/*.deb");
     expect(cache.with?.key).toBe(
       // biome-ignore lint/suspicious/noTemplateCurlyInString: literal GitHub expression
-      "ubuntu-24.04-apt-native-v1-${{ runner.arch }}-${{ hashFiles('scripts/install-ci-linux-tools.sh') }}",
+      "ubuntu-24.04-apt-native-v1-${{ runner.arch }}-${{ hashFiles('scripts/ci/install-ci-linux-tools.sh') }}",
     );
     expect(cache.with?.["restore-keys"]).toBeUndefined();
-    const installer = await read("scripts/install-ci-linux-tools.sh");
+    const installer = await read("scripts/ci/install-ci-linux-tools.sh");
     expect(installer).toContain("ordinary_packages=(tmux ffmpeg)");
     // biome-ignore lint/suspicious/noTemplateCurlyInString: literal Bash expansion
     expect(installer).toContain('--native-audio-only) packages=("${native_packages[@]}")');
@@ -188,9 +188,9 @@ describe("release automation", () => {
     expect(() => Bun.YAML.parse(workflow)).not.toThrow();
     expect(workflow).toContain("bun-version: 1.4.2");
     expect(workflow).not.toContain("pnpm/action-setup");
-    expect(workflow).toContain("bash scripts/install-ci-linux-tools.sh");
+    expect(workflow).toContain("bash scripts/ci/install-ci-linux-tools.sh");
     expect(workflow).toContain("run: bun run ci");
-    const runner = await read("scripts/ci.sh");
+    const runner = await read("scripts/ci/ci.sh");
     expect(runner).toContain("bun install --frozen-lockfile");
     expect(runner).toContain("bun run lint");
     expect(runner).toContain("bun run check");
@@ -210,10 +210,10 @@ describe("release automation", () => {
     const jobCommands = commands(job);
     expect(jobCommands).toContain("brew install tmux");
     expect(jobCommands).toContain("bun run ci:macos");
-    const runner = await read("scripts/ci.sh");
+    const runner = await read("scripts/ci/ci.sh");
     const lane = runner.split('if [[ "$lane" == macos ]]; then')[1]!.split("\nfi")[0]!;
     expect(lane).toContain("bun run prepare:assets");
-    expect(lane).toContain("bun test --parallel=3 tests/live-*.test.ts");
+    expect(lane).toContain("bun test --parallel=3 tests/live/live-*.test.ts");
     expect(lane).not.toMatch(/API_KEY|live.env|SoxAudioAdapter|\b(rec|play) /);
     expect(jobCommands).not.toContain("sox");
     expect(jobCommands).not.toContain("checkAudioCapabilities");
@@ -226,7 +226,7 @@ describe("release automation", () => {
     const release = workflow.jobs.release!;
     const prerequisites = namedStep(release, "Install Linux test tooling");
     const ordinaryGate = namedStep(release, "Shared ordinary Linux gate");
-    expect(prerequisites.run).toBe("bash scripts/install-ci-linux-tools.sh");
+    expect(prerequisites.run).toBe("bash scripts/ci/install-ci-linux-tools.sh");
     expect(release.steps.indexOf(prerequisites)).toBeLessThan(release.steps.indexOf(ordinaryGate));
   });
 
@@ -311,17 +311,17 @@ describe("release automation", () => {
     expect(workflow.jobs["linux-browser-boot"]!.needs).toEqual(["release", "release-source"]);
     expect(workflow.jobs["linux-browser-boot"]!.if).toContain("needs.release.result == 'success'");
     const browserCommands = commands(workflow.jobs["linux-browser-boot"]!);
-    expect(browserCommands).toContain("bash scripts/setup-release-browser.sh");
-    const setup = await read("scripts/setup-release-browser.sh");
+    expect(browserCommands).toContain("bash scripts/release/setup-release-browser.sh");
+    const setup = await read("scripts/release/setup-release-browser.sh");
     expect(setup).toContain("playwright-core@1.63.0");
     expect(await read(".github/workflows/release.yml")).toContain("playwright-1.63.0-ubuntu24.04-headless-");
     expect(setup).toContain("install --only-shell chromium");
     expect(setup).toContain("install-deps chromium");
-    expect(browserCommands).toContain("bash scripts/setup-native-release-gate.sh");
-    expect(browserCommands).toContain("node scripts/run-native-release-gate.mjs");
+    expect(browserCommands).toContain("bash scripts/release/setup-native-release-gate.sh");
+    expect(browserCommands).toContain("node scripts/release/run-native-release-gate.mjs");
     expect(browserCommands).toContain("dist/release/bruv-claude-compat-linux-x64");
     const macCommands = commands(workflow.jobs["mac-release-smoke"]!);
-    expect(macCommands).toContain("bun scripts/verify-update.ts dist/release/bruv-darwin-arm64");
+    expect(macCommands).toContain("bun scripts/release/verify-update.ts dist/release/bruv-darwin-arm64");
     expect(macCommands).toContain("--live-self-test");
     expect(macCommands).not.toContain('"type":"start"');
   });
@@ -335,13 +335,15 @@ describe("release automation", () => {
   test("publish selects only notes for the validated tag and fails closed", async () => {
     const workflow = await readWorkflow("release");
     const publish = namedStep(workflow.jobs.publish!, "Publish GitHub release");
-    expect(publish.run).toContain("bun scripts/publish-release.ts");
+    expect(publish.run).toContain("bun scripts/release/publish-release.ts");
     expect(publish.env?.GH_TOKEN).toBe("${{ github.token }}");
-    const implementation = await read("scripts/publish-release.ts");
-    expect(implementation).toContain("scripts/select-release-notes.ts");
+    const implementation = await read("scripts/release/publish-release.ts");
+    expect(implementation).toContain("scripts/release/select-release-notes.ts");
     expect(implementation).toContain('"--notes-file",');
     expect(implementation).not.toContain("--notes-file support/releases/release-v0.11.1.md");
-    expect(implementation.indexOf("scripts/select-release-notes.ts")).toBeLessThan(implementation.indexOf('"create",'));
+    expect(implementation.indexOf("scripts/release/select-release-notes.ts")).toBeLessThan(
+      implementation.indexOf('"create",'),
+    );
     const directory = await mkdtemp(join(tmpdir(), "bruv-release-notes-"));
     try {
       await mkdir(join(directory, "support/releases"), { recursive: true });
@@ -363,7 +365,7 @@ describe("release automation", () => {
     const pkg = (await Bun.file(resolve(root, "package.json")).json()) as { version: string };
     const run = (tag: string) =>
       Bun.spawnSync({
-        cmd: [process.execPath, "scripts/validate-release-tag.ts", tag],
+        cmd: [process.execPath, "scripts/release/validate-release-tag.ts", tag],
         cwd: root,
         stdout: "pipe",
         stderr: "pipe",
@@ -377,7 +379,7 @@ describe("release automation", () => {
     const output = join(directory, "THIRD_PARTY_LICENSES.txt");
     try {
       const result = Bun.spawnSync({
-        cmd: [process.execPath, "scripts/generate-third-party-notices.ts", output],
+        cmd: [process.execPath, "scripts/dependencies/generate-third-party-notices.ts", output],
         cwd: root,
         stdout: "pipe",
         stderr: "pipe",
@@ -471,14 +473,14 @@ test("release cache environment retains source identity variables", async () => 
 });
 
 test("CI and release build the binary and launcher without a patched web dependency", async () => {
-  const runner = await read("scripts/ci.sh");
+  const runner = await read("scripts/ci/ci.sh");
   const workflow = await read(".github/workflows/release.yml");
   expect(runner).not.toContain("ci-web-validation.sh");
   expect(runner).not.toContain("ci-web.ts");
   expect(workflow).not.toContain("BRUV_T3_SOURCE");
   expect(workflow).not.toContain("reuse-packed-web");
   expect(workflow).toContain("run: bun run ci");
-  expect(runner).toContain("bun scripts/offline-openai-default-transport.ts");
+  expect(runner).toContain("bun scripts/ci/offline-openai-default-transport.ts");
   expect(runner).toContain("env BRUV_RUN_LLM_TESTS=0 bun test --parallel=3 ./tests");
   expect(runner).toContain("bun run smoke -- --reuse-build");
 });
@@ -493,7 +495,7 @@ test("Linux needs no retired migration history; feedback retains its baseline hi
   expect(checkout(workflow.jobs.test!).with?.["fetch-depth"] ?? 1).toBe(1);
   expect(checkout(workflow.jobs.feedback!).with?.["fetch-depth"]).toBe(0);
   expect(namedStep(workflow.jobs.test!, "Install Linux test tooling").run).toBe(
-    "bash scripts/install-ci-linux-tools.sh",
+    "bash scripts/ci/install-ci-linux-tools.sh",
   );
 });
 
@@ -503,7 +505,7 @@ test("release verifies thin launcher dispatch and the actual Android interpreter
   const gate = namedStep(release, "Verify release launcher packaging and Android runtime target");
   const staging = namedStep(release, "Stage verified release assets");
   expect(release.steps.indexOf(gate)).toBeGreaterThan(0);
-  expect(gate.run).toContain("bun scripts/verify-release-launchers.ts dist/release");
+  expect(gate.run).toContain("bun scripts/release/verify-release-launchers.ts dist/release");
   expect(gate.run).toContain("readelf -l dist/release/bruv-android-arm64");
   expect(gate.run).toContain("/system/bin/linker64");
   expect(release.steps.indexOf(gate)).toBeLessThan(release.steps.indexOf(staging));
@@ -550,7 +552,7 @@ test("release reuses only proven exact-SHA full CI and bounds the identical fall
   // biome-ignore lint/suspicious/noTemplateCurlyInString: literal GitHub expression
   expect(release.env?.RELEASE_SHA).toBe("${{ needs.release-source.outputs.sha }}");
   expect(evidence.id).toBe("ci-evidence");
-  expect(evidence.run).toBe("bun scripts/find-release-ci.ts");
+  expect(evidence.run).toBe("bun scripts/release/find-release-ci.ts");
   expect(evidence["timeout-minutes"]).toBe(1);
   // biome-ignore lint/suspicious/noTemplateCurlyInString: literal GitHub expression
   expect(evidence.env).toEqual({ GH_TOKEN: "${{ github.token }}" });
@@ -564,8 +566,8 @@ test("release reuses only proven exact-SHA full CI and bounds the identical fall
   expect(release.steps.indexOf(evidence)).toBeLessThan(release.steps.indexOf(install));
   expect(release.steps.indexOf(install)).toBeLessThan(release.steps.indexOf(gate));
   const ci = await readWorkflow("ci");
-  const lookup = await read("scripts/find-release-ci.ts");
-  const { releaseCiJobNames } = await import("../../scripts/find-release-ci");
+  const lookup = await read("scripts/release/find-release-ci.ts");
+  const { releaseCiJobNames } = await import("../../scripts/release/find-release-ci");
   expect(releaseCiJobNames).toEqual([
     ci.jobs.feedback!.name!,
     // biome-ignore lint/suspicious/noTemplateCurlyInString: literal GitHub matrix expression

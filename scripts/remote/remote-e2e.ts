@@ -1,5 +1,5 @@
 import { loopbackParent, fixtureRpc } from "../fixtures/loopback-parent-fixture";
-import { ownedFixtureEnv } from "../../tests/helpers";
+import { ownedFixtureEnv } from "../../tests/helpers/helpers";
 /** Run real dist/bruv --mode rpc against isolated fake model and pinned Docker SSH host.
  * Parent completion wake is deliberately tested separately by remote-jobs-e2e.ts:
  * this proof kills its original parent before the independent owner finishes.

@@ -36,7 +36,7 @@ if (connector) {
   const build = await Bun.build({ entrypoints: [normalSource], compile: { outfile: join(root, names.normal) } });
   expect(build.success, build.logs.join("\n")).toBe(true);
   const launcher = await readFile(
-    process.env.BRUV_TEST_LAUNCHER_TEMPLATE ?? resolve(import.meta.dir, "../../scripts/bruv-claude-compat.sh"),
+    process.env.BRUV_TEST_LAUNCHER_TEMPLATE ?? resolve(import.meta.dir, "../../scripts/build/bruv-claude-compat.sh"),
     "utf8",
   );
   await writeFile(join(root, names.connector), launcher);
@@ -56,7 +56,7 @@ if (connector) {
     const child = Bun.spawn(
       [
         process.execPath,
-        resolve(import.meta.dir, "../../scripts/verify-update.ts"),
+        resolve(import.meta.dir, "../../scripts/release/verify-update.ts"),
         join(root, names.normal),
         "0.17.0",
         ...(updater === "frozen 0.16.3" ? ["--legacy-updater"] : []),

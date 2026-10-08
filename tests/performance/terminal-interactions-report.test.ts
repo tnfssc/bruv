@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { runInNewContext } from "node:vm";
-import { selectInteractionCases } from "../../scripts/terminal-interactions";
+import { selectInteractionCases } from "../../scripts/terminal-perf/terminal-interactions";
 import { escapeInteractionJson, interactionDashboard } from "../../scripts/terminal-perf/interaction-dashboard";
 import { normalizeInteraction } from "../../scripts/terminal-perf/interaction-normalize";
 import { parseInteractionOptions } from "../../scripts/terminal-perf/interaction-options";

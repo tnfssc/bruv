@@ -13,7 +13,7 @@ import {
   SettingsManager,
 } from "@earendil-works/pi-coding-agent";
 import { builtInExtensions } from "../../node_modules/@earendil-works/pi-coding-agent/dist/extensions/index.js";
-import { adaptPiHostFile, piHostPatches, preparePiHost } from "../../scripts/pi-host-adaptation";
+import { adaptPiHostFile, piHostPatches, preparePiHost } from "../../scripts/build/pi-host-adaptation";
 import tasks from "../../src/agent/extension";
 import { assertBruvPiHost } from "../../src/pi-host";
 import { offlineTestEnv, run } from "../helpers/helpers";

@@ -7,7 +7,9 @@ import { spawnSync } from "node:child_process";
 type Step = { name?: string; run?: string; if?: string };
 type Job = { steps: Step[] };
 async function load(name: string) {
-  return Bun.YAML.parse(await Bun.file(new URL("../../.github/workflows/" + name + ".yml", import.meta.url)).text()) as {
+  return Bun.YAML.parse(
+    await Bun.file(new URL("../../.github/workflows/" + name + ".yml", import.meta.url)).text(),
+  ) as {
     jobs: Record<string, Job>;
   };
 }

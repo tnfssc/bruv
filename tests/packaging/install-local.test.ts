@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { ownedFixtureEnv } from "../helpers/helpers";
 
-const installer = join(import.meta.dir, "../..", "scripts/install-local.sh");
+const installer = join(import.meta.dir, "../..", "scripts/release/install-local.sh");
 const candidate = `#!/bin/sh
 echo "probe $1" >> "$INSTALL_LOG"
 case "$1" in
@@ -32,8 +32,8 @@ async function seedInstalledPair(root: string) {
 async function sandbox() {
   const root = await mkdtemp(join(tmpdir(), "bruv-install-"));
   for (const dir of ["scripts", "scripts/live", "dist", "tools", "bin"]) await mkdir(join(root, dir));
-  await cp(installer, join(root, "scripts/install-local.sh"));
-  await chmod(join(root, "scripts/install-local.sh"), 0o755);
+  await cp(installer, join(root, "scripts/release/install-local.sh"));
+  await chmod(join(root, "scripts/release/install-local.sh"), 0o755);
   await writeFile(join(root, "dist/bruv"), candidate, { mode: 0o755 });
   await writeFile(join(root, "dist/bruv-claude-compat"), launcher, { mode: 0o755 });
   await writeShell(
@@ -52,7 +52,7 @@ fi
 }
 
 async function run(root: string, env: Record<string, string> = {}) {
-  const proc = Bun.spawn(["sh", join(root, "scripts/install-local.sh")], {
+  const proc = Bun.spawn(["sh", join(root, "scripts/release/install-local.sh")], {
     cwd: root,
     env: {
       ...ownedFixtureEnv(root),

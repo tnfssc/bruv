@@ -379,7 +379,7 @@ describe("release selection and installed pair repair", () => {
       mode: 0o755,
     });
     const launcher = await readFile(
-      process.env.BRUV_TEST_LAUNCHER_TEMPLATE ?? new URL("../../scripts/bruv-claude-compat.sh", import.meta.url),
+      process.env.BRUV_TEST_LAUNCHER_TEMPLATE ?? new URL("../../scripts/build/bruv-claude-compat.sh", import.meta.url),
       "utf8",
     );
     await writeFile(join(x.dir, "bruv-claude-compat"), launcher, { mode: 0o755 });
@@ -644,7 +644,14 @@ describe("private compiled updater integration", () => {
     const env = ownedFixtureEnv(dir);
     const out = join(dir, "fixture");
     const build = Bun.spawn(
-      [process.execPath, "build", "--compile", join(import.meta.dir, "../helpers/compiled-bun-fixture.ts"), "--outfile", out],
+      [
+        process.execPath,
+        "build",
+        "--compile",
+        join(import.meta.dir, "../helpers/compiled-bun-fixture.ts"),
+        "--outfile",
+        out,
+      ],
       { cwd: dir, env, stdout: "ignore", stderr: "pipe" },
     );
     expect(await build.exited).toBe(0);

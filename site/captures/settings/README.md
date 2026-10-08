@@ -27,7 +27,7 @@ Captured 2026-10-04 on Linux, from current source, not an installed historical b
 
 - Bruv reports 0.16.0 via --version.
 - Source commit: 4b118e1c54d1005da1d0c7e1643dddd312173e5a; no root application edits.
-- Built with Bun 1.4.2, scripts/build/prepare-assets.ts followed by scripts/build/build.ts. Existing installed root dependencies were temporarily linked; no download/install was performed. No optional native Live helper was included; neither screen exercises Live.
+- Built with Bun 1.4.2, scripts/prepare-assets.ts followed by scripts/build.ts. Existing installed root dependencies were temporarily linked; no download/install was performed. No optional native Live helper was included; neither screen exercises Live.
 - Binary SHA256: a6a7a8f744eab36f7c62f66791bf357b829da8bd6ed22665989ffc237d27bb1a.
 - Emulator: locally installed ghostty-web 0.4.0 (WASM terminal parser + canvas renderer).
 - Screenshot browser: Chromium 153.0.8010.12, device scale 1; DejaVu Sans Mono 15px.

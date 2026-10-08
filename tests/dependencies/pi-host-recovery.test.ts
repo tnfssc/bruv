@@ -4,8 +4,8 @@ import { chmod, link, mkdir, mkdtemp, readFile, rm, stat, symlink, writeFile } f
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { gunzipSync } from "node:zlib";
-import { adaptPiHostFile, piHostPatches } from "../../scripts/pi-host-adaptation";
-import { preparePiHostWithRecovery } from "../../scripts/pi-host-recovery";
+import { adaptPiHostFile, piHostPatches } from "../../scripts/build/pi-host-adaptation";
+import { preparePiHostWithRecovery } from "../../scripts/build/pi-host-recovery";
 
 const originals = JSON.parse(
   gunzipSync(await readFile(join(import.meta.dir, "../fixtures/pi-host/1.1.0-originals.json.gz"))).toString(),

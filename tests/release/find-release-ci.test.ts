@@ -3,7 +3,7 @@ import { execFileSync } from "node:child_process";
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
-import { findReleaseCi } from "../../scripts/find-release-ci";
+import { findReleaseCi } from "../../scripts/release/find-release-ci";
 
 const repo = "owner/bruv";
 const path = ".github/workflows/ci.yml";
@@ -190,19 +190,23 @@ test("API failure, missing token and checkout mismatch are cache misses", async 
 });
 test("CLI uses prepared RELEASE_SHA rather than dispatch GITHUB_SHA and writes a fallback", async () => {
   const output = join(cwd, "output");
-  const result = execFileSync(process.execPath, [resolve(import.meta.dir, "../../scripts/find-release-ci.ts")], {
-    cwd,
-    encoding: "utf8",
-    env: {
-      ...process.env,
-      GITHUB_REPOSITORY: repo,
-      RELEASE_SHA: sha,
-      GITHUB_SHA: "b".repeat(40),
-      GH_TOKEN: "",
-      GITHUB_OUTPUT: output,
-      GITHUB_STEP_SUMMARY: "",
+  const result = execFileSync(
+    process.execPath,
+    [resolve(import.meta.dir, "../../scripts/release/find-release-ci.ts")],
+    {
+      cwd,
+      encoding: "utf8",
+      env: {
+        ...process.env,
+        GITHUB_REPOSITORY: repo,
+        RELEASE_SHA: sha,
+        GITHUB_SHA: "b".repeat(40),
+        GH_TOKEN: "",
+        GITHUB_OUTPUT: output,
+        GITHUB_STEP_SUMMARY: "",
+      },
     },
-  });
+  );
   expect(result).toContain("six-minute deadline");
   await expect(Bun.file(output).text()).resolves.toBe("reused=false\n");
 });

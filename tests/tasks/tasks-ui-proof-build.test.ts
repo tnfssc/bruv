@@ -18,7 +18,8 @@ async function fixture() {
     if (result.status !== 0) throw Error(result.stderr);
     return result.stdout.trim();
   };
-  await mkdir(join(root, "scripts"));
+  await mkdir(join(root, "scripts/tui"), { recursive: true });
+  await mkdir(join(root, "scripts/build"), { recursive: true });
   await mkdir(join(root, "src"));
   const pi = join(root, "node_modules/@earendil-works/pi-coding-agent");
   await mkdir(pi, { recursive: true });
@@ -26,16 +27,16 @@ async function fixture() {
   await writeFile(join(root, ".gitignore"), "node_modules/\nout/\nruntime-assets/\n");
   await writeFile(join(root, "src/cli.ts"), "// owned source fixture\n");
   await writeFile(
-    join(root, "scripts/tasks-ui-proof-build.ts"),
-    await readFile(resolve(import.meta.dir, "../../scripts/tasks-ui-proof-build.ts")),
+    join(root, "scripts/tui/tasks-ui-proof-build.ts"),
+    await readFile(resolve(import.meta.dir, "../../scripts/tui/tasks-ui-proof-build.ts")),
   );
   await writeFile(
-    join(root, "scripts/pi-host-adaptation.ts"),
+    join(root, "scripts/build/pi-host-adaptation.ts"),
     'export const piHostPatches = [{ path: "host.js" }]; export const adaptPiHostFile = () => "adapted";',
   );
   await writeFile(
-    join(root, "scripts/prepare-assets.ts"),
-    'await Bun.write(new URL("../runtime-assets/prepared", import.meta.url), "prepared");',
+    join(root, "scripts/build/prepare-assets.ts"),
+    'await Bun.write(new URL("../../runtime-assets/prepared", import.meta.url), "prepared");',
   );
   await writeFile(
     join(root, "scripts/stub-build.ts"),
@@ -55,11 +56,15 @@ async function fixture() {
   const sourceCommit = git("rev-parse", "HEAD");
   const binary = join(root, "out/native");
   const run = (args = [binary], mode = "") =>
-    spawnSync(process.execPath, ["--preload", "./scripts/stub-build.ts", "scripts/tasks-ui-proof-build.ts", ...args], {
-      cwd: root,
-      encoding: "utf8",
-      env: { ...env, PROOF_STUB: mode },
-    });
+    spawnSync(
+      process.execPath,
+      ["--preload", "./scripts/stub-build.ts", "scripts/tui/tasks-ui-proof-build.ts", ...args],
+      {
+        cwd: root,
+        encoding: "utf8",
+        env: { ...env, PROOF_STUB: mode },
+      },
+    );
   return { root, pi, sourceCommit, binary, run };
 }
 
@@ -95,7 +100,7 @@ test("old archive/output invocation is explicitly rejected before preparation", 
   const f = await fixture();
   const result = f.run([join(f.root, "unused.archive.gz"), f.binary]);
   expect(result.status).not.toBe(0);
-  expect(result.stderr).toContain("Usage: bun scripts/tasks-ui-proof-build.ts OUTPUT_BINARY");
+  expect(result.stderr).toContain("Usage: bun scripts/tui/tasks-ui-proof-build.ts OUTPUT_BINARY");
   expect(await Bun.file(join(f.root, "runtime-assets/prepared")).exists()).toBe(false);
 });
 

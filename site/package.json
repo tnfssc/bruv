@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "bun scripts/build/build.ts",
+    "build": "bun scripts/build.ts",
     "preview": "bun scripts/preview.ts",
     "assets": "bun scripts/captures/extract-cells.ts",
     "test": "bun test scripts/build.test.ts captures/settings/capture.test.ts scripts/scroll.test.ts demos.test.ts scripts/html-animation.test.ts scripts/startup.test.ts scripts/install.test.ts scripts/install-ui.test.ts && bun scripts/validate.ts",

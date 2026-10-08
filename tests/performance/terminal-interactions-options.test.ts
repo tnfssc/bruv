@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { reportFixture } from "./fixtures/terminal-interaction-report";
 import { parseInteractionOptions } from "../../scripts/terminal-perf/interaction-options";
-import { selectInteractionCases } from "../../scripts/terminal-interactions";
+import { selectInteractionCases } from "../../scripts/terminal-perf/terminal-interactions";
 
 test("interaction defaults are measurement defaults, not an explicit budget override", () => {
   const options = parseInteractionOptions([]);
@@ -149,7 +149,7 @@ test("saved-report mode keeps a nondefault budget unless --budget is explicit, e
       const proc = Bun.spawn(
         [
           process.execPath,
-          resolve(import.meta.dir, "../../scripts/terminal-interactions.ts"),
+          resolve(import.meta.dir, "../../scripts/terminal-perf/terminal-interactions.ts"),
           "--report",
           source,
           "--out",

@@ -15,14 +15,14 @@ test("real tmux Pi renderer shows a delegated spoken user turn without transport
 
   try {
     // Source CLI needs the generated local runtime assets even when run as a standalone test.
-    expect((await run([process.execPath, join(root, "scripts/prepare-assets.ts")], { cwd: root })).code).toBe(0);
+    expect((await run([process.execPath, join(root, "scripts/build/prepare-assets.ts")], { cwd: root })).code).toBe(0);
     const { version } = await Bun.file(join(root, "package.json")).json();
     const themeDir = join(home, ".bruv/runtime", version, "dist/modes/interactive");
     await mkdir(themeDir, { recursive: true });
     await symlink(join(home, ".bruv/runtime", version, "theme"), join(themeDir, "theme"));
     await writeFile(
       join(home, "tmux.conf"),
-      (await readFile(join(root, "scripts/tmux.conf"), "utf8")) +
+      (await readFile(join(root, "scripts/tui/tmux.conf"), "utf8")) +
         "\nset -g default-shell /bin/sh\nset -g remain-on-exit on\n",
     );
     const launch = [

@@ -6,7 +6,7 @@ import { spawn } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { DatabaseSync } from "node:sqlite"; // The strict gates require this Node API.
 void DatabaseSync;
-const root = fileURLToPath(new URL("../", import.meta.url));
+const root = fileURLToPath(new URL("../../", import.meta.url));
 const proofRoot = path.join(root, "wisdom/claude-compat/proof/official-2644");
 const pin = JSON.parse(await fs.readFile(path.join(proofRoot, "provenance.json"), "utf8"));
 for (const key of [

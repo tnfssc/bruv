@@ -14,11 +14,12 @@ async function createHarnessFixture() {
   for (const path of [home, config, sdk, temporary, join(root, "scripts")]) {
     await mkdir(path, { mode: 0o700 });
   }
+  await mkdir(join(root, "scripts/tui"), { mode: 0o700 });
   // The harness locates state/artifacts beside its script. Copy that small entry
   // point, but reuse the parent's built dist read-only; never run a build here.
-  const harness = join(root, "scripts", "tui-harness.ts");
-  await copyFile(join(sourceRoot, "scripts", "tui-harness.ts"), harness);
-  await copyFile(join(sourceRoot, "scripts", "tmux.conf"), join(root, "scripts", "tmux.conf"));
+  const harness = join(root, "scripts/tui", "tui-harness.ts");
+  await copyFile(join(sourceRoot, "scripts/tui", "tui-harness.ts"), harness);
+  await copyFile(join(sourceRoot, "scripts/tui", "tmux.conf"), join(root, "scripts/tui", "tmux.conf"));
   await symlink(join(sourceRoot, "dist"), join(root, "dist"), "dir");
   const socket = "bruv-test-" + process.pid + "-" + Date.now();
   const env = {

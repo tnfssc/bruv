@@ -4,7 +4,14 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { CombinedAutocompleteProvider, Editor, ProcessTerminal, TuiMainScreen } from "@earendil-works/pi-tui";
 import { run } from "../helpers/helpers";
-import { capturePane, frameContaining, pasteAndSubmit, pollFrame, shellQuote, tmuxRunner } from "../helpers/tui-helpers";
+import {
+  capturePane,
+  frameContaining,
+  pasteAndSubmit,
+  pollFrame,
+  shellQuote,
+  tmuxRunner,
+} from "../helpers/tui-helpers";
 
 test("POSIX shell quoting roundtrips empty arguments, spaces, apostrophes and shell syntax", async () => {
   const values = ["", "ordinary/path", "space path", "owner's path", "'; $HOME $(echo not-executed)\nnext"];

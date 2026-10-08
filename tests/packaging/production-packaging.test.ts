@@ -2,17 +2,17 @@ import { expect, test } from "bun:test";
 import { mkdir, mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { pairedBuildCommand } from "../../scripts/build-pair";
-import { assetNames } from "../../scripts/publish-release";
+import { pairedBuildCommand } from "../../scripts/build/build-pair";
+import { assetNames } from "../../scripts/release/publish-release";
 
 test("default build ships normal CLI and connector without a T3 dependency", async () => {
   const command = pairedBuildCommand([], "/repo", "/bin/bun");
   expect(command).toEqual([
     "/bin/bun",
-    "/repo/scripts/build-claude-compat.ts",
+    "/repo/scripts/build/build-claude-compat.ts",
     "--outfile=/repo/dist/bruv-claude-compat",
   ]);
-  const build = await Bun.file(new URL("../../scripts/build.ts", import.meta.url)).text();
+  const build = await Bun.file(new URL("../../scripts/build/build.ts", import.meta.url)).text();
   expect(build).not.toContain("buildWeb");
   expect(build).not.toContain("prepareWebPayload");
   expect(build).not.toContain("reuse-web");
@@ -27,7 +27,7 @@ test("release targets compile one normal binary and preserve the target/native h
   );
   expect(command).toEqual([
     "/bin/bun",
-    "/repo/scripts/build-claude-compat.ts",
+    "/repo/scripts/build/build-claude-compat.ts",
     "--target=bun-darwin-arm64",
     "--live-helper=/helper",
     "--outfile=/repo/dist/release/bruv-claude-compat-darwin-arm64",
@@ -42,11 +42,11 @@ test("paired build delegates once from its repository root and relays child I/O 
   try {
     await mkdir(join(root, "scripts"), { recursive: true });
     await Bun.write(
-      join(root, "scripts/build-pair.ts"),
-      await Bun.file(new URL("../../scripts/build-pair.ts", import.meta.url)).text(),
+      join(root, "scripts/build/build-pair.ts"),
+      await Bun.file(new URL("../../scripts/build/build-pair.ts", import.meta.url)).text(),
     );
     await Bun.write(
-      join(root, "scripts/build-claude-compat.ts"),
+      join(root, "scripts/build/build-claude-compat.ts"),
       "console.log(JSON.stringify({ cwd: process.cwd(), args: process.argv.slice(2), input: await Bun.stdin.text() }));\n" +
         'console.error("connector stderr");\nprocess.exit(Number(process.env.BRUV_TEST_BUILD_EXIT));\n',
     );
@@ -54,7 +54,7 @@ test("paired build delegates once from its repository root and relays child I/O 
       const child = Bun.spawn(
         [
           process.execPath,
-          join(root, "scripts/build-pair.ts"),
+          join(root, "scripts/build/build-pair.ts"),
           "--",
           "--target=bun-linux-x64",
           "--outfile=dist/bruv-linux-x64",
@@ -95,7 +95,7 @@ test("every release target ships binary and launcher, checksums and shared licen
 });
 
 test("external native release gate setup keeps verified upstream layout and env handoff", async () => {
-  const script = await Bun.file(new URL("../../scripts/setup-native-release-gate.sh", import.meta.url)).text();
+  const script = await Bun.file(new URL("../../scripts/release/setup-native-release-gate.sh", import.meta.url)).text();
   expect(script).not.toMatch(/[\u0000-\u0008]/);
   expect(script).toContain('root="$RUNNER_TEMP/native-t3"');
   expect(script).toContain("official-2644/fetch-official.mjs");
@@ -115,7 +115,7 @@ test("external native release gate setup keeps verified upstream layout and env 
     await Bun.file(new URL("../../.github/workflows/release.yml", import.meta.url)).text(),
   ) as any;
   const steps = workflow.jobs["linux-browser-boot"].steps;
-  const setup = steps.findIndex((step: any) => step.run === "bash scripts/setup-native-release-gate.sh");
+  const setup = steps.findIndex((step: any) => step.run === "bash scripts/release/setup-native-release-gate.sh");
   expect(setup).toBeGreaterThan(0);
-  expect(steps[setup + 1].run).toContain("node scripts/run-native-release-gate.mjs");
+  expect(steps[setup + 1].run).toContain("node scripts/release/run-native-release-gate.mjs");
 });

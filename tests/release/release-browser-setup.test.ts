@@ -30,7 +30,7 @@ function runSetup({
   fixtures.push(root);
   const bin = join(root, "bin");
   mkdirSync(bin);
-  copyFileSync(resolve(import.meta.dir, "../../scripts/setup-release-browser.sh"), join(root, "setup.sh"));
+  copyFileSync(resolve(import.meta.dir, "../../scripts/release/setup-release-browser.sh"), join(root, "setup.sh"));
   writeFileSync(join(root, "libraries-before"), libraryReports[0]);
   writeFileSync(join(root, "libraries-after"), libraryReports[1]);
   writeFileSync(

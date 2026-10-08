@@ -9,7 +9,7 @@ This cleanup follows [ARCHITECTURE.md](../../ARCHITECTURE.md) and the one-clear-
 
 `test-layout-moves.json` is the exact old-to-new file map. The parent owns consumers outside `tests/` (scripts, package commands, CI and docs); do not infer future script paths here. Historical wisdom is not a checkout manifest and remains untouched.
 
-Values stay unchanged: this applies existing ownership and proof principles, rather than adding a new rule.
+The parent refined value 3 after the scope correction; this lane adds no separate value.
 
 ## Integration and proof
 
@@ -21,3 +21,13 @@ Values stay unchanged: this applies existing ownership and proof principles, rat
 - Final focused boundary/fixture run: 39 passed across eight files. Broader focused feature coverage: 289 passed, one skipped, two process timing failures; both process cases passed on isolated rerun.
 - Final recursive run (`BRUV_RUN_LLM_TESTS=0 bun test --parallel=3 ./tests`): 3,097 passed, 31 skipped, nine failures and three errors reported. Stale outside consumers account for the two CI-selector failures, two legacy-updater failures, and three module-load errors. The SDK markdown 5-second timeout passed alone (3.04 seconds). Resource capture replay still fails alone with `Saved questions unavailable: no parent question runtime binding` from `src/claude-compat/human-controls.ts`; its test assertions were preserved. Full integrated CI remains the parent responsibility.
 - Detailed local logs: `/tmp/bruv-layout-all-tests-final.log`, `/tmp/bruv-layout-typecheck.log`, `/tmp/bruv-layout-smoke-final.log`, `/tmp/bruv-layout-node.log`, `/tmp/bruv-layout-python.log`, and `/tmp/bruv-layout-isolated-*.log`.
+
+## Parent integration
+
+The parent integrated the map and updated all outside consumers. The final map
+includes the owner corrections for measurement tools, task-owned agent helpers
+and connector checkpoint restoration. Shared owned-process cwd now comes from
+the helper's stable repo anchor, not the calling test's depth. Copied script
+fixtures create their real nested directories. Earlier outside-consumer and
+resource replay failures are resolved. See [the combined record](file-layout-cleanup.md)
+for the final proof and the remaining full-suite Markdown timeout.

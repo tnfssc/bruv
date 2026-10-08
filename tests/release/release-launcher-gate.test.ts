@@ -3,8 +3,8 @@ import { createHash } from "node:crypto";
 import { chmod, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { connectorLauncher } from "../../scripts/claude-compat-launcher";
-import { releaseTargets, verifyReleaseLaunchers } from "../../scripts/verify-release-launchers";
+import { connectorLauncher } from "../../scripts/build/claude-compat-launcher";
+import { releaseTargets, verifyReleaseLaunchers } from "../../scripts/release/verify-release-launchers";
 
 type ReleaseTarget = (typeof releaseTargets)[number];
 

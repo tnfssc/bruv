@@ -115,7 +115,7 @@ if (import.meta.main) {
     const args = process.argv.slice(2);
     if (args.some((arg) => arg !== "--fixture"))
       throw new Error("Usage: bun scripts/dependencies/update-dependencies.ts [--fixture]");
-    const root = fileURLToPath(new URL("../", import.meta.url));
+    const root = fileURLToPath(new URL("../../", import.meta.url));
     const manifestFile = Bun.file(new URL("../../package.json", import.meta.url));
     const before = (await manifestFile.json()) as DependencyManifest;
     const lockFile = Bun.file(new URL("../../bun.lock", import.meta.url));
@@ -133,7 +133,7 @@ if (import.meta.main) {
     }
     const after = (await manifestFile.json()) as DependencyManifest;
     validateDependencyUpdate(before, after);
-    const artifactDir = new URL("../../artifacts/dependency-update", import.meta.url);
+    const artifactDir = new URL("../../artifacts/dependency-update/", import.meta.url);
     await mkdir(artifactDir, { recursive: true });
     await Bun.write(
       new URL("versions.md", artifactDir),

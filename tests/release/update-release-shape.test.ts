@@ -7,7 +7,7 @@ import { createHash } from "node:crypto";
 import { mkdtemp, readdir, readFile, rename, rm, stat, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { basename, dirname, join } from "node:path";
-import { connectorLauncher } from "../../scripts/claude-compat-launcher";
+import { connectorLauncher } from "../../scripts/build/claude-compat-launcher";
 import { type UpdateDeps, updateBruv } from "../../src/update";
 
 const targets = [

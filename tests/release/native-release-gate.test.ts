@@ -36,6 +36,7 @@ async function withFixture(
 
 async function fixture(root: string, options: FixtureOptions) {
   await mkdir(path.join(root, "scripts/claude-native-acceptance"), { recursive: true });
+  await mkdir(path.join(root, "scripts/release"), { recursive: true });
   const proof = path.join(root, "wisdom/claude-compat/proof/official-2644");
   await mkdir(proof, { recursive: true });
   const sdk = path.join(root, "sdk");
@@ -60,8 +61,8 @@ async function fixture(root: string, options: FixtureOptions) {
     }),
   );
   await writeFile(
-    path.join(root, "scripts/run-native-release-gate.mjs"),
-    await Bun.file(new URL("../../scripts/run-native-release-gate.mjs", import.meta.url)).text(),
+    path.join(root, "scripts/release/run-native-release-gate.mjs"),
+    await Bun.file(new URL("../../scripts/release/run-native-release-gate.mjs", import.meta.url)).text(),
   );
   const child = `
 import fs from "node:fs/promises";
@@ -110,7 +111,7 @@ switch (options.afterEvidence) {
     run: async () => {
       const node = Bun.which("node");
       if (!node) throw Error("Node is required for release-gate orchestration tests");
-      const proc = Bun.spawn([node, path.join(root, "scripts/run-native-release-gate.mjs")], {
+      const proc = Bun.spawn([node, path.join(root, "scripts/release/run-native-release-gate.mjs")], {
         env: {
           PATH: "/usr/bin:/bin",
           T3_UPSTREAM: upstream,

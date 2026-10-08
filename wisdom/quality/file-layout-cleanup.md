@@ -1,106 +1,103 @@
 # File layout cleanup
 
-User asked to reduce file clutter. This pass changes file placement, not behavior.
-
-## Homes
-
-- 69 versioned release notes moved from `support/` to `support/releases/`.
-  Their names and bytes match HEAD before the move. Their links are absolute.
-- 16 Live tools moved from `scripts/` to `scripts/live/`. Dropped the redundant
-  `live-` in file names, including `probe-live-*` and `build-live-*`.
-  [The tool guide](../../scripts/live/README.md) lists current entry points.
-- Release selection, preparation and workflow staging use the new notes home.
-  Build imports, package commands, native wrappers, workflows and test fixtures
-  use the new Live paths. Shell helpers and onboarding still find the repo root.
-- Historical wisdom command transcripts remain as recorded. No old-path aliases,
-  runtime changes, evidence deletion or generated-file moves.
-
-The first focused test run found fixture directories and probe file names still
-assembled with the old paths. Fixed both; the next run passed.
-
-## Checks
-
-- 135 focused tests passed across release preparation/workflows/publication,
-  local install, native helper embedding/workflows and Live probes.
-- 13 Python tests passed for isolated audio and the virtual wrapper.
-- `bun run check`, `bun run build`, `bun run format:check` and `bun run lint` passed.
-  Format/lint still report existing warnings in wisdom and other unchanged files.
-- Both moved offline provider smoke commands passed from source.
-- The rebuilt CLI passed `bun run smoke:live-onboarding` with fake credentials.
-  No paid provider, microphone or speaker was used.
-- All 69 note files were compared against their original Git blobs, byte for byte.
-
-No full CI, macOS build or paid/device acceptance was run for this layout pass.
-Final read-only review found no concrete issues. It checked consumers, relative
-imports, note bytes and links. Diff whitespace checks passed.
-
-Worktree: `/home/tnfssc/.t3/worktrees/bruv/t3-53f4b259`.
-Branch: `t3/cleanup-file-structure`. The first pass is a local checkpoint; no release requested.
-
-Values unchanged. Existing ownership, honest proof and history-preservation rules
-cover this work; no new general lesson emerged.
-
 ## Scope correction
 
-The user rejected stopping after two easy groupings. The requested cleanup is
-repo-wide, not just Live and release notes. The root still has 377 loose test
-files and scripts still has 61. Audit all owners before deciding what stays.
-A broader pass is now in progress. Keep tests recursive, fixtures owned and
-all build/CI consumers wired up. Do not mistake this checkpoint for completion.
+The user rejected a pass limited to Live scripts and release notes. Map the whole
+requested area before choosing moves. A few easy examples were not the job.
+Value 3 now says this explicitly; it extends the earlier placement lesson.
 
-Test reorganization runs in `/home/tnfssc/.bruv/worktrees/t3-53f4b259-5442693331ce-task_864ff389`,
-branch `bruv/organize-tests-by-feature-owner-864ff389`, task `task_864ff389`.
-It owns tests and its layout map; parent owns scripts and outside consumers.
+## Layout
 
-## Broader pass checkpoint
+- Tests: 377 loose files became three root files: setup and the two repo-wide
+  boundary checks. 431 tests/support files moved to feature homes. All 453
+  original test/support files remain accounted for. Shared helpers stay shared;
+  feature fixtures, executable probes and their tests stay together.
+- Scripts: 77 loose files became the published installer, prompt preview and a
+  [tooling map](../../scripts/README.md). Build, CI, release, dependency, history,
+  remote, Live, terminal capture and performance tools have named homes.
+- Release notes: 69 files now live in support/releases, byte-for-byte unchanged.
+- Remote main-agent placement: ten modules now live in src/remote/root. Shared
+  SSH/repository code stays above it. The execute schema moved to src/typescript.
+  No wire names, persisted paths or runtime ownership changed.
+- Four loose wisdom notes now live with Live, remote or web. Historical Live
+  investigations moved as complete packets to wisdom/experiments/live. Original
+  probe/receipt bytes and claims stay intact; packet READMEs state stale imports
+  and source revisions. No paid probes ran.
+- Historical landing captures now live in site/captures/settings, apart from
+  shipped assets. Their tools and fidelity tests remain usable; no capture was
+  reacquired. [Capture record](../landing-page/capture-layout.md).
 
-59 more script/test files moved. The exact map is
-[tooling-layout-moves.json](tooling-layout-moves.json). Tooling root now keeps
-only the published installer and the standalone prompt preview command, plus
-the new tooling guide. Presentation capture/video stay with their shared ANSI
-renderer in scripts/tui; no new Python loader or alias was needed.
+Native code, shared session contracts, root product docs and the externally
+shared GPT-Live explainer already have clear roles and stay put. Ongoing old audit
+ledgers were not treated as disposable clutter. Historical commands and Git
+object references stay historical; navigation links follow moved files.
 
-The parent changed script consumers outside tests. The isolated test worker
-still owns tests. After its commit returns, integrate it, then apply both maps
-to imports, fixtures and callers across the combined tree. Fix the macOS CI
-glob (currently tests/live-*.test.ts) to the new tests/live location without
-changing the admitted test family. Fixture copies that now create nested script
-paths need matching directories; copied scripts must still find their repo root.
+## Deliberate changes
 
-Parent build passes with the new tooling paths. Shell syntax passes. Presentation
-Bun/Python tests pass. Typecheck currently fails only on tests importing old
-script paths; this is an expected integration gap, not a finished result.
+The duplicate root install.sh was retired. The documented scripts/install.sh
+URL and its bytes are unchanged. Old callers of the undocumented root raw-file
+URL must use the documented one. No fetching wrapper or second copy remains.
 
-Pending audits: task_893ccb43 (tests/tooling), task_fae2a298 (source/docs).
-Read their results before deciding the remaining source/documentation moves.
-Full integrated CI has not run yet. Do not call the broader cleanup complete.
+Four Bun test files formerly under scripts are now in recursive discovery:
+354 original test files plus four equals 358. The relocated Python presentation
+test still needs an explicit Python run. The macOS selector keeps the same
+live-*.test.ts family; it does not silently expand to every Live test.
 
-Value 3 now says to map the whole requested area and not silently narrow a
-repo-wide request to easy examples. This repeats the earlier placement lesson.
+## Integration lessons
 
-## Source and evidence ownership
+Moves need more than import rewrites. Copy fixtures must create nested folders.
+Owned subprocess cwd must come from the shared helper's repo anchor, not the
+calling test's depth. Directory URLs need their trailing slash. Site has its own
+scripts/build.ts; root tooling replacements must not change that local command.
+Embedded SDK patch text is generated code, not an import to relocate. Its pinned
+bytes were restored, not accepted by changing the expected hash. Frozen updater
+proof likewise normalizes only its moved import before checking the old hash.
 
-The source audit found one cohesive runtime group: ten main-agent placement
-modules now live in src/remote/root. Ordinary SSH task/repository code stays
-shared above it. The execute-only schema now lives in src/typescript. Four loose
-wisdom notes moved into their feature homes. Exact paths are in
-[source-layout-moves.json](source-layout-moves.json). No wire names or stored
-paths changed. Native code, shared session contracts and top-level product docs
-already have clear owners and stay put.
+## Proof and state
 
-Retired the byte-identical root install.sh copy. The documented/public installer
-remains scripts/install.sh, unchanged. This deliberately retires the undocumented
-root raw-file URL; there is no fetching wrapper or second maintained copy. Keep
-downloader behavior coverage, but remove the duplicate test entry-point case.
+The final layout is implemented. Full Linux CI is not green: its last complete
+suite run had 3,130 passes, 31 opt-in skips and one default five-second timeout
+in the unchanged Markdown hook test. That test passed alone in 2.63 seconds;
+all six tests in its file passed. No timeout or assertion was loosened. Treat
+this as a load-sensitive verification gap, not a clean full-gate claim.
 
-Two performance tooling tests also move under tests/performance. Along with the
-two presentation Bun tests, these add four suites to normal recursive discovery.
-The Python presentation test also moved but still needs an explicit Python run.
+That gate passed frozen install, format, lint, typecheck, both task-history
+resource profiles, paired build and offline transport before the test timeout.
+The earlier relocation failures are fixed. The standalone paired smoke passed
+separately after the stopped gate.
 
-Landing capture task task_c7ca3739 owns site changes in
-/home/tnfssc/.bruv/worktrees/t3-53f4b259-5442693331ce-task_c7ca3739, branch
-bruv/separate-historical-landing-capture-pipe-c7ca3739.
-Live packet task task_c1fa7700 owns historical probes in
-/home/tnfssc/.bruv/worktrees/t3-53f4b259-5442693331ce-task_c1fa7700, branch
-bruv/archive-complete-live-investigation-pack-c1fa7700.
-Both start from db10b010 and will return scoped commits for integration.
+Final owner review aligned 27 same-depth files: AgentProgress/session tests
+with tasks, checkpoint restoration with the connector, and measurement tools
+with performance rather than splitting them across UI/T3/CLI. The final affected
+family passed 191 tests and typecheck. Discovery remains 358 test files with no
+missing originals. A full gate was not repeated after this last test-only move.
+
+The site build and 44 tests plus validation pass in the parent. The site tests
+rewrote tracked validation screenshots; those generated changes were restored
+to preserve the existing evidence rather than mixing a new capture into cleanup. Relocated Python
+suites and native wrappers pass (84 tests total). Child Node verification passed
+134 tests. All 69 release notes and 12 archived source/receipt files were compared
+with original Git blobs. Static review found no blockers, but execution caught
+path issues that its representative inspection missed.
+
+No paid/provider/device acceptance, macOS gate, hosted CI, release or push was
+run. Worktree: /home/tnfssc/.t3/worktrees/bruv/t3-53f4b259.
+Branch: t3/cleanup-file-structure. This note accompanies the final local
+integration commit; no push or PR was requested. Investigate the Markdown full-suite timeout before
+claiming a green release gate. Logs: /tmp/bruv-layout-full-ci-final.log,
+/tmp/bruv-layout-markdown-isolated.log, /tmp/bruv-layout-owner-tests.log and
+/tmp/bruv-layout-final-smoke.log.
+
+## Delegated provenance
+
+- Tests: 372ffd31, worktree /home/tnfssc/.bruv/worktrees/t3-53f4b259-5442693331ce-task_864ff389,
+  branch bruv/organize-tests-by-feature-owner-864ff389.
+- Landing capture: 4779814f, worktree /home/tnfssc/.bruv/worktrees/t3-53f4b259-5442693331ce-task_c7ca3739,
+  branch bruv/separate-historical-landing-capture-pipe-c7ca3739.
+- Live packets: db751935, worktree /home/tnfssc/.bruv/worktrees/t3-53f4b259-5442693331ce-task_c1fa7700,
+  branch bruv/archive-complete-live-investigation-pack-c1fa7700.
+
+All three scoped commits are integrated. Exact move maps are beside this note:
+[test](test-layout-moves.json), [tooling](tooling-layout-moves.json), and
+[source/notes](source-layout-moves.json). They preserve navigation from old notes
+without keeping compatibility copies of code.
