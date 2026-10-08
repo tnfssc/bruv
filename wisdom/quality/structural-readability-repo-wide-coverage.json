@@ -7751,12 +7751,12 @@
     {
       "file": "src/t3/README.md",
       "initialBlob": "3e491ecd1339adf477200f359e4ecca07961aef1",
-      "status": "pending",
+      "status": "accepted",
       "area": "compatibility-t3",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_2f3a47b0",
       "primaryCommit": "092ecd7771c8d64383a22eae46143c4735f8dbf3",
-      "judgeIds": [],
+      "judgeIds": ["task_ac10d745"],
       "sourceCommit": "092ecd7771c8d64383a22eae46143c4735f8dbf3",
       "report": "wisdom/quality/structural-readability-areas/compatibility-t3.json",
       "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection.",
@@ -7774,6 +7774,18 @@
         "Formatter not invoked: no changed source paths. No source commit created because no source bytes changed; sourceCommit identifies exact reviewed HEAD.",
         "One read-only search guessed absent root build.ts; inspected actual scripts/build.ts instead.",
         "No runtime/provider/native-parity claim. Wisdom and values unchanged: no new lesson; parent owns aggregate wisdom."
+      ],
+      "acceptedBlob": "3e491ecd1339adf477200f359e4ecca07961aef1",
+      "result": "The opening bullets distinguish guidance-only launcher, retained native task ownership, and retired bundled inputs. The setup link is the authority for installation details; the closing paragraph keeps host pin, release gate, immutable evidence and unresolved upstream race distinct. This short boundary document already lets a reader identify what executes and what does not; adding sections or reproducing setup history would not remove a reconstruction burden.",
+      "systemReason": "At this exact commit src/cli.ts routes web directly to runWeb, whose only outcomes are printed setup guidance or unsupported-argument error. The retained task tree is operational: JobService constructs the native MCP adapter, reserves durable launch identity and returns backend-owned launch results; extension.ts attaches the notification mailbox and starts replay, while its task manager uses the retained event emitter. Release workflow invokes run-native-release-gate.mjs, which checks the official provenance hash before launch and after each composed suite. external-t3-setup.md explicitly denies that those historical bounded gates certify UI-only history/fork or full parity. README neither starts a bundled host nor promises that acceptance.",
+      "checks": [
+        "Read complete exact candidate README and guidance; traced launcher dispatch, native bridge launch, mailbox attach and release gate composition.",
+        "Exact focus blob equals recorded initial blob 3e491ecd1339adf477200f359e4ecca07961aef1. Candidate equals supplied primaryBase; no changed source paths in this primary decision.",
+        "Inspected only assigned focus rows in compatibility-t3 area and repo-wide coverage ledgers: pending/needs-judge, with no prior accepted blob or rejected decision."
+      ],
+      "limits": [
+        "Static structural review only; no setup, tests, builds, formatter, authenticated requests or device actions were run. Parent owns isolated batch gates and external runtime model verification.",
+        "Related paths were read at the decision candidate commit, not inferred from checkout HEAD. No source edits, imports, merges, pushes, cleanup or wisdom edits; aggregate wisdom remains parent-owned."
       ]
     },
     {
@@ -9249,12 +9261,12 @@
     {
       "file": "tests/claude-compat-app-worker.test.ts",
       "initialBlob": "1e4988bd5b469c795b0a760d8ee268d8d0e581e0",
-      "status": "pending",
+      "status": "accepted",
       "area": "compatibility-t3",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_71e1d03d",
       "primaryCommit": "2549c6cfc4fee93eb87e29ff49bebdbcd3190c42",
-      "judgeIds": [],
+      "judgeIds": ["task_ac10d745"],
       "sourceCommit": "2549c6cfc4fee93eb87e29ff49bebdbcd3190c42",
       "report": "wisdom/quality/structural-readability-areas/compatibility-t3.json",
       "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection.",
@@ -9285,17 +9297,30 @@
         "No tests, setup, or builds run; parent owns audited isolated batch gates.",
         "Independent fresh judge has not yet reviewed this exact candidate.",
         "No per-worker wisdom or values edits; parent owns aggregate wisdom."
+      ],
+      "acceptedBlob": "091ed0b2a4362a34d854c4192bac7a7204e738ad",
+      "result": "The change organizes concrete scenarios by their three real authorities: operator policy admission, app-owned call preparation/revalidation, and normal launch profile binding. In the original mixed tests the reader had to disentangle external bypass, launch denial, status permission and profile rejection; these now have separate visible scenarios. Invalid role/depth schema and mismatched effort policy are also distinct. The directory helper owns only allocation/finally cleanup, leaving profile writes, policy mutations and assertions local to each scenario. This is a useful structural partition, not just renamed tests or an abstract lifecycle framework.",
+      "systemReason": "Read app-worker.ts and its actual CLI/MCP callers at the candidate commit. cli.ts takes the ordinary profilesPath, admits the operator policy, binds normal-worker model/thinking before model preflight, prepares app-owned requests before authorization and asserts approved requests immediately before execution. mcp.ts clones the approved input and runs that app-owned hook before its single remote call. The three suites mirror these separate boundaries. Original concrete role/depth values, three launch tool names, status query, external owner, target immutability and explicit profile cases are retained; production/security sources are unchanged.",
+      "checks": [
+        "Read complete exact candidate and original primaryBase test, including concrete fixture values, scenario splits and temporary-directory lifetime.",
+        "git diff --name-status 9bbad4e95768f2bf25dda81f88f4b6477f5f2f34 2549c6cfc4fee93eb87e29ff49bebdbcd3190c42 lists only tests/claude-compat-app-worker.test.ts; this is the sole changed source and was inspected.",
+        "Resolved exact candidate test blob 091ed0b2a4362a34d854c4192bac7a7204e738ad.",
+        "Inspected only assigned focus rows in compatibility-t3 area and repo-wide coverage ledgers: pending/needs-judge, original initial blob 1e4988bd5b469c795b0a760d8ee268d8d0e581e0, supplied candidate recorded, no rejected/accepted bytes to import."
+      ],
+      "limits": [
+        "Static structural review only; no setup, tests, builds, formatter, authenticated requests or device actions were run. Parent owns isolated batch gates and external runtime model verification.",
+        "Related paths were read at the decision candidate commit, not inferred from checkout HEAD. No source edits, imports, merges, pushes, cleanup or wisdom edits; aggregate wisdom remains parent-owned."
       ]
     },
     {
       "file": "tests/claude-compat-command-lifecycle.test.ts",
       "initialBlob": "94869a21d9887a385befc82ee9a45c8a757c47e4",
-      "status": "pending",
+      "status": "accepted",
       "area": "compatibility-t3",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_31215e03",
       "primaryCommit": "390bd5ebbcc9bb95f66a691e3d7e05fc8a92511d",
-      "judgeIds": [],
+      "judgeIds": ["task_ac10d745"],
       "sourceCommit": "390bd5ebbcc9bb95f66a691e3d7e05fc8a92511d",
       "report": "wisdom/quality/structural-readability-areas/compatibility-t3.json",
       "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection.",
@@ -9314,6 +9339,18 @@
         "Formatter not invoked because there are no changed source paths and no commit to format.",
         "Independent fresh judge and external runtime model verification remain parent-owned.",
         "Wisdom and values unchanged: no new project lesson; parent owns aggregate wisdom."
+      ],
+      "acceptedBlob": "94869a21d9887a385befc82ee9a45c8a757c47e4",
+      "result": "Both tests already expose the temporal contract directly. Resume captures a checkpoint, starts the agent, verifies no premature result, settles, attempts command completion, and then checks that a later independent epoch acquires no command fate or invented origin. Cancellation places interrupt before handled completion and checks cancelled fate with zero model accounting. The fixture only collects frames and fixes identities. Extracting event drivers or filter wrappers would obscure the decisive ordering without reducing a genuine reconstruction burden.",
+      "systemReason": "At this exact commit runtime input starts and checkpoints the human command before dispatch, then calls commandHandled only when the session is idle; real session events are subscribed into frontend.onEvent. Frontend begin is idempotent while active, startCommand owns human correlation, end increments the result checkpoint and clears command metadata, and commandHandled does not duplicate a result after settlement advanced the checkpoint. A new epoch resets consumed origin; interrupt records terminal failure without inventing assistant work. The dispatcher invokes the real extension command context rather than simulating a model prompt. These ownership boundaries explain the test order and assertions without hidden fixture state.",
+      "checks": [
+        "Read complete exact candidate test; traced frontend start/end/checkpoint/interrupt/accounting, runtime dispatch/subscription/interrupt and actual command dispatcher.",
+        "Exact focus blob equals recorded initial blob 94869a21d9887a385befc82ee9a45c8a757c47e4. Candidate equals supplied primaryBase; no changed source paths in this primary decision.",
+        "Inspected only assigned focus rows in compatibility-t3 area and repo-wide coverage ledgers: pending/needs-judge, with no prior accepted blob or rejected decision."
+      ],
+      "limits": [
+        "Static structural review only; no setup, tests, builds, formatter, authenticated requests or device actions were run. Parent owns isolated batch gates and external runtime model verification.",
+        "Related paths were read at the decision candidate commit, not inferred from checkout HEAD. No source edits, imports, merges, pushes, cleanup or wisdom edits; aggregate wisdom remains parent-owned."
       ]
     },
     {
@@ -9554,13 +9591,47 @@
       "initialBlob": "054ebbdd6ea64619c791db411fec83f2c49c627c",
       "status": "pending",
       "area": "compatibility-t3",
-      "resumeState": "pending-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_9cb924a6",
+      "primaryCommit": "88d5c24f1dc99e81cf6c1028d95055fc2b019d9e",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "88d5c24f1dc99e81cf6c1028d95055fc2b019d9e",
       "report": "wisdom/quality/structural-readability-areas/compatibility-t3.json",
-      "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+      "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection.",
+      "primaryBase": "988f100080e2cca4e885c4aac4c898578b4b72ab",
+      "primaryResult": "fakeLiveResources owns config/key/provider/audio doubles and capture/teardown controls without any session owner. harness composes those doubles with its explicitly fake canonical owner and consent/command plumbing. The real connector root test now creates only resource doubles, leaves owner unspecified for production acquireMainOwner, and records notices directly. The missing-credential scenario borrows resources without an unused frontend. Actual runtime registration is described accurately; all existing assertions, consent checks, teardown waits, no-model-call check, and secret-redaction expectations remain.",
+      "primaryPaths": ["tests/claude-compat-live-frontend.test.ts"],
+      "primaryChecks": [
+        {
+          "check": "Repository Biome formatter on changed source only",
+          "result": "pass: Formatted 1 file. No fixes applied.",
+          "command": "/home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/@biomejs/biome/bin/biome format --write tests/claude-compat-live-frontend.test.ts",
+          "invocation": "node:child_process spawnSync argv",
+          "retainedEnvironment": "/tmp/pr45-live-format-6YG2RK",
+          "environment": "Explicit PATH and fresh retained HOME/XDG_CONFIG_HOME/TMPDIR/CLOUDSDK_CONFIG; no inherited credentials."
+        },
+        {
+          "check": "git diff --check",
+          "result": "pass"
+        },
+        {
+          "check": "Read-only comparison against baseline",
+          "result": "All assertion statements equal after normalizing moved calls/notices identifiers; all test journey titles unchanged. Resource fixture has no owner injection; session harness retains the original fake-owner assertions."
+        },
+        {
+          "check": "Actual caller trace",
+          "result": "Read createClaudeCompatLiveFrontend factory/stop dependency composition, runtime extension registration ordering, and Live extension acquisition via deps.owner followed by audio/provider. Production owner defaults remain selected when resource-only dependencies are passed."
+        },
+        {
+          "check": "Selected lineage evidence",
+          "result": "Focus exists at baseline blob 054ebbdd6ea64619c791db411fec83f2c49c627c. Reconciliation and area rows show pending-primary, no primary/judge/candidate for this focus; no historical branch merged or candidate recovery needed."
+        }
+      ],
+      "primaryLimits": [
+        "No tests, setup, or builds run; parent owns audited isolated runtime gates and independent readability judgment.",
+        "Optional TypeScript AST comparison unavailable: installed typescript resolves to lib/version.cjs exposing version metadata only, not createSourceFile/ScriptTarget. Formatter parsed the changed source; lexical assertion comparison is not a runtime gate.",
+        "No wisdom or values files changed; parent owns aggregate wisdom. No new permissions, credential access, or device access needed."
+      ]
     },
     {
       "file": "tests/claude-compat-preflight.test.ts",

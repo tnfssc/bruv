@@ -1549,18 +1549,19 @@
     {
       "file": "src/t3/README.md",
       "initialBlob": "3e491ecd1339adf477200f359e4ecca07961aef1",
-      "status": "pending",
+      "status": "accepted",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "3e491ecd1339adf477200f359e4ecca07961aef1",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "3e491ecd1339adf477200f359e4ecca07961aef1",
         "primaryId": "task_2f3a47b0",
         "primaryCommit": "092ecd7771c8d64383a22eae46143c4735f8dbf3",
-        "judgeIds": [],
+        "judgeIds": ["task_ac10d745"],
         "sourceCommit": "092ecd7771c8d64383a22eae46143c4735f8dbf3",
-        "state": "needs-judge",
-        "reason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+        "state": "accepted-joined",
+        "reason": "The opening bullets distinguish guidance-only launcher, retained native task ownership, and retired bundled inputs. The setup link is the authority for installation details; the closing paragraph keeps host pin, release gate, immutable evidence and unresolved upstream race distinct. This short boundary document already lets a reader identify what executes and what does not; adding sections or reproducing setup history would not remove a reconstruction burden."
       }
     },
     {
@@ -1821,35 +1822,37 @@
     {
       "file": "tests/claude-compat-app-worker.test.ts",
       "initialBlob": "1e4988bd5b469c795b0a760d8ee268d8d0e581e0",
-      "status": "pending",
+      "status": "accepted",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "091ed0b2a4362a34d854c4192bac7a7204e738ad",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "091ed0b2a4362a34d854c4192bac7a7204e738ad",
         "primaryId": "task_71e1d03d",
         "primaryCommit": "2549c6cfc4fee93eb87e29ff49bebdbcd3190c42",
-        "judgeIds": [],
+        "judgeIds": ["task_ac10d745"],
         "sourceCommit": "2549c6cfc4fee93eb87e29ff49bebdbcd3190c42",
-        "state": "needs-judge",
-        "reason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+        "state": "accepted-joined",
+        "reason": "The change organizes concrete scenarios by their three real authorities: operator policy admission, app-owned call preparation/revalidation, and normal launch profile binding. In the original mixed tests the reader had to disentangle external bypass, launch denial, status permission and profile rejection; these now have separate visible scenarios. Invalid role/depth schema and mismatched effort policy are also distinct. The directory helper owns only allocation/finally cleanup, leaving profile writes, policy mutations and assertions local to each scenario. This is a useful structural partition, not just renamed tests or an abstract lifecycle framework."
       }
     },
     {
       "file": "tests/claude-compat-command-lifecycle.test.ts",
       "initialBlob": "94869a21d9887a385befc82ee9a45c8a757c47e4",
-      "status": "pending",
+      "status": "accepted",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "94869a21d9887a385befc82ee9a45c8a757c47e4",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "94869a21d9887a385befc82ee9a45c8a757c47e4",
         "primaryId": "task_31215e03",
         "primaryCommit": "390bd5ebbcc9bb95f66a691e3d7e05fc8a92511d",
-        "judgeIds": [],
+        "judgeIds": ["task_ac10d745"],
         "sourceCommit": "390bd5ebbcc9bb95f66a691e3d7e05fc8a92511d",
-        "state": "needs-judge",
-        "reason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+        "state": "accepted-joined",
+        "reason": "Both tests already expose the temporal contract directly. Resume captures a checkpoint, starts the agent, verifies no premature result, settles, attempts command completion, and then checks that a later independent epoch acquires no command fate or invented origin. Cancellation places interrupt before handled completion and checks cancelled fate with zero model accounting. The fixture only collects frames and fixes identities. Extracting event drivers or filter wrappers would obscure the decisive ordering without reducing a genuine reconstruction burden."
       }
     },
     {
@@ -2121,11 +2124,11 @@
       "acceptedBlob": null,
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_9cb924a6",
+        "primaryCommit": "88d5c24f1dc99e81cf6c1028d95055fc2b019d9e",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary",
+        "sourceCommit": "88d5c24f1dc99e81cf6c1028d95055fc2b019d9e",
+        "state": "needs-judge",
         "reason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
       }
     },
@@ -3945,7 +3948,7 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 71,
-    "pending": 27
+    "accepted": 74,
+    "pending": 24
   }
 }
