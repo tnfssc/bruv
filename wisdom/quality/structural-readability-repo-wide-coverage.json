@@ -14705,34 +14705,142 @@
       "file": "tests/live-dispatch-budget.ts",
       "initialBlob": "e7fd8dae94e43f8c4a5f582a47e456f803c46bda",
       "status": "pending",
-      "primaryId": null,
-      "sourceCommit": null,
+      "primaryId": "task_0655ce99",
+      "sourceCommit": "6fdecdf3a4028de3a742547f230d069497b5210c",
       "judgeIds": [],
-      "resumeState": "own_primary_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "6fdecdf3a4028de3a742547f230d069497b5210c",
+      "primaryBase": "071cdb3860b17b79d5da7302feab2a25586f19f5",
+      "primaryResult": "Leave focus bytes unchanged. Offline unit callers distinguish setup failure from provider entry; goals-sdk installs/restores the budget around real-runtime offline interception; goals-live preflights before installation and drains workflow/session before restore in finally. SDK ModelRuntime.streamSimple lazily prepares auth/options before calling provider.streamSimple, matching the helper’s explicit split. Extracting either short wrapper or sharing a context would hide the different counting boundaries. The only changed source in this combined commit is the embedded-helper companion focus, listed in full scope below.",
+      "primaryPaths": ["tests/live-embedded-helper.test.ts"],
+      "primaryChecks": [
+        {
+          "kind": "source-reading",
+          "result": "Read each whole focus, assigned reconciliation rows, preserved embedded-helper candidate, relevant runtime/host/fixture callers; no completed own-focus judgment inferred from related acceptance."
+        },
+        {
+          "kind": "formatter",
+          "result": "Biome format --write tests/live-embedded-helper.test.ts via node:child_process explicit argv/env; exit 0; Formatted 1 file, no fixes applied.",
+          "fixture": {
+            "root": "/tmp/pr45-live-tests-format-qMa466",
+            "home": "/tmp/pr45-live-tests-format-qMa466/home",
+            "config": "/tmp/pr45-live-tests-format-qMa466/config",
+            "tmp": "/tmp/pr45-live-tests-format-qMa466/tmp",
+            "sdk": "/tmp/pr45-live-tests-format-qMa466/sdk",
+            "status": 0
+          }
+        },
+        {
+          "kind": "git-diff-check",
+          "result": "git diff --check before commit: exit 0, no output; only tests/live-embedded-helper.test.ts changed."
+        },
+        {
+          "kind": "effect-audit",
+          "result": "No tests/setup/build executed. Compiled-test code writes/builds only under owned mkdtemp root, removes its synthetic input to prove embedding, launches probe via spawnSync(executable, []) with explicit owned HOME/config/SDK/TMPDIR, and retains outer fixture. Probe extracts inert bytes and deletes only its own extraction via production cleanup. Existing first three tests clean provably owned mkdtemp fixtures; inspected, not executed. Execute-control fixture invokes source CLI internal execute using argv/shell:false and inherited parent environment, so parent gate must supply isolated HOME/config/SDK. Goal live caller is credential-gated and potentially paid; inspected as source only. Git hooks directory had no active hooks before source-only commit."
+        }
+      ],
+      "primaryLimits": [
+        "Parent owns fresh independent judgment and audited isolated runtime gates. No tests, setup, builds, live auth/device use, reinstall, push, PR, merge, cleanup, recovery, or delegation performed.",
+        "Runtime agent model verification remains parent-owned. Existing historical checks in reconciliation are not rerun evidence.",
+        "Compiled extraction test covers inert embedding/extraction/isolation/cleanup, not native execution, credentials, provider dispatch, macOS devices, or complete failure coverage.",
+        "Source code/work remains in durable assigned worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_0655ce99. Formatter fixture /tmp/pr45-live-tests-format-qMa466 retained; no test fixture created by this worker."
+      ]
     },
     {
       "file": "tests/live-embedded-helper.test.ts",
       "initialBlob": "603d475b0ba3b18b550c10cc0e950053358d1631",
       "status": "pending",
-      "primaryId": null,
-      "sourceCommit": "2f13e6964b36f305a16084fd3d6c7e417e2361a7",
+      "primaryId": "task_0655ce99",
+      "sourceCommit": "6fdecdf3a4028de3a742547f230d069497b5210c",
       "judgeIds": ["task_1c3f1e78"],
-      "resumeState": "related_actual_code_accepted_own_primary_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Retain exact related-path actual-code acceptance; it is not completion of this file’s distinct primary/fresh focus-judge requirement.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "6fdecdf3a4028de3a742547f230d069497b5210c",
+      "primaryBase": "071cdb3860b17b79d5da7302feab2a25586f19f5",
+      "primaryResult": "Restored only this candidate file through git show, never an old branch. Preserved its path/bytes report and extraction-location/cleanup assertions. Expressed the generated program as a multiline template with visible resolve, missing check, read/report, and finally cleanup. Compiled test now has a straight preparation/build/input-removal/spawn/assert journey; retained owned fixture HOME/config/SDK folders replace the outer removal lifetime, while production extraction cleanup is still asserted. Per-launch independence, tampering, corrupt payload, hostile symlink, platform gates, invalid Mach-O/target/symlink plugin checks remain intact. No shared helper or abstraction added.",
+      "primaryPaths": ["tests/live-embedded-helper.test.ts"],
+      "primaryChecks": [
+        {
+          "kind": "source-reading",
+          "result": "Read each whole focus, assigned reconciliation rows, preserved embedded-helper candidate, relevant runtime/host/fixture callers; no completed own-focus judgment inferred from related acceptance."
+        },
+        {
+          "kind": "formatter",
+          "result": "Biome format --write tests/live-embedded-helper.test.ts via node:child_process explicit argv/env; exit 0; Formatted 1 file, no fixes applied.",
+          "fixture": {
+            "root": "/tmp/pr45-live-tests-format-qMa466",
+            "home": "/tmp/pr45-live-tests-format-qMa466/home",
+            "config": "/tmp/pr45-live-tests-format-qMa466/config",
+            "tmp": "/tmp/pr45-live-tests-format-qMa466/tmp",
+            "sdk": "/tmp/pr45-live-tests-format-qMa466/sdk",
+            "status": 0
+          }
+        },
+        {
+          "kind": "git-diff-check",
+          "result": "git diff --check before commit: exit 0, no output; only tests/live-embedded-helper.test.ts changed."
+        },
+        {
+          "kind": "effect-audit",
+          "result": "No tests/setup/build executed. Compiled-test code writes/builds only under owned mkdtemp root, removes its synthetic input to prove embedding, launches probe via spawnSync(executable, []) with explicit owned HOME/config/SDK/TMPDIR, and retains outer fixture. Probe extracts inert bytes and deletes only its own extraction via production cleanup. Existing first three tests clean provably owned mkdtemp fixtures; inspected, not executed. Execute-control fixture invokes source CLI internal execute using argv/shell:false and inherited parent environment, so parent gate must supply isolated HOME/config/SDK. Goal live caller is credential-gated and potentially paid; inspected as source only. Git hooks directory had no active hooks before source-only commit."
+        }
+      ],
+      "primaryLimits": [
+        "Parent owns fresh independent judgment and audited isolated runtime gates. No tests, setup, builds, live auth/device use, reinstall, push, PR, merge, cleanup, recovery, or delegation performed.",
+        "Runtime agent model verification remains parent-owned. Existing historical checks in reconciliation are not rerun evidence.",
+        "Compiled extraction test covers inert embedding/extraction/isolation/cleanup, not native execution, credentials, provider dispatch, macOS devices, or complete failure coverage.",
+        "Source code/work remains in durable assigned worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_0655ce99. Formatter fixture /tmp/pr45-live-tests-format-qMa466 retained; no test fixture created by this worker."
+      ]
     },
     {
       "file": "tests/live-execute-controls.test.ts",
       "initialBlob": "52ca28929328804ac0140069015586865883bf8a",
       "status": "pending",
-      "primaryId": null,
-      "sourceCommit": null,
+      "primaryId": "task_0655ce99",
+      "sourceCommit": "6fdecdf3a4028de3a742547f230d069497b5210c",
       "judgeIds": [],
-      "resumeState": "own_primary_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "6fdecdf3a4028de3a742547f230d069497b5210c",
+      "primaryBase": "071cdb3860b17b79d5da7302feab2a25586f19f5",
+      "primaryResult": "Leave focus bytes unchanged. Followed registerExecuteTool live.stop scope/option checks into stopCurrentLive/registerLiveStop, and jobs.stopWork through requestForegroundStop’s ACK listener into control.stopForeground’s session-manager-owned controller. execution.ts uses the fixture binary with internal-runner argv and an IPC bridge; fixture shell only execs the source CLI internal route. Separate tests make live teardown vs job/foreground cancellation explicit. A new harness or renamed state would lengthen this readable route without resolving a real reading burden. Complete companion commit scope is recorded below.",
+      "primaryPaths": ["tests/live-embedded-helper.test.ts"],
+      "primaryChecks": [
+        {
+          "kind": "source-reading",
+          "result": "Read each whole focus, assigned reconciliation rows, preserved embedded-helper candidate, relevant runtime/host/fixture callers; no completed own-focus judgment inferred from related acceptance."
+        },
+        {
+          "kind": "formatter",
+          "result": "Biome format --write tests/live-embedded-helper.test.ts via node:child_process explicit argv/env; exit 0; Formatted 1 file, no fixes applied.",
+          "fixture": {
+            "root": "/tmp/pr45-live-tests-format-qMa466",
+            "home": "/tmp/pr45-live-tests-format-qMa466/home",
+            "config": "/tmp/pr45-live-tests-format-qMa466/config",
+            "tmp": "/tmp/pr45-live-tests-format-qMa466/tmp",
+            "sdk": "/tmp/pr45-live-tests-format-qMa466/sdk",
+            "status": 0
+          }
+        },
+        {
+          "kind": "git-diff-check",
+          "result": "git diff --check before commit: exit 0, no output; only tests/live-embedded-helper.test.ts changed."
+        },
+        {
+          "kind": "effect-audit",
+          "result": "No tests/setup/build executed. Compiled-test code writes/builds only under owned mkdtemp root, removes its synthetic input to prove embedding, launches probe via spawnSync(executable, []) with explicit owned HOME/config/SDK/TMPDIR, and retains outer fixture. Probe extracts inert bytes and deletes only its own extraction via production cleanup. Existing first three tests clean provably owned mkdtemp fixtures; inspected, not executed. Execute-control fixture invokes source CLI internal execute using argv/shell:false and inherited parent environment, so parent gate must supply isolated HOME/config/SDK. Goal live caller is credential-gated and potentially paid; inspected as source only. Git hooks directory had no active hooks before source-only commit."
+        }
+      ],
+      "primaryLimits": [
+        "Parent owns fresh independent judgment and audited isolated runtime gates. No tests, setup, builds, live auth/device use, reinstall, push, PR, merge, cleanup, recovery, or delegation performed.",
+        "Runtime agent model verification remains parent-owned. Existing historical checks in reconciliation are not rerun evidence.",
+        "Compiled extraction test covers inert embedding/extraction/isolation/cleanup, not native execution, credentials, provider dispatch, macOS devices, or complete failure coverage.",
+        "Source code/work remains in durable assigned worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_0655ce99. Formatter fixture /tmp/pr45-live-tests-format-qMa466 retained; no test fixture created by this worker."
+      ]
     },
     {
       "file": "tests/live-extension.test.ts",
