@@ -9195,13 +9195,29 @@
       "initialBlob": "94869a21d9887a385befc82ee9a45c8a757c47e4",
       "status": "pending",
       "area": "compatibility-t3",
-      "resumeState": "pending-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_31215e03",
+      "primaryCommit": "390bd5ebbcc9bb95f66a691e3d7e05fc8a92511d",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "390bd5ebbcc9bb95f66a691e3d7e05fc8a92511d",
       "report": "wisdom/quality/structural-readability-areas/compatibility-t3.json",
-      "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+      "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection.",
+      "primaryBase": "390bd5ebbcc9bb95f66a691e3d7e05fc8a92511d",
+      "primaryResult": "The fixture only collects emitted frames and supplies fixed session/model identities. The resume test directly reads as startCommand -> capture checkpoint -> agent_start -> flush and assert started/no result -> agent_settled -> commandHandled(checkpoint) -> flush and assert one result/one completed fate -> later autonomous start/settle and assert no additional command fate plus unclassified origin. The cancellation test directly reads as startCommand -> interrupt -> commandHandled -> flush, then checks cancelled fate and a human error result with zero model turns, tokens, and cost. Traced runtime.ts input(): dispatch captures that checkpoint and only invokes commandHandled when session.isIdle; actual agent_settled otherwise owns completion. Traced frontend.ts begin/end, checkpoint/commandHandled and interrupt: end advances the result count and clears command metadata, explaining the checkpoint and next-epoch assertions. Extracting lifecycle drivers or projection helpers here would hide the important event ordering or only rename simple frame filters. The existing adjacent actions/assertions already show ownership and lifetimes. Preserved reconciliation and area rows mark this exact baseline pending-primary, not rejected; focus exists at that same baseline blob, so no candidate import or old-branch merge is warranted.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Inspected focus rows in preserved compatibility-t3 reconciliation, area ledger, and repo-wide ledgers.",
+        "Read complete focus and traced actual src/claude-compat/runtime.ts input dispatch and src/claude-compat/frontend.ts lifecycle implementation; no related source edits.",
+        "Verified HEAD focus blob equals preserved baseline/joined blob and git diff for focus is empty.",
+        "No source changes or source commit created; result artifact remains untracked."
+      ],
+      "primaryLimits": [
+        "No tests, setup, or builds run: parent owns audited isolated batch gates. This is static reading evidence, not runtime validation.",
+        "Formatter not invoked because there are no changed source paths and no commit to format.",
+        "Independent fresh judge and external runtime model verification remain parent-owned.",
+        "Wisdom and values unchanged: no new project lesson; parent owns aggregate wisdom."
+      ]
     },
     {
       "file": "tests/claude-compat-commands.test.ts",
