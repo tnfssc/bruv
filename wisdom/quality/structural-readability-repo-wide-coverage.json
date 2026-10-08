@@ -13095,12 +13095,29 @@
       "file": "tests/gpt-live-context.test.ts",
       "initialBlob": "a38de09dca8eb243cd51f048d350705ae227e8db",
       "status": "pending",
-      "primaryId": null,
-      "sourceCommit": null,
+      "primaryId": "task_68d8f475",
+      "sourceCommit": "8df31a26231ecd12916fa1483eed6099cc4d2391",
       "judgeIds": [],
-      "resumeState": "own_primary_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "8df31a26231ecd12916fa1483eed6099cc4d2391",
+      "primaryBase": "8df31a26231ecd12916fa1483eed6099cc4d2391",
+      "primaryResult": "Unchanged. The test already gives a complete read from raw text to bounded quoted chunks and back to the exact last 2400 code points. The quote/newline-heavy and emoji cases distinguish escaping and UTF-8 size from retention; the reconstruction assertion makes the no-per-chunk-JSON contract visible. The production extension sends each chunk as an observation, and GPTLiveSession enforces the same 480-byte update boundary. Extracting the short reconstruction expression would hide the protocol oracle behind a helper rather than reduce a real journey burden.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        "Read the entire assigned focus and the relevant implementation/caller journeys; this is an actual-source primary decision, not an independent judgment.",
+        "Read assigned reconciliation row: own_primary_pending, present baseline blob, no candidate/rework/rejection evidence to import.",
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Verified recorded Git HEAD blobs match current file bytes with git hash-object.",
+        "Static effects review: these focus tests use pure text transforms or Buffer PCM and an injected in-memory clock/send/flush fixture; no repository tests/setup/builds executed."
+      ],
+      "primaryLimits": [
+        "No source edits and no new source commit; sourceCommit identifies the exact reviewed existing HEAD. Changed source scope is empty.",
+        "No formatter invoked because there are no changed source paths. No fixture HOME/config/SDK directory was needed or allocated because no formatter or runtime gate ran.",
+        "No runtime/provider/audio-device/auth validation; parent owns audited isolated gates and fresh independent judgments. Synthetic waveform timers/microtask settling were read, not executed.",
+        "No delegation, secrets access, cleanup, deletion, setup, build, dependency writes, push, PR, merge, or wisdom edits. Original candidate worktrees/evidence remain preserved."
+      ]
     },
     {
       "file": "tests/gpt-live-delegation.test.ts",
@@ -13132,12 +13149,29 @@
       "file": "tests/gpt-live-request.test.ts",
       "initialBlob": "cf28d4ade02c6e0d8be24db8497777d115ea88f3",
       "status": "pending",
-      "primaryId": null,
-      "sourceCommit": null,
+      "primaryId": "task_68d8f475",
+      "sourceCommit": "8df31a26231ecd12916fa1483eed6099cc4d2391",
       "judgeIds": [],
-      "resumeState": "own_primary_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "8df31a26231ecd12916fa1483eed6099cc4d2391",
+      "primaryBase": "8df31a26231ecd12916fa1483eed6099cc4d2391",
+      "primaryResult": "Unchanged. All request outcomes are visible directly beside fragment timing and text: contiguous speech joins without a wrapper, overlap preserves alternatives, omitted speech produces no request even when a suffix remains, and a 5000-character retained request is not sliced. These follow gptLiveRequest's refusal/join/trim boundary and the extension's empty-request clarification branch; passive history records the same speech and overlap as evidence. Splitting the final adjacent assertions or adding a request-case abstraction would only rearrange a compact policy comparison, not reveal hidden ownership or decisions.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        "Read the entire assigned focus and the relevant implementation/caller journeys; this is an actual-source primary decision, not an independent judgment.",
+        "Read assigned reconciliation row: own_primary_pending, present baseline blob, no candidate/rework/rejection evidence to import.",
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Verified recorded Git HEAD blobs match current file bytes with git hash-object.",
+        "Static effects review: these focus tests use pure text transforms or Buffer PCM and an injected in-memory clock/send/flush fixture; no repository tests/setup/builds executed."
+      ],
+      "primaryLimits": [
+        "No source edits and no new source commit; sourceCommit identifies the exact reviewed existing HEAD. Changed source scope is empty.",
+        "No formatter invoked because there are no changed source paths. No fixture HOME/config/SDK directory was needed or allocated because no formatter or runtime gate ran.",
+        "No runtime/provider/audio-device/auth validation; parent owns audited isolated gates and fresh independent judgments. Synthetic waveform timers/microtask settling were read, not executed.",
+        "No delegation, secrets access, cleanup, deletion, setup, build, dependency writes, push, PR, merge, or wisdom edits. Original candidate worktrees/evidence remain preserved."
+      ]
     },
     {
       "file": "tests/gpt-live-session.test.ts",
@@ -13156,12 +13190,29 @@
       "file": "tests/gpt-live-waveform.test.ts",
       "initialBlob": "589251a028bd9137e96edecd23889db510e127b6",
       "status": "pending",
-      "primaryId": null,
-      "sourceCommit": null,
+      "primaryId": "task_68d8f475",
+      "sourceCommit": "8df31a26231ecd12916fa1483eed6099cc4d2391",
       "judgeIds": [],
-      "resumeState": "own_primary_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "8df31a26231ecd12916fa1483eed6099cc4d2391",
+      "primaryBase": "8df31a26231ecd12916fa1483eed6099cc4d2391",
+      "primaryResult": "Unchanged. The irregular-chunk test retains byte-for-byte output plus alignment/maximum-frame assertions and absence of flush/errors. The speech test shows one flush across sustained loud frames, rejects suppressed output, and visibly places the 24th/25th quiet-frame boundary before resuming NEW audio; recovery is capture-based, not fake-clock based. The resampling test compares framed and continuous conversion, then independently checks the sine-wave error/step oracle while explicitly excluding the final held interpolation sample. Keeping those local stages and the injected scheduler clock preserves distinct authorities without a shared context bag, duplicated reference implementation or helper chase.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        "Read the entire assigned focus and the relevant implementation/caller journeys; this is an actual-source primary decision, not an independent judgment.",
+        "Read assigned reconciliation row: own_primary_pending, present baseline blob, no candidate/rework/rejection evidence to import.",
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Verified recorded Git HEAD blobs match current file bytes with git hash-object.",
+        "Static effects review: these focus tests use pure text transforms or Buffer PCM and an injected in-memory clock/send/flush fixture; no repository tests/setup/builds executed."
+      ],
+      "primaryLimits": [
+        "No source edits and no new source commit; sourceCommit identifies the exact reviewed existing HEAD. Changed source scope is empty.",
+        "No formatter invoked because there are no changed source paths. No fixture HOME/config/SDK directory was needed or allocated because no formatter or runtime gate ran.",
+        "No runtime/provider/audio-device/auth validation; parent owns audited isolated gates and fresh independent judgments. Synthetic waveform timers/microtask settling were read, not executed.",
+        "No delegation, secrets access, cleanup, deletion, setup, build, dependency writes, push, PR, merge, or wisdom edits. Original candidate worktrees/evidence remain preserved."
+      ]
     },
     {
       "file": "tests/helpers.ts",
@@ -13177,12 +13228,55 @@
       "file": "tests/helpers/live-startup-audio-queue.ts",
       "initialBlob": "6b467a7c5c27d31655ae48c9e92828cbe076cf3a",
       "status": "pending",
-      "primaryId": null,
-      "sourceCommit": null,
+      "primaryId": "task_1f74d85d",
+      "sourceCommit": "a117a1b109ac56b1298f703df251cb3ec7de37fb",
       "judgeIds": [],
-      "resumeState": "own_primary_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "a117a1b109ac56b1298f703df251cb3ec7de37fb",
+      "primaryBase": "a80eedb79e4bd22780fd4fe8f85de28c74dbd398",
+      "primaryResult": "Replaced the three flags with a single buffering/replaying/live/stopped phase owned by the queue. push() visibly appends in buffering and replaying, sends directly only in live, and ignores stopped capture. ready() starts only from buffering and loops only during replaying; its finally advances replaying to live without reviving a stop during a callback or paced wait. stop() owns the terminal transition and backlog discard. PCM copying, FIFO byte accounting, per-send readiness checks, overflow exception/discard, pacing, repeated-ready exclusion, and existing send-exception behavior remain intact. Entire focus and both callers were read; no caller changes were needed. The assigned reconciliation row records own_primary_pending with no candidate, rejected round, or related candidate origin, so there were no candidate bytes to import or rejection objections to rework. This is a primary readability decision, not an independent acceptance.",
+      "primaryPaths": ["tests/helpers/live-startup-audio-queue.ts"],
+      "primaryChecks": [
+        {
+          "kind": "actual-source-reading",
+          "paths": [
+            "tests/helpers/live-startup-audio-queue.ts",
+            "scripts/probe-live-startup-audio.ts",
+            "tests/live-startup-audio-queue.test.ts"
+          ],
+          "result": "Read whole focus and both rg-discovered direct callers; traced delayed provider readiness, reentrant FIFO appends, direct delivery, overflow, readiness loss, close/error stop, late ready, and replay-finally behavior."
+        },
+        {
+          "kind": "evidence",
+          "result": "Read assigned row .rows.85 from live-native-audio-resume-reconciliation.json: initial/joined blob 6b467a7c5c27d31655ae48c9e92828cbe076cf3a; no prior candidate/rejection evidence."
+        },
+        {
+          "kind": "formatter",
+          "command": "/home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/@biomejs/biome/bin/biome",
+          "argv": ["format", "--write", "tests/helpers/live-startup-audio-queue.ts"],
+          "exitCode": 0,
+          "result": "Formatted 1 file in 3ms. No fixes applied.",
+          "retainedFixture": "/tmp/pr45-live-startup-format-RfWuDN",
+          "provenance": "/tmp/pr45-live-startup-format-RfWuDN/provenance.json",
+          "environment": "Fresh fs.mkdtemp fixture; explicit HOME/XDG_CONFIG_HOME/XDG_CACHE_HOME/XDG_DATA_HOME/XDG_STATE_HOME/TMPDIR/TMP/TEMP/SDK paths; child_process argv, no shell. Repository formatter config inspected first; source-only formatting, no network/test/setup/build action."
+        },
+        {
+          "kind": "git-diff-check",
+          "result": "Passed with no output before commit."
+        },
+        {
+          "kind": "source-only-commit",
+          "result": "Only tests/helpers/live-startup-audio-queue.ts committed. Git commit hooks inspected: pre-commit, prepare-commit-msg, commit-msg, post-commit absent; none executed."
+        }
+      ],
+      "primaryLimits": [
+        "No setup, tests, builds, live auth, credentials, provider network, device access, recovery, cleanup shell commands, dependency installation, delegation, push, merge, or PR publication performed. Parent owns audited isolated runtime gates and independent judgments.",
+        "Behavior preservation is source-traced, not runtime-verified; existing assertions remain unchanged. Physical/provider timing parity remains unverified.",
+        "Retained formatter fixture is under /tmp; durable source provenance is this worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_1f74d85d and exact sourceCommit/sourceBlobs. No code checkout was created under /tmp.",
+        "Runtime agent.model verification remains parent-owned. Wisdom/values and structural-readability guidance read; no per-worker wisdom/values edits, per instruction that parent owns aggregate wisdom."
+      ]
     },
     {
       "file": "tests/herdr-agent-state.test.ts",

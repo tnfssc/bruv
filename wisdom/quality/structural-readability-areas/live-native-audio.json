@@ -2833,10 +2833,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
+        "primaryId": "task_68d8f475",
+        "primaryCommit": "8df31a26231ecd12916fa1483eed6099cc4d2391",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "own_primary_pending",
+        "sourceCommit": "8df31a26231ecd12916fa1483eed6099cc4d2391",
+        "state": "needs-judge",
         "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
       }
     },
@@ -2941,10 +2942,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
+        "primaryId": "task_68d8f475",
+        "primaryCommit": "8df31a26231ecd12916fa1483eed6099cc4d2391",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "own_primary_pending",
+        "sourceCommit": "8df31a26231ecd12916fa1483eed6099cc4d2391",
+        "state": "needs-judge",
         "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
       }
     },
@@ -3003,10 +3005,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
+        "primaryId": "task_68d8f475",
+        "primaryCommit": "8df31a26231ecd12916fa1483eed6099cc4d2391",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "own_primary_pending",
+        "sourceCommit": "8df31a26231ecd12916fa1483eed6099cc4d2391",
+        "state": "needs-judge",
         "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
       }
     },
@@ -3019,10 +3022,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
+        "primaryId": "task_1f74d85d",
+        "primaryCommit": "a117a1b109ac56b1298f703df251cb3ec7de37fb",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "own_primary_pending",
+        "sourceCommit": "a117a1b109ac56b1298f703df251cb3ec7de37fb",
+        "state": "needs-judge",
         "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
       }
     },
