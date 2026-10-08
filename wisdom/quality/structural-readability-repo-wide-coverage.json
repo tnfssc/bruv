@@ -2596,13 +2596,56 @@
       "initialBlob": "34458325a2e2fde12b7f65e86359e16c984ddb53",
       "status": "pending",
       "area": "remote",
-      "resumeState": "pending-primary-unstarted",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_d97a3bd7",
+      "primaryCommit": "9861bea3333905083427acbc86253977c3218ac4",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "9861bea3333905083427acbc86253977c3218ac4",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
-      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
+      "primaryBase": "699eca9333f36b48410f76e24022e03bf46eaa8f",
+      "primaryResult": "The harness now owns choosing recovery mode, copying a static fixture helper and binding the pinned SSH config/drop directory in a tiny generated shim after readiness. The helper owns reading requests, verifying accepted responses before loss, saving evidence, consuming one-shot sentinels and transparent forwarding. Config and evidence-directory authority enter as explicit positional arguments rather than inherited environment. The original protocol body is byte-identical after reversing path parameterization and shell-dollar escaping; Docker lifecycle, readiness, loopback restrictions, pinned keys, assertions, file names and failure statuses are preserved.",
+      "primaryPaths": [
+        "scripts/remote-e2e.sh",
+        "tests/fixtures/remote-e2e/recovery-ssh.sh"
+      ],
+      "primaryChecks": [
+        {
+          "check": "Read existing code and callers",
+          "result": "Read remote-e2e.sh, recovery RPC/tmux launch paths, SSH transport/environment handling, fixture entrypoint/README, readability guidance/values and repo-wide/remote ledgers. Preserved reconciliation identifies this focus as unstarted with baseline blob 34458325a2e2fde12b7f65e86359e16c984ddb53; no candidate restoration was necessary."
+        },
+        {
+          "check": "/bin/bash -n scripts/remote-e2e.sh",
+          "result": "Passed; syntax-only, no script execution."
+        },
+        {
+          "check": "/bin/sh -n tests/fixtures/remote-e2e/recovery-ssh.sh",
+          "result": "Passed; syntax-only, no helper execution."
+        },
+        {
+          "check": "Static protocol-source preservation comparison against pre-change HEAD",
+          "result": "Passed; original expanded-dollar source equals helper after removing argument-binding header and reversing config/drop path substitutions."
+        },
+        {
+          "check": "git diff --check",
+          "result": "Passed."
+        },
+        {
+          "check": "Isolated syntax-check environment",
+          "result": "Explicit env with fresh HOME/config/cache/SDK directories retained at /tmp/pr45-remote-static-rZfTRs."
+        },
+        {
+          "check": "Commit scope",
+          "result": "Only the two listed source paths committed; no active commit hooks were present."
+        }
+      ],
+      "primaryLimits": [
+        "No setup, tests, builds, Docker, SSH, recovery execution, credentials or device access performed. Parent owns audited isolated runtime/batch gates.",
+        "Independent exact-candidate readability judgment is pending; this is the primary proposal, not an acceptance verdict.",
+        "No predecessor worktrees or uncommitted candidates changed. No automatic setup failure was bypassed.",
+        "No wisdom or values edits; parent owns aggregate wisdom.",
+        "Runtime model verification belongs to parent jobs.inspect; no self-introspection claim."
+      ]
     },
     {
       "file": "scripts/remote-e2e.ts",

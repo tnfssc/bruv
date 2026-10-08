@@ -85,7 +85,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_d97a3bd7",
         "branch": "bruv/pr45-primary-scripts-remote-e2e.sh-d97a3bd7",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "9861bea3333905083427acbc86253977c3218ac4"
       },
       {
         "id": "task_46bb6641",
