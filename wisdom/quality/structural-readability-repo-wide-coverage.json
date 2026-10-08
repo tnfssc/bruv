@@ -3066,12 +3066,14 @@
     {
       "file": "scripts/remote-root-placement-e2e.ts",
       "initialBlob": "4acbdfa75d15a03e5e146f1d7761e393f8b1f16f",
-      "status": "pending",
+      "status": "accepted",
       "area": "remote",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_4c34a8a9",
       "primaryCommit": "75b23bf68ac8c0a7ef5a35b07d28f53b8cb65222",
-      "judgeIds": [],
+      "judgeIds": [
+        "task_b27cf32c"
+      ],
       "sourceCommit": "75b23bf68ac8c0a7ef5a35b07d28f53b8cb65222",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
       "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
@@ -3109,6 +3111,37 @@
         "Existing acceptance limits retained: reply loss is not owner crash; idle abort/running-job cancellation do not prove active root-stream abort; unsupported modes here are CLI rejections, not server-protocol proof.",
         "Isolated HOME initially lacked Git identity; committed using prior repository commit public name/email via invocation-only Git config, empty retained hooks directory and signing disabled. No user config was read or mutated.",
         "No per-worker wisdom edits; aggregate wisdom and model verification remain parent-owned."
+      ],
+      "acceptedBlob": "4f665e1e6ff707ec44e8f33e6180f8d6bd178367",
+      "result": "Compared actual candidate Git source against primary base acb7cba8b7f38ccc4b364e3c86011e6ff948e7f7, which is also its direct parent; the sole changed source path is the focus. The base interleaved two distinct lifetimes in the fault-root orchestration. Candidate lines 253-300 make uncertain prompt delivery one readable operation: persisted unknown receipt, captured evidence, detach, release of the reply-loss gate, same-root reattach, same command identity completed, status/no-resend/work-once evidence, and no active-source outcome. Lines 303-354 give cancellation its own complete lifetime: background job identity, observed live process, ordinary picker inspection, human Cancel plus confirmation, completed stop receipt, independently observed process disappearance, authoritative terminal inspection, and a still-running root without source return. Each returns its actual evidence ID, not a context bag. Lines 578-605 now visibly prepare the third root, order recovery then cancellation, detach without close, check unchanged local diff, and publish both IDs. This is a coherent structural extraction rather than rename-only cleanup. Unchanged decision: keep the existing harness/transport, evidence assertions, clean/drift scenario, unsupported-mode rejection and receipt publication boundaries as they are; their distinct authorities are already explicit and this candidate need not widen into them.",
+      "systemReason": "Traced actual candidate consumers: the fixture README directly invokes this Bun entrypoint in probe or explicit compiled-BRUV_BIN mode, while remote-typed-root-placement-fixture.test.ts reads the runner for safety, reply-loss, process-exit and live-screen assertions. These interfaces, flags, markers and receipt schema remain intact. network-none-fixture.ts owns isolated environment and SSH wrapper wiring; reply-loss.ts forwards a successful command once, records it, discards bytes, and gates only same-ID status reconciliation until the recovery operation releases the gate. scenario.ts produces root-role execution evidence and the long-lived background shell/PID. proof.ts independently verifies completed same-ID prompt, exactly one send plus command-status evidence, one execution, correct cancellation target and terminal inspection. The production RootClient saves unknown before dispatch and reconciles through command-status without resending; RootControls /ps performs jobs.list/inspect, Cancel and confirmation before jobs.stop; the presenter poll reconciles saved identities, and source return requires authoritative closed-successful root. Candidate retains the important distinction between stop acknowledgement and process exit, and between a stopped job and a closed root. All changed source was inspected; no unrelated accepted source was modified.",
+      "checks": [
+        {
+          "check": "Exact Git identity and changed-source scope",
+          "result": "Candidate parent equals primary base; git diff --name-status reports only scripts/remote-root-placement-e2e.ts. Base blob 4acbdfa75d15a03e5e146f1d7761e393f8b1f16f; candidate blob 4f665e1e6ff707ec44e8f33e6180f8d6bd178367."
+        },
+        {
+          "check": "Independent static moved-body comparison",
+          "result": "Both proof bodies match base after whitespace/comment normalization and faultID-to-id rebinding; recovery comparison excludes unchanged local-diff capture now owned by caller. Cancellation still ends with Escape then ready before caller detach. No tests executed."
+        },
+        {
+          "check": "Candidate diff whitespace",
+          "result": "git diff --check primary-base candidate returned no diagnostics."
+        },
+        {
+          "check": "Actual-code reading",
+          "result": "Read candidate focus, base/parent diff, relevant imported proof/transport/scenario/harness code, direct entrypoint documentation and consumer assertions, and actual presenter/client authorities. Read wisdom/values.md and structural-readability-guidance.md; inspected focus entries in repo-wide coverage/jobs and remote area ledger, not full large ledger documents."
+        },
+        {
+          "check": "Preservation",
+          "result": "Worktree status was clean before writing this report; no source edits, delegation, setup, tests or builds performed."
+        }
+      ],
+      "limits": [
+        "Static structural ACCEPT only, not runtime acceptance. Parent owns audited isolated batch gates and external runtime model verification. No real authentication, credentials, device, network, Docker or SSH acceptance was attempted or claimed.",
+        "Existing explicitly labelled proof gaps remain: reply loss is not owner crash; idle abort and running shell cancellation do not prove actively streaming root abort; unsupported modes are CLI rejection evidence, not server-protocol rejection evidence.",
+        "Helpers intentionally retain fixture-local closure dependencies, fixed artifact paths and the three-root scenario count. They are not reusable general recovery/cancellation APIs; no framework or speculative guards are required for this assignment.",
+        "No per-worker wisdom edits; parent owns aggregate wisdom. Existing worktrees and unrelated source are preserved."
       ]
     },
     {
@@ -3389,12 +3422,14 @@
     {
       "file": "scripts/terminal-perf/audit-probes/disk-callbacks.ts",
       "initialBlob": "5c485f7a7ac0a5311928a43436af9615e3d8e696",
-      "status": "pending",
+      "status": "accepted",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_8399b33f",
       "primaryCommit": "bb1e19e3e94cc135cec9ca5b0efddcf9b8985edf",
-      "judgeIds": [],
+      "judgeIds": [
+        "task_d870409a"
+      ],
       "sourceCommit": "bb1e19e3e94cc135cec9ca5b0efddcf9b8985edf",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
       "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
@@ -3434,6 +3469,42 @@
         "Independent exact-candidate judge and audited runtime gates remain parent-owned; this is primary source review, not an acceptance verdict.",
         "Existing private consume instrumentation and any-typed sample storage remain unchanged in semantics.",
         "No wisdom edits: parent owns aggregate wisdom; existing values already cover this ownership/timing lesson."
+      ],
+      "acceptedBlob": "34edf29c6932231369b0229665db3ddeb35338a5",
+      "result": "Compared the complete actual candidate with primary base 854bbae75d0873baf463a76746cc2acb5cbacebd, which is also its immediate parent. The sole changed source is the focus. In the base, one top-level try block interleaves session construction, consume interception, refresh timing, lifecycle recording, persisted-output validation and publication, with manager disposal distant from its final reader. The candidate introduces coherent effect-owning operations rather than renames: measureCostRefresh installs consume instrumentation, awaits exactly one refresh, checks completeness and returns the annotated measurement; auditSessionCosts constructs fixtures and repetitions and disposes all registered managers in its own finally; auditLifecycleRecords owns the recorder, its failure counter, persisted line-count assertion and output summary. Top-level reading now directly exposes the two checked audits, cost-before-lifecycle ordering, publication and root ownership. Considered leaving the small standalone script unchanged, but these boundaries materially reduce the reader reconstruction of measurement scope and resource lifetime. Retained any-typed samples, private consume instrumentation, reporting code and fixture constants do not warrant extra cleanup for this assignment.",
+      "systemReason": "The script is a standalone direct-execution audit: candidate source searches under scripts/src/tests and package.json/t3.json find no imported or configured caller. It creates one temporary root, builds parent/marked-child sessions for each of the three original payload sizes, and runs three fresh trackers per fixture. Traced SessionCostTracker.refresh -> doRefresh -> relation discovery -> readUsage -> awaited handle.read -> synchronous consume. The wrapper still calls nativeConsume with its original this, captures pending bytes outside the timed native call, and times refresh from immediately before invocation through its await. The original zero-cost/nonempty-callback/zero-final-pending assertion remains. Session-manager disposal delegates to DiskEntryStore.dispose (private spool and cache release, not removal of published transcript); this now occurs after all cost scans and before lifecycle audit, with no later manager users. Partial cost failure invokes manager finally and then top-level root finally, without publication. Lifecycle recording still synchronously writes twenty unchanged finished records; task-lifecycle retains fail-closed locking, protected-path/inode/mode checks, fsync and per-call unlock/close. Recorder failures increment the local counter and prevent a success report; persisted count is checked before returning the summary. Production callers were traced to footer coarse polling and agent-extension TaskManager subscription, confirming the post-await consume and synchronous persistence paths the audit measures, without changing either caller. Successful publication retains version, lifecycle summary, source/runtime/platform/CPU fields, source hashes, all sample fields and sample order; CLI output path and root cleanup are unchanged. Leaving the production implementations, security protections, fixtures, repetition counts, measurement boundaries and report schema unchanged is the correct scope decision; no unrelated work is changed.",
+      "checks": [
+        {
+          "name": "Guidance and focused ledger evidence",
+          "status": "read",
+          "details": "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md; inspected only the focus coverage/area row and focus assignment membership, including supplied primary context."
+        },
+        {
+          "name": "Exact candidate and parent/base source review",
+          "status": "reviewed",
+          "details": "git parent resolution equals the supplied primary base; both base and candidate focus files were read completely. Base-to-candidate and parent-to-candidate inventories each contain only the focus source. Accepted hash is the candidate Git blob, not checkout HEAD."
+        },
+        {
+          "name": "Actual caller and effect trace",
+          "status": "reviewed",
+          "details": "Read candidate tracker refresh/readUsage/consume, manager installation/disposal and disk-store append/disposal effects, lifecycle recorder including persistence/security/failure handling, and relevant footer/extension production caller slices. Imported implementations are unchanged versus primary base."
+        },
+        {
+          "name": "git diff --check",
+          "status": "passed",
+          "details": "Read-only base-to-candidate whitespace check exited 0."
+        },
+        {
+          "name": "Tests, builds, setup and runtime audit",
+          "status": "not run",
+          "details": "Explicitly reserved for parent-owned audited isolated batch gates. No probe execution, auth or device access."
+        }
+      ],
+      "limits": [
+        "Structural source-reading verdict only; runtime report equivalence and isolated batch safety gates remain parent-owned. Timing measurements were not executed and no performance claim is made.",
+        "Earlier setup outcomes are not certified or bypassed here; no setup/build/test was launched.",
+        "No real authentication/device claim or model self-introspection. Parent verifies runtime model externally.",
+        "No source, wisdom or unrelated candidate edits; only this untracked judge result is written."
       ]
     },
     {

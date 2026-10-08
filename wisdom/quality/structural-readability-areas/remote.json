@@ -174,18 +174,21 @@
     {
       "focus": "scripts/remote-root-placement-e2e.ts",
       "initialBlob": "4acbdfa75d15a03e5e146f1d7761e393f8b1f16f",
-      "status": "pending",
+      "status": "accepted",
       "judgeRounds": [],
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "4f665e1e6ff707ec44e8f33e6180f8d6bd178367",
         "primaryId": "task_4c34a8a9",
         "primaryCommit": "75b23bf68ac8c0a7ef5a35b07d28f53b8cb65222",
-        "judgeIds": [],
+        "judgeIds": [
+          "task_b27cf32c"
+        ],
         "sourceCommit": "75b23bf68ac8c0a7ef5a35b07d28f53b8cb65222",
-        "state": "needs-judge",
-        "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+        "state": "accepted-joined",
+        "reason": "Compared actual candidate Git source against primary base acb7cba8b7f38ccc4b364e3c86011e6ff948e7f7, which is also its direct parent; the sole changed source path is the focus. The base interleaved two distinct lifetimes in the fault-root orchestration. Candidate lines 253-300 make uncertain prompt delivery one readable operation: persisted unknown receipt, captured evidence, detach, release of the reply-loss gate, same-root reattach, same command identity completed, status/no-resend/work-once evidence, and no active-source outcome. Lines 303-354 give cancellation its own complete lifetime: background job identity, observed live process, ordinary picker inspection, human Cancel plus confirmation, completed stop receipt, independently observed process disappearance, authoritative terminal inspection, and a still-running root without source return. Each returns its actual evidence ID, not a context bag. Lines 578-605 now visibly prepare the third root, order recovery then cancellation, detach without close, check unchanged local diff, and publish both IDs. This is a coherent structural extraction rather than rename-only cleanup. Unchanged decision: keep the existing harness/transport, evidence assertions, clean/drift scenario, unsupported-mode rejection and receipt publication boundaries as they are; their distinct authorities are already explicit and this candidate need not widen into them."
       },
-      "acceptedBlob": null
+      "acceptedBlob": "4f665e1e6ff707ec44e8f33e6180f8d6bd178367"
     },
     {
       "focus": "src/remote/CAPABILITY-INTEGRATION.md",
@@ -4329,8 +4332,8 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 81,
-    "pending": 41
+    "accepted": 82,
+    "pending": 40
   },
   "extraFiles": [
     {

@@ -807,19 +807,22 @@
     {
       "focus": "scripts/terminal-perf/audit-probes/disk-callbacks.ts",
       "initialBlob": "5c485f7a7ac0a5311928a43436af9615e3d8e696",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "34edf29c6932231369b0229665db3ddeb35338a5",
       "integrationState": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "34edf29c6932231369b0229665db3ddeb35338a5",
         "primaryId": "task_8399b33f",
         "primaryCommit": "bb1e19e3e94cc135cec9ca5b0efddcf9b8985edf",
-        "judgeIds": [],
+        "judgeIds": [
+          "task_d870409a"
+        ],
         "sourceCommit": "bb1e19e3e94cc135cec9ca5b0efddcf9b8985edf",
-        "state": "needs-judge",
-        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+        "state": "accepted-joined",
+        "reason": "Compared the complete actual candidate with primary base 854bbae75d0873baf463a76746cc2acb5cbacebd, which is also its immediate parent. The sole changed source is the focus. In the base, one top-level try block interleaves session construction, consume interception, refresh timing, lifecycle recording, persisted-output validation and publication, with manager disposal distant from its final reader. The candidate introduces coherent effect-owning operations rather than renames: measureCostRefresh installs consume instrumentation, awaits exactly one refresh, checks completeness and returns the annotated measurement; auditSessionCosts constructs fixtures and repetitions and disposes all registered managers in its own finally; auditLifecycleRecords owns the recorder, its failure counter, persisted line-count assertion and output summary. Top-level reading now directly exposes the two checked audits, cost-before-lifecycle ordering, publication and root ownership. Considered leaving the small standalone script unchanged, but these boundaries materially reduce the reader reconstruction of measurement scope and resource lifetime. Retained any-typed samples, private consume instrumentation, reporting code and fixture constants do not warrant extra cleanup for this assignment."
       }
     },
     {
@@ -5287,7 +5290,7 @@
     }
   },
   "resumeStatus": {
-    "accepted": 62,
-    "pending": 49
+    "accepted": 63,
+    "pending": 48
   }
 }
