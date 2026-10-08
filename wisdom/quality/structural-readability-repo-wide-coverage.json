@@ -1205,13 +1205,41 @@
       "initialBlob": "93411cd8380fc52c7f69afc866bff5bf7912b156",
       "status": "pending",
       "area": "compatibility-t3",
-      "resumeState": "pending-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_5f5debab",
+      "primaryCommit": "8430875c6bd00f3d4712ae9f695caa5722f1071e",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "8430875c6bd00f3d4712ae9f695caa5722f1071e",
       "report": "wisdom/quality/structural-readability-areas/compatibility-t3.json",
-      "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+      "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection.",
+      "primaryBase": "3782f6ade0c93e7b7ff441dcef2d22849aeddab6",
+      "primaryResult": "observeWrapperProcess owns the public spawn hook, stdout/stderr capture and actual child close event. launch owns SDK query creation, frame collection and iterator settlement. The shell case omits the hook; Stop and EOF explicitly supply their own observer and await its close evidence separately from SDK settlement. All assertion predicates, timeouts, provider fixture, pinned SDK validation, isolated environment and final resource cleanup remain intact.",
+      "primaryPaths": [
+        "scripts/claude-native-acceptance/wrapper-sdk-smoke.mjs"
+      ],
+      "primaryChecks": [
+        {
+          "name": "/usr/bin/node --check scripts/claude-native-acceptance/wrapper-sdk-smoke.mjs",
+          "result": "passed; parsing only, harness not executed; explicit PATH-only environment"
+        },
+        {
+          "name": "git diff --check",
+          "result": "passed before commit"
+        },
+        {
+          "name": "Static baseline/candidate journey review",
+          "result": "Default SDK spawn remains undefined hook; cancellation hooks forward identical command/args/cwd/env/signal/stdio; process registrations and query registrations remain with existing finalizer; success, held-response rejection, graceful exit and raw EOF assertions preserved."
+        },
+        {
+          "name": "Guidance, ledgers and callers",
+          "result": "Read wisdom values/guidance, repo-wide and compatibility-t3 ledgers, preserved reconciliation row, usage comment and documented single-runtime wrapper smoke caller. Focus exists at baseline blob 93411cd8380fc52c7f69afc866bff5bf7912b156; no source import required."
+        }
+      ],
+      "primaryLimits": [
+        "No setup, repository tests, builds, runtime smoke, network/provider/device access or credential access performed. Parent owns isolated batch gates and fresh independent judge; no readability acceptance claimed.",
+        "The existing harness binds a loopback provider, spawns the explicit compiled wrapper, writes isolated fixture configuration, and removes its own mkdtemp root in finally. These existing effects were inspected but not executed; parent must audit runtime filesystem effects against the retained-directory safety policy.",
+        "No wisdom/values edits: this is a local application of existing ownership/lifetime guidance; parent owns aggregate wisdom."
+      ]
     },
     {
       "file": "scripts/find-ci-baseline.ts",
@@ -1349,13 +1377,32 @@
       "initialBlob": "2e443cc387a687ffd98506aa489c8b8658683593",
       "status": "pending",
       "area": "agent-history-session-goals",
-      "resumeState": "interrupted-primary",
-      "primaryId": "task_49b0bc65",
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_e6e6e804",
+      "primaryCommit": "8f89c50a021b0f98ff5cd8d570a04f6610f27b5f",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "8f89c50a021b0f98ff5cd8d570a04f6610f27b5f",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
-      "pendingReason": "Primary was killed without a completed focused result; preserve worker state and any uncommitted edits."
+      "pendingReason": "Primary was killed without a completed focused result; preserve worker state and any uncommitted edits.",
+      "primaryBase": "3782f6ade0c93e7b7ff441dcef2d22849aeddab6",
+      "primaryResult": "captureSnapshot receives the live manager explicitly and returns only numeric measurements. writeCompactedFixture owns generation and compaction and returns disk coordinates, hashes and measurements, not the populated manager or original bodies; it completes before the reopen GC boundary. child visibly owns adapter installation, the temporary root, reopen, original SHA-256 verification, assertions and final cleanup. Reopened sampling is bound directly; baseline and cross-process comparison use labeled selection. Native/adapted process isolation, 136 MiB/17-compaction workload, output shape, thresholds and owned-root cleanup remain intact. Read the stopped lineage and surviving uncommitted task_b0eea86b candidate without modifying its worktree or merging its branch.",
+      "primaryPaths": [
+        "scripts/history-storage-probe.ts"
+      ],
+      "primaryChecks": [
+        "Read wisdom/values.md, structural readability guidance, repo-wide and area ledgers, provided resume reconciliation evidence, preserved candidate bytes, and documented probe consumers/contracts.",
+        "Manually traced unchanged fixture writes, GC/sampling ordering, persistence reopen, original retrieval, adapter-only assertions, result fields, subprocess behavior and cleanup.",
+        "Bun.Transpiler.scan: static syntax/import scan passed; did not execute the probe or emit compiled output.",
+        "git diff --check passed.",
+        "Commit contains only scripts/history-storage-probe.ts; source commit and blob obtained from Git after commit."
+      ],
+      "primaryLimits": [
+        "No setup, repository tests, builds or runtime probes run; parent owns audited isolated batch gates and any automatic setup failure evidence.",
+        "An attempted read-only TypeScript createSourceFile parser import could not resolve the provided TypeScript package root; used Bun static scan instead. No dependency changes.",
+        "Independent fresh judge and externally verified runtime model remain parent-owned; this primary result is not an acceptance judgment.",
+        "No provider/credential/device access, delegation, push, PR, merge, recovery, destructive Git operations or historical worktree changes.",
+        "No wisdom edits: parent owns aggregate wisdom; this is a focused application of existing lifecycle-ownership guidance."
+      ]
     },
     {
       "file": "scripts/install-local.sh",
@@ -1446,34 +1493,103 @@
       "file": "scripts/live-acceptance.ts",
       "initialBlob": "3d1e341a0ec3115c50c706e21dfa75184e69c098",
       "status": "pending",
-      "primaryId": null,
-      "sourceCommit": null,
+      "primaryId": "task_c5af6f4a",
+      "sourceCommit": "1a15828bcfddbe44b5e274a12b7c402e6f47fe5a",
       "judgeIds": [],
-      "resumeState": "own_primary_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "1a15828bcfddbe44b5e274a12b7c402e6f47fe5a",
+      "primaryBase": "3782f6ade0c93e7b7ff441dcef2d22849aeddab6",
+      "primaryResult": "fixtureAdapter now owns only the canned provider turn framing and reports the sent-completion boundary explicitly. provePlaybackInterruption owns the old-tone stimulus, audible arrival, epoch flush/replacement, stale-tone exclusion, continued-capture assertion, and returned proof fields. The fixture orchestration visibly establishes its first tail/capture proof before requesting the separate interruption proof and publishing both. Main retains all native resource acquisition and teardown; there is no new owner framework or shared context bag.",
+      "primaryPaths": [
+        "scripts/live-acceptance.ts"
+      ],
+      "primaryChecks": [
+        "Read focus, isolated wrapper caller, VoiceSession adapter contract, PlaybackScheduler epoch/turn semantics, values, structural-readability guidance, repo-wide/area ledgers, and preserved focus reconciliation evidence (pending baseline blob 3d1e341a0ec3115c50c706e21dfa75184e69c098; no surviving prior focus candidate).",
+        "Bun.Transpiler.scan with TypeScript loader passed; parse-only, no source execution or emitted artifact.",
+        "git diff --check passed before source commit.",
+        "Read-only baseline comparisons: opt-in/platform guards, deadline and process/route/DSP helpers unchanged; native acquisition/callback wiring unchanged; paid provider branch byte-identical; teardown and suppressed paid error reporting byte-identical.",
+        "Read-only baseline comparisons: fixture message-loop tokens, chunk size/PCM format/timer/completion ordering preserved; first-tail VoiceSession callbacks, waits/diagnostics, queue drain, route check and verdict byte-identical; interruption proof tokens preserved except live capture accessor substitution.",
+        "Source-only commit 1a15828bcfddbe44b5e274a12b7c402e6f47fe5a; exact candidate focus blob 4371f041f46991f18308dc9fcaf4bba3cad45062."
+      ],
+      "primaryLimits": [
+        "No repository tests, setup, builds, typecheck, acceptance execution, provider/credential/device access, delegation, recovery, cleanup, push, PR or merge performed. Parent owns audited isolated gates and a fresh independent judge.",
+        "Static syntax and preservation checks are not runtime/physical-audio or independent readability acceptance. The isolated wrapper contains shell cleanup/traps and was read only, never executed.",
+        "Initial attempts to load traditional TypeScript and Babel parser API paths in the authorized read-only shared dependencies returned ENOENT. No dependency installation or setup workaround; built-in Bun parse-only scan was used instead.",
+        "No wisdom/values edits: existing guidance covers this focused split; parent owns aggregate wisdom. Existing worktrees and any preserved candidate/ledger evidence were left untouched."
+      ]
     },
     {
       "file": "scripts/live-gpt-live-offline-smoke.ts",
       "initialBlob": "b77a2bd12e4534a50cbbea190d8d77775f5a6a3a",
       "status": "pending",
-      "primaryId": null,
-      "sourceCommit": null,
+      "primaryId": "task_fd598368",
+      "sourceCommit": "3782f6ade0c93e7b7ff441dcef2d22849aeddab6",
       "judgeIds": [],
-      "resumeState": "own_primary_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "3782f6ade0c93e7b7ff441dcef2d22849aeddab6",
+      "primaryBase": "3782f6ade0c93e7b7ff441dcef2d22849aeddab6",
+      "primaryResult": "The reader can follow the whole journey in file order: playback send/flush observe local effects; contextual submission checks the uncertain transcript snapshot; the loopback peer validates the fixed fake Bearer token and session.start model/rate/client delegation, then supplies started/transcript/delegation/audio events. GPTLiveSession callbacks connect transcript to the bridge, queued delegation to commentary, and PCM to playback. The try block starts playback, connects, sends four loud frames, asserts handshake/input/commentary/single dispatch/playback/flush/suppression/no session errors, sends quiet frames, asserts recovery, and awaits protocol close. The one finally closes bridge/playback/session and force-stops only this loopback server. Imported session close shares its terminal promise, so the success-path close and final close are visibly compatible. The direct Bun/compiled invocation is documented in the header; repository search found no production caller. Existing semantics and assertions remain untouched.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        {
+          "kind": "manual-source-reading",
+          "result": "Read full focus and relevant imported handshake, microphone/commentary, terminal close, playback suppression/recovery, and delegation snapshot/admission operations."
+        },
+        {
+          "kind": "caller-search",
+          "result": "Searched repository references; direct source/compile commands occur in focus header, with historical smoke evidence in wisdom/live/gpt-live-implementation.md and code-reduction audit. No production importer found."
+        },
+        {
+          "kind": "evidence-reading",
+          "result": "Read values, structural guidance, repo-wide/area ownership ledgers and preserved reconciliation focus row. Focus exists; preserved row has no prior primary, accepted blob, source candidate, objections, or pending uncommitted delta. No candidate import needed."
+        },
+        {
+          "kind": "git-diff-check",
+          "result": "No diff and no whitespace errors."
+        },
+        {
+          "kind": "runtime",
+          "result": "Not run: user reserves setup, tests and builds for parent audited isolated batch gates."
+        }
+      ],
+      "primaryLimits": [
+        "Primary readability judgment only; parent must obtain a fresh independent actual-code judge for this exact blob.",
+        "No runtime/source-compiled/provider/device/macOS validation performed or claimed.",
+        "Existing 30ms/20ms waits and asynchronous callback handling were read, not changed or validated as deterministic timing guarantees.",
+        "No source changes, commit, wisdom edits, setup, cleanup, external API/device access, or credentials used. Existing worktrees/candidates left intact."
+      ]
     },
     {
       "file": "scripts/live-helper-bundle.ts",
       "initialBlob": "59cc37569783f757e9bb64d760dc96aead37edfc",
       "status": "pending",
-      "primaryId": "task_2e2ac20f",
-      "sourceCommit": null,
+      "primaryId": "task_bea74455",
+      "sourceCommit": "3782f6ade0c93e7b7ff441dcef2d22849aeddab6",
       "judgeIds": [],
-      "resumeState": "primary_started_no_committed_candidate",
+      "resumeState": "needs-judge",
       "pendingReason": "Primary was allocated, but no candidate commit or completed focus judgment is recorded. Preserve its worktree; do not treat the stale running status as proof of current execution.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "3782f6ade0c93e7b7ff441dcef2d22849aeddab6",
+      "primaryBase": "3782f6ade0c93e7b7ff441dcef2d22849aeddab6",
+      "primaryResult": "scripts/build.ts owns CLI options and supplies the helper path/target before Bun.build. nativeHelperPlugin owns payload admission and emits the path plus digest into precisely src/live/embedded.ts using JSON.stringify for source literals. src/live/helper.ts separately owns runtime platform gating, integrity verification, private extraction and cleanup. These are distinct build/runtime authorities, already visible at the boundaries. Splitting the short guard/hash/registration sequence or introducing a context bag would add indirection, not improve this journey. Existing target, regular-file/symlink, minimum-header-size, Mach-O/cpu/filetype checks, digest generation and source-literal escaping remain unchanged. Focus exists and exactly matches initial/joined/preserved old-primary blob; no candidate import or branch merge needed.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        "Read wisdom/values.md, structural-readability-guidance.md, repo-wide guidance/resume and focus rows in repo-wide coverage/assignments and live-native-audio ledgers; read preserved resume reconciliation and old-primary provenance.",
+        "Read focus, both integration boundaries and existing embedded-helper assertions; traced invalid target/input rejection through emitted module metadata to runtime integrity verification.",
+        "git diff --check exited 0; initial working tree clean; current and preserved old-primary focus Git hashes both 59cc37569783f757e9bb64d760dc96aead37edfc. Preserved old-primary working tree clean on inspection.",
+        "No repository tests, builds, setup, provider/device access or delegation performed. Report stays untracked; no source commit created because no source changes."
+      ],
+      "primaryLimits": [
+        "Primary reading decision only; parent must obtain a separate independent fresh actual-code judgment for the exact focus blob.",
+        "No runtime validation claim. Existing embedded-helper tests include compile/spawn and fixture deletion; they were read, not run. Parent owns audited isolated gates.",
+        "Inherited automatic setup host-hash failure is retained in historical evidence, not rerun, bypassed or claimed fixed.",
+        "Stopped task_2e2ac20f lineage and old worktree preserved. No recovery, cleanup, secrets, push, PR or merge actions.",
+        "No wisdom changes: existing authority/lifetime guidance already covers this decision; parent writes aggregate wisdom."
+      ]
     },
     {
       "file": "scripts/live-isolated-audio.sh",
@@ -3993,7 +4109,10 @@
       "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
       "acceptedBlob": "3237fbde60b8c0da9951552161d8ab61989547f8",
       "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "acceptedRelatedJudges": [
+        "task_494fbf1d"
+      ]
     },
     {
       "file": "src/live/openai-session.ts",
@@ -12326,9 +12445,9 @@
       "judgeIds": [
         "task_c1052b52"
       ],
-      "resumeState": "accepted-joined",
-      "pendingReason": "New related candidate has no own primary or completed independent focus judgment; withhold integration approval.",
-      "status": "accepted",
+      "resumeState": "needs-primary-final-blob",
+      "pendingReason": "Related actual-code acceptance is retained, but helper still requires its own distinct primary and fresh independent final focus judge.",
+      "status": "pending",
       "acceptedRelatedJudges": [
         "task_c1052b52"
       ],

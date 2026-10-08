@@ -92,6 +92,45 @@
         "branch": "bruv/pr45-judge-src-live-setup-probe.ts-52d397e7",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "handled"
+      },
+      {
+        "id": "task_494fbf1d",
+        "stage": "judge",
+        "focus": "tests/openai-resample.test.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_494fbf1d",
+        "branch": "bruv/pr45-judge-tests-openai-resample.test.ts-494fbf1d",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled"
+      },
+      {
+        "id": "task_c5af6f4a",
+        "stage": "primary",
+        "focus": "scripts/live-acceptance.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_c5af6f4a",
+        "branch": "bruv/pr45-primary-scripts-live-acceptance.ts-c5af6f4a",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled",
+        "sourceCommit": "1a15828bcfddbe44b5e274a12b7c402e6f47fe5a"
+      },
+      {
+        "id": "task_fd598368",
+        "stage": "primary",
+        "focus": "scripts/live-gpt-live-offline-smoke.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_fd598368",
+        "branch": "bruv/pr45-primary-scripts-live-gpt-live-offli-fd598368",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled",
+        "sourceCommit": "3782f6ade0c93e7b7ff441dcef2d22849aeddab6"
+      },
+      {
+        "id": "task_bea74455",
+        "stage": "primary",
+        "focus": "scripts/live-helper-bundle.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_bea74455",
+        "branch": "bruv/pr45-primary-scripts-live-helper-bundle.-bea74455",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled",
+        "sourceCommit": "3782f6ade0c93e7b7ff441dcef2d22849aeddab6"
       }
     ]
   },
@@ -238,6 +277,16 @@
         "branch": "bruv/pr45-judge-scripts-claude-native-accepta-1bcfcb92",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "handled"
+      },
+      {
+        "id": "task_5f5debab",
+        "stage": "primary",
+        "focus": "scripts/claude-native-acceptance/wrapper-sdk-smoke.mjs",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_5f5debab",
+        "branch": "bruv/pr45-primary-scripts-claude-native-accep-5f5debab",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled",
+        "sourceCommit": "8430875c6bd00f3d4712ae9f695caa5722f1071e"
       }
     ]
   },
@@ -288,6 +337,16 @@
         "branch": "bruv/pr45-judge-tests-fixtures-history-sdk-pr-f3981982",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "handled"
+      },
+      {
+        "id": "task_e6e6e804",
+        "stage": "primary",
+        "focus": "scripts/history-storage-probe.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_e6e6e804",
+        "branch": "bruv/pr45-primary-scripts-history-storage-pro-e6e6e804",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled",
+        "sourceCommit": "8f89c50a021b0f98ff5cd8d570a04f6610f27b5f"
       }
     ]
   },

@@ -858,10 +858,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
+        "primaryId": "task_c5af6f4a",
+        "primaryCommit": "1a15828bcfddbe44b5e274a12b7c402e6f47fe5a",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "own_primary_pending",
+        "sourceCommit": "1a15828bcfddbe44b5e274a12b7c402e6f47fe5a",
+        "state": "needs-judge",
         "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
       }
     },
@@ -874,10 +875,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
+        "primaryId": "task_fd598368",
+        "primaryCommit": "3782f6ade0c93e7b7ff441dcef2d22849aeddab6",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "own_primary_pending",
+        "sourceCommit": "3782f6ade0c93e7b7ff441dcef2d22849aeddab6",
+        "state": "needs-judge",
         "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
       }
     },
@@ -896,10 +898,11 @@
       "integration": "primary running",
       "resume": {
         "status": "pending",
-        "primaryId": "task_2e2ac20f",
+        "primaryId": "task_bea74455",
+        "primaryCommit": "3782f6ade0c93e7b7ff441dcef2d22849aeddab6",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "primary_started_no_committed_candidate",
+        "sourceCommit": "3782f6ade0c93e7b7ff441dcef2d22849aeddab6",
+        "state": "needs-judge",
         "reason": "Primary was allocated, but no candidate commit or completed focus judgment is recorded. Preserve its worktree; do not treat the stale running status as proof of current execution."
       }
     },
@@ -4836,17 +4839,17 @@
       "primary": null,
       "relatedPaths": [],
       "judgeRounds": [],
-      "acceptedBlob": "d9dead0e2c17b436931bb3174f80ecbe09095e1b",
+      "acceptedBlob": null,
       "integration": "new related candidate;own primary pending",
       "resume": {
-        "status": "accepted",
+        "status": "pending",
         "acceptedBlob": "d9dead0e2c17b436931bb3174f80ecbe09095e1b",
         "primaryId": null,
         "judgeIds": [
           "task_c1052b52"
         ],
         "sourceCommit": "a5642b72d82ac64e94fb58abfb5a2076b07031c3",
-        "state": "accepted-joined",
+        "state": "needs-primary-final-blob",
         "reason": "New source, absent in the primary parent. probe owns a single temporary root, extracts one scripted helper, launches one child-local Bun module mock, observes diagnostic outcomes, and finally releases its fixture. self/protocol arguments describe the two executable phases directly. Success, early self-test failure, protocol mismatch/parse failure, and timeout journeys remain local to their cases; fixture cleanup and diagnostic cleanup are separately visible. The generated runner is justified by module-cache isolation, not a new framework or production context bag."
       }
     },
@@ -5009,7 +5012,7 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 74,
-    "pending": 76
+    "accepted": 73,
+    "pending": 77
   }
 }

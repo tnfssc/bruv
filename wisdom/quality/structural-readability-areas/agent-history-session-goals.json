@@ -131,11 +131,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": "task_49b0bc65",
-        "primaryCommit": null,
+        "primaryId": "task_e6e6e804",
+        "primaryCommit": "8f89c50a021b0f98ff5cd8d570a04f6610f27b5f",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "interrupted-primary",
+        "sourceCommit": "8f89c50a021b0f98ff5cd8d570a04f6610f27b5f",
+        "state": "needs-judge",
         "reason": "Primary was killed without a completed focused result; preserve worker state and any uncommitted edits."
       }
     },
