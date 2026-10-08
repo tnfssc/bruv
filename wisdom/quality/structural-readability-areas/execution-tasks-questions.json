@@ -3345,55 +3345,58 @@
     {
       "focus": "tests/resume-stream-cancellation.test.ts",
       "initialBlob": "90adb1bb6cdb7f6c526404df57e8fcb87723f943",
-      "status": "pending",
+      "status": "accepted",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "c04171a8a72b1028cdc05a21e6bbbc87f474b3a1",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "c04171a8a72b1028cdc05a21e6bbbc87f474b3a1",
         "primaryId": "task_e86a3033",
         "primaryCommit": "56e420545b560b70492dff19f3c5ec04addc5253",
-        "judgeIds": [],
+        "judgeIds": ["task_b17a5ed7"],
         "sourceCommit": "56e420545b560b70492dff19f3c5ec04addc5253",
-        "state": "needs-judge",
-        "reason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage."
+        "state": "accepted-joined",
+        "reason": "Read the complete 100-line candidate and its exact primary-base diff. The original shared try/catch made successful-result validation, expected cancellation and late abort depend on reconstructing mode-dependent catch behavior. The candidate groups creation of the unreadable directory, queued invalid-header bytes and valid session into one fixture phase; defines current/all-folder dispatch once; and gives active cancellation its own assertion operation. The normal/late branch now visibly requires exactly one valid firstMessage before optionally aborting. Both branches visibly precede the same 100ms late-error observation. runScanProcess is a coherent process boundary, not a context bag: argv launch, simultaneous stream consumption and close/error observation return the same asserted triple. The five expanded registrations and their exact exit/stdout/stderr expectations remain unchanged. This is a genuine separation of fixture, outcome authority and process lifetime rather than naming churn."
       }
     },
     {
       "focus": "tests/root-owner.test.ts",
       "initialBlob": "823b81438fe53e0bab52108e9ae3ca9733acfedb",
-      "status": "pending",
+      "status": "accepted",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "5359344120d28666a3cecfea67d9419de954b890",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "5359344120d28666a3cecfea67d9419de954b890",
         "primaryId": "task_d848af48",
         "primaryCommit": "9415644f7dd7f71ae14b289930077652d39dbfb7",
-        "judgeIds": [],
+        "judgeIds": ["task_b17a5ed7"],
         "sourceCommit": "9415644f7dd7f71ae14b289930077652d39dbfb7",
-        "state": "needs-judge",
-        "reason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage."
+        "state": "accepted-joined",
+        "reason": "Read the complete 620-line candidate and exact primary-base diff, including unchanged tests. Previously one scenario mixed local source capture, replay-safe chunk transfer, checkout-content validation and export authority state transitions. captureTrackedFixture now owns the committed baseline, dirty tracked bytes and deliberately unapproved file; uploadWithExactReplay owns chunk construction and exact retry equality. Separate transport and export tests make their distinct authorities readable. The transport test retains root-owned checkout path, dirty content, one-commit history and tracked-only assertions. The export test still starts from the same uploaded snapshot, rejects no-root and accepted roots, rejects unknown and closed/exit-1 states, and accepts only closed/exit-0 with original snapshot/content/digest assertions. Helpers are cohesive operations using explicit arguments, not a new shared state container. Unchanged create/command replay, detach/observe redaction, unsettled-close, clean/failed-exit, outstanding-prompt abort, uncertain-write/owner death, crash reconciliation, journal gaps, identity/model/command rejection, duplicate-owner and dialog/reconnect cases retain stimulus, persisted outcome and owner drain together. They do not need additional extraction to make their authority visible."
       }
     },
     {
       "focus": "tests/root-runtime.test.ts",
       "initialBlob": "f5ad044150b0be9a1dbca3de6dec9c72fc143463",
-      "status": "pending",
+      "status": "accepted",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "b193a773a6a89806c651ce451b2b0d658232724f",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "b193a773a6a89806c651ce451b2b0d658232724f",
         "primaryId": "task_fdd5f204",
         "primaryCommit": "9a568679ae641766995b7f4332b056edfd617a45",
-        "judgeIds": [],
+        "judgeIds": ["task_b17a5ed7"],
         "sourceCommit": "9a568679ae641766995b7f4332b056edfd617a45",
-        "state": "needs-judge",
-        "reason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage."
+        "state": "accepted-joined",
+        "reason": "Read the complete 230-line candidate and exact diff against its distinct primary base. withPrivateRootRuntime coherently owns root-only env overrides, question/runtime fixture, socket/token startup, assertion callback, session shutdown and env restoration. Nested finally now guarantees restoration even if shutdown rejects; retaining the owned fixture removes deletion from this lifetime. The first test consequently reads as the authority journey: list persisted question, reject wrong token, preserve pending state, reject stale version and wrong branch, accept pinned human reply, confirm delivery once under exact replay, dispatch jobs.stop, and certify settled close. That assertion journey is byte-identical. The other three tests still plainly show configured QuestionService callback/sync ownership without duplicate messages, incomplete cancellation discovery refusing closure, and typed terminal task rows resisting stale running snapshots. Their finally blocks now shut down the registered question runtime rather than only deleting its directory. This improves actual ownership/lifetime structure without obscuring authority behind a generic harness."
       }
     },
     {
@@ -4329,8 +4332,8 @@
     ]
   },
   "resumeStatus": {
-    "accepted": 82,
-    "pending": 19
+    "accepted": 85,
+    "pending": 16
   },
   "extraFiles": [
     {

@@ -13909,11 +13909,11 @@
     {
       "file": "tests/resume-stream-cancellation.test.ts",
       "initialBlob": "90adb1bb6cdb7f6c526404df57e8fcb87723f943",
-      "status": "pending",
+      "status": "accepted",
       "area": "execution-tasks-questions",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_e86a3033",
-      "judgeIds": [],
+      "judgeIds": ["task_b17a5ed7"],
       "sourceCommit": "56e420545b560b70492dff19f3c5ec04addc5253",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
       "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage.",
@@ -13949,6 +13949,20 @@
         "Reviewed direct test filesystem effects and SDK list/read lifetimes before any possible test execution; transitive import/network behavior is not runtime-verified here.",
         "Source now intentionally retains temporary fixture directories; durable regression source/provenance is the committed file in /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_e86a3033. The formatter fixture was retained; regression fixture directories are created only when the parent executes tests.",
         "No wisdom or values edits: parent owns aggregate wisdom; this is a local ownership/readability application of existing guidance."
+      ],
+      "acceptedBlob": "c04171a8a72b1028cdc05a21e6bbbc87f474b3a1",
+      "result": "Read the complete 100-line candidate and its exact primary-base diff. The original shared try/catch made successful-result validation, expected cancellation and late abort depend on reconstructing mode-dependent catch behavior. The candidate groups creation of the unreadable directory, queued invalid-header bytes and valid session into one fixture phase; defines current/all-folder dispatch once; and gives active cancellation its own assertion operation. The normal/late branch now visibly requires exactly one valid firstMessage before optionally aborting. Both branches visibly precede the same 100ms late-error observation. runScanProcess is a coherent process boundary, not a context bag: argv launch, simultaneous stream consumption and close/error observation return the same asserted triple. The five expanded registrations and their exact exit/stdout/stderr expectations remain unchanged. This is a genuine separation of fixture, outcome authority and process lifetime rather than naming churn.",
+      "systemReason": "Traced the unchanged SessionManager scan stream path, its cancellation-aware concurrent workers, current-folder filtering and listAll overload/SDK sessions-directory dispatch. Invalid headers return early; the adaptation owns late stream errors and closes readline/destroys input in finally; unreadable entries remain best-effort skips while an aborted signal rethrows. The test still exercises these distinctions in fresh child processes instead of swallowing process-level failures. Read the candidate pi-host-adaptation session-manager replacements and resume-safeguards method adapters that preserve all arguments. Child env is explicitly supplied (not spread from inherited environment), HOME/config/SDK/TMPDIR are separately owned mkdtemp paths, and injected fixture root is the SDK path used by both scan modes. No deletion is introduced; fixtures are retained.",
+      "checks": [
+        "Exact git diff from cfd8136a69452f4c4460626f17cb9d4c4a1d3653; only the assigned test changes.",
+        "Complete candidate read and unchanged caller/scan decision tracing.",
+        "git diff --check passed; candidate blob resolved directly from Git.",
+        "Static outer expectation-line comparison matched the base; branch assertions also read directly."
+      ],
+      "limits": [
+        "No setup, tests, builds, live auth, network or credential access performed; parent owns audited isolated runtime gates.",
+        "Read-only shared installed session-manager SHA256 is afa016a7535a8e6f57d516e3449cd1be3b56f08c07b05c32864b432e1c84add4, different from candidate adaptation advertised 344b8310365240a6e7e5573d95c8543f256bf5dadb964e954583efbe5ce75202. Its relevant scan implementation was read, but exact installed dependency provenance/runtime behavior remains a parent gate, not claimed verified here.",
+        "Review provenance is the existing durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_b17a5ed7 and exact Git objects; no /tmp code checkout or fixture was created. Parent verifies runtime agent.model."
       ]
     },
     {
@@ -13982,11 +13996,11 @@
     {
       "file": "tests/root-owner.test.ts",
       "initialBlob": "823b81438fe53e0bab52108e9ae3ca9733acfedb",
-      "status": "pending",
+      "status": "accepted",
       "area": "execution-tasks-questions",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_d848af48",
-      "judgeIds": [],
+      "judgeIds": ["task_b17a5ed7"],
       "sourceCommit": "9415644f7dd7f71ae14b289930077652d39dbfb7",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
       "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage.",
@@ -14034,6 +14048,20 @@
         "Reviewed snapshot fixture effects before any possible runtime gate: local Git init/commit/capture/clone and root-owned persistence/result writes; existing owned-temporary-path cleanup remains source-only and was not executed. Snapshot setup now runs independently for each of the two authority scenarios.",
         "Parent runtime gate must supply explicit process argv/env and fresh retained owned HOME/config/SDK fixtures; current source Git helpers still inherit that gate environment. No inherited HOME/config/SDK mutation or cleanup, shell deletion/traps, recovery work, credential/device access, setup bypass, push, merge, or delegation performed.",
         "Independent fresh judge is parent-owned. No per-worker wisdom changes; parent writes aggregate wisdom."
+      ],
+      "acceptedBlob": "5359344120d28666a3cecfea67d9419de954b890",
+      "result": "Read the complete 620-line candidate and exact primary-base diff, including unchanged tests. Previously one scenario mixed local source capture, replay-safe chunk transfer, checkout-content validation and export authority state transitions. captureTrackedFixture now owns the committed baseline, dirty tracked bytes and deliberately unapproved file; uploadWithExactReplay owns chunk construction and exact retry equality. Separate transport and export tests make their distinct authorities readable. The transport test retains root-owned checkout path, dirty content, one-commit history and tracked-only assertions. The export test still starts from the same uploaded snapshot, rejects no-root and accepted roots, rejects unknown and closed/exit-1 states, and accepts only closed/exit-0 with original snapshot/content/digest assertions. Helpers are cohesive operations using explicit arguments, not a new shared state container. Unchanged create/command replay, detach/observe redaction, unsettled-close, clean/failed-exit, outstanding-prompt abort, uncertain-write/owner death, crash reconciliation, journal gaps, identity/model/command rejection, duplicate-owner and dialog/reconnect cases retain stimulus, persisted outcome and owner drain together. They do not need additional extraction to make their authority visible.",
+      "systemReason": "Traced handleRootRequest strict fields and identity/epoch validation, immutable create acceptance and command enqueue, reconciliation without automatic replacement, and RootStore committed dispatch claims/exact retries/unknown receipts. Traced serveRootSession: prompts do not block abort; UI response is hidden before uncertain writes; settled close remains pending until clean process exit; failed exits stay unknown; confirmed close finishes queued commands without dispatch. Journal suffix gaps and persisted dialogs match unchanged tests. For the changed journey, captureRepository creates a history-free tracked snapshot with exact untracked approval; repository-wire validates offset/digest/replay and owns an unaccepted checkout; root-owner maps only closed exit-0 to done before repository-result export. RootClient separately uploads pinned bytes and requires successful closure before returning verified result pages. Splitting the tests preserves this authorization boundary rather than using transport success as export permission.",
+      "checks": [
+        "Exact git diff from cfd8136a69452f4c4460626f17cb9d4c4a1d3653; only the assigned test changes.",
+        "Complete focus read, including unchanged authority and shutdown decisions; relevant production callers read from candidate Git objects.",
+        "git diff --check passed; candidate blob resolved directly from Git.",
+        "Complete Git-byte static expectation-line multiset matches after normalizing replay helper parameter f.options to options; source reading, not this comparison, establishes judgment."
+      ],
+      "limits": [
+        "No setup, tests, builds, live auth, network or credential access performed; parent owns audited isolated gates.",
+        "Existing owned mkdtemp fixture rmSync cleanup and production unaccepted-checkout replacement were inspected only, never executed. This test still inherits process.env for fixture Git subprocesses; parent must supply audited owned HOME/config/SDK/TMPDIR and retain gate evidence. Acceptance is structural/source preservation, not independent runtime isolation certification.",
+        "Review uses the existing durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_b17a5ed7 and retained exact Git evidence; no alternate checkout or cleanup created. Parent verifies runtime agent.model."
       ]
     },
     {
@@ -14066,11 +14094,11 @@
     {
       "file": "tests/root-runtime.test.ts",
       "initialBlob": "f5ad044150b0be9a1dbca3de6dec9c72fc143463",
-      "status": "pending",
+      "status": "accepted",
       "area": "execution-tasks-questions",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_fdd5f204",
-      "judgeIds": [],
+      "judgeIds": ["task_b17a5ed7"],
       "sourceCommit": "9a568679ae641766995b7f4332b056edfd617a45",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
       "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage.",
@@ -14096,6 +14124,20 @@
         "Wisdom/values unchanged: parent owns aggregate wisdom; no worker note pile.",
         "Still uses a fake RootJobs adapter and context; real task cancellation/provider/native/SSH settlement not verified.",
         "Runtime socket lifecycle was source-reviewed (private fixture path, shutdown unlinks socket); actual socket behavior not executed."
+      ],
+      "acceptedBlob": "b193a773a6a89806c651ce451b2b0d658232724f",
+      "result": "Read the complete 230-line candidate and exact diff against its distinct primary base. withPrivateRootRuntime coherently owns root-only env overrides, question/runtime fixture, socket/token startup, assertion callback, session shutdown and env restoration. Nested finally now guarantees restoration even if shutdown rejects; retaining the owned fixture removes deletion from this lifetime. The first test consequently reads as the authority journey: list persisted question, reject wrong token, preserve pending state, reject stale version and wrong branch, accept pinned human reply, confirm delivery once under exact replay, dispatch jobs.stop, and certify settled close. That assertion journey is byte-identical. The other three tests still plainly show configured QuestionService callback/sync ownership without duplicate messages, incomplete cancellation discovery refusing closure, and typed terminal task rows resisting stale running snapshots. Their finally blocks now shut down the registered question runtime rather than only deleting its directory. This improves actual ownership/lifetime structure without obscuring authority behind a generic harness.",
+      "systemReason": "Read registerRootRuntime authentication/serialization and rootFacetRequest error distinctions, dispatchRootFacet sync-before-answer and configured QuestionService authority, close discovery plus idle/terminal checks, and extension wiring that passes the ordinary question service. QuestionService enforces owner/branch/version, persists cli reply identity and avoids duplicate onAnswered callbacks on exact replay. ParentQuestionContinuations queues and durably marks dispatch/delivery; shutdown pauses queued work, detaches the active context and removes observer ownership. Thus the tests still check the shipped question service, not a parallel acceptance implementation. Socket configuration is captured by runtime registration, shutdown closes/unlinks the fixture-owned socket, and the helper restores all four overridden env values after that attempt. The unchanged direct-dispatch tests register a question runtime even without socket startup, so emitting session_shutdown is meaningful and safe.",
+      "checks": [
+        "Exact git diff from 0b42e92c1905ed9e7828f64dc4a0aa67864df90b; only the assigned test changes.",
+        "Complete focus and relevant runtime/service/shipped-wiring source journeys read from candidate Git objects.",
+        "git diff --check passed; candidate blob resolved directly from Git.",
+        "Complete Git-byte comparison confirms all expect lines and the first test assertion journey remain byte-identical."
+      ],
+      "limits": [
+        "No setup, tests, builds, live auth, network or credential access performed; parent owns audited isolated gates.",
+        "The test owns its question/socket directory and retains it; broader process HOME/config/SDK/TMPDIR isolation remains the parent gate responsibility. Shutdown error restoration is established by source reasoning, not an executed fault injection.",
+        "Review provenance is the existing durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_b17a5ed7 and exact retained Git evidence. No source edits, cleanup, publication, delegation or wisdom note created. Parent verifies runtime agent.model."
       ]
     },
     {

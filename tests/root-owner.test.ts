@@ -459,46 +459,69 @@ test("duplicate owner invocation rejects without corrupting the existing root", 
   }
 });
 
-test("root-owned tracked snapshot upload is replay-safe and result export requires confirmed successful close", async () => {
-  const f = fixture();
-  function git(repo: string, ...args: string[]) {
-    const r = Bun.spawnSync(["git", "-C", repo, ...args], {
-      env: { ...process.env, GIT_CONFIG_NOSYSTEM: "1", GIT_CONFIG_GLOBAL: "/dev/null" },
-    });
-    if (r.exitCode) throw Error(r.stderr.toString());
-    return r.stdout.toString().trim();
+function git(repo: string, ...args: string[]) {
+  const r = Bun.spawnSync(["git", "-C", repo, ...args], {
+    env: { ...process.env, GIT_CONFIG_NOSYSTEM: "1", GIT_CONFIG_GLOBAL: "/dev/null" },
+  });
+  if (r.exitCode) throw Error(r.stderr.toString());
+  return r.stdout.toString().trim();
+}
+
+function captureTrackedFixture(dir: string) {
+  const repo = join(dir, "source");
+  mkdirSync(repo);
+  git(repo, "init", "-q");
+  writeFileSync(join(repo, "tracked"), "committed baseline\n");
+  git(repo, "add", ".");
+  git(repo, "-c", "user.name=Fixture", "-c", "user.email=fixture@invalid", "commit", "-qm", "baseline");
+  writeFileSync(join(repo, "tracked"), "current dirty tracked state\n");
+  writeFileSync(join(repo, "unapproved"), "do not transfer\n");
+  return captureRepository(repo, join(dir, "capture"));
+}
+
+async function uploadWithExactReplay(
+  manifest: ReturnType<typeof captureRepository>,
+  options: ReturnType<typeof fixture>["options"],
+) {
+  const bytes = readFileSync(manifest.bundle);
+  let checkout = "";
+  for (let offset = 0; offset < bytes.length; offset += 256 * 1024) {
+    const request: RootRequest = {
+      op: "repository-upload",
+      ...identity,
+      sessionId: "session",
+      snapshot: manifest.snapshot,
+      sha256: createHash("sha256").update(bytes).digest("hex"),
+      total: bytes.length,
+      offset,
+      data: bytes.subarray(offset, offset + 256 * 1024).toString("base64"),
+    };
+    const first = (await handleRootRequest(request, options)) as { checkout?: string };
+    expect(await handleRootRequest(request, options)).toEqual(first);
+    checkout = first.checkout ?? checkout;
   }
+  return checkout;
+}
+
+test("root-owned tracked snapshot upload is replay-safe and excludes unapproved files", async () => {
+  const f = fixture();
   try {
-    const repo = join(f.dir, "source");
-    mkdirSync(repo);
-    git(repo, "init", "-q");
-    writeFileSync(join(repo, "tracked"), "committed baseline\n");
-    git(repo, "add", ".");
-    git(repo, "-c", "user.name=Fixture", "-c", "user.email=fixture@invalid", "commit", "-qm", "baseline");
-    writeFileSync(join(repo, "tracked"), "current dirty tracked state\n");
-    writeFileSync(join(repo, "unapproved"), "do not transfer\n");
-    const manifest = captureRepository(repo, join(f.dir, "capture"));
-    const bytes = readFileSync(manifest.bundle);
-    let checkout = "";
-    for (let offset = 0; offset < bytes.length; offset += 256 * 1024) {
-      const request: RootRequest = {
-        op: "repository-upload",
-        ...identity,
-        sessionId: "session",
-        snapshot: manifest.snapshot,
-        sha256: createHash("sha256").update(bytes).digest("hex"),
-        total: bytes.length,
-        offset,
-        data: bytes.subarray(offset, offset + 256 * 1024).toString("base64"),
-      };
-      const first = (await handleRootRequest(request, f.options)) as { checkout?: string };
-      expect(await handleRootRequest(request, f.options)).toEqual(first);
-      checkout = first.checkout ?? checkout;
-    }
+    const manifest = captureTrackedFixture(f.dir);
+    const checkout = await uploadWithExactReplay(manifest, f.options);
     expect(checkout).toBe(join(f.store.path("session"), "checkout"));
     expect(readFileSync(join(checkout, "tracked"), "utf8")).toBe("current dirty tracked state\n");
     expect(git(checkout, "rev-list", "--count", "HEAD")).toBe("1");
     expect(git(checkout, "ls-files")).toBe("tracked");
+  } finally {
+    f.cleanup();
+  }
+});
+
+test("root repository result export requires confirmed successful close", async () => {
+  const f = fixture();
+  try {
+    const manifest = captureTrackedFixture(f.dir);
+    const checkout = await uploadWithExactReplay(manifest, f.options);
     const result: RootRequest = { op: "repository-result", ...identity, sessionId: "session", offset: 0 };
     await expect(handleRootRequest(result, f.options)).rejects.toThrow("confirmed successful");
     await handleRootRequest(
