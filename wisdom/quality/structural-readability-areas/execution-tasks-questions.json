@@ -3461,19 +3461,19 @@
     {
       "focus": "tests/subagent-extension.test.ts",
       "initialBlob": "508e9dfd1900ae7387c9254e224eca79e2694473",
-      "status": "accepted",
+      "status": "pending",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": "b7d7e0ad3d338b2008660797f7cc0ba806e5cf7b",
+      "acceptedBlob": null,
       "integration": "pending",
       "resume": {
-        "status": "accepted",
+        "status": "pending",
         "acceptedBlob": "b7d7e0ad3d338b2008660797f7cc0ba806e5cf7b",
         "primaryId": "task_187e7fa2",
         "primaryCommit": "bf4827bfd63ece88c460227cdd9fdbd9648a5c39",
         "judgeIds": ["task_ac0df4b4"],
-        "sourceCommit": "bf4827bfd63ece88c460227cdd9fdbd9648a5c39",
-        "state": "accepted-joined",
+        "sourceCommit": null,
+        "state": "needs-rework",
         "reason": "Read the entire candidate file and every diff hunk. bindJobHandler extracts one coherent test operation: install a success-only executeIsolated stub, capture options.jobHandler through the real registered execute tool, and restore in finally before returning it. The tests now expose their notification/shell/authorization actions without repeated binding boilerplate; clocks, controlled children, input delivery, shutdown ordering and per-test filesystem ownership remain at their scenario sites. RPC completion, print/json idle blocking, attention wakeup, racing completion deduplication, mixed bounded evidence and lifecycle persistence keep their original commands and assertions. The Live delegated-stop test still rejects unconfirmed exact-ID cancellation; the native missing-mailbox test still prevents owner creation then permits the next local attachment using the same captured handler. The real background launch followed by outer execute failure correctly remains its own inline mock, preserving sourceCallId/title/terminal-update assertions. Unchanged identity fail-closed and SSH completion/actionable/replay journeys were read as well; they are not hidden behind the new helper."
       }
     },
@@ -3869,7 +3869,7 @@
     {
       "focus": "tests/worktree-workspace.test.ts",
       "initialBlob": "e8d8638eed7fa0b4c82670cb2afc79482715a371",
-      "status": "accepted",
+      "status": "pending",
       "primary": {
         "id": "task_f4444bc8",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_f4444bc8",
@@ -3894,7 +3894,7 @@
           ]
         }
       ],
-      "acceptedBlob": "3d63bbaecbf6268d8b416714d288f17592fb0709",
+      "acceptedBlob": null,
       "integration": "primary test diff integrated; related acceptance superseded",
       "relatedAcceptance": {
         "judge": "task_6181fd8e",
@@ -3912,13 +3912,13 @@
         "typecheck/Biome/diff pass;1 inherited lint info"
       ],
       "resume": {
-        "status": "accepted",
+        "status": "pending",
         "acceptedBlob": "3d63bbaecbf6268d8b416714d288f17592fb0709",
         "primaryId": "task_d07c58c2",
         "primaryCommit": "af63383a0fb05cba759d32b21788c03f7a3cffa7",
         "judgeIds": ["task_83034949", "task_6181fd8e", "task_686802a6"],
-        "sourceCommit": "af63383a0fb05cba759d32b21788c03f7a3cffa7",
-        "state": "accepted-joined",
+        "sourceCommit": null,
+        "state": "needs-rework",
         "reason": "Read the exact candidate against primaryBase 3e7300d72c5535ebb552b6b8651944fccd7e10b3, the entire explicit entry and entire moved case module. This is an actual ownership change, not cosmetic extraction: the discoverable entry now owns a retained mkdtemp runtime, calls the existing whitelist environment helper, records the actual argv/env/cwd, starts a child with explicit preload and an owned cwd, defers all production/SDK imports to that child, and retains stdout/stderr before asserting exit. The case module separates the child-only journeys from discovery. Per-case repositories and session directories sit directly under the retained runtime; direct worktrees sit under case roots, and JobService-managed worktrees/profiles sit under the runtime. withWorktreeJobs now has one responsibility: construct and drain its TaskManager. Global environment mutation and fixture deletion have been removed. The JSONC/schema, commit-pinning/dirty-file exclusion, unsafe-ref/path/branch, cancellation/deadline, trust/continuity, async activation/failure publication, and sibling-identity journeys retain their substantive assertions."
       }
     }
@@ -4352,8 +4352,8 @@
     ]
   },
   "resumeStatus": {
-    "accepted": 105,
-    "pending": 0
+    "accepted": 103,
+    "pending": 2
   },
   "extraFiles": [
     {

@@ -6,7 +6,7 @@
     "id": "task_2604b0e4",
     "artifact": "/home/tnfssc/.bruv/worktrees/pr45-final-review-c2a2fd8a.json"
   },
-  "auxId": "task_8145901d",
+  "auxId": "task_d9ed27fc",
   "groups": [
     {
       "id": "lane-01",
@@ -169,7 +169,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "target": "06d8e9bf0696323d541b9b7d1f41b180d2c3e15f",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -330,7 +330,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "target": "06d8e9bf0696323d541b9b7d1f41b180d2c3e15f",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -510,7 +510,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "target": "06d8e9bf0696323d541b9b7d1f41b180d2c3e15f",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -929,7 +929,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "target": "06d8e9bf0696323d541b9b7d1f41b180d2c3e15f",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -1333,7 +1333,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "target": "06d8e9bf0696323d541b9b7d1f41b180d2c3e15f",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -1640,7 +1640,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "target": "06d8e9bf0696323d541b9b7d1f41b180d2c3e15f",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -1828,7 +1828,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "target": "06d8e9bf0696323d541b9b7d1f41b180d2c3e15f",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -2039,7 +2039,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "target": "06d8e9bf0696323d541b9b7d1f41b180d2c3e15f",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -2412,7 +2412,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "target": "06d8e9bf0696323d541b9b7d1f41b180d2c3e15f",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -2740,7 +2740,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "target": "06d8e9bf0696323d541b9b7d1f41b180d2c3e15f",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -3124,7 +3124,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "target": "06d8e9bf0696323d541b9b7d1f41b180d2c3e15f",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -3143,7 +3143,7 @@
       ],
       "chars": 62387,
       "lines": 1367,
-      "status": "running",
+      "status": "accepted",
       "jobId": "task_04a03f90",
       "model": "openai-codex/gpt-6.1-sol",
       "workspace": {
@@ -3156,7 +3156,7 @@
         "branch": "bruv/pr45-final-integrated-diff-lane-12-build-04a03f90",
         "preparationStatus": "ready",
         "setupTaskId": "task_6d039270",
-        "setupStatus": "running",
+        "setupStatus": "failed",
         "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
       },
       "repairHistory": [
@@ -3590,7 +3590,126 @@
         ],
         "reason": "Fresh actual integrated-code judgment required after assigned/context source bytes changed; prior quality and rejection evidence retained, never promoted by hashes."
       },
-      "candidateOverride": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06"
+      "candidateOverride": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+      "result": {
+        "lane": "lane-12",
+        "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
+        "candidate": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "verdict": "ACCEPT",
+        "diffReadPaths": [
+          "tests/setup-native-release-gate.test.ts",
+          "tests/smoke-script.test.ts",
+          "tests/tooling-fixtures.test.ts",
+          "tests/update-release-shape.md",
+          "tests/update-release-shape.test.ts",
+          "tests/update-self-fixture.test.ts",
+          "tests/update-self-fixture.ts"
+        ],
+        "contextReadPaths": [
+          "tests/helpers.ts",
+          "tests/update.test.ts",
+          "tests/compiled-bun-fixture.ts",
+          "src/update.ts",
+          "scripts/setup-native-release-gate.sh",
+          "scripts/smoke.sh",
+          "scripts/network-none-fixture.ts",
+          "scripts/loopback-parent-fixture.ts",
+          "tests/fixtures/remote-e2e/placement-parent.ts",
+          "scripts/claude-compat-launcher.ts",
+          "scripts/bruv-claude-compat.sh",
+          "scripts/ci.sh",
+          ".github/workflows/ci.yml",
+          ".github/workflows/release.yml",
+          "tests/connector-update.test.ts",
+          "scripts/remote-e2e.ts",
+          "scripts/remote-pty-e2e.ts",
+          "scripts/remote-capability-pty-e2e.ts",
+          "scripts/remote-e2e.sh"
+        ],
+        "sourceBlobs": {
+          "tests/setup-native-release-gate.test.ts": "7526d7a19167310599a6f540c64027bd30cf760b",
+          "tests/smoke-script.test.ts": "d82e1ba631ca80b259fdfceb4db0bd2399079b02",
+          "tests/tooling-fixtures.test.ts": "d3d11812d352a8ce3b81ed562b7f07231d85c610",
+          "tests/update-release-shape.md": "b117a5a3499c9169edad37d9514810ebded9b6b1",
+          "tests/update-release-shape.test.ts": "2803b32f5712f44343edb649aaffbbce2fe29921",
+          "tests/update-self-fixture.test.ts": "29f15040214d714a4e8dda774d0aa1539852357c",
+          "tests/update-self-fixture.ts": "a6959fca4cf82247d0f82207b4a0a69f28b1c87d"
+        },
+        "sourceJourneys": [
+          {
+            "paths": [
+              "tests/update-self-fixture.ts",
+              "tests/update-self-fixture.test.ts",
+              "tests/update.test.ts",
+              "tests/helpers.ts",
+              "src/update.ts",
+              "tests/compiled-bun-fixture.ts"
+            ],
+            "readingReason": "The transport is now a small importable closed release builder; import.meta.main keeps executable authority separate from transport unit tests. Metadata, both payloads and named SHA256 responses share one map. The runtime suite and the repaired existing compiled caller both compile absolute source argv from owned fixture cwd and pass ownedFixtureEnv at build, execution and final probe boundaries. The caller still checks true $bunfs namespace versus lookalikes, staged shell probes, paired installed bytes, runner immutability and staging removal. Its retained integration roots are not registered in the unit-test cleanup set.",
+            "systemReason": "Fresh source reading confirms the previously contradictory inherited compile/probe environments in tests/update.test.ts are repaired, not merely the new suite. updateBruv retains real compiled detection and default staged execution. Only transport is replaced. The reusable real pair is explicitly selected or read from dist, hashed before/after, copied into a private installation and checked through both installed product probes; source execution and wrong staged versions leave the installation untouched."
+          },
+          {
+            "paths": [
+              "tests/update-release-shape.test.ts",
+              "tests/update-release-shape.md",
+              "src/update.ts",
+              "scripts/claude-compat-launcher.ts",
+              "scripts/bruv-claude-compat.sh"
+            ],
+            "readingReason": "The old path-only constant probe and fixture-owned tar preflight are replaced by staged byte inspection and the actual emitted connector launcher. Helpers separate installed siblings, release metadata/payloads, unchanged assertions and staging assertions without a large scenario context bag. The documentation explicitly distinguishes synthetic target probes from real platform execution.",
+            "systemReason": "Tests follow the actual updater order: all four official asset authorities before download, named hashes, normal --version and connector --bruv-version with the explicit staged normal sibling, optional macOS helper, ownership checks and publication. Checksum-valid malformed/wrong-product/wrong-version payloads now reach updater staging instead of only a fixture preflight. Concurrent replacement tests cover either sibling and preserve the other. No ELF/Mach-O or Android execution claim is made."
+          },
+          {
+            "paths": [
+              "tests/smoke-script.test.ts",
+              "scripts/smoke.sh",
+              "scripts/ci.sh",
+              ".github/workflows/ci.yml",
+              ".github/workflows/release.yml"
+            ],
+            "readingReason": "Small readable shell fixtures and independent bad-probe cases replace a long sequential mutation test. The expected probe trace agrees with the actual script, including its version and help reads before version comparison. Build/reuse and invalid argument cases visibly share the same pair requirements.",
+            "systemReason": "The outer test invocation has an owned HOME/config/SDK and TMPDIR. The real smoke script uses env -i and PATH=/nonexistent for copied paired probes; the stand-ins assert those environment boundaries. Each failure starts with a healthy pair, preventing an earlier failure from masking later assertions. Only the smoke-owned temporary pair is cleaned; the surrounding test fixture remains. The shared CI runner builds before complete tests and invokes smoke with --reuse-build; workflows hand off to that runner."
+          },
+          {
+            "paths": [
+              "tests/setup-native-release-gate.test.ts",
+              "scripts/setup-native-release-gate.sh",
+              "tests/helpers.ts"
+            ],
+            "readingReason": "The fixture keeps command-specific stubs and explicit failure statuses next to the gate assertions. A root containing spaces plus JSON argv logging makes command boundary behavior readable. There is no broad abstraction hiding which phase ran.",
+            "systemReason": "Real setup control flow and the real Node SDK API probe are used with fake fetch/download/checksum/extraction under an owned environment. The expected SHA256 input, exact pinned SDK URL, selected browser, symlink and delayed GITHUB_ENV handoff match source. Fetch, transport, checksum, extraction, API and zero/multiple-browser failures cannot publish a partial handoff. This is orchestration coverage, not evidence of real downloads or device/auth readiness."
+          },
+          {
+            "paths": [
+              "tests/tooling-fixtures.test.ts",
+              "scripts/network-none-fixture.ts",
+              "scripts/loopback-parent-fixture.ts",
+              "tests/fixtures/remote-e2e/placement-parent.ts",
+              "scripts/remote-e2e.ts",
+              "scripts/remote-pty-e2e.ts",
+              "scripts/remote-capability-pty-e2e.ts",
+              "scripts/remote-e2e.sh",
+              "tests/helpers.ts"
+            ],
+            "readingReason": "The tooling suite retains its roots, limits cleanup testing to a scratch child, passes explicit environment/cwd to RPC children, uses a deterministic partial-line handshake, locates semantic events rather than relying on indexes, and registers close observation before killing its child. The loopback response assertions agree with placementReply and SSE framing.",
+            "systemReason": "fixtureRpc forwards caller-owned env directly, denies trust confirmations and buffers newline-delimited events. The changed unit caller and all three related script callers supply the new env contract. The shell handoff sets HOME to FIXTURE_DROP_DIR/home, the same HOME constructed by ownedFixtureEnv, so RPC state/placement output and parent state readers remain co-located. The unit network fixture never starts Docker; its explicit env override runs only the local test process, and cleanup affects only its owned scratch child."
+          }
+        ],
+        "integrationReadingReason": "ACCEPT for this bounded lane. Complete assigned baseline-to-candidate diff, including deletions, was read anew from Git source. The integrated changes reduce reading burden by separating private updater transport from executable authority, making release failures reach the actual updater, and giving smoke/RPC failures independent deterministic setup. Related authority and lifetime paths fit: owned environments cover the repaired older private-runner caller as well as the new suite, staged connector authority is the normal sibling rather than ambient override/PATH, and CI builds the reusable pair before the root tests. No blocking behavior contradiction or oversized abstraction was found in the reviewed lane. This is not whole-repository acceptance.",
+        "objections": [],
+        "limits": [
+          "READ-ONLY source review; no tests, builds, setup, installs, formatter, auth/device access, credential inspection, recovery work, deletion/cleanup commands or unsupported Pi preparation were run. No delegation. The only write is this untracked review result.",
+          "Durable provenance: existing worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_04a03f90; HEAD equals the exact candidate. Source was read from exact baseline/candidate Git objects, not prior judgment artifacts or test output. No /tmp code checkout was created; candidate and worktree are preserved.",
+          "All seven assigned diffs were fully read (actual concatenated diff 64650 characters); no assigned unread gaps. Context reading was bounded: tests/update.test.ts fixture/cleanup setup and complete private compiled integration block; connector-update.test.ts compilation/environment and updater-entry assertions; remote script environment/RPC construction; workflow CI handoff snippets. Full current source outside assigned scope was neither required nor attested.",
+          "Production updater, smoke/setup scripts, fixture helper, launcher and loopback/placement helpers were source-inspected. Existing cleanup of owned fixture/staging paths and shell traps was inspected only, never executed. The release-shape suite retains its pre-existing owned-root afterAll cleanup; no inherited HOME/config/SDK cleanup was performed.",
+          "Runtime success, real published binary boot on any target, actual pinned download verification, live auth/device functionality, Docker/SSH execution and repository-wide fit remain unverified here. The synthetic/real-pair distinction is respected. No prior coverage counts, summaries or green tests were used as acceptance evidence."
+        ]
+      },
+      "scopedBlobComparison": {
+        "target": "06d8e9bf0696323d541b9b7d1f41b180d2c3e15f",
+        "unchanged": true,
+        "contextChangedPaths": []
+      }
     },
     {
       "id": "lane-13",
@@ -3601,7 +3720,7 @@
       ],
       "chars": 53532,
       "lines": 1156,
-      "status": "running",
+      "status": "accepted",
       "jobId": "task_301c1339",
       "model": "openai-codex/gpt-6.1-sol",
       "workspace": {
@@ -3618,7 +3737,7 @@
         "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
       },
       "scopedBlobComparison": {
-        "target": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+        "target": "06d8e9bf0696323d541b9b7d1f41b180d2c3e15f",
         "unchanged": true,
         "contextChangedPaths": []
       },
@@ -3733,7 +3852,92 @@
         "priorObjections": [],
         "reason": "Fresh actual integrated-code judgment required after assigned/context source bytes changed; prior quality and rejection evidence retained, never promoted by hashes."
       },
-      "candidateOverride": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06"
+      "candidateOverride": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+      "result": {
+        "lane": "lane-13",
+        "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
+        "candidate": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "verdict": "ACCEPT",
+        "diffReadPaths": [
+          "tests/update.test.ts",
+          "tests/verify-update.test.ts"
+        ],
+        "contextReadPaths": [
+          "src/update.ts",
+          "src/cli.ts",
+          "tests/helpers.ts",
+          "tests/update-self-fixture.ts",
+          "tests/compiled-bun-fixture.ts",
+          "scripts/verify-update.ts",
+          "scripts/verify-update-probe.ts",
+          "scripts/bruv-claude-compat.sh",
+          "tests/update-v0.16.3-fixture.ts"
+        ],
+        "sourceBlobs": {
+          "tests/update.test.ts": "42694f0b853d3aa57106655a102cca7df44d4f38",
+          "tests/verify-update.test.ts": "9d3d678072b9e5994e3653c91e05f0d31cc8daa2"
+        },
+        "sourceJourneys": [
+          {
+            "paths": [
+              "tests/update.test.ts",
+              "src/update.ts"
+            ],
+            "readingReason": "The typed ReleaseOptions separates normal and connector artifact faults and gives the concurrency hook an explicit beforeBruvChecksum lifetime. Followed fixture metadata/fetch into fetchStablePair and stageVerifiedExecutable: canonical asset names and URLs match; checksums still hash the expected payload rather than the intentionally truncated response. The foreign-URL case now supplies the complete connector pair and asserts the authority-specific error, avoiding rejection for an unrelated missing asset.",
+            "systemReason": "Both artifacts must be authorized and checksummed before installed files change. Moved integrity tests retain those protections and the nested per-artifact options remove the former any/flat connector option bag without adding another framework."
+          },
+          {
+            "paths": [
+              "tests/update.test.ts",
+              "src/update.ts",
+              "scripts/bruv-claude-compat.sh",
+              "src/cli.ts"
+            ],
+            "readingReason": "Followed current/newer and same-version repair tests through inspectInstalledPair, installedConnectorMatches and pairProbe. Installed product probes strip inherited launcher overrides; staged connector probes receive the staged normal path. The launcher enters normal bruv claude-compat, and the unchanged CLI shifts claude-compat update into the same update handler. Existing --version fallback stays confined to installed connectors; staged identity is --bruv-version.",
+            "systemReason": "Check-only and repair behavior, honest connector display identity, and refusal to downgrade a newer broken pair remain consistent across public aliases and candidate verification. Moving tests into release selection and staged verification groups follows the actual ownership boundaries rather than creating competing helpers."
+          },
+          {
+            "paths": [
+              "tests/update.test.ts",
+              "src/update.ts"
+            ],
+            "readingReason": "Read the new ordered event assertion against installReleasePair: metadata, onDownload, both binary/checksum downloads, normal/connector product probes, both original backups, identity recheck, connector-first rename, normal rename. The rename callback reads both backups before publication. Followed the retained first/second replacement failure, concurrent file change and rollback-failure tests through replaced tracking and keepRecovery cleanup.",
+            "systemReason": "The explicit journey explains why the two renames are not a transaction and why backups survive failed rollback. Test regrouping preserves the old failure cases while the new ordering test makes publication authority and lifetime observable without replacing the updater implementation."
+          },
+          {
+            "paths": [
+              "tests/update.test.ts",
+              "tests/helpers.ts",
+              "tests/compiled-bun-fixture.ts",
+              "tests/update-self-fixture.ts",
+              "src/update.ts"
+            ],
+            "readingReason": "The two private compiled fixtures now own retained mkdtemp roots outside dirs cleanup. ownedFixtureEnv creates separate HOME/XDG/SDK/Bun/temp/hooks locations with no inherited credential environment; absolute source entrypoints permit an owned cwd. The self fixture requires explicit target and payload paths, mocks only a closed official release transport, retains real compiled detection/product probes, and compares updater-runner bytes after replacing the distinct bruv target.",
+            "systemReason": "This is a concrete isolation improvement, not a generic context bag. Build, runner and final version-check subprocesses use explicit argv/env/cwd. The PATH=/nonexistent runner remains coherent because staged connector probing supplies the absolute normal override, so its shell payload need not resolve dirname."
+          },
+          {
+            "paths": [
+              "tests/verify-update.test.ts",
+              "scripts/verify-update.ts",
+              "scripts/verify-update-probe.ts",
+              "src/update.ts",
+              "tests/update-v0.16.3-fixture.ts",
+              "scripts/bruv-claude-compat.sh"
+            ],
+            "readingReason": "Followed named normal/connector fixture artifacts and named updater run options into the verifier CLI. readCandidate checks both staged checksums before allocating the gate root; the verifier realpaths its install target before injecting normal-rename failure, making aliased TMPDIR match the updater realpath. Mismatched product output fails before publication and the structured probe reports status/args/stderr. Both failure and success finally remove only the verifier-owned root, which explains the new empty TMPDIR assertions. Frozen staging probes --version, for which the launcher has a stage-only legacy product label; current staging probes --bruv-version and installed --version returns the display identity.",
+            "systemReason": "The current/frozen gate selection is clearer than a fixture lifetime boolean and preserves the distinct migration handshake. Alias assertions exercise cleanup ownership, not just printed success text. The frozen source hash assertion is fixture integrity only; it was not used as acceptance evidence."
+          }
+        ],
+        "integrationReadingReason": "ACCEPT for this bounded lane. The complete baseline-to-candidate diffs, including deletions, show meaningful organization around authority, installed identity, integrity, staging and publication rather than abandoned behavior. Actual updater, verifier, launcher, public CLI and fixture context fit the reorganized tests. Typed per-artifact faults and named gate options lower local reading burden; retained owned compiled roots and explicit child environment/cwd improve system ownership. No real new cross-file contradiction or oversized abstraction was found. This is a source judgment, not a green-test claim or whole-repository sign-off.",
+        "objections": [],
+        "limits": [
+          "All assigned diff paths were fully read; no assigned unread gaps. Related context was read where exercised, not every file in the repository; frozen updater context review covered its staged product probes, backup/publication and rollback lifetime, not its entire source.",
+          "Read-only source review except this explicitly requested untracked result. No tests, builds, setup, installs, formatting, auth/device access, secrets, recovery work, deletion/cleanup commands, source edits, delegation or Pi preparation were performed. Candidate remains unchanged in the durable provided worktree.",
+          "Runtime and native/macOS live-helper behavior remain unverified. Existing verifier tests still use in-process Bun.build, inherit process.env for gate launch, and clean provably owned temporary fixture roots; these effects were inspected but never run. Acceptance does not authorize executing them under inherited HOME/config/SDK.",
+          "No earlier judgment artifacts, coverage counts, summaries or green tests were used. Candidate blob IDs identify reviewed bytes only, not acceptance evidence.",
+          "Safety for ALL descendants: NO sudo, recovery investigation, user secrets, shell deletion/cleanup commands, inherited HOME/config/SDK cleanup, nested shell traps, destructive git, or user-data mutation. User already recovered data and requested no recovery work. Tests must use explicit process argv/env and owned fs.mkdtemp fixture HOME/config/SDK; retain them, do not delete. Review filesystem/network effects BEFORE tests/setup. Existing test-code cleanup of provably owned temporary paths may be inspected but NEVER run a shell trap or inherited HOME removal. Need live auth/device? Report unverified, don't access credentials. Propagate these constraints verbatim. Independent code/review agents get durable worktrees, not /tmp code checkouts. Keep existing worktrees and candidate evidence. Test/source fixtures may use /tmp, but document durable provenance."
+        ]
+      }
     },
     {
       "id": "lane-14",
@@ -3893,7 +4097,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "target": "06d8e9bf0696323d541b9b7d1f41b180d2c3e15f",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -4071,7 +4275,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "target": "06d8e9bf0696323d541b9b7d1f41b180d2c3e15f",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -4258,7 +4462,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "target": "06d8e9bf0696323d541b9b7d1f41b180d2c3e15f",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -4447,7 +4651,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "target": "06d8e9bf0696323d541b9b7d1f41b180d2c3e15f",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -4622,7 +4826,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "target": "06d8e9bf0696323d541b9b7d1f41b180d2c3e15f",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -4787,7 +4991,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "target": "06d8e9bf0696323d541b9b7d1f41b180d2c3e15f",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -4932,7 +5136,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "target": "06d8e9bf0696323d541b9b7d1f41b180d2c3e15f",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -5081,7 +5285,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "target": "06d8e9bf0696323d541b9b7d1f41b180d2c3e15f",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -5240,7 +5444,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "target": "06d8e9bf0696323d541b9b7d1f41b180d2c3e15f",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -5414,7 +5618,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "target": "06d8e9bf0696323d541b9b7d1f41b180d2c3e15f",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -5452,7 +5656,7 @@
         "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
       },
       "scopedBlobComparison": {
-        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "target": "06d8e9bf0696323d541b9b7d1f41b180d2c3e15f",
         "unchanged": true,
         "contextChangedPaths": []
       },
@@ -5797,18 +6001,18 @@
       "chars": 96387,
       "lines": 2214,
       "status": "rejected",
-      "jobId": "task_9d2c74ef",
+      "jobId": "task_e45e2ede",
       "model": "openai-codex/gpt-6.1-sol",
       "workspace": {
         "kind": "worktree",
-        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_9d2c74ef",
-        "worktreePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_9d2c74ef",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_e45e2ede",
+        "worktreePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_e45e2ede",
         "sourcePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
-        "baseRef": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
-        "baseOid": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
-        "branch": "bruv/pr45-final-integrated-diff-lane-25-execu-9d2c74ef",
+        "baseRef": "06d8e9bf0696323d541b9b7d1f41b180d2c3e15f",
+        "baseOid": "06d8e9bf0696323d541b9b7d1f41b180d2c3e15f",
+        "branch": "bruv/pr45-final-integrated-diff-lane-25-execu-e45e2ede",
         "preparationStatus": "ready",
-        "setupTaskId": "task_1332bc86",
+        "setupTaskId": "task_c539904d",
         "setupStatus": "failed",
         "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
       },
@@ -5986,28 +6190,212 @@
           },
           "candidate": "af3602cf3d5b62641450c7cc24bb0350334b6652",
           "status": "rejected"
+        },
+        {
+          "jobId": "task_9d2c74ef",
+          "model": "openai-codex/gpt-6.1-sol",
+          "workspace": {
+            "kind": "worktree",
+            "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_9d2c74ef",
+            "worktreePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_9d2c74ef",
+            "sourcePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
+            "baseRef": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+            "baseOid": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+            "branch": "bruv/pr45-final-integrated-diff-lane-25-execu-9d2c74ef",
+            "preparationStatus": "ready",
+            "setupTaskId": "task_1332bc86",
+            "setupStatus": "failed",
+            "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+          },
+          "result": {
+            "lane": "lane-25",
+            "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
+            "candidate": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+            "verdict": "REJECT",
+            "diffReadPaths": [
+              "tests/questions-sdk.test.ts",
+              "tests/questions-tui.test.ts",
+              "tests/questions.test.ts",
+              "tests/resume-safeguards.test.ts",
+              "tests/resume-stream-cancellation.test.ts",
+              "tests/root-owner.test.ts",
+              "tests/root-runtime.test.ts",
+              "tests/subagent-extension.test.ts",
+              "tests/subagent-settings-tui.test.ts",
+              "tests/subagent-settings-ui.test.ts",
+              "tests/task-manager.test.ts"
+            ],
+            "contextReadPaths": [
+              "tests/helpers.ts",
+              "tests/owned-process-suite.ts",
+              "tests/questions-sdk.test.ts",
+              "tests/questions.test.ts",
+              "tests/root-owner.test.ts",
+              "tests/root-runtime.test.ts",
+              "tests/subagent-extension.test.ts",
+              "tests/resume-stream-cancellation.test.ts",
+              "src/tasks/task-manager.ts",
+              "src/tasks/job-service.ts",
+              "src/tasks/worktree-workspace.ts",
+              "src/delegation-environment.ts",
+              "src/tasks/resume-safeguards.ts",
+              "src/questions/service.ts",
+              "src/questions/runtime.ts",
+              "src/questions/extension.ts",
+              "src/remote/root-owner.ts",
+              "src/remote/root-store.ts",
+              "src/remote/root-runtime.ts",
+              "src/remote/repository.ts",
+              "src/agent/extension.ts",
+              "src/remote/job-events.ts",
+              "src/ui/subagent-settings.ts",
+              "src/tasks/subagent-settings-ui.ts"
+            ],
+            "sourceBlobs": {
+              "tests/questions-sdk.test.ts": "4443dbeb51d2ec3601ad528e1165d7a0c86c768c",
+              "tests/questions-tui.test.ts": "eb88eb203ec9b75efb1e1fc61e5569c0092800f5",
+              "tests/questions.test.ts": "6baf85f21deab6c3d694f54aeba957d665bb3391",
+              "tests/resume-safeguards.test.ts": "54ab26258f93b8600e178f3f62dfbce8e0311334",
+              "tests/resume-stream-cancellation.test.ts": "c04171a8a72b1028cdc05a21e6bbbc87f474b3a1",
+              "tests/root-owner.test.ts": "5359344120d28666a3cecfea67d9419de954b890",
+              "tests/root-runtime.test.ts": "b193a773a6a89806c651ce451b2b0d658232724f",
+              "tests/subagent-extension.test.ts": "b7d7e0ad3d338b2008660797f7cc0ba806e5cf7b",
+              "tests/subagent-settings-tui.test.ts": "83ffc1f0d8cbde59cf476a0edf071167bd117f14",
+              "tests/subagent-settings-ui.test.ts": "e4c8cfb70441fc19b8fb347622a48e7554591cff",
+              "tests/task-manager.test.ts": "8e4b6a473ae1c01a29dee9b52ecb9436f297075e"
+            },
+            "sourceJourneys": [
+              {
+                "paths": [
+                  "tests/task-manager.test.ts:635-779",
+                  "tests/owned-process-suite.ts",
+                  "tests/helpers.ts",
+                  "src/tasks/task-manager.ts",
+                  "src/tasks/job-service.ts:1015-1068",
+                  "src/tasks/worktree-workspace.ts:193-198"
+                ],
+                "readingReason": "The new activation tests now use their own mkdtemp/ownedFixtureEnv plus process.execPath -e, not commandLaunch or login shells. The suite wrapper launches the whole file (no test-name filter) in an allowlisted host and owns a non-login SHELL adapter for setupShell. Manager public snapshots are explicitly enumerated rather than copied from internal ManagedTask.",
+                "systemReason": "prepareAgent owns the timer, cancellation controller, promise and identity. activatePreparedAgent mutates that same record; #startDeadline does not replace an existing deadline. The real worktree caller observes the preparation signal and activates the reservation, not a second task. The tests exercise waiter identity, notification policy, lifecycle event count, deadline preservation and absence of public cancellation authority. The prior manager-process objection is resolved by actual candidate code."
+              },
+              {
+                "paths": [
+                  "tests/questions.test.ts",
+                  "src/questions/service.ts"
+                ],
+                "readingReason": "Splitting the combined scenarios exposes separate ledger/idempotence, optional-resolution, sibling-dedup, lock-navigation, race and retention responsibilities. All removed assertions are retained in the corresponding new scenarios; race assertions additionally compare persisted winner/version.",
+                "systemReason": "Service mutate revalidates navigation inside the locked change callback, answer deduplicates matching prior reply/version before stale checks, and ask enforces pending/total limits without deleting history. Agent handle cannot supply a UI answer. Fixtures keep branch ancestry explicit, so the split does not confuse continuation ownership with sibling ownership."
+              },
+              {
+                "paths": [
+                  "tests/questions-sdk.test.ts",
+                  "tests/questions-tui.test.ts",
+                  "src/questions/extension.ts",
+                  "src/questions/runtime.ts",
+                  "src/questions/service.ts"
+                ],
+                "readingReason": "SDK extraction isolates only the fake provider stream; the real SessionManager/resource loader, command registration and persistence remain in the test. TUI helper owns process environment, socket, composer handshake and session restart without becoming a generic context bag.",
+                "systemReason": "Runtime claims dispatch durably before sending one hidden followUp answer message and then records delivery. The SDK assertions still require one new context containing question/reply IDs and no replay on repeated command. The TUI restart keeps session-file and server ownership intact while verifying persisted waiting/cancelled status and abbreviated IDs. Neither path treats answer saving as resuming a child stack."
+              },
+              {
+                "paths": [
+                  "tests/resume-safeguards.test.ts",
+                  "src/tasks/resume-safeguards.ts",
+                  "tests/resume-stream-cancellation.test.ts"
+                ],
+                "readingReason": "Typed callback capture replaces optional Map lookups with the actual three lifecycle callbacks. Shared-root tests make adapter reference ownership legible; the stream test separates fixture construction, active cancellation and explicit child-process handling.",
+                "systemReason": "Picker registration counts roots, returns an idempotent disposer and restores only its own still-installed methods; foreign wrappers retain callable captured closures. Shutdown now runs in finally. Stream fixtures run process.execPath with explicit HOME/config/SDK/temp paths under retained mkdtemp, rather than helpers.run inheritance; list/listAll and late/active modes still exercise the same external SessionManager API."
+              },
+              {
+                "paths": [
+                  "tests/root-owner.test.ts:198-301",
+                  "tests/root-runtime.test.ts",
+                  "src/remote/root-owner.ts:380-558",
+                  "src/remote/root-store.ts",
+                  "src/remote/root-runtime.ts"
+                ],
+                "readingReason": "New close tests distinguish RPC end from acknowledged clean exit and explicitly control the fake process exit promise. The IPC helper scopes only socket/token/root-role environment and restores it even if shutdown throws.",
+                "systemReason": "The runtime close facet requires complete cancellation discovery, terminal descendants and idle/no pending messages. The owner installs pending-close evidence before end, waits for clean exit, and only then drains queued receipts without dispatch. Nonzero exit remains unknown; exact command replay returns the prior receipt. Prompt acknowledgement is deliberately nonblocking so abort can dispatch. These tests agree across owner/store/runtime rather than asserting contradictory notions of closed."
+              },
+              {
+                "paths": [
+                  "tests/root-owner.test.ts:462-550",
+                  "src/remote/repository.ts",
+                  "src/remote/root-owner.ts"
+                ],
+                "readingReason": "captureTrackedFixture and uploadWithExactReplay reduce repeated upload scaffolding and keep dirty-tracked/excluded-untracked and closed-success export gates separate. Baseline and candidate result assertions still reject accepted, unknown and failed-close states.",
+                "systemReason": "This journey also reveals the remaining isolation contradiction: the extracted Git fixture still spreads process.env, and captureRepository also launches Git from the ambient host. A temporary repository is not a temporary process environment. Unlike the repaired task suite, this file has no owned-process boundary; see objection."
+              },
+              {
+                "paths": [
+                  "tests/subagent-extension.test.ts",
+                  "src/agent/extension.ts:643-695",
+                  "src/agent/extension.ts:707-824",
+                  "src/agent/extension.ts:857-942",
+                  "src/agent/extension.ts:1034-1040",
+                  "src/remote/job-events.ts"
+                ],
+                "readingReason": "bindJobHandler eliminates repeated execution-result mocks while restoring the stub in its own finally, before callers exercise real job handling. New attachment tests drive session_start/shutdown through the real registered callbacks, not a synthesized notification reducer.",
+                "systemReason": "Remote claim rows are acknowledged only after dispatch; failures call failed and retain replay. Shutdown unsubscribes and clears the volatile source, so publishing to the old captured source cannot contaminate reattachment. Native configuration without durable delivery fails before manager ownership, and close clears native-session restriction for the next local attachment."
+              },
+              {
+                "paths": [
+                  "tests/subagent-settings-ui.test.ts",
+                  "tests/subagent-settings-tui.test.ts",
+                  "src/ui/subagent-settings.ts",
+                  "src/tasks/subagent-settings-ui.ts",
+                  "tests/helpers.ts"
+                ],
+                "readingReason": "saveFromOverview asserts the screen and selected Save row rather than encoding an unexplained count of downs. Draft/reopen/page-navigation tests identify public state transitions. TUI lifetime is owned locally with an explicit env and direct multi-argument tmux execution.",
+                "systemReason": "The panel clones profiles, restores the initiating row when leaving a picker, clears search on overview return, selects draft values on reopening and clamps page movement to the active list. The command persists only a returned Save result. UI and TUI expectations agree about selection and discard; helpers.run receives an explicit env rather than the default ambient one."
+              }
+            ],
+            "integrationReadingReason": "Fresh review of every assigned baseline-to-candidate addition and deletion, not prior judgments or test counts. Overall the local helper extractions improve intrinsic reading: named lifecycle owners replace repeated mocks and split combined scenarios without losing baseline assertions. The actual manager activation repair and whole-file process wrapper are coherent with production reservation ownership. Functional journeys across questions, root closure, notification attachment and settings fit the candidate implementation. However integration is not acceptable under the required process-isolation contract: the newly split root repository fixtures retain ambient Git process authority while the task-manager suite now explicitly excludes it. This is a concrete cross-file ownership inconsistency, not a style objection or a revival of the repaired activation objection.",
+            "objections": [
+              {
+                "paths": [
+                  "tests/root-owner.test.ts:462-479",
+                  "tests/root-owner.test.ts:506-550",
+                  "tests/root-owner.test.ts:73-83",
+                  "src/remote/repository.ts:25-43",
+                  "tests/owned-process-suite.ts",
+                  "tests/helpers.ts:5-40"
+                ],
+                "readingProblem": "The extracted git helper passes {...process.env, GIT_CONFIG_NOSYSTEM: \"1\", GIT_CONFIG_GLOBAL: \"/dev/null\"}; both now-separate repository tests call it through captureTrackedFixture, including git init/add/commit. fixture() owns only a repository/ledger directory, not HOME/config/SDK/temp or an allowlisted test host, and it removes the fixture on completion. Setting the two Git config flags is not an ownership boundary: ambient HOME, SDK/provider state and Git environment such as GIT_TEMPLATE_DIR or GIT_CONFIG_COUNT are retained (Git init/commit can therefore consume inherited templates/config/hooks). captureRepository itself launches further Git children using a scrubber that intentionally preserves ordinary ambient environment. This file does not enter ownedProcessSuite, unlike tests/task-manager.test.ts. The refactor has split one process-backed scenario into two without establishing the required descendant owner.",
+                "requiredResult": "Put these real-Git scenarios (including captureRepository/upload/export descendants) behind a retained fs.mkdtemp-owned allowlisted process host, with explicit HOME/config/SDK/temp and empty owned Git hooks, using the existing whole-file ownedProcessSuite pattern or an equally explicit dedicated process entry. Keep explicit non-shell argv, retain fixture/evidence directories, and retain exact-replay, dirty-tracked/excluded-untracked and confirmed-successful-close assertions. Merely changing the direct git helper env is insufficient if production repository children still inherit the unisolated test host. Do not run the current ambient-host scenarios to establish safety."
+              }
+            ],
+            "limits": [
+              "Lane-only source judgment; no whole-repository sign-off. All eleven assigned diffs were fully read including deletions; no unread assigned diff gaps. Complete additions/deletions were read in bounded unified-zero slices (SDK also in unified-three), with actual candidate/baseline context as needed; context paths denote focused real-source excerpts, not a claim to have read every line of each production file.",
+              "No tests, setup, builds, installs, formatting, auth/device flows, provider requests or source edits were performed. Existing owned-path cleanup was inspected only, never executed. External installed Pi stream behavior and real TUI/provider execution remain unverified; no unsupported preparation was retried or bypassed.",
+              "Candidate source was read by exact Git object in the durable existing worktree; the only intentional write is this untracked review result. Test fixtures, when run by an authorized owner, may reside under /tmp while source remains in a durable worktree. Existing worktrees and candidate evidence are preserved.",
+              "Safety for ALL descendants: NO sudo, recovery investigation, user secrets, shell deletion/cleanup commands, inherited HOME/config/SDK cleanup, nested shell traps, destructive git, or user-data mutation. User already recovered data and requested no recovery work. Tests must use explicit process argv/env and owned fs.mkdtemp fixture HOME/config/SDK; retain them, do not delete. Review filesystem/network effects BEFORE tests/setup. Existing test-code cleanup of provably owned temporary paths may be inspected but NEVER run a shell trap or inherited HOME removal. Need live auth/device? Report unverified, don't access credentials. Propagate these constraints verbatim. Independent code/review agents get durable worktrees, not /tmp code checkouts. Keep existing worktrees and candidate evidence. Test/source fixtures may use /tmp, but document durable provenance."
+            ]
+          },
+          "candidate": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+          "status": "rejected"
         }
       ],
       "repairReason": {
         "changedSourcePaths": [
-          "tests/task-manager.test.ts",
-          "tests/owned-process-suite.ts"
+          "tests/root-owner.test.ts"
         ],
         "priorObjections": [
           {
             "paths": [
-              "tests/task-manager.test.ts:14-22",
-              "tests/task-manager.test.ts:645-650",
-              "tests/task-manager.test.ts:678-681",
-              "src/tasks/task-manager.ts:350-357"
+              "tests/root-owner.test.ts:462-479",
+              "tests/root-owner.test.ts:506-550",
+              "tests/root-owner.test.ts:73-83",
+              "src/remote/repository.ts:25-43",
+              "tests/owned-process-suite.ts",
+              "tests/helpers.ts:5-40"
             ],
-            "readingProblem": "Both newly added process-backed activation tests spread commandLaunch(\"sleep ...\"), whose argv is /bin/sh -lc and whose env is absent. The actual manager spawn therefore passes scrubT3BridgeEnvironment(process.env), retaining inherited HOME/config/SDK and login-shell startup access. There is no owned mkdtemp environment boundary here. This is a concrete missing test-process owner, contrary to the required safety/isolation contract, even though the functional task assertions themselves match the production refactor.",
-            "requiredResult": "Give these process-backed additions an owned fs.mkdtemp fixture with explicit HOME/config/SDK/temp and allowlisted env; pass that env to activatePreparedAgent and use non-login explicit argv (or an owned deterministic process script) rather than inherited shell startup. Retain fixture directories. Keep the deadline/identity/waiter assertions; do not run the current unisolated tests to establish safety."
+            "readingProblem": "The extracted git helper passes {...process.env, GIT_CONFIG_NOSYSTEM: \"1\", GIT_CONFIG_GLOBAL: \"/dev/null\"}; both now-separate repository tests call it through captureTrackedFixture, including git init/add/commit. fixture() owns only a repository/ledger directory, not HOME/config/SDK/temp or an allowlisted test host, and it removes the fixture on completion. Setting the two Git config flags is not an ownership boundary: ambient HOME, SDK/provider state and Git environment such as GIT_TEMPLATE_DIR or GIT_CONFIG_COUNT are retained (Git init/commit can therefore consume inherited templates/config/hooks). captureRepository itself launches further Git children using a scrubber that intentionally preserves ordinary ambient environment. This file does not enter ownedProcessSuite, unlike tests/task-manager.test.ts. The refactor has split one process-backed scenario into two without establishing the required descendant owner.",
+            "requiredResult": "Put these real-Git scenarios (including captureRepository/upload/export descendants) behind a retained fs.mkdtemp-owned allowlisted process host, with explicit HOME/config/SDK/temp and empty owned Git hooks, using the existing whole-file ownedProcessSuite pattern or an equally explicit dedicated process entry. Keep explicit non-shell argv, retain fixture/evidence directories, and retain exact-replay, dirty-tracked/excluded-untracked and confirmed-successful-close assertions. Merely changing the direct git helper env is insufficient if production repository children still inherit the unisolated test host. Do not run the current ambient-host scenarios to establish safety."
           }
         ],
-        "reason": "Actual process environment/non-login argv and no-filter owner repairs now individually accepted; require fresh integrated judgment, never promote prior rejection from counts."
+        "reason": "Fresh actual integrated-code judgment required after assigned/context source bytes changed; prior quality and rejection evidence retained, never promoted by hashes."
       },
-      "candidateOverride": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+      "candidateOverride": "06d8e9bf0696323d541b9b7d1f41b180d2c3e15f",
       "heldObjections": [
         {
           "paths": [
@@ -6020,10 +6408,15 @@
           "requiredResult": "Give these process-backed additions an owned fs.mkdtemp fixture with explicit HOME/config/SDK/temp and allowlisted env; pass that env to activatePreparedAgent and use non-login explicit argv (or an owned deterministic process script) rather than inherited shell startup. Retain fixture directories. Keep the deadline/identity/waiter assertions; do not run the current unisolated tests to establish safety."
         }
       ],
+      "scopedBlobComparison": {
+        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "unchanged": true,
+        "contextChangedPaths": []
+      },
       "result": {
         "lane": "lane-25",
         "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
-        "candidate": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+        "candidate": "06d8e9bf0696323d541b9b7d1f41b180d2c3e15f",
         "verdict": "REJECT",
         "diffReadPaths": [
           "tests/questions-sdk.test.ts",
@@ -6041,28 +6434,25 @@
         "contextReadPaths": [
           "tests/helpers.ts",
           "tests/owned-process-suite.ts",
-          "tests/questions-sdk.test.ts",
-          "tests/questions.test.ts",
-          "tests/root-owner.test.ts",
-          "tests/root-runtime.test.ts",
-          "tests/subagent-extension.test.ts",
-          "tests/resume-stream-cancellation.test.ts",
-          "src/tasks/task-manager.ts",
-          "src/tasks/job-service.ts",
-          "src/tasks/worktree-workspace.ts",
+          "tests/tui-helpers.ts",
+          "src/remote/repository.ts",
+          "src/remote/repository-wire.ts",
+          "src/remote/root-owner.ts",
+          "src/remote/root-runtime.ts",
           "src/delegation-environment.ts",
+          "src/tasks/job-service.ts",
+          "src/tasks/task-manager.ts",
+          "src/tasks/worktree-workspace.ts",
           "src/tasks/resume-safeguards.ts",
+          "src/agent/extension.ts",
           "src/questions/service.ts",
           "src/questions/runtime.ts",
-          "src/questions/extension.ts",
-          "src/remote/root-owner.ts",
-          "src/remote/root-store.ts",
-          "src/remote/root-runtime.ts",
-          "src/remote/repository.ts",
-          "src/agent/extension.ts",
-          "src/remote/job-events.ts",
           "src/ui/subagent-settings.ts",
-          "src/tasks/subagent-settings-ui.ts"
+          "src/tasks/subagent-settings-ui.ts",
+          "src/tasks/subagent-profiles.ts",
+          "node_modules/@earendil-works/pi-coding-agent/dist/core/session-manager.js",
+          "package.json",
+          "scripts/ci.sh"
         ],
         "sourceBlobs": {
           "tests/questions-sdk.test.ts": "4443dbeb51d2ec3601ad528e1165d7a0c86c768c",
@@ -6070,7 +6460,7 @@
           "tests/questions.test.ts": "6baf85f21deab6c3d694f54aeba957d665bb3391",
           "tests/resume-safeguards.test.ts": "54ab26258f93b8600e178f3f62dfbce8e0311334",
           "tests/resume-stream-cancellation.test.ts": "c04171a8a72b1028cdc05a21e6bbbc87f474b3a1",
-          "tests/root-owner.test.ts": "5359344120d28666a3cecfea67d9419de954b890",
+          "tests/root-owner.test.ts": "a691a1861ba40623a755885a868aaa668204dcb9",
           "tests/root-runtime.test.ts": "b193a773a6a89806c651ce451b2b0d658232724f",
           "tests/subagent-extension.test.ts": "b7d7e0ad3d338b2008660797f7cc0ba806e5cf7b",
           "tests/subagent-settings-tui.test.ts": "83ffc1f0d8cbde59cf476a0edf071167bd117f14",
@@ -6080,75 +6470,49 @@
         "sourceJourneys": [
           {
             "paths": [
-              "tests/task-manager.test.ts:635-779",
+              "tests/root-owner.test.ts",
               "tests/owned-process-suite.ts",
               "tests/helpers.ts",
-              "src/tasks/task-manager.ts",
-              "src/tasks/job-service.ts:1015-1068",
-              "src/tasks/worktree-workspace.ts:193-198"
+              "src/remote/repository.ts",
+              "src/remote/repository-wire.ts",
+              "src/delegation-environment.ts",
+              "src/remote/root-owner.ts"
             ],
-            "readingReason": "The new activation tests now use their own mkdtemp/ownedFixtureEnv plus process.execPath -e, not commandLaunch or login shells. The suite wrapper launches the whole file (no test-name filter) in an allowlisted host and owns a non-login SHELL adapter for setupShell. Manager public snapshots are explicitly enumerated rather than copied from internal ManagedTask.",
-            "systemReason": "prepareAgent owns the timer, cancellation controller, promise and identity. activatePreparedAgent mutates that same record; #startDeadline does not replace an existing deadline. The real worktree caller observes the preparation signal and activates the reservation, not a second task. The tests exercise waiter identity, notification policy, lifecycle event count, deadline preservation and absence of public cancellation authority. The prior manager-process objection is resolved by actual candidate code."
+            "readingReason": "The repaired whole-file gate puts fixture creation, direct init/add/commit, captureTrackedFixture, uploadWithExactReplay and result export under one visible owner. Fixtures close database handles without deleting repository/ledger evidence. The two scenario helpers are narrow, not context bags. Exact upload replay, dirty tracked content, one-commit/no-unapproved-files assertions and unknown/closed-nonzero/closed-zero export gating remain readable at the scenario sites.",
+            "systemReason": "ownedProcessSuite creates a retained mkdtemp allowlisted process host; ownedFixtureEnv provides owned HOME/XDG/SDK/TMP and empty hooks with fixed PATH and no inherited Git template/config variables. Production capture and clone descendants preserve that already-owned host through scrubT3BridgeEnvironment. handleRootRequest maps only closed exitCode=0 to done for repositoryRequest. The supplied prior root-owner ownership objection is repaired in actual candidate code, not merely hidden by per-command flags."
+          },
+          {
+            "paths": [
+              "tests/root-owner.test.ts",
+              "src/remote/root-owner.ts",
+              "tests/root-runtime.test.ts",
+              "src/remote/root-runtime.ts",
+              "src/questions/runtime.ts"
+            ],
+            "readingReason": "New owner tests separate settled close from actual exit acknowledgement and exercise queued commands, failed exit and abort overtaking a pending prompt. withPrivateRootRuntime centralizes socket authority setup and nested-finally restoration while preserving trusted human answer and task projection assertions.",
+            "systemReason": "requestClose installs pendingClose before end; the exited callback certifies closure only on code 0/no signal/nonunknown state, completes queued commands without dispatch, and emits root_closed. Root runtime privately checks token and root identity, delegates answers to the ordinary QuestionService continuation, and requires complete cancellation discovery plus terminal children before settlement. Tests use fake inference, not live auth."
           },
           {
             "paths": [
               "tests/questions.test.ts",
-              "src/questions/service.ts"
-            ],
-            "readingReason": "Splitting the combined scenarios exposes separate ledger/idempotence, optional-resolution, sibling-dedup, lock-navigation, race and retention responsibilities. All removed assertions are retained in the corresponding new scenarios; race assertions additionally compare persisted winner/version.",
-            "systemReason": "Service mutate revalidates navigation inside the locked change callback, answer deduplicates matching prior reply/version before stale checks, and ask enforces pending/total limits without deleting history. Agent handle cannot supply a UI answer. Fixtures keep branch ancestry explicit, so the split does not confuse continuation ownership with sibling ownership."
-          },
-          {
-            "paths": [
               "tests/questions-sdk.test.ts",
               "tests/questions-tui.test.ts",
-              "src/questions/extension.ts",
+              "src/questions/service.ts",
               "src/questions/runtime.ts",
-              "src/questions/service.ts"
+              "tests/tui-helpers.ts"
             ],
-            "readingReason": "SDK extraction isolates only the fake provider stream; the real SessionManager/resource loader, command registration and persistence remain in the test. TUI helper owns process environment, socket, composer handshake and session restart without becoming a generic context bag.",
-            "systemReason": "Runtime claims dispatch durably before sending one hidden followUp answer message and then records delivery. The SDK assertions still require one new context containing question/reply IDs and no replay on repeated command. The TUI restart keeps session-file and server ownership intact while verifying persisted waiting/cancelled status and abbreviated IDs. Neither path treats answer saving as resuming a child stack."
+            "readingReason": "Splitting question lifecycle, optional resolution, branch dedup, lock navigation, racing mutations and ledger capacity removes unrelated phases without dropping old assertions; added reload checks make the winner/history explicit. Offline model construction is a focused provider stub. TUI server/start/send/restart/close helper keeps the composer handshake and durable reload scenario together.",
+            "systemReason": "Service mutations recheck session/branch after lock acquisition; same reply ID/version/text is idempotent while agent handle questions.answer remains forbidden. The runtime durably claims dispatch then sends one display:false follow-up turn. SDK test uses explicit session/resource/auth directories and fake stream. TUI launches tmux/CLI via argv with owned HOME/config/data/cache/temp/SDK and an offline placeholder; no shell-quoted CLI launch remains, and cancellation/restart preserves session state."
           },
           {
             "paths": [
               "tests/resume-safeguards.test.ts",
               "src/tasks/resume-safeguards.ts",
-              "tests/resume-stream-cancellation.test.ts"
+              "tests/resume-stream-cancellation.test.ts",
+              "node_modules/@earendil-works/pi-coding-agent/dist/core/session-manager.js"
             ],
-            "readingReason": "Typed callback capture replaces optional Map lookups with the actual three lifecycle callbacks. Shared-root tests make adapter reference ownership legible; the stream test separates fixture construction, active cancellation and explicit child-process handling.",
-            "systemReason": "Picker registration counts roots, returns an idempotent disposer and restores only its own still-installed methods; foreign wrappers retain callable captured closures. Shutdown now runs in finally. Stream fixtures run process.execPath with explicit HOME/config/SDK/temp paths under retained mkdtemp, rather than helpers.run inheritance; list/listAll and late/active modes still exercise the same external SessionManager API."
-          },
-          {
-            "paths": [
-              "tests/root-owner.test.ts:198-301",
-              "tests/root-runtime.test.ts",
-              "src/remote/root-owner.ts:380-558",
-              "src/remote/root-store.ts",
-              "src/remote/root-runtime.ts"
-            ],
-            "readingReason": "New close tests distinguish RPC end from acknowledged clean exit and explicitly control the fake process exit promise. The IPC helper scopes only socket/token/root-role environment and restores it even if shutdown throws.",
-            "systemReason": "The runtime close facet requires complete cancellation discovery, terminal descendants and idle/no pending messages. The owner installs pending-close evidence before end, waits for clean exit, and only then drains queued receipts without dispatch. Nonzero exit remains unknown; exact command replay returns the prior receipt. Prompt acknowledgement is deliberately nonblocking so abort can dispatch. These tests agree across owner/store/runtime rather than asserting contradictory notions of closed."
-          },
-          {
-            "paths": [
-              "tests/root-owner.test.ts:462-550",
-              "src/remote/repository.ts",
-              "src/remote/root-owner.ts"
-            ],
-            "readingReason": "captureTrackedFixture and uploadWithExactReplay reduce repeated upload scaffolding and keep dirty-tracked/excluded-untracked and closed-success export gates separate. Baseline and candidate result assertions still reject accepted, unknown and failed-close states.",
-            "systemReason": "This journey also reveals the remaining isolation contradiction: the extracted Git fixture still spreads process.env, and captureRepository also launches Git from the ambient host. A temporary repository is not a temporary process environment. Unlike the repaired task suite, this file has no owned-process boundary; see objection."
-          },
-          {
-            "paths": [
-              "tests/subagent-extension.test.ts",
-              "src/agent/extension.ts:643-695",
-              "src/agent/extension.ts:707-824",
-              "src/agent/extension.ts:857-942",
-              "src/agent/extension.ts:1034-1040",
-              "src/remote/job-events.ts"
-            ],
-            "readingReason": "bindJobHandler eliminates repeated execution-result mocks while restoring the stub in its own finally, before callers exercise real job handling. New attachment tests drive session_start/shutdown through the real registered callbacks, not a synthesized notification reducer.",
-            "systemReason": "Remote claim rows are acknowledged only after dispatch; failures call failed and retain replay. Shutdown unsubscribes and clears the volatile source, so publishing to the old captured source cannot contaminate reattachment. Native configuration without durable delivery fails before manager ownership, and close clears native-session restriction for the next local attachment."
+            "readingReason": "captureResumeHandlers exposes three named callbacks instead of optional string-map calls, and test finally blocks release installed adapters. Shared-root tests cover repeated shutdown and a root leaving TUI. Scanner fixture construction and active-abort assertion are separate named operations without changing normal/late/active outcomes.",
+            "systemReason": "Picker roots are reference counted; adapters capture underlying methods and restore only when still installed, preserving foreign wrappers. Scanner child uses explicit argv and a retained mkdtemp HOME/config/SDK/temp environment, and real invalid-header/directory-read-error fixtures. Related installed SDK source owns stream errors, propagates active abort via signal checks and skips ordinary read errors. No SDK preparation or execution was performed."
           },
           {
             "paths": [
@@ -6156,38 +6520,63 @@
               "tests/subagent-settings-tui.test.ts",
               "src/ui/subagent-settings.ts",
               "src/tasks/subagent-settings-ui.ts",
+              "src/tasks/subagent-profiles.ts",
               "tests/helpers.ts"
             ],
-            "readingReason": "saveFromOverview asserts the screen and selected Save row rather than encoding an unexplained count of downs. Draft/reopen/page-navigation tests identify public state transitions. TUI lifetime is owned locally with an explicit env and direct multi-argument tmux execution.",
-            "systemReason": "The panel clones profiles, restores the initiating row when leaving a picker, clears search on overview return, selects draft values on reopening and clamps page movement to the active list. The command persists only a returned Save result. UI and TUI expectations agree about selection and discard; helpers.run receives an explicit env rather than the default ambient one."
+            "readingReason": "saveFromOverview replaces row-distance arithmetic with a named overview action while explicit selection assertions retain the original selection-preservation contract. Reopening, search reset, inheritance, Cancel and page clamping tests mirror panel transitions. withProfileTerminal isolates process lifetime from UI actions.",
+            "systemReason": "Panel clones draft profiles, clears search when returning to overview, returns to returnRow, and only Save returns a draft for atomic persistence. Unit command tests pass an owned file path; TUI helper launches directly with owned HOME/XDG/SDK/TMP so default profilesPath stays under fixture HOME. run(options.env) copies the supplied environment, rather than merging ambient provider credentials."
+          },
+          {
+            "paths": [
+              "tests/task-manager.test.ts",
+              "tests/owned-process-suite.ts",
+              "tests/helpers.ts",
+              "src/tasks/task-manager.ts"
+            ],
+            "readingReason": "Whole-file process ownership is consistent with repaired root-owner; the large indentation churn is attributable to that gate rather than an abstraction hierarchy. Stubborn-process fixture now uses direct runtime argv instead of a shell trap. New activation tests make reservation identity/waiters/foreground policy/deadline and metadata-only public snapshots concrete.",
+            "systemReason": "activatePreparedAgent retains the ManagedTask reservation and existing timeout, public summary is an allowlist with nested metadata copies, and preparation cancellation reaches owned setup jobs. All manager child processes descend from the owned host, including subprocess-host teardown scenarios; evidence is retained. Tests exercise fake preparations, not unsupported Pi setup."
+          },
+          {
+            "paths": [
+              "tests/subagent-extension.test.ts",
+              "src/agent/extension.ts",
+              "src/tasks/job-service.ts",
+              "src/tasks/worktree-workspace.ts",
+              "src/tasks/task-manager.ts",
+              "src/delegation-environment.ts",
+              "package.json",
+              "scripts/ci.sh"
+            ],
+            "readingReason": "bindJobHandler correctly restores only executeIsolated before returning, reducing repeated mock/result boilerplate without obscuring the real job path. New failed-SSH-delivery and missing-native-mailbox scenarios align with attachment disposal/replay and fail-closed mailbox checks. However this leaves a contradictory process ownership boundary versus root-owner/task-manager.",
+            "systemReason": "The RPC/print/json scenarios use real shell jobs after restoring the isolated-execution spy. JobService calls setupShell with inherited SHELL and -lc, then TaskManager inherits ordinary HOME/config/provider environment because the T3 scrubber intentionally removes only root-control authority. controlledChildren is opt-in for later specific scenarios, not an enclosing host. Neither direct test entry nor package/CI test entry establishes an allowlisted HOME/config/SDK owner for this file."
           }
         ],
-        "integrationReadingReason": "Fresh review of every assigned baseline-to-candidate addition and deletion, not prior judgments or test counts. Overall the local helper extractions improve intrinsic reading: named lifecycle owners replace repeated mocks and split combined scenarios without losing baseline assertions. The actual manager activation repair and whole-file process wrapper are coherent with production reservation ownership. Functional journeys across questions, root closure, notification attachment and settings fit the candidate implementation. However integration is not acceptable under the required process-isolation contract: the newly split root repository fixtures retain ambient Git process authority while the task-manager suite now explicitly excludes it. This is a concrete cross-file ownership inconsistency, not a style objection or a revival of the repaired activation objection.",
+        "integrationReadingReason": "Most integrated test helpers reduce intrinsic reading burden by naming a single setup/lifetime operation and leaving behavior assertions at call sites; no large context bags or generalized scenario framework were introduced. The repaired root-owner host is a substantive improvement and preserves repository replay/export authority. Questions, root IPC, resume picker, profile panel and reservation tests fit their actual callers. Lane cannot accept the integrated result because subagent-extension still drives real descendant jobs from the ambient test host, inconsistent with the ownership boundary established for the other process suites. This is a lane-only source judgment, not a whole-repository sign-off.",
         "objections": [
           {
             "paths": [
-              "tests/root-owner.test.ts:462-479",
-              "tests/root-owner.test.ts:506-550",
-              "tests/root-owner.test.ts:73-83",
-              "src/remote/repository.ts:25-43",
+              "tests/subagent-extension.test.ts:147-173",
+              "tests/subagent-extension.test.ts:218-265",
+              "tests/subagent-extension.test.ts:269-282",
+              "tests/subagent-extension.test.ts:722-775",
+              "src/tasks/job-service.ts:357-371",
+              "src/tasks/worktree-workspace.ts:194-198",
+              "src/tasks/task-manager.ts:350-356",
               "tests/owned-process-suite.ts",
-              "tests/helpers.ts:5-40"
+              "tests/helpers.ts"
             ],
-            "readingProblem": "The extracted git helper passes {...process.env, GIT_CONFIG_NOSYSTEM: \"1\", GIT_CONFIG_GLOBAL: \"/dev/null\"}; both now-separate repository tests call it through captureTrackedFixture, including git init/add/commit. fixture() owns only a repository/ledger directory, not HOME/config/SDK/temp or an allowlisted test host, and it removes the fixture on completion. Setting the two Git config flags is not an ownership boundary: ambient HOME, SDK/provider state and Git environment such as GIT_TEMPLATE_DIR or GIT_CONFIG_COUNT are retained (Git init/commit can therefore consume inherited templates/config/hooks). captureRepository itself launches further Git children using a scrubber that intentionally preserves ordinary ambient environment. This file does not enter ownedProcessSuite, unlike tests/task-manager.test.ts. The refactor has split one process-backed scenario into two without establishing the required descendant owner.",
-            "requiredResult": "Put these real-Git scenarios (including captureRepository/upload/export descendants) behind a retained fs.mkdtemp-owned allowlisted process host, with explicit HOME/config/SDK/temp and empty owned Git hooks, using the existing whole-file ownedProcessSuite pattern or an equally explicit dedicated process entry. Keep explicit non-shell argv, retain fixture/evidence directories, and retain exact-replay, dirty-tracked/excluded-untracked and confirmed-successful-close assertions. Merely changing the direct git helper env is insufficient if production repository children still inherit the unisolated test host. Do not run the current ambient-host scenarios to establish safety."
+            "readingProblem": "The extracted bindJobHandler expressly restores executeIsolated so subsequent jobs are real, but the surrounding test file never enters ownedProcessSuite or a dedicated owned host. Its rpc agent_end and print/json scenarios call shell with sleep/read/printf, and the typed launch scenario calls the real jobHandler as well. setupShell selects ambient SHELL and -lc; JobService passes scrubT3BridgeEnvironment(process.env), which preserves ordinary HOME/config/SDK/provider environment. A fixture ledger directory or later opt-in controlledChildren mocks do not own these earlier descendants. Package/CI invokes bun test without an enclosing HOME/config/SDK allowlist. Thus integrated test refactors leave actual shell startup and descendants with ambient authority while the adjacent process suites deliberately avoid it.",
+            "requiredResult": "Put every real-process scenario in this file behind the retained mkdtemp allowlisted ownedProcessSuite pattern or an equally explicit dedicated owned process entry. Own HOME/config/SDK/temp and a non-login fixture shell; retain fixture/evidence directories and source provenance. Keep the narrow bind helper and actual RPC/print/json delivery, attention, failure, shutdown, SSH replay and native-mailbox assertions. Do not run the current ambient-host scenarios as safety evidence; do not retry/bypass unsupported Pi preparation."
           }
         ],
-        "limits": [
-          "Lane-only source judgment; no whole-repository sign-off. All eleven assigned diffs were fully read including deletions; no unread assigned diff gaps. Complete additions/deletions were read in bounded unified-zero slices (SDK also in unified-three), with actual candidate/baseline context as needed; context paths denote focused real-source excerpts, not a claim to have read every line of each production file.",
-          "No tests, setup, builds, installs, formatting, auth/device flows, provider requests or source edits were performed. Existing owned-path cleanup was inspected only, never executed. External installed Pi stream behavior and real TUI/provider execution remain unverified; no unsupported preparation was retried or bypassed.",
-          "Candidate source was read by exact Git object in the durable existing worktree; the only intentional write is this untracked review result. Test fixtures, when run by an authorized owner, may reside under /tmp while source remains in a durable worktree. Existing worktrees and candidate evidence are preserved.",
-          "Safety for ALL descendants: NO sudo, recovery investigation, user secrets, shell deletion/cleanup commands, inherited HOME/config/SDK cleanup, nested shell traps, destructive git, or user-data mutation. User already recovered data and requested no recovery work. Tests must use explicit process argv/env and owned fs.mkdtemp fixture HOME/config/SDK; retain them, do not delete. Review filesystem/network effects BEFORE tests/setup. Existing test-code cleanup of provably owned temporary paths may be inspected but NEVER run a shell trap or inherited HOME removal. Need live auth/device? Report unverified, don't access credentials. Propagate these constraints verbatim. Independent code/review agents get durable worktrees, not /tmp code checkouts. Keep existing worktrees and candidate evidence. Test/source fixtures may use /tmp, but document durable provenance."
-        ]
-      },
-      "scopedBlobComparison": {
-        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
-        "unchanged": true,
-        "contextChangedPaths": []
+        "limits": {
+          "assignedDiffUnreadGaps": [],
+          "reviewMethod": "Complete baseline-to-candidate assigned diffs, including deletions, read in bounded segments; candidate source and related caller/authority/lifetime excerpts read where needed. Related context paths are not claims of full-file review. No prior artifacts, coverage counts, summaries or green tests used as verdict.",
+          "execution": "READ-ONLY source review, no tests/setup/builds/install/formatter/auth/device/secret/source edits; automatic unsupported Pi preparation must not be retried or bypassed.",
+          "safety": "Safety for ALL descendants: NO sudo, recovery investigation, user secrets, shell deletion/cleanup commands, inherited HOME/config/SDK cleanup, nested shell traps, destructive git, or user-data mutation. User already recovered data and requested no recovery work. Tests must use explicit process argv/env and owned fs.mkdtemp fixture HOME/config/SDK; retain them, do not delete. Review filesystem/network effects BEFORE tests/setup. Existing test-code cleanup of provably owned temporary paths may be inspected but NEVER run a shell trap or inherited HOME removal. Need live auth/device? Report unverified, don't access credentials. Propagate these constraints verbatim. Independent code/review agents get durable worktrees, not /tmp code checkouts. Keep existing worktrees and candidate evidence. Test/source fixtures may use /tmp, but document durable provenance.",
+          "provenance": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_e45e2ede",
+          "actions": "No delegation, tests, setup, installs, builds, formatter, auth/device access, cleanup, recovery, or source edits. Read-only Git/source inspection only; this untracked result is the sole authored file. Live behavior and installed SDK compatibility remain unverified by execution. Candidate and worktree retained."
+        }
       }
     },
     {
@@ -6639,7 +7028,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "target": "06d8e9bf0696323d541b9b7d1f41b180d2c3e15f",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -6809,7 +7198,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "target": "06d8e9bf0696323d541b9b7d1f41b180d2c3e15f",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -6978,7 +7367,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "target": "06d8e9bf0696323d541b9b7d1f41b180d2c3e15f",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -7154,7 +7543,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "target": "06d8e9bf0696323d541b9b7d1f41b180d2c3e15f",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -7355,7 +7744,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "target": "06d8e9bf0696323d541b9b7d1f41b180d2c3e15f",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -7486,7 +7875,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "target": "06d8e9bf0696323d541b9b7d1f41b180d2c3e15f",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -7651,7 +8040,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "target": "06d8e9bf0696323d541b9b7d1f41b180d2c3e15f",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -7864,7 +8253,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "target": "06d8e9bf0696323d541b9b7d1f41b180d2c3e15f",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -8059,7 +8448,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "target": "06d8e9bf0696323d541b9b7d1f41b180d2c3e15f",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -8184,7 +8573,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "target": "06d8e9bf0696323d541b9b7d1f41b180d2c3e15f",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -8271,7 +8660,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "target": "06d8e9bf0696323d541b9b7d1f41b180d2c3e15f",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -8628,7 +9017,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "target": "06d8e9bf0696323d541b9b7d1f41b180d2c3e15f",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -8815,7 +9204,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "target": "06d8e9bf0696323d541b9b7d1f41b180d2c3e15f",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -8987,7 +9376,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "target": "06d8e9bf0696323d541b9b7d1f41b180d2c3e15f",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -9327,7 +9716,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "target": "06d8e9bf0696323d541b9b7d1f41b180d2c3e15f",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -9493,7 +9882,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "target": "06d8e9bf0696323d541b9b7d1f41b180d2c3e15f",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -9656,7 +10045,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "target": "06d8e9bf0696323d541b9b7d1f41b180d2c3e15f",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -9676,7 +10065,7 @@
       ],
       "chars": 64197,
       "lines": 1486,
-      "status": "running",
+      "status": "accepted",
       "candidateOverride": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
       "jobId": "task_ae2c2e7b",
       "model": "openai-codex/gpt-6.1-sol",
@@ -9888,6 +10277,146 @@
           }
         ],
         "reason": "Fresh actual integrated-code judgment required after assigned/context source bytes changed; prior quality and rejection evidence retained, never promoted by hashes."
+      },
+      "result": {
+        "lane": "lane-43",
+        "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
+        "candidate": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+        "verdict": "ACCEPT",
+        "diffReadPaths": [
+          "tests/remote-root-presenter.test.ts",
+          "tests/remote-runner-placement-fixture.test.ts",
+          "tests/remote-runtime.test.ts",
+          "tests/remote-session-switch.test.ts",
+          "tests/remote-source-approval.test.ts",
+          "tests/remote-typed-root-placement-fixture.test.ts",
+          "tests/root-placement-options.test.ts",
+          "tests/root-store.test.ts"
+        ],
+        "contextReadPaths": [
+          "tests/helpers.ts",
+          "tests/remote-root-presenter.test.ts",
+          "tests/remote-runner-placement-fixture.test.ts",
+          "tests/remote-source-approval.test.ts",
+          "tests/remote-runtime.test.ts",
+          "tests/fixtures/remote-e2e/placement-parent.ts",
+          "tests/fixtures/remote-typed-root-placement/reply-loss.ts",
+          "src/cli.ts",
+          "src/remote/root-options.ts",
+          "src/remote/root-cli.ts",
+          "src/remote/root-presenter.ts",
+          "src/remote/root-owner.ts",
+          "src/remote/root-store.ts",
+          "src/remote/runtime.ts",
+          "src/remote/job-artifacts.ts",
+          "src/remote/owner.ts",
+          "src/remote/cancellation.ts",
+          "src/remote/extension.ts",
+          "src/remote/source-approval.ts",
+          "src/remote/jobs.ts",
+          "src/questions/service.ts",
+          "src/session/host-access.ts",
+          "node_modules/@earendil-works/pi-tui/dist/tui.js",
+          "node_modules/@earendil-works/pi-tui/dist/tui-main-screen.js",
+          "node_modules/@earendil-works/pi-tui/dist/terminal.js",
+          "node_modules/@earendil-works/pi-tui/dist/keybindings.js"
+        ],
+        "sourceBlobs": {
+          "tests/remote-root-presenter.test.ts": "4f7254abd12f2bde72b4c8e930fa37b11d358ab7",
+          "tests/remote-runner-placement-fixture.test.ts": "31204a6799b7fa386e5f6f3f3b4a9d65e38de431",
+          "tests/remote-runtime.test.ts": "fe29cd1cfb93ec39984d2fd2e3babc5054c29260",
+          "tests/remote-session-switch.test.ts": "088d70b619c279a1d220504ccc87c44818912f58",
+          "tests/remote-source-approval.test.ts": "df9e4dfb8b79785aadfe43dd8cf5f8ccafb3acb9",
+          "tests/remote-typed-root-placement-fixture.test.ts": "dfc49901bdb6bc66d7b5e73a778ea7c04e9acd6c",
+          "tests/root-placement-options.test.ts": "725ebe43d07c2c3d17142ce140b9aebe46bc3fbf",
+          "tests/root-store.test.ts": "b1f3cc8f7b18c1aa5d3a8895324792e7cfec59d8"
+        },
+        "sourceJourneys": [
+          {
+            "paths": [
+              "tests/remote-root-presenter.test.ts:26-78,795-974",
+              "tests/helpers.ts:5-37",
+              "src/remote/root-presenter.ts:482-701",
+              "node_modules/@earendil-works/pi-tui/dist/tui.js:605-675,685-749",
+              "node_modules/@earendil-works/pi-tui/dist/tui-main-screen.js:140-151,212,470-481,514-540",
+              "node_modules/@earendil-works/pi-tui/dist/terminal.js:88-105"
+            ],
+            "readingReason": "remoteReplies extracts only the shared remote response stub; fixture retains its previous UI queues and receipt behavior. mountedPresentation adds a distinct shipped-input seam, not an alternate routing implementation. Terminal callback, input listeners, setFocus and focused component input remain real. Typing reaches requestImmediateRender, and both its nextTick and requestRender timer call the now-spied doRender. Direct root.render(80) still exposes modal/editor content without entering frame-paint diagnostics.",
+            "systemReason": "The prior renderer objection is repaired in actual candidate code: ordinary typing cannot enter the crash/debug writer through either scheduler. Owned HOME/config/SDK/tmp and disabled diagnostic/write-log variables are installed before constructing the terminal/TUI and retained. close sends detach, awaits the presenter (which cancels modals, removes signals, clears animation, stops TUI and awaits poll) before restoring spies/environment. Stopped scheduler callbacks do not resurrect rendering after restoration. Escape sends a cancellation; detach during input fails the attached check and sends no response. The focus assertions exercise the editor rather than the root fallback."
+          },
+          {
+            "paths": [
+              "tests/remote-runner-placement-fixture.test.ts",
+              "tests/fixtures/remote-e2e/placement-parent.ts",
+              "tests/root-placement-options.test.ts",
+              "src/remote/root-options.ts",
+              "src/cli.ts:156-172",
+              "src/remote/root-cli.ts:27-55"
+            ],
+            "readingReason": "Runner tests split prompt preservation, discovery rejection, async-ID rejection, source retry and exact cancellation into named boundaries without dropping their former assertions. Their AsyncFunction dependencies stub Bun writes/subagent/target discovery; the fake parent still emits one launch and acknowledges the matching delivered tool call. Root option tests replace a mixed rejection list with source-selection/startup/attachment groups and exact result assertions.",
+            "systemReason": "The two test domains remain distinct: a named normal async worker launch is not root conversation startup. The parser preserves targetless argument identity and opaque local separator tails, strips explicit local placement, rejects remote prompt tails and host flags, and carries trust/model/thinking/source intent to the thin-client branch before local conversation startup. runRemoteRoot verifies the pinned named connection rather than treating parser acceptance as authorization."
+          },
+          {
+            "paths": [
+              "tests/remote-source-approval.test.ts",
+              "src/remote/source-approval.ts:112-250",
+              "src/remote/jobs.ts:224-267,285-341",
+              "src/questions/service.ts:161-214,349-378"
+            ],
+            "readingReason": "Named SOURCE_CHOICES aliases and separate denial/cancel/stale-answer/bundle-tamper cases reduce positional and multi-fixture reading burden. The added ask-failure case checks a persisted waiting record without questionId, mutates current repository bytes, retries the same service intent, and proves the eventual checkout uses the original pinned bundles. The adapter case follows a real parent continuation while deliberately offering a new jobQuestionOwner.",
+            "systemReason": "pinSource writes approval.json before requestApproval; retry reuses that record and its dedupKey instead of recapturing. Questions authenticate owner, text, choices, task ID, CLI provenance and reply version. The first meaningful continuation remains permitted by QuestionService, while sibling ownership does not. prepareLaunchRequest replaces a retry-supplied owner with saved.questionOwner, reconstructs the canonical unchanged intent, verifies the pinned snapshot before transport, and passes the original owner to the fake repository launcher/client. No test assertion promotes model text or an ordinary agent resolution to inclusion authority."
+          },
+          {
+            "paths": [
+              "tests/remote-session-switch.test.ts",
+              "src/remote/extension.ts:87-224,384-395,554-556"
+            ],
+            "readingReason": "Deferred entry/publication checkpoints replace bounded polling guesses. Tests explicitly distinguish draining old shared cache I/O from publishing into a replacement session. The added picker test holds both snapshot acquisition and choice completion and observes old and replacement status arrays separately.",
+            "systemReason": "refresh captures its observation owner and serializes the shared sync; session closure invalidates publication rather than cancelling I/O. poll rechecks closed after awaited reads/syncs. openMenu returns closures tied to that same observation, so late showSnapshot and close cannot change B’s footer. The tests permit the old custom picker to finish and assert its lost status authority; they do not claim all old menu actions are globally cancelled."
+          },
+          {
+            "paths": [
+              "tests/remote-runtime.test.ts",
+              "src/remote/runtime.ts",
+              "src/session/host-access.ts",
+              "src/remote/job-artifacts.ts",
+              "src/remote/owner.ts:597-614,800-816"
+            ],
+            "readingReason": "The capture gate tests ordering directly: the unsettled checkpoint remains visible while terminal output inspection is blocked, then both job pages, artifact contents, file mode and the retained gap are checked. The separate repeated-cursor case asserts an error checkpoint rather than implying completion.",
+            "systemReason": "Runtime obtains the scoped host through the existing event-bus binding, awaits text publication page by page, and only then replaces the checkpoint. captureNativeJobText writes beneath the supplied owned runtime directory; the first page’s outputLost marker persists across a healthy second page. Killed jobs intentionally still count active for ordinary turn settlement. The unchanged owner rejects runtime.error or missing native evidence and retains active work, so settled:true in the failure checkpoint cannot authorize successful completion."
+          },
+          {
+            "paths": [
+              "tests/root-store.test.ts",
+              "src/remote/root-store.ts",
+              "src/remote/root-owner.ts:404-422,517-546"
+            ],
+            "readingReason": "The small withStore helper owns exactly one store/directory and leaves transaction scenarios explicit. A second connection verifies committed claim visibility and FIFO acceptance order, and SQL-trigger failures check rollback of the actual multi-table transitions. The retention table includes UTF-8 byte differences, complete eviction and an independent session rather than hiding those cases inside an abstraction.",
+            "systemReason": "claimCommand commits dispatching before the owner writes RPC/UI/facet commands and never reclaims that disposition. unknown preserves completed receipts and affects only unresolved commands in its session; closed roots remain unchanged. append atomically updates durable dialogs, sequence and the journal, then retains a contiguous byte-bounded suffix. observe detects cursor gaps even for an empty journal. Durable dialogs survive eviction and UI responses remove them independently of journal retention, matching the owner’s pre-write dialog response handling."
+          },
+          {
+            "paths": [
+              "tests/remote-typed-root-placement-fixture.test.ts:309-368",
+              "tests/fixtures/remote-typed-root-placement/reply-loss.ts"
+            ],
+            "readingReason": "relayRequest centralizes only the explicit process argv/cwd/environment and owned fixture directories. The test retains evidence and renames forwarded/armed artifacts instead of deleting them. It still checks real stand-in forwarding, discarded bytes, gated status and the post-release receipt.",
+            "systemReason": "The child relay receives no inherited HOME/config/SDK/environment and can execute only the fixture stand-in in this test. Its status gate returns before invoking that stand-in, so absence of a new forwarded file demonstrates no second dispatch during the uncertainty window. Releasing the owned gate allows reconciliation. Comments correctly limit this to relay mechanics, not SSH/backend acceptance."
+          }
+        ],
+        "integrationReadingReason": "Fresh complete baseline-to-candidate diff review, including deletions, found coherent test refactors with improved conceptual grouping and small local helpers. Added integration seams preserve public command/placement/ownership semantics instead of replacing them with permissive fakes: scheduler suppression happens below shipped input routing, source retries reuse pinned human-owned intent, shared remote I/O drains without stale UI authority, native artifacts precede owner completion evidence, and root receipts/dialogs remain durable independently of bounded transcript history. The former mounted renderer objection is resolved by the shared doRender boundary and stop-before-restore lifetime, not merely by a changed comment or hash. No conflicting authority, missing lifetime ownership, huge context-bag abstraction, or behavior-losing churn was found within these eight assigned diffs and the related inspected paths.",
+        "objections": [],
+        "limits": [
+          "Lane-only source judgment, not whole-repository approval or dynamic acceptance evidence. All eight assigned diffs were read completely in bounded segments; no assigned unread gaps. Related implementation files were read in relevant sections, not claimed fully read throughout.",
+          "No tests, setup, builds, installs, formatter, authentication/device access, network operations, credential inspection, cleanup/deletion commands, source edits or delegation were performed. Unsupported Pi preparation was neither retried nor bypassed. The only repository write is this requested untracked result JSON.",
+          "Existing source test cleanup was inspected but not executed: root-store/runtime/source-approval cleanup targets mkdtemp-owned fixture paths. Those tests were not run and this review does not authorize their execution with inherited configuration.",
+          "Installed pi-tui source was inspected statically to verify dispatch/scheduler/diagnostic boundaries; no terminal callback or renderer was executed. Live provider/SSH/device behavior remains unverified.",
+          "Durable provenance: candidate HEAD b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0 in retained worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_ae2c2e7b; candidate tracked bytes preserved. Read-only baseline source inspection used Git objects, not a checkout or temporary code tree."
+        ]
+      },
+      "scopedBlobComparison": {
+        "target": "06d8e9bf0696323d541b9b7d1f41b180d2c3e15f",
+        "unchanged": true,
+        "contextChangedPaths": []
       }
     },
     {
@@ -10049,7 +10578,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "target": "06d8e9bf0696323d541b9b7d1f41b180d2c3e15f",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -10172,7 +10701,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "target": "06d8e9bf0696323d541b9b7d1f41b180d2c3e15f",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -10359,7 +10888,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "target": "06d8e9bf0696323d541b9b7d1f41b180d2c3e15f",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -10534,7 +11063,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "target": "06d8e9bf0696323d541b9b7d1f41b180d2c3e15f",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -10716,7 +11245,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "target": "06d8e9bf0696323d541b9b7d1f41b180d2c3e15f",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -10908,7 +11437,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "target": "06d8e9bf0696323d541b9b7d1f41b180d2c3e15f",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -11051,7 +11580,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "target": "06d8e9bf0696323d541b9b7d1f41b180d2c3e15f",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -11075,7 +11604,7 @@
       ],
       "chars": 89361,
       "lines": 2159,
-      "status": "running",
+      "status": "accepted",
       "candidateOverride": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
       "jobId": "task_3cdd53fe",
       "model": "openai-codex/gpt-6.1-sol",
@@ -11089,11 +11618,11 @@
         "branch": "bruv/pr45-final-integrated-diff-lane-51-ui-te-3cdd53fe",
         "preparationStatus": "ready",
         "setupTaskId": "task_d89ace1b",
-        "setupStatus": "running",
+        "setupStatus": "failed",
         "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
       },
       "scopedBlobComparison": {
-        "target": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+        "target": "06d8e9bf0696323d541b9b7d1f41b180d2c3e15f",
         "unchanged": true,
         "contextChangedPaths": []
       },
@@ -11305,6 +11834,157 @@
           }
         ],
         "reason": "Fresh actual integrated-code judgment required after assigned/context source bytes changed; prior quality and rejection evidence retained, never promoted by hashes."
+      },
+      "result": {
+        "lane": "lane-51",
+        "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
+        "candidate": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "verdict": "ACCEPT",
+        "diffReadPaths": [
+          "tests/footer.test.ts",
+          "tests/helpers/terminal-perf-process.ts",
+          "tests/long-thread-pty-latency.test.ts",
+          "tests/long-thread-tui.test.ts",
+          "tests/rolling-activity-disk.test.ts",
+          "tests/rolling-activity.test.ts",
+          "tests/sdk-large-text-tui.test.ts",
+          "tests/sdk-markdown-blocks.test.ts",
+          "tests/sdk-text-wrap-performance.test.ts",
+          "tests/startup-tui.test.ts",
+          "tests/task-rows.test.ts",
+          "tests/tasks-ui-proof-build.test.ts"
+        ],
+        "contextReadPaths": [
+          "tests/helpers.ts",
+          "tests/terminal-process-fixture.ts",
+          "tests/tui-helpers.ts",
+          "tests/terminal-perf-cli.test.ts",
+          "tests/terminal-perf-navigation.test.ts",
+          "scripts/tasks-ui-proof-build.ts",
+          "scripts/terminal-perf.ts",
+          "scripts/terminal-perf/navigation-workloads.ts",
+          "scripts/terminal-perf/navigation-sdk-probe.ts",
+          "scripts/terminal-perf/navigation-history.ts",
+          "src/ui/footer.ts",
+          "src/ui/task-rows.ts",
+          "src/ui/sdk-task-rows.ts",
+          "src/ui/activity-projection.ts",
+          "src/ui/rolling-activity.ts",
+          "src/history/session-manager.ts",
+          "src/history/disk-entry-store.ts"
+        ],
+        "sourceBlobs": {
+          "tests/footer.test.ts": "92878255d0c02ce9e906782e8757269a63221b9b",
+          "tests/helpers/terminal-perf-process.ts": "f57d10925dca3edb6e6511ff867664c38e3e0f65",
+          "tests/long-thread-pty-latency.test.ts": "add8c01df6baacaadce826d1c9f62533cc698645",
+          "tests/long-thread-tui.test.ts": "ddef39df022daaaef6a44732283a258f43914870",
+          "tests/rolling-activity-disk.test.ts": "78b81cb9dd5879ffbb3140268f40791dce838955",
+          "tests/rolling-activity.test.ts": "dcd301abaa75cadf31522a28357a2fa68f08f820",
+          "tests/sdk-large-text-tui.test.ts": "f568e6a6ed1ba369e55cc6cddba32ba54d6078d2",
+          "tests/sdk-markdown-blocks.test.ts": "09c98ee174874df966466af24d868502ecfa7004",
+          "tests/sdk-text-wrap-performance.test.ts": "f0b649a2c7a43306fa18f53dda22fbacff3d7565",
+          "tests/startup-tui.test.ts": "b7cec94ca80407458a244437d57b47e4aa847154",
+          "tests/task-rows.test.ts": "d2b90b93184b0a257924201768a79283208f9dd8",
+          "tests/tasks-ui-proof-build.test.ts": "141e067a4c21cbc63e45d895f6f639139579becf"
+        },
+        "sourceJourneys": [
+          {
+            "paths": [
+              "tests/rolling-activity-disk.test.ts",
+              "tests/helpers.ts",
+              "src/ui/rolling-activity.ts",
+              "src/history/session-manager.ts",
+              "src/history/disk-entry-store.ts"
+            ],
+            "readingReason": "The previous monolithic eval script is separated into one SDK fixture and three deliberately ordered script phases, not misleading independent tests. membershipReplay defines the branch roundtrip and c/d/boundary identities; liveFrames settles e and expansion; ownerTransitions explicitly asserts that inherited live state before rewrite/reload/reset/native-owner checks. Replacing stripped group keys with group.identity matches the candidate contiguous-run representation. The materialize hook counts all body materializations including byte-cache hits, accurately named rather than calling them disk reads.",
+            "systemReason": "runDiskActivityJourney creates mkdtemp root, constructs {...ownedFixtureEnv(root), ROOT:root}, and supplies it explicitly to run. offlineTestEnv copies that supplied environment, not process.env. HOME/config/cache/SDK/temp and empty Git hooks are owned; ROOT is explicit. The child uses ROOT for SessionManager and component cwd, tears down projection/density/task hooks and disk owner, and does not remove its fixture. Production sync caches membership by the relevant disk metadata object and rebuilds child/live state on each frame; indexed select materializes only relevant entries, rewrite/reread/reset replace ownership metadata, and native in-memory managers use the public fallback. The ordered assertions still exercise those distinctions."
+          },
+          {
+            "paths": [
+              "tests/tasks-ui-proof-build.test.ts",
+              "tests/helpers.ts",
+              "scripts/tasks-ui-proof-build.ts"
+            ],
+            "readingReason": "The fixture copies the real proof builder into an owned repository but stubs only host adaptation/preparation/compilation. Assertions distinguish stub provenance mechanics from native UI proof, retain clean-source/adapted-dependency preflight failures, and check no record on compile failure or source mutation. The old two-output invocation remains rejected before preparation; compilation options, binary digest and source commit are inspected directly.",
+            "systemReason": "Both fixture git init/add/commit and the Bun preload/builder process receive the same ownedFixtureEnv. The nested builder Git calls inherit that already isolated environment: fixed /usr/bin:/bin PATH, owned HOME/config/SDK/temp/Bun locations, GIT_CONFIG_NOSYSTEM/GLOBAL, empty core.hooksPath and no caller Git or credential variables. This closes the stated new-source ownership objection rather than merely putting cwd under /tmp. Fixtures and evidence are retained. Actual preparation/build were not invoked in this review."
+          },
+          {
+            "paths": [
+              "tests/footer.test.ts",
+              "src/ui/footer.ts"
+            ],
+            "readingReason": "Splitting display-state assertions from minute-timer assertions keeps each test about one owner. The new cost test exercises one in-flight refresh, rejection/retry, unchanged versus changed totals, and stopped callbacks; the cache test exercises subscription and timer through a single redraw policy, clamping and idempotent disposal. Compared with baseline inline observer code, candidate pollDescendantCost/followCacheCountdown reduce duplicated scheduling without a context bag.",
+            "systemReason": "pollDescendantCost holds busy until its await finishes, catches transient errors, gates redraw by active lifetime and total change, and clears the coarse timer through its stop callback. followCacheCountdown shares update between notifications and ticks and bounds timeout to 1..60000 ms. installCompactFooter marks inactive before stopping both observers and unsubscribing the branch listener. New fake-global timer hooks restore the originals in finally and require no child/filesystem ownership."
+          },
+          {
+            "paths": [
+              "tests/task-rows.test.ts",
+              "tests/rolling-activity.test.ts",
+              "src/ui/task-rows.ts",
+              "src/ui/sdk-task-rows.ts",
+              "src/ui/activity-projection.ts",
+              "src/ui/rolling-activity.ts"
+            ],
+            "readingReason": "New row tests independently check immutable metadata refresh on stale lifecycle snapshots, resolution of terminal-unknown, and evidence retention on partial updates. New rolling tests expose revisited journal identities as separate timeline runs and prevent late notices from borrowing source-call eligibility across handoff. These are concrete behavior boundaries, not implementation-only counts.",
+            "systemReason": "upsertTaskRow selects terminal lifecycle facts separately from normalized fresh title/fallback/source-call metadata. SDK collectTaskFrame merges sibling and live snapshot rows, preserves canonical provenance, and publishes activity facts before native rendering. renderRows is frame-local and deleted in finally even on throw, while ownedTaskRows remains available until uninstall; the failed-native-render test specifically checks native direct rendering after expiry, fresh parent rendering, and uninstall restoration. ActivityController closes current run and source-call eligibility at handoff; identical identity alone never joins noncontiguous tools. These cross-file lifetimes are consistent, not contradictory."
+          },
+          {
+            "paths": [
+              "tests/long-thread-pty-latency.test.ts",
+              "tests/long-thread-tui.test.ts",
+              "tests/terminal-process-fixture.ts",
+              "tests/helpers.ts",
+              "tests/tui-helpers.ts"
+            ],
+            "readingReason": "Saved-session creation moves into narrowly named seed functions with the same messages/tool details. sampleEditorEcho retains send-to-visible timing and excludes draft clearing/settling; idle samples settle 100ms while held samples settle 0ms as before. It returns the last echoed frame for held evidence. paneFrames reduces duplicate polling/artifact writes for fullscreen and regular panes without weakening expanded-detail, draft, reopened-session or persisted-content assertions.",
+            "systemReason": "The related shared fixture owns HOME/config/cache/data/temp and both SDK paths, supplies an explicit env to tmux through run, writes its tmux config, and builds multi-argv env -i pane commands. The PTY version child also gets owned cwd/env. The live-provider measurement is a loopback-only held HTTP fixture with fixture credentials and per-fixture models.json, not inherited live auth. Sessions and artifact pointers are retained while only the dedicated tmux server is terminated. Optional external binary and report output remain explicit caller-selected baseline diagnostic controls, not new hidden authority."
+          },
+          {
+            "paths": [
+              "tests/startup-tui.test.ts",
+              "tests/sdk-large-text-tui.test.ts",
+              "tests/tui-helpers.ts"
+            ],
+            "readingReason": "Startup process creation now names one offline CLI/environment for both tmux and script transports, while mode selection remains explicit. Diagnostics and skill-command visibility are still tested separately from hiding promotion/inventory. Megabyte-message seeding and offline launch are separated from interaction assertions, retaining start/tail/scroll/rich ANSI/editability and exact persisted-content checks.",
+            "systemReason": "Both use mkdtemp-owned HOME/config/cache/data/temp and SDK directories, no process.env spread, explicit cwd/env for transport children, fixed offline placeholder auth, owned tmux configuration/socket, and retained session/evidence locations. Large-text panes additionally use env -i; startup quotes the fixed CLI argv for its existing transport shell, with no traps or cleanup shell. Startup evidence writes now have a nested finally for dedicated tmux shutdown even if an artifact write fails. No inherited HOME/SDK deletion remains in these changed tests."
+          },
+          {
+            "paths": [
+              "tests/sdk-markdown-blocks.test.ts",
+              "tests/sdk-text-wrap-performance.test.ts"
+            ],
+            "readingReason": "measurePlainBlockWork owns the regex hook in one try/finally for both line-bounded and megabyte-single-line callers, preserving complete raw-token equality and forbidden whole-block matcher assertions. createOriginalSdkReference groups the reversed utility and dependent Text/Markdown reference modules, instead of distributing their initialization across mutable globals. The Unicode/ANSI corpus, widths, full render/cache/invalidate/resize and segmentation-work assertions remain unchanged in substance.",
+            "systemReason": "The wrap reference reads installed SDK files and writes only its retained mkdtemp clone, isolates the reverse git-apply child HOME/config/SDK/temp and system/global Git configuration, and routes copied component utility imports to the reversed owned utility while retaining actual dependency resolution for other imports. No installed dependency patching is added. Original here is a utility-hunk oracle, not a claim to revert every SDK patch. Global regex and grapheme instrumentation restores original hooks in finally."
+          },
+          {
+            "paths": [
+              "tests/helpers/terminal-perf-process.ts",
+              "tests/terminal-perf-cli.test.ts",
+              "tests/terminal-perf-navigation.test.ts",
+              "scripts/terminal-perf.ts",
+              "scripts/terminal-perf/navigation-workloads.ts",
+              "scripts/terminal-perf/navigation-sdk-probe.ts",
+              "scripts/terminal-perf/navigation-history.ts"
+            ],
+            "readingReason": "The new process helper is only root plus run(argv); there is no command DSL, cleanup policy or broad mutable context. The CLI and navigation callers actually pass eval/script argv through it and place run/comparison/interactive reports under fixture.root. The helper concurrently drains both pipes and exit, preserving failed CLI exits for impossible-budget assertions instead of hiding errors.",
+            "systemReason": "An explicit allowlist supplies owned HOME/XDG config/cache/data/state/SDK/temp and does not forward caller credentials/config variables. Child cwd is the durable repository for source imports/provenance, not a temporary code checkout. The SDK probe independently constructs owned history/auth paths, in-memory settings, disables resource discovery, forbids fetch/provider calls, and restores instrumentation. Its pre-existing navigation-history disposal deletes only a provably created mkdtemp root; this code was inspected, never run. Outer process HOME and reports remain retained."
+          }
+        ],
+        "integrationReadingReason": "Fresh whole-assigned-diff reading finds a coherent improvement: named setup/lifetime functions remove duplicated low-level mechanics while interaction and ordered state-transition assertions stay visible. The two repaired authority paths now use the actual shared ownedFixtureEnv through their reachable nested children; prior objection text or candidate identity was not used as evidence of correctness. Test additions align with the integrated production split between semantic membership, live presentation, frame-local row rendering, persistent activity facts, and observer disposal. No new giant abstraction/context bag, cross-file lifetime contradiction, removed essential assertion, or unjustified behavioral churn found in this lane. ACCEPT is solely this bounded integrated-source judgment, not native UI/test acceptance or whole-repository sign-off.",
+        "objections": [],
+        "limits": {
+          "assignedDiffUnreadGaps": [],
+          "execution": "Read-only source review only, except writing this requested untracked result. No tests, setup, builds, installation, formatter, auth/device access, recovery investigation, cleanup or source edits performed; no unsupported Pi preparation retried or bypassed. No delegation.",
+          "evidence": "No prior individual-file artifacts, summaries, coverage counts or green tests used as verdict. Candidate Git blobs identify reviewed source only, not acceptance evidence.",
+          "runtime": "Native CLI/UI execution, machine performance, compilation and live authentication remain unverified. Stub builder tests are provenance-mechanics checks, not compiled native UI proof.",
+          "scope": "All 12 assigned baseline-to-candidate diffs including deletions were read. Related context was targeted to exercised authority/lifetime/behavior paths, not full source everywhere and not a whole-repository review.",
+          "durableProvenance": {
+            "worktree": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_3cdd53fe",
+            "head": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+            "sourceCheckout": "Existing durable worktree retained; no /tmp code checkout created. Future test mkdtemp fixture paths are distinct from code provenance and this review created no runtime test fixture."
+          },
+          "contextRanges": "Full helpers.ts, terminal-process-fixture.ts, tui-helpers.ts, tasks-ui-proof-build.ts, terminal-perf-cli.test.ts and activity-projection.ts read. Targeted source/test ranges read elsewhere: footer observer installation plus baseline inline implementation; task-row merge and SDK collect/body/install; activity membership/grouping; session-manager revision/select/rewrite/reload/reset; disk materialization/disposal; navigation caller/probe setup/report ownership and history creation. Partial related-file context is not claimed as full-file review."
+        }
       }
     },
     {
@@ -11492,7 +12172,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "target": "06d8e9bf0696323d541b9b7d1f41b180d2c3e15f",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -11623,7 +12303,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "target": "06d8e9bf0696323d541b9b7d1f41b180d2c3e15f",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -11637,7 +12317,7 @@
       ],
       "chars": 2566,
       "lines": 65,
-      "status": "running",
+      "status": "accepted",
       "candidateOverride": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
       "repairReason": {
         "changedSourcePaths": [
@@ -11661,7 +12341,96 @@
         "setupStatus": "failed",
         "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
       },
-      "launchRecovered": "Outer execute timed out after launch; actual jobs.inspect verifies model and durable worktree. No duplicate launch."
+      "launchRecovered": "Outer execute timed out after launch; actual jobs.inspect verifies model and durable worktree. No duplicate launch.",
+      "result": {
+        "lane": "lane-54",
+        "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
+        "candidate": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "verdict": "ACCEPT",
+        "diffReadPaths": [
+          "scripts/find-ci-baseline.ts",
+          "tests/helpers.ts"
+        ],
+        "contextReadPaths": [
+          "scripts/find-ci-baseline.ts",
+          "tests/helpers.ts",
+          "tests/find-ci-baseline.test.ts",
+          ".github/workflows/ci.yml",
+          "scripts/ci-selective.ts",
+          "tests/owned-process-suite.ts",
+          "tests/install-local.test.ts",
+          "tests/update.test.ts",
+          "tests/worktree-workspace.test.ts",
+          "tests/setup.ts",
+          "src/live/credentials.ts",
+          "tests/tooling-fixtures.test.ts",
+          "scripts/loopback-parent-fixture.ts",
+          "tests/smoke-script.test.ts",
+          "tests/setup-native-release-gate.test.ts",
+          "tests/tasks-ui-proof-build.test.ts"
+        ],
+        "sourceBlobs": {
+          "scripts/find-ci-baseline.ts": "5796c92a32d55d195d2097012530dbd9c310e785",
+          "tests/helpers.ts": "c1df969d356af8fec87002a62cc053f1c6cd08f0"
+        },
+        "sourceJourneys": [
+          {
+            "paths": [
+              "tests/find-ci-baseline.test.ts",
+              "tests/helpers.ts",
+              "scripts/find-ci-baseline.ts",
+              "scripts/ci-selective.ts"
+            ],
+            "readingReason": "checkout() allocates a retained mkdtemp root, keeps checkout separate from HOME/config/SDK/hooks, and supplies the same env to fixture Git, the baseline finder, and the selector subprocess. The new final parameter reaches the one shared spawnSync Git wrapper, so HEAD/object/ancestry checks use the intended fixture authority. The selector inherits that explicit child environment.",
+            "systemReason": "A cwd alone does not isolate Git configuration. This closes that ownership gap without changing API trust criteria, shared deadline, ancestor selection or fail-closed behavior."
+          },
+          {
+            "paths": [
+              ".github/workflows/ci.yml",
+              "scripts/find-ci-baseline.ts",
+              "scripts/ci-selective.ts"
+            ],
+            "readingReason": "The push comparison step still invokes the CLI with repository/SHA/token from its environment. The CLI omits the optional env argument, retaining process.env; an undefined baseline still yields full validation downstream.",
+            "systemReason": "Production behavior remains unchanged; injection is local to subprocess configuration and does not redirect the authenticated HTTP requests or relax baseline authority."
+          },
+          {
+            "paths": [
+              "tests/owned-process-suite.ts",
+              "tests/helpers.ts",
+              "tests/worktree-workspace.test.ts",
+              "tests/setup.ts",
+              "src/live/credentials.ts"
+            ],
+            "readingReason": "The suite launcher uses the allowlisted helper result, an owned non-login shell and explicit process.execPath argv, retaining launch/output evidence. The workspace launcher similarly supplies owned env before importing production/SDK modules. The credential factory resolves BRUV_CODING_AGENT_DIR before homedir fallback, matching the fixture SDK destination; setup continues clearing Herdr pane identity.",
+            "systemReason": "Filesystem lifetime remains with the allocating caller, not the env helper. The helper makes HOME/config/cache/temp/SDK ownership legible and prevents inherited provider or pane environment from entering these launches."
+          },
+          {
+            "paths": [
+              "tests/install-local.test.ts",
+              "tests/update.test.ts",
+              "tests/smoke-script.test.ts",
+              "tests/tooling-fixtures.test.ts",
+              "scripts/loopback-parent-fixture.ts",
+              "tests/tasks-ui-proof-build.test.ts"
+            ],
+            "readingReason": "Installer/smoke fixtures deliberately prepend owned stub tools to the helper PATH; compiled-update fixtures invoke the runtime by absolute process.execPath and target owned binaries. RPC fixtures pass env through fixtureRpc directly to spawn. Proof-build fixture Git explicitly receives env. These are explicit caller specializations rather than helper knowledge of every subsystem.",
+            "systemReason": "The shared env remains one cohesive authority policy, not an opaque context bag. Callers still own argv, cwd, test-specific flags and fixture lifetime, avoiding a broad subprocess abstraction or hidden cleanup."
+          }
+        ],
+        "integrationReadingReason": "Complete assigned diff, including the replaced spawnSync line, and both full candidate implementations were read. The integration adds a narrow environment injection seam and one concrete fixture-environment constructor. Existing offlineTestEnv/run semantics are unchanged. Centralizing the coherent filesystem/configuration authority policy reduces repeated reasoning at isolated process launch sites; local overrides remain visible. No concrete cross-file contradiction or behavior regression was found in the followed journeys.",
+        "objections": [],
+        "limits": [
+          "Read-only source judgment for these two assigned paths, not whole-repository sign-off. Related sources were inspected at relevant caller/authority sections; full unrelated implementations and every other helper caller were not reviewed.",
+          "No tests, setup, builds, installs, formatting, auth/device operations, credential reads or source changes were performed. No unsupported Pi preparation was retried or bypassed. No delegation was used.",
+          "Runtime portability of the explicit /usr/bin:/bin fixture PATH and external SDK behavior are not execution-verified. The owned-root precondition is caller-owned, as documented; this helper is not a sandbox for arbitrary caller overrides.",
+          "Candidate preserved. Only the requested untracked result file was written in the existing durable worktree; no temporary code checkout or fixture was created. Existing artifacts, summaries, coverage counts and green tests were not used as acceptance evidence."
+        ]
+      },
+      "scopedBlobComparison": {
+        "target": "06d8e9bf0696323d541b9b7d1f41b180d2c3e15f",
+        "unchanged": true,
+        "contextChangedPaths": []
+      }
     },
     {
       "id": "lane-55",
@@ -11673,8 +12442,8 @@
       ],
       "chars": 23344,
       "lines": 589,
-      "status": "pending",
-      "candidateOverride": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+      "status": "rejected",
+      "candidateOverride": "06d8e9bf0696323d541b9b7d1f41b180d2c3e15f",
       "repairReason": {
         "changedSourcePaths": [
           "tests/fixtures/worktree-workspace-cases.ts",
@@ -11682,12 +12451,123 @@
           "tests/owned-process-suite.ts"
         ],
         "reason": "Actual introduced maintained sources require own complete baseline-to-repaired integrated diff judgments, not caller-only acceptance. Individual fixture focus may still be pending."
+      },
+      "jobId": "task_a0081293",
+      "workspace": {
+        "kind": "worktree",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_a0081293",
+        "worktreePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_a0081293",
+        "sourcePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
+        "baseRef": "06d8e9bf0696323d541b9b7d1f41b180d2c3e15f",
+        "baseOid": "06d8e9bf0696323d541b9b7d1f41b180d2c3e15f",
+        "branch": "bruv/pr45-final-integrated-diff-lane-55-execu-a0081293",
+        "preparationStatus": "ready",
+        "setupTaskId": "task_0cd572b9",
+        "setupStatus": "failed",
+        "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      },
+      "model": "openai-codex/gpt-6.1-sol",
+      "result": {
+        "lane": "lane-55",
+        "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
+        "candidate": "06d8e9bf0696323d541b9b7d1f41b180d2c3e15f",
+        "verdict": "REJECT",
+        "diffReadPaths": [
+          "tests/fixtures/worktree-workspace-cases.ts",
+          "tests/job-bridge-credentials.fixture.ts",
+          "tests/owned-process-suite.ts"
+        ],
+        "contextReadPaths": [
+          "tests/worktree-workspace.test.ts",
+          "tests/helpers.ts",
+          "tests/setup.ts",
+          "bunfig.toml",
+          "tests/job-bridge.test.ts",
+          "tests/job-service.test.ts",
+          "tests/job-attention.test.ts",
+          "tests/task-manager.test.ts",
+          "tests/questions-bridge.test.ts",
+          "tests/root-owner.test.ts",
+          "src/tasks/job-service.ts",
+          "src/tasks/task-manager.ts",
+          "src/tasks/worktree-workspace.ts",
+          "src/tasks/agent-session.ts",
+          "src/typescript/execution.ts",
+          "src/delegation-environment.ts"
+        ],
+        "sourceBlobs": {
+          "tests/fixtures/worktree-workspace-cases.ts": "16e90314c1d218b04e99644340d8d5220c2ba060",
+          "tests/job-bridge-credentials.fixture.ts": "99858065b35f461748847c07c31e1b2fedeccc7a",
+          "tests/owned-process-suite.ts": "7bb361586e537dd6623872b6b43aa6032dbda09d"
+        },
+        "sourceJourneys": [
+          {
+            "paths": [
+              "tests/job-bridge.test.ts",
+              "tests/owned-process-suite.ts",
+              "tests/helpers.ts",
+              "tests/job-bridge-credentials.fixture.ts",
+              "src/typescript/execution.ts",
+              "src/delegation-environment.ts"
+            ],
+            "readingReason": "Followed the credential assertion from the suite callback into a standalone Bun entry and then the compiled execute spawn. The baseline temporarily changed shared process.env; the candidate supplies only synthetic credentials to a separately owned process, asserts their presence before dispatch, and retains the same output and job-handler assertions.",
+            "systemReason": "The execute child receives scrubT3BridgeEnvironment while its parent retains jobHandler capability; root URL/token are removed but the ordinary safe sentinel survives. Owned fixture roots and manifests are retained, and dist/bruv is addressed from the durable worktree rather than copied into a temporary code checkout. Compiled binary/runtime behavior is unverified."
+          },
+          {
+            "paths": [
+              "tests/owned-process-suite.ts",
+              "tests/helpers.ts",
+              "tests/job-service.test.ts",
+              "tests/job-attention.test.ts",
+              "tests/task-manager.test.ts",
+              "tests/questions-bridge.test.ts",
+              "tests/root-owner.test.ts",
+              "bunfig.toml",
+              "tests/setup.ts"
+            ],
+            "readingReason": "Read suite registration/import boundaries and the common launch helper. The exact suite-file marker limits reentry, child argv names the complete suite, the allowlist owns HOME/config/SDK/Git hooks, and output plus exit receipts are recorded. The helper deliberately substitutes a retained executable that consumes JobService login flags and invokes non-login sh.",
+            "systemReason": "This is a useful small abstraction for process environment ownership rather than repeated process.env mutation. Current scenario overrides are synthetic values, not inherited credentials; tests/setup.ts only removes Herdr pane identity. Source remains in the worktree. Outer suite timeout cancellation/child drain is not established by this helper; no runtime claims are made."
+          },
+          {
+            "paths": [
+              "tests/worktree-workspace.test.ts",
+              "tests/fixtures/worktree-workspace-cases.ts",
+              "tests/helpers.ts",
+              "src/tasks/worktree-workspace.ts",
+              "src/tasks/job-service.ts",
+              "src/tasks/task-manager.ts",
+              "src/tasks/agent-session.ts"
+            ],
+            "readingReason": "Read all extracted worktree cases, their bootstrap, source pinning/branch validation/Git argv, reservation-to-activation, setup spawn and manager stop/drain paths. Cases still explicitly exercise committed-only worktrees, JSONC/schema handling, branch collisions, blocked preparation cancellation, timeout before activation, trust continuity, async setup failure, and independent batch identities.",
+            "systemReason": "Each fixture owns repo and session directories; withWorktreeJobs shuts down its manager in finally, task deadlines begin at reservation, and stopping a reserved task also stops setupTaskId. Session journals are written to fixture sessionDir and retain identity before provider start. However this separate bootstrap uses /bin/sh directly, so setupShell reintroduces login startup authority absent from the common owned-suite path."
+          }
+        ],
+        "integrationReadingReason": "The three added files separate complete source journeys rather than constructing a context bag: the common suite owns process environment, the credentials entry owns one environment-sensitive assertion, and worktree cases own repository/session/job lifetimes. Baseline worktree setup/cleanup and baseline credential assertion were also read for comparison. This generally reduces shared environment mutation and preserves observable assertions with audit retention. The integrated authority story is nevertheless inconsistent: the generic helper explicitly avoids login startup files while the worktree bootstrap does not. This prevents acceptance of the claimed owned-runtime safety boundary. This is a lane-scoped judgment, not a repository sign-off.",
+        "objections": [
+          {
+            "paths": [
+              "tests/fixtures/worktree-workspace-cases.ts",
+              "tests/worktree-workspace.test.ts",
+              "tests/owned-process-suite.ts",
+              "src/tasks/worktree-workspace.ts",
+              "src/tasks/job-service.ts"
+            ],
+            "readingProblem": "The added cases run real repository setup through JobService (e.g. blocking sleep setup at lines 176-223 and async setup later). Their actual bootstrap, tests/worktree-workspace.test.ts:13-18, sets SHELL to /bin/sh. setupShell at src/tasks/worktree-workspace.ts:194-197 passes -lc; #runWorktreeSetup then spawns that shell with the fixture environment. Login sh consults non-fixture startup files, which can execute host commands or reset HOME before setup executes. Merely starting Bun with ownedFixtureEnv does not isolate that descendant. In contrast tests/owned-process-suite.ts:16-22 explicitly introduces a non-login shim to prevent this exact boundary escape. No startup files were accessed or executed during review; the defect is the source-level exposure, not a claimed observed credential leak.",
+            "requiredResult": "Give the worktree-owned bootstrap the same owned non-login shell boundary (or an equivalent fixture-only explicit non-login argv path), retain its manifest/source provenance, and ensure every setup descendant keeps fixture HOME/config/SDK without sourcing host login startup files. Do not change public production shell semantics merely to repair the test harness."
+          }
+        ],
+        "limits": [
+          "READ-ONLY source review; no tests, setup, builds, installation, formatting, auth/device operations, credential access, recovery investigation, cleanup/deletion, delegation, or tracked source edits were performed. Only this requested untracked result artifact is written. Unsupported Pi preparation was not retried or bypassed.",
+          "All three complete baseline-to-candidate assigned diffs were read, including new-file headers; all three paths are absent at baseline. No assigned diff gaps remain. Context reading was targeted to actual callers, authority and lifetime paths; it is not an assertion that every context file or the whole repository was read.",
+          "No independent-focus artifacts, coverage totals, summaries, or green test results were used as acceptance evidence. Live provider access, dist/bruv correspondence and runtime timing remain unverified.",
+          "Durable source provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_a0081293 at candidate 06d8e9bf0696323d541b9b7d1f41b180d2c3e15f. Temporary fixture roots described by source are runtime evidence only, not code checkouts; none was created or removed during review."
+        ]
       }
     }
   ],
   "cap": 6,
-  "auxStatus": "completed",
-  "reworkReserve": 1,
+  "auxStatus": "running",
+  "reworkReserve": 0,
   "reworkHistory": [
     {
       "lane": "lane-05",
@@ -11706,6 +12586,6 @@
       "integrationStillPending": true
     }
   ],
-  "repairedSourceCandidate": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+  "repairedSourceCandidate": "06d8e9bf0696323d541b9b7d1f41b180d2c3e15f",
   "currentDiffPaths": 516
 }

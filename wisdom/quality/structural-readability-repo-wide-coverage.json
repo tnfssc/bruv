@@ -21299,12 +21299,12 @@
     {
       "file": "tests/subagent-extension.test.ts",
       "initialBlob": "508e9dfd1900ae7387c9254e224eca79e2694473",
-      "status": "accepted",
+      "status": "pending",
       "area": "execution-tasks-questions",
-      "resumeState": "accepted-joined",
+      "resumeState": "needs-rework",
       "primaryId": "task_187e7fa2",
       "judgeIds": ["task_ac0df4b4"],
-      "sourceCommit": "bf4827bfd63ece88c460227cdd9fdbd9648a5c39",
+      "sourceCommit": null,
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
       "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage.",
       "primaryCommit": "bf4827bfd63ece88c460227cdd9fdbd9648a5c39",
@@ -21345,7 +21345,42 @@
         "Parent owns audited isolated runtime gates. Model identity is not independently verified by this worker; parent must verify runtime agent.model. Live authentication/device access not verified or attempted. No credentials accessed. No wisdom/source/dependency edits, cleanup, publication or setup.",
         "Safety for ALL descendants: NO sudo, recovery investigation, user secrets, shell deletion/cleanup commands, inherited HOME/config/SDK cleanup, nested shell traps, destructive git, or user-data mutation. User already recovered data and requested no recovery work. Tests must use explicit process argv/env and owned fs.mkdtemp fixture HOME/config/SDK; retain them, do not delete. Review filesystem/network effects BEFORE tests/setup. Existing test-code cleanup of provably owned temporary paths may be inspected but NEVER run a shell trap or inherited HOME removal. Need live auth/device? Report unverified, don't access credentials. Propagate these constraints verbatim. Independent code/review agents get durable worktrees, not /tmp code checkouts. Keep existing worktrees and candidate evidence. Test/source fixtures may use /tmp, but document durable provenance. Parent verifies runtime agent.model openai-codex/gpt-6.1-sol; native normal leaves only, no delegation. Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md. Do NOT run setup, tests, builds: parent owns audited isolated gates. Shared dependencies are read-only; no reinstall or guard bypass. Preserve old worktrees/candidate edits. No push/new PR/merge, publication is parent-owned. No per-worker wisdom note pile; return exact artifact untracked, parent writes aggregate wisdom. Read only assigned focus/evidence rows in large coverage/area ledgers. Real structural reading, no rename churn/context bags/huge abstractions. Preserve existing security/assertions. Every focus including unchanged needs its own actual-source journey reasoning, never accept from counts/tests or batch summary.",
         "Runtime mock restoration, scheduling and Bun test isolation are not executed here. Existing real shell scenarios use read/sleep/printf and one exit-1 child; controlled notification scenarios stub child_process.spawn. Existing rmSync calls target only locally created mkdtemp session fixture roots, but were not run. Extension construction includes a default RemoteClient/config-dependent services: parent must supply owned isolated HOME/config/SDK and explicit process argv/env before running. Session fixtures may create lifecycle and notification outbox files. No live auth/device or network behavior is proven."
-      ]
+      ],
+      "priorAcceptedIntegrationProof": [
+        {
+          "primaryId": "task_187e7fa2",
+          "judgeIds": ["task_ac0df4b4"],
+          "sourceCommit": "bf4827bfd63ece88c460227cdd9fdbd9648a5c39",
+          "acceptedBlob": "b7d7e0ad3d338b2008660797f7cc0ba806e5cf7b",
+          "finalLane": "lane-25",
+          "finalJudge": "task_e45e2ede"
+        }
+      ],
+      "resumeBatch": "owned-last-descendant-shell-fixtures",
+      "resumeRework": {
+        "candidate": "06d8e9bf0696323d541b9b7d1f41b180d2c3e15f",
+        "primaryId": "task_187e7fa2",
+        "primaryBase": "127b579f405866d2a7745a42155615e068d0806a",
+        "judgeId": "task_e45e2ede",
+        "objections": [
+          {
+            "paths": [
+              "tests/subagent-extension.test.ts:147-173",
+              "tests/subagent-extension.test.ts:218-265",
+              "tests/subagent-extension.test.ts:269-282",
+              "tests/subagent-extension.test.ts:722-775",
+              "src/tasks/job-service.ts:357-371",
+              "src/tasks/worktree-workspace.ts:194-198",
+              "src/tasks/task-manager.ts:350-356",
+              "tests/owned-process-suite.ts",
+              "tests/helpers.ts"
+            ],
+            "readingProblem": "The extracted bindJobHandler expressly restores executeIsolated so subsequent jobs are real, but the surrounding test file never enters ownedProcessSuite or a dedicated owned host. Its rpc agent_end and print/json scenarios call shell with sleep/read/printf, and the typed launch scenario calls the real jobHandler as well. setupShell selects ambient SHELL and -lc; JobService passes scrubT3BridgeEnvironment(process.env), which preserves ordinary HOME/config/SDK/provider environment. A fixture ledger directory or later opt-in controlledChildren mocks do not own these earlier descendants. Package/CI invokes bun test without an enclosing HOME/config/SDK allowlist. Thus integrated test refactors leave actual shell startup and descendants with ambient authority while the adjacent process suites deliberately avoid it.",
+            "requiredResult": "Put every real-process scenario in this file behind the retained mkdtemp allowlisted ownedProcessSuite pattern or an equally explicit dedicated owned process entry. Own HOME/config/SDK/temp and a non-login fixture shell; retain fixture/evidence directories and source provenance. Keep the narrow bind helper and actual RPC/print/json delivery, attention, failure, shutdown, SSH replay and native-mailbox assertions. Do not run the current ambient-host scenarios as safety evidence; do not retry/bypass unsupported Pi preparation."
+          }
+        ],
+        "readingReason": "Fresh actual integrated descendant process boundary gap, not regression in earlier accepted ownership repairs. Subagent extension real shell scenarios need no-filter whole-file ownedProcessSuite (retain all real RPC/print/json/attention/failure/shutdown/SSH/native assertions and fixture/evidence). Worktree bootstrap sets SHELL=/bin/sh but production setupShell adds -lc, sourcing host login startup: use same owned non-login shim pattern or equivalent fixture-only owned shell argv; retain existing explicit environment/journal/source manifest. Do NOT change public production login shell semantics. Do NOT test/setup/build/auth/provider/traps/delete or inspect hoststartup/credentials. Small coherent correction to these test owners; if shared helper source changes, that focus needs fresh individual proof too."
+      }
     },
     {
       "file": "tests/subagent-placement.test.ts",
@@ -23646,12 +23681,12 @@
     {
       "file": "tests/worktree-workspace.test.ts",
       "initialBlob": "e8d8638eed7fa0b4c82670cb2afc79482715a371",
-      "status": "accepted",
+      "status": "pending",
       "area": "execution-tasks-questions",
-      "resumeState": "accepted-joined",
+      "resumeState": "needs-rework",
       "primaryId": "task_d07c58c2",
       "judgeIds": ["task_83034949", "task_6181fd8e", "task_686802a6"],
-      "sourceCommit": "af63383a0fb05cba759d32b21788c03f7a3cffa7",
+      "sourceCommit": null,
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
       "acceptedBlob": "3d63bbaecbf6268d8b416714d288f17592fb0709",
       "result": "Read the exact candidate against primaryBase 3e7300d72c5535ebb552b6b8651944fccd7e10b3, the entire explicit entry and entire moved case module. This is an actual ownership change, not cosmetic extraction: the discoverable entry now owns a retained mkdtemp runtime, calls the existing whitelist environment helper, records the actual argv/env/cwd, starts a child with explicit preload and an owned cwd, defers all production/SDK imports to that child, and retains stdout/stderr before asserting exit. The case module separates the child-only journeys from discovery. Per-case repositories and session directories sit directly under the retained runtime; direct worktrees sit under case roots, and JobService-managed worktrees/profiles sit under the runtime. withWorktreeJobs now has one responsibility: construct and drain its TaskManager. Global environment mutation and fixture deletion have been removed. The JSONC/schema, commit-pinning/dirty-file exclusion, unsafe-ref/path/branch, cancellation/deadline, trust/continuity, async activation/failure publication, and sibling-identity journeys retain their substantive assertions.",
@@ -23663,27 +23698,36 @@
           "acceptedBlob": "7a01e214fe52d9bd144d6e0171b03a22e6863f01",
           "finalLane": "lane-26",
           "finalJudge": "task_7641420e"
+        },
+        {
+          "primaryId": "task_d07c58c2",
+          "judgeIds": ["task_83034949", "task_6181fd8e", "task_686802a6"],
+          "sourceCommit": "af63383a0fb05cba759d32b21788c03f7a3cffa7",
+          "acceptedBlob": "3d63bbaecbf6268d8b416714d288f17592fb0709",
+          "finalLane": "lane-55",
+          "finalJudge": "task_a0081293"
         }
       ],
-      "resumeBatch": "owned-worktree-activation-fixture",
+      "resumeBatch": "owned-last-descendant-shell-fixtures",
       "resumeRework": {
-        "candidate": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
-        "primaryId": "task_f4444bc8",
-        "judgeId": "task_7641420e",
+        "candidate": "06d8e9bf0696323d541b9b7d1f41b180d2c3e15f",
+        "primaryId": "task_d07c58c2",
+        "primaryBase": "3e7300d72c5535ebb552b6b8651944fccd7e10b3",
+        "judgeId": "task_a0081293",
         "objections": [
           {
             "paths": [
-              "tests/worktree-workspace.test.ts:30-46,337-380",
-              "src/tasks/job-service.ts:prepareLaunch and #runWorktreeSetup",
-              "src/tasks/agent-session.ts:15-26",
-              "tests/setup.ts",
-              "tests/helpers.ts:ownedFixtureEnv"
+              "tests/fixtures/worktree-workspace-cases.ts",
+              "tests/worktree-workspace.test.ts",
+              "tests/owned-process-suite.ts",
+              "src/tasks/worktree-workspace.ts",
+              "src/tasks/job-service.ts"
             ],
-            "readingProblem": "The newly added async setup test actually traverses prepareAgentSession and activatePreparedAgent (a recording spy, not a mock replacement). Its context has only cwd/model/trust, so sessionDir is undefined. prepareAgentSession writes the SDK-selected default journal and appends metadata, outside root unless the human test launcher happened to isolate SDK configuration. withWorktreeJobs owns only BRUV_WORKTREE_ROOT and TaskManager; {} passed to JobService disables injected native configuration, not process.env copied by setup and child launch. The normal test preload supplies no HOME/config/SDK isolation. This is a concrete missing filesystem/process owner, repeating the pre-existing trust-test gap and adding another persistent outside-fixture writer.",
-            "requiredResult": "Make the worktree test journey own its HOME/config/SDK and session directory under a retained mkdtemp root, with explicit child-test argv/env (or an equally explicit owned runtime boundary). Keep real activation/async publication assertions but do not inherit human configuration or credentials; ensure all journal paths belong to the fixture. Do not clean or delete inherited SDK paths. Reuse the repaired owned environment helper where appropriate, and retain fixtures for audit."
+            "readingProblem": "The added cases run real repository setup through JobService (e.g. blocking sleep setup at lines 176-223 and async setup later). Their actual bootstrap, tests/worktree-workspace.test.ts:13-18, sets SHELL to /bin/sh. setupShell at src/tasks/worktree-workspace.ts:194-197 passes -lc; #runWorktreeSetup then spawns that shell with the fixture environment. Login sh consults non-fixture startup files, which can execute host commands or reset HOME before setup executes. Merely starting Bun with ownedFixtureEnv does not isolate that descendant. In contrast tests/owned-process-suite.ts:16-22 explicitly introduces a non-login shim to prevent this exact boundary escape. No startup files were accessed or executed during review; the defect is the source-level exposure, not a claimed observed credential leak.",
+            "requiredResult": "Give the worktree-owned bootstrap the same owned non-login shell boundary (or an equivalent fixture-only explicit non-login argv path), retain its manifest/source provenance, and ensure every setup descendant keeps fixture HOME/config/SDK without sourcing host login startup files. Do not change public production shell semantics merely to repair the test harness."
           }
         ],
-        "readingReason": "Actual async setup test reaches real prepareAgentSession with undefined sessionDir and inherited SDK paths, persisting a journal outside its fixture. Own all session/SDK/HOME/config and managed-child paths, preserve real async activation/publication assertions, no global env edits/test execution; coordinate actual existing APIs/source before adding abstractions."
+        "readingReason": "Fresh actual integrated descendant process boundary gap, not regression in earlier accepted ownership repairs. Subagent extension real shell scenarios need no-filter whole-file ownedProcessSuite (retain all real RPC/print/json/attention/failure/shutdown/SSH/native assertions and fixture/evidence). Worktree bootstrap sets SHELL=/bin/sh but production setupShell adds -lc, sourcing host login startup: use same owned non-login shim pattern or equivalent fixture-only owned shell argv; retain existing explicit environment/journal/source manifest. Do NOT change public production login shell semantics. Do NOT test/setup/build/auth/provider/traps/delete or inspect hoststartup/credentials. Small coherent correction to these test owners; if shared helper source changes, that focus needs fresh individual proof too."
       },
       "priorPrimaryLineage": [
         {
@@ -26529,9 +26573,9 @@
     "baselineFiles": 766,
     "finalGate": "pending; incomplete focus coverage",
     "liveAuth": "unverified/failing; preserved",
-    "accepted": 839,
+    "accepted": 837,
     "total": 839,
-    "pending": 0,
+    "pending": 2,
     "sourceExtras": 73,
     "checkout": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
     "branch": "bruv/readability-pr45-sol-continuation",
