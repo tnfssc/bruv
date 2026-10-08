@@ -113,6 +113,15 @@
         "branch": "bruv/pr45-primary-scripts-remote-jobs-e2e.ts-40c1becc",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
+      },
+      {
+        "id": "task_dbde3103",
+        "stage": "primary",
+        "focus": "scripts/remote-placement-e2e.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_dbde3103",
+        "branch": "bruv/pr45-primary-scripts-remote-placement-e2-dbde3103",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
       }
     ]
   },
