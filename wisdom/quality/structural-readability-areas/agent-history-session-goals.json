@@ -2693,11 +2693,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_8519a359",
+        "primaryCommit": "bc35aba931192a3ae92d2a9eb8805d5735e52913",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary",
+        "sourceCommit": "bc35aba931192a3ae92d2a9eb8805d5735e52913",
+        "state": "needs-judge",
         "reason": "No dedicated primary/final independent focus judgment."
       }
     },
@@ -2729,11 +2729,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_8519a359",
+        "primaryCommit": "bc35aba931192a3ae92d2a9eb8805d5735e52913",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary",
+        "sourceCommit": "bc35aba931192a3ae92d2a9eb8805d5735e52913",
+        "state": "needs-judge",
         "reason": "No dedicated primary/final independent focus judgment."
       }
     },
@@ -2747,11 +2747,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_8519a359",
+        "primaryCommit": "bc35aba931192a3ae92d2a9eb8805d5735e52913",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary",
+        "sourceCommit": "bc35aba931192a3ae92d2a9eb8805d5735e52913",
+        "state": "needs-judge",
         "reason": "No dedicated primary/final independent focus judgment."
       }
     },

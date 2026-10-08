@@ -3967,55 +3967,58 @@
     {
       "focus": "tests/terminal-perf-send.test.ts",
       "initialBlob": "1af5df2851173b7588355c9ab3b50ff3e9924d5d",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "1af5df2851173b7588355c9ab3b50ff3e9924d5d",
       "integrationState": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "1af5df2851173b7588355c9ab3b50ff3e9924d5d",
         "primaryId": "task_c3dcbd93",
         "primaryCommit": "3dabdaae8f61ab742db85f601d8868e0c20bb325",
-        "judgeIds": [],
+        "judgeIds": ["task_4e5fc6d6"],
         "sourceCommit": "3dabdaae8f61ab742db85f601d8868e0c20bb325",
-        "state": "needs-judge",
-        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+        "state": "accepted-joined",
+        "reason": "Read the whole file, including the unchanged decision. run owns setup -> action -> finally dispose and checks the actual InteractiveMode.init seam afterward. checkEvidence contains shared dispatch, visible acknowledgment, output/hash and timing-order evidence; each neighboring test supplies its distinct admission/journal, multiline/large-paste, history, streaming queue or slash-command consequences. The separate exclusivity case explicitly demonstrates second-owner rejection, idempotent disposal, renderer cleanup and fresh setup. The final child test puts permanent Bruv adapter isolation and disk-journal assertions together. These are short, locally readable paths rather than scattered authorities; further extraction would add navigation without repairing a structural burden."
       }
     },
     {
       "focus": "tests/terminal-perf-t3-config.test.ts",
       "initialBlob": "f81c727c864b16e2d7a243d0ce2764654e0cafbb",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "f81c727c864b16e2d7a243d0ce2764654e0cafbb",
       "integrationState": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "f81c727c864b16e2d7a243d0ce2764654e0cafbb",
         "primaryId": "task_c3dcbd93",
         "primaryCommit": "3dabdaae8f61ab742db85f601d8868e0c20bb325",
-        "judgeIds": [],
+        "judgeIds": ["task_4e5fc6d6"],
         "sourceCommit": "3dabdaae8f61ab742db85f601d8868e0c20bb325",
-        "state": "needs-judge",
-        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+        "state": "accepted-joined",
+        "reason": "Read the entire compact test and both JSON owners at the exact candidate. The local two-row table names Terminal Frame Lab and Terminal Interaction Lab alongside their package commands. For each action, unique selection, exact bun command, package-script presence, no automatic worktree startup and async execution are asserted in the same loop. The Script type describes those fields without a context object or hidden selection helper. This contract can be understood in one pass; no structural split or additional authority is warranted."
       }
     },
     {
       "focus": "tests/terminal-perf-tool-events.test.ts",
       "initialBlob": "fbbc00c6ccae356bf334930e102cee43534c1ec5",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "5688ab51506bf5958824c42f4ca03d02d78d54ad",
       "integrationState": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "5688ab51506bf5958824c42f4ca03d02d78d54ad",
         "primaryId": "task_c3dcbd93",
         "primaryCommit": "3dabdaae8f61ab742db85f601d8868e0c20bb325",
-        "judgeIds": [],
+        "judgeIds": ["task_4e5fc6d6"],
         "sourceCommit": "3dabdaae8f61ab742db85f601d8868e0c20bb325",
-        "state": "needs-judge",
-        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+        "state": "accepted-joined",
+        "reason": "Read the whole intrinsic test, the exact diff and every line of the added executable guard fixture. The previously interleaved common assertions now form coherent contracts: callback burst/settlement and lifecycle suppression; settled visibility/content identity; backlogged input through real Enter/provider/journal admission; and trace accounting/frame links. check still invokes every contract for every workload probe, with shape/outcome-specific consequences adjacent to each invocation. This is meaningful grouping by observation authority, not rename churn. More importantly, the string-concatenated -e program is replaced by readable TypeScript with named originals and a visible setup -> guarded calls -> action -> finally dispose -> restoration -> rejected reuse journey. runIsolatedProbe centralizes child lifetime for both executable paths instead of duplicating launch/drain logic."
       }
     },
     {
@@ -4759,6 +4762,19 @@
         "state": "accepted-joined",
         "reason": "Read the entire helper at the exact candidate, independently of the primary narrative. The journey is contiguous: resolve the repository once; allocate one mkdtemp root; derive seven owned HOME/config/cache/data/state/SDK/temp directories; await their creation; construct an explicit environment that inherits only PATH; return that root and a run closure capturing the environment. run directly owns Bun.spawn with process.execPath plus caller argv, repository cwd and piped output. Its Promise.all observes exit and starts both pipe drains together, then publishes one exitCode/stdout/stderr result. There is no teardown method, shell quoting, inherited HOME removal or second child-lifetime authority. The intentional retained root is visible in the API and comment. A class, directory-builder extraction or additional lifecycle state would split this small authority rather than clarify it."
       }
+    },
+    {
+      "focus": "tests/fixtures/terminal-perf-tool-event-guard.ts",
+      "initialBlob": null,
+      "introducedBy": "3dabdaae8f61ab742db85f601d8868e0c20bb325",
+      "state": "pending",
+      "acceptedBlob": null,
+      "resume": {
+        "status": "pending",
+        "acceptedBlob": "6e9dba742c41e5debbbaeea7b26fe7b5e5b94ee3",
+        "sourceCommit": "3dabdaae8f61ab742db85f601d8868e0c20bb325",
+        "state": "needs-primary-final-blob"
+      }
     }
   ],
   "batchChecks": [
@@ -4869,7 +4885,7 @@
     }
   },
   "resumeStatus": {
-    "accepted": 111,
-    "pending": 3
+    "accepted": 114,
+    "pending": 1
   }
 }
