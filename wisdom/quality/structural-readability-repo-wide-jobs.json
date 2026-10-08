@@ -1713,7 +1713,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_af2a8b9b",
         "branch": "bruv/pr45-primary-tests-questions-sdk.test.ts-af2a8b9b",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "c9bf669c68307fbcb75740d19b36fc1966e6a0f7"
       },
       {
         "id": "task_e086888e",
@@ -1721,6 +1722,24 @@
         "focus": "tests/questions-tui.test.ts",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_e086888e",
         "branch": "bruv/pr45-primary-tests-questions-tui.test.ts-e086888e",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_e86a3033",
+        "stage": "primary",
+        "focus": "tests/resume-stream-cancellation.test.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_e86a3033",
+        "branch": "bruv/pr45-primary-tests-resume-stream-cancell-e86a3033",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_d848af48",
+        "stage": "primary",
+        "focus": "tests/root-owner.test.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_d848af48",
+        "branch": "bruv/pr45-primary-tests-root-owner.test.ts-d848af48",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
       }

@@ -13027,12 +13027,63 @@
       "initialBlob": "b986a86dc43a69adbb4c83094bb9c8c5bd6857a8",
       "status": "pending",
       "area": "execution-tasks-questions",
-      "resumeState": "pending-primary",
-      "primaryId": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_af2a8b9b",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "c9bf669c68307fbcb75740d19b36fc1966e6a0f7",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
-      "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage."
+      "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage.",
+      "primaryCommit": "c9bf669c68307fbcb75740d19b36fc1966e6a0f7",
+      "primaryBase": "8f186d90eb5047304492c72c6bc56a7d0f37204d",
+      "primaryResult": "Extracted the coherent offline model runtime into createOfflineModelRuntime, leaving its explicit local auth path, disabled refresh, fake auth and both overridden streams together. The test now visibly owns captured contexts, real resource-loader question registration, session construction, initial independent turn, saved answer command, hidden persisted custom_message and duplicate-answer suppression. All six assertion expressions and SDK command/persistence behavior remain unchanged. Session disposal remains in finally; the mkdtemp-owned fixture is retained for parent batch inspection instead of deleted. Preserved evidence recorded this focus as baseline pending-primary with no prior candidate or rework to import.",
+      "primaryPaths": ["tests/questions-sdk.test.ts"],
+      "primaryChecks": [
+        {
+          "name": "Repository formatter, changed source path only",
+          "status": 0,
+          "command": "/home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/@biomejs/biome/bin/biome",
+          "args": ["format", "--write", "tests/questions-sdk.test.ts"],
+          "fixtureRoot": "/tmp/pr45-questions-sdk-format-HkRFh3",
+          "stdout": "Formatted 1 file in 19ms. No fixes applied.\n",
+          "stderr": ""
+        },
+        {
+          "name": "git diff --check before commit",
+          "status": "passed"
+        },
+        {
+          "name": "Static original/candidate comparison",
+          "status": "passed",
+          "detail": "All six expect expressions unchanged; fake auth, refreshOnCreate:false, stream/streamSimple overrides and tools:[] preserved."
+        },
+        {
+          "name": "Actual caller trace",
+          "status": "inspected",
+          "detail": "registerQuestions answer command -> runtime service.onAnswered -> ParentQuestionContinuations saved-answer dispatch -> pi.sendMessage customType question-answer, display:false, triggerTurn/followUp; persisted SessionManager custom message inspected by unchanged assertions."
+        },
+        {
+          "name": "Filesystem/network side-effect review",
+          "status": "inspected-not-executed",
+          "detail": "ModelRuntime local authPath, modelsPath:null and refreshOnCreate:false; DefaultResourceLoader explicit fixture cwd/agentDir, disabled extension/skill/theme/prompt discovery; SessionManager explicit fixture session path; all provider calls stubbed. Existing test previously removed only its mkdtemp-owned directory; candidate retains it. Parent must supply isolated HOME/config/SDK for any runtime gates."
+        },
+        {
+          "name": "Repository tests/setup/builds",
+          "status": "not-run",
+          "detail": "Parent owns audited isolated batch gates."
+        },
+        {
+          "name": "Commit source-only",
+          "status": "passed",
+          "detail": "No active git hooks observed; only focus source path committed."
+        }
+      ],
+      "primaryLimits": [
+        "Independent fresh judge pending; static checks and formatting are not runtime or readability acceptance.",
+        "No live provider auth/device verification performed; no credentials read.",
+        "Durable source provenance is this retained Git worktree and exact sourceCommit/sourceBlobs. Formatter-only fixture retained at /tmp/pr45-questions-sdk-format-HkRFh3; test fixture paths will be mkdtemp bruv-questions-sdk-* directories retained when the parent executes its isolated gate.",
+        "No wisdom changes: parent owns aggregate wisdom, and the existing guidance already covers grouping stubbed transport separately from semantic decisions.",
+        "Safety for ALL descendants: no sudo, no recovery actions, no deletion/cleanup shell commands, no HOME or inherited SDK/config cleanup, no nested shell traps. Do not read/use user secrets. Use node child_process argv plus explicit isolated env for tests; allocate fresh disposable HOME/config/SDK dirs with fs.mkdtemp and retain them rather than delete. If real credential/device access is required, return that blocker instead of using it. Do not run repository tests or setup without first checking their filesystem/network side effects. Existing dependencies can be used read-only from /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules. Bun is /home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin/bun. Worktree t3 setup may fail because PATH lacks bun; inspect outcome, do not guess. No repetitive full builds for each worker. Limit to SIX concurrent leaf workers total, primary and judge combined. Give independent code/review agents worktrees. Propagate these safety constraints verbatim. No destructive git operations or user-data mutations."
+      ]
     },
     {
       "file": "tests/questions-tui.test.ts",
