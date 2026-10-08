@@ -19932,16 +19932,16 @@
     {
       "file": "tests/remote-root-presenter.test.ts",
       "initialBlob": "f83b29c694dfed802f8774046a94c6c2c294c0b1",
-      "status": "pending",
+      "status": "accepted",
       "area": "remote",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_f1169a5b",
       "primaryCommit": "40ede2e3c733a7e6c2c1d5b2c0b18f9d32d96a43",
-      "judgeIds": ["task_20e04838"],
+      "judgeIds": ["task_20e04838", "task_102b12bc"],
       "sourceCommit": "40ede2e3c733a7e6c2c1d5b2c0b18f9d32d96a43",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
-      "acceptedBlob": "b4ed20c02e76380b8f9b5435bb482d50268a3a07",
-      "result": "Fake remote response ownership separated from scripted/mounted UI; input follows terminal callback→listeners→focused component rather than wrong root fallback. Question/cancel/detach journeys preserve authority and cleanup.",
+      "acceptedBlob": "4f7254abd12f2bde72b4c8e930fa37b11d358ab7",
+      "result": "Read the complete 975-line exact candidate test, the primaryBase diff, and the base mounted fixture. The only candidate-changed path is this focus. The rework repairs the fixture's actual lifetime/effect boundary rather than weakening its assertions: mountedPresentation now owns a retained mkdtemp root and scoped environment, intercepts doRender instead of requestRender, and restores spies/environment only after presenter termination. The small local change makes clear which shipped operations remain real (listeners, focus, editor/picker input, scheduling) and which are fake (terminal I/O and frame painting), without introducing another presentation implementation or a context bag. Unchanged control, transcript privacy/identity/replay, task outcome, prompt, owner/version answer, modal cancellation and detach assertions were all read and retained.",
       "priorAcceptedIntegrationProof": [
         {
           "primaryId": "task_d3ae9262",
@@ -19993,7 +19993,21 @@
         "An initial evidence read emitted the full reconciliation JSON before targeted filtering; all subsequent ledger inspection was restricted to the assigned focus row. No unrelated rows were used for decisions.",
         "No wisdom/value edits: parent owns the aggregate wisdom artifact, and this is a bounded correction to an already documented ownership principle."
       ],
-      "forceJudge": true
+      "forceJudge": true,
+      "systemReason": "Traced p.key through the captured ProcessTerminal.start callback into TuiBase.handleTerminalInput: registered root listeners run first, then the actual focused editor/picker receives input, followed by requestImmediateRender. The installed pi-tui 1.0.3 code resolves requestImmediateRender's nextTick, requestRender's throttled timer, and renderNow to this.doRender; TuiMainScreen.prototype's method is the concrete painting boundary intercepted by the candidate spy. Thus none of those paths enters doRender's component painting, width-crash log, redraw diagnostics or hard-coded /tmp/tui debug writes. addChild and setFocus spies still call the original methods; RootControls still owns prompt dispatch, uncertain-command protection, owner/version revalidation and answer identity. QuestionPicker input/selection and Editor submission remain real. frame() intentionally renders the root component at width 80, not the terminal renderer. ownedFixtureEnv creates only directories beneath the retained mkdtemp root and redirects HOME, config/cache/data, SDK and TMPDIR before ProcessTerminal/Editor construction; PI_TUI_DEBUG and PI_TUI_DEBUG_REDRAW are disabled and PI_TUI_WRITE_LOG is empty before ProcessTerminal's logging-path initializer. COLUMNS/LINES supply fixed environment fallbacks, not a claim to override an existing TTY. close sends the shipped Ctrl-D listener, which cancels the modal and resolves ended without answering a detached dialog. presentRemoteRoot finally removes signal handlers, clears animation, calls tui.stop, awaits polling, then awaits mock detach. TuiBase.stop marks stopped and cancels the timer; queued nextTicks check stopped before painting, so restoring the doRender spy after running settles does not expose pending paints. The snapshot test calls dispatchRootFacet with stubbed jobs/questions/session services; no live remote client, sockets, providers or credentials are invoked by these fixtures.",
+      "checks": [
+        "Read exact candidate and primaryBase using git show/diff, not checkout HEAD; verified git diff --name-status lists only tests/remote-root-presenter.test.ts.",
+        "Verified candidate focus blob with git ls-tree: 4f7254abd12f2bde72b4c8e930fa37b11d358ab7 (primaryBase focus is b4ed20c02e76380b8f9b5435bb482d50268a3a07).",
+        "Static git diff --check for the focus completed without diagnostics.",
+        "Inspected filesystem/network effects before any potential runtime gate: retained owned fixture mkdir operations, ProcessTerminal logging initialization, renderer crash/debug writes, mock remote services and shutdown guards.",
+        "No setup, tests, builds, installs, dependency writes, cleanup commands, source edits, credentials, recovery work, delegation or publication performed. Only this untracked review artifact is written."
+      ],
+      "limits": [
+        "Static actual-code acceptance only; tests/builds and adversarial diagnostic-environment runtime validation remain parent-owned audited isolated gates. No test success or induced log-write observation is claimed.",
+        "Installed read-only pi-tui 1.0.3 implementation was inspected alongside candidate package/patch provenance; no reinstall or package mutation was used. Future dependency renderer-boundary changes are not verified.",
+        "Durable review provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_102b12bc. Candidate evidence/worktrees were preserved. Candidate runtime fixtures use retained /tmp/bruv-root-presentation-* mkdtemp roots; none were created or removed during this review.",
+        "No live authentication/device access was attempted or verified. Parent owns runtime agent.model verification and aggregate wisdom/publication."
+      ]
     },
     {
       "file": "tests/remote-root-transport.test.ts",
@@ -26262,9 +26276,9 @@
     "baselineFiles": 766,
     "finalGate": "pending; incomplete focus coverage",
     "liveAuth": "unverified/failing; preserved",
-    "accepted": 832,
+    "accepted": 833,
     "total": 839,
-    "pending": 7,
+    "pending": 6,
     "sourceExtras": 73,
     "checkout": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
     "branch": "bruv/readability-pr45-sol-continuation",

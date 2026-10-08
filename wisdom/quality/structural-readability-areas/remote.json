@@ -3369,7 +3369,7 @@
     {
       "focus": "tests/remote-root-presenter.test.ts",
       "initialBlob": "f83b29c694dfed802f8774046a94c6c2c294c0b1",
-      "status": "pending",
+      "status": "accepted",
       "judgeRounds": [
         {
           "id": "task_20e04838",
@@ -3402,20 +3402,20 @@
           "reason": "Summary regex matched introductory candidate word then Base hash. Corrected from retained committed worktree HEAD; source accepted hashes always recorded independently from judge."
         }
       },
-      "acceptedBlob": null,
+      "acceptedBlob": "4f7254abd12f2bde72b4c8e930fa37b11d358ab7",
       "integrationState": "exact independently accepted primary test patch applied",
       "result": "Distinct remoteReplies/scripted UI/mounted UI lifetimes; terminal callback exercises real shipped focused input dispatch; added regression reproduces old helper bypass.",
       "checks": "Worker 29 pass/157 assertions; baseline helper new routing regression fails; format/lint/diff pass existing ANSI regex warning.",
       "changedRelatedPaths": [],
       "resume": {
-        "status": "pending",
-        "acceptedBlob": "b4ed20c02e76380b8f9b5435bb482d50268a3a07",
+        "status": "accepted",
+        "acceptedBlob": "4f7254abd12f2bde72b4c8e930fa37b11d358ab7",
         "primaryId": "task_f1169a5b",
         "primaryCommit": "40ede2e3c733a7e6c2c1d5b2c0b18f9d32d96a43",
-        "judgeIds": ["task_20e04838"],
+        "judgeIds": ["task_20e04838", "task_102b12bc"],
         "sourceCommit": "40ede2e3c733a7e6c2c1d5b2c0b18f9d32d96a43",
-        "state": "needs-judge",
-        "reason": "Fake remote response ownership separated from scripted/mounted UI; input follows terminal callback→listeners→focused component rather than wrong root fallback. Question/cancel/detach journeys preserve authority and cleanup."
+        "state": "accepted-joined",
+        "reason": "Read the complete 975-line exact candidate test, the primaryBase diff, and the base mounted fixture. The only candidate-changed path is this focus. The rework repairs the fixture's actual lifetime/effect boundary rather than weakening its assertions: mountedPresentation now owns a retained mkdtemp root and scoped environment, intercepts doRender instead of requestRender, and restores spies/environment only after presenter termination. The small local change makes clear which shipped operations remain real (listeners, focus, editor/picker input, scheduling) and which are fake (terminal I/O and frame painting), without introducing another presentation implementation or a context bag. Unchanged control, transcript privacy/identity/replay, task outcome, prompt, owner/version answer, modal cancellation and detach assertions were all read and retained."
       }
     },
     {
@@ -4163,8 +4163,8 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 117,
-    "pending": 5
+    "accepted": 118,
+    "pending": 4
   },
   "extraFiles": [
     {

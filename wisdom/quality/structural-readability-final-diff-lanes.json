@@ -9351,7 +9351,7 @@
       ],
       "chars": 95862,
       "lines": 2285,
-      "status": "running",
+      "status": "accepted",
       "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
       "jobId": "task_c2006147",
       "model": "openai-codex/gpt-6.1-sol",
@@ -9367,6 +9367,149 @@
         "setupTaskId": "task_b4948386",
         "setupStatus": "failed",
         "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      },
+      "result": {
+        "lane": "lane-48",
+        "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
+        "candidate": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "verdict": "ACCEPT",
+        "diffReadPaths": [
+          "scripts/terminal-perf/send-workloads.ts",
+          "scripts/terminal-perf/tool-event-workloads.ts",
+          "scripts/terminal-perf/tool-workloads.ts",
+          "scripts/terminal-perf/workloads.ts",
+          "scripts/ui-cleanup-probe.py",
+          "src/cli.ts",
+          "src/diagnostics.ts",
+          "src/ui/conversation-density.ts",
+          "src/ui/editor.ts"
+        ],
+        "contextReadPaths": [
+          "scripts/terminal-perf/send-workloads.ts",
+          "scripts/terminal-perf/tool-event-workloads.ts",
+          "scripts/terminal-perf/tool-workloads.ts",
+          "scripts/terminal-perf/workloads.ts",
+          "scripts/ui-cleanup-probe.py",
+          "src/cli.ts",
+          "src/diagnostics.ts",
+          "src/ui/conversation-density.ts",
+          "src/ui/editor.ts",
+          "scripts/terminal-perf/interaction-worker.ts",
+          "scripts/terminal-perf/action-profiler.ts",
+          "scripts/terminal-perf.ts",
+          "scripts/terminal-perf/dashboard.ts",
+          "src/pi-host.ts",
+          "src/remote/root-options.ts",
+          "src/ui/startup.ts",
+          "src/live/editor-push-to-talk.ts",
+          "src/live/extension.ts",
+          "src/ui/sdk-task-rows.ts",
+          "src/ui/rolling-activity.ts",
+          "src/diagnostics-extension.ts",
+          "src/agent/extension.ts",
+          "node_modules/@earendil-works/pi-coding-agent/dist/modes/interactive/components/assistant-message.js",
+          "node_modules/@earendil-works/pi-tui/dist/tui.js",
+          "node_modules/@earendil-works/pi-tui/dist/tui-alt-screen.js"
+        ],
+        "sourceBlobs": {
+          "scripts/terminal-perf/send-workloads.ts": "6aa16ff8235430a58997714cf78d5b9b86f967b1",
+          "scripts/terminal-perf/tool-event-workloads.ts": "26d3f60fb2442da57cf53dee465edf536614c57c",
+          "scripts/terminal-perf/tool-workloads.ts": "c47e1af5bec976d7f09e10248940f135ce78fe4c",
+          "scripts/terminal-perf/workloads.ts": "a27a6dd7eb5239f3bdb9c0ac011a2eecf433cfce",
+          "scripts/ui-cleanup-probe.py": "c68a4a4b1d55f6fa3ebde54cd408f5196a1ad8ce",
+          "src/cli.ts": "b961477ed8253a6b69a65cf972905895b4eed010",
+          "src/diagnostics.ts": "208b251b5b7130114fbd4813aa83259798119f83",
+          "src/ui/conversation-density.ts": "c343f2b045e2fd95c37943d8ddd2aab9d6611def",
+          "src/ui/editor.ts": "fba6c9f74fc9af07f8a11368455e63cf46f5e4eb"
+        },
+        "sourceJourneys": [
+          {
+            "paths": [
+              "src/cli.ts",
+              "src/pi-host.ts",
+              "src/remote/root-options.ts",
+              "src/ui/startup.ts",
+              "src/ui/conversation-density.ts",
+              "src/ui/rolling-activity.ts"
+            ],
+            "readingReason": "The extracted configureBruvRuntime and runLocalConversation give the entrypoint two meaningful lifecycle boundaries instead of interleaving asset materialization and local presentation startup with routing. No generic startup context bag or new public API is introduced.",
+            "systemReason": "Early connector/update/web/runner routes still precede runtime materialization. Runtime asset exclusive creation and PI identity configuration still precede remote internal/root branches. parseRootPlacementArgs remains before local SDK startup, so a placed root does not gain a local inference loop. Local dynamic Pi imports still follow configured paths and assertBruvPiHost; journal/selector installers precede session creation. UI patches install in the same order and restore in reverse order around main; help interception retains the -- boundary and original console restoration."
+          },
+          {
+            "paths": [
+              "src/ui/conversation-density.ts",
+              "src/ui/sdk-task-rows.ts",
+              "src/ui/rolling-activity.ts",
+              "scripts/terminal-perf/workloads.ts",
+              "scripts/terminal-perf/tool-workloads.ts",
+              "node_modules/@earendil-works/pi-coding-agent/dist/modes/interactive/components/assistant-message.js"
+            ],
+            "readingReason": "adaptMessageLayout and adaptAssistantThinking replace the mixed Restoration record with closures owned by two concrete responsibilities. Coordinate offsets no longer share a record with message provenance and method restoration. denseAddChild remains the explicit adaptation coordinator, with tracking established before assistant redraw.",
+            "systemReason": "Actual Pi updateContent assigns lastMessage and clears/rebuilds its child container; invalidate and thinking visibility redraw from lastMessage. The thinking helper keeps source/presentation identity and streaming state, so redraws do not compact a presentation copy repeatedly or mutate source content. Mouse width/y/height adjustments are the same as baseline. removeChild, clear and uninstall still restore known components and spacers through WeakMap/WeakRef tracking, with method identity checks. Perf installers still install density before task-row wrapping and tear down activity/task rows before density; rolling activity continues to derive membership from typed entries rather than rendered text."
+          },
+          {
+            "paths": [
+              "src/ui/editor.ts",
+              "src/ui/startup.ts",
+              "src/live/editor-push-to-talk.ts",
+              "src/live/extension.ts",
+              "node_modules/@earendil-works/pi-tui/dist/tui.js",
+              "node_modules/@earendil-works/pi-tui/dist/tui-alt-screen.js"
+            ],
+            "readingReason": "The editor extraction separates observing cancellation from acquiring terminal reporting modes. attachPushToTalk remains the one attachment owner and its idempotent detach plainly disposes the control, removes observation/focus hooks, clears attachment fields, and restores acquired modes.",
+            "systemReason": "Startup still replaces only the not-yet-active default editor. Live syncTalkInput detaches a previous editor and attaches with its controller signal; stopObserved aborts that controller before asynchronous audio teardown. The actual TUI runs raw listeners before focused input and filters releases unless wantsKeyRelease. The helper preserves observer-first ordering, focus cancellation, release opt-in, and fullscreen ownership of focus reporting. EditorPushToTalk cancellation still closes its onTalking gate without deleting warmup taps; no auth/device work was exercised."
+          },
+          {
+            "paths": [
+              "src/diagnostics.ts",
+              "src/diagnostics-extension.ts",
+              "src/agent/extension.ts"
+            ],
+            "readingReason": "A snapshot subobject clearly separates live records/health counts from sink generation, dedup state and durable lifetime budget. persistDiagnostic is a narrow acceptance helper, not a persistence framework; recordDiagnostic retains the privacy validation and best-effort boundary.",
+            "systemReason": "registerOperationDiagnostics attaches on session_start using captured session identity and a restorable journal leaf; its public command consumes the same snapshot keys and optional bounded replay. Manager diagnosticRecorder captures attachment generation and checks session ID, so the refactor does not move diagnostics to a mutable active owner. Ring insertion still precedes dedup/budget checks, durable slots are reserved before sink invocation, failures remain contained, and a new attachment resets only live snapshot plus the same durable lifetime state. inspectDiagnostics still copies records and freezes the returned populated snapshot."
+          },
+          {
+            "paths": [
+              "scripts/terminal-perf/send-workloads.ts",
+              "scripts/terminal-perf/tool-event-workloads.ts",
+              "scripts/terminal-perf/interaction-worker.ts",
+              "scripts/terminal-perf/action-profiler.ts",
+              "src/ui/startup.ts",
+              "src/ui/conversation-density.ts"
+            ],
+            "readingReason": "SendObservation consolidates send-only spans, marks, provider waits and acknowledgement evidence without owning the SDK fixture or teardown. Tool-event burst dispatch and subscribed editor send are named separately, making the distinction between injected direct callbacks and a real session turn easier to follow.",
+            "systemReason": "interaction-worker still creates a fresh fixture per case and disposes in finally. Send wrappers still measure only immediate return and preserve method descriptors; observation begins after the pre-action stat and ends before hashing. The scheduled acknowledgement frame is still awaited rather than forced; outputWrites deliberately remains the post-stat snapshot. For tool events the before-frame boundary precedes the same-turn burst, source resets in finally, queued input is admitted afterward, and Enter still traverses getUserInput then session.prompt via the profiler API that returns the exact promise and ends synchronous scope on immediate return. No helper adds an await inside the burst or claims provider wait as CPU."
+          },
+          {
+            "paths": [
+              "scripts/terminal-perf/tool-workloads.ts",
+              "scripts/terminal-perf/workloads.ts",
+              "scripts/terminal-perf.ts",
+              "src/ui/sdk-task-rows.ts",
+              "src/ui/rolling-activity.ts"
+            ],
+            "readingReason": "Tool setup now reads as adapter installation, settled-history construction and layout attachment. Long-thread conversation construction is similarly separate from lifecycle, and captureFrame removes duplicated mount/step evidence assembly. Helpers remain fixture-local, with no exported mega-context.",
+            "systemReason": "Setup still installs global adapters before constructing adapted SDK messages. The tool setup segment labels and stable-image synchronous measurement wrapper are unchanged. Long-thread counters reset before the first render, iteration is zero for mount, and previousScreen is empty at first setup/reset on dispose; the unified capture therefore retains mount and steady changed-row semantics. The unchanged runner consumes mount evidence for cold frames, then step work/changedRows for steady frames, and disposes fixture and profiler. Cleanup order and sequential ownership guards remain intact."
+          },
+          {
+            "paths": [
+              "scripts/ui-cleanup-probe.py",
+              "src/cli.ts",
+              "src/ui/conversation-density.ts"
+            ],
+            "readingReason": "Terminal isolates private tmux commands and the one deadline; isolated_terminal centralizes owned HOME/server teardown; exercise_terminal and settled_assertions separate scenario observation from evidence judgment. This is a concrete lifecycle split rather than a generic test harness abstraction.",
+            "systemReason": "The loopback fixture, fake model configuration, explicit isolated launch environment, tmux socket and scripted two-turn scenario are preserved. Active/expanded/settled captures still generate the same assertions and report shape. The context manager now surrounds fixture configuration as well as execution and exposes records after server stop. Its rmtree targets only the UUID-created probe home, not inherited HOME; this existing owned cleanup was inspected but never run. No terminal fixture, shell workload, binary or network listener was executed."
+          }
+        ],
+        "integrationReadingReason": "All nine assigned baseline-to-candidate diffs, including deletions, were read directly in bounded slices; related candidate source was read selectively for caller, authority and lifetime context. These are cohesive responsibility extractions: startup routing versus local presentation, component layout versus thinking provenance, editor cancellation versus terminal-mode ownership, diagnostic observations versus durable acceptance, and performance fixture content versus measurement/lifecycle. The integrated call order, callback boundaries, ownership and public evidence shapes remain consistent. No material behavior regression or new cross-file context-bag burden was found in this lane. This is a lane-scoped source ACCEPT, not a whole-repository sign-off or a verdict inferred from earlier judgments/tests.",
+        "objections": [],
+        "limits": [
+          "Read-only source review. No tests, setup, build, install, formatter, auth/device/credential access, recovery investigation, delegation, source edits, destructive git or deletion/cleanup commands were performed. Unsupported Pi preparation was not attempted, retried or bypassed. Only the requested untracked lane result was written.",
+          "No unread assigned diff gaps. Related sources were read only at exercised integration sections, not attested as fully reviewed files. Dependency SDK sections were read directly without executing/importing them; their presence is not host-preparation or runtime-acceptance evidence.",
+          "Runtime terminal scheduling, native audio/device/provider access, compiled asset behavior and performance timings are unverified; no prior artifacts, coverage counts, green tests or independent lane summaries were used as verdict evidence.",
+          "Durable review provenance is the existing worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_c2006147 at candidate HEAD. Candidate Git objects and source were preserved. No /tmp code checkout or test fixture was created.",
+          "Parent must combine this judgment with other lanes and cross-domain source review; this lane does not sign off unassigned paths."
+        ]
       }
     },
     {
@@ -9389,7 +9532,7 @@
       ],
       "chars": 93878,
       "lines": 2093,
-      "status": "running",
+      "status": "accepted",
       "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
       "jobId": "task_0f0ffc58",
       "model": "openai-codex/gpt-6.1-sol",
@@ -9403,8 +9546,157 @@
         "branch": "bruv/pr45-final-integrated-diff-lane-49-ui-te-0f0ffc58",
         "preparationStatus": "ready",
         "setupTaskId": "task_282d97df",
-        "setupStatus": "running",
+        "setupStatus": "failed",
         "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      },
+      "result": {
+        "lane": "lane-49",
+        "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
+        "candidate": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "verdict": "ACCEPT",
+        "diffReadPaths": [
+          "src/ui/execution-previews.ts",
+          "src/ui/footer.ts",
+          "src/ui/rolling-activity.ts",
+          "src/ui/sdk-task-rows.ts",
+          "src/ui/subagent-settings.ts",
+          "src/ui/task-monitor.ts",
+          "src/ui/task-rows.ts",
+          "tests/activity-runtime-acceptance-test.py",
+          "tests/activity-terminal-acceptance-test.py",
+          "tests/ansi-video-renderer.test.py",
+          "tests/background-interrupt-tui.test.ts",
+          "tests/background-ux-tui.test.ts",
+          "tests/cli.test.ts"
+        ],
+        "contextReadPaths": [
+          "src/ui/execution-previews.ts",
+          "src/ui/footer.ts",
+          "src/ui/rolling-activity.ts",
+          "src/ui/sdk-task-rows.ts",
+          "src/ui/subagent-settings.ts",
+          "src/ui/task-monitor.ts",
+          "src/ui/task-rows.ts",
+          "src/ui/activity-projection.ts",
+          "src/ui/settled-execute-render.ts",
+          "src/typescript/extension.ts",
+          "src/agent/extension.ts",
+          "src/agent/cache-countdown.ts",
+          "src/tasks/session-costs.ts",
+          "src/tasks/task-monitor-source.ts",
+          "src/tasks/task-monitor.ts",
+          "src/tasks/subagent-settings-ui.ts",
+          "src/cli.ts",
+          "src/pi-host.ts",
+          "scripts/activity-runtime-acceptance.py",
+          "scripts/activity-terminal-acceptance.py",
+          "scripts/ansi_video_renderer.py",
+          "tests/cli.test.ts",
+          "tests/helpers.ts",
+          "tests/background-interrupt-tui.test.ts",
+          "tests/background-ux-tui.test.ts",
+          "node_modules/@earendil-works/pi-coding-agent/dist/modes/interactive/components/tool-execution.js",
+          "node_modules/@earendil-works/pi-coding-agent/package.json"
+        ],
+        "sourceBlobs": {
+          "src/ui/execution-previews.ts": "7510d94b1cb34373854df0680caf60e017c83834",
+          "src/ui/footer.ts": "3d3aa8960033208e5b7c137bbdc3e20da4becfc6",
+          "src/ui/rolling-activity.ts": "66cf00a2db4b52746cc4595c4eab964acd863e42",
+          "src/ui/sdk-task-rows.ts": "12dd2d82132e1997f9ca53903172babf28586e9b",
+          "src/ui/subagent-settings.ts": "e8e8acee76a03e64ed27a50ce9bc886f1e8d05fd",
+          "src/ui/task-monitor.ts": "eab5344adabce4d6aa098c044af1c55efcc7f904",
+          "src/ui/task-rows.ts": "fe08b5d617e02ae6ec57c4fc479f3433977f34ed",
+          "tests/activity-runtime-acceptance-test.py": "ba542d8ff709da709edd5d564ed94d8831bcc745",
+          "tests/activity-terminal-acceptance-test.py": "2ee90a527228a19b6ebf3cad78ad5b9fc8ff7a3d",
+          "tests/ansi-video-renderer.test.py": "d720b8a1abde5a6517400921639390f46387f3dd",
+          "tests/background-interrupt-tui.test.ts": "9307e4bdea109e081ce3b9fe2ad55f5ea33c256b",
+          "tests/background-ux-tui.test.ts": "f5654156092959ad8e07b6b2b901624516972b9f",
+          "tests/cli.test.ts": "528e6e7735b03cdd9812839b8c18657884904713"
+        },
+        "sourceJourneys": [
+          {
+            "paths": [
+              "src/typescript/extension.ts",
+              "src/ui/execution-previews.ts",
+              "src/ui/settled-execute-render.ts",
+              "src/ui/sdk-task-rows.ts"
+            ],
+            "readingReason": "registerExecuteTool supplies immutable result/expansion inputs and a mutable spinner state. executeOutputPreview selects partial, expanded, handoff, or settled view at construction instead of repeatedly branching at paint; width guards, padding, warning/error suffixes, native clipping, and uncached partial frames are retained. The settled native-shell adapter invalidates its width cache at updateDisplay and excludes images/partial results. renderTaskBody still delegates expanded/error bodies and preserves image spacers/components.",
+            "systemReason": "Result rendering remains presentation, not job outcome authority. The extracted runningActionRow removes duplicated spinner layout; view selection reduces per-render state reasoning without introducing a lifecycle owner or broader context bag."
+          },
+          {
+            "paths": [
+              "src/agent/extension.ts",
+              "src/ui/task-rows.ts",
+              "src/ui/sdk-task-rows.ts",
+              "src/ui/activity-projection.ts",
+              "src/ui/rolling-activity.ts"
+            ],
+            "readingReason": "Session start rehydrates typed rows, converts resumed running observations to unknown, and installs the snapshot provider; launch/remote updates persist optional die-task-row metadata. upsertTaskRow still retains terminal facts against delayed running or unknown snapshots while accepting refreshed title and source-call provenance. collectTaskFrame resolves sibling details, callback and live snapshot ownership before any body/header renders, then publishes per-child rows. Rolling sync still separates contiguous identities at prose/control boundaries and handoff, joins notices only when all their sourceCallIds belong to the current run, and carries expansion from the first prior item.",
+            "systemReason": "Canonical task identity/provenance is unchanged; late callback rows do not duplicate launch rows or fabricate success. Replacing identity-plus-segment map keys with a current run and array makes the contiguous grouping invariant explicit. Frame collection and task-body rendering now have distinct narrow contracts; teardown still clears task facts/projections, restores native methods, and retains direct SDK siblings for mouse geometry."
+          },
+          {
+            "paths": [
+              "src/ui/footer.ts",
+              "src/agent/cache-countdown.ts",
+              "src/tasks/session-costs.ts",
+              "src/agent/extension.ts"
+            ],
+            "readingReason": "createCompactUI reinstalls/disposes the footer on session/status changes. pollDescendantCost preserves immediate plus two-second refresh, single in-flight refresh, swallowed ancillary filesystem errors and post-await active gating. followCacheCountdown uses the same visible-text comparison for subscription notifications and deadline ticks, cancels/reschedules a bounded unref timeout, and unsubscribes on disposal. CacheCountdown.estimate is a read projection and subscribe does not synchronously invoke its callback; SessionCostTracker also coalesces refresh promises.",
+            "systemReason": "The component owns one active lifetime and idempotent disposal; helper-owned clocks do not acquire session authority. Extracting the two unrelated observers makes clock and subscription ownership easier to inspect, without changing frequency or retaining extra durable state."
+          },
+          {
+            "paths": [
+              "src/tasks/task-monitor.ts",
+              "src/tasks/task-monitor-source.ts",
+              "src/ui/task-monitor.ts"
+            ],
+            "readingReason": "The /ps installer owns the optional merged source and releases it with the panel. renderOverview and renderInspection retain their original bounded output windows and share renderObservation. MonitorFrame replaces positional border/title/body/control slicing while keeping tiny-height target/control pairing. Stop input still freezes job id and monitorIdentity, revalidates it before kill, and the merged source rechecks SSH ownership before sending a stop; unknown/pending cached SSH observations remain explicitly unconfirmed.",
+            "systemReason": "Named frame fields remove the need to mentally reverse-engineer action-target rows. TaskView carries only lines and identity, not a huge context bundle. The refactor leaves cancellation authority and completion consumption outside rendering."
+          },
+          {
+            "paths": [
+              "src/tasks/subagent-settings-ui.ts",
+              "src/ui/subagent-settings.ts"
+            ],
+            "readingReason": "The command loads profiles, presents a cloned draft, and writes only a returned Save result. Screen now holds picker kind/type/returnRow together; showProfiles clears search and restores the selected profile row, openPicker selects the current value, model filtering resets selection, Escape returns or discards, and Input focus follows the model screen. Model catalog deduplication, unavailable-current item, exact-match ordering and inherit deletion remain intact.",
+            "systemReason": "The discriminated screen state removes independently mutable row/type/screen combinations. Item construction and selection updates are separated from navigation; persistence authority remains in the command installer."
+          },
+          {
+            "paths": [
+              "tests/activity-runtime-acceptance-test.py",
+              "tests/activity-terminal-acceptance-test.py",
+              "scripts/activity-runtime-acceptance.py",
+              "scripts/activity-terminal-acceptance.py",
+              "tests/ansi-video-renderer.test.py",
+              "scripts/ansi_video_renderer.py"
+            ],
+            "readingReason": "New journal assertions exercise prepare_long_thread original lines, parent links and typed execute records, not rewriting/rendering evidence. Fixture tests track replay call-id normalization, saved-answer priority, scenario ordering and error-first completion against the actual resolver. The renderer tests patch PIL/font/path/Popen seams for the render invocation, checking actual SGR state, cell geometry, token-local clipping, audit-before-write/sample ordering, immutable selected row versus replaced timeline timestamp, and encoder close/wait.",
+            "systemReason": "These are source-consistent contract tests, not acceptance evidence. Mock encoder/font isolation avoids launching ffmpeg or relying on font files. The retained quirks are explicitly tested rather than silently presented as improved terminal emulation."
+          },
+          {
+            "paths": [
+              "tests/background-interrupt-tui.test.ts",
+              "tests/background-ux-tui.test.ts",
+              "tests/helpers.ts",
+              "tests/cli.test.ts",
+              "src/cli.ts",
+              "src/pi-host.ts"
+            ],
+            "readingReason": "Interruption polling extraction still waits for the identical transcript predicates. backgroundTurn requires launch result and useful independent work before yield; automaticContinuation separates notification from assistant continuation; verifyCompletedJourney preserves duration, useful-work, waiting-only, arithmetic responsiveness, exactly-once completion and continuation checks before appending evidence. CLI tests use explicit argv/env and beforeEach-owned mkdtemp HOME, and match actual pre-runtime command/gate ordering and immutable runtime creation; normal source startup still enters assertBruvPiHost.",
+            "systemReason": "Test helper boundaries correspond to observations and final journey validation, not a new runtime or fabricated model verdict. Startup dispatch tests cover absence/presence of runtime metadata at meaningful boundaries. Existing opt-in live TUI launch environments are not sufficiently isolated for the present review safety constraints; none were run."
+          }
+        ],
+        "integrationReadingReason": "ACCEPT for this assigned lane only. I fully read every baseline-to-candidate assigned diff, including deletions, and followed current typed ownership, projection, component replacement, observer lifetime, stop authority, draft persistence, test fixture and startup callers. The main changes are semantic decomposition rather than generic abstraction: collectTaskFrame versus renderTaskBody, explicit contiguous rolling runs, Screen-carried return state, named MonitorFrame/TaskView values, and narrow footer observers. They reduce intrinsic reading burden while retaining original public rows, expansion behavior, provenance/terminal monotonicity, timer cadence, ownership checks, image/error handling and test predicates. I found no changed-source cross-file contradiction or missing owner requiring rejection. This is neither a whole-repository sign-off nor a test/terminal/live acceptance claim.",
+        "objections": [],
+        "limits": [
+          "No unread assigned diff gaps. Current context was read selectively at the relevant caller/authority/lifetime functions, not represented as complete current-source reads everywhere. No prior primary/judge artifacts, coverage totals, summaries or green tests were used as verdict evidence.",
+          "Read-only Git/source inspection only; no tests, setup, builds, installs, formatting, auth, device, network, recovery work or source edits. Only this requested untracked review JSON was written; candidate and durable worktree were preserved.",
+          "Available installed Pi dependency is 1.0.3. Its tool updateDisplay code was read only as supplementary component-lifetime context, not as candidate-pinned host verification. No unsupported Pi preparation was retried or bypassed. The actual prepared/supported SDK runtime and live/terminal behavior remain unverified.",
+          "The existing opt-in background interruption/UX tests use tmux launch strings with inherited process environment/HOME/auth via tests/helpers.ts run defaults. They are not safe to execute under this review mandate as-is. CLI/Python test-code cleanup is confined to freshly allocated owned temporary roots, was inspected but never run; no shell cleanup/traps were run.",
+          "No test fixtures were created. Durable provenance is the current worktree at the candidate commit and the exact candidate blobs recorded above.",
+          "Safety for ALL descendants: NO sudo, recovery investigation, user secrets, shell deletion/cleanup commands, inherited HOME/config/SDK cleanup, nested shell traps, destructive git, or user-data mutation. User already recovered data and requested no recovery work. Tests must use explicit process argv/env and owned fs.mkdtemp fixture HOME/config/SDK; retain them, do not delete. Review filesystem/network effects BEFORE tests/setup. Existing test-code cleanup of provably owned temporary paths may be inspected but NEVER run a shell trap or inherited HOME removal. Need live auth/device? Report unverified, don't access credentials. Propagate these constraints verbatim. Independent code/review agents get durable worktrees, not /tmp code checkouts. Keep existing worktrees and candidate evidence. Test/source fixtures may use /tmp, but document durable provenance."
+        ]
       }
     },
     {
@@ -9420,7 +9712,7 @@
       ],
       "chars": 99034,
       "lines": 2144,
-      "status": "running",
+      "status": "accepted",
       "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
       "jobId": "task_13eda299",
       "model": "openai-codex/gpt-6.1-sol",
@@ -9434,8 +9726,115 @@
         "branch": "bruv/pr45-final-integrated-diff-lane-50-ui-te-13eda299",
         "preparationStatus": "ready",
         "setupTaskId": "task_1495fb83",
-        "setupStatus": "running",
+        "setupStatus": "failed",
         "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      },
+      "result": {
+        "lane": "lane-50",
+        "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
+        "candidate": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "verdict": "ACCEPT",
+        "diffReadPaths": [
+          "tests/context-usage-cache.test.ts",
+          "tests/conversation-density.test.ts",
+          "tests/diagnostics.test.ts",
+          "tests/execution-previews.test.ts",
+          "tests/fixtures/context-usage-cache-scenario.mjs",
+          "tests/fixtures/terminal-perf-tool-event-guard.ts"
+        ],
+        "contextReadPaths": [
+          "tests/helpers.ts",
+          "tests/terminal-perf-tool-events.test.ts",
+          "src/history/session-manager.ts",
+          "src/history/disk-entry-store.ts",
+          "src/ui/footer.ts",
+          "src/agent/manual-shake.ts",
+          "src/cli.ts",
+          "src/ui/conversation-density.ts",
+          "src/diagnostics.ts",
+          "src/diagnostics-extension.ts",
+          "src/ui/execution-previews.ts",
+          "src/ui/task-rows.ts",
+          "src/typescript/extension.ts",
+          "src/agent/extension.ts",
+          "scripts/terminal-perf/tool-event-workloads.ts",
+          "node_modules/@earendil-works/pi-coding-agent/dist/core/agent-session.js",
+          "node_modules/@earendil-works/pi-coding-agent/dist/modes/interactive/components/assistant-message.js",
+          "node_modules/@earendil-works/pi-coding-agent/dist/modes/interactive/components/tool-execution.js"
+        ],
+        "sourceBlobs": {
+          "tests/context-usage-cache.test.ts": "4541f123bbcc359b72d2fccb02643798559c7732",
+          "tests/conversation-density.test.ts": "a3500820b45fc6b2223b3fc7770027ad4f601474",
+          "tests/diagnostics.test.ts": "48a273afdc220bd4984fbc18739015dc4a86c88a",
+          "tests/execution-previews.test.ts": "d3d4b20bff13843a3d5bb8c977bdeec591d71de9",
+          "tests/fixtures/context-usage-cache-scenario.mjs": "ab1ae7f18b7f556ca7e85d3a9b2bb37b7cf0d646",
+          "tests/fixtures/terminal-perf-tool-event-guard.ts": "6e9dba742c41e5debbbaeea7b26fe7b5e5b94ee3"
+        },
+        "sourceJourneys": [
+          {
+            "paths": [
+              "tests/context-usage-cache.test.ts",
+              "tests/fixtures/context-usage-cache-scenario.mjs",
+              "tests/helpers.ts",
+              "src/cli.ts",
+              "src/history/session-manager.ts",
+              "src/agent/manual-shake.ts",
+              "src/ui/footer.ts",
+              "node_modules/@earendil-works/pi-coding-agent/dist/core/agent-session.js"
+            ],
+            "readingReason": "The inline child scenario is moved into an executable module, then divided into named phases without changing their order or estimator assertions. The parent supplies explicit argv and a fresh retained HOME/config/SDK/tmp/session root rather than spreading process.env or removing the root. Helpers.run passes that supplied environment through offlineTestEnv. The independent expected() view still calls the original SDK usage function with the public projection builder, not the cache-seeding manager method.",
+            "systemReason": "CLI installs disk history before manual-shake registration, as the fixture does. SDK prepareRequest builds the manager projection; disk history seeds numeric tokens under session/fileEntries/context-leaf identity, while routed limits are read separately. Shake remains an outer validity/freshness owner. Footer cost totals have a separate metadata key. The retained journey checks request prep, ignored bookkeeping, priced responses and compaction costs, context edits/images, compaction unknownness, invalid shake rejection, branch/session replacement and native in-memory fallback without conflating these owners."
+          },
+          {
+            "paths": [
+              "tests/conversation-density.test.ts",
+              "src/ui/conversation-density.ts",
+              "node_modules/@earendil-works/pi-coding-agent/dist/modes/interactive/components/assistant-message.js"
+            ],
+            "readingReason": "installDensity centralizes only restoration registration; explicit restore assertions still execute, and afterEach also restores if an assertion fails. The additional tests use real updateContent, hide/show, invalidate, removeChild, re-add and clear rather than checking a fabricated lifecycle.",
+            "systemReason": "The SDK redraws from lastMessage. The adapter tracks source versus presented message and streaming status in its thinking closure, restores source through nativeUpdate, and only replaces an update wrapper it still owns. remove/clear release tracked components; disposal makes retained foreign chains inactive. The added latest-source and foreign-chain tests match those distinct lifetimes. This is a narrower restoration seam, not a broad context bag."
+          },
+          {
+            "paths": [
+              "tests/diagnostics.test.ts",
+              "src/diagnostics.ts",
+              "src/diagnostics-extension.ts"
+            ],
+            "readingReason": "New diagnostics cases distinguish live observation from successful durable persistence. They verify failed writes and duplicate attempts remain in the ring, snapshots are copied, detach stops persistence, reattach resets the live view and seeds durable dedup, and old generation callbacks cannot affect the new attachment.",
+            "systemReason": "recordDiagnostic accepts into the live ring before persistDiagnostic reserves a dedup key/budget and attempts a sink write. Generation-captured recorders and detachers separate session attachments. The unchanged extension session_start path replaces the sink with captured session identity checks, while shutdown intentionally keeps later lifecycle observations available. The assertions match these production owners rather than treating accepted as persisted."
+          },
+          {
+            "paths": [
+              "tests/execution-previews.test.ts",
+              "src/ui/execution-previews.ts",
+              "src/typescript/extension.ts",
+              "src/agent/extension.ts",
+              "src/ui/task-rows.ts",
+              "node_modules/@earendil-works/pi-coding-agent/dist/modes/interactive/components/tool-execution.js"
+            ],
+            "readingReason": "Read both additions and deletions: the large diff regroups existing cases into lifecycle, content/layout, task completion/attention and diagnostic metadata suites. Existing assertions, including failure precedence, handoff visibility, truncation risk markers, SSH uncertainty and capped outcomes, remain represented; the combined task/execute failure case is split rather than dropped.",
+            "systemReason": "registerExecuteTool passes shared state, padding, label, invalidation and isPartial to previews; SDK updateResult/expansion/invalidation replaces render components. Input suppression and settled last-width caching therefore fit the actual SDK lifetime, while partial spinners stay live. completionDiagnosticDetails counts the full batch before capping details; task-rows translates actual outcomes and omitted aggregates; notification callers preserve details and delivery facts. Reorganization makes these authority boundaries easier to locate without changing behavior."
+          },
+          {
+            "paths": [
+              "tests/fixtures/terminal-perf-tool-event-guard.ts",
+              "tests/terminal-perf-tool-events.test.ts",
+              "scripts/terminal-perf/tool-event-workloads.ts",
+              "src/typescript/extension.ts",
+              "src/ui/conversation-density.ts"
+            ],
+            "readingReason": "The new fixture snapshots process seams, installs the actual workload, attempts four guarded network entry points, runs its action, disposes in finally and checks restored identities plus the deliberate fresh-process requirement. The actual test caller supplies explicit argv and a retained mkdtemp HOME/config/cache/data/SDK environment.",
+            "systemReason": "Workload setup sets PI_OFFLINE and installs synchronous fetch/HTTP/TCP denials before SDK fixture creation; it uses owned paths, in-memory settings, disabled resource discovery and a replacement stream function, not user auth. Cleanup reverses registered wrappers and restores offline state. Its irreversible disk adapter explains process isolation and rejection of setup reuse. Existing recursive cleanup targets only the workload-owned mkdtemp dir, not the retained caller HOME; it was inspected, never executed."
+          }
+        ],
+        "integrationReadingReason": "ACCEPT for this lane only. The complete assigned baseline-to-candidate diff (including all deletions) preserves the public behavior expressed by these tests while improving intrinsic reading: process isolation is explicit, the cache scenario has named ordered phases, cleanup ownership is registered once, and preview suites group by actual rendering/metadata responsibilities. The cross-file journeys above keep numeric estimation, shake validity, footer totals, component presentation/source restoration, live diagnostic acceptance and durable persistence, and notification outcome authority separate. No blocking cross-file contradiction, missing new owner, oversized shared context abstraction, or assertion loss was found in the assigned changes. The large execution-preview churn is test regrouping checked against both removed and added assertions, not presumed from diff size. This is not whole-repository sign-off.",
+        "objections": [],
+        "limits": [
+          "Read-only review of exact Git baseline and candidate; HEAD was candidate and initial working tree was clean. All six assigned diffs were read completely; no assigned unread gaps. Context paths were inspected in focused actual-source excerpts, not attested as completely read files.",
+          "No tests, setup, builds, installations, formatting, auth/device access, network probes, credential reads, source edits, unsupported Pi preparation retries/bypasses, or delegation were performed. SDK source already present on disk was inspected; runtime execution and live provider/device behavior remain unverified.",
+          "The untracked result is the only write. Durable review provenance is this existing candidate worktree; temporary source/test paths were inspected but not created or executed. No prior lane artifacts, summaries, coverage counts, or green tests were used as acceptance evidence.",
+          "Safety for ALL descendants: NO sudo, recovery investigation, user secrets, shell deletion/cleanup commands, inherited HOME/config/SDK cleanup, nested shell traps, destructive git, or user-data mutation. User already recovered data and requested no recovery work. Tests must use explicit process argv/env and owned fs.mkdtemp fixture HOME/config/SDK; retain them, do not delete. Review filesystem/network effects BEFORE tests/setup. Existing test-code cleanup of provably owned temporary paths may be inspected but NEVER run a shell trap or inherited HOME removal. Need live auth/device? Report unverified, don't access credentials. Propagate these constraints verbatim. Independent code/review agents get durable worktrees, not /tmp code checkouts. Keep existing worktrees and candidate evidence. Test/source fixtures may use /tmp, but document durable provenance."
+        ]
       }
     },
     {
@@ -9457,8 +9856,23 @@
       ],
       "chars": 89361,
       "lines": 2159,
-      "status": "pending",
-      "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d"
+      "status": "running",
+      "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+      "jobId": "task_bfa91284",
+      "model": "openai-codex/gpt-6.1-sol",
+      "workspace": {
+        "kind": "worktree",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_bfa91284",
+        "worktreePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_bfa91284",
+        "sourcePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
+        "baseRef": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "baseOid": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "branch": "bruv/pr45-final-integrated-diff-lane-51-ui-te-bfa91284",
+        "preparationStatus": "ready",
+        "setupTaskId": "task_677dc7c3",
+        "setupStatus": "running",
+        "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      }
     },
     {
       "id": "lane-52",
@@ -9479,8 +9893,23 @@
       ],
       "chars": 96214,
       "lines": 2190,
-      "status": "pending",
-      "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d"
+      "status": "running",
+      "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+      "jobId": "task_3d16ad60",
+      "model": "openai-codex/gpt-6.1-sol",
+      "workspace": {
+        "kind": "worktree",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_3d16ad60",
+        "worktreePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_3d16ad60",
+        "sourcePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
+        "baseRef": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "baseOid": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "branch": "bruv/pr45-final-integrated-diff-lane-52-ui-te-3d16ad60",
+        "preparationStatus": "ready",
+        "setupTaskId": "task_90f4608c",
+        "setupStatus": "running",
+        "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      }
     },
     {
       "id": "lane-53",
@@ -9494,8 +9923,23 @@
       ],
       "chars": 27793,
       "lines": 585,
-      "status": "pending",
-      "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d"
+      "status": "running",
+      "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+      "jobId": "task_a17369ba",
+      "model": "openai-codex/gpt-6.1-sol",
+      "workspace": {
+        "kind": "worktree",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_a17369ba",
+        "worktreePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_a17369ba",
+        "sourcePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
+        "baseRef": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "baseOid": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "branch": "bruv/pr45-final-integrated-diff-lane-53-ui-te-a17369ba",
+        "preparationStatus": "ready",
+        "setupTaskId": "task_9e7a2e72",
+        "setupStatus": "running",
+        "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      }
     },
     {
       "id": "lane-54",

@@ -1,4 +1,6 @@
 import { expect, spyOn, test } from "bun:test";
+import { mkdtempSync } from "node:fs";
+import { ownedFixtureEnv } from "./helpers";
 import { type Component, type Editor, ProcessTerminal, TuiMainScreen } from "@earendil-works/pi-tui";
 import { parseStreamingJson } from "@earendil-works/pi-ai";
 import { taskRowFromLaunch, taskRowsFromDetails, taskRowsFromSessionEntries } from "../src/ui/task-rows";
@@ -792,8 +794,20 @@ test("root resume correlates unnamed shells to execute labels before command pre
   expect(t.render(120, 0).join("\n")).toContain("RAW_LAUNCH_SOURCE");
 });
 
-// Mount shipped TUI input routing with terminal I/O and scheduled rendering suppressed.
+// Mount shipped listeners/focus/input dispatch; intercept both render schedulers at doRender.
 function mountedPresentation(dialog?: RootDialog) {
+  // Retain this owned fixture: constructors must not inspect inherited config or terminal log paths.
+  const directory = mkdtempSync("/tmp/bruv-root-presentation-");
+  const env = {
+    ...ownedFixtureEnv(directory),
+    PI_TUI_DEBUG: "0",
+    PI_TUI_DEBUG_REDRAW: "0",
+    PI_TUI_WRITE_LOG: "",
+    COLUMNS: "80",
+    LINES: "24",
+  };
+  const previousEnv = Object.keys(env).map((key) => [key, process.env[key]] as const);
+  Object.assign(process.env, env);
   const remote = remoteReplies();
   const record = replay([]).record;
   record.dialogs = dialog ? [dialog] : [];
@@ -812,7 +826,9 @@ function mountedPresentation(dialog?: RootDialog) {
     spyOn(ProcessTerminal.prototype, "write").mockImplementation(() => {}),
     spyOn(ProcessTerminal.prototype, "hideCursor").mockImplementation(() => {}),
     spyOn(ProcessTerminal.prototype, "showCursor").mockImplementation(() => {}),
-    spyOn(TuiMainScreen.prototype, "requestRender").mockImplementation(() => {}),
+    // doRender is protected in TypeScript, but is the shared runtime boundary for
+    // requestRender, requestImmediateRender and renderNow. Never enter its diagnostics.
+    spyOn(TuiMainScreen.prototype as unknown as { doRender(): void }, "doRender").mockImplementation(() => {}),
     spyOn(TuiMainScreen.prototype, "addChild").mockImplementation(function (this: TuiMainScreen, component) {
       addChild.call(this, component);
       root = component;
@@ -836,7 +852,7 @@ function mountedPresentation(dialog?: RootDialog) {
     { pollMs: 1 },
   );
   const editor = focus as Editor;
-  // Only the terminal boundary is fake: listeners and focused-component dispatch are shipped TUI code.
+  // Terminal I/O and frame painting are fake; input routing and render scheduling stay shipped.
   const key = (data: string) => terminalInput(data);
   return {
     ...remote,
@@ -853,6 +869,10 @@ function mountedPresentation(dialog?: RootDialog) {
         await running;
       } finally {
         for (const spy of spies) spy.mockRestore();
+        for (const [key, value] of previousEnv) {
+          if (value === undefined) delete process.env[key];
+          else process.env[key] = value;
+        }
       }
     },
   };
