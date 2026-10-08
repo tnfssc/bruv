@@ -3554,19 +3554,20 @@
     {
       "focus": "tests/task-lifecycle.test.ts",
       "initialBlob": "427713203db5f91472a7703b441c207d90123f7e",
-      "status": "pending",
+      "status": "accepted",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "427713203db5f91472a7703b441c207d90123f7e",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "427713203db5f91472a7703b441c207d90123f7e",
         "primaryId": "task_f991354d",
         "primaryCommit": "88cbf9b4adcbb6d3b8296a9b1c2d89d243d7ff37",
-        "judgeIds": [],
+        "judgeIds": ["task_7d16a45a"],
         "sourceCommit": "88cbf9b4adcbb6d3b8296a9b1c2d89d243d7ff37",
-        "state": "needs-judge",
-        "reason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage."
+        "state": "accepted-joined",
+        "reason": "Read the complete unchanged file, not merely its absence from the diff. The first journey recreates a recorder and follows 60 durable child entries plus a shutdown-cause entry into the protected index, visibly separating durable ownership from a preview limit. The next binds the original session path, forces bounded retention through large records, and then attempts writes through a symlink while checking the target remains untouched and the diagnostic coalesces. Short positional writes use a narrow write seam and assert both repeated calls and a complete parsed record. Four real child processes account for accepted records plus explicitly reported contention, unique IDs, byte/mode bounds, and absence of a pathname lock. The live-holder journey keeps readiness, blocked-record absence, SIGKILL plus observed exit, successful after-record, and no pathname lock together. Missing FFI and compiled Linux/x64 execution have separate authorities and assertions. Hiding these behind a generic child/writer harness would make the actual evidence harder to follow. No lifecycle improvement is claimed by the nearby TUI-only patch."
       }
     },
     {
@@ -3622,37 +3623,39 @@
     {
       "focus": "tests/task-monitor-source.test.ts",
       "initialBlob": "70e2cf3f3df3568b48df82627f88cf9767276478",
-      "status": "pending",
+      "status": "accepted",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "70e2cf3f3df3568b48df82627f88cf9767276478",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "70e2cf3f3df3568b48df82627f88cf9767276478",
         "primaryId": "task_f991354d",
         "primaryCommit": "88cbf9b4adcbb6d3b8296a9b1c2d89d243d7ff37",
-        "judgeIds": [],
+        "judgeIds": ["task_7d16a45a"],
         "sourceCommit": "88cbf9b4adcbb6d3b8296a9b1c2d89d243d7ff37",
-        "state": "needs-judge",
-        "reason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage."
+        "state": "accepted-joined",
+        "reason": "Read the complete unchanged file. Small local/remote fixtures expose routing and scoped adapter calls without hiding decisions. The merge journey exercises local inspect/kill and session-scoped SSH list/inspect while filtering terminal rows. Separate journeys retain byte-bound multibyte output and terminal-sequence sanitization, stale/gap/owner labels, prior observations after read errors, and pending versus confirmed cancellation. Narrow-height safety remains a readable ordered journey: zero-row confirmation suppression, refreshed epoch mismatch, then independent owner preflight before a stop. Disposal tests deliberately expose promise resolvers: dispose first, resolve a late list, prove no publication and only the adapter subscription removed; separately start output and stop preflight, dispose, resolve both, prove no SSH stop or output publication. panelFor expresses a single cleanup owner rather than generalizing these timings. The final real TaskManager journey observes one completion callback after monitor rendering and remote refresh, then separately shuts down the manager. No extraction is needed to clarify these already explicit boundaries."
       }
     },
     {
       "focus": "tests/task-monitor-tui.test.ts",
       "initialBlob": "26bf71c2c66519461448a29dcbefa01dafe6b6db",
-      "status": "pending",
+      "status": "accepted",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "09003456fc0d06b7bcfdc5b5e16d54771b5da94a",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "09003456fc0d06b7bcfdc5b5e16d54771b5da94a",
         "primaryId": "task_f991354d",
         "primaryCommit": "88cbf9b4adcbb6d3b8296a9b1c2d89d243d7ff37",
-        "judgeIds": [],
+        "judgeIds": ["task_7d16a45a"],
         "sourceCommit": "88cbf9b4adcbb6d3b8296a9b1c2d89d243d7ff37",
-        "state": "needs-judge",
-        "reason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage."
+        "state": "accepted-joined",
+        "reason": "Compared the full base-to-candidate diff and read both complete changed files. The /ps test now begins with a work prompt rather than SSE framing, models.json writes, tmux launch quoting, and readiness polling. It visibly follows selected ALPHA id through inspect/back, selects BETA, proves opening confirmation leaves both ids present, confirms only BETA leaves the running set, and opens activity to retain the exact BETA cancelled-row proof while excluding ALPHA cancellation and console.log. The /resume test still creates root and child in place, follows worker/fast picker labels into a child-id confirmation, and cancels explicitly. All semantic assertions and the readiness zero-request assertion are retained, not replaced by helper success. The new helper groups two coherent resource owners: terminal plus owned filesystem environment, and controlled provider plus submit-handler readiness. Its five terminal capabilities are infrastructure needed by both native journeys, not a semantic scenario/context bag. This resolves real reading burden by moving transport and startup mechanics away from selection/cancellation decisions."
       }
     },
     {
@@ -4345,8 +4348,8 @@
     ]
   },
   "resumeStatus": {
-    "accepted": 98,
-    "pending": 3
+    "accepted": 101,
+    "pending": 1
   },
   "extraFiles": [
     {
@@ -4395,6 +4398,19 @@
         "sourceCommit": "534986d4e14abf86b189fce1e3b88f746aa086c7",
         "state": "accepted-joined",
         "reason": "Read complete focus and paired capture producer. The recording fixture is a narrowly owned command/evidence recorder, not a production context bag: its failure switches exercise visible start, pane-capture and exit transitions. Direct command arrays expose literal input, fixed PTY dimensions and capture-before-pane-removal order. Raw viewport/scrollback files are compared separately from the stripped assertion view, and reopening deliberately preserves the timeline. Failure scenarios distinguish nonzero detach, missing pane and failed start instead of treating all as generic cleanup. The native PTY scenario owns its socket, temporary directories and explicit environment in the same body. This complete file is already structurally coherent; no additional primary source edit is needed."
+      }
+    },
+    {
+      "focus": "tests/task-monitor-tui-fixture.ts",
+      "initialBlob": null,
+      "introducedBy": "88cbf9b4adcbb6d3b8296a9b1c2d89d243d7ff37",
+      "state": "pending",
+      "acceptedBlob": null,
+      "resume": {
+        "status": "pending",
+        "acceptedBlob": "c46f9ca37d2c4959cdf48b98dd73844dd651956f",
+        "sourceCommit": "88cbf9b4adcbb6d3b8296a9b1c2d89d243d7ff37",
+        "state": "needs-primary-final-blob"
       }
     }
   ]

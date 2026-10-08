@@ -14958,11 +14958,11 @@
     {
       "file": "tests/task-lifecycle.test.ts",
       "initialBlob": "427713203db5f91472a7703b441c207d90123f7e",
-      "status": "pending",
+      "status": "accepted",
       "area": "execution-tasks-questions",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_f991354d",
-      "judgeIds": [],
+      "judgeIds": ["task_7d16a45a"],
       "sourceCommit": "88cbf9b4adcbb6d3b8296a9b1c2d89d243d7ff37",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
       "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage.",
@@ -14981,6 +14981,20 @@
       "primaryLimits": [
         "No lifecycle runtime proof here: the existing focus spawns Bun children, holds/kills a child, builds a compiled executable, and rmSyncs only its own mkdtemp fixtures. These effects were inspected, never executed; parent owns the audited isolated gate and retained fixture policy.",
         "Independent judgment and runtime agent.model verification remain parent-owned."
+      ],
+      "acceptedBlob": "427713203db5f91472a7703b441c207d90123f7e",
+      "result": "Read the complete unchanged file, not merely its absence from the diff. The first journey recreates a recorder and follows 60 durable child entries plus a shutdown-cause entry into the protected index, visibly separating durable ownership from a preview limit. The next binds the original session path, forces bounded retention through large records, and then attempts writes through a symlink while checking the target remains untouched and the diagnostic coalesces. Short positional writes use a narrow write seam and assert both repeated calls and a complete parsed record. Four real child processes account for accepted records plus explicitly reported contention, unique IDs, byte/mode bounds, and absence of a pathname lock. The live-holder journey keeps readiness, blocked-record absence, SIGKILL plus observed exit, successful after-record, and no pathname lock together. Missing FFI and compiled Linux/x64 execution have separate authorities and assertions. Hiding these behind a generic child/writer harness would make the actual evidence harder to follow. No lifecycle improvement is claimed by the nearby TUI-only patch.",
+      "systemReason": "Traced createTaskLifecycleRecorder through resolveFlock, writeAll, O_NOFOLLOW opening, nonblocking kernel locking, inode/link/mode validation, bounded whole-record retention, fsync, unlock, and close. The extension captures the owning session when its manager is created; manager event subscribers append bounded metadata rather than commands/prompts/output, including closure-unobserved shutdown diagnostics. The distinct tests correspond to distinct implementation authorities: syscall short writes, real flock contention and process-death release, persistent backend diagnostic coalescing, and compiled ABI loading. Also reviewed both changed TUI paths: their terminal/provider lifetime extraction neither imports nor changes lifecycle behavior.",
+      "checks": [
+        "Read exact candidate files with git show; reviewed complete candidate diff from primaryBase 79994b467143b7f77ffa3c5c791483a9249e430b, including both changed paths.",
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "git diff --check primaryBase candidate: no whitespace errors. Git ls-tree pins accepted blobs; both unchanged focuses have identical base/candidate blobs.",
+        "Static filesystem/network effect review only. No setup, tests, builds, dependency changes, delegation, credential access, cleanup, publication, or source edits."
+      ],
+      "limits": [
+        "Source-level structural judgment, not runtime success. Native terminal/provider execution, shutdown observation, packaged binary availability, and platform ABI execution remain unverified.",
+        "Review ran in durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_7d16a45a; candidate evidence/worktrees preserved. No /tmp code checkout or test fixture was created. Parent owns audited isolated runtime gates and runtime agent.model verification.",
+        "Existing lifecycle cases remove only their own mkdtemp directories in source; they were inspected, never executed. Their Bun.spawn calls do not supply isolated env, and the compiled case invokes a build: the parent must not run this file directly under inherited HOME/config/SDK. The contention-count requirement and Linux/x64 locking assumptions are existing runtime limits, not improvements supplied by this candidate."
       ]
     },
     {
@@ -14999,11 +15013,11 @@
     {
       "file": "tests/task-monitor-source.test.ts",
       "initialBlob": "70e2cf3f3df3568b48df82627f88cf9767276478",
-      "status": "pending",
+      "status": "accepted",
       "area": "execution-tasks-questions",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_f991354d",
-      "judgeIds": [],
+      "judgeIds": ["task_7d16a45a"],
       "sourceCommit": "88cbf9b4adcbb6d3b8296a9b1c2d89d243d7ff37",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
       "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage.",
@@ -15022,16 +15036,30 @@
       "primaryLimits": [
         "No source-test runtime proof here: remote adapters are in-memory fakes; timer/subscription effects and the final real shell-command spawn were inspected. The latter inherits the parent process environment through TaskManager, so any parent execution must supply an audited owned environment. No real SSH was contacted.",
         "Independent judgment and runtime agent.model verification remain parent-owned."
+      ],
+      "acceptedBlob": "70e2cf3f3df3568b48df82627f88cf9767276478",
+      "result": "Read the complete unchanged file. Small local/remote fixtures expose routing and scoped adapter calls without hiding decisions. The merge journey exercises local inspect/kill and session-scoped SSH list/inspect while filtering terminal rows. Separate journeys retain byte-bound multibyte output and terminal-sequence sanitization, stale/gap/owner labels, prior observations after read errors, and pending versus confirmed cancellation. Narrow-height safety remains a readable ordered journey: zero-row confirmation suppression, refreshed epoch mismatch, then independent owner preflight before a stop. Disposal tests deliberately expose promise resolvers: dispose first, resolve a late list, prove no publication and only the adapter subscription removed; separately start output and stop preflight, dispose, resolve both, prove no SSH stop or output publication. panelFor expresses a single cleanup owner rather than generalizing these timings. The final real TaskManager journey observes one completion callback after monitor rendering and remote refresh, then separately shuts down the manager. No extraction is needed to clarify these already explicit boundaries.",
+      "systemReason": "Traced registerTaskMonitor capturing the durable session and releasing the merged adapter through panel disposal. MergedTaskMonitorSource owns its timer/subscription/cache, uses session-scoped cache reads, retains observations on errors, rejects identity drift, bounds first-page UTF-8 output, and checks disposal after awaited reads and stop preflight. RemoteJobsAdapter list/inspect read owned cached tasks; stop validates ownership and records cancellation intent before contacting SSH. TaskMonitorPanel freezes id/ownership at confirmation, blocks confirmation at zero rows, and sanitizes/bounds displayed observations. TaskManager publishes completion independently of monitor subscriptions and owns process close/shutdown; the final test therefore checks a genuinely separate delivery authority. Both candidate-changed TUI paths were also reviewed and do not alter these tests or adapter behavior.",
+      "checks": [
+        "Read exact candidate files with git show; reviewed complete candidate diff from primaryBase 79994b467143b7f77ffa3c5c791483a9249e430b, including both changed paths.",
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "git diff --check primaryBase candidate: no whitespace errors. Git ls-tree pins accepted blobs; both unchanged focuses have identical base/candidate blobs.",
+        "Static filesystem/network effect review only. No setup, tests, builds, dependency changes, delegation, credential access, cleanup, publication, or source edits."
+      ],
+      "limits": [
+        "Source-level structural judgment, not runtime success. Native terminal/provider execution, shutdown observation, packaged binary availability, and platform ABI execution remain unverified.",
+        "Review ran in durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_7d16a45a; candidate evidence/worktrees preserved. No /tmp code checkout or test fixture was created. Parent owns audited isolated runtime gates and runtime agent.model verification.",
+        "Remote behavior here is simulated except for the final local TaskManager process. No live SSH/auth/device verification was attempted. The final manager spawn inherits environment unless an isolated parent gate provides one; it was not executed."
       ]
     },
     {
       "file": "tests/task-monitor-tui.test.ts",
       "initialBlob": "26bf71c2c66519461448a29dcbefa01dafe6b6db",
-      "status": "pending",
+      "status": "accepted",
       "area": "execution-tasks-questions",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_f991354d",
-      "judgeIds": [],
+      "judgeIds": ["task_7d16a45a"],
       "sourceCommit": "88cbf9b4adcbb6d3b8296a9b1c2d89d243d7ff37",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
       "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage.",
@@ -15054,6 +15082,21 @@
         "Future /resume fixture preparation imports the SDK in the gate process; parent must start that process with an owned HOME/config/SDK as instructed. The terminal child environment is explicitly isolated by this helper.",
         "Test fixtures are created under fs.mkdtemp when the parent runs gates and retained. Durable source provenance is this worktree and exact sourceCommit/blobs, not a /tmp code checkout.",
         "Independent judgment and runtime agent.model verification remain parent-owned."
+      ],
+      "acceptedRelatedJudges": ["task_7d16a45a"],
+      "acceptedBlob": "09003456fc0d06b7bcfdc5b5e16d54771b5da94a",
+      "result": "Compared the full base-to-candidate diff and read both complete changed files. The /ps test now begins with a work prompt rather than SSE framing, models.json writes, tmux launch quoting, and readiness polling. It visibly follows selected ALPHA id through inspect/back, selects BETA, proves opening confirmation leaves both ids present, confirms only BETA leaves the running set, and opens activity to retain the exact BETA cancelled-row proof while excluding ALPHA cancellation and console.log. The /resume test still creates root and child in place, follows worker/fast picker labels into a child-id confirmation, and cancels explicitly. All semantic assertions and the readiness zero-request assertion are retained, not replaced by helper success. The new helper groups two coherent resource owners: terminal plus owned filesystem environment, and controlled provider plus submit-handler readiness. Its five terminal capabilities are infrastructure needed by both native journeys, not a semantic scenario/context bag. This resolves real reading burden by moving transport and startup mechanics away from selection/cancellation decisions.",
+      "systemReason": "withTaskMonitorTerminal creates and retains a fresh mkdtemp tree, constructs HOME, all XDG paths, TMPDIR/TMUX_TMPDIR and SDK directory without spreading inherited env, creates private directories, and runs tmux through explicit argv/env/cwd. Unique TMUX_TMPDIR gives the fixed socket name a private namespace; -f /dev/null disables inherited tmux config. new-session passes binary and arguments directly rather than a shell launch string. The helper brackets the entire callback, including /resume session preparation, with terminal shutdown. withLiveJobTui binds the fake provider to loopback and brackets model/readiness writes, binary startup, and semantic callback with server shutdown nested inside terminal shutdown. Registration marker is not confused with readiness: harmless command response proves the real submit handler, with zero provider requests before work. Shared run forwards this explicit env with HERDR_ENV=0; capture helpers preserve actual failing frames. Traced CLI runtime assets to homedir-based .bruv/runtime, normal extension attachment and startup editor preservation, /ps panel confirmation identity, prepareAgentSession durable header/child metadata and private manager disposal, and resume safeguards role decoration plus session_before_switch confirmation/cancel. These callers support the visible journeys without introducing a second authority.",
+      "checks": [
+        "Read exact candidate files with git show; reviewed complete candidate diff from primaryBase 79994b467143b7f77ffa3c5c791483a9249e430b, including both changed paths.",
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "git diff --check primaryBase candidate: no whitespace errors. Git ls-tree pins accepted blobs; both unchanged focuses have identical base/candidate blobs.",
+        "Static filesystem/network effect review only. No setup, tests, builds, dependency changes, delegation, credential access, cleanup, publication, or source edits."
+      ],
+      "limits": [
+        "Source-level structural judgment, not runtime success. Native terminal/provider execution, shutdown observation, packaged binary availability, and platform ABI execution remain unverified.",
+        "Review ran in durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_7d16a45a; candidate evidence/worktrees preserved. No /tmp code checkout or test fixture was created. Parent owns audited isolated runtime gates and runtime agent.model verification.",
+        "The shell loops are controlled job payloads, not fixture-launch or cleanup shell strings; managed children inherit the isolated binary environment. Fixture trees are intentionally retained, not deleted. Terminal shutdown remains best-effort as in the base; actual exit/drain is not proven by this static review. Existing 20-second test timeout versus 30-second readiness deadline and /resume fixed post-cancel sleep remain unchanged; no new runtime reliability claim is made."
       ]
     },
     {
@@ -17170,6 +17213,16 @@
         "No real provider authentication, credential or device access. Fixture configuration references are source context only. Automatic setup was not rerun and no setup/host-hash failure was bypassed.",
         "No source or wisdom edits, delegation, destructive operations, existing worktree/candidate mutation, push, PR or merge. Only this untracked judgment file is written; aggregate wisdom remains parent-owned."
       ]
+    },
+    {
+      "file": "tests/task-monitor-tui-fixture.ts",
+      "initialBlob": "absent",
+      "area": "execution-tasks-questions",
+      "status": "pending",
+      "resumeState": "needs-primary-final-blob",
+      "sourceCommit": "88cbf9b4adcbb6d3b8296a9b1c2d89d243d7ff37",
+      "acceptedRelatedJudges": ["task_7d16a45a"],
+      "acceptedBlob": "c46f9ca37d2c4959cdf48b98dd73844dd651956f"
     }
   ],
   "completedAreas": {
@@ -17188,7 +17241,14 @@
     "joinedSourcePaths": 54,
     "baselineFiles": 766,
     "finalGate": "pending; incomplete focus coverage",
-    "liveAuth": "unverified/failing; preserved"
+    "liveAuth": "unverified/failing; preserved",
+    "accepted": 649,
+    "total": 821,
+    "pending": 172,
+    "sourceExtras": 55,
+    "checkout": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
+    "branch": "bruv/readability-pr45-sol-continuation",
+    "scheduler": "/home/tnfssc/.bruv/worktrees/pr45-flow-c2a2fd8a.mjs"
   },
   "evidenceArtifacts": [
     {
