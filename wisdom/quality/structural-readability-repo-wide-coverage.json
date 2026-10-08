@@ -8804,13 +8804,28 @@
       "initialBlob": "e2dabede2936b961a451e998c071d8ed8e4cae4c",
       "status": "pending",
       "area": "agent-history-session-goals",
-      "resumeState": "pending-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_6ccdfe54",
+      "primaryCommit": "d1d6edce373008bd092ee01813c2718d4fd92723",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "d1d6edce373008bd092ee01813c2718d4fd92723",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
-      "pendingReason": "No dedicated primary/final independent focus judgment."
+      "pendingReason": "No dedicated primary/final independent focus judgment.",
+      "primaryBase": "410281ee739797820d046821586d0a03104701c9",
+      "primaryResult": "createArchivedCheckpointHistory now owns the complete in-memory archived user/assistant/tool-result fixture, including its usage and call pairing. The test binds its marker to that fixture in one call, then keeps preparation capture, warm-up, cache-affine checkpoint assertions, resume verification and same-preparation cold baseline together in their original order. The helper returns only the actual SessionManager; no context bag, new framework or phase state was introduced.",
+      "primaryPaths": ["tests/cache-affine-compaction-live.test.ts"],
+      "primaryChecks": [
+        "Read wisdom/values.md and structural-readability-guidance.md; inspected only focus-specific area/reconciliation ledger entries. Focus was present at the recorded baseline; no preserved candidate source commit existed to import.",
+        "Traced phase1-compaction-fixture.ts to registerCacheAffineCompaction, including context/provider capture and session_before_compact; confirmed this opt-in test isolates Phase 1 rather than production Phase 2.",
+        "Required repository Biome formatter applied only to the changed source path via node child_process argv; no formatting changes were needed. Fresh retained HOME/config/TMPDIR: /tmp/pr45-compaction-format-gSD8g1.",
+        "Static source-equivalence assertions passed: archived fixture statements preserved apart from indentation and marker binding; setup prefix and all live experiment/hook/assertion/error/finally code byte-identical.",
+        "git diff --check passed; committed only the focus source file."
+      ],
+      "primaryLimits": [
+        "No setup, repository tests, builds or live provider calls run, as requested; parent owns audited isolated gates.",
+        "Runtime/type-check validation and independent readability judgment remain for the parent.",
+        "No wisdom or value files changed; parent owns aggregate wisdom."
+      ]
     },
     {
       "file": "tests/cache-affine-compaction-sdk.test.ts",
