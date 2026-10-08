@@ -98,18 +98,21 @@
     {
       "focus": "scripts/remote-jobs-e2e.ts",
       "initialBlob": "036860d89538bd9d6b19c57065c0a71d7a665111",
-      "status": "pending",
+      "status": "accepted",
       "judgeRounds": [],
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "41523344401e8573f56b5dff5f9443798de0cd47",
         "primaryId": "task_40c1becc",
         "primaryCommit": "208cedce3b6aeeb781db32fc97c26948ab8baed8",
-        "judgeIds": [],
+        "judgeIds": [
+          "task_69c923f9"
+        ],
         "sourceCommit": "208cedce3b6aeeb781db32fc97c26948ab8baed8",
-        "state": "needs-judge",
-        "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+        "state": "accepted-joined",
+        "reason": "Compared the actual candidate with dc52072c1ba954f246476d1acd1311c0f47f0a7d, which is also its direct parent. The former single try body required reading transport probes, result-file parsing, completion events, SSH evidence and reconnect mechanics inline to reconstruct the journey. The candidate leaves a readable ordering in the try body: print boundary, connect, place A/B, correlate persisted sessions, observe both parent yields, prove terminal delivery/isolation, check each session and owner execution, then check sync/reconnect deduplication. The extracted operations have concrete proof responsibilities, not arbitrary blocks or a context bag. placeRemoteJob owns discovery/background assertions and returns only the stable jobs ID; taskId owns decoding for persisted-state correlation. assertRemoteCompletions keeps remote terminal state, parent wake acknowledgement, envelope content and own/foreign IDs together rather than conflating done with delivered. The two explicit access-proof calls preserve A-before-B order. Unchanged decision: NO CHANGE NEEDED for fixture setup, launch JSON framing/send/wait diagnostics, process registration and final teardown; their local ownership is already clear. Their code is unchanged except an explanatory registry comment, and reconnects still pass through launch into the same clients registry."
       },
-      "acceptedBlob": null
+      "acceptedBlob": "41523344401e8573f56b5dff5f9443798de0cd47"
     },
     {
       "focus": "scripts/remote-placement-e2e.ts",
@@ -4317,7 +4320,7 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 76,
-    "pending": 46
+    "accepted": 77,
+    "pending": 45
   }
 }

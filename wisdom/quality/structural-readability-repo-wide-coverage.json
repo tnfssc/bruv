@@ -2776,12 +2776,14 @@
     {
       "file": "scripts/remote-jobs-e2e.ts",
       "initialBlob": "036860d89538bd9d6b19c57065c0a71d7a665111",
-      "status": "pending",
+      "status": "accepted",
       "area": "remote",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_40c1becc",
       "primaryCommit": "208cedce3b6aeeb781db32fc97c26948ab8baed8",
-      "judgeIds": [],
+      "judgeIds": [
+        "task_69c923f9"
+      ],
       "sourceCommit": "208cedce3b6aeeb781db32fc97c26948ab8baed8",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
       "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
@@ -2821,6 +2823,23 @@
         "Harness source includes a deletion EXIT trap and fixture network/container activity; direct execution was not attempted under current safety constraints.",
         "Static formatting/source preservation is not runtime or readability acceptance.",
         "No wisdom edits: parent owns aggregate wisdom; existing ownership/readability and safety values apply."
+      ],
+      "acceptedBlob": "41523344401e8573f56b5dff5f9443798de0cd47",
+      "result": "Compared the actual candidate with dc52072c1ba954f246476d1acd1311c0f47f0a7d, which is also its direct parent. The former single try body required reading transport probes, result-file parsing, completion events, SSH evidence and reconnect mechanics inline to reconstruct the journey. The candidate leaves a readable ordering in the try body: print boundary, connect, place A/B, correlate persisted sessions, observe both parent yields, prove terminal delivery/isolation, check each session and owner execution, then check sync/reconnect deduplication. The extracted operations have concrete proof responsibilities, not arbitrary blocks or a context bag. placeRemoteJob owns discovery/background assertions and returns only the stable jobs ID; taskId owns decoding for persisted-state correlation. assertRemoteCompletions keeps remote terminal state, parent wake acknowledgement, envelope content and own/foreign IDs together rather than conflating done with delivered. The two explicit access-proof calls preserve A-before-B order. Unchanged decision: NO CHANGE NEEDED for fixture setup, launch JSON framing/send/wait diagnostics, process registration and final teardown; their local ownership is already clear. Their code is unchanged except an explanatory registry comment, and reconnects still pass through launch into the same clients registry.",
+      "systemReason": "Read candidate-side callers and fixture behavior rather than inferring from helper names. tests/remote-jobs-e2e.test.ts selects this script through scripts/remote-e2e.sh and checks the existing PASS prefix. That runner supplies a fixture HOME, provider, binary and pinned SSH config. The deterministic fake provider issues real execute/jobs.targets/subagent calls, records placement results, yields parents, recognizes SSH completion context, exercises own-list/inspect plus four foreign/unknown inspect/stop rejections, and checks destination normal/depth1 policy while running the dirty-source shell job and recording owner continuation. Production src/remote/jobs.ts encodes the same stable ssh: ID and filters jobs by jobSessionFile; src/agent/extension.ts wires session-scoped observations to the existing task-complete coordinator, and src/remote/job-delivery.ts persists claimed/delivered rows beside the session for reconnect deduplication. The refactor retains these contracts, the session correlation assertions, timeouts, sequential A/B waits, completion isolation checks, source artifact check and final registry teardown. Discovery/background assertions now fail at each placement boundary before the next launch instead of after both; this is a deliberate fail-fast ordering change, not lost coverage or a new transport/authority.",
+      "checks": [
+        "Read wisdom/values.md, wisdom/quality/structural-readability-guidance.md, repo-wide coverage/context and remote area ledgers, including the exact focus row and supplied primary context.",
+        "Read the complete candidate focus source and all changed source paths; the only changed path is scripts/remote-jobs-e2e.ts. Compared primary-base source and change boundaries; verified candidate parent equals the primary base.",
+        "Read candidate-side caller, fixture protocol and relevant production ID/session/delivery code.",
+        "Read-only git diff --check passed. Verified exact candidate blob 41523344401e8573f56b5dff5f9443798de0cd47.",
+        "Static comparison verified setup/transport identical apart from registry ownership comment and separating whitespace; final teardown is identical. No tests, builds or setup were run."
+      ],
+      "limits": [
+        "This is an independent structural code judgment, not runtime gate evidence. Parent owns audited isolated batch gates and external runtime agent.model verification.",
+        "No real authentication, device, Docker/SSH execution, credential access or recovery claim. No source edits, delegation, cleanup, setup, tests, builds, push, PR or merge operations.",
+        "The existing wrapper contains destructive EXIT cleanup and Docker/image removal; it was only read, never executed. Runtime verification must use the parent audited safety approach rather than invoking that wrapper directly.",
+        "Existing repeat-sync/reconnect checks observe fixed 1500/2000 ms windows and teardown uses SIGKILL without awaiting exit. These unchanged limitations are not new guarantees from the extraction. Historical setup/host-hash failures remain historical; no new setup outcome was tested or asserted.",
+        "Related unchanged source paths provide system context, not separate whole-file acceptance. No aggregate wisdom/values edits; parent owns those ledgers."
       ]
     },
     {
