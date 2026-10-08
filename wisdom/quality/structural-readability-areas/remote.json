@@ -79,18 +79,21 @@
     {
       "focus": "scripts/remote-e2e.ts",
       "initialBlob": "fe5d531b0210d36871c340023798a4c6acdd8216",
-      "status": "pending",
+      "status": "accepted",
       "judgeRounds": [],
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "70da0667aecc5d2f6d3542562277f58b1fd99656",
         "primaryId": "task_51a0ee46",
         "primaryCommit": "24026dc1b1249c085668b140d644ea528f188e8e",
-        "judgeIds": [],
+        "judgeIds": [
+          "task_21f18195"
+        ],
         "sourceCommit": "24026dc1b1249c085668b140d644ea528f188e8e",
-        "state": "needs-judge",
-        "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+        "state": "accepted-joined",
+        "reason": "Read the actual candidate file in full and compared its diff and primary-base implementation; the candidate parent is exactly primary base 07d54f20849e244898eebbe6a3c072a97dfb29fd. This is structural progress, not a rename pass: the executable orchestration now exposes SSH trust verification, owner/reconnect/question proof, repository/granted-work proof, and server-offline transcript proof in their required order. cli/reconnect/question state stays inside its scenario; localRepo, staged-index baseline, replacement repoRpc and repository/capability/cancellation task IDs stay inside the repository scenario; only the original owner task ID is passed between scenario operations. The safe launch now calls launchWithUntrackedOmission explicitly instead of triggering an authority-changing branch hidden inside generic nextTask. Both launch paths reuse only task observation and stable-ID verification. Unchanged decision: bootstrap, fixtureRpc/loopback provider helpers, scenario assertions and shared final cleanup need no change for this reading problem. Keeping repository return, capability reconnect, cancellation and artifact caching together is justified by their shared repository/RPC lifetime; further wrapper layers or a context bag would make this journey harder to follow."
       },
-      "acceptedBlob": null
+      "acceptedBlob": "70da0667aecc5d2f6d3542562277f58b1fd99656"
     },
     {
       "focus": "scripts/remote-jobs-e2e.ts",
@@ -4314,7 +4317,7 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 75,
-    "pending": 47
+    "accepted": 76,
+    "pending": 46
   }
 }

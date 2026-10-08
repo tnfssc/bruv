@@ -72,7 +72,7 @@ const ssh = (...args: string[]) =>
     encoding: "utf8",
     timeout: 6000,
   });
-try {
+function verifyPinnedSsh() {
   // SSH identity must be pinned; wrong host key cannot silently become trusted.
   const pinned = ssh("true");
   assert.equal(pinned.status, 0, pinned.stderr);
@@ -88,6 +88,9 @@ try {
   );
   // A different known-hosts file must not authenticate this server.
   assert.notEqual(wrong.status, 0, "SSH unexpectedly trusted an unpinned host key");
+}
+
+async function proveOwnerReconnectAndQuestion() {
   const cli = launchRpc();
   cli.send("/remote connect fixture-owner /usr/local/bin/bruv");
   await cli.wait(() => existsSync(statePath) && !!state().connection, "human /remote connect");
@@ -187,6 +190,10 @@ try {
     "answered owner conversation did not continue to final response",
   );
   reconnect.child.kill("SIGKILL");
+  return taskId;
+}
+
+async function proveRepositoryReturnAndGrantedWork(taskId: string) {
   // Current-repo tracked dirty transfer, explicit omission, safe return and conflict artifacts.
   const localRepo = join(home, "local-repo");
   mkdirSync(localRepo);
@@ -207,22 +214,7 @@ try {
   writeFileSync(join(localRepo, ".agents", "skills", "review", "SKILL.md"), "LOCAL_REVIEW_SKILL\n");
   const originalIndex = git("ls-files", "--stage");
   let repoRpc = launchRpc(localRepo);
-  const nextTask = async (command: string) => {
-    const previous = new Set(Object.keys(state().tasks));
-    let pendingId: string | undefined;
-    repoRpc.send(command);
-    if (command === "REMOTE_FIXTURE_REPO_SAFE") {
-      const proof = join(home, "placement-REMOTE_FIXTURE_REPO_SAFE.json");
-      await repoRpc.wait(() => existsSync(proof), "normal placement source preflight", 30000);
-      const pending = JSON.parse(readFileSync(proof, "utf8")).launch;
-      pendingId = pending.id;
-      assert.equal(pending.sourceApproval.state, "waiting");
-      assert(pending.sourceApproval.questionId, "untracked inclusion did not ask a human question");
-      assert.equal(Object.keys(state().tasks).length, previous.size, "unapproved task dispatched before human answer");
-      await repoRpc.wait(() => repoRpc.events.some((e) => e.type === "agent_end"), "source parent yielded");
-      repoRpc.send("/questions answer " + pending.sourceApproval.questionId + " Omit untracked files");
-      repoRpc.send(command + " PLACEMENT_RETRY");
-    }
+  const waitForTask = async (command: string, previous: Set<string>, pendingId?: string) => {
     await repoRpc.wait(
       () => Object.keys(state().tasks).some((id) => !previous.has(id)),
       "repository/capability launch accepted",
@@ -244,7 +236,28 @@ try {
       );
     return id;
   };
-  const safeId = await nextTask("REMOTE_FIXTURE_REPO_SAFE");
+  const nextTask = async (command: string) => {
+    const previous = new Set(Object.keys(state().tasks));
+    repoRpc.send(command);
+    return waitForTask(command, previous);
+  };
+  const launchWithUntrackedOmission = async () => {
+    const command = "REMOTE_FIXTURE_REPO_SAFE";
+    const previous = new Set(Object.keys(state().tasks));
+    repoRpc.send(command);
+    const proof = join(home, "placement-REMOTE_FIXTURE_REPO_SAFE.json");
+    await repoRpc.wait(() => existsSync(proof), "normal placement source preflight", 30000);
+    const pending = JSON.parse(readFileSync(proof, "utf8")).launch;
+    const pendingId = pending.id;
+    assert.equal(pending.sourceApproval.state, "waiting");
+    assert(pending.sourceApproval.questionId, "untracked inclusion did not ask a human question");
+    assert.equal(Object.keys(state().tasks).length, previous.size, "unapproved task dispatched before human answer");
+    await repoRpc.wait(() => repoRpc.events.some((e) => e.type === "agent_end"), "source parent yielded");
+    repoRpc.send("/questions answer " + pending.sourceApproval.questionId + " Omit untracked files");
+    repoRpc.send(command + " PLACEMENT_RETRY");
+    return waitForTask(command, previous, pendingId);
+  };
+  const safeId = await launchWithUntrackedOmission();
   await repoRpc.wait(
     () => state().tasks[safeId]!.repository?.status === "applied",
     "automatic safe repo return",
@@ -354,6 +367,9 @@ try {
     "full native background job text was not cached before owner exit",
   );
   repoRpc.child.kill("SIGKILL");
+}
+
+async function proveOfflineTranscript(taskId: string) {
   const callsBeforeOffline = localCalls;
   const stopped = spawnSync("docker", ["stop", container], { encoding: "utf8", timeout: 15000 });
   assert.equal(stopped.status, 0, stopped.stderr);
@@ -384,6 +400,13 @@ try {
   );
   assert.equal(localCalls, callsBeforeOffline, "offline transcript must not call a provider");
   offline.child.kill("SIGKILL");
+}
+
+try {
+  verifyPinnedSsh();
+  const taskId = await proveOwnerReconnectAndQuestion();
+  await proveRepositoryReturnAndGrantedWork(taskId);
+  await proveOfflineTranscript(taskId);
   console.log(
     "PASS normal CLI RPC normal subagent target, human connect, pinned SSH, independent owner, automatic reconnect sync, native question answer/continuation, server-offline paged human transcript, dirty repo safe/index-preserving return and conflict review, explicit offline-waiting file/tool/skill grants, native cancellation, cached text artifacts; events=" +
       state().tasks[taskId]!.cursor,

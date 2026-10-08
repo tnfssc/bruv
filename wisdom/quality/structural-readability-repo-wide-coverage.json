@@ -2702,12 +2702,14 @@
     {
       "file": "scripts/remote-e2e.ts",
       "initialBlob": "fe5d531b0210d36871c340023798a4c6acdd8216",
-      "status": "pending",
+      "status": "accepted",
       "area": "remote",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_51a0ee46",
       "primaryCommit": "24026dc1b1249c085668b140d644ea528f188e8e",
-      "judgeIds": [],
+      "judgeIds": [
+        "task_21f18195"
+      ],
       "sourceCommit": "24026dc1b1249c085668b140d644ea528f188e8e",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
       "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
@@ -2751,6 +2753,24 @@
         "No setup, tests, builds, Docker/SSH execution, credential/device access or recovery performed; parent owns audited isolated batch gates and independent exact-candidate judgment. No runtime success claimed.",
         "Existing provider initialization before try, SIGKILL sequences and timeout values are unchanged, not newly hardened.",
         "Wisdom and values unchanged: parent writes aggregate wisdom; no new per-worker wisdom files."
+      ],
+      "acceptedBlob": "70da0667aecc5d2f6d3542562277f58b1fd99656",
+      "result": "Read the actual candidate file in full and compared its diff and primary-base implementation; the candidate parent is exactly primary base 07d54f20849e244898eebbe6a3c072a97dfb29fd. This is structural progress, not a rename pass: the executable orchestration now exposes SSH trust verification, owner/reconnect/question proof, repository/granted-work proof, and server-offline transcript proof in their required order. cli/reconnect/question state stays inside its scenario; localRepo, staged-index baseline, replacement repoRpc and repository/capability/cancellation task IDs stay inside the repository scenario; only the original owner task ID is passed between scenario operations. The safe launch now calls launchWithUntrackedOmission explicitly instead of triggering an authority-changing branch hidden inside generic nextTask. Both launch paths reuse only task observation and stable-ID verification. Unchanged decision: bootstrap, fixtureRpc/loopback provider helpers, scenario assertions and shared final cleanup need no change for this reading problem. Keeping repository return, capability reconnect, cancellation and artifact caching together is justified by their shared repository/RPC lifetime; further wrapper layers or a context bag would make this journey harder to follow.",
+      "systemReason": "Followed tests/remote-e2e.test.ts through scripts/remote-e2e.sh into this candidate and scripts/loopback-parent-fixture.ts, then traced placement-parent.ts and the production /remote connect, answer, grant and transcript handlers plus cached transcript operations. The runner supplies an isolated fixture HOME, fake providers, generated keys and a pinned loopback SSH host; the script verifies rejection with a different known-hosts file before launching work. The first RPC human-connects, the fake parent uses normal authorized-target subagent placement, then the RPC is killed while the independent owner finishes. Reconnect observes the original task and answers a native question with saved owner/version authority. The repository scenario stages an index baseline, requests untracked inclusion, proves no dispatch before the saved human omission answer, retries the reserved task, verifies the returned encoded SSH ID and safe index-preserving return, then retains local conflicts for review. A separate capability task waits while the parent is offline/ungranted and only resumes after an explicit repo.read/tool:git-status/skill:review grant. Native cancellation and complete cached tool/job text remain checked before the Docker owner is stopped. Offline paged transcript requests then inspect actual normal RPC conversation history for readable final assistant text and verify no provider calls. Unchanged decision: caller interfaces, production command authority, fixture response protocol, assertion content and substantive effect order remain appropriate and unchanged. The outer finally still owns all registered RPC children and the loopback provider even when a scenario throws; extraction does not add new cleanup owners.",
+      "checks": [
+        "Read wisdom/values.md, structural-readability guidance, repository-wide ledger, remote area ledger and the focus row in remote.json; did not infer acceptance from earlier ledger proof.",
+        "Git metadata confirms candidate parent equals the supplied primary base; git diff --name-status confirms scripts/remote-e2e.ts is the only changed source path.",
+        "Read candidate code and compared every changed hunk with primary base, including generic launch versus omission retry and final try/finally.",
+        "Verified inspected caller/helper/production source blobs are identical between primary base and candidate.",
+        "git diff --check primary-base candidate completed without whitespace findings.",
+        "No repository tests, setup, build, Docker/SSH session or real provider/device interaction executed."
+      ],
+      "limits": [
+        "Static actual-code readability judgment only; parent owns audited isolated batch runtime/compiler gates. No runtime, real authentication, physical device, provider credential, WAN/macOS or compiled-CLI acceptance claim.",
+        "Existing resource limits remain: bootstrap starts the provider and initializes Git before the try/finally; several scenario-ending SIGKILL calls are not awaited. The shared final cleanup remains the ultimate owner, not proof of immediate exit at every scenario boundary. These behaviors are unchanged, not repaired or newly guaranteed by this refactor.",
+        "Inspected runner has inherited environment and teardown shell traps/deletion commands; it was read only and was not executed under this review safety contract. No cleanup, recovery, credentials or user secrets were accessed.",
+        "Automatic worktree setup outcome was not supplied in this turn and was not rerun or bypassed. Historical setup/compiler failures in the ledgers are not a candidate success claim.",
+        "Only .pr45-judge-result.json is written untracked; no source/wisdom edits, commit, push, PR or merge. Runtime model identity is for parent external jobs.inspect verification, not self-introspection."
       ]
     },
     {
