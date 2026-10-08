@@ -10749,13 +10749,49 @@
       "initialBlob": "21bf893d3fffed763700fa4cf96a3ceb135f7c00",
       "status": "pending",
       "area": "compatibility-t3",
-      "resumeState": "pending-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_555b6c64",
+      "primaryCommit": "15c6ac4c86c95c1d2f7308e1438052b0946423df",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "15c6ac4c86c95c1d2f7308e1438052b0946423df",
       "report": "wisdom/quality/structural-readability-areas/compatibility-t3.json",
-      "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+      "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection.",
+      "primaryBase": "b7e3d4b29cc6e2c333be6e165dc763d2259553ee",
+      "primaryResult": "The top-level journey now creates the real disk-backed Pi session, installs the offline model transport, subscribes, prompts, and disposes in sequence. One local operation owns both deterministic protocol emission and rejection of accidental provider fetches; event details remain directly inspectable below the lifecycle. No candidate recovery or related source edits were needed: the focus was present at its baseline blob and the focus evidence recorded pending-primary, not a rejection.",
+      "primaryPaths": ["tests/fixtures/claude-task-worker.ts"],
+      "primaryChecks": [
+        {
+          "check": "Read values, structural-readability guidance, and focus-specific area/reconciliation/repo-wide evidence",
+          "result": "completed"
+        },
+        {
+          "check": "Trace actual subprocess launcher and journal/usage/history/order assertions in tests/claude-compat-task-binding.test.ts, plus session-manager install/disposal ownership",
+          "result": "read-only; all caller assertions unchanged"
+        },
+        {
+          "check": "Required Biome formatter on changed source path only through node child_process argv and isolated HOME/config/TMPDIR",
+          "result": "exit 0; Formatted 1 file, no fixes applied",
+          "retainedEnvironmentRoot": "/tmp/pr45-claude-task-worker-format-rn2Lwz"
+        },
+        {
+          "check": "Reconstruct original source by inlining moved helper and restoring model.id access",
+          "result": "exact byte equality with baseline source; preserves protocol frames, 40ms delay, token usage, fetch rejection, setup/subscription/prompt/disposal order"
+        },
+        {
+          "check": "git diff --check",
+          "result": "passed"
+        },
+        {
+          "check": "Commit scope",
+          "result": "one source path committed; no other source paths changed"
+        }
+      ],
+      "primaryLimits": [
+        "No setup, tests, builds, or fixture execution performed; parent owns audited isolated batch gates.",
+        "No runtime/model self-introspection, push, PR, merge, recovery, credentials, or cleanup performed.",
+        "Independent readability verdict remains for the parent fresh judge.",
+        "No per-worker wisdom/values edits; parent owns aggregate wisdom and existing guidance already covers this boundary."
+      ]
     },
     {
       "file": "tests/fixtures/live-execute-cli.sh",
