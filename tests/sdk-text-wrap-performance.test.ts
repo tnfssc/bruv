@@ -12,12 +12,12 @@ let reference: Pick<typeof import("@earendil-works/pi-tui"), "visibleWidth" | "w
 let ReferenceText: typeof Text;
 let ReferenceMarkdown: typeof Markdown;
 
-// Reverse only our installed utility hunk: this is the real 1.0.3 implementation, not an invented oracle.
+// Reverse only our installed utility hunk: this is the real 1.1.0 implementation, not an invented oracle.
 beforeAll(async () => {
   dir = await mkdtemp(join(tmpdir(), "bruv-wrap-reference-"));
   await mkdir(join(dir, "dist"));
   await writeFile(join(dir, "dist/utils.js"), await readFile(join(sdk, "utils.js")));
-  const patch = await readFile(join(import.meta.dir, "../patches/@earendil-works%2Fpi-tui@1.0.3.patch"), "utf8");
+  const patch = await readFile(join(import.meta.dir, "../patches/@earendil-works%2Fpi-tui@1.1.0.patch"), "utf8");
   const utility =
     "diff --git a/dist/utils.js b/dist/utils.js\n" +
     patch.split("diff --git a/dist/utils.js b/dist/utils.js\n")[1].split("diff --git ")[0];

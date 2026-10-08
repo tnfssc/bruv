@@ -109,6 +109,7 @@ class InputTerminal implements Terminal {
   clearLine() {}
   clearFromCursor() {}
   clearScreen() {}
+  setProgramStatus() {}
   setTitle() {}
   setProgress() {}
 }

@@ -340,7 +340,7 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
     expect(frames.filter((frame) => frame.subtype === "session_state_changed").map((frame) => frame.state)).toEqual([
       "running",
     ]);
-    frontend.onEvent({ type: "agent_settled" });
+    frontend.onEvent({ type: "agent_settled", aborted: false });
     await frontend.flush();
     const wake = frames.find((frame) => frame.type === "result")!;
     expect(wake.origin).toEqual({ kind: "task-notification" });
@@ -351,7 +351,7 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
     consume("task-attention");
     frontend.consumeUser("next-human");
     frontend.onEvent({ type: "message_end", message: assistant("human reply") });
-    frontend.onEvent({ type: "agent_settled" });
+    frontend.onEvent({ type: "agent_settled", aborted: false });
     await frontend.flush();
     expect(frames.filter((frame) => frame.type === "result")[1]).toMatchObject({
       origin: { kind: "human" },
@@ -362,7 +362,7 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
     frontend.onEvent({ type: "agent_start" });
     consume("unrelated-extension");
     frontend.onEvent({ type: "message_end", message: assistant("other reply") });
-    frontend.onEvent({ type: "agent_settled" });
+    frontend.onEvent({ type: "agent_settled", aborted: false });
     await frontend.flush();
     const unrelated = frames.filter((frame) => frame.type === "result")[2];
     expect(unrelated.origin).toEqual({ kind: "unclassified" });
@@ -418,7 +418,7 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
     frontend.onEvent({ type: "message_end", message: completion });
     await frontend.flush();
     expect(frames.filter((frame) => frame.type === "result")).toHaveLength(0);
-    frontend.onEvent({ type: "agent_settled" });
+    frontend.onEvent({ type: "agent_settled", aborted: false });
     await frontend.flush();
     const replies = frames.filter((frame) => frame.type === "assistant");
     expect(replies.map((frame) => (frame.message as any).content[0].text)).toEqual([

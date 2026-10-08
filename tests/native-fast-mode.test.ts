@@ -289,7 +289,7 @@ test("enabling and restoring fast fail visibly without the pinned runtime seam",
   await h.command.handler("on", h.ctx);
   expect(h.entries).toEqual([]);
   expect(h.notices.at(-1)).toMatchObject({ kind: "error" });
-  expect(h.notices.at(-1).message).toContain("pinned Pi 1.0.3");
+  expect(h.notices.at(-1).message).toContain("pinned Pi 1.1.0");
 
   h.entries.push({
     type: "custom",

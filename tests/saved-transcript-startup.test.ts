@@ -2,7 +2,7 @@ import { expect, test } from "bun:test";
 import { resolve } from "node:path";
 
 // Isolate Bun module controls from all other tests. Each child imports the exact
-// installed SDK 1.0.3 init and real syntax loader, never a copied startup method.
+// installed SDK 1.1.0 init and real syntax loader, never a copied startup method.
 for (const scenario of ["saved", "saved-ready", "empty", "empty-stopped", "rebind-error"]) {
   test("patched SDK startup: " + scenario, async () => {
     const child = Bun.spawn(

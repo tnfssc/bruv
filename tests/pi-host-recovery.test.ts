@@ -8,7 +8,7 @@ import { adaptPiHostFile, piHostPatches } from "../scripts/pi-host-adaptation";
 import { preparePiHostWithRecovery } from "../scripts/pi-host-recovery";
 
 const originals = JSON.parse(
-  gunzipSync(await readFile(join(import.meta.dir, "fixtures/pi-host/1.0.3-originals.json.gz"))).toString(),
+  gunzipSync(await readFile(join(import.meta.dir, "fixtures/pi-host/1.1.0-originals.json.gz"))).toString(),
 ) as Record<string, string>;
 const digest = (text: string) => createHash("sha256").update(text).digest("hex");
 const agentPatch = piHostPatches.find((patch) => patch.path === "dist/core/agent-session.js")!;
@@ -27,7 +27,7 @@ afterEach(async () => {
   for (const dir of dirs.splice(0)) await rm(dir, { recursive: true, force: true });
 });
 
-async function fixture(root: string, files: Record<string, string> = originals, version = "1.0.3") {
+async function fixture(root: string, files: Record<string, string> = originals, version = "1.1.0") {
   await mkdir(root, { recursive: true });
   await writeFile(join(root, "package.json"), JSON.stringify({ version }));
   for (const patch of piHostPatches) {
@@ -74,10 +74,10 @@ async function cleaned(stages: string[]) {
 }
 
 // Exact hashes make the compressed fixture independent of inherited node_modules.
-test("clean fixture is pinned; stale fixture reproduces the observed unsupported hash", () => {
+test("clean 1.1.0 fixture is pinned; stale fixture omits the compaction branch adaptation", () => {
   expect(Object.keys(originals).sort()).toEqual(piHostPatches.map((patch) => patch.path).sort());
   for (const patch of piHostPatches) expect(digest(originals[patch.path]!)).toBe(patch.originalSha256);
-  expect(digest(staleAgent)).toBe("ef78c937779832d87a5a28bbd339e4c73e210d0b5da7ff570723f1d4313be876");
+  expect(digest(staleAgent)).toBe("fc59d68420c94f67f3ed818766eee20ec2ad95126db9038b95b18f2fb4589d6b");
 });
 
 test("recovers private stale branch adaptation once; prepared runs stay offline with stable inode/mtime", async () => {
@@ -121,7 +121,7 @@ test("contaminated hardlink recovery changes only local patch paths, retaining m
   await fixture(cache, { ...originals, [agentPatch.path]: staleAgent });
   for (const root of [local, sibling]) {
     await mkdir(root);
-    await writeFile(join(root, "package.json"), JSON.stringify({ version: "1.0.3" }));
+    await writeFile(join(root, "package.json"), JSON.stringify({ version: "1.1.0" }));
     await writeFile(join(root, "unrelated.js"), "leave other dependency files alone");
     for (const patch of piHostPatches) {
       await mkdir(dirname(join(root, patch.path)), { recursive: true });
@@ -305,5 +305,30 @@ for (const source of ["original", "stale"] as const)
         },
       }),
     ).rejects.toThrow("checkout-local dependencies");
+    await unchanged(borrowed, before);
+  });
+
+for (const source of ["original", "stale"] as const)
+  test("preparation refuses borrowed " + source + " source directories without acquisition or writes", async () => {
+    const project = await temp();
+    const borrowed = await temp();
+    await fixture(project);
+    await fixture(borrowed, source === "stale" ? { ...originals, [agentPatch.path]: staleAgent } : originals);
+    const before = await snapshot(borrowed);
+    await rm(join(project, "dist/core"), { recursive: true });
+    await symlink(join(borrowed, "dist/core"), join(project, "dist/core"), "dir");
+    let acquired = false;
+    await expect(
+      preparePiHostWithRecovery(project, project, {
+        acquireCleanSource: async () => {
+          acquired = true;
+          throw new Error("must not acquire for borrowed source directories");
+        },
+        notice: () => {
+          throw new Error("must not report recovery");
+        },
+      }),
+    ).rejects.toThrow("checkout-local dependencies");
+    expect(acquired).toBe(false);
     await unchanged(borrowed, before);
   });

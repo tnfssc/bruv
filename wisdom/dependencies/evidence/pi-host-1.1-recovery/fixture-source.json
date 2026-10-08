@@ -1,0 +1,56 @@
+{
+  "version": "1.1.0",
+  "tarball": "https://registry.npmjs.org/@earendil-works/pi-coding-agent/-/pi-coding-agent-1.1.0.tgz",
+  "integrity": "sha512-SeEi/4hdcHNgA9UWlefZl7ZZpm3dzi2OoxNjDHsBJ9o298LNOtbL4DGKgitlEj6uCTccvtw6f2hlCkTPVJ2RXg==",
+  "tarballSha256": "09cd8a0a43dbb1d81a67346b09400b439ce71d818caba4e963ea958846a1aed4",
+  "fixtureSha256": "d1e9c01c7472398fa5e66b885939bedda06b7865fa98eadd75431957046fbcb9",
+  "fixtureBytes": 84246,
+  "staleSha256": "fc59d68420c94f67f3ed818766eee20ec2ad95126db9038b95b18f2fb4589d6b",
+  "files": [
+    {
+      "path": "dist/extensions/index.js",
+      "originalSha256": "ed7f805d46160c30db9be874b2350d0bd01f8b390f94a55ec1d8d4ed9474bf9b",
+      "adaptedSha256": "ec465bb227a60159a8b3aa00e62f794370311a232b839cb104917da7b2651fc8"
+    },
+    {
+      "path": "dist/main.js",
+      "originalSha256": "866d65f2d42f74d2bb72ed4a755c8ace1b8a2c497a32cb57cc4db594a4fcb2bf",
+      "adaptedSha256": "ed4130e11c406a138a0bf4c67fdc190d674ee13d19b49093b4c77f8a741181f0"
+    },
+    {
+      "path": "dist/cli/args.js",
+      "originalSha256": "231eca0304b149165a35b12730052586603f23208667e3a57355638017450175",
+      "adaptedSha256": "b0e06afb2d4cb5cd417196b42455ebe1c236f3a7413f79bf760963e85ff871df"
+    },
+    {
+      "path": "dist/core/session-manager.js",
+      "originalSha256": "9d01f720b803bf21d79e2b56de14d35a02316b9e22e8825fb007252a2f45f27a",
+      "adaptedSha256": "afa016a7535a8e6f57d516e3449cd1be3b56f08c07b05c32864b432e1c84add4"
+    },
+    {
+      "path": "dist/modes/interactive/chat-viewport.js",
+      "originalSha256": "77ff3d8a3f20950a95cc3b758ab04ee7cffdaba5a490a2390626e781ae30f70a",
+      "adaptedSha256": "d8935ff445ff638165a4f11dba32eddea46191377894a8b644ee1511ef36e48f"
+    },
+    {
+      "path": "dist/core/agent-session.js",
+      "originalSha256": "0ba5c847b4fd2fd838f71ea84885b9f3a4f15d9bf4b5493e2e88a41d1507e20b",
+      "adaptedSha256": "3e193bae59219f79073969c2b391651e1e1e76512d2c3577d26fe3d80dd50a2b"
+    },
+    {
+      "path": "dist/core/agent-session.d.ts",
+      "originalSha256": "a3d494295855517aab33ca3ec3890b3e181f25b695fb656a5dd9c262f8677906",
+      "adaptedSha256": "438189d7af7f8ee73e87126b727dd9c93d11074f057c5ca27f02f8f67d920352"
+    },
+    {
+      "path": "dist/core/session-manager.d.ts",
+      "originalSha256": "ea12a33701dca952d7b0860243397d30783252317e5d8b147aead6f8a1324d64",
+      "adaptedSha256": "51208200645f89e331998b608bff2c195b42ee6aa5dcb5e9de8143df57c6f895"
+    },
+    {
+      "path": "dist/core/sdk.js",
+      "originalSha256": "8155c0b7d819d2248a1bbf0fa4b8e40d15552ff7fa6a772154cbbccb6ae59235",
+      "adaptedSha256": "d97f22069117c052c9926b40cf23020fc624bf4f4a93c94fc205d9b65933968c"
+    }
+  ]
+}

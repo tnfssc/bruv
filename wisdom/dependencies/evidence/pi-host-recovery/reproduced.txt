@@ -1,4 +1,4 @@
-232 | 
+232 |
 233 | export function adaptPiHostFile(patch: Patch, text: string): string {
 234 |   const digest = hash(text);
 235 |   if (digest === patch.adaptedSha256) return text;
