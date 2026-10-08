@@ -3396,6 +3396,15 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_686802a6",
         "branch": "bruv/pr45-judge-1-execution-tasks-questions-f-686802a6",
         "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled"
+      },
+      {
+        "id": "task_e427af86",
+        "stage": "judge",
+        "focus": ["tests/job-bridge.test.ts"],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_e427af86",
+        "branch": "bruv/pr45-judge-1-execution-tasks-questions-f-e427af86",
+        "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
       }
     ]

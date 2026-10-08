@@ -23365,15 +23365,15 @@
     {
       "file": "tests/worktree-workspace.test.ts",
       "initialBlob": "e8d8638eed7fa0b4c82670cb2afc79482715a371",
-      "status": "pending",
+      "status": "accepted",
       "area": "execution-tasks-questions",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_d07c58c2",
-      "judgeIds": ["task_83034949", "task_6181fd8e"],
+      "judgeIds": ["task_83034949", "task_6181fd8e", "task_686802a6"],
       "sourceCommit": "af63383a0fb05cba759d32b21788c03f7a3cffa7",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
-      "acceptedBlob": "7a01e214fe52d9bd144d6e0171b03a22e6863f01",
-      "result": "Retain ACCEPT by task_83034949: the recorded accepted blob equals the actual focus blob at reviewed commit 59fbfcc9b5a88a1488e9f8ce39bb122d1c67da12. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob.",
+      "acceptedBlob": "3d63bbaecbf6268d8b416714d288f17592fb0709",
+      "result": "Read the exact candidate against primaryBase 3e7300d72c5535ebb552b6b8651944fccd7e10b3, the entire explicit entry and entire moved case module. This is an actual ownership change, not cosmetic extraction: the discoverable entry now owns a retained mkdtemp runtime, calls the existing whitelist environment helper, records the actual argv/env/cwd, starts a child with explicit preload and an owned cwd, defers all production/SDK imports to that child, and retains stdout/stderr before asserting exit. The case module separates the child-only journeys from discovery. Per-case repositories and session directories sit directly under the retained runtime; direct worktrees sit under case roots, and JobService-managed worktrees/profiles sit under the runtime. withWorktreeJobs now has one responsibility: construct and drain its TaskManager. Global environment mutation and fixture deletion have been removed. The JSONC/schema, commit-pinning/dirty-file exclusion, unsafe-ref/path/branch, cancellation/deadline, trust/continuity, async activation/failure publication, and sibling-identity journeys retain their substantive assertions.",
       "priorAcceptedIntegrationProof": [
         {
           "primaryId": "task_f4444bc8",
@@ -23428,7 +23428,32 @@
         "Durable source provenance is this worktree and sourceCommit. Retained tool-only fixtures: /tmp/bruv-worktree-format-cwTPbW, /tmp/bruv-worktree-format-3JbhAt, /tmp/bruv-worktree-git-F5mccS, /tmp/bruv-worktree-commit-Dbt7ZW. No test runtime fixture was created or executed here.",
         "No delegation; parent owns runtime model verification. Wisdom/values unchanged: bounded test ownership rework, aggregate wisdom remains parent-owned."
       ],
-      "forceJudge": true
+      "forceJudge": true,
+      "systemReason": "Followed JobService.handle through local profile selection, worktree reservation/source pinning, setup execution, prepareLaunch, prepareAgentSession, and real TaskManager.activatePreparedAgent/spawn/shutdown. All session-producing contexts explicitly supply getSessionDir and return undefined for both parent file and parent ID, so sessionIdentity does not derive an inherited SDK identity and SessionManager.create receives the case session directory. prepareAgentSession persists its header and bruv-agent metadata there; both trust and async cases now read that real journal and assert its parent directory. Their activation spies still call the real implementation. Setup and agent launch copy process.env, but it is now the child whitelist environment, not the human launcher environment; the async case also checks HOME and both SDK directory variables on the activation launch. Explicit {} on JobService only disables injected native configuration and is not mistaken for launch isolation. Runtime-owned profiles avoid human subagent settings, fixed git configuration/hooks avoid inherited git configuration, and manager shutdown remains the managed-process boundary. Async setup still starts before activation, remains running after preparation is ready, exits 7 after release, and publishes failed setup status. No production changes or security/assertion weakening were found.",
+      "checks": [
+        {
+          "kind": "actual-source review",
+          "result": "Read exact candidate blobs with git show and compared exact candidate diff from the supplied primaryBase; inspected every changed source path and followed unchanged launch, persistence, setup-publication, environment and shutdown decisions."
+        },
+        {
+          "kind": "static whitespace check",
+          "command": "git diff --check 3e7300d72c5535ebb552b6b8651944fccd7e10b3 af63383a0fb05cba759d32b21788c03f7a3cffa7",
+          "result": "No diagnostics."
+        },
+        {
+          "kind": "static dependency inspection",
+          "result": "Read shared installed SDK getAgentDir, SessionManager.create and constructor without importing/executing SDK; explicit sessionDir selects owned storage and SDK directory lookup uses the child environment."
+        },
+        {
+          "kind": "provenance",
+          "result": "Review performed in the supplied durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_686802a6. No checkout, source edit, setup, build, test, dependency mutation, deletion, recovery investigation, credential access, delegation, or publication performed. Only this untracked result artifact was written."
+        }
+      ],
+      "limits": [
+        "Static independent code verdict only; no setup/tests/builds were run. Parent owns audited isolated runtime gates, including subprocess discovery, timing and teardown verification.",
+        "Real provider/auth/device behavior was not verified and no credentials were accessed. The real activation and persisted-journal assertions are source evidence, not a claim that those assertions passed in this review.",
+        "Parent owns runtime model verification and aggregate wisdom; no per-worker wisdom or values files were changed."
+      ]
     },
     {
       "file": "tsconfig.json",
@@ -25996,6 +26021,16 @@
         "Source executes in retained durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_82a904cd; helper-created test fixture roots remain retained for parent audit when the parent runs its gates.",
         "No wisdom/value edits: parent owns aggregate wisdom and this focus produced no new structural change."
       ]
+    },
+    {
+      "file": "tests/fixtures/worktree-workspace-cases.ts",
+      "initialBlob": "absent",
+      "area": "execution-tasks-questions",
+      "status": "pending",
+      "resumeState": "needs-primary-final-blob",
+      "sourceCommit": "af63383a0fb05cba759d32b21788c03f7a3cffa7",
+      "acceptedRelatedJudges": ["task_686802a6"],
+      "acceptedBlob": "16e90314c1d218b04e99644340d8d5220c2ba060"
     }
   ],
   "completedAreas": {
@@ -26015,10 +26050,10 @@
     "baselineFiles": 766,
     "finalGate": "pending; incomplete focus coverage",
     "liveAuth": "unverified/failing; preserved",
-    "accepted": 831,
-    "total": 837,
+    "accepted": 832,
+    "total": 838,
     "pending": 6,
-    "sourceExtras": 71,
+    "sourceExtras": 72,
     "checkout": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
     "branch": "bruv/readability-pr45-sol-continuation",
     "scheduler": "/home/tnfssc/.bruv/worktrees/pr45-flow-c2a2fd8a.mjs"

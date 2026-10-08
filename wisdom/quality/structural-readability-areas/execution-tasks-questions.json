@@ -3869,7 +3869,7 @@
     {
       "focus": "tests/worktree-workspace.test.ts",
       "initialBlob": "e8d8638eed7fa0b4c82670cb2afc79482715a371",
-      "status": "pending",
+      "status": "accepted",
       "primary": {
         "id": "task_f4444bc8",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_f4444bc8",
@@ -3894,7 +3894,7 @@
           ]
         }
       ],
-      "acceptedBlob": null,
+      "acceptedBlob": "3d63bbaecbf6268d8b416714d288f17592fb0709",
       "integration": "primary test diff integrated; related acceptance superseded",
       "relatedAcceptance": {
         "judge": "task_6181fd8e",
@@ -3912,14 +3912,14 @@
         "typecheck/Biome/diff pass;1 inherited lint info"
       ],
       "resume": {
-        "status": "pending",
-        "acceptedBlob": "7a01e214fe52d9bd144d6e0171b03a22e6863f01",
+        "status": "accepted",
+        "acceptedBlob": "3d63bbaecbf6268d8b416714d288f17592fb0709",
         "primaryId": "task_d07c58c2",
         "primaryCommit": "af63383a0fb05cba759d32b21788c03f7a3cffa7",
-        "judgeIds": ["task_83034949", "task_6181fd8e"],
+        "judgeIds": ["task_83034949", "task_6181fd8e", "task_686802a6"],
         "sourceCommit": "af63383a0fb05cba759d32b21788c03f7a3cffa7",
-        "state": "needs-judge",
-        "reason": "Retain ACCEPT by task_83034949: the recorded accepted blob equals the actual focus blob at reviewed commit 59fbfcc9b5a88a1488e9f8ce39bb122d1c67da12. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
+        "state": "accepted-joined",
+        "reason": "Read the exact candidate against primaryBase 3e7300d72c5535ebb552b6b8651944fccd7e10b3, the entire explicit entry and entire moved case module. This is an actual ownership change, not cosmetic extraction: the discoverable entry now owns a retained mkdtemp runtime, calls the existing whitelist environment helper, records the actual argv/env/cwd, starts a child with explicit preload and an owned cwd, defers all production/SDK imports to that child, and retains stdout/stderr before asserting exit. The case module separates the child-only journeys from discovery. Per-case repositories and session directories sit directly under the retained runtime; direct worktrees sit under case roots, and JobService-managed worktrees/profiles sit under the runtime. withWorktreeJobs now has one responsibility: construct and drain its TaskManager. Global environment mutation and fixture deletion have been removed. The JSONC/schema, commit-pinning/dirty-file exclusion, unsafe-ref/path/branch, cancellation/deadline, trust/continuity, async activation/failure publication, and sibling-identity journeys retain their substantive assertions."
       }
     }
   ],
@@ -4352,7 +4352,7 @@
     ]
   },
   "resumeStatus": {
-    "accepted": 100,
+    "accepted": 101,
     "pending": 3
   },
   "extraFiles": [
@@ -4434,6 +4434,19 @@
         "primaryCommit": "9bf50c12c46a2eec788c76d19c5f504819b3496a",
         "sourceCommit": "9bf50c12c46a2eec788c76d19c5f504819b3496a",
         "state": "needs-judge"
+      }
+    },
+    {
+      "focus": "tests/fixtures/worktree-workspace-cases.ts",
+      "initialBlob": null,
+      "introducedBy": "af63383a0fb05cba759d32b21788c03f7a3cffa7",
+      "state": "pending",
+      "acceptedBlob": null,
+      "resume": {
+        "status": "pending",
+        "acceptedBlob": "16e90314c1d218b04e99644340d8d5220c2ba060",
+        "sourceCommit": "af63383a0fb05cba759d32b21788c03f7a3cffa7",
+        "state": "needs-primary-final-blob"
       }
     }
   ]
