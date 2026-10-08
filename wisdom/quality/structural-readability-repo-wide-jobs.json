@@ -1115,7 +1115,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_a045de37",
         "branch": "bruv/pr45-primary-src-prompts-orchestrator.md-a045de37",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "edaa2585eb9271e967ff89bde602215b8e8b3031"
       },
       {
         "id": "task_3c851044",
@@ -1123,6 +1124,19 @@
         "focus": "src/prompts/system.md",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_3c851044",
         "branch": "bruv/pr45-primary-src-prompts-system.md-3c851044",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_840f1277",
+        "stage": "judge",
+        "focus": [
+          "src/prompts/markdown.d.ts",
+          "src/prompts/native-compaction.md",
+          "src/prompts/normal.md"
+        ],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_840f1277",
+        "branch": "bruv/pr45-judge-3-agent-history-session-goals-840f1277",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
       }

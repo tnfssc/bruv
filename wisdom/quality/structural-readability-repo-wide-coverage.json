@@ -7164,13 +7164,29 @@
       "initialBlob": "1a844f93188dc4615c0f6115b795e152ff96f7af",
       "status": "pending",
       "area": "agent-history-session-goals",
-      "resumeState": "pending-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_a045de37",
+      "primaryCommit": "edaa2585eb9271e967ff89bde602215b8e8b3031",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "edaa2585eb9271e967ff89bde602215b8e8b3031",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
-      "pendingReason": "No dedicated primary/final independent focus judgment."
+      "pendingReason": "No dedicated primary/final independent focus judgment.",
+      "primaryBase": "edaa2585eb9271e967ff89bde602215b8e8b3031",
+      "primaryResult": "Followed before_agent_start in src/agent/extension.ts through withSubagentGuidance and subagentGuidance in src/prompts.ts to this template: child identity selects the role; the orchestrator template is distinct from main-orchestrator.md, substitutes {{role}}, and is appended even with a user custom base while collaboration policy remains custom-base-owned. Delegation authorization stays in src/tasks/subagent-profiles.ts and src/tasks/job-service.ts, not this prose. The reader can choose workspace, launch, use the returned path, and retain branch/path together without reconstructing scattered ownership. Reordering or adding headings would be cosmetic, and moving policy enforcement into this prompt would duplicate its actual authority. Reconciliation and area/coverage focus rows show pending-primary, no prior candidate or rejected judgment; current focus blob matches the recorded baseline. No candidate import was needed.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        "Read wisdom/values.md and structural-readability-guidance.md.",
+        "Inspected focus rows in preserved resume reconciliation and area/repo-wide ledgers.",
+        "Read exact focus, role-template composition, before_agent_start insertion, custom-base boundary, and delegation authorization callers.",
+        "Verified clean working tree before result artifact, unchanged focus diff, and exact HEAD focus blob.",
+        "No source changes, therefore no source formatter invocation or source commit."
+      ],
+      "primaryLimits": [
+        "No tests, setup, or builds run; parent owns isolated batch gates.",
+        "No independent judgment performed; parent must assign a fresh judge.",
+        "No runtime model self-introspection performed; parent verifies jobs.inspect.",
+        "Values and wisdom unchanged: no new general lesson and no per-worker wisdom pile."
+      ]
     },
     {
       "file": "src/prompts/system.md",
