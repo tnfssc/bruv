@@ -292,7 +292,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_e2bf3034",
         "branch": "bruv/pr45-primary-3-remote-focuses-e2bf3034",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "b11251c468f51c5a3f772e37c37306b783862fd5"
       }
     ]
   },
