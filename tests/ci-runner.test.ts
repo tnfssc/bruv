@@ -216,7 +216,7 @@ test("both CI lanes install ffmpeg before running PCM conversion tests", async (
     jobs: Record<string, { steps: { run?: string }[] }>;
   };
   for (const [job, install, gate] of [
-    ["test", "bash scripts/install-ci-linux-tools.sh --native-audio", "bun run ci"],
+    ["test", "bash scripts/install-ci-linux-tools.sh", "bun run ci"],
     ["live-macos", "brew install ffmpeg", "bun run ci:macos"],
   ] as const) {
     const steps = parsed.jobs[job]!.steps;
@@ -227,7 +227,7 @@ test("both CI lanes install ffmpeg before running PCM conversion tests", async (
       expect(steps[setup]!.run).toContain("ffmpeg -version");
     } else {
       const installer = await Bun.file(resolve(import.meta.dir, "../scripts/install-ci-linux-tools.sh")).text();
-      expect(installer).toContain("packages=(tmux ffmpeg)");
+      expect(installer).toContain("ordinary_packages=(tmux ffmpeg)");
       expect(installer).toContain("ffmpeg -version");
     }
     expect(steps.findIndex((step) => step.run === gate)).toBeGreaterThan(setup);

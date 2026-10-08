@@ -144,6 +144,43 @@ describe("release automation", () => {
     }
   });
 
+  test("Linux native validation overlaps the ordinary gate without duplicate large setup", async () => {
+    const workflow = await readWorkflow("ci");
+    expect(Object.keys(workflow.jobs)).toEqual(["feedback", "test", "native-linux", "live-macos", "required"]);
+    const ordinary = workflow.jobs.test!;
+    const native = workflow.jobs["native-linux"]!;
+    expect(native["runs-on"]).toBe(ordinary["runs-on"]);
+    expect(native.needs).toBe("feedback");
+    expect(native.if).toBe(ordinary.if);
+    expect(namedStep(ordinary, "Install Linux test tooling").run).toBe("bash scripts/install-ci-linux-tools.sh");
+    expect(namedStep(native, "Install Linux native tooling").run).toBe(
+      "bash scripts/install-ci-linux-tools.sh --native-audio-only",
+    );
+    expect(commands(ordinary)).toContain("bun run ci");
+    expect(commands(ordinary)).not.toMatch(/fsanitize|capture-protocol|webrtc-audio-processing/);
+    expect(commands(native)).not.toMatch(/bun |node |tmux|ffmpeg/);
+    expect(native.steps.filter((step) => step.uses).map((step) => step.uses!.split("@")[0])).toEqual([
+      "actions/checkout",
+      "actions/cache",
+    ]);
+    const cache = namedStep(native, "Cache Linux native package downloads");
+    // biome-ignore lint/suspicious/noTemplateCurlyInString: literal GitHub expression
+    expect(cache.with?.path).toBe("${{ runner.temp }}/bruv-apt-cache/*.deb");
+    expect(cache.with?.key).toBe(
+      // biome-ignore lint/suspicious/noTemplateCurlyInString: literal GitHub expression
+      "ubuntu-24.04-apt-native-v1-${{ runner.arch }}-${{ hashFiles('scripts/install-ci-linux-tools.sh') }}",
+    );
+    expect(cache.with?.["restore-keys"]).toBeUndefined();
+    const installer = await read("scripts/install-ci-linux-tools.sh");
+    expect(installer).toContain("ordinary_packages=(tmux ffmpeg)");
+    // biome-ignore lint/suspicious/noTemplateCurlyInString: literal Bash expansion
+    expect(installer).toContain('--native-audio-only) packages=("${native_packages[@]}")');
+    // biome-ignore lint/suspicious/noTemplateCurlyInString: literal Bash expansion
+    expect(installer).toContain('"") packages=("${ordinary_packages[@]}")');
+    // biome-ignore lint/suspicious/noTemplateCurlyInString: literal Bash expansion
+    expect(installer).toContain('if [[ "${1:-}" != --native-audio-only ]]; then');
+  });
+
   test("CI is deterministic, locked, credential-free, and retains failure logs", async () => {
     const workflow = await read(".github/workflows/ci.yml");
     expect(() => Bun.YAML.parse(workflow)).not.toThrow();
@@ -452,7 +489,7 @@ test("Linux needs no retired migration history; feedback retains its baseline hi
   expect(checkout(workflow.jobs.test!).with?.["fetch-depth"] ?? 1).toBe(1);
   expect(checkout(workflow.jobs.feedback!).with?.["fetch-depth"]).toBe(0);
   expect(namedStep(workflow.jobs.test!, "Install Linux test tooling").run).toBe(
-    "bash scripts/install-ci-linux-tools.sh --native-audio",
+    "bash scripts/install-ci-linux-tools.sh",
   );
 });
 
