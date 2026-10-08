@@ -3368,6 +3368,25 @@
         "model": "openai-codex/gpt-6.1-sol",
         "status": "handled",
         "sourceCommit": "af63383a0fb05cba759d32b21788c03f7a3cffa7"
+      },
+      {
+        "id": "task_6262ecec",
+        "stage": "primary",
+        "focus": ["tests/job-bridge.test.ts"],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_6262ecec",
+        "branch": "bruv/pr45-primary-1-execution-tasks-questions-6262ecec",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_82a904cd",
+        "stage": "primary",
+        "focus": ["tests/owned-process-suite.ts"],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_82a904cd",
+        "branch": "bruv/pr45-primary-1-execution-tasks-questions-82a904cd",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled",
+        "sourceCommit": "9bf50c12c46a2eec788c76d19c5f504819b3496a"
       }
     ]
   },

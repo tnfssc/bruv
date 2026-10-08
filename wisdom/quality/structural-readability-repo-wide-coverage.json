@@ -25977,10 +25977,33 @@
       "initialBlob": "absent",
       "area": "execution-tasks-questions",
       "status": "pending",
-      "resumeState": "needs-primary-final-blob",
-      "sourceCommit": "eb8295ac0714ad9b6c4e548cc9130010949c7dd5",
+      "resumeState": "needs-judge",
+      "sourceCommit": "9bf50c12c46a2eec788c76d19c5f504819b3496a",
       "acceptedRelatedJudges": ["task_80598b58"],
-      "acceptedBlob": "946ea123946ed06dbbcfe717c6dcc4d21d101ca4"
+      "acceptedBlob": "946ea123946ed06dbbcfe717c6dcc4d21d101ca4",
+      "parentReviewNotes": [
+        "Actual independent judge80598b58 rejected the helper-mediated job-bridge credential scenario because --test-name-pattern violates the user no-filter contract. Shared helper has no general-reuse endorsement. Inspect current exact helper and every exercised caller; scenario isolation must run original assertions without filter/skip-as-green, no test execution authorized."
+      ],
+      "primaryId": "task_82a904cd",
+      "primaryCommit": "9bf50c12c46a2eec788c76d19c5f504819b3496a",
+      "primaryBase": "9bf50c12c46a2eec788c76d19c5f504819b3496a",
+      "primaryResult": "Retain the preserved candidate exactly (focus blob 946ea123946ed06dbbcfe717c6dcc4d21d101ca4). ownedProcessSuite registers one outer test and calls defineTests only when the child carries this file marker; callers place their test registrations, TaskManager afterEach shutdown and SessionJobs async disposal inside that callback. runFixture allocates and retains its own mkdtemp root, obtains allowlisted HOME/config/SDK/TMPDIR from ownedFixtureEnv, installs its owned non-login shell, records explicit executable/argv/cwd/env and a source snapshot while executing source in this durable worktree, then spawns without a shell. It accumulates stdout/stderr until close, persists output and exit/signal evidence before rejecting nonzero exit, and never removes the fixture. The sole ownedEnvironmentTest caller supplies synthetic bridge credentials plus a harmless sentinel: its suite child relaunches a separate exact-name-filtered fixture with those inputs, and only that marked child executes the security assertions. Keeping this sequence together makes process authority and evidence lifetime easier to follow than split preparer/runner/result context helpers. No assertions, isolation behavior, or unrelated accepted work changed.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read the whole focus source, ownedFixtureEnv implementation, all five suite wrapper callers and their relevant lifecycle hooks, and the sole synthetic-environment scenario caller.",
+        "Read exact preserved candidate focus via git show eb8295ac0714ad9b6c4e548cc9130010949c7dd5:tests/owned-process-suite.ts; compared full bytes and Git blob with current HEAD: identical.",
+        "Assigned focus and candidate have no matching row or string in the supplied resume-reconciliation JSON; no preserved rejection for this newly listed nearby focus was available there.",
+        "Source worktree was clean before this artifact; no source edits, import of old branch, formatter invocation, or source commit required.",
+        "No tests, setup, builds, credential/device access, cleanup, delegation, or publication performed."
+      ],
+      "primaryLimits": [
+        "Static primary reading only; parent owns fresh independent judgment and audited isolated runtime gates.",
+        "The supplied reconciliation ledger does not contain this focus or candidate; the explicit user-supplied candidate and its actual Git source were used, not an inferred acceptance.",
+        "No formatter ran because there are no changed source paths. No empty/source-less commit created; sourceCommit pins the existing exact HEAD.",
+        "Source executes in retained durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_82a904cd; helper-created test fixture roots remain retained for parent audit when the parent runs its gates.",
+        "No wisdom/value edits: parent owns aggregate wisdom and this focus produced no new structural change."
+      ]
     }
   ],
   "completedAreas": {

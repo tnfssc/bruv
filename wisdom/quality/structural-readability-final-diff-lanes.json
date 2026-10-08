@@ -7526,7 +7526,7 @@
       ],
       "chars": 89787,
       "lines": 1915,
-      "status": "running",
+      "status": "accepted",
       "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
       "jobId": "task_e516dccb",
       "model": "openai-codex/gpt-6.1-sol",
@@ -7542,6 +7542,141 @@
         "setupTaskId": "task_6a80325a",
         "setupStatus": "failed",
         "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      },
+      "result": {
+        "lane": "lane-37",
+        "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
+        "candidate": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "verdict": "ACCEPT",
+        "diffReadPaths": [
+          "scripts/loopback-parent-fixture.ts",
+          "scripts/network-none-fixture.ts",
+          "scripts/remote-capability-pty-e2e.ts",
+          "scripts/remote-e2e.sh",
+          "scripts/remote-e2e.ts",
+          "scripts/remote-jobs-e2e.ts",
+          "scripts/remote-placement-e2e.ts",
+          "scripts/remote-pty-e2e.ts",
+          "scripts/remote-recovery-e2e.ts",
+          "scripts/remote-root-placement-e2e.ts",
+          "src/remote/artifacts.ts",
+          "src/remote/cancellation.ts",
+          "src/remote/CAPABILITY-INTEGRATION.md",
+          "src/remote/capability-runtime.ts"
+        ],
+        "contextReadPaths": [
+          "scripts/loopback-parent-fixture.ts",
+          "scripts/network-none-fixture.ts",
+          "scripts/remote-e2e.sh",
+          "scripts/remote-capability-pty-e2e.ts",
+          "scripts/remote-recovery-e2e.ts",
+          "scripts/remote-placement-e2e.ts",
+          "scripts/remote-root-placement-e2e.ts",
+          "src/remote/artifacts.ts",
+          "src/remote/capability-runtime.ts",
+          "src/remote/cancellation.ts",
+          "src/remote/services.ts",
+          "src/remote/owner.ts",
+          "src/remote/client.ts",
+          "src/remote/operations.ts",
+          "src/remote/extension.ts",
+          "src/remote/runtime.ts",
+          "src/remote/job-artifacts.ts",
+          "src/agent/extension.ts",
+          "src/session/host-access.ts",
+          "src/session/host.ts",
+          "tests/fixtures/remote-e2e/recovery-ssh.sh",
+          "tests/fixtures/remote-e2e/placement-parent.ts",
+          "tests/fixtures/remote-typed-root-placement/proof.ts"
+        ],
+        "sourceBlobs": {
+          "scripts/loopback-parent-fixture.ts": "114f0e3a35d30037c0aae2bbed3d4d2544151529",
+          "scripts/network-none-fixture.ts": "9bf16423feba68972ca1e16b8e8a64d23606fc1e",
+          "scripts/remote-capability-pty-e2e.ts": "41a45a1f07e3a516df9fb8c1514f720296fd5903",
+          "scripts/remote-e2e.sh": "16923a78b5f4d2444f7688f9baedacdcffb5b0e7",
+          "scripts/remote-e2e.ts": "70da0667aecc5d2f6d3542562277f58b1fd99656",
+          "scripts/remote-jobs-e2e.ts": "41523344401e8573f56b5dff5f9443798de0cd47",
+          "scripts/remote-placement-e2e.ts": "644ccb436f5f4bf97fd6544f2081698dc55851d1",
+          "scripts/remote-pty-e2e.ts": "cf4ce7432215744ebfd4cbb11cac89a421716854",
+          "scripts/remote-recovery-e2e.ts": "379a52fc59755bd7eddfaa2f9d00c35ac3d2adcb",
+          "scripts/remote-root-placement-e2e.ts": "4f665e1e6ff707ec44e8f33e6180f8d6bd178367",
+          "src/remote/artifacts.ts": "9423a07b44ad7df48ce6d3b29fc2b228c8cddaad",
+          "src/remote/cancellation.ts": "17cd66cb16a8a3b5af3dd90b50bf86f7fd522d62",
+          "src/remote/CAPABILITY-INTEGRATION.md": "f89276b72f091ffc5c4d647628e3befa1334943b",
+          "src/remote/capability-runtime.ts": "4bbb64ff4d098157cd34868561e286c8292abfe8"
+        },
+        "sourceJourneys": [
+          {
+            "paths": [
+              "src/remote/artifacts.ts",
+              "src/remote/services.ts",
+              "src/remote/client.ts",
+              "src/remote/owner.ts"
+            ],
+            "readingReason": "Followed terminal sync -> serviceRemoteTask -> incomplete manifest -> validated catalog -> verified cached/downloaded file -> per-file manifest -> complete manifest, with client.control owner/epoch checks and owner artifact list/get. The extraction retains whole-catalog validation before transfers, canonical base64/offset/digest checks, safe directory/file reads and atomic saves.",
+            "systemReason": "The private per-file helper accepts only the needed task fence, directory and catalog item. It makes transfer verification separately readable without changing manifest failure/retry semantics or creating another cache owner."
+          },
+          {
+            "paths": [
+              "src/remote/cancellation.ts",
+              "src/remote/runtime.ts",
+              "src/agent/extension.ts",
+              "src/session/host-access.ts",
+              "src/session/host.ts",
+              "src/remote/job-artifacts.ts",
+              "src/remote/owner.ts"
+            ],
+            "readingReason": "Followed owner cancel marker -> private bruv-remote-cancel prompt -> event-backed native jobs.stopWork service -> foreground abort -> scoped SessionHost list/inspect -> terminal-output capture -> active count plus ctx.isIdle -> atomic cancel-report consumed by OwnerCancellation. Incomplete pagination still throws; report errors or timeout keep settled false.",
+            "systemReason": "Requesting cancellation, capturing all pages, and waiting for settlement are now distinct local functions. The existing native service remains the authority; a stop request is not promoted to settled evidence, and terminal output capture precedes owner exit."
+          },
+          {
+            "paths": [
+              "src/remote/capability-runtime.ts",
+              "src/remote/services.ts",
+              "src/remote/operations.ts",
+              "src/remote/extension.ts",
+              "src/remote/client.ts",
+              "src/remote/owner.ts",
+              "src/remote/CAPABILITY-INTEGRATION.md"
+            ],
+            "readingReason": "Read the human confirmation -> client-local grant metadata -> fenced owner mailbox -> typed child request and missing-grant wait -> serialized admission -> sync pending requests -> frozen local request/reply intent -> durable owner reply -> child wait, plus local-first revocation and owner terminal paths. persistIntent preserves identical replay/conflict rejection while persistMarker preserves first-writer markers; the promise-tail queue releases later admissions after either success or failure.",
+            "systemReason": "The two durable-write helpers describe the real distinction between immutable replayable intent and one-way lifecycle markers, without moving transport authority into storage. The rewritten guide removes the contradictory unwired claim and tracks actual services/operations/client/owner ownership and bounds."
+          },
+          {
+            "paths": [
+              "scripts/network-none-fixture.ts",
+              "scripts/remote-placement-e2e.ts",
+              "scripts/remote-root-placement-e2e.ts",
+              "tests/fixtures/remote-typed-root-placement/proof.ts"
+            ],
+            "readingReason": "Followed caller-created mkdtemp roots into the offline image/container/pinned SSH phases, then the parent restart/question provenance flow and the root lost-reply/status-reconciliation/cancel-inspect/process-exit flow. The root helpers return the original command/job identities for scenario receipts; detach still does not return source. Read cleanup code but did not run it.",
+            "systemReason": "Phase helpers leave lifecycle flags and env ownership in the fixture, not caller context bags. The extracted question/recovery/cancellation journeys retain the ordering that distinguishes human answers, transport uncertainty, terminal job status, actual process exit and source return."
+          },
+          {
+            "paths": [
+              "scripts/loopback-parent-fixture.ts",
+              "scripts/remote-e2e.ts",
+              "scripts/remote-jobs-e2e.ts",
+              "scripts/remote-pty-e2e.ts",
+              "scripts/remote-capability-pty-e2e.ts",
+              "scripts/remote-recovery-e2e.ts",
+              "scripts/remote-e2e.sh",
+              "tests/fixtures/remote-e2e/placement-parent.ts",
+              "tests/fixtures/remote-e2e/recovery-ssh.sh"
+            ],
+            "readingReason": "Read every extraction/deletion and followed the scenario orchestrators and shared fixture contracts. RPC parsing still records events and refuses automatic confirmation. Untracked omission still answers the saved human question and retries its saved source approval identity. Jobs still check per-session stable IDs, completion isolation, repeat sync and reconnect. Capability PTY still separates owned placement from human diagnostic grants. The shell wrapper passes config/drop paths and original argv to the extracted recovery shim; accepted-launch/answer response loss remains one-shot and fenced to fixture operations.",
+            "systemReason": "Named proof steps replace long procedural bodies while assertions remain with scenario owners. Child registries/finally cleanup survive the moves; moving PTY repository preparation inside try gives provider cleanup coverage. No introduced broad state carrier, public API split, or cross-file contradiction was found."
+          }
+        ],
+        "integrationReadingReason": "ACCEPT for the assigned integrated lane only. Complete assigned baseline-to-candidate diffs, including deletions, were read in bounded segments; relevant actual candidate caller/authority/lifetime source was read independently of prior review artifacts or test results. Production refactors preserve the existing authority and failure/retry contracts and reduce reading burden by separating verification, cancellation settlement and durable-write semantics. Scenario refactors expose coherent ordered journeys rather than scatter their assertions or invent parallel owners. Documentation now describes the wired path. No actionable new integration defect or intrinsic-reading regression found in this bounded scope.",
+        "objections": [],
+        "limits": [
+          "Source review only: no tests, setup, builds, installation, formatter, auth/device access or source edits. No unsupported Pi preparation was attempted. No prior individual-file judgments, coverage counts, summaries or green tests were used as verdict evidence.",
+          "No unread assigned diff gaps. Related-source reads were targeted excerpts where sufficient, not a whole-repository or full-context-source attestation. Live provider/device/auth and actual Docker/SSH execution remain unverified.",
+          "Existing fixture filesystem/network effects, inherited environment use and cleanup/traps were inspected as source only, never executed. Acceptance here does not authorize running those fixtures under inherited HOME/config/SDK or relaxing the human safety constraints.",
+          "Durable review provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_e516dccb at candidate dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d. No temporary code checkout, delegation or candidate modification. Only this requested untracked result file was written.",
+          "Safety for ALL descendants: NO sudo, recovery investigation, user secrets, shell deletion/cleanup commands, inherited HOME/config/SDK cleanup, nested shell traps, destructive git, or user-data mutation. User already recovered data and requested no recovery work. Tests must use explicit process argv/env and owned fs.mkdtemp fixture HOME/config/SDK; retain them, do not delete. Review filesystem/network effects BEFORE tests/setup. Existing test-code cleanup of provably owned temporary paths may be inspected but NEVER run a shell trap or inherited HOME removal. Need live auth/device? Report unverified, don't access credentials. Propagate these constraints verbatim. Independent code/review agents get durable worktrees, not /tmp code checkouts. Keep existing worktrees and candidate evidence. Test/source fixtures may use /tmp, but document durable provenance."
+        ]
       }
     },
     {
@@ -7561,7 +7696,7 @@
       ],
       "chars": 87210,
       "lines": 1663,
-      "status": "running",
+      "status": "accepted",
       "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
       "jobId": "task_8c9fa9b3",
       "model": "openai-codex/gpt-6.1-sol",
@@ -7577,6 +7712,153 @@
         "setupTaskId": "task_3e48fe46",
         "setupStatus": "failed",
         "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      },
+      "result": {
+        "lane": "lane-38",
+        "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
+        "candidate": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "verdict": "ACCEPT",
+        "diffReadPaths": [
+          "src/remote/client.ts",
+          "src/remote/extension.ts",
+          "src/remote/human-rendering.ts",
+          "src/remote/job-artifacts.ts",
+          "src/remote/job-observations.ts",
+          "src/remote/jobs.ts",
+          "src/remote/menu.ts",
+          "src/remote/owner.ts",
+          "src/remote/question-bridge.ts",
+          "src/remote/README.md"
+        ],
+        "contextReadPaths": [
+          "src/remote/client.ts",
+          "src/remote/extension.ts",
+          "src/remote/human-rendering.ts",
+          "src/remote/job-artifacts.ts",
+          "src/remote/job-observations.ts",
+          "src/remote/jobs.ts",
+          "src/remote/menu.ts",
+          "src/remote/owner.ts",
+          "src/remote/question-bridge.ts",
+          "src/remote/services.ts",
+          "src/remote/runtime.ts",
+          "src/remote/cancellation.ts",
+          "src/remote/job-events.ts",
+          "src/remote/job-delivery.ts",
+          "src/remote/source-approval.ts",
+          "src/remote/repository-wire.ts",
+          "src/remote/operations.ts",
+          "src/tasks/job-service.ts",
+          "src/agent/extension.ts",
+          "src/questions/service.ts",
+          "src/questions/runtime.ts",
+          "src/questions/extension.ts",
+          "src/cli.ts",
+          "src/remote/root-options.ts",
+          "src/remote/root-cli.ts",
+          "src/remote/root-client.ts",
+          "src/remote/root-presenter.ts"
+        ],
+        "sourceBlobs": {
+          "src/remote/client.ts": "f67a509e62c355e55eb5f2abacf9ad06b2488666",
+          "src/remote/extension.ts": "8e159095769935a38f0d9cb5babb827009de4295",
+          "src/remote/human-rendering.ts": "8b014ef87a77115e1f8b665372741c6ccda116e0",
+          "src/remote/job-artifacts.ts": "3a6de6bdc028e1be29be5faa977d7c1fcf7502e7",
+          "src/remote/job-observations.ts": "400739e5b9ed05b27483b7e6ecd1aa9f6ae11361",
+          "src/remote/jobs.ts": "44ce0a37abc61ef5d63f0e4a3f00b59915b74da0",
+          "src/remote/menu.ts": "9bf68769d6fdee30d80c956d8ae4c003ce0f2a78",
+          "src/remote/owner.ts": "9b79cdbf1fd65046575b469cc2017b1b3d75b747",
+          "src/remote/question-bridge.ts": "bdd08a0a376c20d71172ffd7c6b728e8301141e1",
+          "src/remote/README.md": "f18a61b58ae574fc9b8e7eb0ecccceecf3603de7"
+        },
+        "sourceJourneys": [
+          {
+            "paths": [
+              "src/tasks/job-service.ts",
+              "src/remote/jobs.ts",
+              "src/remote/source-approval.ts",
+              "src/remote/repository-wire.ts",
+              "src/remote/client.ts"
+            ],
+            "readingReason": "Followed durable execute call reservation to SSH launch, pinned source approval retry, trusted snapshot arguments and parent identity persisted before dispatch. prepareLaunchRequest returns the original or saved question owner without changing placement intent; assertLaunchOwner is reused on existing, uncertain and accepted tasks.",
+            "systemReason": "Role/depth and authorized target checks still precede repository effects. Human approval pins bytes; replay cannot silently change owner or transfer unapproved untracked content. The extracted preparation stage removes inline mutation/closure coupling without adding a new authority."
+          },
+          {
+            "paths": [
+              "src/remote/owner.ts",
+              "src/remote/client.ts",
+              "src/remote/services.ts"
+            ],
+            "readingReason": "Followed record(event) through OwnerEventJournal, owner events pagination, acceptTranscriptPage, cache save and post-lock serviceRemoteTask. Read runOwnerTask fail, child routing and finally teardown plus client exclusive and syncActive.",
+            "systemReason": "Journal sequence advances only after fsync; full page validates before cache mutation; owner epoch and contiguous cursor checks remain. Service callbacks still run after exclusive resolves, allowing control/updateTask without lock recursion. Journal descriptor lifetime belongs to the owner and child failure remains in runOwnerTask."
+          },
+          {
+            "paths": [
+              "src/remote/runtime.ts",
+              "src/remote/cancellation.ts",
+              "src/remote/job-artifacts.ts",
+              "src/remote/owner.ts",
+              "src/remote/services.ts"
+            ],
+            "readingReason": "Followed native settlement and cancellation callers into text capture before child exit. Compared extracted inspect pagination and publish routines against all removed inline code, including retention gaps, partial prefixes, byte/page limits, fsync/close/rename and errors.",
+            "systemReason": "Inspection failure preserves an explicitly incomplete prefix while disk failure still rejects; runtime checkpoint carries textOutputGap. Artifact cache completion and repository return remain separately reported, not conflated with task settlement. Splitting read versus durable publication clarifies effects with no extra framework."
+          },
+          {
+            "paths": [
+              "src/remote/extension.ts",
+              "src/remote/menu.ts",
+              "src/remote/job-observations.ts",
+              "src/remote/job-events.ts",
+              "src/remote/job-delivery.ts",
+              "src/agent/extension.ts"
+            ],
+            "readingReason": "Followed session_start/shutdown and in-flight refresh to per-session observation closure, menu snapshot lifetime, remoteInboxState exclusion of owned tasks, attributed job publication and existing parent completion batch/outbox. Read task action caller and cached transcript display route.",
+            "systemReason": "An old observer closes before replacement and is drained before the new poll; closed checks prevent old status/attention publication. Owned work is routed through session-scoped jobs while unowned work retains legacy attention. Outbox keys still deduplicate terminal refreshes and bounded result previews preserve cache/unknown semantics. Session-local state replaces a dispersed mutable generation/state cluster."
+          },
+          {
+            "paths": [
+              "src/remote/extension.ts",
+              "src/questions/runtime.ts",
+              "src/remote/question-bridge.ts",
+              "src/questions/service.ts",
+              "src/remote/runtime.ts"
+            ],
+            "readingReason": "Followed refresh observer registration, parent branch selection, native question validation, pending versus existing closed mirror projection, delivered receipt reconciliation after projection, explicit human answer claim and native reply dispatch.",
+            "systemReason": "samePinnedOwner factors host/owner/epoch only; task ID and native question owner remain separately checked at each caller. The extracted helpers do not loosen identity. Reconciliation re-reads the ledger after reflection; saved/uncertain/delivered states and immutable reply IDs remain authoritative, not worker text."
+          },
+          {
+            "paths": [
+              "src/remote/human-rendering.ts",
+              "src/remote/job-observations.ts",
+              "src/remote/extension.ts",
+              "src/agent/extension.ts"
+            ],
+            "readingReason": "Compared all transcript branch deletions with message/tool helpers and switch cases; followed raw transcript preservation and compact completion summaries. Checked labels, payload/metadata handling, errors, empty messages, turn-end aggregation and unknown-event fallback.",
+            "systemReason": "Readable rendering remains presentation, not authority; raw events and cache gap warnings remain accessible. Formatting helper extraction and shared messageText avoid repeated event/content decoding without expanding public contracts."
+          },
+          {
+            "paths": [
+              "src/remote/README.md",
+              "src/remote/operations.ts",
+              "src/cli.ts",
+              "src/remote/root-options.ts",
+              "src/remote/root-cli.ts",
+              "src/remote/root-client.ts",
+              "src/remote/root-presenter.ts"
+            ],
+            "readingReason": "Read entire documentation diff including removed legacy launch guidance. Checked startup branch before local Pi, delegated root rejection, pinned target resolution, flag source-choice conflicts, saved intent checks, and attached question/abort/close/detach command handling.",
+            "systemReason": "The overview now separates normal delegation, root placement and human expert setup with actual owner/caller links. Agent legacy launches really reject. Documentation explicitly separates cached observation, cancel request, source return and delivery evidence, rather than claiming live/provider/release acceptance."
+          }
+        ],
+        "integrationReadingReason": "Complete assigned baseline-to-candidate diffs (including deletions) were read freshly in byte-contiguous segments. In the exercised cross-file paths the changes preserve existing public behavior and ownership boundaries. Helpers are local semantic units: page acceptance, journal durability, source preflight, text inspection/publication, human receipt reconciliation and rendering. The largest rewrite replaces cross-session mutable fields with an owned observation closure and keeps transport synchronization separate; this materially lowers lifetime-reading burden. No newly introduced cross-file contradiction, unowned effect or oversized context abstraction found. ACCEPT applies only to this lane, not the whole repository.",
+        "objections": [],
+        "limits": [
+          "Read-only source review: no tests/setup/build/install/formatter/auth/device/network access or source edits. No Pi preparation retried or bypassed; no delegation. Only requested untracked result file written; candidate checkout preserved.",
+          "All 10 assigned diffs fully read; no assigned unread gaps. Context was targeted actual source sections, not a claim to have read full related files or the whole repository. Root documentation cross-checks sampled actual startup/intent/control paths, not complete root-system acceptance.",
+          "No live SSH/provider, runtime cancellation, crash delivery, filesystem durability or repository apply verification. Documentation retains the unproven host accepted-queue/parent ACK window; source review does not close it. No prior focus artifacts, counts, summaries or green tests used as verdict evidence.",
+          "Baseline-existing adjacent attribution inconsistency observed: src/questions/service.ts reflectRemote stores taskIds as ssh:+encodeURIComponent(raw taskId), whereas src/remote/jobs.ts exposes base64url sshJobId. The same expression exists in baseline; no introduced regression in this lane. Parent may separately track that existing UI attribution gap.",
+          "Durable provenance is the existing supplied worktree at candidate HEAD, with baseline/candidate Git blobs above. No temporary code checkout or test fixture created."
+        ]
       }
     },
     {
@@ -7597,7 +7879,7 @@
       ],
       "chars": 84145,
       "lines": 1779,
-      "status": "running",
+      "status": "accepted",
       "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
       "jobId": "task_0f27188a",
       "model": "openai-codex/gpt-6.1-sol",
@@ -7611,8 +7893,139 @@
         "branch": "bruv/pr45-final-integrated-diff-lane-39-remot-0f27188a",
         "preparationStatus": "ready",
         "setupTaskId": "task_a149cb84",
-        "setupStatus": "running",
+        "setupStatus": "failed",
         "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      },
+      "result": {
+        "lane": "lane-39",
+        "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
+        "candidate": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "verdict": "ACCEPT",
+        "diffReadPaths": [
+          "src/remote/repository-wire.ts",
+          "src/remote/repository.md",
+          "src/remote/repository.ts",
+          "src/remote/root-client.ts",
+          "src/remote/root-options.ts",
+          "src/remote/root-owner.ts",
+          "src/remote/root-presenter.ts",
+          "src/remote/root-store.ts",
+          "src/remote/runtime.ts",
+          "src/remote/services.ts",
+          "src/remote/source-approval.ts"
+        ],
+        "contextReadPaths": [
+          "src/remote/repository-wire.ts",
+          "src/remote/repository.ts",
+          "src/remote/root-client.ts",
+          "src/remote/root-owner.ts",
+          "src/remote/root-store.ts",
+          "src/remote/root-options.ts",
+          "src/remote/root-presenter.ts",
+          "src/remote/source-approval.ts",
+          "src/remote/services.ts",
+          "src/remote/owner.ts",
+          "src/remote/jobs.ts",
+          "src/remote/client.ts",
+          "src/remote/capability-runtime.ts",
+          "src/remote/root-runtime.ts",
+          "src/remote/root-cli.ts",
+          "src/remote/job-artifacts.ts",
+          "src/remote/durable-json.ts",
+          "src/remote/repository-download.ts",
+          "src/questions/service.ts",
+          "src/cli.ts"
+        ],
+        "sourceBlobs": {
+          "src/remote/repository-wire.ts": "64475e6cd3a0b363dfcdcdcb9ea936e83082d6f7",
+          "src/remote/repository.md": "c61021d88b4267389d3d4a4327045bf54b539c6e",
+          "src/remote/repository.ts": "88b0c7fd48b6844e2c25cb3853465a0d65c5b9c3",
+          "src/remote/root-client.ts": "7670632c58bcccd97dad7f5e49e654f4eb79a4c0",
+          "src/remote/root-options.ts": "60f9e73e5dab10306beb9240f26ee1479582cb49",
+          "src/remote/root-owner.ts": "0f0e9fcee2856618b80a033f436397c52f3356e9",
+          "src/remote/root-presenter.ts": "98c70fb74f5e40d6f281463a75d4c0106240c860",
+          "src/remote/root-store.ts": "109babbf1e78a7575570000e6dd8a7181bbb67ca",
+          "src/remote/runtime.ts": "87b03ef3cc853ca66bbc6edbf0b1b36de4ee2586",
+          "src/remote/services.ts": "ac156252a9d73d6deb4963c78c7d14fe903ca8ca",
+          "src/remote/source-approval.ts": "304543857f2151ebf3168939ab7e9c74c0289f57"
+        },
+        "sourceJourneys": [
+          {
+            "paths": [
+              "src/remote/jobs.ts",
+              "src/remote/source-approval.ts",
+              "src/questions/service.ts",
+              "src/remote/repository.ts",
+              "src/remote/repository-wire.ts",
+              "src/remote/client.ts",
+              "src/remote/owner.ts"
+            ],
+            "readingReason": "Followed normal SSH launch authorization into prepare, pinSource, requestApproval, acceptAnswer and snapshot, then trusted prepared-snapshot validation, descriptor pinning and chunk upload. The helper split exposes the three approval stages rather than making launch readers reconstruct them from one long mutable routine. Existing parent/session/branch ownership, exact question provenance, CLI reply/version evidence and immutable include/omit bytes survive the split.",
+            "systemReason": "Jobs still checks delegation and the human-pinned target before preparation. Pending approval never dispatches; non-approval selects omit; include requires the saved human evidence. Snapshot digests and manifest are checked before transfer. Retry descriptors compare owner epoch, prompt, title, profile, placement and selected paths; using descriptor.owner and descriptor.prompt in upload/launch is consistent with those comparisons. Owner.handleRemoteRequest fences identity and serializes repositoryRequest, which cannot replace accepted incomplete input. Orphan creation still excludes source history and runs only inside the detached task artifact checkout."
+          },
+          {
+            "paths": [
+              "src/remote/repository-wire.ts",
+              "src/remote/root-client.ts",
+              "src/remote/root-owner.ts",
+              "src/remote/repository-download.ts",
+              "src/remote/repository.ts",
+              "src/remote/repository.md"
+            ],
+            "readingReason": "Read both result-return entry points, the shared page/digest verifier and the unchanged apply/receipt guards against the expanded documentation. receiveRepositoryUpload, prepareRepositoryCheckout and repositoryResultPage separate transfer validation, unaccepted checkout mutation and completed-result export without moving authority into a generic downloader.",
+            "systemReason": "Task return still requires done; root return still requires closed/exitCode 0, with root owner translating only that success into repository done. Clients persist patch bytes, acquire repository locks and invoke integration; downloader establishes byte/snapshot integrity, not completion. Integration still rejects drift, untracked/new/deleted/mode-changing or invalid/conflicting patches, writes an attempting receipt before worktree-only apply and treats ambiguous/duplicate attempts as review. Documentation accurately describes these distinct permissions and the external-writer/crash limitations."
+          },
+          {
+            "paths": [
+              "src/cli.ts",
+              "src/remote/root-options.ts",
+              "src/remote/root-cli.ts",
+              "src/remote/root-client.ts",
+              "src/remote/root-presenter.ts",
+              "src/remote/root-owner.ts",
+              "src/remote/root-store.ts",
+              "src/remote/root-runtime.ts"
+            ],
+            "readingReason": "Followed remote placement parsing through thin-client startup, pinned local state and command receipts into owner dispatch/closure and presenter modal teardown. withState makes the locked fresh-state read explicit at each operation. PendingRootClose and the modal object replace independently coordinated variables with the actual coupled evidence/lifetime units.",
+            "systemReason": "Local/no-placement parsing remains unchanged; named startup still requires pinned target and root role/depth. Command IDs are saved before sends and reconciled rather than replayed after uncertain outcomes. initialPrompt still reserves its ID separately from admission, preserving queue order. Prompt acknowledgements remain concurrent so abort can dispatch; the removed baseline inflight set had no drain or authority use. Close still clears queued turns, invokes the trusted descendant-settlement facet and requires clean process exit before publishing closed. pendingClose is installed before end. Dialog response is hidden durably before an uncertain send; detach cancels modal/presentation, not remote work."
+          },
+          {
+            "paths": [
+              "src/remote/root-store.ts",
+              "src/remote/root-owner.ts",
+              "src/remote/root-client.ts",
+              "src/remote/root-presenter.ts"
+            ],
+            "readingReason": "Checked the SQL ledger extraction with enqueue, finish, transaction and observe, not only the changed queries. Direct queued-row selection and bulk unknown updates remove repeated full-ledger JSON scans. retainEventSuffix makes the bounded newest-contiguous-suffix policy local, while withPendingDialogs makes clear that dialog state is not reconstructed from retained events.",
+            "systemReason": "Oldest queued command is still claimed transactionally before runtime writes. Unknown replaces only queued/dispatching receipts and closed roots remain protected. The descending cumulative-byte query evicts exactly the oldest excess prefix, including all events if the newest alone exceeds budget. observe retains cursor-gap and page-size checks; pending dialogs survive journal eviction independently and remain bounded."
+          },
+          {
+            "paths": [
+              "src/remote/runtime.ts",
+              "src/remote/job-artifacts.ts",
+              "src/remote/durable-json.ts",
+              "src/remote/owner.ts"
+            ],
+            "readingReason": "Followed captureNativeJobEvidence through terminal text capture and into nativeSettlement on the owner. The extracted loop keeps liveness, pagination limits and text-gap reporting together while registerRemoteRuntime reads as checkpoint orchestration. The shared JSON writer replaces a duplicated implementation, retaining fsync/file-close/rename/directory-fsync sequencing and using exclusive unique temporary creation.",
+            "systemReason": "Terminal job text is still preserved before the checkpoint can authorize child shutdown. Pending descendants/messages or questions prevent completion; runtime inspection errors produce error checkpoints rejected by owner. The owner does not infer successful completion merely from an agent yielding. No capture or settlement authority moved to the durability helper."
+          },
+          {
+            "paths": [
+              "src/remote/client.ts",
+              "src/remote/services.ts",
+              "src/remote/capability-runtime.ts"
+            ],
+            "readingReason": "Followed client.sync releasing its cache lock before serviceRemoteTask, then replyToCapabilityRequests and waitForCapabilityGrant into the actual mailbox/store. Helper extraction cleanly distinguishes servicing already authorized reads from recording and waiting for missing human-granted authority.",
+            "systemReason": "Only live accepted/running tasks service capability requests; task/request/grant identity, explicit task/kind grants and revocation remain checked. Authorized reply bytes are pinned before delivery and exact-request retries reuse them without rereading source. Child need intent remains pinned while waiting; cancellation, terminal marker and timeout still stop waiting. Moving local store construction outside the request loop is harmless because its constructor only stores its directory and grants no authority."
+          }
+        ],
+        "integrationReadingReason": "Fresh complete assigned baseline-to-candidate diff review, including deletions, plus actual candidate caller/authority/lifetime context and baseline inflight-reference check. The changes form small local stage helpers, not a new cross-domain context bag or ownership framework. Public sequencing, immutable intent comparisons, durable receipts, owner fences and completion-versus-integrity boundaries remain coherent across task and root handoffs. The SQL changes add localized query complexity but reduce whole-ledger work without changing selection, eviction or dialog semantics. Expanded repository documentation reduces system-reading burden by naming the actual client/owner responsibilities. No concrete integration regression or quality objection found within this lane.",
+        "objections": [],
+        "limits": [
+          "Lane-only source judgment, not a whole-repository sign-off. All eleven assigned diffs were fully read; related source was read selectively along the described journeys, not attested as full-file/full-repository coverage.",
+          "No tests, setup, builds, installs, formatter, unsupported Pi preparation retries, authentication, devices, secrets, recovery investigation, cleanup or source edits were performed. Documentation claims about prior verification were not used as acceptance evidence; live provider/platform behavior remains unverified.",
+          "Only authorized untracked review result was written. Candidate HEAD remained dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d in durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_0f27188a; no delegation or temporary code checkout was used."
+        ]
       }
     },
     {
@@ -7646,7 +8059,7 @@
         "branch": "bruv/pr45-final-integrated-diff-lane-40-remot-9f34e293",
         "preparationStatus": "ready",
         "setupTaskId": "task_c6be079f",
-        "setupStatus": "running",
+        "setupStatus": "failed",
         "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
       }
     },
@@ -7664,8 +8077,23 @@
       ],
       "chars": 96137,
       "lines": 2363,
-      "status": "pending",
-      "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d"
+      "status": "running",
+      "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+      "jobId": "task_d0c8d984",
+      "model": "openai-codex/gpt-6.1-sol",
+      "workspace": {
+        "kind": "worktree",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_d0c8d984",
+        "worktreePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_d0c8d984",
+        "sourcePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
+        "baseRef": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "baseOid": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "branch": "bruv/pr45-final-integrated-diff-lane-41-remot-d0c8d984",
+        "preparationStatus": "ready",
+        "setupTaskId": "task_936b41c4",
+        "setupStatus": "running",
+        "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      }
     },
     {
       "id": "lane-42",
@@ -7682,8 +8110,23 @@
       ],
       "chars": 98877,
       "lines": 2249,
-      "status": "pending",
-      "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d"
+      "status": "running",
+      "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+      "jobId": "task_6603f047",
+      "model": "openai-codex/gpt-6.1-sol",
+      "workspace": {
+        "kind": "worktree",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_6603f047",
+        "worktreePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_6603f047",
+        "sourcePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
+        "baseRef": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "baseOid": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "branch": "bruv/pr45-final-integrated-diff-lane-42-remot-6603f047",
+        "preparationStatus": "ready",
+        "setupTaskId": "task_363c5de7",
+        "setupStatus": "running",
+        "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      }
     },
     {
       "id": "lane-43",
@@ -7700,8 +8143,23 @@
       ],
       "chars": 64197,
       "lines": 1486,
-      "status": "pending",
-      "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d"
+      "status": "running",
+      "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+      "jobId": "task_5d43a066",
+      "model": "openai-codex/gpt-6.1-sol",
+      "workspace": {
+        "kind": "worktree",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_5d43a066",
+        "worktreePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_5d43a066",
+        "sourcePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
+        "baseRef": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "baseOid": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "branch": "bruv/pr45-final-integrated-diff-lane-43-remot-5d43a066",
+        "preparationStatus": "ready",
+        "setupTaskId": "task_2b08a9f1",
+        "setupStatus": "running",
+        "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      }
     },
     {
       "id": "lane-44",
