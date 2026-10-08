@@ -2530,6 +2530,28 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_ec73fb2d",
         "branch": "bruv/pr45-judge-3-ui-terminal-cli-focuses-ec73fb2d",
         "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled"
+      },
+      {
+        "id": "task_2c116e9f",
+        "stage": "judge",
+        "focus": [
+          "tests/terminal-perf-tools.test.ts",
+          "tests/terminal-perf-workloads.test.ts",
+          "tests/tui-harness.test.ts"
+        ],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_2c116e9f",
+        "branch": "bruv/pr45-judge-3-ui-terminal-cli-focuses-2c116e9f",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_599509a5",
+        "stage": "judge",
+        "focus": ["tests/tui-helpers.test.ts", "tests/tui-helpers.ts", "tests/tui-stop-restoration.test.ts"],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_599509a5",
+        "branch": "bruv/pr45-judge-3-ui-terminal-cli-focuses-599509a5",
+        "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
       }
     ]

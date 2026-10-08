@@ -3868,19 +3868,20 @@
     {
       "focus": "tests/terminal-perf-options.test.ts",
       "initialBlob": "53addac02c4655f7b3b8948ff18b52c3409b6812",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "53addac02c4655f7b3b8948ff18b52c3409b6812",
       "integrationState": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "53addac02c4655f7b3b8948ff18b52c3409b6812",
         "primaryId": "task_5cb6271d",
         "primaryCommit": "7227c21e506566c57f3ffd55f99c87a1572a3080",
-        "judgeIds": [],
+        "judgeIds": ["task_ec73fb2d"],
         "sourceCommit": "7227c21e506566c57f3ffd55f99c87a1572a3080",
-        "state": "needs-judge",
-        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+        "state": "accepted-joined",
+        "reason": "Read the entire two-test file independently. Default budget/scales/strict assertions establish the initial contract. The single argv literal puts samples=3, allowed zero warmup, duplicate scales, two case selections and strict directly beside their expected parsed fields; the separate 0.5 budget assertion explains the fractional exception. The invalid argv list and local throw loop expose all seven rejected inputs without deferred assertions or shared state. No scattered lifetime or authority needs reconstruction; builders or context objects would increase navigation rather than clarify this small journey."
       }
     },
     {
@@ -3944,19 +3945,20 @@
     {
       "focus": "tests/terminal-perf-report.test.ts",
       "initialBlob": "d1d2bab26a9c5244c85d8ef610ad7ca615f5dacf",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "d1d2bab26a9c5244c85d8ef610ad7ca615f5dacf",
       "integrationState": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "d1d2bab26a9c5244c85d8ef610ad7ca615f5dacf",
         "primaryId": "task_5cb6271d",
         "primaryCommit": "7227c21e506566c57f3ffd55f99c87a1572a3080",
-        "judgeIds": [],
+        "judgeIds": ["task_ec73fb2d"],
         "sourceCommit": "7227c21e506566c57f3ffd55f99c87a1572a3080",
-        "state": "needs-judge",
-        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+        "state": "accepted-joined",
+        "reason": "Read the complete fresh-run fixture and every test, including both trailing cold tests. The owned frame factory derives half-duration layout values and creates cold=9, steady=1/2/8 against budget=8, so cold/steady failures, median=2 and layout max=4 can be understood locally. Spike and exact-budget assertions sit with their sample arrays. Independent current/baseline runs keep the 8-to-6 maximum mutation next to the +2 deltas and +1 miss; subsequent CPU and scale changes explain warnings and skipped workloads. The warming test inserts one preceding case directly before null-cold/text-n/a assertions. The content test explicitly advances from missing baseline cold evidence to differing hashes. Dashboard attack and literal-$& strings sit beside the escaping/replacement assertions. No shared mutable fixture lifetime or hidden setup warrants a restructuring."
       }
     },
     {
@@ -4717,15 +4719,17 @@
       "focus": "tests/terminal-process-fixture.ts",
       "initialBlob": null,
       "introducedBy": "13ca09c5f7eafdb52b9e7a11a6d9068dd54a5834",
-      "state": "pending",
-      "acceptedBlob": null,
+      "state": "accepted",
+      "acceptedBlob": "ce36ecd7c404612c9a4ee1ce6bfb81f73820a290",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
         "acceptedBlob": "ce36ecd7c404612c9a4ee1ce6bfb81f73820a290",
         "primaryId": "task_5cb6271d",
         "primaryCommit": "7227c21e506566c57f3ffd55f99c87a1572a3080",
+        "judgeIds": ["task_ec73fb2d"],
         "sourceCommit": "7227c21e506566c57f3ffd55f99c87a1572a3080",
-        "state": "needs-judge"
+        "state": "accepted-joined",
+        "reason": "Read the complete helper independently. Its creation sequence establishes one retained mkdtemp home and socket basename, explicitly defines HOME/XDG/cache/data/TMPDIR/Bruv/Pi agent roots, creates those owned directories, and writes its owned tmux configuration. The returned tmux closure uses argv and the same owned cwd/environment. The pane builder emits env -i plus explicit assignments and argv, rather than shell interpolation. This coherent filesystem/environment authority is already visible in one small file. Shutdown intentionally remains with callers; wrapping their semantically different lifetimes in a shared context would hide that boundary."
       }
     }
   ],
@@ -4837,7 +4841,7 @@
     }
   },
   "resumeStatus": {
-    "accepted": 96,
-    "pending": 17
+    "accepted": 99,
+    "pending": 14
   }
 }

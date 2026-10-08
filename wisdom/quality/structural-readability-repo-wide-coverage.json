@@ -15965,12 +15965,12 @@
     {
       "file": "tests/terminal-perf-options.test.ts",
       "initialBlob": "53addac02c4655f7b3b8948ff18b52c3409b6812",
-      "status": "pending",
+      "status": "accepted",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_5cb6271d",
       "primaryCommit": "7227c21e506566c57f3ffd55f99c87a1572a3080",
-      "judgeIds": [],
+      "judgeIds": ["task_ec73fb2d"],
       "sourceCommit": "7227c21e506566c57f3ffd55f99c87a1572a3080",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
       "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
@@ -15989,6 +15989,22 @@
         "No delegation, deletion, cleanup, recovery investigation, secrets access, destructive git, publication or user-data mutation. Existing durable worktrees and candidate evidence retained.",
         "Source reviewed in this durable worktree; terminal fixture code uses retained fs.mkdtemp roots under tmpdir and callers write fixture provenance to artifacts. No fixtures were executed.",
         "Runtime agent.model verification is parent-owned; not asserted here. Wisdom/values and structural-readability guidance read; aggregate wisdom is parent-owned."
+      ],
+      "acceptedBlob": "53addac02c4655f7b3b8948ff18b52c3409b6812",
+      "result": "Read the entire two-test file independently. Default budget/scales/strict assertions establish the initial contract. The single argv literal puts samples=3, allowed zero warmup, duplicate scales, two case selections and strict directly beside their expected parsed fields; the separate 0.5 budget assertion explains the fractional exception. The invalid argv list and local throw loop expose all seven rejected inputs without deferred assertions or shared state. No scattered lifetime or authority needs reconstruction; builders or context objects would increase navigation rather than clarify this small journey.",
+      "systemReason": "Followed options.ts in full: one next-value reader rejects missing option values, one finite/safe-integer/positivity validator distinguishes warmup zero and fractional budget, and the switch locally owns deduplication and repeated case accumulation. Read terminal-perf.ts end to end: parsed scales/viewport construct workloads, case filters form a union, warmup and sample counts control distinct loops, budget goes into PerfRun, and strict sets the failure exit code. Read artifacts.ts to identify report reads and filesystem output; these effects are not executed by the parser tests. Existing success/failure assertions and exact bytes should remain.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Inspected exact candidate via git show, not checkout HEAD.",
+        "git diff --name-status 7227c21e506566c57f3ffd55f99c87a1572a3080 7227c21e506566c57f3ffd55f99c87a1572a3080 and git diff --raw were empty: primaryBase equals candidate; no candidate-changed related source paths exist.",
+        "Resolved accepted focus blobs with git ls-tree at the exact candidate.",
+        "Static inspection only; no setup, tests, builds, application launches, credential access, or cleanup performed.",
+        "Read every parser test and the complete parser plus CLI and artifact consumers."
+      ],
+      "limits": [
+        "Runtime gates are unverified and reserved for the parent audited isolated environment.",
+        "Runtime agent.model attestation is parent-owned, not independently verified by this code review.",
+        "Durable review provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_ec73fb2d. No source edits, new code checkout, dependency changes, publication, or deletion; only this untracked result artifact was written."
       ]
     },
     {
@@ -16008,12 +16024,12 @@
     {
       "file": "tests/terminal-perf-report.test.ts",
       "initialBlob": "d1d2bab26a9c5244c85d8ef610ad7ca615f5dacf",
-      "status": "pending",
+      "status": "accepted",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_5cb6271d",
       "primaryCommit": "7227c21e506566c57f3ffd55f99c87a1572a3080",
-      "judgeIds": [],
+      "judgeIds": ["task_ec73fb2d"],
       "sourceCommit": "7227c21e506566c57f3ffd55f99c87a1572a3080",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
       "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
@@ -16033,6 +16049,23 @@
         "Source reviewed in this durable worktree; terminal fixture code uses retained fs.mkdtemp roots under tmpdir and callers write fixture provenance to artifacts. No fixtures were executed.",
         "Runtime agent.model verification is parent-owned; not asserted here. Wisdom/values and structural-readability guidance read; aggregate wisdom is parent-owned.",
         "Existing assertions do not prove every warning branch or actual browser behavior; no added coverage or runtime claims."
+      ],
+      "acceptedBlob": "d1d2bab26a9c5244c85d8ef610ad7ca615f5dacf",
+      "result": "Read the complete fresh-run fixture and every test, including both trailing cold tests. The owned frame factory derives half-duration layout values and creates cold=9, steady=1/2/8 against budget=8, so cold/steady failures, median=2 and layout max=4 can be understood locally. Spike and exact-budget assertions sit with their sample arrays. Independent current/baseline runs keep the 8-to-6 maximum mutation next to the +2 deltas and +1 miss; subsequent CPU and scale changes explain warnings and skipped workloads. The warming test inserts one preceding case directly before null-cold/text-n/a assertions. The content test explicitly advances from missing baseline cold evidence to differing hashes. Dashboard attack and literal-$& strings sit beside the escaping/replacement assertions. No shared mutable fixture lifetime or hidden setup warrants a restructuring.",
+      "systemReason": "Read report.ts in full: nearest-rank sorted distributions count >= budget, cold and steady summarize independently, parameter mismatch suppresses comparisons, preceding-case prefix and config govern cold comparability, and missing/different cold fingerprints produce separate warnings. textReport translates null cold deltas to n/a. Read dashboard.ts, including JSON < and separator escaping, callback-based payload substitution and textContent DOM rendering; no remote script is loaded. Followed CLI and artifact output consumers: raw measured frames feed these reports, strict uses the same budgetFailures, and artifact writers emit JSON/text/HTML/trace. Assertions protect accounting and script embedding, not just presentation; regrouping tests would be cosmetic.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Inspected exact candidate via git show, not checkout HEAD.",
+        "git diff --name-status 7227c21e506566c57f3ffd55f99c87a1572a3080 7227c21e506566c57f3ffd55f99c87a1572a3080 and git diff --raw were empty: primaryBase equals candidate; no candidate-changed related source paths exist.",
+        "Resolved accepted focus blobs with git ls-tree at the exact candidate.",
+        "Static inspection only; no setup, tests, builds, application launches, credential access, or cleanup performed.",
+        "Read every report test, the distribution/comparison/text functions, dashboard serialization and rendering, and CLI/artifact consumers."
+      ],
+      "limits": [
+        "Runtime gates are unverified and reserved for the parent audited isolated environment.",
+        "Runtime agent.model attestation is parent-owned, not independently verified by this code review.",
+        "Durable review provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_ec73fb2d. No source edits, new code checkout, dependency changes, publication, or deletion; only this untracked result artifact was written.",
+        "No generated dashboard was opened in a browser and no report runtime or security probe was executed."
       ]
     },
     {
@@ -18096,8 +18129,8 @@
       "file": "tests/terminal-process-fixture.ts",
       "initialBlob": "absent",
       "area": "ui-terminal-cli",
-      "status": "pending",
-      "resumeState": "needs-judge",
+      "status": "accepted",
+      "resumeState": "accepted-joined",
       "sourceCommit": "7227c21e506566c57f3ffd55f99c87a1572a3080",
       "acceptedRelatedJudges": ["task_10416205"],
       "acceptedBlob": "ce36ecd7c404612c9a4ee1ce6bfb81f73820a290",
@@ -18119,6 +18152,24 @@
         "Source reviewed in this durable worktree; terminal fixture code uses retained fs.mkdtemp roots under tmpdir and callers write fixture provenance to artifacts. No fixtures were executed.",
         "Runtime agent.model verification is parent-owned; not asserted here. Wisdom/values and structural-readability guidance read; aggregate wisdom is parent-owned.",
         "tmux argument execution, SDK behavior and isolated environment effectiveness are not runtime-verified; live authentication/device access is unverified."
+      ],
+      "judgeIds": ["task_ec73fb2d"],
+      "result": "Read the complete helper independently. Its creation sequence establishes one retained mkdtemp home and socket basename, explicitly defines HOME/XDG/cache/data/TMPDIR/Bruv/Pi agent roots, creates those owned directories, and writes its owned tmux configuration. The returned tmux closure uses argv and the same owned cwd/environment. The pane builder emits env -i plus explicit assignments and argv, rather than shell interpolation. This coherent filesystem/environment authority is already visible in one small file. Shutdown intentionally remains with callers; wrapping their semantically different lifetimes in a shared context would hide that boundary.",
+      "systemReason": "Read helpers.ts: run passes the supplied environment through offlineTestEnv (only removing Herdr routing and forcing offline routing) into Bun.spawn, then drains stdout/stderr/exit concurrently. Read both full callers and tui-helpers.ts. The saved-thread TUI caller writes home/socket provenance, creates sessions under owned home, uses explicit placeholder provider credentials with --offline, captures/asserts preserved frames and saved contents, and kills its fixture tmux server in finally. The latency caller versions/hashes its selected binary with fixture env, owns a loopback 127.0.0.1 held-response server and models.json under fixture home, publishes fixture and measurement provenance, separates echo/settling/provider/spinner timing, releases held responses, and closes connections/server plus fixture tmux in finally. Filesystem/network effects were inspected, not run. The helper does not delete retained fixtures or regain inherited pane environment; no structural change is needed.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Inspected exact candidate via git show, not checkout HEAD.",
+        "git diff --name-status 7227c21e506566c57f3ffd55f99c87a1572a3080 7227c21e506566c57f3ffd55f99c87a1572a3080 and git diff --raw were empty: primaryBase equals candidate; no candidate-changed related source paths exist.",
+        "Resolved accepted focus blobs with git ls-tree at the exact candidate.",
+        "Static inspection only; no setup, tests, builds, application launches, credential access, or cleanup performed.",
+        "Read the complete fixture, subprocess/environment helper, both full lifecycle callers, and terminal capture/poll helpers before considering runtime effects."
+      ],
+      "limits": [
+        "Runtime gates are unverified and reserved for the parent audited isolated environment.",
+        "Runtime agent.model attestation is parent-owned, not independently verified by this code review.",
+        "Durable review provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_ec73fb2d. No source edits, new code checkout, dependency changes, publication, or deletion; only this untracked result artifact was written.",
+        "No fixture HOME or socket was created by this review. Tests may create retained temporary fixtures; inspected callers publish their home/socket under artifacts/tui or artifacts/latency. The durable Git worktree and exact commit above are the review provenance, not a /tmp code checkout.",
+        "No claim of live provider/auth/device validation or exhaustive failure-path shutdown coverage. The latency caller permits explicit output/binary configuration; any future execution requires parent-audited owned paths and environment."
       ]
     }
   ],
@@ -18139,9 +18190,9 @@
     "baselineFiles": 766,
     "finalGate": "pending; incomplete focus coverage",
     "liveAuth": "unverified/failing; preserved",
-    "accepted": 665,
+    "accepted": 668,
     "total": 823,
-    "pending": 158,
+    "pending": 155,
     "sourceExtras": 57,
     "checkout": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
     "branch": "bruv/readability-pr45-sol-continuation",
