@@ -13235,11 +13235,11 @@
     {
       "file": "tests/gpt-live-context.test.ts",
       "initialBlob": "a38de09dca8eb243cd51f048d350705ae227e8db",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_68d8f475",
       "sourceCommit": "8df31a26231ecd12916fa1483eed6099cc4d2391",
-      "judgeIds": [],
-      "resumeState": "needs-judge",
+      "judgeIds": ["task_680430af"],
+      "resumeState": "accepted-joined",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
       "area": "live-native-audio",
       "primaryCommit": "8df31a26231ecd12916fa1483eed6099cc4d2391",
@@ -13258,6 +13258,38 @@
         "No formatter invoked because there are no changed source paths. No fixture HOME/config/SDK directory was needed or allocated because no formatter or runtime gate ran.",
         "No runtime/provider/audio-device/auth validation; parent owns audited isolated gates and fresh independent judgments. Synthetic waveform timers/microtask settling were read, not executed.",
         "No delegation, secrets access, cleanup, deletion, setup, build, dependency writes, push, PR, merge, or wisdom edits. Original candidate worktrees/evidence remain preserved."
+      ],
+      "acceptedBlob": "a38de09dca8eb243cd51f048d350705ae227e8db",
+      "result": "The whole test is a local protocol journey: empty input has no observations; ordinary text, backslash/quote/newline-heavy text and emoji each become chunks; chunk count and UTF-8 byte ceilings are checked before prefix and omission accounting; then joined chunks have only protocol markers removed and must equal the exact last 2400 Unicode code points. The reconstruction is the readable oracle for literal text rather than per-chunk JSON, not incidental formatting. Byte limits and code-point retention remain visibly distinct. Extracting this expression or introducing a case/context object would conceal the central contract without consolidating scattered decisions.",
+      "systemReason": "gptLiveContext owns lossy retention and chunk framing: Array.from retains Unicode code points, slice(-2400) bounds the suffix, omission count is in the first prefix, and Buffer.byteLength gates 480-byte chunks with continuation markers. extension.sendProviderContext forwards every chunk through GPTLiveSession.observation, with triggerResponse selecting commentary versus thinking; the session uses null delegation correlation and appendContext independently enforces the same 480-byte content boundary plus ready/pending capacity rules. Delivery failure is handled by the extension rather than hidden in the test helper. This test keeps the producer protocol oracle next to the inputs while preserving that separate transport authority.",
+      "checks": [
+        {
+          "check": "git rev-parse exact candidate",
+          "result": "8df31a26231ecd12916fa1483eed6099cc4d2391"
+        },
+        {
+          "check": "git diff --name-status 8df31a26231ecd12916fa1483eed6099cc4d2391 8df31a26231ecd12916fa1483eed6099cc4d2391",
+          "result": "Empty: primaryBase equals candidate; no candidate-changed source paths."
+        },
+        {
+          "check": "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md",
+          "result": "Read; verdicts follow actual source journeys, not test counts or primary evidence."
+        },
+        {
+          "check": "Static effect review",
+          "result": "Assigned tests use buffers, pure functions and injected callback/timer recordings. No assigned fixture writes files or contacts network. No test, setup, build, install, auth or device operation executed."
+        },
+        {
+          "check": "Full intrinsic focus plus production chunk/observation/appendContext path read at candidate; exact focus blob resolved with git rev-parse",
+          "result": "Static journey inspected; unchanged focus and no changed related source paths."
+        }
+      ],
+      "limits": [
+        "Static structural review only. Tests/setup/builds are explicitly forbidden here; parent owns audited isolated gates. No passing-runtime claim.",
+        "No live authentication/device verification; credentials not accessed. No descendants launched. Parent verifies runtime agent.model openai-codex/gpt-6.1-sol.",
+        "Durable review provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_680430af; all candidate code read with git show/git grep at the exact commit, not checkout HEAD. No temporary code checkout or fixture was created. Source, dependencies, worktrees and candidate evidence preserved.",
+        "Only the requested untracked JSON artifact is written; no wisdom notes, source edits, publication, merge or cleanup.",
+        "This is not exhaustive coverage of arbitrary text containing the literal continuation marker or pending-context saturation; neither is a demonstrated structural reading defect in this focus."
       ]
     },
     {
@@ -13289,11 +13321,11 @@
     {
       "file": "tests/gpt-live-request.test.ts",
       "initialBlob": "cf28d4ade02c6e0d8be24db8497777d115ea88f3",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_68d8f475",
       "sourceCommit": "8df31a26231ecd12916fa1483eed6099cc4d2391",
-      "judgeIds": [],
-      "resumeState": "needs-judge",
+      "judgeIds": ["task_680430af"],
+      "resumeState": "accepted-joined",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
       "area": "live-native-audio",
       "primaryCommit": "8df31a26231ecd12916fa1483eed6099cc4d2391",
@@ -13312,6 +13344,38 @@
         "No formatter invoked because there are no changed source paths. No fixture HOME/config/SDK directory was needed or allocated because no formatter or runtime gate ran.",
         "No runtime/provider/audio-device/auth validation; parent owns audited isolated gates and fresh independent judgments. Synthetic waveform timers/microtask settling were read, not executed.",
         "No delegation, secrets access, cleanup, deletion, setup, build, dependency writes, push, PR, merge, or wisdom edits. Original candidate worktrees/evidence remain preserved."
+      ],
+      "acceptedBlob": "cf28d4ade02c6e0d8be24db8497777d115ea88f3",
+      "result": "The small snapshot factory owns only repetitive typed evidence metadata; it does not choose requests. Actual fragment text and timing remain directly inside each assertion. Adjacent end/start times expose ordinary concatenation and demonstrate no internal-host/policy wrapper. Overlapping timings expose newline-separated alternatives, not a reconciled command. The last test intentionally compares omitted-empty and omitted-retained evidence refusing dispatch against a complete 5000-character request surviving unsliced. Those policies can be read in one pass with no helper chase or hidden assertion. Splitting the final comparison would not resolve any ownership or lifetime reconstruction burden.",
+      "systemReason": "gptLiveRequest refuses omittedFragments before mapping text, chooses the separator via gptLiveRequestOverlaps and trims only the joined result. Overlap uses a running latest end, including an optional priorSpeechEndMs watermark. The delegation bridge owns evidence retention/admission and already refuses incomplete attempts before constructing a ready snapshot; the extension additionally treats an empty gptLiveRequest result as clarification and passes admitted speech to the existing owner, separately from provisional snapshot evidence. passive-history derives speech/overlap/missing from the same functions and does not promote incomplete speech into an actionable historical user request. The local assertions make speech manufacture and silent suffix dispatch prohibitions visible without confusing bridge admission with request formatting.",
+      "checks": [
+        {
+          "check": "git rev-parse exact candidate",
+          "result": "8df31a26231ecd12916fa1483eed6099cc4d2391"
+        },
+        {
+          "check": "git diff --name-status 8df31a26231ecd12916fa1483eed6099cc4d2391 8df31a26231ecd12916fa1483eed6099cc4d2391",
+          "result": "Empty: primaryBase equals candidate; no candidate-changed source paths."
+        },
+        {
+          "check": "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md",
+          "result": "Read; verdicts follow actual source journeys, not test counts or primary evidence."
+        },
+        {
+          "check": "Static effect review",
+          "result": "Assigned tests use buffers, pure functions and injected callback/timer recordings. No assigned fixture writes files or contacts network. No test, setup, build, install, auth or device operation executed."
+        },
+        {
+          "check": "Full intrinsic focus and formatting, overlap, retention/admission, extension delegation and passive-history projection decisions read at candidate; exact focus blob resolved",
+          "result": "Static journey inspected independently; unchanged focus and no changed related source paths."
+        }
+      ],
+      "limits": [
+        "Static structural review only. Tests/setup/builds are explicitly forbidden here; parent owns audited isolated gates. No passing-runtime claim.",
+        "No live authentication/device verification; credentials not accessed. No descendants launched. Parent verifies runtime agent.model openai-codex/gpt-6.1-sol.",
+        "Durable review provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_680430af; all candidate code read with git show/git grep at the exact commit, not checkout HEAD. No temporary code checkout or fixture was created. Source, dependencies, worktrees and candidate evidence preserved.",
+        "Only the requested untracked JSON artifact is written; no wisdom notes, source edits, publication, merge or cleanup.",
+        "The focus is a compact policy comparison, not exhaustive prior-watermark or trimming coverage. Bridge and history runtime behavior was not executed."
       ]
     },
     {
@@ -13330,11 +13394,11 @@
     {
       "file": "tests/gpt-live-waveform.test.ts",
       "initialBlob": "589251a028bd9137e96edecd23889db510e127b6",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_68d8f475",
       "sourceCommit": "8df31a26231ecd12916fa1483eed6099cc4d2391",
-      "judgeIds": [],
-      "resumeState": "needs-judge",
+      "judgeIds": ["task_680430af"],
+      "resumeState": "accepted-joined",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
       "area": "live-native-audio",
       "primaryCommit": "8df31a26231ecd12916fa1483eed6099cc4d2391",
@@ -13353,6 +13417,38 @@
         "No formatter invoked because there are no changed source paths. No fixture HOME/config/SDK directory was needed or allocated because no formatter or runtime gate ran.",
         "No runtime/provider/audio-device/auth validation; parent owns audited isolated gates and fresh independent judgments. Synthetic waveform timers/microtask settling were read, not executed.",
         "No delegation, secrets access, cleanup, deletion, setup, build, dependency writes, push, PR, merge, or wisdom edits. Original candidate worktrees/evidence remain preserved."
+      ],
+      "acceptedBlob": "589251a028bd9137e96edecd23889db510e127b6",
+      "result": "The local harness has one coherent authority: it injects scheduler time, records copied send frames, flush epochs and errors, and explicitly starts playback. The nonzero sine fixture exposes loss or duplication. The irregular-wire test feeds aligned but non-frame-sized chunks, advances by actual PCM duration, drains, and checks byte identity separately from frame alignment/size and absence of flush/errors before closing. The speech test never advances scheduler time to release suppression: sustained loud capture produces one flush, output is refused, 24 quiet frames still suppress and the 25th releases, then newly arriving distinct audio is sent with no additional flush/error. The resampling test separately compares framed and continuous conversion, length, and an independent analytic sine error/step oracle, explicitly excluding the future-dependent final held sample. These are readable local stages with distinct clocks and evidence, not a context bag or duplicate reference resampler.",
+      "systemReason": "GptLivePlaybackRecovery owns acoustic transitions and generation invalidation: the detector qualifies four loud frames, ends after fifteen quiet frames, then ten further quiet captures release the guard. A speech onset interrupts PlaybackScheduler once; suppressed output is discarded, not replayed. PlaybackScheduler separately owns copied pending bytes, 960-byte frames, turn-tail draining, bounded reservation timing and asynchronous flush-before-send gating. The extension forwards native capture both to recovery and GPTLiveSession.appendMicrophone, so local suppression never gates input; provider output is validated/sliced by the session and sent through recovery. InputResampler owns rational interpolation state across 16k capture pushes and a reset-on-flush held tail. The test stages follow these separate authorities without mistaking injected wall time for acoustic recovery or byte writes for audible proof.",
+      "checks": [
+        {
+          "check": "git rev-parse exact candidate",
+          "result": "8df31a26231ecd12916fa1483eed6099cc4d2391"
+        },
+        {
+          "check": "git diff --name-status 8df31a26231ecd12916fa1483eed6099cc4d2391 8df31a26231ecd12916fa1483eed6099cc4d2391",
+          "result": "Empty: primaryBase equals candidate; no candidate-changed source paths."
+        },
+        {
+          "check": "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md",
+          "result": "Read; verdicts follow actual source journeys, not test counts or primary evidence."
+        },
+        {
+          "check": "Static effect review",
+          "result": "Assigned tests use buffers, pure functions and injected callback/timer recordings. No assigned fixture writes files or contacts network. No test, setup, build, install, auth or device operation executed."
+        },
+        {
+          "check": "Full intrinsic focus, full playback recovery/detector, full scheduler and full resampler read at candidate; session audio validation/input conversion and extension capture/output wiring inspected; exact focus blob resolved",
+          "result": "Static journey inspected independently; unchanged focus and no changed related source paths."
+        }
+      ],
+      "limits": [
+        "Static structural review only. Tests/setup/builds are explicitly forbidden here; parent owns audited isolated gates. No passing-runtime claim.",
+        "No live authentication/device verification; credentials not accessed. No descendants launched. Parent verifies runtime agent.model openai-codex/gpt-6.1-sol.",
+        "Durable review provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_680430af; all candidate code read with git show/git grep at the exact commit, not checkout HEAD. No temporary code checkout or fixture was created. Source, dependencies, worktrees and candidate evidence preserved.",
+        "Only the requested untracked JSON artifact is written; no wisdom notes, source edits, publication, merge or cleanup.",
+        "Injected send/flush callbacks prove no real device behavior in this review. Acoustic heuristic/echo handling and stale provider tails remain explicitly best-effort production limitations; no audible-quality or failure-path runtime claim."
       ]
     },
     {
@@ -22643,9 +22739,9 @@
     "baselineFiles": 766,
     "finalGate": "pending; incomplete focus coverage",
     "liveAuth": "unverified/failing; preserved",
-    "accepted": 781,
+    "accepted": 784,
     "total": 835,
-    "pending": 54,
+    "pending": 51,
     "sourceExtras": 69,
     "checkout": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
     "branch": "bruv/readability-pr45-sol-continuation",

@@ -2837,16 +2837,17 @@
       "initialBlob": "a38de09dca8eb243cd51f048d350705ae227e8db",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "a38de09dca8eb243cd51f048d350705ae227e8db",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "a38de09dca8eb243cd51f048d350705ae227e8db",
         "primaryId": "task_68d8f475",
         "primaryCommit": "8df31a26231ecd12916fa1483eed6099cc4d2391",
-        "judgeIds": [],
+        "judgeIds": ["task_680430af"],
         "sourceCommit": "8df31a26231ecd12916fa1483eed6099cc4d2391",
-        "state": "needs-judge",
-        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+        "state": "accepted-joined",
+        "reason": "The whole test is a local protocol journey: empty input has no observations; ordinary text, backslash/quote/newline-heavy text and emoji each become chunks; chunk count and UTF-8 byte ceilings are checked before prefix and omission accounting; then joined chunks have only protocol markers removed and must equal the exact last 2400 Unicode code points. The reconstruction is the readable oracle for literal text rather than per-chunk JSON, not incidental formatting. Byte limits and code-point retention remain visibly distinct. Extracting this expression or introducing a case/context object would conceal the central contract without consolidating scattered decisions."
       }
     },
     {
@@ -2946,16 +2947,17 @@
       "initialBlob": "cf28d4ade02c6e0d8be24db8497777d115ea88f3",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "cf28d4ade02c6e0d8be24db8497777d115ea88f3",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "cf28d4ade02c6e0d8be24db8497777d115ea88f3",
         "primaryId": "task_68d8f475",
         "primaryCommit": "8df31a26231ecd12916fa1483eed6099cc4d2391",
-        "judgeIds": [],
+        "judgeIds": ["task_680430af"],
         "sourceCommit": "8df31a26231ecd12916fa1483eed6099cc4d2391",
-        "state": "needs-judge",
-        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+        "state": "accepted-joined",
+        "reason": "The small snapshot factory owns only repetitive typed evidence metadata; it does not choose requests. Actual fragment text and timing remain directly inside each assertion. Adjacent end/start times expose ordinary concatenation and demonstrate no internal-host/policy wrapper. Overlapping timings expose newline-separated alternatives, not a reconciled command. The last test intentionally compares omitted-empty and omitted-retained evidence refusing dispatch against a complete 5000-character request surviving unsliced. Those policies can be read in one pass with no helper chase or hidden assertion. Splitting the final comparison would not resolve any ownership or lifetime reconstruction burden."
       }
     },
     {
@@ -3009,16 +3011,17 @@
       "initialBlob": "589251a028bd9137e96edecd23889db510e127b6",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "589251a028bd9137e96edecd23889db510e127b6",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "589251a028bd9137e96edecd23889db510e127b6",
         "primaryId": "task_68d8f475",
         "primaryCommit": "8df31a26231ecd12916fa1483eed6099cc4d2391",
-        "judgeIds": [],
+        "judgeIds": ["task_680430af"],
         "sourceCommit": "8df31a26231ecd12916fa1483eed6099cc4d2391",
-        "state": "needs-judge",
-        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+        "state": "accepted-joined",
+        "reason": "The local harness has one coherent authority: it injects scheduler time, records copied send frames, flush epochs and errors, and explicitly starts playback. The nonzero sine fixture exposes loss or duplication. The irregular-wire test feeds aligned but non-frame-sized chunks, advances by actual PCM duration, drains, and checks byte identity separately from frame alignment/size and absence of flush/errors before closing. The speech test never advances scheduler time to release suppression: sustained loud capture produces one flush, output is refused, 24 quiet frames still suppress and the 25th releases, then newly arriving distinct audio is sent with no additional flush/error. The resampling test separately compares framed and continuous conversion, length, and an independent analytic sine error/step oracle, explicitly excluding the future-dependent final held sample. These are readable local stages with distinct clocks and evidence, not a context bag or duplicate reference resampler."
       }
     },
     {
@@ -4801,7 +4804,7 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 96,
-    "pending": 54
+    "accepted": 99,
+    "pending": 51
   }
 }
