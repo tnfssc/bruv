@@ -17249,10 +17249,28 @@
       "initialBlob": "absent",
       "area": "execution-tasks-questions",
       "status": "pending",
-      "resumeState": "needs-primary-final-blob",
-      "sourceCommit": "88cbf9b4adcbb6d3b8296a9b1c2d89d243d7ff37",
+      "resumeState": "needs-judge",
+      "sourceCommit": "f7e77b9fecbb5497a21a08e973eadd136feb638f",
       "acceptedRelatedJudges": ["task_7d16a45a"],
-      "acceptedBlob": "c46f9ca37d2c4959cdf48b98dd73844dd651956f"
+      "acceptedBlob": "c46f9ca37d2c4959cdf48b98dd73844dd651956f",
+      "primaryId": "task_b39fb78d",
+      "primaryCommit": "f7e77b9fecbb5497a21a08e973eadd136feb638f",
+      "primaryBase": "f7e77b9fecbb5497a21a08e973eadd136feb638f",
+      "primaryResult": "Read the whole 215-line fixture and the whole sole caller tests/task-monitor-tui.test.ts, plus tests/helpers.ts and tests/tui-helpers.ts. The preserved candidate already resolves the lifetime burden: withTaskMonitorTerminal creates and retains one mkdtemp HOME/config/cache/data/state/runtime/TMPDIR/SDK tree, routes every tmux argv call through the same explicit environment and owned socket location, launches the binary directly, and bounds the callback with its kill-server finally. withLiveJobTui nests the loopback provider inside that terminal lifetime, writes its model configuration, installs the delayed readiness command, launches the terminal, then checks model visibility, registration marker, and actual command response in that order under one deadline. Its zero-request assertion separates a harmless readiness probe from job creation. The callback cannot start the caller’s ALPHA/BETA scenario before those assertions; server.stop runs before the outer terminal teardown. The /resume caller uses only the terminal envelope and retains its own durable-session and confirmation assertions. SSE response construction remains next to the deterministic first-request tool call and later FIXTURE_READY response; splitting it or moving the handshake would add navigation without clarifying authority. No additional structural change is warranted. The current focus blob exactly equals candidate 88cbf9b4adcbb6d3b8296a9b1c2d89d243d7ff37; no old branch merge or byte restoration was needed. The supplied reconciliation contains no fixture row or candidate/rejection record for this candidate; the relevant caller row is pending-primary with no candidate or judge rounds, not an acceptance.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Inspected preserved candidate through git show and compared fixture and related caller/helpers against current checkout; no differences.",
+        "Verified exact HEAD and candidate focus blob hashes with git rev-parse.",
+        "git diff --check completed without output; starting worktree was clean.",
+        "No source changed, so no formatter invocation or source commit was needed."
+      ],
+      "primaryLimits": [
+        "No setup, tests, builds, provider requests, live credentials, or device access were run; parent owns audited isolated gates and independent judgment.",
+        "Static filesystem/network effects review: fixture creates owned retained temporary directories/files, launches tmux and dist/bruv with explicit argv/environment, binds a loopback ephemeral provider, and has owned-server shutdown finally blocks. Live provider replies create two intentionally long-lived shell jobs; their runtime behavior and cancellation were not executed here.",
+        "The supplied reconciliation predates the added fixture: no focus rejection objections were available there to address.",
+        "No new wisdom or values edits: this is a no-change primary reading decision; parent owns aggregate wisdom."
+      ]
     }
   ],
   "completedAreas": {
