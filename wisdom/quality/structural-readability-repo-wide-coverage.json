@@ -9335,13 +9335,56 @@
       "initialBlob": "5dd980739861ee24d0210c7db9734787f43973bd",
       "status": "pending",
       "area": "compatibility-t3",
-      "resumeState": "pending-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_1e1bfadc",
+      "primaryCommit": "bba400e961e35837aaa2c0f6cd4b3537c6406234",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "bba400e961e35837aaa2c0f6cd4b3537c6406234",
       "report": "wisdom/quality/structural-readability-areas/compatibility-t3.json",
-      "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+      "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection.",
+      "primaryBase": "390bd5ebbcc9bb95f66a691e3d7e05fc8a92511d",
+      "primaryResult": "Each model now has its own local turn policy: normalChildTurn executes its proof tool before reporting completion; parentDelegationTurn dispatches only before tool results, reports unexpected child results, and confirms the normal-child proof. The provider visibly dispatches by model and records observation, then delegates only SSE framing to completionStream, shared with the readiness/schema fixture. Actual subprocess launch/control, profiles, transcript checks, failure scenarios, and security assertions remain at their existing owners. No previous candidate or rework/rejection was recorded for this focus; the baseline focus survived and no old branch was merged.",
+      "primaryPaths": ["tests/claude-compat-compiled.test.ts"],
+      "primaryChecks": [
+        {
+          "kind": "required-formatter",
+          "status": "passed",
+          "executable": "/home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/@biomejs/biome/bin/biome",
+          "argv": ["format", "--write", "tests/claude-compat-compiled.test.ts"],
+          "environment": "Explicit isolated HOME/XDG_CONFIG_HOME/XDG_CACHE_HOME/TMPDIR/CLAUDE_CONFIG_DIR; disposable directories retained at /tmp/pr45-compat-compiled-format-gXp9oh",
+          "result": "Formatted only assigned source; exit 0."
+        },
+        {
+          "kind": "static-source-scan",
+          "status": "passed",
+          "method": "Bun.Transpiler({loader:\"ts\"}).scan on candidate text, without importing/evaluating the test module."
+        },
+        {
+          "kind": "assertion-preservation",
+          "status": "passed",
+          "method": "Compared whitespace-normalized expect-expression source against original HEAD; all 60 matched."
+        },
+        {
+          "kind": "security-scenario-preservation",
+          "status": "passed",
+          "method": "Entire final native-preflight test remains byte-identical to baseline."
+        },
+        {
+          "kind": "manual-code-reading",
+          "status": "completed",
+          "method": "Traced compiled-test environment gate, SDK wrapper and root protocol scenarios, paired-binary child launch/profile/transcripts, launch defaults and native-home preflight authority. Reviewed parent/child branch equivalence and unchanged SSE metadata, finish reasons, and end marker; launches, envs, request counters, timeouts, and disposal unchanged."
+        },
+        {
+          "kind": "git-diff-check",
+          "status": "passed",
+          "result": "git diff --check returned 0 before commit."
+        }
+      ],
+      "primaryLimits": [
+        "Repository setup, tests and builds intentionally not run; parent owns audited isolated batch gates and independent fresh judgment. Static checks do not prove compiled runtime behavior.",
+        "Optional TypeScript AST comparison could not load /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/typescript/lib/typescript.js (ENOENT); no dependency installation or setup attempted. Bun source scan and source comparisons were used instead.",
+        "No wisdom/value edits: assignment requires parent aggregate wisdom and no new general implementation lesson was established."
+      ]
     },
     {
       "file": "tests/claude-compat-composition.test.ts",
@@ -9471,13 +9514,40 @@
       "initialBlob": "f7c05c44d24a00a4795933f726df3e1c30733365",
       "status": "pending",
       "area": "compatibility-t3",
-      "resumeState": "pending-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_8b7cafcd",
+      "primaryCommit": "988f100080e2cca4e885c4aac4c898578b4b72ab",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "988f100080e2cca4e885c4aac4c898578b4b72ab",
       "report": "wisdom/quality/structural-readability-areas/compatibility-t3.json",
-      "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+      "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection.",
+      "primaryBase": "988f100080e2cca4e885c4aac4c898578b4b72ab",
+      "primaryResult": "The beforeEach/afterEach pair bounds the single temporary directory. fixture() creates the launcher and its matching normal executable; run() passes an argv array, a deliberately minimal environment, and one stdin payload terminated by EOF, returning the observable exit/stdout/stderr. Each ordinary test directly arranges the relevant path and asserts its result. The PID/SIGTERM test stays inline because observing the first PID and killing that same process is the behavior under test. The system-shell test directly generates and syntax-checks each script; the overwrite test keeps symlink/hardlink rejection beside the preserved binary bytes assertion. The staged-version test visibly writes the special normal executable, probes both version routes, renames both files, and verifies the changed product identity. Tracing scripts/build-claude-compat.ts -> scripts/claude-compat-launcher.ts -> scripts/bruv-claude-compat.sh confirmed these tests follow the shipped pair-building and shell dispatch decisions. Moving these local scenarios into fixture option bags or generic subprocess helpers would add indirection, not resolve an existing structural reading burden. Evidence records this focus as pending-primary with no prior candidate or rejection; focus exists and matches the preserved baseline blob, so no historical bytes were imported.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        {
+          "kind": "manual-source-reading",
+          "result": "Read focus and traced actual launcher generator, shell template, and standalone connector build caller."
+        },
+        {
+          "kind": "focused-ledger-review",
+          "result": "Focus rows in area/repo-wide ledgers and supplied resume reconciliation have no primary/rejection candidate; baseline blob remains f7c05c44d24a00a4795933f726df3e1c30733365."
+        },
+        {
+          "kind": "git-status",
+          "result": "Clean before writing this untracked result."
+        },
+        {
+          "kind": "formatter",
+          "result": "Not applicable: no changed source paths; no formatter invocation or cosmetic churn."
+        }
+      ],
+      "primaryLimits": [
+        "No setup, tests, or builds run; parent owns audited isolated batch gates.",
+        "No source edits or source commit created; sourceCommit identifies the exact unchanged candidate HEAD.",
+        "Manual readability assessment is not runtime safety proof or independent judgment.",
+        "No wisdom/values changes; parent owns aggregate wisdom and this assessment adds no new repository-wide lesson."
+      ]
     },
     {
       "file": "tests/claude-compat-live-frontend.test.ts",

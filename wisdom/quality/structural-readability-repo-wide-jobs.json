@@ -919,7 +919,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_1e1bfadc",
         "branch": "bruv/pr45-primary-tests-claude-compat-compile-1e1bfadc",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "bba400e961e35837aaa2c0f6cd4b3537c6406234"
       },
       {
         "id": "task_0f924831",
@@ -961,7 +962,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_8b7cafcd",
         "branch": "bruv/pr45-primary-tests-claude-compat-launche-8b7cafcd",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "988f100080e2cca4e885c4aac4c898578b4b72ab"
       },
       {
         "id": "task_9cb924a6",
@@ -978,6 +980,15 @@
         "focus": "tests/claude-compat-preflight.test.ts",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_1bf0bce2",
         "branch": "bruv/pr45-primary-tests-claude-compat-preflig-1bf0bce2",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_76686bee",
+        "stage": "primary",
+        "focus": "tests/claude-compat-prompt-ownership.test.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_76686bee",
+        "branch": "bruv/pr45-primary-tests-claude-compat-prompt--76686bee",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
       }
