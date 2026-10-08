@@ -339,7 +339,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_e6d5f424",
         "branch": "bruv/pr45-primary-1-remote-focuses-e6d5f424",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "517a78b22db0ff1e0d5261bfcf4beda103dc803c"
       },
       {
         "id": "task_9435f4ce",
@@ -2139,6 +2140,15 @@
         "focus": ["tests/session-identity.test.ts", "tests/sol-model-catalog.test.ts", "tests/system-prompt.test.ts"],
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_c0fe8a88",
         "branch": "bruv/pr45-judge-3-agent-history-session-goals-c0fe8a88",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_8e99c74c",
+        "stage": "judge",
+        "focus": ["tests/turn-boundaries.test.ts", "tests/turn-boundaries.ts", "tests/wisdom-extension.test.ts"],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_8e99c74c",
+        "branch": "bruv/pr45-judge-3-agent-history-session-goals-8e99c74c",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
       }

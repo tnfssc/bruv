@@ -11489,13 +11489,29 @@
       "initialBlob": "685a959578594802bf58ee0ca8fc607cf4040a37",
       "status": "pending",
       "area": "remote",
-      "resumeState": "pending-primary-unstarted",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_e6d5f424",
+      "primaryCommit": "517a78b22db0ff1e0d5261bfcf4beda103dc803c",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "517a78b22db0ff1e0d5261bfcf4beda103dc803c",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
-      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
+      "primaryBase": "517a78b22db0ff1e0d5261bfcf4beda103dc803c",
+      "primaryResult": "Keep the existing fixture. The opening mock delegates all spawns and intercepts only rpc.sh, captures its PID, and injects an error after agent_start. The fixture then creates its own HOME/profile/repository, obtains the real hello identity and launches a persisted task through the real request handler. Replacing the saved PID/start time with this process and restoring accepted state satisfies runOwnerTask’s actual ownership guard without bypassing it. The RPC script answers remote-config, ignores TERM before announcing agent_start, and stays alive so OwnerChild must escalate to SIGKILL. The final sequence times and awaits runOwnerTask, probes the captured child PID, and reports persisted task state before its emergency kill/owned-directory cleanup. The Linux-only caller copies this text into an isolated subprocess to contain Bun module mocking, and asserts no live child, unknown state, and the exact injected error. OwnerChild waits for close before rethrowing its recorded error; runOwnerTask releases the child and drains writes before publishing terminal state. Extracting the brief preparation or probe would hide the causal setup and observation without consolidating any scattered authority. There is no preserved/rejected candidate for this focus: its assigned reconciliation row is pending-primary-unstarted, with baseline/joined blob 685a959578594802bf58ee0ca8fc607cf4040a37 and no primary or reviews.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        "Read the whole focus, the whole tests/remote-owner-lifecycle.test.ts caller, the whole OwnerChild implementation, and owner hello/admission, ownership guard, RPC handling and teardown/publication paths.",
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read only the assigned focus reconciliation row/evidence; confirmed no preserved candidate or rejection.",
+        "Verified the focus HEAD blob equals the recorded baseline/joined blob and the initial worktree is clean.",
+        "No source changed; formatter and source commit are not applicable. No tests, setup, builds, or live auth/device access performed."
+      ],
+      "primaryLimits": [
+        "This is a primary reading decision, not an independent judgment; parent owns the fresh judge and audited isolated runtime gates.",
+        "Existing fixture and caller filesystem/process effects were read, not executed: they create owned temporary directories, launch /bin/true and an RPC shell, signal the child, and recursively remove their owned directories. The fixture’s TERM trap was inspected only; no shell trap or cleanup command was executed.",
+        "No claim of test success or live runtime behavior. Parent must supply explicit argv/env and fresh owned HOME/config/SDK/TMPDIR for any later execution, retain its isolated test fixtures, and audit existing test-code cleanup before running.",
+        "No source commit was created for an unchanged decision; sourceCommit records the exact existing HEAD. No descendants were launched, no wisdom notes changed, no candidate/worktree removed, and no publication performed."
+      ]
     },
     {
       "file": "tests/fixtures/remote-placement-e2e/Dockerfile",
