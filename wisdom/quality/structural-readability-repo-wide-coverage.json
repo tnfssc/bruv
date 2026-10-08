@@ -16388,12 +16388,12 @@
     {
       "file": "tests/remote-offline-menu-pty.py",
       "initialBlob": "5f2cbe002c36d27dc965c984215fa6673bbdaa71",
-      "status": "pending",
+      "status": "accepted",
       "area": "remote",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_ddbd2881",
       "primaryCommit": "9f0568e39bc7ba3a3fac149125d54a276daea185",
-      "judgeIds": [],
+      "judgeIds": ["task_897371b3"],
       "sourceCommit": "9f0568e39bc7ba3a3fac149125d54a276daea185",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
       "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
@@ -16434,6 +16434,22 @@
         "Durable code provenance is this worktree and exact sourceCommit. Only formatter environment/evidence uses retained /tmp/pr45-remote-format-hUqtok; no temporary code checkout or descendant delegation. Parent verifies runtime model; this worker did not independently inspect it.",
         "No wisdom/values edits: parent owns aggregate wisdom; no per-worker note created.",
         "Preexisting fixed PTY waits and terminate+5s wait remain; no timeout-policy or assertion redesign. Tests may still fail due to terminal/platform behavior; parent must audit/run the compiled proof separately."
+      ],
+      "acceptedBlob": "d9ed8861bcf0a1e0adec824a9c5f4b5949e6842f",
+      "result": "The old script required reconstructing a journey from import-time globals, dense fixture writes, nested terminal helpers and a final cleanup block. The candidate makes the authorities legible: seed_offline_task creates one cached done task and its matching local grant against home/repo; fixture_environment builds only explicitly allowed process inputs and owned config/cache/data/SDK/tmp directories; prove_offline_revocation keeps transcript, byte pacing, keys and six assertions together; main visibly owns mkdtemp, PTY creation, argv/env, process start and shutdown. The return value between these operations is the grants path, not a generic mutable context. The startup guard prevents import-time execution. Slave closure is attached to attempted Popen and master closure survives terminate/wait errors. This is a coherent lifetime/authority improvement, not merely expansion or naming churn.",
+      "systemReason": "Followed /remote inbox -> cached task -> taskActions(hasLocalGrants) -> capabilityMenu. RemoteClient.status reads the local cache, taskOwned is false without a saved connection, and the selected local grant remains discoverable although the task is done/offline. The menu confirms before mutation, rechecks the grant and calls revokeCapability with notify=false for this fixture. That service persists the ClientCapabilityStore revocation marker before any notification; rendering states Owner not notified. The fixture still exercises this actual compiled-terminal boundary with identical argv, byte sequences, 0.09s byte pacing, waits, pass message and all original assertions, including no marker before confirmation. Changing /tmp authority to home/repo narrows fixture ownership without changing the revocation proof. Allowlisted HOME/XDG/SDK/TMPDIR inputs exclude inherited credential/runtime state, and fixture retention replaces recursive HOME removal.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "git diff --name-status 4204b8d4c510b0ed0e76c4deaf219c069614b8ea 9f0568e39bc7ba3a3fac149125d54a276daea185: exactly one changed source path, tests/remote-offline-menu-pty.py; read its full diff and candidate body.",
+        "Resolved acceptedBlobs using git rev-parse candidate:path; no test results are claimed.",
+        "Compared all six assertions and every send/read timing directly with the base; inspected Popen failure, proof failure and wait failure descriptor lifetimes by source reading.",
+        "Reviewed effects: writes under an owned mkdtemp HOME; explicit subprocess argv/env; no recursive deletion; seeded cache has no connection, so offline revoke does not notify an SSH owner. Did not execute the compiled binary."
+      ],
+      "limits": [
+        "Static actual-code review only. No setup, tests, builds, provider calls, credential access, or device/live-auth checks performed; parent owns audited isolated runtime gates. No descendants launched. Parent must verify runtime agent.model openai-codex/gpt-6.1-sol; this artifact does not independently attest the host-selected model.",
+        "Review provenance: durable assigned worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_897371b3. Source was read with git show at the exact candidate and git diff from the exact primaryBase, not from checkout HEAD. No source edits, installs, cleanup, publication, or worktree removal.",
+        "Safety for ALL descendants: NO sudo, recovery investigation, user secrets, shell deletion/cleanup commands, inherited HOME/config/SDK cleanup, nested shell traps, destructive git, or user-data mutation. User already recovered data and requested no recovery work. Tests must use explicit process argv/env and owned fs.mkdtemp fixture HOME/config/SDK; retain them, do not delete. Review filesystem/network effects BEFORE tests/setup. Existing test-code cleanup of provably owned temporary paths may be inspected but NEVER run a shell trap or inherited HOME removal. Need live auth/device? Report unverified, don't access credentials. Propagate these constraints verbatim. Independent code/review agents get durable worktrees, not /tmp code checkouts. Keep existing worktrees and candidate evidence.",
+        "The pre-existing fixed transcript waits remain timing-sensitive. terminate()/wait(timeout=5) still has no kill escalation; a timeout closes the master but does not prove process exit. Runtime behavior and built-binary compatibility remain unverified."
       ]
     },
     {
@@ -16467,12 +16483,12 @@
     {
       "file": "tests/remote-placement-e2e-fixture.test.ts",
       "initialBlob": "ab54907e3562bd6498fd44eb26bc329eea1f4ff6",
-      "status": "pending",
+      "status": "accepted",
       "area": "remote",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_ddbd2881",
       "primaryCommit": "9f0568e39bc7ba3a3fac149125d54a276daea185",
-      "judgeIds": [],
+      "judgeIds": ["task_897371b3"],
       "sourceCommit": "9f0568e39bc7ba3a3fac149125d54a276daea185",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
       "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
@@ -16513,17 +16529,33 @@
         "Durable code provenance is this worktree and exact sourceCommit. Only formatter environment/evidence uses retained /tmp/pr45-remote-format-hUqtok; no temporary code checkout or descendant delegation. Parent verifies runtime model; this worker did not independently inspect it.",
         "No wisdom/values edits: parent owns aggregate wisdom; no per-worker note created.",
         "No inference fixture code or acceptance harness was executed. Related changedPaths contains the full batch source scope for judge visibility; this focus itself is unchanged."
+      ],
+      "acceptedBlob": "ab54907e3562bd6498fd44eb26bc329eea1f4ff6",
+      "result": "Read the entire unchanged test file, not just counts or the extraction report. request/user/done/code express the protocol history locally. The parse-only stage table explicitly constructs an async function without executing generated code. Separate tests expose pinned-target lookup, parent orchestrator launch, destination-local normal child, normal-role refusal, child completion before questioning, assistant-answer-marker spoofing versus a user marker, saved-ledger answer reads, restart inspection without relaunch, clean/drift differences and SSE stop/tool_calls/DONE boundaries. A shared conversation context would conceal the very messages and authority transitions these assertions need to show; no actual structural burden warrants that change.",
+      "systemReason": "Read the complete scenario.ts generator: model selects parent/orchestrator/normal; called only recognizes tool-result IDs; userHas only recognizes user messages. Parent launch reads jobs.targets and the authorized alias, while destination child launch omits target/model. The user answer marker merely selects generated finish code: that code independently requires questions.list() to contain the exact saved q.answer before resolving and writing the tracked return. parentResponse waits for completion delivery before jobs.inspect, and stream wraps the selected response with the matching finish_reason and DONE. Both scripts/remote-placement-e2e.ts and fake-provider.ts actually consume stream as SSE, so these are useful scripted-inference contract checks rather than an unused test copy. The tests correctly label themselves not acceptance and do not execute generated shell/delegation/filesystem actions.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "git diff --name-status 4204b8d4c510b0ed0e76c4deaf219c069614b8ea 9f0568e39bc7ba3a3fac149125d54a276daea185: exactly one changed source path, tests/remote-offline-menu-pty.py; read its full diff and candidate body.",
+        "Resolved acceptedBlobs using git rev-parse candidate:path; no test results are claimed.",
+        "git diff --exit-code base candidate for this focus: unchanged. Read the entire focus and scenario.ts plus both stream consumer boundaries.",
+        "Reviewed effects without running: fixture tests call the pure response/stream generators and parse code strings; executing the harness/provider instead would create fixture state, start listeners/processes and perform generated tools, so none were launched."
+      ],
+      "limits": [
+        "Static actual-code review only. No setup, tests, builds, provider calls, credential access, or device/live-auth checks performed; parent owns audited isolated runtime gates. No descendants launched. Parent must verify runtime agent.model openai-codex/gpt-6.1-sol; this artifact does not independently attest the host-selected model.",
+        "Review provenance: durable assigned worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_897371b3. Source was read with git show at the exact candidate and git diff from the exact primaryBase, not from checkout HEAD. No source edits, installs, cleanup, publication, or worktree removal.",
+        "Safety for ALL descendants: NO sudo, recovery investigation, user secrets, shell deletion/cleanup commands, inherited HOME/config/SDK cleanup, nested shell traps, destructive git, or user-data mutation. User already recovered data and requested no recovery work. Tests must use explicit process argv/env and owned fs.mkdtemp fixture HOME/config/SDK; retain them, do not delete. Review filesystem/network effects BEFORE tests/setup. Existing test-code cleanup of provably owned temporary paths may be inspected but NEVER run a shell trap or inherited HOME removal. Need live auth/device? Report unverified, don't access credentials. Propagate these constraints verbatim. Independent code/review agents get durable worktrees, not /tmp code checkouts. Keep existing worktrees and candidate evidence.",
+        "Substring assertions and syntax parsing do not prove real SSH placement, question delivery, runtime role refusal or repository return. Scenario-generated /tmp records are fixture-side test data, not independent review code checkouts; they were inspected, not created or removed."
       ]
     },
     {
       "file": "tests/remote-placement-entry.test.ts",
       "initialBlob": "d79ea5dfc30377c01a5786c4e8b1d873a73d23eb",
-      "status": "pending",
+      "status": "accepted",
       "area": "remote",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_ddbd2881",
       "primaryCommit": "9f0568e39bc7ba3a3fac149125d54a276daea185",
-      "judgeIds": [],
+      "judgeIds": ["task_897371b3"],
       "sourceCommit": "9f0568e39bc7ba3a3fac149125d54a276daea185",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
       "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
@@ -16564,6 +16596,22 @@
         "Durable code provenance is this worktree and exact sourceCommit. Only formatter environment/evidence uses retained /tmp/pr45-remote-format-hUqtok; no temporary code checkout or descendant delegation. Parent verifies runtime model; this worker did not independently inspect it.",
         "No wisdom/values edits: parent owns aggregate wisdom; no per-worker note created.",
         "No compiled control or validator tests executed. The current test concerns extra-field ownership, not full required-field/schema validation; no incidental coverage expansion. Related changedPaths contains the full batch source scope for judge visibility; this focus itself is unchanged."
+      ],
+      "acceptedBlob": "d79ea5dfc30377c01a5786c4e8b1d873a73d23eb",
+      "result": "Read the full unchanged file against the real validator and wire types. Two explicit examples keep ownership visible: placement is on launch, workspace is on repository-upload. The rejection loop displays all four forbidden crossings directly: host on launch, placement on hello, workspace on sync and approvedUntracked on launch. owner and placement are small local literals, not opaque factories. Splitting this already short boundary proof or extracting builders would add navigation without improving comprehension.",
+      "systemReason": "entry.ts owns the allowed-field map and composes common ownerId/epoch/taskId only for non-hello operations. Its launch row permits placement, and its repository-upload row permits workspace; protocol.ts and RepositoryRequest confirm those distinct wire owners. CLI --remote-control calls runRemoteControl, which bounds and parses stdin, validates fields before handleRemoteRequest, and publishes request_failed when validation throws. Owner handling then routes repository-upload to repositoryRequest and validates launch placement plus prepared workspace agreement independently. The test accurately covers outer field ownership rather than claiming that its dummy repo/snapshot values prove deeper launch or upload validity.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "git diff --name-status 4204b8d4c510b0ed0e76c4deaf219c069614b8ea 9f0568e39bc7ba3a3fac149125d54a276daea185: exactly one changed source path, tests/remote-offline-menu-pty.py; read its full diff and candidate body.",
+        "Resolved acceptedBlobs using git rev-parse candidate:path; no test results are claimed.",
+        "git diff --exit-code base candidate for this focus: unchanged. Read full focus and entry.ts, protocol owning fields, RepositoryRequest and relevant compiled CLI/owner routes.",
+        "Reviewed effects without running: test invokes only validateRemoteRequestFields; it does not invoke stdin handling, owner task spawn or repository-upload disk operations."
+      ],
+      "limits": [
+        "Static actual-code review only. No setup, tests, builds, provider calls, credential access, or device/live-auth checks performed; parent owns audited isolated runtime gates. No descendants launched. Parent must verify runtime agent.model openai-codex/gpt-6.1-sol; this artifact does not independently attest the host-selected model.",
+        "Review provenance: durable assigned worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_897371b3. Source was read with git show at the exact candidate and git diff from the exact primaryBase, not from checkout HEAD. No source edits, installs, cleanup, publication, or worktree removal.",
+        "Safety for ALL descendants: NO sudo, recovery investigation, user secrets, shell deletion/cleanup commands, inherited HOME/config/SDK cleanup, nested shell traps, destructive git, or user-data mutation. User already recovered data and requested no recovery work. Tests must use explicit process argv/env and owned fs.mkdtemp fixture HOME/config/SDK; retain them, do not delete. Review filesystem/network effects BEFORE tests/setup. Existing test-code cleanup of provably owned temporary paths may be inspected but NEVER run a shell trap or inherited HOME removal. Need live auth/device? Report unverified, don't access credentials. Propagate these constraints verbatim. Independent code/review agents get durable worktrees, not /tmp code checkouts. Keep existing worktrees and candidate evidence.",
+        "This direct validator test does not execute the compiled stdin boundary or prove nested placement schema, upload integrity, owner identity or destination launch behavior. Those runtime gates remain parent-owned."
       ]
     },
     {
@@ -22266,9 +22314,9 @@
     "baselineFiles": 766,
     "finalGate": "pending; incomplete focus coverage",
     "liveAuth": "unverified/failing; preserved",
-    "accepted": 775,
+    "accepted": 778,
     "total": 835,
-    "pending": 60,
+    "pending": 57,
     "sourceExtras": 69,
     "checkout": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
     "branch": "bruv/readability-pr45-sol-continuation",

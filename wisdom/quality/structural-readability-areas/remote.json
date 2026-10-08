@@ -2973,18 +2973,19 @@
     {
       "focus": "tests/remote-offline-menu-pty.py",
       "initialBlob": "5f2cbe002c36d27dc965c984215fa6673bbdaa71",
-      "status": "pending",
+      "status": "accepted",
       "judgeRounds": [],
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "d9ed8861bcf0a1e0adec824a9c5f4b5949e6842f",
         "primaryId": "task_ddbd2881",
         "primaryCommit": "9f0568e39bc7ba3a3fac149125d54a276daea185",
-        "judgeIds": [],
+        "judgeIds": ["task_897371b3"],
         "sourceCommit": "9f0568e39bc7ba3a3fac149125d54a276daea185",
-        "state": "needs-judge",
-        "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+        "state": "accepted-joined",
+        "reason": "The old script required reconstructing a journey from import-time globals, dense fixture writes, nested terminal helpers and a final cleanup block. The candidate makes the authorities legible: seed_offline_task creates one cached done task and its matching local grant against home/repo; fixture_environment builds only explicitly allowed process inputs and owned config/cache/data/SDK/tmp directories; prove_offline_revocation keeps transcript, byte pacing, keys and six assertions together; main visibly owns mkdtemp, PTY creation, argv/env, process start and shutdown. The return value between these operations is the grants path, not a generic mutable context. The startup guard prevents import-time execution. Slave closure is attached to attempted Popen and master closure survives terminate/wait errors. This is a coherent lifetime/authority improvement, not merely expansion or naming churn."
       },
-      "acceptedBlob": null
+      "acceptedBlob": "d9ed8861bcf0a1e0adec824a9c5f4b5949e6842f"
     },
     {
       "focus": "tests/remote-owner-lifecycle.test.ts",
@@ -3075,34 +3076,36 @@
     {
       "focus": "tests/remote-placement-e2e-fixture.test.ts",
       "initialBlob": "ab54907e3562bd6498fd44eb26bc329eea1f4ff6",
-      "status": "pending",
+      "status": "accepted",
       "judgeRounds": [],
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "ab54907e3562bd6498fd44eb26bc329eea1f4ff6",
         "primaryId": "task_ddbd2881",
         "primaryCommit": "9f0568e39bc7ba3a3fac149125d54a276daea185",
-        "judgeIds": [],
+        "judgeIds": ["task_897371b3"],
         "sourceCommit": "9f0568e39bc7ba3a3fac149125d54a276daea185",
-        "state": "needs-judge",
-        "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+        "state": "accepted-joined",
+        "reason": "Read the entire unchanged test file, not just counts or the extraction report. request/user/done/code express the protocol history locally. The parse-only stage table explicitly constructs an async function without executing generated code. Separate tests expose pinned-target lookup, parent orchestrator launch, destination-local normal child, normal-role refusal, child completion before questioning, assistant-answer-marker spoofing versus a user marker, saved-ledger answer reads, restart inspection without relaunch, clean/drift differences and SSE stop/tool_calls/DONE boundaries. A shared conversation context would conceal the very messages and authority transitions these assertions need to show; no actual structural burden warrants that change."
       },
-      "acceptedBlob": null
+      "acceptedBlob": "ab54907e3562bd6498fd44eb26bc329eea1f4ff6"
     },
     {
       "focus": "tests/remote-placement-entry.test.ts",
       "initialBlob": "d79ea5dfc30377c01a5786c4e8b1d873a73d23eb",
-      "status": "pending",
+      "status": "accepted",
       "judgeRounds": [],
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "d79ea5dfc30377c01a5786c4e8b1d873a73d23eb",
         "primaryId": "task_ddbd2881",
         "primaryCommit": "9f0568e39bc7ba3a3fac149125d54a276daea185",
-        "judgeIds": [],
+        "judgeIds": ["task_897371b3"],
         "sourceCommit": "9f0568e39bc7ba3a3fac149125d54a276daea185",
-        "state": "needs-judge",
-        "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+        "state": "accepted-joined",
+        "reason": "Read the full unchanged file against the real validator and wire types. Two explicit examples keep ownership visible: placement is on launch, workspace is on repository-upload. The rejection loop displays all four forbidden crossings directly: host on launch, placement on hello, workspace on sync and approvedUntracked on launch. owner and placement are small local literals, not opaque factories. Splitting this already short boundary proof or extracting builders would add navigation without improving comprehension."
       },
-      "acceptedBlob": null
+      "acceptedBlob": "d79ea5dfc30377c01a5786c4e8b1d873a73d23eb"
     },
     {
       "focus": "tests/remote-placement-legacy-launch.test.ts",
@@ -4160,8 +4163,8 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 119,
-    "pending": 3
+    "accepted": 122,
+    "pending": 0
   },
   "extraFiles": [
     {
