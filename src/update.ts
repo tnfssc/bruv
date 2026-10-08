@@ -48,7 +48,7 @@ export function isCompiledInvocation(moduleUrl = import.meta.url): boolean {
 type Version = [number, number, number];
 // Keep metadata/checksum requests bounded separately from ~90 MB release binaries.
 const METADATA_TIMEOUT_MS = 300_000;
-const DOWNLOAD_TIMEOUT_MS = 900_000;
+const DOWNLOAD_TIMEOUT_MS = 1_800_000;
 type ReleaseRequest = (url: string, accept: string, timeoutMs?: number) => Promise<Response>;
 type ReleaseArtifact = { name: string; binaryUrl: string; checksumUrl: string };
 type StableRelease = { version: string; parts: Version; bruv: ReleaseArtifact; connector: ReleaseArtifact };

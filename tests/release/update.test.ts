@@ -420,7 +420,7 @@ describe("artifact download integrity", () => {
         root("v0.3.0") + "bruv-claude-compat-linux-x64",
         root("v0.3.0") + "bruv-claude-compat-linux-x64.sha256",
       ]);
-      expect(timeout.mock.calls.map(([ms]) => ms)).toEqual([300_000, 900_000, 300_000, 900_000, 300_000]);
+      expect(timeout.mock.calls.map(([ms]) => ms)).toEqual([300_000, 1_800_000, 300_000, 1_800_000, 300_000]);
       expect(signals.every((signal) => signal instanceof AbortSignal)).toBe(true);
     } finally {
       timeout.mockRestore();
