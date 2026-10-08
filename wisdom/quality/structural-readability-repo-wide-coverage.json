@@ -2187,12 +2187,42 @@
       "file": "scripts/probe-live-capability.ts",
       "initialBlob": "755a16278c22dacfff5bade1859975616a2aefcb",
       "status": "pending",
-      "primaryId": null,
-      "sourceCommit": null,
+      "primaryId": "task_93771cb4",
+      "sourceCommit": "413747023ebc24e6dbbd9e78a853d962772ad67a",
       "judgeIds": [],
-      "resumeState": "own_primary_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "413747023ebc24e6dbbd9e78a853d962772ad67a",
+      "primaryBase": "0b1faebd03e5eb7711dbcba5a58453564a28cc36",
+      "primaryResult": "Scenario definitions now own their prompt, optional prior assistant refusal and synthetic response callback. Natural and explicit requests visibly share the same jobs/file/audio fixtures; audio inspection remains a string check, never dispatch. The trial plan validates names against those definitions and variant definitions, then carries parsed names into trial execution. trial reads one selected stimulus, orders optional assistant refusal before user input, and hands its mock callback to the unchanged transport. Explicit paid/disclosure gates, 1–24 limit, OpenAI-only restriction, credential handling, isolated preview and execute-only assertion, prompt hashes, deadline/speech/continuation settings and private JSONL shape are retained. Focus existed at baseline; reconciliation reported own_primary_pending with no surviving focus candidate, so no restore or old-branch integration was needed.",
+      "primaryPaths": [
+        "scripts/probe-live-capability.ts"
+      ],
+      "primaryChecks": [
+        {
+          "name": "git diff --check",
+          "result": "passed before source-only commit"
+        },
+        {
+          "name": "manual actual-source and caller review",
+          "result": "Read focus, shared studyTrial transport and its assertions, related probe usage, isolated prompt preview implementation, values/readability guidance, repository/area ledgers and preserved reconciliation focus row; reviewed changed validation and all scenario mappings against baseline."
+        },
+        {
+          "name": "TypeScript static syntax inspection",
+          "result": "not completed: read-only import of /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/typescript/lib/typescript.js failed ENOENT; no dependency installation or candidate execution followed"
+        },
+        {
+          "name": "source-only commit provenance",
+          "result": "Commit changes only scripts/probe-live-capability.ts; exact focus Git blob recorded. No source/helper or test assertions changed elsewhere."
+        }
+      ],
+      "primaryLimits": [
+        "No repository tests, setup or builds run; parent owns audited isolated batch gates.",
+        "No paid provider probe, credential loading, generated code execution, device use or network study performed.",
+        "Independent fresh actual-code judgment remains for the parent; this is a primary proposal, not acceptance.",
+        "No worker wisdom files or values edits; parent owns aggregate wisdom."
+      ]
     },
     {
       "file": "scripts/probe-live-controlled.ts",
