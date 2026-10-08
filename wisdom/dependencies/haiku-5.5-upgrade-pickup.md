@@ -65,3 +65,20 @@ The user's installed binary still needs an install/release to gain this model.
 Wisdom now covers upgrade, test deadlines, and recovery integration. Values
 retain the sibling lesson: stopping future damage is not recovery while
 inherited bad state still feeds fresh starts. No extra general value needed.
+
+## PR #54 conflict follow-up
+
+User asked to address conflicts after PR publication. Merged origin/develop
+37f34948, which contains the same sibling recovery commits already adapted
+here. Four add/add conflicts were fixture README, recovery tests, historical
+reproduction text, and drift recovery wisdom. Kept this branch's reviewed
+1.1.0 versions and nested-directory ownership tests. Removed the reintroduced
+1.0.3 fixture. Runtime code, pins, patches and hashes are unchanged from the
+fully validated branch. No develop change was dropped beyond superseded
+1.0.3 fixture content already carried by the 1.1.0 integration.
+
+Post-resolution check and guarded asset prep pass. Host/recovery/Haiku tests:
+32 passed, zero failures, 1,484 assertions. The prior full Linux proof still
+applies to unchanged runtime code; no need to repeat the entire gate.
+Values unchanged in this follow-up: same recovery lesson applies.
+Next: commit merge, push PR branch, confirm GitHub no longer reports conflicts.
