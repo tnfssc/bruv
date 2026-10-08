@@ -14385,36 +14385,87 @@
       "initialBlob": "1b8198ce3eb32c8ae99a69b59897997adc48bf75",
       "status": "pending",
       "area": "execution-tasks-questions",
-      "resumeState": "pending-primary",
-      "primaryId": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_dc3fa76a",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "632ef5ce3891bfe175447a0f7c0c228851c02465",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
-      "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage."
+      "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage.",
+      "primaryCommit": "632ef5ce3891bfe175447a0f7c0c228851c02465",
+      "primaryBase": "ed106a94e39747cd3f7ae856021ad1ed90be5361",
+      "primaryResult": "No source change to the profiles focus. Keeping the four direct tests avoids inventing fixture abstractions or splitting the coherent persistence journey. Missing model, validation failure, parent inheritance, explicit off, file permissions and malformed-load failure assertions remain exactly as read. Nearby UI/TUI test changes do not alter profile semantics.",
+      "primaryPaths": ["tests/subagent-settings-tui.test.ts", "tests/subagent-settings-ui.test.ts"],
+      "primaryChecks": [
+        "Read the whole assigned focus and relevant profile resolution, command registration, panel transition/rendering, tmux runner and CLI startup callers; no source candidate/rejection existed in the three assigned reconciliation rows.",
+        "Repository Biome format --write via child_process argv/env on changed source paths only: exit 0. Fresh retained HOME/config/cache/data/SDK/TMPDIR fixtures: /tmp/pr45-subagent-format-e0d9K0 and /tmp/pr45-subagent-format-xwW4pI; exact argv and results retained in format-result.json in each.",
+        "git diff --check: exit 0 before commit. Reviewed complete two-file source scope and verified repository hooks directory contains no non-sample hooks.",
+        "SOURCE ONLY commit: 632ef5ce3891bfe175447a0f7c0c228851c02465; no production sources, helper modules, wisdom files or result artifact committed."
+      ],
+      "primaryLimits": [
+        "No tests, setup, builds, live auth/device access, credentials, reinstall, push, PR or merge performed. Runtime and independent judgments are parent-owned; formatter and static reading do not establish runtime behavior or an independent readability verdict.",
+        "Existing profile persistence test cleanup only removes its mkdtemp-owned directory; inspected but never executed. UI command fixtures now retain owned temporary files. Real-TUI test now uses explicit process argv/env, owned HOME/config/cache/data/SDK/TMPDIR and socket, no inherited auth or tmux config, direct tmux command argv, and retains fixture files. These runtime changes await the parent isolated gate.",
+        "Real-TUI startup still uses the existing one-second command-binding delay and requires the built dist/bruv plus tmux; no new readiness mechanism or provider request was introduced. Direct multi-argument launch was checked against installed tmux documentation, not exercised.",
+        "No subagents delegated. Parent owns runtime agent.model verification openai-codex/gpt-6.1-sol.",
+        "Durable source provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_dc3fa76a; base ed106a94e39747cd3f7ae856021ad1ed90be5361. Formatter fixtures are retained temporary state, not code checkouts. Existing candidate worktrees/evidence were not modified."
+      ]
     },
     {
       "file": "tests/subagent-settings-tui.test.ts",
       "initialBlob": "f6345c6670f6dcc1d370372d3d85a3437bbfcb41",
       "status": "pending",
       "area": "execution-tasks-questions",
-      "resumeState": "pending-primary",
-      "primaryId": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_dc3fa76a",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "632ef5ce3891bfe175447a0f7c0c228851c02465",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
-      "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage."
+      "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage.",
+      "primaryCommit": "632ef5ce3891bfe175447a0f7c0c228851c02465",
+      "primaryBase": "ed106a94e39747cd3f7ae856021ad1ed90be5361",
+      "primaryResult": "withProfileTerminal now owns mkdtemp allocation, explicit environment, direct executable argv, startup, callback and socket-scoped shutdown. The test body contains only frame-observed interaction and persisted model/thinking checks. HOME/config/cache/data/SDK/tmp are explicitly owned, tmux uses the fixture socket and /dev/null config, environment contains only selected noncredential values and an offline placeholder, and files are retained. Existing frame predicates, full-query wait, five-down return-row-to-Save journey, final assertions, timeout and startup delay are preserved.",
+      "primaryPaths": ["tests/subagent-settings-tui.test.ts", "tests/subagent-settings-ui.test.ts"],
+      "primaryChecks": [
+        "Read the whole assigned focus and relevant profile resolution, command registration, panel transition/rendering, tmux runner and CLI startup callers; no source candidate/rejection existed in the three assigned reconciliation rows.",
+        "Repository Biome format --write via child_process argv/env on changed source paths only: exit 0. Fresh retained HOME/config/cache/data/SDK/TMPDIR fixtures: /tmp/pr45-subagent-format-e0d9K0 and /tmp/pr45-subagent-format-xwW4pI; exact argv and results retained in format-result.json in each.",
+        "git diff --check: exit 0 before commit. Reviewed complete two-file source scope and verified repository hooks directory contains no non-sample hooks.",
+        "SOURCE ONLY commit: 632ef5ce3891bfe175447a0f7c0c228851c02465; no production sources, helper modules, wisdom files or result artifact committed."
+      ],
+      "primaryLimits": [
+        "No tests, setup, builds, live auth/device access, credentials, reinstall, push, PR or merge performed. Runtime and independent judgments are parent-owned; formatter and static reading do not establish runtime behavior or an independent readability verdict.",
+        "Existing profile persistence test cleanup only removes its mkdtemp-owned directory; inspected but never executed. UI command fixtures now retain owned temporary files. Real-TUI test now uses explicit process argv/env, owned HOME/config/cache/data/SDK/TMPDIR and socket, no inherited auth or tmux config, direct tmux command argv, and retains fixture files. These runtime changes await the parent isolated gate.",
+        "Real-TUI startup still uses the existing one-second command-binding delay and requires the built dist/bruv plus tmux; no new readiness mechanism or provider request was introduced. Direct multi-argument launch was checked against installed tmux documentation, not exercised.",
+        "No subagents delegated. Parent owns runtime agent.model verification openai-codex/gpt-6.1-sol.",
+        "Durable source provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_dc3fa76a; base ed106a94e39747cd3f7ae856021ad1ed90be5361. Formatter fixtures are retained temporary state, not code checkouts. Existing candidate worktrees/evidence were not modified."
+      ]
     },
     {
       "file": "tests/subagent-settings-ui.test.ts",
       "initialBlob": "eacdda0427dd8083b5ddc0491ec2fa26a852d435",
       "status": "pending",
       "area": "execution-tasks-questions",
-      "resumeState": "pending-primary",
-      "primaryId": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_dc3fa76a",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "632ef5ce3891bfe175447a0f7c0c228851c02465",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
-      "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage."
+      "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage.",
+      "primaryCommit": "632ef5ce3891bfe175447a0f7c0c228851c02465",
+      "primaryBase": "ed106a94e39747cd3f7ae856021ad1ed90be5361",
+      "primaryResult": "The panel driver exposes selectedLine and an overview-only Save action that asserts the current screen and selected Save row. Save is separated from edit/reopen/inheritance stages; explicit returned-row assertions preserve the selection-preservation contract rather than relying on arithmetic to reveal a regression. The page-clamping/Cancel test retains its raw input journey. Command persistence uses the same Save action, while cancel, malformed-file nonoverwrite, non-TUI no-file, empty catalog, unavailable model, narrow rendering and exact-search assertions remain intact. Owned command fixture files are retained; no production code or generic context abstraction was introduced.",
+      "primaryPaths": ["tests/subagent-settings-tui.test.ts", "tests/subagent-settings-ui.test.ts"],
+      "primaryChecks": [
+        "Read the whole assigned focus and relevant profile resolution, command registration, panel transition/rendering, tmux runner and CLI startup callers; no source candidate/rejection existed in the three assigned reconciliation rows.",
+        "Repository Biome format --write via child_process argv/env on changed source paths only: exit 0. Fresh retained HOME/config/cache/data/SDK/TMPDIR fixtures: /tmp/pr45-subagent-format-e0d9K0 and /tmp/pr45-subagent-format-xwW4pI; exact argv and results retained in format-result.json in each.",
+        "git diff --check: exit 0 before commit. Reviewed complete two-file source scope and verified repository hooks directory contains no non-sample hooks.",
+        "SOURCE ONLY commit: 632ef5ce3891bfe175447a0f7c0c228851c02465; no production sources, helper modules, wisdom files or result artifact committed."
+      ],
+      "primaryLimits": [
+        "No tests, setup, builds, live auth/device access, credentials, reinstall, push, PR or merge performed. Runtime and independent judgments are parent-owned; formatter and static reading do not establish runtime behavior or an independent readability verdict.",
+        "Existing profile persistence test cleanup only removes its mkdtemp-owned directory; inspected but never executed. UI command fixtures now retain owned temporary files. Real-TUI test now uses explicit process argv/env, owned HOME/config/cache/data/SDK/TMPDIR and socket, no inherited auth or tmux config, direct tmux command argv, and retains fixture files. These runtime changes await the parent isolated gate.",
+        "Real-TUI startup still uses the existing one-second command-binding delay and requires the built dist/bruv plus tmux; no new readiness mechanism or provider request was introduced. Direct multi-argument launch was checked against installed tmux documentation, not exercised.",
+        "No subagents delegated. Parent owns runtime agent.model verification openai-codex/gpt-6.1-sol.",
+        "Durable source provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_dc3fa76a; base ed106a94e39747cd3f7ae856021ad1ed90be5361. Formatter fixtures are retained temporary state, not code checkouts. Existing candidate worktrees/evidence were not modified."
+      ]
     },
     {
       "file": "tests/system-prompt.test.ts",
