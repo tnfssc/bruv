@@ -181,7 +181,7 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_7f7551b5",
         "branch": "bruv/pr45-judge-scripts-remote-placement-e2e.-7f7551b5",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled"
       },
       {
         "id": "task_2fd31271",

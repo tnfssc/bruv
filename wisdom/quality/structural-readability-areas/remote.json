@@ -117,18 +117,21 @@
     {
       "focus": "scripts/remote-placement-e2e.ts",
       "initialBlob": "2ec9d0ad139efe872aa17b34dd5497924781223a",
-      "status": "pending",
+      "status": "accepted",
       "judgeRounds": [],
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "644ccb436f5f4bf97fd6544f2081698dc55851d1",
         "primaryId": "task_dbde3103",
         "primaryCommit": "1f646d49f88f012e1fb29e8c561e7792d962c6b9",
-        "judgeIds": [],
+        "judgeIds": [
+          "task_7f7551b5"
+        ],
         "sourceCommit": "1f646d49f88f012e1fb29e8c561e7792d962c6b9",
-        "state": "needs-judge",
-        "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+        "state": "accepted-joined",
+        "reason": "Intrinsic: the runner has identifiable fixture, provider, terminal, question, clean-return, drift-return, completion and final evidence phases. The new approval operation owns the two distinct public/source question snapshots q and remoteQ for their entire useful lifetime: provenance, client restart, identity/owner/version stability, Escape leaving the source ledger pending, and explicit terminal approval. They no longer remain incidental variables in the outer orchestration. The clean journey now visibly launches, waits for the persisted question, performs restart-and-answer, and separately observes safe return/jobs completion. assertServerChildWorktree isolates destination checkout and child-result evidence without moving its execution point. restartParent owns the actual client teardown, ptyStarted transition, delay, relaunch, readiness and caller-selected settling for both reconnects; it neither reconnects the server nor duplicates scenario assertions. This is coherent lifetime grouping rather than rename-only change or a context-bag framework. Unchanged decision: retain the direct drift-review, descriptor, completion-journal, probe and final evidence sequences; those express separate ordered contracts clearly and do not need forced abstractions."
       },
-      "acceptedBlob": null
+      "acceptedBlob": "644ccb436f5f4bf97fd6544f2081698dc55851d1"
     },
     {
       "focus": "scripts/remote-pty-e2e.ts",
@@ -4323,7 +4326,7 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 78,
-    "pending": 44
+    "accepted": 79,
+    "pending": 43
   }
 }

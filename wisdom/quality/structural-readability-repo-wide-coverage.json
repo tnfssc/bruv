@@ -2845,12 +2845,14 @@
     {
       "file": "scripts/remote-placement-e2e.ts",
       "initialBlob": "2ec9d0ad139efe872aa17b34dd5497924781223a",
-      "status": "pending",
+      "status": "accepted",
       "area": "remote",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_dbde3103",
       "primaryCommit": "1f646d49f88f012e1fb29e8c561e7792d962c6b9",
-      "judgeIds": [],
+      "judgeIds": [
+        "task_7f7551b5"
+      ],
       "sourceCommit": "1f646d49f88f012e1fb29e8c561e7792d962c6b9",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
       "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
@@ -2892,6 +2894,33 @@
         "The fixture helper includes image/build and root cleanup behavior, so executing it here would violate the assigned safety boundary. Existing cleanup code was not run or changed.",
         "Independent exact-candidate structural judgment remains parent-owned and pending.",
         "No per-worker wisdom edits; parent owns aggregate wisdom."
+      ],
+      "acceptedBlob": "644ccb436f5f4bf97fd6544f2081698dc55851d1",
+      "result": "Intrinsic: the runner has identifiable fixture, provider, terminal, question, clean-return, drift-return, completion and final evidence phases. The new approval operation owns the two distinct public/source question snapshots q and remoteQ for their entire useful lifetime: provenance, client restart, identity/owner/version stability, Escape leaving the source ledger pending, and explicit terminal approval. They no longer remain incidental variables in the outer orchestration. The clean journey now visibly launches, waits for the persisted question, performs restart-and-answer, and separately observes safe return/jobs completion. assertServerChildWorktree isolates destination checkout and child-result evidence without moving its execution point. restartParent owns the actual client teardown, ptyStarted transition, delay, relaunch, readiness and caller-selected settling for both reconnects; it neither reconnects the server nor duplicates scenario assertions. This is coherent lifetime grouping rather than rename-only change or a context-bag framework. Unchanged decision: retain the direct drift-review, descriptor, completion-journal, probe and final evidence sequences; those express separate ordered contracts clearly and do not need forced abstractions.",
+      "systemReason": "Compared the exact candidate with its primary base and parent d882fbc6525ed7df8180b1cc9e79d5609830a2e9, not checkout HEAD. Only the focus source path changes. Read all candidate source and the complete diff, plus base approval/reconnect sequences. The maintained README invokes this script directly; no package.json or other script caller was found. networkNoneFixture remains the fixture resource owner, while this script owns its parent provider and PTY. The scenario launches only after discovering a human-authorized target, uses the destination orchestrator profile, creates a target-omitted normal child worktree, waits for ordinary completion, then asks/blocks on the source question. Production picker cancellation returns without submitting; extension/runtime submit the displayed owner/version snapshot; service records cli provenance; RemoteQuestionBridge projects source identity separately and dispatches only a saved explicit human reply to the pinned owner/version. The scenario verifies that saved answer and resolves it before writing tracked content. Clean apply preserves local history and omitted untracked input; drift retains parent edits and a review patch; automatic observation and the second restart retain exactly two completions and owner placements. These assertions and their order are preserved. The helper resolves after the terminal Enter, not after remote completion, and the outer safe-return wait makes that distinction clear.",
+      "checks": [
+        {
+          "check": "Exact Git identity and changed-path inspection",
+          "result": "Candidate parent equals supplied primary base; only scripts/remote-placement-e2e.ts changed; accepted blob read directly from candidate Git tree."
+        },
+        {
+          "check": "Read-only helper-inlining comparison",
+          "result": "After removing helper declarations, substituting taskId with cleanId, and expanding the child assertion and both parameterized restarts at their call sites, whole-file text equals base after whitespace/trailing-comma normalization. This corroborates operation order, not runtime equivalence."
+        },
+        {
+          "check": "git diff --check primary base to candidate",
+          "result": "Passed, no output."
+        },
+        {
+          "check": "Actual-code and existing contract-test reading",
+          "result": "Read candidate runner, supporting fixture/scenario, existing fixture tests and production human-question routing; did not execute them."
+        }
+      ],
+      "limits": [
+        "No setup, repository tests, builds, compiled CLI, Docker, SSH, provider, device or real-auth execution performed. Parent owns audited isolated batch gates. Readability acceptance is not runtime acceptance.",
+        "The unchanged imported fixture start inspects Docker context using inherited HOME, and cleanup removes its container/image and recursively removes its owned root. Those operations were read only, not invoked or approved under the current no-cleanup/no-credentials restrictions.",
+        "Reviewed production question paths at the candidate; did not re-prove the complete production placement/return implementation or all transport retry/cancellation contracts.",
+        "Historical setup/compiler/authentication failures in the ledgers remain visible; no attempt was made to bypass or relabel them. Runtime agent.model verification is external parent responsibility."
       ]
     },
     {
