@@ -16406,11 +16406,11 @@
     {
       "file": "tests/live-tool-result.test.ts",
       "initialBlob": "6d87f59d24f16d498e320e60d32836f635dfc0f0",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_a1f1faff",
       "sourceCommit": "05093422350fcad87478cf2dd0f22f51047bdae0",
-      "judgeIds": ["task_7324a1fb"],
-      "resumeState": "needs-judge",
+      "judgeIds": ["task_7324a1fb", "task_e2b8f7f5"],
+      "resumeState": "accepted-joined",
       "pendingReason": "Retain exact related-path actual-code acceptance; it is not completion of this file’s distinct primary/fresh focus-judge requirement.",
       "area": "live-native-audio",
       "primaryCommit": "05093422350fcad87478cf2dd0f22f51047bdae0",
@@ -16429,6 +16429,20 @@
         "Formatter fixture HOME/config/cache/data/TMPDIR/SDK directories are retained at /tmp/pr45-live-test-format-xNiy3i; their provenance is recorded here in this durable worktree. Test artifact directories are allocated only when parent runs tests and are intentionally retained.",
         "Historical related ACCEPT is preserved evidence, not a new own-focus judge verdict. No per-worker wisdom edits; parent owns aggregate wisdom.",
         "changedPaths in each decision is the complete shared batch source scope; an unchanged focus is explicitly marked no-change."
+      ],
+      "acceptedBlob": "138201b97ba93d82f16142099255a2991f57094e",
+      "result": "Read the entire candidate file and exact base diff. Previously the image tests let voiceToolResult choose the global temp root; now each artifact-producing case visibly creates and passes its own mkdtemp directory directly beside the value, map call, and readback. That makes evidence ownership inspectable without a fixture/context abstraction. The original structured-error, large-image, cyclic-serialization and small-image assertions remain. The added exact-boundary case puts envelope calculation, inline eligibility, one-byte overflow, session-prefix containment, complete JSON readback and private directory/file mode assertions in one causal sequence. The UTF-8 case separately exposes byte eligibility versus character preview; the blocked-directory case locally constructs the storage failure and insists on an error rather than an unusable evidence path. Inline/null/cyclic cases have no test-directory allocation. These are concrete ownership and evidence journeys, not rename churn.",
+      "systemReason": "Traced src/live/tool-result.ts from JSON envelope serialization and explicit serialization error to byte/image eligibility, owned artifact directory creation, private result.json, bounded preview and explicit storage error. Read Gemini dispatch/reply replay authority: execution receives orchestration.artifactDirectory, resolved output is recorded before wire delivery, and queued-only cancellation belongs to the session. Read OpenAI toolDone: dispatch/cancel state and call_id pairing are session-owned; mapping receives orchestration.artifactDirectory before reply. src/live/main-owner.ts supplies sessionFile + .artifacts/live. The candidate improves test evidence ownership while leaving those production authorities unchanged; it does not pretend JSON images were visually rendered.",
+      "checks": [
+        "git diff --name-status/stat showed only tests/live-tool-result.test.ts changed relative to primaryBase; inspected that entire changed path and baseline file.",
+        "Resolved accepted blob using git ls-tree at the exact candidate.",
+        "Static filesystem-effect review: artifact tests allocate fresh mkdtemp fixtures, mapper writes only beneath their supplied directories, blocked-directory file is owned, and no cleanup removes evidence. No subprocess or network use in this focus."
+      ],
+      "limits": [
+        "No setup, tests, builds, reinstall, credentials, live authentication, audio devices, network probes, shell cleanup, source edits, commits or publication performed. Parent owns audited isolated runtime gates and runtime agent.model verification; this review makes no runtime model attestation.",
+        "Read-only git show/diff review of exact candidate against b3b3fdb0c8d775cf3d495585725fcbe635f2eb59 in durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_e2b8f7f5. Checkout HEAD f93b4d1c91ac14228f7e00edafc2cacb3698d111 was not used as candidate evidence.",
+        "wisdom/values.md and wisdom/quality/structural-readability-guidance.md read; no wisdom edits because aggregate wisdom is parent-owned. No descendants launched.",
+        "Static review does not establish runtime filesystem permissions on every platform, live provider delivery, physical hearing, or visual image perception. Temp test fixtures would be retained; none were created by this review."
       ]
     },
     {
@@ -16447,11 +16461,11 @@
     {
       "file": "tests/live-transcript.test.ts",
       "initialBlob": "88ce880be802e5949175dcc8c634f892ccb9f894",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_a1f1faff",
       "sourceCommit": "05093422350fcad87478cf2dd0f22f51047bdae0",
-      "judgeIds": [],
-      "resumeState": "needs-judge",
+      "judgeIds": ["task_e2b8f7f5"],
+      "resumeState": "accepted-joined",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
       "area": "live-native-audio",
       "primaryCommit": "05093422350fcad87478cf2dd0f22f51047bdae0",
@@ -16470,16 +16484,30 @@
         "Formatter fixture HOME/config/cache/data/TMPDIR/SDK directories are retained at /tmp/pr45-live-test-format-xNiy3i; their provenance is recorded here in this durable worktree. Test artifact directories are allocated only when parent runs tests and are intentionally retained.",
         "Historical related ACCEPT is preserved evidence, not a new own-focus judge verdict. No per-worker wisdom edits; parent owns aggregate wisdom.",
         "changedPaths in each decision is the complete shared batch source scope; an unchanged focus is explicitly marked no-change."
+      ],
+      "acceptedBlob": "88ce880be802e5949175dcc8c634f892ccb9f894",
+      "result": "Read the whole unchanged file. The first case joins a received long line before checking complete saved text versus clipped viewport and retained history; the model-contract case explicitly maps replacement/final inputs, turn-boundary and interrupted finishes to saved text/status and rendered interruption, then reset. The speaker-interleave case shows the previous draft becomes partial before the other speaker saves. The chunk case joins all saved partial chunks back into the original input after finish; the exact-full case distinguishes capacity flushing from final boundary. The last case records the live frame and compares it directly after finish, exposing viewport-slot stability. Each test keeps input, persistence callback, finish and expectation locally readable; extraction would hide these short causal sequences.",
+      "systemReason": "Followed TranscriptLog.receive through replacement/speaker flushing, append capacity, finish, flush/save/recent retention, reset and view rendering. In the default mode, exactly full final chunks are deliberately not flushed partial, while a live draft reserves a viewport slot. Then followed the actual extension caller: it constructs groupTurns:true, renders draftView instead of view, routes GPT deltas into receive, applies replace/model-contract final events, and explicitly finishes interrupted output. Read grouped turn/replacement tests in tests/live-conversation.test.ts. This focus remains a default chunked persistence/viewport contract, not proof of the current production draft renderer or heard speech. The distinct default behavior remains implemented and deserves these clear direct tests; no structural rewrite is needed.",
+      "checks": [
+        "Exact candidate git show of the entire intrinsic focus and relevant transcript implementation/caller sections.",
+        "git diff --quiet confirmed this focus unchanged from primaryBase; accepted focus and changed-path blobs resolved by git ls-tree.",
+        "Static effect review: saved arrays and TranscriptLog state only; no filesystem, child-process, device or network work in this focus."
+      ],
+      "limits": [
+        "No setup, tests, builds, reinstall, credentials, live authentication, audio devices, network probes, shell cleanup, source edits, commits or publication performed. Parent owns audited isolated runtime gates and runtime agent.model verification; this review makes no runtime model attestation.",
+        "Read-only git show/diff review of exact candidate against b3b3fdb0c8d775cf3d495585725fcbe635f2eb59 in durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_e2b8f7f5. Checkout HEAD f93b4d1c91ac14228f7e00edafc2cacb3698d111 was not used as candidate evidence.",
+        "wisdom/values.md and wisdom/quality/structural-readability-guidance.md read; no wisdom edits because aggregate wisdom is parent-owned. No descendants launched.",
+        "No runtime transcript or terminal validation. Default view tests do not establish production groupTurns/draftView behavior; relevant existing grouped tests were read, not run."
       ]
     },
     {
       "file": "tests/live-tui-startup.test.ts",
       "initialBlob": "385cb7985f917b03dd2e21ee12d4ce3904ca8f84",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_a1f1faff",
       "sourceCommit": "05093422350fcad87478cf2dd0f22f51047bdae0",
-      "judgeIds": [],
-      "resumeState": "needs-judge",
+      "judgeIds": ["task_e2b8f7f5"],
+      "resumeState": "accepted-joined",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
       "area": "live-native-audio",
       "primaryCommit": "05093422350fcad87478cf2dd0f22f51047bdae0",
@@ -16499,6 +16527,21 @@
         "Formatter fixture HOME/config/cache/data/TMPDIR/SDK directories are retained at /tmp/pr45-live-test-format-xNiy3i; their provenance is recorded here in this durable worktree. Test artifact directories are allocated only when parent runs tests and are intentionally retained.",
         "Historical related ACCEPT is preserved evidence, not a new own-focus judge verdict. No per-worker wisdom edits; parent owns aggregate wisdom.",
         "changedPaths in each decision is the complete shared batch source scope; an unchanged focus is explicitly marked no-change."
+      ],
+      "acceptedBlob": "385cb7985f917b03dd2e21ee12d4ce3904ca8f84",
+      "result": "Read both unchanged cases in full and the whole waitForLiveTuiStartup helper. The ready case places the fixture frame and empty sendKey recorder beside the no-key assertion. The trust case keeps the synthetic state transition visible: only after three recorded keys does the frame expose the GPT fixture, and the assertion names Down, Down, Enter exactly. A shared fixture or context bag would obscure the only important transition. The tests do not launch terminals or silently assert permanent trust.",
+      "systemReason": "The helper first accepts an already-visible fixture, otherwise detects project trust, sends session-only Down/Down/Enter, then waits for the requested fixture and throws with the actual final frame on timeout. Read actual picker and GPT callers from owned fixture HOME/theme preparation through tmux capture/send-key callbacks and startup gating before scenario assertions. Read helper usage in spoken and push-to-talk startup/replay paths and tmuxRunner/capturePane dispatch. Unit tests correctly isolate readiness versus trust without claiming real CLI or trust-menu rendering proof; source callers supply the real terminal boundary. No additional abstraction or renaming improves this intrinsic focus.",
+      "checks": [
+        "Exact candidate git show of entire focus and helper; read real terminal caller journeys rather than inferring from unit test names.",
+        "git diff --quiet confirmed this focus unchanged from primaryBase; accepted focus and changed-path blobs resolved by git ls-tree.",
+        "Static effect review: focus uses in-memory callbacks only; helper polls with Bun.sleep. Real callers allocate fixture HOME paths, spawn tmux/source CLI, and contain owned-path cleanup, which was inspected but never executed."
+      ],
+      "limits": [
+        "No setup, tests, builds, reinstall, credentials, live authentication, audio devices, network probes, shell cleanup, source edits, commits or publication performed. Parent owns audited isolated runtime gates and runtime agent.model verification; this review makes no runtime model attestation.",
+        "Read-only git show/diff review of exact candidate against b3b3fdb0c8d775cf3d495585725fcbe635f2eb59 in durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_e2b8f7f5. Checkout HEAD f93b4d1c91ac14228f7e00edafc2cacb3698d111 was not used as candidate evidence.",
+        "wisdom/values.md and wisdom/quality/structural-readability-guidance.md read; no wisdom edits because aggregate wisdom is parent-owned. No descendants launched.",
+        "No actual tmux/source CLI rendering or project trust menu validation. Unit cases do not test delayed readiness or timeout; this is a known coverage limit, not a structural reading objection.",
+        "Broader terminal callers are not approved for execution by this review: their environment isolation, asset preparation and optional externally supplied evidence output paths require parent audit before any gate. Existing owned-temp cleanup was read only; no cleanup command was run."
       ]
     },
     {
@@ -24419,9 +24462,9 @@
     "baselineFiles": 766,
     "finalGate": "pending; incomplete focus coverage",
     "liveAuth": "unverified/failing; preserved",
-    "accepted": 824,
+    "accepted": 827,
     "total": 836,
-    "pending": 12,
+    "pending": 9,
     "sourceExtras": 70,
     "checkout": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
     "branch": "bruv/readability-pr45-sol-continuation",

@@ -4123,7 +4123,7 @@
       "initialBlob": "6d87f59d24f16d498e320e60d32836f635dfc0f0",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "138201b97ba93d82f16142099255a2991f57094e",
       "integration": "related patch accepted; own primary pending",
       "relatedPatchJudgment": {
         "judgeId": "task_7324a1fb",
@@ -4131,13 +4131,14 @@
         "blob": "176c456ff937bd9a9b63267e508a10c923443648"
       },
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "138201b97ba93d82f16142099255a2991f57094e",
         "primaryId": "task_a1f1faff",
         "primaryCommit": "05093422350fcad87478cf2dd0f22f51047bdae0",
-        "judgeIds": ["task_7324a1fb"],
+        "judgeIds": ["task_7324a1fb", "task_e2b8f7f5"],
         "sourceCommit": "05093422350fcad87478cf2dd0f22f51047bdae0",
-        "state": "needs-judge",
-        "reason": "Retain exact related-path actual-code acceptance; it is not completion of this file’s distinct primary/fresh focus-judge requirement."
+        "state": "accepted-joined",
+        "reason": "Read the entire candidate file and exact base diff. Previously the image tests let voiceToolResult choose the global temp root; now each artifact-producing case visibly creates and passes its own mkdtemp directory directly beside the value, map call, and readback. That makes evidence ownership inspectable without a fixture/context abstraction. The original structured-error, large-image, cyclic-serialization and small-image assertions remain. The added exact-boundary case puts envelope calculation, inline eligibility, one-byte overflow, session-prefix containment, complete JSON readback and private directory/file mode assertions in one causal sequence. The UTF-8 case separately exposes byte eligibility versus character preview; the blocked-directory case locally constructs the storage failure and insists on an error rather than an unusable evidence path. Inline/null/cyclic cases have no test-directory allocation. These are concrete ownership and evidence journeys, not rename churn."
       }
     },
     {
@@ -4191,16 +4192,17 @@
       "initialBlob": "88ce880be802e5949175dcc8c634f892ccb9f894",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "88ce880be802e5949175dcc8c634f892ccb9f894",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "88ce880be802e5949175dcc8c634f892ccb9f894",
         "primaryId": "task_a1f1faff",
         "primaryCommit": "05093422350fcad87478cf2dd0f22f51047bdae0",
-        "judgeIds": [],
+        "judgeIds": ["task_e2b8f7f5"],
         "sourceCommit": "05093422350fcad87478cf2dd0f22f51047bdae0",
-        "state": "needs-judge",
-        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+        "state": "accepted-joined",
+        "reason": "Read the whole unchanged file. The first case joins a received long line before checking complete saved text versus clipped viewport and retained history; the model-contract case explicitly maps replacement/final inputs, turn-boundary and interrupted finishes to saved text/status and rendered interruption, then reset. The speaker-interleave case shows the previous draft becomes partial before the other speaker saves. The chunk case joins all saved partial chunks back into the original input after finish; the exact-full case distinguishes capacity flushing from final boundary. The last case records the live frame and compares it directly after finish, exposing viewport-slot stability. Each test keeps input, persistence callback, finish and expectation locally readable; extraction would hide these short causal sequences."
       }
     },
     {
@@ -4208,16 +4210,17 @@
       "initialBlob": "385cb7985f917b03dd2e21ee12d4ce3904ca8f84",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "385cb7985f917b03dd2e21ee12d4ce3904ca8f84",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "385cb7985f917b03dd2e21ee12d4ce3904ca8f84",
         "primaryId": "task_a1f1faff",
         "primaryCommit": "05093422350fcad87478cf2dd0f22f51047bdae0",
-        "judgeIds": [],
+        "judgeIds": ["task_e2b8f7f5"],
         "sourceCommit": "05093422350fcad87478cf2dd0f22f51047bdae0",
-        "state": "needs-judge",
-        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+        "state": "accepted-joined",
+        "reason": "Read both unchanged cases in full and the whole waitForLiveTuiStartup helper. The ready case places the fixture frame and empty sendKey recorder beside the no-key assertion. The trust case keeps the synthetic state transition visible: only after three recorded keys does the frame expose the GPT fixture, and the assertion names Down, Down, Enter exactly. A shared fixture or context bag would obscure the only important transition. The tests do not launch terminals or silently assert permanent trust."
       }
     },
     {
@@ -4902,7 +4905,7 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 139,
-    "pending": 12
+    "accepted": 142,
+    "pending": 9
   }
 }
