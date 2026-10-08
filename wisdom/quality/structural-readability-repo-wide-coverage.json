@@ -12978,12 +12978,45 @@
       "initialBlob": "cac19ca7ef48e5b2eb9645242b20ce85149bf557",
       "status": "pending",
       "area": "execution-tasks-questions",
-      "resumeState": "pending-primary-incident",
-      "primaryId": "task_afee41f2",
+      "resumeState": "needs-judge",
+      "primaryId": "task_8acfab2e",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "e441e041aabf7997b3f6a895d623d469a1d7e574",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
-      "pendingReason": "Primary cancellation was recorded during the incident; no completed candidate commit or complete-file independent judgment is recorded. Focus working blob currently equals primary HEAD. Preserve the tree and allocate/complete primary work before judging."
+      "pendingReason": "Primary cancellation was recorded during the incident; no completed candidate commit or complete-file independent judgment is recorded. Focus working blob currently equals primary HEAD. Preserve the tree and allocate/complete primary work before judging.",
+      "primaryCommit": "e441e041aabf7997b3f6a895d623d469a1d7e574",
+      "primaryBase": "8f186d90eb5047304492c72c6bc56a7d0f37204d",
+      "primaryResult": "A focus-local terminal operation now owns launch argv, isolated environment, frame/input transport, resize and owned-server shutdown (including startup failure); scenario code owns QuestionService assertions. The narrow stale-picker journey has a separate saved session and terminal, so its sole pending question and open-snapshot mutation can be read directly. The persistence/escape/editor journey and live completion stay continuous. All original behavior assertions, polling bounds and stale owner/version mutation remain; only the narrow scenario no longer depends on the earlier two answered questions. Fixtures retain their HOME/config/SDK/TMPDIR evidence, and terminal launch uses explicit node child_process argv/env with no shell command or inherited config. Preserved reconciliation showed no completed/rejected candidate for stopped task_afee41f2; the existing baseline focus was present and no old branch was merged or copied.",
+      "primaryPaths": ["tests/questions-interactive-tui.test.ts"],
+      "primaryChecks": [
+        {
+          "name": "Read guidance and focus-only ledger/candidate rows",
+          "result": "Read wisdom/values.md, structural-readability-guidance.md, focus entries in area/repo-wide coverage and preserved reconciliation. Baseline blob cac19ca7ef48e5b2eb9645242b20ce85149bf557; no candidate/rework evidence."
+        },
+        {
+          "name": "Trace actual callers and filesystem effects",
+          "result": "Read QuestionService session-sidecar authority, questions extension inbox/completion and runtime owner/version rejection; read TUI helpers, process helper and SDK session creation/config naming. Source fixture uses explicit session directories, fresh mkdtemp HOME/config/SDK/TMPDIR, test-owned socket inside retained TMPDIR, offline CLI and placeholder auth. Removed inherited shell/config launch and recursive HOME removal; no test/setup/build run."
+        },
+        {
+          "name": "Check tmux direct argv semantics",
+          "result": "Read installed tmux manual: new-session permits multiple command arguments executed directly without sh -c. Footer source confirms 1 /questions readiness text."
+        },
+        {
+          "name": "Required repository formatter",
+          "result": "Passed: /usr/bin/node child_process execFile argv [/home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/@biomejs/biome/bin/biome, format, --write, tests/questions-interactive-tui.test.ts]. Only changed source formatted. Fresh retained fixture /tmp/pr45-questions-tui-format-WjyBIv; durable provenance in .pr45-format-provenance.json in this worktree. Output: Formatted 1 file in 5ms. Fixed 1 file."
+        },
+        {
+          "name": "Static final source review and git diff --check",
+          "result": "Passed whitespace check; manually reviewed the complete formatted focus and assertion preservation. Repository commit hooks directory contained no active hooks. Source-only commit created; no wisdom/source helper changes."
+        }
+      ],
+      "primaryLimits": [
+        "No tests, setup or builds executed; parent owns audited isolated batch gates. Formatter/static review do not prove runtime behavior.",
+        "Independent fresh judge remains parent-owned; no delegation or model self-introspection performed.",
+        "No real credentials, live auth or device access attempted; auth/device behavior unverified.",
+        "No old worktrees/evidence removed, no sudo/recovery/cleanup shell commands/destructive git/push/PR/merge used. Source and review evidence remain in the durable assigned worktree; /tmp contains retained formatter/test fixtures only.",
+        "No per-worker wisdom edits: parent writes aggregate wisdom."
+      ]
     },
     {
       "file": "tests/questions-picker.test.ts",

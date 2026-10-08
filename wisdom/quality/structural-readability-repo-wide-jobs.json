@@ -1695,7 +1695,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_8acfab2e",
         "branch": "bruv/pr45-primary-tests-questions-interactive-8acfab2e",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "e441e041aabf7997b3f6a895d623d469a1d7e574"
       },
       {
         "id": "task_b11891ad",
@@ -1750,6 +1751,15 @@
         "focus": ["tests/questions-bridge.test.ts", "tests/questions-picker.test.ts", "tests/questions-sdk.test.ts"],
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_a916dfec",
         "branch": "bruv/pr45-judge-3-execution-tasks-questions-f-a916dfec",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_fdd5f204",
+        "stage": "primary",
+        "focus": ["tests/root-runtime.test.ts", "tests/session-costs-tui.test.ts", "tests/session-costs.test.ts"],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_fdd5f204",
+        "branch": "bruv/pr45-primary-3-execution-tasks-questions-fdd5f204",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
       }
