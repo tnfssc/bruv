@@ -3303,16 +3303,17 @@
       "initialBlob": "e7fd8dae94e43f8c4a5f582a47e456f803c46bda",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "e7fd8dae94e43f8c4a5f582a47e456f803c46bda",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "e7fd8dae94e43f8c4a5f582a47e456f803c46bda",
         "primaryId": "task_0655ce99",
         "primaryCommit": "6fdecdf3a4028de3a742547f230d069497b5210c",
-        "judgeIds": [],
+        "judgeIds": ["task_1d855e12"],
         "sourceCommit": "6fdecdf3a4028de3a742547f230d069497b5210c",
-        "state": "needs-judge",
-        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+        "state": "accepted-joined",
+        "reason": "The unchanged complete helper already exposes the relevant counting authorities together. assertLiveRuntimeReady rejects missing configured auth before lookup, then resolves auth with a five-minute refresh margin. installLiveDispatchBudget validates the positive limit and provider, captures both original methods, and installs two short, visibly different wrappers: runtime entry counts invocations and forces maxRetries=0 before lazy setup; provider entry synchronously rejects over-budget calls, counts admitted dispatches, records model/transport/time evidence, and calls the original provider with its receiver. The returned getters and restore sit beside the owned mutations. Extracting either wrapper or passing a common context would obscure, rather than simplify, the invocation-versus-provider boundary. Base and candidate focus blobs are identical. Independently read the sole changed companion: its multiline probe and owned retained fixture lifetime are acceptable and do not affect dispatch semantics."
       }
     },
     {
@@ -3320,7 +3321,7 @@
       "initialBlob": "603d475b0ba3b18b550c10cc0e950053358d1631",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "8c6b069d99bc5919280b220230ee389e1c9c9c86",
       "integration": "related patch accepted; own primary pending",
       "relatedPatchJudgment": {
         "judgeId": "task_1c3f1e78",
@@ -3328,13 +3329,14 @@
         "blob": "cf16b2888c54fff42ace4d821a086b3628e279e9"
       },
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "8c6b069d99bc5919280b220230ee389e1c9c9c86",
         "primaryId": "task_0655ce99",
         "primaryCommit": "6fdecdf3a4028de3a742547f230d069497b5210c",
-        "judgeIds": ["task_1c3f1e78"],
+        "judgeIds": ["task_1c3f1e78", "task_1d855e12"],
         "sourceCommit": "6fdecdf3a4028de3a742547f230d069497b5210c",
-        "state": "needs-judge",
-        "reason": "Retain exact related-path actual-code acceptance; it is not completion of this file’s distinct primary/fresh focus-judge requirement."
+        "state": "accepted-joined",
+        "reason": "Read the entire candidate and exact base-to-candidate diff. The compiled-bundle journey now reads straight through owned fixture preparation, inert Mach-O payload and rejection checks, generated entry, compilation, removal of that exact input, explicit subprocess launch, and parent assertions. The generated program is a visible multiline resolve/missing-check/read/report/finally-cleanup journey rather than an inline concatenated mini-program. Retaining the fixture root removes the unrelated outer deletion lifetime while preserving the production extraction lifetime in the generated finally. HOME, XDG_CONFIG_HOME and both SDK directories are clearly owned children, TMPDIR confines extraction to the fixture, and argv/env/cwd are explicit. Relative to primaryBase, JSON path/bytes reporting and parent location/cleanup assertions are additions, not already-existing baseline assertions. No shared helper, context bag, cosmetic-only rename scheme, or hidden lifecycle was added."
       }
     },
     {
@@ -3342,16 +3344,17 @@
       "initialBlob": "52ca28929328804ac0140069015586865883bf8a",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "52ca28929328804ac0140069015586865883bf8a",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "52ca28929328804ac0140069015586865883bf8a",
         "primaryId": "task_0655ce99",
         "primaryCommit": "6fdecdf3a4028de3a742547f230d069497b5210c",
-        "judgeIds": [],
+        "judgeIds": ["task_1d855e12"],
         "sourceCommit": "6fdecdf3a4028de3a742547f230d069497b5210c",
-        "state": "needs-judge",
-        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+        "state": "accepted-joined",
+        "reason": "Read the whole unchanged focus rather than relying on companion acceptance. Its compact fixture assembles an event bus, captures the registered execute tool, retains the returned foreground control, and supplies a session-manager-owned context; run calls the actual tool with a fresh AbortSignal. The first test forbids the JobService route and verifies live.stop reaches the scoped bus listener with the original context and returns the structured lifecycle result once. The second test explicitly requires jobs.stopWork with empty params, records that abort has not occurred while preparing the response, then wires the ACK-triggered host abort into that fixture control; the never-resolving execute must reject as cancelled, with one abort and a pending observation. Separate tests make voice teardown versus work cancellation visible. A new harness, shared context, or naming churn would lengthen this already-direct ownership journey. Base and candidate focus blobs are identical. Independently reviewed the entire embedded-helper companion change and found no coupling to this control route."
       }
     },
     {
@@ -4843,7 +4846,7 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 111,
-    "pending": 40
+    "accepted": 114,
+    "pending": 37
   }
 }
