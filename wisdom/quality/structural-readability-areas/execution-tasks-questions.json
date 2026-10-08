@@ -4352,8 +4352,8 @@
     ]
   },
   "resumeStatus": {
-    "accepted": 102,
-    "pending": 3
+    "accepted": 104,
+    "pending": 1
   },
   "extraFiles": [
     {
@@ -4425,15 +4425,17 @@
       "focus": "tests/owned-process-suite.ts",
       "initialBlob": null,
       "introducedBy": "eb8295ac0714ad9b6c4e548cc9130010949c7dd5",
-      "state": "pending",
-      "acceptedBlob": null,
+      "state": "accepted",
+      "acceptedBlob": "7bb361586e537dd6623872b6b43aa6032dbda09d",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
         "acceptedBlob": "7bb361586e537dd6623872b6b43aa6032dbda09d",
         "primaryId": "task_7a16f7fe",
         "primaryCommit": "bc78d3c019fc0f6d7b48730ec337132252589b3a",
+        "judgeIds": ["task_c39704c6"],
         "sourceCommit": "bc78d3c019fc0f6d7b48730ec337132252589b3a",
-        "state": "needs-judge"
+        "state": "accepted-joined",
+        "reason": "The matching BRUV_FIXTURE_SUITE_FILE child alone invokes defineTests; otherwise the host registers a single whole-file Bun test launch with explicit argv and no name filter. runOwnedProcess presents one linear authority/lifetime: create the retained owned root, construct the allowlisted environment and non-login fixture shell, preserve executable/argv/cwd/env and source evidence, spawn without a shell, collect both streams until close, persist exit/signal/output, then reject nonzero or signaled completion. ownedProcessSuite and ownedProcessScenario visibly choose different executable argv rather than concealing a scenario mode. The full caller reading confirms that task-manager and attention afterEach shutdown, job-service try/finally shutdown with spawn substitution, bridge SessionJobs async disposal, and question persistence helpers/registrations are inside defineTests. Another extraction would scatter this coherent operation without resolving an observed reading burden."
       }
     },
     {
@@ -4453,15 +4455,17 @@
       "focus": "tests/job-bridge-credentials.fixture.ts",
       "initialBlob": null,
       "introducedBy": "04c9d2df061d6e15e2c1d347900be71503bb905b",
-      "state": "pending",
-      "acceptedBlob": null,
+      "state": "accepted",
+      "acceptedBlob": "99858065b35f461748847c07c31e1b2fedeccc7a",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
         "acceptedBlob": "99858065b35f461748847c07c31e1b2fedeccc7a",
         "primaryId": "task_7a16f7fe",
         "primaryCommit": "bc78d3c019fc0f6d7b48730ec337132252589b3a",
+        "judgeIds": ["task_c39704c6"],
         "sourceCommit": "bc78d3c019fc0f6d7b48730ec337132252589b3a",
-        "state": "needs-judge"
+        "state": "accepted-joined",
+        "reason": "The entire standalone file is a straight-line assertion journey: validate the three synthetic launch inputs, call executeIsolated with the original source program, cwd, 3000 ms timeout and compiled executable path, record mocked parent capability dispatch, then require zero exit, exactly the safe sentinel and native-1 background job in serialized stdout, exactly the subagent method, and no secret token. Comparing the retained rework with the preceding original test shows that each original behavioral assertion survives as node:assert/strict, with additional positive launch-input assertions. There is no registration branch, conditional scenario marker, test-name filter, skip, or swallowed assertion failure. No structural extraction/context bag would clarify this short single journey."
       }
     }
   ]

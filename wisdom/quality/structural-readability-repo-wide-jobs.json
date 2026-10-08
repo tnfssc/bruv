@@ -3443,7 +3443,7 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_c39704c6",
         "branch": "bruv/pr45-judge-2-execution-tasks-questions-f-c39704c6",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled"
       }
     ]
   },

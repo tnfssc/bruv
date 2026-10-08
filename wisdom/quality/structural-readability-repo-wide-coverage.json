@@ -26127,8 +26127,8 @@
       "file": "tests/owned-process-suite.ts",
       "initialBlob": "absent",
       "area": "execution-tasks-questions",
-      "status": "pending",
-      "resumeState": "needs-judge",
+      "status": "accepted",
+      "resumeState": "accepted-joined",
       "sourceCommit": "bc78d3c019fc0f6d7b48730ec337132252589b3a",
       "acceptedRelatedJudges": ["task_80598b58", "task_e427af86"],
       "acceptedBlob": "7bb361586e537dd6623872b6b43aa6032dbda09d",
@@ -26164,7 +26164,24 @@
           "primaryBase": "9bf50c12c46a2eec788c76d19c5f504819b3496a"
         }
       ],
-      "forceJudge": true
+      "forceJudge": true,
+      "judgeIds": ["task_c39704c6"],
+      "result": "The matching BRUV_FIXTURE_SUITE_FILE child alone invokes defineTests; otherwise the host registers a single whole-file Bun test launch with explicit argv and no name filter. runOwnedProcess presents one linear authority/lifetime: create the retained owned root, construct the allowlisted environment and non-login fixture shell, preserve executable/argv/cwd/env and source evidence, spawn without a shell, collect both streams until close, persist exit/signal/output, then reject nonzero or signaled completion. ownedProcessSuite and ownedProcessScenario visibly choose different executable argv rather than concealing a scenario mode. The full caller reading confirms that task-manager and attention afterEach shutdown, job-service try/finally shutdown with spawn substitution, bridge SessionJobs async disposal, and question persistence helpers/registrations are inside defineTests. Another extraction would scatter this coherent operation without resolving an observed reading burden.",
+      "systemReason": "ownedFixtureEnv supplies owned HOME/XDG/config/cache/data/SDK/Bun/temp/git paths without copying the parent environment. setupShell passes -lc and the owned executable shifts that flag and executes non-login /bin/sh -c, avoiding startup-file authority. TaskManager and executeIsolated explicitly spawn without a shell and scrub root-control environment; their ordinary inherited environment is already the owned suite environment. The sole scenario caller passes only two synthetic bridge credential values and a sentinel; it awaits an unconditional standalone assertion entry. The earlier --test-name-pattern mechanism and scenario marker are absent, and a failed scenario rejects the original registered credential test. The current exact candidate already has the coherent retained 04c9d2df bytes, so no import or source change is needed.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read exact candidate with git show, not working-tree source. git diff primaryBase bc78d3c019fc0f6d7b48730ec337132252589b3a to candidate bc78d3c019fc0f6d7b48730ec337132252589b3a is empty: no candidate-changed source paths.",
+        "Read the entire helper, standalone assertion entry, and all five ownedProcessSuite callers; located every ownedProcessSuite/ownedProcessScenario reference in candidate source.",
+        "Read retained rework 04c9d2df diffs for all three related source paths and prior credential assertions; these three blobs have no diff from 04c9d2df to the exact assigned candidate.",
+        "Inspected filesystem/process effects statically only: owned mkdtemp environment directories and retained launch/source/output/result artifacts, non-login fixture shell, explicit spawned executable/argv/cwd/env, nested child environment scrubbing, question ledger writes/owned lock removal. No setup, tests, builds, network/auth/device access, cleanup, delegation, or source edits."
+      ],
+      "limits": [
+        "Static structural/assertion review only; parent owns audited isolated runtime gates and compiled dist/bruv provenance. No test pass, process execution, or live authentication claim.",
+        "This is an endorsement of the inspected five suite callers and single synthetic scenario caller, not a general-reuse endorsement permitting arbitrary environment overrides.",
+        "Source stays in this durable worktree; prospective mkdtemp roots are fixture/evidence locations only, retained by the helper. Existing Linux-specific task-manager test.skipIf remains unchanged; the credential scenario has no filter/skip/conditional assertion branch.",
+        "Parent must verify runtime agent.model openai-codex/gpt-6.1-sol; this artifact does not independently verify runtime model identity. No wisdom edits; parent owns aggregate wisdom.",
+        "Safety for ALL descendants: NO sudo, recovery investigation, user secrets, shell deletion/cleanup commands, inherited HOME/config/SDK cleanup, nested shell traps, destructive git, or user-data mutation. User already recovered data and requested no recovery work. Tests must use explicit process argv/env and owned fs.mkdtemp fixture HOME/config/SDK; retain them, do not delete. Review filesystem/network effects BEFORE tests/setup. Existing test-code cleanup of provably owned temporary paths may be inspected but NEVER run a shell trap or inherited HOME removal. Need live auth/device? Report unverified, don't access credentials. Propagate these constraints verbatim. Independent code/review agents get durable worktrees, not /tmp code checkouts. Keep existing worktrees and candidate evidence. Test/source fixtures may use /tmp, but document durable provenance. Parent verifies runtime agent.model openai-codex/gpt-6.1-sol; native normal leaves only, no delegation."
+      ]
     },
     {
       "file": "tests/fixtures/worktree-workspace-cases.ts",
@@ -26180,8 +26197,8 @@
       "file": "tests/job-bridge-credentials.fixture.ts",
       "initialBlob": "absent",
       "area": "execution-tasks-questions",
-      "status": "pending",
-      "resumeState": "needs-judge",
+      "status": "accepted",
+      "resumeState": "accepted-joined",
       "sourceCommit": "bc78d3c019fc0f6d7b48730ec337132252589b3a",
       "acceptedRelatedJudges": ["task_e427af86"],
       "acceptedBlob": "99858065b35f461748847c07c31e1b2fedeccc7a",
@@ -26208,7 +26225,24 @@
         "Fixture provenance remains the durable worktree: source executes there, while mkdtemp roots retain owned HOME/config/SDK/TMPDIR, launch manifest, source snapshot and process output/result evidence. No fixtures were launched or removed here.",
         "No descendants delegated; no user secrets accessed. Wisdom/values left unchanged because this bounded pass adds no new lesson; parent owns aggregate wisdom."
       ],
-      "forceJudge": true
+      "forceJudge": true,
+      "judgeIds": ["task_c39704c6"],
+      "result": "The entire standalone file is a straight-line assertion journey: validate the three synthetic launch inputs, call executeIsolated with the original source program, cwd, 3000 ms timeout and compiled executable path, record mocked parent capability dispatch, then require zero exit, exactly the safe sentinel and native-1 background job in serialized stdout, exactly the subagent method, and no secret token. Comparing the retained rework with the preceding original test shows that each original behavioral assertion survives as node:assert/strict, with additional positive launch-input assertions. There is no registration branch, conditional scenario marker, test-name filter, skip, or swallowed assertion failure. No structural extraction/context bag would clarify this short single journey.",
+      "systemReason": "job-bridge.test.ts retains the original named credential test inside its ownedProcessSuite callback and returns the promise from ownedProcessScenario, supplying exactly the same three synthetic inputs. The helper launches bun run of this standalone entry in a fresh retained mkdtemp-owned environment; an assertion throw yields process failure, whose output/status are persisted and whose nonzero result rejects the registered test. executeIsolated scrubs T3 bridge variables while preserving the safe sentinel and supplies the separate job bridge only because the mocked jobHandler exists. Exact stdout shape proves absence of both URL/token values and continued parent subagent capability; seen verifies sole dispatch. No real provider call or live credential is required by this journey. The exact candidate already preserves the inspected rework; no new source bytes are warranted.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read exact candidate with git show, not working-tree source. git diff primaryBase bc78d3c019fc0f6d7b48730ec337132252589b3a to candidate bc78d3c019fc0f6d7b48730ec337132252589b3a is empty: no candidate-changed source paths.",
+        "Read the entire helper, standalone assertion entry, and all five ownedProcessSuite callers; located every ownedProcessSuite/ownedProcessScenario reference in candidate source.",
+        "Read retained rework 04c9d2df diffs for all three related source paths and prior credential assertions; these three blobs have no diff from 04c9d2df to the exact assigned candidate.",
+        "Inspected filesystem/process effects statically only: owned mkdtemp environment directories and retained launch/source/output/result artifacts, non-login fixture shell, explicit spawned executable/argv/cwd/env, nested child environment scrubbing, question ledger writes/owned lock removal. No setup, tests, builds, network/auth/device access, cleanup, delegation, or source edits."
+      ],
+      "limits": [
+        "Static structural/assertion review only; parent owns audited isolated runtime gates and compiled dist/bruv provenance. No test pass, process execution, or live authentication claim.",
+        "This is an endorsement of the inspected five suite callers and single synthetic scenario caller, not a general-reuse endorsement permitting arbitrary environment overrides.",
+        "Source stays in this durable worktree; prospective mkdtemp roots are fixture/evidence locations only, retained by the helper. Existing Linux-specific task-manager test.skipIf remains unchanged; the credential scenario has no filter/skip/conditional assertion branch.",
+        "Parent must verify runtime agent.model openai-codex/gpt-6.1-sol; this artifact does not independently verify runtime model identity. No wisdom edits; parent owns aggregate wisdom.",
+        "Safety for ALL descendants: NO sudo, recovery investigation, user secrets, shell deletion/cleanup commands, inherited HOME/config/SDK cleanup, nested shell traps, destructive git, or user-data mutation. User already recovered data and requested no recovery work. Tests must use explicit process argv/env and owned fs.mkdtemp fixture HOME/config/SDK; retain them, do not delete. Review filesystem/network effects BEFORE tests/setup. Existing test-code cleanup of provably owned temporary paths may be inspected but NEVER run a shell trap or inherited HOME removal. Need live auth/device? Report unverified, don't access credentials. Propagate these constraints verbatim. Independent code/review agents get durable worktrees, not /tmp code checkouts. Keep existing worktrees and candidate evidence. Test/source fixtures may use /tmp, but document durable provenance. Parent verifies runtime agent.model openai-codex/gpt-6.1-sol; native normal leaves only, no delegation."
+      ]
     }
   ],
   "completedAreas": {
@@ -26228,9 +26262,9 @@
     "baselineFiles": 766,
     "finalGate": "pending; incomplete focus coverage",
     "liveAuth": "unverified/failing; preserved",
-    "accepted": 830,
+    "accepted": 832,
     "total": 839,
-    "pending": 9,
+    "pending": 7,
     "sourceExtras": 73,
     "checkout": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
     "branch": "bruv/readability-pr45-sol-continuation",
