@@ -3862,11 +3862,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_4fd8c261",
+        "primaryCommit": "04ac60063eebde3592e35840c727d6db40920870",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary",
+        "sourceCommit": "04ac60063eebde3592e35840c727d6db40920870",
+        "state": "needs-judge",
         "reason": "No dedicated primary/final independent focus judgment."
       }
     },
@@ -3880,11 +3880,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_4fd8c261",
+        "primaryCommit": "04ac60063eebde3592e35840c727d6db40920870",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary",
+        "sourceCommit": "04ac60063eebde3592e35840c727d6db40920870",
+        "state": "needs-judge",
         "reason": "No dedicated primary/final independent focus judgment."
       }
     },
@@ -3905,11 +3905,11 @@
       },
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_4fd8c261",
+        "primaryCommit": "04ac60063eebde3592e35840c727d6db40920870",
         "judgeIds": ["task_b7cd3a68"],
-        "sourceCommit": "d95ff345b6246fb81e7941e6acea8587d39a2bb1",
-        "state": "pending-primary",
+        "sourceCommit": "04ac60063eebde3592e35840c727d6db40920870",
+        "state": "needs-judge",
         "reason": "No dedicated primary/final independent focus judgment. Related-patch review is evidence only; dedicated focus coverage remains required."
       }
     }

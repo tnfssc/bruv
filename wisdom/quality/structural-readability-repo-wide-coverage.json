@@ -18369,26 +18369,58 @@
       "initialBlob": "a9cff28172726411bd418587f5f44217036f76bb",
       "status": "pending",
       "area": "agent-history-session-goals",
-      "resumeState": "pending-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_4fd8c261",
+      "primaryCommit": "04ac60063eebde3592e35840c727d6db40920870",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "04ac60063eebde3592e35840c727d6db40920870",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
-      "pendingReason": "No dedicated primary/final independent focus judgment."
+      "pendingReason": "No dedicated primary/final independent focus judgment.",
+      "primaryBase": "a1a45b3c26fac604060d3fbf22ba1f37642d06e6",
+      "primaryResult": "Leave this focus byte-identical (a9cff28172726411bd418587f5f44217036f76bb). Keep all assertions together: splitting cases or introducing fixture abstractions would increase travel without clarifying a hidden decision. Complete changedPaths below belong to the wisdom focus only.",
+      "primaryPaths": ["tests/fixtures/wisdom-extension-sdk.ts", "tests/wisdom-extension.test.ts"],
+      "primaryChecks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read full assigned source and focus-specific reconciliation rows; no completed dedicated focus acceptance inferred from related-patch evidence.",
+        "Static git diff --check and staged diff --check passed; commit hooks inspected (no active hooks).",
+        "Complete source-only batch commit scope is listed in changedPaths for every decision, including unchanged focuses.",
+        "Focus source was not formatted or changed."
+      ],
+      "primaryLimits": [
+        "No tests, setup, builds, typecheck, authenticated model/provider calls, device checks, or network probes run; parent owns audited isolated gates and independent judgments.",
+        "Shared dependencies read-only; no deletion/cleanup/recovery, destructive Git, delegation, push, PR, merge, or publication performed.",
+        "Runtime model verification remains parent-owned.",
+        "Wisdom and values unchanged: no new general lesson; parent owns aggregate wisdom."
+      ]
     },
     {
       "file": "tests/turn-boundaries.ts",
       "initialBlob": "5e9a22ac49df1f247fbad6482e1fc01b8784425d",
       "status": "pending",
       "area": "agent-history-session-goals",
-      "resumeState": "pending-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_4fd8c261",
+      "primaryCommit": "04ac60063eebde3592e35840c727d6db40920870",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "04ac60063eebde3592e35840c727d6db40920870",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
-      "pendingReason": "No dedicated primary/final independent focus judgment."
+      "pendingReason": "No dedicated primary/final independent focus judgment.",
+      "primaryBase": "a1a45b3c26fac604060d3fbf22ba1f37642d06e6",
+      "primaryResult": "Leave this focus byte-identical (5e9a22ac49df1f247fbad6482e1fc01b8784425d). Its direct batch predicate and terminal timestamp choice expose the rule; extracting this short pipeline would hide rather than reveal the caller-relevant semantics. Complete changedPaths below belong to the wisdom focus only.",
+      "primaryPaths": ["tests/fixtures/wisdom-extension-sdk.ts", "tests/wisdom-extension.test.ts"],
+      "primaryChecks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read full assigned source and focus-specific reconciliation rows; no completed dedicated focus acceptance inferred from related-patch evidence.",
+        "Static git diff --check and staged diff --check passed; commit hooks inspected (no active hooks).",
+        "Complete source-only batch commit scope is listed in changedPaths for every decision, including unchanged focuses.",
+        "Focus source was not formatted or changed."
+      ],
+      "primaryLimits": [
+        "No tests, setup, builds, typecheck, authenticated model/provider calls, device checks, or network probes run; parent owns audited isolated gates and independent judgments.",
+        "Shared dependencies read-only; no deletion/cleanup/recovery, destructive Git, delegation, push, PR, merge, or publication performed.",
+        "Runtime model verification remains parent-owned.",
+        "Wisdom and values unchanged: no new general lesson; parent owns aggregate wisdom."
+      ]
     },
     {
       "file": "tests/typescript-execution.test.ts",
@@ -18525,13 +18557,34 @@
       "initialBlob": "37436aaf746e97961721fb1e042882ef487c90e2",
       "status": "pending",
       "area": "agent-history-session-goals",
-      "resumeState": "pending-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_4fd8c261",
+      "primaryCommit": "04ac60063eebde3592e35840c727d6db40920870",
       "judgeIds": ["task_b7cd3a68"],
-      "sourceCommit": "d95ff345b6246fb81e7941e6acea8587d39a2bb1",
+      "sourceCommit": "04ac60063eebde3592e35840c727d6db40920870",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
-      "pendingReason": "No dedicated primary/final independent focus judgment. Related-patch review is evidence only; dedicated focus coverage remains required."
+      "pendingReason": "No dedicated primary/final independent focus judgment. Related-patch review is evidence only; dedicated focus coverage remains required.",
+      "primaryBase": "a1a45b3c26fac604060d3fbf22ba1f37642d06e6",
+      "primaryResult": "Restore only tests/wisdom-extension.test.ts bytes from candidate d95ff345b6246fb81e7941e6acea8587d39a2bb1, then rework its lifecycle. The main test keeps all prior and candidate assertions, owns project fixtures and explicit argv/env subprocess launch, and observes first-effect counts plus two captured prompts. tests/fixtures/wisdom-extension-sdk.ts owns the shipped factory/SDK registration-order journey, late child attachment, stub stream and shutdown/disposal in one linear session. Each SDK scenario runs with fresh owned HOME/config/cache/SDK/TMP state, no inherited credentials or BRUV identity, and a 15-second child deadline within the existing 20-second test. Git fixture commands share the same explicit owned-env constructor. Remove fixture deletion and retain all mkdtemp state. No production files or unrelated candidate bytes imported.",
+      "primaryPaths": ["tests/fixtures/wisdom-extension-sdk.ts", "tests/wisdom-extension.test.ts"],
+      "primaryChecks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read full assigned source and focus-specific reconciliation rows; no completed dedicated focus acceptance inferred from related-patch evidence.",
+        "Static git diff --check and staged diff --check passed; commit hooks inspected (no active hooks).",
+        "Complete source-only batch commit scope is listed in changedPaths for every decision, including unchanged focuses.",
+        "Read exact d95ff345 candidate patch and saved task_b7cd3a68 final ACCEPT; that review concerns a related production authority fix, not a dedicated whole-focus decision.",
+        "Audited fixture effects statically: project writes and Git checkout confined to owned mkdtemp root; SDK uses in-memory session, owned auth/settings paths and stub stream with refreshOnCreate:false.",
+        "Repository Biome format --write applied by node:child_process execFileSync argv to only the two changed source paths. Retained fresh HOME/config/TMPDIR fixture: /tmp/pr45-wisdom-format-BabWDV. Formatter parsed both paths successfully.",
+        "All baseline assertions and candidate failure-denial, changing-authority/current-trust, command-first and two-turn SDK assertions retained; runtime execution remains unverified."
+      ],
+      "primaryLimits": [
+        "No tests, setup, builds, typecheck, authenticated model/provider calls, device checks, or network probes run; parent owns audited isolated gates and independent judgments.",
+        "Shared dependencies read-only; no deletion/cleanup/recovery, destructive Git, delegation, push, PR, merge, or publication performed.",
+        "Runtime model verification remains parent-owned.",
+        "Wisdom and values unchanged: no new general lesson; parent owns aggregate wisdom.",
+        "SDK subprocess execution, TypeScript compatibility and timeout behavior need the parent isolated gate; this worker made no runtime-success claim.",
+        "Durable code provenance: current worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_4fd8c261 at 04ac60063eebde3592e35840c727d6db40920870; formatter fixture /tmp/pr45-wisdom-format-BabWDV retained. Future test fixtures use bruv-wisdom-* owned mkdtemp roots and are retained."
+      ]
     },
     {
       "file": "tests/worker-handoff.test.ts",
