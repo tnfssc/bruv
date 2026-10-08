@@ -3930,42 +3930,46 @@
       "initialBlob": "35e5c66c596e869e8067a9bb4c2298c671638330",
       "status": "pending",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-rework",
-      "primaryId": "task_72c25417",
-      "primaryCommit": "38bb4270a46a5ee9838b649a2d8b240989bde71e",
+      "resumeState": "needs-judge",
+      "primaryId": "task_9b8ded9d",
+      "primaryCommit": "e7ca3aac5f5bc3504768293001910810e90e49a1",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "e7ca3aac5f5bc3504768293001910810e90e49a1",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
       "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
-      "primaryBase": "4134d99b0c4024dedd0f1a4eb4e16d7faa52ca09",
-      "primaryResult": "The exported entry now owns keybindings in one visible try/finally and invokes separate tree construction and scenario replay functions. Tree payloads, label timestamp, scenario order, callbacks, captures, and hash calculation remain unchanged. Replay remains linear rather than hidden behind scenario dispatch or a context bag.",
+      "primaryBase": "f055bd52c8a4cda425bb579cd6d146b7f82304c6",
+      "primaryResult": "Reused only the relevant rejected focus candidate bytes, retaining its independent fixture builder, linear replay and visible try/finally keybinding owner. Typed the injected constructor using the actual TreeSelectorComponent contract and supplied undefined for onLabelChange before setting and no-tools. The caller now owns golden hashing: its explicitly frozen historical final tail preserves the unchanged 13 rendered replay states, while an exact separate assertion checks the corrected final scenario (root selected through hidden setting; active call included; tool result excluded). The fixture remains byte-identical to the rejected extraction. Existing accept/cancel, fold, empty-search and history/data-preservation assertions remain intact. No old branch merge or unrelated source edits.",
       "primaryPaths": [
-        "scripts/terminal-perf/selector-lifecycle-behavior.ts"
+        "scripts/terminal-perf/selector-lifecycle-behavior.ts",
+        "scripts/terminal-perf/selector-lifecycle.test.ts"
       ],
       "primaryChecks": [
         {
           "kind": "reading",
-          "result": "Read values/guidance, focus-only area/repo-wide ledger rows, preserved reconciliation focus evidence, selector-lifecycle.test.ts caller, installed TreeSelectorComponent and keybinding authority. Focus already present at baseline blob; no candidate bytes imported."
+          "result": "Read values/guidance, preserved reconciliation focus rows and blob inventory, focus-only current area/repo-wide ledger entries, exact rejected candidate, sole caller, read-only installed selector JS/declarations and history lifecycle count patch."
         },
         {
           "kind": "formatter",
-          "command": "/home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/@biomejs/biome/bin/biome format --write scripts/terminal-perf/selector-lifecycle-behavior.ts",
-          "result": "Exit 0; one file formatted, no fixes applied. Invoked through node:child_process argv with explicit isolated env; retained directories under /tmp/pr45-selector-format-GoFwLp."
+          "command": "/home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/@biomejs/biome/bin/biome format --write scripts/terminal-perf/selector-lifecycle-behavior.ts scripts/terminal-perf/selector-lifecycle.test.ts",
+          "result": "Exit 0; formatted two source paths, no fixes applied. Invoked through node:child_process argv with explicit isolated HOME/config/cache/data/TMPDIR/SDK env. Retained isolation at /tmp/pr45-selector-rework-format-aXms4Q."
         },
         {
-          "kind": "static-preservation",
-          "result": "Exact text comparison of extracted fixture/replay bodies passes after normalizing only the shared timestamp identifier and removing the relocated restore statement; timestamp literal unchanged. Existing assertions in caller untouched."
+          "kind": "static-fixture-preservation",
+          "result": "Exact createBranchingTree body matches rejected candidate. Constructor/filter/nearest-visible selection and historical-tail values derived from reading actual installed implementation; not runtime-tested."
         },
         {
           "kind": "git-diff-check",
-          "result": "Passed before commit."
+          "result": "Passed."
+        },
+        {
+          "kind": "source-only-commit",
+          "result": "scripts/terminal-perf/selector-lifecycle-behavior.ts\nscripts/terminal-perf/selector-lifecycle.test.ts"
         }
       ],
       "primaryLimits": [
-        "No setup, tests, or builds run; parent owns audited isolated batch gates. Behavioral parity and exception-path runtime validation remain for parent gates.",
-        "Optional static TypeScript parse unavailable: read-only dependency location lacks typescript/lib/typescript.js; initial package-directory require also failed.",
-        "Independent exact-candidate judge is parent-owned; no delegation performed.",
-        "No per-worker wisdom edits; parent writes aggregate wisdom."
+        "No repository setup, tests or builds run; parent owns audited isolated batch gates. The golden-tail preservation and corrected final expectation need parent runtime verification. No setup guard bypass.",
+        "No delegation or self-model introspection; exact-candidate independent judge and runtime model verification are parent-owned.",
+        "No wisdom edits; parent writes aggregate wisdom. Existing worktrees and candidates retained."
       ],
       "resumeRework": {
         "candidate": "38bb4270a46a5ee9838b649a2d8b240989bde71e",
@@ -4136,12 +4140,14 @@
     {
       "file": "scripts/terminal-perf/send-workloads.ts",
       "initialBlob": "52343cd8ba377fd60e745ecbc0d66c1e7afda918",
-      "status": "pending",
+      "status": "accepted",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_02db43ac",
       "primaryCommit": "ce1847e3d30652f65fd5f9dfa2a3d30ee09f6df7",
-      "judgeIds": [],
+      "judgeIds": [
+        "task_98534795"
+      ],
       "sourceCommit": "ce1847e3d30652f65fd5f9dfa2a3d30ee09f6df7",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
       "pendingReason": "Assigned task_14da3c96; no completed primary candidate commit or independent actual-code verdict. Historical primary-running label is not completion. Retained uncommitted candidate(s): task_14da3c96 blob 22f5d101ccacd5b717ff679795ceabe0e9b926a9 in /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_14da3c96. Not importable or accepted.",
@@ -4189,6 +4195,36 @@
         "Automatic worktree setup result was not exposed to this worker; no setup was retried or bypassed.",
         "Formatter isolation directories retained at /tmp/pr45-send-format-GDAfr6.",
         "No related source/helper edits, no old-branch merge, no push/PR/merge, no wisdom changes (parent owns aggregate wisdom)."
+      ],
+      "acceptedBlob": "6aa16ff8235430a58997714cf78d5b9b86f967b1",
+      "result": "Read the entire candidate and its extraction against f7b5619450bcb7c0b40e5e2194d7303c6a905b9a. SendObservation gives evidence a genuine file-local owner: collection lifetime, synchronous-prefix span nesting, provider observations, event/frame acknowledgment matching and final serialization now live together. createSendWorkload still owns SDK resources, wrapper restoration, real input dispatch and pending work. The action reads as begin observation -> paste/Enter -> await callbacks/prompt/visible frame -> finish observation -> journal accounting, rather than interleaving evidence algorithms with dispatch. This is a coherent authority split, not a name-only cleanup or generic context bag.",
+      "systemReason": "Traced interaction-worker setup/action/finally disposal and interaction-normalize consumers, the standalone probe, existing send tests, startup CompactEditor installation, and installed Pi submit/getUserInput/prompt/streaming-queue/follow-up paths. Normal sends still await the SDK prompt; steer/follow-up retain the held provider and queue_update acknowledgment without new measured provider admission; /name remains a command callback. Async prefixes still stop at immediate return. Real scheduled frames, visible text matching, post-action serialization, pre-stat output text and post-stat write-count snapshots remain explicit. Sequential/single-action guards, no-resource loading, local mock-provider seam, private-method descriptor restoration, held-provider release/drain and reverse cleanup remain with the fixture.",
+      "checks": [
+        {
+          "kind": "guidance",
+          "result": "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md; inspected only these focus rows/evidence in area, coverage, jobs and assignments ledgers."
+        },
+        {
+          "kind": "candidate-boundary",
+          "result": "Compared each exact candidate to its supplied primaryBase with Git; send and tool each change only their focus source path; tmux candidate equals supplied base and changes no source path."
+        },
+        {
+          "kind": "actual-code",
+          "result": "Read complete exact send candidate, primary-base diff, actual caller and evidence normalization, and all existing send assertion source without executing it."
+        },
+        {
+          "kind": "cross-candidate",
+          "result": "Verified shared interaction worker, normalizer, profiler, startup/editor and activity source blobs agree across all three candidates."
+        },
+        {
+          "kind": "blob",
+          "result": "Resolved candidate focus directly through git rev-parse candidate:path: 6aa16ff8235430a58997714cf78d5b9b86f967b1."
+        }
+      ],
+      "limits": [
+        "Source-reading verdict only: no setup, repository tests, builds, runtime probes, tmux sessions, or network/device operations were run. Parent owns audited isolated batch gates.",
+        "Installed Pi 1.0.3 dependencies were read-only evidence, not executed; runtime equivalence and performance are not proven by this review.",
+        "No delegation, source edits, commits, pushes, merges, worktree cleanup, or credential use. Unrelated accepted work and preserved candidates remain untouched. Parent owns aggregate wisdom and external runtime model verification."
       ]
     },
     {
@@ -4254,12 +4290,14 @@
     {
       "file": "scripts/terminal-perf/tool-workloads.ts",
       "initialBlob": "9790dd19745757bf13aa0fe4980c1489ddecd511",
-      "status": "pending",
+      "status": "accepted",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_97f9b348",
       "primaryCommit": "2a5ec2d174ca8e799c16ea39184716293e366c9c",
-      "judgeIds": [],
+      "judgeIds": [
+        "task_98534795"
+      ],
       "sourceCommit": "2a5ec2d174ca8e799c16ea39184716293e366c9c",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
       "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
@@ -4298,6 +4336,36 @@
         "No repository tests, builds or setup run; parent owns audited isolated batch gates. Runtime equivalence is not claimed from source review alone.",
         "Independent fresh judge and external model verification remain parent-owned.",
         "No per-worker wisdom changes; parent writes aggregate wisdom."
+      ],
+      "acceptedBlob": "c47e1af5bec976d7f09e10248940f135ce78fe4c",
+      "result": "Read the entire candidate and primary-base diff. The three extracted operations have distinct effects: install terminal/tool adapters with restoration registration, construct consistent settled transcript/components/task rows, and attach activity/scroll/layout with disposal. Their fixture-local closures use the existing owner state, not a new context container. setup now exposes exclusivity, reset, measured preparation order, readiness/publication and failure disposal together. This materially improves the lifecycle journey even though the action switch and payload algorithms appropriately remain unchanged.",
+      "systemReason": "Traced interaction-worker tools branch, interaction-normalize sample consumption, runToolProbe/default suite, existing tool tests and the tool-to-navigation disposal caller. Read registered execute preview/agent_end animation ownership, ActivityController attach/sync, profiler descriptor restoration and task-row adapter evidence. History branch entries, UI children and task snapshots remain built together before ActivityController observes them. Registered execute and SDK-generic components retain their distinct paths. Stable Kitty IDs remain scoped synchronously; mutation segments remain separate from forced full-frame capture, hashes and animation cleanup. Reverse cleanup still unwinds activity, SDK adapters, animations, profiler, terminal and capabilities; partial setup still delegates to the same disposal owner.",
+      "checks": [
+        {
+          "kind": "guidance",
+          "result": "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md; inspected only these focus rows/evidence in area, coverage, jobs and assignments ledgers."
+        },
+        {
+          "kind": "candidate-boundary",
+          "result": "Compared each exact candidate to its supplied primaryBase with Git; send and tool each change only their focus source path; tmux candidate equals supplied base and changes no source path."
+        },
+        {
+          "kind": "actual-code",
+          "result": "Read complete exact tool candidate and all three moved setup operations, mutation stages, capture/disposal, suite/probe/standalone entry points and relevant callers/assertion source."
+        },
+        {
+          "kind": "source-comparison",
+          "result": "Rechecked correctly delimited extraction bodies: all three moved setup bodies equal their original measured callback bodies after whitespace normalization. Action(stage) through the remainder of exports/standalone code is byte-identical to primaryBase."
+        },
+        {
+          "kind": "blob",
+          "result": "Resolved candidate focus directly through git rev-parse candidate:path: c47e1af5bec976d7f09e10248940f135ce78fe4c."
+        }
+      ],
+      "limits": [
+        "Source-reading verdict only: no setup, repository tests, builds, runtime probes, tmux sessions, or network/device operations were run. Parent owns audited isolated batch gates.",
+        "Installed Pi 1.0.3 dependencies were read-only evidence, not executed; runtime equivalence and performance are not proven by this review.",
+        "No delegation, source edits, commits, pushes, merges, worktree cleanup, or credential use. Unrelated accepted work and preserved candidates remain untouched. Parent owns aggregate wisdom and external runtime model verification."
       ]
     },
     {
@@ -4335,12 +4403,14 @@
     {
       "file": "scripts/tmux.conf",
       "initialBlob": "97b105de113aa23d912aa57f4f3dae012f9ef587",
-      "status": "pending",
+      "status": "accepted",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_5e579abb",
       "primaryCommit": "73163cda2b7e472576c04d5adbb278ecefec368c",
-      "judgeIds": [],
+      "judgeIds": [
+        "task_98534795"
+      ],
       "sourceCommit": "73163cda2b7e472576c04d5adbb278ecefec368c",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
       "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
@@ -4369,6 +4439,32 @@
         "No repository tests, setup, builds, runtime tmux sessions, credential/device/network probes, or delegation run. Parent owns audited isolated batch gates and independent fresh judge.",
         "No new source commit: sourceCommit identifies the exact existing HEAD for review. Source assertions, security behavior, unrelated accepted work, and preserved worktrees/candidates remain untouched.",
         "No per-worker wisdom changes: no new lesson or structural issue; parent owns aggregate wisdom."
+      ],
+      "acceptedBlob": "97b105de113aa23d912aa57f4f3dae012f9ef587",
+      "result": "Read the exact candidate bytes. The purpose comment and three adjacent settings express one keyboard protocol boundary: enable extended keys, select CSI-u encoding and advertise terminal extkeys support. There are no competing authorities, separated lifetimes or hidden control flow here. Additional sections, helper files or renaming would add ceremony without solving a reading problem.",
+      "systemReason": "Traced package.json tui -> scripts/tui-harness.ts -> tmux -f scripts/tmux.conf, including Enter versus M-Enter dispatch; independently traced activity-terminal-acceptance.py selecting the same config. Inspected direct configuration use and derived-config readFile snippets in the relevant TUI test callers without running them. CompactEditor delegates ordinary input to Pi; installed Pi 1.0.3 defaults follow-up to Alt+Enter on this platform and its Enter decoder explicitly accepts CSI-u modified Enter while treating legacy escape-return differently when Kitty is active. The config is therefore a cohesive shared transport policy, not duplicated application key interpretation.",
+      "checks": [
+        {
+          "kind": "guidance",
+          "result": "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md; inspected only these focus rows/evidence in area, coverage, jobs and assignments ledgers."
+        },
+        {
+          "kind": "candidate-boundary",
+          "result": "Compared each exact candidate to its supplied primaryBase with Git; send and tool each change only their focus source path; tmux candidate equals supplied base and changes no source path."
+        },
+        {
+          "kind": "actual-code",
+          "result": "Read complete exact tmux focus, both direct script callers, relevant config-consuming test snippets, CompactEditor input delegation and installed Pi decoder/default follow-up binding source."
+        },
+        {
+          "kind": "blob",
+          "result": "Resolved candidate focus directly through git rev-parse candidate:path: 97b105de113aa23d912aa57f4f3dae012f9ef587; supplied primaryBase equals candidate, so there is no proposed source delta."
+        }
+      ],
+      "limits": [
+        "Source-reading verdict only: no setup, repository tests, builds, runtime probes, tmux sessions, or network/device operations were run. Parent owns audited isolated batch gates.",
+        "Installed Pi 1.0.3 dependencies were read-only evidence, not executed; runtime equivalence and performance are not proven by this review.",
+        "No delegation, source edits, commits, pushes, merges, worktree cleanup, or credential use. Unrelated accepted work and preserved candidates remain untouched. Parent owns aggregate wisdom and external runtime model verification."
       ]
     },
     {
@@ -6613,13 +6709,44 @@
       "initialBlob": "dded389e7892946fb0cffafb289373d9f39025d8",
       "status": "pending",
       "area": "agent-history-session-goals",
-      "resumeState": "pending-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_9a4b847e",
+      "primaryCommit": "42f9383ee4339b32ab48a4d8480d881c71e5a6a2",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "42f9383ee4339b32ab48a4d8480d881c71e5a6a2",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
-      "pendingReason": "No dedicated primary/final independent focus judgment."
+      "pendingReason": "No dedicated primary/final independent focus judgment.",
+      "primaryBase": "42f9383ee4339b32ab48a4d8480d881c71e5a6a2",
+      "primaryResult": "Traced the actual provider journey: agent_settled checks blockers and controller eligibility; sendContinuation issues a marked followUp; GoalReminders.consume verifies pending exact extension payload and strips its transport token; continuation checks active status and loads this prompt; the context hook independently supplies authoritative goal state and goal.md guidance on every provider request. Keeping this short signal separate avoids duplicated mutable state. Headings, helper extraction or moving policy into this file would add structure without resolving any original reading burden. The focus exists at its baseline blob; its preserved row has no primary candidate or rejected judgment, so no candidate import or rework is needed.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        {
+          "kind": "reading",
+          "result": "Read values and structural readability guidance; inspected focus rows in area reconciliation, area ledger and repository-wide coverage."
+        },
+        {
+          "kind": "caller-trace",
+          "result": "Verified prompt import, trimEnd consumption, active-status assertion, reminder authority, followUp delivery, blocking-question check and authoritative context injection by reading src/goals/extension.ts."
+        },
+        {
+          "kind": "assertion-review",
+          "result": "Read existing assertions for exact reminder text, absent objective/criterion duplication, forged/stale/consumed marker rejection, and provider token stripping; no assertion or security code modified."
+        },
+        {
+          "kind": "git",
+          "result": "Focus HEAD blob dded389e7892946fb0cffafb289373d9f39025d8; working tree was clean before writing this untracked result."
+        },
+        {
+          "kind": "formatter",
+          "result": "Not applicable: no changed source paths."
+        }
+      ],
+      "primaryLimits": [
+        "No tests, setup or builds run; parent owns audited isolated batch gates.",
+        "No new source commit because source is unchanged; sourceCommit identifies the exact reviewed checkout.",
+        "Independent final readability judgment remains parent-owned.",
+        "Wisdom and values unchanged: no new general lesson; aggregate wisdom remains parent-owned."
+      ]
     },
     {
       "file": "src/prompts/goal.md",

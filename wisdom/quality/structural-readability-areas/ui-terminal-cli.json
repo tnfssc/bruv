@@ -1518,11 +1518,11 @@
       "integrationState": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": "task_72c25417",
-        "primaryCommit": "38bb4270a46a5ee9838b649a2d8b240989bde71e",
+        "primaryId": "task_9b8ded9d",
+        "primaryCommit": "e7ca3aac5f5bc3504768293001910810e90e49a1",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "needs-rework",
+        "sourceCommit": "e7ca3aac5f5bc3504768293001910810e90e49a1",
+        "state": "needs-judge",
         "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
       }
     },
@@ -1571,7 +1571,7 @@
     {
       "focus": "scripts/terminal-perf/send-workloads.ts",
       "initialBlob": "52343cd8ba377fd60e745ecbc0d66c1e7afda918",
-      "status": "pending",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_14da3c96",
@@ -1581,16 +1581,19 @@
         }
       ],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "6aa16ff8235430a58997714cf78d5b9b86f967b1",
       "integrationState": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "6aa16ff8235430a58997714cf78d5b9b86f967b1",
         "primaryId": "task_02db43ac",
         "primaryCommit": "ce1847e3d30652f65fd5f9dfa2a3d30ee09f6df7",
-        "judgeIds": [],
+        "judgeIds": [
+          "task_98534795"
+        ],
         "sourceCommit": "ce1847e3d30652f65fd5f9dfa2a3d30ee09f6df7",
-        "state": "needs-judge",
-        "reason": "Assigned task_14da3c96; no completed primary candidate commit or independent actual-code verdict. Historical primary-running label is not completion. Retained uncommitted candidate(s): task_14da3c96 blob 22f5d101ccacd5b717ff679795ceabe0e9b926a9 in /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_14da3c96. Not importable or accepted."
+        "state": "accepted-joined",
+        "reason": "Read the entire candidate and its extraction against f7b5619450bcb7c0b40e5e2194d7303c6a905b9a. SendObservation gives evidence a genuine file-local owner: collection lifetime, synchronous-prefix span nesting, provider observations, event/frame acknowledgment matching and final serialization now live together. createSendWorkload still owns SDK resources, wrapper restoration, real input dispatch and pending work. The action reads as begin observation -> paste/Enter -> await callbacks/prompt/visible frame -> finish observation -> journal accounting, rather than interleaving evidence algorithms with dispatch. This is a coherent authority split, not a name-only cleanup or generic context bag."
       }
     },
     {
@@ -1617,19 +1620,22 @@
     {
       "focus": "scripts/terminal-perf/tool-workloads.ts",
       "initialBlob": "9790dd19745757bf13aa0fe4980c1489ddecd511",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "c47e1af5bec976d7f09e10248940f135ce78fe4c",
       "integrationState": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "c47e1af5bec976d7f09e10248940f135ce78fe4c",
         "primaryId": "task_97f9b348",
         "primaryCommit": "2a5ec2d174ca8e799c16ea39184716293e366c9c",
-        "judgeIds": [],
+        "judgeIds": [
+          "task_98534795"
+        ],
         "sourceCommit": "2a5ec2d174ca8e799c16ea39184716293e366c9c",
-        "state": "needs-judge",
-        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+        "state": "accepted-joined",
+        "reason": "Read the entire candidate and primary-base diff. The three extracted operations have distinct effects: install terminal/tool adapters with restoration registration, construct consistent settled transcript/components/task rows, and attach activity/scroll/layout with disposal. Their fixture-local closures use the existing owner state, not a new context container. setup now exposes exclusivity, reset, measured preparation order, readiness/publication and failure disposal together. This materially improves the lifecycle journey even though the action switch and payload algorithms appropriately remain unchanged."
       }
     },
     {
@@ -1755,19 +1761,22 @@
     {
       "focus": "scripts/tmux.conf",
       "initialBlob": "97b105de113aa23d912aa57f4f3dae012f9ef587",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "97b105de113aa23d912aa57f4f3dae012f9ef587",
       "integrationState": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "97b105de113aa23d912aa57f4f3dae012f9ef587",
         "primaryId": "task_5e579abb",
         "primaryCommit": "73163cda2b7e472576c04d5adbb278ecefec368c",
-        "judgeIds": [],
+        "judgeIds": [
+          "task_98534795"
+        ],
         "sourceCommit": "73163cda2b7e472576c04d5adbb278ecefec368c",
-        "state": "needs-judge",
-        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+        "state": "accepted-joined",
+        "reason": "Read the exact candidate bytes. The purpose comment and three adjacent settings express one keyboard protocol boundary: enable extended keys, select CSI-u encoding and advertise terminal extkeys support. There are no competing authorities, separated lifetimes or hidden control flow here. Additional sections, helper files or renaming would add ceremony without solving a reading problem."
       }
     },
     {
@@ -5310,7 +5319,7 @@
     }
   },
   "resumeStatus": {
-    "accepted": 69,
-    "pending": 42
+    "accepted": 72,
+    "pending": 39
   }
 }

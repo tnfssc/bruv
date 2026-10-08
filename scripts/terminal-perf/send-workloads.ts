@@ -141,6 +141,192 @@ class RecordingTerminal implements Terminal {
   setProgress(_active: boolean) {}
 }
 
+/** Send-specific evidence. The fixture owns SDK work and teardown; this owns only observation. */
+class SendObservation {
+  private collecting = false;
+  private depth = 0;
+  private spans: SendSpan[] = [];
+  private marks: SendMark[] = [];
+  private work: Record<string, number> = {};
+  private rawRequests: Array<{ atMs: number; messages: unknown[] }> = [];
+  private providerWaits: SendEvidence["providerWaits"] = [];
+  private acknowledgmentScreen: string[] = [];
+  private ack = false;
+  private ackText = "";
+  private frameActive = false;
+  private visibleNeedles: string[];
+
+  constructor(
+    private path: SendPath,
+    private message: string,
+  ) {
+    const body = message.trim();
+    const firstBreak = body.indexOf("\n");
+    this.visibleNeedles = [
+      body.slice(0, firstBreak < 0 ? 60 : Math.min(60, firstBreak)),
+      body.slice(body.lastIndexOf("\n") + 1, body.lastIndexOf("\n") + 61),
+    ];
+  }
+
+  get isCollecting() {
+    return this.collecting;
+  }
+
+  get hasAcknowledgmentFrame() {
+    return this.acknowledgmentScreen.length > 0;
+  }
+
+  stop() {
+    this.collecting = false;
+  }
+
+  begin() {
+    this.spans = [];
+    this.marks = [];
+    this.work = {};
+    this.rawRequests = [];
+    this.acknowledgmentScreen = [];
+    this.providerWaits = [];
+    this.ack = false;
+    this.collecting = true;
+  }
+
+  mark(name: string) {
+    if (this.collecting) this.marks.push({ name, atMs: now() });
+  }
+
+  measure<T>(name: string, kind: SendSpan["kind"], fn: () => T): T {
+    if (!this.collecting) return fn();
+    const span: SendSpan = { name, kind, startMs: now(), endMs: 0, depth: this.depth++ };
+    this.work[name] = (this.work[name] ?? 0) + 1;
+    try {
+      return fn();
+    } finally {
+      this.depth--;
+      span.endMs = now();
+      this.spans.push(span);
+    }
+  }
+
+  providerAdmitted(messages: unknown[]) {
+    // Capture only references; serialization/hashing happens after action exit.
+    const atMs = now();
+    if (this.collecting) this.rawRequests.push({ atMs, messages });
+    this.mark("provider-admission");
+    return atMs;
+  }
+
+  providerFinished(startMs: number, requestedDelayMs: number) {
+    if (this.collecting)
+      this.providerWaits.push({
+        startMs,
+        endMs: now(),
+        controlled: true,
+        requestedDelayMs,
+        callbackLatenessMs: 0,
+        observedSyncOverlapMs: 0,
+      });
+  }
+
+  event(event: any) {
+    this.mark("event:" + event.type);
+    if ((event.type === "message_start" && event.message.role === "user") || event.type === "queue_update") {
+      this.ack = true;
+      this.ackText =
+        event.type === "queue_update"
+          ? this.message.trim()
+          : event.message.content
+              .filter((c: any) => c.type === "text")
+              .map((c: any) => c.text)
+              .join("\n");
+      this.mark("ui-acknowledgment");
+    }
+  }
+
+  commandAcknowledged(name: string) {
+    this.ack = true;
+    this.ackText = name;
+    this.mark("ui-command-acknowledgment");
+  }
+
+  duringFrame<T>(renderer: TuiAltScreen, render: () => T): T {
+    const frameEntryMs = now();
+    this.mark("frame-entry");
+    this.frameActive = true;
+    try {
+      return render();
+    } finally {
+      this.frameActive = false;
+      if (this.collecting && this.ack) {
+        const screen = renderer.getScreenLines();
+        const plain = screen.map((line) => Bun.stripANSI(line)).join("\n");
+        const needles = this.path === "command" ? [this.ackText] : this.visibleNeedles;
+        if (needles.some((line) => line.length > 0 && plain.includes(line))) {
+          if (!this.acknowledgmentScreen.length) {
+            this.acknowledgmentScreen = screen;
+            this.marks.push({ name: "visible-acknowledgment-frame", atMs: frameEntryMs });
+          }
+        }
+      }
+      this.mark("frame-exit");
+    }
+  }
+
+  frameWrite() {
+    if (this.frameActive && this.ack) this.mark("acknowledgment-frame-write");
+  }
+
+  finish(writes: readonly string[]) {
+    // End collection before serialization; hashing is not part of the measured action.
+    this.stop();
+    const providerRequests = this.rawRequests.map((request) => {
+      const encoded = JSON.stringify(request.messages);
+      return {
+        atMs: request.atMs,
+        messages: request.messages.length,
+        bytes: Buffer.byteLength(encoded),
+        hash: hash(encoded),
+      };
+    });
+    for (const wait of this.providerWaits) {
+      wait.callbackLatenessMs = Math.max(0, wait.endMs - wait.startMs - wait.requestedDelayMs);
+      // Union overlapping/nested measured intervals: don't double-count wrapper spans.
+      const intervals = this.spans
+        .map((span) => [Math.max(wait.startMs, span.startMs), Math.min(wait.endMs, span.endMs)])
+        .filter(([start, end]) => end! > start!)
+        .sort((a, b) => a[0]! - b[0]!);
+      let end = wait.startMs;
+      for (const [start, stop] of intervals) {
+        wait.observedSyncOverlapMs += Math.max(0, stop! - Math.max(start!, end));
+        end = Math.max(end, stop!);
+      }
+    }
+    const output = writes.join("");
+    const first = (name: string) => this.marks.find((m) => m.name === name)?.atMs ?? null;
+    const firstRequestMs = first("render-request"),
+      firstFrameMs = first("frame-entry");
+    return {
+      spans: this.spans.sort((a, b) => a.startMs - b.startMs),
+      marks: this.marks.sort((a, b) => a.atMs - b.atMs),
+      providerWaits: this.providerWaits,
+      networkWaitMs: 0 as const,
+      work: this.work,
+      providerRequests,
+      outputBytes: Buffer.byteLength(output),
+      outputHash: hash(output),
+      output,
+      acknowledgmentScreen: this.acknowledgmentScreen,
+      screenHash: hash(this.acknowledgmentScreen.join("\n")),
+      visibleAcknowledgment: this.ack && this.acknowledgmentScreen.length > 0,
+      acknowledgmentText: this.ackText,
+      firstRequestMs,
+      firstFrameMs,
+      firstAcknowledgmentFrameMs: first("visible-acknowledgment-frame"),
+      requestToFrameMs: firstFrameMs !== null && firstRequestMs !== null ? firstFrameMs - firstRequestMs : null,
+    };
+  }
+}
+
 // Pinned Pi private methods are intentionally visible in raw evidence. No production patches.
 type Methods = Record<string, any>;
 let active: SendWorkload | undefined;
@@ -151,12 +337,7 @@ export function createSendWorkload(options: SendOptions = {}): SendWorkload {
   const message = options.message ?? (path === "command" ? "/name send-probe" : "send-probe: explain this change");
   if (!message.trim()) throw new Error("Send message must not be blank");
   const journal = options.journal ?? "sdk-disk";
-  const body = message.trim();
-  const firstBreak = body.indexOf("\n");
-  const visibleNeedles = [
-    body.slice(0, firstBreak < 0 ? 60 : Math.min(60, firstBreak)),
-    body.slice(body.lastIndexOf("\n") + 1, body.lastIndexOf("\n") + 61),
-  ];
+  const observation = new SendObservation(path, message);
   let dir: string | undefined;
   let session: Awaited<ReturnType<typeof createAgentSession>>["session"] | undefined;
   let manager: SessionManager | undefined;
@@ -164,40 +345,13 @@ export function createSendWorkload(options: SendOptions = {}): SendWorkload {
   let terminal: RecordingTerminal;
   let started = false;
   let actionUsed = false;
-  let depth = 0;
-  let collecting = false;
-  let spans: SendSpan[] = [];
-  let marks: SendMark[] = [];
-  let work: Record<string, number> = {};
-  let providerRequests: SendEvidence["providerRequests"] = [];
-  let rawRequests: Array<{ atMs: number; messages: unknown[] }> = [];
-  let acknowledgmentScreen: string[] = [];
-  let providerWaits: SendEvidence["providerWaits"] = [];
   let callbackPromise: Promise<unknown> | undefined;
   let backgroundPrompt: Promise<void> | undefined;
   let backgroundHeld = false;
   let releaseBackground: (() => void) | undefined;
   let sourceHashes: Record<string, string> = {};
   let historyHash = "";
-  let ack = false;
-  let ackText = "";
-  let frameActive = false;
   const cleanups: Array<() => void> = [];
-  const mark = (name: string) => {
-    if (collecting) marks.push({ name, atMs: now() });
-  };
-  function measure<T>(name: string, kind: SendSpan["kind"], fn: () => T): T {
-    if (!collecting) return fn();
-    const span: SendSpan = { name, kind, startMs: now(), endMs: 0, depth: depth++ };
-    work[name] = (work[name] ?? 0) + 1;
-    try {
-      return fn();
-    } finally {
-      depth--;
-      span.endMs = now();
-      spans.push(span);
-    }
-  }
   function wrap(
     target: Methods,
     method: string,
@@ -209,7 +363,7 @@ export function createSendWorkload(options: SendOptions = {}): SendWorkload {
     if (typeof original !== "function") return;
     const descriptor = Object.getOwnPropertyDescriptor(target, method);
     target[method] = function (...args: any[]) {
-      return measure(name, kind, () => {
+      return observation.measure(name, kind, () => {
         const result = original.apply(this, args);
         after?.(args, result);
         return result;
@@ -315,26 +469,15 @@ export function createSendWorkload(options: SendOptions = {}): SendWorkload {
         }));
         session.agent.streamFunction = (_model, context) => {
           const stream = createAssistantMessageEventStream();
-          // Capture only references; content serialization/hashing happens after action exit.
-          const atMs = now();
-          if (collecting) rawRequests.push({ atMs, messages: context.messages });
-          mark("provider-admission");
+          const atMs = observation.providerAdmitted(context.messages);
           const finish = () => {
-            if (collecting)
-              providerWaits.push({
-                startMs: atMs,
-                endMs: now(),
-                controlled: true,
-                requestedDelayMs: options.providerDelayMs ?? 0,
-                callbackLatenessMs: 0,
-                observedSyncOverlapMs: 0,
-              });
+            observation.providerFinished(atMs, options.providerDelayMs ?? 0);
             const answer = response("send-probe mock reply");
             stream.push({ type: "start", partial: answer });
             stream.push({ type: "done", reason: "stop", message: answer });
             stream.end(answer);
           };
-          if (!collecting && !backgroundHeld && (path === "steer" || path === "follow-up")) {
+          if (!observation.isCollecting && !backgroundHeld && (path === "steer" || path === "follow-up")) {
             backgroundHeld = true;
             releaseBackground = finish;
           } else setTimeout(finish, options.providerDelayMs ?? 0);
@@ -350,37 +493,16 @@ export function createSendWorkload(options: SendOptions = {}): SendWorkload {
         const cleanup = options.onRendererReady?.(renderer);
         if (cleanup) cleanups.push(cleanup);
         // Wrappers time entry-to-return; never await inside a synchronous interval.
-        wrap(renderer, "requestRender", "tui.requestRender", "sync", () => mark("render-request"));
+        wrap(renderer, "requestRender", "tui.requestRender", "sync", () => observation.mark("render-request"));
         wrap(renderer, "doRender", "tui.doRender", "sync");
         const originalRender = (renderer as unknown as Methods).doRender;
         (renderer as unknown as Methods).doRender = function (...args: any[]) {
-          const frameEntryMs = now();
-          mark("frame-entry");
-          frameActive = true;
-          try {
-            return originalRender.apply(this, args);
-          } finally {
-            frameActive = false;
-            if (collecting && ack) {
-              const screen = renderer.getScreenLines();
-              const plain = screen.map((line) => Bun.stripANSI(line)).join("\n");
-              const needles = path === "command" ? [ackText] : visibleNeedles;
-              if (needles.some((line) => line.length > 0 && plain.includes(line))) {
-                if (!acknowledgmentScreen.length) {
-                  acknowledgmentScreen = screen;
-                  marks.push({ name: "visible-acknowledgment-frame", atMs: frameEntryMs });
-                }
-              }
-            }
-            mark("frame-exit");
-          }
+          return observation.duringFrame(renderer, () => originalRender.apply(this, args));
         };
         cleanups.push(() => {
           (renderer as unknown as Methods).doRender = originalRender;
         });
-        terminal.onWrite = () => {
-          if (frameActive && ack) mark("acknowledgment-frame-write");
-        };
+        terminal.onWrite = () => observation.frameWrite();
         await mode.init();
         wrap(mode.editor, "handleInput", "editor.handleInput");
         wrap(mode.editor, "addToHistory", "editor.addToHistory");
@@ -393,19 +515,7 @@ export function createSendWorkload(options: SendOptions = {}): SendWorkload {
           callbackPromise = Promise.resolve(result);
         });
         wrap(mode, "handleEvent", "interactive.handleEvent", "async-prefix", (args) => {
-          const event = args[0];
-          mark("event:" + event.type);
-          if ((event.type === "message_start" && event.message.role === "user") || event.type === "queue_update") {
-            ack = true;
-            ackText =
-              event.type === "queue_update"
-                ? message.trim()
-                : event.message.content
-                    .filter((c: any) => c.type === "text")
-                    .map((c: any) => c.text)
-                    .join("\n");
-            mark("ui-acknowledgment");
-          }
+          observation.event(args[0]);
         });
         const promptOriginal = session.prompt;
         session.prompt = function (text, options) {
@@ -413,7 +523,7 @@ export function createSendWorkload(options: SendOptions = {}): SendWorkload {
           return promptOriginal.call(this, text, {
             ...options,
             onUserMessageCreated: (message) => {
-              mark("user-message-created");
+              observation.mark("user-message-created");
               previous?.(message);
             },
           });
@@ -465,16 +575,8 @@ export function createSendWorkload(options: SendOptions = {}): SendWorkload {
       const beforeBytes = await stat(manager.getSessionFile()!)
         .then((s) => s.size)
         .catch(() => 0);
-      spans = [];
-      marks = [];
-      work = {};
-      providerRequests = [];
-      rawRequests = [];
-      acknowledgmentScreen = [];
-      providerWaits = [];
-      ack = false;
       terminal.writes = [];
-      collecting = true;
+      observation.begin();
       const actionStartMs = now();
       let sendPromise: Promise<void> | undefined;
       if (path === "normal") {
@@ -482,51 +584,25 @@ export function createSendWorkload(options: SendOptions = {}): SendWorkload {
         // getUserInput() -> await session.prompt(input) body, without startup network jobs.
         sendPromise = mode.getUserInput().then((text: string) => session!.prompt(text));
       }
-      measure("action.paste-dispatch", "sync", () => terminal.input("\x1b[200~" + message + "\x1b[201~"));
-      mark("paste-dispatch-exit");
-      measure("action.enter-dispatch", "sync", () => terminal.input(path === "follow-up" ? "\x1b\r" : "\r"));
-      mark("enter-dispatch-exit");
+      observation.measure("action.paste-dispatch", "sync", () => terminal.input("\x1b[200~" + message + "\x1b[201~"));
+      observation.mark("paste-dispatch-exit");
+      observation.measure("action.enter-dispatch", "sync", () =>
+        terminal.input(path === "follow-up" ? "\x1b\r" : "\r"),
+      );
+      observation.mark("enter-dispatch-exit");
       await callbackPromise;
-      mark("submit-callback-settled");
+      observation.mark("submit-callback-settled");
       if (sendPromise) {
         await sendPromise;
-        mark("session-prompt-settled");
+        observation.mark("session-prompt-settled");
       }
       if (path === "command") {
-        ack = true;
-        ackText = manager.getSessionName() ?? "";
-        mark("ui-command-acknowledgment");
+        observation.commandAcknowledged(manager.getSessionName() ?? "");
       }
       // Do not manually renderNow: wait for the real scheduled frame/write.
-      for (let i = 0; i < 100 && !acknowledgmentScreen.length; i++) await new Promise((r) => setTimeout(r, 2));
+      for (let i = 0; i < 100 && !observation.hasAcknowledgmentFrame; i++) await new Promise((r) => setTimeout(r, 2));
       const actionEndMs = now();
-      collecting = false;
-      providerRequests = rawRequests.map((request) => {
-        const encoded = JSON.stringify(request.messages);
-        return {
-          atMs: request.atMs,
-          messages: request.messages.length,
-          bytes: Buffer.byteLength(encoded),
-          hash: hash(encoded),
-        };
-      });
-      for (const wait of providerWaits) {
-        wait.callbackLatenessMs = Math.max(0, wait.endMs - wait.startMs - wait.requestedDelayMs);
-        // Union overlapping/nested measured intervals: don't double-count wrapper spans.
-        const intervals = spans
-          .map((span) => [Math.max(wait.startMs, span.startMs), Math.min(wait.endMs, span.endMs)])
-          .filter(([start, end]) => end! > start!)
-          .sort((a, b) => a[0]! - b[0]!);
-        let end = wait.startMs;
-        for (const [start, stop] of intervals) {
-          wait.observedSyncOverlapMs += Math.max(0, stop! - Math.max(start!, end));
-          end = Math.max(end, stop!);
-        }
-      }
-      const output = terminal.writes.join("");
-      const first = (name: string) => marks.find((m) => m.name === name)?.atMs ?? null;
-      const firstRequestMs = first("render-request"),
-        firstFrameMs = first("frame-entry");
+      const measured = observation.finish(terminal.writes);
       const afterBytes = await stat(manager.getSessionFile()!)
         .then((s) => s.size)
         .catch(() => 0);
@@ -541,30 +617,15 @@ export function createSendWorkload(options: SendOptions = {}): SendWorkload {
         sourceHashes,
         actionStartMs,
         actionEndMs,
-        spans: spans.sort((a, b) => a.startMs - b.startMs),
-        marks: marks.sort((a, b) => a.atMs - b.atMs),
-        providerWaits,
-        networkWaitMs: 0,
-        work,
-        providerRequests,
+        ...measured,
         journalGrowthBytes: afterBytes - beforeBytes,
-        outputBytes: Buffer.byteLength(output),
-        outputWrites: terminal.writes.length,
-        outputHash: hash(output),
-        output,
-        acknowledgmentScreen,
-        screenHash: hash(acknowledgmentScreen.join("\n")),
         requestedProviderDelayMs: options.providerDelayMs ?? 0,
-        visibleAcknowledgment: ack && acknowledgmentScreen.length > 0,
-        acknowledgmentText: ackText,
-        firstRequestMs,
-        firstFrameMs,
-        firstAcknowledgmentFrameMs: first("visible-acknowledgment-frame"),
-        requestToFrameMs: firstFrameMs !== null && firstRequestMs !== null ? firstFrameMs - firstRequestMs : null,
+        // Keep the original post-stat write-count snapshot; output is captured before stat.
+        outputWrites: terminal.writes.length,
       };
     },
     async dispose() {
-      collecting = false;
+      observation.stop();
       releaseBackground?.();
       releaseBackground = undefined;
       if (backgroundPrompt) {

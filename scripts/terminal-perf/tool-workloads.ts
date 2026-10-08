@@ -360,6 +360,131 @@ export function createToolWorkload(input: ToolWorkloadOptions): ToolWorkload {
       ),
     );
   }
+  function installTerminalAndToolAdapters() {
+    const prior = process.env.PI_PACKAGE_DIR;
+    delete process.env.PI_PACKAGE_DIR;
+    try {
+      initTheme("dark", false);
+    } finally {
+      if (prior !== undefined) process.env.PI_PACKAGE_DIR = prior;
+    }
+    const caps = getCapabilities();
+    setCapabilities({ ...caps, images: options.shape === "png-image" ? "kitty" : null });
+    cleanups.push(() => setCapabilities(caps));
+    terminal = new FakeTerminal(options.columns, options.rows);
+    tui = new TuiAltScreen(terminal, false, undefined, { mouse: false });
+    cleanups.push(() => tui.stop());
+    const request = tui.requestRender.bind(tui);
+    tui.requestRender = (force = false) => {
+      work.renderRequests++;
+      request(force);
+    };
+    profiler = attachTerminalProfiler(tui, { capacity: 4 });
+    cleanups.push(() => profiler.dispose());
+    const listeners = new Map<string, Array<() => void>>();
+    registerExecuteTool(
+      {
+        on: (event: string, callback: () => void) => {
+          listeners.set(event, [...(listeners.get(event) ?? []), callback]);
+        },
+        registerTool: (tool: ToolDefinition) => {
+          definition = tool;
+        },
+      } as unknown as ExtensionAPI,
+      undefined,
+      undefined,
+      () => 0,
+    );
+    stopAnimations = () => {
+      for (const fn of listeners.get("agent_end") ?? []) fn();
+    };
+    cleanups.push(() => stopAnimations());
+    cleanups.push(installConversationDensity());
+    cleanups.push(
+      installSdkTaskRows(themeModule.theme, () => {
+        work.snapshotCalls++;
+        work.snapshotRows += rows.length;
+        return rows;
+      }),
+    );
+    chat = new Container();
+    const render = chat.render;
+    chat.render = function (width) {
+      work.documentRenders++;
+      document = render.call(this, width);
+      return document;
+    };
+  }
+
+  function constructSettledHistory() {
+    for (let i = 0; i < options.historySize; i++) {
+      const id = "settled-" + i;
+      if (i % 4 === 0) {
+        chat.addChild(new UserMessageComponent("Inspect fixture module " + i));
+        entries.push({ type: "message", id: "user-" + i, message: { role: "user" } });
+      }
+      const component = construct(id, { label: "Inspect module " + i, code: 'console.log("settled evidence")' });
+      component.markExecutionStarted();
+      work.starts++;
+      const row: TaskRow = {
+        id: "history-task-" + i,
+        source: "local",
+        sourceCallId: id,
+        title: "Module " + i,
+        status: "succeeded",
+        terminal: true,
+        exitCode: 0,
+      };
+      rows.push(row);
+      component.updateResult({
+        content: [{ type: "text", text: "Settled fixture evidence" }],
+        details: { exitCode: 0, taskRows: [row] },
+        isError: false,
+      });
+      work.updateResult++;
+      chat.addChild(component);
+      entries.push(
+        { type: "message", id, message: { role: "assistant", content: [{ type: "toolCall", id }] } },
+        {
+          type: "message",
+          id: "result-" + id,
+          message: { role: "toolResult", toolCallId: id, details: { taskRows: [row] } },
+        },
+      );
+    }
+    chat.addChild(new UserMessageComponent("Run the measured tool interaction."));
+    entries.push({ type: "message", id: "live-user", message: { role: "user" } });
+  }
+
+  function attachActivityAndLayout() {
+    scroll = new ScrollView(chat, { primary: true, follow: "end", scrollbar: "hidden" });
+    activity = new ActivityController({
+      chatContainer: chat,
+      renderer: tui,
+      ui: tui,
+      transcriptScrollView: scroll,
+      sessionManager: {
+        getBranch: () => {
+          work.branchCalls++;
+          work.branchEntries += entries.length;
+          return entries.slice();
+        },
+        getSessionFile: () => "/terminal-tool-fixture",
+      },
+    });
+    activity.attach();
+    cleanups.push(() => activity.dispose());
+    const input = new Input({ prompt: "bruv> " });
+    tui.setLayoutRoot(
+      new VStack([
+        { component: scroll, grow: 1, minSize: 1 },
+        { component: input, basis: 1, shrink: 0 },
+      ]),
+    );
+    tui.setFocus(input);
+    tui.start();
+  }
+
   function capture(stage: ToolSample["stage"], segments: SyncSegment[]): ToolSample {
     const start = performance.now();
     stableImageId(() => tui.renderNow());
@@ -410,128 +535,9 @@ export function createToolWorkload(input: ToolWorkloadOptions): ToolWorkload {
       expanded = false;
       const segments: SyncSegment[] = [];
       try {
-        measure(segments, "initialize-and-install-adapters", () => {
-          const prior = process.env.PI_PACKAGE_DIR;
-          delete process.env.PI_PACKAGE_DIR;
-          try {
-            initTheme("dark", false);
-          } finally {
-            if (prior !== undefined) process.env.PI_PACKAGE_DIR = prior;
-          }
-          const caps = getCapabilities();
-          setCapabilities({ ...caps, images: options.shape === "png-image" ? "kitty" : null });
-          cleanups.push(() => setCapabilities(caps));
-          terminal = new FakeTerminal(options.columns, options.rows);
-          tui = new TuiAltScreen(terminal, false, undefined, { mouse: false });
-          cleanups.push(() => tui.stop());
-          const request = tui.requestRender.bind(tui);
-          tui.requestRender = (force = false) => {
-            work.renderRequests++;
-            request(force);
-          };
-          profiler = attachTerminalProfiler(tui, { capacity: 4 });
-          cleanups.push(() => profiler.dispose());
-          const listeners = new Map<string, Array<() => void>>();
-          registerExecuteTool(
-            {
-              on: (event: string, callback: () => void) => {
-                listeners.set(event, [...(listeners.get(event) ?? []), callback]);
-              },
-              registerTool: (tool: ToolDefinition) => {
-                definition = tool;
-              },
-            } as unknown as ExtensionAPI,
-            undefined,
-            undefined,
-            () => 0,
-          );
-          stopAnimations = () => {
-            for (const fn of listeners.get("agent_end") ?? []) fn();
-          };
-          cleanups.push(() => stopAnimations());
-          cleanups.push(installConversationDensity());
-          cleanups.push(
-            installSdkTaskRows(themeModule.theme, () => {
-              work.snapshotCalls++;
-              work.snapshotRows += rows.length;
-              return rows;
-            }),
-          );
-          chat = new Container();
-          const render = chat.render;
-          chat.render = function (width) {
-            work.documentRenders++;
-            document = render.call(this, width);
-            return document;
-          };
-        });
-        measure(segments, "construct-settled-history", () => {
-          for (let i = 0; i < options.historySize; i++) {
-            const id = "settled-" + i;
-            if (i % 4 === 0) {
-              chat.addChild(new UserMessageComponent("Inspect fixture module " + i));
-              entries.push({ type: "message", id: "user-" + i, message: { role: "user" } });
-            }
-            const component = construct(id, { label: "Inspect module " + i, code: 'console.log("settled evidence")' });
-            component.markExecutionStarted();
-            work.starts++;
-            const row: TaskRow = {
-              id: "history-task-" + i,
-              source: "local",
-              sourceCallId: id,
-              title: "Module " + i,
-              status: "succeeded",
-              terminal: true,
-              exitCode: 0,
-            };
-            rows.push(row);
-            component.updateResult({
-              content: [{ type: "text", text: "Settled fixture evidence" }],
-              details: { exitCode: 0, taskRows: [row] },
-              isError: false,
-            });
-            work.updateResult++;
-            chat.addChild(component);
-            entries.push(
-              { type: "message", id, message: { role: "assistant", content: [{ type: "toolCall", id }] } },
-              {
-                type: "message",
-                id: "result-" + id,
-                message: { role: "toolResult", toolCallId: id, details: { taskRows: [row] } },
-              },
-            );
-          }
-          chat.addChild(new UserMessageComponent("Run the measured tool interaction."));
-          entries.push({ type: "message", id: "live-user", message: { role: "user" } });
-        });
-        measure(segments, "attach-activity-and-layout", () => {
-          scroll = new ScrollView(chat, { primary: true, follow: "end", scrollbar: "hidden" });
-          activity = new ActivityController({
-            chatContainer: chat,
-            renderer: tui,
-            ui: tui,
-            transcriptScrollView: scroll,
-            sessionManager: {
-              getBranch: () => {
-                work.branchCalls++;
-                work.branchEntries += entries.length;
-                return entries.slice();
-              },
-              getSessionFile: () => "/terminal-tool-fixture",
-            },
-          });
-          activity.attach();
-          cleanups.push(() => activity.dispose());
-          const input = new Input({ prompt: "bruv> " });
-          tui.setLayoutRoot(
-            new VStack([
-              { component: scroll, grow: 1, minSize: 1 },
-              { component: input, basis: 1, shrink: 0 },
-            ]),
-          );
-          tui.setFocus(input);
-          tui.start();
-        });
+        measure(segments, "initialize-and-install-adapters", installTerminalAndToolAdapters);
+        measure(segments, "construct-settled-history", constructSettledHistory);
+        measure(segments, "attach-activity-and-layout", attachActivityAndLayout);
         ready = true;
         return capture("setup", segments);
       } catch (error) {
