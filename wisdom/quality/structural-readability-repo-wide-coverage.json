@@ -11616,12 +11616,12 @@
     {
       "file": "tests/fixtures/remote-owner-error.ts.txt",
       "initialBlob": "685a959578594802bf58ee0ca8fc607cf4040a37",
-      "status": "pending",
+      "status": "accepted",
       "area": "remote",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_e6d5f424",
       "primaryCommit": "517a78b22db0ff1e0d5261bfcf4beda103dc803c",
-      "judgeIds": [],
+      "judgeIds": ["task_a71e68bb"],
       "sourceCommit": "517a78b22db0ff1e0d5261bfcf4beda103dc803c",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
       "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
@@ -11640,17 +11640,32 @@
         "Existing fixture and caller filesystem/process effects were read, not executed: they create owned temporary directories, launch /bin/true and an RPC shell, signal the child, and recursively remove their owned directories. The fixture’s TERM trap was inspected only; no shell trap or cleanup command was executed.",
         "No claim of test success or live runtime behavior. Parent must supply explicit argv/env and fresh owned HOME/config/SDK/TMPDIR for any later execution, retain its isolated test fixtures, and audit existing test-code cleanup before running.",
         "No source commit was created for an unchanged decision; sourceCommit records the exact existing HEAD. No descendants were launched, no wisdom notes changed, no candidate/worktree removed, and no publication performed."
+      ],
+      "acceptedBlob": "685a959578594802bf58ee0ca8fc607cf4040a37",
+      "result": "Read the entire exact Git fixture, not checkout HEAD. Its ordered subprocess-local journey keeps the cause next to the observation: retain the original spawn implementation, intercept only rpc.sh, capture its PID, and emit the synthetic error after agent_start. It then allocates its own HOME, profile and repository before importing owner.ts (whose root is computed at module load), obtains the real hello identity, and persists a launch through handleRemoteRequest using /bin/true. Rebinding the saved PID/startTime to this process and restoring accepted state makes the real boot/PID/startTime/state guard pass; the guard itself is not mocked. The RPC script answers the requested configuration, reads the prompt, ignores TERM before agent_start and remains alive. Awaiting runOwnerTask before the PID probe and state-file read exposes premature terminal publication directly. Finally contains emergency kill and cleanup only of the mkdtemp HOME. These are one short causal experiment, not scattered authorities; extracting preparation or the tiny probe would hide details needed to understand its assertion.",
+      "systemReason": "Followed handleRemoteRequest's identity/epoch validation, normal-profile loading, repository checks, accepted-state/request persistence and owner PID recording; followed runOwnerTask's ownership guard, remote-config verification, prompt dispatch and event routing. OwnerChild records error, requests TERM, retains a two-second SIGKILL escalation until close, then waitForExit rethrows. runOwnerTask catches that error, releases the child, drains pending writes and closes the journal before publishing unknown with the error. The Linux-only lifecycle test copies the fixture into its own subprocess so Bun module mocking cannot contaminate other suites, and asserts childAliveAfterReturn=false, unknown state, and the exact injected error. Keeping the fixture preserves this real lifetime boundary without duplicating production ownership.",
+      "checks": [
+        "git show read of the whole focus at 517a78b22db0ff1e0d5261bfcf4beda103dc803c",
+        "git diff --name-status primaryBase..candidate is empty (both commits are 517a78b22db0ff1e0d5261bfcf4beda103dc803c); no candidate-changed related source paths",
+        "git ls-tree verified the exact accepted focus blob",
+        "Static read of the caller assertions and actual ownership, RPC startup, close/escalation, write-drain and terminal-publication paths"
+      ],
+      "limits": [
+        "No setup, tests, builds or subprocess fixture execution: parent owns audited isolated gates. Existing mkdtemp cleanup and signal operations were inspected only, never executed.",
+        "This fixture sets HOME before import but its caller does not supply a sanitized explicit environment; runtime gating must be parent-audited rather than inferred safe from HOME alone.",
+        "The PID probe checks the captured RPC process, not a full descendant process tree. elapsedMs is reported but the caller does not assert a timing threshold or directly assert SIGKILL.",
+        "Review provenance is this retained durable Bruv Git worktree; only candidate Git objects were used for code judgments. No delegated agents, credentials, auth/device probes, cleanup commands or source edits. Runtime model verification remains parent-owned."
       ]
     },
     {
       "file": "tests/fixtures/remote-placement-e2e/Dockerfile",
       "initialBlob": "9e5babf1d4ec8b3d3e77859c1540a352913c54b8",
-      "status": "pending",
+      "status": "accepted",
       "area": "remote",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_b0f63162",
       "primaryCommit": "5a495b062375a1c7ed9baff9cfa2a516351ae5bd",
-      "judgeIds": [],
+      "judgeIds": ["task_a71e68bb"],
       "sourceCommit": "5a495b062375a1c7ed9baff9cfa2a516351ae5bd",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
       "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
@@ -11684,17 +11699,31 @@
         "Existing networkNoneFixture.cleanup removes its supplied root with rmSync and removes Docker resources; the harness also resolves Docker context using inherited HOME before isolation. These effects were inspected only, never run; parent owns audited isolated gates.",
         "No source edit, no source commit created; sourceCommit identifies the exact existing HEAD inspected. Artifact remains untracked in the durable assigned worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_b0f63162.",
         "No descendants/delegation, recovery investigation, credential access, dependency writes, publication or unrelated wisdom edits. Values/guidance read; no new lesson requires changing them."
+      ],
+      "acceptedBlob": "9e5babf1d4ec8b3d3e77859c1540a352913c54b8",
+      "result": "Read every line at the exact candidate. ARG/FROM exposes selection of the local base, USER root and the first RUN explicitly prepare image-local directories, and the consecutive COPY statements show where runtime, provider/scenario/SSH transport, profiles, SSH daemon config and entrypoint reside. The last RUN sets executable permissions and a fixture identity marker; ENV selects the container's agent config; ENTRYPOINT names the startup owner. This is a compact ordered build contract with no need to reconstruct decisions across helper layers. Introducing stages or shell helpers would separate the destination paths from their consumers without removing duplicated authority.",
+      "systemReason": "Read remote-placement-e2e.ts's exact files mapping and Bun/binary/base selection and networkNoneFixture's build/start sequence. The harness resolves a cached base to a validated sha256 image ID, checks sshd/git, generates fixture keys, copies all mapped files plus Bun and optionally compiled bruv into runtime, and builds with network none and pull=false. It then starts with network none, pull=never and a read-only /keys mount. The image's /root/.bruv profile paths and BRUV_CODING_AGENT_DIR match the copied configs; models point only at the fixture loopback provider. sshd_config and entrypoint consume the mount at runtime, keeping private key installation out of image COPY. The runner checks the identity marker in probe mode, records base/binary/Bun provenance and network mode, and owns log collection and container lifecycle. Image build and process startup already have distinct clear authorities.",
+      "checks": [
+        "git show read of the whole Dockerfile at 5a495b062375a1c7ed9baff9cfa2a516351ae5bd",
+        "git diff --name-status primaryBase..candidate is empty (both commits are 5a495b062375a1c7ed9baff9cfa2a516351ae5bd); no candidate-changed related source paths",
+        "git ls-tree verified the exact accepted Dockerfile blob",
+        "Static read of input staging, pinned offline image build, runtime mounts, environment/profile consumers, startup readiness and runner log/teardown ownership"
+      ],
+      "limits": [
+        "No Docker invocation, setup, tests or builds; static review only. The Dockerfile's rm command and harness cleanup were read, not run. Their image/fixture-local effects are not permission for inherited HOME/config cleanup.",
+        "The base image and supplied binaries were not validated by execution; correctness of installed OS tools/runtime remains an audited parent gate. No live auth or credentials accessed.",
+        "Retained durable worktree and exact candidate Git objects provide review provenance; no independent agent delegation or temporary code checkout. Parent owns model verification, runtime gates and publication."
       ]
     },
     {
       "file": "tests/fixtures/remote-placement-e2e/entrypoint.sh",
       "initialBlob": "4c7af0c825d7f2a12dfb8284d23134e27af7b685",
-      "status": "pending",
+      "status": "accepted",
       "area": "remote",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_b0f63162",
       "primaryCommit": "5a495b062375a1c7ed9baff9cfa2a516351ae5bd",
-      "judgeIds": [],
+      "judgeIds": ["task_a71e68bb"],
       "sourceCommit": "5a495b062375a1c7ed9baff9cfa2a516351ae5bd",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
       "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
@@ -11728,17 +11757,32 @@
         "Existing networkNoneFixture.cleanup removes its supplied root with rmSync and removes Docker resources; the harness also resolves Docker context using inherited HOME before isolation. These effects were inspected only, never run; parent owns audited isolated gates.",
         "No source edit, no source commit created; sourceCommit identifies the exact existing HEAD inspected. Artifact remains untracked in the durable assigned worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_b0f63162.",
         "No descendants/delegation, recovery investigation, credential access, dependency writes, publication or unrelated wisdom edits. Values/guidance read; no new lesson requires changing them."
+      ],
+      "acceptedBlob": "4c7af0c825d7f2a12dfb8284d23134e27af7b685",
+      "result": "Read the complete six-line script at the exact candidate. set -eu makes startup failure visible; the two mode-600 install commands explicitly transfer the mounted host private key and client public authorization into sshd's paths; Bun starts the fixture provider with one runner-collected log path; exec replaces the shell with foreground sshd and supplies the fixture config explicitly. The reader can see credential installation and foreground/background process lifetimes in one place. A supervisor or extracted helper would add a new lifecycle owner rather than consolidate an existing scattered decision.",
+      "systemReason": "Verified Dockerfile installs this executable and creates /run/sshd, and networkNoneFixture generates its own keys and mounts /keys read-only in a network-none container. sshd_config uses precisely /run/sshd/hostkey and /run/sshd/client.pub, disables password auth/forwarding and retains strict modes. The harness uses strict pinned known-host SSH with an owned config and a docker-exec byte proxy to the daemon's loopback port; after SSH readiness it separately checks fake-provider's loopback /health endpoint. fake-provider writes inference/error diagnostics under /tmp while this entrypoint redirects its process output to placement-provider.log; the runner captures these logs and Docker stderr before owning teardown. The script owns startup only, while readiness and whole-container termination belong to the harness/runner. That split is legible without new machinery.",
+      "checks": [
+        "git show read of the whole entrypoint at 5a495b062375a1c7ed9baff9cfa2a516351ae5bd",
+        "git diff --name-status primaryBase..candidate is empty (both commits are 5a495b062375a1c7ed9baff9cfa2a516351ae5bd); no candidate-changed related source paths",
+        "git ls-tree verified the exact accepted entrypoint blob",
+        "Static read of mount/key generation, daemon configuration, real SSH relay, separate provider readiness and runner-collected logs/teardown"
+      ],
+      "limits": [
+        "No script, key generation, Docker, setup, tests or builds executed. No real keys or user credentials read; only tracked fixture code/config inspected.",
+        "The background provider is not supervised after startup: its later exit does not itself stop sshd. This is existing fixture behavior, not evidence of a structural refactor need or a new regression. Readiness probing proves only startup if executed, not ongoing provider liveness.",
+        "Existing fixture-directory/image/container cleanup was inspected only. Parent must own audited runtime gates using explicit argv/env and retained owned fixture HOME/config/SDK state; this review provides no execution safety bypass.",
+        "Durable review provenance is the retained Bruv Git worktree and exact candidate objects; no delegates or temporary code checkout. Model verification and publication remain parent-owned."
       ]
     },
     {
       "file": "tests/fixtures/remote-placement-e2e/fake-provider.ts",
       "initialBlob": "882eec6a23bbbb157263978900ebb1b4942b75ad",
-      "status": "pending",
+      "status": "accepted",
       "area": "remote",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_b0f63162",
       "primaryCommit": "5a495b062375a1c7ed9baff9cfa2a516351ae5bd",
-      "judgeIds": [],
+      "judgeIds": ["task_266e6c8f"],
       "sourceCommit": "5a495b062375a1c7ed9baff9cfa2a516351ae5bd",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
       "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
@@ -11772,6 +11816,20 @@
         "Existing networkNoneFixture.cleanup removes its supplied root with rmSync and removes Docker resources; the harness also resolves Docker context using inherited HOME before isolation. These effects were inspected only, never run; parent owns audited isolated gates.",
         "No source edit, no source commit created; sourceCommit identifies the exact existing HEAD inspected. Artifact remains untracked in the durable assigned worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_b0f63162.",
         "No descendants/delegation, recovery investigation, credential access, dependency writes, publication or unrelated wisdom edits. Values/guidance read; no new lesson requires changing them."
+      ],
+      "acceptedBlob": "882eec6a23bbbb157263978900ebb1b4942b75ad",
+      "result": "Read the complete exact candidate adapter. Its request journey is directly visible: GET /health returns a fixture marker; otherwise only POST paths ending /chat/completions are accepted. JSON parsing and inference append occur before the try, so malformed input or append failure are not converted into scenario HTTP 400 errors. The logged request precedes stream(body), retaining evidence of unexpected models. Only scenario/Response construction is caught, and error-log append and HTTP 400 stay adjacent. SSE content type belongs to this HTTP adapter while scenario.ts owns model/message decisions and SSE chunk framing. No scattered routing authority or hidden lifetime warrants helper extraction.",
+      "systemReason": "Dockerfile copies provider/scenario into /opt/fixture; entrypoint launches the provider before sshd and redirects provider output into container /tmp. networkNoneFixture.start probes localhost:18765/health through docker exec. Correction to supplied evidence: this probe checks r.ok only; it does not consume or validate the response-body identity. scenario.stream calls synchronous response before emitting two chunks plus [DONE]; unexpected destination model throws. remote-placement-e2e.ts runs a separate parent loopback provider asserting placement-parent, poisons local descendant profiles with placement-local-wrong, checks destination inference for orchestrator/normal and empty provider errors, then copies the three provider diagnostics in finally. Current boundaries preserve that evidence and remain short/readable.",
+      "checks": [
+        "git show exact candidate:focus and scenario, Dockerfile, entrypoint, models, harness and acceptance-runner source journeys",
+        "git diff --name-only primaryBase candidate was empty (both are 5a495b062375a1c7ed9baff9cfa2a516351ae5bd); there are no candidate-changed related source paths",
+        "git rev-parse candidate:focus returned the recorded accepted blob",
+        "Relevant shared readers are byte-identical between the two assigned candidate revisions"
+      ],
+      "limits": [
+        "Static exact-Git-source review only; no setup, tests, builds, fixture providers, SSH/Docker processes, or live auth/device access were run. Parent owns audited isolated runtime gates and runtime agent.model verification.",
+        "Used the supplied durable worktree for review and retained candidate evidence; no code checkouts in /tmp, no source edits, no delegation, no cleanup, dependency changes, publication, or wisdom edits.",
+        "Fixture effects inspected before any possible execution: Dockerfile contains image-local deletion; harness creates keys/config, Docker containers/images, localhost services and tmux, and cleanup removes its supplied root. These paths were read only, never executed; this review does not authorize inherited-HOME or fixture cleanup."
       ]
     },
     {
@@ -11861,12 +11919,12 @@
     {
       "file": "tests/fixtures/remote-placement-e2e/sshd_config",
       "initialBlob": "56d4d9e552d16fc332ed0e224a53921f5c7b5f8c",
-      "status": "pending",
+      "status": "accepted",
       "area": "remote",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_b143960d",
       "primaryCommit": "f5d7a4189866c067dc8fc90a3c766c53772fbdb7",
-      "judgeIds": [],
+      "judgeIds": ["task_266e6c8f"],
       "sourceCommit": "f5d7a4189866c067dc8fc90a3c766c53772fbdb7",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
       "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
@@ -11892,17 +11950,31 @@
         "Static source reading only; no setup, tests, builds, Docker, SSH, provider requests, or credential access were executed. Parent owns audited isolated runtime gates and fresh independent judgment.",
         "No source edits; formatter not applicable and no empty source commit created. Shared dependencies were not modified. Result artifact intentionally remains untracked; no wisdom files edited, because no new general lesson was found.",
         "Fixture Dockerfile contains image-local removal and harness cleanup contains owned-root removal; these were read, not executed. This review does not authorize running them. Existing worktrees and evidence remain intact."
+      ],
+      "acceptedBlob": "56d4d9e552d16fc332ed0e224a53921f5c7b5f8c",
+      "result": "Read all fourteen exact candidate directives. The transport policy is declared directly in one flat config: 2222 listener, fixed host/client-key paths, key-only root login, strict modes, and disabled agent/TCP forwarding, TTY and X11. Password and keyboard-interactive authentication are separately disabled, with public-key authentication enabled. No include or indirect mapping obscures which daemon policy applies; comments or shared configuration would add navigation rather than consolidate an actual split decision.",
+      "systemReason": "Dockerfile installs this exact file as /etc/ssh/sshd_config. entrypoint installs fixture-mounted hostkey and client.pub to exactly /run/sshd/hostkey and /run/sshd/client.pub with mode 600, then execs sshd -D -e -f with the installed file. networkNoneFixture generates fixture keys, mounts /keys read-only, starts network:none, and builds an owned SSH config with root/2222, the matching identity, no agent, strict pinned host-key checking, and docker-exec ProxyCommand. ssh-proxy.ts is a real byte pipe to container-local 127.0.0.1:2222. Port, key paths and login policy match end-to-end. Restrictions deliberately leave shell commands possible for RPC, without enabling forwarding or terminal allocation.",
+      "checks": [
+        "git show exact candidate:focus, Dockerfile, entrypoint and ssh-proxy; inspected harness key generation, mounts, SSH config, connection and health probe",
+        "git diff --name-only primaryBase candidate was empty (both are f5d7a4189866c067dc8fc90a3c766c53772fbdb7); there are no candidate-changed related source paths",
+        "git rev-parse candidate:focus returned the recorded accepted blob",
+        "Relevant fixture and harness source is byte-identical to 5a495b062375a1c7ed9baff9cfa2a516351ae5bd"
+      ],
+      "limits": [
+        "Static exact-Git-source review only; no setup, tests, builds, fixture providers, SSH/Docker processes, or live auth/device access were run. Parent owns audited isolated runtime gates and runtime agent.model verification.",
+        "Used the supplied durable worktree for review and retained candidate evidence; no code checkouts in /tmp, no source edits, no delegation, no cleanup, dependency changes, publication, or wisdom edits.",
+        "Fixture effects inspected before any possible execution: Dockerfile contains image-local deletion; harness creates keys/config, Docker containers/images, localhost services and tmux, and cleanup removes its supplied root. These paths were read only, never executed; this review does not authorize inherited-HOME or fixture cleanup."
       ]
     },
     {
       "file": "tests/fixtures/remote-placement-e2e/subagents.json",
       "initialBlob": "c952ec558c8c91b62d2e84346b21484e71db1ef3",
-      "status": "pending",
+      "status": "accepted",
       "area": "remote",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_b143960d",
       "primaryCommit": "f5d7a4189866c067dc8fc90a3c766c53772fbdb7",
-      "judgeIds": [],
+      "judgeIds": ["task_266e6c8f"],
       "sourceCommit": "f5d7a4189866c067dc8fc90a3c766c53772fbdb7",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
       "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
@@ -11928,6 +12000,20 @@
         "Static source reading only; no setup, tests, builds, Docker, SSH, provider requests, or credential access were executed. Parent owns audited isolated runtime gates and fresh independent judgment.",
         "No source edits; formatter not applicable and no empty source commit created. Shared dependencies were not modified. Result artifact intentionally remains untracked; no wisdom files edited, because no new general lesson was found.",
         "Fixture Dockerfile contains image-local removal and harness cleanup contains owned-root removal; these were read, not executed. This review does not authorize running them. Existing worktrees and evidence remain intact."
+      ],
+      "acceptedBlob": "c952ec558c8c91b62d2e84346b21484e71db1ef3",
+      "result": "Read the complete exact candidate JSON. Each of its two profile records has a concrete destination model and off thinking. The normal/orchestrator names are operational selectors, not cosmetic labels; their different model IDs make the placement proof legible. Missing fast is allowed by the schema and outside this assigned normal-child journey. The direct two-record mapping has no scattered default or hierarchy to simplify; inheritance/generation would obscure destination evidence.",
+      "systemReason": "Dockerfile copies this destination-only file to /root/.bruv/subagents.json. loadProfiles uses strict profile records, validates provider/model and thinking, and materializes an empty optional fast record. owner hello reads normal; launch selects placement.profile or normal, resolves explicit override before configured model/thinking, and persists that effective profile. Owner startup passes provider/model/thinking CLI arguments and verifies the RPC effective configuration before sending the prompt. remoteChildEnvironment strips T3 root controls and sets role/depth; the target-omitted server child follows job-service local-runtime profile resolution against destination HOME and sets normal/depth 2. Its delegation guard rejects depth 2. models.json defines both IDs; scenario.ts checks orchestrator depth 1, launches the omitted-target normal child, checks normal depth 2 and refusal of further delegation. The runner gives its separate parent HOME placement-local-wrong profiles, asserts placement-parent on parent inference, and checks destination normal/orchestrator evidence and empty errors. Configuration ownership and assertions are already explicit.",
+      "checks": [
+        "git show exact candidate:focus and strict profile schema/loader; followed owner hello/launch/model handshake, placement environment, job-service role/depth/profile selection, bridge routing and scenario/runner assertions",
+        "git diff --name-only primaryBase candidate was empty (both are f5d7a4189866c067dc8fc90a3c766c53772fbdb7); there are no candidate-changed related source paths",
+        "git rev-parse candidate:focus returned the recorded accepted blob",
+        "git diff for all relevant shared source readers between the two assigned candidates was empty"
+      ],
+      "limits": [
+        "Static exact-Git-source review only; no setup, tests, builds, fixture providers, SSH/Docker processes, or live auth/device access were run. Parent owns audited isolated runtime gates and runtime agent.model verification.",
+        "Used the supplied durable worktree for review and retained candidate evidence; no code checkouts in /tmp, no source edits, no delegation, no cleanup, dependency changes, publication, or wisdom edits.",
+        "Fixture effects inspected before any possible execution: Dockerfile contains image-local deletion; harness creates keys/config, Docker containers/images, localhost services and tmux, and cleanup removes its supplied root. These paths were read only, never executed; this review does not authorize inherited-HOME or fixture cleanup."
       ]
     },
     {
@@ -21423,9 +21509,9 @@
     "baselineFiles": 766,
     "finalGate": "pending; incomplete focus coverage",
     "liveAuth": "unverified/failing; preserved",
-    "accepted": 747,
+    "accepted": 753,
     "total": 835,
-    "pending": 88,
+    "pending": 82,
     "sourceExtras": 69,
     "checkout": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
     "branch": "bruv/readability-pr45-sol-continuation",

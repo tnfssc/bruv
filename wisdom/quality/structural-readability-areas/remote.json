@@ -2010,66 +2010,70 @@
     {
       "focus": "tests/fixtures/remote-owner-error.ts.txt",
       "initialBlob": "685a959578594802bf58ee0ca8fc607cf4040a37",
-      "status": "pending",
+      "status": "accepted",
       "judgeRounds": [],
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "685a959578594802bf58ee0ca8fc607cf4040a37",
         "primaryId": "task_e6d5f424",
         "primaryCommit": "517a78b22db0ff1e0d5261bfcf4beda103dc803c",
-        "judgeIds": [],
+        "judgeIds": ["task_a71e68bb"],
         "sourceCommit": "517a78b22db0ff1e0d5261bfcf4beda103dc803c",
-        "state": "needs-judge",
-        "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+        "state": "accepted-joined",
+        "reason": "Read the entire exact Git fixture, not checkout HEAD. Its ordered subprocess-local journey keeps the cause next to the observation: retain the original spawn implementation, intercept only rpc.sh, capture its PID, and emit the synthetic error after agent_start. It then allocates its own HOME, profile and repository before importing owner.ts (whose root is computed at module load), obtains the real hello identity, and persists a launch through handleRemoteRequest using /bin/true. Rebinding the saved PID/startTime to this process and restoring accepted state makes the real boot/PID/startTime/state guard pass; the guard itself is not mocked. The RPC script answers the requested configuration, reads the prompt, ignores TERM before agent_start and remains alive. Awaiting runOwnerTask before the PID probe and state-file read exposes premature terminal publication directly. Finally contains emergency kill and cleanup only of the mkdtemp HOME. These are one short causal experiment, not scattered authorities; extracting preparation or the tiny probe would hide details needed to understand its assertion."
       },
-      "acceptedBlob": null
+      "acceptedBlob": "685a959578594802bf58ee0ca8fc607cf4040a37"
     },
     {
       "focus": "tests/fixtures/remote-placement-e2e/Dockerfile",
       "initialBlob": "9e5babf1d4ec8b3d3e77859c1540a352913c54b8",
-      "status": "pending",
+      "status": "accepted",
       "judgeRounds": [],
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "9e5babf1d4ec8b3d3e77859c1540a352913c54b8",
         "primaryId": "task_b0f63162",
         "primaryCommit": "5a495b062375a1c7ed9baff9cfa2a516351ae5bd",
-        "judgeIds": [],
+        "judgeIds": ["task_a71e68bb"],
         "sourceCommit": "5a495b062375a1c7ed9baff9cfa2a516351ae5bd",
-        "state": "needs-judge",
-        "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+        "state": "accepted-joined",
+        "reason": "Read every line at the exact candidate. ARG/FROM exposes selection of the local base, USER root and the first RUN explicitly prepare image-local directories, and the consecutive COPY statements show where runtime, provider/scenario/SSH transport, profiles, SSH daemon config and entrypoint reside. The last RUN sets executable permissions and a fixture identity marker; ENV selects the container's agent config; ENTRYPOINT names the startup owner. This is a compact ordered build contract with no need to reconstruct decisions across helper layers. Introducing stages or shell helpers would separate the destination paths from their consumers without removing duplicated authority."
       },
-      "acceptedBlob": null
+      "acceptedBlob": "9e5babf1d4ec8b3d3e77859c1540a352913c54b8"
     },
     {
       "focus": "tests/fixtures/remote-placement-e2e/entrypoint.sh",
       "initialBlob": "4c7af0c825d7f2a12dfb8284d23134e27af7b685",
-      "status": "pending",
+      "status": "accepted",
       "judgeRounds": [],
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "4c7af0c825d7f2a12dfb8284d23134e27af7b685",
         "primaryId": "task_b0f63162",
         "primaryCommit": "5a495b062375a1c7ed9baff9cfa2a516351ae5bd",
-        "judgeIds": [],
+        "judgeIds": ["task_a71e68bb"],
         "sourceCommit": "5a495b062375a1c7ed9baff9cfa2a516351ae5bd",
-        "state": "needs-judge",
-        "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+        "state": "accepted-joined",
+        "reason": "Read the complete six-line script at the exact candidate. set -eu makes startup failure visible; the two mode-600 install commands explicitly transfer the mounted host private key and client public authorization into sshd's paths; Bun starts the fixture provider with one runner-collected log path; exec replaces the shell with foreground sshd and supplies the fixture config explicitly. The reader can see credential installation and foreground/background process lifetimes in one place. A supervisor or extracted helper would add a new lifecycle owner rather than consolidate an existing scattered decision."
       },
-      "acceptedBlob": null
+      "acceptedBlob": "4c7af0c825d7f2a12dfb8284d23134e27af7b685"
     },
     {
       "focus": "tests/fixtures/remote-placement-e2e/fake-provider.ts",
       "initialBlob": "882eec6a23bbbb157263978900ebb1b4942b75ad",
-      "status": "pending",
+      "status": "accepted",
       "judgeRounds": [],
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "882eec6a23bbbb157263978900ebb1b4942b75ad",
         "primaryId": "task_b0f63162",
         "primaryCommit": "5a495b062375a1c7ed9baff9cfa2a516351ae5bd",
-        "judgeIds": [],
+        "judgeIds": ["task_266e6c8f"],
         "sourceCommit": "5a495b062375a1c7ed9baff9cfa2a516351ae5bd",
-        "state": "needs-judge",
-        "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+        "state": "accepted-joined",
+        "reason": "Read the complete exact candidate adapter. Its request journey is directly visible: GET /health returns a fixture marker; otherwise only POST paths ending /chat/completions are accepted. JSON parsing and inference append occur before the try, so malformed input or append failure are not converted into scenario HTTP 400 errors. The logged request precedes stream(body), retaining evidence of unexpected models. Only scenario/Response construction is caught, and error-log append and HTTP 400 stay adjacent. SSE content type belongs to this HTTP adapter while scenario.ts owns model/message decisions and SSE chunk framing. No scattered routing authority or hidden lifetime warrants helper extraction."
       },
-      "acceptedBlob": null
+      "acceptedBlob": "882eec6a23bbbb157263978900ebb1b4942b75ad"
     },
     {
       "focus": "tests/fixtures/remote-placement-e2e/models.json",
@@ -2122,34 +2126,36 @@
     {
       "focus": "tests/fixtures/remote-placement-e2e/sshd_config",
       "initialBlob": "56d4d9e552d16fc332ed0e224a53921f5c7b5f8c",
-      "status": "pending",
+      "status": "accepted",
       "judgeRounds": [],
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "56d4d9e552d16fc332ed0e224a53921f5c7b5f8c",
         "primaryId": "task_b143960d",
         "primaryCommit": "f5d7a4189866c067dc8fc90a3c766c53772fbdb7",
-        "judgeIds": [],
+        "judgeIds": ["task_266e6c8f"],
         "sourceCommit": "f5d7a4189866c067dc8fc90a3c766c53772fbdb7",
-        "state": "needs-judge",
-        "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+        "state": "accepted-joined",
+        "reason": "Read all fourteen exact candidate directives. The transport policy is declared directly in one flat config: 2222 listener, fixed host/client-key paths, key-only root login, strict modes, and disabled agent/TCP forwarding, TTY and X11. Password and keyboard-interactive authentication are separately disabled, with public-key authentication enabled. No include or indirect mapping obscures which daemon policy applies; comments or shared configuration would add navigation rather than consolidate an actual split decision."
       },
-      "acceptedBlob": null
+      "acceptedBlob": "56d4d9e552d16fc332ed0e224a53921f5c7b5f8c"
     },
     {
       "focus": "tests/fixtures/remote-placement-e2e/subagents.json",
       "initialBlob": "c952ec558c8c91b62d2e84346b21484e71db1ef3",
-      "status": "pending",
+      "status": "accepted",
       "judgeRounds": [],
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "c952ec558c8c91b62d2e84346b21484e71db1ef3",
         "primaryId": "task_b143960d",
         "primaryCommit": "f5d7a4189866c067dc8fc90a3c766c53772fbdb7",
-        "judgeIds": [],
+        "judgeIds": ["task_266e6c8f"],
         "sourceCommit": "f5d7a4189866c067dc8fc90a3c766c53772fbdb7",
-        "state": "needs-judge",
-        "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+        "state": "accepted-joined",
+        "reason": "Read the complete exact candidate JSON. Each of its two profile records has a concrete destination model and off thinking. The normal/orchestrator names are operational selectors, not cosmetic labels; their different model IDs make the placement proof legible. Missing fast is allowed by the schema and outside this assigned normal-child journey. The direct two-record mapping has no scattered default or hierarchy to simplify; inheritance/generation would obscure destination evidence."
       },
-      "acceptedBlob": null
+      "acceptedBlob": "c952ec558c8c91b62d2e84346b21484e71db1ef3"
     },
     {
       "focus": "tests/fixtures/remote-typed-root-placement/Dockerfile",
@@ -4133,8 +4139,8 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 92,
-    "pending": 30
+    "accepted": 98,
+    "pending": 24
   },
   "extraFiles": [
     {
