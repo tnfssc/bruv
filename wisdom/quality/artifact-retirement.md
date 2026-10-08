@@ -55,3 +55,6 @@ settings capture fixtures and four provider-setup guide images. They still have
 a job. Values now say to keep durable decisions and required inputs in Git,
 write disposable outputs to ignored artifacts, and use Git recovery references
 when retiring evidence. All changes are local; no push or PR was requested.
+
+Further completed-run logs/inventories were retired in a fresh task;
+[decisions and recovery](completed-run-retirement.md).

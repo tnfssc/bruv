@@ -1,5 +1,8 @@
 # Old prompt flashes before the compact prompt
 
+Completed-run captures/logs mentioned below are now historical Git evidence;
+[recovery and retained inputs](../quality/completed-run-retirement.md). Conclusions remain here.
+
 ## Cause and fix
 
 Pi 0.99.1 constructs a bordered CustomEditor, then InteractiveMode.init starts

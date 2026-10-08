@@ -1,5 +1,8 @@
 # Terminal optimization layer — stacked pickup
 
+Completed-run captures/logs mentioned below are now historical Git evidence;
+[recovery and retained inputs](../quality/completed-run-retirement.md). Conclusions remain here.
+
 ## Source and scope
 
 - Verified combined source: `134f7bcd` on `t3code/terminal-ui-frame-performance`; extracted against `origin/develop = 2683847d`, not by replacing its tree with the old source tree.
@@ -11,7 +14,7 @@
 
 ## Fresh setup and checks
 
-Logs and machine-readable results: [evidence/stacked-optimization-extraction](evidence/stacked-optimization-extraction/).
+Logs and machine-readable results: [evidence/stacked-optimization-extraction (historical)](../quality/completed-run-retirement.md#recovery).
 
 1. Removed only this worktree's node_modules; `bun install --frozen-lockfile`, `bun run prepare:assets`, `bun run check` passed.
 2. Also proved pristine setup with `bun install --frozen-lockfile --backend=copyfile --cache-dir=artifacts/terminal-optimization-extraction/dependency-cache` after removing this worktree's node_modules, followed by prepare:assets and check: passed.

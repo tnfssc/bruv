@@ -1,9 +1,0 @@
-bun test v1.4.2 (744846f84)
-
-tests/session-costs-tui.test.ts:
-(pass) real footer includes nested costs, updates while idle, and restores on resume [3324.30ms]
-
- 1 pass
- 0 fail
- 3 expect() calls
-Ran 1 test across 1 file. [3.53s]

@@ -27,3 +27,14 @@ live.env
 /wisdom/experiments/t3/ui-only-history-minimal/final-head/
 /wisdom/experiments/t3/preview-v2/*.png
 /wisdom/t3/evidence/**/*.png
+
+# Retired completed-run captures; keep source, provenance and pinned timing inputs.
+/wisdom/remote-workspaces/evidence/**/*.txt
+/wisdom/remote-workspaces/evidence/**/*.ansi
+/wisdom/tasks-ui/evidence/**/*.txt
+/wisdom/tasks-ui/evidence/**/*.ansi
+/wisdom/tasks-ui/evidence/**/*.json
+!/wisdom/tasks-ui/evidence/selector-lifecycle/pinned-evidence.json
+/wisdom/tasks-ui/evidence/**/*.cpuprofile
+/wisdom/experiments/t3/ui-only-history-minimal/revision-*
+/wisdom/experiments/t3/ui-only-history-pr-link/rebase-provenance.txt

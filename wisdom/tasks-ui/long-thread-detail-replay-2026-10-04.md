@@ -1,5 +1,8 @@
 # Saved detail replay after activity / upstream task-row integration
 
+Completed-run captures/logs mentioned below are now historical Git evidence;
+[recovery and retained inputs](../quality/completed-run-retirement.md). Conclusions remain here.
+
 The isolated compiled normal CLI reproduced the full-CI failure on the merged connector checkout (base 08ad5558b28c689893b8f3831d5b6bd5ad73f563). It is not evidence of missing tool results or a regression in upstream SDK task ownership.
 
 ## What failed

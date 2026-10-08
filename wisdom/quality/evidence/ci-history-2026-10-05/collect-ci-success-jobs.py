@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import concurrent.futures,gzip,json,pathlib,subprocess
-ROOT=pathlib.Path(__file__).resolve().parent
+ROOT=pathlib.Path("artifacts/ci-history")
 runs=json.loads((ROOT/"runs.json").read_text())
 (ROOT/"logs").mkdir(exist_ok=True)
 def fetch(r):

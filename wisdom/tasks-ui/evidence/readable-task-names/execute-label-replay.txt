@@ -1,7 +1,0 @@
-Original session read-only replay, width 100, using follow-up worktree source.
-SDK ToolExecutionComponent + Container:
-✓ Run final repaired root suite
-✓ Check next release version and remote branch
-RootTranscript (task rows; original assistant prose omitted here):
-✓ Run final repaired root suite
-✓ Check next release version and remote branch

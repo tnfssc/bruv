@@ -1,5 +1,5 @@
 import gzip,json,pathlib,re
-root=pathlib.Path(__file__).resolve().parent
+root=pathlib.Path("artifacts/ci-history")
 runs=json.loads((root/'runs.json').read_text())
 for r in sorted(runs,key=lambda r:r['created_at']):
  if r['name']!='Release' or r['conclusion']!='failure': continue

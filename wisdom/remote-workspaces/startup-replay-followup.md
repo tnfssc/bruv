@@ -1,5 +1,8 @@
 # Historical completion replay
 
+Completed-run captures/logs mentioned below are now historical Git evidence;
+[recovery and retained inputs](../quality/completed-run-retirement.md). Conclusions remain here.
+
 User on v0.15.9 reports old done remote-smoke-test-20260717 final text appears every new die startup. Investigate legacy unowned global task cache versus per-session human notice dedup. Startup cached history is not a new completion. Keep explicit status/transcript access, preserve owned undelivered jobs and real transitions. Never delete user history as workaround.
 
 Task task_c7a78d5a worktree /home/tnfssc/.die/worktrees/die-a86675007a5e-task_c7a78d5a branch die/fix-historical-remote-completion-replay--c7a78d5a base429a83d owns fix and regression proof. Parent reviews/integrates/releases. Existing values ownership/human UX apply. Config discovery stays parked.

@@ -1,2 +1,0 @@
-9d01f720b803bf21d79e2b56de14d35a02316b9e22e8825fb007252a2f45f27a  node_modules/@earendil-works/pi-coding-agent/dist/core/session-manager.js
-69340ff4258cf31f149247d8ab0aca3f26149f2e203629f14eeb1df37b4c75e3  node_modules/@earendil-works/pi-tui/dist/tui-alt-screen.js

@@ -1,5 +1,8 @@
 # Combined remote daily-use follow-up
 
+Completed-run captures/logs mentioned below are now historical Git evidence;
+[recovery and retained inputs](../quality/completed-run-retirement.md). Conclusions remain here.
+
 Base e047d97; full branch die/dogfood-remote-workflow-as-actual-termin-5d85da46 merged as bb602b7. Both sides of additive test conflicts preserved; 39 focused merge tests pass. Parent worktree untouched. Read values and daily-dogfood note; config discovery stays parked.
 
 ## Work locations

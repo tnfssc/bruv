@@ -1,5 +1,8 @@
 # Proposal #23: independent compiled-terminal acceptance preparation
 
+Completed-run captures/logs mentioned below are now historical Git evidence;
+[recovery and retained inputs](../quality/completed-run-retirement.md). Conclusions remain here.
+
 This is a prepared harness, **not acceptance of the in-progress implementation** in task_9f8bbb2c. No runtime edits or build. Read that worktree's rolling-activity-proposal.md, rolling-activity-research.md and ui-discussion-checkpoint.md, plus wisdom/values.md. Keep the latest human-approved compact action/footer choices; do not redesign native expanded details to match a hypothetical screenshot.
 
 ## What is reusable

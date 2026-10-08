@@ -1,5 +1,5 @@
 import collections,json,pathlib
-ROOT=pathlib.Path(__file__).resolve().parent
+ROOT=pathlib.Path("artifacts/ci-history")
 runs=json.loads((ROOT/'runs.json').read_text())
 def count(rows,key):
  out={}

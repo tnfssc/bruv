@@ -1,5 +1,8 @@
 # /ps CI readiness must identify the active view (2026-10-04)
 
+Completed-run captures/logs mentioned below are now historical Git evidence;
+[recovery and retained inputs](../quality/completed-run-retirement.md). Conclusions remain here.
+
 CI run 37184257701 at a9c38d283a4ec7e138afccbb15f342b963a4ff95 had
 1,978 passing tests and one failure at task-monitor-tui.test.ts:158:
 `Missing Inspect task_, ALPHA-live`; the captured pane was the Running jobs roster.
@@ -35,7 +38,7 @@ yields the real /ps handler until the next stdin event. The test waits for the
 gate's file handshake, then sends its premature inspect Enter. That input is
 consumed with the editor still focused; the gate releases and the roster appears.
 This reproduces the CI error and real pane shape without a timing sleep:
-[evidence/ps-ci-readiness/gated-repro.txt](evidence/ps-ci-readiness/gated-repro.txt).
+[evidence/ps-ci-readiness/gated-repro.txt (historical)](../quality/completed-run-retirement.md#recovery).
 This forces the relevant scheduling window, not a claim to have recorded CI's
 exact event ordering. None of the gate/debug/env modifications remain in code.
 

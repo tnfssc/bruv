@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Read available assigned-workflow gzip logs; emit bounded contexts, not full logs."""
 import gzip, json, pathlib, re, sys
-root = pathlib.Path(__file__).resolve().parent
+root = pathlib.Path("artifacts/ci-history")
 owned = {"CI", "Daily dependency PR", "Native Live Lab"}
 records = {}
 for path in sorted((root / "jobs").glob("*.json")):

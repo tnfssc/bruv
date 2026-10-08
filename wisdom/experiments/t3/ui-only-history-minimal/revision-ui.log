@@ -1,5 +1,0 @@
-UI-only phase: configure-real-provider-through-ui
-UI-only phase: create-project-through-ui
-UI-only phase: configure-history-scope-through-ui
-UI-only phase: history-init-chat-resume-fork-rollback-reopen-authority
-UI-only acceptance proof: /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_1cbcc09f/experiments/t3/ui-only-history-minimal/final-head

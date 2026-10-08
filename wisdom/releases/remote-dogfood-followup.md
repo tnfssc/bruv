@@ -1,5 +1,8 @@
 # Remote daily-use follow-up
 
+Completed-run captures/logs mentioned below are now historical Git evidence;
+[recovery and retained inputs](../quality/completed-run-retirement.md). Conclusions remain here.
+
 User reported old remote completion on every fresh startup, then asked actual product use. Parent personally navigated compiled tmux offline cached task in repeated fresh sessions: no historical replay; found raw JSON behind human transcript menu; fixed and reread terminal. Frame wisdom/remote-workspaces/evidence/parent-readable-transcript.txt. Broader compiled Docker/tmux exploration found hidden artifacts/capability details, silent untracked omission, SQLite inode lock race, session refresh leakage and missing grant UI. Integrated reports daily-dogfood and combined-dogfood contain frames/scopes/worker paths.
 
 Review fixed lock creation0600 without reopening existing inode, bounded incomplete untracked preview permitting tracked-only, and offline local revocation menu. Parent full gate task31148c03 tests:1351pass17skip0fail30780 assertions all3 Docker gate env vars enabled. Product binary f80c6a0 SHA92536d190ac9e76d11436e0bd137047d3ef13c9a4b8ef30195b9f2f947340c10, real reused web. Initial parent full gate had one stale receipt assertion after new ownerNotified field; now explicitly tests true/false/absent, no product change. Subsequent lint test-variable rename and evidence formatting only; focused extension/check/format/lint passed task791cc96b.

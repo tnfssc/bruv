@@ -1,5 +1,8 @@
 # Bounded repeat-offender audit (2026-10-05)
 
+Completed-run captures/logs mentioned below are now historical Git evidence;
+[recovery and retained inputs](../quality/completed-run-retirement.md). Conclusions remain here.
+
 Base: 9906f92e (v0.16.8 preparation), Bun 1.4.2 (744846f84), Linux/private
 tmux, freshly built dist/bruv and dist/bruv-claude-compat. Owned tests:
 
@@ -38,8 +41,8 @@ helpers, assertions, sleeps, deadlines or product sources changed.**
 - `bun run build`: passed, both binaries built. Worktree mise trust warning
   did not stop the directly available Bun; no trust configuration was changed.
 - `bun test tests/task-monitor-tui.test.ts tests/execution-previews-tui.test.ts tests/goals-sdk.test.ts`:
-  [baseline](evidence/repeat-offender-audit/baseline.txt) 9 pass / 0 fail / 155
-  assertions; [post-control green](evidence/repeat-offender-audit/fixed-tests.txt)
+  [baseline (historical)](../quality/completed-run-retirement.md#recovery) 9 pass / 0 fail / 155
+  assertions; [post-control green (historical)](../quality/completed-run-retirement.md#recovery)
   9 pass / 0 fail / 155 assertions. /ps took 7.02 s and 6.92 s respectively.
   These were baseline and restored-fixture checks, not retry-on-failure.
 - Controlled lifetime negative control: copied goals-sdk.test.ts to
@@ -48,7 +51,7 @@ helpers, assertions, sleeps, deadlines or product sources changed.**
   `while ((await jobs.inspect(job.id)).status === "running") await new Promise(resolve => setImmediate(resolve));`
   before handoff. This forces completion before handoff without a timing sleep.
   `bun test tests/goal-cycle-early-completion.audit.test.ts -t 'print completion cycles pause'`
-  [failed as expected](evidence/repeat-offender-audit/early-completion.txt):
+  [failed as expected (historical)](../quality/completed-run-retirement.md#recovery):
   received 5 calls, unchanged maximum 4. This is a forced version of the already
   fixed lifetime flaw, **not** a failure of today's maintained fixture or proof
   of the exact historical scheduler order. Removed the copy before green check.
@@ -57,7 +60,7 @@ helpers, assertions, sleeps, deadlines or product sources changed.**
   claude-compat-prompt-ownership, claude-compat-runtime, claude-compat-task-binding,
   then goals-sdk (each ./<name>.test). Ran
   `bun test tests/goal-sdk-wrapper-order.audit.test.ts`:
-  [18 pass / 0 fail / 185 outer assertions](evidence/repeat-offender-audit/wrapper-order.txt).
+  [18 pass / 0 fail / 185 outer assertions (historical)](../quality/completed-run-retirement.md#recovery).
   Native shake ran first; all five connector children and all six goal cases
   passed. Removed shim. This targets wrapper ordering, not the full release gate.
 

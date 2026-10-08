@@ -1,5 +1,8 @@
 # Adopt normalized task rows only inside the current frame
 
+Completed-run captures/logs mentioned below are now historical Git evidence;
+[recovery and retained inputs](../quality/completed-run-retirement.md). Conclusions remain here.
+
 2026-10-05 · task_2c7a0457 · baseline 3379c5984e5721370dbc19c76af75e0b0152db67
 
 ## Decision and actual callers
@@ -35,7 +38,7 @@ bun --cpu-prof --cpu-prof-md --cpu-prof-dir artifacts/terminal-perf/task-project
 
 The matched before/after timing runs had no other task-owned test/build/profile job overlapping them. An initial after run (task-projection-after) overlapped a 484ms focused test job; it is **not** the timing evidence used here. Both selected runs: Bun 1.4.2, Pi 1.0.3, Linux x64 Ryzen 9 7940HS, viewport 120×40, warmup 5, scales 100/500/1000, fixtureVersion 1, 18 cases × 40 steady samples. Before is clean 3379c598; after includes this small dirty production diff. Shared-host timing noise remains.
 
-**All 738 corresponding cold/steady screenHash AND outputHash pairs match.** All 720 steady actions change rows. No intentional visible fix. [Full comparison and metadata](evidence/frame-task-row-adoption/comparison.json), [before report](evidence/frame-task-row-adoption/before-report.txt), [after report](evidence/frame-task-row-adoption/after-report.txt). Raw run/dashboard/trace files remain at the ignored local paths above.
+**All 738 corresponding cold/steady screenHash AND outputHash pairs match.** All 720 steady actions change rows. No intentional visible fix. [Full comparison and metadata (historical)](../quality/completed-run-retirement.md#recovery), [before report (historical)](../quality/completed-run-retirement.md#recovery), [after report (historical)](../quality/completed-run-retirement.md#recovery). Raw run/dashboard/trace files remain at the ignored local paths above.
 
 | 1000-execute case | p50 before → after ms | p95 before → after ms | cold before → after ms | steady misses before → after /40 |
 | --- | --- | --- | --- | --- |
@@ -48,7 +51,7 @@ The matched before/after timing runs had no other task-owned test/build/profile 
 
 Input max 14.952 → 17.523ms: the tail is **worse**, not a claimed universal latency improvement. The p50 reduction plus deterministic removal of redundant work supports this small patch, not a tail or budget guarantee. Do not substitute the supplied parent's 9.023ms p50 baseline for this worker's own 9.082ms matched baseline.
 
-Input/1000 work counts are intentionally unchanged: one document render, 1752 component visits, 2252 branch entries, 1000 snapshot rows. This removes operations *inside* the ownership pass, not the document traversal. [Render-only sampled caller evidence](evidence/frame-task-row-adoption/profile.json) retains both raw profile paths. Samples beneath doRender show the SDK direct upsert path and redundant label helper; after, label-helper samples disappear and direct upsert work is smaller. Profiles include cold/warmup/steady renders and sampling overhead; none of those numbers is budget proof.
+Input/1000 work counts are intentionally unchanged: one document render, 1752 component visits, 2252 branch entries, 1000 snapshot rows. This removes operations *inside* the ownership pass, not the document traversal. [Render-only sampled caller evidence (historical)](../quality/completed-run-retirement.md#recovery) retains both raw profile paths. Samples beneath doRender show the SDK direct upsert path and redundant label helper; after, label-helper samples disappear and direct upsert work is smaller. Profiles include cold/warmup/steady renders and sampling overhead; none of those numbers is budget proof.
 
 ## Behavior validation
 

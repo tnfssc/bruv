@@ -1,7 +1,0 @@
-SDK resumed transcript (real Pi components, width 100):
- ✓ Inspect renderer
- ✗ bun run check — exit 1
-
-Placed root resumed transcript (RootTranscript, width 100):
-✓ Inspect renderer
-✗ bun run check — exit 1

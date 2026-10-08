@@ -1,14 +1,16 @@
 # CI log root-cause research — 2026-10-05
 
+Completed inventories/classifications are retired; [recovery and recapture](evidence/ci-history-2026-10-05/README.md). Historical counts below are unchanged.
+
 Research only. Read [values](../values.md); no production code or test changes. Scope: **CI, Daily dependency PR, Native Live Lab**. Release workflow failures are the parent's separate assignment; CI tests *about* Release configuration remain in this report.
 
 ## Evidence and count boundary
 
-- Source: [compact run inventory](evidence/ci-history-2026-10-05/run-inventory.json) (full raw runs.json remains locally), failed-job metadata in that directory's jobs/, and gzip plaintext logs/<jobid>.log.gz. Snapshot analysis completed October 5, 2026, ~18:35 UTC.
+- Source: [compact run inventory (historical)](completed-run-retirement.md#recovery) (full raw runs.json remains locally), failed-job metadata in that directory's jobs/, and gzip plaintext logs/<jobid>.log.gz. Snapshot analysis completed October 5, 2026, ~18:35 UTC.
 - **93 unique failed-job gzip logs actually inspected, from 90 runs:** CI **85**, Daily dependency PR **4**, Native Live Lab **4**. These are not counts of all repository runs, passing tests, all historical failed attempts, or independent product defects.
 - CI policy jobs are downstream outcome aggregation, **excluded from root-cause counts**. Repeated Bun suite-summary failure lines are deduplicated. Linux/macOS failures may be one prerequisite cause even though two job logs were inspected.
 - Initial collector errors were “the response contains terminal escape sequences; pass --allow-escape-sequences to output it anyway.” I downloaded the assigned failure logs using that flag. The parent removed stale .error.txt files after successful downloads; the collector now clears them on success. A download error is not a CI failure.
-- Python extracted bounded assertion/error contexts rather than dumping logs. [Extractor](evidence/ci-history-2026-10-05/extract-owned-failure-contexts.py) can reproduce available-log extraction; redirect its JSON stdout to a scratch file. [Classification JSON](evidence/ci-history-2026-10-05/owned-log-classification.json) records each inspected job, full SHA, attempt, exact failed test names, category, and short numbered evidence snippets.
+- Python extracted bounded assertion/error contexts rather than dumping logs. [Extractor](evidence/ci-history-2026-10-05/extract-owned-failure-contexts.py) can reproduce available-log extraction; redirect its JSON stdout to a scratch file. [Classification JSON (historical)](completed-run-retirement.md#recovery) records each inspected job, full SHA, attempt, exact failed test names, category, and short numbered evidence snippets.
 - Successful same-SHA **job metadata** was additionally read under same-sha-jobs/; these are **not additional inspected log counts**. A head SHA match is not automatically identical PR merge checkout, event, optional steps, or provisioning.
 
 ## What the logs support
