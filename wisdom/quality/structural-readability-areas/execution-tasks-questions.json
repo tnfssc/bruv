@@ -3366,19 +3366,19 @@
     {
       "focus": "tests/root-owner.test.ts",
       "initialBlob": "823b81438fe53e0bab52108e9ae3ca9733acfedb",
-      "status": "accepted",
+      "status": "pending",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": "5359344120d28666a3cecfea67d9419de954b890",
+      "acceptedBlob": null,
       "integration": "pending",
       "resume": {
-        "status": "accepted",
+        "status": "pending",
         "acceptedBlob": "5359344120d28666a3cecfea67d9419de954b890",
         "primaryId": "task_d848af48",
         "primaryCommit": "9415644f7dd7f71ae14b289930077652d39dbfb7",
         "judgeIds": ["task_b17a5ed7"],
-        "sourceCommit": "9415644f7dd7f71ae14b289930077652d39dbfb7",
-        "state": "accepted-joined",
+        "sourceCommit": null,
+        "state": "needs-rework",
         "reason": "Read the complete 620-line candidate and exact primary-base diff, including unchanged tests. Previously one scenario mixed local source capture, replay-safe chunk transfer, checkout-content validation and export authority state transitions. captureTrackedFixture now owns the committed baseline, dirty tracked bytes and deliberately unapproved file; uploadWithExactReplay owns chunk construction and exact retry equality. Separate transport and export tests make their distinct authorities readable. The transport test retains root-owned checkout path, dirty content, one-commit history and tracked-only assertions. The export test still starts from the same uploaded snapshot, rejects no-root and accepted roots, rejects unknown and closed/exit-1 states, and accepts only closed/exit-0 with original snapshot/content/digest assertions. Helpers are cohesive operations using explicit arguments, not a new shared state container. Unchanged create/command replay, detach/observe redaction, unsettled-close, clean/failed-exit, outstanding-prompt abort, uncertain-write/owner death, crash reconciliation, journal gaps, identity/model/command rejection, duplicate-owner and dialog/reconnect cases retain stimulus, persisted outcome and owner drain together. They do not need additional extraction to make their authority visible."
       }
     },
@@ -4352,8 +4352,8 @@
     ]
   },
   "resumeStatus": {
-    "accepted": 105,
-    "pending": 0
+    "accepted": 104,
+    "pending": 1
   },
   "extraFiles": [
     {

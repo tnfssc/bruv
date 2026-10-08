@@ -20299,12 +20299,12 @@
     {
       "file": "tests/root-owner.test.ts",
       "initialBlob": "823b81438fe53e0bab52108e9ae3ca9733acfedb",
-      "status": "accepted",
+      "status": "pending",
       "area": "execution-tasks-questions",
-      "resumeState": "accepted-joined",
+      "resumeState": "needs-rework",
       "primaryId": "task_d848af48",
       "judgeIds": ["task_b17a5ed7"],
-      "sourceCommit": "9415644f7dd7f71ae14b289930077652d39dbfb7",
+      "sourceCommit": null,
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
       "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage.",
       "primaryCommit": "9415644f7dd7f71ae14b289930077652d39dbfb7",
@@ -20365,7 +20365,38 @@
         "No setup, tests, builds, live auth, network or credential access performed; parent owns audited isolated gates.",
         "Existing owned mkdtemp fixture rmSync cleanup and production unaccepted-checkout replacement were inspected only, never executed. This test still inherits process.env for fixture Git subprocesses; parent must supply audited owned HOME/config/SDK/TMPDIR and retain gate evidence. Acceptance is structural/source preservation, not independent runtime isolation certification.",
         "Review uses the existing durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_b17a5ed7 and retained exact Git evidence; no alternate checkout or cleanup created. Parent verifies runtime agent.model."
-      ]
+      ],
+      "priorAcceptedIntegrationProof": [
+        {
+          "primaryId": "task_d848af48",
+          "judgeIds": ["task_b17a5ed7"],
+          "sourceCommit": "9415644f7dd7f71ae14b289930077652d39dbfb7",
+          "acceptedBlob": "5359344120d28666a3cecfea67d9419de954b890",
+          "finalLane": "lane-25",
+          "finalJudge": "task_9d2c74ef"
+        }
+      ],
+      "resumeRework": {
+        "candidate": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+        "primaryId": "task_d848af48",
+        "primaryBase": "cfd8136a69452f4c4460626f17cb9d4c4a1d3653",
+        "judgeId": "task_9d2c74ef",
+        "objections": [
+          {
+            "paths": [
+              "tests/root-owner.test.ts:462-479",
+              "tests/root-owner.test.ts:506-550",
+              "tests/root-owner.test.ts:73-83",
+              "src/remote/repository.ts:25-43",
+              "tests/owned-process-suite.ts",
+              "tests/helpers.ts:5-40"
+            ],
+            "readingProblem": "The extracted git helper passes {...process.env, GIT_CONFIG_NOSYSTEM: \"1\", GIT_CONFIG_GLOBAL: \"/dev/null\"}; both now-separate repository tests call it through captureTrackedFixture, including git init/add/commit. fixture() owns only a repository/ledger directory, not HOME/config/SDK/temp or an allowlisted test host, and it removes the fixture on completion. Setting the two Git config flags is not an ownership boundary: ambient HOME, SDK/provider state and Git environment such as GIT_TEMPLATE_DIR or GIT_CONFIG_COUNT are retained (Git init/commit can therefore consume inherited templates/config/hooks). captureRepository itself launches further Git children using a scrubber that intentionally preserves ordinary ambient environment. This file does not enter ownedProcessSuite, unlike tests/task-manager.test.ts. The refactor has split one process-backed scenario into two without establishing the required descendant owner.",
+            "requiredResult": "Put these real-Git scenarios (including captureRepository/upload/export descendants) behind a retained fs.mkdtemp-owned allowlisted process host, with explicit HOME/config/SDK/temp and empty owned Git hooks, using the existing whole-file ownedProcessSuite pattern or an equally explicit dedicated process entry. Keep explicit non-shell argv, retain fixture/evidence directories, and retain exact-replay, dirty-tracked/excluded-untracked and confirmed-successful-close assertions. Merely changing the direct git helper env is insufficient if production repository children still inherit the unisolated test host. Do not run the current ambient-host scenarios to establish safety."
+          }
+        ],
+        "readingReason": "Split real-Git scenarios still run direct and captureRepository Git descendants with ambient host authority. Use accepted no-filter ownedProcessSuite or equally explicit owned process entry, no global env edits, retain scenario/evidence directories; preserve replay/dirty tracked/excluded untracked/successful close assertions. No tests or credential/config inspection."
+      }
     },
     {
       "file": "tests/root-placement-options.test.ts",
@@ -26428,9 +26459,9 @@
     "baselineFiles": 766,
     "finalGate": "pending; incomplete focus coverage",
     "liveAuth": "unverified/failing; preserved",
-    "accepted": 836,
+    "accepted": 835,
     "total": 839,
-    "pending": 3,
+    "pending": 4,
     "sourceExtras": 73,
     "checkout": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
     "branch": "bruv/readability-pr45-sol-continuation",
