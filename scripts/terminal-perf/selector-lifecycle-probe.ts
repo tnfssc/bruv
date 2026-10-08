@@ -66,19 +66,21 @@ wrap(
   "InteractiveMode.",
 );
 
-// Capture the actual selector confirm path after real disk resume. No provider/summary access.
-const originalResume = (InteractiveMode.prototype as any).handleResumeSession;
-let choose: any;
-(InteractiveMode.prototype as any).handleResumeSession = async function (...args: unknown[]) {
-  const resumed = await originalResume.apply(this, args);
-  this.settingsManager.getBranchSummarySkipPrompt = () => true;
-  this.showTreeSelector("a" + (size - 1));
-  const selector = this.editorContainer.children.find((child: any) => child instanceof TreeSelectorComponent);
+// Own the selector-confirm capture from mounting through final verification.
+// No provider/summary access; settling and verification are outside lifecycle timing.
+async function captureSelectorConfirmation(app: any, leafId: string) {
+  app.settingsManager.getBranchSummarySkipPrompt = () => true;
+  app.showTreeSelector(leafId);
+  const selector = app.editorContainer.children.find((child: any) => child instanceof TreeSelectorComponent);
   if (!selector) throw new Error("No real tree selector mounted");
   await Bun.sleep(40); // Let the actual selector frame finish; not CPU time.
+
   const frames: { startedAtMs: number; durationMs: number }[] = [];
-  const renderer = this.renderer;
+  const renderer = app.renderer;
   const originalRender = renderer.doRender;
+  const treeList = selector.getTreeList();
+  const originalSelect = treeList.onSelect;
+  let completion: Promise<unknown> | undefined;
   renderer.doRender = function (...args: unknown[]) {
     const startedAtMs = performance.now();
     try {
@@ -87,37 +89,45 @@ let choose: any;
       frames.push({ startedAtMs, durationMs: performance.now() - startedAtMs });
     }
   };
-  const treeList = selector.getTreeList();
-  const originalSelect = treeList.onSelect;
-  let completion: Promise<unknown> | undefined;
   treeList.onSelect = (...selection: unknown[]) => {
     completion = originalSelect(...selection);
     return completion;
   };
-  const start = performance.now();
-  const syncMs = measure("selector.confirm.dispatch", () => {
-    treeList.handleInput("\r");
-    return performance.now() - start;
-  });
-  if (!completion) throw new Error("Selector accept did not navigate");
-  await completion;
-  const elapsedMs = performance.now() - start;
-  await Bun.sleep(40); // Actual choose/rebuild frame capture, outside lifecycle elapsed.
-  const sha = (value: string) => createHash("sha256").update(value).digest("hex");
-  // Separately render the completed chat for deterministic output equivalence. This
-  // verification is AFTER actual-frame capture and is not lifecycle CPU evidence.
-  const transcriptOutputHash = sha(this.chatContainer.render(80).join("\n"));
-  choose = {
-    initialSyncMs: syncMs,
-    elapsedMs,
-    frames,
-    leafId: this.sessionManager.getLeafId(),
-    messages: this.session.state.messages.length,
-    transcriptOutputHash,
-    chatChildren: this.chatContainer.children.length,
-    note: "elapsed/drains/verification render are not CPU; synchronous phase spans may nest",
-  };
-  renderer.doRender = originalRender;
+  try {
+    const start = performance.now();
+    const syncMs = measure("selector.confirm.dispatch", () => {
+      treeList.handleInput("\r");
+      return performance.now() - start;
+    });
+    if (!completion) throw new Error("Selector accept did not navigate");
+    await completion;
+    const elapsedMs = performance.now() - start;
+    await Bun.sleep(40); // Actual choose/rebuild frame capture, outside lifecycle elapsed.
+    // Separately render the completed chat for deterministic output equivalence. This
+    // verification is AFTER actual-frame capture and is not lifecycle CPU evidence.
+    const transcriptOutputHash = createHash("sha256").update(app.chatContainer.render(80).join("\n")).digest("hex");
+    return {
+      initialSyncMs: syncMs,
+      elapsedMs,
+      frames,
+      leafId: app.sessionManager.getLeafId(),
+      messages: app.session.state.messages.length,
+      transcriptOutputHash,
+      chatChildren: app.chatContainer.children.length,
+      note: "elapsed/drains/verification render are not CPU; synchronous phase spans may nest",
+    };
+  } finally {
+    treeList.onSelect = originalSelect;
+    renderer.doRender = originalRender;
+  }
+}
+
+// Capture the actual selector confirm path only after real disk resume completes.
+const originalResume = (InteractiveMode.prototype as any).handleResumeSession;
+let choose!: Awaited<ReturnType<typeof captureSelectorConfirmation>>;
+(InteractiveMode.prototype as any).handleResumeSession = async function (...args: unknown[]) {
+  const resumed = await originalResume.apply(this, args);
+  choose = await captureSelectorConfirmation(this, "a" + (size - 1));
   return resumed;
 };
 const size = Number(process.argv[2] ?? "1000");

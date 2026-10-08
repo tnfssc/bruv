@@ -1873,11 +1873,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": "task_9a3e6f45",
-        "primaryCommit": null,
+        "primaryId": "task_46d9c538",
+        "primaryCommit": "0d3ffc7abfff084cac5d6322d861174011a3f62d",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "interrupted-primary",
+        "sourceCommit": "0d3ffc7abfff084cac5d6322d861174011a3f62d",
+        "state": "needs-judge",
         "reason": "Primary was killed without a completed focused result; preserve worker state and any uncommitted edits."
       }
     },
@@ -1891,11 +1891,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_33bb0613",
+        "primaryCommit": "2b1f80cee46cb252803c00d2f3bcdb4aca517c5d",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary",
+        "sourceCommit": "2b1f80cee46cb252803c00d2f3bcdb4aca517c5d",
+        "state": "needs-judge",
         "reason": "No dedicated primary/final independent focus judgment."
       }
     },

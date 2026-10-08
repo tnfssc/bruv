@@ -3785,12 +3785,14 @@
     {
       "file": "scripts/terminal-perf/navigation-workloads.ts",
       "initialBlob": "d01398743c5affb8cc99babeae794e3f0dfe95a7",
-      "status": "pending",
+      "status": "accepted",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_c80b6e38",
       "primaryCommit": "e453ab85d74a043ddd10171d806c4fd9ebe7a6cc",
-      "judgeIds": [],
+      "judgeIds": [
+        "task_cc27bf98"
+      ],
       "sourceCommit": "e453ab85d74a043ddd10171d806c4fd9ebe7a6cc",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
       "pendingReason": "Assigned task_09b8c468; no completed primary candidate commit or independent actual-code verdict. Historical primary-running label is not completion. Retained uncommitted candidate(s): task_09b8c468 blob e883e7a503892e16661c936b246b72b905caa194 in /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_09b8c468. Not importable or accepted.",
@@ -3854,6 +3856,21 @@
         "Static preservation checks are not runtime proof or an independent readability verdict.",
         "Commit signing was disabled for this commit only with git -c commit.gpgsign=false to avoid configured credential/device access; no signing configuration was changed.",
         "No wisdom edits; parent owns aggregate wisdom."
+      ],
+      "acceptedBlob": "6a3240454997193b22f04167d3b7df5ef06b341c",
+      "result": "The separation is structural, not a name/count change. The focus has one scheduled-component lifetime: mount disk-backed content and concrete UI, dispatch the selected action, await doRender return, publish frame/state evidence, then release that fixture. All fourteen unchanged action decisions remain together, including branch rebuilds, input paths, theme restoration and cold-render scope. The SDK probe is a different complete lifetime: runtime factory and managers, forbidden provider/fetch seams, optional initialized InteractiveMode, input/lifecycle captures, final context, and nested finally teardown. History construction owns its deterministic two-leaf disk fixture; the counting terminal owns transport callbacks and writes. Neither lifetime imports the other; both use those concrete shared seams without a context bag. All four changed source files are readable coherent owners.",
+      "systemReason": "Traced interaction-worker navigation/lifecycle versus scheduled-navigation dispatch and their finally disposal; interaction-normalize consumes the same public evidence types, timing distinctions and hashes. Original entrypoint reexports preserve selector probe and test imports. The CLI still selects component, SDK or interactive SDK journeys and now fingerprints every extracted implementation. The SDK path preserves navigate(primary), navigate(alternate), real disk resume, fork and final context, with renderer drains explicitly outside CPU evidence. Exact base comparisons establish unchanged scheduled owner and SDK function bodies, plus unchanged history and transport bodies apart from export visibility; this supports preservation, not the readability verdict.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md; inspected only these focuses in area and repo-wide coverage ledgers, including retained task_09b8c468 pending evidence.",
+        "Read exact candidate focus and all three new source files via git show, plus exact-base extraction seams and actual callers; no checkout HEAD substituted.",
+        "Whitespace-insensitive SDK, scheduled owner, history function and counting-terminal relocation comparisons passed against 4134d99b0c4024dedd0f1a4eb4e16d7faa52ca09.",
+        "Read test expectations for visible scheduled actions, branch state, deterministic history, theme restoration and offline SDK lifecycle; did not execute them.",
+        "git diff --check exact base/candidate passed; changed-source inventory contains exactly four reported accepted blobs."
+      ],
+      "limits": [
+        "Structural source review only: no setup, tests, builds, or runtime probes executed; parent owns audited isolated batch gates.",
+        "Installed SDK implementation was read-only caller context, not proof of candidate runtime behavior.",
+        "No source, accepted unrelated work, old worktrees, or uncommitted candidates were modified. Aggregate wisdom and external runtime-model verification remain parent-owned."
       ]
     },
     {
@@ -3982,12 +3999,14 @@
     {
       "file": "scripts/terminal-perf/selector-lifecycle-probe.ts",
       "initialBlob": "c050db1227585d0f71f7c2156f0a94128a808491",
-      "status": "pending",
+      "status": "accepted",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_a3e07d2e",
       "primaryCommit": "90ccd9b7c34cc154608614eb2d7e52c0e0006225",
-      "judgeIds": [],
+      "judgeIds": [
+        "task_cc27bf98"
+      ],
       "sourceCommit": "90ccd9b7c34cc154608614eb2d7e52c0e0006225",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
       "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
@@ -4020,6 +4039,20 @@
         "No tests, builds, setup or runtime probe executed; parent owns audited isolated batch gates.",
         "Independent exact-candidate judgment remains parent-owned.",
         "No wisdom files changed; aggregate wisdom remains parent-owned."
+      ],
+      "acceptedBlob": "4eb5fec67d1f24e91ab6779e4c563d725f33ba69",
+      "result": "captureSelectorConfirmation owns an intelligible measurement lifetime: mount the real selector without summary work, drain its initial frame, install render/onSelect observation, dispatch Enter, require and await the actual selection promise, stop lifecycle elapsed timing, drain completed UI frames, and separately hash the transcript. Both temporary hooks are now restored in the same finally on success or failure. The resume override no longer mixes runtime resumption, selector instrumentation and evidence assembly: it awaits original resume, awaits confirmation capture, and returns the original result. Returning the capture result replaces outer evidence mutation with a clear boundary while keeping the unchanged phase instrumentation and reporting decisions visible.",
+      "systemReason": "Traced runOfflineNavigationSdkProbe interactive disk-file resume into the prototype override. Read installed SDK handleResumeSession and showTreeSelector: Enter reaches TreeList.handleInput, whose real async onSelect awaits session.navigateTree and rebuilds the chat; intercepting that promise remains necessary because handleInput itself does not await it. The probe retains no-selector/no-selection-promise errors, summary suppression, post-lifecycle verification, original resume return value, output fields and observed-peak caveat. This is a process-scoped standalone diagnostic; persistent prototype wrappers remain its existing scope, not a newly reusable production API. Historical measurement documentation was read as context, not fresh runtime proof.",
+      "checks": [
+        "Read the exact candidate complete source and original confirmation/resume block from d20c4ed1bc39a43d8fc90960d45858b5836f1419, including unchanged instrumentation and output calculations.",
+        "Inspected selector focus rows in area and repo-wide coverage ledgers; prior pending status was not treated as a verdict.",
+        "Read actual SDK Enter callback, navigation UI rebuild and disk-resume path from existing dependencies read-only.",
+        "git diff --check exact base/candidate passed; one changed source path and exact blob recorded."
+      ],
+      "limits": [
+        "Structural source review only: no setup, tests, builds, or runtime probes executed; parent owns audited isolated batch gates.",
+        "Installed SDK implementation was read-only caller context, not proof of candidate runtime behavior.",
+        "No source, accepted unrelated work, old worktrees, or uncommitted candidates were modified. Aggregate wisdom and external runtime-model verification remain parent-owned."
       ]
     },
     {
@@ -4157,12 +4190,14 @@
     {
       "file": "scripts/terminal-perf/tool-event-workloads.ts",
       "initialBlob": "89b078ccdf8cb1198e2ac22be0b734cd334573e6",
-      "status": "pending",
+      "status": "accepted",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_cf54811f",
       "primaryCommit": "8f42a48aa839d206de7294d67e6bdd632eef5f7c",
-      "judgeIds": [],
+      "judgeIds": [
+        "task_cc27bf98"
+      ],
       "sourceCommit": "8f42a48aa839d206de7294d67e6bdd632eef5f7c",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
       "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
@@ -4196,6 +4231,20 @@
         "Optional static TypeScript parsing could not run: read-only dependency path /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/typescript is absent. Formatter parsing and source preservation comparisons completed; no typecheck claim.",
         "Independent fresh judge and external runtime model verification remain parent-owned.",
         "No wisdom files changed; parent owns aggregate wisdom."
+      ],
+      "acceptedBlob": "26d3f60fb2442da57cf53dee465edf536614c57c",
+      "result": "The two helpers separate genuinely different authorities rather than arbitrary code chunks. dispatchToolBurst is synchronous and owns the contiguous measurement slice, direct callback provenance, restoration to subscribed provenance, final component capture and per-burst counters. sendEditorThroughSession owns the real getUserInput/session.prompt path and its provider, scheduled-frame and callback-settlement waits. action now reads in temporal order: queue ready input before blocking work, inject the burst, drain backlogged input, exercise tool visibility and scrolling, await real subscribed send, then stop collection and assemble evidence. The unchanged callback wrapper, frame recorder, payload construction, setup prohibitions and disposal remain legible around that orchestration; no generic runner or context bag was introduced.",
+      "systemReason": "Traced interaction-worker tools/events case selection through setup/action/finally-dispose, plus standalone JSON CLI publication. Read actual InteractiveMode session subscription and input promise/main-loop seams: direct handleEvent injection is distinct from Enter producing subscribed SDK callbacks. interaction-normalize reconciles direct callbacks only against burst counters while total counts include subscribed callbacks; moving source restoration inside the synchronous helper preserves that boundary. Ready-input timestamps still precede burst entry; settlement/frame drains stay outside CPU spans; final visible output and final component state still drive evidence. Read existing test expectations for queued input, no same-turn burst frames, late/orphan events, subscribed agent_settled, final visibility, counters and provider recording, without using test success as acceptance.",
+      "checks": [
+        "Read complete exact candidate source, original action boundaries from f7b5619450bcb7c0b40e5e2194d7303c6a905b9a and unchanged setup, fixture construction, guards, instrumentation, publication and disposal.",
+        "Inspected only tool-event focus rows/evidence in area and repo-wide coverage ledgers.",
+        "Read exact-candidate worker and normalization consumers; their blobs match across all three candidate trees and are unchanged by each candidate.",
+        "git diff --check exact base/candidate passed; one changed source path and exact blob recorded."
+      ],
+      "limits": [
+        "Structural source review only: no setup, tests, builds, or runtime probes executed; parent owns audited isolated batch gates.",
+        "Installed SDK implementation was read-only caller context, not proof of candidate runtime behavior.",
+        "No source, accepted unrelated work, old worktrees, or uncommitted candidates were modified. Aggregate wisdom and external runtime-model verification remain parent-owned."
       ]
     },
     {
@@ -6412,26 +6461,119 @@
       "initialBlob": "1a75e9bd8ed0a8f13acc586b6739b35397a9c6b3",
       "status": "pending",
       "area": "agent-history-session-goals",
-      "resumeState": "interrupted-primary",
-      "primaryId": "task_9a3e6f45",
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_46d9c538",
+      "primaryCommit": "0d3ffc7abfff084cac5d6322d861174011a3f62d",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "0d3ffc7abfff084cac5d6322d861174011a3f62d",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
-      "pendingReason": "Primary was killed without a completed focused result; preserve worker state and any uncommitted edits."
+      "pendingReason": "Primary was killed without a completed focused result; preserve worker state and any uncommitted edits.",
+      "primaryBase": "3bc899c857b0cc2f2c144108165d4faca833c89b",
+      "primaryResult": "Organized the actual embedded description into execution/output, delegated launch authority, observation/cancellation, and human questions. Job cancellation now stands apart from Live teardown; SSH observation restrictions sit with observation; child clarification and human permission ownership sit with question state. Existing output limits, authorization restrictions, unsupported-operation rules, question semantics, and description assertions remain intact. No runtime/helper/test changes or old-branch merge. Preserved stopped-worker candidate files untouched.",
+      "primaryPaths": [
+        "src/prompts/execute-description.md"
+      ],
+      "primaryChecks": [
+        {
+          "kind": "reading",
+          "result": "Read values and structural readability guidance; selected focus rows from area/aggregate ledgers and resume reconciliation; read stopped-worker focus candidate."
+        },
+        {
+          "kind": "caller-trace",
+          "paths": [
+            "src/typescript/definition.ts",
+            "src/typescript/extension.ts",
+            "src/typescript/execution.ts",
+            "src/typescript/job-bridge.ts",
+            "src/prompt-preview.ts",
+            "tests/prompts.test.ts",
+            "tests/prompt-preview.test.ts"
+          ],
+          "result": "Description is embedded with trimEnd and shared through execute registration and preview; helpers dispatch separately to jobs, Live, and question owners. Existing tests were inspected, not run or changed."
+        },
+        {
+          "kind": "static-inspection",
+          "result": "Existing asserted description phrases and output/security/lifetime restrictions retained; prefix unchanged; no handoff text introduced."
+        },
+        {
+          "kind": "diff-check",
+          "result": "git diff --check passed; only focus source changed."
+        },
+        {
+          "kind": "formatter",
+          "command": [
+            "/home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/@biomejs/biome/bin/biome",
+            "format",
+            "--write",
+            "src/prompts/execute-description.md"
+          ],
+          "environmentRoot": "/tmp/pr45-execute-description-format-914HPN",
+          "result": "Attempted via node child_process argv with fresh retained HOME/config/cache/data/TMPDIR; exit 1, formatted zero files, path ignored."
+        },
+        {
+          "kind": "source-commit",
+          "result": "0d3ffc7abfff084cac5d6322d861174011a3f62d"
+        }
+      ],
+      "primaryLimits": [
+        "Repository Biome invocation ignored the Markdown focus and reported no files processed; formatter executable itself was available. No formatter fallback or unrelated source formatting.",
+        "No setup, repository tests, builds, device/credential access, delegation, push, PR, merge, recovery, cleanup, or wisdom changes; parent owns independent judgment and audited gates.",
+        "Initial reconciliation read was oversized and overbroad; subsequent evidence/ledger inspection selected only focus rows."
+      ]
     },
     {
       "file": "src/prompts/execute.md",
       "initialBlob": "fa595c85d78fb668d28268d9ad1fb29cf4e0358a",
       "status": "pending",
       "area": "agent-history-session-goals",
-      "resumeState": "pending-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_33bb0613",
+      "primaryCommit": "2b1f80cee46cb252803c00d2f3bcdb4aca517c5d",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "2b1f80cee46cb252803c00d2f3bcdb4aca517c5d",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
-      "pendingReason": "No dedicated primary/final independent focus judgment."
+      "pendingReason": "No dedicated primary/final independent focus judgment.",
+      "primaryBase": "0a09df26eca5c4f9de9e7a0702b5d06deec29f9b",
+      "primaryResult": "Common launch options now precede one coherent delegation placement/workspace/source group. The named-target authorization, destination model overrides, snapshot/source approval, setup ownership and placement-specific async limits are adjacent before launch-result handling. Every existing nonblank instruction line is retained verbatim after stripping list markers and indentation; no authorization, assertion or runtime behavior was weakened.",
+      "primaryPaths": [
+        "src/prompts/execute.md"
+      ],
+      "primaryChecks": [
+        {
+          "check": "Read wisdom/values.md and structural-readability-guidance.md",
+          "result": "completed"
+        },
+        {
+          "check": "Focus reconciliation and area/repo-wide ledger rows",
+          "result": "pending-primary; baseline focus present; no surviving accepted candidate to import"
+        },
+        {
+          "check": "Trace prompt callers",
+          "result": "src/prompts.ts executeReference/executeGuidance and bruvSystemPrompt; src/typescript/extension.ts promptGuidelines; tests/prompts.test.ts source round-trip contract; src/tasks/job-service.ts native/SSH/local launch restrictions inspected read-only"
+        },
+        {
+          "check": "Static instruction preservation",
+          "result": "all original nonblank lines retained; one group label added"
+        },
+        {
+          "check": "Static executeReference reconstruction and group boundaries",
+          "result": "round-trip exact; target/workspace/model/source and async rules in delegation group; model overrides absent from Live voice item"
+        },
+        {
+          "check": "git diff --check",
+          "result": "passed"
+        },
+        {
+          "check": "Required formatter",
+          "result": "Invoked specified Biome binary via node child_process argv with fresh isolated retained HOME/config/TMPDIR. Exit 1: Formatted 0 files; src/prompts/execute.md ignored/no files processed.",
+          "retainedEnvironmentRoot": "/tmp/pr45-execute-format-TUZVix"
+        }
+      ],
+      "primaryLimits": [
+        "Specified formatter does not process this Markdown path; no alternative formatter used.",
+        "No setup, tests, builds, delegation, push, PR or merge performed. Parent owns batch gates and independent exact-candidate judgment.",
+        "Wisdom/values unchanged: this is a focus-local grouping improvement, not a new general lesson."
+      ]
     },
     {
       "file": "src/prompts/fast.md",
@@ -13747,40 +13889,52 @@
       "file": "scripts/terminal-perf/navigation-history.ts",
       "initialBlob": "absent",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-primary",
+      "resumeState": "needs-primary-final-blob",
       "primaryId": null,
       "primaryCommit": null,
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "e453ab85d74a043ddd10171d806c4fd9ebe7a6cc",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
       "status": "pending",
-      "pendingReason": "Untracked helper blob bedf45729fe64d9fbfb6639d6d2dd5c3138742f8 in preserved /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_09b8c468, from incomplete navigation primary task_09b8c468. No committed source candidate, separate primary-focus coverage, or actual-code judge. Preserve; do not join."
+      "pendingReason": "Untracked helper blob bedf45729fe64d9fbfb6639d6d2dd5c3138742f8 in preserved /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_09b8c468, from incomplete navigation primary task_09b8c468. No committed source candidate, separate primary-focus coverage, or actual-code judge. Preserve; do not join.",
+      "acceptedRelatedJudges": [
+        "task_cc27bf98"
+      ],
+      "acceptedBlob": "bedf45729fe64d9fbfb6639d6d2dd5c3138742f8"
     },
     {
       "file": "scripts/terminal-perf/navigation-sdk-probe.ts",
       "initialBlob": "absent",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-primary",
+      "resumeState": "needs-primary-final-blob",
       "primaryId": null,
       "primaryCommit": null,
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "e453ab85d74a043ddd10171d806c4fd9ebe7a6cc",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
       "status": "pending",
-      "pendingReason": "Untracked helper blob 43e30a2d7094921bc195e788f4897b4920054980 in preserved /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_09b8c468, from incomplete navigation primary task_09b8c468. No committed source candidate, separate primary-focus coverage, or actual-code judge. Preserve; do not join."
+      "pendingReason": "Untracked helper blob 43e30a2d7094921bc195e788f4897b4920054980 in preserved /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_09b8c468, from incomplete navigation primary task_09b8c468. No committed source candidate, separate primary-focus coverage, or actual-code judge. Preserve; do not join.",
+      "acceptedRelatedJudges": [
+        "task_cc27bf98"
+      ],
+      "acceptedBlob": "bc1696b741ddb83b2712d4b9576bbece9c8c186b"
     },
     {
       "file": "scripts/terminal-perf/navigation-terminal.ts",
       "initialBlob": "absent",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-primary",
+      "resumeState": "needs-primary-final-blob",
       "primaryId": null,
       "primaryCommit": null,
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "e453ab85d74a043ddd10171d806c4fd9ebe7a6cc",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
       "status": "pending",
-      "pendingReason": "Untracked helper blob d2643f1280f9769585963939a597ea3154b96dce in preserved /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_09b8c468, from incomplete navigation primary task_09b8c468. No committed source candidate, separate primary-focus coverage, or actual-code judge. Preserve; do not join."
+      "pendingReason": "Untracked helper blob d2643f1280f9769585963939a597ea3154b96dce in preserved /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_09b8c468, from incomplete navigation primary task_09b8c468. No committed source candidate, separate primary-focus coverage, or actual-code judge. Preserve; do not join.",
+      "acceptedRelatedJudges": [
+        "task_cc27bf98"
+      ],
+      "acceptedBlob": "d2643f1280f9769585963939a597ea3154b96dce"
     },
     {
       "file": "tests/fixtures/history-io-short-writes.ts",

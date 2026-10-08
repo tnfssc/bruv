@@ -442,6 +442,51 @@ export function createToolEventWorkload(input: ToolEventOptions = {}): ToolEvent
       }, 0),
     );
   }
+  // No await: only direct callbacks belong to this contiguous measured slice.
+  function dispatchToolBurst(mode: Methods): ToolEventEvidence["burst"] {
+    const beforeFrames = frames.length,
+      beforeCallbacks = callbacks.length,
+      beforeUpdates = updateCount,
+      beforeResults = resultCount;
+    const startMs = now();
+    source = "direct-handleEvent";
+    try {
+      for (const event of payload.events) {
+        mode.handleEvent(event);
+        if (event.type === "tool_execution_start" && event.toolCallId === "event-probe-tool")
+          finalComponent = mode.pendingTools.get("event-probe-tool");
+      }
+    } finally {
+      source = "subscribed-session";
+    }
+    const endMs = now();
+    return {
+      startMs,
+      endMs,
+      callbackCount: callbacks.length - beforeCallbacks,
+      updateDisplayCount: updateCount - beforeUpdates,
+      renderResultCount: resultCount - beforeResults,
+      frameCount: frames.length - beforeFrames,
+    };
+  }
+
+  // Unlike the injected burst, Enter must run through the subscribed SDK session.
+  async function sendEditorThroughSession(mode: Methods, session: AgentSession, profiler: TerminalActionProfiler) {
+    phase = "send-enter";
+    const beforeSend = frames.length;
+    // Identical one-turn body of Pi run(), without its infinite loop/startup network work.
+    const sendPromise = profiler
+      .runAction("send:getUserInput", () => mode.getUserInput())
+      .then((text: string) => profiler.runAction("send:session.prompt:async-prefix", () => session.prompt(text)));
+    await queueInput("send-enter", "\r");
+    for (let i = 0; i < 400 && (!requests.length || session.isStreaming); i++) await sleep(5);
+    if (!requests.length || session.isStreaming) throw new Error("Real send did not settle through recording provider");
+    await sendPromise;
+    await framesAfter(beforeSend);
+    await sleep(30);
+    await Promise.all(settlements);
+  }
+
   const fixture: ToolEventWorkload = {
     async setup() {
       if (installed) throw new Error("Tool-event workloads require a fresh process (irreversible Bruv disk adapter)");
@@ -677,30 +722,8 @@ export function createToolEventWorkload(input: ToolEventOptions = {}): ToolEvent
         queueInput("cursor-left-after-burst", "\x1b[D"),
         queueInput("backspace-after-burst", "\x7f"),
       ];
-      const beforeFrames = frames.length,
-        beforeCallbacks = callbacks.length,
-        beforeUpdates = updateCount,
-        beforeResults = resultCount;
-      const startMs = now();
-      source = "direct-handleEvent";
-      try {
-        for (const event of payload.events) {
-          mode.handleEvent(event);
-          if (event.type === "tool_execution_start" && event.toolCallId === "event-probe-tool")
-            finalComponent = mode.pendingTools.get("event-probe-tool");
-        }
-      } finally {
-        source = "subscribed-session";
-      }
-      const endMs = now();
-      const burst = {
-        startMs,
-        endMs,
-        callbackCount: callbacks.length - beforeCallbacks,
-        updateDisplayCount: updateCount - beforeUpdates,
-        renderResultCount: resultCount - beforeResults,
-        frameCount: frames.length - beforeFrames,
-      };
+      const beforeFrames = frames.length;
+      const burst = dispatchToolBurst(mode);
       phase = "backlogged-input";
       await Promise.all(queued);
       await Promise.all(settlements);
@@ -716,20 +739,7 @@ export function createToolEventWorkload(input: ToolEventOptions = {}): ToolEvent
         await queueInput(action!, data!);
         await framesAfter(before);
       }
-      phase = "send-enter";
-      const beforeSend = frames.length;
-      // Identical one-turn body of Pi run(), without its infinite loop/startup network work.
-      const sendPromise = profiler
-        .runAction("send:getUserInput", () => mode!.getUserInput())
-        .then((text: string) => profiler!.runAction("send:session.prompt:async-prefix", () => session!.prompt(text)));
-      await queueInput("send-enter", "\r");
-      for (let i = 0; i < 400 && (!requests.length || session.isStreaming); i++) await sleep(5);
-      if (!requests.length || session.isStreaming)
-        throw new Error("Real send did not settle through recording provider");
-      await sendPromise;
-      await framesAfter(beforeSend);
-      await sleep(30);
-      await Promise.all(settlements);
+      await sendEditorThroughSession(mode, session, profiler);
       collecting = false;
       const afterBytes = await stat(manager.getSessionFile()!)
         .then((s) => s.size)

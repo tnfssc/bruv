@@ -1305,7 +1305,7 @@
     {
       "focus": "scripts/terminal-perf/navigation-workloads.ts",
       "initialBlob": "d01398743c5affb8cc99babeae794e3f0dfe95a7",
-      "status": "pending",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_09b8c468",
@@ -1315,16 +1315,19 @@
         }
       ],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "6a3240454997193b22f04167d3b7df5ef06b341c",
       "integrationState": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "6a3240454997193b22f04167d3b7df5ef06b341c",
         "primaryId": "task_c80b6e38",
         "primaryCommit": "e453ab85d74a043ddd10171d806c4fd9ebe7a6cc",
-        "judgeIds": [],
+        "judgeIds": [
+          "task_cc27bf98"
+        ],
         "sourceCommit": "e453ab85d74a043ddd10171d806c4fd9ebe7a6cc",
-        "state": "needs-judge",
-        "reason": "Assigned task_09b8c468; no completed primary candidate commit or independent actual-code verdict. Historical primary-running label is not completion. Retained uncommitted candidate(s): task_09b8c468 blob e883e7a503892e16661c936b246b72b905caa194 in /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_09b8c468. Not importable or accepted."
+        "state": "accepted-joined",
+        "reason": "The separation is structural, not a name/count change. The focus has one scheduled-component lifetime: mount disk-backed content and concrete UI, dispatch the selected action, await doRender return, publish frame/state evidence, then release that fixture. All fourteen unchanged action decisions remain together, including branch rebuilds, input paths, theme restoration and cold-render scope. The SDK probe is a different complete lifetime: runtime factory and managers, forbidden provider/fetch seams, optional initialized InteractiveMode, input/lifecycle captures, final context, and nested finally teardown. History construction owns its deterministic two-leaf disk fixture; the counting terminal owns transport callbacks and writes. Neither lifetime imports the other; both use those concrete shared seams without a context bag. All four changed source files are readable coherent owners."
       }
     },
     {
@@ -1526,19 +1529,22 @@
     {
       "focus": "scripts/terminal-perf/selector-lifecycle-probe.ts",
       "initialBlob": "c050db1227585d0f71f7c2156f0a94128a808491",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "4eb5fec67d1f24e91ab6779e4c563d725f33ba69",
       "integrationState": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "4eb5fec67d1f24e91ab6779e4c563d725f33ba69",
         "primaryId": "task_a3e07d2e",
         "primaryCommit": "90ccd9b7c34cc154608614eb2d7e52c0e0006225",
-        "judgeIds": [],
+        "judgeIds": [
+          "task_cc27bf98"
+        ],
         "sourceCommit": "90ccd9b7c34cc154608614eb2d7e52c0e0006225",
-        "state": "needs-judge",
-        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+        "state": "accepted-joined",
+        "reason": "captureSelectorConfirmation owns an intelligible measurement lifetime: mount the real selector without summary work, drain its initial frame, install render/onSelect observation, dispatch Enter, require and await the actual selection promise, stop lifecycle elapsed timing, drain completed UI frames, and separately hash the transcript. Both temporary hooks are now restored in the same finally on success or failure. The resume override no longer mixes runtime resumption, selector instrumentation and evidence assembly: it awaits original resume, awaits confirmation capture, and returns the original result. Returning the capture result replaces outer evidence mutation with a clear boundary while keeping the unchanged phase instrumentation and reporting decisions visible."
       }
     },
     {
@@ -1590,19 +1596,22 @@
     {
       "focus": "scripts/terminal-perf/tool-event-workloads.ts",
       "initialBlob": "89b078ccdf8cb1198e2ac22be0b734cd334573e6",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "26d3f60fb2442da57cf53dee465edf536614c57c",
       "integrationState": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "26d3f60fb2442da57cf53dee465edf536614c57c",
         "primaryId": "task_cf54811f",
         "primaryCommit": "8f42a48aa839d206de7294d67e6bdd632eef5f7c",
-        "judgeIds": [],
+        "judgeIds": [
+          "task_cc27bf98"
+        ],
         "sourceCommit": "8f42a48aa839d206de7294d67e6bdd632eef5f7c",
-        "state": "needs-judge",
-        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+        "state": "accepted-joined",
+        "reason": "The two helpers separate genuinely different authorities rather than arbitrary code chunks. dispatchToolBurst is synchronous and owns the contiguous measurement slice, direct callback provenance, restoration to subscribed provenance, final component capture and per-burst counters. sendEditorThroughSession owns the real getUserInput/session.prompt path and its provider, scheduled-frame and callback-settlement waits. action now reads in temporal order: queue ready input before blocking work, inject the burst, drain backlogged input, exercise tool visibility and scrolling, await real subscribed send, then stop collection and assemble evidence. The unchanged callback wrapper, frame recorder, payload construction, setup prohibitions and disposal remain legible around that orchestration; no generic runner or context bag was introduced."
       }
     },
     {
@@ -5143,11 +5152,12 @@
       "acceptedBlob": null,
       "resume": {
         "status": "pending",
+        "acceptedBlob": "bedf45729fe64d9fbfb6639d6d2dd5c3138742f8",
         "primaryId": null,
         "primaryCommit": null,
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "needs-primary",
+        "sourceCommit": "e453ab85d74a043ddd10171d806c4fd9ebe7a6cc",
+        "state": "needs-primary-final-blob",
         "reason": "Untracked helper blob bedf45729fe64d9fbfb6639d6d2dd5c3138742f8 in preserved /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_09b8c468, from incomplete navigation primary task_09b8c468. No committed source candidate, separate primary-focus coverage, or actual-code judge. Preserve; do not join."
       }
     },
@@ -5159,11 +5169,12 @@
       "acceptedBlob": null,
       "resume": {
         "status": "pending",
+        "acceptedBlob": "bc1696b741ddb83b2712d4b9576bbece9c8c186b",
         "primaryId": null,
         "primaryCommit": null,
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "needs-primary",
+        "sourceCommit": "e453ab85d74a043ddd10171d806c4fd9ebe7a6cc",
+        "state": "needs-primary-final-blob",
         "reason": "Untracked helper blob 43e30a2d7094921bc195e788f4897b4920054980 in preserved /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_09b8c468, from incomplete navigation primary task_09b8c468. No committed source candidate, separate primary-focus coverage, or actual-code judge. Preserve; do not join."
       }
     },
@@ -5175,11 +5186,12 @@
       "acceptedBlob": null,
       "resume": {
         "status": "pending",
+        "acceptedBlob": "d2643f1280f9769585963939a597ea3154b96dce",
         "primaryId": null,
         "primaryCommit": null,
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "needs-primary",
+        "sourceCommit": "e453ab85d74a043ddd10171d806c4fd9ebe7a6cc",
+        "state": "needs-primary-final-blob",
         "reason": "Untracked helper blob d2643f1280f9769585963939a597ea3154b96dce in preserved /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_09b8c468, from incomplete navigation primary task_09b8c468. No committed source candidate, separate primary-focus coverage, or actual-code judge. Preserve; do not join."
       }
     }
@@ -5298,7 +5310,7 @@
     }
   },
   "resumeStatus": {
-    "accepted": 66,
-    "pending": 45
+    "accepted": 69,
+    "pending": 42
   }
 }

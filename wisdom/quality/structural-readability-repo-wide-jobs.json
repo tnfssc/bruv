@@ -943,7 +943,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_46d9c538",
         "branch": "bruv/pr45-primary-src-prompts-execute-descrip-46d9c538",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "0d3ffc7abfff084cac5d6322d861174011a3f62d"
       },
       {
         "id": "task_33bb0613",
@@ -952,7 +953,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_33bb0613",
         "branch": "bruv/pr45-primary-src-prompts-execute.md-33bb0613",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "2b1f80cee46cb252803c00d2f3bcdb4aca517c5d"
       },
       {
         "id": "task_28dca32b",
@@ -1216,7 +1218,7 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_cc27bf98",
         "branch": "bruv/pr45-judge-3-ui-terminal-cli-focuses-cc27bf98",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled"
       },
       {
         "id": "task_98534795",
@@ -1228,6 +1230,15 @@
         ],
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_98534795",
         "branch": "bruv/pr45-judge-3-ui-terminal-cli-focuses-98534795",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_9b8ded9d",
+        "stage": "primary",
+        "focus": "scripts/terminal-perf/selector-lifecycle-behavior.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_9b8ded9d",
+        "branch": "bruv/pr45-primary-scripts-terminal-perf-selec-9b8ded9d",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
       }
