@@ -16335,13 +16335,33 @@
       "initialBlob": "c829765e9417a9808e6663003f6e088d13b61da8",
       "status": "pending",
       "area": "remote",
-      "resumeState": "pending-primary-unstarted",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_e53d5663",
+      "primaryCommit": "92f9a1d03312d29239a09c39f6843959a5f813a9",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "92f9a1d03312d29239a09c39f6843959a5f813a9",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
-      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
+      "primaryBase": "4204b8d4c510b0ed0e76c4deaf219c069614b8ea",
+      "primaryResult": "Kept the original test unchanged. Its two rejected entry points and single final zero-launch assertion already make the bypass prohibition explicit. Extracting each rejection into a helper or separate setup would obscure the shared no-launch proof, not improve it.",
+      "primaryPaths": [
+        "tests/remote-runner-placement-fixture.test.ts",
+        "tests/remote-typed-root-placement-fixture.test.ts"
+      ],
+      "primaryChecks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read each complete assigned focus and its assigned reconciliation row/evidence only: all three pending-primary-unstarted with baseline blobs, no candidate or rejection to restore.",
+        "Read src/remote/operations.ts policy switch; placement-parent.ts and loopback-parent-fixture.ts response ownership; typed-root scenario.ts, proof.ts and reply-loss.ts; followed migrated runner wiring and root loss/cancellation orchestration.",
+        "Repository Biome formatter via node:child_process spawnSync explicit argv on the two changed paths only: exit 0. Retained fresh formatter HOME/config/TMPDIR under /tmp/pr45-placement-format-edtcBO.",
+        "git diff --check passed before source-only commit; inspected source diff and preserved existing assertion cases.",
+        "Reviewed filesystem/network effects: runner programs use injected in-memory jobs/subagent/Bun/process; relay test invokes only an absolute owned fake SSH executable, with explicit argv/env/cwd and owned fixture HOME/config/SDK/tmp. No live SSH, credentials or provider requests run."
+      ],
+      "primaryLimits": [
+        "No tests, setup or builds run: parent owns audited isolated gates and fresh independent judgments. No runtime acceptance claim.",
+        "Durable source provenance is this retained worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_e53d5663 at 92f9a1d03312d29239a09c39f6843959a5f813a9. Formatter fixture retained at /tmp/pr45-placement-format-edtcBO; no test fixture created by this worker. Future relay fixtures are retained mkdtemp typed-root-relay-test-* directories under the parent gate TMPDIR (or /tmp).",
+        "changedPaths records the complete combined commit scope for every decision, including the unchanged legacy focus, so an independent judge sees all related changed source. No helper file changed outside that scope.",
+        "No delegation, cleanup/deletion commands, recovery investigation, user secrets, shared dependency writes, publication, or old-worktree mutation. Parent verifies runtime model. Wisdom and values unchanged; parent owns aggregate wisdom."
+      ]
     },
     {
       "file": "tests/remote-placement.test.ts",
@@ -16514,13 +16534,33 @@
       "initialBlob": "5273a14f9828b786ae844471460651e9bfa6305f",
       "status": "pending",
       "area": "remote",
-      "resumeState": "pending-primary-unstarted",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_e53d5663",
+      "primaryCommit": "92f9a1d03312d29239a09c39f6843959a5f813a9",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "92f9a1d03312d29239a09c39f6843959a5f813a9",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
-      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
+      "primaryBase": "4204b8d4c510b0ed0e76c4deaf219c069614b8ea",
+      "primaryResult": "Grouped normal SSH placement and gave its successful delivery, discovery rejection and launch-result rejection separate test scopes; separated human source retry from exact-ID cancellation. The existing run harness remains the single injected execution boundary, all original prompt cases and assertions remain, and no generic context object or generated-program abstraction was introduced. The named scopes now correspond to the actual fixture authorities in placementCode and placementReply.",
+      "primaryPaths": [
+        "tests/remote-runner-placement-fixture.test.ts",
+        "tests/remote-typed-root-placement-fixture.test.ts"
+      ],
+      "primaryChecks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read each complete assigned focus and its assigned reconciliation row/evidence only: all three pending-primary-unstarted with baseline blobs, no candidate or rejection to restore.",
+        "Read src/remote/operations.ts policy switch; placement-parent.ts and loopback-parent-fixture.ts response ownership; typed-root scenario.ts, proof.ts and reply-loss.ts; followed migrated runner wiring and root loss/cancellation orchestration.",
+        "Repository Biome formatter via node:child_process spawnSync explicit argv on the two changed paths only: exit 0. Retained fresh formatter HOME/config/TMPDIR under /tmp/pr45-placement-format-edtcBO.",
+        "git diff --check passed before source-only commit; inspected source diff and preserved existing assertion cases.",
+        "Reviewed filesystem/network effects: runner programs use injected in-memory jobs/subagent/Bun/process; relay test invokes only an absolute owned fake SSH executable, with explicit argv/env/cwd and owned fixture HOME/config/SDK/tmp. No live SSH, credentials or provider requests run."
+      ],
+      "primaryLimits": [
+        "No tests, setup or builds run: parent owns audited isolated gates and fresh independent judgments. No runtime acceptance claim.",
+        "Durable source provenance is this retained worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_e53d5663 at 92f9a1d03312d29239a09c39f6843959a5f813a9. Formatter fixture retained at /tmp/pr45-placement-format-edtcBO; no test fixture created by this worker. Future relay fixtures are retained mkdtemp typed-root-relay-test-* directories under the parent gate TMPDIR (or /tmp).",
+        "changedPaths records the complete combined commit scope for every decision, including the unchanged legacy focus, so an independent judge sees all related changed source. No helper file changed outside that scope.",
+        "No delegation, cleanup/deletion commands, recovery investigation, user secrets, shared dependency writes, publication, or old-worktree mutation. Parent verifies runtime model. Wisdom and values unchanged; parent owns aggregate wisdom."
+      ]
     },
     {
       "file": "tests/remote-runtime.test.ts",
@@ -16583,13 +16623,33 @@
       "initialBlob": "f4283873d51805a234ae99ebdafef71a5ba54ffb",
       "status": "pending",
       "area": "remote",
-      "resumeState": "pending-primary-unstarted",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_e53d5663",
+      "primaryCommit": "92f9a1d03312d29239a09c39f6843959a5f813a9",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "92f9a1d03312d29239a09c39f6843959a5f813a9",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
-      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
+      "primaryBase": "4204b8d4c510b0ed0e76c4deaf219c069614b8ea",
+      "primaryResult": "Extracted only relay transport invocation into relayRequest(fakeSSH, dir, input), whose explicit argv, cwd and owned HOME/config/SDK/tmp directories show subprocess authority together. The test now reads straight through real forward/discard, gated status, release and reconciled forward; owned marker files are renamed rather than removed so evidence survives. The mkdtemp fixture is deliberately retained on success or failure. All existing relay assertions and all other typed-root test sections remain; no real backend or SSH acceptance is inferred from the fake executable.",
+      "primaryPaths": [
+        "tests/remote-runner-placement-fixture.test.ts",
+        "tests/remote-typed-root-placement-fixture.test.ts"
+      ],
+      "primaryChecks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read each complete assigned focus and its assigned reconciliation row/evidence only: all three pending-primary-unstarted with baseline blobs, no candidate or rejection to restore.",
+        "Read src/remote/operations.ts policy switch; placement-parent.ts and loopback-parent-fixture.ts response ownership; typed-root scenario.ts, proof.ts and reply-loss.ts; followed migrated runner wiring and root loss/cancellation orchestration.",
+        "Repository Biome formatter via node:child_process spawnSync explicit argv on the two changed paths only: exit 0. Retained fresh formatter HOME/config/TMPDIR under /tmp/pr45-placement-format-edtcBO.",
+        "git diff --check passed before source-only commit; inspected source diff and preserved existing assertion cases.",
+        "Reviewed filesystem/network effects: runner programs use injected in-memory jobs/subagent/Bun/process; relay test invokes only an absolute owned fake SSH executable, with explicit argv/env/cwd and owned fixture HOME/config/SDK/tmp. No live SSH, credentials or provider requests run."
+      ],
+      "primaryLimits": [
+        "No tests, setup or builds run: parent owns audited isolated gates and fresh independent judgments. No runtime acceptance claim.",
+        "Durable source provenance is this retained worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_e53d5663 at 92f9a1d03312d29239a09c39f6843959a5f813a9. Formatter fixture retained at /tmp/pr45-placement-format-edtcBO; no test fixture created by this worker. Future relay fixtures are retained mkdtemp typed-root-relay-test-* directories under the parent gate TMPDIR (or /tmp).",
+        "changedPaths records the complete combined commit scope for every decision, including the unchanged legacy focus, so an independent judge sees all related changed source. No helper file changed outside that scope.",
+        "No delegation, cleanup/deletion commands, recovery investigation, user secrets, shared dependency writes, publication, or old-worktree mutation. Parent verifies runtime model. Wisdom and values unchanged; parent owns aggregate wisdom."
+      ]
     },
     {
       "file": "tests/resume-safeguards.test.ts",

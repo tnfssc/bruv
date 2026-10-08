@@ -554,7 +554,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_e53d5663",
         "branch": "bruv/pr45-primary-3-remote-focuses-e53d5663",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "92f9a1d03312d29239a09c39f6843959a5f813a9"
       },
       {
         "id": "task_44e1a40c",
@@ -585,6 +586,19 @@
         "focus": ["tests/remote-jobs-e2e.test.ts", "tests/remote-jobs-placement-fixture.test.ts"],
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_4466ceda",
         "branch": "bruv/pr45-judge-2-remote-focuses-4466ceda",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_5102babd",
+        "stage": "judge",
+        "focus": [
+          "tests/fixtures/remote-typed-root-placement/scenario.ts",
+          "tests/fixtures/remote-typed-root-placement/settings.json",
+          "tests/fixtures/remote-typed-root-placement/ssh-proxy.ts"
+        ],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_5102babd",
+        "branch": "bruv/pr45-judge-3-remote-focuses-5102babd",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
       }
@@ -2403,6 +2417,15 @@
         "branch": "bruv/pr45-judge-1-agent-history-session-goals-0ba57324",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "handled"
+      },
+      {
+        "id": "task_d8d2a1e3",
+        "stage": "primary",
+        "focus": ["tests/system-prompt.test.ts"],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_d8d2a1e3",
+        "branch": "bruv/pr45-primary-1-agent-history-session-goa-d8d2a1e3",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
       }
     ]
   },
