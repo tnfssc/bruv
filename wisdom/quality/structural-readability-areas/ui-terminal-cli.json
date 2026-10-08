@@ -3974,11 +3974,11 @@
       "integrationState": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_c3dcbd93",
+        "primaryCommit": "3dabdaae8f61ab742db85f601d8868e0c20bb325",
         "judgeIds": [],
-        "sourceCommit": "53fb4d9732dcf0c337b797b05a104199ccf1a273",
-        "state": "needs-primary",
+        "sourceCommit": "3dabdaae8f61ab742db85f601d8868e0c20bb325",
+        "state": "needs-judge",
         "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
       }
     },
@@ -3992,11 +3992,11 @@
       "integrationState": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_c3dcbd93",
+        "primaryCommit": "3dabdaae8f61ab742db85f601d8868e0c20bb325",
         "judgeIds": [],
-        "sourceCommit": "8b15830be1e96a45ae4eebc585f35b55e042616e",
-        "state": "needs-primary",
+        "sourceCommit": "3dabdaae8f61ab742db85f601d8868e0c20bb325",
+        "state": "needs-judge",
         "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
       }
     },
@@ -4010,11 +4010,11 @@
       "integrationState": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_c3dcbd93",
+        "primaryCommit": "3dabdaae8f61ab742db85f601d8868e0c20bb325",
         "judgeIds": [],
-        "sourceCommit": "53fb4d9732dcf0c337b797b05a104199ccf1a273",
-        "state": "needs-primary",
+        "sourceCommit": "3dabdaae8f61ab742db85f601d8868e0c20bb325",
+        "state": "needs-judge",
         "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
       }
     },
@@ -4089,55 +4089,58 @@
     {
       "focus": "tests/tui-helpers.test.ts",
       "initialBlob": "e64a66d456b1a43ea29f404e9e8113b5cba48156",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "e64a66d456b1a43ea29f404e9e8113b5cba48156",
       "integrationState": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "e64a66d456b1a43ea29f404e9e8113b5cba48156",
         "primaryId": "task_483b50c3",
         "primaryCommit": "713146af5b76949e504d0c1e1655a47bb8d3d529",
-        "judgeIds": [],
+        "judgeIds": ["task_599509a5"],
         "sourceCommit": "713146af5b76949e504d0c1e1655a47bb8d3d529",
-        "state": "needs-judge",
-        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+        "state": "accepted-joined",
+        "reason": "The whole test file keeps four distinct proofs visible at their assertion sites: shellQuote roundtrips literal shell syntax; synthetic captures distinguish an already-mentioned job from an active roster; a private tmux config checks viewport versus history and last-frame versus missing-marker behavior; the start/stop loop drives the real Pi editor/provider. The editor test types the final argument letter, waits on requestRender, shows that Enter accepts the argument without onSubmit, resets text, then feeds the two pasteAndSubmit send-keys calls into handleInput and checks exactly one submission and an empty editor. Extracting the provider/theme construction or fixture sequence would move the decisive cause/effect away from these assertions without consolidating a second owner. This file is genuinely unchanged at the candidate. I also read the sole changed restoration test: its oracle separation does not alter this file or helper semantics."
       }
     },
     {
       "focus": "tests/tui-helpers.ts",
       "initialBlob": "b45f178e90e91b492f62d9eb4a86eeb2c23c02e6",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "b45f178e90e91b492f62d9eb4a86eeb2c23c02e6",
       "integrationState": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "b45f178e90e91b492f62d9eb4a86eeb2c23c02e6",
         "primaryId": "task_483b50c3",
         "primaryCommit": "713146af5b76949e504d0c1e1655a47bb8d3d529",
-        "judgeIds": [],
+        "judgeIds": ["task_599509a5"],
         "sourceCommit": "713146af5b76949e504d0c1e1655a47bb8d3d529",
-        "state": "needs-judge",
-        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+        "state": "accepted-joined",
+        "reason": "I followed each exported operation: shellQuote only escapes one POSIX argument; tmuxRunner only fixes the binary/socket/optional config argv; pasteAndSubmit sends one bracketed literal paste then Enter; capturePane selects viewport/history; pollFrame captures a real frame each attempt and deliberately returns the last one on timeout; frameContaining owns all-marker matching and the descriptive failure. The latter is a separate assertion policy rather than a second implementation of polling. Their composition is short and linear, with no shared context bag or dispersed teardown owner to repair. The helper blob is identical to base. The changed restoration oracle belongs to a different test fixture and requires no helper alteration."
       }
     },
     {
       "focus": "tests/tui-stop-restoration.test.ts",
       "initialBlob": "a3a127ef7f44792d9b31b7944ad6ce6f74014c13",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "abedf0dfaac63ac76c8e2f6d5c02de1382e83c67",
       "integrationState": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "abedf0dfaac63ac76c8e2f6d5c02de1382e83c67",
         "primaryId": "task_483b50c3",
         "primaryCommit": "713146af5b76949e504d0c1e1655a47bb8d3d529",
-        "judgeIds": [],
+        "judgeIds": ["task_599509a5"],
         "sourceCommit": "713146af5b76949e504d0c1e1655a47bb8d3d529",
-        "state": "needs-judge",
-        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+        "state": "accepted-joined",
+        "reason": "This extraction resolves a real local reading ambiguity: the reference pipeline formerly lived inside the same fixture closure that instruments render and reset work. uncachedTranscript now takes exactly lines, current width, and the original bound reset transform; its body visibly strips zone/cursor markers, resets before clipping, exempts image rows, and assembles the complete terminal buffer. The fixture now shows its own instrumentation lifetime in one place: capture resetRows before replacing applyLineResets, increment observed work only in that replacement, reject doRender, and expose a reference thunk that reads current lines and terminal.columns at invocation. That last thunk preserves the later width/content mutation test instead of freezing the initial snapshot. This is a coherent oracle/measurement separation, not a rename-only improvement or a generalized fixture abstraction."
       }
     }
   ],
@@ -4746,8 +4749,10 @@
       "resume": {
         "status": "pending",
         "acceptedBlob": "f57d10925dca3edb6e6511ff867664c38e3e0f65",
-        "sourceCommit": "92efca3ca0e7b4499e0311c4f5e0edf462ba5aa8",
-        "state": "needs-primary-final-blob"
+        "primaryId": "task_be75da61",
+        "primaryCommit": "a785978b91a05e944f107029ca040970643bb222",
+        "sourceCommit": "a785978b91a05e944f107029ca040970643bb222",
+        "state": "needs-judge"
       }
     }
   ],
@@ -4859,7 +4864,7 @@
     }
   },
   "resumeStatus": {
-    "accepted": 104,
-    "pending": 10
+    "accepted": 107,
+    "pending": 7
   }
 }
