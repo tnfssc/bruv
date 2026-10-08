@@ -9,7 +9,7 @@ for suffix in [".json", ".json.ready", ".before", ".after"]:
     except FileNotFoundError: pass
 pid, fd = pty.fork()
 if pid == 0:
-    os.environ.update(TERM="xterm-256color", COLUMNS="100", LINES="32", PI_PACKAGE_DIR=os.path.abspath("runtime-assets"), PS1="STOP_PROBE_PROMPT> ")
+    os.environ.update(TERM="xterm-256color", COLUMNS="100", LINES="32", PI_PACKAGE_DIR=os.path.abspath("dist/runtime-assets"), PS1="STOP_PROBE_PROMPT> ")
     os.execv("/bin/bash", ["bash", "--noprofile", "--norc", "-i"])
 fcntl.ioctl(fd, termios.TIOCSWINSZ, struct.pack("HHHH", 32, 100, 0, 0))
 command = "stty -g > " + shlex.quote(prefix + ".before") + "; " + shlex.quote(binary) + " " + shlex.quote(prefix + ".json") + "; stty -g > " + shlex.quote(prefix + ".after") + "; printf '\nSHELL_RESUMED:0\n'\n"

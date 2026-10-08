@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { copyFile, cp, mkdir, mkdtemp, readdir, rm, stat, utimes } from "node:fs/promises";
+import { copyFile, cp, mkdir, mkdtemp, readFile, readdir, rm, stat, utimes, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { dirname, join, relative, resolve } from "node:path";
 import { run } from "../helpers/helpers";
@@ -44,9 +44,12 @@ async function prepareAssets(fixture: string): Promise<void> {
 describe("build asset preparation", () => {
   test("keeps only required assets and does not rewrite unchanged files", async () => {
     const fixture = await mkdtemp(join(tmpdir(), "bruv-prepare-assets-"));
-    const assets = join(fixture, "runtime-assets");
+    const assets = join(fixture, "dist", "runtime-assets");
+    const retained = join(fixture, "artifacts", "retained-run.txt");
     try {
       await copyPreparationInputs(fixture);
+      await mkdir(dirname(retained), { recursive: true });
+      await writeFile(retained, "retained run evidence");
       await prepareAssets(fixture);
       const generated = await filesWithMtimes(assets);
       expect(generated.map((file) => file.path)).toEqual([
@@ -61,12 +64,34 @@ describe("build asset preparation", () => {
         "theme/theme-schema.json",
       ]);
 
+      expect(await readdir(fixture)).not.toContain("runtime-assets");
+      // Path-only staging changes must preserve the exact upstream bytes, including
+      // bundled vendor license banners. Only package metadata is generated here.
+      for (const { path } of generated) {
+        if (path === "package.json") continue;
+        const source =
+          path === "photon_rs_bg.wasm"
+            ? join(fixture, "node_modules/@silvia-odwyer/photon-node", path)
+            : join(
+                fixture,
+                "node_modules/@earendil-works/pi-coding-agent/dist",
+                path.startsWith("export-html/") ? "core" : "modes/interactive",
+                path,
+              );
+        expect(await readFile(join(assets, path))).toEqual(await readFile(source));
+      }
+
       // Old timestamps make a rewrite observable without relying on a sleep or clock resolution.
       const oldTime = new Date("2000-01-01T00:00:00Z");
       for (const file of generated) await utimes(join(assets, file.path), oldTime, oldTime);
       const before = await filesWithMtimes(assets);
       await prepareAssets(fixture);
       expect(await filesWithMtimes(assets)).toEqual(before);
+      // Cleaning disposable staging must not erase retained run evidence.
+      await rm(join(fixture, "dist"), { recursive: true });
+      expect(await readFile(retained, "utf8")).toBe("retained run evidence");
+      await prepareAssets(fixture);
+      expect((await filesWithMtimes(assets)).map((file) => file.path)).toEqual(generated.map((file) => file.path));
     } finally {
       await rm(fixture, { recursive: true, force: true });
     }

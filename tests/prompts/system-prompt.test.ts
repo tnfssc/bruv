@@ -133,7 +133,7 @@ test.each([
     ],
     {
       cwd: join(import.meta.dir, "../.."),
-      env: { ...process.env, PI_PACKAGE_DIR: join(import.meta.dir, "../..", "runtime-assets") },
+      env: { ...process.env, PI_PACKAGE_DIR: join(import.meta.dir, "../..", "dist/runtime-assets") },
       stdout: "pipe",
       stderr: "pipe",
     },

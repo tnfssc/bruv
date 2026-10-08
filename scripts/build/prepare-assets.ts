@@ -6,7 +6,8 @@ import { fileURLToPath } from "node:url";
 const root = join(dirname(fileURLToPath(import.meta.url)), "../..");
 const piRoot = join(root, "node_modules/@earendil-works/pi-coding-agent");
 const photonRoot = join(root, "node_modules/@silvia-odwyer/photon-node");
-const output = join(root, "runtime-assets");
+// Rebuildable compile inputs, not retained run evidence or installed runtime state.
+const output = join(root, "dist", "runtime-assets");
 const { version } = (await Bun.file(join(root, "package.json")).json()) as { version: string };
 
 await preparePiHostWithRecovery(root, piRoot);

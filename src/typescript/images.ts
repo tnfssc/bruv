@@ -1,7 +1,7 @@
 import fs, { createWriteStream } from "node:fs";
 import { fileURLToPath } from "node:url";
 import type { ImageContent } from "@earendil-works/pi-ai";
-import photonWasm from "../../runtime-assets/photon_rs_bg.wasm" with { type: "file" };
+import photonWasm from "../../dist/runtime-assets/photon_rs_bg.wasm" with { type: "file" };
 
 export const MAX_IMAGE_BYTES = 5_000_000;
 // Oversized images may be resized, but input reads remain bounded.

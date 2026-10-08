@@ -1,5 +1,6 @@
 node_modules/
-runtime-assets/
+# Retired root staging: leave existing ignored local data alone.
+/runtime-assets/
 dist/
 .bruv-harness/
 artifacts/

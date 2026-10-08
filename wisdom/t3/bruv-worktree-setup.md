@@ -6,7 +6,7 @@ not its pnpm command or env copying. Bruv uses Bun and a frozen bun.lock.
 
 Setup Worktree runs bun install --frozen-lockfile, then bun run prepare:assets.
 Asset preparation is required before importing connector tests. Without it a
-fresh checkout fails on runtime-assets/assets/clankolas.png. Leave setup in
+fresh checkout fails on dist/runtime-assets/assets/clankolas.png. Leave setup in
 foreground: these are prerequisites, not an optional background dev server.
 
 Build and CI Checks use the existing root commands. No web dev action: T3 is

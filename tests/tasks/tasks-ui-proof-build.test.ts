@@ -24,7 +24,7 @@ async function fixture() {
   const pi = join(root, "node_modules/@earendil-works/pi-coding-agent");
   await mkdir(pi, { recursive: true });
   await writeFile(join(pi, "host.js"), "adapted");
-  await writeFile(join(root, ".gitignore"), "node_modules/\nout/\nruntime-assets/\n");
+  await writeFile(join(root, ".gitignore"), "node_modules/\nout/\ndist/runtime-assets/\n");
   await writeFile(join(root, "src/cli.ts"), "// owned source fixture\n");
   await writeFile(
     join(root, "scripts/tui/tasks-ui-proof-build.ts"),
@@ -36,7 +36,7 @@ async function fixture() {
   );
   await writeFile(
     join(root, "scripts/build/prepare-assets.ts"),
-    'await Bun.write(new URL("../../runtime-assets/prepared", import.meta.url), "prepared");',
+    'await Bun.write(new URL("../../dist/runtime-assets/prepared", import.meta.url), "prepared");',
   );
   await writeFile(
     join(root, "scripts/stub-build.ts"),
@@ -91,7 +91,7 @@ test("one output argument builds source/binary provenance without a web archive"
     compile: { outfile: f.binary },
     minify: true,
   });
-  expect(await Bun.file(join(f.root, "runtime-assets/prepared")).text()).toBe("prepared");
+  expect(await Bun.file(join(f.root, "dist/runtime-assets/prepared")).text()).toBe("prepared");
   expect(await Bun.file(join(f.pi, "host.js")).text()).toBe("adapted");
   expect(await Bun.file(join(f.root, "dist/bruv-web.archive.gz")).exists()).toBe(false);
 });
@@ -101,7 +101,7 @@ test("old archive/output invocation is explicitly rejected before preparation", 
   const result = f.run([join(f.root, "unused.archive.gz"), f.binary]);
   expect(result.status).not.toBe(0);
   expect(result.stderr).toContain("Usage: bun scripts/tui/tasks-ui-proof-build.ts OUTPUT_BINARY");
-  expect(await Bun.file(join(f.root, "runtime-assets/prepared")).exists()).toBe(false);
+  expect(await Bun.file(join(f.root, "dist/runtime-assets/prepared")).exists()).toBe(false);
 });
 
 test("dirty tracked source and unadapted dependencies still stop before preparation", async () => {
@@ -112,7 +112,7 @@ test("dirty tracked source and unadapted dependencies still stop before preparat
   await writeFile(join(f.pi, "host.js"), "unadapted");
   expect(f.run().stderr).toContain("Cached Pi host needs adaptation; refuse dependency writes");
   expect(await Bun.file(join(f.pi, "host.js")).text()).toBe("unadapted");
-  expect(await Bun.file(join(f.root, "runtime-assets/prepared")).exists()).toBe(false);
+  expect(await Bun.file(join(f.root, "dist/runtime-assets/prepared")).exists()).toBe(false);
 });
 
 test("failed compile and source mutation during compile publish no proof record", async () => {

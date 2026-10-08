@@ -33,7 +33,7 @@ async function capture(args: string[]): Promise<PromptPreview> {
 async function withColdCheckout(check: (cwd: string) => Promise<void>): Promise<void> {
   const unpreparedRepo = await mkdtemp(join(tmpdir(), "bruv-preview-cli-"));
   try {
-    // Copy the actual package entry and source, deliberately excluding runtime-assets.
+    // Copy the actual package entry and source, deliberately excluding dist/runtime-assets.
     await cp(join(repo, "src"), join(unpreparedRepo, "src"), { recursive: true });
     await mkdir(join(unpreparedRepo, "scripts"));
     await cp(join(repo, "scripts/prompt-preview.ts"), join(unpreparedRepo, "scripts/prompt-preview.ts"));
@@ -44,7 +44,7 @@ async function withColdCheckout(check: (cwd: string) => Promise<void>): Promise<
     const captureAttempt = await run([], unpreparedRepo);
     expect(captureAttempt.exitCode).not.toBe(0);
     expect(captureAttempt.stdout).toBe("");
-    expect(captureAttempt.stderr).toContain("Cannot find module '../../runtime-assets/photon_rs_bg.wasm'");
+    expect(captureAttempt.stderr).toContain("Cannot find module '../../dist/runtime-assets/photon_rs_bg.wasm'");
 
     await check(unpreparedRepo);
   } finally {

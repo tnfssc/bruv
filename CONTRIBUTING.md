@@ -35,8 +35,14 @@ The Linux CI workflow calls the same command. It includes formatting, lint, type
 
 Both pull-request CI and the release workflow run the formatting check. When you format changes, use the pinned Biome version in `devDependencies`.
 
-Do not commit generated `dist/`, `runtime-assets/`, test artifacts, credentials,
-or local configuration.
+Do not commit generated `dist/`, `artifacts/`, credentials, or local configuration.
+
+`dist/runtime-assets/` contains rebuildable compile inputs prepared by
+`bun run prepare:assets` (also run by the paired build). The executables embed
+these assets; release packaging ships the binaries and notices, not this directory.
+Retained CI logs, screenshots, proof runs and performance captures stay in ignored
+root `artifacts/`, outside disposable build/distribution output. Do not move them
+under `dist/` or remove them when cleaning a build.
 
 ## Test policy
 
