@@ -67,6 +67,15 @@
         "branch": "bruv/pr45-judge-scripts-network-none-fixture.-d2ae9701",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
+      },
+      {
+        "id": "task_58c7d1fa",
+        "stage": "primary",
+        "focus": "scripts/remote-capability-pty-e2e.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_58c7d1fa",
+        "branch": "bruv/pr45-primary-scripts-remote-capability-p-58c7d1fa",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
       }
     ]
   },
@@ -442,6 +451,16 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_023dc437",
         "branch": "bruv/pr45-primary-scripts-probe-openai-realti-023dc437",
         "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled",
+        "sourceCommit": "aa7a32b6aea3c5299d5252c9bf0062d177873b60"
+      },
+      {
+        "id": "task_b60b90b8",
+        "stage": "judge",
+        "focus": "scripts/probe-live-startup-audio.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_b60b90b8",
+        "branch": "bruv/pr45-judge-scripts-probe-live-startup-au-b60b90b8",
+        "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
       }
     ]
@@ -627,6 +646,15 @@
         "branch": "bruv/pr45-judge-tests-claude-native-acceptanc-fd2b6ab4",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "handled"
+      },
+      {
+        "id": "task_690995b4",
+        "stage": "judge",
+        "focus": "scripts/claude-native-acceptance/subagent-driver.mjs",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_690995b4",
+        "branch": "bruv/pr45-judge-scripts-claude-native-accepta-690995b4",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
       }
     ]
   },
@@ -696,6 +724,15 @@
         "branch": "bruv/pr45-judge-scripts-history-storage-probe-1925c521",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "handled"
+      },
+      {
+        "id": "task_785ec99c",
+        "stage": "judge",
+        "focus": "scripts/history-storage-probe.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_785ec99c",
+        "branch": "bruv/pr45-judge-scripts-history-storage-probe-785ec99c",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
       }
     ]
   },

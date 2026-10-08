@@ -2487,12 +2487,30 @@
       "file": "scripts/probe-openai-realtime-setup.ts",
       "initialBlob": "336872179296264402c6bac5fc5c7feaa1c8d244",
       "status": "pending",
-      "primaryId": null,
-      "sourceCommit": null,
+      "primaryId": "task_023dc437",
+      "sourceCommit": "aa7a32b6aea3c5299d5252c9bf0062d177873b60",
       "judgeIds": [],
-      "resumeState": "own_primary_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "aa7a32b6aea3c5299d5252c9bf0062d177873b60",
+      "primaryBase": "888ded5094541ff18d832174ebb191dfd5b1cc6c",
+      "primaryResult": "The gated entry point now explicitly loads a validated private key and invokes one session-owning operation. readProbeKey contains all existing file ownership/mode/type/size and key assignment/format checks. runSetupProbe owns handshake/setup observations, the production socket, the 28-second deadline, sanitized success reporting, and unconditional deadline/session teardown. No shared context or exported helper added. The outer generic failure handler now runs after teardown; a teardown exception is also caught there rather than escaping the old finally. Provider identifiers/redaction regex, opt-in exit, model, orchestration denial, and connect-only behavior are unchanged.",
+      "primaryPaths": [
+        "scripts/probe-openai-realtime-setup.ts"
+      ],
+      "primaryChecks": [
+        "Read wisdom values, structural guidance, repo-wide assignments/coverage/jobs, area ledger, pilot and preserved reconciliation focus row. Focus already present at initial blob 336872179296264402c6bac5fc5c7feaa1c8d244; no historical candidate imported.",
+        "Traced script usage and shared paid-acceptance orchestration; manually reviewed production connect/setup/error/close contracts and final source.",
+        "git diff --check passed. Commit contains only the focus source path; exact committed focus blob recorded.",
+        "Verified no active commit hooks before commit; no setup, tests, builds, credential access, devices, delegation, recovery, cleanup, push, PR, or merge performed."
+      ],
+      "primaryLimits": [
+        "Primary candidate only: independent actual-code judgment and parent-owned isolated batch gates remain required.",
+        "No runtime, syntax/typecheck, formatting tool, paid-provider or device validation performed, as directed. Existing assertions and helper source remain untouched.",
+        "Preserved reconciliation records automatic setup host-hash failure; not rerun, bypassed, or claimed resolved.",
+        "No worker wisdom added and values unchanged; parent owns aggregate wisdom. Historical worktrees, dirty candidates and lineage preserved."
+      ]
     },
     {
       "file": "scripts/prompt-preview.ts",
