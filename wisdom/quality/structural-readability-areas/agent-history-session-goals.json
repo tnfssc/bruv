@@ -2555,28 +2555,29 @@
     {
       "focus": "tests/cache-affine-compaction-sdk.test.ts",
       "initialBlob": "eb93fe2c9282b071f3948958d990f3e3b6923659",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "01d9f3f7b099498d9dfb8e446de430da165f35df",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "01d9f3f7b099498d9dfb8e446de430da165f35df",
         "primaryId": "task_f6b24bd0",
         "primaryCommit": "dabb7111b9bece9b6273fcee10405206142d0abe",
-        "judgeIds": [],
+        "judgeIds": ["task_74743d37"],
         "sourceCommit": "dabb7111b9bece9b6273fcee10405206142d0abe",
-        "state": "needs-judge",
-        "reason": "No dedicated primary/final independent focus judgment."
+        "state": "accepted-joined",
+        "reason": "The duplicated transport-to-synthetic-stream boundary is now one coherent file-local operation, not a renamed block or scenario context bag. streamAfterPayloadCapture owns awaiting capture, requiring the sentinel, forwarding an unexpected SDK result unchanged, constructing the successful reply only after capture, converting thrown errors, and pairing each terminal push with end. Each provider scenario still visibly selects actual simple/native serializers, runs header/payload hooks, snapshots attempts/transformed payloads, blocks fetch, and supplies its own reply text. The fresh-session scenario retains its stricter local unexpected-result throw, so the shared operation does not flatten that difference. I followed the normal prompt then compact journey and both fresh explicit/implicit tool journeys through all inline assertions and finally lifetimes. Prefix/system/tools/thinking/cache identity/header routing, whole-history summary instruction, checkpoint usage/fromHook, replay tail, and zero-network assertions remain present and unchanged."
       }
     },
     {
       "focus": "tests/cache-affine-compaction.test.ts",
       "initialBlob": "20236a300c5f611a16f6ec950c00aac31a29ffd1",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "e60643f48560c27e07c377cce9dd1f1b6882d125",
       "integration": "pending",
       "relatedPatchReview": {
         "candidate": "6765c847fd17806b697ec1bede8a8260ac9123d0",
@@ -2586,31 +2587,33 @@
         "primaryFocusStillRequired": true
       },
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "e60643f48560c27e07c377cce9dd1f1b6882d125",
         "primaryId": "task_b1e39ec2",
         "primaryCommit": "cef8af98763ac2be8e0ff5bc3cf5d1908c9c2353",
-        "judgeIds": ["task_2020f326"],
+        "judgeIds": ["task_2020f326", "task_74743d37"],
         "sourceCommit": "cef8af98763ac2be8e0ff5bc3cf5d1908c9c2353",
-        "state": "needs-judge",
-        "reason": "No dedicated primary/final independent focus judgment. Related-patch review is evidence only; dedicated focus coverage remains required."
+        "state": "accepted-joined",
+        "reason": "The previous paid-response test required tracking a successful attempt, a toggled throwing appendEntry, and a later abort in one mutable session. It is now three independently owned summaryAttemptHarness instances whose provider callbacks and real appendEntry replacements name each fault at the scenario. The successful unusable-response journey checks exact paid checkpoint content; storage failure checks one request/one append, both cancellation notices, and secret-safe error text; late abort awaits payload acceptance, aborts, returns paid usage, and checks one request/one failed append. Passing compactEvent through the existing fixture keeps the abort signal explicit. Exposing pi is the actual extension fault seam, not a new dependency container. Adjacent final-wire-rejection, accepted-then-rejected uncertainty, projection failure, and notification failure assertions are preserved under one cancellation describe. I also read the unchanged request preparation, token budget, transformed/tool history, serialization guards, validation, successful extension projection, unavailable runtime/provider/pre-abort cases, custom focus, and manager ownership lifecycles; their assertions remain intact."
       }
     },
     {
       "focus": "tests/cache-countdown-sdk.test.ts",
       "initialBlob": "04f59de886ea0b272ef89e9126a423da750dc86c",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "07e3fea1b864eaafee3cfcf6c17ab4d42ce2e18a",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "07e3fea1b864eaafee3cfcf6c17ab4d42ce2e18a",
         "primaryId": "task_ef29e337",
         "primaryCommit": "d2b3af51370804e9bd939a8ac375fcbeca456ed1",
-        "judgeIds": [],
+        "judgeIds": ["task_74743d37"],
         "sourceCommit": "d2b3af51370804e9bd939a8ac375fcbeca456ed1",
-        "state": "needs-judge",
-        "reason": "No dedicated primary/final independent focus judgment."
+        "state": "accepted-joined",
+        "reason": "This fixes an actual ownership/read-order problem in make(root,rejectPayload,noHttpHook,responseStatus): provider simulation and session wiring were interleaved, and call sites encoded tested decisions as positional booleans. scriptedProvider now owns the counter, payload/header/response hook ordering, and terminal success/error lifecycle. createSdkSession owns offline ModelRuntime, manager/loader/extension construction, wiring and returned session handles. The small discriminated ScriptedResponse describes the actual mutually exclusive paths at each test. I followed all four full scenarios: one of two agents records and survives disk reopening; payload rejection precedes fetch/counter increment and produces no observation; terminal-only transport records once; each rejected HTTP status still produces a successful terminal but no observation. Original assertions, explicit auth/settings paths, disposal, disk-resume details, and owned finally cleanup are unchanged; this is a coherent authority split rather than naming churn."
       }
     },
     {
@@ -2708,11 +2711,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_f1a4e7e5",
+        "primaryCommit": "4f5ee3078b1d85b21460c4cd7fba248be2af1dd6",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary",
+        "sourceCommit": "4f5ee3078b1d85b21460c4cd7fba248be2af1dd6",
+        "state": "needs-judge",
         "reason": "No dedicated primary/final independent focus judgment."
       }
     },
@@ -4477,7 +4480,7 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 78,
-    "pending": 45
+    "accepted": 81,
+    "pending": 42
   }
 }

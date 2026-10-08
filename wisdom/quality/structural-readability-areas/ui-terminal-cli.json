@@ -4021,28 +4021,29 @@
     {
       "focus": "tests/terminal-perf-tools.test.ts",
       "initialBlob": "fc51f95e6eede1cd6df28a1e7dec2122a0151dd3",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "fc51f95e6eede1cd6df28a1e7dec2122a0151dd3",
       "integrationState": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "fc51f95e6eede1cd6df28a1e7dec2122a0151dd3",
         "primaryId": "task_16837afc",
         "primaryCommit": "cbf7ddd6f5cbb1f69eb88479a876e14ec43773c1",
-        "judgeIds": [],
+        "judgeIds": ["task_2c116e9f"],
         "sourceCommit": "cbf7ddd6f5cbb1f69eb88479a876e14ec43773c1",
-        "state": "needs-judge",
-        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+        "state": "accepted-joined",
+        "reason": "The whole unchanged focus already places lifetime authority at the point of use: run() enters setup inside try, performs all ordered toolStages, and always disposes in finally, including setup failures. deterministic() discards frames, segments, mutationMs and renderDrainMs but preserves output, screen and document hashes/lines, content and work counters. Shape tests visibly join stage selection with frame/output accounting, reveal/collapse semantics and global restoration. The manual preview test deliberately omits result completion before reveal, checks invisible args-stream work and idempotent second reveal, and retains local finally disposal. The complete-initial-args constructor test shows its distinct journey directly. The last test exposes invalid pre-setup/pre-construction actions, overlap rejection, bounded repeated completion/error work, first-to-second ownership transfer, idempotent disposal and probe reuse in one place. Extracting more stages or assertions would obscure those protocols, not resolve scattered ownership."
       }
     },
     {
       "focus": "tests/terminal-perf-workloads.test.ts",
       "initialBlob": "162a5a3c74695d6edefe695eb9d5e4c4a52c0ed3",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "d274acb072ed06375c1ee234379d57a32aa026cb",
       "integrationState": "pending",
       "pendingRelatedCandidate": {
         "id": "task_a342c31d",
@@ -4059,31 +4060,33 @@
         }
       ],
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "d274acb072ed06375c1ee234379d57a32aa026cb",
         "primaryId": "task_16837afc",
         "primaryCommit": "cbf7ddd6f5cbb1f69eb88479a876e14ec43773c1",
-        "judgeIds": ["task_d455a9d6"],
+        "judgeIds": ["task_d455a9d6", "task_2c116e9f"],
         "sourceCommit": "cbf7ddd6f5cbb1f69eb88479a876e14ec43773c1",
-        "state": "needs-judge",
-        "reason": "Existing related-path ACCEPT by task_d455a9d6 at 747c31b8e52eff45ab2c585e5974eeb9d50cd85a, blob d274acb072ed06375c1ee234379d57a32aa026cb; exact candidate verified. Related blob not joined; parent may join only with its existing narrow judgment. Dedicated primary-focus acceptance is missing."
+        "state": "accepted-joined",
+        "reason": "The added cold-frame test reads as one complete ownership journey: renderer-ready publishes the renderer and attaches the profiler before any screen exists; setup captures the mount; each subsequent iteration clears only the profiler then compares its own frame/output against the workload step; the cold work snapshot remains immutable; finally stops the workload before removing the caller-owned profiler. The failure test keeps the exact thrown error, terminal-stop instrumentation, prototype restoration, invalid step, and successful next fixture together, with both fixtures disposed locally. Existing catalog laziness, per-mode real visible mutation, 100/500/1000 scaling, non-visible tiny scroll fixture, sequential reuse, option validation and FakeTerminal detachment cases remain direct. These local protocols are clearer than a context bag or shared assertion abstraction."
       }
     },
     {
       "focus": "tests/tui-harness.test.ts",
       "initialBlob": "b806b4944004e9d8806779d271da1b0c8ded8297",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "dce406e1e739da608a844c455502111d4373c9e2",
       "integrationState": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "dce406e1e739da608a844c455502111d4373c9e2",
         "primaryId": "task_16837afc",
         "primaryCommit": "cbf7ddd6f5cbb1f69eb88479a876e14ec43773c1",
-        "judgeIds": [],
+        "judgeIds": ["task_2c116e9f"],
         "sourceCommit": "cbf7ddd6f5cbb1f69eb88479a876e14ec43773c1",
-        "state": "needs-judge",
-        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+        "state": "accepted-joined",
+        "reason": "createHarnessFixture is a coherent local operation, not a renamed context bag: it allocates and retains one mkdtemp root, creates its owned HOME/config/SDK/tmp/script directories, copies the harness/config entrypoints, reuses the already-built dist, and defines command/session/stop operations over one socket, environment and cwd. beforeAll publishes only a completed fixture; afterAll stops that fixture server without deleting directories. Test bodies now state duplicate preservation, invalid-name rejection and demo-only timeout without reconstructing tmux argv/env every time. Assertions still check the same exit codes, errors, help commands, surviving sessions and 1500ms/10000ms timing. The extra boundary has a concrete lifetime and effect: all children and harness-generated state belong to the same fixture."
       }
     },
     {
@@ -4744,15 +4747,17 @@
       "focus": "tests/helpers/terminal-perf-process.ts",
       "initialBlob": null,
       "introducedBy": "92efca3ca0e7b4499e0311c4f5e0edf462ba5aa8",
-      "state": "pending",
-      "acceptedBlob": null,
+      "state": "accepted",
+      "acceptedBlob": "f57d10925dca3edb6e6511ff867664c38e3e0f65",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
         "acceptedBlob": "f57d10925dca3edb6e6511ff867664c38e3e0f65",
         "primaryId": "task_be75da61",
         "primaryCommit": "a785978b91a05e944f107029ca040970643bb222",
+        "judgeIds": ["task_3d1c69eb"],
         "sourceCommit": "a785978b91a05e944f107029ca040970643bb222",
-        "state": "needs-judge"
+        "state": "accepted-joined",
+        "reason": "Read the entire helper at the exact candidate, independently of the primary narrative. The journey is contiguous: resolve the repository once; allocate one mkdtemp root; derive seven owned HOME/config/cache/data/state/SDK/temp directories; await their creation; construct an explicit environment that inherits only PATH; return that root and a run closure capturing the environment. run directly owns Bun.spawn with process.execPath plus caller argv, repository cwd and piped output. Its Promise.all observes exit and starts both pipe drains together, then publishes one exitCode/stdout/stderr result. There is no teardown method, shell quoting, inherited HOME removal or second child-lifetime authority. The intentional retained root is visible in the API and comment. A class, directory-builder extraction or additional lifecycle state would split this small authority rather than clarify it."
       }
     }
   ],
@@ -4864,7 +4869,7 @@
     }
   },
   "resumeStatus": {
-    "accepted": 107,
-    "pending": 7
+    "accepted": 111,
+    "pending": 3
   }
 }

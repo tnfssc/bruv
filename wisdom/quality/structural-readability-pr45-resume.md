@@ -5,7 +5,7 @@
 - User direction: complete existing PR45 code-only scope; parent publishes, no push/new PR. No recovery/credentials.
 - Workspace: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a; branch bruv/readability-pr45-sol-continuation.
 - Leaves: native normal openai-codex/gpt-6.1-sol verified at launch, maximum six globally; exact focus primary and independent actual-code judge required, unchanged included.
-- Exact coverage in current joined checkout: 676/824 accepted, 148 pending; 766 baseline + 58 source extras. Exact focus hashes, primary/judge IDs and candidate tips remain in aggregate/area ledgers.
+- Exact coverage in current joined checkout: 683/824 accepted, 141 pending; 766 baseline + 58 source extras. Exact focus hashes, primary/judge IDs and candidate tips remain in aggregate/area ledgers.
 - Durable scheduler /home/tnfssc/.bruv/worktrees/pr45-flow-c2a2fd8a{.mjs,-state.json}; old originals/worktrees preserved, no old IDs inspected. Selected text/tool evidence and four terminal journal facts retained in pr45-flow-c2a2fd8a-checkpoint-journal.json alongside scheduler.
 - Next: finish execution/tasks/questions, UI/terminal, agent/history/goals, remote, Live, exact new/deleted sources and changed-accepted rejudgment; final independent whole-diff review and safe constituent gates. Full CI/authenticated background UX/device/macOS are NOT proven.
 
