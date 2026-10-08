@@ -2209,12 +2209,47 @@
       "file": "scripts/probe-live-recorded.ts",
       "initialBlob": "3c15dce87ad6cef0b8687c9d2dfeb793a48c9b3a",
       "status": "pending",
-      "primaryId": null,
-      "sourceCommit": null,
+      "primaryId": "task_37841a12",
+      "sourceCommit": "49118d0e1bcffc27ca6b2c71b87cc2504065a67d",
       "judgeIds": [],
-      "resumeState": "own_primary_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "49118d0e1bcffc27ca6b2c71b87cc2504065a67d",
+      "primaryBase": "0b1faebd03e5eb7711dbcba5a58453564a28cc36",
+      "primaryResult": "CLI specs become structured values once. prepareTrial owns source-backed validation, instruction selection, snapshot/replay/user item ordering and hashes computed from the exact prepared input strings. The full prepared plan is completed before prompt/config/credential loading. The final loop only invokes studyTrial with prepared instructions/items and publishes metadata plus model/results. Fresh has no snapshot; snapshot carries projected context; replay appends the same provisional assistant text before the target. Existing projection bounds, consent gate, execute-only schema check, provider check, synthetic tool interception, deadlines and private-output marker remain.",
+      "primaryPaths": [
+        "scripts/probe-live-recorded.ts"
+      ],
+      "primaryChecks": [
+        {
+          "check": "Actual-code journeys and callers",
+          "result": "Read focus, CLI caller/example, input and transport helpers, neighboring controlled probe and existing input test assertions; manually traced fresh/snapshot/replay, invalid spec/source and successful execution/output."
+        },
+        {
+          "check": "Preserved evidence and ownership",
+          "result": "Read values, structural readability guidance, repo-wide ledgers and area ledger/reconciliation. Focus exists at original joined blob 3c15dce87ad6cef0b8687c9d2dfeb793a48c9b3a with own_primary_pending and no prior focus candidate/rework; no old source bytes imported."
+        },
+        {
+          "check": "Read-only source comparisons",
+          "result": "Snapshot projection/size-gate function and mockOutput interception block match parent source exactly. Preparation is before credential resolution."
+        },
+        {
+          "check": "git diff --check",
+          "result": "Passed before and after commit."
+        },
+        {
+          "check": "Commit source inventory",
+          "result": "Only scripts/probe-live-recorded.ts changed in source commit."
+        }
+      ],
+      "primaryLimits": [
+        "No repository tests, setup, builds, paid probe, credentials, devices or network provider execution run; parent owns audited isolated batch gates and fresh independent actual-code judgment.",
+        "Attempted read-only TypeScript syntax parser load failed because /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/typescript/lib/typescript.js is absent; no syntax/typecheck success claimed.",
+        "Invalid transcript preparation now fails before prompt/config/credential loading rather than after it; JSON output property order moves model after metadata, with unchanged field names/values.",
+        "Automatic setup unsupported host-hash failure reported in preserved reconciliation remains unrerun and unbypassed; it is not rendered green.",
+        "No delegation, recovery, cleanup, destructive Git operations, old-worktree mutations, wisdom edits, push, PR or merge. Parent owns aggregate wisdom and external runtime-model verification."
+      ]
     },
     {
       "file": "scripts/probe-live-startup-audio.ts",

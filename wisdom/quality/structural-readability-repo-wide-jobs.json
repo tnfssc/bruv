@@ -374,7 +374,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_37841a12",
         "branch": "bruv/pr45-primary-scripts-probe-live-recorded-37841a12",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "49118d0e1bcffc27ca6b2c71b87cc2504065a67d"
       },
       {
         "id": "task_61f7ec92",
@@ -382,6 +383,15 @@
         "focus": "scripts/offline-openai-default-transport.ts",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_61f7ec92",
         "branch": "bruv/pr45-judge-scripts-offline-openai-defaul-61f7ec92",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_2f550018",
+        "stage": "primary",
+        "focus": "scripts/probe-live-startup-audio.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_2f550018",
+        "branch": "bruv/pr45-primary-scripts-probe-live-startup--2f550018",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
       }

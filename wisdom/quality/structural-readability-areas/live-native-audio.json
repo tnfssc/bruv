@@ -1125,10 +1125,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
+        "primaryId": "task_37841a12",
+        "primaryCommit": "49118d0e1bcffc27ca6b2c71b87cc2504065a67d",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "own_primary_pending",
+        "sourceCommit": "49118d0e1bcffc27ca6b2c71b87cc2504065a67d",
+        "state": "needs-judge",
         "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
       }
     },
