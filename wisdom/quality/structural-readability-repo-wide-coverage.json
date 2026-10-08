@@ -9251,26 +9251,81 @@
       "initialBlob": "0551197d52af008fbc723a70d9b157bb870ffc96",
       "status": "pending",
       "area": "compatibility-t3",
-      "resumeState": "pending-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_0f924831",
+      "primaryCommit": "b5e505add38da059029ce3c17b688ec894da4884",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "b5e505add38da059029ce3c17b688ec894da4884",
       "report": "wisdom/quality/structural-readability-areas/compatibility-t3.json",
-      "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+      "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection.",
+      "primaryBase": "390bd5ebbcc9bb95f66a691e3d7e05fc8a92511d",
+      "primaryResult": "Each policy authority now has its own test with the original assertions beside its inputs. createOfflineModelRuntime owns the complete model registration/auth paths/network-disabled preparation, performed before opening MCP; the MCP test reads from server selection through runtime injection, actual Pi call, result isolation and confirmed runtime/subprocess closure without intervening provider configuration. Native UUID/checkpoint/import assertions and SDK process isolation are unchanged.",
+      "primaryPaths": ["tests/claude-compat-composition.test.ts"],
+      "primaryChecks": [
+        {
+          "check": "Required repository Biome formatter on changed source only via child_process argv with fresh retained HOME/config/TMPDIR/SDK environment",
+          "result": "pass; Formatted 1 file, no fixes applied",
+          "retainedEnvironment": "/tmp/pr45-composition-format-GnYNZN"
+        },
+        {
+          "check": "git diff --check",
+          "result": "pass"
+        },
+        {
+          "check": "Static exact comparison of every expect statement before/after",
+          "result": "pass; all 33 statements unchanged"
+        },
+        {
+          "check": "Static comparison of extracted offline model preparation",
+          "result": "pass; exact bytes preserved apart from helper parameter substitution and returning ModelRuntime.create"
+        },
+        {
+          "check": "Read production callers and authorities",
+          "result": "src/claude-compat/cli.ts, binding.ts, runtime.ts and mcp.ts inspected for native storage, registration, authorization and teardown responsibilities"
+        }
+      ],
+      "primaryLimits": [
+        "No repository tests, setup or builds run; parent owns isolated batch gates and independent readability judgment.",
+        "Optional TypeScript AST inspection unavailable: the provided read-only node_modules/typescript/lib/typescript.js does not exist; no dependency installation attempted. Formatter parsing and static source comparisons used instead.",
+        "No prior candidate/rework evidence for this focus; reconciliation and focus area/coverage rows record pending-primary baseline.",
+        "No wisdom or values edits: parent owns aggregate wisdom."
+      ]
     },
     {
       "file": "tests/claude-compat-defaults.test.ts",
       "initialBlob": "03cbe81b5655cb248754441d870562fde4794397",
       "status": "pending",
       "area": "compatibility-t3",
-      "resumeState": "pending-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_6e06a9b6",
+      "primaryCommit": "820bf697cc719fae893234e9d931a7eec7bea74c",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "820bf697cc719fae893234e9d931a7eec7bea74c",
       "report": "wisdom/quality/structural-readability-areas/compatibility-t3.json",
-      "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+      "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection.",
+      "primaryBase": "820bf697cc719fae893234e9d931a7eec7bea74c",
+      "primaryResult": "The first journey shows standalone connector -> ordinary sibling bruv and packaged bruv -> itself, with each user home yielding its ordinary auth directory. The second journey shows ~/ overrides with spaces -> literal absolute paths, then absolute auth plus relative binary -> cwd-resolved paths; adjacent expandHome assertions preserve ~, literal $HOME and ~other boundaries without shell interpretation. launch.ts owns prefix expansion, sibling selection and cwd resolution; cli.ts lines 304-320 passes the returned agentDir/executablePath directly into runtime construction after authority scrubbing. No fixture lifetime or hidden state is involved. Extracting helpers or a table would separate the concrete inputs from outputs without reducing decision reconstruction. Preserved reconciliation records this focus as pending-primary with no primary/judge/candidate; current source matches its joined/baseline blob, so there is no rejected or absent candidate to recover.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        {
+          "kind": "static-reading",
+          "result": "Read values and structural readability guidance, focus-specific area/repo-wide ledger rows, retained reconciliation focus evidence, both exported helpers and their production caller."
+        },
+        {
+          "kind": "source-identity",
+          "result": "Focus present and unchanged at baseline/joined blob 03cbe81b5655cb248754441d870562fde4794397; initial worktree status clean."
+        },
+        {
+          "kind": "preservation",
+          "result": "All existing assertions and production security/authority-scrubbing behavior remain byte-identical. No related source edits."
+        }
+      ],
+      "primaryLimits": [
+        "No setup, tests or builds run; parent owns audited isolated batch gates.",
+        "No changed source paths or commit: formatter requirement does not apply to a no-change decision.",
+        "Independent exact-source readability judgment remains for the parent-appointed judge.",
+        "Wisdom and values unchanged: no new lesson; parent writes aggregate wisdom."
+      ]
     },
     {
       "file": "tests/claude-compat-history.test.ts",
