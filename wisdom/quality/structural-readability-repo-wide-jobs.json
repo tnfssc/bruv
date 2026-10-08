@@ -652,7 +652,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_1a43b3b3",
         "branch": "bruv/pr45-primary-src-live-setup.ts-1a43b3b3",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "aafa007249fb4e924ecbdf11bd4825e3445e88b7"
       },
       {
         "id": "task_c13efc43",
@@ -933,6 +934,15 @@
         "branch": "bruv/pr45-judge-scripts-history-storage-probe-785ec99c",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "handled"
+      },
+      {
+        "id": "task_46d9c538",
+        "stage": "primary",
+        "focus": "src/prompts/execute-description.md",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_46d9c538",
+        "branch": "bruv/pr45-primary-src-prompts-execute-descrip-46d9c538",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
       }
     ]
   },
@@ -1163,7 +1173,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_97f9b348",
         "branch": "bruv/pr45-primary-scripts-terminal-perf-tool--97f9b348",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "2a5ec2d174ca8e799c16ea39184716293e366c9c"
       },
       {
         "id": "task_5e579abb",

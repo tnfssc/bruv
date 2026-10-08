@@ -4139,13 +4139,49 @@
       "initialBlob": "9790dd19745757bf13aa0fe4980c1489ddecd511",
       "status": "pending",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_97f9b348",
+      "primaryCommit": "2a5ec2d174ca8e799c16ea39184716293e366c9c",
       "judgeIds": [],
-      "sourceCommit": "53fb4d9732dcf0c337b797b05a104199ccf1a273",
+      "sourceCommit": "2a5ec2d174ca8e799c16ea39184716293e366c9c",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
-      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
+      "primaryBase": "e7532d68fdeb4f2285622001cf7e064442b450ba",
+      "primaryResult": "setup() now shows the sequential-ownership guard, active/work reset, three measured setup operations, readiness and sample publication, and failure disposal in one short lifecycle. installTerminalAndToolAdapters owns adapter/resource installation and registration of restorations; constructSettledHistory keeps transcript entries, UI components and task rows together; attachActivityAndLayout owns the activity/scroll/root wiring and its disposal registration. Operations remain fixture-local closures over the existing state: no context bag or new state. Measurement names, ordering, cleanup stack, mutation assertions, frame capture and action behavior are unchanged.",
+      "primaryPaths": [
+        "scripts/terminal-perf/tool-workloads.ts"
+      ],
+      "primaryChecks": [
+        {
+          "check": "Read required guidance and focus-only retained/area/repo-wide ledger evidence",
+          "result": "Focus exists at baseline blob 9790dd19745757bf13aa0fe4980c1489ddecd511; retained reconciliation reports needs-primary with no dedicated prior candidate. No old branch merged or worktree changed."
+        },
+        {
+          "check": "Trace actual consumers",
+          "result": "Read interaction-worker.ts tools/* setup/stage/dispose journey, interaction-normalize.ts ToolSample consumption, and local createToolWorkloads/runToolProbe/standalone writer. Public exports and evidence schema remain unchanged."
+        },
+        {
+          "check": "Repository formatter on changed source only",
+          "result": "Biome format --write scripts/terminal-perf/tool-workloads.ts via node:child_process argv; exit 0, formatted 1 file. Fresh retained HOME/config/TMPDIR and other XDG directories: /tmp/pr45-tool-workloads-format-FNnO73. Executable: /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/@biomejs/biome/bin/biome."
+        },
+        {
+          "check": "Mechanical source preservation review",
+          "result": "Each extracted operation matches its original callback body after indentation normalization. Reconstructing the original callbacks and removing the helpers reproduces all other original source bytes exactly. Existing assertions and restoration/security boundaries preserved."
+        },
+        {
+          "check": "git diff --check",
+          "result": "Clean before commit."
+        },
+        {
+          "check": "Source-only commit",
+          "result": "Only scripts/terminal-perf/tool-workloads.ts staged and committed; no enabled commit hooks found."
+        }
+      ],
+      "primaryLimits": [
+        "No repository tests, builds or setup run; parent owns audited isolated batch gates. Runtime equivalence is not claimed from source review alone.",
+        "Independent fresh judge and external model verification remain parent-owned.",
+        "No per-worker wisdom changes; parent writes aggregate wisdom."
+      ]
     },
     {
       "file": "scripts/terminal-perf/trace.ts",
@@ -6022,12 +6058,29 @@
       "file": "src/live/setup.ts",
       "initialBlob": "728e62f964f69adb6228d1fbae8b9f536836d1eb",
       "status": "pending",
-      "primaryId": "task_9c736343",
-      "sourceCommit": null,
+      "primaryId": "task_1a43b3b3",
+      "sourceCommit": "aafa007249fb4e924ecbdf11bd4825e3445e88b7",
       "judgeIds": [],
-      "resumeState": "primary_started_no_committed_candidate",
+      "resumeState": "needs-judge",
       "pendingReason": "Primary was allocated, but no candidate commit or completed focus judgment is recorded. Preserve its worktree; do not treat the stale running status as proof of current execution.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "aafa007249fb4e924ecbdf11bd4825e3445e88b7",
+      "primaryBase": "aafa007249fb4e924ecbdf11bd4825e3445e88b7",
+      "primaryResult": "Traced both extension.ts callers: /live provider passes allowStart=false and only configures credentials; start/setup receives explicit start authorization, checks entry/sequence/session/leaf ownership, then loads the key and starts Run outside setup. Within runLiveSetup, an already configured key reaches the ready menu and returns only a non-aborted Start voice choice. Missing auth computes import eligibility from credential status plus file existence, explains only changed instructions, and offers explicit import/recheck/cancel. Import success re-enters status inspection rather than automatically starting; import failure emits a generic warning and remains cancellable. OAuth never offers import. Abort checks after awaited inspection and selection, plus the loop condition after import, prevent late choices/import completion from authorizing startup. credentials.ts independently owns guarded, locked non-replacing import. These effects are already visible in one linear procedure; splitting them into helpers or a state framework would add navigation rather than resolve scattered decisions. Existing assertions and all source bytes are preserved.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Inspected setup-specific reconciliation/area/repository coverage evidence: prior task_9c736343 had no committed candidate or focus judgment; focus exists with unchanged baseline blob, so no git-show restoration was needed.",
+        "Static actual-code trace of src/live/setup.ts, callers at src/live/extension.ts:930 and :1179, and status/import authority in src/live/credentials.ts.",
+        "Read tests/live-setup.test.ts assertions for explicit start/import, OAuth preservation, secret-safe failure and late cancellation; did not execute tests.",
+        "Verified clean worktree before result creation and exact HEAD/focus Git blob."
+      ],
+      "primaryLimits": [
+        "No repository tests, setup, builds, device/provider operations, credential access, delegation or runtime validation performed; parent owns audited batch gates and independent fresh judgment.",
+        "No changed source paths or source commit to create; formatter was therefore not invoked (no changed-path formatting target).",
+        "Historical automatic-setup host-hash failure remains historical evidence, not rerun or bypassed.",
+        "Wisdom and values unchanged: no new lesson; parent owns aggregate wisdom."
+      ]
     },
     {
       "file": "src/live/speaker-check.ts",
