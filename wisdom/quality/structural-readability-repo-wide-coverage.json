@@ -9154,13 +9154,41 @@
       "initialBlob": "1e4988bd5b469c795b0a760d8ee268d8d0e581e0",
       "status": "pending",
       "area": "compatibility-t3",
-      "resumeState": "pending-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_71e1d03d",
+      "primaryCommit": "2549c6cfc4fee93eb87e29ff49bebdbcd3190c42",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "2549c6cfc4fee93eb87e29ff49bebdbcd3190c42",
       "report": "wisdom/quality/structural-readability-areas/compatibility-t3.json",
-      "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+      "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection.",
+      "primaryBase": "9bbad4e95768f2bf25dda81f88f4b6477f5f2f34",
+      "primaryResult": "Three authority-oriented suites expose operator policy admission, app-owned preparation/revalidation, and normal launch binding. Separate tests now keep denied launches and allowed status queries visible independently, and distinguish schema rejection from effort-policy rejection. withWorkerDirectory owns only temporary-directory allocation/finally cleanup; each scenario retains its concrete file writes and assertions. The actual cli.ts load/bind and prepare-before-authorize/assert-before-call journeys were traced. All original assertion expressions and role/depth/tool/profile cases remain; production/security code is unchanged.",
+      "primaryPaths": ["tests/claude-compat-app-worker.test.ts"],
+      "primaryChecks": [
+        {
+          "check": "Repository Biome formatter on changed source only",
+          "result": "pass",
+          "command": "/home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/@biomejs/biome/bin/biome format --write tests/claude-compat-app-worker.test.ts",
+          "retainedEnvironment": "/tmp/pr45-app-worker-format-H429nt"
+        },
+        {
+          "check": "git diff --check before commit",
+          "result": "pass"
+        },
+        {
+          "check": "Read-only normalized original assertion comparison",
+          "result": "Every original assertion expression remains; separately inspected loop inputs and fixture values are retained. This is preservation evidence, not a readability verdict."
+        },
+        {
+          "check": "Source scope",
+          "result": "Only the assigned test source changed; no prior source import required because focus exists and its row is pending-primary."
+        }
+      ],
+      "primaryLimits": [
+        "No tests, setup, or builds run; parent owns audited isolated batch gates.",
+        "Independent fresh judge has not yet reviewed this exact candidate.",
+        "No per-worker wisdom or values edits; parent owns aggregate wisdom."
+      ]
     },
     {
       "file": "tests/claude-compat-command-lifecycle.test.ts",
