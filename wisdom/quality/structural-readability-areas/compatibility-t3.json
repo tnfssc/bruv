@@ -2506,35 +2506,37 @@
     {
       "file": "tests/claude-compat/permissions.test.ts",
       "initialBlob": "47e60ac228641c4cd9e1299a250d83731ce126f5",
-      "status": "pending",
+      "status": "accepted",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "87e6a419036b7718b96a0220885a302924b62b72",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "87e6a419036b7718b96a0220885a302924b62b72",
         "primaryId": "task_acf92c62",
         "primaryCommit": "32f74750aa95c64bdaff46e1e7ff6f16727e10a8",
-        "judgeIds": [],
+        "judgeIds": ["task_a39e19f4"],
         "sourceCommit": "32f74750aa95c64bdaff46e1e7ff6f16727e10a8",
-        "state": "needs-judge",
-        "reason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+        "state": "accepted-joined",
+        "reason": "The former mixed test required a reader to distinguish three unrelated permission authorities inside one body. The candidate gives dontAsk approval, conflicting allow/deny rules, and dangerous-mode construction separate local scenario/decision/assertion units. The dontAsk contrast correctly stays together, the conflict is visible before policy invocation, and opt-in validation is visibly synchronous. Unchanged Bash callback identity, plan callback suppression/read-only contrast, and abort-during-callback scenarios each already form a coherent security journey; leaving them intact is appropriate. This is structural separation of authorities, not just renaming."
       }
     },
     {
       "file": "tests/claude-native-acceptance-chronology.test.mjs",
       "initialBlob": "49f0c09654bffd751ad8941db83ab3a2b94f1318",
-      "status": "pending",
+      "status": "accepted",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "16c6b651b6581e920910bf789ae5f96207de5219",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "16c6b651b6581e920910bf789ae5f96207de5219",
         "primaryId": "task_3f207ca0",
         "primaryCommit": "cffd1c00f8038b7e6de647f4f31368d64150a106",
-        "judgeIds": [],
+        "judgeIds": ["task_a39e19f4"],
         "sourceCommit": "cffd1c00f8038b7e6de647f4f31368d64150a106",
-        "state": "needs-judge",
-        "reason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+        "state": "accepted-joined",
+        "reason": "The valid recycled-slot test keeps its essential DOM-order-versus-visual-order contrast together. Missing acknowledgement and completion above the request now each show complete literal rows beside their rejection assertion, so the reader no longer reconstructs an invalid chronology via filter or spread/slice of another scenario. The duplication is small and makes each ordering fault local. The unchanged direct-text contrasts and run-identity disclosure fixture remain coherent and explicit."
       }
     },
     {
@@ -2636,18 +2638,19 @@
     {
       "file": "tests/claude-native-command-idle.test.mjs",
       "initialBlob": "3bd6117eca7ceb80078fb3d22eef42a398560edd",
-      "status": "pending",
+      "status": "accepted",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "3bd6117eca7ceb80078fb3d22eef42a398560edd",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "3bd6117eca7ceb80078fb3d22eef42a398560edd",
         "primaryId": "task_8271e96d",
         "primaryCommit": "e43a0cb01fa81f621191bb33d7a3e57a45600a8d",
-        "judgeIds": [],
+        "judgeIds": ["task_a39e19f4"],
         "sourceCommit": "e43a0cb01fa81f621191bb33d7a3e57a45600a8d",
-        "state": "needs-judge",
-        "reason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+        "state": "accepted-joined",
+        "reason": "The small fixture owns visibility, recorded waits, and convergence in one scope; its returned page visibly checks exact selector semantics. Each scenario already has one readable journey: reject an immediate sidebar sample then await ordered idle states; install a clock, consume one shared budget, assert exhaustion, and restore the descriptor in finally; reject each designated stuck indicator. Splitting these compact journeys or extracting clock/context helpers would scatter their lifetimes rather than clarify them. No structural reading problem warrants a source change."
       }
     },
     {
@@ -3960,7 +3963,7 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 86,
-    "pending": 12
+    "accepted": 89,
+    "pending": 8
   }
 }

@@ -35,18 +35,23 @@ test("plan rejects arbitrary execute even with explicit allow or human callback"
   expect(prompts).toBe(0);
   expect((await policy({ ...execute, toolName: "read", effect: "read-only" })).behavior).toBe("allow");
 });
-test("dontAsk rejects unapproved calls; disallow wins; dangerous mode needs opt-in", async () => {
-  expect((await createPermissionPolicy({ mode: "dontAsk" })(execute)).behavior).toBe("deny");
-  expect((await createPermissionPolicy({ mode: "dontAsk", allowedTools: ["execute"] })(execute)).behavior).toBe(
-    "allow",
-  );
-  expect(
-    (
-      await createPermissionPolicy({ mode: "default", allowedTools: ["execute"], disallowedTools: ["execute"] })(
-        execute,
-      )
-    ).behavior,
-  ).toBe("deny");
+test("dontAsk rejects unapproved calls but allows explicitly approved tools", async () => {
+  const unapproved = createPermissionPolicy({ mode: "dontAsk" });
+  const approved = createPermissionPolicy({ mode: "dontAsk", allowedTools: ["execute"] });
+
+  expect((await unapproved(execute)).behavior).toBe("deny");
+  expect((await approved(execute)).behavior).toBe("allow");
+});
+test("disallowed tools take precedence over explicitly allowed tools", async () => {
+  const policy = createPermissionPolicy({
+    mode: "default",
+    allowedTools: ["execute"],
+    disallowedTools: ["execute"],
+  });
+
+  expect((await policy(execute)).behavior).toBe("deny");
+});
+test("dangerous permission mode requires opt-in before a policy can be created", () => {
   expect(() => createPermissionPolicy({ mode: "bypassPermissions" })).toThrow("opt-in");
 });
 test("permission cancellation never accepts a stale allow", async () => {

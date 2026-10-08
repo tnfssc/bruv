@@ -25,15 +25,25 @@ test("recycled DOM slots preserve strict visual cancellation chronology", () => 
   ];
   assert.throws(() => assertCancellationChronology(rows.map((row) => row.text).join("\n")));
   assert.doesNotThrow(() => assertCancellationChronology(timelineTextInVisualOrder(rows)));
-  assert.throws(() =>
-    assertCancellationChronology(
-      timelineTextInVisualOrder(rows.filter((row) => !row.text.includes("CANCEL_CONFIRMED_REAL"))),
-    ),
-  );
-  assert.throws(() =>
-    assertCancellationChronology(timelineTextInVisualOrder([{ ...rows[0], top: 500 }, ...rows.slice(1)])),
-  );
 });
+
+test("visual ordering cannot replace a missing cancellation acknowledgement", () => {
+  const rows = [
+    { top: 770, text: "CANCELLATION_COMPLETED_REAL" },
+    { top: 580, text: "ACCEPT_CANCEL: request" },
+  ];
+  assert.throws(() => assertCancellationChronology(timelineTextInVisualOrder(rows)));
+});
+
+test("visual ordering rejects cancellation completion above its request", () => {
+  const rows = [
+    { top: 500, text: "CANCELLATION_COMPLETED_REAL" },
+    { top: 580, text: "ACCEPT_CANCEL: request" },
+    { top: 738, text: "CANCEL_CONFIRMED_REAL" },
+  ];
+  assert.throws(() => assertCancellationChronology(timelineTextInVisualOrder(rows)));
+});
+
 test("disclosure selection uses the actual run, not the last recycled DOM slot", async () => {
   const calls = [];
   let expanded = "false";

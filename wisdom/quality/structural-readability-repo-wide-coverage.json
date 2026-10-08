@@ -10230,12 +10230,12 @@
     {
       "file": "tests/claude-compat/permissions.test.ts",
       "initialBlob": "47e60ac228641c4cd9e1299a250d83731ce126f5",
-      "status": "pending",
+      "status": "accepted",
       "area": "compatibility-t3",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_acf92c62",
       "primaryCommit": "32f74750aa95c64bdaff46e1e7ff6f16727e10a8",
-      "judgeIds": [],
+      "judgeIds": ["task_a39e19f4"],
       "sourceCommit": "32f74750aa95c64bdaff46e1e7ff6f16727e10a8",
       "report": "wisdom/quality/structural-readability-areas/compatibility-t3.json",
       "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection.",
@@ -10272,17 +10272,30 @@
         "No setup, repository tests, or builds run, as requested; audited isolated batch gates remain parent-owned.",
         "Independent fresh judge and external runtime model verification remain parent-owned.",
         "No wisdom edits: aggregate wisdom is parent-owned. No delegation, merge, push, recovery, cleanup, or user-secret access."
+      ],
+      "acceptedBlob": "87e6a419036b7718b96a0220885a302924b62b72",
+      "result": "The former mixed test required a reader to distinguish three unrelated permission authorities inside one body. The candidate gives dontAsk approval, conflicting allow/deny rules, and dangerous-mode construction separate local scenario/decision/assertion units. The dontAsk contrast correctly stays together, the conflict is visible before policy invocation, and opt-in validation is visibly synchronous. Unchanged Bash callback identity, plan callback suppression/read-only contrast, and abort-during-callback scenarios each already form a coherent security journey; leaving them intact is appropriate. This is structural separation of authorities, not just renaming.",
+      "systemReason": "Traced createPermissionPolicy through permissionBinding and CLI injection to the runtime tool_call gate and MCP callTool gate. Rule matching does not alias Bash to execute; denial precedes plan/allow decisions; bypass opt-in is checked during construction; the callback is followed by an abort check. Runtime effect classification and MCP trusted effect/owner plus abort checks remain unchanged. The full candidate diff changes only the focus tests and retains every original request field, option, expected decision, callback check, and stale-allow cancellation assertion.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md; inspected only the three matching area/repo-wide ledger rows and their evidence. These rows have no prior file-specific independent verdict or accepted blob.",
+        "Read complete focus source from its specified Git candidate, not checkout HEAD; compared candidate against its specified primaryBase and inspected the complete changed-path list.",
+        "Static structural and behavior-preservation review only. No setup, tests, builds, formatter, native replay, credentials, devices, or delegation used.",
+        "Compared complete baseline/candidate diff: only tests/claude-compat/permissions.test.ts changed. Inspected imported authority implementation and actual consumers at this candidate."
+      ],
+      "limits": [
+        "Runtime gates are parent-owned and were not run; static reading is not a passing runtime/UX claim. No setup or host-hash failure was bypassed.",
+        "No source or ledger edits, publication, recovery, cleanup, or wisdom changes. Aggregate wisdom and external runtime model verification remain parent-owned."
       ]
     },
     {
       "file": "tests/claude-native-acceptance-chronology.test.mjs",
       "initialBlob": "49f0c09654bffd751ad8941db83ab3a2b94f1318",
-      "status": "pending",
+      "status": "accepted",
       "area": "compatibility-t3",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_3f207ca0",
       "primaryCommit": "cffd1c00f8038b7e6de647f4f31368d64150a106",
-      "judgeIds": [],
+      "judgeIds": ["task_a39e19f4"],
       "sourceCommit": "cffd1c00f8038b7e6de647f4f31368d64150a106",
       "report": "wisdom/quality/structural-readability-areas/compatibility-t3.json",
       "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection.",
@@ -10325,6 +10338,19 @@
         "No repository tests, setup, builds, or native acceptance runs performed; parent owns isolated batch gates and independent fresh judgment.",
         "No runtime model self-introspection; parent verifies through jobs.inspect.",
         "No wisdom or values files changed; existing readability guidance applies, and parent owns aggregate wisdom."
+      ],
+      "acceptedBlob": "16c6b651b6581e920910bf789ae5f96207de5219",
+      "result": "The valid recycled-slot test keeps its essential DOM-order-versus-visual-order contrast together. Missing acknowledgement and completion above the request now each show complete literal rows beside their rejection assertion, so the reader no longer reconstructs an invalid chronology via filter or spread/slice of another scenario. The duplication is small and makes each ordering fault local. The unchanged direct-text contrasts and run-identity disclosure fixture remain coherent and explicit.",
+      "systemReason": "Read assertCancellationChronology, timelineTextInVisualOrder, expandRunDisclosure, renderedTimelineText, and the actual driver exercise invoked by the native UI replay. The cancellation and reopened journeys expand the observed run if needed, collect rendered message coordinates, sort visually, and then assert request/acknowledgement/completion order. The new missing-ack rows exactly equal the old filtered rows; the premature-completion rows exactly equal the old top=500 spread/slice result. All markers, coordinates, positive/negative contracts, and disclosure identity/expanded checks are preserved. No helper or replay behavior changes.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md; inspected only the three matching area/repo-wide ledger rows and their evidence. These rows have no prior file-specific independent verdict or accepted blob.",
+        "Read complete focus source from its specified Git candidate, not checkout HEAD; compared candidate against its specified primaryBase and inspected the complete changed-path list.",
+        "Static structural and behavior-preservation review only. No setup, tests, builds, formatter, native replay, credentials, devices, or delegation used.",
+        "Compared complete baseline/candidate diff: only tests/claude-native-acceptance-chronology.test.mjs changed. Manually matched old transformed rows with new literal scenarios and read the actual cancellation/reopened caller chain at this candidate."
+      ],
+      "limits": [
+        "Runtime gates are parent-owned and were not run; static reading is not a passing runtime/UX claim. No setup or host-hash failure was bypassed.",
+        "No source or ledger edits, publication, recovery, cleanup, or wisdom changes. Aggregate wisdom and external runtime model verification remain parent-owned."
       ]
     },
     {
@@ -10358,12 +10384,12 @@
     {
       "file": "tests/claude-native-command-idle.test.mjs",
       "initialBlob": "3bd6117eca7ceb80078fb3d22eef42a398560edd",
-      "status": "pending",
+      "status": "accepted",
       "area": "compatibility-t3",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_8271e96d",
       "primaryCommit": "e43a0cb01fa81f621191bb33d7a3e57a45600a8d",
-      "judgeIds": [],
+      "judgeIds": ["task_a39e19f4"],
       "sourceCommit": "e43a0cb01fa81f621191bb33d7a3e57a45600a8d",
       "report": "wisdom/quality/structural-readability-areas/compatibility-t3.json",
       "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection.",
@@ -10392,6 +10418,20 @@
         "Static primary readability assessment only; independent fresh judge remains parent-owned.",
         "No source changes, new source commit, wisdom edits, or values edits: no new reusable lesson was found.",
         "relatedPaths records inspected caller/helper paths, not edits."
+      ],
+      "acceptedBlob": "3bd6117eca7ceb80078fb3d22eef42a398560edd",
+      "result": "The small fixture owns visibility, recorded waits, and convergence in one scope; its returned page visibly checks exact selector semantics. Each scenario already has one readable journey: reject an immediate sidebar sample then await ordered idle states; install a clock, consume one shared budget, assert exhaustion, and restore the descriptor in finally; reject each designated stuck indicator. Splitting these compact journeys or extracting clock/context helpers would scatter their lifetimes rather than clarify them. No structural reading problem warrants a source change.",
+      "systemReason": "Traced waitForCommandIdle and command-driver.exercise at the exact unchanged candidate. Each of two commands first waits for its correlated wire result, then waits for Stop generation hidden, Submit message visible, and Working hidden under one deadline, rechecks simultaneous visibility, and only then captures idle. trace-command-driver re-exports this exercise; run-trace selects it for command mode via run-subagent replay generation; native-ui replay invokes integration.exercise. The fixture assertions match these selector/state/deadline/rejection contracts. Related proof files are caller evidence, not extra changed or accepted source claims.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md; inspected only the three matching area/repo-wide ledger rows and their evidence. These rows have no prior file-specific independent verdict or accepted blob.",
+        "Read complete focus source from its specified Git candidate, not checkout HEAD; compared candidate against its specified primaryBase and inspected the complete changed-path list.",
+        "Static structural and behavior-preservation review only. No setup, tests, builds, formatter, native replay, credentials, devices, or delegation used.",
+        "primaryBase equals candidate; diff has no changed paths. Focus blob is the recorded initial blob 3bd6117eca7ceb80078fb3d22eef42a398560edd. Read complete test and actual proof/replay helper and routing chain."
+      ],
+      "limits": [
+        "Runtime gates are parent-owned and were not run; static reading is not a passing runtime/UX claim. No setup or host-hash failure was bypassed.",
+        "No source or ledger edits, publication, recovery, cleanup, or wisdom changes. Aggregate wisdom and external runtime model verification remain parent-owned.",
+        "The unit fixture is not a live T3 convergence proof; it does not exercise transient simultaneous-visibility recheck races. That existing coverage limit is not evidence of a structural readability defect."
       ]
     },
     {
@@ -15435,19 +15475,6 @@
       "pendingReason": "Untracked related test preserved in interrupted history-replay worker; absent from committed and preserved area ledger and area/joined trees. Requires its own primary and independent readability judgment. No import permission."
     },
     {
-      "file": "wisdom/quality/structural-readability-worker.md",
-      "initialBlob": "absent",
-      "area": "compatibility-t3",
-      "resumeState": "evidence-artifact-not-code-candidate",
-      "primaryId": null,
-      "primaryCommit": null,
-      "judgeIds": [],
-      "sourceCommit": null,
-      "report": "wisdom/quality/structural-readability-areas/compatibility-t3.json",
-      "status": "pending",
-      "pendingReason": "Two candidate-only worker reports contain different blobs at acba9037 and 38206e59; references retained under candidateArtifacts, excluded from source pending counts. Neither report grants acceptance or integration permission."
-    },
-    {
       "file": "native/live-linux/tests/playback-buffer.cpp",
       "initialBlob": "absent",
       "area": "live-native-audio",
@@ -15819,5 +15846,20 @@
     "baselineFiles": 766,
     "finalGate": "pending; incomplete focus coverage",
     "liveAuth": "unverified/failing; preserved"
-  }
+  },
+  "evidenceArtifacts": [
+    {
+      "file": "wisdom/quality/structural-readability-worker.md",
+      "initialBlob": "absent",
+      "area": "compatibility-t3",
+      "resumeState": "evidence-artifact-not-code-candidate",
+      "primaryId": null,
+      "primaryCommit": null,
+      "judgeIds": [],
+      "sourceCommit": null,
+      "report": "wisdom/quality/structural-readability-areas/compatibility-t3.json",
+      "status": "pending",
+      "pendingReason": "Two candidate-only worker reports contain different blobs at acba9037 and 38206e59; references retained under candidateArtifacts, excluded from source pending counts. Neither report grants acceptance or integration permission."
+    }
+  ]
 }

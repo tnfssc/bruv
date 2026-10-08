@@ -1178,7 +1178,7 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_a39e19f4",
         "branch": "bruv/pr45-judge-3-compatibility-t3-focuses-a39e19f4",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled"
       },
       {
         "id": "task_21d9b2c8",
@@ -1229,6 +1229,15 @@
         "branch": "bruv/pr45-primary-tests-claude-native-history-c186d7a4",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
+      },
+      {
+        "id": "task_711f5c1d",
+        "stage": "primary",
+        "focus": "wisdom/quality/structural-readability-worker.md",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_711f5c1d",
+        "branch": "bruv/pr45-primary-wisdom-quality-structural-r-711f5c1d",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled"
       }
     ]
   },
