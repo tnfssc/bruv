@@ -10606,13 +10606,34 @@
       "initialBlob": "199e737c751b91cc07848c4c52fc0bef173cdc67",
       "status": "pending",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_88e61902",
+      "primaryCommit": "f8b4781e6b57fc00f6055e351c281217fa73dcac",
       "judgeIds": [],
-      "sourceCommit": "190bfcac5d48f5fcc4d728d081b07400bd68da23",
+      "sourceCommit": "f8b4781e6b57fc00f6055e351c281217fa73dcac",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
-      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
+      "primaryBase": "c0f12f6274e3b1648362a03d5038e7bf39939795",
+      "primaryResult": "Moved the existing JavaScript scenario into a formatter-visible .mjs fixture. Two explicit assertion helpers distinguish a required invalidation/recompute from a request/projection-seeded disk read and the outer shake freshness wrapper. Eight ordered phase functions each own the mutation and its assertions: warm footer reads, incremental user estimate, required request projection, bookkeeping/cost totals, edits/compaction, shake validation/freshness, routed limits without recalculation, and replacement/native fallback. The final call sequence makes branch-history dependence explicit instead of introducing a context bag. The short test now owns child argv and retained mkdtemp HOME/config/SDK/temp/session directories with no inherited credentials/config environment. All 46 assertions and all 25 ordered manager mutations were preserved; native-oracle independence and invalid-shake rejection remain intact.",
+      "primaryPaths": ["tests/context-usage-cache.test.ts", "tests/fixtures/context-usage-cache-scenario.mjs"],
+      "primaryChecks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md; read assigned rows and blob inventory in /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_6aa89530/wisdom/quality/structural-readability-areas/ui-terminal-cli-resume-reconciliation.json.",
+        "Read the whole actual focus and the relevant implementation journeys listed in relatedPaths. No runtime-based quality verdict.",
+        "Repository Biome format --write invoked with child_process argv on exactly the two changed source paths, fresh retained HOME/config/TMPDIR; both invocations exited 0, final invocation applied no changes.",
+        "git diff --check passed. Commit hooks inspected before committing: no active hook files. Source commit contains only the two recorded source paths.",
+        "Current pre-edit cache focus matched git show 190bfcac5d48f5fcc4d728d081b07400bd68da23:tests/context-usage-cache.test.ts exactly.",
+        "Static normalized textual assertion inventory matched all 46 calls (ignoring formatting and single-argument arrow parentheses); ordered manager-mutation inventory matched all 25 calls. This is supporting preservation evidence, not an executed safety gate.",
+        "Reviewed process runner Bun.spawn argv/env handling, SDK config override names, nonvirtual prepareRequest projection hook, disk materialize file/cache behavior, and manager disposal. No tests were launched."
+      ],
+      "primaryLimits": [
+        "No tests, setup, builds, provider/device/auth/network probes, delegation, cleanup, destructive git, dependency writes, or publication. Parent owns audited isolated gates and fresh independent judgments.",
+        "The full combined source commit scope is recorded in changedPaths for every decision. Editor and execute-row focuses themselves are unchanged; their decisions do not treat the cache-only sibling edits as improvements to those focuses.",
+        "Runtime/model attestation is parent-owned; no claim of verified model/provider access is made.",
+        "The optional TypeScript parser inspection was unavailable: this dependency exports version metadata only. No reinstall or guard bypass; only Biome parsing/formatting, static textual comparison and manual source review were used.",
+        "Formatter fixtures are retained at /tmp/pr45-cache-format-WpA1T4 and /tmp/pr45-cache-format-TwolsC. Durable source provenance is this worktree and the exact sourceCommit, not a temporary checkout.",
+        "Future cache runs retain mkdtemp bruv-context-cache-* roots with explicit owned home/config/sdk/tmp/sessions directories and an allowlisted child environment; no scenario was executed here. Existing disk-manager disposal can unlink its own spool; this existing source path was inspected, not executed.",
+        "Preserved reconciliation rows for these focuses say NOT REVIEWED/needs-primary, without a prior dedicated primary or rejection. Current focus bytes matched the supplied preserved candidate commits before edits; no old branch was merged or candidate worktree altered."
+      ]
     },
     {
       "file": "tests/conversation-density.test.ts",
@@ -10744,13 +10765,32 @@
       "initialBlob": "ffcfee2b78b774f93bd4f47fb0b8ed0f71d0615d",
       "status": "pending",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_88e61902",
+      "primaryCommit": "f8b4781e6b57fc00f6055e351c281217fa73dcac",
       "judgeIds": [],
-      "sourceCommit": "3603e341a47541a137c95c675106c9568374fde1",
+      "sourceCommit": "f8b4781e6b57fc00f6055e351c281217fa73dcac",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
-      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
+      "primaryBase": "c0f12f6274e3b1648362a03d5038e7bf39939795",
+      "primaryResult": "No structural change is warranted. The single small editor factory exposes its native shortcut matches, zero padding and embedded status indicator. Each behavior is an independent local test with setup/action/assertions kept together. The gutter test binds cursor width and submit; the scrolling test follows both ends of the buffer; paste cleanup and large-paste undo are separate journeys; the spinner test shows both empty and drafted transitions without moving the text column. Mouse mapping covers normal and narrow gutters together, while the autocomplete test keeps provider, rows, pointer selection and Tab completion in one place. Following CompactEditor.render/handleMouse shows exactly why those assertions exist. Splitting these short journeys or sharing assertion/setup bags would obscure rather than clarify their authorities.",
+      "primaryPaths": ["tests/context-usage-cache.test.ts", "tests/fixtures/context-usage-cache-scenario.mjs"],
+      "primaryChecks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md; read assigned rows and blob inventory in /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_6aa89530/wisdom/quality/structural-readability-areas/ui-terminal-cli-resume-reconciliation.json.",
+        "Read the whole actual focus and the relevant implementation journeys listed in relatedPaths. No runtime-based quality verdict.",
+        "Repository Biome format --write invoked with child_process argv on exactly the two changed source paths, fresh retained HOME/config/TMPDIR; both invocations exited 0, final invocation applied no changes.",
+        "git diff --check passed. Commit hooks inspected before committing: no active hook files. Source commit contains only the two recorded source paths.",
+        "Pre-edit and committed editor focus bytes exactly match preserved candidate 3603e341a47541a137c95c675106c9568374fde1. No source changes to this focus or its implementation."
+      ],
+      "primaryLimits": [
+        "No tests, setup, builds, provider/device/auth/network probes, delegation, cleanup, destructive git, dependency writes, or publication. Parent owns audited isolated gates and fresh independent judgments.",
+        "The full combined source commit scope is recorded in changedPaths for every decision. Editor and execute-row focuses themselves are unchanged; their decisions do not treat the cache-only sibling edits as improvements to those focuses.",
+        "Runtime/model attestation is parent-owned; no claim of verified model/provider access is made.",
+        "The optional TypeScript parser inspection was unavailable: this dependency exports version metadata only. No reinstall or guard bypass; only Biome parsing/formatting, static textual comparison and manual source review were used.",
+        "Formatter fixtures are retained at /tmp/pr45-cache-format-WpA1T4 and /tmp/pr45-cache-format-TwolsC. Durable source provenance is this worktree and the exact sourceCommit, not a temporary checkout.",
+        "Future cache runs retain mkdtemp bruv-context-cache-* roots with explicit owned home/config/sdk/tmp/sessions directories and an allowlisted child environment; no scenario was executed here. Existing disk-manager disposal can unlink its own spool; this existing source path was inspected, not executed.",
+        "Preserved reconciliation rows for these focuses say NOT REVIEWED/needs-primary, without a prior dedicated primary or rejection. Current focus bytes matched the supplied preserved candidate commits before edits; no old branch was merged or candidate worktree altered."
+      ]
     },
     {
       "file": "tests/error-diagnostic.test.ts",
@@ -10796,13 +10836,32 @@
       "initialBlob": "2abeb55df0a90d7f1c064ac48febe4f2ecc25de6",
       "status": "pending",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_88e61902",
+      "primaryCommit": "f8b4781e6b57fc00f6055e351c281217fa73dcac",
       "judgeIds": [],
-      "sourceCommit": "3603e341a47541a137c95c675106c9568374fde1",
+      "sourceCommit": "f8b4781e6b57fc00f6055e351c281217fa73dcac",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
-      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
+      "primaryBase": "c0f12f6274e3b1648362a03d5038e7bf39939795",
+      "primaryResult": "No structural change is warranted. The local clean/prior oracle explicitly sanitizes, wraps, decorates and then natively clips; keeping it independent from production helpers is essential to the comparison. The first test owns its Unicode/control corpus and width/warning matrix. The second keeps the spy lifetime in try/finally, resets oracle clipping calls before exercising production, distinguishes fitting rows from the width-one fallback, and asserts same-width identity reuse. The third owns a shared preview state but makes first/latest replacement, warning, collapsed error label, partial caption and old-component invalidation visible in a single short sequence. executeOutputPreview and its component helper confirm that immutable settled components cache by width while replacements choose new views and partial output remains live. No scattered decision or lifetime needs reconstruction, so extraction would add indirection without improving that journey.",
+      "primaryPaths": ["tests/context-usage-cache.test.ts", "tests/fixtures/context-usage-cache-scenario.mjs"],
+      "primaryChecks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md; read assigned rows and blob inventory in /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_6aa89530/wisdom/quality/structural-readability-areas/ui-terminal-cli-resume-reconciliation.json.",
+        "Read the whole actual focus and the relevant implementation journeys listed in relatedPaths. No runtime-based quality verdict.",
+        "Repository Biome format --write invoked with child_process argv on exactly the two changed source paths, fresh retained HOME/config/TMPDIR; both invocations exited 0, final invocation applied no changes.",
+        "git diff --check passed. Commit hooks inspected before committing: no active hook files. Source commit contains only the two recorded source paths.",
+        "Pre-edit and committed execute-row focus bytes exactly match preserved candidate 3603e341a47541a137c95c675106c9568374fde1. No source changes to this focus or its implementation."
+      ],
+      "primaryLimits": [
+        "No tests, setup, builds, provider/device/auth/network probes, delegation, cleanup, destructive git, dependency writes, or publication. Parent owns audited isolated gates and fresh independent judgments.",
+        "The full combined source commit scope is recorded in changedPaths for every decision. Editor and execute-row focuses themselves are unchanged; their decisions do not treat the cache-only sibling edits as improvements to those focuses.",
+        "Runtime/model attestation is parent-owned; no claim of verified model/provider access is made.",
+        "The optional TypeScript parser inspection was unavailable: this dependency exports version metadata only. No reinstall or guard bypass; only Biome parsing/formatting, static textual comparison and manual source review were used.",
+        "Formatter fixtures are retained at /tmp/pr45-cache-format-WpA1T4 and /tmp/pr45-cache-format-TwolsC. Durable source provenance is this worktree and the exact sourceCommit, not a temporary checkout.",
+        "Future cache runs retain mkdtemp bruv-context-cache-* roots with explicit owned home/config/sdk/tmp/sessions directories and an allowlisted child environment; no scenario was executed here. Existing disk-manager disposal can unlink its own spool; this existing source path was inspected, not executed.",
+        "Preserved reconciliation rows for these focuses say NOT REVIEWED/needs-primary, without a prior dedicated primary or rejection. Current focus bytes matched the supplied preserved candidate commits before edits; no old branch was merged or candidate worktree altered."
+      ]
     },
     {
       "file": "tests/execution-previews-tui.test.ts",
