@@ -366,7 +366,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_b0f63162",
         "branch": "bruv/pr45-primary-3-remote-focuses-b0f63162",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "5a495b062375a1c7ed9baff9cfa2a516351ae5bd"
       },
       {
         "id": "task_56130606",
@@ -403,6 +404,19 @@
         ],
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_7db56f55",
         "branch": "bruv/pr45-primary-3-remote-focuses-7db56f55",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_4b304dcf",
+        "stage": "primary",
+        "focus": [
+          "tests/fixtures/remote-typed-root-placement/models.json",
+          "tests/fixtures/remote-typed-root-placement/proof.ts",
+          "tests/fixtures/remote-typed-root-placement/reply-loss.ts"
+        ],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_4b304dcf",
+        "branch": "bruv/pr45-primary-3-remote-focuses-4b304dcf",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
       }

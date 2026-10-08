@@ -11647,39 +11647,132 @@
       "initialBlob": "9e5babf1d4ec8b3d3e77859c1540a352913c54b8",
       "status": "pending",
       "area": "remote",
-      "resumeState": "pending-primary-unstarted",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_b0f63162",
+      "primaryCommit": "5a495b062375a1c7ed9baff9cfa2a516351ae5bd",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "5a495b062375a1c7ed9baff9cfa2a516351ae5bd",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
-      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
+      "primaryBase": "5a495b062375a1c7ed9baff9cfa2a516351ae5bd",
+      "primaryResult": "Unchanged. ARG/FROM select the caller-pinned base, USER root and the initial RUN prepare image-local directories, COPY statements install runtime/scenario/provider/profile/SSH configuration, and the final RUN/ENV/ENTRYPOINT make the startup contract explicit. scripts/remote-placement-e2e.ts supplies exactly these inputs through networkNoneFixture; buildOfflineImage pins an inspected image ID, uses network none/pull=false, copies Bun and optional compiled CLI, and startContainer mounts fresh read-only keys. entrypoint.sh owns consuming those keys, not the image build. Moving these few ordered operations behind helpers or splitting stages would add a navigation burden without clarifying authority. No candidate/rejection exists for this row; current bytes equal its recorded baseline.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        {
+          "kind": "actual-source-reading",
+          "result": "Read the entire assigned focus and the relevant build/start/readiness/diagnostic callers; no setup, tests or builds run."
+        },
+        {
+          "kind": "preserved-evidence",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_1adcf635/wisdom/quality/structural-readability-areas/remote-resume-reconciliation.json",
+          "row": 62,
+          "result": "pending-primary-unstarted; primaryCommit/candidate absent, no rejection to rework, joinedBlob equals baseline."
+        },
+        {
+          "kind": "git-identity",
+          "result": "Committed and working focus blob both match reconciliation baseline.",
+          "blob": "9e5babf1d4ec8b3d3e77859c1540a352913c54b8"
+        },
+        {
+          "kind": "formatting",
+          "result": "Not invoked: no changed source paths. No formatter/setup/test/build process launched."
+        }
+      ],
+      "primaryLimits": [
+        "The existing Dockerfile RUN contains rm -rf /root/.bruv /fixture /tmp/*. It was read, never executed or modified. This fixture must not be built under the current no-shell-deletion constraints without parent resolution of that command. The base-image contents were not investigated.",
+        "Independent actual-code judgment belongs to parent; no review acceptance is claimed.",
+        "Existing networkNoneFixture.cleanup removes its supplied root with rmSync and removes Docker resources; the harness also resolves Docker context using inherited HOME before isolation. These effects were inspected only, never run; parent owns audited isolated gates.",
+        "No source edit, no source commit created; sourceCommit identifies the exact existing HEAD inspected. Artifact remains untracked in the durable assigned worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_b0f63162.",
+        "No descendants/delegation, recovery investigation, credential access, dependency writes, publication or unrelated wisdom edits. Values/guidance read; no new lesson requires changing them."
+      ]
     },
     {
       "file": "tests/fixtures/remote-placement-e2e/entrypoint.sh",
       "initialBlob": "4c7af0c825d7f2a12dfb8284d23134e27af7b685",
       "status": "pending",
       "area": "remote",
-      "resumeState": "pending-primary-unstarted",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_b0f63162",
+      "primaryCommit": "5a495b062375a1c7ed9baff9cfa2a516351ae5bd",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "5a495b062375a1c7ed9baff9cfa2a516351ae5bd",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
-      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
+      "primaryBase": "5a495b062375a1c7ed9baff9cfa2a516351ae5bd",
+      "primaryResult": "Unchanged. set -eu makes failed key installation stop startup; both install commands restrict freshly mounted host/public authorization files to mode 600 at the sshd_config paths. Bun launches the fixture provider in the background with its diagnostic output at the runner-collected log path, then exec makes sshd the foreground container process rather than an extra shell child. networkNoneFixture.start waits for SSH and separately probes the provider health endpoint; the runner owns end-of-container cleanup and captures logs. A process supervisor/extracted shell helper would introduce lifecycle machinery, not remove a present reading burden. The existing lack of provider-exit supervision is behavior, not a structural change requested here. No candidate/rejection exists for this row; current bytes equal its recorded baseline.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        {
+          "kind": "actual-source-reading",
+          "result": "Read the entire assigned focus and the relevant build/start/readiness/diagnostic callers; no setup, tests or builds run."
+        },
+        {
+          "kind": "preserved-evidence",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_1adcf635/wisdom/quality/structural-readability-areas/remote-resume-reconciliation.json",
+          "row": 63,
+          "result": "pending-primary-unstarted; primaryCommit/candidate absent, no rejection to rework, joinedBlob equals baseline."
+        },
+        {
+          "kind": "git-identity",
+          "result": "Committed and working focus blob both match reconciliation baseline.",
+          "blob": "4c7af0c825d7f2a12dfb8284d23134e27af7b685"
+        },
+        {
+          "kind": "formatting",
+          "result": "Not invoked: no changed source paths. No formatter/setup/test/build process launched."
+        }
+      ],
+      "primaryLimits": [
+        "No sshd/provider process, container, key generation or networking was started. Runtime readiness and process shutdown are unverified. No new supervisor or signal behavior was introduced.",
+        "Independent actual-code judgment belongs to parent; no review acceptance is claimed.",
+        "Existing networkNoneFixture.cleanup removes its supplied root with rmSync and removes Docker resources; the harness also resolves Docker context using inherited HOME before isolation. These effects were inspected only, never run; parent owns audited isolated gates.",
+        "No source edit, no source commit created; sourceCommit identifies the exact existing HEAD inspected. Artifact remains untracked in the durable assigned worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_b0f63162.",
+        "No descendants/delegation, recovery investigation, credential access, dependency writes, publication or unrelated wisdom edits. Values/guidance read; no new lesson requires changing them."
+      ]
     },
     {
       "file": "tests/fixtures/remote-placement-e2e/fake-provider.ts",
       "initialBlob": "882eec6a23bbbb157263978900ebb1b4942b75ad",
       "status": "pending",
       "area": "remote",
-      "resumeState": "pending-primary-unstarted",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_b0f63162",
+      "primaryCommit": "5a495b062375a1c7ed9baff9cfa2a516351ae5bd",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "5a495b062375a1c7ed9baff9cfa2a516351ae5bd",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
-      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
+      "primaryBase": "5a495b062375a1c7ed9baff9cfa2a516351ae5bd",
+      "primaryResult": "Unchanged. GET /health returns the fixture identity consumed by networkNoneFixture.start. Other requests must be POST with a chat/completions suffix; accepted JSON is appended to placement-inference.jsonl before the scenario runs, preserving rejected-model evidence. stream(body) owns model/message decisions and SSE framing; the adapter sets the event-stream content type. Only scenario/response construction is inside the catch, whose placement-provider-errors append and HTTP 400 are adjacent. Request parsing and inference-log append remain outside that catch; no error semantics were silently broadened. The acceptance runner checks destination model IDs and an empty error log and copies these files for diagnostics. There is no scattered routing authority to consolidate; extracting health/logging/response helpers would obscure this short flow. No candidate/rejection exists for this row; current bytes equal its recorded baseline.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        {
+          "kind": "actual-source-reading",
+          "result": "Read the entire assigned focus and the relevant build/start/readiness/diagnostic callers; no setup, tests or builds run."
+        },
+        {
+          "kind": "preserved-evidence",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_1adcf635/wisdom/quality/structural-readability-areas/remote-resume-reconciliation.json",
+          "row": 64,
+          "result": "pending-primary-unstarted; primaryCommit/candidate absent, no rejection to rework, joinedBlob equals baseline."
+        },
+        {
+          "kind": "git-identity",
+          "result": "Committed and working focus blob both match reconciliation baseline.",
+          "blob": "882eec6a23bbbb157263978900ebb1b4942b75ad"
+        },
+        {
+          "kind": "formatting",
+          "result": "Not invoked: no changed source paths. No formatter/setup/test/build process launched."
+        }
+      ],
+      "primaryLimits": [
+        "No Bun.serve, HTTP request or fixture scenario/tool code was executed. The server still binds 0.0.0.0:18765 inside the runner-configured network:none container; live/provider/device authentication was not attempted. Runtime route/error behavior remains unverified.",
+        "Independent actual-code judgment belongs to parent; no review acceptance is claimed.",
+        "Existing networkNoneFixture.cleanup removes its supplied root with rmSync and removes Docker resources; the harness also resolves Docker context using inherited HOME before isolation. These effects were inspected only, never run; parent owns audited isolated gates.",
+        "No source edit, no source commit created; sourceCommit identifies the exact existing HEAD inspected. Artifact remains untracked in the durable assigned worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_b0f63162.",
+        "No descendants/delegation, recovery investigation, credential access, dependency writes, publication or unrelated wisdom edits. Values/guidance read; no new lesson requires changing them."
+      ]
     },
     {
       "file": "tests/fixtures/remote-placement-e2e/models.json",
