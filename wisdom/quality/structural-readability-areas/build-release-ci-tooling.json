@@ -2727,10 +2727,11 @@
       "resume": {
         "status": "pending",
         "acceptedBlob": "b0b5232653b47e05d11275766e5f9ede4229e561",
-        "primaryId": "task_d0d9d3eb",
+        "primaryId": "task_f7db8eb8",
+        "primaryCommit": "a1f238b96cc562dfde095f0b486b2d674c410414",
         "judgeIds": ["task_f209f608"],
-        "sourceCommit": null,
-        "state": "needs-rework"
+        "sourceCommit": "a1f238b96cc562dfde095f0b486b2d674c410414",
+        "state": "needs-judge"
       }
     },
     {
@@ -2770,10 +2771,11 @@
       "resume": {
         "status": "pending",
         "acceptedBlob": "0e9728fccb32c1657f09e6d305ac14a10d1621ba",
-        "primaryId": "task_8c70c1f6",
+        "primaryId": "task_f7db8eb8",
+        "primaryCommit": "a1f238b96cc562dfde095f0b486b2d674c410414",
         "judgeIds": ["task_900a3c32"],
-        "sourceCommit": null,
-        "state": "needs-rework"
+        "sourceCommit": "a1f238b96cc562dfde095f0b486b2d674c410414",
+        "state": "needs-judge"
       }
     },
     {
@@ -3178,10 +3180,11 @@
       "resume": {
         "status": "pending",
         "acceptedBlob": "e1bf5ce576f4f1ddec4c42c86e6b32637ceb5267",
-        "primaryId": "task_29efc903",
+        "primaryId": "task_f7db8eb8",
+        "primaryCommit": "a1f238b96cc562dfde095f0b486b2d674c410414",
         "judgeIds": ["task_6e25dc37"],
-        "sourceCommit": null,
-        "state": "needs-rework"
+        "sourceCommit": "a1f238b96cc562dfde095f0b486b2d674c410414",
+        "state": "needs-judge"
       }
     },
     {

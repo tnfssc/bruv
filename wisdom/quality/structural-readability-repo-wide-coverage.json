@@ -14960,6 +14960,11 @@
         "Formatter/commit fixture roots retained; test fixture roots and launch/output evidence will be retained when parent runs audited gates. Source provenance remains this durable worktree and exact commit.",
         "Existing isolated interactive-terminal source/evidence was untouched. No worktrees or candidate evidence removed, no setup/dependency changes, no push/PR/merge.",
         "No wisdom or values edits: existing owned-process/safety values apply; parent owns aggregate wisdom and runtime-model verification."
+      ],
+      "forceJudge": true,
+      "parentReviewNotes": [
+        "Inspect the new tests/owned-process-suite.ts helper as actual related source: it uses --test-name-pattern for environment-specific subprocess scenarios. User requires complete assertion execution and no filter/skip-as-green. Determine source-contract compliance, do not substitute claimed preserved counts; no tests authorized.",
+        "Judge this coherent shared helper before dependent worktree-fixture repair, so that repair can reuse a genuinely accepted owner rather than create a competing wrapper. New helper will still require its OWN individual primary/judge after integration."
       ]
     },
     {
@@ -15084,6 +15089,11 @@
           "sourceCommit": null,
           "primaryBase": "8f186d90eb5047304492c72c6bc56a7d0f37204d"
         }
+      ],
+      "forceJudge": true,
+      "parentReviewNotes": [
+        "Inspect the new tests/owned-process-suite.ts helper as actual related source: it uses --test-name-pattern for environment-specific subprocess scenarios. User requires complete assertion execution and no filter/skip-as-green. Determine source-contract compliance, do not substitute claimed preserved counts; no tests authorized.",
+        "Judge this coherent shared helper before dependent worktree-fixture repair, so that repair can reuse a genuinely accepted owner rather than create a competing wrapper. New helper will still require its OWN individual primary/judge after integration."
       ]
     },
     {
@@ -15178,6 +15188,11 @@
         "Formatter/commit fixture roots retained; test fixture roots and launch/output evidence will be retained when parent runs audited gates. Source provenance remains this durable worktree and exact commit.",
         "Existing isolated interactive-terminal source/evidence was untouched. No worktrees or candidate evidence removed, no setup/dependency changes, no push/PR/merge.",
         "No wisdom or values edits: existing owned-process/safety values apply; parent owns aggregate wisdom and runtime-model verification."
+      ],
+      "forceJudge": true,
+      "parentReviewNotes": [
+        "Inspect the new tests/owned-process-suite.ts helper as actual related source: it uses --test-name-pattern for environment-specific subprocess scenarios. User requires complete assertion execution and no filter/skip-as-green. Determine source-contract compliance, do not substitute claimed preserved counts; no tests authorized.",
+        "Judge this coherent shared helper before dependent worktree-fixture repair, so that repair can reuse a genuinely accepted owner rather than create a competing wrapper. New helper will still require its OWN individual primary/judge after integration."
       ]
     },
     {
@@ -18790,6 +18805,11 @@
           "sourceCommit": null,
           "primaryBase": "8f186d90eb5047304492c72c6bc56a7d0f37204d"
         }
+      ],
+      "forceJudge": true,
+      "parentReviewNotes": [
+        "Inspect the new tests/owned-process-suite.ts helper as actual related source: it uses --test-name-pattern for environment-specific subprocess scenarios. User requires complete assertion execution and no filter/skip-as-green. Determine source-contract compliance, do not substitute claimed preserved counts; no tests authorized.",
+        "Judge this coherent shared helper before dependent worktree-fixture repair, so that repair can reuse a genuinely accepted owner rather than create a competing wrapper. New helper will still require its OWN individual primary/judge after integration."
       ]
     },
     {
@@ -20829,7 +20849,7 @@
       "status": "pending",
       "area": "build-release-ci-tooling",
       "acceptedBlob": "b0b5232653b47e05d11275766e5f9ede4229e561",
-      "primaryId": "task_d0d9d3eb",
+      "primaryId": "task_f7db8eb8",
       "judgeIds": ["task_f209f608"],
       "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json",
       "priorAcceptedIntegrationProof": [
@@ -20841,8 +20861,8 @@
           "finalJudge": "task_1351df8b"
         }
       ],
-      "resumeState": "needs-rework",
-      "sourceCommit": null,
+      "resumeState": "needs-judge",
+      "sourceCommit": "a1f238b96cc562dfde095f0b486b2d674c410414",
       "resumeBatch": "owned-remaining-tooling-fixture-environments",
       "resumeRework": {
         "candidate": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
@@ -20862,7 +20882,39 @@
           }
         ],
         "readingReason": "New version-probe issue fixed, but source-visible setup/smoke/RPC fixture authority inheritance remains. Coherent3-focus repair needs explicit owned env per spawn and fixtureRpc/caller lifetime; preserve all setup fail-stop/handoff, smoke and RPC buffering/trust/timeout assertions. No tests, shell wrappers/traps or dependency/setup execution; reuse small ownedFixtureEnv, no generalized context."
-      }
+      },
+      "priorPrimaryLineage": [
+        {
+          "primaryId": "task_d0d9d3eb",
+          "sourceCommit": null
+        }
+      ],
+      "primaryCommit": "a1f238b96cc562dfde095f0b486b2d674c410414",
+      "primaryBase": "536742e519e83977ddad1c5073882b5249013865",
+      "primaryResult": "fixture() now creates ownedFixtureEnv from its mkdtemp root, and run() layers only its stub PATH, owned smoke TMPDIR and intentional sentinel. The outer build/version shell and later env -i probes have visibly distinct, owned authority. Root cleanup registration is removed while the exact smoke temporary-pair emptiness assertion remains. Build/reuse/argv rejection/probe ordering/product-version/help/connector/stderr/web/workflow assertions and shell stand-ins are otherwise unchanged.",
+      "primaryPaths": [
+        "scripts/loopback-parent-fixture.ts",
+        "scripts/remote-capability-pty-e2e.ts",
+        "scripts/remote-e2e.ts",
+        "scripts/remote-pty-e2e.ts",
+        "tests/setup-native-release-gate.test.ts",
+        "tests/smoke-script.test.ts",
+        "tests/tooling-fixtures.test.ts"
+      ],
+      "primaryChecks": [
+        "Actual whole focus source and relevant RPC/helper/setup/smoke/harness callers read; assigned focus rows only reviewed in build-release-ci-tooling.json.",
+        "Rejected candidate dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d compared against launch HEAD 536742e519e83977ddad1c5073882b5249013865: all three focuses, tests/helpers.ts and scripts/loopback-parent-fixture.ts identical; no old branch merge or candidate transplant.",
+        "Biome format --write via node:child_process argv on exactly seven changed source files, explicit ownedFixtureEnv in retained /tmp/pr45-fixture-format-Fmf2EF; final exit 0, no fixes needed.",
+        "git diff --check exit 0 before source-only commit. Final diff manually reviewed including whitespace-insensitive native setup diff.",
+        "Source-only commit created with explicit owned environment, empty owned hooks path and signing disabled. No setup, tests, builds, dependency writes, live authentication, cleanup commands, push, PR, or merge executed."
+      ],
+      "primaryLimits": [
+        "Runtime behavior, type checking, native/SDK/providing release gates, SSH/Docker/PTY and auth/device behavior unverified: parent owns audited isolated gates and independent judgment.",
+        "Requested undefined/wisdom/quality/structural-readability-areas/build-release-ci-tooling-resume-reconciliation.json does not exist in this durable worktree. Same-named reconciliation file is also absent from wisdom/quality/structural-readability-areas. Used explicit supplied rejection evidence plus assigned existing ledger rows, not an invented reconciliation result.",
+        "Remote RPC callers require the existing remote-e2e.sh-owned FIXTURE_DROP_DIR/HOME/agent/SSH/Docker fixture. Their unrelated non-RPC subprocesses and shell harness lifecycle were not changed or executed.",
+        "Fixture mkdtemp roots are retained; the network-none cleanup ownership assertion still removes only its nested scratch child in test code. Existing smoke script trap behavior is only source-inspected and its owned-pair cleanup assertion preserved; no shell traps executed.",
+        "Durable code provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_f7db8eb8 at a1f238b96cc562dfde095f0b486b2d674c410414. Formatter scratch /tmp/pr45-fixture-format-Fmf2EF retained, not a code checkout. Parent owns runtime agent.model verification and aggregate wisdom; no per-worker wisdom note added."
+      ]
     },
     {
       "file": "tests/sol-model-catalog.test.ts",
@@ -21805,6 +21857,11 @@
         "Formatter/commit fixture roots retained; test fixture roots and launch/output evidence will be retained when parent runs audited gates. Source provenance remains this durable worktree and exact commit.",
         "Existing isolated interactive-terminal source/evidence was untouched. No worktrees or candidate evidence removed, no setup/dependency changes, no push/PR/merge.",
         "No wisdom or values edits: existing owned-process/safety values apply; parent owns aggregate wisdom and runtime-model verification."
+      ],
+      "forceJudge": true,
+      "parentReviewNotes": [
+        "Inspect the new tests/owned-process-suite.ts helper as actual related source: it uses --test-name-pattern for environment-specific subprocess scenarios. User requires complete assertion execution and no filter/skip-as-green. Determine source-contract compliance, do not substitute claimed preserved counts; no tests authorized.",
+        "Judge this coherent shared helper before dependent worktree-fixture repair, so that repair can reuse a genuinely accepted owner rather than create a competing wrapper. New helper will still require its OWN individual primary/judge after integration."
       ]
     },
     {
@@ -22643,7 +22700,7 @@
       "status": "pending",
       "area": "build-release-ci-tooling",
       "acceptedBlob": "0e9728fccb32c1657f09e6d305ac14a10d1621ba",
-      "primaryId": "task_8c70c1f6",
+      "primaryId": "task_f7db8eb8",
       "judgeIds": ["task_900a3c32"],
       "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json",
       "priorAcceptedIntegrationProof": [
@@ -22655,8 +22712,8 @@
           "finalJudge": "task_1351df8b"
         }
       ],
-      "resumeState": "needs-rework",
-      "sourceCommit": null,
+      "resumeState": "needs-judge",
+      "sourceCommit": "a1f238b96cc562dfde095f0b486b2d674c410414",
       "resumeBatch": "owned-remaining-tooling-fixture-environments",
       "resumeRework": {
         "candidate": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
@@ -22676,7 +22733,39 @@
           }
         ],
         "readingReason": "New version-probe issue fixed, but source-visible setup/smoke/RPC fixture authority inheritance remains. Coherent3-focus repair needs explicit owned env per spawn and fixtureRpc/caller lifetime; preserve all setup fail-stop/handoff, smoke and RPC buffering/trust/timeout assertions. No tests, shell wrappers/traps or dependency/setup execution; reuse small ownedFixtureEnv, no generalized context."
-      }
+      },
+      "priorPrimaryLineage": [
+        {
+          "primaryId": "task_8c70c1f6",
+          "sourceCommit": null
+        }
+      ],
+      "primaryCommit": "a1f238b96cc562dfde095f0b486b2d674c410414",
+      "primaryBase": "536742e519e83977ddad1c5073882b5249013865",
+      "primaryResult": "Both RPC tests now supply ownedFixtureEnv(root); the malformed driver receives the same fresh environment explicitly and serializes it for its RPC child. fixtureRpc requires and passes env unchanged, removing hidden inheritance; all three remote RPC script callers construct the same explicit contract from their existing shell-owned root with only fixture SSH PATH, agent dirs and Docker endpoint layered. Buffering gate, false trust response, prompts, stderr timeout detail, malformed JSON refusal, child kill/close and loopback SSE/text/tool assertions remain unchanged. Network-none spawned commands use an owned retained-root environment; their HOME assertion now names that explicit env. Cleanup still proves deletion of its nested scratch and preservation of external evidence, additionally proving the separate owned HOME survives. All mkdtemp roots are retained.",
+      "primaryPaths": [
+        "scripts/loopback-parent-fixture.ts",
+        "scripts/remote-capability-pty-e2e.ts",
+        "scripts/remote-e2e.ts",
+        "scripts/remote-pty-e2e.ts",
+        "tests/setup-native-release-gate.test.ts",
+        "tests/smoke-script.test.ts",
+        "tests/tooling-fixtures.test.ts"
+      ],
+      "primaryChecks": [
+        "Actual whole focus source and relevant RPC/helper/setup/smoke/harness callers read; assigned focus rows only reviewed in build-release-ci-tooling.json.",
+        "Rejected candidate dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d compared against launch HEAD 536742e519e83977ddad1c5073882b5249013865: all three focuses, tests/helpers.ts and scripts/loopback-parent-fixture.ts identical; no old branch merge or candidate transplant.",
+        "Biome format --write via node:child_process argv on exactly seven changed source files, explicit ownedFixtureEnv in retained /tmp/pr45-fixture-format-Fmf2EF; final exit 0, no fixes needed.",
+        "git diff --check exit 0 before source-only commit. Final diff manually reviewed including whitespace-insensitive native setup diff.",
+        "Source-only commit created with explicit owned environment, empty owned hooks path and signing disabled. No setup, tests, builds, dependency writes, live authentication, cleanup commands, push, PR, or merge executed."
+      ],
+      "primaryLimits": [
+        "Runtime behavior, type checking, native/SDK/providing release gates, SSH/Docker/PTY and auth/device behavior unverified: parent owns audited isolated gates and independent judgment.",
+        "Requested undefined/wisdom/quality/structural-readability-areas/build-release-ci-tooling-resume-reconciliation.json does not exist in this durable worktree. Same-named reconciliation file is also absent from wisdom/quality/structural-readability-areas. Used explicit supplied rejection evidence plus assigned existing ledger rows, not an invented reconciliation result.",
+        "Remote RPC callers require the existing remote-e2e.sh-owned FIXTURE_DROP_DIR/HOME/agent/SSH/Docker fixture. Their unrelated non-RPC subprocesses and shell harness lifecycle were not changed or executed.",
+        "Fixture mkdtemp roots are retained; the network-none cleanup ownership assertion still removes only its nested scratch child in test code. Existing smoke script trap behavior is only source-inspected and its owned-pair cleanup assertion preserved; no shell traps executed.",
+        "Durable code provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_f7db8eb8 at a1f238b96cc562dfde095f0b486b2d674c410414. Formatter scratch /tmp/pr45-fixture-format-Fmf2EF retained, not a code checkout. Parent owns runtime agent.model verification and aggregate wisdom; no per-worker wisdom note added."
+      ]
     },
     {
       "file": "tests/tui-harness.test.ts",
@@ -23302,7 +23391,7 @@
       "status": "pending",
       "area": "build-release-ci-tooling",
       "acceptedBlob": "e1bf5ce576f4f1ddec4c42c86e6b32637ceb5267",
-      "primaryId": "task_29efc903",
+      "primaryId": "task_f7db8eb8",
       "judgeIds": ["task_6e25dc37"],
       "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json",
       "priorAcceptedIntegrationProof": [
@@ -23314,8 +23403,8 @@
           "finalJudge": "task_1351df8b"
         }
       ],
-      "resumeState": "needs-rework",
-      "sourceCommit": null,
+      "resumeState": "needs-judge",
+      "sourceCommit": "a1f238b96cc562dfde095f0b486b2d674c410414",
       "resumeBatch": "owned-remaining-tooling-fixture-environments",
       "resumeRework": {
         "candidate": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
@@ -23335,7 +23424,39 @@
           }
         ],
         "readingReason": "New version-probe issue fixed, but source-visible setup/smoke/RPC fixture authority inheritance remains. Coherent3-focus repair needs explicit owned env per spawn and fixtureRpc/caller lifetime; preserve all setup fail-stop/handoff, smoke and RPC buffering/trust/timeout assertions. No tests, shell wrappers/traps or dependency/setup execution; reuse small ownedFixtureEnv, no generalized context."
-      }
+      },
+      "priorPrimaryLineage": [
+        {
+          "primaryId": "task_29efc903",
+          "sourceCommit": null
+        }
+      ],
+      "primaryCommit": "a1f238b96cc562dfde095f0b486b2d674c410414",
+      "primaryBase": "536742e519e83977ddad1c5073882b5249013865",
+      "primaryResult": "setup() now creates ownedFixtureEnv(root) and layers only the stub PATH, RUNNER_TEMP, GITHUB_ENV, browser location, REAL_NODE and failure control. Subcommands therefore inherit the explicit fixture authority, not the worker environment. Removing the fixture-root finally deletion retains HOME/config/SDK/log evidence and flattens the setup lifetime. Ordered argv boundaries, exact checksum input and full handoff bytes, all five independent failpoints and no-partial-handoff assertions, real SDK API probe and both browser cardinality refusals are unchanged.",
+      "primaryPaths": [
+        "scripts/loopback-parent-fixture.ts",
+        "scripts/remote-capability-pty-e2e.ts",
+        "scripts/remote-e2e.ts",
+        "scripts/remote-pty-e2e.ts",
+        "tests/setup-native-release-gate.test.ts",
+        "tests/smoke-script.test.ts",
+        "tests/tooling-fixtures.test.ts"
+      ],
+      "primaryChecks": [
+        "Actual whole focus source and relevant RPC/helper/setup/smoke/harness callers read; assigned focus rows only reviewed in build-release-ci-tooling.json.",
+        "Rejected candidate dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d compared against launch HEAD 536742e519e83977ddad1c5073882b5249013865: all three focuses, tests/helpers.ts and scripts/loopback-parent-fixture.ts identical; no old branch merge or candidate transplant.",
+        "Biome format --write via node:child_process argv on exactly seven changed source files, explicit ownedFixtureEnv in retained /tmp/pr45-fixture-format-Fmf2EF; final exit 0, no fixes needed.",
+        "git diff --check exit 0 before source-only commit. Final diff manually reviewed including whitespace-insensitive native setup diff.",
+        "Source-only commit created with explicit owned environment, empty owned hooks path and signing disabled. No setup, tests, builds, dependency writes, live authentication, cleanup commands, push, PR, or merge executed."
+      ],
+      "primaryLimits": [
+        "Runtime behavior, type checking, native/SDK/providing release gates, SSH/Docker/PTY and auth/device behavior unverified: parent owns audited isolated gates and independent judgment.",
+        "Requested undefined/wisdom/quality/structural-readability-areas/build-release-ci-tooling-resume-reconciliation.json does not exist in this durable worktree. Same-named reconciliation file is also absent from wisdom/quality/structural-readability-areas. Used explicit supplied rejection evidence plus assigned existing ledger rows, not an invented reconciliation result.",
+        "Remote RPC callers require the existing remote-e2e.sh-owned FIXTURE_DROP_DIR/HOME/agent/SSH/Docker fixture. Their unrelated non-RPC subprocesses and shell harness lifecycle were not changed or executed.",
+        "Fixture mkdtemp roots are retained; the network-none cleanup ownership assertion still removes only its nested scratch child in test code. Existing smoke script trap behavior is only source-inspected and its owned-pair cleanup assertion preserved; no shell traps executed.",
+        "Durable code provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_f7db8eb8 at a1f238b96cc562dfde095f0b486b2d674c410414. Formatter scratch /tmp/pr45-fixture-format-Fmf2EF retained, not a code checkout. Parent owns runtime agent.model verification and aggregate wisdom; no per-worker wisdom note added."
+      ]
     },
     {
       "file": "tests/update-self-fixture.test.ts",
