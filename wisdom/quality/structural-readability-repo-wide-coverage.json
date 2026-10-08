@@ -8778,13 +8778,29 @@
       "initialBlob": "8b58841438e433e4f5cd95783ec097883b9d43ae",
       "status": "pending",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_a14113c6",
+      "primaryCommit": "dd1565c25cb94982cf77381100d9ee1472a4feb5",
       "judgeIds": [],
-      "sourceCommit": "713833b3b7093c26fe020d415f972ae122d40970",
+      "sourceCommit": "dd1565c25cb94982cf77381100d9ee1472a4feb5",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
-      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
+      "primaryBase": "410281ee739797820d046821586d0a03104701c9",
+      "primaryResult": "backgroundTurn owns the launch/useful-work/yield relationship; automaticContinuation owns the distinct completion-notification and later assistant-stop relationship and is shared by observation and verification. verifyCompletedJourney owns the temporal/model/runtime contract and returns the existing evidence events only after every assertion succeeds. The TUI scenario now drives frames, inputs, bounded observation, and evidence publication without repeating transcript-resumption predicates. All original guarded error conditions/messages, sanitization, launch setup, failure handling, and teardown are preserved.",
+      "primaryPaths": ["tests/background-ux-tui.test.ts"],
+      "primaryChecks": [
+        "Read wisdom/values.md and structural-readability guidance; inspected focus-only reconciliation/area/coverage rows (no prior primary candidate or judge verdict).",
+        "Confirmed checkout focus blob equals surviving source commit 713833b3b7093c26fe020d415f972ae122d40970: 8b58841438e433e4f5cd95783ec097883b9d43ae; focus was present so no recovery/import was needed.",
+        "Traced yieldedEntries all-results-handoff behavior, execute backgroundJobs result producer, task-complete triggerTurn delivery, and test run helper environmental behavior.",
+        "Required Biome format --write executed via node child_process argv on the sole changed source path; exit 0. Isolated retained HOME/config/cache/TMPDIR/SDK root: /tmp/pr45-background-ux-format-Pc2uje.",
+        "Static source comparison: all 13 guarded Error conditions/messages preserved; safeSession, fixture/launch, and failure-artifact/teardown sections byte-identical.",
+        "git diff --check: exit 0; committed only the focus source."
+      ],
+      "primaryLimits": [
+        "No setup, tests, builds, provider calls, credential access, or runtime TUI execution performed; parent owns audited isolated batch gates and independent judgment.",
+        "Additional TypeScript AST parse attempt could not run because /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/typescript/lib/typescript.js is absent (ENOENT). Biome parsing/formatting succeeded; static preservation checks were used instead.",
+        "No wisdom edits: parent writes aggregate wisdom."
+      ]
     },
     {
       "file": "tests/background-ux.test.ts",
@@ -8871,13 +8887,38 @@
       "initialBlob": "69e9a1ad26d212b5c4439c51d96d82ca7ce07be1",
       "status": "pending",
       "area": "agent-history-session-goals",
-      "resumeState": "pending-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_0aff1d58",
+      "primaryCommit": "a5ad6e645af3add0077e9c6c08e3dd1c077f6282",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "a5ad6e645af3add0077e9c6c08e3dd1c077f6282",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
-      "pendingReason": "No dedicated primary/final independent focus judgment."
+      "pendingReason": "No dedicated primary/final independent focus judgment.",
+      "primaryBase": "a5ad6e645af3add0077e9c6c08e3dd1c077f6282",
+      "primaryResult": "Followed launch -> unknown footer estimate -> literal /cache-ttl 30m submission -> confirmation with provider-cache disclaimer -> exact persisted cacheTtlMs -> finally teardown. tmuxRunner/capturePane/frameContaining centralize only transport and bounded observation; the focus retains all assertions. Traced registerCacheCountdown through bounded duration validation and atomic settings persistence, and the shared countdown into footer rendering. Extracting another fixture or command wrapper for this one linear journey would hide visible effects rather than reduce bookkeeping; renaming aliases or reformatting would be cosmetic. Preserved reconciliation says pending-primary, with no dedicated accepted/rejected focus candidate; existing focus is present and equals its preserved baseline, so no candidate import or old-branch merge applies.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        {
+          "check": "Focus identity and clean checkout",
+          "result": "Focus Git blob 69e9a1ad26d212b5c4439c51d96d82ca7ce07be1 matches preserved baseline 69e9a1ad26d212b5c4439c51d96d82ca7ce07be1; no source edits."
+        },
+        {
+          "check": "Manual structural reading",
+          "result": "Read values/guidance; inspected focus-only area/repo-wide/reconciliation rows; traced helper transport and shipped cache-command/footer callers."
+        },
+        {
+          "check": "Side-effect inspection",
+          "result": "Test starts dist/bruv in tmux with offline flags and temp HOME, writes cache settings, then kills its tmux server and recursively removes its own temp HOME. Not executed."
+        },
+        {
+          "check": "Formatter",
+          "result": "Not invoked: no changed source paths and no source commit to create."
+        }
+      ],
+      "primaryLimits": [
+        "No tests, setup, builds, credential/device access, or runtime UI executed; parent owns audited isolated batch gates.",
+        "No independent judgment claimed. No source change/commit, no wisdom edits; parent owns aggregate wisdom."
+      ]
     },
     {
       "file": "tests/cache-countdown.test.ts",

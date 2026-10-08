@@ -1209,6 +1209,16 @@
         "branch": "bruv/pr45-primary-tests-cache-countdown-sdk.t-ef29e337",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
+      },
+      {
+        "id": "task_0aff1d58",
+        "stage": "primary",
+        "focus": "tests/cache-countdown-tui.test.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_0aff1d58",
+        "branch": "bruv/pr45-primary-tests-cache-countdown-tui.t-0aff1d58",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled",
+        "sourceCommit": "a5ad6e645af3add0077e9c6c08e3dd1c077f6282"
       }
     ]
   },
@@ -1610,7 +1620,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_a14113c6",
         "branch": "bruv/pr45-primary-tests-background-ux-tui.tes-a14113c6",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "dd1565c25cb94982cf77381100d9ee1472a4feb5"
       }
     ]
   },
