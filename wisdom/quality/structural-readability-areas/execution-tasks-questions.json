@@ -3034,10 +3034,11 @@
       "launchBase": "4c53837f67bd43253bfb1da1e3be5e11a84b5eb9",
       "resume": {
         "status": "pending",
-        "primaryId": "task_1b488934",
+        "primaryId": "task_dcb5f688",
+        "primaryCommit": "c680a340577a3d97e62ebadca541ea26ff07b74d",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary-incident",
+        "sourceCommit": "c680a340577a3d97e62ebadca541ea26ff07b74d",
+        "state": "needs-judge",
         "reason": "Primary cancellation was recorded during the incident; no completed candidate commit or complete-file independent judgment is recorded. Focus working blob currently equals primary HEAD. Preserve the tree and allocate/complete primary work before judging."
       }
     },

@@ -3569,16 +3569,17 @@
       "focus": "tests/claude-native-history-replay.test.mjs",
       "initialBlob": null,
       "introducedBy": null,
-      "state": "pending",
-      "acceptedBlob": null,
+      "state": "accepted",
+      "acceptedBlob": "097f9cd64ee4e225b745ab0fc16c877cb6b25a3a",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "097f9cd64ee4e225b745ab0fc16c877cb6b25a3a",
         "primaryId": "task_c186d7a4",
         "primaryCommit": "589739a9317a9c014c12f98fd92b66bbb2e92f8a",
-        "judgeIds": [],
+        "judgeIds": ["task_3f2df770"],
         "sourceCommit": "589739a9317a9c014c12f98fd92b66bbb2e92f8a",
-        "state": "needs-judge",
-        "reason": "Untracked related test preserved in interrupted history-replay worker; absent from committed and preserved area ledger and area/joined trees. Requires its own primary and independent readability judgment. No import permission."
+        "state": "accepted-joined",
+        "reason": "The exact candidate has coherent boundaries, not merely renamed blocks. prepareReplayFixture installs only the external server/browser/driver stand-ins, reserves the loopback port, and returns an explicit environment with retained owned HOME/config/SDK/TMPDIR. replayFixture visibly launches the shipped replay, awaits child close, reads evidence, runs scenario assertions, and finally releases the harness-owned server. Resource-release and failure-proof assertions are separate meaningful contracts. Scenario bodies expose success ordering, page/binary failures, browser launch failure, preexisting-state preservation, server startup failure, setup/close failure, and shutdown escalation without reconstructing a large mode-dependent assertion block."
       }
     },
     {
@@ -3970,7 +3971,7 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 96,
-    "pending": 1
+    "accepted": 97,
+    "pending": 0
   }
 }

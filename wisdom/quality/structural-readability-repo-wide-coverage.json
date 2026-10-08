@@ -12896,12 +12896,50 @@
       "initialBlob": "ecc8311c62fb67efc690bb867c09a7b3e134fc87",
       "status": "pending",
       "area": "execution-tasks-questions",
-      "resumeState": "pending-primary-incident",
-      "primaryId": "task_1b488934",
+      "resumeState": "needs-judge",
+      "primaryId": "task_dcb5f688",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "c680a340577a3d97e62ebadca541ea26ff07b74d",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
-      "pendingReason": "Primary cancellation was recorded during the incident; no completed candidate commit or complete-file independent judgment is recorded. Focus working blob currently equals primary HEAD. Preserve the tree and allocate/complete primary work before judging."
+      "pendingReason": "Primary cancellation was recorded during the incident; no completed candidate commit or complete-file independent judgment is recorded. Focus working blob currently equals primary HEAD. Preserve the tree and allocate/complete primary work before judging.",
+      "primaryCommit": "c680a340577a3d97e62ebadca541ea26ff07b74d",
+      "primaryBase": "8f186d90eb5047304492c72c6bc56a7d0f37204d",
+      "primaryResult": "One local execution operation owns the session fixture, QuestionService bridge handler, child completion, persisted-state snapshot, and existing owned-directory cleanup. The tests now display the child journeys in order: ask returns before independent work, block returns the version used for resolve; actionable read helpers precede cancellation, replay retains the stale version, and nineteen extra questions plus the remaining original reach the cap. All original assertions, labels, versions, helper authority restrictions, and real isolated executable path remain. The only additional service operation is a read-only persisted-question snapshot after the second scenario as well as the first.",
+      "primaryPaths": ["tests/questions-bridge.test.ts"],
+      "primaryChecks": [
+        {
+          "kind": "provenance",
+          "result": "Focus reconciliation row records stopped task_1b488934 with unchanged baseline blob ecc8311c62fb67efc690bb867c09a7b3e134fc87 and no committed/rejected candidate; current focus existed, so no candidate import or old-branch merge was needed."
+        },
+        {
+          "kind": "caller-trace",
+          "paths": ["src/typescript/execution.ts", "src/typescript/job-bridge.ts", "src/questions/service.ts"],
+          "result": "executeIsolated starts the child with argv and inherited scrubbed environment, routes questions through the supplied parent job handler, and waits for completion; helper exposes ask/list/get/block/resolve/cancel but not answer; service rejects questions.answer and persists beside the supplied session file."
+        },
+        {
+          "kind": "formatter",
+          "result": "Specified read-only Biome executable invoked via node child_process argv with fresh retained HOME/XDG_CONFIG_HOME/XDG_CACHE_HOME/XDG_DATA_HOME/TMPDIR; formatted only tests/questions-bridge.test.ts; exit 0, no fixes applied.",
+          "retainedFixture": "/tmp/pr45-questions-bridge-format-bgu9xI"
+        },
+        {
+          "kind": "static-syntax",
+          "result": "Both embedded child programs parsed by node:vm Script wrapped in async functions; no programs executed."
+        },
+        {
+          "kind": "diff-check",
+          "result": "git diff --check passed before commit."
+        },
+        {
+          "kind": "manual-review",
+          "result": "Full changed focus read; original assertions retained. Cleanup remains scoped to exactly the directory created by mkdtempSync. No active git hooks observed; commit contains focus source only."
+        }
+      ],
+      "primaryLimits": [
+        "No repository tests, setup, or builds run: parent owns audited isolated batch gates. Runtime behavior remains unverified. No credential/device access, network, or recovery work performed. No delegation performed.",
+        "Formatter fixture is retained under /tmp; source and report provenance are the durable assigned worktree and commit, not a temporary code checkout. Existing test-code owned rmSync cleanup was inspected/preserved, never executed.",
+        "Safety for ALL descendants: no sudo, no recovery actions, no deletion/cleanup shell commands, no HOME or inherited SDK/config cleanup, no nested shell traps. Do not read/use user secrets. Use node child_process argv plus explicit isolated env for tests; allocate fresh disposable HOME/config/SDK dirs with fs.mkdtemp and retain them rather than delete. If real credential/device access is required, return that blocker instead of using it. Do not run repository tests or setup without first checking their filesystem/network side effects.",
+        "No wisdom files changed; parent writes aggregate wisdom. Independent judgment is still required."
+      ]
     },
     {
       "file": "tests/questions-extension.test.ts",
@@ -15722,13 +15760,13 @@
       "file": "tests/claude-native-history-replay.test.mjs",
       "initialBlob": "absent",
       "area": "compatibility-t3",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_c186d7a4",
       "primaryCommit": "589739a9317a9c014c12f98fd92b66bbb2e92f8a",
-      "judgeIds": [],
+      "judgeIds": ["task_3f2df770"],
       "sourceCommit": "589739a9317a9c014c12f98fd92b66bbb2e92f8a",
       "report": "wisdom/quality/structural-readability-areas/compatibility-t3.json",
-      "status": "pending",
+      "status": "accepted",
       "pendingReason": "Untracked related test preserved in interrupted history-replay worker; absent from committed and preserved area ledger and area/joined trees. Requires its own primary and independent readability judgment. No import permission.",
       "primaryBase": "f70f389163e6d7e7c5741456ea8e45a64917feb8",
       "primaryResult": "Recovered only the exact preserved focus bytes (hash verified, materialized as a Git object and imported with git show; no old branch merge). prepareReplayFixture owns offline boundary installation and explicit child environment; replayFixture shows launch, observed close, evidence, assertions and harness-owned process release. Separate tests expose successful verification, page failure capture, launch failure, startup failure and shutdown escalation; assertFailureProof groups the existing failure-proof/security contract. All original mode coverage and assertions remain, with unchanged stand-in source strings. Fresh HOME/config/SDK/TMPDIR and proof are retained instead of deleting the fixture HOME; runtime-release and preexisting-state preservation assertions remain.",
@@ -15779,6 +15817,47 @@
         "Production replay, if later executed by the parent, deletes its exclusively acquired t3-runtime by design; the test retains its fixture, proof and explicit configuration directories.",
         "Formatter, syntax and git temporary environments retained; old worker/worktrees left untouched.",
         "No per-worker wisdom edits; parent owns aggregate wisdom. Values and readability guidance were read; no new general lesson required a values change."
+      ],
+      "acceptedBlob": "097f9cd64ee4e225b745ab0fc16c877cb6b25a3a",
+      "result": "The exact candidate has coherent boundaries, not merely renamed blocks. prepareReplayFixture installs only the external server/browser/driver stand-ins, reserves the loopback port, and returns an explicit environment with retained owned HOME/config/SDK/TMPDIR. replayFixture visibly launches the shipped replay, awaits child close, reads evidence, runs scenario assertions, and finally releases the harness-owned server. Resource-release and failure-proof assertions are separate meaningful contracts. Scenario bodies expose success ordering, page/binary failures, browser launch failure, preexisting-state preservation, server startup failure, setup/close failure, and shutdown escalation without reconstructing a large mode-dependent assertion block.",
+      "systemReason": "Read production history-replay.mjs at the candidate commit, its actual history-run.mjs caller, the history-driver.mjs boundary and prepare re-export in driver.mjs, plus package test discovery. The fixture copies the shipped replay unchanged and substitutes its relative driver and external T3/Playwright artifacts, so exclusive runtime acquisition, hash checks, explicit child environment, pairing call, readiness, browser failure capture, close-before-server-stop, SIGTERM/SIGKILL escalation and owned runtime removal remain production decisions exercised by the scenarios. Failure screenshots require the runtime still to exist; runtime-release assertions and the preexisting sentinel expose ownership consequences. The stand-in proof flags are assertions about this offline orchestration, not evidence of real authentication, native history correctness or device behavior. No related production source was changed by this candidate.",
+      "checks": [
+        {
+          "name": "exact-source-and-scope",
+          "method": "git show, git rev-parse and git diff --name-status against primaryBase f70f389163e6d7e7c5741456ea8e45a64917feb8",
+          "result": "Candidate parent equals primaryBase; only changed path is the focus (added), blob 097f9cd64ee4e225b745ab0fc16c877cb6b25a3a. Every changed source path was read."
+        },
+        {
+          "name": "intrinsic-and-system-reading",
+          "result": "Read the complete candidate and replay implementation; traced the runner invocation and explicit environment, actual integration boundary, test discovery, and each scenario without executing them."
+        },
+        {
+          "name": "focus-only-ledger-evidence",
+          "result": "Inspected only matching focus rows in repo-wide coverage/jobs and compatibility-t3 area ledger; pending judgment and absent initial blob are consistent with this source scope."
+        },
+        {
+          "name": "static-whitespace",
+          "command": [
+            "git",
+            "diff",
+            "--check",
+            "f70f389163e6d7e7c5741456ea8e45a64917feb8",
+            "589739a9317a9c014c12f98fd92b66bbb2e92f8a"
+          ],
+          "result": "Exit 0; no whitespace diagnostics."
+        },
+        {
+          "name": "filesystem-network-effects-review",
+          "result": "Read-only audit: future test execution writes beneath fs.mkdtemp fixture, starts owned child processes and loopback HTTP, and invokes Git within the fixture project. Copied production replay removes only its exclusively acquired runtime; test retains fixture/proof/configuration directories. No tests/setup/builds were executed."
+        }
+      ],
+      "limits": [
+        "This is exact-source structural acceptance, not a runtime gate. Parent owns audited isolated batch tests; no setup, tests, builds, credentials, authentication or devices were accessed. Automatic setup outcomes were not bypassed.",
+        "The focus is absent at primaryBase. No original untracked bytes were sought or independently compared, and no recovery work was performed; preservation claims in primary evidence are not independent runtime proof.",
+        "Existing hard-coded /usr/bin/node and /usr/bin/git and offline browser/driver stand-ins remain. This review does not establish portability, real browser rendering, actual native history semantics or live provider access.",
+        "Durable review provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_3f2df770; source inspected from exact Git candidate objects, not checkout HEAD. Existing worktrees and evidence retained; only this untracked report was written. No per-worker wisdom or unrelated source edits.",
+        "Safety for ALL descendants: no sudo, no recovery actions, no deletion/cleanup shell commands, no HOME or inherited SDK/config cleanup, no nested shell traps. Do not read/use user secrets. Use node child_process argv plus explicit isolated env for tests; allocate fresh disposable HOME/config/SDK dirs with fs.mkdtemp and retain them rather than delete. If real credential/device access is required, return that blocker instead of using it. Do not run repository tests or setup without first checking their filesystem/network side effects.",
+        "No delegation was used. No destructive git operations or user-data mutations."
       ]
     },
     {
