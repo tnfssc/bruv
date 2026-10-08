@@ -2897,12 +2897,14 @@
     {
       "file": "scripts/remote-pty-e2e.ts",
       "initialBlob": "ff9c6e8a70b09d2134b07c53336b95f56311bf4b",
-      "status": "pending",
+      "status": "accepted",
       "area": "remote",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_1bad7144",
       "primaryCommit": "9c449135513eeb5e5cfa8f20e0371d0fe03abf9f",
-      "judgeIds": [],
+      "judgeIds": [
+        "task_2fd31271"
+      ],
       "sourceCommit": "9c449135513eeb5e5cfa8f20e0371d0fe03abf9f",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
       "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
@@ -2933,6 +2935,36 @@
         "No setup, tests, builds, SSH, Docker, credential/device access, recovery, push, PR, or merge performed. Parent owns isolated audited runtime gates and an independent fresh judge.",
         "Optional read-only TypeScript AST inspection could not load /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/typescript/lib/typescript.js (ENOENT); exact source-movement inspection used instead, not a typecheck.",
         "Existing cleanup semantics are preserved; this change does not claim joined child shutdown or address failures inside the provider constructor itself."
+      ],
+      "acceptedBlob": "cf4ce7432215744ebfd4cbb11cac89a421716854",
+      "result": "Compared the actual candidate with primary base c7a21355e87abe213aeb2b2b3ef06456a17b56e1, which is also its direct parent. Previously the provider was acquired near the globals and live during top-level repository preparation, well before the try/finally. The candidate declares helpers first, then visibly pairs returned-provider acquisition with try/finally. Its first protected operation, prepareLaunchRepository, coherently owns directory creation, fixture content, Git initialization/add/commit assertions and the HOME-not-repository assertion. This is a meaningful lifetime boundary, not merely a renamed block: preparation failures now flow into existing teardown. No framework, shared context bag or exported helper is introduced. Unchanged decision: retain the chronological PTY assertion journey and its local navigation/evidence helpers; that order explains actual interactions, stale snapshots, cancellation and offline observations without needing another orchestration abstraction.",
+      "systemReason": "Read the actual opt-in tests/remote-e2e.test.ts caller, scripts/remote-e2e.sh runner, loopback-parent-fixture.ts implementation and placement-parent.ts provider response. The runner supplies disposable HOME/agent paths and explicit fixture SSH configuration; loopbackParent serves a loopback fake provider and writes its model configuration. Returned-provider ownership now spans repository preparation, SSH readiness, diagnostic RPC seeding, compiled tmux PTY interaction, normal owned RPC placement, offline Docker-owner checks and final teardown. fixtureRpc still registers each child in rpcChildren, rejects confirmation requests and uses noSession only for diagnostic launches. The owned probe still uses jobs.targets plus normal subagent(target), never routes owned work into diagnostic inbox authority. Question writes are checked at the owner; menu Escape, stale-answer refusal, exact picker stability, terminal-text assertions, evidence snapshots and absence of local question ledgers remain unchanged. Finally still targets the per-process tmux server, signals tracked live RPC children and stops the provider. Unchanged decision: preserve these distinct diagnostic/owned authorities, SSH confinement, PTY assertions, snapshots and teardown operations; the candidate changes only preparation membership in the returned-provider lifetime.",
+      "checks": [
+        {
+          "kind": "guidance-and-ledgers",
+          "result": "Read wisdom/values.md, structural-readability-guidance.md and relevant repository-wide assignment/coverage/job and remote-area ledgers. Historical area gates and primary claims were context, not independent runtime evidence."
+        },
+        {
+          "kind": "actual-code-reading",
+          "result": "Read the complete candidate focus, primary-base changed regions, provider/RPC implementation, shell runner, opt-in test caller, placement provider response and relevant source-contract test. Only scripts/remote-pty-e2e.ts changes between primary base/direct parent and candidate."
+        },
+        {
+          "kind": "exact-source-comparison",
+          "result": "Read-only Git/node comparison reconstructed the complete primary-base focus exactly by undoing the helper extraction, moved acquisition and preparation call. SSH readiness through final teardown is byte-identical. All five related paths have unchanged Git blobs."
+        },
+        {
+          "kind": "git-diff-check",
+          "result": "git diff --check c7a21355e87abe213aeb2b2b3ef06456a17b56e1 9c449135513eeb5e5cfa8f20e0371d0fe03abf9f passed."
+        },
+        {
+          "kind": "blob-verification",
+          "result": "Focus/only changed source blob: cf4ce7432215744ebfd4cbb11cac89a421716854; primary-base blob: ff9c6e8a70b09d2134b07c53336b95f56311bf4b."
+        }
+      ],
+      "limits": [
+        "Static structural judgment only. No setup, tests, builds, provider/SSH/Docker execution, credential/device access, recovery, push, PR or merge performed. Parent owns audited isolated batch gates; no real-authentication/device or runtime success claim.",
+        "loopbackParent can start its server and then throw while creating/writing its model configuration before returning; this pre-existing constructor-internal failure is outside the improved returned-provider lifetime. Child kill remains unjoined and fixture HOME remains a caller obligation.",
+        "The unchanged shell runner contains cleanup traps and Docker/network/filesystem effects; it was only read, not executed. Acceptance is not approval to run that wrapper unmodified under this review safety policy. No automatic-setup outcome or model self-introspection claim."
       ]
     },
     {

@@ -133,18 +133,21 @@
     {
       "focus": "scripts/remote-pty-e2e.ts",
       "initialBlob": "ff9c6e8a70b09d2134b07c53336b95f56311bf4b",
-      "status": "pending",
+      "status": "accepted",
       "judgeRounds": [],
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "cf4ce7432215744ebfd4cbb11cac89a421716854",
         "primaryId": "task_1bad7144",
         "primaryCommit": "9c449135513eeb5e5cfa8f20e0371d0fe03abf9f",
-        "judgeIds": [],
+        "judgeIds": [
+          "task_2fd31271"
+        ],
         "sourceCommit": "9c449135513eeb5e5cfa8f20e0371d0fe03abf9f",
-        "state": "needs-judge",
-        "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+        "state": "accepted-joined",
+        "reason": "Compared the actual candidate with primary base c7a21355e87abe213aeb2b2b3ef06456a17b56e1, which is also its direct parent. Previously the provider was acquired near the globals and live during top-level repository preparation, well before the try/finally. The candidate declares helpers first, then visibly pairs returned-provider acquisition with try/finally. Its first protected operation, prepareLaunchRepository, coherently owns directory creation, fixture content, Git initialization/add/commit assertions and the HOME-not-repository assertion. This is a meaningful lifetime boundary, not merely a renamed block: preparation failures now flow into existing teardown. No framework, shared context bag or exported helper is introduced. Unchanged decision: retain the chronological PTY assertion journey and its local navigation/evidence helpers; that order explains actual interactions, stale snapshots, cancellation and offline observations without needing another orchestration abstraction."
       },
-      "acceptedBlob": null
+      "acceptedBlob": "cf4ce7432215744ebfd4cbb11cac89a421716854"
     },
     {
       "focus": "scripts/remote-recovery-e2e.ts",
@@ -4320,7 +4323,7 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 77,
-    "pending": 45
+    "accepted": 78,
+    "pending": 44
   }
 }

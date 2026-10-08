@@ -14,7 +14,6 @@ process.env.GIT_CONFIG_GLOBAL = "/dev/null";
 process.env.GIT_CONFIG_SYSTEM = "/dev/null";
 process.env.GIT_CONFIG_NOSYSTEM = "1";
 const rpcChildren: ReturnType<typeof spawn>[] = [];
-const provider = loopbackParent(agentDir);
 const state = () =>
   JSON.parse(readFileSync(statePath, "utf8")) as {
     connection?: unknown;
@@ -47,17 +46,19 @@ const state = () =>
     >;
   };
 const launchRepo = join(home, "launch-source");
-mkdirSync(launchRepo, { recursive: true });
-writeFileSync(join(launchRepo, "README.md"), "isolated placement source\n");
-for (const args of [
-  ["init", "-q"],
-  ["add", "README.md"],
-  ["-c", "user.name=Fixture", "-c", "user.email=fixture@example.invalid", "commit", "-qm", "base"],
-]) {
-  const result = spawnSync("git", ["-C", launchRepo, ...args], { encoding: "utf8" });
-  assert.equal(result.status, 0, result.stderr);
-}
-assert(!existsSync(join(home, ".git")), "HOME must not become source Git repository");
+const prepareLaunchRepository = () => {
+  mkdirSync(launchRepo, { recursive: true });
+  writeFileSync(join(launchRepo, "README.md"), "isolated placement source\n");
+  for (const args of [
+    ["init", "-q"],
+    ["add", "README.md"],
+    ["-c", "user.name=Fixture", "-c", "user.email=fixture@example.invalid", "commit", "-qm", "base"],
+  ]) {
+    const result = spawnSync("git", ["-C", launchRepo, ...args], { encoding: "utf8" });
+    assert.equal(result.status, 0, result.stderr);
+  }
+  assert(!existsSync(join(home, ".git")), "HOME must not become source Git repository");
+};
 const launchRpc = (cwd = launchRepo, diagnostic = false) =>
   fixtureRpc({
     bruv,
@@ -142,7 +143,9 @@ const until = async (needle: string, timeout = 12000) => {
   throw Error("PTY missing " + needle + "\n" + pane());
 };
 const quote = (value: string) => "'" + value.replaceAll("'", "'\\''") + "'";
+const provider = loopbackParent(agentDir);
 try {
+  prepareLaunchRepository();
   assert.equal(spawnSync("ssh", ["-F", process.env.FIXTURE_SSH_CONFIG!, "fixture-owner", "true"]).status, 0);
   const rpc = launchRpc(launchRepo, true);
   rpc.send("/remote connect fixture-owner /usr/local/bin/bruv");
