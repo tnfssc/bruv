@@ -6086,12 +6086,45 @@
       "file": "src/live/speaker-check.ts",
       "initialBlob": "783d0aaaf7ae22808aad5cc8f00914a1e9610637",
       "status": "pending",
-      "primaryId": "task_ff772328",
-      "sourceCommit": null,
+      "primaryId": "task_c13efc43",
+      "sourceCommit": "cb813e8544a802eeda0afe0e01ae45f8b89eacb0",
       "judgeIds": [],
-      "resumeState": "primary_uncommitted_candidate_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Primary was allocated, but no candidate commit or completed focus judgment is recorded. Preserve its worktree; do not treat the stale running status as proof of current execution.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "cb813e8544a802eeda0afe0e01ae45f8b89eacb0",
+      "primaryBase": "f988b37e1a2ab6421cb7ee87edfa69cf35ee6c90",
+      "primaryResult": "runSpeakerCheck now owns deadline, helper acquisition, terminal callbacks, late factory close and bounded stop/close. measureSpeakerReturn owns capture callbacks, bounded PCM, baseline/playback/tail measurement, inconclusive window outcomes and zeroing before shutdown callbacks can refill capture. waitForAudio exposes bounded waiting; processingConfiguration validates only numeric/static native configuration separately from waveform evidence. Public signatures and deterministic reference/correlation analysis are unchanged. Independently reviewed and retained the stopped task_ff772328 focus candidate (141bd8d0d32972a110cbf4655b8f1e2caf82f8be); no old branch merge or old test edits imported.",
+      "primaryPaths": [
+        "src/live/speaker-check.ts"
+      ],
+      "primaryChecks": [
+        {
+          "kind": "reading",
+          "result": "Read wisdom/values.md, structural-readability guidance, focus reconciliation/coverage/area rows, actual extension consent/abort caller, audio contract, speaker-summary consumer and existing speaker-check assertions."
+        },
+        {
+          "kind": "static",
+          "result": "git diff --check clean before commit; exact comparison confirms reference generation and analyzeSpeakerCheck unchanged; only focus source changed; original tests untouched."
+        },
+        {
+          "kind": "formatter",
+          "command": "/home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/@biomejs/biome/bin/biome format --write src/live/speaker-check.ts",
+          "result": "Exit 0; formatted 1 file, no fixes applied. Invoked with node child_process argv and fresh retained HOME/config/TMPDIR.",
+          "retainedEnvironment": "/tmp/pr45-speaker-format-MVSNB5"
+        },
+        {
+          "kind": "provenance",
+          "result": "Focus existed at HEAD blob 783d0aaaf7ae22808aad5cc8f00914a1e9610637. Verified old working source hash against preserved evidence before copying only focus bytes. Source-only commit; old worktree and its dirty tests preserved."
+        }
+      ],
+      "primaryLimits": [
+        "No repository tests, setup, builds, provider/credential/device access or delegation performed. Parent owns isolated batch gates and independent judge acceptance.",
+        "Preserved candidate was uncommitted: git show 141bd8d0d32972a110cbf4655b8f1e2caf82f8be failed with bad object; used the verified still-present working source instead. Focus was present, so absent-focus restoration was not needed.",
+        "Reconciliation records an automatic setup unsupported Pi host session-manager.js hash failure; this worker did not rerun or bypass it.",
+        "No physical/native-provider/AEC-performance proof is claimed. No model self-introspection performed; parent verifies agent.model externally.",
+        "No wisdom files edited; parent owns aggregate wisdom."
+      ]
     },
     {
       "file": "src/live/speaker-summary.ts",

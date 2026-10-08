@@ -662,7 +662,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_c13efc43",
         "branch": "bruv/pr45-primary-src-live-speaker-check.ts-c13efc43",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "cb813e8544a802eeda0afe0e01ae45f8b89eacb0"
       }
     ]
   },
@@ -943,6 +944,15 @@
         "branch": "bruv/pr45-primary-src-prompts-execute-descrip-46d9c538",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
+      },
+      {
+        "id": "task_33bb0613",
+        "stage": "primary",
+        "focus": "src/prompts/execute.md",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_33bb0613",
+        "branch": "bruv/pr45-primary-src-prompts-execute.md-33bb0613",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
       }
     ]
   },
@@ -1196,6 +1206,19 @@
         ],
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_cc27bf98",
         "branch": "bruv/pr45-judge-3-ui-terminal-cli-focuses-cc27bf98",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_98534795",
+        "stage": "judge",
+        "focus": [
+          "scripts/terminal-perf/send-workloads.ts",
+          "scripts/terminal-perf/tool-workloads.ts",
+          "scripts/tmux.conf"
+        ],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_98534795",
+        "branch": "bruv/pr45-judge-3-ui-terminal-cli-focuses-98534795",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
       }

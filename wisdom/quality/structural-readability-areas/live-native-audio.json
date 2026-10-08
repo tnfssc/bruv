@@ -2574,10 +2574,11 @@
       "integration": "primary running",
       "resume": {
         "status": "pending",
-        "primaryId": "task_ff772328",
+        "primaryId": "task_c13efc43",
+        "primaryCommit": "cb813e8544a802eeda0afe0e01ae45f8b89eacb0",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "primary_uncommitted_candidate_pending",
+        "sourceCommit": "cb813e8544a802eeda0afe0e01ae45f8b89eacb0",
+        "state": "needs-judge",
         "reason": "Primary was allocated, but no candidate commit or completed focus judgment is recorded. Preserve its worktree; do not treat the stale running status as proof of current execution."
       }
     },
