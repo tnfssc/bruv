@@ -4022,13 +4022,44 @@
       "initialBlob": "89b078ccdf8cb1198e2ac22be0b734cd334573e6",
       "status": "pending",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_cf54811f",
+      "primaryCommit": "8f42a48aa839d206de7294d67e6bdd632eef5f7c",
       "judgeIds": [],
-      "sourceCommit": "53fb4d9732dcf0c337b797b05a104199ccf1a273",
+      "sourceCommit": "8f42a48aa839d206de7294d67e6bdd632eef5f7c",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
-      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
+      "primaryBase": "f7b5619450bcb7c0b40e5e2194d7303c6a905b9a",
+      "primaryResult": "dispatchToolBurst() now owns the synchronous measurement slice, callback-origin switch/restoration, final component capture, and burst counters. sendEditorThroughSession() owns real Enter dispatch through getUserInput/session.prompt plus bounded provider, frame, and callback settlement waits. action() visibly queues input before the direct burst, drains it afterward, exercises the viewport, awaits the subscribed send, then publishes unchanged evidence. Traced interaction-worker lifecycle, normalizer direct/subscribed counter reconciliation, and preserved test expectations; no caller edits required.",
+      "primaryPaths": [
+        "scripts/terminal-perf/tool-event-workloads.ts"
+      ],
+      "primaryChecks": [
+        {
+          "name": "required repository formatter",
+          "result": "passed; formatted changed focus path only with node child_process argv",
+          "executable": "/home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/@biomejs/biome/bin/biome",
+          "retainedEnvironmentRoot": "/tmp/pr45-tool-event-format-oKoGZg"
+        },
+        {
+          "name": "git diff --check",
+          "result": "passed before commit"
+        },
+        {
+          "name": "static baseline source comparison",
+          "result": "passed; direct burst body preserved ignoring whitespace/return binding; subscribed send body preserved ignoring whitespace/removal of non-null assertions; setup/safety and evidence/disposal bodies byte-identical"
+        },
+        {
+          "name": "focus evidence",
+          "result": "baseline present at 89b078ccdf8cb1198e2ac22be0b734cd334573e6; preserved resume row had no prior dedicated candidate/verdict; no old branch merged"
+        }
+      ],
+      "primaryLimits": [
+        "No setup, repository tests, or builds run; parent owns audited isolated batch gates.",
+        "Optional static TypeScript parsing could not run: read-only dependency path /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/typescript is absent. Formatter parsing and source preservation comparisons completed; no typecheck claim.",
+        "Independent fresh judge and external runtime model verification remain parent-owned.",
+        "No wisdom files changed; parent owns aggregate wisdom."
+      ]
     },
     {
       "file": "scripts/terminal-perf/tool-workloads.ts",

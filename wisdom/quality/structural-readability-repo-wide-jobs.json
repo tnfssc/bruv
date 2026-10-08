@@ -1121,7 +1121,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_cf54811f",
         "branch": "bruv/pr45-primary-scripts-terminal-perf-tool--cf54811f",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "8f42a48aa839d206de7294d67e6bdd632eef5f7c"
       },
       {
         "id": "task_a1139c9a",
@@ -1142,6 +1143,15 @@
         "focus": "scripts/terminal-perf/tool-workloads.ts",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_97f9b348",
         "branch": "bruv/pr45-primary-scripts-terminal-perf-tool--97f9b348",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_5e579abb",
+        "stage": "primary",
+        "focus": "scripts/tmux.conf",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_5e579abb",
+        "branch": "bruv/pr45-primary-scripts-tmux.conf-5e579abb",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
       }
