@@ -2858,34 +2858,36 @@
     {
       "focus": "tests/remote-jobs-e2e.test.ts",
       "initialBlob": "32242e046ef772be7a30fcba19211c4d7d7804ca",
-      "status": "pending",
+      "status": "accepted",
       "judgeRounds": [],
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "32242e046ef772be7a30fcba19211c4d7d7804ca",
         "primaryId": "task_ae21f02d",
         "primaryCommit": "27099149843befac3accad01a8702a27efebb73f",
-        "judgeIds": [],
+        "judgeIds": ["task_4466ceda"],
         "sourceCommit": "27099149843befac3accad01a8702a27efebb73f",
-        "state": "needs-judge",
-        "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+        "state": "accepted-joined",
+        "reason": "The complete adapter has one visible boundary: the Linux/explicit opt-in skip condition selects the gate; Bun.spawn names remote-e2e.sh and overrides REMOTE_E2E_SCRIPT to remote-jobs-e2e.ts; Promise.all drains both piped streams and awaits exit; the exit assertion preserves stderr and stdout before the specific proof-prefix assertion. Selection, lifetime, diagnostics and the claimed journey are contiguous. Extracting this short spawn/drain operation would make the reader leave the single gate to establish its script and evidence, without separating any distinct authority."
       },
-      "acceptedBlob": null
+      "acceptedBlob": "32242e046ef772be7a30fcba19211c4d7d7804ca"
     },
     {
       "focus": "tests/remote-jobs-placement-fixture.test.ts",
       "initialBlob": "7ef3fa97e43d987b31806519c2e4e08a029975c7",
-      "status": "pending",
+      "status": "accepted",
       "judgeRounds": [],
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "7ef3fa97e43d987b31806519c2e4e08a029975c7",
         "primaryId": "task_ae21f02d",
         "primaryCommit": "27099149843befac3accad01a8702a27efebb73f",
-        "judgeIds": [],
+        "judgeIds": ["task_4466ceda"],
         "sourceCommit": "27099149843befac3accad01a8702a27efebb73f",
-        "state": "needs-judge",
-        "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+        "state": "accepted-joined",
+        "reason": "Read both scenarios and the suite lifetime in full. beforeAll owns the deterministic provider process, obtains the ephemeral loopback port from stderr and releases the reader; afterAll kills and awaits that same child. code(messages) alone owns HTTP/SSE/tool-call decoding and checks execute identity. Each AsyncFunction parameter list explicitly names the injected runtime globals. The launch scenario keeps discovery, launch capture and JSON write capture next to exact target/type/prompt/waitSeconds and write-payload assertions, then exercises missing authorization and invalid async SSH result. The inspection scenario locally owns own/foreign IDs and list/inspect/stop behavior, records all four foreign/unknown attempts, checks the saved own inspection, and proves that an accepted stop causes the emitted program to fail. These are small scenario-specific authorities; moving them into a capability bag or generic mock constructor would hide the injection contract and the intentional rejection behavior."
       },
-      "acceptedBlob": null
+      "acceptedBlob": "7ef3fa97e43d987b31806519c2e4e08a029975c7"
     },
     {
       "focus": "tests/remote-jobs.test.ts",
@@ -4151,8 +4153,8 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 110,
-    "pending": 12
+    "accepted": 112,
+    "pending": 10
   },
   "extraFiles": [
     {

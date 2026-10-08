@@ -588,7 +588,7 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_4466ceda",
         "branch": "bruv/pr45-judge-2-remote-focuses-4466ceda",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled"
       },
       {
         "id": "task_5102babd",
@@ -2463,6 +2463,15 @@
         "model": "openai-codex/gpt-6.1-sol",
         "status": "handled",
         "sourceCommit": "021c24f00962cfcef70f0745f666d978c7bb9b29"
+      },
+      {
+        "id": "task_dff9d8e8",
+        "stage": "judge",
+        "focus": ["tests/system-prompt.test.ts"],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_dff9d8e8",
+        "branch": "bruv/pr45-judge-1-agent-history-session-goals-dff9d8e8",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
       }
     ]
   },

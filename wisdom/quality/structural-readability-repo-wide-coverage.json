@@ -16230,12 +16230,12 @@
     {
       "file": "tests/remote-jobs-e2e.test.ts",
       "initialBlob": "32242e046ef772be7a30fcba19211c4d7d7804ca",
-      "status": "pending",
+      "status": "accepted",
       "area": "remote",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_ae21f02d",
       "primaryCommit": "27099149843befac3accad01a8702a27efebb73f",
-      "judgeIds": [],
+      "judgeIds": ["task_4466ceda"],
       "sourceCommit": "27099149843befac3accad01a8702a27efebb73f",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
       "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
@@ -16252,17 +16252,32 @@
         "No source changed: formatter unnecessary and no empty/source commit created. sourceCommit is the exact inspected HEAD. Artifact remains untracked; no wisdom/value edits because no new general lesson was found.",
         "No descendants launched; runtime agent.model verification remains parent-owned. Durable source provenance: current assigned Git worktree, not a /tmp checkout.",
         "Shared shell runner has the Docker/SSH/key-generation and EXIT cleanup effects described for remote-e2e.test.ts; inspected only, not permitted to run under this task. Jobs script creates a fixture repo/config/session evidence under its supplied HOME, spawns compiled parent CLIs and invokes Docker/SSH. Future parent gate needs an audited owned HOME/config/SDK and explicit argv/env."
+      ],
+      "acceptedBlob": "32242e046ef772be7a30fcba19211c4d7d7804ca",
+      "result": "The complete adapter has one visible boundary: the Linux/explicit opt-in skip condition selects the gate; Bun.spawn names remote-e2e.sh and overrides REMOTE_E2E_SCRIPT to remote-jobs-e2e.ts; Promise.all drains both piped streams and awaits exit; the exit assertion preserves stderr and stdout before the specific proof-prefix assertion. Selection, lifetime, diagnostics and the claimed journey are contiguous. Extracting this short spawn/drain operation would make the reader leave the single gate to establish its script and evidence, without separating any distinct authority.",
+      "systemReason": "Traced the selected script rather than treating the marker as sufficient by itself. remote-e2e.sh creates an isolated home, loopback Docker SSH/provider fixture and pinned generated host keys, then invokes remote-jobs-e2e.ts. That script uses explicit compiled-CLI argv and a selected CLI environment, creates a dirty tracked README in its fixture repo, exercises print/json, launches two RPC parents with distinct session files, human-connects the pinned alias, places async jobs, verifies saved session attribution and parent yields, then checks remote terminal states and existing task-complete wakes. It rejects cross-session task IDs and jobs IDs, probes exact own IDs versus foreign/unknown inspect and stop, verifies owner-side source/depth policy evidence, probes repeat-sync/reconnect non-redelivery, and asserts source dirtiness remains before printing PASS. Production wiring in agent/extension.ts creates the RemoteJobsAdapter for JobService; job-service.ts binds durable launch identity and the parent session, jobs.ts enforces pinned target/role and session-local lookup, job-observations.ts filters by jobSessionFile, and the existing notification batch/outbox persists completion delivery and only replays undelivered rows. The focus is correctly a compiled-boundary adapter, not another owner of these journeys.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read the complete intrinsic focus from git show at the exact candidate, not checkout HEAD.",
+        "git diff --name-status primaryBase..candidate is empty: both are 27099149843befac3accad01a8702a27efebb73f; there are no candidate-changed related source paths.",
+        "Resolved focus blob with git rev-parse candidate:focus.",
+        "Static source/effect review only; no setup, tests, builds, dependency installation, network calls, credential access, cleanup, or delegation executed."
+      ],
+      "limits": [
+        "No runtime pass is claimed. The wrapper inherits process.env; remote-e2e.sh has an EXIT cleanup trap and Docker build/install effects, so it was inspected but NOT run. Its existing execution contract is not an authorization for this review to run cleanup or use inherited user configuration. Parent must supply its separately audited retained mkdtemp HOME/config/SDK gate rather than run this harness unchanged under the review restrictions.",
+        "Docker, compiled CLI behavior, SSH transport and reconnect timing remain runtime-unverified here.",
+        "Review performed in retained durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_4466ceda. No /tmp code checkout or test fixture was created. Parent owns audited isolated runtime gates and runtime agent.model verification; this leaf did not independently establish the model identity."
       ]
     },
     {
       "file": "tests/remote-jobs-placement-fixture.test.ts",
       "initialBlob": "7ef3fa97e43d987b31806519c2e4e08a029975c7",
-      "status": "pending",
+      "status": "accepted",
       "area": "remote",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_ae21f02d",
       "primaryCommit": "27099149843befac3accad01a8702a27efebb73f",
-      "judgeIds": [],
+      "judgeIds": ["task_4466ceda"],
       "sourceCommit": "27099149843befac3accad01a8702a27efebb73f",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
       "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
@@ -16280,6 +16295,21 @@
         "No descendants launched; runtime agent.model verification remains parent-owned. Durable source provenance: current assigned Git worktree, not a /tmp checkout.",
         "Existing fixture subprocess has explicit argv and restricted PATH/loopback provider env but no owned mkdtemp HOME/config/SDK. Its Bun.write/process bindings in generated execute are fake captures, not disk writes. fixture-parent routing avoids the provider worker branch, which has fixed /tmp progress-file writes. Network would be loopback only. None of these paths were executed; parent must supply/audit retained isolation before its gate.",
         "Assertions exercise generated fixture programs with stub jobs/subagent globals, not actual SSH jobs authorization/coordinator behavior; the separate compiled jobs E2E caller owns that proof. No assertions or security behavior were weakened."
+      ],
+      "acceptedBlob": "7ef3fa97e43d987b31806519c2e4e08a029975c7",
+      "result": "Read both scenarios and the suite lifetime in full. beforeAll owns the deterministic provider process, obtains the ephemeral loopback port from stderr and releases the reader; afterAll kills and awaits that same child. code(messages) alone owns HTTP/SSE/tool-call decoding and checks execute identity. Each AsyncFunction parameter list explicitly names the injected runtime globals. The launch scenario keeps discovery, launch capture and JSON write capture next to exact target/type/prompt/waitSeconds and write-payload assertions, then exercises missing authorization and invalid async SSH result. The inspection scenario locally owns own/foreign IDs and list/inspect/stop behavior, records all four foreign/unknown attempts, checks the saved own inspection, and proves that an accepted stop causes the emitted program to fail. These are small scenario-specific authorities; moving them into a capability bag or generic mock constructor would hide the injection contract and the intentional rejection behavior.",
+      "systemReason": "Followed the actual provider emitted source. fake-provider.ts dispatches fixture-parent to parentReply before the worker branch, so this suite executes the same launch/check programs used by remote-jobs-e2e.ts without running worker shell or provider filesystem side effects. parentReply prioritizes print and exact-ID probes; its probe checks session list isolation and completed own inspection, then requires Unknown SSH job from both methods for foreign and fabricated IDs before writing proof. Its launch discovers only the authorized fixture-owner SSH target, calls normal async placement with waitSeconds:0, requires an ssh: ID/background result, and writes discovery plus launch. Production JobService routes targets/list/inspect/stop through the RemoteJobsAdapter with the durable current session; the adapter projects stable SSH IDs, requires human-pinned target and delegation policy before repository work, and resolves inspect/stop only among session-owned tasks. The fixture tests validate generated-program behavior, while the compiled CLI script owns real transport/coordinator proof. This division is readable and does not duplicate a production coordinator implementation.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read the complete intrinsic focus from git show at the exact candidate, not checkout HEAD.",
+        "git diff --name-status primaryBase..candidate is empty: both are 27099149843befac3accad01a8702a27efebb73f; there are no candidate-changed related source paths.",
+        "Resolved focus blob with git rev-parse candidate:focus.",
+        "Static source/effect review only; no setup, tests, builds, dependency installation, network calls, credential access, cleanup, or delegation executed."
+      ],
+      "limits": [
+        "No runtime pass is claimed. Source inspection shows this parent-model path only serves loopback HTTP and returns generated code; the test mocks Bun.write and process.env.HOME rather than creating /fixture-home. The provider worker branch has /tmp file writes and generated shell effects, but fixture-parent dispatch does not enter it. Nothing was executed.",
+        "Provider readiness has no separate timeout/drain redesign in this unchanged focus; runtime lifecycle checks remain parent-owned, not grounds for speculative abstraction here.",
+        "Review performed in retained durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_4466ceda. No /tmp code checkout or test fixture was created. Parent owns audited isolated runtime gates and runtime agent.model verification; this leaf did not independently establish the model identity."
       ]
     },
     {
@@ -22106,9 +22136,9 @@
     "baselineFiles": 766,
     "finalGate": "pending; incomplete focus coverage",
     "liveAuth": "unverified/failing; preserved",
-    "accepted": 765,
+    "accepted": 767,
     "total": 835,
-    "pending": 70,
+    "pending": 68,
     "sourceExtras": 69,
     "checkout": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
     "branch": "bruv/readability-pr45-sol-continuation",
