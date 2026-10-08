@@ -4765,15 +4765,17 @@
       "focus": "tests/fixtures/live-offline-model.ts",
       "initialBlob": null,
       "introducedBy": "a01c01f94014adcfffc850335c2e4a505c0a4fa3",
-      "state": "pending",
-      "acceptedBlob": null,
+      "state": "accepted",
+      "acceptedBlob": "24f5a569f4de0b25d4a38eb14108a5f5e7843c09",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
         "acceptedBlob": "24f5a569f4de0b25d4a38eb14108a5f5e7843c09",
         "primaryId": "task_4ea8c12f",
         "primaryCommit": "f65c6b2f3867a4ae87275b0b3516ecc46acee963",
+        "judgeIds": ["task_7ae37e7d"],
         "sourceCommit": "f65c6b2f3867a4ae87275b0b3516ecc46acee963",
-        "state": "needs-judge"
+        "state": "accepted-joined",
+        "reason": "Read all 32 lines of the exact candidate helper and both complete fixture callers. The single visible effect is replacing agent.streamFunction on the classic session obtained by the caller’s manager identity. Each invocation allocates its own assistant event stream and immediately pushes a done/stop message. The envelope retains the selected model api/provider/id, current timestamp, supplied text, stopReason, and explicitly zero token/cost usage together. There is no split decision, lifetime, or authority to reconstruct inside this helper; extracting the envelope or adding a context bag would make the narrow substitution less direct."
       }
     }
   ],
@@ -4899,7 +4901,7 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 137,
-    "pending": 14
+    "accepted": 138,
+    "pending": 13
   }
 }

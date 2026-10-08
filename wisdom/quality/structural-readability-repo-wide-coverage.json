@@ -24344,8 +24344,8 @@
       "file": "tests/fixtures/live-offline-model.ts",
       "initialBlob": "absent",
       "area": "live-native-audio",
-      "status": "pending",
-      "resumeState": "needs-judge",
+      "status": "accepted",
+      "resumeState": "accepted-joined",
       "sourceCommit": "f65c6b2f3867a4ae87275b0b3516ecc46acee963",
       "acceptedRelatedJudges": ["task_7d99ac05"],
       "acceptedBlob": "24f5a569f4de0b25d4a38eb14108a5f5e7843c09",
@@ -24367,6 +24367,21 @@
         "The specified preserved reconciliation does not contain an exact assigned-focus/candidate entry; candidate provenance is verified directly from Git rather than an inferred ledger acceptance.",
         "Runtime/live provider/device and PTY behavior remain unverified; parent owns audited isolated gates. Existing PTY cleanup code was not executed.",
         "No wisdom/value changes; parent owns aggregate wisdom."
+      ],
+      "judgeIds": ["task_7ae37e7d"],
+      "result": "Read all 32 lines of the exact candidate helper and both complete fixture callers. The single visible effect is replacing agent.streamFunction on the classic session obtained by the caller’s manager identity. Each invocation allocates its own assistant event stream and immediately pushes a done/stop message. The envelope retains the selected model api/provider/id, current timestamp, supplied text, stopReason, and explicitly zero token/cost usage together. There is no split decision, lifetime, or authority to reconstruct inside this helper; extracting the envelope or adding a context bag would make the narrow substitution less direct.",
+      "systemReason": "Read the entire instruction-continuity adapter: _buildRuntime binds the classic session in a manager-keyed WeakMap, lookup returns only that manager’s session, clear releases both maps, and _runAgentPrompt preserves the ordinary owner/instruction-frame path. Followed relevant exact-candidate main-owner acquisition, delegated queue admission, session.prompt, and close sections. The spoken fixture first acquires the real owner, enables delegation, then substitutes OFFLINE_DELEGATED_REPLY; its bridge rejects incomplete retained speech, passes bounded snapshot-derived speech to owner.delegate, and closes the owner when the complete delegation attempt settles. gptLiveRequest and bridge admission preserve speech/provenance distinctions. The push-to-talk fixture installs UNEXPECTED_NORMAL_MODEL_REPLY at session_start without replacing acquisition or transcript ownership. Its fake provider emits input/output transcript and turn callbacks, and its separately owned microphone controls epochs, deliberate stale frames, timer stop/close, and capture counters. Read extension dependency merging, default real owner, startup acquisition, session_start, and provider transcript/turn callbacks to confirm that injected audio/voice leave canonical owner orchestration intact. The helper replaces only model response transport, not user insertion, prompt preparation, authorization, history, or owner lifecycle. Preserve its exact bytes.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md in full.",
+        "Inspected exact commit with git show, and git diff --name-status from primaryBase f65c6b2f3867a4ae87275b0b3516ecc46acee963 to candidate f65c6b2f3867a4ae87275b0b3516ecc46acee963: empty diff, so no candidate-changed related source paths exist.",
+        "Resolved accepted focus blob with git rev-parse candidate:tests/fixtures/live-offline-model.ts.",
+        "Actual-source journey review only; no setup, test, build, dependency writes, credential reads, network calls, device access, delegation, cleanup, or source edits."
+      ],
+      "limits": [
+        "Runtime behavior and live authentication/device behavior remain unverified; parent owns audited isolated gates and runtime agent.model verification.",
+        "Review performed in durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_7ae37e7d; retained candidate evidence and existing worktree. Only this untracked judgment artifact was written.",
+        "Manager binding before installation is a deliberate fixture precondition; no new defensive behavior is proposed.",
+        "No wisdom notes or values edits: this judgment preserves existing source and parent owns aggregate wisdom."
       ]
     }
   ],
@@ -24387,9 +24402,9 @@
     "baselineFiles": 766,
     "finalGate": "pending; incomplete focus coverage",
     "liveAuth": "unverified/failing; preserved",
-    "accepted": 822,
+    "accepted": 823,
     "total": 836,
-    "pending": 14,
+    "pending": 13,
     "sourceExtras": 70,
     "checkout": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
     "branch": "bruv/readability-pr45-sol-continuation",
