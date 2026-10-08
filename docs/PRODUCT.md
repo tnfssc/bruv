@@ -1,5 +1,7 @@
 # bruv — Product Reference
 
+> Historical decision record. Dated implementation summaries below describe their recorded state, not necessarily today’s behavior. See [README](../README.md) for the current product and supported workflows. User decisions remain recorded here; this move does not revise them.
+
 > This document records the product direction and decisions stated by the user in this project conversation. Those statements are the source of truth. Implementation details may support them, but must not silently become product requirements.
 
 ## Live voice (2026-09-24, local build)
@@ -25,7 +27,7 @@ interrupting voice does not cancel agent work. /live stop ends voice;
 normal entry screen. Native startup, reply tails, interruption handling and
 the bounded playback cushion remain in place. No mic muting during playback.
 
-See [promotion work](wisdom/live/native-live-promotion.md) for integration and
+See [promotion work](../wisdom/live/native-live-promotion.md) for integration and
 proof. The physical user report is positive, not a guarantee across all routes.
 
 ## Current contract and hardening status (2026-09-05)
@@ -77,7 +79,7 @@ Root integration review rejected two incomplete first passes: graph bundling cha
 
 - [x] Integrate regressions, typecheck/build/smoke and real-terminal/model validation. Earlier medium successes do not establish minimal-reasoning reliability, and previous passing tests missed real integration bugs.
 
-> **Historical record below:** original product names, commands, paths and release evidence are retained. Current branding is bruv; see [README](README.md) and the [rename handoff](wisdom/packaging/bruv-rename.md).
+> **Historical record below:** original product names, commands, paths and release evidence are retained. Current branding is bruv; see [README](../README.md) and the [rename handoff](../wisdom/packaging/bruv-rename.md).
 
 ## Historical plan — Job attention checkpoints and cache countdown (implemented)
 
@@ -283,7 +285,7 @@ Status: this section keeps the user-approved pre-implementation requirements. Op
 
 - The existing `execute` tool can return images to the model for screenshot inspection and visual debugging.
 - This originally required keeping the then-current three-tool model and avoiding a separate model-facing image/read tool. The later unified execute migration superseded the tool count while preserving image delivery through `emitImage()` inside `execute`.
-- See [`wisdom/execute/execute-images.md`](./wisdom/execute/execute-images.md) for the helper API, implementation limits, and validation.
+- See [`wisdom/execute/execute-images.md`](../wisdom/execute/execute-images.md) for the helper API, implementation limits, and validation.
 
 ## Post-baseline — Interactive task monitor (phase 1 implemented)
 
@@ -410,7 +412,7 @@ Status: this section keeps the user-approved pre-implementation requirements. Op
 
 ## Current phase
 
-Phases 1, 2, and 3 are established for the current Linux/Bun baseline as of 2026-09-05. Phase 3 includes the isolated `execute` tool, module-loading and output hardening, pending-task continuation, and awaited process-group shutdown. See [`wisdom/resources/phase3-baseline.md`](./wisdom/resources/phase3-baseline.md) for validation evidence and remaining limitations. Cross-platform release work and the explicitly deferred items above remain deferred.
+Phases 1, 2, and 3 are established for the current Linux/Bun baseline as of 2026-09-05. Phase 3 includes the isolated `execute` tool, module-loading and output hardening, pending-task continuation, and awaited process-group shutdown. See [`wisdom/resources/phase3-baseline.md`](../wisdom/resources/phase3-baseline.md) for validation evidence and remaining limitations. Cross-platform release work and the explicitly deferred items above remain deferred.
 
 ## Post-baseline — Natural execute/background UX audit
 

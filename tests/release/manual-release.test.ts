@@ -20,7 +20,7 @@ async function withReleaseRepository(scenario: (root: string) => Promise<void>) 
   const root = await mkdtemp(join(tmpdir(), "bruv-manual-release-"));
   try {
     await mkdir(join(root, "scripts/release"), { recursive: true });
-    await mkdir(join(root, "support/releases"), { recursive: true });
+    await mkdir(join(root, "docs/releases"), { recursive: true });
     await writeFile(
       join(root, "scripts/release/prepare-manual-release.ts"),
       await Bun.file("scripts/release/prepare-manual-release.ts").text(),
@@ -42,7 +42,7 @@ describe("manual release preparation", () => {
   test("prepares version and notes idempotently without committing or tagging", async () => {
     await withReleaseRepository(async (root) => {
       const head = git(root, "rev-parse", "HEAD");
-      const notesPath = join(root, "support/releases/release-v0.15.3.md");
+      const notesPath = join(root, "docs/releases/release-v0.15.3.md");
       const first = prepare(root);
       expect(first.status, first.stderr).toBe(0);
       expect(first.stdout).toBe("v0.15.3");
@@ -63,7 +63,7 @@ describe("manual release preparation", () => {
 
   test("keeps reviewed notes instead of regenerating them", async () => {
     await withReleaseRepository(async (root) => {
-      const notesPath = join(root, "support/releases/release-v0.15.3.md");
+      const notesPath = join(root, "docs/releases/release-v0.15.3.md");
       await writeFile(notesPath, "Reviewed notes\n");
       const result = prepare(root);
       expect(result.status, result.stderr).toBe(0);
@@ -81,7 +81,7 @@ describe("manual release preparation", () => {
           expect(result.status, result.stderr).toBe(0);
         }
         const pkg = await readFile(join(root, "package.json"), "utf8");
-        await writeFile(join(root, "support/releases/release-v0.15.3.md"), "");
+        await writeFile(join(root, "docs/releases/release-v0.15.3.md"), "");
         const result = prepare(root);
         expect(result.status).not.toBe(0);
         expect(result.stderr).toContain("release notes are empty");

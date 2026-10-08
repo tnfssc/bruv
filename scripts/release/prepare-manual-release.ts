@@ -38,7 +38,7 @@ if (import.meta.main) {
   const version = nextReleaseVersion(pkg.version, latest);
   const tag = "v" + version;
   if (tags.includes(tag)) throw new Error("release tag already exists: " + tag);
-  const notesPath = resolve(root, "support", "releases", "release-" + tag + ".md");
+  const notesPath = resolve(root, "docs", "releases", "release-" + tag + ".md");
   const range = latest ? latest + "..HEAD" : "HEAD";
   const subjects = git("log", "--format=%s", range).split("\n").filter(Boolean);
   if (!subjects.length) throw new Error("no changes since last release; refusing empty release");

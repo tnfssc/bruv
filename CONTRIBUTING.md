@@ -53,7 +53,7 @@ ignored `artifacts/goals/`. Do not describe a mocked SDK stream as live-model ev
 
 ## Architecture
 
-Read [the code map](ARCHITECTURE.md) before choosing a home for new code. It names runtime owners, shared boundaries, the canonical T3 integration, research archives and test/build discovery rules. Keep code with its real owner, not in whichever file already imports a similar type.
+Read [the code map](docs/ARCHITECTURE.md) before choosing a home for new code. It names runtime owners, shared boundaries, the canonical T3 integration, research archives and test/build discovery rules. Keep code with its real owner, not in whichever file already imports a similar type.
 
 Prompt text belongs in `src/prompts/`. Start with [Editing prompts](wisdom/prompts/prompts.md) and the assembled input, not an isolated sentence. Preserve explicit custom prompts and instruction continuity.
 

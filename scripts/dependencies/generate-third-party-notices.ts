@@ -83,7 +83,12 @@ async function readPackageNotices(
 
   const fallback = fallbackNotices[info.name];
   if (fallback) {
-    return [{ name: `curated ${fallback}`, text: await readLicense(join(root, "licenses/third-party/npm", fallback), budget) }];
+    return [
+      {
+        name: `curated ${fallback}`,
+        text: await readLicense(join(root, "licenses/third-party/npm", fallback), budget),
+      },
+    ];
   }
   if (pinnedPiPackages.has(info.name) && info.version === PI_VERSION) return [];
   throw new Error(`${info.name}@${info.version} has no packaged or curated LICENSE, COPYING, or NOTICE file`);

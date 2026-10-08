@@ -6,7 +6,7 @@ import { validateReleaseTag } from "./validate-release-tag";
 export async function selectReleaseNotes(tag: string, version: unknown, root: string): Promise<string> {
   const error = validateReleaseTag(tag, version);
   if (error) throw new Error(error);
-  const path = resolve(root, "support", "releases", "release-v" + version + ".md");
+  const path = resolve(root, "docs", "releases", "release-v" + version + ".md");
   const file = await stat(path).catch(() => undefined);
   if (!file?.isFile() || file.size === 0) throw new Error("Missing or empty release notes: " + path);
   return path;

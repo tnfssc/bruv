@@ -40,7 +40,7 @@ jobs:
           git checkout -B release origin/develop
           test "$(git rev-parse HEAD:.github/workflows/release.yml)" = "$workflow_sha" || { echo "Release workflow changed since dispatch; retry from latest develop"; exit 1; }
           tag=$(bun scripts/release/prepare-manual-release.ts)
-          git add package.json "support/releases/release-$tag.md"
+          git add package.json "docs/releases/release-$tag.md"
           if ! git diff --cached --quiet; then
             git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m "Prepare $tag release"
             git push origin HEAD:refs/heads/develop

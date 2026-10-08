@@ -41,14 +41,14 @@ Keep historical `git show COMMIT:old/path` references intact. They identify Git 
 
 ## Build, tests and generated data
 
-- [`scripts/`](scripts/README.md) groups build, CI, release and feature tooling by owner. The default build owns the CLI/claude-compat pair, not T3.
+- [`scripts/`](../scripts/README.md) groups build, CI, release and feature tooling by owner. The default build owns the CLI/claude-compat pair, not T3.
 - `native/` owns native source and native-language tests.
 - `tests/` is the recursive deterministic test root. Feature tests, probes and fixtures stay with their owner. Shared helpers have one home; whole-repo contracts stay at the root. Tooling tests belong here too, not under `scripts/`.
-- `support/releases/` holds versioned release notes. `licenses/third-party/` holds license inputs.
+- `docs/releases/` holds versioned release notes. `licenses/third-party/` holds license inputs.
 - `dist/`, `runtime-assets/`, `.cache/` and `artifacts/` are generated, ignored outputs—not alternate source homes.
 
 Typecheck and lint must still cover maintained code after a move. Tests must still be discovered.
 
-Run `bun run ci` with the documented pinned tools before pushing. CI uses that same Linux gate. macOS and release artifact checks have separate platform responsibilities. See [Contributing](CONTRIBUTING.md).
+Run `bun run ci` with the documented pinned tools before pushing. CI uses that same Linux gate. macOS and release artifact checks have separate platform responsibilities. See [Contributing](../CONTRIBUTING.md).
 
 `tests/architecture.test.ts` checks key dependency directions and single-source locations. `tests/session-boundaries.test.ts` protects the provider-independent session boundary. Add small checks for concrete boundaries, not a framework that forbids every possible dependency.
