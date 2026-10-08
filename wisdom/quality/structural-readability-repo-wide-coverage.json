@@ -3001,13 +3001,47 @@
       "initialBlob": "7dc219cb2d14530fd8ce0738623792c6016a1de6",
       "status": "pending",
       "area": "remote",
-      "resumeState": "pending-primary-unstarted",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_927bcc06",
+      "primaryCommit": "688dd7ab7c441ea13f4a248c4044a1a7455f6be5",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "688dd7ab7c441ea13f4a248c4044a1a7455f6be5",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
-      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
+      "primaryBase": "6adca7ac2ffc4107f298b127600257efb5126e46",
+      "primaryResult": "Three cohesive async proof operations now keep each original identity, transport/session disturbance, reconciliation and assertions together. The top-level try shows connect -> launch proof -> reply proof -> session ownership proof followed by the existing shared cleanup. A local orchestration comment explains why RPC remains alive through the interactive proof. All original scenario bodies, fixture startup/helpers, commands, waits, assertions, owner reads and cleanup are unchanged.",
+      "primaryPaths": [
+        "scripts/remote-recovery-e2e.ts"
+      ],
+      "primaryChecks": [
+        {
+          "check": "Read existing focus, caller scripts/remote-e2e.sh, drop-response fixture tests/fixtures/remote-e2e/recovery-ssh.sh, preserved focus evidence, values/readability guidance and repo/area ledgers",
+          "result": "Focus present, preserved baseline blob 7dc219cb2d14530fd8ce0738623792c6016a1de6; no predecessor candidate import needed."
+        },
+        {
+          "check": "Required Biome formatter via node child_process argv, changed source path only",
+          "result": "Exit 0; no fixes applied.",
+          "executable": "/home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/@biomejs/biome/bin/biome",
+          "retainedEnvironment": "/tmp/pr45-remote-format-Vveqdk"
+        },
+        {
+          "check": "Exact source preservation audit against pre-change HEAD",
+          "result": "Original scenario bodies, startup/helpers, connect operation and finally preserved byte-for-byte; all three proofs awaited sequentially. This is a static audit, not runtime proof."
+        },
+        {
+          "check": "git diff --check",
+          "result": "Exit 0."
+        },
+        {
+          "check": "Commit source only",
+          "result": "scripts/remote-recovery-e2e.ts"
+        }
+      ],
+      "primaryLimits": [
+        "No repository setup, tests, builds, remote recovery actions or credential/device access performed. Parent owns isolated runtime gates and fresh independent actual-code judgment.",
+        "Optional TypeScript AST audit could not load /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/typescript/lib/typescript.js (ENOENT); exact source-preservation audit used instead.",
+        "No per-worker wisdom edits; parent owns aggregate wisdom."
+      ]
     },
     {
       "file": "scripts/remote-root-placement-e2e.ts",
@@ -13810,8 +13844,8 @@
       "file": "tests/fixtures/remote-e2e/recovery-ssh.sh",
       "initialBlob": "absent",
       "area": "remote",
-      "status": "pending",
-      "resumeState": "needs-judge",
+      "status": "accepted",
+      "resumeState": "accepted-joined",
       "sourceCommit": "07c2ce9c71929b9f1de2521f9f1b50a08b94a936",
       "acceptedRelatedJudges": [
         "task_f2c831a6"
@@ -13848,6 +13882,24 @@
         "No repository setup, tests, builds, Docker, SSH, recovery actions, credentials, provider/device access, deletion or cleanup performed. Parent owns audited isolated runtime gates and independent exact-candidate judgment.",
         "Parser/source reading is not dynamic recovery proof. Existing string-pattern request matching and evidence-write/sentinel-move error handling are preserved, not hardened.",
         "No automatic setup outcome was rerun, bypassed, or asserted successful. Old worktrees and candidates remain untouched. Parent owns aggregate wisdom; no per-worker wisdom edits."
+      ],
+      "judgeIds": [
+        "task_477023ef"
+      ],
+      "result": "Independent reading of the exact candidate, not checkout HEAD. Primary base equals candidate, so there is no new primary patch. Compared candidate to its parent 2f8ff38457efdc332578a24731b6cda7d42f3985: the helper is newly added and the harness replaces the expanding protocol heredoc with a copied helper and one exec binding. This is a meaningful existing structural boundary: setup chooses fixture authorities, while this directly readable POSIX shell file owns forwarding and deliberate response loss without a second shell-dollar interpretation layer. The config and evidence-directory arguments are removed before forwarding the original SSH argv. Within each short branch, arming, owner response verification, evidence publication, sentinel consumption, diagnostic and failure exit are adjacent. Ordinary forwarding remains the final control path; non-control invocation directly execs real SSH. Keeping the two domain branches explicit is preferable to a generalized transport helper or context bag. Unchanged decision: this focus already presents its complete operation and effects clearly; further extraction would scatter that short journey. The related harness also remains readable as ordered fixture setup, readiness, mode selection and environment handoff.",
+      "systemReason": "The harness installs this helper only for scripts/remote-recovery-e2e.ts, after SSH/provider readiness; all other modes keep their ordinary SSH shim. The helper runs through /bin/sh, so its source need not be executable. The final PATH selects the shim; sshControl preserves PATH through environment scrubbing, sends exactly one JSON line, and rejects nonzero SSH status. An armed marked LOST_LAUNCH sends once, requires matching taskId and accepted/running owner state, saves the response, consumes the launch sentinel and exits 42 with the unknown-outcome diagnostic. The recovery caller reads that evidence, retries the original taskId and checks unchanged owner PID/startTime and task count. An armed answer sends once, requires a nonempty owner replyId and uncertain/delivered receipt, saves evidence, consumes its sentinel and exits 42; the caller compares that replyId with the local persisted intent, checks the owner answer, syncs and retries the same reply. Without a matching armed branch, the already-read control line is forwarded once and SSH status returned. Request read failure or owner/validation failure exits 1 without deliberately consuming the sentinel. Non-control calls preserve argv and pinned fixture config. Parent protocol body is byte-identical after undoing heredoc-dollar escaping and replacing config/drop paths; readiness/setup prefix and ordinary-mode/final-handoff suffix are also identical. No source restoration, unrelated integration or further change is needed.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md; inspected repo-wide and remote area ledgers and the exact focus coverage entry. Prior related acceptance was not used as a substitute for fresh source reading.",
+        "Read the full two-path changed-source diff against candidate parent, candidate harness/helper, SSH transport/environment boundary and recovery caller, plus ordinary test caller cwd/mode handoff. Source reads used explicit candidate and parent Git revisions.",
+        "Read-only JS comparison confirmed the 1673-character protocol body is identical after path parameterization and shell-dollar unescaping; setup/readiness prefix and non-recovery/final-handoff suffix are identical.",
+        "git diff --check candidate-parent candidate passed. Exact blobs resolved with git rev-parse. No setup, tests, builds, Docker, SSH, tmux or recovery execution performed."
+      ],
+      "limits": [
+        "Structural/source judgment only. Parent owns audited isolated batch/runtime gates; this review supplies no copied-helper execution or cleanup-lifetime proof.",
+        "Correction to supplied primary context: answer interception is sentinel-armed, not additionally fixture-marker-filtered; the helper checks replyId existence, not equality to request.replyId. Equality is checked by the recovery caller. These are preserved behaviors, not a structural rejection.",
+        "Existing string-pattern request selection and unchecked evidence-write/sentinel-move failures remain unchanged. No new exactly-once or arbitrary interruption guarantee is claimed.",
+        "No real provider authentication, credential or device access. Fixture configuration references are source context only. Automatic setup was not rerun and no setup/host-hash failure was bypassed.",
+        "No source or wisdom edits, delegation, destructive operations, existing worktree/candidate mutation, push, PR or merge. Only this untracked judgment file is written; aggregate wisdom remains parent-owned."
       ]
     }
   ],

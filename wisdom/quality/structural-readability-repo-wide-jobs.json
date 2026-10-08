@@ -199,7 +199,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_927bcc06",
         "branch": "bruv/pr45-primary-scripts-remote-recovery-e2e-927bcc06",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "688dd7ab7c441ea13f4a248c4044a1a7455f6be5"
       },
       {
         "id": "task_477023ef",
@@ -208,7 +209,7 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_477023ef",
         "branch": "bruv/pr45-judge-tests-fixtures-remote-e2e-rec-477023ef",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled"
       },
       {
         "id": "task_4c34a8a9",
@@ -973,6 +974,15 @@
         "focus": "scripts/tasks-ui-proof-screenshots.ts",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_48469090",
         "branch": "bruv/pr45-primary-scripts-tasks-ui-proof-scre-48469090",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_8399b33f",
+        "stage": "primary",
+        "focus": "scripts/terminal-perf/audit-probes/disk-callbacks.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_8399b33f",
+        "branch": "bruv/pr45-primary-scripts-terminal-perf-audit-8399b33f",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
       }
