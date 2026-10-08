@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, test } from "bun:test";
+import { afterEach, describe, expect, spyOn, test } from "bun:test";
 import { createHash } from "node:crypto";
 import {
   chmod,
@@ -242,9 +242,13 @@ describe("installation layout and file identity", () => {
     "permission failure preserves executable without staging leftovers",
     async () => {
       const x = await target();
+      const f = fixture();
       await chmod(x.dir, 0o500);
       try {
-        await expect(updateBruv(deps(fixture().fetch, x.path))).rejects.toThrow("permissions");
+        await expect(updateBruv(deps(f.fetch, x.path))).rejects.toThrow(
+          /Could not update Bruv pair \(create staging directory\):.*(?:EACCES|permission denied)/i,
+        );
+        expect(f.calls).toEqual([releaseUrl]);
         expect(await Bun.file(x.path).text()).toBe("old");
         expect((await readdir(x.dir)).filter((name) => name.startsWith(".bruv-update-"))).toEqual([]);
       } finally {
@@ -398,6 +402,75 @@ describe("release selection and installed pair repair", () => {
 });
 
 describe("artifact download integrity", () => {
+  test("binary downloads have a longer deadline than metadata and checksums", async () => {
+    const x = await target();
+    const timeout = spyOn(AbortSignal, "timeout");
+    const f = fixture();
+    const signals: (AbortSignal | null | undefined)[] = [];
+    const fetch = (async (url: RequestInfo | URL, init?: RequestInit) => {
+      signals.push(init?.signal);
+      return f.fetch(url, init);
+    }) as typeof globalThis.fetch;
+    try {
+      await updateBruv(deps(fetch, x.path));
+      expect(f.calls).toEqual([
+        releaseUrl,
+        root("v0.3.0") + "bruv-linux-x64",
+        root("v0.3.0") + "bruv-linux-x64.sha256",
+        root("v0.3.0") + "bruv-claude-compat-linux-x64",
+        root("v0.3.0") + "bruv-claude-compat-linux-x64.sha256",
+      ]);
+      expect(timeout.mock.calls.map(([ms]) => ms)).toEqual([300_000, 900_000, 300_000, 900_000, 300_000]);
+      expect(signals.every((signal) => signal instanceof AbortSignal)).toBe(true);
+    } finally {
+      timeout.mockRestore();
+    }
+  });
+
+  test.each(["request", "body"])(
+    "download timeout during %s reports network phase and leaves pair unchanged",
+    async (where) => {
+      const x = await target();
+      const connector = join(x.dir, "bruv-claude-compat");
+      await writeFile(connector, "old connector");
+      const f = fixture();
+      const fetch = (async (url: RequestInfo | URL, init?: RequestInit) => {
+        if (String(url) !== root("v0.3.0") + "bruv-linux-x64") return f.fetch(url, init);
+        const error = new DOMException("The operation timed out.", "TimeoutError");
+        if (where === "request") throw error;
+        return new Response(
+          new ReadableStream({
+            start(controller) {
+              controller.error(error);
+            },
+          }),
+        );
+      }) as typeof globalThis.fetch;
+      let probes = 0;
+      let replacements = 0;
+      await expect(
+        updateBruv(
+          deps(fetch, x.path, {
+            runBinary: async () => {
+              probes++;
+              return "0.3.0";
+            },
+            rename: async () => {
+              replacements++;
+            },
+          }),
+        ),
+      ).rejects.toThrow(
+        "Could not update Bruv pair (download and stage bruv-linux-x64): Unable to download bruv-linux-x64: The operation timed out.. Installed files unchanged.",
+      );
+      expect(await readFile(x.path, "utf8")).toBe("old");
+      expect(await readFile(connector, "utf8")).toBe("old connector");
+      expect((await readdir(x.dir)).sort()).toEqual(["bruv", "bruv-claude-compat"]);
+      expect(probes).toBe(0);
+      expect(replacements).toBe(0);
+    },
+  );
+
   test.each([
     ["wrong hash", { bruv: { checksum: "0".repeat(64), binaryBody: body } }, "Checksum verification failed"],
     ["malformed checksum", { bruv: { checksum: "not-a-sha" } }, "Checksum verification failed"],
@@ -585,7 +658,9 @@ describe("pair publication and recovery", () => {
           },
         }),
       ),
-    ).rejects.toThrow("Installed files unchanged");
+    ).rejects.toThrow(
+      "Could not update Bruv pair (replace installed bruv-claude-compat): injected replacement failure. Installed files unchanged.",
+    );
     expect(await readFile(x.path, "utf8")).toBe("old");
     expect(await readFile(connector, "utf8")).toBe("old connector");
   });

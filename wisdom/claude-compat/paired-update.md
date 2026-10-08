@@ -94,3 +94,10 @@ The connector `update` command now enters this same normal updater through root
 CLI dispatch; it does not run a Claude updater. See [connector update](connector-update.md)
 for the branch, offline command-path proof and the important limit: T3 may still
 say unchanged/outdated because it compares protocol against latest Claude.
+
+## Download timeout and failure phases
+
+The updater now separates binary download deadlines from metadata/checksum
+requests and reports the failed phase instead of blanket permissions advice.
+See [timeout investigation](../releases/updater-timeout-diagnostics.md) for
+artifact-size evidence, tests, scope and remaining network limits.

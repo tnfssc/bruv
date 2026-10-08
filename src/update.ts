@@ -46,7 +46,10 @@ export function isCompiledInvocation(moduleUrl = import.meta.url): boolean {
   return moduleUrl.startsWith("file:///$bunfs/");
 }
 type Version = [number, number, number];
-type ReleaseRequest = (url: string, accept: string) => Promise<Response>;
+// Keep metadata/checksum requests bounded separately from ~90 MB release binaries.
+const METADATA_TIMEOUT_MS = 300_000;
+const DOWNLOAD_TIMEOUT_MS = 900_000;
+type ReleaseRequest = (url: string, accept: string, timeoutMs?: number) => Promise<Response>;
 type ReleaseArtifact = { name: string; binaryUrl: string; checksumUrl: string };
 type StableRelease = { version: string; parts: Version; bruv: ReleaseArtifact; connector: ReleaseArtifact };
 type InstalledExecutable = { name: string; path: string; original?: Stats };
@@ -70,10 +73,10 @@ export async function updateBruv(deps: UpdateDeps = {}): Promise<UpdateResult> {
   const currentParts = version(current);
   if (!currentParts) throw new Error("Cannot self-update this development version: " + current);
   const http = deps.fetch ?? fetch;
-  const request: ReleaseRequest = (url, accept) =>
+  const request: ReleaseRequest = (url, accept, timeoutMs = METADATA_TIMEOUT_MS) =>
     http(url, {
       headers: { accept, "user-agent": "bruv/" + current },
-      signal: AbortSignal.timeout(300_000),
+      signal: AbortSignal.timeout(timeoutMs),
     });
   const release = await fetchStablePair(request, updateAsset);
   const installed = await inspectInstalledPair(deps.executable ?? process.execPath);
@@ -207,7 +210,7 @@ async function stageVerifiedExecutable(
 ): Promise<void> {
   let bytes: Uint8Array;
   try {
-    const response = await request(artifact.binaryUrl, "application/octet-stream");
+    const response = await request(artifact.binaryUrl, "application/octet-stream", DOWNLOAD_TIMEOUT_MS);
     if (!response.ok) throw new Error("HTTP " + response.status);
     bytes = new Uint8Array(await response.arrayBuffer());
     if (!bytes.length) throw new Error("empty download");
@@ -242,12 +245,16 @@ async function installReleasePair(
   let stage: string | undefined;
   let keepRecovery = false;
   const replaced: { path: string; backup?: string }[] = [];
+  let phase = "create staging directory";
   try {
     stage = await mkdtemp(join(dirname(installed.bruv.path), ".bruv-update-"));
+    phase = "download and stage " + release.bruv.name;
     await stageVerifiedExecutable(stage, installed.bruv, release.bruv, installed.bruv.original.mode, request);
+    phase = "download and stage " + release.connector.name;
     await stageVerifiedExecutable(stage, installed.connector, release.connector, installed.bruv.original.mode, request);
     const stagedBruv = join(stage, installed.bruv.name);
     const stagedConnector = join(stage, installed.connector.name);
+    phase = "verify staged Bruv pair";
     // Product versions are independent of Claude compatibility --version output.
     if (
       (await run(stagedBruv, ["--version"])).trim() !== release.version ||
@@ -255,10 +262,12 @@ async function installReleasePair(
     )
       throw new Error("Staged Bruv pair version mismatch (expected " + release.version + ")");
     if (checkLiveHelper) await run(stagedBruv, ["--live-self-test"]);
+    phase = "back up installed Bruv pair";
     const files = [installed.bruv, installed.connector];
     for (const file of files) {
       if (file.original) await copyFile(file.path, join(stage, file.name + ".previous"));
     }
+    phase = "check installed Bruv pair for concurrent changes";
     for (const file of files) {
       const now = await inspectOptional(file.path);
       if (!sameFile(now, file.original))
@@ -266,6 +275,7 @@ async function installReleasePair(
     }
     // Two renames are NOT a transaction. Publish the connector first; retain originals until both succeed.
     for (const file of [installed.connector, installed.bruv]) {
+      phase = "replace installed " + file.name;
       await move(join(stage, file.name), file.path);
       replaced.push({ path: file.path, backup: file.original ? join(stage, file.name + ".previous") : undefined });
     }
@@ -285,7 +295,9 @@ async function installReleasePair(
     }
     keepRecovery = failures.length > 0;
     throw new Error(
-      "Could not update Bruv pair; check installation-directory permissions: " +
+      "Could not update Bruv pair (" +
+        phase +
+        "): " +
         errorMessage(error) +
         (keepRecovery
           ? ". Rollback failed: " +
