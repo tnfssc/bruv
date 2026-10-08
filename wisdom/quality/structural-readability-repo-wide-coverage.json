@@ -10057,12 +10057,12 @@
     {
       "file": "tests/claude-compat/fixtures/http-mcp-lifecycle.ts",
       "initialBlob": "2885a3af02f178caee3a18d89fda257fa8ef49cb",
-      "status": "pending",
+      "status": "accepted",
       "area": "compatibility-t3",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_376be59e",
       "primaryCommit": "f58c8bc4992d3a96671e8b9b1a3499c346232f19",
-      "judgeIds": [],
+      "judgeIds": ["task_00a65847"],
       "sourceCommit": "f58c8bc4992d3a96671e8b9b1a3499c346232f19",
       "report": "wisdom/quality/structural-readability-areas/compatibility-t3.json",
       "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection.",
@@ -10100,17 +10100,32 @@
         "No setup, tests or builds run; parent owns audited isolated batch gates.",
         "Independent readability judgment and runtime model verification remain parent-owned.",
         "No per-worker wisdom written; aggregate wisdom remains parent-owned."
+      ],
+      "acceptedBlob": "e8f406ce506a6ea94f4935e1f4d971c0087108c1",
+      "result": "The extracted operation is a coherent session-construction authority, not an arbitrary named block: it creates one stable transport, binds admission/removal callbacks to that transport, installs the echo peer and connects the SDK before returning. The request handler now exposes the routing and fault-injection sequence without interrupting it with peer construction. The baseline callback captured the mutable request-local transport and required a non-null assertion; the candidate visibly binds a constant transport. Fixture-level session tracking and explicit host shutdown remain adjacent to the public controls rather than becoming a context bag.",
+      "systemReason": "Traced discovery/park, concurrent resume, echo dispatch, failed DELETE, external persistent connection, delayed deletion, repeated runs, interrupt/reuse and host-before-connector shutdown through the actual mcp.test.ts and runtime test callers. InjectedMcpSession still owns authorization, client lease acquisition, DELETE termination and local client close; runtime preflight reacquires leases and result delivery parks them before result/idle publication. The SDK admits a session during initialize handling and invokes removal during DELETE, matching the new closure lifetime. Request recording, reject-DELETE-before-resolution, initialize-only creation, unknown-session 404, deletion delay, loopback listening and memoized stopHost retain their ordering and effects.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read the complete fixture from exact candidate and diff against 961e0df3cabde7ce9b127e395fa9d94bbcabfef1; this is the only changed path in that range.",
+        "Read assigned focus rows in exact-candidate area/coverage ledgers: pending-primary, no earlier accepted/rejected focus judgment; no focus row found in jobs ledger.",
+        "Read all fixture call sites in mcp.test.ts and relevant runtime-test journeys at the candidate, plus corresponding production connection and result-boundary seams.",
+        "Read installed SDK initialization/DELETE callbacks and close behavior read-only.",
+        "Verified exact candidate focus blob with git rev-parse."
+      ],
+      "limits": [
+        "Static readability and behavior-path review only; no setup, tests, builds or runtime gates run. Installed SDK source was inspected read-only, not exercised. Parent owns audited batch gates.",
+        "No unrelated candidate source, accepted work, ledger or wisdom was modified."
       ]
     },
     {
       "file": "tests/claude-compat/fixtures/stdio-mcp.ts",
       "initialBlob": "3dcb59b21e85d47867b3acbd715778117bf8733b",
-      "status": "pending",
+      "status": "accepted",
       "area": "compatibility-t3",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_c0e52552",
       "primaryCommit": "ef15e5aae2720d9791e3d049f84a8dab564da02c",
-      "judgeIds": [],
+      "judgeIds": ["task_00a65847"],
       "sourceCommit": "ef15e5aae2720d9791e3d049f84a8dab564da02c",
       "report": "wisdom/quality/structural-readability-areas/compatibility-t3.json",
       "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection.",
@@ -10128,6 +10143,20 @@
         "No source changes, so no formatter invocation or source commit was needed.",
         "Independent exact-candidate judge remains parent-owned.",
         "Wisdom and values unchanged: no new lesson; parent owns aggregate wisdom."
+      ],
+      "acceptedBlob": "3dcb59b21e85d47867b3acbd715778117bf8733b",
+      "result": "The sole registration contains the entire environment probe: it samples the live child environment when called, reports its PID and configured/inherited provider observations, and lists forbidden control names rather than their values. Registration, response shape and connection startup can be read as one local operation. Extracting the object or name filter would separate the observation from its only consumer without resolving scattered authority or lifetime.",
+      "systemReason": "Read the direct mcp.test.ts launch/call/close journey and the composition test that routes the environment tool through real Pi tool execution and then runtime.close(). Their parsed response fields correspond directly to the fixture, and both use its PID to assert process exit. Production startConnection constructs the explicitly configured child environment with childAgentEnvironment, then hands transport/process ownership to the SDK; SDK default inheritance is an ordinary-environment allowlist. Production closeConnection and runtime.close retain teardown responsibility. The fixture should observe that boundary, not implement its own filtering or shutdown policy.",
+      "checks": [
+        "Read the complete fixture and actual callers from ef15e5aae2720d9791e3d049f84a8dab564da02c.",
+        "Read only this focus row/evidence in area and repository-wide ledgers: pending-primary rather than a rejection; no focus row found in jobs ledger.",
+        "Verified exact focus blob equals its ledger initialBlob; supplied primaryBase equals candidate and has no changed source paths.",
+        "Read childAgentEnvironment, MCP admission/startConnection/closeConnection, runtime close, and installed SDK stdio default-environment merge and process-close implementation.",
+        "Confirmed shared production MCP/frontend/runtime blobs are identical across the three supplied candidate commits, so these system readings apply to each exact candidate."
+      ],
+      "limits": [
+        "Static review only; caller assertions were read, not run. No setup, tests, builds or runtime gates run.",
+        "The probe is not an exhaustive environment-security test; preserving it does not assert comprehensive coverage of every root-control prefix. No source changes were made."
       ]
     },
     {
@@ -10147,12 +10176,12 @@
     {
       "file": "tests/claude-compat/native-adapter-prompt-ownership.ts.txt",
       "initialBlob": "5ea45ec68845bb716a76b40c94407a36e2c590f9",
-      "status": "pending",
+      "status": "accepted",
       "area": "compatibility-t3",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_4fcbcb48",
       "primaryCommit": "b060cdae0f2c664c27e6cde42cd76eff1d8eac02",
-      "judgeIds": [],
+      "judgeIds": ["task_00a65847"],
       "sourceCommit": "b060cdae0f2c664c27e6cde42cd76eff1d8eac02",
       "report": "wisdom/quality/structural-readability-areas/compatibility-t3.json",
       "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection.",
@@ -10182,6 +10211,20 @@
         "No formatter invoked or commit created because changed source paths are empty.",
         "No per-worker wisdom edits; parent owns aggregate wisdom.",
         "Independent readability judgment and runtime model verification remain parent-owned."
+      ],
+      "acceptedBlob": "5ea45ec68845bb716a76b40c94407a36e2c590f9",
+      "result": "The provenance comment explains why this is executable pinned upstream text with erased SDK type references. One predicate owns plural UUID detection/string filtering and singular fallback; the immediately following predicate makes echoed UUID membership authoritative before the known-echo-mode/non-human-origin fallback. Their decision sequence is directly visible, with no distributed state or lifetime to reconstruct. Renaming or extracting these pinned predicates would weaken the exact-text oracle without improving the reading journey.",
+      "systemReason": "Traced the sole consumer in claude-compat-prompt-ownership.test.ts: an owned shell completion wakes Pi while a new human input remains in preflight; the autonomous result carries task-notification origin and no human UUID, and the pinned transpiled classifier marks it foreign to the new prompt in early echo mode. The caller optionally compares exact function text from an externally supplied adapter source. Runtime records created human message identity in a WeakMap and calls consumeUser only on actual user message_start; frontend resets UUID/origin state at run begin, records consumed task custom messages, and generates origin plus echoes at result publication. Those live attribution responsibilities correctly stay outside the pinned oracle.",
+      "checks": [
+        "Read complete pinned fixture and its sole consumer from b060cdae0f2c664c27e6cde42cd76eff1d8eac02, including optional upstream comparison and Bun.Transpiler invocation.",
+        "Read only assigned focus rows/evidence in exact-candidate area and repository-wide ledgers: pending-primary, no accepted/rejected focus candidate; no focus row found in jobs ledger.",
+        "Verified exact focus blob equals its ledger initialBlob; supplied primaryBase equals candidate and has no changed source paths.",
+        "Read runtime admission/message-created/message_start attribution and frontend begin/consumeUser/custom-message/result/settled paths."
+      ],
+      "limits": [
+        "Static review only; no setup, tests, builds, transpiler execution or runtime gates run.",
+        "The external official-adapter source was not supplied or accessed; the optional exact-upstream assertion was inspected, not executed. The single consumer journey does not establish exhaustive predicate coverage.",
+        "No source, unrelated accepted work or wisdom was modified."
       ]
     },
     {
@@ -13841,13 +13884,46 @@
       "initialBlob": "7a393249d4cd32e63f236ca44eedc2a83440d7d5",
       "status": "pending",
       "area": "compatibility-t3",
-      "resumeState": "pending-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_03c6a29d",
+      "primaryCommit": "aea5504bc5ab642ca72ab9c14db0582a00c479cd",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "aea5504bc5ab642ca72ab9c14db0582a00c479cd",
       "report": "wisdom/quality/structural-readability-areas/compatibility-t3.json",
-      "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+      "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection.",
+      "primaryBase": "aea5504bc5ab642ca72ab9c14db0582a00c479cd",
+      "primaryResult": "The test owns its mkdtemp fixture inside try/finally. Setup seeds all three protected state directories and a sentinel-producing legacy override. The adjacent Bun.spawn explicitly supplies HOME, an unusable PATH, and BRUV_WEB_SERVER. Promise.all joins child exit with draining both output streams before any assertions or fixture cleanup. Assertions directly establish successful guidance, empty stderr, no override sentinel or cache, and unchanged entries and bytes in every protected directory. CLI web dispatch calls runWeb and exits before normal interactive startup; runWeb only validates flags and prints externalT3Guide. Neighboring unit tests own detailed guide and flag behavior, leaving this process test focused on compiled-command non-interference. Extracting fixture/process/assertion helpers would hide this short, already-local ownership journey without removing a reconstruction burden. All existing assertions and security checks remain unchanged.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        {
+          "kind": "static-reading",
+          "paths": [
+            "tests/t3/web-launcher-process.test.ts",
+            "src/cli.ts",
+            "src/t3/web/launcher.ts",
+            "tests/t3/web-launcher.test.ts",
+            "package.json"
+          ],
+          "result": "Traced fixture lifetime, compiled invocation, output drain, mutation checks, and actual web dispatch without executing the test."
+        },
+        {
+          "kind": "focus-evidence",
+          "result": "Resume reconciliation row 80, repo-wide focus row, and area focus row all record pending-primary, with no prior primary candidate or rejected candidate. Existing focus blob matches recorded baseline 7a393249d4cd32e63f236ca44eedc2a83440d7d5."
+        },
+        {
+          "kind": "guidance",
+          "result": "Read wisdom/values.md and structural-readability-guidance.md. No wisdom/values edits: no new lesson; aggregate wisdom belongs to parent."
+        },
+        {
+          "kind": "formatter",
+          "result": "Not applicable: no changed source paths and no source commit created."
+        }
+      ],
+      "primaryLimits": [
+        "No setup, tests, builds, executable launch, network, or credential access performed; parent owns audited isolated batch gates. Existing test cleanup was inspected but not executed.",
+        "No independent readability judgment supplied: parent must launch a fresh judge for this exact unchanged blob.",
+        "An initial evidence traversal accidentally emitted unrelated reconciliation rows; subsequent ledger inspection was restricted to focus rows."
+      ]
     },
     {
       "file": "tests/t3/web-launcher.test.ts",

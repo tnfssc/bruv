@@ -2404,35 +2404,37 @@
     {
       "file": "tests/claude-compat/fixtures/http-mcp-lifecycle.ts",
       "initialBlob": "2885a3af02f178caee3a18d89fda257fa8ef49cb",
-      "status": "pending",
+      "status": "accepted",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "e8f406ce506a6ea94f4935e1f4d971c0087108c1",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "e8f406ce506a6ea94f4935e1f4d971c0087108c1",
         "primaryId": "task_376be59e",
         "primaryCommit": "f58c8bc4992d3a96671e8b9b1a3499c346232f19",
-        "judgeIds": [],
+        "judgeIds": ["task_00a65847"],
         "sourceCommit": "f58c8bc4992d3a96671e8b9b1a3499c346232f19",
-        "state": "needs-judge",
-        "reason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+        "state": "accepted-joined",
+        "reason": "The extracted operation is a coherent session-construction authority, not an arbitrary named block: it creates one stable transport, binds admission/removal callbacks to that transport, installs the echo peer and connects the SDK before returning. The request handler now exposes the routing and fault-injection sequence without interrupting it with peer construction. The baseline callback captured the mutable request-local transport and required a non-null assertion; the candidate visibly binds a constant transport. Fixture-level session tracking and explicit host shutdown remain adjacent to the public controls rather than becoming a context bag."
       }
     },
     {
       "file": "tests/claude-compat/fixtures/stdio-mcp.ts",
       "initialBlob": "3dcb59b21e85d47867b3acbd715778117bf8733b",
-      "status": "pending",
+      "status": "accepted",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "3dcb59b21e85d47867b3acbd715778117bf8733b",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "3dcb59b21e85d47867b3acbd715778117bf8733b",
         "primaryId": "task_c0e52552",
         "primaryCommit": "ef15e5aae2720d9791e3d049f84a8dab564da02c",
-        "judgeIds": [],
+        "judgeIds": ["task_00a65847"],
         "sourceCommit": "ef15e5aae2720d9791e3d049f84a8dab564da02c",
-        "state": "needs-judge",
-        "reason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+        "state": "accepted-joined",
+        "reason": "The sole registration contains the entire environment probe: it samples the live child environment when called, reports its PID and configured/inherited provider observations, and lists forbidden control names rather than their values. Registration, response shape and connection startup can be read as one local operation. Extracting the object or name filter would separate the observation from its only consumer without resolving scattered authority or lifetime."
       }
     },
     {
@@ -2486,18 +2488,19 @@
     {
       "file": "tests/claude-compat/native-adapter-prompt-ownership.ts.txt",
       "initialBlob": "5ea45ec68845bb716a76b40c94407a36e2c590f9",
-      "status": "pending",
+      "status": "accepted",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "5ea45ec68845bb716a76b40c94407a36e2c590f9",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "5ea45ec68845bb716a76b40c94407a36e2c590f9",
         "primaryId": "task_4fcbcb48",
         "primaryCommit": "b060cdae0f2c664c27e6cde42cd76eff1d8eac02",
-        "judgeIds": [],
+        "judgeIds": ["task_00a65847"],
         "sourceCommit": "b060cdae0f2c664c27e6cde42cd76eff1d8eac02",
-        "state": "needs-judge",
-        "reason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+        "state": "accepted-joined",
+        "reason": "The provenance comment explains why this is executable pinned upstream text with erased SDK type references. One predicate owns plural UUID detection/string filtering and singular fallback; the immediately following predicate makes echoed UUID membership authoritative before the known-echo-mode/non-human-origin fallback. Their decision sequence is directly visible, with no distributed state or lifetime to reconstruct. Renaming or extracting these pinned predicates would weaken the exact-text oracle without improving the reading journey."
       }
     },
     {
@@ -2899,11 +2902,11 @@
       "acceptedBlob": null,
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_03c6a29d",
+        "primaryCommit": "aea5504bc5ab642ca72ab9c14db0582a00c479cd",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary",
+        "sourceCommit": "aea5504bc5ab642ca72ab9c14db0582a00c479cd",
+        "state": "needs-judge",
         "reason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
       }
     },
@@ -3957,7 +3960,7 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 83,
-    "pending": 15
+    "accepted": 86,
+    "pending": 12
   }
 }
