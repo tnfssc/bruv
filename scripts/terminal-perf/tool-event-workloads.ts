@@ -166,6 +166,7 @@ class RecordingTerminal implements Terminal {
   clearScreen() {
     this.write("\x1b[2J");
   }
+  setProgramStatus() {}
   setTitle(text: string) {
     this.write("\x1b]0;" + text + "\x07");
   }

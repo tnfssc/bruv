@@ -65,7 +65,7 @@ The profiler wraps the concrete TUI instance's synchronous `doRender` entry thro
 
 Request-to-frame-entry and input-dispatch-to-frame-entry delay are separate from render duration. The repeatable workload runner calls public `renderNow()` to drain a frame. Those delay samples do not prove scheduler responsiveness. The profiler tests also check real scheduled input on both screen modes. You can attach `attachTerminalProfiler(renderer)` to another test or interactive probe and inspect `snapshot()`. Pass `observe: [{ target: component, method: "render", name: "my.component" }]` to attribute a component without global patches. Always call `dispose()` to restore instance methods. The ring is bounded; `droppedFrames` makes overwritten samples visible.
 
-Current workloads use full-screen Pi 1.0.3 with real SDK messages, ToolExecutionComponents, Bruv execute previews, typed local/native/SSH task rows, rolling activity and conversation density. They cover typing, animation, streaming results, resize, scrollback and task status updates at 100/500/1000 settled executes. Each measured action must change screen rows. A no-op cannot claim a win.
+Current workloads use full-screen Pi 1.1.0 with real SDK messages, ToolExecutionComponents, Bruv execute previews, typed local/native/SSH task rows, rolling activity and conversation density. They cover typing, animation, streaming results, resize, scrollback and task status updates at 100/500/1000 settled executes. Each measured action must change screen rows. A no-op cannot claim a win.
 
 ## Add a workload
 

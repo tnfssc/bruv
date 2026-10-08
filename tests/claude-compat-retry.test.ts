@@ -45,7 +45,7 @@ function fixture() {
 }
 
 async function settle({ frontend, frames }: ReturnType<typeof fixture>) {
-  frontend.onEvent({ type: "agent_settled" });
+  frontend.onEvent({ type: "agent_settled", aborted: false });
   await frontend.flush();
   expect(frames.filter((frame) => frame.type === "result")).toHaveLength(1);
   return frames.find((frame) => frame.type === "result")!;
@@ -153,7 +153,7 @@ test("a new root run resets both provider and terminal failures", async () => {
   f.frontend.onEvent({ type: "agent_start" });
   expect(f.frontend.error()).toBeUndefined();
   f.message("stop");
-  f.frontend.onEvent({ type: "agent_settled" });
+  f.frontend.onEvent({ type: "agent_settled", aborted: false });
   await f.frontend.flush();
   expect(f.frames.filter((frame) => frame.type === "result")).toHaveLength(2);
   expect(f.frames.filter((frame) => frame.type === "result").at(-1)).toMatchObject({
@@ -183,7 +183,7 @@ test("retry success cannot revive a failed output stream", async () => {
   frontend.onEvent({ type: "message_end", message: assistant("stop") });
   frontend.onEvent({ type: "auto_retry_end", success: true, attempt: 1 });
   frontend.fail(deliveryError);
-  frontend.onEvent({ type: "agent_settled" });
+  frontend.onEvent({ type: "agent_settled", aborted: false });
   await expect(frontend.flush()).rejects.toBe(deliveryError);
   expect(failures).toEqual([deliveryError]);
   expect(frames).toHaveLength(1);

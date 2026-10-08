@@ -1,4 +1,4 @@
-/** Bounded, provider-free fixtures for pi-tui 1.0.3's full layout/diff/write path. */
+/** Bounded, provider-free fixtures for pi-tui 1.1.0's full layout/diff/write path. */
 import { dirname, join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import {
@@ -137,6 +137,7 @@ export class FakeTerminal implements Terminal {
   clearScreen(): void {
     this.write("\x1b[2J");
   }
+  setProgramStatus() {}
   setTitle(title: string): void {
     this.write(`\x1b]0;${title}\x07`);
   }

@@ -395,6 +395,7 @@ class FakeTerminal implements Terminal {
   clearLine() {}
   clearFromCursor() {}
   clearScreen() {}
+  setProgramStatus() {}
   setTitle() {}
   setProgress() {}
 }

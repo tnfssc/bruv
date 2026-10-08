@@ -562,6 +562,7 @@ test("live header and activity picker normalize raw action labels", async () => 
   disposers.push(installRollingActivity());
   const host = Object.assign(nativeHost(), {
     isInitialized: true,
+    programStatus: { handleEvent() {} },
     footer: { invalidate() {} },
     pendingTools: new Map(),
   });
