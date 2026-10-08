@@ -3528,6 +3528,16 @@
         "branch": "bruv/pr45-judge-1-execution-tasks-questions-f-6818ffa9",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "handled"
+      },
+      {
+        "id": "task_6a09b4c6",
+        "stage": "primary",
+        "focus": ["tests/subagent-extension.test.ts", "tests/worktree-workspace.test.ts"],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_6a09b4c6",
+        "branch": "bruv/pr45-primary-2-execution-tasks-questions-6a09b4c6",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled",
+        "sourceCommit": "d3e3ced9e5a2f6e17008630e1ef6d3f5dafaded1"
       }
     ]
   },

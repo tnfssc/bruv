@@ -3469,11 +3469,11 @@
       "resume": {
         "status": "pending",
         "acceptedBlob": "b7d7e0ad3d338b2008660797f7cc0ba806e5cf7b",
-        "primaryId": "task_187e7fa2",
-        "primaryCommit": "bf4827bfd63ece88c460227cdd9fdbd9648a5c39",
+        "primaryId": "task_6a09b4c6",
+        "primaryCommit": "d3e3ced9e5a2f6e17008630e1ef6d3f5dafaded1",
         "judgeIds": ["task_ac0df4b4"],
-        "sourceCommit": null,
-        "state": "needs-rework",
+        "sourceCommit": "d3e3ced9e5a2f6e17008630e1ef6d3f5dafaded1",
+        "state": "needs-judge",
         "reason": "Read the entire candidate file and every diff hunk. bindJobHandler extracts one coherent test operation: install a success-only executeIsolated stub, capture options.jobHandler through the real registered execute tool, and restore in finally before returning it. The tests now expose their notification/shell/authorization actions without repeated binding boilerplate; clocks, controlled children, input delivery, shutdown ordering and per-test filesystem ownership remain at their scenario sites. RPC completion, print/json idle blocking, attention wakeup, racing completion deduplication, mixed bounded evidence and lifecycle persistence keep their original commands and assertions. The Live delegated-stop test still rejects unconfirmed exact-ID cancellation; the native missing-mailbox test still prevents owner creation then permits the next local attachment using the same captured handler. The real background launch followed by outer execute failure correctly remains its own inline mock, preserving sourceCallId/title/terminal-update assertions. Unchanged identity fail-closed and SSH completion/actionable/replay journeys were read as well; they are not hidden behind the new helper."
       }
     },
@@ -3914,11 +3914,11 @@
       "resume": {
         "status": "pending",
         "acceptedBlob": "3d63bbaecbf6268d8b416714d288f17592fb0709",
-        "primaryId": "task_d07c58c2",
-        "primaryCommit": "af63383a0fb05cba759d32b21788c03f7a3cffa7",
+        "primaryId": "task_6a09b4c6",
+        "primaryCommit": "d3e3ced9e5a2f6e17008630e1ef6d3f5dafaded1",
         "judgeIds": ["task_83034949", "task_6181fd8e", "task_686802a6"],
-        "sourceCommit": null,
-        "state": "needs-rework",
+        "sourceCommit": "d3e3ced9e5a2f6e17008630e1ef6d3f5dafaded1",
+        "state": "needs-judge",
         "reason": "Read the exact candidate against primaryBase 3e7300d72c5535ebb552b6b8651944fccd7e10b3, the entire explicit entry and entire moved case module. This is an actual ownership change, not cosmetic extraction: the discoverable entry now owns a retained mkdtemp runtime, calls the existing whitelist environment helper, records the actual argv/env/cwd, starts a child with explicit preload and an owned cwd, defers all production/SDK imports to that child, and retains stdout/stderr before asserting exit. The case module separates the child-only journeys from discovery. Per-case repositories and session directories sit directly under the retained runtime; direct worktrees sit under case roots, and JobService-managed worktrees/profiles sit under the runtime. withWorktreeJobs now has one responsibility: construct and drain its TaskManager. Global environment mutation and fixture deletion have been removed. The JSONC/schema, commit-pinning/dirty-file exclusion, unsafe-ref/path/branch, cancellation/deadline, trust/continuity, async activation/failure publication, and sibling-identity journeys retain their substantive assertions."
       }
     }
