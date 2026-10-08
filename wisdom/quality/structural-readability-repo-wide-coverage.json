@@ -14608,11 +14608,11 @@
     {
       "file": "tests/subagent-settings-tui.test.ts",
       "initialBlob": "f6345c6670f6dcc1d370372d3d85a3437bbfcb41",
-      "status": "pending",
+      "status": "accepted",
       "area": "execution-tasks-questions",
-      "resumeState": "needs-primary-final-blob",
+      "resumeState": "accepted-joined",
       "primaryId": "task_dc3fa76a",
-      "judgeIds": [],
+      "judgeIds": ["task_51167e26"],
       "sourceCommit": "632ef5ce3891bfe175447a0f7c0c228851c02465",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
       "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage.",
@@ -14634,16 +14634,30 @@
         "Durable source provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_dc3fa76a; base ed106a94e39747cd3f7ae856021ad1ed90be5361. Formatter fixtures are retained temporary state, not code checkouts. Existing candidate worktrees/evidence were not modified."
       ],
       "acceptedRelatedJudges": ["task_5b5cbe87"],
-      "acceptedBlob": "83ffc1f0d8cbde59cf476a0edf071167bd117f14"
+      "acceptedBlob": "83ffc1f0d8cbde59cf476a0edf071167bd117f14",
+      "result": "The extraction resolves a real lifetime-reading burden, not naming churn: withProfileTerminal visibly owns allocation, owned directory creation, selected environment, fixture-specific tmux socket/config, direct executable argv, startup readiness/delay, interaction callback and finally socket-scoped server shutdown. The intrinsic test now reads as /subagents -> fast model -> full provider/model query observed -> select -> fast thinking -> off -> preserved row 1 -> five Downs to Save -> persisted model/thinking assertions. The full-query wait, frame predicates, diagnostic search frame, startup delay and 15-second timeout remain. A callback carrying only tmux and home is an appropriate lifetime boundary, not a generic context bag.",
+      "systemReason": "Followed run/ offlineTestEnv to Bun.spawn: supplying env replaces the inherited source before the helper adds HERDR_ENV and strips bridge variables. HOME, XDG config/cache/data, SDK and TMPDIR all point below one newly owned mkdtemp root; only PATH is selected from the ambient environment, and the API key is an offline placeholder. tmux uses -S owned socket and -f /dev/null; multiple launch arguments avoid shell quoting/execution and finally targets only that server, with no filesystem deletion. Followed CLI runtime asset writes under homedir, prepared Pi-host gate, extension registration, profilesPath, settings panel returnRow and Save, and atomic profile persistence. The child fixture home matches the persisted ~/.bruv/subagents.json assertion. The related UI edit preserves Save-only writes, malformed-file nonoverwrite and cancellation. No production source changes are present.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read entire intrinsic focus at exact candidate, exact primary-base diff, and every candidate-changed path.",
+        "git diff --check ed106a94e39747cd3f7ae856021ad1ed90be5361 632ef5ce3891bfe175447a0f7c0c228851c02465: exit 0.",
+        "Resolved acceptedBlobs from exact Git objects; candidate changes only the two settings test files."
+      ],
+      "limits": [
+        "No setup, tests, builds, dependency writes, credential/device access, publication or source edits performed. Parent owns audited isolated runtime gates.",
+        "Read-only git show/diff of exact commits in durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_51167e26; no temporary code checkout.",
+        "Runtime model identity is for the parent to verify; this review does not independently attest agent.model.",
+        "Compiled dist/bruv provenance, tmux direct-argv behavior on the parent platform, offline provider/network behavior and startup timing were not executed or verified. Fixture files are intentionally retained; parent must supply its audited binary and gate environment."
+      ]
     },
     {
       "file": "tests/subagent-settings-ui.test.ts",
       "initialBlob": "eacdda0427dd8083b5ddc0491ec2fa26a852d435",
-      "status": "pending",
+      "status": "accepted",
       "area": "execution-tasks-questions",
-      "resumeState": "needs-primary-final-blob",
+      "resumeState": "accepted-joined",
       "primaryId": "task_dc3fa76a",
-      "judgeIds": [],
+      "judgeIds": ["task_51167e26"],
       "sourceCommit": "632ef5ce3891bfe175447a0f7c0c228851c02465",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
       "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage.",
@@ -14665,7 +14679,21 @@
         "Durable source provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_dc3fa76a; base ed106a94e39747cd3f7ae856021ad1ed90be5361. Formatter fixtures are retained temporary state, not code checkouts. Existing candidate worktrees/evidence were not modified."
       ],
       "acceptedRelatedJudges": ["task_5b5cbe87"],
-      "acceptedBlob": "e4c8cfb70441fc19b8fb347622a48e7554591cff"
+      "acceptedBlob": "e4c8cfb70441fc19b8fb347622a48e7554591cff",
+      "result": "The test driver gains a narrow selectedLine observation and Save action. saveFromOverview first asserts the overview title, navigates via page-down then Up, asserts the selected Save row, and confirms. This separates committing a draft from editing/reopening it without concealing the selection contract: the principal journey asserts return to fast thinking and normal model, Escape/reopen asserts normal model, draft reopen still checks quick/coder search clearing and high/medium thinking, and inheritance asserts return to fast model and fast thinking. The raw page-clamp/Cancel journey remains local and unchanged in substance. Empty search/catalog, unavailable current model, narrow widths/focus and exact gpt-4o search assertions remain; no broad fixture abstraction is added.",
+      "systemReason": "Read the whole SubagentSettingsPanel: overview contains six settings rows then Save/Cancel, visible size ten makes page-down clamp to Cancel, Up selects Save, choose returns a draft only for Save, and picker exits restore returnRow. Draft is structuredClone; model search clears on overview return, exact provider/model matches sort first, and inheritance removes the configured field. registerSubagentSettings refuses non-TUI before reading/prompting, loads valid profiles, writes only a returned draft and reports errors. Command tests still verify Save persistence, subsequent Escape byte-preservation, malformed JSON never prompting/overwriting, and non-TUI no-file guidance. Explicit fixture path isolates persistence; retained mkdtemp files replace test-owned removal. Inspected the related terminal lifetime edit independently and found no assertion/security loss.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read entire intrinsic focus at exact candidate, exact primary-base diff, and every candidate-changed path.",
+        "git diff --check ed106a94e39747cd3f7ae856021ad1ed90be5361 632ef5ce3891bfe175447a0f7c0c228851c02465: exit 0.",
+        "Resolved acceptedBlobs from exact Git objects; candidate changes only the two settings test files."
+      ],
+      "limits": [
+        "No setup, tests, builds, dependency writes, credential/device access, publication or source edits performed. Parent owns audited isolated runtime gates.",
+        "Read-only git show/diff of exact commits in durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_51167e26; no temporary code checkout.",
+        "Runtime model identity is for the parent to verify; this review does not independently attest agent.model.",
+        "No runtime validation of upstream keybindings/SelectList rendering; parent owns that gate. Command fixture passes an explicit owned settings path and launches no subprocess."
+      ]
     },
     {
       "file": "tests/system-prompt.test.ts",
@@ -15031,11 +15059,11 @@
     {
       "file": "tests/task-monitor.test.ts",
       "initialBlob": "538c4698f82dee8127b2281b470acf463af9a2d9",
-      "status": "pending",
+      "status": "accepted",
       "area": "execution-tasks-questions",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_d65db709",
-      "judgeIds": [],
+      "judgeIds": ["task_51167e26"],
       "sourceCommit": "3e87cdd2f2b1362683fc982e2ceccc00eb244ef0",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
       "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage.",
@@ -15086,6 +15114,22 @@
         "Schema registration helper now initializes extension three times, once per relevant test. Stub event/command/render callbacks are not invoked, but extension initialization can read configuration; parent fixture HOME/config/SDK is necessary. No execute handlers or setup probe execute function were invoked.",
         "No recovery, credentials, user-data mutation, destructive git, shell cleanup, inherited HOME removal, guard bypass, dependency changes, push, PR or merge. No descendants launched; runtime agent.model verification is parent-owned.",
         "Wisdom unchanged: parent owns aggregate wisdom. Formatter fixture and its provenance are retained; provenance points to this durable worktree, not a /tmp code checkout."
+      ],
+      "acceptedBlob": "538c4698f82dee8127b2281b470acf463af9a2d9",
+      "result": "Read the entire unchanged focus rather than accepting from its blob identity. The first scenario locally connects two launches, selected output, canceled stop, confirmed kill, wait, Escape, width/render-rate bounds, finally dispose/shutdown, and post-disposal render silence. Separate scenarios keep empty/no-output states; mutable row budget 0-9 with navigation/confirmation suppression and frozen target after exit; non-TUI /ps refusal; inspect navigation and Escape; completion-race stop identity and ID-preserved selection; twenty-row height/selection and OSC/C1 sanitization; and payload plus zero-argument subscriber compatibility. launch already exposes the concrete manager.spawn command/args and metadata while leaving render callbacks, done state and row controls at each journey. Extracting them into a shared context would scatter scenario-specific authority without resolving real reconstruction. No focus edit is warranted.",
+      "systemReason": "Traced TaskMonitorPanel subscription/coalesced rendering, selectedId preservation, frozen confirmation identity, zero-row input suppression, active-target revalidation before kill, bounded inspection/output, row-fitting identity, terminal sequence stripping and disposal of subscription/timers. registerTaskMonitor uses the supplied registry and rejects non-TUI before creating a panel. TaskManager spawns argv with shell:false into a process group, observes output/exit/close, emits spawned/activity/completed events, waits for observed completion, escalates kill, and drains shutdown; these correspond directly to the intrinsic assertions. The only candidate-changed path, tool-schema.test.ts, was read in full and diffed: it separates registered execute/setup-probe parity, provider schema shape, enum conversion, and argument coercion/rejection using a local registeredTools helper. Related execute declaration/toolParameters/registration/setup-probe callers still share the declaration. This is not a separate assigned-focus verdict or broad batch acceptance.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read whole exact-candidate task-monitor focus and whole changed tool-schema test with exact-base diff.",
+        "git diff --check 42fd66090a7d946383ab7efe2f796f341b48e7d1 3e87cdd2f2b1362683fc982e2ceccc00eb244ef0: exit 0.",
+        "Exact candidate/base task-monitor blobs both 538c4698f82dee8127b2281b470acf463af9a2d9; focus diff empty. Only changed path is tests/tool-schema.test.ts."
+      ],
+      "limits": [
+        "No setup, tests, builds, dependency writes, credential/device access, publication or source edits performed. Parent owns audited isolated runtime gates.",
+        "Read-only git show/diff of exact commits in durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_51167e26; no temporary code checkout.",
+        "Runtime model identity is for the parent to verify; this review does not independently attest agent.model.",
+        "Existing monitor launcher uses shell argv for fixed printf/sleep scripts and inherits process environment/cwd through TaskManager. It was inspected but NOT executed; parent must provide explicit owned mkdtemp HOME/config/SDK and an allowlisted process environment for any isolated gate. No network or filesystem mutation is requested by these fixed child scripts.",
+        "No runtime timing, process-group behavior, upstream terminal sanitization or schema argument validation gate was run."
       ]
     },
     {
@@ -15670,11 +15714,11 @@
     {
       "file": "tests/worker-handoff.test.ts",
       "initialBlob": "e4c717440abd69e64286171f553291704c3a5000",
-      "status": "pending",
+      "status": "accepted",
       "area": "execution-tasks-questions",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_517c091d",
-      "judgeIds": [],
+      "judgeIds": ["task_bccaba75"],
       "sourceCommit": "f5b9b593aa21a13c52ae3f681777c02590aff8b7",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
       "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage.",
@@ -15694,6 +15738,21 @@
         "No delegation, dependency writes, cleanup/deletion commands, recovery investigation, or publication.",
         "Initial evidence output was overbroad and truncated; subsequent evidence inspection was filtered to the two assigned rows.",
         "The directory registry cleanup is restricted to mkdtemp fixtures; inspected, never executed. Other scenarios intentionally use process.cwd and executeIsolated inherits scrubbed process.env. Parent must run any gate with explicit argv/env and fresh owned HOME/config/SDK, retained rather than cleaned."
+      ],
+      "acceptedBlob": "e4c717440abd69e64286171f553291704c3a5000",
+      "result": "Read the entire exact candidate focus, including its owned mkdtemp directory registration and afterEach cleanup, rather than relying on the primary narrative. The acceptance case exposes the compiled binary, bridge callback, exact handoff message, before-only stdout, clean exit and absent post-handoff file together. The rejection case deliberately passes 42, checks the request in the rejecting handler and retains the original handler error in stderr; this is a transport/runner error test, not a test of production schema validation. The unavailable case visibly omits jobHandler. The two finally cases make ordinary cleanup failure and a stack missing the error message independently legible, including the expected repaired diagnostic. These are short, materially different scenarios. A default bridge fixture would hide the absent-bridge contrast, while a parameterized helper would make the exact source and assertions harder to connect. No rename, context bag or abstraction is needed. Candidate and primaryBase are identical, so all these decisions and assertions are unchanged.",
+      "systemReason": "Traced executeIsolated in the candidate to explicit executable argv --bruv-internal-execute, stdin source, optional IPC stdio and BRUV job-bridge environment flag. openWorkerJobBridge returns undefined without that flag; installJobGlobals then rejects unavailable requests. With a bridge, serveJobBridge dispatches to the handler and converts its original error message into an error response; the worker resolves/rejects that response only after writing its ACK. handoff awaits the request before throwing HandoffSignal. runTypeScriptFromStdin catches only that class and always drains jobs.finish and images.finish, so a replacement finally error escapes instead of becoming a successful handoff. CLI invokes this runner before normal runtime configuration, uses formatThrownValue to repair an Error.stack header missing the message, sanitizes data-module URLs and exits nonzero on the real error. The production extension routes handoff to ExecuteDelivery.acceptHandoff, validates string length/nonblank/single acceptance, and ExecuteDelivery.finish only emits handoff termination for a successful execution; cleanup failures remain errors. This source journey supports keeping the explicit regression tests intact without claiming they independently exercise production validation or extension delivery.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Used git show against f5b9b593aa21a13c52ae3f681777c02590aff8b7 for the entire focus and relevant caller/bridge/runner/delivery paths, not checkout HEAD.",
+        "git diff --name-status primaryBase..candidate is empty because both exact commits are f5b9b593aa21a13c52ae3f681777c02590aff8b7; there are no candidate-changed source paths requiring additional acceptedBlobs entries.",
+        "git rev-parse candidate:tests/worker-handoff.test.ts returned e4c717440abd69e64286171f553291704c3a5000.",
+        "Static effects review: focus cleanup targets only its registered mkdtemp directory; later tests use process.cwd(), and executeIsolated copies the scrubbed inherited environment, so these tests do not themselves establish isolated HOME/config/SDK. No test cleanup, subprocess runner, setup or build was executed."
+      ],
+      "limits": [
+        "Static independent structural judgment only; parent owns audited isolated runtime gates and runtime model verification. No tests, builds, setup, live auth/device access, network probes, dependency writes, delegation or source edits.",
+        "Acceptance test does not use a deliberately deferred acknowledgement; ordering is established by inspected bridge source, not a timing experiment. Production schema validation and extension delivery were inspected, not runtime-tested by this focus.",
+        "Durable review provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_bccaba75. Candidate evidence and existing worktrees retained; only this untracked judgment artifact was written. No fixture directories were created."
       ]
     },
     {

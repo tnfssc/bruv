@@ -3516,39 +3516,39 @@
     {
       "focus": "tests/subagent-settings-tui.test.ts",
       "initialBlob": "f6345c6670f6dcc1d370372d3d85a3437bbfcb41",
-      "status": "pending",
+      "status": "accepted",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "83ffc1f0d8cbde59cf476a0edf071167bd117f14",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
         "acceptedBlob": "83ffc1f0d8cbde59cf476a0edf071167bd117f14",
         "primaryId": "task_dc3fa76a",
         "primaryCommit": "632ef5ce3891bfe175447a0f7c0c228851c02465",
-        "judgeIds": [],
+        "judgeIds": ["task_51167e26"],
         "sourceCommit": "632ef5ce3891bfe175447a0f7c0c228851c02465",
-        "state": "needs-primary-final-blob",
-        "reason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage."
+        "state": "accepted-joined",
+        "reason": "The extraction resolves a real lifetime-reading burden, not naming churn: withProfileTerminal visibly owns allocation, owned directory creation, selected environment, fixture-specific tmux socket/config, direct executable argv, startup readiness/delay, interaction callback and finally socket-scoped server shutdown. The intrinsic test now reads as /subagents -> fast model -> full provider/model query observed -> select -> fast thinking -> off -> preserved row 1 -> five Downs to Save -> persisted model/thinking assertions. The full-query wait, frame predicates, diagnostic search frame, startup delay and 15-second timeout remain. A callback carrying only tmux and home is an appropriate lifetime boundary, not a generic context bag."
       }
     },
     {
       "focus": "tests/subagent-settings-ui.test.ts",
       "initialBlob": "eacdda0427dd8083b5ddc0491ec2fa26a852d435",
-      "status": "pending",
+      "status": "accepted",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "e4c8cfb70441fc19b8fb347622a48e7554591cff",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
         "acceptedBlob": "e4c8cfb70441fc19b8fb347622a48e7554591cff",
         "primaryId": "task_dc3fa76a",
         "primaryCommit": "632ef5ce3891bfe175447a0f7c0c228851c02465",
-        "judgeIds": [],
+        "judgeIds": ["task_51167e26"],
         "sourceCommit": "632ef5ce3891bfe175447a0f7c0c228851c02465",
-        "state": "needs-primary-final-blob",
-        "reason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage."
+        "state": "accepted-joined",
+        "reason": "The test driver gains a narrow selectedLine observation and Save action. saveFromOverview first asserts the overview title, navigates via page-down then Up, asserts the selected Save row, and confirms. This separates committing a draft from editing/reopening it without concealing the selection contract: the principal journey asserts return to fast thinking and normal model, Escape/reopen asserts normal model, draft reopen still checks quick/coder search clearing and high/medium thinking, and inheritance asserts return to fast model and fast thinking. The raw page-clamp/Cancel journey remains local and unchanged in substance. Empty search/catalog, unavailable current model, narrow widths/focus and exact gpt-4o search assertions remain; no broad fixture abstraction is added."
       }
     },
     {
@@ -3658,19 +3658,20 @@
     {
       "focus": "tests/task-monitor.test.ts",
       "initialBlob": "538c4698f82dee8127b2281b470acf463af9a2d9",
-      "status": "pending",
+      "status": "accepted",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "538c4698f82dee8127b2281b470acf463af9a2d9",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "538c4698f82dee8127b2281b470acf463af9a2d9",
         "primaryId": "task_d65db709",
         "primaryCommit": "3e87cdd2f2b1362683fc982e2ceccc00eb244ef0",
-        "judgeIds": [],
+        "judgeIds": ["task_51167e26"],
         "sourceCommit": "3e87cdd2f2b1362683fc982e2ceccc00eb244ef0",
-        "state": "needs-judge",
-        "reason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage."
+        "state": "accepted-joined",
+        "reason": "Read the entire unchanged focus rather than accepting from its blob identity. The first scenario locally connects two launches, selected output, canceled stop, confirmed kill, wait, Escape, width/render-rate bounds, finally dispose/shutdown, and post-disposal render silence. Separate scenarios keep empty/no-output states; mutable row budget 0-9 with navigation/confirmation suppression and frozen target after exit; non-TUI /ps refusal; inspect navigation and Escape; completion-race stop identity and ID-preserved selection; twenty-row height/selection and OSC/C1 sanitization; and payload plus zero-argument subscriber compatibility. launch already exposes the concrete manager.spawn command/args and metadata while leaving render callbacks, done state and row controls at each journey. Extracting them into a shared context would scatter scenario-specific authority without resolving real reconstruction. No focus edit is warranted."
       }
     },
     {
@@ -3843,19 +3844,20 @@
     {
       "focus": "tests/worker-handoff.test.ts",
       "initialBlob": "e4c717440abd69e64286171f553291704c3a5000",
-      "status": "pending",
+      "status": "accepted",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "e4c717440abd69e64286171f553291704c3a5000",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "e4c717440abd69e64286171f553291704c3a5000",
         "primaryId": "task_517c091d",
         "primaryCommit": "f5b9b593aa21a13c52ae3f681777c02590aff8b7",
-        "judgeIds": [],
+        "judgeIds": ["task_bccaba75"],
         "sourceCommit": "f5b9b593aa21a13c52ae3f681777c02590aff8b7",
-        "state": "needs-judge",
-        "reason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage."
+        "state": "accepted-joined",
+        "reason": "Read the entire exact candidate focus, including its owned mkdtemp directory registration and afterEach cleanup, rather than relying on the primary narrative. The acceptance case exposes the compiled binary, bridge callback, exact handoff message, before-only stdout, clean exit and absent post-handoff file together. The rejection case deliberately passes 42, checks the request in the rejecting handler and retains the original handler error in stderr; this is a transport/runner error test, not a test of production schema validation. The unavailable case visibly omits jobHandler. The two finally cases make ordinary cleanup failure and a stack missing the error message independently legible, including the expected repaired diagnostic. These are short, materially different scenarios. A default bridge fixture would hide the absent-bridge contrast, while a parameterized helper would make the exact source and assertions harder to connect. No rename, context bag or abstraction is needed. Candidate and primaryBase are identical, so all these decisions and assertions are unchanged."
       }
     },
     {
@@ -4343,8 +4345,8 @@
     ]
   },
   "resumeStatus": {
-    "accepted": 94,
-    "pending": 7
+    "accepted": 98,
+    "pending": 3
   },
   "extraFiles": [
     {
