@@ -1929,109 +1929,127 @@
     {
       "focus": "src/prompts/goal-continuation.md",
       "initialBlob": "dded389e7892946fb0cffafb289373d9f39025d8",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "dded389e7892946fb0cffafb289373d9f39025d8",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "dded389e7892946fb0cffafb289373d9f39025d8",
         "primaryId": "task_9a4b847e",
         "primaryCommit": "42f9383ee4339b32ab48a4d8480d881c71e5a6a2",
-        "judgeIds": [],
+        "judgeIds": [
+          "task_b73b5610"
+        ],
         "sourceCommit": "42f9383ee4339b32ab48a4d8480d881c71e5a6a2",
-        "state": "needs-judge",
-        "reason": "No dedicated primary/final independent focus judgment."
+        "state": "accepted-joined",
+        "reason": "The two sentences perform one job: identify why this turn exists and direct useful forward work rather than a recap. There is no scattered decision inside the prompt to reorganize. Adding policy or sections would obscure its deliberately small signaling role."
       }
     },
     {
       "focus": "src/prompts/goal.md",
       "initialBlob": "52b8fdd03d753167b92aba03f175bd85ac2a193c",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "52b8fdd03d753167b92aba03f175bd85ac2a193c",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "52b8fdd03d753167b92aba03f175bd85ac2a193c",
         "primaryId": "task_e558d8f5",
         "primaryCommit": "39eafce01057503d50bc3386b23bc220ee88f4b9",
-        "judgeIds": [],
+        "judgeIds": [
+          "task_b73b5610"
+        ],
         "sourceCommit": "39eafce01057503d50bc3386b23bc220ee88f4b9",
-        "state": "needs-judge",
-        "reason": "No dedicated primary/final independent focus judgment."
+        "state": "accepted-joined",
+        "reason": "The existing list gives a compact usable journey: helper inventory, opt-in persistence, evidence-based progress, criterion-backed completion, and an explicit blocked decision. The imperative wording leaves the agent responsible for checking evidence without burying that responsibility in implementation detail. More headings or helper explanations would not resolve an observed reading burden."
       }
     },
     {
       "focus": "src/prompts/gpt-live.md",
       "initialBlob": "f546be3a70ee901eb6436de7f73b8ce2866d2166",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "f546be3a70ee901eb6436de7f73b8ce2866d2166",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "f546be3a70ee901eb6436de7f73b8ce2866d2166",
         "primaryId": "task_38e8aa10",
         "primaryCommit": "39eafce01057503d50bc3386b23bc220ee88f4b9",
-        "judgeIds": [],
+        "judgeIds": [
+          "task_b73b5610"
+        ],
         "sourceCommit": "39eafce01057503d50bc3386b23bc220ee88f4b9",
-        "state": "needs-judge",
-        "reason": "No dedicated primary/final independent focus judgment."
+        "state": "accepted-joined",
+        "reason": "Despite being a paragraph, the instruction has a clear authority sequence: delegate application work, use the configured agent controls, distinguish queued/partial results from stopping, distinguish speech interruption from work or microphone shutdown, require confirmation before success claims, and keep quoted observations outside instruction and request authority. These are short direct constraints around one delegated voice role, not an implementation journey that needs a new abstraction."
       }
     },
     {
       "focus": "src/prompts/identity.md",
       "initialBlob": "190938830aaf2a635d8313f46af0ac170d79290c",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "190938830aaf2a635d8313f46af0ac170d79290c",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "190938830aaf2a635d8313f46af0ac170d79290c",
         "primaryId": "task_8f111c40",
         "primaryCommit": "39eafce01057503d50bc3386b23bc220ee88f4b9",
-        "judgeIds": [],
+        "judgeIds": [
+          "task_adf35d77"
+        ],
         "sourceCommit": "39eafce01057503d50bc3386b23bc220ee88f4b9",
-        "state": "needs-judge",
-        "reason": "No dedicated primary/final independent focus judgment."
+        "state": "accepted-joined",
+        "reason": "The text has one responsibility: identify the assistant and product. It contains no task dispatch, user-base selection, mode state, or worker policy to reconstruct. src/prompts.ts makes the composition visible in bruvSystemPrompt(): this identity is first, then the separately imported execute reference under Guidelines. Moving the sentence or adding a heading would not clarify a scattered decision."
       }
     },
     {
       "focus": "src/prompts/live.md",
       "initialBlob": "277d037d993483c369a44713ab6ea0de95427fe5",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "277d037d993483c369a44713ab6ea0de95427fe5",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "277d037d993483c369a44713ab6ea0de95427fe5",
         "primaryId": "task_67227421",
         "primaryCommit": "95650e95d72d022bbd3e31646ed529a46f1a764b",
-        "judgeIds": [],
+        "judgeIds": [
+          "task_adf35d77"
+        ],
         "sourceCommit": "95650e95d72d022bbd3e31646ed529a46f1a764b",
-        "state": "needs-judge",
-        "reason": "No dedicated primary/final independent focus judgment."
+        "state": "accepted-joined",
+        "reason": "The retained prompt separates three jobs: conversational/help and honest progress guidance, the boundary between captured host speech/context and agent execution, and explicit cancellation/privacy. Passing work puts request identity, completed-speech authority, context honesty, and non-replay together. Respect the user distinguishes interruption from job cancellation. There is no demonstrated intrinsic reconstruction burden that a reorder, rename, or new prompt module would remove."
       }
     },
     {
       "focus": "src/prompts/main-orchestrator.md",
       "initialBlob": "adfaaf70a70bf709a070cef53f29b94505c999b7",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "adfaaf70a70bf709a070cef53f29b94505c999b7",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "adfaaf70a70bf709a070cef53f29b94505c999b7",
         "primaryId": "task_3cd885b2",
         "primaryCommit": "95650e95d72d022bbd3e31646ed529a46f1a764b",
-        "judgeIds": [],
+        "judgeIds": [
+          "task_adf35d77"
+        ],
         "sourceCommit": "95650e95d72d022bbd3e31646ed529a46f1a764b",
-        "state": "needs-judge",
-        "reason": "No dedicated primary/final independent focus judgment."
+        "state": "accepted-joined",
+        "reason": "The three paragraphs already follow the decision journey: the main agent owns leadership and integration; independent code/PR work is isolated while research/shared edits stay in the current workspace; the launch example and returned-path rule lead into durable placement and recording branch/path for continuation. This puts the isolation choice and its consequences together without conflating them with mode persistence or child-role policy. More headings or another helper would add navigation without exposing a missing authority."
       }
     },
     {
@@ -2116,11 +2134,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_3c851044",
+        "primaryCommit": "9d3a4eb28e1ec4c616c144298add327756d9f42f",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary",
+        "sourceCommit": "9d3a4eb28e1ec4c616c144298add327756d9f42f",
+        "state": "needs-judge",
         "reason": "No dedicated primary/final independent focus judgment."
       }
     },
@@ -4748,7 +4766,7 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 63,
-    "pending": 60
+    "accepted": 69,
+    "pending": 54
   }
 }

@@ -6818,12 +6818,14 @@
     {
       "file": "src/prompts/goal-continuation.md",
       "initialBlob": "dded389e7892946fb0cffafb289373d9f39025d8",
-      "status": "pending",
+      "status": "accepted",
       "area": "agent-history-session-goals",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_9a4b847e",
       "primaryCommit": "42f9383ee4339b32ab48a4d8480d881c71e5a6a2",
-      "judgeIds": [],
+      "judgeIds": [
+        "task_b73b5610"
+      ],
       "sourceCommit": "42f9383ee4339b32ab48a4d8480d881c71e5a6a2",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
       "pendingReason": "No dedicated primary/final independent focus judgment.",
@@ -6857,17 +6859,35 @@
         "No new source commit because source is unchanged; sourceCommit identifies the exact reviewed checkout.",
         "Independent final readability judgment remains parent-owned.",
         "Wisdom and values unchanged: no new general lesson; aggregate wisdom remains parent-owned."
+      ],
+      "acceptedBlob": "dded389e7892946fb0cffafb289373d9f39025d8",
+      "result": "The two sentences perform one job: identify why this turn exists and direct useful forward work rather than a recap. There is no scattered decision inside the prompt to reorganize. Adding policy or sections would obscure its deliberately small signaling role.",
+      "systemReason": "At this exact commit, src/goals/extension.ts owns eligibility and state: agent_settled reconciles waiting work, honors interruption/queued input and foreground questions, then consults GoalContinuationController. sendContinuation marks the automatic run and sends a followUp. GoalReminders issues a transport token and consumes only its pending exact payload, checking blockers again and stripping the token. continuation rejects non-active goals. The context hook supplies goal.md and authoritative current state on each provider request, so the signal need not duplicate mutable goal data. Controller endRun separately accounts deliberate progress and pauses repeated no-progress runs.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Inspected only assigned focus entries in area and repo-wide coverage ledgers; each has no earlier accepted/rejected focus judgment.",
+        "Read focus with git show at the exact candidate commit and verified its Git blob matches the ledger initialBlob.",
+        "Compared each supplied primaryBase to its candidate: identical commit, no changed source paths; no unrelated source changes imported.",
+        "Read extension imports, continuation/GoalReminders, sendContinuation, context/input hooks, waiting reconciliation and agent_end/agent_settled; read controller milestone/run/settle ownership.",
+        "Verified goal extension, controller and store blobs are identical across the two batch candidate commits."
+      ],
+      "limits": [
+        "Static actual-code readability judgment only; no setup, tests, builds, provider calls or device operations run. Parent owns audited isolated batch gates.",
+        "No source edits, commits, push, PR or merge. Existing worktrees and unrelated accepted work preserved.",
+        "No runtime/authentication/device outcome claimed; model verification remains parent-owned. Wisdom and values unchanged; parent owns aggregate wisdom."
       ]
     },
     {
       "file": "src/prompts/goal.md",
       "initialBlob": "52b8fdd03d753167b92aba03f175bd85ac2a193c",
-      "status": "pending",
+      "status": "accepted",
       "area": "agent-history-session-goals",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_e558d8f5",
       "primaryCommit": "39eafce01057503d50bc3386b23bc220ee88f4b9",
-      "judgeIds": [],
+      "judgeIds": [
+        "task_b73b5610"
+      ],
       "sourceCommit": "39eafce01057503d50bc3386b23bc220ee88f4b9",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
       "pendingReason": "No dedicated primary/final independent focus judgment.",
@@ -6885,17 +6905,35 @@
         "No source changes, so formatter and source commit are not applicable.",
         "Independent exact-candidate judgment belongs to parent.",
         "Wisdom and values unchanged: no new general lesson; parent owns aggregate wisdom."
+      ],
+      "acceptedBlob": "52b8fdd03d753167b92aba03f175bd85ac2a193c",
+      "result": "The existing list gives a compact usable journey: helper inventory, opt-in persistence, evidence-based progress, criterion-backed completion, and an explicit blocked decision. The imperative wording leaves the agent responsible for checking evidence without burying that responsibility in implementation detail. More headings or helper explanations would not resolve an observed reading burden.",
+      "systemReason": "At the exact candidate, registerGoalMode imports this text and the context hook appends it immediately before authoritative goal state only when a goal exists. The execute job bridge maps get/set/update/clear directly to goal requests; the agent extension dispatches these to GoalRuntime.handle. GoalStore restores branch entries and persists set/update/clear, requires completion evidence or blocker explanation, and records distinct active progress milestones. GoalContinuationController counts progress rather than revisions/waiting lifecycle churn. The prompt accurately describes agent responsibilities; it does not falsely claim the store itself proves criteria or the freshness of evidence.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Inspected only assigned focus entries in area and repo-wide coverage ledgers; each has no earlier accepted/rejected focus judgment.",
+        "Read focus with git show at the exact candidate commit and verified its Git blob matches the ledger initialBlob.",
+        "Compared each supplied primaryBase to its candidate: identical commit, no changed source paths; no unrelated source changes imported.",
+        "Traced job-bridge goal helpers, agent-extension request dispatch and goal runtime handle methods.",
+        "Read goal context assembly, branch/store lifetime, restoration entries, set/update/clear persistence, completion/blocker validation, progress deduplication and controller milestone semantics."
+      ],
+      "limits": [
+        "Static actual-code readability judgment only; no setup, tests, builds, provider calls or device operations run. Parent owns audited isolated batch gates.",
+        "No source edits, commits, push, PR or merge. Existing worktrees and unrelated accepted work preserved.",
+        "No runtime/authentication/device outcome claimed; model verification remains parent-owned. Wisdom and values unchanged; parent owns aggregate wisdom."
       ]
     },
     {
       "file": "src/prompts/gpt-live.md",
       "initialBlob": "f546be3a70ee901eb6436de7f73b8ce2866d2166",
-      "status": "pending",
+      "status": "accepted",
       "area": "agent-history-session-goals",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_38e8aa10",
       "primaryCommit": "39eafce01057503d50bc3386b23bc220ee88f4b9",
-      "judgeIds": [],
+      "judgeIds": [
+        "task_b73b5610"
+      ],
       "sourceCommit": "39eafce01057503d50bc3386b23bc220ee88f4b9",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
       "pendingReason": "No dedicated primary/final independent focus judgment.",
@@ -6914,17 +6952,36 @@
         "No tests, setup, builds, provider calls or device access run; parent owns audited isolated batch gates.",
         "This is a primary reading decision, not an independent judge acceptance.",
         "Wisdom and values unchanged: no new general lesson; parent owns aggregate wisdom."
+      ],
+      "acceptedBlob": "f546be3a70ee901eb6436de7f73b8ce2866d2166",
+      "result": "Despite being a paragraph, the instruction has a clear authority sequence: delegate application work, use the configured agent controls, distinguish queued/partial results from stopping, distinguish speech interruption from work or microphone shutdown, require confirmation before success claims, and keep quoted observations outside instruction and request authority. These are short direct constraints around one delegated voice role, not an implementation journey that needs a new abstraction.",
+      "systemReason": "GPTLiveSession transmits this exact text as session.start instructions with client delegation and no Realtime function-tool definitions. It validates client delegation IDs; commentary/thinking accept observed IDs, trusted instructions are a separate method, and observations have null correlation. The live extension forwards general context as observations and delegates admitted requests through the same configured classic session owner. Queued commentary says only that the request was passed; completion says the agent turn ended and directs the listener to session history, not that its action succeeded. Execute globals expose live.stop and jobs.stopWork through their existing handlers; voice stop is scoped to the active session and the work-stop handler reports cancellation before requesting foreground abort. This supports keeping the prompt’s authority and success-claim boundaries explicit.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Inspected only assigned focus entries in area and repo-wide coverage ledgers; each has no earlier accepted/rejected focus judgment.",
+        "Read focus with git show at the exact candidate commit and verified its Git blob matches the ledger initialBlob.",
+        "Compared each supplied primaryBase to its candidate: identical commit, no changed source paths; no unrelated source changes imported.",
+        "Read exact session.start payload, delegation validation, typed context methods and context acknowledgment semantics.",
+        "Traced extension observation forwarding, submitContextual admission/completion feedback, handleCreated queued/stale outcomes and interruption semantics, and MainOwner.delegate same-session prompt routing.",
+        "Read execute stop globals, live.stop active-session handler/lifecycle bus and agent jobs.stopWork report-before-foreground-cancellation path."
+      ],
+      "limits": [
+        "Static actual-code readability judgment only; no setup, tests, builds, provider calls or device operations run. Parent owns audited isolated batch gates.",
+        "No source edits, commits, push, PR or merge. Existing worktrees and unrelated accepted work preserved.",
+        "No runtime/authentication/device outcome claimed; model verification remains parent-owned. Wisdom and values unchanged; parent owns aggregate wisdom."
       ]
     },
     {
       "file": "src/prompts/identity.md",
       "initialBlob": "190938830aaf2a635d8313f46af0ac170d79290c",
-      "status": "pending",
+      "status": "accepted",
       "area": "agent-history-session-goals",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_8f111c40",
       "primaryCommit": "39eafce01057503d50bc3386b23bc220ee88f4b9",
-      "judgeIds": [],
+      "judgeIds": [
+        "task_adf35d77"
+      ],
       "sourceCommit": "39eafce01057503d50bc3386b23bc220ee88f4b9",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
       "pendingReason": "No dedicated primary/final independent focus judgment.",
@@ -6961,17 +7018,45 @@
         "No setup, tests, builds, delegation, merge, push, or source changes performed; parent owns audited batch gates and independent judgment.",
         "Formatter not invoked: there are no changed source paths or source commit to format.",
         "No new general lesson; wisdom/values left unchanged and aggregate wisdom belongs to parent."
+      ],
+      "acceptedBlob": "190938830aaf2a635d8313f46af0ac170d79290c",
+      "result": "The text has one responsibility: identify the assistant and product. It contains no task dispatch, user-base selection, mode state, or worker policy to reconstruct. src/prompts.ts makes the composition visible in bruvSystemPrompt(): this identity is first, then the separately imported execute reference under Guidelines. Moving the sentence or adding a heading would not clarify a scattered decision.",
+      "systemReason": "src/cli.ts passes withBruvSystemPrompt(args) to Pi. src/system-prompt.ts preserves an explicit CLI base and lets eligible project/global SYSTEM.md own selection; trust flags govern project eligibility. The before_agent_start hook in src/agent/extension.ts refreshes identity/mode and selects root versus child framing. src/prompts.ts leaves a user-owned root base untouched, while children retain their role and do not replace custom collaboration policy. src/prompt-preview.ts selects a project base or this builder. The Gemini/OpenAI session fallbacks and setup-probe also call the same builder, rather than maintaining another identity. These are distinct framing authorities already visible outside the identity file.",
+      "checks": [
+        {
+          "check": "Required guidance",
+          "result": "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md."
+        },
+        {
+          "check": "Focus-only ledger evidence",
+          "result": "Read assigned area and repo-wide coverage focus rows at exact candidates and current area rows; all three baseline focus blobs are unchanged. Current focus rows retain distinct primaries and needs-judge state; no prior accepted focus blob or rejection to restore."
+        },
+        {
+          "check": "Exact candidate scope",
+          "result": "Compared candidate identities with supplied primaryBases and inspected commit source deltas. No candidate focus-related source edits; caller files traced here are identical between the two candidate commits."
+        },
+        {
+          "check": "Actual caller reading",
+          "result": "Read exact-source composition, fallback/trust transport, before_agent_start framing, preview selection, and alternate Live/setup-probe builder use."
+        }
+      ],
+      "limits": [
+        "Static actual-source readability judgment only; no setup, tests, builds, formatter, provider, microphone, device, or authentication checks run. Parent owns audited batch gates.",
+        "No source, ledgers, wisdom, branches, or existing worktrees modified. Related paths are reading evidence, not additional accepted source edits. No delegation.",
+        "Supplied candidate equals supplied primaryBase: no changed focus-related source paths. Unrelated work already contained in the shared base commit is not rejudged or replaced."
       ]
     },
     {
       "file": "src/prompts/live.md",
       "initialBlob": "277d037d993483c369a44713ab6ea0de95427fe5",
-      "status": "pending",
+      "status": "accepted",
       "area": "agent-history-session-goals",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_67227421",
       "primaryCommit": "95650e95d72d022bbd3e31646ed529a46f1a764b",
-      "judgeIds": [],
+      "judgeIds": [
+        "task_adf35d77"
+      ],
       "sourceCommit": "95650e95d72d022bbd3e31646ed529a46f1a764b",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
       "pendingReason": "No dedicated primary/final independent focus judgment.",
@@ -6997,17 +7082,46 @@
         "Formatter not invoked because no source paths changed and no source commit made; no formatter availability claim.",
         "Historical prompt behavior was not runtime-tested. No removal of retained prompts or unrelated accepted work.",
         "No per-worker wisdom edits; parent owns aggregate wisdom."
+      ],
+      "acceptedBlob": "277d037d993483c369a44713ab6ea0de95427fe5",
+      "result": "The retained prompt separates three jobs: conversational/help and honest progress guidance, the boundary between captured host speech/context and agent execution, and explicit cancellation/privacy. Passing work puts request identity, completed-speech authority, context honesty, and non-replay together. Respect the user distinguishes interruption from job cancellation. There is no demonstrated intrinsic reconstruction burden that a reorder, rename, or new prompt module would remove.",
+      "systemReason": "The important actual-code finding is that this prompt is not the active Live policy. Candidate-tree searches found no src import of prompts/live.md; its agent_send, agent_steer, and job_cancel names occur only in the prompt itself. src/prompts.ts imports the base/role prompts but not this file. src/live/extension.ts chooses configureDelegatedConversation for OPENAI_LIVE_MODEL; that method constructs the delegation bridge and GPTLiveSession. src/live/gpt-live-session.ts imports gpt-live.md and sends it in session.start with client delegation. That active prompt explicitly says it has client delegation, not Realtime function tools. Rewriting the retained file to that protocol would not simplify an active caller journey; changing the active path is outside this unchanged candidate.",
+      "checks": [
+        {
+          "check": "Required guidance",
+          "result": "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md."
+        },
+        {
+          "check": "Focus-only ledger evidence",
+          "result": "Read assigned area and repo-wide coverage focus rows at exact candidates and current area rows; all three baseline focus blobs are unchanged. Current focus rows retain distinct primaries and needs-judge state; no prior accepted focus blob or rejection to restore."
+        },
+        {
+          "check": "Exact candidate scope",
+          "result": "Compared candidate identities with supplied primaryBases and inspected commit source deltas. No candidate focus-related source edits; caller files traced here are identical between the two candidate commits."
+        },
+        {
+          "check": "Consumer search",
+          "result": "Searched exact candidate src for retained prompt imports and old tool names; only live.md contains the old tool names. Read actual provider selection, delegation configuration, GPT-Live session.start instructions, and active gpt-live.md."
+        }
+      ],
+      "limits": [
+        "Static actual-source readability judgment only; no setup, tests, builds, formatter, provider, microphone, device, or authentication checks run. Parent owns audited batch gates.",
+        "No source, ledgers, wisdom, branches, or existing worktrees modified. Related paths are reading evidence, not additional accepted source edits. No delegation.",
+        "Supplied candidate equals supplied primaryBase: no changed focus-related source paths. Unrelated work already contained in the shared base commit is not rejudged or replaced.",
+        "NO CHANGE NEEDED concerns this retained prompt only. It does not assert that live.md runs, that its old tool names exist, or that it is appropriate to attach unchanged to the active GPT-Live protocol. Dormant-file removal/retirement was not performed."
       ]
     },
     {
       "file": "src/prompts/main-orchestrator.md",
       "initialBlob": "adfaaf70a70bf709a070cef53f29b94505c999b7",
-      "status": "pending",
+      "status": "accepted",
       "area": "agent-history-session-goals",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_3cd885b2",
       "primaryCommit": "95650e95d72d022bbd3e31646ed529a46f1a764b",
-      "judgeIds": [],
+      "judgeIds": [
+        "task_adf35d77"
+      ],
       "sourceCommit": "95650e95d72d022bbd3e31646ed529a46f1a764b",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
       "pendingReason": "No dedicated primary/final independent focus judgment.",
@@ -7057,6 +7171,32 @@
         "No setup, repository tests or builds run, as required; parent owns isolated gates.",
         "Independent final readability judgment remains with the parent-assigned fresh judge.",
         "No source edits, recovery, credential access, delegation, push, merge or cleanup performed."
+      ],
+      "acceptedBlob": "adfaaf70a70bf709a070cef53f29b94505c999b7",
+      "result": "The three paragraphs already follow the decision journey: the main agent owns leadership and integration; independent code/PR work is isolated while research/shared edits stay in the current workspace; the launch example and returned-path rule lead into durable placement and recording branch/path for continuation. This puts the isolation choice and its consequences together without conflating them with mode persistence or child-role policy. More headings or another helper would add navigation without exposing a missing authority.",
+      "systemReason": "src/prompts.ts selects this text only in mainAgentGuidance for orchestrator mode and surrounds it with a session-owner-specific region. Its replacement operation only touches that owned region. src/agent/extension.ts applies main framing only at root and respects user custom bases. src/agent/instruction-mode.ts derives a stable owner, restores mode from active session entries, and persists a requested mode before updating the prepared frame; children cannot switch root mode. The worktree guidance matches the actual implementation: src/tasks/job-service.ts prepares the requested workspace and launches from workspaceSummary.path, and src/tasks/worktree-workspace.ts chooses BRUV_WORKTREE_ROOT or ~/.bruv/worktrees and records path/branch. The prompt need not absorb these separate implementation lifetimes.",
+      "checks": [
+        {
+          "check": "Required guidance",
+          "result": "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md."
+        },
+        {
+          "check": "Focus-only ledger evidence",
+          "result": "Read assigned area and repo-wide coverage focus rows at exact candidates and current area rows; all three baseline focus blobs are unchanged. Current focus rows retain distinct primaries and needs-judge state; no prior accepted focus blob or rejection to restore."
+        },
+        {
+          "check": "Exact candidate scope",
+          "result": "Compared candidate identities with supplied primaryBases and inspected commit source deltas. No candidate focus-related source edits; caller files traced here are identical between the two candidate commits."
+        },
+        {
+          "check": "Actual caller and API reading",
+          "result": "Read mode selection/owned replacement, root-versus-worker hook, mode persistence commit point, worktree launch preparation and managed root/path/branch summary."
+        }
+      ],
+      "limits": [
+        "Static actual-source readability judgment only; no setup, tests, builds, formatter, provider, microphone, device, or authentication checks run. Parent owns audited batch gates.",
+        "No source, ledgers, wisdom, branches, or existing worktrees modified. Related paths are reading evidence, not additional accepted source edits. No delegation.",
+        "Supplied candidate equals supplied primaryBase: no changed focus-related source paths. Unrelated work already contained in the shared base commit is not rejudged or replaced."
       ]
     },
     {
@@ -7193,13 +7333,48 @@
       "initialBlob": "4e40ae34cd631f8840affd22c799c4c8bed9a836",
       "status": "pending",
       "area": "agent-history-session-goals",
-      "resumeState": "pending-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_3c851044",
+      "primaryCommit": "9d3a4eb28e1ec4c616c144298add327756d9f42f",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "9d3a4eb28e1ec4c616c144298add327756d9f42f",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
-      "pendingReason": "No dedicated primary/final independent focus judgment."
+      "pendingReason": "No dedicated primary/final independent focus judgment.",
+      "primaryBase": "9d3a4eb28e1ec4c616c144298add327756d9f42f",
+      "primaryResult": "Traced src/agent/extension.ts before_agent_start to withMainAgentGuidance/withSubagentGuidance in src/prompts.ts, then collaborationGuidance to the embedded system.md. Both standard main and worker prompts receive the same complete two-section policy; a user-owned custom prompt retains its collaboration policy, and workers still receive their separate role guidance. workingValues derives the list from the same Markdown rather than maintaining another policy copy. Read tests/prompts.test.ts assertions for canonical Markdown, separation from tool reference, and preserved security/data-loss protections. More headings, splitting, or moving bullets would only churn a readily readable source rather than resolve an observed journey problem. Reconciliation and area/repo coverage focus rows show pending-primary with the identical baseline blob and no retained focus candidate or rejected judgment to import.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        {
+          "kind": "read-only source inspection",
+          "paths": [
+            "wisdom/values.md",
+            "wisdom/quality/structural-readability-guidance.md",
+            "src/prompts/system.md",
+            "src/prompts.ts",
+            "src/agent/extension.ts",
+            "tests/prompts.test.ts"
+          ],
+          "result": "Policy source, injection callers, custom-prompt ownership, and existing assertions inspected without modification."
+        },
+        {
+          "kind": "focus evidence",
+          "result": "Focus-only parsed ledger/reconciliation rows confirm pending-primary; focus exists and matches baseline 4e40ae34cd631f8840affd22c799c4c8bed9a836."
+        },
+        {
+          "kind": "git hash-object and diff --check",
+          "result": "Working focus bytes match HEAD; clean source diff."
+        },
+        {
+          "kind": "formatter",
+          "result": "Not invoked: no changed source paths or source commit."
+        }
+      ],
+      "primaryLimits": [
+        "No tests, builds, setup, delegation, push, PR, merge, or runtime model introspection performed; parent owns independent judgment and batch gates.",
+        "No source commit created because no source change was needed; sourceCommit identifies the exact inspected HEAD.",
+        "Initial reconciliation read emitted out-of-focus evidence before switching to parsed focus-only inspections. No out-of-focus source changes or candidate imports resulted.",
+        "Wisdom and values unchanged: no new general lesson, and parent owns aggregate wisdom."
+      ]
     },
     {
       "file": "src/prompts/wisdom.md",
