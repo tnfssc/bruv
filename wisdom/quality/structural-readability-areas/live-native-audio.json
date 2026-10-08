@@ -2649,10 +2649,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
+        "primaryId": "task_e1c14025",
+        "primaryCommit": "3a45bdda6b7ee814cd9013c8e8c8be2b506692bc",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "own_primary_pending",
+        "sourceCommit": "3a45bdda6b7ee814cd9013c8e8c8be2b506692bc",
+        "state": "needs-judge",
         "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
       }
     },
@@ -2670,10 +2671,11 @@
       },
       "resume": {
         "status": "pending",
-        "primaryId": null,
+        "primaryId": "task_e1c14025",
+        "primaryCommit": "3a45bdda6b7ee814cd9013c8e8c8be2b506692bc",
         "judgeIds": ["task_51a3b4e4"],
-        "sourceCommit": "7f72408d2e97646332d752d423d96ccbf56d310c",
-        "state": "related_actual_code_accepted_own_primary_pending",
+        "sourceCommit": "3a45bdda6b7ee814cd9013c8e8c8be2b506692bc",
+        "state": "needs-judge",
         "reason": "Retain exact related-path actual-code acceptance; it is not completion of this file’s distinct primary/fresh focus-judge requirement."
       }
     },
@@ -2819,10 +2821,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
+        "primaryId": "task_e1c14025",
+        "primaryCommit": "3a45bdda6b7ee814cd9013c8e8c8be2b506692bc",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "own_primary_pending",
+        "sourceCommit": "3a45bdda6b7ee814cd9013c8e8c8be2b506692bc",
+        "state": "needs-judge",
         "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
       }
     },

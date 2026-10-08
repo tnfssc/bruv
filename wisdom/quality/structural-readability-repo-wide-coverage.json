@@ -10778,12 +10778,28 @@
       "file": "tests/current-pipeline-live.test.ts",
       "initialBlob": "2a82fccb8c45476d6e8a871afb598c3f11540e83",
       "status": "pending",
-      "primaryId": null,
-      "sourceCommit": null,
+      "primaryId": "task_e1c14025",
+      "sourceCommit": "3a45bdda6b7ee814cd9013c8e8c8be2b506692bc",
       "judgeIds": [],
-      "resumeState": "own_primary_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "3a45bdda6b7ee814cd9013c8e8c8be2b506692bc",
+      "primaryBase": "0c7548ef6fb41a650d14241382af7acf70cb0331",
+      "primaryResult": "appendToolFixture owns the four-message synthetic tool exchange (tool call, padded private tool result, retention padding, assistant acknowledgement), with explicit SessionManager and selected-model inputs at both calls. The main test now exposes seed -> durable reopen -> compact -> dispose/reopen -> ordinary recall -> append newly uncaptured result to the current manager -> rebuild agent context -> compact. Fixture bytes, role order, private-marker redaction, plaintext-strategy assertions, three-request assertion, retained-tail exclusion and evidence/disposal order remain unchanged. This separates fixture framing from scenario authority without moving the observer or inventing a shared context object.",
+      "primaryPaths": ["tests/current-pipeline-live.test.ts", "tests/goals-live.test.ts"],
+      "primaryChecks": [
+        "Actual whole focus source read; relevant callers/helpers and assigned reconciliation rows read. Historical acceptance is provenance only, not own-focus approval.",
+        "Biome format --write ran only on tests/current-pipeline-live.test.ts and tests/goals-live.test.ts via node:child_process explicit argv. Exit 0. Fresh retained HOME/config/cache/TMPDIR/SDK fixture root: /tmp/pr45-live-primary-format-bvtzg2. Provenance retained at /home/tnfssc/.bruv/worktrees/pr45-format-provenance-task_e1c14025.json.",
+        "git diff --check passed before source-only commit; commit hooks directory contained only .sample hooks. Both refactors reviewed against source diff. Static expect-statement text comparison preserved all 9 pipeline and 10 goal assertions (supporting preservation check, not readability proof).",
+        "Candidate editor test blob verified against 7f72408d2e97646332d752d423d96ccbf56d310c: exact 8602a3f58450df60fd489a9d7ce290a78daa968d and no diff. No rejected own-focus rounds or reworks in these three assigned reconciliation rows.",
+        "No repository tests, setup, builds, credentials, live device/provider calls, dependency writes, delegation, branch merge, push or PR publication performed."
+      ],
+      "primaryLimits": [
+        "Parent owns fresh independent judgment, isolated audited gates, runtime agent.model verification and publication; this is a primary decision, not a judge acceptance.",
+        "Paid provider behavior, SDK integration, timer behavior and real-editor/device parity remain unverified at runtime. Existing cleanup touches mkdtemp-owned test directories; inspected but never executed. Existing live tests can read/refresh auth and dispatch providers and the goal test registers real execute; do not run without parent audit and explicit isolated argv/env.",
+        "Existing accepted unrelated work and candidate worktrees/evidence preserved. No wisdom changes: parent owns aggregate wisdom. Formatter fixture directories retained, not deleted."
+      ]
     },
     {
       "file": "tests/current-pipeline-sdk.test.ts",
@@ -10887,12 +10903,28 @@
       "file": "tests/editor-push-to-talk.test.ts",
       "initialBlob": "cfbe46536c1c27623370d592c394ade2b5fad468",
       "status": "pending",
-      "primaryId": null,
-      "sourceCommit": "7f72408d2e97646332d752d423d96ccbf56d310c",
+      "primaryId": "task_e1c14025",
+      "sourceCommit": "3a45bdda6b7ee814cd9013c8e8c8be2b506692bc",
       "judgeIds": ["task_51a3b4e4"],
-      "resumeState": "related_actual_code_accepted_own_primary_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Retain exact related-path actual-code acceptance; it is not completion of this file’s distinct primary/fresh focus-judge requirement.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "3a45bdda6b7ee814cd9013c8e8c8be2b506692bc",
+      "primaryBase": "0c7548ef6fb41a650d14241382af7acf70cb0331",
+      "primaryResult": "No source change needed. The failed-rollback test explicitly demonstrates input yield, blocked repeats, fresh-press admission and safe capture; changed-draft and missing-undo cases preserve distinct safety guarantees. Slow taps/new warmup tests distinguish intentional spaces from the latest hold. Raw focus/paste observations and modifier-changed releases have direct assertions; inactivity uses the exported bound. CompactEditor supplies guarded text/cursor undo while production startTalking consumes newest-first and acquires capture only after all guards succeed. A new gesture DSL, regrouping or fixture wrapper would conceal the event sequence rather than clarify authority. Preserve the already integrated related candidate bytes exactly; own-focus unchanged reasoning is independent of that historical ACCEPT.",
+      "primaryPaths": ["tests/current-pipeline-live.test.ts", "tests/goals-live.test.ts"],
+      "primaryChecks": [
+        "Actual whole focus source read; relevant callers/helpers and assigned reconciliation rows read. Historical acceptance is provenance only, not own-focus approval.",
+        "Biome format --write ran only on tests/current-pipeline-live.test.ts and tests/goals-live.test.ts via node:child_process explicit argv. Exit 0. Fresh retained HOME/config/cache/TMPDIR/SDK fixture root: /tmp/pr45-live-primary-format-bvtzg2. Provenance retained at /home/tnfssc/.bruv/worktrees/pr45-format-provenance-task_e1c14025.json.",
+        "git diff --check passed before source-only commit; commit hooks directory contained only .sample hooks. Both refactors reviewed against source diff. Static expect-statement text comparison preserved all 9 pipeline and 10 goal assertions (supporting preservation check, not readability proof).",
+        "Candidate editor test blob verified against 7f72408d2e97646332d752d423d96ccbf56d310c: exact 8602a3f58450df60fd489a9d7ce290a78daa968d and no diff. No rejected own-focus rounds or reworks in these three assigned reconciliation rows.",
+        "No repository tests, setup, builds, credentials, live device/provider calls, dependency writes, delegation, branch merge, push or PR publication performed."
+      ],
+      "primaryLimits": [
+        "Parent owns fresh independent judgment, isolated audited gates, runtime agent.model verification and publication; this is a primary decision, not a judge acceptance.",
+        "Paid provider behavior, SDK integration, timer behavior and real-editor/device parity remain unverified at runtime. Existing cleanup touches mkdtemp-owned test directories; inspected but never executed. Existing live tests can read/refresh auth and dispatch providers and the goal test registers real execute; do not run without parent audit and explicit isolated argv/env.",
+        "Existing accepted unrelated work and candidate worktrees/evidence preserved. No wisdom changes: parent owns aggregate wisdom. Formatter fixture directories retained, not deleted."
+      ]
     },
     {
       "file": "tests/editor-voice-integration.test.ts",
@@ -12926,12 +12958,28 @@
       "file": "tests/goals-live.test.ts",
       "initialBlob": "0397caa9ef5367b746a6c6020ad6c8ece81dcc18",
       "status": "pending",
-      "primaryId": null,
-      "sourceCommit": null,
+      "primaryId": "task_e1c14025",
+      "sourceCommit": "3a45bdda6b7ee814cd9013c8e8c8be2b506692bc",
       "judgeIds": [],
-      "resumeState": "own_primary_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "3a45bdda6b7ee814cd9013c8e8c8be2b506692bc",
+      "primaryBase": "0c7548ef6fb41a650d14241382af7acf70cb0331",
+      "primaryResult": "runWithinGoalWallLimit owns timer creation, deadline rejection, the workflow promise, race, timer release, session abort and workflow drain in one operation. Its call marks the bounded scenario explicitly; evidence persistence and dispatch-budget restoration are visibly after that awaited ownership boundary. The fully initialized created.session is passed explicitly and used inside verification, while optional session/manager/budget remain only for partial-setup finalization. All criterion content/hash, latest completed-goal evidence bounds, durable JSONL completion and dispatch-cap assertions remain; auth preflight, provider wrapper maxRetries=0, 120-second wall limit and 150-second test limit are preserved. No general runner/context bag or production change was introduced.",
+      "primaryPaths": ["tests/current-pipeline-live.test.ts", "tests/goals-live.test.ts"],
+      "primaryChecks": [
+        "Actual whole focus source read; relevant callers/helpers and assigned reconciliation rows read. Historical acceptance is provenance only, not own-focus approval.",
+        "Biome format --write ran only on tests/current-pipeline-live.test.ts and tests/goals-live.test.ts via node:child_process explicit argv. Exit 0. Fresh retained HOME/config/cache/TMPDIR/SDK fixture root: /tmp/pr45-live-primary-format-bvtzg2. Provenance retained at /home/tnfssc/.bruv/worktrees/pr45-format-provenance-task_e1c14025.json.",
+        "git diff --check passed before source-only commit; commit hooks directory contained only .sample hooks. Both refactors reviewed against source diff. Static expect-statement text comparison preserved all 9 pipeline and 10 goal assertions (supporting preservation check, not readability proof).",
+        "Candidate editor test blob verified against 7f72408d2e97646332d752d423d96ccbf56d310c: exact 8602a3f58450df60fd489a9d7ce290a78daa968d and no diff. No rejected own-focus rounds or reworks in these three assigned reconciliation rows.",
+        "No repository tests, setup, builds, credentials, live device/provider calls, dependency writes, delegation, branch merge, push or PR publication performed."
+      ],
+      "primaryLimits": [
+        "Parent owns fresh independent judgment, isolated audited gates, runtime agent.model verification and publication; this is a primary decision, not a judge acceptance.",
+        "Paid provider behavior, SDK integration, timer behavior and real-editor/device parity remain unverified at runtime. Existing cleanup touches mkdtemp-owned test directories; inspected but never executed. Existing live tests can read/refresh auth and dispatch providers and the goal test registers real execute; do not run without parent audit and explicit isolated argv/env.",
+        "Existing accepted unrelated work and candidate worktrees/evidence preserved. No wisdom changes: parent owns aggregate wisdom. Formatter fixture directories retained, not deleted."
+      ]
     },
     {
       "file": "tests/goals-marker-sdk.test.ts",

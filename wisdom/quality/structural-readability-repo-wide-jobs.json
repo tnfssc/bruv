@@ -1073,7 +1073,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_e1c14025",
         "branch": "bruv/pr45-primary-3-live-native-audio-focuses-e1c14025",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "3a45bdda6b7ee814cd9013c8e8c8be2b506692bc"
       },
       {
         "id": "task_677b6742",
@@ -1168,6 +1169,19 @@
         ],
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_ae2196d9",
         "branch": "bruv/pr45-primary-3-live-native-audio-focuses-ae2196d9",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_7d99ac05",
+        "stage": "judge",
+        "focus": [
+          "tests/fixtures/live-push-to-talk-tui.ts",
+          "tests/fixtures/live-spoken-tui.ts",
+          "tests/helpers/live-startup-audio-queue.ts"
+        ],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_7d99ac05",
+        "branch": "bruv/pr45-judge-3-live-native-audio-focuses-7d99ac05",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
       }
