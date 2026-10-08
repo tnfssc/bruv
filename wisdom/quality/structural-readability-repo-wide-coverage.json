@@ -16079,26 +16079,62 @@
       "initialBlob": "fc51f95e6eede1cd6df28a1e7dec2122a0151dd3",
       "status": "pending",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_16837afc",
+      "primaryCommit": "cbf7ddd6f5cbb1f69eb88479a876e14ec43773c1",
       "judgeIds": [],
-      "sourceCommit": "8100b94cfb49eaa8d07794da0ec658393b474939",
+      "sourceCommit": "cbf7ddd6f5cbb1f69eb88479a876e14ec43773c1",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
-      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
+      "primaryBase": "7227c21e506566c57f3ffd55f99c87a1572a3080",
+      "primaryResult": "Leave this focus unchanged. run() visibly owns setup through all toolStages and always disposes in finally. deterministic() removes only observational clocks/frame timing, keeping screen/content/work evidence for reuse comparisons. The manual preview and complete-constructor tests intentionally show the selected mutations inside local try/finally; the overlap/repeated-completion test explicitly exposes first-to-second fixture ownership and bounded retained branch behavior. Extracting these assertions or stages would hide the protocol being checked without removing an authority/lifetime reconstruction burden. All existing assertions remain byte-identical; the other two files are included below solely to pin the complete batch source scope.",
+      "primaryPaths": ["tests/terminal-perf-workloads.test.ts", "tests/tui-harness.test.ts"],
+      "primaryChecks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md; read only assigned reconciliation rows and their matching preserved evidence.",
+        "Static filesystem/process-effects review only; no tests, setup, builds, provider/device/auth calls, or delegation performed.",
+        "Repository Biome invoked with child_process explicit argv: /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/@biomejs/biome/bin/biome format --write /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_16837afc/tests/terminal-perf-workloads.test.ts /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_16837afc/tests/tui-harness.test.ts; retained fresh environment root /tmp/pr45-primary-format-dmCy4b (HOME=/tmp/pr45-primary-format-dmCy4b/home, XDG_CONFIG_HOME=/tmp/pr45-primary-format-dmCy4b/config, TMPDIR=/tmp/pr45-primary-format-dmCy4b/tmp, SDK=/tmp/pr45-primary-format-dmCy4b/sdk). Formatted changed source paths only; 2 files formatted, 1 fixed.",
+        "git diff --check: exit 0. Reviewed both full source changes; commit contains only tests/terminal-perf-workloads.test.ts, tests/tui-harness.test.ts.",
+        "No active commit hooks configured; default hook directory contains samples only. Source-only commit cbf7ddd6f5cbb1f69eb88479a876e14ec43773c1.",
+        "git diff 8100b94cfb49eaa8d07794da0ec658393b474939 HEAD -- tests/terminal-perf-tools.test.ts is empty; blob fc51f95e6eede1cd6df28a1e7dec2122a0151dd3."
+      ],
+      "primaryLimits": [
+        "No independent judgment performed: parent owns fresh independent judgments and audited isolated runtime gates.",
+        "No tests/setup/builds executed by instruction. No runtime or performance claims; tmux availability, compiled dist startup and terminal timing remain unverified.",
+        "No live auth/device/credentials accessed. Runtime agent.model verification remains parent-owned; this leaf did not inspect credentials or delegate.",
+        "changedPaths and sourceBlobs list the complete two-file combined commit scope on every decision, including when that focus itself is unchanged. Other accepted source and preserved worktrees/candidate evidence were not modified.",
+        "Formatter fixture retained at /tmp/pr45-primary-format-dmCy4b. Harness runtime fixture creation is test source only, not executed here; its copied entrypoint/config and dist symlink derive from the durable source worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_16837afc, and its logged mkdtemp root is retained for parent audit."
+      ]
     },
     {
       "file": "tests/terminal-perf-workloads.test.ts",
       "initialBlob": "162a5a3c74695d6edefe695eb9d5e4c4a52c0ed3",
       "status": "pending",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_16837afc",
+      "primaryCommit": "cbf7ddd6f5cbb1f69eb88479a876e14ec43773c1",
       "judgeIds": ["task_d455a9d6"],
-      "sourceCommit": "747c31b8e52eff45ab2c585e5974eeb9d50cd85a",
+      "sourceCommit": "cbf7ddd6f5cbb1f69eb88479a876e14ec43773c1",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
-      "pendingReason": "Existing related-path ACCEPT by task_d455a9d6 at 747c31b8e52eff45ab2c585e5974eeb9d50cd85a, blob d274acb072ed06375c1ee234379d57a32aa026cb; exact candidate verified. Related blob not joined; parent may join only with its existing narrow judgment. Dedicated primary-focus acceptance is missing."
+      "pendingReason": "Existing related-path ACCEPT by task_d455a9d6 at 747c31b8e52eff45ab2c585e5974eeb9d50cd85a, blob d274acb072ed06375c1ee234379d57a32aa026cb; exact candidate verified. Related blob not joined; parent may join only with its existing narrow judgment. Dedicated primary-focus acceptance is missing.",
+      "primaryBase": "7227c21e506566c57f3ffd55f99c87a1572a3080",
+      "primaryResult": "Restore ONLY this file via git show from 747c31b8e52eff45ab2c585e5974eeb9d50cd85a, without importing or merging its branch. The recovered tests put attach-before-mount, clear-between-steps and workload-then-profiler disposal in one explicit try/finally journey. The separate ready-failure test keeps the thrown error, stop count, prototype restoration, invalid post-failure step, and successful next fixture together. Existing catalog/visible-mutation/scale/tiny-fixture/sequential-lifecycle/invalid-options/FakeTerminal tests retain their direct ownership and assertions; no further abstraction is justified. The formatted focus remains exactly the previously accepted related blob, but needs its new independent primary-focus judgment.",
+      "primaryPaths": ["tests/terminal-perf-workloads.test.ts", "tests/tui-harness.test.ts"],
+      "primaryChecks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md; read only assigned reconciliation rows and their matching preserved evidence.",
+        "Static filesystem/process-effects review only; no tests, setup, builds, provider/device/auth calls, or delegation performed.",
+        "Repository Biome invoked with child_process explicit argv: /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/@biomejs/biome/bin/biome format --write /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_16837afc/tests/terminal-perf-workloads.test.ts /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_16837afc/tests/tui-harness.test.ts; retained fresh environment root /tmp/pr45-primary-format-dmCy4b (HOME=/tmp/pr45-primary-format-dmCy4b/home, XDG_CONFIG_HOME=/tmp/pr45-primary-format-dmCy4b/config, TMPDIR=/tmp/pr45-primary-format-dmCy4b/tmp, SDK=/tmp/pr45-primary-format-dmCy4b/sdk). Formatted changed source paths only; 2 files formatted, 1 fixed.",
+        "git diff --check: exit 0. Reviewed both full source changes; commit contains only tests/terminal-perf-workloads.test.ts, tests/tui-harness.test.ts.",
+        "No active commit hooks configured; default hook directory contains samples only. Source-only commit cbf7ddd6f5cbb1f69eb88479a876e14ec43773c1.",
+        "git diff 747c31b8e52eff45ab2c585e5974eeb9d50cd85a -- tests/terminal-perf-workloads.test.ts is empty after formatting; blob d274acb072ed06375c1ee234379d57a32aa026cb equals preserved accepted-related d274acb072ed06375c1ee234379d57a32aa026cb."
+      ],
+      "primaryLimits": [
+        "No independent judgment performed: parent owns fresh independent judgments and audited isolated runtime gates.",
+        "No tests/setup/builds executed by instruction. No runtime or performance claims; tmux availability, compiled dist startup and terminal timing remain unverified.",
+        "No live auth/device/credentials accessed. Runtime agent.model verification remains parent-owned; this leaf did not inspect credentials or delegate.",
+        "changedPaths and sourceBlobs list the complete two-file combined commit scope on every decision, including when that focus itself is unchanged. Other accepted source and preserved worktrees/candidate evidence were not modified.",
+        "Formatter fixture retained at /tmp/pr45-primary-format-dmCy4b. Harness runtime fixture creation is test source only, not executed here; its copied entrypoint/config and dist symlink derive from the durable source worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_16837afc, and its logged mkdtemp root is retained for parent audit."
+      ]
     },
     {
       "file": "tests/tool-schema.test.ts",
@@ -16189,52 +16225,161 @@
       "initialBlob": "b806b4944004e9d8806779d271da1b0c8ded8297",
       "status": "pending",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_16837afc",
+      "primaryCommit": "cbf7ddd6f5cbb1f69eb88479a876e14ec43773c1",
       "judgeIds": [],
-      "sourceCommit": "292fd116640733d190bc9344505c236cff4c7dbd",
+      "sourceCommit": "cbf7ddd6f5cbb1f69eb88479a876e14ec43773c1",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
-      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
+      "primaryBase": "7227c21e506566c57f3ffd55f99c87a1572a3080",
+      "primaryResult": "Introduce one local createHarnessFixture operation that owns its retained mkdtemp root, allowlisted env, HOME/config/SDK/TMPDIR/TMUX_TMPDIR, copied small harness/config entrypoints and read-only reuse of the parent-built dist. Its command/createSession/hasSession/stopServer operations close over the same socket/env/cwd; beforeAll publishes the fixture and afterAll stops only that server, never removes directories. Because the copied entrypoint computes root inside the fixture, state/transcripts now share that owned boundary too. Test bodies now describe duplicate preservation, invalid-name rejection and demo-only timeout without reassembling transport details. All command/exit/error/session/timeout assertions and timing remain intact. No production source or shared helper changed.",
+      "primaryPaths": ["tests/terminal-perf-workloads.test.ts", "tests/tui-harness.test.ts"],
+      "primaryChecks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md; read only assigned reconciliation rows and their matching preserved evidence.",
+        "Static filesystem/process-effects review only; no tests, setup, builds, provider/device/auth calls, or delegation performed.",
+        "Repository Biome invoked with child_process explicit argv: /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/@biomejs/biome/bin/biome format --write /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_16837afc/tests/terminal-perf-workloads.test.ts /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_16837afc/tests/tui-harness.test.ts; retained fresh environment root /tmp/pr45-primary-format-dmCy4b (HOME=/tmp/pr45-primary-format-dmCy4b/home, XDG_CONFIG_HOME=/tmp/pr45-primary-format-dmCy4b/config, TMPDIR=/tmp/pr45-primary-format-dmCy4b/tmp, SDK=/tmp/pr45-primary-format-dmCy4b/sdk). Formatted changed source paths only; 2 files formatted, 1 fixed.",
+        "git diff --check: exit 0. Reviewed both full source changes; commit contains only tests/terminal-perf-workloads.test.ts, tests/tui-harness.test.ts.",
+        "No active commit hooks configured; default hook directory contains samples only. Source-only commit cbf7ddd6f5cbb1f69eb88479a876e14ec43773c1.",
+        "git diff 292fd116640733d190bc9344505c236cff4c7dbd HEAD -- tests/tui-harness.test.ts was empty before this rework. Post-edit static review: only PATH inherited; argv/env explicit; all writable paths inside owned root; kill-server targets fixture socket/TMUX_TMPDIR; no cleanup/removal commands or inherited credentials."
+      ],
+      "primaryLimits": [
+        "No independent judgment performed: parent owns fresh independent judgments and audited isolated runtime gates.",
+        "No tests/setup/builds executed by instruction. No runtime or performance claims; tmux availability, compiled dist startup and terminal timing remain unverified.",
+        "No live auth/device/credentials accessed. Runtime agent.model verification remains parent-owned; this leaf did not inspect credentials or delegate.",
+        "changedPaths and sourceBlobs list the complete two-file combined commit scope on every decision, including when that focus itself is unchanged. Other accepted source and preserved worktrees/candidate evidence were not modified.",
+        "Formatter fixture retained at /tmp/pr45-primary-format-dmCy4b. Harness runtime fixture creation is test source only, not executed here; its copied entrypoint/config and dist symlink derive from the durable source worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_16837afc, and its logged mkdtemp root is retained for parent audit.",
+        "The dist symlink is a reused prebuilt dependency, not a code checkout/build. The tests must be run only by the parent with its audited offline/network-isolated gate and existing compiled artifact; offline CLI behavior was not executed/verified here."
+      ]
     },
     {
       "file": "tests/tui-helpers.test.ts",
       "initialBlob": "e64a66d456b1a43ea29f404e9e8113b5cba48156",
       "status": "pending",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_483b50c3",
+      "primaryCommit": "713146af5b76949e504d0c1e1655a47bb8d3d529",
       "judgeIds": [],
-      "sourceCommit": "12f1b0fbe27c647d6a414a32406d63a730bba50b",
+      "sourceCommit": "713146af5b76949e504d0c1e1655a47bb8d3d529",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
-      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
+      "primaryBase": "cd1c72851831111cbbeccacae801469989e2f299",
+      "primaryResult": "No-change. The real Pi editor/provider setup and explicit send-keys assertions make the distinction between suggestion acceptance and command submission visible at the test site. Extracting the editor configuration or tmux fixture would hide the exact input sequence and add navigation without resolving an ownership/lifetime burden. Existing assertions, fixtures, and environment behavior remain unchanged.",
+      "primaryPaths": ["tests/tui-stop-restoration.test.ts"],
+      "primaryChecks": [
+        "Read entire assigned focus files, wisdom/values.md, and wisdom/quality/structural-readability-guidance.md; selected assigned reconciliation rows report needs-primary / NOT REVIEWED, with no rejected dedicated candidate.",
+        "git show verified each preserved candidate file exactly equals its starting HEAD source; no candidate recovery or branch merge necessary.",
+        "git diff --check: clean.",
+        "Static comparison confirms every restoration test body/assertion is byte-identical to the starting source.",
+        {
+          "kind": "formatter",
+          "binary": "/home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/@biomejs/biome/bin/biome",
+          "argv": ["format", "--write", "tests/tui-stop-restoration.test.ts"],
+          "env": {
+            "PATH": "/usr/bin:/bin",
+            "HOME": "/tmp/pr45-tui-stop-format-JLs7Zi/home",
+            "XDG_CONFIG_HOME": "/tmp/pr45-tui-stop-format-JLs7Zi/config",
+            "TMPDIR": "/tmp/pr45-tui-stop-format-JLs7Zi/tmp"
+          },
+          "result": "Formatted one changed source path successfully; no tests/setup/build."
+        },
+        "Source-only commit scope confirmed with git diff-tree; changedPaths in every decision records the complete combined source scope, not a change to an unchanged focus."
+      ],
+      "primaryLimits": [
+        "No tests, setup, build, typecheck, live authentication, devices, credential access, recovery work, dependency installs, remote work, push, PR, merge or publication performed. Parent owns audited isolated gates and fresh independent judgments.",
+        "No delegation performed. Parent owns runtime model verification; no independent readability acceptance claimed.",
+        "Existing temporary-directory cleanup in helper/caller test code was only read, never executed. Helper tests currently use run() inheriting process environment and a top-level tmux version probe: parent must audit/isolate before any execution. Shared dependency implementation was read only.",
+        "Preserved candidate commits/worktrees and unrelated accepted work left intact. Wisdom and values unchanged; parent owns aggregate wisdom.",
+        "Formatter fixture /tmp/pr45-tui-stop-format-JLs7Zi retained; source and Git provenance remain in durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_483b50c3. Only the assigned restoration test was formatted. Supplemental formatter provenance remains untracked in .pr45-format-provenance.json.",
+        "Initial reconciliation output was inadvertently broader than assigned rows and hit the capture limit; focused reread selected only the three assigned rows/blobInventory entries. No broader source review or changes made."
+      ]
     },
     {
       "file": "tests/tui-helpers.ts",
       "initialBlob": "b45f178e90e91b492f62d9eb4a86eeb2c23c02e6",
       "status": "pending",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_483b50c3",
+      "primaryCommit": "713146af5b76949e504d0c1e1655a47bb8d3d529",
       "judgeIds": [],
-      "sourceCommit": "12f1b0fbe27c647d6a414a32406d63a730bba50b",
+      "sourceCommit": "713146af5b76949e504d0c1e1655a47bb8d3d529",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
-      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
+      "primaryBase": "cd1c72851831111cbbeccacae801469989e2f299",
+      "primaryResult": "No-change. pollFrame deliberately returns the last observed frame so callers retain their assertions; frameContaining explicitly adds all-marker matching and its own error. Keeping those two policies separate preserves the caller contract. The module is small and linear, with no context bag, distributed lifetime, or duplicated policy requiring structural intervention.",
+      "primaryPaths": ["tests/tui-stop-restoration.test.ts"],
+      "primaryChecks": [
+        "Read entire assigned focus files, wisdom/values.md, and wisdom/quality/structural-readability-guidance.md; selected assigned reconciliation rows report needs-primary / NOT REVIEWED, with no rejected dedicated candidate.",
+        "git show verified each preserved candidate file exactly equals its starting HEAD source; no candidate recovery or branch merge necessary.",
+        "git diff --check: clean.",
+        "Static comparison confirms every restoration test body/assertion is byte-identical to the starting source.",
+        {
+          "kind": "formatter",
+          "binary": "/home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/@biomejs/biome/bin/biome",
+          "argv": ["format", "--write", "tests/tui-stop-restoration.test.ts"],
+          "env": {
+            "PATH": "/usr/bin:/bin",
+            "HOME": "/tmp/pr45-tui-stop-format-JLs7Zi/home",
+            "XDG_CONFIG_HOME": "/tmp/pr45-tui-stop-format-JLs7Zi/config",
+            "TMPDIR": "/tmp/pr45-tui-stop-format-JLs7Zi/tmp"
+          },
+          "result": "Formatted one changed source path successfully; no tests/setup/build."
+        },
+        "Source-only commit scope confirmed with git diff-tree; changedPaths in every decision records the complete combined source scope, not a change to an unchanged focus."
+      ],
+      "primaryLimits": [
+        "No tests, setup, build, typecheck, live authentication, devices, credential access, recovery work, dependency installs, remote work, push, PR, merge or publication performed. Parent owns audited isolated gates and fresh independent judgments.",
+        "No delegation performed. Parent owns runtime model verification; no independent readability acceptance claimed.",
+        "Existing temporary-directory cleanup in helper/caller test code was only read, never executed. Helper tests currently use run() inheriting process environment and a top-level tmux version probe: parent must audit/isolate before any execution. Shared dependency implementation was read only.",
+        "Preserved candidate commits/worktrees and unrelated accepted work left intact. Wisdom and values unchanged; parent owns aggregate wisdom.",
+        "Formatter fixture /tmp/pr45-tui-stop-format-JLs7Zi retained; source and Git provenance remain in durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_483b50c3. Only the assigned restoration test was formatted. Supplemental formatter provenance remains untracked in .pr45-format-provenance.json.",
+        "Initial reconciliation output was inadvertently broader than assigned rows and hit the capture limit; focused reread selected only the three assigned rows/blobInventory entries. No broader source review or changes made."
+      ]
     },
     {
       "file": "tests/tui-stop-restoration.test.ts",
       "initialBlob": "a3a127ef7f44792d9b31b7944ad6ce6f74014c13",
       "status": "pending",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_483b50c3",
+      "primaryCommit": "713146af5b76949e504d0c1e1655a47bb8d3d529",
       "judgeIds": [],
-      "sourceCommit": "3603e341a47541a137c95c675106c9568374fde1",
+      "sourceCommit": "713146af5b76949e504d0c1e1655a47bb8d3d529",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
-      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
+      "primaryBase": "cd1c72851831111cbbeccacae801469989e2f299",
+      "primaryResult": "Extracted uncachedTranscript(lines, width, resetRows), exposing strip -> reset -> clip -> terminal-buffer ordering with explicit inputs outside fixture instrumentation. The fixture retains the original bound resetRows before installing the counting spy and explicitly passes it to the oracle; comments explain why expected-output generation does not increment observed work. reference still samples current lines and width at invocation, so later width/content changes retain their behavior. Consecutive-run counts, byte/hash output checks, image/link/color coverage, preserveScreen/inactive behavior, public stop ordering and capability restoration are unchanged.",
+      "primaryPaths": ["tests/tui-stop-restoration.test.ts"],
+      "primaryChecks": [
+        "Read entire assigned focus files, wisdom/values.md, and wisdom/quality/structural-readability-guidance.md; selected assigned reconciliation rows report needs-primary / NOT REVIEWED, with no rejected dedicated candidate.",
+        "git show verified each preserved candidate file exactly equals its starting HEAD source; no candidate recovery or branch merge necessary.",
+        "git diff --check: clean.",
+        "Static comparison confirms every restoration test body/assertion is byte-identical to the starting source.",
+        {
+          "kind": "formatter",
+          "binary": "/home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/@biomejs/biome/bin/biome",
+          "argv": ["format", "--write", "tests/tui-stop-restoration.test.ts"],
+          "env": {
+            "PATH": "/usr/bin:/bin",
+            "HOME": "/tmp/pr45-tui-stop-format-JLs7Zi/home",
+            "XDG_CONFIG_HOME": "/tmp/pr45-tui-stop-format-JLs7Zi/config",
+            "TMPDIR": "/tmp/pr45-tui-stop-format-JLs7Zi/tmp"
+          },
+          "result": "Formatted one changed source path successfully; no tests/setup/build."
+        },
+        "Source-only commit scope confirmed with git diff-tree; changedPaths in every decision records the complete combined source scope, not a change to an unchanged focus."
+      ],
+      "primaryLimits": [
+        "No tests, setup, build, typecheck, live authentication, devices, credential access, recovery work, dependency installs, remote work, push, PR, merge or publication performed. Parent owns audited isolated gates and fresh independent judgments.",
+        "No delegation performed. Parent owns runtime model verification; no independent readability acceptance claimed.",
+        "Existing temporary-directory cleanup in helper/caller test code was only read, never executed. Helper tests currently use run() inheriting process environment and a top-level tmux version probe: parent must audit/isolate before any execution. Shared dependency implementation was read only.",
+        "Preserved candidate commits/worktrees and unrelated accepted work left intact. Wisdom and values unchanged; parent owns aggregate wisdom.",
+        "Formatter fixture /tmp/pr45-tui-stop-format-JLs7Zi retained; source and Git provenance remain in durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_483b50c3. Only the assigned restoration test was formatted. Supplemental formatter provenance remains untracked in .pr45-format-provenance.json.",
+        "Initial reconciliation output was inadvertently broader than assigned rows and hit the capture limit; focused reread selected only the three assigned rows/blobInventory entries. No broader source review or changes made."
+      ]
     },
     {
       "file": "tests/turn-boundaries.test.ts",

@@ -4023,11 +4023,11 @@
       "integrationState": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_16837afc",
+        "primaryCommit": "cbf7ddd6f5cbb1f69eb88479a876e14ec43773c1",
         "judgeIds": [],
-        "sourceCommit": "8100b94cfb49eaa8d07794da0ec658393b474939",
-        "state": "needs-primary",
+        "sourceCommit": "cbf7ddd6f5cbb1f69eb88479a876e14ec43773c1",
+        "state": "needs-judge",
         "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
       }
     },
@@ -4055,11 +4055,11 @@
       ],
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_16837afc",
+        "primaryCommit": "cbf7ddd6f5cbb1f69eb88479a876e14ec43773c1",
         "judgeIds": ["task_d455a9d6"],
-        "sourceCommit": "747c31b8e52eff45ab2c585e5974eeb9d50cd85a",
-        "state": "needs-primary",
+        "sourceCommit": "cbf7ddd6f5cbb1f69eb88479a876e14ec43773c1",
+        "state": "needs-judge",
         "reason": "Existing related-path ACCEPT by task_d455a9d6 at 747c31b8e52eff45ab2c585e5974eeb9d50cd85a, blob d274acb072ed06375c1ee234379d57a32aa026cb; exact candidate verified. Related blob not joined; parent may join only with its existing narrow judgment. Dedicated primary-focus acceptance is missing."
       }
     },
@@ -4073,11 +4073,11 @@
       "integrationState": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_16837afc",
+        "primaryCommit": "cbf7ddd6f5cbb1f69eb88479a876e14ec43773c1",
         "judgeIds": [],
-        "sourceCommit": "292fd116640733d190bc9344505c236cff4c7dbd",
-        "state": "needs-primary",
+        "sourceCommit": "cbf7ddd6f5cbb1f69eb88479a876e14ec43773c1",
+        "state": "needs-judge",
         "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
       }
     },
@@ -4091,11 +4091,11 @@
       "integrationState": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_483b50c3",
+        "primaryCommit": "713146af5b76949e504d0c1e1655a47bb8d3d529",
         "judgeIds": [],
-        "sourceCommit": "12f1b0fbe27c647d6a414a32406d63a730bba50b",
-        "state": "needs-primary",
+        "sourceCommit": "713146af5b76949e504d0c1e1655a47bb8d3d529",
+        "state": "needs-judge",
         "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
       }
     },
@@ -4109,11 +4109,11 @@
       "integrationState": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_483b50c3",
+        "primaryCommit": "713146af5b76949e504d0c1e1655a47bb8d3d529",
         "judgeIds": [],
-        "sourceCommit": "12f1b0fbe27c647d6a414a32406d63a730bba50b",
-        "state": "needs-primary",
+        "sourceCommit": "713146af5b76949e504d0c1e1655a47bb8d3d529",
+        "state": "needs-judge",
         "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
       }
     },
@@ -4127,11 +4127,11 @@
       "integrationState": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_483b50c3",
+        "primaryCommit": "713146af5b76949e504d0c1e1655a47bb8d3d529",
         "judgeIds": [],
-        "sourceCommit": "3603e341a47541a137c95c675106c9568374fde1",
-        "state": "needs-primary",
+        "sourceCommit": "713146af5b76949e504d0c1e1655a47bb8d3d529",
+        "state": "needs-judge",
         "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
       }
     }
