@@ -56,37 +56,10 @@ for attempt in {1..50}; do
  sleep .1
 done
 if [[ "${REMOTE_E2E_SCRIPT:-}" == scripts/remote-recovery-e2e.ts ]]; then
+cp tests/fixtures/remote-e2e/recovery-ssh.sh "$tmp/bin/recovery-ssh.sh"
 cat > "$tmp/bin/ssh" <<EOF
 #!/bin/sh
-# Only the opt-in recovery fixture drops accepted responses; readiness SSH is untouched.
-case "\$*" in
-  *--remote-control*)
-    IFS= read -r request || exit 1
-    case "\$request" in
-      *'"op":"launch"'*'REMOTE_FIXTURE_MENU_LOST_LAUNCH'*)
-        if test -f "$tmp/drop-next-launch"; then
-          response=\$(printf '%s\n' "\$request" | /usr/bin/ssh -F "$tmp/home/.ssh/config" "\$@") || exit 1
-          python3 -c 'import json,sys; q=json.loads(sys.argv[1]); r=json.loads(sys.argv[2]); assert q["op"] == "launch" and q["taskId"] == r["task"]["taskId"] and r["task"]["state"] in ("accepted", "running")' "\$request" "\$response" || exit 1
-          printf '%s\n' "\$response" > "$tmp/dropped-launch.json"
-          mv "$tmp/drop-next-launch" "$tmp/launch-drop-used"
-          echo 'fixture: accepted owner launch response intentionally lost' >&2
-          exit 42
-        fi ;;
-      *'"op":"answer"'*)
-        if test -f "$tmp/drop-next-answer"; then
-          response=\$(printf '%s\n' "\$request" | /usr/bin/ssh -F "$tmp/home/.ssh/config" "\$@") || exit 1
-          # Verify owner responded to the accepted request BEFORE losing the reply.
-          printf '%s' "\$response" | python3 -c 'import json,sys; r=json.load(sys.stdin); assert r["task"]["reply"]["replyId"] and r["task"]["reply"]["status"] in ("uncertain", "delivered")' || exit 1
-          printf '%s\n' "\$response" > "$tmp/dropped-reply.json"
-          mv "$tmp/drop-next-answer" "$tmp/drop-used"
-          echo 'fixture: accepted owner answer response intentionally lost' >&2
-          exit 42
-        fi ;;
-    esac
-    printf '%s\n' "\$request" | /usr/bin/ssh -F "$tmp/home/.ssh/config" "\$@"
-    exit \$? ;;
-esac
-exec /usr/bin/ssh -F "$tmp/home/.ssh/config" "\$@"
+exec /bin/sh "$tmp/bin/recovery-ssh.sh" "$tmp/home/.ssh/config" "$tmp" "\$@"
 EOF
 else
 cat > "$tmp/bin/ssh" <<EOF

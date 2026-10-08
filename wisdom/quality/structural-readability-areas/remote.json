@@ -60,18 +60,21 @@
     {
       "focus": "scripts/remote-e2e.sh",
       "initialBlob": "34458325a2e2fde12b7f65e86359e16c984ddb53",
-      "status": "pending",
+      "status": "accepted",
       "judgeRounds": [],
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "16923a78b5f4d2444f7688f9baedacdcffb5b0e7",
         "primaryId": "task_d97a3bd7",
         "primaryCommit": "9861bea3333905083427acbc86253977c3218ac4",
-        "judgeIds": [],
+        "judgeIds": [
+          "task_f2c831a6"
+        ],
         "sourceCommit": "9861bea3333905083427acbc86253977c3218ac4",
-        "state": "needs-judge",
-        "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+        "state": "accepted-joined",
+        "reason": "Independent actual-code reading against primary base 699eca9333f36b48410f76e24022e03bf46eaa8f, which is also the candidate parent. Previously a reader had to interpret a recovery protocol inside an expanding Bash heredoc, distinguish setup-time tmp substitution from escaped runtime shell variables, and then resume Docker/SSH orchestration. The candidate makes that real authority boundary visible: the harness selects recovery only after readiness, copies the fixture helper, and generates a single exec binding the pinned config and evidence directory. The helper receives those two authorities explicitly, shifts them out of the original SSH argv, and directly presents the complete request/response-loss operation. Both changed files are intrinsically readable: the helper has two short domain branches, with acceptance verification, evidence publication, sentinel consumption, diagnostic and exit 42 together, followed by the ordinary forwarding path. This is not a rename-only or arbitrary extraction: it removes a second shell interpretation layer from protocol reading without introducing a framework or shared context. Unchanged decision: retain the linear Docker setup, key pinning, readiness loops, ordinary SSH shim and final environment handoff; their order and lifetime are already directly visible, and further splitting would scatter rather than clarify this fixture."
       },
-      "acceptedBlob": null
+      "acceptedBlob": "16923a78b5f4d2444f7688f9baedacdcffb5b0e7"
     },
     {
       "focus": "scripts/remote-e2e.ts",
@@ -4311,7 +4314,7 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 74,
+    "accepted": 75,
     "pending": 47
   }
 }

@@ -2628,12 +2628,14 @@
     {
       "file": "scripts/remote-e2e.sh",
       "initialBlob": "34458325a2e2fde12b7f65e86359e16c984ddb53",
-      "status": "pending",
+      "status": "accepted",
       "area": "remote",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_d97a3bd7",
       "primaryCommit": "9861bea3333905083427acbc86253977c3218ac4",
-      "judgeIds": [],
+      "judgeIds": [
+        "task_f2c831a6"
+      ],
       "sourceCommit": "9861bea3333905083427acbc86253977c3218ac4",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
       "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
@@ -2679,6 +2681,22 @@
         "No predecessor worktrees or uncommitted candidates changed. No automatic setup failure was bypassed.",
         "No wisdom or values edits; parent owns aggregate wisdom.",
         "Runtime model verification belongs to parent jobs.inspect; no self-introspection claim."
+      ],
+      "acceptedBlob": "16923a78b5f4d2444f7688f9baedacdcffb5b0e7",
+      "result": "Independent actual-code reading against primary base 699eca9333f36b48410f76e24022e03bf46eaa8f, which is also the candidate parent. Previously a reader had to interpret a recovery protocol inside an expanding Bash heredoc, distinguish setup-time tmp substitution from escaped runtime shell variables, and then resume Docker/SSH orchestration. The candidate makes that real authority boundary visible: the harness selects recovery only after readiness, copies the fixture helper, and generates a single exec binding the pinned config and evidence directory. The helper receives those two authorities explicitly, shifts them out of the original SSH argv, and directly presents the complete request/response-loss operation. Both changed files are intrinsically readable: the helper has two short domain branches, with acceptance verification, evidence publication, sentinel consumption, diagnostic and exit 42 together, followed by the ordinary forwarding path. This is not a rename-only or arbitrary extraction: it removes a second shell interpretation layer from protocol reading without introducing a framework or shared context. Unchanged decision: retain the linear Docker setup, key pinning, readiness loops, ordinary SSH shim and final environment handoff; their order and lifetime are already directly visible, and further splitting would scatter rather than clarify this fixture.",
+      "systemReason": "Traced opt-in test callers and the recovery script, plus actual production src/remote/ssh.ts framing. Production spawns ssh via PATH with one JSON line and a --remote-control command; the copied helper is invoked through /bin/sh (so its non-executable Git mode is intentional), receives config/drop positionally and preserves the remaining argv. For LOST_LAUNCH, the caller creates drop-next-launch; the helper forwards to the actual SSH executable, checks taskId and accepted/running status before saving dropped-launch.json, consuming the sentinel into launch-drop-used, and returning 42. The caller then observes unknown outcome and retries the original taskId, checking the same owner process identity and task count. For answer loss, the helper checks the owner reply receipt before dropped-reply.json/drop-used and exit 42; the caller verifies uncertain local delivery, owner-saved answer and recovery of the same replyId. Without a sentinel, control requests are forwarded once with their input line and SSH status; non-control calls exec the real SSH unchanged. Readiness runs before shim installation. Other runner modes retain the original ordinary shim. Existing RPC/session-switch assertions and explicit real-SSH owner inspections are unchanged. The helper belongs on the host next to the shim, not in the Docker build context; its source path is resolved from the same repository-root cwd already required by the harness and supplied by test callers.",
+      "checks": [
+        "Read wisdom/values.md, structural-readability-guidance.md, repo-wide ledger/coverage/assignments and relevant remote area ledger. The focus was pending; no prior focus rejection was recorded.",
+        "Inspected the complete two-path candidate diff, full candidate harness/helper, primary-base harness, recovery caller and SSH transport; inspected ordinary caller entry/handoff and fixture lifecycle/config source. All source reads used explicit Git revisions, not checkout HEAD.",
+        "Verified primary base equals candidate parent and the full changed-source set is exactly the harness and new helper. Recorded exact candidate Git blobs.",
+        "Read-only normalization comparison: after reversing shell-dollar escaping and parameterizing the original config/drop paths, the protocol body is byte-identical (1673 bytes). Setup/readiness prefix and non-recovery/final-handoff suffix are byte-identical.",
+        "git diff --check primary-base candidate passed. No repository tests, setup, builds, shell fixtures or recovery commands were run."
+      ],
+      "limits": [
+        "Structural/source judgment only; parent owns audited isolated runtime batch gates. No dynamic proof of copied-helper execution, Docker/SSH, tmux, shell syntax or cleanup behavior is claimed.",
+        "No real provider authentication, user credentials, device access, WAN/platform behavior or exactly-once side-effect claim. Inspected keys/config references are fixture source only.",
+        "Existing one-line request matching, evidence-write/sentinel-move error handling and lifecycle traps are preserved, not strengthened or dynamically audited by this review.",
+        "Automatic worktree setup outcomes were not rerun or treated as proof; no host-hash/setup failure was bypassed. No source, wisdom ledger, old worktree or existing candidate was changed."
       ]
     },
     {
@@ -13620,6 +13638,18 @@
         "responseStarted marks the peer write callback, not an internal adapter inspection event. The preserved 40ms settling delay and subsequent assertions bracket the intended inspection window but are not a deterministic internal-event barrier; polling and the 1100ms observation were not newly executed or validated. No timing changes proposed without an observed failure.",
         "acceptedBlobs records the unchanged own-focus file; related implementation paths were contextual reading, not new own-focus approvals. No source or wisdom edited; no credential/device access, recovery, cleanup, push, PR or merge."
       ]
+    },
+    {
+      "file": "tests/fixtures/remote-e2e/recovery-ssh.sh",
+      "initialBlob": "absent",
+      "area": "remote",
+      "status": "pending",
+      "resumeState": "needs-primary-final-blob",
+      "sourceCommit": "9861bea3333905083427acbc86253977c3218ac4",
+      "acceptedRelatedJudges": [
+        "task_f2c831a6"
+      ],
+      "acceptedBlob": "d7e8d093f900e4d5654636badd1f72d96041aa09"
     }
   ],
   "completedAreas": {
