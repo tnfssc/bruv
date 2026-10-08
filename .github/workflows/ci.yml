@@ -183,7 +183,8 @@ jobs:
           }
           trap cleanup EXIT
           # Noble ships WebRTC 0.3, but the real helper requires the 1.x API.
-          curl --fail --location https://freedesktop.org/software/pulseaudio/webrtc-audio-processing/webrtc-audio-processing-1.3.tar.gz -o "$fixture/apm.tar.gz"
+          # Debian mirrors the byte-identical upstream archive; freedesktop blocks some CI IPs (418).
+          curl --fail --location https://deb.debian.org/debian/pool/main/w/webrtc-audio-processing/webrtc-audio-processing_1.3.orig.tar.gz -o "$fixture/apm.tar.gz"
           echo "95552fc17faa0202133707bbb3727e8c2cf64d4266fe31bfdb2298d769c1db75  $fixture/apm.tar.gz" | sha256sum --check
           tar -xzf "$fixture/apm.tar.gz" -C "$fixture"
           meson setup "$fixture/build" "$fixture/webrtc-audio-processing-1.3" --prefix="$fixture/apm" --libdir=lib --buildtype=release --wrap-mode=nofallback
