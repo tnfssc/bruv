@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
-packages=(tmux ffmpeg)
+ordinary_packages=(tmux ffmpeg)
+native_packages=(clang pkg-config meson ninja-build libabsl-dev libpulse-dev libjson-c-dev libglib2.0-dev pulseaudio pulseaudio-utils)
 case "${1:-}" in
-  --native-audio) packages+=(clang pkg-config meson ninja-build libabsl-dev libpulse-dev libjson-c-dev libglib2.0-dev pulseaudio pulseaudio-utils) ;;
-  "") ;;
-  *) echo "Usage: $0 [--native-audio]" >&2; exit 2 ;;
+  --native-audio) packages=("${ordinary_packages[@]}" "${native_packages[@]}") ;;
+  --native-audio-only) packages=("${native_packages[@]}") ;;
+  "") packages=("${ordinary_packages[@]}") ;;
+  *) echo "Usage: $0 [--native-audio|--native-audio-only]" >&2; exit 2 ;;
 esac
 missing=()
 for package in "${packages[@]}"; do
@@ -23,6 +25,8 @@ if (( ${#missing[@]} )); then
   sudo timeout 90 apt-get "${apt_options[@]}" update
   sudo timeout 180 apt-get "${apt_options[@]}" install -y --no-install-recommends "${missing[@]}"
 fi
-tmux -V
-ffmpeg -version
+if [[ "${1:-}" != --native-audio-only ]]; then
+  tmux -V
+  ffmpeg -version
+fi
 echo "CPU slots: $(getconf _NPROCESSORS_ONLN)"

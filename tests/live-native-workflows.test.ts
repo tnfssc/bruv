@@ -12,7 +12,7 @@ async function load(name: string) {
   };
 }
 const lanes = [
-  ["ci", "test"],
+  ["ci", "native-linux"],
   ["ci", "live-macos"],
   ["release", "release"],
   ["release", "mac-helper"],
@@ -67,7 +67,7 @@ for (const [workflow, lane] of lanes) {
   });
 }
 
-for (const [workflow, lane] of lanes.filter(([, lane]) => lane !== "test" && lane !== "release")) {
+for (const [workflow, lane] of lanes.filter(([, lane]) => lane !== "native-linux" && lane !== "release")) {
   test(workflow + "/" + lane + " compiles Swift and checks exact hello without devices", async () => {
     const steps = (await load(workflow)).jobs[lane]!.steps;
     const commands = steps.map((step) => step.run ?? "").join("\n");
@@ -82,7 +82,7 @@ for (const [workflow, lane] of lanes.filter(([, lane]) => lane !== "test" && lan
 }
 
 test("Linux protocol gate builds the real 1.x helper and uses only a private Pulse null graph", async () => {
-  const steps = (await load("ci")).jobs.test!.steps;
+  const steps = (await load("ci")).jobs["native-linux"]!.steps;
   const fixture = steps.find((step) => step.name?.startsWith("Capture-origin protocol"))!;
   expect(fixture.if).toBeUndefined();
   const run = fixture.run!;
@@ -90,6 +90,7 @@ test("Linux protocol gate builds the real 1.x helper and uses only a private Pul
   expect(run).toContain("95552fc17faa0202133707bbb3727e8c2cf64d4266fe31bfdb2298d769c1db75");
   expect(run).toContain("sha256sum --check");
   expect(run).toContain("--wrap-mode=nofallback");
+  expect(run).toContain('meson compile -C "$fixture/build" -j 2');
   expect(run).toContain('export CPLUS_INCLUDE_PATH="$fixture/apm/include"');
   expect(run).toContain('bash scripts/build-live-linux-helper.sh "$fixture/live-audio-linux"');
   expect(run).toContain('PULSE_SERVER="unix:$fixture/native"');

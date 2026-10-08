@@ -120,7 +120,41 @@ jobs:
       - name: Install Linux test tooling
         shell: bash
         timeout-minutes: 5
-        run: bash scripts/install-ci-linux-tools.sh --native-audio
+        run: bash scripts/install-ci-linux-tools.sh
+      - name: Shared Linux CI gate (paired binaries, external T3)
+        # Healthy runs take about three minutes. Bound a stalled test runner, not each test.
+        timeout-minutes: 6
+        shell: bash
+        run: bun run ci
+      - name: Upload failure logs
+        if: failure()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: ci-failure-logs
+          path: artifacts/ci/
+          if-no-files-found: warn
+          retention-days: 14
+
+  native-linux:
+    name: Full validation / Linux native audio (no hardware)
+    needs: feedback
+    if: ${{ needs.feedback.outputs.full == 'true' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      # Native tools only; no Node/Bun install, dependencies or build outputs shared with root tests.
+      - name: Cache Linux native package downloads
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ runner.temp }}/bruv-apt-cache/*.deb
+          key: ubuntu-24.04-apt-native-v1-${{ runner.arch }}-${{ hashFiles('scripts/install-ci-linux-tools.sh') }}
+      - name: Install Linux native tooling
+        shell: bash
+        timeout-minutes: 5
+        run: bash scripts/install-ci-linux-tools.sh --native-audio-only
       - name: Sanitized, device-free capture-origin tests
         shell: bash
         run: |
@@ -172,19 +206,6 @@ jobs:
           timeout 2 pactl info >/dev/null
           pactl -f json list sources | python3 -c 'import json,sys; assert {s["name"] for s in json.load(sys.stdin)} == {"bruv_ci_mic.monitor", "bruv_ci_out.monitor"}'
           python3 native/live-linux/tests/capture-protocol.py "$fixture/live-audio-linux" bruv_ci_mic.monitor bruv_ci_out
-      - name: Shared Linux CI gate (paired binaries, external T3)
-        # Healthy runs take about three minutes. Bound a stalled test runner, not each test.
-        timeout-minutes: 6
-        shell: bash
-        run: bun run ci
-      - name: Upload failure logs
-        if: failure()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        with:
-          name: ci-failure-logs
-          path: artifacts/ci/
-          if-no-files-found: warn
-          retention-days: 14
 
   live-macos:
     name: Full validation / macOS Live (no devices or API)
@@ -246,7 +267,7 @@ jobs:
 
   required:
     name: CI policy
-    needs: [feedback, test, live-macos]
+    needs: [feedback, test, native-linux, live-macos]
     if: ${{ always() }}
     runs-on: ubuntu-24.04
     timeout-minutes: 2
@@ -258,6 +279,7 @@ jobs:
           MODE: ${{ needs.feedback.outputs.mode }}
           FULL: ${{ needs.feedback.outputs.full }}
           LINUX: ${{ needs.test.result }}
+          NATIVE: ${{ needs.native-linux.result }}
           MACOS: ${{ needs.live-macos.result }}
         run: |
           set -euo pipefail
@@ -265,13 +287,13 @@ jobs:
             printf 'Planning or docs checks did not succeed: %s\n' "$FEEDBACK" >&2
             exit 1
           fi
-          # The only accepted combinations are plan mode/full + Linux/macOS results.
-          case "$MODE:$FULL:$LINUX:$MACOS" in
-            full:true:success:success) ;;
-            docs:false:skipped:skipped) ;;
+          # The only accepted combinations are plan mode/full + ordinary Linux/native Linux/macOS results.
+          case "$MODE:$FULL:$LINUX:$NATIVE:$MACOS" in
+            full:true:success:success:success) ;;
+            docs:false:skipped:skipped:skipped) ;;
             *)
-              printf 'Rejected CI plan/results: mode=%s full=%s Linux=%s macOS=%s\n' \
-                "$MODE" "$FULL" "$LINUX" "$MACOS" >&2
+              printf 'Rejected CI plan/results: mode=%s full=%s Linux=%s native=%s macOS=%s\n' \
+                "$MODE" "$FULL" "$LINUX" "$NATIVE" "$MACOS" >&2
               exit 1
               ;;
           esac

@@ -66,9 +66,9 @@ test("routine CI triggers cannot filter changes or bypass required validation", 
   expect(ci.jobs.feedback!.permissions).toEqual({ contents: "read", actions: "read" });
   // biome-ignore lint/suspicious/noTemplateCurlyInString: literal GitHub expression
   expect(ci.jobs.required!.if).toBe("${{ always() }}");
-  expect(ci.jobs.required!.needs).toEqual(["feedback", "test", "live-macos"]);
+  expect(ci.jobs.required!.needs).toEqual(["feedback", "test", "native-linux", "live-macos"]);
   expect(ci.jobs.feedback!.name).toContain("not executable validation");
-  for (const job of [ci.jobs.test!, ci.jobs["live-macos"]!]) {
+  for (const job of [ci.jobs.test!, ci.jobs["native-linux"]!, ci.jobs["live-macos"]!]) {
     expect(job.name).toStartWith("Full validation /");
     expect(job.needs).toBe("feedback");
     expect(enabled(job.if!, {}, { feedback: { outputs: { full: "true" } } })).toBe(true);
@@ -125,11 +125,11 @@ test("fast feedback plans and executes in one Bun-only job without full provisio
 const acceptedOutcomes = [
   {
     name: "docs classifier only",
-    env: { MODE: "docs", FULL: "false", FEEDBACK: "success", LINUX: "skipped", MACOS: "skipped" },
+    env: { MODE: "docs", FULL: "false", FEEDBACK: "success", LINUX: "skipped", NATIVE: "skipped", MACOS: "skipped" },
   },
   {
     name: "full executable validation",
-    env: { MODE: "full", FULL: "true", FEEDBACK: "success", LINUX: "success", MACOS: "success" },
+    env: { MODE: "full", FULL: "true", FEEDBACK: "success", LINUX: "success", NATIVE: "success", MACOS: "success" },
   },
 ];
 const outcomeAlternatives = {
@@ -137,6 +137,7 @@ const outcomeAlternatives = {
   FULL: ["true", "false", ""],
   FEEDBACK: ["failure", "cancelled", "skipped", ""],
   LINUX: ["success", "skipped", "failure", "cancelled", ""],
+  NATIVE: ["success", "skipped", "failure", "cancelled", ""],
   MACOS: ["success", "skipped", "failure", "cancelled", ""],
 };
 const aggregate = step(ci.jobs.required!, "Require the planned validation outcomes");
@@ -151,12 +152,21 @@ test("CI policy consumes all authoritative plan and dependency outcomes", () => 
     // biome-ignore lint/suspicious/noTemplateCurlyInString: literal GitHub expression
     LINUX: "${{ needs.test.result }}",
     // biome-ignore lint/suspicious/noTemplateCurlyInString: literal GitHub expression
+    NATIVE: "${{ needs.native-linux.result }}",
+    // biome-ignore lint/suspicious/noTemplateCurlyInString: literal GitHub expression
     MACOS: "${{ needs.live-macos.result }}",
   });
 });
 test("CI policy rejects a wholly missing plan even when docs checks succeeded", () => {
   expect(
-    shell(aggregate.run!, { MODE: "", FULL: "", FEEDBACK: "success", LINUX: "skipped", MACOS: "skipped" }).status,
+    shell(aggregate.run!, {
+      MODE: "",
+      FULL: "",
+      FEEDBACK: "success",
+      LINUX: "skipped",
+      NATIVE: "skipped",
+      MACOS: "skipped",
+    }).status,
   ).toBe(1);
 });
 for (const { name, env } of acceptedOutcomes) {

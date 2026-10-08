@@ -7,8 +7,9 @@ feeds. Logs were still in progress, so the exact stalled mirror was not proven.
 
 CI and release now share scripts/install-ci-linux-tools.sh. It checks installed
 packages, refreshes only the hosted Noble Ubuntu source file, and installs all
-missing prerequisites together without recommended packages. CI includes native
-Pulse/WebRTC build prerequisites; release needs tmux and ffmpeg. The original
+missing prerequisites together without recommended packages. Ordinary CI and release need tmux and ffmpeg. The required sibling Linux
+native lane uses the installer’s native-only mode for Pulse/WebRTC build tools;
+see [parallel native lane](parallel-native-linux.md). The original
 audio and capture protocol tests still run. Missing packages remain failures.
 
 Cache only downloaded .deb files under runner.temp/bruv-apt-cache. apt still
