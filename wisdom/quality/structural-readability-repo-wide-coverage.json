@@ -15387,12 +15387,29 @@
       "initialBlob": "088665c0de3d9d9b07107ffe901dd2dc54d6f20f",
       "status": "pending",
       "area": "execution-tasks-questions",
-      "resumeState": "pending-primary",
-      "primaryId": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_517c091d",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "f5b9b593aa21a13c52ae3f681777c02590aff8b7",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
-      "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage."
+      "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage.",
+      "primaryCommit": "f5b9b593aa21a13c52ae3f681777c02590aff8b7",
+      "primaryBase": "f5b9b593aa21a13c52ae3f681777c02590aff8b7",
+      "primaryResult": "Keep unchanged. Followed owned per-test directory creation and the exact-directory cleanup, then runTypeScript through compiled CLI internal dispatch and stdin module execution. The first test checks filesystem/command execution and absence of emitted files; cwd overrides are explicit for spaces and installed-package reads. Static/dynamic/transitive ESM identity, conditional exports and private paths, computed/lazy imports, native CommonJS cycles/cache/module.require and evaluation errors, nested builtin/JSON imports, asset URLs, imports aliases and failed evaluation caching, type erasure, pnpm symlink canonicalization, CommonJS-to-ESM registration, require.resolve search paths, explicit exits, and sanitized errors all retain visible local fixtures and expectations. The deliberately conflicting package entries and load counters explain the resolver contracts without a generic fixture DSL. Extracting those graphs or merely splitting describe blocks would move essential evidence away from the checked journey rather than simplify its decisions.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        "Read the complete assigned focus and relevant runner/execution/bridge callers.",
+        "Assigned reconciliation row is pending-primary with no candidate, rejection, or related acceptance to recover.",
+        "Reviewed filesystem/process effects statically; did not execute test cleanup.",
+        "Confirmed initial worktree status clean and reviewed tracked Git blob identities."
+      ],
+      "primaryLimits": [
+        "No tests, setup, builds, or live auth/device access run; parent owns audited isolated runtime gates and independent judgment.",
+        "No source changes; formatter and new source commit are not applicable. Existing HEAD is the exact reviewed source commit.",
+        "No delegation, dependency writes, cleanup/deletion commands, recovery investigation, or publication.",
+        "Initial evidence output was overbroad and truncated; subsequent evidence inspection was filtered to the two assigned rows.",
+        "Existing afterEach removes only its mkdtemp directory; inspected, never executed. Child HOME is under that directory; tests do not establish a fresh config/SDK environment themselves. Any parent gate must provide owned isolated config/SDK and retain its fixtures. Installed-package imports have not been runtime-audited here."
+      ]
     },
     {
       "file": "tests/update-release-shape.test.ts",
@@ -15472,12 +15489,29 @@
       "initialBlob": "e4c717440abd69e64286171f553291704c3a5000",
       "status": "pending",
       "area": "execution-tasks-questions",
-      "resumeState": "pending-primary",
-      "primaryId": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_517c091d",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "f5b9b593aa21a13c52ae3f681777c02590aff8b7",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
-      "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage."
+      "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage.",
+      "primaryCommit": "f5b9b593aa21a13c52ae3f681777c02590aff8b7",
+      "primaryBase": "f5b9b593aa21a13c52ae3f681777c02590aff8b7",
+      "primaryResult": "Keep unchanged. Followed executeIsolated installing the optional bridge and passing the compiled internal-runner argv, job globals awaiting the handoff request before throwing HandoffSignal, runner swallowing only that signal while draining helpers, and CLI preserving real errors. The accepted test records the exact bridge message and verifies stdout plus absence of a post-handoff file; the rejection test checks the exact invalid request and original handler error; bridge absence is visibly represented by omitting jobHandler. The finally cases separately preserve thrown cleanup failures and a message omitted from Error.stack. Extension delivery validates acceptance and refuses to turn failed cleanup into successful handoff. These contrasts are legible in place; a shared default bridge/helper would obscure the unavailable case or turn five explicit scenarios into another indirection. All existing assertions and source remain intact.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        "Read the complete assigned focus and relevant runner/execution/bridge callers.",
+        "Assigned reconciliation row is pending-primary with no candidate, rejection, or related acceptance to recover.",
+        "Reviewed filesystem/process effects statically; did not execute test cleanup.",
+        "Confirmed initial worktree status clean and reviewed tracked Git blob identities."
+      ],
+      "primaryLimits": [
+        "No tests, setup, builds, or live auth/device access run; parent owns audited isolated runtime gates and independent judgment.",
+        "No source changes; formatter and new source commit are not applicable. Existing HEAD is the exact reviewed source commit.",
+        "No delegation, dependency writes, cleanup/deletion commands, recovery investigation, or publication.",
+        "Initial evidence output was overbroad and truncated; subsequent evidence inspection was filtered to the two assigned rows.",
+        "The directory registry cleanup is restricted to mkdtemp fixtures; inspected, never executed. Other scenarios intentionally use process.cwd and executeIsolated inherits scrubbed process.env. Parent must run any gate with explicit argv/env and fresh owned HOME/config/SDK, retained rather than cleaned."
+      ]
     },
     {
       "file": "tests/worktree-workspace.test.ts",
