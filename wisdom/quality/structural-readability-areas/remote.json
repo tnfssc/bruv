@@ -180,11 +180,11 @@
       "judgeRounds": [],
       "resume": {
         "status": "pending",
-        "primaryId": "task_6c2c01a6",
-        "primaryCommit": null,
+        "primaryId": "task_9b6af1ac",
+        "primaryCommit": "a9296ce2c6de0c23f127cc5ebf29d38b4dcf4ec8",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary-killed-no-candidate",
+        "sourceCommit": "a9296ce2c6de0c23f127cc5ebf29d38b4dcf4ec8",
+        "state": "needs-judge",
         "reason": "Saved job ended killed with exit143; worktree HEAD equals launch base and working tree has no preserved edit. Ledger running status is stale."
       },
       "acceptedBlob": null

@@ -1,5 +1,15 @@
 # PR45 Sol resume map
 
+## Current authoritative resume map
+
+- User direction: continue existing PR45 code only after their own recovery; no recovery/credentials work. Parent publishes.
+- Workspace: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab; branch bruv/readability-pr45-sol; joined tip de9e6bafcea53638d16877ad5f02c53d09df1b59.
+- New leaves: native normal openai-codex/gpt-6.1-sol, externally verified; cap six. Distinct primaries, fresh independent judges (coherent batches of up to three).
+- Exact coverage: 586/821, 535/766 baseline, 51 accepted extra rows; 235 pending. Pending by area: {"build-release-ci-tooling":0,"live-native-audio":57,"ui-terminal-cli":36,"compatibility-t3":27,"execution-tasks-questions":25,"agent-history-session-goals":51,"remote":39,"site-support":0,"parent-integration":0}.
+- Next: finish pending focus decisions and all changed helper/test blobs; reconcile baseline/additions/deletions and accepted hashes/modes before final gate. Typecheck/focused checks continue in retained fixtures. Root CI/authenticated UX not green; no unsafe cleanup or auth access.
+- Durable scheduler and state: /home/tnfssc/.bruv/worktrees/pr45-flow-214f85ab{.mjs,-state.json}; exact candidate tips/worker paths in aggregate coverage/jobs/area ledgers. Preserve old trees and withheld candidates.
+
+
 User explicitly directed code resume after recovering their own data. No recovery or credential work. Parent owns publication to existing PR45; no push, merge or new PR here.
 
 Coordinator: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab, branch bruv/readability-pr45-sol, starting a5c9ccb52a98d61bce719dee20d4772548e9fd5b. Required workers: native normal openai-codex/gpt-6.1-sol only, launch identity verified; maximum six concurrent leaves (primary and judge combined). Preserve previous worktrees and uncommitted candidates.

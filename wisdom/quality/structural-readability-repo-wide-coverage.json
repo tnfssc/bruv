@@ -6815,13 +6815,47 @@
       "initialBlob": "152542f9ed3fbbe64bfa70019aa84873f3be7063",
       "status": "pending",
       "area": "remote",
-      "resumeState": "pending-primary-killed-no-candidate",
-      "primaryId": "task_6c2c01a6",
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_9b6af1ac",
+      "primaryCommit": "a9296ce2c6de0c23f127cc5ebf29d38b4dcf4ec8",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "a9296ce2c6de0c23f127cc5ebf29d38b4dcf4ec8",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
-      "pendingReason": "Saved job ended killed with exit143; worktree HEAD equals launch base and working tree has no preserved edit. Ledger running status is stale."
+      "pendingReason": "Saved job ended killed with exit143; worktree HEAD equals launch base and working tree has no preserved edit. Ledger running status is stale.",
+      "primaryBase": "092ecd7771c8d64383a22eae46143c4735f8dbf3",
+      "primaryResult": "The guide now establishes storage/authority boundaries, follows the integrated human grant → child wait → owner sync → client frozen reply → owner persistence/child observation journey, and groups replay, revocation and task end. Low-level examples are separated into owner control hooks, owned-child execute and client-local serving. Existing read-only, credential, path confinement, immutable storage, identity fencing and retention constraints are retained; no runtime or test assertions changed.",
+      "primaryPaths": ["src/remote/CAPABILITY-INTEGRATION.md"],
+      "primaryChecks": [
+        {
+          "name": "Focus lineage",
+          "result": "Current focus exists and equals reconciliation baseline 152542f9ed3fbbe64bfa70019aa84873f3be7063. Prior task_6c2c01a6 has no preserved candidate; no git-show import or branch merge needed. Rework evidence null."
+        },
+        {
+          "name": "Caller tracing",
+          "result": "Read src/remote/services.ts, capability-runtime.ts, capabilities.ts, owner.ts, client.ts, operations.ts, and src/typescript/job-bridge.ts; traced explicit grant, child mailbox execute, authenticated owner reply/terminal, client sync service and frozen reply persistence. Checked README and integrated normal-session evidence."
+        },
+        {
+          "name": "Documentation links",
+          "result": "All six relative links resolve to existing files."
+        },
+        {
+          "name": "git diff --check",
+          "result": "Passed before commit."
+        },
+        {
+          "name": "Repository formatter",
+          "result": "Invoked exact read-only Biome executable via node:child_process argv: format --write src/remote/CAPABILITY-INTEGRATION.md; fresh retained HOME/XDG_CONFIG_HOME/TMPDIR under /tmp/pr45-capability-format-eZTWsz. Exit 1: path ignored, 0 files processed, no fixes."
+        },
+        {
+          "name": "Source-only commit",
+          "result": "src/remote/CAPABILITY-INTEGRATION.md"
+        }
+      ],
+      "primaryLimits": [
+        "Biome did not process the Markdown focus; formatting could not be applied to this file with the mandated formatter.",
+        "No setup, tests, builds, provider/device/credential checks, push, PR or merge performed; parent owns audited gates and independent exact-candidate judgment.",
+        "No worker wisdom files changed; parent owns aggregate wisdom."
+      ]
     },
     {
       "file": "src/remote/README.md",
@@ -8516,13 +8550,41 @@
       "initialBlob": "dfd337c15df9a002723db43e3db6023b233b6191",
       "status": "pending",
       "area": "agent-history-session-goals",
-      "resumeState": "pending-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_7078093d",
+      "primaryCommit": "3f8a9cb2b759245076c3b9a47a798d4e9a23dda4",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "3f8a9cb2b759245076c3b9a47a798d4e9a23dda4",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
-      "pendingReason": "No dedicated primary/final independent focus judgment."
+      "pendingReason": "No dedicated primary/final independent focus judgment.",
+      "primaryBase": "3f8a9cb2b759245076c3b9a47a798d4e9a23dda4",
+      "primaryResult": "The fixture has a single responsibility: construct the isolated SDK session with configured fake auth, disabled external resources, the production tasks extension, and shared compaction settings. Message/history builders and successful/error provider streams are separate, explicit helpers. Each scenario keeps the seeded history, captured provider contexts, prompt boundary and persistence assertions together. The threshold loop shares the same journey for normal and Codex models and shows first-turn history followed by projected follow-up history; overflow shows the first failing request and second projected request before checking the persisted successful answer; rejection shows the small removable trace remaining and explicit compact cancellation. Each scenario owns its session disposal and temp directory in the same try/finally. Tracing extension.ts registration to manual-shake.ts confirms shake precedes native/normal compaction, the 75% character-reduction gate persists a checkpoint before cancellation, and the SDK accounting adapter preserves overflow continuation but suppresses stale usage before the next prompt. SDK _checkCompaction and session_before_compact cancellation explain the different prompt/context assertions without requiring test restructuring. Extracting scenario lifecycle or a scripted provider/context bag would hide these event boundaries, not reduce a reconstruction burden. Existing assertions and security configuration remain byte-identical; no prior focus candidate or rejection is recorded in the preserved evidence.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        {
+          "kind": "read-only source trace",
+          "paths": ["tests/auto-shake-sdk.test.ts", "src/agent/extension.ts", "src/agent/manual-shake.ts"],
+          "result": "Read all focus scenarios; traced extension registration, shake gate, projection and accounting adapter."
+        },
+        {
+          "kind": "read-only dependency trace",
+          "result": "Inspected installed pi-coding-agent/dist/core/agent-session.js automatic threshold, overflow retry and extension cancellation boundaries."
+        },
+        {
+          "kind": "scoped evidence",
+          "result": "Focus row in preserved reconciliation, area ledger and repo-wide coverage is pending-primary; baseline and current focus blob both dfd337c15df9a002723db43e3db6023b233b6191."
+        },
+        {
+          "kind": "git state",
+          "result": "Working tree clean before writing this untracked report; no source changes or commit created."
+        }
+      ],
+      "primaryLimits": [
+        "Tests, setup and builds not run; parent owns audited isolated gates.",
+        "Formatter not run: no changed source paths and no commit.",
+        "Independent fresh judge remains parent-owned; no runtime model self-introspection or delegation performed.",
+        "Wisdom and values unchanged; no new general lesson and parent owns aggregate wisdom."
+      ]
     },
     {
       "file": "tests/background-interrupt-tui.test.ts",

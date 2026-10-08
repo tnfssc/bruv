@@ -255,7 +255,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_9b6af1ac",
         "branch": "bruv/pr45-primary-src-remote-capability-integ-9b6af1ac",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "a9296ce2c6de0c23f127cc5ebf29d38b4dcf4ec8"
       },
       {
         "id": "task_ddda5faa",
@@ -1169,7 +1170,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_7078093d",
         "branch": "bruv/pr45-primary-tests-auto-shake-sdk.test.t-7078093d",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "3f8a9cb2b759245076c3b9a47a798d4e9a23dda4"
       }
     ]
   },
@@ -1546,6 +1548,19 @@
         "focus": "tests/background-interrupt-tui.test.ts",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_bc4cf36e",
         "branch": "bruv/pr45-primary-tests-background-interrupt--bc4cf36e",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_f6b4ec29",
+        "stage": "judge",
+        "focus": [
+          "scripts/terminal-perf/selector-lifecycle.test.ts",
+          "tests/action-label-wiring.test.ts",
+          "tests/activity-terminal-acceptance-test.py"
+        ],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_f6b4ec29",
+        "branch": "bruv/pr45-judge-3-ui-terminal-cli-focuses-f6b4ec29",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
       }
