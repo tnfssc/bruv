@@ -230,11 +230,18 @@ export const piHostPatches: readonly Patch[] = [
 
 const hash = (text: string) => createHash("sha256").update(text).digest("hex");
 
+// Recovery may handle only same-version source drift, never version, patch, or I/O errors.
+export class UnsupportedPiHostFileError extends Error {
+  constructor(path: string) {
+    super(`Unsupported Pi host file: ${path}; review bruv's host adaptations before updating Pi`);
+    this.name = "UnsupportedPiHostFileError";
+  }
+}
+
 export function adaptPiHostFile(patch: Patch, text: string): string {
   const digest = hash(text);
   if (digest === patch.adaptedSha256) return text;
-  if (digest !== patch.originalSha256)
-    throw new Error(`Unsupported Pi host file: ${patch.path}; review bruv's host adaptations before updating Pi`);
+  if (digest !== patch.originalSha256) throw new UnsupportedPiHostFileError(patch.path);
   let result = patch.content ?? text;
   for (const [before, after] of patch.replacements ?? []) {
     if (result.split(before).length !== 2) throw new Error(`Pi host adaptation anchor changed: ${patch.path}`);
@@ -248,20 +255,28 @@ export async function preparePiHost(piRoot: string): Promise<void> {
   const metadata = JSON.parse(await readFile(join(piRoot, "package.json"), "utf8")) as { version: string };
   if (metadata.version !== "1.0.3") throw new Error(`Unsupported Pi host version: ${metadata.version}`);
   // Validate every file before changing any. A dependency upgrade fails closed.
-  const prepared = await Promise.all(
+  // Finish all reads first: drift must not mask a missing/unreadable sibling file.
+  const sources = await Promise.all(
     piHostPatches.map(async (patch) => {
       const path = join(piRoot, patch.path);
-      const before = await readFile(path, "utf8");
-      return { path, before, after: adaptPiHostFile(patch, before) };
+      return { patch, path, before: await readFile(path, "utf8") };
     }),
   );
+  const prepared = sources.map(({ patch, path, before }) => ({ path, before, after: adaptPiHostFile(patch, before) }));
+  await replacePiHostFiles(prepared);
+}
+
+// Callers must validate every replacement before entering this writer.
+export async function replacePiHostFiles(
+  prepared: readonly { path: string; before: string; after: string }[],
+): Promise<void> {
   for (const { path, before, after } of prepared) {
     if (before === after) continue;
     // Bun installs may hardlink to its cache and other worktrees. Never write the
     // installed inode: copy beside it (retaining modes), adapt, then replace it.
     const temporary = `${path}.bruv-${randomUUID()}`;
-    await copyFile(path, temporary, constants.COPYFILE_EXCL);
     try {
+      await copyFile(path, temporary, constants.COPYFILE_EXCL);
       await writeFile(temporary, after);
       await rename(temporary, path);
     } finally {
