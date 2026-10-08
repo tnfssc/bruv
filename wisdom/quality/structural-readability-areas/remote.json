@@ -1889,50 +1889,53 @@
     {
       "focus": "tests/fixtures/remote-e2e/Dockerfile",
       "initialBlob": "a09a77bc3faa327b69ba596c2d1ad79f2d1451cb",
-      "status": "pending",
+      "status": "accepted",
       "judgeRounds": [],
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "a09a77bc3faa327b69ba596c2d1ad79f2d1451cb",
         "primaryId": "task_13049669",
         "primaryCommit": "4670838ed3a277a2cef4f87efb4a38e774c6af0e",
-        "judgeIds": [],
+        "judgeIds": ["task_9a31ccf2"],
         "sourceCommit": "4670838ed3a277a2cef4f87efb4a38e774c6af0e",
-        "state": "needs-judge",
-        "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+        "state": "accepted-joined",
+        "reason": "Read the entire exact candidate Dockerfile and traced the build-context producer in scripts/remote-e2e.sh. The OS prerequisite installation leads directly to binary/provider/SSH/entrypoint copies, executable permissions and fixture-only Git repository initialization, then destination model/profile copies and the explicit entrypoint. The long initialization RUN owns one coherent image-construction operation; splitting it into helpers would hide its effects rather than resolve scattered authority. No edit is warranted for this focus."
       },
-      "acceptedBlob": null
+      "acceptedBlob": "a09a77bc3faa327b69ba596c2d1ad79f2d1451cb"
     },
     {
       "focus": "tests/fixtures/remote-e2e/entrypoint.sh",
       "initialBlob": "f55fd6b58bbc113387864d5b49719857abef6a0a",
-      "status": "pending",
+      "status": "accepted",
       "judgeRounds": [],
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "f55fd6b58bbc113387864d5b49719857abef6a0a",
         "primaryId": "task_13049669",
         "primaryCommit": "4670838ed3a277a2cef4f87efb4a38e774c6af0e",
-        "judgeIds": [],
+        "judgeIds": ["task_9a31ccf2"],
         "sourceCommit": "4670838ed3a277a2cef4f87efb4a38e774c6af0e",
-        "state": "needs-judge",
-        "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+        "state": "accepted-joined",
+        "reason": "Read every entrypoint line and followed its image and runner callers. set -eu precedes /run/sshd creation and private installation of the mounted fixture keys. The provider starts once in the background with its container log redirection; exec immediately replaces the shell with foreground sshd. Launch sites expose the distinct provider and daemon lifetimes. There is no intervening state machine or scattered shutdown authority needing an extraction."
       },
-      "acceptedBlob": null
+      "acceptedBlob": "f55fd6b58bbc113387864d5b49719857abef6a0a"
     },
     {
       "focus": "tests/fixtures/remote-e2e/fake-provider.ts",
       "initialBlob": "0ca133ab070c33dc4ef9937017a2bbded956d20e",
-      "status": "pending",
+      "status": "accepted",
       "judgeRounds": [],
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "72d168a3c60ff27c595c8571f5db64a2223bd23a",
         "primaryId": "task_13049669",
         "primaryCommit": "4670838ed3a277a2cef4f87efb4a38e774c6af0e",
-        "judgeIds": [],
+        "judgeIds": ["task_9a31ccf2"],
         "sourceCommit": "4670838ed3a277a2cef4f87efb4a38e774c6af0e",
-        "state": "needs-judge",
-        "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+        "state": "accepted-joined",
+        "reason": "Read the entire base and candidate provider and their patch. The old fetch handler nested parent response policy, worker response policy, generated execute envelopes and two separate SSE encoders. The candidate makes the actual journeys readable: fetch validates/parses and selects authority; parentReply explicitly prioritizes print, isolation probe, completion acknowledgement, launch yield and first launch; workerReply records request/answer/finished observations before any return, then separates answer/completed-turn selection from first execution-program selection. Its ordered branches preserve jobs/repo/capability/cancel/question/default precedence. executeReply owns only the tool-call envelope; completionStream owns only chunk framing and determines finish_reason from the returned reply. These are coherent boundaries, not renamed blocks, a shared context bag or a new abstraction framework."
       },
-      "acceptedBlob": null
+      "acceptedBlob": "72d168a3c60ff27c595c8571f5db64a2223bd23a"
     },
     {
       "focus": "tests/fixtures/remote-e2e/models.json",
@@ -4124,8 +4127,8 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 83,
-    "pending": 39
+    "accepted": 86,
+    "pending": 36
   },
   "extraFiles": [
     {

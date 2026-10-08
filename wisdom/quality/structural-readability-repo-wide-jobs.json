@@ -330,7 +330,7 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_9a31ccf2",
         "branch": "bruv/pr45-judge-3-remote-focuses-9a31ccf2",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled"
       },
       {
         "id": "task_e6d5f424",
@@ -352,6 +352,19 @@
         ],
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_9435f4ce",
         "branch": "bruv/pr45-judge-3-remote-focuses-9435f4ce",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_b0f63162",
+        "stage": "primary",
+        "focus": [
+          "tests/fixtures/remote-placement-e2e/Dockerfile",
+          "tests/fixtures/remote-placement-e2e/entrypoint.sh",
+          "tests/fixtures/remote-placement-e2e/fake-provider.ts"
+        ],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_b0f63162",
+        "branch": "bruv/pr45-primary-3-remote-focuses-b0f63162",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
       }
