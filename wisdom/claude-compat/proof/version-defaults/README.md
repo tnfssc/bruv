@@ -25,7 +25,7 @@ The user explicitly requested a compatibility version and ordinary Bruv defaults
   not Bruv account/provider claims. **Never let its updater overwrite the wrapper.**
   We do not fake model names or claim every banner disappeared.
 
-[Settings](observed/settings.png) · [chat](observed/chat.png) ·
+[Settings text](observed/settings.txt) · [chat text](observed/chat.txt) ·
 [result/artifact identity](observed/result.json). Text replaces only owned temp
 paths; no tokens/logs/auth files are retained. Private server logs and owned
 runtime are removed by the probe. Browser/T3 executable are not modified.
@@ -82,3 +82,5 @@ come from a labeled loopback OpenAI-compatible model through real Pi.
   new tooling must use --bruv-version. This proof does not certify legacy update,
   the future thin launcher, cross-platform release, native fork, paid access or
   full T3 parity. No push/release/global install was performed.
+
+Historical browser screenshots were retired; the text captures and compatibility conclusions remain. See [protocol artifact retirement](../../../quality/protocol-artifact-retirement.md).

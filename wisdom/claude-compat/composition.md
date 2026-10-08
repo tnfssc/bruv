@@ -181,7 +181,7 @@ real human controls and no-secret-descriptor principles cover this work. The new
 recipe and exact remaining acceptance boundaries belong here, not another value.
 
 The driver reached actual reload/reopen after Stop before the cancellation failure;
-reloaded.png retains the real view. Full continuing job/lifecycle parity did not pass.
+The historical reloaded-view screenshot was retired; the protocol conclusion remains (see [artifact retirement](../quality/protocol-artifact-retirement.md)). Full continuing job/lifecycle parity did not pass.
 
 Actual native replay command (PROOF_OUTPUT must be new):
 

@@ -12,7 +12,7 @@ The SDK defines init as metadata emitted each turn and session_state_changed idl
 
 ## Final strict result: FAIL
 
-[Assessment](assessment.json), [result](result.json), [screenshot](failure.png), [DOM](failure.txt), [same-root checkpoint](same-root-return-evidence.json), [final decoded SDK + shared application events](final-provider-evidence.json).
+[Assessment](assessment.json), [result](result.json), [DOM](failure.txt), [same-root checkpoint](same-root-return-evidence.json), [final decoded SDK + shared application events](final-provider-evidence.json).
 
 - Original root and actual query owner; no replacement between input and result.
 - Offered next prompt id-75 is echoed by ROOT_AFTER_CHILD_REAL assistant/result, origin human, one model turn. SDK decodes the result at per-thread sequence 74, then actual idle at 75, native session id-7.
@@ -38,3 +38,5 @@ Replay with fresh proof output:
 Next investigation: trace actual adapter result dispatch/finalizeActiveTurn against the complete owner/SDK/shared-event sequence. Keep the strict actual-next-reply **and idle** gate; a completed reply item is not a completed run.
 
 Wisdom corrects the formerly claimed supported auto-continuation origin and records stronger boundary evidence. Values unchanged: existing one-owner, actual-consumption, truthful-evidence/UI and no-second-scheduler rules already require keeping this P1 open.
+
+Historical failure screenshots were retired; the result, DOM text and protocol evidence remain. See [protocol artifact retirement](../../../quality/protocol-artifact-retirement.md).
