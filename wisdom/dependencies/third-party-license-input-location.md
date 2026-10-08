@@ -1,9 +1,7 @@
-# Curated third-party license input location
+# Third-party license input location
 
-Root curated license inputs live under `licenses/third-party/`, separate from build/runtime source. This is a location-only change: preserve all curated bytes and keep notice generation and release artifact behavior unchanged.
+Curated dependency-license inputs live under `licenses/third-party/`, and the repository notice guide lives at `licenses/THIRD_PARTY_NOTICES.md`, separate from build/runtime source. This is a source-layout change only: preserve the guide bytes and keep generated release notice names, archive contents, and install behavior unchanged. The release workflow copies the guide into its archive as `THIRD_PARTY_NOTICES.md`; keep that distributable basename stable.
 
-The notice generator, packaging/release fixtures and architecture map must use the new root. Historical wisdom and release reports retain their original path wording as evidence; they are not active path consumers.
+The notice generator reads curated inputs from `licenses/third-party/` and writes the generated bundle to `dist/release/THIRD_PARTY_LICENSES.txt`. README and contributor links use the relocated guide; release packaging copies it from `licenses/` but retains the archive basename. Packaging/install tests assert that public basename. Historical wisdom and release reports retain original path wording as evidence; they are not active path consumers.
 
-Validation: `bun test tests/packaging/generate-third-party-notices.test.ts tests/release/release-workflows.test.ts`, `bun x tsc --noEmit`, and `git diff --check`.
-
-Worktree: branch `bruv/move-curated-third-party-licenses-241d25b2`, path `/home/tnfssc/.bruv/worktrees/t3-53f4b259-5442693331ce-task_241d25b2`.
+Validation: `bun test tests/packaging/generate-third-party-notices.test.ts tests/release/release-workflows.test.ts tests/packaging/production-packaging.test.ts tests/packaging/install-download.test.ts`, `bun x tsc --noEmit`, and `git diff --check`.

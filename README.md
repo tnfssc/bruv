@@ -223,4 +223,4 @@ See [manual release recovery](wisdom/releases/manual-release-dispatch.md).
 
 ## License
 
-[MIT](LICENSE). See [third-party notices](THIRD_PARTY_NOTICES.md) for dependencies.
+[MIT](LICENSE). See [third-party notices](licenses/THIRD_PARTY_NOTICES.md) for dependencies.

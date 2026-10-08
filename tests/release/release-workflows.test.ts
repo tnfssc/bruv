@@ -279,6 +279,7 @@ describe("release automation", () => {
     expect(provenance).toContain('sha256sum "$binary" > "$binary.sha256"');
     expect(provenance).toContain("bruv-claude-compat");
     expect(provenance).toContain("THIRD_PARTY_NOTICES.md");
+    expect(provenance).toContain("../../licenses/THIRD_PARTY_NOTICES.md");
     expect(provenance).toContain("SOURCE.txt");
     expect(namedStep(release, "Stage verified release assets").with?.name).toBe("stable-release-assets");
     const source = await read(".github/workflows/release.yml");

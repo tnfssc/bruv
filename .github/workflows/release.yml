@@ -221,7 +221,7 @@ jobs:
           for binary in bruv-{linux-x64,linux-arm64,darwin-arm64,android-arm64} bruv-claude-compat-{linux-x64,linux-arm64,darwin-arm64,android-arm64}; do
             sha256sum "$binary" > "$binary.sha256"
           done
-          cp ../../LICENSE ../../THIRD_PARTY_NOTICES.md .
+          cp ../../LICENSE ../../licenses/THIRD_PARTY_NOTICES.md .
           printf 'Source: https://github.com/%s/tree/%s\nCommit: %s\nTag: %s\nPaired targets: bun-linux-x64-baseline, bun-linux-arm64, bun-darwin-arm64, bun-android-arm64.\nEach target ships one compiled bruv binary and a tiny POSIX exec launcher bruv-claude-compat with checksums. The launcher execs its matching sibling bruv claude-compat. Linux/macOS require /bin/sh; Android requires /system/bin/sh and Android API 28+ (/system/bin/linker64), not glibc.\nT3 Code is external, unmodified, manually installed and not included in these assets.\n' \
             "$GITHUB_REPOSITORY" "$RELEASE_SHA" "$RELEASE_SHA" "$RELEASE_TAG" > SOURCE.txt
           printf '\nEmbedded macOS arm64 native helper (Apple frameworks; experimental voice-only /live):\n' >> SOURCE.txt
