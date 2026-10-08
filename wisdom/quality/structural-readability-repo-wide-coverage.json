@@ -2141,6 +2141,10 @@
         "No setup, repository tests, builds, Docker/SSH operations, cleanup commands or credential access performed. Parent owns audited isolated runtime/typecheck gates and independent final-blob judgment.",
         "TypeScript AST audit could not load the supplied shared node_modules/typescript/lib/typescript.js path; used source-only Bun scanning and static statement relocation comparison instead. No typecheck claim.",
         "Existing fixture cleanup and Docker endpoint-discovery behavior are preserved, not runtime-proven by this worker. Wisdom/values were read but not edited; parent owns aggregate wisdom."
+      ],
+      "forceJudge": true,
+      "stoppedJudgeIds": [
+        "task_d2ae9701"
       ]
     },
     {
