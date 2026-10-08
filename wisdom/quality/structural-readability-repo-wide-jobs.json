@@ -1508,7 +1508,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_8d64fb99",
         "branch": "bruv/pr45-primary-3-live-native-audio-focuses-8d64fb99",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "6ac6b9b5b2ccbf8cc9100721ba33ea4195605062"
       },
       {
         "id": "task_07aca624",
@@ -1539,6 +1540,37 @@
         "focus": ["tests/fixtures/live-offline-model.ts"],
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_7ae37e7d",
         "branch": "bruv/pr45-judge-1-live-native-audio-focuses-7ae37e7d",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_3c15b64a",
+        "stage": "judge",
+        "focus": [
+          "tests/live-startup-speech-probe.test.ts",
+          "tests/live-status.test.ts",
+          "tests/live-study-trial.test.ts"
+        ],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_3c15b64a",
+        "branch": "bruv/pr45-judge-3-live-native-audio-focuses-3c15b64a",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_e2b8f7f5",
+        "stage": "judge",
+        "focus": ["tests/live-tool-result.test.ts", "tests/live-transcript.test.ts", "tests/live-tui-startup.test.ts"],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_e2b8f7f5",
+        "branch": "bruv/pr45-judge-3-live-native-audio-focuses-e2b8f7f5",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_85638752",
+        "stage": "judge",
+        "focus": ["tests/openai-session-schema.test.ts"],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_85638752",
+        "branch": "bruv/pr45-judge-1-live-native-audio-focuses-85638752",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
       }

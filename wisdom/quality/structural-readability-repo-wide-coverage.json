@@ -16505,23 +16505,57 @@
       "file": "tests/live-tui-startup.ts",
       "initialBlob": "a54e5ee4473dde6061371c635228faf76de88b31",
       "status": "pending",
-      "primaryId": null,
-      "sourceCommit": null,
+      "primaryId": "task_8d64fb99",
+      "sourceCommit": "6ac6b9b5b2ccbf8cc9100721ba33ea4195605062",
       "judgeIds": [],
-      "resumeState": "own_primary_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "6ac6b9b5b2ccbf8cc9100721ba33ea4195605062",
+      "primaryBase": "8be6beee6965ec96073b2d5b355cca4f7e626c26",
+      "primaryResult": "Retained exact startup bytes. Reading its unit tests and all four TUI callers shows the fixture marker is the contract before each scenario (and before push-to-talk replay). Extracting the duplicated polling body would conceal the trust/no-more-keys distinction or add state without reducing a reader journey. No candidate or rejection exists for this focus; unchanged is an actual-source decision, not inferred from coverage.",
+      "primaryPaths": ["tests/live-waveform.test.ts", "tests/openai-session-diagnostics.test.ts"],
+      "primaryChecks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md; inspected assigned reconciliation rows (no focus rejection rounds recorded).",
+        "Static actual-source journey review, not test results.",
+        "Repository Biome format --write via node:child_process execFileSync argv on the two changed source paths only; exit 0. Retained owned fixture: /tmp/pr45-live-test-format-YUcMNH; explicit HOME/XDG_CONFIG_HOME/XDG_CACHE_HOME/PI_CODING_AGENT_DIR/TMPDIR, PATH=/usr/bin:/bin; no inherited HOME/config/SDK. Formatter used existing read-only dependency binary /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/@biomejs/biome/bin/biome.",
+        "git diff --check and git diff --cached --check returned exit 0. Commit hook inspection found no active hooks and no core.hooksPath override. Source-only commit contains exactly tests/live-waveform.test.ts, tests/openai-session-diagnostics.test.ts.",
+        "Static sorted original/current waveform expect-line inventory is identical (not a runtime gate). Artifact has exactly three requested unique focus decisions; all recorded source blobs verified against final Git HEAD. changedPaths intentionally records the full two-path coherent commit scope even for the unchanged startup focus."
+      ],
+      "primaryLimits": [
+        "No tests, setup, builds, provider/device access, credentials, delegation, cleanup, destructive Git, push, PR, merge or publication. Parent owns audited isolated gates and fresh independent judgments.",
+        "The durable code workspace is /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_8d64fb99; only formatter HOME/config/cache/SDK/TMPDIR use the retained mkdtemp fixture above. Old worktrees/candidate evidence untouched.",
+        "Runtime agent.model verification remains parent-owned. No per-worker wisdom/values edits: this bounded test organization/restoration introduces no new general lesson; parent owns aggregate wisdom.",
+        "No rendered trust menu verification. Existing menu-key ordering and wall-clock waits retained. Caller inspection found spoken test invokes prepare-assets and optional evidence writes, and several TUI callers remove their mkdtemp-owned HOME in finally; none were executed. This is not a safety approval to run those callers unchanged."
+      ]
     },
     {
       "file": "tests/live-waveform.test.ts",
       "initialBlob": "7badb15d60945ddde2798584094ab498f4e43645",
       "status": "pending",
-      "primaryId": null,
-      "sourceCommit": null,
+      "primaryId": "task_8d64fb99",
+      "sourceCommit": "6ac6b9b5b2ccbf8cc9100721ba33ea4195605062",
       "judgeIds": [],
-      "resumeState": "own_primary_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "6ac6b9b5b2ccbf8cc9100721ba33ea4195605062",
+      "primaryBase": "8be6beee6965ec96073b2d5b355cca4f7e626c26",
+      "primaryResult": "Split mic-decay, interruption-with-live-mic and queued-output-expiry into independent state journeys. Each constructs its own waveform; the interruption test keeps playback, mic capture, reset and return-to-listening together because that interaction is its contract. Moved the pure animation assertion beside pure renderer properties and grouped the quiet-output/stale-mic journey with the other waveform tests. Preserved every original assertion expression, PCM sample, event time and tick loop; no production changes or context bag. Read the whole waveform implementation and relevant footer render expectations; LiveWaveform has no production caller in current source searches.",
+      "primaryPaths": ["tests/live-waveform.test.ts", "tests/openai-session-diagnostics.test.ts"],
+      "primaryChecks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md; inspected assigned reconciliation rows (no focus rejection rounds recorded).",
+        "Static actual-source journey review, not test results.",
+        "Repository Biome format --write via node:child_process execFileSync argv on the two changed source paths only; exit 0. Retained owned fixture: /tmp/pr45-live-test-format-YUcMNH; explicit HOME/XDG_CONFIG_HOME/XDG_CACHE_HOME/PI_CODING_AGENT_DIR/TMPDIR, PATH=/usr/bin:/bin; no inherited HOME/config/SDK. Formatter used existing read-only dependency binary /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/@biomejs/biome/bin/biome.",
+        "git diff --check and git diff --cached --check returned exit 0. Commit hook inspection found no active hooks and no core.hooksPath override. Source-only commit contains exactly tests/live-waveform.test.ts, tests/openai-session-diagnostics.test.ts.",
+        "Static sorted original/current waveform expect-line inventory is identical (not a runtime gate). Artifact has exactly three requested unique focus decisions; all recorded source blobs verified against final Git HEAD. changedPaths intentionally records the full two-path coherent commit scope even for the unchanged startup focus."
+      ],
+      "primaryLimits": [
+        "No tests, setup, builds, provider/device access, credentials, delegation, cleanup, destructive Git, push, PR, merge or publication. Parent owns audited isolated gates and fresh independent judgments.",
+        "The durable code workspace is /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_8d64fb99; only formatter HOME/config/cache/SDK/TMPDIR use the retained mkdtemp fixture above. Old worktrees/candidate evidence untouched.",
+        "Runtime agent.model verification remains parent-owned. No per-worker wisdom/values edits: this bounded test organization/restoration introduces no new general lesson; parent owns aggregate wisdom.",
+        "Runtime equivalence is unverified. Fresh waveform instances intentionally remove prior unrelated phase/shown history at scenario boundaries. Queue test retains the original assertion at 2400 (inclusive original scheduled deadline), so it does not newly prove extension beyond that deadline; no coverage expansion claimed."
+      ]
     },
     {
       "file": "tests/llm.test.ts",
@@ -17158,12 +17192,30 @@
       "file": "tests/openai-session-diagnostics.test.ts",
       "initialBlob": "092f838262b6233b561174bf8c55e2319a455381",
       "status": "pending",
-      "primaryId": null,
-      "sourceCommit": "9f25cbbee79aebf17532edf4f0f8f42dce48d3ef",
+      "primaryId": "task_8d64fb99",
+      "sourceCommit": "6ac6b9b5b2ccbf8cc9100721ba33ea4195605062",
       "judgeIds": ["task_8db4b91e"],
-      "resumeState": "related_actual_code_accepted_own_primary_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Retain exact related-path actual-code acceptance; it is not completion of this file’s distinct primary/fresh focus-judge requirement.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "6ac6b9b5b2ccbf8cc9100721ba33ea4195605062",
+      "primaryBase": "8be6beee6965ec96073b2d5b355cca4f7e626c26",
+      "primaryResult": "Restored only the exact tests/openai-session-diagnostics.test.ts bytes from candidate 9f25cbbee79aebf17532edf4f0f8f42dce48d3ef using git show (no branch merge or unrelated candidate paths). The appended coherent ready-session timeline keeps response correlation/duplicate suppression and terminal provider-error distinction at the asserted lifecycle boundary. Existing rejection helper still owns setup connection, closure and single error observation; privacy matrix and quota assertions unchanged. Independently read all focus bytes plus connect/fail/error/response.created/response.done and shared diagnostic allowlisting. Candidate-related ACCEPT is supporting preservation evidence, not this focus’s fresh judgment. No further helper extraction justified.",
+      "primaryPaths": ["tests/live-waveform.test.ts", "tests/openai-session-diagnostics.test.ts"],
+      "primaryChecks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md; inspected assigned reconciliation rows (no focus rejection rounds recorded).",
+        "Static actual-source journey review, not test results.",
+        "Repository Biome format --write via node:child_process execFileSync argv on the two changed source paths only; exit 0. Retained owned fixture: /tmp/pr45-live-test-format-YUcMNH; explicit HOME/XDG_CONFIG_HOME/XDG_CACHE_HOME/PI_CODING_AGENT_DIR/TMPDIR, PATH=/usr/bin:/bin; no inherited HOME/config/SDK. Formatter used existing read-only dependency binary /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/@biomejs/biome/bin/biome.",
+        "git diff --check and git diff --cached --check returned exit 0. Commit hook inspection found no active hooks and no core.hooksPath override. Source-only commit contains exactly tests/live-waveform.test.ts, tests/openai-session-diagnostics.test.ts.",
+        "Post-format candidate blob equality verified with git hash-object and git rev-parse; exact match.",
+        "Static sorted original/current waveform expect-line inventory is identical (not a runtime gate). Artifact has exactly three requested unique focus decisions; all recorded source blobs verified against final Git HEAD. changedPaths intentionally records the full two-path coherent commit scope even for the unchanged startup focus."
+      ],
+      "primaryLimits": [
+        "No tests, setup, builds, provider/device access, credentials, delegation, cleanup, destructive Git, push, PR, merge or publication. Parent owns audited isolated gates and fresh independent judgments.",
+        "The durable code workspace is /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_8d64fb99; only formatter HOME/config/cache/SDK/TMPDIR use the retained mkdtemp fixture above. Old worktrees/candidate evidence untouched.",
+        "Runtime agent.model verification remains parent-owned. No per-worker wisdom/values edits: this bounded test organization/restoration introduces no new general lesson; parent owns aggregate wisdom.",
+        "Historical related ACCEPT task_8db4b91e is not a fresh own-focus verdict. Exact restored candidate blob is 5e91f029981f49fee3848a977cfe92d36da072e8. Fake socket injection avoids real network by inspection; no test was run. Internally nonterminal response failure does not claim the extension keeps Live running after onError."
+      ]
     },
     {
       "file": "tests/openai-session-schema.test.ts",
