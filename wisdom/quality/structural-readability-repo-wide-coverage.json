@@ -9370,12 +9370,12 @@
     {
       "file": "tests/claude-compat-compiled.test.ts",
       "initialBlob": "5dd980739861ee24d0210c7db9734787f43973bd",
-      "status": "pending",
+      "status": "accepted",
       "area": "compatibility-t3",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_1e1bfadc",
       "primaryCommit": "bba400e961e35837aaa2c0f6cd4b3537c6406234",
-      "judgeIds": [],
+      "judgeIds": ["task_d6335a2d"],
       "sourceCommit": "bba400e961e35837aaa2c0f6cd4b3537c6406234",
       "report": "wisdom/quality/structural-readability-areas/compatibility-t3.json",
       "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection.",
@@ -9421,17 +9421,43 @@
         "Repository setup, tests and builds intentionally not run; parent owns audited isolated batch gates and independent fresh judgment. Static checks do not prove compiled runtime behavior.",
         "Optional TypeScript AST comparison could not load /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/typescript/lib/typescript.js (ENOENT); no dependency installation or setup attempted. Bun source scan and source comparisons were used instead.",
         "No wisdom/value edits: assignment requires parent aggregate wisdom and no new general implementation lesson was established."
+      ],
+      "acceptedBlob": "2b6bf26feeba55363328778e545be62e081cc99e",
+      "result": "Read the complete candidate, not HEAD. The former interleaved child/parent conditional now has two local semantic owners: normalChildTurn requests execute until its proof is present, then reports completion; parentDelegationTurn confirms completed-child evidence, exposes unexpected tool results, or delegates on the initial turn. The fetch handler visibly collects tool evidence, records the selected model, chooses its policy, and frames the response. completionStream owns only SSE chunk metadata, finish reason and the terminal marker, and both providers call it. These are coherent decision/framing boundaries, not just renamed blocks. The unchanged readiness/schema/EOF/failure journey and the separate preflight journey remain readable at their original fixture owners.",
+      "systemReason": "Traced packaged bruv claude-compat into runConnector, default binary selection and root-authority scrubbing, native-home and exact-model preflight before history/MCP allocation, Pi tool selection and permission classification, and bindNativeChildExecutable routing only this canonical owner to the paired normal binary. JobService resolves the normal profile, prepares the child session, supplies explicit model/thinking and depth/type environment, and launches through TaskManager. The candidate still verifies child-provider observation, root tool result and persisted child proof/depth/control isolation; it does not replace genuine subprocess execution with fixture completion. Version/readiness, auxiliary output, interruption, invalid setup and ordinary-state preservation assertions remain intact. Framing and branch outcomes match the baseline.",
+      "checks": [
+        {
+          "kind": "exact-source",
+          "result": "git show read the entire focus at the listed commit; git diff against primaryBase lists only the focus as changed; accepted blob obtained with git rev-parse."
+        },
+        {
+          "kind": "structural-reading",
+          "result": "Reviewed complete scenarios including unchanged decisions and traced relevant production consumers. Compared baseline turn conditions and both SSE response shapes."
+        },
+        {
+          "kind": "static-whitespace",
+          "result": "git diff --check primaryBase..candidate returned 0."
+        },
+        {
+          "kind": "scoped-evidence",
+          "result": "Read only these focus rows in area/coverage/jobs ledgers; pending status was not treated as a prior rejection or acceptance."
+        }
+      ],
+      "limits": [
+        "No setup, tests or builds run; compiled execution and optional installed-SDK behavior require parent-owned audited gates. Static reading is not runtime or provider-access proof.",
+        "Existing fixture cleanup/process-lifetime code was inspected but neither run nor redesigned. No credentials, device access, cleanup, source edits, delegation, push or merge.",
+        "No wisdom/value edits; parent owns aggregate wisdom."
       ]
     },
     {
       "file": "tests/claude-compat-composition.test.ts",
       "initialBlob": "0551197d52af008fbc723a70d9b157bb870ffc96",
-      "status": "pending",
+      "status": "accepted",
       "area": "compatibility-t3",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_0f924831",
       "primaryCommit": "b5e505add38da059029ce3c17b688ec894da4884",
-      "judgeIds": [],
+      "judgeIds": ["task_d6335a2d"],
       "sourceCommit": "b5e505add38da059029ce3c17b688ec894da4884",
       "report": "wisdom/quality/structural-readability-areas/compatibility-t3.json",
       "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection.",
@@ -9466,17 +9492,43 @@
         "Optional TypeScript AST inspection unavailable: the provided read-only node_modules/typescript/lib/typescript.js does not exist; no dependency installation attempted. Formatter parsing and static source comparisons used instead.",
         "No prior candidate/rework evidence for this focus; reconciliation and focus area/coverage rows record pending-primary baseline.",
         "No wisdom or values edits: parent owns aggregate wisdom."
+      ],
+      "acceptedBlob": "37f63e38891f84ea3628b521dcbc35032f5a8e5e",
+      "result": "Read the complete exact candidate. Independent policy journeys now end at their own assertion boundaries: observed settings/tool selection, Bash versus arbitrary execute permission, thinking/display resolution, and unsupported effects. Inputs and original expectations stay together rather than moving into a generic table. createOfflineModelRuntime owns model-file registration plus auth/models paths and disabled-network construction. Calling it before MCP startup removes unrelated provider preparation from the open-MCP interval; the MCP test now proceeds directly from server selection/policy to runtime/tool injection, actual Pi turn, correlated result and confirmed closure. The unchanged UUID/checkpoint, history-only fork import and empty-session identity cases retain explicit source IDs and ownership assertions.",
+      "systemReason": "Traced arguments into launchPolicy and permissionBinding, exact-name permission matching and the native CLI consumer. nativeStorage remains the authority for home/cwd binding, canonical Pi headers, exact checkpoint branching and import mappings; importNativeHistory builds a fresh session from validated messages rather than restoring old task/question/agent entries. For MCP, InjectedMcpSession opens the configured stdio fixture with a scrubbed explicit environment, mcpFactory registers discovered tools, Pi activates only the selected tool, and callTool owns external-tool authorization/correlation. Runtime close aborts the session, shuts down extensions, disposes Pi, flushes persistence and closes MCP; the test still checks closed status and the reported subprocess PID. Model preflight/initialize use configured local availability, not provider-access verification. The process-global SDK isolation wrapper and native persistence/security expectations are unchanged.",
+      "checks": [
+        {
+          "kind": "exact-source",
+          "result": "git show read the entire focus at the listed commit; primaryBase diff lists only this focus as changed; accepted blob obtained with git rev-parse."
+        },
+        {
+          "kind": "structural-reading",
+          "result": "Inspected the full diff, preserved policy expectations, extracted preparation and unchanged persistence/import/MCP journeys; followed production authorities and stdio fixture."
+        },
+        {
+          "kind": "static-whitespace",
+          "result": "git diff --check primaryBase..candidate returned 0."
+        },
+        {
+          "kind": "scoped-evidence",
+          "result": "Read only assigned focus records in area/coverage/jobs ledgers; did not infer acceptance from primary static checks or test totals."
+        }
+      ],
+      "limits": [
+        "No setup, tests or builds run; actual Pi/MCP execution and SDK process isolation remain for parent-owned audited gates.",
+        "Existing afterEach removal and inherited-environment child wrapper were read, not executed; this decision does not authorize those probes or claim whole-fixture lifetime hardening.",
+        "No source edits or unrelated acceptance changes. No auth/device claim. Wisdom and values unchanged; parent owns aggregation."
       ]
     },
     {
       "file": "tests/claude-compat-defaults.test.ts",
       "initialBlob": "03cbe81b5655cb248754441d870562fde4794397",
-      "status": "pending",
+      "status": "accepted",
       "area": "compatibility-t3",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_6e06a9b6",
       "primaryCommit": "820bf697cc719fae893234e9d931a7eec7bea74c",
-      "judgeIds": [],
+      "judgeIds": ["task_d6335a2d"],
       "sourceCommit": "820bf697cc719fae893234e9d931a7eec7bea74c",
       "report": "wisdom/quality/structural-readability-areas/compatibility-t3.json",
       "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection.",
@@ -9502,6 +9554,31 @@
         "No changed source paths or commit: formatter requirement does not apply to a no-change decision.",
         "Independent exact-source readability judgment remains for the parent-appointed judge.",
         "Wisdom and values unchanged: no new lesson; parent writes aggregate wisdom."
+      ],
+      "acceptedBlob": "03cbe81b5655cb248754441d870562fde4794397",
+      "result": "The complete unchanged candidate already presents two concrete input/output journeys without hidden state: ordinary auth directories with standalone connector-to-sibling and packaged bruv-to-self selection, then literal home-prefix overrides with spaces and cwd-resolved relative binary paths. Adjacent expandHome assertions show bare ~ and the deliberately unexpanded $HOME and ~other boundaries. Each call and expected path can be read together; a table/helper extraction would add navigation without consolidating a scattered decision or lifetime.",
+      "systemReason": "Read launch.ts and the actual runConnector caller. expandHome only handles the current-user prefix; connectorLaunchDefaults owns sibling/self choice and cwd resolution. runConnector scrubs root authority before computing these defaults and passes the resulting agentDir and executablePath directly into runtime creation. The production runtime checks the paired executable, uses the selected agent directory for local configuration/model setup, and binds that normal binary to the canonical child-launch owner. Exact related source blobs are identical across all three reviewed commits, so these callers were not inferred from checkout HEAD. No source changes are needed to explain the tested boundary, and this judgment preserves unrelated accepted work.",
+      "checks": [
+        {
+          "kind": "exact-source",
+          "result": "Read entire focus at exact candidate; its blob equals baseline 03cbe81b5655cb248754441d870562fde4794397; primaryBase equals candidate and there are no changed source paths."
+        },
+        {
+          "kind": "caller-identity",
+          "result": "Compared Git blobs for launch, cli, runtime, binding and delegation-environment across all three commits; each path is byte-identical, permitting reuse of exact-source caller reading."
+        },
+        {
+          "kind": "structural-reading",
+          "result": "Followed both defaults journeys and unchanged literal-prefix boundary decisions into production consumption."
+        },
+        {
+          "kind": "scoped-evidence",
+          "result": "Focus-specific area/coverage/jobs records show pending fresh judgment, not a rejected candidate requiring recovery."
+        }
+      ],
+      "limits": [
+        "No setup, tests or builds run; this is an intrinsic and system readability judgment, not platform/runtime verification.",
+        "No auth/device claim, source changes, cleanup or unrelated review expansion. Wisdom and values unchanged; parent owns aggregate wisdom."
       ]
     },
     {
@@ -9716,12 +9793,12 @@
     {
       "file": "tests/claude-compat-prompt-ownership.test.ts",
       "initialBlob": "77df78bd7770d1c81f753dd5b29be8fea0799d78",
-      "status": "pending",
+      "status": "accepted",
       "area": "compatibility-t3",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_76686bee",
       "primaryCommit": "ea98bbb6e6ff3f43040459667e10e59141cbd5f6",
-      "judgeIds": [],
+      "judgeIds": ["task_41a5466e"],
       "sourceCommit": "ea98bbb6e6ff3f43040459667e10e59141cbd5f6",
       "report": "wisdom/quality/structural-readability-areas/compatibility-t3.json",
       "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection.",
@@ -9753,17 +9830,43 @@
         "No setup, tests, builds, push, PR, merge, or delegation performed. Runtime validation remains with the parent audited batch gates; no readability judge verdict is claimed.",
         "Optional TypeScript parser inspection could not load the existing dependency; its lib/typescript.js path is absent. Biome successfully parsed/formatted the changed source.",
         "Wisdom and values unchanged: this is a bounded application of existing authority-separation guidance; parent owns aggregate wisdom."
+      ],
+      "acceptedBlob": "a2f85d35bcc60597b0510e601aec7a6cc31cd06f",
+      "result": "The extracted loader owns one complete operation: read the pinned adapter predicates, optionally compare the supplied native-source slices, transpile those same bytes, and return the classifier. The race now reads continuously from initial early-echo evidence to classification against the pending human UUID and then its call/init/result assertions. This removes source-provenance/compiler detail from the causal scenario rather than merely renaming it. The queue variants still expose steering/follow-up admission, transformed identical text, no premature attribution, and UUID-less consumption explicitly. Task-wake and same-settlement distinct-reply scenarios remain independently readable. The diff moves the existing native-loading statements and conditional assertion intact; no other source path changes.",
+      "systemReason": "Traced runtime.onUser admission serialization, preflight callback and onUserMessageCreated object-identity capture; session.subscribe attributes only a consumed user message_start through frontend.consumeUser. Frontend begin/reset, promptEcho, task custom-message attribution, per-reply identity and agent_settled result/idle publication explain the assertions. The pinned native predicate first checks echoed UUID membership, otherwise rejects non-human origin once early echo is known. Thus an autonomous result without the pending human UUID cannot settle that human prompt. Read-only installed SDK inspection corroborates input hooks preceding message creation and distinct queued-message capture; runtime/frontend exact blobs also match the other two candidate revisions.",
+      "checks": [
+        {
+          "kind": "exact-candidate-review",
+          "result": "Read the full focus at ea98bbb6e6ff3f43040459667e10e59141cbd5f6 and its complete diff from aaa5daaa024bf26b37acd9f29ca6d85312c2d5a8; only the focus changes."
+        },
+        {
+          "kind": "git-blob-and-whitespace",
+          "result": "git rev-parse confirms a2f85d35bcc60597b0510e601aec7a6cc31cd06f; candidate diff --check has no output."
+        },
+        {
+          "kind": "guidance-and-focus-evidence",
+          "result": "Read wisdom/values.md and structural-readability-guidance.md; inspected only the three assigned rows in coverage/area ledgers and matching job/state/primary evidence records. Pending history is not a prior rejection."
+        },
+        {
+          "kind": "caller-reading",
+          "result": "Read runtime admission/subscriber, frontend lifecycle/attribution/publication, pinned native predicates and relevant read-only installed SDK event/capture paths."
+        }
+      ],
+      "limits": [
+        "Read-only structural review: no setup, tests, builds, formatter, network/provider/device access, or cleanup performed. Runtime gates remain parent-owned; no live authentication or device claim.",
+        "No source edited, imported, committed, pushed, or merged; unrelated accepted work and old worktrees preserved. Parent owns aggregate wisdom and external runtime-model verification.",
+        "No external native adapter source was read or executed; comparison is conditional in the reviewed code. Installed SDK reading is corroboration, not a build/host-hash acceptance claim. The existing isolated-runtime fixture inherits environment and removes its owned temporary dirs; it was not run."
       ]
     },
     {
       "file": "tests/claude-compat-retry.test.ts",
       "initialBlob": "b47243122091cbf6159182f3a856508bdc5b4b51",
-      "status": "pending",
+      "status": "accepted",
       "area": "compatibility-t3",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_7896d05f",
       "primaryCommit": "7442e2235e8109a0cf06457a24f7ad9604d011a7",
-      "judgeIds": [],
+      "judgeIds": ["task_41a5466e"],
       "sourceCommit": "7442e2235e8109a0cf06457a24f7ad9604d011a7",
       "report": "wisdom/quality/structural-readability-areas/compatibility-t3.json",
       "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection.",
@@ -9798,6 +9901,31 @@
         "Formatter not invoked because there are no changed source paths and no source commit to make.",
         "No independent judge verdict claimed; parent will launch a fresh judge for this exact source identity.",
         "No wisdom/values edits: no new structural lesson; parent owns aggregate wisdom."
+      ],
+      "acceptedBlob": "b47243122091cbf6159182f3a856508bdc5b4b51",
+      "result": "The first scenario exposes the important event order directly: provider error, agent_end(willRetry), retry start, nested agent_start, recovered toolUse, authoritative retry confirmation, tool result, final assistant and settlement. Intermediate assertions distinguish successful message from recovery authority and recovery from settlement. fixture hides only ordinary message pairing and frame collection; settle owns explicit settlement, flush and the single-result check. Exhaustion, missing confirmation, aborted response, interruption and runtime failure stay short separate cases. Root-reset deliberately performs its second settlement inline; failed delivery deliberately uses a separate throwing emitter. Further extraction would hide the distinctions being documented, with no demonstrated reading burden.",
+      "systemReason": "The exact candidate runtime subscribes session events to frontend.onEvent. Frontend begin returns when already active, so retry agent_start does not reset the root RunResult; only agent_settled ends it. message_end records all assistant turns/usage without clearing provider failure; auto_retry_end(success) clears only provider failure. Terminal abort/interruption/runtime failure therefore survives. New root begin constructs new accounting. send records output failure once and suppresses subsequent delivery; flush continues rejecting independently of retry success. Installed SDK emits retry success for non-error assistant messages (including aborted) and computes willRetry for agent_end, corroborating why the tests retain their authority/precedence assertions.",
+      "checks": [
+        {
+          "kind": "exact-candidate-review",
+          "result": "Read the entire focus at 7442e2235e8109a0cf06457a24f7ad9604d011a7, not checkout HEAD. Candidate equals supplied primaryBase; no changed source paths."
+        },
+        {
+          "kind": "git-blob",
+          "result": "git rev-parse confirms b47243122091cbf6159182f3a856508bdc5b4b51, matching the focused initial ledger blob."
+        },
+        {
+          "kind": "focus-evidence",
+          "result": "Focused area/coverage/job/state and retained primary artifact identify this unchanged candidate; no prior focus-specific rejection is recorded."
+        },
+        {
+          "kind": "caller-reading",
+          "result": "Read exact runtime subscriber and frontend begin/end/onEvent/RunResult/send/flush; verified runtime/frontend blobs match the prompt-ownership revision. Read installed SDK retry-confirmation and settlement event source, without execution."
+        }
+      ],
+      "limits": [
+        "Read-only structural review: no setup, tests, builds, formatter, network/provider/device access, or cleanup performed. Runtime gates remain parent-owned; no live authentication or device claim.",
+        "No source edited, imported, committed, pushed, or merged; unrelated accepted work and old worktrees preserved. Parent owns aggregate wisdom and external runtime-model verification."
       ]
     },
     {
@@ -9859,12 +9987,12 @@
     {
       "file": "tests/claude-compat/credential-isolation.test.ts",
       "initialBlob": "5b0fd64bdd1a91b1bf8bb228393724152bff4ec4",
-      "status": "pending",
+      "status": "accepted",
       "area": "compatibility-t3",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_b79ef546",
       "primaryCommit": "b24a271aa7b555aef7edd146a754fa6128fe295d",
-      "judgeIds": [],
+      "judgeIds": ["task_41a5466e"],
       "sourceCommit": "b24a271aa7b555aef7edd146a754fa6128fe295d",
       "report": "wisdom/quality/structural-readability-areas/compatibility-t3.json",
       "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection.",
@@ -9898,6 +10026,32 @@
         "No credentials, devices, real SSH host, recovery action, or cleanup command used.",
         "Independent readability judgment and external runtime model verification remain parent-owned.",
         "Wisdom/values unchanged; parent owns aggregate wisdom, and this no-change decision introduces no new lesson."
+      ],
+      "acceptedBlob": "5b0fd64bdd1a91b1bf8bb228393724152bff4ec4",
+      "result": "The local fake environment makes root-control prefixes, configured-provider retention and workspace state visible together. The independent child expression observes process.env instead of reusing the scrubber. The factory test directly contrasts ordinary scrub, distinct-agent checkpoint removal, remote defaults, source immutability and in-place root scrub. Task, arbitrary-TypeScript and fake-SSH scenarios each show their own real launch API, observed output and local lifetime; installEnv snapshots exactly the keys it changes and both callers visibly restore them in finally. A shared launch/lifecycle wrapper would obscure different boundaries rather than resolve scattered decisions. No structural change is needed.",
+      "systemReason": "Traced scrubT3BridgeEnvironment and childAgentEnvironment policy, remoteChildEnvironment layering, TaskManager.spawn -> #spawnChild (scrubs explicit env too), process close -> completion -> wait, executeIsolated scrub-before-spawn and stdin runner entry, sshControl scrubbed local bootstrap env and close/JSON response, and connector CLI capture-bindings-before-in-place-scrub ordering. Both task results are awaited before normal finally; manager.shutdown starts cancellation if needed but its returned Promise is not awaited by this existing test, so exceptional shutdown draining is not proved. Fake ssh tests local bootstrap only; destination child policy is asserted directly in the factory test, not through a destination process. These distinctions are explicit and do not need a new abstraction.",
+      "checks": [
+        {
+          "kind": "exact-candidate-review",
+          "result": "Read the entire focus at b24a271aa7b555aef7edd146a754fa6128fe295d. Candidate equals supplied primaryBase; no changed source paths."
+        },
+        {
+          "kind": "git-blob",
+          "result": "git rev-parse confirms 5b0fd64bdd1a91b1bf8bb228393724152bff4ec4, matching the focused initial ledger blob."
+        },
+        {
+          "kind": "focus-evidence",
+          "result": "Inspected assigned area/coverage/job/state rows and retained primary artifact. Pending history carries no recorded earlier independent rejection."
+        },
+        {
+          "kind": "caller-reading",
+          "result": "Read the exact candidate scrubber, placement environment factory, task spawn/wait/close/shutdown, TypeScript spawn/stdin/completion and runner entry, full SSH bootstrap function, and connector root-scrub caller."
+        }
+      ],
+      "limits": [
+        "Read-only structural review: no setup, tests, builds, formatter, network/provider/device access, or cleanup performed. Runtime gates remain parent-owned; no live authentication or device claim.",
+        "No source edited, imported, committed, pushed, or merged; unrelated accepted work and old worktrees preserved. Parent owns aggregate wisdom and external runtime-model verification.",
+        "The existing tests preserve inherited non-fixture environment entries and contain rm for created temp dirs; none were executed. Fake fixture strings are not evidence of provider access or real destination isolation. Exceptional TaskManager shutdown is initiated but not awaited; no claim of complete failure-path draining."
       ]
     },
     {

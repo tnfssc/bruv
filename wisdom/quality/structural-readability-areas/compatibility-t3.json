@@ -1906,52 +1906,55 @@
     {
       "file": "tests/claude-compat-compiled.test.ts",
       "initialBlob": "5dd980739861ee24d0210c7db9734787f43973bd",
-      "status": "pending",
+      "status": "accepted",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "2b6bf26feeba55363328778e545be62e081cc99e",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "2b6bf26feeba55363328778e545be62e081cc99e",
         "primaryId": "task_1e1bfadc",
         "primaryCommit": "bba400e961e35837aaa2c0f6cd4b3537c6406234",
-        "judgeIds": [],
+        "judgeIds": ["task_d6335a2d"],
         "sourceCommit": "bba400e961e35837aaa2c0f6cd4b3537c6406234",
-        "state": "needs-judge",
-        "reason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+        "state": "accepted-joined",
+        "reason": "Read the complete candidate, not HEAD. The former interleaved child/parent conditional now has two local semantic owners: normalChildTurn requests execute until its proof is present, then reports completion; parentDelegationTurn confirms completed-child evidence, exposes unexpected tool results, or delegates on the initial turn. The fetch handler visibly collects tool evidence, records the selected model, chooses its policy, and frames the response. completionStream owns only SSE chunk metadata, finish reason and the terminal marker, and both providers call it. These are coherent decision/framing boundaries, not just renamed blocks. The unchanged readiness/schema/EOF/failure journey and the separate preflight journey remain readable at their original fixture owners."
       }
     },
     {
       "file": "tests/claude-compat-composition.test.ts",
       "initialBlob": "0551197d52af008fbc723a70d9b157bb870ffc96",
-      "status": "pending",
+      "status": "accepted",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "37f63e38891f84ea3628b521dcbc35032f5a8e5e",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "37f63e38891f84ea3628b521dcbc35032f5a8e5e",
         "primaryId": "task_0f924831",
         "primaryCommit": "b5e505add38da059029ce3c17b688ec894da4884",
-        "judgeIds": [],
+        "judgeIds": ["task_d6335a2d"],
         "sourceCommit": "b5e505add38da059029ce3c17b688ec894da4884",
-        "state": "needs-judge",
-        "reason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+        "state": "accepted-joined",
+        "reason": "Read the complete exact candidate. Independent policy journeys now end at their own assertion boundaries: observed settings/tool selection, Bash versus arbitrary execute permission, thinking/display resolution, and unsupported effects. Inputs and original expectations stay together rather than moving into a generic table. createOfflineModelRuntime owns model-file registration plus auth/models paths and disabled-network construction. Calling it before MCP startup removes unrelated provider preparation from the open-MCP interval; the MCP test now proceeds directly from server selection/policy to runtime/tool injection, actual Pi turn, correlated result and confirmed closure. The unchanged UUID/checkpoint, history-only fork import and empty-session identity cases retain explicit source IDs and ownership assertions."
       }
     },
     {
       "file": "tests/claude-compat-defaults.test.ts",
       "initialBlob": "03cbe81b5655cb248754441d870562fde4794397",
-      "status": "pending",
+      "status": "accepted",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "03cbe81b5655cb248754441d870562fde4794397",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "03cbe81b5655cb248754441d870562fde4794397",
         "primaryId": "task_6e06a9b6",
         "primaryCommit": "820bf697cc719fae893234e9d931a7eec7bea74c",
-        "judgeIds": [],
+        "judgeIds": ["task_d6335a2d"],
         "sourceCommit": "820bf697cc719fae893234e9d931a7eec7bea74c",
-        "state": "needs-judge",
-        "reason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+        "state": "accepted-joined",
+        "reason": "The complete unchanged candidate already presents two concrete input/output journeys without hidden state: ordinary auth directories with standalone connector-to-sibling and packaged bruv-to-self selection, then literal home-prefix overrides with spaces and cwd-resolved relative binary paths. Adjacent expandHome assertions show bare ~ and the deliberately unexpanded $HOME and ~other boundaries. Each call and expected path can be read together; a table/helper extraction would add navigation without consolidating a scattered decision or lifetime."
       }
     },
     {
@@ -2155,35 +2158,37 @@
     {
       "file": "tests/claude-compat-prompt-ownership.test.ts",
       "initialBlob": "77df78bd7770d1c81f753dd5b29be8fea0799d78",
-      "status": "pending",
+      "status": "accepted",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "a2f85d35bcc60597b0510e601aec7a6cc31cd06f",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "a2f85d35bcc60597b0510e601aec7a6cc31cd06f",
         "primaryId": "task_76686bee",
         "primaryCommit": "ea98bbb6e6ff3f43040459667e10e59141cbd5f6",
-        "judgeIds": [],
+        "judgeIds": ["task_41a5466e"],
         "sourceCommit": "ea98bbb6e6ff3f43040459667e10e59141cbd5f6",
-        "state": "needs-judge",
-        "reason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+        "state": "accepted-joined",
+        "reason": "The extracted loader owns one complete operation: read the pinned adapter predicates, optionally compare the supplied native-source slices, transpile those same bytes, and return the classifier. The race now reads continuously from initial early-echo evidence to classification against the pending human UUID and then its call/init/result assertions. This removes source-provenance/compiler detail from the causal scenario rather than merely renaming it. The queue variants still expose steering/follow-up admission, transformed identical text, no premature attribution, and UUID-less consumption explicitly. Task-wake and same-settlement distinct-reply scenarios remain independently readable. The diff moves the existing native-loading statements and conditional assertion intact; no other source path changes."
       }
     },
     {
       "file": "tests/claude-compat-retry.test.ts",
       "initialBlob": "b47243122091cbf6159182f3a856508bdc5b4b51",
-      "status": "pending",
+      "status": "accepted",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "b47243122091cbf6159182f3a856508bdc5b4b51",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "b47243122091cbf6159182f3a856508bdc5b4b51",
         "primaryId": "task_7896d05f",
         "primaryCommit": "7442e2235e8109a0cf06457a24f7ad9604d011a7",
-        "judgeIds": [],
+        "judgeIds": ["task_41a5466e"],
         "sourceCommit": "7442e2235e8109a0cf06457a24f7ad9604d011a7",
-        "state": "needs-judge",
-        "reason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+        "state": "accepted-joined",
+        "reason": "The first scenario exposes the important event order directly: provider error, agent_end(willRetry), retry start, nested agent_start, recovered toolUse, authoritative retry confirmation, tool result, final assistant and settlement. Intermediate assertions distinguish successful message from recovery authority and recovery from settlement. fixture hides only ordinary message pairing and frame collection; settle owns explicit settlement, flush and the single-result check. Exhaustion, missing confirmation, aborted response, interruption and runtime failure stay short separate cases. Root-reset deliberately performs its second settlement inline; failed delivery deliberately uses a separate throwing emitter. Further extraction would hide the distinctions being documented, with no demonstrated reading burden."
       }
     },
     {
@@ -2381,18 +2386,19 @@
     {
       "file": "tests/claude-compat/credential-isolation.test.ts",
       "initialBlob": "5b0fd64bdd1a91b1bf8bb228393724152bff4ec4",
-      "status": "pending",
+      "status": "accepted",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "5b0fd64bdd1a91b1bf8bb228393724152bff4ec4",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "5b0fd64bdd1a91b1bf8bb228393724152bff4ec4",
         "primaryId": "task_b79ef546",
         "primaryCommit": "b24a271aa7b555aef7edd146a754fa6128fe295d",
-        "judgeIds": [],
+        "judgeIds": ["task_41a5466e"],
         "sourceCommit": "b24a271aa7b555aef7edd146a754fa6128fe295d",
-        "state": "needs-judge",
-        "reason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+        "state": "accepted-joined",
+        "reason": "The local fake environment makes root-control prefixes, configured-provider retention and workspace state visible together. The independent child expression observes process.env instead of reusing the scrubber. The factory test directly contrasts ordinary scrub, distinct-agent checkpoint removal, remote defaults, source immutability and in-place root scrub. Task, arbitrary-TypeScript and fake-SSH scenarios each show their own real launch API, observed output and local lifetime; installEnv snapshots exactly the keys it changes and both callers visibly restore them in finally. A shared launch/lifecycle wrapper would obscure different boundaries rather than resolve scattered decisions. No structural change is needed."
       }
     },
     {
@@ -3951,7 +3957,7 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 77,
-    "pending": 21
+    "accepted": 83,
+    "pending": 15
   }
 }

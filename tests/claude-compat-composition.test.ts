@@ -63,7 +63,39 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
     return stream;
   }
 
-  test("ordinary native health and main policies accept exact observed flags, no Bash/execute preapproval conflation", async () => {
+  async function createOfflineModelRuntime(agentDir: string) {
+    await Bun.write(
+      join(agentDir, "models.json"),
+      JSON.stringify({
+        providers: {
+          "bruv-composition": {
+            api: "openai-completions",
+            baseUrl: "http://127.0.0.1:1",
+            apiKey: "local-test-only",
+            models: [
+              {
+                id: "exact-model",
+                name: "Exact local fixture",
+                reasoning: false,
+                input: ["text"],
+                contextWindow: 16000,
+                maxTokens: 512,
+                cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
+              },
+            ],
+          },
+        },
+      }),
+    );
+    return ModelRuntime.create({
+      modelsPath: join(agentDir, "models.json"),
+      authPath: join(agentDir, "auth.json"),
+      refreshOnCreate: false,
+      allowModelNetwork: false,
+    });
+  }
+
+  test("observed native settings map to the selected tool policy", () => {
     const policy = launchPolicy(
       parse([
         "--settings",
@@ -75,6 +107,9 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
     expect(policy.allowedTools).toEqual(["bash"]);
     expect(policy.disallowedTools).toEqual(["write"]);
     expect(policy.tools).toBeUndefined();
+  });
+
+  test("Bash preapproval does not authorize arbitrary Bruv execute code", async () => {
     let asks = 0;
     const gate = permissionBinding(parse(["--allowedTools", "Bash(*)"]), async () => {
       asks++;
@@ -91,6 +126,9 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
       }),
     ).toMatchObject({ behavior: "deny" });
     expect(asks).toBe(1);
+  });
+
+  test("thinking flags and settings resolve together and reject conflicting display choices", () => {
     expect(
       launchPolicy(
         parse([
@@ -108,6 +146,9 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
     expect(launchPolicy(parse(["--settings", '{"alwaysThinkingEnabled":true}']))).toMatchObject({ thinking: "high" });
     expect(launchPolicy(parse(["--thinking", "adaptive", "--effort", "low"]))).toMatchObject({ thinking: "low" });
     expect(() => parse(["--thinking-display", "summarized", "--thinking-display", "omitted"])).toThrow("Conflicting");
+  });
+
+  test("unsupported launch settings are rejected rather than inherited", () => {
     for (const settings of ['{"fastMode":true}', '{"hooks":{}}', '{"env":{"OPENAI_API_KEY":"not-a-real-key"}}'])
       expect(() => launchPolicy(parse(["--settings", settings]))).toThrow("Unsupported");
   });
@@ -194,6 +235,7 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
 
   test("injected stdio MCP is selected separately, gated in real Pi tool execution and closed with the runtime", async () => {
     const options = await home();
+    const modelRuntime = await createOfflineModelRuntime(options.agentDir);
     const mcp = await InjectedMcpSession.open(
       {
         mcpServers: {
@@ -210,35 +252,6 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
         policy: { authorizeServer: async () => true, authorizeTool: async () => ({ behavior: "allow" }) },
       },
     );
-    await Bun.write(
-      join(options.agentDir, "models.json"),
-      JSON.stringify({
-        providers: {
-          "bruv-composition": {
-            api: "openai-completions",
-            baseUrl: "http://127.0.0.1:1",
-            apiKey: "local-test-only",
-            models: [
-              {
-                id: "exact-model",
-                name: "Exact local fixture",
-                reasoning: false,
-                input: ["text"],
-                contextWindow: 16000,
-                maxTokens: 512,
-                cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
-              },
-            ],
-          },
-        },
-      }),
-    );
-    const modelRuntime = await ModelRuntime.create({
-      modelsPath: join(options.agentDir, "models.json"),
-      authPath: join(options.agentDir, "auth.json"),
-      refreshOnCreate: false,
-      allowModelNetwork: false,
-    });
     const frames: Record<string, any>[] = [];
     const runtime = await createClaudeCompatRuntime({
       ...options,

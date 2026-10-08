@@ -15,6 +15,22 @@ const binary = process.env.BRUV_CLAUDE_COMPAT_TEST_BINARY;
 const normalBinary = process.env.BRUV_CLAUDE_COMPAT_TEST_BRUV;
 const compiledTest = binary && normalBinary ? test : test.skip;
 
+function completionStream(id: string, model: string, delta: { role: string; content?: string; tool_calls?: object[] }) {
+  const event = (chunk: object, finishReason: string | null) => ({
+    id,
+    object: "chat.completion.chunk",
+    created: 1,
+    model,
+    choices: [{ index: 0, delta: chunk, finish_reason: finishReason }],
+  });
+  return new Response(
+    [event(delta, null), event({}, delta.tool_calls ? "tool_calls" : "stop")]
+      .map((chunk) => "data: " + JSON.stringify(chunk) + "\n\n")
+      .join("") + "data: [DONE]\n\n",
+    { headers: { "content-type": "text/event-stream" } },
+  );
+}
+
 compiledTest(
   "compiled connector: local readiness, stream, schema auxiliary, truthful flag failures",
   async () => {
@@ -34,22 +50,10 @@ compiledTest(
         const auxiliary = body.messages.some((m) => JSON.stringify(m.content).includes("Return only JSON matching"));
         const longTurn = body.messages.some((m) => JSON.stringify(m.content).includes("hold until EOF"));
         if (longTurn) await Bun.sleep(300);
-        const event = (delta: object, finish_reason: string | null) => ({
-          id: "loopback-only",
-          object: "chat.completion.chunk",
-          created: 1,
-          model: "fixture-model",
-          choices: [{ index: 0, delta, finish_reason }],
+        return completionStream("loopback-only", "fixture-model", {
+          role: "assistant",
+          content: auxiliary ? '{"title":"Loopback title"}' : "Loopback answer",
         });
-        return new Response(
-          [
-            event({ role: "assistant", content: auxiliary ? '{"title":"Loopback title"}' : "Loopback answer" }, null),
-            event({}, "stop"),
-          ]
-            .map((e) => "data: " + JSON.stringify(e) + "\n\n")
-            .join("") + "data: [DONE]\n\n",
-          { headers: { "content-type": "text/event-stream" } },
-        );
       },
     });
     const children: ReturnType<typeof spawn>[] = [];
@@ -302,6 +306,34 @@ compiledTest(
     await mkdir(state, { recursive: true });
     await mkdir(home);
     const seen: Array<{ model: string; childTool: boolean }> = [];
+    const executeCall = (id: string, code: string) => ({
+      role: "assistant",
+      tool_calls: [
+        {
+          index: 0,
+          id,
+          type: "function",
+          function: { name: "execute", arguments: JSON.stringify({ label: "Paired binary real execution", code }) },
+        },
+      ],
+    });
+    const normalChildTurn = (toolResults: string) => {
+      if (toolResults.includes("ACTUAL_CHILD_TOOL_RESULT"))
+        return { role: "assistant", content: "ACTUAL_NORMAL_CHILD_DONE" };
+      return executeCall(
+        "child-actual-tool",
+        'console.log(JSON.stringify({proof:"ACTUAL_CHILD_TOOL_RESULT",type:process.env.BRUV_SUBAGENT_TYPE,depth:process.env.BRUV_SUBAGENT_DEPTH,controls:Object.keys(process.env).filter(k=>k.startsWith("T3_")||k.startsWith("BRUV_ROOT_"))}));',
+      );
+    };
+    const parentDelegationTurn = (toolResults: string) => {
+      if (toolResults.includes("ACTUAL_NORMAL_CHILD_DONE"))
+        return { role: "assistant", content: "ACTUAL_PARENT_CHILD_CONFIRMED" };
+      if (toolResults) return { role: "assistant", content: "ACTUAL_CHILD_FAILURE: " + toolResults };
+      return executeCall(
+        "parent-actual-subagent",
+        'const r=await subagent({type:"normal",prompt:"Run CHILD_RUN_TOOL_PROOF using your actual execute tool",waitSeconds:10}); console.log(JSON.stringify(r));',
+      );
+    };
     const provider = Bun.serve({
       hostname: "127.0.0.1",
       port: 0,
@@ -313,45 +345,8 @@ compiledTest(
           .join("\n");
         const child = body.model === "child-model";
         seen.push({ model: body.model, childTool: child && toolResults.includes("ACTUAL_CHILD_TOOL_RESULT") });
-        let delta: any;
-        const tool = (id: string, code: string) => ({
-          role: "assistant",
-          tool_calls: [
-            {
-              index: 0,
-              id,
-              type: "function",
-              function: { name: "execute", arguments: JSON.stringify({ label: "Paired binary real execution", code }) },
-            },
-          ],
-        });
-        if (child && !toolResults.includes("ACTUAL_CHILD_TOOL_RESULT"))
-          delta = tool(
-            "child-actual-tool",
-            'console.log(JSON.stringify({proof:"ACTUAL_CHILD_TOOL_RESULT",type:process.env.BRUV_SUBAGENT_TYPE,depth:process.env.BRUV_SUBAGENT_DEPTH,controls:Object.keys(process.env).filter(k=>k.startsWith("T3_")||k.startsWith("BRUV_ROOT_"))}));',
-          );
-        else if (child) delta = { role: "assistant", content: "ACTUAL_NORMAL_CHILD_DONE" };
-        else if (toolResults && !toolResults.includes("ACTUAL_NORMAL_CHILD_DONE"))
-          delta = { role: "assistant", content: "ACTUAL_CHILD_FAILURE: " + toolResults };
-        else if (!toolResults.includes("ACTUAL_NORMAL_CHILD_DONE"))
-          delta = tool(
-            "parent-actual-subagent",
-            'const r=await subagent({type:"normal",prompt:"Run CHILD_RUN_TOOL_PROOF using your actual execute tool",waitSeconds:10}); console.log(JSON.stringify(r));',
-          );
-        else delta = { role: "assistant", content: "ACTUAL_PARENT_CHILD_CONFIRMED" };
-        const event = (d: any, finish: string | null) => ({
-          id: "paired-binary-fixture",
-          object: "chat.completion.chunk",
-          created: 1,
-          model: body.model,
-          choices: [{ index: 0, delta: d, finish_reason: finish }],
-        });
-        return new Response(
-          [event(delta, null), event({}, delta.tool_calls ? "tool_calls" : "stop")]
-            .map((e) => "data: " + JSON.stringify(e) + "\n\n")
-            .join("") + "data: [DONE]\n\n",
-          { headers: { "content-type": "text/event-stream" } },
-        );
+        const delta = child ? normalChildTurn(toolResults) : parentDelegationTurn(toolResults);
+        return completionStream("paired-binary-fixture", body.model, delta);
       },
     });
     await writeFile(
