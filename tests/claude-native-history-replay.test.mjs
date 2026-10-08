@@ -7,7 +7,7 @@ import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
 
-const serverSource = String.raw`#!/usr/bin/node
+const serverSource = String.raw`#!${process.execPath}
 import fs from "node:fs/promises";
 import path from "node:path";
 import { createServer } from "node:http";
@@ -118,7 +118,7 @@ async function prepareReplayFixture(fixture, mode) {
   const port = reservation.address().port;
   await new Promise((resolve) => reservation.close(resolve));
   return {
-    PATH: "/usr/bin:/bin",
+    PATH: [path.dirname(process.execPath), "/usr/bin", "/bin"].join(path.delimiter),
     ...isolatedEnv,
     T3_UPSTREAM: upstream,
     BROWSER_PATH: "owned-browser",
@@ -140,7 +140,7 @@ async function replayFixture(mode, check) {
   const env = await prepareReplayFixture(fixture, mode);
   let pid;
   try {
-    const child = spawn("/usr/bin/node", [path.join(fixture, "replay.mjs")], {
+    const child = spawn(process.execPath, [path.join(fixture, "replay.mjs")], {
       env,
       stdio: ["ignore", "ignore", "pipe"],
     });

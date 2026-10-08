@@ -25,7 +25,7 @@ async function installMockUpstream(upstream, proof) {
   await fs.mkdir(path.join(upstream, "runtime/node_modules/playwright"), { recursive: true });
   await fs.writeFile(
     binary,
-    "#!/usr/bin/node\n" +
+    `#!${process.execPath}\n` +
       mockHooks.replace("process.env.PROOF_OUTPUT", JSON.stringify(proof)) +
       String.raw`
 if (process.argv.includes("--version")) {
@@ -236,9 +236,9 @@ async function replayFixture(mode, check) {
     await new Promise((resolve) => reservation.listen(0, "127.0.0.1", resolve));
     const port = reservation.address().port;
     await new Promise((resolve) => reservation.close(resolve));
-    const child = spawn("/usr/bin/node", [replay], {
+    const child = spawn(process.execPath, [replay], {
       env: {
-        PATH: "/usr/bin:/bin",
+        PATH: [path.dirname(process.execPath), "/usr/bin", "/bin"].join(path.delimiter),
         HOME: fixture,
         T3_UPSTREAM: upstream,
         BROWSER_PATH: "test-browser",

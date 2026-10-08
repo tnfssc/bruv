@@ -114,7 +114,12 @@ test("Release log destination uses the same Linux commands, env and owned temp",
   expectOwnedTempCleaned(ci);
   expectOwnedTempCleaned(release);
   expect(release.result.status).toBe(0);
-  expect(release.calls.map((call) => call.command)).toEqual(ci.calls.map((call) => call.command));
+  // Resource outputs belong under the selected log destination; every other argument is identical.
+  expect(release.calls.map((call) => call.command)).toEqual(
+    ci.calls.map((call) =>
+      call.command.replace(join(ci.root, "artifacts/ci/resources"), "artifacts/release/ci/resources"),
+    ),
+  );
   for (const { root, calls } of [ci, release]) {
     expect(calls.every((call) => call.cwd === root)).toBe(true);
   }

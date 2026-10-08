@@ -95,7 +95,11 @@ async function assertRunnerFinalization(proof) {
     realCredentialsUsed: false,
     integratedReplayPassed: false,
   });
-  await assert.rejects(fetch(observation.modelUrl), /fetch failed/);
+  // Bun and Node expose the same refusal through different structured error fields.
+  await assert.rejects(
+    fetch(observation.modelUrl),
+    (error) => error.code === "ConnectionRefused" || error.cause?.code === "ECONNREFUSED",
+  );
 }
 
 async function assertRetainedReplayProof(proof) {
