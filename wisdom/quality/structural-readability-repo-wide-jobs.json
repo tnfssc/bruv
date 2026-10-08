@@ -3357,7 +3357,7 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_80598b58",
         "branch": "bruv/pr45-judge-5-execution-tasks-questions-f-80598b58",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled"
       },
       {
         "id": "task_d07c58c2",

@@ -2753,7 +2753,7 @@
     {
       "focus": "tests/job-attention.test.ts",
       "initialBlob": "100304e6a1f99859c8f452b203c43c67cd5264ac",
-      "status": "pending",
+      "status": "accepted",
       "primary": {
         "id": "task_49f70753",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_49f70753",
@@ -2778,7 +2778,7 @@
           ]
         }
       ],
-      "acceptedBlob": null,
+      "acceptedBlob": "96ab2b9f8fb8a5c76ccbf11915061bedd49568e1",
       "integration": "unchanged primary blob matches integrated related patch",
       "relatedAcceptance": {
         "judge": "task_846bbe75",
@@ -2792,14 +2792,14 @@
       "readingResult": "No change after whole-file focus: activity/deadline/batch, snooze/watch eligibility, completion cleanup and inspection failure/checkpoint/recovery explicit; manager retains stop/settlement.",
       "checks": ["focus11/70", "sourceSDK1/7", "Biome/diff pass; shared binary before attention so no compiled parity"],
       "resume": {
-        "status": "pending",
-        "acceptedBlob": "dc777477cb0379b14073fba859471e30406134d8",
+        "status": "accepted",
+        "acceptedBlob": "96ab2b9f8fb8a5c76ccbf11915061bedd49568e1",
         "primaryId": "task_01035810",
         "primaryCommit": "eb8295ac0714ad9b6c4e548cc9130010949c7dd5",
-        "judgeIds": ["task_d655e78f", "task_846bbe75"],
+        "judgeIds": ["task_d655e78f", "task_846bbe75", "task_80598b58"],
         "sourceCommit": "eb8295ac0714ad9b6c4e548cc9130010949c7dd5",
-        "state": "needs-judge",
-        "reason": "Retain NO CHANGE NEEDED by task_d655e78f: the recorded accepted blob equals the actual focus blob at reviewed commit 58aead918c9cd290b432e1c08d9b697b57d740e4. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
+        "state": "accepted-joined",
+        "reason": "The entire actual suite was read, including FakeClock execution ordering, 55-job quiet/review batches, event-driven noisy writes, watch grace and snooze, disposal, snapshot-based pending contracts, arithmetic catchup, raw reasoning stream activity, inspection failure episodes and method restoration. The semantic delta only adds the ownedProcessSuite boundary. Every original test registration and afterEach manager shutdown remains inside its callback; this focus calls runFixture(file) without a scenario and therefore its subprocess argv has no test-name filter. This is an accepted unfiltered attention journey, not acceptance of the helper’s separate filtered credential journey."
       }
     },
     {
@@ -2872,19 +2872,19 @@
       "launchBase": "3fc00c2732f544ba63d4a2e22449184a90bd29f7",
       "resume": {
         "status": "pending",
-        "acceptedBlob": "fdfd204668c37b58853330109de78d0258e6896c",
+        "acceptedBlob": "ac3973d96f36dbf054d892077d86e44b1950c759",
         "primaryId": "task_01035810",
         "primaryCommit": "eb8295ac0714ad9b6c4e548cc9130010949c7dd5",
         "judgeIds": ["task_a3213d3e"],
-        "sourceCommit": "eb8295ac0714ad9b6c4e548cc9130010949c7dd5",
-        "state": "needs-judge",
+        "sourceCommit": null,
+        "state": "needs-rework",
         "reason": "Read the whole candidate and exact diff from 8f186d90eb5047304492c72c6bc56a7d0f37204d. SessionJobs joins a genuine parent-session lifetime: manager, typed completion sink, JobService dispatch, raw execute entry, registered-tool entry, and awaited shutdown. A reader can now follow foreground completion, background survival/input/inspection, delayed spawn cancellation, concurrent wait cancellation, pre-delivery disconnect, provisional ACK failure, oversized response release, registered batch ACK, partial batch failure, and handoff without reconstructing repeated ownership setup and finally blocks. Timing, abort points, dispatch wrappers, and batch completion barriers stay visible in their scenarios. Raw multiplexing/unavailable-bridge/budget tests and attention/goal/history RPC checks remain separate; the credential scrub assertion and environment restoration remain explicit. This is a coherent lifetime extraction, not a rename-only improvement or context bag."
       }
     },
     {
       "focus": "tests/job-service.test.ts",
       "initialBlob": "01c7c3f343042cbbd544af39be1614fccd8b3a40",
-      "status": "pending",
+      "status": "accepted",
       "primary": {
         "id": "task_51bb34f2",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_51bb34f2",
@@ -2924,7 +2924,7 @@
           ]
         }
       ],
-      "acceptedBlob": null,
+      "acceptedBlob": "6bbbf88c94f7294a5b20fa26aba59125fd47eaec",
       "integration": "full coherent accepted candidate diff integrated",
       "launchBase": "1475ea9c468e343de12524cf8fbbd6f5da3ef83b",
       "changedRelatedPaths": ["tests/job-service.test.ts"],
@@ -2951,14 +2951,14 @@
         }
       ],
       "resume": {
-        "status": "pending",
-        "acceptedBlob": "761b16045499f37ce8b52682464b75f864f37ea9",
+        "status": "accepted",
+        "acceptedBlob": "6bbbf88c94f7294a5b20fa26aba59125fd47eaec",
         "primaryId": "task_01035810",
         "primaryCommit": "eb8295ac0714ad9b6c4e548cc9130010949c7dd5",
-        "judgeIds": ["task_207ccf5d", "task_2ae89e04"],
+        "judgeIds": ["task_207ccf5d", "task_2ae89e04", "task_80598b58"],
         "sourceCommit": "eb8295ac0714ad9b6c4e548cc9130010949c7dd5",
-        "state": "needs-judge",
-        "reason": "Retain ACCEPT by task_2ae89e04: the recorded accepted blob equals the actual focus blob at reviewed commit a7e7c1de30189ac337e9fec9c3599e9c2e42a53d. Joined tree does not contain that exact accepted blob; an accepted source batch remains to join, not a fresh quality review. Latest area tree also matches the recorded accepted blob."
+        "state": "accepted-joined",
+        "reason": "Read the whole service suite through validation, stdin closure/open input, metadata-only dispatch records, local profile argv, orchestrator/depth limits, persisted native-fast propagation, partial spawn failure stop/notification, refresh isolation, polling diagnostic deduplication, title completion/inspection and UI execute-label precedence. substituteAgentProcess deliberately changes only command/args; it retains the original service launch environment and receipt/wait/exit ownership. Under the new unfiltered ownedProcessSuite boundary that retained environment is now fixture-owned. All original assertions, mock restoration and manager shutdown remain. Local profile/session directories are retained rather than deleted. This suite never calls ownedEnvironmentTest and therefore does not enter the rejected filtered helper branch."
       }
     },
     {
@@ -3024,7 +3024,7 @@
     {
       "focus": "tests/questions-bridge.test.ts",
       "initialBlob": "ecc8311c62fb67efc690bb867c09a7b3e134fc87",
-      "status": "pending",
+      "status": "accepted",
       "primary": {
         "id": "task_1b488934",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_1b488934",
@@ -3033,18 +3033,18 @@
         "commit": null
       },
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "5bd80f4943deab8935a8abf16f6a270288d3af08",
       "integration": "pending",
       "launchBase": "4c53837f67bd43253bfb1da1e3be5e11a84b5eb9",
       "resume": {
-        "status": "pending",
-        "acceptedBlob": "0b3bf8c13cbe38b3a6fdd5a657fcb27d9307cdf3",
+        "status": "accepted",
+        "acceptedBlob": "5bd80f4943deab8935a8abf16f6a270288d3af08",
         "primaryId": "task_01035810",
         "primaryCommit": "eb8295ac0714ad9b6c4e548cc9130010949c7dd5",
-        "judgeIds": ["task_a916dfec"],
+        "judgeIds": ["task_a916dfec", "task_80598b58"],
         "sourceCommit": "eb8295ac0714ad9b6c4e548cc9130010949c7dd5",
-        "state": "needs-judge",
-        "reason": "The complete test now separates one parent-owned execution lifetime from the two child journeys. executeQuestionScenario owns the mkdtemp session, service, bridge handler, awaited child completion, persisted snapshot and existing owned-directory finally cleanup. Each multiline child program shows its consequential order locally: ask then independent work, block then resolve with the returned version; actionable reads, cancellation, stale replay, then nineteen additions beside the remaining original question. This is a coherent operation extraction, not renamed plumbing or a context bag. Output expectations, test labels and resolved-state expectation retain their meaning."
+        "state": "accepted-joined",
+        "reason": "Read both complete scenario programs and their parent harness. executeQuestionScenario owns a mkdtemp session/question path, serves only QuestionService.handle to the real compiled execute worker, then snapshots the saved questions. The ask/block/get/list/resolve operation, independent continuation, absence of answer authority, stale cancellation version rejection and 20-active-question cap assertions are unchanged. The new unfiltered ownedProcessSuite boundary encloses both registrations; removal of finally/rmSync preserves the scenario ledger for inspection without moving the snapshot after disposal. No environment-specific test helper/filter is called by this focus."
       }
     },
     {
@@ -3575,7 +3575,7 @@
     {
       "focus": "tests/task-manager.test.ts",
       "initialBlob": "ca3938554cf07fcaf5f5bfa73426e46997c57f57",
-      "status": "pending",
+      "status": "accepted",
       "primary": {
         "id": "task_d2a99d2b",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_d2a99d2b",
@@ -3599,7 +3599,7 @@
           ]
         }
       ],
-      "acceptedBlob": null,
+      "acceptedBlob": "8e4b6a473ae1c01a29dee9b52ecb9436f297075e",
       "integration": "unchanged primary candidate blob matches integrated related patch",
       "relatedAcceptance": {
         "judge": "task_a01fd3d7",
@@ -3613,14 +3613,14 @@
       "readingResult": "No-change after whole-file focus: cleanup/cursor/cancel/escalation/delivery/preparation/activation journeys explicit; controller isolation regression retained.",
       "checks": ["manager30/238", "adjacent lifecycle/termination/progress15/67", "format/lint/diff pass"],
       "resume": {
-        "status": "pending",
-        "acceptedBlob": "5da9d43a261d342a14d7bdadfc12eb767e2ef3b5",
+        "status": "accepted",
+        "acceptedBlob": "8e4b6a473ae1c01a29dee9b52ecb9436f297075e",
         "primaryId": "task_01035810",
         "primaryCommit": "eb8295ac0714ad9b6c4e548cc9130010949c7dd5",
-        "judgeIds": ["task_69e81429", "task_a01fd3d7"],
+        "judgeIds": ["task_69e81429", "task_a01fd3d7", "task_80598b58"],
         "sourceCommit": "eb8295ac0714ad9b6c4e548cc9130010949c7dd5",
-        "state": "needs-judge",
-        "reason": "Retain NO CHANGE NEEDED by task_69e81429: the recorded accepted blob equals the actual focus blob at reviewed commit bda0a5d07f39e2f3ad038e30623b7107d57c7e02. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
+        "state": "accepted-joined",
+        "reason": "Read the whole manager suite, not only activation additions: process-return/completion and callback containment, cursor/UTF-8/bounded output, concurrent delivery, lifecycle diagnostics, first cause/timeout attribution, process-group shutdown and stubborn descendants, live JSON agent progress/failure, foreground races, completed-output budgets and observer ordering, setup-child ownership, preparation teardown, titles, reservation activation and metadata snapshots. All registrations and afterEach manager drains are now inside the unfiltered owned suite. commandLaunch is explicit /bin/sh -c; the SIGTERM escalation fixture is explicit Bun code rather than a shell trap. Identity activation has its own retained mkdtemp env; deadline activation creates that env before the 200ms reservation clock. The ID/startedAt/identity/waiter/foreground/event/diagnostic and original deadline assertions stay intact. The Linux-only skip was already in the base and is not a new filter repair."
       }
     },
     {
@@ -4352,8 +4352,8 @@
     ]
   },
   "resumeStatus": {
-    "accepted": 96,
-    "pending": 6
+    "accepted": 100,
+    "pending": 3
   },
   "extraFiles": [
     {
@@ -4419,6 +4419,19 @@
         "sourceCommit": "f7e77b9fecbb5497a21a08e973eadd136feb638f",
         "state": "accepted-joined",
         "reason": "Read the complete exact-candidate fixture and sole caller, not checkout HEAD, then the complete process/TUI helpers. The reader can follow two coherent lifetimes without reconstructing scattered ownership: withTaskMonitorTerminal allocates and retains one owned mkdtemp tree, builds its explicit HOME/XDG/SDK/tmp environment, binds every tmux invocation to that environment and cwd, directly launches dist/bruv with argv, exposes terminal operations, and terminates that owned server in finally. withLiveJobTui adds the loopback provider inside that lifetime; its first-request execute response, later FIXTURE_READY response, and SSE framing remain together. It writes owned model/readiness files, launches the terminal, checks visible model, post-registration marker, and real command response under one startup deadline, and asserts zero provider requests before allowing scenario actions. These boundaries already clarify authority; splitting response framing or relocating the handshake would add navigation, not solve a reading burden."
+      }
+    },
+    {
+      "focus": "tests/owned-process-suite.ts",
+      "initialBlob": null,
+      "introducedBy": "eb8295ac0714ad9b6c4e548cc9130010949c7dd5",
+      "state": "pending",
+      "acceptedBlob": null,
+      "resume": {
+        "status": "pending",
+        "acceptedBlob": "946ea123946ed06dbbcfe717c6dcc4d21d101ca4",
+        "sourceCommit": "eb8295ac0714ad9b6c4e548cc9130010949c7dd5",
+        "state": "needs-primary-final-blob"
       }
     }
   ]

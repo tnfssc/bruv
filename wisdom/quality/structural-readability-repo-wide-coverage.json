@@ -14871,15 +14871,15 @@
     {
       "file": "tests/job-attention.test.ts",
       "initialBlob": "100304e6a1f99859c8f452b203c43c67cd5264ac",
-      "status": "pending",
+      "status": "accepted",
       "area": "execution-tasks-questions",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_01035810",
-      "judgeIds": ["task_d655e78f", "task_846bbe75"],
+      "judgeIds": ["task_d655e78f", "task_846bbe75", "task_80598b58"],
       "sourceCommit": "eb8295ac0714ad9b6c4e548cc9130010949c7dd5",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
-      "acceptedBlob": "dc777477cb0379b14073fba859471e30406134d8",
-      "result": "Retain NO CHANGE NEEDED by task_d655e78f: the recorded accepted blob equals the actual focus blob at reviewed commit 58aead918c9cd290b432e1c08d9b697b57d740e4. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob.",
+      "acceptedBlob": "96ab2b9f8fb8a5c76ccbf11915061bedd49568e1",
+      "result": "The entire actual suite was read, including FakeClock execution ordering, 55-job quiet/review batches, event-driven noisy writes, watch grace and snooze, disposal, snapshot-based pending contracts, arithmetic catchup, raw reasoning stream activity, inspection failure episodes and method restoration. The semantic delta only adds the ownedProcessSuite boundary. Every original test registration and afterEach manager shutdown remains inside its callback; this focus calls runFixture(file) without a scenario and therefore its subprocess argv has no test-name filter. This is an accepted unfiltered attention journey, not acceptance of the helper’s separate filtered credential journey.",
       "priorAcceptedIntegrationProof": [
         {
           "primaryId": "task_49f70753",
@@ -14965,6 +14965,21 @@
       "parentReviewNotes": [
         "Inspect the new tests/owned-process-suite.ts helper as actual related source: it uses --test-name-pattern for environment-specific subprocess scenarios. User requires complete assertion execution and no filter/skip-as-green. Determine source-contract compliance, do not substitute claimed preserved counts; no tests authorized.",
         "Judge this coherent shared helper before dependent worktree-fixture repair, so that repair can reuse a genuinely accepted owner rather than create a competing wrapper. New helper will still require its OWN individual primary/judge after integration."
+      ],
+      "systemReason": "TaskManager.#spawnChild still scrubs launch.env ?? process.env and spawns explicit argv with shell:false. In this suite that inherited environment is now ownedFixtureEnv, including owned HOME/XDG/SDK/temp paths. Both idle command children and the raw JSON-mode agent descend from that boundary. JobAttentionScheduler still owns one timer and its subscription, consumes due checkpoints before inspection, retires missing pending snapshots, reports one diagnostic per failed episode and resets only after recovery. No runtime scheduling/default/cancellation decisions were changed, and original assertions address those actual decisions.",
+      "checks": [
+        "Read complete intrinsic focus and all six changed source files using git show eb8295ac0714ad9b6c4e548cc9130010949c7dd5:path; examined git diff and git diff -w from 7032a079cb717c688f7f5ca4a73cc07be082363c, not checkout HEAD.",
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read tests/helpers.ts ownedFixtureEnv, bunfig.toml and tests/setup.ts. The new launcher allocates mkdtemp directories, writes an owned non-login SHELL shim, argv/env/cwd manifest, source snapshot and stdout/stderr/result evidence; no deletion or parent process.env edits in the changed fixture sources.",
+        "Static review only: no setup, tests, builds, dependency install, auth/device access, recovery work, network requests, source edits, git mutation, publication or delegation.",
+        "Compared attention semantic diff: only import/callback wrapping changed; no original test or assertion removed.",
+        "Traced scheduler constructor/subscription, watch/snooze/dispose, #fire/#inspectPendingTask and TaskManager spawn/activity/pending/shutdown owners.",
+        "Read AgentProgress thinking-delta omission, tool phase projection, final text capture, model-error status and agent_end boundaries."
+      ],
+      "limits": [
+        "Runtime behavior and assertion execution are unverified; parent owns audited isolated gates.",
+        "acceptedBlobs fingerprints every candidate-changed source path as required; it is not a blanket acceptance of those paths or a standalone primary/judge decision for tests/owned-process-suite.ts. The filtered helper branch is rejected in the job-bridge decision below, so the helper as a whole is NOT endorsed for general reuse.",
+        "No per-worker wisdom note created; parent owns aggregate wisdom. Existing worktrees, candidate and shared dependencies were preserved."
       ]
     },
     {
@@ -14985,10 +15000,10 @@
       "initialBlob": "41a49cda7d40568bdbe2060020d8b2dcdb9ed4b6",
       "status": "pending",
       "area": "execution-tasks-questions",
-      "resumeState": "needs-judge",
+      "resumeState": "needs-rework",
       "primaryId": "task_01035810",
       "judgeIds": ["task_a3213d3e"],
-      "sourceCommit": "eb8295ac0714ad9b6c4e548cc9130010949c7dd5",
+      "sourceCommit": null,
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
       "pendingReason": "Primary was cancelled during the incident. A changed focus blob survives only in the primary working tree, not its HEAD; no completed independent actual-code judgment or accepted blob is recorded. Preserve the uncommitted candidate, dist and runtime-assets without cleanup.",
       "primaryCommit": "eb8295ac0714ad9b6c4e548cc9130010949c7dd5",
@@ -15032,7 +15047,7 @@
         "Existing isolated interactive-terminal source/evidence was untouched. No worktrees or candidate evidence removed, no setup/dependency changes, no push/PR/merge.",
         "No wisdom or values edits: existing owned-process/safety values apply; parent owns aggregate wisdom and runtime-model verification."
       ],
-      "acceptedBlob": "fdfd204668c37b58853330109de78d0258e6896c",
+      "acceptedBlob": "ac3973d96f36dbf054d892077d86e44b1950c759",
       "result": "Read the whole candidate and exact diff from 8f186d90eb5047304492c72c6bc56a7d0f37204d. SessionJobs joins a genuine parent-session lifetime: manager, typed completion sink, JobService dispatch, raw execute entry, registered-tool entry, and awaited shutdown. A reader can now follow foreground completion, background survival/input/inspection, delayed spawn cancellation, concurrent wait cancellation, pre-delivery disconnect, provisional ACK failure, oversized response release, registered batch ACK, partial batch failure, and handoff without reconstructing repeated ownership setup and finally blocks. Timing, abort points, dispatch wrappers, and batch completion barriers stay visible in their scenarios. Raw multiplexing/unavailable-bridge/budget tests and attention/goal/history RPC checks remain separate; the credential scrub assertion and environment restoration remain explicit. This is a coherent lifetime extraction, not a rename-only improvement or context bag.",
       "systemReason": "Traced JobService.handle and shell dispatch into TaskManager.foreground: wait expiry/cancellation transfers notification ownership once, completed foreground results attach to the bridge delivery signal, and shutdown drains/kills managed tasks while suppressing session-shutdown notifications. executeIsolated serves the bridge and commits provisional ACKs only at clean worker exit; serveJobBridge aborts ownership on failed/oversized delivery and retains foreground ACKs provisionally. registerExecuteTool still wraps the real dispatch through ExecuteDelivery.waitSignal/withJobCancellation, so handoff cancels waits without pretending completed delivery disconnected. The fixture preserves that wrapper route and leaves its fake batch spawn/foreground operations local to the tests. Shutdown via await using replaces the old finally with the same real manager.shutdown. No production source changed; no security or behavior assertions were dropped.",
       "checks": [
@@ -15060,28 +15075,23 @@
       ],
       "resumeBatch": "owned-managed-execution-process-fixtures",
       "resumeRework": {
-        "candidate": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
-        "reviewedCandidate": "af3602cf3d5b62641450c7cc24bb0350334b6652",
-        "primaryId": "task_f4f56799",
-        "primaryBase": "8f186d90eb5047304492c72c6bc56a7d0f37204d",
-        "judgeId": "task_748fb453",
+        "candidate": "eb8295ac0714ad9b6c4e548cc9130010949c7dd5",
+        "primaryId": "task_01035810",
+        "primaryBase": "7032a079cb717c688f7f5ca4a73cc07be082363c",
+        "judgeId": "task_80598b58",
         "objections": [
           {
             "paths": [
-              "tests/job-service.test.ts",
-              "tests/job-bridge.test.ts",
-              "tests/questions-bridge.test.ts",
-              "tests/job-attention.test.ts",
-              "src/tasks/job-service.ts",
-              "src/tasks/task-manager.ts",
-              "src/typescript/execution.ts",
-              "src/delegation-environment.ts"
+              "tests/job-bridge.test.ts:478-509",
+              "tests/owned-process-suite.ts:14-28",
+              "tests/owned-process-suite.ts:49-52",
+              "tests/owned-process-suite.ts:65-72"
             ],
-            "readingProblem": "The tests do not consistently own the process environment they exercise. substituteAgentProcess changes only command/args while retaining launch.env from childAgentEnvironment(process.env); SessionJobs.execute and executeQuestionScenario call executeIsolated, whose childEnv spreads process.env; attention launch omits env and TaskManager falls back to process.env. Sanitizing T3 root authority does not isolate inherited HOME/config/SDK/provider auth. The service refactor newly turns former fabricated foreground tasks into actual child processes without adding environment isolation.",
-            "requiredResult": "Run process-bearing scenarios inside an explicitly launched, allowlisted fixture process with fs.mkdtemp-owned HOME/config/SDK directories (or equally explicit per-child env plumbing); use explicit argv, retain fixture directories and evidence, and avoid mutating/removing inherited user paths or relying on global process.env edits. Apply isolation to managed shell/agent children as well as compiled execute workers. Keep the correctly isolated interactive terminal approach and its retained evidence."
+            "readingProblem": "The actual credential test calls ownedEnvironmentTest; when BRUV_FIXTURE_SCENARIO is absent it relaunches this test file with an anchored --test-name-pattern. All other registered cases are filtered in that subprocess, and the helper treats its zero exit as success. This is a concrete filter-as-fixture strategy despite the explicit no-filter/skip-as-green requirement. The full ordinary fixture does schedule the other original cases, so the objection is the prohibited execution strategy, not an invented assertion-count loss.",
+            "requiredResult": "Replace the filtered credential subprocess with an explicitly launched owned scenario/assertion entry that does not invoke Bun test-name filtering (or another fully unfiltered execution design). Keep the complete ordinary bridge suite, the original credential/sentinel/job-capability assertions, allowlisted mkdtemp HOME/config/SDK/temp, explicit argv, retained evidence and asynchronous manager shutdown. Do not mutate global process.env or alter production defaults. Rejudge the new helper individually before authorizing general reuse."
           }
         ],
-        "readingReason": "Actual refactor changes fabricated foreground records into process-bearing scenarios without owned HOME/config/SDK authority. Coherent4-focus source repair must keep original assertions and public runtime behavior; isolate fixture agent/shell/execute worker environments, no global process.env edits, no test execution before independent effects clearance."
+        "readingReason": "Read SessionJobs and every bridge case, not only its credential change: multiplex/error/budget RPC, foreground and surviving background input, cancellation ownership, three-second/zero-wait/timeout separation, batch delivery, registered execute ACK wrapping, provisional ACKs, oversized results, handoff, partial batch failure, attention/goal/history helpers and synthetic credential assertions. The ordinary owned fixture registers all these cases. Its credential test then invokes ownedEnvironmentTest, which launches a second Bun test process with --test-name-pattern selecting only that case. This is explicit filtered test orchestration, not the unfiltered fixture path used by the other four focuses. The normal outer journey schedules the other cases; I am not claiming their assertions are textually removed. Nevertheless this changed branch violates the explicit no-filter/skip-as-green source contract."
       },
       "priorPrimaryLineage": [
         {
@@ -15094,20 +15104,42 @@
       "parentReviewNotes": [
         "Inspect the new tests/owned-process-suite.ts helper as actual related source: it uses --test-name-pattern for environment-specific subprocess scenarios. User requires complete assertion execution and no filter/skip-as-green. Determine source-contract compliance, do not substitute claimed preserved counts; no tests authorized.",
         "Judge this coherent shared helper before dependent worktree-fixture repair, so that repair can reuse a genuinely accepted owner rather than create a competing wrapper. New helper will still require its OWN individual primary/judge after integration."
+      ],
+      "acceptedRelatedJudges": ["task_80598b58"],
+      "rejectedCandidates": [
+        {
+          "candidate": "eb8295ac0714ad9b6c4e548cc9130010949c7dd5",
+          "primaryId": "task_01035810",
+          "primaryBase": "7032a079cb717c688f7f5ca4a73cc07be082363c",
+          "judgeId": "task_80598b58",
+          "objections": [
+            {
+              "paths": [
+                "tests/job-bridge.test.ts:478-509",
+                "tests/owned-process-suite.ts:14-28",
+                "tests/owned-process-suite.ts:49-52",
+                "tests/owned-process-suite.ts:65-72"
+              ],
+              "readingProblem": "The actual credential test calls ownedEnvironmentTest; when BRUV_FIXTURE_SCENARIO is absent it relaunches this test file with an anchored --test-name-pattern. All other registered cases are filtered in that subprocess, and the helper treats its zero exit as success. This is a concrete filter-as-fixture strategy despite the explicit no-filter/skip-as-green requirement. The full ordinary fixture does schedule the other original cases, so the objection is the prohibited execution strategy, not an invented assertion-count loss.",
+              "requiredResult": "Replace the filtered credential subprocess with an explicitly launched owned scenario/assertion entry that does not invoke Bun test-name filtering (or another fully unfiltered execution design). Keep the complete ordinary bridge suite, the original credential/sentinel/job-capability assertions, allowlisted mkdtemp HOME/config/SDK/temp, explicit argv, retained evidence and asynchronous manager shutdown. Do not mutate global process.env or alter production defaults. Rejudge the new helper individually before authorizing general reuse."
+            }
+          ],
+          "readingReason": "Read SessionJobs and every bridge case, not only its credential change: multiplex/error/budget RPC, foreground and surviving background input, cancellation ownership, three-second/zero-wait/timeout separation, batch delivery, registered execute ACK wrapping, provisional ACKs, oversized results, handoff, partial batch failure, attention/goal/history helpers and synthetic credential assertions. The ordinary owned fixture registers all these cases. Its credential test then invokes ownedEnvironmentTest, which launches a second Bun test process with --test-name-pattern selecting only that case. This is explicit filtered test orchestration, not the unfiltered fixture path used by the other four focuses. The normal outer journey schedules the other cases; I am not claiming their assertions are textually removed. Nevertheless this changed branch violates the explicit no-filter/skip-as-green source contract."
+        }
       ]
     },
     {
       "file": "tests/job-service.test.ts",
       "initialBlob": "01c7c3f343042cbbd544af39be1614fccd8b3a40",
-      "status": "pending",
+      "status": "accepted",
       "area": "execution-tasks-questions",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_01035810",
-      "judgeIds": ["task_207ccf5d", "task_2ae89e04"],
+      "judgeIds": ["task_207ccf5d", "task_2ae89e04", "task_80598b58"],
       "sourceCommit": "eb8295ac0714ad9b6c4e548cc9130010949c7dd5",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
-      "acceptedBlob": "761b16045499f37ce8b52682464b75f864f37ea9",
-      "result": "Retain ACCEPT by task_2ae89e04: the recorded accepted blob equals the actual focus blob at reviewed commit a7e7c1de30189ac337e9fec9c3599e9c2e42a53d. Joined tree does not contain that exact accepted blob; an accepted source batch remains to join, not a fresh quality review. Latest area tree also matches the recorded accepted blob.",
+      "acceptedBlob": "6bbbf88c94f7294a5b20fa26aba59125fd47eaec",
+      "result": "Read the whole service suite through validation, stdin closure/open input, metadata-only dispatch records, local profile argv, orchestrator/depth limits, persisted native-fast propagation, partial spawn failure stop/notification, refresh isolation, polling diagnostic deduplication, title completion/inspection and UI execute-label precedence. substituteAgentProcess deliberately changes only command/args; it retains the original service launch environment and receipt/wait/exit ownership. Under the new unfiltered ownedProcessSuite boundary that retained environment is now fixture-owned. All original assertions, mock restoration and manager shutdown remain. Local profile/session directories are retained rather than deleted. This suite never calls ownedEnvironmentTest and therefore does not enter the rejected filtered helper branch.",
       "priorAcceptedIntegrationProof": [
         {
           "primaryId": "task_51bb34f2",
@@ -15193,6 +15225,23 @@
       "parentReviewNotes": [
         "Inspect the new tests/owned-process-suite.ts helper as actual related source: it uses --test-name-pattern for environment-specific subprocess scenarios. User requires complete assertion execution and no filter/skip-as-green. Determine source-contract compliance, do not substitute claimed preserved counts; no tests authorized.",
         "Judge this coherent shared helper before dependent worktree-fixture repair, so that repair can reuse a genuinely accepted owner rather than create a competing wrapper. New helper will still require its OWN individual primary/judge after integration."
+      ],
+      "acceptedRelatedJudges": ["task_80598b58"],
+      "systemReason": "JobService still validates before launch, selects local profile/depth policy, prepares SDK session identity, adds native-fast/depth/type to childAgentEnvironment(process.env), and owns partial batch stop and foreground notification transfer. Shell launch still uses setupShell with login flags in production; the test-only owned SHELL shim consumes those flags and executes /bin/sh -c without user startup. Default SDK session preparation now resolves into the fixture agent directory, while explicit sessionDir cases remain in their owned mkdtemp directory. Source changes do not modify production environment sanitization, service policy or delivery defaults.",
+      "checks": [
+        "Read complete intrinsic focus and all six changed source files using git show eb8295ac0714ad9b6c4e548cc9130010949c7dd5:path; examined git diff and git diff -w from 7032a079cb717c688f7f5ca4a73cc07be082363c, not checkout HEAD.",
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read tests/helpers.ts ownedFixtureEnv, bunfig.toml and tests/setup.ts. The new launcher allocates mkdtemp directories, writes an owned non-login SHELL shim, argv/env/cwd manifest, source snapshot and stdout/stderr/result evidence; no deletion or parent process.env edits in the changed fixture sources.",
+        "Static review only: no setup, tests, builds, dependency install, auth/device access, recovery work, network requests, source edits, git mutation, publication or delegation.",
+        "Compared complete service semantic diff: callback boundary and removal of owned-directory cleanup only; original argv/policy/failure/title assertions preserved.",
+        "Traced local service validation, prepareLaunch, SDK session persistence/disposal, inherited spawn/failure transfer, shell setup and manager spawn/foreground/shutdown decisions.",
+        "Read installed shared SDK config getAgentDir and SessionManager.create/default session path read-only to confirm directory resolution; did not read credential files or modify dependencies."
+      ],
+      "limits": [
+        "Runtime behavior and assertion execution are unverified; parent owns audited isolated gates.",
+        "acceptedBlobs fingerprints every candidate-changed source path as required; it is not a blanket acceptance of those paths or a standalone primary/judge decision for tests/owned-process-suite.ts. The filtered helper branch is rejected in the job-bridge decision below, so the helper as a whole is NOT endorsed for general reuse.",
+        "No per-worker wisdom note created; parent owns aggregate wisdom. Existing worktrees, candidate and shared dependencies were preserved.",
+        "Installed SDK source inspection corroborates the directory choice, but is not a build/runtime attestation for candidate dependencies."
       ]
     },
     {
@@ -18695,11 +18744,11 @@
     {
       "file": "tests/questions-bridge.test.ts",
       "initialBlob": "ecc8311c62fb67efc690bb867c09a7b3e134fc87",
-      "status": "pending",
+      "status": "accepted",
       "area": "execution-tasks-questions",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_01035810",
-      "judgeIds": ["task_a916dfec"],
+      "judgeIds": ["task_a916dfec", "task_80598b58"],
       "sourceCommit": "eb8295ac0714ad9b6c4e548cc9130010949c7dd5",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
       "pendingReason": "Primary cancellation was recorded during the incident; no completed candidate commit or complete-file independent judgment is recorded. Focus working blob currently equals primary HEAD. Preserve the tree and allocate/complete primary work before judging.",
@@ -18744,25 +18793,21 @@
         "Existing isolated interactive-terminal source/evidence was untouched. No worktrees or candidate evidence removed, no setup/dependency changes, no push/PR/merge.",
         "No wisdom or values edits: existing owned-process/safety values apply; parent owns aggregate wisdom and runtime-model verification."
       ],
-      "acceptedBlob": "0b3bf8c13cbe38b3a6fdd5a657fcb27d9307cdf3",
-      "result": "The complete test now separates one parent-owned execution lifetime from the two child journeys. executeQuestionScenario owns the mkdtemp session, service, bridge handler, awaited child completion, persisted snapshot and existing owned-directory finally cleanup. Each multiline child program shows its consequential order locally: ask then independent work, block then resolve with the returned version; actionable reads, cancellation, stale replay, then nineteen additions beside the remaining original question. This is a coherent operation extraction, not renamed plumbing or a context bag. Output expectations, test labels and resolved-state expectation retain their meaning.",
-      "systemReason": "Traced executeIsolated through explicit executable argv, IPC job bridge, stream completion and teardown; installJobGlobals exposes ask/list/get/block/resolve/cancel but no answer. QuestionService stores beside the explicit session file, scopes reads by owner, increments versions after mutation and rejects stale cancellation; only pending records count toward twenty. The helper snapshot is taken after the child and before fixture cleanup. Its extra list in the second scenario is read-only, adds no authority and does not change that journey. The production execute extension invokes the same isolated runner; actual callers are unchanged blobs in this candidate.",
+      "acceptedBlob": "5bd80f4943deab8935a8abf16f6a270288d3af08",
+      "result": "Read both complete scenario programs and their parent harness. executeQuestionScenario owns a mkdtemp session/question path, serves only QuestionService.handle to the real compiled execute worker, then snapshots the saved questions. The ask/block/get/list/resolve operation, independent continuation, absence of answer authority, stale cancellation version rejection and 20-active-question cap assertions are unchanged. The new unfiltered ownedProcessSuite boundary encloses both registrations; removal of finally/rmSync preserves the scenario ledger for inspection without moving the snapshot after disposal. No environment-specific test helper/filter is called by this focus.",
+      "systemReason": "The parent QuestionService remains the persistence and mutation authority. Its ledger path derives from the owned session file; writes/lock files are adjacent to that fixture, with stale version and active-owner checks retained and questions.answer rejected at the RPC handler. executeIsolated explicitly spawns the compiled internal worker with shell:false and copies the fixture-owned environment through root-authority scrubbing. CLI handles the internal worker before normal user configuration bootstrap. Neither public question authority nor execution environment defaults were changed. Runtime transient lock/temp unlink belongs only to the owned question ledger, not inherited HOME/config/SDK cleanup.",
       "checks": [
+        "Read complete intrinsic focus and all six changed source files using git show eb8295ac0714ad9b6c4e548cc9130010949c7dd5:path; examined git diff and git diff -w from 7032a079cb717c688f7f5ca4a73cc07be082363c, not checkout HEAD.",
         "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
-        "Read matching focus evidence in area and repo-wide coverage/job ledgers; no previous accepted blob or independent judgment recorded for these rows.",
-        "Resolved exact Git commit and focus blob; enumerated the complete candidate diff against 8f186d90eb5047304492c72c6bc56a7d0f37204d, not checkout HEAD.",
-        "git diff --check against primaryBase produced no findings; this is a whitespace check, not acceptance evidence.",
-        "No repository setup, tests, builds, formatter, credential access or live/device verification performed; no delegation.",
-        "Read the complete baseline and candidate focus; candidate changes only this focus source path.",
-        "Verified listed related caller blobs equal primaryBase; read service ledger, block/resolve/cancel and trusted-answer restriction, and execution/bridge wiring.",
-        "Filesystem effects inspected, not executed: QuestionService atomic ledger/lock operations lie under the mkdtemp fixture; rmSync targets only that owned directory. executeIsolated inherits a scrubbed process environment and can write output artifacts, so parent must isolate HOME/config/SDK before its gate."
+        "Read tests/helpers.ts ownedFixtureEnv, bunfig.toml and tests/setup.ts. The new launcher allocates mkdtemp directories, writes an owned non-login SHELL shim, argv/env/cwd manifest, source snapshot and stdout/stderr/result evidence; no deletion or parent process.env edits in the changed fixture sources.",
+        "Static review only: no setup, tests, builds, dependency install, auth/device access, recovery work, network requests, source edits, git mutation, publication or delegation.",
+        "Compared complete questions semantic diff: wrapped registrations, retained fixture directory and snapshot comment; original scenario operations/assertions unchanged.",
+        "Read QuestionService ledger path/IO/lock, ask cap/dedup, mutation ownership/version, block/resolve and handle answer restriction; traced execute worker environment and CLI offline dispatch."
       ],
       "limits": [
-        "Static actual-code readability decision only. Parent owns audited isolated batch runtime gates; any automatic setup host-hash failure remains unverified here and must not be bypassed.",
-        "Durable review provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_a916dfec. Candidate commits and original primary worktrees retained. No runtime fixtures created or cleaned by this judge.",
-        "No auth/device claim. No source, unrelated accepted work, ledger, wisdom or values edits; parent owns aggregate wisdom.",
-        "Safety for ALL descendants: no sudo, no recovery actions, no deletion/cleanup shell commands, no HOME or inherited SDK/config cleanup, no nested shell traps. Do not read/use user secrets. Use node child_process argv plus explicit isolated env for tests; allocate fresh disposable HOME/config/SDK dirs with fs.mkdtemp and retain them rather than delete. If real credential/device access is required, return that blocker instead of using it. Do not run repository tests or setup without first checking their filesystem/network side effects. Existing dependencies can be used read-only from /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules. Bun is /home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin/bun. Worktree t3 setup may fail because PATH lacks bun; inspect outcome, do not guess. No repetitive full builds for each worker. Limit to SIX concurrent leaf workers total, primary and judge combined. Give independent code/review agents worktrees. Propagate these safety constraints verbatim. No destructive git operations or user-data mutations.",
-        "The preserved bridge test cleanup was inspected but never executed. This fixture uses a minimal session manager and checks bridge behavior, not full parent UI/SDK continuation; that baseline boundary is unchanged. Real dist/bruv behavior remains for the parent gate."
+        "Runtime behavior and assertion execution are unverified; parent owns audited isolated gates.",
+        "acceptedBlobs fingerprints every candidate-changed source path as required; it is not a blanket acceptance of those paths or a standalone primary/judge decision for tests/owned-process-suite.ts. The filtered helper branch is rejected in the job-bridge decision below, so the helper as a whole is NOT endorsed for general reuse.",
+        "No per-worker wisdom note created; parent owns aggregate wisdom. Existing worktrees, candidate and shared dependencies were preserved."
       ],
       "priorAcceptedIntegrationProof": [
         {
@@ -18810,7 +18855,8 @@
       "parentReviewNotes": [
         "Inspect the new tests/owned-process-suite.ts helper as actual related source: it uses --test-name-pattern for environment-specific subprocess scenarios. User requires complete assertion execution and no filter/skip-as-green. Determine source-contract compliance, do not substitute claimed preserved counts; no tests authorized.",
         "Judge this coherent shared helper before dependent worktree-fixture repair, so that repair can reuse a genuinely accepted owner rather than create a competing wrapper. New helper will still require its OWN individual primary/judge after integration."
-      ]
+      ],
+      "acceptedRelatedJudges": ["task_80598b58"]
     },
     {
       "file": "tests/questions-extension.test.ts",
@@ -21772,15 +21818,15 @@
     {
       "file": "tests/task-manager.test.ts",
       "initialBlob": "ca3938554cf07fcaf5f5bfa73426e46997c57f57",
-      "status": "pending",
+      "status": "accepted",
       "area": "execution-tasks-questions",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_01035810",
-      "judgeIds": ["task_69e81429", "task_a01fd3d7"],
+      "judgeIds": ["task_69e81429", "task_a01fd3d7", "task_80598b58"],
       "sourceCommit": "eb8295ac0714ad9b6c4e548cc9130010949c7dd5",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
-      "acceptedBlob": "5da9d43a261d342a14d7bdadfc12eb767e2ef3b5",
-      "result": "Retain NO CHANGE NEEDED by task_69e81429: the recorded accepted blob equals the actual focus blob at reviewed commit bda0a5d07f39e2f3ad038e30623b7107d57c7e02. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob.",
+      "acceptedBlob": "8e4b6a473ae1c01a29dee9b52ecb9436f297075e",
+      "result": "Read the whole manager suite, not only activation additions: process-return/completion and callback containment, cursor/UTF-8/bounded output, concurrent delivery, lifecycle diagnostics, first cause/timeout attribution, process-group shutdown and stubborn descendants, live JSON agent progress/failure, foreground races, completed-output budgets and observer ordering, setup-child ownership, preparation teardown, titles, reservation activation and metadata snapshots. All registrations and afterEach manager drains are now inside the unfiltered owned suite. commandLaunch is explicit /bin/sh -c; the SIGTERM escalation fixture is explicit Bun code rather than a shell trap. Identity activation has its own retained mkdtemp env; deadline activation creates that env before the 200ms reservation clock. The ID/startedAt/identity/waiter/foreground/event/diagnostic and original deadline assertions stay intact. The Linux-only skip was already in the base and is not a new filter repair.",
       "priorAcceptedIntegrationProof": [
         {
           "primaryId": "task_d2a99d2b",
@@ -21862,6 +21908,23 @@
       "parentReviewNotes": [
         "Inspect the new tests/owned-process-suite.ts helper as actual related source: it uses --test-name-pattern for environment-specific subprocess scenarios. User requires complete assertion execution and no filter/skip-as-green. Determine source-contract compliance, do not substitute claimed preserved counts; no tests authorized.",
         "Judge this coherent shared helper before dependent worktree-fixture repair, so that repair can reuse a genuinely accepted owner rather than create a competing wrapper. New helper will still require its OWN individual primary/judge after integration."
+      ],
+      "acceptedRelatedJudges": ["task_80598b58"],
+      "systemReason": "TaskManager still owns child process groups, output/agent projection, wait promises, delivery policy and shutdown escalation. activatePreparedAgent retains the reservation task rather than recreating it, and #startDeadline only installs when the existing timer is absent, so the test’s 1ms activation timeout cannot replace 200ms preparation timeout. #spawnChild consumes the explicit per-activation owned env, and remaining child/host fixtures inherit only the suite fixture environment. Public summaries remain an allowlist excluding preparationController and copying nested metadata. No production default or security authority was weakened; the pid-file directory is retained and manager shutdown still drains process ownership.",
+      "checks": [
+        "Read complete intrinsic focus and all six changed source files using git show eb8295ac0714ad9b6c4e548cc9130010949c7dd5:path; examined git diff and git diff -w from 7032a079cb717c688f7f5ca4a73cc07be082363c, not checkout HEAD.",
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read tests/helpers.ts ownedFixtureEnv, bunfig.toml and tests/setup.ts. The new launcher allocates mkdtemp directories, writes an owned non-login SHELL shim, argv/env/cwd manifest, source snapshot and stdout/stderr/result evidence; no deletion or parent process.env edits in the changed fixture sources.",
+        "Static review only: no setup, tests, builds, dependency install, auth/device access, recovery work, network requests, source edits, git mutation, publication or delegation.",
+        "Read complete manager semantic diff, including shell argv, stubborn process fixture, both direct activation env additions and removal of pid-directory cleanup.",
+        "Traced prepareAgent/activatePreparedAgent/#createTask/#spawnChild/#startDeadline, process close observation, pending/inspect/wait/foreground ownership, kill/setup cancellation and idempotent shutdown/group signaling.",
+        "Read AgentProgress thinking-delta omission, tool phase projection, final text capture, model-error status and agent_end boundaries."
+      ],
+      "limits": [
+        "Runtime behavior and assertion execution are unverified; parent owns audited isolated gates.",
+        "acceptedBlobs fingerprints every candidate-changed source path as required; it is not a blanket acceptance of those paths or a standalone primary/judge decision for tests/owned-process-suite.ts. The filtered helper branch is rejected in the job-bridge decision below, so the helper as a whole is NOT endorsed for general reuse.",
+        "No per-worker wisdom note created; parent owns aggregate wisdom. Existing worktrees, candidate and shared dependencies were preserved.",
+        "Existing platform-dependent descendant assertion still executes only on Linux; cross-platform behavior is unverified. No filtered scenario helper is invoked by this focus."
       ]
     },
     {
@@ -25908,6 +25971,16 @@
         "Manager binding before installation is a deliberate fixture precondition; no new defensive behavior is proposed.",
         "No wisdom notes or values edits: this judgment preserves existing source and parent owns aggregate wisdom."
       ]
+    },
+    {
+      "file": "tests/owned-process-suite.ts",
+      "initialBlob": "absent",
+      "area": "execution-tasks-questions",
+      "status": "pending",
+      "resumeState": "needs-primary-final-blob",
+      "sourceCommit": "eb8295ac0714ad9b6c4e548cc9130010949c7dd5",
+      "acceptedRelatedJudges": ["task_80598b58"],
+      "acceptedBlob": "946ea123946ed06dbbcfe717c6dcc4d21d101ca4"
     }
   ],
   "completedAreas": {
@@ -25927,10 +26000,10 @@
     "baselineFiles": 766,
     "finalGate": "pending; incomplete focus coverage",
     "liveAuth": "unverified/failing; preserved",
-    "accepted": 827,
-    "total": 836,
-    "pending": 9,
-    "sourceExtras": 70,
+    "accepted": 831,
+    "total": 837,
+    "pending": 6,
+    "sourceExtras": 71,
     "checkout": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
     "branch": "bruv/readability-pr45-sol-continuation",
     "scheduler": "/home/tnfssc/.bruv/worktrees/pr45-flow-c2a2fd8a.mjs"
