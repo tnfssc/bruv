@@ -4016,16 +4016,17 @@
       "initialBlob": "dca97e84254ed5773b34315e6006b5cde89d85ac",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "dca97e84254ed5773b34315e6006b5cde89d85ac",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "dca97e84254ed5773b34315e6006b5cde89d85ac",
         "primaryId": "task_ab82e530",
         "primaryCommit": "4845d39b0c0e9087fa1c2519af9b22d6d0e832e3",
-        "judgeIds": [],
+        "judgeIds": ["task_7d4535af"],
         "sourceCommit": "4845d39b0c0e9087fa1c2519af9b22d6d0e832e3",
-        "state": "needs-judge",
-        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+        "state": "accepted-joined",
+        "reason": "The complete test reads as one renderer journey: create an owned home and tmux socket, prepare assets/theme/config, assemble the explicitly offline source-CLI launch, handle session-only startup trust, submit /spokenfixture, poll actual frames with a bound, then assert the complete speech and model reply while excluding transport/provenance/lost-fragment text. Preparation belongs before launch and frame assertions remain next to their wait condition. Extracting the one-use setup or polling would move this temporal contract behind another navigation step without joining split authority. No structural reading burden justified a change."
       }
     },
     {
@@ -4033,16 +4034,17 @@
       "initialBlob": "88dd84ca8356b8512be44337dcc62b074138517e",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "88dd84ca8356b8512be44337dcc62b074138517e",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "88dd84ca8356b8512be44337dcc62b074138517e",
         "primaryId": "task_ab82e530",
         "primaryCommit": "4845d39b0c0e9087fa1c2519af9b22d6d0e832e3",
-        "judgeIds": [],
+        "judgeIds": ["task_7d4535af"],
         "sourceCommit": "4845d39b0c0e9087fa1c2519af9b22d6d0e832e3",
-        "state": "needs-judge",
-        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+        "state": "accepted-joined",
+        "reason": "Read the entire Socket, fixture, chunk/expected helpers and every provider/scenario. Socket owns recorded JSON wire events and deterministic send reentrancy; fixture owns the real session, readiness/failure injection, terminal queue callbacks, wire decoding and GPT close acknowledgement. The FIFO scenario visibly distinguishes discarded pre-ready direct send, copy-on-push against a reused buffer, transport-open versus provider-ready, readiness without replay, tail admission during replay, and direct sends after replay. It then checks the exact concatenated wire PCM and zero backlog. Separate stopped, failed and overflow cases make their terminal consequences visible. The compact provider selection adapts genuine handshake differences; a registry, shared context bundle or generic lifecycle wrapper would obscure those differences rather than regroup scattered decisions."
       }
     },
     {
@@ -4050,16 +4052,17 @@
       "initialBlob": "9f457024b7b1e6f5fd436fe799dfeb3abbfd32eb",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "9f457024b7b1e6f5fd436fe799dfeb3abbfd32eb",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "9f457024b7b1e6f5fd436fe799dfeb3abbfd32eb",
         "primaryId": "task_ab82e530",
         "primaryCommit": "4845d39b0c0e9087fa1c2519af9b22d6d0e832e3",
-        "judgeIds": [],
+        "judgeIds": ["task_7d4535af"],
         "sourceCommit": "4845d39b0c0e9087fa1c2519af9b22d6d0e832e3",
-        "state": "needs-judge",
-        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+        "state": "accepted-joined",
+        "reason": "Read all fixture-plan, ordered-retention/numeric diagnosis/privacy, PCM conversion and generation assertions. Policy failures are stated beside allowed modes. Word presence and order are separately checked, including reordered words and the narrowly diagnosed numeric 7; the boundary asserts fixed counts/booleans rather than transcript tokens. The PCM case constructs a one-second waveform and checks duration, exact silence tail, signal levels and invalid/silent inputs. The two-case adapter changes only output transcription, keeping text-trigger payload, audio and turn completion identical; success checks PCM/counts/no transcript, failure checks fixture_incomplete_response, and both expose model, automatic VAD and exactly one close. This single-use adapter and two-case loop keep the causal distinction local; extraction or expansion would add indirection or repetition, not resolve split authority."
       }
     },
     {
@@ -4908,7 +4911,7 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 145,
-    "pending": 6
+    "accepted": 148,
+    "pending": 3
   }
 }

@@ -16228,11 +16228,11 @@
     {
       "file": "tests/live-spoken-tui.test.ts",
       "initialBlob": "dca97e84254ed5773b34315e6006b5cde89d85ac",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_ab82e530",
       "sourceCommit": "4845d39b0c0e9087fa1c2519af9b22d6d0e832e3",
-      "judgeIds": [],
-      "resumeState": "needs-judge",
+      "judgeIds": ["task_7d4535af"],
+      "resumeState": "accepted-joined",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
       "area": "live-native-audio",
       "primaryCommit": "4845d39b0c0e9087fa1c2519af9b22d6d0e832e3",
@@ -16255,16 +16255,31 @@
         "No per-worker wisdom or values changes; parent owns aggregate wisdom.",
         "Execution blocker found in static side-effect review: this test invokes scripts/prepare-assets.ts, whose preparePiHost writes adapted files under node_modules and also creates runtime-assets. Shared dependencies are read-only under this task. Do not run this setup invocation or bypass the host hash guard.",
         "tmuxRunner/run inherit the process environment; launch overrides HOME but not every inherited config/SDK path. A future parent gate needs explicit isolated process argv/env and fresh owned HOME/config/SDK/TMPDIR. The finally rm targets a provably mkdtemp-owned home, but this task requires retention and it was not executed. Optional BRUV_LIVE_TUI_CAPTURE also writes a caller-selected path; parent must keep any capture within owned fixtures."
+      ],
+      "acceptedBlob": "dca97e84254ed5773b34315e6006b5cde89d85ac",
+      "result": "The complete test reads as one renderer journey: create an owned home and tmux socket, prepare assets/theme/config, assemble the explicitly offline source-CLI launch, handle session-only startup trust, submit /spokenfixture, poll actual frames with a bound, then assert the complete speech and model reply while excluding transport/provenance/lost-fragment text. Preparation belongs before launch and frame assertions remain next to their wait condition. Extracting the one-use setup or polling would move this temporal contract behind another navigation step without joining split authority. No structural reading burden justified a change.",
+      "systemReason": "Traced live-spoken-tui fixture through GptLiveDelegationBridge: its oversized first fragment is evicted, prepareAdmission retires that incomplete attempt as clarification, and only then are nonoverlapping character fragments admitted. gptLiveRequest rejects omissions and joins only speech. acquireMainOwner resolves the existing classic session; delegate bounds and deduplicates admission, queues the backend turn, stores provenance with appendCustomMessageEntry display=false, and calls session.prompt(requestText) without template expansion. installOfflineModelReply changes the existing agent streamFunction, not user rendering. The production extension uses the same bridge/request/owner boundaries (though it acknowledges admission before completion); the fixture awaits the operation. Thus visible user text is exercised through the real prompt/renderer boundary, not fixture insertion. The test is still offline renderer evidence, not live microphone/provider proof.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read source with git show 4845d39b0c0e9087fa1c2519af9b22d6d0e832e3:path, not checkout HEAD.",
+        "git diff --name-status 4845d39b0c0e9087fa1c2519af9b22d6d0e832e3 4845d39b0c0e9087fa1c2519af9b22d6d0e832e3 is empty: supplied primaryBase equals candidate; there are no candidate-changed related source paths.",
+        "Read-only static review; no setup, tests, builds, credentials, devices, dependency writes, or cleanup executed.",
+        "Inspected helpers.run environment inheritance, tmux argv/socket/config ownership, session-only trust handling, asset preparation writes, hidden audit entry and ordinary session.prompt call."
+      ],
+      "limits": [
+        "Durable review worktree: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_7d4535af. Exact candidate evidence retained in Git; no temporary code checkout or descendant agents. Parent must verify runtime agent.model openai-codex/gpt-6.1-sol; this review does not attest that external runtime field.",
+        "Readability decision only, NOT approval to run current setup/cleanup. prepare-assets invokes preparePiHost, which can write shared node_modules, and writes runtime-assets; helpers.run inherits process.env unless supplied. Launch sets HOME/offline arguments but does not establish an explicit wholly owned config/SDK environment. Optional BRUV_LIVE_TUI_CAPTURE writes an inherited path. finally removes the provably mkdtemp-owned home and kills the named tmux server; neither was executed. Parent owns audited isolated gates and must retain owned fixtures under the current constraints.",
+        "Actual Pi renderer output, timing, provider auth and devices remain unverified; no test or dependency installation was performed."
       ]
     },
     {
       "file": "tests/live-startup-audio-queue.test.ts",
       "initialBlob": "88dd84ca8356b8512be44337dcc62b074138517e",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_ab82e530",
       "sourceCommit": "4845d39b0c0e9087fa1c2519af9b22d6d0e832e3",
-      "judgeIds": [],
-      "resumeState": "needs-judge",
+      "judgeIds": ["task_7d4535af"],
+      "resumeState": "accepted-joined",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
       "area": "live-native-audio",
       "primaryCommit": "4845d39b0c0e9087fa1c2519af9b22d6d0e832e3",
@@ -16286,16 +16301,31 @@
         "Parent owns verification of runtime agent.model openai-codex/gpt-6.1-sol; not independently verified here.",
         "No per-worker wisdom or values changes; parent owns aggregate wisdom.",
         "Static effect review: all three sessions receive fake SDK/socket transports and dummy test-only keys, and queue PCM is in memory. No actual provider connection is exercised. Timing/VAD/provider/device behavior remains unverified; the probe CLI was read, not run."
+      ],
+      "acceptedBlob": "88dd84ca8356b8512be44337dcc62b074138517e",
+      "result": "Read the entire Socket, fixture, chunk/expected helpers and every provider/scenario. Socket owns recorded JSON wire events and deterministic send reentrancy; fixture owns the real session, readiness/failure injection, terminal queue callbacks, wire decoding and GPT close acknowledgement. The FIFO scenario visibly distinguishes discarded pre-ready direct send, copy-on-push against a reused buffer, transport-open versus provider-ready, readiness without replay, tail admission during replay, and direct sends after replay. It then checks the exact concatenated wire PCM and zero backlog. Separate stopped, failed and overflow cases make their terminal consequences visible. The compact provider selection adapts genuine handshake differences; a registry, shared context bundle or generic lifecycle wrapper would obscure those differences rather than regroup scattered decisions.",
+      "systemReason": "StartupAudioQueue owns buffering/replaying/live/stopped, retained bytes, copying, bounded overflow and nonrevival after stop. Traced VoiceSession connect epoch/cancellation and late SDK-result closure, OpenAI socket-open configuration versus session.updated readiness and serial invalidation, and GPT session.started validation versus session.closed finalization. Their pre-ready send gates make the initial drop meaningful; their shared streaming InputResampler explains the concatenated 16-to-24k expectation. The fixture terminal callbacks discard PCM and its GPT close supplies the required final acknowledgement. In deliverStartupSpeech the experimental queue is used only by burst/paced; control bypasses it, and trial callbacks stop it on failure/closure. This is an experimental probe queue, explicitly not a production Live capture feature, so preserving its focused scenario narration is appropriate.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read source with git show 4845d39b0c0e9087fa1c2519af9b22d6d0e832e3:path, not checkout HEAD.",
+        "git diff --name-status 4845d39b0c0e9087fa1c2519af9b22d6d0e832e3 4845d39b0c0e9087fa1c2519af9b22d6d0e832e3 is empty: supplied primaryBase equals candidate; there are no candidate-changed related source paths.",
+        "Read-only static review; no setup, tests, builds, credentials, devices, dependency writes, or cleanup executed.",
+        "Statically traced each fake handshake to the corresponding real adapter readiness/terminal boundary and compared replay/capture ordering with queue phases and probe control bypass."
+      ],
+      "limits": [
+        "Durable review worktree: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_7d4535af. Exact candidate evidence retained in Git; no temporary code checkout or descendant agents. Parent must verify runtime agent.model openai-codex/gpt-6.1-sol; this review does not attest that external runtime field.",
+        "No runtime tests executed. Fake transport events are not remote VAD, real handshake timing, paid-provider, or device evidence. The concatenated expectation independently checks ordering/chunk behavior but reuses the production resampler, so it is not independent proof of resampling mathematics.",
+        "These fixtures inject fake SDK/socket factories and use no real keys; no transport or credential source was accessed. Parent owns any explicit argv/env isolated execution and must retain fixture HOME/config/SDK."
       ]
     },
     {
       "file": "tests/live-startup-natural-fixture.test.ts",
       "initialBlob": "9f457024b7b1e6f5fd436fe799dfeb3abbfd32eb",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_ab82e530",
       "sourceCommit": "4845d39b0c0e9087fa1c2519af9b22d6d0e832e3",
-      "judgeIds": [],
-      "resumeState": "needs-judge",
+      "judgeIds": ["task_7d4535af"],
+      "resumeState": "accepted-joined",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
       "area": "live-native-audio",
       "primaryCommit": "4845d39b0c0e9087fa1c2519af9b22d6d0e832e3",
@@ -16317,6 +16347,21 @@
         "Parent owns verification of runtime agent.model openai-codex/gpt-6.1-sol; not independently verified here.",
         "No per-worker wisdom or values changes; parent owns aggregate wisdom.",
         "Static effect review: naturalFixturePcm invokes ffmpeg via argv with piped PCM and inherited environment; no fixture file is written. A future gate needs owned retained HOME/config/SDK/TMPDIR and explicit isolated test-process argv/env. The generation test injects a fake adapter and dummy key; live generation, paid probe CLI, credential lookup and physical audio were not run."
+      ],
+      "acceptedBlob": "9f457024b7b1e6f5fd436fe799dfeb3abbfd32eb",
+      "result": "Read all fixture-plan, ordered-retention/numeric diagnosis/privacy, PCM conversion and generation assertions. Policy failures are stated beside allowed modes. Word presence and order are separately checked, including reordered words and the narrowly diagnosed numeric 7; the boundary asserts fixed counts/booleans rather than transcript tokens. The PCM case constructs a one-second waveform and checks duration, exact silence tail, signal levels and invalid/silent inputs. The two-case adapter changes only output transcription, keeping text-trigger payload, audio and turn completion identical; success checks PCM/counts/no transcript, failure checks fixture_incomplete_response, and both expose model, automatic VAD and exactly one close. This single-use adapter and two-case loop keep the causal distinction local; extraction or expansion would add indirection or repetition, not resolve split authority.",
+      "systemReason": "Traced generateNaturalFixture into the real VoiceSession: connect chooses gemini-3.8-live/automatic VAD, sendContext builds the asserted user turn with turnComplete=true, and receive emits audio and transcription before completion. The generator owns the byte cap, deadline, completion promise, ordered-word acceptance and finally close; its returned shape excludes raw transcription. naturalFixturePcm uses bounded piped ffmpeg conversion, then appends exact silence and validates nonzero signal/duration/size. startupSpeechFixturePlan owns Google-only and incompatible-policy decisions; the import.meta.main guarded caller requires paid opt-in before loading credential sources, generates once and then runs selected modes without retries. With the natural default this is one generation plus three trials, not a hidden unbounded session loop. Keeping test cases direct respects those separate authorities.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read source with git show 4845d39b0c0e9087fa1c2519af9b22d6d0e832e3:path, not checkout HEAD.",
+        "git diff --name-status 4845d39b0c0e9087fa1c2519af9b22d6d0e832e3 4845d39b0c0e9087fa1c2519af9b22d6d0e832e3 is empty: supplied primaryBase equals candidate; there are no candidate-changed related source paths.",
+        "Read-only static review; no setup, tests, builds, credentials, devices, dependency writes, or cleanup executed.",
+        "Inspected ffmpeg argv/stdin/stdout and child deadline, generator completion/finally close, actual VoiceSession message callback order, fixture-plan restrictions, import.meta.main guard and paid opt-in before credential loading."
+      ],
+      "limits": [
+        "Durable review worktree: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_7d4535af. Exact candidate evidence retained in Git; no temporary code checkout or descendant agents. Parent must verify runtime agent.model openai-codex/gpt-6.1-sol; this review does not attest that external runtime field.",
+        "No ffmpeg or provider execution. fixtureCommand uses explicit spawn argv and memory pipes but inherits env; parent must audit its isolated env. The complete/incomplete fake responses test local acceptance and close, not natural speech quality, remote silence-only VAD, provider availability, or all timeout/audio-cap branches.",
+        "The probe main can read live.env/canonical credential sources and open paid sessions after opt-in; it was inspected as source only, never invoked. Credential/device availability remains unverified. No source/test changes, wisdom notes, setup, builds or publication were made."
       ]
     },
     {
@@ -24511,9 +24556,9 @@
     "baselineFiles": 766,
     "finalGate": "pending; incomplete focus coverage",
     "liveAuth": "unverified/failing; preserved",
-    "accepted": 830,
+    "accepted": 833,
     "total": 836,
-    "pending": 6,
+    "pending": 3,
     "sourceExtras": 70,
     "checkout": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
     "branch": "bruv/readability-pr45-sol-continuation",
