@@ -4772,8 +4772,10 @@
       "resume": {
         "status": "pending",
         "acceptedBlob": "6e9dba742c41e5debbbaeea7b26fe7b5e5b94ee3",
-        "sourceCommit": "3dabdaae8f61ab742db85f601d8868e0c20bb325",
-        "state": "needs-primary-final-blob"
+        "primaryId": "task_e19d935a",
+        "primaryCommit": "f6302bb9784eaf07a31e03e76c74c503a8830da7",
+        "sourceCommit": "f6302bb9784eaf07a31e03e76c74c503a8830da7",
+        "state": "needs-judge"
       }
     }
   ],

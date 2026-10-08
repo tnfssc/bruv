@@ -4,7 +4,6 @@ import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { createAssistantMessageEventStream, getModel, type AssistantMessage } from "@earendil-works/pi-ai/compat";
-import * as codex from "@earendil-works/pi-ai/api/openai-codex-responses";
 import * as anthropic from "@earendil-works/pi-ai/api/anthropic-messages";
 import {
   ModelRuntime,
@@ -15,7 +14,6 @@ import {
 } from "@earendil-works/pi-coding-agent";
 import { bruvSystemPrompt } from "../src/prompts";
 import tasks from "../src/agent/extension";
-import phase1Fixture from "./phase1-compaction-fixture";
 
 const sentinel = "offline-compaction-sdk-capture";
 const usage = {
@@ -26,12 +24,91 @@ const usage = {
   totalTokens: 125,
   cost: { input: 0.01, output: 0.02, cacheRead: 0.001, cacheWrite: 0, total: 0.031 },
 };
-const enc = (x: unknown) => Buffer.from(JSON.stringify(x)).toString("base64url");
-const jwt =
-  enc({ alg: "none" }) +
-  "." +
-  enc({ "https://api.openai.com/auth": { chatgpt_account_id: "offline-test" } }) +
-  ".signature";
+// Keep real serializer option mapping and the no-network boundary together.
+// Scenario hooks below still own conversation transforms and compaction timing.
+function captureOfflineRequests(runtime: ModelRuntime, isCompacting: () => boolean) {
+  const captured: any[] = [];
+  const attempts: any[] = [];
+  let networkCalls = 0;
+  function fixture(serializer: any, m: any, context: any, options: any) {
+    const output = createAssistantMessageEventStream();
+    void (async () => {
+      const headers = (await options?.transformHeaders?.(options?.headers ?? {})) ?? options?.headers;
+      const observed = await serializer(m, context, {
+        ...options,
+        headers,
+        apiKey: "offline-key",
+        transport: "sse",
+        fetch: async () => {
+          networkCalls++;
+          throw Error("unexpected network");
+        },
+        onPayload: async (payload: any) => {
+          attempts.push(structuredClone(payload));
+          const result = await options?.onPayload?.(payload, m);
+          captured.push({ compacting: isCompacting(), headers, payload: structuredClone(result ?? payload) });
+          throw Error(sentinel);
+        },
+      }).result();
+      if (!observed.errorMessage?.includes(sentinel)) {
+        output.push({ type: "error", reason: "error", error: observed });
+        output.end(observed);
+        return;
+      }
+      const message: AssistantMessage = {
+        role: "assistant",
+        api: m.api,
+        provider: m.provider,
+        model: m.id,
+        content: [
+          {
+            type: "text",
+            text: isCompacting()
+              ? "## Goal\nPreserve fixture state.\n## Critical Context\nfixture-checkpoint"
+              : "Fixture acknowledged.",
+          },
+        ],
+        stopReason: "stop",
+        usage,
+        timestamp: Date.now(),
+      };
+      output.push({ type: "done", reason: "stop", message });
+      output.end(message);
+    })().catch((e) => {
+      const message: any = {
+        role: "assistant",
+        api: m.api,
+        provider: m.provider,
+        model: m.id,
+        content: [],
+        stopReason: "error",
+        errorMessage: String(e),
+        usage,
+        timestamp: Date.now(),
+      };
+      output.push({ type: "error", reason: "error", error: message });
+      output.end(message);
+    });
+    return output;
+  }
+  // Exercise the real simple/native provider option mappings, rather than a
+  // mock complete() that accepts options the real serializer would ignore.
+  runtime.streamSimple = ((m: any, c: any, o: any) => fixture(anthropic.streamSimple, m, c, o)) as any;
+  runtime.stream = ((m: any, c: any, o: any) => fixture(anthropic.stream, m, c, o)) as any;
+  const realProvider = runtime.getProvider("anthropic")!;
+  runtime.getProvider = (() => ({
+    ...realProvider,
+    streamSimple: (m: any, c: any, o: any) => fixture(anthropic.streamSimple, m, c, o),
+  })) as any;
+
+  return {
+    captured,
+    attempts,
+    get networkCalls() {
+      return networkCalls;
+    },
+  };
+}
 
 for (const scenario of [
   "fresh",
@@ -43,15 +120,11 @@ for (const scenario of [
   "over-limit",
 ] as const) {
   const provider = "anthropic" as const;
-  const api = anthropic;
   test(scenario + " compacts current transformed conversation without a warm capture", async () => {
     const dir = await mkdtemp(join(tmpdir(), "bruv-compact-sdk-"));
     let session: Awaited<ReturnType<typeof createAgentSession>>["session"] | undefined;
-    let networkCalls = 0;
     const notifications: string[] = [];
     let restoreNotify = () => {};
-    const captured: any[] = [];
-    const attempts: any[] = [];
     try {
       const model = getModel("anthropic", "claude-sonnet-4-5")!;
       const runtime = await ModelRuntime.create({
@@ -62,76 +135,8 @@ for (const scenario of [
       runtime.hasConfiguredAuth = () => true;
       runtime.getAuth = (async () => ({ auth: { apiKey: "offline-key" } })) as any;
       let compacting = false;
-      function fixture(serializer: any, m: any, context: any, options: any) {
-        const output = createAssistantMessageEventStream();
-        void (async () => {
-          const headers = (await options?.transformHeaders?.(options?.headers ?? {})) ?? options?.headers;
-          const observed = await serializer(m, context, {
-            ...options,
-            headers,
-            apiKey: "offline-key",
-            transport: "sse",
-            fetch: async () => {
-              networkCalls++;
-              throw Error("unexpected network");
-            },
-            onPayload: async (payload: any) => {
-              attempts.push(structuredClone(payload));
-              const result = await options?.onPayload?.(payload, m);
-              captured.push({ compacting, headers, payload: structuredClone(result ?? payload) });
-              throw Error(sentinel);
-            },
-          }).result();
-          if (!observed.errorMessage?.includes(sentinel)) {
-            output.push({ type: "error", reason: "error", error: observed });
-            output.end(observed);
-            return;
-          }
-          const message: AssistantMessage = {
-            role: "assistant",
-            api: m.api,
-            provider: m.provider,
-            model: m.id,
-            content: [
-              {
-                type: "text",
-                text: compacting
-                  ? "## Goal\nPreserve fixture state.\n## Critical Context\nfixture-checkpoint"
-                  : "Fixture acknowledged.",
-              },
-            ],
-            stopReason: "stop",
-            usage,
-            timestamp: Date.now(),
-          };
-          output.push({ type: "done", reason: "stop", message });
-          output.end(message);
-        })().catch((e) => {
-          const message: any = {
-            role: "assistant",
-            api: m.api,
-            provider: m.provider,
-            model: m.id,
-            content: [],
-            stopReason: "error",
-            errorMessage: String(e),
-            usage,
-            timestamp: Date.now(),
-          };
-          output.push({ type: "error", reason: "error", error: message });
-          output.end(message);
-        });
-        return output;
-      }
-      // Exercise the real simple/native provider option mappings, rather than a
-      // mock complete() that accepts options the real serializer would ignore.
-      runtime.streamSimple = ((m: any, c: any, o: any) => fixture(api.streamSimple, m, c, o)) as any;
-      runtime.stream = ((m: any, c: any, o: any) => fixture(api.stream, m, c, o)) as any;
-      const realProvider = runtime.getProvider(provider)!;
-      runtime.getProvider = (() => ({
-        ...realProvider,
-        streamSimple: (m: any, c: any, o: any) => fixture(api.streamSimple, m, c, o),
-      })) as any;
+      const requests = captureOfflineRequests(runtime, () => compacting);
+      const { captured, attempts } = requests;
       let manager = SessionManager.create(dir, join(dir, "sessions"));
       manager.appendMessage({
         role: "user",
@@ -292,7 +297,7 @@ for (const scenario of [
         await expect(session.compact()).rejects.toThrow();
         expect(captured).toHaveLength(ordinaryCount);
         expect(manager.getEntries().filter((e) => e.type === "compaction")).toHaveLength(0);
-        expect(networkCalls).toBe(0);
+        expect(requests.networkCalls).toBe(0);
         return;
       }
       if (scenario === "automatic") await (session as any)._runAutoCompaction("threshold", false);
@@ -343,7 +348,7 @@ for (const scenario of [
         expect(last.system).toEqual(captured[0].payload.system);
         expect(last.thinking).toEqual(captured[0].payload.thinking);
       }
-      expect(networkCalls).toBe(0);
+      expect(requests.networkCalls).toBe(0);
     } finally {
       restoreNotify();
       session?.dispose();

@@ -2686,55 +2686,58 @@
     {
       "focus": "tests/current-pipeline-sdk.test.ts",
       "initialBlob": "10bbc30734f4b1a9da868402cd0084acf979d6d7",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "0c667532ac6741686caed409d7724672a10b4d39",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "0c667532ac6741686caed409d7724672a10b4d39",
         "primaryId": "task_8519a359",
         "primaryCommit": "bc35aba931192a3ae92d2a9eb8805d5735e52913",
-        "judgeIds": [],
+        "judgeIds": ["task_c7b3eb22"],
         "sourceCommit": "bc35aba931192a3ae92d2a9eb8805d5735e52913",
-        "state": "needs-judge",
-        "reason": "No dedicated primary/final independent focus judgment."
+        "state": "accepted-joined",
+        "reason": "Read the entire exact candidate and full primary-base diff. captureOfflineRequests groups one coherent authority: install all three real Anthropic dispatch interceptions, transform headers, retain pre-hook attempts and post-hook captured payloads, terminate at the sentinel before fetch, count unexpected network calls, and complete the outer stream on both recognized sentinel success and provider/error paths. Its only scenario input is a live compacting observer, called at the same two moments as the former closed-over flag. The test body now reads continuously from persisted history and optional reopen/warm turn through context redaction/prefix/tail edits, framing/payload/header hooks, new uncaptured tool result, manual/automatic/rejected compaction, and checkpoint/wire evidence. This removes a provider-lifecycle interruption rather than merely renaming a block or adding a context bag. The removed Codex/JWT/Phase-1 decorations did not participate in this Anthropic-only journey."
       }
     },
     {
       "focus": "tests/fixtures/saved-transcript-startup.ts",
       "initialBlob": "e18b6dfed78feec20b1aff2d6e1232a097c7a2d5",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "b0814e8844dab591845aa8c172edd320423649dc",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "b0814e8844dab591845aa8c172edd320423649dc",
         "primaryId": "task_f1a4e7e5",
         "primaryCommit": "4f5ee3078b1d85b21460c4cd7fba248be2af1dd6",
-        "judgeIds": [],
+        "judgeIds": ["task_c7b3eb22"],
         "sourceCommit": "4f5ee3078b1d85b21460c4cd7fba248be2af1dd6",
-        "state": "needs-judge",
-        "reason": "No dedicated primary/final independent focus judgment."
+        "state": "accepted-joined",
+        "reason": "Read the complete exact fixture and primary-base diff. Previously saved-ready grammar release occurred outside the later saved-message assertion branch, with extension release shared across success/error/empty paths. verifySavedStartup now owns both readiness orders end to end: optionally finish grammars before extensions, release/tick extensions, prove extensions alone cannot paint when grammars lag, finish grammar readiness, verify first saved paint, then verify live theme/content/width and explicit invalidation behavior. verifyEmptyStartup owns extension release through first empty paint, optional stopped state and subsequent grammar invalidation. Shared synchronous editor/input/color/tool setup remains visible and unchanged; the short dispatch keeps error no-paint and success-only repeat-init decisions at the orchestration boundary. This meaningfully groups lifecycle authority, with no new context bag or assertion weakening."
       }
     },
     {
       "focus": "tests/goals-marker-sdk.test.ts",
       "initialBlob": "31f02b1233366797bff63b27d07516776fc486c3",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "31f02b1233366797bff63b27d07516776fc486c3",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "31f02b1233366797bff63b27d07516776fc486c3",
         "primaryId": "task_8519a359",
         "primaryCommit": "bc35aba931192a3ae92d2a9eb8805d5735e52913",
-        "judgeIds": [],
+        "judgeIds": ["task_c7b3eb22"],
         "sourceCommit": "bc35aba931192a3ae92d2a9eb8805d5735e52913",
-        "state": "needs-judge",
-        "reason": "No dedicated primary/final independent focus judgment."
+        "state": "accepted-joined",
+        "reason": "Read the whole exact focus, not just its unchanged diff. This is one linear security journey: own offline runtime and no-tools goal-only loader, capture actual SDK dispatch messages, clear the goal exactly on first capture to bound automatic follow-ups, command-set a goal, prove plaintext reminder reached dispatch without transport tokens and without reminder persistence, dispose the first session, reopen its real session file through the local open(sessionManager) operation, and prove a typed fake marker remains literal in both dispatch and resumed history. Capture ownership and the clear bound are adjacent; first-session/resumed-session boundary and provider-versus-history evidence remain explicit. The existing open closure already groups the repeated session assembly. Further extraction would fragment that boundary or conflate this no-tools fixture with unrelated task/compaction lifecycles. Focus blob exactly matches its primary base; no cosmetic change is warranted."
       }
     },
     {
@@ -2747,11 +2750,12 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
+        "acceptedBlob": "53c696d6d477467e5c65e6d9803ae97c350b17c3",
         "primaryId": "task_8519a359",
         "primaryCommit": "bc35aba931192a3ae92d2a9eb8805d5735e52913",
         "judgeIds": [],
         "sourceCommit": "bc35aba931192a3ae92d2a9eb8805d5735e52913",
-        "state": "needs-judge",
+        "state": "needs-primary-final-blob",
         "reason": "No dedicated primary/final independent focus judgment."
       }
     },
@@ -2765,11 +2769,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_e0259a34",
+        "primaryCommit": "e3cc39958775e3f3cf05f38ee5743ef4ba392b88",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary",
+        "sourceCommit": "e3cc39958775e3f3cf05f38ee5743ef4ba392b88",
+        "state": "needs-judge",
         "reason": "No dedicated primary/final independent focus judgment."
       }
     },
@@ -2890,11 +2894,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_e0259a34",
+        "primaryCommit": "e3cc39958775e3f3cf05f38ee5743ef4ba392b88",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary",
+        "sourceCommit": "e3cc39958775e3f3cf05f38ee5743ef4ba392b88",
+        "state": "needs-judge",
         "reason": "No dedicated primary/final independent focus judgment."
       }
     },
@@ -2908,11 +2912,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_e0259a34",
+        "primaryCommit": "e3cc39958775e3f3cf05f38ee5743ef4ba392b88",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary",
+        "sourceCommit": "e3cc39958775e3f3cf05f38ee5743ef4ba392b88",
+        "state": "needs-judge",
         "reason": "No dedicated primary/final independent focus judgment."
       }
     },
@@ -2926,11 +2930,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_b770a2c7",
+        "primaryCommit": "8d04882c7fd0b6165ac217f9a7a7bf893262dd33",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary",
+        "sourceCommit": "8d04882c7fd0b6165ac217f9a7a7bf893262dd33",
+        "state": "needs-judge",
         "reason": "No dedicated primary/final independent focus judgment."
       }
     },
@@ -2944,11 +2948,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_b770a2c7",
+        "primaryCommit": "8d04882c7fd0b6165ac217f9a7a7bf893262dd33",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary",
+        "sourceCommit": "8d04882c7fd0b6165ac217f9a7a7bf893262dd33",
+        "state": "needs-judge",
         "reason": "No dedicated primary/final independent focus judgment."
       }
     },
@@ -2962,11 +2966,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_b770a2c7",
+        "primaryCommit": "8d04882c7fd0b6165ac217f9a7a7bf893262dd33",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary",
+        "sourceCommit": "8d04882c7fd0b6165ac217f9a7a7bf893262dd33",
+        "state": "needs-judge",
         "reason": "No dedicated primary/final independent focus judgment."
       }
     },
@@ -2980,11 +2984,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_d1a42e98",
+        "primaryCommit": "fc5b9f3e7aba21718b8989b57df4081751558c31",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary",
+        "sourceCommit": "fc5b9f3e7aba21718b8989b57df4081751558c31",
+        "state": "needs-judge",
         "reason": "No dedicated primary/final independent focus judgment."
       }
     },
@@ -2998,11 +3002,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_d1a42e98",
+        "primaryCommit": "fc5b9f3e7aba21718b8989b57df4081751558c31",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary",
+        "sourceCommit": "fc5b9f3e7aba21718b8989b57df4081751558c31",
+        "state": "needs-judge",
         "reason": "No dedicated primary/final independent focus judgment."
       }
     },
@@ -3016,11 +3020,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_d1a42e98",
+        "primaryCommit": "fc5b9f3e7aba21718b8989b57df4081751558c31",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary",
+        "sourceCommit": "fc5b9f3e7aba21718b8989b57df4081751558c31",
+        "state": "needs-judge",
         "reason": "No dedicated primary/final independent focus judgment."
       }
     },
@@ -3115,11 +3119,11 @@
       },
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_abcc8a6b",
+        "primaryCommit": "d7e16f9c897647a63b1f735fb89a3ab9e20c1e7e",
         "judgeIds": ["task_4b35440e"],
-        "sourceCommit": "a6bc2c45ad4f18f5bede511ca33e4eb690c26b36",
-        "state": "pending-primary",
+        "sourceCommit": "d7e16f9c897647a63b1f735fb89a3ab9e20c1e7e",
+        "state": "needs-judge",
         "reason": "No dedicated primary/final independent focus judgment. Related-patch review is evidence only; dedicated focus coverage remains required."
       }
     },
@@ -3133,11 +3137,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_abcc8a6b",
+        "primaryCommit": "d7e16f9c897647a63b1f735fb89a3ab9e20c1e7e",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary",
+        "sourceCommit": "d7e16f9c897647a63b1f735fb89a3ab9e20c1e7e",
+        "state": "needs-judge",
         "reason": "No dedicated primary/final independent focus judgment."
       }
     },
@@ -3199,11 +3203,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_abcc8a6b",
+        "primaryCommit": "d7e16f9c897647a63b1f735fb89a3ab9e20c1e7e",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary",
+        "sourceCommit": "d7e16f9c897647a63b1f735fb89a3ab9e20c1e7e",
+        "state": "needs-judge",
         "reason": "No dedicated primary/final independent focus judgment."
       }
     },
@@ -4480,7 +4484,7 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 81,
-    "pending": 42
+    "accepted": 84,
+    "pending": 39
   }
 }

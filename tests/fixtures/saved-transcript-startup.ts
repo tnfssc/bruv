@@ -181,53 +181,64 @@ await until("rebind:start");
 assert(events.includes("tool:fd") && events.includes("tool:rg"), "managed tools must use the fixture seam");
 assert(events.includes("keys:ready") && events.includes("submit:ready"));
 assert(!events.includes("messages:render"));
-if (scenario === "saved-ready") {
+// Keep each readiness race together: every journey owns its gate releases and
+// the assertions about what may paint before and after those releases.
+async function verifySavedStartup() {
+  if (scenario === "saved-ready") {
+    grammars.resolve();
+    await grammarReady.promise;
+    assert(events.includes("grammars:ready"));
+    assert(!events.includes("messages:render"), "early grammar readiness cannot bypass extension setup");
+  }
+  rebind.resolve();
+  await tick();
+  if (scenario !== "saved-ready")
+    assert(!events.includes("messages:render"), "rebind completion alone cannot paint saved messages");
+  grammars.resolve();
+  assert.equal(await outcome, undefined);
+  assert(events.indexOf("grammars:ready") < events.indexOf("messages:render"));
+  assert(events.indexOf("messages:render") < events.indexOf("paint:transcript"));
+  assert.equal(invalidations, 0, "grammar readiness must not rebuild the saved transcript after paint");
+  const highlighted = assistant!.render(80).join("\n");
+  assert(highlighted.includes("defmodule") && highlighted.includes("\x1b["));
+  assert.equal(rebuilds, 0);
+  // Native theme callbacks, explicit invalidation, mutable results, and width changes remain live.
+  assert.equal(setTheme("light", false).success, true);
+  assert.equal(invalidations, 1);
+  assert.equal(rebuilds, 1);
+  assert(events.includes("theme:border"));
+  assert.notEqual(assistant!.render(80).join("\n"), highlighted);
+  assert.notDeepEqual(assistant!.render(25), assistant!.render(80));
+  assistant!.updateContent({ ...message, content: [{ type: "text", text: "Updated result" }] });
+  assert(assistant!.render(80).join("\n").includes("Updated result"));
+  ui.invalidate();
+  assert.equal(invalidations, 2);
+  assert.equal(rebuilds, 3);
+}
+
+async function verifyEmptyStartup() {
+  rebind.resolve();
+  await tick();
+  assert.equal(await outcome, undefined, "empty startup must finish before grammars are ready");
+  assert(events.indexOf("paint:transcript") < events.indexOf("grammars:start"));
+  assert.equal(invalidations, 0);
+  if (scenario === "empty-stopped") mode.isInitialized = false;
   grammars.resolve();
   await grammarReady.promise;
   assert(events.includes("grammars:ready"));
-  assert(!events.includes("messages:render"), "early grammar readiness cannot bypass extension setup");
+  await tick();
+  assert.equal(invalidations, scenario === "empty-stopped" ? 0 : 1);
 }
-rebind.resolve();
-await tick();
+
 if (scenario === "rebind-error") {
+  rebind.resolve();
+  await tick();
   assert.equal((await outcome)?.message, "fixture extension startup failed");
   assert(!events.includes("messages:render"));
   assert(!events.includes("paint:transcript"));
 } else {
-  if (saved) {
-    if (scenario !== "saved-ready")
-      assert(!events.includes("messages:render"), "rebind completion alone cannot paint saved messages");
-    grammars.resolve();
-    assert.equal(await outcome, undefined);
-    assert(events.indexOf("grammars:ready") < events.indexOf("messages:render"));
-    assert(events.indexOf("messages:render") < events.indexOf("paint:transcript"));
-    assert.equal(invalidations, 0, "grammar readiness must not rebuild the saved transcript after paint");
-    const highlighted = assistant!.render(80).join("\n");
-    assert(highlighted.includes("defmodule") && highlighted.includes("\x1b["));
-    assert.equal(rebuilds, 0);
-    // Native theme callbacks, explicit invalidation, mutable results, and width changes remain live.
-    assert.equal(setTheme("light", false).success, true);
-    assert.equal(invalidations, 1);
-    assert.equal(rebuilds, 1);
-    assert(events.includes("theme:border"));
-    assert.notEqual(assistant!.render(80).join("\n"), highlighted);
-    assert.notDeepEqual(assistant!.render(25), assistant!.render(80));
-    assistant!.updateContent({ ...message, content: [{ type: "text", text: "Updated result" }] });
-    assert(assistant!.render(80).join("\n").includes("Updated result"));
-    ui.invalidate();
-    assert.equal(invalidations, 2);
-    assert.equal(rebuilds, 3);
-  } else {
-    assert.equal(await outcome, undefined, "empty startup must finish before grammars are ready");
-    assert(events.indexOf("paint:transcript") < events.indexOf("grammars:start"));
-    assert.equal(invalidations, 0);
-    if (scenario === "empty-stopped") mode.isInitialized = false;
-    grammars.resolve();
-    await grammarReady.promise;
-    assert(events.includes("grammars:ready"));
-    await tick();
-    assert.equal(invalidations, scenario === "empty-stopped" ? 0 : 1);
-  }
+  if (saved) await verifySavedStartup();
+  else await verifyEmptyStartup();
   if (mode.isInitialized) {
     const before = events.length;
     await mode.init();
