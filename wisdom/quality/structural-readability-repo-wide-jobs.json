@@ -58,6 +58,15 @@
         "model": "openai-codex/gpt-6.1-sol",
         "status": "handled",
         "sourceCommit": "37d387369bd426a42bfc57b337af3a63205f3fdf"
+      },
+      {
+        "id": "task_d2ae9701",
+        "stage": "judge",
+        "focus": "scripts/network-none-fixture.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_d2ae9701",
+        "branch": "bruv/pr45-judge-scripts-network-none-fixture.-d2ae9701",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
       }
     ]
   },
@@ -387,7 +396,7 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_61f7ec92",
         "branch": "bruv/pr45-judge-scripts-offline-openai-defaul-61f7ec92",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled"
       },
       {
         "id": "task_2f550018",

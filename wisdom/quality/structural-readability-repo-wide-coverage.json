@@ -2153,11 +2153,13 @@
     {
       "file": "scripts/offline-openai-default-transport.ts",
       "initialBlob": "643359a3fb7221ed0fbf9c5e97259eb2b70c733a",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_d54f9cf5",
       "sourceCommit": "0b1faebd03e5eb7711dbcba5a58453564a28cc36",
-      "judgeIds": [],
-      "resumeState": "needs-judge",
+      "judgeIds": [
+        "task_61f7ec92"
+      ],
+      "resumeState": "accepted-joined",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
       "area": "live-native-audio",
       "primaryCommit": "0b1faebd03e5eb7711dbcba5a58453564a28cc36",
@@ -2177,6 +2179,23 @@
         "No devices, providers, credentials, recovery, cleanup, destructive Git operations, delegation, pushes, PRs or merges. Old worktrees and candidate bytes preserved.",
         "Environment filtering and loopback-only behavior were inspected in source, not exercised; physical/provider/macOS parity remains outside this proof.",
         "No wisdom edits: parent owns aggregate wisdom. No source change means sourceCommit is the existing launch HEAD."
+      ],
+      "acceptedBlob": "643359a3fb7221ed0fbf9c5e97259eb2b70c733a",
+      "result": "Judged exact candidate Git objects, not checkout HEAD. Primary base equals candidate; parent is 5c3598debf99126b985f46d926d9e39129eb2a4e. Focus bytes are identical in candidate and parent. Intrinsically, the file exposes its complete execution contract in one straight journey: reject unsupported arguments, derive source/binary paths, strip credential-named environment entries, install the fake test gate, then visit source and optionally compiled CLI. Within each visit the denied launch and its nonzero/gate-diagnostic assertion visibly precede the permitted launch and its zero/success-marker assertion. Both launch lifetimes show piped output and a 15-second bound at their call sites. There is no scattered authority or hidden transition to reconstruct; extracting those adjacent blocks or changing the tuple/names would add navigation without clarifying responsibility. Thus unchanged is a substantive independent reading decision, not credit for a cosmetic improvement. Also inspected the sole parent-delta source, scripts/live-probe-input.ts, in full and against its parent. Its readStudy now owns JSON/timestamp/cutoff/entry-count decisions; readStudyLines owns bounded streaming UTF-8/JSONL framing and descriptor closure. The former stopped flag and callback cross-control disappear. A cutoff break or parsing exception closes the suspended generator through finally, while normal EOF flushes the decoder before the final line. That related structural change is acceptable on actual reading; its exact blob is included, not inferred from an earlier judgment.",
+      "systemReason": "CI calls this wrapper with --source-only after asset preparation on macOS, and without it after the Linux paired build; scripts/build.ts compiles src/cli.ts to the default dist/bruv that this wrapper resolves. The source-only branch retains exactly the source visit, rather than introducing a different protocol path. src/cli.ts checks the sole hidden argument and exact loopback-fake-key gate before normal CLI bootstrap, denies with the diagnostic this wrapper requires, or dynamically imports the probe and exits after it completes. The protocol owner constructs only an ephemeral 127.0.0.1 endpoint, supplies a hard-coded fake bearer key, and calls production defaultSocket, which delegates to upgradeSocket rather than an injected test factory. For each full/mini model, the listener checks the model, authorization and upgrade; the successful socket sends session.update and observes session.updated, while the rejected upgrade must classify HTTP 401 without the fake key/private-body marker. Each fixture has a four-second race and finally closes its socket/listener and timer. The wrapper only declares success after the combined marker and exit check, so process orchestration and protocol evidence remain separate at their natural boundary. For the related study reader, recorded and controlled callers validate explicit plans and disclosure/source selection before readStudy and studyTarget, then proceed to configuration/credential work; the generator change does not move those permissions or provider work. One source-level behavioral nuance is explicit: once cutoff is yielded, the new break does not run the old trailing-carry size check on irrelevant buffered suffix; byte/line limits still apply to consumed prefix, and decoder processing still occurs by block. No runtime equivalence claim is made for that nuance.",
+      "checks": [
+        "Read wisdom/values.md, structural-readability-guidance.md, repo-wide scope/resume and applicable area/repo-wide ledger entries. The focus has no earlier judge round to preserve.",
+        "Inspected candidate identity, parent and complete changed-path list with read-only Git commands. Only changed source is scripts/live-probe-input.ts; remaining parent-delta paths are aggregate ledgers.",
+        "Read exact candidate focus, CLI gate, CI/build entrypoint wiring, loopback protocol fixture, production socket authority and error classification; read relevant gate/CI assertions as source, not executions.",
+        "Compared parent and candidate study-input source and read its recorded/controlled admission callers and input-test source.",
+        "Verified exact candidate hashes and equality of parent/candidate focus blobs using git rev-parse. Initial git status --short was clean.",
+        "No setup, test, build, provider request, device operation or delegated job executed. Wrote only this untracked result."
+      ],
+      "limits": [
+        "This is an actual-code structural judgment, not runtime, real authentication, device, hosted CI or macOS proof. Parent owns audited isolated batch gates.",
+        "Environment-name filtering is inspected behavior, not a claim of complete HOME/config/SDK isolation; neither this wrapper nor paid study callers were launched.",
+        "Known automatic setup host-hash failure remains unrerun and unbypassed. No recovery, credential access, cleanup, destructive Git, push, PR or merge actions.",
+        "No source, values or wisdom edits. Parent owns aggregate wisdom; prior worktrees and candidates were left untouched. Agent model verification remains external through parent jobs.inspect."
       ]
     },
     {

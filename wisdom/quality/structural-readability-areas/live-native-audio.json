@@ -1072,16 +1072,19 @@
       "initialBlob": "643359a3fb7221ed0fbf9c5e97259eb2b70c733a",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "643359a3fb7221ed0fbf9c5e97259eb2b70c733a",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "643359a3fb7221ed0fbf9c5e97259eb2b70c733a",
         "primaryId": "task_d54f9cf5",
         "primaryCommit": "0b1faebd03e5eb7711dbcba5a58453564a28cc36",
-        "judgeIds": [],
+        "judgeIds": [
+          "task_61f7ec92"
+        ],
         "sourceCommit": "0b1faebd03e5eb7711dbcba5a58453564a28cc36",
-        "state": "needs-judge",
-        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+        "state": "accepted-joined",
+        "reason": "Judged exact candidate Git objects, not checkout HEAD. Primary base equals candidate; parent is 5c3598debf99126b985f46d926d9e39129eb2a4e. Focus bytes are identical in candidate and parent. Intrinsically, the file exposes its complete execution contract in one straight journey: reject unsupported arguments, derive source/binary paths, strip credential-named environment entries, install the fake test gate, then visit source and optionally compiled CLI. Within each visit the denied launch and its nonzero/gate-diagnostic assertion visibly precede the permitted launch and its zero/success-marker assertion. Both launch lifetimes show piped output and a 15-second bound at their call sites. There is no scattered authority or hidden transition to reconstruct; extracting those adjacent blocks or changing the tuple/names would add navigation without clarifying responsibility. Thus unchanged is a substantive independent reading decision, not credit for a cosmetic improvement. Also inspected the sole parent-delta source, scripts/live-probe-input.ts, in full and against its parent. Its readStudy now owns JSON/timestamp/cutoff/entry-count decisions; readStudyLines owns bounded streaming UTF-8/JSONL framing and descriptor closure. The former stopped flag and callback cross-control disappear. A cutoff break or parsing exception closes the suspended generator through finally, while normal EOF flushes the decoder before the final line. That related structural change is acceptable on actual reading; its exact blob is included, not inferred from an earlier judgment."
       }
     },
     {
@@ -5055,7 +5058,7 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 85,
-    "pending": 65
+    "accepted": 86,
+    "pending": 64
   }
 }
