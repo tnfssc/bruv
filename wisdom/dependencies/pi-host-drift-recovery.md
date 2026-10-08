@@ -26,3 +26,5 @@ Tests will inject acquisition, exercise the exact observed stale adaptation and 
 - Read-only final inspection confirms this worktree's inherited agent-session.js still has the unsupported ef78… hash. Tests repaired owned temporary fixtures only; neither global cache nor this worktree's inherited dependency files nor other worktrees were changed.
 
 Values unchanged: existing isolated ownership, exact evidence and simplest-working-solution values apply. This is a dependency-specific repair, not a new general rule.
+
+Parent integration: [recurring drift proof](pi-host-recurring-drift.md). The parent also added an ownership check before normal preparation and recovery. Borrowed dependency directories outside the checkout fail without writes or clean-source acquisition.

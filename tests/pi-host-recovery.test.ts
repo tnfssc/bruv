@@ -1,6 +1,6 @@
 import { afterEach, expect, test } from "bun:test";
 import { createHash } from "node:crypto";
-import { chmod, link, mkdir, mkdtemp, readFile, rm, stat, writeFile } from "node:fs/promises";
+import { chmod, link, mkdir, mkdtemp, readFile, rm, stat, symlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { gunzipSync } from "node:zlib";
@@ -286,3 +286,24 @@ test("acquisition/network failure reports retry action, leaves target untouched 
   await cleaned(stages);
   await unchanged(root, before);
 });
+
+for (const source of ["original", "stale"] as const)
+  test(`preparation refuses borrowed ${source} dependencies without acquisition or writes`, async () => {
+    const project = await temp();
+    const borrowed = await temp();
+    await fixture(borrowed, source === "stale" ? { ...originals, [agentPatch.path]: staleAgent } : originals);
+    const before = await snapshot(borrowed);
+    const linked = join(project, "pi");
+    await symlink(borrowed, linked, "dir");
+    await expect(
+      preparePiHostWithRecovery(project, linked, {
+        acquireCleanSource: async () => {
+          throw new Error("must not acquire for borrowed dependencies");
+        },
+        notice: () => {
+          throw new Error("must not report recovery");
+        },
+      }),
+    ).rejects.toThrow("checkout-local dependencies");
+    await unchanged(borrowed, before);
+  });
