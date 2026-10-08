@@ -527,8 +527,8 @@ export function registerNativeFastMode(pi: ExtensionAPI) {
     ui?.setStatus("bruv-native-fast", active ? statusText(active.enabled) : undefined);
   };
 
-  const persistSelection = (ctx: ExtensionContext, enabled: boolean) => {
-    const model = ctx.model!;
+  // Callers admit the model and billing consent; this owns the resulting checkpoint.
+  const persistSelection = (ctx: ExtensionContext, model: Model<any>, enabled: boolean): boolean => {
     const entry: Setting = {
       version: ENTRY_VERSION,
       oauth: ctx.modelRegistry.isUsingOAuth(model),
@@ -539,8 +539,7 @@ export function registerNativeFastMode(pi: ExtensionAPI) {
       costAcknowledged: enabled,
       timestamp: Date.now(),
     };
-    if (!persistSetting(pi, ctx.sessionManager, entry))
-      throw new Error("Could not persist native fast mode; the requested setting was not activated.");
+    return persistSetting(pi, ctx.sessionManager, entry);
   };
 
   // Only explicit host user selection may call this: true is premium billing
@@ -560,7 +559,8 @@ export function registerNativeFastMode(pi: ExtensionAPI) {
       // No authorization is created on those surfaces.
       return;
     }
-    persistSelection(ctx, enabled);
+    if (!persistSelection(ctx, ctx.model, enabled))
+      throw new Error("Could not persist native fast mode; the requested setting was not activated.");
     refreshStatus(ctx);
   };
 
@@ -669,17 +669,7 @@ export function registerNativeFastMode(pi: ExtensionAPI) {
         );
         return;
       }
-      const entry: Setting = {
-        version: ENTRY_VERSION,
-        oauth: ctx.modelRegistry.isUsingOAuth(model),
-        sessionId: consentScope.sessionId,
-        provider: model.provider,
-        model: model.id,
-        enabled: action === "on",
-        costAcknowledged: action === "on",
-        timestamp: Date.now(),
-      };
-      if (!persistSetting(pi, ctx.sessionManager, entry)) {
+      if (!persistSelection(ctx, currentModel, action === "on")) {
         commandDiagnostic(ctx, FAST_CHECKPOINT_PERSIST_FAILED, "failed", operationId);
         ctx.ui.notify("Could not persist native fast mode; the requested setting was not activated.", "error");
         return;
@@ -708,16 +698,10 @@ export function registerNativeFastMode(pi: ExtensionAPI) {
         authSurfaceMatches(ctx, support.surface) &&
         resolveSetting(ctx).kind === "absent"
       ) {
-        pi.appendEntry(NATIVE_FAST_ENTRY, {
-          version: ENTRY_VERSION,
-          oauth: ctx.modelRegistry.isUsingOAuth(model),
-          sessionId: ctx.sessionManager.getSessionId(),
-          provider: model.provider,
-          model: model.id,
-          enabled: true,
-          costAcknowledged: true,
-          timestamp: Date.now(),
-        } satisfies Setting);
+        if (!persistSelection(ctx, model, true)) {
+          commandDiagnostic(ctx, FAST_CHECKPOINT_PERSIST_FAILED, "failed", crypto.randomUUID());
+          ctx.ui.notify("Could not persist inherited native fast mode; Fast was not activated.", "error");
+        }
       }
     }
     refreshStatus(ctx);

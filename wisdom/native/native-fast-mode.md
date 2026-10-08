@@ -154,3 +154,37 @@ This change is in local source only. No push, release, install, or live provider
 ### Codex alignment published
 
 PR [#27](https://github.com/tnfssc/bruv/pull/27) passed final hosted Linux/macOS/policy checks and merged normally as 914b0a3e. Released [v0.16.2](https://github.com/tnfssc/bruv/releases/tag/v0.16.2) at 49379a1958ef41127799a166de8df8190f26c0f3. [Release run 37191445417](https://github.com/tnfssc/bruv/actions/runs/37191445417) passed all six gates; stable metadata and all 20 expected nonempty assets verified without redundant binary downloads. No local binary installation. See [release record and remaining limits](../releases/codex-fast-alignment-release.md) and [publication evidence](../releases/v0.16.2-publication.json). Parent original commits e93d0953 / 7404ee32 are already included through the reviewed cherry-picks; fetch/integrate develop rather than applying them again. Values reviewed and unchanged.
+
+## One selection publication owner (PR45 repair, 2026-10-08)
+
+The agent/UI quality REJECT at 0d8066e4 found three consent-checkpoint
+constructors and two publication routes. PR base 22ad5f50 shared host/command
+publication; continuation a0d9ef19 retained rollback but lacked the host API.
+Their join must share publication, not introduce a settings framework.
+
+All three admitted paths now pass their model to persistSelection. It builds
+one v2 session/provider/model/OAuth consent record and publishes through
+persistSetting. Host explicit consent and thrown errors remain at the host;
+async confirmation, stale-consent checks and command notifications remain in
+the command. Inheritance still consumes its launch bit once and requires an
+absent setting. Failed startup publication rolls back, reports a bounded error
+and refreshes status without activating Fast or retrying. persistSetting's
+volatile opt-out suppression, immutable request authorization and transport
+guards are unchanged. Reading now follows one constructor/publication path,
+with separate admission and UI consequences at each caller.
+
+Focused proof: 13 tests / 69 assertions passed, 29 filtered out, in
+native-fast-mode.test.ts (publication, persistence, stale-consent and inheritance
+cases). Three new in-memory cases cover matching caller records, failed host
+opt-out suppression and startup rollback/error/one-shot behavior. Effects were
+inspected first; env -i and owned HOME/config/cache/tmp/SDK directories are
+retained at /tmp/bruv-fast-selection-9c720ca3-aQKS3N, with exact command.txt.
+Two-file Biome format and git diff --check passed; complete-file comparison
+confirmed all pre-registration guards/persistence byte-identical.
+
+No broad suite/typecheck, setup/install retry or strict-hash bypass; no real
+credentials/provider/device/SSH or rendered-host proof. The known autosetup
+shared-cache failure was not retried. Worker model verified from model_change:
+openai-codex/gpt-6.1-sol. Values unchanged: existing ownership/readability and
+proof-scope guidance apply. Parent owns independent quality rejudgment,
+integration and publication; these checks are not a readability ACCEPT.

@@ -901,6 +901,104 @@ test("fast leaves raw response-tier events available to existing observers", asy
   expect(h.statuses.at(-1).value).toBe(" fast on");
 });
 
+test("host, command and inherited Fast selections publish the same model-bound consent", async () => {
+  const savedFast = process.env[NATIVE_FAST_CHILD_ENV];
+  const savedDepth = process.env.BRUV_SUBAGENT_DEPTH;
+  try {
+    const model = getModel("openai-codex", "gpt-5.6-luna")!;
+    const host = harness(model);
+    await host.emit("model_select");
+    host.registration.setWithCostConsent(true);
+    const command = harness(model, { mode: "print", accept: true });
+    await command.command.handler("on", command.ctx);
+    process.env[NATIVE_FAST_CHILD_ENV] = "1";
+    process.env.BRUV_SUBAGENT_DEPTH = "1";
+    const child = harness(model);
+    await child.emit("session_start");
+    const expected = {
+      version: 2,
+      oauth: true,
+      sessionId: "session-a",
+      provider: model.provider,
+      model: model.id,
+      enabled: true,
+      costAcknowledged: true,
+      timestamp: expect.any(Number),
+    };
+    expect(host.entries[0].data).toEqual(expected);
+    expect(command.entries[0].data).toEqual(expected);
+    expect(child.entries[0].data).toEqual(expected);
+    host.registration.setWithCostConsent(false);
+    expect(host.registration.currentSetting(host.ctx)).toMatchObject({ enabled: false, costAcknowledged: false });
+  } finally {
+    if (savedFast === undefined) delete process.env[NATIVE_FAST_CHILD_ENV];
+    else process.env[NATIVE_FAST_CHILD_ENV] = savedFast;
+    if (savedDepth === undefined) delete process.env.BRUV_SUBAGENT_DEPTH;
+    else process.env.BRUV_SUBAGENT_DEPTH = savedDepth;
+  }
+});
+
+test("host opt-out persistence failure throws but suppresses prior premium consent", async () => {
+  const manager = SessionManager.inMemory();
+  const model = getModel("openai", "gpt-5.3-codex")!;
+  let failWrite = false;
+  const h = harness(model, {
+    sessionManager: manager,
+    appendEntry(type, data) {
+      manager.appendCustomEntry(type, data);
+      if (failWrite) throw new Error("private persistence detail");
+    },
+  });
+  await h.emit("model_select");
+  h.registration.setWithCostConsent(true);
+  const priorLeaf = manager.getLeafId();
+  failWrite = true;
+  expect(() => h.registration.setWithCostConsent(false)).toThrow(
+    "Could not persist native fast mode; the requested setting was not activated.",
+  );
+  expect(manager.getLeafId()).toBe(priorLeaf);
+  expect(nativeFastEnabled(h.ctx)).toBe(false);
+  expect(h.registration.currentSetting(h.ctx)).toMatchObject({ enabled: false, costAcknowledged: false });
+});
+
+test("inherited Fast append failure rolls back, reports startup refusal and is not retried", async () => {
+  const savedFast = process.env[NATIVE_FAST_CHILD_ENV];
+  const savedDepth = process.env.BRUV_SUBAGENT_DEPTH;
+  try {
+    process.env[NATIVE_FAST_CHILD_ENV] = "1";
+    process.env.BRUV_SUBAGENT_DEPTH = "1";
+    const manager = SessionManager.inMemory();
+    manager.appendMessage({ role: "user", content: "before", timestamp: 1 });
+    const priorLeaf = manager.getLeafId();
+    let attempts = 0;
+    const h = harness(getModel("openai", "gpt-5.3-codex")!, {
+      sessionManager: manager,
+      appendEntry(type, data) {
+        attempts++;
+        manager.appendCustomEntry(type, data);
+        throw new Error("private persistence detail");
+      },
+    });
+    await h.emit("session_start");
+    expect(manager.getLeafId()).toBe(priorLeaf);
+    expect(h.registration.currentSetting(h.ctx)).toBeUndefined();
+    expect(h.notices.at(-1)).toMatchObject({ kind: "error" });
+    expect(h.statuses.at(-1)).toEqual({ key: "bruv-native-fast", value: undefined });
+    expect(inspectDiagnostics(manager).records.at(-1)).toMatchObject({
+      code: FAST_CHECKPOINT_PERSIST_FAILED,
+      outcome: "failed",
+    });
+    expect(JSON.stringify(h.notices)).not.toContain("private persistence detail");
+    await h.emit("session_start");
+    expect(attempts).toBe(1);
+  } finally {
+    if (savedFast === undefined) delete process.env[NATIVE_FAST_CHILD_ENV];
+    else process.env[NATIVE_FAST_CHILD_ENV] = savedFast;
+    if (savedDepth === undefined) delete process.env.BRUV_SUBAGENT_DEPTH;
+    else process.env.BRUV_SUBAGENT_DEPTH = savedDepth;
+  }
+});
+
 test("parent fast consent bootstraps a distinct supported child and its descendants", async () => {
   const savedFast = process.env[NATIVE_FAST_CHILD_ENV];
   const savedDepth = process.env.BRUV_SUBAGENT_DEPTH;
