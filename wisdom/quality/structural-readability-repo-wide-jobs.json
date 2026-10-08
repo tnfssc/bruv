@@ -183,6 +183,22 @@
         "branch": "bruv/pr45-judge-scripts-claude-native-accepta-619d6011",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "handled"
+      },
+      {
+        "id": "task_2aa53476",
+        "stage": "judge",
+        "focus": "scripts/claude-native-acceptance/subagent-driver.mjs",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_2aa53476",
+        "branch": "bruv/pr45-judge-scripts-claude-native-accepta-2aa53476",
+        "status": "running"
+      },
+      {
+        "id": "task_1bcfcb92",
+        "stage": "judge",
+        "focus": "scripts/claude-native-acceptance/subagent-return-evidence.mjs",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_1bcfcb92",
+        "branch": "bruv/pr45-judge-scripts-claude-native-accepta-1bcfcb92",
+        "status": "running"
       }
     ]
   },
