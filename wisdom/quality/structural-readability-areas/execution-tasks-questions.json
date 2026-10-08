@@ -3366,20 +3366,20 @@
     {
       "focus": "tests/root-owner.test.ts",
       "initialBlob": "823b81438fe53e0bab52108e9ae3ca9733acfedb",
-      "status": "pending",
+      "status": "accepted",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "a691a1861ba40623a755885a868aaa668204dcb9",
       "integration": "pending",
       "resume": {
-        "status": "pending",
-        "acceptedBlob": "5359344120d28666a3cecfea67d9419de954b890",
+        "status": "accepted",
+        "acceptedBlob": "a691a1861ba40623a755885a868aaa668204dcb9",
         "primaryId": "task_e7320bb4",
         "primaryCommit": "eed9d67a5b58cc407f34e49f770c74a68503466e",
-        "judgeIds": ["task_b17a5ed7"],
+        "judgeIds": ["task_b17a5ed7", "task_6818ffa9"],
         "sourceCommit": "eed9d67a5b58cc407f34e49f770c74a68503466e",
-        "state": "needs-judge",
-        "reason": "Read the complete 620-line candidate and exact primary-base diff, including unchanged tests. Previously one scenario mixed local source capture, replay-safe chunk transfer, checkout-content validation and export authority state transitions. captureTrackedFixture now owns the committed baseline, dirty tracked bytes and deliberately unapproved file; uploadWithExactReplay owns chunk construction and exact retry equality. Separate transport and export tests make their distinct authorities readable. The transport test retains root-owned checkout path, dirty content, one-commit history and tracked-only assertions. The export test still starts from the same uploaded snapshot, rejects no-root and accepted roots, rejects unknown and closed/exit-1 states, and accepts only closed/exit-0 with original snapshot/content/digest assertions. Helpers are cohesive operations using explicit arguments, not a new shared state container. Unchanged create/command replay, detach/observe redaction, unsettled-close, clean/failed-exit, outstanding-prompt abort, uncertain-write/owner death, crash reconciliation, journal gaps, identity/model/command rejection, duplicate-owner and dialog/reconnect cases retain stimulus, persisted outcome and owner drain together. They do not need additional extraction to make their authority visible."
+        "state": "accepted-joined",
+        "reason": "Read the complete exact-candidate file and both full and whitespace-insensitive diffs from 882cfa3a21f72bbd8b29f4dc169618f3c83cb171, rather than judging checkout HEAD or the primary narrative. The file now has one visible descendant authority: ownedProcessSuite encloses the fixture, fake port, helpers and every test. fixture.cleanup closes the ledger without deleting its checkout/evidence; journal and dialog fixtures are retained too, and the dialog reconnect store closes in finally. This is an ownership change, not merely indentation or renamed helpers. The unchanged create journey keeps exact persisted request/intent replay, all conflict stimuli, and launch counts together. The ordinary owner journey retains detach-without-signalling, private response suppression, safe model projection, ordered observation cursors, replay/conflict assertions, pending settlement and confirmed close. Separate close tests keep delayed exit and queued-undispatched receipts visible, and distinguish failed exit from closure. Abort remains dispatchable while a prompt acknowledgement is pending. Uncertain writes, dead-owner reconciliation, crash claims, bounded journal gaps, identity/role/field/model rejection and duplicate-owner protection remain explicit scenarios with their own persisted assertions and fake-owner drain. UI delivery replay and durable pending-dialog reconnect still distinguish written/unknown delivery from prompting again. The repository helpers remain narrow operations: captureTrackedFixture creates committed then dirty tracked bytes plus an unapproved file; uploadWithExactReplay compares every immediate chunk replay. Upload separately proves the root-owned checkout, dirty tracked bytes, one-commit history and tracked-only contents. Export rejects absent, accepted, unknown and closed/nonzero roots before accepting closed/zero and checking snapshot, result content and digest. No context bag or unnecessary scenario abstraction was introduced."
       }
     },
     {
@@ -4352,8 +4352,8 @@
     ]
   },
   "resumeStatus": {
-    "accepted": 104,
-    "pending": 1
+    "accepted": 105,
+    "pending": 0
   },
   "extraFiles": [
     {

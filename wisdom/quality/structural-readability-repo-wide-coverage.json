@@ -20314,11 +20314,11 @@
     {
       "file": "tests/root-owner.test.ts",
       "initialBlob": "823b81438fe53e0bab52108e9ae3ca9733acfedb",
-      "status": "pending",
+      "status": "accepted",
       "area": "execution-tasks-questions",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_e7320bb4",
-      "judgeIds": ["task_b17a5ed7"],
+      "judgeIds": ["task_b17a5ed7", "task_6818ffa9"],
       "sourceCommit": "eed9d67a5b58cc407f34e49f770c74a68503466e",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
       "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage.",
@@ -20337,19 +20337,40 @@
         "No credentials/config inspection, live auth/device access, recovery work, cleanup commands, destructive Git, or shared-dependency mutation. Existing production deletion is confined to task-owned checkout/result paths; no production source was changed.",
         "Runtime agent.model verification remains parent-owned. Formatter evidence and fixture ownership design are not runtime acceptance proof."
       ],
-      "acceptedBlob": "5359344120d28666a3cecfea67d9419de954b890",
-      "result": "Read the complete 620-line candidate and exact primary-base diff, including unchanged tests. Previously one scenario mixed local source capture, replay-safe chunk transfer, checkout-content validation and export authority state transitions. captureTrackedFixture now owns the committed baseline, dirty tracked bytes and deliberately unapproved file; uploadWithExactReplay owns chunk construction and exact retry equality. Separate transport and export tests make their distinct authorities readable. The transport test retains root-owned checkout path, dirty content, one-commit history and tracked-only assertions. The export test still starts from the same uploaded snapshot, rejects no-root and accepted roots, rejects unknown and closed/exit-1 states, and accepts only closed/exit-0 with original snapshot/content/digest assertions. Helpers are cohesive operations using explicit arguments, not a new shared state container. Unchanged create/command replay, detach/observe redaction, unsettled-close, clean/failed-exit, outstanding-prompt abort, uncertain-write/owner death, crash reconciliation, journal gaps, identity/model/command rejection, duplicate-owner and dialog/reconnect cases retain stimulus, persisted outcome and owner drain together. They do not need additional extraction to make their authority visible.",
-      "systemReason": "Traced handleRootRequest strict fields and identity/epoch validation, immutable create acceptance and command enqueue, reconciliation without automatic replacement, and RootStore committed dispatch claims/exact retries/unknown receipts. Traced serveRootSession: prompts do not block abort; UI response is hidden before uncertain writes; settled close remains pending until clean process exit; failed exits stay unknown; confirmed close finishes queued commands without dispatch. Journal suffix gaps and persisted dialogs match unchanged tests. For the changed journey, captureRepository creates a history-free tracked snapshot with exact untracked approval; repository-wire validates offset/digest/replay and owns an unaccepted checkout; root-owner maps only closed exit-0 to done before repository-result export. RootClient separately uploads pinned bytes and requires successful closure before returning verified result pages. Splitting the tests preserves this authorization boundary rather than using transport success as export permission.",
+      "acceptedBlob": "a691a1861ba40623a755885a868aaa668204dcb9",
+      "result": "Read the complete exact-candidate file and both full and whitespace-insensitive diffs from 882cfa3a21f72bbd8b29f4dc169618f3c83cb171, rather than judging checkout HEAD or the primary narrative. The file now has one visible descendant authority: ownedProcessSuite encloses the fixture, fake port, helpers and every test. fixture.cleanup closes the ledger without deleting its checkout/evidence; journal and dialog fixtures are retained too, and the dialog reconnect store closes in finally. This is an ownership change, not merely indentation or renamed helpers. The unchanged create journey keeps exact persisted request/intent replay, all conflict stimuli, and launch counts together. The ordinary owner journey retains detach-without-signalling, private response suppression, safe model projection, ordered observation cursors, replay/conflict assertions, pending settlement and confirmed close. Separate close tests keep delayed exit and queued-undispatched receipts visible, and distinguish failed exit from closure. Abort remains dispatchable while a prompt acknowledgement is pending. Uncertain writes, dead-owner reconciliation, crash claims, bounded journal gaps, identity/role/field/model rejection and duplicate-owner protection remain explicit scenarios with their own persisted assertions and fake-owner drain. UI delivery replay and durable pending-dialog reconnect still distinguish written/unknown delivery from prompting again. The repository helpers remain narrow operations: captureTrackedFixture creates committed then dirty tracked bytes plus an unapproved file; uploadWithExactReplay compares every immediate chunk replay. Upload separately proves the root-owned checkout, dirty tracked bytes, one-commit history and tracked-only contents. Export rejects absent, accepted, unknown and closed/nonzero roots before accepting closed/zero and checking snapshot, result content and digest. No context bag or unnecessary scenario abstraction was introduced.",
+      "systemReason": "Traced the real descendant path in candidate source: ownedProcessSuite starts process.execPath with explicit argv, shell:false, a durable-worktree cwd, and an allowlisted ownedFixtureEnv from a retained fs.mkdtemp root. HOME, XDG config/cache/data, SDK directories, TMPDIR, Bun/npm config and empty Git hooks are owned; PATH is fixed; inherited Git/provider settings are not copied. The suite marker only selects the child definition entry and no test-name filter drops scenarios. The direct git helper therefore receives the already owned process.env, not the former ambient-host spread with two Git flags. captureRepository, prepareRepositoryCheckout and collectRepositoryResult use explicit Git argv and scrubT3BridgeEnvironment, which preserves ordinary environment, so the enclosing owned host is the necessary boundary for those production descendants as well. Reviewed upload chunk conflict/digest fencing, task-owned checkout replacement, history/tree bounds, ready replay and result pagination. handleRootRequest maps only closed exitCode 0 to done before repositoryResultPage; all other root states fail the successful-completion gate. RootStore persists immutable intents and pre-write command claims; unknown transitions do not requeue. serveRootSession installs pending close evidence before end, waits for clean exit, completes queued commands without dispatch, and hides UI requests before uncertain human-response delivery. runRootOwner protects the existing claim and closes its own store. Shipped CLI/root-entry still route to these same functions; tests inject hello/launch/ports rather than invoking provider, live auth or network inference. The earlier ambient authority objection is resolved in actual code without weakening assertions. Acceptance is a static structural/safety judgment, not a runtime gate result.",
       "checks": [
-        "Exact git diff from cfd8136a69452f4c4460626f17cb9d4c4a1d3653; only the assigned test changes.",
-        "Complete focus read, including unchanged authority and shutdown decisions; relevant production callers read from candidate Git objects.",
-        "git diff --check passed; candidate blob resolved directly from Git.",
-        "Complete Git-byte static expectation-line multiset matches after normalizing replay helper parameter f.options to options; source reading, not this comparison, establishes judgment."
+        {
+          "check": "Exact candidate commit and changed-path enumeration",
+          "result": "git rev-parse confirmed eed9d67a5b58cc407f34e49f770c74a68503466e; diff --name-status lists only tests/root-owner.test.ts."
+        },
+        {
+          "check": "Complete intrinsic focus and relevant source journey reading",
+          "result": "Read exact candidate via git show; inspected changed focus plus unchanged process-owner, environment, ledger, upload/export and shipped entry decisions."
+        },
+        {
+          "check": "Accepted blob identity",
+          "result": "git ls-tree reports tests/root-owner.test.ts blob a691a1861ba40623a755885a868aaa668204dcb9; no additional candidate-changed source paths."
+        },
+        {
+          "check": "Whitespace patch check",
+          "result": "git diff --check primaryBase candidate exited 0."
+        },
+        {
+          "check": "Wisdom guidance",
+          "result": "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md."
+        },
+        {
+          "check": "Execution restraint",
+          "result": "No tests, setup, builds, dependency mutation, live auth, credential/config inspection, cleanup or delegation performed. Only read-only Git/source inspection and this untracked result artifact."
+        }
       ],
       "limits": [
-        "No setup, tests, builds, live auth, network or credential access performed; parent owns audited isolated gates.",
-        "Existing owned mkdtemp fixture rmSync cleanup and production unaccepted-checkout replacement were inspected only, never executed. This test still inherits process.env for fixture Git subprocesses; parent must supply audited owned HOME/config/SDK/TMPDIR and retain gate evidence. Acceptance is structural/source preservation, not independent runtime isolation certification.",
-        "Review uses the existing durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_b17a5ed7 and retained exact Git evidence; no alternate checkout or cleanup created. Parent verifies runtime agent.model."
+        "Runtime behavior is unverified here; parent owns audited isolated gates. No live authentication or device verification was attempted. Parent must verify runtime agent.model openai-codex/gpt-6.1-sol; this judge did not independently observe that metadata.",
+        "Review provenance is the retained durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_6818ffa9 and exact candidate Git objects. No /tmp code checkout was created. The reviewed harness retains mkdtemp test/evidence roots and a launch manifest referencing the durable source cwd; no such fixtures were executed by this judge.",
+        "Safety for ALL descendants: NO sudo, recovery investigation, user secrets, shell deletion/cleanup commands, inherited HOME/config/SDK cleanup, nested shell traps, destructive git, or user-data mutation. User already recovered data and requested no recovery work. Tests must use explicit process argv/env and owned fs.mkdtemp fixture HOME/config/SDK; retain them, do not delete. Review filesystem/network effects BEFORE tests/setup. Existing test-code cleanup of provably owned temporary paths may be inspected but NEVER run a shell trap or inherited HOME removal. Need live auth/device? Report unverified, don't access credentials. Propagate these constraints verbatim. Independent code/review agents get durable worktrees, not /tmp code checkouts. Keep existing worktrees and candidate evidence. Test/source fixtures may use /tmp, but document durable provenance. Parent verifies runtime agent.model openai-codex/gpt-6.1-sol; native normal leaves only, no delegation.",
+        "Do NOT run setup, tests, builds: parent owns audited isolated gates. Shared dependencies are read-only; no reinstall or guard bypass. Preserve old worktrees/candidate edits. No push/new PR/merge, publication is parent-owned. No per-worker wisdom note pile; return exact artifact untracked, parent writes aggregate wisdom."
       ],
       "priorAcceptedIntegrationProof": [
         {
@@ -26508,9 +26529,9 @@
     "baselineFiles": 766,
     "finalGate": "pending; incomplete focus coverage",
     "liveAuth": "unverified/failing; preserved",
-    "accepted": 838,
+    "accepted": 839,
     "total": 839,
-    "pending": 1,
+    "pending": 0,
     "sourceExtras": 73,
     "checkout": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
     "branch": "bruv/readability-pr45-sol-continuation",

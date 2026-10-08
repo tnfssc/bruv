@@ -169,7 +169,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -330,7 +330,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -510,7 +510,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -929,7 +929,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -1333,7 +1333,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -1640,7 +1640,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -1828,7 +1828,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -2039,7 +2039,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -2412,7 +2412,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -2740,7 +2740,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -3124,7 +3124,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -3143,20 +3143,20 @@
       ],
       "chars": 62387,
       "lines": 1367,
-      "status": "rejected",
-      "jobId": "task_5d582a15",
+      "status": "running",
+      "jobId": "task_04a03f90",
       "model": "openai-codex/gpt-6.1-sol",
       "workspace": {
         "kind": "worktree",
-        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_5d582a15",
-        "worktreePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_5d582a15",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_04a03f90",
+        "worktreePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_04a03f90",
         "sourcePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
-        "baseRef": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
-        "baseOid": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
-        "branch": "bruv/pr45-final-integrated-diff-lane-12-build-5d582a15",
+        "baseRef": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "baseOid": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "branch": "bruv/pr45-final-integrated-diff-lane-12-build-04a03f90",
         "preparationStatus": "ready",
-        "setupTaskId": "task_3d7a8edf",
-        "setupStatus": "failed",
+        "setupTaskId": "task_6d039270",
+        "setupStatus": "running",
         "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
       },
       "repairHistory": [
@@ -3421,138 +3421,160 @@
           },
           "candidate": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
           "status": "rejected"
-        }
-      ],
-      "repairReason": {
-        "changedSourcePaths": [
-          "scripts/loopback-parent-fixture.ts",
-          "tests/setup-native-release-gate.test.ts",
-          "tests/smoke-script.test.ts",
-          "tests/tooling-fixtures.test.ts"
-        ],
-        "priorObjections": [
-          {
-            "paths": [
-              "tests/setup-native-release-gate.test.ts:75-85",
-              "tests/smoke-script.test.ts:63-70",
-              "tests/tooling-fixtures.test.ts:125-133,202",
-              "scripts/loopback-parent-fixture.ts:85-91",
-              "tests/helpers.ts:5-36"
-            ],
-            "readingProblem": "The integrated fixture story still has contradictory process authority: native setup and outer smoke spread process.env without owned HOME/config/SDK locations; malformed-RPC driver omits env entirely; fixtureRpc spreads process.env and overrides only HOME and BRUV_CODING_AGENT_DIR. Thus parent provider/BRUV authority, PI/config settings, and runtime preload settings can cross these fixture boundaries. Local RUNNER_TEMP/TMPDIR and later smoke env -i probes do not isolate the earlier subprocesses. This is a source-visible violation of the requested explicit fixture environment contract; I do not claim these shell stand-ins reproduced the prior normal CLI HOME write. Smoke/RPC inheritance was present at baseline but remains in the integrated candidate.",
-            "requiredResult": "Use an explicit fresh environment rooted in each already owned mkdtemp fixture for every spawned command in these tests. Reuse ownedFixtureEnv and layer only needed stub PATH, REAL_NODE, RUNNER_TEMP, GITHUB_ENV, browser and sentinel settings. Give the malformed-RPC driver an explicit env; make fixtureRpc accept/use the owned environment rather than inheriting config/SDK/provider/BRUV state (update exercised callers coherently). Preserve setup fail-stop/handoff checks, smoke probe isolation and original assertions, and RPC buffering/trust/timeout assertions. Do not inspect credentials or remove inherited HOME/config/SDK."
-          }
-        ],
-        "reason": "Fresh actual integrated-code judgment required after assigned/context source bytes changed; prior quality and rejection evidence retained, never promoted by hashes."
-      },
-      "candidateOverride": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
-      "result": {
-        "lane": "lane-12",
-        "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
-        "candidate": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
-        "verdict": "REJECT",
-        "diffReadPaths": [
-          "tests/setup-native-release-gate.test.ts",
-          "tests/smoke-script.test.ts",
-          "tests/tooling-fixtures.test.ts",
-          "tests/update-release-shape.md",
-          "tests/update-release-shape.test.ts",
-          "tests/update-self-fixture.test.ts",
-          "tests/update-self-fixture.ts"
-        ],
-        "contextReadPaths": [
-          "tests/helpers.ts",
-          "scripts/setup-native-release-gate.sh",
-          "scripts/smoke.sh",
-          "scripts/loopback-parent-fixture.ts",
-          "scripts/network-none-fixture.ts",
-          "scripts/remote-e2e.ts",
-          "scripts/remote-pty-e2e.ts",
-          "scripts/remote-capability-pty-e2e.ts",
-          "scripts/remote-e2e.sh",
-          "tests/fixtures/remote-e2e/placement-parent.ts",
-          "src/update.ts",
-          "scripts/claude-compat-launcher.ts",
-          "scripts/bruv-claude-compat.sh",
-          "tests/update.test.ts",
-          "tests/connector-update.test.ts",
-          "scripts/ci.sh",
-          ".github/workflows/ci.yml",
-          ".github/workflows/release.yml"
-        ],
-        "sourceBlobs": {
-          "tests/setup-native-release-gate.test.ts": "7526d7a19167310599a6f540c64027bd30cf760b",
-          "tests/smoke-script.test.ts": "d82e1ba631ca80b259fdfceb4db0bd2399079b02",
-          "tests/tooling-fixtures.test.ts": "d3d11812d352a8ce3b81ed562b7f07231d85c610",
-          "tests/update-release-shape.md": "b117a5a3499c9169edad37d9514810ebded9b6b1",
-          "tests/update-release-shape.test.ts": "2803b32f5712f44343edb649aaffbbce2fe29921",
-          "tests/update-self-fixture.test.ts": "29f15040214d714a4e8dda774d0aa1539852357c",
-          "tests/update-self-fixture.ts": "a6959fca4cf82247d0f82207b4a0a69f28b1c87d"
         },
-        "sourceJourneys": [
-          {
-            "paths": [
-              "tests/setup-native-release-gate.test.ts",
-              "tests/helpers.ts",
-              "scripts/setup-native-release-gate.sh"
-            ],
-            "readingReason": "Fresh ownedFixtureEnv replaces parent authority; only stub PATH, REAL_NODE and fixture-specific handoff/failure/browser settings are layered. The real setup runs with argv boundaries preserved for paths containing spaces; stubs delegate only the SDK API probe to real Node. The exact call transcript, checksum input, symlink and appended environment assertions explain success without reading a giant options bag.",
-            "systemReason": "Download/extraction are stubbed; each failure stops the transcript at the expected command and leaves GITHUB_ENV unchanged. Browser cardinality failure stops before SDK setup. All setup paths and HOME/config/SDK are beneath the retained mkdtemp root. The specified prior setup objection is repaired in source."
+        {
+          "jobId": "task_5d582a15",
+          "model": "openai-codex/gpt-6.1-sol",
+          "workspace": {
+            "kind": "worktree",
+            "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_5d582a15",
+            "worktreePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_5d582a15",
+            "sourcePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
+            "baseRef": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+            "baseOid": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+            "branch": "bruv/pr45-final-integrated-diff-lane-12-build-5d582a15",
+            "preparationStatus": "ready",
+            "setupTaskId": "task_3d7a8edf",
+            "setupStatus": "failed",
+            "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
           },
-          {
-            "paths": [
+          "result": {
+            "lane": "lane-12",
+            "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
+            "candidate": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+            "verdict": "REJECT",
+            "diffReadPaths": [
+              "tests/setup-native-release-gate.test.ts",
               "tests/smoke-script.test.ts",
+              "tests/tooling-fixtures.test.ts",
+              "tests/update-release-shape.md",
+              "tests/update-release-shape.test.ts",
+              "tests/update-self-fixture.test.ts",
+              "tests/update-self-fixture.ts"
+            ],
+            "contextReadPaths": [
               "tests/helpers.ts",
+              "scripts/setup-native-release-gate.sh",
               "scripts/smoke.sh",
+              "scripts/loopback-parent-fixture.ts",
+              "scripts/network-none-fixture.ts",
+              "scripts/remote-e2e.ts",
+              "scripts/remote-pty-e2e.ts",
+              "scripts/remote-capability-pty-e2e.ts",
+              "scripts/remote-e2e.sh",
+              "tests/fixtures/remote-e2e/placement-parent.ts",
+              "src/update.ts",
+              "scripts/claude-compat-launcher.ts",
+              "scripts/bruv-claude-compat.sh",
+              "tests/update.test.ts",
+              "tests/connector-update.test.ts",
               "scripts/ci.sh",
               ".github/workflows/ci.yml",
               ".github/workflows/release.yml"
             ],
-            "readingReason": "Named build/product/connector stand-ins and independent fresh failure cases replace the old serial mutation chain that could mask later failures. expectedProbes is a concrete ordered transcript, not a framework. Source CI/release handoffs still build before --reuse-build.",
-            "systemReason": "The outer script now receives a fresh fixture environment and owned TMPDIR; the actual smoke script uses env -i for its probes. Sentinel/PATH assertions test that separate probe boundary. Every run checks cleanup of the script-owned temporary pair while retaining the outer fixture; product version/help, connector product/identity/stderr, web guidance, executable-pair and argument assertions remain. The specified prior outer-smoke objection is repaired."
-          },
-          {
-            "paths": [
-              "tests/tooling-fixtures.test.ts",
-              "tests/helpers.ts",
-              "scripts/loopback-parent-fixture.ts",
-              "scripts/network-none-fixture.ts",
-              "tests/fixtures/remote-e2e/placement-parent.ts",
-              "scripts/remote-e2e.ts",
-              "scripts/remote-pty-e2e.ts",
-              "scripts/remote-capability-pty-e2e.ts",
-              "scripts/remote-e2e.sh"
+            "sourceBlobs": {
+              "tests/setup-native-release-gate.test.ts": "7526d7a19167310599a6f540c64027bd30cf760b",
+              "tests/smoke-script.test.ts": "d82e1ba631ca80b259fdfceb4db0bd2399079b02",
+              "tests/tooling-fixtures.test.ts": "d3d11812d352a8ce3b81ed562b7f07231d85c610",
+              "tests/update-release-shape.md": "b117a5a3499c9169edad37d9514810ebded9b6b1",
+              "tests/update-release-shape.test.ts": "2803b32f5712f44343edb649aaffbbce2fe29921",
+              "tests/update-self-fixture.test.ts": "29f15040214d714a4e8dda774d0aa1539852357c",
+              "tests/update-self-fixture.ts": "a6959fca4cf82247d0f82207b4a0a69f28b1c87d"
+            },
+            "sourceJourneys": [
+              {
+                "paths": [
+                  "tests/setup-native-release-gate.test.ts",
+                  "tests/helpers.ts",
+                  "scripts/setup-native-release-gate.sh"
+                ],
+                "readingReason": "Fresh ownedFixtureEnv replaces parent authority; only stub PATH, REAL_NODE and fixture-specific handoff/failure/browser settings are layered. The real setup runs with argv boundaries preserved for paths containing spaces; stubs delegate only the SDK API probe to real Node. The exact call transcript, checksum input, symlink and appended environment assertions explain success without reading a giant options bag.",
+                "systemReason": "Download/extraction are stubbed; each failure stops the transcript at the expected command and leaves GITHUB_ENV unchanged. Browser cardinality failure stops before SDK setup. All setup paths and HOME/config/SDK are beneath the retained mkdtemp root. The specified prior setup objection is repaired in source."
+              },
+              {
+                "paths": [
+                  "tests/smoke-script.test.ts",
+                  "tests/helpers.ts",
+                  "scripts/smoke.sh",
+                  "scripts/ci.sh",
+                  ".github/workflows/ci.yml",
+                  ".github/workflows/release.yml"
+                ],
+                "readingReason": "Named build/product/connector stand-ins and independent fresh failure cases replace the old serial mutation chain that could mask later failures. expectedProbes is a concrete ordered transcript, not a framework. Source CI/release handoffs still build before --reuse-build.",
+                "systemReason": "The outer script now receives a fresh fixture environment and owned TMPDIR; the actual smoke script uses env -i for its probes. Sentinel/PATH assertions test that separate probe boundary. Every run checks cleanup of the script-owned temporary pair while retaining the outer fixture; product version/help, connector product/identity/stderr, web guidance, executable-pair and argument assertions remain. The specified prior outer-smoke objection is repaired."
+              },
+              {
+                "paths": [
+                  "tests/tooling-fixtures.test.ts",
+                  "tests/helpers.ts",
+                  "scripts/loopback-parent-fixture.ts",
+                  "scripts/network-none-fixture.ts",
+                  "tests/fixtures/remote-e2e/placement-parent.ts",
+                  "scripts/remote-e2e.ts",
+                  "scripts/remote-pty-e2e.ts",
+                  "scripts/remote-capability-pty-e2e.ts",
+                  "scripts/remote-e2e.sh"
+                ],
+                "readingReason": "fixtureRpc now takes a required caller-owned env directly instead of manufacturing process.env overrides. Both test callers supply it, including the malformed-JSON driver and its nested RPC child. Deterministic partial-line completion replaces the timer and verifies that an incomplete request produces no event before the newline; trust denial/prompt/timeout expectations remain exact.",
+                "systemReason": "The three script RPC callers coherently supply rpcEnv, layer only fixture agent/Docker/stub PATH settings, and use the shell-owned FIXTURE_DROP_DIR/home also used for parent state. The fake parent model endpoint and placementReply agree on model id, text/tool deltas and finish frames. Unit lifetime waits for child close and stops the loopback listener. network-none cleanup targets only retainedRoot/scratch, not the retained HOME or external evidence. The specified prior RPC inheritance objections are repaired."
+              },
+              {
+                "paths": [
+                  "tests/update-release-shape.test.ts",
+                  "tests/update-release-shape.md",
+                  "src/update.ts",
+                  "scripts/claude-compat-launcher.ts",
+                  "scripts/bruv-claude-compat.sh",
+                  "tests/connector-update.test.ts",
+                  "tests/update.test.ts"
+                ],
+                "readingReason": "The in-memory release exposes metadata, payloads and request transcript directly; mutations describe failure inputs without a sprawling Override context. Synthetic normal bytes and actual emitted launcher replace unrealistic synthetic connector bytes. probeFixture reads staged bytes and the selected normal sibling rather than returning a version solely from the pathname. Documentation distinguishes synthetic probes from real platform boot.",
+                "systemReason": "Actual updater resolves four exact official metadata assets before staging, checks both named hashes, probes normal --version and connector --bruv-version with the staged sibling override, optionally selects the macOS helper probe, checks both installed identities before rename, and cleans staging on these failures. Tests now check both unchanged siblings/new-owner bytes, staging locations, request order and probe selection. Checksum-valid tar-shaped payloads reach the injected staged probe instead of failing only a test preflight. Real compiled shell-payload routes were inspected as bounded context, not executed."
+              },
+              {
+                "paths": [
+                  "tests/update-self-fixture.ts",
+                  "tests/update-self-fixture.test.ts",
+                  "tests/update.test.ts:637-708",
+                  "tests/helpers.ts",
+                  "src/update.ts"
+                ],
+                "readingReason": "createFixtureReleaseFetch is a small closed release map shared by transport tests and the import.meta.main private runner. Import no longer requires environment paths or starts an update. Main selects the host asset and declared product version while leaving compiled-authority detection and actual staged subprocess probes intact. The dedicated new tests own compile/runtime environment and verify runner/payload hashes.",
+                "systemReason": "The new suite preserves temporary-target-only update semantics and verifies source refusal, wrong staged version rollback and reusable real-pair installation. But the exercised caller in tests/update.test.ts compiles this same changed runner with no env, and its adjacent compiled-authority test spreads process.env. Final installed shell probes omit env too. Ownership in the new test file therefore does not establish an explicit fixture environment for the integrated private-updater test journey."
+              }
             ],
-            "readingReason": "fixtureRpc now takes a required caller-owned env directly instead of manufacturing process.env overrides. Both test callers supply it, including the malformed-JSON driver and its nested RPC child. Deterministic partial-line completion replaces the timer and verifies that an incomplete request produces no event before the newline; trust denial/prompt/timeout expectations remain exact.",
-            "systemReason": "The three script RPC callers coherently supply rpcEnv, layer only fixture agent/Docker/stub PATH settings, and use the shell-owned FIXTURE_DROP_DIR/home also used for parent state. The fake parent model endpoint and placementReply agree on model id, text/tool deltas and finish frames. Unit lifetime waits for child close and stops the loopback listener. network-none cleanup targets only retainedRoot/scratch, not the retained HOME or external evidence. The specified prior RPC inheritance objections are repaired."
-          },
-          {
-            "paths": [
-              "tests/update-release-shape.test.ts",
-              "tests/update-release-shape.md",
-              "src/update.ts",
-              "scripts/claude-compat-launcher.ts",
-              "scripts/bruv-claude-compat.sh",
-              "tests/connector-update.test.ts",
-              "tests/update.test.ts"
+            "integrationReadingReason": "The assigned seven diffs were fully read, including deletions. The setup/smoke/RPC repairs satisfy the specified earlier objections locally and their helper/caller handoffs are coherent. The release-shape rewrite improves intrinsic reading burden: concrete payload/metadata authority, independently owned pair assertions, and truthful synthetic-versus-runtime documentation replace path-only success and serial failure masking. The self-fixture transport extraction remains small and preserves public updater authority. Nevertheless the integrated caller of that changed private runner in tests/update.test.ts still contradicts the explicit fixture process-environment contract; this is a cross-file ownership gap, not stylistic churn or a verdict inferred from prior artifacts/tests.",
+            "objections": [
+              {
+                "paths": [
+                  "tests/update.test.ts:641-653",
+                  "tests/update.test.ts:671-685",
+                  "tests/update.test.ts:699-705",
+                  "tests/update-self-fixture.ts",
+                  "tests/update-self-fixture.test.ts:53-75",
+                  "tests/helpers.ts:5-36"
+                ],
+                "readingProblem": "The new owned-environment private-updater suite coexists with another integrated exercised caller of the same changed private runner that has contradictory process authority. tests/update.test.ts builds and runs compiled-bun-fixture with {...process.env, TMPDIR:\"/var/tmp\", HERDR_ENV:\"0\"}, compiles tests/update-self-fixture.ts with no env, and runs final installed version probes with no env. The runner execution uses an explicit HOME-only environment but no explicit owned config/SDK locations. Parent HOME/config/SDK/provider/BRUV/preload settings can cross the inherited compile/probe boundaries; later fresh runner settings cannot isolate the earlier build. This is source-visible noncompliance with the explicit fixture environment contract, not evidence that shell stand-ins reproduced the recovered HOME write.",
+                "requiredResult": "Thread ownedFixtureEnv rooted in each already owned mkdtemp fixture through every build/run/check command in this private compiled updater integration block, including the caller compiling tests/update-self-fixture.ts. Use explicit argv and fixture cwd with absolute source paths where necessary; layer only needed PATH and BRUV_TEST_UPDATE_* settings. Preserve compiled namespace/lookalike checks, real staged probes, paired-byte assertions and unchanged-runner checks. Retain the owned fixtures for inspection; do not inspect credentials or remove inherited HOME/config/SDK."
+              }
             ],
-            "readingReason": "The in-memory release exposes metadata, payloads and request transcript directly; mutations describe failure inputs without a sprawling Override context. Synthetic normal bytes and actual emitted launcher replace unrealistic synthetic connector bytes. probeFixture reads staged bytes and the selected normal sibling rather than returning a version solely from the pathname. Documentation distinguishes synthetic probes from real platform boot.",
-            "systemReason": "Actual updater resolves four exact official metadata assets before staging, checks both named hashes, probes normal --version and connector --bruv-version with the staged sibling override, optionally selects the macOS helper probe, checks both installed identities before rename, and cleans staging on these failures. Tests now check both unchanged siblings/new-owner bytes, staging locations, request order and probe selection. Checksum-valid tar-shaped payloads reach the injected staged probe instead of failing only a test preflight. Real compiled shell-payload routes were inspected as bounded context, not executed."
+            "limits": [
+              "READ-ONLY review: no tests, setup, builds, installs, formatters, auth/device/secret access, network requests, recovery work, shell deletion/cleanup, destructive git, or source edits were performed. No delegation; no unsupported Pi preparation was attempted or retried. Only .pr45-final-lane-result.json was written.",
+              "All seven assigned baseline-to-candidate diffs are fully read; no assigned unread gaps. Candidate source identities are recorded as Git blobs, not acceptance evidence. No prior lane artifacts, counts, summaries or green tests were used as verdict.",
+              "Context is bounded rather than whole-repo: complete helpers, setup/smoke/RPC, placement reply, updater and launcher source; network fixture environment/run and cleanup/canonical-output paths; remote script RPC environment/caller/lifetime excerpts and shell HOME/drop-root handoff; tests/update.test.ts target ownership and private compiled updater block plus its baseline-to-candidate integration changes; connector-update compilation/environment intro; CI/release build/reuse handoff excerpts. No full-source attestation for partial contexts.",
+              "Runtime behavior, live auth/device flows, actual published-binary platform boot and real reusable dist pair availability are unverified. Synthetic release-shape probes are not platform execution proof. The ownership objection does not claim reproduced user-data loss.",
+              "Lane-only source judgment, not a whole-repository sign-off. Durable review worktree/candidate provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_5d582a15 at b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0. Existing worktrees and candidate evidence preserved; /tmp and /var/tmp paths were source fixture declarations only and were not executed."
+            ]
           },
-          {
-            "paths": [
-              "tests/update-self-fixture.ts",
-              "tests/update-self-fixture.test.ts",
-              "tests/update.test.ts:637-708",
-              "tests/helpers.ts",
-              "src/update.ts"
-            ],
-            "readingReason": "createFixtureReleaseFetch is a small closed release map shared by transport tests and the import.meta.main private runner. Import no longer requires environment paths or starts an update. Main selects the host asset and declared product version while leaving compiled-authority detection and actual staged subprocess probes intact. The dedicated new tests own compile/runtime environment and verify runner/payload hashes.",
-            "systemReason": "The new suite preserves temporary-target-only update semantics and verifies source refusal, wrong staged version rollback and reusable real-pair installation. But the exercised caller in tests/update.test.ts compiles this same changed runner with no env, and its adjacent compiled-authority test spreads process.env. Final installed shell probes omit env too. Ownership in the new test file therefore does not establish an explicit fixture environment for the integrated private-updater test journey."
-          }
+          "candidate": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+          "status": "rejected"
+        }
+      ],
+      "repairReason": {
+        "changedSourcePaths": [
+          "tests/update.test.ts"
         ],
-        "integrationReadingReason": "The assigned seven diffs were fully read, including deletions. The setup/smoke/RPC repairs satisfy the specified earlier objections locally and their helper/caller handoffs are coherent. The release-shape rewrite improves intrinsic reading burden: concrete payload/metadata authority, independently owned pair assertions, and truthful synthetic-versus-runtime documentation replace path-only success and serial failure masking. The self-fixture transport extraction remains small and preserves public updater authority. Nevertheless the integrated caller of that changed private runner in tests/update.test.ts still contradicts the explicit fixture process-environment contract; this is a cross-file ownership gap, not stylistic churn or a verdict inferred from prior artifacts/tests.",
-        "objections": [
+        "priorObjections": [
           {
             "paths": [
               "tests/update.test.ts:641-653",
@@ -3566,14 +3588,9 @@
             "requiredResult": "Thread ownedFixtureEnv rooted in each already owned mkdtemp fixture through every build/run/check command in this private compiled updater integration block, including the caller compiling tests/update-self-fixture.ts. Use explicit argv and fixture cwd with absolute source paths where necessary; layer only needed PATH and BRUV_TEST_UPDATE_* settings. Preserve compiled namespace/lookalike checks, real staged probes, paired-byte assertions and unchanged-runner checks. Retain the owned fixtures for inspection; do not inspect credentials or remove inherited HOME/config/SDK."
           }
         ],
-        "limits": [
-          "READ-ONLY review: no tests, setup, builds, installs, formatters, auth/device/secret access, network requests, recovery work, shell deletion/cleanup, destructive git, or source edits were performed. No delegation; no unsupported Pi preparation was attempted or retried. Only .pr45-final-lane-result.json was written.",
-          "All seven assigned baseline-to-candidate diffs are fully read; no assigned unread gaps. Candidate source identities are recorded as Git blobs, not acceptance evidence. No prior lane artifacts, counts, summaries or green tests were used as verdict.",
-          "Context is bounded rather than whole-repo: complete helpers, setup/smoke/RPC, placement reply, updater and launcher source; network fixture environment/run and cleanup/canonical-output paths; remote script RPC environment/caller/lifetime excerpts and shell HOME/drop-root handoff; tests/update.test.ts target ownership and private compiled updater block plus its baseline-to-candidate integration changes; connector-update compilation/environment intro; CI/release build/reuse handoff excerpts. No full-source attestation for partial contexts.",
-          "Runtime behavior, live auth/device flows, actual published-binary platform boot and real reusable dist pair availability are unverified. Synthetic release-shape probes are not platform execution proof. The ownership objection does not claim reproduced user-data loss.",
-          "Lane-only source judgment, not a whole-repository sign-off. Durable review worktree/candidate provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_5d582a15 at b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0. Existing worktrees and candidate evidence preserved; /tmp and /var/tmp paths were source fixture declarations only and were not executed."
-        ]
-      }
+        "reason": "Fresh actual integrated-code judgment required after assigned/context source bytes changed; prior quality and rejection evidence retained, never promoted by hashes."
+      },
+      "candidateOverride": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06"
     },
     {
       "id": "lane-13",
@@ -3584,110 +3601,139 @@
       ],
       "chars": 53532,
       "lines": 1156,
-      "status": "accepted",
-      "jobId": "task_76f77dde",
+      "status": "running",
+      "jobId": "task_301c1339",
       "model": "openai-codex/gpt-6.1-sol",
       "workspace": {
         "kind": "worktree",
-        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_76f77dde",
-        "worktreePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_76f77dde",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_301c1339",
+        "worktreePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_301c1339",
         "sourcePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
-        "baseRef": "af3602cf3d5b62641450c7cc24bb0350334b6652",
-        "baseOid": "af3602cf3d5b62641450c7cc24bb0350334b6652",
-        "branch": "bruv/pr45-final-integrated-diff-lane-13-build-76f77dde",
+        "baseRef": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "baseOid": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "branch": "bruv/pr45-final-integrated-diff-lane-13-build-301c1339",
         "preparationStatus": "ready",
-        "setupTaskId": "task_5602ba47",
-        "setupStatus": "running",
+        "setupTaskId": "task_8ce828bb",
+        "setupStatus": "failed",
         "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
-      },
-      "result": {
-        "lane": "lane-13",
-        "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
-        "candidate": "af3602cf3d5b62641450c7cc24bb0350334b6652",
-        "verdict": "ACCEPT",
-        "diffReadPaths": [
-          "tests/update.test.ts",
-          "tests/verify-update.test.ts"
-        ],
-        "contextReadPaths": [
-          "tests/update.test.ts",
-          "tests/verify-update.test.ts",
-          "src/update.ts",
-          "src/cli.ts",
-          "scripts/verify-update.ts",
-          "scripts/verify-update-probe.ts",
-          "scripts/bruv-claude-compat.sh",
-          "tests/update-self-fixture.ts",
-          "tests/compiled-bun-fixture.ts",
-          "tests/update-v0.16.3-fixture.ts"
-        ],
-        "sourceBlobs": {
-          "tests/update.test.ts": "6569bd7e550e94dcd82b41da3774848f4347eae2",
-          "tests/verify-update.test.ts": "9d3d678072b9e5994e3653c91e05f0d31cc8daa2"
-        },
-        "sourceJourneys": [
-          {
-            "paths": [
-              "tests/update.test.ts",
-              "src/update.ts",
-              "src/cli.ts"
-            ],
-            "readingReason": "Read the complete test diff including removed positions, both full baseline and candidate updater implementations, and the public CLI update branch at both revisions. Fixture options now separate bruv and connector artifacts, use the public UpdateDeps type, and deliberately hash expected rather than corrupt returned bytes. Official URL rejection now supplies all four assets and checks the particular normal-asset error instead of allowing an unrelated missing-connector rejection.",
-            "systemReason": "fetchStablePair still resolves exact official metadata for both binaries and checksums before layout inspection, download or publication. Source invocation and unsupported-host guards remain before fetch. The CLI still supplies check/currentVersion/onDownload and interprets the same four statuses. Current/newer metadata-only behavior, same-version repair, and no-downgrade behavior remain explicitly asserted; helper extraction preserves their ordering."
-          },
-          {
-            "paths": [
-              "tests/update.test.ts",
-              "src/update.ts",
-              "scripts/bruv-claude-compat.sh"
-            ],
-            "readingReason": "Followed moved installed fallback and override tests and staged pair tests through pairProbe, installedConnectorMatches, installReleasePair, and the actual shell launcher. Read unchanged staged connector and macOS helper assertion bodies, not just relocation hunks.",
-            "systemReason": "Installed probes strip inherited BRUV_CLAUDE_COMPAT_BRUV_PATH; staged connector probes bind it to the verified candidate normal executable. Installed-only legacy fallback remains distinct from strict staged --bruv-version checks, and macOS live-helper probing still precedes publication. Tests distinguish product identity from the label-only connector --version, matching the launcher authority path."
-          },
-          {
-            "paths": [
-              "tests/update.test.ts",
-              "src/update.ts"
-            ],
-            "readingReason": "Followed the added event-order test and moved concurrency, first/second rename, and rollback-failure tests into stageVerifiedExecutable and installReleasePair. Compared baseline staging, backups, identity checks, connector-first publication, reversed rollback and final cleanup directly with candidate source.",
-            "systemReason": "The new assertion records sequential downloads/probes/publication and reads both original installed files during probes and both backup files at publication. It checks the real lifetime boundary rather than merely a returned success. Existing tests retain missing/existing connector rollback, concurrent creation/change protection, permission/layout/mode preservation and retained-backup diagnostics. The transaction owner still holds stage, replaced entries and keepRecovery locally; extraction has not split responsibility for rollback or cleanup."
-          },
-          {
-            "paths": [
-              "tests/verify-update.test.ts",
-              "scripts/verify-update.ts",
-              "scripts/verify-update-probe.ts",
-              "scripts/bruv-claude-compat.sh",
-              "tests/update-v0.16.3-fixture.ts"
-            ],
-            "readingReason": "Read complete verification-test diff and current gate implementation, baseline gate ownership/path excerpts, diagnostic serializer, launcher and frozen updater staging/publication/rollback/probe excerpts. Named normal/connector fixture paths and named current/frozen updater choice replace positional indexes and a boolean. Inspected mismatch diagnostic assertions and added empty-TMPDIR assertions.",
-            "systemReason": "Generated fixture normal implements both normal --version and connector product/display identities. Gate validates both staged checksums before allocating its work directory, compiles the selected updater, injects corrupt checksums and normal-rename failure, and checks byte preservation before replacement. install is canonicalized with realpath, so rename injection still identifies the normal target through an aliased TMPDIR. Gate finally removes only its own mkdtemp directory; outer fixture owns its root. The launcher staged --version special case coheres with frozen updater probes, whereas current updater uses --bruv-version; post-publication identity remains label-only."
-          },
-          {
-            "paths": [
-              "tests/update.test.ts",
-              "tests/update-self-fixture.ts",
-              "tests/compiled-bun-fixture.ts",
-              "src/update.ts"
-            ],
-            "readingReason": "Read relocated private compiled-integration tests and full candidate fixture sources. The compiled self-fixture builds an in-memory official release map and requires explicit target/payload paths; compiled invocation fixture actually invokes the real namespace predicate.",
-            "systemReason": "Relocation preserves real compiled detection, real staged process probes, non-running temporary installation replacement and the check that the runner itself is unchanged. The helper is a closed transport fixture, not a substitute for updater ownership or authority checks."
-          }
-        ],
-        "integrationReadingReason": "Within this lane the integrated code preserves the baseline behavioral assertions while improving navigation by lifecycle phase: invocation/authority, layout, selection/repair, artifact integrity, staged verification, publication/recovery and compiled integration. Typed per-artifact fixture options replace an untyped mixed option bag without introducing a generic framework. Named gate artifacts and updater modes remove positional/boolean interpretation. The updater helpers expose concrete release/pair boundaries and retain transaction lifetime in one function, rather than spreading cleanup across an abstraction or context bag. The added source-level order and temporary-directory assertions fit the actual integrated caller/launcher/gate paths. No substantive cross-file contradiction or lost ownership was found in these journeys; this is not whole-repository approval.",
-        "objections": [],
-        "limits": [
-          "Both assigned baseline-to-candidate diffs were fully read including deletions: 46,281 and 7,251 characters respectively. No assigned unread gaps. Context paths are actual Git source, not prior judgments, coverage summaries or test results. Context scope is full candidate src/update.ts, scripts/verify-update.ts, scripts/verify-update-probe.ts, launcher and two private compiled fixtures; full baseline updater; selected public CLI branches, baseline gate ownership/path excerpts and frozen updater staging/rollback/probe excerpts. No attestation to unread parts of those excerpted files or other lanes.",
-          "Read-only review; no tests/setup/build/install/formatter/auth/device/network access, unsupported Pi preparation, delegation, shell cleanup or source edits were performed. Only this requested untracked result file was written. No recovery investigation or user-data mutation.",
-          "Existing cleanup code was inspected only: outer tests track mkdtemp roots, gate removes its allocated directory, updater retains its stage on rollback failure. Existing build/test subprocesses sometimes inherit process.env; they were not executed or treated as safe authorization. Any later test execution must independently obey explicit argv/env and owned fixture HOME/config/SDK plus retained fixtures. Live auth/device and platform runtime behavior remain unverified.",
-          "Durable provenance: reviewed candidate HEAD af3602cf3d5b62641450c7cc24bb0350334b6652 in /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_76f77dde. No temporary code checkout, worktree removal or candidate mutation."
-        ]
       },
       "scopedBlobComparison": {
         "target": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
         "unchanged": true,
         "contextChangedPaths": []
-      }
+      },
+      "repairHistory": [
+        {
+          "jobId": "task_76f77dde",
+          "model": "openai-codex/gpt-6.1-sol",
+          "workspace": {
+            "kind": "worktree",
+            "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_76f77dde",
+            "worktreePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_76f77dde",
+            "sourcePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
+            "baseRef": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+            "baseOid": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+            "branch": "bruv/pr45-final-integrated-diff-lane-13-build-76f77dde",
+            "preparationStatus": "ready",
+            "setupTaskId": "task_5602ba47",
+            "setupStatus": "running",
+            "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+          },
+          "result": {
+            "lane": "lane-13",
+            "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
+            "candidate": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+            "verdict": "ACCEPT",
+            "diffReadPaths": [
+              "tests/update.test.ts",
+              "tests/verify-update.test.ts"
+            ],
+            "contextReadPaths": [
+              "tests/update.test.ts",
+              "tests/verify-update.test.ts",
+              "src/update.ts",
+              "src/cli.ts",
+              "scripts/verify-update.ts",
+              "scripts/verify-update-probe.ts",
+              "scripts/bruv-claude-compat.sh",
+              "tests/update-self-fixture.ts",
+              "tests/compiled-bun-fixture.ts",
+              "tests/update-v0.16.3-fixture.ts"
+            ],
+            "sourceBlobs": {
+              "tests/update.test.ts": "6569bd7e550e94dcd82b41da3774848f4347eae2",
+              "tests/verify-update.test.ts": "9d3d678072b9e5994e3653c91e05f0d31cc8daa2"
+            },
+            "sourceJourneys": [
+              {
+                "paths": [
+                  "tests/update.test.ts",
+                  "src/update.ts",
+                  "src/cli.ts"
+                ],
+                "readingReason": "Read the complete test diff including removed positions, both full baseline and candidate updater implementations, and the public CLI update branch at both revisions. Fixture options now separate bruv and connector artifacts, use the public UpdateDeps type, and deliberately hash expected rather than corrupt returned bytes. Official URL rejection now supplies all four assets and checks the particular normal-asset error instead of allowing an unrelated missing-connector rejection.",
+                "systemReason": "fetchStablePair still resolves exact official metadata for both binaries and checksums before layout inspection, download or publication. Source invocation and unsupported-host guards remain before fetch. The CLI still supplies check/currentVersion/onDownload and interprets the same four statuses. Current/newer metadata-only behavior, same-version repair, and no-downgrade behavior remain explicitly asserted; helper extraction preserves their ordering."
+              },
+              {
+                "paths": [
+                  "tests/update.test.ts",
+                  "src/update.ts",
+                  "scripts/bruv-claude-compat.sh"
+                ],
+                "readingReason": "Followed moved installed fallback and override tests and staged pair tests through pairProbe, installedConnectorMatches, installReleasePair, and the actual shell launcher. Read unchanged staged connector and macOS helper assertion bodies, not just relocation hunks.",
+                "systemReason": "Installed probes strip inherited BRUV_CLAUDE_COMPAT_BRUV_PATH; staged connector probes bind it to the verified candidate normal executable. Installed-only legacy fallback remains distinct from strict staged --bruv-version checks, and macOS live-helper probing still precedes publication. Tests distinguish product identity from the label-only connector --version, matching the launcher authority path."
+              },
+              {
+                "paths": [
+                  "tests/update.test.ts",
+                  "src/update.ts"
+                ],
+                "readingReason": "Followed the added event-order test and moved concurrency, first/second rename, and rollback-failure tests into stageVerifiedExecutable and installReleasePair. Compared baseline staging, backups, identity checks, connector-first publication, reversed rollback and final cleanup directly with candidate source.",
+                "systemReason": "The new assertion records sequential downloads/probes/publication and reads both original installed files during probes and both backup files at publication. It checks the real lifetime boundary rather than merely a returned success. Existing tests retain missing/existing connector rollback, concurrent creation/change protection, permission/layout/mode preservation and retained-backup diagnostics. The transaction owner still holds stage, replaced entries and keepRecovery locally; extraction has not split responsibility for rollback or cleanup."
+              },
+              {
+                "paths": [
+                  "tests/verify-update.test.ts",
+                  "scripts/verify-update.ts",
+                  "scripts/verify-update-probe.ts",
+                  "scripts/bruv-claude-compat.sh",
+                  "tests/update-v0.16.3-fixture.ts"
+                ],
+                "readingReason": "Read complete verification-test diff and current gate implementation, baseline gate ownership/path excerpts, diagnostic serializer, launcher and frozen updater staging/publication/rollback/probe excerpts. Named normal/connector fixture paths and named current/frozen updater choice replace positional indexes and a boolean. Inspected mismatch diagnostic assertions and added empty-TMPDIR assertions.",
+                "systemReason": "Generated fixture normal implements both normal --version and connector product/display identities. Gate validates both staged checksums before allocating its work directory, compiles the selected updater, injects corrupt checksums and normal-rename failure, and checks byte preservation before replacement. install is canonicalized with realpath, so rename injection still identifies the normal target through an aliased TMPDIR. Gate finally removes only its own mkdtemp directory; outer fixture owns its root. The launcher staged --version special case coheres with frozen updater probes, whereas current updater uses --bruv-version; post-publication identity remains label-only."
+              },
+              {
+                "paths": [
+                  "tests/update.test.ts",
+                  "tests/update-self-fixture.ts",
+                  "tests/compiled-bun-fixture.ts",
+                  "src/update.ts"
+                ],
+                "readingReason": "Read relocated private compiled-integration tests and full candidate fixture sources. The compiled self-fixture builds an in-memory official release map and requires explicit target/payload paths; compiled invocation fixture actually invokes the real namespace predicate.",
+                "systemReason": "Relocation preserves real compiled detection, real staged process probes, non-running temporary installation replacement and the check that the runner itself is unchanged. The helper is a closed transport fixture, not a substitute for updater ownership or authority checks."
+              }
+            ],
+            "integrationReadingReason": "Within this lane the integrated code preserves the baseline behavioral assertions while improving navigation by lifecycle phase: invocation/authority, layout, selection/repair, artifact integrity, staged verification, publication/recovery and compiled integration. Typed per-artifact fixture options replace an untyped mixed option bag without introducing a generic framework. Named gate artifacts and updater modes remove positional/boolean interpretation. The updater helpers expose concrete release/pair boundaries and retain transaction lifetime in one function, rather than spreading cleanup across an abstraction or context bag. The added source-level order and temporary-directory assertions fit the actual integrated caller/launcher/gate paths. No substantive cross-file contradiction or lost ownership was found in these journeys; this is not whole-repository approval.",
+            "objections": [],
+            "limits": [
+              "Both assigned baseline-to-candidate diffs were fully read including deletions: 46,281 and 7,251 characters respectively. No assigned unread gaps. Context paths are actual Git source, not prior judgments, coverage summaries or test results. Context scope is full candidate src/update.ts, scripts/verify-update.ts, scripts/verify-update-probe.ts, launcher and two private compiled fixtures; full baseline updater; selected public CLI branches, baseline gate ownership/path excerpts and frozen updater staging/rollback/probe excerpts. No attestation to unread parts of those excerpted files or other lanes.",
+              "Read-only review; no tests/setup/build/install/formatter/auth/device/network access, unsupported Pi preparation, delegation, shell cleanup or source edits were performed. Only this requested untracked result file was written. No recovery investigation or user-data mutation.",
+              "Existing cleanup code was inspected only: outer tests track mkdtemp roots, gate removes its allocated directory, updater retains its stage on rollback failure. Existing build/test subprocesses sometimes inherit process.env; they were not executed or treated as safe authorization. Any later test execution must independently obey explicit argv/env and owned fixture HOME/config/SDK plus retained fixtures. Live auth/device and platform runtime behavior remain unverified.",
+              "Durable provenance: reviewed candidate HEAD af3602cf3d5b62641450c7cc24bb0350334b6652 in /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_76f77dde. No temporary code checkout, worktree removal or candidate mutation."
+            ]
+          },
+          "candidate": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+          "status": "accepted"
+        }
+      ],
+      "repairReason": {
+        "changedSourcePaths": [
+          "tests/update.test.ts"
+        ],
+        "priorObjections": [],
+        "reason": "Fresh actual integrated-code judgment required after assigned/context source bytes changed; prior quality and rejection evidence retained, never promoted by hashes."
+      },
+      "candidateOverride": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06"
     },
     {
       "id": "lane-14",
@@ -3847,7 +3893,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -4025,7 +4071,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -4212,7 +4258,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -4401,7 +4447,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -4576,7 +4622,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -4741,7 +4787,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -4886,7 +4932,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -5035,7 +5081,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -5194,7 +5240,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -5368,7 +5414,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -5406,7 +5452,7 @@
         "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
       },
       "scopedBlobComparison": {
-        "target": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
         "unchanged": true,
         "contextChangedPaths": []
       },
@@ -6137,6 +6183,11 @@
           "Candidate source was read by exact Git object in the durable existing worktree; the only intentional write is this untracked review result. Test fixtures, when run by an authorized owner, may reside under /tmp while source remains in a durable worktree. Existing worktrees and candidate evidence are preserved.",
           "Safety for ALL descendants: NO sudo, recovery investigation, user secrets, shell deletion/cleanup commands, inherited HOME/config/SDK cleanup, nested shell traps, destructive git, or user-data mutation. User already recovered data and requested no recovery work. Tests must use explicit process argv/env and owned fs.mkdtemp fixture HOME/config/SDK; retain them, do not delete. Review filesystem/network effects BEFORE tests/setup. Existing test-code cleanup of provably owned temporary paths may be inspected but NEVER run a shell trap or inherited HOME removal. Need live auth/device? Report unverified, don't access credentials. Propagate these constraints verbatim. Independent code/review agents get durable worktrees, not /tmp code checkouts. Keep existing worktrees and candidate evidence. Test/source fixtures may use /tmp, but document durable provenance."
         ]
+      },
+      "scopedBlobComparison": {
+        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "unchanged": true,
+        "contextChangedPaths": []
       }
     },
     {
@@ -6152,7 +6203,7 @@
       ],
       "chars": 57695,
       "lines": 1455,
-      "status": "running",
+      "status": "accepted",
       "jobId": "task_6d37f4ed",
       "model": "openai-codex/gpt-6.1-sol",
       "workspace": {
@@ -6477,7 +6528,121 @@
         ],
         "reason": "Fresh actual integrated-code judgment required after assigned/context source bytes changed; prior quality and rejection evidence retained, never promoted by hashes."
       },
-      "candidateOverride": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0"
+      "candidateOverride": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+      "result": {
+        "lane": "lane-26",
+        "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
+        "candidate": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+        "verdict": "ACCEPT",
+        "diffReadPaths": [
+          "tests/task-monitor-tui-fixture.ts",
+          "tests/task-monitor-tui.test.ts",
+          "tests/tool-schema.test.ts",
+          "tests/typescript-execution.test.ts",
+          "tests/typescript-images.test.ts",
+          "tests/worktree-workspace.test.ts"
+        ],
+        "contextReadPaths": [
+          "tests/helpers.ts",
+          "tests/setup.ts",
+          "tests/tui-helpers.ts",
+          "tests/fixtures/worktree-workspace-cases.ts",
+          "src/tasks/job-service.ts",
+          "src/tasks/task-manager.ts",
+          "src/tasks/agent-session.ts",
+          "src/tasks/worktree-workspace.ts",
+          "src/history/session-manager.ts",
+          "src/tasks/resume-safeguards.ts",
+          "src/ui/task-monitor.ts",
+          "src/typescript/execution.ts",
+          "src/typescript/extension.ts",
+          "src/typescript/job-bridge.ts",
+          "src/typescript/output-capture.ts",
+          "src/typescript/images.ts",
+          "src/typescript/definition.ts",
+          "src/tool-schema.ts",
+          "src/live/setup-probe.ts",
+          "src/agent/extension.ts",
+          "src/cli.ts",
+          "node_modules/@earendil-works/pi-coding-agent/dist/core/session-manager.js",
+          "node_modules/@earendil-works/pi-coding-agent/dist/config.js"
+        ],
+        "sourceBlobs": {
+          "tests/task-monitor-tui-fixture.ts": "c46f9ca37d2c4959cdf48b98dd73844dd651956f",
+          "tests/task-monitor-tui.test.ts": "09003456fc0d06b7bcfdc5b5e16d54771b5da94a",
+          "tests/tool-schema.test.ts": "540a0d1a2cf47c8d09a7040cc7b29637d780655f",
+          "tests/typescript-execution.test.ts": "95801cca1074a934009985ab6f1c24e903b961f5",
+          "tests/typescript-images.test.ts": "c812a1a951d36405c07022c0aaf61963bc51bdd6",
+          "tests/worktree-workspace.test.ts": "3d63bbaecbf6268d8b416714d288f17592fb0709"
+        },
+        "sourceJourneys": [
+          {
+            "paths": [
+              "tests/worktree-workspace.test.ts:8-31",
+              "tests/helpers.ts:ownedFixtureEnv",
+              "tests/fixtures/worktree-workspace-cases.ts:fixture/withWorktreeJobs/trust and async setup cases",
+              "src/tasks/job-service.ts:550-592,970-1144",
+              "src/tasks/agent-session.ts",
+              "src/tasks/task-manager.ts:activatePreparedAgent/shutdown"
+            ],
+            "readingReason": "Read the deleted baseline cases and their full relocated candidate implementation, not just the wrapper. The child runtime now has explicit Bun test argv/preload, a fresh cwd, a retained mkdtemp HOME/config/PI+BRUV SDK/temp/Git boundary, and a recorded launch environment. All service contexts that can prepare sessions provide a per-case sessionDir. The small job scope owns draining rather than pretending that JobService environment injection owns process.env.",
+            "systemReason": "The actual prepareLaunch -> SessionManager.create/write/open/append -> real activatePreparedAgent journey remains exercised by recording spies. SDK open derives its directory from the explicit journal parent. Setup and child launch copy the already-owned child process environment; workspace paths are under the retained runtime root. Async setup remains pending until the release file, then exit 7 updates the reserved child workspace. The prior outside-fixture journal/config objection is resolved in these actual candidate bytes."
+          },
+          {
+            "paths": [
+              "tests/task-monitor-tui-fixture.ts",
+              "tests/task-monitor-tui.test.ts",
+              "tests/helpers.ts:run",
+              "tests/tui-helpers.ts",
+              "src/ui/task-monitor.ts:handleInput",
+              "src/tasks/resume-safeguards.ts",
+              "src/tasks/agent-session.ts",
+              "src/cli.ts:runtime bootstrap"
+            ],
+            "readingReason": "The extracted terminal helper carries only home, target, tmux, capture and start; it separates terminal ownership from the controlled loopback provider and handshake. Read the old inline provider/startup deletions and unchanged live job selection/confirmation assertions as well as the resume caller.",
+            "systemReason": "run receives a replacement allowlisted environment, not a merge with human process.env. TMUX_TMPDIR isolates the fixed monitor socket name per retained HOME, tmux ignores user config, and multi-argument new-session invokes the binary without shell interpolation. Model files, extension marker and explicit resume journals belong to the retained fixture. The handshake still proves command-handler readiness with zero provider requests before starting jobs; stop confirmation still checks exact task IDs and keeps the other job alive. Resume metadata still drives the real child-role confirmation. Provider and tmux teardown remain in finally, with no inherited filesystem deletion."
+          },
+          {
+            "paths": [
+              "tests/typescript-execution.test.ts",
+              "src/typescript/extension.ts",
+              "src/typescript/execution.ts",
+              "src/typescript/job-bridge.ts",
+              "src/typescript/output-capture.ts"
+            ],
+            "readingReason": "The registration helper replaces repeated API stubs with an event-selected lifecycle surface and launch recording, not a generic context bag. The split describe retains the top-level fixture lifetime and the original output/image/task-row assertions. Read the added timeout test against actual execution cancellation and bridge abort ordering.",
+            "systemReason": "executionCancellation establishes the first termination cause before aborting bridge requests. The synchronous bridge observer can then request shutdown without changing timeout ownership, and SIGTERM-resistant execution escalates to SIGKILL. Registered-tool shutdown/start selects the intended hooks; background launch rows still publish before a later outer failure, inline helpers keep canonical identity, and foreground shells do not become task rows. These controlled children use the internal runner branch, before normal SDK CLI bootstrap; no new default SDK journal writer is introduced by this refactor."
+          },
+          {
+            "paths": [
+              "tests/tool-schema.test.ts",
+              "src/agent/extension.ts:registerExecuteTool",
+              "src/typescript/definition.ts",
+              "src/tool-schema.ts",
+              "src/live/setup-probe.ts",
+              "tests/typescript-images.test.ts",
+              "src/typescript/images.ts:decodeImageRecord/decodeImageChannel",
+              "src/typescript/execution.ts:image acceptance"
+            ],
+            "readingReason": "Schema assertions were split by responsibility without deleting equality/coercion/rejection/enum checks. Image execution fixtures are now scoped to the execution describe; pure detection/channel validation no longer allocate irrelevant directories. Read each added image-channel case against the decoder.",
+            "systemReason": "Setup probes and registered execute still share executeDeclaration. The decoder checks channel byte size, final newline and record count before record validation, checks canonical base64/MIME/resize metadata, and totals decoded bytes. Added cases cover ordered results, atomic rejection of a later malformed record, equality at the total limit and overflow below the framing limit. Execution attaches images only after successful whole-channel decoding, so the test split does not weaken the public atomic-output behavior."
+          }
+        ],
+        "integrationReadingReason": "Within this six-path lane, the refactors improve reading by extracting two concrete lifetime boundaries (owned terminal/provider and isolated worktree child/jobs) and one narrow execute registration stub, while leaving scenario assertions local. No huge abstraction or opaque universal context was added. The relocated worktree cases preserve the baseline journeys and add a release-gated async failure journey with explicit journal ownership. I found no concrete cross-file contradiction or unresolved new ownership defect in the reviewed candidate. This is a lane-level source judgment, not a whole-repository sign-off.",
+        "objections": [],
+        "limits": [
+          "Read-only source review; no tests, setup, builds, installs, formatting, auth/device flows, secret access, recovery work, or source edits were performed. Unsupported Pi preparation was not retried or bypassed. No delegation occurred.",
+          "Complete assigned baseline-to-candidate diffs, including deletions, were read for all six paths; related production files were read only in the relevant caller/authority/lifetime sections, not attested wholesale. Installed SDK context is local dependency source, not candidate-tracked Git evidence.",
+          "No runtime result, old judgment artifact, coverage count, summary, or green test was used as acceptance evidence. Native TUI behavior and SDK/compiled-binary compatibility remain unverified dynamically.",
+          "Unchanged execute/image test scaffolds still copy process.env through the production internal runner and remove their own mkdtemp directories; this review did not run them or certify suite-wide environment isolation. The repaired worktree journey has its separate explicit retained runtime boundary.",
+          "Candidate and existing worktree retained. Durable review provenance is this candidate checkout and its untracked .pr45-final-lane-result.json; test roots discussed in source are retained mkdtemp fixtures, not reviewer-created code checkouts."
+        ]
+      },
+      "scopedBlobComparison": {
+        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "unchanged": true,
+        "contextChangedPaths": []
+      }
     },
     {
       "id": "lane-27",
@@ -6644,7 +6809,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -6813,7 +6978,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -6989,7 +7154,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -7190,7 +7355,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -7321,7 +7486,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -7486,7 +7651,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -7699,7 +7864,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -7894,7 +8059,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -8019,7 +8184,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -8106,7 +8271,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -8132,7 +8297,7 @@
       ],
       "chars": 89787,
       "lines": 1915,
-      "status": "running",
+      "status": "accepted",
       "candidateOverride": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
       "jobId": "task_5de6aadd",
       "model": "openai-codex/gpt-6.1-sol",
@@ -8314,6 +8479,158 @@
         ],
         "priorObjections": [],
         "reason": "Fresh actual integrated-code judgment required after assigned/context source bytes changed; prior quality and rejection evidence retained, never promoted by hashes."
+      },
+      "result": {
+        "lane": "lane-37",
+        "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
+        "candidate": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+        "verdict": "ACCEPT",
+        "diffReadPaths": [
+          "scripts/loopback-parent-fixture.ts",
+          "scripts/network-none-fixture.ts",
+          "scripts/remote-capability-pty-e2e.ts",
+          "scripts/remote-e2e.sh",
+          "scripts/remote-e2e.ts",
+          "scripts/remote-jobs-e2e.ts",
+          "scripts/remote-placement-e2e.ts",
+          "scripts/remote-pty-e2e.ts",
+          "scripts/remote-recovery-e2e.ts",
+          "scripts/remote-root-placement-e2e.ts",
+          "src/remote/artifacts.ts",
+          "src/remote/cancellation.ts",
+          "src/remote/CAPABILITY-INTEGRATION.md",
+          "src/remote/capability-runtime.ts"
+        ],
+        "contextReadPaths": [
+          "tests/helpers.ts",
+          "tests/fixtures/remote-e2e/recovery-ssh.sh",
+          "tests/fixtures/remote-e2e/placement-parent.ts",
+          "src/remote/services.ts",
+          "src/remote/client.ts",
+          "src/remote/owner.ts",
+          "src/remote/operations.ts",
+          "src/remote/runtime.ts",
+          "src/remote/job-artifacts.ts",
+          "src/remote/capabilities.ts",
+          "src/session/host.ts",
+          "src/session/host-access.ts",
+          "src/agent/extension.ts",
+          "src/tasks/job-service.ts",
+          "scripts/loopback-parent-fixture.ts",
+          "scripts/network-none-fixture.ts",
+          "scripts/remote-capability-pty-e2e.ts",
+          "scripts/remote-e2e.sh",
+          "scripts/remote-e2e.ts",
+          "scripts/remote-jobs-e2e.ts",
+          "scripts/remote-placement-e2e.ts",
+          "scripts/remote-pty-e2e.ts",
+          "scripts/remote-recovery-e2e.ts",
+          "scripts/remote-root-placement-e2e.ts",
+          "src/remote/artifacts.ts",
+          "src/remote/cancellation.ts",
+          "src/remote/capability-runtime.ts"
+        ],
+        "sourceBlobs": {
+          "scripts/loopback-parent-fixture.ts": "9a33c9296fcd3de7c945d09d5f86d1d82edee687",
+          "scripts/network-none-fixture.ts": "9bf16423feba68972ca1e16b8e8a64d23606fc1e",
+          "scripts/remote-capability-pty-e2e.ts": "3c3a634ce44569602fb7f584b60d97638a4c4e4d",
+          "scripts/remote-e2e.sh": "16923a78b5f4d2444f7688f9baedacdcffb5b0e7",
+          "scripts/remote-e2e.ts": "320b3a149d7ad52320e99afc6dadda511e772aef",
+          "scripts/remote-jobs-e2e.ts": "41523344401e8573f56b5dff5f9443798de0cd47",
+          "scripts/remote-placement-e2e.ts": "644ccb436f5f4bf97fd6544f2081698dc55851d1",
+          "scripts/remote-pty-e2e.ts": "0557c88c0c4a1044af2ad62f6399fb510c15134a",
+          "scripts/remote-recovery-e2e.ts": "379a52fc59755bd7eddfaa2f9d00c35ac3d2adcb",
+          "scripts/remote-root-placement-e2e.ts": "4f665e1e6ff707ec44e8f33e6180f8d6bd178367",
+          "src/remote/artifacts.ts": "9423a07b44ad7df48ce6d3b29fc2b228c8cddaad",
+          "src/remote/cancellation.ts": "17cd66cb16a8a3b5af3dd90b50bf86f7fd522d62",
+          "src/remote/CAPABILITY-INTEGRATION.md": "f89276b72f091ffc5c4d647628e3befa1334943b",
+          "src/remote/capability-runtime.ts": "4bbb64ff4d098157cd34868561e286c8292abfe8"
+        },
+        "sourceJourneys": [
+          {
+            "paths": [
+              "scripts/remote-e2e.sh",
+              "tests/helpers.ts",
+              "scripts/loopback-parent-fixture.ts",
+              "scripts/remote-e2e.ts",
+              "scripts/remote-pty-e2e.ts",
+              "scripts/remote-capability-pty-e2e.ts",
+              "tests/fixtures/remote-e2e/placement-parent.ts"
+            ],
+            "readingReason": "Traced the shell-owned fixture root to ownedFixtureEnv, the three complete fixtureRpc caller migrations, loopback models.json, explicit CLI argv, and registered child teardown. Read-only diff review includes every removed inline RPC parser line. The env overrides deliberately restore the fixture SSH shim, Docker endpoint and loopback SDK/model directory; HOME remains the shell fixture home. The extracted parser preserves event accumulation and denial of RPC confirmation requests.",
+            "systemReason": "Environment ownership is now explicit at the RPC boundary instead of inheriting provider/worker configuration. Named scenario functions retain launch/reconnect, untracked omission approval, capability consent and offline transcript ordering. PTY repository preparation now runs inside its existing teardown boundary. No caller was left using the removed home/agentDir contract."
+          },
+          {
+            "paths": [
+              "scripts/network-none-fixture.ts",
+              "scripts/remote-placement-e2e.ts",
+              "scripts/remote-root-placement-e2e.ts"
+            ],
+            "readingReason": "Read all image/SSH/container extraction additions and deletions, then followed start() and cleanup() and mkdtemp caller ownership. Reviewed the client-restart/question-provenance journey and root lost-reply/cancellation extraction with their actual caller sequences and teardown.",
+            "systemReason": "Image identity, no-network build/container flags, pinned host keys, readiness order and cleanup flags remain in their former lifecycle. Scenario-specific helpers keep the question identity/owner/version checks with explicit human approval, and retain uncertain-command identity reconciliation before running-job cancellation. Root source return is still prohibited without successful close. Helpers use narrow scalar results (command/job IDs), not a generic context bag or a second owner."
+          },
+          {
+            "paths": [
+              "scripts/remote-jobs-e2e.ts",
+              "src/remote/client.ts",
+              "src/agent/extension.ts"
+            ],
+            "readingReason": "Compared the complete two-session scenario extraction, including removed checks, against current client launch registration and final cleanup. Followed stable job-ID decoding, parent yield, terminal completion, cross-session rejection and reconnect/no-redelivery assertions.",
+            "systemReason": "The sequence still launches two session-owned jobs and checks both stable IDs and ownership before observing completion. Completion filtering and side-specific checks are named once, while all reconnect clients remain in the same owned clients list. No fixture result or green test was used as acceptance evidence."
+          },
+          {
+            "paths": [
+              "scripts/remote-e2e.sh",
+              "scripts/remote-recovery-e2e.ts",
+              "tests/fixtures/remote-e2e/recovery-ssh.sh"
+            ],
+            "readingReason": "Read the entire removed shell SSH shim and its actual extracted fixture script, plus caller config/drop argv and the scenario functions. These are simulated transport-loss source paths, not user recovery investigation.",
+            "systemReason": "The extraction still forwards exact SSH argv through fixture config, drops only a verified accepted launch/answer response after writing owned evidence, and leaves other requests/readiness untouched. The TypeScript journey keeps RPC alive for old-session answers and uses the same durable task/reply identities across retry."
+          },
+          {
+            "paths": [
+              "src/remote/artifacts.ts",
+              "src/remote/services.ts",
+              "src/remote/client.ts",
+              "src/remote/owner.ts",
+              "src/remote/job-artifacts.ts",
+              "src/remote/cancellation.ts",
+              "src/remote/runtime.ts",
+              "src/session/host.ts",
+              "src/session/host-access.ts",
+              "src/agent/extension.ts",
+              "src/tasks/job-service.ts"
+            ],
+            "readingReason": "Followed owner-fenced artifact list/get through client.control, catalog validation, verified cache reuse/download and incomplete-to-complete manifest publication. Also followed the cancellation command through the shared event bus to session-owned jobs.stopWork, scoped host pagination/capture, idle settlement and the owner cancel-report consumer.",
+            "systemReason": "Artifact helpers preserve catalog-wide validation before any download, exact digest/offset/base64 bounds, atomic publication, owner/epoch pinning and retryable incomplete manifests. Cancellation still waits for native service acknowledgement, aborts the foreground, captures terminal output across all pages and requires no active jobs plus idle context before settled=true. Timeout/error remains an unconfirmed report rather than proof of exit. These helpers expose the existing protocol phases without inventing PID ownership."
+          },
+          {
+            "paths": [
+              "src/remote/CAPABILITY-INTEGRATION.md",
+              "src/remote/capability-runtime.ts",
+              "src/remote/services.ts",
+              "src/remote/operations.ts",
+              "src/remote/client.ts",
+              "src/remote/owner.ts",
+              "src/remote/capabilities.ts"
+            ],
+            "readingReason": "Read the full documentation replacement and runtime diff, then inspected immutable link/fsync storage, request admission, reply fences, revoked/terminal waits, explicit local grant checks and read confinement. Followed the typed request bridge to missing-grant wait and mailbox execute, and sync to frozen local reply delivery.",
+            "systemReason": "persistIntent preserves identical-byte replay/conflicting-intent rejection; persistMarker preserves first-writer one-way lifetime markers. The promise-chain queue preserves per-task request serialization and releases later admissions after failure. Human local-root authority remains client-owned, metadata alone crosses transport, and owner operations retain identity/liveness checks. The guide removes its old wired/not-wired contradiction and describes the actual frozen-reply/revocation lifetime rather than proposing parallel authority."
+          }
+        ],
+        "integrationReadingReason": "ACCEPT for this bounded lane: complete assigned baseline-to-candidate diffs, including deletions, and actual related source journeys show coherent behavior-preserving helper extraction plus explicit RPC environment ownership. The reading burden improves through named protocol/lifetime phases and smaller scenario entrypoints; shared helpers remain narrowly typed or fixture-specific rather than accumulating a large context abstraction. No introduced cross-file contract mismatch, missing lifecycle owner, or authority widening was found. This is not a whole-repository sign-off.",
+        "objections": [],
+        "limits": [
+          "Source review only; no tests, setup, builds, installs, formatting, auth/device access, secrets, source edits, delegation or recovery investigation. Unsupported Pi preparation was neither retried nor bypassed.",
+          "All 14 assigned diffs fully read; no assigned unread gaps. Related current source was read only as needed, not claimed as full-repository coverage. Prior judgments, coverage counts and test summaries were not used as verdict evidence.",
+          "No live SSH/Docker/provider behavior was verified. Existing fixture cleanup/traps and filesystem/network effects were inspected only, never executed; this review does not authorize running those scripts under the stricter retained-fixture safety constraints.",
+          "Durable provenance: review performed in the existing supplied worktree at candidate b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0; no temporary checkout or test root created. Candidate source and existing evidence preserved. Only this requested untracked result file was written."
+        ]
+      },
+      "scopedBlobComparison": {
+        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "unchanged": true,
+        "contextChangedPaths": []
       }
     },
     {
@@ -8498,7 +8815,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -8670,7 +8987,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -8692,7 +9009,7 @@
       ],
       "chars": 99875,
       "lines": 2012,
-      "status": "running",
+      "status": "accepted",
       "candidateOverride": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
       "jobId": "task_3bac1f85",
       "model": "openai-codex/gpt-6.1-sol",
@@ -8870,6 +9187,149 @@
         ],
         "priorObjections": [],
         "reason": "Fresh actual integrated-code judgment required after assigned/context source bytes changed; prior quality and rejection evidence retained, never promoted by hashes."
+      },
+      "result": {
+        "lane": "lane-40",
+        "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
+        "candidate": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+        "verdict": "ACCEPT",
+        "diffReadPaths": [
+          "tests/fixtures/remote-e2e/fake-provider.ts",
+          "tests/fixtures/remote-e2e/placement-parent.ts",
+          "tests/fixtures/remote-e2e/recovery-ssh.sh",
+          "tests/fixtures/remote-placement-e2e/scenario.ts",
+          "tests/fixtures/remote-typed-root-placement/scenario.ts",
+          "tests/remote-artifacts.test.ts",
+          "tests/remote-cancellation.test.ts",
+          "tests/remote-capabilities.test.ts",
+          "tests/remote-capability-runtime.test.ts",
+          "tests/remote-client.test.ts"
+        ],
+        "contextReadPaths": [
+          "scripts/loopback-parent-fixture.ts",
+          "scripts/remote-e2e.sh",
+          "scripts/remote-e2e.ts",
+          "scripts/remote-pty-e2e.ts",
+          "scripts/remote-capability-pty-e2e.ts",
+          "scripts/remote-recovery-e2e.ts",
+          "scripts/remote-placement-e2e.ts",
+          "scripts/remote-root-placement-e2e.ts",
+          "scripts/network-none-fixture.ts",
+          "tests/helpers.ts",
+          "tests/remote-runner-placement-fixture.test.ts",
+          "tests/fixtures/remote-placement-e2e/fake-provider.ts",
+          "tests/fixtures/remote-typed-root-placement/fake-provider.ts",
+          "src/remote/client.ts",
+          "src/remote/ssh.ts",
+          "src/remote/services.ts",
+          "src/remote/capabilities.ts",
+          "src/remote/capability-runtime.ts",
+          "src/remote/cancellation.ts",
+          "src/remote/job-artifacts.ts",
+          "src/session/host-access.ts",
+          "src/agent/extension.ts",
+          "src/tasks/job-service.ts",
+          "src/tasks/subagent-profiles.ts",
+          "src/remote/placement.ts",
+          "src/remote/owner.ts"
+        ],
+        "sourceBlobs": {
+          "tests/fixtures/remote-e2e/fake-provider.ts": "72d168a3c60ff27c595c8571f5db64a2223bd23a",
+          "tests/fixtures/remote-e2e/placement-parent.ts": "7b0319dca327f046657a13f42b110ffbee42fba4",
+          "tests/fixtures/remote-e2e/recovery-ssh.sh": "d7e8d093f900e4d5654636badd1f72d96041aa09",
+          "tests/fixtures/remote-placement-e2e/scenario.ts": "8aa11f4ce7161b4998e14bf80a96f89460964405",
+          "tests/fixtures/remote-typed-root-placement/scenario.ts": "9130afb6ab3862fe2c7137d9bbe8909f064deaec",
+          "tests/remote-artifacts.test.ts": "1d819e294b230a85d08adfc9a4e37e323169cf12",
+          "tests/remote-cancellation.test.ts": "a1a198779b4e9cf1bd48b7459e3e0c3b0adcb901",
+          "tests/remote-capabilities.test.ts": "701ed0dd3fc42525eee5c8d18ad00d347c9d8de7",
+          "tests/remote-capability-runtime.test.ts": "bb79598d6c168ff5654a48adfe6d0ce57623ace8",
+          "tests/remote-client.test.ts": "2439a5752941a42426a09c94e8d57c19ab97b792"
+        },
+        "sourceJourneys": [
+          {
+            "paths": [
+              "tests/fixtures/remote-e2e/placement-parent.ts",
+              "scripts/loopback-parent-fixture.ts",
+              "scripts/remote-e2e.ts",
+              "scripts/remote-pty-e2e.ts",
+              "scripts/remote-capability-pty-e2e.ts",
+              "tests/helpers.ts",
+              "src/tasks/job-service.ts",
+              "src/remote/owner.ts",
+              "tests/fixtures/remote-e2e/fake-provider.ts"
+            ],
+            "readingReason": "Read complete fixture diffs, complete repaired loopback helper, and actual runner launch/env call sites. placementReply preserves last-user marker extraction, stop priority, stable call IDs, completed-tool acknowledgement and pinned source-approval retry. Shared stream handling retains tool_calls versus stop finish reasons. parentReply/workerReply replace nested response construction without changing probe/launch/completion or worker stage precedence.",
+            "systemReason": "The runner owns explicit HOME/config/SDK env and child registration; fake inference only emits execute programs. Discovery requires an authorized SSH target, normal launches remain async, and destination owner selects the profile and role/depth. Source inclusion still requests human approval and retries its reserved task ID; stop uses the saved launch ID. No inference-created grant or human answer was introduced."
+          },
+          {
+            "paths": [
+              "tests/fixtures/remote-e2e/recovery-ssh.sh",
+              "scripts/remote-e2e.sh",
+              "scripts/remote-recovery-e2e.ts",
+              "src/remote/ssh.ts",
+              "tests/remote-client.test.ts",
+              "src/remote/client.ts"
+            ],
+            "readingReason": "Read the entire new shim and its opt-in installation, actual loss/reconciliation assertions and SSH JSON-line transport. The shim reads one framed request, verifies the real accepted response, records it before intentionally failing, and forwards all non-opt-in traffic. Client tests now inspect disk intent from inside transport rather than merely counting posts.",
+            "systemReason": "Lost launch and answer acknowledgements preserve taskId/replyId rather than authorizing replacement work. Transcript tests exercise valid-page persistence before invalid cursor rejection, retry from the persisted cursor, preservation of terminal truth against a later running snapshot, and matching-only reply reconciliation. The killed-client test can read cached intent before killing because transcript/read do not take the SQLite exclusive lock; launch retains that lock until the child dies. Child process ownership remains bounded to the spawned handle."
+          },
+          {
+            "paths": [
+              "tests/fixtures/remote-placement-e2e/scenario.ts",
+              "tests/fixtures/remote-placement-e2e/fake-provider.ts",
+              "scripts/remote-placement-e2e.ts",
+              "tests/fixtures/remote-typed-root-placement/scenario.ts",
+              "tests/fixtures/remote-typed-root-placement/fake-provider.ts",
+              "scripts/remote-root-placement-e2e.ts",
+              "src/tasks/job-service.ts",
+              "src/tasks/subagent-profiles.ts",
+              "src/remote/placement.ts"
+            ],
+            "readingReason": "Read both complete scenario diffs including removed embedded programs, provider wrappers, runner question/child-result checks, and actual role/placement guards. Role response helpers and stage program builders retain clean/drift markers, inspection paging bounds, stage call IDs, tracked snapshot checks and proof filenames.",
+            "systemReason": "Parent launch waits for terminal delivery before reading results; orchestrator launches its normal child on the current server runtime without a new target. Saved question owner/version and explicit answer remain the gate for tracked edits. Typed root remains role0 with a depth1 normal child, verifies child completion before asking, and checks first-turn bytes before second-turn edits. Neither provider supplies a human answer. Native scoped cross-placement is rejected, with backend-owned policy; local policy still denies normal delegation."
+          },
+          {
+            "paths": [
+              "tests/remote-artifacts.test.ts",
+              "src/remote/artifacts.ts",
+              "src/remote/services.ts",
+              "tests/remote-client.test.ts",
+              "src/remote/client.ts",
+              "tests/remote-cancellation.test.ts",
+              "src/remote/cancellation.ts",
+              "src/remote/job-artifacts.ts",
+              "src/session/host-access.ts",
+              "src/agent/extension.ts"
+            ],
+            "readingReason": "Read complete artifact/cancellation diffs and actual catalog, chunk, manifest, servicing, native capture, event bridge and cancellation registration paths. Split artifact cases remove dependence on mutation/cleanup of a shared fixture. Added tests check duplicate-catalog rejection before get, verified progress after partial failure, unchanged old failed-file bytes, and digest-based reuse on retry.",
+            "systemReason": "Artifact file replacement follows validation and digest verification; manifest completion is distinct from transcript completion and owner terminal state. Client servicing occurs outside the cache lock before integration errors are persisted. Cancellation receives the stop report before foreground abort, captures terminal text across paginated job lists, then requires both zero active jobs and idle foreground. Rejected service or incomplete pagination cannot produce settled=true; no second PID ownership scheme was added."
+          },
+          {
+            "paths": [
+              "tests/remote-capabilities.test.ts",
+              "tests/remote-capability-runtime.test.ts",
+              "src/remote/capabilities.ts",
+              "src/remote/capability-runtime.ts",
+              "src/remote/services.ts"
+            ],
+            "readingReason": "Read complete capability diffs and actual confined UTF-8 read, immutable record publication, admission queue, revocation/terminal markers, reply fence, need ledger and service retry paths. Previously combined checks become awaited, explicit authority/lifetime cases; new service tests inspect frozen replies on disk before delivery.",
+            "systemReason": "A need is not a grant. Cancellation while awaiting a missing grant leaves the durable need; granted retry moves it into the mailbox. Local service runs capabilities only for accepted/running tasks, freezes authorized bytes before network delivery, rejects changed retry intent and skips locally revoked grants. Request admission recovers after rejection; first terminal/revocation/cancellation markers remain one-way. Repo reads continue rejecting traversal, symlinks, nonregular, oversized and invalid UTF-8 inputs."
+          }
+        ],
+        "integrationReadingReason": "Within this lane the integrated changes preserve observable fixture programs and protocol identities while making role, stage and authority transitions easier to follow. Small reply/stream helpers remove duplicated transport envelopes; role-specific scenario helpers expose causal order without introducing a global context bag or a second state machine. Focused tests now express independent fences and durable-before-delivery outcomes rather than multi-purpose assertion chains. The actual shared loopback caller and cancellation/capability/artifact/client integration paths fit those contracts. No concrete cross-file regression or blocking reading-burden objection found in the assigned scope; this is not a whole-repository sign-off.",
+        "objections": [],
+        "limits": [
+          "All ten assigned baseline-to-candidate diffs were read completely, including deletions. Context paths list actual source inspected, sometimes focused sections rather than entire files; no whole-file context attestation is implied.",
+          "Static source review only: no tests, setup, build, install, formatter, auth/device, secret access, source edits, delegation, recovery investigation, shell traps or cleanup were run. Unsupported automatic Pi preparation was not retried or bypassed. Runtime/live provider/device behavior is unverified.",
+          "Read existing harness cleanup and filesystem/network effects only as source. Unit fixture cleanup is restricted to mkdtemp-owned roots; scripts/remote-e2e.sh has shell traps and networkNoneFixture has cleanup, neither executed. Those harnesses are not blanket-approved for execution under this lane safety policy.",
+          "Durable provenance is the existing worktree at candidate HEAD; Git blob IDs in this result are provenance only, never acceptance evidence. No /tmp code checkout or test fixture was created. Candidate and existing worktrees retained; the only intentional repository write is this untracked result.",
+          "Acceptance is bounded to lane-40 assigned diffs and inspected integration context. No prior focus artifacts, coverage totals, summaries, hashes or green tests were used as a verdict."
+        ]
+      },
+      "scopedBlobComparison": {
+        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "unchanged": true,
+        "contextChangedPaths": []
       }
     },
     {
@@ -9033,7 +9493,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -9196,7 +9656,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -9230,7 +9690,7 @@
         "branch": "bruv/pr45-final-integrated-diff-lane-43-remot-ae2c2e7b",
         "preparationStatus": "ready",
         "setupTaskId": "task_7ccbc5b6",
-        "setupStatus": "running",
+        "setupStatus": "failed",
         "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
       },
       "repairHistory": [
@@ -9589,7 +10049,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -9712,7 +10172,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -9899,7 +10359,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -10074,7 +10534,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -10256,7 +10716,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -10448,7 +10908,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -10591,7 +11051,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -10615,151 +11075,216 @@
       ],
       "chars": 89361,
       "lines": 2159,
-      "status": "rejected",
-      "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
-      "jobId": "task_bfa91284",
+      "status": "running",
+      "candidateOverride": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+      "jobId": "task_3cdd53fe",
       "model": "openai-codex/gpt-6.1-sol",
       "workspace": {
         "kind": "worktree",
-        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_bfa91284",
-        "worktreePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_bfa91284",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_3cdd53fe",
+        "worktreePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_3cdd53fe",
         "sourcePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
-        "baseRef": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
-        "baseOid": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
-        "branch": "bruv/pr45-final-integrated-diff-lane-51-ui-te-bfa91284",
+        "baseRef": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "baseOid": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "branch": "bruv/pr45-final-integrated-diff-lane-51-ui-te-3cdd53fe",
         "preparationStatus": "ready",
-        "setupTaskId": "task_677dc7c3",
-        "setupStatus": "failed",
+        "setupTaskId": "task_d89ace1b",
+        "setupStatus": "running",
         "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
       },
-      "result": {
-        "lane": "lane-51",
-        "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
-        "candidate": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
-        "verdict": "REJECT",
-        "diffReadPaths": [
-          "tests/footer.test.ts",
-          "tests/helpers/terminal-perf-process.ts",
-          "tests/long-thread-pty-latency.test.ts",
-          "tests/long-thread-tui.test.ts",
-          "tests/rolling-activity-disk.test.ts",
-          "tests/rolling-activity.test.ts",
-          "tests/sdk-large-text-tui.test.ts",
-          "tests/sdk-markdown-blocks.test.ts",
-          "tests/sdk-text-wrap-performance.test.ts",
-          "tests/startup-tui.test.ts",
-          "tests/task-rows.test.ts",
-          "tests/tasks-ui-proof-build.test.ts"
-        ],
-        "contextReadPaths": [
-          "tests/helpers.ts",
-          "tests/tui-helpers.ts",
-          "tests/terminal-process-fixture.ts",
-          "tests/terminal-perf-cli.test.ts",
-          "tests/terminal-perf-navigation.test.ts",
-          "src/ui/footer.ts",
-          "src/ui/task-rows.ts",
-          "src/ui/sdk-task-rows.ts",
-          "src/ui/activity-projection.ts",
-          "src/ui/rolling-activity.ts",
-          "src/history/session-manager.ts",
-          "scripts/tasks-ui-proof-build.ts"
-        ],
-        "sourceBlobs": {
-          "tests/footer.test.ts": "92878255d0c02ce9e906782e8757269a63221b9b",
-          "tests/helpers/terminal-perf-process.ts": "f57d10925dca3edb6e6511ff867664c38e3e0f65",
-          "tests/long-thread-pty-latency.test.ts": "add8c01df6baacaadce826d1c9f62533cc698645",
-          "tests/long-thread-tui.test.ts": "ddef39df022daaaef6a44732283a258f43914870",
-          "tests/rolling-activity-disk.test.ts": "a502768eb70247ad2caceed71f88c1c6aa82533d",
-          "tests/rolling-activity.test.ts": "dcd301abaa75cadf31522a28357a2fa68f08f820",
-          "tests/sdk-large-text-tui.test.ts": "f568e6a6ed1ba369e55cc6cddba32ba54d6078d2",
-          "tests/sdk-markdown-blocks.test.ts": "09c98ee174874df966466af24d868502ecfa7004",
-          "tests/sdk-text-wrap-performance.test.ts": "f0b649a2c7a43306fa18f53dda22fbacff3d7565",
-          "tests/startup-tui.test.ts": "b7cec94ca80407458a244437d57b47e4aa847154",
-          "tests/task-rows.test.ts": "d2b90b93184b0a257924201768a79283208f9dd8",
-          "tests/tasks-ui-proof-build.test.ts": "d132c1709bbc03d1e3851dd2e6886ed50fc8bf0d"
-        },
-        "sourceJourneys": [
-          {
-            "paths": [
-              "tests/footer.test.ts",
-              "src/ui/footer.ts"
-            ],
-            "readingReason": "The added deferred-promise polling journey follows installCompactFooter -> pollDescendantCost -> component/installer disposal. It checks one refresh in flight, retry after rejection, and changed-cost-only redraw. The cache test split separates rendering colors from timer lifetime; the added fake-clock journey follows followCacheCountdown notification/tick rescheduling and idempotent disposal. Actual production lifetime code agrees with those assertions; prior in-flight-disposal test and fixture were also read.",
-            "systemReason": "Clocks/subscriptions remain observer-owned, while the component active flag gates delayed callbacks. Separating usage layout from countdown lifetime reduces the number of simultaneous concerns without weakening the old assertions."
+      "scopedBlobComparison": {
+        "target": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+        "unchanged": true,
+        "contextChangedPaths": []
+      },
+      "repairHistory": [
+        {
+          "jobId": "task_bfa91284",
+          "model": "openai-codex/gpt-6.1-sol",
+          "workspace": {
+            "kind": "worktree",
+            "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_bfa91284",
+            "worktreePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_bfa91284",
+            "sourcePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
+            "baseRef": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+            "baseOid": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+            "branch": "bruv/pr45-final-integrated-diff-lane-51-ui-te-bfa91284",
+            "preparationStatus": "ready",
+            "setupTaskId": "task_677dc7c3",
+            "setupStatus": "failed",
+            "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
           },
-          {
-            "paths": [
+          "result": {
+            "lane": "lane-51",
+            "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
+            "candidate": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+            "verdict": "REJECT",
+            "diffReadPaths": [
+              "tests/footer.test.ts",
+              "tests/helpers/terminal-perf-process.ts",
               "tests/long-thread-pty-latency.test.ts",
               "tests/long-thread-tui.test.ts",
-              "tests/terminal-process-fixture.ts",
-              "tests/tui-helpers.ts",
-              "tests/helpers.ts"
-            ],
-            "readingReason": "Session seeding moves intact out of the interaction journeys. PTY sampleEditorEcho still starts timing before send-keys, captures the successful echo frame, clears the draft and settles outside timing; held samples retain their final successful echo frame. The loopback provider holds requests until harness release. Both launch paths now pass paneCommand argv through tmux; its env -i boundary and owned SDK/config paths were read, as were capture/frame helpers and the unchanged offline/regular-mode interaction context.",
-            "systemReason": "The extraction names the measurement boundary and saved-session lifecycle rather than introducing a generic context bag. The test still distinguishes idle echo, held-provider echo and spinner transitions; long-thread regular/fullscreen expansion and reopen use the same saved journal. Retained fixture paths are recorded rather than deleting evidence."
-          },
-          {
-            "paths": [
-              "tests/sdk-large-text-tui.test.ts",
-              "tests/startup-tui.test.ts",
-              "tests/tui-helpers.ts",
-              "tests/helpers.ts"
-            ],
-            "readingReason": "Large-text seeding preserves the full message; launchOfflineCli uses its explicit retained environment and env -i shell quoting. Startup createStartupProcess keeps the same offline argv for tmux and script PTY, with owned HOME/config/SDK paths. Read the unchanged first-paint stream assertions, pipe drains and exit path, and the new nested finally guaranteeing tmux shutdown after artifact writes.",
-            "systemReason": "These small test-local factories keep transport concerns away from visible-message assertions. They do not claim native UI proof from mock data or silently change promotion/skill-warning semantics. Environment ownership is substantially clearer in these terminal journeys."
-          },
-          {
-            "paths": [
               "tests/rolling-activity-disk.test.ts",
               "tests/rolling-activity.test.ts",
-              "src/ui/rolling-activity.ts",
-              "src/history/session-manager.ts",
-              "src/ui/sdk-task-rows.ts",
-              "src/ui/activity-projection.ts"
-            ],
-            "readingReason": "Read the complete disk fixture and ordered membershipReplay + liveFrames + ownerTransitions strings, including removed inline script. They intentionally carry branch/boundary/c/d/e state through rewrite/reread/reset/native-manager replacement. Production sync uses owner-index metadata revision only for membership, and still rebuilds children, live IDs, expansion and result/task facts each frame. Added revisited-identity/handoff assertions agree with contiguous-run assembly, source-call eligibility clearing, and groupsByItem expansion ownership. The disk materialize hook counts calls, not physical I/O, as its new comment correctly says.",
-            "systemReason": "Direct identity assertions remove the old suffixed-key normalization. Named phases make the cache-versus-live-state boundary easier to follow, although the phases remain deliberately lexically coupled. There is no broad context-object abstraction. The process environment ownership claim remains false; see objection."
-          },
-          {
-            "paths": [
+              "tests/sdk-large-text-tui.test.ts",
+              "tests/sdk-markdown-blocks.test.ts",
+              "tests/sdk-text-wrap-performance.test.ts",
+              "tests/startup-tui.test.ts",
               "tests/task-rows.test.ts",
+              "tests/tasks-ui-proof-build.test.ts"
+            ],
+            "contextReadPaths": [
+              "tests/helpers.ts",
+              "tests/tui-helpers.ts",
+              "tests/terminal-process-fixture.ts",
+              "tests/terminal-perf-cli.test.ts",
+              "tests/terminal-perf-navigation.test.ts",
+              "src/ui/footer.ts",
               "src/ui/task-rows.ts",
               "src/ui/sdk-task-rows.ts",
-              "src/ui/activity-projection.ts"
+              "src/ui/activity-projection.ts",
+              "src/ui/rolling-activity.ts",
+              "src/history/session-manager.ts",
+              "scripts/tasks-ui-proof-build.ts"
             ],
-            "readingReason": "Added merge assertions follow upsertTaskRow: stale lifecycle data preserves terminal evidence while metadata refreshes; terminal unknown accepts resolved outcome; omitted fields survive partial updates. Read collectTaskFrame provenance/owner selection, render-local map lifetime, wrapper installation/uninstall, and separate activity facts WeakMap. Failed-parent-render test distinguishes retained activity facts from expired body overlay and then verifies uninstall restoration.",
-            "systemReason": "The tests explicitly exercise evidence, display metadata and per-frame rendering ownership as distinct authorities. They fit the integrated adapter rather than conflating a failed frame with session teardown. No public-outcome regression was found in this inspected journey."
+            "sourceBlobs": {
+              "tests/footer.test.ts": "92878255d0c02ce9e906782e8757269a63221b9b",
+              "tests/helpers/terminal-perf-process.ts": "f57d10925dca3edb6e6511ff867664c38e3e0f65",
+              "tests/long-thread-pty-latency.test.ts": "add8c01df6baacaadce826d1c9f62533cc698645",
+              "tests/long-thread-tui.test.ts": "ddef39df022daaaef6a44732283a258f43914870",
+              "tests/rolling-activity-disk.test.ts": "a502768eb70247ad2caceed71f88c1c6aa82533d",
+              "tests/rolling-activity.test.ts": "dcd301abaa75cadf31522a28357a2fa68f08f820",
+              "tests/sdk-large-text-tui.test.ts": "f568e6a6ed1ba369e55cc6cddba32ba54d6078d2",
+              "tests/sdk-markdown-blocks.test.ts": "09c98ee174874df966466af24d868502ecfa7004",
+              "tests/sdk-text-wrap-performance.test.ts": "f0b649a2c7a43306fa18f53dda22fbacff3d7565",
+              "tests/startup-tui.test.ts": "b7cec94ca80407458a244437d57b47e4aa847154",
+              "tests/task-rows.test.ts": "d2b90b93184b0a257924201768a79283208f9dd8",
+              "tests/tasks-ui-proof-build.test.ts": "d132c1709bbc03d1e3851dd2e6886ed50fc8bf0d"
+            },
+            "sourceJourneys": [
+              {
+                "paths": [
+                  "tests/footer.test.ts",
+                  "src/ui/footer.ts"
+                ],
+                "readingReason": "The added deferred-promise polling journey follows installCompactFooter -> pollDescendantCost -> component/installer disposal. It checks one refresh in flight, retry after rejection, and changed-cost-only redraw. The cache test split separates rendering colors from timer lifetime; the added fake-clock journey follows followCacheCountdown notification/tick rescheduling and idempotent disposal. Actual production lifetime code agrees with those assertions; prior in-flight-disposal test and fixture were also read.",
+                "systemReason": "Clocks/subscriptions remain observer-owned, while the component active flag gates delayed callbacks. Separating usage layout from countdown lifetime reduces the number of simultaneous concerns without weakening the old assertions."
+              },
+              {
+                "paths": [
+                  "tests/long-thread-pty-latency.test.ts",
+                  "tests/long-thread-tui.test.ts",
+                  "tests/terminal-process-fixture.ts",
+                  "tests/tui-helpers.ts",
+                  "tests/helpers.ts"
+                ],
+                "readingReason": "Session seeding moves intact out of the interaction journeys. PTY sampleEditorEcho still starts timing before send-keys, captures the successful echo frame, clears the draft and settles outside timing; held samples retain their final successful echo frame. The loopback provider holds requests until harness release. Both launch paths now pass paneCommand argv through tmux; its env -i boundary and owned SDK/config paths were read, as were capture/frame helpers and the unchanged offline/regular-mode interaction context.",
+                "systemReason": "The extraction names the measurement boundary and saved-session lifecycle rather than introducing a generic context bag. The test still distinguishes idle echo, held-provider echo and spinner transitions; long-thread regular/fullscreen expansion and reopen use the same saved journal. Retained fixture paths are recorded rather than deleting evidence."
+              },
+              {
+                "paths": [
+                  "tests/sdk-large-text-tui.test.ts",
+                  "tests/startup-tui.test.ts",
+                  "tests/tui-helpers.ts",
+                  "tests/helpers.ts"
+                ],
+                "readingReason": "Large-text seeding preserves the full message; launchOfflineCli uses its explicit retained environment and env -i shell quoting. Startup createStartupProcess keeps the same offline argv for tmux and script PTY, with owned HOME/config/SDK paths. Read the unchanged first-paint stream assertions, pipe drains and exit path, and the new nested finally guaranteeing tmux shutdown after artifact writes.",
+                "systemReason": "These small test-local factories keep transport concerns away from visible-message assertions. They do not claim native UI proof from mock data or silently change promotion/skill-warning semantics. Environment ownership is substantially clearer in these terminal journeys."
+              },
+              {
+                "paths": [
+                  "tests/rolling-activity-disk.test.ts",
+                  "tests/rolling-activity.test.ts",
+                  "src/ui/rolling-activity.ts",
+                  "src/history/session-manager.ts",
+                  "src/ui/sdk-task-rows.ts",
+                  "src/ui/activity-projection.ts"
+                ],
+                "readingReason": "Read the complete disk fixture and ordered membershipReplay + liveFrames + ownerTransitions strings, including removed inline script. They intentionally carry branch/boundary/c/d/e state through rewrite/reread/reset/native-manager replacement. Production sync uses owner-index metadata revision only for membership, and still rebuilds children, live IDs, expansion and result/task facts each frame. Added revisited-identity/handoff assertions agree with contiguous-run assembly, source-call eligibility clearing, and groupsByItem expansion ownership. The disk materialize hook counts calls, not physical I/O, as its new comment correctly says.",
+                "systemReason": "Direct identity assertions remove the old suffixed-key normalization. Named phases make the cache-versus-live-state boundary easier to follow, although the phases remain deliberately lexically coupled. There is no broad context-object abstraction. The process environment ownership claim remains false; see objection."
+              },
+              {
+                "paths": [
+                  "tests/task-rows.test.ts",
+                  "src/ui/task-rows.ts",
+                  "src/ui/sdk-task-rows.ts",
+                  "src/ui/activity-projection.ts"
+                ],
+                "readingReason": "Added merge assertions follow upsertTaskRow: stale lifecycle data preserves terminal evidence while metadata refreshes; terminal unknown accepts resolved outcome; omitted fields survive partial updates. Read collectTaskFrame provenance/owner selection, render-local map lifetime, wrapper installation/uninstall, and separate activity facts WeakMap. Failed-parent-render test distinguishes retained activity facts from expired body overlay and then verifies uninstall restoration.",
+                "systemReason": "The tests explicitly exercise evidence, display metadata and per-frame rendering ownership as distinct authorities. They fit the integrated adapter rather than conflating a failed frame with session teardown. No public-outcome regression was found in this inspected journey."
+              },
+              {
+                "paths": [
+                  "tests/sdk-markdown-blocks.test.ts",
+                  "tests/sdk-text-wrap-performance.test.ts"
+                ],
+                "readingReason": "Read both complete diffs and the candidate original-SDK reference factory/module rewriting context. measurePlainBlockWork owns the RegExp.exec hook around one lexer call, preserves both whole-block matcher bans and full raw-token equality, returns the old counters and restores the prototype in finally. createOriginalSdkReference keeps the same utility-only reverse-patch oracle: components import the copied reversed utility, while other relative/external imports resolve against installed SDK dependencies. Every assertion formerly using separate reference globals now uses the one named original object; corpus/layout/cache and work assertions remain intact.",
+                "systemReason": "These helpers factor one clear concern apiece: temporary instrumentation ownership and reference implementation assembly. They improve reading burden without changing the oracle into an invented implementation or weakening rich Unicode/ANSI checks. Reference git apply has explicit owned HOME/config/SDK and retained provenance, further highlighting the proof-build fixture environment inconsistency. Installed dependencies and the selected patch hunk were not executed or attested as runtime-verified."
+              },
+              {
+                "paths": [
+                  "tests/helpers/terminal-perf-process.ts",
+                  "tests/terminal-perf-cli.test.ts",
+                  "tests/terminal-perf-navigation.test.ts"
+                ],
+                "readingReason": "Read the complete new helper and actual callers: CLI/report probes and SDK/InteractiveMode navigation probes invoke process.execPath with explicit args from repository cwd. Fixture.run drains exit and both pipes concurrently; each fixture owns and retains HOME, XDG state, PI SDK and temporary directories. Navigation eval/entrypoint callers use it to isolate prototype patching from the parent.",
+                "systemReason": "A small process-boundary helper is a meaningful ownership abstraction, not a catch-all fixture bag. Returned root supports report paths; no shell cleanup or auth fallback is introduced."
+              },
+              {
+                "paths": [
+                  "tests/tasks-ui-proof-build.test.ts",
+                  "scripts/tasks-ui-proof-build.ts",
+                  "tests/helpers.ts"
+                ],
+                "readingReason": "Read complete new test and actual builder. The copied builder with stub build/prepare/adaptation verifies one-output CLI, clean-source/adapted-dependency gates, and post-build source/binary provenance. Assertions explicitly state stub binary is not native UI proof. Traced its real git init/add/commit helper into inherited Git authority, then the Bun child into builder git commands; unlike ownedFixtureEnv elsewhere, neither establishes an owned environment.",
+                "systemReason": "The provenance mechanics are legible and appropriately scoped, but a mkdtemp cwd alone does not own Git configuration/hooks or HOME. This is a concrete cross-file boundary contradiction, not a taste objection to the use of stubs."
+              }
+            ],
+            "integrationReadingReason": "All twelve assigned baseline-to-candidate diffs were read completely, including deletions. Most extractions improve intrinsic reading burden by naming seeding, transport, timer lifetime and measurement boundaries while preserving assertions and ordered transitions. The inspected production/footer/activity/task contracts fit the new tests; no broad context bags or unjustified giant abstractions were found. Nevertheless the integrated test-process ownership story is inconsistent: terminal/reference/performance fixtures isolate child environments, while the new proof-build fixture inherits real Git/HOME authority and the refactored disk wrapper still forwards process.env. Reject this bounded lane for those source-visible ownership defects, not on coverage artifacts, previous judgments or green tests.",
+            "objections": [
+              {
+                "paths": [
+                  "tests/tasks-ui-proof-build.test.ts:10-16,52-71",
+                  "scripts/tasks-ui-proof-build.ts:12-18",
+                  "tests/helpers.ts:ownedFixtureEnv"
+                ],
+                "readingProblem": "Blocking new-source ownership gap: git spawnSync has no env at all, and the builder Bun child spreads process.env. git init/add/commit consequently honor caller Git environment/global config/hooks despite cwd being mkdtemp; commit can execute a caller-configured hook outside fixture ownership. HOME/config/SDK are not fixture-owned. The nested copied builder inherits the same authority. No external mutation is asserted to have happened; this is the actual reachable source path, contrary to the required isolated test boundary.",
+                "requiredResult": "Use one explicit owned environment for fixture Git and Bun/builder children (the existing ownedFixtureEnv supplies isolated HOME/config/SDK and empty hooks), without forwarding caller Git/config/credential variables. Retain the fixture/evidence rather than removing it. Keep the honest distinction between stub provenance checks and native UI proof."
+              },
+              {
+                "paths": [
+                  "tests/rolling-activity-disk.test.ts:133-158",
+                  "tests/helpers.ts:run,offlineTestEnv",
+                  "tests/helpers/terminal-perf-process.ts"
+                ],
+                "readingProblem": "The extracted runDiskActivityJourney says the test owns child files, but only ROOT is owned; env spreads process.env. run -> offlineTestEnv merely clears Herdr routing and does not isolate HOME/config/SDK. The real SDK/theme/prototype fixture therefore still operates with caller environment authority, unlike the other integrated terminal process fixtures. This inherited environment flaw already existed in the baseline; it is not claimed as a newly introduced functional regression, but the candidate wrapper still does not meet the requested test ownership boundary.",
+                "requiredResult": "Give the journey a mkdtemp-owned HOME/config/SDK environment, pass ROOT explicitly on that allowlisted environment, and retain fixture files for inspection. Preserve the intentionally ordered membership/live/owner transition sequence and subprocess isolation."
+              }
+            ],
+            "limits": {
+              "scope": "Bounded lane judgment only; no whole-repository sign-off.",
+              "unreadAssignedDiffPaths": [],
+              "runtime": "No tests, setup, builds, installation, formatting, auth/device flows or unsupported Pi preparation were run or retried. Runtime correctness, installed SDK support and live/native proof remain unverified.",
+              "evidence": "Fresh source review only; no prior focus artifacts, coverage counts, summaries or green tests were used as acceptance evidence.",
+              "context": "Related source was inspected in relevant sections, not attested as fully read: footer lifetime/fixture/disposal; rolling membership/sync/run assembly/dispose; history revision/selectors; task merge/frame attribution/wrapper cleanup/activity maps; process-helper callers and builder. No full-current-source-everywhere claim.",
+              "provenance": {
+                "worktree": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_bfa91284",
+                "head": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+                "fixtureExecution": "None. Temporary paths described above belong to candidate test source; no temporary code checkout or test fixture was created by this reviewer."
+              },
+              "safety": "No delegation; no sudo, recovery work, secret access, cleanup/deletion commands, inherited HOME/config/SDK cleanup, shell traps, destructive Git or user-data mutation. Candidate source/worktree preserved; only this untracked result file is written."
+            }
           },
-          {
-            "paths": [
-              "tests/sdk-markdown-blocks.test.ts",
-              "tests/sdk-text-wrap-performance.test.ts"
-            ],
-            "readingReason": "Read both complete diffs and the candidate original-SDK reference factory/module rewriting context. measurePlainBlockWork owns the RegExp.exec hook around one lexer call, preserves both whole-block matcher bans and full raw-token equality, returns the old counters and restores the prototype in finally. createOriginalSdkReference keeps the same utility-only reverse-patch oracle: components import the copied reversed utility, while other relative/external imports resolve against installed SDK dependencies. Every assertion formerly using separate reference globals now uses the one named original object; corpus/layout/cache and work assertions remain intact.",
-            "systemReason": "These helpers factor one clear concern apiece: temporary instrumentation ownership and reference implementation assembly. They improve reading burden without changing the oracle into an invented implementation or weakening rich Unicode/ANSI checks. Reference git apply has explicit owned HOME/config/SDK and retained provenance, further highlighting the proof-build fixture environment inconsistency. Installed dependencies and the selected patch hunk were not executed or attested as runtime-verified."
-          },
-          {
-            "paths": [
-              "tests/helpers/terminal-perf-process.ts",
-              "tests/terminal-perf-cli.test.ts",
-              "tests/terminal-perf-navigation.test.ts"
-            ],
-            "readingReason": "Read the complete new helper and actual callers: CLI/report probes and SDK/InteractiveMode navigation probes invoke process.execPath with explicit args from repository cwd. Fixture.run drains exit and both pipes concurrently; each fixture owns and retains HOME, XDG state, PI SDK and temporary directories. Navigation eval/entrypoint callers use it to isolate prototype patching from the parent.",
-            "systemReason": "A small process-boundary helper is a meaningful ownership abstraction, not a catch-all fixture bag. Returned root supports report paths; no shell cleanup or auth fallback is introduced."
-          },
-          {
-            "paths": [
-              "tests/tasks-ui-proof-build.test.ts",
-              "scripts/tasks-ui-proof-build.ts",
-              "tests/helpers.ts"
-            ],
-            "readingReason": "Read complete new test and actual builder. The copied builder with stub build/prepare/adaptation verifies one-output CLI, clean-source/adapted-dependency gates, and post-build source/binary provenance. Assertions explicitly state stub binary is not native UI proof. Traced its real git init/add/commit helper into inherited Git authority, then the Bun child into builder git commands; unlike ownedFixtureEnv elsewhere, neither establishes an owned environment.",
-            "systemReason": "The provenance mechanics are legible and appropriately scoped, but a mkdtemp cwd alone does not own Git configuration/hooks or HOME. This is a concrete cross-file boundary contradiction, not a taste objection to the use of stubs."
-          }
+          "candidate": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+          "status": "rejected"
+        }
+      ],
+      "repairReason": {
+        "changedSourcePaths": [
+          "tests/rolling-activity-disk.test.ts",
+          "tests/tasks-ui-proof-build.test.ts"
         ],
-        "integrationReadingReason": "All twelve assigned baseline-to-candidate diffs were read completely, including deletions. Most extractions improve intrinsic reading burden by naming seeding, transport, timer lifetime and measurement boundaries while preserving assertions and ordered transitions. The inspected production/footer/activity/task contracts fit the new tests; no broad context bags or unjustified giant abstractions were found. Nevertheless the integrated test-process ownership story is inconsistent: terminal/reference/performance fixtures isolate child environments, while the new proof-build fixture inherits real Git/HOME authority and the refactored disk wrapper still forwards process.env. Reject this bounded lane for those source-visible ownership defects, not on coverage artifacts, previous judgments or green tests.",
-        "objections": [
+        "priorObjections": [
           {
             "paths": [
               "tests/tasks-ui-proof-build.test.ts:10-16,52-71",
@@ -10779,24 +11304,7 @@
             "requiredResult": "Give the journey a mkdtemp-owned HOME/config/SDK environment, pass ROOT explicitly on that allowlisted environment, and retain fixture files for inspection. Preserve the intentionally ordered membership/live/owner transition sequence and subprocess isolation."
           }
         ],
-        "limits": {
-          "scope": "Bounded lane judgment only; no whole-repository sign-off.",
-          "unreadAssignedDiffPaths": [],
-          "runtime": "No tests, setup, builds, installation, formatting, auth/device flows or unsupported Pi preparation were run or retried. Runtime correctness, installed SDK support and live/native proof remain unverified.",
-          "evidence": "Fresh source review only; no prior focus artifacts, coverage counts, summaries or green tests were used as acceptance evidence.",
-          "context": "Related source was inspected in relevant sections, not attested as fully read: footer lifetime/fixture/disposal; rolling membership/sync/run assembly/dispose; history revision/selectors; task merge/frame attribution/wrapper cleanup/activity maps; process-helper callers and builder. No full-current-source-everywhere claim.",
-          "provenance": {
-            "worktree": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_bfa91284",
-            "head": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
-            "fixtureExecution": "None. Temporary paths described above belong to candidate test source; no temporary code checkout or test fixture was created by this reviewer."
-          },
-          "safety": "No delegation; no sudo, recovery work, secret access, cleanup/deletion commands, inherited HOME/config/SDK cleanup, shell traps, destructive Git or user-data mutation. Candidate source/worktree preserved; only this untracked result file is written."
-        }
-      },
-      "scopedBlobComparison": {
-        "target": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
-        "unchanged": true,
-        "contextChangedPaths": []
+        "reason": "Fresh actual integrated-code judgment required after assigned/context source bytes changed; prior quality and rejection evidence retained, never promoted by hashes."
       }
     },
     {
@@ -10984,7 +11492,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -11115,7 +11623,7 @@
         ]
       },
       "scopedBlobComparison": {
-        "target": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+        "target": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
         "unchanged": true,
         "contextChangedPaths": []
       }
@@ -11129,15 +11637,31 @@
       ],
       "chars": 2566,
       "lines": 65,
-      "status": "pending",
-      "candidateOverride": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+      "status": "running",
+      "candidateOverride": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
       "repairReason": {
         "changedSourcePaths": [
           "scripts/find-ci-baseline.ts",
           "tests/helpers.ts"
         ],
         "reason": "Previously unchanged maintained sources now have actual baseline-to-final diff; require their own whole-integrated-diff scope, not related-context-only coverage."
-      }
+      },
+      "jobId": "task_6b92c1f2",
+      "model": "openai-codex/gpt-6.1-sol",
+      "workspace": {
+        "kind": "worktree",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_6b92c1f2",
+        "worktreePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_6b92c1f2",
+        "sourcePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
+        "baseRef": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "baseOid": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
+        "branch": "bruv/pr45-final-integrated-diff-lane-54-build-6b92c1f2",
+        "preparationStatus": "ready",
+        "setupTaskId": "task_46f5d852",
+        "setupStatus": "failed",
+        "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      },
+      "launchRecovered": "Outer execute timed out after launch; actual jobs.inspect verifies model and durable worktree. No duplicate launch."
     },
     {
       "id": "lane-55",
@@ -11150,7 +11674,7 @@
       "chars": 23344,
       "lines": 589,
       "status": "pending",
-      "candidateOverride": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+      "candidateOverride": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
       "repairReason": {
         "changedSourcePaths": [
           "tests/fixtures/worktree-workspace-cases.ts",
@@ -11163,7 +11687,7 @@
   ],
   "cap": 6,
   "auxStatus": "completed",
-  "reworkReserve": 2,
+  "reworkReserve": 1,
   "reworkHistory": [
     {
       "lane": "lane-05",
@@ -11182,6 +11706,6 @@
       "integrationStillPending": true
     }
   ],
-  "repairedSourceCandidate": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+  "repairedSourceCandidate": "60d8289865027aaf79e88ebbea3f59ca2c8a9e06",
   "currentDiffPaths": 516
 }
