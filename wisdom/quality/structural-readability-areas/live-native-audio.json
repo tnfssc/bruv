@@ -4067,16 +4067,17 @@
       "initialBlob": "15ef014e3e3b6b833200984a23610f2609af1a30",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "15ef014e3e3b6b833200984a23610f2609af1a30",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "15ef014e3e3b6b833200984a23610f2609af1a30",
         "primaryId": "task_ec1706fd",
         "primaryCommit": "27cf9c133dbc943e4aac92286ddfb9a32ca90b5f",
-        "judgeIds": [],
+        "judgeIds": ["task_3c15b64a"],
         "sourceCommit": "27cf9c133dbc943e4aac92286ddfb9a32ca90b5f",
-        "state": "needs-judge",
-        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+        "state": "accepted-joined",
+        "reason": "Read the entire intrinsic test. The deferred connect fixture owns the readiness transition explicitly: connect first moves to connecting and installs release, the test observes zero sends before release, and each send asserts ready. After release, concatenated PCM equality and two chunks establish complete ordered delivery; mode-dependent buffering and elapsed replay assertions distinguish control/paced from burst. The separate finish test shows that false performs neither delay nor endAudio, while true waits and invokes endAudio once. The inline Google connection records the exact configuration and outgoing sequence, making automatic versus manually bracketed audio visible without another fixture layer. Extracting these fixtures would separate the causal release/ready/send and setup/framing observations rather than resolve a scattered ownership problem. Existing names describe substantive behaviors, not cosmetic churn."
       }
     },
     {
@@ -4084,7 +4085,7 @@
       "initialBlob": "db179896d78a7b812017a91ec843399a8a7e70b5",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "21bfe18b88d0e9e78327414ac63d6fabe2cb51ac",
       "integration": "related patch accepted;own primary pending",
       "relatedPatchJudgment": {
         "judgeId": "task_5f68217e",
@@ -4092,13 +4093,14 @@
         "blob": "21bfe18b88d0e9e78327414ac63d6fabe2cb51ac"
       },
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "21bfe18b88d0e9e78327414ac63d6fabe2cb51ac",
         "primaryId": "task_ec1706fd",
         "primaryCommit": "27cf9c133dbc943e4aac92286ddfb9a32ca90b5f",
-        "judgeIds": ["task_5f68217e"],
+        "judgeIds": ["task_5f68217e", "task_3c15b64a"],
         "sourceCommit": "27cf9c133dbc943e4aac92286ddfb9a32ca90b5f",
-        "state": "needs-judge",
-        "reason": "Retain exact related-path actual-code acceptance; it is not completion of this file’s distinct primary/fresh focus-judge requirement."
+        "state": "accepted-joined",
+        "reason": "Read the complete base-relative diff and candidate test. Existing eligibility assertions are preserved verbatim. A typed idleRun baseline removes repeated incidental facts, and every variant is visible at the assertion through object spread; no helper hides the decision. The added named examples present the decision ladder in reading order: not running dominates concurrent activities; continuous mode ignores push-to-talk availability and reasoning but reflects playback; held input dominates unavailable input/output; unavailable input dominates output; otherwise speaking dominates thinking, then idle. Mixed activity inputs make precedence explicit, rather than merely testing one flag at a time. This is useful structure for the presentation contract, not a second owner or an abstraction/context bag. The baseline is not mutated by the examples."
       }
     },
     {
@@ -4106,16 +4108,17 @@
       "initialBlob": "0232e36634ac9ff67128d632bb1a8585344c0acc",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "0232e36634ac9ff67128d632bb1a8585344c0acc",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "0232e36634ac9ff67128d632bb1a8585344c0acc",
         "primaryId": "task_ec1706fd",
         "primaryCommit": "27cf9c133dbc943e4aac92286ddfb9a32ca90b5f",
-        "judgeIds": [],
+        "judgeIds": ["task_3c15b64a"],
         "sourceCommit": "27cf9c133dbc943e4aac92286ddfb9a32ca90b5f",
-        "state": "needs-judge",
-        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+        "state": "accepted-joined",
+        "reason": "Read the entire test from loopback server construction through final assertions. One local trial fixture owns listen readiness, recording, synthetic provider messages, client-disconnect observation and finally server termination/close. Its setup handler deliberately sends malformed JSON before ready/error/close/timeout; its response handler increments the synthetic call ID, emits both speech streams, alternates one malformed argument payload, and ends each response. Keeping this protocol beside the trial makes continuation and terminal behavior traceable. The success assertions inspect ordered assistant/user items, the three-response bound, intercepted arguments and correlated call IDs, bounded speech and no errors. The small terminal-mode loop uses the same lifetime and clearly local expected error differences. Splitting that loop or extracting the server would scatter the single lifetime without a concrete reading benefit."
       }
     },
     {
@@ -4905,7 +4908,7 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 142,
-    "pending": 9
+    "accepted": 145,
+    "pending": 6
   }
 }

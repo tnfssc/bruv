@@ -16322,11 +16322,11 @@
     {
       "file": "tests/live-startup-speech-probe.test.ts",
       "initialBlob": "15ef014e3e3b6b833200984a23610f2609af1a30",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_ec1706fd",
       "sourceCommit": "27cf9c133dbc943e4aac92286ddfb9a32ca90b5f",
-      "judgeIds": [],
-      "resumeState": "needs-judge",
+      "judgeIds": ["task_3c15b64a"],
+      "resumeState": "accepted-joined",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
       "area": "live-native-audio",
       "primaryCommit": "27cf9c133dbc943e4aac92286ddfb9a32ca90b5f",
@@ -16345,16 +16345,32 @@
         "changedPaths records the complete batch source scope in every decision; no-change means that individual focus remains byte-identical.",
         "Git commit used per-command core.hooksPath=/dev/null to avoid implicit test/setup/build hooks; no dependency or setup guards were modified.",
         "Values and wisdom unchanged: parent owns aggregate wisdom; no per-worker notes. Runtime agent.model verification remains parent-owned."
+      ],
+      "acceptedBlob": "15ef014e3e3b6b833200984a23610f2609af1a30",
+      "result": "Read the entire intrinsic test. The deferred connect fixture owns the readiness transition explicitly: connect first moves to connecting and installs release, the test observes zero sends before release, and each send asserts ready. After release, concatenated PCM equality and two chunks establish complete ordered delivery; mode-dependent buffering and elapsed replay assertions distinguish control/paced from burst. The separate finish test shows that false performs neither delay nor endAudio, while true waits and invokes endAudio once. The inline Google connection records the exact configuration and outgoing sequence, making automatic versus manually bracketed audio visible without another fixture layer. Extracting these fixtures would separate the causal release/ready/send and setup/framing observations rather than resolve a scattered ownership problem. Existing names describe substantive behaviors, not cosmetic churn.",
+      "systemReason": "Followed deliverStartupSpeech into StartupAudioQueue: connect starts before experimental FIFO population, awaiting connect and checking ready precedes optional activityStart and replay, while control bypasses FIFO and sends 640-byte chunks with pacing. Queue has a byte bound and terminal stop, copies captured buffers, drains FIFO only while ready, and cannot revive after stop. Followed VoiceSession constructor defaults, connect config/setup resolution/onReady, audio validation, manual input framing, endAudio and close epoch invalidation. The test-only adapter preserves supplied model/instructions/transcription configuration while overriding automatic detection only for manual probe policy. The explicit probe caller owns queue stop on error/close/deadline, distinguishes silence-only acceptance from flush/manual acceptance, and closes the session in finally. main is import.meta.main-gated and paid execution needs explicit opt-in. Also independently read the only changed path, live-status.test.ts, with status.ts/render caller; its named presentation cases do not affect this probe journey.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "git diff --name-status base..candidate lists ONLY tests/live-status.test.ts; read its complete candidate blob and full base-relative diff.",
+        "git diff --check base..candidate returned no diagnostics. This is a static whitespace check, not execution proof.",
+        "git rev-parse candidate:tests/live-startup-speech-probe.test.ts and base:tests/live-startup-speech-probe.test.ts both yield 15ef014e3e3b6b833200984a23610f2609af1a30.",
+        "Inspected filesystem/network boundaries before any possible runtime gate: tested exports use memory/fake connection and timers; real synthesis/credentials/provider connections are in explicit CLI paths, which were not invoked."
+      ],
+      "limits": [
+        "Static actual-code review only: no setup, tests, builds, package writes, auth, device access, or provider requests. Parent owns audited isolated runtime gates.",
+        "Read candidate via git show/git diff against b3b3fdb0c8d775cf3d495585725fcbe635f2eb59, not checkout HEAD. Durable provenance: existing worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_3c15b64a; worktree and Git evidence retained. No temporary code checkout or runtime filesystem fixture created.",
+        "No descendants delegated; runtime agent.model verification remains parent-owned. No wisdom edits: parent owns aggregate note.",
+        "Timer thresholds, provider readiness behavior, silence-only VAD, paid auth and real audio devices were not executed or verified."
       ]
     },
     {
       "file": "tests/live-status.test.ts",
       "initialBlob": "db179896d78a7b812017a91ec843399a8a7e70b5",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_ec1706fd",
       "sourceCommit": "27cf9c133dbc943e4aac92286ddfb9a32ca90b5f",
-      "judgeIds": ["task_5f68217e"],
-      "resumeState": "needs-judge",
+      "judgeIds": ["task_5f68217e", "task_3c15b64a"],
+      "resumeState": "accepted-joined",
       "pendingReason": "Retain exact related-path actual-code acceptance; it is not completion of this file’s distinct primary/fresh focus-judge requirement.",
       "area": "live-native-audio",
       "primaryCommit": "27cf9c133dbc943e4aac92286ddfb9a32ca90b5f",
@@ -16373,16 +16389,33 @@
         "changedPaths records the complete batch source scope in every decision; no-change means that individual focus remains byte-identical.",
         "Git commit used per-command core.hooksPath=/dev/null to avoid implicit test/setup/build hooks; no dependency or setup guards were modified.",
         "Values and wisdom unchanged: parent owns aggregate wisdom; no per-worker notes. Runtime agent.model verification remains parent-owned."
+      ],
+      "acceptedRelatedJudges": ["task_3c15b64a"],
+      "acceptedBlob": "21bfe18b88d0e9e78327414ac63d6fabe2cb51ac",
+      "result": "Read the complete base-relative diff and candidate test. Existing eligibility assertions are preserved verbatim. A typed idleRun baseline removes repeated incidental facts, and every variant is visible at the assertion through object spread; no helper hides the decision. The added named examples present the decision ladder in reading order: not running dominates concurrent activities; continuous mode ignores push-to-talk availability and reasoning but reflects playback; held input dominates unavailable input/output; unavailable input dominates output; otherwise speaking dominates thinking, then idle. Mixed activity inputs make precedence explicit, rather than merely testing one flag at a time. This is useful structure for the presentation contract, not a second owner or an abstraction/context bag. The baseline is not mutated by the examples.",
+      "systemReason": "Read status.ts in full: compactLiveStatus returns only labels in exactly the tested priority order and liveLocalOnly remains the root-interactive-local predicate. Followed extension defaults.local (platform + TTY + process environment) and command eligibility gate, then Run.render. render passes facts owned elsewhere: provider/audio startup establishes running only after provider readiness, heldEpoch is set by push-to-talk gating and release ends audio, editor attachment supplies availability, playback output/drain supplies speaking, and provider interaction status supplies thinking. Presentation receives these facts without mutating lifecycle, readiness or input. The cases therefore clarify genuine caller-observable policy while preserving eligibility/security assertions. The historical hash identity was corroborated, but the acceptance is based on this source journey, not historical approval or test counts.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "git diff --name-status base..candidate lists ONLY tests/live-status.test.ts; read its complete candidate blob and full base-relative diff.",
+        "git diff --check base..candidate returned no diagnostics. This is a static whitespace check, not execution proof.",
+        "Candidate focus blob is 21bfe18b88d0e9e78327414ac63d6fabe2cb51ac, identical to 931224a0e92a33af036ba65404559b958ff1574a:tests/live-status.test.ts.",
+        "Complete changed-path inspection found only import expansion and additive presentation examples; no implementation or eligibility assertion changes."
+      ],
+      "limits": [
+        "Static actual-code review only: no setup, tests, builds, package writes, auth, device access, or provider requests. Parent owns audited isolated runtime gates.",
+        "Read candidate via git show/git diff against b3b3fdb0c8d775cf3d495585725fcbe635f2eb59, not checkout HEAD. Durable provenance: existing worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_3c15b64a; worktree and Git evidence retained. No temporary code checkout or runtime filesystem fixture created.",
+        "No descendants delegated; runtime agent.model verification remains parent-owned. No wisdom edits: parent owns aggregate note.",
+        "No rendered UI, keyboard/device interaction, or runtime test verification; this verdict covers test readability and its inspected presentation contract."
       ]
     },
     {
       "file": "tests/live-study-trial.test.ts",
       "initialBlob": "0232e36634ac9ff67128d632bb1a8585344c0acc",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_ec1706fd",
       "sourceCommit": "27cf9c133dbc943e4aac92286ddfb9a32ca90b5f",
-      "judgeIds": [],
-      "resumeState": "needs-judge",
+      "judgeIds": ["task_3c15b64a"],
+      "resumeState": "accepted-joined",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
       "area": "live-native-audio",
       "primaryCommit": "27cf9c133dbc943e4aac92286ddfb9a32ca90b5f",
@@ -16401,6 +16434,22 @@
         "changedPaths records the complete batch source scope in every decision; no-change means that individual focus remains byte-identical.",
         "Git commit used per-command core.hooksPath=/dev/null to avoid implicit test/setup/build hooks; no dependency or setup guards were modified.",
         "Values and wisdom unchanged: parent owns aggregate wisdom; no per-worker notes. Runtime agent.model verification remains parent-owned."
+      ],
+      "acceptedBlob": "0232e36634ac9ff67128d632bb1a8585344c0acc",
+      "result": "Read the entire test from loopback server construction through final assertions. One local trial fixture owns listen readiness, recording, synthetic provider messages, client-disconnect observation and finally server termination/close. Its setup handler deliberately sends malformed JSON before ready/error/close/timeout; its response handler increments the synthetic call ID, emits both speech streams, alternates one malformed argument payload, and ends each response. Keeping this protocol beside the trial makes continuation and terminal behavior traceable. The success assertions inspect ordered assistant/user items, the three-response bound, intercepted arguments and correlated call IDs, bounded speech and no errors. The small terminal-mode loop uses the same lifetime and clearly local expected error differences. Splitting that loop or extracting the server would scatter the single lifetime without a concrete reading benefit.",
+      "systemReason": "Followed studyTrial from WebSocket URL override and session.update to session.updated-controlled ordered item sends, initial response, ignored malformed JSON, argument parse/fallback, synthetic function_call_output, pending-driven continuation below three responses, speech truncation, and shared idempotent end for provider error/socket close/deadline. Client end resolves the study result before necessarily finishing socket shutdown; the fixture explicitly awaits disconnected before returning and finally closes its own server. Read capability/controlled/recorded studyTrial call sites: caller-supplied instructions/items and bounded deadlines/speech limits feed the same transport; mockOutput only manufactures responses, with no generated-code dispatch. Paid/source-disclosure paths remain outside this fixture and were not run. Independently inspected the changed live-status test and its status/render caller; it introduces presentation assertions only and does not alter study transport or fixture lifetime.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "git diff --name-status base..candidate lists ONLY tests/live-status.test.ts; read its complete candidate blob and full base-relative diff.",
+        "git diff --check base..candidate returned no diagnostics. This is a static whitespace check, not execution proof.",
+        "git rev-parse candidate:tests/live-study-trial.test.ts and base:tests/live-study-trial.test.ts both yield 0232e36634ac9ff67128d632bb1a8585344c0acc.",
+        "Inspected effects only: fixture would bind ephemeral loopback and send a literal dummy credential solely to that local server; it owns its WebSocket clients/server cleanup and uses no HOME/config/SDK filesystem fixture. No network execution performed."
+      ],
+      "limits": [
+        "Static actual-code review only: no setup, tests, builds, package writes, auth, device access, or provider requests. Parent owns audited isolated runtime gates.",
+        "Read candidate via git show/git diff against b3b3fdb0c8d775cf3d495585725fcbe635f2eb59, not checkout HEAD. Durable provenance: existing worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_3c15b64a; worktree and Git evidence retained. No temporary code checkout or runtime filesystem fixture created.",
+        "No descendants delegated; runtime agent.model verification remains parent-owned. No wisdom edits: parent owns aggregate note.",
+        "Local socket ordering, deadline behavior, disconnect/close timing and real provider behavior remain runtime-unverified. Existing fixture lifetime was inspected, not executed."
       ]
     },
     {
@@ -24462,9 +24511,9 @@
     "baselineFiles": 766,
     "finalGate": "pending; incomplete focus coverage",
     "liveAuth": "unverified/failing; preserved",
-    "accepted": 827,
+    "accepted": 830,
     "total": 836,
-    "pending": 9,
+    "pending": 6,
     "sourceExtras": 70,
     "checkout": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
     "branch": "bruv/readability-pr45-sol-continuation",
