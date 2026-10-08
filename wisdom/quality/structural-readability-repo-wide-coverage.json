@@ -12194,12 +12194,12 @@
     {
       "file": "tests/fixtures/remote-typed-root-placement/models.json",
       "initialBlob": "4010451d3c42d520ae8729f3057198df2f693bcd",
-      "status": "pending",
+      "status": "accepted",
       "area": "remote",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_4b304dcf",
       "primaryCommit": "ac4bb9b780ef576058f14d763c4b7c542a6ac31b",
-      "judgeIds": [],
+      "judgeIds": ["task_fd70d031"],
       "sourceCommit": "ac4bb9b780ef576058f14d763c4b7c542a6ac31b",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
       "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
@@ -12215,17 +12215,34 @@
         "Parent owns fresh independent readability judgments and audited isolated runtime gates. No runtime acceptance is claimed.",
         "No source edits warranted; no source commit created. sourceCommit identifies the existing exact HEAD. Formatter is inapplicable because changedPaths is empty.",
         "Durable provenance is this retained Git worktree; no temporary code checkout or fixture process was created."
+      ],
+      "acceptedBlob": "4010451d3c42d520ae8729f3057198df2f693bcd",
+      "result": "Read the entire provider document. One adjacent pair of complete records makes the exact IDs, identical token/context limits, shared loopback URL, explicit openai-completions API and dummy key visible without reconstructing generated configuration. The provider-level transport is already owned once; repeating the two small record fields keeps the standard consumed shape visible. There is no structural journey burden justifying extraction, renaming or formatting churn.",
+      "systemReason": "Traced runner files.models.json through networkNoneFixture copy into the owned build and Docker COPY into /root/.bruv/agent. settings.json selects fixture/typed-root; subagents.json selects fixture/typed-root-normal through the normal provider/model profile shape. fake-provider.ts listens only at the matching loopback port and chat/completions route; scenario.response dispatches exactly typed-root-normal then rejects anything other than typed-root for root work. The actual-binary runner checks both model IDs in server inference. The clean-capture caller reuses image infrastructure but deliberately supplies its own presentation model document; it is not a hidden consumer of these records.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read exact candidate focus with git show ac4bb9b780ef576058f14d763c4b7c542a6ac31b:<focus>; did not substitute current HEAD.",
+        "git diff --name-status ac4bb9b780ef576058f14d763c4b7c542a6ac31b ac4bb9b780ef576058f14d763c4b7c542a6ac31b is empty: primaryBase and candidate are identical, and there are no candidate-changed related source paths.",
+        "Resolved exact focus Git blob using git rev-parse ac4bb9b780ef576058f14d763c4b7c542a6ac31b:<focus>.",
+        "Static source inspection only; no setup, tests, builds, credentials, network calls, or source edits.",
+        "Statically followed exact root/normal model dispatch, server-only inference and profile/config placement."
+      ],
+      "limits": [
+        "No runtime acceptance claimed; parent owns audited isolated gates and verification of runtime agent.model openai-codex/gpt-6.1-sol. No delegation was performed.",
+        "Review provenance is the supplied durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_fd70d031 and exact commit ac4bb9b780ef576058f14d763c4b7c542a6ac31b; worktree/candidate evidence retained.",
+        "No live authentication/device/provider access verified. No dependencies modified, cleanup run, commit, push, PR, or merge.",
+        "Did not execute dependency model loading or isolated Docker/provider gates. No direct read of installed model-registry dependency implementation claimed."
       ]
     },
     {
       "file": "tests/fixtures/remote-typed-root-placement/proof.ts",
       "initialBlob": "810ab260d994b27b3526d05f001064d42ef4b680",
-      "status": "pending",
+      "status": "accepted",
       "area": "remote",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_4b304dcf",
       "primaryCommit": "ac4bb9b780ef576058f14d763c4b7c542a6ac31b",
-      "judgeIds": [],
+      "judgeIds": ["task_fd70d031"],
       "sourceCommit": "ac4bb9b780ef576058f14d763c4b7c542a6ac31b",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
       "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
@@ -12241,17 +12258,35 @@
         "Parent owns fresh independent readability judgments and audited isolated runtime gates. No runtime acceptance is claimed.",
         "No source edits warranted; no source commit created. sourceCommit identifies the existing exact HEAD. Formatter is inapplicable because changedPaths is empty.",
         "Durable provenance is this retained Git worktree; no temporary code checkout or fixture process was created."
+      ],
+      "acceptedBlob": "810ab260d994b27b3526d05f001064d42ef4b680",
+      "result": "Read every exported assertion. completedCommands owns completed-receipt selection, while questionsFromReceipt alone unwraps the normal question facet. Pending human identity/version, root identity/journal, source provenance, prompt multiplicity and phase/role/depth/worktree execution are distinct claims with small local assertions. assertReplyRecovered joins original request, saved command ID and command, error-free completion, one send, status reconciliation and one real role0 execution at the saved repo. assertCancelledJob joins the sole completed stop receipt to the selected ID and a matching inspected terminal non-success result. These are coherent evidence operations, not arbitrary named blocks or a shared context bag.",
+      "systemReason": "Read the entire actual-binary runner and scenario plus regression test source. The runner owns the transport/process lifecycle: wait for lost.json, preserve a genuinely unknown local receipt, observe one execution, detach, release armed, reattach, then invoke assertReplyRecovered and prove no active source return. Cancellation separately observes the process live before the picker, completed stop, real process exit, authoritative post-stop inspection, missing natural-completion marker and unchanged active root/source. assertSameRoot/assertSnapshot/assertWorkOnce are called at the appropriate root/return/reattach boundaries. Root client persists command identity before send and only status-reconciles saved commands; owner command-status returns the saved receipt. Keeping process-exit observation outside receipt assertions prevents a completed stop from being mistaken for actual exit.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read exact candidate focus with git show ac4bb9b780ef576058f14d763c4b7c542a6ac31b:<focus>; did not substitute current HEAD.",
+        "git diff --name-status ac4bb9b780ef576058f14d763c4b7c542a6ac31b ac4bb9b780ef576058f14d763c4b7c542a6ac31b is empty: primaryBase and candidate are identical, and there are no candidate-changed related source paths.",
+        "Resolved exact focus Git blob using git rev-parse ac4bb9b780ef576058f14d763c4b7c542a6ac31b:<focus>.",
+        "Static source inspection only; no setup, tests, builds, credentials, network calls, or source edits.",
+        "Read runner unknown-before-detach/release/reconnect and live-process/post-stop inspection journeys.",
+        "Read negative assertion test cases without running them."
+      ],
+      "limits": [
+        "No runtime acceptance claimed; parent owns audited isolated gates and verification of runtime agent.model openai-codex/gpt-6.1-sol. No delegation was performed.",
+        "Review provenance is the supplied durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_fd70d031 and exact commit ac4bb9b780ef576058f14d763c4b7c542a6ac31b; worktree/candidate evidence retained.",
+        "No live authentication/device/provider access verified. No dependencies modified, cleanup run, commit, push, PR, or merge.",
+        "No runtime proof of detach/reconnect, real execution, picker behavior or process exit. Existing runner explicitly excludes owner-crash and actively streaming-root abort proof."
       ]
     },
     {
       "file": "tests/fixtures/remote-typed-root-placement/reply-loss.ts",
       "initialBlob": "48a041d9861a0c53bc93419fadba22540fb9940d",
-      "status": "pending",
+      "status": "accepted",
       "area": "remote",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_4b304dcf",
       "primaryCommit": "ac4bb9b780ef576058f14d763c4b7c542a6ac31b",
-      "judgeIds": [],
+      "judgeIds": ["task_fd70d031"],
       "sourceCommit": "ac4bb9b780ef576058f14d763c4b7c542a6ac31b",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
       "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
@@ -12267,6 +12302,24 @@
         "Parent owns fresh independent readability judgments and audited isolated runtime gates. No runtime acceptance is claimed.",
         "No source edits warranted; no source commit created. sourceCommit identifies the existing exact HEAD. Formatter is inapplicable because changedPaths is empty.",
         "Durable provenance is this retained Git worktree; no temporary code checkout or fixture process was created."
+      ],
+      "acceptedBlob": "48a041d9861a0c53bc93419fadba22540fb9940d",
+      "result": "Read the complete module, including shouldDrop and CLI argv handling. The unrelated-SSH early return visibly preserves inherited streams and actual status. For typed root controls, parsing/logging precedes the armed-plus-saved-loss matching command-status gate, and that gate returns 255 before spawn. The fault path executes real SSH first, requires status 0, armed and no previous lost file, parses the actual response, writes request/response at mode 0600, then discards stdout with exit 255. All other replies forward actual stdout/stderr/status. The linear ordering directly exposes gate-before-delivery and durable-save-before-discard; another fault-state object or scattered predicate/write helpers would add reconstruction rather than remove it.",
+      "systemReason": "Traced networkNoneFixture wrapper argv (Bun, relay source, real SSH executable, explicit fixture SSH config, owned faultDir, forwarded SSH args), production sshControl --remote-root-control framing and JSON stdin, and the runner fault lifecycle. The caller creates armed before the third root, waits for saved real response and unknown receipt plus one execution, detaches before removing armed, then reconnects and inspects request/work evidence with assertReplyRecovered. Other status requests are forwarded, and missing armed releases the saved-command status query without resending the prompt. The relay regression test source checks forwarded bytes, discarded stdout, no forwarded gated status and normal response after release; its stand-in is not actual SSH acceptance.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read exact candidate focus with git show ac4bb9b780ef576058f14d763c4b7c542a6ac31b:<focus>; did not substitute current HEAD.",
+        "git diff --name-status ac4bb9b780ef576058f14d763c4b7c542a6ac31b ac4bb9b780ef576058f14d763c4b7c542a6ac31b is empty: primaryBase and candidate are identical, and there are no candidate-changed related source paths.",
+        "Resolved exact focus Git blob using git rev-parse ac4bb9b780ef576058f14d763c4b7c542a6ac31b:<focus>.",
+        "Static source inspection only; no setup, tests, builds, credentials, network calls, or source edits.",
+        "Statically checked subprocess arguments, status gate placement, actual response preservation at 0600 and exact release ownership.",
+        "Inspected subprocess test and fixture filesystem/network/cleanup effects; did not run any of them."
+      ],
+      "limits": [
+        "No runtime acceptance claimed; parent owns audited isolated gates and verification of runtime agent.model openai-codex/gpt-6.1-sol. No delegation was performed.",
+        "Review provenance is the supplied durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_fd70d031 and exact commit ac4bb9b780ef576058f14d763c4b7c542a6ac31b; worktree/candidate evidence retained.",
+        "No live authentication/device/provider access verified. No dependencies modified, cleanup run, commit, push, PR, or merge.",
+        "No real SSH fault injection run. Ordinary regression-test subprocess source inherits its environment; parent must use its audited explicit argv/env and owned HOME/config/SDK gate rather than treating this inspection as test authorization. Existing network fixture cleanup and Dockerfile image-local removal were inspected only, never executed."
       ]
     },
     {
@@ -21627,9 +21680,9 @@
     "baselineFiles": 766,
     "finalGate": "pending; incomplete focus coverage",
     "liveAuth": "unverified/failing; preserved",
-    "accepted": 759,
+    "accepted": 762,
     "total": 835,
-    "pending": 76,
+    "pending": 73,
     "sourceExtras": 69,
     "checkout": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
     "branch": "bruv/readability-pr45-sol-continuation",

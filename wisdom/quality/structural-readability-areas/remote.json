@@ -2214,50 +2214,53 @@
     {
       "focus": "tests/fixtures/remote-typed-root-placement/models.json",
       "initialBlob": "4010451d3c42d520ae8729f3057198df2f693bcd",
-      "status": "pending",
+      "status": "accepted",
       "judgeRounds": [],
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "4010451d3c42d520ae8729f3057198df2f693bcd",
         "primaryId": "task_4b304dcf",
         "primaryCommit": "ac4bb9b780ef576058f14d763c4b7c542a6ac31b",
-        "judgeIds": [],
+        "judgeIds": ["task_fd70d031"],
         "sourceCommit": "ac4bb9b780ef576058f14d763c4b7c542a6ac31b",
-        "state": "needs-judge",
-        "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+        "state": "accepted-joined",
+        "reason": "Read the entire provider document. One adjacent pair of complete records makes the exact IDs, identical token/context limits, shared loopback URL, explicit openai-completions API and dummy key visible without reconstructing generated configuration. The provider-level transport is already owned once; repeating the two small record fields keeps the standard consumed shape visible. There is no structural journey burden justifying extraction, renaming or formatting churn."
       },
-      "acceptedBlob": null
+      "acceptedBlob": "4010451d3c42d520ae8729f3057198df2f693bcd"
     },
     {
       "focus": "tests/fixtures/remote-typed-root-placement/proof.ts",
       "initialBlob": "810ab260d994b27b3526d05f001064d42ef4b680",
-      "status": "pending",
+      "status": "accepted",
       "judgeRounds": [],
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "810ab260d994b27b3526d05f001064d42ef4b680",
         "primaryId": "task_4b304dcf",
         "primaryCommit": "ac4bb9b780ef576058f14d763c4b7c542a6ac31b",
-        "judgeIds": [],
+        "judgeIds": ["task_fd70d031"],
         "sourceCommit": "ac4bb9b780ef576058f14d763c4b7c542a6ac31b",
-        "state": "needs-judge",
-        "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+        "state": "accepted-joined",
+        "reason": "Read every exported assertion. completedCommands owns completed-receipt selection, while questionsFromReceipt alone unwraps the normal question facet. Pending human identity/version, root identity/journal, source provenance, prompt multiplicity and phase/role/depth/worktree execution are distinct claims with small local assertions. assertReplyRecovered joins original request, saved command ID and command, error-free completion, one send, status reconciliation and one real role0 execution at the saved repo. assertCancelledJob joins the sole completed stop receipt to the selected ID and a matching inspected terminal non-success result. These are coherent evidence operations, not arbitrary named blocks or a shared context bag."
       },
-      "acceptedBlob": null
+      "acceptedBlob": "810ab260d994b27b3526d05f001064d42ef4b680"
     },
     {
       "focus": "tests/fixtures/remote-typed-root-placement/reply-loss.ts",
       "initialBlob": "48a041d9861a0c53bc93419fadba22540fb9940d",
-      "status": "pending",
+      "status": "accepted",
       "judgeRounds": [],
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "48a041d9861a0c53bc93419fadba22540fb9940d",
         "primaryId": "task_4b304dcf",
         "primaryCommit": "ac4bb9b780ef576058f14d763c4b7c542a6ac31b",
-        "judgeIds": [],
+        "judgeIds": ["task_fd70d031"],
         "sourceCommit": "ac4bb9b780ef576058f14d763c4b7c542a6ac31b",
-        "state": "needs-judge",
-        "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+        "state": "accepted-joined",
+        "reason": "Read the complete module, including shouldDrop and CLI argv handling. The unrelated-SSH early return visibly preserves inherited streams and actual status. For typed root controls, parsing/logging precedes the armed-plus-saved-loss matching command-status gate, and that gate returns 255 before spawn. The fault path executes real SSH first, requires status 0, armed and no previous lost file, parses the actual response, writes request/response at mode 0600, then discards stdout with exit 255. All other replies forward actual stdout/stderr/status. The linear ordering directly exposes gate-before-delivery and durable-save-before-discard; another fault-state object or scattered predicate/write helpers would add reconstruction rather than remove it."
       },
-      "acceptedBlob": null
+      "acceptedBlob": "48a041d9861a0c53bc93419fadba22540fb9940d"
     },
     {
       "focus": "tests/fixtures/remote-typed-root-placement/scenario.ts",
@@ -4145,8 +4148,8 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 104,
-    "pending": 18
+    "accepted": 107,
+    "pending": 15
   },
   "extraFiles": [
     {
