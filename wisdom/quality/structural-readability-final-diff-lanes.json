@@ -2307,7 +2307,22 @@
       ],
       "chars": 99455,
       "lines": 2190,
-      "status": "pending"
+      "status": "running",
+      "jobId": "task_46225dd8",
+      "model": "openai-codex/gpt-6.1-sol",
+      "workspace": {
+        "kind": "worktree",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_46225dd8",
+        "worktreePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_46225dd8",
+        "sourcePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
+        "baseRef": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "baseOid": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "branch": "bruv/pr45-final-integrated-diff-lane-14-compa-46225dd8",
+        "preparationStatus": "ready",
+        "setupTaskId": "task_62f7cd21",
+        "setupStatus": "running",
+        "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      }
     },
     {
       "id": "lane-15",
@@ -2330,7 +2345,22 @@
       ],
       "chars": 98275,
       "lines": 2289,
-      "status": "pending"
+      "status": "running",
+      "jobId": "task_994f8d54",
+      "model": "openai-codex/gpt-6.1-sol",
+      "workspace": {
+        "kind": "worktree",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_994f8d54",
+        "worktreePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_994f8d54",
+        "sourcePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
+        "baseRef": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "baseOid": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "branch": "bruv/pr45-final-integrated-diff-lane-15-compa-994f8d54",
+        "preparationStatus": "ready",
+        "setupTaskId": "task_60d5a150",
+        "setupStatus": "running",
+        "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      }
     },
     {
       "id": "lane-16",
@@ -2353,7 +2383,22 @@
       ],
       "chars": 96663,
       "lines": 2249,
-      "status": "pending"
+      "status": "running",
+      "jobId": "task_a3e6f5fd",
+      "model": "openai-codex/gpt-6.1-sol",
+      "workspace": {
+        "kind": "worktree",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_a3e6f5fd",
+        "worktreePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_a3e6f5fd",
+        "sourcePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
+        "baseRef": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "baseOid": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "branch": "bruv/pr45-final-integrated-diff-lane-16-compa-a3e6f5fd",
+        "preparationStatus": "ready",
+        "setupTaskId": "task_c25efa24",
+        "setupStatus": "running",
+        "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      }
     },
     {
       "id": "lane-17",
@@ -2372,7 +2417,22 @@
       ],
       "chars": 92279,
       "lines": 2097,
-      "status": "pending"
+      "status": "running",
+      "jobId": "task_6cce396f",
+      "model": "openai-codex/gpt-6.1-sol",
+      "workspace": {
+        "kind": "worktree",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_6cce396f",
+        "worktreePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_6cce396f",
+        "sourcePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
+        "baseRef": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "baseOid": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "branch": "bruv/pr45-final-integrated-diff-lane-17-compa-6cce396f",
+        "preparationStatus": "ready",
+        "setupTaskId": "task_12cebe0f",
+        "setupStatus": "running",
+        "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      }
     },
     {
       "id": "lane-18",
@@ -3032,15 +3092,12 @@
   ],
   "cap": 6,
   "auxStatus": "completed",
-  "reworkReserve": 1,
+  "reworkReserve": 2,
   "reworkHistory": [
     {
       "lane": "lane-05",
       "jobId": "task_49b63983",
       "reason": "Concrete inherited-env SDK failure-probe objection; reserve next free slot for fresh source primary/judge."
     }
-  ],
-  "pausedForRework": {
-    "reason": "Record new concrete fixture-authority objections before refilling."
-  }
+  ]
 }

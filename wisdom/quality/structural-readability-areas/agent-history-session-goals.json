@@ -4244,7 +4244,7 @@
     },
     {
       "focus": "tests/history-sdk-probe.test.ts",
-      "status": "pending",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_156435a8",
@@ -4287,17 +4287,17 @@
         "blob": "cbafe26ff776d7bbd7c687073ade73c0871ddda4",
         "primaryFocusStillRequired": true
       },
-      "acceptedBlob": null,
+      "acceptedBlob": "7853461b737b0065c0723c0660a84d798c8b4a59",
       "integration": "integrated-exact-candidate",
       "resume": {
-        "status": "pending",
-        "acceptedBlob": "bd738142f9c2cb7dd0b1652b47294b63fe25788f",
+        "status": "accepted",
+        "acceptedBlob": "7853461b737b0065c0723c0660a84d798c8b4a59",
         "primaryId": "task_8ed15117",
         "primaryCommit": "5e0fb7ac78fc0efaf669c83cbc4e794c54a78603",
-        "judgeIds": ["task_b1d3b7fc", "task_efa4fabb"],
+        "judgeIds": ["task_b1d3b7fc", "task_efa4fabb", "task_a6351926"],
         "sourceCommit": "5e0fb7ac78fc0efaf669c83cbc4e794c54a78603",
-        "state": "needs-judge",
-        "reason": "Saved final original review and candidate/area hashes match. Parent launch/drain/assert separated from typed child fault/disposal/physicalspool-before-rm/exit observation; real diagnostic scenario coherent and sourceunchanged. Exact candidate177e confirmed despite launch metadata delay. Joined tr..."
+        "state": "accepted-joined",
+        "reason": "Read the whole exact candidate focus and its diff from primaryBase 2b3cb2151ffffbffa77b2c696fc8bd60a352cb7f. Both tests enter runFailedSoak separately; each invocation now creates a fresh retained createHistoryFixture and launches explicit argv with only fixture.env plus BRUV_TEST_SKIP_MANAGER_DISPOSAL. Following run into offlineTestEnv shows the supplied environment replaces, rather than merges, process.env; the helper concurrently drains stdout/stderr and awaits child exit. This directly removes the earlier inherited HOME/config/SDK authority exception without adding an abstraction or changing the scenario assertions."
       }
     },
     {
@@ -4692,7 +4692,7 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 132,
-    "pending": 1
+    "accepted": 133,
+    "pending": 0
   }
 }

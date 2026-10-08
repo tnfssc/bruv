@@ -3007,6 +3007,15 @@
         "model": "openai-codex/gpt-6.1-sol",
         "status": "handled",
         "sourceCommit": "5e0fb7ac78fc0efaf669c83cbc4e794c54a78603"
+      },
+      {
+        "id": "task_a6351926",
+        "stage": "judge",
+        "focus": ["tests/history-sdk-probe.test.ts"],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_a6351926",
+        "branch": "bruv/pr45-judge-1-agent-history-session-goals-a6351926",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled"
       }
     ]
   },
@@ -4012,7 +4021,25 @@
     "branch": "bruv/whole-repo-structural-readability-build--d849d828",
     "base": "59413c532e6422983f611915e509e8421aa2f363",
     "resumeResearch": [],
-    "resumeFocusWorkers": []
+    "resumeFocusWorkers": [
+      {
+        "id": "task_ad282ca7",
+        "stage": "primary",
+        "focus": [
+          "tests/dependency-updates.test.ts",
+          "tests/dependency-workflow.test.ts",
+          "tests/find-ci-baseline.test.ts",
+          "tests/helpers.ts",
+          "tests/install-download.test.ts",
+          "tests/install-local.test.ts",
+          "tests/update-self-fixture.test.ts"
+        ],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_ad282ca7",
+        "branch": "bruv/pr45-primary-7-build-release-ci-tooling--ad282ca7",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      }
+    ]
   },
   {
     "group": "site-support",

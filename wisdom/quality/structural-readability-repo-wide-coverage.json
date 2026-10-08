@@ -23013,15 +23013,15 @@
       "file": "tests/history-sdk-probe.test.ts",
       "initialBlob": "absent",
       "area": "agent-history-session-goals",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_8ed15117",
       "primaryCommit": "5e0fb7ac78fc0efaf669c83cbc4e794c54a78603",
-      "judgeIds": ["task_b1d3b7fc", "task_efa4fabb"],
+      "judgeIds": ["task_b1d3b7fc", "task_efa4fabb", "task_a6351926"],
       "sourceCommit": "5e0fb7ac78fc0efaf669c83cbc4e794c54a78603",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
-      "status": "pending",
-      "acceptedBlob": "bd738142f9c2cb7dd0b1652b47294b63fe25788f",
-      "result": "Saved final original review and candidate/area hashes match. Parent launch/drain/assert separated from typed child fault/disposal/physicalspool-before-rm/exit observation; real diagnostic scenario coherent and sourceunchanged. Exact candidate177e confirmed despite launch metadata delay. Joined tr...",
+      "status": "accepted",
+      "acceptedBlob": "7853461b737b0065c0723c0660a84d798c8b4a59",
+      "result": "Read the whole exact candidate focus and its diff from primaryBase 2b3cb2151ffffbffa77b2c696fc8bd60a352cb7f. Both tests enter runFailedSoak separately; each invocation now creates a fresh retained createHistoryFixture and launches explicit argv with only fixture.env plus BRUV_TEST_SKIP_MANAGER_DISPOSAL. Following run into offlineTestEnv shows the supplied environment replaces, rather than merges, process.env; the helper concurrently drains stdout/stderr and awaits child exit. This directly removes the earlier inherited HOME/config/SDK authority exception without adding an abstraction or changing the scenario assertions.",
       "priorAcceptedIntegrationProof": [
         {
           "primaryId": "task_156435a8",
@@ -23082,6 +23082,20 @@
         "No delegation, cleanup, recovery, dependency writes, push, merge or publication performed. Existing worktrees and candidate evidence preserved.",
         "Runtime agent.model verification remains parent-owned.",
         "Values and wisdom guidance read; no wisdom/value source edits or per-worker note added because parent owns aggregate wisdom."
+      ],
+      "systemReason": "The unchanged fixture owns mkdtemp root and HOME, all four XDG roots, SDK agent/session roots, and TMPDIR/TMP/TEMP beneath it, with no outer cleanup operation. The unchanged script derives its soak directory from tmpdir(), now nested in that owned TMPDIR, explicitly sets runtime auth/models and loader directories, supplies an offline summary hook, disposes the live session, then finalizes the disk-backed manager before removing only the script-created directory. The preload retains the pending store, injects first-message append failure, snapshots disposal/spool existence before rm, and checks them at exit; its negative control removes only manager disposal. DiskEntryStore.pending creates a real exclusive pending spool beside the owned target, and dispose removes that spool. These unchanged lifetime and negative-control decisions remain intact. Read-only installed SDK config inspection confirms HOME and agent-dir defaults derive from child environment; no credentials or live auth were accessed.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "git diff --name-status primaryBase candidate confirms tests/history-sdk-probe.test.ts is the only changed path; read its full diff and full candidate blob.",
+        "Read candidate helper, preload, full script, relevant manager create/newSession/dispose integration and store pending/dispose implementation.",
+        "Exact candidate focus blob verified with git rev-parse; base blob bd738142f9c2cb7dd0b1652b47294b63fe25788f.",
+        "Read-only filesystem/network-effect review performed; no setup, tests, builds, cleanup, dependency installs, or delegation executed."
+      ],
+      "limits": [
+        "Static actual-source verdict only; parent owns audited isolated runtime gates. Failure and negative-control execution remain unverified in this review.",
+        "Durable review provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_a6351926; exact candidate/base retained in Git. No temporary code checkout or source edit.",
+        "No fixture was created by this review. Source fixtures may use system tmpdir but retain their outer roots; no inherited HOME/config/SDK path was cleaned.",
+        "Runtime agent.model verification remains parent-owned. No wisdom edits: parent owns aggregate wisdom."
       ]
     },
     {
@@ -24895,9 +24909,9 @@
     "baselineFiles": 766,
     "finalGate": "pending; incomplete focus coverage",
     "liveAuth": "unverified/failing; preserved",
-    "accepted": 828,
+    "accepted": 829,
     "total": 836,
-    "pending": 8,
+    "pending": 7,
     "sourceExtras": 70,
     "checkout": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
     "branch": "bruv/readability-pr45-sol-continuation",

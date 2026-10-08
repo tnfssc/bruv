@@ -1,5 +1,7 @@
 import { expect, test } from "bun:test";
 import { resolve } from "node:path";
+import { run } from "./helpers";
+import { createHistoryFixture } from "./helpers/history-fixture";
 
 const root = resolve(import.meta.dir, "..");
 const preload = resolve(import.meta.dir, "fixtures/history-sdk-probe-failure.ts");
@@ -8,17 +10,16 @@ const cleanupMarker = "PROBE_CLEANUP_OK";
 
 // Only the child imports the preload; its patches never touch the test runner.
 async function runFailedSoak(skipManagerDisposal = false) {
-  const child = Bun.spawn([process.execPath, "--preload", preload, "scripts/history-sdk-probe.ts"], {
+  // Retain HOME/config/SDK state; the script removes only its own nested soak directory.
+  const fixture = createHistoryFixture("bruv-history-sdk-probe-test-");
+  const {
+    stdout,
+    stderr,
+    code: exitCode,
+  } = await run([process.execPath, "--preload", preload, "scripts/history-sdk-probe.ts"], {
     cwd: root,
-    env: { ...process.env, BRUV_TEST_SKIP_MANAGER_DISPOSAL: skipManagerDisposal ? "1" : "0" },
-    stdout: "pipe",
-    stderr: "pipe",
+    env: { ...fixture.env, BRUV_TEST_SKIP_MANAGER_DISPOSAL: skipManagerDisposal ? "1" : "0" },
   });
-  const [stdout, stderr, exitCode] = await Promise.all([
-    new Response(child.stdout).text(),
-    new Response(child.stderr).text(),
-    child.exited,
-  ]);
   return { stdout, stderr, exitCode };
 }
 
