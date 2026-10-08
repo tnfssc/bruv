@@ -44,7 +44,7 @@ Keep historical `git show COMMIT:old/path` references intact. They identify Git 
 - [`scripts/`](scripts/README.md) groups build, CI, release and feature tooling by owner. The default build owns the CLI/claude-compat pair, not T3.
 - `native/` owns native source and native-language tests.
 - `tests/` is the recursive deterministic test root. Feature tests, probes and fixtures stay with their owner. Shared helpers have one home; whole-repo contracts stay at the root. Tooling tests belong here too, not under `scripts/`.
-- `support/releases/` holds versioned release notes. `third_party/` holds license inputs.
+- `support/releases/` holds versioned release notes. `licenses/third-party/` holds license inputs.
 - `dist/`, `runtime-assets/`, `.cache/` and `artifacts/` are generated, ignored outputs—not alternate source homes.
 
 Typecheck and lint must still cover maintained code after a move. Tests must still be discovered.

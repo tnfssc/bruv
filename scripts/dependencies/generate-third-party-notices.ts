@@ -83,7 +83,7 @@ async function readPackageNotices(
 
   const fallback = fallbackNotices[info.name];
   if (fallback) {
-    return [{ name: `curated ${fallback}`, text: await readLicense(join(root, "third_party/npm", fallback), budget) }];
+    return [{ name: `curated ${fallback}`, text: await readLicense(join(root, "licenses/third-party/npm", fallback), budget) }];
   }
   if (pinnedPiPackages.has(info.name) && info.version === PI_VERSION) return [];
   throw new Error(`${info.name}@${info.version} has no packaged or curated LICENSE, COPYING, or NOTICE file`);
@@ -172,8 +172,8 @@ export async function generateThirdPartyNotices(
 ): Promise<number> {
   const rootPackage = (await Bun.file(join(root, "package.json")).json()) as { dependencies?: Record<string, string> };
   const budget = { used: 0, maximum: maximumBytes };
-  const piLicense = await readLicense(join(root, "third_party/pi/LICENSE"), budget);
-  const bunLicense = await readLicense(join(root, "third_party/bun/LICENSE.md"), budget);
+  const piLicense = await readLicense(join(root, "licenses/third-party/pi/LICENSE"), budget);
+  const bunLicense = await readLicense(join(root, "licenses/third-party/bun/LICENSE.md"), budget);
   const entries = await collectProductionNotices(root, Object.keys(rootPackage.dependencies ?? {}), budget);
   const content = renderNotices(entries, piLicense, bunLicense);
   if (Buffer.byteLength(content) > maximumBytes) throw new Error(`notice bundle exceeds ${maximumBytes} bytes`);

@@ -51,14 +51,14 @@ async function writeNoticeFixture(
   dependencies: string[],
   packages: Record<string, FixturePackage>,
 ): Promise<void> {
-  await mkdir(join(directory, "third_party/pi"), { recursive: true });
-  await mkdir(join(directory, "third_party/bun"), { recursive: true });
+  await mkdir(join(directory, "licenses/third-party/pi"), { recursive: true });
+  await mkdir(join(directory, "licenses/third-party/bun"), { recursive: true });
   await Bun.write(
     join(directory, "package.json"),
     JSON.stringify({ dependencies: Object.fromEntries(dependencies.map((name) => [name, "1.0.0"])) }),
   );
-  await Bun.write(join(directory, "third_party/pi/LICENSE"), "Pi license\n");
-  await Bun.write(join(directory, "third_party/bun/LICENSE.md"), "Bun license\n");
+  await Bun.write(join(directory, "licenses/third-party/pi/LICENSE"), "Pi license\n");
+  await Bun.write(join(directory, "licenses/third-party/bun/LICENSE.md"), "Bun license\n");
   for (const [name, fixture] of Object.entries(packages)) {
     const packageDirectory = join(directory, "node_modules", name);
     await mkdir(packageDirectory, { recursive: true });

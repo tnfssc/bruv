@@ -20,8 +20,8 @@ describe("third-party notice collection and rendering", () => {
   beforeEach(async () => {
     root = await mkdtemp(join(tmpdir(), "bruv-notice-generator-"));
     output = join(root, "notices.txt");
-    await Bun.write(join(root, "third_party/pi/LICENSE"), "Pi license\n");
-    await Bun.write(join(root, "third_party/bun/LICENSE.md"), "Bun license\n");
+    await Bun.write(join(root, "licenses/third-party/pi/LICENSE"), "Pi license\n");
+    await Bun.write(join(root, "licenses/third-party/bun/LICENSE.md"), "Bun license\n");
   });
 
   afterEach(async () => {
@@ -135,7 +135,7 @@ describe("third-party notice collection and rendering", () => {
       name: "@earendil-works/pi-ai",
       version: "1.1.0",
     });
-    await Bun.write(join(root, "third_party/npm/proxy-agent-negotiate.LICENSE"), "curated proxy license\n");
+    await Bun.write(join(root, "licenses/third-party/npm/proxy-agent-negotiate.LICENSE"), "curated proxy license\n");
     expect(await generateThirdPartyNotices(root, output)).toBe(2);
     const content = await Bun.file(output).text();
     expect(content).toContain("--- curated proxy-agent-negotiate.LICENSE ---\ncurated proxy license\n");

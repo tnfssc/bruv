@@ -8,4 +8,4 @@ To reproduce: fetch the version metadata and tarball from registry.npmjs.org, ve
 
 The tests synthesize a stale 1.1.0 agent-session.js by omitting the final compaction getModelContextBranch adaptation. Its fc59d68420c94f67f3ed818766eee20ec2ad95126db9038b95b18f2fb4589d6b hash is a regression fixture, not an observed polluted-cache hash or a production-accepted hash. The historically observed ef78… hash belongs to 1.0.3 and remains documented in the sibling task's wisdom only.
 
-Upstream: @earendil-works/pi-coding-agent 1.1.0, MIT; see third-party/pi/LICENSE and third-party notices. Compressed to avoid hundreds of kilobytes of generated dependency text in test source.
+Upstream: @earendil-works/pi-coding-agent 1.1.0, MIT; see licenses/third-party/pi/LICENSE and third-party notices. Compressed to avoid hundreds of kilobytes of generated dependency text in test source.
