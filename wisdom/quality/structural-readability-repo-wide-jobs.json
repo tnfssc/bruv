@@ -1259,6 +1259,15 @@
         "branch": "bruv/pr45-judge-2-compatibility-t3-focuses-2a3c512d",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "handled"
+      },
+      {
+        "id": "task_3f2df770",
+        "stage": "judge",
+        "focus": ["tests/claude-native-history-replay.test.mjs"],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_3f2df770",
+        "branch": "bruv/pr45-judge-1-compatibility-t3-focuses-3f2df770",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
       }
     ]
   },
