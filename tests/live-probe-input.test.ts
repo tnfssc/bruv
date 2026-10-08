@@ -2,7 +2,7 @@ import { expect, test } from "bun:test";
 import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { probeArgs, readStudy, studyTarget } from "../scripts/live-probe-input";
+import { probeArgs, readStudy, studyTarget } from "../scripts/live/probe-input";
 
 const flags = ["--source", "fixture.jsonl", "--study-2026-09-25", "--disclose-private", "audio:fresh:baseline"];
 test("source, historical study and disclosure are explicit", () => {
@@ -50,14 +50,14 @@ for (const { name, contents, error } of [
 }
 
 for (const { script, args, message } of [
-  { script: "probe-live-capability.ts", args: ["--disclose-root", "unknown:jobs"], message: "valid variant:scenario" },
+  { script: "live/probe-capability.ts", args: ["--disclose-root", "unknown:jobs"], message: "valid variant:scenario" },
   {
-    script: "probe-live-recorded.ts",
+    script: "live/probe-recorded.ts",
     args: ["--source", "missing-private-study.jsonl", "--study-2026-09-25", "--disclose-private", "bad:fresh:baseline"],
     message: "Invalid trial",
   },
   {
-    script: "probe-live-controlled.ts",
+    script: "live/probe-controlled.ts",
     args: [
       "--source",
       "missing-private-study.jsonl",

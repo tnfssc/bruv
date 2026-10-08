@@ -1,10 +1,10 @@
 /** Loopback only; fake key, no capture/playback devices or external services.
- * bun scripts/live-gpt-live-offline-smoke.ts
- * bun build --compile scripts/live-gpt-live-offline-smoke.ts --outfile /tmp/bruv-gpt-live-smoke
+ * bun scripts/live/gpt-live-offline-smoke.ts
+ * bun build --compile scripts/live/gpt-live-offline-smoke.ts --outfile /tmp/bruv-gpt-live-smoke
  */
-import { GPTLiveSession } from "../src/live/gpt-live-session";
-import { GptLivePlaybackRecovery } from "../src/live/gpt-live-playback";
-import { GptLiveDelegationBridge } from "../src/live/gpt-live-delegation";
+import { GPTLiveSession } from "../../src/live/gpt-live-session";
+import { GptLivePlaybackRecovery } from "../../src/live/gpt-live-playback";
+import { GptLiveDelegationBridge } from "../../src/live/gpt-live-delegation";
 let configured = false,
   input = 0,
   commentary = false,

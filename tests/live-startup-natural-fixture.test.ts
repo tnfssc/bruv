@@ -7,8 +7,8 @@ import {
   startupPhrase,
   startupWordCounts,
   trailingSilenceMs,
-} from "../scripts/live-startup-fixture";
-import { startupSpeechFixturePlan } from "../scripts/probe-live-startup-audio";
+} from "../scripts/live/startup-fixture";
+import { startupSpeechFixturePlan } from "../scripts/live/probe-startup-audio";
 import type { LiveAdapter, LiveConnection, LiveParams } from "../src/live/types";
 
 test("natural fixture is supplied-key Google only, automatic VAD, at most four sessions", () => {

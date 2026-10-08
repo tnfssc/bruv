@@ -61,7 +61,7 @@ elif name == 'python3':
     def test_desktop_entry_hands_off_to_private_graph(self):
         result, calls = self.run_fixture(isolated=False)
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertEqual(calls, [['bash', 'scripts/live-isolated-audio.sh', '--',
+        self.assertEqual(calls, [['bash', 'scripts/live/isolated-audio.sh', '--',
                                  'bash', 'native/live-linux/tests/virtual.sh', '/a helper']])
 
     def test_success_unplugs_microphone_once_then_releases_output(self):

@@ -4,11 +4,11 @@ import { GoogleGenAI } from "@google/genai";
 // --manual-activity frames Gemini retention with automatic VAD disabled.
 // --flush-after-pause tests cached-audio flushing separately; neither proves silence-only VAD.
 // --gemini-live-env --fixture=gemini-natural: one memory-only generation + control/paced/burst (max four sessions).
-import { createDefaultLiveCredentialService, loadLiveKey } from "../src/live/credentials";
-import { OPENAI_VOICE_MODEL, OpenAIRealtimeSession } from "../src/live/openai-session";
-import { VoiceSession } from "../src/live/session";
-import type { LiveAdapter, LiveConnection, VoiceCallbacks, VoiceOrchestration } from "../src/live/types";
-import { StartupAudioQueue } from "../tests/helpers/live-startup-audio-queue";
+import { createDefaultLiveCredentialService, loadLiveKey } from "../../src/live/credentials";
+import { OPENAI_VOICE_MODEL, OpenAIRealtimeSession } from "../../src/live/openai-session";
+import { VoiceSession } from "../../src/live/session";
+import type { LiveAdapter, LiveConnection, VoiceCallbacks, VoiceOrchestration } from "../../src/live/types";
+import { StartupAudioQueue } from "../../tests/helpers/live-startup-audio-queue";
 import {
   fixtureCommand as command,
   generateNaturalFixture,
@@ -17,7 +17,7 @@ import {
   startupPhrase as phrase,
   startupWordCounts,
   trailingSilenceMs,
-} from "./live-startup-fixture";
+} from "./startup-fixture";
 
 /** Select credential sources; --gemini-live-env restricts the probe to its explicit source. */
 export function startupSpeechCredentialPlan(args: readonly string[]): {

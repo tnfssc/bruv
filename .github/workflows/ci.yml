@@ -193,7 +193,7 @@ jobs:
           export PKG_CONFIG_PATH="$fixture/apm/lib/pkgconfig"
           export LD_LIBRARY_PATH="$fixture/apm/lib"
           export CPLUS_INCLUDE_PATH="$fixture/apm/include"
-          bash scripts/build-live-linux-helper.sh "$fixture/live-audio-linux"
+          bash scripts/live/build-linux-helper.sh "$fixture/live-audio-linux"
           mkdir -m 700 "$fixture/home" "$fixture/runtime"
           head -c 256 /dev/urandom > "$fixture/cookie"
           export PULSE_SERVER="unix:$fixture/native" PULSE_COOKIE="$fixture/cookie"
@@ -256,7 +256,7 @@ jobs:
       - name: Compile native helper and check exact capability (no devices)
         shell: bash
         run: |
-          sh scripts/build-live-helper.sh
+          sh scripts/live/build-helper.sh
           python3 - <<'PY'
           import json, select, subprocess
           p = subprocess.Popen(['dist/live-audio'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True)

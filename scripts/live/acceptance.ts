@@ -3,10 +3,10 @@ import { spawn, type ChildProcessWithoutNullStreams } from "node:child_process";
 import { randomBytes } from "node:crypto";
 import { access } from "node:fs/promises";
 import { resolve } from "node:path";
-import { LiveAudio, audioEnvironment } from "../src/live/audio";
-import { VoiceSession } from "../src/live/session";
-import { createDefaultLiveCredentialService } from "../src/live/credentials";
-import { PlaybackScheduler } from "../src/live/playback";
+import { LiveAudio, audioEnvironment } from "../../src/live/audio";
+import { VoiceSession } from "../../src/live/session";
+import { createDefaultLiveCredentialService } from "../../src/live/credentials";
+import { PlaybackScheduler } from "../../src/live/playback";
 
 const paid = process.argv.includes("--provider");
 const args = process.argv.slice(2);

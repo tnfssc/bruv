@@ -13,7 +13,7 @@ if [ "$(uname -s)" = "Darwin" ] && [ "$(uname -m)" = "arm64" ]; then
 fi
 if [ "${BRUV_SKIP_BUILD:-0}" != "1" ]; then
   if [ "$mac_arm64" = "1" ]; then
-    sh scripts/build-live-helper.sh
+    sh scripts/live/build-helper.sh
     bun run build --live-helper=dist/live-audio
   else
     bun run build

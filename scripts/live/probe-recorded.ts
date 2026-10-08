@@ -1,13 +1,13 @@
 /** Paid text-transcript Realtime fixture: intercepted tools only; never evaluates generated code.
- * BRUV_CAPABILITY_PROBE=1 bun scripts/probe-live-recorded.ts --source FILE --study-2026-09-25 --disclose-private weather:fresh:baseline
+ * BRUV_CAPABILITY_PROBE=1 bun scripts/live/probe-recorded.ts --source FILE --study-2026-09-25 --disclose-private weather:fresh:baseline
  * Sends private root/transcript to configured provider; output may echo private text. Keep output OUTSIDE repository.
  */
-import { studyTrial } from "./live-study-trial";
-import { probeArgs, readStudy, study, studyTarget } from "./live-probe-input";
+import { studyTrial } from "./study-trial";
+import { probeArgs, readStudy, study, studyTarget } from "./probe-input";
 import { createHash } from "node:crypto";
-import { createDefaultLiveCredentialService } from "../src/live/credentials";
-import { loadLiveConfig } from "../src/live/config";
-import { createPromptPreview } from "../src/prompt-preview";
+import { createDefaultLiveCredentialService } from "../../src/live/credentials";
+import { loadLiveConfig } from "../../src/live/config";
+import { createPromptPreview } from "../../src/prompt-preview";
 
 if (process.env.BRUV_CAPABILITY_PROBE !== "1") throw Error("Explicitly opt into paid probe");
 const input = probeArgs(process.argv.slice(2), "recorded");

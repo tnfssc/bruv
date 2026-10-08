@@ -1,12 +1,12 @@
 /** Explicit paid OpenAI Realtime text-input probe. No desktop reads, real tool dispatch or audio playback.
  * Setup: bun install --frozen-lockfile; bun scripts/prepare-assets.ts.
- * Run: BRUV_CAPABILITY_PROBE=1 bun scripts/probe-live-capability.ts --disclose-root baseline:jobs grounding:jobs
+ * Run: BRUV_CAPABILITY_PROBE=1 bun scripts/live/probe-capability.ts --disclose-root baseline:jobs grounding:jobs
  * Output JSONL includes model-generated code: review before sharing. Never execute it.
  */
-import { studyTrial } from "./live-study-trial";
-import { createDefaultLiveCredentialService } from "../src/live/credentials";
-import { loadLiveConfig } from "../src/live/config";
-import { createPromptPreview } from "../src/prompt-preview";
+import { studyTrial } from "./study-trial";
+import { createDefaultLiveCredentialService } from "../../src/live/credentials";
+import { loadLiveConfig } from "../../src/live/config";
+import { createPromptPreview } from "../../src/prompt-preview";
 import { createHash } from "node:crypto";
 
 const guidance =

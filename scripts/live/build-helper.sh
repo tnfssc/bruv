@@ -1,6 +1,6 @@
 #!/bin/sh
 set -eu
-cd "$(dirname "$0")/.."
+cd "$(dirname "$0")/../.."
 if [ "$(uname -s)" != Darwin ]; then echo 'macOS and Xcode are required' >&2; exit 1; fi
 xcrun --find swiftc >/dev/null
 xcrun --find clang >/dev/null

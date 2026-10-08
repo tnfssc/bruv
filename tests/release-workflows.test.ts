@@ -263,7 +263,7 @@ describe("release automation", () => {
     const helper = workflow.jobs["mac-helper"]!;
     expect(commands(helper)).toContain("-fsanitize=address,undefined");
     const compile = namedStep(helper, "Compile helper and check device-free protocol");
-    expect(compile.run).toContain("scripts/build-live-helper.sh");
+    expect(compile.run).toContain("scripts/live/build-helper.sh");
     expect(compile.run).toContain("Mach-O 64-bit (executable arm64|arm64 executable)");
     const download = workflow.jobs.release!.steps.find((step) => step.uses?.startsWith("actions/download-artifact@"));
     expect(download?.with?.name).toBe("release-mac-arm64-helper");
@@ -340,17 +340,19 @@ describe("release automation", () => {
     const implementation = await read("scripts/publish-release.ts");
     expect(implementation).toContain("scripts/select-release-notes.ts");
     expect(implementation).toContain('"--notes-file",');
-    expect(implementation).not.toContain("--notes-file support/release-v0.11.1.md");
+    expect(implementation).not.toContain("--notes-file support/releases/release-v0.11.1.md");
     expect(implementation.indexOf("scripts/select-release-notes.ts")).toBeLessThan(implementation.indexOf('"create",'));
     const directory = await mkdtemp(join(tmpdir(), "bruv-release-notes-"));
     try {
-      await mkdir(join(directory, "support"));
-      await Bun.write(join(directory, "support/release-v9.8.7.md"), "current release\n");
-      await Bun.write(join(directory, "support/release-v0.11.1.md"), "stale release\n");
-      expect(await selectReleaseNotes("v9.8.7", "9.8.7", directory)).toBe(join(directory, "support/release-v9.8.7.md"));
+      await mkdir(join(directory, "support/releases"), { recursive: true });
+      await Bun.write(join(directory, "support/releases/release-v9.8.7.md"), "current release\n");
+      await Bun.write(join(directory, "support/releases/release-v0.11.1.md"), "stale release\n");
+      expect(await selectReleaseNotes("v9.8.7", "9.8.7", directory)).toBe(
+        join(directory, "support/releases/release-v9.8.7.md"),
+      );
       await expect(selectReleaseNotes("v9.8.8", "9.8.7", directory)).rejects.toThrow("does not match");
       await expect(selectReleaseNotes("v9.8.6", "9.8.6", directory)).rejects.toThrow("Missing or empty release notes");
-      await Bun.write(join(directory, "support/release-v9.8.6.md"), "");
+      await Bun.write(join(directory, "support/releases/release-v9.8.6.md"), "");
       await expect(selectReleaseNotes("v9.8.6", "9.8.6", directory)).rejects.toThrow("Missing or empty release notes");
     } finally {
       await rm(directory, { recursive: true, force: true });

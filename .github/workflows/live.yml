@@ -11,7 +11,7 @@ on:
     paths:
       - "native/live/**"
       - "native/live-linux/**"
-      - "scripts/build-live-helper.sh"
+      - "scripts/live/build-helper.sh"
       - ".github/workflows/live.yml"
 permissions:
   contents: read
@@ -32,7 +32,7 @@ jobs:
           clang++ -std=c++17 -Wall -Wextra -Werror -fsanitize=address,undefined native/live-linux/tests/capture-gate.cpp -o /tmp/live-linux-capture-gate-test
           /tmp/live-linux-capture-gate-test
       - name: Compile Apple voice-processing helper and self-test
-        run: sh scripts/build-live-helper.sh
+        run: sh scripts/live/build-helper.sh
       - name: Device-free protocol smoke
         run: |
           dist/live-audio --help

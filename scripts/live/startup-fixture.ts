@@ -1,5 +1,5 @@
-import { VoiceSession } from "../src/live/session";
-import type { LiveAdapter } from "../src/live/types";
+import { VoiceSession } from "../../src/live/session";
+import type { LiveAdapter } from "../../src/live/types";
 
 export const startupPhrase = "Please repeat these words: amber river seven lighthouse.";
 const words = ["amber", "river", "seven", "lighthouse"];

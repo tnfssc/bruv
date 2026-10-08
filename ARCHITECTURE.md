@@ -37,10 +37,10 @@ Keep historical `git show COMMIT:old/path` references intact. They identify Git 
 
 ## Build, tests and generated data
 
-- `scripts/` owns whole-product commands, release orchestration and non-T3 tools. The default build owns the CLI/claude-compat pair, not T3.
+- `scripts/` owns whole-product commands and release orchestration. Feature tooling stays in named folders such as [`scripts/live/`](scripts/live/README.md). The default build owns the CLI/claude-compat pair, not T3.
 - `native/` owns native source and native-language tests.
 - `tests/` is the recursive deterministic test root. Feature test folders stay under it.
-- `support/` holds versioned release notes. `third_party/` holds license inputs.
+- `support/releases/` holds versioned release notes. `third_party/` holds license inputs.
 - `dist/`, `runtime-assets/`, `.cache/` and `artifacts/` are generated, ignored outputs—not alternate source homes.
 
 Typecheck and lint must still cover maintained code after a move. Tests must still be discovered.

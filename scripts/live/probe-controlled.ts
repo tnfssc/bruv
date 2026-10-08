@@ -1,13 +1,13 @@
 /** Paid text-input probe. --source reads an explicitly selected private JSONL; generated code is never run.
- * BRUV_CAPABILITY_PROBE=1 bun scripts/probe-live-controlled.ts --synthetic --disclose-private en:fresh:baseline
+ * BRUV_CAPABILITY_PROBE=1 bun scripts/live/probe-controlled.ts --synthetic --disclose-private en:fresh:baseline
  * Historical snapshots require --source FILE --study-2026-09-25 --disclose-private. Keep output private.
  */
-import { studyTrial } from "./live-study-trial";
+import { studyTrial } from "./study-trial";
 import { createHash } from "node:crypto";
-import { probeArgs, readStudy, study, studyTarget } from "./live-probe-input";
-import { createDefaultLiveCredentialService } from "../src/live/credentials";
-import { loadLiveConfig } from "../src/live/config";
-import { createPromptPreview } from "../src/prompt-preview";
+import { probeArgs, readStudy, study, studyTarget } from "./probe-input";
+import { createDefaultLiveCredentialService } from "../../src/live/credentials";
+import { loadLiveConfig } from "../../src/live/config";
+import { createPromptPreview } from "../../src/prompt-preview";
 
 if (process.env.BRUV_CAPABILITY_PROBE !== "1") throw Error("Set BRUV_CAPABILITY_PROBE=1 for paid sessions");
 const input = probeArgs(process.argv.slice(2), "controlled");

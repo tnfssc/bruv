@@ -7,7 +7,7 @@ if [[ ${1:-} == -- ]]; then
   (( $# )) || { echo 'Expected a command after --' >&2; exit 1; }
   command=("$@")
 else
-  command=(bun scripts/live-acceptance.ts "$@")
+  command=(bun scripts/live/acceptance.ts "$@")
   for tool in parec pacat bun; do
     command -v "$tool" >/dev/null || { echo "Missing $tool" >&2; exit 1; }
   done

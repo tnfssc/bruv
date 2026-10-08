@@ -4,7 +4,7 @@ import {
   finishStartupSpeech,
   startupSpeechCredentialPlan,
   startupSpeechGoogleAdapter,
-} from "../scripts/probe-live-startup-audio";
+} from "../scripts/live/probe-startup-audio";
 import { VoiceSession } from "../src/live/session";
 import type { LiveConnection, LiveParams } from "../src/live/types";
 

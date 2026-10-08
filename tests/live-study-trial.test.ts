@@ -1,6 +1,6 @@
 import { expect, test } from "bun:test";
 import { WebSocketServer } from "ws";
-import { studyTrial } from "../scripts/live-study-trial";
+import { studyTrial } from "../scripts/live/study-trial";
 
 async function trial(mode: "tools" | "error" | "close" | "timeout") {
   const server = new WebSocketServer({ host: "127.0.0.1", port: 0 });

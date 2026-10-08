@@ -3,7 +3,7 @@ import { chmod, copyFile, mkdir, mkdtemp, readFile, rm, stat, writeFile } from "
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 
-const root = resolve(import.meta.dir, "..");
+const root = resolve(import.meta.dir, "../..");
 const binary = resolve(process.env.BRUV_LIVE_SMOKE_BINARY ?? join(root, "dist/bruv"));
 function requireExecutable(name: string): string {
   const path = Bun.which(name);

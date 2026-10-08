@@ -1,6 +1,6 @@
 # Experimental native macOS Live Lab audio helper
 
-Build locally with Xcode Command Line Tools / Xcode: `scripts/build-live-helper.sh`.
+Build locally with Xcode Command Line Tools / Xcode: `scripts/live/build-helper.sh`.
 The script builds `dist/live-audio` and runs `--self-test` (no devices). Linux C ring tests:
 `clang -std=c11 -Wall -Wextra -Werror -fsanitize=address,undefined native/live/AudioCore.c native/live/test-core.c -o /tmp/live-test && /tmp/live-test`.
 
@@ -48,4 +48,4 @@ The C ring gate tests run on Linux too; Swift source checks do not substitute fo
 macOS compilation and consenting physical-device validation. An opt-in native
 protocol check is `python3 native/live-linux/tests/capture-protocol.py HELPER MIC.monitor SINK`;
 use only explicitly isolated virtual endpoints (for example the private graph
-setup in `scripts/live-isolated-audio.sh`), never desktop hardware/default routes.
+setup in `scripts/live/isolated-audio.sh`), never desktop hardware/default routes.

@@ -31,7 +31,7 @@ async function seedInstalledPair(root: string) {
 
 async function sandbox() {
   const root = await mkdtemp(join(tmpdir(), "bruv-install-"));
-  for (const dir of ["scripts", "dist", "tools", "bin"]) await mkdir(join(root, dir));
+  for (const dir of ["scripts", "scripts/live", "dist", "tools", "bin"]) await mkdir(join(root, dir));
   await cp(installer, join(root, "scripts/install-local.sh"));
   await chmod(join(root, "scripts/install-local.sh"), 0o755);
   await writeFile(join(root, "dist/bruv"), candidate, { mode: 0o755 });
@@ -47,7 +47,7 @@ fi
 `,
   );
   await writeShell(root, "tools/bun", 'echo "bun $*" >> "$INSTALL_LOG"\n');
-  await writeShell(root, "scripts/build-live-helper.sh", 'echo helper >> "$INSTALL_LOG"\n');
+  await writeShell(root, "scripts/live/build-helper.sh", 'echo helper >> "$INSTALL_LOG"\n');
   return root;
 }
 

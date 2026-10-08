@@ -2,13 +2,13 @@
 import { lstat, readFile } from "node:fs/promises";
 import { homedir } from "node:os";
 import { join } from "node:path";
-import { OpenAIRealtimeSession, defaultSocket } from "../src/live/openai-session";
+import { OpenAIRealtimeSession, defaultSocket } from "../../src/live/openai-session";
 
 if (process.env.BRUV_REALTIME_SETUP_PROBE !== "1") {
   console.error("Probe disabled; explicit BRUV_REALTIME_SETUP_PROBE=1 required");
   process.exit(2);
 }
-const { setupProbeOrchestration } = await import("../src/live/setup-probe");
+const { setupProbeOrchestration } = await import("../../src/live/setup-probe");
 try {
   const key = await readProbeKey(join(homedir(), ".bruv", "openai-test.env"));
   await runSetupProbe(key);

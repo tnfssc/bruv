@@ -1,5 +1,5 @@
 import { resolve } from "node:path";
-import { nativeHelperPlugin } from "./live-helper-bundle";
+import { nativeHelperPlugin } from "./live/helper-bundle";
 
 const root = resolve(import.meta.dir, "..");
 let output = "dist/bruv";

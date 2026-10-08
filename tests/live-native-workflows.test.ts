@@ -72,7 +72,7 @@ for (const [workflow, lane] of lanes.filter(([, lane]) => lane !== "native-linux
     const steps = (await load(workflow)).jobs[lane]!.steps;
     const commands = steps.map((step) => step.run ?? "").join("\n");
     const smoke = steps.find((step) => step.run?.includes("helper hello timed out"))!.run!;
-    const compile = commands.indexOf("scripts/build-live-helper.sh");
+    const compile = commands.indexOf("scripts/live/build-helper.sh");
     expect(compile).toBeGreaterThanOrEqual(0);
     expect(compile).toBeLessThan(commands.indexOf("python3 - <<'PY'"));
     expect(smoke).not.toContain('"type":"start"');
@@ -95,7 +95,7 @@ test("Linux protocol gate builds the real 1.x helper and uses only a private Pul
   expect(run).toContain("--wrap-mode=nofallback");
   expect(run).toContain('meson compile -C "$fixture/build" -j 2');
   expect(run).toContain('export CPLUS_INCLUDE_PATH="$fixture/apm/include"');
-  expect(run).toContain('bash scripts/build-live-linux-helper.sh "$fixture/live-audio-linux"');
+  expect(run).toContain('bash scripts/live/build-linux-helper.sh "$fixture/live-audio-linux"');
   expect(run).toContain('PULSE_SERVER="unix:$fixture/native"');
   expect(run).toContain('pulseaudio -nF "$fixture/pulse.pa"');
   const config = run.split('cat > "$fixture/pulse.pa" <<EOF\n')[1]!.split("\nEOF")[0]!;

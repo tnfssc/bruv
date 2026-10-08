@@ -23,7 +23,7 @@
     "lint": "biome lint .",
     "generate:notices": "bun ./scripts/generate-third-party-notices.ts",
     "prompt:preview": "bun ./scripts/prompt-preview.ts",
-    "smoke:live-onboarding": "bun ./scripts/live-onboarding-smoke.ts",
+    "smoke:live-onboarding": "bun ./scripts/live/onboarding-smoke.ts",
     "build:claude-compat": "bun ./scripts/build-claude-compat.ts",
     "perf:terminal": "bun ./scripts/terminal-perf.ts",
     "perf:interactions": "bun ./scripts/terminal-interactions.ts",
