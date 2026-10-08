@@ -1,0 +1,895 @@
+# v0.16.20
+
+- Merge pull request #56 from tnfssc/bruv/ci-speed-owner-20261008
+- Merge pull request #45 from tnfssc/bruv/structural-readability-owner-reviewed
+- Align retained CI contracts with ordinary tool provisioning
+- Save CI review and draft publication checkpoint
+- Record integrated CI lane contracts and move its handoff
+- Run required Linux native validation in parallel
+- Bound stalled Linux gate before the job budget expires
+- Record independent notice-fixture acceptance
+- Align pinned notice fallback fixture with Pi 1.1.0
+- Record reviewed develop merge and current compiled acceptance
+- Merge pinned develop into PR45, preserve reviewed owners
+- Record final readability judgments and original-intent reconciliation
+- Unify native Fast consent selection publication
+- Remove spare history context engine and publish prepared append metadata
+- refactor(resource-harness): use authoritative child history writer
+- Record original readability intent and follow-up ownership
+- Record accepted Linux CI repairs and focused validation
+- Fix native fast compatibility ordering and product-path CI fixtures
+- Fix Linux replay runtime and runner fixture contracts
+- Record product integration acceptance and build evidence
+- Keep auxiliary cursor leaves out of history scan budget
+- Merge develop product fixes into accepted PR45 continuation
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record repaired integration evidence and outstanding process-fixture objections
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Queue real integrated SDK probe isolation objection for Sol rework
+- Record bounded whole-diff continuation and exact safe final constituents
+- Record full exact focus coverage and final-source safe gate proofs
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record near-final Live static checks and source reconciliation
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record distinct offline Live fixture source expansion
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record completed remote focus area and isolated static checks
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record judged system-prompt typing fix and compiler result
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record completed history focus area and joined compiler checkpoint
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record distinct wisdom SDK source and exact scope audit
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record independently judged parity fix and passing joined compiler
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record SDK mode source scope and active parity type rework
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record history source scope and joined typecheck audit
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record dedicated tool-event guard source focus
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record fourth new helper scope and joined UI typecheck
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record dedicated terminal process helper focus
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record dedicated cache fixture focus and continuation map
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record isolated monitor and resume rendered proof
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record new helper focus and joined execution typecheck
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record isolated rendered question-flow proof
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Apply required controlled-probe formatting
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record exact continuation coverage and safety gate limits
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Apply required formatter to accepted structural change
+- Apply required formatter to accepted structural change
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record joined device-free fixture checks
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record exact addition reconciliation and resample proof
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record PR45 exact judgments and join accepted focus work
+- Record independent fixture acceptance and repaired focused tests
+- Record PR45 exact judgments and join accepted focus work
+- Record audited native unit proof and retained gate limits
+- Record PR45 exact judgments and join accepted focus work
+- Persist active bounded Sol primary and judge assignments
+- Record PR45 exact judgments and join accepted focus work
+- Record joined typecheck and concrete remaining gate failures
+- Record PR45 exact judgments and join accepted focus work
+- Join reconciled actual-code-accepted PR45 source batches
+- Correct resume coverage and persist Sol reconciliation ownership
+- Record PR45 Sol resume and surviving area coverage
+- docs: pause readability work after HOME cleanup incident
+- docs: record completed tooling coverage in full task
+- Integrate complete judge-accepted build-release tooling area
+- test: run judged native protocol regressions in root gate
+- docs: finalize tooling area coverage and reconciliation proof
+- refactor(test): name updater fixture artifact and install pairs
+- refactor(test): isolate smoke failures and cleanup evidence
+- refactor(test): expose staged release shape and pair authority
+- docs: record third judged integration and regression coverage
+- Join third judged build-release-ci-tooling batch for shared integration
+- Join third judged ui-terminal-cli batch for shared integration
+- Join third judged execution-tasks-questions batch for shared integration
+- Join third judged agent-history-session-goals batch for shared integration
+- Join third judged compatibility-t3 batch for shared integration
+- Join third judged live-native-audio batch for shared integration
+- Join third judged remote batch for shared integration
+- refactor(test): name connector entry and paired installation contracts
+- docs: track remaining extra coverage and combined build
+- refactor(test): close updater fixture transport and expose runner authority
+- merge: join accepted parent checkpoint before final tooling proof
+- refactor(test): prove explicit root TUI environment isolation
+- refactor(test): make tooling protocol evidence explicit
+- refactor(test): isolate compiled product identity contracts
+- refactor(test): expose CI baseline trust and deadline contracts
+- docs: accept Pi assertion and track event-comment rejudgment
+- docs: accept trace projection and judge report test scenarios
+- refactor(test): unify connector fixture release files
+- refactor: separate native history scenario decisions from HTTP evidence
+- docs: queue preference correction review and wisdom effects primary
+- docs: track artifact judgment and dashboard primary
+- refactor(test): branch app delegation transcripts without restoration state
+- refactor(remote): render message and tool payloads directly
+- docs: accept selector boundary and track pane-state review
+- refactor: scope execution audit resource lifetimes
+- docs: record combined history and compaction checks
+- refactor(test): give interaction CLI runs independent artifact ownership
+- docs: queue prompt assembly review and system transport primary
+- docs: accept rolling activity tests and retain stateful rework requirement
+- docs: track completed file findings and fresh reviews
+- docs: accept GPT request rendering authority boundary
+- docs: record architecture and Node-path guard limits
+- refactor(history): integrate judged metadata and accounting ownership
+- docs: track embedded and scoped lifecycle access coverage
+- refactor: scope native replay capture while preserving final evidence
+- refactor(remote): separate captured text from artifact publication
+- refactor(test): isolate remote request admission proofs
+- docs: reconcile assigned editor test primary from parent checkpoint
+- Merge branch 'bruv/structural-readability-repo-wide' into bruv/whole-repo-structural-readability-ui-ter-f8e968d6
+- docs: record combined native and provider integration proof
+- docs: track helper and embedded payload primary coverage
+- docs: record active report test primary before shared checkpoint
+- docs: track delegation and recovery test coverage
+- docs: record actual pair build and broad area test baseline
+- refactor(live): clarify recovery and audio fixture boundaries
+- test(remote): expose question session and polling lifetimes
+- refactor(test): separate native runner fixture programs and supervision
+- docs: track activity judgments and proof-test trace primaries
+- docs: accept baseline finder boundary and record scoped style proof
+- docs: preserve JobService rework response and source limits
+- refactor(test): clarify cleanup expectations while preserving timeout negative
+- docs: record combined tooling test and typecheck proof
+- docs: record audit acceptance and CLI soak judgment
+- docs: track native capture tests and helper extraction coverage
+- docs: track conversation and shared host bridge coverage
+- docs: track new soak test coverage and video primary
+- refactor(tooling): remove unconsumed archive lifetime from native proof build
+- refactor(test): name CI admission and dependency gate contracts
+- Merge second parent accepted structural checkpoint
+- refactor: align image and ledger tests with owned lifetimes
+- test(remote): separate observation projection and persisted summaries
+- refactor(tooling): scope footer benchmark readers and probes
+- docs: record capture regression primary pickup
+- test(live): make GPT session fixtures own protocol lifetimes
+- test(remote): group placement assertions by dispatch contract
+- refactor(test): give ANSI rendering captures local ownership
+- test(live): unify capture protocol event validation and ownership
+- docs: record test session escape rejection and fresh rework
+- docs: track billing and provisional delegation test coverage
+- docs: track audio lifecycle tests and conversation primary
+- refactor: expose app delegation model authority journeys
+- docs: track footer benchmark and activity test primary work
+- docs: accept shake schema and track preference caveat judgment
+- docs: queue Pi host assertion review and wisdom resolver primary
+- refactor: expose native subagent acceptance programs
+- refactor: drain handoff-test invocations before spy restoration
+- refactor(live): group provisional evidence admission lifecycle
+- docs: record schema acceptance and image-test candidate
+- docs: track GPT recovery and request contract reviews
+- docs: record fresh merged batch proof and transcript candidate
+- docs: compact compatibility pickup and preserve rejection context
+- docs: accept session attribution and track view restoration judgment
+- docs: retain deadline negative rejection and new-test review rounds
+- test(live): complete isolated fixture process and storage ownership
+- docs: queue selector adapter judgment and agent state primary
+- docs: track playback and billing test primary coverage
+- docs: track audio protocol and pipe lifecycle test coverage
+- docs: launch fresh capture protocol actual-code review
+- refactor(test): own offline PTY lifecycle and fresh terminal evidence
+- docs: accept dedicated new normalization test coverage
+- docs: record remote integration proof and pickup state
+- refactor(tests): integrate judged snapshot fault and cleanup lifetimes
+- docs: retain incomplete capture protocol review attempt
+- docs: track ledger-test and audit-script candidates
+- docs: queue model-preference caveat review and Pi host primary
+- refactor(remote): make lifecycle observation projection explicit
+- docs: preserve per-file review protocol and latest judgments
+- fix(live): centralize usage accounting and preserve terminal charges
+- docs: record combined tooling and Python regression batch
+- refactor(remote): clarify question projection and startup parsing
+- docs: accept session contracts and track identity judgment
+- refactor: separate image record trust from channel accounting
+- docs: accept independently reviewed frame profiler tests
+- docs: track GPT context and playback recovery coverage
+- docs: track dedicated new-test primary and judge coverage
+- refactor(agent): integrate judged cache-affine attempt settlement
+- refactor(live): expose guarded push-to-talk promotion
+- refactor: make native acceptance disposal independent of proof writes
+- docs: queue restore-view review and history selector primary
+- docs: track GPT and native audio test primary coverage
+- refactor(test): unify CI invocation observations and cleanup assertions
+- refactor(test): isolate launcher policy rejection scenarios
+- docs: queue shake schema and identity reviews with retained provenance
+- docs: queue identity review and explicit CLI preference owner
+- docs: record second judged integration checkpoint
+- Join next judged build-release-ci-tooling batch for whole-repo integration
+- Join next judged ui-terminal-cli batch for whole-repo integration
+- Join next judged execution-tasks-questions batch for whole-repo integration
+- Join next judged agent-history-session-goals batch for whole-repo integration
+- Join next judged compatibility-t3 batch for whole-repo integration
+- docs: record shared subprocess helper boundary judgment
+- docs: track delegation and GPT context ownership reviews
+- Join next judged live-native-audio batch for whole-repo integration
+- Join next judged remote batch for whole-repo integration
+- refactor(tooling): clarify ANSI rendering with callback sampling preserved
+- refactor(agent): integrate judged native compaction attempt lifetime
+- docs: retain fixture rework response and playback test owner
+- refactor: own protocol-test globals and socket cleanup
+- docs: record CI and launcher test primary reviews
+- docs: preserve interrupted proof build attempt for fresh pickup
+- refactor(test): expose browser outcomes and updater fixture roles
+- docs: clarify session manager candidate ownership boundaries
+- docs: accept diagnostics and launch push-to-talk judgment
+- refactor(test): distinguish renderer fixture from profiler lifetime
+- docs: queue session manager review and leaf restore primary
+- docs: record original compiled suite and changed-file gates
+- docs: track push-to-talk and GPT session test coverage
+- docs: queue session contract review and identity primary
+- docs: track compaction settlement review and shake-record primary
+- docs: record joined build and final capture-test judgment
+- docs: reconcile async worker workspace provenance
+- docs: record browser and compiled verifier test review pipeline
+- refactor(tests): integrate judged native fast ownership fixtures
+- docs: assign rejected fixture rework and queue cost candidate
+- refactor(test): give captured native dialogs correlated replies
+- refactor: own execute reply delivery per invocation
+- refactor(tooling): expose evidence validation and cleanup probe lifetimes
+- docs: retain wrapper-test rejection and queue rework
+- refactor(test): expose native setup observations and failure cutoffs
+- docs: record image candidate and parent integration boundary
+- refactor(test): clarify durable notification scenarios and cleanup
+- refactor(test): expose native gate scenarios and fixture lifetimes
+- docs: track diagnostics and delegation primary coverage
+- refactor: establish runner loader ownership before hooks
+- docs: retain ANSI rework response and fresh profiler test coverage
+- docs: accept credential discovery and import boundaries
+- docs: record merged parent API compatibility proof
+- refactor(update): expose compiled verifier artifact contracts and runner source
+- docs: clarify native compaction candidate lifetime
+- refactor: make question interaction test journeys explicit
+- Merge commit '0072ad15' into bruv/whole-repo-structural-readability-compat-dc14408d
+- docs: checkpoint compatibility before common accepted integration
+- docs: track native compaction judge and session contracts primary
+- docs: record clean parent checkpoint join and unchanged area hashes
+- merge: bring parent judged shared integration checkpoint into agent area
+- refactor(live): separate pending audio and playback timeline ownership
+- docs: correct parent integration checkpoint after full diff inspection
+- refactor(release): isolate launcher packaging and dispatch probe lifetimes
+- docs: record provenance audit and parent batch checkpoint
+- refactor(live): unify GPT transport settlement ownership
+- docs: track final fast-policy tests and session-manager primary
+- refactor(test): expose projection journeys and actual event traffic
+- docs: record native-test and compiler configuration pipeline
+- docs: accept independently reviewed isolated snapshot runner
+- docs: track wrapper regression and diagnostics coverage
+- docs: track ANSI rework and cleanup normalization judgments
+- docs: queue removal tests and push-to-talk primary
+- docs: record workspace acceptance and exact adapter paths
+- test(remote): expose root client protocol recovery boundaries
+- docs: record completed site coverage within full-repo work
+- docs: record current area typecheck and focused style proof
+- docs: track credential and usage accounting coverage
+- refactor(release): publish native gate inputs after complete verification
+- docs: record question-test review and capture-test primary
+- refactor(test): make density fixture cleanup ownership complete
+- fix(tests): integrate judged required goal RPC argument correction
+- docs: track playback and removal regression reviews
+- refactor(agent): integrate judged shake protocol and checkpoint ownership
+- test(remote): make client intent durability evidence explicit
+- refactor(release): expose verified native suite admission lifecycle
+- docs: queue fixture lifetime judgment and cache-affine primary
+- docs(agent): integrate current independently judged ownership map
+- refactor: make bridge delivery obligations explicit
+- docs: queue snapshot runner judgment and native compaction primary
+- refactor(test): expose sole task authority in compatibility fixtures
+- docs: reject ANSI candidate callback sampling drift
+- refactor(test): separate dependency policy and report scenarios
+- Integrate completed judge-accepted site-support area
+- test(live): expose source-removal process ownership
+- test(remote): isolate capability fence evidence
+- docs: record runner candidate and required compiled proof
+- docs: register native setup extra test and verification pipeline
+- docs: track GPT session and credential boundary coverage
+- refactor: bind native human dialogs to one frontend lifetime
+- docs: track capture protocol and wrapper regression coverage
+- docs: record repaired full typecheck on shared integrated state
+- refactor: separate inline preview and artifact capture lifetimes
+- refactor(test): complete task fixture contract and clarify evidence validation
+- docs: record preload boundary qualification and next native batch
+- test(remote): exercise shipped presenter input routing
+- refactor(tests): integrate judged cache evidence scenarios
+- docs: record title judgment and workspace candidate
+- test(live): remove backpressure fixture producer lifetime
+- refactor(live): clarify graph and editor fixture ownership
+- docs(tooling): remove retired pnpm authority comment
+- merge: bring accepted parent common checkpoint into tooling area
+- docs: compact UI area pickup and exact coverage checkpoint
+- refactor(remote): collect native evidence before durable settlement
+- docs: record package manifest intrinsic acceptance
+- refactor: clarify durable local notification delivery ownership
+- docs: finalize 41-file site-support acceptance and integration proof
+- refactor(install): align standalone staged pair and final test contract
+- docs: queue goal compile correction judgment and snapshot runner primary
+- docs: track source-removal and playback scheduler coverage
+- docs: track shake projection judgment and snapshot fixture primary
+- docs: compact live coverage pickup and extra-file proof
+- refactor(test): isolate notice graph and rendering scenarios
+- docs: track final ownership map judge and native-fast test owner
+- refactor: expose question interaction and submission boundaries
+- refactor(remote): separate upload receipt and pinned launch preparation
+- docs: record parent common merge and interaction worker acceptance
+- docs: track backpressure and delegated session coverage
+- refactor(tooling): unify own-entry-safe dependency comparisons and policy
+- docs: consolidate area pickup reasoning and unresolved coverage
+- Merge branch 'bruv/structural-readability-repo-wide' into bruv/whole-repo-structural-readability-ui-ter-f8e968d6
+- test(live): expose startup cancellation boundaries
+- docs: track countdown tests and real goal typecheck rework
+- docs: record capture and monitor candidates
+- refactor(test): separate terminal fixture routing from scenario progression
+- docs: accept live settings persistence boundary
+- refactor(remote): clarify root client state without reordering startup
+- refactor(test): expose MCP peer construction and cancellation sequencing
+- docs: queue editor voice and capture protocol coverage
+- docs: accept performance options and judge task fixture repair
+- refactor: make resume-test callbacks and cleanup explicit
+- docs: track isolated graph and source-removal coverage
+- docs: record smoke and ignore final blob judgments
+- refactor: expose task projection checkpoint outcomes
+- merge: bring parent accepted common changes into remote area
+- docs: preserve dependency rejection response and root related follow-up
+- docs: queue observed task fixture typecheck repair for judgment
+- docs: accept independently reviewed instruction continuity authority
+- refactor(tests): integrate judged history contract journeys
+- docs: record fresh owner-child judgment and parent checkpoint
+- docs: track complete attention-test judgment and monitor review
+- refactor(session): integrate judged snapshot retention transaction
+- docs: accept native helper build lifecycle boundary
+- refactor(remote): clarify capability persistence and admission
+- docs: record isolated fresh-binary batch proof and remaining type fix
+- refactor(tooling): expose notice generation phases and remove retired attribute rule
+- docs: record real compiled-batch failures and required goal test fix
+- docs: track virtual-test and backpressure primary coverage
+- docs: record judged site/wrangler.jsonc
+- docs: record shared checkpoint live integration proof
+- refactor: expose native task causal registration and delivery ordering
+- docs: record settings and profile independent acceptance
+- docs: record fresh area paired-build provenance
+- docs: accept Linux helper build boundary
+- refactor(release): unify numeric version ordering and package snapshot
+- refactor(test): separate long-thread runtime fixture preparation
+- docs: record judged site/styles.css
+- refactor(agent): integrate judged fast policy authorization flow
+- test(live): expose independent waveform render lifetimes
+- docs: record partial combined-code typecheck
+- docs: record judged site/scripts/startup.test.ts
+- refactor(terminal): give pending render requests bounded ownership
+- docs: track history test judgment and countdown test primary
+- docs: track shared-checkpoint related-file coverage
+- refactor(test): make transport stream ownership and gates explicit
+- docs: record judged site/scroll.ts
+- refactor(tests): integrate independently judged combined goal scenarios
+- docs: record notices and Git configuration review queue
+- docs: track fixture and report candidates and test repair
+- docs: track continuity judgment and shake primary
+- Merge parent accepted shared structural checkpoint
+- docs: track snapshot transaction review and runtime map rework
+- refactor(test): bind release workflow contracts to owning jobs
+- refactor(agent): integrate judged notification delivery lifetime
+- docs: record unchanged config and contracts candidates
+- docs: record successful CLI batch and task fixture typecheck blocker
+- refactor(test): isolate manual release state and authority cases
+- refactor(site): record judged site/scripts/install.test.ts
+- refactor: expose compatibility storage branches and SDK test environments
+- refactor: clarify worktree test fixture ownership
+- refactor(test): localize dependency workflow contracts and bundle fixtures
+- refactor(remote): own local root presenter modal lifetime
+- docs: record judged site/scripts/preview.ts
+- refactor(site): record judged site/scripts/scroll.test.ts
+- refactor(ui): expose monitor frame roles and interaction worker lifetime
+- test(live): isolate native protocol audio graph ownership
+- test(remote): own gated child lifetime in lifecycle fixtures
+- docs: record judged shared integration checkpoint
+- Join judged partial site-support code for shared integration
+- docs: track acceptance fixtures and report primary coverage
+- Join judged partial build-release-ci-tooling code for shared integration
+- Join judged partial ui-terminal-cli code for shared integration
+- Join judged partial execution-tasks-questions code for shared integration
+- Join judged partial agent-history-session-goals code for shared integration
+- Join judged partial compatibility-t3 code for shared integration
+- Join judged partial live-native-audio code for shared integration
+- Join judged partial remote code for shared integration
+- test(live): isolate acquisition gate policy journeys
+- refactor(site): record judged site/scripts/install-ui.test.ts
+- docs: record manual and dependency test review pipeline
+- docs: track Linux build and provider types review queue
+- refactor: expose injected MCP discovery and lease reacquisition
+- docs: record judged site/scripts/capture-real-pty.py
+- docs: track fast policy judgment and continuity primary
+- docs: queue waveform judgment and extension test owner
+- docs: record judged site/scripts/browser.ts
+- refactor(test): own asset preparation fixture and deterministic timestamps
+- docs: accept harness with explicit existing lifecycle limits
+- docs: record lifecycle and termination final judgments
+- refactor(test): localize command fixture lifetimes
+- test(live): separate owner session lifecycle from authority proof
+- docs: track interaction and profiler candidates
+- docs: track combined goal coverage judgment and history-test primary
+- docs: record judged site/package.json
+- docs: record README follow-up for notification ownership candidate
+- docs: record Linux helper build owner
+- refactor(live): expose startup and conversation authority
+- docs: track composition judgment and snapshot primary
+- docs: record judged site/install-html.ts
+- docs: accept terminal performance entry and track monitor review
+- docs: record judged site/brand.ts
+- docs: accept independently reviewed provider evidence boundary
+- docs: accept capture policy and track native test coverage
+- docs: record packaging judgment and retained pending file attempts
+- refactor: clarify resume picker patch lifetime
+- refactor(ui): separate SDK task frame ownership and body rendering
+- docs: track primary test candidates and next source owners
+- docs: retain goal fixture acceptance pending combined review
+- refactor(session): integrate judged shared transcript snapshot lifetime
+- docs: track virtual runtime candidate and related coverage
+- docs: record CI runner judgment and packaging test review
+- refactor(test): expose connector launch and teardown synchronization
+- docs: record judged site/index.html
+- docs: accept diagnostics extension with precise persistence limits
+- refactor(site): record judged site/capture.ts
+- docs: queue core header judgment and bundle metadata owner
+- refactor: separate bounded compatibility frames from transport lifetime
+- docs: record judged site/content.ts
+- refactor(release): centralize admitted source and tag authority
+- docs: record capture gate coverage pipeline
+- docs: record second batch static proof and per-file reviews
+- refactor(ci): separate dependency verification from authenticated publication
+- docs: track harness and performance script primaries
+- docs: accept protocol regression whole-file coverage
+- docs: track provider evidence judgment and fast-mode primary
+- refactor: keep imported history messages with provenance
+- docs: track goal test judgment and coherent overlap rework
+- docs: record judged site/brand.ts
+- docs: compact execution pickup and record second batch proof
+- docs: accept settled cache with explicit final join requirements
+- refactor(goals): integrate judged reminder transport lifetime
+- docs: audit accepted remote blobs and compact pickup
+- docs: record judged site/assets/cli-settings.txt
+- test(live): clarify Gemini dispatch and settlement journeys
+- docs: record judged site/assets/settings-cells.json
+- refactor(remote): expose capability delivery and grant wait phases
+- docs: checkpoint combined compatibility contracts and new-file coverage
+- docs: record workflow and packaging primary review pipeline
+- docs: track protocol regression and capture-gate owners
+- refactor: clarify attention checkpoint and observation ownership
+- refactor(history): integrate judged retrieval preparation ownership
+- refactor(ui): pair density adapters with semantic restoration
+- test(live): expose OpenAI protocol scenario lifetimes
+- refactor: separate compatibility run accounting from delivery lifetime
+- refactor(ci): expose accepted plan and lane result tuples
+- refactor: expose worktree agent launch lifetime
+- docs: record judged site/assets/brand/wordmark-cells.json
+- docs: clarify host snapshot lifetime and cross-area owner
+- docs: track host snapshot judgment and cross-area test need
+- refactor(build): expose single paired-build command and spawn
+- test(remote): type cancellation context identity assertion
+- refactor: clarify question runtime test attachment lifetimes
+- docs: track SDK candidate and terminal entry primary
+- docs: record judged site/assets/brand/bruv-wordmark.svg
+- docs: track extension judgment and protocol regression owner
+- docs: record judged site/scripts/generate-wordmark.ts
+- refactor: separate compatibility command authority and effects
+- docs: record combined live lifecycle regression proof
+- test(remote): separate approval and artifact fixture lifetimes
+- fix(live): accept queue feedback while awaiting native stop
+- docs: record judged site/assets/brand/bruv-wordmark-light.svg
+- docs: accept quiet tool ownership without churn
+- docs: accept independently reviewed cleanup fault fixture
+- refactor(test): scope download installer sandbox lifetimes
+- docs: track goal binding judgment and agent composition primary
+- docs: accept diagnostics test focus and track projection review
+- docs: record judged site/assets/brand/bruv-icon.svg
+- docs: assign virtual fixture and tool-test reviews
+- refactor(remote): make root close evidence and publication explicit
+- docs: track history retrieval judgment and goal test primary
+- style(tests): integrate independently rejudged IO import correction
+- refactor(live): expose native protocol fixture ownership
+- refactor: expose compatibility acceptance scenario ownership
+- docs: record notification acceptance and attention judgment
+- docs: record judged site/.gitignore
+- refactor(test): show local install phases and ordered effects
+- docs: record combined batch proof and exact blob audit
+- docs: record attention and termination candidate coverage
+- refactor(tests): integrate judged instruction mode scenarios
+- refactor(site): record judged site/scripts/html-animation.test.ts
+- refactor(agent): integrate judged cache request evidence ownership
+- docs: record installer test and CI workflow file pipeline
+- refactor(test): make footer observer lifetimes explicit
+- refactor(remote): give owner event journal explicit lifetime
+- refactor(goals): integrate independently judged combined journal contract
+- refactor: remove unused compatibility argument state
+- docs: track SDK projection and diagnostics test coverage
+- docs: track provider and owner test primary coverage
+- refactor(site): record judged site/demos.test.ts
+- refactor: clarify task lifetimes and contain snapshot authority
+- test(remote): expose root journal retention expectations
+- refactor: make compatibility teardown completion explicit
+- refactor(live): expose owner history and tool protocol authority
+- refactor(ui): keep picker return selection with its screen
+- docs: record combined updater CI release installer tests
+- refactor(test): expose updater contracts and typed artifact fixtures
+- docs: record picker and progress actual-code acceptance
+- docs: record stop-fix judge and live coverage audit
+- docs: record selector acceptance and retained baseline retry
+- docs: record judged site/scripts/build.test.ts
+- docs: queue final IO fixture review and session host primary
+- refactor(ui): separate task lifecycle authority from metadata refresh
+- refactor(test): unify release byte fixtures and lookup lifetimes
+- docs: track cleanup fixture proof and goals extension primary
+- docs: track cache countdown judgment and history service primary
+- refactor(remote): expose transcript synchronization lifetime
+- docs: record judged site/html-cells.ts
+- docs: track test and picker primary review rounds
+- refactor(test): expose bridge cancellation and rejection lifetimes
+- test(live): make core scenarios own their playback history
+- refactor(remote): expose durable source approval phases
+- docs: accept independently reviewed CLI test focus
+- refactor(site): record judged site/scripts/animation.ts
+- docs: accept independently reviewed history result contracts
+- docs: record second combined UI validation batch
+- docs: record combined current installer proof
+- docs: track combined reviews and individual fixture owners
+- refactor(install): bind staged download pair and isolate probes
+- docs: track progress and notification file coverage
+- docs: accept startup ownership without source churn
+- docs: record judged support/gpt-live-explained.html
+- test(live): separate playback buffer contract lifetimes
+- docs: preserve compatibility rejection and fresh rework checkpoint
+- refactor(ui): separate execution preview rendering lifetimes
+- docs: assign observed native stop mismatch rework
+- refactor: clarify registered execution test journeys
+- refactor(tests): integrate judged isolated history IO fault fixtures
+- refactor: give local question continuation a coherent owner
+- refactor(live): clarify pipe tool-call and native-output lifetimes
+- refactor(diagnostics): distinguish observation from durable acceptance
+- docs: retain goal contract verdict and history types review
+- docs: queue core-test judgment and OpenAI test owner
+- refactor(ui): separate footer observers and lifetime gate
+- docs: record snapshot rework and queued file judgments
+- refactor(site): record judged site/scripts/extract-cells.ts
+- docs: compact remote pickup and combined root proof
+- docs: record installer judge and publication test owner
+- docs: track deletion test review and next primary slots
+- docs: record harness primary and protocol coverage owner
+- docs: record judged site/install-command.ts
+- docs: record combined site renderer gate
+- refactor(remote): clarify durable root store operations
+- docs: record compatibility identity and permission judgments
+- refactor(site): make demo turns explicit and restore cell type ownership
+- refactor(remote): expose cancellation settlement checkpoint
+- refactor(ui): express rolling activity as contiguous groups
+- refactor(goals): integrate independently judged replay authority flow
+- docs: record combined CI release installer batch proof
+- refactor(test): isolate selective CI repository lifetimes
+- docs: track IO fixture judgment and added coverage
+- refactor(remote): separate verified artifact file synchronization
+- docs: track goal contract review and instruction-test primary
+- docs: accept unchanged action labels and queue diagnostics review
+- docs(agent): integrate independently accepted runtime reading map
+- refactor(site): record judged site/layout.ts
+- docs: record independent unchanged lifetime judgments
+- docs: track bridge session and Swift review rounds
+- refactor(site): record judged site/scripts/capture-demo-source.ts
+- docs: record buffer acceptance and active execution reviews
+- docs: record real batch type and style results
+- refactor(install): scope local replacement journal and recovery
+- docs: record host bridge acceptance and combined behavior proof
+- refactor: clarify MCP exchange and shared handshake ownership
+- docs: save remote combined checks and candidate coverage needs
+- docs: record combined UI tests and static proof
+- refactor(agent): integrate judged instruction frame lifetime simplification
+- docs: record workflow judgment and combined live proof
+- docs: record integrated execution and questions batch proof
+- docs: checkpoint compatibility coverage and batch proof
+- refactor(site): record judged site/scripts/validate.ts
+- docs: record UI accepted batch validation checkpoint
+- docs: queue goal replay judgment and deleted-test primary
+- refactor(update): expose pair policy and installation recovery lifetime
+- refactor(live): expose playback and response ownership
+- docs: record task manager authority finding and batch gate
+- refactor(terminal): give frame attribution one bounded owner
+- refactor(session): remove independently judged unshipped input authority
+- refactor: own compatibility history mirroring and message bodies
+- refactor(remote): expose approval-resolved launch ownership
+- refactor(release): separate tag authority asset identity and publication
+- refactor(cli): expose startup authority and local lifetime
+- refactor(site): clarify renderer ownership with judged file evidence
+- docs: retain README rework response and next primary ownership
+- refactor: separate remote question creation and reconciliation
+- docs: track host adapter judgment and storage IO primary
+- refactor(live): clarify callback-owned playback cursor
+- docs: record asset and release notes review pipeline
+- refactor: clarify execution cancellation ownership
+- refactor(ui): pair editor attachment lifetimes with teardown
+- refactor(history): integrate judged append publication transaction
+- refactor(ci): expose selection authority and guarded execution
+- docs: track Linux candidate and added harness coverage
+- docs: track instruction mode judgment and README rework
+- docs: retain README rejection and concrete rework target
+- refactor(site): group page policies with independent readability proof
+- docs: track OpenAI candidate and independent review
+- refactor(remote): isolate judged history-free snapshot assembly
+- docs: track input deletion judgment and host access owner
+- docs: record updater and selective CI review candidates
+- docs: track execution candidates and independent review rounds
+- docs: track editor and profiler independent reviews
+- docs: record native task actual-code acceptance
+- docs: accept unchanged goal controller and track disk store candidate
+- docs: record independent unchanged build acceptance and proof limits
+- docs: record two site-support no-change judgments
+- docs: record live audio candidate review context
+- docs: record first remote candidates and review rounds
+- docs: track README judgment and instruction mode ownership
+- docs: record build candidate review and file pipeline protocol
+- docs: record site-support independent review queue
+- docs: track controller judgment and session input ownership
+- docs: mark whole-repo judge-backed work in progress
+- docs: record first live audio file owners
+- docs: record first site-support file owners
+- docs: record first UI primary worktrees
+- docs: record initial build tooling file workers
+- docs: record first compatibility file workers
+- docs: record first agent area primary assignments
+- docs: record first execution readability workers
+- docs: initialize UI terminal CLI readability coverage
+- docs: initialize remote readability per-file pipeline
+- docs: initialize site-support readability ledger
+- docs: initialize build release tooling per-file review ledger
+- docs: initialize agent history session goals area coverage
+- docs: initialize execution area readability coverage
+- docs: initialize compatibility structural readability ledger
+- docs: initialize live native audio readability coverage
+- docs: record whole-repo structural workers and judges
+- Initialize ongoing whole-repository structural readability review
+- docs: record judge-accepted owner pilot and full CI
+- Preserve blank RPC frame rejection and record owner review lessons
+- Make remote owner protocol and teardown boundaries explicit
