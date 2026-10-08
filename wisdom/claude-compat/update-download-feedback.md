@@ -19,9 +19,25 @@ Keep checksum, version checks, and paired rollback. No retries or install redesi
 
 ## Still running
 
-Both workers are running. Tests and terminal acceptance remain. Source is not shipped.
+Both workers finished. Combined proof is below. Source is not shipped.
 Values stay unchanged: existing honest-proof and real-visible-flow values cover this task. Keep local timeout/UI details here.
 
 ## Timeout integration
 
 Worker afbd0668 is integrated as a28492e8. Its 15-minute choice used asset size and a hypothetical 1 Mbps link. Parent measured about 61 KB/s, so 15 minutes still would not fit the observed transfer. Integration changes binaries to 30 minutes. Metadata and checksums stay at five minutes. Final combined proof belongs here; worker proof in its own note applies to its original patch.
+
+## Combined result
+
+Timeout patch is a28492e8, measured budget change e5bd1a2a, and progress patch 534058eb. Resolve both updater pieces together: the streamed fetch uses the 30-minute binary budget and both stage calls keep their phase labels. Both callback and integrity/recovery paths remain intact.
+
+Combined focused gate passes: 120 tests, 795 assertions across update, release shape, streamed progress, and compiled connector update. No test skips were added. Initial worker test failures and their fixes are in the worker notes. Timeout-only integration also passed 88 tests / 480 assertions.
+
+The actual 80-column pseudo-terminal probe uses the real display with measured byte/rate samples. It rewrites one physical line, then ends it before the failure text. The plain probe shows the same metrics with no rewrite escapes. This checks terminal formatting, not a full live network update. Streamed response and compiled CLI tests cover the callback wiring using synthetic bodies and temporary pairs. No actual installed files were replaced.
+
+Example final progress line:
+
+    Downloading bruv-linux-x64 7.0 MiB / 88.2 MiB (7%) · 60.0 KiB/s · ETA 23m 5s
+
+Both workers finished and their changes are combined. Final standalone typecheck, focused formatting (six files), and git diff --check pass. No push, PR, release or local installation was requested. This branch stays local until that handoff is asked for. The installed updater will not gain this behavior merely because source is fixed. Stop/restart guidance for real pair replacement stays unchanged.
+
+Wisdom adds the task evidence and both worker notes; paired-update links the follow-ups. Values stay unchanged: this is one feature's time budget and display behavior, already covered by honest proof and visible real work.
