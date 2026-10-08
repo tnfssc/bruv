@@ -3479,38 +3479,39 @@
     {
       "focus": "tests/startup-tui.test.ts",
       "initialBlob": "400c8cec0e31e00ca42ae4581de2c9e6dcf4b873",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "b7cec94ca80407458a244437d57b47e4aa847154",
       "integrationState": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
         "acceptedBlob": "b7cec94ca80407458a244437d57b47e4aa847154",
         "primaryId": "task_14e54bf3",
         "primaryCommit": "591968f724dc8456caee006ac7de8fd25de7420e",
-        "judgeIds": [],
+        "judgeIds": ["task_4722617f"],
         "sourceCommit": "591968f724dc8456caee006ac7de8fd25de7420e",
-        "state": "needs-primary-final-blob",
-        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+        "state": "accepted-joined",
+        "reason": "The startup journey now starts at one concrete owner: createStartupProcess creates and retains the home, writable configuration/SDK/tmp paths, environment, quoted offline CLI invocation and evidence provenance. Its small returned interface is transport operations plus scenario paths, not an arbitrary context bag. The quiet-startup scenario still owns settings and both skills, launches a real tmux session, captures the warning/prompt frame, then types the skill command and asserts autocomplete. Its nested finally preserves evidence-before-shutdown ordering while guaranteeing private-server shutdown if evidence writing fails. The PTY scenarios keep their separate real script transport, Ctrl-D exit, alternate-screen mode distinction and compact first-paint assertions visible. These changes remove repeated launch/environment authority, not merely rename it."
       }
     },
     {
       "focus": "tests/startup.test.ts",
       "initialBlob": "06e1ab4b62941e35f3b67aad7f3e7097f63d15e7",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "06e1ab4b62941e35f3b67aad7f3e7097f63d15e7",
       "integrationState": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "06e1ab4b62941e35f3b67aad7f3e7097f63d15e7",
         "primaryId": "task_beae5cf1",
         "primaryCommit": "92efca3ca0e7b4499e0311c4f5e0edf462ba5aa8",
-        "judgeIds": [],
+        "judgeIds": ["task_4722617f"],
         "sourceCommit": "92efca3ca0e7b4499e0311c4f5e0edf462ba5aa8",
-        "state": "needs-judge",
-        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+        "state": "accepted-joined",
+        "reason": "This focus is byte-identical to its primary base (06e1ab4b62941e35f3b67aad7f3e7097f63d15e7), but was read independently rather than accepted from that identity. Each quiet-startup test creates explicit settings storage, installs the getter override, performs the governing manager operation and immediately checks its consequence: unchanged skill-command policy, save/flush/reload without persisting the override, or restoration. The editor fixture makes default/current-editor identity and container membership visible. The simulated native init checks the actual pre-init replacement boundary, wires onSubmit on defaultEditor, checks first-line rendering, and the scenario then checks draft transfer, autocomplete limit, factory ownership, submission, repeat-init identity and restoration. The separate preselected-editor case checks preservation of the existing instance and container. LIFO afterEach restores the hooks before removing only fixture-owned storage. Extracting these short action/assertion pairs would hide the decisions rather than improve their structure."
       }
     },
     {
@@ -3832,37 +3833,39 @@
     {
       "focus": "tests/terminal-perf-cli.test.ts",
       "initialBlob": "c8b2c787299512988880a71e71da14e912c2ae6e",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "a47ca34d49c3bf229b3d5df6c7591e758560244c",
       "integrationState": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "a47ca34d49c3bf229b3d5df6c7591e758560244c",
         "primaryId": "task_beae5cf1",
         "primaryCommit": "92efca3ca0e7b4499e0311c4f5e0edf462ba5aa8",
-        "judgeIds": [],
+        "judgeIds": ["task_4722617f"],
         "sourceCommit": "92efca3ca0e7b4499e0311c4f5e0edf462ba5aa8",
-        "state": "needs-judge",
-        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+        "state": "accepted-joined",
+        "reason": "The entire CLI action sequence remains directly readable: list workloads, run one case with an impossible strict budget, inspect cold/steady frames and work/hashes, inspect HTML/trace, compare the saved run against itself, report with an explicit large budget, and reject an unknown case. Every original assertion survives in the same order. A single fixture is now the authority for retained report root and each subprocess environment/completion; the local cli closure only supplies the actual script path. The shared helper performs concrete argv/cwd/environment and exit-plus-both-pipe drain ownership, not semantic report orchestration. It is also used by the two isolated SDK navigation scenarios, replacing inconsistent inherited environments and a previously undrained stdout pipe. Removing report-root deletion is intentional retained evidence, not assertion weakening."
       }
     },
     {
       "focus": "tests/terminal-perf-navigation.test.ts",
       "initialBlob": "a1e645587fbdc2b87426d83410d9c40fe3ef3f5a",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "413aeaf5e8df03e704d4650c1fc58220c40cf9e5",
       "integrationState": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "413aeaf5e8df03e704d4650c1fc58220c40cf9e5",
         "primaryId": "task_beae5cf1",
         "primaryCommit": "92efca3ca0e7b4499e0311c4f5e0edf462ba5aa8",
-        "judgeIds": [],
+        "judgeIds": ["task_a9ae5117"],
         "sourceCommit": "92efca3ca0e7b4499e0311c4f5e0edf462ba5aa8",
-        "state": "needs-judge",
-        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees. Retained uncommitted candidate(s): task_09b8c468 blob 3a7ad4e15c5f409cb3944f1baa467649f819a756 in /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_09b8c468. Not importable or accepted."
+        "state": "accepted-joined",
+        "reason": "Read the entire navigation test and all three changed source paths, with the exact diff from 1c758b0f3ae1cca1640b8ff2625e4e55455bb589. The extraction fixes a real authority/lifetime split rather than renaming assertions: one small process fixture owns argv execution, repository cwd, writable environment and concurrent stdout/stderr/exit observation. Both SDK seams now say only what they invoke and inspect; interactive report ownership is visibly the same fixture root. The CLI sibling uses that same lifetime operation and retains listing, impossible-budget exit, frame/work/hash, JSON/dashboard/trace, baseline comparison, explicit report-budget and invalid-case assertions. Navigation retains the common scheduled-frame checks, per-mode actions, theme restoration/sequential ownership, deterministic fingerprints, persistent-tree disposal and offline provider/fetch/disk/context/lifecycle/segment assertions. This leaves domain journeys beside their assertions without a context bag or a second process protocol."
       }
     },
     {
@@ -4704,15 +4707,17 @@
       "focus": "tests/fixtures/context-usage-cache-scenario.mjs",
       "initialBlob": null,
       "introducedBy": "f8b4781e6b57fc00f6055e351c281217fa73dcac",
-      "state": "pending",
-      "acceptedBlob": null,
+      "state": "accepted",
+      "acceptedBlob": "ab1ae7f18b7f556ca7e85d3a9b2bb37b7cf0d646",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
         "acceptedBlob": "ab1ae7f18b7f556ca7e85d3a9b2bb37b7cf0d646",
         "primaryId": "task_8440f279",
         "primaryCommit": "c98fa76bd85f4e6e3a12af6c3f2356fd55285825",
+        "judgeIds": ["task_a9ae5117"],
         "sourceCommit": "c98fa76bd85f4e6e3a12af6c3f2356fd55285825",
-        "state": "needs-judge"
+        "state": "accepted-joined",
+        "reason": "Read the complete exact fixture independently rather than inheriting the primary no-change claim. Top-level installation exposes three authorities in order: untouched SDK estimator, instrumented disk-backed numeric cache, then shake freshness/validation. expected() rebuilds a public SDK projection from full native entries/branch without seeding through the manager cache. The two verification operations express genuinely different contracts (invalidation versus request/projection seeding). Eight named phases preserve the one chronological session and keep each mutation adjacent to its expected consequence: warm footer/time reads, incremental user append, actual system+user request preparation, bookkeeping/costs, branch/edit/image/compaction, shake validation, routed limits and session replacement/native fallback. The explicit ordered invocation list is sufficient lifetime orchestration. Further splitting this fixture would make its intentional cross-phase branch and cache state harder to follow; no structural change is warranted."
       }
     },
     {
@@ -4730,6 +4735,19 @@
         "sourceCommit": "7227c21e506566c57f3ffd55f99c87a1572a3080",
         "state": "accepted-joined",
         "reason": "Read the complete helper independently. Its creation sequence establishes one retained mkdtemp home and socket basename, explicitly defines HOME/XDG/cache/data/TMPDIR/Bruv/Pi agent roots, creates those owned directories, and writes its owned tmux configuration. The returned tmux closure uses argv and the same owned cwd/environment. The pane builder emits env -i plus explicit assignments and argv, rather than shell interpolation. This coherent filesystem/environment authority is already visible in one small file. Shutdown intentionally remains with callers; wrapping their semantically different lifetimes in a shared context would hide that boundary."
+      }
+    },
+    {
+      "focus": "tests/helpers/terminal-perf-process.ts",
+      "initialBlob": null,
+      "introducedBy": "92efca3ca0e7b4499e0311c4f5e0edf462ba5aa8",
+      "state": "pending",
+      "acceptedBlob": null,
+      "resume": {
+        "status": "pending",
+        "acceptedBlob": "f57d10925dca3edb6e6511ff867664c38e3e0f65",
+        "sourceCommit": "92efca3ca0e7b4499e0311c4f5e0edf462ba5aa8",
+        "state": "needs-primary-final-blob"
       }
     }
   ],
@@ -4841,7 +4859,7 @@
     }
   },
   "resumeStatus": {
-    "accepted": 99,
-    "pending": 14
+    "accepted": 104,
+    "pending": 10
   }
 }
