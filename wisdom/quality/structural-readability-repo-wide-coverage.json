@@ -15303,9 +15303,9 @@
       "initialBlob": "9f5353942e250a8cf5c73837f6ea2cfc6abd8232",
       "status": "pending",
       "primaryId": "task_e9a14830",
-      "sourceCommit": "2f147a38600174fe50f6eb6f104fc755538d3599",
+      "sourceCommit": null,
       "judgeIds": [],
-      "resumeState": "needs-judge",
+      "resumeState": "needs-rework",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
       "area": "live-native-audio",
       "primaryCommit": "2f147a38600174fe50f6eb6f104fc755538d3599",
@@ -15334,6 +15334,28 @@
         "The unchanged runtime probe uses executeIsolated/JobService child environments inherited from its parent. Its existing owned-cwd rm calls were inspected but never executed. Parent must audit and run only through explicit argv/env with retained owned mkdtemp HOME/config/SDK; this is not a runtime-safety approval.",
         "Workflow replay subprocesses were not executed. Source now uses explicit argv/env with owned mkdtemp HOME/config/SDK/TMPDIR and retains the fixture; the extracted Python only launches the fake dist/live-audio, checks hello, then terminates/waits for that child. Workflow build/download/Pulse/trap steps are read as text, not run.",
         "Durable source provenance is this worktree and exact Git commit; formatter temporary fixture is retained and documented above. No per-worker wisdom edits; parent owns aggregate wisdom. Parent verifies runtime agent.model openai-codex/gpt-6.1-sol."
+      ],
+      "resumeRework": {
+        "candidate": "2f147a38600174fe50f6eb6f104fc755538d3599",
+        "primaryId": "task_e9a14830",
+        "primaryBase": "92ce9d1901a1ac8ad9d9e3815b331db4b42ee4b9",
+        "judgeId": "task_20e29ec3",
+        "objections": [
+          "tests/live-main-orchestrator-runtime.probe.ts:45: remove or correct the universal \"current Live does not advertise execute\" claim. State only that this synthetic declaration is not evidence of production Live advertisement/admission, or describe the actual tool-based versus delegated model distinction. No fixture extraction or assertion change is requested."
+        ],
+        "readingReason": "Read both full scenarios, unchanged from primaryBase. The first owns a mkdtemp cwd, registers the real execute tool with a fake denying service, constructs an explicit declaration adapter, dispatches success/subagent/error/unknown calls, and removes only that cwd in finally. The second visibly replaces fake service authority with TaskManager + JobService, proves asynchronous shell handoff, waits the exact job, inspects bounded output through both dispatch and service, checks execute output limits/errors, then awaits manager.shutdown before its owned cwd removal. Keeping these distinct setup/dispatch/assertion/lifetime journeys local is structurally sound; a shared context bag is not warranted. However line 45 incorrectly says current Live does not advertise execute, so the proposed unchanged reader boundary is not truthful."
+      },
+      "rejectedCandidates": [
+        {
+          "candidate": "2f147a38600174fe50f6eb6f104fc755538d3599",
+          "primaryId": "task_e9a14830",
+          "primaryBase": "92ce9d1901a1ac8ad9d9e3815b331db4b42ee4b9",
+          "judgeId": "task_20e29ec3",
+          "objections": [
+            "tests/live-main-orchestrator-runtime.probe.ts:45: remove or correct the universal \"current Live does not advertise execute\" claim. State only that this synthetic declaration is not evidence of production Live advertisement/admission, or describe the actual tool-based versus delegated model distinction. No fixture extraction or assertion change is requested."
+          ],
+          "readingReason": "Read both full scenarios, unchanged from primaryBase. The first owns a mkdtemp cwd, registers the real execute tool with a fake denying service, constructs an explicit declaration adapter, dispatches success/subagent/error/unknown calls, and removes only that cwd in finally. The second visibly replaces fake service authority with TaskManager + JobService, proves asynchronous shell handoff, waits the exact job, inspects bounded output through both dispatch and service, checks execute output limits/errors, then awaits manager.shutdown before its owned cwd removal. Keeping these distinct setup/dispatch/assertion/lifetime journeys local is structurally sound; a shared context bag is not warranted. However line 45 incorrectly says current Live does not advertise execute, so the proposed unchanged reader boundary is not truthful."
+        }
       ]
     },
     {
@@ -15352,11 +15374,11 @@
     {
       "file": "tests/live-native-workflows.test.ts",
       "initialBlob": "06bd7f4a043216f68250ee481310ff12e8b7c5ce",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_e9a14830",
       "sourceCommit": "2f147a38600174fe50f6eb6f104fc755538d3599",
-      "judgeIds": [],
-      "resumeState": "needs-judge",
+      "judgeIds": ["task_20e29ec3"],
+      "resumeState": "accepted-joined",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
       "area": "live-native-audio",
       "primaryCommit": "2f147a38600174fe50f6eb6f104fc755538d3599",
@@ -15385,16 +15407,32 @@
         "The unchanged runtime probe uses executeIsolated/JobService child environments inherited from its parent. Its existing owned-cwd rm calls were inspected but never executed. Parent must audit and run only through explicit argv/env with retained owned mkdtemp HOME/config/SDK; this is not a runtime-safety approval.",
         "Workflow replay subprocesses were not executed. Source now uses explicit argv/env with owned mkdtemp HOME/config/SDK/TMPDIR and retains the fixture; the extracted Python only launches the fake dist/live-audio, checks hello, then terminates/waits for that child. Workflow build/download/Pulse/trap steps are read as text, not run.",
         "Durable source provenance is this worktree and exact Git commit; formatter temporary fixture is retained and documented above. No per-worker wisdom edits; parent owns aggregate wisdom. Parent verifies runtime agent.model openai-codex/gpt-6.1-sol."
+      ],
+      "acceptedBlob": "ea5008ecc3b7f7184badc6e62dc76fd53b61e6a2",
+      "result": "Read the complete loader, five lane selections, sanitizer assertions, three macOS hello scenarios and private-Pulse assertions. The lane scenario now tells the policy journey directly: load steps, require build before smoke, forbid capture start, require the exact handshake comparator, then replay that gate. expectHelloSmokeAcceptsOnlyExactHandshake owns one complete operation: extract the Python heredoc, allocate retained fixture directories, write fake executable, invoke interpreter with argv/env, and assert the five unchanged outcomes. It takes only smoke, not a context bag. This is a useful responsibility boundary rather than a name-only reshuffle. The policy checks remain beside the lane whose workflow they govern.",
+      "systemReason": "Read the corresponding ci/release/live workflow smoke scripts: all invoke dist/live-audio with stdin/stdout pipes, select with a timeout, compare the exact hello dictionary, and terminate/wait in finally. The replay extracts only Python, so workflow builds, shell traps, dependencies, network downloads and Pulse startup are not executed by this test. Its fake child is under its owned cwd and inherits the explicit minimal environment; HOME, XDG_CONFIG_HOME, PI_CODING_AGENT_DIR and TMPDIR each come from fresh mkdtemp directories. Only PATH is inherited for Python discovery. The native Swift helper emits protocol-1 captureGate hello before command handling; replay tests that gate, not hardware. The unchanged sanitizer, unconditional-step, build-order, no-start, exact-handshake and three-module private-Pulse graph checks retain their separate purposes. No workflow or production source changed.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "git diff --name-status primaryBase candidate reports only tests/live-native-workflows.test.ts; inspected its complete diff and complete candidate source for every decision.",
+        "git diff --check primaryBase candidate exited 0 (static whitespace check only).",
+        "Exact focus and changed-source blob IDs obtained with git rev-parse candidate:path.",
+        "Source comparison confirms all five positive/negative handshake cases and both spawn result assertions are preserved.",
+        "Inspected Python process effects and workflow shell/network/cleanup text without running any of it."
+      ],
+      "limits": [
+        "Read exact candidate Git objects against primaryBase 92ce9d1901a1ac8ad9d9e3815b331db4b42ee4b9, not checkout HEAD. Durable judge worktree: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_20e29ec3. No setup, tests, builds, dependency writes, credential/device access, cleanup, delegation, publication, or tracked source edits. Only this untracked artifact was written. Runtime agent.model verification is parent-owned.",
+        "No test or Python replay run; interpreter availability, execution results, native compilation, private Pulse protocol behavior and physical-device behavior remain unverified. Fixtures are intentionally retained. Outer test-runner environment/launch must be audited by the parent; this helper isolates only its own interpreter/fake child. The workflow text contains privileged setup, downloads and cleanup traps; all were inspected as source only.",
+        "Safety for ALL descendants: NO sudo, recovery investigation, user secrets, shell deletion/cleanup commands, inherited HOME/config/SDK cleanup, nested shell traps, destructive git, or user-data mutation. User already recovered data and requested no recovery work. Tests must use explicit process argv/env and owned fs.mkdtemp fixture HOME/config/SDK; retain them, do not delete. Review filesystem/network effects BEFORE tests/setup. Existing test-code cleanup of provably owned temporary paths may be inspected but NEVER run a shell trap or inherited HOME removal. Need live auth/device? Report unverified, don't access credentials. Propagate these constraints verbatim. Independent code/review agents get durable worktrees, not /tmp code checkouts. Keep existing worktrees and candidate evidence. Test/source fixtures may use /tmp, but document durable provenance. Parent verifies runtime agent.model openai-codex/gpt-6.1-sol; native normal leaves only, no delegation. Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md. Do NOT run setup, tests, builds: parent owns audited isolated gates. Shared dependencies are read-only; no reinstall or guard bypass. Preserve old worktrees/candidate edits. No push/new PR/merge, publication is parent-owned. No per-worker wisdom note pile; return exact artifact untracked, parent writes aggregate wisdom. Read only assigned focus/evidence rows in large coverage/area ledgers. Real structural reading, no rename churn/context bags/huge abstractions. Preserve existing security/assertions. Every focus including unchanged needs its own actual-source journey reasoning, never accept from counts/tests or batch summary."
       ]
     },
     {
       "file": "tests/live-notice.test.ts",
       "initialBlob": "6af6d30ad7cb6cf0763d2c5fdaa7edadca694d9c",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_e9a14830",
       "sourceCommit": "2f147a38600174fe50f6eb6f104fc755538d3599",
-      "judgeIds": [],
-      "resumeState": "needs-judge",
+      "judgeIds": ["task_20e29ec3"],
+      "resumeState": "accepted-joined",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
       "area": "live-native-audio",
       "primaryCommit": "2f147a38600174fe50f6eb6f104fc755538d3599",
@@ -15423,6 +15461,22 @@
         "The unchanged runtime probe uses executeIsolated/JobService child environments inherited from its parent. Its existing owned-cwd rm calls were inspected but never executed. Parent must audit and run only through explicit argv/env with retained owned mkdtemp HOME/config/SDK; this is not a runtime-safety approval.",
         "Workflow replay subprocesses were not executed. Source now uses explicit argv/env with owned mkdtemp HOME/config/SDK/TMPDIR and retains the fixture; the extracted Python only launches the fake dist/live-audio, checks hello, then terminates/waits for that child. Workflow build/download/Pulse/trap steps are read as text, not run.",
         "Durable source provenance is this worktree and exact Git commit; formatter temporary fixture is retained and documented above. No per-worker wisdom edits; parent owns aggregate wisdom. Parent verifies runtime agent.model openai-codex/gpt-6.1-sol."
+      ],
+      "acceptedBlob": "6af6d30ad7cb6cf0763d2c5fdaa7edadca694d9c",
+      "result": "Read the entire unchanged single scenario: synchronously read extension.ts by a module-relative URL, then make two explicit negative wording assertions. The source authority and both prohibited exact notices are together with no hidden fixture lifetime or dispatch responsibility. Extracting the read or wrapping the two strings would increase navigation without clarifying a decision. The related workflow helper is coherent on its own and does not justify modifying this small notice test.",
+      "systemReason": "Read extension.ts Live start/setup and stop branches. Startup enforces local/interactivity and input-model requirements, obtains credentials through dependencies, guards session/leaf liveness, starts Run, then emits the legitimate continuous-mic warning only for an alive continuous run. The two literals forbidden by this test are absent and are not the continuous-mic notice. The test is narrow source-wording coverage; it does not establish rendered UI or mic/provider behavior. Workflow replay operates on YAML and a fake protocol helper and has no notice or Live UI authority.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "git diff --name-status primaryBase candidate reports only tests/live-native-workflows.test.ts; inspected its complete diff and complete candidate source for every decision.",
+        "git diff --check primaryBase candidate exited 0 (static whitespace check only).",
+        "Exact focus and changed-source blob IDs obtained with git rev-parse candidate:path.",
+        "git diff primaryBase candidate for this focus is empty.",
+        "Read complete notice test and actual startup notification branch; both exact negative assertions remain unchanged."
+      ],
+      "limits": [
+        "Read exact candidate Git objects against primaryBase 92ce9d1901a1ac8ad9d9e3815b331db4b42ee4b9, not checkout HEAD. Durable judge worktree: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_20e29ec3. No setup, tests, builds, dependency writes, credential/device access, cleanup, delegation, publication, or tracked source edits. Only this untracked artifact was written. Runtime agent.model verification is parent-owned.",
+        "No tests run, no credentials read, and no provider/device or UI rendering accessed. Source absence of the two phrases is not end-to-end user-interface proof.",
+        "Safety for ALL descendants: NO sudo, recovery investigation, user secrets, shell deletion/cleanup commands, inherited HOME/config/SDK cleanup, nested shell traps, destructive git, or user-data mutation. User already recovered data and requested no recovery work. Tests must use explicit process argv/env and owned fs.mkdtemp fixture HOME/config/SDK; retain them, do not delete. Review filesystem/network effects BEFORE tests/setup. Existing test-code cleanup of provably owned temporary paths may be inspected but NEVER run a shell trap or inherited HOME removal. Need live auth/device? Report unverified, don't access credentials. Propagate these constraints verbatim. Independent code/review agents get durable worktrees, not /tmp code checkouts. Keep existing worktrees and candidate evidence. Test/source fixtures may use /tmp, but document durable provenance. Parent verifies runtime agent.model openai-codex/gpt-6.1-sol; native normal leaves only, no delegation. Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md. Do NOT run setup, tests, builds: parent owns audited isolated gates. Shared dependencies are read-only; no reinstall or guard bypass. Preserve old worktrees/candidate edits. No push/new PR/merge, publication is parent-owned. No per-worker wisdom note pile; return exact artifact untracked, parent writes aggregate wisdom. Read only assigned focus/evidence rows in large coverage/area ledgers. Real structural reading, no rename churn/context bags/huge abstractions. Preserve existing security/assertions. Every focus including unchanged needs its own actual-source journey reasoning, never accept from counts/tests or batch summary."
       ]
     },
     {
@@ -15562,34 +15616,80 @@
       "file": "tests/live-prompt.test.ts",
       "initialBlob": "b4a12d969bf7c39fd19223b31d233f5ab1f6c78e",
       "status": "pending",
-      "primaryId": null,
-      "sourceCommit": null,
+      "primaryId": "task_82de2654",
+      "sourceCommit": "af516eddb0607a24ce9b7e631936af16414cd291",
       "judgeIds": [],
-      "resumeState": "own_primary_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "af516eddb0607a24ce9b7e631936af16414cd291",
+      "primaryBase": "af516eddb0607a24ce9b7e631936af16414cd291",
+      "primaryResult": "Leave unchanged. setupProbeOrchestration obtains the registered declaration from executeDeclaration, instructions directly from bruvSystemPrompt, and installs an unconditional denial rather than a dispatcher. The test mirrors that construction in the same order, ending with a throwing code string to exercise the denial result. Splitting these adjacent assertions or introducing a harness would hide a compact contract rather than clarify it. No production behavior/assertions changed.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        "Read the whole focus and traced the relevant caller/helper journeys in actual source; this is not a test-count or historical-acceptance inference.",
+        "Assigned reconciliation row in /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_92b8f95a/wisdom/quality/structural-readability-areas/live-native-audio-resume-reconciliation.json: own_primary_pending; no candidate origin, rejection round, rework, or accepted focus review. Focus exists and its current blob exactly matches joinedBlob. No historical candidate import needed.",
+        "git diff --check completed without findings; tracked tree clean before artifact creation. Changed source scope: none."
+      ],
+      "primaryLimits": [
+        "Primary reading decision only; parent owns fresh independent actual-code judgment and runtime model verification. No repository tests, setup, builds, delegation, credentials, network/device probes, cleanup or recovery operations were run.",
+        "No source changed, so no formatter invocation or source commit was necessary; sourceCommit pins the existing HEAD. Artifact is retained untracked in the assigned durable worktree. No wisdom/values changes; no new general lesson identified.",
+        "Static reading does not prove the execute string was never run at runtime; that assertion was not executed. The source factory itself returns the unconditional denial."
+      ]
     },
     {
       "file": "tests/live-provider.acceptance.test.ts",
       "initialBlob": "21629333879e5eaabf82d51b136cca62e08ff733",
       "status": "pending",
-      "primaryId": null,
-      "sourceCommit": null,
+      "primaryId": "task_82de2654",
+      "sourceCommit": "af516eddb0607a24ce9b7e631936af16414cd291",
       "judgeIds": [],
-      "resumeState": "own_primary_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "af516eddb0607a24ce9b7e631936af16414cd291",
+      "primaryBase": "af516eddb0607a24ce9b7e631936af16414cd291",
+      "primaryResult": "Leave unchanged. The test explicitly loads canonical Google credentials without calling importLiveEnv, constructs VoiceSession with the real SDK adapter/default Gemini model and setup-only orchestration, awaits connect, asserts no provider errors and ready, then aborts and closes in finally before checking closed. The caller source makes ready depend on SDK setup completion, and close invalidates the epoch/cancels pending connect. A new fixture abstraction would obscure the intentionally real provider/auth boundary. No source or security/assertions changed.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        "Read the whole focus and traced the relevant caller/helper journeys in actual source; this is not a test-count or historical-acceptance inference.",
+        "Assigned reconciliation row in /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_92b8f95a/wisdom/quality/structural-readability-areas/live-native-audio-resume-reconciliation.json: own_primary_pending; no candidate origin, rejection round, rework, or accepted focus review. Focus exists and its current blob exactly matches joinedBlob. No historical candidate import needed.",
+        "git diff --check completed without findings; tracked tree clean before artifact creation. Changed source scope: none."
+      ],
+      "primaryLimits": [
+        "Primary reading decision only; parent owns fresh independent actual-code judgment and runtime model verification. No repository tests, setup, builds, delegation, credentials, network/device probes, cleanup or recovery operations were run.",
+        "No source changed, so no formatter invocation or source commit was necessary; sourceCommit pins the existing HEAD. Artifact is retained untracked in the assigned durable worktree. No wisdom/values changes; no new general lesson identified.",
+        "Paid/auth-dependent path is unverified and was not enabled. createDefaultLiveCredentialService would access canonical auth storage; VoiceSession.connect would contact Gemini. No credential files were read or real provider connection attempted.",
+        "The existing test does not assert SDK close success via closeError; preserving its assertions is not claiming broader transport teardown acceptance."
+      ]
     },
     {
       "file": "tests/live-push-to-talk-tui.test.ts",
       "initialBlob": "025fff9fb0e7475a83241c69c1a150043067273d",
       "status": "pending",
-      "primaryId": null,
-      "sourceCommit": null,
+      "primaryId": "task_82de2654",
+      "sourceCommit": "af516eddb0607a24ce9b7e631936af16414cd291",
       "judgeIds": [],
-      "resumeState": "own_primary_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "af516eddb0607a24ce9b7e631936af16414cd291",
+      "primaryBase": "af516eddb0607a24ce9b7e631936af16414cd291",
+      "primaryResult": "Leave unchanged. Read both widths through terminal creation and session seed; tap-as-text with zero sends/ends; hold preserving the draft with sends and one completed spoken turn; stale-frame, blur and stopped-session gate checks; then pane respawn using the same saved session plus rendered and persisted branch uniqueness assertions. The fixture owns its synthetic microphone clock/gate and counters while the real extension owns hold epochs, endAudio and transcript delivery to the canonical owner. proof() centralizes waiting for the numbered notification, parsing the captures/sends/ends/typed wire layout and selecting the newest notification, so the positional assertions require one local layout lookup, not scattered policy reconstruction. Replay checks deliberately sit beside the live conversation assertions. Moving stages into named helpers or introducing a context bag would make this sequential test harder to follow. All assertions and existing ownership boundaries preserved.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        "Read the whole focus and traced the relevant caller/helper journeys in actual source; this is not a test-count or historical-acceptance inference.",
+        "Assigned reconciliation row in /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_92b8f95a/wisdom/quality/structural-readability-areas/live-native-audio-resume-reconciliation.json: own_primary_pending; no candidate origin, rejection round, rework, or accepted focus review. Focus exists and its current blob exactly matches joinedBlob. No historical candidate import needed.",
+        "git diff --check completed without findings; tracked tree clean before artifact creation. Changed source scope: none."
+      ],
+      "primaryLimits": [
+        "Primary reading decision only; parent owns fresh independent actual-code judgment and runtime model verification. No repository tests, setup, builds, delegation, credentials, network/device probes, cleanup or recovery operations were run.",
+        "No source changed, so no formatter invocation or source commit was necessary; sourceCommit pins the existing HEAD. Artifact is retained untracked in the assigned durable worktree. No wisdom/values changes; no new general lesson identified.",
+        "Terminal/device behavior was not exercised. Fixture synthesizes microphone/provider and model replies, but source CLI still writes runtime assets and session data and starts tmux; parent must audit/isolate that gate.",
+        "Reviewed, not executed: home is obtained from fs.mkdtemp and the existing finally invokes tmux kill-server then rm(home). Under this task fixtures must be retained, so this report is not authorization to run the original cleanup.",
+        "tmuxRunner uses tests/helpers.ts run(), whose default environment inherits process.env; the launch overrides HOME but not every inherited config/SDK path. Parent must provide explicit owned HOME/config/SDK/env before any runtime gate. BRUV_VOICE_EVIDENCE_DIR can also write outside the fixture root if inherited; leave it unset or explicitly parent-owned.",
+        "Project-trust startup helper can grant session-only trust in the real cwd, and source CLI asset extraction is reachable. No trust prompt was answered and no setup/runtime materialization was performed."
+      ]
     },
     {
       "file": "tests/live-session.test.ts",
@@ -23558,9 +23658,9 @@
     "baselineFiles": 766,
     "finalGate": "pending; incomplete focus coverage",
     "liveAuth": "unverified/failing; preserved",
-    "accepted": 802,
+    "accepted": 804,
     "total": 836,
-    "pending": 34,
+    "pending": 32,
     "sourceExtras": 70,
     "checkout": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
     "branch": "bruv/readability-pr45-sol-continuation",

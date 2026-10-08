@@ -3612,8 +3612,8 @@
         "primaryId": "task_e9a14830",
         "primaryCommit": "2f147a38600174fe50f6eb6f104fc755538d3599",
         "judgeIds": [],
-        "sourceCommit": "2f147a38600174fe50f6eb6f104fc755538d3599",
-        "state": "needs-judge",
+        "sourceCommit": null,
+        "state": "needs-rework",
         "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
       }
     },
@@ -3668,16 +3668,17 @@
       "initialBlob": "06bd7f4a043216f68250ee481310ff12e8b7c5ce",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "ea5008ecc3b7f7184badc6e62dc76fd53b61e6a2",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "ea5008ecc3b7f7184badc6e62dc76fd53b61e6a2",
         "primaryId": "task_e9a14830",
         "primaryCommit": "2f147a38600174fe50f6eb6f104fc755538d3599",
-        "judgeIds": [],
+        "judgeIds": ["task_20e29ec3"],
         "sourceCommit": "2f147a38600174fe50f6eb6f104fc755538d3599",
-        "state": "needs-judge",
-        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+        "state": "accepted-joined",
+        "reason": "Read the complete loader, five lane selections, sanitizer assertions, three macOS hello scenarios and private-Pulse assertions. The lane scenario now tells the policy journey directly: load steps, require build before smoke, forbid capture start, require the exact handshake comparator, then replay that gate. expectHelloSmokeAcceptsOnlyExactHandshake owns one complete operation: extract the Python heredoc, allocate retained fixture directories, write fake executable, invoke interpreter with argv/env, and assert the five unchanged outcomes. It takes only smoke, not a context bag. This is a useful responsibility boundary rather than a name-only reshuffle. The policy checks remain beside the lane whose workflow they govern."
       }
     },
     {
@@ -3685,16 +3686,17 @@
       "initialBlob": "6af6d30ad7cb6cf0763d2c5fdaa7edadca694d9c",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "6af6d30ad7cb6cf0763d2c5fdaa7edadca694d9c",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "6af6d30ad7cb6cf0763d2c5fdaa7edadca694d9c",
         "primaryId": "task_e9a14830",
         "primaryCommit": "2f147a38600174fe50f6eb6f104fc755538d3599",
-        "judgeIds": [],
+        "judgeIds": ["task_20e29ec3"],
         "sourceCommit": "2f147a38600174fe50f6eb6f104fc755538d3599",
-        "state": "needs-judge",
-        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+        "state": "accepted-joined",
+        "reason": "Read the entire unchanged single scenario: synchronously read extension.ts by a module-relative URL, then make two explicit negative wording assertions. The source authority and both prohibited exact notices are together with no hidden fixture lifetime or dispatch responsibility. Extracting the read or wrapping the two strings would increase navigation without clarifying a decision. The related workflow helper is coherent on its own and does not justify modifying this small notice test."
       }
     },
     {
@@ -3856,10 +3858,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
+        "primaryId": "task_82de2654",
+        "primaryCommit": "af516eddb0607a24ce9b7e631936af16414cd291",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "own_primary_pending",
+        "sourceCommit": "af516eddb0607a24ce9b7e631936af16414cd291",
+        "state": "needs-judge",
         "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
       }
     },
@@ -3872,10 +3875,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
+        "primaryId": "task_82de2654",
+        "primaryCommit": "af516eddb0607a24ce9b7e631936af16414cd291",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "own_primary_pending",
+        "sourceCommit": "af516eddb0607a24ce9b7e631936af16414cd291",
+        "state": "needs-judge",
         "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
       }
     },
@@ -3888,10 +3892,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
+        "primaryId": "task_82de2654",
+        "primaryCommit": "af516eddb0607a24ce9b7e631936af16414cd291",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "own_primary_pending",
+        "sourceCommit": "af516eddb0607a24ce9b7e631936af16414cd291",
+        "state": "needs-judge",
         "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
       }
     },
@@ -4855,7 +4860,7 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 117,
-    "pending": 34
+    "accepted": 119,
+    "pending": 32
   }
 }

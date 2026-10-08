@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { mkdtempSync, mkdirSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { spawnSync } from "node:child_process";
@@ -18,6 +18,39 @@ const lanes = [
   ["release", "mac-helper"],
   ["live", "macos-helper"],
 ] as const;
+
+// Replay only the device-free hello script, never the workflow's build or shell steps.
+function expectHelloSmokeAcceptsOnlyExactHandshake(smoke: string) {
+  const python = smoke.split("python3 - <<'PY'\n")[1]!.split("\nPY")[0]!;
+  // Retain this owned fixture for inspection; no inherited HOME/config/SDK is used.
+  const root = mkdtempSync(join(tmpdir(), "live-workflow-hello-"));
+  const env = {
+    PATH: process.env.PATH,
+    HOME: mkdtempSync(join(root, "home-")),
+    XDG_CONFIG_HOME: mkdtempSync(join(root, "config-")),
+    PI_CODING_AGENT_DIR: mkdtempSync(join(root, "sdk-")),
+    TMPDIR: mkdtempSync(join(root, "tmp-")),
+  };
+  mkdirSync(join(root, "dist"));
+  for (const [hello, succeeds] of [
+    [{ type: "hello", protocol: 1, captureGate: true }, true],
+    [{ type: "hello", protocol: 1 }, false],
+    [{ type: "hello", protocol: 1, captureGate: false }, false],
+    [{ type: "hello", protocol: 2, captureGate: true }, false],
+    [{ type: "hello", protocol: 1, captureGate: true, extra: true }, false],
+  ] as const) {
+    writeFileSync(
+      join(root, "dist/live-audio"),
+      "#!/usr/bin/env python3\nimport sys\nprint(" +
+        JSON.stringify(JSON.stringify(hello)) +
+        ", flush=True)\nsys.stdin.read()\n",
+      { mode: 0o755 },
+    );
+    const result = spawnSync("python3", ["-c", python], { cwd: root, env, encoding: "utf8", timeout: 10_000 });
+    expect(result.error).toBeUndefined();
+    expect(result.status === 0).toBe(succeeds);
+  }
+}
 
 for (const [workflow, lane] of lanes) {
   test(workflow + "/" + lane + " requires sanitized portable capture-origin tests", async () => {
@@ -44,31 +77,7 @@ for (const [workflow, lane] of lanes.filter(([, lane]) => lane !== "test" && lan
     expect(compile).toBeLessThan(commands.indexOf("python3 - <<'PY'"));
     expect(smoke).not.toContain('"type":"start"');
     expect(smoke).toContain("== {'type': 'hello', 'protocol': 1, 'captureGate': True}");
-    const python = smoke.split("python3 - <<'PY'\n")[1]!.split("\nPY")[0]!;
-    const root = mkdtempSync(join(tmpdir(), "live-workflow-hello-"));
-    try {
-      mkdirSync(join(root, "dist"));
-      for (const [hello, succeeds] of [
-        [{ type: "hello", protocol: 1, captureGate: true }, true],
-        [{ type: "hello", protocol: 1 }, false],
-        [{ type: "hello", protocol: 1, captureGate: false }, false],
-        [{ type: "hello", protocol: 2, captureGate: true }, false],
-        [{ type: "hello", protocol: 1, captureGate: true, extra: true }, false],
-      ] as const) {
-        writeFileSync(
-          join(root, "dist/live-audio"),
-          "#!/usr/bin/env python3\nimport sys\nprint(" +
-            JSON.stringify(JSON.stringify(hello)) +
-            ", flush=True)\nsys.stdin.read()\n",
-          { mode: 0o755 },
-        );
-        const result = spawnSync("python3", ["-c", python], { cwd: root, encoding: "utf8", timeout: 10_000 });
-        expect(result.error).toBeUndefined();
-        expect(result.status === 0).toBe(succeeds);
-      }
-    } finally {
-      rmSync(root, { recursive: true, force: true });
-    }
+    expectHelloSmokeAcceptsOnlyExactHandshake(smoke);
   });
 }
 
