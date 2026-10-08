@@ -4545,8 +4545,10 @@
       "resume": {
         "status": "pending",
         "acceptedBlob": "7db5150623e2dee2c09c9726ab91d8cc6f494d82",
-        "sourceCommit": "04ac60063eebde3592e35840c727d6db40920870",
-        "state": "needs-primary-final-blob"
+        "primaryId": "task_11fc1fb2",
+        "primaryCommit": "7387dc6be58bd653996e27b8de345440cac50e3c",
+        "sourceCommit": "7387dc6be58bd653996e27b8de345440cac50e3c",
+        "state": "needs-judge"
       }
     }
   ],

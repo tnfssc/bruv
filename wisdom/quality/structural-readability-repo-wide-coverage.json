@@ -21363,10 +21363,47 @@
       "initialBlob": "absent",
       "area": "agent-history-session-goals",
       "status": "pending",
-      "resumeState": "needs-primary-final-blob",
-      "sourceCommit": "04ac60063eebde3592e35840c727d6db40920870",
+      "resumeState": "needs-judge",
+      "sourceCommit": "7387dc6be58bd653996e27b8de345440cac50e3c",
       "acceptedRelatedJudges": ["task_8e99c74c"],
-      "acceptedBlob": "7db5150623e2dee2c09c9726ab91d8cc6f494d82"
+      "acceptedBlob": "7db5150623e2dee2c09c9726ab91d8cc6f494d82",
+      "primaryId": "task_11fc1fb2",
+      "primaryCommit": "7387dc6be58bd653996e27b8de345440cac50e3c",
+      "primaryBase": "7387dc6be58bd653996e27b8de345440cac50e3c",
+      "primaryResult": "Retain exact candidate bytes already present; do not introduce extraction or naming churn. Read the entire fixture and its complete test caller, then traced production root resolution and prompt composition. SDK bindExtensions emits session_start before the fixture appends bruv-agent; registerProjectWisdom rehydrates identity at each effect and before_agent_start restores child guidance. The fake stream captures composed prompts and ends a valid assistant event without provider access. The caller supplies only an explicit owned HOME/config/cache/SDK/TMP environment, invokes the fixture with execFile argv, and checks command warning/no root-wisdom notice/no model turn plus two child prompts without wisdom/values. Fixture finally emits session_shutdown and its inner finally disposes even if that emit fails. This is a source-reading decision, not an acceptance inferred from assertions or test counts. No changed source or helper paths; no source commit or formatter run is needed for unchanged bytes.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        {
+          "kind": "source-reading",
+          "result": "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md; entire assigned fixture and entire tests/wisdom-extension.test.ts; relevant identity, wisdom-registration, before_agent_start, session_start, and session_shutdown callers in src/agent/extension.ts; entire src/wisdom/extension.ts; SDK bindExtensions/dispose implementations."
+        },
+        {
+          "kind": "candidate-equivalence",
+          "candidate": "04ac60063eebde3592e35840c727d6db40920870",
+          "candidateBlob": "7db5150623e2dee2c09c9726ab91d8cc6f494d82",
+          "result": "Current focus blob 7db5150623e2dee2c09c9726ab91d8cc6f494d82 exactly equals preserved candidate. git diff candidate -- focus and test caller was empty. No old branch merged or candidate bytes imported."
+        },
+        {
+          "kind": "preserved-evidence",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_016abd3c/wisdom/quality/structural-readability-areas/agent-history-session-goals-resume-reconciliation.json",
+          "result": "The supplied reconciliation contains no fixture row or 04ac6006 candidate reference. Inspected only the associated wisdom-extension test row and linked wisdom evidence after locating that absence. The test row requires a dedicated focus decision; its historical related-patch ACCEPT does not decide this fixture. No fixture rejection was present to address. Read exact candidate focus and candidate test diff directly with git show."
+        },
+        {
+          "kind": "effects-review",
+          "result": "No tests/setup/builds executed. Static caller review shows retained mkdtemp project fixtures and explicit child env/argv; fixture disables ambient extensions/skills/themes/templates, uses SDK auth.json only in caller-owned SDK directory with refreshOnCreate:false, and substitutes the provider stream before prompting. No shell cleanup, auth/device access, dependency writes, or delegation."
+        },
+        {
+          "kind": "working-tree",
+          "result": "Source scope unchanged; artifact only. Baseline git status --short was empty."
+        }
+      ],
+      "primaryLimits": [
+        "Parent owns independent exact-blob judgment and audited isolated runtime gates; neither was performed here.",
+        "No live provider/auth/device behavior verified; fixture model string is test data, not evidence of worker runtime identity. Parent verifies runtime model.",
+        "Unchanged decision: no formatter execution and no new source commit; sourceCommit pins the exact retained HEAD.",
+        "No wisdom/value note edits: no new general lesson; parent owns aggregate wisdom.",
+        "No temporary test or formatter fixtures created or removed. Durable provenance is this retained worktree plus the preserved candidate commit and evidence worktree."
+      ]
     }
   ],
   "completedAreas": {
