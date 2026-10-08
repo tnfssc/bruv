@@ -11291,23 +11291,69 @@
       "file": "tests/fixtures/live-push-to-talk-tui.ts",
       "initialBlob": "179e7292fffc19c5281d1072c7aad31b0b700b77",
       "status": "pending",
-      "primaryId": null,
-      "sourceCommit": null,
+      "primaryId": "task_3ad08a2d",
+      "sourceCommit": "a01c01f94014adcfffc850335c2e4a505c0a4fa3",
       "judgeIds": [],
-      "resumeState": "own_primary_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "a01c01f94014adcfffc850335c2e4a505c0a4fa3",
+      "primaryBase": "8f4324306649ee3ee91f1fe2d8de2ee7725d9c33",
+      "primaryResult": "createSyntheticMicrophone now owns gate state, last admitted epoch, cumulative captures, callback retention and timer shutdown in one local operation. The extension receives microphone.open; the proof reads microphone.captures; the deliberate stale-frame command asks that same owner to inject. stop and close share the identical clock teardown. Provider send/turn/typed counters and transcript sequence remain inline next to their callbacks. installOfflineModelReply makes the session-start sentinel explicit while the shared helper owns only model transport payload construction, not owner acquisition or prompting.",
+      "primaryPaths": [
+        "tests/fixtures/live-push-to-talk-tui.ts",
+        "tests/fixtures/live-spoken-tui.ts",
+        "tests/fixtures/live-offline-model.ts"
+      ],
+      "primaryChecks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md in full.",
+        "Read both entire focus files, both entire TUI test callers, relevant LiveDependencies/audio launch/capture-gate integration, main-owner delegate/acquisition/close, instruction-continuity session lookup, complete gpt-live-delegation and gpt-live-request paths.",
+        "Read only assigned reconciliation rows and checked matching candidate/rejection references: both own_primary_pending, no preserved candidate, no rejection/rework history, no matching integrationCandidates/worktreeObservations/uncommittedLedgerDelta.",
+        "Manual source/diff comparison: identical offline done-event metadata and reply literals; unchanged speech fragments, refusal assertion, production delegate request/provenance, callback order, proof markers and provider counters. Mic keeps cumulative captures, 20ms/640-byte frames, null gate and prior non-null epoch, original timer stop/close effects, and late-frame injection after stop.",
+        "Repository Biome format --write via node child_process argv, changed source paths only; final pass reported no fixes. Fresh explicit HOME/XDG_CONFIG_HOME/TMPDIR retained at /tmp/bruv-pr45-live-fixture-final-format-GH7R9u; earlier formatter environment retained at /tmp/bruv-pr45-live-fixture-format-IcK2pZ. Durable code provenance is this Git worktree, not those formatter environment directories.",
+        "git diff --check passed; reviewed complete source diff and new helper; repository commit hooks inspected (no non-sample hooks); source-only commit scope verified."
+      ],
+      "primaryLimits": [
+        "No tests, setup, build, typecheck or fixture runtime executed: parent owns audited isolated gates.",
+        "TUI caller effects were inspected, not executed: temporary HOME/session/theme writes, tmux subprocesses, optional evidence output, owned-directory cleanup; spoken caller also runs prepare-assets. These callers were not treated as approved gates.",
+        "No live authentication, credential reads, devices or network accessed; real audio/TUI/runtime behavior remains unverified.",
+        "No delegation, candidate checkout/merge, destructive git, shell cleanup, user-data mutation, dependency changes, push or publication. Existing worktrees/evidence retained.",
+        "Primary readability proposals only; fresh independent judgments are parent-owned. No per-worker wisdom edits; aggregate wisdom is parent-owned."
+      ]
     },
     {
       "file": "tests/fixtures/live-spoken-tui.ts",
       "initialBlob": "03c7168fdf7aa3a91084573c467eb7a94408f67b",
       "status": "pending",
-      "primaryId": null,
-      "sourceCommit": null,
+      "primaryId": "task_3ad08a2d",
+      "sourceCommit": "a01c01f94014adcfffc850335c2e4a505c0a4fa3",
       "judgeIds": [],
-      "resumeState": "own_primary_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "a01c01f94014adcfffc850335c2e4a505c0a4fa3",
+      "primaryBase": "8f4324306649ee3ee91f1fe2d8de2ee7725d9c33",
+      "primaryResult": "The command now reads in order: acquire real owner, enable delegated voice, install the offline model reply, create the bridge using the real owner.delegate/request/provenance path, refuse incomplete retained speech, feed the fresh complete request, and close the owner after the asynchronous delegation settles. The shared helper isolates only the synthetic model reply; the real session.prompt path, incomplete-speech assertion, fragment timeline, output markers and owner-close timing remain untouched. No further extraction of the compact loss/repeat journey was warranted.",
+      "primaryPaths": [
+        "tests/fixtures/live-push-to-talk-tui.ts",
+        "tests/fixtures/live-spoken-tui.ts",
+        "tests/fixtures/live-offline-model.ts"
+      ],
+      "primaryChecks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md in full.",
+        "Read both entire focus files, both entire TUI test callers, relevant LiveDependencies/audio launch/capture-gate integration, main-owner delegate/acquisition/close, instruction-continuity session lookup, complete gpt-live-delegation and gpt-live-request paths.",
+        "Read only assigned reconciliation rows and checked matching candidate/rejection references: both own_primary_pending, no preserved candidate, no rejection/rework history, no matching integrationCandidates/worktreeObservations/uncommittedLedgerDelta.",
+        "Manual source/diff comparison: identical offline done-event metadata and reply literals; unchanged speech fragments, refusal assertion, production delegate request/provenance, callback order, proof markers and provider counters. Mic keeps cumulative captures, 20ms/640-byte frames, null gate and prior non-null epoch, original timer stop/close effects, and late-frame injection after stop.",
+        "Repository Biome format --write via node child_process argv, changed source paths only; final pass reported no fixes. Fresh explicit HOME/XDG_CONFIG_HOME/TMPDIR retained at /tmp/bruv-pr45-live-fixture-final-format-GH7R9u; earlier formatter environment retained at /tmp/bruv-pr45-live-fixture-format-IcK2pZ. Durable code provenance is this Git worktree, not those formatter environment directories.",
+        "git diff --check passed; reviewed complete source diff and new helper; repository commit hooks inspected (no non-sample hooks); source-only commit scope verified."
+      ],
+      "primaryLimits": [
+        "No tests, setup, build, typecheck or fixture runtime executed: parent owns audited isolated gates.",
+        "TUI caller effects were inspected, not executed: temporary HOME/session/theme writes, tmux subprocesses, optional evidence output, owned-directory cleanup; spoken caller also runs prepare-assets. These callers were not treated as approved gates.",
+        "No live authentication, credential reads, devices or network accessed; real audio/TUI/runtime behavior remains unverified.",
+        "No delegation, candidate checkout/merge, destructive git, shell cleanup, user-data mutation, dependency changes, push or publication. Existing worktrees/evidence retained.",
+        "Primary readability proposals only; fresh independent judgments are parent-owned. No per-worker wisdom edits; aggregate wisdom is parent-owned."
+      ]
     },
     {
       "file": "tests/fixtures/remote-e2e/Dockerfile",
