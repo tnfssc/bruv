@@ -14349,36 +14349,95 @@
       "initialBlob": "0145fd511ce1d999151bed8710f708be529252f9",
       "status": "pending",
       "area": "execution-tasks-questions",
-      "resumeState": "pending-primary",
-      "primaryId": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_187e7fa2",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "bf4827bfd63ece88c460227cdd9fdbd9648a5c39",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
-      "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage."
+      "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage.",
+      "primaryCommit": "bf4827bfd63ece88c460227cdd9fdbd9648a5c39",
+      "primaryBase": "127b579f405866d2a7745a42155615e068d0806a",
+      "primaryResult": "No edit to this focus. The fixtures keep incomplete discovery distinct from pending cancellation and per-job failure, while terminal-status mapping is independently explicit. Sharing the repeated positional JobService construction would hide the exact native/local seam without clarifying these three journeys. The nearby extension-only fixture extraction does not change stop-work reporting.",
+      "primaryPaths": ["tests/subagent-extension.test.ts"],
+      "primaryChecks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read the entire assigned focus and relevant production caller journeys; assigned reconciliation row is pending-primary with candidate:null, ownerReview:null, judgeRounds:[], so there were no preserved candidate/rejection bytes to restore or rework. Evidence: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_6662575a/wisdom/quality/structural-readability-areas/execution-tasks-questions-resume-reconciliation.json",
+        "Repository formatter exited 0 for only tests/subagent-extension.test.ts; git diff --check passed after formatting.",
+        "Static comparison with pre-change HEAD: ordered assertion-start lines, test-title lines, shell-command field lines, and session_shutdown lines are exactly preserved. This is not runtime proof.",
+        "Source-only commit scope: tests/subagent-extension.test.ts (34 insertions, 135 deletions). All decisions list this combined changed source scope; unchanged means the assigned focus itself is byte-identical.",
+        "Assigned focus current Git blob is exactly the pre-change HEAD blob 0145fd511ce1d999151bed8710f708be529252f9."
+      ],
+      "primaryLimits": [
+        "No setup, tests, builds, live authentication/device access, delegation, push, merge, publication, or credential access. Parent owns isolated runtime gates and fresh independent judgment.",
+        "Formatter only: retained fs.mkdtemp fixture /tmp/pr45-execution-tests-format-6e49zg; explicit child_process argv/env, shell:false, fresh HOME/XDG_CONFIG_HOME/XDG_CACHE_HOME/TMPDIR/PI_CODING_AGENT_DIR. Durable source provenance is this worktree and sourceCommit; fixture provenance.json is retained. Shared dependencies were read-only.",
+        "Existing tests have real child-shell paths and SDK/config-sensitive extension initialization. Future gates must supply owned HOME/config/SDK and explicit argv/env. Existing rm/rmSync targets were inspected as exact mkdtemp-owned paths, not executed. No shell cleanup or inherited HOME/config/SDK mutation was performed.",
+        "Parent must verify runtime agent.model openai-codex/gpt-6.1-sol; this worker did not independently inspect runtime model metadata. No descendant was launched.",
+        "No wisdom files changed: parent owns aggregate wisdom; existing guidance already covers coherent lifetime ownership."
+      ]
     },
     {
       "file": "tests/subagent-extension.test.ts",
       "initialBlob": "508e9dfd1900ae7387c9254e224eca79e2694473",
       "status": "pending",
       "area": "execution-tasks-questions",
-      "resumeState": "pending-primary",
-      "primaryId": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_187e7fa2",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "bf4827bfd63ece88c460227cdd9fdbd9648a5c39",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
-      "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage."
+      "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage.",
+      "primaryCommit": "bf4827bfd63ece88c460227cdd9fdbd9648a5c39",
+      "primaryBase": "127b579f405866d2a7745a42155615e068d0806a",
+      "primaryResult": "Added file-local bindJobHandler, which temporarily stubs isolated execution, binds through the real registered execute tool, returns its real job handler, and restores the stub in finally before callers exercise jobs. Each scenario now starts at its actual shell/notification/authorization action and retains its own session shutdown, clocks, child controls, filesystem fixtures, and assertions. The specialized execute mock that intentionally launches a real background job then reports outer failure stays inline; it has different authority and is not folded into this helper. Native binding now uses the same zero-exit empty result including explicit false loss flags; no assertion, shell command, ownership constraint, or security check was removed.",
+      "primaryPaths": ["tests/subagent-extension.test.ts"],
+      "primaryChecks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read the entire assigned focus and relevant production caller journeys; assigned reconciliation row is pending-primary with candidate:null, ownerReview:null, judgeRounds:[], so there were no preserved candidate/rejection bytes to restore or rework. Evidence: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_6662575a/wisdom/quality/structural-readability-areas/execution-tasks-questions-resume-reconciliation.json",
+        "Repository formatter exited 0 for only tests/subagent-extension.test.ts; git diff --check passed after formatting.",
+        "Static comparison with pre-change HEAD: ordered assertion-start lines, test-title lines, shell-command field lines, and session_shutdown lines are exactly preserved. This is not runtime proof.",
+        "Source-only commit scope: tests/subagent-extension.test.ts (34 insertions, 135 deletions). All decisions list this combined changed source scope; unchanged means the assigned focus itself is byte-identical.",
+        "Manually checked all eight replacement binding call sites for unchanged ctx/default cwd and sequencing relative to session_start, host.delegate, shell launch, agent_end, and session_shutdown.",
+        "Manual final-source check: only bindJobHandler and the intentional launch-then-error test retain executeIsolated mock ownership. No new cross-test state or context bag was introduced."
+      ],
+      "primaryLimits": [
+        "No setup, tests, builds, live authentication/device access, delegation, push, merge, publication, or credential access. Parent owns isolated runtime gates and fresh independent judgment.",
+        "Formatter only: retained fs.mkdtemp fixture /tmp/pr45-execution-tests-format-6e49zg; explicit child_process argv/env, shell:false, fresh HOME/XDG_CONFIG_HOME/XDG_CACHE_HOME/TMPDIR/PI_CODING_AGENT_DIR. Durable source provenance is this worktree and sourceCommit; fixture provenance.json is retained. Shared dependencies were read-only.",
+        "Existing tests have real child-shell paths and SDK/config-sensitive extension initialization. Future gates must supply owned HOME/config/SDK and explicit argv/env. Existing rm/rmSync targets were inspected as exact mkdtemp-owned paths, not executed. No shell cleanup or inherited HOME/config/SDK mutation was performed.",
+        "Parent must verify runtime agent.model openai-codex/gpt-6.1-sol; this worker did not independently inspect runtime model metadata. No descendant was launched.",
+        "No wisdom files changed: parent owns aggregate wisdom; existing guidance already covers coherent lifetime ownership."
+      ]
     },
     {
       "file": "tests/subagent-placement.test.ts",
       "initialBlob": "f897af60816f07c9eb116301c0ff626b36c525f4",
       "status": "pending",
       "area": "execution-tasks-questions",
-      "resumeState": "pending-primary",
-      "primaryId": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_187e7fa2",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "bf4827bfd63ece88c460227cdd9fdbd9648a5c39",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
-      "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage."
+      "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage.",
+      "primaryCommit": "bf4827bfd63ece88c460227cdd9fdbd9648a5c39",
+      "primaryBase": "127b579f405866d2a7745a42155615e068d0806a",
+      "primaryResult": "No edit to this focus. The transport stub makes accepted/sync/cancel behavior visible next to its offline flag, while the repository launcher records only inputs crossing that seam and verifies retry intent. service(policy, environment, native) leaves native backend injection explicit; local prepare/spawn/foreground spies remain limited to the local-routing test. Assertions expose per-scenario side-effect boundaries (requests/posts/native calls), and exact request identity is passed at each dispatch. Moving this into shared batch infrastructure would obscure rather than simplify the security/placement journeys. The extension-only change is separately listed for exact combined-commit review.",
+      "primaryPaths": ["tests/subagent-extension.test.ts"],
+      "primaryChecks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read the entire assigned focus and relevant production caller journeys; assigned reconciliation row is pending-primary with candidate:null, ownerReview:null, judgeRounds:[], so there were no preserved candidate/rejection bytes to restore or rework. Evidence: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_6662575a/wisdom/quality/structural-readability-areas/execution-tasks-questions-resume-reconciliation.json",
+        "Repository formatter exited 0 for only tests/subagent-extension.test.ts; git diff --check passed after formatting.",
+        "Static comparison with pre-change HEAD: ordered assertion-start lines, test-title lines, shell-command field lines, and session_shutdown lines are exactly preserved. This is not runtime proof.",
+        "Source-only commit scope: tests/subagent-extension.test.ts (34 insertions, 135 deletions). All decisions list this combined changed source scope; unchanged means the assigned focus itself is byte-identical.",
+        "Assigned focus current Git blob is exactly the pre-change HEAD blob f897af60816f07c9eb116301c0ff626b36c525f4.",
+        "Filesystem/network effects inspected: placement state and launch ledgers are under its mkdtemp root; RemoteClient uses an injected transport and repository launcher, native uses an injected adapter, and the local spawn/preparation/wait path is spied. These effects were not executed."
+      ],
+      "primaryLimits": [
+        "No setup, tests, builds, live authentication/device access, delegation, push, merge, publication, or credential access. Parent owns isolated runtime gates and fresh independent judgment.",
+        "Formatter only: retained fs.mkdtemp fixture /tmp/pr45-execution-tests-format-6e49zg; explicit child_process argv/env, shell:false, fresh HOME/XDG_CONFIG_HOME/XDG_CACHE_HOME/TMPDIR/PI_CODING_AGENT_DIR. Durable source provenance is this worktree and sourceCommit; fixture provenance.json is retained. Shared dependencies were read-only.",
+        "Existing tests have real child-shell paths and SDK/config-sensitive extension initialization. Future gates must supply owned HOME/config/SDK and explicit argv/env. Existing rm/rmSync targets were inspected as exact mkdtemp-owned paths, not executed. No shell cleanup or inherited HOME/config/SDK mutation was performed.",
+        "Parent must verify runtime agent.model openai-codex/gpt-6.1-sol; this worker did not independently inspect runtime model metadata. No descendant was launched.",
+        "No wisdom files changed: parent owns aggregate wisdom; existing guidance already covers coherent lifetime ownership."
+      ]
     },
     {
       "file": "tests/subagent-profiles.test.ts",
