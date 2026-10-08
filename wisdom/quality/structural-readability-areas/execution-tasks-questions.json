@@ -2858,7 +2858,7 @@
     {
       "focus": "tests/job-bridge.test.ts",
       "initialBlob": "41a49cda7d40568bdbe2060020d8b2dcdb9ed4b6",
-      "status": "pending",
+      "status": "accepted",
       "primary": {
         "id": "task_bf3b25b4",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_bf3b25b4",
@@ -2867,18 +2867,18 @@
         "commit": null
       },
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "973202d35cdf83c14024e33b6f0cc9532573ff34",
       "integration": "pending",
       "launchBase": "3fc00c2732f544ba63d4a2e22449184a90bd29f7",
       "resume": {
-        "status": "pending",
-        "acceptedBlob": "ac3973d96f36dbf054d892077d86e44b1950c759",
+        "status": "accepted",
+        "acceptedBlob": "973202d35cdf83c14024e33b6f0cc9532573ff34",
         "primaryId": "task_6262ecec",
         "primaryCommit": "04c9d2df061d6e15e2c1d347900be71503bb905b",
-        "judgeIds": ["task_a3213d3e"],
+        "judgeIds": ["task_a3213d3e", "task_e427af86"],
         "sourceCommit": "04c9d2df061d6e15e2c1d347900be71503bb905b",
-        "state": "needs-judge",
-        "reason": "Read the whole candidate and exact diff from 8f186d90eb5047304492c72c6bc56a7d0f37204d. SessionJobs joins a genuine parent-session lifetime: manager, typed completion sink, JobService dispatch, raw execute entry, registered-tool entry, and awaited shutdown. A reader can now follow foreground completion, background survival/input/inspection, delayed spawn cancellation, concurrent wait cancellation, pre-delivery disconnect, provisional ACK failure, oversized response release, registered batch ACK, partial batch failure, and handoff without reconstructing repeated ownership setup and finally blocks. Timing, abort points, dispatch wrappers, and batch completion barriers stay visible in their scenarios. Raw multiplexing/unavailable-bridge/budget tests and attention/goal/history RPC checks remain separate; the credential scrub assertion and environment restoration remain explicit. This is a coherent lifetime extraction, not a rename-only improvement or context bag."
+        "state": "accepted-joined",
+        "reason": "Read the exact candidate bridge file from registration through its last assertion, and the exact diff from primaryBase 9bf50c12c46a2eec788c76d19c5f504819b3496a. SessionJobs visibly owns a TaskManager and JobService across compiled execute invocations, exposes direct and registered execute paths, and awaits manager.shutdown in asynchronous disposal. Followed multiplexed success/error RPC and absence of implicit output; unavailable bridge; inline completion versus surviving background input/inspection; delayed-spawn and concurrent cancellation ownership; request/response budgets with subsequent calls; independent three-second foreground, zero-wait, job timeout and failed-exit decisions; disconnect before delivery ACK; registered batch-wrapper ownership; provisional ACK rollback on worker exit 7; oversized response fallback; handoff separating delivered inline work from pending jobs; partial batch failure; attention, goal and history parameter forwarding. Read the entire new credential entry and shared process owner, not only their names. The original credential worker source and exit/scrubbed-object/visible-sentinel/job-capability/subagent-RPC/token-nondisclosure assertions remain, now as strict standalone assertions. New assertions also prove that the parent really received the synthetic credentials. The credential case launches that absolute assertion entry with [run, file], not a filtered test-suite re-entry. All ordinary suite cases remain registered and the suite owner launches [test, --timeout, 30000, file] without name filtering. This resolves the concrete previous source-contract objection through a clear process lifetime boundary rather than a filter marker."
       }
     },
     {
@@ -4352,7 +4352,7 @@
     ]
   },
   "resumeStatus": {
-    "accepted": 101,
+    "accepted": 102,
     "pending": 3
   },
   "extraFiles": [
@@ -4429,11 +4429,11 @@
       "acceptedBlob": null,
       "resume": {
         "status": "pending",
-        "acceptedBlob": "946ea123946ed06dbbcfe717c6dcc4d21d101ca4",
+        "acceptedBlob": "7bb361586e537dd6623872b6b43aa6032dbda09d",
         "primaryId": "task_82a904cd",
         "primaryCommit": "9bf50c12c46a2eec788c76d19c5f504819b3496a",
-        "sourceCommit": "9bf50c12c46a2eec788c76d19c5f504819b3496a",
-        "state": "needs-judge"
+        "sourceCommit": "04c9d2df061d6e15e2c1d347900be71503bb905b",
+        "state": "needs-primary-final-blob"
       }
     },
     {
@@ -4446,6 +4446,19 @@
         "status": "pending",
         "acceptedBlob": "16e90314c1d218b04e99644340d8d5220c2ba060",
         "sourceCommit": "af63383a0fb05cba759d32b21788c03f7a3cffa7",
+        "state": "needs-primary-final-blob"
+      }
+    },
+    {
+      "focus": "tests/job-bridge-credentials.fixture.ts",
+      "initialBlob": null,
+      "introducedBy": "04c9d2df061d6e15e2c1d347900be71503bb905b",
+      "state": "pending",
+      "acceptedBlob": null,
+      "resume": {
+        "status": "pending",
+        "acceptedBlob": "99858065b35f461748847c07c31e1b2fedeccc7a",
+        "sourceCommit": "04c9d2df061d6e15e2c1d347900be71503bb905b",
         "state": "needs-primary-final-blob"
       }
     }

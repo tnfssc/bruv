@@ -6,12 +6,11 @@ import { basename, dirname, join } from "node:path";
 import { ownedFixtureEnv } from "./helpers";
 
 const suiteFileEnv = "BRUV_FIXTURE_SUITE_FILE";
-const scenarioEnv = "BRUV_FIXTURE_SCENARIO";
 
 // The Bun test host, managed jobs and compiled execute workers all descend from
 // this allowlisted process. No inherited HOME/config/SDK/provider authority enters.
 // Keep each root, launch manifest and output for the parent gate's audit.
-async function runFixture(file: string, scenario?: { name: string; env: Record<string, string> }) {
+async function runOwnedProcess(file: string, args: string[], environment: Record<string, string>) {
   const root = await mkdtemp(join(tmpdir(), "bruv-owned-suite-"));
   const cwd = dirname(dirname(file));
   // JobService passes login flags to SHELL. This owned executable runs the same
@@ -21,11 +20,8 @@ async function runFixture(file: string, scenario?: { name: string; env: Record<s
   const env = {
     ...ownedFixtureEnv(root),
     SHELL: shell,
-    [suiteFileEnv]: file,
-    ...(scenario ? { ...scenario.env, [scenarioEnv]: scenario.name } : {}),
+    ...environment,
   };
-  const args = ["test", "--timeout", "30000", file];
-  if (scenario) args.push("--test-name-pattern", "^" + scenario.name.replace(/[.*+?^$()|[\]\\]/g, "\\$&") + "$");
   // Source remains in the durable worktree, never a copied /tmp code checkout.
   await writeFile(join(root, "launch.json"), JSON.stringify({ executable: process.execPath, args, cwd, env }, null, 2));
   await writeFile(join(root, "suite-source.ts"), await readFile(file));
@@ -57,16 +53,15 @@ export function ownedProcessSuite(file: string, defineTests: () => void): void {
     defineTests();
     return;
   }
-  test(`owned process: ${basename(file)}`, () => runFixture(file), 120_000);
+  test(
+    `owned process: ${basename(file)}`,
+    () => runOwnedProcess(file, ["test", "--timeout", "30000", file], { [suiteFileEnv]: file }),
+    120_000,
+  );
 }
 
-// Synthetic root credentials are launch input to one separate fixture process,
-// not mutations of the shared test host's environment.
-export function ownedEnvironmentTest(
-  file: string,
-  name: string,
-  env: Record<string, string>,
-  scenario: () => Promise<void>,
-): void {
-  test(name, () => (process.env[scenarioEnv] === name ? scenario() : runFixture(file, { name, env })), 120_000);
+// Environment-specific assertions have their own executable entry, not a filtered
+// re-entry into a test suite. The entry must throw on assertion failure.
+export function ownedProcessScenario(file: string, env: Record<string, string>): Promise<void> {
+  return runOwnedProcess(file, ["run", file], env);
 }

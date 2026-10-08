@@ -3369,7 +3369,7 @@
     {
       "focus": "tests/remote-root-presenter.test.ts",
       "initialBlob": "f83b29c694dfed802f8774046a94c6c2c294c0b1",
-      "status": "accepted",
+      "status": "pending",
       "judgeRounds": [
         {
           "id": "task_20e04838",
@@ -3402,19 +3402,19 @@
           "reason": "Summary regex matched introductory candidate word then Base hash. Corrected from retained committed worktree HEAD; source accepted hashes always recorded independently from judge."
         }
       },
-      "acceptedBlob": "b4ed20c02e76380b8f9b5435bb482d50268a3a07",
+      "acceptedBlob": null,
       "integrationState": "exact independently accepted primary test patch applied",
       "result": "Distinct remoteReplies/scripted UI/mounted UI lifetimes; terminal callback exercises real shipped focused input dispatch; added regression reproduces old helper bypass.",
       "checks": "Worker 29 pass/157 assertions; baseline helper new routing regression fails; format/lint/diff pass existing ANSI regex warning.",
       "changedRelatedPaths": [],
       "resume": {
-        "status": "accepted",
+        "status": "pending",
         "acceptedBlob": "b4ed20c02e76380b8f9b5435bb482d50268a3a07",
         "primaryId": "task_d3ae9262",
         "primaryCommit": "77ea8f3a80698debf5ffe36ce5f501076f266888",
         "judgeIds": ["task_20e04838"],
-        "sourceCommit": "77ea8f3a80698debf5ffe36ce5f501076f266888",
-        "state": "accepted-exact-joined",
+        "sourceCommit": null,
+        "state": "needs-rework",
         "reason": "Fake remote response ownership separated from scripted/mounted UI; input follows terminal callback→listeners→focused component rather than wrong root fallback. Question/cancel/detach journeys preserve authority and cleanup."
       }
     },
@@ -4163,8 +4163,8 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 122,
-    "pending": 0
+    "accepted": 121,
+    "pending": 1
   },
   "extraFiles": [
     {

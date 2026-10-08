@@ -3405,7 +3405,7 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_e427af86",
         "branch": "bruv/pr45-judge-1-execution-tasks-questions-f-e427af86",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled"
       }
     ]
   },
@@ -4168,6 +4168,19 @@
         "model": "openai-codex/gpt-6.1-sol",
         "status": "handled",
         "sourceCommit": "a1f238b96cc562dfde095f0b486b2d674c410414"
+      },
+      {
+        "id": "task_9cd1c88b",
+        "stage": "judge",
+        "focus": [
+          "tests/smoke-script.test.ts",
+          "tests/tooling-fixtures.test.ts",
+          "tests/setup-native-release-gate.test.ts"
+        ],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_9cd1c88b",
+        "branch": "bruv/pr45-judge-3-build-release-ci-tooling-fo-9cd1c88b",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
       }
     ]
   },

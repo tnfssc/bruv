@@ -6,7 +6,7 @@ import { type TaskInspection, TaskManager } from "../src/tasks/task-manager";
 import { executeIsolated } from "../src/typescript/execution";
 import { registerExecuteTool } from "../src/typescript/extension";
 
-import { ownedEnvironmentTest, ownedProcessSuite } from "./owned-process-suite";
+import { ownedProcessScenario, ownedProcessSuite } from "./owned-process-suite";
 
 ownedProcessSuite(import.meta.path, () => {
   const binary = resolve(import.meta.dir, "../dist/bruv");
@@ -475,36 +475,14 @@ ownedProcessSuite(import.meta.path, () => {
     ]);
   });
 
-  ownedEnvironmentTest(
-    import.meta.path,
+  test(
     "execute cannot read T3 bridge credentials while parent job capability remains available",
-    {
-      T3_MCP_URL: "http://secret.invalid/mcp",
-      T3_MCP_BEARER_TOKEN: "SECRET_EXECUTE_TOKEN",
-      BRUV_SAFE_SENTINEL: "visible",
-    },
-    async () => {
-      const seen: string[] = [];
-      const result = await executeIsolated(
-        'console.log(JSON.stringify({url:process.env.T3_MCP_URL,token:process.env.T3_MCP_BEARER_TOKEN,safe:process.env.BRUV_SAFE_SENTINEL,job:await subagent({prompt:"work",type:"fast"})}))',
-        process.cwd(),
-        undefined,
-        3_000,
-        {
-          executablePath: binary,
-          jobHandler: async (method) => {
-            seen.push(method);
-            return { id: "native-1", background: true };
-          },
-        },
-      );
-      expect(result.exitCode).toBe(0);
-      expect(JSON.parse(result.stdout)).toEqual({
-        safe: "visible",
-        job: { id: "native-1", background: true },
-      });
-      expect(seen).toEqual(["subagent"]);
-      expect(result.stdout).not.toContain("SECRET_EXECUTE_TOKEN");
-    },
+    () =>
+      ownedProcessScenario(resolve(import.meta.dir, "job-bridge-credentials.fixture.ts"), {
+        T3_MCP_URL: "http://secret.invalid/mcp",
+        T3_MCP_BEARER_TOKEN: "SECRET_EXECUTE_TOKEN",
+        BRUV_SAFE_SENTINEL: "visible",
+      }),
+    120_000,
   );
 });

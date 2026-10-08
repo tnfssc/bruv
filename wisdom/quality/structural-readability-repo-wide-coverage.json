@@ -14998,11 +14998,11 @@
     {
       "file": "tests/job-bridge.test.ts",
       "initialBlob": "41a49cda7d40568bdbe2060020d8b2dcdb9ed4b6",
-      "status": "pending",
+      "status": "accepted",
       "area": "execution-tasks-questions",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_6262ecec",
-      "judgeIds": ["task_a3213d3e"],
+      "judgeIds": ["task_a3213d3e", "task_e427af86"],
       "sourceCommit": "04c9d2df061d6e15e2c1d347900be71503bb905b",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
       "pendingReason": "Primary was cancelled during the incident. A changed focus blob survives only in the primary working tree, not its HEAD; no completed independent actual-code judgment or accepted blob is recorded. Preserve the uncommitted candidate, dist and runtime-assets without cleanup.",
@@ -15033,21 +15033,24 @@
         "Temporary formatter/commit evidence is retained under /tmp/pr45-bridge-format-xMonw2; source provenance is durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_6262ecec at 04c9d2df061d6e15e2c1d347900be71503bb905b. Runtime fixture roots are created only when parent-authorized gates later run and are retained without deletion.",
         "No wisdom/values edits: parent owns aggregate wisdom, and the existing isolation/ownership/readability values already cover this correction."
       ],
-      "acceptedBlob": "ac3973d96f36dbf054d892077d86e44b1950c759",
-      "result": "Read the whole candidate and exact diff from 8f186d90eb5047304492c72c6bc56a7d0f37204d. SessionJobs joins a genuine parent-session lifetime: manager, typed completion sink, JobService dispatch, raw execute entry, registered-tool entry, and awaited shutdown. A reader can now follow foreground completion, background survival/input/inspection, delayed spawn cancellation, concurrent wait cancellation, pre-delivery disconnect, provisional ACK failure, oversized response release, registered batch ACK, partial batch failure, and handoff without reconstructing repeated ownership setup and finally blocks. Timing, abort points, dispatch wrappers, and batch completion barriers stay visible in their scenarios. Raw multiplexing/unavailable-bridge/budget tests and attention/goal/history RPC checks remain separate; the credential scrub assertion and environment restoration remain explicit. This is a coherent lifetime extraction, not a rename-only improvement or context bag.",
-      "systemReason": "Traced JobService.handle and shell dispatch into TaskManager.foreground: wait expiry/cancellation transfers notification ownership once, completed foreground results attach to the bridge delivery signal, and shutdown drains/kills managed tasks while suppressing session-shutdown notifications. executeIsolated serves the bridge and commits provisional ACKs only at clean worker exit; serveJobBridge aborts ownership on failed/oversized delivery and retains foreground ACKs provisionally. registerExecuteTool still wraps the real dispatch through ExecuteDelivery.waitSignal/withJobCancellation, so handoff cancels waits without pretending completed delivery disconnected. The fixture preserves that wrapper route and leaves its fake batch spawn/foreground operations local to the tests. Shutdown via await using replaces the old finally with the same real manager.shutdown. No production source changed; no security or behavior assertions were dropped.",
+      "acceptedBlob": "973202d35cdf83c14024e33b6f0cc9532573ff34",
+      "result": "Read the exact candidate bridge file from registration through its last assertion, and the exact diff from primaryBase 9bf50c12c46a2eec788c76d19c5f504819b3496a. SessionJobs visibly owns a TaskManager and JobService across compiled execute invocations, exposes direct and registered execute paths, and awaits manager.shutdown in asynchronous disposal. Followed multiplexed success/error RPC and absence of implicit output; unavailable bridge; inline completion versus surviving background input/inspection; delayed-spawn and concurrent cancellation ownership; request/response budgets with subsequent calls; independent three-second foreground, zero-wait, job timeout and failed-exit decisions; disconnect before delivery ACK; registered batch-wrapper ownership; provisional ACK rollback on worker exit 7; oversized response fallback; handoff separating delivered inline work from pending jobs; partial batch failure; attention, goal and history parameter forwarding. Read the entire new credential entry and shared process owner, not only their names. The original credential worker source and exit/scrubbed-object/visible-sentinel/job-capability/subagent-RPC/token-nondisclosure assertions remain, now as strict standalone assertions. New assertions also prove that the parent really received the synthetic credentials. The credential case launches that absolute assertion entry with [run, file], not a filtered test-suite re-entry. All ordinary suite cases remain registered and the suite owner launches [test, --timeout, 30000, file] without name filtering. This resolves the concrete previous source-contract objection through a clear process lifetime boundary rather than a filter marker.",
+      "systemReason": "Traced executeIsolated into scrubT3BridgeEnvironment, explicit worker argv/env, IPC job serving, output drain and clean-worker-exit ACK commit; traced runner job-global installation and bridge dispatch/error/fallback/ACK rules. The credential scenario keeps the real compiled worker and parent-provided RPC handler, so removing T3_* authority does not also remove allowed parent job capability. Traced JobService shell spawn/foreground through setupShell and TaskManager foreground notification ownership and awaited shutdown. The owned fixture shell consumes the production -lc flag and invokes non-login /bin/sh -c; no production default changes are needed. Read ownedFixtureEnv: it creates HOME/config/cache/data/SDK/temp/Bun/git-hook paths below the mkdtemp root and returns an allowlist, not inherited provider authority. runOwnedProcess uses explicit argv and env with shell:false, retains launch/source/stdout/stderr/result evidence and rejects nonzero or signaled exit. Scenario environment is synthetic launch input, never a mutation of shared process.env. Reviewed registration/lifetime callers in the four other listed suites; these paths are unchanged against the stated primaryBase. Their ordinary ownedProcessSuite entry remains compatible and there is no remaining ownedEnvironmentTest caller. This is acceptance of the assigned bridge focus with its related source, not a standalone helper-focus verdict or authorization of general reuse.",
       "checks": [
-        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
-        "git show of the entire exact candidate focus; git diff -U1 against the exact primaryBase, read in full.",
-        "git diff --name-status: only the focus changed; git rev-parse candidate:focus verified the recorded blob.",
-        "git diff --check against primaryBase: exit 0.",
-        "Read relevant dispatch, foreground/ACK, bridge framing/fallback, registered handoff, spawn environment and shutdown implementations at the candidate revision."
+        "Read candidate and base via git show/diff, not checkout HEAD. Exact candidate resolved to 04c9d2df061d6e15e2c1d347900be71503bb905b.",
+        "Exact diff names only tests/job-bridge.test.ts, tests/job-bridge-credentials.fixture.ts and tests/owned-process-suite.ts; all three changed source paths were read in full. Recorded the four other supplied paths as unchanged related evidence, not additional focus decisions.",
+        "git diff --check primaryBase candidate produced no errors.",
+        "Complete git-show source comparison via execFileSync confirmed the 18,714-byte ordinary bridge prefix is identical after the single helper-import substitution. An initial comparison using bounded shell output was discarded; this check used complete source bytes.",
+        "Candidate-wide test caller search found ownedProcessSuite callers in the five named suites, ownedProcessScenario only in the bridge credential case, and no ownedEnvironmentTest reference. The changed helper no longer constructs --test-name-pattern or a scenario marker.",
+        "Read-only filesystem/network effect review: fixture roots and evidence are owned and retained, scenario credentials are literal synthetic values, subagent behavior in the credential entry is mocked at the RPC handler, and no network/auth/device operation is introduced by the changed paths.",
+        "No setup, tests, builds, dependency installation, cleanup, credentials access, recovery work, delegation or source edits performed. Only this untracked judge artifact was written."
       ],
       "limits": [
-        "Static actual-source judgment only. No setup, tests, builds, dependency installation, credential access, network request, or live auth/device probe. Parent owns audited isolated runtime gates and verification of agent.model openai-codex/gpt-6.1-sol.",
-        "Existing execute/task subprocesses deliberately inherit scrubbed parent environment and use process.cwd(); this focus does not create its own HOME/config/SDK fixture. Any parent gate must launch the test runner with explicit argv/env and owned retained mkdtemp HOME/config/SDK. The shell strings are the behavior under test, not review commands executed here.",
-        "Compiled dist/bruv correspondence and timing/async-disposal runtime behavior remain unverified.",
-        "Independent judge artifact produced in durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_a3213d3e. Candidates were read with git show/diff by immutable commit, not checkout HEAD. No source edits, delegation, setup, tests, builds, cleanup/deletion, destructive Git, push, PR, merge or publication. Existing worktrees, candidates and shared dependencies preserved. Wisdom unchanged: this task returns only the aggregate-ready review artifact."
+        "Source-only independent review. Parent owns audited isolated runtime gates; Bun argv execution, dist/bruv availability, timing behavior and runtime environment were not executed or verified here.",
+        "Only tests/job-bridge.test.ts receives an explicit focus decision. The shared owner still needs its own individual primary/judge after integration before general reuse, as requested. Related caller reads do not constitute acceptance of their entire suites.",
+        "Parent verifies runtime agent.model openai-codex/gpt-6.1-sol; no independent model attestation is claimed here.",
+        "Review provenance is the existing durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_e427af86 and exact Git candidate blobs. No /tmp code checkout was created. Future fixture roots may be temporary paths, but their sources remain in that durable worktree and their launch/evidence directories must be retained.",
+        "Safety for ALL descendants: NO sudo, recovery investigation, user secrets, shell deletion/cleanup commands, inherited HOME/config/SDK cleanup, nested shell traps, destructive git, or user-data mutation. User already recovered data and requested no recovery work. Tests must use explicit process argv/env and owned fs.mkdtemp fixture HOME/config/SDK; retain them, do not delete. Review filesystem/network effects BEFORE tests/setup. Existing test-code cleanup of provably owned temporary paths may be inspected but NEVER run a shell trap or inherited HOME removal. Need live auth/device? Report unverified, don't access credentials. Propagate these constraints verbatim. Independent code/review agents get durable worktrees, not /tmp code checkouts. Keep existing worktrees and candidate evidence. Test/source fixtures may use /tmp, but document durable provenance. Parent verifies runtime agent.model openai-codex/gpt-6.1-sol; native normal leaves only, no delegation. Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md. Do NOT run setup, tests, builds: parent owns audited isolated gates. Shared dependencies are read-only; no reinstall or guard bypass. Preserve old worktrees/candidate edits. No push/new PR/merge, publication is parent-owned. No per-worker wisdom note pile; return exact artifact untracked, parent writes aggregate wisdom. Read only assigned focus/evidence rows in large coverage/area ledgers. Real structural reading, no rename churn/context bags/huge abstractions. Preserve existing security/assertions. Every focus including unchanged needs its own actual-source journey reasoning, never accept from counts/tests or batch summary."
       ],
       "priorAcceptedIntegrationProof": [
         {
@@ -19925,16 +19928,44 @@
     {
       "file": "tests/remote-root-presenter.test.ts",
       "initialBlob": "f83b29c694dfed802f8774046a94c6c2c294c0b1",
-      "status": "accepted",
+      "status": "pending",
       "area": "remote",
-      "resumeState": "accepted-exact-joined",
+      "resumeState": "needs-rework",
       "primaryId": "task_d3ae9262",
       "primaryCommit": "77ea8f3a80698debf5ffe36ce5f501076f266888",
       "judgeIds": ["task_20e04838"],
-      "sourceCommit": "77ea8f3a80698debf5ffe36ce5f501076f266888",
+      "sourceCommit": null,
       "report": "wisdom/quality/structural-readability-areas/remote.json",
       "acceptedBlob": "b4ed20c02e76380b8f9b5435bb482d50268a3a07",
-      "result": "Fake remote response ownership separated from scripted/mounted UI; input follows terminal callback→listeners→focused component rather than wrong root fallback. Question/cancel/detach journeys preserve authority and cleanup."
+      "result": "Fake remote response ownership separated from scripted/mounted UI; input follows terminal callback→listeners→focused component rather than wrong root fallback. Question/cancel/detach journeys preserve authority and cleanup.",
+      "priorAcceptedIntegrationProof": [
+        {
+          "primaryId": "task_d3ae9262",
+          "judgeIds": ["task_20e04838"],
+          "sourceCommit": "77ea8f3a80698debf5ffe36ce5f501076f266888",
+          "acceptedBlob": "b4ed20c02e76380b8f9b5435bb482d50268a3a07",
+          "finalLane": "lane-43",
+          "finalJudge": "task_5d43a066"
+        }
+      ],
+      "resumeRework": {
+        "candidate": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "primaryId": "task_d3ae9262",
+        "judgeId": "task_5d43a066",
+        "objections": [
+          {
+            "paths": [
+              "tests/remote-root-presenter.test.ts:794-840",
+              "src/remote/root-presenter.ts:482-613",
+              "node_modules/@earendil-works/pi-tui/dist/tui.js:635-650,738-749",
+              "node_modules/@earendil-works/pi-tui/dist/tui-main-screen.js:470-481,514-540"
+            ],
+            "readingProblem": "The new mountedPresentation helper says terminal I/O and scheduled rendering are suppressed, but line 815 mocks only requestRender. p.key invokes the real terminal callback; shipped handleTerminalInput calls requestImmediateRender after focused-component input. That method independently schedules nextTick -> doRender, bypassing the mock. Thus typing in these new tests runs actual rendering with inherited terminal dimensions/env. Statically, inherited PI_TUI_DEBUG=1 permits writes under the unowned /tmp/tui directory, and a render-width crash writes pi-tui-crash.log under inherited os.tmpdir(). Mocking terminal.write does not block either filesystem path. No test was run and no such write was induced.",
+            "requiredResult": "Keep real listeners/focus/component input dispatch, but suppress rendering at the boundary actually used by both scheduled and immediate rendering (rather than only requestRender). Isolate any remaining renderer effects/environment in retained owned mkdtemp fixture directories with explicit HOME/config/SDK/env. The helper must not let ordinary test typing enter real doRender with inherited diagnostics or unowned log paths."
+          }
+        ],
+        "readingReason": "Actual mountedPresentation fixture only mocks scheduled requestRender; keyboard dispatch enters immediate rendering, which may write inherited diagnostic paths. Repair actual shared rendering boundary while retaining real listeners/focus/input; no package/dependency mutation or tests. Own remaining effects explicitly if any."
+      }
     },
     {
       "file": "tests/remote-root-transport.test.ts",
@@ -25997,10 +26028,10 @@
       "initialBlob": "absent",
       "area": "execution-tasks-questions",
       "status": "pending",
-      "resumeState": "needs-judge",
-      "sourceCommit": "9bf50c12c46a2eec788c76d19c5f504819b3496a",
-      "acceptedRelatedJudges": ["task_80598b58"],
-      "acceptedBlob": "946ea123946ed06dbbcfe717c6dcc4d21d101ca4",
+      "resumeState": "needs-primary-final-blob",
+      "sourceCommit": "04c9d2df061d6e15e2c1d347900be71503bb905b",
+      "acceptedRelatedJudges": ["task_80598b58", "task_e427af86"],
+      "acceptedBlob": "7bb361586e537dd6623872b6b43aa6032dbda09d",
       "parentReviewNotes": [
         "Actual independent judge80598b58 rejected the helper-mediated job-bridge credential scenario because --test-name-pattern violates the user no-filter contract. Shared helper has no general-reuse endorsement. Inspect current exact helper and every exercised caller; scenario isolation must run original assertions without filter/skip-as-green, no test execution authorized."
       ],
@@ -26034,6 +26065,16 @@
       "sourceCommit": "af63383a0fb05cba759d32b21788c03f7a3cffa7",
       "acceptedRelatedJudges": ["task_686802a6"],
       "acceptedBlob": "16e90314c1d218b04e99644340d8d5220c2ba060"
+    },
+    {
+      "file": "tests/job-bridge-credentials.fixture.ts",
+      "initialBlob": "absent",
+      "area": "execution-tasks-questions",
+      "status": "pending",
+      "resumeState": "needs-primary-final-blob",
+      "sourceCommit": "04c9d2df061d6e15e2c1d347900be71503bb905b",
+      "acceptedRelatedJudges": ["task_e427af86"],
+      "acceptedBlob": "99858065b35f461748847c07c31e1b2fedeccc7a"
     }
   ],
   "completedAreas": {
@@ -26054,9 +26095,9 @@
     "finalGate": "pending; incomplete focus coverage",
     "liveAuth": "unverified/failing; preserved",
     "accepted": 832,
-    "total": 838,
-    "pending": 6,
-    "sourceExtras": 72,
+    "total": 839,
+    "pending": 7,
+    "sourceExtras": 73,
     "checkout": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
     "branch": "bruv/readability-pr45-sol-continuation",
     "scheduler": "/home/tnfssc/.bruv/worktrees/pr45-flow-c2a2fd8a.mjs"
