@@ -1742,6 +1742,15 @@
         "branch": "bruv/pr45-primary-tests-root-owner.test.ts-d848af48",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
+      },
+      {
+        "id": "task_a916dfec",
+        "stage": "judge",
+        "focus": ["tests/questions-bridge.test.ts", "tests/questions-picker.test.ts", "tests/questions-sdk.test.ts"],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_a916dfec",
+        "branch": "bruv/pr45-judge-3-execution-tasks-questions-f-a916dfec",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
       }
     ]
   },
