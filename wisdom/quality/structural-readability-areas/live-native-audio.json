@@ -854,16 +854,19 @@
       "initialBlob": "3d1e341a0ec3115c50c706e21dfa75184e69c098",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "4371f041f46991f18308dc9fcaf4bba3cad45062",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "4371f041f46991f18308dc9fcaf4bba3cad45062",
         "primaryId": "task_c5af6f4a",
         "primaryCommit": "1a15828bcfddbe44b5e274a12b7c402e6f47fe5a",
-        "judgeIds": [],
+        "judgeIds": [
+          "task_3bf9b010"
+        ],
         "sourceCommit": "1a15828bcfddbe44b5e274a12b7c402e6f47fe5a",
-        "state": "needs-judge",
-        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+        "state": "accepted-joined",
+        "reason": "Read actual candidate and primary base; the base is also the direct parent. The only changed source is the focus. Base main interleaved nested provider-message framing and a separate, lengthy interruption experiment with native orchestration. Candidate fixtureAdapter (173-202) owns only the delayed 9600-byte PCM message framing and calls turnCompleteSent immediately after sending turnComplete. It does not decide audible success. Main (330-407) now visibly constructs lead/tail, connects VoiceSession, observes the 830Hz monitor marker, waits for native/software queue drain, checks routes and tail/capture facts, then requests the separate interruption proof before publishing both results. provePlaybackInterruption (204-246) is a coherent effectful experiment: capture baseline, queue 1130Hz epoch-0 stimulus, wait for monitor arrival, interrupt to epoch 1, queue/finish 670Hz replacement, observe it, exclude old tone after the replacement boundary, require continued capture and return precisely its proof fields. This is a real transport/proof responsibility separation, not rename-only progress or arbitrary block extraction. Intrinsically the helpers have explicit narrow inputs and no owner framework/context bag. Unchanged decision: keep native resource acquisition and finally teardown in main, keep route and waveform helpers as they are, and keep the separately gated paid-provider journey; these already expose their respective ownership and ordering without further splitting."
       }
     },
     {
@@ -871,16 +874,19 @@
       "initialBlob": "b77a2bd12e4534a50cbbea190d8d77775f5a6a3a",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "b77a2bd12e4534a50cbbea190d8d77775f5a6a3a",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "b77a2bd12e4534a50cbbea190d8d77775f5a6a3a",
         "primaryId": "task_fd598368",
         "primaryCommit": "3782f6ade0c93e7b7ff441dcef2d22849aeddab6",
-        "judgeIds": [],
+        "judgeIds": [
+          "task_bb760faf"
+        ],
         "sourceCommit": "3782f6ade0c93e7b7ff441dcef2d22849aeddab6",
-        "state": "needs-judge",
-        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+        "state": "accepted-joined",
+        "reason": "The focus is byte-identical at candidate, supplied primary base, and parent 4ba9714ec539fef3d4d4a9ab65636def5c29c63c (blob b77a2bd12e4534a50cbbea190d8d77775f5a6a3a). Its intrinsic journey is already direct: local counters and playback effects, bounded provisional-context submission, the fake loopback peer, callback wiring, then one stimulus/assertion sequence and one finally. The peer keeps configuration checks next to session.started/transcript/delegation/audio emission. The callback block shows the three bridges without a context bag: transcript becomes evidence, queued admission becomes commentary, and PCM becomes playback. Four loud capture frames and independent microphone forwarding precede the integrated assertions; quiet capture then releases suppression before a fresh output admission. Extracting these short fixture stages behind new abstractions would hide their shared lifetime rather than resolve a scattered decision. This is an affirmative unchanged judgment, not credit for renaming, coverage counts, or the primary narrative."
       }
     },
     {
@@ -894,16 +900,19 @@
         "commit": null
       },
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "59cc37569783f757e9bb64d760dc96aead37edfc",
       "integration": "primary running",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "59cc37569783f757e9bb64d760dc96aead37edfc",
         "primaryId": "task_bea74455",
         "primaryCommit": "3782f6ade0c93e7b7ff441dcef2d22849aeddab6",
-        "judgeIds": [],
+        "judgeIds": [
+          "task_3ef38a2b"
+        ],
         "sourceCommit": "3782f6ade0c93e7b7ff441dcef2d22849aeddab6",
-        "state": "needs-judge",
-        "reason": "Primary was allocated, but no candidate commit or completed focus judgment is recorded. Preserve its worktree; do not treat the stale running status as proof of current execution."
+        "state": "accepted-joined",
+        "reason": "Independent actual-code reading supports leaving this function unchanged. nativeHelperPlugin has a single build-time admission-to-registration journey: reject a target other than bun-darwin-arm64, resolve the input, reject non-regular files (including symlinks via lstat), read bytes, require a minimum 32-byte header and the Mach-O 64-bit/arm64/executable fields, then compute SHA-256 and return a Bun plugin. The setup callback replaces precisely src/live/embedded.ts with a file import plus digest; both injected string literals use JSON.stringify. All data needed by registration is plainly captured by the closure. The header predicate is locally readable, and its failure precedes hashing and registration. Splitting this sequence or introducing shared context would require following more indirection without clarifying an authority or lifetime. Candidate equals primary base, and focus equals the candidate parent and ledger initial blob; there is no claimed structural improvement or cosmetic patch."
       }
     },
     {
@@ -4841,19 +4850,20 @@
       "primary": null,
       "relatedPaths": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "43cc779434834ecad511d79f2f06cff346ed289d",
       "integration": "new related candidate;own primary pending",
       "resume": {
-        "status": "pending",
-        "acceptedBlob": "d9dead0e2c17b436931bb3174f80ecbe09095e1b",
+        "status": "accepted",
+        "acceptedBlob": "43cc779434834ecad511d79f2f06cff346ed289d",
         "primaryId": "task_dda934b5",
         "primaryCommit": "8909e9742c8e2eb6ffd6e9f88d1cf491146b3160",
         "judgeIds": [
-          "task_c1052b52"
+          "task_c1052b52",
+          "task_60a55b56"
         ],
         "sourceCommit": "8909e9742c8e2eb6ffd6e9f88d1cf491146b3160",
-        "state": "needs-judge",
-        "reason": "New source, absent in the primary parent. probe owns a single temporary root, extracts one scripted helper, launches one child-local Bun module mock, observes diagnostic outcomes, and finally releases its fixture. self/protocol arguments describe the two executable phases directly. Success, early self-test failure, protocol mismatch/parse failure, and timeout journeys remain local to their cases; fixture cleanup and diagnostic cleanup are separately visible. The generated runner is justified by module-cache isolation, not a new framework or production context bag."
+        "state": "accepted-joined",
+        "reason": "Intrinsic: the current probe reads as one fixture lifetime: allocate the private root/environment, extract the scenario helper, run the diagnostic, observe removal/credential filtering/process exit/stop-only input, and finally stop any remaining recorded fixture process. Script assembly plus hashing/extraction is one coherent preparation operation; child-local resolver substitution plus diagnostic invocation is another coherent execution operation. Scenario definitions remain local and direct. Improvement over the actual primary parent: previously probe interleaved the shell program, generated Bun runner, inherited environment, assertions and release policy. The candidate separates the two executable programs from the lifetime owner, and the finally block now plainly owns process release rather than also deleting HOME. This reduces reconstruction of effects and ownership, not merely naming or line count. The generated runner remains justified by module-cache isolation; no framework or shared context bag was introduced."
       }
     },
     {
@@ -4862,17 +4872,19 @@
       "primary": null,
       "relatedPaths": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "ceee222b98414140f6d2688bd128ace3f1c02add",
       "integration": "new related candidate;own primary pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
         "acceptedBlob": "ceee222b98414140f6d2688bd128ace3f1c02add",
         "primaryId": "task_fc50d3f8",
         "primaryCommit": "4d5a00544d80550f83b16a8650be97c78257602d",
-        "judgeIds": [],
+        "judgeIds": [
+          "task_3e4e9ada"
+        ],
         "sourceCommit": "4d5a00544d80550f83b16a8650be97c78257602d",
-        "state": "needs-judge",
-        "reason": "New related candidate has no own primary or completed independent focus judgment; withhold integration approval."
+        "state": "accepted-joined",
+        "reason": "Independent intrinsic reading supports leaving this file unchanged. The successful scenario captures original Bun.serve, records each real server before returning it, suppresses logging, awaits the real probe, then examines acquisition options and released resources before checking the success message. The failed scenario retains the first real upgrade and replaces only the second acquisition with HTTP 403; its local comment makes the intentional fixture corruption visible. Exactly two acquisitions, the precise classification rejection, no success logging, and both stopped listeners describe that failure journey directly. Each test has its own server list and locally visible finally block restoring both global spies and force-stopping acquired servers. The small repeated harness keeps ownership visible rather than requiring a shared fixture abstraction. The sole index dependency is servers.length === 1 matching the probe’s first model success-then-unauthorized ordering; this is a straightforward orchestration dependency, not distributed state. No structural problem warrants abstraction, renaming, assertion reduction, or source changes. Primary base equals candidate; focus and inspected transport/caller blobs also match actual Git parent 3782f6ade0c93e7b7ff441dcef2d22849aeddab6, so this is an unchanged-code judgment, not a claimed improvement."
       }
     },
     {
@@ -5017,7 +5029,7 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 74,
-    "pending": 76
+    "accepted": 79,
+    "pending": 71
   }
 }

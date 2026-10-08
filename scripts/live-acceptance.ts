@@ -170,6 +170,81 @@ async function checkRoutes(pid: number, mic: string, output: string) {
   await assertRoute("source-outputs", pid, endpoint(await listing("sources"), mic + ".monitor"));
 }
 
+// Fixture transport supplies one normal provider turn; audible proof stays in the acceptance journey.
+function fixtureAdapter(result: Buffer, turnCompleteSent: () => void) {
+  return (() => ({
+    live: {
+      connect: async ({ callbacks }: any) => {
+        setTimeout(() => {
+          for (let offset = 0; offset < result.length; offset += 9600) {
+            callbacks.onmessage({
+              serverContent: {
+                modelTurn: {
+                  parts: [
+                    {
+                      inlineData: {
+                        mimeType: "audio/pcm;rate=24000",
+                        data: result.subarray(offset, offset + 9600).toString("base64"),
+                      },
+                    },
+                  ],
+                },
+              },
+            });
+          }
+          callbacks.onmessage({ serverContent: { turnComplete: true } });
+          turnCompleteSent();
+        }, 5);
+        return { close() {}, sendRealtimeInput() {} };
+      },
+    },
+  })) as any;
+}
+
+async function provePlaybackInterruption(
+  playback: PlaybackScheduler,
+  outputParts: Buffer[],
+  capturedFrames: () => number,
+  failures: string[],
+) {
+  // Separate interruption: long old signal is queued, then deliberately flushed; capture stays open.
+  const old = pcmTone(1130, 2.5),
+    before = capturedFrames();
+  if (!playback.enqueue(old, 0)) throw new Error("Cannot queue stale playback");
+  await within(
+    (async () => {
+      while (peak(Buffer.concat(outputParts), 1130).score < 0.7) {
+        if (failures.length) throw new Error("Audio pipeline failed");
+        await sleep(60);
+      }
+    })(),
+    3000,
+  );
+  const oldBefore = peak(Buffer.concat(outputParts), 1130);
+  playback.interrupt(1);
+  if (!playback.enqueue(pcmTone(670, 0.75), 1)) throw new Error("Cannot queue new epoch");
+  playback.turnComplete(1);
+  await within(
+    (async () => {
+      while (peak(Buffer.concat(outputParts), 670).score < 0.7) {
+        if (failures.length) throw new Error("Audio pipeline failed");
+        await sleep(80);
+      }
+    })(),
+    5000,
+  );
+  await sleep(550);
+  const after = Buffer.concat(outputParts);
+  const newEpoch = peak(after, 670);
+  const postFlush = peak(after, 1130, newEpoch.atMs * 24 + 2400);
+  if (postFlush.score > 0.4 || capturedFrames() <= before || failures.length)
+    throw new Error(
+      "Flush/capture proof failed: " +
+        JSON.stringify({ postFlush, newEpoch, capturedBefore: before, capturedAfter: capturedFrames(), failures }),
+    );
+  return { oldBefore, postFlushOldTone: postFlush, newEpoch, captureContinued: capturedFrames() > before };
+}
+
 async function main() {
   // No default route changes and no daemon auto-start: fail if daemon/tools are absent.
   await run("pactl", ["info"]);
@@ -257,33 +332,9 @@ async function main() {
       const lead = pcmTone(430, 1.6),
         tail = pcmTone(830, 0.8);
       const result = Buffer.concat([lead, tail]);
-      const adapter = (() => ({
-        live: {
-          connect: async ({ callbacks }: any) => {
-            setTimeout(() => {
-              for (let offset = 0; offset < result.length; offset += 9600) {
-                callbacks.onmessage({
-                  serverContent: {
-                    modelTurn: {
-                      parts: [
-                        {
-                          inlineData: {
-                            mimeType: "audio/pcm;rate=24000",
-                            data: result.subarray(offset, offset + 9600).toString("base64"),
-                          },
-                        },
-                      ],
-                    },
-                  },
-                });
-              }
-              callbacks.onmessage({ serverContent: { turnComplete: true } });
-              completeAt = Date.now();
-            }, 5);
-            return { close() {}, sendRealtimeInput() {} };
-          },
-        },
-      })) as any;
+      const adapter = fixtureAdapter(result, () => {
+        completeAt = Date.now();
+      });
       voice = new VoiceSession(
         {
           onAudio: (data, gen) => {
@@ -343,41 +394,7 @@ async function main() {
       const tailProof = peak(rendered, 830);
       if (tailProof.score < 0.65 || !turns || !outputAudio || !captured || completeAt <= 0 || completeAt >= Date.now())
         throw new Error("Fixture tail/capture proof failed");
-      // Separate interruption: long old signal is queued, then deliberately flushed; capture stays open.
-      const old = pcmTone(1130, 2.5),
-        before = captured;
-      if (!playback.enqueue(old, 0)) throw new Error("Cannot queue stale playback");
-      await within(
-        (async () => {
-          while (peak(Buffer.concat(outputParts), 1130).score < 0.7) {
-            if (failures.length) throw new Error("Audio pipeline failed");
-            await sleep(60);
-          }
-        })(),
-        3000,
-      );
-      const oldBefore = peak(Buffer.concat(outputParts), 1130);
-      playback.interrupt(1);
-      if (!playback.enqueue(pcmTone(670, 0.75), 1)) throw new Error("Cannot queue new epoch");
-      playback.turnComplete(1);
-      await within(
-        (async () => {
-          while (peak(Buffer.concat(outputParts), 670).score < 0.7) {
-            if (failures.length) throw new Error("Audio pipeline failed");
-            await sleep(80);
-          }
-        })(),
-        5000,
-      );
-      await sleep(550);
-      const after = Buffer.concat(outputParts);
-      const newEpoch = peak(after, 670);
-      const postFlush = peak(after, 1130, newEpoch.atMs * 24 + 2400);
-      if (postFlush.score > 0.4 || captured <= before || failures.length)
-        throw new Error(
-          "Flush/capture proof failed: " +
-            JSON.stringify({ postFlush, newEpoch, capturedBefore: before, capturedAfter: captured, failures }),
-        );
+      const interruptionProof = await provePlaybackInterruption(playback, outputParts, () => captured, failures);
       console.log(
         JSON.stringify({
           mode: "fixture",
@@ -385,10 +402,7 @@ async function main() {
           outputTail: tailProof,
           turnCompleteBeforeTail: completeAt > 0 && completeAt < Date.now(),
           queueDrained: queueDrainedAt > 0,
-          oldBefore,
-          postFlushOldTone: postFlush,
-          newEpoch,
-          captureContinued: captured > before,
+          ...interruptionProof,
         }),
       );
     } else {

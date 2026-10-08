@@ -1,7 +1,7 @@
 import { expect, test } from "bun:test";
 import { spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { mkdtemp, readFile, rm } from "node:fs/promises";
+import { mkdtemp, readFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { extractNativeHelper } from "../src/live/helper";
@@ -10,6 +10,44 @@ import { extractNativeHelper } from "../src/live/helper";
 // resolution. A shell fixture cannot prove macOS audio or provider readiness.
 async function probe(self: string, protocol: string) {
   const root = await mkdtemp(join(tmpdir(), "live-self-test-"));
+  const env = await diagnosticEnvironment(root);
+  const helper = await extractScriptedHelper(root, self, protocol);
+  try {
+    const run = runDiagnostic(helper.path, root, env);
+    expect(run.error).toBeUndefined();
+    expect(await Bun.file(helper.path).exists()).toBe(false);
+    expect(await readFile(join(root, "credential"), "utf8")).toBe("");
+    const pidFile = Bun.file(join(root, "pid"));
+    if (await pidFile.exists()) {
+      const pid = Number(await pidFile.text());
+      expect(() => process.kill(pid, 0)).toThrow();
+    }
+    const calls = await readFile(join(root, "calls"), "utf8");
+    if (calls !== "--self-test\n") {
+      expect(await readFile(join(root, "input"), "utf8")).toBe('{"type":"stop"}\n');
+    }
+    return { ...run, calls };
+  } finally {
+    // Assertion failures must not leave a hanging fixture process. Retain the
+    // private HOME/config/SDK directories for the parent's audited gate evidence.
+    await stopFixtureProcess(root);
+  }
+}
+
+async function diagnosticEnvironment(root: string): Promise<NodeJS.ProcessEnv> {
+  return {
+    PATH: "/usr/bin:/bin",
+    HOME: root,
+    TMPDIR: root,
+    XDG_CONFIG_HOME: await mkdtemp(join(root, "config-")),
+    XDG_CACHE_HOME: await mkdtemp(join(root, "cache-")),
+    XDG_DATA_HOME: await mkdtemp(join(root, "data-")),
+    PI_CODING_AGENT_DIR: await mkdtemp(join(root, "sdk-")),
+    OPENAI_API_KEY: "fixture-secret",
+  };
+}
+
+async function extractScriptedHelper(root: string, self: string, protocol: string) {
   const bytes = Buffer.from(
     [
       "#!/bin/sh",
@@ -24,45 +62,32 @@ async function probe(self: string, protocol: string) {
       "",
     ].join("\n"),
   );
-  try {
-    const helper = await extractNativeHelper(bytes, createHash("sha256").update(bytes).digest("hex"), root);
-    // Module mocks are confined to this child; no root-suite module cache changes.
-    const runner = [
-      'import { mock } from "bun:test";',
-      'import { rm } from "node:fs/promises";',
-      "mock.module(" + JSON.stringify(join(import.meta.dir, "../src/live/helper.ts")) + ", () => ({",
-      "resolveEmbeddedNativeHelper: async () => ({ path: " + JSON.stringify(helper.path) + ",",
-      "cleanup: () => rm(" + JSON.stringify(dirname(helper.path)) + ", { recursive: true, force: true }) }) }));",
-      "const { testEmbeddedNativeHelper } = await import(" +
-        JSON.stringify(join(import.meta.dir, "../src/live/self-test.ts")) +
-        ");",
-      "try { await testEmbeddedNativeHelper(); } catch (e) { console.error(e.message); process.exitCode = 1; }",
-    ].join("\n");
-    const run = spawnSync(process.execPath, ["-e", runner], {
-      encoding: "utf8",
-      timeout: 12_000,
-      env: { ...process.env, HOME: root, TMPDIR: root, OPENAI_API_KEY: "fixture-secret" },
-    });
-    expect(run.error).toBeUndefined();
-    expect(await Bun.file(helper.path).exists()).toBe(false);
-    expect(await readFile(join(root, "credential"), "utf8")).toBe("");
-    const calls = await readFile(join(root, "calls"), "utf8");
-    if (calls !== "--self-test\n") {
-      expect(await readFile(join(root, "input"), "utf8")).toBe('{"type":"stop"}\n');
-    }
-    const pidFile = Bun.file(join(root, "pid"));
-    if (await pidFile.exists()) {
-      const pid = Number(await pidFile.text());
-      expect(() => process.kill(pid, 0)).toThrow();
-    }
-    return { ...run, calls };
-  } finally {
-    await releaseFixture(root);
-  }
+  return extractNativeHelper(bytes, createHash("sha256").update(bytes).digest("hex"), root);
 }
 
-async function releaseFixture(root: string) {
-  // Also release the fixture if the diagnostic regresses and leaves it alive.
+function runDiagnostic(helperPath: string, root: string, env: NodeJS.ProcessEnv) {
+  // Module mocks are confined to this child; no root-suite module cache changes.
+  // Only the extracted helper directory is removed by diagnostic cleanup, never HOME.
+  const runner = [
+    'import { mock } from "bun:test";',
+    'import { rm } from "node:fs/promises";',
+    "mock.module(" + JSON.stringify(join(import.meta.dir, "../src/live/helper.ts")) + ", () => ({",
+    "resolveEmbeddedNativeHelper: async () => ({ path: " + JSON.stringify(helperPath) + ",",
+    "cleanup: () => rm(" + JSON.stringify(dirname(helperPath)) + ", { recursive: true, force: true }) }) }));",
+    "const { testEmbeddedNativeHelper } = await import(" +
+      JSON.stringify(join(import.meta.dir, "../src/live/self-test.ts")) +
+      ");",
+    "try { await testEmbeddedNativeHelper(); } catch (e) { console.error(e.message); process.exitCode = 1; }",
+  ].join("\n");
+  return spawnSync(process.execPath, ["-e", runner], {
+    cwd: root,
+    encoding: "utf8",
+    timeout: 12_000,
+    env,
+  });
+}
+
+async function stopFixtureProcess(root: string) {
   const pidFile = Bun.file(join(root, "pid"));
   if (await pidFile.exists()) {
     try {
@@ -71,7 +96,6 @@ async function releaseFixture(root: string) {
       if ((error as NodeJS.ErrnoException).code !== "ESRCH") throw error;
     }
   }
-  await rm(root, { recursive: true, force: true });
 }
 
 const greeting = 'printf \'%s\\n\' \'{"type":"hello","protocol":1}\' \'{"type":"stopped"}\'';

@@ -1529,11 +1529,13 @@
     {
       "file": "scripts/live-acceptance.ts",
       "initialBlob": "3d1e341a0ec3115c50c706e21dfa75184e69c098",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_c5af6f4a",
       "sourceCommit": "1a15828bcfddbe44b5e274a12b7c402e6f47fe5a",
-      "judgeIds": [],
-      "resumeState": "needs-judge",
+      "judgeIds": [
+        "task_3bf9b010"
+      ],
+      "resumeState": "accepted-joined",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
       "area": "live-native-audio",
       "primaryCommit": "1a15828bcfddbe44b5e274a12b7c402e6f47fe5a",
@@ -1555,16 +1557,36 @@
         "Static syntax and preservation checks are not runtime/physical-audio or independent readability acceptance. The isolated wrapper contains shell cleanup/traps and was read only, never executed.",
         "Initial attempts to load traditional TypeScript and Babel parser API paths in the authorized read-only shared dependencies returned ENOENT. No dependency installation or setup workaround; built-in Bun parse-only scan was used instead.",
         "No wisdom/values edits: existing guidance covers this focused split; parent owns aggregate wisdom. Existing worktrees and any preserved candidate/ledger evidence were left untouched."
+      ],
+      "acceptedBlob": "4371f041f46991f18308dc9fcaf4bba3cad45062",
+      "result": "Read actual candidate and primary base; the base is also the direct parent. The only changed source is the focus. Base main interleaved nested provider-message framing and a separate, lengthy interruption experiment with native orchestration. Candidate fixtureAdapter (173-202) owns only the delayed 9600-byte PCM message framing and calls turnCompleteSent immediately after sending turnComplete. It does not decide audible success. Main (330-407) now visibly constructs lead/tail, connects VoiceSession, observes the 830Hz monitor marker, waits for native/software queue drain, checks routes and tail/capture facts, then requests the separate interruption proof before publishing both results. provePlaybackInterruption (204-246) is a coherent effectful experiment: capture baseline, queue 1130Hz epoch-0 stimulus, wait for monitor arrival, interrupt to epoch 1, queue/finish 670Hz replacement, observe it, exclude old tone after the replacement boundary, require continued capture and return precisely its proof fields. This is a real transport/proof responsibility separation, not rename-only progress or arbitrary block extraction. Intrinsically the helpers have explicit narrow inputs and no owner framework/context bag. Unchanged decision: keep native resource acquisition and finally teardown in main, keep route and waveform helpers as they are, and keep the separately gated paid-provider journey; these already expose their respective ownership and ordering without further splitting.",
+      "systemReason": "Caller scripts/live-isolated-audio.sh selects this script, establishes an empty private graph and sets BRUV_LIVE_ISOLATED; the script still rejects unsupported/ungated invocation. Its monitor, helper, module IDs and optional injection children remain owned by main. Candidate VoiceSession uses the adapter function during connect, accepts messages only once ready, dispatches PCM at generation 0 and normal completion separately from interruption. PlaybackScheduler.turnComplete retains the tail rather than flushing; enqueue copies PCM, interrupt clears unsent old data and gates replacement output on native flush. LiveAudio.play validates the current generation and flush increments it/drops unsent playback writes. Thus the extracted direct scheduler interruption remains intentionally separate from provider interruption simulation and retains the real bridge/helper. Capture continues through the same main-owned callback; the accessor reads live captured count rather than a stale snapshot. Paid mode still loads credentials only inside its opt-in branch, injects generated speech, observes transcripts/audio and correlates provider tail with the virtual monitor. Finally still closes voice/scheduler, stops audio, terminates owned children and unloads only owned modules, with cleanup failure overriding acceptance. No behavior fix or authority/lifetime migration is claimed. Existing playback and session test bodies retain meaningful normal-tail/no-flush and flush-gated replacement assertions; they were read, not executed.",
+      "checks": [
+        "Verified candidate direct parent equals primary base 3782f6ade0c93e7b7ff441dcef2d22849aeddab6.",
+        "Inspected full candidate focus source and complete base-to-candidate delta; git diff --name-status reports only scripts/live-acceptance.ts modified.",
+        "Read values, structural-readability guidance, repo-wide ledger and live-native-audio area ledger including pending focus record.",
+        "Traced actual candidate wrapper dispatch, session adapter/receive path, scheduler tail/epoch/flush path and native bridge playback/stop API; read related test assertions without running them.",
+        "Read-only git diff --check base candidate completed without whitespace errors.",
+        "Exact accepted focus blob: 4371f041f46991f18308dc9fcaf4bba3cad45062."
+      ],
+      "limits": [
+        "Structural/source judgment only. No setup, tests, builds, wrapper, native helper, credential service or device/provider operation was run; parent owns audited isolated runtime gates.",
+        "No real authentication, physical audibility, microphone stop, macOS execution or provider acceptance claim. Monitor tone detection is not a physical-device proof.",
+        "Inherited turnCompleteBeforeTail compares completion timestamp with report-time Date.now(), not a recorded audible-tail arrival timestamp; this extraction preserves that existing reporting/proof limit and does not repair it.",
+        "Inherited deadline races do not cancel polling promises; no new cancellation or teardown behavior is claimed.",
+        "Runtime agent model verification is external and remains with the parent. Source and wisdom were not edited; only this untracked judgment artifact was written."
       ]
     },
     {
       "file": "scripts/live-gpt-live-offline-smoke.ts",
       "initialBlob": "b77a2bd12e4534a50cbbea190d8d77775f5a6a3a",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_fd598368",
       "sourceCommit": "3782f6ade0c93e7b7ff441dcef2d22849aeddab6",
-      "judgeIds": [],
-      "resumeState": "needs-judge",
+      "judgeIds": [
+        "task_bb760faf"
+      ],
+      "resumeState": "accepted-joined",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
       "area": "live-native-audio",
       "primaryCommit": "3782f6ade0c93e7b7ff441dcef2d22849aeddab6",
@@ -1598,16 +1620,34 @@
         "No runtime/source-compiled/provider/device/macOS validation performed or claimed.",
         "Existing 30ms/20ms waits and asynchronous callback handling were read, not changed or validated as deterministic timing guarantees.",
         "No source changes, commit, wisdom edits, setup, cleanup, external API/device access, or credentials used. Existing worktrees/candidates left intact."
+      ],
+      "acceptedBlob": "b77a2bd12e4534a50cbbea190d8d77775f5a6a3a",
+      "result": "The focus is byte-identical at candidate, supplied primary base, and parent 4ba9714ec539fef3d4d4a9ab65636def5c29c63c (blob b77a2bd12e4534a50cbbea190d8d77775f5a6a3a). Its intrinsic journey is already direct: local counters and playback effects, bounded provisional-context submission, the fake loopback peer, callback wiring, then one stimulus/assertion sequence and one finally. The peer keeps configuration checks next to session.started/transcript/delegation/audio emission. The callback block shows the three bridges without a context bag: transcript becomes evidence, queued admission becomes commentary, and PCM becomes playback. Four loud capture frames and independent microphone forwarding precede the integrated assertions; quiet capture then releases suppression before a fresh output admission. Extracting these short fixture stages behind new abstractions would hide their shared lifetime rather than resolve a scattered decision. This is an affirmative unchanged judgment, not credit for renaming, coverage counts, or the primary narrative.",
+      "systemReason": "Candidate-wide search finds only the header direct Bun and compiled invocation references outside wisdom, not a production caller of this script. Reading the imported GPTLiveSession establishes Bearer-header construction, validated session.started readiness, PCM16 16k-to-24k resampling, delegation-ID admission for commentary, audio decoding, and the shared terminal close promise. Reading GptLiveDelegationBridge shows that offset-100 delegation selects the offset-80 provisional fragment and context-at-zero, dispatches once, and returns only queued commentary. GptLivePlaybackRecovery plus PlaybackScheduler explain one initial 960-byte send, the fourth-loud-frame generation change/flush, and recovery after 15 detector-quiet plus 10 settling frames; no microphone gate is imposed. The script owns its bridge, playback, voice and ephemeral loopback server, and the finally closes each without interfering with external resources. Candidate-parent changed live transport paths and their new tests were inspected: the hidden CLI OpenAI Realtime probe uses defaultSocket/upgradeSocket and explicit session.updated versus HTTP-401 observers; rejected HTTP-body ownership and cancellation live in readRejectionCode. They do not participate in this GPT-Live script, whose injected native WebSocket factory bypasses that adapter. The separate --live-self-test diagnostic and its new tests likewise do not call this focus. Therefore the integrated parent changes do not create a new focus reading burden.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md; consulted repository and live-native-audio ledgers, including the pending focus entry. Ledger status was not used as a readability verdict.",
+        "Used git show, diff-tree, diff, rev-parse and candidate-pinned git grep; did not substitute checkout HEAD for the candidate. Candidate versus primary base has no diff, and focus plus its three immediate imports are identical to candidate parent.",
+        "Read the complete focus, immediate GPT-Live imports, playback scheduler and input resampler. Traced readiness, transcript snapshot, queued delegation, commentary, PCM send/flush, suppression/recovery and repeated close.",
+        "Read complete changed live transport sources and new tests, inspected their candidate-parent changes and actual CLI/defaultSocket callers. Inspected both unrelated native-acceptance source deltas to identify their separate scope.",
+        "Recorded exact candidate Git blobs for every source/test path changed from candidate parent plus the unchanged focus. No source edits; only this untracked judgment file is written."
+      ],
+      "limits": [
+        "Structural reading only: no setup, tests, builds, compiled invocation, provider calls, credentials or devices were run or accessed. Parent owns audited isolated batch gates and external runtime-model verification.",
+        "The fixture uses fixed 30ms/20ms waits; this reading is not runtime timing evidence. Its post-quiet check proves output admission in code, not an awaited second send or audible playback.",
+        "Awaiting voice.close waits for a terminal transport result, including timeout/failure. The fixture supplies session.closed but does not assert onClosed(finalized), closeError or errors after close; no stronger finalization claim is made. This pre-existing assertion gap does not require a structural rewrite.",
+        "The acceptedBlobs map includes unrelated integration source hashes as requested for exact provenance, not independent focus-level acceptance of the native-acceptance driver/evidence files or other diagnostics. No whole-area or whole-repository verdict is implied."
       ]
     },
     {
       "file": "scripts/live-helper-bundle.ts",
       "initialBlob": "59cc37569783f757e9bb64d760dc96aead37edfc",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_bea74455",
       "sourceCommit": "3782f6ade0c93e7b7ff441dcef2d22849aeddab6",
-      "judgeIds": [],
-      "resumeState": "needs-judge",
+      "judgeIds": [
+        "task_3ef38a2b"
+      ],
+      "resumeState": "accepted-joined",
       "pendingReason": "Primary was allocated, but no candidate commit or completed focus judgment is recorded. Preserve its worktree; do not treat the stale running status as proof of current execution.",
       "area": "live-native-audio",
       "primaryCommit": "3782f6ade0c93e7b7ff441dcef2d22849aeddab6",
@@ -1626,6 +1666,23 @@
         "Inherited automatic setup host-hash failure is retained in historical evidence, not rerun, bypassed or claimed fixed.",
         "Stopped task_2e2ac20f lineage and old worktree preserved. No recovery, cleanup, secrets, push, PR or merge actions.",
         "No wisdom changes: existing authority/lifetime guidance already covers this decision; parent writes aggregate wisdom."
+      ],
+      "acceptedBlob": "59cc37569783f757e9bb64d760dc96aead37edfc",
+      "result": "Independent actual-code reading supports leaving this function unchanged. nativeHelperPlugin has a single build-time admission-to-registration journey: reject a target other than bun-darwin-arm64, resolve the input, reject non-regular files (including symlinks via lstat), read bytes, require a minimum 32-byte header and the Mach-O 64-bit/arm64/executable fields, then compute SHA-256 and return a Bun plugin. The setup callback replaces precisely src/live/embedded.ts with a file import plus digest; both injected string literals use JSON.stringify. All data needed by registration is plainly captured by the closure. The header predicate is locally readable, and its failure precedes hashing and registration. Splitting this sequence or introducing shared context would require following more indirection without clarifying an authority or lifetime. Candidate equals primary base, and focus equals the candidate parent and ledger initial blob; there is no claimed structural improvement or cosmetic patch.",
+      "systemReason": "Read the actual build and runtime boundaries at the requested candidate rather than checkout HEAD. Release supplies --live-helper and bun-darwin-arm64; connector build forwards both to scripts/build.ts. That script owns argument parsing and default target selection, awaits plugin admission before Bun.build, and leaves the normal null embedded.ts module untouched when no helper is supplied. The plugin owns payload shape admission and source generation, not devices or runtime extraction. Runtime helper.ts gates on darwin/arm64 plus payload presence, verifies the recorded digest before allocating a private directory, writes exclusively, syncs and verifies again before chmod, and returns cleanup ownership. LiveAudio.launch prioritizes explicit developer helper paths, otherwise resolves the embedded payload; launch failure cleans up locally and successful launch transfers the extracted helper to LiveAudio, whose reaped callback cleans it up. The release self-test separately owns its extraction and finally cleanup. These boundaries make build admission, runtime integrity, executable lifetime and caller ownership legible without joining distinct authorities. Existing tests describe corrupt/missing payload, symlink rejection, independent extraction and compiled file embedding; their code was inspected, not executed.",
+      "checks": [
+        "Read wisdom/values.md, structural-readability-guidance.md, repo-wide mandate/coverage/assignments and live-native-audio ledger context including the exact focus row. Historical running rows are not treated as proof of live execution.",
+        "Used immutable git show/grep/rev-parse for candidate code and callers. Primary base 3782f6ade0c93e7b7ff441dcef2d22849aeddab6 → candidate has no changed paths. Candidate parent is 4ba9714ec539fef3d4d4a9ab65636def5c29c63c; parent → candidate focus diff is empty.",
+        "Verified identical candidate/parent Git hashes for focus, scripts/build.ts, src/live/embedded.ts, src/live/helper.ts, src/live/audio.ts, src/live/self-test.ts and both inspected helper/packaging test paths. No changed related source path was omitted from this unchanged primary decision.",
+        "Inspected parent → candidate changed-path list to distinguish preexisting unrelated integration work from this primary decision. Those unrelated changes do not constitute this primary patch and are not accepted by this focused verdict.",
+        "Read embedded-helper test side effects (temporary writes, compilation/spawn and fixture deletion); did not run them. No repository setup, tests, builds, delegation, credential access, device access, push, PR, merge or cleanup performed. Initial worktree status was clean."
+      ],
+      "limits": [
+        "Static readability judgment only; parent owns audited isolated batch gates and final integrated reconciliation. No runtime, real-authentication, provider, device, macOS compilation or shipped-binary execution claim.",
+        "Mach-O fields establish header shape, not a fully valid executable or authenticated provenance. Digest checks establish payload integrity, not authenticity. No speculative validation rewrite requested.",
+        "acceptedBlobs covers the unchanged focus and all source changes from the supplied primary base (none); unrelated parent-commit integrations remain under their own judgments and dedicated focus coverage.",
+        "Historical automatic setup host-hash failure remains historical evidence; no setup was rerun, bypassed or claimed repaired. Old worktrees and candidates were not modified.",
+        "Only this untracked result is written. Source and wisdom remain unchanged; parent owns aggregate wisdom."
       ]
     },
     {
@@ -12323,18 +12380,20 @@
       "file": "tests/claude-native-acceptance-subagent-run.test.mjs",
       "initialBlob": "absent",
       "area": "compatibility-t3",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_868d94d9",
       "primaryCommit": "1fb11ce19951cc51aedb03e77e05b426f8bce20f",
-      "judgeIds": [],
+      "judgeIds": [
+        "task_fd2b6ab4"
+      ],
       "sourceCommit": "1fb11ce19951cc51aedb03e77e05b426f8bce20f",
       "report": "wisdom/quality/structural-readability-areas/compatibility-t3.json",
-      "status": "pending",
+      "status": "accepted",
       "pendingReason": "Added only in surviving run-subagent worker commit acba9037, not at area tip or joined tree. Source judge was killed without verdict; test also lacks its own whole-file primary and judge.",
       "acceptedRelatedJudges": [
         "task_7fd4e906"
       ],
-      "acceptedBlob": "611d0cb7e7a68d58501488971bb2aa6aeac582e9",
+      "acceptedBlob": "ab3e9589c3ce3b9fb17e15666028bd2471797894",
       "primaryBase": "4d5a00544d80550f83b16a8650be97c78257602d",
       "primaryResult": "runFailedReplay now owns stand-in installation, isolated execution and guaranteed server shutdown. Scenarios read as expected failure -> runner finalization proof -> retained replay proof where applicable. The test retains fresh fixture/HOME/config/tmp directories and never deletes a child-reported scope. Existing proof, credential-isolation, redaction, wake-count, profile and runner-scope-removal assertions remain intact. Focus was already present at the exact preserved acba9037 candidate blob, so no old branch or candidate import was needed.",
       "primaryPaths": [
@@ -12367,6 +12426,21 @@
         "These tests intentionally use offline owned browser/executable stand-ins; no native acceptance, real SDK, credential or device claim.",
         "Disposable syntax-check directories retained: /tmp/pr45-subagent-syntax-RTbgjx and /tmp/pr45-subagent-node-syntax-4agPin. Runtime test fixtures will likewise be retained; the runner still removes its own scoped private state as asserted.",
         "Only source focus committed. No wisdom files changed; parent writes aggregate wisdom. No delegation, push, PR, merge, recovery, cleanup command or credential access."
+      ],
+      "result": "Compared the whole candidate test and exact diff against primary base 4d5a00544d80550f83b16a8650be97c78257602d, which is also the candidate parent. Previously each scenario interleaved stand-in installation, synchronous child execution, evidence interpretation and a finally that recovered an observation to delete its reported scope. The candidate makes the scenario read as runFailedReplay -> expected process failure -> assertRunnerFinalization -> assertRetainedReplayProof only for the non-corrupt case. These are coherent effect/proof boundaries, not cosmetic names or a shared context bag: runFailedReplay alone owns fresh fixture/HOME/config/tmp allocation, explicit child environment and stand-in stop request; assertion helpers consume only the retained proof path and do not mutate reported scopes. All final-evidence ordering, privacy, scope-removal, model closure, failure, wake-count and profile assertions remain. Unchanged decision: retain the two boolean fault scenarios, imports, runner binding and generated health/browser stand-ins. The health program visibly writes its PID and synthetic evidence, contacts the actual loopback model, then exposes readiness; the browser program throws at newContext and records the pre-release observation at close, with result corruption confined to its owned proof file. Their inline generated source makes the process boundary visible and needs no framework or additional extraction.",
+      "systemReason": "Traced candidate code, not checkout HEAD: run-subagent pins the executable, starts the loopback model, configures isolated agent/home state, generates replay with subagent-driver import substitution, and waits for replay child close. Replay prepares the owned runtime and launches the stand-in health process with an explicit environment; browser newContext fails after health readiness. Replay captures the failed result, then subagent-driver.flushCapture calls collectReturnEvidence before browser close and runtime deletion. The collector projects marker/correlation fields rather than PRIVATE_PROMPT. Browser close records evidence present, private state still present and no inherited sentinel credentials. Replay releases browser/server/log/runtime. Runner retainProof preserves failed status and model response with zero completion wakes; nested finally still closes the model and removes runner scope if browser close turned result.json into a directory and retainProof raises EISDIR. The shared finalization assertions prove that latter path without requiring retained replay proof that cannot be written. Fresh TMPDIR places runner temporary state under the retained fixture; the test no longer deletes a child-reported scope, so failed runner cleanup is not silently repaired by the test. Unchanged runner/driver/collector responsibilities remain appropriate; the test change does not purport to prove real connector execution, SDK child history, authenticated native acceptance or UI success. Related replay-finalization test confirms the same generated-driver/collector boundary by source reading. Package/CI invoke the root test suite, but I did not execute them or claim this mjs file is covered by those gates.",
+      "checks": [
+        "Git parent identity and base/candidate name-status: only the focused test changed; inspected the whole changed source and diff.",
+        "Read wisdom/values.md, structural-readability-guidance.md, repo-wide review contract, coverage focus row and compatibility-t3 area ledgers; ledgers used as context, not acceptance evidence.",
+        "Exact candidate focus blob resolved with git rev-parse; base focus blob 611d0cb7e7a68d58501488971bb2aa6aeac582e9.",
+        "git diff --check 4d5a00544d80550f83b16a8650be97c78257602d 1fb11ce19951cc51aedb03e77e05b426f8bce20f passed.",
+        "Initial syntax-only attempt through process.execPath failed because this tool runtime identifies /home/tnfssc/.local/bin/bruv, which rejects --check/--input-type. No tests/setup launched. Retried explicitly with /usr/bin/node --check --input-type=module, candidate source on stdin and explicit PATH-only env: passed.",
+        "Source left unchanged; only this untracked result file written. No delegation."
+      ],
+      "limits": [
+        "No setup, tests, builds, credentials, device access or network requests performed; parent owns audited isolated runtime gates. Structural acceptance is not a runtime pass claim.",
+        "The test helper sends SIGTERM to its own recorded stand-in PID but does not itself await exit; do not describe that helper alone as proof of completed server shutdown. The replay owns bounded shutdown; this test directly checks model closure, not stand-in endpoint closure.",
+        "Only the focused test changed; related paths were traced at candidate as context, not assigned new accepted source hashes. No wisdom edits; aggregate wisdom remains parent-owned."
       ]
     },
     {
@@ -12530,30 +12604,50 @@
       "primaryId": "task_dda934b5",
       "sourceCommit": "8909e9742c8e2eb6ffd6e9f88d1cf491146b3160",
       "judgeIds": [
-        "task_c1052b52"
+        "task_c1052b52",
+        "task_60a55b56"
       ],
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "pendingReason": "Related actual-code acceptance is retained, but helper still requires its own distinct primary and fresh independent final focus judge.",
-      "status": "pending",
+      "status": "accepted",
       "acceptedRelatedJudges": [
         "task_c1052b52"
       ],
-      "acceptedBlob": "d9dead0e2c17b436931bb3174f80ecbe09095e1b",
-      "result": "New source, absent in the primary parent. probe owns a single temporary root, extracts one scripted helper, launches one child-local Bun module mock, observes diagnostic outcomes, and finally releases its fixture. self/protocol arguments describe the two executable phases directly. Success, early self-test failure, protocol mismatch/parse failure, and timeout journeys remain local to their cases; fixture cleanup and diagnostic cleanup are separately visible. The generated runner is justified by module-cache isolation, not a new framework or production context bag.",
-      "systemReason": "The child substitutes only embedded resolution and cleanup; it imports the actual diagnostic and uses actual subprocess execution and audioEnvironment. Checks observe phase order, exact stop-only stdin, synthetic API-key stripping, extraction removal and timeout-fixture exit before outer cleanup. The outer fixture finally covers assertion failures. This adds direct evidence for the retained owner rather than changing release behavior. Mock scope is confined to the child, so neighboring tests are not made dependent on a global helper-module replacement.",
+      "acceptedBlob": "43cc779434834ecad511d79f2f06cff346ed289d",
+      "result": "Intrinsic: the current probe reads as one fixture lifetime: allocate the private root/environment, extract the scenario helper, run the diagnostic, observe removal/credential filtering/process exit/stop-only input, and finally stop any remaining recorded fixture process. Script assembly plus hashing/extraction is one coherent preparation operation; child-local resolver substitution plus diagnostic invocation is another coherent execution operation. Scenario definitions remain local and direct. Improvement over the actual primary parent: previously probe interleaved the shell program, generated Bun runner, inherited environment, assertions and release policy. The candidate separates the two executable programs from the lifetime owner, and the finally block now plainly owns process release rather than also deleting HOME. This reduces reconstruction of effects and ownership, not merely naming or line count. The generated runner remains justified by module-cache isolation; no framework or shared context bag was introduced.",
+      "systemReason": "Followed the actual candidate call chain, not checkout HEAD. extractNativeHelper verifies bytes and creates a private bruv-live directory under the fixture root. The Bun child uses argv, a fresh cwd and an explicitly enumerated environment with retained mkdtemp HOME/config/cache/data/SDK directories and a synthetic key. Its resolver-only mock returns the extracted executable and cleanup limited to that executable directory. The real testEmbeddedNativeHelper obtains audioEnvironment (which omits model credentials), runs --self-test first, then only stop input, validates hello/protocol/stopped, and calls helper cleanup in finally. Success produces the existing banner; self-test failure skips protocol; nonzero protocol, version/stopped mismatch and malformed JSON fail without success output; each phase timeout must leave the recorded sleep PID dead and extraction absent. Assertion failure reaches fixture-process release, while private user/config/SDK directories are intentionally retained. Unchanged decision: src/live/self-test.ts already makes the two phases and cleanup authority clear; helper.ts already owns extraction integrity and cleanup; audioEnvironment already owns credential stripping. These production paths, CLI --live-self-test dispatch, release smoke and staged-install callers need no edits for this fixture readability change. The fixture still substitutes platform resolution, so it does not prove a compiled macOS helper, devices or provider access.",
       "checks": [
-        "Primary context supplied as {}; no prior judgment assumed.",
-        "Read candidate and primary parent 7a77efe6fea0aee00df16ebd19382e789c74dd36 using git show/diff, not checkout HEAD. Focus blob identical in both.",
-        "Inspected every changed path: tests/live-self-test.test.ts and wisdom/quality/structural-readability-worker.md; only the test is changed source.",
-        "Read wisdom/values.md, structural-readability-guidance.md, repo-wide ledger/pipeline and exact repo-wide/area focus entries plus area briefs. Entries are pending, not prior acceptance.",
-        "git diff --check primary-parent candidate passed (static whitespace check only). No setup, tests, builds, auth, device, network or delegation performed."
+        {
+          "check": "Required context",
+          "result": "Read wisdom/values.md, structural-readability guidance, repo-wide/resume ledgers and live-native-audio area ledger/briefs; judgment is grounded in actual Git code rather than ledger summaries."
+        },
+        {
+          "check": "Exact candidate and parent scope",
+          "result": "Candidate parent equals primary base 4d5a00544d80550f83b16a8650be97c78257602d. Full diff contains only tests/live-self-test.test.ts; all related paths above are unchanged between base and candidate. Both complete focus versions and the complete changed-path diff were inspected."
+        },
+        {
+          "check": "Git blob verification",
+          "result": "Candidate focus is 43cc779434834ecad511d79f2f06cff346ed289d; actual primary-base focus exists with blob d9dead0e2c17b436931bb3174f80ecbe09095e1b. Historical area-ledger wording that it was absent does not describe this supplied primary base."
+        },
+        {
+          "check": "Scenario preservation",
+          "result": "The suffix beginning const greeting, including every scenario definition and assertion, is byte-identical between primary base and candidate. Fixture assertions still check helper disappearance, empty credential contents, stop-only input and recorded-process exit; only assertion ordering changed."
+        },
+        {
+          "check": "Whitespace",
+          "result": "git diff --check between exact primary base and candidate produced no errors."
+        },
+        {
+          "check": "Static side-effect reading",
+          "result": "No fixture executed. Expected execution writes only newly allocated fixture directories, runs the extracted /bin/sh script and cat/sleep with filtered explicit environment, removes only its extracted-helper directory through the diagnostic callback, and signals the PID recorded by its fixture. HOME/config/SDK directories are retained."
+        }
       ],
       "limits": [
-        "Static actual-code judgment only; primary-reported test counts were not independently rerun and do not establish this verdict. Parent owns audited batch runtime gates.",
-        "No macOS executable, physical device, provider readiness or authentication claim. Swift start-free behavior is source tracing, not native execution proof.",
-        "spawnSync timeout is not a hard deadline for signal-ignoring children or descendants.",
-        "The resolver and its returned cleanup are synthetic in the child; production platform resolution and Swift audio behavior are not exercised by these shell fixtures.",
-        "Side-effect audit: this test writes/extracts into an mkdtemp root, runs /bin/sh and sleep, sends signals to its recorded fixture PID, and recursively removes its own root. Its Bun runner inherits process.env except overridden HOME/TMPDIR and a fake key; it is not a fully hermetic SDK/config environment. No such actions were executed here. Parent must account for this cleanup and inherited environment in its audited gates."
+        "No setup, tests, builds, auth/provider/device access, network work, recovery, cleanup commands or delegation performed. Parent owns audited isolated runtime gates, including both timeout phases and neighboring module-cache behavior. This ACCEPT is structural-code judgment, not runtime proof.",
+        "Existing spawnSync timeout and PID-file teardown limitations remain; the final fixture release sends SIGKILL without a new wait/reaping abstraction. The assertion before finally remains the evidence of diagnostic-owned process exit. No speculative teardown framework requested.",
+        "The explicit environment, private cwd and retained directories are deliberate fixture behavior changes, not production changes. Runtime effects are not independently measured here.",
+        "Historical automatic setup host-hash failure was not retried, bypassed or relabeled. Existing worktrees and uncommitted candidates were untouched.",
+        "Only this untracked result file is written. No source/wisdom/values edits, commits, pushes, PR or merge. Runtime agent model verification remains external through parent jobs.inspect; no self-introspection claim."
       ],
       "primaryCommit": "8909e9742c8e2eb6ffd6e9f88d1cf491146b3160",
       "primaryBase": "4d5a00544d80550f83b16a8650be97c78257602d",
@@ -12598,10 +12692,12 @@
       "area": "live-native-audio",
       "primaryId": "task_fc50d3f8",
       "sourceCommit": "4d5a00544d80550f83b16a8650be97c78257602d",
-      "judgeIds": [],
-      "resumeState": "needs-judge",
+      "judgeIds": [
+        "task_3e4e9ada"
+      ],
+      "resumeState": "accepted-joined",
       "pendingReason": "New related candidate has no own primary or completed independent focus judgment; withhold integration approval.",
-      "status": "pending",
+      "status": "accepted",
       "acceptedRelatedJudges": [
         "task_26c0b5a0"
       ],
@@ -12622,6 +12718,20 @@
         "No source commit created because there are no source changes. Existing candidate bytes, worktrees and uncommitted work preserved. No credentials, devices, recovery, cleanup or delegation used.",
         "Automatic setup host-hash failure was not rerun, bypassed or repaired. No device/provider/macOS or authenticated-background UX validation claimed.",
         "Wisdom and values unchanged: existing principles already explain the decision; aggregate wisdom remains parent-owned."
+      ],
+      "result": "Independent intrinsic reading supports leaving this file unchanged. The successful scenario captures original Bun.serve, records each real server before returning it, suppresses logging, awaits the real probe, then examines acquisition options and released resources before checking the success message. The failed scenario retains the first real upgrade and replaces only the second acquisition with HTTP 403; its local comment makes the intentional fixture corruption visible. Exactly two acquisitions, the precise classification rejection, no success logging, and both stopped listeners describe that failure journey directly. Each test has its own server list and locally visible finally block restoring both global spies and force-stopping acquired servers. The small repeated harness keeps ownership visible rather than requiring a shared fixture abstraction. The sole index dependency is servers.length === 1 matching the probe’s first model success-then-unauthorized ordering; this is a straightforward orchestration dependency, not distributed state. No structural problem warrants abstraction, renaming, assertion reduction, or source changes. Primary base equals candidate; focus and inspected transport/caller blobs also match actual Git parent 3782f6ade0c93e7b7ff441dcef2d22849aeddab6, so this is an unchanged-code judgment, not a claimed improvement.",
+      "systemReason": "The CLI explicitly gates the hidden diagnostic by its sole argument and BRUV_OFFLINE_OPENAI_TRANSPORT_PROBE=loopback-fake-key before importing and awaiting it. Direct test invocation bypasses that gate deliberately but the probe itself constructs its only endpoint from an ephemeral 127.0.0.1 listener with a hard-coded fake Authorization value. For each catalogue model the probe awaits session.updated first and HTTP 401 second, emitting one success announcement only after the whole loop. The success fixture checks path/model/authorization/upgrade and validates the sent session setup. The unauthorized fixture supplies a private body/header; the ws-backed production defaultSocket passes numeric HTTP metadata to connectionFailure rather than raw body text. Its bounded rejection reader and suppression of generic error/close events preserve that status classification. Separate expectation functions make successful session readiness and sanitized 401 evidence independently readable. On injected 403 the second expectation rejects with Unsafe or missing 401 classification, aborting before another listener or the final log. Probe finally owns its timer/socket/server teardown on either path; the tests observe zero pending WebSockets and failed fetches after that teardown, with test-owned finally as a backstop. Existing CLI coverage separately checks rejection before runtime preparation when the gate is absent. These are loopback transport journeys, not real authentication or device acceptance.",
+      "checks": [
+        "Read pinned Git objects rather than checkout HEAD: complete focus and probe, production defaultSocket/interface, complete upgrade wrapper and connection classifier, provider-code classification/catalogue, CLI diagnostic gate, and relevant CLI gate test/harness context.",
+        "Compared candidate with primary base (same commit) and actual parent 3782f6ade0c93e7b7ff441dcef2d22849aeddab6. Parent-to-candidate changed paths are five wisdom ledger JSON files only; there are no changed source paths to judge beyond the focus. Verified identical parent/candidate hashes for focus, probe, CLI, socket wrapper, socket export, classifier, provider errors and catalogue.",
+        "Read wisdom/values.md, structural-readability-guidance.md, repo-wide ledger, relevant live-area ledger/brief and repo-wide coverage entries. Earlier related-patch acceptance is context, not substituted for this independent focus reading.",
+        "No setup, tests, builds, delegation, source edits, credentials or recovery actions performed. Wrote only the requested untracked result JSON."
+      ],
+      "limits": [
+        "Static actual-code judgment only. Parent owns audited isolated runtime/batch gates; no runtime pass, packaged-binary acceptance, real provider/authentication, microphone/device, macOS or hosted-network claim.",
+        "The success test checks the success message was logged, not that console.log was called exactly once. The single announcement follows from the inspected probe’s one final log; do not describe the test itself as asserting log count.",
+        "The failure fixture intentionally depends on acquisition order and therefore must be revisited if the probe’s success/unauthorized ordering changes.",
+        "This decision covers the exact focus blob, not independent primary coverage of all related modules or a repo-wide completion claim. Model verification is parent-owned; no self-introspection assertion."
       ]
     },
     {

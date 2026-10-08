@@ -169,7 +169,7 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_3bf9b010",
         "branch": "bruv/pr45-judge-scripts-live-acceptance.ts-3bf9b010",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled"
       },
       {
         "id": "task_bb760faf",
@@ -178,7 +178,7 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_bb760faf",
         "branch": "bruv/pr45-judge-scripts-live-gpt-live-offline-bb760faf",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled"
       },
       {
         "id": "task_3ef38a2b",
@@ -187,7 +187,7 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_3ef38a2b",
         "branch": "bruv/pr45-judge-scripts-live-helper-bundle.ts-3ef38a2b",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled"
       },
       {
         "id": "task_60a55b56",
@@ -196,7 +196,7 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_60a55b56",
         "branch": "bruv/pr45-judge-tests-live-self-test.test.ts-60a55b56",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled"
       },
       {
         "id": "task_3e4e9ada",
@@ -205,7 +205,7 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_3e4e9ada",
         "branch": "bruv/pr45-judge-tests-offline-transport-probe-3e4e9ada",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled"
       }
     ]
   },
@@ -389,7 +389,7 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_fd2b6ab4",
         "branch": "bruv/pr45-judge-tests-claude-native-acceptanc-fd2b6ab4",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled"
       }
     ]
   },

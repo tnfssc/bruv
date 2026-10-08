@@ -17,91 +17,100 @@ for (const corruptResult of [false, true]) {
       ? "proof-write failure still closes the model and removes private state"
       : "failed replay retains final provider proof before releasing the runner scope",
     async () => {
-      const fixture = await fs.mkdtemp(path.join(os.tmpdir(), "subagent-runner-test-"));
-      const proof = path.join(fixture, "proof");
-      let observation;
-      try {
-        const connector = path.join(fixture, "owned-connector");
-        const runtime = path.join(fixture, "owned-runtime");
-        const upstream = path.join(fixture, "upstream");
-        await fs.writeFile(connector, "#!/bin/sh\nexit 1\n", { mode: 0o755 });
-        await fs.writeFile(runtime, "#!/bin/sh\nexit 1\n", { mode: 0o755 });
-        await installHealthServer(path.join(upstream, "platform/t3"), fixture);
-        await installFailingBrowser(path.join(upstream, "runtime/node_modules/playwright/index.mjs"), corruptResult);
-        const reservation = createServer();
-        await new Promise((resolve) => reservation.listen(0, "127.0.0.1", resolve));
-        const port = reservation.address().port;
-        await new Promise((resolve) => reservation.close(resolve));
-        const result = spawnSync(process.execPath, [runner], {
-          env: {
-            PATH: [path.dirname(process.execPath), "/usr/bin", "/bin"].join(path.delimiter),
-            HOME: fixture,
-            BRUV_CONNECTOR_EXECUTABLE: connector,
-            BRUV_RUNTIME_BINARY: runtime,
-            T3_UPSTREAM: upstream,
-            BROWSER_PATH: "owned-browser",
-            FIXTURE_PORT: String(port),
-            PROOF_OUTPUT: proof,
-            ANTHROPIC_API_KEY: "must-not-be-inherited",
-            OPENAI_API_KEY: "must-not-be-inherited",
-            CLAUDE_CONFIG_DIR: "must-not-be-inherited",
-          },
-          encoding: "utf8",
-          timeout: 10000,
-        });
-        observation = JSON.parse(await fs.readFile(path.join(proof, "browser-close.json"), "utf8"));
-        assert.equal(result.error, undefined, result.stderr);
-        assert.notEqual(result.status, 0);
-        assert.match(result.stderr, corruptResult ? /EISDIR/ : /owned browser setup failure/);
-        assert.equal(observation.finalEvidencePresent, true);
-        assert.equal(observation.privateStatePresent, true);
-        assert.equal(observation.credentialsInherited, false);
-        const evidence = JSON.parse(await fs.readFile(path.join(proof, "final-provider-evidence.json"), "utf8"));
-        assert.deepEqual(evidence.provider[0].markers, ["ROOT_AFTER_CHILD_REAL"]);
-        assert.ok(!JSON.stringify(evidence).includes("PRIVATE_PROMPT"));
-        assert.equal(
-          await fs.access(observation.scope).then(
-            () => true,
-            () => false,
-          ),
-          false,
-        );
-        assert.deepEqual(JSON.parse(await fs.readFile(path.join(proof, "cleanup.json"), "utf8")), {
-          temporaryScopedStateRemoved: true,
-          realCredentialsUsed: false,
-          integratedReplayPassed: false,
-        });
-        await assert.rejects(fetch(observation.modelUrl), /fetch failed/);
-        if (!corruptResult) {
-          const retained = JSON.parse(await fs.readFile(path.join(proof, "result.json"), "utf8"));
-          assert.equal(retained.passed, false);
-          assert.equal(retained.error, "owned browser setup failure");
-          assert.equal(retained.modelCompletionWakeCount, 0);
-          assert.equal(retained.killedJobCompletionWakeCount, 0);
-          const model = JSON.parse(await fs.readFile(path.join(proof, "model-projection.json"), "utf8"));
-          assert.equal(model[0].response, "ROOT_AFTER_CHILD_REAL");
-          assert.ok(!JSON.stringify(model).includes("PRIVATE_PROMPT"));
-          const profiles = JSON.parse(await fs.readFile(path.join(proof, "profiles.json"), "utf8"));
-          assert.deepEqual(Object.keys(profiles), ["fast", "normal", "orchestrator"]);
-          assert.equal(new Set(Object.values(profiles).map((profile) => profile.model)).size, 1);
-          assert.ok(Object.values(profiles).every((profile) => profile.thinking === "off"));
-        }
-      } finally {
-        // Own the stand-in process/private files even when testing a broken runner.
-        try {
-          process.kill(Number(await fs.readFile(path.join(fixture, "server.pid"), "utf8")), "SIGTERM");
-        } catch (error) {
-          assert.ok(["ENOENT", "ESRCH"].includes(error.code), String(error));
-        }
-        observation ??= await fs
-          .readFile(path.join(proof, "browser-close.json"), "utf8")
-          .then(JSON.parse)
-          .catch(() => undefined);
-        if (observation) await fs.rm(observation.scope, { recursive: true, force: true });
-        await fs.rm(fixture, { recursive: true, force: true });
-      }
+      const { result, proof } = await runFailedReplay(corruptResult);
+      assert.equal(result.error, undefined, result.stderr);
+      assert.notEqual(result.status, 0);
+      assert.match(result.stderr, corruptResult ? /EISDIR/ : /owned browser setup failure/);
+      await assertRunnerFinalization(proof);
+      if (!corruptResult) await assertRetainedReplayProof(proof);
     },
   );
+}
+
+async function runFailedReplay(corruptResult) {
+  const fixture = await fs.mkdtemp(path.join(os.tmpdir(), "subagent-runner-test-"));
+  const proof = path.join(fixture, "proof");
+  try {
+    const home = await fs.mkdtemp(path.join(fixture, "home-"));
+    const config = await fs.mkdtemp(path.join(fixture, "config-"));
+    const temporary = await fs.mkdtemp(path.join(fixture, "tmp-"));
+    const connector = path.join(fixture, "owned-connector");
+    const runtime = path.join(fixture, "owned-runtime");
+    const upstream = path.join(fixture, "upstream");
+    await fs.writeFile(connector, "#!/bin/sh\nexit 1\n", { mode: 0o755 });
+    await fs.writeFile(runtime, "#!/bin/sh\nexit 1\n", { mode: 0o755 });
+    await installHealthServer(path.join(upstream, "platform/t3"), fixture);
+    await installFailingBrowser(path.join(upstream, "runtime/node_modules/playwright/index.mjs"), corruptResult);
+    const reservation = createServer();
+    await new Promise((resolve) => reservation.listen(0, "127.0.0.1", resolve));
+    const port = reservation.address().port;
+    await new Promise((resolve) => reservation.close(resolve));
+    const result = spawnSync(process.execPath, [runner], {
+      env: {
+        PATH: [path.dirname(process.execPath), "/usr/bin", "/bin"].join(path.delimiter),
+        HOME: home,
+        TMPDIR: temporary,
+        BRUV_CONNECTOR_EXECUTABLE: connector,
+        BRUV_RUNTIME_BINARY: runtime,
+        T3_UPSTREAM: upstream,
+        BROWSER_PATH: "owned-browser",
+        FIXTURE_PORT: String(port),
+        PROOF_OUTPUT: proof,
+        ANTHROPIC_API_KEY: "must-not-be-inherited",
+        OPENAI_API_KEY: "must-not-be-inherited",
+        CLAUDE_CONFIG_DIR: config,
+      },
+      encoding: "utf8",
+      timeout: 10000,
+    });
+    return { result, proof };
+  } finally {
+    // Stop only our stand-in server, including when the runner fails to stop it.
+    // Retain fixture files/HOME/config for inspection; never delete a child-reported path.
+    try {
+      process.kill(Number(await fs.readFile(path.join(fixture, "server.pid"), "utf8")), "SIGTERM");
+    } catch (error) {
+      assert.ok(["ENOENT", "ESRCH"].includes(error.code), String(error));
+    }
+  }
+}
+
+async function assertRunnerFinalization(proof) {
+  const observation = JSON.parse(await fs.readFile(path.join(proof, "browser-close.json"), "utf8"));
+  assert.equal(observation.finalEvidencePresent, true);
+  assert.equal(observation.privateStatePresent, true);
+  assert.equal(observation.credentialsInherited, false);
+  const evidence = JSON.parse(await fs.readFile(path.join(proof, "final-provider-evidence.json"), "utf8"));
+  assert.deepEqual(evidence.provider[0].markers, ["ROOT_AFTER_CHILD_REAL"]);
+  assert.ok(!JSON.stringify(evidence).includes("PRIVATE_PROMPT"));
+  assert.equal(
+    await fs.access(observation.scope).then(
+      () => true,
+      () => false,
+    ),
+    false,
+  );
+  assert.deepEqual(JSON.parse(await fs.readFile(path.join(proof, "cleanup.json"), "utf8")), {
+    temporaryScopedStateRemoved: true,
+    realCredentialsUsed: false,
+    integratedReplayPassed: false,
+  });
+  await assert.rejects(fetch(observation.modelUrl), /fetch failed/);
+}
+
+async function assertRetainedReplayProof(proof) {
+  const retained = JSON.parse(await fs.readFile(path.join(proof, "result.json"), "utf8"));
+  assert.equal(retained.passed, false);
+  assert.equal(retained.error, "owned browser setup failure");
+  assert.equal(retained.modelCompletionWakeCount, 0);
+  assert.equal(retained.killedJobCompletionWakeCount, 0);
+  const model = JSON.parse(await fs.readFile(path.join(proof, "model-projection.json"), "utf8"));
+  assert.equal(model[0].response, "ROOT_AFTER_CHILD_REAL");
+  assert.ok(!JSON.stringify(model).includes("PRIVATE_PROMPT"));
+  const profiles = JSON.parse(await fs.readFile(path.join(proof, "profiles.json"), "utf8"));
+  assert.deepEqual(Object.keys(profiles), ["fast", "normal", "orchestrator"]);
+  assert.equal(new Set(Object.values(profiles).map((profile) => profile.model)).size, 1);
+  assert.ok(Object.values(profiles).every((profile) => profile.thinking === "off"));
 }
 
 async function installHealthServer(binary, fixture) {
