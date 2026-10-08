@@ -12325,12 +12325,12 @@
     {
       "file": "tests/fixtures/remote-typed-root-placement/scenario.ts",
       "initialBlob": "54ed191ca3a9a15aabdb54b2d1337ff2b382df7f",
-      "status": "pending",
+      "status": "accepted",
       "area": "remote",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_0717149c",
       "primaryCommit": "2107b1e2f9ff44024bb6ef3f98b64f9ff1ee053a",
-      "judgeIds": [],
+      "judgeIds": ["task_5102babd"],
       "sourceCommit": "2107b1e2f9ff44024bb6ef3f98b64f9ff1ee053a",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
       "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
@@ -12348,17 +12348,32 @@
         "Parent owns audited isolated tests/build/acceptance gates and fresh independent actual-code judgments; source/generated-program runtime behavior has not been executed here.",
         "Generated programs retain compact spellings required by existing string assertions (shell prefix, workspace literal, second-turn comparison); multiline program formatting changes generated source whitespace, not intended effects.",
         "No wisdom files changed: parent owns aggregate wisdom; no new value rule needed. No delegation or additional worktree creation. Parent owns runtime agent.model verification."
+      ],
+      "acceptedBlob": "9130afb6ab3862fe2c7137d9bbe8909f064deaec",
+      "result": "The response now reads as one ordered journey: normal leaf dispatch first, fail-closed root model check, cancellation/reply-loss cases, then root start, completed-child delivery, question, saved human answer and second turn. Previously those transitions were interrupted by long concatenated programs. Each stage-local builder exposes its server tool effects as multiline code without a context bag or separate protocol authority. snapshotChecks shares precisely the identical tracked/omitted/approved-path and orphan-history checks; root and normal role/depth/worktree distinctions remain at their respective starts. This is a real reconstruction reduction, not rename churn.",
+      "systemReason": "fake-provider calls stream on the server, and stream preserves execute IDs, tool-call framing and SSE completion boundaries. The runner supplies ROOT_START/ROOT_SECOND and answers via the real saved-question picker. askAfterChild still performs bounded inspection with advancing cursors and completed/done validation before ask/block. useHumanAnswer still requires questions.list saved answer, resolves using saved owner/version, then mutates tracked.txt; a transcript marker alone cannot authorize mutation. Child launch remains no-target asynchronous normal worktree, child attempts delegation and requires refusal. Shell fail-closed checks, clean/drift return contents, proof paths/phases, failure-case precedence and marker IDs are unchanged by inspection. The real root owner clears inherited child role and uses destination default model unless explicit; fixture root/normal model separation still agrees.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Inspected exact candidate with git show and complete git diff against 7018ba2782c462a523f74b4e608a495c22f3cdcb; only scenario.ts changed.",
+        "Read entire candidate and base scenario.ts, entire settings.json and ssh-proxy.ts, plus server provider, Docker installation, entrypoint, models/subagents/sshd configuration, runner/harness journeys and relevant focused assertions. No setup, tests or builds run.",
+        "Read src/remote/root-owner.ts launch/model checks and role-environment clearing, and root-runtime.ts saved-question facet continuation authority.",
+        "Resolved accepted Git blob IDs from exact candidate, not checkout HEAD."
+      ],
+      "limits": [
+        "Source-only structural review; parent owns audited isolated runtime gates. No test execution, Docker build/start, network/device/auth access, credential reads, cleanup, source edits or delegation.",
+        "Existing Dockerfile/runner cleanup effects were inspected only and not executed. Fixture /tmp proof paths are container-local; this review and artifact retain durable worktree provenance at /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_5102babd.",
+        "Model identity verification is parent-owned; this review does not claim runtime agent.model verification."
       ]
     },
     {
       "file": "tests/fixtures/remote-typed-root-placement/settings.json",
       "initialBlob": "ec9b88eda601f80ee98cb3b69305df6552b504e8",
-      "status": "pending",
+      "status": "accepted",
       "area": "remote",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_0717149c",
       "primaryCommit": "2107b1e2f9ff44024bb6ef3f98b64f9ff1ee053a",
-      "judgeIds": [],
+      "judgeIds": ["task_5102babd"],
       "sourceCommit": "2107b1e2f9ff44024bb6ef3f98b64f9ff1ee053a",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
       "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
@@ -12376,17 +12391,32 @@
         "Parent owns audited isolated tests/build/acceptance gates and fresh independent actual-code judgments; source/generated-program runtime behavior has not been executed here.",
         "Generated programs retain compact spellings required by existing string assertions (shell prefix, workspace literal, second-turn comparison); multiline program formatting changes generated source whitespace, not intended effects.",
         "No wisdom files changed: parent owns aggregate wisdom; no new value rule needed. No delegation or additional worktree creation. Parent owns runtime agent.model verification."
+      ],
+      "acceptedBlob": "ec9b88eda601f80ee98cb3b69305df6552b504e8",
+      "result": "Read the complete three-field literal: fixture provider, typed-root default model and off thinking. These are already locally visible destination defaults, not hidden branching or lifetime logic. The file is byte-identical to the base; extracting or wrapping it would obscure this simple authority rather than solve a reading problem.",
+      "systemReason": "The runner includes this exact settings file, Docker copies it with models.json into /root/.bruv/agent and sets BRUV_CODING_AGENT_DIR there. models.json defines fixture/typed-root separately from typed-root-normal, and subagents.json selects only the normal leaf model. The real root owner starts ordinary RPC without a model override when intent omits one, strips inherited subagent role/depth, and rejects missing destination model or explicit-model mismatch. scenario separately rejects unexpected root model after normal dispatch. Thus unchanged settings remain an explicit server-root authority, not a laptop or child-profile fallback.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Inspected exact candidate with git show and complete git diff against 7018ba2782c462a523f74b4e608a495c22f3cdcb; only scenario.ts changed.",
+        "Read entire candidate and base scenario.ts, entire settings.json and ssh-proxy.ts, plus server provider, Docker installation, entrypoint, models/subagents/sshd configuration, runner/harness journeys and relevant focused assertions. No setup, tests or builds run.",
+        "Read src/remote/root-owner.ts launch/model checks and role-environment clearing, and root-runtime.ts saved-question facet continuation authority.",
+        "Resolved accepted Git blob IDs from exact candidate, not checkout HEAD."
+      ],
+      "limits": [
+        "Source-only structural review; parent owns audited isolated runtime gates. No test execution, Docker build/start, network/device/auth access, credential reads, cleanup, source edits or delegation.",
+        "Existing Dockerfile/runner cleanup effects were inspected only and not executed. Fixture /tmp proof paths are container-local; this review and artifact retain durable worktree provenance at /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_5102babd.",
+        "Model identity verification is parent-owned; this review does not claim runtime agent.model verification."
       ]
     },
     {
       "file": "tests/fixtures/remote-typed-root-placement/ssh-proxy.ts",
       "initialBlob": "ca71c9208be0329bb6b36b75ed2fe61a1ec5a5a5",
-      "status": "pending",
+      "status": "accepted",
       "area": "remote",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_0717149c",
       "primaryCommit": "2107b1e2f9ff44024bb6ef3f98b64f9ff1ee053a",
-      "judgeIds": [],
+      "judgeIds": ["task_5102babd"],
       "sourceCommit": "2107b1e2f9ff44024bb6ef3f98b64f9ff1ee053a",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
       "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
@@ -12404,6 +12434,21 @@
         "Parent owns audited isolated tests/build/acceptance gates and fresh independent actual-code judgments; source/generated-program runtime behavior has not been executed here.",
         "Generated programs retain compact spellings required by existing string assertions (shell prefix, workspace literal, second-turn comparison); multiline program formatting changes generated source whitespace, not intended effects.",
         "No wisdom files changed: parent owns aggregate wisdom; no new value rule needed. No delegation or additional worktree creation. Parent owns runtime agent.model verification."
+      ],
+      "acceptedBlob": "ca71c9208be0329bb6b36b75ed2fe61a1ec5a5a5",
+      "result": "Read the entire direct transport: connect container loopback port 2222, terminate with diagnostic/error status on socket failure, pipe stdin to socket and socket to stdout, exit on socket close. Both byte directions and process/socket lifetime are adjacent. This unchanged small program has no scattered authority or arbitrary abstraction worth introducing.",
+      "systemReason": "Docker installs this exact file at /opt/fixture. networkNoneFixture builds a real SSH ProxyCommand using docker exec -i and the installed Bun/proxy inside the network:none container; sshd listens at 2222. Host-key pinning, isolated IdentityFile, no SSH agent/forwarding and real SSH authentication belong to the harness/sshd, not the proxy. The proxy carries opaque bytes only; it does not emulate SSH, parse RPC, select profiles or manufacture saved human answers. The candidate scenario change does not alter this transport contract.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Inspected exact candidate with git show and complete git diff against 7018ba2782c462a523f74b4e608a495c22f3cdcb; only scenario.ts changed.",
+        "Read entire candidate and base scenario.ts, entire settings.json and ssh-proxy.ts, plus server provider, Docker installation, entrypoint, models/subagents/sshd configuration, runner/harness journeys and relevant focused assertions. No setup, tests or builds run.",
+        "Read src/remote/root-owner.ts launch/model checks and role-environment clearing, and root-runtime.ts saved-question facet continuation authority.",
+        "Resolved accepted Git blob IDs from exact candidate, not checkout HEAD."
+      ],
+      "limits": [
+        "Source-only structural review; parent owns audited isolated runtime gates. No test execution, Docker build/start, network/device/auth access, credential reads, cleanup, source edits or delegation.",
+        "Existing Dockerfile/runner cleanup effects were inspected only and not executed. Fixture /tmp proof paths are container-local; this review and artifact retain durable worktree provenance at /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_5102babd.",
+        "Model identity verification is parent-owned; this review does not claim runtime agent.model verification."
       ]
     },
     {
@@ -22151,9 +22196,9 @@
     "baselineFiles": 766,
     "finalGate": "pending; incomplete focus coverage",
     "liveAuth": "unverified/failing; preserved",
-    "accepted": 768,
+    "accepted": 771,
     "total": 835,
-    "pending": 67,
+    "pending": 64,
     "sourceExtras": 69,
     "checkout": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
     "branch": "bruv/readability-pr45-sol-continuation",

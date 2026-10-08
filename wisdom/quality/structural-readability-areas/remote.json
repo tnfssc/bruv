@@ -2265,50 +2265,53 @@
     {
       "focus": "tests/fixtures/remote-typed-root-placement/scenario.ts",
       "initialBlob": "54ed191ca3a9a15aabdb54b2d1337ff2b382df7f",
-      "status": "pending",
+      "status": "accepted",
       "judgeRounds": [],
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "9130afb6ab3862fe2c7137d9bbe8909f064deaec",
         "primaryId": "task_0717149c",
         "primaryCommit": "2107b1e2f9ff44024bb6ef3f98b64f9ff1ee053a",
-        "judgeIds": [],
+        "judgeIds": ["task_5102babd"],
         "sourceCommit": "2107b1e2f9ff44024bb6ef3f98b64f9ff1ee053a",
-        "state": "needs-judge",
-        "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+        "state": "accepted-joined",
+        "reason": "The response now reads as one ordered journey: normal leaf dispatch first, fail-closed root model check, cancellation/reply-loss cases, then root start, completed-child delivery, question, saved human answer and second turn. Previously those transitions were interrupted by long concatenated programs. Each stage-local builder exposes its server tool effects as multiline code without a context bag or separate protocol authority. snapshotChecks shares precisely the identical tracked/omitted/approved-path and orphan-history checks; root and normal role/depth/worktree distinctions remain at their respective starts. This is a real reconstruction reduction, not rename churn."
       },
-      "acceptedBlob": null
+      "acceptedBlob": "9130afb6ab3862fe2c7137d9bbe8909f064deaec"
     },
     {
       "focus": "tests/fixtures/remote-typed-root-placement/settings.json",
       "initialBlob": "ec9b88eda601f80ee98cb3b69305df6552b504e8",
-      "status": "pending",
+      "status": "accepted",
       "judgeRounds": [],
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "ec9b88eda601f80ee98cb3b69305df6552b504e8",
         "primaryId": "task_0717149c",
         "primaryCommit": "2107b1e2f9ff44024bb6ef3f98b64f9ff1ee053a",
-        "judgeIds": [],
+        "judgeIds": ["task_5102babd"],
         "sourceCommit": "2107b1e2f9ff44024bb6ef3f98b64f9ff1ee053a",
-        "state": "needs-judge",
-        "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+        "state": "accepted-joined",
+        "reason": "Read the complete three-field literal: fixture provider, typed-root default model and off thinking. These are already locally visible destination defaults, not hidden branching or lifetime logic. The file is byte-identical to the base; extracting or wrapping it would obscure this simple authority rather than solve a reading problem."
       },
-      "acceptedBlob": null
+      "acceptedBlob": "ec9b88eda601f80ee98cb3b69305df6552b504e8"
     },
     {
       "focus": "tests/fixtures/remote-typed-root-placement/ssh-proxy.ts",
       "initialBlob": "ca71c9208be0329bb6b36b75ed2fe61a1ec5a5a5",
-      "status": "pending",
+      "status": "accepted",
       "judgeRounds": [],
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "ca71c9208be0329bb6b36b75ed2fe61a1ec5a5a5",
         "primaryId": "task_0717149c",
         "primaryCommit": "2107b1e2f9ff44024bb6ef3f98b64f9ff1ee053a",
-        "judgeIds": [],
+        "judgeIds": ["task_5102babd"],
         "sourceCommit": "2107b1e2f9ff44024bb6ef3f98b64f9ff1ee053a",
-        "state": "needs-judge",
-        "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+        "state": "accepted-joined",
+        "reason": "Read the entire direct transport: connect container loopback port 2222, terminate with diagnostic/error status on socket failure, pipe stdin to socket and socket to stdout, exit on socket close. Both byte directions and process/socket lifetime are adjacent. This unchanged small program has no scattered authority or arbitrary abstraction worth introducing."
       },
-      "acceptedBlob": null
+      "acceptedBlob": "ca71c9208be0329bb6b36b75ed2fe61a1ec5a5a5"
     },
     {
       "focus": "tests/fixtures/remote-typed-root-placement/sshd_config",
@@ -4154,8 +4157,8 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 113,
-    "pending": 9
+    "accepted": 116,
+    "pending": 6
   },
   "extraFiles": [
     {
