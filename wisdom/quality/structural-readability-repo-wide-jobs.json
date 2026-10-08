@@ -4066,6 +4066,15 @@
         "model": "openai-codex/gpt-6.1-sol",
         "status": "handled",
         "sourceCommit": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d"
+      },
+      {
+        "id": "task_af877be3",
+        "stage": "judge",
+        "focus": ["scripts/find-ci-baseline.ts"],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_af877be3",
+        "branch": "bruv/pr45-judge-1-build-release-ci-tooling-fo-af877be3",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled"
       }
     ]
   },

@@ -576,7 +576,7 @@
     {
       "focus": "scripts/find-ci-baseline.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_706aaff1",
@@ -620,18 +620,19 @@
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "5796c92a32d55d195d2097012530dbd9c310e785",
       "readingResult": "Unchanged proposed: linear checkout validation/workflow identity/trusted successful push filter/ancestry journey;predicate and deadline-sharing coherent.",
       "checks": "19baseline/selector+4workflow tests;focusedtsc/Biome pass;stale release-source expectation separately fixed in judged selective-workflow candidate8bc3a8c4.",
       "integrationState": "Unchanged focus matches area;only candidate note excluded;prior stalled attempts not coverage.",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
         "acceptedBlob": "5796c92a32d55d195d2097012530dbd9c310e785",
         "primaryId": "task_61e58786",
         "primaryCommit": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
-        "judgeIds": ["task_149c9180"],
+        "judgeIds": ["task_149c9180", "task_af877be3"],
         "sourceCommit": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
-        "state": "needs-judge"
+        "state": "accepted-joined",
+        "reason": "Read the entire exact candidate focus, not a summary. The journey stays in one function: reject invalid repo/head/token; establish one deadline; use local Git/HTTP closures over that authority; prove the checkout HEAD; resolve ci.yml to a positive workflow ID and the expected path; read one bounded newest-first history page; reject untrusted run metadata in one contiguous predicate; prove a local commit object and ancestry; return the first acceptable prior SHA. A non-ancestor continues searching, unexpected ancestry failure ends with uncertainty, and caught errors never publish credential-bearing details. The CLI emits only a SHA to stdout, or a fixed diagnostic to stderr. The linear structure exposes trust and failure decisions without forcing a reader through extracted predicates or shared context objects. No readability rework is justified. The preserved env parameter is passed directly to spawnSync and defaults to process.env; it changes neither production authority nor ordering."
       }
     },
     {
@@ -3574,7 +3575,7 @@
     "retainedWorktrees": "Per-file primary[].path and branch retained, including stopped/rejected attempts."
   },
   "resumeStatus": {
-    "accepted": 73,
-    "pending": 1
+    "accepted": 74,
+    "pending": 0
   }
 }

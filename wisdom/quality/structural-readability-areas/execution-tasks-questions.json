@@ -2753,7 +2753,7 @@
     {
       "focus": "tests/job-attention.test.ts",
       "initialBlob": "100304e6a1f99859c8f452b203c43c67cd5264ac",
-      "status": "accepted",
+      "status": "pending",
       "primary": {
         "id": "task_49f70753",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_49f70753",
@@ -2778,7 +2778,7 @@
           ]
         }
       ],
-      "acceptedBlob": "dc777477cb0379b14073fba859471e30406134d8",
+      "acceptedBlob": null,
       "integration": "unchanged primary blob matches integrated related patch",
       "relatedAcceptance": {
         "judge": "task_846bbe75",
@@ -2792,12 +2792,12 @@
       "readingResult": "No change after whole-file focus: activity/deadline/batch, snooze/watch eligibility, completion cleanup and inspection failure/checkpoint/recovery explicit; manager retains stop/settlement.",
       "checks": ["focus11/70", "sourceSDK1/7", "Biome/diff pass; shared binary before attention so no compiled parity"],
       "resume": {
-        "status": "accepted",
+        "status": "pending",
         "acceptedBlob": "dc777477cb0379b14073fba859471e30406134d8",
         "primaryId": "task_49f70753",
         "judgeIds": ["task_d655e78f", "task_846bbe75"],
-        "sourceCommit": "58aead918c9cd290b432e1c08d9b697b57d740e4",
-        "state": "accepted-joined",
+        "sourceCommit": null,
+        "state": "needs-rework",
         "reason": "Retain NO CHANGE NEEDED by task_d655e78f: the recorded accepted blob equals the actual focus blob at reviewed commit 58aead918c9cd290b432e1c08d9b697b57d740e4. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
       }
     },
@@ -2857,7 +2857,7 @@
     {
       "focus": "tests/job-bridge.test.ts",
       "initialBlob": "41a49cda7d40568bdbe2060020d8b2dcdb9ed4b6",
-      "status": "accepted",
+      "status": "pending",
       "primary": {
         "id": "task_bf3b25b4",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_bf3b25b4",
@@ -2866,24 +2866,24 @@
         "commit": null
       },
       "judgeRounds": [],
-      "acceptedBlob": "fdfd204668c37b58853330109de78d0258e6896c",
+      "acceptedBlob": null,
       "integration": "pending",
       "launchBase": "3fc00c2732f544ba63d4a2e22449184a90bd29f7",
       "resume": {
-        "status": "accepted",
+        "status": "pending",
         "acceptedBlob": "fdfd204668c37b58853330109de78d0258e6896c",
         "primaryId": "task_f4f56799",
         "primaryCommit": "b54079d88b5e8336af51204d28f117eacae5b07b",
         "judgeIds": ["task_a3213d3e"],
-        "sourceCommit": "b54079d88b5e8336af51204d28f117eacae5b07b",
-        "state": "accepted-joined",
+        "sourceCommit": null,
+        "state": "needs-rework",
         "reason": "Read the whole candidate and exact diff from 8f186d90eb5047304492c72c6bc56a7d0f37204d. SessionJobs joins a genuine parent-session lifetime: manager, typed completion sink, JobService dispatch, raw execute entry, registered-tool entry, and awaited shutdown. A reader can now follow foreground completion, background survival/input/inspection, delayed spawn cancellation, concurrent wait cancellation, pre-delivery disconnect, provisional ACK failure, oversized response release, registered batch ACK, partial batch failure, and handoff without reconstructing repeated ownership setup and finally blocks. Timing, abort points, dispatch wrappers, and batch completion barriers stay visible in their scenarios. Raw multiplexing/unavailable-bridge/budget tests and attention/goal/history RPC checks remain separate; the credential scrub assertion and environment restoration remain explicit. This is a coherent lifetime extraction, not a rename-only improvement or context bag."
       }
     },
     {
       "focus": "tests/job-service.test.ts",
       "initialBlob": "01c7c3f343042cbbd544af39be1614fccd8b3a40",
-      "status": "accepted",
+      "status": "pending",
       "primary": {
         "id": "task_51bb34f2",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_51bb34f2",
@@ -2923,7 +2923,7 @@
           ]
         }
       ],
-      "acceptedBlob": "761b16045499f37ce8b52682464b75f864f37ea9",
+      "acceptedBlob": null,
       "integration": "full coherent accepted candidate diff integrated",
       "launchBase": "1475ea9c468e343de12524cf8fbbd6f5da3ef83b",
       "changedRelatedPaths": ["tests/job-service.test.ts"],
@@ -2950,12 +2950,12 @@
         }
       ],
       "resume": {
-        "status": "accepted",
+        "status": "pending",
         "acceptedBlob": "761b16045499f37ce8b52682464b75f864f37ea9",
         "primaryId": "task_51bb34f2",
         "judgeIds": ["task_207ccf5d", "task_2ae89e04"],
-        "sourceCommit": "a7e7c1de30189ac337e9fec9c3599e9c2e42a53d",
-        "state": "accepted-not-joined",
+        "sourceCommit": null,
+        "state": "needs-rework",
         "reason": "Retain ACCEPT by task_2ae89e04: the recorded accepted blob equals the actual focus blob at reviewed commit a7e7c1de30189ac337e9fec9c3599e9c2e42a53d. Joined tree does not contain that exact accepted blob; an accepted source batch remains to join, not a fresh quality review. Latest area tree also matches the recorded accepted blob."
       }
     },
@@ -3022,7 +3022,7 @@
     {
       "focus": "tests/questions-bridge.test.ts",
       "initialBlob": "ecc8311c62fb67efc690bb867c09a7b3e134fc87",
-      "status": "accepted",
+      "status": "pending",
       "primary": {
         "id": "task_1b488934",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_1b488934",
@@ -3031,17 +3031,17 @@
         "commit": null
       },
       "judgeRounds": [],
-      "acceptedBlob": "0b3bf8c13cbe38b3a6fdd5a657fcb27d9307cdf3",
+      "acceptedBlob": null,
       "integration": "pending",
       "launchBase": "4c53837f67bd43253bfb1da1e3be5e11a84b5eb9",
       "resume": {
-        "status": "accepted",
+        "status": "pending",
         "acceptedBlob": "0b3bf8c13cbe38b3a6fdd5a657fcb27d9307cdf3",
         "primaryId": "task_dcb5f688",
         "primaryCommit": "c680a340577a3d97e62ebadca541ea26ff07b74d",
         "judgeIds": ["task_a916dfec"],
-        "sourceCommit": "c680a340577a3d97e62ebadca541ea26ff07b74d",
-        "state": "accepted-joined",
+        "sourceCommit": null,
+        "state": "needs-rework",
         "reason": "The complete test now separates one parent-owned execution lifetime from the two child journeys. executeQuestionScenario owns the mkdtemp session, service, bridge handler, awaited child completion, persisted snapshot and existing owned-directory finally cleanup. Each multiline child program shows its consequential order locally: ask then independent work, block then resolve with the returned version; actionable reads, cancellation, stale replay, then nineteen additions beside the remaining original question. This is a coherent operation extraction, not renamed plumbing or a context bag. Output expectations, test labels and resolved-state expectation retain their meaning."
       }
     },
@@ -3573,7 +3573,7 @@
     {
       "focus": "tests/task-manager.test.ts",
       "initialBlob": "ca3938554cf07fcaf5f5bfa73426e46997c57f57",
-      "status": "accepted",
+      "status": "pending",
       "primary": {
         "id": "task_d2a99d2b",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_d2a99d2b",
@@ -3597,7 +3597,7 @@
           ]
         }
       ],
-      "acceptedBlob": "5da9d43a261d342a14d7bdadfc12eb767e2ef3b5",
+      "acceptedBlob": null,
       "integration": "unchanged primary candidate blob matches integrated related patch",
       "relatedAcceptance": {
         "judge": "task_a01fd3d7",
@@ -3611,12 +3611,12 @@
       "readingResult": "No-change after whole-file focus: cleanup/cursor/cancel/escalation/delivery/preparation/activation journeys explicit; controller isolation regression retained.",
       "checks": ["manager30/238", "adjacent lifecycle/termination/progress15/67", "format/lint/diff pass"],
       "resume": {
-        "status": "accepted",
+        "status": "pending",
         "acceptedBlob": "5da9d43a261d342a14d7bdadfc12eb767e2ef3b5",
         "primaryId": "task_d2a99d2b",
         "judgeIds": ["task_69e81429", "task_a01fd3d7"],
-        "sourceCommit": "bda0a5d07f39e2f3ad038e30623b7107d57c7e02",
-        "state": "accepted-joined",
+        "sourceCommit": null,
+        "state": "needs-rework",
         "reason": "Retain NO CHANGE NEEDED by task_69e81429: the recorded accepted blob equals the actual focus blob at reviewed commit bda0a5d07f39e2f3ad038e30623b7107d57c7e02. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
       }
     },
@@ -4348,8 +4348,8 @@
     ]
   },
   "resumeStatus": {
-    "accepted": 102,
-    "pending": 0
+    "accepted": 97,
+    "pending": 5
   },
   "extraFiles": [
     {

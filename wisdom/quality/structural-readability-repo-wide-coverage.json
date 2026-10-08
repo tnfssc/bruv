@@ -1114,13 +1114,13 @@
     {
       "file": "scripts/find-ci-baseline.ts",
       "initialBlob": "fb773c5dff9e139a4773d05af38956eebf9d29c2",
-      "status": "pending",
+      "status": "accepted",
       "area": "build-release-ci-tooling",
       "acceptedBlob": "5796c92a32d55d195d2097012530dbd9c310e785",
       "primaryId": "task_61e58786",
-      "judgeIds": ["task_149c9180"],
+      "judgeIds": ["task_149c9180", "task_af877be3"],
       "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "sourceCommit": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
       "acceptedRelatedJudges": ["task_7b313d31"],
       "priorPrimaryLineage": [
@@ -1145,6 +1145,21 @@
         "No tests, setup, builds, reinstall, live authentication/device/API calls, or independent judgments run; parent owns audited isolated gates and fresh independent judgment.",
         "No source edits, fixture execution/creation, cleanup, data recovery, shared-dependency mutation, pushes, PRs, or merges. Artifact remains untracked for parent aggregation; existing worktrees and candidate commits retained.",
         "Durable provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_61e58786 at dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d; supplied candidate 4c36ec0aa32cac6edf7c76e78a0a0d030f0768f7. No temporary code checkout used."
+      ],
+      "result": "Read the entire exact candidate focus, not a summary. The journey stays in one function: reject invalid repo/head/token; establish one deadline; use local Git/HTTP closures over that authority; prove the checkout HEAD; resolve ci.yml to a positive workflow ID and the expected path; read one bounded newest-first history page; reject untrusted run metadata in one contiguous predicate; prove a local commit object and ancestry; return the first acceptable prior SHA. A non-ancestor continues searching, unexpected ancestry failure ends with uncertainty, and caught errors never publish credential-bearing details. The CLI emits only a SHA to stdout, or a fixed diagnostic to stderr. The linear structure exposes trust and failure decisions without forcing a reader through extracted predicates or shared context objects. No readability rework is justified. The preserved env parameter is passed directly to spawnSync and defaults to process.env; it changes neither production authority nor ordering.",
+      "systemReason": "Read the exact CI comparison caller and the complete ci-selective.ts consumer. On develop push, command substitution carries this helper output to the comparison base. Empty output reaches plan(), whose missing-baseline branch requires full validation; it cannot become docs-only success. Failed/cancelled source pushes remain in the cumulative diff from the earlier trusted success. A candidate equal to HEAD is excluded, preventing empty self-comparison. PR comparison separately proves checkout identity, two-parent topology, PR head, and reconstructed merge tree; it does not use this helper. Scheduled/manual reconciliation explicitly plans full. Release has no baseline/selector reference or actions-read permission. Read the complete baseline tests and shared fixture helper: all baseline calls pass the retained mkdtemp-owned environment, and Git plus selector subprocesses use explicit argv/env. HTTP is substituted there, not authenticated live. The preserved parent-to-candidate focus/test/helper deltas retain assertions and remove baseline fixture cleanup rather than weakening trust checks.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "git show read pinned candidate focus and callers; git diff primaryBase dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d to candidate dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d is empty. There are no candidate-changed source paths in the assigned comparison beyond the required focus blob attestation.",
+        "Supplemental exact candidate-parent diff inspected for scripts/find-ci-baseline.ts, tests/find-ci-baseline.test.ts and tests/helpers.ts to independently verify the preserved environment-isolation delta.",
+        "Read-only review of effects: production performs Git inspection and two authenticated HTTP requests; baseline fixtures create and retain owned temporary state with isolated HOME/config/SDK. Workflow smoke fixture includes inherited subprocess environment and owned-root rmSync, inspected but not executed.",
+        "No setup, tests, builds, dependency installation, live authentication, device access, publication, source edits, cleanup or delegation performed."
+      ],
+      "limits": [
+        "Static actual-source judgment only; runtime tests and audited isolated gates remain parent-owned. No hosted GitHub ordering/authentication behavior was exercised.",
+        "Primary base equals candidate, so this decision preserves the supplied focus rather than accepting a new refactor. Supplemental parent diff is evidence only, not acceptance of other source changes or other focuses in the joined commit.",
+        "Review ran in durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_af877be3; no temporary code checkout or test fixture was created. Existing worktrees and evidence retained.",
+        "Parent must independently verify runtime agent.model openai-codex/gpt-6.1-sol; this worker does not attest that metadata. No wisdom files changed; aggregate wisdom remains parent-owned."
       ]
     },
     {
@@ -14856,15 +14871,49 @@
     {
       "file": "tests/job-attention.test.ts",
       "initialBlob": "100304e6a1f99859c8f452b203c43c67cd5264ac",
-      "status": "accepted",
+      "status": "pending",
       "area": "execution-tasks-questions",
-      "resumeState": "accepted-joined",
+      "resumeState": "needs-rework",
       "primaryId": "task_49f70753",
       "judgeIds": ["task_d655e78f", "task_846bbe75"],
-      "sourceCommit": "58aead918c9cd290b432e1c08d9b697b57d740e4",
+      "sourceCommit": null,
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
       "acceptedBlob": "dc777477cb0379b14073fba859471e30406134d8",
-      "result": "Retain NO CHANGE NEEDED by task_d655e78f: the recorded accepted blob equals the actual focus blob at reviewed commit 58aead918c9cd290b432e1c08d9b697b57d740e4. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
+      "result": "Retain NO CHANGE NEEDED by task_d655e78f: the recorded accepted blob equals the actual focus blob at reviewed commit 58aead918c9cd290b432e1c08d9b697b57d740e4. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob.",
+      "priorAcceptedIntegrationProof": [
+        {
+          "primaryId": "task_49f70753",
+          "judgeIds": ["task_d655e78f", "task_846bbe75"],
+          "sourceCommit": "58aead918c9cd290b432e1c08d9b697b57d740e4",
+          "acceptedBlob": "dc777477cb0379b14073fba859471e30406134d8",
+          "finalLane": "lane-24",
+          "finalJudge": "task_748fb453"
+        }
+      ],
+      "resumeBatch": "owned-managed-execution-process-fixtures",
+      "resumeRework": {
+        "candidate": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "reviewedCandidate": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "primaryId": "task_49f70753",
+        "judgeId": "task_748fb453",
+        "objections": [
+          {
+            "paths": [
+              "tests/job-service.test.ts",
+              "tests/job-bridge.test.ts",
+              "tests/questions-bridge.test.ts",
+              "tests/job-attention.test.ts",
+              "src/tasks/job-service.ts",
+              "src/tasks/task-manager.ts",
+              "src/typescript/execution.ts",
+              "src/delegation-environment.ts"
+            ],
+            "readingProblem": "The tests do not consistently own the process environment they exercise. substituteAgentProcess changes only command/args while retaining launch.env from childAgentEnvironment(process.env); SessionJobs.execute and executeQuestionScenario call executeIsolated, whose childEnv spreads process.env; attention launch omits env and TaskManager falls back to process.env. Sanitizing T3 root authority does not isolate inherited HOME/config/SDK/provider auth. The service refactor newly turns former fabricated foreground tasks into actual child processes without adding environment isolation.",
+            "requiredResult": "Run process-bearing scenarios inside an explicitly launched, allowlisted fixture process with fs.mkdtemp-owned HOME/config/SDK directories (or equally explicit per-child env plumbing); use explicit argv, retain fixture directories and evidence, and avoid mutating/removing inherited user paths or relying on global process.env edits. Apply isolation to managed shell/agent children as well as compiled execute workers. Keep the correctly isolated interactive terminal approach and its retained evidence."
+          }
+        ],
+        "readingReason": "Actual refactor changes fabricated foreground records into process-bearing scenarios without owned HOME/config/SDK authority. Coherent4-focus source repair must keep original assertions and public runtime behavior; isolate fixture agent/shell/execute worker environments, no global process.env edits, no test execution before independent effects clearance."
+      }
     },
     {
       "file": "tests/job-bridge-protocol.test.ts",
@@ -14882,12 +14931,12 @@
     {
       "file": "tests/job-bridge.test.ts",
       "initialBlob": "41a49cda7d40568bdbe2060020d8b2dcdb9ed4b6",
-      "status": "accepted",
+      "status": "pending",
       "area": "execution-tasks-questions",
-      "resumeState": "accepted-joined",
+      "resumeState": "needs-rework",
       "primaryId": "task_f4f56799",
       "judgeIds": ["task_a3213d3e"],
-      "sourceCommit": "b54079d88b5e8336af51204d28f117eacae5b07b",
+      "sourceCommit": null,
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
       "pendingReason": "Primary was cancelled during the incident. A changed focus blob survives only in the primary working tree, not its HEAD; no completed independent actual-code judgment or accepted blob is recorded. Preserve the uncommitted candidate, dist and runtime-assets without cleanup.",
       "primaryCommit": "b54079d88b5e8336af51204d28f117eacae5b07b",
@@ -14924,20 +14973,89 @@
         "Existing execute/task subprocesses deliberately inherit scrubbed parent environment and use process.cwd(); this focus does not create its own HOME/config/SDK fixture. Any parent gate must launch the test runner with explicit argv/env and owned retained mkdtemp HOME/config/SDK. The shell strings are the behavior under test, not review commands executed here.",
         "Compiled dist/bruv correspondence and timing/async-disposal runtime behavior remain unverified.",
         "Independent judge artifact produced in durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_a3213d3e. Candidates were read with git show/diff by immutable commit, not checkout HEAD. No source edits, delegation, setup, tests, builds, cleanup/deletion, destructive Git, push, PR, merge or publication. Existing worktrees, candidates and shared dependencies preserved. Wisdom unchanged: this task returns only the aggregate-ready review artifact."
-      ]
+      ],
+      "priorAcceptedIntegrationProof": [
+        {
+          "primaryId": "task_f4f56799",
+          "judgeIds": ["task_a3213d3e"],
+          "sourceCommit": "b54079d88b5e8336af51204d28f117eacae5b07b",
+          "acceptedBlob": "fdfd204668c37b58853330109de78d0258e6896c",
+          "finalLane": "lane-24",
+          "finalJudge": "task_748fb453"
+        }
+      ],
+      "resumeBatch": "owned-managed-execution-process-fixtures",
+      "resumeRework": {
+        "candidate": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "reviewedCandidate": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "primaryId": "task_f4f56799",
+        "primaryBase": "8f186d90eb5047304492c72c6bc56a7d0f37204d",
+        "judgeId": "task_748fb453",
+        "objections": [
+          {
+            "paths": [
+              "tests/job-service.test.ts",
+              "tests/job-bridge.test.ts",
+              "tests/questions-bridge.test.ts",
+              "tests/job-attention.test.ts",
+              "src/tasks/job-service.ts",
+              "src/tasks/task-manager.ts",
+              "src/typescript/execution.ts",
+              "src/delegation-environment.ts"
+            ],
+            "readingProblem": "The tests do not consistently own the process environment they exercise. substituteAgentProcess changes only command/args while retaining launch.env from childAgentEnvironment(process.env); SessionJobs.execute and executeQuestionScenario call executeIsolated, whose childEnv spreads process.env; attention launch omits env and TaskManager falls back to process.env. Sanitizing T3 root authority does not isolate inherited HOME/config/SDK/provider auth. The service refactor newly turns former fabricated foreground tasks into actual child processes without adding environment isolation.",
+            "requiredResult": "Run process-bearing scenarios inside an explicitly launched, allowlisted fixture process with fs.mkdtemp-owned HOME/config/SDK directories (or equally explicit per-child env plumbing); use explicit argv, retain fixture directories and evidence, and avoid mutating/removing inherited user paths or relying on global process.env edits. Apply isolation to managed shell/agent children as well as compiled execute workers. Keep the correctly isolated interactive terminal approach and its retained evidence."
+          }
+        ],
+        "readingReason": "Actual refactor changes fabricated foreground records into process-bearing scenarios without owned HOME/config/SDK authority. Coherent4-focus source repair must keep original assertions and public runtime behavior; isolate fixture agent/shell/execute worker environments, no global process.env edits, no test execution before independent effects clearance."
+      }
     },
     {
       "file": "tests/job-service.test.ts",
       "initialBlob": "01c7c3f343042cbbd544af39be1614fccd8b3a40",
-      "status": "accepted",
+      "status": "pending",
       "area": "execution-tasks-questions",
-      "resumeState": "accepted-not-joined",
+      "resumeState": "needs-rework",
       "primaryId": "task_51bb34f2",
       "judgeIds": ["task_207ccf5d", "task_2ae89e04"],
-      "sourceCommit": "a7e7c1de30189ac337e9fec9c3599e9c2e42a53d",
+      "sourceCommit": null,
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
       "acceptedBlob": "761b16045499f37ce8b52682464b75f864f37ea9",
-      "result": "Retain ACCEPT by task_2ae89e04: the recorded accepted blob equals the actual focus blob at reviewed commit a7e7c1de30189ac337e9fec9c3599e9c2e42a53d. Joined tree does not contain that exact accepted blob; an accepted source batch remains to join, not a fresh quality review. Latest area tree also matches the recorded accepted blob."
+      "result": "Retain ACCEPT by task_2ae89e04: the recorded accepted blob equals the actual focus blob at reviewed commit a7e7c1de30189ac337e9fec9c3599e9c2e42a53d. Joined tree does not contain that exact accepted blob; an accepted source batch remains to join, not a fresh quality review. Latest area tree also matches the recorded accepted blob.",
+      "priorAcceptedIntegrationProof": [
+        {
+          "primaryId": "task_51bb34f2",
+          "judgeIds": ["task_207ccf5d", "task_2ae89e04"],
+          "sourceCommit": "a7e7c1de30189ac337e9fec9c3599e9c2e42a53d",
+          "acceptedBlob": "761b16045499f37ce8b52682464b75f864f37ea9",
+          "finalLane": "lane-24",
+          "finalJudge": "task_748fb453"
+        }
+      ],
+      "resumeBatch": "owned-managed-execution-process-fixtures",
+      "resumeRework": {
+        "candidate": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "reviewedCandidate": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "primaryId": "task_51bb34f2",
+        "judgeId": "task_748fb453",
+        "objections": [
+          {
+            "paths": [
+              "tests/job-service.test.ts",
+              "tests/job-bridge.test.ts",
+              "tests/questions-bridge.test.ts",
+              "tests/job-attention.test.ts",
+              "src/tasks/job-service.ts",
+              "src/tasks/task-manager.ts",
+              "src/typescript/execution.ts",
+              "src/delegation-environment.ts"
+            ],
+            "readingProblem": "The tests do not consistently own the process environment they exercise. substituteAgentProcess changes only command/args while retaining launch.env from childAgentEnvironment(process.env); SessionJobs.execute and executeQuestionScenario call executeIsolated, whose childEnv spreads process.env; attention launch omits env and TaskManager falls back to process.env. Sanitizing T3 root authority does not isolate inherited HOME/config/SDK/provider auth. The service refactor newly turns former fabricated foreground tasks into actual child processes without adding environment isolation.",
+            "requiredResult": "Run process-bearing scenarios inside an explicitly launched, allowlisted fixture process with fs.mkdtemp-owned HOME/config/SDK directories (or equally explicit per-child env plumbing); use explicit argv, retain fixture directories and evidence, and avoid mutating/removing inherited user paths or relying on global process.env edits. Apply isolation to managed shell/agent children as well as compiled execute workers. Keep the correctly isolated interactive terminal approach and its retained evidence."
+          }
+        ],
+        "readingReason": "Actual refactor changes fabricated foreground records into process-bearing scenarios without owned HOME/config/SDK authority. Coherent4-focus source repair must keep original assertions and public runtime behavior; isolate fixture agent/shell/execute worker environments, no global process.env edits, no test execution before independent effects clearance."
+      }
     },
     {
       "file": "tests/last-used-cli-model.test.ts",
@@ -18439,12 +18557,12 @@
     {
       "file": "tests/questions-bridge.test.ts",
       "initialBlob": "ecc8311c62fb67efc690bb867c09a7b3e134fc87",
-      "status": "accepted",
+      "status": "pending",
       "area": "execution-tasks-questions",
-      "resumeState": "accepted-joined",
+      "resumeState": "needs-rework",
       "primaryId": "task_dcb5f688",
       "judgeIds": ["task_a916dfec"],
-      "sourceCommit": "c680a340577a3d97e62ebadca541ea26ff07b74d",
+      "sourceCommit": null,
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
       "pendingReason": "Primary cancellation was recorded during the incident; no completed candidate commit or complete-file independent judgment is recorded. Focus working blob currently equals primary HEAD. Preserve the tree and allocate/complete primary work before judging.",
       "primaryCommit": "c680a340577a3d97e62ebadca541ea26ff07b74d",
@@ -18504,7 +18622,42 @@
         "No auth/device claim. No source, unrelated accepted work, ledger, wisdom or values edits; parent owns aggregate wisdom.",
         "Safety for ALL descendants: no sudo, no recovery actions, no deletion/cleanup shell commands, no HOME or inherited SDK/config cleanup, no nested shell traps. Do not read/use user secrets. Use node child_process argv plus explicit isolated env for tests; allocate fresh disposable HOME/config/SDK dirs with fs.mkdtemp and retain them rather than delete. If real credential/device access is required, return that blocker instead of using it. Do not run repository tests or setup without first checking their filesystem/network side effects. Existing dependencies can be used read-only from /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules. Bun is /home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin/bun. Worktree t3 setup may fail because PATH lacks bun; inspect outcome, do not guess. No repetitive full builds for each worker. Limit to SIX concurrent leaf workers total, primary and judge combined. Give independent code/review agents worktrees. Propagate these safety constraints verbatim. No destructive git operations or user-data mutations.",
         "The preserved bridge test cleanup was inspected but never executed. This fixture uses a minimal session manager and checks bridge behavior, not full parent UI/SDK continuation; that baseline boundary is unchanged. Real dist/bruv behavior remains for the parent gate."
-      ]
+      ],
+      "priorAcceptedIntegrationProof": [
+        {
+          "primaryId": "task_dcb5f688",
+          "judgeIds": ["task_a916dfec"],
+          "sourceCommit": "c680a340577a3d97e62ebadca541ea26ff07b74d",
+          "acceptedBlob": "0b3bf8c13cbe38b3a6fdd5a657fcb27d9307cdf3",
+          "finalLane": "lane-24",
+          "finalJudge": "task_748fb453"
+        }
+      ],
+      "resumeBatch": "owned-managed-execution-process-fixtures",
+      "resumeRework": {
+        "candidate": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "reviewedCandidate": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "primaryId": "task_dcb5f688",
+        "primaryBase": "8f186d90eb5047304492c72c6bc56a7d0f37204d",
+        "judgeId": "task_748fb453",
+        "objections": [
+          {
+            "paths": [
+              "tests/job-service.test.ts",
+              "tests/job-bridge.test.ts",
+              "tests/questions-bridge.test.ts",
+              "tests/job-attention.test.ts",
+              "src/tasks/job-service.ts",
+              "src/tasks/task-manager.ts",
+              "src/typescript/execution.ts",
+              "src/delegation-environment.ts"
+            ],
+            "readingProblem": "The tests do not consistently own the process environment they exercise. substituteAgentProcess changes only command/args while retaining launch.env from childAgentEnvironment(process.env); SessionJobs.execute and executeQuestionScenario call executeIsolated, whose childEnv spreads process.env; attention launch omits env and TaskManager falls back to process.env. Sanitizing T3 root authority does not isolate inherited HOME/config/SDK/provider auth. The service refactor newly turns former fabricated foreground tasks into actual child processes without adding environment isolation.",
+            "requiredResult": "Run process-bearing scenarios inside an explicitly launched, allowlisted fixture process with fs.mkdtemp-owned HOME/config/SDK directories (or equally explicit per-child env plumbing); use explicit argv, retain fixture directories and evidence, and avoid mutating/removing inherited user paths or relying on global process.env edits. Apply isolation to managed shell/agent children as well as compiled execute workers. Keep the correctly isolated interactive terminal approach and its retained evidence."
+          }
+        ],
+        "readingReason": "Actual refactor changes fabricated foreground records into process-bearing scenarios without owned HOME/config/SDK authority. Coherent4-focus source repair must keep original assertions and public runtime behavior; isolate fixture agent/shell/execute worker environments, no global process.env edits, no test execution before independent effects clearance."
+      }
     },
     {
       "file": "tests/questions-extension.test.ts",
@@ -21403,15 +21556,45 @@
     {
       "file": "tests/task-manager.test.ts",
       "initialBlob": "ca3938554cf07fcaf5f5bfa73426e46997c57f57",
-      "status": "accepted",
+      "status": "pending",
       "area": "execution-tasks-questions",
-      "resumeState": "accepted-joined",
+      "resumeState": "needs-rework",
       "primaryId": "task_d2a99d2b",
       "judgeIds": ["task_69e81429", "task_a01fd3d7"],
-      "sourceCommit": "bda0a5d07f39e2f3ad038e30623b7107d57c7e02",
+      "sourceCommit": null,
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
       "acceptedBlob": "5da9d43a261d342a14d7bdadfc12eb767e2ef3b5",
-      "result": "Retain NO CHANGE NEEDED by task_69e81429: the recorded accepted blob equals the actual focus blob at reviewed commit bda0a5d07f39e2f3ad038e30623b7107d57c7e02. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
+      "result": "Retain NO CHANGE NEEDED by task_69e81429: the recorded accepted blob equals the actual focus blob at reviewed commit bda0a5d07f39e2f3ad038e30623b7107d57c7e02. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob.",
+      "priorAcceptedIntegrationProof": [
+        {
+          "primaryId": "task_d2a99d2b",
+          "judgeIds": ["task_69e81429", "task_a01fd3d7"],
+          "sourceCommit": "bda0a5d07f39e2f3ad038e30623b7107d57c7e02",
+          "acceptedBlob": "5da9d43a261d342a14d7bdadfc12eb767e2ef3b5",
+          "finalLane": "lane-25",
+          "finalJudge": "task_b4f421dc"
+        }
+      ],
+      "resumeBatch": "owned-managed-execution-process-fixtures",
+      "resumeRework": {
+        "candidate": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "reviewedCandidate": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "primaryId": "task_d2a99d2b",
+        "judgeId": "task_b4f421dc",
+        "objections": [
+          {
+            "paths": [
+              "tests/task-manager.test.ts:14-22",
+              "tests/task-manager.test.ts:645-650",
+              "tests/task-manager.test.ts:678-681",
+              "src/tasks/task-manager.ts:350-357"
+            ],
+            "readingProblem": "Both newly added process-backed activation tests spread commandLaunch(\"sleep ...\"), whose argv is /bin/sh -lc and whose env is absent. The actual manager spawn therefore passes scrubT3BridgeEnvironment(process.env), retaining inherited HOME/config/SDK and login-shell startup access. There is no owned mkdtemp environment boundary here. This is a concrete missing test-process owner, contrary to the required safety/isolation contract, even though the functional task assertions themselves match the production refactor.",
+            "requiredResult": "Give these process-backed additions an owned fs.mkdtemp fixture with explicit HOME/config/SDK/temp and allowlisted env; pass that env to activatePreparedAgent and use non-login explicit argv (or an owned deterministic process script) rather than inherited shell startup. Retain fixture directories. Keep the deadline/identity/waiter assertions; do not run the current unisolated tests to establish safety."
+          }
+        ],
+        "readingReason": "New process-backed activation tests use /bin/sh -lc with inherited environment; coherent5-focus process-fixture repair must use owned explicit child env/argv and preserve deadlines, identity, waiter and cancellation assertions. Existing runtime defaults stay meaningful; no global env edits or test execution."
+      }
     },
     {
       "file": "tests/task-monitor-source.test.ts",
@@ -25296,9 +25479,9 @@
     "baselineFiles": 766,
     "finalGate": "pending; incomplete focus coverage",
     "liveAuth": "unverified/failing; preserved",
-    "accepted": 835,
+    "accepted": 831,
     "total": 836,
-    "pending": 1,
+    "pending": 5,
     "sourceExtras": 70,
     "checkout": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
     "branch": "bruv/readability-pr45-sol-continuation",
