@@ -25,18 +25,21 @@
     {
       "focus": "scripts/network-none-fixture.ts",
       "initialBlob": "33b7fd198ac0af8f72eae995238a25f9169e793f",
-      "status": "pending",
+      "status": "accepted",
       "judgeRounds": [],
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "9bf16423feba68972ca1e16b8e8a64d23606fc1e",
         "primaryId": "task_e3461f0e",
         "primaryCommit": "37d387369bd426a42bfc57b337af3a63205f3fdf",
-        "judgeIds": [],
+        "judgeIds": [
+          "task_eadbfc56"
+        ],
         "sourceCommit": "37d387369bd426a42bfc57b337af3a63205f3fdf",
-        "state": "needs-judge",
-        "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+        "state": "accepted-joined",
+        "reason": "The baseline start() interleaves cached-image validation, runtime/key staging, image acquisition, container acquisition, SSH pinning/wrapper construction and two readiness checks in one long body. The candidate exposes three coherent lexical operations, not arbitrary named blocks: buildOfflineImage owns the validated base digest and staging/build transaction; startContainer owns network-none container acquisition; connectPinnedSsh owns the pinned transport/configuration, optional reply-loss wrapper, PATH installation and SSH readiness, returning the direct SSH command. start() now makes the validation/acquisition/readiness order legible. Success-only image/container ownership flags remain beside these operations and the existing cleanup owner; no context bag, alternate implementation or new state is introduced. The helper bodies retain inspectable concrete commands and security decisions."
       },
-      "acceptedBlob": null
+      "acceptedBlob": "9bf16423feba68972ca1e16b8e8a64d23606fc1e"
     },
     {
       "focus": "scripts/remote-capability-pty-e2e.ts",
@@ -4332,8 +4335,8 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 82,
-    "pending": 40
+    "accepted": 83,
+    "pending": 39
   },
   "extraFiles": [
     {

@@ -2097,12 +2097,14 @@
     {
       "file": "scripts/network-none-fixture.ts",
       "initialBlob": "33b7fd198ac0af8f72eae995238a25f9169e793f",
-      "status": "pending",
+      "status": "accepted",
       "area": "remote",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_e3461f0e",
       "primaryCommit": "37d387369bd426a42bfc57b337af3a63205f3fdf",
-      "judgeIds": [],
+      "judgeIds": [
+        "task_eadbfc56"
+      ],
       "sourceCommit": "37d387369bd426a42bfc57b337af3a63205f3fdf",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
       "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
@@ -2145,6 +2147,32 @@
       "forceJudge": true,
       "stoppedJudgeIds": [
         "task_d2ae9701"
+      ],
+      "acceptedBlob": "9bf16423feba68972ca1e16b8e8a64d23606fc1e",
+      "result": "The baseline start() interleaves cached-image validation, runtime/key staging, image acquisition, container acquisition, SSH pinning/wrapper construction and two readiness checks in one long body. The candidate exposes three coherent lexical operations, not arbitrary named blocks: buildOfflineImage owns the validated base digest and staging/build transaction; startContainer owns network-none container acquisition; connectPinnedSsh owns the pinned transport/configuration, optional reply-loss wrapper, PATH installation and SSH readiness, returning the direct SSH command. start() now makes the validation/acquisition/readiness order legible. Success-only image/container ownership flags remain beside these operations and the existing cleanup owner; no context bag, alternate implementation or new state is introduced. The helper bodies retain inspectable concrete commands and security decisions.",
+      "systemReason": "Traced all three actual script callers at the candidate commit. Placement and typed-root runners await start(), record the returned base image digest, verify network mode and use direct ssh for evidence; clean capture does the same before launching presentation. Their CLI launches explicitly consume the shared isolated env, so the installed SSH wrapper and optional reply-loss transport still reach the product subprocess while direct evidence/readiness SSH bypasses injected reply loss. The supplied Dockerfiles and entrypoints consume the staged runtime/files and generated key mount; docker exec runs the SSH proxy inside the network-none container against port 2222. SSH readiness still precedes fake-inference health readiness. Caller finally blocks collect container diagnostics only when containerStarted and then invoke the same cleanup; image ownership is recorded only after successful build and container ownership only after successful run. The unchanged environment allowlist, command runners, output canonicalization helper, error propagation, timeouts and caller API were reviewed rather than inferred from tests.",
+      "checks": [
+        {
+          "check": "Required guidance and scoped ledger evidence",
+          "result": "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md; inspected only network-none-fixture rows in repo-wide coverage and remote area ledgers. Pending primary/candidate identity matches assignment; no prior verdict reused."
+        },
+        {
+          "check": "Exact candidate/base inspection",
+          "result": "Read candidate source and baseline startup, inspected diff against 0b1faebd03e5eb7711dbcba5a58453564a28cc36. Only scripts/network-none-fixture.ts changed. Git blob resolved to 9bf16423feba68972ca1e16b8e8a64d23606fc1e."
+        },
+        {
+          "check": "Independent static relocation comparison",
+          "result": "Removed the three lexical helper declarations and expanded their calls with their bodies, omitting their new local return statements. Expanded candidate equals baseline after trimming indentation and blank lines, preserving statement order throughout the file. git diff --check passed."
+        },
+        {
+          "check": "Actual consumer and transport reading",
+          "result": "Read caller fixture construction, start/result consumption, isolated-environment CLI launch and final diagnostic/cleanup journeys; inspected container staging/entrypoint/proxy and optional reply-loss contracts. Read relevant existing fixture test assertions without executing them."
+        }
+      ],
+      "limits": [
+        "Structural source review only: no setup, tests, builds, Docker/SSH execution, provider/device access or runtime acceptance claim. Parent owns audited isolated gates.",
+        "Existing cleanup removes caller-provided scratch root; actual script callers create that root with mkdtemp. Existing endpoint discovery may consult Docker context using original HOME. These unchanged behaviors were inspected, not executed or newly hardened.",
+        "No source or wisdom edits, publication, merging, recovery or credentials work. Only this untracked decision artifact is written. Runtime model identity verification belongs to parent."
       ]
     },
     {

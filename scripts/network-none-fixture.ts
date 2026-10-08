@@ -87,6 +87,139 @@ export function networkNoneFixture(options: {
 
   let containerStarted = false,
     imageBuilt = false;
+
+  function buildOfflineImage() {
+    const imageId = docker("image", "inspect", base!, "--format", "{{.Id}}");
+    assert.match(imageId, /^sha256:[0-9a-f]{64}$/);
+    docker(
+      "run",
+      "--rm",
+      "--network",
+      "none",
+      "--entrypoint",
+      "/bin/sh",
+      imageId,
+      "-c",
+      "test -x /usr/sbin/sshd && command -v git >/dev/null",
+    );
+    run("ssh-keygen", ["-q", "-t", "ed25519", "-N", "", "-f", join(root, "client")]);
+    run("ssh-keygen", ["-q", "-t", "ed25519", "-N", "", "-f", join(root, "hostkey")]);
+    for (const [file, path] of Object.entries(options.files)) copyFileSync(path, join(build, file));
+    copyFileSync(bun, join(build, "runtime", "bun"));
+    chmodSync(join(build, "runtime", "bun"), 0o755);
+    if (binary) {
+      copyFileSync(binary, join(build, "runtime", "bruv"));
+      chmodSync(join(build, "runtime", "bruv"), 0o755);
+    }
+    copyFileSync(join(root, "hostkey"), join(root, "keys", "hostkey"));
+    copyFileSync(join(root, "client.pub"), join(root, "keys", "client.pub"));
+    run(
+      "docker",
+      [
+        "build",
+        "--network",
+        "none",
+        "--pull=false",
+        "--build-arg",
+        "" + options.buildArg + "=" + imageId,
+        "-t",
+        name,
+        build,
+      ],
+      { timeout: 180000 },
+    );
+    imageBuilt = true;
+    return imageId;
+  }
+
+  function startContainer() {
+    docker(
+      "run",
+      "-d",
+      "--pull=never",
+      "--name",
+      name,
+      "--network",
+      "none",
+      "--memory",
+      "1g",
+      "--cpus",
+      "2",
+      "--pids-limit",
+      "256",
+      "--mount",
+      "type=bind,src=" + join(root, "keys") + ",dst=/keys,readonly",
+      name,
+    );
+    containerStarted = true;
+  }
+
+  async function connectPinnedSsh() {
+    const sshPort = "2222";
+    const dockerBin = run("/bin/sh", ["-c", "command -v docker"]);
+    const proxy = [
+      dockerBin,
+      "--host",
+      env.DOCKER_HOST,
+      "exec",
+      "-i",
+      name,
+      "/usr/local/bin/bun",
+      "/opt/fixture/ssh-proxy.ts",
+    ]
+      .map(quote)
+      .join(" ");
+    const sshConfig = join(home, ".ssh", "config");
+    writeFileSync(
+      join(home, ".ssh", "known_hosts"),
+      "[127.0.0.1]:" + sshPort + " " + readFileSync(join(root, "hostkey.pub"), "utf8"),
+      { mode: 0o600 },
+    );
+    writeFileSync(
+      sshConfig,
+      [
+        "Host " + options.alias,
+        "  HostName 127.0.0.1",
+        "  User root",
+        "  Port " + sshPort,
+        "  ProxyCommand " + proxy,
+        "  IdentityFile " + join(root, "client"),
+        "  IdentitiesOnly yes",
+        "  IdentityAgent none",
+        "  ForwardAgent no",
+        "  StrictHostKeyChecking yes",
+        "  UserKnownHostsFile " + join(home, ".ssh", "known_hosts"),
+        "  GlobalKnownHostsFile /dev/null",
+        "  UpdateHostKeys no",
+        "  BatchMode yes",
+        "  ConnectTimeout 3",
+        "  ControlMaster no",
+        "",
+      ].join("\n"),
+      { mode: 0o600 },
+    );
+    const sshBin = run("/bin/sh", ["-c", "command -v ssh"]);
+    writeFileSync(
+      join(root, "bin", "ssh"),
+      "#!/bin/sh\nexec " +
+        (options.replyLoss ? [bun, options.replyLoss, sshBin, sshConfig, faultDir] : [sshBin, "-F", sshConfig])
+          .map(quote)
+          .join(" ") +
+        ' "$@"\n',
+      {
+        mode: 0o755,
+      },
+    );
+    env.PATH = join(root, "bin") + ":" + env.PATH;
+    const ssh = (...args: string[]) => run(sshBin, ["-F", sshConfig, options.alias, ...args]);
+    await wait(
+      "isolated SSH ready",
+      () => raw(sshBin, ["-F", sshConfig, options.alias, "true"], { timeout: 5000 }).status === 0,
+      20000,
+    );
+    return ssh;
+  }
+
   return {
     home,
     agent,
@@ -111,127 +244,9 @@ export function networkNoneFixture(options: {
         run("/bin/sh", ["-c", 'command -v "$1"', "check", tool]);
       assert(existsSync(bun), "BUN_BIN is missing");
       if (binary) assert(existsSync(binary), "BRUV_BIN is missing");
-      const imageId = docker("image", "inspect", base!, "--format", "{{.Id}}");
-      assert.match(imageId, /^sha256:[0-9a-f]{64}$/);
-      docker(
-        "run",
-        "--rm",
-        "--network",
-        "none",
-        "--entrypoint",
-        "/bin/sh",
-        imageId,
-        "-c",
-        "test -x /usr/sbin/sshd && command -v git >/dev/null",
-      );
-      run("ssh-keygen", ["-q", "-t", "ed25519", "-N", "", "-f", join(root, "client")]);
-      run("ssh-keygen", ["-q", "-t", "ed25519", "-N", "", "-f", join(root, "hostkey")]);
-      for (const [file, path] of Object.entries(options.files)) copyFileSync(path, join(build, file));
-      copyFileSync(bun, join(build, "runtime", "bun"));
-      chmodSync(join(build, "runtime", "bun"), 0o755);
-      if (binary) {
-        copyFileSync(binary, join(build, "runtime", "bruv"));
-        chmodSync(join(build, "runtime", "bruv"), 0o755);
-      }
-      copyFileSync(join(root, "hostkey"), join(root, "keys", "hostkey"));
-      copyFileSync(join(root, "client.pub"), join(root, "keys", "client.pub"));
-      run(
-        "docker",
-        [
-          "build",
-          "--network",
-          "none",
-          "--pull=false",
-          "--build-arg",
-          "" + options.buildArg + "=" + imageId,
-          "-t",
-          name,
-          build,
-        ],
-        { timeout: 180000 },
-      );
-      imageBuilt = true;
-      docker(
-        "run",
-        "-d",
-        "--pull=never",
-        "--name",
-        name,
-        "--network",
-        "none",
-        "--memory",
-        "1g",
-        "--cpus",
-        "2",
-        "--pids-limit",
-        "256",
-        "--mount",
-        "type=bind,src=" + join(root, "keys") + ",dst=/keys,readonly",
-        name,
-      );
-      containerStarted = true;
-      const sshPort = "2222";
-      const dockerBin = run("/bin/sh", ["-c", "command -v docker"]);
-      const proxy = [
-        dockerBin,
-        "--host",
-        env.DOCKER_HOST,
-        "exec",
-        "-i",
-        name,
-        "/usr/local/bin/bun",
-        "/opt/fixture/ssh-proxy.ts",
-      ]
-        .map(quote)
-        .join(" ");
-      const sshConfig = join(home, ".ssh", "config");
-      writeFileSync(
-        join(home, ".ssh", "known_hosts"),
-        "[127.0.0.1]:" + sshPort + " " + readFileSync(join(root, "hostkey.pub"), "utf8"),
-        { mode: 0o600 },
-      );
-      writeFileSync(
-        sshConfig,
-        [
-          "Host " + options.alias,
-          "  HostName 127.0.0.1",
-          "  User root",
-          "  Port " + sshPort,
-          "  ProxyCommand " + proxy,
-          "  IdentityFile " + join(root, "client"),
-          "  IdentitiesOnly yes",
-          "  IdentityAgent none",
-          "  ForwardAgent no",
-          "  StrictHostKeyChecking yes",
-          "  UserKnownHostsFile " + join(home, ".ssh", "known_hosts"),
-          "  GlobalKnownHostsFile /dev/null",
-          "  UpdateHostKeys no",
-          "  BatchMode yes",
-          "  ConnectTimeout 3",
-          "  ControlMaster no",
-          "",
-        ].join("\n"),
-        { mode: 0o600 },
-      );
-      const sshBin = run("/bin/sh", ["-c", "command -v ssh"]);
-      writeFileSync(
-        join(root, "bin", "ssh"),
-        "#!/bin/sh\nexec " +
-          (options.replyLoss ? [bun, options.replyLoss, sshBin, sshConfig, faultDir] : [sshBin, "-F", sshConfig])
-            .map(quote)
-            .join(" ") +
-          ' "$@"\n',
-        {
-          mode: 0o755,
-        },
-      );
-      env.PATH = join(root, "bin") + ":" + env.PATH;
-      const ssh = (...args: string[]) => run(sshBin, ["-F", sshConfig, options.alias, ...args]);
-      await wait(
-        "isolated SSH ready",
-        () => raw(sshBin, ["-F", sshConfig, options.alias, "true"], { timeout: 5000 }).status === 0,
-        20000,
-      );
+      const imageId = buildOfflineImage();
+      startContainer();
+      const ssh = await connectPinnedSsh();
       await wait(
         "fake inference ready",
         () => {
