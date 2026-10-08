@@ -28,3 +28,5 @@ Tests will inject acquisition, exercise the exact observed stale adaptation and 
 Values unchanged: existing isolated ownership, exact evidence and simplest-working-solution values apply. This is a dependency-specific repair, not a new general rule.
 
 Parent integration: [recurring drift proof](pi-host-recurring-drift.md). The parent also added an ownership check before normal preparation and recovery. Borrowed dependency directories outside the checkout fail without writes or clean-source acquisition.
+
+Current Pi 1.1.0 integration and regenerated published-source fixture: [integration proof](pi-1.1.0-recovery-integration.md). The 1.0.3 fixture facts above describe this original task, not the current fixture version.

@@ -1,0 +1,85 @@
+bun test v1.4.2 (744846f84)
+
+tests/haiku-model-catalog.test.ts:
+(pass) bundled Haiku 5.5 is available and selectable with offline Anthropic credentials [37.66ms]
+
+tests/pi-host.test.ts:
+(pass) Pi host adaptations include the required disk-backed history seam [0.13ms]
+(pass) Pi host adaptation is exact, idempotent, and rejects dependency drift [15.52ms]
+(pass) runtime host gate rejects pristine and partly prepared dependencies [0.10ms]
+(pass) adaptation validates all files and version before any writes [3.11ms]
+(pass) preparation detaches Bun-style hardlinks without changing cache or sibling bytes [14.87ms]
+(pass) failed validation leaves every hardlinked file untouched [8.96ms]
+(pass) trusted project overrides and explicit built-in selectors cannot restore removed factories; config retains llama [29.60ms]
+(pass) source CLI removes MCP command/help and rejects all explicit removed built-ins [3696.53ms]
+(pass) source CLI starts no configured MCP server and preserves user extension registration [698.48ms]
+ 9 |
+10 | export async function run(
+11 |   command: string[],
+12 |   options: { env?: Record<string, string | undefined>; cwd?: string } = {},
+13 | ): Promise<{ stdout: string; stderr: string; code: number }> {
+14 |   const proc = Bun.spawn(command, {
+                        ^
+ENOENT: no such file or directory, posix_spawn '/home/tnfssc/.bruv/worktrees/t3-98a10da6-5442693331ce-task_0cdc00f7/dist/bruv'
+    path: "/home/tnfssc/.bruv/worktrees/t3-98a10da6-5442693331ce-task_0cdc00f7/dist/bruv",
+ syscall: "posix_spawn",
+   errno: -2,
+    code: "ENOENT"
+
+      at run (/home/tnfssc/.bruv/worktrees/t3-98a10da6-5442693331ce-task_0cdc00f7/tests/helpers.ts:14:20)
+      at <anonymous> (/home/tnfssc/.bruv/worktrees/t3-98a10da6-5442693331ce-task_0cdc00f7/tests/pi-host.test.ts:243:24)
+(fail) compiled CLI removes MCP command/help and rejects all explicit removed built-ins [2.60ms]
+303 |       extension,
+304 |       'export default function(pi) { pi.registerTool({name:"user_fixture",label:"Fixture",description:"Fixture",parameters:{type:"object",properties:{}},async execute(){return {content:[{type:"text",text:"fixture"}]};}}); pi.on("session_start",async()=>{await Bun.write(' +
+305 |         JSON.stringify(proof) +
+306 |         ",JSON.stringify({tools:pi.getAllTools().map(t=>t.name),commands:pi.getCommands().map(c=>c.name)}));}); }",
+307 |     );
+308 |     const proc = Bun.spawn(
+                           ^
+ENOENT: no such file or directory, posix_spawn '/home/tnfssc/.bruv/worktrees/t3-98a10da6-5442693331ce-task_0cdc00f7/dist/bruv'
+    path: "/home/tnfssc/.bruv/worktrees/t3-98a10da6-5442693331ce-task_0cdc00f7/dist/bruv",
+ syscall: "posix_spawn",
+   errno: -2,
+    code: "ENOENT"
+
+      at <anonymous> (/home/tnfssc/.bruv/worktrees/t3-98a10da6-5442693331ce-task_0cdc00f7/tests/pi-host.test.ts:308:22)
+(fail) compiled CLI starts no configured MCP server and preserves user extension registration [3.07ms]
+(pass) bruv execute stays active and user-authored codemode tools are not banned [27.51ms]
+(pass) upstream defaults to fullscreen and honors explicit regular mode [0.16ms]
+
+tests/prepare-assets.test.ts:
+(pass) build asset preparation > keeps only required assets and does not rewrite unchanged files [55.38ms]
+
+tests/sol-model-catalog.test.ts:
+(pass) bundled GPT-6.1 Sol models > registry retains upstream IDs, provider APIs, capabilities and prices [9.05ms]
+(pass) bundled GPT-6.1 Sol models > configured offline openai provider appears in the real model selector and can be selected [12.32ms]
+(pass) bundled GPT-6.1 Sol models > configured offline openai-codex provider appears in the real model selector and can be selected [7.75ms]
+
+tests/pi-host-recovery.test.ts:
+(pass) clean 1.1.0 fixture is pinned; stale fixture omits the compaction branch adaptation [1.46ms]
+(pass) recovers private stale branch adaptation once; prepared runs stay offline with stable inode/mtime [20.72ms]
+(pass) contaminated hardlink recovery changes only local patch paths, retaining modes [18.66ms]
+(pass) normal pristine preparation also stays offline [9.06ms]
+(pass) unsupported version fails without acquisition or target writes, even alongside source drift [3.40ms]
+(pass) malformed metadata fails without acquisition or target writes, even alongside source drift [2.73ms]
+(pass) I/O error fails without acquisition or target writes, even alongside source drift [2.69ms]
+(pass) failing staged version validation leaves target untouched and removes stage [5.30ms]
+(pass) failing staged source validation leaves target untouched and removes stage [10.92ms]
+(pass) failing staged metadata validation leaves target untouched and removes stage [4.57ms]
+(pass) failing staged I/O validation leaves target untouched and removes stage [4.17ms]
+(pass) malformed adaptation anchor still fails without recovery or target writes [2.67ms]
+(pass) malformed adaptation result still fails without recovery or target writes [2.51ms]
+(pass) acquisition/network failure reports retry action, leaves target untouched and cleans partial stage [3.60ms]
+(pass) preparation refuses borrowed original dependencies without acquisition or writes [2.28ms]
+(pass) preparation refuses borrowed stale dependencies without acquisition or writes [2.24ms]
+(pass) preparation refuses borrowed original source directories without acquisition or writes [3.47ms]
+(pass) preparation refuses borrowed stale source directories without acquisition or writes [3.48ms]
+
+2 tests failed:
+(fail) compiled CLI removes MCP command/help and rejects all explicit removed built-ins [2.60ms]
+(fail) compiled CLI starts no configured MCP server and preserves user extension registration [3.07ms]
+
+ 34 pass
+ 2 fail
+ 1477 expect() calls
+Ran 36 tests across 5 files. [5.33s]
