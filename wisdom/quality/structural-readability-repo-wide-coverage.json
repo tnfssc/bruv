@@ -11458,12 +11458,12 @@
     {
       "file": "tests/fixtures/remote-e2e/placement-parent.ts",
       "initialBlob": "65dc9f4f1f5b893bf6b4e3ad7e7cf6bee1605cc1",
-      "status": "pending",
+      "status": "accepted",
       "area": "remote",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_e2bf3034",
       "primaryCommit": "b11251c468f51c5a3f772e37c37306b783862fd5",
-      "judgeIds": [],
+      "judgeIds": ["task_9435f4ce"],
       "sourceCommit": "b11251c468f51c5a3f772e37c37306b783862fd5",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
       "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
@@ -11499,17 +11499,30 @@
         "No wisdom files changed; parent owns aggregate note. Durable code provenance is this retained Git worktree and exact source commit; formatter-only temporary environment is retained at /tmp/pr45-remote-fixture-format-0DK3gT."
       ],
       "acceptedRelatedJudges": ["task_9cf44661"],
-      "acceptedBlob": "7b0319dca327f046657a13f42b110ffbee42fba4"
+      "acceptedBlob": "7b0319dca327f046657a13f42b110ffbee42fba4",
+      "result": "Read the complete baseline and candidate, including the unchanged placementCode generator. Previously the stop branch owned its own call ID, completed-tool scan and execute envelope, while launch/retry repeated those decisions below it. The candidate makes the journey explicit in one sequence: last user and fixture prompt -> stop/retry flags -> action-specific call identity -> one completed-call acknowledgement -> action-specific code -> one envelope. This is a coherent reduction of duplicated orchestration, not rename churn or a helper/context indirection. Stop wins in both identity and code selection even when retry is also present. Missing prompt still acknowledges without a call; a matching completed tool still acknowledges before code generation.",
+      "systemReason": "scripts/loopback-parent-fixture.ts feeds placementReply the model request messages and streams its result with the proper tool_calls/stop finish reason; fixtureRpc starts the real CLI with fixture provider/model and the supplied fixture HOME/agent directory. The RPC runner connects fixture-owner before sending normal prompts, checks the persisted exact SSH ID, answers source approval then sends PLACEMENT_RETRY, and sends PLACEMENT_STOP after the cancellation job starts. Both PTY runners also exercise this shared parent through owned repository placement/proof checks while retaining separate human diagnostic paths. placementCode still requires an authorized SSH fixture-owner from jobs.targets, launches a normal child with waitSeconds:0, requires ssh: plus background, and persists discovery/launch. Untracked retry still uses previous.launch.sourceApproval.taskId; stop still reads the cancellation proof and passes proof.launch.id unchanged to jobs.stop. src/remote/jobs.ts discovers only the human-pinned target, enforces delegation/target matching, and cancellation resolves that owned SSH identity before recording intent. All those security and assertion boundaries remain unchanged.",
+      "checks": [
+        "git diff a1a45b3c26fac604060d3fbf22ba1f37642d06e6 b11251c468f51c5a3f772e37c37306b783862fd5: exactly one changed source path, reviewed in full.",
+        "Read-only Git text comparison confirmed placementCode and its preceding declaration bytes unchanged; exact generated stop code literal remains present in the baseline.",
+        "Manually followed plain launch, source inclusion/retry, completed-call acknowledgement, stop, and combined stop/retry selection. Existing focused test source was inspected, not run.",
+        "git rev-parse resolved the accepted candidate blob; git status was clean before this result artifact."
+      ],
+      "limits": [
+        "Read-only actual-source review; no setup, tests, builds, fixture execution, live authentication, credential access, or network requests were performed. Parent owns audited isolated runtime gates and runtime agent.model verification.",
+        "Harness effects inspected only: Docker build/package installation, temporary keys/config/HOME, loopback port publication, fixture repository mutations and shell cleanup traps. No harness or cleanup was run. Any parent gate must use explicit argv/env and owned fs.mkdtemp HOME/config/SDK and retain those fixtures.",
+        "Durable review provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_9435f4ce. Exact candidate Git objects were inspected, not checkout HEAD. No delegated descendants or temporary code checkouts. Existing worktrees and candidate evidence preserved."
+      ]
     },
     {
       "file": "tests/fixtures/remote-e2e/sshd_config",
       "initialBlob": "56d4d9e552d16fc332ed0e224a53921f5c7b5f8c",
-      "status": "pending",
+      "status": "accepted",
       "area": "remote",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_e2bf3034",
       "primaryCommit": "b11251c468f51c5a3f772e37c37306b783862fd5",
-      "judgeIds": [],
+      "judgeIds": ["task_9435f4ce"],
       "sourceCommit": "b11251c468f51c5a3f772e37c37306b783862fd5",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
       "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
@@ -11543,17 +11556,30 @@
         "Inspected scripts/remote-e2e.sh effects: fixture key generation, Docker build/container, loopback port publication, SSH/curl probes and cleanup traps. Not executed; parent must use audited isolated gates, not run those shell traps.",
         "No delegation. Runtime agent.model verification belongs to parent.",
         "No wisdom files changed; parent owns aggregate note. Durable code provenance is this retained Git worktree and exact source commit; formatter-only temporary environment is retained at /tmp/pr45-remote-fixture-format-0DK3gT."
+      ],
+      "acceptedBlob": "56d4d9e552d16fc332ed0e224a53921f5c7b5f8c",
+      "result": "Read every directive in the exact candidate. The small ordered policy is already directly legible: port/listener -> host and authorized-key paths -> prohibit-password root login and key-only authentication -> deny agent/TCP forwarding, TTY and X11 -> strict modes and logging. There is no scattered authority to consolidate inside this file. Regrouping it or extracting a policy layer would add navigation or formatting churn without improving this journey.",
+      "systemReason": "scripts/remote-e2e.sh copies this exact config into its build context; Dockerfile installs it at /etc/ssh/sshd_config. entrypoint.sh installs the mounted fixture host key and authorized public key into /run/sshd with mode 600, then execs sshd with this config. ListenAddress 0.0.0.0 is needed within the container, not a host exposure: the harness publishes 2222 on 127.0.0.1 with an allocated host port and checks that mapping. Its client config pins the host public key, uses the fixture identity with IdentitiesOnly/IdentityAgent none, disables forwarding, and enables strict host checking. Preserve the unchanged security policy. The only candidate-changed related source is placement-parent.ts; it was separately reviewed and accepted, and its blob is explicitly recorded here rather than inferred from this unchanged focus.",
+      "checks": [
+        "git show read the complete candidate sshd_config; git rev-parse confirmed focus blob equals primaryBase a1a45b3c26fac604060d3fbf22ba1f37642d06e6.",
+        "Inspected Dockerfile, entrypoint and harness listener publication/client pinning as source only; no sshd/container validation executed.",
+        "Candidate diff has only placement-parent.ts, inspected in full and included in acceptedBlobs."
+      ],
+      "limits": [
+        "Read-only actual-source review; no setup, tests, builds, fixture execution, live authentication, credential access, or network requests were performed. Parent owns audited isolated runtime gates and runtime agent.model verification.",
+        "Harness effects inspected only: Docker build/package installation, temporary keys/config/HOME, loopback port publication, fixture repository mutations and shell cleanup traps. No harness or cleanup was run. Any parent gate must use explicit argv/env and owned fs.mkdtemp HOME/config/SDK and retain those fixtures.",
+        "Durable review provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_9435f4ce. Exact candidate Git objects were inspected, not checkout HEAD. No delegated descendants or temporary code checkouts. Existing worktrees and candidate evidence preserved."
       ]
     },
     {
       "file": "tests/fixtures/remote-e2e/subagents.json",
       "initialBlob": "77fb8e3477a59a1aa467edd97000701b2227e919",
-      "status": "pending",
+      "status": "accepted",
       "area": "remote",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_0ebb2fc5",
       "primaryCommit": "dbc48ffafc37b685fde4158082034ec2ef223bbf",
-      "judgeIds": [],
+      "judgeIds": ["task_9435f4ce"],
       "sourceCommit": "dbc48ffafc37b685fde4158082034ec2ef223bbf",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
       "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
@@ -11571,6 +11597,20 @@
         "Runner shell traps and removal commands inspected as source only; never executed. No temporary fixture directories created.",
         "No changed source paths: formatter and source commit intentionally not needed. Existing source HEAD is recorded, result artifact remains untracked.",
         "No delegation, wisdom edits, push, PR, merge, dependency changes, cleanup, or user-data mutation. Parent verifies runtime agent.model."
+      ],
+      "acceptedBlob": "77fb8e3477a59a1aa467edd97000701b2227e919",
+      "result": "Read the entire exact JSON: the normal profile owns model fixture/fixture-model and thinking off in one place. These two related settings require no reconstruction within the fixture. Empty fast/orchestrator profiles, expanded formatting, or a helper would not clarify the only configured profile and would introduce unrelated surface. The candidate equals its supplied primaryBase, so there are no source edits or prior changes to restore in this assigned comparison.",
+      "systemReason": "At this exact candidate, remote-e2e.sh copies subagents.json to the build context and Dockerfile installs /root/.bruv/subagents.json separately from /root/.bruv/agent/models.json. ProfileSchema validates provider/model and thinking; loadProfiles reads the destination profile file and fills omitted profile groups with empty objects. Remote owner hello reports normal; launch selects placement.profile or normal, resolves explicit model/thinking overrides against that configured profile, rejects missing/invalid selections, and persists the resolved task profile before spawning. Owner start splits provider/model into explicit CLI args, adds --thinking off, and checks the CLI selected provider, model and thinking before sending the prompt. The fixture normal launch generator omits overrides, while models.json defines fixture-model at the loopback fake-provider endpoint. The destination fake provider asserts normal/depth1 placement and denial of worker delegation. Configuration data, provider registration and runtime enforcement already have distinct clear owners; no structural change is needed in this one-line profile.",
+      "checks": [
+        "git show dbc48ffafc37b685fde4158082034ec2ef223bbf:tests/fixtures/remote-e2e/subagents.json read in full; git diff primaryBase/candidate is empty by exact supplied identical commits.",
+        "Read complete profile schema/load/resolve implementation and owner greeting, launch resolution/persistence, child argv and effective-configuration verification.",
+        "Git blob equality checked between the two assigned candidate commits for harness, Dockerfile, entrypoint, model registry, fake provider, profile loader and owner; these caller readings apply to the exact profile candidate, not HEAD. Its baseline placementCode was also read.",
+        "Accepted focus blob obtained with git rev-parse; no parsing test or live provider request executed."
+      ],
+      "limits": [
+        "Read-only actual-source review; no setup, tests, builds, fixture execution, live authentication, credential access, or network requests were performed. Parent owns audited isolated runtime gates and runtime agent.model verification.",
+        "Harness effects inspected only: Docker build/package installation, temporary keys/config/HOME, loopback port publication, fixture repository mutations and shell cleanup traps. No harness or cleanup was run. Any parent gate must use explicit argv/env and owned fs.mkdtemp HOME/config/SDK and retain those fixtures.",
+        "Durable review provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_9435f4ce. Exact candidate Git objects were inspected, not checkout HEAD. No delegated descendants or temporary code checkouts. Existing worktrees and candidate evidence preserved."
       ]
     },
     {
@@ -21019,9 +21059,9 @@
     "baselineFiles": 766,
     "finalGate": "pending; incomplete focus coverage",
     "liveAuth": "unverified/failing; preserved",
-    "accepted": 741,
+    "accepted": 744,
     "total": 834,
-    "pending": 93,
+    "pending": 90,
     "sourceExtras": 68,
     "checkout": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
     "branch": "bruv/readability-pr45-sol-continuation",

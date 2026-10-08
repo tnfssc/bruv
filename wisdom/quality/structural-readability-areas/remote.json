@@ -1959,51 +1959,53 @@
     {
       "focus": "tests/fixtures/remote-e2e/placement-parent.ts",
       "initialBlob": "65dc9f4f1f5b893bf6b4e3ad7e7cf6bee1605cc1",
-      "status": "pending",
+      "status": "accepted",
       "judgeRounds": [],
       "resume": {
-        "status": "pending",
+        "status": "accepted",
         "acceptedBlob": "7b0319dca327f046657a13f42b110ffbee42fba4",
         "primaryId": "task_e2bf3034",
         "primaryCommit": "b11251c468f51c5a3f772e37c37306b783862fd5",
-        "judgeIds": [],
+        "judgeIds": ["task_9435f4ce"],
         "sourceCommit": "b11251c468f51c5a3f772e37c37306b783862fd5",
-        "state": "needs-judge",
-        "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+        "state": "accepted-joined",
+        "reason": "Read the complete baseline and candidate, including the unchanged placementCode generator. Previously the stop branch owned its own call ID, completed-tool scan and execute envelope, while launch/retry repeated those decisions below it. The candidate makes the journey explicit in one sequence: last user and fixture prompt -> stop/retry flags -> action-specific call identity -> one completed-call acknowledgement -> action-specific code -> one envelope. This is a coherent reduction of duplicated orchestration, not rename churn or a helper/context indirection. Stop wins in both identity and code selection even when retry is also present. Missing prompt still acknowledges without a call; a matching completed tool still acknowledges before code generation."
       },
-      "acceptedBlob": null
+      "acceptedBlob": "7b0319dca327f046657a13f42b110ffbee42fba4"
     },
     {
       "focus": "tests/fixtures/remote-e2e/sshd_config",
       "initialBlob": "56d4d9e552d16fc332ed0e224a53921f5c7b5f8c",
-      "status": "pending",
+      "status": "accepted",
       "judgeRounds": [],
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "56d4d9e552d16fc332ed0e224a53921f5c7b5f8c",
         "primaryId": "task_e2bf3034",
         "primaryCommit": "b11251c468f51c5a3f772e37c37306b783862fd5",
-        "judgeIds": [],
+        "judgeIds": ["task_9435f4ce"],
         "sourceCommit": "b11251c468f51c5a3f772e37c37306b783862fd5",
-        "state": "needs-judge",
-        "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+        "state": "accepted-joined",
+        "reason": "Read every directive in the exact candidate. The small ordered policy is already directly legible: port/listener -> host and authorized-key paths -> prohibit-password root login and key-only authentication -> deny agent/TCP forwarding, TTY and X11 -> strict modes and logging. There is no scattered authority to consolidate inside this file. Regrouping it or extracting a policy layer would add navigation or formatting churn without improving this journey."
       },
-      "acceptedBlob": null
+      "acceptedBlob": "56d4d9e552d16fc332ed0e224a53921f5c7b5f8c"
     },
     {
       "focus": "tests/fixtures/remote-e2e/subagents.json",
       "initialBlob": "77fb8e3477a59a1aa467edd97000701b2227e919",
-      "status": "pending",
+      "status": "accepted",
       "judgeRounds": [],
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "77fb8e3477a59a1aa467edd97000701b2227e919",
         "primaryId": "task_0ebb2fc5",
         "primaryCommit": "dbc48ffafc37b685fde4158082034ec2ef223bbf",
-        "judgeIds": [],
+        "judgeIds": ["task_9435f4ce"],
         "sourceCommit": "dbc48ffafc37b685fde4158082034ec2ef223bbf",
-        "state": "needs-judge",
-        "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+        "state": "accepted-joined",
+        "reason": "Read the entire exact JSON: the normal profile owns model fixture/fixture-model and thinking off in one place. These two related settings require no reconstruction within the fixture. Empty fast/orchestrator profiles, expanded formatting, or a helper would not clarify the only configured profile and would introduce unrelated surface. The candidate equals its supplied primaryBase, so there are no source edits or prior changes to restore in this assigned comparison."
       },
-      "acceptedBlob": null
+      "acceptedBlob": "77fb8e3477a59a1aa467edd97000701b2227e919"
     },
     {
       "focus": "tests/fixtures/remote-owner-error.ts.txt",
@@ -4131,8 +4133,8 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 89,
-    "pending": 33
+    "accepted": 92,
+    "pending": 30
   },
   "extraFiles": [
     {
