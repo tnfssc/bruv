@@ -2078,50 +2078,53 @@
     {
       "focus": "tests/fixtures/remote-placement-e2e/models.json",
       "initialBlob": "3849fbe167501b2b3c262687524d095988f14b93",
-      "status": "pending",
+      "status": "accepted",
       "judgeRounds": [],
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "3849fbe167501b2b3c262687524d095988f14b93",
         "primaryId": "task_56130606",
         "primaryCommit": "45731ea3cb85870c2bc145b1307b5b44e22caf18",
-        "judgeIds": [],
+        "judgeIds": ["task_77e4899b"],
         "sourceCommit": "45731ea3cb85870c2bc145b1307b5b44e22caf18",
-        "state": "needs-judge",
-        "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+        "state": "accepted-joined",
+        "reason": "The entire JSON is one explicit fixture provider: loopback port 18765, OpenAI-completions transport, a clearly fake key, and the three parent/orchestrator/normal IDs with matching names and token limits. Following each ID into scenario.response shows a direct role switch with an error for unexpected/local-wrong models. Destination subagents.json maps normal and orchestrator directly to those IDs. No reader has to reconstruct a dispersed configuration scheme, so grouping or introducing a configuration abstraction would add navigation without resolving a real structural burden. The unchanged blob is appropriate independently of the scenario acceptance."
       },
-      "acceptedBlob": null
+      "acceptedBlob": "3849fbe167501b2b3c262687524d095988f14b93"
     },
     {
       "focus": "tests/fixtures/remote-placement-e2e/scenario.ts",
       "initialBlob": "364bd429724eafcc4f6d657837c50f1197efcefc",
-      "status": "pending",
+      "status": "accepted",
       "judgeRounds": [],
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "8aa11f4ce7161b4998e14bf80a96f89460964405",
         "primaryId": "task_56130606",
         "primaryCommit": "45731ea3cb85870c2bc145b1307b5b44e22caf18",
-        "judgeIds": [],
+        "judgeIds": ["task_77e4899b"],
         "sourceCommit": "45731ea3cb85870c2bc145b1307b5b44e22caf18",
-        "state": "needs-judge",
-        "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+        "state": "accepted-joined",
+        "reason": "Read the complete role journeys, not only extracted names. response now chooses clean/drift and dispatches a role, without carrying role-irrelevant expected/question state. parentResponse exposes question capture, readiness, one launch, delivery-gated inspection, result and yield in their original order; launchOrchestrator owns authorization lookup plus durable job recording, and inspectOrchestratorResult owns paged observation plus result recording. orchestratorResponse exposes start, child completion, question blocking, user-answer trigger and finish gates without embedding their programs. startOrchestrator keeps remote proof and omitted-target child creation together; requestReturnApproval keeps completed-child observation and human block together; applyApprovedReturn keeps saved-ledger validation, resolution and edit together. normalResponse appropriately retains its one proof and prohibited-grandchild check rather than fragmenting it. Multiline shell/JS and inspectHelper make actual proof assertions and cursor handling readable. These are coherent authority boundaries, not cosmetic renames, mutable context bags or a framework."
       },
-      "acceptedBlob": null
+      "acceptedBlob": "8aa11f4ce7161b4998e14bf80a96f89460964405"
     },
     {
       "focus": "tests/fixtures/remote-placement-e2e/ssh-proxy.ts",
       "initialBlob": "ca71c9208be0329bb6b36b75ed2fe61a1ec5a5a5",
-      "status": "pending",
+      "status": "accepted",
       "judgeRounds": [],
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "ca71c9208be0329bb6b36b75ed2fe61a1ec5a5a5",
         "primaryId": "task_56130606",
         "primaryCommit": "45731ea3cb85870c2bc145b1307b5b44e22caf18",
-        "judgeIds": [],
+        "judgeIds": ["task_77e4899b"],
         "sourceCommit": "45731ea3cb85870c2bc145b1307b5b44e22caf18",
-        "state": "needs-judge",
-        "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+        "state": "accepted-joined",
+        "reason": "Read all nine lines: connect to destination loopback port 2222, report socket error and fail, pipe stdin into that socket, pipe socket bytes into stdout, and exit on socket close. Connection lifetime and both byte directions are already visible together. There is no role selection, profile lookup, approval state or placement policy hidden here. Extracting connect/pipe/termination wrappers would turn a single glance into additional navigation; leaving this file intact is the independently appropriate structural result."
       },
-      "acceptedBlob": null
+      "acceptedBlob": "ca71c9208be0329bb6b36b75ed2fe61a1ec5a5a5"
     },
     {
       "focus": "tests/fixtures/remote-placement-e2e/sshd_config",
@@ -2311,11 +2314,11 @@
       "judgeRounds": [],
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_b9789736",
+        "primaryCommit": "7018ba2782c462a523f74b4e608a495c22f3cdcb",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary-unstarted",
+        "sourceCommit": "7018ba2782c462a523f74b4e608a495c22f3cdcb",
+        "state": "needs-judge",
         "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
       },
       "acceptedBlob": null
@@ -2327,11 +2330,11 @@
       "judgeRounds": [],
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_b9789736",
+        "primaryCommit": "7018ba2782c462a523f74b4e608a495c22f3cdcb",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary-unstarted",
+        "sourceCommit": "7018ba2782c462a523f74b4e608a495c22f3cdcb",
+        "state": "needs-judge",
         "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
       },
       "acceptedBlob": null
@@ -4142,8 +4145,8 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 101,
-    "pending": 21
+    "accepted": 104,
+    "pending": 18
   },
   "extraFiles": [
     {

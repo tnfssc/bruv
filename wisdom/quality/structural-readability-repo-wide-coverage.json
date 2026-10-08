@@ -11835,12 +11835,12 @@
     {
       "file": "tests/fixtures/remote-placement-e2e/models.json",
       "initialBlob": "3849fbe167501b2b3c262687524d095988f14b93",
-      "status": "pending",
+      "status": "accepted",
       "area": "remote",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_56130606",
       "primaryCommit": "45731ea3cb85870c2bc145b1307b5b44e22caf18",
-      "judgeIds": [],
+      "judgeIds": ["task_77e4899b"],
       "sourceCommit": "45731ea3cb85870c2bc145b1307b5b44e22caf18",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
       "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
@@ -11858,17 +11858,33 @@
         "Existing Dockerfile and fixture callers inspected only; their container/temp writes and cleanup were not executed. Formatter alone ran in its retained owned fixture environment; dependencies read-only.",
         "No independent reviewer or other descendants launched; runtime model verification belongs to parent.",
         "changedPaths on every decision lists the complete combined source commit scope; only scenario.ts changed, even when the focus decision is no-change. No wisdom/values edits; parent owns aggregate lessons."
+      ],
+      "acceptedBlob": "3849fbe167501b2b3c262687524d095988f14b93",
+      "result": "The entire JSON is one explicit fixture provider: loopback port 18765, OpenAI-completions transport, a clearly fake key, and the three parent/orchestrator/normal IDs with matching names and token limits. Following each ID into scenario.response shows a direct role switch with an error for unexpected/local-wrong models. Destination subagents.json maps normal and orchestrator directly to those IDs. No reader has to reconstruct a dispersed configuration scheme, so grouping or introducing a configuration abstraction would add navigation without resolving a real structural burden. The unchanged blob is appropriate independently of the scenario acceptance.",
+      "systemReason": "Dockerfile copies models.json into the destination agent directory and subagents.json into its HOME. entrypoint starts the container provider, whose stream(body) dispatches by those IDs. scripts/remote-placement-e2e.ts loads this JSON for the parent but changes only that copy's provider URL, requires placement-parent at its inference endpoint, and writes deliberately invalid local descendant profiles. src/remote/owner.ts selects the destination profile and constructs provider/model argv; src/tasks/job-service.ts resolves an omitted-target normal child from destination profiles. This separation makes escaped placement fail rather than silently inherit local configuration. The related scenario change preserves all IDs, default error and destination checks.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md; independently read complete candidate focus files and complete base/candidate scenario source using git show, not checkout HEAD.",
+        "git diff --name-status 0879e2ecf255536afe27ead93375282b9c6a8167 45731ea3cb85870c2bc145b1307b5b44e22caf18: scenario.ts is the only changed path. Inspected this changed source for every focus.",
+        "git diff --check 0879e2ecf255536afe27ead93375282b9c6a8167 45731ea3cb85870c2bc145b1307b5b44e22caf18 exited 0.",
+        "Read (did not run) tests/remote-placement-e2e-fixture.test.ts, including generated-program syntax cases, placement/role gates, user-vs-tool answer markers, restart/delivery, drift, and SSE assertions.",
+        "git diff --quiet base candidate -- models.json ssh-proxy.ts exited 0; models.json base and candidate blob are both 3849fbe167501b2b3c262687524d095988f14b93."
+      ],
+      "limits": [
+        "Source-only independent judgment. No setup, tests, builds, provider calls, SSH connections, live auth/device use, credentials, cleanup, or delegation were executed. Runtime agent.model verification remains parent-owned; no runtime model claim is made here.",
+        "Durable provenance: review performed in /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_77e4899b against exact Git candidate/base objects. Existing worktrees and candidate edits preserved. Only this untracked result artifact was written; no wisdom/source edits or publication.",
+        "Reviewed effects before any execution consideration: harness creates mkdtemp fixture roots, HOME/config/repository and keys, Docker image/container and loopback inference; network-none-fixture cleanup removes its root/image/container, Dockerfile contains image-local removal, and scenario emits writes to fixture HOME, container /tmp and tracked.txt. None of these fixture programs were run. Parent must use its audited retained isolated gates rather than blindly invoke existing cleanup.",
+        "Safety for ALL descendants: NO sudo, recovery investigation, user secrets, shell deletion/cleanup commands, inherited HOME/config/SDK cleanup, nested shell traps, destructive git, or user-data mutation. User already recovered data and requested no recovery work. Tests must use explicit process argv/env and owned fs.mkdtemp fixture HOME/config/SDK; retain them, do not delete. Review filesystem/network effects BEFORE tests/setup. Existing test-code cleanup of provably owned temporary paths may be inspected but NEVER run a shell trap or inherited HOME removal. Need live auth/device? Report unverified, don't access credentials. Propagate these constraints verbatim."
       ]
     },
     {
       "file": "tests/fixtures/remote-placement-e2e/scenario.ts",
       "initialBlob": "364bd429724eafcc4f6d657837c50f1197efcefc",
-      "status": "pending",
+      "status": "accepted",
       "area": "remote",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_56130606",
       "primaryCommit": "45731ea3cb85870c2bc145b1307b5b44e22caf18",
-      "judgeIds": [],
+      "judgeIds": ["task_77e4899b"],
       "sourceCommit": "45731ea3cb85870c2bc145b1307b5b44e22caf18",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
       "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
@@ -11886,17 +11902,34 @@
         "Existing Dockerfile and fixture callers inspected only; their container/temp writes and cleanup were not executed. Formatter alone ran in its retained owned fixture environment; dependencies read-only.",
         "No independent reviewer or other descendants launched; runtime model verification belongs to parent.",
         "changedPaths on every decision lists the complete combined source commit scope; only scenario.ts changed, even when the focus decision is no-change. No wisdom/values edits; parent owns aggregate lessons."
+      ],
+      "acceptedRelatedJudges": ["task_77e4899b"],
+      "acceptedBlob": "8aa11f4ce7161b4998e14bf80a96f89460964405",
+      "result": "Read the complete role journeys, not only extracted names. response now chooses clean/drift and dispatches a role, without carrying role-irrelevant expected/question state. parentResponse exposes question capture, readiness, one launch, delivery-gated inspection, result and yield in their original order; launchOrchestrator owns authorization lookup plus durable job recording, and inspectOrchestratorResult owns paged observation plus result recording. orchestratorResponse exposes start, child completion, question blocking, user-answer trigger and finish gates without embedding their programs. startOrchestrator keeps remote proof and omitted-target child creation together; requestReturnApproval keeps completed-child observation and human block together; applyApprovedReturn keeps saved-ledger validation, resolution and edit together. normalResponse appropriately retains its one proof and prohibited-grandchild check rather than fragmenting it. Multiline shell/JS and inspectHelper make actual proof assertions and cursor handling readable. These are coherent authority boundaries, not cosmetic renames, mutable context bags or a framework.",
+      "systemReason": "Compared every generated stage against the base: same tool-call IDs, prompts, paths, clean/drift expectations, launch parameters, depth/role/host/git/untracked assertions, async wait settings, child completion marker, human question provenance fields, ledger answer equality, resolve-before-write order, refusal assertion, and 200-page/5000-byte advancing-cursor bound. Parent still cannot connect or answer; destination normal child still omits target/model; no restart relaunch or result inspection before terminal marker was introduced. Shell statements now occupy separate lines under the same set -eux; JS literals use JSON.stringify without changing the fixture marker/newline values. Execute envelopes and OpenAI SSE finish/DONE framing remain unchanged and separate from journeys. Followed harness ordinary-question restart/escape/explicit approval, snapshot provenance, safe apply, drift review and completion deduplication assertions, and runtime destination profile/role/depth handling. No security/assertion weakening found.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md; independently read complete candidate focus files and complete base/candidate scenario source using git show, not checkout HEAD.",
+        "git diff --name-status 0879e2ecf255536afe27ead93375282b9c6a8167 45731ea3cb85870c2bc145b1307b5b44e22caf18: scenario.ts is the only changed path. Inspected this changed source for every focus.",
+        "git diff --check 0879e2ecf255536afe27ead93375282b9c6a8167 45731ea3cb85870c2bc145b1307b5b44e22caf18 exited 0.",
+        "Read (did not run) tests/remote-placement-e2e-fixture.test.ts, including generated-program syntax cases, placement/role gates, user-vs-tool answer markers, restart/delivery, drift, and SSE assertions."
+      ],
+      "limits": [
+        "Source-only independent judgment. No setup, tests, builds, provider calls, SSH connections, live auth/device use, credentials, cleanup, or delegation were executed. Runtime agent.model verification remains parent-owned; no runtime model claim is made here.",
+        "Durable provenance: review performed in /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_77e4899b against exact Git candidate/base objects. Existing worktrees and candidate edits preserved. Only this untracked result artifact was written; no wisdom/source edits or publication.",
+        "Reviewed effects before any execution consideration: harness creates mkdtemp fixture roots, HOME/config/repository and keys, Docker image/container and loopback inference; network-none-fixture cleanup removes its root/image/container, Dockerfile contains image-local removal, and scenario emits writes to fixture HOME, container /tmp and tracked.txt. None of these fixture programs were run. Parent must use its audited retained isolated gates rather than blindly invoke existing cleanup.",
+        "Safety for ALL descendants: NO sudo, recovery investigation, user secrets, shell deletion/cleanup commands, inherited HOME/config/SDK cleanup, nested shell traps, destructive git, or user-data mutation. User already recovered data and requested no recovery work. Tests must use explicit process argv/env and owned fs.mkdtemp fixture HOME/config/SDK; retain them, do not delete. Review filesystem/network effects BEFORE tests/setup. Existing test-code cleanup of provably owned temporary paths may be inspected but NEVER run a shell trap or inherited HOME removal. Need live auth/device? Report unverified, don't access credentials. Propagate these constraints verbatim.",
+        "Behavioral preservation is static reading, not executed equivalence or end-to-end acceptance. Existing fixture limitations remain: leaf delegation refusal accepts any thrown error, marker gates rely on scripted conversation history, and terminal status/snapshot outcomes are asserted by the harness. These were not introduced or weakened by this refactor."
       ]
     },
     {
       "file": "tests/fixtures/remote-placement-e2e/ssh-proxy.ts",
       "initialBlob": "ca71c9208be0329bb6b36b75ed2fe61a1ec5a5a5",
-      "status": "pending",
+      "status": "accepted",
       "area": "remote",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_56130606",
       "primaryCommit": "45731ea3cb85870c2bc145b1307b5b44e22caf18",
-      "judgeIds": [],
+      "judgeIds": ["task_77e4899b"],
       "sourceCommit": "45731ea3cb85870c2bc145b1307b5b44e22caf18",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
       "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
@@ -11914,6 +11947,22 @@
         "Existing Dockerfile and fixture callers inspected only; their container/temp writes and cleanup were not executed. Formatter alone ran in its retained owned fixture environment; dependencies read-only.",
         "No independent reviewer or other descendants launched; runtime model verification belongs to parent.",
         "changedPaths on every decision lists the complete combined source commit scope; only scenario.ts changed, even when the focus decision is no-change. No wisdom/values edits; parent owns aggregate lessons."
+      ],
+      "acceptedBlob": "ca71c9208be0329bb6b36b75ed2fe61a1ec5a5a5",
+      "result": "Read all nine lines: connect to destination loopback port 2222, report socket error and fail, pipe stdin into that socket, pipe socket bytes into stdout, and exit on socket close. Connection lifetime and both byte directions are already visible together. There is no role selection, profile lookup, approval state or placement policy hidden here. Extracting connect/pipe/termination wrappers would turn a single glance into additional navigation; leaving this file intact is the independently appropriate structural result.",
+      "systemReason": "Followed network-none-fixture.connectPinnedSsh: ProxyCommand runs docker exec -i into the named network:none container and invokes this exact relay; the Dockerfile copies it into /opt/fixture, and entrypoint runs real sshd with the fixture sshd_config. The caller owns identity keys, IdentityAgent none, no forwarding, pinned generated known-host key, StrictHostKeyChecking yes, batch mode and timeout; daemon disables password/KbdInteractive auth, forwarding and TTY. Relay is byte transport under OpenSSH, not an authentication bypass or task placement authority. Changing scenario.ts does not alter this transport or its caller policy, so no corresponding relay edit is warranted.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md; independently read complete candidate focus files and complete base/candidate scenario source using git show, not checkout HEAD.",
+        "git diff --name-status 0879e2ecf255536afe27ead93375282b9c6a8167 45731ea3cb85870c2bc145b1307b5b44e22caf18: scenario.ts is the only changed path. Inspected this changed source for every focus.",
+        "git diff --check 0879e2ecf255536afe27ead93375282b9c6a8167 45731ea3cb85870c2bc145b1307b5b44e22caf18 exited 0.",
+        "Read (did not run) tests/remote-placement-e2e-fixture.test.ts, including generated-program syntax cases, placement/role gates, user-vs-tool answer markers, restart/delivery, drift, and SSE assertions.",
+        "git diff --quiet base candidate -- models.json ssh-proxy.ts exited 0; ssh-proxy.ts base and candidate blob are both ca71c9208be0329bb6b36b75ed2fe61a1ec5a5a5."
+      ],
+      "limits": [
+        "Source-only independent judgment. No setup, tests, builds, provider calls, SSH connections, live auth/device use, credentials, cleanup, or delegation were executed. Runtime agent.model verification remains parent-owned; no runtime model claim is made here.",
+        "Durable provenance: review performed in /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_77e4899b against exact Git candidate/base objects. Existing worktrees and candidate edits preserved. Only this untracked result artifact was written; no wisdom/source edits or publication.",
+        "Reviewed effects before any execution consideration: harness creates mkdtemp fixture roots, HOME/config/repository and keys, Docker image/container and loopback inference; network-none-fixture cleanup removes its root/image/container, Dockerfile contains image-local removal, and scenario emits writes to fixture HOME, container /tmp and tracked.txt. None of these fixture programs were run. Parent must use its audited retained isolated gates rather than blindly invoke existing cleanup.",
+        "Safety for ALL descendants: NO sudo, recovery investigation, user secrets, shell deletion/cleanup commands, inherited HOME/config/SDK cleanup, nested shell traps, destructive git, or user-data mutation. User already recovered data and requested no recovery work. Tests must use explicit process argv/env and owned fs.mkdtemp fixture HOME/config/SDK; retain them, do not delete. Review filesystem/network effects BEFORE tests/setup. Existing test-code cleanup of provably owned temporary paths may be inspected but NEVER run a shell trap or inherited HOME removal. Need live auth/device? Report unverified, don't access credentials. Propagate these constraints verbatim."
       ]
     },
     {
@@ -12264,26 +12313,54 @@
       "initialBlob": "56d4d9e552d16fc332ed0e224a53921f5c7b5f8c",
       "status": "pending",
       "area": "remote",
-      "resumeState": "pending-primary-unstarted",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_b9789736",
+      "primaryCommit": "7018ba2782c462a523f74b4e608a495c22f3cdcb",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "7018ba2782c462a523f74b4e608a495c22f3cdcb",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
-      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
+      "primaryBase": "7018ba2782c462a523f74b4e608a495c22f3cdcb",
+      "primaryResult": "Retain unchanged. Both remote-root-placement-e2e.ts and task-placement-clean-capture.ts pass this file to networkNoneFixture; Dockerfile copies it to /etc/ssh/sshd_config and entrypoint.sh installs fixture keys at the declared /run/sshd paths then execs sshd with -f. network-none-fixture.ts generates owned keys and pins known_hosts/client identity at port 2222 through a network-none Docker exec proxy. The fixture assertion reads the no-TTY/no-TCP-forwarding directives directly. Endpoint, authentication, restrictions, and ownership remain visible without an abstraction or cosmetic regrouping; all security directives are preserved.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        "Read whole assigned file and its exact reconciliation row: no candidate, rejection, prior primary, or judgment; current blob equals preserved baseline.",
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Static source/caller inspection only; git status --short clean before artifact and git diff --check exit 0."
+      ],
+      "primaryLimits": [
+        "No tests, setup, builds, runtime SSH/Docker, auth/device access, or credential reads performed. Parent owns audited isolated gates and independent judgment.",
+        "No source edits; no source commit created or formatter invoked. sourceCommit identifies unchanged exact current HEAD.",
+        "Durable provenance: current assigned worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_b9789736; reconciliation evidence retained in parent worktree task_214f85ab/task_1adcf635. No temporary code checkout or cleanup.",
+        "No delegation. Runtime agent.model verification remains parent-owned."
+      ]
     },
     {
       "file": "tests/fixtures/remote-typed-root-placement/subagents.json",
       "initialBlob": "8d2fa02a457a15c6bf84070689ab7d4b673c13ed",
       "status": "pending",
       "area": "remote",
-      "resumeState": "pending-primary-unstarted",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_b9789736",
+      "primaryCommit": "7018ba2782c462a523f74b4e608a495c22f3cdcb",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "7018ba2782c462a523f74b4e608a495c22f3cdcb",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
-      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
+      "primaryBase": "7018ba2782c462a523f74b4e608a495c22f3cdcb",
+      "primaryResult": "Retain unchanged. remote-root-placement-e2e.ts sends this file through networkNoneFixture into the Docker build; Dockerfile places it at /root/.bruv/subagents.json. subagent-profiles.ts parses the normal field using the shared strict schema. remote/owner.ts reads destination HOME profiles for hello and launch, choosing the configured normal model/thinking unless a request explicitly overrides them. models.json registers typed-root-normal under fixture, and scenario.ts routes that model to depth-1 normal-child assertions separately from root typed-root selected by settings.json. README already explains this distinction. The clean presentation capture deliberately substitutes its own presentation subagents.json and does not consume this profile. Adding another indirection or expanding the minimal declaration would obscure rather than improve this journey.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        "Read whole assigned file and its exact reconciliation row: no candidate, rejection, prior primary, or judgment; current blob equals preserved baseline.",
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Static source/caller inspection only; git status --short clean before artifact and git diff --check exit 0."
+      ],
+      "primaryLimits": [
+        "No tests, setup, builds, runtime SSH/Docker, auth/device access, or credential reads performed. Parent owns audited isolated gates and independent judgment.",
+        "No source edits; no source commit created or formatter invoked. sourceCommit identifies unchanged exact current HEAD.",
+        "Durable provenance: current assigned worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_b9789736; reconciliation evidence retained in parent worktree task_214f85ab/task_1adcf635. No temporary code checkout or cleanup.",
+        "No delegation. Runtime agent.model verification remains parent-owned."
+      ]
     },
     {
       "file": "tests/fixtures/saved-transcript-startup.ts",
@@ -21550,9 +21627,9 @@
     "baselineFiles": 766,
     "finalGate": "pending; incomplete focus coverage",
     "liveAuth": "unverified/failing; preserved",
-    "accepted": 756,
+    "accepted": 759,
     "total": 835,
-    "pending": 79,
+    "pending": 76,
     "sourceExtras": 69,
     "checkout": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
     "branch": "bruv/readability-pr45-sol-continuation",
