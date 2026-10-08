@@ -86,6 +86,24 @@
         "branch": "bruv/pr45-primary-scripts-remote-e2e.sh-d97a3bd7",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
+      },
+      {
+        "id": "task_46bb6641",
+        "stage": "judge",
+        "focus": "scripts/remote-capability-pty-e2e.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_46bb6641",
+        "branch": "bruv/pr45-judge-scripts-remote-capability-pty-46bb6641",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_51a0ee46",
+        "stage": "primary",
+        "focus": "scripts/remote-e2e.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_51a0ee46",
+        "branch": "bruv/pr45-primary-scripts-remote-e2e.ts-51a0ee46",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
       }
     ]
   },
@@ -672,7 +690,7 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_690995b4",
         "branch": "bruv/pr45-judge-scripts-claude-native-accepta-690995b4",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled"
       }
     ]
   },

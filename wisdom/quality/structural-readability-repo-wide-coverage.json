@@ -965,13 +965,14 @@
     {
       "file": "scripts/claude-native-acceptance/subagent-driver.mjs",
       "initialBlob": "b3a839d892d5d6ea15b4bc23a32504ce22a29103",
-      "status": "pending",
+      "status": "accepted",
       "area": "compatibility-t3",
-      "resumeState": "needs-rejudge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_48898268",
       "primaryCommit": "e2da2498bfe0fcb2ea83bc0fb74867b7a2622e20",
       "judgeIds": [
-        "task_2aa53476"
+        "task_2aa53476",
+        "task_690995b4"
       ],
       "sourceCommit": "89d2aa8e47b2b4e52470e39cec6cfab5417f86a0",
       "report": "wisdom/quality/structural-readability-areas/compatibility-t3.json",
@@ -1010,35 +1011,21 @@
         "Runtime agent.model verification and automatic launch-setup diagnostics remain parent-owned; no self-introspection or setup retry/bypass performed.",
         "No per-worker wisdom edits: parent owns aggregate wisdom; preserved worktrees and candidates retained."
       ],
-      "acceptedBlob": "48d0ded793f11d31cece88d1f3da251e61a6daf9",
-      "result": "Compared the exact candidate with its parent, which is the supplied primary base, not this worktree HEAD. The base embeds three browser scenarios and four verification authorities in long exported functions. The candidate makes exercise (lines 21–30) expose the prerequisite: completed-child inspection and successful same-root next reply must finish before either independent root is opened. exerciseCompletedChildReturn owns child release, live-card selection, transcript/tool inspection, parent URL identity, bounded composer admission and its finally evidence capture. The cancellation and Stop helpers each retain their own process-exit waits and snapshots. verify (lines 311–363) now reads as explicit browser/wire admission, task lifecycle, root/child usage ownership, persisted launch-source resolution, Stop/Continue, then publication. Helpers return the evidence their caller actually uses; no new framework, context bag or duplicated owner. This is structural journey/authority separation, not merely renaming. Unchanged decision: NO CHANGE NEEDED for checkSameRootReply, checkConsumedPromptOwnership and flushCapture; their byte-identical code already clearly separates session identity, human prompt consumption versus autonomous wake origin, and final provider capture. The proof-publication tail is also byte-identical and should remain unchanged.",
-      "systemReason": "Followed the candidate run-subagent runner: it creates isolated deterministic-model configuration, rewrites the shared replay integration import to this driver, and waits for replay exit before retaining proof. The shared replay opens the native composer before exercise, invokes verify after reading wire, and invokes flushCapture in finally before browser/server release, including failures before exercise. observedConfig is still assigned before the first awaited browser action; flushCapture keeps both the live-config path and the existing disk fallback for pre-exercise failure. The return-evidence collector reads fixture wire, native journals, provider logs and read-only projection databases, reporting fixture markers/correlation and the live same-root flag. Model source ties ready/PID files and reply markers to normal asynchronous workers, explicit terminal cancellation inspection and native Stop of the owned subtree. Exported checker callers in claude-native-subagent-return.test.mjs still use the same contracts. Extraction preserves scenario ordering, prompts, waits, snapshots, source-binding resolution and publication. Agent-count validation now precedes usage validation; simultaneous failures can produce a different first assertion, but no authority or requirement was removed. No related source edit is needed.",
+      "acceptedBlob": "e0e020bb0e860bb6ea3d417f1d9e4883138ae232",
+      "result": "Read the complete actual candidate driver from Git, its supplied primary base and direct parent 753f7a1ffafa5577938649e09ac58a818b64dc64, and the earlier structural integration delta at 3782f6ad. Candidate versus supplied base is only one submitPrompt call formatted across lines; it is not a new structural improvement. Independently accept the resulting code, not the formatter or the primary narrative. exercise makes the critical sequence visible: complete and inspect the first child, return and obtain another reply in that same root, then create separate cancellation and Stop roots. The first scenario retains the root URL, rendered transcript/tool evidence, bounded composer checks, success flag and finally evidence capture together. Cancellation owns its completion and worker/tool exit observations; Stop owns interrupt, all three exit observations and continuation. verify separately names native task lifecycle, root/child usage ownership, persisted launch-source resolution and Stop/Continue evidence, and publishes proof only after those checks. The helpers represent coherent scenarios or authorities rather than arbitrary line blocks; their arguments and small returned evidence sets do not introduce a framework or shared context bag. No further source change is needed. Unchanged decision: preserve same-root/prompt-ownership assertions, exact proof payloads, observedConfig assignment before exercise, and flushCapture including the pre-exercise on-disk fallback; these already express the needed authorities and replay lifetime.",
+      "systemReason": "Traced run-subagent.mjs replacing the shared replay template driver import and supplying fixture configuration. The replay prepares the runtime and native composer, invokes this exercise, reads wire evidence, invokes verify before publishing PASS, and calls flushCapture in finally before runtime release. Shared driver.mjs owns native preparation/model identity, wire projection and bounded process-exit observation. subagent-model.mjs maps the offered markers to real normal-worker launches, readiness/release files, terminal cancellation inspection, held root-tool generation for Stop, and distinct followup/after-child replies; those markers agree with the scenario boundaries. In the completed-child journey a pending followup precedes release and autonomous completion, completed-card navigation exposes transcript/tool input, Open parent must restore the saved URL, and next reply must succeed there before independent roots can start. Browser success is then independently checked against root session IDs and consumed human UUIDs; autonomous completion must have task-notification origin and no consumed human UUID. Task verification associates terminal notifications with starts, keeps child usage separate from root results, and resolves launch job IDs/source calls through persisted task projection entries. The Stop journey observes actual worker, child-tool and root-tool exit, followed by a fresh query-owner spawn in native wire. collectReturnEvidence reads the same in-memory config for immediate and final evidence, so successful browser flags are not lost by rereading config after exercise. Candidate formatting changes none of these callers, assertions, source authorities or proof contracts.",
       "checks": [
-        {
-          "check": "Exact Git parent, primary-base delta and every changed source path",
-          "result": "Candidate parent equals b80a55a855e65d9bcb4ae8db3bb95d577db79b67; the only changed path is the focus. Read full candidate and full diff against that parent."
-        },
-        {
-          "check": "Actual-code system journey reading",
-          "result": "Read candidate callers and relevant shared preparation, identity, replay/finalization, model controls, process-exit checks, evidence collection and exported-checker callers without executing them."
-        },
-        {
-          "check": "Unchanged boundary comparison",
-          "result": "checkSameRootReply, checkConsumedPromptOwnership, flushCapture and proof-publication tail are byte-identical to primary base."
-        },
-        {
-          "check": "git diff --check primary-base candidate",
-          "result": "Exit 0, no output; whitespace-only safety check, not readability or runtime proof."
-        },
-        {
-          "check": "Required context",
-          "result": "Read values, structural-readability guidance, repo-wide ledger, focus coverage entry and compatibility/T3 area ledger and focus entry."
-        }
+        "Read wisdom/values.md, structural-readability-guidance.md, repo-wide charter/resume and repo-wide assignment/coverage/jobs records for the compatibility area. No prior judgment used as the acceptance authority.",
+        "Git parent verification: candidate parent is exactly the supplied base. Git diff against both base and parent identifies only the focus source path. Every changed source path is represented in acceptedBlobs.",
+        "Static exact-source comparison: base blob 48d0ded793f11d31cece88d1f3da251e61a6daf9 becomes accepted blob e0e020bb0e860bb6ea3d417f1d9e4883138ae232 solely through the exact multiline formatting replacement of one unchanged prompt call.",
+        "Static comparisons confirm verify and flushCapture are byte-identical to the supplied base. Read unchanged same-root and prompt-ownership fixture assertions; did not execute them.",
+        "Read complete candidate focus and relevant actual caller/helper source from candidate Git tree, not current checkout HEAD. No source edits, setup, tests, builds, delegation, credentials, devices, cleanup or destructive Git operations."
       ],
       "limits": [
-        "Static independent actual-code review only. No repository tests, setup, builds, browser/provider execution, device access, credentials or recovery actions performed. Parent owns audited isolated batch gates and external runtime agent.model verification; no self-introspection or runtime/auth claim.",
-        "The preserved interrupted commit 86ef6f761802edea2844a001ea198a90fe14b87c is not present in this worktree Git object database (git diff reported bad object). No fetch/recovery attempted. Its history is context only; the requested candidate and primary base were available and reviewed directly.",
-        "No source or wisdom edits, delegation, cleanup, push, PR creation or merge. Existing worktrees and uncommitted candidates preserved. Automatic setup diagnostics remain parent-owned; no setup retry or bypass."
+        "Structural/static code judgment only. No runtime, full-gate, real-auth, device or live browser acceptance claim; audited isolated batch gates remain parent-owned.",
+        "Existing runner/replay/test cleanup was inspected as source only, never executed. No automatic setup was launched or bypassed by this judge.",
+        "The historical interrupted hash 86ef6f761802edea2844a001ea198a90fe14b87c is not available as a Git object in this worktree (git show reported bad object). Its reported provenance is not independently verified; supplied base/parent, candidate and surviving structural integration history were directly inspected. No old worktree was modified.",
+        "This is exact-blob reacceptance of already structured code after formatting, not acceptance of a rename-only readability improvement. Broader ledger coverage and integration success remain outside this decision."
       ],
       "previousAcceptedBlob": "48d0ded793f11d31cece88d1f3da251e61a6daf9",
       "originalPrimaryBase": "b80a55a855e65d9bcb4ae8db3bb95d577db79b67",
