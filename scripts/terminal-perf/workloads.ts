@@ -184,6 +184,193 @@ function createWorkload(
   let previousScreen: string[] = [];
   let iteration = 0;
   let documentLines = 0;
+
+  // Fixture contents have no adapter or terminal lifetime of their own. setup()
+  // installs the global adapters before constructing these SDK components.
+  function buildConversation(theme: Theme, tui: TuiAltScreen, taskRows: TaskRow[]) {
+    const chat = new Container();
+    const entries: Array<{
+      type: string;
+      id?: string;
+      message?: {
+        role: string;
+        content?: Array<{ type: string; id: string }>;
+        toolCallId?: string;
+        details?: unknown;
+      };
+    }> = [];
+    const add = (component: Component) => {
+      chat.addChild(component);
+      // Count calls AFTER SDK adaptation, not instead of its wrapper.
+      const render = component.render;
+      component.render = function (width) {
+        counts.componentRenders++;
+        const lines = render.call(this, width);
+        counts.componentLines += lines.length;
+        return lines;
+      };
+    };
+    const tool = (id: string, label: string, state: ExecutePreviewState) =>
+      new ToolExecutionComponent(
+        "execute",
+        id,
+        { label, code: 'console.log("deterministic fixture")' },
+        { showImages: false },
+        {
+          renderShell: "self",
+          renderCall: (args, _theme, context) => {
+            const call = args as { code: string; label?: string };
+            return executeInputPreview(call.code, context.expanded, theme, state, 0, call.label);
+          },
+          renderResult: (result, options, _theme, context) =>
+            executeOutputPreview(result, options.expanded, context.isError, theme, undefined, state),
+        },
+        tui,
+        process.cwd(),
+      );
+    for (let index = 0; index < size; index++) {
+      const callId = `settled-call-${index}`;
+      // A new turn every four calls keeps groups realistic while exposing scans
+      // across many settled components. All bodies and evidence are bounded.
+      if (index % 4 === 0) {
+        entries.push({ type: "message", id: `user-${index}`, message: { role: "user" } });
+        add(new UserMessageComponent(`Audit module ${index} and preserve its task provenance.`));
+        add(
+          new AssistantMessageComponent(
+            {
+              role: "assistant",
+              content: [
+                {
+                  type: "text",
+                  text:
+                    "### Module " +
+                    index +
+                    "\n\nMeasured fixture evidence:\n\n- task ownership retained\n- resize and scrolling retained",
+                },
+              ],
+            } as never,
+            false,
+          ),
+        );
+      }
+      entries.push({
+        type: "message",
+        id: `assistant-${index}`,
+        message: { role: "assistant", content: [{ type: "toolCall", id: callId }] },
+      });
+      const row: TaskRow = {
+        id: `task-${index}`,
+        source: index % 3 === 0 ? "local" : index % 3 === 1 ? "native" : "ssh",
+        sourceCallId: callId,
+        title: `Check module ${index}`,
+        status: index % 11 === 0 ? "failed" : "succeeded",
+        terminal: true,
+        exitCode: index % 11 === 0 ? 1 : 0,
+      };
+      taskRows.push(row);
+      const settled = tool(callId, `Inspect module ${index}`, {});
+      const details = { taskRows: [row], exitCode: row.exitCode, backgroundJobs: [], images: [] };
+      settled.markExecutionStarted();
+      settled.updateResult({
+        content: [{ type: "text", text: `Fixture output ${index}\nTwo bounded evidence lines.` }],
+        details,
+        isError: row.status === "failed",
+      });
+      add(settled);
+      entries.push({
+        type: "message",
+        id: `result-${index}`,
+        message: { role: "toolResult", toolCallId: callId, details },
+      });
+      if (index % 4 === 0) {
+        add(
+          new CustomMessageComponent(
+            {
+              role: "custom",
+              customType: "task-complete",
+              content: `Recorded module ${index}`,
+              details,
+              display: true,
+            } as never,
+            (message, options) =>
+              completionPreview(
+                message.content,
+                options.expanded,
+                theme,
+                options.outputPad,
+                "task-complete",
+                message.details,
+              ),
+          ),
+        );
+      }
+    }
+    entries.push({ type: "message", id: "live-user", message: { role: "user" } });
+    add(new UserMessageComponent("Continue the measured terminal fixture."));
+    entries.push({
+      type: "message",
+      id: "live-assistant",
+      message: { role: "assistant", content: [{ type: "toolCall", id: "live-call" }] },
+    });
+    const previewState: ExecutePreviewState = { spinnerFrame: 0 };
+    const liveTool = tool("live-call", "Measure live output", previewState);
+    liveTool.markExecutionStarted();
+    const liveRow: TaskRow = {
+      id: "live-task",
+      source: "native",
+      sourceCallId: "live-call",
+      title: "Live measured task",
+      status: "running",
+      terminal: false,
+    };
+    if (mode === "task-update") {
+      taskRows.push(liveRow);
+      liveTool.updateResult(
+        {
+          content: [{ type: "text", text: "Live task evidence" }],
+          details: { taskRows: [liveRow] },
+          isError: false,
+        },
+        true,
+      );
+    } else if (mode === "streaming") {
+      liveTool.updateResult({ content: [{ type: "text", text: "stream chunk 0" }], isError: false }, true);
+      liveTool.setExpanded(true);
+    } else {
+      // Exercise the real execute preview spinner, advanced manually (no timers).
+      liveTool.setExpanded(mode !== "animation");
+    }
+    add(liveTool);
+    // Collapsed rolling headers do not expose the execute spinner. Keep the
+    // animation call native: its own group remains collapsed but rendered
+    // through a direct SDK component after the historical rolling document.
+    if (mode === "animation") chat.removeChild(liveTool);
+    return { chat, entries, liveTool, liveRow, previewState };
+  }
+
+  // The cold screen is compared with [], then each step with the preceding screen.
+  // Drain writes only here so every sample has the same bounded output boundary.
+  function captureFrame(tui: TuiAltScreen, terminal: FakeTerminal, mutations: number): WorkloadSample {
+    counts.frames++;
+    const screen = tui.getScreenLines();
+    let changedRows = 0;
+    for (let row = 0; row < Math.max(previousScreen.length, screen.length); row++)
+      if (previousScreen[row] !== screen[row]) changedRows++;
+    previousScreen = screen;
+    const { output, writes } = terminal.takeOutput();
+    return {
+      iteration,
+      mutations,
+      outputBytes: Buffer.byteLength(output),
+      outputWrites: writes,
+      outputHash: hash(output),
+      screenHash: hash(screen.join("\n")),
+      screenChanged: changedRows > 0,
+      changedRows,
+      output,
+      work: { ...counts },
+    };
+  }
   const fixture: TerminalWorkload = {
     name: `long-thread/${mode}/${size}`,
     mode,
@@ -224,163 +411,7 @@ function createWorkload(
             return taskRows;
           }),
         );
-        const chat = new Container();
-        const entries: Array<{
-          type: string;
-          id?: string;
-          message?: {
-            role: string;
-            content?: Array<{ type: string; id: string }>;
-            toolCallId?: string;
-            details?: unknown;
-          };
-        }> = [];
-        const add = (component: Component) => {
-          chat.addChild(component);
-          // Count calls AFTER SDK adaptation, not instead of its wrapper.
-          const render = component.render;
-          component.render = function (width) {
-            counts.componentRenders++;
-            const lines = render.call(this, width);
-            counts.componentLines += lines.length;
-            return lines;
-          };
-        };
-        const tool = (id: string, label: string, state: ExecutePreviewState) =>
-          new ToolExecutionComponent(
-            "execute",
-            id,
-            { label, code: 'console.log("deterministic fixture")' },
-            { showImages: false },
-            {
-              renderShell: "self",
-              renderCall: (args, _theme, context) => {
-                const call = args as { code: string; label?: string };
-                return executeInputPreview(call.code, context.expanded, theme, state, 0, call.label);
-              },
-              renderResult: (result, options, _theme, context) =>
-                executeOutputPreview(result, options.expanded, context.isError, theme, undefined, state),
-            },
-            tui,
-            process.cwd(),
-          );
-        for (let index = 0; index < size; index++) {
-          const callId = `settled-call-${index}`;
-          // A new turn every four calls keeps groups realistic while exposing scans
-          // across many settled components. All bodies and evidence are bounded.
-          if (index % 4 === 0) {
-            entries.push({ type: "message", id: `user-${index}`, message: { role: "user" } });
-            add(new UserMessageComponent(`Audit module ${index} and preserve its task provenance.`));
-            add(
-              new AssistantMessageComponent(
-                {
-                  role: "assistant",
-                  content: [
-                    {
-                      type: "text",
-                      text:
-                        "### Module " +
-                        index +
-                        "\n\nMeasured fixture evidence:\n\n- task ownership retained\n- resize and scrolling retained",
-                    },
-                  ],
-                } as never,
-                false,
-              ),
-            );
-          }
-          entries.push({
-            type: "message",
-            id: `assistant-${index}`,
-            message: { role: "assistant", content: [{ type: "toolCall", id: callId }] },
-          });
-          const row: TaskRow = {
-            id: `task-${index}`,
-            source: index % 3 === 0 ? "local" : index % 3 === 1 ? "native" : "ssh",
-            sourceCallId: callId,
-            title: `Check module ${index}`,
-            status: index % 11 === 0 ? "failed" : "succeeded",
-            terminal: true,
-            exitCode: index % 11 === 0 ? 1 : 0,
-          };
-          taskRows.push(row);
-          const settled = tool(callId, `Inspect module ${index}`, {});
-          const details = { taskRows: [row], exitCode: row.exitCode, backgroundJobs: [], images: [] };
-          settled.markExecutionStarted();
-          settled.updateResult({
-            content: [{ type: "text", text: `Fixture output ${index}\nTwo bounded evidence lines.` }],
-            details,
-            isError: row.status === "failed",
-          });
-          add(settled);
-          entries.push({
-            type: "message",
-            id: `result-${index}`,
-            message: { role: "toolResult", toolCallId: callId, details },
-          });
-          if (index % 4 === 0) {
-            add(
-              new CustomMessageComponent(
-                {
-                  role: "custom",
-                  customType: "task-complete",
-                  content: `Recorded module ${index}`,
-                  details,
-                  display: true,
-                } as never,
-                (message, options) =>
-                  completionPreview(
-                    message.content,
-                    options.expanded,
-                    theme,
-                    options.outputPad,
-                    "task-complete",
-                    message.details,
-                  ),
-              ),
-            );
-          }
-        }
-        entries.push({ type: "message", id: "live-user", message: { role: "user" } });
-        add(new UserMessageComponent("Continue the measured terminal fixture."));
-        entries.push({
-          type: "message",
-          id: "live-assistant",
-          message: { role: "assistant", content: [{ type: "toolCall", id: "live-call" }] },
-        });
-        const previewState: ExecutePreviewState = { spinnerFrame: 0 };
-        const liveTool = tool("live-call", "Measure live output", previewState);
-        liveTool.markExecutionStarted();
-        const liveRow: TaskRow = {
-          id: "live-task",
-          source: "native",
-          sourceCallId: "live-call",
-          title: "Live measured task",
-          status: "running",
-          terminal: false,
-        };
-        if (mode === "task-update") {
-          taskRows.push(liveRow);
-          liveTool.updateResult(
-            {
-              content: [{ type: "text", text: "Live task evidence" }],
-              details: { taskRows: [liveRow] },
-              isError: false,
-            },
-            true,
-          );
-        } else if (mode === "streaming") {
-          liveTool.updateResult({ content: [{ type: "text", text: "stream chunk 0" }], isError: false }, true);
-          liveTool.setExpanded(true);
-        } else {
-          // Exercise the real execute preview spinner, advanced manually (no timers).
-          liveTool.setExpanded(mode !== "animation");
-        }
-        add(liveTool);
-        // Collapsed rolling headers do not expose the execute spinner. Keep the
-        // animation call native: its own group remains collapsed but rendered
-        // through a direct SDK component after the historical rolling document.
-        if (mode === "animation") chat.removeChild(liveTool);
+        const { chat, entries, liveTool, liveRow, previewState } = buildConversation(theme, tui, taskRows);
         const scroll = new ScrollView(chat, { primary: true, follow: "end", scrollbar: "hidden" });
         const input = new Input({ prompt: "bruv> " });
         const activity = new ActivityController({
@@ -415,26 +446,12 @@ function createWorkload(
         tui.setLayoutRoot(root);
         tui.setFocus(input);
         counts = freshWork();
+        iteration = 0;
         onTuiReady?.(tui, chat);
         tui.start();
         tui.renderNow();
-        counts.frames++;
-        previousScreen = tui.getScreenLines();
-        const { output, writes } = terminal.takeOutput();
-        const mount: WorkloadSample = {
-          iteration: 0,
-          mutations: 0,
-          outputBytes: Buffer.byteLength(output),
-          outputWrites: writes,
-          outputHash: hash(output),
-          screenHash: hash(previousScreen.join(String.fromCharCode(10))),
-          screenChanged: previousScreen.length > 0,
-          changedRows: previousScreen.length,
-          output,
-          work: { ...counts },
-        };
+        const mount = captureFrame(tui, terminal, 0);
         counts = freshWork();
-        iteration = 0;
         runtime = { terminal, tui, scroll, liveTool, liveRow, previewState };
         return mount;
       } catch (error) {
@@ -491,25 +508,7 @@ function createWorkload(
           break;
       }
       tui.renderNow();
-      counts.frames++;
-      const screen = tui.getScreenLines();
-      let changedRows = 0;
-      for (let row = 0; row < Math.max(previousScreen.length, screen.length); row++)
-        if (previousScreen[row] !== screen[row]) changedRows++;
-      previousScreen = screen;
-      const { output, writes } = terminal.takeOutput();
-      return {
-        iteration,
-        mutations: mode === "input" ? 2 : 1,
-        outputBytes: Buffer.byteLength(output),
-        outputWrites: writes,
-        outputHash: hash(output),
-        screenHash: hash(screen.join("\n")),
-        screenChanged: changedRows > 0,
-        changedRows,
-        output,
-        work: { ...counts },
-      };
+      return captureFrame(tui, terminal, mode === "input" ? 2 : 1);
     },
     dispose() {
       while (cleanups.length) cleanups.pop()?.();

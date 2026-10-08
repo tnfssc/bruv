@@ -3,6 +3,7 @@
 import fs from "node:fs";
 import { createHash } from "node:crypto";
 import { spawn } from "node:child_process";
+import { StringDecoder } from "node:string_decoder";
 const config = JSON.parse(fs.readFileSync(process.env.BRUV_ACCEPTANCE_CONFIG, "utf8"));
 const isWorker = config.delegationCases && process.argv[1] === config.workerTap;
 const instance = isWorker ? "normal" : "root";
@@ -41,45 +42,42 @@ if (config.delegationCases) {
     depth: instanceEnv.BRUV_SUBAGENT_DEPTH,
   });
 }
-let errors = "";
-child.stderr.on("data", (b) => {
-  process.stderr.write(b);
-  errors += b;
-  for (let p; (p = errors.indexOf("\n")) >= 0; ) {
-    const line = errors.slice(0, p);
-    errors = errors.slice(p + 1);
-    if (
-      config.delegationCases ||
-      /^\[bruv-claude-compat\] (?:--[A-Za-z-]+ .*not yet bound|Unsupported permission mode:|No configured Bruv model|No configured authentication|Unknown connector option: --[A-Za-z-]+$|Question belongs to another branch; history only$|Native question frontend is not bound to a parent session$|Unsupported --settings effect: [A-Za-z]+$|--[A-Za-z-]+ is not supported|Native session\/message ID must be a UUID)/.test(
-        line,
-      )
-    )
-      log("diagnostic", { error: line.replaceAll(pathRoot(config), "<FIXTURE>") });
-  }
-});
-function pathRoot(c) {
-  return c.state.slice(0, c.state.lastIndexOf("/"));
-}
-function tap(input, output, kind) {
+// Forward original bytes; decode only the evidence stream. Unterminated tails are not records.
+function forwardLines(input, output, observeLine) {
+  const decoder = new StringDecoder("utf8");
   let buffer = "";
-  input.on("data", (b) => {
-    output.write(b);
-    buffer += b.toString();
-    for (let p; (p = buffer.indexOf("\n")) >= 0; ) {
-      const line = buffer.slice(0, p);
-      buffer = buffer.slice(p + 1);
-      if (line) {
-        try {
-          log(kind, JSON.parse(line));
-        } catch {
-          log(kind, { unparsed: true });
-        }
-      }
+  input.on("data", (chunk) => {
+    output.write(chunk);
+    buffer += decoder.write(chunk);
+    for (let newline; (newline = buffer.indexOf("\n")) >= 0; ) {
+      const line = buffer.slice(0, newline);
+      buffer = buffer.slice(newline + 1);
+      observeLine(line);
     }
   });
 }
-tap(process.stdin, child.stdin, "stdin");
-tap(child.stdout, process.stdout, "stdout");
+function recordPacket(kind, line) {
+  if (!line) return;
+  try {
+    log(kind, JSON.parse(line));
+  } catch {
+    log(kind, { unparsed: true });
+  }
+}
+function recordDiagnostic(line) {
+  if (
+    config.delegationCases ||
+    /^\[bruv-claude-compat\] (?:--[A-Za-z-]+ .*not yet bound|Unsupported permission mode:|No configured Bruv model|No configured authentication|Unknown connector option: --[A-Za-z-]+$|Question belongs to another branch; history only$|Native question frontend is not bound to a parent session$|Unsupported --settings effect: [A-Za-z]+$|--[A-Za-z-]+ is not supported|Native session\/message ID must be a UUID)/.test(
+      line,
+    )
+  ) {
+    const fixtureRoot = config.state.slice(0, config.state.lastIndexOf("/"));
+    log("diagnostic", { error: line.replaceAll(fixtureRoot, "<FIXTURE>") });
+  }
+}
+forwardLines(process.stdin, child.stdin, (line) => recordPacket("stdin", line));
+forwardLines(child.stdout, process.stdout, (line) => recordPacket("stdout", line));
+forwardLines(child.stderr, process.stderr, recordDiagnostic);
 process.stdin.on("end", () => child.stdin.end());
 child.stdin.on("error", () => {});
 for (const signal of ["SIGTERM", "SIGINT"]) process.on(signal, () => child.kill(signal));

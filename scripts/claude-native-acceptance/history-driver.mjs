@@ -24,86 +24,22 @@ async function files(dir) {
 const lines = (s) => s.trim().split("\n").filter(Boolean).map(JSON.parse);
 const hash = (s) => createHash("sha256").update(s).digest("hex");
 export async function collect(config, proof, label = "disk") {
-  const agent = config.env.BRUV_CODING_AGENT_DIR,
-    home = config.env.CLAUDE_CONFIG_DIR;
   const wire = lines(await fs.readFile(config.wire, "utf8").catch(() => ""));
-  const ids = new Set(
+  const wireUuids = new Set(
     wire
       .filter((e) => ["stdin", "stdout"].includes(e.kind))
       .map((e) => e.value.uuid)
       .filter(Boolean),
   );
+  const indexFiles = await files(path.join(config.env.BRUV_CODING_AGENT_DIR, "native-sessions"));
+  const nativeFiles = await files(path.join(config.env.CLAUDE_CONFIG_DIR, "projects"));
+  const scope = path.dirname(config.state);
   const indexes = [];
-  for (const file of await files(path.join(agent, "native-sessions")))
-    if (file.endsWith(".json")) {
-      const index = JSON.parse(await fs.readFile(file, "utf8"));
-      if (!index.file) continue;
-      const raw = await fs.readFile(index.file, "utf8");
-      const canonical = lines(raw);
-      const nativeFile = (await files(path.join(home, "projects"))).find(
-        (f) => path.basename(f) === path.basename(file, ".json") + ".jsonl",
-      );
-      const native = nativeFile ? lines(await fs.readFile(nativeFile, "utf8")) : [];
-      const importedMap = canonical
-        .filter((e) => e.customType === "bruv-native-entry-map")
-        .flatMap((e) => e.data.entries);
-      const mappings = native
-        .filter((e) => e.uuid && ["user", "assistant"].includes(e.type))
-        .map((e) => {
-          const mapped = importedMap.find((m) => m.nativeUuid === e.uuid);
-          const id = e.bruv?.sourceSessionId === canonical[0]?.id ? e.bruv.sourceMessageId : mapped?.piEntryId;
-          const source = canonical.find((c) => c.id === id);
-          return {
-            nativeUuid: e.uuid,
-            parentUuid: e.parentUuid,
-            sourceSessionId: canonical[0]?.id,
-            sourceEntryId: id,
-            originalNativeSource: e.bruv,
-            mappingKind: mapped ? "durable-import-map" : "direct-source-entry",
-            sourceExists: !!source,
-            sourceRole: source?.message?.role,
-            nativeType: e.type,
-            observedWireUuid: ids.has(e.uuid),
-          };
-        });
-      indexes.push({
-        nativeSessionId: path.basename(file, ".json"),
-        canonicalSessionId: canonical[0]?.id,
-        canonicalParentSession: canonical[0]?.parentSession ?? null,
-        canonicalSha256: hash(raw),
-        authorityOutputs: canonical
-          .filter((e) => e.message?.role === "toolResult")
-          .map((e) => JSON.stringify(e.message.content).replaceAll(path.dirname(config.state), "<SCOPED>"))
-          .filter((t) => t.includes("HISTORY_ROOT_AUTHORITY") || t.includes("HISTORY_AUTHORITY_INSPECTION")),
-        canonicalEntries: canonical.map((e) => ({
-          type: e.type,
-          id: e.id,
-          parentId: e.parentId,
-          customType: e.customType,
-          ...(e.type === "custom" && e.customType?.startsWith("bruv-native") ? { data: e.data } : {}),
-          ...(e.message
-            ? {
-                role: e.message.role,
-                toolCallId: e.message.toolCallId,
-                contentMarkers: JSON.stringify(e.message.content ?? "").match(/HISTORY_[A-Z_]+|orchid-73/g),
-                toolCalls: e.message.content
-                  ?.filter?.((b) => b.type === "toolCall")
-                  .map((b) => ({ id: b.id, name: b.name })),
-              }
-            : {}),
-        })),
-        mappings,
-        nativeEntries: native.map((e) => ({
-          type: e.type,
-          uuid: e.uuid,
-          parentUuid: e.parentUuid,
-          sessionId: e.sessionId,
-          bruv: e.bruv,
-          forkedFrom: e.forkedFrom,
-          markers: (JSON.stringify(e.message) ?? "").match(/HISTORY_[A-Z_]+|orchid-73/g),
-        })),
-      });
-    }
+  for (const file of indexFiles.filter((file) => file.endsWith(".json"))) {
+    const evidence = await readSessionEvidence(file, nativeFiles, wireUuids, scope);
+    if (evidence) indexes.push(evidence);
+  }
+
   const counter = (await fs.readFile(path.join(config.state, "root-tool-count"), "utf8").catch(() => ""))
     .trim()
     .split("\n")
@@ -117,35 +53,111 @@ export async function collect(config, proof, label = "disk") {
       .flatMap((x) => x.value.message?.content ?? [])
       .filter((b) => b.type === "tool_use").length,
   };
-  await fs.writeFile(
-    path.join(proof, "history-wire-projection.json"),
-    JSON.stringify(
-      wire.map((x) => ({
-        direction: x.kind,
-        type: x.value.type,
-        subtype: x.value.subtype,
-        event: x.value.event,
-        flags: x.value.flags,
-        uuid: x.value.uuid,
-        sessionId: x.value.session_id,
-        control: x.value.request?.subtype,
-        content: x.value.message?.content?.map?.((b) => ({
-          type: b.type,
-          id: b.id,
-          toolUseId: b.tool_use_id,
-          name: b.name,
-          markers: JSON.stringify(b).match(/HISTORY_[A-Z_]+|orchid-73/g),
-        })),
-      })),
-      null,
-      2,
-    ).replaceAll(path.dirname(config.state), "<SCOPED>") + "\n",
-  );
+  // Redact only exported evidence. Hashes and source identities come from the
+  // original files; projections never become live session/task authority.
+  await writeEvidence(proof, "history-wire-projection", projectHistoryWire(wire), scope);
+  await writeEvidence(proof, label, out, scope);
+  return out;
+}
+
+async function readSessionEvidence(indexFile, nativeFiles, wireUuids, scope) {
+  const index = JSON.parse(await fs.readFile(indexFile, "utf8"));
+  if (!index.file) return;
+  const raw = await fs.readFile(index.file, "utf8");
+  const canonical = lines(raw);
+  const nativeSessionId = path.basename(indexFile, ".json");
+  const nativeFile = nativeFiles.find((file) => path.basename(file) === nativeSessionId + ".jsonl");
+  const native = nativeFile ? lines(await fs.readFile(nativeFile, "utf8")) : [];
+  return {
+    nativeSessionId,
+    canonicalSessionId: canonical[0]?.id,
+    canonicalParentSession: canonical[0]?.parentSession ?? null,
+    canonicalSha256: hash(raw),
+    authorityOutputs: canonical
+      .filter((e) => e.message?.role === "toolResult")
+      .map((e) => JSON.stringify(e.message.content).replaceAll(scope, "<SCOPED>"))
+      .filter((t) => t.includes("HISTORY_ROOT_AUTHORITY") || t.includes("HISTORY_AUTHORITY_INSPECTION")),
+    canonicalEntries: canonical.map((e) => ({
+      type: e.type,
+      id: e.id,
+      parentId: e.parentId,
+      customType: e.customType,
+      ...(e.type === "custom" && e.customType?.startsWith("bruv-native") ? { data: e.data } : {}),
+      ...(e.message
+        ? {
+            role: e.message.role,
+            toolCallId: e.message.toolCallId,
+            contentMarkers: JSON.stringify(e.message.content ?? "").match(/HISTORY_[A-Z_]+|orchid-73/g),
+            toolCalls: e.message.content
+              ?.filter?.((b) => b.type === "toolCall")
+              .map((b) => ({ id: b.id, name: b.name })),
+          }
+        : {}),
+    })),
+    mappings: reconcileNativeSources(canonical, native, wireUuids),
+    nativeEntries: native.map((e) => ({
+      type: e.type,
+      uuid: e.uuid,
+      parentUuid: e.parentUuid,
+      sessionId: e.sessionId,
+      bruv: e.bruv,
+      forkedFrom: e.forkedFrom,
+      markers: (JSON.stringify(e.message) ?? "").match(/HISTORY_[A-Z_]+|orchid-73/g),
+    })),
+  };
+}
+
+function reconcileNativeSources(canonical, native, wireUuids) {
+  const sourceSessionId = canonical[0]?.id;
+  const importedMap = canonical.filter((e) => e.customType === "bruv-native-entry-map").flatMap((e) => e.data.entries);
+  return native
+    .filter((e) => e.uuid && ["user", "assistant"].includes(e.type))
+    .map((e) => {
+      const mapped = importedMap.find((m) => m.nativeUuid === e.uuid);
+      // A fork retains the old bruv provenance. Its canonical source belongs to
+      // the fresh child and is resolved by the durable import map instead.
+      const id = e.bruv?.sourceSessionId === sourceSessionId ? e.bruv.sourceMessageId : mapped?.piEntryId;
+      const source = canonical.find((c) => c.id === id);
+      return {
+        nativeUuid: e.uuid,
+        parentUuid: e.parentUuid,
+        sourceSessionId,
+        sourceEntryId: id,
+        originalNativeSource: e.bruv,
+        mappingKind: mapped ? "durable-import-map" : "direct-source-entry",
+        sourceExists: !!source,
+        sourceRole: source?.message?.role,
+        nativeType: e.type,
+        observedWireUuid: wireUuids.has(e.uuid),
+      };
+    });
+}
+
+function projectHistoryWire(wire) {
+  return wire.map((x) => ({
+    direction: x.kind,
+    type: x.value.type,
+    subtype: x.value.subtype,
+    event: x.value.event,
+    flags: x.value.flags,
+    uuid: x.value.uuid,
+    sessionId: x.value.session_id,
+    control: x.value.request?.subtype,
+    content: x.value.message?.content?.map?.((b) => ({
+      type: b.type,
+      id: b.id,
+      toolUseId: b.tool_use_id,
+      name: b.name,
+      markers: JSON.stringify(b).match(/HISTORY_[A-Z_]+|orchid-73/g),
+    })),
+  }));
+}
+
+async function writeEvidence(proof, label, value, scope) {
   await fs.writeFile(
     path.join(proof, label + ".json"),
-    JSON.stringify(out, null, 2).replaceAll(path.dirname(config.state), "<SCOPED>") + "\n",
+    JSON.stringify(value, null, 2).replaceAll(scope, "<SCOPED>") + "\n",
   );
-  return out;
 }
 export async function exercise({ page, url, snapshot, body, config }) {
   const log = [];

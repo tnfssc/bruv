@@ -1,16 +1,16 @@
 # Remote structural readability — ongoing
 
-39/119 initial files accepted. Two new tests have own primary/judge acceptance; one existing cross-area related test still needs assigned-owner reconciliation. This is not area completion or full-gate evidence.
+66/119 initial files accepted. Two new tests have own primary/judge acceptance; one existing cross-area related test still needs assigned-owner reconciliation. This is not area completion or full-gate evidence.
 
 Worktree: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74
 Branch: bruv/whole-repo-structural-readability-remote-cbb4da74
 Initial commit: 59413c532e6422983f611915e509e8421aa2f363
-Current source checkpoint: df656c0cf005ba2e8963ee8db70d139abfc007e0
+Current source checkpoint: 6dab803ed890711836c3d13c14762be8f92456d1
 
 ## Pickup and ownership
 remote.json is authoritative for all119 assignments, durable worker paths/branches/bases/candidates, independent judge rounds, accepted blobs, related overlaps and proofs. Reusable briefs are stored there. Preserve every attempt/worktree. Max3 active normal primary/rework workers and3 independent read-only normal judges. Coordinator does not edit source; accepted complete source/test patches only, excluding shared worker-note paths. Each related final file needs own primary and final-hash judgment; no shallow rename/extract quota.
 
-Active primaries: root-placement-options tests task_c13c26b1; remote-question-bridge tests task_4cf5a2f7; remote-job-observations tests task_0e0a9a10. Judges: job-delivery task_2852e3a3; owner-rpc task_ac4bfb3b. Fill freed slots from pending ledger rows; do not poll just to stay busy.
+Current active/queued tasks and exact durable worktrees are in remote.json; fill freed slots from pending rows and do not poll just to stay busy.
 
 ## Accepted structural boundaries
 Source changes make repository snapshot construction, launch resolution, artifact-file lifetime, cancellation request/settlement, root-store pruning, source approval, client locked sync, owner journal lifetime, root-owner close/exit evidence, capability intent/reply transactions, root presenter modal lifetime, root-client command admission, repository return and runtime capture-before-checkpoint explicit. Latest bridge change separates projection from authoritative delivered-receipt reconciliation while preserving initial versus fresh snapshots. Root parser co-locates consumption/effect; --place was intentionally already selected, not a fixed bug. Observation projection selects terminal results versus active human waits without constructing discarded alternatives.
@@ -41,3 +41,35 @@ Bridge tests1406a1c6 ACCEPT task_9172c217 atf0e7f199: ordered multicast session 
 Native artifact capture66543af9 ACCEPT task_1352e407 at3a6de6bd: per-job recoverable text/gap separate from fatal publication; serial/latest-gap and runtime checkpoint contracts retained.25/2337 independent. Related test927e7038 requires own primary. Existing PID staging/no directory fsync/failed-stage cleanup/marker-overflow limits unchanged; no power-loss claim.
 
 Human rendering f8ea2a79 ACCEPT task_1cfa60a3 at8b014ef8: direct tool payload selection and lifecycle message rendering, exact row/fallback/raw behavior retained;51/1162 independent. Related testcadcbe6c needs own primary. RPC fresh judge task_69fda549 NO CHANGE at982d5b8f (11/106 +20 probes); stalled task_ac4bfb3b killed143 retained. Latest configured check f05ff07f passed117/3624 integration tests.
+
+Placement sourcec27e168e NO CHANGE task_c7aba3df;71/498 +13/71. Judge found jobs.ts drops nativeFast during reconstructed repository placement. Coordinator verified exact omission already present at initial59413c53; inherited defect, not refactor regression. Parent follow-up should preserve field and add forwarding/replay regression separately; not silently fixed here.
+
+Partial audit at808e55e398c9bc3a1f18af65f4fe5163eee16e1f: 50/119 initial accepted, zero blob mismatches. Operations67cf5486 and previewf38709ac independently NO CHANGE; cached inventory/byte bounds and exceptional subprocess teardown limits recorded.
+
+Menu6057b48d ACCEPT task_fed65650 at9bf68769: cached/local actions, pinned-owner saved reconciliation, fresh-active cancel ordering visible; question routing/wording one decision.74/1240 independent including stale-session/picker snapshots. Related test2de5b96f own-primary pending.
+
+Artifact-capture tests6257b1c0 ACCEPT task_cb1c250e atddf5627e: independent pagination/retention signals with exact no-marker oracle, prior boundary assertions retained;27/2342 independent.
+
+Delivery testsb44aec55 ACCEPT task_bef6bb0e at84ddbfc7: lexical connection ownership and durable envelope replay at same blocked timestamp;14/67 plus independent callback-failure cleanup probe.
+
+Rendering tests4bb5612c ACCEPT task_68a7048b at934fd947: co-located literal rows retain exact6 instrumented input/assertion records and whole-page/raw oracles;15/95 independent.
+
+Extension096b0168 ACCEPT task_63a628f1 at8e159095: cohesive observation lifetime fences switched-away poll/picker publication, fixes observed A-picker clearing B footer. Independent86/1287; requested final renderer/menu/bridge joins87/1291; baseline39+1 expected regression. Full source/two-test patch integrated, extension tests917d1925 and session-switch2b031955 need own-primary. Closure invalidates publication, not in-flight cache I/O.
+
+Menu testsd04d417c ACCEPT task_1d505493 atc1b63f8e (74/1237); repository tests4f47f7c8 ACCEPT task_edfe5062 at93e78bb2 (35/200). Independent authority/refusal/receipt journeys retain original coverage. Both complete test patches joined. Extension combined configured check at6a607949 passed149/3830 across11 suites before these two test-only changes.
+
+All assigned source TypeScript has fresh primary+independent judge acceptance. Initial docs/scripts/fixtures/tests remain; not area-complete. Latest accepted-blob audit 59/119 with zero mismatches. Root transport tests19e7050b NO CHANGE task_b7050702 (2/26 +oversize1/2), successful fixture lifecycle not arbitrary interruption guarantee.
+
+Owner tests7659ac93 ACCEPT task_244509e5 at4a03e2e7 intrinsically: separate contracts/current PID ownership and joined cleanup, all50 original assertions+3. Judge runtime blocked3pass/13fail missing zod/mini; candidate worker16/109 not independently confirmed. Exact patch joined and area configured/runtime checks launched to resolve this explicit proof gap.
+
+Owner candidate runtime gap resolved on integrated exact blob: configured check+71/346 across8 suites passed task_778198ae atcce8f963. Judge dependency failure remains recorded, no coordinator cleanup-probe rerun claimed. Download tests0bc50fed ACCEPT task_731b02f6 at9cd3c4cd: isolated encoding/chunk guards and explicit restart requests;36/138 plus independent4-fixture mutation sensitivity.
+
+Jobs testsa7d47c6c ACCEPT task_b9aed0ec atc471c6f5: actual scoped service shutdown, typed pagination traversal and explicit inter-page launch;4 unsupported requests now reach SSH denial rather than schema errors.83/478 independent. Production unchanged.
+
+Session-switch testsa2a76806 ACCEPT task_94dcb963 at088d70b6: exact held IO and replacement final-read boundaries, strict status histories catch late undefined clear, all held gates cleanup.76/1243 plus independent assertion/mutation probes; no arbitrary IO drain/cancel guarantee.
+
+Extension testsa873b060 ACCEPT task_94bacc30 at7e50a41c: awaited mount disposal/reload lifetime, all166 assertions+2,17→0 timers independently reproduced.61/1183 and final session-switch62/1201 compatibility. First observed successful automatic setup task_c4c1ac8d installed/prepared placement-test workspace; prior setup failures are historical, not universal.
+
+## Current compiler blocker and active follow-up
+Whole check task_c46705ef failed TS2769 at download test140 (readonly expected tuple matcher), so that file acceptance is suspended. Fresh rework task_974c50bb candidate3436ea74 explicitly types retry rows offsets:number[], preserving assertions/no casts; whole check+40/160 passed worker. Fresh judge task_704df491 pending. Do not report current tree compile-green until exact fix is judged/joined/rechecked. Capability-test original task_5ee954f3 stalled20min, killed143; uncommitted test diff preserved. Fresh task_fdfb5c4d owns continuation. Probe disproved old cleanup-race hypothesis, so improvement is explicit fixture/read ownership only.
+Partial audit 66/119 accepted initial blobs match disk; no area completion. Automatic setups now succeeding with installed dependencies after historical fish/mise failures.

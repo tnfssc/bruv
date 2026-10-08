@@ -1,12 +1,24 @@
 import { expect, spyOn, test } from "bun:test";
-import { formatTaskRow, taskRowFromLaunch, upsertTaskRow, type TaskRow } from "../src/ui/task-rows";
 import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 import { type JobDiagnosticInput, JobService } from "../src/tasks/job-service";
-import { type TaskLaunch, TaskManager } from "../src/tasks/task-manager";
+import { TaskManager } from "../src/tasks/task-manager";
+import { formatTaskRow, type TaskRow, taskRowFromLaunch, upsertTaskRow } from "../src/ui/task-rows";
 
 const signal = new AbortController().signal;
+
+// Replace only the child runtime; TaskManager still owns receipts, waits and exit.
+function substituteAgentProcess(manager: TaskManager) {
+  const spawn = manager.spawn.bind(manager);
+  return spyOn(manager, "spawn").mockImplementation((launch) =>
+    spawn({
+      ...launch,
+      command: process.execPath,
+      args: ["-e", "setTimeout(() => {}, 30)"],
+    }),
+  );
+}
 test("job helper validation rejects invalid inputs before spawning", async () => {
   const manager = new TaskManager(() => {}),
     service = new JobService(
@@ -106,50 +118,14 @@ test("records metadata-only dispatch lifecycle against the supplied session reco
   }
 });
 
-test("profile settings, child identity, and three-tier limits survive helper migration", async () => {
-  const dir = await mkdtemp(join(tmpdir(), "bruv-jobs-profile-")),
-    path = join(dir, "profiles.json");
-  await writeFile(path, JSON.stringify({ fast: { model: "p/quick", thinking: "off" } }));
-  const manager = new TaskManager(() => {}),
-    launches: TaskLaunch[] = [];
-  const spawn = spyOn(manager, "spawn").mockImplementation((launch) => {
-    launches.push(launch);
-    return {
-      id: "fake",
-      kind: "agent",
-      command: "test",
-      cwd: dir,
-      status: "running",
-      startedAt: new Date().toISOString(),
-      baseOffset: 0,
-      outputEnd: 0,
-      timedOut: false,
-    };
-  });
-  const foreground = spyOn(manager, "foreground").mockResolvedValue({
-    id: "fake",
-    kind: "agent",
-    command: "test",
-    cwd: dir,
-    status: "running",
-    startedAt: new Date().toISOString(),
-    baseOffset: 0,
-    outputEnd: 0,
-    timedOut: false,
-    output: "",
-    requestedOffset: 0,
-    nextOffset: 0,
-    outputLost: false,
-    hasMore: false,
-    background: true,
-  });
-  let policy: { depth: number; type?: string } = { depth: 0 };
-  const service = new JobService(
-    manager,
-    () => policy,
-    () => {},
-    path,
-  );
+test("local profile settings become child arguments and launch options", async () => {
+  const dir = await mkdtemp(join(tmpdir(), "bruv-jobs-profile-"));
+  const profilesPath = join(dir, "profiles.json");
+  await writeFile(profilesPath, JSON.stringify({ fast: { model: "p/quick", thinking: "off" } }));
+  const manager = new TaskManager(() => {});
+  const spawn = substituteAgentProcess(manager);
+  const foreground = spyOn(manager, "foreground");
+  const service = new JobService(manager, () => ({ depth: 0 }), undefined, profilesPath);
   const ctx = {
     cwd: dir,
     model: { provider: "p", id: "parent" },
@@ -163,10 +139,11 @@ test("profile settings, child identity, and three-tier limits survive helper mig
       ctx,
       signal,
     );
-    expect(launches[0]!.title).toBe("Inspect renderer");
-    expect(launches[0]!.args).toEqual([
+    const launch = spawn.mock.calls[0]![0];
+    expect(launch.title).toBe("Inspect renderer");
+    expect(launch.args).toEqual([
       "--session",
-      launches[0]!.agent!.sessionFile,
+      launch.agent!.sessionFile,
       "--mode",
       "json",
       "-p",
@@ -177,16 +154,38 @@ test("profile settings, child identity, and three-tier limits survive helper mig
       "--",
       "scout",
     ]);
-    expect(launches[0]).toMatchObject({
+    expect(launch).toMatchObject({
       command: process.execPath,
       cwd: dir,
       timeoutMs: 2000,
       closeStdin: true,
       notifyOnComplete: false,
     });
-    expect(launches[0]!.workspace).toBeUndefined();
-    expect(launches[0]!.env?.BRUV_SUBAGENT_TYPE).toBe("fast");
+    expect(launch.workspace).toBeUndefined();
+    expect(launch.env?.BRUV_SUBAGENT_TYPE).toBe("fast");
     expect(foreground.mock.calls[0]![1]).toBe(1000);
+  } finally {
+    spawn.mockRestore();
+    foreground.mockRestore();
+    await manager.shutdown();
+    await rm(dir, { recursive: true, force: true });
+  }
+});
+
+test("delegation policy permits only orchestrator children and caps depth at two", async () => {
+  const dir = await mkdtemp(join(tmpdir(), "bruv-jobs-depth-"));
+  const profilesPath = join(dir, "profiles.json");
+  await writeFile(profilesPath, JSON.stringify({ fast: { model: "p/quick" } }));
+  const manager = new TaskManager(() => {});
+  const spawn = substituteAgentProcess(manager);
+  let policy: { depth: number; type?: string } = { depth: 1 };
+  const service = new JobService(manager, () => policy, undefined, profilesPath);
+  const ctx = {
+    cwd: dir,
+    model: { provider: "p", id: "parent" },
+    sessionManager: { getSessionDir: () => dir, getSessionFile: () => undefined },
+  } as any;
+  try {
     for (const type of ["fast", "normal"]) {
       policy = { depth: 1, type };
       await expect(service.handle("subagent", { prompt: "x" }, ctx, signal)).rejects.toThrow("Only orchestrator");
@@ -195,43 +194,71 @@ test("profile settings, child identity, and three-tier limits survive helper mig
     await expect(service.handle("subagent", { type: "orchestrator", prompt: "x" }, ctx, signal)).rejects.toThrow(
       "fast/normal",
     );
+    expect(spawn).not.toHaveBeenCalled();
+
     await service.handle("subagent", { type: "fast", prompt: "x" }, ctx, signal);
-    expect(launches[1]!.title).toBe("x");
-    expect(launches[1]!.env?.BRUV_SUBAGENT_DEPTH).toBe("2");
-    policy = { depth: 0 };
-    ctx.model = {
-      provider: "openai-codex",
-      id: "gpt-6.1-sol",
-      api: "openai-codex-responses",
-      baseUrl: "https://chatgpt.com/backend-api",
-    };
-    ctx.modelRegistry = { isUsingOAuth: () => true };
-    const fastSetting = {
-      type: "custom",
-      customType: "bruv-native-fast-mode",
-      data: {
-        version: 1,
-        sessionId: "parent",
-        provider: ctx.model.provider,
-        model: ctx.model.id,
-        enabled: true,
-        costAcknowledged: true,
-        timestamp: 1,
-      },
-    };
-    ctx.sessionManager.getSessionId = () => "parent";
-    ctx.sessionManager.getCwd = () => dir;
-    ctx.sessionManager.getBranch = () => [fastSetting];
-    await service.handle("subagent", { type: "fast", prompt: "inherit premium tier" }, ctx, signal);
-    expect(launches.at(-1)!.env?.BRUV_SUBAGENT_NATIVE_FAST).toBe("1");
-    fastSetting.data.enabled = false;
-    await service.handle("subagent", { type: "fast", prompt: "standard tier" }, ctx, signal);
-    expect(launches.at(-1)!.env?.BRUV_SUBAGENT_NATIVE_FAST).toBe("0");
+    expect(spawn).toHaveBeenCalledTimes(1);
+    const launch = spawn.mock.calls[0]![0];
+    expect(launch.title).toBe("x");
+    expect(launch.env?.BRUV_SUBAGENT_DEPTH).toBe("2");
+    expect(dirname(launch.agent!.sessionFile!)).toBe(dir);
+
     policy = { depth: 2, type: "orchestrator" };
     await expect(service.handle("subagent", { prompt: "x" }, ctx, signal)).rejects.toThrow("two levels");
+    expect(spawn).toHaveBeenCalledTimes(1);
   } finally {
     spawn.mockRestore();
-    foreground.mockRestore();
+    await manager.shutdown();
+    await rm(dir, { recursive: true, force: true });
+  }
+});
+
+test("local subagents inherit the parent's persisted native fast setting", async () => {
+  const dir = await mkdtemp(join(tmpdir(), "bruv-jobs-native-fast-"));
+  const profilesPath = join(dir, "profiles.json");
+  await writeFile(profilesPath, JSON.stringify({ fast: { model: "p/quick" } }));
+  const manager = new TaskManager(() => {});
+  const spawn = substituteAgentProcess(manager);
+  const service = new JobService(manager, () => ({ depth: 0 }), undefined, profilesPath);
+  const model = {
+    provider: "openai-codex",
+    id: "gpt-6.1-sol",
+    api: "openai-codex-responses",
+    baseUrl: "https://chatgpt.com/backend-api",
+  };
+  const fastSetting = {
+    type: "custom",
+    customType: "bruv-native-fast-mode",
+    data: {
+      version: 1,
+      sessionId: "parent",
+      provider: model.provider,
+      model: model.id,
+      enabled: true,
+      costAcknowledged: true,
+      timestamp: 1,
+    },
+  };
+  const ctx = {
+    cwd: dir,
+    model,
+    modelRegistry: { isUsingOAuth: () => true },
+    sessionManager: {
+      getSessionDir: () => dir,
+      getSessionFile: () => undefined,
+      getSessionId: () => "parent",
+      getCwd: () => dir,
+      getBranch: () => [fastSetting],
+    },
+  } as any;
+  try {
+    await service.handle("subagent", { type: "fast", prompt: "inherit premium tier" }, ctx, signal);
+    expect(spawn.mock.calls[0]![0].env?.BRUV_SUBAGENT_NATIVE_FAST).toBe("1");
+    fastSetting.data.enabled = false;
+    await service.handle("subagent", { type: "fast", prompt: "standard tier" }, ctx, signal);
+    expect(spawn.mock.calls[1]![0].env?.BRUV_SUBAGENT_NATIVE_FAST).toBe("0");
+  } finally {
+    spawn.mockRestore();
     await manager.shutdown();
     await rm(dir, { recursive: true, force: true });
   }
@@ -347,14 +374,7 @@ test.each([
     deliver = resolve;
   });
   const manager = new TaskManager(deliver);
-  const originalSpawn = manager.spawn.bind(manager);
-  const spawn = spyOn(manager, "spawn").mockImplementation((launch) =>
-    originalSpawn({
-      ...launch,
-      command: process.execPath,
-      args: ["-e", "setTimeout(() => {}, 30)"],
-    }),
-  );
+  const spawn = substituteAgentProcess(manager);
   const service = new JobService(manager, () => ({ depth: 0 }), undefined, profilesPath);
   try {
     const launch = (await service.handle(

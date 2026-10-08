@@ -1,4 +1,4 @@
-import { compareRuns, summarizeCase, type PerfRun } from "./report.js";
+import { compareRuns, type PerfRun, summarizeCase } from "./report.js";
 
 /** One offline file. No CDN, server or provider is needed to inspect a run. */
 export function dashboard(run: PerfRun, baseline?: PerfRun): string {
@@ -25,19 +25,130 @@ const page = String.raw`<html lang="en"><meta charset="utf-8"><meta name="viewpo
 <section><h2>Before / after</h2><pre id="compare"></pre></section>
 <section><h2>What this proves</h2><p>This runs actual TUI layout, screen diff and terminal write calls into a counting terminal. It does not measure a terminal emulator's paint, OS output backpressure, provider latency or every possible session. Request / input delay is separate from CPU work. These samples locate regressions; no run proves that lag can never happen. Keep machine, runtime, viewport and workload settings the same for comparisons.</p><pre id="config"></pre></section>
 <script>
-const data=/*PAYLOAD*/;
-const {run,summaries,comparison}=data;
-const el=id=>document.getElementById(id), fmt=n=>n.toFixed(3)+' ms';
-const all=run.cases.flatMap(c=>[...c.cold,...c.frames]);
-el('budget').textContent='< '+run.budgetMs+' ms';el('worst').textContent=fmt(all.reduce((max,f)=>Math.max(max,f.durationMs),0));el('misses').textContent=all.filter(f=>f.durationMs>=run.budgetMs).length;el('misses').className=all.some(f=>f.durationMs>=run.budgetMs)?'bad':'good';el('count').textContent=all.length;
-el('env').textContent=run.environment.revision+(run.environment.dirty?' \u00B7 dirty':'')+' \u00B7 Bun '+run.environment.bun+' \u00B7 '+run.environment.cpu+' \u00B7 '+run.startedAt;
-el('config').textContent=JSON.stringify({config:run.config,environment:run.environment},null,2);
-el('compare').textContent=comparison?JSON.stringify(comparison,null,2):'No baseline supplied. Rerun with --baseline path/to/run.json to compare.';
-let selected=0;
-run.cases.forEach((c,i)=>{const s=summaries[i],t=s.steady.timing;const row=document.createElement('tr');const values=[c.id,fmt(s.cold.timing.max),fmt(t.p50),fmt(t.p95),fmt(t.p99),fmt(t.max),s.cold.timing.overBudget+' / '+t.overBudget,s.steady.changed+' / '+t.count];values.forEach((v,j)=>{const td=document.createElement('td');td.textContent=v;if(j===5)td.className=t.max>=run.budgetMs?'bad':'good';row.append(td)});row.tabIndex=0;row.onclick=()=>choose(i);row.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();choose(i)}};el('cases').append(row)});
-function choose(i){selected=i;[...el('cases').children].forEach((r,j)=>r.classList.toggle('selected',i===j));el('case-title').textContent=run.cases[i].id;el('description').textContent=run.cases[i].description;const metric=el('metric');metric.replaceChildren();const names=['durationMs',...new Set([...run.cases[i].cold,...run.cases[i].frames].flatMap(f=>Object.keys(f.phases)))];for(const name of names){const o=document.createElement('option');o.value=name;o.textContent=name==='durationMs'?'Total frame':name;metric.append(o)}draw()}
-const ns='http://www.w3.org/2000/svg';
-function shape(tag,attrs){const n=document.createElementNS(ns,tag);Object.entries(attrs).forEach(([k,v])=>n.setAttribute(k,v));el('chart').append(n);return n}
-function draw(){const frames=run.cases[selected][el('phase').value],metric=el('metric').value,value=f=>metric==='durationMs'?f.durationMs:(f.phases[metric]||0);const max=frames.reduce((max,f)=>Math.max(max,value(f)),run.budgetMs*1.25), y=n=>210-(n/max)*190;el('chart').replaceChildren();const label=shape('text',{x:40,y:15,fill:'#9dacc2','font-size':12});label.textContent='Scale: 0 \u2013 '+fmt(max);frames.forEach((f,i)=>{const w=950/frames.length,x=40+i*w,v=value(f);const bar=shape('rect',{x,y:y(v),width:Math.max(.5,w-1),height:Math.max(1,210-y(v)),fill:v>=run.budgetMs?'#ff847d':'#69e4c7'});const title=document.createElementNS(ns,'title');title.textContent='#'+f.index+' '+f.action+': '+fmt(v);bar.append(title);bar.onmouseenter=()=>{el('tooltip').textContent='#'+f.index+' '+f.action+' \u00B7 '+fmt(v)+' \u00B7 '+f.bytes+' bytes / '+f.writes+' writes \u00B7 changed='+f.changed+' \u00B7 work='+JSON.stringify(f.work||{})}});shape('line',{x1:40,y1:y(run.budgetMs),x2:990,y2:y(run.budgetMs),stroke:'#ffe1a3','stroke-width':2,'stroke-dasharray':'5 5'});const budgetLabel=shape('text',{x:45,y:y(run.budgetMs)-6,fill:'#ffe1a3','font-size':12});budgetLabel.textContent='budget '+run.budgetMs+' ms';el('slow').textContent=[...frames].sort((a,b)=>b.durationMs-a.durationMs).slice(0,5).map(f=>'#'+f.index+' '+f.action+' \u00B7 '+fmt(f.durationMs)+'\n  phases '+JSON.stringify(f.phases)+'\n  work '+JSON.stringify(f.work||{})).join('\n')}
-el('phase').onchange=draw;el('metric').onchange=draw;choose(0);
+const {run, summaries, comparison} = /*PAYLOAD*/;
+const el = id => document.getElementById(id);
+const fmt = n => n.toFixed(3) + ' ms';
+let selected = 0;
+
+function renderRunOverview() {
+  const frames = run.cases.flatMap(c => [...c.cold, ...c.frames]);
+  const misses = frames.filter(f => f.durationMs >= run.budgetMs).length;
+  el('budget').textContent = '< ' + run.budgetMs + ' ms';
+  el('worst').textContent = fmt(frames.reduce((max, f) => Math.max(max, f.durationMs), 0));
+  el('misses').textContent = misses;
+  el('misses').className = misses ? 'bad' : 'good';
+  el('count').textContent = frames.length;
+  el('env').textContent = run.environment.revision + (run.environment.dirty ? ' \u00B7 dirty' : '')
+    + ' \u00B7 Bun ' + run.environment.bun + ' \u00B7 ' + run.environment.cpu + ' \u00B7 ' + run.startedAt;
+  el('config').textContent = JSON.stringify({config: run.config, environment: run.environment}, null, 2);
+  el('compare').textContent = comparison ? JSON.stringify(comparison, null, 2)
+    : 'No baseline supplied. Rerun with --baseline path/to/run.json to compare.';
+}
+
+function renderCaseTable() {
+  run.cases.forEach((result, index) => {
+    const summary = summaries[index], timing = summary.steady.timing;
+    const row = document.createElement('tr');
+    const values = [
+      result.id, fmt(summary.cold.timing.max), fmt(timing.p50), fmt(timing.p95),
+      fmt(timing.p99), fmt(timing.max), summary.cold.timing.overBudget + ' / ' + timing.overBudget,
+      summary.steady.changed + ' / ' + timing.count
+    ];
+    values.forEach((value, column) => {
+      const cell = document.createElement('td');
+      cell.textContent = value;
+      if (column === 5) cell.className = timing.max >= run.budgetMs ? 'bad' : 'good';
+      row.append(cell);
+    });
+    row.tabIndex = 0;
+    row.onclick = () => chooseCase(index);
+    row.onkeydown = event => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        chooseCase(index);
+      }
+    };
+    el('cases').append(row);
+  });
+}
+
+function chooseCase(index) {
+  selected = index;
+  const result = run.cases[index];
+  [...el('cases').children].forEach((row, i) => row.classList.toggle('selected', index === i));
+  el('case-title').textContent = result.id;
+  el('description').textContent = result.description;
+
+  // Case changes reset the metric to total, but retain the cold/steady selection.
+  const metric = el('metric');
+  metric.replaceChildren();
+  const names = ['durationMs', ...new Set([...result.cold, ...result.frames].flatMap(f => Object.keys(f.phases)))];
+  for (const name of names) {
+    const option = document.createElement('option');
+    option.value = name;
+    option.textContent = name === 'durationMs' ? 'Total frame' : name;
+    metric.append(option);
+  }
+  renderSelectedFrames();
+}
+
+function renderSelectedFrames() {
+  const frames = run.cases[selected][el('phase').value];
+  renderChart(frames, el('metric').value);
+  // Spike ranking always uses total duration, independent of the chart metric.
+  renderSlowFrames(frames);
+}
+
+function renderChart(frames, metric) {
+  const chart = el('chart');
+  const ns = 'http://www.w3.org/2000/svg';
+  const value = frame => metric === 'durationMs' ? frame.durationMs : (frame.phases[metric] || 0);
+  const max = frames.reduce((max, frame) => Math.max(max, value(frame)), run.budgetMs * 1.25);
+  const y = n => 210 - (n / max) * 190;
+  const width = 950 / frames.length;
+  function shape(tag, attrs) {
+    const node = document.createElementNS(ns, tag);
+    Object.entries(attrs).forEach(([key, value]) => node.setAttribute(key, value));
+    chart.append(node);
+    return node;
+  }
+
+  chart.replaceChildren();
+  const label = shape('text', {x: 40, y: 15, fill: '#9dacc2', 'font-size': 12});
+  label.textContent = 'Scale: 0 \u2013 ' + fmt(max);
+  frames.forEach((frame, index) => {
+    const duration = value(frame), top = y(duration);
+    const bar = shape('rect', {
+      x: 40 + index * width, y: top, width: Math.max(.5, width - 1), height: Math.max(1, 210 - top),
+      fill: duration >= run.budgetMs ? '#ff847d' : '#69e4c7'
+    });
+    const title = document.createElementNS(ns, 'title');
+    title.textContent = '#' + frame.index + ' ' + frame.action + ': ' + fmt(duration);
+    bar.append(title);
+    bar.onmouseenter = () => {
+      el('tooltip').textContent = '#' + frame.index + ' ' + frame.action + ' \u00B7 ' + fmt(duration)
+        + ' \u00B7 ' + frame.bytes + ' bytes / ' + frame.writes + ' writes \u00B7 changed=' + frame.changed
+        + ' \u00B7 work=' + JSON.stringify(frame.work || {});
+    };
+  });
+  shape('line', {
+    x1: 40, y1: y(run.budgetMs), x2: 990, y2: y(run.budgetMs), stroke: '#ffe1a3',
+    'stroke-width': 2, 'stroke-dasharray': '5 5'
+  });
+  const budgetLabel = shape('text', {x: 45, y: y(run.budgetMs) - 6, fill: '#ffe1a3', 'font-size': 12});
+  budgetLabel.textContent = 'budget ' + run.budgetMs + ' ms';
+}
+
+function renderSlowFrames(frames) {
+  el('slow').textContent = [...frames].sort((a, b) => b.durationMs - a.durationMs).slice(0, 5)
+    .map(frame => '#' + frame.index + ' ' + frame.action + ' \u00B7 ' + fmt(frame.durationMs)
+      + '\n  phases ' + JSON.stringify(frame.phases) + '\n  work ' + JSON.stringify(frame.work || {}))
+    .join('\n');
+}
+
+renderRunOverview();
+renderCaseTable();
+el('phase').onchange = renderSelectedFrames;
+el('metric').onchange = renderSelectedFrames;
+chooseCase(0);
 </script></html>`;

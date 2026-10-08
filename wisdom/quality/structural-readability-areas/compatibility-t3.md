@@ -1,21 +1,19 @@
 # Compatibility / T3: ongoing structural readability
 
-**Not complete.** 83 initial assigned files; current status counts: {"accepted-unchanged":15,"pending":37,"judging":3,"rework-running":1,"accepted-integrated":26,"primary-running":1}. 6 extra related/new files tracked separately. Detailed per-file primary worktrees/branches/commits, every judge round, exact accepted hashes, proof and limits are in `compatibility-t3.json`. Counts are inventory, not readability proof. Parent owns one PR #45 and whole-repository gate. No area push/PR.
+**Not complete.** 83 initial assigned files; 9 extra related/new files. Combined status counts: {"accepted-unchanged":19,"pending":34,"accepted-integrated":33,"primary-running":3,"judging":2,"pending-candidate":1}. Detailed per-file primary worktrees/branches/commits, every judge round, exact accepted hashes, proof and limits are in `compatibility-t3.json`. Counts are inventory, not readability proof. Parent owns one PR #45 and whole-repository gate. No area push/PR.
 
 ## Pickup
 
 - Checkout: `/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d`; branch `bruv/whole-repo-structural-readability-compat-dc14408d`; initial commit `59413c532e6422983f611915e509e8421aa2f363`.
 - At most 3 primary/rework code workers and 3 independent read-only judges. Coordinator only joins accepted coherent worker patches; no source authored here, no worker pickup notes imported.
 - Continue all pending initial rows plus extras. Later changes invalidate accepted blobs; compare final tip hashes and rejudge combined/overlapping code. Retain all worker branches/worktrees and rejected attempts.
-- Primary/rework/judge running or queued rows:
-  - `scripts/claude-native-acceptance/app-delegation-model.mjs`: judging; primary task_00f0a474.
-  - `scripts/claude-native-acceptance/driver.mjs`: rework-running; primary task_ffc92537; rework task_23c0fcde.
-  - `scripts/claude-native-acceptance/history-model.mjs`: judging; primary task_0af35abe.
-  - `scripts/claude-native-acceptance/subagent-model.mjs`: judging; primary task_5996dfa6.
-  - `scripts/claude-native-acceptance/tap.mjs`: primary-running; primary task_ce9e9c06.
-  - `tests/claude-native-acceptance-runner.test.mjs`: primary-running; primary task_23190128.
-  - `wisdom/claude-compat/proof/native-ui-fixture/replay.mjs`: pending-candidate; primary not launched.
-  - `tests/claude-native-acceptance-capture.test.mjs`: pending-candidate; primary not launched.
+- Active/queued rows:
+  - `scripts/claude-native-acceptance/history-run.mjs`: primary-running; primary task_10c1cb54; judges none active.
+  - `wisdom/claude-compat/proof/native-ui-fixture/replay.mjs`: judging; primary task_1514b0b6; judges task_77d08693.
+  - `tests/claude-native-acceptance-capture.test.mjs`: judging; primary task_d8e47cb7; judges task_0a84de3d.
+  - `tests/claude-native-acceptance-replay-finalization.test.mjs`: primary-running; primary task_5b8a48c9; judges none active.
+  - `tests/claude-native-acceptance-tap.test.mjs`: primary-running; primary task_83a97a2b; judges none active.
+  - `tests/claude-native-replay.test.mjs`: pending-candidate; primary pending; judges none active.
 
 ## Accepted structural work (exact proof in ledger)
 
@@ -31,7 +29,7 @@
 ## Rejections and open integration needs
 
 - Arguments initial no-change REJECT `task_c9ec06dd` resolved by fresh worker `task_565d6984` and fresh judge `task_e06dc5c8`; original attempt retained.
-- Driver capture ownership candidate REJECT `task_2d4634f7`: shared replay migration skipped subagent `flushCapture` and lost final-provider evidence before private deletion. Entire candidate unintegrated; fresh rework `task_23c0fcde` must preserve owned observation and test actual generated caller finalization. Partial blob acceptance is not integration permission.
+- Driver round1 REJECT `task_2d4634f7` lost generated subagent final-provider evidence; fresh rework `task_23c0fcde` and round2 `task_0d4690cf` ACCEPT all4 blobs, integrated `67ca6129`. Shared integration.flushCapture remains before private deletion,optional owned observation. Actual generated setup-failure regression rejects old finalizer. Current whole-replay primary candidate has its own fresh judge; related acceptance is not whole-file primary.
 - New/related source under `wisdom/claude-compat/proof/native-ui-fixture/replay.mjs` is real source and has an extra primary obligation, not documentation exemption. All extras recorded.
 - Older shell-judge installer observation was already fixed by parent common code; current both-entrypoint inherited-override regression passed (`task_73304664`,2 tests12 assertions). No local cross-area source edit.
 
@@ -45,4 +43,10 @@ Projection candidate old binding fixture failed `tasks!.list()`; preserved in it
 
 Pinned Bun1.4.2: `/home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin`, PATH inside quoted /bin/bash. Automatic fish setup fails but workers run. Dependencies reused read-only from `/home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules`; area generates its own runtime-assets. Temporary dependency link must be removed for final clean-tree audit if untracked. Latest boundary had130GiB free; check future boundaries, don't delete retained worker worktrees. Final audit must reconcile exact baseline83 + extras, unique fresh primary per file, all rounds/accepted final blobs, real combined checks and note text safety.
 
-Driver rejection resolved: fresh rework `task_23c0fcde` candidatea61eec6e and fresh round2 `task_0d4690cf` ACCEPT all4 blobs. Capture remains replay-owned;shared integration.flushCapture receives optional observation and preserves generated subagent final-provider evidence before private deletion. Actual generated replay setup-failure regression fails rejected finalizer and passes repaired;58 independent tests. Both original rejection/partial verdicts retained. Related wisdom replay SOURCE and2 new tests still require primary focus.
+
+## Latest checkpoint
+
+- All52 accepted final blobs matched area working tree at current boundary. 34 initial rows remain unstarted; not an area completion claim.
+- Interrupted history-model judge and tap/history-run primaries retained with no verdict/candidate; replacements tracked. No stopped attempt counted as acceptance.
+- One paired build (`task_a4378da6`, source batch67ca6129) succeeded. Explicit compiled connector suite (`task_12ac2f75`) passes3 cases154 assertions using paired artifacts; real normal child dispatch + local fixture provider. Earlier unconfigured3 skips retained. Compiled/web/launcher/composition batch12 pass3 skips54 assertions. No external-provider/browser/full-gate claim.
+- Tap has one byte-forward/framing owner; independently reproduced split UTF8 evidence corruption repaired without changing forwarded bytes. EOF partial lines still not synthesized into records. Whole new test primary remains active.

@@ -1,15 +1,15 @@
 import { join } from "node:path";
-import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import wisdomGuidance from "../prompts/wisdom.md" with { type: "text" };
 import { projectWisdomDir } from "./location";
 
 export interface ProjectWisdomOptions {
-  isRoot: () => boolean;
+  isRoot: (ctx: ExtensionContext) => boolean;
 }
 
-function rootAllowed(callback: () => boolean): boolean {
+function rootAllowed(callback: ProjectWisdomOptions["isRoot"], ctx: ExtensionContext): boolean {
   try {
-    return callback() === true;
+    return callback(ctx) === true;
   } catch {
     return false;
   }
@@ -19,7 +19,7 @@ export function registerProjectWisdom(pi: ExtensionAPI, options: ProjectWisdomOp
   pi.registerCommand("wisdom", {
     description: "Show where project wisdom lives",
     async handler(_args, ctx) {
-      if (!rootAllowed(options.isRoot))
+      if (!rootAllowed(options.isRoot, ctx))
         return ctx.ui.notify("Project wisdom is unavailable outside the root agent.", "warning");
       const directory = projectWisdomDir(ctx.cwd, ctx.isProjectTrusted());
       return ctx.ui.notify(`Project wisdom lives in ${directory}/. Put it with the feature or system it explains.`);
@@ -27,7 +27,7 @@ export function registerProjectWisdom(pi: ExtensionAPI, options: ProjectWisdomOp
   });
 
   pi.on("before_agent_start", (event, ctx) => {
-    if (!rootAllowed(options.isRoot)) return;
+    if (!rootAllowed(options.isRoot, ctx)) return;
     const directory = projectWisdomDir(ctx.cwd, ctx.isProjectTrusted());
     const guidance = wisdomGuidance
       .trimEnd()

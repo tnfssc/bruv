@@ -6,7 +6,7 @@ import { registerOperationDiagnostics } from "../diagnostics-extension";
 import { type GoalRuntime, registerGoalMode } from "../goals/extension";
 import { HistoryService } from "../history/service";
 import { currentMainOwner, currentMainToolOwner } from "../live/main-owner";
-import { collaborationGuidance, isBruvSystemPrompt, subagentGuidance } from "../prompts";
+import { withMainAgentGuidance, withSubagentGuidance } from "../prompts";
 import { registerQuestions } from "../questions/extension";
 import { registerQuestionRuntime } from "../questions/runtime";
 import { registerRemoteCancellationService } from "../remote/cancellation";
@@ -513,7 +513,11 @@ export default function asynchronousTasksExtension(
     sessionHost?.observe({ type: "turn_end" });
   });
   registerProjectWisdom(pi, {
-    isRoot: () => subagentDepth === 0,
+    isRoot: (ctx) => {
+      // Resumed identity may be attached after session_start, before either effect.
+      restoreAgentIdentity(ctx);
+      return subagentDepth === 0;
+    },
   });
   const remoteOperations = createRemoteOperations(remoteClient);
   registerRemoteCancellationService(pi, (ctx) =>
@@ -629,16 +633,11 @@ export default function asynchronousTasksExtension(
     // session_start may precede dynamically loaded extension handlers in SDK
     // embedders; framing the first ordinary turn is the definitive scope seam.
     scopeInstructionContinuity(ctx.sessionManager as object);
-    // Explicit user system prompts retain their existing override semantics.
-    const custom = !!event.systemPromptOptions?.customPrompt;
-    // Pi assembled Bruv's base with dynamic append/context/skill/cwd sections.
-    // A user-owned custom base remains untouched at root, but children must
-    // retain their role identity and delegation boundary on every base.
-    const userCustom = custom && !isBruvSystemPrompt(event.systemPromptOptions);
-    if (userCustom && subagentDepth === 0) return;
-    const role = subagentDepth > 0 ? subagentGuidance(agentType ?? "normal") : instructionMode.guidance(ctx);
-    const additions = [userCustom ? "" : collaborationGuidance(), role].filter(Boolean).join("\n\n");
-    if (additions) return { systemPrompt: event.systemPrompt + "\n\n" + additions };
+    const systemPrompt =
+      subagentDepth > 0
+        ? withSubagentGuidance(event.systemPrompt, event.systemPromptOptions, agentType ?? "normal")
+        : withMainAgentGuidance(event.systemPrompt, event.systemPromptOptions, () => instructionMode.guidance(ctx));
+    if (systemPrompt !== event.systemPrompt) return { systemPrompt };
   });
 
   pi.on("session_start", async (_event, ctx) => {

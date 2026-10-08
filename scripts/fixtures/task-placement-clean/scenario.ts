@@ -32,13 +32,17 @@ export function response(body: RequestBody): object {
       return execute(
         "write-notes",
         "Write getting-started notes",
-        "const list = await questions.list(); const q = list.find(q => q.text === " +
-          JSON.stringify(QUESTION) +
-          '); await questions.resolve({id:q.id, owner:q.owner, version:q.version, reason:"Used your preference"}); await Bun.write("NOTES.md", ' +
-          JSON.stringify(
-            "# Getting started\n\n1. Install dependencies.\n2. Run the development server.\n3. Open the local app.\n",
-          ) +
-          ");",
+        `const list = await questions.list();
+const q = list.find(q => q.text === ${JSON.stringify(QUESTION)});
+await questions.resolve({
+  id: q.id,
+  owner: q.owner,
+  version: q.version,
+  reason: "Used your preference",
+});
+await Bun.write("NOTES.md", ${JSON.stringify(
+          "# Getting started\n\n1. Install dependencies.\n2. Run the development server.\n3. Open the local app.\n",
+        )});`,
       );
     const result = (body.messages ?? []).filter((m) => m.role === "tool" && m.tool_call_id === "write-notes").at(-1);
     if (JSON.stringify(result?.content).includes("Execution failed"))
@@ -63,11 +67,18 @@ export function response(body: RequestBody): object {
     return execute(
       "ask-detail",
       "Ask about the level of detail",
-      'const q = await questions.ask({text:"' +
-        QUESTION +
-        '", choices:["' +
-        ANSWER +
-        '", "Add more detail"], allowFreeText:false}); await questions.block({id:q.id, owner:q.owner, version:q.version, checkpoint:"Write the getting-started notes", foreground:true});',
+      `const q = await questions.ask({
+  text: ${JSON.stringify(QUESTION)},
+  choices: [${JSON.stringify(ANSWER)}, "Add more detail"],
+  allowFreeText: false,
+});
+await questions.block({
+  id: q.id,
+  owner: q.owner,
+  version: q.version,
+  checkpoint: "Write the getting-started notes",
+  foreground: true,
+});`,
     );
   return say(
     "The helper is reviewing the guide. I saved a question about the level of detail; you can answer it in /questions.",

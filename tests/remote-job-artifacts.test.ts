@@ -24,16 +24,7 @@ test("native job text is paged into task-owned offline artifacts before buffers 
       await captureNativeJobText(host as any, join(dir, "runtime.json"), [{ id: "task_output", status: "completed" }]),
     ).toBeUndefined();
     expect(offsets).toEqual([0, 5000, 10000]);
-    expect(readFileSync(join(dir, "session.jsonl.artifacts", "execute-job-task_output", "stdout.log"), "utf8")).toBe(
-      text,
-    );
-    expect(
-      await captureNativeJobText(
-        { inspect: async () => ({ output: "tail", baseOffset: 100, outputLost: true, hasMore: false }) } as any,
-        join(dir, "runtime.json"),
-        [{ id: "task_gap", status: "completed" }],
-      ),
-    ).toContain("retention gap");
+    expect(readFileSync(artifactPath(dir, "task_output"), "utf8")).toBe(text);
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }
@@ -42,6 +33,29 @@ test("native job text is paged into task-owned offline artifacts before buffers 
 function artifactPath(dir: string, id: string): string {
   return join(dir, "session.jsonl.artifacts", "execute-job-" + id, "stdout.log");
 }
+
+test.each([
+  ["outputLost", { outputLost: true }],
+  ["baseOffset ahead of the requested cursor", { baseOffset: 100 }],
+] as const)("retention via %s publishes the retained tail without an incomplete marker", async (_signal, metadata) => {
+  const dir = mkdtempSync(join(tmpdir(), "remote-job-text-retention-"));
+  const offsets: number[] = [];
+  try {
+    const host = {
+      inspect: async (_id: string, offset: number) => {
+        offsets.push(offset);
+        return { output: "retained tail", hasMore: false, ...metadata };
+      },
+    };
+    expect(await captureNativeJobText(host, join(dir, "runtime.json"), [{ id: "retained", status: "completed" }])).toBe(
+      "Native job output retention gap: retained",
+    );
+    expect(offsets).toEqual([0]);
+    expect(readFileSync(artifactPath(dir, "retained"), "utf8")).toBe("retained tail");
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
 
 test("only safe terminal jobs are captured in list order; later success retains the last gap", async () => {
   const dir = mkdtempSync(join(tmpdir(), "remote-job-text-order-"));
@@ -174,7 +188,7 @@ test("10 MiB limit counts UTF-8 bytes and excludes the page that exceeds it", as
   }
 });
 
-test("artifact write failure rejects instead of reporting a text gap or capturing later jobs", async () => {
+test("staging-open failure preserves the prior artifact and rejects before capturing later jobs", async () => {
   const dir = mkdtempSync(join(tmpdir(), "remote-job-text-write-"));
   const path = artifactPath(dir, "blocked");
   mkdirSync(join(dir, "session.jsonl.artifacts", "execute-job-blocked"), { recursive: true });

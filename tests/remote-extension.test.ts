@@ -1,26 +1,77 @@
 import { clearRemoteJobEvents, remoteJobEvents } from "../src/remote/job-events";
 import { createRemoteOperations } from "../src/remote/operations";
-import { expect, test } from "bun:test";
+import { expect, spyOn, test } from "bun:test";
 import remoteExtension, { parseRemoteLaunch, renderRemote, remoteInboxState } from "../src/remote/extension";
 import { RemoteAttention, remoteStatus, renderHuman } from "../src/remote/human-rendering";
 
+// A mount owns the real extension's observation timer. Session reloads may share
+// cache and journal effects, but never share an observation's lifecycle hooks.
+function mountRemoteExtension(pi: any, client: any) {
+  const starts: Array<(event: {}, ctx: any) => unknown> = [];
+  const shutdowns: Array<(event: {}, ctx: any) => unknown> = [];
+  let command: any;
+  remoteExtension(
+    {
+      ...pi,
+      on(name: string, handler: (event: {}, ctx: any) => unknown) {
+        if (name === "session_start") starts.push(handler);
+        if (name === "session_shutdown") shutdowns.push(handler);
+      },
+      registerCommand(name: string, value: any) {
+        if (name === "remote") command = value;
+      },
+    },
+    client,
+  );
+  const shutdown = async () => {
+    for (const handler of shutdowns) await handler({}, undefined);
+  };
+  return {
+    start: async (ctx: any) => {
+      for (const handler of starts) await handler({}, ctx);
+    },
+    shutdown,
+    run: (args: string, ctx: any) => command.handler(args, ctx),
+    [Symbol.asyncDispose]: shutdown,
+  };
+}
+
+test("test mount releases its observation timer even when the test body throws", async () => {
+  const schedule = globalThis.setInterval;
+  let timer!: ReturnType<typeof setInterval>;
+  const interval = spyOn(globalThis, "setInterval").mockImplementation(((callback: () => void, delay?: number) => {
+    timer = schedule(callback, delay);
+    return timer;
+  }) as typeof setInterval);
+  const clear = spyOn(globalThis, "clearInterval");
+  try {
+    await expect(
+      (async () => {
+        await using _extension = mountRemoteExtension({ sendMessage() {} }, { status: async () => ({ tasks: {} }) });
+        throw Error("failed test body");
+      })(),
+    ).rejects.toThrow("failed test body");
+    expect(clear.mock.calls.some(([id]) => id === timer)).toBe(true);
+  } finally {
+    interval.mockRestore();
+    clear.mockRestore();
+    clearInterval(timer);
+  }
+});
+
 test("remote uses execute bridge while human output persists in conversation", async () => {
   let active = ["execute"];
-  const handlers = new Map<string, Function>();
-  const commands = new Map<string, any>();
   const messages: any[] = [];
   const tools: any[] = [];
   const pi = {
-    on: (name: string, fn: Function) => handlers.set(name, fn),
     getActiveTools: () => active,
     setActiveTools: (names: string[]) => {
       active = names;
     },
     registerTool: (tool: any) => tools.push(tool),
-    registerCommand: (name: string, command: any) => commands.set(name, command),
     sendMessage: (message: any) => messages.push(message),
   };
-  remoteExtension(
+  await using extension = mountRemoteExtension(
     pi as any,
     { path: "/nonexistent/remote-test/state.json", status: async () => ({ tasks: {} }) } as any,
   );
@@ -35,7 +86,7 @@ test("remote uses execute bridge while human output persists in conversation", a
     cached: true,
     tasks: [],
   });
-  await commands.get("remote").handler("status", {});
+  await extension.run("status", {});
   expect(messages[0].display).toBe(true);
   expect(messages[0].content).toContain("No saved tasks");
   expect(messages[0].content).not.toContain('"cached"');
@@ -50,17 +101,13 @@ test("remote launch preserves raw prompt and quoted repository paths", () => {
   expect(() => parseRemoteLaunch("launch /repo ")).toThrow("Usage");
 });
 test("accepted retry syncs; uncertain retry retains same launch ID", async () => {
-  let command: any;
   const calls: string[] = [];
   let outcome = "accepted";
   const task = { taskId: "id", repoPath: "/repo", prompt: "prompt", events: [] };
   const messages: any[] = [];
   const pi = {
-    on() {},
     registerTool() {},
-    registerCommand(_n: string, c: any) {
-      command = c;
-    },
+
     sendMessage(m: any) {
       messages.push(m);
     },
@@ -78,12 +125,12 @@ test("accepted retry syncs; uncertain retry retains same launch ID", async () =>
     },
     connect: async () => ({}),
   };
-  remoteExtension(pi as any, client as any);
-  await command.handler("retry id", {});
+  await using extension = mountRemoteExtension(pi as any, client as any);
+  await extension.run("retry id", {});
   outcome = "unknown";
-  await command.handler("retry id", {});
+  await extension.run("retry id", {});
   expect(calls).toEqual(["sync:id", "launch:id"]);
-  await command.handler("connect host", {});
+  await extension.run("connect host", {});
   expect(messages.at(-1).content).toContain("shared across");
 });
 
@@ -99,7 +146,7 @@ test("execute remote methods use configured client, never accept a host", async 
     sync: async (id: string) => ({ events: [], taskId: id }),
     transcript: async (id: string) => ({ events: Array.from({ length: 55 }, (_, i) => i), taskId: id }),
   };
-  remoteExtension(pi as any, client as any);
+  await using _extension = mountRemoteExtension(pi as any, client as any);
   await expect(
     createRemoteOperations(client as any)({ op: "launch", repoPath: "/repo", prompt: "do work", taskId: "id" }),
   ).rejects.toThrow("subagent");
@@ -136,7 +183,6 @@ test("remote presentation escapes terminal and bidi control text", () => {
 });
 
 test("stale targeted or missing-text remote answers never fall through to a different question", async () => {
-  let command: any;
   const messages: any[] = [];
   const replies: any[] = [];
   const task = {
@@ -147,12 +193,8 @@ test("stale targeted or missing-text remote answers never fall through to a diff
       questions: [{ id: "q_current", owner: { sessionId: "s", branchId: "b" }, version: 2, status: "pending" }],
     },
   };
-  remoteExtension(
+  await using extension = mountRemoteExtension(
     {
-      on() {},
-      registerCommand(_name: string, value: any) {
-        command = value;
-      },
       sendMessage(value: any) {
         messages.push(value);
       },
@@ -166,19 +208,18 @@ test("stale targeted or missing-text remote answers never fall through to a diff
       },
     } as any,
   );
-  await command.handler("answer task_one q_old yes", {});
-  await command.handler("answer q_old yes", {});
-  await command.handler("answer task_one q_current", {});
-  await command.handler("answer", {});
+  await extension.run("answer task_one q_old yes", {});
+  await extension.run("answer q_old yes", {});
+  await extension.run("answer task_one q_current", {});
+  await extension.run("answer", {});
   expect(replies).toHaveLength(0);
   expect(messages.every((m) => m.content.startsWith("Remote error:"))).toBe(true);
-  await command.handler("answer no thanks", {});
+  await extension.run("answer no thanks", {});
   expect(replies[0][0]).toBe("task_one");
   expect(replies[0][1]).toMatchObject({ id: "q_current", version: 2, text: "no thanks" });
 });
 
 test("no-args inbox binds selected choice to freshly synced owner/version, Escape never submits", async () => {
-  let command: any;
   let version = 3;
   const answers: any[] = [];
   const task = () => ({
@@ -216,13 +257,9 @@ test("no-args inbox binds selected choice to freshly synced owner/version, Escap
     },
   };
   const pi = {
-    on() {},
-    registerCommand(_name: string, c: any) {
-      command = c;
-    },
     sendMessage() {},
   };
-  remoteExtension(pi as any, client as any);
+  await using extension = mountRemoteExtension(pi as any, client as any);
   const keys = {
     matches: (data: string, name: string) =>
       data === (name === "tui.select.confirm" ? "enter" : name === "tui.select.cancel" ? "esc" : "never"),
@@ -248,7 +285,7 @@ test("no-args inbox binds selected choice to freshly synced owner/version, Escap
       notify() {},
     },
   };
-  await command.handler("", ctx);
+  await extension.run("", ctx);
   expect(answers).toHaveLength(1);
   expect(answers[0][1]).toMatchObject({
     id: "q-one",
@@ -258,19 +295,14 @@ test("no-args inbox binds selected choice to freshly synced owner/version, Escap
   });
   answers.length = 0;
   selections.push("enter", "esc", "esc");
-  await command.handler("", ctx);
+  await extension.run("", ctx);
   expect(answers).toHaveLength(0);
 });
 
 test("connect editor Escape never connects, even after entering a host", async () => {
-  let command: any;
   const connects: unknown[] = [];
-  remoteExtension(
+  await using extension = mountRemoteExtension(
     {
-      on() {},
-      registerCommand(_n: string, c: any) {
-        command = c;
-      },
       sendMessage() {},
     } as any,
     { status: async () => ({ tasks: {} }), connect: async (...args: any[]) => connects.push(args) } as any,
@@ -296,13 +328,12 @@ test("connect editor Escape never connects, even after entering a host", async (
       notify() {},
     },
   };
-  await command.handler("", ctx);
+  await extension.run("", ctx);
   expect(connects).toEqual([]);
 });
 
 for (const change of ["offline", "changed-owner"] as const) {
   test("cancel confirmation open then " + change + " refuses dispatch", async () => {
-    let command: any;
     let phase = 0;
     let cancels = 0;
     const task = {
@@ -330,12 +361,8 @@ for (const change of ["offline", "changed-owner"] as const) {
       },
     };
     const messages: any[] = [];
-    remoteExtension(
+    await using extension = mountRemoteExtension(
       {
-        on() {},
-        registerCommand(_n: string, c: any) {
-          command = c;
-        },
         sendMessage(m: any) {
           messages.push(m);
         },
@@ -343,7 +370,7 @@ for (const change of ["offline", "changed-owner"] as const) {
       client as any,
     );
     const choices = ["task:id", "cancel"];
-    await command.handler("", {
+    await extension.run("", {
       hasUI: true,
       ui: {
         custom: async () => choices.shift(),
@@ -430,10 +457,11 @@ test("human transcript preserves every event and offset while task summary extra
 });
 
 test("poll UI is compact, cleanup clears status, and open picker receives no chat interruption", async () => {
-  const handlers = new Map<string, any>(),
-    messages: any[] = [],
+  const messages: any[] = [],
     statuses: any[] = [];
-  let command: any, release!: () => void;
+  let release!: () => void;
+  let menu: Promise<void> | undefined;
+  let extension: ReturnType<typeof mountRemoteExtension> | undefined;
   const task: any = {
     taskId: "id",
     prompt: "work",
@@ -442,36 +470,47 @@ test("poll UI is compact, cleanup clears status, and open picker receives no cha
     events: [],
     task: { state: "running" },
   };
-  remoteExtension(
-    {
-      on: (name: string, fn: any) => handlers.set(name, fn),
-      registerCommand: (_: string, c: any) => (command = c),
-      sendMessage: (m: any) => messages.push(m),
-    } as any,
-    { status: async () => ({ tasks: { id: task } }), syncActive: async () => {}, sync: async () => task } as any,
-  );
-  const ctx: any = {
-    hasUI: true,
-    ui: {
-      setStatus: (...args: any[]) => statuses.push(args),
-      custom: async () => new Promise((resolve) => (release = () => resolve(undefined))),
-    },
-  };
-  await handlers.get("session_start")({}, ctx);
-  await new Promise((resolve) => setTimeout(resolve, 0));
-  expect(statuses.at(-1)).toEqual(["bruv-remote", "remote: 1 active"]);
-  expect(messages).toHaveLength(0);
-  const menu = command.handler("", ctx);
-  task.task.questions = [{ id: "q", version: 1, status: "pending", text: "Open menu question" }];
-  await handlers.get("session_start")({}, ctx);
-  await new Promise((resolve) => setTimeout(resolve, 0));
-  expect(messages).toHaveLength(0);
-  release();
-  await menu;
-  await handlers.get("session_start")({}, ctx);
-  await new Promise((resolve) => setTimeout(resolve, 0));
-  expect(messages.filter((m) => m.content.includes("Open menu question"))).toHaveLength(1);
-  await handlers.get("session_shutdown")();
+  // Drive the actual timer callback, not a synthetic session replacement.
+  let poll!: () => void;
+  const schedule = globalThis.setInterval;
+  const interval = spyOn(globalThis, "setInterval").mockImplementation(((callback: () => void, delay?: number) => {
+    poll = callback;
+    return schedule(callback, delay);
+  }) as typeof setInterval);
+  try {
+    extension = mountRemoteExtension(
+      {
+        sendMessage: (m: any) => messages.push(m),
+      } as any,
+      { status: async () => ({ tasks: { id: task } }), syncActive: async () => {}, sync: async () => task } as any,
+    );
+    const ctx: any = {
+      hasUI: true,
+      ui: {
+        setStatus: (...args: any[]) => statuses.push(args),
+        custom: async () => new Promise((resolve) => (release = () => resolve(undefined))),
+      },
+    };
+    await extension.start(ctx);
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(statuses.at(-1)).toEqual(["bruv-remote", "remote: 1 active"]);
+    expect(messages).toHaveLength(0);
+    menu = extension.run("", ctx);
+    task.task.questions = [{ id: "q", version: 1, status: "pending", text: "Open menu question" }];
+    poll();
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(messages).toHaveLength(0);
+    release();
+    await menu;
+    poll();
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(messages.filter((m) => m.content.includes("Open menu question"))).toHaveLength(1);
+  } finally {
+    interval.mockRestore();
+    release?.();
+    await menu;
+    await extension?.shutdown();
+  }
   expect(statuses.at(-1)).toEqual(["bruv-remote", undefined]);
 });
 
@@ -497,14 +536,9 @@ test("capability, delivery uncertainty, blocked, failure and integration review 
 });
 
 test("sync command renders final assistant text from full client task, not stripped RPC summary", async () => {
-  let command: any;
   const messages: any[] = [];
-  remoteExtension(
+  await using extension = mountRemoteExtension(
     {
-      on() {},
-      registerCommand(_name: string, c: any) {
-        command = c;
-      },
       sendMessage(m: any) {
         messages.push(m);
       },
@@ -526,7 +560,7 @@ test("sync command renders final assistant text from full client task, not strip
       }),
     } as any,
   );
-  await command.handler("sync task", {});
+  await extension.run("sync task", {});
   expect(messages[0].content).toContain("Human conclusion");
   expect(messages[0].content).not.toContain("message_end");
 });
@@ -597,42 +631,36 @@ test("compact status retains unresolved attention after active tasks end and cle
 
 test("session branch attention rehydrates on reload without poll spam", async () => {
   const entries: any[] = [],
-    messages: any[] = [],
-    handlers = new Map<string, Function>();
+    messages: any[] = [];
   const task: any = {
     taskId: "t",
     task: { state: "running", questions: [{ id: "q", status: "pending", version: 1, text: "Review?" }] },
     events: [],
   };
   const client: any = { syncActive: async () => {}, status: async () => ({ tasks: { t: task } }) };
-  const make = () => {
-    const h = new Map<string, Function>();
-    remoteExtension(
+  const mount = () =>
+    mountRemoteExtension(
       {
-        on: (name: string, fn: Function) => h.set(name, fn),
-        registerCommand() {},
         sendMessage: (m: any) => messages.push(m),
         appendEntry: (customType: string, data: any) => entries.push({ type: "custom", customType, data }),
-      } as any,
+      },
       client,
     );
-    return h;
-  };
   const ctx = { hasUI: false, sessionManager: { getBranch: () => entries } };
-  const first = make();
-  await first.get("session_start")!({}, ctx);
+  await using first = mount();
+  await first.start(ctx);
   await new Promise((resolve) => setTimeout(resolve, 10));
   expect(messages.filter((m) => m.content.includes("Review?"))).toHaveLength(1);
-  await first.get("session_shutdown")!();
-  const second = make();
-  await second.get("session_start")!({}, ctx);
+  await first.shutdown();
+  await using second = mount();
+  await second.start(ctx);
   await new Promise((resolve) => setTimeout(resolve, 10));
   expect(messages.filter((m) => m.content.includes("Review?"))).toHaveLength(1);
   task.task.questions[0].version = 2;
-  await second.get("session_start")!({}, ctx);
+  await second.start(ctx);
   await new Promise((resolve) => setTimeout(resolve, 10));
   expect(messages.filter((m) => m.content.includes("Review?"))).toHaveLength(2);
-  await second.get("session_shutdown")!();
+  await second.shutdown();
 });
 
 test("each genuine outage and recovery is noticed once, including recovery after session reload", () => {
@@ -665,8 +693,7 @@ test("failure is one useful notice and explicit delivery responses distinguish r
 });
 
 test("remote refresher projects only this parent's jobs and does not duplicate terminal/artifact UI messages", async () => {
-  const handlers = new Map<string, Function>(),
-    messages: any[] = [];
+  const messages: any[] = [];
   const a = "/fixture/session-owned-a",
     b = "/fixture/session-owned-b";
   const task = (taskId: string, jobSessionFile: string) => ({
@@ -683,16 +710,14 @@ test("remote refresher projects only this parent's jobs and does not duplicate t
     task: { taskId, state: "done" },
   });
   const state = { tasks: { a: task("a", a), b: task("b", b) } };
-  remoteExtension(
+  await using extension = mountRemoteExtension(
     {
-      on: (name: string, fn: Function) => handlers.set(name, fn),
-      registerCommand() {},
       sendMessage: (m: any) => messages.push(m),
     } as any,
     { path: "/nonexistent/fixture/state.json", syncActive: async () => {}, status: async () => state } as any,
   );
   try {
-    await handlers.get("session_start")!({}, { sessionManager: { getSessionFile: () => a } });
+    await extension.start({ sessionManager: { getSessionFile: () => a } });
     await Bun.sleep(10);
     expect(
       remoteJobEvents(a)
@@ -701,8 +726,8 @@ test("remote refresher projects only this parent's jobs and does not duplicate t
     ).toEqual(["a"]);
     expect(remoteJobEvents(b).snapshot()).toEqual([]);
     expect(messages).toEqual([]);
-    await handlers.get("session_shutdown")!();
-    await handlers.get("session_start")!({}, { sessionManager: { getSessionFile: () => b } });
+    await extension.shutdown();
+    await extension.start({ sessionManager: { getSessionFile: () => b } });
     await Bun.sleep(10);
     expect(
       remoteJobEvents(b)
@@ -711,14 +736,13 @@ test("remote refresher projects only this parent's jobs and does not duplicate t
     ).toEqual(["b"]);
     expect(messages).toEqual([]);
   } finally {
-    await handlers.get("session_shutdown")!();
+    await extension.shutdown();
     clearRemoteJobEvents(a);
     clearRemoteJobEvents(b);
   }
 });
 
 test("session-owned completion and questions stay in normal jobs/questions, not remote footer", async () => {
-  const handlers = new Map<string, Function>();
   const messages: any[] = [];
   const statuses: any[] = [];
   const session = "/fixture/owned-human-footer";
@@ -735,10 +759,8 @@ test("session-owned completion and questions stay in normal jobs/questions, not 
     outcome: "accepted",
     task: { taskId: "owned", state: "done", questions: [{ id: "q", version: 1, status: "pending", text: "Review?" }] },
   };
-  remoteExtension(
+  await using extension = mountRemoteExtension(
     {
-      on: (name: string, fn: Function) => handlers.set(name, fn),
-      registerCommand() {},
       sendMessage: (m: any) => messages.push(m),
     } as any,
     {
@@ -748,14 +770,11 @@ test("session-owned completion and questions stay in normal jobs/questions, not 
     } as any,
   );
   try {
-    await handlers.get("session_start")!(
-      {},
-      {
-        hasUI: true,
-        ui: { setStatus: (...args: any[]) => statuses.push(args) },
-        sessionManager: { getSessionFile: () => session },
-      },
-    );
+    await extension.start({
+      hasUI: true,
+      ui: { setStatus: (...args: any[]) => statuses.push(args) },
+      sessionManager: { getSessionFile: () => session },
+    });
     await Bun.sleep(10);
     expect(messages).toEqual([]);
     expect(statuses.some(([, value]) => String(value).includes("question(s)"))).toBe(false);
@@ -765,22 +784,17 @@ test("session-owned completion and questions stay in normal jobs/questions, not 
         .map((t) => t.taskId),
     ).toEqual(["owned"]);
   } finally {
-    await handlers.get("session_shutdown")!();
+    await extension.shutdown();
     clearRemoteJobEvents(session);
   }
   expect(statuses.at(-1)).toEqual(["bruv-remote", undefined]);
 });
 
 test("human direct launch binds the command's parent session without exposing JSON", async () => {
-  let command: any;
   const calls: any[] = [],
     messages: any[] = [];
-  remoteExtension(
+  await using extension = mountRemoteExtension(
     {
-      on() {},
-      registerCommand: (_: string, value: any) => {
-        command = value;
-      },
       sendMessage: (m: any) => messages.push(m),
     } as any,
     {
@@ -793,7 +807,7 @@ test("human direct launch binds the command's parent session without exposing JS
       status: async () => ({ tasks: {} }),
     } as any,
   );
-  await command.handler('launch "/repo with spaces" do useful work', {
+  await extension.run('launch "/repo with spaces" do useful work', {
     sessionManager: { getSessionFile: () => "/fixture/human-parent" },
   });
   expect(calls).toEqual([["/repo with spaces", "do useful work", undefined, undefined, "/fixture/human-parent"]]);
@@ -823,58 +837,47 @@ test("fresh sessions baseline legacy unowned results, but live transitions and r
       live: task("live", "running"),
     },
   };
-  const make = () => {
-    const handlers = new Map<string, Function>();
-    let command: any;
-    remoteExtension(
+  const mount = () =>
+    mountRemoteExtension(
       {
-        on: (name: string, fn: Function) => handlers.set(name, fn),
-        registerCommand: (_: string, value: any) => {
-          command = value;
-        },
         sendMessage: (m: any) => messages.push(m),
         appendEntry: (customType: string, data: any) => entries.push({ type: "custom", customType, data }),
-      } as any,
+      },
       {
         path: "/nonexistent/fixture/state.json",
         syncActive: async () => {},
         status: async () => state,
-      } as any,
+      },
     );
-    return { handlers, command };
-  };
-  const start = async (instance: ReturnType<typeof make>, branch: any[]) => {
-    await instance.handlers.get("session_start")!(
-      {},
-      { sessionManager: { getBranch: () => branch, getSessionFile: () => "/current-session" } },
-    );
+  const start = async (instance: ReturnType<typeof mount>, branch: any[]) => {
+    await instance.start({ sessionManager: { getBranch: () => branch, getSessionFile: () => "/current-session" } });
     await Bun.sleep(15);
   };
-  let instance = make();
+  let instance = mount();
   try {
     await start(instance, entries);
     expect(messages.map((m) => m.content).join(" ")).toContain("Review?");
     expect(messages.map((m) => m.content).join(" ")).not.toContain("Remote legacy · done");
     expect(messages.map((m) => m.content).join(" ")).not.toContain("Remote other · done");
-    await instance.handlers.get("session_shutdown")!();
-    instance = make();
+    await instance.shutdown();
+    instance = mount();
     await start(instance, []); // another fresh session must not replay the cached result
     expect(messages.map((m) => m.content).join(" ")).not.toContain("Remote legacy · done");
     state.tasks.live.task.state = "done";
-    await instance.command.handler("status", { hasUI: false }); // explicit status is still accessible
+    await instance.run("status", { hasUI: false }); // explicit status is still accessible
     await Bun.sleep(10);
     expect(messages.map((m) => m.content).filter((text: string) => text.includes("Remote live · done"))).toHaveLength(
       1,
     );
-    await instance.handlers.get("session_shutdown")!();
-    instance = make();
+    await instance.shutdown();
+    instance = mount();
     await start(instance, entries); // reload: previously delivered completion not replayed
     expect(messages.map((m) => m.content).filter((text: string) => text.includes("Remote live · done"))).toHaveLength(
       1,
     );
     expect(messages.map((m) => m.content).some((text: string) => text.includes("legacy"))).toBe(true);
   } finally {
-    await instance.handlers.get("session_shutdown")!();
+    await instance.shutdown();
   }
 });
 
@@ -882,48 +885,40 @@ test("unowned task active before shutdown completes during restart and is delive
   const entries: any[] = [],
     messages: any[] = [];
   const task: any = { taskId: "restart", events: [], task: { state: "running" } };
-  const make = () => {
-    const handlers = new Map<string, Function>();
-    remoteExtension(
+  const mount = () =>
+    mountRemoteExtension(
       {
-        on: (n: string, f: Function) => handlers.set(n, f),
-        registerCommand() {},
         appendEntry: (customType: string, data: any) => entries.push({ type: "custom", customType, data }),
         sendMessage: (m: any) => messages.push(m),
-      } as any,
-      { syncActive: async () => {}, status: async () => ({ tasks: { restart: task } }) } as any,
+      },
+      { syncActive: async () => {}, status: async () => ({ tasks: { restart: task } }) },
     );
-    return handlers;
-  };
-  const start = async (h: Map<string, Function>, branch: any[]) => {
-    await h.get("session_start")!({}, { sessionManager: { getBranch: () => branch } });
+  const start = async (session: ReturnType<typeof mount>, branch: any[]) => {
+    await session.start({ sessionManager: { getBranch: () => branch } });
     await Bun.sleep(15);
   };
-  let handlers = make();
+  let session = mount();
   try {
-    await start(handlers, entries);
-    await handlers.get("session_shutdown")!();
+    await start(session, entries);
+    await session.shutdown();
     task.task.state = "done";
-    handlers = make();
-    await start(handlers, entries);
+    session = mount();
+    await start(session, entries);
     expect(messages.filter((m) => m.content.includes("Remote restart · done"))).toHaveLength(1);
-    await handlers.get("session_shutdown")!();
-    handlers = make();
-    await start(handlers, []);
+    await session.shutdown();
+    session = mount();
+    await start(session, []);
     expect(messages.filter((m) => m.content.includes("Remote restart · done"))).toHaveLength(1);
   } finally {
-    await handlers.get("session_shutdown")!();
+    await session.shutdown();
   }
 });
 
 test("completion first seen during startup sync is not mistaken for historical cache", async () => {
-  const handlers = new Map<string, Function>();
   const messages: any[] = [];
   const task: any = { taskId: "during-sync", events: [], task: { state: "running" } };
-  remoteExtension(
+  await using extension = mountRemoteExtension(
     {
-      on: (n: string, f: Function) => handlers.set(n, f),
-      registerCommand() {},
       sendMessage: (m: any) => messages.push(m),
     } as any,
     {
@@ -934,16 +929,15 @@ test("completion first seen during startup sync is not mistaken for historical c
     } as any,
   );
   try {
-    await handlers.get("session_start")!({}, { sessionManager: { getBranch: () => [] } });
+    await extension.start({ sessionManager: { getBranch: () => [] } });
     await Bun.sleep(15);
     expect(messages.filter((m) => m.content.includes("Remote during-sync · done"))).toHaveLength(1);
   } finally {
-    await handlers.get("session_shutdown")!();
+    await extension.shutdown();
   }
 });
 
 test("review action exposes cached conflict artifact and leaves picker without contacting owner", async () => {
-  let command: any;
   const messages: any[] = [];
   let picks = 0;
   const task = {
@@ -953,19 +947,15 @@ test("review action exposes cached conflict artifact and leaves picker without c
     task: { state: "done" },
     repository: { status: "review", reason: "local conflict", artifact: "/safe/return.patch" },
   };
-  remoteExtension(
+  await using extension = mountRemoteExtension(
     {
-      on() {},
-      registerCommand(_n: string, c: any) {
-        command = c;
-      },
       sendMessage(m: any) {
         messages.push(m);
       },
     } as any,
     { status: async () => ({ tasks: { review: task } }) } as any,
   );
-  await command.handler("", { hasUI: true, ui: { custom: async () => ["task:review", "details"][picks++] } });
+  await extension.run("", { hasUI: true, ui: { custom: async () => ["task:review", "details"][picks++] } });
   expect(picks).toBe(2);
   expect(messages.at(-1).content).toContain("/safe/return.patch");
   expect(messages.at(-1).content).toContain("Inspect local worktree before applying");
@@ -979,20 +969,16 @@ test("menu repository launch asks about untracked files before snapshot or trans
   try {
     Bun.spawnSync(["git", "init", dir]);
     await writeFile(join(dir, "new-file.txt"), "private local draft");
-    let command: any;
+
     const confirmations: string[] = [];
     const picks = ["launch", undefined];
-    remoteExtension(
+    await using extension = mountRemoteExtension(
       {
-        on() {},
-        registerCommand(_n: string, c: any) {
-          command = c;
-        },
         sendMessage() {},
       } as any,
       { path: join(dir, "cache/state.json"), status: async () => ({ tasks: {}, connection: {} }) } as any,
     );
-    await command.handler("", {
+    await extension.run("", {
       cwd: dir,
       hasUI: true,
       ui: {
@@ -1012,7 +998,6 @@ test("menu repository launch asks about untracked files before snapshot or trans
 });
 
 test("capability menu shows remote request details and refuses changed owner after HUMAN confirmation", async () => {
-  let command: any;
   let owner = "owner";
   let picks = 0;
   const messages: any[] = [];
@@ -1039,19 +1024,15 @@ test("capability menu shows remote request details and refuses changed owner aft
       throw Error("must not dispatch");
     },
   };
-  remoteExtension(
+  await using extension = mountRemoteExtension(
     {
-      on() {},
-      registerCommand(_n: string, c: any) {
-        command = c;
-      },
       sendMessage(m: any) {
         messages.push(m);
       },
     } as any,
     client,
   );
-  await command.handler("", {
+  await extension.run("", {
     hasUI: true,
     cwd: process.cwd(),
     ui: {
@@ -1071,24 +1052,19 @@ test("capability menu shows remote request details and refuses changed owner aft
 });
 
 test("open remote menu signals snapshot freshness without rewriting the picker or transcript", async () => {
-  let command: any;
   let release!: (choice?: string) => void;
   const statuses: string[] = [];
   const messages: any[] = [];
   let openings = 0;
-  remoteExtension(
+  await using extension = mountRemoteExtension(
     {
-      on() {},
-      registerCommand(_n: string, c: any) {
-        command = c;
-      },
       sendMessage(m: any) {
         messages.push(m);
       },
     } as any,
     { status: async () => ({ tasks: {} }) } as any,
   );
-  const run = command.handler("", {
+  const run = extension.run("", {
     hasUI: true,
     ui: {
       setStatus(_key: string, value: string) {
@@ -1152,16 +1128,12 @@ test("oversized untracked menu inventory permits tracked-only without bulk appro
   try {
     Bun.spawnSync(["git", "init", dir]);
     for (let i = 0; i < 5000; i++) await writeFile(join(dir, String(i).padStart(5, "0") + "x".repeat(215)), "");
-    let command: any;
+
     const notices: string[] = [];
     let confirmations = 0;
     let reachedLaunch = false;
-    remoteExtension(
+    await using extension = mountRemoteExtension(
       {
-        on() {},
-        registerCommand(_n: string, c: any) {
-          command = c;
-        },
         sendMessage() {},
       } as any,
       {
@@ -1172,7 +1144,7 @@ test("oversized untracked menu inventory permits tracked-only without bulk appro
         },
       } as any,
     );
-    await command.handler("", {
+    await extension.run("", {
       cwd: dir,
       hasUI: true,
       ui: {
@@ -1246,13 +1218,9 @@ test("offline terminal menu revokes only the selected local grant; Escape and de
         throw Error("wrong-owner dispatch");
       },
     };
-    let command: any;
-    remoteExtension(
+
+    await using extension = mountRemoteExtension(
       {
-        on() {},
-        registerCommand(_n: string, c: any) {
-          command = c;
-        },
         sendMessage(m: any) {
           messages.push(m);
         },
@@ -1261,7 +1229,7 @@ test("offline terminal menu revokes only the selected local grant; Escape and de
     );
     const run = async (confirm: boolean, escapeMenu = false) => {
       let picks = 0;
-      await command.handler("", {
+      await extension.run("", {
         hasUI: true,
         ui: {
           setStatus() {},
@@ -1326,14 +1294,10 @@ test("changed-owner accepted task loses local grant without wrong-owner dispatch
       connection: { host: "host", hello: { ownerId: "new", epoch: "epoch" } },
     };
     client.status = async () => state;
-    let cmd: any;
+
     const output: any[] = [];
-    remoteExtension(
+    await using extension = mountRemoteExtension(
       {
-        on() {},
-        registerCommand(_n: string, c: any) {
-          cmd = c;
-        },
         sendMessage(m: any) {
           output.push(m);
         },
@@ -1341,7 +1305,7 @@ test("changed-owner accepted task loses local grant without wrong-owner dispatch
       client,
     );
     let picks = 0;
-    await cmd.handler("", {
+    await extension.run("", {
       hasUI: true,
       ui: {
         setStatus() {},

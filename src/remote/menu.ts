@@ -32,15 +32,18 @@ export const taskOwned = (task: RemoteTask, state: RemoteState) =>
 export function inboxItems(state: RemoteState): Item[] {
   const online = !!state.connection;
   return [
-    ...pendingQuestions(state).map(({ task, q }) => ({
-      value: (taskOwned(task, state) && !task.lastError ? "question:" : "offline:question:") + task.taskId + ":" + q.id,
-      label: "Question: " + title(q.text ?? q.question ?? "Untitled question"),
-      description:
-        (taskOwned(task, state) && !task.lastError ? "" : "Answer unavailable · sync pinned owner first · ") +
-        title(task.prompt) +
-        " · " +
-        task.taskId.slice(0, 12),
-    })),
+    ...pendingQuestions(state).map(({ task, q }) => {
+      const answerAvailable = taskOwned(task, state) && !task.lastError;
+      return {
+        value: (answerAvailable ? "question:" : "offline:question:") + task.taskId + ":" + q.id,
+        label: "Question: " + title(q.text ?? q.question ?? "Untitled question"),
+        description:
+          (answerAvailable ? "" : "Answer unavailable · sync pinned owner first · ") +
+          title(task.prompt) +
+          " · " +
+          task.taskId.slice(0, 12),
+      };
+    }),
     ...Object.values(state.tasks).flatMap((task) =>
       Object.entries(task.replyDelivery ?? {})
         .filter(([, delivery]) => delivery.status === "uncertain")
@@ -102,66 +105,63 @@ export function questionOptions(q: RemoteQuestion): Item[] {
     ...(q.allowFreeText === false ? [] : [{ value: "write", label: "Write an answer…" }]),
   ];
 }
-export function taskActions(task: RemoteTask, online: boolean, hasLocalGrants = false): Item[] {
-  return [
+export function taskActions(task: RemoteTask, ownerConnected: boolean, hasLocalGrants = false): Item[] {
+  const review = returnedReview(task);
+  const freshActive = !task.lastError && ["accepted", "running"].includes(task.task?.state ?? "");
+  const items: Item[] = [
     { value: "transcript", label: "View cached transcript", description: "Available offline" },
     {
       value: "details",
-      label: returnedReview(task) ? "Review returned changes" : "View saved task details",
-      description: returnedReview(task)
+      label: review ? "Review returned changes" : "View saved task details",
+      description: review
         ? "Saved conflict reason and local artifact path · available offline"
         : "Saved status, errors and pending requests · available offline",
     },
-    ...(hasLocalGrants || (online && !task.lastError && ["accepted", "running"].includes(task.task?.state ?? ""))
-      ? [
-          {
-            value: "capabilities",
-            label: "Local capabilities…",
-            description: "Revoke local grants offline; new grants require a live pinned owner",
-          },
-        ]
-      : []),
-    ...(online
-      ? [
-          {
-            value: "sync",
-            label: "Sync task",
-            description: task.lastError
-              ? "Retry failed sync; other actions unavailable until fresh"
-              : "Fetch owner updates",
-          },
-          ...Object.entries(task.replyDelivery ?? {})
-            .filter(([, d]) => d.status === "uncertain")
-            .map(([id]) => ({
-              value: "reply:" + id,
-              label: "Reconcile saved reply",
-              description: "Same saved text and reply identity; never a new answer",
-            })),
-          ...(task.outcome === "unknown"
-            ? [{ value: "retry", label: "Reconcile uncertain launch", description: "Same task ID and owner only" }]
-            : []),
-          ...(!task.lastError && ["accepted", "running"].includes(task.task?.state ?? "")
-            ? [{ value: "cancel", label: "Cancel task…", description: "Requires confirmation" }]
-            : []),
-          ...(task.lastError
-            ? [
-                {
-                  value: "offline",
-                  label: "Cancel unavailable (last sync failed)",
-                  description: "Sync the pinned owner first",
-                },
-              ]
-            : []),
-        ]
-      : [
-          {
-            value: "offline",
-            label: "Sync / cancel unavailable (offline)",
-            description: "Connect to the pinned owner first",
-          },
-        ]),
   ];
+
+  // Local revocation does not require a connected owner or a fresh task.
+  if (hasLocalGrants || (ownerConnected && freshActive))
+    items.push({
+      value: "capabilities",
+      label: "Local capabilities…",
+      description: "Revoke local grants offline; new grants require a live pinned owner",
+    });
+  if (!ownerConnected) {
+    items.push({
+      value: "offline",
+      label: "Sync / cancel unavailable (offline)",
+      description: "Connect to the pinned owner first",
+    });
+    return items;
+  }
+
+  // Reconciliation is available even after a failed sync; it retains saved identities.
+  items.push({
+    value: "sync",
+    label: "Sync task",
+    description: task.lastError ? "Retry failed sync; other actions unavailable until fresh" : "Fetch owner updates",
+  });
+  for (const [id, delivery] of Object.entries(task.replyDelivery ?? {})) {
+    if (delivery.status === "uncertain")
+      items.push({
+        value: "reply:" + id,
+        label: "Reconcile saved reply",
+        description: "Same saved text and reply identity; never a new answer",
+      });
+  }
+  if (task.outcome === "unknown")
+    items.push({ value: "retry", label: "Reconcile uncertain launch", description: "Same task ID and owner only" });
+
+  if (freshActive) items.push({ value: "cancel", label: "Cancel task…", description: "Requires confirmation" });
+  if (task.lastError)
+    items.push({
+      value: "offline",
+      label: "Cancel unavailable (last sync failed)",
+      description: "Sync the pinned owner first",
+    });
+  return items;
 }
+
 const verbs = [
   "connect",
   "status",

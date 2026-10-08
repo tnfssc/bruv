@@ -17,36 +17,12 @@ test("generated subagent replay collects exit evidence before browser close and 
     const proof = path.join(fixture, "proof");
     const state = path.join(fixture, "state");
     const upstream = path.join(fixture, "upstream");
-    const here = fileURLToPath(new URL("../scripts/claude-native-acceptance/", import.meta.url));
     const seed = path.join(fixture, "seed-base");
-    const userdata = path.join(seed, "userdata");
-    const providerLogs = path.join(seed, "logs/provider");
-    const browserModule = path.join(upstream, "runtime/node_modules/playwright/index.mjs");
-    for (const dir of [
-      proof,
-      state,
-      userdata,
-      providerLogs,
-      path.dirname(browserModule),
-      path.join(upstream, "platform"),
-    ])
-      await fs.mkdir(dir, { recursive: true });
-
     const wire = path.join(fixture, "wire.ndjson");
-    await fs.writeFile(wire, `${JSON.stringify({ kind: "lifecycle", value: { pid: 123, event: "exit" } })}\n`);
-    await fs.writeFile(
-      path.join(providerLogs, "owned.log"),
-      `${JSON.stringify({
-        event: { direction: "out", payload: { type: "assistant", text: "ROOT_AFTER_CHILD_REAL PRIVATE_PROMPT" } },
-      })}\n`,
-    );
-    const database = new DatabaseSync(path.join(userdata, "statev2.sqlite"));
-    try {
-      database.exec("CREATE TABLE orchestration_v2_projection_subagents (id TEXT, status TEXT)");
-      database.exec("INSERT INTO orchestration_v2_projection_subagents VALUES ('owned-child', 'completed')");
-    } finally {
-      database.close();
-    }
+    await fs.mkdir(proof);
+    await fs.mkdir(state);
+    await seedExitEvidence(seed, wire);
+
     const configFile = path.join(fixture, "config.json");
     await fs.writeFile(
       configFile,
@@ -60,55 +36,15 @@ test("generated subagent replay collects exit evidence before browser close and 
       }),
     );
 
-    // Execute the generation block from the shipped runner, including its real import substitutions.
-    const runner = await fs.readFile(path.join(here, "run-subagent.mjs"), "utf8");
-    const start = runner.indexOf("  const template =");
-    const end = runner.indexOf("  const env =", start);
-    assert.ok(start >= 0 && end > start, "shipped replay generation block");
-    const AsyncFunction = Object.getPrototypeOf(async () => {}).constructor;
-    await new AsyncFunction("fs", "path", "here", "root", runner.slice(start, end))(fs, path, here, fixture);
-    const replay = path.join(fixture, "replay.mjs");
-    assert.ok((await fs.readFile(replay, "utf8")).includes("subagent-driver.mjs"));
+    const replay = await generateSubagentReplay(fixture);
+    await installHealthServer(path.join(upstream, "platform/t3"), seed, path.join(fixture, "server.pid"));
+    await installFailingBrowser(path.join(upstream, "runtime/node_modules/playwright/index.mjs"));
 
-    // A real loopback health endpoint lets the generated replay reach browser startup.
+    // The health endpoint must succeed so the replay reaches the browser setup failure.
     const portLease = createServer();
     await new Promise((resolve) => portLease.listen(0, "127.0.0.1", resolve));
     const port = portLease.address().port;
     await new Promise((resolve) => portLease.close(resolve));
-    const binary = path.join(upstream, "platform/t3");
-    await fs.writeFile(
-      binary,
-      `#!${process.execPath}
-import { createServer } from "node:http";
-import fs from "node:fs/promises";
-if (process.argv.includes("--version")) console.log("owned-t3-fixture");
-else {
-  await fs.writeFile(${JSON.stringify(path.join(fixture, "server.pid"))}, String(process.pid));
-  await fs.cp(${JSON.stringify(seed)}, process.argv[process.argv.indexOf("--base-dir") + 1], { recursive: true });
-  const server = createServer((_, res) => res.end("ok"));
-  server.listen(Number(process.argv[process.argv.indexOf("--port") + 1]), "127.0.0.1");
-  process.on("SIGTERM", () => server.close(() => process.exit(0)));
-}
-`,
-      { mode: 0o755 },
-    );
-    await fs.writeFile(
-      browserModule,
-      `import fs from "node:fs/promises";
-import path from "node:path";
-export const chromium = {
-  launch: async () => ({
-    newContext: async () => { throw Error("owned browser setup failure"); },
-    close: async () => {
-      const config = JSON.parse(await fs.readFile(process.env.BRUV_ACCEPTANCE_CONFIG, "utf8"));
-      const evidencePresent = await fs.access(path.join(config.proof, "final-provider-evidence.json")).then(() => true, () => false);
-      await fs.access(config.root);
-      await fs.writeFile(path.join(config.proof, "browser-close.json"), JSON.stringify({ evidencePresent, runtimePresent: true }));
-    },
-  }),
-};
-`,
-    );
     const result = spawnSync(process.execPath, [replay], {
       env: {
         PATH: `${path.dirname(process.execPath)}:/usr/bin:/bin`,
@@ -154,3 +90,82 @@ export const chromium = {
     await fs.rm(fixture, { recursive: true, force: true });
   }
 });
+
+// Give the real collector one record from each exit-evidence source, including private text that must not be exported.
+async function seedExitEvidence(seed, wire) {
+  const userdata = path.join(seed, "userdata");
+  const providerLogs = path.join(seed, "logs/provider");
+  await fs.mkdir(userdata, { recursive: true });
+  await fs.mkdir(providerLogs, { recursive: true });
+  await fs.writeFile(wire, `${JSON.stringify({ kind: "lifecycle", value: { pid: 123, event: "exit" } })}\n`);
+  await fs.writeFile(
+    path.join(providerLogs, "owned.log"),
+    `${JSON.stringify({
+      event: { direction: "out", payload: { type: "assistant", text: "ROOT_AFTER_CHILD_REAL PRIVATE_PROMPT" } },
+    })}\n`,
+  );
+  const database = new DatabaseSync(path.join(userdata, "statev2.sqlite"));
+  try {
+    database.exec("CREATE TABLE orchestration_v2_projection_subagents (id TEXT, status TEXT)");
+    database.exec("INSERT INTO orchestration_v2_projection_subagents VALUES ('owned-child', 'completed')");
+  } finally {
+    database.close();
+  }
+}
+
+async function generateSubagentReplay(fixture) {
+  const here = fileURLToPath(new URL("../scripts/claude-native-acceptance/", import.meta.url));
+  // Execute the generation block from the shipped runner, including its real import substitutions.
+  const runner = await fs.readFile(path.join(here, "run-subagent.mjs"), "utf8");
+  const start = runner.indexOf("  const template =");
+  const end = runner.indexOf("  const env =", start);
+  assert.ok(start >= 0 && end > start, "shipped replay generation block");
+  const AsyncFunction = Object.getPrototypeOf(async () => {}).constructor;
+  await new AsyncFunction("fs", "path", "here", "root", runner.slice(start, end))(fs, path, here, fixture);
+  const replay = path.join(fixture, "replay.mjs");
+  assert.ok((await fs.readFile(replay, "utf8")).includes("subagent-driver.mjs"));
+  return replay;
+}
+
+// The substitute binary seeds the actual runtime base directory and serves the real health request.
+async function installHealthServer(binary, seed, pidFile) {
+  await fs.mkdir(path.dirname(binary), { recursive: true });
+  await fs.writeFile(
+    binary,
+    `#!${process.execPath}
+import { createServer } from "node:http";
+import fs from "node:fs/promises";
+if (process.argv.includes("--version")) console.log("owned-t3-fixture");
+else {
+  await fs.writeFile(${JSON.stringify(pidFile)}, String(process.pid));
+  await fs.cp(${JSON.stringify(seed)}, process.argv[process.argv.indexOf("--base-dir") + 1], { recursive: true });
+  const server = createServer((_, res) => res.end("ok"));
+  server.listen(Number(process.argv[process.argv.indexOf("--port") + 1]), "127.0.0.1");
+  process.on("SIGTERM", () => server.close(() => process.exit(0)));
+}
+`,
+    { mode: 0o755 },
+  );
+}
+
+// Fail after browser launch, then observe ordering at the browser-close boundary.
+async function installFailingBrowser(browserModule) {
+  await fs.mkdir(path.dirname(browserModule), { recursive: true });
+  await fs.writeFile(
+    browserModule,
+    `import fs from "node:fs/promises";
+import path from "node:path";
+export const chromium = {
+  launch: async () => ({
+    newContext: async () => { throw Error("owned browser setup failure"); },
+    close: async () => {
+      const config = JSON.parse(await fs.readFile(process.env.BRUV_ACCEPTANCE_CONFIG, "utf8"));
+      const evidencePresent = await fs.access(path.join(config.proof, "final-provider-evidence.json")).then(() => true, () => false);
+      await fs.access(config.root);
+      await fs.writeFile(path.join(config.proof, "browser-close.json"), JSON.stringify({ evidencePresent, runtimePresent: true }));
+    },
+  }),
+};
+`,
+  );
+}

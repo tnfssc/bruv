@@ -66,3 +66,13 @@ Proof-build fresh retry task_259c27b0 + judge task_f9504048 ACCEPT 85e990227aa93
 Second parent checkpoint db885fce5225bf31dbaadba34c14ceb2393f5999 merged at cef74bca0621739e63a5ae98e5b26dd38103141e. Only UI-owned overlap was related editor-voice test; Live assigned primary task_90932544 + independent judge task_5f1948bf accepted final 89f3ee58570d4e8d08bbb8aedf98e1e218524529, now reconciled in extra coverage. Independent scenarios own hold/cancel/release/rearm and fixture disposers;39tests/171assertions. No inferred coverage. Other-area source joins require combined checks; disk119G.
 
 Disk activity primary REJECT task_6f3b1071: all53assertion statements retained but split clean-seeded owner subprocess lost expanded/failed live state. Expanded-owner negative catches base, not candidate. Fresh rework task task_2031ace4 must preserve dirty journey and branch-roundtrip state before rewrite. No candidate integrated. Proposed parent lesson: assertion/AST count preservation does not prove scenario coverage; preserve causal state and use focused negative controls when splitting stateful tests.
+
+## Checkpoint 2026-10-07T14:51:16.063Z
+
+- Baseline: 49 accepted / 101; 3 judging, 1 primary running, 48 pending. Exact ledger is authoritative, not directory coverage.
+- Rejected disk-test split resolved by fresh rework task_2031ace4 / judge task_28221777: integrated b4d67b8b, final blob a502768eb70247ad2caceed71f88c1c6aa82533d. One causal controller lifetime preserves expanded failed state; independent expanded-owner negative fails base/rework and passes rejected split. Preserve old attempt.
+- Frame dashboard accepted task_0d31b493; integrated 8c4df41f. Options parser accepted task_4c71fe7d; integrated 2d314a4b. New tests have dedicated primaries task_f492439a / task_22861d44 running.
+- Primary scripts/tasks-ui-proof-screenshots.ts: task_46eaf8ec. All three writer worktrees/branches saved in JSON.
+- Fresh judges: catalog task_ab6bca78; native proof plus tooling test task_fca35838; interaction dashboard plus new DOM test task_a52a6008. Native proof candidate cleanup fix is explicit, unintegrated, not accepted until judgment.
+- Combined batch5 task_6adf8626 running against c5c7ab91; log runtime-assets/readability-batch5.log. No full task completion.
+- 111G available; all durable candidates/rejected worktrees retained. Shared dependencies read-only. Known auto-setup Bun/mise failure does not stop primary agents.

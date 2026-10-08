@@ -89,66 +89,94 @@ test("binary websocket evidence keeps inherited identities and ignores non-JSON 
   }
 });
 
-test("shared finalization retains read-only persisted evidence with and without a browser observation", async () => {
+// The database is closed before capture starts; finalization must only read it.
+async function seedCancellationHistory(root) {
   const { DatabaseSync } = await import("node:sqlite");
-  const root = await fs.mkdtemp(path.join(os.tmpdir(), "native-persisted-capture-"));
+  const userdata = path.join(root, "t3-base/userdata");
+  await fs.mkdir(userdata, { recursive: true });
+  const databasePath = path.join(userdata, "statev2.sqlite");
+  const database = new DatabaseSync(databasePath);
   try {
-    const proof = path.join(root, "proof");
-    const userdata = path.join(root, "t3-base/userdata");
-    await fs.mkdir(proof);
-    await fs.mkdir(userdata, { recursive: true });
-    const databasePath = path.join(userdata, "statev2.sqlite");
-    const database = new DatabaseSync(databasePath);
-    try {
-      database.exec(
-        "CREATE TABLE orchestration_v2_projection_turn_items (ordinal INTEGER, type TEXT, payload_json TEXT)",
-      );
-      const insert = database.prepare("INSERT INTO orchestration_v2_projection_turn_items VALUES (?, ?, ?)");
-      insert.run(
-        2,
-        "assistant_message",
-        JSON.stringify({
-          id: "completion",
-          runId: "run",
-          messageId: "message",
-          text: "CANCELLATION_COMPLETED_REAL private completion",
-        }),
-      );
-      insert.run(
-        1,
-        "user_message",
-        JSON.stringify({
-          id: "request",
-          runId: "run",
-          text: "ACCEPT_CANCEL: private request",
-        }),
-      );
-    } finally {
-      database.close();
-    }
-    const before = await fs.readFile(databasePath);
-    await flushCapture({ proof, root, observation: observedPage().observation });
-    const rows = JSON.parse(await fs.readFile(path.join(proof, "t3-persisted-item-projection.json"), "utf8"));
-    assert.deepEqual(
-      rows.map((row) => row.ordinal),
-      [1, 2],
+    database.exec(
+      "CREATE TABLE orchestration_v2_projection_turn_items (ordinal INTEGER, type TEXT, payload_json TEXT)",
     );
-    assert.deepEqual(
-      rows.map((row) => row.markers),
-      [["ACCEPT_CANCEL"], ["CANCELLATION_COMPLETED_REAL"]],
+    const insert = database.prepare("INSERT INTO orchestration_v2_projection_turn_items VALUES (?, ?, ?)");
+    // Insert out of order so the exported chronology must come from the ordinal.
+    insert.run(
+      2,
+      "assistant_message",
+      JSON.stringify({
+        id: "completion",
+        runId: "run",
+        messageId: "message",
+        text: "CANCELLATION_COMPLETED_REAL private completion",
+      }),
     );
-    assert.equal(rows[1].messageIdHash, hash("message"));
-    assert.equal(rows[0].runIdHash, hash("run"));
-    assert.ok(!JSON.stringify(rows).includes("private"));
-    assert.deepEqual(await fs.readFile(databasePath), before);
-    await flushCapture({ proof, root });
-    assert.deepEqual(
-      JSON.parse(await fs.readFile(path.join(proof, "t3-persisted-item-projection.json"), "utf8")),
-      rows,
+    insert.run(
+      1,
+      "user_message",
+      JSON.stringify({ id: "request", runId: "run", text: "ACCEPT_CANCEL: private request" }),
     );
-    assert.deepEqual(JSON.parse(await fs.readFile(path.join(proof, "t3-item-projection.json"), "utf8")), []);
-    assert.deepEqual(await fs.readFile(databasePath), before);
   } finally {
-    await fs.rm(root, { recursive: true, force: true });
+    database.close();
   }
+  return databasePath;
+}
+
+test("finalization exports live observation and read-only persisted evidence", async (t) => {
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), "native-persisted-capture-"));
+  t.after(() => fs.rm(root, { recursive: true, force: true }));
+  const proof = path.join(root, "proof");
+  await fs.mkdir(proof);
+  const databasePath = await seedCancellationHistory(root);
+  const before = await fs.readFile(databasePath);
+  const { observation, receive } = observedPage();
+  receive({ text: "CANCEL_CONFIRMED_REAL private live acknowledgement", runId: "live-run" });
+
+  await flushCapture({ proof, root, observation });
+
+  const liveRows = JSON.parse(await fs.readFile(path.join(proof, "t3-item-projection.json"), "utf8"));
+  assert.deepEqual(liveRows, [
+    { sequence: 0, location: "root", runIdHash: hash("live-run"), markers: ["CANCEL_CONFIRMED_REAL"] },
+  ]);
+  const rows = JSON.parse(await fs.readFile(path.join(proof, "t3-persisted-item-projection.json"), "utf8"));
+  assert.deepEqual(
+    rows.map((row) => row.ordinal),
+    [1, 2],
+  );
+  assert.deepEqual(
+    rows.map((row) => row.markers),
+    [["ACCEPT_CANCEL"], ["CANCELLATION_COMPLETED_REAL"]],
+  );
+  assert.equal(rows[1].messageIdHash, hash("message"));
+  assert.equal(rows[0].runIdHash, hash("run"));
+  assert.ok(!JSON.stringify(rows).includes("private"));
+  assert.deepEqual(await fs.readFile(databasePath), before);
+});
+
+test("finalization without a browser observation creates persisted evidence and an empty live projection", async (t) => {
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), "native-persisted-capture-"));
+  t.after(() => fs.rm(root, { recursive: true, force: true }));
+  const proof = path.join(root, "proof");
+  await fs.mkdir(proof);
+  const databasePath = await seedCancellationHistory(root);
+  const before = await fs.readFile(databasePath);
+
+  // A fresh proof directory cannot accidentally reuse an earlier observation's files.
+  await flushCapture({ proof, root });
+
+  const rows = JSON.parse(await fs.readFile(path.join(proof, "t3-persisted-item-projection.json"), "utf8"));
+  assert.deepEqual(rows, [
+    { ordinal: 1, type: "user_message", idHash: hash("request"), runIdHash: hash("run"), markers: ["ACCEPT_CANCEL"] },
+    {
+      ordinal: 2,
+      type: "assistant_message",
+      idHash: hash("completion"),
+      messageIdHash: hash("message"),
+      runIdHash: hash("run"),
+      markers: ["CANCELLATION_COMPLETED_REAL"],
+    },
+  ]);
+  assert.deepEqual(JSON.parse(await fs.readFile(path.join(proof, "t3-item-projection.json"), "utf8")), []);
+  assert.deepEqual(await fs.readFile(databasePath), before);
 });

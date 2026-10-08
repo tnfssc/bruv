@@ -1,4 +1,4 @@
-import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { registerRemoteRuntime } from "./runtime";
 import { RemoteClient } from "./client";
 import { repositoryUntracked } from "./untracked-preview";
@@ -66,158 +66,162 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
     });
   const publish = (result: unknown, kind?: string) =>
     pi.sendMessage({ customType: "bruv-remote", content: renderHuman(result, kind), display: true });
-  let sessionFile: string | undefined;
-  let questionContext: import("../questions/service").QuestionContext | undefined;
-  let sessionGeneration = 0;
-  let inFlight = false,
-    closed = false,
-    picking = false,
-    menuSnapshot: string | undefined,
-    ui: { setStatus?: (key: string, value: string | undefined) => void } | undefined;
-  const attention = new RemoteAttention();
-  let lastStatus: string | undefined;
-  let initialSnapshot = true;
-  const activeInSession = new Set<string>();
-  const rememberActive = (state: import("./client").RemoteState) => {
-    for (const task of Object.values(state.tasks)) {
-      if (task.jobSessionFile || !["accepted", "running"].includes(task.task?.state ?? "")) continue;
-      if (activeInSession.has(task.taskId)) continue;
-      activeInSession.add(task.taskId);
-      pi.appendEntry?.("bruv-remote-active", { taskId: task.taskId });
-    }
-  };
   const menuFingerprint = (state: import("./client").RemoteState) =>
     JSON.stringify({
       items: inboxItems(state),
       needs: Object.values(state.tasks).map((task) => task.task?.capabilityNeeds),
     });
+
+  // Cache synchronization is shared, but all publication belongs to the session
+  // that requested it. Drain an old poll before starting the replacement session.
+  let inFlight = false;
   const refresh = async () => {
-    if (inFlight || closed) return;
+    if (inFlight) return;
+    const owner = observation;
     inFlight = true;
-    const generation = sessionGeneration;
-    const current = () => !closed && generation === sessionGeneration;
-    let syncError: unknown;
     try {
-      // Observe the cache before sync: a completion produced by this sync is new,
-      // while a terminal result already on disk is not a fresh-session notice.
-      if (initialSnapshot) {
-        try {
-          const baseline = await client.status();
-          if (!current()) return;
-          rememberActive(baseline);
-        } catch {
-          /* Retry baseline on next refresh. */
-        }
-      }
-      if (!current()) return;
-      try {
-        await client.syncActive();
-      } catch (error) {
-        syncError = error;
-      }
-      if (!current()) return;
-      const state = await client.status();
-      if (!current()) return;
-      if (questionContext) {
-        try {
-          await publishRemoteQuestionState(questionContext, state);
-        } catch {
-          /* /questions reports ledger errors. */
-        }
-        if (!current()) return;
-      }
-      if (picking) {
-        const changed = menuSnapshot !== undefined && menuSnapshot !== menuFingerprint(remoteInboxState(state));
-        ui?.setStatus?.(
-          "bruv-remote",
-          "remote: menu snapshot " +
-            (syncError ? "offline" : changed ? "updated" : "current") +
-            " · Refresh from remote to reload",
-        );
-        return;
-      }
-      const baseline = initialSnapshot;
-      initialSnapshot = false;
-      publishRemoteJobObservations(state, sessionFile);
-      const status = remoteStatus(remoteInboxState(state), !!syncError);
-      if (lastStatus !== status) {
-        ui?.setStatus?.("bruv-remote", status);
-        lastStatus = status;
-      }
-      for (const notice of attention.connection("owner", !!syncError, syncError, (key) =>
-        pi.appendEntry?.("bruv-remote-attention", { key }),
-      ))
-        publish(notice);
-      for (const notice of attention.update(
-        { ...state, tasks: Object.fromEntries(Object.entries(state.tasks).filter(([, task]) => !task.jobSessionFile)) },
-        (key) => pi.appendEntry?.("bruv-remote-attention", { key }),
-        baseline ? (task) => !activeInSession.has(task.taskId) : undefined,
-      ))
-        publish(notice);
-      rememberActive(state);
-    } catch (error) {
-      if (!current()) return;
-      // A global cache/status failure must not masquerade as a healthy connection.
-      const status = "remote: offline (cached state unavailable)";
-      if (!picking && !closed && lastStatus !== status) {
-        ui?.setStatus?.("bruv-remote", status);
-        lastStatus = status;
-      }
-      if (!picking && !closed)
-        for (const notice of attention.connection("owner", true, error, (key) =>
-          pi.appendEntry?.("bruv-remote-attention", { key }),
-        ))
-          publish(notice);
+      await owner.refresh();
     } finally {
       inFlight = false;
-      // A new session may have requested refresh while this old one was awaiting I/O.
-      if (!closed && generation !== sessionGeneration) void refresh();
+      if (owner !== observation) void refresh();
     }
   };
-  let timer: ReturnType<typeof setInterval> | undefined;
-  const startRefresh = () => {
-    if (timer) clearInterval(timer);
-    timer = setInterval(() => {
-      void refresh();
-    }, 5000);
-    timer.unref();
-  };
-  startRefresh();
-  pi.on("session_start", async (_event, ctx) => {
-    sessionGeneration++;
-    sessionFile = ctx?.sessionManager?.getSessionFile?.();
-    questionContext = ctx;
-    closed = false;
-    startRefresh();
-    ui = ctx.hasUI ? ctx.ui : undefined;
-    lastStatus = undefined;
-    attention.reset();
-    initialSnapshot = true;
-    activeInSession.clear();
-    for (const entry of (ctx.sessionManager?.getBranch?.() ?? []) as any[])
-      if (
-        entry.type === "custom" &&
-        entry.customType === "bruv-remote-active" &&
-        typeof entry.data?.taskId === "string"
-      )
-        activeInSession.add(entry.data.taskId);
+  const observeSession = (ctx?: ExtensionContext) => {
+    const sessionFile = ctx?.sessionManager?.getSessionFile?.();
+    let ui = ctx?.hasUI ? ctx.ui : undefined;
+    let closed = false;
+    let initialSnapshot = true;
+    let lastStatus: string | undefined;
+    let menu: { fingerprint?: string } | undefined;
+    const attention = new RemoteAttention();
+    const activeInSession = new Set<string>();
+    const entries = ctx?.sessionManager?.getBranch?.() ?? [];
+    for (const entry of entries) {
+      if (entry.type === "custom" && entry.customType === "bruv-remote-active") {
+        const taskId = (entry.data as { taskId?: unknown })?.taskId;
+        if (typeof taskId === "string") activeInSession.add(taskId);
+      }
+    }
     attention.restore(
-      (ctx.sessionManager?.getBranch?.() ?? [])
-        .filter((entry: any) => entry.type === "custom" && entry.customType === "bruv-remote-attention")
-        .map((entry: any) => entry.data?.key)
-        .filter((key: unknown): key is string => typeof key === "string"),
+      entries
+        .filter((entry) => entry.type === "custom" && entry.customType === "bruv-remote-attention")
+        .map((entry) => (entry as { data?: { key?: unknown } }).data?.key)
+        .filter((key): key is string => typeof key === "string"),
     );
+    const rememberActive = (state: import("./client").RemoteState) => {
+      for (const task of Object.values(state.tasks)) {
+        if (task.jobSessionFile || !["accepted", "running"].includes(task.task?.state ?? "")) continue;
+        if (activeInSession.has(task.taskId)) continue;
+        activeInSession.add(task.taskId);
+        pi.appendEntry?.("bruv-remote-active", { taskId: task.taskId });
+      }
+    };
+    const rememberAttention = (key: string) => pi.appendEntry?.("bruv-remote-attention", { key });
+    const setStatus = (status: string | undefined) => {
+      if (lastStatus === status) return;
+      ui?.setStatus?.("bruv-remote", status);
+      lastStatus = status;
+    };
+    const poll = async () => {
+      if (closed) return;
+      let syncError: unknown;
+      try {
+        // Running work in the pre-sync cache belongs to this session. A terminal
+        // result already on disk is history, not a new completion notification.
+        if (initialSnapshot) {
+          try {
+            const baseline = await client.status();
+            if (closed) return;
+            rememberActive(baseline);
+          } catch {
+            /* Retry baseline on next refresh. */
+          }
+        }
+        if (closed) return;
+        try {
+          await client.syncActive();
+        } catch (error) {
+          syncError = error;
+        }
+        if (closed) return;
+        const state = await client.status();
+        if (closed) return;
+        if (ctx) {
+          try {
+            await publishRemoteQuestionState(ctx, state);
+          } catch {
+            /* /questions reports ledger errors. */
+          }
+          if (closed) return;
+        }
+        const inbox = remoteInboxState(state);
+        if (menu) {
+          const changed = menu.fingerprint !== undefined && menu.fingerprint !== menuFingerprint(inbox);
+          ui?.setStatus?.(
+            "bruv-remote",
+            "remote: menu snapshot " +
+              (syncError ? "offline" : changed ? "updated" : "current") +
+              " · Refresh from remote to reload",
+          );
+          return;
+        }
+        const baseline = initialSnapshot;
+        initialSnapshot = false;
+        // Owned work goes to jobs and /questions; only unowned work uses legacy attention.
+        publishRemoteJobObservations(state, sessionFile);
+        setStatus(remoteStatus(inbox, !!syncError));
+        for (const notice of attention.connection("owner", !!syncError, syncError, rememberAttention)) publish(notice);
+        for (const notice of attention.update(
+          inbox,
+          rememberAttention,
+          baseline ? (task) => !activeInSession.has(task.taskId) : undefined,
+        ))
+          publish(notice);
+        rememberActive(state);
+      } catch (error) {
+        if (closed || menu) return;
+        // A cache failure must not masquerade as a healthy connection.
+        setStatus("remote: offline (cached state unavailable)");
+        for (const notice of attention.connection("owner", true, error, rememberAttention)) publish(notice);
+      }
+    };
+    const timer = setInterval(() => void refresh(), 5000);
+    timer.unref();
+    return {
+      refresh: poll,
+      close() {
+        closed = true;
+        clearInterval(timer);
+        ui?.setStatus?.("bruv-remote", undefined);
+      },
+      openMenu(menuUi: ExtensionContext["ui"]) {
+        ui = menuUi;
+        const snapshot: { fingerprint?: string } = {};
+        menu = snapshot;
+        return {
+          showSnapshot(state: import("./client").RemoteState) {
+            if (closed) return;
+            snapshot.fingerprint = menuFingerprint(state);
+            ui?.setStatus?.("bruv-remote", "remote: menu snapshot · Refresh from remote to reload");
+          },
+          close() {
+            if (closed) return;
+            menu = undefined;
+            // Closing this picker's banner must not clear a replacement session's status.
+            ui?.setStatus?.("bruv-remote", undefined);
+            lastStatus = undefined;
+          },
+        };
+      },
+    };
+  };
+  let observation = observeSession();
+  pi.on("session_start", async (_event, ctx) => {
+    observation.close();
+    observation = observeSession(ctx);
     void refresh();
   });
-  pi.on("session_shutdown", async () => {
-    sessionGeneration++;
-    closed = true;
-    sessionFile = undefined;
-    questionContext = undefined;
-    if (timer) clearInterval(timer);
-    timer = undefined;
-    ui?.setStatus?.("bruv-remote", undefined);
-  });
+  pi.on("session_shutdown", async () => observation.close());
   const choose = async (id?: string) => {
     if (id) return id;
     const tasks = Object.values((await client.status()).tasks);
@@ -382,13 +386,11 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
       publish(await operations({ op: "status" }), "status");
       return;
     }
-    ui = ctx.ui;
-    picking = true;
+    const picker = observation.openMenu(ctx.ui);
     try {
       while (true) {
         const state = remoteInboxState(await client.status());
-        menuSnapshot = menuFingerprint(state);
-        ui?.setStatus?.("bruv-remote", "remote: menu snapshot · Refresh from remote to reload");
+        picker.showSnapshot(state);
         const choice = await pick(ctx, "Remote · inbox", inboxItems(state));
         if (!choice) return;
         if (choice.startsWith("offline")) continue;
@@ -550,11 +552,7 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
         "error",
       );
     } finally {
-      picking = false;
-      menuSnapshot = undefined;
-      // The snapshot banner describes an open picker, not the normal chat view.
-      ui?.setStatus?.("bruv-remote", undefined);
-      lastStatus = undefined;
+      picker.close();
     }
   };
   pi.registerCommand("remote", {
@@ -564,7 +562,6 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
     handler: async (input, ctx) => {
       if (!input.trim()) return inbox(ctx);
       try {
-        if (ctx.hasUI) ui = ctx.ui;
         const [op, ...rest] = input.trim().split(/\s+/);
         let result: unknown;
         let rawTranscript = false;

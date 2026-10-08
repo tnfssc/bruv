@@ -37,68 +37,57 @@ export function parseInteractionOptions(args: string[]): InteractionOptions {
   };
   for (let i = 0; i < args.length; i++) {
     const flag = args[i];
-    if (flag === "--strict") {
-      o.strict = true;
-      continue;
-    }
-    if (flag === "--list") {
-      o.list = true;
-      continue;
-    }
-    if (flag === "--help" || flag === "-h") {
-      o.help = true;
-      continue;
-    }
-    if (
-      ![
-        "--groups",
-        "--cases",
-        "--repetitions",
-        "--budget",
-        "--width",
-        "--height",
-        "--out",
-        "--baseline",
-        "--report",
-      ].includes(flag)
-    )
-      throw new Error("Unknown option " + flag);
-    const v = args[++i];
-    if (!v || v.startsWith("--")) throw new Error("Missing value for " + flag);
+    const value = () => {
+      const text = args[++i];
+      if (!text || text.startsWith("--")) throw new Error("Missing value for " + flag);
+      return text;
+    };
     switch (flag) {
+      case "--strict":
+        o.strict = true;
+        break;
+      case "--list":
+        o.list = true;
+        break;
+      case "--help":
+      case "-h":
+        o.help = true;
+        break;
       case "--groups": {
-        const groups = v.split(",");
+        const groups = value().split(",");
         if (groups.some((g) => !interactionGroups.includes(g as InteractionGroup)))
           throw new Error("Unknown interaction group");
         o.groups = [...new Set(groups)] as InteractionGroup[];
         break;
       }
       case "--cases":
-        o.cases = [...new Set(v.split(","))];
+        o.cases = [...new Set(value().split(","))];
         if (o.cases.some((c) => !c)) throw new Error("Empty case");
         break;
       case "--repetitions":
-        o.repetitions = numeric(v, flag, 1, 100);
+        o.repetitions = numeric(value(), flag, 1, 100);
         break;
       case "--budget":
-        o.budget = numeric(v, flag, Number.MIN_VALUE, 10000, false);
+        o.budget = numeric(value(), flag, Number.MIN_VALUE, 10000, false);
         o.budgetExplicit = true;
         break;
       case "--width":
-        o.width = numeric(v, flag, 24, 240);
+        o.width = numeric(value(), flag, 24, 240);
         break;
       case "--height":
-        o.height = numeric(v, flag, 8, 100);
+        o.height = numeric(value(), flag, 8, 100);
         break;
       case "--out":
-        o.out = v;
+        o.out = value();
         break;
       case "--baseline":
-        o.baseline = v;
+        o.baseline = value();
         break;
       case "--report":
-        o.report = v;
+        o.report = value();
         break;
+      default:
+        throw new Error("Unknown option " + flag);
     }
   }
   return o;

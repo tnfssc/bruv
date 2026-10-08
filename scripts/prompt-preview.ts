@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 
 import { resolve } from "node:path";
-import { createPromptPreview, PREVIEW_ROLES, type PreviewRole } from "../src/prompt-preview";
+import type { PromptPreviewOptions, PreviewRole } from "../src/prompt-preview";
 import { MAIN_AGENT_MODES, type MainAgentMode } from "../src/prompts";
 
 function help(): string {
@@ -28,7 +28,7 @@ function value(args: string[], index: number, option: string): string {
 }
 
 const args = process.argv.slice(2);
-const options: Parameters<typeof createPromptPreview>[0] = {};
+const options: PromptPreviewOptions = {};
 for (let index = 0; index < args.length; index++) {
   const arg = args[index];
   if (!arg) continue;
@@ -41,7 +41,8 @@ for (let index = 0; index < args.length; index++) {
   else if (arg === "--goal") options.goal = value(args, index++, arg);
   else if (arg === "--role") {
     const role = value(args, index++, arg);
-    if (!PREVIEW_ROLES.includes(role as PreviewRole)) throw new Error(`Invalid --role: ${role}`);
+    if (role !== "root" && !MAIN_AGENT_MODES.includes(role as MainAgentMode))
+      throw new Error(`Invalid --role: ${role}`);
     options.role = role as PreviewRole;
   } else if (arg === "--mode") {
     const mode = value(args, index++, arg);
@@ -50,4 +51,6 @@ for (let index = 0; index < args.length; index++) {
   } else throw new Error(`Unknown option: ${arg}\n\n${help()}`);
 }
 
+// Help and argument errors do not need the production runtime or its generated assets.
+const { createPromptPreview } = await import("../src/prompt-preview");
 console.log(JSON.stringify(await createPromptPreview(options), null, 2));

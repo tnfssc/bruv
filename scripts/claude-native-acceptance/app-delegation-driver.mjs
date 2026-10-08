@@ -161,20 +161,18 @@ export async function exercise({ page, url, snapshot, body, config }) {
   await fs.writeFile(path.join(config.state, "cancel.release"), "release cancelled provider request");
   await page.waitForTimeout(1500);
 }
-export async function verify({ wire, config, proof, t3Version, t3BinarySha256 }) {
+// Task-reference files locate native rows; only the native projections establish state.
+async function readNativeTasks(state) {
   const tasks = await Promise.all(
-    ["done", "cancel"].map(async (n) =>
-      JSON.parse(await fs.readFile(path.join(config.state, n + ".task.json"), "utf8")),
-    ),
+    ["done", "cancel"].map(async (n) => JSON.parse(await fs.readFile(path.join(state, n + ".task.json"), "utf8"))),
   );
   assert.ok(tasks.every((t) => t.taskId && t.childThreadId));
   assert.notEqual(tasks[0].taskId, tasks[1].taskId);
-  const db = new DatabaseSync(path.join(path.dirname(config.state), "t3-runtime/t3-base/userdata/statev2.sqlite"), {
+  const db = new DatabaseSync(path.join(path.dirname(state), "t3-runtime/t3-base/userdata/statev2.sqlite"), {
     readOnly: true,
   });
-  let native;
   try {
-    native = tasks.map((t) => {
+    return tasks.map((t) => {
       const task = JSON.parse(
         db.prepare("SELECT payload_json FROM orchestration_v2_projection_subagents WHERE subagent_id=?").get(t.taskId)
           .payload_json,
@@ -198,11 +196,16 @@ export async function verify({ wire, config, proof, t3Version, t3BinarySha256 })
   } finally {
     db.close();
   }
+}
+
+async function verifyNativeTaskState(state, proof) {
+  const native = await readNativeTasks(state);
+  const [completed, cancelled] = native;
   await fs.writeFile(path.join(proof, "native-task-state.json"), JSON.stringify(native, null, 2));
-  assert.equal(native[0].status, "completed");
-  assert.equal(native[1].status, "interrupted");
-  assert.equal(native[0].completionDelivery?.state, "acknowledged", "Native task_status commits terminal result ACK");
-  assert.equal(native[1].completionDelivery?.state, "disposed", "Native task_cancel disposes its completion wake");
+  assert.equal(completed.status, "completed");
+  assert.equal(cancelled.status, "interrupted");
+  assert.equal(completed.completionDelivery?.state, "acknowledged", "Native task_status commits terminal result ACK");
+  assert.equal(cancelled.completionDelivery?.state, "disposed", "Native task_cancel disposes its completion wake");
   assert.ok(
     native.every((t) => t.origin === "app_owned"),
     "Actual native app-owned origin",
@@ -220,6 +223,11 @@ export async function verify({ wire, config, proof, t3Version, t3BinarySha256 })
     native.every((t) => t.lineage.relationshipToParent === "subagent"),
     "Actual native child lineage",
   );
+  return native.length;
+}
+
+// Connector traces establish process isolation, not native task completion.
+async function verifyNativeProcesses(wire, proof) {
   const scopes = wire.filter((x) => x.kind === "scope" && x.value.hasCredential);
   await fs.writeFile(path.join(proof, "native-scopes.json"), JSON.stringify(scopes, null, 2));
   const root = new Set(scopes.filter((x) => x.instance === "root").map((x) => x.value.credentialDigest));
@@ -252,6 +260,11 @@ export async function verify({ wire, config, proof, t3Version, t3BinarySha256 })
     !cancelledOutput.some((x) => JSON.stringify(x.value.message?.content).includes("APP_CHILD_RESULT_REAL_cancel")),
     "Cancelled actual child cannot publish late provider result",
   );
+}
+
+export async function verify({ wire, config, proof, t3Version, t3BinarySha256 }) {
+  const nativeChildCount = await verifyNativeTaskState(config.state, proof);
+  await verifyNativeProcesses(wire, proof);
   await fs.writeFile(
     path.join(proof, "task-status.json"),
     JSON.stringify(
@@ -280,7 +293,7 @@ export async function verify({ wire, config, proof, t3Version, t3BinarySha256 })
         normalRoleDepth: 1,
         childScopesDistinct: true,
         noDuplicateBruvNotifications: true,
-        actualNativeChildCount: tasks.length,
+        actualNativeChildCount: nativeChildCount,
         nativeTerminalAck: true,
         cancellationTerminal: "interrupted",
       },

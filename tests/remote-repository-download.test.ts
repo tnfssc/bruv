@@ -1,6 +1,7 @@
 import { expect, test } from "bun:test";
 import { createHash } from "node:crypto";
 import { downloadRepositoryResult, type RepositoryResultPage } from "../src/remote/repository-download";
+
 const CHUNK = 256 * 1024;
 const snapshot = "a".repeat(40);
 function pages(patch: Buffer) {
@@ -27,77 +28,125 @@ test("empty and multi-page patches preserve verified bytes under each client byt
     }
   }
 });
-test("page bounds, canonical base64, no-progress and metadata stability remain strict", async () => {
+
+test.each([
+  ["missing padding", "eA"],
+  ["trailing whitespace", "eA==\n"],
+  ["nonzero padding bits", "eB=="],
+])("rejects non-canonical base64: %s", async (_reason, data) => {
+  const request = pages(Buffer.from("x"));
+  await expect(
+    downloadRepositoryResult(async (offset) => ({ ...(await request(offset)), data }), snapshot, 128 * 1024 * 1024),
+  ).rejects.toThrow("page");
+});
+
+test.each([
+  { violation: "negative total", change: { total: -1 } },
+  { violation: "fractional total", change: { total: 1.5 } },
+  {
+    violation: "oversized chunk",
+    change: { data: Buffer.alloc(CHUNK + 1, 120).toString("base64"), offset: CHUNK + 1 },
+  },
+  { violation: "offset disagrees with decoded length", change: { offset: 1 } },
+  { violation: "unfinished page makes no progress", change: { data: "", offset: 0 } },
+])("rejects invalid pagination: $violation", async ({ change }) => {
   const request = pages(Buffer.alloc(CHUNK + 1, 120));
-  for (const change of [
-    { data: "eA" },
-    { data: "eA==\n" },
-    { data: "eB==" },
-    { total: -1 },
-    { total: 1.5 },
-    { total: 129 * 1024 * 1024 },
-    { data: Buffer.alloc(CHUNK + 1).toString("base64") },
-    { offset: 1 },
-    { data: "", offset: 0 },
-  ]) {
-    await expect(
-      downloadRepositoryResult(
-        async (offset) => ({ ...(await request(offset)), ...change }),
-        snapshot,
-        128 * 1024 * 1024,
-      ),
-    ).rejects.toThrow("page");
-  }
+  await expect(
+    downloadRepositoryResult(
+      async (offset) => ({ ...(await request(offset)), ...change }),
+      snapshot,
+      128 * 1024 * 1024,
+    ),
+  ).rejects.toThrow("page");
+});
+
+test.each([32, 128])("rejects a total above the %i MiB client limit", async (limitMiB) => {
+  const maxBytes = limitMiB * 1024 * 1024;
+  const request = pages(Buffer.alloc(CHUNK + 1, 120));
+  await expect(
+    downloadRepositoryResult(
+      async (offset) => ({ ...(await request(offset)), total: maxBytes + 1 }),
+      snapshot,
+      maxBytes,
+    ),
+  ).rejects.toThrow("page");
+});
+
+test("a later page cannot change the result descriptor", async () => {
+  const request = pages(Buffer.alloc(CHUNK + 1, 120));
+  const offsets: number[] = [];
   await expect(
     downloadRepositoryResult(
       async (offset) => {
-        const r = await request(offset);
-        return offset ? { ...r, result: { ...r.result, untracked: ["changed"] } } : r;
+        offsets.push(offset);
+        const page = await request(offset);
+        return offset ? { ...page, result: { ...page.result, untracked: ["changed"] } } : page;
       },
       snapshot,
       128 * 1024 * 1024,
     ),
   ).rejects.toThrow("page");
-  await expect(
-    downloadRepositoryResult(
-      async (offset) => ({ ...(await request(offset)), total: 32 * 1024 * 1024 + 1 }),
-      snapshot,
-      32 * 1024 * 1024,
-    ),
-  ).rejects.toThrow("page");
+  expect(offsets).toEqual([0, CHUNK]);
 });
-test("digest/snapshot mismatches and bounded child page exhaustion cannot produce a verified patch", async () => {
+
+test("assembled bytes must match the result digest and requested snapshot", async () => {
   const request = pages(Buffer.from("patch"));
   await expect(downloadRepositoryResult(request, "b".repeat(40), 128 * 1024 * 1024)).rejects.toThrow("mismatch");
   await expect(
     downloadRepositoryResult(
       async (offset) => {
-        const r = await request(offset);
-        return { ...r, result: { ...r.result, sha256: "0".repeat(64) } };
+        const page = await request(offset);
+        return { ...page, result: { ...page.result, sha256: "0".repeat(64) } };
       },
       snapshot,
       128 * 1024 * 1024,
     ),
   ).rejects.toThrow("mismatch");
-  await expect(
-    downloadRepositoryResult(pages(Buffer.alloc(CHUNK + 1, 120)), snapshot, 128 * 1024 * 1024, { maxPages: 0 }),
-  ).rejects.toThrow("mismatch");
 });
-test("offline download retries reuse the original request; root error labels stay intact", async () => {
+
+test("exhausting the child page budget cannot return a partial patch", async () => {
+  const request = pages(Buffer.alloc(CHUNK + 1, 120));
+  const offsets: number[] = [];
+  await expect(
+    downloadRepositoryResult(
+      (offset) => {
+        offsets.push(offset);
+        return request(offset);
+      },
+      snapshot,
+      128 * 1024 * 1024,
+      { maxPages: 0 },
+    ),
+  ).rejects.toThrow("mismatch");
+  expect(offsets).toEqual([0]);
+});
+
+test.each([
+  { failAt: 0, offsets: [0, 0, CHUNK] },
+  { failAt: CHUNK, offsets: [0, CHUNK, 0, CHUNK] },
+])("offline failure at offset $failAt propagates; retry starts a fresh download", async ({ failAt, offsets }) => {
+  const patch = Buffer.alloc(CHUNK + 1, 120);
+  const request = pages(patch);
+  const requested: number[] = [];
   let offline = true;
-  const request = pages(Buffer.from("patch"));
   const remote = async (offset: number) => {
-    if (offline) throw Error("offline");
+    requested.push(offset);
+    if (offline && offset === failAt) throw Error("offline");
     return request(offset);
   };
   await expect(downloadRepositoryResult(remote, snapshot, 32 * 1024 * 1024)).rejects.toThrow("offline");
   offline = false;
-  expect((await downloadRepositoryResult(remote, snapshot, 32 * 1024 * 1024)).patch.toString()).toBe("patch");
+  expect((await downloadRepositoryResult(remote, snapshot, 32 * 1024 * 1024)).patch).toEqual(patch);
+  expect(requested).toEqual(offsets);
+});
+
+test("root callers retain their page and integrity error labels", async () => {
+  const request = pages(Buffer.from("patch"));
   await expect(
     downloadRepositoryResult(request, "different", 32 * 1024 * 1024, {
       integrityError: "Root result digest or source mismatch",
     }),
-  ).rejects.toThrow("Root result");
+  ).rejects.toThrow("Root result digest or source mismatch");
   await expect(
     downloadRepositoryResult(
       async (offset) => ({ ...(await request(offset)), data: "bad" }),
@@ -105,5 +154,5 @@ test("offline download retries reuse the original request; root error labels sta
       32 * 1024 * 1024,
       { pageError: "Invalid root repository result page" },
     ),
-  ).rejects.toThrow("Invalid root");
+  ).rejects.toThrow("Invalid root repository result page");
 });
