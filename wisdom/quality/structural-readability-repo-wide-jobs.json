@@ -645,7 +645,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_f1169a5b",
         "branch": "bruv/pr45-primary-1-remote-focuses-f1169a5b",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "40ede2e3c733a7e6c2c1d5b2c0b18f9d32d96a43"
       }
     ]
   },
@@ -3423,7 +3424,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_7a16f7fe",
         "branch": "bruv/pr45-primary-2-execution-tasks-questions-7a16f7fe",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "bc78d3c019fc0f6d7b48730ec337132252589b3a"
       }
     ]
   },
@@ -4199,6 +4201,15 @@
         "branch": "bruv/pr45-judge-3-build-release-ci-tooling-fo-9cd1c88b",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "handled"
+      },
+      {
+        "id": "task_4515d507",
+        "stage": "primary",
+        "focus": ["tests/tooling-fixtures.test.ts"],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_4515d507",
+        "branch": "bruv/pr45-primary-1-build-release-ci-tooling--4515d507",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
       }
     ]
   },

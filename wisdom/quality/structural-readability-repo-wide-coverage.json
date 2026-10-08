@@ -19934,11 +19934,11 @@
       "initialBlob": "f83b29c694dfed802f8774046a94c6c2c294c0b1",
       "status": "pending",
       "area": "remote",
-      "resumeState": "needs-rework",
-      "primaryId": "task_d3ae9262",
-      "primaryCommit": "77ea8f3a80698debf5ffe36ce5f501076f266888",
+      "resumeState": "needs-judge",
+      "primaryId": "task_f1169a5b",
+      "primaryCommit": "40ede2e3c733a7e6c2c1d5b2c0b18f9d32d96a43",
       "judgeIds": ["task_20e04838"],
-      "sourceCommit": null,
+      "sourceCommit": "40ede2e3c733a7e6c2c1d5b2c0b18f9d32d96a43",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
       "acceptedBlob": "b4ed20c02e76380b8f9b5435bb482d50268a3a07",
       "result": "Fake remote response ownership separated from scripted/mounted UI; input follows terminal callback→listeners→focused component rather than wrong root fallback. Question/cancel/detach journeys preserve authority and cleanup.",
@@ -19969,7 +19969,30 @@
           }
         ],
         "readingReason": "Actual mountedPresentation fixture only mocks scheduled requestRender; keyboard dispatch enters immediate rendering, which may write inherited diagnostic paths. Repair actual shared rendering boundary while retaining real listeners/focus/input; no package/dependency mutation or tests. Own remaining effects explicitly if any."
-      }
+      },
+      "priorPrimaryLineage": [
+        {
+          "primaryId": "task_d3ae9262",
+          "sourceCommit": null
+        }
+      ],
+      "primaryBase": "bc78d3c019fc0f6d7b48730ec337132252589b3a",
+      "primaryResult": "Preserved the exact candidate test (candidate blob b4ed20c02e76380b8f9b5435bb482d50268a3a07) and changed only mountedPresentation. Its terminal callback, listeners, real focus tracking, editor/picker input and render scheduling remain shipped. The protected doRender runtime seam now suppresses throttled, immediate and renderNow frame painting together, before hard-coded /tmp/tui debugging or os.tmpdir crash logs. Mounted construction receives a retained mkdtemp-owned HOME/config/cache/data/SDK/TMPDIR via existing ownedFixtureEnv, disables all three terminal diagnostic variables and fixes env dimensions. close awaits presenter shutdown (which stops render timers and polling) before restoring mocks and previous env keys. Existing prompt, owner/version question, cancellation, detach and privacy assertions are unchanged.",
+      "primaryPaths": ["tests/remote-root-presenter.test.ts"],
+      "primaryChecks": [
+        "Read entire assigned test and relevant presenter startup, input listeners, modal focus, poll and shutdown journey; statically followed both render schedulers to doRender and inspected diagnostic filesystem effects before any potential test run.",
+        "Compared assigned focus to rejected candidate dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d: identical prior test bytes; no old branch merged or unrelated candidate source imported.",
+        "Read only matching reconciliation row in targeted follow-up: original ACCEPT evidence for exact joined b4ed20c02e76380b8f9b5435bb482d50268a3a07; addressed newer supplied rejection rather than treating original acceptance as final.",
+        "Repository Biome format --write tests/remote-root-presenter.test.ts via child_process argv and explicit non-inherited env, exit 0; retained formatter fixture /tmp/bruv-root-presenter-format-CsUCm3.",
+        "git diff --check passed before source-only commit; commit contains exactly the assigned test. Hooks explicitly pointed to owned empty directory; no tests/setup/build hooks ran."
+      ],
+      "primaryLimits": [
+        "No tests, setup or builds run; parent owns audited isolated runtime gates and independent judgment. No live auth, credential access, dependency modification, cleanup, push, PR or merge.",
+        "Runtime test fixture directories (/tmp/bruv-root-presentation-*) will be retained when the parent runs tests; none were created by executing test code in this worker. Durable fixture provenance is this committed helper in the retained worktree. Formatter fixture also retained.",
+        "Prototype spies and process env changes retain the existing serial mounted-fixture lifetime; module import-time isolation belongs to the parent explicit argv/env test process. No claims of full terminal-render correctness or a live product check.",
+        "An initial evidence read emitted the full reconciliation JSON before targeted filtering; all subsequent ledger inspection was restricted to the assigned focus row. No unrelated rows were used for decisions.",
+        "No wisdom/value edits: parent owns the aggregate wisdom artifact, and this is a bounded correction to an already documented ownership principle."
+      ]
     },
     {
       "file": "tests/remote-root-transport.test.ts",
@@ -26085,32 +26108,41 @@
       "initialBlob": "absent",
       "area": "execution-tasks-questions",
       "status": "pending",
-      "resumeState": "needs-primary-final-blob",
-      "sourceCommit": "04c9d2df061d6e15e2c1d347900be71503bb905b",
+      "resumeState": "needs-judge",
+      "sourceCommit": "bc78d3c019fc0f6d7b48730ec337132252589b3a",
       "acceptedRelatedJudges": ["task_80598b58", "task_e427af86"],
       "acceptedBlob": "7bb361586e537dd6623872b6b43aa6032dbda09d",
       "parentReviewNotes": [
         "Actual independent judge80598b58 rejected the helper-mediated job-bridge credential scenario because --test-name-pattern violates the user no-filter contract. Shared helper has no general-reuse endorsement. Inspect current exact helper and every exercised caller; scenario isolation must run original assertions without filter/skip-as-green, no test execution authorized."
       ],
-      "primaryId": "task_82a904cd",
-      "primaryCommit": "9bf50c12c46a2eec788c76d19c5f504819b3496a",
-      "primaryBase": "9bf50c12c46a2eec788c76d19c5f504819b3496a",
-      "primaryResult": "Retain the preserved candidate exactly (focus blob 946ea123946ed06dbbcfe717c6dcc4d21d101ca4). ownedProcessSuite registers one outer test and calls defineTests only when the child carries this file marker; callers place their test registrations, TaskManager afterEach shutdown and SessionJobs async disposal inside that callback. runFixture allocates and retains its own mkdtemp root, obtains allowlisted HOME/config/SDK/TMPDIR from ownedFixtureEnv, installs its owned non-login shell, records explicit executable/argv/cwd/env and a source snapshot while executing source in this durable worktree, then spawns without a shell. It accumulates stdout/stderr until close, persists output and exit/signal evidence before rejecting nonzero exit, and never removes the fixture. The sole ownedEnvironmentTest caller supplies synthetic bridge credentials plus a harmless sentinel: its suite child relaunches a separate exact-name-filtered fixture with those inputs, and only that marked child executes the security assertions. Keeping this sequence together makes process authority and evidence lifetime easier to follow than split preparer/runner/result context helpers. No assertions, isolation behavior, or unrelated accepted work changed.",
+      "primaryId": "task_7a16f7fe",
+      "primaryCommit": "bc78d3c019fc0f6d7b48730ec337132252589b3a",
+      "primaryBase": "bc78d3c019fc0f6d7b48730ec337132252589b3a",
+      "primaryResult": "Retain candidate 04c9d2df exactly. ownedProcessSuite has a visible two-branch boundary: only the matching file-marked child invokes defineTests; the outer host registers one test launching the entire file without a name filter. Each inspected caller puts all registrations inside that callback: task-manager and attention afterEach shutdown, job-service try/finally shutdown, bridge SessionJobs async disposal, and question persistence helpers all belong to the isolated child. runOwnedProcess linearly owns mkdtemp, allowlisted environment, non-login fixture shell, explicit executable/argv/cwd, launch/source evidence, spawn without a shell, output until close, persisted exit/signal and rejection on failure. The tiny suite/scenario wrappers declare different executable argv rather than hiding a scenario mode. The sole scenario caller supplies only synthetic credentials/sentinel and launches the standalone assertion file with bun run. No additional structural extraction would resolve an observed burden; it would scatter this already coherent lifetime. Candidate helper, fixture and related caller are already identical in HEAD, so no bytes need importing or editing.",
       "primaryPaths": [],
       "primaryChecks": [
         "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
-        "Read the whole focus source, ownedFixtureEnv implementation, all five suite wrapper callers and their relevant lifecycle hooks, and the sole synthetic-environment scenario caller.",
-        "Read exact preserved candidate focus via git show eb8295ac0714ad9b6c4e548cc9130010949c7dd5:tests/owned-process-suite.ts; compared full bytes and Git blob with current HEAD: identical.",
-        "Assigned focus and candidate have no matching row or string in the supplied resume-reconciliation JSON; no preserved rejection for this newly listed nearby focus was available there.",
-        "Source worktree was clean before this artifact; no source edits, import of old branch, formatter invocation, or source commit required.",
-        "No tests, setup, builds, credential/device access, cleanup, delegation, or publication performed."
+        "Read both entire current focus files, all five ownedProcessSuite caller files, and ownedFixtureEnv; inspected the sole ownedProcessScenario caller and original credential assertions.",
+        "Read assigned reconciliation evidence availability and relevant tests/job-bridge.test.ts row. Exact focus paths, primary ID task_82a904cd, judge task_80598b58, candidate ID and cited helper blob are absent from that supplied reconciliation JSON.",
+        "Read candidate 04c9d2df source diff and its parent helper/caller, including the rejected --test-name-pattern construction.",
+        "Verified both focus blobs and related tests/job-bridge.test.ts blob match candidate 04c9d2df exactly; verified all recorded working source hashes match HEAD.",
+        "git diff --check passed; source working tree unchanged."
       ],
       "primaryLimits": [
-        "Static primary reading only; parent owns fresh independent judgment and audited isolated runtime gates.",
-        "The supplied reconciliation ledger does not contain this focus or candidate; the explicit user-supplied candidate and its actual Git source were used, not an inferred acceptance.",
-        "No formatter ran because there are no changed source paths. No empty/source-less commit created; sourceCommit pins the existing exact HEAD.",
-        "Source executes in retained durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_82a904cd; helper-created test fixture roots remain retained for parent audit when the parent runs its gates.",
-        "No wisdom/value edits: parent owns aggregate wisdom and this focus produced no new structural change."
+        "No tests, setup, builds, provider/auth/device checks or test fixture execution performed; runtime isolation and failure propagation remain unverified in this primary pass. Parent owns audited isolated gates and fresh independent judgments.",
+        "No formatter invoked because no source paths changed. No new source commit: candidate source is already present byte-for-byte in the existing recorded HEAD. No merge, branch restoration, publication or cleanup performed.",
+        "The supplied reconciliation JSON predates these focus/rejection records; the rejection constraint is taken from the explicit parentReviewNotes and checked against preserved pre-rework source, not represented as an independently retrieved judge verdict.",
+        "The prompt cites helper blob 946ea123946ed06dbbcfe717c6dcc4d21d101ca4. That is the pre-rework filtered helper; candidate 04c9d2df and current HEAD instead contain 7bb361586e537dd6623872b6b43aa6032dbda09d. Retained the actual reworked candidate, not the rejected blob.",
+        "No general-reuse endorsement: conclusion is bounded to the five inspected suite callers and one standalone scenario caller. Existing unrelated accepted work and preexisting platform-specific guards are untouched.",
+        "Fixture provenance remains the durable worktree: source executes there, while mkdtemp roots retain owned HOME/config/SDK/TMPDIR, launch manifest, source snapshot and process output/result evidence. No fixtures were launched or removed here.",
+        "No descendants delegated; no user secrets accessed. Wisdom/values left unchanged because this bounded pass adds no new lesson; parent owns aggregate wisdom."
+      ],
+      "priorPrimaryLineage": [
+        {
+          "primaryId": "task_82a904cd",
+          "sourceCommit": "04c9d2df061d6e15e2c1d347900be71503bb905b",
+          "primaryBase": "9bf50c12c46a2eec788c76d19c5f504819b3496a"
+        }
       ]
     },
     {
@@ -26128,10 +26160,33 @@
       "initialBlob": "absent",
       "area": "execution-tasks-questions",
       "status": "pending",
-      "resumeState": "needs-primary-final-blob",
-      "sourceCommit": "04c9d2df061d6e15e2c1d347900be71503bb905b",
+      "resumeState": "needs-judge",
+      "sourceCommit": "bc78d3c019fc0f6d7b48730ec337132252589b3a",
       "acceptedRelatedJudges": ["task_e427af86"],
-      "acceptedBlob": "99858065b35f461748847c07c31e1b2fedeccc7a"
+      "acceptedBlob": "99858065b35f461748847c07c31e1b2fedeccc7a",
+      "primaryId": "task_7a16f7fe",
+      "primaryCommit": "bc78d3c019fc0f6d7b48730ec337132252589b3a",
+      "primaryBase": "bc78d3c019fc0f6d7b48730ec337132252589b3a",
+      "primaryResult": "Retain candidate 04c9d2df exactly. The sole job-bridge.test.ts caller still registers the original credential test and awaits ownedProcessScenario with the same three synthetic inputs. This standalone file unconditionally validates those inputs, invokes the same executeIsolated code with the same 3000 ms timeout and compiled executable path, records the same mocked parent subagent capability, then asserts zero exit, exact safe-only serialized output and job result, the sole subagent method, and absence of the token. node:assert/strict replaces Bun matchers without a registration/filter/skip branch; throws make the scenario process fail, which the owned launcher persists and rejects. The added launch-input assertions make the positive sentinel/credential setup explicit. One straight-line assertion journey needs no new abstraction or context bag. The fixture and its helper/caller already match the preserved reworked candidate byte-for-byte; no further edit or new source commit is warranted.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read both entire current focus files, all five ownedProcessSuite caller files, and ownedFixtureEnv; inspected the sole ownedProcessScenario caller and original credential assertions.",
+        "Read assigned reconciliation evidence availability and relevant tests/job-bridge.test.ts row. Exact focus paths, primary ID task_82a904cd, judge task_80598b58, candidate ID and cited helper blob are absent from that supplied reconciliation JSON.",
+        "Read candidate 04c9d2df source diff and its parent helper/caller, including the rejected --test-name-pattern construction.",
+        "Verified both focus blobs and related tests/job-bridge.test.ts blob match candidate 04c9d2df exactly; verified all recorded working source hashes match HEAD.",
+        "git diff --check passed; source working tree unchanged.",
+        "Compared each original credential expectation with the standalone assertions: zero child exit, exact safe/job JSON, sole subagent call and no leaked token are retained, plus explicit synthetic input checks."
+      ],
+      "primaryLimits": [
+        "No tests, setup, builds, provider/auth/device checks or test fixture execution performed; runtime isolation and failure propagation remain unverified in this primary pass. Parent owns audited isolated gates and fresh independent judgments.",
+        "No formatter invoked because no source paths changed. No new source commit: candidate source is already present byte-for-byte in the existing recorded HEAD. No merge, branch restoration, publication or cleanup performed.",
+        "The supplied reconciliation JSON predates these focus/rejection records; the rejection constraint is taken from the explicit parentReviewNotes and checked against preserved pre-rework source, not represented as an independently retrieved judge verdict.",
+        "The prompt cites helper blob 946ea123946ed06dbbcfe717c6dcc4d21d101ca4. That is the pre-rework filtered helper; candidate 04c9d2df and current HEAD instead contain 7bb361586e537dd6623872b6b43aa6032dbda09d. Retained the actual reworked candidate, not the rejected blob.",
+        "No general-reuse endorsement: conclusion is bounded to the five inspected suite callers and one standalone scenario caller. Existing unrelated accepted work and preexisting platform-specific guards are untouched.",
+        "Fixture provenance remains the durable worktree: source executes there, while mkdtemp roots retain owned HOME/config/SDK/TMPDIR, launch manifest, source snapshot and process output/result evidence. No fixtures were launched or removed here.",
+        "No descendants delegated; no user secrets accessed. Wisdom/values left unchanged because this bounded pass adds no new lesson; parent owns aggregate wisdom."
+      ]
     }
   ],
   "completedAreas": {

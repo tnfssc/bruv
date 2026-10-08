@@ -3410,11 +3410,11 @@
       "resume": {
         "status": "pending",
         "acceptedBlob": "b4ed20c02e76380b8f9b5435bb482d50268a3a07",
-        "primaryId": "task_d3ae9262",
-        "primaryCommit": "77ea8f3a80698debf5ffe36ce5f501076f266888",
+        "primaryId": "task_f1169a5b",
+        "primaryCommit": "40ede2e3c733a7e6c2c1d5b2c0b18f9d32d96a43",
         "judgeIds": ["task_20e04838"],
-        "sourceCommit": null,
-        "state": "needs-rework",
+        "sourceCommit": "40ede2e3c733a7e6c2c1d5b2c0b18f9d32d96a43",
+        "state": "needs-judge",
         "reason": "Fake remote response ownership separated from scripted/mounted UI; input follows terminal callback→listeners→focused component rather than wrong root fallback. Question/cancel/detach journeys preserve authority and cleanup."
       }
     },
