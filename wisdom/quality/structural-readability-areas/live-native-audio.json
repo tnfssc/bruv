@@ -1152,16 +1152,19 @@
       "initialBlob": "7efa411dd2d16d6070ee511416884d1a64309fb1",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "e2109081876ad2509a52ae00b9db8ba30bff0299",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "e2109081876ad2509a52ae00b9db8ba30bff0299",
         "primaryId": "task_2f550018",
         "primaryCommit": "e96bbf1f443dac11a4eb1da2b45334e8ca8623a7",
-        "judgeIds": [],
+        "judgeIds": [
+          "task_b60b90b8"
+        ],
         "sourceCommit": "e96bbf1f443dac11a4eb1da2b45334e8ca8623a7",
-        "state": "needs-judge",
-        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+        "state": "accepted-joined",
+        "reason": "Actual candidate and primary-base/parent code were read, not checkout HEAD. This is a useful effect-ownership change rather than naming cleanup: loadStartupSpeechKey owns source selection, credential-status diagnostics and unavailable-key failure effects; prepareStartupSpeechFixture owns synthetic versus natural preparation and the existing generation diagnostics. main now exposes the run journey without credential and fixture implementation interleaved: parse plan, allow fixture-only, require paid opt-in, resolve a provider key or continue, prepare/cache shared PCM or return, validate activity policy, dispatch modes. The helpers have small direct parameters and no new context bag, public framework, retry or fallback. NO CHANGE NEEDED for the already-explicit credential/fixture plans, readiness-gated delivery, bounded trial lifetime and separate retention/automatic/manual/flushed acceptance expressions; these unchanged sections remain readable in their actual caller journey."
       }
     },
     {
@@ -5069,7 +5072,7 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 89,
-    "pending": 61
+    "accepted": 90,
+    "pending": 60
   }
 }

@@ -369,6 +369,63 @@ export function startupSpeechFixturePlan(args: readonly string[]) {
   return { fixture, modes };
 }
 
+/** Resolve one credential source; unavailable keys skip only that provider. */
+async function loadStartupSpeechKey(
+  provider: "google" | "openai",
+  source: "canonical" | "live.env",
+): Promise<string | undefined> {
+  try {
+    if (source === "live.env" && provider === "google") {
+      const key = await loadLiveKey(); // explicit test-only read; never import or store
+      console.log(JSON.stringify({ provider, credentialSource: source, credentialState: "supplied_api_key" }));
+      return key;
+    }
+    const credentials = await createDefaultLiveCredentialService(undefined, provider);
+    const status = await credentials.status();
+    console.log(JSON.stringify({ provider, credentialState: status.state }));
+    return await credentials.loadKey(); // default canonical behavior unchanged; never import
+  } catch {
+    console.log(JSON.stringify({ provider, blocked: `existing ${source} API key unavailable`, paidSessions: 0 }));
+    process.exitCode = 1;
+    return undefined;
+  }
+}
+
+/** Prepare shared PCM; failed natural generation ends the run without retry or paid controls. */
+async function prepareStartupSpeechFixture(fixture: string, key: string): Promise<Buffer | undefined> {
+  if (fixture !== "gemini-natural") return synthesize();
+
+  let generated: Awaited<ReturnType<typeof generateNaturalFixture>>;
+  try {
+    generated = await generateNaturalFixture(key);
+  } catch (error) {
+    const code =
+      error instanceof Error && /^[a-z_]+$/.test(error.message) ? error.message : "fixture_generation_failed";
+    console.log(JSON.stringify({ fixture, stage: "generation", ok: false, error: code }));
+    process.exitCode = 1;
+    return undefined; // no retry, no unusable fixture sent to paid controls
+  }
+  const pcm = await naturalFixturePcm(generated.pcm24);
+  const { pcm24: _pcm24, model: _model, elapsedMs: _elapsedMs, ...wordCounts } = generated;
+  console.log(
+    JSON.stringify({
+      fixture,
+      stage: "generation",
+      ok: true,
+      model: generated.model,
+      elapsedMs: generated.elapsedMs,
+      ...wordCounts,
+      textTriggeredGeneration: true,
+      automaticTurnAccepted: false,
+      source: pcmCounts(generated.pcm24, 24000),
+      input: pcmCounts(pcm, 16000),
+      trailingSilenceMs,
+      silenceTail: pcm.subarray(-32 * trailingSilenceMs).every((v) => v === 0),
+    }),
+  );
+  return pcm;
+}
+
 /** Dispatch the CLI-selected fixture or provider trials and print their diagnostics. */
 async function main() {
   const { fixture, modes } = startupSpeechFixturePlan(process.argv);
@@ -388,53 +445,11 @@ async function main() {
   if (process.env.BRUV_RUN_LIVE_STARTUP_SPEECH !== "1") throw new Error("Explicit paid opt-in required");
   let pcm: Buffer | undefined;
   for (const { provider, source } of startupSpeechCredentialPlan(process.argv)) {
-    let key: string;
-    try {
-      if (source === "live.env" && provider === "google") {
-        key = await loadLiveKey(); // explicit test-only read; never import or store
-        console.log(JSON.stringify({ provider, credentialSource: source, credentialState: "supplied_api_key" }));
-      } else {
-        const credentials = await createDefaultLiveCredentialService(undefined, provider);
-        const status = await credentials.status();
-        console.log(JSON.stringify({ provider, credentialState: status.state }));
-        key = await credentials.loadKey(); // default canonical behavior unchanged; never import
-      }
-    } catch {
-      console.log(JSON.stringify({ provider, blocked: `existing ${source} API key unavailable`, paidSessions: 0 }));
-      process.exitCode = 1;
-      continue;
-    }
+    const key = await loadStartupSpeechKey(provider, source);
+    if (key === undefined) continue;
     if (!pcm) {
-      if (fixture === "gemini-natural") {
-        let generated: Awaited<ReturnType<typeof generateNaturalFixture>>;
-        try {
-          generated = await generateNaturalFixture(key);
-        } catch (error) {
-          const code =
-            error instanceof Error && /^[a-z_]+$/.test(error.message) ? error.message : "fixture_generation_failed";
-          console.log(JSON.stringify({ fixture, stage: "generation", ok: false, error: code }));
-          process.exitCode = 1;
-          return; // no retry, no unusable fixture sent to paid controls
-        }
-        pcm = await naturalFixturePcm(generated.pcm24);
-        const { pcm24: _pcm24, model: _model, elapsedMs: _elapsedMs, ...wordCounts } = generated;
-        console.log(
-          JSON.stringify({
-            fixture,
-            stage: "generation",
-            ok: true,
-            model: generated.model,
-            elapsedMs: generated.elapsedMs,
-            ...wordCounts,
-            textTriggeredGeneration: true,
-            automaticTurnAccepted: false,
-            source: pcmCounts(generated.pcm24, 24000),
-            input: pcmCounts(pcm, 16000),
-            trailingSilenceMs,
-            silenceTail: pcm.subarray(-32 * trailingSilenceMs).every((v) => v === 0),
-          }),
-        );
-      } else pcm = await synthesize();
+      pcm = await prepareStartupSpeechFixture(fixture, key);
+      if (!pcm) return;
     }
     const manualActivity = process.argv.includes("--manual-activity");
     const flushAfterPause = process.argv.includes("--flush-after-pause");

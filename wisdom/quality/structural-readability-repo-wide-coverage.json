@@ -2441,11 +2441,13 @@
     {
       "file": "scripts/probe-live-startup-audio.ts",
       "initialBlob": "7efa411dd2d16d6070ee511416884d1a64309fb1",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_2f550018",
       "sourceCommit": "e96bbf1f443dac11a4eb1da2b45334e8ca8623a7",
-      "judgeIds": [],
-      "resumeState": "needs-judge",
+      "judgeIds": [
+        "task_b60b90b8"
+      ],
+      "resumeState": "accepted-joined",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
       "area": "live-native-audio",
       "primaryCommit": "e96bbf1f443dac11a4eb1da2b45334e8ca8623a7",
@@ -2481,6 +2483,22 @@
         "No independent readability acceptance claimed; parent must launch its separate fresh judge against exact committed bytes.",
         "No related source/helper changes, assertion weakening, recovery, cleanup, push, PR or merge.",
         "Wisdom and values unchanged: existing ownership/readability and safety guidance already covers this change; aggregate wisdom belongs to parent."
+      ],
+      "acceptedBlob": "e2109081876ad2509a52ae00b9db8ba30bff0299",
+      "result": "Actual candidate and primary-base/parent code were read, not checkout HEAD. This is a useful effect-ownership change rather than naming cleanup: loadStartupSpeechKey owns source selection, credential-status diagnostics and unavailable-key failure effects; prepareStartupSpeechFixture owns synthetic versus natural preparation and the existing generation diagnostics. main now exposes the run journey without credential and fixture implementation interleaved: parse plan, allow fixture-only, require paid opt-in, resolve a provider key or continue, prepare/cache shared PCM or return, validate activity policy, dispatch modes. The helpers have small direct parameters and no new context bag, public framework, retry or fallback. NO CHANGE NEEDED for the already-explicit credential/fixture plans, readiness-gated delivery, bounded trial lifetime and separate retention/automatic/manual/flushed acceptance expressions; these unchanged sections remain readable in their actual caller journey.",
+      "systemReason": "Fixture-only still synthesizes locally and returns before credential resolution or paid opt-in. Paid runs still require BRUV_RUN_LIVE_STARTUP_SPEECH=1 before acquisition; default Google/OpenAI canonical sources and explicit Google-only live.env selection are unchanged. A source failure still emits bounded blocked diagnostics, sets exitCode=1 and skips only that provider. Canonical status/loadKey are still used without importing credentials; return await keeps rejected loadKey calls within the acquisition catch. PCM remains owned and cached by main, prepared only after the first available key and reused across selected modes/providers. Natural planning still requires supplied-key Google and automatic silence-only trials: one bounded generation plus selected trials, no retry. Generation errors alone are sanitized into a stage=generation failure and terminate before trial dispatch; conversion errors remain outside that catch and reach the unchanged top-level suppression. The natural fixture source retains in-memory generation/conversion, bounded audio and its own timer/session teardown. Existing control bypass versus connecting-time queued replay, ready-only sends, manual activity markers and paused-stream flush remain intact. trial still observes transcripts/audio/turns, distinguishes exact ordered word retention from numeric diagnostics and automatic turns from full silence-only acceptance, and owns deadline, queue stop, cleanup-only end marker and session close. Exported APIs remain unchanged; candidate-tree references are the two existing caller tests and CLI entry point, with no production startup buffering integration introduced.",
+      "checks": [
+        "Read wisdom/values.md, wisdom/quality/structural-readability-guidance.md, repository-wide readability ledger and relevant audio-area/coverage entries at the candidate revision. Historical focus entry is pending, not prior acceptance.",
+        "Verified candidate parent equals primary base 98d6861618aa5fdf731c23c3928337b234ad04d8; git diff shows exactly one changed source path, scripts/probe-live-startup-audio.ts. Read the complete candidate focus and changed parent orchestration, with all remaining focus code verified byte-identical.",
+        "Read candidate credential implementation, complete fixture/queue implementations and complete direct caller tests; inspected production Google/OpenAI readiness, audio/end-marker and close boundaries without invoking them. Candidate-tree git grep identified references independently of HEAD.",
+        "Read-only textual comparison verified all code before the new helpers, including trial/delivery/acceptance, is identical to base; activity validation, mode dispatch and top-level suppression tail are also identical. Reviewed moved acquisition and generation operations against the parent code.",
+        "Resolved exact accepted Git blob e2109081876ad2509a52ae00b9db8ba30bff0299 from the candidate tree. No repository setup, tests, builds, source edits, delegation or git mutation performed."
+      ],
+      "limits": [
+        "Structural/static judgment only; parent owns audited isolated batch gates. Existing tests were read, not executed; no test or runtime success claim.",
+        "No credential files or user secrets read, no credential/device/provider access attempted and no real authentication, audio-device or paid-session claim. Credential code was inspected only as tracked source.",
+        "No setup recovery or bypass attempted; this review supplies no new setup outcome and does not supersede parent-reported automatic setup/host-hash failures.",
+        "Acceptance covers the stated candidate focus blob and its changed-source scope, not whole-repository completion or fresh independent acceptance for unchanged related paths."
       ]
     },
     {
@@ -2545,13 +2563,31 @@
       "initialBlob": "9d766840abdeaa12b164aae3f0d8f682cc3825c5",
       "status": "pending",
       "area": "remote",
-      "resumeState": "pending-primary-unstarted",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_58c7d1fa",
+      "primaryCommit": "bc41663916e35b9e376c6427c50312ccb0765abb",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "bc41663916e35b9e376c6427c50312ccb0765abb",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
-      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
+      "primaryBase": "955feded55c7125658094bbef862244ee9b5941e",
+      "primaryResult": "The orchestrator now exposes five ordered journeys: verify owned placement, seed only diagnostic requests (returning the task ID), start the PTY and verify its stable request snapshot/explicit refresh, verify human-only grants, and verify human-only revocation. Each authority journey keeps its actions, frame/evidence observations and unchanged grant-ledger assertions together. Task identity and RPC observation are explicit parameters; no context bag or new state is introduced. The sole outer finally still owns all RPC children, provider and tmux shutdown.",
+      "primaryPaths": [
+        "scripts/remote-capability-pty-e2e.ts"
+      ],
+      "primaryChecks": [
+        "Read wisdom/values.md and structural-readability-guidance.md, remote area ledger, repo-wide assignment/coverage entries, and supplied preserved reconciliation evidence; focus was present at baseline blob with no surviving candidate or prior judgment.",
+        "Read the full focus, scripts/remote-e2e.sh caller, fixtureRpc child/polling contract, and actual capability grant/revoke confirmation handlers in src/remote/extension.ts.",
+        "Complete Git-byte static comparison expanded the five new journey calls: all original scenario statements are unchanged and remain in original order (ignoring blank lines); support code and finally shutdown are byte-identical.",
+        "Bun.Transpiler.scan parsed the edited TypeScript without executing the fixture or emitting build output.",
+        "git diff --check passed; source-only commit contains exactly the focus path."
+      ],
+      "primaryLimits": [
+        "No setup, repository tests, builds, SSH/Docker/tmux fixtures, network/provider/device/credential access or recovery actions were executed. Parent owns audited isolated batch gates, exact-candidate independent judgment and external runtime model verification.",
+        "The allowed shared dependency path did not resolve typescript during an attempted static AST read; no installation was attempted. Bun syntax scan and source-byte preservation checks are not typechecking or runtime proof.",
+        "Existing fixture behavior remains: process.env inheritance, provider/setup before the outer try, disposable-owner request removal in the stale-request scenario, and existing shutdown methods. No new isolation/lifecycle/security assurance is claimed.",
+        "No per-worker wisdom edits; parent owns aggregate wisdom. No delegation, push, PR creation/merge, or deletion/cleanup commands were performed."
+      ]
     },
     {
       "file": "scripts/remote-e2e.sh",
