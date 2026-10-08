@@ -1876,49 +1876,28 @@
       "initialBlob": "02e74db59339686bf3be7bab19c4cbf3f934808d",
       "status": "pending",
       "area": "remote",
-      "resumeState": "needs-primary-final-blob",
-      "primaryId": "task_3af9f8fa",
-      "primaryCommit": "7075ead9e0cc3f5611aeb0337dc4ade36bb532ae",
+      "resumeState": "needs-judge",
+      "primaryId": "task_7b708818",
+      "primaryCommit": "930db93e8dcd5d38fc224010a1bab44b062bfbae",
       "judgeIds": ["task_2c94381e"],
-      "sourceCommit": "a1f238b96cc562dfde095f0b486b2d674c410414",
+      "sourceCommit": "930db93e8dcd5d38fc224010a1bab44b062bfbae",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
       "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
-      "primaryBase": "5c3598debf99126b985f46d926d9e39129eb2a4e",
-      "primaryResult": "A private readRpcEvents operation owns the stdout buffer, complete-line delivery and existing parse/callback error boundary. fixtureRpc now shows child registration, stderr observation, event recording and unconditional confirmation denial together, followed by prompt submission and wait diagnostics. Callers still own child shutdown and provider stop. The loopback HTTP provider and exported API are unchanged; no new shared context or exported framework.",
-      "primaryPaths": ["scripts/loopback-parent-fixture.ts"],
+      "primaryBase": "930db93e8dcd5d38fc224010a1bab44b062bfbae",
+      "primaryResult": "UNCHANGED: read the entire current fixture and both complete callers. readRpcEvents privately owns the partial-line buffer, complete-line delivery and existing combined parse/callback error boundary. fixtureRpc visibly starts and registers the child, observes stderr, records every event and unconditionally denies confirm requests before exposing prompt send/wait diagnostics. It consumes caller-owned env rather than constructing inherited HOME state. Both callers explicitly pass rpcEnv, track all children and retain their own final child/provider shutdown. loopbackParent still binds only 127.0.0.1, delegates pure response generation to placementReply and writes models.json under the supplied agentDir. No shared context or exported framework is needed.",
+      "primaryPaths": [],
       "primaryChecks": [
-        {
-          "kind": "reading",
-          "result": "Read values, structural readability guidance, repo-wide assignment/coverage ledgers, remote ledger and preserved reconciliation evidence. Focus exists with baseline blob 02e74db59339686bf3be7bab19c4cbf3f934808d; no preserved focus candidate or predecessor ownership."
-        },
-        {
-          "kind": "caller-reading",
-          "paths": [
-            "scripts/remote-e2e.ts",
-            "scripts/remote-pty-e2e.ts",
-            "scripts/remote-capability-pty-e2e.ts",
-            "tests/tooling-fixtures.test.ts",
-            "tests/fixtures/remote-e2e/placement-parent.ts"
-          ],
-          "result": "Traced provider configuration, RPC registration, event consumption, wait diagnostics and caller-owned cleanup; inspected assertions for partial lines, false trust responses, prompts, timeout detail and malformed JSON."
-        },
-        {
-          "kind": "static-comparison",
-          "result": "Exact source comparisons confirmed loopbackParent, RPC spawn/child registration, prompt send, wait and return sections unchanged. Manual parser comparison confirms buffer scope, newline consumption, blank-line skipping, parse/callback catch and Invalid RPC JSON text retained; events are still recorded before confirmed:false response."
-        },
-        {
-          "kind": "git-diff-check",
-          "result": "Passed."
-        },
-        {
-          "kind": "execution",
-          "result": "No setup, tests, builds or device/credential access performed. Commit hook directory inspected: no active hooks."
-        }
+        "Whole current focus read, with relevant callers and authority/environment helper implementations.",
+        "Assigned reconciliation row read: pending-primary-unstarted/MISSING JUDGMENT; no rejection is recorded for this assigned row. Supplied candidate evidence is treated as primary history, not an independent verdict.",
+        "Compared preserved candidate against supplied primaryBase 5c3598debf99126b985f46d926d9e39129eb2a4e for this focus; inspected the actual structural extraction and retained assertions.",
+        "git diff HEAD a1f238b96cc562dfde095f0b486b2d674c410414 -- scripts/loopback-parent-fixture.ts is empty; exact Git blob equality also verified.",
+        "git status --short was clean before writing this artifact; git diff --check passed with no source diff. Formatting is not a readability judgment and no eligible changed path exists."
       ],
       "primaryLimits": [
-        "Runtime and typecheck evidence pending parent-owned audited isolated batch gates; this is a primary candidate, not independent readability acceptance.",
-        "Existing parser error handling still labels callback failures as invalid RPC JSON; preserved rather than introducing an incidental behavior change.",
-        "Wisdom and values unchanged; parent owns aggregate wisdom."
+        "No setup, tests, builds, live provider, SSH, Docker, tmux, credentials, or device operations executed. Runtime safety and fresh independent readability judgments belong to the parent.",
+        "No source changes in this worktree: each focus already equals the preserved candidate at a1f238b96cc562dfde095f0b486b2d674c410414. No restoration, formatter invocation (no changed source paths), or new/empty source commit was needed. sourceCommit identifies the existing exact final HEAD.",
+        "scripts/remote-e2e.sh was read only as the caller. It contains Docker build/removal and an EXIT deletion trap; it was NOT executed and must not be run unchanged under the supplied constraints. Parent owns audited isolated gates.",
+        "No descendants launched. No worker wisdom/values edits: parent owns aggregate wisdom; no new general lesson beyond existing guidance."
       ],
       "acceptedBlob": "9a33c9296fcd3de7c945d09d5f86d1d82edee687",
       "result": "Intrinsic: fixtureRpc reads in execution order: spawn the fixture RPC child, register it with the caller, observe stderr, record decoded events and deny every confirm request, then expose prompt submission and polling diagnostics. The private readRpcEvents operation separately owns the stdout buffer, extraction of complete nonempty newline-delimited records, synchronous JSON delivery and the existing parse/callback error boundary. Before this change the reader had to descend through buffer slicing and JSON framing to discover event recording and confirmation denial. The candidate removes that concrete transport/policy nesting without a context bag, exported framework or name-only cleanup. The helper has one real responsibility and its buffer lifetime is local to one stdout subscription. Unchanged decision: loopbackParent is already a coherent local provider operation (route validation, placement response, SSE formatting, fixture model registration and return of the provider); NO CHANGE NEEDED for that operation or the existing exported API.",
@@ -1935,7 +1914,14 @@
         "fixtureRpc still inherits process.env apart from HOME and BRUV_CODING_AGENT_DIR overrides; no new isolation or real-credential safety claim is made.",
         "No source or wisdom edits, delegation, push, PR creation/merge, cleanup or recovery. Only this untracked judgment artifact was written."
       ],
-      "acceptedRelatedJudges": ["task_9cd1c88b"]
+      "acceptedRelatedJudges": ["task_9cd1c88b"],
+      "priorPrimaryLineage": [
+        {
+          "primaryId": "task_3af9f8fa",
+          "sourceCommit": "a1f238b96cc562dfde095f0b486b2d674c410414",
+          "primaryBase": "5c3598debf99126b985f46d926d9e39129eb2a4e"
+        }
+      ]
     },
     {
       "file": "scripts/network-none-fixture.ts",
@@ -2394,28 +2380,28 @@
       "initialBlob": "9d766840abdeaa12b164aae3f0d8f682cc3825c5",
       "status": "pending",
       "area": "remote",
-      "resumeState": "needs-primary-final-blob",
-      "primaryId": "task_58c7d1fa",
-      "primaryCommit": "bc41663916e35b9e376c6427c50312ccb0765abb",
+      "resumeState": "needs-judge",
+      "primaryId": "task_7b708818",
+      "primaryCommit": "930db93e8dcd5d38fc224010a1bab44b062bfbae",
       "judgeIds": ["task_46bb6641"],
-      "sourceCommit": "a1f238b96cc562dfde095f0b486b2d674c410414",
+      "sourceCommit": "930db93e8dcd5d38fc224010a1bab44b062bfbae",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
       "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
-      "primaryBase": "955feded55c7125658094bbef862244ee9b5941e",
-      "primaryResult": "The orchestrator now exposes five ordered journeys: verify owned placement, seed only diagnostic requests (returning the task ID), start the PTY and verify its stable request snapshot/explicit refresh, verify human-only grants, and verify human-only revocation. Each authority journey keeps its actions, frame/evidence observations and unchanged grant-ledger assertions together. Task identity and RPC observation are explicit parameters; no context bag or new state is introduced. The sole outer finally still owns all RPC children, provider and tmux shutdown.",
-      "primaryPaths": ["scripts/remote-capability-pty-e2e.ts"],
+      "primaryBase": "930db93e8dcd5d38fc224010a1bab44b062bfbae",
+      "primaryResult": "UNCHANGED: read all setup, helpers, journeys and the final orchestration. Connection precedes verifyOwnedPlacement, whose normal task proves real destination execution and is distinct from the diagnostic task returned by seedDiagnosticCapabilityRequests. startCapabilityPtyAndVerifySnapshot keeps displayed requests, owner mutation, unchanged-menu assertion and explicit refresh together. verifyGrantRequiresHumanConsent keeps unsupported denial, scoped confirmation, Escape, disappearing-request denial, No and Yes beside grant-ledger assertions; only repo.read may result. verifyRevokeRequiresHumanConsent similarly keeps cancellation and affirmative revocation beside ledger observations. id and rpc are explicit parameters, not a context bag. The sole outer finally still owns RPC children, provider and tmux shutdown. Existing security assertions and action order need no rework.",
+      "primaryPaths": [],
       "primaryChecks": [
-        "Read wisdom/values.md and structural-readability-guidance.md, remote area ledger, repo-wide assignment/coverage entries, and supplied preserved reconciliation evidence; focus was present at baseline blob with no surviving candidate or prior judgment.",
-        "Read the full focus, scripts/remote-e2e.sh caller, fixtureRpc child/polling contract, and actual capability grant/revoke confirmation handlers in src/remote/extension.ts.",
-        "Complete Git-byte static comparison expanded the five new journey calls: all original scenario statements are unchanged and remain in original order (ignoring blank lines); support code and finally shutdown are byte-identical.",
-        "Bun.Transpiler.scan parsed the edited TypeScript without executing the fixture or emitting build output.",
-        "git diff --check passed; source-only commit contains exactly the focus path."
+        "Whole current focus read, with relevant callers and authority/environment helper implementations.",
+        "Assigned reconciliation row read: pending-primary-unstarted/MISSING JUDGMENT; no rejection is recorded for this assigned row. Supplied candidate evidence is treated as primary history, not an independent verdict.",
+        "Compared preserved candidate against supplied primaryBase 955feded55c7125658094bbef862244ee9b5941e for this focus; inspected the actual structural extraction and retained assertions.",
+        "git diff HEAD a1f238b96cc562dfde095f0b486b2d674c410414 -- scripts/remote-capability-pty-e2e.ts is empty; exact Git blob equality also verified.",
+        "git status --short was clean before writing this artifact; git diff --check passed with no source diff. Formatting is not a readability judgment and no eligible changed path exists."
       ],
       "primaryLimits": [
-        "No setup, repository tests, builds, SSH/Docker/tmux fixtures, network/provider/device/credential access or recovery actions were executed. Parent owns audited isolated batch gates, exact-candidate independent judgment and external runtime model verification.",
-        "The allowed shared dependency path did not resolve typescript during an attempted static AST read; no installation was attempted. Bun syntax scan and source-byte preservation checks are not typechecking or runtime proof.",
-        "Existing fixture behavior remains: process.env inheritance, provider/setup before the outer try, disposable-owner request removal in the stale-request scenario, and existing shutdown methods. No new isolation/lifecycle/security assurance is claimed.",
-        "No per-worker wisdom edits; parent owns aggregate wisdom. No delegation, push, PR creation/merge, or deletion/cleanup commands were performed."
+        "No setup, tests, builds, live provider, SSH, Docker, tmux, credentials, or device operations executed. Runtime safety and fresh independent readability judgments belong to the parent.",
+        "No source changes in this worktree: each focus already equals the preserved candidate at a1f238b96cc562dfde095f0b486b2d674c410414. No restoration, formatter invocation (no changed source paths), or new/empty source commit was needed. sourceCommit identifies the existing exact final HEAD.",
+        "scripts/remote-e2e.sh was read only as the caller. It contains Docker build/removal and an EXIT deletion trap; it was NOT executed and must not be run unchanged under the supplied constraints. Parent owns audited isolated gates.",
+        "No descendants launched. No worker wisdom/values edits: parent owns aggregate wisdom; no new general lesson beyond existing guidance."
       ],
       "acceptedBlob": "3c3a634ce44569602fb7f584b60d97638a4c4e4d",
       "result": "Read the actual candidate and its primary base/direct parent 955feded55c7125658094bbef862244ee9b5941e, not checkout HEAD. Previously one long try mixed normal owned-placement policy proof, diagnostic request creation, PTY snapshot behavior, grant authority and revocation authority. The candidate exposes those five substantive journeys in order at lines 363–381. verifyOwnedPlacement keeps target discovery, decoded task identity, terminal-state observation and destination execution evidence together. seedDiagnosticCapabilityRequests keeps diagnostic launch, request lookup, unsupported-request injection and synchronization together and returns the task ID. startCapabilityPtyAndVerifySnapshot owns PTY startup and the displayed snapshot versus explicit-refresh experiment. verifyGrantRequiresHumanConsent keeps unsupported denial, displayed scope, Escape, stale-request denial/restoration, No, Yes and grant-ledger checks in one authority journey. verifyRevokeRequiresHumanConsent keeps cancel/confirm actions, ledger checks and final visible results together. This is a navigable behavioral decomposition, not rename-only cleanup or a context framework. The task ID and observing RPC fixture are explicit parameters; no new mutable state is introduced. Unchanged decision: retain the existing narrow pane/key/select/evidence helpers, task-filtered grant inventory and single outer shutdown owner. Their jobs are already clear and splitting each UI action from its assertion would make these journeys harder to read. The helpers deliberately share one fixture HOME and tmux pane; sequential calls, rather than a reusable independent-phase API, are appropriate here.",
@@ -2449,7 +2435,14 @@
         "The unchanged shell launcher contains EXIT cleanup and destructive fixture teardown. It was read, never executed; parent safety audit must govern any runtime use. No automatic setup failure was bypassed.",
         "Only the focus is a changed-source acceptance. Related paths were traced at the relevant contracts/authority sections, not given whole-file acceptance. Wisdom and values were not edited; parent owns aggregate wisdom."
       ],
-      "acceptedRelatedJudges": ["task_9cd1c88b"]
+      "acceptedRelatedJudges": ["task_9cd1c88b"],
+      "priorPrimaryLineage": [
+        {
+          "primaryId": "task_58c7d1fa",
+          "sourceCommit": "a1f238b96cc562dfde095f0b486b2d674c410414",
+          "primaryBase": "955feded55c7125658094bbef862244ee9b5941e"
+        }
+      ]
     },
     {
       "file": "scripts/remote-e2e.sh",
@@ -2525,47 +2518,28 @@
       "initialBlob": "fe5d531b0210d36871c340023798a4c6acdd8216",
       "status": "pending",
       "area": "remote",
-      "resumeState": "needs-primary-final-blob",
-      "primaryId": "task_51a0ee46",
-      "primaryCommit": "24026dc1b1249c085668b140d644ea528f188e8e",
+      "resumeState": "needs-judge",
+      "primaryId": "task_7b708818",
+      "primaryCommit": "930db93e8dcd5d38fc224010a1bab44b062bfbae",
       "judgeIds": ["task_21f18195"],
-      "sourceCommit": "a1f238b96cc562dfde095f0b486b2d674c410414",
+      "sourceCommit": "930db93e8dcd5d38fc224010a1bab44b062bfbae",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
       "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
-      "primaryBase": "07d54f20849e244898eebbe6a3c072a97dfb29fd",
-      "primaryResult": "The orchestration now states the ordered proof lifetimes: pinned SSH, independent owner/reconnect/native question, repository return and explicitly granted work, then server-offline human transcript. Only the original task ID crosses those scenario boundaries; RPC replacements and repository state stay local to their owning scenario. The safe-source launch explicitly calls launchWithUntrackedOmission; ordinary launches and omission retries share only task observation/stable-ID verification. Existing authority, assertions and effect order are preserved.",
-      "primaryPaths": ["scripts/remote-e2e.ts"],
+      "primaryBase": "930db93e8dcd5d38fc224010a1bab44b062bfbae",
+      "primaryResult": "UNCHANGED: read the entire script, launch/env caller, and placementReply/placementCode. The final try names the ordered lifetimes: verifyPinnedSsh, proveOwnerReconnectAndQuestion, proveRepositoryReturnAndGrantedWork, proveOfflineTranscript. Only the original taskId crosses scenarios; local client replacements, repository/index state and capability/cancellation IDs stay in their owning scenario. launchWithUntrackedOmission explicitly verifies waiting human approval, no premature dispatch, parent yield, omission answer and identity-preserving retry. Ordinary launches and this retry share only waitForTask observation/stable-ID verification. Repository safe return/index preservation, local-conflict retention, explicit grants after reconnect, native cancellation and full cached artifacts remain together before Docker stop/offline readable transcript/no-provider proof. All children are retained in rpcChildren for the unchanged final shutdown. No new state or wider extraction improves this journey.",
+      "primaryPaths": [],
       "primaryChecks": [
-        {
-          "kind": "reading",
-          "result": "Read values, structural guidance, repo-wide/resume/remote ledgers, focus coverage row, and preserved reconciliation evidence. Focus existed at baseline fe5d531b0210d36871c340023798a4c6acdd8216 with no surviving focus candidate to import."
-        },
-        {
-          "kind": "caller-reading",
-          "paths": ["scripts/remote-e2e.sh", "tests/remote-e2e.test.ts", "scripts/loopback-parent-fixture.ts"],
-          "result": "Inspected isolated HOME/config injection, fixture-provider and RPC registration/transport, opt-in runner, Docker/SSH operations and shell cleanup effects. Did not execute the runner."
-        },
-        {
-          "kind": "static-comparison",
-          "result": "Pinned SSH, owner/reconnect/question, offline transcript, repository setup, repository/capability/cancellation/artifact statements, shared task observation/identity verification, and final cleanup matched baseline byte-for-byte in their extracted bodies. Source assertion expressions retained exactly with multiplicity; their lexical order changes because approval and identity checks now reside in separate helpers. Execution order was traced manually, including snapshot-before-initial-prompt and answer-before-retry."
-        },
-        {
-          "kind": "parser-attempt",
-          "result": "Read-only TypeScript import exposes version metadata only (installed TypeScript 7.0.2); createSourceFile/ScriptTarget API unavailable. Attempt failed before parsing. No alternative compiler/build/test gate run."
-        },
-        {
-          "kind": "git-diff-check",
-          "result": "Passed."
-        },
-        {
-          "kind": "commit-safety",
-          "result": "core.hooksPath unset; repository hook directory contains sample files only. Committed only scripts/remote-e2e.ts."
-        }
+        "Whole current focus read, with relevant callers and authority/environment helper implementations.",
+        "Assigned reconciliation row read: pending-primary-unstarted/MISSING JUDGMENT; no rejection is recorded for this assigned row. Supplied candidate evidence is treated as primary history, not an independent verdict.",
+        "Compared preserved candidate against supplied primaryBase 07d54f20849e244898eebbe6a3c072a97dfb29fd for this focus; inspected the actual structural extraction and retained assertions.",
+        "git diff HEAD a1f238b96cc562dfde095f0b486b2d674c410414 -- scripts/remote-e2e.ts is empty; exact Git blob equality also verified.",
+        "git status --short was clean before writing this artifact; git diff --check passed with no source diff. Formatting is not a readability judgment and no eligible changed path exists."
       ],
       "primaryLimits": [
-        "No setup, tests, builds, Docker/SSH execution, credential/device access or recovery performed; parent owns audited isolated batch gates and independent exact-candidate judgment. No runtime success claimed.",
-        "Existing provider initialization before try, SIGKILL sequences and timeout values are unchanged, not newly hardened.",
-        "Wisdom and values unchanged: parent writes aggregate wisdom; no new per-worker wisdom files."
+        "No setup, tests, builds, live provider, SSH, Docker, tmux, credentials, or device operations executed. Runtime safety and fresh independent readability judgments belong to the parent.",
+        "No source changes in this worktree: each focus already equals the preserved candidate at a1f238b96cc562dfde095f0b486b2d674c410414. No restoration, formatter invocation (no changed source paths), or new/empty source commit was needed. sourceCommit identifies the existing exact final HEAD.",
+        "scripts/remote-e2e.sh was read only as the caller. It contains Docker build/removal and an EXIT deletion trap; it was NOT executed and must not be run unchanged under the supplied constraints. Parent owns audited isolated gates.",
+        "No descendants launched. No worker wisdom/values edits: parent owns aggregate wisdom; no new general lesson beyond existing guidance."
       ],
       "acceptedBlob": "320b3a149d7ad52320e99afc6dadda511e772aef",
       "result": "Read the actual candidate file in full and compared its diff and primary-base implementation; the candidate parent is exactly primary base 07d54f20849e244898eebbe6a3c072a97dfb29fd. This is structural progress, not a rename pass: the executable orchestration now exposes SSH trust verification, owner/reconnect/question proof, repository/granted-work proof, and server-offline transcript proof in their required order. cli/reconnect/question state stays inside its scenario; localRepo, staged-index baseline, replacement repoRpc and repository/capability/cancellation task IDs stay inside the repository scenario; only the original owner task ID is passed between scenario operations. The safe launch now calls launchWithUntrackedOmission explicitly instead of triggering an authority-changing branch hidden inside generic nextTask. Both launch paths reuse only task observation and stable-ID verification. Unchanged decision: bootstrap, fixtureRpc/loopback provider helpers, scenario assertions and shared final cleanup need no change for this reading problem. Keeping repository return, capability reconnect, cancellation and artifact caching together is justified by their shared repository/RPC lifetime; further wrapper layers or a context bag would make this journey harder to follow.",
@@ -2585,7 +2559,14 @@
         "Automatic worktree setup outcome was not supplied in this turn and was not rerun or bypassed. Historical setup/compiler failures in the ledgers are not a candidate success claim.",
         "Only .pr45-judge-result.json is written untracked; no source/wisdom edits, commit, push, PR or merge. Runtime model identity is for parent external jobs.inspect verification, not self-introspection."
       ],
-      "acceptedRelatedJudges": ["task_9cd1c88b"]
+      "acceptedRelatedJudges": ["task_9cd1c88b"],
+      "priorPrimaryLineage": [
+        {
+          "primaryId": "task_51a0ee46",
+          "sourceCommit": "a1f238b96cc562dfde095f0b486b2d674c410414",
+          "primaryBase": "07d54f20849e244898eebbe6a3c072a97dfb29fd"
+        }
+      ]
     },
     {
       "file": "scripts/remote-jobs-e2e.ts",
@@ -2734,38 +2715,43 @@
       "initialBlob": "ff9c6e8a70b09d2134b07c53336b95f56311bf4b",
       "status": "pending",
       "area": "remote",
-      "resumeState": "needs-primary-final-blob",
-      "primaryId": "task_1bad7144",
-      "primaryCommit": "9c449135513eeb5e5cfa8f20e0371d0fe03abf9f",
+      "resumeState": "needs-judge",
+      "primaryId": "task_174c8eac",
+      "primaryCommit": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
       "judgeIds": ["task_2fd31271"],
-      "sourceCommit": "a1f238b96cc562dfde095f0b486b2d674c410414",
+      "sourceCommit": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
       "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
-      "primaryBase": "c7a21355e87abe213aeb2b2b3ef06456a17b56e1",
-      "primaryResult": "Repository preparation is now one explicit operation containing the unchanged isolated Git setup and HOME assertion. All helper declarations precede provider acquisition; acquisition is immediately followed by the existing try/finally, whose first operation prepares the launch repository. A reader can see the complete returned-provider lifetime and preparation failures now enter existing teardown. Original diagnostic versus owned RPC authority, SSH confinement, PTY assertions, evidence snapshots, and teardown operations remain unchanged.",
-      "primaryPaths": ["scripts/remote-pty-e2e.ts"],
+      "primaryBase": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+      "primaryResult": "Read the entire current PTY script and its launcher, returned-provider/RPC helper, and owned fixture environment. The final focus already contains the exact preserved candidate blob. prepareLaunchRepository groups the original isolated Git preparation and HOME assertion as one operation. All helper declarations precede provider acquisition, immediately followed by try whose first statement prepares the repository; the existing finally owns tmux shutdown, RPC child kills, and provider.stop(true). Diagnostic launches still pass noSession=true and exercise legacy human menu authority; the normal owned launch separately uses launchRpc() and verifies target authorization and destination completion. SSH fixture confinement, menu/stale/cancel/fresh-client/offline assertions, evidence snapshots and no-local-question-ledger assertion remain explicit. Further extraction would hide the chronological PTY interaction/assertion journey rather than resolve a demonstrated burden. No reapplication, rename, helper edits or new source commit needed; parent must obtain the independent final-blob judgment.",
+      "primaryPaths": [],
       "primaryChecks": [
         {
-          "kind": "structural-reading",
-          "result": "Read values, structural guidance, repo-wide/remote ledgers and preserved reconciliation. Focus exists at recorded baseline ff9c6e8a70b09d2134b07c53336b95f56311bf4b; no surviving focus candidate or prior primary/judge recorded. Read remote-e2e.sh caller and loopback-parent-fixture.ts RPC/provider boundary."
+          "kind": "actual-source-reading",
+          "result": "Read full assigned focus and relevant scripts/remote-e2e.sh, scripts/loopback-parent-fixture.ts, tests/helpers.ts contracts; read wisdom/values.md and structural-readability guidance."
+        },
+        {
+          "kind": "preserved-evidence",
+          "result": "Assigned reconciliation row is rows[7], pending-primary-unstarted / MISSING JUDGMENT with baseline and joined blob ff9c6e8a70b09d2134b07c53336b95f56311bf4b; it contains no rejection objection. Reviewed exact supplied candidate diff against primaryBase c7a21355e87abe213aeb2b2b3ef06456a17b56e1, not just pre-candidate checkout."
+        },
+        {
+          "kind": "git-blob-comparison",
+          "result": "Current HEAD focus blob 0557c88c0c4a1044af2ad62f6399fb510c15134a equals candidate a1f238b96cc562dfde095f0b486b2d674c410414 focus blob; git diff HEAD candidate -- focus is empty."
+        },
+        {
+          "kind": "effect-review",
+          "result": "Read-only review of launcher and helpers: launcher creates SSH keys, Docker image/container and fixture tree and has deletion traps; not executed. Focus writes only fixture repository/evidence and uses tmux/SSH/Docker/RPC; none executed."
         },
         {
           "kind": "formatter",
-          "result": "Required read-only Biome executable invoked via node:child_process argv with fresh retained HOME/config/cache/data/TMPDIR at /tmp/pr45-remote-pty-format-YNCErO. Formatted exactly scripts/remote-pty-e2e.ts; no fixes applied."
-        },
-        {
-          "kind": "static-source-preservation",
-          "result": "Exact baseline-to-candidate transformation checked without executing the harness: repository preparation unchanged except enclosing indentation, original SSH-to-finally journey byte-identical. All existing assertion expressions, command arguments and security environment settings preserved."
-        },
-        {
-          "kind": "git-diff-check",
-          "result": "Passed; source commit changes only the focus path."
+          "result": "Not run: no changed source paths."
         }
       ],
       "primaryLimits": [
-        "No setup, tests, builds, SSH, Docker, credential/device access, recovery, push, PR, or merge performed. Parent owns isolated audited runtime gates and an independent fresh judge.",
-        "Optional read-only TypeScript AST inspection could not load /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/typescript/lib/typescript.js (ENOENT); exact source-movement inspection used instead, not a typecheck.",
-        "Existing cleanup semantics are preserved; this change does not claim joined child shutdown or address failures inside the provider constructor itself."
+        "No setup, tests or builds executed; parent owns audited isolated gates. No live auth/device/credential access.",
+        "No source changes or commit produced; exact sourceCommit is inherited current HEAD. Artifact intentionally remains untracked.",
+        "Primary reasoning only, not an independent readability verdict. No delegation or cleanup performed. Existing worktrees and candidate evidence preserved.",
+        "Values/wisdom unchanged; parent owns aggregate wisdom."
       ],
       "acceptedBlob": "0557c88c0c4a1044af2ad62f6399fb510c15134a",
       "result": "Compared the actual candidate with primary base c7a21355e87abe213aeb2b2b3ef06456a17b56e1, which is also its direct parent. Previously the provider was acquired near the globals and live during top-level repository preparation, well before the try/finally. The candidate declares helpers first, then visibly pairs returned-provider acquisition with try/finally. Its first protected operation, prepareLaunchRepository, coherently owns directory creation, fixture content, Git initialization/add/commit assertions and the HOME-not-repository assertion. This is a meaningful lifetime boundary, not merely a renamed block: preparation failures now flow into existing teardown. No framework, shared context bag or exported helper is introduced. Unchanged decision: retain the chronological PTY assertion journey and its local navigation/evidence helpers; that order explains actual interactions, stale snapshots, cancellation and offline observations without needing another orchestration abstraction.",
@@ -2797,7 +2783,14 @@
         "loopbackParent can start its server and then throw while creating/writing its model configuration before returning; this pre-existing constructor-internal failure is outside the improved returned-provider lifetime. Child kill remains unjoined and fixture HOME remains a caller obligation.",
         "The unchanged shell runner contains cleanup traps and Docker/network/filesystem effects; it was only read, not executed. Acceptance is not approval to run that wrapper unmodified under this review safety policy. No automatic-setup outcome or model self-introspection claim."
       ],
-      "acceptedRelatedJudges": ["task_9cd1c88b"]
+      "acceptedRelatedJudges": ["task_9cd1c88b"],
+      "priorPrimaryLineage": [
+        {
+          "primaryId": "task_1bad7144",
+          "sourceCommit": "a1f238b96cc562dfde095f0b486b2d674c410414",
+          "primaryBase": "c7a21355e87abe213aeb2b2b3ef06456a17b56e1"
+        }
+      ]
     },
     {
       "file": "scripts/remote-recovery-e2e.ts",
@@ -20252,16 +20245,45 @@
     {
       "file": "tests/rolling-activity-disk.test.ts",
       "initialBlob": "16109794da03297d71f74968b134a2c9e7929bf4",
-      "status": "accepted",
+      "status": "pending",
       "area": "ui-terminal-cli",
-      "resumeState": "accepted-not-joined",
+      "resumeState": "needs-rework",
       "primaryId": "task_2031ace4",
       "primaryCommit": "496389243e523220cae31f698ac02922890a578f",
       "judgeIds": ["task_6f3b1071", "task_28221777", "task_a6caab27"],
-      "sourceCommit": "496389243e523220cae31f698ac02922890a578f",
+      "sourceCommit": null,
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
       "acceptedBlob": "a502768eb70247ad2caceed71f88c1c6aa82533d",
-      "result": "Existing primary-focus ACCEPT by task_28221777 at 496389243e523220cae31f698ac02922890a578f; exact candidate and surviving-area blob verified. Pinned joined tree lacks this accepted blob; parent owns joining. No new review or test execution. Final fresh rework writer task_2031ace4; original rejected primary task_1b754cf4/ad493ccc4986fb5c18bc708590a38232c84621bd retained in evidence."
+      "result": "Existing primary-focus ACCEPT by task_28221777 at 496389243e523220cae31f698ac02922890a578f; exact candidate and surviving-area blob verified. Pinned joined tree lacks this accepted blob; parent owns joining. No new review or test execution. Final fresh rework writer task_2031ace4; original rejected primary task_1b754cf4/ad493ccc4986fb5c18bc708590a38232c84621bd retained in evidence.",
+      "priorAcceptedIntegrationProof": [
+        {
+          "primaryId": "task_2031ace4",
+          "judgeIds": ["task_6f3b1071", "task_28221777", "task_a6caab27"],
+          "sourceCommit": "496389243e523220cae31f698ac02922890a578f",
+          "acceptedBlob": "a502768eb70247ad2caceed71f88c1c6aa82533d",
+          "finalLane": "lane-51",
+          "finalJudge": "task_bfa91284"
+        }
+      ],
+      "resumeBatch": "owned-terminal-process-fixture-environments",
+      "resumeRework": {
+        "candidate": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+        "reviewedCandidate": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "primaryId": "task_2031ace4",
+        "judgeId": "task_bfa91284",
+        "objections": [
+          {
+            "paths": [
+              "tests/rolling-activity-disk.test.ts:133-158",
+              "tests/helpers.ts:run,offlineTestEnv",
+              "tests/helpers/terminal-perf-process.ts"
+            ],
+            "readingProblem": "The extracted runDiskActivityJourney says the test owns child files, but only ROOT is owned; env spreads process.env. run -> offlineTestEnv merely clears Herdr routing and does not isolate HOME/config/SDK. The real SDK/theme/prototype fixture therefore still operates with caller environment authority, unlike the other integrated terminal process fixtures. This inherited environment flaw already existed in the baseline; it is not claimed as a newly introduced functional regression, but the candidate wrapper still does not meet the requested test ownership boundary.",
+            "requiredResult": "Give the journey a mkdtemp-owned HOME/config/SDK environment, pass ROOT explicitly on that allowlisted environment, and retain fixture files for inspection. Preserve the intentionally ordered membership/live/owner transition sequence and subprocess isolation."
+          }
+        ],
+        "readingReason": "Observed current Git/Bun/SDK process-bearing fixture lacks owned HOME/config/SDK authority. Reuse explicit ownedFixtureEnv and retain actualfixture state; preserve proof-vs-native distinction, ordered disk activity transitions and every assertion. No tests/setup/builds/traps/provider/device execution."
+      }
     },
     {
       "file": "tests/rolling-activity.test.ts",
@@ -23956,15 +23978,44 @@
       "file": "tests/tasks-ui-proof-build.test.ts",
       "initialBlob": "absent",
       "area": "ui-terminal-cli",
-      "resumeState": "accepted-joined",
+      "resumeState": "needs-rework",
       "primaryId": "task_eed22df6",
       "primaryCommit": "fd1e6f44a2c88c3f1ac311087b90efb65f6e980d",
       "judgeIds": ["task_f9504048", "task_db1c285c"],
-      "sourceCommit": "fd1e6f44a2c88c3f1ac311087b90efb65f6e980d",
+      "sourceCommit": null,
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
-      "status": "accepted",
+      "status": "pending",
       "acceptedBlob": "d132c1709bbc03d1e3851dd2e6886ed50fc8bf0d",
-      "result": "Existing primary-focus NO CHANGE NEEDED by task_db1c285c at fd1e6f44a2c88c3f1ac311087b90efb65f6e980d; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
+      "result": "Existing primary-focus NO CHANGE NEEDED by task_db1c285c at fd1e6f44a2c88c3f1ac311087b90efb65f6e980d; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution.",
+      "priorAcceptedIntegrationProof": [
+        {
+          "primaryId": "task_eed22df6",
+          "judgeIds": ["task_f9504048", "task_db1c285c"],
+          "sourceCommit": "fd1e6f44a2c88c3f1ac311087b90efb65f6e980d",
+          "acceptedBlob": "d132c1709bbc03d1e3851dd2e6886ed50fc8bf0d",
+          "finalLane": "lane-51",
+          "finalJudge": "task_bfa91284"
+        }
+      ],
+      "resumeBatch": "owned-terminal-process-fixture-environments",
+      "resumeRework": {
+        "candidate": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+        "reviewedCandidate": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "primaryId": "task_eed22df6",
+        "judgeId": "task_bfa91284",
+        "objections": [
+          {
+            "paths": [
+              "tests/tasks-ui-proof-build.test.ts:10-16,52-71",
+              "scripts/tasks-ui-proof-build.ts:12-18",
+              "tests/helpers.ts:ownedFixtureEnv"
+            ],
+            "readingProblem": "Blocking new-source ownership gap: git spawnSync has no env at all, and the builder Bun child spreads process.env. git init/add/commit consequently honor caller Git environment/global config/hooks despite cwd being mkdtemp; commit can execute a caller-configured hook outside fixture ownership. HOME/config/SDK are not fixture-owned. The nested copied builder inherits the same authority. No external mutation is asserted to have happened; this is the actual reachable source path, contrary to the required isolated test boundary.",
+            "requiredResult": "Use one explicit owned environment for fixture Git and Bun/builder children (the existing ownedFixtureEnv supplies isolated HOME/config/SDK and empty hooks), without forwarding caller Git/config/credential variables. Retain the fixture/evidence rather than removing it. Keep the honest distinction between stub provenance checks and native UI proof."
+          }
+        ],
+        "readingReason": "Observed current Git/Bun/SDK process-bearing fixture lacks owned HOME/config/SDK authority. Reuse explicit ownedFixtureEnv and retain actualfixture state; preserve proof-vs-native distinction, ordered disk activity transitions and every assertion. No tests/setup/builds/traps/provider/device execution."
+      }
     },
     {
       "file": "tests/terminal-interactions-options.test.ts",
@@ -26216,8 +26267,8 @@
       "file": "tests/fixtures/worktree-workspace-cases.ts",
       "initialBlob": "absent",
       "area": "execution-tasks-questions",
-      "status": "pending",
-      "resumeState": "needs-judge",
+      "status": "accepted",
+      "resumeState": "accepted-joined",
       "sourceCommit": "3ce466109e6c814265868a3e80fbdfc1f1f090cb",
       "acceptedRelatedJudges": ["task_686802a6"],
       "acceptedBlob": "16e90314c1d218b04e99644340d8d5220c2ba060",
@@ -26239,6 +26290,23 @@
         "The supplied reconciliation file (observedAt 2026-10-08T00:09:47.669Z) has neither this focus nor candidate hash; source-based primary decision proceeds from the exact preserved candidate, not an invented prior acceptance/rejection.",
         "No per-worker wisdom changes; parent owns aggregate wisdom. Values unchanged because this decision follows existing ownership, truthful-proof and safety guidance.",
         "No test fixture was executed or created. Durable source provenance is this existing worktree and sourceCommit; the existing launcher retains any future mkdtemp fixture plus launch.json/stdout.log/stderr.log."
+      ],
+      "judgeIds": ["task_09eee4d9"],
+      "result": "Independently read all 472 focus lines from the exact candidate Git object, not checkout HEAD. The file has a clear authority split: fixture() creates case-owned repositories and sessions below the launcher-owned runtime; withWorktreeJobs() owns only the manager/service lifetime and drains it in finally. Assertions remain beside each journey rather than behind a context bag. JSONC cases distinguish parsing/schema validation from original-byte hashing. The clean-commit case visibly dirties tracked and untracked source files, then checks the pinned commit and safe generated branch. Early batch-branch rejection deliberately needs no repository; invalid refs, task identity, path collision and branch reuse each expose their own failure boundary. Reservation cancellation and deadline assertions cover preparing identities and managed setup, not merely eventual process exit. The synchronous case makes denied child trust and copied option-boundary argv explicit; the asynchronous case has a release-file gate so activation-before-setup-settlement is observable. Both inspect retained journal headers; async also checks owned HOME/SDK forwarding. The batch failure checks the failed second identity separately from sibling termination. Repeated small contexts make trust and journal authority directly readable. I found no scattered decision that warrants another generic helper or source edit. This is an unchanged-focus judgment, not a claim of a new readability transformation.",
+      "systemReason": "Read the companion launcher and ownedFixtureEnv: a retained mkdtemp root supplies HOME, XDG config/cache/data, SDK, temp, Bun cache and empty Git hooks; explicit Bun argv/env and fresh cwd precede dynamic import of production/SDK dependencies. setup.ts only clears inherited Herdr identity. Followed JobService constructor and subagent validation: the fixture supplies an empty bridge environment and an owned profiles path; explicit multi-prompt branch rejection precedes reservation and workspace side effects. Local prepareLaunch forwards case sessionDir into prepareAgentSession, which persists the header exclusively, appends bruv-agent metadata and disposes its private session managers. #launchWorktreeAgents reserves every identity and starts its deadline before preparation, pins one source, preserves the trust flag and system-prompt arguments only before --, and activates only after blocking setup. Async setup is a separate managed command and publishes eventual status without gating activation. TaskManager preserves reservation identity/deadline during activation, propagates kill to setup, and shutdown waits for running tasks with bounded escalation. Failure settles one reserved task without cancelling siblings. worktree-workspace.ts validates refs/identities, rejects branch/path reuse, parses original configuration, and uses argv-based Git worktree creation at the pinned OID without copying dirty files or resetting branches. These unchanged callers explain the assertions and confirm the visible ownership boundaries are substantive.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "git show and git grep used explicit candidate 3ce466109e6c814265868a3e80fbdfc1f1f090cb for focus, launcher and relevant production callers.",
+        "git diff primaryBase..candidate is empty: both are 3ce466109e6c814265868a3e80fbdfc1f1f090cb; no candidate-changed source paths require additional blob entries.",
+        "git ls-tree confirms focus and companion launcher blobs are identical at candidate and af63383a0fb05cba759d32b21788c03f7a3cffa7.",
+        "Reviewed filesystem/process effects statically: retained owned roots, local Git commands, shell setup fixtures, SDK journal creation, command draining; no fixture deletion or credential-bearing environment inheritance in the launcher path.",
+        "No setup, tests, builds, dependency installation, network/auth/device probes, source edits, commits or publication performed."
+      ],
+      "limits": [
+        "Static actual-code review only. Parent owns audited isolated execution gates; runtime timing, provider execution and live auth/device behavior are unverified.",
+        "Durable review provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_09eee4d9. Checkout HEAD is b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0, so all candidate source reading used Git objects. No /tmp code checkout or runtime fixture was created by this judge; candidate fixtures may create retained temporary runtime roots only when the parent runs its gate.",
+        "Safety for ALL descendants: NO sudo, recovery investigation, user secrets, shell deletion/cleanup commands, inherited HOME/config/SDK cleanup, nested shell traps, destructive git, or user-data mutation. User already recovered data and requested no recovery work. Tests must use explicit process argv/env and owned fs.mkdtemp fixture HOME/config/SDK; retain them, do not delete. Review filesystem/network effects BEFORE tests/setup. Existing test-code cleanup of provably owned temporary paths may be inspected but NEVER run a shell trap or inherited HOME removal. Need live auth/device? Report unverified, don't access credentials. Propagate these constraints verbatim. Independent code/review agents get durable worktrees, not /tmp code checkouts. Keep existing worktrees and candidate evidence. Test/source fixtures may use /tmp, but document durable provenance. Parent verifies runtime agent.model openai-codex/gpt-6.1-sol; native normal leaves only, no delegation.",
+        "Do NOT run setup, tests, builds: parent owns audited isolated gates. Shared dependencies are read-only; no reinstall or guard bypass. Preserve old worktrees/candidate edits. No push/new PR/merge, publication is parent-owned. No per-worker wisdom note pile; return exact artifact untracked, parent writes aggregate wisdom."
       ]
     },
     {
@@ -26310,9 +26378,9 @@
     "baselineFiles": 766,
     "finalGate": "pending; incomplete focus coverage",
     "liveAuth": "unverified/failing; preserved",
-    "accepted": 834,
+    "accepted": 833,
     "total": 839,
-    "pending": 5,
+    "pending": 6,
     "sourceExtras": 73,
     "checkout": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
     "branch": "bruv/readability-pr45-sol-continuation",

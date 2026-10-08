@@ -4352,8 +4352,8 @@
     ]
   },
   "resumeStatus": {
-    "accepted": 104,
-    "pending": 1
+    "accepted": 105,
+    "pending": 0
   },
   "extraFiles": [
     {
@@ -4442,15 +4442,17 @@
       "focus": "tests/fixtures/worktree-workspace-cases.ts",
       "initialBlob": null,
       "introducedBy": "af63383a0fb05cba759d32b21788c03f7a3cffa7",
-      "state": "pending",
-      "acceptedBlob": null,
+      "state": "accepted",
+      "acceptedBlob": "16e90314c1d218b04e99644340d8d5220c2ba060",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
         "acceptedBlob": "16e90314c1d218b04e99644340d8d5220c2ba060",
         "primaryId": "task_7f50bbb5",
         "primaryCommit": "3ce466109e6c814265868a3e80fbdfc1f1f090cb",
+        "judgeIds": ["task_09eee4d9"],
         "sourceCommit": "3ce466109e6c814265868a3e80fbdfc1f1f090cb",
-        "state": "needs-judge"
+        "state": "accepted-joined",
+        "reason": "Independently read all 472 focus lines from the exact candidate Git object, not checkout HEAD. The file has a clear authority split: fixture() creates case-owned repositories and sessions below the launcher-owned runtime; withWorktreeJobs() owns only the manager/service lifetime and drains it in finally. Assertions remain beside each journey rather than behind a context bag. JSONC cases distinguish parsing/schema validation from original-byte hashing. The clean-commit case visibly dirties tracked and untracked source files, then checks the pinned commit and safe generated branch. Early batch-branch rejection deliberately needs no repository; invalid refs, task identity, path collision and branch reuse each expose their own failure boundary. Reservation cancellation and deadline assertions cover preparing identities and managed setup, not merely eventual process exit. The synchronous case makes denied child trust and copied option-boundary argv explicit; the asynchronous case has a release-file gate so activation-before-setup-settlement is observable. Both inspect retained journal headers; async also checks owned HOME/SDK forwarding. The batch failure checks the failed second identity separately from sibling termination. Repeated small contexts make trust and journal authority directly readable. I found no scattered decision that warrants another generic helper or source edit. This is an unchanged-focus judgment, not a claim of a new readability transformation."
       }
     },
     {
