@@ -1549,11 +1549,11 @@
       "integrationState": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_b483c184",
+        "primaryCommit": "2e9f506b874a0acd793f20c4acef448af8b900d1",
         "judgeIds": [],
-        "sourceCommit": "3603e341a47541a137c95c675106c9568374fde1",
-        "state": "needs-primary",
+        "sourceCommit": "2e9f506b874a0acd793f20c4acef448af8b900d1",
+        "state": "needs-judge",
         "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
       }
     },

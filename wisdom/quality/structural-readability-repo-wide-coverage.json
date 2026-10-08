@@ -3862,13 +3862,56 @@
       "initialBlob": "0799d40669ad0f61af0bd252affa18ff53e2ffa0",
       "status": "pending",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_b483c184",
+      "primaryCommit": "2e9f506b874a0acd793f20c4acef448af8b900d1",
       "judgeIds": [],
-      "sourceCommit": "3603e341a47541a137c95c675106c9568374fde1",
+      "sourceCommit": "2e9f506b874a0acd793f20c4acef448af8b900d1",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
-      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
+      "primaryBase": "d20c4ed1bc39a43d8fc90960d45858b5836f1419",
+      "primaryResult": "The scenario now reads sequentially: write an explicitly branched journal fixture, verify metadata-only counts/branching/appending while getEntries is forbidden, restore and dispose the first manager, then reopen to verify persisted counts and message bodies. Finally blocks only restore/release resources. The outer fixture lifetime covers fixture creation and both manager lifetimes. The fixture bytes, all assertion statements, replay prohibition, and append-only byte check are unchanged.",
+      "primaryPaths": [
+        "scripts/terminal-perf/selector-lifecycle.test.ts"
+      ],
+      "primaryChecks": [
+        {
+          "name": "Repository formatter",
+          "result": "exit 0; Formatted 1 file in 3ms. No fixes applied.",
+          "command": [
+            "/home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/@biomejs/biome/bin/biome",
+            "format",
+            "--write",
+            "scripts/terminal-perf/selector-lifecycle.test.ts"
+          ],
+          "retainedIsolatedEnvironment": "/tmp/pr45-selector-format-oFV5RL"
+        },
+        {
+          "name": "Static assertion preservation",
+          "result": "All exact expect statement strings identical before/after; no source/test execution."
+        },
+        {
+          "name": "Static fixture preservation",
+          "result": "Original journal serialization construction identical; metadata-only replay guard unchanged."
+        },
+        {
+          "name": "git diff --check",
+          "result": "exit 0"
+        },
+        {
+          "name": "Reading trace",
+          "result": "Read focus reconciliation/area/repo-wide rows; traced CLI installer order, SessionManager metadata ownership/disposal, selectorBehavior caller, lifecycle probe, and upstream renderInitialMessages compaction count caller."
+        },
+        {
+          "name": "Commit hooks",
+          "result": "pre-commit, prepare-commit-msg, commit-msg, post-commit absent."
+        }
+      ],
+      "primaryLimits": [
+        "No repository tests, setup, or builds run; parent owns isolated batch gates.",
+        "Independent fresh judge verdict pending; this is a primary candidate, not acceptance.",
+        "No wisdom/values edits: parent owns aggregate wisdom, and this change follows existing lifecycle-ownership guidance."
+      ]
     },
     {
       "file": "scripts/terminal-perf/send-workloads.ts",
