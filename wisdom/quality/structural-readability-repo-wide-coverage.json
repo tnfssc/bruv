@@ -2106,13 +2106,49 @@
       "initialBlob": "33b7fd198ac0af8f72eae995238a25f9169e793f",
       "status": "pending",
       "area": "remote",
-      "resumeState": "pending-primary-unstarted",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_e3461f0e",
+      "primaryCommit": "37d387369bd426a42bfc57b337af3a63205f3fdf",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "37d387369bd426a42bfc57b337af3a63205f3fdf",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
-      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
+      "primaryBase": "0b1faebd03e5eb7711dbcba5a58453564a28cc36",
+      "primaryResult": "The fixture owner now has three lexical lifecycle operations: buildOfflineImage validates and stages the offline image and records image ownership only after successful build; startContainer acquires the network-none container and records ownership only after successful run; connectPinnedSsh owns host-key pinning, transport command/configuration, optional reply-loss wrapper and SSH readiness, returning the caller SSH command. start() shows endpoint/tool validation, these acquisitions and final fake-inference readiness in order. cleanup flags remain in the same owner, and caller APIs/assertions are unchanged. No new state container, framework, fallback or feature behavior was added.",
+      "primaryPaths": [
+        "scripts/network-none-fixture.ts"
+      ],
+      "primaryChecks": [
+        {
+          "check": "Read preserved reconciliation and area/repo ledgers",
+          "result": "Focus exists at baseline blob 33b7fd198ac0af8f72eae995238a25f9169e793f; reconciliation records pending-primary-unstarted with no prior candidate/judge. No candidate copy or branch merge needed."
+        },
+        {
+          "check": "Read callers",
+          "result": "Inspected scripts/remote-placement-e2e.ts, scripts/remote-root-placement-e2e.ts and scripts/task-placement-clean-capture.ts: start returns imageId/ssh; callers consume public environment/command helpers and containerStarted for evidence before finally cleanup. No caller edits required."
+        },
+        {
+          "check": "Static relocation audit",
+          "result": "All three moved operation bodies match baseline statement text ignoring indentation. Re-expanding helper calls reproduces baseline startup statement order. Environment/command-runner prefix, public returned members, cleanup and external-output-boundary suffix are exact unchanged source."
+        },
+        {
+          "check": "Bun TypeScript source scanner",
+          "result": "Accepted candidate source without executing/importing fixture."
+        },
+        {
+          "check": "git diff --check",
+          "result": "Passed before commit; only focus path changed."
+        },
+        {
+          "check": "Commit source-only verification",
+          "result": "Commit contains only scripts/network-none-fixture.ts; report remains untracked."
+        }
+      ],
+      "primaryLimits": [
+        "No setup, repository tests, builds, Docker/SSH operations, cleanup commands or credential access performed. Parent owns audited isolated runtime/typecheck gates and independent final-blob judgment.",
+        "TypeScript AST audit could not load the supplied shared node_modules/typescript/lib/typescript.js path; used source-only Bun scanning and static statement relocation comparison instead. No typecheck claim.",
+        "Existing fixture cleanup and Docker endpoint-discovery behavior are preserved, not runtime-proven by this worker. Wisdom/values were read but not edited; parent owns aggregate wisdom."
+      ]
     },
     {
       "file": "scripts/offline-openai-default-transport.ts",
