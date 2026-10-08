@@ -576,6 +576,15 @@
         "branch": "bruv/pr45-judge-3-remote-focuses-21b49933",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
+      },
+      {
+        "id": "task_4466ceda",
+        "stage": "judge",
+        "focus": ["tests/remote-jobs-e2e.test.ts", "tests/remote-jobs-placement-fixture.test.ts"],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_4466ceda",
+        "branch": "bruv/pr45-judge-2-remote-focuses-4466ceda",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
       }
     ]
   },
