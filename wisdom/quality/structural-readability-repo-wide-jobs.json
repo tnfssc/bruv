@@ -1058,7 +1058,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_c0e52552",
         "branch": "bruv/pr45-primary-tests-claude-compat-fixture-c0e52552",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "ef15e5aae2720d9791e3d049f84a8dab564da02c"
       },
       {
         "id": "task_41a5466e",
@@ -1079,6 +1080,15 @@
         "focus": "tests/claude-compat/native-adapter-prompt-ownership.ts.txt",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_4fcbcb48",
         "branch": "bruv/pr45-primary-tests-claude-compat-native--4fcbcb48",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_acf92c62",
+        "stage": "primary",
+        "focus": "tests/claude-compat/permissions.test.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_acf92c62",
+        "branch": "bruv/pr45-primary-tests-claude-compat-permiss-acf92c62",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
       }

@@ -9902,13 +9902,28 @@
       "initialBlob": "3dcb59b21e85d47867b3acbd715778117bf8733b",
       "status": "pending",
       "area": "compatibility-t3",
-      "resumeState": "pending-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_c0e52552",
+      "primaryCommit": "ef15e5aae2720d9791e3d049f84a8dab564da02c",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "ef15e5aae2720d9791e3d049f84a8dab564da02c",
       "report": "wisdom/quality/structural-readability-areas/compatibility-t3.json",
-      "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+      "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection.",
+      "primaryBase": "ef15e5aae2720d9791e3d049f84a8dab564da02c",
+      "primaryResult": "Kept the exact baseline source. tests/claude-compat/mcp.test.ts launches this fixture with scoped auth, an explicitly configured provider and forbidden root control keys, calls mcp__local__environment, parses the text response, asserts configured/provider/controls/inheritedProvider and checks the returned PID is gone after session.close(). tests/claude-compat-composition.test.ts invokes the same tool through real Pi tool execution, checks isolation and verifies runtime.close() closes the MCP session and child PID. The fixture samples process.env when called and reports forbidden control names, not their values. src/claude-compat/mcp.ts owns environment filtering, client transport and shutdown; the fixture correctly does not duplicate those decisions. Pulling the response object or predicate behind helpers would separate the complete probe from its sole registration without relieving a real reading burden. Focus reconciliation and area/repo-wide rows record pending-primary, not rejection; no preserved or rejected focus candidate exists to import.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        "Read wisdom/values.md and structural-readability guidance.",
+        "Inspected focus-only reconciliation, area and repo-wide ledger rows.",
+        "Read complete focus source and traced both actual callers, environment assertions and close ownership.",
+        "Verified focus Git blob against recorded baseline and clean source status."
+      ],
+      "primaryLimits": [
+        "No setup, tests or builds run; parent owns audited isolated batch gates.",
+        "No source changes, so no formatter invocation or source commit was needed.",
+        "Independent exact-candidate judge remains parent-owned.",
+        "Wisdom and values unchanged: no new lesson; parent owns aggregate wisdom."
+      ]
     },
     {
       "file": "tests/claude-compat/mcp.test.ts",
