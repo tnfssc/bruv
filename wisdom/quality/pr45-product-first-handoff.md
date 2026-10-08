@@ -39,3 +39,21 @@ Final product source74b187ae also passes noEmit, unchanged guarded paired build,
 ## Ready for PR update
 
 Product source74b187ae is accepted by the targeted judge and passes the checks above. The final follow-up commit changes this handoff note only. Update the existing PR branch normally; do not merge or release. The only deferred integration objections are test-only lanes25/55, with unsafe/unrun scenarios still explicit. Full hosted CI results must be reported for the actual pushed tip. Values remain unchanged: this was an application of existing ownership, product-first and proof guidance.
+
+## Hosted follow-up on8359b01d
+
+GitHub run37769727796 passed macOS no-device/API validation. Linux reached the root suite and reported26 failures. CI policy failed only because Linux failed; its outcome rule is intact and needs no weakening. Full log retained at /home/tnfssc/.bruv/agent/watchers/pr45-ci-37769727796-failed.log; grouped contexts in pr45-ci-failure-groups.json beside it.
+
+Two bounded follow-ups start at exact published8359b01d, no broadtestcleanup:
+- task_0b2f5b5a: actual CLI offlinePTY, Fast missing-runtime seam, and trusted-project SDKprompt failures. Checkout /home/tnfssc/.bruv/worktrees/t3-1dc1185b-5442693331ce-task_0b2f5b5a; branchbruv/pr45-linux-product-fixes. Actual running model openai-codex/gpt-6.1-sol verified.
+- task_52da24d3: replay lifecycle fixtures (missingnode/unexpectedloopbackconnection) and CIrunner log-destination parity. Checkout /home/tnfssc/.bruv/worktrees/t3-1dc1185b-5442693331ce-task_52da24d3; branchbruv/pr45-linux-replay-runner-fixes. Launch model openai-codex/gpt-6.1-sol verified.
+
+Only observed regressions or stalefixture contracts may change. Assertions/gates stay intact; no provider/auth/device runs. Shared good publication dependencies are read-only. Rejected setupcache directories must be retained, not destructively cleaned. Parent owns integration and normalPRupdate after concrete results.
+
+Replay/runner worker task_52da24d3 completed90b45da3; parent inspected and cherry-picked it. It makes four small fixture-contract corrections: resource outputs follow Release log destination, refusal checks inspect Bun/Node error codes, and replay fixtures use the current JS runtime/path rather than /usr/bin/node. Product runners/sharedhelpers/gates and lifecycle assertions are unchanged. Worker reports21/21 replay checks on bothBun/Node plus scopedformat/lint and trap-freeRelease commandcontract proof. Full localCIrunner/runtime remains unrun. Evidence /home/tnfssc/.bruv/agent/watchers/pr45-owned-replay-runner-UFdkOw. Product-path worker task_0b2f5b5a remains active.
+
+Product-path worker completed33169ff3; parent cherry-picked to520dc85b after replayfix3f3ed66b. Fast now reports a missing runtime seam before asking for OAuth state. SDK metadata and offlinePTY fixture resources now match actual product startup; no prompt/routing behavior changed. Worker58tests/326expects and typecheck passed. Exact-tip Sol review task_a939c07b runs in /home/tnfssc/.bruv/worktrees/t3-1dc1185b-5442693331ce-task_a939c07b, branchbruv/pr45-linux-repair-judge. Integrated focusedchecks/typecheck/build/format jobtask_a16782ff uses retained ownedenv /home/tnfssc/.bruv/agent/watchers/pr45-linux-integrated-yz5mu4. No push yet; wait for actual results, then commit this handoff and publish accepted fixes. Values unchanged: existing focusedproof and ownedfixture guidance applies.
+
+Integrated check jobtask_a16782ff passed on520dc85b: focused product suites, noEmit, paired build, compiledversion0.16.18 and rootformat. Format retains two existing size warnings for review-ledger JSON. Exact-tip review still pending; no hosted rerun or new publication yet.
+
+Sol judge task_a939c07b ACCEPTED exact520dc85b. Actualmodel openai-codex/gpt-6.1-sol confirmed in model_change. Full judgment saved beside this note in pr45-linux-repair-judgment.md. Product fixes and fixture corrections preserve assertions/gates. Parent now publishes both repaircommits plus notes to existingPR45; hostedCI is still required. No merge/release. Values unchanged: focused review, isolatedfixtures and honest validation already cover this work.
