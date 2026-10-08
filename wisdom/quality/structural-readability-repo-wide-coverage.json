@@ -13731,12 +13731,44 @@
       "initialBlob": "absent",
       "area": "remote",
       "status": "pending",
-      "resumeState": "needs-primary-final-blob",
-      "sourceCommit": "9861bea3333905083427acbc86253977c3218ac4",
+      "resumeState": "needs-judge",
+      "sourceCommit": "07c2ce9c71929b9f1de2521f9f1b50a08b94a936",
       "acceptedRelatedJudges": [
         "task_f2c831a6"
       ],
-      "acceptedBlob": "d7e8d093f900e4d5654636badd1f72d96041aa09"
+      "acceptedBlob": "d7e8d093f900e4d5654636badd1f72d96041aa09",
+      "primaryId": "task_4f024748",
+      "primaryCommit": "07c2ce9c71929b9f1de2521f9f1b50a08b94a936",
+      "primaryBase": "07c2ce9c71929b9f1de2521f9f1b50a08b94a936",
+      "primaryResult": "Traced scripts/remote-e2e.sh installation, src/remote/ssh.ts JSON-line/PATH transport, and scripts/remote-recovery-e2e.ts reconciliation. The recovery-only shim receives config/drop then preserves SSH argv. Readiness occurs before shim installation; other runner modes use ordinary SSH. Control requests read exactly one line. Only marked LOST_LAUNCH plus drop-next-launch accepts and verifies matching taskId/accepted-or-running response before dropped-launch.json, launch-drop-used, diagnostic, and exit 42. Marked answers verify replyId/uncertain-or-delivered before dropped-reply.json, drop-used, diagnostic, and exit 42. Without a matching armed sentinel, the request is forwarded once and SSH status returned; non-control calls exec real SSH with the pinned fixture config. The caller checks recovery of the same launch task/process identity and same replyId. These decisions and consequences are colocated. Branch-local transport repetition avoids hiding effects in a generalized helper. Focus exists and matches the preserved candidate; no restoration or unrelated integration was needed.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        {
+          "check": "Guidance and lineage reads",
+          "result": "Read values, structural-readability guidance, repo-wide coverage/assignments and ledger, preserved remote-resume reconciliation, focus and relevant callers. Area records original harness pending; repo coverage records helper pending final primary with previously accepted related extraction judgment. This is a fresh primary reading, not that related verdict."
+        },
+        {
+          "check": "Preserved candidate identity",
+          "result": "Current focus bytes exactly match git show 9861bea3333905083427acbc86253977c3218ac4:tests/fixtures/remote-e2e/recovery-ssh.sh. Exact Git blob d7e8d093f900e4d5654636badd1f72d96041aa09."
+        },
+        {
+          "check": "/bin/sh -n tests/fixtures/remote-e2e/recovery-ssh.sh",
+          "result": "Passed; parser-only via node child_process argv with explicit isolated env. Helper was not executed. Fresh HOME/config/cache/SDK/TMPDIR retained at /tmp/pr45-recovery-ssh-static-DOVca6."
+        },
+        {
+          "check": "git diff --check",
+          "result": "Passed; source working tree remained clean."
+        },
+        {
+          "check": "Formatter and source commit scope",
+          "result": "No changed source paths and no source commit; formatter invocation not applicable. No cosmetic edits or empty commit created."
+        }
+      ],
+      "primaryLimits": [
+        "No repository setup, tests, builds, Docker, SSH, recovery actions, credentials, provider/device access, deletion or cleanup performed. Parent owns audited isolated runtime gates and independent exact-candidate judgment.",
+        "Parser/source reading is not dynamic recovery proof. Existing string-pattern request matching and evidence-write/sentinel-move error handling are preserved, not hardened.",
+        "No automatic setup outcome was rerun, bypassed, or asserted successful. Old worktrees and candidates remain untouched. Parent owns aggregate wisdom; no per-worker wisdom edits."
+      ]
     }
   ],
   "completedAreas": {
