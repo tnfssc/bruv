@@ -2686,13 +2686,54 @@
       "initialBlob": "fe5d531b0210d36871c340023798a4c6acdd8216",
       "status": "pending",
       "area": "remote",
-      "resumeState": "pending-primary-unstarted",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_51a0ee46",
+      "primaryCommit": "24026dc1b1249c085668b140d644ea528f188e8e",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "24026dc1b1249c085668b140d644ea528f188e8e",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
-      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
+      "primaryBase": "07d54f20849e244898eebbe6a3c072a97dfb29fd",
+      "primaryResult": "The orchestration now states the ordered proof lifetimes: pinned SSH, independent owner/reconnect/native question, repository return and explicitly granted work, then server-offline human transcript. Only the original task ID crosses those scenario boundaries; RPC replacements and repository state stay local to their owning scenario. The safe-source launch explicitly calls launchWithUntrackedOmission; ordinary launches and omission retries share only task observation/stable-ID verification. Existing authority, assertions and effect order are preserved.",
+      "primaryPaths": [
+        "scripts/remote-e2e.ts"
+      ],
+      "primaryChecks": [
+        {
+          "kind": "reading",
+          "result": "Read values, structural guidance, repo-wide/resume/remote ledgers, focus coverage row, and preserved reconciliation evidence. Focus existed at baseline fe5d531b0210d36871c340023798a4c6acdd8216 with no surviving focus candidate to import."
+        },
+        {
+          "kind": "caller-reading",
+          "paths": [
+            "scripts/remote-e2e.sh",
+            "tests/remote-e2e.test.ts",
+            "scripts/loopback-parent-fixture.ts"
+          ],
+          "result": "Inspected isolated HOME/config injection, fixture-provider and RPC registration/transport, opt-in runner, Docker/SSH operations and shell cleanup effects. Did not execute the runner."
+        },
+        {
+          "kind": "static-comparison",
+          "result": "Pinned SSH, owner/reconnect/question, offline transcript, repository setup, repository/capability/cancellation/artifact statements, shared task observation/identity verification, and final cleanup matched baseline byte-for-byte in their extracted bodies. Source assertion expressions retained exactly with multiplicity; their lexical order changes because approval and identity checks now reside in separate helpers. Execution order was traced manually, including snapshot-before-initial-prompt and answer-before-retry."
+        },
+        {
+          "kind": "parser-attempt",
+          "result": "Read-only TypeScript import exposes version metadata only (installed TypeScript 7.0.2); createSourceFile/ScriptTarget API unavailable. Attempt failed before parsing. No alternative compiler/build/test gate run."
+        },
+        {
+          "kind": "git-diff-check",
+          "result": "Passed."
+        },
+        {
+          "kind": "commit-safety",
+          "result": "core.hooksPath unset; repository hook directory contains sample files only. Committed only scripts/remote-e2e.ts."
+        }
+      ],
+      "primaryLimits": [
+        "No setup, tests, builds, Docker/SSH execution, credential/device access or recovery performed; parent owns audited isolated batch gates and independent exact-candidate judgment. No runtime success claimed.",
+        "Existing provider initialization before try, SIGKILL sequences and timeout values are unchanged, not newly hardened.",
+        "Wisdom and values unchanged: parent writes aggregate wisdom; no new per-worker wisdom files."
+      ]
     },
     {
       "file": "scripts/remote-jobs-e2e.ts",
