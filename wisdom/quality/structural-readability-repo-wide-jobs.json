@@ -887,7 +887,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_2f3a47b0",
         "branch": "bruv/pr45-primary-src-t3-readme.md-2f3a47b0",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "092ecd7771c8d64383a22eae46143c4735f8dbf3"
       }
     ]
   },
@@ -1139,7 +1140,7 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_840f1277",
         "branch": "bruv/pr45-judge-3-agent-history-session-goals-840f1277",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled"
       },
       {
         "id": "task_035453f8",
@@ -1148,7 +1149,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_035453f8",
         "branch": "bruv/pr45-primary-src-prompts-wisdom.md-035453f8",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "dbcd6371cbf67989daa4c18bead4b3c6a749dcdd"
       }
     ]
   },
@@ -1489,6 +1491,15 @@
         "model": "openai-codex/gpt-6.1-sol",
         "status": "handled",
         "sourceCommit": "9d3a4eb28e1ec4c616c144298add327756d9f42f"
+      },
+      {
+        "id": "task_4582ca5b",
+        "stage": "primary",
+        "focus": "tests/action-label-wiring.test.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_4582ca5b",
+        "branch": "bruv/pr45-primary-tests-action-label-wiring.t-4582ca5b",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
       }
     ]
   },

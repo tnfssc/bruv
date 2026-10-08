@@ -6490,12 +6490,12 @@
     {
       "file": "src/prompts/markdown.d.ts",
       "initialBlob": "045cd12b2a85c7f0516f99e218fe500b18c8eace",
-      "status": "pending",
+      "status": "accepted",
       "area": "agent-history-session-goals",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_42da07de",
       "primaryCommit": "5a3e0105872fcd64383c8533469f47ce771e0789",
-      "judgeIds": [],
+      "judgeIds": ["task_840f1277"],
       "sourceCommit": "5a3e0105872fcd64383c8533469f47ce771e0789",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
       "pendingReason": "No dedicated primary/final independent focus judgment.",
@@ -6513,17 +6513,31 @@
         "No formatter invocation: no changed source paths and no source commit to create.",
         "Independent final judgment remains with parent; no self-introspection or delegation performed.",
         "Wisdom and values unchanged: no new general lesson; parent owns aggregate wisdom."
+      ],
+      "acceptedBlob": "045cd12b2a85c7f0516f99e218fe500b18c8eace",
+      "result": "The wildcard ambient module states the entire Markdown import contract in one place: a string-valued default export. It has no effects, alternatives, lifecycle or policy for a reader to reconstruct. A wrapper, renamed alias or extra explanation would add a second reading hop without clarifying the contract.",
+      "systemReason": "At this exact commit, tsconfig includes src/**/*.ts and Bun types with Bundler module resolution. src/prompts.ts explicitly imports Markdown as text, then uses split/filter/trimEnd to assemble guidance. The goals, execute declaration, wisdom, live and compaction consumers likewise use string interpolation, trimEnd or replacement. Thus the declaration accurately describes the common boundary while runtime text loading stays explicit at each import; it does not compete with caller-owned prompt policy.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Parsed only the three assigned focus rows from area and repo-wide coverage ledgers; also read those rows at the exact source commit. Candidate evidence has pending-primary, no earlier primary or judge round, and no rejected decision. Current evidence records the supplied distinct primary ownership.",
+        "Verified Git focus blob against initialBlob. Supplied primaryBase equals candidate and git diff primaryBase candidate is empty; there are no changed source paths in this primary submission. Enclosing integration-commit changes are not this submission and are left untouched.",
+        "Read exact declaration and traced representative actual text consumers at 5a3e0105872fcd64383c8533469f47ce771e0789, including goal context injection, executeDeclaration description, wisdom placeholder replacement, live instructions and compaction templates."
+      ],
+      "limits": [
+        "Static source review only; repository setup, tests, builds and formatting were not run. Parent owns audited batch gates.",
+        "No runtime/provider behavior is proven by this judgment. Related caller paths are inspected for the focus journey, not separately approved for unrelated work.",
+        "Source, worktrees, ledgers, values and wisdom were not edited; only this untracked result is written. Parent owns aggregate wisdom."
       ]
     },
     {
       "file": "src/prompts/native-compaction.md",
       "initialBlob": "238e6ec4fd3014e47545ff7512f32377bf7749e0",
-      "status": "pending",
+      "status": "accepted",
       "area": "agent-history-session-goals",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_0516aa0a",
       "primaryCommit": "ff4e61d7a5026de562b438eb23b768ee3337917d",
-      "judgeIds": [],
+      "judgeIds": ["task_840f1277"],
       "sourceCommit": "ff4e61d7a5026de562b438eb23b768ee3337917d",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
       "pendingReason": "No dedicated primary/final independent focus judgment.",
@@ -6557,17 +6571,31 @@
         "Formatter not invoked because there are no changed source paths and no commit to format; formatter availability was not checked.",
         "No runtime behavior claim beyond static caller/assertion inspection.",
         "Wisdom and values unchanged: no new general lesson; parent owns aggregate wisdom."
+      ],
+      "acceptedBlob": "238e6ec4fd3014e47545ff7512f32377bf7749e0",
+      "result": "The single labeled notice proceeds from opaque/encrypted state to the replay boundary, then distinguishes stored-model provenance from model compatibility and closes with unsupported routes and branch summaries. These are one coherent checkpoint policy, not scattered instructions needing another framework or section split.",
+      "systemReason": "The exact caller trims this text into NATIVE_CODEX_SUMMARY and persists it in the compaction result, appending pending-job runtime state separately (739-762). Replay eligibility compares API/provider, not model ID (485-486); nativeAssistant uses the selected model only for its transport shim and leaves durable origin and encrypted item intact (488-497). Context handling aborts invalid/incompatible replay (808-830), and projection substitutes the opaque item plus any runtime-state user message rather than treating the notice as a textual reconstruction (534-555). session_before_tree cancels summaries over opaque state (885-905). The notice reflects these actual authorities without pretending to decode the checkpoint. Registration order in extension.ts keeps shake, native and cache-affine ownership separate.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Parsed only the three assigned focus rows from area and repo-wide coverage ledgers; also read those rows at the exact source commit. Candidate evidence has pending-primary, no earlier primary or judge round, and no rejected decision. Current evidence records the supplied distinct primary ownership.",
+        "Verified Git focus blob against initialBlob. Supplied primaryBase equals candidate and git diff primaryBase candidate is empty; there are no changed source paths in this primary submission. Enclosing integration-commit changes are not this submission and are left untouched.",
+        "Read the exact notice, typed native details validation, compatibility predicate, transport shim, compactionSummary projection, result construction, context/provider safeguards, branch-summary restriction and handler registration at ff4e61d7a5026de562b438eb23b768ee3337917d."
+      ],
+      "limits": [
+        "Static source review only; repository setup, tests, builds and formatting were not run. Parent owns audited batch gates.",
+        "No runtime/provider behavior is proven by this judgment. Related caller paths are inspected for the focus journey, not separately approved for unrelated work.",
+        "Source, worktrees, ledgers, values and wisdom were not edited; only this untracked result is written. Parent owns aggregate wisdom."
       ]
     },
     {
       "file": "src/prompts/normal.md",
       "initialBlob": "17c2e5573655696a57d5cae9e8615f8809695eda",
-      "status": "pending",
+      "status": "accepted",
       "area": "agent-history-session-goals",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_6699937f",
       "primaryCommit": "ff4e61d7a5026de562b438eb23b768ee3337917d",
-      "judgeIds": [],
+      "judgeIds": ["task_840f1277"],
       "sourceCommit": "ff4e61d7a5026de562b438eb23b768ee3337917d",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
       "pendingReason": "No dedicated primary/final independent focus judgment.",
@@ -6585,6 +6613,21 @@
       "primaryLimits": [
         "Tests, setup, builds, delegation, recovery, and credential access not performed; parent owns audited batch gates and independent judgment.",
         "Initial evidence read inadvertently emitted broad reconciliation output (truncated); subsequent reconciliation inspection extracted only the normal.md row."
+      ],
+      "acceptedBlob": "17c2e5573655696a57d5cae9e8615f8809695eda",
+      "result": "The role placeholder and direct decide/change/check progression express a single normal-worker responsibility. There is no intertwined orchestration or hidden mutable authority inside this template. Adding delegation, continuation or security prose would duplicate policy owned elsewhere rather than reduce a reading burden.",
+      "systemReason": "At the exact candidate, subagentGuidance chooses fast/orchestrator explicitly and otherwise selects normal, trims it and substitutes the role. withSubagentGuidance appends this framing on every worker base but only adds collaboration guidance when the base is not user-owned. before_agent_start restores session/environment identity before choosing worker versus root framing (628-640), while restoreAgentIdentity retains the spawned-process role cap (206-238). This establishes why the template can remain focused on contribution instead of becoming a second capability authority.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Parsed only the three assigned focus rows from area and repo-wide coverage ledgers; also read those rows at the exact source commit. Candidate evidence has pending-primary, no earlier primary or judge round, and no rejected decision. Current evidence records the supplied distinct primary ownership.",
+        "Verified Git focus blob against initialBlob. Supplied primaryBase equals candidate and git diff primaryBase candidate is empty; there are no changed source paths in this primary submission. Enclosing integration-commit changes are not this submission and are left untouched.",
+        "Read exact role template, subagentGuidance, withSubagentGuidance, custom-base ownership and before_agent_start identity restoration at ff4e61d7a5026de562b438eb23b768ee3337917d.",
+        "Read tests/prompts.test.ts role/contribution, trimming and no-delegation-commentary assertions as contract context only; did not execute or use test success as a readability verdict."
+      ],
+      "limits": [
+        "Static source review only; repository setup, tests, builds and formatting were not run. Parent owns audited batch gates.",
+        "No runtime/provider behavior is proven by this judgment. Related caller paths are inspected for the focus journey, not separately approved for unrelated work.",
+        "Source, worktrees, ledgers, values and wisdom were not edited; only this untracked result is written. Parent owns aggregate wisdom."
       ]
     },
     {
@@ -6669,13 +6712,51 @@
       "initialBlob": "d3f933dbb141e5b009765351736c8bc0fdbcc956",
       "status": "pending",
       "area": "agent-history-session-goals",
-      "resumeState": "pending-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_035453f8",
+      "primaryCommit": "dbcd6371cbf67989daa4c18bead4b3c6a749dcdd",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "dbcd6371cbf67989daa4c18bead4b3c6a749dcdd",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
-      "pendingReason": "No dedicated primary/final independent focus judgment."
+      "pendingReason": "No dedicated primary/final independent focus judgment.",
+      "primaryBase": "dbcd6371cbf67989daa4c18bead4b3c6a749dcdd",
+      "primaryResult": "The existing eight paragraphs already explain why to save context, where wisdom and values live, when to read them, when and how to record/promote lessons, what to check before declaring done, and when this worktree stops accepting edits. The exact source is present at its baseline/area/reconciliation blob d3f933dbb141e5b009765351736c8bc0fdbcc956; no prior focus candidate or rejected round was recorded. Caller trace: src/agent/extension.ts restores identity and permits depth-zero agents; src/wisdom/extension.ts appends this one template at before_agent_start and resolves both placeholders; src/wisdom/location.ts owns trusted project configuration and nearest-project resolution. Reordering or adding lifecycle headings would only restyle an already-local journey, not remove a reading burden. Existing assertions, root-only gating, trust handling, and unrelated accepted source are unchanged.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        {
+          "kind": "static-read",
+          "paths": [
+            "wisdom/values.md",
+            "wisdom/quality/structural-readability-guidance.md",
+            "src/prompts/wisdom.md",
+            "src/agent/extension.ts",
+            "src/wisdom/extension.ts",
+            "src/wisdom/location.ts"
+          ],
+          "result": "Traced actual registration, eligibility, template injection, and placeholder authority."
+        },
+        {
+          "kind": "preserved-evidence",
+          "result": "Focus rows in reconciliation, area ledger, and repo-wide coverage all report pending primary with no primary commit, accepted candidate, or rejection; checkout focus matches recorded baseline."
+        },
+        {
+          "kind": "assertion-inspection-only",
+          "paths": ["tests/prompts.test.ts", "tests/wisdom-extension.test.ts", "tests/main-agent-mode-sdk.test.ts"],
+          "result": "Read the exact-text assertion, root-only/template lifecycle assertions, and configured-path SDK assertion; no assertions changed and no tests executed."
+        },
+        {
+          "kind": "git",
+          "result": "Working tree clean before writing this untracked report; no source changes or commit created."
+        },
+        {
+          "kind": "formatter",
+          "result": "Not applicable: no changed source paths to format."
+        }
+      ],
+      "primaryLimits": [
+        "No setup, tests, builds, delegation, push, PR, merge, recovery, credentials, or cleanup actions performed. Parent owns isolated batch gates and independent exact-candidate judgment.",
+        "Runtime model verification is parent-owned; no self-introspection performed."
+      ]
     },
     {
       "file": "src/questions/extension.ts",
@@ -7495,13 +7576,28 @@
       "initialBlob": "3e491ecd1339adf477200f359e4ecca07961aef1",
       "status": "pending",
       "area": "compatibility-t3",
-      "resumeState": "pending-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_2f3a47b0",
+      "primaryCommit": "092ecd7771c8d64383a22eae46143c4735f8dbf3",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "092ecd7771c8d64383a22eae46143c4735f8dbf3",
       "report": "wisdom/quality/structural-readability-areas/compatibility-t3.json",
-      "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+      "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection.",
+      "primaryBase": "092ecd7771c8d64383a22eae46143c4735f8dbf3",
+      "primaryResult": "The three opening bullets separate guidance-only web/launcher.ts, retained native task ownership, and retired bundled inputs. The next paragraph names the single setup authority and explicitly rejects packaging as parity proof; the last paragraph separates the unchanged official 2644 target, composed release gate, immutable provenance, and unfixed upstream race. Tracing src/cli.ts -> runWeb confirms guidance-only execution; src/tasks/job-service.ts and src/agent/extension.ts consume the retained native task bridge/event/mailbox code, not an obsolete web bundle. Release workflow calls run-native-release-gate.mjs, which verifies the pinned host and composes bounded suites. external-t3-setup.md retains the fuller history-fix/UI-only acceptance limitations. Adding sections or duplicating those lifetimes here would not reduce a real reconstruction burden. Focus exists at its recorded baseline blob; focused reconciliation/area/coverage rows record pending-primary, not a rejected candidate, and contain no relevant preserved focus bytes to import.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        "Read wisdom/values.md and structural-readability-guidance.md; inspected focus rows in reconciliation, area and repo-wide coverage ledgers.",
+        "Static caller trace: src/cli.ts -> src/t3/web/launcher.ts; src/tasks/job-service.ts -> native-task/mcp-client/launch-identity; src/agent/extension.ts -> events/local-notifications/mcp-client.",
+        "Static release/build trace: .github/workflows/release.yml -> scripts/run-native-release-gate.mjs; scripts/build.ts entrypoint is src/cli.ts; package manifest uses paired build, not a bundled T3 archive.",
+        "Verified focus Git blob matches recorded baseline 3e491ecd1339adf477200f359e4ecca07961aef1 and working tree was clean before result artifact."
+      ],
+      "primaryLimits": [
+        "No setup, tests or builds run; parent owns audited isolated batch gates and independent fresh judgment.",
+        "Formatter not invoked: no changed source paths. No source commit created because no source bytes changed; sourceCommit identifies exact reviewed HEAD.",
+        "One read-only search guessed absent root build.ts; inspected actual scripts/build.ts instead.",
+        "No runtime/provider/native-parity claim. Wisdom and values unchanged: no new lesson; parent owns aggregate wisdom."
+      ]
     },
     {
       "file": "src/t3/tasks/events.ts",

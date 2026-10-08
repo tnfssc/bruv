@@ -1903,55 +1903,58 @@
     {
       "focus": "src/prompts/markdown.d.ts",
       "initialBlob": "045cd12b2a85c7f0516f99e218fe500b18c8eace",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "045cd12b2a85c7f0516f99e218fe500b18c8eace",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "045cd12b2a85c7f0516f99e218fe500b18c8eace",
         "primaryId": "task_42da07de",
         "primaryCommit": "5a3e0105872fcd64383c8533469f47ce771e0789",
-        "judgeIds": [],
+        "judgeIds": ["task_840f1277"],
         "sourceCommit": "5a3e0105872fcd64383c8533469f47ce771e0789",
-        "state": "needs-judge",
-        "reason": "No dedicated primary/final independent focus judgment."
+        "state": "accepted-joined",
+        "reason": "The wildcard ambient module states the entire Markdown import contract in one place: a string-valued default export. It has no effects, alternatives, lifecycle or policy for a reader to reconstruct. A wrapper, renamed alias or extra explanation would add a second reading hop without clarifying the contract."
       }
     },
     {
       "focus": "src/prompts/native-compaction.md",
       "initialBlob": "238e6ec4fd3014e47545ff7512f32377bf7749e0",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "238e6ec4fd3014e47545ff7512f32377bf7749e0",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "238e6ec4fd3014e47545ff7512f32377bf7749e0",
         "primaryId": "task_0516aa0a",
         "primaryCommit": "ff4e61d7a5026de562b438eb23b768ee3337917d",
-        "judgeIds": [],
+        "judgeIds": ["task_840f1277"],
         "sourceCommit": "ff4e61d7a5026de562b438eb23b768ee3337917d",
-        "state": "needs-judge",
-        "reason": "No dedicated primary/final independent focus judgment."
+        "state": "accepted-joined",
+        "reason": "The single labeled notice proceeds from opaque/encrypted state to the replay boundary, then distinguishes stored-model provenance from model compatibility and closes with unsupported routes and branch summaries. These are one coherent checkpoint policy, not scattered instructions needing another framework or section split."
       }
     },
     {
       "focus": "src/prompts/normal.md",
       "initialBlob": "17c2e5573655696a57d5cae9e8615f8809695eda",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "17c2e5573655696a57d5cae9e8615f8809695eda",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "17c2e5573655696a57d5cae9e8615f8809695eda",
         "primaryId": "task_6699937f",
         "primaryCommit": "ff4e61d7a5026de562b438eb23b768ee3337917d",
-        "judgeIds": [],
+        "judgeIds": ["task_840f1277"],
         "sourceCommit": "ff4e61d7a5026de562b438eb23b768ee3337917d",
-        "state": "needs-judge",
-        "reason": "No dedicated primary/final independent focus judgment."
+        "state": "accepted-joined",
+        "reason": "The role placeholder and direct decide/change/check progression express a single normal-worker responsibility. There is no intertwined orchestration or hidden mutable authority inside this template. Adding delegation, continuation or security prose would duplicate policy owned elsewhere rather than reduce a reading burden."
       }
     },
     {
@@ -2000,11 +2003,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_035453f8",
+        "primaryCommit": "dbcd6371cbf67989daa4c18bead4b3c6a749dcdd",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary",
+        "sourceCommit": "dbcd6371cbf67989daa4c18bead4b3c6a749dcdd",
+        "state": "needs-judge",
         "reason": "No dedicated primary/final independent focus judgment."
       }
     },
@@ -4468,7 +4471,7 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 69,
-    "pending": 54
+    "accepted": 72,
+    "pending": 51
   }
 }
