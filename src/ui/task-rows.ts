@@ -1,3 +1,4 @@
+import { selectDiskBackedBranchEntries } from "../history/session-manager";
 import { launchTaskTitle, taskTitle as clean } from "../tasks/task-title";
 import { sshJobId } from "../remote/jobs";
 
@@ -227,4 +228,16 @@ export function taskRowsFromSessionEntries(entries: ReadonlyArray<unknown>): Tas
       });
   }
   return [...rows.values()].map((row) => taskRowWithExecuteLabel(row, labels.get(row.sourceCallId ?? "")));
+}
+
+/** Startup reader: archived custom checkpoints cannot contribute rows or labels. */
+export function taskRowsFromSessionManager(manager: { getBranch(): unknown[] }): TaskRow[] {
+  const entries =
+    selectDiskBackedBranchEntries(
+      manager,
+      (meta) =>
+        (meta.type === "custom" && meta.customType === "die-task-row") ||
+        (meta.type === "message" && (meta.messageRole === "assistant" || meta.messageRole === "toolResult")),
+    ) ?? manager.getBranch();
+  return taskRowsFromSessionEntries(entries);
 }

@@ -3,12 +3,11 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import type { ExtensionFactory, SessionManager as PiSessionManager } from "@earendil-works/pi-coding-agent";
 import type { TSchema } from "typebox";
-import type { ConnectorArguments } from "./arguments";
 import type { NativeHistory } from "./history";
-import { createPermissionPolicy, type PermissionMode, type PermissionRequest } from "./permissions";
 import type { TaskLaunch } from "../tasks/task-manager";
-
-import { InjectedMcpSession, parseInjectedMcpConfig } from "./mcp";
+import type { ConnectorArguments } from "./arguments";
+import { type InjectedMcpSession, parseInjectedMcpConfig } from "./mcp";
+import { createPermissionPolicy, type PermissionMode, type PermissionRequest } from "./permissions";
 
 import type { ClaudeCompatTransport } from "./transport";
 
@@ -38,7 +37,14 @@ export function launchPolicy(args: ConnectorArguments) {
   if (args.sessionId && args.resume) throw new Error("Use --resume or --session-id, not both");
   if (args.mcpConfig) parseInjectedMcpConfig(args.mcpConfig);
   const settings = args.settings ?? {};
-  const supported = ["disableAllHooks", "permissions", "env", "alwaysThinkingEnabled", "showThinkingSummaries"];
+  const supported = [
+    "disableAllHooks",
+    "permissions",
+    "env",
+    "alwaysThinkingEnabled",
+    "showThinkingSummaries",
+    "fastMode",
+  ];
   for (const key of Object.keys(settings))
     if (!supported.includes(key)) throw new Error("Unsupported --settings effect: " + key);
   if (settings.disableAllHooks !== undefined && settings.disableAllHooks !== true)
@@ -47,6 +53,8 @@ export function launchPolicy(args: ConnectorArguments) {
     throw new Error("alwaysThinkingEnabled must be boolean");
   if (settings.showThinkingSummaries !== undefined && typeof settings.showThinkingSummaries !== "boolean")
     throw new Error("showThinkingSummaries must be boolean");
+  if (settings.fastMode !== undefined && typeof settings.fastMode !== "boolean")
+    throw new Error("fastMode must be boolean");
   const permissions = settings.permissions as Record<string, unknown> | undefined;
   if (permissions && (typeof permissions !== "object" || Array.isArray(permissions)))
     throw new Error("Invalid settings permissions");
@@ -108,6 +116,7 @@ export function launchPolicy(args: ConnectorArguments) {
     disallowedTools: [...rules("deny"), ...toolRules(args.disallowedTools)],
     thinking,
     thinkingDisplay,
+    fastMode: settings.fastMode as boolean | undefined,
     disableHooks: settings.disableAllHooks === true,
     tools: args.tools === undefined || args.tools === "default" ? undefined : toolRules(args.tools),
   };
@@ -118,7 +127,12 @@ export async function nativeStorage(
   options: { cwd: string; agentDir: string; configDir: string; projectKey?: string },
 ) {
   const { SessionManager } = await import("@earendil-works/pi-coding-agent");
-  const { NativeHistory, importNativeHistory, readNativeHistory, nativeHistoryToPi } = await import("./history");
+  // Storage opens history before runtime composition. Install the bounded reader
+  // here, not only in createClaudeCompatRuntime after the journal was loaded.
+  const { installDiskBackedSessionManager } = await import("../history/session-manager");
+  installDiskBackedSessionManager();
+  const { NativeHistory, importNativeHistory, readNativeHistory, nativeHistoryToPi, nativeImportEntryMaps } =
+    await import("./history");
   const sessionId = args.resume ?? args.sessionId ?? randomUUID();
   if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(sessionId))
     throw new Error("Native session ID must be a UUID");
@@ -145,9 +159,10 @@ export async function nativeStorage(
   if (binding) {
     manager = SessionManager.open(binding.file);
     const historyOptions = { ...location, sourceSessionId: manager.getSessionId() };
-    history = manager.getEntries().some((e) => e.type === "custom" && e.customType === "bruv-native-entry-map")
-      ? await NativeHistory.resumeImported(historyOptions, manager)
-      : await NativeHistory.open(historyOptions);
+    history =
+      nativeImportEntryMaps(manager).length > 0
+        ? await NativeHistory.resumeImported(historyOptions, manager)
+        : await NativeHistory.open(historyOptions);
   } else if (args.resume) {
     const imported = await importNativeHistory({ ...location, sessionDir: directory });
     manager = imported.sessionManager;
@@ -168,10 +183,7 @@ export async function nativeStorage(
     if (!checkpoint) throw new Error("Unknown native checkpoint");
     // Validate complete context before changing Pi's leaf. Never reexecute an imported tool.
     nativeHistoryToPi(entries.slice(0, entries.indexOf(checkpoint) + 1), sessionId);
-    const mapping = manager
-      .getEntries()
-      .filter((e) => e.type === "custom" && e.customType === "bruv-native-entry-map")
-      .flatMap((e) => (e as any).data.entries);
+    const mapping = nativeImportEntryMaps(manager).flatMap((e) => (e as any).data.entries);
     const id =
       checkpoint.bruv?.sourceSessionId === manager.getSessionId()
         ? checkpoint.bruv.sourceMessageId

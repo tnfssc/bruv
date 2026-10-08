@@ -59,6 +59,30 @@ export function getDiskBackedEntryMetadata(manager: object): readonly EntryMetad
   return states.get(manager as SessionManager)?.store.entries;
 }
 
+/** Latest matching custom record on the active branch, newest first.
+ * Undefined means unowned manager; null means no matching record. Only
+ * matching custom types are materialized, and search stops on acceptance.
+ */
+export function getLatestDiskBackedCustomEntry(
+  manager: object,
+  customType: string,
+  accept: (entry: Extract<SessionEntry, { type: "custom" }>) => boolean = () => true,
+): Extract<SessionEntry, { type: "custom" }> | null | undefined {
+  const owned = states.get(manager as SessionManager);
+  if (!owned) return undefined;
+  let result: Extract<SessionEntry, { type: "custom" }> | null = null;
+  walkMetadata(owned.store, internals(manager as SessionManager).leafId, (meta) => {
+    if (meta.type === "custom" && meta.customType === customType) {
+      const entry = owned.store.materialize(meta);
+      if (entry.type === "custom" && accept(entry)) {
+        result = entry;
+        return false;
+      }
+    }
+  });
+  return result;
+}
+
 /** Identity of the latest relevant active-branch metadata, or the empty index.
  * Appends leave metadata identities intact; reread/rewrite/reset replace them.
  * Walk only the ignored suffix through the owner's index, without bodies or a
@@ -70,36 +94,30 @@ export function getDiskBackedBranchRevision(
 ): object | undefined {
   const owned = states.get(manager as SessionManager);
   if (!owned) return undefined;
-  let id = internals(manager as SessionManager).leafId;
-  const seen = new Set<string>();
-  while (id) {
-    if (seen.has(id)) return undefined;
-    seen.add(id);
-    const meta = owned.store.byId.get(id);
-    if (!meta) return undefined;
-    if (relevant(meta)) return meta;
-    id = meta.parentId;
-  }
-  return owned.store.entries;
+  let revision: object = owned.store.entries;
+  walkMetadata(owned.store, internals(manager as SessionManager).leafId, (meta) => {
+    if (relevant(meta)) {
+      revision = meta;
+      return false;
+    }
+  });
+  return revision;
 }
 
 function contextLeaf(owned: ManagerState, fromId: string | null, assistantOnly = false): string | null {
-  let id = fromId;
-  const seen = new Set<string>();
-  while (id && !seen.has(id)) {
-    seen.add(id);
-    const entry = owned.store.byId.get(id);
-    if (!entry) break;
+  let leaf: string | null = null;
+  walkMetadata(owned.store, fromId, (entry) => {
     if (
       (entry.type === "message" && (!assistantOnly || entry.messageRole === "assistant")) ||
       (!assistantOnly && entry.type === "custom_message") ||
       ["compaction", "branch_summary", "context_edit"].includes(entry.type) ||
       (entry.type === "custom" && entry.customType === MANUAL_SHAKE_ENTRY)
-    )
-      return id;
-    id = entry.parentId;
-  }
-  return null;
+    ) {
+      leaf = entry.id;
+      return false;
+    }
+  });
+  return leaf;
 }
 
 /** Position of the active context, ignoring footer/cache bookkeeping entries. */
@@ -147,7 +165,7 @@ function internals(manager: SessionManager): ManagerInternals {
 
 /** Publish one committed journal entry into the SDK's metadata-only view. */
 function publishEntryMetadata(target: ManagerInternals, meta: EntryMetadata): void {
-  const skeleton = metadataSkeleton(meta);
+  const skeleton = meta as unknown as SessionEntry;
   target.fileEntries.push(skeleton);
   target.byId.set(meta.id, skeleton);
   target.leafId = meta.id;
@@ -165,7 +183,7 @@ function syncIndexes(manager: SessionManager, owned: ManagerState): void {
   const target = internals(manager);
   const { store } = owned;
   target.fileEntries = owned.skeletonEntries = [store.header];
-  target.byId = new Map();
+  target.byId = store.byId as unknown as Map<string, SessionEntry>;
   target.labelsById = new Map();
   target.labelTimestampsById = new Map();
   target.leafId = null;
@@ -205,34 +223,92 @@ function recoverStateOnFailure<T>(manager: SessionManager, operation: () => T): 
   }
 }
 
-function pathMetadata(store: DiskEntryStore, leafId: string | null | undefined): EntryMetadata[] {
-  if (!leafId) return [];
-  let current = store.byId.get(leafId);
-  if (!current) return [];
-  const path: EntryMetadata[] = [];
-  const seen = new Set<string>();
-  while (current && !seen.has(current.id)) {
-    path.push(current);
-    seen.add(current.id);
-    current = current.parentId ? store.byId.get(current.parentId) : undefined;
+/** Count unique nodes only when a non-backward link makes a cycle possible.
+ * Floyd's walk uses constant space; ordinary append-only paths need no preflight.
+ */
+function uniquePathLength(store: DiskEntryStore, leaf: EntryMetadata): number {
+  const next = (meta: EntryMetadata | undefined) => (meta?.parentId ? store.byId.get(meta.parentId) : undefined);
+  let slow = next(leaf);
+  let fast = next(next(leaf));
+  while (slow && fast && slow !== fast) {
+    slow = next(slow);
+    fast = next(next(fast));
   }
-  path.reverse();
-  return path;
+  if (!slow || !fast) return store.entries.length;
+  let prefix = 0;
+  slow = leaf;
+  while (slow !== fast) {
+    slow = next(slow)!;
+    fast = next(fast)!;
+    prefix++;
+  }
+  let cycle = 1;
+  fast = next(slow)!;
+  while (slow !== fast) {
+    fast = next(fast)!;
+    cycle++;
+  }
+  return prefix + cycle;
 }
 
-function contextMetadata(path: EntryMetadata[]): EntryMetadata[] {
-  let compaction: EntryMetadata | undefined;
-  for (const meta of path) if (meta.type === "compaction") compaction = meta;
-  if (!compaction) return path;
-  const at = path.indexOf(compaction);
-  const selected: EntryMetadata[] = [compaction];
-  let keep = false;
-  for (let i = 0; i < at; i++) {
-    if (path[i].id === compaction.firstKeptEntryId) keep = true;
-    if (keep && !(path[i].type === "message" && path[i].messageRole === "system")) selected.push(path[i]);
+/** Newest first, stopping at gaps or before a repeated node. No per-walk ID set.
+ * Strictly decreasing byte offsets cannot cycle. On the first forward/self link,
+ * compute the unique path length before delivering any duplicate metadata.
+ */
+function walkMetadata(
+  store: DiskEntryStore,
+  leafId: string | null | undefined,
+  visit: (metadata: EntryMetadata) => void | boolean,
+): void {
+  const leaf = leafId ? store.byId.get(leafId) : undefined;
+  let current = leaf;
+  let limit = store.entries.length;
+  let checked = false;
+  for (let steps = 0; current && steps < limit; steps++) {
+    if (visit(current) === false) break;
+    const parent = current.parentId ? store.byId.get(current.parentId) : undefined;
+    if (parent && parent.offset >= current.offset && !checked) {
+      limit = uniquePathLength(store, leaf!);
+      checked = true;
+    }
+    current = parent;
   }
-  selected.push(...path.slice(at + 1));
-  return selected;
+}
+
+function pathMetadata(store: DiskEntryStore, leafId: string | null | undefined): EntryMetadata[] {
+  const path: EntryMetadata[] = [];
+  walkMetadata(store, leafId, (meta) => {
+    path.push(meta);
+  });
+  return path.reverse();
+}
+
+/** Visit active-branch metadata newest first without copying the branch.
+ * The resident entry count bounds the walk, including cyclic parent links.
+ * Return false to stop at an authority boundary. Undefined means an unowned manager.
+ */
+export function visitDiskBackedBranch(
+  manager: object,
+  visit: (metadata: EntryMetadata) => void | boolean,
+): true | undefined {
+  const owned = states.get(manager as SessionManager);
+  if (!owned) return undefined;
+  walkMetadata(owned.store, internals(manager as SessionManager).leafId, visit);
+  return true;
+}
+
+/** Filter the active branch before loading originals. Only selected records are
+ * retained, in public-API (oldest-first) order; no branch-sized path or ID set.
+ */
+export function selectDiskBackedBranchEntries(
+  manager: object,
+  select: (metadata: EntryMetadata) => boolean,
+): SessionEntry[] | undefined {
+  const entries: SessionEntry[] = [];
+  const indexed = visitDiskBackedBranch(manager, (metadata) => {
+    if (select(metadata)) entries.push((manager as SessionManager).getEntry(metadata.id)!);
+  });
+  return indexed ? entries.reverse() : undefined;
 }
 
 /** Select indexed candidates from the same branch/context as the public APIs.
@@ -246,21 +322,116 @@ export function selectDiskBackedEntries(
 ): SessionEntry[] | undefined {
   const owned = states.get(manager as SessionManager);
   if (!owned) return undefined;
-  const path = pathMetadata(owned.store, internals(manager as SessionManager).leafId);
-  const entries = scope === "context" ? contextMetadata(path) : path;
-  return entries.filter(select).map((metadata) => owned.store.materialize(metadata));
+  let length = 0;
+  let compact: EntryMetadata | undefined;
+  let compactAt = -1;
+  let keptAt = -1;
+  let keptSystems = 0;
+  visitDiskBackedBranch(manager, (meta) => {
+    const at = length++;
+    if (scope === "branch") return;
+    if (!compact && meta.type === "compaction") {
+      compact = meta;
+      compactAt = at;
+    }
+    if (compact && at > compactAt && keptAt < 0 && meta.type === "message" && meta.messageRole === "system")
+      keptSystems++;
+    if (compact && meta.id === compact.firstKeptEntryId) keptAt = at;
+  });
+  const keptCount = keptAt > compactAt ? keptAt - compactAt - keptSystems : 0;
+  const contextCount = compact ? compactAt + 1 + keptCount : length;
+  const selected: { metadata: EntryMetadata; index: number }[] = [];
+  let position = 0;
+  let keptSeen = 0;
+  visitDiskBackedBranch(manager, (meta) => {
+    const at = position++;
+    let index = length - at - 1;
+    if (compact) {
+      if (at === compactAt) index = 0;
+      else if (at < compactAt) index = contextCount - at - 1;
+      else {
+        if (at > keptAt || (meta.type === "message" && meta.messageRole === "system")) return;
+        index = keptCount - keptSeen++;
+      }
+    }
+    if (select(meta, index)) selected.push({ metadata: meta, index });
+  });
+  selected.sort((a, b) => a.index - b.index);
+  return selected.map(({ metadata }) => owned.store.materialize(metadata));
 }
 
-function contextSettings(path: EntryMetadata[]): Pick<SessionContext, "thinkingLevel" | "model"> {
-  let thinkingLevel = "off";
+/** Only entries which affect model context are parsed. Settings live in the index.
+ * Two bounded parent walks locate the kept range before collecting it: even a
+ * missing firstKeptEntryId must not buffer all summarized message metadata.
+ */
+function modelContextMetadata(
+  manager: SessionManager,
+  includeShake = false,
+): {
+  context: EntryMetadata[];
+  branch: EntryMetadata[];
+  thinkingLevel: string;
+  model: { provider: string; modelId: string } | null;
+} {
+  let compaction: EntryMetadata | undefined;
+  let compactionPosition = -1;
+  let keptPosition = -1;
+  let position = 0;
+  let thinkingLevel: string | undefined;
   let model: { provider: string; modelId: string } | null = null;
-  for (const meta of path) {
-    if (meta.type === "thinking_level_change") thinkingLevel = meta.thinkingLevel!;
-    else if (meta.type === "model_change") model = { provider: meta.provider!, modelId: meta.modelId! };
-    else if (meta.type === "message" && meta.messageRole === "assistant")
-      model = { provider: meta.messageProvider!, modelId: meta.messageModel! };
-  }
-  return { thinkingLevel, model };
+  visitDiskBackedBranch(manager, (meta) => {
+    if (thinkingLevel === undefined && meta.type === "thinking_level_change") thinkingLevel = meta.thinkingLevel!;
+    if (model === null) {
+      if (meta.type === "model_change") model = { provider: meta.provider!, modelId: meta.modelId! };
+      else if (meta.type === "message" && meta.messageRole === "assistant")
+        model = { provider: meta.messageProvider!, modelId: meta.messageModel! };
+    }
+    if (!compaction && meta.type === "compaction") {
+      compaction = meta;
+      compactionPosition = position;
+    }
+    if (compaction && meta.id === compaction.firstKeptEntryId) keptPosition = position;
+    position++;
+  });
+  const branch: EntryMetadata[] = [];
+  position = 0;
+  visitDiskBackedBranch(manager, (meta) => {
+    const at = position++;
+    if (
+      compaction &&
+      at > compactionPosition &&
+      (at > keptPosition || (meta.type === "message" && meta.messageRole === "system"))
+    )
+      return;
+    // Plain custom records (tasks, caches, instruction bookkeeping) cannot
+    // produce messages or edits. Never ask the store for their original bodies.
+    if (
+      meta.type === "message" ||
+      meta.type === "custom_message" ||
+      meta.type === "branch_summary" ||
+      meta.type === "context_edit" ||
+      meta.type === "compaction" ||
+      meta.type === "thinking_level_change" ||
+      meta.type === "model_change" ||
+      meta.id === compaction?.firstKeptEntryId ||
+      (includeShake && meta.type === "custom" && meta.customType === MANUAL_SHAKE_ENTRY)
+    )
+      branch.push(meta);
+  });
+  branch.reverse();
+  const context = compaction
+    ? [
+        compaction,
+        ...branch.filter(
+          (meta) =>
+            meta !== compaction &&
+            (meta.type !== "custom" || (includeShake && meta.customType === MANUAL_SHAKE_ENTRY)) &&
+            meta.type !== "label" &&
+            meta.type !== "session_info",
+        ),
+      ]
+    : branch;
+  return { context, branch, thinkingLevel: thinkingLevel ?? "off", model };
 }
 
 function openStore(path: string): DiskEntryStore {
@@ -345,14 +516,15 @@ function installDiskBackedContextUsage(): (
 
   return (manager, projection, path) => {
     // The pinned SDK estimator inspects branch type/id only (compaction and
-    // usage positions). Give it the projection we already built plus temporary
-    // metadata skeletons, never a second materialized branch. A positive dummy
+    // usage positions). Give it the projection we already built plus its selected
+    // metadata view, never a second materialized branch. A positive dummy
     // window obtains tokens even before the routed model is available.
     const usage = originalContextUsage.call({
       _limitsModel: () => ({ contextWindow: 1 }),
       sessionManager: {
         buildSessionProjection: () => projection,
-        getBranch: () => path.map(metadataSkeleton),
+        getBranch: () => path as unknown as SessionEntry[],
+        getModelContextBranch: () => path as unknown as SessionEntry[],
       },
     } as unknown as AgentSession)!;
     rememberTokens(manager, usage.tokens);
@@ -464,14 +636,103 @@ export function installDiskBackedSessionManager(): void {
   prototype.buildContextEntries = function (this: SessionManager): SessionEntry[] {
     const owned = state(this);
     if (!owned) return original.buildContextEntries.call(this);
-    const path = pathMetadata(owned.store, internals(this).leafId);
-    return contextMetadata(path).map((meta) => owned.store.materialize(meta));
+    return modelContextMetadata(this, true).context.map((meta) => owned.store.materialize(meta));
+  };
+  // SDK-only views: getBranch/getEntries remain exact original-history APIs.
+  prototype.getSessionSettingsBranch = function (this: SessionManager): SessionEntry[] {
+    const owned = state(this);
+    if (!owned) return this.getBranch();
+    const selected: EntryMetadata[] = [];
+    let response: Extract<SessionEntry, { type: "message" }> | undefined;
+    let thinking = false;
+    let assistant = false;
+    let modelChange = false;
+    visitDiskBackedBranch(this, (meta) => {
+      if (!thinking && meta.type === "thinking_level_change") {
+        selected.push(meta);
+        thinking = true;
+      } else if (!assistant && !modelChange && meta.type === "message" && meta.messageRole === "assistant") {
+        const entry = owned.store.materialize(meta) as Extract<SessionEntry, { type: "message" }>;
+        // Failed virtual routing responses do not select a physical model. The
+        // index intentionally has no API field; read only candidate responses.
+        if (entry.message.role === "assistant" && entry.message.api !== "pi-virtual") {
+          selected.push(meta);
+          response = entry;
+          assistant = true;
+        }
+      } else if (!modelChange && meta.type === "model_change") {
+        selected.push(meta);
+        modelChange = true;
+      }
+    });
+    return selected.reverse().map(
+      (meta) =>
+        ({
+          ...metadataSkeleton(meta),
+          ...(meta.type === "message" ? { message: response!.message } : {}),
+          ...(meta.type === "model_change" ? { provider: meta.provider, modelId: meta.modelId } : {}),
+          ...(meta.type === "thinking_level_change" ? { thinkingLevel: meta.thinkingLevel } : {}),
+        }) as SessionEntry,
+    );
+  };
+  prototype.getModelContextBranch = function (this: SessionManager): SessionEntry[] {
+    const owned = state(this);
+    if (!owned) return this.getBranch();
+    return modelContextMetadata(this).branch.map((meta) =>
+      meta.type === "custom" || meta.type === "label" || meta.type === "session_info"
+        ? metadataSkeleton(meta)
+        : owned.store.materialize(meta),
+    );
+  };
+  prototype.getContextPreviewBranch = function (this: SessionManager): SessionEntry[] {
+    if (!state(this)) return this.getBranch();
+    const selected = modelContextMetadata(this);
+    const entries = this.getModelContextBranch();
+    // SDK in-memory previews follow parent IDs. Relink private copies across
+    // omitted bookkeeping; never mutate originals or the resident index.
+    const settings: SessionEntry[] = [
+      {
+        type: "thinking_level_change",
+        id: randomUUID(),
+        parentId: null,
+        timestamp: "",
+        thinkingLevel: selected.thinkingLevel,
+      } as SessionEntry,
+    ];
+    if (selected.model)
+      settings.push({
+        type: "model_change",
+        id: randomUUID(),
+        parentId: null,
+        timestamp: "",
+        ...selected.model,
+      } as SessionEntry);
+    let parentId: string | null = null;
+    return [...settings, ...entries].map((entry) => {
+      const linked = { ...entry, parentId };
+      parentId = entry.id;
+      return linked;
+    });
+  };
+  prototype.getLatestCustomEntryOnBranch = function (
+    this: SessionManager,
+    customType: string,
+    accept: (entry: Extract<SessionEntry, { type: "custom" }>) => boolean,
+  ): Extract<SessionEntry, { type: "custom" }> | undefined {
+    const indexed = getLatestDiskBackedCustomEntry(this, customType, accept);
+    if (indexed !== undefined) return indexed ?? undefined;
+    return this.getBranch()
+      .reverse()
+      .find(
+        (entry): entry is Extract<SessionEntry, { type: "custom" }> =>
+          entry.type === "custom" && entry.customType === customType && accept(entry),
+      );
   };
   prototype.buildSessionProjection = function (this: SessionManager): SessionProjection {
     const owned = state(this);
     if (!owned) return original.buildSessionProjection.call(this);
-    const path = pathMetadata(owned.store, internals(this).leafId);
-    const contextEntries = contextMetadata(path).map((meta) => owned.store.materialize(meta));
+    const selected = modelContextMetadata(this);
+    const contextEntries = selected.context.map((meta) => owned.store.materialize(meta));
     const edits = new Map<string, ContextEditEntry>();
     for (const entry of contextEntries) {
       if (entry.type === "context_edit") edits.set(entry.targetId, entry);
@@ -503,9 +764,10 @@ export function installDiskBackedSessionManager(): void {
     const projection: SessionProjection = {
       entries,
       messages: entries.flatMap((entry) => entry.messages),
-      ...contextSettings(path),
+      thinkingLevel: selected.thinkingLevel,
+      model: selected.model,
     };
-    recordContextUsage(this, projection, path);
+    recordContextUsage(this, projection, selected.branch);
     return projection;
   };
   prototype.buildSessionContext = function (this: SessionManager): SessionContext {
@@ -530,8 +792,11 @@ export function installDiskBackedSessionManager(): void {
       throw new Error("Context edit replacement must be null or contain string/array content");
     const target = owned.store.byId.get(targetId);
     if (!target) throw new Error(`Entry ${targetId} not found`);
-    if (!pathMetadata(owned.store, internals(this).leafId).some((entry) => entry.id === targetId))
-      throw new Error(`Entry ${targetId} is not on the active branch`);
+    let onBranch = false;
+    visitDiskBackedBranch(this, (meta) => {
+      if (meta.id === targetId) onBranch = true;
+    });
+    if (!onBranch) throw new Error(`Entry ${targetId} is not on the active branch`);
     const editable =
       target.type === "custom_message" ||
       (target.type === "message" &&
@@ -607,11 +872,13 @@ export function installDiskBackedSessionManager(): void {
       if (existsSync(resolved)) {
         if (statSync(resolved).size === 0) {
           const explicitPath = resolved;
+          internals(this).byId = new Map();
           original.newSession.call(this);
           const header = internals(this).fileEntries[0] as SessionHeader;
           adopt(this, DiskEntryStore.published(explicitPath, header));
         } else adopt(this, openStore(resolved));
       } else {
+        internals(this).byId = new Map();
         original.newSession.call(this);
         internals(this).sessionFile = resolved;
         const header = internals(this).fileEntries[0] as SessionHeader;
@@ -625,6 +892,8 @@ export function installDiskBackedSessionManager(): void {
     options?: { id?: string; parentSession?: string },
   ): string | undefined {
     return recoverStateOnFailure(this, () => {
+      // Native reset clears its map in place; do not clear the journal owner.
+      if (state(this)) internals(this).byId = new Map();
       const result = original.newSession.call(this, options);
       if (!internals(this).persist || !result) return result;
       const header = internals(this).fileEntries[0] as SessionHeader;
@@ -637,6 +906,9 @@ export function installDiskBackedSessionManager(): void {
     return recoverStateOnFailure(this, () => {
       const owned = state(this);
       if (!owned) return original.createBranchedSession.call(this, leafId);
+      // Native branch creation rebuilds its map before persisting. Keep the
+      // previous owner intact until publication succeeds (failure can recover).
+      internals(this).byId = new Map(internals(this).byId);
       const result = original.createBranchedSession.call(this, leafId);
       if (!result) return result;
       // _rewriteFile adopts assistant-containing branches. Deferred branches still
@@ -742,26 +1014,22 @@ export function installDiskBackedSessionManager(): void {
   };
 }
 
-/** Walk metadata only. Fail closed and bound original-history reads. */
+/** Walk truncated metadata paths, bounding selected original-history reads. */
 export function getDiskBackedBranch(
   manager: object,
   fromId?: string,
   maxEntries = 100_000,
+  select: (metadata: EntryMetadata) => boolean = () => true,
 ): SessionEntry[] | undefined {
   const owned = states.get(manager as SessionManager);
   if (!owned) return undefined;
   const entries: SessionEntry[] = [];
-  const seen = new Set<string>();
-  let id = fromId ?? internals(manager as SessionManager).leafId;
-  while (id) {
-    if (seen.has(id)) throw new Error("Active history branch contains a cycle");
-    if (entries.length >= maxEntries)
-      throw new Error("Active history branch exceeds the " + maxEntries + "-entry limit");
-    seen.add(id);
-    const meta = owned.store.byId.get(id);
-    if (!meta) throw new Error("Active history branch contains a broken parent link");
-    entries.push(metadataSkeleton(meta));
-    id = meta.parentId;
-  }
+  walkMetadata(owned.store, fromId ?? internals(manager as SessionManager).leafId, (meta) => {
+    if (select(meta)) {
+      if (entries.length >= maxEntries)
+        throw new Error("Active history branch exceeds the " + maxEntries + "-entry limit");
+      entries.push(metadataSkeleton(meta));
+    }
+  });
   return entries.reverse();
 }

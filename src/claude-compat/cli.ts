@@ -60,6 +60,8 @@ export const CONNECTOR_HELP = [
   "Initialization checks local readiness, never provider access or subscription.",
   "Native permissions, injected MCP and canonical Pi history are bound. Unsupported",
   "Claude-only settings effects fail explicitly; execute is never aliased to Bash.",
+  '--settings {"fastMode":true} is explicit premium native Fast billing consent.',
+  "It uses supported OpenAI auth surfaces and applies to new supported CLI children.",
   "",
 ].join("\n");
 
@@ -218,6 +220,7 @@ const productionRuntime: RuntimeFactory = async (options, args) => {
       disableSlashCommands: args.disableSlashCommands,
       thinkingLevel: (normalWorker?.thinking ?? policy.thinking) as any,
       thinkingDisplay: policy.thinkingDisplay,
+      fastMode: policy.fastMode,
       ...(process.env.BRUV_CLAUDE_COMPAT_LOCAL_AUDIO_HOST
         ? { localAudio: { host: process.env.BRUV_CLAUDE_COMPAT_LOCAL_AUDIO_HOST } }
         : {}),

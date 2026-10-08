@@ -10,6 +10,7 @@ import { type ExtensionAPI, ModelRuntime, SessionManager, SettingsManager } from
 import { InjectedMcpSession } from "../src/claude-compat/mcp";
 import { mcpFactory } from "../src/claude-compat/binding";
 import { httpMcpLifecycleFixture } from "./claude-compat/fixtures/http-mcp-lifecycle";
+import { parseClaudeLine, mightCarryUsage, priceUsage } from "./claude-compat/fixtures/t3-usage";
 import { permissionBinding } from "../src/claude-compat/binding";
 import { parseConnectorArguments } from "../src/claude-compat/arguments";
 import { NativeHistory, readNativeHistory } from "../src/claude-compat/history";
@@ -1011,6 +1012,60 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
     }
   });
 
+  test("root journals price exact Pi model IDs from actual totals without a rate table", async () => {
+    const dir = await mkdtemp(join(tmpdir(), "bruv-root-usage-"));
+    dirs.push(dir);
+    const manager = SessionManager.create(dir, join(dir, "pi"));
+    const nativeId = "55963508-6de0-49c9-a81c-dea90f5cf7e5";
+    const history = await NativeHistory.open({
+      cwd: dir,
+      configDir: join(dir, "native"),
+      sessionId: nativeId,
+      sourceSessionId: manager.getSessionId(),
+    });
+    const { runtime } = await fixture({ extra: { sessionManager: manager, nativeSessionId: nativeId, history } });
+    await init(runtime);
+    const models = ["gpt-6-astra", "gpt-6.1-sol", "gpt-6-luna"];
+    const costs = [0.031, 0.042, 0];
+    let index = 0;
+    runtime.session.agent.streamFunction = () => {
+      const i = index++;
+      return output(
+        assistant("offline answer", {
+          provider: "openai-codex",
+          model: models[i]!,
+          usage: { ...usage, cost: { input: costs[i]!, output: 0, cacheRead: 0, cacheWrite: 0, total: costs[i]! } },
+        }),
+      );
+    };
+    for (const model of models)
+      await runtime.onUser(
+        user(runtime, "offline " + model, {
+          session_id: nativeId,
+          uuid: "00000000-0000-4000-8000-00000000003" + models.indexOf(model),
+        }),
+        signal(),
+      );
+    await runtime.close();
+    const entries = (await readNativeHistory(history.options)).filter((entry) => entry.type === "assistant");
+    expect(entries).toHaveLength(3);
+    for (const [i, entry] of entries.entries()) {
+      const line = JSON.stringify(entry);
+      expect(mightCarryUsage(line, "claude")).toBe(true);
+      const parsed = parseClaudeLine(line);
+      expect(parsed.dedupeKey).toBe(entry.uuid + ":");
+      expect(parsed.model).toBe("openai-codex/" + models[i]);
+      expect(parsed.reportedCostUsd).toBe(costs[i]);
+      expect(parsed.totals).toMatchObject({
+        uncachedInputTokens: 11,
+        outputTokens: 7,
+        cachedInputTokens: 3,
+        cacheCreationTokens: 2,
+      });
+      expect(priceUsage(new Map(), parsed)).toMatchObject({ costUsd: costs[i], costSource: "providerReported" });
+    }
+  });
+
   test("source-entry history stores ordered real repeated messages/tool results and wire UUIDs, resumes Pi context", async () => {
     const dir = await mkdtemp(join(tmpdir(), "bruv-composition-history-"));
     dirs.push(dir);
@@ -1055,6 +1110,24 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
     await runtime.close();
     const entries = await readNativeHistory(history.options);
     expect(entries.map((e) => e.type)).toEqual(["user", "assistant", "user", "assistant", "user", "assistant"]);
+    for (const entry of entries) {
+      if (entry.type !== "assistant") {
+        expect(entry.costUSD).toBeUndefined();
+        continue;
+      }
+      const line = JSON.stringify(entry);
+      expect(mightCarryUsage(line, "claude")).toBe(true);
+      const parsed = parseClaudeLine(line);
+      expect(parsed.dedupeKey).toBe(entry.uuid + ":");
+      expect(parsed.model).toBe("anthropic/claude-sonnet-4-5");
+      expect(parsed.totals).toMatchObject({
+        uncachedInputTokens: 11,
+        outputTokens: 7,
+        cachedInputTokens: 3,
+        cacheCreationTokens: 2,
+      });
+      expect(priceUsage(new Map(), parsed)).toMatchObject({ costUsd: 0.01, costSource: "providerReported" });
+    }
     expect(entries[0]?.uuid).toBe("00000000-0000-4000-8000-000000000021");
     expect(entries[4]?.uuid).toBe("00000000-0000-4000-8000-000000000022");
     expect(new Set(entries.map((e) => e.bruv!.sourceMessageId)).size).toBe(6);

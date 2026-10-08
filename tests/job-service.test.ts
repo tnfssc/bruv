@@ -231,7 +231,8 @@ ownedProcessSuite(import.meta.path, () => {
       type: "custom",
       customType: "bruv-native-fast-mode",
       data: {
-        version: 1,
+        version: 2,
+        oauth: true,
         sessionId: "parent",
         provider: model.provider,
         model: model.id,
@@ -255,9 +256,13 @@ ownedProcessSuite(import.meta.path, () => {
     try {
       await service.handle("subagent", { type: "fast", prompt: "inherit premium tier" }, ctx, signal);
       expect(spawn.mock.calls[0]![0].env?.BRUV_SUBAGENT_NATIVE_FAST).toBe("1");
+      ctx.model = { ...ctx.model, provider: "openai", api: "openai-responses", baseUrl: "https://api.openai.com/v1" };
+      fastSetting.data.provider = ctx.model.provider;
+      await service.handle("subagent", { type: "fast", prompt: "inherit new ChatGPT login tier" }, ctx, signal);
+      expect(spawn.mock.calls.at(-1)![0].env?.BRUV_SUBAGENT_NATIVE_FAST).toBe("1");
       fastSetting.data.enabled = false;
       await service.handle("subagent", { type: "fast", prompt: "standard tier" }, ctx, signal);
-      expect(spawn.mock.calls[1]![0].env?.BRUV_SUBAGENT_NATIVE_FAST).toBe("0");
+      expect(spawn.mock.calls.at(-1)![0].env?.BRUV_SUBAGENT_NATIVE_FAST).toBe("0");
     } finally {
       spawn.mockRestore();
       await manager.shutdown();

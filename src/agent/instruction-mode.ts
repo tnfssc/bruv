@@ -1,3 +1,4 @@
+import { getLatestDiskBackedCustomEntry } from "../history/session-manager";
 import { createHash } from "node:crypto";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { recordDiagnostic } from "../diagnostics";
@@ -28,7 +29,8 @@ function activeEntries(ctx: ExtensionContext): any[] {
 }
 
 function persistedMode(ctx: ExtensionContext): MainAgentMode {
-  const entries = activeEntries(ctx);
+  const latest = ctx.sessionManager && getLatestDiskBackedCustomEntry(ctx.sessionManager, INSTRUCTION_MODE_ENTRY);
+  const entries = latest === undefined ? activeEntries(ctx) : latest ? [latest] : [];
   for (let index = entries.length - 1; index >= 0; index--) {
     const entry = entries[index];
     if (entry.type !== "custom" || entry.customType !== INSTRUCTION_MODE_ENTRY) continue;

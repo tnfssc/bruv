@@ -1,8 +1,11 @@
-import { randomUUID } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
+import { createReadStream } from "node:fs";
 import { appendFile, mkdir, readFile, realpath, writeFile } from "node:fs/promises";
 import { isAbsolute, join, resolve } from "node:path";
+import { createInterface } from "node:readline";
 import type { AssistantMessage, ImageContent, Message, TextContent } from "@earendil-works/pi-ai";
-import { SessionManager } from "@earendil-works/pi-coding-agent";
+import { type SessionEntry, SessionManager } from "@earendil-works/pi-coding-agent";
+import { getDiskBackedEntryMetadata } from "../history/session-manager";
 
 export interface NativeHistoryOptions {
   /** Must be the config directory visible to the parent SDK, not just the executable. */
@@ -17,6 +20,8 @@ export interface NativeHistoryAppend {
   sourceMessageId: string;
   type: "user" | "assistant";
   message: Record<string, unknown>;
+  /** Actual Pi usage total, omitted when unknown. */
+  costUSD?: number;
   timestamp: string;
   uuid?: string;
   /** Omit for linear append; null starts a branch; otherwise an already stored native UUID. */
@@ -79,10 +84,48 @@ export async function readNativeHistory(
   return entriesAt((await location(options)).filePath);
 }
 
+async function* streamedNativeEntries(filePath: string): AsyncGenerator<NativeEntry> {
+  const input = createReadStream(filePath, { encoding: "utf8" });
+  const lines = createInterface({ input, crlfDelay: Infinity });
+  try {
+    for await (const line of lines) if (line.trim()) yield object(JSON.parse(line)) as NativeEntry;
+  } finally {
+    lines.close();
+    input.destroy();
+  }
+}
+function messageHash(message: unknown): string {
+  return createHash("sha256")
+    .update(JSON.stringify(message) ?? "")
+    .digest("hex");
+}
+interface NativeRecord {
+  uuid: string;
+  parentUuid?: string | null;
+  type: string;
+  messageHash: string;
+  costUSD?: number;
+}
+
+/** Import maps are bookkeeping; looking for one must not load every task snapshot. */
+export function nativeImportEntryMaps(manager: SessionManager): SessionEntry[] {
+  const metadata = getDiskBackedEntryMetadata(manager);
+  if (metadata)
+    return metadata
+      .filter((entry) => entry.type === "custom" && entry.customType === "bruv-native-entry-map")
+      .map((entry) => manager.getEntry(entry.id))
+      .filter((entry): entry is SessionEntry => entry !== undefined);
+  return manager
+    .getEntries()
+    .filter((entry) => entry.type === "custom" && entry.customType === "bruv-native-entry-map");
+}
+
 /** Derived transcripts only. One writer per root/child; this class never starts or restores work. */
 export class NativeHistory {
   private queue: Promise<unknown> = Promise.resolve();
-  private entries: NativeEntry[] = [];
+  private readonly records = new Map<string, NativeRecord>();
+  private lastMessageUuid: string | null = null;
+  private readonly children = new Map<string, { binding: string; writer: Promise<NativeHistory> }>();
   private readonly sourceUuids = new Map<string, string>();
   private constructor(
     readonly options: NativeHistoryOptions,
@@ -100,9 +143,7 @@ export class NativeHistory {
     if (manager.getSessionId() !== options.sourceSessionId) throw new Error("Imported Pi session identity mismatch");
     const loc = await location(options);
     const writer = new NativeHistory({ ...options, cwd: loc.cwd }, loc.filePath, false);
-    const maps = manager
-      .getEntries()
-      .filter((entry) => entry.type === "custom" && entry.customType === "bruv-native-entry-map");
+    const maps = nativeImportEntryMaps(manager);
     const map = maps
       .map((entry) => object((entry as { data?: unknown }).data))
       .find((data) => data.nativeSessionId === options.sessionId);
@@ -132,52 +173,73 @@ export class NativeHistory {
   private async load(importedIds = new Set<string>()) {
     await mkdir(resolve(this.filePath, ".."), { recursive: true, mode: 0o700 });
     try {
-      this.entries = await entriesAt(this.filePath);
+      // Explicit fork validation needs its full import view. Ordinary root and
+      // child restore only index identity/hash metadata; stream both without
+      // retaining transcript bodies alongside the already-resident Pi index.
+      const entries = importedIds.size ? await entriesAt(this.filePath) : streamedNativeEntries(this.filePath);
+      const selected = importedIds.size
+        ? new Set(nativeHistoryToPi(entries as NativeEntry[], this.options.sessionId).nativeUuids)
+        : undefined;
+      for await (const entry of entries) {
+        if (entry.uuid)
+          this.records.set(entry.uuid, {
+            uuid: entry.uuid,
+            parentUuid: entry.parentUuid,
+            type: entry.type,
+            messageHash: messageHash(entry.message),
+            ...(typeof entry.costUSD === "number" ? { costUSD: entry.costUSD } : {}),
+          });
+        if (entry.type !== "user" && entry.type !== "assistant") continue;
+        if (
+          entry.sessionId !== this.options.sessionId ||
+          ((entry.bruv?.sourceSessionId !== this.options.sourceSessionId || entry.forkedFrom) &&
+            !importedIds.has(entry.uuid!) &&
+            (!selected || selected.has(entry.uuid!)))
+        )
+          throw new Error("Transcript is not this Pi session's derived view; import SDK forks into a fresh Pi session");
+        this.lastMessageUuid = entry.uuid!;
+        if (entry.bruv?.sourceSessionId === this.options.sourceSessionId)
+          this.sourceUuids.set(entry.bruv.sourceMessageId, entry.uuid!);
+      }
     } catch (error) {
       if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
     }
-    const selected = importedIds.size
-      ? new Set(nativeHistoryToPi(this.entries, this.options.sessionId).nativeUuids)
-      : undefined;
-    for (const entry of this.entries) {
-      if (entry.type !== "user" && entry.type !== "assistant") continue;
-      if (
-        entry.sessionId !== this.options.sessionId ||
-        ((entry.bruv?.sourceSessionId !== this.options.sourceSessionId || entry.forkedFrom) &&
-          !importedIds.has(entry.uuid!) &&
-          (!selected || selected.has(entry.uuid!)))
-      ) {
-        throw new Error("Transcript is not this Pi session's derived view; import SDK forks into a fresh Pi session");
-      }
-      if (entry.bruv?.sourceSessionId === this.options.sourceSessionId)
-        this.sourceUuids.set(entry.bruv.sourceMessageId, entry.uuid!);
-    }
   }
   append(input: NativeHistoryAppend): Promise<string> {
+    return this.appendWithResult(input).then((result) => result.uuid);
+  }
+  /** Replay is validated inside the same writer queue as a fresh append. */
+  appendWithResult(input: NativeHistoryAppend): Promise<{ uuid: string; appended: boolean }> {
     const operation = this.queue.then(async () => {
       if (!input.sourceMessageId || !this.options.sourceSessionId)
         throw new Error("Actual source identities are required");
       if (!Number.isFinite(Date.parse(input.timestamp))) throw new Error("Invalid transcript timestamp");
       if (input.message.role !== input.type) throw new Error("Transcript role/type mismatch");
-      const prior = this.entries.find((entry) => entry.uuid === this.sourceUuids.get(input.sourceMessageId));
+      if (
+        input.costUSD !== undefined &&
+        (input.type !== "assistant" || !Number.isFinite(input.costUSD) || input.costUSD < 0)
+      )
+        throw new Error("Invalid assistant transcript cost");
+      const priorId = this.sourceUuids.get(input.sourceMessageId);
+      const prior = priorId ? this.records.get(priorId) : undefined;
       if (prior) {
+        // Legacy entries stay immutable: absence of cost is not permission to backfill.
+        // For priced entries, a replay cannot change or erase their recorded cost.
         if (
           prior.type !== input.type ||
-          JSON.stringify(prior.message) !== JSON.stringify(input.message) ||
+          prior.messageHash !== messageHash(input.message) ||
+          (prior.costUSD !== undefined && prior.costUSD !== input.costUSD) ||
           (input.uuid && prior.uuid !== input.uuid) ||
           (input.parentUuid !== undefined && input.parentUuid !== prior.parentUuid)
         ) {
           throw new Error("Conflicting replay of source message");
         }
-        return prior.uuid!;
+        return { uuid: prior.uuid, appended: false };
       }
       const id = uuid(input.uuid ?? randomUUID());
-      if (this.entries.some((entry) => entry.uuid === id)) throw new Error("Duplicate native UUID");
-      const parentUuid =
-        input.parentUuid === undefined
-          ? (this.entries.filter((entry) => entry.type === "user" || entry.type === "assistant").at(-1)?.uuid ?? null)
-          : input.parentUuid;
-      if (parentUuid !== null && !this.entries.some((entry) => entry.uuid === parentUuid))
+      if (this.records.has(id)) throw new Error("Duplicate native UUID");
+      const parentUuid = input.parentUuid === undefined ? this.lastMessageUuid : input.parentUuid;
+      if (parentUuid !== null && !this.records.has(parentUuid))
         throw new Error("Native parent must already exist in this transcript");
       const entry: NativeEntry = {
         type: input.type,
@@ -188,12 +250,20 @@ export class NativeHistory {
         isSidechain: this.sidechain,
         cwd: this.options.cwd,
         message: JSON.parse(JSON.stringify(input.message)),
+        ...(input.costUSD === undefined ? {} : { costUSD: input.costUSD }),
         bruv: { sourceSessionId: this.options.sourceSessionId, sourceMessageId: input.sourceMessageId },
       };
       await appendFile(this.filePath, JSON.stringify(entry) + "\n", { mode: 0o600 });
-      this.entries.push(entry);
+      this.records.set(id, {
+        uuid: id,
+        parentUuid,
+        type: input.type,
+        messageHash: messageHash(entry.message),
+        ...(input.costUSD === undefined ? {} : { costUSD: input.costUSD }),
+      });
+      this.lastMessageUuid = id;
       this.sourceUuids.set(input.sourceMessageId, id);
-      return id;
+      return { uuid: id, appended: true };
     });
     this.queue = operation.catch(() => {});
     return operation;
@@ -208,22 +278,37 @@ export class NativeHistory {
     if (!/^[A-Za-z0-9_.:-]{1,128}$/.test(binding.sourceCallId)) throw new Error("Invalid actual tool-use ID");
     if (binding.parentAgentId !== undefined) segment(binding.parentAgentId);
     const path = join(this.filePath.slice(0, -6), "subagents", "agent-" + binding.taskId + ".jsonl");
-    const writer = new NativeHistory({ ...this.options, sourceSessionId: binding.sourceSessionId }, path, true);
-    await writer.load();
     const metadata = {
       toolUseId: binding.sourceCallId,
       parentAgentId: binding.parentAgentId ?? null,
       bruvSourceSessionId: binding.sourceSessionId,
     };
-    const metaPath = path.slice(0, -6) + ".meta.json";
-    try {
-      await writeFile(metaPath, JSON.stringify(metadata), { flag: "wx", mode: 0o600 });
-    } catch (error) {
-      if ((error as NodeJS.ErrnoException).code !== "EEXIST") throw error;
-      if (JSON.stringify(JSON.parse(await readFile(metaPath, "utf8"))) !== JSON.stringify(metadata))
-        throw new Error("Conflicting child causal binding");
+    const bindingKey = JSON.stringify(metadata);
+    const existing = this.children.get(binding.taskId);
+    if (existing) {
+      if (existing.binding !== bindingKey) throw new Error("Conflicting child causal binding");
+      return existing.writer;
     }
-    return writer;
+    const writer = (async () => {
+      const child = new NativeHistory({ ...this.options, sourceSessionId: binding.sourceSessionId }, path, true);
+      await child.load();
+      const metaPath = path.slice(0, -6) + ".meta.json";
+      try {
+        await writeFile(metaPath, bindingKey, { flag: "wx", mode: 0o600 });
+      } catch (error) {
+        if ((error as NodeJS.ErrnoException).code !== "EEXIST") throw error;
+        if (JSON.stringify(JSON.parse(await readFile(metaPath, "utf8"))) !== bindingKey)
+          throw new Error("Conflicting child causal binding");
+      }
+      return child;
+    })();
+    this.children.set(binding.taskId, { binding: bindingKey, writer });
+    try {
+      return await writer;
+    } catch (error) {
+      this.children.delete(binding.taskId);
+      throw error;
+    }
   }
 }
 

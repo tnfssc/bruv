@@ -81,6 +81,8 @@ test("Linux builds the pair without preparing or validating bundled web", () => 
     "run format:check",
     "run lint",
     "run check",
+    "run perf:resources --profile ci --out " + join(root, "artifacts/ci/resources"),
+    "run perf:resources --profile stress --out " + join(root, "artifacts/ci/resources"),
     "run build",
     "scripts/offline-openai-default-transport.ts",
     "test --parallel=3 ./tests",
@@ -155,24 +157,44 @@ test("production CI caches downloads only and delegates paired validation to the
   expect(workflow).not.toContain("PNPM_CONFIG_STORE_DIR");
   expect(workflow).not.toContain("pnpm/action-setup");
   expect(workflow).not.toContain("Compute pinned web producer key");
-  const parsed = Bun.YAML.parse(workflow) as {
-    jobs: Record<string, { steps: { uses?: string; run?: string; with?: Record<string, string> }[] }>;
-  };
-  const downloadCaches = Object.values(parsed.jobs).flatMap((job) =>
-    job.steps.filter((step) => step.uses?.startsWith("actions/cache")),
-  );
-  expect(downloadCaches.length).toBeGreaterThan(0);
-  for (const cache of downloadCaches) {
-    expect(cache.with?.path).toBe("${{ runner.temp }}/bruv-bun-cache");
-    expect(cache.with?.key).toContain("bun-1.4.2-");
+  const cacheWorkflows = ["ci.yml", "release.yml"];
+  for (const filename of cacheWorkflows) {
+    const text = await Bun.file(resolve(import.meta.dir, "../.github/workflows/" + filename)).text();
+    const parsed = Bun.YAML.parse(text) as {
+      jobs: Record<string, { steps: { uses?: string; run?: string; with?: Record<string, string> }[] }>;
+    };
+    let downloadCaches = 0;
+    for (const job of Object.values(parsed.jobs)) {
+      if (filename === "ci.yml")
+        for (const step of job.steps.filter((step) => step.uses?.startsWith("actions/cache")))
+          expect(["${{ runner.temp }}/bruv-bun-cache", "${{ runner.temp }}/bruv-apt-cache/*.deb"]).toContain(
+            step.with?.path ?? "",
+          );
+      for (const step of job.steps.filter(
+        (step) => step.uses?.startsWith("actions/cache") && step.with?.path === "${{ runner.temp }}/bruv-bun-cache",
+      )) {
+        downloadCaches++;
+        expect(step.with?.path).toBe("${{ runner.temp }}/bruv-bun-cache");
+        expect(step.with?.key).toBe(
+          "bun-download-v2-1.4.2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('bun.lock', 'package.json') }}",
+        );
+        expect(step.with?.["restore-keys"]).toBe("bun-download-v2-1.4.2-${{ runner.os }}-${{ runner.arch }}-");
+        expect(step.with?.key).not.toContain("bun-1.4.2-");
+        expect(step.with?.["restore-keys"]).not.toContain("bun-1.4.2-");
+      }
+    }
+    expect(downloadCaches).toBeGreaterThan(0);
   }
-  expect(parsed.jobs.test!.steps.some((step) => step.run === "bun run ci")).toBe(true);
+  const ci = Bun.YAML.parse(workflow) as { jobs: Record<string, { steps: { run?: string }[] }> };
+  expect(ci.jobs.test!.steps.some((step) => step.run === "bun run ci")).toBe(true);
   const runner = await Bun.file(resolve(import.meta.dir, "../scripts/ci.sh")).text();
   for (const gate of [
     "bun install --frozen-lockfile",
     "bun run format:check",
     "bun run lint",
     "bun run check",
+    'bun run perf:resources --profile ci --out "$log_dir/resources"',
+    'bun run perf:resources --profile stress --out "$log_dir/resources"',
     "bun run build",
     "bun scripts/offline-openai-default-transport.ts",
     "bun test --parallel=3 ./tests",
@@ -189,14 +211,20 @@ test("both CI lanes install ffmpeg before running PCM conversion tests", async (
     jobs: Record<string, { steps: { run?: string }[] }>;
   };
   for (const [job, install, gate] of [
-    ["test", "sudo apt-get update && sudo apt-get install -y ffmpeg", "bun run ci"],
+    ["test", "bash scripts/install-ci-linux-tools.sh --native-audio", "bun run ci"],
     ["live-macos", "brew install ffmpeg", "bun run ci:macos"],
   ] as const) {
     const steps = parsed.jobs[job]!.steps;
     const setup = steps.findIndex((step) => step.run?.includes(install));
     expect(setup).toBeGreaterThanOrEqual(0);
-    expect(steps[setup]!.run).toContain("command -v ffmpeg >/dev/null ||");
-    expect(steps[setup]!.run).toContain("ffmpeg -version");
+    if (job === "live-macos") {
+      expect(steps[setup]!.run).toContain("command -v ffmpeg >/dev/null ||");
+      expect(steps[setup]!.run).toContain("ffmpeg -version");
+    } else {
+      const installer = await Bun.file(resolve(import.meta.dir, "../scripts/install-ci-linux-tools.sh")).text();
+      expect(installer).toContain("packages=(tmux ffmpeg)");
+      expect(installer).toContain("ffmpeg -version");
+    }
     expect(steps.findIndex((step) => step.run === gate)).toBeGreaterThan(setup);
   }
 });

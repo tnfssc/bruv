@@ -149,7 +149,8 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
   });
 
   test("unsupported launch settings are rejected rather than inherited", () => {
-    for (const settings of ['{"fastMode":true}', '{"hooks":{}}', '{"env":{"OPENAI_API_KEY":"not-a-real-key"}}'])
+    expect(launchPolicy(parse(["--settings", '{"fastMode":true}']))).toMatchObject({ fastMode: true });
+    for (const settings of ['{"hooks":{}}', '{"env":{"OPENAI_API_KEY":"not-a-real-key"}}'])
       expect(() => launchPolicy(parse(["--settings", settings]))).toThrow("Unsupported");
   });
 

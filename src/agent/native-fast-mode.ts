@@ -2,12 +2,12 @@ import { AsyncLocalStorage } from "node:async_hooks";
 import { type Context, lazyStream, type Model, normalizeContext } from "@earendil-works/pi-ai";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { recordDiagnostic } from "../diagnostics.js";
-import { selectDiskBackedEntries } from "../history/session-manager";
+import { getLatestDiskBackedCustomEntry } from "../history/session-manager";
 import { restoreLeaf } from "../session/restore-leaf";
 
 export const NATIVE_FAST_CHILD_ENV = "BRUV_SUBAGENT_NATIVE_FAST";
 export const NATIVE_FAST_ENTRY = "bruv-native-fast-mode";
-const ENTRY_VERSION = 1;
+const ENTRY_VERSION = 2;
 const OPENAI_BASE_URL = "https://api.openai.com/v1";
 const CODEX_BASE_URL = "https://chatgpt.com/backend-api";
 const standardTierScope = new AsyncLocalStorage<boolean>();
@@ -77,7 +77,8 @@ export async function withStandardProviderTier<T>(run: () => Promise<T>): Promis
 
 // Consent belongs to one session/provider/model on the active branch.
 type Setting = {
-  version: 1;
+  version: 2;
+  oauth: boolean;
   sessionId: string;
   provider: string;
   model: string;
@@ -118,6 +119,7 @@ function setting(value: unknown): value is Setting {
   if (!record(value)) return false;
   return (
     value.version === ENTRY_VERSION &&
+    typeof value.oauth === "boolean" &&
     boundedId(value.sessionId) &&
     boundedId(value.provider) &&
     boundedId(value.model) &&
@@ -140,7 +142,8 @@ function resolveSetting(
     return {
       kind: "valid",
       value: {
-        version: 1,
+        version: ENTRY_VERSION,
+        oauth: false,
         sessionId,
         provider: model.provider,
         model: model.id,
@@ -150,12 +153,19 @@ function resolveSetting(
       },
     };
   }
-  const entries =
-    selectDiskBackedEntries(
-      ctx.sessionManager,
-      "branch",
-      (meta) => meta.type === "custom" && meta.customType === NATIVE_FAST_ENTRY,
-    ) ?? branch(ctx);
+  const latest = getLatestDiskBackedCustomEntry(ctx.sessionManager, NATIVE_FAST_ENTRY, (entry) => {
+    // Malformed identity is authoritative; well-formed records for another
+    // session/model may be skipped, just as in the native branch scan below.
+    const data = entry.data;
+    return (
+      !record(data) ||
+      !boundedId(data.sessionId) ||
+      !boundedId(data.provider) ||
+      !boundedId(data.model) ||
+      (data.sessionId === sessionId && data.provider === model.provider && data.model === model.id)
+    );
+  });
+  const entries = latest === undefined ? branch(ctx) : latest ? [latest] : [];
   for (let index = entries.length - 1; index >= 0; index--) {
     const entry = entries[index];
     if (entry?.type !== "custom" || entry.customType !== NATIVE_FAST_ENTRY) continue;
@@ -202,15 +212,18 @@ function persistSetting(pi: ExtensionAPI, manager: ExtensionContext["sessionMana
 
 export function nativeFastSupport(
   model: Pick<Model<any>, "provider" | "id" | "api" | "baseUrl">,
-): { supported: true; tier: "priority"; surface: "api" | "codex" } | { supported: false; reason: string } {
+  oauth = false,
+): { supported: true; tier: "priority"; surface: "api" | "chatgpt" | "codex" } | { supported: false; reason: string } {
   const baseUrl = normalizedUrl(model.baseUrl);
   if (model.provider === "openai") {
-    if (model.api !== "openai-responses" || baseUrl !== OPENAI_BASE_URL)
+    if (model.api !== "openai-responses" || baseUrl !== OPENAI_BASE_URL || (oauth && model.baseUrl !== OPENAI_BASE_URL))
       return {
         supported: false,
         reason: "OpenAI native fast mode requires the official openai Responses endpoint and auth surface.",
       };
-    return { supported: true, tier: "priority", surface: "api" };
+    // Pi 1.0.3 canonical OpenAI keeps the Responses API/endpoint for both
+    // API keys and ChatGPT OAuth; it does not rewrite OAuth to legacy Codex.
+    return { supported: true, tier: "priority", surface: oauth ? "chatgpt" : "api" };
   }
   if (model.provider === "openai-codex") {
     if (model.api !== "openai-codex-responses" || baseUrl !== CODEX_BASE_URL)
@@ -233,16 +246,18 @@ export function nativeFastSupport(
   };
 }
 
-function authSurfaceMatches(ctx: ExtensionContext, surface: "api" | "codex", model = ctx.model): boolean {
+function authSurfaceMatches(ctx: ExtensionContext, surface: "api" | "chatgpt" | "codex", model = ctx.model): boolean {
   const oauth = model ? ctx.modelRegistry.isUsingOAuth(model) : false;
-  return surface === "codex" ? oauth : !oauth;
+  return surface === "api" ? !oauth : oauth;
 }
 
 export function nativeFastEnabled(ctx: ExtensionContext): boolean {
   if (!ctx.model || !ctx.sessionManager?.getSessionId) return false;
   const active = currentSetting(ctx);
   if (!active?.enabled || !active.costAcknowledged) return false;
-  const support = nativeFastSupport(ctx.model);
+  const oauth = ctx.modelRegistry.isUsingOAuth(ctx.model);
+  if (active.oauth !== oauth) return false;
+  const support = nativeFastSupport(ctx.model, oauth);
   return support.supported && authSurfaceMatches(ctx, support.surface);
 }
 
@@ -268,7 +283,10 @@ function requestTierPolicy(ctx: ExtensionContext, model: Model<any>, sessionId: 
   const found = resolveSetting(ctx, model, sessionId);
   if (found.kind === "absent") return;
   if (found.kind === "invalid")
-    return { blocked: "Native fast mode rejected a malformed or unsupported authorization record before dispatch." };
+    return {
+      blocked:
+        "Native fast mode rejected a malformed or unsupported authorization record; run /fast on or /fast off again.",
+    };
   const active = found.value;
   if (!active.enabled)
     return {
@@ -277,7 +295,10 @@ function requestTierPolicy(ctx: ExtensionContext, model: Model<any>, sessionId: 
         ? {}
         : { blocked: "Native fast opt-out no longer matches an official provider surface." }),
     };
-  const support = nativeFastSupport(model);
+  const oauth = ctx.modelRegistry.isUsingOAuth(model);
+  const support = nativeFastSupport(model, oauth);
+  if (active.oauth !== oauth)
+    return { blocked: "Native fast mode authentication surface changed; run /fast on again." };
   if (!active.costAcknowledged) return { blocked: "Native fast mode authorization is missing; run /fast on again." };
   if (!support.supported) return { blocked: support.reason };
   if (!authSurfaceMatches(ctx, support.surface, model))
@@ -325,7 +346,7 @@ type RuntimePatch = {
 
 const runtimePatches = new WeakMap<object, RuntimePatch>();
 const COMPATIBILITY_ERROR =
-  "Native fast mode is unavailable: pinned Pi 0.85 ModelRuntime compatibility seam is missing.";
+  "Native fast mode is unavailable: pinned Pi 1.0.3 ModelRuntime compatibility seam is missing.";
 
 // One immutable authorization covers preparation, payload hooks, and transport.
 function streamAuthorizedRequest(
@@ -396,10 +417,22 @@ function streamAuthorizedRequest(
       throw new Error("Native fast mode authorization did not select a provider tier.");
     }
     if (authorization.tier !== "default") {
-      const actualSupport = nativeFastSupport(prepared.model);
+      const actualSupport = nativeFastSupport(prepared.model, authorization.oauth);
       if (!actualSupport.supported || actualSupport.tier !== authorization.tier) {
         fastDiagnostic(authorization.manager, FAST_GUARD_UNSUPPORTED_ENDPOINT, "blocked", authorization.operationId);
         throw new Error("Native fast mode actual provider endpoint is not authorized for this request.");
+      }
+    }
+    if (authorization.tier !== "default" && authorization.provider === "openai") {
+      // Consent follows the resolved credential, not only the registry snapshot.
+      const key = prepared.options?.apiKey;
+      const headers = { ...prepared.model.headers, ...prepared.options?.headers };
+      const authOverride = Object.entries(headers).some(
+        ([name, value]) => name.toLowerCase() === "authorization" && value !== "Bearer " + key,
+      );
+      if (typeof key !== "string" || !key || !key.startsWith("sk-") !== authorization.oauth || authOverride) {
+        fastDiagnostic(authorization.manager, FAST_GUARD_IDENTITY_MISMATCH, "blocked", authorization.operationId);
+        throw new Error("Native fast mode resolved credentials do not match the authorized authentication surface.");
       }
     }
     return prepared.provider.streamSimple(prepared.model, transcript, prepared.options);
@@ -408,7 +441,7 @@ function streamAuthorizedRequest(
 
 /** Pi's extension emitter catches hook failures. Patch only this extension
  * context's runtime instance. Restore it when the last controller leaves. The
- * pinned Pi 0.85 seam is prepareRequest, then provider.streamSimple with the
+ * pinned Pi 1.0.3 seam is prepareRequest, then provider.streamSimple with the
  * final onPayload pipeline. */
 function attachConcreteRequestGuard(runtime: unknown, controller: FastController): string | undefined {
   if (!record(runtime)) return COMPATIBILITY_ERROR;
@@ -494,6 +527,43 @@ export function registerNativeFastMode(pi: ExtensionAPI) {
     ui?.setStatus("bruv-native-fast", active ? statusText(active.enabled) : undefined);
   };
 
+  const persistSelection = (ctx: ExtensionContext, enabled: boolean) => {
+    const model = ctx.model!;
+    const entry: Setting = {
+      version: ENTRY_VERSION,
+      oauth: ctx.modelRegistry.isUsingOAuth(model),
+      sessionId: ctx.sessionManager.getSessionId(),
+      provider: model.provider,
+      model: model.id,
+      enabled,
+      costAcknowledged: enabled,
+      timestamp: Date.now(),
+    };
+    if (!persistSetting(pi, ctx.sessionManager, entry))
+      throw new Error("Could not persist native fast mode; the requested setting was not activated.");
+  };
+
+  // Only explicit host user selection may call this: true is premium billing
+  // consent, not a hint inferred from effort, an unsupported flag, or a badge.
+  const setWithCostConsent = (enabled: boolean) => {
+    const ctx = controller.context;
+    if (!ctx?.model) throw new Error("Select a model before changing native fast mode");
+    const compatibilityError = bindContext(ctx);
+    const support = nativeFastSupport(ctx.model, ctx.modelRegistry.isUsingOAuth(ctx.model));
+    if (enabled) {
+      if (compatibilityError) throw new Error(compatibilityError);
+      if (!support.supported) throw new Error(support.reason);
+      if (!authSurfaceMatches(ctx, support.surface))
+        throw new Error("Native fast mode authentication surface mismatch");
+    } else if (!officialSurface(ctx.model)) {
+      // Hosts also send false for models without a native Fast implementation.
+      // No authorization is created on those surfaces.
+      return;
+    }
+    persistSelection(ctx, enabled);
+    refreshStatus(ctx);
+  };
+
   pi.registerCommand("fast", {
     description: "Show or set opt-in provider-native fast mode (on, off, status)",
     getArgumentCompletions: (prefix) => {
@@ -532,7 +602,7 @@ export function registerNativeFastMode(pi: ExtensionAPI) {
         provider: model.provider,
         model: model.id,
       };
-      const support = nativeFastSupport(model);
+      const support = nativeFastSupport(model, ctx.modelRegistry.isUsingOAuth(model));
       if (action === "off" && !officialSurface(model)) {
         commandDiagnostic(ctx, FAST_REFUSED_UNSUPPORTED, "blocked", operationId);
         ctx.ui.notify(
@@ -566,8 +636,8 @@ export function registerNativeFastMode(pi: ExtensionAPI) {
         if (!accepted && ctx.mode === "tui")
           accepted = await ctx.ui.confirm(
             "Enable premium fast mode?",
-            support.supported && support.surface === "codex"
-              ? "Fast mode also applies to new supported subagents. It consumes more ChatGPT credits (model-dependent, currently 2x or 2.5x). Provider billing is authoritative."
+            support.supported && support.surface !== "api"
+              ? "Fast mode also applies to new supported subagents. It uses premium ChatGPT subscription usage/credits. Provider billing is authoritative."
               : "Fast mode also applies to new supported subagents. It uses premium API token pricing. Provider billing is authoritative.",
           );
         if (!accepted) {
@@ -601,6 +671,7 @@ export function registerNativeFastMode(pi: ExtensionAPI) {
       }
       const entry: Setting = {
         version: ENTRY_VERSION,
+        oauth: ctx.modelRegistry.isUsingOAuth(model),
         sessionId: consentScope.sessionId,
         provider: model.provider,
         model: model.id,
@@ -628,7 +699,7 @@ export function registerNativeFastMode(pi: ExtensionAPI) {
     if (inheritFast) {
       inheritFast = false;
       const model = ctx.model;
-      const support = model && nativeFastSupport(model);
+      const support = model && nativeFastSupport(model, ctx.modelRegistry.isUsingOAuth(model));
       if (
         !compatibilityError &&
         model &&
@@ -638,6 +709,7 @@ export function registerNativeFastMode(pi: ExtensionAPI) {
       ) {
         pi.appendEntry(NATIVE_FAST_ENTRY, {
           version: ENTRY_VERSION,
+          oauth: ctx.modelRegistry.isUsingOAuth(model),
           sessionId: ctx.sessionManager.getSessionId(),
           provider: model.provider,
           model: model.id,
@@ -663,5 +735,5 @@ export function registerNativeFastMode(pi: ExtensionAPI) {
     controller.context = undefined;
     ui = undefined;
   });
-  return { refreshStatus, currentSetting };
+  return { refreshStatus, currentSetting, setWithCostConsent };
 }

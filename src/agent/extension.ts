@@ -1,3 +1,4 @@
+import { getLatestDiskBackedCustomEntry } from "../history/session-manager";
 import { createHash } from "node:crypto";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { T3_MCP_BEARER_ENV, T3_MCP_URL_ENV } from "../delegation-environment";
@@ -51,7 +52,7 @@ import {
   taskRowFromRemote,
   taskRowKey,
   taskRowsFromDetails,
-  taskRowsFromSessionEntries,
+  taskRowsFromSessionManager,
   upsertTaskRow,
 } from "../ui/task-rows";
 import { registerProjectWisdom } from "../wisdom/extension";
@@ -119,13 +120,16 @@ export default function asynchronousTasksExtension(
     executablePath?: string;
     /** Observe the existing manager; shutdown drains it before closing this binding. */
     onTaskOwner?: TaskOwnerObserver;
+    /** Host adapter binding; only explicit user Fast selection acknowledges billing. */
+    onNativeFastMode?: (control: ReturnType<typeof registerNativeFastMode>) => void;
   } = {},
 ): void {
   registerOperationDiagnostics(pi);
   registerRollingActivity(pi);
   // Must precede all payload capture/observation hooks so snapshots contain the
   // exact tier that the provider transport will serialize.
-  registerNativeFastMode(pi);
+  const nativeFast = registerNativeFastMode(pi);
+  options.onNativeFastMode?.(nativeFast);
   const cacheCountdown = new CacheCountdown();
   registerCacheCountdown(pi, cacheCountdown, options.cacheSettingsPath);
   const installUI = createCompactUI(pi, cacheCountdown);
@@ -161,7 +165,13 @@ export default function asynchronousTasksExtension(
       const sessionManager = ctx.sessionManager as
         | { getBranch?: () => unknown; getEntries?: () => unknown }
         | undefined;
-      const entries = sessionManager?.getBranch?.() ?? sessionManager?.getEntries?.() ?? [];
+      const latest = sessionManager && getLatestDiskBackedCustomEntry(sessionManager, "bruv-agent");
+      const entries =
+        latest === undefined
+          ? (sessionManager?.getBranch?.() ?? sessionManager?.getEntries?.() ?? [])
+          : latest
+            ? [latest]
+            : [];
       if (!Array.isArray(entries)) throw new Error("Invalid session entries");
 
       let marker: Record<string, unknown> | undefined;
@@ -643,7 +653,7 @@ export default function asynchronousTasksExtension(
   pi.on("session_start", async (_event, ctx) => {
     owningContext = ctx;
     transcriptRows.clear();
-    for (const row of taskRowsFromSessionEntries(ctx.sessionManager.getBranch()))
+    for (const row of taskRowsFromSessionManager(ctx.sessionManager))
       upsertTaskRow(transcriptRows, row.status === "running" ? { ...row, status: "unknown" } : row);
     restoreTaskRows?.();
     restoreTaskRows =

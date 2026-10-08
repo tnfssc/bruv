@@ -1,4 +1,4 @@
-import { selectDiskBackedEntries } from "../history/session-manager";
+import { visitDiskBackedBranch } from "../history/session-manager";
 import { restoreLeaf } from "../session/restore-leaf";
 import { AsyncLocalStorage } from "node:async_hooks";
 import { isDeepStrictEqual } from "node:util";
@@ -510,13 +510,20 @@ function nativeAssistant(message: AgentMessage, d: NativeCodexCompactionDetails,
 function compactionsInContext(ctx: ExtensionContext): CompactionEntry[] {
   // SDK projection emits only the newest checkpoint at index zero. Older
   // compactions in its kept range are archived entries, not replay items.
-  return (
-    selectDiskBackedEntries(
-      ctx.sessionManager,
-      "context",
-      (meta, index) => index === 0 && meta.type === "compaction",
-    ) ?? ctx.sessionManager.buildContextEntries().slice(0, 1)
-  ).filter((e): e is CompactionEntry => e.type === "compaction");
+  let checkpoint: CompactionEntry | undefined;
+  const indexed = visitDiskBackedBranch(ctx.sessionManager, (meta) => {
+    if (meta.type !== "compaction") return;
+    checkpoint = ctx.sessionManager.getEntry(meta.id) as CompactionEntry;
+    return false;
+  });
+  return indexed === undefined
+    ? ctx.sessionManager
+        .buildContextEntries()
+        .slice(0, 1)
+        .filter((e): e is CompactionEntry => e.type === "compaction")
+    : checkpoint
+      ? [checkpoint]
+      : [];
 }
 function nativeEntriesInContext(ctx: ExtensionContext): CompactionEntry[] {
   return compactionsInContext(ctx).filter(

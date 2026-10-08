@@ -3,13 +3,15 @@
 Bruv's native fast mode is an explicit, session-local provider request setting.
 It is separate from `/mode fast` and sub-agent profile `fast`: it doesn't change the model, thinking level, or instructions. New supported CLI/SSH subagents inherit the parent’s active fast setting.
 
+Pinned Pi 1.0.3 also supports the **new canonical OpenAI ChatGPT login**, not just legacy Codex. See [auth semantics, bound consent and regression proof](openai-chatgpt-fast-mode-pi-1.0.3.md).
+
 ## Commands and consent
 
 - `/fast` and `/fast status` only report status; a bare command never enables billing.
 - `/fast on` needs the TUI premium-cost confirmation. Noninteractive launches must include `--accept-cost`.
 - `/fast off` records an explicit model-bound opt-out and sends `service_tier: "default"`. Sessions/models that the user hasn't touched aren't overridden.
 
-The setting is stored on the active session branch with its exact session, provider, and model identity.
+The setting is stored on the active session branch with its exact session, provider, model, and OAuth/API-key auth identity (schema v2). Older unbound records require explicit renewal with `/fast on` or `/fast off`.
 A new session starts off.
 A model switch activates only an authorized record already on that branch for the switched-to exact model.
 New CLI/SSH subagents inherit active parent fast consent at launch. The launcher sends a fresh BRUV_SUBAGENT_NATIVE_FAST bit, never an ambient inherited bit. The child consumes it once and writes its own session/model setting if its endpoint and auth support fast mode. This includes nested orchestrator children. Unsupported providers stay untouched. Parent /fast off affects future launches, not already-running children. Explicit child settings win on resume.
@@ -21,7 +23,8 @@ The separate T3-native task backend does not accept this launch setting yet. Its
 Supported surfaces, not model aliases, determine the wire tier:
 
 - OpenAI API, official `openai` Responses endpoint with API-key auth: `service_tier: "priority"`, matching Codex Fast on API-key traffic too.
-- Codex, official `openai-codex` endpoint with ChatGPT sign-in: `service_tier: "priority"`, matching the official Codex client's Fast wire mapping.
+- OpenAI ChatGPT subscription, canonical `openai` Responses endpoint with OAuth auth: `service_tier: "priority"`. It stays on the official API endpoint, not the legacy Codex transport.
+- Legacy Codex, official `openai-codex` endpoint with ChatGPT sign-in: `service_tier: "priority"`, matching the official Codex client's Fast wire mapping.
 
 Die forwards the selected model alias unchanged and lets the provider validate model/tier availability. There is no hardcoded model allowlist or prefix check. The old catalog gate rejected `gpt-6.1-sol` even on the supported Codex surface; adding one alias would only postpone the same failure for the next catalog change. An alias being forwarded does not guarantee premium support: provider errors remain provider errors, with no automatic retry or model swap.
 

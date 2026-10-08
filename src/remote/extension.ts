@@ -1,3 +1,4 @@
+import { selectDiskBackedBranchEntries } from "../history/session-manager";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { registerRemoteRuntime } from "./runtime";
 import { RemoteClient } from "./client";
@@ -95,7 +96,16 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
     let menu: { fingerprint?: string } | undefined;
     const attention = new RemoteAttention();
     const activeInSession = new Set<string>();
-    const entries = ctx?.sessionManager?.getBranch?.() ?? [];
+    const entries =
+      (ctx?.sessionManager &&
+        selectDiskBackedBranchEntries(
+          ctx.sessionManager,
+          (meta) =>
+            meta.type === "custom" &&
+            (meta.customType === "bruv-remote-active" || meta.customType === "bruv-remote-attention"),
+        )) ??
+      ctx?.sessionManager?.getBranch?.() ??
+      [];
     for (const entry of entries) {
       if (entry.type === "custom" && entry.customType === "bruv-remote-active") {
         const taskId = (entry.data as { taskId?: unknown })?.taskId;

@@ -143,11 +143,17 @@ jobs:
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ${{ runner.temp }}/bruv-bun-cache
-          key: bun-1.4.2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('bun.lock', 'package.json') }}
-          restore-keys: bun-1.4.2-${{ runner.os }}-${{ runner.arch }}-
-      - name: Install required PTY tooling
+          key: bun-download-v2-1.4.2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('bun.lock', 'package.json') }}
+          restore-keys: bun-download-v2-1.4.2-${{ runner.os }}-${{ runner.arch }}-
+      - name: Cache Linux fixture package downloads
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ runner.temp }}/bruv-apt-cache/*.deb
+          key: ubuntu-24.04-apt-v1-${{ runner.arch }}-${{ hashFiles('scripts/install-ci-linux-tools.sh') }}
+      - name: Install Linux test tooling
         shell: bash
-        run: sudo apt-get update && sudo apt-get install -y tmux ffmpeg
+        timeout-minutes: 5
+        run: bash scripts/install-ci-linux-tools.sh
       - name: Prepare logs
         run: mkdir -p artifacts/release dist/release
       - name: Validate tag matches package version

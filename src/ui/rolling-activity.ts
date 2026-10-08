@@ -16,7 +16,7 @@ import {
   type TuiMouseEvent,
   truncateToWidth,
 } from "@earendil-works/pi-tui";
-import { getDiskBackedBranchRevision, selectDiskBackedEntries } from "../history/session-manager";
+import { getDiskBackedBranchRevision, selectDiskBackedBranchEntries } from "../history/session-manager";
 import { actionLabel } from "./action-label";
 import { clearActivityProjection, getActivityTaskRows, setActivityProjection } from "./activity-projection";
 import { taskRowKey, taskRowsFromDetails, taskStatusSummaryFromDetails } from "./task-rows";
@@ -150,7 +150,7 @@ export class ActivityController {
     const revision = getDiskBackedBranchRevision(manager, membershipEntry);
     if (!revision || this.membershipRevision?.deref() !== revision) {
       this.membership = activityMembership(
-        selectDiskBackedEntries(manager, "branch", membershipEntry) ?? manager.getBranch(),
+        selectDiskBackedBranchEntries(manager, membershipEntry) ?? manager.getBranch(),
       );
       this.membershipRevision = revision ? new WeakRef(revision) : undefined;
     }

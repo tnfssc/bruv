@@ -1,11 +1,7 @@
-import { createClaudeCompatLiveFrontend } from "./live-frontend";
-import { bindNativeTasks } from "./task-binding";
-import { nativeTaskId } from "./task-projection";
 import { randomUUID } from "node:crypto";
-import type { Message } from "@earendil-works/pi-ai";
 import type { AgentMessage } from "@earendil-works/pi-agent-core";
 import { join, resolve } from "node:path";
-import type { Api, ImageContent, Model } from "@earendil-works/pi-ai";
+import type { Api, ImageContent, Message, Model } from "@earendil-works/pi-ai";
 import {
   type AgentSession,
   createAgentSession,
@@ -19,19 +15,23 @@ import {
 import type { TSchema } from "typebox";
 import { Compile } from "typebox/compile";
 import bruvPackage from "../../package.json";
-import { COMPAT_PROTOCOL_VERSION } from "./launch";
 import { T3_MCP_BEARER_ENV, T3_MCP_URL_ENV } from "../delegation-environment";
 import { currentMainOwner } from "../live/main-owner";
 import { assertBruvPiHost } from "../pi-host";
 import { withBruvSystemPrompt } from "../system-prompt";
 import { bindNativeChildExecutable } from "./binding";
 import { createClaudeCompatCommands } from "./commands";
-import { createClaudeCompatHumanControls } from "./human-controls";
-import type { NativeHistory } from "./history";
-import type { InjectedMcpSession } from "./mcp";
-import type { PermissionRequest, PermissionDecision } from "./permissions";
-import type { ClaudeCompatTransport } from "./transport";
 import { type CompatFrame, createClaudeCompatFrontend } from "./frontend";
+import type { NativeHistory } from "./history";
+import { createClaudeCompatHumanControls } from "./human-controls";
+import { COMPAT_PROTOCOL_VERSION } from "./launch";
+import { createClaudeCompatLiveFrontend } from "./live-frontend";
+import type { InjectedMcpSession } from "./mcp";
+import { nativeAssistantCost, nativeAssistantUsage } from "./message-usage";
+import type { PermissionDecision, PermissionRequest } from "./permissions";
+import { bindNativeTasks } from "./task-binding";
+import { writeNativeChildFrame } from "./task-child-journal";
+import type { ClaudeCompatTransport } from "./transport";
 
 export interface CompatUserMessage {
   type: "user";
@@ -80,6 +80,8 @@ export interface ClaudeCompatRuntimeOptions {
   disableSlashCommands?: boolean;
   thinkingLevel?: "off" | "minimal" | "low" | "medium" | "high" | "xhigh" | "max";
   thinkingDisplay?: string;
+  /** Official host --settings fastMode: explicit user premium-tier opt-in. */
+  fastMode?: boolean;
   profilesPath?: string;
   /** The actual enforced policy, not a readiness label. */
   permissionMode?: string;
@@ -188,7 +190,11 @@ function mirrorNativeHistory(
           history.append({
             sourceMessageId: entryId,
             type: native.role,
-            message: native,
+            message: {
+              ...native,
+              ...(message.role === "assistant" ? { id: uuid, usage: nativeAssistantUsage(message) } : {}),
+            },
+            ...(message.role === "assistant" ? nativeAssistantCost(message) : {}),
             timestamp: new Date(message.timestamp).toISOString(),
             uuid,
             ...(parent === undefined ? {} : { parentUuid: parent }),
@@ -352,6 +358,7 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
     sessionId: () => options.nativeSessionId ?? session.sessionId,
     model: () => (session.model ? session.model.provider + "/" + session.model.id : (options.model ?? "")),
   });
+  let nativeFast: ReturnType<typeof import("../agent/native-fast-mode").registerNativeFastMode> | undefined;
   let factories: { name: string; factory: ExtensionFactory; hidden: boolean }[] = [];
   if (!options.auxiliary) {
     const [{ default: tasks }, { default: state }, { default: remote }] = await Promise.all([
@@ -366,6 +373,9 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
           tasks(pi, {
             executablePath: options.executablePath,
             profilesPath: options.profilesPath,
+            onNativeFastMode: (control) => {
+              nativeFast = control;
+            },
             onTaskOwner: (owner) =>
               bindNativeTasks(owner, {
                 root: {
@@ -399,31 +409,12 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
                               ? "max_tokens"
                               : "end_turn",
                         stop_sequence: null,
-                        usage: {
-                          input_tokens: message.usage.input,
-                          output_tokens: message.usage.output,
-                          cache_read_input_tokens: message.usage.cacheRead,
-                          cache_creation_input_tokens: message.usage.cacheWrite,
-                        },
+                        usage: nativeAssistantUsage(message),
                       },
                     },
                   ];
                 },
-                writeChildFrame: async ({ link, entry }, frame) => {
-                  if (!options.history || frame.type === "stream_event") return;
-                  const child = await options.history.child({
-                    taskId: nativeTaskId(link),
-                    sourceSessionId: link.child.sourceSessionId,
-                    sourceCallId: link.launchToolUseId,
-                  });
-                  await child.append({
-                    sourceMessageId: entry.id,
-                    type: frame.type,
-                    message: frame.message,
-                    timestamp: entry.timestamp,
-                    uuid: frame.uuid,
-                  });
-                },
+                writeChildFrame: (source, frame) => writeNativeChildFrame(options.history, source, frame),
                 diagnostic: (message) => options.diagnostic?.(new Error(message)),
               }),
           }),
@@ -622,6 +613,17 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
     throw error;
   }
 
+  if (options.fastMode !== undefined) {
+    try {
+      if (!nativeFast) {
+        if (options.fastMode) throw new Error("Native fast mode is unavailable in this runtime");
+      } else nativeFast.setWithCostConsent(options.fastMode);
+    } catch (error) {
+      await close();
+      throw error;
+    }
+  }
+
   // Bruv's extension installs its ordinary CLI execute-only default at session_start.
   // Native selection belongs to this composition, after those defaults have run.
   const selectedTools = options.auxiliary ? [] : (options.tools ?? ["execute"]);
@@ -683,6 +685,22 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
           },
         }
       : {}),
+    apply_flag_settings: async (message) => {
+      checkOpen();
+      if (!session.isIdle) throw new Error("Cannot change Fast during a running turn; interrupt first");
+      const settings = message.request.settings;
+      if (
+        !settings ||
+        typeof settings !== "object" ||
+        Array.isArray(settings) ||
+        Object.keys(settings).some((key) => key !== "fastMode") ||
+        typeof (settings as Record<string, unknown>).fastMode !== "boolean"
+      )
+        throw new Error("apply_flag_settings supports only boolean fastMode");
+      if (!nativeFast) throw new Error("Native fast mode is unavailable in this runtime");
+      nativeFast.setWithCostConsent((settings as { fastMode: boolean }).fastMode);
+      return {};
+    },
     set_model: async (message) => {
       checkOpen();
       if (!session.isIdle) throw new Error("Cannot change model during a running turn; interrupt first");

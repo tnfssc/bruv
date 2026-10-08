@@ -1,13 +1,13 @@
 import { afterEach, describe, expect, test } from "bun:test";
-import { existsSync } from "node:fs";
 import { randomUUID } from "node:crypto";
-import { mkdir, mkdtemp, readFile, readdir, rm, symlink, writeFile } from "node:fs/promises";
+import { existsSync } from "node:fs";
+import { mkdir, mkdtemp, readdir, readFile, rm, symlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { SessionManager } from "@earendil-works/pi-coding-agent";
 import {
-  NativeHistory,
   importNativeHistory,
+  NativeHistory,
   nativeHistoryToPi,
   nativeProjectKey,
   readNativeHistory,
@@ -186,7 +186,7 @@ describe.skipIf(!existsSync(sdkPath) && process.env.BRUV_REQUIRE_CLAUDE_SDK !== 
           { type: "tool_result", tool_use_id: "actual-tool", content: "already-ran", is_error: false },
         ]),
       );
-      const checkpoint = await history.append(assistant("pi-finish"));
+      const checkpoint = await history.append(assistant("pi-finish", undefined, { costUSD: 0.019 }));
       await history.append(user("pi-excluded", "must not be imported"));
       const child = await history.child({
         taskId: "task_actual",
@@ -209,6 +209,7 @@ describe.skipIf(!existsSync(sdkPath) && process.env.BRUV_REQUIRE_CLAUDE_SDK !== 
       expect(conversation.every((e) => ![u, a, r, checkpoint].includes(e.uuid!))).toBe(true);
       expect(conversation.map((e) => e.parentUuid)).toEqual([null, ...conversation.slice(0, -1).map((e) => e.uuid)]);
       expect(conversation[1]!.bruv?.sourceMessageId).toBe("pi-tool");
+      expect(conversation[3]!.costUSD).toBe(0.019);
       await expect(NativeHistory.open(forkOptions)).rejects.toThrow("import SDK forks");
       const result = await importNativeHistory({ ...forkOptions, sessionDir: join(dir, "new-pi") });
       expect(result.ownership).toBe("imported-history-only");
@@ -523,4 +524,26 @@ describe("history boundaries", () => {
       NativeHistory.resumeImported({ ...options, sourceSessionId: imported.sourceSessionId }, imported.sessionManager),
     ).rejects.toThrow("no longer matches");
   });
+});
+
+test("child writers are reused, validate replay, and reopen body-free identity indexes", async () => {
+  const { history, options } = await fixture();
+  const binding = {
+    taskId: "cached-child",
+    sourceSessionId: "actual-child-source",
+    sourceCallId: "agent-actual-launch",
+  };
+  const [first, second] = await Promise.all([history.child(binding), history.child(binding)]);
+  expect(second).toBe(first);
+  const input = user("first-child-message", "large original ".repeat(1000));
+  const written = await first.appendWithResult(input);
+  expect(written.appended).toBe(true);
+  expect(await second.appendWithResult(input)).toEqual({ uuid: written.uuid, appended: false });
+  const original = await readFile(first.filePath);
+  const root = await NativeHistory.open(options);
+  const reopened = await root.child(binding);
+  expect(await reopened.appendWithResult(input)).toEqual({ uuid: written.uuid, appended: false });
+  expect(await readFile(first.filePath)).toEqual(original);
+  await expect(reopened.append(user("first-child-message", "changed"))).rejects.toThrow("Conflicting replay");
+  await expect(root.child({ ...binding, sourceCallId: "different-launch" })).rejects.toThrow("Conflicting child");
 });

@@ -123,15 +123,22 @@ describe("release automation", () => {
         'echo "BUN_INSTALL_CACHE_DIR=$RUNNER_TEMP/bruv-bun-cache"',
       );
 
-      const caches = job.steps.filter((step) => step.uses?.startsWith("actions/cache@"));
+      const allCaches = job.steps.filter((step) => step.uses?.startsWith("actions/cache@"));
+      expect(allCaches).toHaveLength(2);
+      const apt = allCaches.find((step) => step.with?.path === "${{ runner.temp }}/bruv-apt-cache/*.deb");
+      expect(apt?.with?.key).toBe(
+        "ubuntu-24.04-apt-v1-${{ runner.arch }}-${{ hashFiles('scripts/install-ci-linux-tools.sh') }}",
+      );
+      expect(apt?.with?.["restore-keys"]).toBeUndefined();
+      const caches = allCaches.filter((step) => step.with?.path === "${{ runner.temp }}/bruv-bun-cache");
       expect(caches).toHaveLength(1);
       expect(caches[0]?.with?.path).toBe("${{ runner.temp }}/bruv-bun-cache");
-      expect(caches[0]?.with?.key).toContain("hashFiles('bun.lock', 'package.json')");
+      expect(caches[0]?.with?.key).toBe(
+        "bun-download-v2-1.4.2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('bun.lock', 'package.json') }}",
+      );
       for (const cache of caches) {
         expect(cache.with?.key).toContain("${{ runner.os }}-${{ runner.arch }}");
-        expect(cache.with?.["restore-keys"]).toMatch(
-          /^(bun-1\.4\.2|pnpm-11\.10\.0)-\$\{\{ runner.os \}\}-\$\{\{ runner.arch \}\}-$/,
-        );
+        expect(cache.with?.["restore-keys"]).toBe("bun-download-v2-1.4.2-${{ runner.os }}-${{ runner.arch }}-");
         expect(cache.with?.path).not.toMatch(/node_modules|dist|HOME/);
       }
     }
@@ -142,7 +149,7 @@ describe("release automation", () => {
     expect(() => Bun.YAML.parse(workflow)).not.toThrow();
     expect(workflow).toContain("bun-version: 1.4.2");
     expect(workflow).not.toContain("pnpm/action-setup");
-    expect(workflow).toContain("apt-get install -y tmux");
+    expect(workflow).toContain("bash scripts/install-ci-linux-tools.sh");
     expect(workflow).toContain("run: bun run ci");
     const runner = await read("scripts/ci.sh");
     expect(runner).toContain("bun install --frozen-lockfile");
@@ -178,9 +185,9 @@ describe("release automation", () => {
   test("release installs ffmpeg before the shared ordinary Linux gate", async () => {
     const workflow = await readWorkflow("release");
     const release = workflow.jobs.release!;
-    const prerequisites = namedStep(release, "Install required PTY tooling");
+    const prerequisites = namedStep(release, "Install Linux test tooling");
     const ordinaryGate = namedStep(release, "Shared ordinary Linux gate");
-    expect(prerequisites.run).toContain("apt-get install -y tmux ffmpeg");
+    expect(prerequisites.run).toBe("bash scripts/install-ci-linux-tools.sh");
     expect(release.steps.indexOf(prerequisites)).toBeLessThan(release.steps.indexOf(ordinaryGate));
   });
 
@@ -444,7 +451,9 @@ test("Linux needs no retired migration history; feedback retains its baseline hi
   };
   expect(checkout(workflow.jobs.test!).with?.["fetch-depth"] ?? 1).toBe(1);
   expect(checkout(workflow.jobs.feedback!).with?.["fetch-depth"]).toBe(0);
-  expect(namedStep(workflow.jobs.test!, "Install required PTY tooling").run).toContain("command -v tmux >/dev/null ||");
+  expect(namedStep(workflow.jobs.test!, "Install Linux test tooling").run).toBe(
+    "bash scripts/install-ci-linux-tools.sh --native-audio",
+  );
 });
 
 test("release verifies thin launcher dispatch and the actual Android interpreter before staging", async () => {

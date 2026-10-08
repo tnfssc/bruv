@@ -1,3 +1,5 @@
+import { selectDiskBackedBranchEntries } from "../history/session-manager";
+import { GOAL_ENTRY_TYPE } from "./store";
 import { randomUUID } from "node:crypto";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import goalGuidance from "../prompts/goal.md" with { type: "text" };
@@ -125,7 +127,15 @@ export function registerGoalMode(
     const manager = ctx.sessionManager as object | undefined;
     const leaf = leafOf(ctx);
     if (!store || loadedManager !== manager || (leaf !== undefined && leaf !== loadedLeaf)) {
-      const entries = ctx.sessionManager?.getBranch?.() ?? ctx.sessionManager?.getEntries() ?? [];
+      const entries =
+        (ctx.sessionManager &&
+          selectDiskBackedBranchEntries(
+            ctx.sessionManager,
+            (meta) => meta.type === "custom" && meta.customType === GOAL_ENTRY_TYPE,
+          )) ??
+        ctx.sessionManager?.getBranch?.() ??
+        ctx.sessionManager?.getEntries() ??
+        [];
       const candidate = new GoalStore(
         (type, data) => {
           pi.appendEntry(type, data);

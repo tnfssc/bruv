@@ -1,3 +1,4 @@
+import { AuthStorage } from "../node_modules/@earendil-works/pi-coding-agent/dist/core/auth-storage.js";
 import { expect, test } from "bun:test";
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -8,6 +9,7 @@ import * as codex from "@earendil-works/pi-ai/api/openai-codex-responses";
 import * as openai from "@earendil-works/pi-ai/api/openai-responses";
 import { getModel } from "@earendil-works/pi-ai/compat";
 import {
+  ModelRegistry,
   createAgentSession,
   DefaultResourceLoader,
   type InlineExtension,
@@ -30,9 +32,9 @@ import { inspectDiagnostics } from "../src/diagnostics";
 import { restoreLeaf } from "../src/session/restore-leaf";
 
 // The seam is fake, but serialization runs through the actual provider adapters.
-function providerRuntime() {
+function providerRuntime(oauth?: boolean) {
   return {
-    isUsingOAuth: (provider: string) => provider === "openai-codex",
+    isUsingOAuth: (provider: string) => oauth ?? provider === "openai-codex",
     async prepareRequest(requestModel: any, requestOptions: any) {
       return {
         provider: {
@@ -54,6 +56,7 @@ function harness(
   model: any,
   options: {
     mode?: string;
+    oauth?: boolean;
     accept?: boolean;
     sessionId?: string;
     confirm?: () => Promise<boolean>;
@@ -88,7 +91,7 @@ function harness(
     },
     appendEntry,
   } as any;
-  const runtime = options.runtime ?? providerRuntime();
+  const runtime = options.runtime ?? providerRuntime(options.oauth);
   const ctx = {
     mode: options.mode ?? "tui",
     model,
@@ -112,6 +115,7 @@ function harness(
     return value;
   };
   return {
+    runtime,
     command,
     ctx,
     notices,
@@ -155,7 +159,7 @@ async function createOfflineSession(
   });
   runtime.hasConfiguredAuth = () => true;
   runtime.isUsingOAuth = () => options.oauth ?? false;
-  runtime.getAuth = (async () => ({ auth: { apiKey: "offline-key" } })) as any;
+  runtime.getAuth = (async () => ({ auth: { apiKey: "sk-offline-key" } })) as any;
   return (
     await createAgentSession({
       cwd: dir,
@@ -199,6 +203,8 @@ async function wirePayload(
   h: ReturnType<typeof harness>,
   model = h.ctx.model,
   options: {
+    apiKey?: string;
+    headers?: Record<string, string>;
     onPayload?: (payload: any) => any;
     onProviderStreamEvent?: (event: any, model: any) => void;
     sessionId?: string;
@@ -211,8 +217,9 @@ async function wirePayload(
       model,
       { systemPrompt: "sys", messages: [{ role: "user", content: "hi", timestamp: 1 }], tools: [] },
       {
-        apiKey: model.provider === "openai-codex" ? CODEX_TOKEN : "offline-key",
+        apiKey: options.apiKey ?? (h.ctx.modelRegistry.isUsingOAuth(model) ? CODEX_TOKEN : "sk-offline-key"),
         transport: "sse",
+        headers: options.headers,
         sessionId: options.sessionId ?? h.ctx.sessionManager.getSessionId(),
         onPayload: options.onPayload,
         onProviderStreamEvent: options.onProviderStreamEvent,
@@ -343,11 +350,11 @@ test("fast mode rejects the wrong authentication surface", async () => {
   expect(codex.notices.at(-1).message).toContain("ChatGPT OAuth");
 
   const apiModel = getModel("openai", "gpt-5.3-codex")!;
-  const api = harness(apiModel, { mode: "print", accept: true });
-  api.ctx.modelRegistry.isUsingOAuth = () => true;
+  const api = harness(apiModel, { mode: "print", accept: true, oauth: true });
   await api.command.handler("on", api.ctx);
-  expect(api.entries).toEqual([]);
-  expect(api.notices.at(-1).message).toContain("API-key auth surface");
+  expect(api.entries.at(-1).data).toMatchObject({ enabled: true, oauth: true });
+  expect(nativeFastEnabled(api.ctx)).toBe(true);
+  expect((await wirePayload(api)).service_tier).toBe("priority");
 });
 
 test("/fast is safe status; on requires consent and state is session/model/branch bound", async () => {
@@ -382,13 +389,14 @@ test("enabling and restoring fast fail visibly without the pinned runtime seam",
   await h.command.handler("on", h.ctx);
   expect(h.entries).toEqual([]);
   expect(h.notices.at(-1)).toMatchObject({ kind: "error" });
-  expect(h.notices.at(-1).message).toContain("pinned Pi 0.85");
+  expect(h.notices.at(-1).message).toContain("pinned Pi 1.0.3");
 
   h.entries.push({
     type: "custom",
     customType: NATIVE_FAST_ENTRY,
     data: {
-      version: 1,
+      version: 2,
+      oauth: false,
       sessionId: "session-a",
       provider: model.provider,
       model: model.id,
@@ -462,7 +470,7 @@ test("actual Pi streamSimple OpenAI serialization carries Codex-compatible prior
       model,
       { systemPrompt: "sys", messages: [{ role: "user", content: "hi", timestamp: 1 }], tools: [] },
       {
-        apiKey: "offline-key",
+        apiKey: "sk-offline-key",
         reasoning: "low",
         fetch: (async (_url: any, init: any) => {
           body = JSON.parse(init.body);
@@ -588,14 +596,15 @@ test("actual ModelRuntime request snapshot ignores model changes during delayed 
       runtime.getAuth = (async () => {
         preparing.resolve();
         await resumeAuth.promise;
-        return { auth: { apiKey: "offline-key" } };
+        return { auth: { apiKey: "sk-offline-key" } };
       }) as any;
       const h = harness(base, { runtime });
       h.entries.push({
         type: "custom",
         customType: NATIVE_FAST_ENTRY,
         data: {
-          version: 1,
+          version: 2,
+          oauth: false,
           sessionId: "session-a",
           provider: authorizedModel.provider,
           model: authorizedModel.id,
@@ -640,7 +649,8 @@ test("real AgentSession ModelRuntime guard survives swallowed hook throws and st
     const model = getModel("openai", "gpt-5.3-codex")!;
     const manager = SessionManager.inMemory(dir);
     manager.appendCustomEntry(NATIVE_FAST_ENTRY, {
-      version: 1,
+      version: 2,
+      oauth: false,
       sessionId: manager.getSessionId(),
       provider: model.provider,
       model: model.id,
@@ -698,7 +708,8 @@ for (const scenario of ["corrupt-record", "wrong-auth", "unsupported-endpoint"] 
         scenario === "unsupported-endpoint" ? { ...documented, baseUrl: "https://proxy.example/v1" } : documented;
       const manager = SessionManager.inMemory(dir);
       manager.appendCustomEntry(NATIVE_FAST_ENTRY, {
-        version: scenario === "corrupt-record" ? 99 : 1,
+        version: scenario === "corrupt-record" ? 99 : 2,
+        oauth: false,
         sessionId: manager.getSessionId(),
         provider: model.provider,
         model: model.id,
@@ -725,8 +736,8 @@ for (const scenario of ["corrupt-record", "wrong-auth", "unsupported-endpoint"] 
 
 test("fast refusals and the concrete tier guard emit privacy-bounded static diagnostics", async () => {
   const model = getModel("openai", "gpt-5.3-codex")!;
-  const auth = harness(model, { mode: "print", accept: true });
-  auth.ctx.modelRegistry.isUsingOAuth = () => true;
+  const auth = harness(getModel("openai-codex", "gpt-5.5")!, { mode: "print", accept: true });
+  auth.ctx.modelRegistry.isUsingOAuth = () => false;
   await auth.command.handler("on", auth.ctx);
   expect(inspectDiagnostics(auth.ctx.sessionManager).records.at(-1)).toMatchObject({
     component: "fast",
@@ -787,7 +798,8 @@ test("append-then-throw while opting out keeps prior premium consent unusable", 
   const manager = SessionManager.inMemory();
   const model = getModel("openai", "gpt-5.3-codex")!;
   manager.appendCustomEntry(NATIVE_FAST_ENTRY, {
-    version: 1,
+    version: 2,
+    oauth: false,
     sessionId: manager.getSessionId(),
     provider: model.provider,
     model: model.id,
@@ -948,7 +960,8 @@ test("disabled fast inheritance leaves model routing and auth untouched", () => 
     type: "custom",
     customType: NATIVE_FAST_ENTRY,
     data: {
-      version: 1,
+      version: 2,
+      oauth: false,
       sessionId: "session-a",
       provider: model.provider,
       model: model.id,
@@ -960,4 +973,233 @@ test("disabled fast inheritance leaves model routing and auth untouched", () => 
   expect(nativeFastEnabled(h.ctx)).toBe(false);
   h.entries[0].data.enabled = true;
   expect(nativeFastEnabled(h.ctx)).toBe(false);
+});
+
+for (const oauth of [false, true]) {
+  test(
+    "canonical OpenAI " + (oauth ? "ChatGPT login" : "API key") + " uses priority Responses and standard compaction",
+    async () => {
+      const credentials = AuthStorage.inMemory({
+        openai: oauth
+          ? { type: "oauth", access: CODEX_TOKEN, refresh: "offline-refresh", expires: Date.now() + 3_600_000 }
+          : { type: "api_key", key: "sk-offline-key" },
+      });
+      const runtime = await ModelRuntime.create({ credentials, modelsPath: null, allowModelNetwork: false });
+      const registry = new ModelRegistry(runtime);
+      const model = registry.find("openai", "gpt-5.3-codex")!;
+      expect(model.api).toBe("openai-responses");
+      expect(model.baseUrl).toBe("https://api.openai.com/v1");
+      expect(registry.isUsingOAuth(model)).toBe(oauth);
+      const h = harness(model, { mode: "print", accept: true });
+      h.ctx.modelRegistry = registry;
+      let body: any;
+      let calls = 0;
+      const request = () =>
+        runtime
+          .streamSimple(
+            model,
+            {
+              systemPrompt: "keep-system",
+              messages: [{ role: "user", content: "hi", timestamp: 1 }],
+              tools: [{ name: "lookup", description: "Look up", parameters: { type: "object", properties: {} } }],
+            },
+            {
+              sessionId: "session-a",
+              maxTokens: 100,
+              temperature: 0.5,
+              fetch: (async (url: any, init: any) => {
+                calls++;
+                expect(String(url)).toBe("https://api.openai.com/v1/responses");
+                const headers = new Headers(init.headers);
+                expect(headers.get("authorization")).toBe("Bearer " + (oauth ? CODEX_TOKEN : "sk-offline-key"));
+                expect(headers.has("chatgpt-account-id")).toBe(false);
+                body = JSON.parse(init.body);
+                return sse(body.service_tier);
+              }) as typeof fetch,
+            },
+          )
+          .result();
+      try {
+        await h.command.handler("on", h.ctx);
+        expect(h.entries.at(-1).data).toMatchObject({ version: 2, oauth, enabled: true, costAcknowledged: true });
+        expect(nativeFastEnabled(h.ctx)).toBe(true);
+        const response = await request();
+        expect(response.stopReason).toBe("stop");
+        expect(body.service_tier).toBe("priority");
+        expect(body.input).toContainEqual({ role: "developer", content: "keep-system" });
+        expect(body.tools).toMatchObject([{ type: "function", name: "lookup" }]);
+        expect(body.max_output_tokens).toBe(oauth ? undefined : 100);
+        expect(body.temperature).toBe(oauth ? undefined : 0.5);
+        // Pi still returns token-catalog estimates on subscription auth, not account credits.
+        expect(response.usage.cost.total).toBeCloseTo(((4 * model.cost.input + model.cost.output) / 1_000_000) * 2, 12);
+        await withStandardProviderTier(request);
+        expect(body.service_tier).toBe("default");
+        expect(nativeFastEnabled(h.ctx)).toBe(true);
+        await h.command.handler("off", h.ctx);
+        await request();
+        expect(body.service_tier).toBe("default");
+        expect(nativeFastEnabled(h.ctx)).toBe(false);
+        expect(calls).toBe(3);
+      } finally {
+        await h.emit("session_shutdown");
+      }
+    },
+  );
+
+  test("canonical consent wording identifies " + (oauth ? "ChatGPT subscription" : "API pricing"), async () => {
+    const h = harness(getModel("openai", "gpt-5.3-codex")!, { oauth });
+    let prompt = "";
+    h.ctx.ui.confirm = async (_title: string, text: string) => {
+      prompt = text;
+      return true;
+    };
+    await h.command.handler("on", h.ctx);
+    expect(prompt).toContain(oauth ? "premium ChatGPT subscription usage/credits" : "premium API token pricing");
+    expect(prompt).not.toContain(oauth ? "API token pricing" : "ChatGPT");
+    expect(prompt).toContain("new supported subagents");
+    expect(prompt).toContain("Provider billing is authoritative");
+  });
+
+  test(
+    "canonical auth change during confirmation refuses " + (oauth ? "subscription" : "API") + " consent",
+    async () => {
+      const h = harness(getModel("openai", "gpt-5.3-codex")!, { oauth });
+      h.ctx.ui.confirm = async () => {
+        h.runtime.isUsingOAuth = () => !oauth;
+        return true;
+      };
+      await h.command.handler("on", h.ctx);
+      expect(h.entries).toEqual([]);
+      expect(h.notices.at(-1).message).toContain("authentication surface changed");
+      expect(nativeFastEnabled(h.ctx)).toBe(false);
+    },
+  );
+
+  test(
+    "canonical resolved credential overrides cannot change " + (oauth ? "subscription" : "API") + " billing consent",
+    async () => {
+      const h = harness(getModel("openai", "gpt-5.3-codex")!, { oauth, mode: "print", accept: true });
+      await h.command.handler("on", h.ctx);
+      expect(await wirePayload(h, h.ctx.model, { apiKey: oauth ? "sk-override-key" : CODEX_TOKEN })).toBeUndefined();
+      expect(inspectDiagnostics(h.ctx.sessionManager).records.at(-1)).toMatchObject({
+        code: "identity_stale",
+        outcome: "blocked",
+        dispatch: "none",
+      });
+      expect(
+        await wirePayload(h, h.ctx.model, {
+          headers: { Authorization: "Bearer " + (oauth ? "sk-override-key" : CODEX_TOKEN) },
+        }),
+      ).toBeUndefined();
+      expect(
+        await wirePayload(h, { ...h.ctx.model, headers: { authorization: "Bearer other-account" } }),
+      ).toBeUndefined();
+      expect((await wirePayload(h)).service_tier).toBe("priority");
+      h.runtime.isUsingOAuth = () => !oauth;
+      expect(nativeFastEnabled(h.ctx)).toBe(false);
+      expect(await wirePayload(h)).toBeUndefined();
+      await h.command.handler("on", h.ctx);
+      expect(h.entries.at(-1).data.oauth).toBe(!oauth);
+      expect((await wirePayload(h)).service_tier).toBe("priority");
+    },
+  );
+}
+
+test("unbound pre-upgrade consent fails closed and can be explicitly renewed", async () => {
+  const model = getModel("openai", "gpt-5.3-codex")!;
+  const h = harness(model, { oauth: true, mode: "print", accept: true });
+  h.entries.push({
+    type: "custom",
+    customType: NATIVE_FAST_ENTRY,
+    data: {
+      version: 1,
+      sessionId: "session-a",
+      provider: model.provider,
+      model: model.id,
+      enabled: true,
+      costAcknowledged: true,
+      timestamp: 1,
+    },
+  });
+  expect(nativeFastEnabled(h.ctx)).toBe(false);
+  await h.emit("session_start");
+  expect(await wirePayload(h)).toBeUndefined();
+  await h.command.handler("on", h.ctx);
+  expect((await wirePayload(h)).service_tier).toBe("priority");
+});
+
+test("new ChatGPT OAuth inheritance authorizes the child's own session and billing surface", async () => {
+  const savedFast = process.env[NATIVE_FAST_CHILD_ENV];
+  const savedDepth = process.env.BRUV_SUBAGENT_DEPTH;
+  try {
+    const model = getModel("openai", "gpt-5.3-codex")!;
+    const parent = harness(model, { mode: "print", accept: true });
+    await parent.command.handler("on", parent.ctx);
+    process.env[NATIVE_FAST_CHILD_ENV] = nativeFastEnabled(parent.ctx) ? "1" : "0";
+    process.env.BRUV_SUBAGENT_DEPTH = "1";
+    const child = harness(model, { oauth: true, mode: "json", sessionId: "oauth-child" });
+    await child.emit("session_start");
+    expect(child.entries[0].data).toMatchObject({
+      version: 2,
+      sessionId: "oauth-child",
+      oauth: true,
+      enabled: true,
+      costAcknowledged: true,
+    });
+    expect(nativeFastEnabled(child.ctx)).toBe(true);
+    expect((await wirePayload(child)).service_tier).toBe("priority");
+    expect(await wirePayload(child, model, { sessionId: "session-a" })).not.toHaveProperty("service_tier");
+    await child.command.handler("off", child.ctx);
+    expect((await wirePayload(child)).service_tier).toBe("default");
+    expect(nativeFastEnabled(parent.ctx)).toBe(true);
+    process.env[NATIVE_FAST_CHILD_ENV] = "1";
+    process.env.BRUV_SUBAGENT_DEPTH = "0";
+    const root = harness(model, { oauth: true });
+    await root.emit("session_start");
+    expect(root.entries).toEqual([]);
+  } finally {
+    if (savedFast === undefined) delete process.env[NATIVE_FAST_CHILD_ENV];
+    else process.env[NATIVE_FAST_CHILD_ENV] = savedFast;
+    if (savedDepth === undefined) delete process.env.BRUV_SUBAGENT_DEPTH;
+    else process.env.BRUV_SUBAGENT_DEPTH = savedDepth;
+  }
+});
+
+test("canonical OAuth guards reject resolved proxy endpoints, including official-looking trailing slash", async () => {
+  const runtime = await ModelRuntime.create({
+    credentials: AuthStorage.inMemory({
+      openai: { type: "oauth", access: CODEX_TOKEN, refresh: "offline-refresh", expires: Date.now() + 3_600_000 },
+    }),
+    modelsPath: null,
+    allowModelNetwork: false,
+  });
+  const registry = new ModelRegistry(runtime);
+  const model = registry.find("openai", "gpt-5.3-codex")!;
+  const h = harness(model, { mode: "print", accept: true });
+  h.ctx.modelRegistry = registry;
+  await h.command.handler("on", h.ctx);
+  let calls = 0;
+  try {
+    for (const baseUrl of ["https://proxy.example/v1", "https://api.openai.com/v1/"]) {
+      runtime.getAuth = (async () => ({ auth: { apiKey: CODEX_TOKEN, baseUrl } })) as any;
+      const response = await runtime
+        .streamSimple(
+          model,
+          { messages: [{ role: "user", content: "hi", timestamp: 1 }] },
+          {
+            sessionId: "session-a",
+            fetch: (async (_url: any, _init: any) => {
+              calls++;
+              return sse("priority");
+            }) as typeof fetch,
+          },
+        )
+        .result();
+      expect(response.stopReason).toBe("error");
+      expect(response.errorMessage).toContain("endpoint is not authorized");
+    }
+    expect(calls).toBe(0);
+  } finally {
+    await h.emit("session_shutdown");
+  }
 });

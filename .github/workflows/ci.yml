@@ -110,19 +110,17 @@ jobs:
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ${{ runner.temp }}/bruv-bun-cache
-          key: bun-1.4.2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('bun.lock', 'package.json') }}
-          restore-keys: bun-1.4.2-${{ runner.os }}-${{ runner.arch }}-
-      - name: Install required PTY tooling
+          key: bun-download-v2-1.4.2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('bun.lock', 'package.json') }}
+          restore-keys: bun-download-v2-1.4.2-${{ runner.os }}-${{ runner.arch }}-
+      - name: Cache Linux fixture package downloads
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ runner.temp }}/bruv-apt-cache/*.deb
+          key: ubuntu-24.04-apt-v1-${{ runner.arch }}-${{ hashFiles('scripts/install-ci-linux-tools.sh') }}
+      - name: Install Linux test tooling
         shell: bash
-        run: |
-          command -v tmux >/dev/null || { sudo apt-get update && sudo apt-get install -y tmux; }
-          tmux -V
-          echo "CPU slots: $(getconf _NPROCESSORS_ONLN)"
-      - name: Install required audio fixture tooling
-        shell: bash
-        run: |
-          command -v ffmpeg >/dev/null || { sudo apt-get update && sudo apt-get install -y ffmpeg; }
-          ffmpeg -version
+        timeout-minutes: 5
+        run: bash scripts/install-ci-linux-tools.sh --native-audio
       - name: Sanitized, device-free capture-origin tests
         shell: bash
         run: |
@@ -130,11 +128,6 @@ jobs:
           /tmp/live-capture-gate-test
           clang++ -std=c++17 -Wall -Wextra -Werror -fsanitize=address,undefined native/live-linux/tests/capture-gate.cpp -o /tmp/live-linux-capture-gate-test
           /tmp/live-linux-capture-gate-test
-      - name: Install isolated native audio fixture tooling
-        shell: bash
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends clang pkg-config meson ninja-build libabsl-dev libpulse-dev libjson-c-dev libglib2.0-dev pulseaudio pulseaudio-utils
       - name: Capture-origin protocol in private Pulse fixture (no hardware)
         shell: bash
         timeout-minutes: 8
@@ -212,8 +205,8 @@ jobs:
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ${{ runner.temp }}/bruv-bun-cache
-          key: bun-1.4.2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('bun.lock', 'package.json') }}
-          restore-keys: bun-1.4.2-${{ runner.os }}-${{ runner.arch }}-
+          key: bun-download-v2-1.4.2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('bun.lock', 'package.json') }}
+          restore-keys: bun-download-v2-1.4.2-${{ runner.os }}-${{ runner.arch }}-
       - name: Install required PTY tooling
         run: |
           command -v tmux >/dev/null || brew install tmux

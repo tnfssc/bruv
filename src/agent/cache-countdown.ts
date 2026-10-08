@@ -1,3 +1,4 @@
+import { visitDiskBackedBranch } from "../history/session-manager";
 import { homedir } from "node:os";
 import { dirname, join } from "node:path";
 import { mkdir, readFile, rename, unlink, writeFile } from "node:fs/promises";
@@ -146,15 +147,27 @@ export class CacheCountdown {
     const manager = ctx.sessionManager as typeof ctx.sessionManager & {
       getBranch?: () => ReturnType<typeof ctx.sessionManager.getEntries>;
     };
-    for (const entry of manager.getBranch?.() ?? manager.getEntries()) {
-      // A shake changes the serialized prompt prefix. Do not display a TTL for
-      // the pre-shake request after resume; later observed calls repopulate it.
-      if (entry.type === "custom" && entry.customType === "bruv-manual-shake") this.calls.clear();
-      else if (entry.type === "custom" && entry.customType === CACHE_CALL_ENTRY && validCall(entry.data)) {
+    const indexed = visitDiskBackedBranch(manager, (meta) => {
+      if (meta.type !== "custom") return;
+      // Newest-first: the latest shake excludes all earlier observations.
+      if (meta.customType === "bruv-manual-shake") return false;
+      if (meta.customType !== CACHE_CALL_ENTRY) return;
+      const entry = manager.getEntry(meta.id);
+      if (entry?.type === "custom" && validCall(entry.data)) {
         const key = entry.data.provider + "/" + entry.data.model;
         this.calls.set(key, Math.max(this.calls.get(key) ?? 0, entry.data.timestamp));
       }
-    }
+    });
+    if (indexed === undefined)
+      for (const entry of manager.getBranch?.() ?? manager.getEntries()) {
+        // A shake changes the serialized prompt prefix. Do not display a TTL for
+        // the pre-shake request after resume; later observed calls repopulate it.
+        if (entry.type === "custom" && entry.customType === "bruv-manual-shake") this.calls.clear();
+        else if (entry.type === "custom" && entry.customType === CACHE_CALL_ENTRY && validCall(entry.data)) {
+          const key = entry.data.provider + "/" + entry.data.model;
+          this.calls.set(key, Math.max(this.calls.get(key) ?? 0, entry.data.timestamp));
+        }
+      }
     this.changed();
   }
   record(pi: ExtensionAPI, model: Pick<Model<any>, "provider" | "id"> | undefined, timestamp = this.now()) {

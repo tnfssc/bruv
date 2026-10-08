@@ -112,6 +112,9 @@ const seams = {
   setupEditorSubmitHandler() {
     events.push("submit:ready");
   },
+  // Optional host image tooling can request an unrelated asynchronous redraw.
+  // Keep this fixture focused on grammar readiness and transcript invalidation.
+  ensurePngTranscoder() {},
   async rebindCurrentSession() {
     events.push("rebind:start");
     await rebind.promise;

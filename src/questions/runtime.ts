@@ -1,6 +1,6 @@
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { currentMainToolOwner } from "../live/main-owner";
-import { QuestionService, type Question } from "./service";
+import { QuestionService, questionBranchIds, type Question } from "./service";
 import { RemoteQuestionBridge, observeRemoteQuestions, type RemoteQuestionClient } from "../remote/question-bridge";
 import type { RemoteState } from "../remote/client";
 import type { QuestionCommands } from "./extension";
@@ -194,7 +194,7 @@ class ParentQuestionContinuations {
       item.epoch === this.epoch &&
       item.manager === ctx.sessionManager &&
       item.question.owner.sessionId === ctx.sessionManager.getSessionId() &&
-      (!item.leaf || ctx.sessionManager.getBranch().some((entry) => entry.id === item.leaf))
+      (!item.leaf || questionBranchIds(ctx.sessionManager).includes(item.leaf))
     );
   }
 
