@@ -1529,6 +1529,15 @@
         "branch": "bruv/pr45-judge-3-live-native-audio-focuses-7d4535af",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
+      },
+      {
+        "id": "task_7ae37e7d",
+        "stage": "judge",
+        "focus": ["tests/fixtures/live-offline-model.ts"],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_7ae37e7d",
+        "branch": "bruv/pr45-judge-1-live-native-audio-focuses-7ae37e7d",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
       }
     ]
   },
