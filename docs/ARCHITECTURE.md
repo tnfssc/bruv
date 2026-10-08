@@ -45,7 +45,9 @@ Keep historical `git show COMMIT:old/path` references intact. They identify Git 
 - `native/` owns native source and native-language tests.
 - `tests/` is the recursive deterministic test root. Feature tests, probes and fixtures stay with their owner. Shared helpers have one home; whole-repo contracts stay at the root. Tooling tests belong here too, not under `scripts/`.
 - `docs/releases/` holds versioned release notes. `licenses/third-party/` holds license inputs.
-- `dist/`, `runtime-assets/`, `.cache/` and `artifacts/` are generated, ignored outputs—not alternate source homes.
+- `dist/` holds disposable build output, including rebuildable `dist/runtime-assets/` compile inputs. The binaries embed those assets; release packaging selects binaries and notices, not the staging directory.
+- Root `artifacts/` holds retained run evidence outside build/distribution staging; `.cache/` holds local caches. Both are ignored, not alternate source homes. Builds do not clean retained evidence.
+- Old root `runtime-assets/` remains ignored to preserve existing local data, but maintained consumers use only `dist/runtime-assets/`.
 
 Typecheck and lint must still cover maintained code after a move. Tests must still be discovered.
 
