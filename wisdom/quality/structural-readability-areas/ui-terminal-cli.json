@@ -3502,11 +3502,11 @@
       "integrationState": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_beae5cf1",
+        "primaryCommit": "92efca3ca0e7b4499e0311c4f5e0edf462ba5aa8",
         "judgeIds": [],
-        "sourceCommit": "c4af41c02ba55a977c5497737eb88ebdee73bbfc",
-        "state": "needs-primary",
+        "sourceCommit": "92efca3ca0e7b4499e0311c4f5e0edf462ba5aa8",
+        "state": "needs-judge",
         "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
       }
     },
@@ -3836,11 +3836,11 @@
       "integrationState": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_beae5cf1",
+        "primaryCommit": "92efca3ca0e7b4499e0311c4f5e0edf462ba5aa8",
         "judgeIds": [],
-        "sourceCommit": "53fb4d9732dcf0c337b797b05a104199ccf1a273",
-        "state": "needs-primary",
+        "sourceCommit": "92efca3ca0e7b4499e0311c4f5e0edf462ba5aa8",
+        "state": "needs-judge",
         "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
       }
     },
@@ -3854,11 +3854,11 @@
       "integrationState": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_beae5cf1",
+        "primaryCommit": "92efca3ca0e7b4499e0311c4f5e0edf462ba5aa8",
         "judgeIds": [],
-        "sourceCommit": "53fb4d9732dcf0c337b797b05a104199ccf1a273",
-        "state": "needs-primary",
+        "sourceCommit": "92efca3ca0e7b4499e0311c4f5e0edf462ba5aa8",
+        "state": "needs-judge",
         "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees. Retained uncommitted candidate(s): task_09b8c468 blob 3a7ad4e15c5f409cb3944f1baa467649f819a756 in /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_09b8c468. Not importable or accepted."
       }
     },

@@ -14919,13 +14919,33 @@
       "initialBlob": "06e1ab4b62941e35f3b67aad7f3e7097f63d15e7",
       "status": "pending",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_beae5cf1",
+      "primaryCommit": "92efca3ca0e7b4499e0311c4f5e0edf462ba5aa8",
       "judgeIds": [],
-      "sourceCommit": "c4af41c02ba55a977c5497737eb88ebdee73bbfc",
+      "sourceCommit": "92efca3ca0e7b4499e0311c4f5e0edf462ba5aa8",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
-      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
+      "primaryBase": "1c758b0f3ae1cca1640b8ff2625e4e55455bb589",
+      "primaryResult": "Keep tests/startup.test.ts byte-identical (06e1ab4b62941e35f3b67aad7f3e7097f63d15e7). Traced src/cli.ts install/finally restoration, src/ui/startup.ts guarded getter/init restorers and editor identity/container replacement, and SDK settings storage/reload plus native onSubmit-before-paint wiring. Draft transfer, autocomplete settings, first visible line, default/custom identity, idempotent init, onSubmit ownership and persistence checks already sit beside their governing actions. Reconciliation has no dedicated candidate/judge/rejection for this focus; named candidate is the unchanged starting blob. No import was needed. The batch source scope below concerns only the two separately listed performance focuses and their shared process fixture.",
+      "primaryPaths": [
+        "tests/helpers/terminal-perf-process.ts",
+        "tests/terminal-perf-cli.test.ts",
+        "tests/terminal-perf-navigation.test.ts"
+      ],
+      "primaryChecks": [
+        "Read complete focus sources, exact preserved candidate blobs, assigned reconciliation rows and relevant production/SDK seams; no tests, setup or builds.",
+        "Reviewed filesystem/network effects: child fixture owns mkdtemp HOME/XDG config/cache/data/state/SDK/TMPDIR; subprocess uses explicit argv/env and repository cwd; no credential environment forwarded. Existing history disposal only removes its own mkdtemp root. Offline SDK forbids fetch/provider use and disables resource discovery; not executed.",
+        "Repository Biome format --write via node:child_process argv, only the three changed paths, exit 0 (no fixes); retained fresh fixture /tmp/pr45-perf-primary-format-hKvQui with provenance.json naming durable workspace and argv.",
+        "git diff --check passed; source diff manually reviewed. Assertion-expression comparison against preserved candidate sources passed (normalizing whitespace and CLI code→exitCode only); this is preservation support, not a readability verdict.",
+        "Source-only commit contains exactly the three listed changedPaths; startup source remains exact preserved blob."
+      ],
+      "primaryLimits": [
+        "No tests/setup/build/typecheck run. Parent owns audited isolated runtime gates and fresh independent judgments; reduced child environment and retained fixture behavior remain runtime-unverified.",
+        "No auth/device/provider/credential probing, delegation, user-data mutation, cleanup commands, dependency changes, old-worktree modifications, merge/push/PR/publication, or wisdom edits.",
+        "Test child roots will be retained with prefix bruv-terminal-perf-process-; fixture provenance is the committed tests/helpers/terminal-perf-process.ts blob in this durable worktree. Existing workload-owned temporary history cleanup is unchanged and was not executed.",
+        "changedPaths records the complete coherent batch source scope for every decision, including the unchanged startup focus; it does not mean startup bytes changed."
+      ]
     },
     {
       "file": "tests/stop-work.test.ts",
@@ -15836,26 +15856,66 @@
       "initialBlob": "c8b2c787299512988880a71e71da14e912c2ae6e",
       "status": "pending",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_beae5cf1",
+      "primaryCommit": "92efca3ca0e7b4499e0311c4f5e0edf462ba5aa8",
       "judgeIds": [],
-      "sourceCommit": "53fb4d9732dcf0c337b797b05a104199ccf1a273",
+      "sourceCommit": "92efca3ca0e7b4499e0311c4f5e0edf462ba5aa8",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
-      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
+      "primaryBase": "1c758b0f3ae1cca1640b8ff2625e4e55455bb589",
+      "primaryResult": "Introduce a narrowly scoped shared process fixture owning argv/cwd, an explicit minimal environment, mkdtemp HOME/config/SDK and temporary paths, and exit plus both pipe drains. The test creates one fixture, launches its CLI actions through that owner and writes all artifacts beneath its retained root. Removed only the test report-root deletion, not any assertion. Listing, strict budget exit=1 and frames/work/hashes, HTML/trace artifacts, saved baseline comparison, new budget and invalid-case exit=2 remain visible in the original action order. The helper owns actual process completion rather than generic context; no new report abstraction. Read terminal-perf.ts main/measure and artifacts.ts to distinguish invalid-case exit, impossible-budget exit after artifacts, and report-only writing. Reconciliation records no dedicated verdict/rejection; preserved named candidate matched starting focus blob c8b2c787299512988880a71e71da14e912c2ae6e.",
+      "primaryPaths": [
+        "tests/helpers/terminal-perf-process.ts",
+        "tests/terminal-perf-cli.test.ts",
+        "tests/terminal-perf-navigation.test.ts"
+      ],
+      "primaryChecks": [
+        "Read complete focus sources, exact preserved candidate blobs, assigned reconciliation rows and relevant production/SDK seams; no tests, setup or builds.",
+        "Reviewed filesystem/network effects: child fixture owns mkdtemp HOME/XDG config/cache/data/state/SDK/TMPDIR; subprocess uses explicit argv/env and repository cwd; no credential environment forwarded. Existing history disposal only removes its own mkdtemp root. Offline SDK forbids fetch/provider use and disables resource discovery; not executed.",
+        "Repository Biome format --write via node:child_process argv, only the three changed paths, exit 0 (no fixes); retained fresh fixture /tmp/pr45-perf-primary-format-hKvQui with provenance.json naming durable workspace and argv.",
+        "git diff --check passed; source diff manually reviewed. Assertion-expression comparison against preserved candidate sources passed (normalizing whitespace and CLI code→exitCode only); this is preservation support, not a readability verdict.",
+        "Source-only commit contains exactly the three listed changedPaths; startup source remains exact preserved blob."
+      ],
+      "primaryLimits": [
+        "No tests/setup/build/typecheck run. Parent owns audited isolated runtime gates and fresh independent judgments; reduced child environment and retained fixture behavior remain runtime-unverified.",
+        "No auth/device/provider/credential probing, delegation, user-data mutation, cleanup commands, dependency changes, old-worktree modifications, merge/push/PR/publication, or wisdom edits.",
+        "Test child roots will be retained with prefix bruv-terminal-perf-process-; fixture provenance is the committed tests/helpers/terminal-perf-process.ts blob in this durable worktree. Existing workload-owned temporary history cleanup is unchanged and was not executed.",
+        "changedPaths records the complete coherent batch source scope for every decision, including the unchanged startup focus; it does not mean startup bytes changed."
+      ]
     },
     {
       "file": "tests/terminal-perf-navigation.test.ts",
       "initialBlob": "a1e645587fbdc2b87426d83410d9c40fe3ef3f5a",
       "status": "pending",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_beae5cf1",
+      "primaryCommit": "92efca3ca0e7b4499e0311c4f5e0edf462ba5aa8",
       "judgeIds": [],
-      "sourceCommit": "53fb4d9732dcf0c337b797b05a104199ccf1a273",
+      "sourceCommit": "92efca3ca0e7b4499e0311c4f5e0edf462ba5aa8",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
-      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees. Retained uncommitted candidate(s): task_09b8c468 blob 3a7ad4e15c5f409cb3944f1baa467649f819a756 in /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_09b8c468. Not importable or accepted."
+      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees. Retained uncommitted candidate(s): task_09b8c468 blob 3a7ad4e15c5f409cb3944f1baa467649f819a756 in /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_09b8c468. Not importable or accepted.",
+      "primaryBase": "1c758b0f3ae1cca1640b8ff2625e4e55455bb589",
+      "primaryResult": "Both SDK seam tests now use the same explicit process fixture as the CLI focus. Eval imports resolve against the pinned repository cwd; interactive report belongs to the child fixture root; both pipes are consumed alongside exit before assertions/readback. HOME/XDG/SDK/TMP paths are fresh owned directories and retained, with no parent environment or credentials forwarded except PATH. Keep the common scheduled-frame checks, mode-specific actions and all provider/fetch/disk/context/lifecycle/segment assertions in place. Read navigation setup/step/dispose, history mkdtemp/dispose, probe forbidden fetch/model stream guards, runtime factory, instrumentation restoration, app capture and CLI report writer. Exact retained uncommitted test candidate 3a7ad4e15c5f409cb3944f1baa467649f819a756 was inspected via full diff against the complete starting focus: it adds interaction repetition/probe journey and helper fingerprint assertions. Reconciliation labels it interrupted/not importable, not REJECT or ACCEPT; those unrelated additions were not copied. Named committed candidate is starting blob a1e645587fbdc2b87426d83410d9c40fe3ef3f5a; no rejected verdict exists to rework.",
+      "primaryPaths": [
+        "tests/helpers/terminal-perf-process.ts",
+        "tests/terminal-perf-cli.test.ts",
+        "tests/terminal-perf-navigation.test.ts"
+      ],
+      "primaryChecks": [
+        "Read complete focus sources, exact preserved candidate blobs, assigned reconciliation rows and relevant production/SDK seams; no tests, setup or builds.",
+        "Reviewed filesystem/network effects: child fixture owns mkdtemp HOME/XDG config/cache/data/state/SDK/TMPDIR; subprocess uses explicit argv/env and repository cwd; no credential environment forwarded. Existing history disposal only removes its own mkdtemp root. Offline SDK forbids fetch/provider use and disables resource discovery; not executed.",
+        "Repository Biome format --write via node:child_process argv, only the three changed paths, exit 0 (no fixes); retained fresh fixture /tmp/pr45-perf-primary-format-hKvQui with provenance.json naming durable workspace and argv.",
+        "git diff --check passed; source diff manually reviewed. Assertion-expression comparison against preserved candidate sources passed (normalizing whitespace and CLI code→exitCode only); this is preservation support, not a readability verdict.",
+        "Source-only commit contains exactly the three listed changedPaths; startup source remains exact preserved blob."
+      ],
+      "primaryLimits": [
+        "No tests/setup/build/typecheck run. Parent owns audited isolated runtime gates and fresh independent judgments; reduced child environment and retained fixture behavior remain runtime-unverified.",
+        "No auth/device/provider/credential probing, delegation, user-data mutation, cleanup commands, dependency changes, old-worktree modifications, merge/push/PR/publication, or wisdom edits.",
+        "Test child roots will be retained with prefix bruv-terminal-perf-process-; fixture provenance is the committed tests/helpers/terminal-perf-process.ts blob in this durable worktree. Existing workload-owned temporary history cleanup is unchanged and was not executed.",
+        "changedPaths records the complete coherent batch source scope for every decision, including the unchanged startup focus; it does not mean startup bytes changed."
+      ]
     },
     {
       "file": "tests/terminal-perf-options.test.ts",

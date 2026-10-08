@@ -2447,7 +2447,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_beae5cf1",
         "branch": "bruv/pr45-primary-3-ui-terminal-cli-focuses-beae5cf1",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "92efca3ca0e7b4499e0311c4f5e0edf462ba5aa8"
       },
       {
         "id": "task_5cb6271d",
@@ -2485,6 +2486,15 @@
         ],
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_16837afc",
         "branch": "bruv/pr45-primary-3-ui-terminal-cli-focuses-16837afc",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_483b50c3",
+        "stage": "primary",
+        "focus": ["tests/tui-helpers.test.ts", "tests/tui-helpers.ts", "tests/tui-stop-restoration.test.ts"],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_483b50c3",
+        "branch": "bruv/pr45-primary-3-ui-terminal-cli-focuses-483b50c3",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
       }
