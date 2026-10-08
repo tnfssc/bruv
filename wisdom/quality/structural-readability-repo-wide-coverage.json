@@ -14660,12 +14660,12 @@
     {
       "file": "tests/prompt-preview.test.ts",
       "initialBlob": "b3d7dbfffd008f9432d016a0211ef64a83e81685",
-      "status": "pending",
+      "status": "accepted",
       "area": "agent-history-session-goals",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_125d5689",
       "primaryCommit": "c8a6fbaa9603fda560f1c4a9fef45b073be46b53",
-      "judgeIds": ["task_10247cc9"],
+      "judgeIds": ["task_10247cc9", "task_4b3a2d79"],
       "sourceCommit": "c8a6fbaa9603fda560f1c4a9fef45b073be46b53",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
       "pendingReason": "No dedicated primary/final independent focus judgment. Related-patch review is evidence only; dedicated focus coverage remains required.",
@@ -14685,17 +14685,32 @@
         "Existing preview test cleanup calls remove only mkdtemp-created project paths; production preview removes its mkdtemp scratch. These effects were inspected, not executed. Parent gates must use explicit argv/env and retained owned HOME/config/SDK/TMPDIR fixtures.",
         "Saved historical test counts are not current validation or this readability verdict. Parent verifies runtime agent.model; no model verification claimed here.",
         "No wisdom or values edits: this bounded restoration adds no general lesson; parent owns aggregate wisdom."
+      ],
+      "acceptedBlob": "97799fa3e59268f059079a171b38010070b5661c",
+      "result": "The complete file reads as individual production-preview contracts: offline provider capture/tool equivalence/goal injection, selected-project guidance, custom base and append precedence without package loading or project writes, root/worker workspace prose, and custom-worker role framing. The added identity journey owns the incoming depth/type, checks a default root followed by explicit fast and normal previews, observes both requested framing and preservation of the caller after every request, and restores the original variables in one visible finally. Keeping that journey local avoids hiding its process-global lifetime in a fixture/context bag. Existing fetch interception remains paired with restoration and all earlier assertions are preserved.",
+      "systemReason": "Followed createPromptPreview through SessionManager.inMemory, root-mode/child markers, in-memory settings, DefaultResourceLoader, ModelRuntime and captureOfflineTurn. previewTasksExtension temporarily supplies the explicit role only while the production factory synchronously captures environment identity, then restores it. The production extension caps restored session identity by that environment and frames before_agent_start through withMainAgentGuidance/withSubagentGuidance. Thus the new assertions test a real capability/framing boundary, not copied identity logic. Read the unchanged execute declaration/registration and goal context hook: tool equality and goal assertions still target their actual owners.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read exact candidate focus files in full with git show, and candidate diff against 2a45b24ddace53a140e15cbad9f6521b64cfccb3. Inspected both candidate-changed paths.",
+        "git ls-tree resolved exact accepted blobs; git diff --check against the primary base returned no findings.",
+        "Reviewed effects without executing: preview uses its own mkdtemp scratch, in-memory session/settings, explicit scratch auth path and replaced provider stream; project fixture writes are local and cleanup targets are locally created temporary paths. Existing cleanup was inspected only."
+      ],
+      "limits": [
+        "Static actual-code review only: no setup, tests, builds, reinstall, credential access, network requests or cleanup executed. Parent owns audited isolated runtime gates.",
+        "Installed SDK sources were read-only caller evidence (pi-coding-agent 1.0.3), not an execution result. Parent owns runtime model verification.",
+        "Durable review provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_4b3a2d79. Candidate evidence and existing worktrees retained; no temporary code checkout or probe fixture created.",
+        "Does not establish runtime concurrency or failure-path behavior; those were not claimed by this review."
       ]
     },
     {
       "file": "tests/prompts.test.ts",
       "initialBlob": "8ee97fbb55897ea0afb59014fb7ed84a29a1add7",
-      "status": "pending",
+      "status": "accepted",
       "area": "agent-history-session-goals",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_125d5689",
       "primaryCommit": "c8a6fbaa9603fda560f1c4a9fef45b073be46b53",
-      "judgeIds": ["task_7f8422ea"],
+      "judgeIds": ["task_7f8422ea", "task_4b3a2d79"],
       "sourceCommit": "c8a6fbaa9603fda560f1c4a9fef45b073be46b53",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
       "pendingReason": "No dedicated primary/final independent focus judgment. Related-patch review is evidence only; dedicated focus coverage remains required.",
@@ -14715,17 +14730,32 @@
         "Existing preview test cleanup calls remove only mkdtemp-created project paths; production preview removes its mkdtemp scratch. These effects were inspected, not executed. Parent gates must use explicit argv/env and retained owned HOME/config/SDK/TMPDIR fixtures.",
         "Saved historical test counts are not current validation or this readability verdict. Parent verifies runtime agent.model; no model verification claimed here.",
         "No wisdom or values edits: this bounded restoration adds no general lesson; parent owns aggregate wisdom."
+      ],
+      "acceptedRelatedJudges": ["task_4b3a2d79"],
+      "acceptedBlob": "c921bbe561640e6b889872c18270558de68daad3",
+      "result": "Read the whole test file, including unchanged tool facts, product-first guidance, bounded handoff IDs, role policies, empty owned root regions, exact wisdom source, tool-description text and durable-worktree judgments. The canonical-source test now closes identity/reference composition. Three separate framing contracts make authority visible: Bruv/default root preserves the complete incoming Pi frame then adds collaboration and its owned region; user-owned root returns the frame untouched without evaluating the region supplier; workers keep their own role on either base but add collaboration only on a Bruv/default base. Complete expected strings are constructed beside the calls, so ordering and ownership do not require a custom matcher or shared context. No existing assertion was removed.",
+      "systemReason": "Read src/prompts.ts and the embedded identity/role Markdown; matched each new contract to hasUserSystemPrompt, withMainAgentGuidance and withSubagentGuidance. Followed production before_agent_start and installed Pi assembly: the resource loader supplies custom/append/context inputs, Pi assembles the frame, and Bruv adds only its framing at the extension seam. The throwing supplier checks the meaningful lazy authority boundary on custom roots. Related preview tests verify those same semantics through actual assembly, so the synthetic complete-frame tests remain focused composition contracts, not a second production assembler.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read exact candidate focus files in full with git show, and candidate diff against 2a45b24ddace53a140e15cbad9f6521b64cfccb3. Inspected both candidate-changed paths.",
+        "git ls-tree resolved exact accepted blobs; git diff --check against the primary base returned no findings.",
+        "Reviewed effects without executing: preview uses its own mkdtemp scratch, in-memory session/settings, explicit scratch auth path and replaced provider stream; project fixture writes are local and cleanup targets are locally created temporary paths. Existing cleanup was inspected only."
+      ],
+      "limits": [
+        "Static actual-code review only: no setup, tests, builds, reinstall, credential access, network requests or cleanup executed. Parent owns audited isolated runtime gates.",
+        "Installed SDK sources were read-only caller evidence (pi-coding-agent 1.0.3), not an execution result. Parent owns runtime model verification.",
+        "Durable review provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_4b3a2d79. Candidate evidence and existing worktrees retained; no temporary code checkout or probe fixture created."
       ]
     },
     {
       "file": "tests/provider-prompt.test.ts",
       "initialBlob": "6fe31d158cc6a58ca0b88ab749ca0728b45c42dd",
-      "status": "pending",
+      "status": "accepted",
       "area": "agent-history-session-goals",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_1c106c8b",
       "primaryCommit": "51a6af6dd26478a4df1501fa858d1edf2d5f3ec6",
-      "judgeIds": [],
+      "judgeIds": ["task_4b3a2d79"],
       "sourceCommit": "51a6af6dd26478a4df1501fa858d1edf2d5f3ec6",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
       "pendingReason": "No dedicated primary/final independent focus judgment.",
@@ -14742,6 +14772,21 @@
         "changedPaths lists the complete combined source commit scope even for unchanged focuses; only saved-transcript-startup.test.ts changed.",
         "Code provenance is this retained durable worktree: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_1c106c8b. Formatter fixture retained at /tmp/pr45-startup-format-buS54W. Scenario fixture directories are created and retained only when the parent runs the tests.",
         "Values and wisdom unchanged: existing ownership/safety guidance covers this change; parent owns the aggregate note."
+      ],
+      "acceptedBlob": "6fe31d158cc6a58ca0b88ab749ca0728b45c42dd",
+      "result": "Read the entire unchanged provider test at the exact candidate, not HEAD. Its journey is already one coherent boundary contract: a local dummy JWT supplies only a fake account identifier; owned working/tool prose enters normalizeContext; the real Codex stream invokes an adjacent payload capture which throws the named sentinel; the same test drains terminal events and checks exact instructions, automatic tool choice, the sentinel error and zero fetch calls. Splitting capture or drain into another helper would separate the evidence from the boundary that produced it. Leaving the single authentication helper and inline provider hook is justified by actual structure, not by lack of a diff.",
+      "systemReason": "Read prompt exports plus installed transcript normalization and Codex request-building/transport/error paths. normalizeContext places the exact prompt in a leading system message; buildRequestBody uses its complete text for instructions and defaults tool_choice to auto. onPayload runs before headers, websocket selection and SSE fetch; the throw is converted to a sole error event before start emission. Explicit apiKey and transport sse prevent ambient authentication/device work, and the injected fetch rejects any HTTP attempt. Inspected the only candidate-changed path in full: saved-transcript-startup now creates retained scenario-owned HOME/config/SDK/temp directories and launches explicit argv with a non-inherited env and owned cwd. Followed its unchanged fixture through installed SDK imports, managed-tool seams, readiness gates and saved/empty/error assertions; that isolation change neither alters this provider boundary nor requires restructuring it.",
+      "checks": [
+        "Read exact candidate provider focus in full and diff against 4341f0aeaf94a5503c30c1d4696a80994a6f42bb; provider diff is empty and its base/candidate blob is identical.",
+        "Read the complete candidate-changed saved-transcript-startup test and its fixture; reviewed process environment, filesystem ownership and network effects without running them.",
+        "git ls-tree resolved exact accepted blobs; git diff --check against the primary base returned no findings.",
+        "Read installed normalization, request-body instructions/tool_choice, payload-before-transport order, injected fetch and terminal error handling."
+      ],
+      "limits": [
+        "Static actual-code review only: no setup, tests, builds, reinstall, credential access, network requests or cleanup executed. Parent owns audited isolated runtime gates.",
+        "Installed SDK sources were read-only caller evidence (pi-coding-agent 1.0.3), not an execution result. Parent owns runtime model verification.",
+        "Durable review provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_4b3a2d79. Candidate evidence and existing worktrees retained; no temporary code checkout or probe fixture created.",
+        "Live auth/device behavior and patched startup runtime behavior remain unverified; no credentials were accessed. Retained startup fixture execution, if needed, is parent-owned."
       ]
     },
     {
@@ -15996,7 +16041,9 @@
         "changedPaths lists the complete combined source commit scope even for unchanged focuses; only saved-transcript-startup.test.ts changed.",
         "Code provenance is this retained durable worktree: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_1c106c8b. Formatter fixture retained at /tmp/pr45-startup-format-buS54W. Scenario fixture directories are created and retained only when the parent runs the tests.",
         "Values and wisdom unchanged: existing ownership/safety guidance covers this change; parent owns the aggregate note."
-      ]
+      ],
+      "acceptedRelatedJudges": ["task_4b3a2d79"],
+      "acceptedBlob": "b0c5bdfa1c30f881d06d95fc4878c904cb66729a"
     },
     {
       "file": "tests/scroll-layout-render.test.ts",
@@ -20604,9 +20651,9 @@
     "baselineFiles": 766,
     "finalGate": "pending; incomplete focus coverage",
     "liveAuth": "unverified/failing; preserved",
-    "accepted": 726,
+    "accepted": 729,
     "total": 834,
-    "pending": 108,
+    "pending": 105,
     "sourceExtras": 68,
     "checkout": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
     "branch": "bruv/readability-pr45-sol-continuation",

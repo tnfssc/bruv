@@ -8,6 +8,8 @@ import {
   isBruvSystemPrompt,
   mainAgentGuidance,
   subagentGuidance,
+  withMainAgentGuidance,
+  withSubagentGuidance,
   workingValues,
 } from "../src/prompts";
 
@@ -88,6 +90,8 @@ test("fast and normal root modes add no behavioral prose while retaining owned p
 test("Markdown is the complete source of the system and tool guidance", async () => {
   const system = await Bun.file(new URL("../src/prompts/system.md", import.meta.url)).text();
   const reference = await Bun.file(new URL("../src/prompts/execute.md", import.meta.url)).text();
+  const identity = await Bun.file(new URL("../src/prompts/identity.md", import.meta.url)).text();
+  expect(bruvSystemPrompt()).toBe(`${identity.trimEnd()}\n\nGuidelines:\n${reference.trimEnd()}`);
   expect(collaborationGuidance()).toBe(system.trimEnd());
   expect(executeGuidance.map((item) => "- " + item).join("\n")).toBe(reference.trimEnd());
   for (const role of ["fast", "normal", "orchestrator"]) expect(subagentGuidance(role)).not.toContain("{{");
@@ -127,6 +131,37 @@ test("Bruv base is a Pi custom prompt with execute guidance", () => {
   expect(isBruvSystemPrompt({ customPrompt: prompt })).toBe(true);
   expect(isBruvSystemPrompt({ customPrompt: "user-owned" })).toBe(false);
   expect(isBruvSystemPrompt(undefined)).toBe(false);
+});
+
+test("root framing adds collaboration and the owned mode region after Pi's complete frame", () => {
+  const prompt = `${bruvSystemPrompt()}\n\nProject context\n\nAppend text\n\nCurrent cwd`;
+  for (const mode of ["fast", "normal", "orchestrator"] as const) {
+    const region = mainAgentGuidance(mode, "session-owner");
+    const expected = `${prompt}\n\n${collaborationGuidance()}\n\n${region}`;
+    expect(withMainAgentGuidance(prompt, { customPrompt: bruvSystemPrompt() }, () => region)).toBe(expected);
+    expect(withMainAgentGuidance(prompt, undefined, () => region)).toBe(expected);
+    expect(withMainAgentGuidance(prompt, { customPrompt: "" }, () => region)).toBe(expected);
+  }
+});
+
+test("a root custom base owns the full frame and never requests a mode region", () => {
+  const prompt = "User base\n\nAppend text\n\nCurrent cwd";
+  expect(
+    withMainAgentGuidance(prompt, { customPrompt: "User base" }, () => {
+      throw new Error("a custom root must not request Bruv's mode region");
+    }),
+  ).toBe(prompt);
+});
+
+test("worker framing keeps each role on a custom base without taking over collaboration policy", () => {
+  const prompt = "Pi's complete frame\n\nAppend text\n\nCurrent cwd";
+  for (const role of ["fast", "normal", "orchestrator"]) {
+    const roleGuidance = subagentGuidance(role);
+    expect(withSubagentGuidance(prompt, { customPrompt: "User base" }, role)).toBe(`${prompt}\n\n${roleGuidance}`);
+    const expected = `${prompt}\n\n${collaborationGuidance()}\n\n${roleGuidance}`;
+    expect(withSubagentGuidance(prompt, { customPrompt: bruvSystemPrompt() }, role)).toBe(expected);
+    expect(withSubagentGuidance(prompt, undefined, role)).toBe(expected);
+  }
 });
 
 test("execute tool description uses the embedded Markdown source", async () => {

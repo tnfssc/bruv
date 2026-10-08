@@ -3637,10 +3637,10 @@
     {
       "focus": "tests/prompt-preview.test.ts",
       "initialBlob": "b3d7dbfffd008f9432d016a0211ef64a83e81685",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "97799fa3e59268f059079a171b38010070b5661c",
       "integration": "pending",
       "relatedPatchReview": {
         "candidate": "904c6fb51b2fb62a4c91580e0120d5eabc1c0f7b",
@@ -3650,22 +3650,23 @@
         "primaryFocusStillRequired": true
       },
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "97799fa3e59268f059079a171b38010070b5661c",
         "primaryId": "task_125d5689",
         "primaryCommit": "c8a6fbaa9603fda560f1c4a9fef45b073be46b53",
-        "judgeIds": ["task_10247cc9"],
+        "judgeIds": ["task_10247cc9", "task_4b3a2d79"],
         "sourceCommit": "c8a6fbaa9603fda560f1c4a9fef45b073be46b53",
-        "state": "needs-judge",
-        "reason": "No dedicated primary/final independent focus judgment. Related-patch review is evidence only; dedicated focus coverage remains required."
+        "state": "accepted-joined",
+        "reason": "The complete file reads as individual production-preview contracts: offline provider capture/tool equivalence/goal injection, selected-project guidance, custom base and append precedence without package loading or project writes, root/worker workspace prose, and custom-worker role framing. The added identity journey owns the incoming depth/type, checks a default root followed by explicit fast and normal previews, observes both requested framing and preservation of the caller after every request, and restores the original variables in one visible finally. Keeping that journey local avoids hiding its process-global lifetime in a fixture/context bag. Existing fetch interception remains paired with restoration and all earlier assertions are preserved."
       }
     },
     {
       "focus": "tests/prompts.test.ts",
       "initialBlob": "8ee97fbb55897ea0afb59014fb7ed84a29a1add7",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "c921bbe561640e6b889872c18270558de68daad3",
       "integration": "pending",
       "relatedPatchReview": {
         "candidate": "42bec26abf11007f2b0781e1771224c1d5fa63c0",
@@ -3675,31 +3676,33 @@
         "primaryFocusStillRequired": true
       },
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "c921bbe561640e6b889872c18270558de68daad3",
         "primaryId": "task_125d5689",
         "primaryCommit": "c8a6fbaa9603fda560f1c4a9fef45b073be46b53",
-        "judgeIds": ["task_7f8422ea"],
+        "judgeIds": ["task_7f8422ea", "task_4b3a2d79"],
         "sourceCommit": "c8a6fbaa9603fda560f1c4a9fef45b073be46b53",
-        "state": "needs-judge",
-        "reason": "No dedicated primary/final independent focus judgment. Related-patch review is evidence only; dedicated focus coverage remains required."
+        "state": "accepted-joined",
+        "reason": "Read the whole test file, including unchanged tool facts, product-first guidance, bounded handoff IDs, role policies, empty owned root regions, exact wisdom source, tool-description text and durable-worktree judgments. The canonical-source test now closes identity/reference composition. Three separate framing contracts make authority visible: Bruv/default root preserves the complete incoming Pi frame then adds collaboration and its owned region; user-owned root returns the frame untouched without evaluating the region supplier; workers keep their own role on either base but add collaboration only on a Bruv/default base. Complete expected strings are constructed beside the calls, so ordering and ownership do not require a custom matcher or shared context. No existing assertion was removed."
       }
     },
     {
       "focus": "tests/provider-prompt.test.ts",
       "initialBlob": "6fe31d158cc6a58ca0b88ab749ca0728b45c42dd",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "6fe31d158cc6a58ca0b88ab749ca0728b45c42dd",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "6fe31d158cc6a58ca0b88ab749ca0728b45c42dd",
         "primaryId": "task_1c106c8b",
         "primaryCommit": "51a6af6dd26478a4df1501fa858d1edf2d5f3ec6",
-        "judgeIds": [],
+        "judgeIds": ["task_4b3a2d79"],
         "sourceCommit": "51a6af6dd26478a4df1501fa858d1edf2d5f3ec6",
-        "state": "needs-judge",
-        "reason": "No dedicated primary/final independent focus judgment."
+        "state": "accepted-joined",
+        "reason": "Read the entire unchanged provider test at the exact candidate, not HEAD. Its journey is already one coherent boundary contract: a local dummy JWT supplies only a fake account identifier; owned working/tool prose enters normalizeContext; the real Codex stream invokes an adjacent payload capture which throws the named sentinel; the same test drains terminal events and checks exact instructions, automatic tool choice, the sentinel error and zero fetch calls. Splitting capture or drain into another helper would separate the evidence from the boundary that produced it. Leaving the single authentication helper and inline provider hook is justified by actual structure, not by lack of a diff."
       }
     },
     {
@@ -3712,6 +3715,7 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
+        "acceptedBlob": "b0c5bdfa1c30f881d06d95fc4878c904cb66729a",
         "primaryId": "task_1c106c8b",
         "primaryCommit": "51a6af6dd26478a4df1501fa858d1edf2d5f3ec6",
         "judgeIds": [],
@@ -4662,7 +4666,7 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 120,
-    "pending": 12
+    "accepted": 123,
+    "pending": 9
   }
 }

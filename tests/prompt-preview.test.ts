@@ -138,3 +138,31 @@ test("custom child base and append preserve role framing without injecting Bruv 
     await rm(dir, { recursive: true, force: true });
   }
 });
+
+test("explicit preview roles do not inherit or overwrite the caller child identity", async () => {
+  const priorDepth = process.env.BRUV_SUBAGENT_DEPTH;
+  const priorType = process.env.BRUV_SUBAGENT_TYPE;
+  process.env.BRUV_SUBAGENT_DEPTH = "4";
+  process.env.BRUV_SUBAGENT_TYPE = "orchestrator";
+  try {
+    const root = await createPromptPreview();
+    expect(root.systemPrompt).toContain("You lead work.");
+    expect(root.systemPrompt).not.toContain("You are a orchestrator sub-agent.");
+    expect(process.env.BRUV_SUBAGENT_DEPTH).toBe("4");
+    expect(process.env.BRUV_SUBAGENT_TYPE).toBe("orchestrator");
+
+    for (const role of ["fast", "normal"] as const) {
+      const child = await createPromptPreview({ role });
+      expect(child.systemPrompt).toContain(`You are a ${role} sub-agent.`);
+      expect(child.systemPrompt).not.toContain("You lead work.");
+      expect(child.systemPrompt).not.toContain("You are a orchestrator sub-agent.");
+      expect(process.env.BRUV_SUBAGENT_DEPTH).toBe("4");
+      expect(process.env.BRUV_SUBAGENT_TYPE).toBe("orchestrator");
+    }
+  } finally {
+    if (priorDepth === undefined) delete process.env.BRUV_SUBAGENT_DEPTH;
+    else process.env.BRUV_SUBAGENT_DEPTH = priorDepth;
+    if (priorType === undefined) delete process.env.BRUV_SUBAGENT_TYPE;
+    else process.env.BRUV_SUBAGENT_TYPE = priorType;
+  }
+});
