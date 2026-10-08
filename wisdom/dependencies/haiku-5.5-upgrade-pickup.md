@@ -91,3 +91,16 @@ After green local and hosted checks, merge #54 and dispatch Release workflow
 on develop. It owns version preparation, platform gates and publication.
 No repo edits in this worktree after PR merge. Record later release facts in
 the release or task, not here. Values unchanged by sync/release request.
+
+Latest-base gate on e5a1725c passed (full scripts/ci.sh linux), including
+paired smoke. Root suite summary:
+ 2307 pass
+ 30 skip
+ 0 fail
+ 115968 expect() calls
+Ran 2337 tests across 319 files. [103.83s]
+Read-only review task_820fe180 found no new bugs and confirmed no base changes
+lost. Prior PR feedback had no code findings (CodeRabbit review was skipped).
+Pushing conflict-resolution commits and this proof to PR #54. Wait for hosted
+Linux/macOS checks on the new head, then recheck base/head before merging.
+Release follow-through uses the managed workflow, not old-worktree edits.
