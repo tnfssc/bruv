@@ -3132,10 +3132,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
+        "primaryId": "task_b11891ad",
+        "primaryCommit": "8f186d90eb5047304492c72c6bc56a7d0f37204d",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary",
+        "sourceCommit": "8f186d90eb5047304492c72c6bc56a7d0f37204d",
+        "state": "needs-judge",
         "reason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage."
       }
     },

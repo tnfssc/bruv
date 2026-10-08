@@ -1667,6 +1667,52 @@
         "branch": "bruv/pr45-fresh-judge-execution-tasks-questio-626cfea3",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "handled"
+      },
+      {
+        "id": "task_f4f56799",
+        "stage": "primary",
+        "focus": "tests/job-bridge.test.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_f4f56799",
+        "branch": "bruv/pr45-primary-tests-job-bridge.test.ts-f4f56799",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_dcb5f688",
+        "stage": "primary",
+        "focus": "tests/questions-bridge.test.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_dcb5f688",
+        "branch": "bruv/pr45-primary-tests-questions-bridge.test-dcb5f688",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_8acfab2e",
+        "stage": "primary",
+        "focus": "tests/questions-interactive-tui.test.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_8acfab2e",
+        "branch": "bruv/pr45-primary-tests-questions-interactive-8acfab2e",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_b11891ad",
+        "stage": "primary",
+        "focus": "tests/questions-picker.test.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_b11891ad",
+        "branch": "bruv/pr45-primary-tests-questions-picker.test-b11891ad",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled",
+        "sourceCommit": "8f186d90eb5047304492c72c6bc56a7d0f37204d"
+      },
+      {
+        "id": "task_af2a8b9b",
+        "stage": "primary",
+        "focus": "tests/questions-sdk.test.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_af2a8b9b",
+        "branch": "bruv/pr45-primary-tests-questions-sdk.test.ts-af2a8b9b",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
       }
     ]
   },

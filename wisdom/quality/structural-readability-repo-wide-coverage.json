@@ -12933,12 +12933,43 @@
       "initialBlob": "0668492090f6120f5f66d0ee35c946bd87db12d8",
       "status": "pending",
       "area": "execution-tasks-questions",
-      "resumeState": "pending-primary",
-      "primaryId": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_b11891ad",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "8f186d90eb5047304492c72c6bc56a7d0f37204d",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
-      "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage."
+      "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage.",
+      "primaryCommit": "8f186d90eb5047304492c72c6bc56a7d0f37204d",
+      "primaryBase": "8f186d90eb5047304492c72c6bc56a7d0f37204d",
+      "primaryResult": "Read the complete focus and picker implementation, the actual questions extension, remote extension and remote root presenter constructor/callback journeys, and the adjacent picker test in questions-extension.test.ts. The single fixture owns mutable terminal height and captured done values and exposes those directly; rendering and input remain on the actual QuestionPicker, with real getKeybindings. Each test keeps the necessary stimulus and assertions together: bounded rendering and accumulating title/label tail visibility followed by unchanged selection on Enter; item-18 navigation followed by shrink/grow and confirmation; cancel and filter as separate fresh fixtures; the 48x18 long-label tail; and detail reset on selection/filter changes with a tiny-screen selected-item assertion. Both PgDn loops are visibly local bounded stimuli with different purposes, not a hidden lifecycle. The production picker owns detailOffset/list selection and the callers own modal completion/render requests, matching the fixture boundary. Extracting key/scroll/assertion wrappers would make readers jump away from these short journeys and would not consolidate any scattered authority. All existing assertions, selection semantics and unrelated accepted work remain byte-for-byte unchanged. Preserved reconciliation and current focus ledgers record pending-primary baseline, no approved/rejected candidate source, so there are no candidate bytes to import. No commit or formatter invocation is appropriate with zero changed source paths.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        {
+          "kind": "static-reading",
+          "result": "Complete focus, actual picker and relevant caller journeys inspected; no execution."
+        },
+        {
+          "kind": "evidence",
+          "result": "Only focus rows inspected in preserved reconciliation, area ledger and repo-wide coverage/assignments; no candidate or rework evidence for focus."
+        },
+        {
+          "kind": "source-identity",
+          "result": "HEAD and working focus both 0668492090f6120f5f66d0ee35c946bd87db12d8"
+        },
+        {
+          "kind": "format",
+          "result": "Not applicable: no changed source paths."
+        },
+        {
+          "kind": "runtime",
+          "result": "Not run: parent owns audited isolated batch gates."
+        }
+      ],
+      "primaryLimits": [
+        "No runtime, test/setup/build or live auth/device verification was attempted. No credentials accessed. No source changes, no empty commit, no push/PR/merge. No wisdom files changed: no new lesson; parent owns aggregate wisdom.",
+        ".pr45-primary-result.json is untracked evidence in the durable assigned worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_b11891ad. No temporary code checkout or test fixture was created.",
+        "Safety for ALL descendants: no sudo, no recovery actions, no deletion/cleanup shell commands, no HOME or inherited SDK/config cleanup, no nested shell traps. Do not read/use user secrets. Use node child_process argv plus explicit isolated env for tests; allocate fresh disposable HOME/config/SDK dirs with fs.mkdtemp and retain them rather than delete. If real credential/device access is required, return that blocker instead of using it. Do not run repository tests or setup without first checking their filesystem/network side effects. Existing dependencies can be used read-only from /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules. Bun is /home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin/bun. Worktree t3 setup may fail because PATH lacks bun; inspect outcome, do not guess. No repetitive full builds for each worker. Limit to SIX concurrent leaf workers total, primary and judge combined. Give independent code/review agents worktrees. Propagate these safety constraints verbatim. No destructive git operations or user-data mutations."
+      ]
     },
     {
       "file": "tests/questions-runtime.test.ts",
