@@ -15570,23 +15570,59 @@
       "file": "tests/live-picker-tui.test.ts",
       "initialBlob": "493944773ae246afd77f57941b8ace8ee242fc47",
       "status": "pending",
-      "primaryId": null,
-      "sourceCommit": null,
+      "primaryId": "task_a4ebdae8",
+      "sourceCommit": "ac571b29fad3c90c4263c9f53abd8e4028dfb29f",
       "judgeIds": [],
-      "resumeState": "own_primary_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "ac571b29fad3c90c4263c9f53abd8e4028dfb29f",
+      "primaryBase": "5236ce9965f44e0305b470a745eaf4efc3db9b90",
+      "primaryResult": "withPickerTerminal now owns retained isolated filesystem and SDK/config/temp roots, explicit tmux argv/environment, private socket, theme and offline CLI startup, readiness and owned-server shutdown. It lends only the tmux operation to the scenario callback, not a context bag. The reader can follow the unchanged visible journey: all provider models and readiness labels, select gpt-live-1, re-open to verify selection, configure OpenAI credentials, Done without Start voice, then Live-off status. No UI assertions, waiting behavior, fixture device/provider prohibitions or polling helpers were weakened.",
+      "primaryPaths": ["tests/live-picker-tui.test.ts", "tests/live-probe-input.test.ts"],
+      "primaryChecks": [
+        "All three whole focused tests and relevant implementation/caller boundaries read. Assigned reconciliation rows are own_primary_pending with no preserved candidates, rejected rounds, or reworks; no candidate import or old-branch merge performed.",
+        "Repository formatter invoked via node:child_process spawn with argv format --write tests/live-picker-tui.test.ts tests/live-probe-input.test.ts only. Exit 0. Fresh retained HOME/config/TMPDIR fixture: /tmp/pr45-live-tests-format-KxHGiG; shared dependencies read-only.",
+        "git diff --check passed before commit. Source-only commit changes exactly the two listed changedPaths.",
+        "Picker UI journey (first model command through final Live-off status assertions) compared against pre-edit Git bytes and is byte-for-byte identical.",
+        "Static effects review: picker startup uses owned mkdtemp HOME/config/SDK/temp and explicit tmux argv/env, owned socket, offline fixture with provider/microphone/session access forbidden; only its owned tmux server is stopped. Probe subprocesses have explicit argv/env/cwd inside owned retained fixtures, deliberately absent local input, and all prior exit/stdout/error/privacy-order assertions preserved."
+      ],
+      "primaryLimits": [
+        "No repository tests, setup, builds, live credentials, devices, provider/network probes, delegation, publication, cleanup, deletion commands, or recovery actions performed. Runtime behavior and independent readability verdict remain parent-owned.",
+        "Every decision lists the complete combined commit source scope in changedPaths and sourceBlobs, including the other changed test. The platform focus itself is unchanged.",
+        "Durable provenance is this worktree and exact sourceCommit; formatter fixture is retained under /tmp. Test fixture creation/retention was inspected in source but tests were not executed.",
+        "Parent must verify runtime agent.model openai-codex/gpt-6.1-sol; this worker does not claim that verification.",
+        "Initial evidence output was overbroad and capture-truncated; decisions rely only on the three subsequently extracted assigned rows. Existing unrelated work and historical worktrees/candidate evidence remain preserved."
+      ]
     },
     {
       "file": "tests/live-platform.test.ts",
       "initialBlob": "446b8f6bb78ed13440e344405dfcc3f6957dbda5",
       "status": "pending",
-      "primaryId": null,
-      "sourceCommit": null,
+      "primaryId": "task_a4ebdae8",
+      "sourceCommit": "ac571b29fad3c90c4263c9f53abd8e4028dfb29f",
       "judgeIds": [],
-      "resumeState": "own_primary_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "ac571b29fad3c90c4263c9f53abd8e4028dfb29f",
+      "primaryBase": "5236ce9965f44e0305b470a745eaf4efc3db9b90",
+      "primaryResult": "Keep these bytes. The source-vs-$bunfs path decision is directly visible in defaultHelperPath and used at helper launch, while audioEnvironment is an explicit audio-discovery allowlist supplied to native spawn. The two short tests expose their distinct contracts without hidden fixture lifetime, device access or reconstructed state. Extracting a matrix or fixture here would add indirection rather than make either journey easier to read. Unchanged focus blob remains 446b8f6bb78ed13440e344405dfcc3f6957dbda5.",
+      "primaryPaths": ["tests/live-picker-tui.test.ts", "tests/live-probe-input.test.ts"],
+      "primaryChecks": [
+        "All three whole focused tests and relevant implementation/caller boundaries read. Assigned reconciliation rows are own_primary_pending with no preserved candidates, rejected rounds, or reworks; no candidate import or old-branch merge performed.",
+        "Repository formatter invoked via node:child_process spawn with argv format --write tests/live-picker-tui.test.ts tests/live-probe-input.test.ts only. Exit 0. Fresh retained HOME/config/TMPDIR fixture: /tmp/pr45-live-tests-format-KxHGiG; shared dependencies read-only.",
+        "git diff --check passed before commit. Source-only commit changes exactly the two listed changedPaths.",
+        "Picker UI journey (first model command through final Live-off status assertions) compared against pre-edit Git bytes and is byte-for-byte identical.",
+        "Static effects review: picker startup uses owned mkdtemp HOME/config/SDK/temp and explicit tmux argv/env, owned socket, offline fixture with provider/microphone/session access forbidden; only its owned tmux server is stopped. Probe subprocesses have explicit argv/env/cwd inside owned retained fixtures, deliberately absent local input, and all prior exit/stdout/error/privacy-order assertions preserved."
+      ],
+      "primaryLimits": [
+        "No repository tests, setup, builds, live credentials, devices, provider/network probes, delegation, publication, cleanup, deletion commands, or recovery actions performed. Runtime behavior and independent readability verdict remain parent-owned.",
+        "Every decision lists the complete combined commit source scope in changedPaths and sourceBlobs, including the other changed test. The platform focus itself is unchanged.",
+        "Durable provenance is this worktree and exact sourceCommit; formatter fixture is retained under /tmp. Test fixture creation/retention was inspected in source but tests were not executed.",
+        "Parent must verify runtime agent.model openai-codex/gpt-6.1-sol; this worker does not claim that verification.",
+        "Initial evidence output was overbroad and capture-truncated; decisions rely only on the three subsequently extracted assigned rows. Existing unrelated work and historical worktrees/candidate evidence remain preserved."
+      ]
     },
     {
       "file": "tests/live-playback.test.ts",
@@ -15605,12 +15641,30 @@
       "file": "tests/live-probe-input.test.ts",
       "initialBlob": "bd5d23d0a95241c605c78a2b8aba5cb2fb8a841a",
       "status": "pending",
-      "primaryId": null,
-      "sourceCommit": null,
+      "primaryId": "task_a4ebdae8",
+      "sourceCommit": "ac571b29fad3c90c4263c9f53abd8e4028dfb29f",
       "judgeIds": [],
-      "resumeState": "own_primary_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "ac571b29fad3c90c4263c9f53abd8e4028dfb29f",
+      "primaryBase": "5236ce9965f44e0305b470a745eaf4efc3db9b90",
+      "primaryResult": "A single-purpose studyFile operation creates and retains one owned file per input. UTF-8/cutoff success stays one coherent journey; each malformed/over-limit/invalid-UTF-8 case is independently named with its own file and corresponding rejection assertion. Named script/args/message records register separate executable tests. Each subprocess owns explicit HOME/config/cache/SDK/temp roots, cwd, argv and env, so missing private input resolves only inside its fixture. Original disclosure/synthetic argument checks and nonzero exit, empty stdout, expected validation error, no ENOENT and no credential-error checks are preserved. Caller reading confirms invalid plans are parsed before readStudy/config/credential/socket work.",
+      "primaryPaths": ["tests/live-picker-tui.test.ts", "tests/live-probe-input.test.ts"],
+      "primaryChecks": [
+        "All three whole focused tests and relevant implementation/caller boundaries read. Assigned reconciliation rows are own_primary_pending with no preserved candidates, rejected rounds, or reworks; no candidate import or old-branch merge performed.",
+        "Repository formatter invoked via node:child_process spawn with argv format --write tests/live-picker-tui.test.ts tests/live-probe-input.test.ts only. Exit 0. Fresh retained HOME/config/TMPDIR fixture: /tmp/pr45-live-tests-format-KxHGiG; shared dependencies read-only.",
+        "git diff --check passed before commit. Source-only commit changes exactly the two listed changedPaths.",
+        "Picker UI journey (first model command through final Live-off status assertions) compared against pre-edit Git bytes and is byte-for-byte identical.",
+        "Static effects review: picker startup uses owned mkdtemp HOME/config/SDK/temp and explicit tmux argv/env, owned socket, offline fixture with provider/microphone/session access forbidden; only its owned tmux server is stopped. Probe subprocesses have explicit argv/env/cwd inside owned retained fixtures, deliberately absent local input, and all prior exit/stdout/error/privacy-order assertions preserved."
+      ],
+      "primaryLimits": [
+        "No repository tests, setup, builds, live credentials, devices, provider/network probes, delegation, publication, cleanup, deletion commands, or recovery actions performed. Runtime behavior and independent readability verdict remain parent-owned.",
+        "Every decision lists the complete combined commit source scope in changedPaths and sourceBlobs, including the other changed test. The platform focus itself is unchanged.",
+        "Durable provenance is this worktree and exact sourceCommit; formatter fixture is retained under /tmp. Test fixture creation/retention was inspected in source but tests were not executed.",
+        "Parent must verify runtime agent.model openai-codex/gpt-6.1-sol; this worker does not claim that verification.",
+        "Initial evidence output was overbroad and capture-truncated; decisions rely only on the three subsequently extracted assigned rows. Existing unrelated work and historical worktrees/candidate evidence remain preserved."
+      ]
     },
     {
       "file": "tests/live-prompt.test.ts",
