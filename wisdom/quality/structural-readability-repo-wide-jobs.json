@@ -87,6 +87,61 @@
         "branch": "bruv/pr45-fresh-judge-compatibility-t3-2-cand-7fd4e906",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "handled"
+      },
+      {
+        "id": "task_f7ff07f4",
+        "stage": "primary",
+        "focus": "scripts/claude-native-acceptance/history-replay.mjs",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_f7ff07f4",
+        "branch": "bruv/pr45-primary-scripts-claude-native-accep-f7ff07f4",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_f2026c09",
+        "stage": "primary",
+        "focus": "scripts/claude-native-acceptance/human-driver.mjs",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_f2026c09",
+        "branch": "bruv/pr45-primary-scripts-claude-native-accep-f2026c09",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_8b9d9dd1",
+        "stage": "primary",
+        "focus": "scripts/claude-native-acceptance/runtime-smoke.mjs",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_8b9d9dd1",
+        "branch": "bruv/pr45-primary-scripts-claude-native-accep-8b9d9dd1",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_48898268",
+        "stage": "primary",
+        "focus": "scripts/claude-native-acceptance/subagent-driver.mjs",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_48898268",
+        "branch": "bruv/pr45-primary-scripts-claude-native-accep-48898268",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_32253a22",
+        "stage": "primary",
+        "focus": "scripts/claude-native-acceptance/subagent-return-evidence.mjs",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_32253a22",
+        "branch": "bruv/pr45-primary-scripts-claude-native-accep-32253a22",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_eb51c954",
+        "stage": "primary",
+        "focus": "scripts/claude-native-acceptance/worker.mjs",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_eb51c954",
+        "branch": "bruv/pr45-primary-scripts-claude-native-accep-eb51c954",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled",
+        "sourceCommit": "b80a55a855e65d9bcb4ae8db3bb95d577db79b67"
       }
     ]
   },

@@ -3119,7 +3119,19 @@
       },
       "relatedPaths": [],
       "readingResult": "Six independent contract scenarios replace one shared buffer history; purposeful ring fill/rejection/wrap/drain/reuse and generation/flush-priority journeys remain together; assertion helper verifies each frame flags/ramp.",
-      "checks": "Baseline and candidate strict ASan/UBSan standalone harness pass; diff check pass. No device/provider/macOS/concurrency/root suite proof."
+      "checks": "Baseline and candidate strict ASan/UBSan standalone harness pass; diff check pass. No device/provider/macOS/concurrency/root suite proof.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "86b16c263f912996fb907d7b1d960835a274c795",
+        "primaryId": "task_fc3af74e",
+        "judgeIds": [
+          "task_1ce2e593",
+          "task_13282f24"
+        ],
+        "sourceCommit": "74ae2a442c5cb787d3666eeb5a1bc942c02319cf",
+        "state": "accepted_exact_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      }
     },
     {
       "focus": "native/live-linux/tests/test_protocol.py",
@@ -3171,7 +3183,20 @@
       },
       "relatedPaths": [],
       "readingResult": "Unchanged: subprocess bytes/read-rejection/adjacent assertions/context cleanup visible; microphone open/write/scenario failure and completion/freeing separate; no tangled ownership.",
-      "checks": "9 unittest pass. No source changes; manual tests, parent CI wiring pending. No device/provider/macOS/helper validation."
+      "checks": "9 unittest pass. No source changes; manual tests, parent CI wiring pending. No device/provider/macOS/helper validation.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "533dc3e1828e0862e5e14e10876dc22abdaec999",
+        "primaryId": "task_63e174cf",
+        "judgeIds": [
+          "task_e561d4a8",
+          "task_ab2edd5f",
+          "task_5ff86413"
+        ],
+        "sourceCommit": "61dd86168b4b0a3a178aa5ccdca54e1a058117f6",
+        "state": "accepted_exact_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      }
     },
     {
       "focus": "native/live-linux/tests/test_virtual.py",
@@ -3209,7 +3234,19 @@
       },
       "relatedPaths": [],
       "readingResult": "Unchanged temporary-dir runner owns fake commands/logs and realBash; tests expose handoff/acquisition/partial failure/removal-before-after-unload, cleanup ownership and preserved status locally visible.",
-      "checks": "17 Python tests including5 virtual methods7 scenarios pass;diff clean;no real server/device/provider/macOS/full gate."
+      "checks": "17 Python tests including5 virtual methods7 scenarios pass;diff clean;no real server/device/provider/macOS/full gate.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "293dec5887c1ff795c2f8e8ab7536e64babaed99",
+        "primaryId": "task_d69d2178",
+        "judgeIds": [
+          "task_d88de73c",
+          "task_ab2edd5f"
+        ],
+        "sourceCommit": "465d49952932b8c6877f755549b5efef41c977e6",
+        "state": "accepted_exact_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      }
     },
     {
       "focus": "native/live-linux/tests/test_isolated_audio.py",
@@ -3275,7 +3312,20 @@
           "readingResult": "Prior WrapperInvocation ownership retained;controlled TMPDIR confines Bashgraph under harness tree;timeoutregression asserts containment,stoppedprocesses,eventual graph removal. Perinvocationrecords and kill-before-drain preserved,productionwrapper unchanged.",
           "checks": "Reproduced escapedgraph survivesstop/testcleanup;32Python+8focused pass;removeonlyTMPDIR regressionfails;probe leaks removed;diffclean. Fake-tool proofonly."
         }
-      ]
+      ],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "c489af81e01cc3c290892e3cdf6b80b5676c52fc",
+        "primaryId": "task_7950a5e2",
+        "judgeIds": [
+          "task_dd7fe5dc",
+          "task_2b5beb9d",
+          "task_1a73a583"
+        ],
+        "sourceCommit": "009b872830322e84e4a6a1f181029f10831a1769",
+        "state": "accepted_exact_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      }
     },
     {
       "focus": "native/live-linux/tests/test_source_removal.py",
@@ -3313,7 +3363,19 @@
       },
       "relatedPaths": [],
       "readingResult": "Unchanged child transcripts adjacent to assertions;unplug requiresstopped aftererror/capture;deviceerror/EOF notsubstitute;contextcleanup separate, extraction hidesevidence.",
-      "checks": "7 focusedtests/diffpass,clean;nodevice/provider/macOS."
+      "checks": "7 focusedtests/diffpass,clean;nodevice/provider/macOS.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "fe4cbdbc3e3cd3568e69be7ed54bc7da13dc4c32",
+        "primaryId": "task_2e92bcc7",
+        "judgeIds": [
+          "task_3b13ed9b",
+          "task_46031fcf"
+        ],
+        "sourceCommit": "2e62282fd6ca936b142a6f16a60ad69e96770804",
+        "state": "accepted_exact_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      }
     },
     {
       "focus": "native/live-linux/tests/test_capture_protocol.py",
@@ -3351,7 +3413,19 @@
       },
       "relatedPaths": [],
       "readingResult": "Unchanged single fixture ownstemphelper/realpipes;closedepochsettling vsnew/malformed rejection direct;framing andsuspendedfailure teardown evidence intact.",
-      "checks": "10testspass/diffclean;no nativebuild/fullgate/device/provider/Mac."
+      "checks": "10testspass/diffclean;no nativebuild/fullgate/device/provider/Mac.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "589184ed6845c98d21a05cc338101e89708c3c6f",
+        "primaryId": "task_0dad3ccb",
+        "judgeIds": [
+          "task_3814e201",
+          "task_0f8a556e"
+        ],
+        "sourceCommit": "08ec6a90ee3f57e3e43ea8e97292afaae80dc1a6",
+        "state": "accepted_exact_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      }
     },
     {
       "focus": "tests/openai-resample.test.ts",
@@ -3381,7 +3455,18 @@
         "blob": "a1a5fc71b8829a10c8e7b4952302ab1ec5552698"
       },
       "readingResult": "Every signed/parity vector now owns literal emitted/held samples checking production and integerweighted offlineoracle independently;malformed-input recovery and reset have separate streamfixtures. Chunking/continuation journeys retained.",
-      "checks": "56tests303assertions;Biome/diffpass;temporary oracle rounding mutation rejected by literal signed sample. No productionfix/fullTS/build/provider/device/Mac."
+      "checks": "56tests303assertions;Biome/diffpass;temporary oracle rounding mutation rejected by literal signed sample. No productionfix/fullTS/build/provider/device/Mac.",
+      "resume": {
+        "status": "pending",
+        "primaryId": "task_b7108f40",
+        "judgeIds": [
+          "task_25a39150",
+          "task_cfda53f2"
+        ],
+        "sourceCommit": "179da0367bc5901d9e4e7eb44c6ec79c898b54c8",
+        "state": "candidate_pending_actual_code_judgment",
+        "reason": "Committed primary candidate verified; no recorded completed focus ACCEPT/NO CHANGE NEEDED judgment. Historical running labels are not current liveness or approval."
+      }
     },
     {
       "focus": "tests/live-self-test.test.ts",
@@ -3390,7 +3475,15 @@
       "relatedPaths": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "new related candidate;own primary pending"
+      "integration": "new related candidate;own primary pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": "a5642b72d82ac64e94fb58abfb5a2076b07031c3",
+        "state": "related_candidate_own_primary_pending",
+        "reason": "New related candidate has no own primary or completed independent focus judgment; withhold integration approval."
+      }
     },
     {
       "focus": "tests/offline-transport-probe.test.ts",
@@ -3399,7 +3492,15 @@
       "relatedPaths": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "new related candidate;own primary pending"
+      "integration": "new related candidate;own primary pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": "a2e8025bd3ffba42a24e0b7ba3358ac97de68532",
+        "state": "related_candidate_own_primary_pending",
+        "reason": "New related candidate has no own primary or completed independent focus judgment; withhold integration approval."
+      }
     },
     {
       "focus": "tests/openai-upgrade-socket-node.test.mjs",
@@ -3408,7 +3509,15 @@
       "relatedPaths": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "new related candidate;own primary pending"
+      "integration": "new related candidate;own primary pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": "31bf2843d0aad882258288ca512035fe1d64528e",
+        "state": "related_candidate_own_primary_pending",
+        "reason": "New related candidate has no own primary or completed independent focus judgment; withhold integration approval."
+      }
     }
   ],
   "sharedBrief": "ONGOING whole-repo structural readability task. User rejected shallow rename/comment sweep and required independent judgment. Read wisdom/values.md and wisdom/quality/structural-readability-{guidance,owner-pilot,repo-wide}.md. Maximize actual ease of understanding, not diff count/names/smaller files/boilerplate. Identify concrete mental bookkeeping, trace real callers/shipped paths. Simplify tangled responsibilities, branching/hidden state, unrelated lifetimes, needless indirection/dead machinery. Coherent domain operations and visible effects, not arbitrary splitting/context bags/registries/state-machine frameworks. Good names/comments/types help but are insufficient when structure remains tangled. Already clear code may stay unchanged. Preserve purposeful permission/replay/cancellation/delivery/data-loss/protocol contracts; no invented safety reductions, speculative defenses/dependencies/feature cuts/weakened tests. Explicitly report and test observed incidental fixes. Green tests support safety, not readability. Source focus is not edit-only-one-file restriction: coherent related edits allowed, report overlaps and all changed paths. No push/PR. No global/other area notes/values edits. Shared read-only dependencies /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules. Bun /home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin/bun; use /bin/bash PATH set inside quoted script (automatic fish setup failure known). No per-worker massive builds. Device/provider/macOS gaps honest.",

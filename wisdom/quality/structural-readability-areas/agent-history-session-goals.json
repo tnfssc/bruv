@@ -40,7 +40,19 @@
         }
       ],
       "acceptedBlob": "d8df6d268182f2f00087218756390eef7f6ca9e3",
-      "integration": "integrated-exact-candidate"
+      "integration": "integrated-exact-candidate",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "d8df6d268182f2f00087218756390eef7f6ca9e3",
+        "primaryId": "task_2724586d",
+        "primaryCommit": "b00744a30869de866bdcc6b8e87011e73d50c07e",
+        "judgeIds": [
+          "task_efa4fabb"
+        ],
+        "sourceCommit": "b00744a30869de866bdcc6b8e87011e73d50c07e",
+        "state": "accepted-exact-not-joined",
+        "reason": "Saved final original review and candidate/area hashes match. Live compaction owns SDK session; manager-only reset/replay follows; sampling returns observation rather than retained ledger; separate manager/directory finalizers make actual lifetime visible. Joined tree differs; parent integration p..."
+      }
     },
     {
       "focus": "scripts/history-storage-preload.ts",
@@ -73,7 +85,19 @@
         }
       ],
       "acceptedBlob": "8f7b5e5783bd2486eb7b0bc7f9952e080457617e",
-      "integration": "unchanged-at-area-tip"
+      "integration": "unchanged-at-area-tip",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "8f7b5e5783bd2486eb7b0bc7f9952e080457617e",
+        "primaryId": "task_9bbf5aee",
+        "primaryCommit": "cc3a45f5700d05d60ed35c56ba1a89d7f3e1276d",
+        "judgeIds": [
+          "task_dc60f489"
+        ],
+        "sourceCommit": "cc3a45f5700d05d60ed35c56ba1a89d7f3e1276d",
+        "state": "accepted-joined",
+        "reason": "Saved final original review and candidate/area hashes match. Preload sole synchronous installer activation clear; no owned selection/teardown state. Integration contract verified against actual preload/startup/SDK/native isolation and cleanup consumers, not whole-history acceptance."
+      }
     },
     {
       "focus": "scripts/history-storage-probe.ts",
@@ -104,7 +128,16 @@
       ],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": "task_49b0bc65",
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "interrupted-primary",
+        "reason": "Primary was killed without a completed focused result; preserve worker state and any uncommitted edits."
+      }
     },
     {
       "focus": "scripts/leak-audit/session-journal.ts",
@@ -137,7 +170,19 @@
         }
       ],
       "acceptedBlob": "e1c6629766f6f6511f2d347887310a885d455b92",
-      "integration": "unchanged-at-area-tip"
+      "integration": "unchanged-at-area-tip",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "e1c6629766f6f6511f2d347887310a885d455b92",
+        "primaryId": "task_fda08b6d",
+        "primaryCommit": "8c1b33bedd5d34ba5d84bfe3d87f1429e3268c40",
+        "judgeIds": [
+          "task_4f7e5e8f"
+        ],
+        "sourceCommit": "8c1b33bedd5d34ba5d84bfe3d87f1429e3268c40",
+        "state": "accepted-joined",
+        "reason": "Saved final original review and candidate/area hashes match. In-memory SDK diagnostic phases/manager retention/reset are direct, not shipped disk-store cleanup. Measurement code need not invent resource-release ownership; no structural burden found."
+      }
     },
     {
       "focus": "scripts/pi-host-adaptation.ts",
@@ -170,7 +215,19 @@
         }
       ],
       "acceptedBlob": "f0a19b44b776154c3308e02c5781824c30c40f1d",
-      "integration": "unchanged-at-area-tip"
+      "integration": "unchanged-at-area-tip",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "f0a19b44b776154c3308e02c5781824c30c40f1d",
+        "primaryId": "task_b29d8757",
+        "primaryCommit": "50aac7df5a8f3664d516edd4d1684db59e5c7b50",
+        "judgeIds": [
+          "task_672ed13a"
+        ],
+        "sourceCommit": "50aac7df5a8f3664d516edd4d1684db59e5c7b50",
+        "state": "accepted-joined",
+        "reason": "Saved final original review and candidate/area hashes match. Pinned recipes expose exact changes, pure transform rejects drift and batch validates before sole writes; runtime readiness separate, no IO rollback claimed."
+      }
     },
     {
       "focus": "scripts/prompt-preview.ts",
@@ -207,7 +264,19 @@
         }
       ],
       "acceptedBlob": "7a5766139559355f8ca7be138c9e436d54020f01",
-      "integration": "integrated-exact-candidate"
+      "integration": "integrated-exact-candidate",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "7a5766139559355f8ca7be138c9e436d54020f01",
+        "primaryId": "task_178021e9",
+        "primaryCommit": "d92a2a69dd455f3c9980f03255f51de76bbc171c",
+        "judgeIds": [
+          "task_910065b6"
+        ],
+        "sourceCommit": "d92a2a69dd455f3c9980f03255f51de76bbc171c",
+        "state": "accepted-exact-not-joined",
+        "reason": "Saved final original review and candidate/area hashes match. Linear parser remains direct; runtime capture initializes only after successful parsing, so help/errors no longer require transitive production assets. Equivalent role predicate and parser semantics preserved. Joined tree differs; paren..."
+      }
     },
     {
       "focus": "src/agent/README.md",
@@ -339,7 +408,23 @@
       ],
       "acceptedBlob": "613be07a1fc8c96a91487f30764fa5f213b7182c",
       "integration": "integrated-semantic-rework",
-      "previousAcceptedBlob": "463258e1632b8aca69b566ffe8a60fdb76790cb4"
+      "previousAcceptedBlob": "463258e1632b8aca69b566ffe8a60fdb76790cb4",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "613be07a1fc8c96a91487f30764fa5f213b7182c",
+        "primaryId": "task_c4082476",
+        "primaryCommit": "e5241b6b3919a8a62daa9c4a9f6003396ee0223d",
+        "judgeIds": [
+          "task_0cfbdfd3",
+          "task_8739dae2",
+          "task_b5e28075",
+          "task_7f8422ea",
+          "task_b7cd3a68"
+        ],
+        "sourceCommit": "d95ff345b6246fb81e7941e6acea8587d39a2bb1",
+        "state": "accepted-joined",
+        "reason": "Saved final original review and candidate/area hashes match. Currentcontext -> failclosed identity restoration -> wisdom eligibility removes registration-order/stale-depth dependency for command/prompt. Whole final task/notification/framing extension remains coherent; README semantic map accurate."
+      }
     },
     {
       "focus": "src/agent/cache-affine-compaction.ts",
@@ -377,7 +462,19 @@
         }
       ],
       "acceptedBlob": "1b4656ebb9765af61b459073d4eeeb6ceffa1d06",
-      "integration": "integrated-exact-candidate"
+      "integration": "integrated-exact-candidate",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "1b4656ebb9765af61b459073d4eeeb6ceffa1d06",
+        "primaryId": "task_f6a2cf6a",
+        "primaryCommit": "6765c847fd17806b697ec1bede8a8260ac9123d0",
+        "judgeIds": [
+          "task_2020f326"
+        ],
+        "sourceCommit": "6765c847fd17806b697ec1bede8a8260ac9123d0",
+        "state": "accepted-joined",
+        "reason": "Saved final original review and candidate/area hashes match. Inference/projection returns classified outcome/response receipt; hook owns one cancelled-usage append attempt plus diagnostic/notification/cancel. Wire acceptance not erased by later rejection. Actual SDK reproduction confirms notifier..."
+      }
     },
     {
       "focus": "src/agent/cache-countdown.ts",
@@ -415,7 +512,19 @@
         }
       ],
       "acceptedBlob": "e77c355972a0581e3773f8cabd457fe4424a55ee",
-      "integration": "integrated-exact-candidate"
+      "integration": "integrated-exact-candidate",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "e77c355972a0581e3773f8cabd457fe4424a55ee",
+        "primaryId": "task_06296bc0",
+        "primaryCommit": "b2b130e3fc239ec1677fa356c295ad8be1725e6a",
+        "judgeIds": [
+          "task_7fc83ddf"
+        ],
+        "sourceCommit": "b2b130e3fc239ec1677fa356c295ad8be1725e6a",
+        "state": "accepted-joined",
+        "reason": "Saved final original review and candidate/area hashes match. Observer owns request/subscription/HTTP-terminal debt lifetime apart from settings/durable countdown. Atomic select+consume, grouped terminal debt/ambiguity disposal, native real-operation evidence remove cross-hook reconstruction witho..."
+      }
     },
     {
       "focus": "src/agent/extension.ts",
@@ -492,7 +601,22 @@
         "blob": "e8393b2496f38d915c39b260f3d084019385ad0b",
         "primaryFocusStillRequired": true
       },
-      "checkNeeds": []
+      "checkNeeds": [],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "d639bcdedadbd503cac1c2ce6739177b385d1dc3",
+        "primaryId": "task_f10ebf0a",
+        "primaryCommit": "8472ed2449ce129f1929ac5c60867cf34dfd2f0e",
+        "judgeIds": [
+          "task_0acb5c07",
+          "task_7f8422ea",
+          "task_b7cd3a68",
+          "task_eef5d289"
+        ],
+        "sourceCommit": "d95ff345b6246fb81e7941e6acea8587d39a2bb1",
+        "state": "accepted-exact-not-joined",
+        "reason": "Saved final original review and candidate/area hashes match. Currentcontext -> failclosed identity restoration -> wisdom eligibility removes registration-order/stale-depth dependency for command/prompt. Whole final task/notification/framing extension remains coherent; README semantic map accurate..."
+      }
     },
     {
       "focus": "src/agent/instruction-continuity.ts",
@@ -525,7 +649,19 @@
         }
       ],
       "acceptedBlob": "51020264675b38641611920f0adb4e4c4c03664a",
-      "integration": "unchanged-at-area-tip"
+      "integration": "unchanged-at-area-tip",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "51020264675b38641611920f0adb4e4c4c03664a",
+        "primaryId": "task_9489bfd1",
+        "primaryCommit": "e1ce1259975e663d8f091564175612a85dafa92f",
+        "judgeIds": [
+          "task_7a60dd3f"
+        ],
+        "sourceCommit": "e1ce1259975e663d8f091564175612a85dafa92f",
+        "state": "accepted-joined",
+        "reason": "Saved final original review and candidate/area hashes match. Actual private SDK adapter separates bound-session ownership, manager/session-scoped frame and per-run options; prompt/compaction/hooks synchronize final frames, replacement/shutdown invalidate old authority, root custom/child roles sta..."
+      }
     },
     {
       "focus": "src/agent/instruction-mode.ts",
@@ -565,7 +701,19 @@
         }
       ],
       "acceptedBlob": "bcb44e0107f9dedc6ed401bb74ebb20431861cb5",
-      "integration": "integrated-exact-candidate"
+      "integration": "integrated-exact-candidate",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "bcb44e0107f9dedc6ed401bb74ebb20431861cb5",
+        "primaryId": "task_146763c6",
+        "primaryCommit": "b56b4b3a99499178ace1cacba5538760fdc0a656",
+        "judgeIds": [
+          "task_00bd7047"
+        ],
+        "sourceCommit": "b56b4b3a99499178ace1cacba5538760fdc0a656",
+        "state": "accepted-joined",
+        "reason": "Saved final original review and candidate/area hashes match. Removes duplicate frame lifecycle: owner digest derives from context; custom flag never true in shipped caller. Actual manager/session authority, root custom/child isolation, marker replacement and persistence ordering remain explicit."
+      }
     },
     {
       "focus": "src/agent/last-used-cli-model.ts",
@@ -625,7 +773,20 @@
         }
       ],
       "acceptedBlob": "38ae1734383f3d55a388a9f2f28af122d6ff3e8a",
-      "integration": "integrated-exact-rework"
+      "integration": "integrated-exact-rework",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "38ae1734383f3d55a388a9f2f28af122d6ff3e8a",
+        "primaryId": "task_e862a0d8",
+        "primaryCommit": "e7fe2eec0a44aa69a41ded01a6862217fdb7a7b7",
+        "judgeIds": [
+          "task_8d8d65eb",
+          "task_b1432f83"
+        ],
+        "sourceCommit": "e7fe2eec0a44aa69a41ded01a6862217fdb7a7b7",
+        "state": "accepted-exact-not-joined",
+        "reason": "Saved final original review and candidate/area hashes match. Prior rejection fully answered: comment accurately exposes effective thinking events from model changes with no source/consent discriminator and distinct event-free initialization. Different handler authority stays explicit; no runtime ..."
+      }
     },
     {
       "focus": "src/agent/manual-shake.ts",
@@ -663,7 +824,19 @@
         }
       ],
       "acceptedBlob": "51bbeaf48a9a3fab8d9cdfb58eca338c92350337",
-      "integration": "integrated-exact-candidate"
+      "integration": "integrated-exact-candidate",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "51bbeaf48a9a3fab8d9cdfb58eca338c92350337",
+        "primaryId": "task_dd5dc858",
+        "primaryCommit": "16e685366452845e2faff7fe7fbee57c6cdc5a6e",
+        "judgeIds": [
+          "task_c5c84c0c"
+        ],
+        "sourceCommit": "16e685366452845e2faff7fe7fbee57c6cdc5a6e",
+        "state": "accepted-joined",
+        "reason": "Saved final original review and candidate/area hashes match. Protocol evidence/plan/match/authorize/rewrite/commit responsibilities distinct; replay no longer plans checkpoint just for ambiguity. Original occurrence/redaction/duplicate/order safety and native full-window coverage preserved. One c..."
+      }
     },
     {
       "focus": "src/agent/native-compaction.ts",
@@ -701,7 +874,19 @@
         }
       ],
       "acceptedBlob": "629695696d1bedafc6147cfac485600ed878e664",
-      "integration": "integrated-exact-candidate"
+      "integration": "integrated-exact-candidate",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "629695696d1bedafc6147cfac485600ed878e664",
+        "primaryId": "task_ec8e3840",
+        "primaryCommit": "08e00ae3c0aa5603288096ddb7d5a3ab73a8c682",
+        "judgeIds": [
+          "task_7caa7713"
+        ],
+        "sourceCommit": "08e00ae3c0aa5603288096ddb7d5a3ab73a8c682",
+        "state": "accepted-joined",
+        "reason": "Saved final original review and candidate/area hashes match. Registration owns capture/replay/admission; one attempt owns pinned scope through auth/transport/settlement without capture mutation. Stale scope, billable cancelled/failed usage, response evidence and no postlaunch plaintext fallback p..."
+      }
     },
     {
       "focus": "src/agent/native-fast-mode.ts",
@@ -754,7 +939,20 @@
       ],
       "acceptedBlob": "07e4935305ca0bca5cd66c7042b15757d87877bf",
       "integration": "integrated-exact-candidate",
-      "checkNeeds": []
+      "checkNeeds": [],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "07e4935305ca0bca5cd66c7042b15757d87877bf",
+        "primaryId": "task_fd75f63a",
+        "primaryCommit": "e4a406a62b1e3715cc8f50b3e5bb5661644c8bb1",
+        "judgeIds": [
+          "task_167d27b3",
+          "task_4cfa8579"
+        ],
+        "sourceCommit": "4b7d3e5b47687be57c96e4035265b5c2ce1ec3c5",
+        "state": "accepted-joined",
+        "reason": "Saved final original review and candidate/area hashes match. Fixture uses actual shared runtime/persistence authority, explicit consent/preparation signals and direct rollback fault injection; all 108 assertions/test declarations remain. Final source policy/authorization/guard/rollback/last-owner..."
+      }
     },
     {
       "focus": "src/agent/provider-attempts.ts",
@@ -787,7 +985,19 @@
         }
       ],
       "acceptedBlob": "cfa8d0941c92b30f72653ff89f36a84a98aafabe",
-      "integration": "unchanged-at-area-tip"
+      "integration": "unchanged-at-area-tip",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "cfa8d0941c92b30f72653ff89f36a84a98aafabe",
+        "primaryId": "task_1b7e035c",
+        "primaryCommit": "5e95045dec145d784639b23f578741539586a603",
+        "judgeIds": [
+          "task_075c1281"
+        ],
+        "sourceCommit": "5e95045dec145d784639b23f578741539586a603",
+        "state": "accepted-joined",
+        "reason": "Saved final original review and candidate/area hashes match. Owner-keyed subscription/evidence broker is coherent; native producer owns generation/scope/validated-output authority and cache consumer ignores dispatch. Listener failure isolation and cleanup explicit, no need to merge lifetimes."
+      }
     },
     {
       "focus": "src/goals/controller.ts",
@@ -820,7 +1030,19 @@
         }
       ],
       "acceptedBlob": "b46d074e022db912d2ea6565730a27879f83a361",
-      "integration": "unchanged-at-area-tip"
+      "integration": "unchanged-at-area-tip",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "b46d074e022db912d2ea6565730a27879f83a361",
+        "primaryId": "task_b7e1aa63",
+        "primaryCommit": "ffdfb910fa126b9eca765d6fbfcc5a3b2b2ceb6b",
+        "judgeIds": [
+          "task_61e44d61"
+        ],
+        "sourceCommit": "ffdfb910",
+        "state": "accepted-joined",
+        "reason": "Saved final original review and candidate/area hashes match. Transient accounting stays distinct from persistence/delivery; automatic/helper starts, per-run strikes and settled scheduling are explicit. First helper ordinary run exemption and waiting handoff accounting remain localized."
+      }
     },
     {
       "focus": "src/goals/extension.ts",
@@ -859,7 +1081,19 @@
         }
       ],
       "acceptedBlob": "90e7ddd369fad8b41c6cf53a2114b85c4bda5af1",
-      "integration": "integrated-exact-candidate"
+      "integration": "integrated-exact-candidate",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "90e7ddd369fad8b41c6cf53a2114b85c4bda5af1",
+        "primaryId": "task_28c52a22",
+        "primaryCommit": "3768ecd10500006ffdfed8bc12202224a483636a",
+        "judgeIds": [
+          "task_4a2a31dd"
+        ],
+        "sourceCommit": "3768ecd10500006ffdfed8bc12202224a483636a",
+        "state": "accepted-joined",
+        "reason": "Saved final original review and candidate/area hashes match. GoalReminders coherently owns transport tokens/epoch/generation/bounded pending IDs, separate from store and controller. Hooks retain visible transport-only invalidation vs full accounting reset. Exact payload, queue/navigation/restart,..."
+      }
     },
     {
       "focus": "src/goals/store.ts",
@@ -917,7 +1151,20 @@
         }
       ],
       "acceptedBlob": "bd72fa6cc6e8ccfebde0677faa87ccff9be764d2",
-      "integration": "integrated-exact-candidate"
+      "integration": "integrated-exact-candidate",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "bd72fa6cc6e8ccfebde0677faa87ccff9be764d2",
+        "primaryId": "task_fda16f5b",
+        "primaryCommit": "550ce6425a3d92d1b0300bc48bd9cfe69737da91",
+        "judgeIds": [
+          "task_46beb0fa",
+          "task_d72cbe58"
+        ],
+        "sourceCommit": "0f29a6e2742eed1fa99fe34c67b15e3cb7d8d072",
+        "state": "accepted-joined",
+        "reason": "Saved final original review and candidate/area hashes match. Durable journal variants match writes; validated replay result deliberately omits envelope. Removed assertion site genuinely disappeared in accepted replay; combined authority/diagnostics/waiting/write ordering contracts remain explicit."
+      }
     },
     {
       "focus": "src/goals/types.ts",
@@ -987,7 +1234,20 @@
         }
       ],
       "acceptedBlob": "8ccbe88cc95296fc9fa4c224c72c7cf2c447c5bd",
-      "integration": "integrated-reconciled-candidate"
+      "integration": "integrated-reconciled-candidate",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "8ccbe88cc95296fc9fa4c224c72c7cf2c447c5bd",
+        "primaryId": "task_30334bdd",
+        "primaryCommit": "0f29a6e2742eed1fa99fe34c67b15e3cb7d8d072",
+        "judgeIds": [
+          "task_229853f3",
+          "task_d72cbe58"
+        ],
+        "sourceCommit": "0f29a6e2742eed1fa99fe34c67b15e3cb7d8d072",
+        "state": "accepted-joined",
+        "reason": "Saved final original review and candidate/area hashes match. Durable journal variants match writes; validated replay result deliberately omits envelope. Removed assertion site genuinely disappeared in accepted replay; combined authority/diagnostics/waiting/write ordering contracts remain explicit."
+      }
     },
     {
       "focus": "src/herdr-agent-state.ts",
@@ -1020,7 +1280,19 @@
         }
       ],
       "acceptedBlob": "652dc28d948e82a263b789da4a2ec5dbb09d4296",
-      "integration": "unchanged-at-area-tip"
+      "integration": "unchanged-at-area-tip",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "652dc28d948e82a263b789da4a2ec5dbb09d4296",
+        "primaryId": "task_841fe796",
+        "primaryCommit": "f57af221d2c5558b34d3db7959bd91d7898efd7f",
+        "judgeIds": [
+          "task_740befb5"
+        ],
+        "sourceCommit": "f57af221d2c5558b34d3db7959bd91d7898efd7f",
+        "state": "accepted-joined",
+        "reason": "Saved final original review and candidate/area hashes match. Pane reporter claim/event precedence and coalesced serialized delivery/quit lifetime already coherent. Splitting class or shared state framework would not resolve a reading problem."
+      }
     },
     {
       "focus": "src/history/disk-entry-store.ts",
@@ -1058,7 +1330,19 @@
         }
       ],
       "acceptedBlob": "4bba42698529fdc9183ecd6e93110ab3b4484cff",
-      "integration": "integrated-exact-candidate"
+      "integration": "integrated-exact-candidate",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "4bba42698529fdc9183ecd6e93110ab3b4484cff",
+        "primaryId": "task_93e226ba",
+        "primaryCommit": "32cbff38aa54ff05659ea2365134f016ff8c4055",
+        "judgeIds": [
+          "task_0426dce8"
+        ],
+        "sourceCommit": "32cbff38aa54ff05659ea2365134f016ff8c4055",
+        "state": "accepted-joined",
+        "reason": "Saved final original review and candidate/area hashes match. Single transaction descriptor owns write/publication/rollback; indexes/cache advance only on success. Removed flags derive from active path and immediate publication invariant. Collision and cleanup contracts preserved."
+      }
     },
     {
       "focus": "src/history/selector-lifecycle.ts",
@@ -1091,7 +1375,19 @@
         }
       ],
       "acceptedBlob": "97954cd9e305bbecae9fbfdedac034e8a52cf4c4",
-      "integration": "unchanged-at-area-tip"
+      "integration": "unchanged-at-area-tip",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "97954cd9e305bbecae9fbfdedac034e8a52cf4c4",
+        "primaryId": "task_1e7ee0c8",
+        "primaryCommit": "313f21095386e99beda79404e94aefc4c05da23c",
+        "judgeIds": [
+          "task_2011e8a7"
+        ],
+        "sourceCommit": "313f21095386e99beda79404e94aefc4c05da23c",
+        "state": "accepted-joined",
+        "reason": "Saved final original review and candidate/area hashes match. Metadata-count override has one installation lifetime and native fallback; picker selection/disposal belong elsewhere. Metadata-only count avoids body hydration with clear authority."
+      }
     },
     {
       "focus": "src/history/service.ts",
@@ -1129,7 +1425,19 @@
         }
       ],
       "acceptedBlob": "7ccf86cf97d5e1b35a5382d1b6a8b62aca041a9c",
-      "integration": "integrated-exact-candidate"
+      "integration": "integrated-exact-candidate",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "7ccf86cf97d5e1b35a5382d1b6a8b62aca041a9c",
+        "primaryId": "task_f75129c8",
+        "primaryCommit": "3e75dd44ee0e8109ed4191fe7397ec1d0459bfc9",
+        "judgeIds": [
+          "task_150357ad"
+        ],
+        "sourceCommit": "3e75dd44ee0e8109ed4191fe7397ec1d0459bfc9",
+        "state": "accepted-joined",
+        "reason": "Saved final original review and candidate/area hashes match. Retrieval preparation owns cursor/ancestry/snapshot/live exclusions together; sorting uses visible provenance not generator side map. Read retains full scan and original UTF-16, permission/ref/cursor/live exclusion contracts."
+      }
     },
     {
       "focus": "src/history/session-manager.ts",
@@ -1167,7 +1475,19 @@
         }
       ],
       "acceptedBlob": "d7032c57091c90f661c37edd3b69bf27f0835243",
-      "integration": "integrated-exact-candidate"
+      "integration": "integrated-exact-candidate",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "d7032c57091c90f661c37edd3b69bf27f0835243",
+        "primaryId": "task_f9b9fc58",
+        "primaryCommit": "a6bc2c45ad4f18f5bede511ca33e4eb690c26b36",
+        "judgeIds": [
+          "task_4b35440e"
+        ],
+        "sourceCommit": "a6bc2c45ad4f18f5bede511ca33e4eb690c26b36",
+        "state": "accepted-joined",
+        "reason": "Saved final original review and candidate/area hashes match. Unified append/rebuild metadata publisher; explicit owner in syncIndexes; accounting installer owns cache validation/native estimate/projection recording. Append/publication/recovery, skeleton identity, replay and disposal remain purpos..."
+      }
     },
     {
       "focus": "src/history/shake-record.ts",
@@ -1200,7 +1520,19 @@
         }
       ],
       "acceptedBlob": "5ebffcfca9e7666fb500825428a99033150e8b63",
-      "integration": "unchanged-at-area-tip"
+      "integration": "unchanged-at-area-tip",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "5ebffcfca9e7666fb500825428a99033150e8b63",
+        "primaryId": "task_ce232122",
+        "primaryCommit": "976ba477d57be183677d200913cca5c810d42908",
+        "judgeIds": [
+          "task_776b93a2"
+        ],
+        "sourceCommit": "976ba477d57be183677d200913cca5c810d42908",
+        "state": "accepted-joined",
+        "reason": "Saved final original review and candidate/area hashes match. Exact schema/version/ID/byte validation is linear; manual newest-authority, native full coverage and history cumulative live exclusions intentionally differ in caller-owned consequences. No central framework would reduce reader reconstr..."
+      }
     },
     {
       "focus": "src/history/types.ts",
@@ -1233,7 +1565,19 @@
         }
       ],
       "acceptedBlob": "4f47ce0c473b8e2f03d11590cc9952e5a739907b",
-      "integration": "unchanged-at-area-tip"
+      "integration": "unchanged-at-area-tip",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "4f47ce0c473b8e2f03d11590cc9952e5a739907b",
+        "primaryId": "task_90c49aec",
+        "primaryCommit": "520137fbe51b09be0d9cb0c7a8833b90630f80bf",
+        "judgeIds": [
+          "task_bbbdce1d"
+        ],
+        "sourceCommit": "520137fbe51b09be0d9cb0c7a8833b90630f80bf",
+        "state": "accepted-joined",
+        "reason": "Saved final original review and candidate/area hashes match. Four evidence contracts separate provenance, match/read ranges and page/scan completeness. Permission, session/branch authority and live exclusions stay explicitly in service; shared provenance is evidence not context bag."
+      }
     },
     {
       "focus": "src/pi-host.ts",
@@ -1266,7 +1610,19 @@
         }
       ],
       "acceptedBlob": "db2f1392adacf1d649e960bf7aaaf837200f66d2",
-      "integration": "unchanged-at-area-tip"
+      "integration": "unchanged-at-area-tip",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "db2f1392adacf1d649e960bf7aaaf837200f66d2",
+        "primaryId": "task_dad4fc12",
+        "primaryCommit": "f41b2a9eb367298f703309897930711b7d8c20cd",
+        "judgeIds": [
+          "task_43ae3d21"
+        ],
+        "sourceCommit": "f41b2a9eb367298f703309897930711b7d8c20cd",
+        "state": "accepted-joined",
+        "reason": "Saved final original review and candidate/area hashes match. Prepared SDK registry/markers runtime assertion is one fail-closed prerequisite, separate from preparation hash/version authority and actual session owners."
+      }
     },
     {
       "focus": "src/prompt-preview.ts",
@@ -1303,7 +1659,19 @@
         }
       ],
       "acceptedBlob": "2bfc8a1e7288a43f140742a6895073e70dc34052",
-      "integration": "integrated-exact-candidate"
+      "integration": "integrated-exact-candidate",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "2bfc8a1e7288a43f140742a6895073e70dc34052",
+        "primaryId": "task_321320f8",
+        "primaryCommit": "904c6fb51b2fb62a4c91580e0120d5eabc1c0f7b",
+        "judgeIds": [
+          "task_10247cc9"
+        ],
+        "sourceCommit": "904c6fb51b2fb62a4c91580e0120d5eabc1c0f7b",
+        "state": "accepted-exact-not-joined",
+        "reason": "Saved final original review and candidate/area hashes match. Project/session cleanup remains outer; temporary role environment restoration and offline capture/fake completion/exact-context validation are complete shorter lifetimes, not alternative assembler. Joined tree differs; parent integratio..."
+      }
     },
     {
       "focus": "src/prompts.ts",
@@ -1342,7 +1710,19 @@
         }
       ],
       "acceptedBlob": "784be0e71de6893f04168ddbd2b4f2c42dc99723",
-      "integration": "integrated-exact-candidate"
+      "integration": "integrated-exact-candidate",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "784be0e71de6893f04168ddbd2b4f2c42dc99723",
+        "primaryId": "task_263c3f6a",
+        "primaryCommit": "42bec26abf11007f2b0781e1771224c1d5fa63c0",
+        "judgeIds": [
+          "task_7f8422ea"
+        ],
+        "sourceCommit": "42bec26abf11007f2b0781e1771224c1d5fa63c0",
+        "state": "accepted-exact-not-joined",
+        "reason": "Saved final original review and candidate/area hashes match. Complete root/worker framing belongs with text/base ownership; extension visibly selects after identity/mode/continuity. Direct embedded Markdown removes strip/re-add. Entire final extension retains coherent notification/task lifecycle ..."
+      }
     },
     {
       "focus": "src/prompts/background-handoff.md",
@@ -1375,7 +1755,19 @@
         }
       ],
       "acceptedBlob": "c46390ba223aa38f28fb9cae3d04b8f9dbe8fda4",
-      "integration": "unchanged-at-area-tip"
+      "integration": "unchanged-at-area-tip",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "c46390ba223aa38f28fb9cae3d04b8f9dbe8fda4",
+        "primaryId": "task_014fb077",
+        "primaryCommit": "2b4e68216d85eceb3126db02b27f86acdeac121a",
+        "judgeIds": [
+          "task_4e71a5a2"
+        ],
+        "sourceCommit": "2b4e68216d85eceb3126db02b27f86acdeac121a",
+        "state": "accepted-joined",
+        "reason": "Saved final original review and candidate/area hashes match. Embedded handoff receipt and bounded ID substitution convey observation without permission/cancellation/delivery ownership; service/manager/dispatch remain actual authorities. Expansion would duplicate their contracts."
+      }
     },
     {
       "focus": "src/prompts/compaction-jobs.md",
@@ -1404,7 +1796,19 @@
         }
       ],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "e896596cd3979381dd5e174aa023e9e89b4f8ae6",
+        "primaryId": "task_8fa02408",
+        "primaryCommit": "05618a9bc05091b9b7ac2ba76042c2f332fd188f",
+        "judgeIds": [
+          "task_14606708"
+        ],
+        "sourceCommit": "05618a9bc05091b9b7ac2ba76042c2f332fd188f",
+        "state": "accepted-joined",
+        "reason": "Recovered final original review; ledger running state is stale. Completed saved actual-code review of shipped historical job snapshot; source unchanged. Ledger still says running; final delivery found in original session."
+      }
     },
     {
       "focus": "src/prompts/compaction.md",
@@ -1433,7 +1837,20 @@
         }
       ],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "130bda9935d6bccd28182ce185dcd88601fb3a04",
+        "primaryId": "task_cc512c91",
+        "primaryCommit": "ae1b0da452ca0c98c86f14a7b8a26ef2a405b2b1",
+        "judgeIds": [
+          "task_43d520e7",
+          "task_59bb105b"
+        ],
+        "sourceCommit": "ae1b0da452ca0c98c86f14a7b8a26ef2a405b2b1",
+        "state": "accepted-joined",
+        "reason": "The exact candidate prompt is unchanged from the supplied baseline and primary parent. It already exposes one coherent operation: produce a continuation checkpoint, not execute historical orders. The opening goal, explicit retention list, fixed Markdown outline, and final no-tools/no-continuation boundary make the reader journey direct. Goals and constraints precede progress; decisions, next steps, and critical recovery facts follow. The separate live-job/ownership/wait requirements and older-checkpoint retention make continuation needs visible without an abstract context bag. A rename, helper extraction, or added prose framework would not reduce an observed reconstruction burden. This is independent unchanged acceptance, not acceptance of the worker safety report or a claim of structural improvement."
+      }
     },
     {
       "focus": "src/prompts/execute-description.md",
@@ -1449,7 +1866,16 @@
       ],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": "task_9a3e6f45",
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "interrupted-primary",
+        "reason": "Primary was killed without a completed focused result; preserve worker state and any uncommitted edits."
+      }
     },
     {
       "focus": "src/prompts/execute.md",
@@ -1458,7 +1884,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No dedicated primary/final independent focus judgment."
+      }
     },
     {
       "focus": "src/prompts/fast.md",
@@ -1467,7 +1902,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No dedicated primary/final independent focus judgment."
+      }
     },
     {
       "focus": "src/prompts/goal-continuation.md",
@@ -1476,7 +1920,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No dedicated primary/final independent focus judgment."
+      }
     },
     {
       "focus": "src/prompts/goal.md",
@@ -1485,7 +1938,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No dedicated primary/final independent focus judgment."
+      }
     },
     {
       "focus": "src/prompts/gpt-live.md",
@@ -1494,7 +1956,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No dedicated primary/final independent focus judgment."
+      }
     },
     {
       "focus": "src/prompts/identity.md",
@@ -1503,7 +1974,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No dedicated primary/final independent focus judgment."
+      }
     },
     {
       "focus": "src/prompts/live.md",
@@ -1512,7 +1992,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No dedicated primary/final independent focus judgment."
+      }
     },
     {
       "focus": "src/prompts/main-orchestrator.md",
@@ -1521,7 +2010,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No dedicated primary/final independent focus judgment."
+      }
     },
     {
       "focus": "src/prompts/markdown.d.ts",
@@ -1530,7 +2028,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No dedicated primary/final independent focus judgment."
+      }
     },
     {
       "focus": "src/prompts/native-compaction.md",
@@ -1539,7 +2046,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No dedicated primary/final independent focus judgment."
+      }
     },
     {
       "focus": "src/prompts/normal.md",
@@ -1548,7 +2064,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No dedicated primary/final independent focus judgment."
+      }
     },
     {
       "focus": "src/prompts/orchestrator.md",
@@ -1557,7 +2082,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No dedicated primary/final independent focus judgment."
+      }
     },
     {
       "focus": "src/prompts/system.md",
@@ -1566,7 +2100,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No dedicated primary/final independent focus judgment."
+      }
     },
     {
       "focus": "src/prompts/wisdom.md",
@@ -1575,7 +2118,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No dedicated primary/final independent focus judgment."
+      }
     },
     {
       "focus": "src/session/host-access.ts",
@@ -1608,7 +2160,19 @@
         }
       ],
       "acceptedBlob": "b5a5b4f018035a73c1261785c34b2fd75b057e61",
-      "integration": "unchanged-at-area-tip"
+      "integration": "unchanged-at-area-tip",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "b5a5b4f018035a73c1261785c34b2fd75b057e61",
+        "primaryId": "task_bb3cc0b8",
+        "primaryCommit": "10ae751bb3481fd648093db7f31af241aa070782",
+        "judgeIds": [
+          "task_ed71d544"
+        ],
+        "sourceCommit": "10ae751bb3481fd648093db7f31af241aa070782",
+        "state": "accepted-joined",
+        "reason": "Saved final original review and candidate/area hashes match. One call-local synchronous bus lookup crosses extension wrappers without owning cache/scheduler/session lifetime; owning extension checks manager identity and clears host on shutdown. Shipped remote consumers inspect jobs without acquir..."
+      }
     },
     {
       "focus": "src/session/host.ts",
@@ -1648,7 +2212,19 @@
         }
       ],
       "acceptedBlob": "cc31676e84612ee72967b28da46f401efcfc4407",
-      "integration": "integrated-exact-candidate"
+      "integration": "integrated-exact-candidate",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "cc31676e84612ee72967b28da46f401efcfc4407",
+        "primaryId": "task_9fef6998",
+        "primaryCommit": "7f466cef21871ee373a158c35f58f85e19861166",
+        "judgeIds": [
+          "task_9ae7f05e"
+        ],
+        "sourceCommit": "7f466cef21871ee373a158c35f58f85e19861166",
+        "state": "accepted-joined",
+        "reason": "Saved final original review and candidate/area hashes match. Snapshot filesystem retention has separate process-shared expiry/locking/budget lifetime from host branch/scope checks and delivery. Retained path replaces misleading creation metadata. Native polling tracks IDs and one completion decis..."
+      }
     },
     {
       "focus": "src/session/identity.ts",
@@ -1681,7 +2257,19 @@
         }
       ],
       "acceptedBlob": "12d42ff85ad0c1524bb85bafeeb668fed2a42b26",
-      "integration": "unchanged-at-area-tip"
+      "integration": "unchanged-at-area-tip",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "12d42ff85ad0c1524bb85bafeeb668fed2a42b26",
+        "primaryId": "task_743c2cfa",
+        "primaryCommit": "b5a177e68e2705c9ad68004938618b6cb53a2c60",
+        "judgeIds": [
+          "task_cbe6a2c8"
+        ],
+        "sourceCommit": "b5a177e68e2705c9ad68004938618b6cb53a2c60",
+        "state": "accepted-joined",
+        "reason": "Saved final original review and candidate/area hashes match. Stateless helper prefers durable path else stable existing ID attribution, no allocation/write/authority. Child parent metadata/footer/connector consumers distinct from native/SSH persisted-session authority and replay/history identity."
+      }
     },
     {
       "focus": "src/session/input.ts",
@@ -1719,7 +2307,19 @@
         }
       ],
       "acceptedBlob": "absent",
-      "integration": "integrated-judged-deletion"
+      "integration": "integrated-judged-deletion",
+      "resume": {
+        "status": "accepted-deletion",
+        "acceptedBlob": "absent",
+        "primaryId": "task_aeae3a68",
+        "primaryCommit": "35218b896296c97fd6f43cec7b324047a9ff3f9c",
+        "judgeIds": [
+          "task_ea00ebd0"
+        ],
+        "sourceCommit": "35218b896296c97fd6f43cec7b324047a9ff3f9c",
+        "state": "accepted-deletion-joined",
+        "reason": "Explicit deletion judgment, not a missing hash. Independent 775-module baseline import scan and package/build tracing found only deleted test consumer. Actual input/replay/cancellation authority is MainOwner and GPT delegation; removed test asserted only unused API, not shipped safety."
+      }
     },
     {
       "focus": "src/session/operations.ts",
@@ -1752,7 +2352,19 @@
         }
       ],
       "acceptedBlob": "b007de00a379d4f69fdd42594c4e608c7635a85a",
-      "integration": "unchanged-at-area-tip"
+      "integration": "unchanged-at-area-tip",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "b007de00a379d4f69fdd42594c4e608c7635a85a",
+        "primaryId": "task_7a84499f",
+        "primaryCommit": "a285b48cd5f6879568f7514beb9f72bd5510f0dc",
+        "judgeIds": [
+          "task_864426d0"
+        ],
+        "sourceCommit": "a285b48cd5f6879568f7514beb9f72bd5510f0dc",
+        "state": "accepted-joined",
+        "reason": "Saved final original review and candidate/area hashes match. Session operation facade preserves owning-host replay/scope and task authority; cancellation confirmation distinct from observation, actual Live MainOwner path remains separate. Contracts already expose effects without hidden lifetime."
+      }
     },
     {
       "focus": "src/session/restore-leaf.ts",
@@ -1785,7 +2397,19 @@
         }
       ],
       "acceptedBlob": "bba39bd21c27e5fc846e54654e3a7c2ad1f9f38c",
-      "integration": "unchanged-at-area-tip"
+      "integration": "unchanged-at-area-tip",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "bba39bd21c27e5fc846e54654e3a7c2ad1f9f38c",
+        "primaryId": "task_6d6e2568",
+        "primaryCommit": "8f868493f1a28ce307445964ddb38f1b70e667cb",
+        "judgeIds": [
+          "task_58208ff4"
+        ],
+        "sourceCommit": "8f868493f1a28ce307445964ddb38f1b70e667cb",
+        "state": "accepted-joined",
+        "reason": "Saved final original review and candidate/area hashes match. Unavailable/empty/branched view snapshots explicit; helper restores active view without deleting durable entries or absorbing caller-owned failure policy."
+      }
     },
     {
       "focus": "src/session/transcript.ts",
@@ -1823,7 +2447,19 @@
         }
       ],
       "acceptedBlob": "2084f1006598cbc074b94465e751e4ab568453b2",
-      "integration": "integrated-exact-candidate"
+      "integration": "integrated-exact-candidate",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "2084f1006598cbc074b94465e751e4ab568453b2",
+        "primaryId": "task_308d89c5",
+        "primaryCommit": "c3c3f816323828d4a44d5ae0d311c52a6b62698d",
+        "judgeIds": [
+          "task_91f2cc12"
+        ],
+        "sourceCommit": "c3c3f816323828d4a44d5ae0d311c52a6b62698d",
+        "state": "accepted-exact-not-joined",
+        "reason": "Saved final original review and candidate/area hashes match. One speaker-owned draft explicitly represents invariant formerly reconstructed across two slots; receive boundaries/append retention/flush persistence clear, actual Live/GPT/replay/host authority preserved. Joined tree differs; parent i..."
+      }
     },
     {
       "focus": "src/system-prompt.ts",
@@ -1862,7 +2498,19 @@
         }
       ],
       "acceptedBlob": "f581007216760dcdc2f77dfe8dc65415b3c64789",
-      "integration": "integrated-exact-candidate"
+      "integration": "integrated-exact-candidate",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "f581007216760dcdc2f77dfe8dc65415b3c64789",
+        "primaryId": "task_e1bfb465",
+        "primaryCommit": "1430519dd7dbda93b9ccf79b2e8f33690ddbd6a4",
+        "judgeIds": [
+          "task_a731e652"
+        ],
+        "sourceCommit": "1430519dd7dbda93b9ccf79b2e8f33690ddbd6a4",
+        "state": "accepted-exact-not-joined",
+        "reason": "Saved final original review and candidate/area hashes match. SDK directly selects Bruv fallback or Pi discovery with actual trust, no CLI argv-index simulation. CLI retains bypass/trust/insertion responsibility; complete related runtime authority/isolation/drain unchanged. Joined tree differs; pa..."
+      }
     },
     {
       "focus": "src/wisdom/extension.ts",
@@ -1934,6 +2582,19 @@
         "base": "current-area-tip",
         "importCandidateTests": "4532fc23a20dcec998e4c419642f02130a6665ff",
         "preserve": "Latest accepted prompt framing42bec26 and notification owner in src/agent/extension.ts b66fae53360af81f161d7700808d69bc7437cd50; fresh whole-final judge required if related extension changed."
+      },
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "fccd4d3b7dea180016373d025ee580ec242e37c3",
+        "primaryId": "task_7a48140a",
+        "primaryCommit": "d95ff345b6246fb81e7941e6acea8587d39a2bb1",
+        "judgeIds": [
+          "task_5fa23d85",
+          "task_b7cd3a68"
+        ],
+        "sourceCommit": "d95ff345b6246fb81e7941e6acea8587d39a2bb1",
+        "state": "accepted-exact-not-joined",
+        "reason": "Saved final original review and candidate/area hashes match. Currentcontext -> failclosed identity restoration -> wisdom eligibility removes registration-order/stale-depth dependency for command/prompt. Whole final task/notification/framing extension remains coherent; README semantic map accurate..."
       }
     },
     {
@@ -1989,6 +2650,19 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7-5442693331ce-task_673d9338",
         "branch": "bruv/primary-wisdom-path-tests-and-rejected-p-673d9338",
         "priorJudge": "task_f581c0d2"
+      },
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "909717075aaac02a273286168e712faf0269f7ab",
+        "primaryId": "task_4e40c20e",
+        "primaryCommit": "07fafa2a65e73e99654c5a998c2bd3d0226a70e6",
+        "judgeIds": [
+          "task_f581c0d2",
+          "task_757a9fcd"
+        ],
+        "sourceCommit": "7f90e64158460e947fd85693457fccfde658e0d9",
+        "state": "accepted-joined",
+        "reason": "Saved final original review and candidate/area hashes match. Full final unchanged resolver re-read: lexical ancestor selection, trust-gated settings read, ENOENT-only default, validation and readonly path resolve coherent. Original related-test objection independently resolved."
       }
     },
     {
@@ -1998,7 +2672,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No dedicated primary/final independent focus judgment."
+      }
     },
     {
       "focus": "tests/cache-affine-compaction-live.test.ts",
@@ -2007,7 +2690,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No dedicated primary/final independent focus judgment."
+      }
     },
     {
       "focus": "tests/cache-affine-compaction-sdk.test.ts",
@@ -2016,7 +2708,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No dedicated primary/final independent focus judgment."
+      }
     },
     {
       "focus": "tests/cache-affine-compaction.test.ts",
@@ -2032,6 +2733,17 @@
         "verdict": "ACCEPT",
         "blob": "faf1ca8647b6c9b5540ceb8a970f834a1443c550",
         "primaryFocusStillRequired": true
+      },
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [
+          "task_2020f326"
+        ],
+        "sourceCommit": "6765c847fd17806b697ec1bede8a8260ac9123d0",
+        "state": "pending-primary",
+        "reason": "No dedicated primary/final independent focus judgment. Related-patch review is evidence only; dedicated focus coverage remains required."
       }
     },
     {
@@ -2041,7 +2753,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No dedicated primary/final independent focus judgment."
+      }
     },
     {
       "focus": "tests/cache-countdown-tui.test.ts",
@@ -2050,7 +2771,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No dedicated primary/final independent focus judgment."
+      }
     },
     {
       "focus": "tests/cache-countdown.test.ts",
@@ -2091,6 +2821,19 @@
         "verdict": "ACCEPT",
         "blob": "171d704cbc1e6bbedca67308b2efd2d541a14242",
         "primaryFocusStillRequired": true
+      },
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "0e9faeaa1de954835aea36d309bede70079c9ec6",
+        "primaryId": "task_5bc31e3d",
+        "primaryCommit": "03755e5b3097404d6c9ce755407754702cdaeb04",
+        "judgeIds": [
+          "task_79840549",
+          "task_7fc83ddf"
+        ],
+        "sourceCommit": "03755e5b3097404d6c9ce755407754702cdaeb04",
+        "state": "accepted-joined",
+        "reason": "Saved final original review and candidate/area hashes match. Independent request histories remove cumulative append/debt bookkeeping; capture fixture records real registrations not policy. Settings/evidence and persistence/delivery lifetimes separate, session replacement chronology retained; timi..."
       }
     },
     {
@@ -2100,7 +2843,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No dedicated primary/final independent focus judgment."
+      }
     },
     {
       "focus": "tests/fixtures/saved-transcript-startup.ts",
@@ -2109,7 +2861,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No dedicated primary/final independent focus judgment."
+      }
     },
     {
       "focus": "tests/goals-marker-sdk.test.ts",
@@ -2118,7 +2879,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No dedicated primary/final independent focus judgment."
+      }
     },
     {
       "focus": "tests/goals-sdk.test.ts",
@@ -2127,7 +2897,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No dedicated primary/final independent focus judgment."
+      }
     },
     {
       "focus": "tests/goals-tui.test.ts",
@@ -2136,7 +2915,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No dedicated primary/final independent focus judgment."
+      }
     },
     {
       "focus": "tests/goals.test.ts",
@@ -2249,7 +3037,22 @@
         "primaryFocusStillRequired": true,
         "overlap": "Active primary launched before these four regression additions; final combination via fresh file worker and independent judge required."
       },
-      "checkNeeds": []
+      "checkNeeds": [],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "fa176b1df06db3887321f0c3452a18cd92d4b9e1",
+        "primaryId": "task_1ac39db6",
+        "primaryCommit": "3ae9918527f5233e52e6683774e02438e37bf31f",
+        "judgeIds": [
+          "task_a7f9ce2d",
+          "task_134ecfd8",
+          "task_d26b0999",
+          "task_4a2a31dd"
+        ],
+        "sourceCommit": "3ae9918527f5233e52e6683774e02438e37bf31f",
+        "state": "accepted-joined",
+        "reason": "Saved final original review and candidate/area hashes match. Explicit undefined matches required RPC method/params contract without weakening genuine before-start assertion; all final fixture/controller/store/transport journeys remain clear, no production/API change."
+      }
     },
     {
       "focus": "tests/herdr-agent-state.test.ts",
@@ -2258,7 +3061,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No dedicated primary/final independent focus judgment."
+      }
     },
     {
       "focus": "tests/history-disk-footer.probe.ts",
@@ -2267,7 +3079,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No dedicated primary/final independent focus judgment."
+      }
     },
     {
       "focus": "tests/history-disk-footer.test.ts",
@@ -2276,7 +3097,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No dedicated primary/final independent focus judgment."
+      }
     },
     {
       "focus": "tests/history-disk-retrieval.test.ts",
@@ -2285,7 +3115,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No dedicated primary/final independent focus judgment."
+      }
     },
     {
       "focus": "tests/history-projection-parity.test.ts",
@@ -2294,7 +3133,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No dedicated primary/final independent focus judgment."
+      }
     },
     {
       "focus": "tests/history-publication-collision.test.ts",
@@ -2303,7 +3151,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No dedicated primary/final independent focus judgment."
+      }
     },
     {
       "focus": "tests/history-sdk-099.test.ts",
@@ -2312,7 +3169,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No dedicated primary/final independent focus judgment."
+      }
     },
     {
       "focus": "tests/history-storage-cleanup.test.ts",
@@ -2321,7 +3187,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No dedicated primary/final independent focus judgment."
+      }
     },
     {
       "focus": "tests/history-storage-io.test.ts",
@@ -2385,7 +3260,21 @@
         "blob": "5fba8ec9f35c04ef7a9a7c0254b5df1067337220",
         "primaryFocusStillRequired": true
       },
-      "checkNeeds": []
+      "checkNeeds": [],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "7f0efbed4f5941360e28ede13c2c3d4027ec1da9",
+        "primaryId": "task_3073210f",
+        "primaryCommit": "eaac149b84b707785584990ea9204a3d6b68905a",
+        "judgeIds": [
+          "task_6fc46161",
+          "task_cc13d7e2",
+          "task_0426dce8"
+        ],
+        "sourceCommit": "0100f6e726bea78b391b356fe9c9e8846e133719",
+        "state": "accepted-joined",
+        "reason": "Saved final original review and candidate/area hashes match. Fixture linear mock/import/write/failure/byte rollback/retry/reopen journey already clear; parent owns roots/drained child exit while child owns mocked module cache. Full final code reviewed independently."
+      }
     },
     {
       "focus": "tests/history-storage-lifecycle.test.ts",
@@ -2401,6 +3290,17 @@
         "verdict": "ACCEPT",
         "blob": "33c54c77cd356b3470423a19c532602b1c11ecd8",
         "primaryFocusStillRequired": true
+      },
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [
+          "task_4b35440e"
+        ],
+        "sourceCommit": "a6bc2c45ad4f18f5bede511ca33e4eb690c26b36",
+        "state": "pending-primary",
+        "reason": "No dedicated primary/final independent focus judgment. Related-patch review is evidence only; dedicated focus coverage remains required."
       }
     },
     {
@@ -2410,7 +3310,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No dedicated primary/final independent focus judgment."
+      }
     },
     {
       "focus": "tests/history.test.ts",
@@ -2451,6 +3360,19 @@
         "verdict": "ACCEPT",
         "blob": "0723cdd03b3cca2e58b1e2f4d817819306eae219",
         "primaryFocusStillRequired": true
+      },
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "2613abbf1434c98127489b87575149ca7d507406",
+        "primaryId": "task_396dabdf",
+        "primaryCommit": "6e78787852d27ce9fc861d9fcac45d488172035b",
+        "judgeIds": [
+          "task_01b94654",
+          "task_150357ad"
+        ],
+        "sourceCommit": "6e78787852d27ce9fc861d9fcac45d488172035b",
+        "state": "accepted-joined",
+        "reason": "Saved final original review and candidate/area hashes match. Independent page/read/branch and file-loading scenarios remove unrelated state dependencies; real shake records replace synthetic facade; named entry identities clarify ordering. Operations/authority/assertions stay visible, all origina..."
       }
     },
     {
@@ -2460,7 +3382,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No dedicated primary/final independent focus judgment."
+      }
     },
     {
       "focus": "tests/instruction-mode.test.ts",
@@ -2506,7 +3437,20 @@
         "blob": "91cdf3d35143286cc1ff2b0147811156c949a1b0",
         "primaryFocusStillRequired": true
       },
-      "checkNeeds": []
+      "checkNeeds": [],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "83ee0e37976b48d52ce63c562248e3373224f8aa",
+        "primaryId": "task_5d4de9b9",
+        "primaryCommit": "7600a5871c87dbdc8a5ad33a06f3aff8629fe30c",
+        "judgeIds": [
+          "task_eef5d289",
+          "task_00bd7047"
+        ],
+        "sourceCommit": "7600a5871c87dbdc8a5ad33a06f3aff8629fe30c",
+        "state": "accepted-joined",
+        "reason": "Saved final original review and candidate/area hashes match. Started-session fixture owns command wiring/observations, independent frame/command/history scenarios expose relevant state. Real branch/reopen lives explicit; refresh seam now actually tested."
+      }
     },
     {
       "focus": "tests/last-used-cli-model.test.ts",
@@ -2515,7 +3459,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No dedicated primary/final independent focus judgment."
+      }
     },
     {
       "focus": "tests/llm.test.ts",
@@ -2524,7 +3477,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No dedicated primary/final independent focus judgment."
+      }
     },
     {
       "focus": "tests/main-agent-mode-sdk.test.ts",
@@ -2533,7 +3495,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No dedicated primary/final independent focus judgment."
+      }
     },
     {
       "focus": "tests/main-agent-mode-tui.test.ts",
@@ -2542,7 +3513,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No dedicated primary/final independent focus judgment."
+      }
     },
     {
       "focus": "tests/manual-shake-sdk.test.ts",
@@ -2551,7 +3531,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No dedicated primary/final independent focus judgment."
+      }
     },
     {
       "focus": "tests/manual-shake.test.ts",
@@ -2567,6 +3556,17 @@
         "verdict": "ACCEPT",
         "blob": "cf84c73d7f7669bb6fcb42ec6954c68c2a27f22c",
         "primaryFocusStillRequired": true
+      },
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [
+          "task_c5c84c0c"
+        ],
+        "sourceCommit": "16e685366452845e2faff7fe7fbee57c6cdc5a6e",
+        "state": "pending-primary",
+        "reason": "No dedicated primary/final independent focus judgment. Related-patch review is evidence only; dedicated focus coverage remains required."
       }
     },
     {
@@ -2576,7 +3576,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No dedicated primary/final independent focus judgment."
+      }
     },
     {
       "focus": "tests/native-compaction.test.ts",
@@ -2592,6 +3601,17 @@
         "verdict": "ACCEPT",
         "blob": "165dbac0f976b308ce582985a00dda6846280cd9",
         "primaryFocusStillRequired": true
+      },
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [
+          "task_7caa7713"
+        ],
+        "sourceCommit": "08e00ae3c0aa5603288096ddb7d5a3ab73a8c682",
+        "state": "pending-primary",
+        "reason": "No dedicated primary/final independent focus judgment. Related-patch review is evidence only; dedicated focus coverage remains required."
       }
     },
     {
@@ -2638,7 +3658,20 @@
         "blob": "ccde20788d3485bb3a2eeb8b73137d321a402ce3",
         "primaryFocusStillRequired": true
       },
-      "checkNeeds": []
+      "checkNeeds": [],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "ab607b97df359dd53b1897dfe5596e59206dab33",
+        "primaryId": "task_efb8e91c",
+        "primaryCommit": "4b7d3e5b47687be57c96e4035265b5c2ce1ec3c5",
+        "judgeIds": [
+          "task_4cfa8579",
+          "task_167d27b3"
+        ],
+        "sourceCommit": "4b7d3e5b47687be57c96e4035265b5c2ce1ec3c5",
+        "state": "accepted-joined",
+        "reason": "Saved final original review and candidate/area hashes match. Fixture uses actual shared runtime/persistence authority, explicit consent/preparation signals and direct rollback fault injection; all 108 assertions/test declarations remain. Final source policy/authorization/guard/rollback/last-owner..."
+      }
     },
     {
       "focus": "tests/native-request-history.test.ts",
@@ -2647,7 +3680,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No dedicated primary/final independent focus judgment."
+      }
     },
     {
       "focus": "tests/native-shake-sdk.test.ts",
@@ -2656,7 +3698,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No dedicated primary/final independent focus judgment."
+      }
     },
     {
       "focus": "tests/phase1-compaction-fixture.ts",
@@ -2665,7 +3716,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No dedicated primary/final independent focus judgment."
+      }
     },
     {
       "focus": "tests/phase2-native-live.test.ts",
@@ -2674,7 +3734,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No dedicated primary/final independent focus judgment."
+      }
     },
     {
       "focus": "tests/phase2-native-sdk.test.ts",
@@ -2683,7 +3752,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No dedicated primary/final independent focus judgment."
+      }
     },
     {
       "focus": "tests/pi-host.test.ts",
@@ -2692,7 +3770,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No dedicated primary/final independent focus judgment."
+      }
     },
     {
       "focus": "tests/prompt-delivery.test.ts",
@@ -2701,7 +3788,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No dedicated primary/final independent focus judgment."
+      }
     },
     {
       "focus": "tests/prompt-preview.test.ts",
@@ -2717,6 +3813,17 @@
         "verdict": "ACCEPT",
         "blob": "97799fa3e59268f059079a171b38010070b5661c",
         "primaryFocusStillRequired": true
+      },
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [
+          "task_10247cc9"
+        ],
+        "sourceCommit": "904c6fb51b2fb62a4c91580e0120d5eabc1c0f7b",
+        "state": "pending-primary",
+        "reason": "No dedicated primary/final independent focus judgment. Related-patch review is evidence only; dedicated focus coverage remains required."
       }
     },
     {
@@ -2733,6 +3840,17 @@
         "blob": "c921bbe561640e6b889872c18270558de68daad3",
         "verdict": "ACCEPT",
         "primaryFocusStillRequired": true
+      },
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [
+          "task_7f8422ea"
+        ],
+        "sourceCommit": "42bec26abf11007f2b0781e1771224c1d5fa63c0",
+        "state": "pending-primary",
+        "reason": "No dedicated primary/final independent focus judgment. Related-patch review is evidence only; dedicated focus coverage remains required."
       }
     },
     {
@@ -2742,7 +3860,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No dedicated primary/final independent focus judgment."
+      }
     },
     {
       "focus": "tests/saved-transcript-startup.test.ts",
@@ -2751,7 +3878,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No dedicated primary/final independent focus judgment."
+      }
     },
     {
       "focus": "tests/session-boundaries.test.ts",
@@ -2760,7 +3896,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No dedicated primary/final independent focus judgment."
+      }
     },
     {
       "focus": "tests/session-identity.test.ts",
@@ -2769,7 +3914,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No dedicated primary/final independent focus judgment."
+      }
     },
     {
       "focus": "tests/session-input.test.ts",
@@ -2809,6 +3963,19 @@
         "verdict": "ACCEPT",
         "blob": "absent",
         "primaryFocusStillRequired": true
+      },
+      "resume": {
+        "status": "accepted-deletion",
+        "acceptedBlob": "absent",
+        "primaryId": "task_fe11d531",
+        "primaryCommit": "27dacc46efd49f6863ebaaef7244f25a0fb50e87",
+        "judgeIds": [
+          "task_4b90b765",
+          "task_ea00ebd0"
+        ],
+        "sourceCommit": "27dacc46efd49f6863ebaaef7244f25a0fb50e87",
+        "state": "accepted-deletion-joined",
+        "reason": "Explicit deletion judgment, not a missing hash. Independent historical search and shipped admission/delegation tracing confirms orphan-only tests; removed TTL/size/revoke policies not claimed reimplemented. Absence removes misleading second authority."
       }
     },
     {
@@ -2818,7 +3985,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No dedicated primary/final independent focus judgment."
+      }
     },
     {
       "focus": "tests/system-prompt.test.ts",
@@ -2834,6 +4010,17 @@
         "verdict": "ACCEPT",
         "blob": "7237a4c0735d6fac00c6c5b82a94e42bc9866303",
         "primaryFocusStillRequired": true
+      },
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [
+          "task_a731e652"
+        ],
+        "sourceCommit": "1430519dd7dbda93b9ccf79b2e8f33690ddbd6a4",
+        "state": "pending-primary",
+        "reason": "No dedicated primary/final independent focus judgment. Related-patch review is evidence only; dedicated focus coverage remains required."
       }
     },
     {
@@ -2843,7 +4030,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No dedicated primary/final independent focus judgment."
+      }
     },
     {
       "focus": "tests/turn-boundaries.ts",
@@ -2852,7 +4048,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No dedicated primary/final independent focus judgment."
+      }
     },
     {
       "focus": "tests/wisdom-extension.test.ts",
@@ -2868,6 +4073,17 @@
         "verdict": "ACCEPT",
         "blob": "91085edf6782c7701d02f3fb76d4e6c2cc581b59",
         "primaryFocusStillRequired": true
+      },
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [
+          "task_b7cd3a68"
+        ],
+        "sourceCommit": "d95ff345b6246fb81e7941e6acea8587d39a2bb1",
+        "state": "pending-primary",
+        "reason": "No dedicated primary/final independent focus judgment. Related-patch review is evidence only; dedicated focus coverage remains required."
       }
     }
   ],
@@ -2917,6 +4133,19 @@
         "verdict": "ACCEPT",
         "blob": "a738fc9cace7df491e9267a165a326e2b61511e6",
         "primaryFocusStillRequired": true
+      },
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "a738fc9cace7df491e9267a165a326e2b61511e6",
+        "primaryId": "task_d44d38b0",
+        "primaryCommit": "0100f6e726bea78b391b356fe9c9e8846e133719",
+        "judgeIds": [
+          "task_cc13d7e2",
+          "task_6fc46161"
+        ],
+        "sourceCommit": "0100f6e726bea78b391b356fe9c9e8846e133719",
+        "state": "accepted-joined",
+        "reason": "Saved final original review and candidate/area hashes match. Fixture linear mock/import/write/failure/byte rollback/retry/reopen journey already clear; parent owns roots/drained child exit while child owns mocked module cache. Full final code reviewed independently."
       }
     },
     {
@@ -2959,6 +4188,19 @@
         "verdict": "ACCEPT",
         "blob": "baddd5ace399fa55d0903aad88ee4821905d1c22",
         "primaryFocusStillRequired": true
+      },
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "baddd5ace399fa55d0903aad88ee4821905d1c22",
+        "primaryId": "task_d007bea3",
+        "primaryCommit": "bf821d9a48f8f20d05e487545df72db2cd119b51",
+        "judgeIds": [
+          "task_8dcf7bd3",
+          "task_6fc46161"
+        ],
+        "sourceCommit": "bf821d9a48f8f20d05e487545df72db2cd119b51",
+        "state": "accepted-joined",
+        "reason": "Saved final original review and candidate/area hashes match. One-shot pending unlink fault precedes store import in isolated child; publication completion and consumed fault explicitly checked, then append/reopen. Parent waits drained exit before cleanup, failure propagates."
       }
     },
     {
@@ -3007,6 +4249,19 @@
         "verdict": "ACCEPT",
         "blob": "58773a0331d48e8470d1775ecd99c275d5f2261d",
         "primaryFocusStillRequired": true
+      },
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "be5d94bde803903b1cc6d25132f17a9d63a6cb09",
+        "primaryId": "task_3b6b9b8d",
+        "primaryCommit": "dfd632869cc21aaf0b20cb3e732e14258929b910",
+        "judgeIds": [
+          "task_35e27b6b",
+          "task_9ae7f05e"
+        ],
+        "sourceCommit": "dfd632869cc21aaf0b20cb3e732e14258929b910",
+        "state": "accepted-joined",
+        "reason": "Saved final original review and candidate/area hashes match. Locked transaction stages now reclaim/account, verify/renew existing before admission, then exclusive write/rollback; helper lifetimes/domain meaning reduce reconstruction without changing retention safety. Fixture/wrapper lifetimes and..."
       }
     },
     {
@@ -3052,6 +4307,19 @@
         "verdict": "ACCEPT",
         "blob": "7aec56ef946ff9464c59338786b818c42c81e0c5",
         "primaryFocusStillRequired": true
+      },
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "2eaf2608f31112be616f737b64e8413e29b8c2b1",
+        "primaryId": "task_e8c1f4a2",
+        "primaryCommit": "b8e3ca50e2975b03255962af351f20c1dad57f16",
+        "judgeIds": [
+          "task_a19d2f25",
+          "task_35e27b6b"
+        ],
+        "sourceCommit": "b8e3ca50e2975b03255962af351f20c1dad57f16",
+        "state": "accepted-joined",
+        "reason": "Saved final original review and candidate/area hashes match. Each mock ends locally before real-fs assertions; held-lock case owns release/drain even on assertion failure; independent unsafe/stale scenarios separate setup. Independent injected failure reproduces old pending work vs final settled ..."
       }
     },
     {
@@ -3107,6 +4375,20 @@
         "verdict": "ACCEPT",
         "blob": "d6cd4d7bf0cc594be8f2cdc75eea6ae69f2b73a2",
         "primaryFocusStillRequired": true
+      },
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "d6cd4d7bf0cc594be8f2cdc75eea6ae69f2b73a2",
+        "primaryId": "task_08a471b0",
+        "primaryCommit": "f45666020f9de3ccf6e27934077664726665918c",
+        "judgeIds": [
+          "task_6e5c5f73",
+          "task_a19d2f25",
+          "task_35e27b6b"
+        ],
+        "sourceCommit": "b8e3ca50e2975b03255962af351f20c1dad57f16",
+        "state": "accepted-joined",
+        "reason": "Saved final original review and candidate/area hashes match. Each mock ends locally before real-fs assertions; held-lock case owns release/drain even on assertion failure; independent unsafe/stale scenarios separate setup. Independent injected failure reproduces old pending work vs final settled ..."
       }
     },
     {
@@ -3144,7 +4426,19 @@
       "introducedBy": "task_4e40c20e",
       "candidate": "07fafa2a65e73e99654c5a998c2bd3d0226a70e6",
       "acceptedBlob": "9ee4c9225a0306ac1f2489174524a932142b838e",
-      "integration": "integrated-exact-rework"
+      "integration": "integrated-exact-rework",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "9ee4c9225a0306ac1f2489174524a932142b838e",
+        "primaryId": "task_673d9338",
+        "primaryCommit": "7f90e64158460e947fd85693457fccfde658e0d9",
+        "judgeIds": [
+          "task_757a9fcd"
+        ],
+        "sourceCommit": "7f90e64158460e947fd85693457fccfde658e0d9",
+        "state": "accepted-exact-not-joined",
+        "reason": "Saved final original review and candidate/area hashes match. Whole new test fixture/cleanup/lexical marker/trust/permission journeys clear; lstat ENOENT repairs directory false-pass, BOM/parent-relative contracts intact. Joined tree differs; parent integration pending."
+      }
     },
     {
       "focus": "tests/history-sdk-probe.test.ts",
@@ -3192,7 +4486,20 @@
         "primaryFocusStillRequired": true
       },
       "acceptedBlob": "bd738142f9c2cb7dd0b1652b47294b63fe25788f",
-      "integration": "integrated-exact-candidate"
+      "integration": "integrated-exact-candidate",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "bd738142f9c2cb7dd0b1652b47294b63fe25788f",
+        "primaryId": "task_156435a8",
+        "primaryCommit": "177e687eb82c0768d209db8695f2bc78af2539b4",
+        "judgeIds": [
+          "task_b1d3b7fc",
+          "task_efa4fabb"
+        ],
+        "sourceCommit": "177e687eb82c0768d209db8695f2bc78af2539b4",
+        "state": "accepted-exact-not-joined",
+        "reason": "Saved final original review and candidate/area hashes match. Parent launch/drain/assert separated from typed child fault/disposal/physicalspool-before-rm/exit observation; real diagnostic scenario coherent and sourceunchanged. Exact candidate177e confirmed despite launch metadata delay. Joined tr..."
+      }
     },
     {
       "focus": "tests/prompt-preview-cli.test.ts",
@@ -3234,7 +4541,20 @@
         "primaryFocusStillRequired": true
       },
       "acceptedBlob": "6996b5def3b6f2bc4a7297e8b50140b636928b2e",
-      "integration": "integrated-exact-candidate"
+      "integration": "integrated-exact-candidate",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "6996b5def3b6f2bc4a7297e8b50140b636928b2e",
+        "primaryId": "task_accb5b9d",
+        "primaryCommit": "f79bfad28ea57d33b0e63d042161d76e652f6f79",
+        "judgeIds": [
+          "task_71b4db6a",
+          "task_910065b6"
+        ],
+        "sourceCommit": "f79bfad28ea57d33b0e63d042161d76e652f6f79",
+        "state": "accepted-exact-not-joined",
+        "reason": "Saved final original review and candidate/area hashes match. Each cold checkout owns create/copy/genuine missing-WASM precondition/awaited checks/finally; subprocesscwd explicit, concurrent output+exit drained before cleanup. Scenario assertions remain direct, shared lifecycle reconstruction remo..."
+      }
     },
     {
       "focus": "tests/fixtures/history-sdk-probe-failure.ts",
@@ -3257,6 +4577,17 @@
         "blob": "8dc54fdbef477552d6dbb3559cebb797c79ee267",
         "primaryFocusStillRequired": true,
         "limit": "Strong store reference does NOT retain manager FinalizationRegistry target; no GC invariance proof. Fixture comment must be assessed in its dedicated primary; exercised counterfactual established."
+      },
+      "resume": {
+        "status": "pending",
+        "primaryId": "task_9e79f658",
+        "primaryCommit": "ce7032a68d76defd3b2f40c6bb630f5b8824c0af",
+        "judgeIds": [
+          "task_b1d3b7fc"
+        ],
+        "sourceCommit": "ce7032a68d76defd3b2f40c6bb630f5b8824c0af",
+        "state": "needs-judge",
+        "reason": "Primary was killed without a completed focused result; preserve worker state and any uncommitted edits. Related-patch review is evidence only; dedicated focus coverage remains required."
       }
     }
   ],

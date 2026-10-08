@@ -820,13 +820,35 @@
       "initialBlob": "766989628f65993cbde352037144c85dc25e316f",
       "status": "pending",
       "area": "compatibility-t3",
-      "resumeState": "pending-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_eb51c954",
+      "primaryCommit": "b80a55a855e65d9bcb4ae8db3bb95d577db79b67",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "b80a55a855e65d9bcb4ae8db3bb95d577db79b67",
       "report": "wisdom/quality/structural-readability-areas/compatibility-t3.json",
-      "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+      "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection.",
+      "primaryBase": "b80a55a855e65d9bcb4ae8db3bb95d577db79b67",
+      "primaryResult": "Read the exact 581-byte focus and traced model.mjs workerCommand/shellCode (steer, early, stop, cancel), driver.mjs release and stop assertions, run.mjs scoped copy/PID verification, and runtime-smoke.mjs completion wake. State and scenario are supplied by the deterministic harness; the worker owns only start/wait/finish, while the harness owns release and stop. The .started PID supports actual process-exit checks; MANAGED_DONE_early drives model continuation; .finished is written only after release, so the stop assertion distinguishes termination from normal completion. Those effects and their order are already adjacent and visible. Extracting helpers, naming additional state, or moving polling elsewhere would fragment rather than clarify this journey. Preserved reconciliation and repo/area ledgers mark the focus pending-primary with no prior candidate or objection; focus exists at its original exact blob, so no candidate import is applicable.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        {
+          "check": "Static structural journey review",
+          "result": "Read values, structural readability guidance, repo-wide/area ledgers, preserved reconciliation, focus, invocation and lifecycle consumers."
+        },
+        {
+          "check": "Exact Git and working-file comparison",
+          "result": "HEAD focus blob and git hash-object both equal 766989628f65993cbde352037144c85dc25e316f."
+        },
+        {
+          "check": "git diff --check and git diff --name-only",
+          "result": "Passed with no source changes."
+        }
+      ],
+      "primaryLimits": [
+        "No setup, tests, builds, runtime fixture execution, credentials, device access, cleanup or recovery performed. Runtime gates remain parent-owned. Read harness code includes process signalling and recursive temporary-state cleanup, so historical runtime commands were not reused.",
+        "No fresh independent judgment claimed; parent owns an independent judge for the exact candidate.",
+        "No source changes means no new source commit. Result remains untracked; no wisdom/values edits, publication, push or merge."
+      ]
     },
     {
       "file": "scripts/claude-native-acceptance/wrapper-sdk-smoke.mjs",

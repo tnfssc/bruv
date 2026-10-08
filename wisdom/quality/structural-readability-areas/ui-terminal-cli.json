@@ -76,7 +76,19 @@
       ],
       "limits": [
         "Preparation proof only; no compiled product/visual/full build"
-      ]
+      ],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "b567863d0802af842a39af34935c9528ef4edc4f",
+        "primaryId": "task_8217bb2e",
+        "primaryCommit": "98bd940bd8dc870efa814074b7c038649d4df706",
+        "judgeIds": [
+          "task_150f5c27"
+        ],
+        "sourceCommit": "98bd940bd8dc870efa814074b7c038649d4df706",
+        "state": "accepted-joined",
+        "reason": "Existing primary-focus ACCEPT by task_150f5c27 at 98bd940bd8dc870efa814074b7c038649d4df706; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
+      }
     },
     {
       "focus": "scripts/activity-terminal-acceptance.py",
@@ -128,7 +140,19 @@
       ],
       "limits": [
         "Fixture-only no compiled terminal/visual acceptance"
-      ]
+      ],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "8760c4c386ebb251f9d4bcce65f73d68820d8f54",
+        "primaryId": "task_28f2469a",
+        "primaryCommit": "b02afcce77ccd1ebb021dc6230641ab0294ce68e",
+        "judgeIds": [
+          "task_c4ad6e75"
+        ],
+        "sourceCommit": "b02afcce77ccd1ebb021dc6230641ab0294ce68e",
+        "state": "accepted-joined",
+        "reason": "Existing primary-focus ACCEPT by task_c4ad6e75 at b02afcce77ccd1ebb021dc6230641ab0294ce68e; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
+      }
     },
     {
       "focus": "scripts/ansi_video_renderer.py",
@@ -221,7 +245,20 @@
           "respondsTo": "task_c420e381",
           "commit": "f72d5f0a9eea957f45cddd71695e6fad53cb164e"
         }
-      ]
+      ],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "b692fce492c0c227e42e9cc4645ce4bded57b27a",
+        "primaryId": "task_283b2f40",
+        "primaryCommit": "f72d5f0a9eea957f45cddd71695e6fad53cb164e",
+        "judgeIds": [
+          "task_c420e381",
+          "task_73d21038"
+        ],
+        "sourceCommit": "f72d5f0a9eea957f45cddd71695e6fad53cb164e",
+        "state": "accepted-joined",
+        "reason": "Existing primary-focus ACCEPT by task_73d21038 at f72d5f0a9eea957f45cddd71695e6fad53cb164e; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution. Final fresh rework writer task_283b2f40; original rejected primary task_32c7f556/15e0abb0dc551c00523d84c928e363f2acaae3f9 retained in evidence."
+      }
     },
     {
       "focus": "scripts/benchmark-footer-context.ts",
@@ -272,7 +309,19 @@
       ],
       "limits": [
         "No speed/build/typecheck"
-      ]
+      ],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "4a3883306c3a8437a15dbceaf93eae751204c4e0",
+        "primaryId": "task_98c25ed9",
+        "primaryCommit": "0b04211f5d594e631d2a171807ecba84dc5e45f4",
+        "judgeIds": [
+          "task_e562a5b1"
+        ],
+        "sourceCommit": "0b04211f5d594e631d2a171807ecba84dc5e45f4",
+        "state": "accepted-joined",
+        "reason": "Existing primary-focus ACCEPT by task_e562a5b1 at 0b04211f5d594e631d2a171807ecba84dc5e45f4; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
+      }
     },
     {
       "focus": "scripts/benchmark-task-row-render.ts",
@@ -319,7 +368,19 @@
       ],
       "limits": [
         "No performance/build"
-      ]
+      ],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "ae42ddf511434a63a309d1d4fbc023d366d938fa",
+        "primaryId": "task_c9f5fced",
+        "primaryCommit": "5cbafa0c84777290a9c0d56da036fd524fec748d",
+        "judgeIds": [
+          "task_21c6d061"
+        ],
+        "sourceCommit": "5cbafa0c84777290a9c0d56da036fd524fec748d",
+        "state": "accepted-joined",
+        "reason": "Existing primary-focus NO CHANGE NEEDED by task_21c6d061 at 5cbafa0c84777290a9c0d56da036fd524fec748d; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
+      }
     },
     {
       "focus": "scripts/tasks-ui-native-proof.py",
@@ -366,7 +427,19 @@
       "changedRelatedPaths": [
         "tests/tasks-ui-proof-tooling.test.py"
       ],
-      "result": "Candidate moves disposable resources into NativeCapture.session, eleven stages/barriers into capture_scenario, screenshot processing separate, provenance/final audit visible in main. Independently inspect resource/error cleanup and reproduce explicit incidental bug fix: config-write/tmux teardown base leaks home/server thread candidate zero. Keep source/binary/hash provenance, official-T3 separation, mandatory visual review/fixture bounds/audit authority. Related builder OUTPUT_BINARY-only already judged task_f9504048; not inherited consumer acceptance. Worker22Python and4stubbed builder20assertions, loopbackSSE/tmuxPython-stub; no real CLI/screenshot acceptance."
+      "result": "Candidate moves disposable resources into NativeCapture.session, eleven stages/barriers into capture_scenario, screenshot processing separate, provenance/final audit visible in main. Independently inspect resource/error cleanup and reproduce explicit incidental bug fix: config-write/tmux teardown base leaks home/server thread candidate zero. Keep source/binary/hash provenance, official-T3 separation, mandatory visual review/fixture bounds/audit authority. Related builder OUTPUT_BINARY-only already judged task_f9504048; not inherited consumer acceptance. Worker22Python and4stubbed builder20assertions, loopbackSSE/tmuxPython-stub; no real CLI/screenshot acceptance.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "176b6ca6eab97b4bb6e8c31a053e8ee9ec8f8cf2",
+        "primaryId": "task_a993bd35",
+        "primaryCommit": "ed7351634195cff3a1f32926008c1072d3ca7a84",
+        "judgeIds": [
+          "task_fca35838"
+        ],
+        "sourceCommit": "ed7351634195cff3a1f32926008c1072d3ca7a84",
+        "state": "accepted-not-joined",
+        "reason": "Existing primary-focus ACCEPT by task_fca35838 at ed7351634195cff3a1f32926008c1072d3ca7a84; exact candidate and surviving-area blob verified. Pinned joined tree lacks this accepted blob; parent owns joining. No new review or test execution."
+      }
     },
     {
       "focus": "scripts/tasks-ui-proof-build.ts",
@@ -436,7 +509,19 @@
       ],
       "limits": [
         "No real native build/PTY/screenshots"
-      ]
+      ],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "c6710c2ffd68ce9f89521bda3249f9ed64f8b18f",
+        "primaryId": "task_259c27b0",
+        "primaryCommit": "85e990227aa93c12c16337f7a23a686b77661eda",
+        "judgeIds": [
+          "task_f9504048"
+        ],
+        "sourceCommit": "85e990227aa93c12c16337f7a23a686b77661eda",
+        "state": "accepted-joined",
+        "reason": "Existing primary-focus ACCEPT by task_f9504048 at 85e990227aa93c12c16337f7a23a686b77661eda; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
+      }
     },
     {
       "focus": "scripts/tasks-ui-proof-screenshots.ts",
@@ -457,7 +542,16 @@
       ],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": "task_46eaf8ec",
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": "7c4bd77934b4974e02a4960eef7f33839d5d79f9",
+        "state": "needs-primary",
+        "reason": "Assigned task_46eaf8ec; no completed primary candidate commit or independent actual-code verdict. Historical primary-running label is not completion. Preserved worktree is clean at launch base; no source candidate exists."
+      }
     },
     {
       "focus": "scripts/terminal-interactions.ts",
@@ -509,7 +603,19 @@
       "limits": [
         "Timeout escalation/signal cancellation untested",
         "No build/typecheck/provider/paint"
-      ]
+      ],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "3dc3648e06896880f7e8ec92326c03e7075e78c3",
+        "primaryId": "task_5ef7a768",
+        "primaryCommit": "a536d856e661f353bd1bf690ec8e0902ee6660f1",
+        "judgeIds": [
+          "task_16ed90d7"
+        ],
+        "sourceCommit": "a536d856e661f353bd1bf690ec8e0902ee6660f1",
+        "state": "accepted-joined",
+        "reason": "Existing primary-focus ACCEPT by task_16ed90d7 at a536d856e661f353bd1bf690ec8e0902ee6660f1; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
+      }
     },
     {
       "focus": "scripts/terminal-perf.ts",
@@ -558,7 +664,19 @@
       ],
       "limits": [
         "No build/performance-speed claim"
-      ]
+      ],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "696dd170594931b9907916079576e46666367030",
+        "primaryId": "task_6c37950b",
+        "primaryCommit": "44c24d4a6651d9671b6a90dca91df7fa183c8159",
+        "judgeIds": [
+          "task_219f2747"
+        ],
+        "sourceCommit": "44c24d4a6651d9671b6a90dca91df7fa183c8159",
+        "state": "accepted-joined",
+        "reason": "Existing primary-focus NO CHANGE NEEDED by task_219f2747 at 44c24d4a6651d9671b6a90dca91df7fa183c8159; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
+      }
     },
     {
       "focus": "scripts/terminal-perf/action-profiler.ts",
@@ -609,7 +727,19 @@
       ],
       "limits": [
         "No full build/gate, live-provider/device check or performance claim."
-      ]
+      ],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "062743f9b9d3f410ff09eda39e76db21b717e11a",
+        "primaryId": "task_6ffa8972",
+        "primaryCommit": "84108130c3b7f3ba70e166dac04e53bfde0f7dcb",
+        "judgeIds": [
+          "task_40ff7535"
+        ],
+        "sourceCommit": "84108130c3b7f3ba70e166dac04e53bfde0f7dcb",
+        "state": "accepted-joined",
+        "reason": "Existing primary-focus ACCEPT by task_40ff7535 at 84108130c3b7f3ba70e166dac04e53bfde0f7dcb; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
+      }
     },
     {
       "focus": "scripts/terminal-perf/artifacts.ts",
@@ -657,7 +787,19 @@
       ],
       "limits": [
         "Nontransactional partial writes/overwrites unchanged; no build"
-      ]
+      ],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "eeac78ef15a882ca01423dfaf4c1ada83c10f861",
+        "primaryId": "task_47a4d9cd",
+        "primaryCommit": "a70327eb16d622fbed9460d467ac2fb08f692150",
+        "judgeIds": [
+          "task_83710623"
+        ],
+        "sourceCommit": "a70327eb16d622fbed9460d467ac2fb08f692150",
+        "state": "accepted-joined",
+        "reason": "Existing primary-focus NO CHANGE NEEDED by task_83710623 at a70327eb16d622fbed9460d467ac2fb08f692150; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
+      }
     },
     {
       "focus": "scripts/terminal-perf/audit-probes/disk-callbacks.ts",
@@ -666,7 +808,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": "f588f0aa3236139454e1b6ed2cb794cb9f9f2a21",
+        "state": "needs-primary",
+        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      }
     },
     {
       "focus": "scripts/terminal-perf/audit-probes/journal-stop.ts",
@@ -675,7 +826,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": "f588f0aa3236139454e1b6ed2cb794cb9f9f2a21",
+        "state": "needs-primary",
+        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      }
     },
     {
       "focus": "scripts/terminal-perf/dashboard.ts",
@@ -727,7 +887,19 @@
       ],
       "limits": [
         "No real browser paint/build/latency"
-      ]
+      ],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "b47c5df84073db71231d1d19208b382cee337402",
+        "primaryId": "task_64e62042",
+        "primaryCommit": "61cbca24222af36731506d0117559bbbf4c2679e",
+        "judgeIds": [
+          "task_0d31b493"
+        ],
+        "sourceCommit": "61cbca24222af36731506d0117559bbbf4c2679e",
+        "state": "accepted-not-joined",
+        "reason": "Existing primary-focus ACCEPT by task_0d31b493 at 61cbca24222af36731506d0117559bbbf4c2679e; exact candidate and surviving-area blob verified. Pinned joined tree lacks this accepted blob; parent owns joining. No new review or test execution."
+      }
     },
     {
       "focus": "scripts/terminal-perf/interaction-catalog.ts",
@@ -769,7 +941,19 @@
       "integrationState": "unchanged primary independently accepted",
       "launchBase": "c4d4830013ec1f9f501d40bb552c46089d7a4720",
       "changedRelatedPaths": [],
-      "result": "No-change candidate: independently assess intrinsic catalog grouping/IDs/parameter selection/ordered filtering. Trace all43 IDs to real workload stages/callers/tests, preserve gaps and measurement boundaries. Worker28tests225assertions; not full catalog measurement."
+      "result": "No-change candidate: independently assess intrinsic catalog grouping/IDs/parameter selection/ordered filtering. Trace all43 IDs to real workload stages/callers/tests, preserve gaps and measurement boundaries. Worker28tests225assertions; not full catalog measurement.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "9440f4128b7ec6f9dd429e456aca592ca32e5e14",
+        "primaryId": "task_747857d1",
+        "primaryCommit": "55a45d69c6aa994badbfdc4c55d6a7a0478283c6",
+        "judgeIds": [
+          "task_ab6bca78"
+        ],
+        "sourceCommit": "55a45d69c6aa994badbfdc4c55d6a7a0478283c6",
+        "state": "accepted-joined",
+        "reason": "Existing primary-focus NO CHANGE NEEDED by task_ab6bca78 at 55a45d69c6aa994badbfdc4c55d6a7a0478283c6; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
+      }
     },
     {
       "focus": "scripts/terminal-perf/interaction-dashboard.ts",
@@ -815,7 +999,19 @@
       "changedRelatedPaths": [
         "tests/terminal-interaction-dashboard.test.ts"
       ],
-      "result": "Candidate separates filtering/row render/selection-owned sample callback and descending non-additive top-span sort; replaces ambient selected row. Preserve escaping/security/nullable metrics/thresholds/baselines. New DOM test needs later primary. Worker30tests and5DOMtests pass exact base; broader32pass one missing photon WASM setup failure. No real browser/paint/latency."
+      "result": "Candidate separates filtering/row render/selection-owned sample callback and descending non-additive top-span sort; replaces ambient selected row. Preserve escaping/security/nullable metrics/thresholds/baselines. New DOM test needs later primary. Worker30tests and5DOMtests pass exact base; broader32pass one missing photon WASM setup failure. No real browser/paint/latency.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "1142c9e4554230643455f275f492e44829c90ab5",
+        "primaryId": "task_3236664c",
+        "primaryCommit": "a97abdcb67cd2597bd0c3a6ca3c9a0320d7aa7f5",
+        "judgeIds": [
+          "task_a52a6008"
+        ],
+        "sourceCommit": "a97abdcb67cd2597bd0c3a6ca3c9a0320d7aa7f5",
+        "state": "accepted-not-joined",
+        "reason": "Existing primary-focus ACCEPT by task_a52a6008 at a97abdcb67cd2597bd0c3a6ca3c9a0320d7aa7f5; exact candidate and surviving-area blob verified. Pinned joined tree lacks this accepted blob; parent owns joining. No new review or test execution."
+      }
     },
     {
       "focus": "scripts/terminal-perf/interaction-normalize.ts",
@@ -868,7 +1064,19 @@
       ],
       "limits": [
         "No build/typecheck/latency"
-      ]
+      ],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "03425e9333f88fd84f0aa26bc11a78a294ae3d0f",
+        "primaryId": "task_5fb34446",
+        "primaryCommit": "e5654ea0d0f92812e5a1bf526f78057f631d4189",
+        "judgeIds": [
+          "task_23bf0f9f"
+        ],
+        "sourceCommit": "e5654ea0d0f92812e5a1bf526f78057f631d4189",
+        "state": "accepted-joined",
+        "reason": "Existing primary-focus ACCEPT by task_23bf0f9f at e5654ea0d0f92812e5a1bf526f78057f631d4189; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
+      }
     },
     {
       "focus": "scripts/terminal-perf/interaction-options.ts",
@@ -919,7 +1127,19 @@
       ],
       "limits": [
         "No build/typecheck/live/device/PTY"
-      ]
+      ],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "0d8768c9e6995b8954c9c05b298ac5e33f3ddbec",
+        "primaryId": "task_1d27744f",
+        "primaryCommit": "650cf810bda828c13f3e18b0df3ae577ba86cef5",
+        "judgeIds": [
+          "task_4c71fe7d"
+        ],
+        "sourceCommit": "650cf810bda828c13f3e18b0df3ae577ba86cef5",
+        "state": "accepted-not-joined",
+        "reason": "Existing primary-focus ACCEPT by task_4c71fe7d at 650cf810bda828c13f3e18b0df3ae577ba86cef5; exact candidate and surviving-area blob verified. Pinned joined tree lacks this accepted blob; parent owns joining. No new review or test execution."
+      }
     },
     {
       "focus": "scripts/terminal-perf/interaction-report.ts",
@@ -968,7 +1188,19 @@
         "Focused strict TypeScript/format",
         "Seven exact-base validation contracts match",
         "lint exit 0 infos"
-      ]
+      ],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "c65d7a19f9e30836a378c88f12a3493a41031e5b",
+        "primaryId": "task_5930e394",
+        "primaryCommit": "d5fadc4552948bf4041af05249ccb577b313b269",
+        "judgeIds": [
+          "task_e42d2c99"
+        ],
+        "sourceCommit": "d5fadc4552948bf4041af05249ccb577b313b269",
+        "state": "accepted-joined",
+        "reason": "Existing primary-focus ACCEPT by task_e42d2c99 at d5fadc4552948bf4041af05249ccb577b313b269; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
+      }
     },
     {
       "focus": "scripts/terminal-perf/interaction-tool-events.test.ts",
@@ -985,7 +1217,18 @@
           "verdict": "ACCEPT",
           "blob": "2e0e6eb8783ba3fcce9fde642717064f933dd67f"
         }
-      ]
+      ],
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [
+          "task_23bf0f9f"
+        ],
+        "sourceCommit": "e5654ea0d0f92812e5a1bf526f78057f631d4189",
+        "state": "needs-primary",
+        "reason": "Existing related-path ACCEPT by task_23bf0f9f at e5654ea0d0f92812e5a1bf526f78057f631d4189, blob 2e0e6eb8783ba3fcce9fde642717064f933dd67f; exact candidate verified. Related blob already joined. Dedicated primary-focus acceptance is missing."
+      }
     },
     {
       "focus": "scripts/terminal-perf/interaction-worker.ts",
@@ -1034,7 +1277,19 @@
       ],
       "limits": [
         "No build/provider/compiled CLI/PTY/performance"
-      ]
+      ],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "479071932b154974ea189736685241aa5f1995c5",
+        "primaryId": "task_8e35cbf3",
+        "primaryCommit": "0975c6b36cb08cf00bbc697c414746d09d0e10f1",
+        "judgeIds": [
+          "task_5064dcca"
+        ],
+        "sourceCommit": "0975c6b36cb08cf00bbc697c414746d09d0e10f1",
+        "state": "accepted-joined",
+        "reason": "Existing primary-focus NO CHANGE NEEDED by task_5064dcca at 0975c6b36cb08cf00bbc697c414746d09d0e10f1; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
+      }
     },
     {
       "focus": "scripts/terminal-perf/navigation-workloads.ts",
@@ -1050,7 +1305,16 @@
       ],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": "task_09b8c468",
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": "53fb4d9732dcf0c337b797b05a104199ccf1a273",
+        "state": "needs-primary",
+        "reason": "Assigned task_09b8c468; no completed primary candidate commit or independent actual-code verdict. Historical primary-running label is not completion. Retained uncommitted candidate(s): task_09b8c468 blob e883e7a503892e16661c936b246b72b905caa194 in /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_09b8c468. Not importable or accepted."
+      }
     },
     {
       "focus": "scripts/terminal-perf/options.ts",
@@ -1093,7 +1357,19 @@
       "result": "No-change: defaults/validation, runner-owned union selection and explicit budget override remain direct.",
       "checks": [
         "9 options/report/CLI tests /60 assertions"
-      ]
+      ],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "9d123b4f21a13ef603be8c89b2eb9e16a68e1463",
+        "primaryId": "task_61e4e31c",
+        "primaryCommit": "b17800456f856f9314ab01b6387210c2f3376592",
+        "judgeIds": [
+          "task_be297c64"
+        ],
+        "sourceCommit": "b17800456f856f9314ab01b6387210c2f3376592",
+        "state": "accepted-joined",
+        "reason": "Existing primary-focus NO CHANGE NEEDED by task_be297c64 at b17800456f856f9314ab01b6387210c2f3376592; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
+      }
     },
     {
       "focus": "scripts/terminal-perf/profiler.ts",
@@ -1145,7 +1421,19 @@
       ],
       "limits": [
         "No build/typecheck/performance/live/device/packaged CLI"
-      ]
+      ],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "067127cee9b9abfbb30d5fac247b1c6edafa70a5",
+        "primaryId": "task_98eabc08",
+        "primaryCommit": "ec5417038093c7fe3cd22fc353ba27ef8cda3dbe",
+        "judgeIds": [
+          "task_5e042418"
+        ],
+        "sourceCommit": "ec5417038093c7fe3cd22fc353ba27ef8cda3dbe",
+        "state": "accepted-joined",
+        "reason": "Existing primary-focus ACCEPT by task_5e042418 at ec5417038093c7fe3cd22fc353ba27ef8cda3dbe; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
+      }
     },
     {
       "focus": "scripts/terminal-perf/report.ts",
@@ -1192,7 +1480,19 @@
       ],
       "limits": [
         "No build/performance/device/provider"
-      ]
+      ],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "2fcf24ca57d3c81087a237150258a6ec944bbefa",
+        "primaryId": "task_598e86e4",
+        "primaryCommit": "1eaa132f032d736f33a9e0a43fff483f2aaab17c",
+        "judgeIds": [
+          "task_7b633bb8"
+        ],
+        "sourceCommit": "1eaa132f032d736f33a9e0a43fff483f2aaab17c",
+        "state": "accepted-joined",
+        "reason": "Existing primary-focus NO CHANGE NEEDED by task_7b633bb8 at 1eaa132f032d736f33a9e0a43fff483f2aaab17c; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
+      }
     },
     {
       "focus": "scripts/terminal-perf/selector-lifecycle-behavior.ts",
@@ -1201,7 +1501,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": "3603e341a47541a137c95c675106c9568374fde1",
+        "state": "needs-primary",
+        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      }
     },
     {
       "focus": "scripts/terminal-perf/selector-lifecycle-probe.ts",
@@ -1210,7 +1519,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": "53fb4d9732dcf0c337b797b05a104199ccf1a273",
+        "state": "needs-primary",
+        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      }
     },
     {
       "focus": "scripts/terminal-perf/selector-lifecycle.test.ts",
@@ -1219,7 +1537,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": "3603e341a47541a137c95c675106c9568374fde1",
+        "state": "needs-primary",
+        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      }
     },
     {
       "focus": "scripts/terminal-perf/send-workloads.ts",
@@ -1235,7 +1562,16 @@
       ],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": "task_14da3c96",
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": "53fb4d9732dcf0c337b797b05a104199ccf1a273",
+        "state": "needs-primary",
+        "reason": "Assigned task_14da3c96; no completed primary candidate commit or independent actual-code verdict. Historical primary-running label is not completion. Retained uncommitted candidate(s): task_14da3c96 blob 22f5d101ccacd5b717ff679795ceabe0e9b926a9 in /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_14da3c96. Not importable or accepted."
+      }
     },
     {
       "focus": "scripts/terminal-perf/tool-event-workloads.ts",
@@ -1244,7 +1580,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": "53fb4d9732dcf0c337b797b05a104199ccf1a273",
+        "state": "needs-primary",
+        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      }
     },
     {
       "focus": "scripts/terminal-perf/tool-workloads.ts",
@@ -1253,7 +1598,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": "53fb4d9732dcf0c337b797b05a104199ccf1a273",
+        "state": "needs-primary",
+        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      }
     },
     {
       "focus": "scripts/terminal-perf/trace.ts",
@@ -1300,7 +1654,19 @@
       ],
       "limits": [
         "No build/viewer/performance"
-      ]
+      ],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "2cae4e67ca3341e12927116d7ec45dfd81ec957f",
+        "primaryId": "task_fb8832c3",
+        "primaryCommit": "6d00f91a29bd8b1567331d36bddb7ce0fc954d4f",
+        "judgeIds": [
+          "task_36396b4b"
+        ],
+        "sourceCommit": "6d00f91a29bd8b1567331d36bddb7ce0fc954d4f",
+        "state": "accepted-joined",
+        "reason": "Existing primary-focus NO CHANGE NEEDED by task_36396b4b at 6d00f91a29bd8b1567331d36bddb7ce0fc954d4f; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
+      }
     },
     {
       "focus": "scripts/terminal-perf/workloads.ts",
@@ -1349,7 +1715,19 @@
         "54tests2870assertions",
         "96serialized samples/sixmodes/foursizes exactbase equality",
         "format/lint/diff"
-      ]
+      ],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "a27a6dd7eb5239f3bdb9c0ac011a2eecf433cfce",
+        "primaryId": "task_a342c31d",
+        "primaryCommit": "747c31b8e52eff45ab2c585e5974eeb9d50cd85a",
+        "judgeIds": [
+          "task_d455a9d6"
+        ],
+        "sourceCommit": "747c31b8e52eff45ab2c585e5974eeb9d50cd85a",
+        "state": "accepted-not-joined",
+        "reason": "Existing primary-focus ACCEPT by task_d455a9d6 at 747c31b8e52eff45ab2c585e5974eeb9d50cd85a; exact candidate and surviving-area blob verified. Pinned joined tree lacks this accepted blob; parent owns joining. No new review or test execution."
+      }
     },
     {
       "focus": "scripts/tmux.conf",
@@ -1358,7 +1736,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": "4be377fef66159202a8de582ca98c3cb10948deb",
+        "state": "needs-primary",
+        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      }
     },
     {
       "focus": "scripts/tui-harness.ts",
@@ -1409,7 +1796,19 @@
       "limits": [
         "Used shared prebuilt CLI read-only, not freshly compiled base binary",
         "No build"
-      ]
+      ],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "2fe85b0ba6b79f86d3bca3ca3ee4c187a82b610f",
+        "primaryId": "task_7f3c2fe5",
+        "primaryCommit": "e5880ac872c2d04ef90194ca3c5964437cb4efab",
+        "judgeIds": [
+          "task_fdd2cd2a"
+        ],
+        "sourceCommit": "e5880ac872c2d04ef90194ca3c5964437cb4efab",
+        "state": "accepted-joined",
+        "reason": "Existing primary-focus NO CHANGE NEEDED by task_fdd2cd2a at e5880ac872c2d04ef90194ca3c5964437cb4efab; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
+      }
     },
     {
       "focus": "scripts/ui-cleanup-probe.py",
@@ -1463,7 +1862,19 @@
       ],
       "limits": [
         "No terminal acceptance/current-source build; real probe baseline/candidate failures retained"
-      ]
+      ],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "c68a4a4b1d55f6fa3ebde54cd408f5196a1ad8ce",
+        "primaryId": "task_96febf21",
+        "primaryCommit": "caed7a396d78adb86e2b4e2294806491cb62a0b3",
+        "judgeIds": [
+          "task_988afb2b"
+        ],
+        "sourceCommit": "caed7a396d78adb86e2b4e2294806491cb62a0b3",
+        "state": "accepted-joined",
+        "reason": "Existing primary-focus ACCEPT by task_988afb2b at caed7a396d78adb86e2b4e2294806491cb62a0b3; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
+      }
     },
     {
       "focus": "src/cli.ts",
@@ -1516,7 +1927,19 @@
       ],
       "limits": [
         "No full build/typecheck, compiled CLI, live/provider, authenticated SSH or interactive TTY checks."
-      ]
+      ],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "b961477ed8253a6b69a65cf972905895b4eed010",
+        "primaryId": "task_75c8d308",
+        "primaryCommit": "f27f3d73c76d754b0c19bdc0d561657fc5f66b0b",
+        "judgeIds": [
+          "task_db22e114"
+        ],
+        "sourceCommit": "f27f3d73c76d754b0c19bdc0d561657fc5f66b0b",
+        "state": "accepted-joined",
+        "reason": "Existing primary-focus ACCEPT by task_db22e114 at f27f3d73c76d754b0c19bdc0d561657fc5f66b0b; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
+      }
     },
     {
       "focus": "src/diagnostics-extension.ts",
@@ -1563,7 +1986,19 @@
       ],
       "limits": [
         "No build/provider"
-      ]
+      ],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "51f2655613a4022bf3b3742d0c2de4524711e002",
+        "primaryId": "task_ce10c8d9",
+        "primaryCommit": "c7ce40535fb494bdadac75ae970755e48a379e39",
+        "judgeIds": [
+          "task_bb4b2bf5"
+        ],
+        "sourceCommit": "c7ce40535fb494bdadac75ae970755e48a379e39",
+        "state": "accepted-joined",
+        "reason": "Existing primary-focus NO CHANGE NEEDED by task_bb4b2bf5 at c7ce40535fb494bdadac75ae970755e48a379e39; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
+      }
     },
     {
       "focus": "src/diagnostics.ts",
@@ -1613,7 +2048,19 @@
       ],
       "limits": [
         "No full build/provider/packaged-runtime proof"
-      ]
+      ],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "208b251b5b7130114fbd4813aa83259798119f83",
+        "primaryId": "task_123df133",
+        "primaryCommit": "54ebccd6eeedc055d6832461c3fe4e4e9bae859b",
+        "judgeIds": [
+          "task_50dcf5f6"
+        ],
+        "sourceCommit": "54ebccd6eeedc055d6832461c3fe4e4e9bae859b",
+        "state": "accepted-joined",
+        "reason": "Existing primary-focus ACCEPT by task_50dcf5f6 at 54ebccd6eeedc055d6832461c3fe4e4e9bae859b; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
+      }
     },
     {
       "focus": "src/ui/action-label.ts",
@@ -1661,7 +2108,19 @@
       ],
       "limits": [
         "No full build, interactive capture, provider or SSH checks."
-      ]
+      ],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "290d620d94ba2c45b195cc5c220ae0894bf95056",
+        "primaryId": "task_7482f459",
+        "primaryCommit": "3d5d0ae28d7ddd8fbbc16e390e164724ec72b53e",
+        "judgeIds": [
+          "task_8d1d090b"
+        ],
+        "sourceCommit": "3d5d0ae28d7ddd8fbbc16e390e164724ec72b53e",
+        "state": "accepted-joined",
+        "reason": "Existing primary-focus NO CHANGE NEEDED by task_8d1d090b at 3d5d0ae28d7ddd8fbbc16e390e164724ec72b53e; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
+      }
     },
     {
       "focus": "src/ui/activity-projection.ts",
@@ -1717,7 +2176,19 @@
           "blob": "90fe58e67e209ca8c64219ac0e60c8c7f1788dd8",
           "coordinatorBase": "7892a98fe8eed40b01cded4f398e1811c8478e0f"
         }
-      ]
+      ],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "90fe58e67e209ca8c64219ac0e60c8c7f1788dd8",
+        "primaryId": "task_5c8f0f5d",
+        "primaryCommit": "64bd85472711c2d5c6469466641b14107d4d532f",
+        "judgeIds": [
+          "task_f92fc2a1"
+        ],
+        "sourceCommit": "64bd85472711c2d5c6469466641b14107d4d532f",
+        "state": "accepted-joined",
+        "reason": "Existing primary-focus NO CHANGE NEEDED by task_f92fc2a1 at 64bd85472711c2d5c6469466641b14107d4d532f; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
+      }
     },
     {
       "focus": "src/ui/conversation-density.ts",
@@ -1778,7 +2249,19 @@
           "blob": "c343f2b045e2fd95c37943d8ddd2aab9d6611def",
           "coordinatorBase": "7892a98fe8eed40b01cded4f398e1811c8478e0f"
         }
-      ]
+      ],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "c343f2b045e2fd95c37943d8ddd2aab9d6611def",
+        "primaryId": "task_19cd167f",
+        "primaryCommit": "1071775f8f3c9c120ddc639d60c267d4acd8ef1f",
+        "judgeIds": [
+          "task_203052f5"
+        ],
+        "sourceCommit": "1071775f8f3c9c120ddc639d60c267d4acd8ef1f",
+        "state": "accepted-joined",
+        "reason": "Existing primary-focus ACCEPT by task_203052f5 at 1071775f8f3c9c120ddc639d60c267d4acd8ef1f; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
+      }
     },
     {
       "focus": "src/ui/editor.ts",
@@ -1825,7 +2308,19 @@
       ],
       "limits": [
         "No full build/typecheck, compiled CLI, tmux, provider or physical-device acceptance."
-      ]
+      ],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "fba6c9f74fc9af07f8a11368455e63cf46f5e4eb",
+        "primaryId": "task_ff96b465",
+        "primaryCommit": "58af8f98e82c5d0ad6e34422cc2aafb9f5126ba7",
+        "judgeIds": [
+          "task_14234cb0"
+        ],
+        "sourceCommit": "58af8f98e82c5d0ad6e34422cc2aafb9f5126ba7",
+        "state": "accepted-joined",
+        "reason": "Existing primary-focus ACCEPT by task_14234cb0 at 58af8f98e82c5d0ad6e34422cc2aafb9f5126ba7; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
+      }
     },
     {
       "focus": "src/ui/execution-previews.ts",
@@ -1879,7 +2374,19 @@
           "blob": "7510d94b1cb34373854df0680caf60e017c83834",
           "coordinatorBase": "7892a98fe8eed40b01cded4f398e1811c8478e0f"
         }
-      ]
+      ],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "7510d94b1cb34373854df0680caf60e017c83834",
+        "primaryId": "task_52ca0e94",
+        "primaryCommit": "828e13116b668825a7d24cf4247e2b56e3ed49b9",
+        "judgeIds": [
+          "task_9a76656a"
+        ],
+        "sourceCommit": "828e13116b668825a7d24cf4247e2b56e3ed49b9",
+        "state": "accepted-joined",
+        "reason": "Existing primary-focus ACCEPT by task_9a76656a at 828e13116b668825a7d24cf4247e2b56e3ed49b9; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
+      }
     },
     {
       "focus": "src/ui/footer.ts",
@@ -1927,7 +2434,19 @@
         "43 focused tests",
         "Expanded footer suite passes baseline",
         "format/diff pass; lint exit 0 with existing advisories"
-      ]
+      ],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "3d3aa8960033208e5b7c137bbdc3e20da4becfc6",
+        "primaryId": "task_b0090f89",
+        "primaryCommit": "23d4c95aa626e1ef2e84308c792bffc4b1b130e6",
+        "judgeIds": [
+          "task_05ce27ca"
+        ],
+        "sourceCommit": "23d4c95aa626e1ef2e84308c792bffc4b1b130e6",
+        "state": "accepted-joined",
+        "reason": "Existing primary-focus ACCEPT by task_05ce27ca at 23d4c95aa626e1ef2e84308c792bffc4b1b130e6; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
+      }
     },
     {
       "focus": "src/ui/quiet-tool-ui.ts",
@@ -1984,7 +2503,19 @@
           "blob": "5970b1ea57aba517a223ded5c196ab3ebca133f1",
           "coordinatorBase": "7892a98fe8eed40b01cded4f398e1811c8478e0f"
         }
-      ]
+      ],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "5970b1ea57aba517a223ded5c196ab3ebca133f1",
+        "primaryId": "task_022db18e",
+        "primaryCommit": "34143eafe466f0f402e62382e3a03b6a602dedde",
+        "judgeIds": [
+          "task_a1a59af9"
+        ],
+        "sourceCommit": "34143eafe466f0f402e62382e3a03b6a602dedde",
+        "state": "accepted-joined",
+        "reason": "Existing primary-focus NO CHANGE NEEDED by task_a1a59af9 at 34143eafe466f0f402e62382e3a03b6a602dedde; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
+      }
     },
     {
       "focus": "src/ui/rolling-activity.ts",
@@ -2045,7 +2576,19 @@
           "blob": "66cf00a2db4b52746cc4595c4eab964acd863e42",
           "coordinatorBase": "7892a98fe8eed40b01cded4f398e1811c8478e0f"
         }
-      ]
+      ],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "66cf00a2db4b52746cc4595c4eab964acd863e42",
+        "primaryId": "task_f8eb0cae",
+        "primaryCommit": "8aaffbf961e73dbedafd111ad18a21faf3a1bfdb",
+        "judgeIds": [
+          "task_a6caab27"
+        ],
+        "sourceCommit": "8aaffbf961e73dbedafd111ad18a21faf3a1bfdb",
+        "state": "accepted-joined",
+        "reason": "Existing primary-focus ACCEPT by task_a6caab27 at 8aaffbf961e73dbedafd111ad18a21faf3a1bfdb; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
+      }
     },
     {
       "focus": "src/ui/sdk-task-rows.ts",
@@ -2109,7 +2652,19 @@
       ],
       "limits": [
         "No full build/typecheck/CLI/live/SSH/device"
-      ]
+      ],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "12dd2d82132e1997f9ca53903172babf28586e9b",
+        "primaryId": "task_5d9a622d",
+        "primaryCommit": "9dab0b950dde5fffdb3bfeb00bea85bdf969b5c7",
+        "judgeIds": [
+          "task_060d7edf"
+        ],
+        "sourceCommit": "9dab0b950dde5fffdb3bfeb00bea85bdf969b5c7",
+        "state": "accepted-joined",
+        "reason": "Existing primary-focus ACCEPT by task_060d7edf at 9dab0b950dde5fffdb3bfeb00bea85bdf969b5c7; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
+      }
     },
     {
       "focus": "src/ui/settled-execute-render.ts",
@@ -2165,7 +2720,19 @@
           "blob": "d8134b728f86ecd669820d7922f459350e78adc8",
           "coordinatorBase": "7892a98fe8eed40b01cded4f398e1811c8478e0f"
         }
-      ]
+      ],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "d8134b728f86ecd669820d7922f459350e78adc8",
+        "primaryId": "task_cde04507",
+        "primaryCommit": "655dd9f6908f34b82927f97a04b468c4e5051d53",
+        "judgeIds": [
+          "task_ac462b2f"
+        ],
+        "sourceCommit": "655dd9f6908f34b82927f97a04b468c4e5051d53",
+        "state": "accepted-joined",
+        "reason": "Existing primary-focus NO CHANGE NEEDED by task_ac462b2f at 655dd9f6908f34b82927f97a04b468c4e5051d53; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
+      }
     },
     {
       "focus": "src/ui/startup.ts",
@@ -2212,7 +2779,19 @@
       ],
       "limits": [
         "No full build/compiled PTY/device/provider/SSH"
-      ]
+      ],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "3e98efaa1c3aec6d77cdb4c8f7f9ffa42e8f2f49",
+        "primaryId": "task_b0e54e09",
+        "primaryCommit": "8d0911b585c89320ccee5d5b3c3981beb357e4a0",
+        "judgeIds": [
+          "task_f31c7dbc"
+        ],
+        "sourceCommit": "8d0911b585c89320ccee5d5b3c3981beb357e4a0",
+        "state": "accepted-joined",
+        "reason": "Existing primary-focus NO CHANGE NEEDED by task_f31c7dbc at 8d0911b585c89320ccee5d5b3c3981beb357e4a0; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
+      }
     },
     {
       "focus": "src/ui/subagent-settings.ts",
@@ -2263,7 +2842,19 @@
       ],
       "limits": [
         "No full build/compiled PTY"
-      ]
+      ],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "e8e8acee76a03e64ed27a50ce9bc886f1e8d05fd",
+        "primaryId": "task_3ec62165",
+        "primaryCommit": "f14b45ab14702f6e697aca70b3d929d7a55c6dac",
+        "judgeIds": [
+          "task_2c6056ba"
+        ],
+        "sourceCommit": "f14b45ab14702f6e697aca70b3d929d7a55c6dac",
+        "state": "accepted-joined",
+        "reason": "Existing primary-focus ACCEPT by task_2c6056ba at f14b45ab14702f6e697aca70b3d929d7a55c6dac; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
+      }
     },
     {
       "focus": "src/ui/task-monitor.ts",
@@ -2312,7 +2903,19 @@
       ],
       "limits": [
         "No build/typecheck/packaged TUI/provider/authenticated SSH; dist absent"
-      ]
+      ],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "eab5344adabce4d6aa098c044af1c55efcc7f904",
+        "primaryId": "task_8f7cb2e9",
+        "primaryCommit": "95d39e5cce2b60fc40d687fb0c7bb4c7a1b5142e",
+        "judgeIds": [
+          "task_77087f04"
+        ],
+        "sourceCommit": "95d39e5cce2b60fc40d687fb0c7bb4c7a1b5142e",
+        "state": "accepted-joined",
+        "reason": "Existing primary-focus ACCEPT by task_77087f04 at 95d39e5cce2b60fc40d687fb0c7bb4c7a1b5142e; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
+      }
     },
     {
       "focus": "src/ui/task-rows.ts",
@@ -2371,7 +2974,19 @@
           "blob": "fe08b5d617e02ae6ec57c4fc479f3433977f34ed",
           "coordinatorBase": "7892a98fe8eed40b01cded4f398e1811c8478e0f"
         }
-      ]
+      ],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "fe08b5d617e02ae6ec57c4fc479f3433977f34ed",
+        "primaryId": "task_3856c420",
+        "primaryCommit": "eeb7a1d09e39e95ba7aecff9f09c98c21b4997f1",
+        "judgeIds": [
+          "task_24064ab2"
+        ],
+        "sourceCommit": "eeb7a1d09e39e95ba7aecff9f09c98c21b4997f1",
+        "state": "accepted-joined",
+        "reason": "Existing primary-focus ACCEPT by task_24064ab2 at eeb7a1d09e39e95ba7aecff9f09c98c21b4997f1; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
+      }
     },
     {
       "focus": "tests/action-label-wiring.test.ts",
@@ -2380,7 +2995,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": "47c08778ff7c1d803320838c1707e3c28213178d",
+        "state": "needs-primary",
+        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      }
     },
     {
       "focus": "tests/activity-runtime-acceptance-test.py",
@@ -2397,7 +3021,18 @@
           "verdict": "ACCEPT",
           "blob": "0f1dd3b4c1ae423fc0528c369c0a33efc71f6dc8"
         }
-      ]
+      ],
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [
+          "task_150f5c27"
+        ],
+        "sourceCommit": "98bd940bd8dc870efa814074b7c038649d4df706",
+        "state": "needs-primary",
+        "reason": "Existing related-path ACCEPT by task_150f5c27 at 98bd940bd8dc870efa814074b7c038649d4df706, blob 0f1dd3b4c1ae423fc0528c369c0a33efc71f6dc8; exact candidate verified. Related blob already joined. Dedicated primary-focus acceptance is missing."
+      }
     },
     {
       "focus": "tests/activity-terminal-acceptance-test.py",
@@ -2414,7 +3049,18 @@
           "verdict": "ACCEPT",
           "blob": "2ee90a527228a19b6ebf3cad78ad5b9fc8ff7a3d"
         }
-      ]
+      ],
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [
+          "task_c4ad6e75"
+        ],
+        "sourceCommit": "b02afcce77ccd1ebb021dc6230641ab0294ce68e",
+        "state": "needs-primary",
+        "reason": "Existing related-path ACCEPT by task_c4ad6e75 at b02afcce77ccd1ebb021dc6230641ab0294ce68e, blob 2ee90a527228a19b6ebf3cad78ad5b9fc8ff7a3d; exact candidate verified. Related blob already joined. Dedicated primary-focus acceptance is missing."
+      }
     },
     {
       "focus": "tests/background-interrupt-tui.test.ts",
@@ -2423,7 +3069,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": "713833b3b7093c26fe020d415f972ae122d40970",
+        "state": "needs-primary",
+        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      }
     },
     {
       "focus": "tests/background-ux-tui.test.ts",
@@ -2432,7 +3087,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": "713833b3b7093c26fe020d415f972ae122d40970",
+        "state": "needs-primary",
+        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      }
     },
     {
       "focus": "tests/cli.test.ts",
@@ -2489,7 +3153,20 @@
       ],
       "limits": [
         "9 compiled cases not run; need batch artifacts"
-      ]
+      ],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "528e6e7735b03cdd9812839b8c18657884904713",
+        "primaryId": "task_f5df93a3",
+        "primaryCommit": "3564daa6efa343e79ef9e5ddf6f1d34d6bd8f5b5",
+        "judgeIds": [
+          "task_a07a60a3",
+          "task_db22e114"
+        ],
+        "sourceCommit": "3564daa6efa343e79ef9e5ddf6f1d34d6bd8f5b5",
+        "state": "accepted-joined",
+        "reason": "Existing primary-focus NO CHANGE NEEDED by task_a07a60a3 at 3564daa6efa343e79ef9e5ddf6f1d34d6bd8f5b5; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
+      }
     },
     {
       "focus": "tests/context-usage-cache.test.ts",
@@ -2498,7 +3175,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": "190bfcac5d48f5fcc4d728d081b07400bd68da23",
+        "state": "needs-primary",
+        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      }
     },
     {
       "focus": "tests/conversation-density.test.ts",
@@ -2570,7 +3256,20 @@
       ],
       "limits": [
         "Test fixture behavior fix explicit; no production edits/full build"
-      ]
+      ],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "a3500820b45fc6b2223b3fc7770027ad4f601474",
+        "primaryId": "task_9bb57a1e",
+        "primaryCommit": "cf43fa6ef2bcbb84d142fbd3478300d85d7a0bf6",
+        "judgeIds": [
+          "task_32a06541",
+          "task_203052f5"
+        ],
+        "sourceCommit": "cf43fa6ef2bcbb84d142fbd3478300d85d7a0bf6",
+        "state": "accepted-joined",
+        "reason": "Existing primary-focus ACCEPT by task_32a06541 at cf43fa6ef2bcbb84d142fbd3478300d85d7a0bf6; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
+      }
     },
     {
       "focus": "tests/diagnostics.test.ts",
@@ -2622,7 +3321,20 @@
       "checks": [
         "13 tests /573 assertions",
         "format/diff"
-      ]
+      ],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "48a273afdc220bd4984fbc18739015dc4a86c88a",
+        "primaryId": "task_28d3f49e",
+        "primaryCommit": "d2bf06b4b75226b367e8889279889527f076dab8",
+        "judgeIds": [
+          "task_a3ac95db",
+          "task_50dcf5f6"
+        ],
+        "sourceCommit": "d2bf06b4b75226b367e8889279889527f076dab8",
+        "state": "accepted-joined",
+        "reason": "Existing primary-focus NO CHANGE NEEDED by task_a3ac95db at d2bf06b4b75226b367e8889279889527f076dab8; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
+      }
     },
     {
       "focus": "tests/editor.test.ts",
@@ -2631,7 +3343,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": "3603e341a47541a137c95c675106c9568374fde1",
+        "state": "needs-primary",
+        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      }
     },
     {
       "focus": "tests/execute-row-render-performance.test.ts",
@@ -2640,7 +3361,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": "3603e341a47541a137c95c675106c9568374fde1",
+        "state": "needs-primary",
+        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      }
     },
     {
       "focus": "tests/execution-previews-tui.test.ts",
@@ -2649,7 +3379,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": "149c9922bd7213e196dc24a7d86d905df9b2cfc6",
+        "state": "needs-primary",
+        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      }
     },
     {
       "focus": "tests/execution-previews.test.ts",
@@ -2658,7 +3397,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": "93ddce0018aae9e6abc7c17a143b1a60e076c2be",
+        "state": "needs-primary",
+        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      }
     },
     {
       "focus": "tests/fixtures/terminal-interaction-report.ts",
@@ -2667,7 +3415,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": "53fb4d9732dcf0c337b797b05a104199ccf1a273",
+        "state": "needs-primary",
+        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      }
     },
     {
       "focus": "tests/footer.test.ts",
@@ -2725,7 +3482,20 @@
       ],
       "limits": [
         "Mocked only, no interactive CLI/provider/build/typecheck"
-      ]
+      ],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "92878255d0c02ce9e906782e8757269a63221b9b",
+        "primaryId": "task_f4f7731b",
+        "primaryCommit": "ecfd5a67ecdf054839b97e811999447f4f75da21",
+        "judgeIds": [
+          "task_dc793fa7",
+          "task_05ce27ca"
+        ],
+        "sourceCommit": "ecfd5a67ecdf054839b97e811999447f4f75da21",
+        "state": "accepted-joined",
+        "reason": "Existing primary-focus ACCEPT by task_dc793fa7 at ecfd5a67ecdf054839b97e811999447f4f75da21; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
+      }
     },
     {
       "focus": "tests/fullscreen-editor-tui.test.ts",
@@ -2734,7 +3504,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": "966dd055ab098a2ec699f0ea044fc00aac4df770",
+        "state": "needs-primary",
+        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      }
     },
     {
       "focus": "tests/fullscreen-editor.test.ts",
@@ -2743,7 +3522,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": "333452d3175df7692ff3b061b11879aa35424201",
+        "state": "needs-primary",
+        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      }
     },
     {
       "focus": "tests/long-thread-pty-latency.test.ts",
@@ -2752,7 +3540,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": "ec1ad19737067bbd4662adae35e94a6fa63e9032",
+        "state": "needs-primary",
+        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      }
     },
     {
       "focus": "tests/long-thread-tui.test.ts",
@@ -2761,7 +3558,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": "648403b360129ea1ff7b35db2c5598325b1dede6",
+        "state": "needs-primary",
+        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      }
     },
     {
       "focus": "tests/rolling-activity-disk.test.ts",
@@ -2854,7 +3660,21 @@
           "respondsTo": "task_6f3b1071",
           "commit": "496389243e523220cae31f698ac02922890a578f"
         }
-      ]
+      ],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "a502768eb70247ad2caceed71f88c1c6aa82533d",
+        "primaryId": "task_2031ace4",
+        "primaryCommit": "496389243e523220cae31f698ac02922890a578f",
+        "judgeIds": [
+          "task_6f3b1071",
+          "task_28221777",
+          "task_a6caab27"
+        ],
+        "sourceCommit": "496389243e523220cae31f698ac02922890a578f",
+        "state": "accepted-not-joined",
+        "reason": "Existing primary-focus ACCEPT by task_28221777 at 496389243e523220cae31f698ac02922890a578f; exact candidate and surviving-area blob verified. Pinned joined tree lacks this accepted blob; parent owns joining. No new review or test execution. Final fresh rework writer task_2031ace4; original rejected primary task_1b754cf4/ad493ccc4986fb5c18bc708590a38232c84621bd retained in evidence."
+      }
     },
     {
       "focus": "tests/rolling-activity.test.ts",
@@ -2906,7 +3726,20 @@
       "checks": [
         "48tests/267assertions",
         "format/diff"
-      ]
+      ],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "dcd301abaa75cadf31522a28357a2fa68f08f820",
+        "primaryId": "task_635acd35",
+        "primaryCommit": "68e4045e79c099bd1397fb8f36e62b13d41fce80",
+        "judgeIds": [
+          "task_b0411e3d",
+          "task_a6caab27"
+        ],
+        "sourceCommit": "68e4045e79c099bd1397fb8f36e62b13d41fce80",
+        "state": "accepted-joined",
+        "reason": "Existing primary-focus NO CHANGE NEEDED by task_b0411e3d at 68e4045e79c099bd1397fb8f36e62b13d41fce80; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
+      }
     },
     {
       "focus": "tests/scroll-layout-render.test.ts",
@@ -2915,7 +3748,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": "3603e341a47541a137c95c675106c9568374fde1",
+        "state": "needs-primary",
+        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      }
     },
     {
       "focus": "tests/sdk-large-text-tui.test.ts",
@@ -2924,7 +3766,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": "3603e341a47541a137c95c675106c9568374fde1",
+        "state": "needs-primary",
+        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      }
     },
     {
       "focus": "tests/sdk-markdown-blocks.test.ts",
@@ -2933,7 +3784,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": "3603e341a47541a137c95c675106c9568374fde1",
+        "state": "needs-primary",
+        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      }
     },
     {
       "focus": "tests/sdk-text-wrap-performance.test.ts",
@@ -2942,7 +3802,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": "3603e341a47541a137c95c675106c9568374fde1",
+        "state": "needs-primary",
+        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      }
     },
     {
       "focus": "tests/settled-execute-render.test.ts",
@@ -2951,7 +3820,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": "c64e61660792a2c6fd13ecdce964b12895fda5f0",
+        "state": "needs-primary",
+        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      }
     },
     {
       "focus": "tests/startup-tui.test.ts",
@@ -2960,7 +3838,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": "149c9922bd7213e196dc24a7d86d905df9b2cfc6",
+        "state": "needs-primary",
+        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      }
     },
     {
       "focus": "tests/startup.test.ts",
@@ -2969,7 +3856,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": "c4af41c02ba55a977c5497737eb88ebdee73bbfc",
+        "state": "needs-primary",
+        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      }
     },
     {
       "focus": "tests/task-rows.test.ts",
@@ -3035,7 +3931,21 @@
         "Full tsc passes after owned assets",
         "31 tests /452 assertions before and after",
         "Exact one-line source delta; format/lint/diff"
-      ]
+      ],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "d2b90b93184b0a257924201768a79283208f9dd8",
+        "primaryId": "task_e44a3fd7",
+        "primaryCommit": "1b66a8d1dc898e2953e963da9f4af5b663bafd86",
+        "judgeIds": [
+          "task_c584a1d4",
+          "task_24064ab2",
+          "task_060d7edf"
+        ],
+        "sourceCommit": "1b66a8d1dc898e2953e963da9f4af5b663bafd86",
+        "state": "accepted-joined",
+        "reason": "Existing primary-focus ACCEPT by task_c584a1d4 at 1b66a8d1dc898e2953e963da9f4af5b663bafd86; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
+      }
     },
     {
       "focus": "tests/tasks-ui-proof-tooling.test.py",
@@ -3090,7 +4000,20 @@
       "checks": [
         "22Python0skips",
         "diff/clean"
-      ]
+      ],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "5f4204a1afdf344f2e20858e98270ea2ff76b9eb",
+        "primaryId": "task_921c1b1e",
+        "primaryCommit": "c6fd15afdb82262758a71652a94d755d9ed3de38",
+        "judgeIds": [
+          "task_6512e607",
+          "task_fca35838"
+        ],
+        "sourceCommit": "c6fd15afdb82262758a71652a94d755d9ed3de38",
+        "state": "accepted-not-joined",
+        "reason": "Existing primary-focus NO CHANGE NEEDED by task_6512e607 at c6fd15afdb82262758a71652a94d755d9ed3de38; exact candidate and surviving-area blob verified. Pinned joined tree lacks this accepted blob; parent owns joining. No new review or test execution."
+      }
     },
     {
       "focus": "tests/terminal-interactions-cli.test.ts",
@@ -3146,7 +4069,20 @@
         "Final23/197",
         "Dashboard baseline-drop mutant passes original/fails candidate",
         "format/lint/diff"
-      ]
+      ],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "157c77305cba239e6c5e2ee273f5d1d4f72eb93d",
+        "primaryId": "task_58841b38",
+        "primaryCommit": "03a4c651a1a8967ecfe8090b1f7377ce9af6d511",
+        "judgeIds": [
+          "task_9704585a",
+          "task_16ed90d7"
+        ],
+        "sourceCommit": "03a4c651a1a8967ecfe8090b1f7377ce9af6d511",
+        "state": "accepted-joined",
+        "reason": "Existing primary-focus ACCEPT by task_9704585a at 03a4c651a1a8967ecfe8090b1f7377ce9af6d511; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
+      }
     },
     {
       "focus": "tests/terminal-interactions-report.test.ts",
@@ -3203,7 +4139,20 @@
       ],
       "limits": [
         "No build/typecheck/latency"
-      ]
+      ],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "bc294fef540ca659193c1016c537260cff5ec247",
+        "primaryId": "task_374aa134",
+        "primaryCommit": "92a6e31512ade19844c2ec80bcc089fd24143141",
+        "judgeIds": [
+          "task_b8bd6e1b",
+          "task_e42d2c99"
+        ],
+        "sourceCommit": "92a6e31512ade19844c2ec80bcc089fd24143141",
+        "state": "accepted-not-joined",
+        "reason": "Existing primary-focus ACCEPT by task_b8bd6e1b at 92a6e31512ade19844c2ec80bcc089fd24143141; exact candidate and surviving-area blob verified. Pinned joined tree lacks this accepted blob; parent owns joining. No new review or test execution."
+      }
     },
     {
       "focus": "tests/terminal-perf-action-profiler.test.ts",
@@ -3258,7 +4207,20 @@
         "Candidate profiler pair33/247",
         "All timing/assertion statements unchanged",
         "format/lint/diff"
-      ]
+      ],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "46abbafdc26b90a509b33f330bca9c13b348545a",
+        "primaryId": "task_b9c5eb3e",
+        "primaryCommit": "4bec0ca300a19bd4ee0b9f25438c1d8da4a42ef2",
+        "judgeIds": [
+          "task_432725ee",
+          "task_40ff7535"
+        ],
+        "sourceCommit": "4bec0ca300a19bd4ee0b9f25438c1d8da4a42ef2",
+        "state": "accepted-joined",
+        "reason": "Existing primary-focus ACCEPT by task_432725ee at 4bec0ca300a19bd4ee0b9f25438c1d8da4a42ef2; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
+      }
     },
     {
       "focus": "tests/terminal-perf-cli.test.ts",
@@ -3267,7 +4229,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": "53fb4d9732dcf0c337b797b05a104199ccf1a273",
+        "state": "needs-primary",
+        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      }
     },
     {
       "focus": "tests/terminal-perf-navigation.test.ts",
@@ -3276,7 +4247,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": "53fb4d9732dcf0c337b797b05a104199ccf1a273",
+        "state": "needs-primary",
+        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees. Retained uncommitted candidate(s): task_09b8c468 blob 3a7ad4e15c5f409cb3944f1baa467649f819a756 in /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_09b8c468. Not importable or accepted."
+      }
     },
     {
       "focus": "tests/terminal-perf-options.test.ts",
@@ -3285,7 +4265,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": "53fb4d9732dcf0c337b797b05a104199ccf1a273",
+        "state": "needs-primary",
+        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      }
     },
     {
       "focus": "tests/terminal-perf-profiler.test.ts",
@@ -3343,7 +4332,20 @@
       "limits": [
         "Broader biome check existing import-order assist",
         "No build"
-      ]
+      ],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "708996371dabfb105ba97e010979b60c3af5b271",
+        "primaryId": "task_6b781769",
+        "primaryCommit": "68ea091b9d1751f98c5c6ca5aa96591c05662c94",
+        "judgeIds": [
+          "task_74718e8d",
+          "task_5e042418"
+        ],
+        "sourceCommit": "68ea091b9d1751f98c5c6ca5aa96591c05662c94",
+        "state": "accepted-joined",
+        "reason": "Existing primary-focus NO CHANGE NEEDED by task_74718e8d at 68ea091b9d1751f98c5c6ca5aa96591c05662c94; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
+      }
     },
     {
       "focus": "tests/terminal-perf-report.test.ts",
@@ -3352,7 +4354,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": "53fb4d9732dcf0c337b797b05a104199ccf1a273",
+        "state": "needs-primary",
+        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      }
     },
     {
       "focus": "tests/terminal-perf-send.test.ts",
@@ -3361,7 +4372,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": "53fb4d9732dcf0c337b797b05a104199ccf1a273",
+        "state": "needs-primary",
+        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      }
     },
     {
       "focus": "tests/terminal-perf-t3-config.test.ts",
@@ -3370,7 +4390,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": "8b15830be1e96a45ae4eebc585f35b55e042616e",
+        "state": "needs-primary",
+        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      }
     },
     {
       "focus": "tests/terminal-perf-tool-events.test.ts",
@@ -3379,7 +4408,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": "53fb4d9732dcf0c337b797b05a104199ccf1a273",
+        "state": "needs-primary",
+        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      }
     },
     {
       "focus": "tests/terminal-perf-tools.test.ts",
@@ -3388,7 +4426,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": "8100b94cfb49eaa8d07794da0ec658393b474939",
+        "state": "needs-primary",
+        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      }
     },
     {
       "focus": "tests/terminal-perf-workloads.test.ts",
@@ -3411,7 +4458,18 @@
           "candidate": "747c31b8e52eff45ab2c585e5974eeb9d50cd85a",
           "blob": "d274acb072ed06375c1ee234379d57a32aa026cb"
         }
-      ]
+      ],
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [
+          "task_d455a9d6"
+        ],
+        "sourceCommit": "747c31b8e52eff45ab2c585e5974eeb9d50cd85a",
+        "state": "needs-primary",
+        "reason": "Existing related-path ACCEPT by task_d455a9d6 at 747c31b8e52eff45ab2c585e5974eeb9d50cd85a, blob d274acb072ed06375c1ee234379d57a32aa026cb; exact candidate verified. Related blob not joined; parent may join only with its existing narrow judgment. Dedicated primary-focus acceptance is missing."
+      }
     },
     {
       "focus": "tests/tui-harness.test.ts",
@@ -3420,7 +4478,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": "292fd116640733d190bc9344505c236cff4c7dbd",
+        "state": "needs-primary",
+        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      }
     },
     {
       "focus": "tests/tui-helpers.test.ts",
@@ -3429,7 +4496,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": "12f1b0fbe27c647d6a414a32406d63a730bba50b",
+        "state": "needs-primary",
+        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      }
     },
     {
       "focus": "tests/tui-helpers.ts",
@@ -3438,7 +4514,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": "12f1b0fbe27c647d6a414a32406d63a730bba50b",
+        "state": "needs-primary",
+        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      }
     },
     {
       "focus": "tests/tui-stop-restoration.test.ts",
@@ -3447,7 +4532,16 @@
       "primary": [],
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integrationState": "pending"
+      "integrationState": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": "3603e341a47541a137c95c675106c9568374fde1",
+        "state": "needs-primary",
+        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      }
     }
   ],
   "extraFiles": [
@@ -3570,7 +4664,20 @@
       ],
       "limits": [
         "No media/visual/product/build"
-      ]
+      ],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "d720b8a1abde5a6517400921639390f46387f3dd",
+        "primaryId": "task_c89c25be",
+        "primaryCommit": "e684683cd2ab8d675e88f557c49763b5ff279780",
+        "judgeIds": [
+          "task_73d21038",
+          "task_c7691cb3"
+        ],
+        "sourceCommit": "e684683cd2ab8d675e88f557c49763b5ff279780",
+        "state": "accepted-joined",
+        "reason": "Existing primary-focus ACCEPT by task_c7691cb3 at e684683cd2ab8d675e88f557c49763b5ff279780; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
+      }
     },
     {
       "focus": "tests/terminal-interactions-normalize.test.ts",
@@ -3624,7 +4731,20 @@
         "3primary/68assertions",
         "24related/164assertions",
         "Biome/diff"
-      ]
+      ],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "96a49888775e77328e9cbeb1f416f2b5347b345b",
+        "primaryId": "task_c93f9a76",
+        "primaryCommit": "694eb962f1db0458cf6bb395b25e9c8ab7f46a70",
+        "judgeIds": [
+          "task_0d381a57",
+          "task_23bf0f9f"
+        ],
+        "sourceCommit": "694eb962f1db0458cf6bb395b25e9c8ab7f46a70",
+        "state": "accepted-joined",
+        "reason": "Existing primary-focus NO CHANGE NEEDED by task_0d381a57 at 694eb962f1db0458cf6bb395b25e9c8ab7f46a70; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
+      }
     },
     {
       "focus": "tests/ui-cleanup-probe.test.py",
@@ -3718,7 +4838,21 @@
           "respondsTo": "task_3bc6b56e",
           "commit": "a2c2b9f33764fde811d082c1fbf812c46b5cee15"
         }
-      ]
+      ],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "4d6e5207586f61dfc1662548d2395830eac5ef0f",
+        "primaryId": "task_3a95a2db",
+        "primaryCommit": "a2c2b9f33764fde811d082c1fbf812c46b5cee15",
+        "judgeIds": [
+          "task_3bc6b56e",
+          "task_ce1af6b4",
+          "task_988afb2b"
+        ],
+        "sourceCommit": "a2c2b9f33764fde811d082c1fbf812c46b5cee15",
+        "state": "accepted-joined",
+        "reason": "Existing primary-focus ACCEPT by task_ce1af6b4 at a2c2b9f33764fde811d082c1fbf812c46b5cee15; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution. Final fresh rework writer task_3a95a2db; original rejected primary task_09dea81c/e6e787e74a42fc4228198cf91cc26d8285162ec8 retained in evidence."
+      }
     },
     {
       "focus": "tests/tasks-ui-proof-build.test.ts",
@@ -3775,7 +4909,20 @@
       ],
       "limits": [
         "Stubs not real native/UI proof"
-      ]
+      ],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "d132c1709bbc03d1e3851dd2e6886ed50fc8bf0d",
+        "primaryId": "task_eed22df6",
+        "primaryCommit": "fd1e6f44a2c88c3f1ac311087b90efb65f6e980d",
+        "judgeIds": [
+          "task_f9504048",
+          "task_db1c285c"
+        ],
+        "sourceCommit": "fd1e6f44a2c88c3f1ac311087b90efb65f6e980d",
+        "state": "accepted-joined",
+        "reason": "Existing primary-focus NO CHANGE NEEDED by task_db1c285c at fd1e6f44a2c88c3f1ac311087b90efb65f6e980d; exact candidate and surviving-area blob verified. Pinned joined tree has the exact accepted blob. No new review or test execution."
+      }
     },
     {
       "focus": "tests/terminal-interactions-options.test.ts",
@@ -3825,7 +4972,20 @@
       "checks": [
         "38tests/195assertions after localWASM copy",
         "Whitespace"
-      ]
+      ],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "716e22bf607d13777996f2aabdc0479a4f37b329",
+        "primaryId": "task_22861d44",
+        "primaryCommit": "e033b0e3cbe52a0b0a40e54e8e30f523042b1b6a",
+        "judgeIds": [
+          "task_4c71fe7d",
+          "task_9cc2ecb4"
+        ],
+        "sourceCommit": "e033b0e3cbe52a0b0a40e54e8e30f523042b1b6a",
+        "state": "accepted-not-joined",
+        "reason": "Existing primary-focus NO CHANGE NEEDED by task_9cc2ecb4 at e033b0e3cbe52a0b0a40e54e8e30f523042b1b6a; exact candidate and surviving-area blob verified. Pinned joined tree lacks this accepted blob; parent owns joining. No new review or test execution."
+      }
     },
     {
       "focus": "tests/terminal-perf-dashboard.test.ts",
@@ -3876,7 +5036,20 @@
       "checks": [
         "10tests/62assertions",
         "Biomecheck"
-      ]
+      ],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "3fb03fa6b61f5a7d088b5611738e0b0c2f29d917",
+        "primaryId": "task_f492439a",
+        "primaryCommit": "29a206f7105f8b3d9e078be4eb6dc21d4710f04e",
+        "judgeIds": [
+          "task_0d31b493",
+          "task_a9e71449"
+        ],
+        "sourceCommit": "29a206f7105f8b3d9e078be4eb6dc21d4710f04e",
+        "state": "accepted-not-joined",
+        "reason": "Existing primary-focus NO CHANGE NEEDED by task_a9e71449 at 29a206f7105f8b3d9e078be4eb6dc21d4710f04e; exact candidate and surviving-area blob verified. Pinned joined tree lacks this accepted blob; parent owns joining. No new review or test execution."
+      }
     },
     {
       "focus": "tests/terminal-interaction-dashboard.test.ts",
@@ -3933,7 +5106,20 @@
         "33tests104assertions",
         "Base in-place mutant passes;candidate fails",
         "Biome"
-      ]
+      ],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "c1200835ac2ef2ba622ebe0b2de0e7de7063fe98",
+        "primaryId": "task_b25f56dc",
+        "primaryCommit": "ff0ececc2e4c74dd103ecaa54113e726fda8e346",
+        "judgeIds": [
+          "task_a52a6008",
+          "task_a8281cbe"
+        ],
+        "sourceCommit": "ff0ececc2e4c74dd103ecaa54113e726fda8e346",
+        "state": "accepted-not-joined",
+        "reason": "Existing primary-focus ACCEPT by task_a8281cbe at ff0ececc2e4c74dd103ecaa54113e726fda8e346; exact candidate and surviving-area blob verified. Pinned joined tree lacks this accepted blob; parent owns joining. No new review or test execution."
+      }
     }
   ],
   "batchChecks": [

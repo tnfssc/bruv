@@ -33,7 +33,19 @@
       "changedRelatedPaths": [],
       "readingResult": "Unchanged physical launcher resolution→validate sibling→legacy staged probe or exported exec one visible lifetime;helper extraction adds shell-global coupling.",
       "checks": "13 tests53 assertions;disposable Linux probes missing sibling despite PATH decoy/env/cwd/argv/export/invalid executable;no normal compiled/macOS/Android/full gate.",
-      "integrationState": "Matches area tip unchanged"
+      "integrationState": "Matches area tip unchanged",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "e3fc96419050e349c3beb8f9043a47e61b8443e0",
+        "primaryId": "task_3e881127",
+        "primaryCommit": "73ce9724096b166af2d81d2767172b113a44247f",
+        "judgeIds": [
+          "task_10115cb2"
+        ],
+        "sourceCommit": "73ce9724096b166af2d81d2767172b113a44247f",
+        "state": "accepted-joined",
+        "reason": "Original whole-file NO CHANGE NEEDED from completed Sol primary and independent Sol judge survives exactly at area tip; joined blob also exact."
+      }
     },
     {
       "file": "scripts/build-claude-compat.ts",
@@ -63,7 +75,19 @@
       "changedRelatedPaths": [],
       "readingResult": "Unchanged paired build→validate destinations→assets/version→compile normal sibling once forwarding target/helper→failure propagation→shell launcher publication already visible.",
       "checks": "13 focused85 assertions;11 actual-script preflight cases protect bytes without compile;connector-update fixture compile missing deps/assets,not full build.",
-      "integrationState": "Matches tip unchanged"
+      "integrationState": "Matches tip unchanged",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "288ab823259a840b1f8b547d4366406d0340c963",
+        "primaryId": "task_af37fc58",
+        "primaryCommit": "efc6ca67a41cbfda7ec74a84a72245283034d593",
+        "judgeIds": [
+          "task_3de9555d"
+        ],
+        "sourceCommit": "efc6ca67a41cbfda7ec74a84a72245283034d593",
+        "state": "accepted-joined",
+        "reason": "Original whole-file NO CHANGE NEEDED from completed Sol primary and independent Sol judge survives exactly at area tip; joined blob also exact."
+      }
     },
     {
       "file": "scripts/claude-compat-launcher.ts",
@@ -93,7 +117,19 @@
       "changedRelatedPaths": [],
       "readingResult": "Unchanged filename validation/template selection/guarded write coherent visible effects; build/installer/shell exec/connector dispatch traced.",
       "checks": "13 pass85 assertions;no full build/device/provider.",
-      "integrationState": "Matches tip unchanged"
+      "integrationState": "Matches tip unchanged",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "42cadbf1870ff31d75b1d2d137c7d405a3e5b285",
+        "primaryId": "task_fadcda8f",
+        "primaryCommit": "a9a52ee8d264ce8aaa0933d55a174112ba47c59e",
+        "judgeIds": [
+          "task_fe560183"
+        ],
+        "sourceCommit": "a9a52ee8d264ce8aaa0933d55a174112ba47c59e",
+        "state": "accepted-joined",
+        "reason": "Original whole-file NO CHANGE NEEDED from completed Sol primary and independent Sol judge survives exactly at area tip; joined blob also exact."
+      }
     },
     {
       "file": "scripts/claude-native-acceptance/app-delegation-driver.mjs",
@@ -128,7 +164,19 @@
       ],
       "readingResult": "SQLite snapshot lifetime,native-state verification and process-isolation verification separate;publication order/assertions/exports/native authority unchanged,preparation/browser flow retained.",
       "checks": "41focused;8newtests baseline pass;format/diff;no native/browser/binary proof.",
-      "integrationState": "Exact source/newtest patch joined;new test own primary pending"
+      "integrationState": "Exact source/newtest patch joined;new test own primary pending",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "63a5a5703e731c0b141753a138ecbfd6974db514",
+        "primaryId": "task_866762ca",
+        "primaryCommit": "b538064f91afba9b3bb5a79bc8ec8ae6923f630b",
+        "judgeIds": [
+          "task_0ffaaac1"
+        ],
+        "sourceCommit": "b538064f91afba9b3bb5a79bc8ec8ae6923f630b",
+        "state": "accepted-not-joined",
+        "reason": "Original whole-file ACCEPT from completed Sol primary and independent Sol judge survives exactly at area tip; joined blob differs or is absent; retain judgment and import only the exact accepted code batch."
+      }
     },
     {
       "file": "scripts/claude-native-acceptance/app-delegation-model.mjs",
@@ -163,7 +211,19 @@
       ],
       "readingResult": "Mixed reply path separated normal-child scope checks and root launch/cancel/ACK operations;transcript guards/evidence/native-app vs Bruv ownership retained.",
       "checks": "39 Bun pass;7 Node app tests;Biome/diff;no native/browser/provider/full gate.",
-      "integrationState": "Exact accepted model+related test joined;whole app-model test primary pending"
+      "integrationState": "Exact accepted model+related test joined;whole app-model test primary pending",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "3bd2f8206676320c0bdb28e800db9ee9d9389d7f",
+        "primaryId": "task_00f0a474",
+        "primaryCommit": "89be0631d4fa7d22ab17ce62ed59b2a70e0b6039",
+        "judgeIds": [
+          "task_97f013af"
+        ],
+        "sourceCommit": "89be0631d4fa7d22ab17ce62ed59b2a70e0b6039",
+        "state": "accepted-joined",
+        "reason": "Original whole-file ACCEPT from completed Sol primary and independent Sol judge survives exactly at area tip; joined blob also exact."
+      }
     },
     {
       "file": "scripts/claude-native-acceptance/driver.mjs",
@@ -240,7 +300,20 @@
       ],
       "reworkResponse": "Keeps replay-owned capture,restores shared flushCapture contract so generated subagent replay collects final-provider evidence before private deletion. Flush does not detach browser listeners. New actual generated replay regression fails rejected finalizer,passes repaired.",
       "reworkChecks": "58 tests pass;baseline cross-page contamination reproduced;focused format/lint/syntax/diff pass;no native/full CI.",
-      "integrationState": "Fresh rework+fresh round2 judge accepted entire coherent patch;all4 source/tests joined;3 related extra primary obligations pending"
+      "integrationState": "Fresh rework+fresh round2 judge accepted entire coherent patch;all4 source/tests joined;3 related extra primary obligations pending",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "2982fe9d1bc4651248115a82f5aff9014c4a4b46",
+        "primaryId": "task_23c0fcde",
+        "primaryCommit": "a61eec6ee10a8f292f1f1edfeaaa5a39fc8367bc",
+        "judgeIds": [
+          "task_2d4634f7",
+          "task_0d4690cf"
+        ],
+        "sourceCommit": "a61eec6ee10a8f292f1f1edfeaaa5a39fc8367bc",
+        "state": "accepted-joined",
+        "reason": "Original whole-file ACCEPT from completed Sol primary and independent Sol judge survives exactly at area tip; joined blob also exact."
+      }
     },
     {
       "file": "scripts/claude-native-acceptance/history-driver.mjs",
@@ -275,7 +348,19 @@
       ],
       "readingResult": "Discovery,persisted-session evidence,source reconciliation and redacted proof writing separate;discover once instead of per bound session.UI journey/verification unchanged.",
       "checks": "27pass7SDKskips;base/candidate fixture evidence+JSONproof identical;format/lint existing warning;no native/current binary.",
-      "integrationState": "Exact coherent source/test accepted patch joined;new test own primary pending"
+      "integrationState": "Exact coherent source/test accepted patch joined;new test own primary pending",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "6b8bef41775398be3293f16eb3f248d061a6d2b7",
+        "primaryId": "task_e63767de",
+        "primaryCommit": "8a96f814d110e65250c081c1f2dda9daea098cf2",
+        "judgeIds": [
+          "task_e0fec250"
+        ],
+        "sourceCommit": "8a96f814d110e65250c081c1f2dda9daea098cf2",
+        "state": "accepted-not-joined",
+        "reason": "Original whole-file ACCEPT from completed Sol primary and independent Sol judge survives exactly at area tip; joined blob differs or is absent; retain judgment and import only the exact accepted code batch."
+      }
     },
     {
       "file": "scripts/claude-native-acceptance/history-model.mjs",
@@ -319,7 +404,20 @@
       ],
       "readingResult": "Conversation-driven historyReply returns decisions directly;HTTP owner explicitly IDs/records/SSE, generated authority programs readable statements. Verifier unchanged preserves paired exchange/ownership/precompaction replay.",
       "checks": "30 focused pass;expanded history suite passes baseline;Biome/diff;mocked generated APIs not native replay,no full gate.",
-      "integrationState": "Exact source+related test accepted by fresh replacement judge joined;whole history-model test primary pending"
+      "integrationState": "Exact source+related test accepted by fresh replacement judge joined;whole history-model test primary pending",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "beca9ab506641797c648aab54dc51908108b54e1",
+        "primaryId": "task_0af35abe",
+        "primaryCommit": "462f150fbce933d55a1e9b6261af5891f391b9d1",
+        "judgeIds": [
+          "task_6eb06db6",
+          "task_0a188823"
+        ],
+        "sourceCommit": "462f150fbce933d55a1e9b6261af5891f391b9d1",
+        "state": "accepted-joined",
+        "reason": "Original whole-file ACCEPT from completed Sol primary and independent Sol judge survives exactly at area tip; joined blob also exact."
+      }
     },
     {
       "file": "scripts/claude-native-acceptance/history-replay.mjs",
@@ -333,7 +431,16 @@
       },
       "judges": [],
       "acceptedBlob": null,
-      "launchBase": "0f31ee8bcbb4a6b9cc4e76121fa0aef55d7c52b2"
+      "launchBase": "0f31ee8bcbb4a6b9cc4e76121fa0aef55d7c52b2",
+      "resume": {
+        "status": "pending",
+        "primaryId": "task_968a7573",
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary-interrupted",
+        "reason": "Primary was killed by session shutdown (143); preserved uncommitted code is retained at the worker path. No submitted candidate commit or readability verdict; resume its original scope rather than count it accepted."
+      }
     },
     {
       "file": "scripts/claude-native-acceptance/history-run.mjs",
@@ -380,7 +487,19 @@
       ],
       "readingResult": "Scoped preparation,replay ownership,proof retention separate;one protocol config removes duplicate collection/config bookkeeping.Observed proof-write cleanup leak repaired.",
       "checks": "53Bun,5Node runner;baseline proof-write failure reproduced;Biome/diff;no native/full gate.",
-      "integrationState": "Fresh replacement primary+judge coherent source/test joined;new test own primary pending"
+      "integrationState": "Fresh replacement primary+judge coherent source/test joined;new test own primary pending",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "9940f5dc0a94aed48f0312463450ef10a0464539",
+        "primaryId": "task_10c1cb54",
+        "primaryCommit": "7726b42dd9a37ca2e7de618ed38653509bcc7373",
+        "judgeIds": [
+          "task_39ec0f44"
+        ],
+        "sourceCommit": "7726b42dd9a37ca2e7de618ed38653509bcc7373",
+        "state": "accepted-not-joined",
+        "reason": "Original whole-file ACCEPT from completed Sol primary and independent Sol judge survives exactly at area tip; joined blob differs or is absent; retain judgment and import only the exact accepted code batch."
+      }
     },
     {
       "file": "scripts/claude-native-acceptance/human-driver.mjs",
@@ -388,7 +507,16 @@
       "status": "pending",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+      }
     },
     {
       "file": "scripts/claude-native-acceptance/model.mjs",
@@ -424,7 +552,19 @@
       ],
       "readingResult": "Notification-only persisted ID/history correlation separated from ordinary scenario selection; runtime programs expose launch/save-owned-ID/stop/terminal wait and saved question authority instead of nested quote concatenation. Request-local sequence fixes reproduced overlapping async SSE/record attribution.",
       "checks": "42 Node tests across acceptance/model variants;2 Bun node-path tests/10 expectations;syntax/format/lint/diff passed; fixtures not real connector evidence.",
-      "integrationState": "Exact accepted source + related test integrated; related test primary pending"
+      "integrationState": "Exact accepted source + related test integrated; related test primary pending",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "7dbf41d3d38502dc29c44cedc5a24603a408a25b",
+        "primaryId": "task_caff1c75",
+        "primaryCommit": "484fff19d6f71ce3459426ba881d2e953badc4f4",
+        "judgeIds": [
+          "task_84bcbfb5"
+        ],
+        "sourceCommit": "484fff19d6f71ce3459426ba881d2e953badc4f4",
+        "state": "accepted-joined",
+        "reason": "Original whole-file ACCEPT from completed Sol primary and independent Sol judge survives exactly at area tip; joined blob also exact."
+      }
     },
     {
       "file": "scripts/claude-native-acceptance/run-subagent.mjs",
@@ -450,7 +590,20 @@
         "tests/claude-native-acceptance-subagent-run.test.mjs"
       ],
       "readingResult": "Isolated config,replay process ownership,real-delivery verification,proof retention separate;actual generation bindings+driver flushCapture retained.Explicit baseline proof-write private-state leak repaired.",
-      "checks": "28focused,syntax/format/diff;no native/current binary/full gate;package has no explicit native/node test list."
+      "checks": "28focused,syntax/format/diff;no native/current binary/full gate;package has no explicit native/node test list.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "16300ead040e2d9f6daf3e2fa17af4001ae4dfd6",
+        "primaryId": "task_38276b5f",
+        "primaryCommit": "acba9037095809d012444d28656a733b1fcdcf86",
+        "judgeIds": [
+          "task_1a9f7e52",
+          "task_7fd4e906"
+        ],
+        "sourceCommit": "acba9037095809d012444d28656a733b1fcdcf86",
+        "state": "accepted-joined",
+        "reason": "Whole runner accepted, not just the related patch. Against the primary parent, the long setup/replay/assertion/finalization block becomes an intelligible orchestration: pin and record the artifact, open the model, configure the isolated fixture, await replay close, verify delivery, then verify persisted child history. recordInvocation, configureFixture, runReplay, verifyModelDelivery, stopFixtureWorkers and retainProof each own a coherent effect; these are not renames or arbitrary chunks hidden behind a context bag. The module-owned root/proof and the explicit model/passed bindings make scope authority visible. configureFixture now publishes the complete tap configuration once rather than writing then mutating and rewriting it. The nested finally blocks expose which resource still must be released when proof publication fails. The unchanged child-history helper remains readable as successive native/source/SDK identity checks followed by export; its local loop keeps the three representations together. The added paired test is also accepted in full: the two descriptively named corruptResult cases make the failure distinction visible, while installHealthServer and installFailingBrowser describe owned stand-ins with clear purposes. Resource ownership, browser-close observations and pre-cleanup assertions are readable without treating assertion count as a quality score."
+      }
     },
     {
       "file": "scripts/claude-native-acceptance/run.mjs",
@@ -486,7 +639,19 @@
       ],
       "readingResult": "Validation→outcome publication→owned stop/evidence→unconditional gate release/model closure/scoped removal. Proof writing no longer controls disposal. Explicit reproduced fix baseline proof-write failures skip model close and leave actual gated worker;candidate cleanup preserves unrelated PID.",
       "checks": "28 Bun focused+7 Node runner pass;3 baseline regressions fail as expected;format/diff;offline orchestration only,no configured connector/upstream/browser/native replay/provider/fullbuild/confirmed exit escalation claim.",
-      "integrationState": "Exact accepted runner+new test joined;new test primary pending"
+      "integrationState": "Exact accepted runner+new test joined;new test primary pending",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "5e917258ac272c39fc3e29bc70187633e4b855c4",
+        "primaryId": "task_52aa2a57",
+        "primaryCommit": "f478dc507c14e579b46a68aa69800a33f9f8b9b8",
+        "judgeIds": [
+          "task_ce93e198"
+        ],
+        "sourceCommit": "f478dc507c14e579b46a68aa69800a33f9f8b9b8",
+        "state": "accepted-joined",
+        "reason": "Original whole-file ACCEPT from completed Sol primary and independent Sol judge survives exactly at area tip; joined blob also exact."
+      }
     },
     {
       "file": "scripts/claude-native-acceptance/runtime-smoke.mjs",
@@ -494,7 +659,16 @@
       "status": "pending",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+      }
     },
     {
       "file": "scripts/claude-native-acceptance/subagent-driver.mjs",
@@ -509,7 +683,16 @@
       },
       "judges": [],
       "acceptedBlob": null,
-      "launchBase": "0f31ee8bcbb4a6b9cc4e76121fa0aef55d7c52b2"
+      "launchBase": "0f31ee8bcbb4a6b9cc4e76121fa0aef55d7c52b2",
+      "resume": {
+        "status": "pending",
+        "primaryId": "task_3fcde229",
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary-interrupted",
+        "reason": "Primary was killed by session shutdown (143); preserved uncommitted code is retained at the worker path. No submitted candidate commit or readability verdict; resume its original scope rather than count it accepted."
+      }
     },
     {
       "file": "scripts/claude-native-acceptance/subagent-model.mjs",
@@ -544,7 +727,19 @@
       ],
       "readingResult": "Dense generated concatenation/mutable tails become readable launch→PID→readiness→explicit cancel/terminal inspect or root hold for native-owned Stop programs.",
       "checks": "15 focused Bun+Node pass;expanded tests base pass;format/lint/diff pass;optional Biome check import assists;no driver/runner/native claim.",
-      "integrationState": "Exact accepted model+related test joined;whole subagent-model test primary pending"
+      "integrationState": "Exact accepted model+related test joined;whole subagent-model test primary pending",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "89591d8f077afa20b6e507cf03189b63539ddad2",
+        "primaryId": "task_5996dfa6",
+        "primaryCommit": "1ad3c7216d4c3dc4cd57039f10f91570513e6a3d",
+        "judgeIds": [
+          "task_f65d18f3"
+        ],
+        "sourceCommit": "1ad3c7216d4c3dc4cd57039f10f91570513e6a3d",
+        "state": "accepted-joined",
+        "reason": "Original whole-file ACCEPT from completed Sol primary and independent Sol judge survives exactly at area tip; joined blob also exact."
+      }
     },
     {
       "file": "scripts/claude-native-acceptance/subagent-return-evidence.mjs",
@@ -552,7 +747,16 @@
       "status": "pending",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+      }
     },
     {
       "file": "scripts/claude-native-acceptance/tap.mjs",
@@ -599,7 +803,19 @@
       ],
       "readingResult": "Single unchanged-byte forwarding+complete-line framing owner replaces duplicate buffer loops;packet parsing vs diagnostic filtering/redaction separate. Explicit reproduced split UTF8 evidence corruption fixed by streaming decode without forwarded byte change.",
       "checks": "18 Node focused;36 Bun acceptance+node-path;format/diff;no native/browser/full gate.",
-      "integrationState": "Exact fresh replacement primary+judge patch joined;new test needs whole-file primary"
+      "integrationState": "Exact fresh replacement primary+judge patch joined;new test needs whole-file primary",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "020964ccf3a3106c95b7d6de69bf41d0002e77d1",
+        "primaryId": "task_88689870",
+        "primaryCommit": "0f4a395278c83a54f5c4ac82a7bfbb23e583a821",
+        "judgeIds": [
+          "task_fae57248"
+        ],
+        "sourceCommit": "0f4a395278c83a54f5c4ac82a7bfbb23e583a821",
+        "state": "accepted-not-joined",
+        "reason": "Original whole-file ACCEPT from completed Sol primary and independent Sol judge survives exactly at area tip; joined blob differs or is absent; retain judgment and import only the exact accepted code batch."
+      }
     },
     {
       "file": "scripts/claude-native-acceptance/worker.mjs",
@@ -607,7 +823,16 @@
       "status": "pending",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "resume": {
+        "status": "pending",
+        "primaryId": "task_eb51c954",
+        "primaryCommit": "b80a55a855e65d9bcb4ae8db3bb95d577db79b67",
+        "judgeIds": [],
+        "sourceCommit": "b80a55a855e65d9bcb4ae8db3bb95d577db79b67",
+        "state": "needs-judge",
+        "reason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+      }
     },
     {
       "file": "scripts/claude-native-acceptance/wrapper-sdk-smoke.mjs",
@@ -615,7 +840,16 @@
       "status": "pending",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+      }
     },
     {
       "file": "src/claude-compat/app-worker.ts",
@@ -645,7 +879,19 @@
       "changedRelatedPaths": [],
       "readingResult": "Unchanged: CLI validates operator routing vs normal profile before model preflight/history; permission prep pins delegation inputs; dispatch checks active run/provider then revalidates human-updated inputs before one upstream call. Separate authorities already visible.",
       "checks": "23 app-worker/permissions/MCP pass96 assertions;no tests changed;no build/live/parity.",
-      "integrationState": "Matches area tip unchanged"
+      "integrationState": "Matches area tip unchanged",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "a69edf87092ec0a5dc77bacd0150da6062722c76",
+        "primaryId": "task_4260afa3",
+        "primaryCommit": "ab0973b13eeacaa53393c3db073f6bb7fad82caf",
+        "judgeIds": [
+          "task_65c3222d"
+        ],
+        "sourceCommit": "ab0973b13eeacaa53393c3db073f6bb7fad82caf",
+        "state": "accepted-joined",
+        "reason": "Original whole-file NO CHANGE NEEDED from completed Sol primary and independent Sol judge survives exactly at area tip; joined blob also exact."
+      }
     },
     {
       "file": "src/claude-compat/arguments.ts",
@@ -704,7 +950,20 @@
       ],
       "reworkResponse": "Confirmed never-read flags state, removed fields/defaults/writes; keeps flag acceptance/toggle validation/duplicates with explicit unconditional semantics. Parser structure preserved; cli/launch test untouched. Added new focused argument tests.",
       "reworkChecks": "34 focused pass plus 5 isolated composition; baseline regression reproduced; typecheck/format/diff pass.",
-      "integrationState": "Fresh rework accepted after rejection; exact patch joined. Combined CLI contract review pending."
+      "integrationState": "Fresh rework accepted after rejection; exact patch joined. Combined CLI contract review pending.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "f84dc294d18bb530a4147da1d02abe3baf2ac05e",
+        "primaryId": "task_565d6984",
+        "primaryCommit": "e5f89da92237ef8f257f4afd30fe0250630eba66",
+        "judgeIds": [
+          "task_c9ec06dd",
+          "task_e06dc5c8"
+        ],
+        "sourceCommit": "e5f89da92237ef8f257f4afd30fe0250630eba66",
+        "state": "accepted-joined",
+        "reason": "Original whole-file ACCEPT from completed Sol primary and independent Sol judge survives exactly at area tip; joined blob also exact."
+      }
     },
     {
       "file": "src/claude-compat/binding.ts",
@@ -739,7 +998,19 @@
       ],
       "readingResult": "Native storage explicit bound reopen / unbound resume import / fresh persist-reopen-open branches. Transient import ends locally, durable entry map shared by checkpoint paths; context validation before branching and exclusive index publication after.",
       "checks": "7 focused49 assertions;typecheck/format/lint/diff pass,retained warnings;fresh/reopen checkpoint and incomplete tool reject leave persisted leaf/index unchanged.",
-      "integrationState": "Exact reviewed coherent patch integrated"
+      "integrationState": "Exact reviewed coherent patch integrated",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "4d1a2ba1658c36e7516651d2cb8c6f2555117853",
+        "primaryId": "task_f0de0fb4",
+        "primaryCommit": "3743b41972dd27bbeb33d459f2a6f5ced7413c33",
+        "judgeIds": [
+          "task_dfcc2819"
+        ],
+        "sourceCommit": "3743b41972dd27bbeb33d459f2a6f5ced7413c33",
+        "state": "accepted-joined",
+        "reason": "Original whole-file ACCEPT from completed Sol primary and independent Sol judge survives exactly at area tip; joined blob also exact."
+      }
     },
     {
       "file": "src/claude-compat/cli.ts",
@@ -774,7 +1045,19 @@
       ],
       "readingResult": "Stop triggers cancellation immediately; one finally waits teardown; exit selected afterward, replacing distributed return branches/repeated close waits/asynchronous shutdownError. Explicit fix duplicated cleanup diagnostics reports once, still nonzero.",
       "checks": "36 launch/transport/runtime outer tests,152 assertions; base regression 16 pass/2 fail for duplicate diagnostic tests, candidate passes. Format/diff pass; inherited lint/import organization notes.",
-      "integrationState": "Exact reviewed source and related launch test integrated; launch test primary pending."
+      "integrationState": "Exact reviewed source and related launch test integrated; launch test primary pending.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "c3d9050ff5912bb22e961b72c52717b5cb3aede4",
+        "primaryId": "task_adf93322",
+        "primaryCommit": "150667b5d6000ff8f6bdc933a1ef57e5256511e0",
+        "judgeIds": [
+          "task_71218826"
+        ],
+        "sourceCommit": "150667b5d6000ff8f6bdc933a1ef57e5256511e0",
+        "state": "accepted-joined",
+        "reason": "Original whole-file ACCEPT from completed Sol primary and independent Sol judge survives exactly at area tip; joined blob also exact."
+      }
     },
     {
       "file": "src/claude-compat/commands.ts",
@@ -809,7 +1092,19 @@
       ],
       "readingResult": "readHumanCommand owns recognition/authority/syntax normalization; dispatch selects visible effects; runExtensionCommand owns context projection and ordered notification completion. Retains two spellings whitespace differences.",
       "checks": "20 focused pass129 assertions; new tests baseline6 pass57 assertions; typecheck/format/lint/diff pass,7 infos.",
-      "integrationState": "Exact candidate source+related commands test joined; commands test primary pending"
+      "integrationState": "Exact candidate source+related commands test joined; commands test primary pending",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "b242e3cc8afa0f536e415b0fa41cc6d6154baa35",
+        "primaryId": "task_b1382f6c",
+        "primaryCommit": "3013a308208dba8bf92de2a6b4a911a286a5ad5a",
+        "judgeIds": [
+          "task_dfe81e3e"
+        ],
+        "sourceCommit": "3013a308208dba8bf92de2a6b4a911a286a5ad5a",
+        "state": "accepted-joined",
+        "reason": "Original whole-file ACCEPT from completed Sol primary and independent Sol judge survives exactly at area tip; joined blob also exact."
+      }
     },
     {
       "file": "src/claude-compat/frontend.ts",
@@ -844,7 +1139,19 @@
       ],
       "readingResult": "Run accounting/failures have one replacement boundary, separate persistent delivery; routing records/publishes assistant messages while settlement alone ends run. Retains results/retry precedence/command fate/consumption attribution.",
       "checks": "16 top-level pass69 assertions across 5 suites including isolated runtime/ownership;4 new tests baseline pass; typecheck/format/diff pass;1 existing lint warning.",
-      "integrationState": "Exact reviewed source+new test joined; new test primary pending"
+      "integrationState": "Exact reviewed source+new test joined; new test primary pending",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "557693c15cc2ce9e8db9d339dc708bb799e0242c",
+        "primaryId": "task_01071cbe",
+        "primaryCommit": "898826edd36649f92faa239effb2989d1364ac25",
+        "judgeIds": [
+          "task_78d1ce83"
+        ],
+        "sourceCommit": "898826edd36649f92faa239effb2989d1364ac25",
+        "state": "accepted-joined",
+        "reason": "Original whole-file ACCEPT from completed Sol primary and independent Sol judge survives exactly at area tip; joined blob also exact."
+      }
     },
     {
       "file": "src/claude-compat/history.ts",
@@ -879,7 +1186,19 @@
       ],
       "readingResult": "Branch selection completes before content translation; internal translated messages paired with source UUID remove lockstep arrays. Writer says property order/source IDs/parenting/import authority/mirroring unchanged.",
       "checks": "15 focused pass including SDK0.3.276 filesystem+isolated runtime; typecheck/format/lint/diff pass, warnings retained; no live/build/parity.",
-      "integrationState": "Exact reviewed history source+test joined; history test primary pending"
+      "integrationState": "Exact reviewed history source+test joined; history test primary pending",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "ed43998ab87580bf595ee2b78f4bb929de62ee09",
+        "primaryId": "task_3a86626e",
+        "primaryCommit": "71aaf5c4bb89e1004f1650b150b7afcde8afe235",
+        "judgeIds": [
+          "task_9b56d280"
+        ],
+        "sourceCommit": "71aaf5c4bb89e1004f1650b150b7afcde8afe235",
+        "state": "accepted-joined",
+        "reason": "Original whole-file ACCEPT from completed Sol primary and independent Sol judge survives exactly at area tip; joined blob also exact."
+      }
     },
     {
       "file": "src/claude-compat/human-controls.ts",
@@ -914,7 +1233,19 @@
       ],
       "readingResult": "One bound frontend owns subscription/dispose callbacks, remembered versions, active dialogs; refresh/save use captured command port. Replacement closes/invalidate late callbacks/abort dialogs, interrupt retains binding, terminal drain follows replacement. Explicit answer/correlation/owner/version/defer/delivery authority retained.",
       "checks": "60 focused295 assertions+runtime wrapper;typecheck/format/lint/diff pass,one info;new lifetime tests pass base,no behavior fix.",
-      "integrationState": "Exact accepted human-controls source+test joined; whole test primary pending"
+      "integrationState": "Exact accepted human-controls source+test joined; whole test primary pending",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "2d8fe9d62992a87370438cae5cde46da043fa823",
+        "primaryId": "task_449c2e3a",
+        "primaryCommit": "d09a46d856445ce51003ad5e1b1aa0080986454c",
+        "judgeIds": [
+          "task_262e4f9b"
+        ],
+        "sourceCommit": "d09a46d856445ce51003ad5e1b1aa0080986454c",
+        "state": "accepted-joined",
+        "reason": "Original whole-file ACCEPT from completed Sol primary and independent Sol judge survives exactly at area tip; joined blob also exact."
+      }
     },
     {
       "file": "src/claude-compat/launch.ts",
@@ -944,7 +1275,19 @@
       "changedRelatedPaths": [],
       "readingResult": "Unchanged pure defaults and distinct identities coherent. Trial branch removal altered path-normalization/home-expansion ordering and was reverted rather than unrelated behavior change.",
       "checks": "23 defaults+launch pass115 assertions;clean;no full gate/product claim.",
-      "integrationState": "Matches area tip unchanged"
+      "integrationState": "Matches area tip unchanged",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "ec7515100c4560c03f473214973d9705380f927a",
+        "primaryId": "task_58f5a56b",
+        "primaryCommit": "15eb6b922c9d3a188066b71673e3762a8853b6f8",
+        "judgeIds": [
+          "task_f677e563"
+        ],
+        "sourceCommit": "15eb6b922c9d3a188066b71673e3762a8853b6f8",
+        "state": "accepted-joined",
+        "reason": "Original whole-file NO CHANGE NEEDED from completed Sol primary and independent Sol judge survives exactly at area tip; joined blob also exact."
+      }
     },
     {
       "file": "src/claude-compat/live-frontend.ts",
@@ -974,7 +1317,19 @@
       "changedRelatedPaths": [],
       "readingResult": "Unchanged: owner binding, command consent and audio teardown purposeful distinct lifetimes, caller paths traced.",
       "checks": "18 focused105 assertions;no live/provider/device proof.",
-      "integrationState": "Matches tip unchanged;judge inspected accepted adjacent human-control source interface"
+      "integrationState": "Matches tip unchanged;judge inspected accepted adjacent human-control source interface",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "e1e8e088837528826765e9f5e101fc577aa99c81",
+        "primaryId": "task_1868ec30",
+        "primaryCommit": "cab5870156b255ed5d1bb44fd5f27145b7832a0d",
+        "judgeIds": [
+          "task_0d9e0626"
+        ],
+        "sourceCommit": "cab5870156b255ed5d1bb44fd5f27145b7832a0d",
+        "state": "accepted-joined",
+        "reason": "Original whole-file NO CHANGE NEEDED from completed Sol primary and independent Sol judge survives exactly at area tip; joined blob also exact."
+      }
     },
     {
       "file": "src/claude-compat/mcp.ts",
@@ -1009,7 +1364,19 @@
       ],
       "readingResult": "connect discover=true hidden modes replaced by visible startup admit/init→discover→ready→park app leases; resume reacquires admitted connection without rediscovery. Failed init remains registered for cleanup.",
       "checks": "16 focused pass63 assertions MCP+2 isolated wrappers; strengthened lease checks baseline pass;format pass;5 retained lint warnings;no typecheck/full gate/live claim.",
-      "integrationState": "Exact reviewed source+related test joined; MCP test primary pending"
+      "integrationState": "Exact reviewed source+related test joined; MCP test primary pending",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "6c5fb958a3cb79642c8dac28abdd5e24dcddc158",
+        "primaryId": "task_18afd0bf",
+        "primaryCommit": "de68965bf0465751e9a80f787eb957aec285d035",
+        "judgeIds": [
+          "task_5e2a8606"
+        ],
+        "sourceCommit": "de68965bf0465751e9a80f787eb957aec285d035",
+        "state": "accepted-joined",
+        "reason": "Original whole-file ACCEPT from completed Sol primary and independent Sol judge survives exactly at area tip; joined blob also exact."
+      }
     },
     {
       "file": "src/claude-compat/permissions.ts",
@@ -1039,7 +1406,19 @@
       "changedRelatedPaths": [],
       "readingResult": "Unchanged ordered policy snapshot → cancellation → hard denials → explicit/mode allows → human callback → cancellation recheck; writer traced binding/runtime/MCP/app callers.",
       "checks": "18 pass/67 assertions; no full gate/live.",
-      "integrationState": "Matches area tip unchanged"
+      "integrationState": "Matches area tip unchanged",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "77083e6264957aa744ef1e895d6ab537ec575c97",
+        "primaryId": "task_8e956f8c",
+        "primaryCommit": "b46e82cf279b6799c61d790bc5e2a8b67d635861",
+        "judgeIds": [
+          "task_8e89cb17"
+        ],
+        "sourceCommit": "b46e82cf279b6799c61d790bc5e2a8b67d635861",
+        "state": "accepted-joined",
+        "reason": "Original whole-file NO CHANGE NEEDED from completed Sol primary and independent Sol judge survives exactly at area tip; joined blob also exact."
+      }
     },
     {
       "file": "src/claude-compat/preflight.ts",
@@ -1068,7 +1447,19 @@
       "changedRelatedPaths": [],
       "readingResult": "No source change proposed: readonly ancestor resolution distinct from native-home validation; explicit absolute path → canonicalize → refuse default Claude subtree → check ancestor permissions.",
       "checks": "Direct-source 6 pass/23 assertions; no compiled/full gate.",
-      "integrationState": "Unchanged matches area tip"
+      "integrationState": "Unchanged matches area tip",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "8d220bba36b3b6edbf7b131e60b45a3ad89792cf",
+        "primaryId": "task_276ba03d",
+        "primaryCommit": "2d6aae08ca1f143ebbb3740fa74e7407bbd0d624",
+        "judgeIds": [
+          "task_b4734a45"
+        ],
+        "sourceCommit": "2d6aae08ca1f143ebbb3740fa74e7407bbd0d624",
+        "state": "accepted-joined",
+        "reason": "Original whole-file NO CHANGE NEEDED from completed Sol primary and independent Sol judge survives exactly at area tip; joined blob also exact."
+      }
     },
     {
       "file": "src/claude-compat/runtime.ts",
@@ -1103,7 +1494,19 @@
       ],
       "readingResult": "mirrorNativeHistory owns append ordering, UUID parenting and sticky first failure with drain used at turn completion/close; shared nativeMessage conversion preserves root thinking/child omission and property insertion order.",
       "checks": "27 runtime tests/197 assertions; companion 5 pass/7 SDK skips; typecheck, focused Biome format/lint and diff check passed. Broad check inherited import ordering failure. No live/SDK/build/full gate.",
-      "integrationState": "Exact reviewed patch applied without overlap; related runtime test primary still pending."
+      "integrationState": "Exact reviewed patch applied without overlap; related runtime test primary still pending.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "10ebd3a80f9b44c2993ae88ef2df629eb6ab5637",
+        "primaryId": "task_4cd5eb88",
+        "primaryCommit": "cb1bcfc8a31d7869005ebed4106b56fe81773bed",
+        "judgeIds": [
+          "task_9a477342"
+        ],
+        "sourceCommit": "cb1bcfc8a31d7869005ebed4106b56fe81773bed",
+        "state": "accepted-joined",
+        "reason": "Original whole-file ACCEPT from completed Sol primary and independent Sol judge survives exactly at area tip; joined blob also exact."
+      }
     },
     {
       "file": "src/claude-compat/task-binding.ts",
@@ -1138,7 +1541,19 @@
       ],
       "readingResult": "observe previously mixed causal registration, Agent payloads, once-only guards, delivery. Registration/Agent delivery operations own guards/effects; orchestration exposes history replay/frame order/result/persistence/roster. Durable schema unchanged.",
       "checks": "21 focused152 assertions+isolated suite;typecheck/format/diff pass;new ordering/history-before-exposure/reattachment assertions;no SDK/live/SSH.",
-      "integrationState": "Exact reviewed task-binding source+test joined; whole test primary pending; projection separate candidate under review"
+      "integrationState": "Exact reviewed task-binding source+test joined; whole test primary pending; projection separate candidate under review",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "f89738896eb0371d634a4cac21b6108cc6c5e48b",
+        "primaryId": "task_b586bdb8",
+        "primaryCommit": "d6dae4e14c8e0a75fc6ffd173754a9aa42825dc7",
+        "judgeIds": [
+          "task_575ede26"
+        ],
+        "sourceCommit": "d6dae4e14c8e0a75fc6ffd173754a9aa42825dc7",
+        "state": "accepted-joined",
+        "reason": "Original whole-file ACCEPT from completed Sol primary and independent Sol judge survives exactly at area tip; joined blob also exact."
+      }
     },
     {
       "file": "src/claude-compat/task-projection.ts",
@@ -1173,7 +1588,19 @@
       ],
       "readingResult": "Pure frame builders remove wire assembly from lifecycle choices; path returns explicit retained/terminal/active checkpoint rather than incremental mutation. Revision/resume guards and start-before-progress remain.",
       "checks": "16 focused88 assertions;typecheck/scoped format/lint/diff pass;2 new contract tests baseline pass;no behavior change. Pending task-binding candidate untouched.",
-      "integrationState": "Exact accepted projection source+test joined; combined binding/projection review pending; projection test primary pending"
+      "integrationState": "Exact accepted projection source+test joined; combined binding/projection review pending; projection test primary pending",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "8dcf972b448b2da8c19abe4d70c2530e117c7ba0",
+        "primaryId": "task_195ae5e6",
+        "primaryCommit": "7e679084be24d21c23492a319f7bf2657abd7630",
+        "judgeIds": [
+          "task_157d0ec7"
+        ],
+        "sourceCommit": "7e679084be24d21c23492a319f7bf2657abd7630",
+        "state": "accepted-joined",
+        "reason": "Original whole-file ACCEPT from completed Sol primary and independent Sol judge survives exactly at area tip; joined blob also exact."
+      }
     },
     {
       "file": "src/claude-compat/transport.ts",
@@ -1208,7 +1635,19 @@
       ],
       "readingResult": "Internal readFrames owns bounded NDJSON cursor/buffer; run shows dispatch→EOF callback rejection→handler/output drain→close. Correlation/cancellation/ordered writes retained.",
       "checks": "2 added regressions pass baseline/candidate;35 focused tests pass;Biome/focused TypeScript/diff pass; no compiled/live.",
-      "integrationState": "Exact reviewed framing source+related test joined; transport test primary pending"
+      "integrationState": "Exact reviewed framing source+related test joined; transport test primary pending",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "7426350d874d2222a7afb61335407f1215fa751d",
+        "primaryId": "task_6958d30f",
+        "primaryCommit": "b3c9b428d397e8620dadee0d2a41c0ce24deb2f8",
+        "judgeIds": [
+          "task_70aa7bb7"
+        ],
+        "sourceCommit": "b3c9b428d397e8620dadee0d2a41c0ce24deb2f8",
+        "state": "accepted-joined",
+        "reason": "Original whole-file ACCEPT from completed Sol primary and independent Sol judge survives exactly at area tip; joined blob also exact."
+      }
     },
     {
       "file": "src/t3/README.md",
@@ -1216,7 +1655,16 @@
       "status": "pending",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+      }
     },
     {
       "file": "src/t3/tasks/events.ts",
@@ -1251,7 +1699,19 @@
       ],
       "readingResult": "Source unchanged: projection vs transport explicit; spawn/subscription/opt-in NDJSON, stopping silent until terminal, durable delivery separate, shutdown drain then listener cleanup. Related tests fixed blind spot swallowed throwing writer could falsely prove flag-off;direct traffic/bounds/failure assertions.",
       "checks": "39 pass246 assertions;Biome/diff;gate-removal mutation now fails;source restored exact;no browser/full gate.",
-      "integrationState": "Exact accepted patch joined; final source/test acceptance at listed blob"
+      "integrationState": "Exact accepted patch joined; final source/test acceptance at listed blob",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "fee21123a7d6380e5d4ffee96fb6815471a3d47b",
+        "primaryId": "task_18567a85",
+        "primaryCommit": "0f1dfe3930622aac30b0a05120bb07bab7f4fe0c",
+        "judgeIds": [
+          "task_63537626"
+        ],
+        "sourceCommit": "0f1dfe3930622aac30b0a05120bb07bab7f4fe0c",
+        "state": "accepted-joined",
+        "reason": "Original whole-file ACCEPT from completed Sol primary and independent Sol judge survives exactly at area tip; joined blob also exact."
+      }
     },
     {
       "file": "src/t3/tasks/launch-identity.ts",
@@ -1281,7 +1741,19 @@
       "changedRelatedPaths": [],
       "readingResult": "Caller durable identity → fingerprint → valid legacy mapping or deterministic bruv-v1 ID without writes; native uses ID, SSH derives task ID. Read handle lifetime local.",
       "checks": "30 native-routing/SSH placement pass,159 assertions; diff check; no live/authenticated SSH/full build.",
-      "integrationState": "Unchanged matches area tip"
+      "integrationState": "Unchanged matches area tip",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "4162ee435592ca0bc00890499e6195006cf93225",
+        "primaryId": "task_2f86e222",
+        "primaryCommit": "430f24edb86cdc322aab2038745648ddd778b32d",
+        "judgeIds": [
+          "task_1cec47b4"
+        ],
+        "sourceCommit": "430f24edb86cdc322aab2038745648ddd778b32d",
+        "state": "accepted-joined",
+        "reason": "Original whole-file NO CHANGE NEEDED from completed Sol primary and independent Sol judge survives exactly at area tip; joined blob also exact."
+      }
     },
     {
       "file": "src/t3/tasks/local-notifications.ts",
@@ -1316,7 +1788,19 @@
       ],
       "readingResult": "Redundant mailbox cache removed with disk authority retained; pass-level completion priority/fairness separate per-notification retry/ACK/client cleanup. Durable before send, stable identity, matching committed/disposed ACK/supersession/capacity/cancel retained.",
       "checks": "35 tests116 assertions;focused TypeScript/Biome;no intended behavior fix/live/full build.",
-      "integrationState": "Exact reviewed source+related test joined; local-notification test primary pending"
+      "integrationState": "Exact reviewed source+related test joined; local-notification test primary pending",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "4fb034c350ee11e5c65bd48541b4498478d823f6",
+        "primaryId": "task_5f59191c",
+        "primaryCommit": "5fe1a9886250d111282c347f3350e60cbd3e0c4e",
+        "judgeIds": [
+          "task_c76f8b07"
+        ],
+        "sourceCommit": "5fe1a9886250d111282c347f3350e60cbd3e0c4e",
+        "state": "accepted-joined",
+        "reason": "Original whole-file ACCEPT from completed Sol primary and independent Sol judge survives exactly at area tip; joined blob also exact."
+      }
     },
     {
       "file": "src/t3/tasks/mcp-client.ts",
@@ -1354,7 +1838,19 @@
       ],
       "readingResult": "send owns complete POST exchange, deadline and body cleanup; post owns request IDs. One shared handshake replaces reconnect promise around initialization, separating caller wait from owned handshake.",
       "checks": "47 tests/180 assertions across production-bridge/native-routing/local-notifications; format/typecheck/diff pass; lint exit 0 with retained warnings. No full gate/live.",
-      "integrationState": "Exact accepted patch joined; production-bridge test still needs primary focus."
+      "integrationState": "Exact accepted patch joined; production-bridge test still needs primary focus.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "08a53a63713839260f730a6da8ff4775a72bce99",
+        "primaryId": "task_ea47c14e",
+        "primaryCommit": "17c4c9e34d15866ec8188865fb8ec57f9c5a3bcc",
+        "judgeIds": [
+          "task_645854a5"
+        ],
+        "sourceCommit": "17c4c9e34d15866ec8188865fb8ec57f9c5a3bcc",
+        "state": "accepted-joined",
+        "reason": "Original whole-file ACCEPT from completed Sol primary and independent Sol judge survives exactly at area tip; joined blob also exact."
+      }
     },
     {
       "file": "src/t3/tasks/native-task.ts",
@@ -1387,7 +1883,19 @@
       "readingResult": "Strict schemas expose boundary contracts; launch explicitly validates, calls, replays ambiguity once with stable args, sanitizes structured rejections and validates result. Observation/cancel/list stay short without generic retry framework. JobService owns connection cleanup. No rewrite warranted.",
       "checks": "36 pass, 154 assertions: native-routing and production-bridge; diff check. No live backend.",
       "integrationState": "Matches area tip; no worker note imported.",
-      "changedRelatedPaths": []
+      "changedRelatedPaths": [],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "9152be57bb326b4f919518efe6d13be4b10c363b",
+        "primaryId": "task_c80e2264",
+        "primaryCommit": "bb9db4b7aaec6b9f4f2d0a4a76ffd313208d41a5",
+        "judgeIds": [
+          "task_2c886e04"
+        ],
+        "sourceCommit": "bb9db4b7aaec6b9f4f2d0a4a76ffd313208d41a5",
+        "state": "accepted-joined",
+        "reason": "Original whole-file NO CHANGE NEEDED from completed Sol primary and independent Sol judge survives exactly at area tip; joined blob also exact."
+      }
     },
     {
       "file": "src/t3/web/launcher.ts",
@@ -1417,7 +1925,19 @@
       "changedRelatedPaths": [],
       "readingResult": "Unchanged web dispatch validates flags/prints setup/exits; pure formatting, no hidden server/worktree/setup/cancel lifetime. Real owners traced elsewhere including CLI/build/env.",
       "checks": "7 launcher/architecture81 assertions pass;compiled process test not run absent dist;no build/live.",
-      "integrationState": "Matches tip unchanged"
+      "integrationState": "Matches tip unchanged",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "8df201a2dfb5785bb79e2ec6c4831bc80b974049",
+        "primaryId": "task_9cfebe77",
+        "primaryCommit": "dd2647cb402bf047cf80b0419765eba1e0ee88ae",
+        "judgeIds": [
+          "task_082c33db"
+        ],
+        "sourceCommit": "dd2647cb402bf047cf80b0419765eba1e0ee88ae",
+        "state": "accepted-joined",
+        "reason": "Original whole-file NO CHANGE NEEDED from completed Sol primary and independent Sol judge survives exactly at area tip; joined blob also exact."
+      }
     },
     {
       "file": "tests/claude-compat-app-worker.test.ts",
@@ -1425,7 +1945,16 @@
       "status": "pending",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+      }
     },
     {
       "file": "tests/claude-compat-command-lifecycle.test.ts",
@@ -1433,7 +1962,16 @@
       "status": "pending",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+      }
     },
     {
       "file": "tests/claude-compat-commands.test.ts",
@@ -1471,7 +2009,19 @@
       "changedRelatedPaths": [],
       "readingResult": "Real goal/mode/questions integration retains ledger/temp lifetime locally; shared fixture drops unused handlers and temp ownership. Admission/resources/native-open own visible registrations without disk; notification gates explicit preserving real-context/order/completion.",
       "checks": "Baseline/candidate6 tests57 assertions each; candidate+human19 tests128 assertions;format/diff pass.",
-      "integrationState": "Exact whole-file candidate joined; supersedes related source-patch test blob"
+      "integrationState": "Exact whole-file candidate joined; supersedes related source-patch test blob",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "44f9c527bee1426cb71d094855db8b493079fd80",
+        "primaryId": "task_71d2ae32",
+        "primaryCommit": "73528c0f1ecfc22fb008d7883322cb6e54cee415",
+        "judgeIds": [
+          "task_41daae2e"
+        ],
+        "sourceCommit": "73528c0f1ecfc22fb008d7883322cb6e54cee415",
+        "state": "accepted-joined",
+        "reason": "Original whole-file ACCEPT from completed Sol primary and independent Sol judge survives exactly at area tip; joined blob also exact."
+      }
     },
     {
       "file": "tests/claude-compat-compiled.test.ts",
@@ -1479,7 +2029,16 @@
       "status": "pending",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+      }
     },
     {
       "file": "tests/claude-compat-composition.test.ts",
@@ -1487,7 +2046,16 @@
       "status": "pending",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+      }
     },
     {
       "file": "tests/claude-compat-defaults.test.ts",
@@ -1495,7 +2063,16 @@
       "status": "pending",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+      }
     },
     {
       "file": "tests/claude-compat-history.test.ts",
@@ -1533,7 +2110,19 @@
       "changedRelatedPaths": [],
       "readingResult": "SDK subprocess HOME/config/project environments explicit per call instead of overloaded positional args+boolean; child program readable inline; direct directory absence instead nested promises. Redundant child-file assertion removed with stronger directory absence retained.",
       "checks": "Real pinned SDK12 pass including hostile inherited config;missing optional SDK5 pass7 skip;format/lint/diff pass;no build/live.",
-      "integrationState": "Exact reviewed coherent patch integrated"
+      "integrationState": "Exact reviewed coherent patch integrated",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "a7c329a3f4915be3b6dbf9960c9101007f4bcbdd",
+        "primaryId": "task_aba67ce5",
+        "primaryCommit": "8ba70a29058e3ffe6b5ad2253f6fc7bd2c0df75d",
+        "judgeIds": [
+          "task_139e64e4"
+        ],
+        "sourceCommit": "8ba70a29058e3ffe6b5ad2253f6fc7bd2c0df75d",
+        "state": "accepted-joined",
+        "reason": "Original whole-file ACCEPT from completed Sol primary and independent Sol judge survives exactly at area tip; joined blob also exact."
+      }
     },
     {
       "file": "tests/claude-compat-human-controls.test.ts",
@@ -1571,7 +2160,19 @@
       "changedRelatedPaths": [],
       "readingResult": "Each captured native dialog owns correlated reply; replacement test reuses transport with abort rejection disabled instead duplicated callback/correlation machinery. Ledger authority/lifecycle assertions explicit.",
       "checks": "37 tests185 assertions;all15 names82 assertion lines retained;typecheck/format/lint/diff pass;no production/live.",
-      "integrationState": "Exact whole-file primary/judge patch joined, supersedes earlier related test blob"
+      "integrationState": "Exact whole-file primary/judge patch joined, supersedes earlier related test blob",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "34e9b716d5cd1f9a6a16e456021641bd7a3aa439",
+        "primaryId": "task_46b8d726",
+        "primaryCommit": "a681ae7aea98375a69c78df606cb03b5c0b85635",
+        "judgeIds": [
+          "task_2057ad8a"
+        ],
+        "sourceCommit": "a681ae7aea98375a69c78df606cb03b5c0b85635",
+        "state": "accepted-joined",
+        "reason": "Original whole-file ACCEPT from completed Sol primary and independent Sol judge survives exactly at area tip; joined blob also exact."
+      }
     },
     {
       "file": "tests/claude-compat-launch.test.ts",
@@ -1609,7 +2210,19 @@
       "changedRelatedPaths": [],
       "readingResult": "Harness owns repeated NDJSON/EOF mechanics; explicit startup/generation promises replace readiness polling/optional reject callback; environment vs permission lifetimes separated; teardown completion count stronger than entry count.",
       "checks": "38 tests178 assertions; typecheck/format/lint/diff; early-return mutation passes three baseline cancellation cases but fails all candidate cases; no production edit retained.",
-      "integrationState": "Exact fresh whole-file primary/judge patch integrated; replaces earlier CLI related/combined old test-blob acceptance"
+      "integrationState": "Exact fresh whole-file primary/judge patch integrated; replaces earlier CLI related/combined old test-blob acceptance",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "c882e0b3ac87294b1b6b76e89817362ec608364d",
+        "primaryId": "task_2cea9559",
+        "primaryCommit": "6e25cf94e5b4224e205b1c90b4a616403a823612",
+        "judgeIds": [
+          "task_739abadc"
+        ],
+        "sourceCommit": "6e25cf94e5b4224e205b1c90b4a616403a823612",
+        "state": "accepted-joined",
+        "reason": "Original whole-file ACCEPT from completed Sol primary and independent Sol judge survives exactly at area tip; joined blob also exact."
+      }
     },
     {
       "file": "tests/claude-compat-launcher.test.ts",
@@ -1617,7 +2230,16 @@
       "status": "pending",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+      }
     },
     {
       "file": "tests/claude-compat-live-frontend.test.ts",
@@ -1625,7 +2247,16 @@
       "status": "pending",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+      }
     },
     {
       "file": "tests/claude-compat-preflight.test.ts",
@@ -1633,7 +2264,16 @@
       "status": "pending",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+      }
     },
     {
       "file": "tests/claude-compat-prompt-ownership.test.ts",
@@ -1641,7 +2281,16 @@
       "status": "pending",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+      }
     },
     {
       "file": "tests/claude-compat-retry.test.ts",
@@ -1649,7 +2298,16 @@
       "status": "pending",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+      }
     },
     {
       "file": "tests/claude-compat-runtime.test.ts",
@@ -1687,7 +2345,19 @@
       "changedRelatedPaths": [],
       "readingResult": "Fresh full-file primary proposes unchanged after fixture, steering/preflight cancellation, shutdown/wake, MCP release/fatal delivery, permission/question, history drain and command correlation traces. Largest test branches model three real shipped origins.",
       "checks": "Isolated wrapper 1 pass, child exit zero; initial missing-assets resolved with readonly asset links, removed before commit.",
-      "integrationState": "Fresh whole-file primary/judge accepted integrated runtime test blob unchanged"
+      "integrationState": "Fresh whole-file primary/judge accepted integrated runtime test blob unchanged",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "1d98a4025fda59bbb5ccce3da917d58a1fbee364",
+        "primaryId": "task_5d5cfc47",
+        "primaryCommit": "01d354b0c197cd25c300368146bebc5ab28a9395",
+        "judgeIds": [
+          "task_340d96b8"
+        ],
+        "sourceCommit": "01d354b0c197cd25c300368146bebc5ab28a9395",
+        "state": "accepted-joined",
+        "reason": "Original whole-file NO CHANGE NEEDED from completed Sol primary and independent Sol judge survives exactly at area tip; joined blob also exact."
+      }
     },
     {
       "file": "tests/claude-compat-task-binding.test.ts",
@@ -1725,7 +2395,19 @@
       "changedRelatedPaths": [],
       "readingResult": "SDK execute journey creates session resources without unused manager/binding; extension owns sole task authority. Direct tests add own owner explicitly; both worker journeys share agent-only executable replacement.",
       "checks": "8 binding+13 projection tests+isolation wrapper;Biome/diff pass;assertions retained;missing assets both baseline/candidate resolved locally;optional pinned SDK unavailable;UUID assertion narrow.",
-      "integrationState": "Exact fresh whole-file patch joined; supersedes old related+combined test blob acceptance"
+      "integrationState": "Exact fresh whole-file patch joined; supersedes old related+combined test blob acceptance",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "ab4395a8ac3b3dcb9530d054ead571d8166845ab",
+        "primaryId": "task_0e6166c9",
+        "primaryCommit": "89ecd547979c0022ff93e98776a421cd683b5ba7",
+        "judgeIds": [
+          "task_dada1e0a"
+        ],
+        "sourceCommit": "89ecd547979c0022ff93e98776a421cd683b5ba7",
+        "state": "accepted-joined",
+        "reason": "Original whole-file ACCEPT from completed Sol primary and independent Sol judge survives exactly at area tip; joined blob also exact."
+      }
     },
     {
       "file": "tests/claude-compat-task-projection.test.ts",
@@ -1763,7 +2445,19 @@
       "changedRelatedPaths": [],
       "readingResult": "finish helper no longer silently starts/checkpoints; callers connect lifecycle explicitly. Roster opacity/membership/disconnected contracts distinct; replacement journey closes both opaque jobs. Impossible fixture-kind branches removed, resumed-child attribution unconditional.",
       "checks": "18 projection87 assertions;typecheck/Biome/diff pass. Worker baseline binding SDK fixture failed tasks undefined;no binding fix/native claim. Area prior combined binding passed separately.",
-      "integrationState": "Exact accepted patch joined; final source/test acceptance at listed blob"
+      "integrationState": "Exact accepted patch joined; final source/test acceptance at listed blob",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "477fba2b01fe10243d285cd68d5020714904bfa5",
+        "primaryId": "task_532af0c5",
+        "primaryCommit": "b0586a2aa4f9e3d453e92b1260da2ec6be93dc15",
+        "judgeIds": [
+          "task_39d6f247"
+        ],
+        "sourceCommit": "b0586a2aa4f9e3d453e92b1260da2ec6be93dc15",
+        "state": "accepted-joined",
+        "reason": "Original whole-file ACCEPT from completed Sol primary and independent Sol judge survives exactly at area tip; joined blob also exact."
+      }
     },
     {
       "file": "tests/claude-compat-transport.test.ts",
@@ -1801,7 +2495,19 @@
       "changedRelatedPaths": [],
       "readingResult": "Explicit fixture stream ownership replaces spare output/ambiguous overrides; actual reply/handler entry/EOF gates replace ticks; held writes pair frame+release callback replacing parallel arrays. Fixture-output regression reproduced, no production change.",
       "checks": "17 pass53 assertions;strict focused typecheck/Biome/diff pass;framing/bounds/correlation/cancel/drain assertions retained.",
-      "integrationState": "Exact fresh whole-file primary/judge patch joined, replaces old related test blob"
+      "integrationState": "Exact fresh whole-file primary/judge patch joined, replaces old related test blob",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "43115a9a1fa3e50536fc46fd77ca3163134f21ae",
+        "primaryId": "task_ea845de6",
+        "primaryCommit": "a1b0b3fedee5ca17f335d2d042d444ae59aa5e9e",
+        "judgeIds": [
+          "task_d5030f7e"
+        ],
+        "sourceCommit": "a1b0b3fedee5ca17f335d2d042d444ae59aa5e9e",
+        "state": "accepted-joined",
+        "reason": "Original whole-file ACCEPT from completed Sol primary and independent Sol judge survives exactly at area tip; joined blob also exact."
+      }
     },
     {
       "file": "tests/claude-compat/credential-isolation.test.ts",
@@ -1809,7 +2515,16 @@
       "status": "pending",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+      }
     },
     {
       "file": "tests/claude-compat/fixtures/http-mcp-lifecycle.ts",
@@ -1817,7 +2532,16 @@
       "status": "pending",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+      }
     },
     {
       "file": "tests/claude-compat/fixtures/stdio-mcp.ts",
@@ -1825,7 +2549,16 @@
       "status": "pending",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+      }
     },
     {
       "file": "tests/claude-compat/mcp.test.ts",
@@ -1863,7 +2596,19 @@
       "changedRelatedPaths": [],
       "readingResult": "SDK peer construction separate HTTP dispatch; official failure envelope unified; explicit start/release/finish cancellation sequence replaces polling/sleeps and replacement exists before old response release. Whole file/callers/fixtures traced.",
       "checks": "14 pass62 assertions;focused Biome/strict TypeScript/diff pass;no production/shared fixture edits.",
-      "integrationState": "Exact fresh whole-file primary/judge patch joined, supersedes earlier related test blob"
+      "integrationState": "Exact fresh whole-file primary/judge patch joined, supersedes earlier related test blob",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "7e2b7fb68df577da37497fc6ce526157cf332620",
+        "primaryId": "task_95076a9f",
+        "primaryCommit": "d2ad9567a47bf4b7e3614da2bdb8dfb035db25f0",
+        "judgeIds": [
+          "task_89cb5d88"
+        ],
+        "sourceCommit": "d2ad9567a47bf4b7e3614da2bdb8dfb035db25f0",
+        "state": "accepted-joined",
+        "reason": "Original whole-file ACCEPT from completed Sol primary and independent Sol judge survives exactly at area tip; joined blob also exact."
+      }
     },
     {
       "file": "tests/claude-compat/native-adapter-prompt-ownership.ts.txt",
@@ -1871,7 +2616,16 @@
       "status": "pending",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+      }
     },
     {
       "file": "tests/claude-compat/permissions.test.ts",
@@ -1879,7 +2633,16 @@
       "status": "pending",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+      }
     },
     {
       "file": "tests/claude-native-acceptance-chronology.test.mjs",
@@ -1887,7 +2650,16 @@
       "status": "pending",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+      }
     },
     {
       "file": "tests/claude-native-acceptance-model.test.mjs",
@@ -1925,7 +2697,19 @@
       "changedRelatedPaths": [],
       "readingResult": "Fresh whole337-line review unchanged: separate cancellation ownership/terminal inspection/delivery evidence; question returned authority+explicit answers; request-local concurrency evidence; each fixture owns server/temp lifetime.",
       "checks": "15 focused Bun tests pass; no real connector/full gate.",
-      "integrationState": "Fresh whole-file primary/judge covers integrated test unchanged"
+      "integrationState": "Fresh whole-file primary/judge covers integrated test unchanged",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "341241ef6dc769bc102678cea91c9f3e4ec19b16",
+        "primaryId": "task_bb4a09fd",
+        "primaryCommit": "e64138c06a0b4bbcd0b5dc56089cae40851e9259",
+        "judgeIds": [
+          "task_abb511f6"
+        ],
+        "sourceCommit": "e64138c06a0b4bbcd0b5dc56089cae40851e9259",
+        "state": "accepted-joined",
+        "reason": "Original whole-file NO CHANGE NEEDED from completed Sol primary and independent Sol judge survives exactly at area tip; joined blob also exact."
+      }
     },
     {
       "file": "tests/claude-native-app-delegation-model.test.mjs",
@@ -1963,7 +2747,19 @@
       "changedRelatedPaths": [],
       "readingResult": "Copy transcript branches replace append/reject/pop bookkeeping;successful journey advances explicitly,rejection probe cannot mutate it.Original3 bodies and generated model programs unchanged.",
       "checks": "7 each Bun/Node;instrumented baseline/candidate40 reply request transcripts identical;format/diff;no source/live.",
-      "integrationState": "Exact whole-file primary/judge patch joined,replaces old model-patch test hash"
+      "integrationState": "Exact whole-file primary/judge patch joined,replaces old model-patch test hash",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "6ede1b80de7086f185214a1add3684ed43746d01",
+        "primaryId": "task_e6d0f185",
+        "primaryCommit": "c87751547054ba01def731c868035c2fc53d4029",
+        "judgeIds": [
+          "task_d7f96210"
+        ],
+        "sourceCommit": "c87751547054ba01def731c868035c2fc53d4029",
+        "state": "accepted-joined",
+        "reason": "Original whole-file ACCEPT from completed Sol primary and independent Sol judge survives exactly at area tip; joined blob also exact."
+      }
     },
     {
       "file": "tests/claude-native-command-idle.test.mjs",
@@ -1971,7 +2767,16 @@
       "status": "pending",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+      }
     },
     {
       "file": "tests/claude-native-history-model.test.mjs",
@@ -2009,7 +2814,19 @@
       "changedRelatedPaths": [],
       "readingResult": "Responses expose own evidence record;explicit verifier stages+independent transcripts remove numeric indices/aliasing.Added child ID-pair rejection without dropping assertions.",
       "checks": "16eachBun/Node;Biome/diff;no source overlap/native proof.",
-      "integrationState": "Whole-file primary/judge test patch joined,supersedes model-related acceptance"
+      "integrationState": "Whole-file primary/judge test patch joined,supersedes model-related acceptance",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "65182c0864566a36fd88490c9141261b756af194",
+        "primaryId": "task_cbfed35a",
+        "primaryCommit": "200402d553b163916d211d2e29c6f9b27edc0d42",
+        "judgeIds": [
+          "task_0ba7fa4d"
+        ],
+        "sourceCommit": "200402d553b163916d211d2e29c6f9b27edc0d42",
+        "state": "accepted-not-joined",
+        "reason": "Original whole-file ACCEPT from completed Sol primary and independent Sol judge survives exactly at area tip; joined blob differs or is absent; retain judgment and import only the exact accepted code batch."
+      }
     },
     {
       "file": "tests/claude-native-subagent-model.test.mjs",
@@ -2047,7 +2864,19 @@
       "changedRelatedPaths": [],
       "readingResult": "Unchanged explicit stubs/event traces expose readiness,terminal cancellation observation and native Stop root hold;shared harness would obscure distinct authority.",
       "checks": "11 focused Bun pass;no native ownership/live provider.",
-      "integrationState": "Fresh whole-file primary/judge covers final integrated test"
+      "integrationState": "Fresh whole-file primary/judge covers final integrated test",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "893576c1f15e397763fea21915accb8619e49442",
+        "primaryId": "task_988c56c9",
+        "primaryCommit": "5576525d700d07b112136b84e8655c9c534e55a1",
+        "judgeIds": [
+          "task_001ef7c1"
+        ],
+        "sourceCommit": "5576525d700d07b112136b84e8655c9c534e55a1",
+        "state": "accepted-joined",
+        "reason": "Original whole-file NO CHANGE NEEDED from completed Sol primary and independent Sol judge survives exactly at area tip; joined blob also exact."
+      }
     },
     {
       "file": "tests/claude-native-subagent-return.test.mjs",
@@ -2055,7 +2884,16 @@
       "status": "pending",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+      }
     },
     {
       "file": "tests/fixtures/claude-task-worker.ts",
@@ -2063,7 +2901,16 @@
       "status": "pending",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+      }
     },
     {
       "file": "tests/t3/local-notifications.test.ts",
@@ -2101,7 +2948,19 @@
       "changedRelatedPaths": [],
       "readingResult": "Mailbox vs delivery contract groups; one typed mock adapter replaces repeated casts while scenario effects inline; native promise/resolver pairs;finally Stop cleanup;call history replaces redundant replay counter.",
       "checks": "13 tests45 assertions;36 assertion statements preserved modulo whitespace;strict focused typecheck/Biome/diff pass;no production edits.",
-      "integrationState": "Exact whole-file primary/judge patch joined, replaces earlier source-patch test hash"
+      "integrationState": "Exact whole-file primary/judge patch joined, replaces earlier source-patch test hash",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "d646cd04f78933f4a57f0b3b6a91f7654a2bd459",
+        "primaryId": "task_514938ef",
+        "primaryCommit": "d5648579f7360c7578a084cbfaa9c0c34e3d88a5",
+        "judgeIds": [
+          "task_cd9bfa00"
+        ],
+        "sourceCommit": "d5648579f7360c7578a084cbfaa9c0c34e3d88a5",
+        "state": "accepted-joined",
+        "reason": "Original whole-file ACCEPT from completed Sol primary and independent Sol judge survives exactly at area tip; joined blob also exact."
+      }
     },
     {
       "file": "tests/t3/native-routing.test.ts",
@@ -2109,7 +2968,16 @@
       "status": "pending",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+      }
     },
     {
       "file": "tests/t3/production-bridge.test.ts",
@@ -2147,7 +3015,19 @@
       "changedRelatedPaths": [],
       "readingResult": "Generic nested proxies for one header observation replaced with direct observation; mode-loop timeout replay/cancel/auth cases separated by relevant lifetime. Whole test reviewed; accepted late-old-404 regression untouched.",
       "checks": "39 tests/159 assertions; bridge retains all 71 assertions; format/lint/typecheck/diff pass.",
-      "integrationState": "Exact fresh whole-file primary/judge candidate integrated; supersedes old related test-blob acceptance"
+      "integrationState": "Exact fresh whole-file primary/judge candidate integrated; supersedes old related test-blob acceptance",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "53c4bb22298c15e81dd6123b3d5508b86100c6ef",
+        "primaryId": "task_c1e2e00b",
+        "primaryCommit": "3f2d0daf007302dee1188caa1d0d6047d8ba5400",
+        "judgeIds": [
+          "task_f50293ec"
+        ],
+        "sourceCommit": "3f2d0daf007302dee1188caa1d0d6047d8ba5400",
+        "state": "accepted-joined",
+        "reason": "Original whole-file ACCEPT from completed Sol primary and independent Sol judge survives exactly at area tip; joined blob also exact."
+      }
     },
     {
       "file": "tests/t3/web-launcher-process.test.ts",
@@ -2155,7 +3035,16 @@
       "status": "pending",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+      }
     },
     {
       "file": "tests/t3/web-launcher.test.ts",
@@ -2163,7 +3052,16 @@
       "status": "pending",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "pending-primary",
+        "reason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+      }
     },
     {
       "file": "tests/t3/web-task-events.test.ts",
@@ -2201,7 +3099,19 @@
       "changedRelatedPaths": [],
       "readingResult": "Unchanged five local visible input/effect contracts; shared machinery would add navigation. Captured traffic correction and all assertions preserved.",
       "checks": "5 pass16 assertions;no build/full suite.",
-      "integrationState": "Fresh whole-file primary/judge covers final integrated test"
+      "integrationState": "Fresh whole-file primary/judge covers final integrated test",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "95a7f1c9831296f560d4fbbc8786c6a55817cf36",
+        "primaryId": "task_258e5ffd",
+        "primaryCommit": "6f0e9102146e372a551c32e8a3f3cb808fca61f6",
+        "judgeIds": [
+          "task_390134c3"
+        ],
+        "sourceCommit": "6f0e9102146e372a551c32e8a3f3cb808fca61f6",
+        "state": "accepted-joined",
+        "reason": "Original whole-file NO CHANGE NEEDED from completed Sol primary and independent Sol judge survives exactly at area tip; joined blob also exact."
+      }
     }
   ],
   "extraFiles": [
@@ -2243,7 +3153,19 @@
       "changedRelatedPaths": [],
       "readingResult": "Fresh primary unchanged: two direct test contracts, flags leave launch state unchanged and grammar rejects values/duplicates; small loops expose both without hidden state.",
       "checks": "2 pass26 assertions; Biome pass; clean tree.",
-      "integrationState": "New-file fresh primary + whole-file judge complete, exact area blob"
+      "integrationState": "New-file fresh primary + whole-file judge complete, exact area blob",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "49284980b17450943aaf9fed71f6cbc2dbd74cdd",
+        "primaryId": "task_a3a6c083",
+        "primaryCommit": "84835d670152921268ecd3e5e0207158853efb10",
+        "judgeIds": [
+          "task_4c141287"
+        ],
+        "sourceCommit": "84835d670152921268ecd3e5e0207158853efb10",
+        "state": "accepted-joined",
+        "reason": "Original whole-file NO CHANGE NEEDED from completed Sol primary and independent Sol judge survives exactly at area tip; joined blob also exact."
+      }
     },
     {
       "file": "tests/claude-compat-frontend.test.ts",
@@ -2283,7 +3205,19 @@
       "changedRelatedPaths": [],
       "readingResult": "Whole new file unchanged: explicit settlement→retained accounting→next-run reset/session cost; separate auxiliary accounting; shared ordered protocol expectations across thinking policies, no split warranted.",
       "checks": "4 tests27 assertions pass;Biome clean.",
-      "integrationState": "New-file fresh primary and whole-file judge complete at exact area blob"
+      "integrationState": "New-file fresh primary and whole-file judge complete at exact area blob",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "3b61902f5d029433cac72a63e9188bd729889f21",
+        "primaryId": "task_a49cb4c3",
+        "primaryCommit": "b24301489aef9ed999390a8730980c9cc685305b",
+        "judgeIds": [
+          "task_5958071a"
+        ],
+        "sourceCommit": "b24301489aef9ed999390a8730980c9cc685305b",
+        "state": "accepted-joined",
+        "reason": "Original whole-file NO CHANGE NEEDED from completed Sol primary and independent Sol judge survives exactly at area tip; joined blob also exact."
+      }
     },
     {
       "file": "tests/claude-compat-binding.test.ts",
@@ -2323,7 +3257,19 @@
       "changedRelatedPaths": [],
       "readingResult": "Fresh new-file primary unchanged: direct fresh identity/import-reopen-rejection journeys; shared import lifetime avoids duplicate fixtures. Rejection proves persisted state, not absence attempted memory branch; source validation order/earlier reopening may reject.",
       "checks": "2 pass15 assertions;target format/lint pass.",
-      "integrationState": "New-file fresh primary+whole-file judge complete at exact area blob"
+      "integrationState": "New-file fresh primary+whole-file judge complete at exact area blob",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "35149e461ce949a6a0d48bf591e7c9ba14256916",
+        "primaryId": "task_f673edab",
+        "primaryCommit": "98212400adf815257b45fdd5359f6a1b9d412d76",
+        "judgeIds": [
+          "task_1c7cf1d4"
+        ],
+        "sourceCommit": "98212400adf815257b45fdd5359f6a1b9d412d76",
+        "state": "accepted-joined",
+        "reason": "Original whole-file NO CHANGE NEEDED from completed Sol primary and independent Sol judge survives exactly at area tip; joined blob also exact."
+      }
     },
     {
       "file": "tests/claude-native-acceptance-runner.test.mjs",
@@ -2363,7 +3309,19 @@
       "changedRelatedPaths": [],
       "readingResult": "Executable fixture programs separated from runner supervision;observed evidence still captured before fallback disposal;all7 test bodies/assertions unchanged.",
       "checks": "7 each Bun/Node;Biome/diff;3 write-failure cases reject pre-cleanup runner missing closures/scoped worker;offline only.",
-      "integrationState": "New-file fresh primary+whole judge complete;exact changed test integrated,replaces old patch blob"
+      "integrationState": "New-file fresh primary+whole judge complete;exact changed test integrated,replaces old patch blob",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "88b1c6fa88075bc38d4bd8502f7b1559a3979c0d",
+        "primaryId": "task_23190128",
+        "primaryCommit": "811c22d44d71446eed5731db2af4f53d44a16c71",
+        "judgeIds": [
+          "task_bafc9ff0"
+        ],
+        "sourceCommit": "811c22d44d71446eed5731db2af4f53d44a16c71",
+        "state": "accepted-joined",
+        "reason": "Original whole-file ACCEPT from completed Sol primary and independent Sol judge survives exactly at area tip; joined blob also exact."
+      }
     },
     {
       "file": "wisdom/claude-compat/proof/native-ui-fixture/replay.mjs",
@@ -2408,7 +3366,19 @@
       ],
       "readingResult": "Exclusive runtime ownership→preparation→native composer/exercise→proof→driver final capture→resource teardown. Explicit observed setup/browser-close cleanup leaks repaired;generated import substitutions,observation,binary hashes,subagent evidence preserved.",
       "checks": "Worker17 focused pass including relocated replay actual subagent collector;fixture auth/refusal,syntax/format/diff;no native T3/browser.",
-      "integrationState": "Whole-file primary+judge source/test joined;supersedes earlier related replay acceptance;new test awaits primary"
+      "integrationState": "Whole-file primary+judge source/test joined;supersedes earlier related replay acceptance;new test awaits primary",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "7bf21b4f548c0acd9dbfea13a3f5a451f7170f0e",
+        "primaryId": "task_1514b0b6",
+        "primaryCommit": "76a0fed02a6354133920c1f40b6f7bd4c91b5504",
+        "judgeIds": [
+          "task_77d08693"
+        ],
+        "sourceCommit": "76a0fed02a6354133920c1f40b6f7bd4c91b5504",
+        "state": "accepted-not-joined",
+        "reason": "Original whole-file ACCEPT from completed Sol primary and independent Sol judge survives exactly at area tip; joined blob differs or is absent; retain judgment and import only the exact accepted code batch."
+      }
     },
     {
       "file": "tests/claude-native-acceptance-capture.test.mjs",
@@ -2448,7 +3418,19 @@
       "changedRelatedPaths": [],
       "readingResult": "Database seeding separate from two fresh-fixture finalization journeys;mutation exposes stale-evidence reuse missed by old test.",
       "checks": "Bun5,Node4 pass;focused format/lint/diff;broader Biome unchanged import ordering;offline only.",
-      "integrationState": "Exact whole-file primary+judge test patch joined;supersedes related patch test hash"
+      "integrationState": "Exact whole-file primary+judge test patch joined;supersedes related patch test hash",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "a7575f3ed9050c9cfe84512824cb49b43f99a6fa",
+        "primaryId": "task_d8e47cb7",
+        "primaryCommit": "628add7bbda4e9c6e744afdfd6f892b52536473e",
+        "judgeIds": [
+          "task_0a84de3d"
+        ],
+        "sourceCommit": "628add7bbda4e9c6e744afdfd6f892b52536473e",
+        "state": "accepted-not-joined",
+        "reason": "Original whole-file ACCEPT from completed Sol primary and independent Sol judge survives exactly at area tip; joined blob differs or is absent; retain judgment and import only the exact accepted code batch."
+      }
     },
     {
       "file": "tests/claude-native-acceptance-replay-finalization.test.mjs",
@@ -2488,7 +3470,19 @@
       "changedRelatedPaths": [],
       "readingResult": "Separate evidence seeding,shipped replay generation and external stand-in installation from visible finalization assertions.",
       "checks": "11 focused pass;format/diff;observation-only negative fails missing collector evidence;unmerged replay candidate isolated compatibility passes.Offline browser setup failure only.",
-      "integrationState": "Whole-file primary+judge test joined;candidate checked against accepted replay source too"
+      "integrationState": "Whole-file primary+judge test joined;candidate checked against accepted replay source too",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "5969cc3ab7ef036cc9b0409e7ce6c1a53c3f5700",
+        "primaryId": "task_5b8a48c9",
+        "primaryCommit": "09b8718193308d4dd5a451d2e02ce14cdb4623ff",
+        "judgeIds": [
+          "task_864aebbb"
+        ],
+        "sourceCommit": "09b8718193308d4dd5a451d2e02ce14cdb4623ff",
+        "state": "accepted-not-joined",
+        "reason": "Original whole-file ACCEPT from completed Sol primary and independent Sol judge survives exactly at area tip; joined blob differs or is absent; retain judgment and import only the exact accepted code batch."
+      }
     },
     {
       "file": "tests/claude-native-acceptance-tap.test.mjs",
@@ -2528,7 +3522,19 @@
       "changedRelatedPaths": [],
       "readingResult": "Credential scope verification separate from byte framing;generated connector programs readable;production tap/cleanup unchanged.",
       "checks": "6eachNode/Bun;UTF8 mutant fails;format/diff;no native/full gate.",
-      "integrationState": "Whole-file primary+judge test patch joined;supersedes related tap-test acceptance"
+      "integrationState": "Whole-file primary+judge test patch joined;supersedes related tap-test acceptance",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "e103fd37a27fe8094f5c136e75a36d15809cb24a",
+        "primaryId": "task_83a97a2b",
+        "primaryCommit": "ab3ce8b32e9aeab5bd5eab6bab9fec712b6db7b6",
+        "judgeIds": [
+          "task_d85a0338"
+        ],
+        "sourceCommit": "ab3ce8b32e9aeab5bd5eab6bab9fec712b6db7b6",
+        "state": "accepted-not-joined",
+        "reason": "Original whole-file ACCEPT from completed Sol primary and independent Sol judge survives exactly at area tip; joined blob differs or is absent; retain judgment and import only the exact accepted code batch."
+      }
     },
     {
       "file": "tests/claude-native-replay.test.mjs",
@@ -2568,7 +3574,19 @@
       "changedRelatedPaths": [],
       "readingResult": "Mock-boundary construction separate from fixture ownership/execution/cleanup;actual relocated replay+real collector,assertions+injected modules unchanged.",
       "checks": "10eachNode/Bun;Biome0;clean;offline lifecycle only.",
-      "integrationState": "Exact whole-file primary+judge patch joined;supersedes related source-test hash"
+      "integrationState": "Exact whole-file primary+judge patch joined;supersedes related source-test hash",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "7c0a3efb66c13ebb5ffe00ff6ed117dc0d428fa7",
+        "primaryId": "task_bd242a1f",
+        "primaryCommit": "f4207fe9b4d39d75b4087295f9a7f977c7ce460f",
+        "judgeIds": [
+          "task_192dc5f9"
+        ],
+        "sourceCommit": "f4207fe9b4d39d75b4087295f9a7f977c7ce460f",
+        "state": "accepted-not-joined",
+        "reason": "Original whole-file ACCEPT from completed Sol primary and independent Sol judge survives exactly at area tip; joined blob differs or is absent; retain judgment and import only the exact accepted code batch."
+      }
     },
     {
       "file": "tests/claude-native-history-runner.test.mjs",
@@ -2602,7 +3620,20 @@
       "launchBase": "47cd1b9b4c7d3d9a084d517b318283085d67efc9",
       "changedRelatedPaths": [],
       "readingResult": "Scenario token dispatch replaced by explicit per-test failure injections;collection→socket close→scope deletion evidence strengthened.",
-      "checks": "5eachBun/Node;format/diff;1preexistinginfo;candidate detects pre-fix rootExists true;no production/native proof."
+      "checks": "5eachBun/Node;format/diff;1preexistinginfo;candidate detects pre-fix rootExists true;no production/native proof.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "0b2c252a17719c8f541319ff164db6c26e136196",
+        "primaryId": "task_c7da2216",
+        "primaryCommit": "38206e59026118676b87f088beb3b86f7eaeb507",
+        "judgeIds": [
+          "task_76a9b652",
+          "task_7fd4e906"
+        ],
+        "sourceCommit": "38206e59026118676b87f088beb3b86f7eaeb507",
+        "state": "accepted-joined",
+        "reason": "Read and accept the complete file. The central improvement is eliminating the failure-token interpreter: callers now provide the concrete replay side effect, or malformed connector arguments, at the scenario that needs it. A reader can see replay exit 7, a second root-tool-count line, or the projection-path directory directly beside that scenario instead of reconstructing behavior from a token, string replacement, child branch and environment switch. successfulReplay gives the fabricated child evidence one explicit common purpose. runFixture owns copying the shipped runner, installing narrow dependency stand-ins, spawning/observing the child, capturing results before disposal, and then disposing its own fixture. Its two options are direct inputs, not a mutable context bag. The close observation makes the lifetime of scoped state visible rather than relying solely on the eventual absence of files. The assertions describe distinct failure stages, especially publication failure after replay/model checks already passed; acceptance is based on this intrinsic control-flow clarity, not added assertions or coverage."
+      }
     },
     {
       "file": "tests/claude-native-app-delegation-driver.test.mjs",
@@ -2627,7 +3658,16 @@
           "candidate": "b538064f91afba9b3bb5a79bc8ec8ae6923f630b"
         }
       ],
-      "launchBase": "b8c0bb7c6ff0fec215e90188666df77225ffe47a"
+      "launchBase": "b8c0bb7c6ff0fec215e90188666df77225ffe47a",
+      "resume": {
+        "status": "pending",
+        "primaryId": "task_de00fb25",
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": "b538064f91afba9b3bb5a79bc8ec8ae6923f630b",
+        "state": "pending-primary-interrupted",
+        "reason": "Primary was killed by session shutdown (143); preserved uncommitted code is retained at the worker path. No submitted candidate commit or readability verdict; resume its original scope rather than count it accepted."
+      }
     },
     {
       "file": "tests/claude-native-history-driver.test.mjs",
@@ -2645,7 +3685,16 @@
           "blob": "616c6078f3f7af86efe061ec1f652379b0036ef9",
           "candidate": "8a96f814d110e65250c081c1f2dda9daea098cf2"
         }
-      ]
+      ],
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": "8a96f814d110e65250c081c1f2dda9daea098cf2",
+        "state": "pending-primary",
+        "reason": "Related source patch has an original accepted code judgment, but this test still lacks its distinct whole-file primary/judge. Preserve the related acceptance without promoting it to completed file coverage."
+      }
     },
     {
       "file": "tests/claude-native-acceptance-subagent-run.test.mjs",
@@ -2655,7 +3704,17 @@
       "introducedBy": "acba9037095809d012444d28656a733b1fcdcf86",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null
+      "acceptedBlob": null,
+      "resume": {
+        "status": "pending",
+        "acceptedBlob": "611d0cb7e7a68d58501488971bb2aa6aeac582e9",
+        "primaryId": null,
+        "primaryCommit": null,
+        "judgeIds": [],
+        "sourceCommit": "acba9037095809d012444d28656a733b1fcdcf86",
+        "state": "needs-primary-final-blob",
+        "reason": "Added only in surviving run-subagent worker commit acba9037, not at area tip or joined tree. Source judge was killed without verdict; test also lacks its own whole-file primary and judge."
+      }
     }
   ],
   "crossAreaNeeds": [
