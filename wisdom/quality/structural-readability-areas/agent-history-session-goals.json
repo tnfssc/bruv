@@ -2743,20 +2743,20 @@
     {
       "focus": "tests/goals-sdk.test.ts",
       "initialBlob": "cf13910d34ed26c53cbc44a33165dff53a081ebd",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "53c696d6d477467e5c65e6d9803ae97c350b17c3",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
         "acceptedBlob": "53c696d6d477467e5c65e6d9803ae97c350b17c3",
         "primaryId": "task_bc681e2d",
         "primaryCommit": "34fde6ffbcc38fbacc562bdfe0bed13e2d3f431c",
-        "judgeIds": [],
+        "judgeIds": ["task_1b82de8d"],
         "sourceCommit": "34fde6ffbcc38fbacc562bdfe0bed13e2d3f431c",
-        "state": "needs-judge",
-        "reason": "No dedicated primary/final independent focus judgment."
+        "state": "accepted-joined",
+        "reason": "Read all 607 candidate lines, including unchanged decisions. offlineResponse is a coherent delivery boundary, not a test-orchestration wrapper: it owns assistant identity, shared usage, timestamp, stream construction, queued done and end(message). Each of its three callers still chooses content and stopReason beside its own script/call/pause decisions. The set/update/clear scenario locally captures system/tools/messages and proves only message guidance changes. The waiting scenario preserves observe -> tasks -> handoff observation -> context filter ordering, asserts waiting and a single provider call before releasing the job, then checks filtered context, task completion status and waiting/active/completed history. The print helper retains its scenario authority: failed jobs are released via setImmediate from agent_end, and the two tests separately judge no-progress pause versus explicit milestones. Auth-preparation failure is not merged with intercepted real-provider dispatch; each owns its evidence and restoration ordering. This removes recurring transport construction without hiding lifecycle decisions or weakening assertions."
       }
     },
     {
@@ -3282,37 +3282,39 @@
     {
       "focus": "tests/last-used-cli-model.test.ts",
       "initialBlob": "479cb99a4f680520282922dc69e2b243b938015e",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "479cb99a4f680520282922dc69e2b243b938015e",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "479cb99a4f680520282922dc69e2b243b938015e",
         "primaryId": "task_bc681e2d",
         "primaryCommit": "34fde6ffbcc38fbacc562bdfe0bed13e2d3f431c",
-        "judgeIds": [],
+        "judgeIds": ["task_1b82de8d"],
         "sourceCommit": "34fde6ffbcc38fbacc562bdfe0bed13e2d3f431c",
-        "state": "needs-judge",
-        "reason": "No dedicated primary/final independent focus judgment."
+        "state": "accepted-joined",
+        "reason": "Read all 242 candidate lines. Small event/context/thinkingEvent helpers remove incidental SDK shape without taking over decisions. Predicate assertions explicitly distinguish set/cycle/restore, TUI/print/json/RPC and root/child. Each handler fixture captures only the event under review; its root toggle, settings-create counter and writes stay beside triggering dispatches. The model-only settings fake deliberately throws if that handler rewrites thinking. Each persistence test owns mkdir/seed/register/dispatch/fresh SettingsManager/read sequence, and checks the independent thinking/provider/model/theme fields. The thinking test checks high then off as successive persisted choices. The failure case keeps flush-before-drain and warning text/kind together. A shared registry, settings fixture or context bag would obscure these distinct acceptance gates without removing a scattered authority; retain the candidate unchanged."
       }
     },
     {
       "focus": "tests/llm.test.ts",
       "initialBlob": "58b8635ace4e453680bd40bc6f4cf5793550c277",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "58b8635ace4e453680bd40bc6f4cf5793550c277",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "58b8635ace4e453680bd40bc6f4cf5793550c277",
         "primaryId": "task_bc681e2d",
         "primaryCommit": "34fde6ffbcc38fbacc562bdfe0bed13e2d3f431c",
-        "judgeIds": [],
+        "judgeIds": ["task_1b82de8d"],
         "sourceCommit": "34fde6ffbcc38fbacc562bdfe0bed13e2d3f431c",
-        "state": "needs-judge",
-        "reason": "No dedicated primary/final independent focus judgment."
+        "state": "accepted-joined",
+        "reason": "Read all 306 candidate lines. Live opt-in and fixed dist binary are explicit. The simple response, owned TypeScript file workflow, visual image, error recovery, inline/background shell and durable child history cases each retain their own prompt/argv/mode/session/cwd/time budget/assertions. The TypeScript case checks result.txt on disk. The image case requires exactly one execute result, exact image content and no duplicated base64 details before judging the reply. Recovery first locates the failing execute and then requires a later successful one and readable stack marker. The shell loop keeps command/waitSeconds/yield instructions and tool/completion/final counts adjacent. Only subagent diagnostics opts into persisted parent history, constrains the returned child path to the fixture and reads bruv-agent plus execute tool history before checking delivered completion. Repeated CLI flags and text projections are direct framing; a generic run/session wrapper would hide no-session versus durable history and cwd distinctions. No structural change is warranted."
       }
     },
     {
@@ -3325,11 +3327,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_fdf8feb2",
+        "primaryCommit": "953636ca924944dbf67f42af22a9c7870fe212ac",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary",
+        "sourceCommit": "953636ca924944dbf67f42af22a9c7870fe212ac",
+        "state": "needs-judge",
         "reason": "No dedicated primary/final independent focus judgment."
       }
     },
@@ -3343,11 +3345,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_e122aaee",
+        "primaryCommit": "29c7ec1d20cd22d6c59a747df673f61d9e11383e",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary",
+        "sourceCommit": "29c7ec1d20cd22d6c59a747df673f61d9e11383e",
+        "state": "needs-judge",
         "reason": "No dedicated primary/final independent focus judgment."
       }
     },
@@ -3361,11 +3363,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_e122aaee",
+        "primaryCommit": "29c7ec1d20cd22d6c59a747df673f61d9e11383e",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary",
+        "sourceCommit": "29c7ec1d20cd22d6c59a747df673f61d9e11383e",
+        "state": "needs-judge",
         "reason": "No dedicated primary/final independent focus judgment."
       }
     },
@@ -3386,11 +3388,11 @@
       },
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_e122aaee",
+        "primaryCommit": "29c7ec1d20cd22d6c59a747df673f61d9e11383e",
         "judgeIds": ["task_c5c84c0c"],
-        "sourceCommit": "16e685366452845e2faff7fe7fbee57c6cdc5a6e",
-        "state": "pending-primary",
+        "sourceCommit": "29c7ec1d20cd22d6c59a747df673f61d9e11383e",
+        "state": "needs-judge",
         "reason": "No dedicated primary/final independent focus judgment. Related-patch review is evidence only; dedicated focus coverage remains required."
       }
     },
@@ -4366,8 +4368,10 @@
       "resume": {
         "status": "pending",
         "acceptedBlob": "bb589e72dcab627861635a63051e522191a2da20",
-        "sourceCommit": "8d04882c7fd0b6165ac217f9a7a7bf893262dd33",
-        "state": "needs-primary-final-blob"
+        "primaryId": "task_19ac106b",
+        "primaryCommit": "191812d4b948379cfd5d93861e3892041494f153",
+        "sourceCommit": "191812d4b948379cfd5d93861e3892041494f153",
+        "state": "needs-judge"
       }
     },
     {
@@ -4379,8 +4383,10 @@
       "resume": {
         "status": "pending",
         "acceptedBlob": "e5c78470d6b08537685c82256a6c1b7184fb7d60",
-        "sourceCommit": "8d04882c7fd0b6165ac217f9a7a7bf893262dd33",
-        "state": "needs-primary-final-blob"
+        "primaryId": "task_19ac106b",
+        "primaryCommit": "191812d4b948379cfd5d93861e3892041494f153",
+        "sourceCommit": "191812d4b948379cfd5d93861e3892041494f153",
+        "state": "needs-judge"
       }
     },
     {
@@ -4392,8 +4398,10 @@
       "resume": {
         "status": "pending",
         "acceptedBlob": "4d81158abaa1190eb8853d86c72516ce99cb1ac0",
-        "sourceCommit": "8d04882c7fd0b6165ac217f9a7a7bf893262dd33",
-        "state": "needs-primary-final-blob"
+        "primaryId": "task_19ac106b",
+        "primaryCommit": "191812d4b948379cfd5d93861e3892041494f153",
+        "sourceCommit": null,
+        "state": "needs-rework"
       }
     },
     {
@@ -4405,8 +4413,10 @@
       "resume": {
         "status": "pending",
         "acceptedBlob": "173ad097f805cbd0393953b81612c757c6be91f1",
-        "sourceCommit": "8d04882c7fd0b6165ac217f9a7a7bf893262dd33",
-        "state": "needs-primary-final-blob"
+        "primaryId": "task_00ab83b8",
+        "primaryCommit": "191812d4b948379cfd5d93861e3892041494f153",
+        "sourceCommit": "191812d4b948379cfd5d93861e3892041494f153",
+        "state": "needs-judge"
       }
     },
     {
@@ -4418,8 +4428,10 @@
       "resume": {
         "status": "pending",
         "acceptedBlob": "3800d0fbb3857b0a366d6302b52d7d5432196a3b",
-        "sourceCommit": "fc5b9f3e7aba21718b8989b57df4081751558c31",
-        "state": "needs-primary-final-blob"
+        "primaryId": "task_fdf8feb2",
+        "primaryCommit": "953636ca924944dbf67f42af22a9c7870fe212ac",
+        "sourceCommit": "953636ca924944dbf67f42af22a9c7870fe212ac",
+        "state": "needs-judge"
       }
     },
     {
@@ -4431,8 +4443,10 @@
       "resume": {
         "status": "pending",
         "acceptedBlob": "f0661fa8f8a1790a93b2cb8eb00a11e29ecb59fd",
-        "sourceCommit": "fc5b9f3e7aba21718b8989b57df4081751558c31",
-        "state": "needs-primary-final-blob"
+        "primaryId": "task_fdf8feb2",
+        "primaryCommit": "953636ca924944dbf67f42af22a9c7870fe212ac",
+        "sourceCommit": "953636ca924944dbf67f42af22a9c7870fe212ac",
+        "state": "needs-judge"
       }
     },
     {
@@ -4444,8 +4458,10 @@
       "resume": {
         "status": "pending",
         "acceptedBlob": "111cd72e10e51ed928c7222e625a75666fd54d28",
-        "sourceCommit": "d7e16f9c897647a63b1f735fb89a3ab9e20c1e7e",
-        "state": "needs-primary-final-blob"
+        "primaryId": "task_baac92f1",
+        "primaryCommit": "191812d4b948379cfd5d93861e3892041494f153",
+        "sourceCommit": "191812d4b948379cfd5d93861e3892041494f153",
+        "state": "needs-judge"
       }
     }
   ],
@@ -4587,7 +4603,7 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 96,
-    "pending": 34
+    "accepted": 99,
+    "pending": 31
   }
 }

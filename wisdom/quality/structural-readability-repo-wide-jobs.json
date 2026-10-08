@@ -1768,6 +1768,73 @@
         "model": "openai-codex/gpt-6.1-sol",
         "status": "handled",
         "sourceCommit": "34fde6ffbcc38fbacc562bdfe0bed13e2d3f431c"
+      },
+      {
+        "id": "task_1b82de8d",
+        "stage": "judge",
+        "focus": ["tests/goals-sdk.test.ts", "tests/last-used-cli-model.test.ts", "tests/llm.test.ts"],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_1b82de8d",
+        "branch": "bruv/pr45-judge-3-agent-history-session-goals-1b82de8d",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled"
+      },
+      {
+        "id": "task_19ac106b",
+        "stage": "primary",
+        "focus": [
+          "tests/fixtures/history-disk-retrieval.ts",
+          "tests/fixtures/history-large-session.ts",
+          "tests/fixtures/history-projection-parity.ts"
+        ],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_19ac106b",
+        "branch": "bruv/pr45-primary-3-agent-history-session-goa-19ac106b",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled",
+        "sourceCommit": "191812d4b948379cfd5d93861e3892041494f153"
+      },
+      {
+        "id": "task_00ab83b8",
+        "stage": "primary",
+        "focus": ["tests/helpers/history-fixture.ts"],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_00ab83b8",
+        "branch": "bruv/pr45-primary-1-agent-history-session-goa-00ab83b8",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled",
+        "sourceCommit": "191812d4b948379cfd5d93861e3892041494f153"
+      },
+      {
+        "id": "task_fdf8feb2",
+        "stage": "primary",
+        "focus": [
+          "tests/history-process.ts",
+          "tests/history-storage-cleanup.probe.mjs",
+          "tests/main-agent-mode-sdk.test.ts"
+        ],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_fdf8feb2",
+        "branch": "bruv/pr45-primary-3-agent-history-session-goa-fdf8feb2",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled",
+        "sourceCommit": "953636ca924944dbf67f42af22a9c7870fe212ac"
+      },
+      {
+        "id": "task_baac92f1",
+        "stage": "primary",
+        "focus": ["tests/fixtures/history-storage-lifecycle.mjs"],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_baac92f1",
+        "branch": "bruv/pr45-primary-1-agent-history-session-goa-baac92f1",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled",
+        "sourceCommit": "191812d4b948379cfd5d93861e3892041494f153"
+      },
+      {
+        "id": "task_e122aaee",
+        "stage": "primary",
+        "focus": ["tests/main-agent-mode-tui.test.ts", "tests/manual-shake-sdk.test.ts", "tests/manual-shake.test.ts"],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_e122aaee",
+        "branch": "bruv/pr45-primary-3-agent-history-session-goa-e122aaee",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled",
+        "sourceCommit": "29c7ec1d20cd22d6c59a747df673f61d9e11383e"
       }
     ]
   },
