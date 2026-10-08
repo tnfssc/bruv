@@ -19992,7 +19992,8 @@
         "Prototype spies and process env changes retain the existing serial mounted-fixture lifetime; module import-time isolation belongs to the parent explicit argv/env test process. No claims of full terminal-render correctness or a live product check.",
         "An initial evidence read emitted the full reconciliation JSON before targeted filtering; all subsequent ledger inspection was restricted to the assigned focus row. No unrelated rows were used for decisions.",
         "No wisdom/value edits: parent owns the aggregate wisdom artifact, and this is a bounded correction to an already documented ownership principle."
-      ]
+      ],
+      "forceJudge": true
     },
     {
       "file": "tests/remote-root-transport.test.ts",
@@ -26143,7 +26144,8 @@
           "sourceCommit": "04c9d2df061d6e15e2c1d347900be71503bb905b",
           "primaryBase": "9bf50c12c46a2eec788c76d19c5f504819b3496a"
         }
-      ]
+      ],
+      "forceJudge": true
     },
     {
       "file": "tests/fixtures/worktree-workspace-cases.ts",
@@ -26186,7 +26188,8 @@
         "No general-reuse endorsement: conclusion is bounded to the five inspected suite callers and one standalone scenario caller. Existing unrelated accepted work and preexisting platform-specific guards are untouched.",
         "Fixture provenance remains the durable worktree: source executes there, while mkdtemp roots retain owned HOME/config/SDK/TMPDIR, launch manifest, source snapshot and process output/result evidence. No fixtures were launched or removed here.",
         "No descendants delegated; no user secrets accessed. Wisdom/values left unchanged because this bounded pass adds no new lesson; parent owns aggregate wisdom."
-      ]
+      ],
+      "forceJudge": true
     }
   ],
   "completedAreas": {
