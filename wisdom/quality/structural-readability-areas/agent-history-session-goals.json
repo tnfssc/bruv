@@ -3858,46 +3858,48 @@
     {
       "focus": "tests/turn-boundaries.test.ts",
       "initialBlob": "a9cff28172726411bd418587f5f44217036f76bb",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "a9cff28172726411bd418587f5f44217036f76bb",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "a9cff28172726411bd418587f5f44217036f76bb",
         "primaryId": "task_4fd8c261",
         "primaryCommit": "04ac60063eebde3592e35840c727d6db40920870",
-        "judgeIds": [],
+        "judgeIds": ["task_8e99c74c"],
         "sourceCommit": "04ac60063eebde3592e35840c727d6db40920870",
-        "state": "needs-judge",
-        "reason": "No dedicated primary/final independent focus judgment."
+        "state": "accepted-joined",
+        "reason": "Read the complete file, not only the unchanged diff. One two-call assistant record and the small result constructor make the distinguishing input visible next to all five expectations: missing second result, non-yield second result, failed second result, complete successful all-yield batch returning b, and ordinary assistant stop. Keeping these cases together lets a reader compare the predicate without traveling to separate scenarios or fixture machinery. The candidate and primaryBase contain the same exact focus blob."
       }
     },
     {
       "focus": "tests/turn-boundaries.ts",
       "initialBlob": "5e9a22ac49df1f247fbad6482e1fc01b8784425d",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "5e9a22ac49df1f247fbad6482e1fc01b8784425d",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "5e9a22ac49df1f247fbad6482e1fc01b8784425d",
         "primaryId": "task_4fd8c261",
         "primaryCommit": "04ac60063eebde3592e35840c727d6db40920870",
-        "judgeIds": [],
+        "judgeIds": ["task_8e99c74c"],
         "sourceCommit": "04ac60063eebde3592e35840c727d6db40920870",
-        "state": "needs-judge",
-        "reason": "No dedicated primary/final independent focus judgment."
+        "state": "accepted-joined",
+        "reason": "Read the whole helper from result index to returned entries. It visibly separates indexing tool results, selecting assistant stop entries, collecting every call result, requiring a nonempty complete successful string-handoff batch, choosing the latest terminal result timestamp, and filtering the original sequence. These decisions are short and contiguous. Extracting the predicate or timestamp reduction would hide the semantic difference between a per-tool hint and a completed batch; an abstraction or rename is unnecessary. Exact focus bytes match primaryBase."
       }
     },
     {
       "focus": "tests/wisdom-extension.test.ts",
       "initialBlob": "37436aaf746e97961721fb1e042882ef487c90e2",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "9925e4e230e9c635723337e3e23830fa5c46bfe6",
       "integration": "pending",
       "relatedPatchReview": {
         "candidate": "d95ff345b6246fb81e7941e6acea8587d39a2bb1",
@@ -3907,13 +3909,14 @@
         "primaryFocusStillRequired": true
       },
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "9925e4e230e9c635723337e3e23830fa5c46bfe6",
         "primaryId": "task_4fd8c261",
         "primaryCommit": "04ac60063eebde3592e35840c727d6db40920870",
-        "judgeIds": ["task_b7cd3a68"],
+        "judgeIds": ["task_b7cd3a68", "task_8e99c74c"],
         "sourceCommit": "04ac60063eebde3592e35840c727d6db40920870",
-        "state": "needs-judge",
-        "reason": "No dedicated primary/final independent focus judgment. Related-patch review is evidence only; dedicated focus coverage remains required."
+        "state": "accepted-joined",
+        "reason": "Read the complete main test and new 97-line SDK fixture, plus diffs from primaryBase and the supplied d95ff345b6246fb81e7941e6acea8587d39a2bb1 assertion evidence. Unit cases keep guidance wording, absence checks, hook shape, dynamic root authority, fail-closed denial-before-trust, command reporting, worktree settings, untrusted/default/absolute paths, invalid settings, and current trust/settings effects local to assertions. The main file now visibly owns project creation, owned-env construction, explicit argv child launch/deadline, and first-effect/two-turn observations. The SDK fixture owns one linear shipped-factory session: resource load, model/runtime selection, captured stub stream, bind session_start as root, attach child marker, optional command before first ordinary turn, two ordinary turns, then shutdown and disposal. This is a coherent lifetime extraction, not scattered arbitrary helpers or a context bag. Prior SDK assertions survive through the serialized result; commandPromptCount preserves the zero-model-call check before ordinary turns."
       }
     }
   ],
@@ -4532,6 +4535,19 @@
         "state": "accepted-joined",
         "reason": "Read the complete probe at the exact candidate and followed its parent test and SDK fixture helper. The probe already presents each journey as construction options, ordinary/command/custom-message requests, then assertions. beforeEach makes the root identity assumption visible and confined to the isolated child; afterEach delegates session disposal to the helper that constructed them. The helper appropriately owns project/auth/resource-loader setup, intercepted provider responses, and actual durable session reopening rather than exposing a shared context bag of incidental setup. Mode/model/thinking preservation, frame hook placement, collision examples, project wisdom paths, restored modes, and child /mode restriction remain at the tests that explain their consequences. There is no unresolved structural burden requiring another extraction. This is an explicit independent final-blob decision for the unchanged probe, not acceptance inferred from the two changed tests."
       }
+    },
+    {
+      "focus": "tests/fixtures/wisdom-extension-sdk.ts",
+      "initialBlob": null,
+      "introducedBy": "04ac60063eebde3592e35840c727d6db40920870",
+      "state": "pending",
+      "acceptedBlob": null,
+      "resume": {
+        "status": "pending",
+        "acceptedBlob": "7db5150623e2dee2c09c9726ab91d8cc6f494d82",
+        "sourceCommit": "04ac60063eebde3592e35840c727d6db40920870",
+        "state": "needs-primary-final-blob"
+      }
     }
   ],
   "crossAreaNeeds": [
@@ -4672,7 +4688,7 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 129,
-    "pending": 3
+    "accepted": 132,
+    "pending": 1
   }
 }

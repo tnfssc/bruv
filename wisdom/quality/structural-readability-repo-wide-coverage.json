@@ -11818,65 +11818,157 @@
       "initialBlob": "56d4d9e552d16fc332ed0e224a53921f5c7b5f8c",
       "status": "pending",
       "area": "remote",
-      "resumeState": "pending-primary-unstarted",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_b143960d",
+      "primaryCommit": "f5d7a4189866c067dc8fc90a3c766c53772fbdb7",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "f5d7a4189866c067dc8fc90a3c766c53772fbdb7",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
-      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
+      "primaryBase": "f5d7a4189866c067dc8fc90a3c766c53772fbdb7",
+      "primaryResult": "Keep the configuration unchanged. Dockerfile copies it to /etc/ssh/sshd_config; entrypoint installs /keys/hostkey and /keys/client.pub mode 600 at exactly the configured /run/sshd paths and execs sshd with this file. network-none-fixture generates owned fixture keys, mounts them read-only, starts a network:none container, pins the host key in a fixture known_hosts file, selects User root/Port 2222, disables agent use, and reaches ssh-proxy.ts through docker exec. The proxy connects container-local 127.0.0.1:2222. PermitRootLogin prohibit-password, disabled password/interactive auth, enabled public-key auth, disabled forwarding/TTY/X11, and StrictModes yes already expose the intended restricted shell transport directly. Adding comments, splitting includes, or sharing another fixture config would introduce another lookup without simplifying that journey.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        {
+          "kind": "actual-source-reading",
+          "result": "Whole focus read; relevant startup/selection/transport callers inspected. No test counts used as readability evidence."
+        },
+        {
+          "kind": "preserved-evidence",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_1adcf635/wisdom/quality/structural-readability-areas/remote-resume-reconciliation.json",
+          "result": "Assigned row is pending-primary-unstarted, verdict MISSING JUDGMENT; no primary, candidate, rejection, or judgment to transplant/rework. Current blob 56d4d9e552d16fc332ed0e224a53921f5c7b5f8c equals preserved baseline 56d4d9e552d16fc332ed0e224a53921f5c7b5f8c."
+        },
+        {
+          "kind": "git-working-state",
+          "result": "Initial tracked worktree clean; no source bytes changed."
+        }
+      ],
+      "primaryLimits": [
+        "Static source reading only; no setup, tests, builds, Docker, SSH, provider requests, or credential access were executed. Parent owns audited isolated runtime gates and fresh independent judgment.",
+        "No source edits; formatter not applicable and no empty source commit created. Shared dependencies were not modified. Result artifact intentionally remains untracked; no wisdom files edited, because no new general lesson was found.",
+        "Fixture Dockerfile contains image-local removal and harness cleanup contains owned-root removal; these were read, not executed. This review does not authorize running them. Existing worktrees and evidence remain intact."
+      ]
     },
     {
       "file": "tests/fixtures/remote-placement-e2e/subagents.json",
       "initialBlob": "c952ec558c8c91b62d2e84346b21484e71db1ef3",
       "status": "pending",
       "area": "remote",
-      "resumeState": "pending-primary-unstarted",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_b143960d",
+      "primaryCommit": "f5d7a4189866c067dc8fc90a3c766c53772fbdb7",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "f5d7a4189866c067dc8fc90a3c766c53772fbdb7",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
-      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
+      "primaryBase": "f5d7a4189866c067dc8fc90a3c766c53772fbdb7",
+      "primaryResult": "Keep the JSON unchanged. Dockerfile installs this destination-only file at /root/.bruv/subagents.json. loadProfiles validates the strict normal/orchestrator profile shape; remote owner hello reads normal and launch selects req.placement.profile (normal by default), resolving configured model/thinking unless explicitly overridden. models.json defines both fixture model IDs; scenario.ts branches on placement-orchestrator to launch a target-omitted normal child and branches on placement-normal to check depth/type and refuse further delegation. The runner deliberately writes placement-local-wrong profiles to its separate parent HOME and asserts the parent inference model, so explicit destination model names are important evidence of placement rather than naming noise. This direct two-record mapping is clearer than inheritance, a generated config, or an added common-settings abstraction. The absent fast profile is not involved in this assigned normal-child/orchestrator journey.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        {
+          "kind": "actual-source-reading",
+          "result": "Whole focus read; relevant startup/selection/transport callers inspected. No test counts used as readability evidence."
+        },
+        {
+          "kind": "preserved-evidence",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_1adcf635/wisdom/quality/structural-readability-areas/remote-resume-reconciliation.json",
+          "result": "Assigned row is pending-primary-unstarted, verdict MISSING JUDGMENT; no primary, candidate, rejection, or judgment to transplant/rework. Current blob c952ec558c8c91b62d2e84346b21484e71db1ef3 equals preserved baseline c952ec558c8c91b62d2e84346b21484e71db1ef3."
+        },
+        {
+          "kind": "git-working-state",
+          "result": "Initial tracked worktree clean; no source bytes changed."
+        }
+      ],
+      "primaryLimits": [
+        "Static source reading only; no setup, tests, builds, Docker, SSH, provider requests, or credential access were executed. Parent owns audited isolated runtime gates and fresh independent judgment.",
+        "No source edits; formatter not applicable and no empty source commit created. Shared dependencies were not modified. Result artifact intentionally remains untracked; no wisdom files edited, because no new general lesson was found.",
+        "Fixture Dockerfile contains image-local removal and harness cleanup contains owned-root removal; these were read, not executed. This review does not authorize running them. Existing worktrees and evidence remain intact."
+      ]
     },
     {
       "file": "tests/fixtures/remote-typed-root-placement/Dockerfile",
       "initialBlob": "159f0b8598cbcd3aa0df75c6766681ed87d8284c",
       "status": "pending",
       "area": "remote",
-      "resumeState": "pending-primary-unstarted",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_7db56f55",
+      "primaryCommit": "22d3e51fb98828a0b2fb0d29f5f001692b00c7f1",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "22d3e51fb98828a0b2fb0d29f5f001692b00c7f1",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
-      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
+      "primaryBase": "22d3e51fb98828a0b2fb0d29f5f001692b00c7f1",
+      "primaryResult": "Kept unchanged. ARG/FROM select the cached base; USER/RUN prepare fixture directories; COPY statements group runtime, provider/scenario/proxy, model/settings/subagent configuration, SSH configuration, and entrypoint by destination. The final RUN establishes executability and the typed-host marker, ENV selects server agent configuration, and ENTRYPOINT names startup. networkNoneFixture stages the inputs and supplies an inspected image ID with network:none/pull=false; the clean-capture caller intentionally reuses this image recipe with its own provider/config files. The static fixture assertion preserves no-package/no-tmux constraints. Extracting build stages or renaming paths would obscure this direct dependency ordering rather than improve it.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        "Read whole assigned focus, wisdom/values.md, and wisdom/quality/structural-readability-guidance.md.",
+        "Read only assigned reconciliation rows/candidate evidence: pending-primary-unstarted, no preserved or rejected candidate, joined blob equals baseline.",
+        "Static caller inspection only; no tests, setup, builds, fixture scripts, credential access, or cleanup executed.",
+        "Verified exact HEAD and focus blob against Git index and retained baseline. No source changed; formatter and source commit are not applicable."
+      ],
+      "primaryLimits": [
+        "Primary reading decision only; fresh independent judgment and audited isolated runtime gates belong to parent.",
+        "No source changes or new commit. Artifact remains untracked in the durable assigned worktree; old worktrees and candidate evidence preserved.",
+        "No new wisdom/values edits: existing simplicity/ownership guidance already covers the decision; parent owns aggregate wisdom.",
+        "Dockerfile contains rm -rf in an image RUN instruction. It was read only, never built or executed; this decision is not authorization to execute its cleanup. Parent must audit filesystem/network effects before any gate."
+      ]
     },
     {
       "file": "tests/fixtures/remote-typed-root-placement/entrypoint.sh",
       "initialBlob": "e5680c805f076bcae5e02be77e20def1970aff9d",
       "status": "pending",
       "area": "remote",
-      "resumeState": "pending-primary-unstarted",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_7db56f55",
+      "primaryCommit": "22d3e51fb98828a0b2fb0d29f5f001692b00c7f1",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "22d3e51fb98828a0b2fb0d29f5f001692b00c7f1",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
-      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
+      "primaryBase": "22d3e51fb98828a0b2fb0d29f5f001692b00c7f1",
+      "primaryResult": "Kept unchanged. set -eu makes failed key installation stop startup. Two install commands copy the mounted host key and client public key with mode 600 into /run/sshd, matching sshd_config. Bun starts the local fake provider with a single visible log destination; exec replaces the shell with foreground sshd using the explicit fixture config. The harness starts the container, connects pinned SSH, and independently polls /health before proceeding. A readiness loop or supervisor in this script would duplicate that existing fixture authority and add lifecycle machinery without an observed problem.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        "Read whole assigned focus, wisdom/values.md, and wisdom/quality/structural-readability-guidance.md.",
+        "Read only assigned reconciliation rows/candidate evidence: pending-primary-unstarted, no preserved or rejected candidate, joined blob equals baseline.",
+        "Static caller inspection only; no tests, setup, builds, fixture scripts, credential access, or cleanup executed.",
+        "Verified exact HEAD and focus blob against Git index and retained baseline. No source changed; formatter and source commit are not applicable."
+      ],
+      "primaryLimits": [
+        "Primary reading decision only; fresh independent judgment and audited isolated runtime gates belong to parent.",
+        "No source changes or new commit. Artifact remains untracked in the durable assigned worktree; old worktrees and candidate evidence preserved.",
+        "No new wisdom/values edits: existing simplicity/ownership guidance already covers the decision; parent owns aggregate wisdom.",
+        "Provider background process is not independently supervised by this script; container/harness lifecycle owns teardown. No claim of runtime supervision or signal behavior verification."
+      ]
     },
     {
       "file": "tests/fixtures/remote-typed-root-placement/fake-provider.ts",
       "initialBlob": "e0be25e37e1014caeeb403c56a7c4b046936a9b5",
       "status": "pending",
       "area": "remote",
-      "resumeState": "pending-primary-unstarted",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_7db56f55",
+      "primaryCommit": "22d3e51fb98828a0b2fb0d29f5f001692b00c7f1",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "22d3e51fb98828a0b2fb0d29f5f001692b00c7f1",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
-      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
+      "primaryBase": "22d3e51fb98828a0b2fb0d29f5f001692b00c7f1",
+      "primaryResult": "Kept unchanged. The listener is explicitly loopback:18765, matching models.json. GET /health answers readiness, unrelated requests return 404, and only POST chat/completions reaches JSON parsing. The request evidence append precedes scenario evaluation. stream(body) produces the SSE payload and the adapter adds content-type; scenario failures are logged and returned as 400. The error boundary intentionally covers scenario streaming, not request parsing or evidence persistence; broadening it would change behavior. The harness polls the exact health endpoint and the root runner retains inference/error/provider logs. Additional route, logger, or response helpers would split a readable single request journey without reducing semantic burden.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        "Read whole assigned focus, wisdom/values.md, and wisdom/quality/structural-readability-guidance.md.",
+        "Read only assigned reconciliation rows/candidate evidence: pending-primary-unstarted, no preserved or rejected candidate, joined blob equals baseline.",
+        "Static caller inspection only; no tests, setup, builds, fixture scripts, credential access, or cleanup executed.",
+        "Verified exact HEAD and focus blob against Git index and retained baseline. No source changed; formatter and source commit are not applicable."
+      ],
+      "primaryLimits": [
+        "Primary reading decision only; fresh independent judgment and audited isolated runtime gates belong to parent.",
+        "No source changes or new commit. Artifact remains untracked in the durable assigned worktree; old worktrees and candidate evidence preserved.",
+        "No new wisdom/values edits: existing simplicity/ownership guidance already covers the decision; parent owns aggregate wisdom.",
+        "Malformed JSON and request-log write failures remain outside the scenario catch; no speculative validation or fallback added.",
+        "Loopback/provider/log effects were reviewed statically only; no listener launched and no fixture /tmp paths written."
+      ]
     },
     {
       "file": "tests/fixtures/remote-typed-root-placement/models.json",
@@ -18652,12 +18744,12 @@
     {
       "file": "tests/turn-boundaries.test.ts",
       "initialBlob": "a9cff28172726411bd418587f5f44217036f76bb",
-      "status": "pending",
+      "status": "accepted",
       "area": "agent-history-session-goals",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_4fd8c261",
       "primaryCommit": "04ac60063eebde3592e35840c727d6db40920870",
-      "judgeIds": [],
+      "judgeIds": ["task_8e99c74c"],
       "sourceCommit": "04ac60063eebde3592e35840c727d6db40920870",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
       "pendingReason": "No dedicated primary/final independent focus judgment.",
@@ -18676,17 +18768,32 @@
         "Shared dependencies read-only; no deletion/cleanup/recovery, destructive Git, delegation, push, PR, merge, or publication performed.",
         "Runtime model verification remains parent-owned.",
         "Wisdom and values unchanged: no new general lesson; parent owns aggregate wisdom."
+      ],
+      "acceptedBlob": "a9cff28172726411bd418587f5f44217036f76bb",
+      "result": "Read the complete file, not only the unchanged diff. One two-call assistant record and the small result constructor make the distinguishing input visible next to all five expectations: missing second result, non-yield second result, failed second result, complete successful all-yield batch returning b, and ordinary assistant stop. Keeping these cases together lets a reader compare the predicate without traveling to separate scenarios or fixture machinery. The candidate and primaryBase contain the same exact focus blob.",
+      "systemReason": "Followed yieldedEntries into both background transcript consumers. background-ux sessionTimeline turns these returned entries into stop timestamps; background-ux-tui backgroundTurn requires a boundary after both launch and useful independent work. The error/mixed/incomplete expectations prevent either consumer from treating one tool hint as a completed handoff. Read the successful execute producer and SDK batch termination too: the producer throws on failed execution, pairs terminate with handoff on success, and Pi terminates only a nonempty all-terminate batch. No changed related file alters this journey. Independently reviewed the wisdom test and its SDK fixture: their subprocess/session ownership change is separate from these boundary assertions.",
+      "checks": [
+        "git diff --name-status primaryBase..candidate: exactly tests/fixtures/wisdom-extension-sdk.ts (added) and tests/wisdom-extension.test.ts (modified); both fully read.",
+        "git diff --check a1a45b3c26fac604060d3fbf22ba1f37642d06e6 04ac60063eebde3592e35840c727d6db40920870: exit 0.",
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md; no source edited and no wisdom notes added.",
+        "git ls-tree candidate and primaryBase verified focus byte identity against a9cff28172726411bd418587f5f44217036f76bb."
+      ],
+      "limits": [
+        "Static actual-code review only: no setup, tests, builds, dependency writes, or live auth/device checks. Parent owns audited isolated runtime gates; no passing runtime result is claimed.",
+        "Review provenance is the existing durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_8e99c74c. Source was read with git show/diff at the exact candidate and primaryBase, not checkout HEAD (55ce1a12ec17d21df5e9d26e6dcc4a0198400512). No temporary code checkout or test fixture was created by this judge.",
+        "Shared installed SDK JavaScript was read only to follow dispatch/termination/disposal, alongside candidate package.json/bun.lock; this does not certify installed adaptation/build parity.",
+        "No descendants were launched. Parent must independently verify runtime agent.model openai-codex/gpt-6.1-sol; model identity is not established by source review."
       ]
     },
     {
       "file": "tests/turn-boundaries.ts",
       "initialBlob": "5e9a22ac49df1f247fbad6482e1fc01b8784425d",
-      "status": "pending",
+      "status": "accepted",
       "area": "agent-history-session-goals",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_4fd8c261",
       "primaryCommit": "04ac60063eebde3592e35840c727d6db40920870",
-      "judgeIds": [],
+      "judgeIds": ["task_8e99c74c"],
       "sourceCommit": "04ac60063eebde3592e35840c727d6db40920870",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
       "pendingReason": "No dedicated primary/final independent focus judgment.",
@@ -18705,6 +18812,21 @@
         "Shared dependencies read-only; no deletion/cleanup/recovery, destructive Git, delegation, push, PR, merge, or publication performed.",
         "Runtime model verification remains parent-owned.",
         "Wisdom and values unchanged: no new general lesson; parent owns aggregate wisdom."
+      ],
+      "acceptedBlob": "5e9a22ac49df1f247fbad6482e1fc01b8784425d",
+      "result": "Read the whole helper from result index to returned entries. It visibly separates indexing tool results, selecting assistant stop entries, collecting every call result, requiring a nonempty complete successful string-handoff batch, choosing the latest terminal result timestamp, and filtering the original sequence. These decisions are short and contiguous. Extracting the predicate or timestamp reduction would hide the semantic difference between a per-tool hint and a completed batch; an abstraction or rename is unnecessary. Exact focus bytes match primaryBase.",
+      "systemReason": "Read its entire unit test and followed both unchanged callers. sessionTimeline consumes only the returned timestamps; backgroundTurn uses them against launch/useful-work times, then verifyCompletedJourney compares yield and completion evidence. Choosing the latest result rather than first yielded hint is therefore caller-relevant, not incidental sorting. Read src/typescript/extension.ts finish: unsuccessful execution throws, while successful handoff attaches terminate and details.handoff. Installed Pi reduces finalized calls with a nonempty every(terminate === true), explaining the helper's complete-batch representation for these execute transcripts. Ordinary assistant stop remains a separate control boundary. Related wisdom candidate paths were individually inspected and do not change this contract.",
+      "checks": [
+        "git diff --name-status primaryBase..candidate: exactly tests/fixtures/wisdom-extension-sdk.ts (added) and tests/wisdom-extension.test.ts (modified); both fully read.",
+        "git diff --check a1a45b3c26fac604060d3fbf22ba1f37642d06e6 04ac60063eebde3592e35840c727d6db40920870: exit 0.",
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md; no source edited and no wisdom notes added.",
+        "git ls-tree candidate and primaryBase verified focus byte identity against 5e9a22ac49df1f247fbad6482e1fc01b8784425d."
+      ],
+      "limits": [
+        "Static actual-code review only: no setup, tests, builds, dependency writes, or live auth/device checks. Parent owns audited isolated runtime gates; no passing runtime result is claimed.",
+        "Review provenance is the existing durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_8e99c74c. Source was read with git show/diff at the exact candidate and primaryBase, not checkout HEAD (55ce1a12ec17d21df5e9d26e6dcc4a0198400512). No temporary code checkout or test fixture was created by this judge.",
+        "Shared installed SDK JavaScript was read only to follow dispatch/termination/disposal, alongside candidate package.json/bun.lock; this does not certify installed adaptation/build parity.",
+        "No descendants were launched. Parent must independently verify runtime agent.model openai-codex/gpt-6.1-sol; model identity is not established by source review."
       ]
     },
     {
@@ -18840,12 +18962,12 @@
     {
       "file": "tests/wisdom-extension.test.ts",
       "initialBlob": "37436aaf746e97961721fb1e042882ef487c90e2",
-      "status": "pending",
+      "status": "accepted",
       "area": "agent-history-session-goals",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_4fd8c261",
       "primaryCommit": "04ac60063eebde3592e35840c727d6db40920870",
-      "judgeIds": ["task_b7cd3a68"],
+      "judgeIds": ["task_b7cd3a68", "task_8e99c74c"],
       "sourceCommit": "04ac60063eebde3592e35840c727d6db40920870",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
       "pendingReason": "No dedicated primary/final independent focus judgment. Related-patch review is evidence only; dedicated focus coverage remains required.",
@@ -18869,6 +18991,24 @@
         "Wisdom and values unchanged: no new general lesson; parent owns aggregate wisdom.",
         "SDK subprocess execution, TypeScript compatibility and timeout behavior need the parent isolated gate; this worker made no runtime-success claim.",
         "Durable code provenance: current worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_4fd8c261 at 04ac60063eebde3592e35840c727d6db40920870; formatter fixture /tmp/pr45-wisdom-format-BabWDV retained. Future test fixtures use bruv-wisdom-* owned mkdtemp roots and are retained."
+      ],
+      "acceptedRelatedJudges": ["task_8e99c74c"],
+      "acceptedBlob": "9925e4e230e9c635723337e3e23830fa5c46bfe6",
+      "result": "Read the complete main test and new 97-line SDK fixture, plus diffs from primaryBase and the supplied d95ff345b6246fb81e7941e6acea8587d39a2bb1 assertion evidence. Unit cases keep guidance wording, absence checks, hook shape, dynamic root authority, fail-closed denial-before-trust, command reporting, worktree settings, untrusted/default/absolute paths, invalid settings, and current trust/settings effects local to assertions. The main file now visibly owns project creation, owned-env construction, explicit argv child launch/deadline, and first-effect/two-turn observations. The SDK fixture owns one linear shipped-factory session: resource load, model/runtime selection, captured stub stream, bind session_start as root, attach child marker, optional command before first ordinary turn, two ordinary turns, then shutdown and disposal. This is a coherent lifetime extraction, not scattered arbitrary helpers or a context bag. Prior SDK assertions survive through the serialized result; commandPromptCount preserves the zero-model-call check before ordinary turns.",
+      "systemReason": "Followed registerProjectWisdom through rootAllowed and projectWisdomDir, then the shipped extension registration order and restoreAgentIdentity implementation. Wisdom registers before the general before_agent_start framing hook; its own isRoot callback restores the latest branch identity before either command or prompt, which matters because SDK prompt contributions accumulate in registration order rather than overwrite one another. session_start runs before the fixture attaches bruv-agent; both captured turns must have child framing and no wisdom/values guidance, and /wisdom must warn without invoking the model. SDK command dispatch returns before ordinary prompt dispatch; bindExtensions emits session_start; emitBeforeAgentStart exposes the progressively rendered prompt. Read extension session_shutdown and SDK dispose: fixture finally awaits extension shutdown and disposes even if shutdown throws. Static effect audit found each SDK scenario gets a new retained mkdtemp project and owned HOME/USERPROFILE/config/cache/SDK/TMP; the env is constructed without spreading inherited credentials or BRUV/T3 identity, and Git fixtures reuse it with explicit argv. Auth is pointed at owned sdk/auth.json, model refresh is disabled, and the stream is stubbed before prompts. In-memory sessionFile is absent, so notification attach does not start persisted remote/native deliveries. Parent kills a stuck child at 15 seconds inside the 20-second test; no deletion remains. These boundaries make the production SDK journey readable without changing production source.",
+      "checks": [
+        "git diff --name-status primaryBase..candidate: exactly tests/fixtures/wisdom-extension-sdk.ts (added) and tests/wisdom-extension.test.ts (modified); both fully read.",
+        "git diff --check a1a45b3c26fac604060d3fbf22ba1f37642d06e6 04ac60063eebde3592e35840c727d6db40920870: exit 0.",
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md; no source edited and no wisdom notes added.",
+        "Compared d95ff345b6246fb81e7941e6acea8587d39a2bb1..candidate: SDK lifecycle moved to fixture, process-global environment mutation removed, owned-temp deletion removed, Git environment isolation added, assertions retained in parent observations.",
+        "Inspected filesystem/network effects before considering any gate; did not run setup/tests/builds. Owned test state is retained by the candidate; judge created none.",
+        "git status --short was clean before writing this sole untracked result artifact; exact changed-path blobs verified with git ls-tree."
+      ],
+      "limits": [
+        "Static actual-code review only: no setup, tests, builds, dependency writes, or live auth/device checks. Parent owns audited isolated runtime gates; no passing runtime result is claimed.",
+        "Review provenance is the existing durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_8e99c74c. Source was read with git show/diff at the exact candidate and primaryBase, not checkout HEAD (55ce1a12ec17d21df5e9d26e6dcc4a0198400512). No temporary code checkout or test fixture was created by this judge.",
+        "Shared installed SDK JavaScript was read only to follow dispatch/termination/disposal, alongside candidate package.json/bun.lock; this does not certify installed adaptation/build parity.",
+        "No descendants were launched. Parent must independently verify runtime agent.model openai-codex/gpt-6.1-sol; model identity is not established by source review."
       ]
     },
     {
@@ -21133,6 +21273,16 @@
         "No wisdom or values edits: the requested aggregate wisdom belongs to the parent. Existing cleanup code for mkdtemp-owned preview fixtures was inspected only, never executed.",
         "No runtime assertion results are claimed. The parent must execute the retained explicit-environment gates. Existing preview rm calls target locally created mkdtemp paths and were reviewed only; no cleanup was run."
       ]
+    },
+    {
+      "file": "tests/fixtures/wisdom-extension-sdk.ts",
+      "initialBlob": "absent",
+      "area": "agent-history-session-goals",
+      "status": "pending",
+      "resumeState": "needs-primary-final-blob",
+      "sourceCommit": "04ac60063eebde3592e35840c727d6db40920870",
+      "acceptedRelatedJudges": ["task_8e99c74c"],
+      "acceptedBlob": "7db5150623e2dee2c09c9726ab91d8cc6f494d82"
     }
   ],
   "completedAreas": {
@@ -21152,10 +21302,10 @@
     "baselineFiles": 766,
     "finalGate": "pending; incomplete focus coverage",
     "liveAuth": "unverified/failing; preserved",
-    "accepted": 744,
-    "total": 834,
-    "pending": 90,
-    "sourceExtras": 68,
+    "accepted": 747,
+    "total": 835,
+    "pending": 88,
+    "sourceExtras": 69,
     "checkout": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
     "branch": "bruv/readability-pr45-sol-continuation",
     "scheduler": "/home/tnfssc/.bruv/worktrees/pr45-flow-c2a2fd8a.mjs"

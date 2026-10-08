@@ -2126,11 +2126,11 @@
       "judgeRounds": [],
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_b143960d",
+        "primaryCommit": "f5d7a4189866c067dc8fc90a3c766c53772fbdb7",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary-unstarted",
+        "sourceCommit": "f5d7a4189866c067dc8fc90a3c766c53772fbdb7",
+        "state": "needs-judge",
         "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
       },
       "acceptedBlob": null
@@ -2142,11 +2142,11 @@
       "judgeRounds": [],
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_b143960d",
+        "primaryCommit": "f5d7a4189866c067dc8fc90a3c766c53772fbdb7",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary-unstarted",
+        "sourceCommit": "f5d7a4189866c067dc8fc90a3c766c53772fbdb7",
+        "state": "needs-judge",
         "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
       },
       "acceptedBlob": null
@@ -2158,11 +2158,11 @@
       "judgeRounds": [],
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_7db56f55",
+        "primaryCommit": "22d3e51fb98828a0b2fb0d29f5f001692b00c7f1",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary-unstarted",
+        "sourceCommit": "22d3e51fb98828a0b2fb0d29f5f001692b00c7f1",
+        "state": "needs-judge",
         "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
       },
       "acceptedBlob": null
@@ -2174,11 +2174,11 @@
       "judgeRounds": [],
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_7db56f55",
+        "primaryCommit": "22d3e51fb98828a0b2fb0d29f5f001692b00c7f1",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary-unstarted",
+        "sourceCommit": "22d3e51fb98828a0b2fb0d29f5f001692b00c7f1",
+        "state": "needs-judge",
         "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
       },
       "acceptedBlob": null
@@ -2190,11 +2190,11 @@
       "judgeRounds": [],
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_7db56f55",
+        "primaryCommit": "22d3e51fb98828a0b2fb0d29f5f001692b00c7f1",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary-unstarted",
+        "sourceCommit": "22d3e51fb98828a0b2fb0d29f5f001692b00c7f1",
+        "state": "needs-judge",
         "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
       },
       "acceptedBlob": null
