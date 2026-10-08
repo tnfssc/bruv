@@ -2871,10 +2871,11 @@
       "launchBase": "3fc00c2732f544ba63d4a2e22449184a90bd29f7",
       "resume": {
         "status": "pending",
-        "primaryId": "task_bf3b25b4",
+        "primaryId": "task_f4f56799",
+        "primaryCommit": "b54079d88b5e8336af51204d28f117eacae5b07b",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-uncommitted-candidate",
+        "sourceCommit": "b54079d88b5e8336af51204d28f117eacae5b07b",
+        "state": "needs-judge",
         "reason": "Primary was cancelled during the incident. A changed focus blob survives only in the primary working tree, not its HEAD; no completed independent actual-code judgment or accepted blob is recorded. Preserve the uncommitted candidate, dist and runtime-assets without cleanup."
       }
     },

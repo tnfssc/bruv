@@ -11852,12 +11852,31 @@
       "initialBlob": "41a49cda7d40568bdbe2060020d8b2dcdb9ed4b6",
       "status": "pending",
       "area": "execution-tasks-questions",
-      "resumeState": "pending-uncommitted-candidate",
-      "primaryId": "task_bf3b25b4",
+      "resumeState": "needs-judge",
+      "primaryId": "task_f4f56799",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "b54079d88b5e8336af51204d28f117eacae5b07b",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
-      "pendingReason": "Primary was cancelled during the incident. A changed focus blob survives only in the primary working tree, not its HEAD; no completed independent actual-code judgment or accepted blob is recorded. Preserve the uncommitted candidate, dist and runtime-assets without cleanup."
+      "pendingReason": "Primary was cancelled during the incident. A changed focus blob survives only in the primary working tree, not its HEAD; no completed independent actual-code judgment or accepted blob is recorded. Preserve the uncommitted candidate, dist and runtime-assets without cleanup.",
+      "primaryCommit": "b54079d88b5e8336af51204d28f117eacae5b07b",
+      "primaryBase": "8f186d90eb5047304492c72c6bc56a7d0f37204d",
+      "primaryResult": "Reused the coherent preserved SessionJobs candidate: one parent-session fixture owns its manager, typed notification sink, service dispatch, raw execute entry, registered-tool entry, and asynchronous shutdown. Each test now presents its launch/race/delivery assertions in sequence, with timing/signal/handler changes explicit at the call site. Cancellation handlers still visibly wrap real dispatch; batch foreground ownership and handoff assertions remain local. Raw RPC-only and credential-isolation tests stay separate. This resolves the original unjoined reading burden rather than assuming the cancelled candidate was integrated. Rework evidence is null; no prior rejected judgment exists.",
+      "primaryPaths": ["tests/job-bridge.test.ts"],
+      "primaryChecks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md; inspected focus ownership/reconciliation rows. Current focus started at baseline blob 41a49cda7d40568bdbe2060020d8b2dcdb9ed4b6.",
+        "Inspected exact preserved uncommitted candidate at /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_bf3b25b4/tests/job-bridge.test.ts; its fdfd204668c37b58853330109de78d0258e6896c bytes are the committed focus. Old worktree, candidate, dist, and runtime-assets untouched; no branch merge.",
+        "Traced shipped routing in src/agent/extension.ts, src/typescript/extension.ts, src/typescript/execution.ts, src/tasks/job-service.ts and src/tasks/task-manager.ts: session manager/service attachment, wrapper cancellation, provisional ACK commit on clean exit, foreground notification handoff, and shutdown.",
+        "Static comparison: every original expect statement remains in original order after normalizing jobs.manager/jobs.notifications accesses and whitespace; test titles unchanged. Credential-isolation scenario byte-identical. No test execution.",
+        "Reviewed filesystem/process effects: focus commands are read/printf/exit or owned child argv; execution inherits scrubbed parent env and TaskManager shutdown terminates its own tasks. Parent must supply isolated env for runtime gates; no runtime gate launched.",
+        "Repository formatter invoked via node child_process argv, executable /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/@biomejs/biome/bin/biome, args [\"format\",\"--write\",\"tests/job-bridge.test.ts\"], isolated retained HOME/config/SDK/TMPDIR fixture /tmp/pr45-job-bridge-format-HIz7q6; exit 0, Formatted 1 file, no fixes applied.",
+        "git diff --check passed. Commit contains only tests/job-bridge.test.ts; no active commit hooks observed, signing disabled to avoid credential use."
+      ],
+      "primaryLimits": [
+        "No tests, setup, builds, live auth, or device access performed; parent owns audited isolated batch gates and independent exact-candidate judgment. Runtime behavior remains unverified.",
+        "Initial reconciliation logging was broader than the focus restriction; corrected all subsequent ledger/evidence queries to focus rows only. No evidence files or unrelated source edited.",
+        "Formatter fixture and .pr45-format-evidence.json retained; durable source provenance is this worktree commit and the preserved prior candidate path.",
+        "Safety for ALL descendants: no sudo, no recovery actions, no deletion/cleanup shell commands, no HOME or inherited SDK/config cleanup, no nested shell traps. Do not read/use user secrets. Use node child_process argv plus explicit isolated env for tests; allocate fresh disposable HOME/config/SDK dirs with fs.mkdtemp and retain them rather than delete. If real credential/device access is required, return that blocker instead of using it. Do not run repository tests or setup without first checking their filesystem/network side effects. Existing dependencies can be used read-only from /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules. Bun is /home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin/bun. Worktree t3 setup may fail because PATH lacks bun; inspect outcome, do not guess. No repetitive full builds for each worker. Limit to SIX concurrent leaf workers total, primary and judge combined. Give independent code/review agents worktrees. Propagate these safety constraints verbatim. No destructive git operations or user-data mutations."
+      ]
     },
     {
       "file": "tests/job-service.test.ts",

@@ -1675,7 +1675,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_f4f56799",
         "branch": "bruv/pr45-primary-tests-job-bridge.test.ts-f4f56799",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "b54079d88b5e8336af51204d28f117eacae5b07b"
       },
       {
         "id": "task_dcb5f688",
