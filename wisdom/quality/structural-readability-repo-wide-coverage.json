@@ -2101,12 +2101,30 @@
       "file": "scripts/offline-openai-default-transport.ts",
       "initialBlob": "643359a3fb7221ed0fbf9c5e97259eb2b70c733a",
       "status": "pending",
-      "primaryId": null,
-      "sourceCommit": null,
+      "primaryId": "task_d54f9cf5",
+      "sourceCommit": "0b1faebd03e5eb7711dbcba5a58453564a28cc36",
       "judgeIds": [],
-      "resumeState": "own_primary_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "0b1faebd03e5eb7711dbcba5a58453564a28cc36",
+      "primaryBase": "0b1faebd03e5eb7711dbcba5a58453564a28cc36",
+      "primaryResult": "scripts/ci.sh passes --source-only for macOS and invokes both targets after the Linux build. The focus validates that sole optional argument, resolves both entrypoints beside the script, filters credential-named environment variables and installs the explicit fake loopback gate. Its single sequential loop skips the compiled target when requested, first launches the same command with the gate blank and requires nonzero exit plus the gate diagnostic, then launches with the gate set and requires zero exit plus the full/mini session.updated and HTTP 401 marker. Both launches have the same visible 15-second bound and piped output. src/cli.ts owns the early hidden-flag permission check and exits before normal CLI startup; src/live/offline-transport-probe.ts owns the ephemeral loopback listener, fake authorization, production defaultSocket call, protocol assertions, timeout and finally teardown. These are distinct execution and protocol responsibilities, already separated at their natural boundary. Extracting the two short adjacent launch/check blocks would hide rather than clarify their required ordering; renaming variables or replacing the two-entry tuple would be cosmetic. All existing gate, success, redaction and protocol assertions are unchanged.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        "Read wisdom/values.md and structural-readability guidance, repo-wide scope and relevant repo-wide/area ledger entries.",
+        "Read the preserved live-native-audio-resume-reconciliation.json focus record: joined/area/initial blob 643359a3fb7221ed0fbf9c5e97259eb2b70c733a; no former primary, judge verdict, candidate origin or rework for this focus.",
+        "Traced CI source-only and paired entrypoints, denied and allowed CLI gate outcomes, loopback protocol ownership and production defaultSocket authority by source inspection.",
+        "git rev-parse HEAD and HEAD:focus recorded; git hash-object focus matches committed blob.",
+        "Initial git status --short was clean. No source edits, candidate import or empty commit."
+      ],
+      "primaryLimits": [
+        "No repository tests, builds or setup run: parent owns audited isolated batch gates. This is a primary reading decision, not an independent judge verdict or runtime acceptance.",
+        "Automatic setup host-hash failure evidence was not rerun, bypassed or relabeled; no manual setup performed.",
+        "No devices, providers, credentials, recovery, cleanup, destructive Git operations, delegation, pushes, PRs or merges. Old worktrees and candidate bytes preserved.",
+        "Environment filtering and loopback-only behavior were inspected in source, not exercised; physical/provider/macOS parity remains outside this proof.",
+        "No wisdom edits: parent owns aggregate wisdom. No source change means sourceCommit is the existing launch HEAD."
+      ]
     },
     {
       "file": "scripts/pi-host-adaptation.ts",

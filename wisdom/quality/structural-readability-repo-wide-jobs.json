@@ -346,7 +346,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_d54f9cf5",
         "branch": "bruv/pr45-primary-scripts-offline-openai-defa-d54f9cf5",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "0b1faebd03e5eb7711dbcba5a58453564a28cc36"
       },
       {
         "id": "task_93771cb4",
