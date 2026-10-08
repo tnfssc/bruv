@@ -15105,11 +15105,11 @@
     {
       "file": "tests/task-title.test.ts",
       "initialBlob": "6de23efe560776791c57b3574e1778c9718463dc",
-      "status": "pending",
+      "status": "accepted",
       "area": "execution-tasks-questions",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_d65db709",
-      "judgeIds": [],
+      "judgeIds": ["task_046a79ee"],
       "sourceCommit": "3e87cdd2f2b1362683fc982e2ceccc00eb244ef0",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
       "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage.",
@@ -15160,6 +15160,19 @@
         "Schema registration helper now initializes extension three times, once per relevant test. Stub event/command/render callbacks are not invoked, but extension initialization can read configuration; parent fixture HOME/config/SDK is necessary. No execute handlers or setup probe execute function were invoked.",
         "No recovery, credentials, user-data mutation, destructive git, shell cleanup, inherited HOME removal, guard bypass, dependency changes, push, PR or merge. No descendants launched; runtime agent.model verification is parent-owned.",
         "Wisdom unchanged: parent owns aggregate wisdom. Formatter fixture and its provenance are retained; provenance points to this durable worktree, not a /tmp code checkout."
+      ],
+      "acceptedBlob": "6de23efe560776791c57b3574e1778c9718463dc",
+      "result": "Read the entire candidate test and the actual normalization helper. Its single journey starts with explicit-title precedence, then exercises whitespace-only metadata falling back to a newline/ANSI-bearing literal prompt, then keeps the three length/prefix/ellipsis checks next to the one preview they describe, and ends with absent inputs returning empty. The normalization, authority choice, and bounded preview are readily visible without a table or helper. The focus blob is identical to primaryBase. Also read the only candidate-changed path, tests/tool-schema.test.ts, and its full diff; the separate decision below judges that change.",
+      "systemReason": "taskTitle strips terminal sequences and control characters, collapses whitespace and trims; launchTaskTitle first returns a nonempty normalized explicit title, otherwise normalizes the literal prompt and caps it at 119 trimmed characters plus an ellipsis. Followed the native batch launch/projection, SSH launch, local session preparation/launch metadata, and worktree reservations in job-service: all use this helper and apply the caller-owned Agent task default. taskRowFromLaunch separately sanitizes explicit metadata and uses this bounded helper for command/prompt fallback, without inferring success from the title. Keeping the direct pure-helper test intact preserves that ownership boundary.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "git show exact candidate:tests/task-title.test.ts and relevant candidate system callers.",
+        "git diff --name-status primaryBase candidate: only tests/tool-schema.test.ts changed; inspected its whole candidate and diff.",
+        "git diff --exit-code primaryBase candidate -- tests/task-title.test.ts: empty; candidate and base Git blob both 6de23efe560776791c57b3574e1778c9718463dc."
+      ],
+      "limits": [
+        "Static actual-code review only: no setup, tests, builds, dependency changes, network requests, live auth/device access, cleanup, or source edits performed. Parent owns audited isolated runtime gates and runtime agent.model verification (openai-codex/gpt-6.1-sol); this review does not verify either.",
+        "Review performed in the assigned durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_046a79ee. Exact Git objects, not checkout HEAD, are the code provenance. Worktrees and candidate evidence retained. No descendants launched."
       ]
     },
     {
@@ -15352,11 +15365,11 @@
     {
       "file": "tests/tool-schema.test.ts",
       "initialBlob": "2bcea71c82e3f657a622c485085eb03872b3732b",
-      "status": "pending",
+      "status": "accepted",
       "area": "execution-tasks-questions",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_d65db709",
-      "judgeIds": [],
+      "judgeIds": ["task_046a79ee"],
       "sourceCommit": "3e87cdd2f2b1362683fc982e2ceccc00eb244ef0",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
       "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage.",
@@ -15407,6 +15420,20 @@
         "Schema registration helper now initializes extension three times, once per relevant test. Stub event/command/render callbacks are not invoked, but extension initialization can read configuration; parent fixture HOME/config/SDK is necessary. No execute handlers or setup probe execute function were invoked.",
         "No recovery, credentials, user-data mutation, destructive git, shell cleanup, inherited HOME removal, guard bypass, dependency changes, push, PR or merge. No descendants launched; runtime agent.model verification is parent-owned.",
         "Wisdom unchanged: parent owns aggregate wisdom. Formatter fixture and its provenance are retained; provenance points to this durable worktree, not a /tmp code checkout."
+      ],
+      "acceptedRelatedJudges": ["task_046a79ee"],
+      "acceptedBlob": "540a0d1a2cf47c8d09a7040cc7b29637d780655f",
+      "result": "Read both complete base and candidate tests and the exact diff. The former single test made the reader cross registration inventory, probe equivalence, schema presentation, unrelated synthetic enum conversion and call validation under one name. registeredTools now owns only capture of registration into a newly allocated array; each registration-dependent test calls it locally. Inventory and probe parity remain one meaningful comparison; prompt snippet, required code, timeout minimum and absent field descriptions remain together; the synthetic enum example no longer needs an extension fixture; coercion and both rejection inputs still target the actual captured execute tool. The helper returns no context bag and no shared mutable state. Every original assertion is retained.",
+      "systemReason": "Followed asynchronousTasksExtension into registerExecuteTool: the registered tool spreads executeDeclaration and adds the prompt snippet, while its execution callback parses ExecuteParameters before isolated execution. ExecuteParameters owns code presence and the 0.1 timeout minimum. toolParameters converts Zod input schemas to draft-7 and removes the dialect/standard wrappers. setupProbeOrchestration projects the same declaration into parametersJsonSchema and denies execution. The candidate continues to compare the registered schema to the probe, not a copied expected declaration; the enum conversion and SDK validateToolArguments checks remain distinct boundary checks rather than pretending to execute the real handler. No production source path changed.",
+      "checks": [
+        "git diff 42fd66090a7d946383ab7efe2f796f341b48e7d1 3e87cdd2f2b1362683fc982e2ceccc00eb244ef0 -- tests/tool-schema.test.ts; full base and candidate source inspected.",
+        "Candidate-wide changed-path inventory contains only this test; no changed related production source to inspect.",
+        "Read candidate registration, execution argument parsing, shared declaration, schema conversion and setup probe implementation.",
+        "git rev-parse candidate:tests/tool-schema.test.ts = 540a0d1a2cf47c8d09a7040cc7b29637d780655f."
+      ],
+      "limits": [
+        "Static actual-code review only: no setup, tests, builds, dependency changes, network requests, live auth/device access, cleanup, or source edits performed. Parent owns audited isolated runtime gates and runtime agent.model verification (openai-codex/gpt-6.1-sol); this review does not verify either.",
+        "Review performed in the assigned durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_046a79ee. Exact Git objects, not checkout HEAD, are the code provenance. Worktrees and candidate evidence retained. No descendants launched."
       ]
     },
     {
@@ -15526,11 +15553,11 @@
     {
       "file": "tests/typescript-runner.test.ts",
       "initialBlob": "088665c0de3d9d9b07107ffe901dd2dc54d6f20f",
-      "status": "pending",
+      "status": "accepted",
       "area": "execution-tasks-questions",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_517c091d",
-      "judgeIds": [],
+      "judgeIds": ["task_046a79ee"],
       "sourceCommit": "f5b9b593aa21a13c52ae3f681777c02590aff8b7",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
       "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage.",
@@ -15550,6 +15577,21 @@
         "No delegation, dependency writes, cleanup/deletion commands, recovery investigation, or publication.",
         "Initial evidence output was overbroad and truncated; subsequent evidence inspection was filtered to the two assigned rows.",
         "Existing afterEach removes only its mkdtemp directory; inspected, never executed. Child HOME is under that directory; tests do not establish a fresh config/SDK environment themselves. Any parent gate must provide owned isolated config/SDK and retain its fixtures. Installed-package imports have not been runtime-audited here."
+      ],
+      "acceptedBlob": "088665c0de3d9d9b07107ffe901dd2dc54d6f20f",
+      "result": "Read the entire 477-line exact-candidate focus, including fixture hooks and every test, rather than adopting the primary summary. A fresh mkdtemp directory owns each fixture graph; runTypeScript sends source to an explicit compiled-binary/internal-dispatch argv, uses its owned directory by default, supplies HOME beneath that fixture and only PATH, closes stdin, and awaits both output streams and exit together. Package-read tests visibly override cwd to the repository. Individual tests keep the relevant package manifests, conflicting import/require entries, blocked private paths, cycle participants, counters, aliases, symlinks and lazy failing modules immediately before their execution and expectations. Those concrete graphs explain ESM identity, native CommonJS cache/cycles/module.require, no retry after evaluation error, type-only import erasure, pnpm canonicalization, CJS-to-ESM and computed dynamic imports, and all require.resolve search paths. The simple filesystem/command example, globals-with-spaces example and exit/sanitized-error expectations remain directly readable. A generic package fixture builder or arbitrary describe split would hide the decisive graph edges without reducing reconstruction. The final failure case overlaps the sanitized-error case, but it does not create a material structural reading problem.",
+      "systemReason": "Followed production execution.ts spawning the same internal runner argument, the early cli.ts dispatch and its data-URL diagnostic sanitization, and all of runner.ts. The runner reads stdin, creates a cwd-relative synthetic entry, initializes module lexing, keeps native CommonJS evaluation/cache while customizing resolution, canonicalizes package targets, respects export conditions/private paths and package imports, erases external TS types before graph registration, and registers only reachable ESM files. Rewritten dynamic imports resolve at evaluation time, preserving lazy missing-module errors; root static imports retain filesystem URLs. Runtime globals anchor require/__dirname/__filename to the synthetic entry, then evaluate a transpiled in-memory data URL and drain jobs/images in finally. The local fixtures expose these decisions directly instead of reconstructing a resolver DSL. The test env does not enable the worker job bridge or image channel; their initializer gates were inspected. Owned afterEach removal was inspected only, never executed.",
+      "checks": [
+        "git show f5b9b593aa21a13c52ae3f681777c02590aff8b7:tests/typescript-runner.test.ts: read complete file in sequential ranges.",
+        "git diff --name-status f5b9b593aa21a13c52ae3f681777c02590aff8b7 f5b9b593aa21a13c52ae3f681777c02590aff8b7: empty (assigned primaryBase equals candidate).",
+        "Read complete exact-candidate src/typescript/runner.ts and relevant CLI/production spawn/bridge/image callers.",
+        "git rev-parse candidate:tests/typescript-runner.test.ts = 088665c0de3d9d9b07107ffe901dd2dc54d6f20f.",
+        "Filesystem/process effects inspected before any possible gate: owned mkdtemp fixture writes/symlinks, explicit child argv/env, repository dependency reads, exact-directory afterEach rm. No gates run."
+      ],
+      "limits": [
+        "Static actual-code review only: no setup, tests, builds, dependency changes, network requests, live auth/device access, cleanup, or source edits performed. Parent owns audited isolated runtime gates and runtime agent.model verification (openai-codex/gpt-6.1-sol); this review does not verify either.",
+        "Review performed in the assigned durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_046a79ee. Exact Git objects, not checkout HEAD, are the code provenance. Worktrees and candidate evidence retained. No descendants launched.",
+        "Existing test afterEach deletes its own mkdtemp directory; inspected but not run. Tests use OS temporary source fixtures while review provenance remains this durable Git worktree. Any parent-run gates must retain their owned HOME/config/SDK fixtures and audit compiled-binary/import side effects; this static review is not a complete dependency startup-effect audit."
       ]
     },
     {

@@ -4,7 +4,8 @@ import { validateToolArguments, type JsonObject } from "@earendil-works/pi-ai";
 import { toolParameters } from "../src/tool-schema";
 import extension from "../src/agent/extension";
 import { setupProbeOrchestration } from "../src/live/setup-probe";
-test("only execute is registered with a provider-friendly schema", () => {
+
+function registeredTools() {
   const tools: any[] = [];
   extension({
     registerTool: (t: any) => tools.push(t),
@@ -16,23 +17,39 @@ test("only execute is registered with a provider-friendly schema", () => {
     registerMessageRenderer() {},
     on() {},
   } as any);
+  return tools;
+}
+
+test("only execute is registered and setup probes share its declaration", () => {
+  const tools = registeredTools();
   expect(tools.map((t) => t.name)).toEqual(["execute"]);
   expect(setupProbeOrchestration().tools).toEqual(
     tools.map(({ name, description, parameters }) => ({ name, description, parametersJsonSchema: parameters })),
   );
-  expect(tools[0].promptSnippet).toBe("Run JS/TS.");
-  expect(tools[0].parameters).toMatchObject({
+});
+
+test("registered execute has a provider-friendly schema", () => {
+  const [execute] = registeredTools();
+  expect(execute.promptSnippet).toBe("Run JS/TS.");
+  expect(execute.parameters).toMatchObject({
     type: "object",
     required: ["code"],
     properties: { code: { type: "string" }, timeoutSeconds: { type: "number", minimum: 0.1 } },
   });
-  expect(tools[0].parameters.properties.code.description).toBeUndefined();
-  expect(tools[0].parameters.properties.timeoutSeconds.description).toBeUndefined();
+  expect(execute.parameters.properties.code.description).toBeUndefined();
+  expect(execute.parameters.properties.timeoutSeconds.description).toBeUndefined();
+});
+
+test("toolParameters preserves enum choices in JSON Schema", () => {
   expect(toolParameters(z.object({ choice: z.enum(["one", "two"]) }))).toMatchObject({
     properties: { choice: { enum: ["one", "two"] } },
   });
+});
+
+test("registered execute coerces valid arguments and rejects missing or out-of-range values", () => {
+  const [execute] = registeredTools();
   expect(
-    validateToolArguments(tools[0], {
+    validateToolArguments(execute, {
       type: "toolCall",
       id: "t",
       name: "execute",
@@ -42,6 +59,6 @@ test("only execute is registered with a provider-friendly schema", () => {
   const invalidArgs: JsonObject[] = [{}, { code: "ok", timeoutSeconds: 0 }];
   for (const args of invalidArgs)
     expect(() =>
-      validateToolArguments(tools[0], { type: "toolCall", id: "t", name: "execute", arguments: args }),
+      validateToolArguments(execute, { type: "toolCall", id: "t", name: "execute", arguments: args }),
     ).toThrow();
 });

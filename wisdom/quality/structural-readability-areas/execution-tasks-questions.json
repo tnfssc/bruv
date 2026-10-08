@@ -3676,37 +3676,39 @@
     {
       "focus": "tests/task-title.test.ts",
       "initialBlob": "6de23efe560776791c57b3574e1778c9718463dc",
-      "status": "pending",
+      "status": "accepted",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "6de23efe560776791c57b3574e1778c9718463dc",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "6de23efe560776791c57b3574e1778c9718463dc",
         "primaryId": "task_d65db709",
         "primaryCommit": "3e87cdd2f2b1362683fc982e2ceccc00eb244ef0",
-        "judgeIds": [],
+        "judgeIds": ["task_046a79ee"],
         "sourceCommit": "3e87cdd2f2b1362683fc982e2ceccc00eb244ef0",
-        "state": "needs-judge",
-        "reason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage."
+        "state": "accepted-joined",
+        "reason": "Read the entire candidate test and the actual normalization helper. Its single journey starts with explicit-title precedence, then exercises whitespace-only metadata falling back to a newline/ANSI-bearing literal prompt, then keeps the three length/prefix/ellipsis checks next to the one preview they describe, and ends with absent inputs returning empty. The normalization, authority choice, and bounded preview are readily visible without a table or helper. The focus blob is identical to primaryBase. Also read the only candidate-changed path, tests/tool-schema.test.ts, and its full diff; the separate decision below judges that change."
       }
     },
     {
       "focus": "tests/tool-schema.test.ts",
       "initialBlob": "2bcea71c82e3f657a622c485085eb03872b3732b",
-      "status": "pending",
+      "status": "accepted",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "540a0d1a2cf47c8d09a7040cc7b29637d780655f",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "540a0d1a2cf47c8d09a7040cc7b29637d780655f",
         "primaryId": "task_d65db709",
         "primaryCommit": "3e87cdd2f2b1362683fc982e2ceccc00eb244ef0",
-        "judgeIds": [],
+        "judgeIds": ["task_046a79ee"],
         "sourceCommit": "3e87cdd2f2b1362683fc982e2ceccc00eb244ef0",
-        "state": "needs-judge",
-        "reason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage."
+        "state": "accepted-joined",
+        "reason": "Read both complete base and candidate tests and the exact diff. The former single test made the reader cross registration inventory, probe equivalence, schema presentation, unrelated synthetic enum conversion and call validation under one name. registeredTools now owns only capture of registration into a newly allocated array; each registration-dependent test calls it locally. Inventory and probe parity remain one meaningful comparison; prompt snippet, required code, timeout minimum and absent field descriptions remain together; the synthetic enum example no longer needs an extension fixture; coercion and both rejection inputs still target the actual captured execute tool. The helper returns no context bag and no shared mutable state. Every original assertion is retained."
       }
     },
     {
@@ -3822,19 +3824,20 @@
     {
       "focus": "tests/typescript-runner.test.ts",
       "initialBlob": "088665c0de3d9d9b07107ffe901dd2dc54d6f20f",
-      "status": "pending",
+      "status": "accepted",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "088665c0de3d9d9b07107ffe901dd2dc54d6f20f",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "088665c0de3d9d9b07107ffe901dd2dc54d6f20f",
         "primaryId": "task_517c091d",
         "primaryCommit": "f5b9b593aa21a13c52ae3f681777c02590aff8b7",
-        "judgeIds": [],
+        "judgeIds": ["task_046a79ee"],
         "sourceCommit": "f5b9b593aa21a13c52ae3f681777c02590aff8b7",
-        "state": "needs-judge",
-        "reason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage."
+        "state": "accepted-joined",
+        "reason": "Read the entire 477-line exact-candidate focus, including fixture hooks and every test, rather than adopting the primary summary. A fresh mkdtemp directory owns each fixture graph; runTypeScript sends source to an explicit compiled-binary/internal-dispatch argv, uses its owned directory by default, supplies HOME beneath that fixture and only PATH, closes stdin, and awaits both output streams and exit together. Package-read tests visibly override cwd to the repository. Individual tests keep the relevant package manifests, conflicting import/require entries, blocked private paths, cycle participants, counters, aliases, symlinks and lazy failing modules immediately before their execution and expectations. Those concrete graphs explain ESM identity, native CommonJS cache/cycles/module.require, no retry after evaluation error, type-only import erasure, pnpm canonicalization, CJS-to-ESM and computed dynamic imports, and all require.resolve search paths. The simple filesystem/command example, globals-with-spaces example and exit/sanitized-error expectations remain directly readable. A generic package fixture builder or arbitrary describe split would hide the decisive graph edges without reducing reconstruction. The final failure case overlaps the sanitized-error case, but it does not create a material structural reading problem."
       }
     },
     {
@@ -4340,8 +4343,8 @@
     ]
   },
   "resumeStatus": {
-    "accepted": 91,
-    "pending": 10
+    "accepted": 94,
+    "pending": 7
   },
   "extraFiles": [
     {
