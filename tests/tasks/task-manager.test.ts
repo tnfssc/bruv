@@ -1,0 +1,780 @@
+import { afterEach, describe, expect, spyOn, test } from "bun:test";
+import { mkdtemp, readFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { fileURLToPath } from "node:url";
+import { type TaskInspection, TaskManager, type TaskSummary } from "../../src/tasks/task-manager";
+
+import { ownedFixtureEnv } from "../helpers/helpers";
+import { ownedProcessSuite } from "../helpers/owned-process-suite";
+
+ownedProcessSuite(import.meta.path, () => {
+  const managers: TaskManager[] = [];
+
+  afterEach(async () => {
+    await Promise.all(managers.splice(0).map((manager) => manager.shutdown()));
+  });
+
+  function commandLaunch(command: string) {
+    return {
+      kind: "command" as const,
+      command: "/bin/sh",
+      args: ["-c", command],
+      displayCommand: command,
+      cwd: process.cwd(),
+    };
+  }
+
+  function managerWithCompletion() {
+    let resolveCompletion!: (task: TaskInspection) => void;
+    const completion = new Promise<TaskInspection>((resolve) => {
+      resolveCompletion = resolve;
+    });
+    const manager = new TaskManager(resolveCompletion);
+    managers.push(manager);
+    return { manager, completion };
+  }
+
+  describe("asynchronous task manager", () => {
+    test("spawn returns while the process continues and completion is reported", async () => {
+      const { manager, completion } = managerWithCompletion();
+      const started = performance.now();
+      const task = manager.spawn(commandLaunch("sleep 0.2; printf completed"));
+
+      expect(performance.now() - started).toBeLessThan(100);
+      expect(task.status).toBe("running");
+
+      const finished = await completion;
+      expect(finished.status).toBe("completed");
+      expect(finished.exitCode).toBe(0);
+      expect(finished.output).toBe("completed");
+    });
+
+    test("contains completion callback failures on normal process close", async () => {
+      const error = spyOn(console, "error").mockImplementation(() => {});
+      let notifications = 0;
+      const manager = new TaskManager(() => {
+        notifications++;
+        throw new Error("notification failed");
+      });
+      managers.push(manager);
+      try {
+        const task = manager.spawn(commandLaunch("printf preserved"));
+        const finished = await manager.wait(task.id);
+
+        expect(finished.status).toBe("completed");
+        expect(finished.output).toBe("preserved");
+        expect(manager.inspect(task.id).output).toBe("preserved");
+        expect(notifications).toBe(1);
+        expect(error).toHaveBeenCalledTimes(1);
+      } finally {
+        error.mockRestore();
+      }
+    });
+
+    test("contains callback failures in an aborted-completed foreground race", async () => {
+      const error = spyOn(console, "error").mockImplementation(() => {});
+      let notifications = 0;
+      const manager = new TaskManager(() => {
+        notifications++;
+        throw new Error("notification failed");
+      });
+      managers.push(manager);
+      try {
+        const task = manager.spawn({ ...commandLaunch("printf preserved"), notifyOnComplete: false });
+        await manager.wait(task.id);
+        const signal = AbortSignal.abort();
+
+        const result = await manager.foreground(task.id, 1_000, signal);
+        const repeated = await manager.foreground(task.id, 1_000, signal);
+
+        expect(result.background).toBe(true);
+        expect(result.status).toBe("completed");
+        expect(result.output).toBe("preserved");
+        expect(repeated.background).toBe(true);
+        expect(notifications).toBe(1);
+        expect(error).toHaveBeenCalledTimes(1);
+        expect(manager.inspect(task.id).output).toBe("preserved");
+      } finally {
+        error.mockRestore();
+      }
+    });
+
+    test("supports incremental inspection with output cursors", async () => {
+      const { manager, completion } = managerWithCompletion();
+      const task = manager.spawn(commandLaunch("printf abcdef"));
+      await completion;
+
+      const first = manager.inspect(task.id, 0, 3);
+      const second = manager.inspect(task.id, first.nextOffset, 3);
+      expect(first.output).toBe("abc");
+      expect(first.hasMore).toBe(true);
+      expect(second.output).toBe("def");
+      expect(second.hasMore).toBe(false);
+    });
+
+    test("keeps UTF-8 characters intact across inspection pages", async () => {
+      const { manager, completion } = managerWithCompletion();
+      const task = manager.spawn({
+        kind: "command",
+        command: process.execPath,
+        args: ["-e", "process.stdout.write('A😀B')"],
+        displayCommand: "unicode output",
+        cwd: process.cwd(),
+      });
+      await completion;
+
+      const first = manager.inspect(task.id, 0, 2);
+      const second = manager.inspect(task.id, first.nextOffset, 2);
+      const third = manager.inspect(task.id, second.nextOffset, 2);
+      expect(first.output).toBe("A");
+      expect(second.output).toBe("😀");
+      expect(third.output).toBe("B");
+      expect(third.hasMore).toBe(false);
+    });
+
+    test("can await completion without emitting an automatic notification", async () => {
+      let notificationCount = 0;
+      const manager = new TaskManager(() => notificationCount++);
+      managers.push(manager);
+      const task = manager.spawn({ ...commandLaunch("printf nested-result"), notifyOnComplete: false });
+
+      const completed = await manager.wait(task.id);
+      expect(completed.status).toBe("completed");
+      expect(completed.output).toBe("nested-result");
+      expect(notificationCount).toBe(0);
+    });
+
+    test("writes standard input and can close it", async () => {
+      const { manager, completion } = managerWithCompletion();
+      const task = manager.spawn(commandLaunch("IFS= read -r value; printf 'received:%s' \"$value\""));
+
+      await manager.write(task.id, "hello\n", true);
+      const finished = await completion;
+      expect(finished.output).toBe("received:hello");
+    });
+
+    test("can start with closed input for non-interactive agents", async () => {
+      const { manager, completion } = managerWithCompletion();
+      manager.spawn({ ...commandLaunch("cat >/dev/null; printf eof"), closeStdin: true });
+
+      expect((await completion).output).toBe("eof");
+    });
+
+    test("bounds retained output from noisy processes", async () => {
+      const { manager, completion } = managerWithCompletion();
+      const task = manager.spawn(commandLaunch("yes x | head -c 5000000"));
+
+      await completion;
+      const summary = manager.list().find((item) => item.id === task.id)!;
+      expect(summary.outputEnd).toBe(5_000_000);
+      expect(summary.outputEnd - summary.baseOffset).toBe(1_000_000);
+      const tail = manager.inspect(task.id, summary.baseOffset, 50_000);
+      expect(Buffer.byteLength(tail.output)).toBe(5_000);
+      expect(Buffer.byteLength(manager.inspect(task.id).output)).toBe(5_000);
+      expect(tail.hasMore).toBe(true);
+    });
+
+    test("completion and wait preserve the final output with the smaller page cap", async () => {
+      const { manager, completion } = managerWithCompletion();
+      const task = manager.spawn({
+        kind: "command",
+        command: process.execPath,
+        args: ["-e", "process.stdout.write('a'.repeat(20000) + 'FINAL')"],
+        displayCommand: "large result",
+        cwd: process.cwd(),
+      });
+      const finished = await completion;
+      expect(Buffer.byteLength(finished.output)).toBe(5_000);
+      expect(finished.output).toEndWith("FINAL");
+      expect((await manager.wait(task.id)).output).toBe(finished.output);
+      let output = "",
+        offset = 0;
+      for (;;) {
+        const page = manager.inspect(task.id, offset);
+        expect(Buffer.byteLength(page.output)).toBeLessThanOrEqual(5_000);
+        output += page.output;
+        offset = page.nextOffset;
+        if (!page.hasMore) break;
+      }
+      expect(output).toBe("a".repeat(20000) + "FINAL");
+    });
+
+    test("runs 50 concurrent tasks without losing results", async () => {
+      const results = new Map<string, string>();
+      let resolveAll!: () => void;
+      const allCompleted = new Promise<void>((resolve) => (resolveAll = resolve));
+      const manager = new TaskManager((task) => {
+        results.set(task.id, task.output);
+        if (results.size === 50) resolveAll();
+      });
+      managers.push(manager);
+
+      const started = performance.now();
+      const tasks = Array.from({ length: 50 }, (_, index) =>
+        manager.spawn(commandLaunch(`sleep 0.${String(index % 10).padStart(2, "0")}; printf task-${index}`)),
+      );
+      expect(performance.now() - started).toBeLessThan(1_000);
+      await allCompleted;
+
+      expect(results.size).toBe(50);
+      for (const [index, task] of tasks.entries()) expect(results.get(task.id)).toBe(`task-${index}`);
+    }, 10_000);
+
+    test("reports metadata-only task-child mappings through the lifecycle hook", async () => {
+      const mappings: object[] = [];
+      const manager = new TaskManager(() => {}, undefined, { onTaskChild: (mapping) => mappings.push(mapping) });
+      managers.push(manager);
+      const task = manager.spawn({
+        ...commandLaunch("printf secret-command"),
+        kind: "agent",
+        agent: { type: "normal", model: "p/m", depth: 1, sessionFile: "/sessions/child.jsonl" },
+      });
+      await manager.wait(task.id);
+      expect(mappings).toEqual([{ taskId: task.id, kind: "agent", sessionFile: "/sessions/child.jsonl" }]);
+      expect(JSON.stringify(mappings)).not.toContain("secret-command");
+    });
+
+    test("exposes the first termination cause immediately and keeps it stable", async () => {
+      const diagnostics: object[] = [];
+      const manager = new TaskManager(() => {}, 25, { recordDiagnostic: (input) => diagnostics.push(input) });
+      managers.push(manager);
+      const task = manager.spawn({ ...commandLaunch("sleep 30"), timeoutMs: 10_000 });
+
+      const stopping = manager.kill(task.id, "user-stop");
+      const repeated = manager.kill(task.id, "session-shutdown");
+      expect(stopping.termination?.cause).toBe("user-stop");
+      expect(Date.parse(stopping.termination!.requestedAt)).not.toBeNaN();
+      expect(repeated.termination).toEqual(stopping.termination);
+      expect(repeated.timedOut).toBe(false);
+      repeated.termination!.cause = "timeout";
+      expect(manager.inspect(task.id).termination?.cause).toBe("user-stop");
+
+      await manager.wait(task.id);
+      expect(manager.inspect(task.id).termination).toEqual(stopping.termination);
+      expect(diagnostics).toContainEqual({
+        component: "jobs",
+        code: "JOBS_TASK_TERMINATION_REQUESTED",
+        outcome: "success",
+        taskId: task.id,
+        cancellation: "caller",
+      });
+      expect(JSON.stringify(diagnostics)).not.toContain("sleep 30");
+    });
+
+    test("attributes automatic timeout and shutdown termination separately", async () => {
+      const manager = new TaskManager(() => {}, 25);
+      managers.push(manager);
+      const timed = manager.spawn({ ...commandLaunch("sleep 30"), timeoutMs: 10 });
+      const timedResult = await manager.wait(timed.id);
+      expect(timedResult.termination?.cause).toBe("timeout");
+      expect(timedResult.timedOut).toBe(true);
+
+      const shuttingDown = manager.spawn(commandLaunch("sleep 30"));
+      const shutdown = manager.shutdown();
+      expect(manager.inspect(shuttingDown.id).termination?.cause).toBe("session-shutdown");
+      await shutdown;
+    });
+
+    test("terminates running process groups", async () => {
+      const { manager, completion } = managerWithCompletion();
+      const task = manager.spawn(commandLaunch("sleep 30"));
+
+      manager.kill(task.id);
+      const finished = await completion;
+      expect(finished.status).toBe("killed");
+      expect(finished.signal).toBe("SIGTERM");
+    });
+
+    test("shutdown can be awaited before the host exits and is idempotent", async () => {
+      const source = `
+      import { TaskManager } from ${JSON.stringify(fileURLToPath(new URL("../../src/tasks/task-manager.ts", import.meta.url)))};
+      const manager = new TaskManager(() => { throw new Error("Unexpected shutdown notification"); }, 50);
+      const task = manager.spawn({
+        kind: "command", command: process.execPath,
+        args: ["-e", 'process.on("SIGTERM", () => {}); console.log("ready"); setInterval(() => {}, 1000);'],
+        displayCommand: "stubborn child", cwd: process.cwd(),
+      });
+      console.log(task.pid);
+      while (!manager.inspect(task.id).output.includes("ready")) await Bun.sleep(10);
+      const shutdown = manager.shutdown();
+      if (shutdown !== manager.shutdown()) throw new Error("Shutdown must be idempotent");
+      await shutdown;
+      console.log(manager.inspect(task.id).status);
+      process.exit(0);
+    `;
+      const host = Bun.spawn([process.execPath, "-e", source], { stdout: "pipe", stderr: "pipe" });
+      const [stdout, stderr, code] = await Promise.all([
+        new Response(host.stdout).text(),
+        new Response(host.stderr).text(),
+        host.exited,
+      ]);
+      const pid = Number(stdout.split("\n")[0]);
+      try {
+        expect(code).toBe(0);
+        expect(stderr).toBe("");
+        expect(stdout).toContain("killed");
+        expect(() => process.kill(pid, 0)).toThrow();
+      } finally {
+        if (pid > 0) {
+          try {
+            process.kill(-pid, "SIGKILL");
+          } catch {}
+        }
+        host.kill();
+      }
+    });
+
+    test.skipIf(process.platform !== "linux")(
+      "shutdown kills descendants after the shell exits and output pipes close",
+      async () => {
+        const directory = await mkdtemp(join(tmpdir(), "bruv-shutdown-"));
+        const ready = join(directory, "child.pid");
+        const quote = (text: string) => `'${text.replaceAll("'", "'\\''")}'`;
+        const childCode = `const fs = require("node:fs"); process.on("SIGTERM", () => {}); fs.closeSync(1); fs.closeSync(2); fs.writeFileSync(${JSON.stringify(ready)}, String(process.pid)); setInterval(() => {}, 1000);`;
+        const manager = new TaskManager(() => {});
+        managers.push(manager);
+        const task = manager.spawn({
+          ...commandLaunch(`${quote(process.execPath)} -e ${quote(childCode)} & wait`),
+          closeStdin: true,
+        });
+        let childPid = 0;
+        try {
+          const deadline = Date.now() + 2_000;
+          while (!(await Bun.file(ready).exists()) && Date.now() < deadline) await Bun.sleep(10);
+          childPid = Number(await readFile(ready, "utf8"));
+          await manager.shutdown();
+          let alive = true;
+          for (let attempt = 0; attempt < 100 && alive; attempt++) {
+            try {
+              alive = !/\) Z /.test(await readFile(`/proc/${childPid}/stat`, "utf8"));
+            } catch {
+              alive = false;
+            }
+            if (alive) await Bun.sleep(10);
+          }
+          expect(alive).toBe(false);
+        } finally {
+          if (task.pid) {
+            try {
+              process.kill(-task.pid, "SIGKILL");
+            } catch {}
+          }
+          await manager.shutdown();
+        }
+      },
+    );
+
+    test("shutdown escalates when a process ignores SIGTERM", async () => {
+      const manager = new TaskManager(() => {}, 25);
+      managers.push(manager);
+      const task = manager.spawn({
+        kind: "command",
+        command: process.execPath,
+        args: ["-e", 'process.on("SIGTERM", () => {}); console.log("ready"); setInterval(() => {}, 1000);'],
+        displayCommand: "stubborn process",
+        cwd: process.cwd(),
+      });
+      // Process startup can exceed a fixed 25ms sleep under load. Signal only
+      // once the fixture has actually installed its SIGTERM handler.
+      const readyDeadline = Date.now() + 2_000;
+      while (!manager.inspect(task.id).output.includes("ready") && Date.now() < readyDeadline) await Bun.sleep(10);
+      expect(manager.inspect(task.id).output).toContain("ready");
+
+      manager.shutdown();
+      const deadline = Date.now() + 1_000;
+      while (manager.list()[0].status === "running" && Date.now() < deadline) await Bun.sleep(10);
+
+      const finished = manager.list().find((item) => item.id === task.id)!;
+      expect(finished.status).toBe("killed");
+      expect(finished.signal).toBe("SIGKILL");
+    });
+  });
+
+  test("live agent inspection survives kill and success delivers only the final answer", async () => {
+    const { manager, completion } = managerWithCompletion();
+    const code = `const emit=e=>console.log(JSON.stringify(e));
+    emit({type:"tool_execution_start",toolName:"execute",args:{code:"inspect source"}});
+    await Bun.stdin.text();
+    emit({type:"tool_execution_end",toolName:"execute",result:{content:[{type:"text",text:"evidence"}]}});
+    emit({type:"message_end",message:{role:"assistant",stopReason:"stop",content:[{type:"text",text:"final answer"}]}});
+    emit({type:"agent_end"});`;
+    const launch = {
+      kind: "agent" as const,
+      command: process.execPath,
+      args: ["-e", code],
+      displayCommand: "test agent",
+      cwd: process.cwd(),
+      agent: { type: "normal", model: "p/model", depth: 1, sessionFile: "/test.jsonl" },
+    };
+    const task = manager.spawn(launch);
+    const deadline = Date.now() + 2000;
+    while (!manager.inspect(task.id).agent?.currentTool && Date.now() < deadline) await Bun.sleep(10);
+    const live = manager.inspect(task.id);
+    expect(live.status).toBe("running");
+    expect(live.agent?.currentTool).toBe("execute");
+    expect(live.output).toContain("inspect source");
+    await manager.write(task.id, "", true);
+    const done = await completion;
+    expect(done.output).toBe("final answer");
+    expect((await manager.wait(task.id)).output).toBe("final answer");
+    expect(manager.inspect(task.id).output).toContain("evidence");
+    const stuck = manager.spawn(launch);
+    const until = Date.now() + 2000;
+    while (!manager.inspect(stuck.id).agent?.currentTool && Date.now() < until) await Bun.sleep(10);
+    manager.kill(stuck.id);
+    await manager.wait(stuck.id);
+    expect(manager.inspect(stuck.id).status).toBe("killed");
+    expect(manager.inspect(stuck.id).output).toContain("Tool started");
+  });
+  test("JSON-mode model errors count as failure even when the child exits zero", async () => {
+    const { manager, completion } = managerWithCompletion();
+    manager.spawn({
+      kind: "agent",
+      command: process.execPath,
+      args: [
+        "-e",
+        'console.log(JSON.stringify({type:"message_end",message:{role:"assistant",stopReason:"error",errorMessage:"provider unavailable"}}))',
+      ],
+      displayCommand: "failed model",
+      cwd: process.cwd(),
+      agent: { type: "normal", model: "p/m", depth: 1, sessionFile: "/test.jsonl" },
+    });
+    const result = await completion;
+    expect(result.exitCode).toBe(0);
+    expect(result.status).toBe("failed");
+    expect(result.agent?.lastError).toBe("provider unavailable");
+  });
+
+  test("foreground/background completion races deliver each result exactly once", async () => {
+    const notifications: TaskInspection[] = [];
+    const manager = new TaskManager((t) => notifications.push(t));
+    managers.push(manager);
+    const jobs = Array.from({ length: 30 }, () =>
+      manager.spawn({ ...commandLaunch("printf done"), notifyOnComplete: false }),
+    );
+    const results = await Promise.all(jobs.map((job, i) => manager.foreground(job.id, i % 2 ? 1000 : 0)));
+    await Promise.all(jobs.map((job) => manager.wait(job.id)));
+    const inline = results.filter((result) => !result.background);
+    expect(inline.length + notifications.length).toBe(30);
+    expect(new Set([...inline, ...notifications].map((job) => job.id)).size).toBe(30);
+  });
+
+  describe("completed output aggregate budget", () => {
+    test("bounds many completed jobs while retaining IDs, status, and honest cursors", async () => {
+      const manager = new TaskManager(() => {}, undefined, { completedOutputBudgetBytes: 25 });
+      managers.push(manager);
+      const jobs = [];
+      for (let index = 0; index < 12; index++) {
+        const task = manager.spawn({
+          kind: "command",
+          command: process.execPath,
+          args: ["-e", `process.stdout.write("${String(index).padStart(2, "0")}xxxxxxxx")`],
+          displayCommand: `output ${index}`,
+          cwd: process.cwd(),
+          notifyOnComplete: false,
+        });
+        jobs.push(task);
+        const completion = await manager.wait(task.id);
+        expect(completion.output).toBe(`${String(index).padStart(2, "0")}xxxxxxxx`);
+      }
+
+      const listed = manager.list();
+      expect(listed).toHaveLength(12);
+      expect(listed.every((task) => task.status === "completed" && task.completedAt)).toBe(true);
+      expect(listed.reduce((bytes, task) => bytes + task.outputEnd - task.baseOffset, 0)).toBeLessThanOrEqual(25);
+
+      const oldest = manager.inspect(jobs[0].id, 0);
+      expect(oldest.outputLost).toBe(true);
+      expect(oldest.output).toBe("");
+      expect(oldest.requestedOffset).toBe(0);
+      expect(oldest.nextOffset).toBe(oldest.outputEnd);
+      const newest = manager.inspect(jobs[jobs.length - 1].id, 0);
+      expect(newest.outputLost).toBe(false);
+      expect(newest.output).toBe("11xxxxxxxx");
+    });
+
+    test("keeps active output under its per-task cap, then applies a Unicode-safe completed budget", async () => {
+      const manager = new TaskManager(() => {}, undefined, { completedOutputBudgetBytes: 4 });
+      managers.push(manager);
+      const task = manager.spawn({
+        kind: "command",
+        command: process.execPath,
+        args: ["-e", "process.stdout.write('A😀B'); setTimeout(() => {}, 150)"],
+        displayCommand: "unicode transition",
+        cwd: process.cwd(),
+        notifyOnComplete: false,
+      });
+
+      const deadline = Date.now() + 2_000;
+      while (manager.inspect(task.id, 0).outputEnd < 6 && Date.now() < deadline) await Bun.sleep(5);
+      const active = manager.inspect(task.id, 0);
+      expect(active.status).toBe("running");
+      expect(active.output).toBe("A😀B");
+      expect(active.outputLost).toBe(false);
+
+      await manager.wait(task.id);
+      const completed = manager.inspect(task.id, 0);
+      expect(completed.status).toBe("completed");
+      expect(completed.baseOffset).toBe(2);
+      expect(completed.outputEnd).toBe(6);
+      expect(completed.outputLost).toBe(true);
+      expect(completed.output).toBe("B");
+      expect(completed.nextOffset).toBe(6);
+      expect(completed.hasMore).toBe(false);
+    });
+  });
+
+  test("completion observers see budgeted manager state while delivery preserves the final answer", async () => {
+    const observed: Array<{ source: string; output: string; lost: boolean }> = [];
+    let delivered = "";
+    const manager = new TaskManager(
+      (completion) => {
+        delivered = completion.output;
+        const retained = manager.inspect(completion.id, 0);
+        observed.push({ source: "notification", output: retained.output, lost: retained.outputLost });
+      },
+      undefined,
+      { completedOutputBudgetBytes: 0 },
+    );
+    managers.push(manager);
+    manager.subscribe((event) => {
+      if (event.type !== "completed") return;
+      const retained = manager.inspect(event.task.id, 0);
+      observed.push({ source: "event", output: retained.output, lost: retained.outputLost });
+    });
+    const task = manager.spawn({
+      kind: "agent",
+      command: process.execPath,
+      args: [
+        "-e",
+        'console.log(JSON.stringify({type:"message_end",message:{role:"assistant",stopReason:"stop",content:[{type:"text",text:"final answer"}]}})); console.log(JSON.stringify({type:"agent_end"}));',
+      ],
+      displayCommand: "agent budget observer",
+      cwd: process.cwd(),
+      agent: { type: "normal", model: "p/model", depth: 1, sessionFile: "/test.jsonl" },
+    });
+    const delivery = await manager.wait(task.id);
+    expect(delivery.output).toBe("final answer");
+    expect(delivered).toBe("final answer");
+    expect(observed.map((value) => value.source)).toEqual(["event", "notification"]);
+    expect(observed.every((value) => value.output === "" && value.lost)).toBe(true);
+    expect((await manager.wait(task.id)).output).toBe("");
+  });
+
+  test("stopping a workspace agent also stops its owned background setup", async () => {
+    const manager = new TaskManager(() => {}, 25);
+    managers.push(manager);
+    const setup = manager.spawn(commandLaunch("sleep 30"));
+    const agent = manager.spawn({
+      ...commandLaunch("sleep 30"),
+      kind: "agent",
+      workspace: { kind: "worktree", path: "/var/tmp/bruv-owned-worktree", setupTaskId: setup.id },
+    });
+    manager.kill(agent.id);
+    expect(manager.inspect(setup.id).termination?.cause).toBe("user-stop");
+    await Promise.all([manager.wait(agent.id), manager.wait(setup.id)]);
+  });
+
+  test("preparation failure closes owned setup and repeated preparation teardown leaves no active jobs", async () => {
+    const manager = new TaskManager(() => {}, 20);
+    managers.push(manager);
+    for (let index = 0; index < 8; index++) {
+      const child = manager.prepareAgent({
+        id: "task_prepare_" + index,
+        displayCommand: "prepare",
+        cwd: process.cwd(),
+        workspace: { kind: "worktree", path: process.cwd() },
+        timeoutMs: 10000,
+      });
+      const signal = manager.preparationSignal(child.id);
+      const setup = manager.spawn(commandLaunch("sleep 30"));
+      manager.updatePreparedWorkspace(child.id, {
+        kind: "worktree",
+        path: process.cwd(),
+        setupTaskId: setup.id,
+        setupStatus: "running",
+      });
+      if (index % 2) manager.kill(child.id);
+      else manager.failPreparedAgent(child.id, new Error("session preparation failed"));
+      expect(signal.aborted).toBe(true);
+      await Promise.all([manager.wait(child.id), manager.wait(setup.id)]);
+      expect(manager.inspect(setup.id).status).toBe("killed");
+    }
+    expect(manager.pending()).toHaveLength(0);
+    await manager.shutdown();
+  });
+
+  test("explicit titles survive launch, preparation, activation, summaries and completion delivery", async () => {
+    const { manager, completion } = managerWithCompletion();
+    const task = manager.spawn({ ...commandLaunch("printf done"), title: "Read renderer" });
+    expect(task.title).toBe("Read renderer");
+    expect(manager.list()[0]?.title).toBe("Read renderer");
+    expect((await completion).title).toBe("Read renderer");
+    expect(manager.inspect(task.id).title).toBe("Read renderer");
+    manager.prepareAgent({
+      id: "prepared_title",
+      title: "Run checks",
+      displayCommand: "arbitrary prompt",
+      cwd: process.cwd(),
+      workspace: { kind: "inherit", path: process.cwd() },
+    });
+    const activated = manager.activatePreparedAgent("prepared_title", commandLaunch("printf checked"));
+    expect(activated.title).toBe("Run checks");
+    expect((await manager.wait(activated.id)).title).toBe("Run checks");
+    manager.prepareAgent({
+      id: "failed_title",
+      title: "Prepare workspace",
+      displayCommand: "unrelated",
+      cwd: process.cwd(),
+      workspace: { kind: "inherit", path: process.cwd() },
+    });
+    expect(manager.failPreparedAgent("failed_title", new Error("fixture failure")).title).toBe("Prepare workspace");
+  });
+
+  test("activation keeps the reserved task's waiters, identity and foreground delivery policy", async () => {
+    const delivered: TaskInspection[] = [];
+    const events: string[] = [];
+    const diagnostics: string[] = [];
+    const manager = new TaskManager((task) => delivered.push(task), 20, {
+      recordDiagnostic: (entry) => diagnostics.push(entry.code),
+    });
+    managers.push(manager);
+    manager.subscribe((event) => events.push(event.type));
+    const identity = { sourceSessionId: "parent", sourceCallId: "call", callIndex: 0 };
+    const reserved = manager.prepareAgent({
+      id: "reserved_identity",
+      launchIdentity: identity,
+      displayCommand: "prepare workspace",
+      cwd: process.cwd(),
+      workspace: { kind: "inherit", path: process.cwd() },
+    });
+    const waiter = manager.wait(reserved.id);
+    const preparationSignal = manager.preparationSignal(reserved.id);
+    const fixture = await mkdtemp(join(tmpdir(), "bruv-activation-identity-"));
+    const activated = manager.activatePreparedAgent(reserved.id, {
+      command: process.execPath,
+      args: ["-e", "setTimeout(() => process.stdout.write('activated'), 50)"],
+      displayCommand: "activation fixture",
+      cwd: process.cwd(),
+      env: ownedFixtureEnv(fixture),
+      launchIdentity: { ...identity, sourceCallId: "not-the-reservation" },
+      workspace: { kind: "inherit", path: process.cwd() },
+      notifyOnComplete: true,
+    });
+    expect(activated.id).toBe(reserved.id);
+    expect(activated.startedAt).toBe(reserved.startedAt);
+    expect(activated.launchIdentity).toEqual(identity);
+    expect(activated.background).toBe(false);
+    expect(activated.workspace?.preparationStatus).toBe("ready");
+    expect(manager.wait(reserved.id)).toBe(waiter);
+    expect(preparationSignal.aborted).toBe(false);
+    expect(events).toEqual(["spawned", "updated"]);
+    const completed = await waiter;
+    expect(completed.status).toBe("completed");
+    expect(completed.output).toBe("activated");
+    expect(delivered).toHaveLength(0);
+    expect(events.filter((event) => event === "completed")).toHaveLength(1);
+    expect(diagnostics.filter((code) => code === "JOBS_TASK_SPAWNED")).toHaveLength(1);
+    expect(diagnostics.filter((code) => code === "JOBS_TASK_COMPLETED")).toHaveLength(1);
+  });
+
+  test("activation does not replace the workspace preparation deadline", async () => {
+    const fixture = await mkdtemp(join(tmpdir(), "bruv-activation-deadline-"));
+    const env = ownedFixtureEnv(fixture);
+    const manager = new TaskManager(() => {}, 20);
+    managers.push(manager);
+    const reserved = manager.prepareAgent({
+      id: "reserved_deadline",
+      displayCommand: "prepare workspace",
+      cwd: process.cwd(),
+      workspace: { kind: "inherit", path: process.cwd() },
+      timeoutMs: 200,
+    });
+    manager.activatePreparedAgent(reserved.id, {
+      command: process.execPath,
+      args: ["-e", "setTimeout(() => {}, 10_000)"],
+      displayCommand: "deadline fixture",
+      cwd: process.cwd(),
+      env,
+      timeoutMs: 1,
+    });
+    await Bun.sleep(30);
+    expect(manager.inspect(reserved.id).status).toBe("running");
+    const completed = await manager.wait(reserved.id);
+    expect(completed.status).toBe("killed");
+    expect(completed.timedOut).toBe(true);
+    expect(completed.termination?.cause).toBe("timeout");
+  });
+
+  test("preparation snapshots expose metadata without cancellation authority", async () => {
+    const delivered: TaskInspection[] = [];
+    const events: TaskSummary[] = [];
+    const manager = new TaskManager((task) => delivered.push(task), 20);
+    managers.push(manager);
+    manager.subscribe((event) => events.push(event.task));
+    const identity = { sourceSessionId: "parent", sourceCallId: "prepare", callIndex: 0 };
+    const workspace = { kind: "inherit" as const, path: process.cwd() };
+    const reserved = manager.prepareAgent({
+      id: "public_preparation",
+      title: "Prepare workspace",
+      launchIdentity: identity,
+      displayCommand: "prepare workspace",
+      cwd: workspace.path,
+      workspace,
+      notifyOnComplete: true,
+    });
+    const signal = manager.preparationSignal(reserved.id);
+    const waiter = manager.wait(reserved.id);
+    const updated = manager.updatePreparedWorkspace(reserved.id, workspace);
+    const snapshots = [
+      reserved,
+      updated,
+      manager.list()[0]!,
+      manager.pending()[0]!,
+      manager.inspect(reserved.id),
+      ...events,
+    ];
+
+    for (const snapshot of snapshots) {
+      expect(snapshot).not.toHaveProperty("preparationController");
+      expect(snapshot).toMatchObject({
+        id: reserved.id,
+        title: "Prepare workspace",
+        launchIdentity: identity,
+        workspace: { ...workspace, preparationStatus: "preparing" },
+        background: true,
+        status: "running",
+        command: "prepare workspace",
+        cwd: workspace.path,
+        startedAt: reserved.startedAt,
+        baseOffset: 0,
+        outputEnd: 0,
+        timedOut: false,
+        stdinOpen: false,
+      });
+    }
+    // Each read path and lifecycle event owns its nested metadata copies.
+    for (const snapshot of snapshots) {
+      snapshot.launchIdentity!.sourceCallId = "snapshot mutation";
+      snapshot.workspace!.preparationStatus = "failed";
+    }
+    expect(manager.inspect(reserved.id).launchIdentity).toEqual(identity);
+    expect(manager.inspect(reserved.id).workspace?.preparationStatus).toBe("preparing");
+    expect(signal.aborted).toBe(false);
+    expect(manager.inspect(reserved.id).termination).toBeUndefined();
+
+    const stopped = manager.kill(reserved.id, "user-stop");
+    expect(signal.aborted).toBe(true);
+    const completed = await waiter;
+    expect(stopped.status).toBe("killed");
+    expect(completed.status).toBe("killed");
+    expect(completed.termination?.cause).toBe("user-stop");
+    expect(completed.workspace?.preparationStatus).toBe("failed");
+    expect(manager.pending()).toHaveLength(0);
+    expect(delivered).toHaveLength(1);
+    expect(events.at(-1)?.status).toBe("killed");
+    stopped.termination!.cause = "timeout";
+    expect(manager.inspect(reserved.id).termination?.cause).toBe("user-stop");
+  });
+});
