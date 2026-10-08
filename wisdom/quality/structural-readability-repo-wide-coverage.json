@@ -4156,13 +4156,39 @@
       "initialBlob": "97b105de113aa23d912aa57f4f3dae012f9ef587",
       "status": "pending",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_5e579abb",
+      "primaryCommit": "73163cda2b7e472576c04d5adbb278ecefec368c",
       "judgeIds": [],
-      "sourceCommit": "4be377fef66159202a8de582ca98c3cb10948deb",
+      "sourceCommit": "73163cda2b7e472576c04d5adbb278ecefec368c",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
-      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
+      "primaryBase": "73163cda2b7e472576c04d5adbb278ecefec368c",
+      "primaryResult": "Traced package.json tui -> scripts/tui-harness.ts tmux wrapper -> -f scripts/tmux.conf; scripts/activity-terminal-acceptance.py independently selects that same configuration. CompactEditor delegates normal editing to Pi, whose installed keys decoder explicitly distinguishes Alt+Enter via CSI-u. The three adjacent tmux settings express that single protocol boundary without an extra helper or duplicate state. Existing focus bytes match the preserved 4be377fef66159202a8de582ca98c3cb10948deb candidate and reconciliation blob 97b105de113aa23d912aa57f4f3dae012f9ef587, so no restoration is needed. Splitting, renaming, or adding sections would add ceremony to an already cohesive unit.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        {
+          "kind": "reading",
+          "result": "Read wisdom/values.md and structural-readability-guidance.md; inspected focused area/repo-wide ledger rows and preserved focus reconciliation evidence."
+        },
+        {
+          "kind": "caller-trace",
+          "result": "Read both direct -f callers and relevant Pi input decoder; no callers or source files changed."
+        },
+        {
+          "kind": "git",
+          "result": "Focus source matches preserved candidate exactly; tracked worktree diff is empty."
+        },
+        {
+          "kind": "formatter",
+          "result": "Not applicable: no changed source paths and no source commit."
+        }
+      ],
+      "primaryLimits": [
+        "No repository tests, setup, builds, runtime tmux sessions, credential/device/network probes, or delegation run. Parent owns audited isolated batch gates and independent fresh judge.",
+        "No new source commit: sourceCommit identifies the exact existing HEAD for review. Source assertions, security behavior, unrelated accepted work, and preserved worktrees/candidates remain untouched.",
+        "No per-worker wisdom changes: no new lesson or structural issue; parent owns aggregate wisdom."
+      ]
     },
     {
       "file": "scripts/tui-harness.ts",
