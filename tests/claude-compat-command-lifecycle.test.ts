@@ -24,7 +24,7 @@ test("command completion is exactly once, after real session settlement when a c
   await frontend.flush();
   expect(frames.filter((f) => f.type === "command_lifecycle").map((f) => f.state)).toEqual(["started"]);
   expect(frames.filter((f) => f.type === "result")).toHaveLength(0);
-  frontend.onEvent({ type: "agent_settled" });
+  frontend.onEvent({ type: "agent_settled", aborted: false });
   frontend.commandHandled(checkpoint);
   await frontend.flush();
   expect(frames.filter((f) => f.type === "result")).toHaveLength(1);
@@ -34,7 +34,7 @@ test("command completion is exactly once, after real session settlement when a c
   ]);
   // A later epoch with no consumed input has neither command metadata nor a claimed wake origin.
   frontend.onEvent({ type: "agent_start" });
-  frontend.onEvent({ type: "agent_settled" });
+  frontend.onEvent({ type: "agent_settled", aborted: false });
   await frontend.flush();
   expect(frames.filter((f) => f.type === "command_lifecycle")).toHaveLength(2);
   expect(frames.filter((f) => f.type === "result").at(-1)).toMatchObject({ origin: { kind: "unclassified" } });

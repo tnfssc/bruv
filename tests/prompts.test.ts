@@ -61,10 +61,10 @@ test("background notice identifies jobs and deferred results without turn-manage
   expect(text).not.toContain("END YOUR TURN");
 });
 
-test("roles keep contribution prose without delegation commentary", () => {
+test("roles keep child identity and useful guidance without delegation-policy commentary", () => {
   expect(subagentGuidance("fast")).toContain("Find answer. Show where it came from. Say what still guess.");
   expect(subagentGuidance("normal")).toContain("Work out what to change. Make it. Check it solves the problem.");
-  expect(subagentGuidance("orchestrator")).toContain("Give workers clear jobs and room to think.");
+  expect(subagentGuidance("orchestrator")).toContain("Delegating independent code or PR work? Give it a worktree.");
   expect(subagentGuidance("orchestrator")).not.toContain("Fast/normal workers are available");
   expect(subagentGuidance("normal")).not.toContain("Delegation is disabled");
   const normal = subagentGuidance("normal");
@@ -83,8 +83,22 @@ test("fast and normal root modes add no behavioral prose while retaining owned p
     expect(guidance).not.toContain("main agent in fast instruction mode");
   }
   expect(mainAgentGuidance("orchestrator", "test-owner")).toContain(
-    "You lead work. Give other agents clear jobs and room to think. Put their work together for user.",
+    "Delegating independent code or PR work? Give it a worktree.",
   );
+});
+
+test("orchestrator guidance keeps delegation mechanics without leader framing", () => {
+  const root = mainAgentGuidance("orchestrator", "framing-test");
+  const child = subagentGuidance("orchestrator");
+  expect(child).toStartWith("You are a orchestrator sub-agent.");
+  for (const guidance of [root, child]) {
+    expect(guidance).toContain("Delegating independent code or PR work? Give it a worktree.");
+    expect(guidance).not.toContain("You lead work.");
+    expect(guidance).not.toContain("Give other agents clear jobs and room to think.");
+    expect(guidance).not.toContain("Put their work together for user.");
+    expect(guidance).not.toContain("Give workers clear jobs and room to think.");
+    expect(guidance).not.toContain("Put their findings together.");
+  }
 });
 
 test("Markdown is the complete source of the system and tool guidance", async () => {
@@ -192,7 +206,7 @@ test("worktree API facts stay in reference and isolation judgment stays in orche
   expect(reference).toContain('{ kind: "inherit" }');
   expect(reference).toContain("one pinned commit");
   expect(reference).toContain("t3.json");
-  const judgment = "Independent code or PR work? Give it a worktree.";
+  const judgment = "Delegating independent code or PR work? Give it a worktree.";
   expect(subagentGuidance("orchestrator")).toContain(judgment);
   expect(mainAgentGuidance("orchestrator", "workspace-test")).toContain(judgment);
   for (const role of ["fast", "normal"]) expect(subagentGuidance(role)).not.toContain(judgment);

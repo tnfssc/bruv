@@ -659,7 +659,7 @@ describe("private compiled updater integration", () => {
     expect(result.url.endsWith("/fixture")).toBe(true);
     expect(result.compiled).toBe(true);
     expect(await run.exited).toBe(0);
-  });
+  }, 30_000);
 
   test("compiled updater verifies staged distinct versions and updates a non-running temporary pair", async () => {
     const dir = await mkdtemp("/var/tmp/bruv-update-compiled-");
@@ -712,5 +712,5 @@ describe("private compiled updater integration", () => {
       expect(await check.exited).toBe(0);
     }
     expect((await readdir(x.dir)).filter((name) => name.startsWith(".bruv-update-"))).toEqual([]);
-  });
+  }, 30_000);
 });

@@ -1,5 +1,18 @@
+diff --git a/dist/core/session-manager.d.ts b/dist/core/session-manager.d.ts
+index 3f6104e..1c06297 100644
+--- a/dist/core/session-manager.d.ts
++++ b/dist/core/session-manager.d.ts
+@@ -332,6 +332,8 @@ export declare class SessionManager {
+      * change the leaf pointer. Entries cannot be modified or deleted.
+      */
+     getEntries(): SessionEntry[];
++    /** Count entry kinds without requiring callers to materialize their bodies. */
++    getEntryCountByType(type: SessionEntry["type"]): number;
+     /**
+      * Get the session as a tree structure. Returns a shallow defensive copy of all entries.
+      * A well-formed session has exactly one root (first entry with parentId === null).
 diff --git a/dist/core/session-manager.js b/dist/core/session-manager.js
-index 62b469b5..132179fa 100644
+index 62b469b..132179f 100644
 --- a/dist/core/session-manager.js
 +++ b/dist/core/session-manager.js
 @@ -1107,6 +1107,10 @@ export class SessionManager {
@@ -13,21 +26,21 @@ index 62b469b5..132179fa 100644
      /**
       * Get the session as a tree structure. Returns a shallow defensive copy of all entries.
       * A well-formed session has exactly one root (first entry with parentId === null).
-diff --git a/dist/core/session-manager.d.ts b/dist/core/session-manager.d.ts
-index 3f6104e1..1c062978 100644
---- a/dist/core/session-manager.d.ts
-+++ b/dist/core/session-manager.d.ts
-@@ -332,6 +332,8 @@ export declare class SessionManager {
-      * change the leaf pointer. Entries cannot be modified or deleted.
-      */
-     getEntries(): SessionEntry[];
-+    /** Count entry kinds without requiring callers to materialize their bodies. */
-+    getEntryCountByType(type: SessionEntry["type"]): number;
-     /**
-      * Get the session as a tree structure. Returns a shallow defensive copy of all entries.
-      * A well-formed session has exactly one root (first entry with parentId === null).
+diff --git a/dist/modes/interactive/components/mermaid.js b/dist/modes/interactive/components/mermaid.js
+index 6015ae4..453f5f6 100644
+--- a/dist/modes/interactive/components/mermaid.js
++++ b/dist/modes/interactive/components/mermaid.js
+@@ -1,6 +1,6 @@
+-import { Marked } from "@earendil-works/pi-tui";
++import { Marked, GfmBlockTokenizer } from "@earendil-works/pi-tui";
+ import { render } from "grok-mermaid";
+-const markdownParser = new Marked();
++const markdownParser = new Marked({ tokenizer: new GfmBlockTokenizer() });
+ function isMermaid(token) {
+     return token.type === "code" && token.lang?.trim().split(/\s+/, 1)[0]?.toLowerCase() === "mermaid";
+ }
 diff --git a/dist/modes/interactive/components/tree-selector.js b/dist/modes/interactive/components/tree-selector.js
-index ee90a338..a5a26884 100644
+index ee90a33..a5a2688 100644
 --- a/dist/modes/interactive/components/tree-selector.js
 +++ b/dist/modes/interactive/components/tree-selector.js
 @@ -39,6 +39,8 @@ function renderHorizontalViewport(rows, width) {
@@ -240,20 +253,20 @@ index ee90a338..a5a26884 100644
          // Add visible roots in reverse order (to process in forward order via stack)
          for (let i = visibleRootIds.length - 1; i >= 0; i--) {
 diff --git a/dist/modes/interactive/interactive-mode.js b/dist/modes/interactive/interactive-mode.js
-index 7827bcea..0e0dc91f 100644
+index 421255a..5cb94a2 100644
 --- a/dist/modes/interactive/interactive-mode.js
 +++ b/dist/modes/interactive/interactive-mode.js
-@@ -702,6 +702,9 @@ export class InteractiveMode {
-         // Start the UI before initializing extensions so session_start handlers can use interactive dialogs
+@@ -706,6 +706,9 @@ export class InteractiveMode {
          this.ui.start();
          this.isInitialized = true;
+         this.programStatus.report();
 +        // Saved transcripts must get their first paint with all grammars ready. Start
 +        // after mounting the editor, overlapping terminal colors, tools, and extensions.
 +        const highlightLanguagesReady = this.session.state.messages.length > 0 ? loadAllHighlightLanguages() : undefined;
          this.ensurePngTranscoder();
          this.themeController.applyFromSettings();
          // The header and startup notices bake theme colors into their text, so build them once the terminal
-@@ -781,7 +784,9 @@ export class InteractiveMode {
+@@ -785,7 +788,9 @@ export class InteractiveMode {
          this.ui.requestRender();
          // Initialize extensions first so resources are shown before messages
          await this.rebindCurrentSession();
@@ -264,7 +277,7 @@ index 7827bcea..0e0dc91f 100644
          this.renderInitialMessages();
          // Set up theme file watcher
          onThemeChange(() => {
-@@ -795,14 +800,17 @@ export class InteractiveMode {
+@@ -799,14 +804,17 @@ export class InteractiveMode {
          });
          // Initialize available provider count for footer display
          await this.updateAvailableProviderCount();
@@ -289,7 +302,7 @@ index 7827bcea..0e0dc91f 100644
      }
      /**
       * Update terminal title with session name and cwd.
-@@ -3397,8 +3405,7 @@ export class InteractiveMode {
+@@ -3419,8 +3427,7 @@ export class InteractiveMode {
          });
          this.renderProjectTrustWarningIfNeeded();
          // Show compaction info if session was compacted
@@ -299,15 +312,3 @@ index 7827bcea..0e0dc91f 100644
          if (compactionCount > 0) {
              const times = compactionCount === 1 ? "1 time" : `${compactionCount} times`;
              this.showStatus(`Session compacted ${times}`);
-diff --git a/dist/modes/interactive/components/mermaid.js b/dist/modes/interactive/components/mermaid.js
---- a/dist/modes/interactive/components/mermaid.js
-+++ b/dist/modes/interactive/components/mermaid.js
-@@ -1,6 +1,6 @@
--import { Marked } from "@earendil-works/pi-tui";
-+import { Marked, GfmBlockTokenizer } from "@earendil-works/pi-tui";
- import { render } from "grok-mermaid";
--const markdownParser = new Marked();
-+const markdownParser = new Marked({ tokenizer: new GfmBlockTokenizer() });
- function isMermaid(token) {
-     return token.type === "code" && token.lang?.trim().split(/\s+/, 1)[0]?.toLowerCase() === "mermaid";
- }

@@ -65,7 +65,7 @@ Outside custom base suppresses root collaboration/mode text on purpose. Child st
 
 ### Root mode selection
 
-`src/tasks/instruction-mode.ts` starts root in `orchestrator`. It restores newest valid `die-instruction-mode` branch entry. Missing or bad state falls back to `orchestrator`. Orchestrator picks `main-orchestrator.md`. Fast and normal pick no mode prose. Every choice keeps owned placeholder wrapped as:
+`src/tasks/instruction-mode.ts` starts root in `orchestrator`. It restores newest valid `die-instruction-mode` branch entry. Missing or bad state falls back to `orchestrator`. Orchestrator picks `main-orchestrator.md` for worktree mechanics when delegating, not a leader identity. Fast and normal pick no mode prose. Every choice keeps owned placeholder wrapped as:
 
 ```text
 <!-- die:main-agent-mode:{{owner}}:start -->
@@ -77,7 +77,7 @@ Outside custom base suppresses root collaboration/mode text on purpose. Child st
 
 ### Child role selection
 
-At depth over zero, `subagentGuidance(role)` picks `fast.md`, `normal.md`, or `orchestrator.md`. Unknown role falls back to normal. It puts runtime role string in template. No child gets delegation-guidance fragment. Job service still enforces delegation powers. Child identity/depth comes from process environment and newest valid `die-agent` session marker. Bad state fails closed. User subagent assignment is child normal user prompt. It is **external caller-supplied context**, not role template.
+At depth over zero, `subagentGuidance(role)` picks `fast.md`, `normal.md`, or `orchestrator.md`. Unknown role falls back to normal. It puts runtime role string in template. `orchestrator.md` keeps child identity and worktree mechanics when delegating; it does not tell the child to lead workers. No child gets delegation-guidance fragment. Job service still enforces delegation powers. Child identity/depth comes from process environment and newest valid `die-agent` session marker. Bad state fails closed. User subagent assignment is child normal user prompt. It is **external caller-supplied context**, not role template.
 
 ## Execute tool assembly
 
@@ -102,8 +102,8 @@ Build embeds all files below. Current request picks sources. Model does not lazy
 | [execute-description.md](../../src/prompts/execute-description.md) | Provider-visible execute tool description, not a separate chat message. |
 | [system.md](../../src/prompts/system.md) | Collaboration values/opinions added by the framing hook, except for user-owned custom bases. |
 | [wisdom.md](../../src/prompts/wisdom.md) | Root wisdom guidance, including roots using custom bases. Does not read the wisdom corpus. |
-| [main-orchestrator.md](../../src/prompts/main-orchestrator.md) | Root orchestrator guidance. Fast/normal retain only the owned empty mode placeholder; all root mode blocks are suppressed for user-owned custom bases. |
-| [fast.md](../../src/prompts/fast.md), [normal.md](../../src/prompts/normal.md), [orchestrator.md](../../src/prompts/orchestrator.md) | Exactly one child role, including children with custom bases. Assignment is a separate user message. |
+| [main-orchestrator.md](../../src/prompts/main-orchestrator.md) | Root orchestrator worktree mechanics when delegating, not leader framing. Fast/normal retain only the owned empty mode placeholder; all root mode blocks are suppressed for user-owned custom bases. |
+| [fast.md](../../src/prompts/fast.md), [normal.md](../../src/prompts/normal.md), [orchestrator.md](../../src/prompts/orchestrator.md) | Exactly one child role, including children with custom bases. Orchestrator keeps child identity and delegation worktree mechanics. Assignment is a separate user message. |
 | [background-handoff.md](../../src/prompts/background-handoff.md) | Added to an execute result that reports background launches; job IDs substituted. Not in the initial base. |
 | [goal.md](../../src/prompts/goal.md) | Goal API guidance included with the goal-state context message only when a goal exists; not in the system prefix. |
 | [goal-continuation.md](../../src/prompts/goal-continuation.md) | Automatic user message when an active durable goal needs another turn. Goal state arrives separately. |

@@ -221,7 +221,7 @@ export function nativeFastSupport(
         supported: false,
         reason: "OpenAI native fast mode requires the official openai Responses endpoint and auth surface.",
       };
-    // Pi 1.0.3 canonical OpenAI keeps the Responses API/endpoint for both
+    // Pi 1.1.0 canonical OpenAI keeps the Responses API/endpoint for both
     // API keys and ChatGPT OAuth; it does not rewrite OAuth to legacy Codex.
     return { supported: true, tier: "priority", surface: oauth ? "chatgpt" : "api" };
   }
@@ -346,7 +346,7 @@ type RuntimePatch = {
 
 const runtimePatches = new WeakMap<object, RuntimePatch>();
 const COMPATIBILITY_ERROR =
-  "Native fast mode is unavailable: pinned Pi 1.0.3 ModelRuntime compatibility seam is missing.";
+  "Native fast mode is unavailable: pinned Pi 1.1.0 ModelRuntime compatibility seam is missing.";
 
 // One immutable authorization covers preparation, payload hooks, and transport.
 function streamAuthorizedRequest(
@@ -441,7 +441,7 @@ function streamAuthorizedRequest(
 
 /** Pi's extension emitter catches hook failures. Patch only this extension
  * context's runtime instance. Restore it when the last controller leaves. The
- * pinned Pi 1.0.3 seam is prepareRequest, then provider.streamSimple with the
+ * pinned Pi 1.1.0 seam is prepareRequest, then provider.streamSimple with the
  * final onPayload pipeline. */
 function attachConcreteRequestGuard(runtime: unknown, controller: FastController): string | undefined {
   if (!record(runtime)) return COMPATIBILITY_ERROR;

@@ -82,7 +82,9 @@ describe("prepared instruction frames", () => {
 
     await runMode("fast");
     expect(session._runSystemPromptOptions.forceSystemPrompt).toBe("BEFORE\n" + mode.guidance(ctx) + "\nAFTER");
-    expect(session._runSystemPromptOptions.forceSystemPrompt).not.toContain("You lead work.");
+    expect(session._runSystemPromptOptions.forceSystemPrompt).not.toContain(
+      "Delegating independent code or PR work? Give it a worktree.",
+    );
 
     await runMode("orchestrator");
     expect(session._runSystemPromptOptions.forceSystemPrompt).toBe(initial);
@@ -121,12 +123,12 @@ describe("prepared instruction frames", () => {
     expect(switched).toEndWith("CUSTOM AFTER");
     expect(switched).toContain("<!-- bruv:main-agent-mode:owned-test-region:start -->\n\n");
     expect(switched).not.toContain("You build and fix code.");
-    expect(switched).not.toContain("You lead work.");
+    expect(switched).not.toContain("Delegating independent code or PR work? Give it a worktree.");
 
     const restored = replaceMainAgentGuidance(switched, "orchestrator", owner);
     expect(restored).toStartWith("CUSTOM BEFORE");
     expect(restored).toEndWith("CUSTOM AFTER");
-    expect(restored).toContain("You lead work.");
+    expect(restored).toContain("Delegating independent code or PR work? Give it a worktree.");
     expect(replaceMainAgentGuidance("EXPLICIT CUSTOM", "fast", owner)).toBe("EXPLICIT CUSTOM");
   });
 });
@@ -265,7 +267,7 @@ describe("session history", () => {
       expect(afterRestart).toBe(beforeRestart);
       expect(afterRestart).toContain("<!-- bruv:main-agent-mode:");
       expect(afterRestart).not.toContain("You build and fix code.");
-      expect(afterRestart).not.toContain("You lead work.");
+      expect(afterRestart).not.toContain("Delegating independent code or PR work? Give it a worktree.");
     } finally {
       await rm(dir, { recursive: true, force: true });
     }

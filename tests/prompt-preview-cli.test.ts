@@ -99,7 +99,8 @@ test("default package invocation emits only pretty capture JSON with isolated pr
   });
   expect(preview.preview.excluded).toContain("all external project files and guidance");
   expect(preview.preview.excluded).toContain("global and project settings/packages");
-  expect(preview.systemPrompt).toContain("You lead work.");
+  expect(preview.systemPrompt).toContain("Delegating independent code or PR work? Give it a worktree.");
+  expect(preview.systemPrompt).not.toContain("You lead work.");
   expect(JSON.stringify(preview.messages)).toContain("Preview this request without sending it to a model.");
   expect(await Bun.file(join(preview.preview.cwd, ".keep")).exists()).toBe(false);
 });

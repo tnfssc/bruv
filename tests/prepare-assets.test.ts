@@ -11,6 +11,7 @@ async function copyPreparationInputs(fixture: string): Promise<void> {
     "package.json",
     "scripts/prepare-assets.ts",
     "scripts/pi-host-adaptation.ts",
+    "scripts/pi-host-recovery.ts",
     "node_modules/@silvia-odwyer/photon-node/photon_rs_bg.wasm",
   ]) {
     const target = join(fixture, path);

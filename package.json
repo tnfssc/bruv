@@ -1,6 +1,6 @@
 {
   "name": "bruv",
-  "version": "0.16.18",
+  "version": "0.16.19",
   "private": true,
   "type": "module",
   "bin": {
@@ -30,10 +30,10 @@
     "perf:resources": "bun ./scripts/resource-harness/run.ts"
   },
   "dependencies": {
-    "@earendil-works/pi-ai": "1.0.3",
-    "@earendil-works/pi-coding-agent": "1.0.3",
-    "@earendil-works/pi-server": "1.0.3",
-    "@earendil-works/pi-tui": "1.0.3",
+    "@earendil-works/pi-ai": "1.1.0",
+    "@earendil-works/pi-coding-agent": "1.1.0",
+    "@earendil-works/pi-server": "1.1.0",
+    "@earendil-works/pi-tui": "1.1.0",
     "@google/genai": "2.27.0",
     "@modelcontextprotocol/sdk": "1.32.1",
     "es-module-lexer": "^3.0.3",
@@ -52,7 +52,7 @@
   },
   "license": "MIT",
   "patchedDependencies": {
-    "@earendil-works/pi-coding-agent@1.0.3": "patches/@earendil-works%2Fpi-coding-agent@1.0.3.patch",
-    "@earendil-works/pi-tui@1.0.3": "patches/@earendil-works%2Fpi-tui@1.0.3.patch"
+    "@earendil-works/pi-coding-agent@1.1.0": "patches/@earendil-works%2Fpi-coding-agent@1.1.0.patch",
+    "@earendil-works/pi-tui@1.1.0": "patches/@earendil-works%2Fpi-tui@1.1.0.patch"
   }
 }

@@ -11,7 +11,7 @@ type LayoutUtilities = Pick<
   "visibleWidth" | "wrapTextWithAnsi" | "truncateToWidth"
 >;
 
-// Reverse only our installed utility hunk: this is the real 1.0.3 implementation, not an invented oracle.
+// Reverse only our installed utility hunk: this is the real 1.1.0 implementation, not an invented oracle.
 // All writes and git apply belong to this retained fixture; installed dependencies stay read-only.
 async function createOriginalSdkReference() {
   const sdk = dirname(createRequire(import.meta.url).resolve("@earendil-works/pi-tui"));
@@ -19,7 +19,7 @@ async function createOriginalSdkReference() {
   for (const child of ["dist", "home", "config", "agent", "tmp"]) await mkdir(join(dir, child));
   await writeFile(join(dir, "provenance.json"), JSON.stringify({ worktree: dirname(import.meta.dir), sdk }));
   await writeFile(join(dir, "dist/utils.js"), await readFile(join(sdk, "utils.js")));
-  const patch = await readFile(join(import.meta.dir, "../patches/@earendil-works%2Fpi-tui@1.0.3.patch"), "utf8");
+  const patch = await readFile(join(import.meta.dir, "../patches/@earendil-works%2Fpi-tui@1.1.0.patch"), "utf8");
   const utility =
     "diff --git a/dist/utils.js b/dist/utils.js\n" +
     patch.split("diff --git a/dist/utils.js b/dist/utils.js\n")[1].split("diff --git ")[0];

@@ -5,7 +5,7 @@ import { resolve } from "node:path";
 import { Container } from "@earendil-works/pi-tui";
 
 const sdk = resolve(import.meta.dir, "../../node_modules/@earendil-works/pi-coding-agent");
-assert.equal((await Bun.file(resolve(sdk, "package.json")).json()).version, "1.0.3");
+assert.equal((await Bun.file(resolve(sdk, "package.json")).json()).version, "1.1.0");
 const scenario = process.argv[2];
 const saved = scenario !== "empty" && scenario !== "empty-stopped";
 const events: string[] = [];
@@ -82,6 +82,7 @@ const ui = {
 const editor = new CustomEditor(ui, getEditorTheme(), { matches: () => false });
 const seams = {
   isInitialized: false,
+  programStatus: { report() {} },
   ui,
   renderer: ui,
   defaultEditor: editor,

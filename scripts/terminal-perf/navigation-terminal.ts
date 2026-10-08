@@ -44,6 +44,7 @@ export class NavigationTerminal implements Terminal {
   clearScreen() {
     this.write("\x1b[2J");
   }
+  setProgramStatus() {}
   setTitle(title: string) {
     this.write("\x1b]0;" + title + "\x07");
   }

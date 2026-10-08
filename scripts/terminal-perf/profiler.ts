@@ -113,7 +113,7 @@ class PendingRenderRequests {
   }
 }
 
-// Pi 1.0.3: fullscreen renderLayoutFrame is imported and its diff is inline.
+// Pi 1.1.0: fullscreen renderLayoutFrame is imported and its diff is inline.
 // Regular mode's render(width) is a usable whole-document rendering boundary.
 // These shared helpers are observable; none alone represents a complete diff.
 const phaseMethods = [
@@ -131,7 +131,7 @@ const phaseMethods = [
 ] as const;
 
 /**
- * Opt-in Pi 1.0.3 instance instrumentation (regular and fullscreen).
+ * Opt-in Pi 1.1.0 instance instrumentation (regular and fullscreen).
  * Attach to the concrete renderer, not a host/facade. No prototype/global patches.
  * No async wrapper: the original methods' return values and throws are preserved.
  * Times include instrumentation overhead, but not terminal flush/paint/backpressure

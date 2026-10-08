@@ -23,8 +23,8 @@ export const piHostPatches: readonly Patch[] = [
   },
   {
     path: "dist/main.js",
-    originalSha256: "060521b0b81f91948d8ded9139e423e5d0c9e6808a45c81750cc30519de4d2db",
-    adaptedSha256: "b0197a0d0abb0261fac507a9e30c33a5e6a2c4fcedfd28b0d4e29fa2f30be786",
+    originalSha256: "866d65f2d42f74d2bb72ed4a755c8ace1b8a2c497a32cb57cc4db594a4fcb2bf",
+    adaptedSha256: "ed4130e11c406a138a0bf4c67fdc190d674ee13d19b49093b4c77f8a741181f0",
     replacements: [
       ['import { loadMcpCommand } from "./extensions/mcp/cli.lazy.js";\n', ""],
       [
@@ -36,10 +36,26 @@ export const piHostPatches: readonly Patch[] = [
   },
   {
     path: "dist/cli/args.js",
-    originalSha256: "f48f91efc303fc7b826f0ce02ba6eb70fcc271d31671f0f68f562fdd8c6885e6",
-    adaptedSha256: "4a3d92e391f2205174c71cfd30a8aed771ad9f560b80c0c6e662322f8e846e83",
+    originalSha256: "231eca0304b149165a35b12730052586603f23208667e3a57355638017450175",
+    adaptedSha256: "b0e06afb2d4cb5cd417196b42455ebe1c236f3a7413f79bf760963e85ff871df",
     replacements: [
       ["  ${APP_NAME} mcp <command>             Check MCP servers, sign in to or out of OAuth servers\n", ""],
+      [
+        "                                 Keeps MCP tools unless an entry starts with mcp__\n                                 Only +name/-name entries add to or remove from the defaults\n",
+        "                                 Only +name/-name entries add to or remove from the defaults\n",
+      ],
+      [
+        "                                 Applies to all tools, MCP tools included",
+        "                                 Applies to all tools",
+      ],
+      [
+        "  --no-mcp                       Disable built-in MCP support: no servers connect and no MCP tools\n  --skill <path>                 Load a skill file or directory (can be used multiple times)\n",
+        "  --skill <path>                 Load a skill file or directory (can be used multiple times)\n",
+      ],
+      [
+        "  # Add codemode to the default tools\n  ${APP_NAME} --tools +codemode\n\n  # Codemode with only the tools of one MCP server\n  ${APP_NAME} --tools read,bash,codemode,'mcp__radius__*'\n\n  # Disable one tool while keeping the rest available\n",
+        "  # Disable one tool while keeping the rest available\n",
+      ],
       ["install/remove/uninstall/update/list/config/auth/mcp", "install/remove/uninstall/update/list/config/auth"],
       ["//# sourceMappingURL=args.js.map", "export const bruvHostAdapted = true;\n//# sourceMappingURL=args.js.map"],
     ],
@@ -85,8 +101,8 @@ export const piHostPatches: readonly Patch[] = [
   // Native input identity and bounded model-context readers stay at the SDK seam.
   {
     path: "dist/core/agent-session.js",
-    originalSha256: "35ca1dabd54d98c236c9601b569c2856b726ade392d06b2eaaf50158f48913ab",
-    adaptedSha256: "c25468db7f3b81050df032bccb6013266414b2adbab0fddbf131b59dae76d9d3",
+    originalSha256: "0ba5c847b4fd2fd838f71ea84885b9f3a4f15d9bf4b5493e2e88a41d1507e20b",
+    adaptedSha256: "3e193bae59219f79073969c2b391651e1e1e76512d2c3577d26fe3d80dd50a2b",
     replacements: [
       [
         "await this._queueFollowUp(expandedText, currentImages);",
@@ -179,8 +195,8 @@ export const piHostPatches: readonly Patch[] = [
   },
   {
     path: "dist/core/agent-session.d.ts",
-    originalSha256: "2e50b35a37f9c7149c6297ae554b2d965bd74dbfcb8ccd7be44f13226ce497e7",
-    adaptedSha256: "c50ee6235e917833ac40629f34dc0974e309786dbbe123e2b73929a554d40e73",
+    originalSha256: "a3d494295855517aab33ca3ec3890b3e181f25b695fb656a5dd9c262f8677906",
+    adaptedSha256: "438189d7af7f8ee73e87126b727dd9c93d11074f057c5ca27f02f8f67d920352",
     replacements: [
       [
         "    preflightResult?: (disposition: PromptDisposition) => void;",
@@ -213,8 +229,8 @@ export const piHostPatches: readonly Patch[] = [
   },
   {
     path: "dist/core/sdk.js",
-    originalSha256: "fe643170de3d259c7e06179d9e18270a009dfb54df915f6e3de515425b8d009b",
-    adaptedSha256: "605c7d9def7478cfc0bbc30af70adf59a34b6ea678d5e64132bb0c724497d2b1",
+    originalSha256: "8155c0b7d819d2248a1bbf0fa4b8e40d15552ff7fa6a772154cbbccb6ae59235",
+    adaptedSha256: "d97f22069117c052c9926b40cf23020fc624bf4f4a93c94fc205d9b65933968c",
     replacements: [
       [
         "const hasThinkingEntry = sessionManager.getBranch().some",
@@ -230,11 +246,18 @@ export const piHostPatches: readonly Patch[] = [
 
 const hash = (text: string) => createHash("sha256").update(text).digest("hex");
 
+// Recovery may handle only same-version source drift, never version, patch, or I/O errors.
+export class UnsupportedPiHostFileError extends Error {
+  constructor(path: string) {
+    super(`Unsupported Pi host file: ${path}; review bruv's host adaptations before updating Pi`);
+    this.name = "UnsupportedPiHostFileError";
+  }
+}
+
 export function adaptPiHostFile(patch: Patch, text: string): string {
   const digest = hash(text);
   if (digest === patch.adaptedSha256) return text;
-  if (digest !== patch.originalSha256)
-    throw new Error(`Unsupported Pi host file: ${patch.path}; review bruv's host adaptations before updating Pi`);
+  if (digest !== patch.originalSha256) throw new UnsupportedPiHostFileError(patch.path);
   let result = patch.content ?? text;
   for (const [before, after] of patch.replacements ?? []) {
     if (result.split(before).length !== 2) throw new Error(`Pi host adaptation anchor changed: ${patch.path}`);
@@ -246,22 +269,30 @@ export function adaptPiHostFile(patch: Patch, text: string): string {
 
 export async function preparePiHost(piRoot: string): Promise<void> {
   const metadata = JSON.parse(await readFile(join(piRoot, "package.json"), "utf8")) as { version: string };
-  if (metadata.version !== "1.0.3") throw new Error(`Unsupported Pi host version: ${metadata.version}`);
+  if (metadata.version !== "1.1.0") throw new Error(`Unsupported Pi host version: ${metadata.version}`);
   // Validate every file before changing any. A dependency upgrade fails closed.
-  const prepared = await Promise.all(
+  // Finish all reads first: drift must not mask a missing/unreadable sibling file.
+  const sources = await Promise.all(
     piHostPatches.map(async (patch) => {
       const path = join(piRoot, patch.path);
-      const before = await readFile(path, "utf8");
-      return { path, before, after: adaptPiHostFile(patch, before) };
+      return { patch, path, before: await readFile(path, "utf8") };
     }),
   );
+  const prepared = sources.map(({ patch, path, before }) => ({ path, before, after: adaptPiHostFile(patch, before) }));
+  await replacePiHostFiles(prepared);
+}
+
+// Callers must validate every replacement before entering this writer.
+export async function replacePiHostFiles(
+  prepared: readonly { path: string; before: string; after: string }[],
+): Promise<void> {
   for (const { path, before, after } of prepared) {
     if (before === after) continue;
     // Bun installs may hardlink to its cache and other worktrees. Never write the
     // installed inode: copy beside it (retaining modes), adapt, then replace it.
     const temporary = `${path}.bruv-${randomUUID()}`;
-    await copyFile(path, temporary, constants.COPYFILE_EXCL);
     try {
+      await copyFile(path, temporary, constants.COPYFILE_EXCL);
       await writeFile(temporary, after);
       await rename(temporary, path);
     } finally {

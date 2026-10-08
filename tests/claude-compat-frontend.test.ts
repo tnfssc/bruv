@@ -53,8 +53,8 @@ test("settlement retains one run's accounting, while a new run replaces it and r
   await frontend.flush();
   expect(frames.filter((frame) => frame.type === "result")).toHaveLength(0);
   expect(frontend.cost()).toBe(0);
-  frontend.onEvent({ type: "agent_settled" });
-  frontend.onEvent({ type: "agent_settled" });
+  frontend.onEvent({ type: "agent_settled", aborted: false });
+  frontend.onEvent({ type: "agent_settled", aborted: false });
   await frontend.flush();
   const first = frames.find((frame) => frame.type === "result")!;
   expect(first).toMatchObject({
@@ -84,7 +84,7 @@ test("settlement retains one run's accounting, while a new run replaces it and r
   });
   expect(frontend.result()).not.toHaveProperty("user_message_uuid");
   reply("new run");
-  frontend.onEvent({ type: "agent_settled" });
+  frontend.onEvent({ type: "agent_settled", aborted: false });
   await frontend.flush();
   expect(frontend.cost()).toBe(0.75);
   expect(frames.filter((frame) => frame.type === "result")).toHaveLength(2);
@@ -101,7 +101,7 @@ test("auxiliary results collect real accounting without publishing root lifecycl
   const { frontend, frames, reply } = fixture({ auxiliary: true });
   expect(frontend.result()).toMatchObject({ duration_ms: 0, usage: emptyUsage, num_turns: 0 });
   reply('{"answer":42}');
-  frontend.onEvent({ type: "agent_settled" });
+  frontend.onEvent({ type: "agent_settled", aborted: false });
   await frontend.flush();
   expect(frames).toEqual([]);
   expect(frontend.result({ answer: 42 })).toMatchObject({

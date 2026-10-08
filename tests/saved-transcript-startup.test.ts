@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 
 // Isolate Bun module controls from all other tests. Each child imports the exact
-// installed SDK 1.0.3 init and real syntax loader, never a copied startup method.
+// installed SDK 1.1.0 init and real syntax loader, never a copied startup method.
 for (const scenario of ["saved", "saved-ready", "empty", "empty-stopped", "rebind-error"]) {
   test("patched SDK startup: " + scenario, async () => {
     // Retain each scenario's files for inspection; never use the caller's SDK state.

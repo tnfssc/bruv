@@ -1,0 +1,63 @@
+{
+  "bun": "1.4.2",
+  "installExitCode": 0,
+  "installCommand": "bun install --frozen-lockfile --ignore-scripts --backend copy --cache-dir OWNED_STAGE/cache",
+  "sourceHashesAllMatchedBeforePreparation": true,
+  "adapted": [
+    {
+      "path": "dist/extensions/index.js",
+      "sha256": "ec465bb227a60159a8b3aa00e62f794370311a232b839cb104917da7b2651fc8",
+      "expected": "ec465bb227a60159a8b3aa00e62f794370311a232b839cb104917da7b2651fc8",
+      "links": 1
+    },
+    {
+      "path": "dist/main.js",
+      "sha256": "b0197a0d0abb0261fac507a9e30c33a5e6a2c4fcedfd28b0d4e29fa2f30be786",
+      "expected": "b0197a0d0abb0261fac507a9e30c33a5e6a2c4fcedfd28b0d4e29fa2f30be786",
+      "links": 1
+    },
+    {
+      "path": "dist/cli/args.js",
+      "sha256": "4a3d92e391f2205174c71cfd30a8aed771ad9f560b80c0c6e662322f8e846e83",
+      "expected": "4a3d92e391f2205174c71cfd30a8aed771ad9f560b80c0c6e662322f8e846e83",
+      "links": 1
+    },
+    {
+      "path": "dist/core/session-manager.js",
+      "sha256": "afa016a7535a8e6f57d516e3449cd1be3b56f08c07b05c32864b432e1c84add4",
+      "expected": "afa016a7535a8e6f57d516e3449cd1be3b56f08c07b05c32864b432e1c84add4",
+      "links": 1
+    },
+    {
+      "path": "dist/modes/interactive/chat-viewport.js",
+      "sha256": "d8935ff445ff638165a4f11dba32eddea46191377894a8b644ee1511ef36e48f",
+      "expected": "d8935ff445ff638165a4f11dba32eddea46191377894a8b644ee1511ef36e48f",
+      "links": 1
+    },
+    {
+      "path": "dist/core/agent-session.js",
+      "sha256": "c25468db7f3b81050df032bccb6013266414b2adbab0fddbf131b59dae76d9d3",
+      "expected": "c25468db7f3b81050df032bccb6013266414b2adbab0fddbf131b59dae76d9d3",
+      "links": 1
+    },
+    {
+      "path": "dist/core/agent-session.d.ts",
+      "sha256": "c50ee6235e917833ac40629f34dc0974e309786dbbe123e2b73929a554d40e73",
+      "expected": "c50ee6235e917833ac40629f34dc0974e309786dbbe123e2b73929a554d40e73",
+      "links": 1
+    },
+    {
+      "path": "dist/core/session-manager.d.ts",
+      "sha256": "51208200645f89e331998b608bff2c195b42ee6aa5dcb5e9de8143df57c6f895",
+      "expected": "51208200645f89e331998b608bff2c195b42ee6aa5dcb5e9de8143df57c6f895",
+      "links": 1
+    },
+    {
+      "path": "dist/core/sdk.js",
+      "sha256": "605c7d9def7478cfc0bbc30af70adf59a34b6ea678d5e64132bb0c724497d2b1",
+      "expected": "605c7d9def7478cfc0bbc30af70adf59a34b6ea678d5e64132bb0c724497d2b1",
+      "links": 1
+    }
+  ],
+  "agentSessionDifference": "estimateProjectedContextTokens(manager.buildSessionProjection(), manager.getBranch()) -> estimateProjectedContextTokens(manager.buildSessionProjection(), manager.getModelContextBranch())"
+}

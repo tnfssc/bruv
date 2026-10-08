@@ -102,7 +102,7 @@ test("runtime host gate rejects pristine and partly prepared dependencies", () =
 
 test("adaptation validates all files and version before any writes", async () => {
   const dir = await temp();
-  await writeFile(join(dir, "package.json"), JSON.stringify({ version: "1.0.3" }));
+  await writeFile(join(dir, "package.json"), JSON.stringify({ version: "1.1.0" }));
   for (const patch of piHostPatches) {
     await mkdir(dirname(join(dir, patch.path)), { recursive: true });
     await writeFile(join(dir, patch.path), patch.content ? originalRegistry : await readFile(join(piRoot, patch.path)));
@@ -126,7 +126,7 @@ async function hardlinkedPiHost(driftPath?: string) {
   const cache = join(dir, "cache");
   const sibling = join(dir, "sibling");
   await mkdir(local);
-  await writeFile(join(local, "package.json"), JSON.stringify({ version: "1.0.3" }));
+  await writeFile(join(local, "package.json"), JSON.stringify({ version: "1.1.0" }));
   const originals = new Map<string, string>();
   for (const patch of piHostPatches) {
     const original = await originalPiHostFile(patch);

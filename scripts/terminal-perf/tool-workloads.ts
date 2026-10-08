@@ -729,8 +729,8 @@ if (import.meta.main) {
     "src/ui/task-rows.ts",
     "src/ui/conversation-density.ts",
     "bun.lock",
-    "patches/@earendil-works%2Fpi-coding-agent@1.0.3.patch",
-    "patches/@earendil-works%2Fpi-tui@1.0.3.patch",
+    "patches/@earendil-works%2Fpi-coding-agent@1.1.0.patch",
+    "patches/@earendil-works%2Fpi-tui@1.1.0.patch",
     join(sdkDir, "modes/interactive/components/tool-execution.js"),
   ];
   const sourceHashes: Record<string, string> = {};
@@ -741,7 +741,7 @@ if (import.meta.main) {
     commit: git("rev-parse", "HEAD"),
     dirty: git("status", "--porcelain"),
     bun: Bun.version,
-    sdk: "1.0.3",
+    sdk: "1.1.0",
     machine: { platform: platform(), release: release(), arch: arch(), cpu: cpus()[0]?.model, cpuCount: cpus().length },
     sourceHashes,
   };
