@@ -33,5 +33,5 @@ the probe to root orchestrator mode and reran it: 8279 characters, the real
 execute declaration, no network. Explicit --paid still stops at missing
 canonical Google credentials. Added --offline, a call cap, hard deadline and
 a full observation window after sending a simulated result. Connected
-behavior remains unproved. See main-orchestrator-investigation.md and
+behavior remains unproved. See [main-orchestrator-investigation.md](main-orchestrator-investigation.md) and
 main-orchestrator-provider-attempts.json for current results.

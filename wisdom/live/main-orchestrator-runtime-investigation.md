@@ -40,5 +40,5 @@ Unknown: provider acceptance of execute schema/result size, stable Pi assembled-
 Parent reran both tests with the matching worktree CLI: 2 pass, 22 assertions.
 Typecheck first found five uses of isError, absent from AgentToolResult.
 Assertions now check real text content instead; tsc --noEmit passes. No
-production runtime source changed. See main-orchestrator-investigation.md
+production runtime source changed. See ../experiments/live/main-orchestrator-provider-probes/main-orchestrator-investigation.md
 for the combined provider and session-ownership evidence boundary.

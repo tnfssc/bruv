@@ -30,6 +30,6 @@ The initial simplified probe below is historical. Parent replaced its prompt
 and tool construction with the actual root orchestrator provider-boundary
 preview, added explicit --offline/--paid modes, call caps and result-marker
 observation. Both modes ran; paid trials still stopped at missing canonical
-credentials. See main-orchestrator-investigation.md and
+credentials. See [main-orchestrator-investigation.md](main-orchestrator-investigation.md) and
 main-orchestrator-provider-attempts.json for current evidence. Parent also
 checked the public types and saved selected excerpts with a source hash.

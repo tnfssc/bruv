@@ -74,7 +74,7 @@ See [source CLI lesson](../live/macos-live-ci-source-cli.md).
 Implementation, tests, durable worktrees and limitations:
 [main owner](../live/main-orchestrator-implementation.md),
 [parent release work](../live/main-orchestrator-release-work.md),
-[investigation](../live/main-orchestrator-investigation.md).
+[investigation](../experiments/live/main-orchestrator-provider-probes/main-orchestrator-investigation.md).
 
 Values reviewed after integrated review and release. No new value needed.
 Value 7 now links the recurring source-CLI-fixture lesson: reuse the existing

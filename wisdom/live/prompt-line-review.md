@@ -835,7 +835,7 @@ Agreed changes / reason: —
 
 
 Investigation and probes are now authorized and running. See
-[main-orchestrator-investigation.md](main-orchestrator-investigation.md) for
+[main-orchestrator-investigation.md](../experiments/live/main-orchestrator-provider-probes/main-orchestrator-investigation.md) for
 baseline evidence, durable worktrees, jobs and open questions.
 
 Investigation results: real execute + isolated real async shell job passed

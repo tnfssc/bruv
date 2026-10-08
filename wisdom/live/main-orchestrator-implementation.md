@@ -1,7 +1,7 @@
 # Live owns the main session
 
 Implemented 2026-09-25. This replaces the production companion path. It is not
-a prototype flag. See [investigation](main-orchestrator-investigation.md),
+a prototype flag. See [investigation](../experiments/live/main-orchestrator-provider-probes/main-orchestrator-investigation.md),
 [prompt review](prompt-line-review.md), and its linked wire/input audits.
 No install, release, push, credential change, paid request, or microphone use
 was done in this worktree.
