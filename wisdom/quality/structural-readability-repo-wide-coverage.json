@@ -13962,18 +13962,46 @@
       "file": "scripts/terminal-perf/navigation-sdk-probe.ts",
       "initialBlob": "absent",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-primary-final-blob",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_7ac8ab0a",
+      "primaryCommit": "d7a44119cc7148769f1042a0929eec7121203f2e",
       "judgeIds": [],
-      "sourceCommit": "e453ab85d74a043ddd10171d806c4fd9ebe7a6cc",
+      "sourceCommit": "d7a44119cc7148769f1042a0929eec7121203f2e",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
       "status": "pending",
       "pendingReason": "Untracked helper blob 43e30a2d7094921bc195e788f4897b4920054980 in preserved /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_09b8c468, from incomplete navigation primary task_09b8c468. No committed source candidate, separate primary-focus coverage, or actual-code judge. Preserve; do not join.",
       "acceptedRelatedJudges": [
         "task_cc27bf98"
       ],
-      "acceptedBlob": "bc1696b741ddb83b2712d4b9576bbece9c8c186b"
+      "acceptedBlob": "bc1696b741ddb83b2712d4b9576bbece9c8c186b",
+      "primaryBase": "ca4a39af1b7b3f729c7d04504cd22f2ab880ed13",
+      "primaryResult": "A file-local InteractiveNavigationCapture owns the renderer/terminal/profiler association, reset, shared snapshot, stage/input records, input drain measurement, and profiler disposal. The orchestrator retains actual app/runtime ownership, operation labels, exact selector/navigation order, init and awaited lifecycle timing, and lifecycle drain timing. Both capture paths now use one snapshot implementation and return the same evidence fields. Noninteractive output remains empty appInput/appStages. Fetch/provider prohibitions, isolated history/auth paths, disabled resources, cancellation assertion, environment restoration and disk-manager disposal are unchanged.",
+      "primaryPaths": [
+        "scripts/terminal-perf/navigation-sdk-probe.ts"
+      ],
+      "primaryChecks": [
+        {
+          "kind": "source-review",
+          "result": "Read wisdom values/guidance and only focus evidence rows. Compared preserved uncommitted candidate 43e30a2d7094921bc195e788f4897b4920054980 against current bc1696b741ddb83b2712d4b9576bbece9c8c186b. Focus already present; no restoration or old-branch merge."
+        },
+        {
+          "kind": "caller-trace",
+          "result": "Read navigation-workloads import/re-export and SDK CLI branch, interaction-worker invocation, selector-lifecycle-probe invocation, interaction-normalize evidence consumption, and existing terminal-perf-navigation assertions without executing them."
+        },
+        {
+          "kind": "formatter",
+          "result": "Passed: requested read-only Biome executable via node child_process argv, format --write on focus only; no fixes applied. Fresh retained environment /tmp/pr45-navigation-format-BkuxGa (home/config/tmp)."
+        },
+        {
+          "kind": "git-diff-check",
+          "result": "Passed before commit. Source-only commit; no active commit hooks found."
+        }
+      ],
+      "primaryLimits": [
+        "No setup, tests, builds or live SDK/provider/device access run; parent owns audited isolated batch gates and independent exact-candidate judgment.",
+        "Structural improvement is a primary proposal, not an independent acceptance verdict. Existing app-stop/disposal failure behavior and pre-try history-open lifetime were left unchanged outside the observed capture-reading burden.",
+        "No per-worker wisdom edits; parent owns aggregate wisdom."
+      ]
     },
     {
       "file": "scripts/terminal-perf/navigation-terminal.ts",

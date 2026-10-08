@@ -991,6 +991,15 @@
         "branch": "bruv/pr45-judge-3-agent-history-session-goals-5f25d07a",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
+      },
+      {
+        "id": "task_9a4b847e",
+        "stage": "primary",
+        "focus": "src/prompts/goal-continuation.md",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_9a4b847e",
+        "branch": "bruv/pr45-primary-src-prompts-goal-continuati-9a4b847e",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
       }
     ]
   },
@@ -1286,7 +1295,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_7ac8ab0a",
         "branch": "bruv/pr45-primary-scripts-terminal-perf-navig-7ac8ab0a",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "d7a44119cc7148769f1042a0929eec7121203f2e"
       },
       {
         "id": "task_1e242769",
