@@ -2681,11 +2681,11 @@
       "integrationState": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_4582ca5b",
+        "primaryCommit": "7fb091b1597c0cfba275caaf32db05b03c11e711",
         "judgeIds": [],
-        "sourceCommit": "47c08778ff7c1d803320838c1707e3c28213178d",
-        "state": "needs-primary",
+        "sourceCommit": "7fb091b1597c0cfba275caaf32db05b03c11e711",
+        "state": "needs-judge",
         "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
       }
     },

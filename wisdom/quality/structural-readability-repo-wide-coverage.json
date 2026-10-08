@@ -8319,13 +8319,48 @@
       "initialBlob": "d832b5e79f4dc55c772394e88ad5890c5594cd68",
       "status": "pending",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_4582ca5b",
+      "primaryCommit": "7fb091b1597c0cfba275caaf32db05b03c11e711",
       "judgeIds": [],
-      "sourceCommit": "47c08778ff7c1d803320838c1707e3c28213178d",
+      "sourceCommit": "7fb091b1597c0cfba275caaf32db05b03c11e711",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
-      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
+      "primaryBase": "7fb091b1597c0cfba275caaf32db05b03c11e711",
+      "primaryResult": "Keep the existing structure. registeredTool captures the actual registerExecuteTool declaration with outputPad=0 explicitly injected, so the schema and native tool-component tests share the real registration without invoking execution. The tool lifecycle test visibly proceeds args complete → execution started → success → expanded source/output → collapsed failure; splitting this sequence or hiding it in fixture operations would make its state dependencies harder to follow. The completion test keeps formatCompletionNotification evidence distinct from completionDiagnosticDetails title/status authority, deliberately supplies a non-title command, then checks collapsed title and expanded evidence. The attention test keeps notice details and checkpoint evidence together, then checks hidden routine collapsed content and retained expanded evidence. Both explicit completionPreview callbacks match src/agent/extension.ts registration and make kind/details/padding forwarding directly inspectable; extracting the two constructors would conceal the wiring under test for little benefit. plain only normalizes terminal presentation. No assertions, security behavior or unrelated accepted work were modified.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        {
+          "name": "Focus identity",
+          "result": "Present; HEAD blob d832b5e79f4dc55c772394e88ad5890c5594cd68 matches preserved source d832b5e79f4dc55c772394e88ad5890c5594cd68. No candidate-byte restoration required."
+        },
+        {
+          "name": "Focused evidence",
+          "result": "Read focus entries only in ui-terminal-cli resume reconciliation, area ledger and repo-wide coverage/assignment evidence; no prior dedicated candidate or rejected focus candidate recorded."
+        },
+        {
+          "name": "Actual callers and owners",
+          "result": "Read registerExecuteTool rendering/registration, executeDeclaration, execute prompt assets, completionDiagnosticDetails, production task-complete/task-attention registrations, completionPreview, formatCompletionNotification, and installed native ToolExecutionComponent/CustomMessageComponent lifecycle/rendering."
+        },
+        {
+          "name": "Guidance",
+          "result": "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md."
+        },
+        {
+          "name": "git diff --check",
+          "result": "Passed; no source diff."
+        },
+        {
+          "name": "Formatter",
+          "result": "Not applicable: no changed source paths."
+        }
+      ],
+      "primaryLimits": [
+        "No repository tests, setup or builds run; parent owns audited isolated batch gates.",
+        "Static reading is not a runtime or independent judge verdict.",
+        "No source commit created because decision preserves existing source.",
+        "No wisdom edits: parent owns aggregate wisdom; no new structural lesson required."
+      ]
     },
     {
       "file": "tests/activity-runtime-acceptance-test.py",

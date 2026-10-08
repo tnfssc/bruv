@@ -1151,6 +1151,15 @@
         "model": "openai-codex/gpt-6.1-sol",
         "status": "handled",
         "sourceCommit": "dbcd6371cbf67989daa4c18bead4b3c6a749dcdd"
+      },
+      {
+        "id": "task_bc3ceb60",
+        "stage": "judge",
+        "focus": ["src/prompts/orchestrator.md", "src/prompts/system.md", "src/prompts/wisdom.md"],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_bc3ceb60",
+        "branch": "bruv/pr45-judge-3-agent-history-session-goals-bc3ceb60",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
       }
     ]
   },
@@ -1498,6 +1507,25 @@
         "focus": "tests/action-label-wiring.test.ts",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_4582ca5b",
         "branch": "bruv/pr45-primary-tests-action-label-wiring.t-4582ca5b",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled",
+        "sourceCommit": "7fb091b1597c0cfba275caaf32db05b03c11e711"
+      },
+      {
+        "id": "task_0962494e",
+        "stage": "primary",
+        "focus": "tests/activity-runtime-acceptance-test.py",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_0962494e",
+        "branch": "bruv/pr45-primary-tests-activity-runtime-acce-0962494e",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_7c18a737",
+        "stage": "primary",
+        "focus": "tests/activity-terminal-acceptance-test.py",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_7c18a737",
+        "branch": "bruv/pr45-primary-tests-activity-terminal-acc-7c18a737",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
       }
