@@ -3510,12 +3510,14 @@
     {
       "file": "scripts/terminal-perf/audit-probes/journal-stop.ts",
       "initialBlob": "5d535f2de208af012789c2b9b05046ededd52463",
-      "status": "pending",
+      "status": "accepted",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_6e013db2",
       "primaryCommit": "f5c0f12c124dfe25baa57ae05d942e9f6c1be03a",
-      "judgeIds": [],
+      "judgeIds": [
+        "task_c15d8d4d"
+      ],
       "sourceCommit": "f5c0f12c124dfe25baa57ae05d942e9f6c1be03a",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
       "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
@@ -3554,6 +3556,23 @@
         "No repository tests, audit execution, setup or builds run; parent owns isolated batch runtime gates. Static reading and formatting do not establish runtime equivalence.",
         "Independent fresh judge and external runtime model verification remain parent-owned.",
         "No per-worker wisdom edits; existing guidance was applied and parent owns aggregate wisdom."
+      ],
+      "acceptedBlob": "a62119275cf02374bfd2d0eee57d0af20c1d413f",
+      "result": "The base is also the candidate parent (585e1a97e484483f42d5dde29417880fae28d754). In the base, journal instrumentation and its resources surround unrelated terminal measurements and report publication. The actual candidate gives auditJournal one visible lifetime: create its exact temporary root, collect original/reopened managers, install materialize accounting, record append/branch/projection/open samples, then restore materialize, dispose managers and remove that root in its own finally. auditTerminalStop contains the coherent native-message fixture, layout/focus setup, render instrumentation, excluded setup frame, counter reset, synchronous stop and restoration assertions. The two top-level calls now show phase order before publishing. This is a real ownership/lifetime improvement, not merely renaming or hiding arbitrary blocks. Unchanged decision: retain the shared synchronous segment helper, deterministic fixtures/fingerprints and simple top-level report publication; these already expose the relevant timing and provenance policy without needing a new reporting abstraction or context bag.",
+      "systemReason": "Traced the standalone Bun CLI entry and documented direct invocations; no automated source caller or package-script wrapper was found. SessionManager.create enters the installed newSession adapter and adopts a pending DiskEntryStore; append enters the installed disk append path, branch/projection materialize metadata, and open adopts the persisted store before the reopened branch sample. Disposal clears owned store/cache state; the candidate restores only materialize instrumentation, not the installed SessionManager adaptation, as in the base. FakeTerminal captures writes without a real terminal. TUI.stop cancels scheduled rendering, runs terminal-stop hooks and then the alternate-screen hook synchronously renders/restores the transcript, explaining the unchanged no-frame/one-document-render assertions. Journal exceptions still execute its finally and prevent terminal/report execution. Terminal/assertion or report-write failures now occur after journal resources have been released. Successful execution keeps sample order, timing entry-to-return, materialize byte accounting, hashes, report schema, output argument/default and console summaries. Earlier journal disposal can affect incidental GC/OS timing, but it is an explicit phase-lifetime change, not a change to the measured stop boundary. Unchanged decision: preserve the imported history implementation, fixture terminal and actual stop/report behavior; their candidate Git blobs are unchanged and the extraction does not require related source edits.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md; inspected only focus records in repo-wide coverage and relevant area JSON ledgers.",
+        "Read exact base and candidate source, parent identity and changed-path inventory: only the focus source changed.",
+        "Static comparison: shared segment/fixture summary helper definitions are byte-identical; journal sample body and terminal body are identical after line indentation trimming; report/publication is identical after whitespace normalization.",
+        "git diff --check between primary base and candidate returned no findings.",
+        "Verified candidate/base Git blobs for the related history source and FakeTerminal workload source are identical.",
+        "Read actual public journal adapters, disposal/materialize implementation, fixture terminal, available SDK create and terminal-stop/restoration implementations, and documented CLI references."
+      ],
+      "limits": [
+        "No setup, tests, builds or probe execution performed; parent owns audited isolated runtime gates. Static checks support safety but do not constitute runtime parity or timing proof.",
+        "SDK implementation reading used existing dependencies read-only at /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules; no claim that installed bytes have been runtime-validated for this candidate.",
+        "No real authentication, provider, credential or device access used or claimed. No model self-introspection; parent verifies runtime identity externally.",
+        "No source edits, commits, delegation, cleanup commands or unrelated-work changes. Aggregate wisdom remains parent-owned."
       ]
     },
     {
@@ -3783,13 +3802,43 @@
       "initialBlob": "35e5c66c596e869e8067a9bb4c2298c671638330",
       "status": "pending",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_72c25417",
+      "primaryCommit": "38bb4270a46a5ee9838b649a2d8b240989bde71e",
       "judgeIds": [],
-      "sourceCommit": "3603e341a47541a137c95c675106c9568374fde1",
+      "sourceCommit": "38bb4270a46a5ee9838b649a2d8b240989bde71e",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
-      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
+      "primaryBase": "4134d99b0c4024dedd0f1a4eb4e16d7faa52ca09",
+      "primaryResult": "The exported entry now owns keybindings in one visible try/finally and invokes separate tree construction and scenario replay functions. Tree payloads, label timestamp, scenario order, callbacks, captures, and hash calculation remain unchanged. Replay remains linear rather than hidden behind scenario dispatch or a context bag.",
+      "primaryPaths": [
+        "scripts/terminal-perf/selector-lifecycle-behavior.ts"
+      ],
+      "primaryChecks": [
+        {
+          "kind": "reading",
+          "result": "Read values/guidance, focus-only area/repo-wide ledger rows, preserved reconciliation focus evidence, selector-lifecycle.test.ts caller, installed TreeSelectorComponent and keybinding authority. Focus already present at baseline blob; no candidate bytes imported."
+        },
+        {
+          "kind": "formatter",
+          "command": "/home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/@biomejs/biome/bin/biome format --write scripts/terminal-perf/selector-lifecycle-behavior.ts",
+          "result": "Exit 0; one file formatted, no fixes applied. Invoked through node:child_process argv with explicit isolated env; retained directories under /tmp/pr45-selector-format-GoFwLp."
+        },
+        {
+          "kind": "static-preservation",
+          "result": "Exact text comparison of extracted fixture/replay bodies passes after normalizing only the shared timestamp identifier and removing the relocated restore statement; timestamp literal unchanged. Existing assertions in caller untouched."
+        },
+        {
+          "kind": "git-diff-check",
+          "result": "Passed before commit."
+        }
+      ],
+      "primaryLimits": [
+        "No setup, tests, or builds run; parent owns audited isolated batch gates. Behavioral parity and exception-path runtime validation remain for parent gates.",
+        "Optional static TypeScript parse unavailable: read-only dependency location lacks typescript/lib/typescript.js; initial package-directory require also failed.",
+        "Independent exact-candidate judge is parent-owned; no delegation performed.",
+        "No per-worker wisdom edits; parent writes aggregate wisdom."
+      ]
     },
     {
       "file": "scripts/terminal-perf/selector-lifecycle-probe.ts",

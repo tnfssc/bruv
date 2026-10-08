@@ -828,19 +828,22 @@
     {
       "focus": "scripts/terminal-perf/audit-probes/journal-stop.ts",
       "initialBlob": "5d535f2de208af012789c2b9b05046ededd52463",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "a62119275cf02374bfd2d0eee57d0af20c1d413f",
       "integrationState": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "a62119275cf02374bfd2d0eee57d0af20c1d413f",
         "primaryId": "task_6e013db2",
         "primaryCommit": "f5c0f12c124dfe25baa57ae05d942e9f6c1be03a",
-        "judgeIds": [],
+        "judgeIds": [
+          "task_c15d8d4d"
+        ],
         "sourceCommit": "f5c0f12c124dfe25baa57ae05d942e9f6c1be03a",
-        "state": "needs-judge",
-        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+        "state": "accepted-joined",
+        "reason": "The base is also the candidate parent (585e1a97e484483f42d5dde29417880fae28d754). In the base, journal instrumentation and its resources surround unrelated terminal measurements and report publication. The actual candidate gives auditJournal one visible lifetime: create its exact temporary root, collect original/reopened managers, install materialize accounting, record append/branch/projection/open samples, then restore materialize, dispose managers and remove that root in its own finally. auditTerminalStop contains the coherent native-message fixture, layout/focus setup, render instrumentation, excluded setup frame, counter reset, synchronous stop and restoration assertions. The two top-level calls now show phase order before publishing. This is a real ownership/lifetime improvement, not merely renaming or hiding arbitrary blocks. Unchanged decision: retain the shared synchronous segment helper, deterministic fixtures/fingerprints and simple top-level report publication; these already expose the relevant timing and provenance policy without needing a new reporting abstraction or context bag."
       }
     },
     {
@@ -1510,11 +1513,11 @@
       "integrationState": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_72c25417",
+        "primaryCommit": "38bb4270a46a5ee9838b649a2d8b240989bde71e",
         "judgeIds": [],
-        "sourceCommit": "3603e341a47541a137c95c675106c9568374fde1",
-        "state": "needs-primary",
+        "sourceCommit": "38bb4270a46a5ee9838b649a2d8b240989bde71e",
+        "state": "needs-judge",
         "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
       }
     },
@@ -5290,7 +5293,7 @@
     }
   },
   "resumeStatus": {
-    "accepted": 63,
-    "pending": 48
+    "accepted": 64,
+    "pending": 47
   }
 }
