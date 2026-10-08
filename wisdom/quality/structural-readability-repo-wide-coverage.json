@@ -3252,12 +3252,14 @@
     {
       "file": "scripts/tasks-ui-proof-screenshots.ts",
       "initialBlob": "c2db3b69aea3197ac7d013e9ba58ad8443a91199",
-      "status": "pending",
+      "status": "accepted",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_48469090",
       "primaryCommit": "70ed7b9be7d505db9c65ca09eab71a1d0843f6b3",
-      "judgeIds": [],
+      "judgeIds": [
+        "task_050e83e0"
+      ],
       "sourceCommit": "70ed7b9be7d505db9c65ca09eab71a1d0843f6b3",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
       "pendingReason": "Assigned task_46eaf8ec; no completed primary candidate commit or independent actual-code verdict. Historical primary-running label is not completion. Preserved worktree is clean at launch base; no source candidate exists.",
@@ -3288,6 +3290,36 @@
         "No setup, tests, builds or browser runtime executed; parent owns audited isolated batch gates and independent exact-candidate judgment.",
         "Cached Playwright import now belongs to captureScreenshots, after timeline/font reads; simultaneous input/module failures can have a different error precedence.",
         "No wisdom or values edits: aggregate wisdom is parent-owned and no new general lesson was established."
+      ],
+      "acceptedBlob": "1e17035bcea3692265434818cf51d1f98bdb5685",
+      "result": "Compared the actual candidate against primary base 1c5fdc5a8a8953164c2914738af32941fbb07399, which is also its immediate parent; the focus is the only changed source path. In the base, CLI validation/import precede the ANSI interpreter, while document composition, browser ownership, frame effects, and provenance publication share a top-level run. In the candidate, the bottom-level journey is contiguous: validate the invocation and cached-asset paths, load timeline/font, await captureScreenshots, then publish screenshots.json and the success count. renderViewportDocument owns the exact embedded-font/style/pre composition and delegates ANSI interpretation to replay. captureScreenshots visibly owns module import, launch, one network-blocked page, sequential frame reads and HTML writes, font readiness, text-identity assertion, full-page PNG capture and hashes, finally-close, then return. This extraction groups an actual resource lifetime and separates pure composition from browser effects; it is not merely renamed blocks or a context-bag framework. Unchanged decision: retain the existing local esc/ansi/replay implementation and manifest code, rather than splitting individual SGR branches or adding a rendering abstraction. Their state and output rules are already contiguous and remain byte-identical.",
+      "systemReason": "Traced candidate scripts/tasks-ui-native-proof.py: NativeCapture.capture writes the exact viewport.ansi.txt inputs and timeline step records; render_screenshots invokes Bun with this helper and one capture directory, records stdout/stderr, rejects nonzero exit, and checks every timeline PNG. main records screenshots_complete, helper tooling hashes, disclosed ANSI-replay kind, and a separate required parent PNG visual review. The helper retains argument/env contract, filename construction, ANSI text equality, route abort, viewport/device scale, screenshot options, PNG hashing and provenance fields. Browser close remains awaited on frame failure and on success; hashes return only after close, so the CLI cannot publish a success manifest when capture or close rejects. Partial HTML/PNG artifacts on failure remain possible as before; the caller marks failure rather than interpreting them as acceptance. Cached-module import now occurs after timeline/font reads, changing simultaneous-failure precedence, but no caller depends on that precedence. No caller or related source change is needed.",
+      "checks": [
+        {
+          "kind": "guidance",
+          "result": "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md; inspected only matching focus rows in coverage/area ledgers and the supplied primary context."
+        },
+        {
+          "kind": "exact-candidate-review",
+          "result": "Read candidate and primary-base source and the complete focused diff through Git objects, not checkout HEAD. Candidate parent equals primary base; only scripts/tasks-ui-proof-screenshots.ts differs. Related caller, mechanics test and disclosure documentation are unchanged."
+        },
+        {
+          "kind": "caller-trace",
+          "result": "Read NativeCapture.capture, render_screenshots and main publication/failure handling, plus the existing screenshot-helper caller mechanics test as source only. The test stubs process output and PNG existence and is not rendered evidence."
+        },
+        {
+          "kind": "static-preservation",
+          "result": "Read-only substring comparisons confirm byte-identical ANSI interpretation/escaping and manifest/success-log code. Reviewed moved document string, browser options, per-frame sequence, route/font/text checks and finally-close against the base."
+        },
+        {
+          "kind": "diff-check",
+          "result": "git diff --check 1c5fdc5a8a8953164c2914738af32941fbb07399 70ed7b9be7d505db9c65ca09eab71a1d0843f6b3 returned successfully with no whitespace errors; exact candidate focus blob resolved through git rev-parse."
+        }
+      ],
+      "limits": [
+        "Structural source-reading verdict only. No setup, repository tests, builds, browser execution, credentials or devices used; parent owns audited isolated batch gates and visual/runtime evidence.",
+        "Module import follows input reads in the candidate, so simultaneous invalid inputs and invalid module paths can report a different first error; this is an accepted non-contractual ordering change, not claimed identical failure precedence.",
+        "No source or wisdom edits, unrelated work imports, delegation, push, PR or merge. Only this untracked report is written; parent owns aggregate wisdom and external runtime-model verification."
       ]
     },
     {
@@ -3554,15 +3586,49 @@
       "initialBlob": "2ba446b1c0b439cc7ee92256ad58ff7ccd3d0836",
       "status": "pending",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_efdf5c1a",
+      "primaryCommit": "4fb1ae370ec111a0c5a7c1a2ccf216588244eb48",
       "judgeIds": [
         "task_23bf0f9f"
       ],
-      "sourceCommit": "e5654ea0d0f92812e5a1bf526f78057f631d4189",
+      "sourceCommit": "4fb1ae370ec111a0c5a7c1a2ccf216588244eb48",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
-      "pendingReason": "Existing related-path ACCEPT by task_23bf0f9f at e5654ea0d0f92812e5a1bf526f78057f631d4189, blob 2e0e6eb8783ba3fcce9fde642717064f933dd67f; exact candidate verified. Related blob already joined. Dedicated primary-focus acceptance is missing."
+      "pendingReason": "Existing related-path ACCEPT by task_23bf0f9f at e5654ea0d0f92812e5a1bf526f78057f631d4189, blob 2e0e6eb8783ba3fcce9fde642717064f933dd67f; exact candidate verified. Related blob already joined. Dedicated primary-focus acceptance is missing.",
+      "primaryBase": "4fb1ae370ec111a0c5a7c1a2ccf216588244eb48",
+      "primaryResult": "The typed evidence() fixture states the callback, frame, input, burst, visibility and trace records together. The first positive test follows that single fixture through normalizeInteraction into samplePeakSync and explicitly proves input lateness cannot inflate CPU peak. The mixed-source test locally appends a subscribed-session callback and updates only total counters, leaving the direct burst intact; adjacent assertions compare total and burst callback/frame counts, spans, iteration and raw evidence. The two rejection loops each create a fresh fixture and mutate one evidence field: timing/count mismatches retain the exact malformed-evidence assertion, while visibility, network and trace loss retain rejection assertions. Traced the actual worker return {id,evidence}, terminal-interactions runner normalization handoff, validateToolEventEvidence pre-derivation validation and samplePeakSync report authority. The existing structure already exposes these journeys without scattered authority or shared mutable fixture lifetime. Extracting wrappers or splitting this compact fixture would add indirection rather than resolve a demonstrated burden. Preserved all accepted source bytes; no cosmetic churn.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        {
+          "kind": "static-reading",
+          "result": "Read wisdom/values.md and structural-readability guidance; inspected only focus records in area, resume-reconciliation and repo-wide ledgers."
+        },
+        {
+          "kind": "candidate-integrity",
+          "result": "HEAD and working focus bytes match preserved e5654ea0d0f92812e5a1bf526f78057f631d4189 candidate blob 2e0e6eb8783ba3fcce9fde642717064f933dd67f. Focus exists; no restoration or merge needed."
+        },
+        {
+          "kind": "caller-trace",
+          "paths": [
+            "scripts/terminal-perf/interaction-worker.ts",
+            "scripts/terminal-interactions.ts",
+            "scripts/terminal-perf/tool-event-workloads.ts",
+            "scripts/terminal-perf/interaction-normalize.ts",
+            "scripts/terminal-perf/interaction-report.ts"
+          ],
+          "result": "Read-only tracing of fixture evidence production, normalization/rejection boundary and report measurement derivation."
+        },
+        {
+          "kind": "source-status",
+          "result": "Working tree clean before result file; no source/helper edits and no new source commit."
+        }
+      ],
+      "primaryLimits": [
+        "No setup, repository tests or builds run; parent owns audited isolated batch gates.",
+        "Formatter not invoked: no changed source paths and no commit to format.",
+        "Independent exact-candidate judge and external runtime model verification remain parent-owned.",
+        "No wisdom or values edits; aggregate wisdom is parent-owned and no new general lesson was identified."
+      ]
     },
     {
       "file": "scripts/terminal-perf/interaction-worker.ts",

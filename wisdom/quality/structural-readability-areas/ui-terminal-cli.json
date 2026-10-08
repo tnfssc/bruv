@@ -526,7 +526,7 @@
     {
       "focus": "scripts/tasks-ui-proof-screenshots.ts",
       "initialBlob": "c2db3b69aea3197ac7d013e9ba58ad8443a91199",
-      "status": "pending",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_46eaf8ec",
@@ -541,16 +541,19 @@
         }
       ],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "1e17035bcea3692265434818cf51d1f98bdb5685",
       "integrationState": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "1e17035bcea3692265434818cf51d1f98bdb5685",
         "primaryId": "task_48469090",
         "primaryCommit": "70ed7b9be7d505db9c65ca09eab71a1d0843f6b3",
-        "judgeIds": [],
+        "judgeIds": [
+          "task_050e83e0"
+        ],
         "sourceCommit": "70ed7b9be7d505db9c65ca09eab71a1d0843f6b3",
-        "state": "needs-judge",
-        "reason": "Assigned task_46eaf8ec; no completed primary candidate commit or independent actual-code verdict. Historical primary-running label is not completion. Preserved worktree is clean at launch base; no source candidate exists."
+        "state": "accepted-joined",
+        "reason": "Compared the actual candidate against primary base 1c5fdc5a8a8953164c2914738af32941fbb07399, which is also its immediate parent; the focus is the only changed source path. In the base, CLI validation/import precede the ANSI interpreter, while document composition, browser ownership, frame effects, and provenance publication share a top-level run. In the candidate, the bottom-level journey is contiguous: validate the invocation and cached-asset paths, load timeline/font, await captureScreenshots, then publish screenshots.json and the success count. renderViewportDocument owns the exact embedded-font/style/pre composition and delegates ANSI interpretation to replay. captureScreenshots visibly owns module import, launch, one network-blocked page, sequential frame reads and HTML writes, font readiness, text-identity assertion, full-page PNG capture and hashes, finally-close, then return. This extraction groups an actual resource lifetime and separates pure composition from browser effects; it is not merely renamed blocks or a context-bag framework. Unchanged decision: retain the existing local esc/ansi/replay implementation and manifest code, rather than splitting individual SGR branches or adding a rendering abstraction. Their state and output rules are already contiguous and remain byte-identical."
       }
     },
     {
@@ -1220,13 +1223,13 @@
       ],
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_efdf5c1a",
+        "primaryCommit": "4fb1ae370ec111a0c5a7c1a2ccf216588244eb48",
         "judgeIds": [
           "task_23bf0f9f"
         ],
-        "sourceCommit": "e5654ea0d0f92812e5a1bf526f78057f631d4189",
-        "state": "needs-primary",
+        "sourceCommit": "4fb1ae370ec111a0c5a7c1a2ccf216588244eb48",
+        "state": "needs-judge",
         "reason": "Existing related-path ACCEPT by task_23bf0f9f at e5654ea0d0f92812e5a1bf526f78057f631d4189, blob 2e0e6eb8783ba3fcce9fde642717064f933dd67f; exact candidate verified. Related blob already joined. Dedicated primary-focus acceptance is missing."
       }
     },
@@ -5236,7 +5239,7 @@
     }
   },
   "resumeStatus": {
-    "accepted": 61,
-    "pending": 50
+    "accepted": 62,
+    "pending": 49
   }
 }
