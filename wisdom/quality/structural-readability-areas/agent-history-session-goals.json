@@ -2008,11 +2008,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_67227421",
+        "primaryCommit": "95650e95d72d022bbd3e31646ed529a46f1a764b",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary",
+        "sourceCommit": "95650e95d72d022bbd3e31646ed529a46f1a764b",
+        "state": "needs-judge",
         "reason": "No dedicated primary/final independent focus judgment."
       }
     },

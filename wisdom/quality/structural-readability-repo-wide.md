@@ -81,6 +81,10 @@ New root wrapper tests/live-linux-protocol-regressions.test.ts has primary task_
 
 Joined final 2d4a18b2: 70 exact baseline files plus four extras, each with unique primary coverage and independent final-code acceptance, all blob hashes checked. Both rejections resolved. Area proof: 490 tests/2,443 assertions, actual Linux paired build, full typecheck, scoped format/lint. Parent still owns global reconciliation and final whole-tree gate. No area PR or whole-task completion. Six areas continue.
 
-## Safety pause — no further source work
+## Historical safety pause
 
 All area work is stopped after an unsafe HOME cleanup in a judge probe. The logged cleanup named HOME itself; only .config contents were checked, not the full loss. No recovery or further source integration. See [incident facts, evidence and pickup](home-cleanup-incident.md). Earlier running-area status above is historical. Await human question q_2cfc9b5e-cb8b-4f46-a342-6433beb1ba47.
+
+## PR45 authorized code-only resume
+
+The user explicitly directed continuation after recovering their own data. No recovery or credentials work is authorized or needed. Current coordination, surviving tips, exact coverage, model choice, safety restrictions and retained scheduler are in [PR45 resume map](structural-readability-pr45-resume.md). Parent owns publication of existing PR45; no area PR/push/merge. The historical pause and incident evidence above remain preserved, not clearance to run unsafe probes. Completion still requires all766 baseline files and reconciled additions/removals with exact final-code independent judgments.

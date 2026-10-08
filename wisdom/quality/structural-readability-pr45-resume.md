@@ -65,3 +65,5 @@ Joined typecheck and22Node/Bash parse-only syntax checks passed in retained /tmp
 Unfinished network-fixture judge task_d2ae9701 stopped143 after30min/114236events receiving model response, no judgment artifact and no further code-reading output since01:59:30Z. Tree preserved; no verdict inferred. Replacement independent Sol judge required; candidate37d38736 remains withheld until actual-code acceptance.
 
 Scoped terminal fixture batch8pass/46assertions in /tmp/pr45-terminal-fixtures-563-qtK8Fr, before later navigation/tool-event join; rejected selector-behavior candidate remained unjoined. Controlled-probe formatter difference is now corrected but exact new hash is pending fresh independent rejudgment with original primary lineage retained.
+
+Checkpoint39eafce0: owned retained environment /tmp/pr45-terminal-joined-568-eCuprr passed noEmit tsc and8audited terminal fixture tests/46assertions after joined navigation/workload code. This does not accept the separate selector rework. Current pointers in whole-repo wisdom now distinguish historical safety pause from authorized code-only resume; old incident evidence remains untouched.

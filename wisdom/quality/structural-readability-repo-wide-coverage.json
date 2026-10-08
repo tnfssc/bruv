@@ -6911,13 +6911,36 @@
       "initialBlob": "277d037d993483c369a44713ab6ea0de95427fe5",
       "status": "pending",
       "area": "agent-history-session-goals",
-      "resumeState": "pending-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_67227421",
+      "primaryCommit": "95650e95d72d022bbd3e31646ed529a46f1a764b",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "95650e95d72d022bbd3e31646ed529a46f1a764b",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
-      "pendingReason": "No dedicated primary/final independent focus judgment."
+      "pendingReason": "No dedicated primary/final independent focus judgment.",
+      "primaryBase": "95650e95d72d022bbd3e31646ed529a46f1a764b",
+      "primaryResult": "Left the exact baseline focus blob intact. Working together answers when to delegate and when results may be claimed; Passing work identifies the host as speech/context authority and the configured agent as execution authority; Respect the user isolates explicit cancellation and privacy. Reordering these twenty lines or extracting another prompt would be cosmetic. Actual caller tracing found no current source consumer of live.md or its agent_send/agent_steer/job_cancel names. src/prompts.ts explicitly imports other prompts; the active Live path is src/live/extension.ts configureDelegatedConversation -> GPTLiveSession -> src/prompts/gpt-live.md, sent as session.start instructions with client delegation. Rewriting this retained prompt to the active protocol or changing the active protocol would expand this focus rather than simplify a demonstrated reading journey. Reconciliation and current ledgers mark this focus pending-primary with no preserved focus candidate or rejected judgment; no candidate bytes needed importing.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        {
+          "kind": "read-only inspection",
+          "result": "Read wisdom/values.md and structural-readability-guidance.md; inspected only matching live.md rows/references in area/repo ledgers and reconciliation evidence."
+        },
+        {
+          "kind": "caller trace",
+          "result": "Inspected src/prompts.ts, src/live/extension.ts, src/live/gpt-live-session.ts and src/prompts/gpt-live.md; searched current source for focus import/tool names. Current session.start uses gptLiveInstruction, not live.md."
+        },
+        {
+          "kind": "source identity",
+          "result": "Focus Git blob is baseline 277d037d993483c369a44713ab6ea0de95427fe5; source working tree clean before writing this untracked result."
+        }
+      ],
+      "primaryLimits": [
+        "No setup, tests, builds, credential/device access, delegation, or source edits performed. Parent owns batch runtime gates and independent judgment.",
+        "Formatter not invoked because no source paths changed and no source commit made; no formatter availability claim.",
+        "Historical prompt behavior was not runtime-tested. No removal of retained prompts or unrelated accepted work.",
+        "No per-worker wisdom edits; parent owns aggregate wisdom."
+      ]
     },
     {
       "file": "src/prompts/main-orchestrator.md",
