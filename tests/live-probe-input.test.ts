@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { probeArgs, readStudy, studyTarget } from "../scripts/live-probe-input";
@@ -19,50 +19,73 @@ test("source, historical study and disclosure are explicit", () => {
   expect(probeArgs(["--synthetic", "--disclose-private", "en:fresh:baseline"], "controlled").synthetic).toBe(true);
 });
 
-test("bounded JSONL preserves UTF-8 across chunks; cutoff and malformed input", () => {
-  const dir = mkdtempSync(join(tmpdir(), "live-probe-"));
+// Each input owns a retained file: rejection cases cannot inherit a previous case's bytes.
+function studyFile(contents: string | Buffer) {
+  const dir = mkdtempSync(join(tmpdir(), "live-probe-input-"));
   const file = join(dir, "input.jsonl");
-  try {
-    const entry = { timestamp: "2026-09-25T17:00:00.000Z", message: { role: "user", content: "a".repeat(4080) + "న" } };
-    writeFileSync(
-      file,
-      JSON.stringify(entry) + "\n" + JSON.stringify({ timestamp: "2026-09-25T18:00:00.000Z" }) + "\n",
-    );
-    expect(studyTarget(readStudy(file), 0).message.content).toBe(entry.message.content);
-    expect(readStudy(file)).toHaveLength(1);
-    writeFileSync(file, "not json\n");
-    expect(() => readStudy(file)).toThrow();
-    writeFileSync(file, "x".repeat(262145));
-    expect(() => readStudy(file)).toThrow(/256 KiB/);
-    writeFileSync(file, Buffer.from([0xff, 0x0a]));
-    expect(() => readStudy(file)).toThrow();
-  } finally {
-    rmSync(dir, { recursive: true, force: true });
-  }
+  writeFileSync(file, contents);
+  return file;
+}
+
+test("bounded JSONL preserves UTF-8 across chunks and stops at the study cutoff", () => {
+  const entry = { timestamp: "2026-09-25T17:00:00.000Z", message: { role: "user", content: "a".repeat(4080) + "న" } };
+  const file = studyFile(
+    JSON.stringify(entry) + "\n" + JSON.stringify({ timestamp: "2026-09-25T18:00:00.000Z" }) + "\n",
+  );
+  const entries = readStudy(file);
+  expect(studyTarget(entries, 0).message.content).toBe(entry.message.content);
+  expect(entries).toHaveLength(1);
 });
 
-test("invalid study plans fail before private source or credential/socket work", async () => {
-  for (const [script, args, message] of [
-    ["probe-live-capability.ts", ["--disclose-root", "unknown:jobs"], "valid variant:scenario"],
-    [
-      "probe-live-recorded.ts",
-      ["--source", "/nonexistent-private-study", "--study-2026-09-25", "--disclose-private", "bad:fresh:baseline"],
-      "Invalid trial",
+for (const { name, contents, error } of [
+  { name: "malformed JSON", contents: "not json\n", error: undefined },
+  { name: "a line exceeding 256 KiB", contents: "x".repeat(262145), error: /256 KiB/ },
+  { name: "invalid UTF-8", contents: Buffer.from([0xff, 0x0a]), error: undefined },
+]) {
+  test("bounded JSONL rejects " + name, () => {
+    const file = studyFile(contents);
+    if (error) expect(() => readStudy(file)).toThrow(error);
+    else expect(() => readStudy(file)).toThrow();
+  });
+}
+
+for (const { script, args, message } of [
+  { script: "probe-live-capability.ts", args: ["--disclose-root", "unknown:jobs"], message: "valid variant:scenario" },
+  {
+    script: "probe-live-recorded.ts",
+    args: ["--source", "missing-private-study.jsonl", "--study-2026-09-25", "--disclose-private", "bad:fresh:baseline"],
+    message: "Invalid trial",
+  },
+  {
+    script: "probe-live-controlled.ts",
+    args: [
+      "--source",
+      "missing-private-study.jsonl",
+      "--study-2026-09-25",
+      "--disclose-private",
+      "bad:snapshot:baseline",
     ],
-    [
-      "probe-live-controlled.ts",
-      ["--source", "/nonexistent-private-study", "--study-2026-09-25", "--disclose-private", "bad:snapshot:baseline"],
-      "Invalid condition",
-    ],
-  ] as const) {
+    message: "Invalid condition",
+  },
+]) {
+  test(script + " rejects invalid plans before private source or credential/socket work", async () => {
+    const home = mkdtempSync(join(tmpdir(), "live-probe-plan-"));
+    const env = {
+      PATH: process.env.PATH,
+      HOME: home,
+      XDG_CONFIG_HOME: join(home, "config"),
+      XDG_CACHE_HOME: join(home, "cache"),
+      PI_CODING_AGENT_DIR: join(home, "sdk"),
+      TMPDIR: join(home, "tmp"),
+      BRUV_CAPABILITY_PROBE: "1",
+      BRUV_RECORDED_PROBE: "1",
+      BRUV_CONTROLLED_PROBE: "1",
+    };
+    for (const dir of [env.XDG_CONFIG_HOME, env.XDG_CACHE_HOME, env.PI_CODING_AGENT_DIR, env.TMPDIR]) mkdirSync(dir);
+    // Resolve the deliberately missing source inside this owned fixture; retain it for inspection.
     const proc = Bun.spawn([process.execPath, new URL("../scripts/" + script, import.meta.url).pathname, ...args], {
-      env: {
-        PATH: process.env.PATH,
-        HOME: "/nonexistent-study-home",
-        BRUV_CAPABILITY_PROBE: "1",
-        BRUV_RECORDED_PROBE: "1",
-        BRUV_CONTROLLED_PROBE: "1",
-      },
+      cwd: home,
+      env,
       stdout: "pipe",
       stderr: "pipe",
     });
@@ -76,5 +99,5 @@ test("invalid study plans fail before private source or credential/socket work",
     expect(stderr).toContain(message);
     expect(stderr).not.toContain("ENOENT");
     expect(stderr).not.toContain("credential");
-  }
-});
+  });
+}

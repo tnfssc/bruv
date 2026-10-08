@@ -15352,38 +15352,44 @@
       "file": "tests/live-main-orchestrator-runtime.probe.ts",
       "initialBlob": "9f5353942e250a8cf5c73837f6ea2cfc6abd8232",
       "status": "pending",
-      "primaryId": "task_e9a14830",
-      "sourceCommit": null,
+      "primaryId": "task_3812f224",
+      "sourceCommit": "0913ab2e4fd2c5c1c4e9063839336a223a980136",
       "judgeIds": [],
-      "resumeState": "needs-rework",
+      "resumeState": "needs-judge",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
       "area": "live-native-audio",
-      "primaryCommit": "2f147a38600174fe50f6eb6f104fc755538d3599",
-      "primaryBase": "92ce9d1901a1ac8ad9d9e3815b331db4b42ee4b9",
-      "primaryResult": "Leave this focus unchanged. Each scenario keeps setup, dispatch, assertions and finally boundary together; the real-manager scenario drains shutdown before touching its owned cwd. The repeated registration/context setup intentionally exposes fake-service versus real-service authority rather than hiding it in a shared fixture context bag. The provider declaration is explicitly a test adapter, not current Live execute advertisement. No coherent extraction would reduce decision reconstruction here. The only changed source in this batch is the related workflow test, listed in changedPaths.",
-      "primaryPaths": ["tests/live-native-workflows.test.ts"],
+      "primaryCommit": "0913ab2e4fd2c5c1c4e9063839336a223a980136",
+      "primaryBase": "a3ece760adc29021f94f426fb4b4bd37a26e1d2e",
+      "primaryResult": "Corrected only the declaration comment to state that the synthetic adapter is not evidence of production Live advertisement or admission. Read both complete scenarios: the first owns its mkdtemp cwd, real execute registration and denying fake job service, then checks success/subagent/denied shell/runtime error/unknown tool dispatch before its finally boundary; the second replaces service authority with TaskManager + JobService, launches asynchronously, awaits the exact job, compares bounded bridge/service inspection, tests output truncation and errors, and awaits manager.shutdown before owned cwd removal. Kept their distinct setup/dispatch/assertion/lifetime journeys local, with no shared context bag or changed assertions. Rejected candidate 2f147a38600174fe50f6eb6f104fc755538d3599 had identical probe and workflow blobs to starting HEAD; its earlier workflow extraction is already present and preserved unchanged. Actual src/live/main-owner.ts advertises execute and controls admission; src/live/setup-probe.ts separately uses an explicitly denied diagnostic declaration.",
+      "primaryPaths": ["tests/live-main-orchestrator-runtime.probe.ts"],
       "primaryChecks": [
+        "Read the entire focus and relevant caller/authority paths.",
+        "Reviewed assigned reconciliation evidence and exact rejected/preserved candidate scope.",
+        "git diff --check: passed before commit.",
+        "Comment-only proof: committed probe differs from prior HEAD solely by the requested comment replacement; all dispatch, assertions and lifetimes preserved.",
         {
-          "kind": "actual-source-reading",
-          "result": "Read all three complete focus sources, assigned reconciliation rows (all own_primary_pending, no preserved candidate or rejection history), wisdom/values.md and structural-readability-guidance.md; traced relevant execute registration/child launch, JobService shell ownership/TaskManager shutdown, workflow lane scripts, and Live startup/notification callers."
+          "formatter": {
+            "root": "/tmp/pr45-live-audio-format-U7YJta",
+            "env": {
+              "PATH": "/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:/home/tnfssc/.local/share/mise/installs/age/1.3.1/age:/home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin:/home/tnfssc/.local/share/mise/installs/cmdx/2.0.2:/home/tnfssc/.local/share/mise/installs/colima/0.9.1:/home/tnfssc/.local/share/mise/installs/docker-cli/29.1.3/docker:/home/tnfssc/.local/share/mise/installs/github-tnfssc-protonpass-cli-bin/1.3.2:/home/tnfssc/.local/share/mise/installs/gitleaks/8.30.1:/home/tnfssc/.local/share/mise/installs/node/24.21.0/bin:/home/tnfssc/.local/share/mise/installs/powershell-core/7.6.3:/home/tnfssc/.cargo/bin:/home/tnfssc/.local/share/mise/installs/uv/0.10.7/uv-x86_64-unknown-linux-musl:/home/tnfssc/Android/Sdk/platform-tools:/home/tnfssc/Android/Sdk/emulator:/home/tnfssc/.local/share/pnpm:/home/tnfssc/.bun/bin:/home/tnfssc/.local/bin:/usr/local/bin:/usr/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl:/home/tnfssc/.local/share/pnpm/bin",
+              "HOME": "/tmp/pr45-live-audio-format-U7YJta/home-DoHgIc",
+              "XDG_CONFIG_HOME": "/tmp/pr45-live-audio-format-U7YJta/config-aHP5CP",
+              "PI_CODING_AGENT_DIR": "/tmp/pr45-live-audio-format-U7YJta/sdk-qXtUfn",
+              "TMPDIR": "/tmp/pr45-live-audio-format-U7YJta/tmp-LuAyLn"
+            },
+            "executable": "/home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/@biomejs/biome/bin/biome",
+            "args": ["format", "--write", "tests/live-main-orchestrator-runtime.probe.ts"],
+            "status": 0,
+            "stdout": "Formatted 1 file in 5ms. No fixes applied.\n",
+            "stderr": ""
+          }
         },
-        {
-          "kind": "formatter",
-          "command": "/home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/@biomejs/biome/bin/biome format --write tests/live-native-workflows.test.ts",
-          "result": "Exit 0, changed source path only, invoked through node:child_process spawnSync argv with explicit isolated env.",
-          "retainedFixtureRoot": "/tmp/pr45-live-focus-format-JlYEqY"
-        },
-        {
-          "kind": "static-diff",
-          "result": "git diff --check passed before commit. Exact source-only commit scope verified through git diff-tree; no tests/setup/builds executed."
-        }
+        "SOURCE ONLY commit scope verified; no active Git hooks found (samples only), no hooks bypassed."
       ],
       "primaryLimits": [
-        "Primary decisions only; parent owns fresh independent judgments and audited isolated gates. No acceptance inferred from evidence states, line counts or formatter success.",
-        "No repository tests, setup, builds, delegation, credential/device access, network requests, recovery, cleanup commands, destructive Git, dependency changes or publication performed.",
-        "The unchanged runtime probe uses executeIsolated/JobService child environments inherited from its parent. Its existing owned-cwd rm calls were inspected but never executed. Parent must audit and run only through explicit argv/env with retained owned mkdtemp HOME/config/SDK; this is not a runtime-safety approval.",
-        "Workflow replay subprocesses were not executed. Source now uses explicit argv/env with owned mkdtemp HOME/config/SDK/TMPDIR and retains the fixture; the extracted Python only launches the fake dist/live-audio, checks hello, then terminates/waits for that child. Workflow build/download/Pulse/trap steps are read as text, not run.",
-        "Durable source provenance is this worktree and exact Git commit; formatter temporary fixture is retained and documented above. No per-worker wisdom edits; parent owns aggregate wisdom. Parent verifies runtime agent.model openai-codex/gpt-6.1-sol."
+        "No tests, setup, builds, live provider calls, credentials, devices, dependency writes, cleanup, recovery, delegation, publication, merges or pushes. Parent owns audited isolated gates and independent judgments.",
+        "Source reading and a comment-only diff are not runtime/provider or physical AEC verification. Existing probe cleanup was inspected but not executed. Formatter fixture remains retained.",
+        "Wisdom/values left unchanged: parent owns aggregate wisdom; this batch applies existing authority/ownership guidance."
       ],
       "resumeRework": {
         "candidate": "2f147a38600174fe50f6eb6f104fc755538d3599",
@@ -15405,6 +15411,13 @@
             "tests/live-main-orchestrator-runtime.probe.ts:45: remove or correct the universal \"current Live does not advertise execute\" claim. State only that this synthetic declaration is not evidence of production Live advertisement/admission, or describe the actual tool-based versus delegated model distinction. No fixture extraction or assertion change is requested."
           ],
           "readingReason": "Read both full scenarios, unchanged from primaryBase. The first owns a mkdtemp cwd, registers the real execute tool with a fake denying service, constructs an explicit declaration adapter, dispatches success/subagent/error/unknown calls, and removes only that cwd in finally. The second visibly replaces fake service authority with TaskManager + JobService, proves asynchronous shell handoff, waits the exact job, inspects bounded output through both dispatch and service, checks execute output limits/errors, then awaits manager.shutdown before its owned cwd removal. Keeping these distinct setup/dispatch/assertion/lifetime journeys local is structurally sound; a shared context bag is not warranted. However line 45 incorrectly says current Live does not advertise execute, so the proposed unchanged reader boundary is not truthful."
+        }
+      ],
+      "priorPrimaryLineage": [
+        {
+          "primaryId": "task_e9a14830",
+          "sourceCommit": null,
+          "primaryBase": "92ce9d1901a1ac8ad9d9e3815b331db4b42ee4b9"
         }
       ]
     },
@@ -15671,11 +15684,11 @@
     {
       "file": "tests/live-picker-tui.test.ts",
       "initialBlob": "493944773ae246afd77f57941b8ace8ee242fc47",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_a4ebdae8",
       "sourceCommit": "ac571b29fad3c90c4263c9f53abd8e4028dfb29f",
-      "judgeIds": [],
-      "resumeState": "needs-judge",
+      "judgeIds": ["task_672eb21c"],
+      "resumeState": "accepted-joined",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
       "area": "live-native-audio",
       "primaryCommit": "ac571b29fad3c90c4263c9f53abd8e4028dfb29f",
@@ -15695,16 +15708,31 @@
         "Durable provenance is this worktree and exact sourceCommit; formatter fixture is retained under /tmp. Test fixture creation/retention was inspected in source but tests were not executed.",
         "Parent must verify runtime agent.model openai-codex/gpt-6.1-sol; this worker does not claim that verification.",
         "Initial evidence output was overbroad and capture-truncated; decisions rely only on the three subsequently extracted assigned rows. Existing unrelated work and historical worktrees/candidate evidence remain preserved."
+      ],
+      "acceptedBlob": "2c740636666cee2691b5664bb9ed6ad9ed572798",
+      "result": "The source now separates terminal ownership from the UI story at a real authority boundary. withPickerTerminal creates the retained owned HOME/config/cache/SDK/temp roots, specifies the tmux process argv/environment and private -S socket, prepares theme/config, starts the offline CLI, waits for fixture readiness, lends only a tmux operation, and shuts down that owned server in finally. The scenario remains locally readable: open all five provider/model readiness labels at each width, choose gpt-live-1, reopen and verify selected state, escape, open provider credentials, choose OpenAI, assert Done without Start voice, and confirm Live off rather than listening. The callback retains its local send/frame/wait behavior rather than receiving a context bag.",
+      "systemReason": "Traced run through offlineTestEnv/Bun.spawn: supplying env prevents inherited HOME, auth variables and SDK roots; HERDR_ENV is disabled. The owned socket means finally kill-server targets only this fixture. CLI configureBruvRuntime writes assets under homedir/.bruv/runtime, matching the retained fixture theme layout. Startup trust helper remains session-only and bounded, and frameContaining still throws on missing labels. The unchanged fixture injects in-memory config and synthetic readiness and rejects provider-key/audio use. In the real extension, model options join both providers and readiness, config.save precedes selected publication, provider setup calls runOpenAISetup(..., false), and status reports the selected model with Live off. Thus this extraction follows actual picker authority without replacing the real renderer or weakening prohibitions/assertions.",
+      "checks": [
+        "Read exact git show ac571b29fad3c90c4263c9f53abd8e4028dfb29f source and git diff from 5236ce9965f44e0305b470a745eaf4efc3db9b90; complete changed-path inventory contains only the two reviewed test files.",
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "git diff --check between exact base and candidate returned no diagnostics.",
+        "Read-only review of filesystem, subprocess, socket and network effects; no setup, tests, builds, provider connection, device access or credential reads performed."
+      ],
+      "limits": [
+        "Runtime gates deliberately not run: parent owns audited isolated gates. No claim of test execution or real authentication/audio-device verification.",
+        "Durable review provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_672eb21c; candidate/base objects retained. No /tmp code checkout or fixture created by this judge.",
+        "Parent must verify runtime agent.model openai-codex/gpt-6.1-sol; this review does not independently establish runtime model identity. No delegation, dependency modification, setup, cleanup or publication.",
+        "Real tmux execution, renderer frames at 80/120 columns and owned-server shutdown remain parent-gate verification, not proven by static review."
       ]
     },
     {
       "file": "tests/live-platform.test.ts",
       "initialBlob": "446b8f6bb78ed13440e344405dfcc3f6957dbda5",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_a4ebdae8",
       "sourceCommit": "ac571b29fad3c90c4263c9f53abd8e4028dfb29f",
-      "judgeIds": [],
-      "resumeState": "needs-judge",
+      "judgeIds": ["task_672eb21c"],
+      "resumeState": "accepted-joined",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
       "area": "live-native-audio",
       "primaryCommit": "ac571b29fad3c90c4263c9f53abd8e4028dfb29f",
@@ -15724,6 +15752,22 @@
         "Durable provenance is this worktree and exact sourceCommit; formatter fixture is retained under /tmp. Test fixture creation/retention was inspected in source but tests were not executed.",
         "Parent must verify runtime agent.model openai-codex/gpt-6.1-sol; this worker does not claim that verification.",
         "Initial evidence output was overbroad and capture-truncated; decisions rely only on the three subsequently extracted assigned rows. Existing unrelated work and historical worktrees/candidate evidence remain preserved."
+      ],
+      "acceptedBlob": "446b8f6bb78ed13440e344405dfcc3f6957dbda5",
+      "result": "Read the whole unchanged focus, not just its blob identity. The first short test directly follows source Linux resolution relative to audio.ts and compiled Darwin/Linux resolution beside the executable; each input and expected path is visible together. The second constructs an explicit discovery-and-credential environment and directly checks retained HOME/PULSE_SERVER/LIVE_SOURCE versus absent GEMINI_API_KEY/OPENAI_API_KEY. There is no fixture lifetime or reconstructed state to untangle. A shared fixture or platform matrix would hide these two distinct contracts rather than clarify them.",
+      "systemReason": "defaultHelperPath visibly branches on /$bunfs/ and chooses live-audio-linux versus live-audio. LiveAudio.launch first prefers an embedded extracted helper or trusted explicit helper path, then uses defaultHelperPath for the fallback, stats executable eligibility and calls spawn(path, [], {env: audioEnvironment()}). audioEnvironment builds an allowlist for audio discovery, never spreads model credentials. The test invokes pure decisions only, not spawn or native device work; its fake strings are not credential access. Exact base and candidate platform blobs match. The two other candidate-changed test paths were also inspected in full; neither changes this production decision or this focus.",
+      "checks": [
+        "Read exact git show ac571b29fad3c90c4263c9f53abd8e4028dfb29f source and git diff from 5236ce9965f44e0305b470a745eaf4efc3db9b90; complete changed-path inventory contains only the two reviewed test files.",
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "git diff --check between exact base and candidate returned no diagnostics.",
+        "Read-only review of filesystem, subprocess, socket and network effects; no setup, tests, builds, provider connection, device access or credential reads performed.",
+        "git rev-parse verified identical base/candidate platform blob 446b8f6bb78ed13440e344405dfcc3f6957dbda5; no production src/scripts path changes."
+      ],
+      "limits": [
+        "Runtime gates deliberately not run: parent owns audited isolated gates. No claim of test execution or real authentication/audio-device verification.",
+        "Durable review provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_672eb21c; candidate/base objects retained. No /tmp code checkout or fixture created by this judge.",
+        "Parent must verify runtime agent.model openai-codex/gpt-6.1-sol; this review does not independently establish runtime model identity. No delegation, dependency modification, setup, cleanup or publication.",
+        "The platform test is not proof of embedded extraction, fallback spawn integration, every allowlist variable, native audio-daemon discovery or actual devices. Existing narrow scope is preserved, not expanded."
       ]
     },
     {
@@ -15742,11 +15786,11 @@
     {
       "file": "tests/live-probe-input.test.ts",
       "initialBlob": "bd5d23d0a95241c605c78a2b8aba5cb2fb8a841a",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_a4ebdae8",
       "sourceCommit": "ac571b29fad3c90c4263c9f53abd8e4028dfb29f",
-      "judgeIds": [],
-      "resumeState": "needs-judge",
+      "judgeIds": ["task_672eb21c"],
+      "resumeState": "accepted-joined",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
       "area": "live-native-audio",
       "primaryCommit": "ac571b29fad3c90c4263c9f53abd8e4028dfb29f",
@@ -15766,6 +15810,22 @@
         "Durable provenance is this worktree and exact sourceCommit; formatter fixture is retained under /tmp. Test fixture creation/retention was inspected in source but tests were not executed.",
         "Parent must verify runtime agent.model openai-codex/gpt-6.1-sol; this worker does not claim that verification.",
         "Initial evidence output was overbroad and capture-truncated; decisions rely only on the three subsequently extracted assigned rows. Existing unrelated work and historical worktrees/candidate evidence remain preserved."
+      ],
+      "acceptedRelatedJudges": ["task_672eb21c"],
+      "acceptedBlob": "2a8b1efe9800aaf736388f3fb408ffd37bcfa913",
+      "result": "The unchanged argument/disclosure checks remain explicit at the top. studyFile is a single-effect owned-file operation, so success uses one coherent UTF-8/cutoff journey and each named malformed/oversize/invalid-UTF-8 case starts from its own bytes instead of serially overwriting a shared file. The three named script/args/message records now register independent executable validation journeys, each creating and retaining its HOME/config/cache/SDK/temp roots and showing subprocess argv, cwd, env and result assertions in one place. This reduces reconstruction of shared fixture state rather than merely renaming a loop.",
+      "systemReason": "Read probeArgs, readStudy/readStudyLines and studyTarget: disclosure/source selection is explicit; the streaming fatal UTF-8 decoder reads 4096-byte chunks, bounds JSONL lines at 256 KiB, and cutoff stops iteration while finally closes the fd. The same valid content and rejection bytes remain in the candidate. Traced all three entrypoints: capability validates variant/scenario before loadLiveConfig and credentials; recorded maps/validates trial specs before readStudy, prompt/config/key work; controlled validates conditions before readStudy and prompt/config/key work. studyTrial opens WebSocket only when invoked, not on import. Relative missing-private-study.jsonl now resolves under the owned subprocess cwd. Every subprocess retains nonzero-exit, empty-stdout, expected-validation-message, no-ENOENT and no-credential-error assertions. No disclosure/synthetic rejection or device/network prohibition was relaxed.",
+      "checks": [
+        "Read exact git show ac571b29fad3c90c4263c9f53abd8e4028dfb29f source and git diff from 5236ce9965f44e0305b470a745eaf4efc3db9b90; complete changed-path inventory contains only the two reviewed test files.",
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "git diff --check between exact base and candidate returned no diagnostics.",
+        "Read-only review of filesystem, subprocess, socket and network effects; no setup, tests, builds, provider connection, device access or credential reads performed."
+      ],
+      "limits": [
+        "Runtime gates deliberately not run: parent owns audited isolated gates. No claim of test execution or real authentication/audio-device verification.",
+        "Durable review provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_672eb21c; candidate/base objects retained. No /tmp code checkout or fixture created by this judge.",
+        "Parent must verify runtime agent.model openai-codex/gpt-6.1-sol; this review does not independently establish runtime model identity. No delegation, dependency modification, setup, cleanup or publication.",
+        "No subprocesses or study files were executed/created. Parent gate must verify independent registered cases and observed validation ordering; static ordering plus assertions are not runtime proof."
       ]
     },
     {
@@ -15980,23 +16040,89 @@
       "file": "tests/live-speaker-check.test.ts",
       "initialBlob": "cb257f2e226dcb43a7b284184a4f9016bbf4eb23",
       "status": "pending",
-      "primaryId": null,
-      "sourceCommit": null,
+      "primaryId": "task_3812f224",
+      "sourceCommit": "0913ab2e4fd2c5c1c4e9063839336a223a980136",
       "judgeIds": [],
-      "resumeState": "related_uncommitted_candidate_own_primary_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Related primary left uncommitted bytes for this file; preserve them, allocate this focus its own primary, and obtain exact-code judgment before integration.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "0913ab2e4fd2c5c1c4e9063839336a223a980136",
+      "primaryBase": "a3ece760adc29021f94f426fb4b4bd37a26e1d2e",
+      "primaryResult": "Leave focus unchanged. Read the whole file: deterministic reference/baseline/combined setup flows directly into delayed, off-grid/inverted/sparse-alias, broadband-noise and silence/clipping/missing/loud-background assertions. fakeAudio keeps the timer and accounting with start/play/stop/close. Runner cases keep launch, captured callback, result whitelist/sanitized failure, bounded abort/hung-stop and deadline, pre-abort nonlaunch, processing metadata, late factory completion, overflow/queued playback, uncooperative write, and held-PCM zeroing assertions together. Reading runSpeakerCheck and measureSpeakerReturn confirms the audio owner, late-close observer, bounded native shutdown, capture windows and clear-before-shutdown boundary; consent-gated extension only exposes sanitized summaries. No coherent extraction would reduce decision reconstruction without hiding these event orders in a fixture bag. Read the preserved uncommitted candidate patch at its original durable workspace: no-signal/configuration assertion, clear-at-stop assertion, finite inverted/resampled waveform scenario and invalid-configuration scenario. These are coverage additions, not required readability repairs; they remain untouched in their original worktree and are not represented as independently accepted.",
+      "primaryPaths": ["tests/live-main-orchestrator-runtime.probe.ts"],
+      "primaryChecks": [
+        "Read the entire focus and relevant caller/authority paths.",
+        "Reviewed assigned reconciliation evidence and exact rejected/preserved candidate scope.",
+        "git diff --check: passed before commit.",
+        "Comment-only proof: committed probe differs from prior HEAD solely by the requested comment replacement; all dispatch, assertions and lifetimes preserved.",
+        {
+          "formatter": {
+            "root": "/tmp/pr45-live-audio-format-U7YJta",
+            "env": {
+              "PATH": "/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:/home/tnfssc/.local/share/mise/installs/age/1.3.1/age:/home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin:/home/tnfssc/.local/share/mise/installs/cmdx/2.0.2:/home/tnfssc/.local/share/mise/installs/colima/0.9.1:/home/tnfssc/.local/share/mise/installs/docker-cli/29.1.3/docker:/home/tnfssc/.local/share/mise/installs/github-tnfssc-protonpass-cli-bin/1.3.2:/home/tnfssc/.local/share/mise/installs/gitleaks/8.30.1:/home/tnfssc/.local/share/mise/installs/node/24.21.0/bin:/home/tnfssc/.local/share/mise/installs/powershell-core/7.6.3:/home/tnfssc/.cargo/bin:/home/tnfssc/.local/share/mise/installs/uv/0.10.7/uv-x86_64-unknown-linux-musl:/home/tnfssc/Android/Sdk/platform-tools:/home/tnfssc/Android/Sdk/emulator:/home/tnfssc/.local/share/pnpm:/home/tnfssc/.bun/bin:/home/tnfssc/.local/bin:/usr/local/bin:/usr/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl:/home/tnfssc/.local/share/pnpm/bin",
+              "HOME": "/tmp/pr45-live-audio-format-U7YJta/home-DoHgIc",
+              "XDG_CONFIG_HOME": "/tmp/pr45-live-audio-format-U7YJta/config-aHP5CP",
+              "PI_CODING_AGENT_DIR": "/tmp/pr45-live-audio-format-U7YJta/sdk-qXtUfn",
+              "TMPDIR": "/tmp/pr45-live-audio-format-U7YJta/tmp-LuAyLn"
+            },
+            "executable": "/home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/@biomejs/biome/bin/biome",
+            "args": ["format", "--write", "tests/live-main-orchestrator-runtime.probe.ts"],
+            "status": 0,
+            "stdout": "Formatted 1 file in 5ms. No fixes applied.\n",
+            "stderr": ""
+          }
+        },
+        "SOURCE ONLY commit scope verified; no active Git hooks found (samples only), no hooks bypassed."
+      ],
+      "primaryLimits": [
+        "No tests, setup, builds, live provider calls, credentials, devices, dependency writes, cleanup, recovery, delegation, publication, merges or pushes. Parent owns audited isolated gates and independent judgments.",
+        "Source reading and a comment-only diff are not runtime/provider or physical AEC verification. Existing probe cleanup was inspected but not executed. Formatter fixture remains retained.",
+        "Wisdom/values left unchanged: parent owns aggregate wisdom; this batch applies existing authority/ownership guidance."
+      ]
     },
     {
       "file": "tests/live-speaker-summary.test.ts",
       "initialBlob": "24e2b019302b328c4df36199c6c23100b92edf34",
       "status": "pending",
-      "primaryId": null,
-      "sourceCommit": null,
+      "primaryId": "task_3812f224",
+      "sourceCommit": "0913ab2e4fd2c5c1c4e9063839336a223a980136",
       "judgeIds": [],
-      "resumeState": "own_primary_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "0913ab2e4fd2c5c1c4e9063839336a223a980136",
+      "primaryBase": "a3ece760adc29021f94f426fb4b4bd37a26e1d2e",
+      "primaryResult": "Leave focus unchanged. The no_signal test constructs only status, then jointly asserts the non-AEC-pass warning, unknown native processing and non-hardware-reference disclaimer. The correlated_return test locally supplies correlation, lag, capture levels and enabled/nonbypassed processing rates, then checks actionable WebRTC-investigation wording, correlation, bypass and unknown channel labeling. The production formatter selects actions by status, renders missing finite numbers/channels as unknown, and always states the submitted-PCM limitation; the extension calls it only after the local runner result under explicit consent and adds a non-AEC-quality UI disclaimer. Keeping each input and assertion block together exposes measurement versus configuration authority without unnecessary table-driven branches or a shared result fixture.",
+      "primaryPaths": ["tests/live-main-orchestrator-runtime.probe.ts"],
+      "primaryChecks": [
+        "Read the entire focus and relevant caller/authority paths.",
+        "Reviewed assigned reconciliation evidence and exact rejected/preserved candidate scope.",
+        "git diff --check: passed before commit.",
+        "Comment-only proof: committed probe differs from prior HEAD solely by the requested comment replacement; all dispatch, assertions and lifetimes preserved.",
+        {
+          "formatter": {
+            "root": "/tmp/pr45-live-audio-format-U7YJta",
+            "env": {
+              "PATH": "/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:/home/tnfssc/.local/share/mise/installs/age/1.3.1/age:/home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin:/home/tnfssc/.local/share/mise/installs/cmdx/2.0.2:/home/tnfssc/.local/share/mise/installs/colima/0.9.1:/home/tnfssc/.local/share/mise/installs/docker-cli/29.1.3/docker:/home/tnfssc/.local/share/mise/installs/github-tnfssc-protonpass-cli-bin/1.3.2:/home/tnfssc/.local/share/mise/installs/gitleaks/8.30.1:/home/tnfssc/.local/share/mise/installs/node/24.21.0/bin:/home/tnfssc/.local/share/mise/installs/powershell-core/7.6.3:/home/tnfssc/.cargo/bin:/home/tnfssc/.local/share/mise/installs/uv/0.10.7/uv-x86_64-unknown-linux-musl:/home/tnfssc/Android/Sdk/platform-tools:/home/tnfssc/Android/Sdk/emulator:/home/tnfssc/.local/share/pnpm:/home/tnfssc/.bun/bin:/home/tnfssc/.local/bin:/usr/local/bin:/usr/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl:/home/tnfssc/.local/share/pnpm/bin",
+              "HOME": "/tmp/pr45-live-audio-format-U7YJta/home-DoHgIc",
+              "XDG_CONFIG_HOME": "/tmp/pr45-live-audio-format-U7YJta/config-aHP5CP",
+              "PI_CODING_AGENT_DIR": "/tmp/pr45-live-audio-format-U7YJta/sdk-qXtUfn",
+              "TMPDIR": "/tmp/pr45-live-audio-format-U7YJta/tmp-LuAyLn"
+            },
+            "executable": "/home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/@biomejs/biome/bin/biome",
+            "args": ["format", "--write", "tests/live-main-orchestrator-runtime.probe.ts"],
+            "status": 0,
+            "stdout": "Formatted 1 file in 5ms. No fixes applied.\n",
+            "stderr": ""
+          }
+        },
+        "SOURCE ONLY commit scope verified; no active Git hooks found (samples only), no hooks bypassed."
+      ],
+      "primaryLimits": [
+        "No tests, setup, builds, live provider calls, credentials, devices, dependency writes, cleanup, recovery, delegation, publication, merges or pushes. Parent owns audited isolated gates and independent judgments.",
+        "Source reading and a comment-only diff are not runtime/provider or physical AEC verification. Existing probe cleanup was inspected but not executed. Formatter fixture remains retained.",
+        "Wisdom/values left unchanged: parent owns aggregate wisdom; this batch applies existing authority/ownership guidance."
+      ]
     },
     {
       "file": "tests/live-spoken-tui.test.ts",
@@ -23910,9 +24036,9 @@
     "baselineFiles": 766,
     "finalGate": "pending; incomplete focus coverage",
     "liveAuth": "unverified/failing; preserved",
-    "accepted": 813,
+    "accepted": 816,
     "total": 836,
-    "pending": 23,
+    "pending": 20,
     "sourceExtras": 70,
     "checkout": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
     "branch": "bruv/readability-pr45-sol-continuation",

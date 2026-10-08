@@ -1412,7 +1412,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_3812f224",
         "branch": "bruv/pr45-primary-3-live-native-audio-focuses-3812f224",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "0913ab2e4fd2c5c1c4e9063839336a223a980136"
       },
       {
         "id": "task_eed62836",
@@ -1434,7 +1435,7 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_672eb21c",
         "branch": "bruv/pr45-judge-3-live-native-audio-focuses-672eb21c",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled"
       },
       {
         "id": "task_da2fc7e1",
@@ -1455,6 +1456,28 @@
         ],
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_ab82e530",
         "branch": "bruv/pr45-primary-3-live-native-audio-focuses-ab82e530",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_ec1706fd",
+        "stage": "primary",
+        "focus": [
+          "tests/live-startup-speech-probe.test.ts",
+          "tests/live-status.test.ts",
+          "tests/live-study-trial.test.ts"
+        ],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_ec1706fd",
+        "branch": "bruv/pr45-primary-3-live-native-audio-focuses-ec1706fd",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_a1f1faff",
+        "stage": "primary",
+        "focus": ["tests/live-tool-result.test.ts", "tests/live-transcript.test.ts", "tests/live-tui-startup.test.ts"],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_a1f1faff",
+        "branch": "bruv/pr45-primary-3-live-native-audio-focuses-a1f1faff",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
       }

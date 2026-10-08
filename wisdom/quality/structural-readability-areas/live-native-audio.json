@@ -3612,11 +3612,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": "task_e9a14830",
-        "primaryCommit": "2f147a38600174fe50f6eb6f104fc755538d3599",
+        "primaryId": "task_3812f224",
+        "primaryCommit": "0913ab2e4fd2c5c1c4e9063839336a223a980136",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "needs-rework",
+        "sourceCommit": "0913ab2e4fd2c5c1c4e9063839336a223a980136",
+        "state": "needs-judge",
         "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
       }
     },
@@ -3766,16 +3766,17 @@
       "initialBlob": "493944773ae246afd77f57941b8ace8ee242fc47",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "2c740636666cee2691b5664bb9ed6ad9ed572798",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "2c740636666cee2691b5664bb9ed6ad9ed572798",
         "primaryId": "task_a4ebdae8",
         "primaryCommit": "ac571b29fad3c90c4263c9f53abd8e4028dfb29f",
-        "judgeIds": [],
+        "judgeIds": ["task_672eb21c"],
         "sourceCommit": "ac571b29fad3c90c4263c9f53abd8e4028dfb29f",
-        "state": "needs-judge",
-        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+        "state": "accepted-joined",
+        "reason": "The source now separates terminal ownership from the UI story at a real authority boundary. withPickerTerminal creates the retained owned HOME/config/cache/SDK/temp roots, specifies the tmux process argv/environment and private -S socket, prepares theme/config, starts the offline CLI, waits for fixture readiness, lends only a tmux operation, and shuts down that owned server in finally. The scenario remains locally readable: open all five provider/model readiness labels at each width, choose gpt-live-1, reopen and verify selected state, escape, open provider credentials, choose OpenAI, assert Done without Start voice, and confirm Live off rather than listening. The callback retains its local send/frame/wait behavior rather than receiving a context bag."
       }
     },
     {
@@ -3783,16 +3784,17 @@
       "initialBlob": "446b8f6bb78ed13440e344405dfcc3f6957dbda5",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "446b8f6bb78ed13440e344405dfcc3f6957dbda5",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "446b8f6bb78ed13440e344405dfcc3f6957dbda5",
         "primaryId": "task_a4ebdae8",
         "primaryCommit": "ac571b29fad3c90c4263c9f53abd8e4028dfb29f",
-        "judgeIds": [],
+        "judgeIds": ["task_672eb21c"],
         "sourceCommit": "ac571b29fad3c90c4263c9f53abd8e4028dfb29f",
-        "state": "needs-judge",
-        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+        "state": "accepted-joined",
+        "reason": "Read the whole unchanged focus, not just its blob identity. The first short test directly follows source Linux resolution relative to audio.ts and compiled Darwin/Linux resolution beside the executable; each input and expected path is visible together. The second constructs an explicit discovery-and-credential environment and directly checks retained HOME/PULSE_SERVER/LIVE_SOURCE versus absent GEMINI_API_KEY/OPENAI_API_KEY. There is no fixture lifetime or reconstructed state to untangle. A shared fixture or platform matrix would hide these two distinct contracts rather than clarify them."
       }
     },
     {
@@ -3846,16 +3848,17 @@
       "initialBlob": "bd5d23d0a95241c605c78a2b8aba5cb2fb8a841a",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "2a8b1efe9800aaf736388f3fb408ffd37bcfa913",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "2a8b1efe9800aaf736388f3fb408ffd37bcfa913",
         "primaryId": "task_a4ebdae8",
         "primaryCommit": "ac571b29fad3c90c4263c9f53abd8e4028dfb29f",
-        "judgeIds": [],
+        "judgeIds": ["task_672eb21c"],
         "sourceCommit": "ac571b29fad3c90c4263c9f53abd8e4028dfb29f",
-        "state": "needs-judge",
-        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+        "state": "accepted-joined",
+        "reason": "The unchanged argument/disclosure checks remain explicit at the top. studyFile is a single-effect owned-file operation, so success uses one coherent UTF-8/cutoff journey and each named malformed/oversize/invalid-UTF-8 case starts from its own bytes instead of serially overwriting a shared file. The three named script/args/message records now register independent executable validation journeys, each creating and retaining its HOME/config/cache/SDK/temp roots and showing subprocess argv, cwd, env and result assertions in one place. This reduces reconstruction of shared fixture state rather than merely renaming a loop."
       }
     },
     {
@@ -3977,10 +3980,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
+        "primaryId": "task_3812f224",
+        "primaryCommit": "0913ab2e4fd2c5c1c4e9063839336a223a980136",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "related_uncommitted_candidate_own_primary_pending",
+        "sourceCommit": "0913ab2e4fd2c5c1c4e9063839336a223a980136",
+        "state": "needs-judge",
         "reason": "Related primary left uncommitted bytes for this file; preserve them, allocate this focus its own primary, and obtain exact-code judgment before integration."
       }
     },
@@ -3993,10 +3997,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
+        "primaryId": "task_3812f224",
+        "primaryCommit": "0913ab2e4fd2c5c1c4e9063839336a223a980136",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "own_primary_pending",
+        "sourceCommit": "0913ab2e4fd2c5c1c4e9063839336a223a980136",
+        "state": "needs-judge",
         "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
       }
     },
@@ -4875,7 +4880,7 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 128,
-    "pending": 23
+    "accepted": 131,
+    "pending": 20
   }
 }
