@@ -4812,7 +4812,7 @@
           "base": "5cdd4e2295664f3af3c054dc5fdef384e8a5c728"
         }
       ],
-      "acceptedBlob": null,
+      "acceptedBlob": "92094c7497e5e1b150475d8ae801b3f11901898b",
       "integration": "judge running",
       "relatedPatchJudgment": {
         "judgeId": "task_cfda53f2",
@@ -4822,15 +4822,17 @@
       "readingResult": "Every signed/parity vector now owns literal emitted/held samples checking production and integerweighted offlineoracle independently;malformed-input recovery and reset have separate streamfixtures. Chunking/continuation journeys retained.",
       "checks": "56tests303assertions;Biome/diffpass;temporary oracle rounding mutation rejected by literal signed sample. No productionfix/fullTS/build/provider/device/Mac.",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "92094c7497e5e1b150475d8ae801b3f11901898b",
         "primaryId": "task_b7108f40",
         "judgeIds": [
           "task_25a39150",
-          "task_cfda53f2"
+          "task_cfda53f2",
+          "task_494fbf1d"
         ],
         "sourceCommit": "179da0367bc5901d9e4e7eb44c6ec79c898b54c8",
-        "state": "candidate_pending_actual_code_judgment",
-        "reason": "Committed primary candidate verified; no recorded completed focus ACCEPT/NO CHANGE NEEDED judgment. Historical running labels are not current liveness or approval."
+        "state": "accepted-joined",
+        "reason": "Compared the complete focus at the exact primary parent 5cdd4e2295664f3af3c054dc5fdef384e8a5c728 with the candidate, with primary context {}. The base hides signed/parity expectations behind reference(samples) and combines malformed-input recovery with resetting the same stream. The candidate gives each vector literal input/emitted/held ownership and checks both production and the offline reference against those literals. Integer-weighted whole-waveform indexing exposes the reference arithmetic without reproducing streaming phase/delta state. Separate tests now show rejection preserving endpoint/phase versus reset discarding the endpoint and restarting at phase zero. These are actual expectation-authority and lifetime improvements, not renames or acceptance inferred from test counts. The PCM serializer, complete helper, explicit irregular-chunk loop and single-sample continuation/flush/restart journey remain appropriately unchanged; their operations already belong together."
       }
     },
     {
@@ -5012,7 +5014,7 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 73,
-    "pending": 77
+    "accepted": 74,
+    "pending": 76
   }
 }

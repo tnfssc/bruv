@@ -4111,6 +4111,7 @@
       "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
       "area": "live-native-audio",
       "acceptedRelatedJudges": [
+        "task_494fbf1d",
         "task_494fbf1d"
       ]
     },
@@ -12430,11 +12431,27 @@
       "sourceCommit": "179da0367bc5901d9e4e7eb44c6ec79c898b54c8",
       "judgeIds": [
         "task_25a39150",
-        "task_cfda53f2"
+        "task_cfda53f2",
+        "task_494fbf1d"
       ],
-      "resumeState": "candidate_pending_actual_code_judgment",
+      "resumeState": "accepted-joined",
       "pendingReason": "Committed primary candidate verified; no recorded completed focus ACCEPT/NO CHANGE NEEDED judgment. Historical running labels are not current liveness or approval.",
-      "status": "pending"
+      "status": "accepted",
+      "acceptedBlob": "92094c7497e5e1b150475d8ae801b3f11901898b",
+      "result": "Compared the complete focus at the exact primary parent 5cdd4e2295664f3af3c054dc5fdef384e8a5c728 with the candidate, with primary context {}. The base hides signed/parity expectations behind reference(samples) and combines malformed-input recovery with resetting the same stream. The candidate gives each vector literal input/emitted/held ownership and checks both production and the offline reference against those literals. Integer-weighted whole-waveform indexing exposes the reference arithmetic without reproducing streaming phase/delta state. Separate tests now show rejection preserving endpoint/phase versus reset discarding the endpoint and restarting at phase zero. These are actual expectation-authority and lifetime improvements, not renames or acceptance inferred from test counts. The PCM serializer, complete helper, explicit irregular-chunk loop and single-sample continuation/flush/restart journey remain appropriately unchanged; their operations already belong together.",
+      "systemReason": "Traced actual candidate consumers, not checkout HEAD. Extension capture feeds processed 16k PCM through the startup queue to OpenAISession.sendAudio or GPTLiveSession.appendMicrophone. OpenAISession validates the decoded chunk, pushes its per-session resampler and appends 24k wire PCM; endAudio flushes before manual commit or short-hold clear, while non-ready endAudio and close discard stream state. GPTLiveSession continuously pushes frames and resets on terminal transport completion rather than flushing each frame. The unchanged irregular-chunk and single-sample tests retain the frame-boundary carry contract; literal emitted/held vectors make the end-of-stream contract directly readable. Existing session tests cover flush/commit ordering; waveform and startup-queue tests retain their different approximate-waveform/transport-order responsibilities. No production call sites or stream behavior were changed.",
+      "checks": [
+        "Read wisdom/values.md, structural-readability-guidance.md, repo-wide ledger/coverage and pertinent live-native-audio ledger entries.",
+        "Read all changed source paths (only the focus test), full base/candidate focus, full production resampler and relevant actual caller/test journeys. Read the added candidate wisdom note as context only.",
+        "Verified exact candidate/parent IDs, changed-path inventory and Git blob IDs. git diff --check between the exact parent and candidate passed.",
+        "Manual arithmetic reading of literals confirms signed interpolation, output-count parity, emitted-versus-held ownership and empty-stream behavior; no runtime execution."
+      ],
+      "limits": [
+        "No setup, tests, builds, provider requests, authentication or device operations run; parent owns isolated runtime gates. Primary note test/mutation claims are inherited statements, not independently reproduced proof.",
+        "No aggregate/whole-repository readability acceptance or integration claim.",
+        "Candidate adds wisdom/quality/structural-readability-worker.md (blob 763f57c7e93e96afd9699d5e185428b1ef400550). It is bookkeeping, not changed source or accepted code; parent should omit/consolidate this per-worker note under the aggregate-wisdom instruction.",
+        "No source edited; only the requested untracked judgment is written. Model verification is external to this review."
+      ]
     },
     {
       "file": "tests/live-self-test.test.ts",
