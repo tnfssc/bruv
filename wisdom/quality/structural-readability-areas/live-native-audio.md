@@ -66,3 +66,27 @@ Latest audio/test batch: fresh judges task_849c1ccb(audio tests),task_8ab8f308(p
 ## Latest combined proof
 
 At source1a327b0c after secondparent checkpoint, task_b3b5ed42 passed rootcheck,44-fileformat,380TS tests/22,390assertions,42Python tests. One nativeLinux build then devicefreeprotocol/backpressure/privategraphprotocol+source-removal/privategraphcapture allpass;3ClangASanUBSan Cregressions pass withzero waveformmismatch. UniqueTMPDIR isolatesfixture artifacts. Source-removal mayreroute;PipeWirePulse notCI PulseAudio/physical/device/provider/Mac proof. Earlier batchlaunch failed fishquoting beforechecks;notcounted. Acceptedhash/uniqueprimary audit remains exact andpartial inJSON.
+
+Lifecycle-test task_61f07074/task_3e2610a0 and billing-test task_0ed9f187/task_c4ba592a final own-primary revisions accepted. Callback/drain ordering and failedwrite settlement now direct;pricing vs persistence own separate testlifetimes.27/109 independent tests pass. Inherited billingtest subcenttolerance/intermediatewatermark and missingdedicatedlatebill guard proof recorded,notclaimed solved.
+
+Delegation-test own-primary task_79a24111, fresh judge task_9286e550 ACCEPT integrated: direct test-owned admission promises, fixture observes every submission independently of policy, stale speech vs settlement and independent loss ownership explicit. 26 focused tests/91 assertions; judge owner/integration rerun blocked at missing-WASM loader, not credited as pass.
+
+Helper source own-primary task_34c585ed/fresh judge task_1c3f1e78 NO CHANGE NEEDED; coherent fd/directory/executable cleanup ownership retained. Related embedded-helper fixture ACCEPT: explicit TMPDIR ownership and extraction cleanup checks.21tests/112assertions. Linux inert Mach-O payload probe is not native execution/authenticity proof. Related test still needs own primary.
+
+## Partial checkpoint 47b05ba9
+
+49/140 baseline accepted; 59/140 primary launched. All 6 new native regressions have own-primary acceptance. Exact accepted-blob mismatches: 0; unique primary IDs 65/65. Still partial: no area-completion or final whole-repo gate claim. Full queue, paths, original/rework judges and exact hashes remain in JSON.
+
+Recovery-test own-primary task_3186f4b0/freshjudge task_1c5671f2 ACCEPT integrated;37combinedtests/20251assertions,explicit clock/write/flush ownership,terminalblankpane still unvalidated. Host-bridge test task_98219b99/task_b019b845 REJECT: afterEach moved failed-host close past final retained-snapshot assertion. Structural gains valid but checkpoint weakened. Candidate not integrated;fresh rework next primary slot, then fresh judge with full rejection context.
+
+Resampler task_202ecbee/freshjudge task_cfda53f2 NO CHANGE NEEDED source; ACCEPT independent exact-byte reference/literal tests.86tests/797assertions. Existing sine reference acknowledged;new tests strengthen not invent first independent evidence. NEW tests/openai-resample.test.ts added to extra ledger (7 total), own-primary/freshjudge still required.
+
+Passive-history task_17da398e/task_189c73c2 ACCEPT integrated: pending audit next-user ownership separate from projection-wide legacy dedup,42tests342assertions,raw/private/branch semantics unchanged. Related test own primary pending. Lifecycle port task_426bbfc3/task_4cd11b16 NO CHANGE NEEDED: scoped bus handshake vs owner stop/navigation/work cancellation separate;13tests67assertions+8bus assertions,sourcewrapper only.
+
+Third parent checkpoint1c1e65fb joined cleanly(no assigned source delta). At ec8d02c7, task_232790bf passed rootcheck,46-fileformat,432tests/22601assertions across24files with uniqueTMPDIR. Includes currenthistory projection,delegation/recovery tests,embeddedfixture and independentresampling contracts. No new physical/provider/Mac/fullgate claim;previous native batch still distinct evidence.
+
+Provider diagnostics task_eccea8a1/task_8db4b91e ACCEPT all3maintainedpaths: classification+safe enrichment colocated,session retains correlation/cancellation/terminal/audio/tool lifetimes. Fresh WHOLE final openai-session acceptance replaces oldblob;related diagnostic test ownprimary pending.70tests705assertions. Unknown/duplicate suppression already existed;provider-internal nonterminal response failure still triggers shipped extension Live shutdown through onError. No incidental fix.
+
+Host retention REJECT resolved: fresh rework task_8e8cf502/d19bdc41 then fresh whole-original-to-final judge task_bb9a363e ACCEPT blob3dc74be1 integrated. Failed-host close now before retained-byte assertion;typed port/wiredecoder/central cleanup improvements retained.19tests111assertions independently;neighbor asset loader blocked judge integration. Original rejected branch retained,never integrated.
+
+Status task_89c0c507/task_5f68217e ACCEPT all3paths integrated. Explicit pure priority replaces nestedrenderconditional;presentationfacts no extra lifecycle. Fresh WHOLE final extension accepted53b126a8,retains startup/capture/stop/billing ownership.159tests1044assertions incl80/120column sourcePTT;64input statusstrings matchbaseline. Status not actual readiness/teardown proof. Related status-test ownprimary pending.

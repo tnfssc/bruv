@@ -14,6 +14,22 @@
         "model": "openai-codex/gpt-6.1-sol",
         "purpose": "saved exact-blob/review reconciliation (not new judge)"
       }
+    ],
+    "resumeFocusWorkers": [
+      {
+        "id": "task_7f35b9db",
+        "stage": "judge",
+        "focus": [
+          "src/remote/README.md",
+          "tests/remote-capabilities.test.ts",
+          "tests/remote-placement.test.ts",
+          "tests/remote-repository-download.test.ts"
+        ],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_7f35b9db",
+        "branch": "bruv/pr45-fresh-judge-remote-4-candidates-7f35b9db",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled"
+      }
     ]
   },
   {
@@ -39,7 +55,8 @@
         "model": "openai-codex/gpt-6.1-sol",
         "purpose": "saved exact-blob/review reconciliation (not new judge)"
       }
-    ]
+    ],
+    "resumeFocusWorkers": []
   },
   {
     "group": "compatibility-t3",
@@ -56,6 +73,20 @@
         "branch": "bruv/pr45-compatibility-t3-exact-reconciliati-2cc82a24",
         "model": "openai-codex/gpt-6.1-sol",
         "purpose": "saved exact-blob/review reconciliation (not new judge)"
+      }
+    ],
+    "resumeFocusWorkers": [
+      {
+        "id": "task_7fd4e906",
+        "stage": "judge",
+        "focus": [
+          "scripts/claude-native-acceptance/run-subagent.mjs",
+          "tests/claude-native-history-runner.test.mjs"
+        ],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_7fd4e906",
+        "branch": "bruv/pr45-fresh-judge-compatibility-t3-2-cand-7fd4e906",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled"
       }
     ]
   },
@@ -74,6 +105,29 @@
         "branch": "bruv/pr45-agent-history-session-goals-exact-r-016abd3c",
         "model": "openai-codex/gpt-6.1-sol",
         "purpose": "saved exact-blob/review reconciliation (not new judge)"
+      }
+    ],
+    "resumeFocusWorkers": [
+      {
+        "id": "task_59bb105b",
+        "stage": "judge",
+        "focus": [
+          "src/prompts/compaction.md"
+        ],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_59bb105b",
+        "branch": "bruv/pr45-fresh-judge-agent-history-session-g-59bb105b",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled"
+      },
+      {
+        "id": "task_9e79f658",
+        "stage": "primary",
+        "focus": "tests/fixtures/history-sdk-probe-failure.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_9e79f658",
+        "branch": "bruv/pr45-primary-history-failure-fixture-9e79f658",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled",
+        "sourceCommit": "ce7032a68d76defd3b2f40c6bb630f5b8824c0af"
       }
     ]
   },
@@ -100,6 +154,36 @@
         "model": "openai-codex/gpt-6.1-sol",
         "purpose": "saved exact-blob/review reconciliation (not new judge)"
       }
+    ],
+    "resumeFocusWorkers": [
+      {
+        "id": "task_997edac5",
+        "stage": "judge",
+        "focus": [
+          "tests/attention-sdk.test.ts",
+          "tests/cooperative-handoff.test.ts",
+          "tests/foreground-execution-sdk.test.ts",
+          "tests/foreground-stop.test.ts"
+        ],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_997edac5",
+        "branch": "bruv/pr45-fresh-judge-execution-tasks-questio-997edac5",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled"
+      },
+      {
+        "id": "task_626cfea3",
+        "stage": "judge",
+        "focus": [
+          "tests/image-fixture.ts",
+          "tests/local-agent-termination.test.ts",
+          "tests/output-buffer.test.ts",
+          "scripts/task-placement-clean-capture.test.ts"
+        ],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_626cfea3",
+        "branch": "bruv/pr45-fresh-judge-execution-tasks-questio-626cfea3",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled"
+      }
     ]
   },
   {
@@ -125,7 +209,8 @@
         "model": "openai-codex/gpt-6.1-sol",
         "purpose": "saved exact-blob/review reconciliation (not new judge)"
       }
-    ]
+    ],
+    "resumeFocusWorkers": []
   },
   {
     "group": "build-release-ci-tooling",
@@ -135,7 +220,8 @@
     "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828",
     "branch": "bruv/whole-repo-structural-readability-build--d849d828",
     "base": "59413c532e6422983f611915e509e8421aa2f363",
-    "resumeResearch": []
+    "resumeResearch": [],
+    "resumeFocusWorkers": []
   },
   {
     "group": "site-support",
@@ -145,6 +231,7 @@
     "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d",
     "branch": "bruv/whole-repo-structural-readability-site-s-6608ea8d",
     "base": "59413c532e6422983f611915e509e8421aa2f363",
-    "resumeResearch": []
+    "resumeResearch": [],
+    "resumeFocusWorkers": []
   }
 ]

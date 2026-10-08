@@ -40,7 +40,16 @@
     {
       "file": ".github/workflows/live.yml",
       "initialBlob": "6c1b0780b78c229785db286e9f15b76a4be60d32",
-      "status": "pending"
+      "status": "accepted",
+      "primaryId": "task_8194489e",
+      "sourceCommit": "333c662fc7ac2b3ffa9a8ca238ba0fe9c6bce8f5",
+      "judgeIds": [
+        "task_c5d328c7"
+      ],
+      "resumeState": "accepted_exact_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "acceptedBlob": "6c1b0780b78c229785db286e9f15b76a4be60d32",
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
     },
     {
       "file": ".github/workflows/release.yml",
@@ -117,77 +126,216 @@
     {
       "file": "native/live-linux/CaptureGate.h",
       "initialBlob": "b1cd6d7ce25890e7336fd7ea198ac5e2e324905e",
-      "status": "pending"
+      "status": "accepted",
+      "primaryId": "task_7e221830",
+      "sourceCommit": "d3ba046d7bdca2cbe0c008105abccf0278cd4a4b",
+      "judgeIds": [
+        "task_5e692e3f"
+      ],
+      "resumeState": "accepted_exact_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "acceptedBlob": "b1cd6d7ce25890e7336fd7ea198ac5e2e324905e",
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
     },
     {
       "file": "native/live-linux/main.cpp",
       "initialBlob": "76741dde51fe38d1f42496c66309cb700e266987",
-      "status": "pending"
+      "status": "accepted",
+      "primaryId": "task_71e74f3b",
+      "sourceCommit": "751c9ba0be74eb6939791c49c06d84de8882e669",
+      "judgeIds": [
+        "task_13282f24"
+      ],
+      "resumeState": "accepted_exact_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "acceptedBlob": "b8ae3e08f47d6346d45324baa24605ef61e9d907",
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
     },
     {
       "file": "native/live-linux/tests/backpressure.py",
       "initialBlob": "926018512888ed0d7b08002be97e2179a2089561",
-      "status": "pending"
+      "status": "accepted",
+      "primaryId": "task_b65be047",
+      "sourceCommit": "4ba1f1c1b0757f60bedd75076bd461397f6a112c",
+      "judgeIds": [
+        "task_c68d41f2"
+      ],
+      "resumeState": "accepted_exact_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "acceptedBlob": "df54145e5bb23b98a0ba70decb49efa6f767a01c",
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
     },
     {
       "file": "native/live-linux/tests/capture-gate.cpp",
       "initialBlob": "54545816cf0085d09b852dfad919fc9dc7545d57",
-      "status": "pending"
+      "status": "accepted",
+      "primaryId": "task_3f8cfc8c",
+      "sourceCommit": "60884cc93465a0bd217574abdb6e148db81dfaf6",
+      "judgeIds": [
+        "task_794b83a8"
+      ],
+      "resumeState": "accepted_exact_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "acceptedBlob": "6cb2911f8dbc46de4ea293fed9d12f8b64f0730d",
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
     },
     {
       "file": "native/live-linux/tests/capture-protocol.py",
       "initialBlob": "86a6f83cd562f0ab9f7e77bc7257f451c540a4c1",
-      "status": "pending"
+      "status": "accepted",
+      "primaryId": "task_c8643d8b",
+      "sourceCommit": "3c71d4a280d89be9b6597d09af48a40a376451f8",
+      "judgeIds": [
+        "task_c412b125",
+        "task_0f8a556e"
+      ],
+      "resumeState": "accepted_exact_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "acceptedBlob": "6918a3b62e8bcaf6687e73874bd5ae31ce3a46f3",
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
     },
     {
       "file": "native/live-linux/tests/protocol.py",
       "initialBlob": "266caf808d098fac5a3c4b834c73f428b9fd19b6",
-      "status": "pending"
+      "status": "accepted",
+      "primaryId": "task_113b4141",
+      "sourceCommit": "61dd86168b4b0a3a178aa5ccdca54e1a058117f6",
+      "judgeIds": [
+        "task_5ff86413",
+        "task_ab2edd5f",
+        "task_13282f24"
+      ],
+      "resumeState": "accepted_exact_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "acceptedBlob": "3c2ef6bc49b9c8e2025132ffdab1877a82effa81",
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
     },
     {
       "file": "native/live-linux/tests/source-removal.py",
       "initialBlob": "28a1a9d47228fc945f5837efd31a1b0c49a31dff",
-      "status": "pending"
+      "status": "accepted",
+      "primaryId": "task_ba46a6b0",
+      "sourceCommit": "bebc961f249c35103aa08d0bebf496548844c8ad",
+      "judgeIds": [
+        "task_46031fcf"
+      ],
+      "resumeState": "accepted_exact_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "acceptedBlob": "5d707531d9753b02b575997c378f13517fc8370d",
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
     },
     {
       "file": "native/live-linux/tests/virtual.sh",
       "initialBlob": "02fea1a0e2d25ac75c78fce395ce9f39dcbaf52f",
-      "status": "pending"
+      "status": "accepted",
+      "primaryId": "task_48ae14aa",
+      "sourceCommit": "61dd86168b4b0a3a178aa5ccdca54e1a058117f6",
+      "judgeIds": [
+        "task_ab2edd5f"
+      ],
+      "resumeState": "accepted_exact_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "acceptedBlob": "86e0f56798547d704db912eab2534a2161c93d0e",
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
     },
     {
       "file": "native/live/AudioCore.c",
       "initialBlob": "2efc770027dad553a71f5bd1dfc34a87fbd3eb6a",
-      "status": "pending"
+      "status": "accepted",
+      "primaryId": "task_08961c0d",
+      "sourceCommit": "693ef0906777ccc267265d5b16e25a5df5ff1b66",
+      "judgeIds": [
+        "task_365b0c49"
+      ],
+      "resumeState": "accepted_exact_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "acceptedBlob": "a4c9b7c4ec975fdcfe46cf875c7f5faf5bc2dcc6",
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
     },
     {
       "file": "native/live/AudioCore.h",
       "initialBlob": "e2d8f07794f66272af89f64c69f86bee4ee70aee",
-      "status": "pending"
+      "status": "accepted",
+      "primaryId": "task_db37eb3b",
+      "sourceCommit": "0e0c7d766c65f4cbfbfb46b973946cc6217c9e65",
+      "judgeIds": [
+        "task_8ae63e66"
+      ],
+      "resumeState": "accepted_exact_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "acceptedBlob": "e2d8f07794f66272af89f64c69f86bee4ee70aee",
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
     },
     {
       "file": "native/live/Info.plist",
       "initialBlob": "d027ae3e545619f1628e72bf2c0f0fafdda72718",
-      "status": "pending"
+      "status": "accepted",
+      "primaryId": "task_68f2d62b",
+      "sourceCommit": "439444f649249259125c548e41f1a345977de91f",
+      "judgeIds": [
+        "task_9de91bbe"
+      ],
+      "resumeState": "accepted_exact_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "acceptedBlob": "d027ae3e545619f1628e72bf2c0f0fafdda72718",
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
     },
     {
       "file": "native/live/main.swift",
       "initialBlob": "4a29411a451125a88c2572107856a35bc97ea137",
-      "status": "pending"
+      "status": "accepted",
+      "primaryId": "task_255d99a6",
+      "sourceCommit": "b01dac0216dfa47d3b40e57f92c6021ea530e368",
+      "judgeIds": [
+        "task_660502a4"
+      ],
+      "resumeState": "accepted_exact_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "acceptedBlob": "e51337959b28907cfa01625a6533bf0f068d014a",
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
     },
     {
       "file": "native/live/test-capture-gate.c",
       "initialBlob": "292e509c5754bd29811b8472347afc8ae2e0637f",
-      "status": "pending"
+      "status": "accepted",
+      "primaryId": "task_c28913a3",
+      "sourceCommit": "1dfc7b232c6ec64fdf89ff41b6c6eda2283baf8c",
+      "judgeIds": [
+        "task_bd041eab"
+      ],
+      "resumeState": "accepted_exact_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "acceptedBlob": "292e509c5754bd29811b8472347afc8ae2e0637f",
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
     },
     {
       "file": "native/live/test-core.c",
       "initialBlob": "16f9df07efbef8b515fb70f28e4de0c0c5b4d4cd",
-      "status": "pending"
+      "status": "accepted",
+      "primaryId": "task_e7779538",
+      "sourceCommit": "017776567ec43ba4a886dd5edadab71d6430331d",
+      "judgeIds": [
+        "task_27183ba4",
+        "task_365b0c49"
+      ],
+      "resumeState": "accepted_exact_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "acceptedBlob": "182ca301ae67e70cfbaffd43ec6380c2ac9ff377",
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
     },
     {
       "file": "native/live/test-waveform.c",
       "initialBlob": "bb584e0f6042f5e82f7298fb3a84b8e2bcb6e749",
-      "status": "pending"
+      "status": "accepted",
+      "primaryId": "task_6cc26443",
+      "sourceCommit": "84e6ee3d013babbac0e8f66c8137ecbeb59312c9",
+      "judgeIds": [
+        "task_0d6645b3"
+      ],
+      "resumeState": "accepted_exact_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "acceptedBlob": "7a88474d51cef3259e49ab8897263f9a19811b17",
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
     },
     {
       "file": "package.json",
@@ -317,12 +465,30 @@
     {
       "file": "scripts/build-live-helper.sh",
       "initialBlob": "bf9a9d9873825675f42392aa331f61bda36097f4",
-      "status": "pending"
+      "status": "accepted",
+      "primaryId": "task_2ce0dc69",
+      "sourceCommit": "0c9fc2f2baff2c16895b74f6d2a5a75ebe6035ab",
+      "judgeIds": [
+        "task_cdb98bdc"
+      ],
+      "resumeState": "accepted_exact_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "acceptedBlob": "bf9a9d9873825675f42392aa331f61bda36097f4",
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
     },
     {
       "file": "scripts/build-live-linux-helper.sh",
       "initialBlob": "81989563bcacb3c947843520081648afa4e4b521",
-      "status": "pending"
+      "status": "accepted",
+      "primaryId": "task_4761041c",
+      "sourceCommit": "a840d0db75cf09eeb7b3a0556de30c53e04a5e5d",
+      "judgeIds": [
+        "task_1f20ecb1"
+      ],
+      "resumeState": "accepted_exact_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "acceptedBlob": "81989563bcacb3c947843520081648afa4e4b521",
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
     },
     {
       "file": "scripts/build-pair.ts",
@@ -531,17 +697,36 @@
     {
       "file": "scripts/claude-native-acceptance/run-subagent.mjs",
       "initialBlob": "333a6297626d5bedcd9aecd72757c436ce3f51ef",
-      "status": "pending",
+      "status": "accepted",
       "area": "compatibility-t3",
-      "resumeState": "pending-review-interrupted",
+      "resumeState": "accepted-joined",
       "primaryId": "task_38276b5f",
       "primaryCommit": "acba9037095809d012444d28656a733b1fcdcf86",
       "judgeIds": [
-        "task_1a9f7e52"
+        "task_1a9f7e52",
+        "task_7fd4e906"
       ],
       "sourceCommit": "acba9037095809d012444d28656a733b1fcdcf86",
       "report": "wisdom/quality/structural-readability-areas/compatibility-t3.json",
-      "pendingReason": "Committed whole-file primary candidate survives; recorded running judge was killed by session shutdown (143), with no completed final verdict. Existing related-patch acceptance does not replace this missing whole-file judgment."
+      "pendingReason": "Committed whole-file primary candidate survives; recorded running judge was killed by session shutdown (143), with no completed final verdict. Existing related-patch acceptance does not replace this missing whole-file judgment.",
+      "acceptedBlob": "16300ead040e2d9f6daf3e2fa17af4001ae4dfd6",
+      "result": "Whole runner accepted, not just the related patch. Against the primary parent, the long setup/replay/assertion/finalization block becomes an intelligible orchestration: pin and record the artifact, open the model, configure the isolated fixture, await replay close, verify delivery, then verify persisted child history. recordInvocation, configureFixture, runReplay, verifyModelDelivery, stopFixtureWorkers and retainProof each own a coherent effect; these are not renames or arbitrary chunks hidden behind a context bag. The module-owned root/proof and the explicit model/passed bindings make scope authority visible. configureFixture now publishes the complete tap configuration once rather than writing then mutating and rewriting it. The nested finally blocks expose which resource still must be released when proof publication fails. The unchanged child-history helper remains readable as successive native/source/SDK identity checks followed by export; its local loop keeps the three representations together. The added paired test is also accepted in full: the two descriptively named corruptResult cases make the failure distinction visible, while installHealthServer and installFailingBrowser describe owned stand-ins with clear purposes. Resource ownership, browser-close observations and pre-cleanup assertions are readable without treating assertion count as a quality score.",
+      "systemReason": "Followed the actual environment/config boundary into the generated replay template and subagent-driver. The driver flushCapture collects final provider evidence before the template closes browser/server and releases its t3-runtime; the runner waits for replay close before retaining wire/model projections and releasing its model and private root. That ordering makes the caller journey and terminal authority legible on both replay failure and a result.json publication failure. startModel returns records and an explicit close operation; verifyChildHistory independently follows native rows to committed source IDs and the pinned SDK reader. The added test exercises this shipped runner/generator/driver/collector journey using an owned health server and failing browser, and labels that boundary as offline scope/finalization rather than native acceptance. Existing source-slicing replay-finalization caller still finds the preserved template-to-env generation block. All changed non-wisdom code in this primary patch is accepted; no related changed file is withheld.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Independent worktree HEAD is 9e3d59809de2fb9e9d17e411736537d32b225a7b; reviewed git show/diff of the exact candidate, not checkout files.",
+        "Verified candidate commit acba9037095809d012444d28656a733b1fcdcf86 and primary parent 3c411345b6275c1120406f0f07e97b439787a97d.",
+        "Verified parent runner blob equals supplied baseline/joined blob 333a6297626d5bedcd9aecd72757c436ce3f51ef; candidate runner blob is 16300ead040e2d9f6daf3e2fa17af4001ae4dfd6.",
+        "Verified paired test is absent in the parent and is blob 611d0cb7e7a68d58501488971bb2aa6aeac582e9 in the candidate; read its complete source and the complete runner.",
+        "git diff-tree inventory: runner modified, paired test added, wisdom/quality/structural-readability-worker.md added. Only worker wisdom excluded from acceptance scope.",
+        "Read the primary diff, relevant replay/model/driver/collector implementations and caller references via git show/git grep. No tests, builds or setup executed."
+      ],
+      "limits": [
+        "This is independent actual-code readability acceptance, not a safety-reporter verdict or runtime acceptance.",
+        "No credentials, authentication, device or real browser interaction accessed. Authenticated background UX remains unverified, not green.",
+        "Known automatic setup hash rejection was not bypassed; no setup, delegation, source edits, publication or destructive git operations performed.",
+        "Unchanged helpers were assessed for their role and intrinsic readability, not dynamically verified. Fixture sources containing cleanup were read only, never executed."
+      ]
     },
     {
       "file": "scripts/claude-native-acceptance/run.mjs",
@@ -888,47 +1073,97 @@
     {
       "file": "scripts/live-acceptance.ts",
       "initialBlob": "3d1e341a0ec3115c50c706e21dfa75184e69c098",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "own_primary_pending",
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
     },
     {
       "file": "scripts/live-gpt-live-offline-smoke.ts",
       "initialBlob": "b77a2bd12e4534a50cbbea190d8d77775f5a6a3a",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "own_primary_pending",
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
     },
     {
       "file": "scripts/live-helper-bundle.ts",
       "initialBlob": "59cc37569783f757e9bb64d760dc96aead37edfc",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": "task_2e2ac20f",
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "primary_started_no_committed_candidate",
+      "pendingReason": "Primary was allocated, but no candidate commit or completed focus judgment is recorded. Preserve its worktree; do not treat the stale running status as proof of current execution."
     },
     {
       "file": "scripts/live-isolated-audio.sh",
       "initialBlob": "ba92d903223fcee68a9c3a5ce799e4ec695230ab",
-      "status": "pending"
+      "status": "accepted",
+      "primaryId": "task_1b8756f7",
+      "sourceCommit": "5a342b6aa3df79f4be15d4fa2b84561a276f95b3",
+      "judgeIds": [
+        "task_1a73a583",
+        "task_ab2edd5f"
+      ],
+      "resumeState": "accepted_exact_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "acceptedBlob": "056491cb8f7267f2cb0821fb5ccdc7911e0a1822",
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
     },
     {
       "file": "scripts/live-onboarding-smoke.ts",
       "initialBlob": "f02f07cca5ad453ba39de2fe1b0b6b396cc0c1bb",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "own_primary_pending",
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
     },
     {
       "file": "scripts/live-openai-offline-smoke.ts",
       "initialBlob": "c900eaef25ae1b5501a4da8ee24b29854241b78d",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "own_primary_pending",
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
     },
     {
       "file": "scripts/live-probe-input.ts",
       "initialBlob": "30da7b239c9a9bf9ef9fdfa05be474de72253f57",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "own_primary_pending",
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
     },
     {
       "file": "scripts/live-startup-fixture.ts",
       "initialBlob": "57daaf09ced917e5130a196b1410cf0b6aa257cc",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "own_primary_pending",
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
     },
     {
       "file": "scripts/live-study-trial.ts",
       "initialBlob": "63d6fd9dd0bdeead65c912d63ac4b50e7a60bb0c",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "own_primary_pending",
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
     },
     {
       "file": "scripts/loopback-parent-fixture.ts",
@@ -959,7 +1194,12 @@
     {
       "file": "scripts/offline-openai-default-transport.ts",
       "initialBlob": "643359a3fb7221ed0fbf9c5e97259eb2b70c733a",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "own_primary_pending",
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
     },
     {
       "file": "scripts/pi-host-adaptation.ts",
@@ -1004,27 +1244,52 @@
     {
       "file": "scripts/probe-live-capability.ts",
       "initialBlob": "755a16278c22dacfff5bade1859975616a2aefcb",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "own_primary_pending",
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
     },
     {
       "file": "scripts/probe-live-controlled.ts",
       "initialBlob": "7000ee28bed1449a679449a65bc3359cb4c126dd",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "own_primary_pending",
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
     },
     {
       "file": "scripts/probe-live-recorded.ts",
       "initialBlob": "3c15dce87ad6cef0b8687c9d2dfeb793a48c9b3a",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "own_primary_pending",
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
     },
     {
       "file": "scripts/probe-live-startup-audio.ts",
       "initialBlob": "7efa411dd2d16d6070ee511416884d1a64309fb1",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "own_primary_pending",
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
     },
     {
       "file": "scripts/probe-openai-realtime-setup.ts",
       "initialBlob": "336872179296264402c6bac5fc5c7feaa1c8d244",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "own_primary_pending",
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
     },
     {
       "file": "scripts/prompt-preview.ts",
@@ -3012,187 +3277,506 @@
     {
       "file": "src/live/audio.ts",
       "initialBlob": "f2549d1391e3184fe6463503542169e6c6c6b3f7",
-      "status": "pending"
+      "status": "accepted",
+      "primaryId": "task_f8a6b192",
+      "sourceCommit": "c8fbb91f3c0569b9789ccfc539e614d64c8a4d73",
+      "judgeIds": [
+        "task_aeb6dd8f",
+        "task_610f6154"
+      ],
+      "resumeState": "accepted_exact_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "acceptedBlob": "b3b015c01c83ae297d9b2dbb2a8016d1945bc636",
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
     },
     {
       "file": "src/live/config.ts",
       "initialBlob": "066a823fe085451dad54f693c824013f2a4ffbb5",
-      "status": "pending"
+      "status": "accepted",
+      "primaryId": "task_51d6ae66",
+      "sourceCommit": "fb653ebe559b3b04cd1588452662e7f246ff2249",
+      "judgeIds": [
+        "task_6da0bcc2"
+      ],
+      "resumeState": "accepted_exact_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "acceptedBlob": "066a823fe085451dad54f693c824013f2a4ffbb5",
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
     },
     {
       "file": "src/live/conversation.ts",
       "initialBlob": "7f9a86a60e3eb296e41459e09e7ccbbec1470d49",
-      "status": "pending"
+      "status": "accepted",
+      "primaryId": "task_7d020b63",
+      "sourceCommit": "79325faf09732f06bd890dbad180957b0a323def",
+      "judgeIds": [
+        "task_365a3eee"
+      ],
+      "resumeState": "accepted_exact_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "acceptedBlob": "7f9a86a60e3eb296e41459e09e7ccbbec1470d49",
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
     },
     {
       "file": "src/live/cost.ts",
       "initialBlob": "14d4bead2ec2e832da60d5816e9cee0b3e40069c",
-      "status": "pending"
+      "status": "accepted",
+      "primaryId": "task_2995e9e9",
+      "sourceCommit": "da7f97d770768c2f74540f8a9c3fde8667e15177",
+      "judgeIds": [
+        "task_4b5c5997"
+      ],
+      "resumeState": "accepted_exact_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "acceptedBlob": "1a6087ab8fb201b5c7d2aa771ab26aec7c899b04",
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
     },
     {
       "file": "src/live/credentials.ts",
       "initialBlob": "ddff52c311a81faef6290ed979f50a04fd5182cb",
-      "status": "pending"
+      "status": "accepted",
+      "primaryId": "task_9203c038",
+      "sourceCommit": "357b3a75677e60ce60bdf341e4988242f2d762fe",
+      "judgeIds": [
+        "task_c817da47"
+      ],
+      "resumeState": "accepted_exact_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "acceptedBlob": "ddff52c311a81faef6290ed979f50a04fd5182cb",
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
     },
     {
       "file": "src/live/diagnostics.ts",
       "initialBlob": "40dc0fdf0b0a29da00c52827af7ba3eba6461b0b",
-      "status": "pending"
+      "status": "accepted",
+      "primaryId": "task_84881347",
+      "sourceCommit": "ad1dfa9d42fc87c397fe92e691127958201e0f1a",
+      "judgeIds": [
+        "task_3ac00f12"
+      ],
+      "resumeState": "accepted_exact_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "acceptedBlob": "40dc0fdf0b0a29da00c52827af7ba3eba6461b0b",
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
     },
     {
       "file": "src/live/editor-push-to-talk.ts",
       "initialBlob": "df048148512e56c08a09807a4e35db9577fae485",
-      "status": "pending"
+      "status": "accepted",
+      "primaryId": "task_7bb5cb79",
+      "sourceCommit": "7f72408d2e97646332d752d423d96ccbf56d310c",
+      "judgeIds": [
+        "task_51a3b4e4"
+      ],
+      "resumeState": "accepted_exact_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "acceptedBlob": "3fac9c057f3f767a9af84ce9bcbcb3341a952e5b",
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
     },
     {
       "file": "src/live/embedded.ts",
       "initialBlob": "bda048c5bdf546d7dd7297e130b17920ce1c3f14",
-      "status": "pending"
+      "status": "accepted",
+      "primaryId": "task_e346a38c",
+      "sourceCommit": "8a92d8f20f136df4561706ec9c6493f25c709946",
+      "judgeIds": [
+        "task_779f8ffd"
+      ],
+      "resumeState": "accepted_exact_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "acceptedBlob": "bda048c5bdf546d7dd7297e130b17920ce1c3f14",
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
     },
     {
       "file": "src/live/extension.ts",
       "initialBlob": "84274f466746fb1665d4d9cb5c71ed3869d036c9",
-      "status": "pending"
+      "status": "accepted",
+      "primaryId": "task_b67e363a",
+      "sourceCommit": "931224a0e92a33af036ba65404559b958ff1574a",
+      "judgeIds": [
+        "task_65eb4c80",
+        "task_4b5c5997",
+        "task_5f68217e"
+      ],
+      "resumeState": "accepted_exact_not_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit and latest area tree; joined bytes differ. Preserve both prior and current exact-code reviews; accepted area source still needs deliberate integration, not safety-reporter approval.",
+      "acceptedBlob": "53b126a8669adebbd44292faeddf782889809825",
+      "result": "Exact focus-reviewed blob verified at its judged source commit and latest area tree; joined bytes differ. Preserve both prior and current exact-code reviews; accepted area source still needs deliberate integration, not safety-reporter approval."
     },
     {
       "file": "src/live/gpt-live-context.ts",
       "initialBlob": "ca67afe7f0da5fa93829785661d93b002a2d2302",
-      "status": "pending"
+      "status": "accepted",
+      "primaryId": "task_07981349",
+      "sourceCommit": "a4836828bfb3336229bd70430539e5fb7fecbc77",
+      "judgeIds": [
+        "task_4151cb4a"
+      ],
+      "resumeState": "accepted_exact_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "acceptedBlob": "ca67afe7f0da5fa93829785661d93b002a2d2302",
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
     },
     {
       "file": "src/live/gpt-live-delegation.ts",
       "initialBlob": "0096dd7f6d3ef5601f2605a8cf2f8117b648b2b7",
-      "status": "pending"
+      "status": "accepted",
+      "primaryId": "task_05694cc7",
+      "sourceCommit": "a5f932b5712711f4de4767f2fed28986dec14052",
+      "judgeIds": [
+        "task_3583b317"
+      ],
+      "resumeState": "accepted_exact_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "acceptedBlob": "160003768942615890ecba4835805cd3954be71a",
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
     },
     {
       "file": "src/live/gpt-live-playback.ts",
       "initialBlob": "fcbf4975f3b457e798e7d959aee9943f62b7f698",
-      "status": "pending"
+      "status": "accepted",
+      "primaryId": "task_65c3efca",
+      "sourceCommit": "84ddffa8b4c5559f35dbcea6eb134af33e115900",
+      "judgeIds": [
+        "task_af9fc144"
+      ],
+      "resumeState": "accepted_exact_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "acceptedBlob": "0ae9b29f607c565fbfe00896627956c5bac3ce18",
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
     },
     {
       "file": "src/live/gpt-live-request.ts",
       "initialBlob": "ff55e2444000fa15232dabf6d697c63037a7b0ae",
-      "status": "pending"
+      "status": "accepted",
+      "primaryId": "task_8bc8ea03",
+      "sourceCommit": "ee1694e6abc99958cdd3600cb6fa3b29954a71c6",
+      "judgeIds": [
+        "task_bf610eb5"
+      ],
+      "resumeState": "accepted_exact_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "acceptedBlob": "ff55e2444000fa15232dabf6d697c63037a7b0ae",
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
     },
     {
       "file": "src/live/gpt-live-session.ts",
       "initialBlob": "4a59910d130a5d142313497b71c344f79aec7357",
-      "status": "pending"
+      "status": "accepted",
+      "primaryId": "task_35b0a03e",
+      "sourceCommit": "6d69c467cd48fa7ebad64fc5faa5d73ed0e861bf",
+      "judgeIds": [
+        "task_86206c2a"
+      ],
+      "resumeState": "accepted_exact_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "acceptedBlob": "92d985f0bd164825e712218e609930f2262beb0b",
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
     },
     {
       "file": "src/live/helper.ts",
       "initialBlob": "7cd173370b3ab5bf89e08ea287cbbe8e9e70b8a8",
-      "status": "pending"
+      "status": "accepted",
+      "primaryId": "task_34c585ed",
+      "sourceCommit": "2f13e6964b36f305a16084fd3d6c7e417e2361a7",
+      "judgeIds": [
+        "task_1c3f1e78"
+      ],
+      "resumeState": "accepted_exact_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "acceptedBlob": "7cd173370b3ab5bf89e08ea287cbbe8e9e70b8a8",
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
     },
     {
       "file": "src/live/lifecycle-access.ts",
       "initialBlob": "907131d869263fb00bd1a84a042a244cf108c1dc",
-      "status": "pending"
+      "status": "accepted",
+      "primaryId": "task_426bbfc3",
+      "sourceCommit": "abbb39433b481bf27129eb1a7a0a8eaecf85f03f",
+      "judgeIds": [
+        "task_4cd11b16"
+      ],
+      "resumeState": "accepted_exact_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "acceptedBlob": "907131d869263fb00bd1a84a042a244cf108c1dc",
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
     },
     {
       "file": "src/live/main-owner.ts",
       "initialBlob": "6ef4a9e05c4dfc3d0d2191f0936fc12b9df2bc1f",
-      "status": "pending"
+      "status": "accepted",
+      "primaryId": "task_a05d83ac",
+      "sourceCommit": "b6c6eb450541225a1590a010824b50a896f145cc",
+      "judgeIds": [
+        "task_bb0fe7ca"
+      ],
+      "resumeState": "accepted_exact_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "acceptedBlob": "bb80a4fd5997a18d93cfce3fd34fc8e4b022c7aa",
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
     },
     {
       "file": "src/live/offline-transport-probe.ts",
       "initialBlob": "a45e47706f80941e5988bf58a43d28e57b68a73d",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": "task_1a83d7f6",
+      "sourceCommit": "a2e8025bd3ffba42a24e0b7ba3358ac97de68532",
+      "judgeIds": [
+        "task_ad737139"
+      ],
+      "resumeState": "candidate_pending_actual_code_judgment",
+      "pendingReason": "Committed primary candidate verified; no recorded completed focus ACCEPT/NO CHANGE NEEDED judgment. Historical running labels are not current liveness or approval."
     },
     {
       "file": "src/live/openai-connect-error.ts",
       "initialBlob": "4b1dc32b7b36c544da534e9ca5f0cfe4686ddc68",
-      "status": "pending"
+      "status": "accepted",
+      "primaryId": "task_605161af",
+      "sourceCommit": "556d9b06734f1da70e76fe5de06a19b28d7dc093",
+      "judgeIds": [
+        "task_1c54d226"
+      ],
+      "resumeState": "accepted_exact_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "acceptedBlob": "4b1dc32b7b36c544da534e9ca5f0cfe4686ddc68",
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
     },
     {
       "file": "src/live/openai-errors.ts",
       "initialBlob": "aa59837c76b1d00430c2fa3648c6a73998f9a6c4",
-      "status": "pending"
+      "status": "accepted",
+      "primaryId": "task_eccea8a1",
+      "sourceCommit": "9f25cbbee79aebf17532edf4f0f8f42dce48d3ef",
+      "judgeIds": [
+        "task_8db4b91e"
+      ],
+      "resumeState": "accepted_exact_not_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit and latest area tree; joined bytes differ. Preserve both prior and current exact-code reviews; accepted area source still needs deliberate integration, not safety-reporter approval.",
+      "acceptedBlob": "0292a5e8aa1e33459570f4052a86896331e529c8",
+      "result": "Exact focus-reviewed blob verified at its judged source commit and latest area tree; joined bytes differ. Preserve both prior and current exact-code reviews; accepted area source still needs deliberate integration, not safety-reporter approval."
     },
     {
       "file": "src/live/openai-resample.ts",
       "initialBlob": "3237fbde60b8c0da9951552161d8ab61989547f8",
-      "status": "pending"
+      "status": "accepted",
+      "primaryId": "task_202ecbee",
+      "sourceCommit": "6453dc1fa0fbdfe243075ffa3d31dee946117843",
+      "judgeIds": [
+        "task_cfda53f2"
+      ],
+      "resumeState": "accepted_exact_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "acceptedBlob": "3237fbde60b8c0da9951552161d8ab61989547f8",
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
     },
     {
       "file": "src/live/openai-session.ts",
       "initialBlob": "5055955c85459ef4e03de7947f6053ef66282fd8",
-      "status": "pending"
+      "status": "accepted",
+      "primaryId": "task_497094fa",
+      "sourceCommit": "9f25cbbee79aebf17532edf4f0f8f42dce48d3ef",
+      "judgeIds": [
+        "task_5c3c9aed",
+        "task_8db4b91e"
+      ],
+      "resumeState": "accepted_exact_not_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit and latest area tree; joined bytes differ. Preserve both prior and current exact-code reviews; accepted area source still needs deliberate integration, not safety-reporter approval.",
+      "acceptedBlob": "aa6e30da2964c45ff7245572bfbbbad910ad8cf9",
+      "result": "Exact focus-reviewed blob verified at its judged source commit and latest area tree; joined bytes differ. Preserve both prior and current exact-code reviews; accepted area source still needs deliberate integration, not safety-reporter approval."
     },
     {
       "file": "src/live/openai-upgrade-socket.ts",
       "initialBlob": "c6ced660c58ff7b517315e86ceb892bfe0a59f39",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": "task_ad7ff38d",
+      "sourceCommit": "31bf2843d0aad882258288ca512035fe1d64528e",
+      "judgeIds": [
+        "task_8fc1fe9e"
+      ],
+      "resumeState": "candidate_pending_actual_code_judgment",
+      "pendingReason": "Committed primary candidate verified; no recorded completed focus ACCEPT/NO CHANGE NEEDED judgment. Historical running labels are not current liveness or approval."
     },
     {
       "file": "src/live/passive-history.ts",
       "initialBlob": "6d734f3931a9a8f21016b121eddecf8ebef5e131",
-      "status": "pending"
+      "status": "accepted",
+      "primaryId": "task_17da398e",
+      "sourceCommit": "2e6c8b980ff1f03b0baa81692387c14b9acbd400",
+      "judgeIds": [
+        "task_189c73c2"
+      ],
+      "resumeState": "accepted_exact_not_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit and latest area tree; joined bytes differ. Preserve both prior and current exact-code reviews; accepted area source still needs deliberate integration, not safety-reporter approval.",
+      "acceptedBlob": "7070135c72f7a9216c71318e4d47dead85d72dbc",
+      "result": "Exact focus-reviewed blob verified at its judged source commit and latest area tree; joined bytes differ. Preserve both prior and current exact-code reviews; accepted area source still needs deliberate integration, not safety-reporter approval."
     },
     {
       "file": "src/live/playback.ts",
       "initialBlob": "13c3a077ca113568196fdc051184ac53d434fc69",
-      "status": "pending"
+      "status": "accepted",
+      "primaryId": "task_1ea27d33",
+      "sourceCommit": "83b1defbd83984e35197625252271702dfb6769d",
+      "judgeIds": [
+        "task_542a0b36"
+      ],
+      "resumeState": "accepted_exact_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "acceptedBlob": "ce0fd68dbcc5487dd3fa1f218dd353f34571feac",
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
     },
     {
       "file": "src/live/providers.ts",
       "initialBlob": "ac1238e745270cf870d48d98fa510b0893536a52",
-      "status": "pending"
+      "status": "accepted",
+      "primaryId": "task_6a8ab666",
+      "sourceCommit": "22505fc8f7ab79980b3bb0c682767424d23896d8",
+      "judgeIds": [
+        "task_ebace531"
+      ],
+      "resumeState": "accepted_exact_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "acceptedBlob": "ac1238e745270cf870d48d98fa510b0893536a52",
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
     },
     {
       "file": "src/live/self-test.ts",
       "initialBlob": "ee5fe8af00adb8b80b56f53b6581926a6525ccfc",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": "task_0c915bed",
+      "sourceCommit": "a5642b72d82ac64e94fb58abfb5a2076b07031c3",
+      "judgeIds": [
+        "task_58b18de6"
+      ],
+      "resumeState": "candidate_pending_actual_code_judgment",
+      "pendingReason": "Committed primary candidate verified; no recorded completed focus ACCEPT/NO CHANGE NEEDED judgment. Historical running labels are not current liveness or approval. Candidate retains the existing focus source blob; its report or related additions do not replace an independent focus judgment."
     },
     {
       "file": "src/live/session.ts",
       "initialBlob": "6344b6c65a4f6aa3aa787923fb9d0b53fa18dda6",
-      "status": "pending"
+      "status": "accepted",
+      "primaryId": "task_51a039fa",
+      "sourceCommit": "2e381e06926ba110a219c9602fbf14cccc922014",
+      "judgeIds": [
+        "task_aba16011"
+      ],
+      "resumeState": "accepted_exact_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "acceptedBlob": "5d0f66a03d902165e3f1a224e3e607802ca015cb",
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
     },
     {
       "file": "src/live/setup-probe.ts",
       "initialBlob": "6b216e0773e6c7c1255a6777b43afb1d1fc2d50f",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": "task_763635f4",
+      "sourceCommit": "e048a21fae75ef90d7694cbeb2f1393169eae9ed",
+      "judgeIds": [],
+      "resumeState": "candidate_pending_actual_code_judgment",
+      "pendingReason": "Committed primary candidate verified; no recorded completed focus ACCEPT/NO CHANGE NEEDED judgment. Historical running labels are not current liveness or approval. Candidate retains the existing focus source blob; its report or related additions do not replace an independent focus judgment."
     },
     {
       "file": "src/live/setup.ts",
       "initialBlob": "728e62f964f69adb6228d1fbae8b9f536836d1eb",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": "task_9c736343",
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "primary_started_no_committed_candidate",
+      "pendingReason": "Primary was allocated, but no candidate commit or completed focus judgment is recorded. Preserve its worktree; do not treat the stale running status as proof of current execution."
     },
     {
       "file": "src/live/speaker-check.ts",
       "initialBlob": "783d0aaaf7ae22808aad5cc8f00914a1e9610637",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": "task_ff772328",
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "primary_uncommitted_candidate_pending",
+      "pendingReason": "Primary was allocated, but no candidate commit or completed focus judgment is recorded. Preserve its worktree; do not treat the stale running status as proof of current execution."
     },
     {
       "file": "src/live/speaker-summary.ts",
       "initialBlob": "95305051ea489012a17049fa326ea87e53ec06aa",
-      "status": "pending"
+      "status": "accepted",
+      "primaryId": "task_dfb821c4",
+      "sourceCommit": "1c8f22bbbef3a23a395b9cca545c642e12b739cc",
+      "judgeIds": [
+        "task_b23c691e"
+      ],
+      "resumeState": "accepted_exact_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "acceptedBlob": "95305051ea489012a17049fa326ea87e53ec06aa",
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
     },
     {
       "file": "src/live/status.ts",
       "initialBlob": "50437274560d847fe5fb6441e69032f6d3549467",
-      "status": "pending"
+      "status": "accepted",
+      "primaryId": "task_89c0c507",
+      "sourceCommit": "931224a0e92a33af036ba65404559b958ff1574a",
+      "judgeIds": [
+        "task_5f68217e"
+      ],
+      "resumeState": "accepted_exact_not_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit and latest area tree; joined bytes differ. Preserve both prior and current exact-code reviews; accepted area source still needs deliberate integration, not safety-reporter approval.",
+      "acceptedBlob": "d8026fa785047027d133f9ef541ecd6eec0942bf",
+      "result": "Exact focus-reviewed blob verified at its judged source commit and latest area tree; joined bytes differ. Preserve both prior and current exact-code reviews; accepted area source still needs deliberate integration, not safety-reporter approval."
     },
     {
       "file": "src/live/tool-result.ts",
       "initialBlob": "f0338f1445387a86adfd6cc9917fa3dcfb39c739",
-      "status": "pending"
+      "status": "accepted",
+      "primaryId": "task_a3d04408",
+      "sourceCommit": "193fef1e293af8e3f5283bce38a1f5b1f02f8a49",
+      "judgeIds": [
+        "task_7324a1fb"
+      ],
+      "resumeState": "accepted_exact_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "acceptedBlob": "f0338f1445387a86adfd6cc9917fa3dcfb39c739",
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
     },
     {
       "file": "src/live/transcript-text.ts",
       "initialBlob": "e7e2fd9610dea3364c9dd23ac7a9286fa3eb48ee",
-      "status": "pending"
+      "status": "accepted",
+      "primaryId": "task_a3fbb8b2",
+      "sourceCommit": "5aff3e388936ec698d848a715de450d7f31787df",
+      "judgeIds": [
+        "task_3355dad9"
+      ],
+      "resumeState": "accepted_exact_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "acceptedBlob": "e7e2fd9610dea3364c9dd23ac7a9286fa3eb48ee",
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
     },
     {
       "file": "src/live/types.ts",
       "initialBlob": "982613947af84d36edeb598916e7826fc3f43190",
-      "status": "pending"
+      "status": "accepted",
+      "primaryId": "task_d79e8579",
+      "sourceCommit": "2932f52f154c8d697234bb620b66b927ba2afd44",
+      "judgeIds": [
+        "task_2bb07f5d"
+      ],
+      "resumeState": "accepted_exact_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "acceptedBlob": "982613947af84d36edeb598916e7826fc3f43190",
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
     },
     {
       "file": "src/live/waveform.ts",
       "initialBlob": "4fa724f5c981c5d85054dcccec102a67ced75e2d",
-      "status": "pending"
+      "status": "accepted",
+      "primaryId": "task_704586e1",
+      "sourceCommit": "0a330bbfdfda2ce45fe8888c1328e451c0c7433d",
+      "judgeIds": [
+        "task_29ed4bde"
+      ],
+      "resumeState": "accepted_exact_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "acceptedBlob": "4fa724f5c981c5d85054dcccec102a67ced75e2d",
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
     },
     {
       "file": "src/output-buffer.ts",
@@ -3292,17 +3876,34 @@
     {
       "file": "src/prompts/compaction.md",
       "initialBlob": "130bda9935d6bccd28182ce185dcd88601fb3a04",
-      "status": "pending",
+      "status": "accepted",
       "area": "agent-history-session-goals",
-      "resumeState": "missing-judgment",
+      "resumeState": "accepted-joined",
       "primaryId": "task_cc512c91",
       "primaryCommit": "ae1b0da452ca0c98c86f14a7b8a26ef2a405b2b1",
       "judgeIds": [
-        "task_43d520e7"
+        "task_43d520e7",
+        "task_59bb105b"
       ],
       "sourceCommit": "ae1b0da452ca0c98c86f14a7b8a26ef2a405b2b1",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
-      "pendingReason": "Committed primary result survives; judge was killed before a final verdict."
+      "pendingReason": "Committed primary result survives; judge was killed before a final verdict.",
+      "acceptedBlob": "130bda9935d6bccd28182ce185dcd88601fb3a04",
+      "result": "The exact candidate prompt is unchanged from the supplied baseline and primary parent. It already exposes one coherent operation: produce a continuation checkpoint, not execute historical orders. The opening goal, explicit retention list, fixed Markdown outline, and final no-tools/no-continuation boundary make the reader journey direct. Goals and constraints precede progress; decisions, next steps, and critical recovery facts follow. The separate live-job/ownership/wait requirements and older-checkpoint retention make continuation needs visible without an abstract context bag. A rename, helper extraction, or added prose framework would not reduce an observed reconstruction burden. This is independent unchanged acceptance, not acceptance of the worker safety report or a claim of structural improvement.",
+      "systemReason": "Read the actual candidate tree rather than checkout HEAD. extension.ts registers shake, native compaction, then cache-affine compaction and supplies running local-job rows. cache-affine-compaction.ts prepares current branch history through current instruction framing and context conversion; prepareCacheAffineRequest appends this prompt to all prepared history, not merely a discarded prefix. It trims optional custom focus and replaces the single placeholder using a callback, so dollar sequences remain literal. prepareCurrentConversation.complete obtains the stream result, not an agent tool-execution loop. attemptCacheAffineSummary validates the response and returns summary text, original firstKeptEntryId, usage and file metadata; running-job facts are appended from compaction-jobs.md rather than assigned to this prose prompt as runtime authority. The session_before_compact handler returns that result to the session owner and cancels unusable attempts without another summarizer. history/session-manager.ts selects the latest checkpoint, retained tail and subsequent entries; buildSessionProjection avoids replaying older checkpoint summaries. native-compaction.ts owns the opaque Codex path and custom-focus fallback/cancellation, separately from this plaintext prompt. These boundaries make the prompt purpose and continuation journey coherent without moving persistence, cancellation or native-policy decisions into Markdown. The primary patch adds only excluded worker wisdom; there are no changed source files or paired code changes awaiting acceptance.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Verified candidate commit ae1b0da452ca0c98c86f14a7b8a26ef2a405b2b1 and primary parent 6cce493c549c0f8b99bdaddbbf3f025c6de1f575; independent checkout HEAD was 9e3d59809de2fb9e9d17e411736537d32b225a7b and was not treated as candidate.",
+        "git show and git rev-parse verify candidate and primary-parent prompt blobs both equal supplied baseline 130bda9935d6bccd28182ce185dcd88601fb3a04; supplied joinedBlob is the same.",
+        "git diff-tree / git diff parent-to-candidate show only addition wisdom/quality/structural-readability-worker.md; src diff is empty. All changed source files evaluated: none.",
+        "Candidate related blobs read: src/agent/cache-affine-compaction.ts=1b4656ebb9765af61b459073d4eeeb6ceffa1d06; src/agent/extension.ts=d639bcdedadbd503cac1c2ce6739177b385d1dc3; src/prompts/compaction-jobs.md=e896596cd3979381dd5e174aa023e9e89b4f8ae6; src/agent/native-compaction.ts=629695696d1bedafc6147cfac485600ed878e664; src/history/session-manager.ts=d7032c57091c90f661c37edd3b69bf27f0835243."
+      ],
+      "limits": [
+        "Read-only actual-source judgment of this prompt and its caller/replay journeys, not a wholesale acceptance of unchanged related subsystems.",
+        "No setup, tests, builds, delegation, source edits, publication, credential or device access. Known automatic setup hash rejection was not bypassed.",
+        "No authenticated background UX acceptance, real-model instruction-obedience proof or runtime safety-green claim. Existing primary test/safety results were not used as readability proof.",
+        "Only .pr45-judge-result.json is written in this independent worktree; old trees and wisdom/values remain unchanged."
+      ]
     },
     {
       "file": "src/prompts/execute-description.md",
@@ -3575,17 +4176,59 @@
     {
       "file": "src/remote/README.md",
       "initialBlob": "5c3efed97770f82bf34b4f82637207306564cf72",
-      "status": "pending",
+      "status": "accepted",
       "area": "remote",
-      "resumeState": "candidate-withheld-missing-judgment",
+      "resumeState": "accepted-joined",
       "primaryId": "task_f826530f",
       "primaryCommit": "4692a8e499f837c736f9053cb95e0dd2baf2776d",
       "judgeIds": [
-        "task_8e2a9b7a"
+        "task_8e2a9b7a",
+        "task_7f35b9db"
       ],
       "sourceCommit": "4692a8e499f837c736f9053cb95e0dd2baf2776d",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
-      "pendingReason": "Candidate exists; saved independent review ended killed143 without a verdict. Do not infer acceptance from tests, partial review, or reporter status."
+      "pendingReason": "Candidate exists; saved independent review ended killed143 without a verdict. Do not infer acceptance from tests, partial review, or reporter status.",
+      "acceptedBlob": "f18a61b58ae574fc9b8e7eb0ecccceecf3603de7",
+      "result": "The primary base mixes ordinary delegation, expert diagnostics and eventual root-session scope in consecutive prose. This candidate reorganizes the document around three different user intents and their actual authorities. Authorization, source pinning, owning-parent observation, root attachment and repository return each have their own coherent sequence. The command/effect tables distinguish abort, close and detach rather than merely renaming headings. The implementation map supplies caller-to-owner reading paths; the separate bounds section no longer interrupts the ordinary launch journey. The additional length buys explicit ownership and outcome distinctions, not a shared context bag or cosmetic cleanup.",
+      "systemReason": "Read the candidate-version CLI startup branch, root argument parser, runRemoteRoot and RootClient reuse/return gates: the thin client branches before local conversation startup, pins the authorized owner epoch, and only returns source after confirmed closed successful state. Followed normal delegation from job-service durable launch identity into remote jobs target matching/source approval, plus owner/version-bound question reply dispatch. Operations still reject legacy agent launch calls. Repository integration checks local drift and creates an attempting receipt before apply. The document correctly separates task completion, verified patch return, text availability and uncertain parent delivery; it explicitly does not turn cached auth configuration into API access or root implementation into live acceptance.",
+      "checks": {
+        "method": "git show exact commit files and selected caller/owner blocks; git diff exact primary base to candidate, not judge HEAD",
+        "judgeHead": "9e3d59809de2fb9e9d17e411736537d32b225a7b",
+        "verifiedCommit": "4692a8e499f837c736f9053cb95e0dd2baf2776d",
+        "verifiedPrimaryWorktreeHead": "4692a8e499f837c736f9053cb95e0dd2baf2776d",
+        "verifiedBranchCommit": "4692a8e499f837c736f9053cb95e0dd2baf2776d",
+        "baseFocusBlob": "5c3efed97770f82bf34b4f82637207306564cf72",
+        "pairedChangedBlobs": {
+          "src/remote/README.md": "f18a61b58ae574fc9b8e7eb0ecccceecf3603de7",
+          "wisdom/quality/structural-readability-worker.md": "6e8e539940e94f52746fe1414d90d50982f9aef1"
+        },
+        "excludedFromVerdict": [
+          "wisdom/quality/structural-readability-worker.md"
+        ],
+        "relatedContextBlobs": {
+          "src/cli.ts": "b961477ed8253a6b69a65cf972905895b4eed010",
+          "src/tasks/job-service.ts": "27ce9ecdf3610353fd50d65c165999d07bfa99e8",
+          "src/remote/jobs.ts": "44ce0a37abc61ef5d63f0e4a3f00b59915b74da0",
+          "src/remote/source-approval.ts": "304543857f2151ebf3168939ab7e9c74c0289f57",
+          "src/remote/operations.ts": "67cf54865eeee7c16e178470b9fcd076d0d41747",
+          "src/remote/root-options.ts": "60f9e73e5dab10306beb9240f26ee1479582cb49",
+          "src/remote/root-cli.ts": "5c1ea1bcf7042888c9c1e340fb3ab1e79579b64f",
+          "src/remote/root-client.ts": "7670632c58bcccd97dad7f5e49e654f4eb79a4c0",
+          "src/remote/root-presenter.ts": "98c70fb74f5e40d6f281463a75d4c0106240c860",
+          "src/remote/question-bridge.ts": "bdd08a0a376c20d71172ffd7c6b728e8301141e1",
+          "src/remote/repository.ts": "88b0c7fd48b6844e2c25cb3853465a0d65c5b9c3"
+        },
+        "guidanceRead": [
+          "wisdom/values.md",
+          "wisdom/quality/structural-readability-guidance.md"
+        ]
+      },
+      "limits": [
+        "Independent static actual-code readability review only; no setup, tests, builds, delegation, source edits, publication or destructive operations were performed.",
+        "Automatic setup hash rejection was not bypassed. Existing primary safety reports and old judgments were not treated as actual-code acceptance.",
+        "No real auth/provider/device access or authenticated background UX validation. Those acceptance gates remain unproven, not green.",
+        "Related unchanged code was read for caller/system context, not granted repository-wide acceptance. All changed non-wisdom paths in each exact primary-base patch are included in this decision; no additional changed source path is withheld. Worker wisdom is excluded as requested."
+      ]
     },
     {
       "file": "src/remote/artifacts.ts",
@@ -5314,16 +5957,33 @@
     {
       "file": "tests/attention-sdk.test.ts",
       "initialBlob": "73f10a5a52d4a7513e323d0552232bd88896d82f",
-      "status": "pending",
+      "status": "accepted",
       "area": "execution-tasks-questions",
-      "resumeState": "pending-judge-incident",
+      "resumeState": "accepted-joined",
       "primaryId": "task_d3480bb9",
       "judgeIds": [
-        "task_2bb42000"
+        "task_2bb42000",
+        "task_997edac5"
       ],
       "sourceCommit": "5ec16db73e8709b410be7f081ec22371d8429ec0",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
-      "pendingReason": "Committed primary candidate 5ec16db73e8709b410be7f081ec22371d8429ec0 survives with the actual focus blob recorded below, but no completed approving complete-file judge is recorded. Incident-interrupted judgment is pending; a cancellation request is not an approval."
+      "pendingReason": "Committed primary candidate 5ec16db73e8709b410be7f081ec22371d8429ec0 survives with the actual focus blob recorded below, but no completed approving complete-file judge is recorded. Incident-interrupted judgment is pending; a cancellation request is not an approval.",
+      "acceptedBlob": "9472dcc594a0cc7bbf2459cfbfb2876181603b79",
+      "result": "ACCEPT: the complete file now separates three real responsibilities: prototype instrumentation, provider reply framing, and the SDK attention scenario. observeTaskManagerWaits owns both installations, the idempotent unsubscribe accounting, their counts, and restoration; the test visibly restores it in finally after session disposal. This is a focused observation lifetime, not a generic context bag. assistantReply derives stopReason from content instead of maintaining a second calls===1/7 decision in message metadata. The scenario reads directly as launch on call 1, receive attention, stop on call 7, then inspect subscription ownership. These are structural authority/lifetime improvements, not renames or assertion-count gains. The short deterministic call-number schedule remains readable for this single scenario.",
+      "systemReason": "Read the real tasks extension registration and print agent_end path at this candidate, plus TaskManager subscribe/wait and JobAttentionScheduler subscribe/waitForNotice/dispose. The test registers tasks through DefaultResourceLoader and binds print extensions; its fake provider calls the actual execute tool to start an open-input shell and later list/stop jobs. The extension owns the permanent lifecycle-index and attention subscriptions, and each idle boundary owns a disposable completion listener and cancellable attention wait. The observation measures those actual boundaries rather than replacing their behavior; prompt completion leads to assertions, session disposal, and prototype restoration. No production source changes are paired with this test patch.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md. Independent judge checkout HEAD=9e3d59809de2fb9e9d17e411736537d32b225a7b; candidates read with git show/diff, not assumed to be checkout HEAD.",
+        "Verified primary base=05e9825e5056fe3a4f1eaa16a8f8497c68e6f92f, base focus blob=73f10a5a52d4a7513e323d0552232bd88896d82f; candidate commit=5ec16db73e8709b410be7f081ec22371d8429ec0, parent=05e9825e5056fe3a4f1eaa16a8f8497c68e6f92f, candidate focus blob=9472dcc594a0cc7bbf2459cfbfb2876181603b79.",
+        "Read complete candidate source and compared actual baseline source/primary diff. Full primary name-status: M\ttests/attention-sdk.test.ts; A\twisdom/quality/structural-readability-worker.md. All changed source is covered; only worker wisdom excluded.",
+        "Read-only verification of retained primary tree task_d3480bb9: HEAD=5ec16db73e8709b410be7f081ec22371d8429ec0, working focus hash=9472dcc594a0cc7bbf2459cfbfb2876181603b79, git status --short empty."
+      ],
+      "limits": [
+        "Static actual-code readability review only; no repository tests, setup, builds, source edits, delegation, publication, credentials, device access, or cleanup were performed.",
+        "No authenticated background-job UX, live-device flow, full-suite safety, or runtime green result is claimed. Prior worker check counts and safety-reporter verdicts were not acceptance evidence.",
+        "Only the changed test source is accepted here. The added wisdom/quality/structural-readability-worker.md is excluded as instructed; the production caller files are unchanged in the primary patch.",
+        "The provider is synthesized and hasConfiguredAuth is overridden; this is not real provider authentication or authenticated background UX validation.",
+        "The existing test removes its own mkdtemp directory when run; this review only read that code and did not execute its cleanup."
+      ]
     },
     {
       "file": "tests/auto-shake-sdk.test.ts",
@@ -6081,21 +6741,44 @@
     {
       "file": "tests/cooperative-handoff.test.ts",
       "initialBlob": "a7d4b31a5e3671b4f611cca28307d683a2360544",
-      "status": "pending",
+      "status": "accepted",
       "area": "execution-tasks-questions",
-      "resumeState": "withheld-safety-incident",
+      "resumeState": "accepted-joined",
       "primaryId": "task_153d501f",
       "judgeIds": [
-        "task_817e6a43"
+        "task_817e6a43",
+        "task_997edac5"
       ],
       "sourceCommit": "8510667a3684cedaa0f8d99fdfba467a4b614587",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
-      "pendingReason": "Safety-incident reporter task_817e6a43 reported ACCEPT, but the area explicitly withheld integration and recorded no accepted blob. This is not integration approval. Retain candidate 8510667a3684cedaa0f8d99fdfba467a4b614587; independent safe actual-code review/owner decision is pending."
+      "pendingReason": "Safety-incident reporter task_817e6a43 reported ACCEPT, but the area explicitly withheld integration and recorded no accepted blob. This is not integration approval. Retain candidate 8510667a3684cedaa0f8d99fdfba467a4b614587; independent safe actual-code review/owner decision is pending.",
+      "acceptedBlob": "583b76c9419da55f9bc2101519b2013104f7fdc5",
+      "result": "ACCEPT: compared with the complete baseline, the boolean allYield no longer simultaneously encodes a case label, per-call termination policy, and expected request count. Each named scenario states which calls hand off and its expected continuation; the tool implementation reads that policy locally. assistantReply is a small coherent provider-wire constructor, leaving the first two-call batch and subsequent text reply directly visible in the scenario. Setup, registered-tool substitution, prompt, result observation, and disposal remain together. Recording the executed codes and showing both persisted tool results makes the batch journey explicit, but the verdict rests on the separation of wire framing from batch policy, not extra assertions.",
+      "systemReason": "Read registerExecuteTool and ExecuteDelivery at the exact candidate: successful accepted handoff produces a terminate flag, while execution failure cannot become successful termination. This test captures the registered execute definition, substitutes a deterministic per-call result, and passes it as the SDK custom tool. Read shared read-only pi-agent-core 1.0.3 agent-loop.js, matching the candidate bun.lock version: sequential/parallel execution publishes all finalized tool results and terminates the batch only when every finalized result terminates; the loop appends those results before deciding continuation. Thus the first provider batch contains both calls, unanimous handoff ends without another provider request, and a mixed batch obtains the final text reply. The candidate keeps those responsibilities legible without purporting to exercise isolated-worker handoff itself. No other changed source needs separate approval.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md. Independent judge checkout HEAD=9e3d59809de2fb9e9d17e411736537d32b225a7b; candidates read with git show/diff, not assumed to be checkout HEAD.",
+        "Verified primary base=d75bb3afd56ae308683f3744ac0b496913f2507f, base focus blob=a7d4b31a5e3671b4f611cca28307d683a2360544; candidate commit=8510667a3684cedaa0f8d99fdfba467a4b614587, parent=d75bb3afd56ae308683f3744ac0b496913f2507f, candidate focus blob=583b76c9419da55f9bc2101519b2013104f7fdc5.",
+        "Read complete candidate source and compared actual baseline source/primary diff. Full primary name-status: M\ttests/cooperative-handoff.test.ts; A\twisdom/quality/structural-readability-worker.md. All changed source is covered; only worker wisdom excluded.",
+        "Read-only verification of retained primary tree task_153d501f: HEAD=8510667a3684cedaa0f8d99fdfba467a4b614587, working focus hash=583b76c9419da55f9bc2101519b2013104f7fdc5, git status --short empty."
+      ],
+      "limits": [
+        "Static actual-code readability review only; no repository tests, setup, builds, source edits, delegation, publication, credentials, device access, or cleanup were performed.",
+        "No authenticated background-job UX, live-device flow, full-suite safety, or runtime green result is claimed. Prior worker check counts and safety-reporter verdicts were not acceptance evidence.",
+        "Only the changed test source is accepted here. The added wisdom/quality/structural-readability-worker.md is excluded as instructed; the production caller files are unchanged in the primary patch.",
+        "Tool execution and provider replies are fixtures; isolated execute bridge handoff, external provider traffic, queued-message delivery, and real auth are not validated.",
+        "The historical safety incident is not cleared by this code verdict. This is independent readability acceptance, not an owner incident resolution or integration/publication action.",
+        "Installed SDK source was read as caller context, with version 1.0.3 matched to the candidate lockfile; no installed-package integrity or runtime result is claimed."
+      ]
     },
     {
       "file": "tests/current-pipeline-live.test.ts",
       "initialBlob": "2a82fccb8c45476d6e8a871afb598c3f11540e83",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "own_primary_pending",
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
     },
     {
       "file": "tests/current-pipeline-sdk.test.ts",
@@ -6154,12 +6837,28 @@
     {
       "file": "tests/editor-push-to-talk.test.ts",
       "initialBlob": "cfbe46536c1c27623370d592c394ade2b5fad468",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": "7f72408d2e97646332d752d423d96ccbf56d310c",
+      "judgeIds": [
+        "task_51a3b4e4"
+      ],
+      "resumeState": "related_actual_code_accepted_own_primary_pending",
+      "pendingReason": "Retain exact related-path actual-code acceptance; it is not completion of this file’s distinct primary/fresh focus-judge requirement."
     },
     {
       "file": "tests/editor-voice-integration.test.ts",
       "initialBlob": "a54b95973f39569c32af94c7043aa7665a8da4ca",
-      "status": "pending"
+      "status": "accepted",
+      "primaryId": "task_90932544",
+      "sourceCommit": "1bebfe90e9b17b318805063068d637b4f1f8b1b5",
+      "judgeIds": [
+        "task_5f1948bf"
+      ],
+      "resumeState": "accepted_exact_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "acceptedBlob": "89f3ee58570d4e8d08bbb8aedf98e1e218524529",
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
     },
     {
       "file": "tests/editor.test.ts",
@@ -6288,27 +6987,52 @@
     {
       "file": "tests/fixtures/live-execute-cli.sh",
       "initialBlob": "a0f5fe7da7fa86df69413dbe85ea45c6dbcc29f4",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "own_primary_pending",
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
     },
     {
       "file": "tests/fixtures/live-gpt-tui.ts",
       "initialBlob": "04aebb179abb726126dbd1db0b6fe6bc9b1941a0",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "own_primary_pending",
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
     },
     {
       "file": "tests/fixtures/live-picker-tui.ts",
       "initialBlob": "4be3cc03453bc7c74062545f4b453c9be54d2f3e",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "own_primary_pending",
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
     },
     {
       "file": "tests/fixtures/live-push-to-talk-tui.ts",
       "initialBlob": "179e7292fffc19c5281d1072c7aad31b0b700b77",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "own_primary_pending",
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
     },
     {
       "file": "tests/fixtures/live-spoken-tui.ts",
       "initialBlob": "03c7168fdf7aa3a91084573c467eb7a94408f67b",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "own_primary_pending",
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
     },
     {
       "file": "tests/fixtures/remote-e2e/Dockerfile",
@@ -6707,28 +7431,63 @@
     {
       "file": "tests/foreground-execution-sdk.test.ts",
       "initialBlob": "1e4adab3e9a13a49253aa57ef43dc98b89c49354",
-      "status": "pending",
+      "status": "accepted",
       "area": "execution-tasks-questions",
-      "resumeState": "pending-judge-incident",
+      "resumeState": "accepted-joined",
       "primaryId": "task_849aedc0",
       "judgeIds": [
-        "task_427ef8b3"
+        "task_427ef8b3",
+        "task_997edac5"
       ],
       "sourceCommit": "73bb044bbeafa24e7128bb2e9c6bb1aa45d49422",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
-      "pendingReason": "Committed primary candidate 73bb044bbeafa24e7128bb2e9c6bb1aa45d49422 survives with the actual focus blob recorded below, but no completed approving complete-file judge is recorded. Incident-interrupted judgment is pending; a cancellation request is not an approval."
+      "pendingReason": "Committed primary candidate 73bb044bbeafa24e7128bb2e9c6bb1aa45d49422 survives with the actual focus blob recorded below, but no completed approving complete-file judge is recorded. Incident-interrupted judgment is pending; a cancellation request is not an approval.",
+      "acceptedBlob": "4e7e1e827071e62d00a2410a56886a8ca3f5e371",
+      "result": "ACCEPT: the complete file has one registration fixture tying the captured definition, SDK runToolCall adapter, ToolExecutionComponent, render observation, and foreground owner to the same args/cwd/session manager. This replaces the separate bespoke registration/execution/render path in the baseline failure case. The options bind that fixture lifetime rather than becoming a shared arbitrary context bag. executorFixture adds only the real executable/session/output scope; LIFO asynchronous teardown explicitly awaits session_shutdown before removing that scope. Tests can now read execute -> inspect outcome -> feed outcome to the same component, or execute -> wait for worker readiness -> reject foreign owner -> stop owner -> await exit. That coherent shared ownership and teardown are substantive improvements independently of the new scenarios or stronger types. The unchanged visual cases still state their rendered expectations directly.",
+      "systemReason": "Read exact-candidate registerExecuteTool, its active promise set/foreground controller map, agent_end animation stop, session_shutdown abort-and-await, execute owner capture, finally release, and identity-scoped stopForeground. Also read executeIsolated spawn/completion/output-pump/finalization path: cancellation signals the process group; the result waits for child close and drained output artifacts. The candidate fixture uses the same registered definition for SDK execution and manual result rendering. Its actual-session cases inspect persisted output, foreign-manager rejection, cancellation request, worker exit, released ownership, and resulting compact row in that order. The fixture teardown aligns with the production shutdown boundary instead of using only agent_end animation cleanup. No changed production companion is being left unreviewed.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md. Independent judge checkout HEAD=9e3d59809de2fb9e9d17e411736537d32b225a7b; candidates read with git show/diff, not assumed to be checkout HEAD.",
+        "Verified primary base=9623825730d1276d0e021f781cca213a36d0c092, base focus blob=1e4adab3e9a13a49253aa57ef43dc98b89c49354; candidate commit=73bb044bbeafa24e7128bb2e9c6bb1aa45d49422, parent=9623825730d1276d0e021f781cca213a36d0c092, candidate focus blob=4e7e1e827071e62d00a2410a56886a8ca3f5e371.",
+        "Read complete candidate source and compared actual baseline source/primary diff. Full primary name-status: M\ttests/foreground-execution-sdk.test.ts; A\twisdom/quality/structural-readability-worker.md. All changed source is covered; only worker wisdom excluded.",
+        "Read-only verification of retained primary tree task_849aedc0: HEAD=73bb044bbeafa24e7128bb2e9c6bb1aa45d49422, working focus hash=4e7e1e827071e62d00a2410a56886a8ca3f5e371, git status --short empty."
+      ],
+      "limits": [
+        "Static actual-code readability review only; no repository tests, setup, builds, source edits, delegation, publication, credentials, device access, or cleanup were performed.",
+        "No authenticated background-job UX, live-device flow, full-suite safety, or runtime green result is claimed. Prior worker check counts and safety-reporter verdicts were not acceptance evidence.",
+        "Only the changed test source is accepted here. The added wisdom/quality/structural-readability-worker.md is excluded as instructed; the production caller files are unchanged in the primary patch.",
+        "The dist/bruv runner was not executed or rebuilt. Worker exit, output persistence, and renderer results described above are code journeys, not observed test results.",
+        "Tool results are explicitly fed into ToolExecutionComponent; this is not end-to-end authenticated interactive TUI or device acceptance.",
+        "The existing test body changes PI_PACKAGE_DIR temporarily and creates/removes fixture directories; none of those operations were executed by this judge."
+      ]
     },
     {
       "file": "tests/foreground-stop.test.ts",
       "initialBlob": "76432c303b1f9917642f3965497136dc56cb2fa4",
-      "status": "pending",
+      "status": "accepted",
       "area": "execution-tasks-questions",
-      "resumeState": "pending-independent-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_14ad038b",
-      "judgeIds": [],
+      "judgeIds": [
+        "task_997edac5"
+      ],
       "sourceCommit": "d22418eb4bec42aadabab33e24e809c55f9879cf",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
-      "pendingReason": "Committed primary candidate d22418eb4bec42aadabab33e24e809c55f9879cf survives with the actual focus blob recorded below, but no completed approving complete-file judge is recorded. Fresh independent actual-code judgment is pending."
+      "pendingReason": "Committed primary candidate d22418eb4bec42aadabab33e24e809c55f9879cf survives with the actual focus blob recorded below, but no completed approving complete-file judge is recorded. Fresh independent actual-code judgment is pending.",
+      "acceptedBlob": "c31ecda9b9ad9f38dd858faaf5c44be2c6991e33",
+      "result": "ACCEPT: the complete candidate replaces opaque mutable idle/session/fail flags, an abort counter, broad any casting, and four intertwined fixture lifetimes with a narrow host/delivery fixture and independently readable scenarios. Host getter/abort mocks expose the authority being changed in each case; requestStop and acknowledgeDelivery expose the protocol boundary rather than hiding it in start/ack/counter helpers. Each case shows request -> authority or delivery change -> acknowledgement -> host call and observation. The public acknowledgement-enabling function replaces knowledge of its internal symbol. The fixture holds one coherent request environment, not a subsystem context bag. This materially reduces reconstruction of lifetimes; the separate branch and voice-owner journeys help describe the authority model rather than serving as a coverage-based verdict.",
+      "systemReason": "Read requestForegroundStop and job-delivery at this exact candidate and the actual jobs.stopWork caller in src/agent/extension.ts. The caller requests async descendant cancellation first, then schedules foreground cancellation only after bridge response ACK; local cancellation preserves the delivery signal. requestForegroundStop snapshots session/leaf for normal execution or rechecks the supplied voice-owner predicate, disarms on cancellation or ACK, and reports pending rather than treating abort issuance as completion. The caller uses the active voice owner predicate only for voice-owned work, otherwise invokes executeControl.stopForeground and host abort. Candidate scenarios distinguish session, branch, lost delivery, thrown abort, idle host, and changed voice owner at that same decision boundary, without pretending to own actual job termination.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md. Independent judge checkout HEAD=9e3d59809de2fb9e9d17e411736537d32b225a7b; candidates read with git show/diff, not assumed to be checkout HEAD.",
+        "Verified primary base=464f1904521196d2fe42adc7c8b2a88709fb7297, base focus blob=76432c303b1f9917642f3965497136dc56cb2fa4; candidate commit=d22418eb4bec42aadabab33e24e809c55f9879cf, parent=464f1904521196d2fe42adc7c8b2a88709fb7297, candidate focus blob=c31ecda9b9ad9f38dd858faaf5c44be2c6991e33.",
+        "Read complete candidate source and compared actual baseline source/primary diff. Full primary name-status: M\ttests/foreground-stop.test.ts; A\twisdom/quality/structural-readability-worker.md. All changed source is covered; only worker wisdom excluded.",
+        "Read-only verification of retained primary tree task_14ad038b: HEAD=d22418eb4bec42aadabab33e24e809c55f9879cf, working focus hash=c31ecda9b9ad9f38dd858faaf5c44be2c6991e33, git status --short empty."
+      ],
+      "limits": [
+        "Static actual-code readability review only; no repository tests, setup, builds, source edits, delegation, publication, credentials, device access, or cleanup were performed.",
+        "No authenticated background-job UX, live-device flow, full-suite safety, or runtime green result is claimed. Prior worker check counts and safety-reporter verdicts were not acceptance evidence.",
+        "Only the changed test source is accepted here. The added wisdom/quality/structural-readability-worker.md is excluded as instructed; the production caller files are unchanged in the primary patch.",
+        "This is a mock host and AbortSignal protocol fixture, not proof of actual foreground process teardown, real voice operation, or authenticated device/background UX."
+      ]
     },
     {
       "file": "tests/fullscreen-editor-tui.test.ts",
@@ -6759,7 +7518,12 @@
     {
       "file": "tests/goals-live.test.ts",
       "initialBlob": "0397caa9ef5367b746a6c6020ad6c8ece81dcc18",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "own_primary_pending",
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
     },
     {
       "file": "tests/goals-marker-sdk.test.ts",
@@ -6822,32 +7586,77 @@
     {
       "file": "tests/gpt-live-context.test.ts",
       "initialBlob": "a38de09dca8eb243cd51f048d350705ae227e8db",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "own_primary_pending",
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
     },
     {
       "file": "tests/gpt-live-delegation.test.ts",
       "initialBlob": "1a6bb3e927e44740fd7d513e2d250be178b9c43e",
-      "status": "pending"
+      "status": "accepted",
+      "primaryId": "task_79a24111",
+      "sourceCommit": "bea2d9d57a4d1fa9a2279f5ec9d67a5b39e1d9db",
+      "judgeIds": [
+        "task_9286e550",
+        "task_3583b317"
+      ],
+      "resumeState": "accepted_exact_not_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit and latest area tree; joined bytes differ. Preserve both prior and current exact-code reviews; accepted area source still needs deliberate integration, not safety-reporter approval.",
+      "acceptedBlob": "3ffa47fccf3ea33830d6180d81cbc8812438f18c",
+      "result": "Exact focus-reviewed blob verified at its judged source commit and latest area tree; joined bytes differ. Preserve both prior and current exact-code reviews; accepted area source still needs deliberate integration, not safety-reporter approval."
     },
     {
       "file": "tests/gpt-live-playback.test.ts",
       "initialBlob": "f2532f05c7ea303b44d5ad520a32cad0e413bf63",
-      "status": "pending"
+      "status": "accepted",
+      "primaryId": "task_3186f4b0",
+      "sourceCommit": "4434438e3dab24da5e98e19fb600ab1794f9c474",
+      "judgeIds": [
+        "task_1c5671f2",
+        "task_af9fc144"
+      ],
+      "resumeState": "accepted_exact_not_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit and latest area tree; joined bytes differ. Preserve both prior and current exact-code reviews; accepted area source still needs deliberate integration, not safety-reporter approval.",
+      "acceptedBlob": "66489a0ad2027a5307cdecb469aa5ba6fa8a633b",
+      "result": "Exact focus-reviewed blob verified at its judged source commit and latest area tree; joined bytes differ. Preserve both prior and current exact-code reviews; accepted area source still needs deliberate integration, not safety-reporter approval."
     },
     {
       "file": "tests/gpt-live-request.test.ts",
       "initialBlob": "cf28d4ade02c6e0d8be24db8497777d115ea88f3",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "own_primary_pending",
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
     },
     {
       "file": "tests/gpt-live-session.test.ts",
       "initialBlob": "8cb2e77fbaf1c0853b0f458b445b10a08a1b92d1",
-      "status": "pending"
+      "status": "accepted",
+      "primaryId": "task_1a45d152",
+      "sourceCommit": "42b90f334af4af21e039fd199ff3b2b402c0b55c",
+      "judgeIds": [
+        "task_792067e5",
+        "task_86206c2a"
+      ],
+      "resumeState": "accepted_exact_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "acceptedBlob": "21832ae3a8c518914e1e99e849a3f21340bcf303",
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
     },
     {
       "file": "tests/gpt-live-waveform.test.ts",
       "initialBlob": "589251a028bd9137e96edecd23889db510e127b6",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "own_primary_pending",
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
     },
     {
       "file": "tests/helpers.ts",
@@ -6864,7 +7673,12 @@
     {
       "file": "tests/helpers/live-startup-audio-queue.ts",
       "initialBlob": "6b467a7c5c27d31655ae48c9e92828cbe076cf3a",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "own_primary_pending",
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
     },
     {
       "file": "tests/herdr-agent-state.test.ts",
@@ -7036,14 +7850,31 @@
     {
       "file": "tests/image-fixture.ts",
       "initialBlob": "7f1792f86e6968f6af61905539c915541cfdc91a",
-      "status": "pending",
+      "status": "accepted",
       "area": "execution-tasks-questions",
-      "resumeState": "pending-independent-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_6806027d",
-      "judgeIds": [],
+      "judgeIds": [
+        "task_626cfea3"
+      ],
       "sourceCommit": "50c65bcac6b35f53273288beed83b27e5669c47e",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
-      "pendingReason": "Committed primary candidate 50c65bcac6b35f53273288beed83b27e5669c47e survives with the actual focus blob recorded below, but no completed approving complete-file judge is recorded. Fresh independent actual-code judgment is pending. This is a no-source-change primary: the commit records the writer note, not a new source blob; complete-file judgment is still required."
+      "pendingReason": "Committed primary candidate 50c65bcac6b35f53273288beed83b27e5669c47e survives with the actual focus blob recorded below, but no completed approving complete-file judge is recorded. Fresh independent actual-code judgment is pending. This is a no-source-change primary: the commit records the writer note, not a new source blob; complete-file judgment is still required.",
+      "acceptedBlob": "7f1792f86e6968f6af61905539c915541cfdc91a",
+      "result": "Complete file has one small, linear encoding journey: row-major callback RGB values enter zero-initialized filter-0 scanlines, which are deflated into IDAT, framed by IHDR/IEND and per-chunk CRCs. crc32 owns the polynomial walk; the local chunk function owns length/type/payload/CRC framing. PNG signature, header byte positions and channel indexing are format facts, not scattered decisions needing a context bag or rename pass. Default red pixels and optional dimensions/pixel callback give callers a direct contract. Leaving this unchanged is justified by cohesive encoding authority and an immediately traceable byte lifetime.",
+      "systemReason": "Read all five actual importing caller journeys at the candidate: llm.test.ts supplies four visual quadrants to execute/showImage; rolling-activity.test.ts and task-rows.test.ts send default PNG bytes as native image content; typescript-execution.test.ts exercises text-model advisory with retained image content; typescript-images.test.ts uses default, color variants and deterministic large noise for ordered emissions and resizing. Followed src/typescript/images.ts header detection, bounded input conversion, image-helper queuing and resize handoff. The fixture produces genuine RGB PNG bytes rather than a header-only stand-in, and callers retain control of their display or resize scenario. No production change is part of this primary.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "git rev-parse, git show and git diff verified exact candidate and base; focus blob is 7f1792f86e6968f6af61905539c915541cfdc91a on both. Primary diff adds only wisdom/quality/structural-readability-worker.md, excluded from source judgment.",
+        "Read complete candidate via git show, not judge checkout HEAD (9e3d59809de2fb9e9d17e411736537d32b225a7b). Read caller bodies via candidate git show/grep.",
+        "Read-only git -C of primary tree confirmed HEAD 50c65bcac6b35f53273288beed83b27e5669c47e, working focus hash 7f1792f86e6968f6af61905539c915541cfdc91a, no focus edits."
+      ],
+      "limits": [
+        "Static actual-code readability judgment only: no tests, setup, builds, publication, delegation, credentials or device access. Known automatic setup rejection was not bypassed.",
+        "Prior safety reports, coverage and reported passing checks were not used as actual-code acceptance.",
+        "No authenticated background UX or real-auth/device acceptance; no source or old-worktree edits.",
+        "No visual model/provider run or PNG execution probe performed."
+      ]
     },
     {
       "file": "tests/install-download.test.ts",
@@ -7176,257 +8007,565 @@
     {
       "file": "tests/live-audio-lifecycle.test.ts",
       "initialBlob": "e210a7e633afecac8ef19c67837a9024fc462e13",
-      "status": "pending"
+      "status": "accepted",
+      "primaryId": "task_61f07074",
+      "sourceCommit": "df2795d38c86d819801a98dd480c217834d2a98c",
+      "judgeIds": [
+        "task_3e2610a0",
+        "task_aeb6dd8f"
+      ],
+      "resumeState": "accepted_exact_not_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit and latest area tree; joined bytes differ. Preserve both prior and current exact-code reviews; accepted area source still needs deliberate integration, not safety-reporter approval.",
+      "acceptedBlob": "bfd36ef721d8ac677ac5765d0074934659cd9a32",
+      "result": "Exact focus-reviewed blob verified at its judged source commit and latest area tree; joined bytes differ. Preserve both prior and current exact-code reviews; accepted area source still needs deliberate integration, not safety-reporter approval."
     },
     {
       "file": "tests/live-audio.test.ts",
       "initialBlob": "960e983066ac7261639690915733dd8e8c8cb3d7",
-      "status": "pending"
+      "status": "accepted",
+      "primaryId": "task_af04f669",
+      "sourceCommit": "ed86cb9cd103d92c431cef5e03fe55184fa6f59f",
+      "judgeIds": [
+        "task_849c1ccb",
+        "task_610f6154"
+      ],
+      "resumeState": "accepted_exact_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "acceptedBlob": "a6f73800667e3a3cafc70357e0b2840d366d1290",
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
     },
     {
       "file": "tests/live-auth-lifecycle.test.ts",
       "initialBlob": "05d9ebf1bdff9f49b9ab4a06a2fbdc67564eca9b",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "own_primary_pending",
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
     },
     {
       "file": "tests/live-capture-gate.test.ts",
       "initialBlob": "f0ba15732398870ba1d0882f466f5c788133b1f2",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": "b01dac0216dfa47d3b40e57f92c6021ea530e368",
+      "judgeIds": [
+        "task_660502a4"
+      ],
+      "resumeState": "related_actual_code_accepted_own_primary_pending",
+      "pendingReason": "Retain exact related-path actual-code acceptance; it is not completion of this file’s distinct primary/fresh focus-judge requirement."
     },
     {
       "file": "tests/live-config.test.ts",
       "initialBlob": "5eda639ce13db2cd96fdaa74f6b8ef03b3da4865",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "own_primary_pending",
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
     },
     {
       "file": "tests/live-conversation.test.ts",
       "initialBlob": "c9d761bbefe7e6f698b946a1a03cd3af2d9590b1",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "own_primary_pending",
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
     },
     {
       "file": "tests/live-cost.test.ts",
       "initialBlob": "b48ba6cc2be94aa95e9846ad76b9f08bcdcd291d",
-      "status": "pending"
+      "status": "accepted",
+      "primaryId": "task_0ed9f187",
+      "sourceCommit": "186f1a59ded8eae2d42c6c1a5e33d93ad5817612",
+      "judgeIds": [
+        "task_c4ba592a",
+        "task_4b5c5997"
+      ],
+      "resumeState": "accepted_exact_not_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit and latest area tree; joined bytes differ. Preserve both prior and current exact-code reviews; accepted area source still needs deliberate integration, not safety-reporter approval.",
+      "acceptedBlob": "b6b973be8cc5a8c93f5cbe2986f2edfe27563806",
+      "result": "Exact focus-reviewed blob verified at its judged source commit and latest area tree; joined bytes differ. Preserve both prior and current exact-code reviews; accepted area source still needs deliberate integration, not safety-reporter approval."
     },
     {
       "file": "tests/live-credentials.test.ts",
       "initialBlob": "2813968a386603df54b51314c4238769805a8b86",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "own_primary_pending",
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
     },
     {
       "file": "tests/live-dispatch-budget.test.ts",
       "initialBlob": "d74bfcc059ab24149feda80784335bdd606ef1e6",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "own_primary_pending",
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
     },
     {
       "file": "tests/live-dispatch-budget.ts",
       "initialBlob": "e7fd8dae94e43f8c4a5f582a47e456f803c46bda",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "own_primary_pending",
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
     },
     {
       "file": "tests/live-embedded-helper.test.ts",
       "initialBlob": "603d475b0ba3b18b550c10cc0e950053358d1631",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": "2f13e6964b36f305a16084fd3d6c7e417e2361a7",
+      "judgeIds": [
+        "task_1c3f1e78"
+      ],
+      "resumeState": "related_actual_code_accepted_own_primary_pending",
+      "pendingReason": "Retain exact related-path actual-code acceptance; it is not completion of this file’s distinct primary/fresh focus-judge requirement."
     },
     {
       "file": "tests/live-execute-controls.test.ts",
       "initialBlob": "52ca28929328804ac0140069015586865883bf8a",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "own_primary_pending",
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
     },
     {
       "file": "tests/live-extension.test.ts",
       "initialBlob": "1b32ba0926c08fdcaed34529c1707a95dd52de7a",
-      "status": "pending"
+      "status": "accepted",
+      "primaryId": "task_ecea00d6",
+      "sourceCommit": "da7f97d770768c2f74540f8a9c3fde8667e15177",
+      "judgeIds": [
+        "task_d469e2f0",
+        "task_4b5c5997",
+        "task_65eb4c80"
+      ],
+      "resumeState": "accepted_exact_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "acceptedBlob": "da0317117b6400fdba6b333935d8bb0b2d951e31",
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
     },
     {
       "file": "tests/live-gpt-live-provider.acceptance.test.ts",
       "initialBlob": "b95c39f77a411881b1fdea75836ffb275882afdf",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "own_primary_pending",
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
     },
     {
       "file": "tests/live-gpt-tui.test.ts",
       "initialBlob": "333c95a90933643b25d6ab77f6ff0f10a77434e9",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "own_primary_pending",
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
     },
     {
       "file": "tests/live-host-access.test.ts",
       "initialBlob": "efd8339fcd34ca1398bb45b3357bdfe21bd332a3",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "own_primary_pending",
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
     },
     {
       "file": "tests/live-host-bridge.test.ts",
       "initialBlob": "eaa1c68643eef793430b8e52c2db86ab543dd26c",
-      "status": "pending"
+      "status": "accepted",
+      "primaryId": "task_98219b99",
+      "sourceCommit": "d19bdc41754d26d69a8cfa9eae60942bef3a0ef1",
+      "judgeIds": [
+        "task_b019b845",
+        "task_bb9a363e"
+      ],
+      "resumeState": "accepted_exact_not_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit and latest area tree; joined bytes differ. Preserve both prior and current exact-code reviews; accepted area source still needs deliberate integration, not safety-reporter approval.",
+      "acceptedBlob": "3dc74be1639a7877100ff4b4fb8eee5a635a03c1",
+      "result": "Exact focus-reviewed blob verified at its judged source commit and latest area tree; joined bytes differ. Preserve both prior and current exact-code reviews; accepted area source still needs deliberate integration, not safety-reporter approval."
     },
     {
       "file": "tests/live-long-audio.test.ts",
       "initialBlob": "37efad69fcf9882df32c37d02b99324bb39a1803",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "own_primary_pending",
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
     },
     {
       "file": "tests/live-macos-ci.test.ts",
       "initialBlob": "53f420190ad67578a63e274c8f6060639b7a8942",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "own_primary_pending",
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
     },
     {
       "file": "tests/live-main-integration.test.ts",
       "initialBlob": "950dd13e9775f57f61cbf37aacc8b1d78446913c",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "own_primary_pending",
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
     },
     {
       "file": "tests/live-main-orchestrator-runtime.probe.ts",
       "initialBlob": "9f5353942e250a8cf5c73837f6ea2cfc6abd8232",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "own_primary_pending",
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
     },
     {
       "file": "tests/live-main-owner.test.ts",
       "initialBlob": "1fcc147892d3cdd2f5adcdf0338ab281c0151506",
-      "status": "pending"
+      "status": "accepted",
+      "primaryId": "task_d7333f4e",
+      "sourceCommit": "70bfa1a0e0d8dd8048bd60b7690c5e7a4a7ed4bb",
+      "judgeIds": [
+        "task_3251abf2",
+        "task_bb0fe7ca"
+      ],
+      "resumeState": "accepted_exact_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "acceptedBlob": "9e228bc0c98e2ae271d679c8aeedcfd3e4a10fe1",
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
     },
     {
       "file": "tests/live-native-workflows.test.ts",
       "initialBlob": "06bd7f4a043216f68250ee481310ff12e8b7c5ce",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "own_primary_pending",
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
     },
     {
       "file": "tests/live-notice.test.ts",
       "initialBlob": "6af6d30ad7cb6cf0763d2c5fdaa7edadca694d9c",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "own_primary_pending",
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
     },
     {
       "file": "tests/live-openai-provider.acceptance.test.ts",
       "initialBlob": "fae64d6c3a8c043e31e264c69e1f1dfaf812783d",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "own_primary_pending",
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
     },
     {
       "file": "tests/live-paired-runtime.test.ts",
       "initialBlob": "3c8a12296f7d2a2cfe900c71dfe876a64e6472b8",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "own_primary_pending",
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
     },
     {
       "file": "tests/live-passive-history.test.ts",
       "initialBlob": "973e8cd7089d5efafd89b79bef6eb466ad8c0001",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": "2e6c8b980ff1f03b0baa81692387c14b9acbd400",
+      "judgeIds": [
+        "task_189c73c2"
+      ],
+      "resumeState": "related_actual_code_accepted_own_primary_pending",
+      "pendingReason": "Retain exact related-path actual-code acceptance; it is not completion of this file’s distinct primary/fresh focus-judge requirement."
     },
     {
       "file": "tests/live-picker-tui.test.ts",
       "initialBlob": "493944773ae246afd77f57941b8ace8ee242fc47",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "own_primary_pending",
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
     },
     {
       "file": "tests/live-platform.test.ts",
       "initialBlob": "446b8f6bb78ed13440e344405dfcc3f6957dbda5",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "own_primary_pending",
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
     },
     {
       "file": "tests/live-playback.test.ts",
       "initialBlob": "55e410b4de84f8f0a83fc8e1e540d68085254e34",
-      "status": "pending"
+      "status": "accepted",
+      "primaryId": "task_29a09f86",
+      "sourceCommit": "d6a78704028e99ec22bc7d7e00cf9c83851754b6",
+      "judgeIds": [
+        "task_8ab8f308",
+        "task_542a0b36"
+      ],
+      "resumeState": "accepted_exact_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "acceptedBlob": "af8b12dd1bf13514c5313825d06d9a018d380fcc",
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
     },
     {
       "file": "tests/live-probe-input.test.ts",
       "initialBlob": "bd5d23d0a95241c605c78a2b8aba5cb2fb8a841a",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "own_primary_pending",
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
     },
     {
       "file": "tests/live-prompt.test.ts",
       "initialBlob": "b4a12d969bf7c39fd19223b31d233f5ab1f6c78e",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "own_primary_pending",
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
     },
     {
       "file": "tests/live-provider.acceptance.test.ts",
       "initialBlob": "21629333879e5eaabf82d51b136cca62e08ff733",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "own_primary_pending",
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
     },
     {
       "file": "tests/live-push-to-talk-tui.test.ts",
       "initialBlob": "025fff9fb0e7475a83241c69c1a150043067273d",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "own_primary_pending",
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
     },
     {
       "file": "tests/live-session.test.ts",
       "initialBlob": "f677fece47f695dec08e9a37dc204d10205bb67d",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "own_primary_pending",
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
     },
     {
       "file": "tests/live-setup-diagnostics.test.ts",
       "initialBlob": "79f3cd7334d0ea0ac781e03c385ccffa8ab0ce16",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": "b01dac0216dfa47d3b40e57f92c6021ea530e368",
+      "judgeIds": [
+        "task_660502a4"
+      ],
+      "resumeState": "related_actual_code_accepted_own_primary_pending",
+      "pendingReason": "Retain exact related-path actual-code acceptance; it is not completion of this file’s distinct primary/fresh focus-judge requirement."
     },
     {
       "file": "tests/live-setup.test.ts",
       "initialBlob": "ea963544724a2198f8a4650a55ad12a1cfb5e978",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "own_primary_pending",
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
     },
     {
       "file": "tests/live-speaker-check.test.ts",
       "initialBlob": "cb257f2e226dcb43a7b284184a4f9016bbf4eb23",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "related_uncommitted_candidate_own_primary_pending",
+      "pendingReason": "Related primary left uncommitted bytes for this file; preserve them, allocate this focus its own primary, and obtain exact-code judgment before integration."
     },
     {
       "file": "tests/live-speaker-summary.test.ts",
       "initialBlob": "24e2b019302b328c4df36199c6c23100b92edf34",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "own_primary_pending",
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
     },
     {
       "file": "tests/live-spoken-tui.test.ts",
       "initialBlob": "dca97e84254ed5773b34315e6006b5cde89d85ac",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "own_primary_pending",
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
     },
     {
       "file": "tests/live-startup-audio-queue.test.ts",
       "initialBlob": "88dd84ca8356b8512be44337dcc62b074138517e",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "own_primary_pending",
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
     },
     {
       "file": "tests/live-startup-natural-fixture.test.ts",
       "initialBlob": "9f457024b7b1e6f5fd436fe799dfeb3abbfd32eb",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "own_primary_pending",
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
     },
     {
       "file": "tests/live-startup-speech-probe.test.ts",
       "initialBlob": "15ef014e3e3b6b833200984a23610f2609af1a30",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "own_primary_pending",
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
     },
     {
       "file": "tests/live-status.test.ts",
       "initialBlob": "db179896d78a7b812017a91ec843399a8a7e70b5",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": "931224a0e92a33af036ba65404559b958ff1574a",
+      "judgeIds": [
+        "task_5f68217e"
+      ],
+      "resumeState": "related_actual_code_accepted_own_primary_pending",
+      "pendingReason": "Retain exact related-path actual-code acceptance; it is not completion of this file’s distinct primary/fresh focus-judge requirement."
     },
     {
       "file": "tests/live-study-trial.test.ts",
       "initialBlob": "0232e36634ac9ff67128d632bb1a8585344c0acc",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "own_primary_pending",
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
     },
     {
       "file": "tests/live-tool-result.test.ts",
       "initialBlob": "6d87f59d24f16d498e320e60d32836f635dfc0f0",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": "193fef1e293af8e3f5283bce38a1f5b1f02f8a49",
+      "judgeIds": [
+        "task_7324a1fb"
+      ],
+      "resumeState": "related_actual_code_accepted_own_primary_pending",
+      "pendingReason": "Retain exact related-path actual-code acceptance; it is not completion of this file’s distinct primary/fresh focus-judge requirement."
     },
     {
       "file": "tests/live-tools.test.ts",
       "initialBlob": "70033025563f0f8fb1789048e97ef02222bb8efc",
-      "status": "pending"
+      "status": "accepted",
+      "primaryId": "task_217fe0fb",
+      "sourceCommit": "421cd3969f3db5e4c1d1358ae5fad4bf01a53d78",
+      "judgeIds": [
+        "task_0b0630b0",
+        "task_aba16011"
+      ],
+      "resumeState": "accepted_exact_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "acceptedBlob": "1c93a8e1bdb4066f2ab226871e34415e658d48ea",
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
     },
     {
       "file": "tests/live-transcript.test.ts",
       "initialBlob": "88ce880be802e5949175dcc8c634f892ccb9f894",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "own_primary_pending",
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
     },
     {
       "file": "tests/live-tui-startup.test.ts",
       "initialBlob": "385cb7985f917b03dd2e21ee12d4ce3904ca8f84",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "own_primary_pending",
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
     },
     {
       "file": "tests/live-tui-startup.ts",
       "initialBlob": "a54e5ee4473dde6061371c635228faf76de88b31",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "own_primary_pending",
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
     },
     {
       "file": "tests/live-waveform.test.ts",
       "initialBlob": "7badb15d60945ddde2798584094ab498f4e43645",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "own_primary_pending",
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
     },
     {
       "file": "tests/llm.test.ts",
@@ -7444,14 +8583,30 @@
     {
       "file": "tests/local-agent-termination.test.ts",
       "initialBlob": "dc6c745a929c920ced66d8458f8a552cc9ad5863",
-      "status": "pending",
+      "status": "accepted",
       "area": "execution-tasks-questions",
-      "resumeState": "pending-independent-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_7053ba4f",
-      "judgeIds": [],
+      "judgeIds": [
+        "task_626cfea3"
+      ],
       "sourceCommit": "669dc0c10ce67e6b7eea4c00b8e03072a559d675",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
-      "pendingReason": "Committed primary candidate 669dc0c10ce67e6b7eea4c00b8e03072a559d675 survives with the actual focus blob recorded below, but no completed approving complete-file judge is recorded. Fresh independent actual-code judgment is pending. This is a no-source-change primary: the commit records the writer note, not a new source blob; complete-file judgment is still required."
+      "pendingReason": "Committed primary candidate 669dc0c10ce67e6b7eea4c00b8e03072a559d675 survives with the actual focus blob recorded below, but no completed approving complete-file judge is recorded. Fresh independent actual-code judgment is pending. This is a no-source-change primary: the commit records the writer note, not a new source blob; complete-file judgment is still required.",
+      "acceptedBlob": "dc6c745a929c920ced66d8458f8a552cc9ad5863",
+      "result": "Complete file exposes signal ownership without OS-process machinery: FakeAgent owns its emitter, jobs, shutdown count, exit record and disposer. The first scenario puts owned and sibling managers side by side and follows duplicate SIGTERM to one drain and one exit. The second first removes a listener, then holds shutdown unresolved and explicitly releases it before exit is observable. These are two short, direct lifetime journeys, not helpers concealing arbitrary steps. The opening fake-tree disclaimer accurately distinguishes model behavior from real process termination. No extraction or rename-only cleanup would resolve an actual reading burden here.",
+      "systemReason": "Followed installLocalAgentTermination in src/tasks/local-agent-termination.ts: one request guard, manager.shutdown promise, failure logging, final exit(143), listener removal. Followed sole production installation in src/agent/extension.ts: only CLI descendants with environment depth and not native sessions receive the bridge, ownedManager is captured, and session_shutdown drains then detaches. Followed TaskManager.shutdown in src/tasks/task-manager.ts: its own running jobs, kill/escalation, close waits, bounded watchdog and diagnostics. Thus sibling isolation and deferred exit in this test map to explicit production ownership; they do not claim real signal/process-group proof.",
+      "checks": [
+        "Exact commit/base verified with git show/rev-parse/diff; both focus blobs dc6c745a929c920ced66d8458f8a552cc9ad5863. Primary changes only excluded worker wisdom.",
+        "Read complete focus and complete signal bridge, and candidate production installation, session teardown and manager shutdown bodies.",
+        "Read-only primary-tree identity confirmed HEAD 669dc0c10ce67e6b7eea4c00b8e03072a559d675, working focus dc6c745a929c920ced66d8458f8a552cc9ad5863, no focus edits."
+      ],
+      "limits": [
+        "Static actual-code readability judgment only: no tests, setup, builds, publication, delegation, credentials or device access. Known automatic setup rejection was not bypassed.",
+        "Prior safety reports, coverage and reported passing checks were not used as actual-code acceptance.",
+        "No authenticated background UX or real-auth/device acceptance; no source or old-worktree edits.",
+        "Fake EventEmitter code reading does not establish actual process shutdown, descendant cancellation or real-auth background UX."
+      ]
     },
     {
       "file": "tests/long-thread-pty-latency.test.ts",
@@ -7656,29 +8811,68 @@
     {
       "file": "tests/openai-session-diagnostics.test.ts",
       "initialBlob": "092f838262b6233b561174bf8c55e2319a455381",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": "9f25cbbee79aebf17532edf4f0f8f42dce48d3ef",
+      "judgeIds": [
+        "task_8db4b91e"
+      ],
+      "resumeState": "related_actual_code_accepted_own_primary_pending",
+      "pendingReason": "Retain exact related-path actual-code acceptance; it is not completion of this file’s distinct primary/fresh focus-judge requirement."
     },
     {
       "file": "tests/openai-session-schema.test.ts",
       "initialBlob": "f0285954c2a47aaa013df69828c262153238915e",
-      "status": "pending"
+      "status": "pending",
+      "primaryId": null,
+      "sourceCommit": null,
+      "judgeIds": [],
+      "resumeState": "own_primary_pending",
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
     },
     {
       "file": "tests/openai-session.test.ts",
       "initialBlob": "a3284f8c1803e2b14259bddf0216ad4daa55aaaf",
-      "status": "pending"
+      "status": "accepted",
+      "primaryId": "task_b8b36154",
+      "sourceCommit": "af9b22ff882959f601e8748f75cf296e4fbfa7d1",
+      "judgeIds": [
+        "task_4cb31324",
+        "task_5c3c9aed"
+      ],
+      "resumeState": "accepted_exact_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "acceptedBlob": "db32c13aeccdc9c9a8e7f991fc7a2442ee1575c8",
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
     },
     {
       "file": "tests/output-buffer.test.ts",
       "initialBlob": "0fe2a49d04fb9fcd41e86dd5420900201649cf58",
-      "status": "pending",
+      "status": "accepted",
       "area": "execution-tasks-questions",
-      "resumeState": "pending-independent-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_9379fe09",
-      "judgeIds": [],
+      "judgeIds": [
+        "task_626cfea3"
+      ],
       "sourceCommit": "9c9958375854208322c442c11ff397c51ff83508",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
-      "pendingReason": "Committed primary candidate 9c9958375854208322c442c11ff397c51ff83508 survives with the actual focus blob recorded below, but no completed approving complete-file judge is recorded. Fresh independent actual-code judgment is pending."
+      "pendingReason": "Committed primary candidate 9c9958375854208322c442c11ff397c51ff83508 survives with the actual focus blob recorded below, but no completed approving complete-file judge is recorded. Fresh independent actual-code judgment is pending.",
+      "acceptedBlob": "f53aeae5875cfa1d8828885a3b319b58328c3916",
+      "result": "Read the entire baseline and candidate. This is substantive contract organization, not merely renamed tests: byte cursors/output loss are separated from bounded owned storage. Adjacent complete read-result objects make bytes, absolute cursor, loss and pagination legible together rather than forcing inference from selective assertions. Prefix release now shows the partially retained UTF-8 bytes, full release, and a later append continuing the original byte timeline. Ownership is visible in mutations of both incoming and returned buffers. Ordered decimal tail bytes make the tiny-write journey readable; the oversized-write scenario shows displacement of preexisting output and copy ownership. Local literal expectations are appropriate here: a shared context or assertion helper would hide the precise contract.",
+      "systemReason": "Read complete src/output-buffer.ts and traced actual consumers. TaskManager append updates absolute endpoints; inspect applies utf8SafeSlice after reading raw bytes and derives safe text cursor/loss; completed-output budgeting invokes discardPrefix without rebasing the stream. AgentProgress stores bounded final-answer bytes; TaskManager reads those for notifications separately from the activity log. executeIsolated uses a bounded raw image channel and treats baseOffset advancement as overflow before atomic decoding. The candidate makes the raw-store/text-repair authority boundary explicit, preserving the distinction these callers rely on. No production code or other source changes are paired with this primary.",
+      "checks": [
+        "git show/diff verified candidate f53aeae5875cfa1d8828885a3b319b58328c3916 against baseline 0fe2a49d04fb9fcd41e86dd5420900201649cf58.",
+        "Primary source diff is exactly tests/output-buffer.test.ts; added worker wisdom excluded. Complete changed source file and complete byte-store implementation read.",
+        "Read-only primary-tree identity confirmed HEAD 9c9958375854208322c442c11ff397c51ff83508, working focus f53aeae5875cfa1d8828885a3b319b58328c3916, no focus edits.",
+        "Acceptance names the actual primary blob, NOT supplied joinedBlob 0fe2a49d04fb9fcd41e86dd5420900201649cf58."
+      ],
+      "limits": [
+        "Static actual-code readability judgment only: no tests, setup, builds, publication, delegation, credentials or device access. Known automatic setup rejection was not bypassed.",
+        "Prior safety reports, coverage and reported passing checks were not used as actual-code acceptance.",
+        "No authenticated background UX or real-auth/device acceptance; no source or old-worktree edits.",
+        "No allocation, metadata-size, performance or runtime behavior measurements; readability acceptance does not certify those properties."
+      ]
     },
     {
       "file": "tests/phase1-compaction-fixture.ts",
@@ -7998,15 +9192,49 @@
     {
       "file": "tests/remote-capabilities.test.ts",
       "initialBlob": "fe468f2a82561942a0a00a1ce1f19a743a7df01b",
-      "status": "pending",
+      "status": "accepted",
       "area": "remote",
-      "resumeState": "candidate-withheld-missing-judgment",
-      "primaryId": "task_5ee954f3",
+      "resumeState": "accepted-joined",
+      "primaryId": "task_fdfb5c4d",
       "primaryCommit": null,
-      "judgeIds": [],
+      "judgeIds": [
+        "task_7f35b9db"
+      ],
       "sourceCommit": "d6cc065a4a03d1c1f0877d0f6b715a072678d23f",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
-      "pendingReason": "Fresh replacement candidate is committed but has no original readability verdict. Preserved predecessor uncommitted blob equals candidate; neither is acceptance."
+      "pendingReason": "Fresh replacement candidate is committed but has no original readability verdict. Preserved predecessor uncommitted blob equals candidate; neither is acceptance.",
+      "acceptedBlob": "701ed0dd3fc42525eee5c8d18ad00d347c9d8de7",
+      "result": "The base combines unrelated denial cases behind a global directory registry, afterEach and a repo helper that hides fixture contents. The candidate separates repository confinement from bounded UTF-8 regular-file reads. Each test visibly creates, uses and finally releases its own exact temporary root; setup stays beside the assertions that depend on it. Awaited individual rejection expressions make asynchronous observation finish before finally cleanup. Concrete errors describe the denied operation without making a reader decode a name loop. This is an ownership/lifetime and semantic grouping improvement, not more coverage as a verdict.",
+      "systemReason": "Read readGrantedRepoFile end to end and capability-runtime execution dispatch. Human grant/task/kind/revocation checks precede repo.read; skill reads and exact-file git-diff preflight also use this same bounded reader. The first test follows path validation and per-element symlink refusal; the second follows open/stat, size bound and fatal UTF-8 decode. No runtime ownership is moved into a test abstraction. The reader closes its own fd and the fixture owns its own root. This judgment is source readability, not proof of hostile-writer confinement, real grants or authenticated use.",
+      "checks": {
+        "method": "git show exact commit files and selected caller/owner blocks; git diff exact primary base to candidate, not judge HEAD",
+        "judgeHead": "9e3d59809de2fb9e9d17e411736537d32b225a7b",
+        "verifiedCommit": "d6cc065a4a03d1c1f0877d0f6b715a072678d23f",
+        "verifiedPrimaryWorktreeHead": "d6cc065a4a03d1c1f0877d0f6b715a072678d23f",
+        "verifiedBranchCommit": "d6cc065a4a03d1c1f0877d0f6b715a072678d23f",
+        "baseFocusBlob": "fe468f2a82561942a0a00a1ce1f19a743a7df01b",
+        "pairedChangedBlobs": {
+          "tests/remote-capabilities.test.ts": "701ed0dd3fc42525eee5c8d18ad00d347c9d8de7",
+          "wisdom/quality/structural-readability-worker.md": "f04037393c629dada6c0a877de103ad0e69d4ad7"
+        },
+        "excludedFromVerdict": [
+          "wisdom/quality/structural-readability-worker.md"
+        ],
+        "relatedContextBlobs": {
+          "src/remote/capabilities.ts": "c5669679c832b8fb3896ca6e9e33d5099f0842b2",
+          "src/remote/capability-runtime.ts": "4bbb64ff4d098157cd34868561e286c8292abfe8"
+        },
+        "guidanceRead": [
+          "wisdom/values.md",
+          "wisdom/quality/structural-readability-guidance.md"
+        ]
+      },
+      "limits": [
+        "Independent static actual-code readability review only; no setup, tests, builds, delegation, source edits, publication or destructive operations were performed.",
+        "Automatic setup hash rejection was not bypassed. Existing primary safety reports and old judgments were not treated as actual-code acceptance.",
+        "No real auth/provider/device access or authenticated background UX validation. Those acceptance gates remain unproven, not green.",
+        "Related unchanged code was read for caller/system context, not granted repository-wide acceptance. All changed non-wisdom paths in each exact primary-base patch are included in this decision; no additional changed source path is withheld. Worker wisdom is excluded as requested."
+      ]
     },
     {
       "file": "tests/remote-capability-runtime.test.ts",
@@ -8311,17 +9539,52 @@
     {
       "file": "tests/remote-placement.test.ts",
       "initialBlob": "89b8bea144e6fc76d3218236619b70aea70d1323",
-      "status": "pending",
+      "status": "accepted",
       "area": "remote",
-      "resumeState": "candidate-withheld-missing-judgment",
+      "resumeState": "accepted-joined",
       "primaryId": "task_bce19675",
       "primaryCommit": "99d9f3b8bb81688b6304ff4bf43fc8a5da0e33c5",
       "judgeIds": [
-        "task_7e8aadb0"
+        "task_7e8aadb0",
+        "task_7f35b9db"
       ],
       "sourceCommit": "99d9f3b8bb81688b6304ff4bf43fc8a5da0e33c5",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
-      "pendingReason": "Candidate exists; saved independent review ended killed143 without a verdict. Do not infer acceptance from tests, partial review, or reporter status."
+      "pendingReason": "Candidate exists; saved independent review ended killed143 without a verdict. Do not infer acceptance from tests, partial review, or reporter status.",
+      "acceptedBlob": "13008d703348c30efa47f3d5687440e31f33f4b3",
+      "result": "The base puts root admission, nested profile branching, parent refusal, malformed/exhausted depth, default environment and workspace validation into one test. The candidate gives these separate semantic homes, removes the per-profile if/else, and keeps concrete placement values and expected child environment beside each policy. The omitted-placement case makes copying versus mutation visible alongside owner-authority stripping and ordinary server environment preservation. Small loops still represent homogeneous alternatives rather than a generalized matrix/context object. The gain is being able to read one authority boundary at a time, not the expanded assertion set or revised names.",
+      "systemReason": "Read validatePlacement, remoteChildEnvironment and childAgentEnvironment, and the owner callsites that validate incoming placement and spawn both the owner process and its CLI child; repository-wire also validates before handoff. The tests distinguish delegation admission from child environment construction: child depth is parent plus one, owner role/depth are not inherited, root controls/checkpoint state are removed, and server provider environment remains available. nativeFast is explicitly selected rather than inherited. The candidate is a readable description of those caller journeys without claiming a real credential was accessed or cross-placement UX was exercised.",
+      "checks": {
+        "method": "git show exact commit files and selected caller/owner blocks; git diff exact primary base to candidate, not judge HEAD",
+        "judgeHead": "9e3d59809de2fb9e9d17e411736537d32b225a7b",
+        "verifiedCommit": "99d9f3b8bb81688b6304ff4bf43fc8a5da0e33c5",
+        "verifiedPrimaryWorktreeHead": "99d9f3b8bb81688b6304ff4bf43fc8a5da0e33c5",
+        "verifiedBranchCommit": "99d9f3b8bb81688b6304ff4bf43fc8a5da0e33c5",
+        "baseFocusBlob": "89b8bea144e6fc76d3218236619b70aea70d1323",
+        "pairedChangedBlobs": {
+          "tests/remote-placement.test.ts": "13008d703348c30efa47f3d5687440e31f33f4b3",
+          "wisdom/quality/structural-readability-worker.md": "4b38a4a687a558abd4a8ddb23c252b3bbba93a8a"
+        },
+        "excludedFromVerdict": [
+          "wisdom/quality/structural-readability-worker.md"
+        ],
+        "relatedContextBlobs": {
+          "src/remote/placement.ts": "c27e168ec203a643ed30def19cf8edbfd53abb09",
+          "src/delegation-environment.ts": "352e1f7710a97911faf7aaefca724bb4536f20ff",
+          "src/remote/owner.ts": "9b79cdbf1fd65046575b469cc2017b1b3d75b747",
+          "src/remote/repository-wire.ts": "64475e6cd3a0b363dfcdcdcb9ea936e83082d6f7"
+        },
+        "guidanceRead": [
+          "wisdom/values.md",
+          "wisdom/quality/structural-readability-guidance.md"
+        ]
+      },
+      "limits": [
+        "Independent static actual-code readability review only; no setup, tests, builds, delegation, source edits, publication or destructive operations were performed.",
+        "Automatic setup hash rejection was not bypassed. Existing primary safety reports and old judgments were not treated as actual-code acceptance.",
+        "No real auth/provider/device access or authenticated background UX validation. Those acceptance gates remain unproven, not green.",
+        "Related unchanged code was read for caller/system context, not granted repository-wide acceptance. All changed non-wisdom paths in each exact primary-base patch are included in this decision; no additional changed source path is withheld. Worker wisdom is excluded as requested."
+      ]
     },
     {
       "file": "tests/remote-question-bridge.test.ts",
@@ -8344,17 +9607,49 @@
       "initialBlob": "2ce5b7deb99d70cb7b27785134b813505c223431",
       "status": "accepted",
       "area": "remote",
-      "resumeState": "accepted-exact-not-joined",
-      "primaryId": "task_c79fbb6b",
+      "resumeState": "accepted-joined",
+      "primaryId": "task_974c50bb",
       "primaryCommit": "0bc50fed66bda6d3e390dc699b6e5cfb9167e32d",
       "judgeIds": [
         "task_731b02f6",
-        "task_704df491"
+        "task_704df491",
+        "task_7f35b9db"
       ],
-      "sourceCommit": "0bc50fed66bda6d3e390dc699b6e5cfb9167e32d",
+      "sourceCommit": "3436ea74d1a372575def44618e7ecfd706db6300",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
-      "acceptedBlob": "9cd3c4cd871556c1501d6175cfa2cb06d31771f2",
-      "result": "Valid descriptor fixture isolates canonical encoding/chunk guards from offset rejection; continuity/exhaustion/offline fresh invocation/root labels separate; exact request transcript proves restart at zero, not automatic resume. Accepted predecessor survives exactly; later compiler rework has no completed judgment and must not inherit acceptance."
+      "acceptedBlob": "622c60f8a89b1b866745b6409dd0d7ec0681e814",
+      "result": "Read the entire exact candidate, not just the typed matcher change or an accepted predecessor. The primary diff only adds the failAt/offsets row type; I do not credit that as structural progress. The existing structure needs no rewrite: pages(patch) has a coherent purpose as a canonical paginated descriptor/byte fixture, and each test locally perturbs one protocol property. Offset traces make later-page refusal and fresh retry visible; root error labels are checked separately. Concrete fixtures, requested offsets and offline state remain local, with no lifecycle framework or context bag. This unchanged structure is intrinsically readable, so the exact candidate blob is accepted.",
+      "systemReason": "Read downloadRepositoryResult and both production caller blocks at this candidate. The helper owns only page assembly and byte verification; snapshot child returnRepository owns task-done admission, page budget, repository lock and receipt integration, while RootClient.returnSource owns closed/success admission and root error labels. The tests follow canonical base64, bounded pagination, stable descriptor, digest/source integrity, budget exhaustion and retry-from-zero without pretending download establishes completion or safe apply. No baseline is absent: the base focus blob is 9cd3c4cd871556c1501d6175cfa2cb06d31771f2. The prior accepted blob was not used as permission.",
+      "checks": {
+        "method": "git show exact commit files and selected caller/owner blocks; git diff exact primary base to candidate, not judge HEAD",
+        "judgeHead": "9e3d59809de2fb9e9d17e411736537d32b225a7b",
+        "verifiedCommit": "3436ea74d1a372575def44618e7ecfd706db6300",
+        "verifiedPrimaryWorktreeHead": "3436ea74d1a372575def44618e7ecfd706db6300",
+        "verifiedBranchCommit": "3436ea74d1a372575def44618e7ecfd706db6300",
+        "baseFocusBlob": "9cd3c4cd871556c1501d6175cfa2cb06d31771f2",
+        "pairedChangedBlobs": {
+          "tests/remote-repository-download.test.ts": "622c60f8a89b1b866745b6409dd0d7ec0681e814",
+          "wisdom/quality/structural-readability-worker.md": "0edefe37313289e3eef0d3b2c28c3fcd01636cc7"
+        },
+        "excludedFromVerdict": [
+          "wisdom/quality/structural-readability-worker.md"
+        ],
+        "relatedContextBlobs": {
+          "src/remote/repository-download.ts": "c03eb8b1827d8f1c9f58449966dd0b4c1b1c0f0a",
+          "src/remote/repository-wire.ts": "64475e6cd3a0b363dfcdcdcb9ea936e83082d6f7",
+          "src/remote/root-client.ts": "7670632c58bcccd97dad7f5e49e654f4eb79a4c0"
+        },
+        "guidanceRead": [
+          "wisdom/values.md",
+          "wisdom/quality/structural-readability-guidance.md"
+        ]
+      },
+      "limits": [
+        "Independent static actual-code readability review only; no setup, tests, builds, delegation, source edits, publication or destructive operations were performed.",
+        "Automatic setup hash rejection was not bypassed. Existing primary safety reports and old judgments were not treated as actual-code acceptance.",
+        "No real auth/provider/device access or authenticated background UX validation. Those acceptance gates remain unproven, not green.",
+        "Related unchanged code was read for caller/system context, not granted repository-wide acceptance. All changed non-wisdom paths in each exact primary-base patch are included in this decision; no additional changed source path is withheld. Worker wisdom is excluded as requested."
+      ]
     },
     {
       "file": "tests/remote-repository-wire.test.ts",
@@ -9728,16 +11023,33 @@
       "file": "scripts/task-placement-clean-capture.test.ts",
       "initialBlob": "absent",
       "area": "execution-tasks-questions",
-      "resumeState": "pending-judge-incident",
+      "resumeState": "accepted-joined",
       "primaryId": "task_e04c4e92",
       "judgeIds": [
         "task_33a4cc92",
-        "task_abf8fcb1"
+        "task_abf8fcb1",
+        "task_626cfea3"
       ],
       "sourceCommit": "534986d4e14abf86b189fce1e3b88f746aa086c7",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
-      "status": "pending",
-      "pendingReason": "Committed primary candidate 534986d4e14abf86b189fce1e3b88f746aa086c7 survives with the actual focus blob recorded below, but no completed approving complete-file judge is recorded. Incident-interrupted judgment is pending; a cancellation request is not an approval. This is a no-source-change primary: the commit records the writer note, not a new source blob; complete-file judgment is still required. Retain related actual-code acceptance as supporting evidence only; it does not replace the pending own complete-file primary/judge."
+      "status": "accepted",
+      "pendingReason": "Committed primary candidate 534986d4e14abf86b189fce1e3b88f746aa086c7 survives with the actual focus blob recorded below, but no completed approving complete-file judge is recorded. Incident-interrupted judgment is pending; a cancellation request is not an approval. This is a no-source-change primary: the commit records the writer note, not a new source blob; complete-file judgment is still required. Retain related actual-code acceptance as supporting evidence only; it does not replace the pending own complete-file primary/judge.",
+      "acceptedBlob": "83cafd1bb95ca575ac2e08f8c748313975f0bb1f",
+      "result": "Read complete focus and paired capture producer. The recording fixture is a narrowly owned command/evidence recorder, not a production context bag: its failure switches exercise visible start, pane-capture and exit transitions. Direct command arrays expose literal input, fixed PTY dimensions and capture-before-pane-removal order. Raw viewport/scrollback files are compared separately from the stripped assertion view, and reopening deliberately preserves the timeline. Failure scenarios distinguish nonzero detach, missing pane and failed start instead of treating all as generic cleanup. The native PTY scenario owns its socket, temporary directories and explicit environment in the same body. This complete file is already structurally coherent; no additional primary source edit is needed.",
+      "systemReason": "Although initial ledger baseline is absent, the exact primary launch base already contains this file unchanged. Established its added purpose from originating patch 484df2a53deb867e12dd85ca0675197d4322080f against 9623825730d1276d0e021f781cca213a36d0c092: it accompanies PresentationTerminal extraction and main/import guard. Independently read full paired helper and whitespace-insensitive originating diff. PresentationTerminal owns tmux session state and raw evidence, while main retains sandbox/server setup, durable root/question/source-return assertions and receipt publication; constructor capabilities stay narrow. Successful detach requires dead status zero, captures before removal, and clears started; failed detach leaves final evidence/server-stop authority intact. Importing the test does not execute the Docker/SSH presentation main. Followed the main caller through start, task/question views, detach/reopen, answer, /close and final artifact collection; inspected networkNoneFixture environment ownership and timeline-renderer consumption as callers, not runtime proof. Accept both exact paired blobs independently of the prior related-acceptance entry.",
+      "checks": [
+        "Candidate and primary base both contain focus 83cafd1bb95ca575ac2e08f8c748313975f0bb1f and helper 9cee9d131e3bda752cce6998ad42e1dc19e194b1. Primary diff only adds excluded worker wisdom.",
+        "Originating coherent patch changes exactly scripts/task-placement-clean-capture.test.ts and scripts/task-placement-clean-capture.ts outside wisdom; both complete files judged here. Origin adds focus from absent and changes helper bab2afe49282ebd687fe9b26db81ef8112ce3ca2 to exact accepted 9cee9d131e3bda752cce6998ad42e1dc19e194b1.",
+        "Verified related source commit 6cc5ce747acbe49adcea90944af3d777f1f89db7 has the same exact focus and helper hashes; no prior judge verdict substituted for this reading.",
+        "Read-only primary-tree identity confirmed HEAD 534986d4e14abf86b189fce1e3b88f746aa086c7, working focus 83cafd1bb95ca575ac2e08f8c748313975f0bb1f, no focus edits."
+      ],
+      "limits": [
+        "Static actual-code readability judgment only: no tests, setup, builds, publication, delegation, credentials or device access. Known automatic setup rejection was not bypassed.",
+        "Prior safety reports, coverage and reported passing checks were not used as actual-code acceptance.",
+        "No authenticated background UX or real-auth/device acceptance; no source or old-worktree edits.",
+        "Native PTY test and offline presentation were read, not run. No Docker/SSH access, visual/video acceptance or real transport/provider/authentication proof.",
+        "Acceptance covers the focus and paired producer only. Intervening scripts/task-placement-clean-video.py and scripts/task-placement-clean-video.test.py edits are outside this primary and its originating helper patch; their complete-file actual-code acceptance must come from their own review, not this report."
+      ]
     },
     {
       "file": "tests/ansi-video-renderer.test.py",
@@ -10038,16 +11350,34 @@
       "file": "tests/fixtures/history-sdk-probe-failure.ts",
       "initialBlob": "absent",
       "area": "agent-history-session-goals",
-      "resumeState": "interrupted-primary",
-      "primaryId": "task_296ad782",
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_9e79f658",
+      "primaryCommit": "ce7032a68d76defd3b2f40c6bb630f5b8824c0af",
       "judgeIds": [
         "task_b1d3b7fc"
       ],
-      "sourceCommit": "177e687eb82c0768d209db8695f2bc78af2539b4",
+      "sourceCommit": "ce7032a68d76defd3b2f40c6bb630f5b8824c0af",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
       "status": "pending",
-      "pendingReason": "Primary was killed without a completed focused result; preserve worker state and any uncommitted edits. Related-patch review is evidence only; dedicated focus coverage remains required."
+      "pendingReason": "Primary was killed without a completed focused result; preserve worker state and any uncommitted edits. Related-patch review is evidence only; dedicated focus coverage remains required.",
+      "primaryBase": "25bb96f0b70a2afad8875dc00ce34412861bac6e",
+      "primaryResult": "Read values and structural guidance, then traced tests/history-sdk-probe.test.ts -> preload -> scripts/history-sdk-probe.ts -> session-manager.ts -> disk-entry-store.ts. The child-only preload captures and retains exactly one real pending store, observes its dispose after original disposal, injects failure before the first message append can publish the spool, snapshots disposal/spool existence before delegating rm, optionally mocks only manager disposal, and checks all observations at process exit. runProbe owns manager disposal in finally; the outer probe owns directory removal in finally. Both remain real in the positive case; the negative control preserves the injected failure and directory finalizer but must fail the disposal assertion. These sequential local groups already make the observation boundaries and lifetimes visible; extraction or context bags would add indirection without resolving a scattered authority. Restored exact git-show bytes from 177e687eb82c0768d209db8695f2bc78af2539b4, preserving every helper and caller assertion. No rename-only edits or wider branch import. No wisdom/values edits: no new lesson beyond existing ownership guidance; parent owns aggregate ledger.",
+      "primaryPaths": [
+        "tests/fixtures/history-sdk-probe-failure.ts"
+      ],
+      "primaryChecks": [
+        "Read actual restored helper and its test caller, probe orchestration, manager disposal and store pending/dispose implementations.",
+        "git hash-object matched candidate blob 8dc54fdbef477552d6dbb3559cebb797c79ee267 exactly.",
+        "git diff --cached --check passed before commit.",
+        "Commit contains only tests/fixtures/history-sdk-probe-failure.ts.",
+        "Commit hooks inspected: relevant hooks absent; no tests/setup/builds invoked."
+      ],
+      "primaryLimits": [
+        "Runtime behavior, Bun module mocking, typechecking and focused tests not executed per instruction; parent will run checks in its validated isolated dependency environment after independent judge.",
+        "No independent judgment claimed; this is the replacement primary result.",
+        "No credentials/devices requested or used; no auth availability claim.",
+        "No delegation, setup, builds, recovery, cleanup, push, merge or PR actions; old tree untouched."
+      ]
     },
     {
       "file": "tests/claude-compat-arguments.test.ts",
@@ -10197,16 +11527,33 @@
       "file": "tests/claude-native-history-runner.test.mjs",
       "initialBlob": "absent",
       "area": "compatibility-t3",
-      "resumeState": "pending-review-interrupted",
+      "resumeState": "accepted-joined",
       "primaryId": "task_c7da2216",
       "primaryCommit": "38206e59026118676b87f088beb3b86f7eaeb507",
       "judgeIds": [
-        "task_76a9b652"
+        "task_76a9b652",
+        "task_7fd4e906"
       ],
       "sourceCommit": "38206e59026118676b87f088beb3b86f7eaeb507",
       "report": "wisdom/quality/structural-readability-areas/compatibility-t3.json",
-      "status": "pending",
-      "pendingReason": "Committed whole-file primary candidate survives; recorded running judge was killed by session shutdown (143), with no completed final verdict. Existing related-patch acceptance does not replace this missing whole-file judgment."
+      "status": "accepted",
+      "pendingReason": "Committed whole-file primary candidate survives; recorded running judge was killed by session shutdown (143), with no completed final verdict. Existing related-patch acceptance does not replace this missing whole-file judgment.",
+      "acceptedBlob": "0b2c252a17719c8f541319ff164db6c26e136196",
+      "result": "Read and accept the complete file. The central improvement is eliminating the failure-token interpreter: callers now provide the concrete replay side effect, or malformed connector arguments, at the scenario that needs it. A reader can see replay exit 7, a second root-tool-count line, or the projection-path directory directly beside that scenario instead of reconstructing behavior from a token, string replacement, child branch and environment switch. successfulReplay gives the fabricated child evidence one explicit common purpose. runFixture owns copying the shipped runner, installing narrow dependency stand-ins, spawning/observing the child, capturing results before disposal, and then disposing its own fixture. Its two options are direct inputs, not a mutable context bag. The close observation makes the lifetime of scoped state visible rather than relying solely on the eventual absence of files. The assertions describe distinct failure stages, especially publication failure after replay/model checks already passed; acceptance is based on this intrinsic control-flow clarity, not added assertions or coverage.",
+      "systemReason": "Followed the test into history-run.mjs at this candidate: it prepares private state, opens the model, parses connectorArgs, awaits the replay child, writes model checks, rejects repeated stored-tool execution, retains collected/projection evidence, closes the model, then removes the private scope. The fixture substitutes history-model/history-driver/history-replay and projection dependencies but copies the real runner and tap; comments explicitly say the tap is copied, not exercised. The success and four failure callers align with those real orchestration stages. An argument parse failure occurs after model start but before replay; the test records no replay observation while requiring collection and close while state exists. A projection write failure happens after passed is set, so nonzero process status is deliberately distinguished from successful replay/model checks. No production history-runner change is smuggled into this test-only patch. All changed non-wisdom code in this primary patch is accepted.",
+      "checks": [
+        "Verified candidate commit 38206e59026118676b87f088beb3b86f7eaeb507 and primary parent 47cd1b9b4c7d3d9a084d517b318283085d67efc9.",
+        "Candidate blob is 0b2c252a17719c8f541319ff164db6c26e136196. Despite the supplied ledger baseline being null and kind being addition, the primary Git parent already contains this path as blob 393f9f313cb8320b3562dc922e22fce1713efff7; compared against that actual primary base.",
+        "git diff-tree inventory: tests/claude-native-history-runner.test.mjs modified; wisdom/quality/structural-readability-worker.md added and excluded. There is no other changed source file to withhold.",
+        "Read complete candidate test, primary diff and complete candidate history-run.mjs; searched caller references and read documented CLI/package test entry points.",
+        "Reviewed via exact git objects in the independent worktree rather than assuming HEAD contains the candidate. No tests, builds or setup executed."
+      ],
+      "limits": [
+        "Offline fixture fabricated replay/model/collection evidence is not native history acceptance and is not relabeled as such.",
+        "No authentication, device or real credential access; authenticated background UX remains unverified.",
+        "This verdict does not establish test passage, timing reliability or runtime safety. No source edits, delegation, setup/hash bypass or publication.",
+        "Only the untracked .pr45-judge-result.json report is written; old trees and wisdom remain unchanged."
+      ]
     },
     {
       "file": "tests/claude-native-app-delegation-driver.test.mjs",
@@ -10238,14 +11585,18 @@
       "file": "tests/claude-native-acceptance-subagent-run.test.mjs",
       "initialBlob": "absent",
       "area": "compatibility-t3",
-      "resumeState": "pending-primary-and-related-review",
+      "resumeState": "needs-primary-final-blob",
       "primaryId": null,
       "primaryCommit": null,
       "judgeIds": [],
       "sourceCommit": "acba9037095809d012444d28656a733b1fcdcf86",
       "report": "wisdom/quality/structural-readability-areas/compatibility-t3.json",
       "status": "pending",
-      "pendingReason": "Added only in surviving run-subagent worker commit acba9037, not at area tip or joined tree. Source judge was killed without verdict; test also lacks its own whole-file primary and judge."
+      "pendingReason": "Added only in surviving run-subagent worker commit acba9037, not at area tip or joined tree. Source judge was killed without verdict; test also lacks its own whole-file primary and judge.",
+      "acceptedRelatedJudges": [
+        "task_7fd4e906"
+      ],
+      "acceptedBlob": "611d0cb7e7a68d58501488971bb2aa6aeac582e9"
     },
     {
       "file": "tests/claude-native-history-replay.test.mjs",
@@ -10272,6 +11623,151 @@
       "report": "wisdom/quality/structural-readability-areas/compatibility-t3.json",
       "status": "pending",
       "pendingReason": "Two candidate-only worker reports contain different blobs at acba9037 and 38206e59; references retained under candidateArtifacts, excluded from source pending counts. Neither report grants acceptance or integration permission."
+    },
+    {
+      "file": "native/live-linux/tests/playback-buffer.cpp",
+      "initialBlob": "absent",
+      "area": "live-native-audio",
+      "primaryId": "task_fc3af74e",
+      "sourceCommit": "74ae2a442c5cb787d3666eeb5a1bc942c02319cf",
+      "judgeIds": [
+        "task_1ce2e593",
+        "task_13282f24"
+      ],
+      "resumeState": "accepted_exact_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "status": "accepted",
+      "acceptedBlob": "86b16c263f912996fb907d7b1d960835a274c795",
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+    },
+    {
+      "file": "native/live-linux/tests/test_protocol.py",
+      "initialBlob": "absent",
+      "area": "live-native-audio",
+      "primaryId": "task_63e174cf",
+      "sourceCommit": "61dd86168b4b0a3a178aa5ccdca54e1a058117f6",
+      "judgeIds": [
+        "task_e561d4a8",
+        "task_ab2edd5f",
+        "task_5ff86413"
+      ],
+      "resumeState": "accepted_exact_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "status": "accepted",
+      "acceptedBlob": "533dc3e1828e0862e5e14e10876dc22abdaec999",
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+    },
+    {
+      "file": "native/live-linux/tests/test_virtual.py",
+      "initialBlob": "absent",
+      "area": "live-native-audio",
+      "primaryId": "task_d69d2178",
+      "sourceCommit": "465d49952932b8c6877f755549b5efef41c977e6",
+      "judgeIds": [
+        "task_d88de73c",
+        "task_ab2edd5f"
+      ],
+      "resumeState": "accepted_exact_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "status": "accepted",
+      "acceptedBlob": "293dec5887c1ff795c2f8e8ab7536e64babaed99",
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+    },
+    {
+      "file": "native/live-linux/tests/test_isolated_audio.py",
+      "initialBlob": "absent",
+      "area": "live-native-audio",
+      "primaryId": "task_7950a5e2",
+      "sourceCommit": "009b872830322e84e4a6a1f181029f10831a1769",
+      "judgeIds": [
+        "task_dd7fe5dc",
+        "task_2b5beb9d",
+        "task_1a73a583"
+      ],
+      "resumeState": "accepted_exact_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "status": "accepted",
+      "acceptedBlob": "c489af81e01cc3c290892e3cdf6b80b5676c52fc",
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+    },
+    {
+      "file": "native/live-linux/tests/test_source_removal.py",
+      "initialBlob": "absent",
+      "area": "live-native-audio",
+      "primaryId": "task_2e92bcc7",
+      "sourceCommit": "2e62282fd6ca936b142a6f16a60ad69e96770804",
+      "judgeIds": [
+        "task_3b13ed9b",
+        "task_46031fcf"
+      ],
+      "resumeState": "accepted_exact_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "status": "accepted",
+      "acceptedBlob": "fe4cbdbc3e3cd3568e69be7ed54bc7da13dc4c32",
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+    },
+    {
+      "file": "native/live-linux/tests/test_capture_protocol.py",
+      "initialBlob": "absent",
+      "area": "live-native-audio",
+      "primaryId": "task_0dad3ccb",
+      "sourceCommit": "08ec6a90ee3f57e3e43ea8e97292afaae80dc1a6",
+      "judgeIds": [
+        "task_3814e201",
+        "task_0f8a556e"
+      ],
+      "resumeState": "accepted_exact_joined",
+      "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "status": "accepted",
+      "acceptedBlob": "589184ed6845c98d21a05cc338101e89708c3c6f",
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+    },
+    {
+      "file": "tests/openai-resample.test.ts",
+      "initialBlob": "absent",
+      "area": "live-native-audio",
+      "primaryId": "task_b7108f40",
+      "sourceCommit": "179da0367bc5901d9e4e7eb44c6ec79c898b54c8",
+      "judgeIds": [
+        "task_25a39150",
+        "task_cfda53f2"
+      ],
+      "resumeState": "candidate_pending_actual_code_judgment",
+      "pendingReason": "Committed primary candidate verified; no recorded completed focus ACCEPT/NO CHANGE NEEDED judgment. Historical running labels are not current liveness or approval.",
+      "status": "pending"
+    },
+    {
+      "file": "tests/live-self-test.test.ts",
+      "initialBlob": "absent",
+      "area": "live-native-audio",
+      "primaryId": null,
+      "sourceCommit": "a5642b72d82ac64e94fb58abfb5a2076b07031c3",
+      "judgeIds": [],
+      "resumeState": "related_candidate_own_primary_pending",
+      "pendingReason": "New related candidate has no own primary or completed independent focus judgment; withhold integration approval.",
+      "status": "pending"
+    },
+    {
+      "file": "tests/offline-transport-probe.test.ts",
+      "initialBlob": "absent",
+      "area": "live-native-audio",
+      "primaryId": null,
+      "sourceCommit": "a2e8025bd3ffba42a24e0b7ba3358ac97de68532",
+      "judgeIds": [],
+      "resumeState": "related_candidate_own_primary_pending",
+      "pendingReason": "New related candidate has no own primary or completed independent focus judgment; withhold integration approval.",
+      "status": "pending"
+    },
+    {
+      "file": "tests/openai-upgrade-socket-node.test.mjs",
+      "initialBlob": "absent",
+      "area": "live-native-audio",
+      "primaryId": null,
+      "sourceCommit": "31bf2843d0aad882258288ca512035fe1d64528e",
+      "judgeIds": [],
+      "resumeState": "related_candidate_own_primary_pending",
+      "pendingReason": "New related candidate has no own primary or completed independent focus judgment; withhold integration approval.",
+      "status": "pending"
     }
   ],
   "completedAreas": {

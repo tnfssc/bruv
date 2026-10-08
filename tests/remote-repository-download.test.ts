@@ -121,7 +121,7 @@ test("exhausting the child page budget cannot return a partial patch", async () 
   expect(offsets).toEqual([0]);
 });
 
-test.each([
+test.each<{ failAt: number; offsets: number[] }>([
   { failAt: 0, offsets: [0, 0, CHUNK] },
   { failAt: CHUNK, offsets: [0, CHUNK, 0, CHUNK] },
 ])("offline failure at offset $failAt propagates; retry starts a fresh download", async ({ failAt, offsets }) => {

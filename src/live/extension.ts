@@ -27,7 +27,7 @@ import { PlaybackScheduler } from "./playback";
 import { LIVE_PROVIDERS, type LiveModelId, OPENAI_LIVE_MODEL, OPENAI_REALTIME_MODELS } from "./providers";
 import { VoiceSession } from "./session";
 import { runLiveSetup } from "./setup";
-import { liveLocalOnly } from "./status";
+import { compactLiveStatus, liveLocalOnly } from "./status";
 import type { VoiceCallbacks, VoiceOrchestration, VoiceProvider } from "./types";
 
 const ID = "bruv-live";
@@ -288,22 +288,14 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
         this.renderTimer = undefined;
       }
       this.lastRender = Date.now();
-      const status =
-        this.state !== "running"
-          ? "Voice · connecting"
-          : this.inputMode === "continuous"
-            ? this.speaking
-              ? "Speaking · mic on"
-              : "Voice · mic on"
-            : this.heldEpoch !== null
-              ? "Listening · release Space to finish"
-              : !this.talkEditor
-                ? "Voice · input unavailable"
-                : this.speaking
-                  ? "Speaking · hold Space to reply"
-                  : this.thinking
-                    ? "Thinking · hold Space to speak"
-                    : "Voice · hold Space to speak";
+      const status = compactLiveStatus({
+        running: this.state === "running",
+        inputMode: this.inputMode,
+        talking: this.heldEpoch !== null,
+        inputAvailable: Boolean(this.talkEditor),
+        speaking: this.speaking,
+        thinking: this.thinking,
+      });
       if (status !== this.lastStatus) {
         this.ctx.ui.setStatus(ID, status);
         this.lastStatus = status;

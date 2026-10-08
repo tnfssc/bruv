@@ -1,8 +1,29 @@
 import { describe, expect, test } from "bun:test";
 import { BoundedOutputBuffer } from "../src/output-buffer";
 
-describe("bounded task output buffer", () => {
-  test("retains only the configured tail without whole-buffer concatenation", () => {
+describe("byte cursors and output loss", () => {
+  test("pages across append boundaries using the returned byte cursor", () => {
+    const output = new BoundedOutputBuffer(100);
+    output.append("abc");
+    output.append("def");
+
+    const first = output.read(0, 4);
+    expect(first).toEqual({
+      buffer: Buffer.from("abcd"),
+      nextOffset: 4,
+      outputLost: false,
+      hasMore: true,
+    });
+    const second = output.read(first.nextOffset, 4);
+    expect(second).toEqual({
+      buffer: Buffer.from("ef"),
+      nextOffset: 6,
+      outputLost: false,
+      hasMore: false,
+    });
+  });
+
+  test("resumes an expired cursor at the retained tail and reports the gap", () => {
     const output = new BoundedOutputBuffer(10);
     output.append("12345");
     output.append("67890");
@@ -11,12 +32,67 @@ describe("bounded task output buffer", () => {
     expect(output.retainedBytes).toBe(10);
     expect(output.baseOffset).toBe(5);
     expect(output.endOffset).toBe(15);
-    const result = output.read(0, 20);
-    expect(result.outputLost).toBe(true);
-    expect(result.buffer.toString()).toBe("67890abcde");
+    expect(output.read(0, 20)).toEqual({
+      buffer: Buffer.from("67890abcde"),
+      nextOffset: 15,
+      outputLost: true,
+      hasMore: false,
+    });
+    expect(output.read(output.baseOffset, 20)).toEqual({
+      buffer: Buffer.from("67890abcde"),
+      nextOffset: 15,
+      outputLost: false,
+      hasMore: false,
+    });
   });
 
-  test("copies incoming buffer slices instead of retaining pooled backing slabs", () => {
+  test("releases raw bytes for a storage budget without rebasing later appends", () => {
+    const output = new BoundedOutputBuffer(20);
+    output.append("A😀BC"); // 41 f0 9f 98 80 42 43: seven bytes, four characters.
+
+    expect(output.discardPrefix(2)).toBe(2);
+    expect(output.retainedBytes).toBe(5);
+    expect(output.baseOffset).toBe(2);
+    expect(output.endOffset).toBe(7);
+    // UTF-8 repair belongs to TaskManager.inspect, not this byte store.
+    expect(output.read(0, 20)).toEqual({
+      buffer: Buffer.from([0x9f, 0x98, 0x80, 0x42, 0x43]),
+      nextOffset: 7,
+      outputLost: true,
+      hasMore: false,
+    });
+    expect(output.read(2, 2)).toEqual({
+      buffer: Buffer.from([0x9f, 0x98]),
+      nextOffset: 4,
+      outputLost: false,
+      hasMore: true,
+    });
+
+    expect(output.discardPrefix(100)).toBe(5);
+    expect(output.retainedBytes).toBe(0);
+    expect(output.baseOffset).toBe(7);
+    expect(output.endOffset).toBe(7);
+    expect(output.read(0, 20)).toEqual({
+      buffer: Buffer.alloc(0),
+      nextOffset: 7,
+      outputLost: true,
+      hasMore: false,
+    });
+
+    output.append("D");
+    expect(output.baseOffset).toBe(7);
+    expect(output.endOffset).toBe(8);
+    expect(output.read(7, 20)).toEqual({
+      buffer: Buffer.from("D"),
+      nextOffset: 8,
+      outputLost: false,
+      hasMore: false,
+    });
+  });
+});
+
+describe("bounded, owned byte storage", () => {
+  test("copies incoming slices and isolates returned pages from saved bytes", () => {
     const output = new BoundedOutputBuffer(100);
     const backing = Buffer.alloc(64_000, 0);
     const slice = backing.subarray(100, 103);
@@ -24,48 +100,44 @@ describe("bounded task output buffer", () => {
     output.append(slice);
     slice.set(Buffer.from("xyz"));
 
+    const first = output.read(0, 100);
+    expect(first.buffer.toString()).toBe("abc");
+    // A caller can also mutate a returned page without changing saved output.
+    first.buffer.fill(0);
     expect(output.read(0, 100).buffer.toString()).toBe("abc");
   });
 
-  test("supports cursor pagination across chunks", () => {
-    const output = new BoundedOutputBuffer(100);
-    output.append("abc");
-    output.append("def");
-
-    const first = output.read(0, 4);
-    const second = output.read(first.nextOffset, 4);
-    expect(first.buffer.toString()).toBe("abcd");
-    expect(first.hasMore).toBe(true);
-    expect(second.buffer.toString()).toBe("ef");
-    expect(second.hasMore).toBe(false);
-  });
-
-  test("bounds metadata for pathological tiny writes", () => {
+  test("keeps the newest bytes ordered after many tiny writes", () => {
     const output = new BoundedOutputBuffer(1_000);
-    for (let index = 0; index < 20_000; index++) output.append("x");
+    for (let index = 0; index < 19_000; index++) output.append("x");
+    for (let index = 0; index < 1_000; index++) output.append(String(index % 10));
 
     expect(output.retainedBytes).toBe(1_000);
     expect(output.baseOffset).toBe(19_000);
-    expect(output.read(output.baseOffset, 2_000).buffer.length).toBe(1_000);
+    expect(output.endOffset).toBe(20_000);
+    expect(output.read(output.baseOffset, 2_000)).toEqual({
+      buffer: Buffer.from("0123456789".repeat(100)),
+      nextOffset: 20_000,
+      outputLost: false,
+      hasMore: false,
+    });
   });
 
-  test("copies only the retained tail of one oversized write", () => {
+  test("replaces older chunks with an owned tail of one oversized write", () => {
     const output = new BoundedOutputBuffer(4);
-    output.append(Buffer.from("0123456789"));
+    output.append("abc");
+    const incoming = Buffer.from("0123456789");
+    output.append(incoming);
+    incoming.fill(0);
 
     expect(output.retainedBytes).toBe(4);
-    expect(output.baseOffset).toBe(6);
-    expect(output.read(6, 4).buffer.toString()).toBe("6789");
-  });
-  test("can release retained prefixes while preserving logical offsets", () => {
-    const output = new BoundedOutputBuffer(20);
-    output.append("A😀BC");
-
-    expect(output.discardPrefix(2)).toBe(2);
-    expect(output.baseOffset).toBe(2);
-    expect(output.endOffset).toBe(7);
-    const result = output.read(0, 20);
-    expect(result.outputLost).toBe(true);
-    expect(result.nextOffset).toBe(7);
+    expect(output.baseOffset).toBe(9);
+    expect(output.endOffset).toBe(13);
+    expect(output.read(9, 4)).toEqual({
+      buffer: Buffer.from("6789"),
+      nextOffset: 13,
+      outputLost: false,
+      hasMore: false,
+    });
   });
 });

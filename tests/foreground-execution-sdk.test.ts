@@ -1,18 +1,22 @@
 import { afterEach, beforeAll, expect, test } from "bun:test";
-import { runToolCall } from "@earendil-works/pi-agent-core";
-import { chmod, mkdtemp, rm } from "node:fs/promises";
+import { runToolCall, type AgentTool, type AgentToolCall } from "@earendil-works/pi-agent-core";
+import { chmod, mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { join, resolve } from "node:path";
 import { parseStreamingJson } from "@earendil-works/pi-ai";
 import {
   AssistantMessageComponent,
   InteractiveMode,
   initTheme,
   ToolExecutionComponent,
+  SessionManager,
   type ExtensionAPI,
+  type ExtensionToolContext,
+  type ToolDefinition,
 } from "@earendil-works/pi-coding-agent";
 import { Container, getCapabilities, setCapabilities, stripTerminalSequences } from "@earendil-works/pi-tui";
 import { registerExecuteTool } from "../src/typescript/extension";
+import type { ExecutionResult } from "../src/typescript/execution";
 import { installQuietToolUi } from "../src/ui/quiet-tool-ui";
 import { installConversationDensity } from "../src/ui/conversation-density";
 
@@ -25,9 +29,9 @@ beforeAll(() => {
     if (packageDir !== undefined) process.env.PI_PACKAGE_DIR = packageDir;
   }
 });
-const cleanups: Array<() => void> = [];
-afterEach(() => {
-  while (cleanups.length) cleanups.pop()?.();
+const cleanups: Array<() => void | Promise<void>> = [];
+afterEach(async () => {
+  while (cleanups.length) await cleanups.pop()?.();
 });
 const plain = (component: { render(width: number): string[] }) =>
   component
@@ -35,24 +39,32 @@ const plain = (component: { render(width: number): string[] }) =>
     .map(stripTerminalSequences)
     .map((line) => line.trimEnd())
     .filter(Boolean);
-function fixture(args: unknown = {}) {
-  const handlers = new Map<string, Function>();
-  let definition: any;
+function fixture(
+  args: AgentToolCall["arguments"] = {},
+  options: { cwd?: string; executable?: string; sessionManager?: SessionManager } = {},
+) {
+  const handlers = new Map<string, () => void | Promise<void>>();
+  let definition!: ToolDefinition;
   let redraws = 0;
-  registerExecuteTool(
+  const cwd = options.cwd ?? "/fixture";
+  const ctx = { cwd, sessionManager: options.sessionManager } as unknown as ExtensionToolContext;
+  const execution = registerExecuteTool(
     {
-      on(name: string, fn: Function) {
+      on(name: string, fn: () => void | Promise<void>) {
         handlers.set(name, fn);
       },
-      registerTool(tool: unknown) {
+      registerTool(tool: ToolDefinition) {
         definition = tool;
       },
     } as unknown as ExtensionAPI,
     undefined,
-    undefined,
+    options.executable,
     () => 0,
   );
-  cleanups.push(() => handlers.get("agent_end")?.());
+  // Shutdown stops preview timers and awaits any real executor still owned by this fixture.
+  cleanups.push(async () => {
+    await handlers.get("session_shutdown")?.();
+  });
   const tool = new ToolExecutionComponent(
     "execute",
     "call-1",
@@ -64,10 +76,46 @@ function fixture(args: unknown = {}) {
         redraws++;
       },
     } as never,
-    "/fixture",
+    cwd,
   );
-  return { tool, definition, handlers, redraws: () => redraws };
+  return {
+    tool,
+    definition,
+    redraws: () => redraws,
+    agentEnd: () => handlers.get("agent_end")?.(),
+    stopForeground: (sessionManager = options.sessionManager) =>
+      execution.stopForeground({ ...ctx, sessionManager } as ExtensionToolContext),
+    execute: () => {
+      const sdkTool: AgentTool = {
+        ...definition,
+        execute: (id, input, signal, onUpdate) => definition.execute(id, input, signal, onUpdate, ctx),
+      };
+      return runToolCall(
+        { type: "toolCall", id: "call-1", name: "execute", arguments: args },
+        {
+          tools: [sdkTool],
+          assistantMessage: { role: "assistant", content: [] } as never,
+          context: { messages: [], tools: [sdkTool] },
+        },
+      );
+    },
+  };
 }
+
+async function executorFixture(args: AgentToolCall["arguments"], script?: string) {
+  const directory = await mkdtemp(join(tmpdir(), "bruv-foreground-sdk-"));
+  cleanups.push(() => rm(directory, { recursive: true, force: true }));
+  let executable = resolve(import.meta.dir, "../dist/bruv");
+  if (script !== undefined) {
+    executable = join(directory, "fixture-execute");
+    await Bun.write(executable, script);
+    await chmod(executable, 0o700);
+  }
+  // Keep the real manager and its output artifacts alive until executor shutdown has completed.
+  const sessionManager = SessionManager.create(directory, join(directory, "sessions"));
+  return { ...fixture(args, { cwd: directory, executable, sessionManager }), directory };
+}
+
 const success = {
   content: [{ type: "text", text: "Execution completed with exit code 0.\n\nstdout:\nSECRET_OUTPUT" }],
   details: { exitCode: 0 },
@@ -76,7 +124,9 @@ const success = {
 
 test("SDK partial argument events keep one animated row from empty call through label/code/execution/partial output", async () => {
   const { tool, definition, redraws } = fixture();
-  expect(Object.keys(definition.parameters.properties).slice(0, 2)).toEqual(["label", "code"]);
+  expect(
+    Object.keys((definition.parameters as { properties: Record<string, unknown> }).properties).slice(0, 2),
+  ).toEqual(["label", "code"]);
   expect(plain(tool)).toEqual(["⠋"]);
   tool.updateArgs(parseStreamingJson('{"label":"Read'));
   expect(plain(tool)).toEqual(["⠋ Read"]);
@@ -237,62 +287,71 @@ test("SDK exception output selects the actual error rather than a source frame o
 });
 
 test("SDK active action animation is stopped at agent end even without a result", async () => {
-  const { tool, handlers, redraws } = fixture({ label: "Read README" });
+  const { tool, agentEnd, redraws } = fixture({ label: "Read README" });
   expect(plain(tool)).toEqual(["⠋ Read README"]);
-  handlers.get("agent_end")?.();
+  agentEnd();
   const stoppedRedraws = redraws();
   await Bun.sleep(100);
   expect(redraws()).toBe(stoppedRedraws);
 });
 
 test("real SDK rejected tool execution preserves actual failure output and concise rendering", async () => {
-  const directory = await mkdtemp(join(tmpdir(), "die-foreground-error-"));
-  try {
-    const executable = join(directory, "fixture-execute");
-    await Bun.write(executable, "#!/bin/sh\nprintf 'ordinary output\\n'\nprintf 'permission denied\\n' >&2\nexit 7\n");
-    await chmod(executable, 0o700);
-    let definition: any;
-    registerExecuteTool(
-      {
-        on() {},
-        registerTool(tool: unknown) {
-          definition = tool;
-        },
-      } as unknown as ExtensionAPI,
-      undefined,
-      executable,
-      () => 0,
-    );
-    const tool = {
-      ...definition,
-      execute: (id: string, args: unknown, signal: AbortSignal, onUpdate: unknown) =>
-        definition.execute(id, args, signal, onUpdate, { cwd: directory }),
-    };
-    const outcome = await runToolCall(
-      { type: "toolCall", id: "error-call", name: "execute", arguments: { label: "Read README", code: "fixture" } },
-      {
-        tools: [tool],
-        assistantMessage: { role: "assistant", content: [] } as never,
-        context: { messages: [], tools: [tool] },
-      },
-    );
-    expect(outcome.isError).toBe(true);
-    const failure = outcome.result.content.map((part: any) => part.text ?? "").join("\n");
-    expect(failure).toContain("Execution failed with exit code 7.");
-    expect(failure).toContain("ordinary output");
-    expect(failure).toContain("permission denied");
-    const component = new ToolExecutionComponent(
-      "execute",
-      "error-call",
-      { label: "Read README", code: "fixture" },
-      {},
-      definition,
-      { requestRender() {} } as never,
-      directory,
-    );
-    component.updateResult({ ...outcome.result, isError: outcome.isError });
-    expect(plain(component)).toEqual(["✗ Read README — permission denied"]);
-  } finally {
-    await rm(directory, { recursive: true, force: true });
+  const { tool, execute } = await executorFixture(
+    { label: "Read README", code: "fixture" },
+    "#!/bin/sh\nprintf 'ordinary output\\n'\nprintf 'permission denied\\n' >&2\nexit 7\n",
+  );
+  const outcome = await execute();
+  expect(outcome.isError).toBe(true);
+  const failure = outcome.result.content.map((part) => (part.type === "text" ? part.text : "")).join("\n");
+  expect(failure).toContain("Execution failed with exit code 7.");
+  expect(failure).toContain("ordinary output");
+  expect(failure).toContain("permission denied");
+  tool.updateResult({ ...outcome.result, isError: outcome.isError });
+  expect(plain(tool)).toEqual(["✗ Read README — permission denied"]);
+});
+
+test("real SDK foreground completion retains output and releases execution ownership", async () => {
+  const { tool, execute, stopForeground, directory } = await executorFixture({
+    label: "Read output",
+    code: 'console.log("FOREGROUND_OUTPUT".repeat(1000))',
+  });
+  const outcome = await execute();
+  expect(outcome.isError).toBe(false);
+  const details = outcome.result.details as ExecutionResult;
+  expect(details.exitCode).toBe(0);
+  expect(details.cancelled).toBe(false);
+  expect(details.stdoutPath).toContain(join(directory, "sessions"));
+  expect(await readFile(details.stdoutPath!, "utf8")).toBe("FOREGROUND_OUTPUT".repeat(1000) + "\n");
+  expect(stopForeground()).toBe(0);
+  tool.updateResult({ ...outcome.result, isError: outcome.isError });
+  expect(plain(tool)).toEqual(["✓ Read output"]);
+});
+
+test("real SDK foreground stop is owner-scoped and completion waits for worker exit", async () => {
+  const { tool, execute, stopForeground, directory } = await executorFixture({
+    label: "Wait",
+    code: 'await Bun.write(process.cwd() + "/ready", String(process.pid)); await new Promise(() => {});',
+  });
+  const pending = execute();
+  const readyPath = join(directory, "ready");
+  const deadline = Date.now() + 3_000;
+  // Bun.file retains an initial missing-file observation; poll with a fresh handle.
+  while (!(await Bun.file(readyPath).exists())) {
+    if (Date.now() > deadline) throw new Error("Foreground worker did not become ready");
+    await Bun.sleep(10);
   }
+  const pid = Number(await readFile(readyPath, "utf8"));
+  expect(Number.isInteger(pid) && pid > 0).toBe(true);
+  expect(stopForeground(SessionManager.inMemory(directory))).toBe(0);
+  expect(() => process.kill(pid, 0)).not.toThrow();
+  expect(stopForeground()).toBe(1);
+  const outcome = await pending;
+  expect(outcome.isError).toBe(true);
+  expect(outcome.result.content).toEqual([
+    expect.objectContaining({ type: "text", text: expect.stringContaining("Execution cancelled") }),
+  ]);
+  expect(() => process.kill(pid, 0)).toThrow();
+  expect(stopForeground()).toBe(0);
+  tool.updateResult({ ...outcome.result, isError: outcome.isError });
+  expect(plain(tool)).toEqual(["✗ Wait — failed"]);
 });
