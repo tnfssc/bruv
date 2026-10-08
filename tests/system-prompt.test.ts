@@ -1,4 +1,3 @@
-import { DefaultResourceLoader, SettingsManager } from "@earendil-works/pi-coding-agent";
 import { expect, test } from "bun:test";
 import { mkdir, mkdtemp, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -110,17 +109,40 @@ test.each([
   },
 ])("SDK fallback: $name", async ({ files, projectTrusted, expected }) => {
   const paths = await systemPromptFiles(files);
-  const settingsManager = SettingsManager.inMemory({}, { projectTrusted });
-  const loader = new DefaultResourceLoader({
-    ...paths,
-    settingsManager,
-    noExtensions: true,
-    noSkills: true,
-    noPromptTemplates: true,
-    noThemes: true,
-    noContextFiles: true,
-    systemPrompt: bruvSystemPromptFallback({ ...paths, projectTrusted: settingsManager.isProjectTrusted() }),
-  });
-  await loader.reload();
-  expect(loader.getSystemPrompt()).toBe(expected);
+  // Pi caches package metadata on first import. A fresh child mirrors the CLI's
+  // PI_PACKAGE_DIR-before-SDK ordering instead of discovering upstream .pi files.
+  const child = Bun.spawn(
+    [
+      process.execPath,
+      "--eval",
+      `
+      import { DefaultResourceLoader, SettingsManager } from "@earendil-works/pi-coding-agent";
+      import { bruvSystemPromptFallback } from "./src/system-prompt.ts";
+      const { paths, projectTrusted } = JSON.parse(process.argv[1]);
+      const settingsManager = SettingsManager.inMemory({}, { projectTrusted });
+      const loader = new DefaultResourceLoader({
+        ...paths, settingsManager,
+        noExtensions: true, noSkills: true, noPromptTemplates: true,
+        noThemes: true, noContextFiles: true,
+        systemPrompt: bruvSystemPromptFallback({ ...paths, projectTrusted: settingsManager.isProjectTrusted() }),
+      });
+      await loader.reload();
+      console.log(JSON.stringify({ prompt: loader.getSystemPrompt() }));
+    `,
+      JSON.stringify({ paths, projectTrusted }),
+    ],
+    {
+      cwd: join(import.meta.dir, ".."),
+      env: { ...process.env, PI_PACKAGE_DIR: join(import.meta.dir, "..", "runtime-assets") },
+      stdout: "pipe",
+      stderr: "pipe",
+    },
+  );
+  const [stdout, stderr, code] = await Promise.all([
+    new Response(child.stdout).text(),
+    new Response(child.stderr).text(),
+    child.exited,
+  ]);
+  expect(code, stderr).toBe(0);
+  expect(JSON.parse(stdout).prompt).toBe(expected);
 });

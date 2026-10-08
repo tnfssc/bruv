@@ -549,9 +549,9 @@ export function registerNativeFastMode(pi: ExtensionAPI) {
     const ctx = controller.context;
     if (!ctx?.model) throw new Error("Select a model before changing native fast mode");
     const compatibilityError = bindContext(ctx);
+    if (enabled && compatibilityError) throw new Error(compatibilityError);
     const support = nativeFastSupport(ctx.model, ctx.modelRegistry.isUsingOAuth(ctx.model));
     if (enabled) {
-      if (compatibilityError) throw new Error(compatibilityError);
       if (!support.supported) throw new Error(support.reason);
       if (!authSurfaceMatches(ctx, support.surface))
         throw new Error("Native fast mode authentication surface mismatch");
@@ -602,6 +602,11 @@ export function registerNativeFastMode(pi: ExtensionAPI) {
         provider: model.provider,
         model: model.id,
       };
+      if (action === "on" && compatibilityError) {
+        commandDiagnostic(ctx, FAST_REFUSED_COMPATIBILITY, "blocked", operationId);
+        ctx.ui.notify(compatibilityError, "error");
+        return;
+      }
       const support = nativeFastSupport(model, ctx.modelRegistry.isUsingOAuth(model));
       if (action === "off" && !officialSurface(model)) {
         commandDiagnostic(ctx, FAST_REFUSED_UNSUPPORTED, "blocked", operationId);
@@ -614,11 +619,6 @@ export function registerNativeFastMode(pi: ExtensionAPI) {
       if (action === "on" && !support.supported) {
         commandDiagnostic(ctx, FAST_REFUSED_UNSUPPORTED, "blocked", operationId);
         ctx.ui.notify(support.reason, "error");
-        return;
-      }
-      if (action === "on" && compatibilityError) {
-        commandDiagnostic(ctx, FAST_REFUSED_COMPATIBILITY, "blocked", operationId);
-        ctx.ui.notify(compatibilityError, "error");
         return;
       }
       if (action === "on") {
@@ -699,7 +699,8 @@ export function registerNativeFastMode(pi: ExtensionAPI) {
     if (inheritFast) {
       inheritFast = false;
       const model = ctx.model;
-      const support = model && nativeFastSupport(model, ctx.modelRegistry.isUsingOAuth(model));
+      const support =
+        !compatibilityError && model ? nativeFastSupport(model, ctx.modelRegistry.isUsingOAuth(model)) : undefined;
       if (
         !compatibilityError &&
         model &&

@@ -14,6 +14,11 @@ import time
 
 
 def seed_offline_home(home):
+    project = home / "project"
+    resources = project / ".bruv"
+    resources.mkdir(parents=True)
+    (resources / "SYSTEM.md").write_text("UNTRUSTED FIXTURE: must not become the system prompt")
+
     remote = home / ".bruv/remote"
     grants = remote / "capability-grants"
     grants.mkdir(parents=True)
@@ -52,6 +57,9 @@ def source_terminal(home):
     env = dict(os.environ, HOME=str(home), TERM="xterm-256color", NO_COLOR="1")
     env.pop("BRUV_REMOTE_RUNTIME_STATE", None)
     env.pop("OPENAI_API_KEY", None)
+    # Do not inherit an SDK/config directory outside this terminal fixture.
+    for key in ("PI_CODING_AGENT_DIR", "BRUV_CODING_AGENT_DIR"):
+        env[key] = str(home / "sdk")
     command = [
         os.environ["BUN_BIN"], str(Path("src/cli.ts").resolve()),
         "--offline", "--no-approve", "--model", "openai/gpt-4o-mini",
@@ -60,7 +68,7 @@ def source_terminal(home):
     process = None
     try:
         # Inherit the selective runner group so cancellation reaches the CLI too.
-        process = subprocess.Popen(command, stdin=slave, stdout=slave, stderr=slave, env=env)
+        process = subprocess.Popen(command, stdin=slave, stdout=slave, stderr=slave, env=env, cwd=home / "project")
         os.close(slave)
         slave = None
         yield master
@@ -130,12 +138,11 @@ def prove_offline_revoke(master, grant):
 
 
 def main():
-    # The home outlives the CLI; setup, launch, and assertion failures all clean up.
-    with tempfile.TemporaryDirectory(prefix="bruv-remote-pty-") as directory:
-        home = Path(directory)
-        grant = seed_offline_home(home)
-        with source_terminal(home) as master:
-            prove_offline_revoke(master, grant)
+    # Retain the owned fixture for inspection, including on assertion failure.
+    home = Path(tempfile.mkdtemp(prefix="bruv-remote-pty-"))
+    grant = seed_offline_home(home)
+    with source_terminal(home) as master:
+        prove_offline_revoke(master, grant)
 
 
 if __name__ == "__main__":

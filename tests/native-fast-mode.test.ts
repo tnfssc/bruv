@@ -390,6 +390,8 @@ test("enabling and restoring fast fail visibly without the pinned runtime seam",
   expect(h.entries).toEqual([]);
   expect(h.notices.at(-1)).toMatchObject({ kind: "error" });
   expect(h.notices.at(-1).message).toContain("pinned Pi 1.0.3");
+  expect(() => h.registration.setWithCostConsent(true)).toThrow("pinned Pi 1.0.3");
+  expect(h.entries).toEqual([]);
 
   h.entries.push({
     type: "custom",
@@ -408,6 +410,22 @@ test("enabling and restoring fast fail visibly without the pinned runtime seam",
   await h.emit("session_start");
   expect(h.notices.at(-1)).toMatchObject({ kind: "error" });
   expect(h.notices.at(-1).message).toContain("compatibility seam is missing");
+
+  const savedFast = process.env[NATIVE_FAST_CHILD_ENV];
+  const savedDepth = process.env.BRUV_SUBAGENT_DEPTH;
+  try {
+    process.env[NATIVE_FAST_CHILD_ENV] = "1";
+    process.env.BRUV_SUBAGENT_DEPTH = "1";
+    const child = harness(model, { mode: "print", accept: true });
+    child.ctx.modelRegistry.runtime = undefined;
+    await child.emit("session_start");
+    expect(child.entries).toEqual([]);
+  } finally {
+    if (savedFast === undefined) delete process.env[NATIVE_FAST_CHILD_ENV];
+    else process.env[NATIVE_FAST_CHILD_ENV] = savedFast;
+    if (savedDepth === undefined) delete process.env.BRUV_SUBAGENT_DEPTH;
+    else process.env.BRUV_SUBAGENT_DEPTH = savedDepth;
+  }
 });
 
 test("consent is rejected if session, branch, or model changes while confirmation is open", async () => {
