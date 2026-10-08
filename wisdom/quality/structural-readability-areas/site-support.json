@@ -5,7 +5,7 @@
     {
       "focus": "site/.gitignore",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-unchanged",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_e433e2c2",
@@ -46,7 +46,7 @@
     {
       "focus": "site/assets/brand/bruv-icon.svg",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-unchanged",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_74788f3b",
@@ -87,7 +87,7 @@
     {
       "focus": "site/assets/brand/bruv-wordmark-light.svg",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-unchanged",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_8e8b5dd8",
@@ -128,7 +128,7 @@
     {
       "focus": "site/assets/brand/bruv-wordmark.svg",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-unchanged",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_e142ec25",
@@ -169,7 +169,7 @@
     {
       "focus": "site/assets/brand/wordmark-cells.json",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-unchanged",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_4cffbf2e",
@@ -210,7 +210,7 @@
     {
       "focus": "site/assets/cli-settings.txt",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-unchanged",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_a55e7213",
@@ -251,7 +251,7 @@
     {
       "focus": "site/assets/settings-cells.json",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-unchanged",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_dc9fc829",
@@ -292,7 +292,7 @@
     {
       "focus": "site/brand.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-unchanged",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_4f28d450",
@@ -343,7 +343,7 @@
     {
       "focus": "site/capture.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-integrated",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_a8322d06",
@@ -386,7 +386,7 @@
     {
       "focus": "site/content.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-unchanged",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_6b21fc71",
@@ -427,7 +427,7 @@
     {
       "focus": "site/demos.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-integrated",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_008ddeae",
@@ -478,7 +478,7 @@
     {
       "focus": "site/demos.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-integrated",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_01e034e7",
@@ -526,7 +526,7 @@
     {
       "focus": "site/html-animation.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-integrated",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_9c42d8e3",
@@ -569,7 +569,7 @@
     {
       "focus": "site/html-cells.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-unchanged",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_0fff100d",
@@ -618,7 +618,7 @@
     {
       "focus": "site/index.html",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-unchanged",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_1510f666",
@@ -659,7 +659,7 @@
     {
       "focus": "site/install-command.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-unchanged",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_867e5969",
@@ -700,7 +700,7 @@
     {
       "focus": "site/install-html.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-unchanged",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_8dfc6d3c",
@@ -741,7 +741,7 @@
     {
       "focus": "site/layout.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-integrated",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_c8710829",
@@ -784,7 +784,7 @@
     {
       "focus": "site/package.json",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-unchanged",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_f9d8fefe",
@@ -825,7 +825,7 @@
     {
       "focus": "site/playback.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-unchanged",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_ed0b8880",
@@ -866,7 +866,7 @@
     {
       "focus": "site/scripts/animation.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-integrated",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_5d88706f",
@@ -909,7 +909,7 @@
     {
       "focus": "site/scripts/browser.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-unchanged",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_4d170cd0",
@@ -950,7 +950,7 @@
     {
       "focus": "site/scripts/build.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-unchanged",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_3a3293a9",
@@ -991,7 +991,7 @@
     {
       "focus": "site/scripts/build.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-integrated",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_f66bbf8b",
@@ -1034,7 +1034,7 @@
     {
       "focus": "site/scripts/capture-demo-source.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-integrated",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_82201d2d",
@@ -1077,7 +1077,7 @@
     {
       "focus": "site/scripts/capture-real-pty.py",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-unchanged",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_46c581d4",
@@ -1118,7 +1118,7 @@
     {
       "focus": "site/scripts/capture-real.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-unchanged",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_78b57531",
@@ -1160,7 +1160,7 @@
     {
       "focus": "site/scripts/extract-cells.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-integrated",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_f07c6c88",
@@ -1203,7 +1203,7 @@
     {
       "focus": "site/scripts/generate-wordmark.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-unchanged",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_ff69ebfe",
@@ -1252,7 +1252,7 @@
     {
       "focus": "site/scripts/html-animation.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-integrated",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_9f36ba3a",
@@ -1295,7 +1295,7 @@
     {
       "focus": "site/scripts/install-ui.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-integrated",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_072fdc49",
@@ -1338,7 +1338,7 @@
     {
       "focus": "site/scripts/install.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-integrated",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_d558bcd2",
@@ -1381,7 +1381,7 @@
     {
       "focus": "site/scripts/preview.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-unchanged",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_0207fb65",
@@ -1422,7 +1422,7 @@
     {
       "focus": "site/scripts/scroll.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-integrated",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_6f289d7b",
@@ -1465,7 +1465,7 @@
     {
       "focus": "site/scripts/startup.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-unchanged",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_2473ecf3",
@@ -1506,7 +1506,7 @@
     {
       "focus": "site/scripts/validate.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-integrated",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_feb44467",
@@ -1549,7 +1549,7 @@
     {
       "focus": "site/scroll.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-unchanged",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_955a4df5",
@@ -1590,7 +1590,7 @@
     {
       "focus": "site/styles.css",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-unchanged",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_05fa70bb",
@@ -1631,7 +1631,7 @@
     {
       "focus": "site/terminal.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-integrated",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_8638bdbf",
@@ -1674,7 +1674,7 @@
     {
       "focus": "site/wrangler.jsonc",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-unchanged",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_60419896",
@@ -1715,7 +1715,7 @@
     {
       "focus": "support/gpt-live-explained.html",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-unchanged",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_1e4c14a6",
@@ -1941,5 +1941,9 @@
     "cleanSource": true,
     "noteByteCheck": "No NUL or ANSI escape bytes;Markdown fences balanced."
   },
-  "status": "accepted-ready-for-parent-integration"
+  "status": "accepted-ready-for-parent-integration",
+  "resumeStatus": {
+    "accepted": 41,
+    "pending": 0
+  }
 }

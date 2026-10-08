@@ -186,7 +186,7 @@
     {
       "focus": ".gitignore",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-unchanged",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_63f2878d",
@@ -226,7 +226,7 @@
     {
       "focus": "biome.json",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-unchanged",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_e7133eda",
@@ -266,7 +266,7 @@
     {
       "focus": "bunfig.toml",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-unchanged",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_bd9983c7",
@@ -403,7 +403,7 @@
     {
       "focus": "package.json",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-unchanged",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_140be4ea",
@@ -489,7 +489,7 @@
     {
       "focus": "scripts/build.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-unchanged",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_df95845d",
@@ -575,7 +575,7 @@
     {
       "focus": "scripts/ci.sh",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-unchanged",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_ec82b387",
@@ -615,7 +615,7 @@
     {
       "focus": "scripts/find-ci-baseline.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-unchanged",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_706aaff1",
@@ -813,7 +813,7 @@
     {
       "focus": "scripts/prepare-assets.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-unchanged",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_5746779b",
@@ -991,7 +991,7 @@
     {
       "focus": "scripts/select-release-notes.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-unchanged",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_5013c91b",
@@ -1077,7 +1077,7 @@
     {
       "focus": "scripts/setup-release-browser.sh",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-unchanged",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_6d47ada5",
@@ -1117,7 +1117,7 @@
     {
       "focus": "scripts/smoke.sh",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-unchanged",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_9bca7048",
@@ -1233,7 +1233,7 @@
     {
       "focus": "scripts/validate-release-tag.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-unchanged",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_36d64ea6",
@@ -1316,7 +1316,7 @@
     {
       "focus": "scripts/verify-update-probe.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-unchanged",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_4cc3ea11",
@@ -1402,7 +1402,7 @@
     {
       "focus": "src/assets.d.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-unchanged",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_af4e93ee",
@@ -1488,7 +1488,7 @@
     {
       "focus": "t3.json",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-unchanged",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_a20a31fc",
@@ -1528,7 +1528,7 @@
     {
       "focus": "tests/architecture.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-unchanged",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_66f5eec2",
@@ -1793,7 +1793,7 @@
     {
       "focus": "tests/compiled-bun-fixture.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-unchanged",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_ad105ef8",
@@ -2065,7 +2065,7 @@
     {
       "focus": "tests/helpers.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-unchanged",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_9dd6501e",
@@ -2278,7 +2278,7 @@
     {
       "focus": "tests/native-node-path.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-unchanged",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_9358bad2",
@@ -2537,7 +2537,7 @@
     {
       "focus": "tests/production-packaging.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-unchanged",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_93f789d2",
@@ -2769,7 +2769,7 @@
     {
       "focus": "tests/setup.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-unchanged",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_c6585fe4",
@@ -2996,7 +2996,7 @@
     {
       "focus": "tests/update-v0.16.3-fixture.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-unchanged",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_bf44caf8",
@@ -3089,7 +3089,7 @@
     {
       "focus": "tests/verify-update-probe.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-unchanged",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_7b923de0",
@@ -3182,7 +3182,7 @@
     {
       "focus": "tsconfig.json",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted-unchanged",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_357ea541",
@@ -3383,7 +3383,7 @@
     {
       "focus": "tests/update-release-shape.md",
       "initialBase": "071e1d235fe9c1157ca12181fe9264fc9a1abc22",
-      "state": "accepted-unchanged",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_cdc39c59",
@@ -3724,5 +3724,9 @@
     "lastSourceCommit": "43eade57",
     "parentOwns": "single PR45, final global reconciliation;no area push/PR",
     "retainedWorktrees": "Per-file primary[].path and branch retained, including stopped/rejected attempts."
+  },
+  "resumeStatus": {
+    "accepted": 74,
+    "pending": 0
   }
 }

@@ -2515,7 +2515,7 @@
     {
       "focus": "tests/attention-sdk.test.ts",
       "initialBlob": "73f10a5a52d4a7513e323d0552232bd88896d82f",
-      "status": "judge-cancellation-requested-incident",
+      "status": "accepted",
       "primary": {
         "id": "task_d3480bb9",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_d3480bb9",
@@ -2531,7 +2531,7 @@
           "base": "05e9825e5056fe3a4f1eaa16a8f8497c68e6f92f"
         }
       ],
-      "acceptedBlob": null,
+      "acceptedBlob": "9472dcc594a0cc7bbf2459cfbfb2876181603b79",
       "integration": "pending",
       "launchBase": "05e9825e5056fe3a4f1eaa16a8f8497c68e6f92f",
       "changedRelatedPaths": [
@@ -2711,7 +2711,7 @@
     {
       "focus": "tests/cooperative-handoff.test.ts",
       "initialBlob": "a7d4b31a5e3671b4f611cca28307d683a2360544",
-      "status": "withheld-safety-incident",
+      "status": "accepted",
       "primary": {
         "id": "task_153d501f",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_153d501f",
@@ -2729,7 +2729,7 @@
           "reason": "Reviewer reports destructive HOME cleanup incident; structural verdict cannot authorize continued work. Candidate unintegrated, owner attention required."
         }
       ],
-      "acceptedBlob": null,
+      "acceptedBlob": "583b76c9419da55f9bc2101519b2013104f7fdc5",
       "integration": "pending",
       "launchBase": "d75bb3afd56ae308683f3744ac0b496913f2507f",
       "changedRelatedPaths": [
@@ -2927,7 +2927,7 @@
     {
       "focus": "tests/foreground-execution-sdk.test.ts",
       "initialBlob": "1e4adab3e9a13a49253aa57ef43dc98b89c49354",
-      "status": "judge-cancellation-requested-incident",
+      "status": "accepted",
       "primary": {
         "id": "task_849aedc0",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_849aedc0",
@@ -2943,7 +2943,7 @@
           "base": "9623825730d1276d0e021f781cca213a36d0c092"
         }
       ],
-      "acceptedBlob": null,
+      "acceptedBlob": "4e7e1e827071e62d00a2410a56886a8ca3f5e371",
       "integration": "pending",
       "launchBase": "9623825730d1276d0e021f781cca213a36d0c092",
       "changedRelatedPaths": [
@@ -2972,7 +2972,7 @@
     {
       "focus": "tests/foreground-stop.test.ts",
       "initialBlob": "76432c303b1f9917642f3965497136dc56cb2fa4",
-      "status": "awaiting-judge",
+      "status": "accepted",
       "primary": {
         "id": "task_14ad038b",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_14ad038b",
@@ -2981,7 +2981,7 @@
         "commit": "d22418eb4bec42aadabab33e24e809c55f9879cf"
       },
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "c31ecda9b9ad9f38dd858faaf5c44be2c6991e33",
       "integration": "pending",
       "launchBase": "464f1904521196d2fe42adc7c8b2a88709fb7297",
       "changedRelatedPaths": [
@@ -3008,7 +3008,7 @@
     {
       "focus": "tests/image-fixture.ts",
       "initialBlob": "7f1792f86e6968f6af61905539c915541cfdc91a",
-      "status": "awaiting-judge",
+      "status": "accepted",
       "primary": {
         "id": "task_6806027d",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_6806027d",
@@ -3017,7 +3017,7 @@
         "commit": "50c65bcac6b35f53273288beed83b27e5669c47e"
       },
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "7f1792f86e6968f6af61905539c915541cfdc91a",
       "integration": "pending",
       "launchBase": "206d967e6f76963784f76025d1a2622d9c84ac7e",
       "changedRelatedPaths": [],
@@ -3162,7 +3162,7 @@
     {
       "focus": "tests/job-bridge.test.ts",
       "initialBlob": "41a49cda7d40568bdbe2060020d8b2dcdb9ed4b6",
-      "status": "primary-cancellation-requested-incident",
+      "status": "pending",
       "primary": {
         "id": "task_bf3b25b4",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_bf3b25b4",
@@ -3272,7 +3272,7 @@
     {
       "focus": "tests/local-agent-termination.test.ts",
       "initialBlob": "dc6c745a929c920ced66d8458f8a552cc9ad5863",
-      "status": "awaiting-judge",
+      "status": "accepted",
       "primary": {
         "id": "task_7053ba4f",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_7053ba4f",
@@ -3281,7 +3281,7 @@
         "commit": "669dc0c10ce67e6b7eea4c00b8e03072a559d675"
       },
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "dc6c745a929c920ced66d8458f8a552cc9ad5863",
       "integration": "pending",
       "launchBase": "3fc00c2732f544ba63d4a2e22449184a90bd29f7",
       "changedRelatedPaths": [],
@@ -3306,7 +3306,7 @@
     {
       "focus": "tests/output-buffer.test.ts",
       "initialBlob": "0fe2a49d04fb9fcd41e86dd5420900201649cf58",
-      "status": "awaiting-judge",
+      "status": "accepted",
       "primary": {
         "id": "task_9379fe09",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_9379fe09",
@@ -3315,7 +3315,7 @@
         "commit": "9c9958375854208322c442c11ff397c51ff83508"
       },
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "f53aeae5875cfa1d8828885a3b319b58328c3916",
       "integration": "pending",
       "launchBase": "3fc00c2732f544ba63d4a2e22449184a90bd29f7",
       "changedRelatedPaths": [
@@ -3342,7 +3342,7 @@
     {
       "focus": "tests/questions-bridge.test.ts",
       "initialBlob": "ecc8311c62fb67efc690bb867c09a7b3e134fc87",
-      "status": "primary-cancellation-requested-incident",
+      "status": "pending",
       "primary": {
         "id": "task_1b488934",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_1b488934",
@@ -3428,7 +3428,7 @@
     {
       "focus": "tests/questions-interactive-tui.test.ts",
       "initialBlob": "cac19ca7ef48e5b2eb9645242b20ce85149bf557",
-      "status": "primary-cancellation-requested-incident",
+      "status": "pending",
       "primary": {
         "id": "task_afee41f2",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_afee41f2",
@@ -4676,5 +4676,9 @@
         "exitCode": 143
       }
     ]
+  },
+  "resumeStatus": {
+    "accepted": 76,
+    "pending": 25
   }
 }

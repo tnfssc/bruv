@@ -8,7 +8,7 @@
     {
       "file": "scripts/bruv-claude-compat.sh",
       "initialBlob": "e3fc96419050e349c3beb8f9043a47e61b8443e0",
-      "status": "accepted-unchanged",
+      "status": "accepted",
       "primary": {
         "id": "task_3e881127",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_3e881127",
@@ -50,7 +50,7 @@
     {
       "file": "scripts/build-claude-compat.ts",
       "initialBlob": "288ab823259a840b1f8b547d4366406d0340c963",
-      "status": "accepted-unchanged",
+      "status": "accepted",
       "primary": {
         "id": "task_af37fc58",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_af37fc58",
@@ -92,7 +92,7 @@
     {
       "file": "scripts/claude-compat-launcher.ts",
       "initialBlob": "42cadbf1870ff31d75b1d2d137c7d405a3e5b285",
-      "status": "accepted-unchanged",
+      "status": "accepted",
       "primary": {
         "id": "task_fadcda8f",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_fadcda8f",
@@ -134,7 +134,7 @@
     {
       "file": "scripts/claude-native-acceptance/app-delegation-driver.mjs",
       "initialBlob": "b155c48a81e9f9206dff243ce82caa5f1ce3f762",
-      "status": "accepted-integrated",
+      "status": "accepted",
       "primary": {
         "id": "task_866762ca",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_866762ca",
@@ -181,7 +181,7 @@
     {
       "file": "scripts/claude-native-acceptance/app-delegation-model.mjs",
       "initialBlob": "cd31945f84240e89773e227fd0db20d8a5d0d6e0",
-      "status": "accepted-integrated",
+      "status": "accepted",
       "primary": {
         "id": "task_00f0a474",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_00f0a474",
@@ -228,7 +228,7 @@
     {
       "file": "scripts/claude-native-acceptance/driver.mjs",
       "initialBlob": "882479646781146d901ab1b87e5d3a99865d8509",
-      "status": "accepted-integrated",
+      "status": "accepted",
       "primary": {
         "id": "task_ffc92537",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_ffc92537",
@@ -318,7 +318,7 @@
     {
       "file": "scripts/claude-native-acceptance/history-driver.mjs",
       "initialBlob": "659797ad2ec3eede386464076c949ad0f700cf6c",
-      "status": "accepted-integrated",
+      "status": "accepted",
       "primary": {
         "id": "task_e63767de",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_e63767de",
@@ -365,7 +365,7 @@
     {
       "file": "scripts/claude-native-acceptance/history-model.mjs",
       "initialBlob": "9446986b74d6df6bf6b4bdaddd5e3de7aa8740a6",
-      "status": "accepted-integrated",
+      "status": "accepted",
       "primary": {
         "id": "task_0af35abe",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_0af35abe",
@@ -422,7 +422,7 @@
     {
       "file": "scripts/claude-native-acceptance/history-replay.mjs",
       "initialBlob": "0ccc3cc8c75866a526eb1f6928a936b0752c5496",
-      "status": "primary-running",
+      "status": "accepted",
       "primary": {
         "id": "task_968a7573",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d",
@@ -430,7 +430,7 @@
         "commit": null
       },
       "judges": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "416646505069c09f31812412ef55a0ba5ab16553",
       "launchBase": "0f31ee8bcbb4a6b9cc4e76121fa0aef55d7c52b2",
       "resume": {
         "status": "accepted",
@@ -448,7 +448,7 @@
     {
       "file": "scripts/claude-native-acceptance/history-run.mjs",
       "initialBlob": "fb51c5b023103a4928903ce846abccd608e35a10",
-      "status": "accepted-integrated",
+      "status": "accepted",
       "primary": {
         "id": "task_10c1cb54",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_10c1cb54",
@@ -507,10 +507,10 @@
     {
       "file": "scripts/claude-native-acceptance/human-driver.mjs",
       "initialBlob": "92e5682af10e949649d0f87236c00b412f02a3df",
-      "status": "pending",
+      "status": "accepted",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "3fddd662b31503d6ab756c096c3d996792531f16",
       "resume": {
         "status": "accepted",
         "acceptedBlob": "3fddd662b31503d6ab756c096c3d996792531f16",
@@ -527,7 +527,7 @@
     {
       "file": "scripts/claude-native-acceptance/model.mjs",
       "initialBlob": "974c4c41cd0b921a6b8bb569137a349d95135492",
-      "status": "accepted-integrated",
+      "status": "accepted",
       "primary": {
         "id": "task_caff1c75",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_caff1c75",
@@ -575,7 +575,7 @@
     {
       "file": "scripts/claude-native-acceptance/run-subagent.mjs",
       "initialBlob": "333a6297626d5bedcd9aecd72757c436ce3f51ef",
-      "status": "judging",
+      "status": "accepted",
       "primary": {
         "id": "task_38276b5f",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_38276b5f",
@@ -590,7 +590,7 @@
           "candidate": "acba9037095809d012444d28656a733b1fcdcf86"
         }
       ],
-      "acceptedBlob": null,
+      "acceptedBlob": "16300ead040e2d9f6daf3e2fa17af4001ae4dfd6",
       "launchBase": "3c411345b6275c1120406f0f07e97b439787a97d",
       "changedRelatedPaths": [
         "tests/claude-native-acceptance-subagent-run.test.mjs"
@@ -614,7 +614,7 @@
     {
       "file": "scripts/claude-native-acceptance/run.mjs",
       "initialBlob": "949bb21f489de722a85735d22d5dabd27f6413a0",
-      "status": "accepted-integrated",
+      "status": "accepted",
       "primary": {
         "id": "task_52aa2a57",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_52aa2a57",
@@ -662,10 +662,10 @@
     {
       "file": "scripts/claude-native-acceptance/runtime-smoke.mjs",
       "initialBlob": "f13d18e4883ef5fcc47aa785039ceee334cce15f",
-      "status": "pending",
+      "status": "accepted",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "614b3fac5c116306d2e0ec7cbc5b81a1b15dc5f2",
       "resume": {
         "status": "accepted",
         "acceptedBlob": "614b3fac5c116306d2e0ec7cbc5b81a1b15dc5f2",
@@ -682,7 +682,7 @@
     {
       "file": "scripts/claude-native-acceptance/subagent-driver.mjs",
       "initialBlob": "b3a839d892d5d6ea15b4bc23a32504ce22a29103",
-      "status": "primary-running",
+      "status": "accepted",
       "primary": {
         "id": "task_3fcde229",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_3fcde229",
@@ -691,22 +691,25 @@
         "commit": null
       },
       "judges": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "48d0ded793f11d31cece88d1f3da251e61a6daf9",
       "launchBase": "0f31ee8bcbb4a6b9cc4e76121fa0aef55d7c52b2",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "48d0ded793f11d31cece88d1f3da251e61a6daf9",
         "primaryId": "task_48898268",
         "primaryCommit": "e2da2498bfe0fcb2ea83bc0fb74867b7a2622e20",
-        "judgeIds": [],
+        "judgeIds": [
+          "task_2aa53476"
+        ],
         "sourceCommit": "e2da2498bfe0fcb2ea83bc0fb74867b7a2622e20",
-        "state": "needs-judge",
-        "reason": "Primary was killed by session shutdown (143); preserved uncommitted code is retained at the worker path. No submitted candidate commit or readability verdict; resume its original scope rather than count it accepted."
+        "state": "accepted-joined",
+        "reason": "Compared the exact candidate with its parent, which is the supplied primary base, not this worktree HEAD. The base embeds three browser scenarios and four verification authorities in long exported functions. The candidate makes exercise (lines 21–30) expose the prerequisite: completed-child inspection and successful same-root next reply must finish before either independent root is opened. exerciseCompletedChildReturn owns child release, live-card selection, transcript/tool inspection, parent URL identity, bounded composer admission and its finally evidence capture. The cancellation and Stop helpers each retain their own process-exit waits and snapshots. verify (lines 311–363) now reads as explicit browser/wire admission, task lifecycle, root/child usage ownership, persisted launch-source resolution, Stop/Continue, then publication. Helpers return the evidence their caller actually uses; no new framework, context bag or duplicated owner. This is structural journey/authority separation, not merely renaming. Unchanged decision: NO CHANGE NEEDED for checkSameRootReply, checkConsumedPromptOwnership and flushCapture; their byte-identical code already clearly separates session identity, human prompt consumption versus autonomous wake origin, and final provider capture. The proof-publication tail is also byte-identical and should remain unchanged."
       }
     },
     {
       "file": "scripts/claude-native-acceptance/subagent-model.mjs",
       "initialBlob": "26c60744b7399e669da090a7c33e8a767d0bd61d",
-      "status": "accepted-integrated",
+      "status": "accepted",
       "primary": {
         "id": "task_5996dfa6",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_5996dfa6",
@@ -753,24 +756,27 @@
     {
       "file": "scripts/claude-native-acceptance/subagent-return-evidence.mjs",
       "initialBlob": "89a45efad86898aea8b5202b63b3a5bcdf523ac1",
-      "status": "pending",
+      "status": "accepted",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "c8763df7ac177766e8ab065a13b290ae836399b0",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "c8763df7ac177766e8ab065a13b290ae836399b0",
         "primaryId": "task_32253a22",
         "primaryCommit": "766ff44e0f4505dd0412226a2430b97a7090c059",
-        "judgeIds": [],
+        "judgeIds": [
+          "task_1bcfcb92"
+        ],
         "sourceCommit": "766ff44e0f4505dd0412226a2430b97a7090c059",
-        "state": "needs-judge",
-        "reason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+        "state": "accepted-joined",
+        "reason": "Compared the named candidate against primary base b80a55a855e65d9bcb4ae8db3bb95d577db79b67, which is also its sole parent, rather than checkout HEAD. The baseline collector mixed wire projections, journal traversal, provider decoding and SQLite handling in one long function; especially its runtime-files loop made the reader carry provider parsing and database resource lifetime together. The actual candidate gives each source a private reader with concrete inputs and explicit outputs, not a context bag or generic framework. readWireEvidence owns lifecycle and stdin/stdout correlation; readJournalEvidence owns index/source loading and latest-per-job cursors; readProviderEvidence owns prefix-tolerant log decoding and prompt.offer unwrapping; readPersistenceEvidence owns SQLite import, read-only opens, queries and finally-close. collectReturnEvidence now exposes the whole ordered journey and single report publication without hiding field selection in generic adapters. Its locally owned ID map and sequential wire/journal/provider calls keep shared correlation identity and allocation order visible. This is coherent responsibility/lifetime restructuring, not rename-only progress. Unchanged decision: leave marker extraction, recursive file discovery, projection shapes and existing caller API alone; they already make their local decisions directly and need no extra abstraction."
       }
     },
     {
       "file": "scripts/claude-native-acceptance/tap.mjs",
       "initialBlob": "5f8db4ace61b0211f53f5959653a2bf6f0dc2f26",
-      "status": "accepted-integrated",
+      "status": "accepted",
       "primary": {
         "id": "task_88689870",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_88689870",
@@ -829,10 +835,10 @@
     {
       "file": "scripts/claude-native-acceptance/worker.mjs",
       "initialBlob": "766989628f65993cbde352037144c85dc25e316f",
-      "status": "pending",
+      "status": "accepted",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "766989628f65993cbde352037144c85dc25e316f",
       "resume": {
         "status": "accepted",
         "acceptedBlob": "766989628f65993cbde352037144c85dc25e316f",
@@ -866,7 +872,7 @@
     {
       "file": "src/claude-compat/app-worker.ts",
       "initialBlob": "a69edf87092ec0a5dc77bacd0150da6062722c76",
-      "status": "accepted-unchanged",
+      "status": "accepted",
       "primary": {
         "id": "task_4260afa3",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_4260afa3",
@@ -908,7 +914,7 @@
     {
       "file": "src/claude-compat/arguments.ts",
       "initialBlob": "61a99f162b7328d9f937d10ec33691a9b47bd645",
-      "status": "accepted-integrated",
+      "status": "accepted",
       "primary": {
         "id": "task_1b5068a0",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_1b5068a0",
@@ -980,7 +986,7 @@
     {
       "file": "src/claude-compat/binding.ts",
       "initialBlob": "38964c2b098bc5e68f36594e9bdae4e03930f631",
-      "status": "accepted-integrated",
+      "status": "accepted",
       "primary": {
         "id": "task_f0de0fb4",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_f0de0fb4",
@@ -1027,7 +1033,7 @@
     {
       "file": "src/claude-compat/cli.ts",
       "initialBlob": "fdc3bb4a35f2f52b9a7d970aac5213681ffa0f85",
-      "status": "accepted-integrated",
+      "status": "accepted",
       "primary": {
         "id": "task_adf93322",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_adf93322",
@@ -1074,7 +1080,7 @@
     {
       "file": "src/claude-compat/commands.ts",
       "initialBlob": "f50902cd03e53ac8a58906b24d4ef01e532c55f8",
-      "status": "accepted-integrated",
+      "status": "accepted",
       "primary": {
         "id": "task_b1382f6c",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_b1382f6c",
@@ -1121,7 +1127,7 @@
     {
       "file": "src/claude-compat/frontend.ts",
       "initialBlob": "72795e199794f3aaac8ca266277289b498235b52",
-      "status": "accepted-integrated",
+      "status": "accepted",
       "primary": {
         "id": "task_01071cbe",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_01071cbe",
@@ -1168,7 +1174,7 @@
     {
       "file": "src/claude-compat/history.ts",
       "initialBlob": "a89c8a44b0fb136a21e4f11fd6213f07a8cf60a7",
-      "status": "accepted-integrated",
+      "status": "accepted",
       "primary": {
         "id": "task_3a86626e",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_3a86626e",
@@ -1215,7 +1221,7 @@
     {
       "file": "src/claude-compat/human-controls.ts",
       "initialBlob": "dceabf00172ab6f8c57fcb462315e48bf6427256",
-      "status": "accepted-integrated",
+      "status": "accepted",
       "primary": {
         "id": "task_449c2e3a",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_449c2e3a",
@@ -1262,7 +1268,7 @@
     {
       "file": "src/claude-compat/launch.ts",
       "initialBlob": "ec7515100c4560c03f473214973d9705380f927a",
-      "status": "accepted-unchanged",
+      "status": "accepted",
       "primary": {
         "id": "task_58f5a56b",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_58f5a56b",
@@ -1304,7 +1310,7 @@
     {
       "file": "src/claude-compat/live-frontend.ts",
       "initialBlob": "e1e8e088837528826765e9f5e101fc577aa99c81",
-      "status": "accepted-unchanged",
+      "status": "accepted",
       "primary": {
         "id": "task_1868ec30",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_1868ec30",
@@ -1346,7 +1352,7 @@
     {
       "file": "src/claude-compat/mcp.ts",
       "initialBlob": "01284c27fd7f3b9bfae7ec13b08f88bc78c3646d",
-      "status": "accepted-integrated",
+      "status": "accepted",
       "primary": {
         "id": "task_18afd0bf",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_18afd0bf",
@@ -1393,7 +1399,7 @@
     {
       "file": "src/claude-compat/permissions.ts",
       "initialBlob": "77083e6264957aa744ef1e895d6ab537ec575c97",
-      "status": "accepted-unchanged",
+      "status": "accepted",
       "primary": {
         "id": "task_8e956f8c",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_8e956f8c",
@@ -1435,7 +1441,7 @@
     {
       "file": "src/claude-compat/preflight.ts",
       "initialBlob": "8d220bba36b3b6edbf7b131e60b45a3ad89792cf",
-      "status": "accepted-unchanged",
+      "status": "accepted",
       "primary": {
         "id": "task_276ba03d",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_276ba03d",
@@ -1476,7 +1482,7 @@
     {
       "file": "src/claude-compat/runtime.ts",
       "initialBlob": "40db8189be3b9179ae67df78548a55cf48043cdc",
-      "status": "accepted-integrated",
+      "status": "accepted",
       "primary": {
         "id": "task_4cd5eb88",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_4cd5eb88",
@@ -1523,7 +1529,7 @@
     {
       "file": "src/claude-compat/task-binding.ts",
       "initialBlob": "f278a6a219b3b5fc5f710d97f3a2905748b9d670",
-      "status": "accepted-integrated",
+      "status": "accepted",
       "primary": {
         "id": "task_b586bdb8",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_b586bdb8",
@@ -1570,7 +1576,7 @@
     {
       "file": "src/claude-compat/task-projection.ts",
       "initialBlob": "6c04a462ddfc040f2aaaee6c263d829fbf62499f",
-      "status": "accepted-integrated",
+      "status": "accepted",
       "primary": {
         "id": "task_195ae5e6",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_195ae5e6",
@@ -1617,7 +1623,7 @@
     {
       "file": "src/claude-compat/transport.ts",
       "initialBlob": "2955f0309942c4d94a591065f9d315cc4592c02a",
-      "status": "accepted-integrated",
+      "status": "accepted",
       "primary": {
         "id": "task_6958d30f",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_6958d30f",
@@ -1681,7 +1687,7 @@
     {
       "file": "src/t3/tasks/events.ts",
       "initialBlob": "fee21123a7d6380e5d4ffee96fb6815471a3d47b",
-      "status": "accepted-unchanged",
+      "status": "accepted",
       "primary": {
         "id": "task_18567a85",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_18567a85",
@@ -1728,7 +1734,7 @@
     {
       "file": "src/t3/tasks/launch-identity.ts",
       "initialBlob": "4162ee435592ca0bc00890499e6195006cf93225",
-      "status": "accepted-unchanged",
+      "status": "accepted",
       "primary": {
         "id": "task_2f86e222",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_2f86e222",
@@ -1770,7 +1776,7 @@
     {
       "file": "src/t3/tasks/local-notifications.ts",
       "initialBlob": "76e02ef84211c59caf17457745a5fc5ed11dbf03",
-      "status": "accepted-integrated",
+      "status": "accepted",
       "primary": {
         "id": "task_5f59191c",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_5f59191c",
@@ -1817,7 +1823,7 @@
     {
       "file": "src/t3/tasks/mcp-client.ts",
       "initialBlob": "b00156caaeb4ba5fe15e0f3c7fb8eff472d282ce",
-      "status": "accepted-integrated",
+      "status": "accepted",
       "primary": {
         "id": "task_ea47c14e",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_ea47c14e",
@@ -1867,7 +1873,7 @@
     {
       "file": "src/t3/tasks/native-task.ts",
       "initialBlob": "9152be57bb326b4f919518efe6d13be4b10c363b",
-      "status": "accepted-unchanged",
+      "status": "accepted",
       "primary": {
         "id": "task_c80e2264",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_c80e2264",
@@ -1912,7 +1918,7 @@
     {
       "file": "src/t3/web/launcher.ts",
       "initialBlob": "8df201a2dfb5785bb79e2ec6c4831bc80b974049",
-      "status": "accepted-unchanged",
+      "status": "accepted",
       "primary": {
         "id": "task_9cfebe77",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_9cfebe77",
@@ -1988,7 +1994,7 @@
     {
       "file": "tests/claude-compat-commands.test.ts",
       "initialBlob": "e506ca3fda50eaebad675cf026e8948b8e4e128e",
-      "status": "accepted-integrated",
+      "status": "accepted",
       "primary": {
         "id": "task_71d2ae32",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_71d2ae32",
@@ -2089,7 +2095,7 @@
     {
       "file": "tests/claude-compat-history.test.ts",
       "initialBlob": "291daa0d1e8d8c9df89f68de6cf11a48642f2902",
-      "status": "accepted-integrated",
+      "status": "accepted",
       "primary": {
         "id": "task_aba67ce5",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_aba67ce5",
@@ -2139,7 +2145,7 @@
     {
       "file": "tests/claude-compat-human-controls.test.ts",
       "initialBlob": "8dc79ae1e34631b7c6e55a6f3fad6fdb994ff647",
-      "status": "accepted-integrated",
+      "status": "accepted",
       "primary": {
         "id": "task_46b8d726",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_46b8d726",
@@ -2189,7 +2195,7 @@
     {
       "file": "tests/claude-compat-launch.test.ts",
       "initialBlob": "43bb031ffd0b2d74bdc83b48c13434161c33547a",
-      "status": "accepted-integrated",
+      "status": "accepted",
       "primary": {
         "id": "task_2cea9559",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_2cea9559",
@@ -2324,7 +2330,7 @@
     {
       "file": "tests/claude-compat-runtime.test.ts",
       "initialBlob": "5429ce6b5e28b1b1dcde77a0c4e1f75d19a398ef",
-      "status": "accepted-unchanged",
+      "status": "accepted",
       "primary": {
         "id": "task_5d5cfc47",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_5d5cfc47",
@@ -2374,7 +2380,7 @@
     {
       "file": "tests/claude-compat-task-binding.test.ts",
       "initialBlob": "88bae66b92d33c773eb63314188b667b96b66447",
-      "status": "accepted-integrated",
+      "status": "accepted",
       "primary": {
         "id": "task_0e6166c9",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_0e6166c9",
@@ -2424,7 +2430,7 @@
     {
       "file": "tests/claude-compat-task-projection.test.ts",
       "initialBlob": "da89cdcea508117e2cbefe3d91d35670c3a71d9d",
-      "status": "accepted-integrated",
+      "status": "accepted",
       "primary": {
         "id": "task_532af0c5",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_532af0c5",
@@ -2474,7 +2480,7 @@
     {
       "file": "tests/claude-compat-transport.test.ts",
       "initialBlob": "136ce557bfba92d0c1baedbf32efe1980e2d2d8b",
-      "status": "accepted-integrated",
+      "status": "accepted",
       "primary": {
         "id": "task_ea845de6",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_ea845de6",
@@ -2575,7 +2581,7 @@
     {
       "file": "tests/claude-compat/mcp.test.ts",
       "initialBlob": "35c79565ff48cb3976226b305697ca63cd122619",
-      "status": "accepted-integrated",
+      "status": "accepted",
       "primary": {
         "id": "task_95076a9f",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_95076a9f",
@@ -2676,7 +2682,7 @@
     {
       "file": "tests/claude-native-acceptance-model.test.mjs",
       "initialBlob": "0b993a6daeef0eb081aca96e1d202ff802e8e151",
-      "status": "accepted-unchanged",
+      "status": "accepted",
       "primary": {
         "id": "task_bb4a09fd",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_bb4a09fd",
@@ -2726,7 +2732,7 @@
     {
       "file": "tests/claude-native-app-delegation-model.test.mjs",
       "initialBlob": "1cf00502ad018790f014c2cb3740e3fb38366ec6",
-      "status": "accepted-integrated",
+      "status": "accepted",
       "primary": {
         "id": "task_e6d0f185",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_e6d0f185",
@@ -2793,7 +2799,7 @@
     {
       "file": "tests/claude-native-history-model.test.mjs",
       "initialBlob": "d5f7bf0c5df506d5e38fca62409df9239258b3ce",
-      "status": "accepted-integrated",
+      "status": "accepted",
       "primary": {
         "id": "task_cbfed35a",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_cbfed35a",
@@ -2843,7 +2849,7 @@
     {
       "file": "tests/claude-native-subagent-model.test.mjs",
       "initialBlob": "7312e31703cb656c2ba1d743b815887c2e018c82",
-      "status": "accepted-unchanged",
+      "status": "accepted",
       "primary": {
         "id": "task_988c56c9",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_988c56c9",
@@ -2927,7 +2933,7 @@
     {
       "file": "tests/t3/local-notifications.test.ts",
       "initialBlob": "a3076eba307fac9850dad74c870d4673dfc2db78",
-      "status": "accepted-integrated",
+      "status": "accepted",
       "primary": {
         "id": "task_514938ef",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_514938ef",
@@ -2994,7 +3000,7 @@
     {
       "file": "tests/t3/production-bridge.test.ts",
       "initialBlob": "3fe602a2184e31bfe3cb6bd96937bd6208b6dfd8",
-      "status": "accepted-integrated",
+      "status": "accepted",
       "primary": {
         "id": "task_c1e2e00b",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_c1e2e00b",
@@ -3078,7 +3084,7 @@
     {
       "file": "tests/t3/web-task-events.test.ts",
       "initialBlob": "f09ea82bc1e8c407aabc7e377f1dbd02e4debbd6",
-      "status": "accepted-unchanged",
+      "status": "accepted",
       "primary": {
         "id": "task_258e5ffd",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d-5442693331ce-task_258e5ffd",
@@ -3131,7 +3137,7 @@
       "file": "tests/claude-compat-arguments.test.ts",
       "kind": "new",
       "initialBlob": null,
-      "status": "accepted-unchanged",
+      "status": "accepted",
       "introducedBy": "e5f89da92237ef8f257f4afd30fe0250630eba66",
       "primary": {
         "id": "task_a3a6c083",
@@ -3183,7 +3189,7 @@
       "file": "tests/claude-compat-frontend.test.ts",
       "kind": "new",
       "initialBlob": null,
-      "status": "accepted-unchanged",
+      "status": "accepted",
       "introducedBy": "898826edd36649f92faa239effb2989d1364ac25",
       "primary": {
         "id": "task_a49cb4c3",
@@ -3235,7 +3241,7 @@
       "file": "tests/claude-compat-binding.test.ts",
       "kind": "new",
       "initialBlob": null,
-      "status": "accepted-unchanged",
+      "status": "accepted",
       "introducedBy": "3743b41972dd27bbeb33d459f2a6f5ced7413c33",
       "primary": {
         "id": "task_f673edab",
@@ -3287,7 +3293,7 @@
       "file": "tests/claude-native-acceptance-runner.test.mjs",
       "kind": "new",
       "initialBlob": null,
-      "status": "accepted-integrated",
+      "status": "accepted",
       "introducedBy": "f478dc507c14e579b46a68aa69800a33f9f8b9b8",
       "primary": {
         "id": "task_23190128",
@@ -3339,7 +3345,7 @@
       "file": "wisdom/claude-compat/proof/native-ui-fixture/replay.mjs",
       "kind": "related-existing",
       "initialBlob": "74e8a8040d7b70b0851550921bd988d377464e8e",
-      "status": "accepted-integrated",
+      "status": "accepted",
       "introducedBy": "06f56bdd95bb033cd44026c458d3cb69d4e37a0c",
       "primary": {
         "id": "task_1514b0b6",
@@ -3396,7 +3402,7 @@
       "file": "tests/claude-native-acceptance-capture.test.mjs",
       "kind": "new",
       "initialBlob": null,
-      "status": "accepted-integrated",
+      "status": "accepted",
       "introducedBy": "06f56bdd95bb033cd44026c458d3cb69d4e37a0c",
       "primary": {
         "id": "task_d8e47cb7",
@@ -3448,7 +3454,7 @@
       "file": "tests/claude-native-acceptance-replay-finalization.test.mjs",
       "kind": "new",
       "initialBlob": null,
-      "status": "accepted-integrated",
+      "status": "accepted",
       "introducedBy": "a61eec6ee10a8f292f1f1edfeaaa5a39fc8367bc",
       "primary": {
         "id": "task_5b8a48c9",
@@ -3500,7 +3506,7 @@
       "file": "tests/claude-native-acceptance-tap.test.mjs",
       "kind": "new",
       "initialBlob": null,
-      "status": "accepted-integrated",
+      "status": "accepted",
       "introducedBy": "0f4a395278c83a54f5c4ac82a7bfbb23e583a821",
       "primary": {
         "id": "task_83a97a2b",
@@ -3552,7 +3558,7 @@
       "file": "tests/claude-native-replay.test.mjs",
       "kind": "new",
       "initialBlob": null,
-      "status": "accepted-integrated",
+      "status": "accepted",
       "introducedBy": "76a0fed02a6354133920c1f40b6f7bd4c91b5504",
       "primary": {
         "id": "task_bd242a1f",
@@ -3604,7 +3610,7 @@
       "file": "tests/claude-native-history-runner.test.mjs",
       "kind": "new",
       "initialBlob": null,
-      "status": "judging",
+      "status": "accepted",
       "introducedBy": "7726b42dd9a37ca2e7de618ed38653509bcc7373",
       "primary": {
         "id": "task_c7da2216",
@@ -3620,7 +3626,7 @@
           "candidate": "38206e59026118676b87f088beb3b86f7eaeb507"
         }
       ],
-      "acceptedBlob": null,
+      "acceptedBlob": "0b2c252a17719c8f541319ff164db6c26e136196",
       "relatedPatchJudgments": [
         {
           "id": "task_39ec0f44",
@@ -3651,7 +3657,7 @@
       "file": "tests/claude-native-app-delegation-driver.test.mjs",
       "kind": "new",
       "initialBlob": null,
-      "status": "primary-running",
+      "status": "pending",
       "introducedBy": "b538064f91afba9b3bb5a79bc8ec8ae6923f630b",
       "primary": {
         "id": "task_de00fb25",
@@ -3685,7 +3691,7 @@
       "file": "tests/claude-native-history-driver.test.mjs",
       "kind": "new",
       "initialBlob": null,
-      "status": "pending-primary",
+      "status": "pending",
       "introducedBy": "8a96f814d110e65250c081c1f2dda9daea098cf2",
       "primary": null,
       "judges": [],
@@ -3712,7 +3718,7 @@
       "file": "tests/claude-native-acceptance-subagent-run.test.mjs",
       "kind": "new",
       "initialBlob": null,
-      "status": "pending-candidate",
+      "status": "pending",
       "introducedBy": "acba9037095809d012444d28656a733b1fcdcf86",
       "primary": null,
       "judges": [],
@@ -4099,5 +4105,9 @@
       "acceptedBlobAudit": "All54 accepted source/test blobs unchanged;other-area code/notes parent-owned",
       "limits": "Previous compiled build predates this common merge;not current post-merge binary proof."
     }
-  ]
+  ],
+  "resumeStatus": {
+    "accepted": 69,
+    "pending": 29
+  }
 }

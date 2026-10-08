@@ -49,7 +49,8 @@
       "resumeState": "accepted_exact_joined",
       "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
       "acceptedBlob": "6c1b0780b78c229785db286e9f15b76a4be60d32",
-      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "area": "live-native-audio"
     },
     {
       "file": ".github/workflows/release.yml",
@@ -135,7 +136,8 @@
       "resumeState": "accepted_exact_joined",
       "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
       "acceptedBlob": "b1cd6d7ce25890e7336fd7ea198ac5e2e324905e",
-      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "area": "live-native-audio"
     },
     {
       "file": "native/live-linux/main.cpp",
@@ -149,7 +151,8 @@
       "resumeState": "accepted_exact_joined",
       "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
       "acceptedBlob": "b8ae3e08f47d6346d45324baa24605ef61e9d907",
-      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "area": "live-native-audio"
     },
     {
       "file": "native/live-linux/tests/backpressure.py",
@@ -163,7 +166,8 @@
       "resumeState": "accepted_exact_joined",
       "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
       "acceptedBlob": "df54145e5bb23b98a0ba70decb49efa6f767a01c",
-      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "area": "live-native-audio"
     },
     {
       "file": "native/live-linux/tests/capture-gate.cpp",
@@ -177,7 +181,8 @@
       "resumeState": "accepted_exact_joined",
       "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
       "acceptedBlob": "6cb2911f8dbc46de4ea293fed9d12f8b64f0730d",
-      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "area": "live-native-audio"
     },
     {
       "file": "native/live-linux/tests/capture-protocol.py",
@@ -192,7 +197,8 @@
       "resumeState": "accepted_exact_joined",
       "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
       "acceptedBlob": "6918a3b62e8bcaf6687e73874bd5ae31ce3a46f3",
-      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "area": "live-native-audio"
     },
     {
       "file": "native/live-linux/tests/protocol.py",
@@ -208,7 +214,8 @@
       "resumeState": "accepted_exact_joined",
       "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
       "acceptedBlob": "3c2ef6bc49b9c8e2025132ffdab1877a82effa81",
-      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "area": "live-native-audio"
     },
     {
       "file": "native/live-linux/tests/source-removal.py",
@@ -222,7 +229,8 @@
       "resumeState": "accepted_exact_joined",
       "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
       "acceptedBlob": "5d707531d9753b02b575997c378f13517fc8370d",
-      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "area": "live-native-audio"
     },
     {
       "file": "native/live-linux/tests/virtual.sh",
@@ -236,7 +244,8 @@
       "resumeState": "accepted_exact_joined",
       "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
       "acceptedBlob": "86e0f56798547d704db912eab2534a2161c93d0e",
-      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "area": "live-native-audio"
     },
     {
       "file": "native/live/AudioCore.c",
@@ -250,7 +259,8 @@
       "resumeState": "accepted_exact_joined",
       "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
       "acceptedBlob": "a4c9b7c4ec975fdcfe46cf875c7f5faf5bc2dcc6",
-      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "area": "live-native-audio"
     },
     {
       "file": "native/live/AudioCore.h",
@@ -264,7 +274,8 @@
       "resumeState": "accepted_exact_joined",
       "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
       "acceptedBlob": "e2d8f07794f66272af89f64c69f86bee4ee70aee",
-      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "area": "live-native-audio"
     },
     {
       "file": "native/live/Info.plist",
@@ -278,7 +289,8 @@
       "resumeState": "accepted_exact_joined",
       "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
       "acceptedBlob": "d027ae3e545619f1628e72bf2c0f0fafdda72718",
-      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "area": "live-native-audio"
     },
     {
       "file": "native/live/main.swift",
@@ -292,7 +304,8 @@
       "resumeState": "accepted_exact_joined",
       "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
       "acceptedBlob": "e51337959b28907cfa01625a6533bf0f068d014a",
-      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "area": "live-native-audio"
     },
     {
       "file": "native/live/test-capture-gate.c",
@@ -306,7 +319,8 @@
       "resumeState": "accepted_exact_joined",
       "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
       "acceptedBlob": "292e509c5754bd29811b8472347afc8ae2e0637f",
-      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "area": "live-native-audio"
     },
     {
       "file": "native/live/test-core.c",
@@ -321,7 +335,8 @@
       "resumeState": "accepted_exact_joined",
       "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
       "acceptedBlob": "182ca301ae67e70cfbaffd43ec6380c2ac9ff377",
-      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "area": "live-native-audio"
     },
     {
       "file": "native/live/test-waveform.c",
@@ -335,7 +350,8 @@
       "resumeState": "accepted_exact_joined",
       "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
       "acceptedBlob": "7a88474d51cef3259e49ab8897263f9a19811b17",
-      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "area": "live-native-audio"
     },
     {
       "file": "package.json",
@@ -474,7 +490,8 @@
       "resumeState": "accepted_exact_joined",
       "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
       "acceptedBlob": "bf9a9d9873825675f42392aa331f61bda36097f4",
-      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "area": "live-native-audio"
     },
     {
       "file": "scripts/build-live-linux-helper.sh",
@@ -488,7 +505,8 @@
       "resumeState": "accepted_exact_joined",
       "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
       "acceptedBlob": "81989563bcacb3c947843520081648afa4e4b521",
-      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "area": "live-native-audio"
     },
     {
       "file": "scripts/build-pair.ts",
@@ -947,12 +965,14 @@
     {
       "file": "scripts/claude-native-acceptance/subagent-driver.mjs",
       "initialBlob": "b3a839d892d5d6ea15b4bc23a32504ce22a29103",
-      "status": "pending",
+      "status": "accepted",
       "area": "compatibility-t3",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_48898268",
       "primaryCommit": "e2da2498bfe0fcb2ea83bc0fb74867b7a2622e20",
-      "judgeIds": [],
+      "judgeIds": [
+        "task_2aa53476"
+      ],
       "sourceCommit": "e2da2498bfe0fcb2ea83bc0fb74867b7a2622e20",
       "report": "wisdom/quality/structural-readability-areas/compatibility-t3.json",
       "pendingReason": "Primary was killed by session shutdown (143); preserved uncommitted code is retained at the worker path. No submitted candidate commit or readability verdict; resume its original scope rather than count it accepted.",
@@ -989,6 +1009,36 @@
         "The Agent-count assertion is now grouped with task lifecycle before usage checks, so the first error reported when both are invalid can change; all assertions and evidence requirements remain intact.",
         "Runtime agent.model verification and automatic launch-setup diagnostics remain parent-owned; no self-introspection or setup retry/bypass performed.",
         "No per-worker wisdom edits: parent owns aggregate wisdom; preserved worktrees and candidates retained."
+      ],
+      "acceptedBlob": "48d0ded793f11d31cece88d1f3da251e61a6daf9",
+      "result": "Compared the exact candidate with its parent, which is the supplied primary base, not this worktree HEAD. The base embeds three browser scenarios and four verification authorities in long exported functions. The candidate makes exercise (lines 21–30) expose the prerequisite: completed-child inspection and successful same-root next reply must finish before either independent root is opened. exerciseCompletedChildReturn owns child release, live-card selection, transcript/tool inspection, parent URL identity, bounded composer admission and its finally evidence capture. The cancellation and Stop helpers each retain their own process-exit waits and snapshots. verify (lines 311–363) now reads as explicit browser/wire admission, task lifecycle, root/child usage ownership, persisted launch-source resolution, Stop/Continue, then publication. Helpers return the evidence their caller actually uses; no new framework, context bag or duplicated owner. This is structural journey/authority separation, not merely renaming. Unchanged decision: NO CHANGE NEEDED for checkSameRootReply, checkConsumedPromptOwnership and flushCapture; their byte-identical code already clearly separates session identity, human prompt consumption versus autonomous wake origin, and final provider capture. The proof-publication tail is also byte-identical and should remain unchanged.",
+      "systemReason": "Followed the candidate run-subagent runner: it creates isolated deterministic-model configuration, rewrites the shared replay integration import to this driver, and waits for replay exit before retaining proof. The shared replay opens the native composer before exercise, invokes verify after reading wire, and invokes flushCapture in finally before browser/server release, including failures before exercise. observedConfig is still assigned before the first awaited browser action; flushCapture keeps both the live-config path and the existing disk fallback for pre-exercise failure. The return-evidence collector reads fixture wire, native journals, provider logs and read-only projection databases, reporting fixture markers/correlation and the live same-root flag. Model source ties ready/PID files and reply markers to normal asynchronous workers, explicit terminal cancellation inspection and native Stop of the owned subtree. Exported checker callers in claude-native-subagent-return.test.mjs still use the same contracts. Extraction preserves scenario ordering, prompts, waits, snapshots, source-binding resolution and publication. Agent-count validation now precedes usage validation; simultaneous failures can produce a different first assertion, but no authority or requirement was removed. No related source edit is needed.",
+      "checks": [
+        {
+          "check": "Exact Git parent, primary-base delta and every changed source path",
+          "result": "Candidate parent equals b80a55a855e65d9bcb4ae8db3bb95d577db79b67; the only changed path is the focus. Read full candidate and full diff against that parent."
+        },
+        {
+          "check": "Actual-code system journey reading",
+          "result": "Read candidate callers and relevant shared preparation, identity, replay/finalization, model controls, process-exit checks, evidence collection and exported-checker callers without executing them."
+        },
+        {
+          "check": "Unchanged boundary comparison",
+          "result": "checkSameRootReply, checkConsumedPromptOwnership, flushCapture and proof-publication tail are byte-identical to primary base."
+        },
+        {
+          "check": "git diff --check primary-base candidate",
+          "result": "Exit 0, no output; whitespace-only safety check, not readability or runtime proof."
+        },
+        {
+          "check": "Required context",
+          "result": "Read values, structural-readability guidance, repo-wide ledger, focus coverage entry and compatibility/T3 area ledger and focus entry."
+        }
+      ],
+      "limits": [
+        "Static independent actual-code review only. No repository tests, setup, builds, browser/provider execution, device access, credentials or recovery actions performed. Parent owns audited isolated batch gates and external runtime agent.model verification; no self-introspection or runtime/auth claim.",
+        "The preserved interrupted commit 86ef6f761802edea2844a001ea198a90fe14b87c is not present in this worktree Git object database (git diff reported bad object). No fetch/recovery attempted. Its history is context only; the requested candidate and primary base were available and reviewed directly.",
+        "No source or wisdom edits, delegation, cleanup, push, PR creation or merge. Existing worktrees and uncommitted candidates preserved. Automatic setup diagnostics remain parent-owned; no setup retry or bypass."
       ]
     },
     {
@@ -1010,12 +1060,14 @@
     {
       "file": "scripts/claude-native-acceptance/subagent-return-evidence.mjs",
       "initialBlob": "89a45efad86898aea8b5202b63b3a5bcdf523ac1",
-      "status": "pending",
+      "status": "accepted",
       "area": "compatibility-t3",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_32253a22",
       "primaryCommit": "766ff44e0f4505dd0412226a2430b97a7090c059",
-      "judgeIds": [],
+      "judgeIds": [
+        "task_1bcfcb92"
+      ],
       "sourceCommit": "766ff44e0f4505dd0412226a2430b97a7090c059",
       "report": "wisdom/quality/structural-readability-areas/compatibility-t3.json",
       "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection.",
@@ -1050,6 +1102,34 @@
         "Static syntax and code reading do not prove runtime behavior or independent readability acceptance. Existing fixture tests were only read; their filesystem side effects must remain part of parent gate audit.",
         "Capture remains a non-atomic cross-source observation: provider logs are now collected as a source stage before SQLite inspection, rather than interleaved with databases in runtime directory order.",
         "Preserved worker worktrees/candidates untouched. No worker wisdom edits; parent owns aggregate wisdom. Runtime model verification remains external."
+      ],
+      "acceptedBlob": "c8763df7ac177766e8ab065a13b290ae836399b0",
+      "result": "Compared the named candidate against primary base b80a55a855e65d9bcb4ae8db3bb95d577db79b67, which is also its sole parent, rather than checkout HEAD. The baseline collector mixed wire projections, journal traversal, provider decoding and SQLite handling in one long function; especially its runtime-files loop made the reader carry provider parsing and database resource lifetime together. The actual candidate gives each source a private reader with concrete inputs and explicit outputs, not a context bag or generic framework. readWireEvidence owns lifecycle and stdin/stdout correlation; readJournalEvidence owns index/source loading and latest-per-job cursors; readProviderEvidence owns prefix-tolerant log decoding and prompt.offer unwrapping; readPersistenceEvidence owns SQLite import, read-only opens, queries and finally-close. collectReturnEvidence now exposes the whole ordered journey and single report publication without hiding field selection in generic adapters. Its locally owned ID map and sequential wire/journal/provider calls keep shared correlation identity and allocation order visible. This is coherent responsibility/lifetime restructuring, not rename-only progress. Unchanged decision: leave marker extraction, recursive file discovery, projection shapes and existing caller API alone; they already make their local decisions directly and need no extra abstraction.",
+      "systemReason": "Traced actual candidate callers. run-subagent.mjs generates the replay by substituting subagent-driver.mjs into the shared template. The driver exercises return from child transcript to the same completed root, attempts the next prompt and reply, and collects page-aware evidence in finally even when that bounded UI attempt fails. Its flushCapture uses observed configuration or the saved configuration and invokes the same collector without a page for final-provider-evidence.json. The shared replay awaits integration.flushCapture before its outer releaseRuntime closes browser/server/log and disposes private runtime state. Diagnostic capture-trace callers likewise use the unchanged filename override/no-page API and retain their ENOENT handling. These callers are unchanged by this candidate. The collector preserves report keys, fixture-only marker filtering, lifecycle/wire/provider projections, latest journal cursor behavior, application_event_version=2 event query, projection-table and column allowlists, LIMIT 100 and finally-close. Database rows allocate no anonymized IDs, so separating runtime traversal into provider then persistence does not alter successful-report ID order. Existing fixture assertions directly check prompt/session echoes, lifecycle owner agreement, projected status/markers, exclusion of fixture auth/prompt text, UI flags and omitted no-page flags. Leaving these caller contracts and assertions unchanged is justified; no related source edit is needed for this extraction.",
+      "checks": [
+        {
+          "kind": "structural source review",
+          "result": "Read candidate focus source, complete base-to-candidate patch, baseline mixed runtime loop, actual callers and relevant fixture/assertions using Git objects at the supplied commits."
+        },
+        {
+          "kind": "guidance and ledger review",
+          "result": "Read wisdom/values.md, structural-readability-guidance.md, repo-wide pipeline/coverage focus row and compatibility-t3 area ledger focus row. Primary context considered, not used as proof of acceptance."
+        },
+        {
+          "kind": "scope and blob verification",
+          "result": "Candidate sole parent equals primary base. Only changed source path is focus; candidate blob c8763df7ac177766e8ab065a13b290ae836399b0. Compared related driver, runner, replay and test blobs against base: unchanged."
+        },
+        {
+          "kind": "patch hygiene",
+          "command": "git diff --check b80a55a855e65d9bcb4ae8db3bb95d577db79b67 766ff44e0f4505dd0412226a2430b97a7090c059",
+          "result": "Passed; no repository code executed."
+        }
+      ],
+      "limits": [
+        "No setup, repository tests, builds, native/provider/browser/device/authenticated flows or credential access performed. Runtime gates remain parent-owned; assertions were read, not run. No real-auth/device claim.",
+        "Provider logs are now all read before SQLite work, and SQLite import occurs within persistence after provider reading rather than before runtime traversal. This can change failure precedence/timing; this review establishes successful-report projection and ID-order preservation, not byte-identical concurrent snapshots. Neither version provides an atomic multi-source snapshot.",
+        "Runtime agent.model verification is parent-owned through jobs.inspect; no self-introspection attempted.",
+        "No source edits, wisdom edits, commits, push, PR or merge performed. Only the requested untracked result artifact was written."
       ]
     },
     {
@@ -1370,7 +1450,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "own_primary_pending",
-      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
+      "area": "live-native-audio"
     },
     {
       "file": "scripts/live-gpt-live-offline-smoke.ts",
@@ -1380,7 +1461,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "own_primary_pending",
-      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
+      "area": "live-native-audio"
     },
     {
       "file": "scripts/live-helper-bundle.ts",
@@ -1390,7 +1472,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "primary_started_no_committed_candidate",
-      "pendingReason": "Primary was allocated, but no candidate commit or completed focus judgment is recorded. Preserve its worktree; do not treat the stale running status as proof of current execution."
+      "pendingReason": "Primary was allocated, but no candidate commit or completed focus judgment is recorded. Preserve its worktree; do not treat the stale running status as proof of current execution.",
+      "area": "live-native-audio"
     },
     {
       "file": "scripts/live-isolated-audio.sh",
@@ -1405,7 +1488,8 @@
       "resumeState": "accepted_exact_joined",
       "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
       "acceptedBlob": "056491cb8f7267f2cb0821fb5ccdc7911e0a1822",
-      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "area": "live-native-audio"
     },
     {
       "file": "scripts/live-onboarding-smoke.ts",
@@ -1415,7 +1499,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "own_primary_pending",
-      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
+      "area": "live-native-audio"
     },
     {
       "file": "scripts/live-openai-offline-smoke.ts",
@@ -1425,7 +1510,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "own_primary_pending",
-      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
+      "area": "live-native-audio"
     },
     {
       "file": "scripts/live-probe-input.ts",
@@ -1435,7 +1521,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "own_primary_pending",
-      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
+      "area": "live-native-audio"
     },
     {
       "file": "scripts/live-startup-fixture.ts",
@@ -1445,7 +1532,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "own_primary_pending",
-      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
+      "area": "live-native-audio"
     },
     {
       "file": "scripts/live-study-trial.ts",
@@ -1455,7 +1543,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "own_primary_pending",
-      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
+      "area": "live-native-audio"
     },
     {
       "file": "scripts/loopback-parent-fixture.ts",
@@ -1491,7 +1580,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "own_primary_pending",
-      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
+      "area": "live-native-audio"
     },
     {
       "file": "scripts/pi-host-adaptation.ts",
@@ -1541,7 +1631,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "own_primary_pending",
-      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
+      "area": "live-native-audio"
     },
     {
       "file": "scripts/probe-live-controlled.ts",
@@ -1551,7 +1642,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "own_primary_pending",
-      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
+      "area": "live-native-audio"
     },
     {
       "file": "scripts/probe-live-recorded.ts",
@@ -1561,7 +1653,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "own_primary_pending",
-      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
+      "area": "live-native-audio"
     },
     {
       "file": "scripts/probe-live-startup-audio.ts",
@@ -1571,7 +1664,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "own_primary_pending",
-      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
+      "area": "live-native-audio"
     },
     {
       "file": "scripts/probe-openai-realtime-setup.ts",
@@ -1581,7 +1675,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "own_primary_pending",
-      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
+      "area": "live-native-audio"
     },
     {
       "file": "scripts/prompt-preview.ts",
@@ -3579,7 +3674,8 @@
       "resumeState": "accepted_exact_joined",
       "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
       "acceptedBlob": "b3b015c01c83ae297d9b2dbb2a8016d1945bc636",
-      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "area": "live-native-audio"
     },
     {
       "file": "src/live/config.ts",
@@ -3593,7 +3689,8 @@
       "resumeState": "accepted_exact_joined",
       "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
       "acceptedBlob": "066a823fe085451dad54f693c824013f2a4ffbb5",
-      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "area": "live-native-audio"
     },
     {
       "file": "src/live/conversation.ts",
@@ -3607,7 +3704,8 @@
       "resumeState": "accepted_exact_joined",
       "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
       "acceptedBlob": "7f9a86a60e3eb296e41459e09e7ccbbec1470d49",
-      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "area": "live-native-audio"
     },
     {
       "file": "src/live/cost.ts",
@@ -3621,7 +3719,8 @@
       "resumeState": "accepted_exact_joined",
       "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
       "acceptedBlob": "1a6087ab8fb201b5c7d2aa771ab26aec7c899b04",
-      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "area": "live-native-audio"
     },
     {
       "file": "src/live/credentials.ts",
@@ -3635,7 +3734,8 @@
       "resumeState": "accepted_exact_joined",
       "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
       "acceptedBlob": "ddff52c311a81faef6290ed979f50a04fd5182cb",
-      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "area": "live-native-audio"
     },
     {
       "file": "src/live/diagnostics.ts",
@@ -3649,7 +3749,8 @@
       "resumeState": "accepted_exact_joined",
       "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
       "acceptedBlob": "40dc0fdf0b0a29da00c52827af7ba3eba6461b0b",
-      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "area": "live-native-audio"
     },
     {
       "file": "src/live/editor-push-to-talk.ts",
@@ -3663,7 +3764,8 @@
       "resumeState": "accepted_exact_joined",
       "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
       "acceptedBlob": "3fac9c057f3f767a9af84ce9bcbcb3341a952e5b",
-      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "area": "live-native-audio"
     },
     {
       "file": "src/live/embedded.ts",
@@ -3677,7 +3779,8 @@
       "resumeState": "accepted_exact_joined",
       "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
       "acceptedBlob": "bda048c5bdf546d7dd7297e130b17920ce1c3f14",
-      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "area": "live-native-audio"
     },
     {
       "file": "src/live/extension.ts",
@@ -3693,7 +3796,8 @@
       "resumeState": "accepted_exact_not_joined",
       "pendingReason": "Exact focus-reviewed blob verified at its judged source commit and latest area tree; joined bytes differ. Preserve both prior and current exact-code reviews; accepted area source still needs deliberate integration, not safety-reporter approval.",
       "acceptedBlob": "53b126a8669adebbd44292faeddf782889809825",
-      "result": "Exact focus-reviewed blob verified at its judged source commit and latest area tree; joined bytes differ. Preserve both prior and current exact-code reviews; accepted area source still needs deliberate integration, not safety-reporter approval."
+      "result": "Exact focus-reviewed blob verified at its judged source commit and latest area tree; joined bytes differ. Preserve both prior and current exact-code reviews; accepted area source still needs deliberate integration, not safety-reporter approval.",
+      "area": "live-native-audio"
     },
     {
       "file": "src/live/gpt-live-context.ts",
@@ -3707,7 +3811,8 @@
       "resumeState": "accepted_exact_joined",
       "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
       "acceptedBlob": "ca67afe7f0da5fa93829785661d93b002a2d2302",
-      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "area": "live-native-audio"
     },
     {
       "file": "src/live/gpt-live-delegation.ts",
@@ -3721,7 +3826,8 @@
       "resumeState": "accepted_exact_joined",
       "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
       "acceptedBlob": "160003768942615890ecba4835805cd3954be71a",
-      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "area": "live-native-audio"
     },
     {
       "file": "src/live/gpt-live-playback.ts",
@@ -3735,7 +3841,8 @@
       "resumeState": "accepted_exact_joined",
       "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
       "acceptedBlob": "0ae9b29f607c565fbfe00896627956c5bac3ce18",
-      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "area": "live-native-audio"
     },
     {
       "file": "src/live/gpt-live-request.ts",
@@ -3749,7 +3856,8 @@
       "resumeState": "accepted_exact_joined",
       "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
       "acceptedBlob": "ff55e2444000fa15232dabf6d697c63037a7b0ae",
-      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "area": "live-native-audio"
     },
     {
       "file": "src/live/gpt-live-session.ts",
@@ -3763,7 +3871,8 @@
       "resumeState": "accepted_exact_joined",
       "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
       "acceptedBlob": "92d985f0bd164825e712218e609930f2262beb0b",
-      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "area": "live-native-audio"
     },
     {
       "file": "src/live/helper.ts",
@@ -3777,7 +3886,8 @@
       "resumeState": "accepted_exact_joined",
       "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
       "acceptedBlob": "7cd173370b3ab5bf89e08ea287cbbe8e9e70b8a8",
-      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "area": "live-native-audio"
     },
     {
       "file": "src/live/lifecycle-access.ts",
@@ -3791,7 +3901,8 @@
       "resumeState": "accepted_exact_joined",
       "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
       "acceptedBlob": "907131d869263fb00bd1a84a042a244cf108c1dc",
-      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "area": "live-native-audio"
     },
     {
       "file": "src/live/main-owner.ts",
@@ -3805,19 +3916,39 @@
       "resumeState": "accepted_exact_joined",
       "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
       "acceptedBlob": "bb80a4fd5997a18d93cfce3fd34fc8e4b022c7aa",
-      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "area": "live-native-audio"
     },
     {
       "file": "src/live/offline-transport-probe.ts",
       "initialBlob": "a45e47706f80941e5988bf58a43d28e57b68a73d",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_1a83d7f6",
       "sourceCommit": "a2e8025bd3ffba42a24e0b7ba3358ac97de68532",
       "judgeIds": [
-        "task_ad737139"
+        "task_ad737139",
+        "task_26c0b5a0"
       ],
-      "resumeState": "candidate_pending_actual_code_judgment",
-      "pendingReason": "Committed primary candidate verified; no recorded completed focus ACCEPT/NO CHANGE NEEDED judgment. Historical running labels are not current liveness or approval."
+      "resumeState": "accepted-joined",
+      "pendingReason": "Committed primary candidate verified; no recorded completed focus ACCEPT/NO CHANGE NEEDED judgment. Historical running labels are not current liveness or approval.",
+      "area": "live-native-audio",
+      "acceptedBlob": "b9185ba4765942830b79097724643510da3a7f62",
+      "result": "Compared actual Git parent 1c1c6c9f3da5cb4157304c9034f20ba8993ce222 with the candidate, not checkout HEAD; primary context was {}. The parent exercise function makes the reader join a reject boolean across fixture response, socket-open behavior, socket-error behavior, string settlement and a three-part final assertion. The candidate makes two complete semantic journeys independently readable: expectSessionUpdated sends setup on open, accepts only session.updated and rejects error/close; expectUnauthorizedUpgrade forbids open/message and accepts only sanitized, metadata-backed HTTP 401 evidence. These are coherent event expectations, not arbitrary extracted blocks or a context bag. probeLoopbackTransport visibly owns acquisition, deadline, fixture evidence and finally teardown; there is no second lifecycle owner. Removing the ready/rejected result string leaves Promise<void> settlement authoritative. Explicit outcome arguments and separate handshake/session assertions expose the orchestration. The new related test file is also readable: one scenario observes every model/outcome listener, while the other substitutes 403 only for the second, rejection fixture and requires failure without success logging. Each test owns its acquired servers and global spies in a local try/finally. Acceptance covers both changed source blobs as one patch, not a test-count argument.",
+      "systemReason": "Followed unchanged hidden CLI gate in src/cli.ts into the exported probe, and the source/full-compiled comparison launcher. For each of the two catalogue models, the export runs readiness then rejection sequentially and logs success only after all finish. The owner constructs only a ws://127.0.0.1 URL from its own ephemeral Bun listener and passes the synthetic Authorization header directly to production defaultSocket. That delegates to upgradeSocket: ws performs one nonredirecting handshake, successful frames are forwarded, unexpected HTTP responses yield status/allowlisted code rather than raw body/header text, and close terminates a connecting socket or closes an established one. connectionFailure converts metadata to safe text; the rejection expectation requires HTTP 401 and excludes fake-key/body markers and unknown-status text. The fixture validates path/model/header/upgrade, either returns poisoned 401 metadata or validates the session.update type and 24 kHz input rate before replying. The shared owner races expectation against four seconds, checks exactly one handshake and matching server-side session evidence, and clears timer/closes socket/stops listener in finally. Unchanged decision: no change needed to the existing CLI gate, direct transport selection, safe error classifier or loopback resource owner for this cleanup; their distinct responsibilities remain in their existing homes. This does not enter the production voice-session connect/microphone/credential journey. The new unauthorized message failure gives an immediate diagnostic instead of the parent resolving ready and failing its result assertion; it does not add a new product authentication behavior.",
+      "checks": [
+        "Read wisdom/values.md, structural-readability-guidance.md, repository-wide and live/native-audio ledgers; read the relevant live JSON entries. Worker claims were not used as runtime evidence.",
+        "Inspected all three changed paths: focus source, new related test source, and worker prose note. Read actual candidate source/callers and parent focus source from Git objects.",
+        "Verified the seven listed unchanged caller/dependency/test paths have identical parent/candidate blobs.",
+        "git diff --check between exact parent and candidate completed cleanly.",
+        "No setup, repository tests, builds, provider/device probes or delegation were run. Only Git/filesystem reading and this untracked report write."
+      ],
+      "limits": [
+        "Static actual-code judgment only; parent owns audited isolated batch runtime gates. Worker-reported tests and source CLI success were not independently reproduced or credited as judge passes.",
+        "No real credentials/authentication, external provider, physical audio device, macOS, compiled CLI parity or rendered voice readiness/teardown claim.",
+        "Timeout and finally ownership are visible in source, not independently measured here; inherited callback JSON parsing/server validation can still throw outside Promise settlement. No speculative redesign requested.",
+        "New tests/offline-transport-probe.test.ts is accepted as a related patch path here; its required dedicated primary-focus coverage remains separate in the area ledger.",
+        "Worker-local wisdom note was reviewed as prose, not accepted as application source or copied into aggregate wisdom. No source, wisdom or values edits; existing guidance suffices."
+      ]
     },
     {
       "file": "src/live/openai-connect-error.ts",
@@ -3831,7 +3962,8 @@
       "resumeState": "accepted_exact_joined",
       "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
       "acceptedBlob": "4b1dc32b7b36c544da534e9ca5f0cfe4686ddc68",
-      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "area": "live-native-audio"
     },
     {
       "file": "src/live/openai-errors.ts",
@@ -3845,7 +3977,8 @@
       "resumeState": "accepted_exact_not_joined",
       "pendingReason": "Exact focus-reviewed blob verified at its judged source commit and latest area tree; joined bytes differ. Preserve both prior and current exact-code reviews; accepted area source still needs deliberate integration, not safety-reporter approval.",
       "acceptedBlob": "0292a5e8aa1e33459570f4052a86896331e529c8",
-      "result": "Exact focus-reviewed blob verified at its judged source commit and latest area tree; joined bytes differ. Preserve both prior and current exact-code reviews; accepted area source still needs deliberate integration, not safety-reporter approval."
+      "result": "Exact focus-reviewed blob verified at its judged source commit and latest area tree; joined bytes differ. Preserve both prior and current exact-code reviews; accepted area source still needs deliberate integration, not safety-reporter approval.",
+      "area": "live-native-audio"
     },
     {
       "file": "src/live/openai-resample.ts",
@@ -3859,7 +3992,8 @@
       "resumeState": "accepted_exact_joined",
       "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
       "acceptedBlob": "3237fbde60b8c0da9951552161d8ab61989547f8",
-      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "area": "live-native-audio"
     },
     {
       "file": "src/live/openai-session.ts",
@@ -3874,19 +4008,38 @@
       "resumeState": "accepted_exact_not_joined",
       "pendingReason": "Exact focus-reviewed blob verified at its judged source commit and latest area tree; joined bytes differ. Preserve both prior and current exact-code reviews; accepted area source still needs deliberate integration, not safety-reporter approval.",
       "acceptedBlob": "aa6e30da2964c45ff7245572bfbbbad910ad8cf9",
-      "result": "Exact focus-reviewed blob verified at its judged source commit and latest area tree; joined bytes differ. Preserve both prior and current exact-code reviews; accepted area source still needs deliberate integration, not safety-reporter approval."
+      "result": "Exact focus-reviewed blob verified at its judged source commit and latest area tree; joined bytes differ. Preserve both prior and current exact-code reviews; accepted area source still needs deliberate integration, not safety-reporter approval.",
+      "area": "live-native-audio"
     },
     {
       "file": "src/live/openai-upgrade-socket.ts",
       "initialBlob": "c6ced660c58ff7b517315e86ceb892bfe0a59f39",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_ad7ff38d",
       "sourceCommit": "31bf2843d0aad882258288ca512035fe1d64528e",
       "judgeIds": [
-        "task_8fc1fe9e"
+        "task_8fc1fe9e",
+        "task_1d24c7e5"
       ],
-      "resumeState": "candidate_pending_actual_code_judgment",
-      "pendingReason": "Committed primary candidate verified; no recorded completed focus ACCEPT/NO CHANGE NEEDED judgment. Historical running labels are not current liveness or approval."
+      "resumeState": "accepted-joined",
+      "pendingReason": "Committed primary candidate verified; no recorded completed focus ACCEPT/NO CHANGE NEEDED judgment. Historical running labels are not current liveness or approval.",
+      "area": "live-native-audio",
+      "acceptedBlob": "e28565a97187ecdf928826917f20c252d4190adb",
+      "result": "Intrinsic: the adapter has a readable success path and a distinct HTTP-rejection path. readRejectionCode owns response buffering, the 4096-byte retention bound, one-second deadline, parsing, destruction and exactly-once completion/cancellation. Its returned stop operation is the explicit lifetime boundary; status/model correlation and WebSocket termination remain with upgradeSocket. Compared with primary parent ec8d02c7d7c214a19993132b6ac62666a1a4b823, readers no longer reconstruct rejection resource ownership across outer rejection/rejectionTimer/finished variables and close(). The permanent rejected gate starts at unexpected-response, while helper done represents completion or cancellation of the body inspection; those are genuinely different decisions, not renamed state. Normal end reports only error.code; oversize, malformed, stream error and deadline retain status without response text. close() cancels the reader before terminating the connection. The new Node fixture owns its server/peers and follows partial HTTP response, explicit close, peer release and absence of late diagnostics. Unchanged decision: NO CHANGE NEEDED for direct open/message translation, readyState/bufferedAmount/send forwarding, the small RealtimeSocket contract, and the session-owned readiness/terminal correlation; further extraction would add navigation without clarifying authority.",
+      "systemReason": "Traced exact candidate callers: defaultSocket -> upgradeSocket; OpenAIRealtimeSession.connect supplies one Authorization-bearing Upgrade, sends session.update on open, and becomes ready only after session.updated. Redirects remain disabled and no REST probe or model substitution is introduced. On rejected HTTP upgrade, adapter suppresses competing generic ws error/close while reading diagnostics, then reports status/code/model once. connectionFailure validates status and selected model; providerFailure allowlists codes, withholding arbitrary provider text. Session error handling calls fail -> close, advances serial, settles pending connect and closes the socket; late events cannot reopen it. Extension onError requests Live shutdown, reports the safe diagnostic and preserves agent jobs. Explicit shutdown during inspection now marks the reader done and suppresses termination error/close instead of leaving parent finished false: an intentional adapter cancellation fix. The session already had serial fencing, so this is not evidence of a newly fixed production user-visible duplicate notification. Offline probe remains a loopback-only consumer of the same factory. All inspected production caller blobs are unchanged in this candidate.",
+      "checks": [
+        "Read wisdom/values.md, structural-readability-guidance.md, repository and live-area ledger guidance/provenance; primary context was {}.",
+        "Resolved candidate and primary parent explicitly; git diff --name-status identified both changed source paths and a worker wisdom note. Read complete exact Git versions of changed sources and parent focus, not checkout HEAD.",
+        "Inspected exact candidate session contract/connect/error/close paths, diagnostic classifiers, extension startup/failure/stop paths, offline consumer, and existing loopback setup/status/body-bound/stall/extension assertions; verified these callers have no candidate-to-parent delta.",
+        "Read installed ws rejected-response/abort-handshake behavior read-only to check ownership and asynchronous termination events.",
+        "No setup, tests, builds, real network/provider/device access, credential use, delegation, source edits, commits or destructive operations performed. Static review only; no primary-reported passes credited as independent checks."
+      ],
+      "limits": [
+        "Runtime acceptance remains with parent audited isolated batch gates; the incidental late-error fix was traced statically, not independently reproduced here.",
+        "New regression is Node-specific and skipped on Bun; its fixed 40ms inspection delay is scheduling-sensitive. The comment about Bun partial-body behavior is not independently verified by this review.",
+        "No real authentication, device, macOS, acoustics, compiled CLI or whole-repository gate claim. Automatic setup outcome was not established by this review and must not be inferred successful.",
+        "Related test receives actual-code review here but its separate own-primary coverage obligation in the area ledger remains; this decision is not aggregate PR45 integration approval."
+      ]
     },
     {
       "file": "src/live/passive-history.ts",
@@ -3900,7 +4053,8 @@
       "resumeState": "accepted_exact_not_joined",
       "pendingReason": "Exact focus-reviewed blob verified at its judged source commit and latest area tree; joined bytes differ. Preserve both prior and current exact-code reviews; accepted area source still needs deliberate integration, not safety-reporter approval.",
       "acceptedBlob": "7070135c72f7a9216c71318e4d47dead85d72dbc",
-      "result": "Exact focus-reviewed blob verified at its judged source commit and latest area tree; joined bytes differ. Preserve both prior and current exact-code reviews; accepted area source still needs deliberate integration, not safety-reporter approval."
+      "result": "Exact focus-reviewed blob verified at its judged source commit and latest area tree; joined bytes differ. Preserve both prior and current exact-code reviews; accepted area source still needs deliberate integration, not safety-reporter approval.",
+      "area": "live-native-audio"
     },
     {
       "file": "src/live/playback.ts",
@@ -3914,7 +4068,8 @@
       "resumeState": "accepted_exact_joined",
       "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
       "acceptedBlob": "ce0fd68dbcc5487dd3fa1f218dd353f34571feac",
-      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "area": "live-native-audio"
     },
     {
       "file": "src/live/providers.ts",
@@ -3928,19 +4083,37 @@
       "resumeState": "accepted_exact_joined",
       "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
       "acceptedBlob": "ac1238e745270cf870d48d98fa510b0893536a52",
-      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "area": "live-native-audio"
     },
     {
       "file": "src/live/self-test.ts",
       "initialBlob": "ee5fe8af00adb8b80b56f53b6581926a6525ccfc",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_0c915bed",
       "sourceCommit": "a5642b72d82ac64e94fb58abfb5a2076b07031c3",
       "judgeIds": [
-        "task_58b18de6"
+        "task_58b18de6",
+        "task_c1052b52"
       ],
-      "resumeState": "candidate_pending_actual_code_judgment",
-      "pendingReason": "Committed primary candidate verified; no recorded completed focus ACCEPT/NO CHANGE NEEDED judgment. Historical running labels are not current liveness or approval. Candidate retains the existing focus source blob; its report or related additions do not replace an independent focus judgment."
+      "resumeState": "accepted-joined",
+      "pendingReason": "Committed primary candidate verified; no recorded completed focus ACCEPT/NO CHANGE NEEDED judgment. Historical running labels are not current liveness or approval. Candidate retains the existing focus source blob; its report or related additions do not replace an independent focus judgment.",
+      "area": "live-native-audio",
+      "acceptedBlob": "ee5fe8af00adb8b80b56f53b6581926a6525ccfc",
+      "result": "The unchanged function has one visible authority and lifetime: obtain the embedded helper or fail before acquisition, enter try/finally, run --self-test, run a separate stop-only protocol process, validate first hello/protocol 1 plus stopped, report success, then await cleanup on success or any failure. Shared process options are local and bounded; no hidden state or reconstructed phase machine. The failure branches and ownership are already readable. Moving these short steps into helpers would obscure rather than clarify their effects. No source readability improvement is claimed from adding tests.",
+      "systemReason": "CLI handles the sole --live-self-test argument before ordinary bootstrap and exits after this operation. Build embedding validates arm64 Mach-O bytes and records their digest; embedded resolver gates darwin/arm64 and helper extraction owns a verified private executable and rollback on partial failure. This diagnostic deliberately bypasses normal LiveAudio developer/sibling helper selection. Swift --self-test exits before Live creation; normal protocol emits hello and stop does not call start/open, where AVAudioEngine is created. Installer/updater call the staged diagnostic before replacing the installed pair. These boundaries fit the retained embedded-only release diagnostic without adding a device/provider path.",
+      "checks": [
+        "Primary context supplied as {}; no prior judgment assumed.",
+        "Read candidate and primary parent 7a77efe6fea0aee00df16ebd19382e789c74dd36 using git show/diff, not checkout HEAD. Focus blob identical in both.",
+        "Inspected every changed path: tests/live-self-test.test.ts and wisdom/quality/structural-readability-worker.md; only the test is changed source.",
+        "Read wisdom/values.md, structural-readability-guidance.md, repo-wide ledger/pipeline and exact repo-wide/area focus entries plus area briefs. Entries are pending, not prior acceptance.",
+        "git diff --check primary-parent candidate passed (static whitespace check only). No setup, tests, builds, auth, device, network or delegation performed."
+      ],
+      "limits": [
+        "Static actual-code judgment only; primary-reported test counts were not independently rerun and do not establish this verdict. Parent owns audited batch runtime gates.",
+        "No macOS executable, physical device, provider readiness or authentication claim. Swift start-free behavior is source tracing, not native execution proof.",
+        "spawnSync timeout is not a hard deadline for signal-ignoring children or descendants."
+      ]
     },
     {
       "file": "src/live/session.ts",
@@ -3954,17 +4127,36 @@
       "resumeState": "accepted_exact_joined",
       "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
       "acceptedBlob": "5d0f66a03d902165e3f1a224e3e607802ca015cb",
-      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "area": "live-native-audio"
     },
     {
       "file": "src/live/setup-probe.ts",
       "initialBlob": "6b216e0773e6c7c1255a6777b43afb1d1fc2d50f",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_763635f4",
       "sourceCommit": "e048a21fae75ef90d7694cbeb2f1393169eae9ed",
-      "judgeIds": [],
-      "resumeState": "candidate_pending_actual_code_judgment",
-      "pendingReason": "Committed primary candidate verified; no recorded completed focus ACCEPT/NO CHANGE NEEDED judgment. Historical running labels are not current liveness or approval. Candidate retains the existing focus source blob; its report or related additions do not replace an independent focus judgment."
+      "judgeIds": [
+        "task_52d397e7"
+      ],
+      "resumeState": "accepted-joined",
+      "pendingReason": "Committed primary candidate verified; no recorded completed focus ACCEPT/NO CHANGE NEEDED judgment. Historical running labels are not current liveness or approval. Candidate retains the existing focus source blob; its report or related additions do not replace an independent focus judgment.",
+      "area": "live-native-audio",
+      "acceptedBlob": "6b216e0773e6c7c1255a6777b43afb1d1fc2d50f",
+      "result": "Independent source reading against actual parent abf51f5ef6643b459028a086abc85aee6ebb9a44, with primary context {}. Candidate changes only wisdom/quality/structural-readability-worker.md; there are no changed related source paths. Focus is byte-identical to parent. Its single factory has one coherent responsibility: obtain the shared execute declaration, adapt parameters to the voice schema field, provide ordinary root instructions, and return an unconditional asynchronous denial. The execute callback does not inspect or evaluate submitted code. Schema construction belongs to definition.ts/tool-schema.ts, prompt composition to prompts.ts, and provider transport/lifetimes to sessions. There is no hidden mutable state, authority handoff, cancellation registration, child or cleanup lifetime in this factory. Extracting wrappers or a context bag would obscure this already-direct path. No rename or test-count argument is needed to retain it.",
+      "systemReason": "Source journeys: (1) Ordinary tool registration in src/typescript/extension.ts spreads executeDeclaration(); the probe uses that same asset-free declaration but deliberately does not acquire the agent runtime. The prompt/schema callers compare the ordinary root prompt and registered schema and explicitly check denial of executable-looking code. (2) OpenAIRealtimeSession maps the returned tools to session.update function declarations and awaits session.updated; Gemini VoiceSession passes them as NON_BLOCKING SDK declarations. If a provider issues an admitted tool request, each session calls orchestration.execute and delivers the denied result, rather than running agent work. Session cancellation, duplicate/reply tracking, readiness and socket/SDK closure stay with the provider session, not this factory. The offline OpenAI schema caller validates the actual serialized payload before acknowledging it; this is fixture evidence, not real provider acceptance. (3) Maintained paid acceptance callers are explicit opt-in, load canonical credentials only inside their test callbacks, and abort/close in finally. The operational OpenAI setup script gates before its private-file read, gives the connection a 28-second deadline, clears the timer and closes the session in finally. I read these source files, not credential files, and ran none of them. (4) The shipped /live mic-check is separate: local/busy gate, sequence-owned explicit consent, AbortController, audio launch and explicit start, then stop/close in finally. LiveAudio owns the protocol-v1 hello (3 seconds), ready/start (30 seconds), stopped acknowledgement (2 seconds), abort wiring, input acceptance, SIGTERM/one-second SIGKILL escalation and extraction cleanup; helper.ts owns private extraction and failure cleanup. A ready route does not establish sound quality or physical silence. (5) /live setup enters credential configuration, but can then launch a real Run after the user chooses Start voice; Run acquires the main owner, launches audio, connects its provider and starts capture. That is not the denial-only probe orchestration. Retaining this small factory preserves a useful configuration-only diagnostic boundary without conflating shipped device or agent ownership.",
+      "checks": [
+        "Read wisdom/values.md, structural-readability-guidance.md and repo-wide/live-native-audio ledgers; their prior counts/verdicts were not substituted for reading the candidate.",
+        "Read candidate and actual parent with Git object reads, not current checkout HEAD; git diff --name-status identifies only the new local Markdown note. Inspected that complete changed path.",
+        "git rev-parse verifies parent and candidate focus both resolve to 6b216e0773e6c7c1255a6777b43afb1d1fc2d50f; no changed source paths are omitted from acceptedBlobs.",
+        "Candidate-to-parent git diff --check completed with no output. Read all maintained setupProbeOrchestration callers located by candidate-tree git grep and the relevant schema/provider/shipped diagnostic ownership paths.",
+        "No source edits, tests, builds, setup, delegation, paid connections, device probes, credential reads, recovery, cleanup, push, PR or merge performed."
+      ],
+      "limits": [
+        "Static actual-code readability judgment only. No independent runtime pass/count claim; primary test counts are not credited as judge evidence. Parent owns audited isolated batch gates.",
+        "No real authentication, provider acceptance, audio-device, acoustic/AEC, macOS compilation, physical stop or complete system-quality claim. Host automatic setup outcome was not available in this review and was neither inferred successful nor bypassed.",
+        "Acceptance applies to the exact focused source blob above, not the worker-local wisdom note or a blanket acceptance of adjacent files. No per-worker wisdom/value edits; parent owns aggregate wisdom. Runtime agent.model verification is left to the parent through jobs.inspect."
+      ]
     },
     {
       "file": "src/live/setup.ts",
@@ -3974,7 +4166,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "primary_started_no_committed_candidate",
-      "pendingReason": "Primary was allocated, but no candidate commit or completed focus judgment is recorded. Preserve its worktree; do not treat the stale running status as proof of current execution."
+      "pendingReason": "Primary was allocated, but no candidate commit or completed focus judgment is recorded. Preserve its worktree; do not treat the stale running status as proof of current execution.",
+      "area": "live-native-audio"
     },
     {
       "file": "src/live/speaker-check.ts",
@@ -3984,7 +4177,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "primary_uncommitted_candidate_pending",
-      "pendingReason": "Primary was allocated, but no candidate commit or completed focus judgment is recorded. Preserve its worktree; do not treat the stale running status as proof of current execution."
+      "pendingReason": "Primary was allocated, but no candidate commit or completed focus judgment is recorded. Preserve its worktree; do not treat the stale running status as proof of current execution.",
+      "area": "live-native-audio"
     },
     {
       "file": "src/live/speaker-summary.ts",
@@ -3998,7 +4192,8 @@
       "resumeState": "accepted_exact_joined",
       "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
       "acceptedBlob": "95305051ea489012a17049fa326ea87e53ec06aa",
-      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "area": "live-native-audio"
     },
     {
       "file": "src/live/status.ts",
@@ -4012,7 +4207,8 @@
       "resumeState": "accepted_exact_not_joined",
       "pendingReason": "Exact focus-reviewed blob verified at its judged source commit and latest area tree; joined bytes differ. Preserve both prior and current exact-code reviews; accepted area source still needs deliberate integration, not safety-reporter approval.",
       "acceptedBlob": "d8026fa785047027d133f9ef541ecd6eec0942bf",
-      "result": "Exact focus-reviewed blob verified at its judged source commit and latest area tree; joined bytes differ. Preserve both prior and current exact-code reviews; accepted area source still needs deliberate integration, not safety-reporter approval."
+      "result": "Exact focus-reviewed blob verified at its judged source commit and latest area tree; joined bytes differ. Preserve both prior and current exact-code reviews; accepted area source still needs deliberate integration, not safety-reporter approval.",
+      "area": "live-native-audio"
     },
     {
       "file": "src/live/tool-result.ts",
@@ -4026,7 +4222,8 @@
       "resumeState": "accepted_exact_joined",
       "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
       "acceptedBlob": "f0338f1445387a86adfd6cc9917fa3dcfb39c739",
-      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "area": "live-native-audio"
     },
     {
       "file": "src/live/transcript-text.ts",
@@ -4040,7 +4237,8 @@
       "resumeState": "accepted_exact_joined",
       "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
       "acceptedBlob": "e7e2fd9610dea3364c9dd23ac7a9286fa3eb48ee",
-      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "area": "live-native-audio"
     },
     {
       "file": "src/live/types.ts",
@@ -4054,7 +4252,8 @@
       "resumeState": "accepted_exact_joined",
       "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
       "acceptedBlob": "982613947af84d36edeb598916e7826fc3f43190",
-      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "area": "live-native-audio"
     },
     {
       "file": "src/live/waveform.ts",
@@ -4068,7 +4267,8 @@
       "resumeState": "accepted_exact_joined",
       "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
       "acceptedBlob": "4fa724f5c981c5d85054dcccec102a67ced75e2d",
-      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "area": "live-native-audio"
     },
     {
       "file": "src/output-buffer.ts",
@@ -7070,7 +7270,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "own_primary_pending",
-      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/current-pipeline-sdk.test.ts",
@@ -7136,7 +7337,8 @@
         "task_51a3b4e4"
       ],
       "resumeState": "related_actual_code_accepted_own_primary_pending",
-      "pendingReason": "Retain exact related-path actual-code acceptance; it is not completion of this file’s distinct primary/fresh focus-judge requirement."
+      "pendingReason": "Retain exact related-path actual-code acceptance; it is not completion of this file’s distinct primary/fresh focus-judge requirement.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/editor-voice-integration.test.ts",
@@ -7150,7 +7352,8 @@
       "resumeState": "accepted_exact_joined",
       "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
       "acceptedBlob": "89f3ee58570d4e8d08bbb8aedf98e1e218524529",
-      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/editor.test.ts",
@@ -7284,7 +7487,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "own_primary_pending",
-      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/fixtures/live-gpt-tui.ts",
@@ -7294,7 +7498,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "own_primary_pending",
-      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/fixtures/live-picker-tui.ts",
@@ -7304,7 +7509,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "own_primary_pending",
-      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/fixtures/live-push-to-talk-tui.ts",
@@ -7314,7 +7520,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "own_primary_pending",
-      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/fixtures/live-spoken-tui.ts",
@@ -7324,7 +7531,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "own_primary_pending",
-      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/fixtures/remote-e2e/Dockerfile",
@@ -7815,7 +8023,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "own_primary_pending",
-      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/goals-marker-sdk.test.ts",
@@ -7883,7 +8092,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "own_primary_pending",
-      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/gpt-live-delegation.test.ts",
@@ -7898,7 +8108,8 @@
       "resumeState": "accepted_exact_not_joined",
       "pendingReason": "Exact focus-reviewed blob verified at its judged source commit and latest area tree; joined bytes differ. Preserve both prior and current exact-code reviews; accepted area source still needs deliberate integration, not safety-reporter approval.",
       "acceptedBlob": "3ffa47fccf3ea33830d6180d81cbc8812438f18c",
-      "result": "Exact focus-reviewed blob verified at its judged source commit and latest area tree; joined bytes differ. Preserve both prior and current exact-code reviews; accepted area source still needs deliberate integration, not safety-reporter approval."
+      "result": "Exact focus-reviewed blob verified at its judged source commit and latest area tree; joined bytes differ. Preserve both prior and current exact-code reviews; accepted area source still needs deliberate integration, not safety-reporter approval.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/gpt-live-playback.test.ts",
@@ -7913,7 +8124,8 @@
       "resumeState": "accepted_exact_not_joined",
       "pendingReason": "Exact focus-reviewed blob verified at its judged source commit and latest area tree; joined bytes differ. Preserve both prior and current exact-code reviews; accepted area source still needs deliberate integration, not safety-reporter approval.",
       "acceptedBlob": "66489a0ad2027a5307cdecb469aa5ba6fa8a633b",
-      "result": "Exact focus-reviewed blob verified at its judged source commit and latest area tree; joined bytes differ. Preserve both prior and current exact-code reviews; accepted area source still needs deliberate integration, not safety-reporter approval."
+      "result": "Exact focus-reviewed blob verified at its judged source commit and latest area tree; joined bytes differ. Preserve both prior and current exact-code reviews; accepted area source still needs deliberate integration, not safety-reporter approval.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/gpt-live-request.test.ts",
@@ -7923,7 +8135,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "own_primary_pending",
-      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/gpt-live-session.test.ts",
@@ -7938,7 +8151,8 @@
       "resumeState": "accepted_exact_joined",
       "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
       "acceptedBlob": "21832ae3a8c518914e1e99e849a3f21340bcf303",
-      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/gpt-live-waveform.test.ts",
@@ -7948,7 +8162,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "own_primary_pending",
-      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/helpers.ts",
@@ -7970,7 +8185,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "own_primary_pending",
-      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/herdr-agent-state.test.ts",
@@ -8309,7 +8525,8 @@
       "resumeState": "accepted_exact_not_joined",
       "pendingReason": "Exact focus-reviewed blob verified at its judged source commit and latest area tree; joined bytes differ. Preserve both prior and current exact-code reviews; accepted area source still needs deliberate integration, not safety-reporter approval.",
       "acceptedBlob": "bfd36ef721d8ac677ac5765d0074934659cd9a32",
-      "result": "Exact focus-reviewed blob verified at its judged source commit and latest area tree; joined bytes differ. Preserve both prior and current exact-code reviews; accepted area source still needs deliberate integration, not safety-reporter approval."
+      "result": "Exact focus-reviewed blob verified at its judged source commit and latest area tree; joined bytes differ. Preserve both prior and current exact-code reviews; accepted area source still needs deliberate integration, not safety-reporter approval.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/live-audio.test.ts",
@@ -8324,7 +8541,8 @@
       "resumeState": "accepted_exact_joined",
       "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
       "acceptedBlob": "a6f73800667e3a3cafc70357e0b2840d366d1290",
-      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/live-auth-lifecycle.test.ts",
@@ -8334,7 +8552,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "own_primary_pending",
-      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/live-capture-gate.test.ts",
@@ -8346,7 +8565,8 @@
         "task_660502a4"
       ],
       "resumeState": "related_actual_code_accepted_own_primary_pending",
-      "pendingReason": "Retain exact related-path actual-code acceptance; it is not completion of this file’s distinct primary/fresh focus-judge requirement."
+      "pendingReason": "Retain exact related-path actual-code acceptance; it is not completion of this file’s distinct primary/fresh focus-judge requirement.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/live-config.test.ts",
@@ -8356,7 +8576,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "own_primary_pending",
-      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/live-conversation.test.ts",
@@ -8366,7 +8587,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "own_primary_pending",
-      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/live-cost.test.ts",
@@ -8381,7 +8603,8 @@
       "resumeState": "accepted_exact_not_joined",
       "pendingReason": "Exact focus-reviewed blob verified at its judged source commit and latest area tree; joined bytes differ. Preserve both prior and current exact-code reviews; accepted area source still needs deliberate integration, not safety-reporter approval.",
       "acceptedBlob": "b6b973be8cc5a8c93f5cbe2986f2edfe27563806",
-      "result": "Exact focus-reviewed blob verified at its judged source commit and latest area tree; joined bytes differ. Preserve both prior and current exact-code reviews; accepted area source still needs deliberate integration, not safety-reporter approval."
+      "result": "Exact focus-reviewed blob verified at its judged source commit and latest area tree; joined bytes differ. Preserve both prior and current exact-code reviews; accepted area source still needs deliberate integration, not safety-reporter approval.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/live-credentials.test.ts",
@@ -8391,7 +8614,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "own_primary_pending",
-      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/live-dispatch-budget.test.ts",
@@ -8401,7 +8625,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "own_primary_pending",
-      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/live-dispatch-budget.ts",
@@ -8411,7 +8636,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "own_primary_pending",
-      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/live-embedded-helper.test.ts",
@@ -8423,7 +8649,8 @@
         "task_1c3f1e78"
       ],
       "resumeState": "related_actual_code_accepted_own_primary_pending",
-      "pendingReason": "Retain exact related-path actual-code acceptance; it is not completion of this file’s distinct primary/fresh focus-judge requirement."
+      "pendingReason": "Retain exact related-path actual-code acceptance; it is not completion of this file’s distinct primary/fresh focus-judge requirement.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/live-execute-controls.test.ts",
@@ -8433,7 +8660,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "own_primary_pending",
-      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/live-extension.test.ts",
@@ -8449,7 +8677,8 @@
       "resumeState": "accepted_exact_joined",
       "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
       "acceptedBlob": "da0317117b6400fdba6b333935d8bb0b2d951e31",
-      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/live-gpt-live-provider.acceptance.test.ts",
@@ -8459,7 +8688,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "own_primary_pending",
-      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/live-gpt-tui.test.ts",
@@ -8469,7 +8699,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "own_primary_pending",
-      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/live-host-access.test.ts",
@@ -8479,7 +8710,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "own_primary_pending",
-      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/live-host-bridge.test.ts",
@@ -8494,7 +8726,8 @@
       "resumeState": "accepted_exact_not_joined",
       "pendingReason": "Exact focus-reviewed blob verified at its judged source commit and latest area tree; joined bytes differ. Preserve both prior and current exact-code reviews; accepted area source still needs deliberate integration, not safety-reporter approval.",
       "acceptedBlob": "3dc74be1639a7877100ff4b4fb8eee5a635a03c1",
-      "result": "Exact focus-reviewed blob verified at its judged source commit and latest area tree; joined bytes differ. Preserve both prior and current exact-code reviews; accepted area source still needs deliberate integration, not safety-reporter approval."
+      "result": "Exact focus-reviewed blob verified at its judged source commit and latest area tree; joined bytes differ. Preserve both prior and current exact-code reviews; accepted area source still needs deliberate integration, not safety-reporter approval.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/live-long-audio.test.ts",
@@ -8504,7 +8737,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "own_primary_pending",
-      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/live-macos-ci.test.ts",
@@ -8514,7 +8748,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "own_primary_pending",
-      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/live-main-integration.test.ts",
@@ -8524,7 +8759,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "own_primary_pending",
-      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/live-main-orchestrator-runtime.probe.ts",
@@ -8534,7 +8770,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "own_primary_pending",
-      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/live-main-owner.test.ts",
@@ -8549,7 +8786,8 @@
       "resumeState": "accepted_exact_joined",
       "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
       "acceptedBlob": "9e228bc0c98e2ae271d679c8aeedcfd3e4a10fe1",
-      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/live-native-workflows.test.ts",
@@ -8559,7 +8797,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "own_primary_pending",
-      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/live-notice.test.ts",
@@ -8569,7 +8808,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "own_primary_pending",
-      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/live-openai-provider.acceptance.test.ts",
@@ -8579,7 +8819,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "own_primary_pending",
-      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/live-paired-runtime.test.ts",
@@ -8589,7 +8830,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "own_primary_pending",
-      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/live-passive-history.test.ts",
@@ -8601,7 +8843,8 @@
         "task_189c73c2"
       ],
       "resumeState": "related_actual_code_accepted_own_primary_pending",
-      "pendingReason": "Retain exact related-path actual-code acceptance; it is not completion of this file’s distinct primary/fresh focus-judge requirement."
+      "pendingReason": "Retain exact related-path actual-code acceptance; it is not completion of this file’s distinct primary/fresh focus-judge requirement.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/live-picker-tui.test.ts",
@@ -8611,7 +8854,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "own_primary_pending",
-      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/live-platform.test.ts",
@@ -8621,7 +8865,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "own_primary_pending",
-      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/live-playback.test.ts",
@@ -8636,7 +8881,8 @@
       "resumeState": "accepted_exact_joined",
       "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
       "acceptedBlob": "af8b12dd1bf13514c5313825d06d9a018d380fcc",
-      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/live-probe-input.test.ts",
@@ -8646,7 +8892,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "own_primary_pending",
-      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/live-prompt.test.ts",
@@ -8656,7 +8903,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "own_primary_pending",
-      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/live-provider.acceptance.test.ts",
@@ -8666,7 +8914,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "own_primary_pending",
-      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/live-push-to-talk-tui.test.ts",
@@ -8676,7 +8925,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "own_primary_pending",
-      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/live-session.test.ts",
@@ -8686,7 +8936,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "own_primary_pending",
-      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/live-setup-diagnostics.test.ts",
@@ -8698,7 +8949,8 @@
         "task_660502a4"
       ],
       "resumeState": "related_actual_code_accepted_own_primary_pending",
-      "pendingReason": "Retain exact related-path actual-code acceptance; it is not completion of this file’s distinct primary/fresh focus-judge requirement."
+      "pendingReason": "Retain exact related-path actual-code acceptance; it is not completion of this file’s distinct primary/fresh focus-judge requirement.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/live-setup.test.ts",
@@ -8708,7 +8960,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "own_primary_pending",
-      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/live-speaker-check.test.ts",
@@ -8718,7 +8971,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "related_uncommitted_candidate_own_primary_pending",
-      "pendingReason": "Related primary left uncommitted bytes for this file; preserve them, allocate this focus its own primary, and obtain exact-code judgment before integration."
+      "pendingReason": "Related primary left uncommitted bytes for this file; preserve them, allocate this focus its own primary, and obtain exact-code judgment before integration.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/live-speaker-summary.test.ts",
@@ -8728,7 +8982,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "own_primary_pending",
-      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/live-spoken-tui.test.ts",
@@ -8738,7 +8993,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "own_primary_pending",
-      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/live-startup-audio-queue.test.ts",
@@ -8748,7 +9004,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "own_primary_pending",
-      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/live-startup-natural-fixture.test.ts",
@@ -8758,7 +9015,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "own_primary_pending",
-      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/live-startup-speech-probe.test.ts",
@@ -8768,7 +9026,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "own_primary_pending",
-      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/live-status.test.ts",
@@ -8780,7 +9039,8 @@
         "task_5f68217e"
       ],
       "resumeState": "related_actual_code_accepted_own_primary_pending",
-      "pendingReason": "Retain exact related-path actual-code acceptance; it is not completion of this file’s distinct primary/fresh focus-judge requirement."
+      "pendingReason": "Retain exact related-path actual-code acceptance; it is not completion of this file’s distinct primary/fresh focus-judge requirement.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/live-study-trial.test.ts",
@@ -8790,7 +9050,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "own_primary_pending",
-      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/live-tool-result.test.ts",
@@ -8802,7 +9063,8 @@
         "task_7324a1fb"
       ],
       "resumeState": "related_actual_code_accepted_own_primary_pending",
-      "pendingReason": "Retain exact related-path actual-code acceptance; it is not completion of this file’s distinct primary/fresh focus-judge requirement."
+      "pendingReason": "Retain exact related-path actual-code acceptance; it is not completion of this file’s distinct primary/fresh focus-judge requirement.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/live-tools.test.ts",
@@ -8817,7 +9079,8 @@
       "resumeState": "accepted_exact_joined",
       "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
       "acceptedBlob": "1c93a8e1bdb4066f2ab226871e34415e658d48ea",
-      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/live-transcript.test.ts",
@@ -8827,7 +9090,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "own_primary_pending",
-      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/live-tui-startup.test.ts",
@@ -8837,7 +9101,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "own_primary_pending",
-      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/live-tui-startup.ts",
@@ -8847,7 +9112,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "own_primary_pending",
-      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/live-waveform.test.ts",
@@ -8857,7 +9123,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "own_primary_pending",
-      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/llm.test.ts",
@@ -9110,7 +9377,8 @@
         "task_8db4b91e"
       ],
       "resumeState": "related_actual_code_accepted_own_primary_pending",
-      "pendingReason": "Retain exact related-path actual-code acceptance; it is not completion of this file’s distinct primary/fresh focus-judge requirement."
+      "pendingReason": "Retain exact related-path actual-code acceptance; it is not completion of this file’s distinct primary/fresh focus-judge requirement.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/openai-session-schema.test.ts",
@@ -9120,7 +9388,8 @@
       "sourceCommit": null,
       "judgeIds": [],
       "resumeState": "own_primary_pending",
-      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/openai-session.test.ts",
@@ -9135,7 +9404,8 @@
       "resumeState": "accepted_exact_joined",
       "pendingReason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
       "acceptedBlob": "db32c13aeccdc9c9a8e7f991fc7a2442ee1575c8",
-      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      "result": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file.",
+      "area": "live-native-audio"
     },
     {
       "file": "tests/output-buffer.test.ts",
@@ -12053,10 +12323,32 @@
       "area": "live-native-audio",
       "primaryId": null,
       "sourceCommit": "a5642b72d82ac64e94fb58abfb5a2076b07031c3",
-      "judgeIds": [],
-      "resumeState": "related_candidate_own_primary_pending",
+      "judgeIds": [
+        "task_c1052b52"
+      ],
+      "resumeState": "accepted-joined",
       "pendingReason": "New related candidate has no own primary or completed independent focus judgment; withhold integration approval.",
-      "status": "pending"
+      "status": "accepted",
+      "acceptedRelatedJudges": [
+        "task_c1052b52"
+      ],
+      "acceptedBlob": "d9dead0e2c17b436931bb3174f80ecbe09095e1b",
+      "result": "New source, absent in the primary parent. probe owns a single temporary root, extracts one scripted helper, launches one child-local Bun module mock, observes diagnostic outcomes, and finally releases its fixture. self/protocol arguments describe the two executable phases directly. Success, early self-test failure, protocol mismatch/parse failure, and timeout journeys remain local to their cases; fixture cleanup and diagnostic cleanup are separately visible. The generated runner is justified by module-cache isolation, not a new framework or production context bag.",
+      "systemReason": "The child substitutes only embedded resolution and cleanup; it imports the actual diagnostic and uses actual subprocess execution and audioEnvironment. Checks observe phase order, exact stop-only stdin, synthetic API-key stripping, extraction removal and timeout-fixture exit before outer cleanup. The outer fixture finally covers assertion failures. This adds direct evidence for the retained owner rather than changing release behavior. Mock scope is confined to the child, so neighboring tests are not made dependent on a global helper-module replacement.",
+      "checks": [
+        "Primary context supplied as {}; no prior judgment assumed.",
+        "Read candidate and primary parent 7a77efe6fea0aee00df16ebd19382e789c74dd36 using git show/diff, not checkout HEAD. Focus blob identical in both.",
+        "Inspected every changed path: tests/live-self-test.test.ts and wisdom/quality/structural-readability-worker.md; only the test is changed source.",
+        "Read wisdom/values.md, structural-readability-guidance.md, repo-wide ledger/pipeline and exact repo-wide/area focus entries plus area briefs. Entries are pending, not prior acceptance.",
+        "git diff --check primary-parent candidate passed (static whitespace check only). No setup, tests, builds, auth, device, network or delegation performed."
+      ],
+      "limits": [
+        "Static actual-code judgment only; primary-reported test counts were not independently rerun and do not establish this verdict. Parent owns audited batch runtime gates.",
+        "No macOS executable, physical device, provider readiness or authentication claim. Swift start-free behavior is source tracing, not native execution proof.",
+        "spawnSync timeout is not a hard deadline for signal-ignoring children or descendants.",
+        "The resolver and its returned cleanup are synthetic in the child; production platform resolution and Swift audio behavior are not exercised by these shell fixtures.",
+        "Side-effect audit: this test writes/extracts into an mkdtemp root, runs /bin/sh and sleep, sends signals to its recorded fixture PID, and recursively removes its own root. Its Bun runner inherits process.env except overridden HOME/TMPDIR and a fake key; it is not a fully hermetic SDK/config environment. No such actions were executed here. Parent must account for this cleanup and inherited environment in its audited gates."
+      ]
     },
     {
       "file": "tests/offline-transport-probe.test.ts",
@@ -12065,9 +12357,13 @@
       "primaryId": null,
       "sourceCommit": "a2e8025bd3ffba42a24e0b7ba3358ac97de68532",
       "judgeIds": [],
-      "resumeState": "related_candidate_own_primary_pending",
+      "resumeState": "needs-primary-final-blob",
       "pendingReason": "New related candidate has no own primary or completed independent focus judgment; withhold integration approval.",
-      "status": "pending"
+      "status": "pending",
+      "acceptedRelatedJudges": [
+        "task_26c0b5a0"
+      ],
+      "acceptedBlob": "ceee222b98414140f6d2688bd128ace3f1c02add"
     },
     {
       "file": "tests/openai-upgrade-socket-node.test.mjs",
@@ -12076,9 +12372,13 @@
       "primaryId": null,
       "sourceCommit": "31bf2843d0aad882258288ca512035fe1d64528e",
       "judgeIds": [],
-      "resumeState": "related_candidate_own_primary_pending",
+      "resumeState": "needs-primary-final-blob",
       "pendingReason": "New related candidate has no own primary or completed independent focus judgment; withhold integration approval.",
-      "status": "pending"
+      "status": "pending",
+      "acceptedRelatedJudges": [
+        "task_1d24c7e5"
+      ],
+      "acceptedBlob": "4e191af147d30885d04d0d601e21c8dc0eae8481"
     }
   ],
   "completedAreas": {

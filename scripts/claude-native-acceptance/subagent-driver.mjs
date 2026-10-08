@@ -2,7 +2,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import assert from "node:assert/strict";
 import { prepare, captureIdentity, projectWire, waitForProcessExit } from "./driver.mjs";
-import { modelSlug, title, cancelTitle, stopTitle } from "./subagent-model.mjs";
+import { modelSlug, title } from "./subagent-model.mjs";
 import { collectReturnEvidence } from "./subagent-return-evidence.mjs";
 export { prepare, captureIdentity };
 async function waitFile(file) {
@@ -16,49 +16,66 @@ async function waitFile(file) {
   }
   throw Error("Missing actual child file: " + path.basename(file));
 }
+// Finalization runs after exercise (including failure), without reloading its proof flags from disk.
 let observedConfig;
-export async function exercise({ page, url, snapshot, config }) {
+export async function exercise({ page, snapshot, config }) {
   observedConfig = config;
   // The shared replay already completed the real native ready/new-thread flow.
-  const message = page.getByRole("textbox", { name: "Message", exact: true });
-  const newThread = async () => {
-    await page.getByRole("button", { name: "New thread", exact: true }).click();
-    // Current upstream opens its native project picker before creating the draft.
-    await page
-      .locator('[data-slot="command-item"]')
-      .filter({ has: page.getByText("project", { exact: true }) })
-      .first()
-      .click();
-    await message.waitFor();
-    await page.locator('[data-chat-provider-model-picker="true"]').first().click();
-    await page.getByText("Local deterministic acceptance (not Claude)", { exact: true }).last().click();
-  };
-  await message.waitFor();
+  await exerciseCompletedChildReturn(page, config, snapshot);
+  // These independent roots must not hide a broken same-root continuation.
+  await openWorkerRoot(page);
+  await exerciseExplicitCancellation(page, config.state, snapshot);
+  await openWorkerRoot(page);
+  await exerciseNativeStop(page, config.state, snapshot);
+}
+
+async function selectWorkerModel(page) {
+  await page.getByRole("textbox", { name: "Message", exact: true }).waitFor();
   await page.locator('[data-chat-provider-model-picker="true"]').first().click();
   await page.getByText("Local deterministic acceptance (not Claude)", { exact: true }).last().click();
+}
+
+async function openWorkerRoot(page) {
+  await page.getByRole("button", { name: "New thread", exact: true }).click();
+  // Current upstream opens its native project picker before creating the draft.
+  await page
+    .locator('[data-slot="command-item"]')
+    .filter({ has: page.getByText("project", { exact: true }) })
+    .first()
+    .click();
+  await selectWorkerModel(page);
+}
+
+async function submitPrompt(page, text) {
+  await page.getByRole("textbox", { name: "Message", exact: true }).fill(text);
+  await page.getByRole("button", { name: "Submit message", exact: true }).click();
+}
+
+async function waitForText(page, text) {
+  await page.getByText(text, { exact: false }).first().waitFor({ timeout: 30000 });
+}
+
+async function exerciseCompletedChildReturn(page, config, snapshot) {
+  const message = page.getByRole("textbox", { name: "Message", exact: true });
+  await selectWorkerModel(page);
   await snapshot("model-identity");
-  const submit = async (text) => {
-    await message.fill(text);
-    await page.getByRole("button", { name: "Submit message", exact: true }).click();
-  };
-  const visible = async (text) => page.getByText(text, { exact: false }).first().waitFor({ timeout: 30000 });
-  await submit("ACCEPT_LOCAL_SUBAGENT: launch the actual normal Bruv worker locally with waitSeconds zero.");
+  await submitPrompt(page, "ACCEPT_LOCAL_SUBAGENT: launch the actual normal Bruv worker locally with waitSeconds zero.");
   await waitFile(path.join(config.state, "child.ready"));
-  await visible("ROOT_BACKGROUND_RETURN_REAL");
+  await waitForText(page, "ROOT_BACKGROUND_RETURN_REAL");
   await page
     .getByText(/^Worked for /)
     .first()
     .click();
-  await visible(title);
+  await waitForText(page, title);
   const nativeCard = page.locator('[data-v2-item-type="subagent"]').filter({ hasText: title });
   assert.equal(await nativeCard.getAttribute("aria-description"), "Running");
   await snapshot("agent-running");
   // A separate user turn while the real child is pending; completion must survive it.
-  await submit("ACCEPT_LOCAL_FOLLOWUP: acknowledge this followup while the normal child is still running.");
-  await visible("ROOT_FOLLOWUP_REAL");
+  await submitPrompt(page, "ACCEPT_LOCAL_FOLLOWUP: acknowledge this followup while the normal child is still running.");
+  await waitForText(page, "ROOT_FOLLOWUP_REAL");
   await snapshot("followup-before-completion");
   await fs.writeFile(path.join(config.state, "child.release"), "release");
-  await visible("ROOT_COMPLETION_ONCE_REAL");
+  await waitForText(page, "ROOT_COMPLETION_ONCE_REAL");
   // 2644 also renders a Finished event card. Select the original live card by
   // its Completed status instead of treating both same-title cards as one.
   const completedCard = page
@@ -77,13 +94,13 @@ export async function exercise({ page, url, snapshot, config }) {
   await completedCard.click();
   await page.waitForTimeout(750);
   await snapshot("child-transcript-attempt");
-  await visible("CHILD_ANSWER_REAL");
-  await visible("Completed");
+  await waitForText(page, "CHILD_ANSWER_REAL");
+  await waitForText(page, "Completed");
   await page
     .getByText(/^Worked for /)
     .first()
     .click();
-  await visible("Execute");
+  await waitForText(page, "Execute");
   await snapshot("child-transcript-expanded");
   await page.getByText("Execute", { exact: true }).first().click();
   await page.waitForTimeout(500);
@@ -114,7 +131,7 @@ export async function exercise({ page, url, snapshot, config }) {
     await message.fill("ACCEPT_LOCAL_AFTER_CHILD: reply in this same root after child transcript return.");
     // A success result is not enough: the real native composer must admit the next prompt.
     await page.getByRole("button", { name: "Submit message", exact: true }).click({ timeout: 10000 });
-    await visible("ROOT_AFTER_CHILD_REAL");
+    await waitForText(page, "ROOT_AFTER_CHILD_REAL");
     await page
       .getByRole("button", { name: "Stop generation", exact: true })
       .waitFor({ state: "hidden", timeout: 10000 });
@@ -125,26 +142,29 @@ export async function exercise({ page, url, snapshot, config }) {
   } finally {
     await collectReturnEvidence(config, page);
   }
-  // Cancellation/Stop use independent roots only AFTER same-root continuation passes.
-  await newThread();
-  await submit("ACCEPT_LOCAL_CANCEL: launch and explicitly stop another actual normal worker.");
-  await visible("ROOT_KILLED_COMPLETION_REAL");
-  await waitForProcessExit(path.join(config.state, "cancel.worker.pid"));
-  await waitForProcessExit(path.join(config.state, "cancel.ready"));
+}
+
+async function exerciseExplicitCancellation(page, state, snapshot) {
+  await submitPrompt(page, "ACCEPT_LOCAL_CANCEL: launch and explicitly stop another actual normal worker.");
+  await waitForText(page, "ROOT_KILLED_COMPLETION_REAL");
+  await waitForProcessExit(path.join(state, "cancel.worker.pid"));
+  await waitForProcessExit(path.join(state, "cancel.ready"));
   await snapshot("actual-cancel-completed");
-  await newThread();
-  await submit("ACCEPT_LOCAL_STOP: launch another actual normal worker and hold root generation.");
-  await waitFile(path.join(config.state, "stop.ready"));
+}
+
+async function exerciseNativeStop(page, state, snapshot) {
+  await submitPrompt(page, "ACCEPT_LOCAL_STOP: launch another actual normal worker and hold root generation.");
+  await waitFile(path.join(state, "stop.ready"));
   await snapshot("before-stop");
   await page.getByRole("button", { name: "Stop generation", exact: true }).click();
-  await visible("Run interrupted by user");
-  await waitForProcessExit(path.join(config.state, "stop.worker.pid"));
-  await waitForProcessExit(path.join(config.state, "stop.ready"));
-  await waitForProcessExit(path.join(config.state, "stop.root-tool.pid"));
+  await waitForText(page, "Run interrupted by user");
+  await waitForProcessExit(path.join(state, "stop.worker.pid"));
+  await waitForProcessExit(path.join(state, "stop.ready"));
+  await waitForProcessExit(path.join(state, "stop.root-tool.pid"));
   await snapshot("stop-owned-subtree-exited");
-  await submit("ACCEPT_LOCAL_FOLLOWUP: continue after default Stop closed the owned subtree.");
+  await submitPrompt(page, "ACCEPT_LOCAL_FOLLOWUP: continue after default Stop closed the owned subtree.");
   await page.waitForTimeout(1000);
-  await visible("ROOT_FOLLOWUP_REAL");
+  await waitForText(page, "ROOT_FOLLOWUP_REAL");
   await snapshot("continued-after-stop");
 }
 export function checkSameRootReply(wire) {
@@ -196,15 +216,7 @@ export function checkConsumedPromptOwnership(wire) {
   assert.equal(echoed(wake).length, 0, "Autonomous result must not recharge a consumed human prompt UUID");
   return { consumedPromptOwnership: true };
 }
-export async function verify({ wire, config, proof, t3Version, t3BinarySha256 }) {
-  assert.equal(
-    config.sameRootChildReturnReply,
-    true,
-    "Actual same-root browser return, admission and next reply required",
-  );
-  checkSameRootReply(wire);
-  checkConsumedPromptOwnership(wire);
-  const out = wire.filter((x) => x.kind === "stdout").map((x) => x.value);
+function checkTaskLifecycle(out) {
   const starts = out.filter((m) => m.type === "system" && m.subtype === "task_started");
   const ends = out.filter((m) => m.type === "system" && m.subtype === "task_notification");
   assert.equal(starts.length, 3, "Three actual local worker starts");
@@ -229,6 +241,12 @@ export async function verify({ wire, config, proof, t3Version, t3BinarySha256 })
     .flatMap((m) => m.message?.content ?? [])
     .filter((c) => c.type === "tool_use");
   assert.equal(tools.filter((c) => c.name === "execute").length, 3, "No duplicate root execute launch");
+  const agents = tools.filter((c) => c.name === "Agent");
+  assert.equal(agents.length, 3, "Real native Agent call");
+  return { starts, ends, agents };
+}
+
+function checkUsageOwnership(out, completedTask) {
   const rootModelMessages = out.filter(
     (m) =>
       m.type === "assistant" &&
@@ -242,13 +260,15 @@ export async function verify({ wire, config, proof, t3Version, t3BinarySha256 })
   );
   assert.equal(rootModelMessages.length, 10, "Actual root model turns, no duplicated child turns");
   assert.equal(rootTokens, 180, "Actual root usage only, child tokens not added");
-  assert.equal(ends[0].usage.total_tokens, 36, "Actual child usage exactly two model calls");
+  assert.equal(completedTask.usage.total_tokens, 36, "Actual child usage exactly two model calls");
   const rootResultTokens = out
     .filter((m) => m.type === "result" && m.usage)
     .reduce((n, m) => n + m.usage.input_tokens + m.usage.output_tokens, 0);
   assert.equal(rootResultTokens, rootTokens, "Native per-generation result usage excludes child tokens");
-  const agents = tools.filter((c) => c.name === "Agent");
-  assert.equal(agents.length, 3, "Real native Agent call");
+  return { rootModelMessages, rootTokens };
+}
+
+async function resolveLaunchSources(out) {
   const launchFrames = out.filter((m) => m.type === "assistant" && m.bruv?.jobId);
   assert.equal(new Set(launchFrames.map((m) => m.bruv.jobId)).size, 3, "Distinct actual local job IDs");
   const launchSources = [];
@@ -270,6 +290,10 @@ export async function verify({ wire, config, proof, t3Version, t3BinarySha256 })
     assert.ok(call, "Actual root execute source call resolves");
     launchSources.push({ launch: frame.bruv, call, bindings });
   }
+  return launchSources;
+}
+
+function checkStopContinuation(wire) {
   const stopIndex = wire.findIndex(
     (x) => x.kind === "stdin" && x.value?.type === "control_request" && x.value.request?.subtype === "interrupt",
   );
@@ -282,6 +306,22 @@ export async function verify({ wire, config, proof, t3Version, t3BinarySha256 })
     wire.slice(stopIndex + 1).some((x) => x.kind === "lifecycle" && x.value?.event === "spawn"),
     "Continue starts a new query owner",
   );
+}
+
+export async function verify({ wire, config, proof, t3Version, t3BinarySha256 }) {
+  assert.equal(
+    config.sameRootChildReturnReply,
+    true,
+    "Actual same-root browser return, admission and next reply required",
+  );
+  checkSameRootReply(wire);
+  checkConsumedPromptOwnership(wire);
+  const out = wire.filter((x) => x.kind === "stdout").map((x) => x.value);
+  const { starts, ends, agents } = checkTaskLifecycle(out);
+  const { rootModelMessages, rootTokens } = checkUsageOwnership(out, ends[0]);
+  const launchSources = await resolveLaunchSources(out);
+  checkStopContinuation(wire);
+
   await fs.writeFile(
     path.join(proof, "source-task-bindings.json"),
     JSON.stringify(launchSources, null, 2).replaceAll(path.dirname(config.state), "<FIXTURE>") + "\n",

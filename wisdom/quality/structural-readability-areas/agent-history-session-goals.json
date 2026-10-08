@@ -102,7 +102,7 @@
     {
       "focus": "scripts/history-storage-probe.ts",
       "initialBlob": "2e443cc387a687ffd98506aa489c8b8658683593",
-      "status": "primary-running",
+      "status": "pending",
       "primary": [
         {
           "id": "task_b0eea86b",
@@ -1772,7 +1772,7 @@
     {
       "focus": "src/prompts/compaction-jobs.md",
       "initialBlob": "e896596cd3979381dd5e174aa023e9e89b4f8ae6",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_8fa02408",
@@ -1795,7 +1795,7 @@
           "status": "running"
         }
       ],
-      "acceptedBlob": null,
+      "acceptedBlob": "e896596cd3979381dd5e174aa023e9e89b4f8ae6",
       "integration": "pending",
       "resume": {
         "status": "accepted",
@@ -1813,7 +1813,7 @@
     {
       "focus": "src/prompts/compaction.md",
       "initialBlob": "130bda9935d6bccd28182ce185dcd88601fb3a04",
-      "status": "judging",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_cc512c91",
@@ -1836,7 +1836,7 @@
           "status": "running"
         }
       ],
-      "acceptedBlob": null,
+      "acceptedBlob": "130bda9935d6bccd28182ce185dcd88601fb3a04",
       "integration": "pending",
       "resume": {
         "status": "accepted",
@@ -1855,7 +1855,7 @@
     {
       "focus": "src/prompts/execute-description.md",
       "initialBlob": "1a75e9bd8ed0a8f13acc586b6739b35397a9c6b3",
-      "status": "primary-running",
+      "status": "pending",
       "primary": [
         {
           "id": "task_9a3e6f45",
@@ -4558,7 +4558,7 @@
     },
     {
       "focus": "tests/fixtures/history-sdk-probe-failure.ts",
-      "status": "primary-running",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_296ad782",
@@ -4590,7 +4590,8 @@
         "sourceCommit": "ce7032a68d76defd3b2f40c6bb630f5b8824c0af",
         "state": "accepted-joined",
         "reason": "Compared actual candidate with primary base 25bb96f0b70a2afad8875dc00ce34412861bac6e, which is also its parent. The sole changed source is the restored 69-line preload; the base lacks it despite an existing test caller. Read the complete fixture, caller test and script, then the manager registration/adoption/append/reset/disposal paths and real store pending/append/publication/disposal/exit cleanup. Intrinsically NO CHANGE NEEDED after restoration: the sequential groups express capture of one real store and physical spool, observation after real dispose, first-message failure before publication, snapshot before real directory removal, optional counterfactual, and synchronous exit assertions. Their few local observations correspond to those distinct boundaries rather than a scattered policy or shared context bag. Extraction or a naming-only rewrite would conceal this short journey without relocating an authority. ACCEPT records restoring the missing caller dependency, not a claim of a new structural refactor."
-      }
+      },
+      "acceptedBlob": "8dc54fdbef477552d6dbb3559cebb797c79ee267"
     }
   ],
   "crossAreaNeeds": [
@@ -4732,5 +4733,9 @@
       "areaMerge": "e0fe105c008a532f7a6324b2d9329c92aa003759",
       "result": "Clean three-way merge of parent accepted shared checkpoint (not direct sibling merge). All current own accepted blob hashes unchanged. Parent first-parent commits explicitly join judged partial areas; site complete. Combined API/type/tests still required, no acceptance inferred for untouched pending focuses."
     }
-  ]
+  ],
+  "resumeStatus": {
+    "accepted": 59,
+    "pending": 64
+  }
 }

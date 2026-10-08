@@ -13,12 +13,9 @@ async function files(dir) {
   }
   return out;
 }
-// Capture BEFORE replay removes its private state, including on the bounded UI failure.
-// Only fixture markers and correlation/status fields: no prompts, pairing tokens or auth rows.
-export async function collectReturnEvidence(config, page, filename = "same-root-return-evidence.json") {
-  const wire = lines(await fs.readFile(config.wire, "utf8"));
-  const ids = new Map();
-  const id = (v) => (v ? (ids.has(v) ? ids.get(v) : (ids.set(v, "id-" + (ids.size + 1)), ids.get(v))) : null);
+
+async function readWireEvidence(file, id) {
+  const wire = lines(await fs.readFile(file, "utf8"));
   const lifecycle = wire.flatMap((e, sequence) =>
     e.kind === "lifecycle"
       ? [
@@ -54,8 +51,12 @@ export async function collectReturnEvidence(config, page, filename = "same-root-
         markers: markers(m),
       };
     });
+  return { lifecycle, correlation };
+}
+
+async function readJournalEvidence(directory, id) {
   const journals = [];
-  for (const f of await files(path.join(config.env.BRUV_CODING_AGENT_DIR, "native-sessions"))) {
+  for (const f of await files(directory)) {
     if (!f.endsWith(".json")) continue;
     const index = JSON.parse(await fs.readFile(f, "utf8"));
     if (!index.file) continue;
@@ -90,12 +91,12 @@ export async function collectReturnEvidence(config, page, filename = "same-root-
         })),
     });
   }
-  const persistence = [];
-  const events = [];
+  return journals;
+}
+
+async function readProviderEvidence(runtimeFiles, id) {
   const provider = [];
-  const { DatabaseSync } = await import("node:sqlite");
-  const base = path.join(path.dirname(config.state), "t3-runtime", "t3-base");
-  for (const f of await files(base)) {
+  for (const f of runtimeFiles) {
     if (f.includes("/logs/provider/") && f.endsWith(".log")) {
       for (const [sequence, line] of (await fs.readFile(f, "utf8")).split("\n").entries()) {
         const start = line.indexOf("{");
@@ -128,6 +129,15 @@ export async function collectReturnEvidence(config, page, filename = "same-root-
         });
       }
     }
+  }
+  return provider;
+}
+
+async function readPersistenceEvidence(runtimeFiles) {
+  const persistence = [];
+  const events = [];
+  const { DatabaseSync } = await import("node:sqlite");
+  for (const f of runtimeFiles) {
     if (!/\.(sqlite|sqlite3|db)$/.test(f)) continue;
     const db = new DatabaseSync(f, { readOnly: true });
     try {
@@ -169,6 +179,20 @@ export async function collectReturnEvidence(config, page, filename = "same-root-
       db.close();
     }
   }
+  return { events, persistence };
+}
+
+// Capture BEFORE replay removes its private state, including on the bounded UI failure.
+// Only fixture markers and correlation/status fields: no prompts, pairing tokens or auth rows.
+export async function collectReturnEvidence(config, page, filename = "same-root-return-evidence.json") {
+  // Share one ID namespace across sources, in capture order, so prompt/session echoes remain comparable.
+  const ids = new Map();
+  const id = (v) => (v ? (ids.has(v) ? ids.get(v) : (ids.set(v, "id-" + (ids.size + 1)), ids.get(v))) : null);
+  const { lifecycle, correlation } = await readWireEvidence(config.wire, id);
+  const journals = await readJournalEvidence(path.join(config.env.BRUV_CODING_AGENT_DIR, "native-sessions"), id);
+  const runtimeFiles = await files(path.join(path.dirname(config.state), "t3-runtime", "t3-base"));
+  const provider = await readProviderEvidence(runtimeFiles, id);
+  const { events, persistence } = await readPersistenceEvidence(runtimeFiles);
   const report = {
     lifecycle,
     provider,

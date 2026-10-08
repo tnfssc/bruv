@@ -36,7 +36,18 @@
       "integration": "accepted unchanged blob matches area tip",
       "relatedPaths": [],
       "readingResult": "Unchanged candidate: opposite job conditions distinguish helper protocol smoke/artifact delivery from source+compiled loopback probe; extraction would add navigation.",
-      "checks": "9 workflow tests/100 assertions, three portable sanitizer binaries, YAML routing/permissions/pins/artifacts and diff checks. No hosted/macOS/device/provider or compiled transport execution."
+      "checks": "9 workflow tests/100 assertions, three portable sanitizer binaries, YAML routing/permissions/pins/artifacts and diff checks. No hosted/macOS/device/provider or compiled transport execution.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "6c1b0780b78c229785db286e9f15b76a4be60d32",
+        "primaryId": "task_8194489e",
+        "judgeIds": [
+          "task_c5d328c7"
+        ],
+        "sourceCommit": "333c662fc7ac2b3ffa9a8ca238ba0fe9c6bce8f5",
+        "state": "accepted_exact_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      }
     },
     {
       "focus": "native/live-linux/CaptureGate.h",
@@ -68,7 +79,18 @@
       "integration": "accepted unchanged blob matches area tip",
       "relatedPaths": [],
       "readingResult": "Unchanged acquisition frontier predicate: rejects unarmed/invalid origin/pre-frontier; main.cpp owns Pulse revision/cancellation/backlog resets, JS stale epoch rejection separate. Wrappers would add indirection.",
-      "checks": "28 Bun pass/155 assertions; C++ gate ASan/UBSan pass. No virtual/native helper/provider/macOS proof."
+      "checks": "28 Bun pass/155 assertions; C++ gate ASan/UBSan pass. No virtual/native helper/provider/macOS proof.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "b1cd6d7ce25890e7336fd7ea198ac5e2e324905e",
+        "primaryId": "task_7e221830",
+        "judgeIds": [
+          "task_5e692e3f"
+        ],
+        "sourceCommit": "d3ba046d7bdca2cbe0c008105abccf0278cd4a4b",
+        "state": "accepted_exact_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      }
     },
     {
       "focus": "native/live-linux/main.cpp",
@@ -105,7 +127,18 @@
         "native/live-linux/tests/protocol.py"
       ],
       "readingResult": "PlaybackBuffer owns ring/generation/flush synchronization; explicit enqueue outcomes; updateStreams owns opening/readiness/verification; render path frame/echo/AEC/Pulse write visible.",
-      "checks": "Native build/self-test, ASan/UBSan buffer harness, protocol rejection/backpressure; 25 Bun tests/172 assertions. Virtual protocol/capture fail audio_device on candidate and baseline; no runtime parity."
+      "checks": "Native build/self-test, ASan/UBSan buffer harness, protocol rejection/backpressure; 25 Bun tests/172 assertions. Virtual protocol/capture fail audio_device on candidate and baseline; no runtime parity.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "b8ae3e08f47d6346d45324baa24605ef61e9d907",
+        "primaryId": "task_71e74f3b",
+        "judgeIds": [
+          "task_13282f24"
+        ],
+        "sourceCommit": "751c9ba0be74eb6939791c49c06d84de8882e669",
+        "state": "accepted_exact_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      }
     },
     {
       "focus": "native/live-linux/tests/backpressure.py",
@@ -137,7 +170,18 @@
       "integration": "integrated accepted exact primary candidate",
       "relatedPaths": [],
       "readingResult": "Preloaded command replay file removes producer thread; unread stdout launch/exit74 deadline/diagnostic and failure kill/reap/close visible. Explicit baseline openpipe leak fixed by owned handle cleanup.",
-      "checks": "Native build/backpressure/no-device protocol pass;10 instrumented realhelper runs;silentdrop/wrongstatus/missingdiagnostic/blocking mutations rejected,blocking killed/reaped5.001sec. No device/provider/macOS/fullgate."
+      "checks": "Native build/backpressure/no-device protocol pass;10 instrumented realhelper runs;silentdrop/wrongstatus/missingdiagnostic/blocking mutations rejected,blocking killed/reaped5.001sec. No device/provider/macOS/fullgate.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "df54145e5bb23b98a0ba70decb49efa6f767a01c",
+        "primaryId": "task_b65be047",
+        "judgeIds": [
+          "task_c68d41f2"
+        ],
+        "sourceCommit": "4ba1f1c1b0757f60bedd75076bd461397f6a112c",
+        "state": "accepted_exact_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      }
     },
     {
       "focus": "native/live-linux/tests/capture-gate.cpp",
@@ -169,7 +213,18 @@
       "integration": "integrated accepted exact primary candidate",
       "relatedPaths": [],
       "readingResult": "Three local gate fixtures isolate continuous/first hold/reopen; reopening proves index9000 accepted before mute then rejected until new snapshot and against new frontier, units explicit. Prior assertions retained.",
-      "checks": "4 Bun tests/24 assertions; strict GCC and ClangASan/UBSan pass; diff clean. No Pulse/device/provider/macOS runtime."
+      "checks": "4 Bun tests/24 assertions; strict GCC and ClangASan/UBSan pass; diff clean. No Pulse/device/provider/macOS runtime.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "6cb2911f8dbc46de4ea293fed9d12f8b64f0730d",
+        "primaryId": "task_3f8cfc8c",
+        "judgeIds": [
+          "task_794b83a8"
+        ],
+        "sourceCommit": "60884cc93465a0bd217574abdb6e148db81dfaf6",
+        "state": "accepted_exact_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      }
     },
     {
       "focus": "native/live-linux/tests/capture-protocol.py",
@@ -214,7 +269,19 @@
         "native/live-linux/tests/test_capture_protocol.py"
       ],
       "readingResult": "Scoped session owns framing/shutdown and one validation path;scenario startup/hold/suspendedclient backlog/freshhold/stop visible. Baseline mutedrain accepted newepoch/malformedPCM;explicit regressions reject both while retaining oldepoch settling allowance.",
-      "checks": "27 Python tests+4 capturegate tests/helper build;launch+3candidate privatehardwarefree graph pass. Local PipeWirePulse not CI PulseAudio;nulltraffic not acquisitionorigin proof, nativefrontier tests supply it."
+      "checks": "27 Python tests+4 capturegate tests/helper build;launch+3candidate privatehardwarefree graph pass. Local PipeWirePulse not CI PulseAudio;nulltraffic not acquisitionorigin proof, nativefrontier tests supply it.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "6918a3b62e8bcaf6687e73874bd5ae31ce3a46f3",
+        "primaryId": "task_c8643d8b",
+        "judgeIds": [
+          "task_c412b125",
+          "task_0f8a556e"
+        ],
+        "sourceCommit": "3c71d4a280d89be9b6597d09af48a40a376451f8",
+        "state": "accepted_exact_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      }
     },
     {
       "focus": "native/live-linux/tests/protocol.py",
@@ -268,7 +335,20 @@
         "native/live-linux/tests/test_protocol.py"
       ],
       "readingResult": "Protocol owns framing/process exit; ordered checks retain journey; synthetic_microphone owns Pulse stream/worker cleanup/join/failure delivery. Explicit fixes reported for buffered select responses, unterminated-line deadline, feeder failure cleanup.",
-      "checks": "Nine regressions/helper build/real no-device smoke/diff pass. Baseline and candidate virtual smoke fail first played audio_device; drain/capture/restart/source-removal unproven."
+      "checks": "Nine regressions/helper build/real no-device smoke/diff pass. Baseline and candidate virtual smoke fail first played audio_device; drain/capture/restart/source-removal unproven.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "3c2ef6bc49b9c8e2025132ffdab1877a82effa81",
+        "primaryId": "task_113b4141",
+        "judgeIds": [
+          "task_5ff86413",
+          "task_ab2edd5f",
+          "task_13282f24"
+        ],
+        "sourceCommit": "61dd86168b4b0a3a178aa5ccdca54e1a058117f6",
+        "state": "accepted_exact_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      }
     },
     {
       "focus": "native/live-linux/tests/source-removal.py",
@@ -303,7 +383,18 @@
         "native/live-linux/tests/test_source_removal.py"
       ],
       "readingResult": "RemovalHelper owns framing/process lifetime;scenario visibly hello/start/ready/checked unload/timedstop/stopped;device errors not acknowledgment. Explicit partial-frame EOF busy wait fixed.",
-      "checks": "24 focused tests/native build/private virtual graph protocol-removal pass;partialEOF baseline2.053sec vs candidate.059sec,both reject missing shutdown. Virtual may reroute,no physical/device/macOS/provider/fullgate."
+      "checks": "24 focused tests/native build/private virtual graph protocol-removal pass;partialEOF baseline2.053sec vs candidate.059sec,both reject missing shutdown. Virtual may reroute,no physical/device/macOS/provider/fullgate.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "5d707531d9753b02b575997c378f13517fc8370d",
+        "primaryId": "task_ba46a6b0",
+        "judgeIds": [
+          "task_46031fcf"
+        ],
+        "sourceCommit": "bebc961f249c35103aa08d0bebf496548844c8ad",
+        "state": "accepted_exact_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      }
     },
     {
       "focus": "native/live-linux/tests/virtual.sh",
@@ -344,7 +435,18 @@
         "scripts/live-isolated-audio.sh"
       ],
       "readingResult": "Candidate makes virtual graph ownership private rather than touching desktop graph; uses existing isolated graph harness. Explicit fixture fix:20ms playback can finish within100ms report throttle;500ms ensures positive report while preserving nonzero capture,drain,restart,source-removal.",
-      "checks": "3 consecutive real virtual smokes pass;17 regressions; desktop modules unchanged; failure status23 preserved and owned processes/dir removed; syntax/diff pass. No physical/macOS/provider proof."
+      "checks": "3 consecutive real virtual smokes pass;17 regressions; desktop modules unchanged; failure status23 preserved and owned processes/dir removed; syntax/diff pass. No physical/macOS/provider proof.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "86e0f56798547d704db912eab2534a2161c93d0e",
+        "primaryId": "task_48ae14aa",
+        "judgeIds": [
+          "task_ab2edd5f"
+        ],
+        "sourceCommit": "61dd86168b4b0a3a178aa5ccdca54e1a058117f6",
+        "state": "accepted_exact_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      }
     },
     {
       "focus": "native/live/AudioCore.c",
@@ -379,7 +481,18 @@
         "native/live/test-core.c"
       ],
       "readingResult": "Candidate replaces primed/tail bookkeeping with explicit callback PlaybackCursor sample states and shared lookahead/reset operations; independent judgment pending.",
-      "checks": "Worker reports ASan/UBSan core/capture-gate tests; 16 focused Bun tests; baseline-compatible flush tests; 10,000-operation differential trace 7985c85bc32c5b06. No macOS/device/provider/concurrency proof."
+      "checks": "Worker reports ASan/UBSan core/capture-gate tests; 16 focused Bun tests; baseline-compatible flush tests; 10,000-operation differential trace 7985c85bc32c5b06. No macOS/device/provider/concurrency proof.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "a4c9b7c4ec975fdcfe46cf875c7f5faf5bc2dcc6",
+        "primaryId": "task_08961c0d",
+        "judgeIds": [
+          "task_365b0c49"
+        ],
+        "sourceCommit": "693ef0906777ccc267265d5b16e25a5df5ff1b66",
+        "state": "accepted_exact_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      }
     },
     {
       "focus": "native/live/AudioCore.h",
@@ -411,7 +524,18 @@
       "integration": "accepted unchanged blob matches area tip",
       "relatedPaths": [],
       "readingResult": "Unchanged opaque core API exposes direct admission/generation/render operations; capture origin tags preserved through ring and validated before resampling; wrappers genuinely used.",
-      "checks": "3 C ASan/UBSan regressions and19 Bun tests pass; no macOS/device/provider proof."
+      "checks": "3 C ASan/UBSan regressions and19 Bun tests pass; no macOS/device/provider proof.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "e2d8f07794f66272af89f64c69f86bee4ee70aee",
+        "primaryId": "task_db37eb3b",
+        "judgeIds": [
+          "task_8ae63e66"
+        ],
+        "sourceCommit": "0e0c7d766c65f4cbfbfb46b973946cc6217c9e65",
+        "state": "accepted_exact_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      }
     },
     {
       "focus": "native/live/Info.plist",
@@ -443,7 +567,18 @@
       "integration": "accepted unchanged blob matches area tip",
       "relatedPaths": [],
       "readingResult": "Unchanged three-entry metadata has one clear role: native build embeds Mach-O metadata, release embeds bytes, runtime launches helper, Swift owns microphone permission.",
-      "checks": "Exact plist assertions/build-script syntax;13 helper/workflow tests/120 assertions. No macOS permission/device/provider/full gate."
+      "checks": "Exact plist assertions/build-script syntax;13 helper/workflow tests/120 assertions. No macOS permission/device/provider/full gate.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "d027ae3e545619f1628e72bf2c0f0fafdda72718",
+        "primaryId": "task_68f2d62b",
+        "judgeIds": [
+          "task_9de91bbe"
+        ],
+        "sourceCommit": "439444f649249259125c548e41f1a345977de91f",
+        "state": "accepted_exact_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      }
     },
     {
       "focus": "native/live/main.swift",
@@ -480,7 +615,18 @@
         "tests/live-setup-diagnostics.test.ts"
       ],
       "readingResult": "Live retains permission/hardware/validation; LiveOutput owns conversion/bounded delivery/playback reporting; stop shows cancel polling, hardware teardown, flush, synchronized cleanup/ack. Gate synchronization and 200ms zero-report delay preserved.",
-      "checks": "18 focused tests/C core regression/Biome/diff pass. macOS compilation/helper self-test/device unverified: build script needs macOS/Xcode."
+      "checks": "18 focused tests/C core regression/Biome/diff pass. macOS compilation/helper self-test/device unverified: build script needs macOS/Xcode.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "e51337959b28907cfa01625a6533bf0f068d014a",
+        "primaryId": "task_255d99a6",
+        "judgeIds": [
+          "task_660502a4"
+        ],
+        "sourceCommit": "b01dac0216dfa47d3b40e57f92c6021ea530e368",
+        "state": "accepted_exact_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      }
     },
     {
       "focus": "native/live/test-capture-gate.c",
@@ -512,7 +658,18 @@
       "integration": "accepted unchanged blob matches area tip",
       "relatedPaths": [],
       "readingResult": "Unchanged single temporal scenario purposefully retains queued block tags through mute/reopen transitions; extraction would hide lifetime. Startup-2,epoch0/1 and drop/backpressure distinctions explicit.",
-      "checks": "4 Bun pass/24 assertions;strict ClangASan/UBSan pass;no concurrent stress/macOS/device/provider."
+      "checks": "4 Bun pass/24 assertions;strict ClangASan/UBSan pass;no concurrent stress/macOS/device/provider.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "292e509c5754bd29811b8472347afc8ae2e0637f",
+        "primaryId": "task_c28913a3",
+        "judgeIds": [
+          "task_bd041eab"
+        ],
+        "sourceCommit": "1dfc7b232c6ec64fdf89ff41b6c6eda2283baf8c",
+        "state": "accepted_exact_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      }
     },
     {
       "focus": "native/live/test-core.c",
@@ -549,7 +706,19 @@
       },
       "relatedPaths": [],
       "readingResult": "Independent scenarios own core lifetimes instead of one shared history through generations 0–10; contiguous/split playback juxtaposed, capture overflow owns refill/drop accounting, flush/capacity sequence kept coherent; accepted flush helper identical.",
-      "checks": "Baseline/candidate Clang ASan/UBSan strict core pass; capture-gate/waveform pass; three mutations rejected by both baseline/candidate; diff clean. No production change/macOS/device/provider/full build."
+      "checks": "Baseline/candidate Clang ASan/UBSan strict core pass; capture-gate/waveform pass; three mutations rejected by both baseline/candidate; diff clean. No production change/macOS/device/provider/full build.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "182ca301ae67e70cfbaffd43ec6380c2ac9ff377",
+        "primaryId": "task_e7779538",
+        "judgeIds": [
+          "task_27183ba4",
+          "task_365b0c49"
+        ],
+        "sourceCommit": "017776567ec43ba4a886dd5edadab71d6430331d",
+        "state": "accepted_exact_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      }
     },
     {
       "focus": "native/live/test-waveform.c",
@@ -581,7 +750,18 @@
       "integration": "integrated accepted exact primary candidate",
       "relatedPaths": [],
       "readingResult": "Contiguous reference and packet rendering each own core lifetime; packet operation exposes958 vs960 first-arrival timing/subsequent packets/final tail; main generates fixture/independent outputs/exact comparison.",
-      "checks": "Baseline/candidate strictASanUBSan zero waveform error;core regressions pass;both reject removed held-tail lookahead mutation;diff clean. No production/macOS/device/provider."
+      "checks": "Baseline/candidate strictASanUBSan zero waveform error;core regressions pass;both reject removed held-tail lookahead mutation;diff clean. No production/macOS/device/provider.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "7a88474d51cef3259e49ab8897263f9a19811b17",
+        "primaryId": "task_6cc26443",
+        "judgeIds": [
+          "task_0d6645b3"
+        ],
+        "sourceCommit": "84e6ee3d013babbac0e8f66c8137ecbeb59312c9",
+        "state": "accepted_exact_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      }
     },
     {
       "focus": "scripts/build-live-helper.sh",
@@ -613,7 +793,18 @@
       "integration": "accepted unchanged blob matches area tip",
       "relatedPaths": [],
       "readingResult": "Unchanged linear temporary compile/link/self-test/publish sequence; install/CI/release/embedding/runtime cleanup distinct responsibilities, extraction adds navigation.",
-      "checks": "Shell syntax;44 focused tests481 assertions;6 fake-tool lifecycle order/failure/cleanup cases. No macOSXcode/device/provider/signal/cross-volume proof."
+      "checks": "Shell syntax;44 focused tests481 assertions;6 fake-tool lifecycle order/failure/cleanup cases. No macOSXcode/device/provider/signal/cross-volume proof.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "bf9a9d9873825675f42392aa331f61bda36097f4",
+        "primaryId": "task_2ce0dc69",
+        "judgeIds": [
+          "task_cdb98bdc"
+        ],
+        "sourceCommit": "0c9fc2f2baff2c16895b74f6d2a5a75ebe6035ab",
+        "state": "accepted_exact_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      }
     },
     {
       "focus": "scripts/build-live-linux-helper.sh",
@@ -645,7 +836,18 @@
       "integration": "accepted unchanged blob matches area tip",
       "relatedPaths": [],
       "readingResult": "Unchanged direct dependency flags/output/compiler path; Linux build self-test only reports buildOK, no need to import macOS publication orchestration.",
-      "checks": "Shell syntax/real native build including spaced nested output/self-test/no-device hello-stop pass;11 workflow/platform tests108 assertions. No privatePulse/device/provider/macOS/full gate."
+      "checks": "Shell syntax/real native build including spaced nested output/self-test/no-device hello-stop pass;11 workflow/platform tests108 assertions. No privatePulse/device/provider/macOS/full gate.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "81989563bcacb3c947843520081648afa4e4b521",
+        "primaryId": "task_4761041c",
+        "judgeIds": [
+          "task_1f20ecb1"
+        ],
+        "sourceCommit": "a840d0db75cf09eeb7b3a0556de30c53e04a5e5d",
+        "state": "accepted_exact_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      }
     },
     {
       "focus": "scripts/live-acceptance.ts",
@@ -653,7 +855,15 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "own_primary_pending",
+        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      }
     },
     {
       "focus": "scripts/live-gpt-live-offline-smoke.ts",
@@ -661,7 +871,15 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "own_primary_pending",
+        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      }
     },
     {
       "focus": "scripts/live-helper-bundle.ts",
@@ -675,7 +893,15 @@
       },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "primary running"
+      "integration": "primary running",
+      "resume": {
+        "status": "pending",
+        "primaryId": "task_2e2ac20f",
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "primary_started_no_committed_candidate",
+        "reason": "Primary was allocated, but no candidate commit or completed focus judgment is recorded. Preserve its worktree; do not treat the stale running status as proof of current execution."
+      }
     },
     {
       "focus": "scripts/live-isolated-audio.sh",
@@ -715,7 +941,19 @@
         "native/live-linux/tests/test_isolated_audio.py"
       ],
       "readingResult": "Entrypoint allocate/traps/start-verify graph/launch-wait visible;cleanup snapshots owned PID list once for both termination stages;readable inline Python graph filtering;default acceptance unchanged.",
-      "checks": "24 native regressions;7 new wrapper checks baseline-pass;3 real private graph smokes emptycleanup/failure statuslogs/native protocol-source-removal;syntax/diff pass. Initial smoke quoting corrected;no repo behavior fix."
+      "checks": "24 native regressions;7 new wrapper checks baseline-pass;3 real private graph smokes emptycleanup/failure statuslogs/native protocol-source-removal;syntax/diff pass. Initial smoke quoting corrected;no repo behavior fix.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "056491cb8f7267f2cb0821fb5ccdc7911e0a1822",
+        "primaryId": "task_1b8756f7",
+        "judgeIds": [
+          "task_1a73a583",
+          "task_ab2edd5f"
+        ],
+        "sourceCommit": "5a342b6aa3df79f4be15d4fa2b84561a276f95b3",
+        "state": "accepted_exact_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      }
     },
     {
       "focus": "scripts/live-onboarding-smoke.ts",
@@ -723,7 +961,15 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "own_primary_pending",
+        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      }
     },
     {
       "focus": "scripts/live-openai-offline-smoke.ts",
@@ -731,7 +977,15 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "own_primary_pending",
+        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      }
     },
     {
       "focus": "scripts/live-probe-input.ts",
@@ -739,7 +993,15 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "own_primary_pending",
+        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      }
     },
     {
       "focus": "scripts/live-startup-fixture.ts",
@@ -747,7 +1009,15 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "own_primary_pending",
+        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      }
     },
     {
       "focus": "scripts/live-study-trial.ts",
@@ -755,7 +1025,15 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "own_primary_pending",
+        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      }
     },
     {
       "focus": "scripts/offline-openai-default-transport.ts",
@@ -763,7 +1041,15 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "own_primary_pending",
+        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      }
     },
     {
       "focus": "scripts/probe-live-capability.ts",
@@ -771,7 +1057,15 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "own_primary_pending",
+        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      }
     },
     {
       "focus": "scripts/probe-live-controlled.ts",
@@ -779,7 +1073,15 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "own_primary_pending",
+        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      }
     },
     {
       "focus": "scripts/probe-live-recorded.ts",
@@ -787,7 +1089,15 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "own_primary_pending",
+        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      }
     },
     {
       "focus": "scripts/probe-live-startup-audio.ts",
@@ -795,7 +1105,15 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "own_primary_pending",
+        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      }
     },
     {
       "focus": "scripts/probe-openai-realtime-setup.ts",
@@ -803,7 +1121,15 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "own_primary_pending",
+        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      }
     },
     {
       "focus": "src/live/audio.ts",
@@ -869,7 +1195,19 @@
           "readingResult": "Validated played reports belong to running/stopping, update diagnostic/callbacks; only stopped acknowledges stop. FIFO/cancellation/timeout/reaping unchanged.",
           "checks": "Native stop sequence regression failed launch baseline exact stopError then passed; 117 tests/711 assertions; focused typecheck/format/lint/diff pass. Biome combined check inherited import organization errors. Native source traced, not device-executed."
         }
-      ]
+      ],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "b3b015c01c83ae297d9b2dbb2a8016d1945bc636",
+        "primaryId": "task_f8a6b192",
+        "judgeIds": [
+          "task_aeb6dd8f",
+          "task_610f6154"
+        ],
+        "sourceCommit": "c8fbb91f3c0569b9789ccfc539e614d64c8a4d73",
+        "state": "accepted_exact_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      }
     },
     {
       "focus": "src/live/config.ts",
@@ -901,7 +1239,18 @@
       "integration": "accepted unchanged blob matches area tip",
       "relatedPaths": [],
       "readingResult": "Unchanged validate-active-settings/load ENOENT defaults/private-temp atomic-save boundary; credentials/caches/run lifetimes outside.",
-      "checks": "82 tests452 assertions; initial missing assets resolved with standard prepare;no behavior fixes."
+      "checks": "82 tests452 assertions; initial missing assets resolved with standard prepare;no behavior fixes.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "066a823fe085451dad54f693c824013f2a4ffbb5",
+        "primaryId": "task_51d6ae66",
+        "judgeIds": [
+          "task_6da0bcc2"
+        ],
+        "sourceCommit": "fb653ebe559b3b04cd1588452662e7f246ff2249",
+        "state": "accepted_exact_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      }
     },
     {
       "focus": "src/live/conversation.ts",
@@ -933,7 +1282,18 @@
       "integration": "accepted unchanged final blob",
       "relatedPaths": [],
       "readingResult": "Unchanged conversation adapter keeps transcript record/correction and matching currentbranch reconstruction together;admission/context exclusion/playbackinterrupt/explicitworkcancel remain distinctauthorities;extra splitting addsnavigation.",
-      "checks": "43tests245assertions conversation/owner/passivehistory/transcript;initialWASM setupresolvedexistingasset,no behaviorfix/provider/device/Mac."
+      "checks": "43tests245assertions conversation/owner/passivehistory/transcript;initialWASM setupresolvedexistingasset,no behaviorfix/provider/device/Mac.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "7f9a86a60e3eb296e41459e09e7ccbbec1470d49",
+        "primaryId": "task_7d020b63",
+        "judgeIds": [
+          "task_365a3eee"
+        ],
+        "sourceCommit": "79325faf09732f06bd890dbad180957b0a323def",
+        "state": "accepted_exact_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      }
     },
     {
       "focus": "src/live/cost.ts",
@@ -972,7 +1332,18 @@
         "tests/live-extension.test.ts"
       ],
       "readingResult": "Provider-specific accounting: GPT cumulative snapshots vsGemini perturn vsRealtime independent responses;pricing operations replace mixedcachevalidation/positionalrates. Explicit GPTsnapshot overcount+ignoredterminalduration fixes.",
-      "checks": "122tests1142assertions;two regressions fail exactlaunch/passcandidate;changedTS/format/diffpass,lintzero warnings;roottypes missingassetimports. SessionID persistence and unknownbackend/ASR retained."
+      "checks": "122tests1142assertions;two regressions fail exactlaunch/passcandidate;changedTS/format/diffpass,lintzero warnings;roottypes missingassetimports. SessionID persistence and unknownbackend/ASR retained.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "1a6087ab8fb201b5c7d2aa771ab26aec7c899b04",
+        "primaryId": "task_2995e9e9",
+        "judgeIds": [
+          "task_4b5c5997"
+        ],
+        "sourceCommit": "da7f97d770768c2f74540f8a9c3fde8667e15177",
+        "state": "accepted_exact_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      }
     },
     {
       "focus": "src/live/credentials.ts",
@@ -1004,7 +1375,18 @@
       "integration": "accepted unchanged blob matches area tip",
       "relatedPaths": [],
       "readingResult": "Unchanged discovery separate from runtime resolution;import guards descriptor access/rechecks config/locked callback decideswrite;one trycatchfinally owns file descriptor. Extraction addsindirection.",
-      "checks": "107tests580assertions acrosscredential/lifecycle/setup/extension/startupprobe;no provider/device/macOS/fullbuild."
+      "checks": "107tests580assertions acrosscredential/lifecycle/setup/extension/startupprobe;no provider/device/macOS/fullbuild.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "ddff52c311a81faef6290ed979f50a04fd5182cb",
+        "primaryId": "task_9203c038",
+        "judgeIds": [
+          "task_c817da47"
+        ],
+        "sourceCommit": "357b3a75677e60ce60bdf341e4988242f2d762fe",
+        "state": "accepted_exact_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      }
     },
     {
       "focus": "src/live/diagnostics.ts",
@@ -1036,7 +1418,18 @@
       "integration": "accepted unchanged blob matches area tip",
       "relatedPaths": [],
       "readingResult": "Unchanged nativephase/detail->bridge sanitize->extension ignores helpertext->fixedguidance switch;unknowncodes remainfailures;no hiddenstate/lifetimes tosplit.",
-      "checks": "21tests139assertions/diffclean;mockedaudioUI/native source only,no macOS/device/provider/compiledCLI."
+      "checks": "21tests139assertions/diffclean;mockedaudioUI/native source only,no macOS/device/provider/compiledCLI.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "40dc0fdf0b0a29da00c52827af7ba3eba6461b0b",
+        "primaryId": "task_84881347",
+        "judgeIds": [
+          "task_3ac00f12"
+        ],
+        "sourceCommit": "ad1dfa9d42fc87c397fe92e691127958201e0f1a",
+        "state": "accepted_exact_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      }
     },
     {
       "focus": "src/live/editor-push-to-talk.ts",
@@ -1071,7 +1464,18 @@
         "tests/editor-push-to-talk.test.ts"
       ],
       "readingResult": "Explicit pendingSpaceBatch owns held-space/edit evidence;recognition chooses ordinaryinsert vs guardedpromotion;startTalking consumesundo newestfirst andopenscapture onlyafterguards. Rawrelease/focus/paste/navigation,epochs/Abortattachment intact.",
-      "checks": "114tests634assertions discriminator/realeditor/extension/offlineCLI;14discriminatorcases baseline-pass;strictTS/Biome/diff;assetsresolved initialCLIerrors then80/120columns pass. No behaviorfix/provider/device/macOS."
+      "checks": "114tests634assertions discriminator/realeditor/extension/offlineCLI;14discriminatorcases baseline-pass;strictTS/Biome/diff;assetsresolved initialCLIerrors then80/120columns pass. No behaviorfix/provider/device/macOS.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "3fac9c057f3f767a9af84ce9bcbcb3341a952e5b",
+        "primaryId": "task_7bb5cb79",
+        "judgeIds": [
+          "task_51a3b4e4"
+        ],
+        "sourceCommit": "7f72408d2e97646332d752d423d96ccbf56d310c",
+        "state": "accepted_exact_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      }
     },
     {
       "focus": "src/live/embedded.ts",
@@ -1103,7 +1507,18 @@
       "integration": "accepted unchanged final blob",
       "relatedPaths": [],
       "readingResult": "Unchanged sourcenull/releaseplugin assetpathdigest/resolver verifyprivateextract/audio cleanup owners distinctvisible;extraabstraction addsbookkeeping.",
-      "checks": "4embeddedtests20assertions inclcompiledextract afteroriginalpayloaddeletion;unbundleddefault/diffpass,nodevice/Mac/provider/fullgate."
+      "checks": "4embeddedtests20assertions inclcompiledextract afteroriginalpayloaddeletion;unbundleddefault/diffpass,nodevice/Mac/provider/fullgate.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "bda048c5bdf546d7dd7297e130b17920ce1c3f14",
+        "primaryId": "task_e346a38c",
+        "judgeIds": [
+          "task_779f8ffd"
+        ],
+        "sourceCommit": "8a92d8f20f136df4561706ec9c6493f25c709946",
+        "state": "accepted_exact_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      }
     },
     {
       "focus": "src/live/extension.ts",
@@ -1169,7 +1584,20 @@
         "tests/live-extension.test.ts"
       ],
       "readingResult": "Start exposes owner acquisition/helper/conversation/connect/context replay/capture-playback; coherent delegated vs tool-calling wiring, shared replay/live context dispatch, removes mirrored owner orchestration run state.",
-      "checks": "146 tests across8 files, TypeScript/format pass; Biome no errors; replay regression passes baseline. No native/device/provider/macOS/full build."
+      "checks": "146 tests across8 files, TypeScript/format pass; Biome no errors; replay regression passes baseline. No native/device/provider/macOS/full build.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "53b126a8669adebbd44292faeddf782889809825",
+        "primaryId": "task_b67e363a",
+        "judgeIds": [
+          "task_65eb4c80",
+          "task_4b5c5997",
+          "task_5f68217e"
+        ],
+        "sourceCommit": "931224a0e92a33af036ba65404559b958ff1574a",
+        "state": "accepted_exact_not_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit and latest area tree; joined bytes differ. Preserve both prior and current exact-code reviews; accepted area source still needs deliberate integration, not safety-reporter approval."
+      }
     },
     {
       "focus": "src/live/gpt-live-context.ts",
@@ -1201,7 +1629,18 @@
       "integration": "accepted unchanged blob matches area tip",
       "relatedPaths": [],
       "readingResult": "Unchanged tail2400codepoints/disclosedomissions thenquoted480byteUTF8chunks withoutsplitting codepoints;caller observations no inventedcorrelation,provisionaltimestamps/approxcontext/sessionselection separate.",
-      "checks": "98tests555assertions context/delegation/request/extension,diffclean;no provider/device/macOS."
+      "checks": "98tests555assertions context/delegation/request/extension,diffclean;no provider/device/macOS.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "ca67afe7f0da5fa93829785661d93b002a2d2302",
+        "primaryId": "task_07981349",
+        "judgeIds": [
+          "task_4151cb4a"
+        ],
+        "sourceCommit": "a4836828bfb3336229bd70430539e5fb7fecbc77",
+        "state": "accepted_exact_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      }
     },
     {
       "focus": "src/live/gpt-live-delegation.ts",
@@ -1236,7 +1675,18 @@
         "tests/gpt-live-delegation.test.ts"
       ],
       "readingResult": "ProvisionalSpeech ownsretention/loss/reservation/settlement withentry state ratherthan3set joins/cumulativeomissioncounters;bridge exposesreplay/savedcontext/preparedadmission/hostsubmission/spokenfreshness/unconditionalsettlement;authority unchanged.",
-      "checks": "65tests718assertions;20delegationtests baselinepass incl2new;strictTS/format/lintpass4existingwarnings;no productfix/provider/device/macOS/fullgate."
+      "checks": "65tests718assertions;20delegationtests baselinepass incl2new;strictTS/format/lintpass4existingwarnings;no productfix/provider/device/macOS/fullgate.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "160003768942615890ecba4835805cd3954be71a",
+        "primaryId": "task_05694cc7",
+        "judgeIds": [
+          "task_3583b317"
+        ],
+        "sourceCommit": "a5f932b5712711f4de4767f2fed28986dec14052",
+        "state": "accepted_exact_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      }
     },
     {
       "focus": "src/live/gpt-live-playback.ts",
@@ -1271,7 +1721,18 @@
         "tests/gpt-live-playback.test.ts"
       ],
       "readingResult": "OutputRecovery owns speechguard/terminalfailure suppression and capturedquiet resumes;interruption explicitqueueinvalidate;terminalfailure no duplicate speechflush;closure independent. Micforwarding/thresholds/pacing/flushgating/epochs/shortdrain unchanged.",
-      "checks": "88offlinepass1paidskip20903assertions;3newregressions baselinepass;strictTS/Biomepass1existingwarn;actualterminal blankpane startup fails baseline/candidate rootcauseunproven,no device/provider/macOS."
+      "checks": "88offlinepass1paidskip20903assertions;3newregressions baselinepass;strictTS/Biomepass1existingwarn;actualterminal blankpane startup fails baseline/candidate rootcauseunproven,no device/provider/macOS.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "0ae9b29f607c565fbfe00896627956c5bac3ce18",
+        "primaryId": "task_65c3efca",
+        "judgeIds": [
+          "task_af9fc144"
+        ],
+        "sourceCommit": "84ddffa8b4c5559f35dbcea6eb134af33e115900",
+        "state": "accepted_exact_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      }
     },
     {
       "focus": "src/live/gpt-live-request.ts",
@@ -1303,7 +1764,18 @@
       "integration": "accepted unchanged blob matches area tip",
       "relatedPaths": [],
       "readingResult": "Unchanged rejectomittedspeech/scanarrivalorder timingvsadmission/jointext newlineoverlap/trim;rawaudit/provisionalreplay/admission stay withowners,no inventedfinality.",
-      "checks": "63tests705assertions;missingWASM fixedexistingfixtures;no runtime/sourcechange/provider/device/Mac/build."
+      "checks": "63tests705assertions;missingWASM fixedexistingfixtures;no runtime/sourcechange/provider/device/Mac/build.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "ff55e2444000fa15232dabf6d697c63037a7b0ae",
+        "primaryId": "task_8bc8ea03",
+        "judgeIds": [
+          "task_bf610eb5"
+        ],
+        "sourceCommit": "ee1694e6abc99958cdd3600cb6fa3b29954a71c6",
+        "state": "accepted_exact_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      }
     },
     {
       "focus": "src/live/gpt-live-session.ts",
@@ -1338,7 +1810,18 @@
         "tests/gpt-live-session.test.ts"
       ],
       "readingResult": "One shared transport teardown promise serves close callers;finishTransport owns cleanup/finalizedvsunknown usage;context append+matchedack together by semantic kinds. Delegation remains extension/bridge/owner admission,playback interruption notjobcancel,no inferred finality.",
-      "checks": "151passes1paidprovider skip;strict focusedTS/format/diff pass;concurrentclose finalized/timeout regression;initial missingWASM resolved existing readonlyassets;no behaviorfix/provider/device/macOS/fullgate."
+      "checks": "151passes1paidprovider skip;strict focusedTS/format/diff pass;concurrentclose finalized/timeout regression;initial missingWASM resolved existing readonlyassets;no behaviorfix/provider/device/macOS/fullgate.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "92d985f0bd164825e712218e609930f2262beb0b",
+        "primaryId": "task_35b0a03e",
+        "judgeIds": [
+          "task_86206c2a"
+        ],
+        "sourceCommit": "6d69c467cd48fa7ebad64fc5faa5d73ed0e861bf",
+        "state": "accepted_exact_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      }
     },
     {
       "focus": "src/live/helper.ts",
@@ -1373,7 +1856,18 @@
         "tests/live-embedded-helper.test.ts"
       ],
       "readingResult": "Helperunchanged validate/privateextract/sync-reverify/grantexecute/transfercleanup journey;nestedfd/directory scopes purposeful. Relatedcompiledprobe discardedTMPDIR;fixture nowpassesTMPDIR/assertsownedlocation+cleanup.",
-      "checks": "21tests112assertions/format/diffpass;no Mac/device/provider/fullgate. Explicit fixture fix only,noruntime contractchange."
+      "checks": "21tests112assertions/format/diffpass;no Mac/device/provider/fullgate. Explicit fixture fix only,noruntime contractchange.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "7cd173370b3ab5bf89e08ea287cbbe8e9e70b8a8",
+        "primaryId": "task_34c585ed",
+        "judgeIds": [
+          "task_1c3f1e78"
+        ],
+        "sourceCommit": "2f13e6964b36f305a16084fd3d6c7e417e2361a7",
+        "state": "accepted_exact_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      }
     },
     {
       "focus": "src/live/lifecycle-access.ts",
@@ -1405,7 +1899,18 @@
       "integration": "accepted unchanged final blob",
       "relatedPaths": [],
       "readingResult": "Unchanged lifecycleport delegates scopedhostauthority/Runresource-stop/errorreporting;navigation separately cancelsforeground andwaitsrelease, movingdecisions intoport blursownership.",
-      "checks": "102focusedtests677assertions/directbus8assertions;missingWASM resolvedassetprep,noproductionchange/provider/device/Mac/compiledCLI/fullgate."
+      "checks": "102focusedtests677assertions/directbus8assertions;missingWASM resolvedassetprep,noproductionchange/provider/device/Mac/compiledCLI/fullgate.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "907131d869263fb00bd1a84a042a244cf108c1dc",
+        "primaryId": "task_426bbfc3",
+        "judgeIds": [
+          "task_4cd11b16"
+        ],
+        "sourceCommit": "abbb39433b481bf27129eb1a7a0a8eaecf85f03f",
+        "state": "accepted_exact_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      }
     },
     {
       "focus": "src/live/main-owner.ts",
@@ -1440,7 +1945,18 @@
         "tests/live-main-owner.test.ts"
       ],
       "readingResult": "Candidate separates canonical history pairing/buffered observations and registered-tool permission/execution/evidence/hooks/persistence/UI effects; owner finally removes controller/releases ordering/checks draining; speech waits settlement.",
-      "checks": "132 focused tests/712 assertions, typecheck/format/diff pass; lint warnings. Three new protocol tests pass baseline. No provider/device/macOS/full gate."
+      "checks": "132 focused tests/712 assertions, typecheck/format/diff pass; lint warnings. Three new protocol tests pass baseline. No provider/device/macOS/full gate.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "bb80a4fd5997a18d93cfce3fd34fc8e4b022c7aa",
+        "primaryId": "task_a05d83ac",
+        "judgeIds": [
+          "task_bb0fe7ca"
+        ],
+        "sourceCommit": "b6c6eb450541225a1590a010824b50a896f145cc",
+        "state": "accepted_exact_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      }
     },
     {
       "focus": "src/live/offline-transport-probe.ts",
@@ -1460,13 +1976,25 @@
           "base": "1c1c6c9f3da5cb4157304c9034f20ba8993ce222"
         }
       ],
-      "acceptedBlob": null,
+      "acceptedBlob": "b9185ba4765942830b79097724643510da3a7f62",
       "integration": "judge running",
       "relatedPaths": [
         "tests/offline-transport-probe.test.ts"
       ],
       "readingResult": "Readiness and unauthorized-upgrade expectations now separate operations instead rejectflag threaded through server/socket/results/assertions. Loopbackowner selects expectation,checks fixture evidence,bounds wait,cleans timer/socket/server;real defaultSocket direct,no factory injection.",
-      "checks": "48tests287assertions,sourceCLI gate/full/mini,TS/format/lint/diffpass. Tests assertlistener cleanup and substituted403 cannot satisfy401 evidence;no incidentalproductfix/compiled/provider/device/Mac."
+      "checks": "48tests287assertions,sourceCLI gate/full/mini,TS/format/lint/diffpass. Tests assertlistener cleanup and substituted403 cannot satisfy401 evidence;no incidentalproductfix/compiled/provider/device/Mac.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "b9185ba4765942830b79097724643510da3a7f62",
+        "primaryId": "task_1a83d7f6",
+        "judgeIds": [
+          "task_ad737139",
+          "task_26c0b5a0"
+        ],
+        "sourceCommit": "a2e8025bd3ffba42a24e0b7ba3358ac97de68532",
+        "state": "accepted-joined",
+        "reason": "Compared actual Git parent 1c1c6c9f3da5cb4157304c9034f20ba8993ce222 with the candidate, not checkout HEAD; primary context was {}. The parent exercise function makes the reader join a reject boolean across fixture response, socket-open behavior, socket-error behavior, string settlement and a three-part final assertion. The candidate makes two complete semantic journeys independently readable: expectSessionUpdated sends setup on open, accepts only session.updated and rejects error/close; expectUnauthorizedUpgrade forbids open/message and accepts only sanitized, metadata-backed HTTP 401 evidence. These are coherent event expectations, not arbitrary extracted blocks or a context bag. probeLoopbackTransport visibly owns acquisition, deadline, fixture evidence and finally teardown; there is no second lifecycle owner. Removing the ready/rejected result string leaves Promise<void> settlement authoritative. Explicit outcome arguments and separate handshake/session assertions expose the orchestration. The new related test file is also readable: one scenario observes every model/outcome listener, while the other substitutes 403 only for the second, rejection fixture and requires failure without success logging. Each test owns its acquired servers and global spies in a local try/finally. Acceptance covers both changed source blobs as one patch, not a test-count argument."
+      }
     },
     {
       "focus": "src/live/openai-connect-error.ts",
@@ -1498,7 +2026,18 @@
       "integration": "accepted unchanged final blob",
       "relatedPaths": [],
       "readingResult": "Unchanged upgrade diagnostic boundary traced through HTTP/socket rejection,session failure settlement and offline probe;credential config distinct from API access and session.updated readiness. No behavior change.",
-      "checks": "64tests390assertions plus freshprocess loopback full/mini setup+HTTP401redaction;dependency/quoting blockers resolved,no liveprovider/device/Mac/fullbuild."
+      "checks": "64tests390assertions plus freshprocess loopback full/mini setup+HTTP401redaction;dependency/quoting blockers resolved,no liveprovider/device/Mac/fullbuild.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "4b1dc32b7b36c544da534e9ca5f0cfe4686ddc68",
+        "primaryId": "task_605161af",
+        "judgeIds": [
+          "task_1c54d226"
+        ],
+        "sourceCommit": "556d9b06734f1da70e76fe5de06a19b28d7dc093",
+        "state": "accepted_exact_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      }
     },
     {
       "focus": "src/live/openai-errors.ts",
@@ -1535,7 +2074,18 @@
         "tests/openai-session-diagnostics.test.ts"
       ],
       "readingResult": "Moves complete Realtime diagnostic formatting/structural redaction beside shared classification;session keeps correlation,cancellation,terminal decisions visible. Existing four-code classifier unchanged,session removal/import only. Added unknown/duplicate response suppression,correlated nonterminal and terminal errors regression.",
-      "checks": "148tests1154assertions;format/diff pass,lintzero existingwarnings;no incidentalfix/fullTS/provider/device/Mac/fullgate. Related previouslyaccepted session/test requires fresh finalblob judgment."
+      "checks": "148tests1154assertions;format/diff pass,lintzero existingwarnings;no incidentalfix/fullTS/provider/device/Mac/fullgate. Related previouslyaccepted session/test requires fresh finalblob judgment.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "0292a5e8aa1e33459570f4052a86896331e529c8",
+        "primaryId": "task_eccea8a1",
+        "judgeIds": [
+          "task_8db4b91e"
+        ],
+        "sourceCommit": "9f25cbbee79aebf17532edf4f0f8f42dce48d3ef",
+        "state": "accepted_exact_not_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit and latest area tree; joined bytes differ. Preserve both prior and current exact-code reviews; accepted area source still needs deliberate integration, not safety-reporter approval."
+      }
     },
     {
       "focus": "src/live/openai-resample.ts",
@@ -1570,7 +2120,18 @@
         "tests/openai-resample.test.ts"
       ],
       "readingResult": "Unchanged streaming interpolation fields share one stream lifetime: seed first sample, interpolate intervals retaining chunk phase, flush endpoint/reset or discard on reset. Related independent reference tests establish arithmetic/carry/end contracts rather than comparing two production invocations.",
-      "checks": "86tests797assertions;strictTS/Biome/diff pass;no behavior fix,source identical;no provider/device/Mac/fullgate."
+      "checks": "86tests797assertions;strictTS/Biome/diff pass;no behavior fix,source identical;no provider/device/Mac/fullgate.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "3237fbde60b8c0da9951552161d8ab61989547f8",
+        "primaryId": "task_202ecbee",
+        "judgeIds": [
+          "task_cfda53f2"
+        ],
+        "sourceCommit": "6453dc1fa0fbdfe243075ffa3d31dee946117843",
+        "state": "accepted_exact_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      }
     },
     {
       "focus": "src/live/openai-session.ts",
@@ -1622,7 +2183,19 @@
         "tests/openai-session.test.ts"
       ],
       "readingResult": "Candidate groups output authorization and timing ownership into OutputAudioTimeline; response owns direct reply entries instead of cross-map reconstruction.",
-      "checks": "60 pass/384 assertions; four regressions pass baseline; focused TypeScript/format/diff pass, lint unchanged 8 warnings/7 infos. No full build/provider/device/macOS claim."
+      "checks": "60 pass/384 assertions; four regressions pass baseline; focused TypeScript/format/diff pass, lint unchanged 8 warnings/7 infos. No full build/provider/device/macOS claim.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "aa6e30da2964c45ff7245572bfbbbad910ad8cf9",
+        "primaryId": "task_497094fa",
+        "judgeIds": [
+          "task_5c3c9aed",
+          "task_8db4b91e"
+        ],
+        "sourceCommit": "9f25cbbee79aebf17532edf4f0f8f42dce48d3ef",
+        "state": "accepted_exact_not_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit and latest area tree; joined bytes differ. Preserve both prior and current exact-code reviews; accepted area source still needs deliberate integration, not safety-reporter approval."
+      }
     },
     {
       "focus": "src/live/openai-upgrade-socket.ts",
@@ -1636,13 +2209,25 @@
         "commit": "31bf2843d0aad882258288ca512035fe1d64528e"
       },
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "e28565a97187ecdf928826917f20c252d4190adb",
       "integration": "awaiting judge slot",
       "relatedPaths": [
         "tests/openai-upgrade-socket-node.test.mjs"
       ],
       "readingResult": "readRejectionCode owns bounded body inspection/cancellation;adapter owns status/model correlation,event suppression and socket shutdown. Successful translation/readiness unchanged. Explicit incidentalfix late Node {} error after close during rejection inspection;retained regression failsbaseline.",
-      "checks": "Bun138pass1Node-onlyskip;Node regression1pass;focusedTS/formatpass;manualNode success/timeout. Bunpartialfixture ends early,cannot prove Node streaming;no provider/device/Mac/fullbuild."
+      "checks": "Bun138pass1Node-onlyskip;Node regression1pass;focusedTS/formatpass;manualNode success/timeout. Bunpartialfixture ends early,cannot prove Node streaming;no provider/device/Mac/fullbuild.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "e28565a97187ecdf928826917f20c252d4190adb",
+        "primaryId": "task_ad7ff38d",
+        "judgeIds": [
+          "task_8fc1fe9e",
+          "task_1d24c7e5"
+        ],
+        "sourceCommit": "31bf2843d0aad882258288ca512035fe1d64528e",
+        "state": "accepted-joined",
+        "reason": "Intrinsic: the adapter has a readable success path and a distinct HTTP-rejection path. readRejectionCode owns response buffering, the 4096-byte retention bound, one-second deadline, parsing, destruction and exactly-once completion/cancellation. Its returned stop operation is the explicit lifetime boundary; status/model correlation and WebSocket termination remain with upgradeSocket. Compared with primary parent ec8d02c7d7c214a19993132b6ac62666a1a4b823, readers no longer reconstruct rejection resource ownership across outer rejection/rejectionTimer/finished variables and close(). The permanent rejected gate starts at unexpected-response, while helper done represents completion or cancellation of the body inspection; those are genuinely different decisions, not renamed state. Normal end reports only error.code; oversize, malformed, stream error and deadline retain status without response text. close() cancels the reader before terminating the connection. The new Node fixture owns its server/peers and follows partial HTTP response, explicit close, peer release and absence of late diagnostics. Unchanged decision: NO CHANGE NEEDED for direct open/message translation, readyState/bufferedAmount/send forwarding, the small RealtimeSocket contract, and the session-owned readiness/terminal correlation; further extraction would add navigation without clarifying authority."
+      }
     },
     {
       "focus": "src/live/passive-history.ts",
@@ -1677,7 +2262,18 @@
         "tests/live-passive-history.test.ts"
       ],
       "readingResult": "One pending audit replaces parallel request/evidence scan state, consumed at every user turn;projectUserTurn owns ordinary/provisional/empty recovery/incomplete cases;legacy dedup remains projection-wide. Raw audit/private context/branch authority contracts unchanged.",
-      "checks": "42tests342assertions,focusedstrictTS/Biome/diff pass;no intended incidental fix;source-wrapper integration only."
+      "checks": "42tests342assertions,focusedstrictTS/Biome/diff pass;no intended incidental fix;source-wrapper integration only.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "7070135c72f7a9216c71318e4d47dead85d72dbc",
+        "primaryId": "task_17da398e",
+        "judgeIds": [
+          "task_189c73c2"
+        ],
+        "sourceCommit": "2e6c8b980ff1f03b0baa81692387c14b9acbd400",
+        "state": "accepted_exact_not_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit and latest area tree; joined bytes differ. Preserve both prior and current exact-code reviews; accepted area source still needs deliberate integration, not safety-reporter approval."
+      }
     },
     {
       "focus": "src/live/playback.ts",
@@ -1712,7 +2308,18 @@
         "tests/live-playback.test.ts"
       ],
       "readingResult": "PlaybackTimeline owns sixcounter reservation/acceptedcredit/conservative monotonicplayed estimation; scheduler retains epoch/lifecycle authority. Interrupt discards queued samples/resets estimates/immediateflush but oldwrite retainspipe slot;stalecompletion releases slot withoutnewcredit.",
-      "checks": "53 focusedtests20755assertions;updated23playbacktests baseline-pass;focusedstrictTS/Biome/diff pass1existinginfo;no behaviorfix/device/provider/macOS/fullgate."
+      "checks": "53 focusedtests20755assertions;updated23playbacktests baseline-pass;focusedstrictTS/Biome/diff pass1existinginfo;no behaviorfix/device/provider/macOS/fullgate.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "ce0fd68dbcc5487dd3fa1f218dd353f34571feac",
+        "primaryId": "task_1ea27d33",
+        "judgeIds": [
+          "task_542a0b36"
+        ],
+        "sourceCommit": "83b1defbd83984e35197625252271702dfb6769d",
+        "state": "accepted_exact_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      }
     },
     {
       "focus": "src/live/providers.ts",
@@ -1744,7 +2351,18 @@
       "integration": "accepted unchanged final blob",
       "relatedPaths": [],
       "readingResult": "Unchanged constants define transportfamilies;LIVE_PROVIDERS owns picker rows/exact membership;config rejects mismatches. Selection persists provider+model;credential setup independent;readiness decorates not availability. Session owners retain capabilities/wireIDs;capability registry needless.",
-      "checks": "99tests520assertions config/extension/credentials/auth-lifecycle;tree clean,nofix/provider/Mac/device/fullbuild."
+      "checks": "99tests520assertions config/extension/credentials/auth-lifecycle;tree clean,nofix/provider/Mac/device/fullbuild.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "ac1238e745270cf870d48d98fa510b0893536a52",
+        "primaryId": "task_6a8ab666",
+        "judgeIds": [
+          "task_ebace531"
+        ],
+        "sourceCommit": "22505fc8f7ab79980b3bb0c682767424d23896d8",
+        "state": "accepted_exact_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      }
     },
     {
       "focus": "src/live/self-test.ts",
@@ -1765,13 +2383,25 @@
           "base": "7a77efe6fea0aee00df16ebd19382e789c74dd36"
         }
       ],
-      "acceptedBlob": null,
+      "acceptedBlob": "ee5fe8af00adb8b80b56f53b6581926a6525ccfc",
       "integration": "judge running",
       "relatedPaths": [
         "tests/live-self-test.test.ts"
       ],
       "readingResult": "Unchanged single operation resolves one embedded extraction,runs selftest,fresh stop-only protocol probe,validates hello/stopped,reports,finally cleans extraction. Direct tests add probe order/credential stripping/exact stop input/failures/malformed protocol/cleanup/timeouts.",
-      "checks": "40tests289assertions;strictTS/Biome/diff pass. Linux shellfixtures,timeout proof only SIGTERM-responsive direct children;no productionfix/Mac/provider/device/fullgate."
+      "checks": "40tests289assertions;strictTS/Biome/diff pass. Linux shellfixtures,timeout proof only SIGTERM-responsive direct children;no productionfix/Mac/provider/device/fullgate.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "ee5fe8af00adb8b80b56f53b6581926a6525ccfc",
+        "primaryId": "task_0c915bed",
+        "judgeIds": [
+          "task_58b18de6",
+          "task_c1052b52"
+        ],
+        "sourceCommit": "a5642b72d82ac64e94fb58abfb5a2076b07031c3",
+        "state": "accepted-joined",
+        "reason": "The unchanged function has one visible authority and lifetime: obtain the embedded helper or fail before acquisition, enter try/finally, run --self-test, run a separate stop-only protocol process, validate first hello/protocol 1 plus stopped, report success, then await cleanup on success or any failure. Shared process options are local and bounded; no hidden state or reconstructed phase machine. The failure branches and ownership are already readable. Moving these short steps into helpers would obscure rather than clarify their effects. No source readability improvement is claimed from adding tests."
+      }
     },
     {
       "focus": "src/live/session.ts",
@@ -1806,7 +2436,18 @@
         "tests/live-tools.test.ts"
       ],
       "readingResult": "Intake handles identity/validation/replay, single call-progress value determines cancellation eligibility, dispatch owns checkpoint/accepted execution/response/capacity release. Responses recorded before transport; same-envelope ordering and accepted-work survival preserved.",
-      "checks": "31 focused tests plus 2 Gemini main-owner shell/wire cases; expanded tests pass baseline; typecheck/format/diff pass, 2 existing lint warnings. No device/provider/macOS build."
+      "checks": "31 focused tests plus 2 Gemini main-owner shell/wire cases; expanded tests pass baseline; typecheck/format/diff pass, 2 existing lint warnings. No device/provider/macOS build.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "5d0f66a03d902165e3f1a224e3e607802ca015cb",
+        "primaryId": "task_51a039fa",
+        "judgeIds": [
+          "task_aba16011"
+        ],
+        "sourceCommit": "2e381e06926ba110a219c9602fbf14cccc922014",
+        "state": "accepted_exact_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      }
     },
     {
       "focus": "src/live/setup-probe.ts",
@@ -1820,11 +2461,22 @@
         "commit": "e048a21fae75ef90d7694cbeb2f1393169eae9ed"
       },
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "6b216e0773e6c7c1255a6777b43afb1d1fc2d50f",
       "integration": "awaiting judge slot",
       "relatedPaths": [],
       "readingResult": "Unchanged14line factory reads shared execute declaration,exposes schema/rootprompt,unconditionally denies dispatch. NOT childprocessowner;actual provider/micconsent/protocoltimeout/reaping/extraction cleanup traced separately.",
-      "checks": "64tests338assertions,2paidoptinskips,diffclean;no fixes/overlap/device/Mac/provider/fullgate."
+      "checks": "64tests338assertions,2paidoptinskips,diffclean;no fixes/overlap/device/Mac/provider/fullgate.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "6b216e0773e6c7c1255a6777b43afb1d1fc2d50f",
+        "primaryId": "task_763635f4",
+        "judgeIds": [
+          "task_52d397e7"
+        ],
+        "sourceCommit": "e048a21fae75ef90d7694cbeb2f1393169eae9ed",
+        "state": "accepted-joined",
+        "reason": "Independent source reading against actual parent abf51f5ef6643b459028a086abc85aee6ebb9a44, with primary context {}. Candidate changes only wisdom/quality/structural-readability-worker.md; there are no changed related source paths. Focus is byte-identical to parent. Its single factory has one coherent responsibility: obtain the shared execute declaration, adapt parameters to the voice schema field, provide ordinary root instructions, and return an unconditional asynchronous denial. The execute callback does not inspect or evaluate submitted code. Schema construction belongs to definition.ts/tool-schema.ts, prompt composition to prompts.ts, and provider transport/lifetimes to sessions. There is no hidden mutable state, authority handoff, cancellation registration, child or cleanup lifetime in this factory. Extracting wrappers or a context bag would obscure this already-direct path. No rename or test-count argument is needed to retain it."
+      }
     },
     {
       "focus": "src/live/setup.ts",
@@ -1839,7 +2491,15 @@
       },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "primary running"
+      "integration": "primary running",
+      "resume": {
+        "status": "pending",
+        "primaryId": "task_9c736343",
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "primary_started_no_committed_candidate",
+        "reason": "Primary was allocated, but no candidate commit or completed focus judgment is recorded. Preserve its worktree; do not treat the stale running status as proof of current execution."
+      }
     },
     {
       "focus": "src/live/speaker-check.ts",
@@ -1854,7 +2514,15 @@
       },
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "primary running"
+      "integration": "primary running",
+      "resume": {
+        "status": "pending",
+        "primaryId": "task_ff772328",
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "primary_uncommitted_candidate_pending",
+        "reason": "Primary was allocated, but no candidate commit or completed focus judgment is recorded. Preserve its worktree; do not treat the stale running status as proof of current execution."
+      }
     },
     {
       "focus": "src/live/speaker-summary.ts",
@@ -1886,7 +2554,18 @@
       "integration": "accepted unchanged final blob",
       "relatedPaths": [],
       "readingResult": "Formatter presents outcome/reason guidance,finite numeric evidence,optional native configuration and measurement limits;config separate from captured signal measurements. Extension owns consent/cancel/stale-result/delivery,connector frontend owns consent. Splitting adds navigation.",
-      "checks": "123tests666assertions summary/measurement/audio/extension/connector;missingWASM resolved readonlyassets;no productfix or physicalAEC/bargein/provider/Mac/fullgate proof."
+      "checks": "123tests666assertions summary/measurement/audio/extension/connector;missingWASM resolved readonlyassets;no productfix or physicalAEC/bargein/provider/Mac/fullgate proof.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "95305051ea489012a17049fa326ea87e53ec06aa",
+        "primaryId": "task_dfb821c4",
+        "judgeIds": [
+          "task_b23c691e"
+        ],
+        "sourceCommit": "1c8f22bbbef3a23a395b9cca545c642e12b739cc",
+        "state": "accepted_exact_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      }
     },
     {
       "focus": "src/live/status.ts",
@@ -1923,7 +2602,18 @@
         "tests/live-status.test.ts"
       ],
       "readingResult": "compactLiveStatus exposes running/continuousmic/held/unavailable/playback/reasoning/idle priority instead nested conditional inside rendering/throttling/publication. Run supplies facts and retains timing/state/dedup/teardown;local eligibility unchanged.",
-      "checks": "85focusedstatus/lifecycle/connector+28footer/sourceTUI tests incl80/120columnPTT;Biome/diffpass existingextensionwarnings;no behaviorfix/TS/fullbuild/provider/device/Mac."
+      "checks": "85focusedstatus/lifecycle/connector+28footer/sourceTUI tests incl80/120columnPTT;Biome/diffpass existingextensionwarnings;no behaviorfix/TS/fullbuild/provider/device/Mac.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "d8026fa785047027d133f9ef541ecd6eec0942bf",
+        "primaryId": "task_89c0c507",
+        "judgeIds": [
+          "task_5f68217e"
+        ],
+        "sourceCommit": "931224a0e92a33af036ba65404559b958ff1574a",
+        "state": "accepted_exact_not_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit and latest area tree; joined bytes differ. Preserve both prior and current exact-code reviews; accepted area source still needs deliberate integration, not safety-reporter approval."
+      }
     },
     {
       "focus": "src/live/tool-result.ts",
@@ -1958,7 +2648,18 @@
         "tests/live-tool-result.test.ts"
       ],
       "readingResult": "Unchanged provider visibility shaper preserves complete serialized evidence;main owner records canonical results,Google/OpenAI own pairing/replay/cancellation. New explicit null/envelope-inclusive UTF8 size/privateartifact permissions/storagefailure tests;no readability rewrite claimed.",
-      "checks": "88tests472assertions result/Google/OpenAI/mainowner;Biome/diff pass;no sourcefix/fulltypecheck/provider/device/Mac/fullgate."
+      "checks": "88tests472assertions result/Google/OpenAI/mainowner;Biome/diff pass;no sourcefix/fulltypecheck/provider/device/Mac/fullgate.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "f0338f1445387a86adfd6cc9917fa3dcfb39c739",
+        "primaryId": "task_a3d04408",
+        "judgeIds": [
+          "task_7324a1fb"
+        ],
+        "sourceCommit": "193fef1e293af8e3f5283bce38a1f5b1f02f8a49",
+        "state": "accepted_exact_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      }
     },
     {
       "focus": "src/live/transcript-text.ts",
@@ -1990,7 +2691,18 @@
       "integration": "accepted unchanged final blob",
       "relatedPaths": [],
       "readingResult": "Unchanged pure helper removes VT/remaining escape/unsafe controls in explicit order retaining prose/newlines;callers own presentation copies,canonical admission and exact hidden audit. Further extraction adds navigation.",
-      "checks": "37tests227assertions conversation/passivehistory/mainowner;initial missingWASM resolvedassetprep;no incidental fixes/provider/device/Mac/fullbuild."
+      "checks": "37tests227assertions conversation/passivehistory/mainowner;initial missingWASM resolvedassetprep;no incidental fixes/provider/device/Mac/fullbuild.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "e7e2fd9610dea3364c9dd23ac7a9286fa3eb48ee",
+        "primaryId": "task_a3fbb8b2",
+        "judgeIds": [
+          "task_3355dad9"
+        ],
+        "sourceCommit": "5aff3e388936ec698d848a715de450d7f31787df",
+        "state": "accepted_exact_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      }
     },
     {
       "focus": "src/live/types.ts",
@@ -2022,7 +2734,18 @@
       "integration": "accepted unchanged blob matches area tip",
       "relatedPaths": [],
       "readingResult": "Unchanged shared provider contracts keep input/output/turn epochs and admission separate;GPT provisional delegation protocol not fabricated shared completion.",
-      "checks": "190 tests1350 assertions across7;standard assets resolved initial missing WASM;no typecheck/build/provider/device proof."
+      "checks": "190 tests1350 assertions across7;standard assets resolved initial missing WASM;no typecheck/build/provider/device proof.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "982613947af84d36edeb598916e7826fc3f43190",
+        "primaryId": "task_d79e8579",
+        "judgeIds": [
+          "task_2bb07f5d"
+        ],
+        "sourceCommit": "2932f52f154c8d697234bb620b66b927ba2afd44",
+        "state": "accepted_exact_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      }
     },
     {
       "focus": "src/live/waveform.ts",
@@ -2054,7 +2777,18 @@
       "integration": "accepted unchanged final blob",
       "relatedPaths": [],
       "readingResult": "Unchanged synchronous owner:PCM sampling to intervalmicpeak/latest outputdeadline,tick smoothing/peakconsumption,purebraille rendering. Live compactstatus differs but maintained terminal-performance live-wave workload consumes meter;deletion not valid.",
-      "checks": "134focusedtests;19independentPCM/timingassertions;2componentworkloads render;native offlinewaveform zeromismatches;nofix/device/provider/Mac/fullbuild."
+      "checks": "134focusedtests;19independentPCM/timingassertions;2componentworkloads render;native offlinewaveform zeromismatches;nofix/device/provider/Mac/fullbuild.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "4fa724f5c981c5d85054dcccec102a67ced75e2d",
+        "primaryId": "task_704586e1",
+        "judgeIds": [
+          "task_29ed4bde"
+        ],
+        "sourceCommit": "0a330bbfdfda2ce45fe8888c1328e451c0c7433d",
+        "state": "accepted_exact_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      }
     },
     {
       "focus": "tests/current-pipeline-live.test.ts",
@@ -2062,7 +2796,15 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "own_primary_pending",
+        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      }
     },
     {
       "focus": "tests/editor-push-to-talk.test.ts",
@@ -2075,6 +2817,16 @@
         "judgeId": "task_51a3b4e4",
         "verdict": "ACCEPT",
         "blob": "8602a3f58450df60fd489a9d7ce290a78daa968d"
+      },
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [
+          "task_51a3b4e4"
+        ],
+        "sourceCommit": "7f72408d2e97646332d752d423d96ccbf56d310c",
+        "state": "related_actual_code_accepted_own_primary_pending",
+        "reason": "Retain exact related-path actual-code acceptance; it is not completion of this file’s distinct primary/fresh focus-judge requirement."
       }
     },
     {
@@ -2114,7 +2866,18 @@
       },
       "relatedPaths": [],
       "readingResult": "Independent cancellation journeys show hold/cancel/release/freshhold;mouse/programmatic edits separate;fixture owns all attachment disposers including reattach and teardown before clock restore;actual SDK/draft/undo/focus/stale-detach evidence retained.",
-      "checks": "22 primary tests83 assertions;39 across3 editor suites171 assertions;Biome/typecheck afterassets/diff pass;no production fix/device/provider/macOS."
+      "checks": "22 primary tests83 assertions;39 across3 editor suites171 assertions;Biome/typecheck afterassets/diff pass;no production fix/device/provider/macOS.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "89f3ee58570d4e8d08bbb8aedf98e1e218524529",
+        "primaryId": "task_90932544",
+        "judgeIds": [
+          "task_5f1948bf"
+        ],
+        "sourceCommit": "1bebfe90e9b17b318805063068d637b4f1f8b1b5",
+        "state": "accepted_exact_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      }
     },
     {
       "focus": "tests/fixtures/live-execute-cli.sh",
@@ -2122,7 +2885,15 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "own_primary_pending",
+        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      }
     },
     {
       "focus": "tests/fixtures/live-gpt-tui.ts",
@@ -2130,7 +2901,15 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "own_primary_pending",
+        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      }
     },
     {
       "focus": "tests/fixtures/live-picker-tui.ts",
@@ -2138,7 +2917,15 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "own_primary_pending",
+        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      }
     },
     {
       "focus": "tests/fixtures/live-push-to-talk-tui.ts",
@@ -2146,7 +2933,15 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "own_primary_pending",
+        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      }
     },
     {
       "focus": "tests/fixtures/live-spoken-tui.ts",
@@ -2154,7 +2949,15 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "own_primary_pending",
+        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      }
     },
     {
       "focus": "tests/goals-live.test.ts",
@@ -2162,7 +2965,15 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "own_primary_pending",
+        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      }
     },
     {
       "focus": "tests/gpt-live-context.test.ts",
@@ -2170,7 +2981,15 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "own_primary_pending",
+        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      }
     },
     {
       "focus": "tests/gpt-live-delegation.test.ts",
@@ -2207,7 +3026,19 @@
       },
       "relatedPaths": [],
       "readingResult": "Fixture alwaysobservessubmissions;testowned admissionpromises replacecallback-initializedmutable resolvers;acceptfirst/rejectsecond evictedadmission explicit. Four contractgroups eventtime/authorityspeechfreshness/replay/losssettlement;stalespeechvsrealsettlement watermark asserted.",
-      "checks": "26focusedtests91assertions;strictTS/format/diffpass3baseline lintwarnings;no runtimefix/provider/device/Mac/wholegate."
+      "checks": "26focusedtests91assertions;strictTS/format/diffpass3baseline lintwarnings;no runtimefix/provider/device/Mac/wholegate.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "3ffa47fccf3ea33830d6180d81cbc8812438f18c",
+        "primaryId": "task_79a24111",
+        "judgeIds": [
+          "task_9286e550",
+          "task_3583b317"
+        ],
+        "sourceCommit": "bea2d9d57a4d1fa9a2279f5ec9d67a5b39e1d9db",
+        "state": "accepted_exact_not_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit and latest area tree; joined bytes differ. Preserve both prior and current exact-code reviews; accepted area source still needs deliberate integration, not safety-reporter approval."
+      }
     },
     {
       "focus": "tests/gpt-live-playback.test.ts",
@@ -2244,7 +3075,19 @@
       },
       "relatedPaths": [],
       "readingResult": "Testclock elapse replaces timerID/callbacksnapshot/manualtime reconstruction;micframes explicitindependent recoveryclock;deferredwrite/flush promises+release direct;suites4contractjourneys.",
-      "checks": "12baseline/candidatetests112assertions;37combined20251assertions;alltitles/assertionlines retained;format/lint/isolatedTS/diffpass,no productionfix,terminalblankpane unresolved."
+      "checks": "12baseline/candidatetests112assertions;37combined20251assertions;alltitles/assertionlines retained;format/lint/isolatedTS/diffpass,no productionfix,terminalblankpane unresolved.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "66489a0ad2027a5307cdecb469aa5ba6fa8a633b",
+        "primaryId": "task_3186f4b0",
+        "judgeIds": [
+          "task_1c5671f2",
+          "task_af9fc144"
+        ],
+        "sourceCommit": "4434438e3dab24da5e98e19fb600ab1794f9c474",
+        "state": "accepted_exact_not_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit and latest area tree; joined bytes differ. Preserve both prior and current exact-code reviews; accepted area source still needs deliberate integration, not safety-reporter approval."
+      }
     },
     {
       "focus": "tests/gpt-live-request.test.ts",
@@ -2252,7 +3095,15 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "own_primary_pending",
+        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      }
     },
     {
       "focus": "tests/gpt-live-session.test.ts",
@@ -2289,7 +3140,19 @@
       },
       "relatedPaths": [],
       "readingResult": "Overflow/malformedaudio/disconnect ownfixture evidence instead3sessions sharedarrays;earlyreject/successbilling lifetimes separate;routineadmission centralized but handshakes/terminal/interleaving/replay/concurrentclose explicit.",
-      "checks": "20sessiontests unchanged383assertions;6GPTfiles54pass656assertions;Biome/diffpass;no runtimefix/typecheck/build/provider/device/macOS."
+      "checks": "20sessiontests unchanged383assertions;6GPTfiles54pass656assertions;Biome/diffpass;no runtimefix/typecheck/build/provider/device/macOS.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "21832ae3a8c518914e1e99e849a3f21340bcf303",
+        "primaryId": "task_1a45d152",
+        "judgeIds": [
+          "task_792067e5",
+          "task_86206c2a"
+        ],
+        "sourceCommit": "42b90f334af4af21e039fd199ff3b2b402c0b55c",
+        "state": "accepted_exact_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      }
     },
     {
       "focus": "tests/gpt-live-waveform.test.ts",
@@ -2297,7 +3160,15 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "own_primary_pending",
+        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      }
     },
     {
       "focus": "tests/helpers/live-startup-audio-queue.ts",
@@ -2305,7 +3176,15 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "own_primary_pending",
+        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      }
     },
     {
       "focus": "tests/live-audio-lifecycle.test.ts",
@@ -2342,7 +3221,19 @@
       },
       "relatedPaths": [],
       "readingResult": "Independently controlled callback/drain straightlineorders replace extractedcallbacks/doublebranch;callbackfailure vs nextwritethrow ownssettlement;commandsequences showFIFO and cancellationlifetimes separate.",
-      "checks": "27focusedneighbor tests131assertions;focusedTS/Biome/diffpass;timing/interruption/reaping evidence retained,no productfix/provider/device/macOS/fullgate."
+      "checks": "27focusedneighbor tests131assertions;focusedTS/Biome/diffpass;timing/interruption/reaping evidence retained,no productfix/provider/device/macOS/fullgate.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "bfd36ef721d8ac677ac5765d0074934659cd9a32",
+        "primaryId": "task_61f07074",
+        "judgeIds": [
+          "task_3e2610a0",
+          "task_aeb6dd8f"
+        ],
+        "sourceCommit": "df2795d38c86d819801a98dd480c217834d2a98c",
+        "state": "accepted_exact_not_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit and latest area tree; joined bytes differ. Preserve both prior and current exact-code reviews; accepted area source still needs deliberate integration, not safety-reporter approval."
+      }
     },
     {
       "focus": "tests/live-audio.test.ts",
@@ -2379,7 +3270,19 @@
       },
       "relatedPaths": [],
       "readingResult": "Independent contract tests remove unrelated helperlifetimes insidecompoundcases;grouped byauthority withinline effects;native batchedplayed->stopped/queueonlytimeout/parser/gate/reaping preserved,newpendingready+EOFnotack;honesttitles.",
-      "checks": "66focusedtests20339assertions;focusedTS/Biome/diffpass;roottypes absentassetJSON, no runtimefix/provider/device/macOS."
+      "checks": "66focusedtests20339assertions;focusedTS/Biome/diffpass;roottypes absentassetJSON, no runtimefix/provider/device/macOS.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "a6f73800667e3a3cafc70357e0b2840d366d1290",
+        "primaryId": "task_af04f669",
+        "judgeIds": [
+          "task_849c1ccb",
+          "task_610f6154"
+        ],
+        "sourceCommit": "ed86cb9cd103d92c431cef5e03fe55184fa6f59f",
+        "state": "accepted_exact_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      }
     },
     {
       "focus": "tests/live-auth-lifecycle.test.ts",
@@ -2387,7 +3290,15 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "own_primary_pending",
+        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      }
     },
     {
       "focus": "tests/live-capture-gate.test.ts",
@@ -2400,6 +3311,16 @@
         "judgeId": "task_660502a4",
         "verdict": "ACCEPT",
         "blob": "e14d5006f3c1c8cd2ad1ca4d88c2f5021753c817"
+      },
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [
+          "task_660502a4"
+        ],
+        "sourceCommit": "b01dac0216dfa47d3b40e57f92c6021ea530e368",
+        "state": "related_actual_code_accepted_own_primary_pending",
+        "reason": "Retain exact related-path actual-code acceptance; it is not completion of this file’s distinct primary/fresh focus-judge requirement."
       }
     },
     {
@@ -2408,7 +3329,15 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "own_primary_pending",
+        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      }
     },
     {
       "focus": "tests/live-conversation.test.ts",
@@ -2416,7 +3345,15 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "own_primary_pending",
+        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      }
     },
     {
       "focus": "tests/live-cost.test.ts",
@@ -2453,7 +3390,19 @@
       },
       "relatedPaths": [],
       "readingResult": "Pricingeligibility separate from persistence/close;one tracker peraccountingtest instead3lifetimes zerousage;eventsequences/charges visible,alloriginalcases plus sessionvsturn watermark/distinctresponseIDs.",
-      "checks": "109tests558assertions cost/session/extension;Biome/diffpass,no productfix/dedicated switchedsession guardproof/device/provider/macOS."
+      "checks": "109tests558assertions cost/session/extension;Biome/diffpass,no productfix/dedicated switchedsession guardproof/device/provider/macOS.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "b6b973be8cc5a8c93f5cbe2986f2edfe27563806",
+        "primaryId": "task_0ed9f187",
+        "judgeIds": [
+          "task_c4ba592a",
+          "task_4b5c5997"
+        ],
+        "sourceCommit": "186f1a59ded8eae2d42c6c1a5e33d93ad5817612",
+        "state": "accepted_exact_not_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit and latest area tree; joined bytes differ. Preserve both prior and current exact-code reviews; accepted area source still needs deliberate integration, not safety-reporter approval."
+      }
     },
     {
       "focus": "tests/live-credentials.test.ts",
@@ -2461,7 +3410,15 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "own_primary_pending",
+        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      }
     },
     {
       "focus": "tests/live-dispatch-budget.test.ts",
@@ -2469,7 +3426,15 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "own_primary_pending",
+        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      }
     },
     {
       "focus": "tests/live-dispatch-budget.ts",
@@ -2477,7 +3442,15 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "own_primary_pending",
+        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      }
     },
     {
       "focus": "tests/live-embedded-helper.test.ts",
@@ -2490,6 +3463,16 @@
         "judgeId": "task_1c3f1e78",
         "verdict": "ACCEPT",
         "blob": "cf16b2888c54fff42ace4d821a086b3628e279e9"
+      },
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [
+          "task_1c3f1e78"
+        ],
+        "sourceCommit": "2f13e6964b36f305a16084fd3d6c7e417e2361a7",
+        "state": "related_actual_code_accepted_own_primary_pending",
+        "reason": "Retain exact related-path actual-code acceptance; it is not completion of this file’s distinct primary/fresh focus-judge requirement."
       }
     },
     {
@@ -2498,7 +3481,15 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "own_primary_pending",
+        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      }
     },
     {
       "focus": "tests/live-extension.test.ts",
@@ -2549,7 +3540,20 @@
       },
       "relatedPaths": [],
       "readingResult": "Independent helper-launch/provider-connect holds expose cancellation arrival/resume/activation journey; realSDK input/focus fixture separate from simulated Live dependencies; generic provider seam now truthfully named.",
-      "checks": "76 tests442 assertions;focused typecheck/Biome/diff pass;no assertion removed or product fix. Full typecheck blocked8 missing asset JSON imports;no native/provider/macOS."
+      "checks": "76 tests442 assertions;focused typecheck/Biome/diff pass;no assertion removed or product fix. Full typecheck blocked8 missing asset JSON imports;no native/provider/macOS.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "da0317117b6400fdba6b333935d8bb0b2d951e31",
+        "primaryId": "task_ecea00d6",
+        "judgeIds": [
+          "task_d469e2f0",
+          "task_4b5c5997",
+          "task_65eb4c80"
+        ],
+        "sourceCommit": "da7f97d770768c2f74540f8a9c3fde8667e15177",
+        "state": "accepted_exact_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      }
     },
     {
       "focus": "tests/live-gpt-live-provider.acceptance.test.ts",
@@ -2557,7 +3561,15 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "own_primary_pending",
+        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      }
     },
     {
       "focus": "tests/live-gpt-tui.test.ts",
@@ -2565,7 +3577,15 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "own_primary_pending",
+        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      }
     },
     {
       "focus": "tests/live-host-access.test.ts",
@@ -2573,7 +3593,15 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "own_primary_pending",
+        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      }
     },
     {
       "focus": "tests/live-host-bridge.test.ts",
@@ -2642,7 +3670,19 @@
           "readingResult": "Explicit failed.bridge.close before other-reader mutation and final immutable snapshot read restores rejected retention checkpoint;typed authority,wire decoder and centralized afterEach remain.",
           "checks": "19focus111assertions;20combined127assertions preparedreadonlyassets;TS/format/diff pass, no productionfix/device/provider/Mac/fullgate."
         }
-      ]
+      ],
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "3dc74be1639a7877100ff4b4fb8eee5a635a03c1",
+        "primaryId": "task_98219b99",
+        "judgeIds": [
+          "task_b019b845",
+          "task_bb9a363e"
+        ],
+        "sourceCommit": "d19bdc41754d26d69a8cfa9eae60942bef3a0ef1",
+        "state": "accepted_exact_not_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit and latest area tree; joined bytes differ. Preserve both prior and current exact-code reviews; accepted area source still needs deliberate integration, not safety-reporter approval."
+      }
     },
     {
       "focus": "tests/live-long-audio.test.ts",
@@ -2650,7 +3690,15 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "own_primary_pending",
+        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      }
     },
     {
       "focus": "tests/live-macos-ci.test.ts",
@@ -2658,7 +3706,15 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "own_primary_pending",
+        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      }
     },
     {
       "focus": "tests/live-main-integration.test.ts",
@@ -2666,7 +3722,15 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "own_primary_pending",
+        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      }
     },
     {
       "focus": "tests/live-main-orchestrator-runtime.probe.ts",
@@ -2674,7 +3738,15 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "own_primary_pending",
+        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      }
     },
     {
       "focus": "tests/live-main-owner.test.ts",
@@ -2711,7 +3783,19 @@
       },
       "relatedPaths": [],
       "readingResult": "Session cleanup one owner; separate loadout/rendering vs typed authority/fallback journeys. Authority preserves execute/typed input/forbidden text/release/ordinary text sequence; race gates and evidence explicit. Removed duplicated fixture activity state, new idle assertion.",
-      "checks": "42 tests/352 assertions; Biome/root typecheck/diff pass;108 assertions retained and4 race bodies whitespace-only. Idle regression fails launch fixture passes candidate; no production behavior change."
+      "checks": "42 tests/352 assertions; Biome/root typecheck/diff pass;108 assertions retained and4 race bodies whitespace-only. Idle regression fails launch fixture passes candidate; no production behavior change.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "9e228bc0c98e2ae271d679c8aeedcfd3e4a10fe1",
+        "primaryId": "task_d7333f4e",
+        "judgeIds": [
+          "task_3251abf2",
+          "task_bb0fe7ca"
+        ],
+        "sourceCommit": "70bfa1a0e0d8dd8048bd60b7690c5e7a4a7ed4bb",
+        "state": "accepted_exact_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      }
     },
     {
       "focus": "tests/live-native-workflows.test.ts",
@@ -2719,7 +3803,15 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "own_primary_pending",
+        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      }
     },
     {
       "focus": "tests/live-notice.test.ts",
@@ -2727,7 +3819,15 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "own_primary_pending",
+        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      }
     },
     {
       "focus": "tests/live-openai-provider.acceptance.test.ts",
@@ -2735,7 +3835,15 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "own_primary_pending",
+        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      }
     },
     {
       "focus": "tests/live-paired-runtime.test.ts",
@@ -2743,7 +3851,15 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "own_primary_pending",
+        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      }
     },
     {
       "focus": "tests/live-passive-history.test.ts",
@@ -2756,6 +3872,16 @@
         "judgeId": "task_189c73c2",
         "verdict": "ACCEPT",
         "blob": "ab128e1f7515e20fc4d8d852b7d6beeed8bf9e1f"
+      },
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [
+          "task_189c73c2"
+        ],
+        "sourceCommit": "2e6c8b980ff1f03b0baa81692387c14b9acbd400",
+        "state": "related_actual_code_accepted_own_primary_pending",
+        "reason": "Retain exact related-path actual-code acceptance; it is not completion of this file’s distinct primary/fresh focus-judge requirement."
       }
     },
     {
@@ -2764,7 +3890,15 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "own_primary_pending",
+        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      }
     },
     {
       "focus": "tests/live-platform.test.ts",
@@ -2772,7 +3906,15 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "own_primary_pending",
+        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      }
     },
     {
       "focus": "tests/live-playback.test.ts",
@@ -2809,7 +3951,19 @@
       },
       "relatedPaths": [],
       "readingResult": "RealNativeRing testowner groups consumption/delayedfeedback/timers;tests show render/JSadvance/feedback/settling;interruption keepsdistinct oldwrite+flush;failure/close-beforestart lifetimes split.",
-      "checks": "80focusedtests20487assertions;20139orderedplayback assertionobservations matchbaseline byteforbyte inclBufferhashes;strictTS/Biome/diffpass;no runtimefix/device/provider/macOS/build."
+      "checks": "80focusedtests20487assertions;20139orderedplayback assertionobservations matchbaseline byteforbyte inclBufferhashes;strictTS/Biome/diffpass;no runtimefix/device/provider/macOS/build.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "af8b12dd1bf13514c5313825d06d9a018d380fcc",
+        "primaryId": "task_29a09f86",
+        "judgeIds": [
+          "task_8ab8f308",
+          "task_542a0b36"
+        ],
+        "sourceCommit": "d6a78704028e99ec22bc7d7e00cf9c83851754b6",
+        "state": "accepted_exact_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      }
     },
     {
       "focus": "tests/live-probe-input.test.ts",
@@ -2817,7 +3971,15 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "own_primary_pending",
+        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      }
     },
     {
       "focus": "tests/live-prompt.test.ts",
@@ -2825,7 +3987,15 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "own_primary_pending",
+        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      }
     },
     {
       "focus": "tests/live-provider.acceptance.test.ts",
@@ -2833,7 +4003,15 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "own_primary_pending",
+        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      }
     },
     {
       "focus": "tests/live-push-to-talk-tui.test.ts",
@@ -2841,7 +4019,15 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "own_primary_pending",
+        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      }
     },
     {
       "focus": "tests/live-session.test.ts",
@@ -2849,7 +4035,15 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "own_primary_pending",
+        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      }
     },
     {
       "focus": "tests/live-setup-diagnostics.test.ts",
@@ -2862,6 +4056,16 @@
         "judgeId": "task_660502a4",
         "verdict": "ACCEPT",
         "blob": "dfebe3a0f48e57f513209583119326744dff4afd"
+      },
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [
+          "task_660502a4"
+        ],
+        "sourceCommit": "b01dac0216dfa47d3b40e57f92c6021ea530e368",
+        "state": "related_actual_code_accepted_own_primary_pending",
+        "reason": "Retain exact related-path actual-code acceptance; it is not completion of this file’s distinct primary/fresh focus-judge requirement."
       }
     },
     {
@@ -2870,7 +4074,15 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "own_primary_pending",
+        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      }
     },
     {
       "focus": "tests/live-speaker-check.test.ts",
@@ -2878,7 +4090,15 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "related_uncommitted_candidate_own_primary_pending",
+        "reason": "Related primary left uncommitted bytes for this file; preserve them, allocate this focus its own primary, and obtain exact-code judgment before integration."
+      }
     },
     {
       "focus": "tests/live-speaker-summary.test.ts",
@@ -2886,7 +4106,15 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "own_primary_pending",
+        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      }
     },
     {
       "focus": "tests/live-spoken-tui.test.ts",
@@ -2894,7 +4122,15 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "own_primary_pending",
+        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      }
     },
     {
       "focus": "tests/live-startup-audio-queue.test.ts",
@@ -2902,7 +4138,15 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "own_primary_pending",
+        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      }
     },
     {
       "focus": "tests/live-startup-natural-fixture.test.ts",
@@ -2910,7 +4154,15 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "own_primary_pending",
+        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      }
     },
     {
       "focus": "tests/live-startup-speech-probe.test.ts",
@@ -2918,7 +4170,15 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "own_primary_pending",
+        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      }
     },
     {
       "focus": "tests/live-status.test.ts",
@@ -2931,6 +4191,16 @@
         "judgeId": "task_5f68217e",
         "verdict": "ACCEPT",
         "blob": "21bfe18b88d0e9e78327414ac63d6fabe2cb51ac"
+      },
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [
+          "task_5f68217e"
+        ],
+        "sourceCommit": "931224a0e92a33af036ba65404559b958ff1574a",
+        "state": "related_actual_code_accepted_own_primary_pending",
+        "reason": "Retain exact related-path actual-code acceptance; it is not completion of this file’s distinct primary/fresh focus-judge requirement."
       }
     },
     {
@@ -2939,7 +4209,15 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "own_primary_pending",
+        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      }
     },
     {
       "focus": "tests/live-tool-result.test.ts",
@@ -2952,6 +4230,16 @@
         "judgeId": "task_7324a1fb",
         "verdict": "ACCEPT",
         "blob": "176c456ff937bd9a9b63267e508a10c923443648"
+      },
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [
+          "task_7324a1fb"
+        ],
+        "sourceCommit": "193fef1e293af8e3f5283bce38a1f5b1f02f8a49",
+        "state": "related_actual_code_accepted_own_primary_pending",
+        "reason": "Retain exact related-path actual-code acceptance; it is not completion of this file’s distinct primary/fresh focus-judge requirement."
       }
     },
     {
@@ -2989,7 +4277,19 @@
       },
       "relatedPaths": [],
       "readingResult": "Split mixed rejection/failure/result/disconnect journeys; host calls recorded at one execution seam and deferred results expose dispatch/settlement; disconnect before/after together, replay/cancel checkpoints explicit; undeclared-tool response assertion added.",
-      "checks": "33 focused/adjacent pass/134 assertions; typecheck/format/lint/diff pass. No production change/full gate/provider/macOS/device."
+      "checks": "33 focused/adjacent pass/134 assertions; typecheck/format/lint/diff pass. No production change/full gate/provider/macOS/device.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "1c93a8e1bdb4066f2ab226871e34415e658d48ea",
+        "primaryId": "task_217fe0fb",
+        "judgeIds": [
+          "task_0b0630b0",
+          "task_aba16011"
+        ],
+        "sourceCommit": "421cd3969f3db5e4c1d1358ae5fad4bf01a53d78",
+        "state": "accepted_exact_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      }
     },
     {
       "focus": "tests/live-transcript.test.ts",
@@ -2997,7 +4297,15 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "own_primary_pending",
+        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      }
     },
     {
       "focus": "tests/live-tui-startup.test.ts",
@@ -3005,7 +4313,15 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "own_primary_pending",
+        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      }
     },
     {
       "focus": "tests/live-tui-startup.ts",
@@ -3013,7 +4329,15 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "own_primary_pending",
+        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      }
     },
     {
       "focus": "tests/live-waveform.test.ts",
@@ -3021,7 +4345,15 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "own_primary_pending",
+        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      }
     },
     {
       "focus": "tests/openai-session-diagnostics.test.ts",
@@ -3034,6 +4366,16 @@
         "judgeId": "task_8db4b91e",
         "verdict": "ACCEPT",
         "blob": "5e91f029981f49fee3848a977cfe92d36da072e8"
+      },
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [
+          "task_8db4b91e"
+        ],
+        "sourceCommit": "9f25cbbee79aebf17532edf4f0f8f42dce48d3ef",
+        "state": "related_actual_code_accepted_own_primary_pending",
+        "reason": "Retain exact related-path actual-code acceptance; it is not completion of this file’s distinct primary/fresh focus-judge requirement."
       }
     },
     {
@@ -3042,7 +4384,15 @@
       "primary": null,
       "judgeRounds": [],
       "acceptedBlob": null,
-      "integration": "pending"
+      "integration": "pending",
+      "resume": {
+        "status": "pending",
+        "primaryId": null,
+        "judgeIds": [],
+        "sourceCommit": null,
+        "state": "own_primary_pending",
+        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+      }
     },
     {
       "focus": "tests/openai-session.test.ts",
@@ -3079,7 +4429,19 @@
       },
       "relatedPaths": [],
       "readingResult": "Scenarios contiguous by capture/context/response/playback/transport; dispatch result lifetimes explicit and keyed by call ID, admission awaited in revocation tests, protocol messages remain visible. Oversized-result artifact directory now owned/cleaned and complete content verified.",
-      "checks": "64 focused tests/393 assertions; all 46 expanded scenarios and 143 provider-message expressions retained; typecheck/format/diff pass, existing PCM warning. Baseline artifact 100050 bytes vs candidate zero entries explicit fixture leak fix."
+      "checks": "64 focused tests/393 assertions; all 46 expanded scenarios and 143 provider-message expressions retained; typecheck/format/diff pass, existing PCM warning. Baseline artifact 100050 bytes vs candidate zero entries explicit fixture leak fix.",
+      "resume": {
+        "status": "accepted",
+        "acceptedBlob": "db32c13aeccdc9c9a8e7f991fc7a2442ee1575c8",
+        "primaryId": "task_b8b36154",
+        "judgeIds": [
+          "task_4cb31324",
+          "task_5c3c9aed"
+        ],
+        "sourceCommit": "af9b22ff882959f601e8748f75cf296e4fbfa7d1",
+        "state": "accepted_exact_joined",
+        "reason": "Exact focus-reviewed blob verified at its judged source commit, latest area tree, and joined tree. Retain original actual-code acceptance; no new review or source import needed for this file."
+      }
     }
   ],
   "extraFiles": [
@@ -3474,15 +4836,18 @@
       "primary": null,
       "relatedPaths": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "d9dead0e2c17b436931bb3174f80ecbe09095e1b",
       "integration": "new related candidate;own primary pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "d9dead0e2c17b436931bb3174f80ecbe09095e1b",
         "primaryId": null,
-        "judgeIds": [],
+        "judgeIds": [
+          "task_c1052b52"
+        ],
         "sourceCommit": "a5642b72d82ac64e94fb58abfb5a2076b07031c3",
-        "state": "related_candidate_own_primary_pending",
-        "reason": "New related candidate has no own primary or completed independent focus judgment; withhold integration approval."
+        "state": "accepted-joined",
+        "reason": "New source, absent in the primary parent. probe owns a single temporary root, extracts one scripted helper, launches one child-local Bun module mock, observes diagnostic outcomes, and finally releases its fixture. self/protocol arguments describe the two executable phases directly. Success, early self-test failure, protocol mismatch/parse failure, and timeout journeys remain local to their cases; fixture cleanup and diagnostic cleanup are separately visible. The generated runner is justified by module-cache isolation, not a new framework or production context bag."
       }
     },
     {
@@ -3495,10 +4860,11 @@
       "integration": "new related candidate;own primary pending",
       "resume": {
         "status": "pending",
+        "acceptedBlob": "ceee222b98414140f6d2688bd128ace3f1c02add",
         "primaryId": null,
         "judgeIds": [],
         "sourceCommit": "a2e8025bd3ffba42a24e0b7ba3358ac97de68532",
-        "state": "related_candidate_own_primary_pending",
+        "state": "needs-primary-final-blob",
         "reason": "New related candidate has no own primary or completed independent focus judgment; withhold integration approval."
       }
     },
@@ -3512,10 +4878,11 @@
       "integration": "new related candidate;own primary pending",
       "resume": {
         "status": "pending",
+        "acceptedBlob": "4e191af147d30885d04d0d601e21c8dc0eae8481",
         "primaryId": null,
         "judgeIds": [],
         "sourceCommit": "31bf2843d0aad882258288ca512035fe1d64528e",
-        "state": "related_candidate_own_primary_pending",
+        "state": "needs-primary-final-blob",
         "reason": "New related candidate has no own primary or completed independent focus judgment; withhold integration approval."
       }
     }
@@ -3640,5 +5007,9 @@
       "status": "clean shared accepted checkpoint joined;no area-assigned source delta",
       "limits": "combined checks pending;other-area notes imported unchanged"
     }
-  ]
+  ],
+  "resumeStatus": {
+    "accepted": 74,
+    "pending": 76
+  }
 }

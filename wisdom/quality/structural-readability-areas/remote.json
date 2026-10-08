@@ -16,7 +16,8 @@
         "sourceCommit": null,
         "state": "pending-primary-unstarted",
         "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
-      }
+      },
+      "acceptedBlob": null
     },
     {
       "focus": "scripts/network-none-fixture.ts",
@@ -31,7 +32,8 @@
         "sourceCommit": null,
         "state": "pending-primary-unstarted",
         "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
-      }
+      },
+      "acceptedBlob": null
     },
     {
       "focus": "scripts/remote-capability-pty-e2e.ts",
@@ -46,7 +48,8 @@
         "sourceCommit": null,
         "state": "pending-primary-unstarted",
         "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
-      }
+      },
+      "acceptedBlob": null
     },
     {
       "focus": "scripts/remote-e2e.sh",
@@ -61,7 +64,8 @@
         "sourceCommit": null,
         "state": "pending-primary-unstarted",
         "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
-      }
+      },
+      "acceptedBlob": null
     },
     {
       "focus": "scripts/remote-e2e.ts",
@@ -76,7 +80,8 @@
         "sourceCommit": null,
         "state": "pending-primary-unstarted",
         "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
-      }
+      },
+      "acceptedBlob": null
     },
     {
       "focus": "scripts/remote-jobs-e2e.ts",
@@ -91,7 +96,8 @@
         "sourceCommit": null,
         "state": "pending-primary-unstarted",
         "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
-      }
+      },
+      "acceptedBlob": null
     },
     {
       "focus": "scripts/remote-placement-e2e.ts",
@@ -106,7 +112,8 @@
         "sourceCommit": null,
         "state": "pending-primary-unstarted",
         "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
-      }
+      },
+      "acceptedBlob": null
     },
     {
       "focus": "scripts/remote-pty-e2e.ts",
@@ -121,7 +128,8 @@
         "sourceCommit": null,
         "state": "pending-primary-unstarted",
         "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
-      }
+      },
+      "acceptedBlob": null
     },
     {
       "focus": "scripts/remote-recovery-e2e.ts",
@@ -136,7 +144,8 @@
         "sourceCommit": null,
         "state": "pending-primary-unstarted",
         "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
-      }
+      },
+      "acceptedBlob": null
     },
     {
       "focus": "scripts/remote-root-placement-e2e.ts",
@@ -151,7 +160,8 @@
         "sourceCommit": null,
         "state": "pending-primary-unstarted",
         "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
-      }
+      },
+      "acceptedBlob": null
     },
     {
       "focus": "src/remote/CAPABILITY-INTEGRATION.md",
@@ -166,12 +176,13 @@
         "sourceCommit": null,
         "state": "pending-primary-killed-no-candidate",
         "reason": "Saved job ended killed with exit143; worktree HEAD equals launch base and working tree has no preserved edit. Ledger running status is stale."
-      }
+      },
+      "acceptedBlob": null
     },
     {
       "focus": "src/remote/README.md",
       "initialBlob": "5c3efed97770f82bf34b4f82637207306564cf72",
-      "status": "judging",
+      "status": "accepted",
       "judgeRounds": [
         {
           "id": "task_8e2a9b7a",
@@ -199,7 +210,8 @@
         "sourceCommit": "4692a8e499f837c736f9053cb95e0dd2baf2776d",
         "state": "accepted-joined",
         "reason": "The primary base mixes ordinary delegation, expert diagnostics and eventual root-session scope in consecutive prose. This candidate reorganizes the document around three different user intents and their actual authorities. Authorization, source pinning, owning-parent observation, root attachment and repository return each have their own coherent sequence. The command/effect tables distinguish abort, close and detach rather than merely renaming headings. The implementation map supplies caller-to-owner reading paths; the separate bounds section no longer interrupts the ordinary launch journey. The additional length buys explicit ownership and outcome distinctions, not a shared context bag or cosmetic cleanup."
-      }
+      },
+      "acceptedBlob": "f18a61b58ae574fc9b8e7eb0ecccceecf3603de7"
     },
     {
       "focus": "src/remote/artifacts.ts",
@@ -1233,7 +1245,7 @@
     {
       "focus": "src/remote/repository.md",
       "initialBlob": "90e5d9625f8af05c4c3c5dee290e72b3b9353025",
-      "status": "primary-running",
+      "status": "pending",
       "judgeRounds": [],
       "launchBase": "6dab803ed890711836c3d13c14762be8f92456d1",
       "primary": {
@@ -1249,7 +1261,8 @@
         "sourceCommit": null,
         "state": "pending-primary-killed-no-candidate",
         "reason": "Saved job ended killed with exit143; worktree HEAD equals launch base and working tree has no preserved edit. Ledger running status is stale."
-      }
+      },
+      "acceptedBlob": null
     },
     {
       "focus": "src/remote/repository.ts",
@@ -2001,7 +2014,8 @@
         "sourceCommit": null,
         "state": "pending-primary-unstarted",
         "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
-      }
+      },
+      "acceptedBlob": null
     },
     {
       "focus": "tests/fixtures/remote-e2e/entrypoint.sh",
@@ -2016,7 +2030,8 @@
         "sourceCommit": null,
         "state": "pending-primary-unstarted",
         "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
-      }
+      },
+      "acceptedBlob": null
     },
     {
       "focus": "tests/fixtures/remote-e2e/fake-provider.ts",
@@ -2031,7 +2046,8 @@
         "sourceCommit": null,
         "state": "pending-primary-unstarted",
         "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
-      }
+      },
+      "acceptedBlob": null
     },
     {
       "focus": "tests/fixtures/remote-e2e/models.json",
@@ -2046,7 +2062,8 @@
         "sourceCommit": null,
         "state": "pending-primary-unstarted",
         "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
-      }
+      },
+      "acceptedBlob": null
     },
     {
       "focus": "tests/fixtures/remote-e2e/placement-parent.ts",
@@ -2061,7 +2078,8 @@
         "sourceCommit": null,
         "state": "pending-primary-unstarted",
         "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
-      }
+      },
+      "acceptedBlob": null
     },
     {
       "focus": "tests/fixtures/remote-e2e/sshd_config",
@@ -2076,7 +2094,8 @@
         "sourceCommit": null,
         "state": "pending-primary-unstarted",
         "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
-      }
+      },
+      "acceptedBlob": null
     },
     {
       "focus": "tests/fixtures/remote-e2e/subagents.json",
@@ -2091,7 +2110,8 @@
         "sourceCommit": null,
         "state": "pending-primary-unstarted",
         "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
-      }
+      },
+      "acceptedBlob": null
     },
     {
       "focus": "tests/fixtures/remote-owner-error.ts.txt",
@@ -2106,7 +2126,8 @@
         "sourceCommit": null,
         "state": "pending-primary-unstarted",
         "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
-      }
+      },
+      "acceptedBlob": null
     },
     {
       "focus": "tests/fixtures/remote-placement-e2e/Dockerfile",
@@ -2121,7 +2142,8 @@
         "sourceCommit": null,
         "state": "pending-primary-unstarted",
         "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
-      }
+      },
+      "acceptedBlob": null
     },
     {
       "focus": "tests/fixtures/remote-placement-e2e/entrypoint.sh",
@@ -2136,7 +2158,8 @@
         "sourceCommit": null,
         "state": "pending-primary-unstarted",
         "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
-      }
+      },
+      "acceptedBlob": null
     },
     {
       "focus": "tests/fixtures/remote-placement-e2e/fake-provider.ts",
@@ -2151,7 +2174,8 @@
         "sourceCommit": null,
         "state": "pending-primary-unstarted",
         "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
-      }
+      },
+      "acceptedBlob": null
     },
     {
       "focus": "tests/fixtures/remote-placement-e2e/models.json",
@@ -2166,7 +2190,8 @@
         "sourceCommit": null,
         "state": "pending-primary-unstarted",
         "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
-      }
+      },
+      "acceptedBlob": null
     },
     {
       "focus": "tests/fixtures/remote-placement-e2e/scenario.ts",
@@ -2181,7 +2206,8 @@
         "sourceCommit": null,
         "state": "pending-primary-unstarted",
         "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
-      }
+      },
+      "acceptedBlob": null
     },
     {
       "focus": "tests/fixtures/remote-placement-e2e/ssh-proxy.ts",
@@ -2196,7 +2222,8 @@
         "sourceCommit": null,
         "state": "pending-primary-unstarted",
         "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
-      }
+      },
+      "acceptedBlob": null
     },
     {
       "focus": "tests/fixtures/remote-placement-e2e/sshd_config",
@@ -2211,7 +2238,8 @@
         "sourceCommit": null,
         "state": "pending-primary-unstarted",
         "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
-      }
+      },
+      "acceptedBlob": null
     },
     {
       "focus": "tests/fixtures/remote-placement-e2e/subagents.json",
@@ -2226,7 +2254,8 @@
         "sourceCommit": null,
         "state": "pending-primary-unstarted",
         "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
-      }
+      },
+      "acceptedBlob": null
     },
     {
       "focus": "tests/fixtures/remote-typed-root-placement/Dockerfile",
@@ -2241,7 +2270,8 @@
         "sourceCommit": null,
         "state": "pending-primary-unstarted",
         "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
-      }
+      },
+      "acceptedBlob": null
     },
     {
       "focus": "tests/fixtures/remote-typed-root-placement/entrypoint.sh",
@@ -2256,7 +2286,8 @@
         "sourceCommit": null,
         "state": "pending-primary-unstarted",
         "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
-      }
+      },
+      "acceptedBlob": null
     },
     {
       "focus": "tests/fixtures/remote-typed-root-placement/fake-provider.ts",
@@ -2271,7 +2302,8 @@
         "sourceCommit": null,
         "state": "pending-primary-unstarted",
         "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
-      }
+      },
+      "acceptedBlob": null
     },
     {
       "focus": "tests/fixtures/remote-typed-root-placement/models.json",
@@ -2286,7 +2318,8 @@
         "sourceCommit": null,
         "state": "pending-primary-unstarted",
         "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
-      }
+      },
+      "acceptedBlob": null
     },
     {
       "focus": "tests/fixtures/remote-typed-root-placement/proof.ts",
@@ -2301,7 +2334,8 @@
         "sourceCommit": null,
         "state": "pending-primary-unstarted",
         "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
-      }
+      },
+      "acceptedBlob": null
     },
     {
       "focus": "tests/fixtures/remote-typed-root-placement/reply-loss.ts",
@@ -2316,7 +2350,8 @@
         "sourceCommit": null,
         "state": "pending-primary-unstarted",
         "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
-      }
+      },
+      "acceptedBlob": null
     },
     {
       "focus": "tests/fixtures/remote-typed-root-placement/scenario.ts",
@@ -2331,7 +2366,8 @@
         "sourceCommit": null,
         "state": "pending-primary-unstarted",
         "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
-      }
+      },
+      "acceptedBlob": null
     },
     {
       "focus": "tests/fixtures/remote-typed-root-placement/settings.json",
@@ -2346,7 +2382,8 @@
         "sourceCommit": null,
         "state": "pending-primary-unstarted",
         "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
-      }
+      },
+      "acceptedBlob": null
     },
     {
       "focus": "tests/fixtures/remote-typed-root-placement/ssh-proxy.ts",
@@ -2361,7 +2398,8 @@
         "sourceCommit": null,
         "state": "pending-primary-unstarted",
         "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
-      }
+      },
+      "acceptedBlob": null
     },
     {
       "focus": "tests/fixtures/remote-typed-root-placement/sshd_config",
@@ -2376,7 +2414,8 @@
         "sourceCommit": null,
         "state": "pending-primary-unstarted",
         "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
-      }
+      },
+      "acceptedBlob": null
     },
     {
       "focus": "tests/fixtures/remote-typed-root-placement/subagents.json",
@@ -2391,7 +2430,8 @@
         "sourceCommit": null,
         "state": "pending-primary-unstarted",
         "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
-      }
+      },
+      "acceptedBlob": null
     },
     {
       "focus": "tests/remote-artifacts.test.ts",
@@ -2440,7 +2480,7 @@
     {
       "focus": "tests/remote-capabilities.test.ts",
       "initialBlob": "fe468f2a82561942a0a00a1ce1f19a743a7df01b",
-      "status": "rework-running",
+      "status": "accepted",
       "judgeRounds": [],
       "launchBase": "b4ce4abc608f8e04ceb28cf4110ec25e895a44f7",
       "primary": {
@@ -2473,7 +2513,8 @@
         "sourceCommit": "d6cc065a4a03d1c1f0877d0f6b715a072678d23f",
         "state": "accepted-joined",
         "reason": "The base combines unrelated denial cases behind a global directory registry, afterEach and a repo helper that hides fixture contents. The candidate separates repository confinement from bounded UTF-8 regular-file reads. Each test visibly creates, uses and finally releases its own exact temporary root; setup stays beside the assertions that depend on it. Awaited individual rejection expressions make asynchronous observation finish before finally cleanup. Concrete errors describe the denied operation without making a reader decode a name loop. This is an ownership/lifetime and semantic grouping improvement, not more coverage as a verdict."
-      }
+      },
+      "acceptedBlob": "701ed0dd3fc42525eee5c8d18ad00d347c9d8de7"
     },
     {
       "focus": "tests/remote-capability-runtime.test.ts",
@@ -2709,7 +2750,8 @@
         "sourceCommit": null,
         "state": "pending-primary-unstarted",
         "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
-      }
+      },
+      "acceptedBlob": null
     },
     {
       "focus": "tests/remote-extension.test.ts",
@@ -2937,7 +2979,8 @@
         "sourceCommit": null,
         "state": "pending-primary-unstarted",
         "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
-      }
+      },
+      "acceptedBlob": null
     },
     {
       "focus": "tests/remote-jobs-placement-fixture.test.ts",
@@ -2952,7 +2995,8 @@
         "sourceCommit": null,
         "state": "pending-primary-unstarted",
         "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
-      }
+      },
+      "acceptedBlob": null
     },
     {
       "focus": "tests/remote-jobs.test.ts",
@@ -3049,7 +3093,8 @@
         "sourceCommit": null,
         "state": "pending-primary-unstarted",
         "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
-      }
+      },
+      "acceptedBlob": null
     },
     {
       "focus": "tests/remote-owner-lifecycle.test.ts",
@@ -3154,7 +3199,8 @@
         "sourceCommit": null,
         "state": "pending-primary-unstarted",
         "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
-      }
+      },
+      "acceptedBlob": null
     },
     {
       "focus": "tests/remote-placement-entry.test.ts",
@@ -3169,7 +3215,8 @@
         "sourceCommit": null,
         "state": "pending-primary-unstarted",
         "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
-      }
+      },
+      "acceptedBlob": null
     },
     {
       "focus": "tests/remote-placement-legacy-launch.test.ts",
@@ -3184,12 +3231,13 @@
         "sourceCommit": null,
         "state": "pending-primary-unstarted",
         "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
-      }
+      },
+      "acceptedBlob": null
     },
     {
       "focus": "tests/remote-placement.test.ts",
       "initialBlob": "89b8bea144e6fc76d3218236619b70aea70d1323",
-      "status": "judging",
+      "status": "accepted",
       "judgeRounds": [
         {
           "id": "task_7e8aadb0",
@@ -3218,7 +3266,8 @@
         "sourceCommit": "99d9f3b8bb81688b6304ff4bf43fc8a5da0e33c5",
         "state": "accepted-joined",
         "reason": "The base puts root admission, nested profile branching, parent refusal, malformed/exhausted depth, default environment and workspace validation into one test. The candidate gives these separate semantic homes, removes the per-profile if/else, and keeps concrete placement values and expected child environment beside each policy. The omitted-placement case makes copying versus mutation visible alongside owner-authority stripping and ordinary server environment preservation. Small loops still represent homogeneous alternatives rather than a generalized matrix/context object. The gain is being able to read one authority boundary at a time, not the expanded assertion set or revised names."
-      }
+      },
+      "acceptedBlob": "13008d703348c30efa47f3d5687440e31f33f4b3"
     },
     {
       "focus": "tests/remote-question-bridge.test.ts",
@@ -3262,7 +3311,7 @@
     {
       "focus": "tests/remote-repository-download.test.ts",
       "initialBlob": "2ce5b7deb99d70cb7b27785134b813505c223431",
-      "status": "rework-judging",
+      "status": "accepted",
       "judgeRounds": [
         {
           "id": "task_731b02f6",
@@ -3287,7 +3336,7 @@
         "commit": "0bc50fed66bda6d3e390dc699b6e5cfb9167e32d"
       },
       "workerResponse": "**Candidate ready for independent judgment.**\n\n- Base: `8b786d11bf91f217b56c47b1aae138005386d1dd`\n- Candidate: `0bc50fed66bda6d3e390dc699b6e5cfb9167e32d`\n- Branch: `bruv/remote-primary-download-tests-c79fbb6b`\n\nChanged paths:\n- `tests/remote-repository-download.test.ts`\n- `wisdom/quality/structural-readability-worker.md`\n\n**Before → after:** Mixed rejection cases concealed which validation mattered. Canonical-base64 and oversized-chunk fixtures also violated offsets. Now those cases isolate their intended guards; descriptor continuity, page exhaustion, offline restart, and root error labels have distinct journeys. Request transcripts explicitly show partial-download retries restarting at zero.\n\n**Proof:** Removing canonical/chunk guards in disposable copies left baseline tests green; candidate tests failed exactly four intended cases. Final existing download/wire/repository/root-client suites: **36 pass, 138 assertions**. Biome and diff checks pass.\n\nProduction source unchanged; no active-file overlaps, push, PR, or full-gate claim. Working tree clean.",
-      "acceptedBlob": "9cd3c4cd871556c1501d6175cfa2cb06d31771f2",
+      "acceptedBlob": "622c60f8a89b1b866745b6409dd0d7ec0681e814",
       "integrationState": "Judged own-primary patch joined but combined compiler found regression; acceptance suspended pending fresh rework+judge",
       "integrationObjection": {
         "check": "task_c46705ef",
@@ -3548,7 +3597,8 @@
         "sourceCommit": null,
         "state": "pending-primary-unstarted",
         "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
-      }
+      },
+      "acceptedBlob": null
     },
     {
       "focus": "tests/remote-runtime.test.ts",
@@ -3740,7 +3790,8 @@
         "sourceCommit": null,
         "state": "pending-primary-unstarted",
         "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
-      }
+      },
+      "acceptedBlob": null
     },
     {
       "focus": "tests/root-placement-options.test.ts",
@@ -3790,7 +3841,7 @@
     {
       "focus": "tests/root-placement-policy.test.ts",
       "initialBlob": "a4d822bf2938bd980be47974618467ccd21a1971",
-      "status": "primary-running",
+      "status": "pending",
       "judgeRounds": [],
       "launchBase": "6dab803ed890711836c3d13c14762be8f92456d1",
       "primary": {
@@ -3806,7 +3857,8 @@
         "sourceCommit": null,
         "state": "pending-primary-killed-no-candidate",
         "reason": "Saved job ended killed with exit143; worktree HEAD equals launch base and working tree has no preserved edit. Ledger running status is stale."
-      }
+      },
+      "acceptedBlob": null
     }
   ],
   "extras": [
@@ -4251,5 +4303,9 @@
       "baselineCheck": "Exact relevant lines identical at initial59413c532e6422983f611915e509e8421aa2f363 and current; inherited defect, not readability regression.",
       "followup": "Parent should track separate behavior fix: preserve field with adapter forwarding/replay regression. No incidental fix made in behavior-preserving area."
     }
-  ]
+  ],
+  "resumeStatus": {
+    "accepted": 72,
+    "pending": 49
+  }
 }

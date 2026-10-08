@@ -526,7 +526,7 @@
     {
       "focus": "scripts/tasks-ui-proof-screenshots.ts",
       "initialBlob": "c2db3b69aea3197ac7d013e9ba58ad8443a91199",
-      "status": "primary-running",
+      "status": "pending",
       "primary": [
         {
           "id": "task_46eaf8ec",
@@ -1294,7 +1294,7 @@
     {
       "focus": "scripts/terminal-perf/navigation-workloads.ts",
       "initialBlob": "d01398743c5affb8cc99babeae794e3f0dfe95a7",
-      "status": "primary-running",
+      "status": "pending",
       "primary": [
         {
           "id": "task_09b8c468",
@@ -1551,7 +1551,7 @@
     {
       "focus": "scripts/terminal-perf/send-workloads.ts",
       "initialBlob": "52343cd8ba377fd60e745ecbc0d66c1e7afda918",
-      "status": "primary-running",
+      "status": "pending",
       "primary": [
         {
           "id": "task_14da3c96",
@@ -5234,5 +5234,9 @@
       "blob": "a3500820b45fc6b2223b3fc7770027ad4f601474",
       "proof": "Four suites87/679; unchanged126 assertions and no production blobs changed; observed fixture failure cleanup fixed"
     }
+  },
+  "resumeStatus": {
+    "accepted": 61,
+    "pending": 50
   }
 }

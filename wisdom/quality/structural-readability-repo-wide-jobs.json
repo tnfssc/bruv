@@ -56,7 +56,44 @@
         "purpose": "saved exact-blob/review reconciliation (not new judge)"
       }
     ],
-    "resumeFocusWorkers": []
+    "resumeFocusWorkers": [
+      {
+        "id": "task_26c0b5a0",
+        "stage": "judge",
+        "focus": "src/live/offline-transport-probe.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_26c0b5a0",
+        "branch": "bruv/pr45-judge-src-live-offline-transport-pr-26c0b5a0",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled"
+      },
+      {
+        "id": "task_1d24c7e5",
+        "stage": "judge",
+        "focus": "src/live/openai-upgrade-socket.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_1d24c7e5",
+        "branch": "bruv/pr45-judge-src-live-openai-upgrade-socke-1d24c7e5",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled"
+      },
+      {
+        "id": "task_c1052b52",
+        "stage": "judge",
+        "focus": "src/live/self-test.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_c1052b52",
+        "branch": "bruv/pr45-judge-src-live-self-test.ts-c1052b52",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled"
+      },
+      {
+        "id": "task_52d397e7",
+        "stage": "judge",
+        "focus": "src/live/setup-probe.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_52d397e7",
+        "branch": "bruv/pr45-judge-src-live-setup-probe.ts-52d397e7",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled"
+      }
+    ]
   },
   {
     "group": "compatibility-t3",
@@ -190,7 +227,8 @@
         "focus": "scripts/claude-native-acceptance/subagent-driver.mjs",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_2aa53476",
         "branch": "bruv/pr45-judge-scripts-claude-native-accepta-2aa53476",
-        "status": "running"
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled"
       },
       {
         "id": "task_1bcfcb92",
@@ -198,7 +236,8 @@
         "focus": "scripts/claude-native-acceptance/subagent-return-evidence.mjs",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_1bcfcb92",
         "branch": "bruv/pr45-judge-scripts-claude-native-accepta-1bcfcb92",
-        "status": "running"
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled"
       }
     ]
   },
