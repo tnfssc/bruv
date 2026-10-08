@@ -12409,12 +12409,12 @@
     {
       "file": "tests/fixtures/remote-typed-root-placement/sshd_config",
       "initialBlob": "56d4d9e552d16fc332ed0e224a53921f5c7b5f8c",
-      "status": "pending",
+      "status": "accepted",
       "area": "remote",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_b9789736",
       "primaryCommit": "7018ba2782c462a523f74b4e608a495c22f3cdcb",
-      "judgeIds": [],
+      "judgeIds": ["task_21b49933"],
       "sourceCommit": "7018ba2782c462a523f74b4e608a495c22f3cdcb",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
       "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
@@ -12431,17 +12431,32 @@
         "No source edits; no source commit created or formatter invoked. sourceCommit identifies unchanged exact current HEAD.",
         "Durable provenance: current assigned worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_b9789736; reconciliation evidence retained in parent worktree task_214f85ab/task_1adcf635. No temporary code checkout or cleanup.",
         "No delegation. Runtime agent.model verification remains parent-owned."
+      ],
+      "acceptedBlob": "56d4d9e552d16fc332ed0e224a53921f5c7b5f8c",
+      "result": "The whole declaration presents the endpoint (2222, 0.0.0.0), host-key and authorized-key paths, and authentication/restriction policy directly. Root login is public-key-only via prohibit-password with password and keyboard-interactive authentication disabled; pubkey authentication is enabled. Agent/TCP/X11 forwarding and TTY allocation are separately and plainly disabled. StrictModes and ERROR logging remain explicit. Grouping or abstracting this short native sshd configuration would not remove any reader reconstruction burden and could conceal security settings.",
+      "systemReason": "The typed runner maps this exact file into networkNoneFixture; the clean-capture runner reuses the same SSH configuration while substituting presentation model files. The harness copies it into its build, Dockerfile installs it at /etc/ssh/sshd_config, and entrypoint installs owned generated keys with mode 600 at /run/sshd before exec sshd -D -e -f. The harness creates a network:none container, pins port 2222, client identity and known_hosts, disables client agent forwarding and requires strict host-key checking. Docker exec transports bytes through ssh-proxy.ts to container loopback:2222 rather than publishing a host TCP port. Fixture assertions independently read PermitTTY no and AllowTcpForwarding no. That end-to-end arrangement explains why listening on 0.0.0.0 is fixture-local, why the /run paths match, and why no TTY is needed. Retaining the native declaration keeps the authority visible without changing any security restriction.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read focus contents with git show at the exact candidate, not checkout HEAD.",
+        "git diff --name-status primaryBase candidate is empty (the assigned primaryBase equals candidate); there are no candidate-changed source paths to inspect or add to acceptedBlobs.",
+        "Resolved focus Git blob with git rev-parse candidate:focus. No setup, tests, builds, dependency changes, credential access, cleanup, or delegation performed."
+      ],
+      "limits": [
+        "Static structural/source judgment only; runtime behavior and live auth/device access are unverified. Parent owns audited isolated gates and runtime agent.model verification.",
+        "Durable review provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_21b49933. Candidate objects and existing worktrees retained. Only this untracked result artifact is written.",
+        "Relevant caller excerpts were read at each decision's exact candidate; this is not a whole-subsystem correctness audit.",
+        "Existing fixture cleanup code was inspected, never executed. scripts/remote-e2e.sh contains ERR/EXIT shell traps and cleanup commands, so it was not launched. networkNoneFixture.cleanup removes its supplied root and was not invoked. No approval to run either cleanup is implied."
       ]
     },
     {
       "file": "tests/fixtures/remote-typed-root-placement/subagents.json",
       "initialBlob": "8d2fa02a457a15c6bf84070689ab7d4b673c13ed",
-      "status": "pending",
+      "status": "accepted",
       "area": "remote",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_b9789736",
       "primaryCommit": "7018ba2782c462a523f74b4e608a495c22f3cdcb",
-      "judgeIds": [],
+      "judgeIds": ["task_21b49933"],
       "sourceCommit": "7018ba2782c462a523f74b4e608a495c22f3cdcb",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
       "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
@@ -12458,6 +12473,21 @@
         "No source edits; no source commit created or formatter invoked. sourceCommit identifies unchanged exact current HEAD.",
         "Durable provenance: current assigned worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_b9789736; reconciliation evidence retained in parent worktree task_214f85ab/task_1adcf635. No temporary code checkout or cleanup.",
         "No delegation. Runtime agent.model verification remains parent-owned."
+      ],
+      "acceptedBlob": "8d2fa02a457a15c6bf84070689ab7d4b673c13ed",
+      "result": "The entire JSON has one normal profile, with model fixture/typed-root-normal and thinking off. The profile name, provider/model identity and thinking policy are visible at the point of declaration. No second authority, alias, context object or inferred default is necessary to understand the intended child model. Expanding this declaration would make this simple distinction harder, not easier, to follow.",
+      "systemReason": "remote-root-placement-e2e.ts copies this file through networkNoneFixture and Dockerfile to /root/.bruv/subagents.json. The strict shared parser admits normal with model/thinking and validates provider/model syntax; missing fast/orchestrator profiles become empty objects. Destination owner hello reads the destination HOME normal profile, while launch selects the placement profile (normal by default), validates overrides and resolves request model/thinking ahead of configured values. models.json registers typed-root-normal as well as typed-root; settings.json selects typed-root for the root. scenario.ts routes typed-root-normal to assertions for normal role, depth 1 and server worktree isolation, then refuses a normal worker grandchild; the root model follows a separate branch. The actual-binary runner checks that inference includes both model identities. README explicitly documents the root/settings versus child/subagents distinction. The clean presentation capture deliberately supplies its own subagents.json, so it is not a consumer of this model choice. The unchanged minimal declaration is already the clearest representation of that destination-owned policy.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read focus contents with git show at the exact candidate, not checkout HEAD.",
+        "git diff --name-status primaryBase candidate is empty (the assigned primaryBase equals candidate); there are no candidate-changed source paths to inspect or add to acceptedBlobs.",
+        "Resolved focus Git blob with git rev-parse candidate:focus. No setup, tests, builds, dependency changes, credential access, cleanup, or delegation performed."
+      ],
+      "limits": [
+        "Static structural/source judgment only; runtime behavior and live auth/device access are unverified. Parent owns audited isolated gates and runtime agent.model verification.",
+        "Durable review provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_21b49933. Candidate objects and existing worktrees retained. Only this untracked result artifact is written.",
+        "Relevant caller excerpts were read at each decision's exact candidate; this is not a whole-subsystem correctness audit.",
+        "Existing fixture cleanup code was inspected, never executed. scripts/remote-e2e.sh contains ERR/EXIT shell traps and cleanup commands, so it was not launched. networkNoneFixture.cleanup removes its supplied root and was not invoked. No approval to run either cleanup is implied."
       ]
     },
     {
@@ -16086,12 +16116,12 @@
     {
       "file": "tests/remote-e2e.test.ts",
       "initialBlob": "19c4704dcfafad84ca4f9af4547dd31a21197acc",
-      "status": "pending",
+      "status": "accepted",
       "area": "remote",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_ae21f02d",
       "primaryCommit": "27099149843befac3accad01a8702a27efebb73f",
-      "judgeIds": [],
+      "judgeIds": ["task_21b49933"],
       "sourceCommit": "27099149843befac3accad01a8702a27efebb73f",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
       "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
@@ -16108,6 +16138,23 @@
         "No source changed: formatter unnecessary and no empty/source commit created. sourceCommit is the exact inspected HEAD. Artifact remains untracked; no wisdom/value edits because no new general lesson was found.",
         "No descendants launched; runtime agent.model verification remains parent-owned. Durable source provenance: current assigned Git worktree, not a /tmp checkout.",
         "Inspected but never executed scripts/remote-e2e.sh: it builds/runs Docker, creates SSH keys, probes loopback SSH/provider, inherits outer environment, and has ERR/EXIT traps including temporary-directory and container/image removal. Its present cleanup traps are not permitted in this task; parent must audit before any gate. No recovery scenario was investigated or run."
+      ],
+      "acceptedBlob": "19c4704dcfafad84ca4f9af4547dd31a21197acc",
+      "result": "Both complete test callbacks visibly own their scenario gate, command, environment, stdout/stderr drains, exit wait, diagnostics and PASS marker. Each starts one bash runner and Promise.all concurrently drains both pipes while waiting for child.exited, then checks zero exit with both logs before its own marker. Separate Linux/opt-in gates and 300-second budgets clearly distinguish normal RPC from compiled PTY proof. The PTY selection is explicit beside its launch. Extracting these two short blocks into a wrapper would move meaningful scenario selection and failure interpretation away from the tests without clarifying process ownership.",
+      "systemReason": "scripts/remote-e2e.sh checks tools and binaries, creates a generated fixture root and keys, builds disposable Docker/SSH/provider infrastructure with loopback-published ports, pins known_hosts and identity, and launches Bun under the fixture HOME/agent directory. Its default script is remote-e2e.ts; the second callback supplies remote-pty-e2e.ts. The RPC script verifies host-key pinning, owner continuation after client death, reconnect sync and native-question answer/continuation, then repository/capability/cancellation/offline transcript journeys before printing the exact RPC marker. Its finally kills remaining RPC children and stops the loopback fake provider. The PTY script uses the real compiled CLI in a tmux-owned terminal and validates menu navigation, filtering, narrow choices, owner question status, offline honesty and absence of local question ledgers before its marker; finally it stops tmux, remaining RPC children and its provider. loopback-parent-fixture.ts shows fixture-only provider configuration, child registration and RPC stream consumption. These scripts own their internal scenario resources; the test callbacks own the runner exit/log contract. Keep that division inline and preserve both assertions.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read focus contents with git show at the exact candidate, not checkout HEAD.",
+        "git diff --name-status primaryBase candidate is empty (the assigned primaryBase equals candidate); there are no candidate-changed source paths to inspect or add to acceptedBlobs.",
+        "Resolved focus Git blob with git rev-parse candidate:focus. No setup, tests, builds, dependency changes, credential access, cleanup, or delegation performed."
+      ],
+      "limits": [
+        "Static structural/source judgment only; runtime behavior and live auth/device access are unverified. Parent owns audited isolated gates and runtime agent.model verification.",
+        "Durable review provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_21b49933. Candidate objects and existing worktrees retained. Only this untracked result artifact is written.",
+        "Relevant caller excerpts were read at each decision's exact candidate; this is not a whole-subsystem correctness audit.",
+        "Existing fixture cleanup code was inspected, never executed. scripts/remote-e2e.sh contains ERR/EXIT shell traps and cleanup commands, so it was not launched. networkNoneFixture.cleanup removes its supplied root and was not invoked. No approval to run either cleanup is implied.",
+        "The RPC callback spreads process.env and does not explicitly clear REMOTE_E2E_SCRIPT; the shell uses its RPC default only when that variable is unset/empty. A parent audited RPC gate needs to control that environment. Marker and exit assertions remain intact; no unconditional script-selection guarantee is claimed.",
+        "These tests themselves inherit environment at launch, and the existing shell performs owned temporary-path cleanup. This verdict is a readability judgment, not certification that direct execution meets the current review safety constraints. No tests were run."
       ]
     },
     {
@@ -22030,9 +22077,9 @@
     "baselineFiles": 766,
     "finalGate": "pending; incomplete focus coverage",
     "liveAuth": "unverified/failing; preserved",
-    "accepted": 762,
+    "accepted": 765,
     "total": 835,
-    "pending": 73,
+    "pending": 70,
     "sourceExtras": 69,
     "checkout": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
     "branch": "bruv/readability-pr45-sol-continuation",

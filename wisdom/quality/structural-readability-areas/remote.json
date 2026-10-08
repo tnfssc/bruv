@@ -2313,34 +2313,36 @@
     {
       "focus": "tests/fixtures/remote-typed-root-placement/sshd_config",
       "initialBlob": "56d4d9e552d16fc332ed0e224a53921f5c7b5f8c",
-      "status": "pending",
+      "status": "accepted",
       "judgeRounds": [],
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "56d4d9e552d16fc332ed0e224a53921f5c7b5f8c",
         "primaryId": "task_b9789736",
         "primaryCommit": "7018ba2782c462a523f74b4e608a495c22f3cdcb",
-        "judgeIds": [],
+        "judgeIds": ["task_21b49933"],
         "sourceCommit": "7018ba2782c462a523f74b4e608a495c22f3cdcb",
-        "state": "needs-judge",
-        "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+        "state": "accepted-joined",
+        "reason": "The whole declaration presents the endpoint (2222, 0.0.0.0), host-key and authorized-key paths, and authentication/restriction policy directly. Root login is public-key-only via prohibit-password with password and keyboard-interactive authentication disabled; pubkey authentication is enabled. Agent/TCP/X11 forwarding and TTY allocation are separately and plainly disabled. StrictModes and ERROR logging remain explicit. Grouping or abstracting this short native sshd configuration would not remove any reader reconstruction burden and could conceal security settings."
       },
-      "acceptedBlob": null
+      "acceptedBlob": "56d4d9e552d16fc332ed0e224a53921f5c7b5f8c"
     },
     {
       "focus": "tests/fixtures/remote-typed-root-placement/subagents.json",
       "initialBlob": "8d2fa02a457a15c6bf84070689ab7d4b673c13ed",
-      "status": "pending",
+      "status": "accepted",
       "judgeRounds": [],
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "8d2fa02a457a15c6bf84070689ab7d4b673c13ed",
         "primaryId": "task_b9789736",
         "primaryCommit": "7018ba2782c462a523f74b4e608a495c22f3cdcb",
-        "judgeIds": [],
+        "judgeIds": ["task_21b49933"],
         "sourceCommit": "7018ba2782c462a523f74b4e608a495c22f3cdcb",
-        "state": "needs-judge",
-        "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+        "state": "accepted-joined",
+        "reason": "The entire JSON has one normal profile, with model fixture/typed-root-normal and thinking off. The profile name, provider/model identity and thinking policy are visible at the point of declaration. No second authority, alias, context object or inferred default is necessary to understand the intended child model. Expanding this declaration would make this simple distinction harder, not easier, to follow."
       },
-      "acceptedBlob": null
+      "acceptedBlob": "8d2fa02a457a15c6bf84070689ab7d4b673c13ed"
     },
     {
       "focus": "tests/remote-artifacts.test.ts",
@@ -2636,18 +2638,19 @@
     {
       "focus": "tests/remote-e2e.test.ts",
       "initialBlob": "19c4704dcfafad84ca4f9af4547dd31a21197acc",
-      "status": "pending",
+      "status": "accepted",
       "judgeRounds": [],
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "19c4704dcfafad84ca4f9af4547dd31a21197acc",
         "primaryId": "task_ae21f02d",
         "primaryCommit": "27099149843befac3accad01a8702a27efebb73f",
-        "judgeIds": [],
+        "judgeIds": ["task_21b49933"],
         "sourceCommit": "27099149843befac3accad01a8702a27efebb73f",
-        "state": "needs-judge",
-        "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+        "state": "accepted-joined",
+        "reason": "Both complete test callbacks visibly own their scenario gate, command, environment, stdout/stderr drains, exit wait, diagnostics and PASS marker. Each starts one bash runner and Promise.all concurrently drains both pipes while waiting for child.exited, then checks zero exit with both logs before its own marker. Separate Linux/opt-in gates and 300-second budgets clearly distinguish normal RPC from compiled PTY proof. The PTY selection is explicit beside its launch. Extracting these two short blocks into a wrapper would move meaningful scenario selection and failure interpretation away from the tests without clarifying process ownership."
       },
-      "acceptedBlob": null
+      "acceptedBlob": "19c4704dcfafad84ca4f9af4547dd31a21197acc"
     },
     {
       "focus": "tests/remote-extension.test.ts",
@@ -4148,8 +4151,8 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 107,
-    "pending": 15
+    "accepted": 110,
+    "pending": 12
   },
   "extraFiles": [
     {
