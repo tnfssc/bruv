@@ -3832,10 +3832,10 @@
     {
       "focus": "tests/system-prompt.test.ts",
       "initialBlob": "dc36d8396fc1d5350784e9af2bf0ea922e1b5fa0",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "0541138ec5359b8f018ace65c639edfab133f9cf",
       "integration": "pending",
       "relatedPatchReview": {
         "candidate": "1430519dd7dbda93b9ccf79b2e8f33690ddbd6a4",
@@ -3845,14 +3845,14 @@
         "primaryFocusStillRequired": true
       },
       "resume": {
-        "status": "pending",
-        "acceptedBlob": "d873111e2674f9e12366c89659deae21bf0e05c4",
+        "status": "accepted",
+        "acceptedBlob": "0541138ec5359b8f018ace65c639edfab133f9cf",
         "primaryId": "task_d8d2a1e3",
         "primaryCommit": "021c24f00962cfcef70f0745f666d978c7bb9b29",
-        "judgeIds": ["task_a731e652", "task_c0fe8a88"],
+        "judgeIds": ["task_a731e652", "task_c0fe8a88", "task_dff9d8e8"],
         "sourceCommit": "021c24f00962cfcef70f0745f666d978c7bb9b29",
-        "state": "needs-judge",
-        "reason": "The change resolves an actual reading burden: the old override test mutates one filesystem through trust assertions, then removes the project file to switch to global-only policy. The candidate separates same-array preservation from exact fallback injection, names each trust scenario beside its args, gives positional authorization its own assertion, and uses a fresh global-only fixture. The small systemPromptFiles helper owns only directory/file construction; it hides neither trust nor loader decisions. The SDK table declares the complete file set, trust and expected base in each row; DefaultResourceLoader construction, disabled-resource flags, reload and result assertion remain visible in the test body. All old explicit-prompt, positional insertion, trust/denial and config assertions survive; short-flag denial and real SDK discovery/precedence assertions are added. This is coherent fixture/policy separation, not rename churn or a context bag."
+        "state": "accepted-joined",
+        "reason": "Read the entire exact candidate test file and the diff from 0036fb8ecad6af12bce3ac832ea9a8baeb87b842. The local ProjectPromptScenario declares args as mutable string[] at the scenario boundary, and both CLI tables explicitly select that type. Bun's inspected object-row overload each<const T>(table: T[]): Test<[T]> therefore receives a declared object type rather than inferring readonly nested arrays. This addresses the concrete rejected scenario/API mismatch without casts or callback copies. The trusted rows still assert same-array identity; denied rows still assert exact Bruv injection. The owned fixture, independent global case, explicit-prompt/config cases, positional authorization boundary, and SDK precedence rows remain locally legible. No further structural extraction is warranted for this small test journey."
       }
     },
     {
@@ -4692,7 +4692,7 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 132,
-    "pending": 1
+    "accepted": 133,
+    "pending": 0
   }
 }

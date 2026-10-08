@@ -1087,6 +1087,15 @@
         "branch": "bruv/pr45-primary-3-live-native-audio-focuses-677b6742",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
+      },
+      {
+        "id": "task_3ad08a2d",
+        "stage": "primary",
+        "focus": ["tests/fixtures/live-push-to-talk-tui.ts", "tests/fixtures/live-spoken-tui.ts"],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_3ad08a2d",
+        "branch": "bruv/pr45-primary-2-live-native-audio-focuses-3ad08a2d",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
       }
     ]
   },
@@ -2497,7 +2506,7 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_dff9d8e8",
         "branch": "bruv/pr45-judge-1-agent-history-session-goals-dff9d8e8",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled"
       }
     ]
   },

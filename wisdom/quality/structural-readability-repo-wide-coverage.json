@@ -18099,12 +18099,12 @@
     {
       "file": "tests/system-prompt.test.ts",
       "initialBlob": "dc36d8396fc1d5350784e9af2bf0ea922e1b5fa0",
-      "status": "pending",
+      "status": "accepted",
       "area": "agent-history-session-goals",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_d8d2a1e3",
       "primaryCommit": "021c24f00962cfcef70f0745f666d978c7bb9b29",
-      "judgeIds": ["task_a731e652", "task_c0fe8a88"],
+      "judgeIds": ["task_a731e652", "task_c0fe8a88", "task_dff9d8e8"],
       "sourceCommit": "021c24f00962cfcef70f0745f666d978c7bb9b29",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
       "pendingReason": "No dedicated primary/final independent focus judgment. Related-patch review is evidence only; dedicated focus coverage remains required.",
@@ -18150,21 +18150,36 @@
         "Values and structural-readability guidance read; unchanged because this bounded type repair introduces no new general lesson. Parent owns aggregate wisdom."
       ],
       "acceptedRelatedJudges": ["task_c0fe8a88"],
-      "acceptedBlob": "d873111e2674f9e12366c89659deae21bf0e05c4",
-      "result": "The change resolves an actual reading burden: the old override test mutates one filesystem through trust assertions, then removes the project file to switch to global-only policy. The candidate separates same-array preservation from exact fallback injection, names each trust scenario beside its args, gives positional authorization its own assertion, and uses a fresh global-only fixture. The small systemPromptFiles helper owns only directory/file construction; it hides neither trust nor loader decisions. The SDK table declares the complete file set, trust and expected base in each row; DefaultResourceLoader construction, disabled-resource flags, reload and result assertion remain visible in the test body. All old explicit-prompt, positional insertion, trust/denial and config assertions survive; short-flag denial and real SDK discovery/precedence assertions are added. This is coherent fixture/policy separation, not rename churn or a context bag.",
-      "systemReason": "src/system-prompt.ts decides fallback eligibility using project file existence plus trust, or any global file. CLI transport independently owns config exemption, pre-- explicit options, last trust override and insertion before positional args. src/cli.ts feeds that array to Pi main; the native runtime feeds the same policy result to DefaultResourceLoader while preserving an auxiliary fixed prompt. SDK resource-loader reload preserves SettingsManager trust and discovers trusted project SYSTEM.md before global SYSTEM.md; an explicit Bruv fallback bypasses discovery. The five SDK outcomes therefore test the policy-to-discovery handoff with the actual loader, including untrusted project/global precedence. Bruv entry points set package metadata before SDK initialization, matching the .bruv fixture paths. No runtime source changes occur in this candidate.",
+      "acceptedBlob": "0541138ec5359b8f018ace65c639edfab133f9cf",
+      "result": "Read the entire exact candidate test file and the diff from 0036fb8ecad6af12bce3ac832ea9a8baeb87b842. The local ProjectPromptScenario declares args as mutable string[] at the scenario boundary, and both CLI tables explicitly select that type. Bun's inspected object-row overload each<const T>(table: T[]): Test<[T]> therefore receives a declared object type rather than inferring readonly nested arrays. This addresses the concrete rejected scenario/API mismatch without casts or callback copies. The trusted rows still assert same-array identity; denied rows still assert exact Bruv injection. The owned fixture, independent global case, explicit-prompt/config cases, positional authorization boundary, and SDK precedence rows remain locally legible. No further structural extraction is warranted for this small test journey.",
+      "systemReason": "Traced unchanged withBruvSystemPrompt: config and explicit option bases preserve args, only pre-- flags can alter caller trust, last override wins, eligible SYSTEM.md leaves discovery to Pi, and Bruv insertion copies args before the positional boundary. Traced bruvSystemPromptFallback: denied project files are ineligible but global files remain eligible. Read the CLI call into Pi main and the compatibility runtime loader call (auxiliary fixed base versus trust-aware fallback). Inspected installed SDK main/settings/resource-loader sources: trust enters SettingsManager, reload preserves trust, nullish systemPrompt triggers discovery, trusted project precedes global, denied project never wins. The SDK test directly passes in-memory settings and disables unrelated resources. These tests protect the actual prompt authority and transport boundaries; the candidate changes only TypeScript table typing, not those semantics or assertions.",
       "checks": [
-        "Read whole candidate focus and complete primary-base diff; only changed path is tests/system-prompt.test.ts, from dc36d8396fc1d5350784e9af2bf0ea922e1b5fa0 to d873111e2674f9e12366c89659deae21bf0e05c4.",
-        "Inspected candidate CLI/native policy callers, fallback implementation and prompt construction, SDK trust/discovery/reload behavior, and shipped PI_PACKAGE_DIR branding order.",
-        "Reviewed filesystem effects statically: helper creates only fresh mkdtemp descendants and retains them; removed cleanup is not executed. SettingsManager is in memory and all optional resource categories are disabled.",
-        "Inspected bunfig/test preload and prepare-assets effects without running them; preparation writes dependency adaptations/assets, so no gate was launched against shared dependencies.",
-        "git diff --check at exact base/candidate returned no diagnostics; no runtime/test result used as readability evidence."
+        {
+          "kind": "exact-commit-diff",
+          "result": "Only tests/system-prompt.test.ts changed from the assigned primaryBase; same focused diff against rejected 0257d78607a61856035239f24fa6f2924c300d6e."
+        },
+        {
+          "kind": "static-content-comparison",
+          "result": "Full untruncated git-show bytes equal the base after removing only the added interface and two explicit generic arguments. All assertion bodies, row values, fixture code and SDK flags are byte-identical."
+        },
+        {
+          "kind": "git-diff-check",
+          "result": "No whitespace diagnostics."
+        },
+        {
+          "kind": "unchanged-production-blob",
+          "result": "src/system-prompt.ts is f581007216760dcdc2f77dfe8dc65415b3c64789 at both primaryBase and candidate."
+        },
+        {
+          "kind": "effects-review",
+          "result": "Fixture creates and retains owned mkdtemp project/agent paths and writes only their SYSTEM.md files. SDK settings are in-memory; loader receives explicit paths and resource-disable flags. Loader still performs package resolution; empty in-memory package settings avoid configured install sources. No source or SDK code was executed."
+        }
       ],
       "limits": [
-        "Static actual-code review only; no setup, tests, builds, model calls, live authentication or device work performed. Parent owns audited isolated runtime gates and agent.model verification.",
-        "Repository evidence read with git show/diff at exact candidate versus a1a45b3c26fac604060d3fbf22ba1f37642d06e6, not checkout HEAD. Durable judge worktree: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_c0fe8a88. Existing worktrees and candidate evidence preserved.",
-        "Shared installed Pi 1.0.3 implementations inspected read-only; no dependency reinstall/adaptation. Their local package metadata defaults to .pi. Parent SDK prompt gate must select owned prepared Bruv package metadata (.bruv) before SDK imports, as shipped entry points do via PI_PACKAGE_DIR. No gate result claimed.",
-        "No fixtures created by this review. Candidate fixture roots use fs.mkdtemp under tmpdir and are retained; candidate provenance remains the durable commit/worktree. Parent gates must additionally own process HOME/config/SDK and explicit argv/env; disabled loader flags alone are not a complete process-isolation claim."
+        "No setup, tests, builds, or typecheck run: parent owns audited isolated gates. Mutable-array correction is source/type-contract judgment, not claimed compiler evidence.",
+        "Installed dependency sources were inspected read-only as supporting caller evidence, not represented as Git blobs from the candidate.",
+        "No live authentication/device/network check; no credentials accessed. Parent must verify runtime agent.model openai-codex/gpt-6.1-sol; no delegation performed.",
+        "Review provenance is the existing durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_dff9d8e8; candidate/old worktrees preserved. Only this untracked review artifact was written. No per-worker wisdom note; values/guidance read, aggregate wisdom remains parent-owned."
       ],
       "priorAcceptedValidationProof": [
         {
@@ -22196,9 +22211,9 @@
     "baselineFiles": 766,
     "finalGate": "pending; incomplete focus coverage",
     "liveAuth": "unverified/failing; preserved",
-    "accepted": 771,
+    "accepted": 772,
     "total": 835,
-    "pending": 64,
+    "pending": 63,
     "sourceExtras": 69,
     "checkout": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
     "branch": "bruv/readability-pr45-sol-continuation",

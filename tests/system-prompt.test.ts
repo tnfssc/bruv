@@ -34,7 +34,13 @@ test("preserves explicit CLI system prompts", () => {
   expect(withBruvSystemPrompt(positional, { cwd: "/missing", agentDir: "/missing" })).not.toBe(positional);
 });
 
-test.each([
+interface ProjectPromptScenario {
+  name: string;
+  args: string[];
+  projectTrusted: boolean | undefined;
+}
+
+test.each<ProjectPromptScenario>([
   { name: "caller trust", args: [], projectTrusted: true },
   { name: "last long trust flag", args: ["--no-approve", "--approve"], projectTrusted: undefined },
 ])("preserves project SYSTEM.md with $name", async ({ args, projectTrusted }) => {
@@ -42,7 +48,7 @@ test.each([
   expect(withBruvSystemPrompt(args, { ...paths, projectTrusted })).toBe(args);
 });
 
-test.each([
+test.each<ProjectPromptScenario>([
   { name: "long denial flag", args: ["--no-approve"], projectTrusted: undefined },
   { name: "last short trust flag", args: ["-a", "-na"], projectTrusted: undefined },
   { name: "caller denial", args: [], projectTrusted: false },
