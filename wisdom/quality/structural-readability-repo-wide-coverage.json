@@ -3359,26 +3359,99 @@
       "initialBlob": "5c485f7a7ac0a5311928a43436af9615e3d8e696",
       "status": "pending",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_8399b33f",
+      "primaryCommit": "bb1e19e3e94cc135cec9ca5b0efddcf9b8985edf",
       "judgeIds": [],
-      "sourceCommit": "f588f0aa3236139454e1b6ed2cb794cb9f9f2a21",
+      "sourceCommit": "bb1e19e3e94cc135cec9ca5b0efddcf9b8985edf",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
-      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
+      "primaryBase": "854bbae75d0873baf463a76746cc2acb5cbacebd",
+      "primaryResult": "measureCostRefresh now contains the consume instrumentation, whole-refresh timing, timing-scope descriptions and unchanged completeness assertion together. auditSessionCosts owns the session fixtures and disposes its managers after their last scan, including partial failure. auditLifecycleRecords owns recording, failure/count assertions and persisted-output summary. The top level sequences the two checked audits, preserves cost-before-lifecycle sample order and all report fields, publishes the report and owns only temporary-root cleanup. No assertion, security code, fixture payload, repetition count or timing boundary was removed.",
+      "primaryPaths": [
+        "scripts/terminal-perf/audit-probes/disk-callbacks.ts"
+      ],
+      "primaryChecks": [
+        {
+          "name": "Repository guidance and targeted focus evidence",
+          "status": "read",
+          "details": "Read wisdom/values.md and structural-readability-guidance.md, focus rows in area/repo-wide ledgers, and the supplied preserved reconciliation focus row/blob inventory. Focus already existed at baseline blob 5c485f7a7ac0a5311928a43436af9615e3d8e696; no recovery import or branch merge was needed."
+        },
+        {
+          "name": "Caller and lifetime trace",
+          "status": "reviewed",
+          "details": "Tracked source references show a standalone audit script, no imported caller. Traced SessionCostTracker.refresh -> readUsage -> post-await consume, createTaskLifecycleRecorder synchronous persistence, and disposeDiskBackedSessionManager ownership. Kept assertions and output schema unchanged."
+        },
+        {
+          "name": "Repository formatter",
+          "status": "passed",
+          "details": "Ran read-only /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/@biomejs/biome/bin/biome format --write scripts/terminal-perf/audit-probes/disk-callbacks.ts using node child_process argv and isolated retained HOME/config/cache/TMPDIR under /tmp/pr45-disk-callback-format-L7K2ej. Exit 0; no fixes applied."
+        },
+        {
+          "name": "git diff --check",
+          "status": "passed",
+          "details": "Whitespace check passed before source-only commit; exactly the assigned focus source changed."
+        },
+        {
+          "name": "Tests/setup/builds/runtime probe",
+          "status": "not run",
+          "details": "Explicitly reserved for the parent audited isolated batch gates."
+        }
+      ],
+      "primaryLimits": [
+        "Independent exact-candidate judge and audited runtime gates remain parent-owned; this is primary source review, not an acceptance verdict.",
+        "Existing private consume instrumentation and any-typed sample storage remain unchanged in semantics.",
+        "No wisdom edits: parent owns aggregate wisdom; existing values already cover this ownership/timing lesson."
+      ]
     },
     {
       "file": "scripts/terminal-perf/audit-probes/journal-stop.ts",
       "initialBlob": "5d535f2de208af012789c2b9b05046ededd52463",
       "status": "pending",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_6e013db2",
+      "primaryCommit": "f5c0f12c124dfe25baa57ae05d942e9f6c1be03a",
       "judgeIds": [],
-      "sourceCommit": "f588f0aa3236139454e1b6ed2cb794cb9f9f2a21",
+      "sourceCommit": "f5c0f12c124dfe25baa57ae05d942e9f6c1be03a",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
-      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
+      "primaryBase": "585e1a97e484483f42d5dde29417880fae28d754",
+      "primaryResult": "auditJournal now owns creation, materialize instrumentation, all journal samples, prototype restoration, manager disposal and its exact temporary-root cleanup. auditTerminalStop owns the terminal fixture/setup/reset/stop/assertion sequence. Top-level orchestration runs the two phases and then publishes the unchanged report. Journal resources are intentionally released before terminal measurements/report writing instead of spanning unrelated phases. Shared synchronous timing, sample order and fingerprints, materialize accounting, stop assertions and source hashing remain unchanged.",
+      "primaryPaths": [
+        "scripts/terminal-perf/audit-probes/journal-stop.ts"
+      ],
+      "primaryChecks": [
+        {
+          "name": "focused evidence",
+          "result": "Read preserved resume-reconciliation row/blobInventory and only focus rows in area/repo-wide ledgers. Focus already existed with baseline blob 5d535f2de208af012789c2b9b05046ededd52463; no old-branch merge or candidate recovery needed."
+        },
+        {
+          "name": "actual callers and effects",
+          "result": "CLI header is the direct invocation; focused scripts/package search found no other script caller. Traced DiskEntryStore.materialize, install/disposeDiskBackedSessionManager, FakeTerminal.takeOutput and native alternate-screen stop restoration."
+        },
+        {
+          "name": "repository formatter",
+          "result": "Applied required read-only Biome executable via node child_process argv: format --write scripts/terminal-perf/audit-probes/journal-stop.ts. Passed. Fresh HOME/config/TMPDIR/SDK environment retained at /tmp/pr45-journal-stop-format-WLlLux."
+        },
+        {
+          "name": "diff review",
+          "result": "Reviewed git diff -w: journal resource ownership and two phase boundaries changed; terminal measurement body and all stop assertions preserved. Report fields, fixture sizes/iterations and synchronous timing boundary preserved."
+        },
+        {
+          "name": "git diff --check",
+          "result": "Passed before source-only commit."
+        },
+        {
+          "name": "source-only commit",
+          "result": "f5c0f12c124dfe25baa57ae05d942e9f6c1be03a changes only the assigned focus. No active commit hooks were present."
+        }
+      ],
+      "primaryLimits": [
+        "No repository tests, audit execution, setup or builds run; parent owns isolated batch runtime gates. Static reading and formatting do not establish runtime equivalence.",
+        "Independent fresh judge and external runtime model verification remain parent-owned.",
+        "No per-worker wisdom edits; existing guidance was applied and parent owns aggregate wisdom."
+      ]
     },
     {
       "file": "scripts/terminal-perf/dashboard.ts",

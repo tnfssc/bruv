@@ -1004,7 +1004,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_8399b33f",
         "branch": "bruv/pr45-primary-scripts-terminal-perf-audit-8399b33f",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "bb1e19e3e94cc135cec9ca5b0efddcf9b8985edf"
       },
       {
         "id": "task_6e013db2",
@@ -1013,7 +1014,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_6e013db2",
         "branch": "bruv/pr45-primary-scripts-terminal-perf-audit-6e013db2",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "f5c0f12c124dfe25baa57ae05d942e9f6c1be03a"
       },
       {
         "id": "task_050e83e0",
@@ -1021,6 +1023,15 @@
         "focus": "scripts/tasks-ui-proof-screenshots.ts",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_050e83e0",
         "branch": "bruv/pr45-judge-scripts-tasks-ui-proof-screen-050e83e0",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_efdf5c1a",
+        "stage": "primary",
+        "focus": "scripts/terminal-perf/interaction-tool-events.test.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_efdf5c1a",
+        "branch": "bruv/pr45-primary-scripts-terminal-perf-inter-efdf5c1a",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
       }

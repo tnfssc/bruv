@@ -811,11 +811,11 @@
       "integrationState": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_8399b33f",
+        "primaryCommit": "bb1e19e3e94cc135cec9ca5b0efddcf9b8985edf",
         "judgeIds": [],
-        "sourceCommit": "f588f0aa3236139454e1b6ed2cb794cb9f9f2a21",
-        "state": "needs-primary",
+        "sourceCommit": "bb1e19e3e94cc135cec9ca5b0efddcf9b8985edf",
+        "state": "needs-judge",
         "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
       }
     },
@@ -829,11 +829,11 @@
       "integrationState": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_6e013db2",
+        "primaryCommit": "f5c0f12c124dfe25baa57ae05d942e9f6c1be03a",
         "judgeIds": [],
-        "sourceCommit": "f588f0aa3236139454e1b6ed2cb794cb9f9f2a21",
-        "state": "needs-primary",
+        "sourceCommit": "f5c0f12c124dfe25baa57ae05d942e9f6c1be03a",
+        "state": "needs-judge",
         "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
       }
     },
