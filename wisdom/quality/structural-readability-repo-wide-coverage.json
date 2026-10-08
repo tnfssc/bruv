@@ -2198,12 +2198,44 @@
       "file": "scripts/probe-live-controlled.ts",
       "initialBlob": "7000ee28bed1449a679449a65bc3359cb4c126dd",
       "status": "pending",
-      "primaryId": null,
-      "sourceCommit": null,
+      "primaryId": "task_852c860e",
+      "sourceCommit": "b50efbd7ce8edab4a938f43c2ff333459fb420c2",
       "judgeIds": [],
-      "resumeState": "own_primary_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "b50efbd7ce8edab4a938f43c2ff333459fb420c2",
+      "primaryBase": "0b1faebd03e5eb7711dbcba5a58453564a28cc36",
+      "primaryResult": "Conditions are decoded and validated once before private-source access. A bounded preparation phase selects each target and optional snapshot once, orders semantic messages, frames them uniformly, and hashes exactly those selected strings. All prepared trials exist before config/credentials are loaded; the sequential paid-session loop only dispatches each prepared payload and publishes its metadata/result. Fresh, prior-refusal and historical-snapshot journeys retain their message ordering, instructions, output fields and intercepted-execute behavior.",
+      "primaryPaths": [
+        "scripts/probe-live-controlled.ts"
+      ],
+      "primaryChecks": [
+        {
+          "name": "git diff --check",
+          "status": "passed"
+        },
+        {
+          "name": "Bun.Transpiler.scan (read-only syntax parsing, no emission/execution)",
+          "status": "passed",
+          "details": "6 imports; 0 exports."
+        },
+        {
+          "name": "Manual source/diff journey review",
+          "status": "completed",
+          "details": "Read study-input caller assertions, shared study transport, manual CLI documentation, preserved focus reconciliation, repo-wide and area ledgers. Confirmed unchanged paid opt-in, disclosure gate, condition choices/default, snapshot/source limits, execute-only schema, mock output, deadlines, sequential execution, private output and existing assertions."
+        },
+        {
+          "name": "TypeScript createSourceFile parser attempt",
+          "status": "unavailable",
+          "details": "Installed typescript resolves to lib/version.cjs exposing only version/versionMajorMinor; ScriptTarget is absent. No compile or tests ran. Bun read-only syntax scan used instead."
+        }
+      ],
+      "primaryLimits": [
+        "No setup, tests, builds, paid provider session, credentials, private transcript or device access run. Parent owns audited isolated runtime/type/format gates and a distinct fresh judge for this exact candidate.",
+        "No old branch merge/restoration was needed: focus exists and preserved reconciliation has no surviving proposed source commit or accepted candidate.",
+        "Source changes only committed. No related edits, assertion changes, per-worker wisdom, push, PR or merge. Parent owns aggregate wisdom; values/guidance unchanged."
+      ]
     },
     {
       "file": "scripts/probe-live-recorded.ts",
