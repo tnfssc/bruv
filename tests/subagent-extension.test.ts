@@ -144,6 +144,32 @@ function load(depth = 0, type?: string, options: any = {}) {
     active: () => active,
   };
 }
+
+// Bind through the real execute tool, but do not start an isolated execution.
+// Restore that stub before returning so subsequent jobs exercise real job handling.
+async function bindJobHandler(e: ReturnType<typeof load>, ctx: Pick<ExtensionContext, "cwd"> = { cwd: process.cwd() }) {
+  let rpc: any;
+  const mock = spyOn(execution, "executeIsolated").mockImplementation(async (_c, _w, _s, _t, options) => {
+    rpc = options!.jobHandler;
+    return {
+      exitCode: 0,
+      stdout: "",
+      stderr: "",
+      stdoutLost: false,
+      stderrLost: false,
+      timedOut: false,
+      cancelled: false,
+      images: [],
+    };
+  });
+  try {
+    await e.tools.get("execute").execute("bind", { code: "" }, undefined, undefined, ctx);
+    return rpc;
+  } finally {
+    mock.mockRestore();
+  }
+}
+
 test("root and all agent profiles expose only execute", async () => {
   for (const [depth, type] of [
     [0, undefined],
@@ -191,27 +217,10 @@ test("resumed leaf identity is retained in instructions", async () => {
 });
 test("rpc agent_end flushes an already-completed job before Pi settles", async () => {
   const e = load();
-  let rpc: any;
-  const mock = spyOn(execution, "executeIsolated").mockImplementation(async (_c, _w, _s, _t, options) => {
-    rpc = options!.jobHandler;
-    return {
-      exitCode: 0,
-      stdout: "",
-      stderr: "",
-      stdoutLost: false,
-      stderrLost: false,
-      timedOut: false,
-      cancelled: false,
-      images: [],
-    };
-  });
   const ctx = contextFixture({ mode: "rpc" });
   try {
     await e.fire("session_start", {}, ctx);
-    await e.tools.get("execute").execute("bind", { code: "" }, undefined, undefined, {
-      cwd: process.cwd(),
-    });
-    mock.mockRestore();
+    const rpc = await bindJobHandler(e);
     const task = await rpc(
       "shell",
       { command: "sleep 0.02; printf ready", waitSeconds: 0 },
@@ -228,7 +237,6 @@ test("rpc agent_end flushes an already-completed job before Pi settles", async (
     expect(e.messages[0].customType).toBe("task-complete");
     expect(e.messages[0].content).toContain("ready");
   } finally {
-    mock.mockRestore();
     await e.fire("session_shutdown", {}, ctx);
   }
 });
@@ -236,25 +244,8 @@ test("rpc agent_end flushes an already-completed job before Pi settles", async (
 for (const mode of ["print", "json"] as const)
   test(mode + " idle boundary still resumes background jobs", async () => {
     const e = load();
-    let rpc: any;
-    const mock = spyOn(execution, "executeIsolated").mockImplementation(async (_c, _w, _s, _t, options) => {
-      rpc = options!.jobHandler;
-      return {
-        exitCode: 0,
-        stdout: "",
-        stderr: "",
-        stdoutLost: false,
-        stderrLost: false,
-        timedOut: false,
-        cancelled: false,
-        images: [],
-      };
-    });
     try {
-      await e.tools.get("execute").execute("bind", { code: "" }, undefined, undefined, {
-        cwd: process.cwd(),
-      });
-      mock.mockRestore();
+      const rpc = await bindJobHandler(e);
       const signal = new AbortController().signal;
       const ctx = contextFixture({ mode, signal });
       const task = await rpc(
@@ -271,32 +262,14 @@ for (const mode of ["print", "json"] as const)
       expect(e.messages).toHaveLength(1);
       expect(e.messages[0].content).toContain("ready");
     } finally {
-      mock.mockRestore();
       await e.fire("session_shutdown", {}, contextFixture({ mode }));
     }
   });
 
 test("print agent_end wakes on attention while a job is still running", async () => {
   const e = load(0, undefined, { attention: { quietMs: 15, reviewMs: 1000 } });
-  let rpc: any;
-  const mock = spyOn(execution, "executeIsolated").mockImplementation(async (_c, _w, _s, _t, options) => {
-    rpc = options!.jobHandler;
-    return {
-      exitCode: 0,
-      stdout: "",
-      stderr: "",
-      stdoutLost: false,
-      stderrLost: false,
-      timedOut: false,
-      cancelled: false,
-      images: [],
-    };
-  });
   try {
-    await e.tools.get("execute").execute("bind", { code: "" }, undefined, undefined, {
-      cwd: process.cwd(),
-    });
-    mock.mockRestore();
+    const rpc = await bindJobHandler(e);
     const signal = new AbortController().signal,
       ctx = contextFixture({ mode: "print", signal }),
       task = await rpc("shell", { command: "read value", waitSeconds: 0, closeInput: false }, signal);
@@ -308,7 +281,6 @@ test("print agent_end wakes on attention while a job is still running", async ()
     expect(e.messages[0].content).toContain(task.id);
     await rpc("jobs.stop", { id: task.id }, signal);
   } finally {
-    mock.mockRestore();
     await e.fire("session_shutdown", {}, contextFixture());
   }
 });
@@ -369,25 +341,8 @@ test("attention and a racing completion produce one deduplicated parent wakeup",
   const { clock, advance } = attentionClockFixture();
   const children = controlledChildren();
   const e = load(0, undefined, { attention: { quietMs: 15, reviewMs: 1000, clock } });
-  let rpc: any;
-  const mock = spyOn(execution, "executeIsolated").mockImplementation(async (_c, _w, _s, _t, options) => {
-    rpc = options!.jobHandler;
-    return {
-      exitCode: 0,
-      stdout: "",
-      stderr: "",
-      stdoutLost: false,
-      stderrLost: false,
-      timedOut: false,
-      cancelled: false,
-      images: [],
-    };
-  });
   try {
-    await e.tools.get("execute").execute("bind", { code: "" }, undefined, undefined, {
-      cwd: process.cwd(),
-    });
-    mock.mockRestore();
+    const rpc = await bindJobHandler(e);
     const signal = new AbortController().signal;
     const ctx = contextFixture({ mode: "print", signal });
     const task = await rpc("shell", { command: "read value; printf done", waitSeconds: 0, closeInput: false }, signal);
@@ -405,7 +360,6 @@ test("attention and a racing completion produce one deduplicated parent wakeup",
     await e.fire("agent_end", { messages: [] }, ctx);
     expect(e.messages).toHaveLength(1);
   } finally {
-    mock.mockRestore();
     children.restore();
     await e.fire("session_shutdown", {}, contextFixture());
   }
@@ -525,25 +479,8 @@ test("mixed completion and attention reserve bounded evidence for both", async (
   const e = load(0, undefined, {
     attention: { quietMs: 15, reviewMs: 1000, clock },
   });
-  let rpc: any;
-  const mock = spyOn(execution, "executeIsolated").mockImplementation(async (_c, _w, _s, _t, options) => {
-    rpc = options!.jobHandler;
-    return {
-      exitCode: 0,
-      stdout: "",
-      stderr: "",
-      stdoutLost: false,
-      stderrLost: false,
-      timedOut: false,
-      cancelled: false,
-      images: [],
-    };
-  });
   try {
-    await e.tools.get("execute").execute("bind", { code: "" }, undefined, undefined, {
-      cwd: process.cwd(),
-    });
-    mock.mockRestore();
+    const rpc = await bindJobHandler(e);
     const signal = new AbortController().signal;
     const ctx = contextFixture({ mode: "print", signal });
     const idle = await rpc("shell", { command: "read value", waitSeconds: 0, closeInput: false }, signal);
@@ -574,7 +511,6 @@ test("mixed completion and attention reserve bounded evidence for both", async (
     expect(e.messages).toHaveLength(1);
     await rpc("jobs.stop", { id: idle.id }, signal);
   } finally {
-    mock.mockRestore();
     await e.fire("session_shutdown", {}, contextFixture());
     children.restore();
   }
@@ -663,24 +599,9 @@ test("shutdown persists every shell ownership cause without duplicating inspect 
     sessionManager: { getSessionFile: () => sessionFile },
   });
   const e = load();
-  let rpc: any;
-  const mock = spyOn(execution, "executeIsolated").mockImplementation(async (_c, _w, _s, _t, options) => {
-    rpc = options!.jobHandler;
-    return {
-      exitCode: 0,
-      stdout: "",
-      stderr: "",
-      stdoutLost: false,
-      stderrLost: false,
-      timedOut: false,
-      cancelled: false,
-      images: [],
-    };
-  });
   try {
     await e.fire("session_start", {}, ctx);
-    await e.tools.get("execute").execute("bind", { code: "" }, undefined, undefined, ctx);
-    mock.mockRestore();
+    const rpc = await bindJobHandler(e, ctx);
     const signal = new AbortController().signal;
     const command = "printf sentinel-useful-output; read sentinel-useful-input";
     const first = await rpc("shell", { command, waitSeconds: 0, closeInput: false }, signal);
@@ -703,7 +624,6 @@ test("shutdown persists every shell ownership cause without duplicating inspect 
     expect(readFileSync(taskLifecycleFile(sessionFile), "utf8")).toBe(raw);
     await resumed.fire("session_shutdown", {}, ctx);
   } finally {
-    mock.mockRestore();
     await e.fire("session_shutdown", {}, ctx);
     rmSync(dir, { recursive: true, force: true });
   }
@@ -711,20 +631,6 @@ test("shutdown persists every shell ownership cause without duplicating inspect 
 
 test("GPT-Live delegation cannot bypass the current agent jobs.stop confirmation", async () => {
   const e = load();
-  let rpc: any;
-  const mock = spyOn(execution, "executeIsolated").mockImplementation(async (_c, _w, _s, _t, options) => {
-    rpc = options!.jobHandler;
-    return {
-      exitCode: 0,
-      stdout: "",
-      stderr: "",
-      stdoutLost: false,
-      stderrLost: false,
-      timedOut: false,
-      cancelled: false,
-      images: [],
-    };
-  });
   const ctx = contextFixture({ sessionManager: { getSessionFile: () => undefined, getBranch: () => [] } });
   let confirms = 0;
   ctx.ui.confirm = async (_title, body) => {
@@ -737,13 +643,12 @@ test("GPT-Live delegation cannot bypass the current agent jobs.stop confirmation
     const host = getSessionHost({ events: e.events } as any, ctx)!;
     expect(host).toBeDefined();
     await host.delegate("d", '{"fragments":[{"text":"cancel maybe"}]}');
-    await e.tools.get("execute").execute("bind", { code: "" }, undefined, undefined, ctx);
+    const rpc = await bindJobHandler(e, ctx);
     await expect(rpc("jobs.stop", { id: "fake-exact-job" }, new AbortController().signal)).rejects.toThrow(
       "did not confirm",
     );
     expect(confirms).toBe(1);
   } finally {
-    mock.mockRestore();
     await e.fire("session_shutdown", {}, ctx);
   }
 });
@@ -919,20 +824,15 @@ test("a native attachment without a durable mailbox cannot create jobs and does 
   process.env.T3_MCP_URL = "http://127.0.0.1/mcp";
   delete process.env.T3_MCP_BEARER_TOKEN;
   let owners = 0;
-  let rpc: any;
   const e = load(0, undefined, {
     onTaskOwner: () => {
       owners++;
     },
   });
   const ctx = contextFixture({ mode: "rpc", sessionManager: { getSessionFile: () => undefined } });
-  const mock = spyOn(execution, "executeIsolated").mockImplementation(async (_c, _w, _s, _t, options) => {
-    rpc = options!.jobHandler;
-    return { exitCode: 0, stdout: "", stderr: "", timedOut: false, cancelled: false, images: [] } as any;
-  });
   try {
     await e.fire("session_start", {}, ctx);
-    await e.tools.get("execute").execute("bind", { code: "" }, undefined, undefined, ctx);
+    const rpc = await bindJobHandler(e, ctx);
     await expect(rpc("jobs.list", {}, new AbortController().signal)).rejects.toThrow("durable notification outbox");
     expect(owners).toBe(0);
     expect(e.messages).toHaveLength(0);
@@ -943,7 +843,6 @@ test("a native attachment without a durable mailbox cannot create jobs and does 
     expect(await rpc("jobs.list", {}, new AbortController().signal)).toMatchObject({ jobs: [], total: 0 });
     expect(owners).toBe(1);
   } finally {
-    mock.mockRestore();
     await e.fire("session_shutdown", {}, ctx);
     if (previousUrl === undefined) delete process.env.T3_MCP_URL;
     else process.env.T3_MCP_URL = previousUrl;

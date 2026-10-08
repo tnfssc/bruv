@@ -3402,109 +3402,115 @@
     {
       "focus": "tests/session-costs-tui.test.ts",
       "initialBlob": "cda7fbe6aede6fc1648ba563e149d6a1e782e62d",
-      "status": "pending",
+      "status": "accepted",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "cda7fbe6aede6fc1648ba563e149d6a1e782e62d",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "cda7fbe6aede6fc1648ba563e149d6a1e782e62d",
         "primaryId": "task_fdd5f204",
         "primaryCommit": "9a568679ae641766995b7f4332b056edfd617a45",
-        "judgeIds": [],
+        "judgeIds": ["task_5b5cbe87"],
         "sourceCommit": "9a568679ae641766995b7f4332b056edfd617a45",
-        "state": "needs-judge",
-        "reason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage."
+        "state": "accepted-joined",
+        "reason": "Read the complete exact-candidate test. The journey is already local: append root $0.125, orchestrator $0.250, nested worker $0.500, and unrelated $9; launch that persisted root and observe $0.875; append another $0.125 to the worker while idle and observe $1.000; toggle /status and assert $1.000 total plus root ↑10 ↓20; kill only the fixture session and relaunch the same launch closure to prove resume. Header and bruv-agent metadata show lineage at creation. The small append helper factors the verbose usage shape without concealing lineage or mutation timing. Extracting child creation or the single launch would not resolve a reader burden. Candidate/base focus blobs are identical."
       }
     },
     {
       "focus": "tests/session-costs.test.ts",
       "initialBlob": "6969bb9ed10e0a05b4cfb22c90aafcde4b9b0426",
-      "status": "pending",
+      "status": "accepted",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "6969bb9ed10e0a05b4cfb22c90aafcde4b9b0426",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "6969bb9ed10e0a05b4cfb22c90aafcde4b9b0426",
         "primaryId": "task_fdd5f204",
         "primaryCommit": "9a568679ae641766995b7f4332b056edfd617a45",
-        "judgeIds": [],
+        "judgeIds": ["task_5b5cbe87"],
         "sourceCommit": "9a568679ae641766995b7f4332b056edfd617a45",
-        "state": "needs-judge",
-        "reason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage."
+        "state": "accepted-joined",
+        "reason": "Read the whole exact-candidate file including the standalone failed-compaction test. The first test presents one readable graph: four supported usage sources in the child, a grandchild, unrelated and ordinary branches, and a disconnected cycle. Each subsequent test keeps its causal boundary next to refresh: split JSONL across refreshes with malformed complete lines; root exclusion, fallback marker and later nested discovery; copied-fork header/custom-parent mismatch; negative totals and duplicate IDs; truncation then inode replacement; concurrent promise identity with a synthetic missing root; exact failed-compaction custom type versus arbitrary custom usage. fixture/session/line/usage factor repeated data shapes, while concrete paths and changes remain in the tests. No scattered authority or lifetime needs another fixture layer. Candidate/base focus blobs are identical."
       }
     },
     {
       "focus": "tests/stop-work.test.ts",
       "initialBlob": "0145fd511ce1d999151bed8710f708be529252f9",
-      "status": "pending",
+      "status": "accepted",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "0145fd511ce1d999151bed8710f708be529252f9",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "0145fd511ce1d999151bed8710f708be529252f9",
         "primaryId": "task_187e7fa2",
         "primaryCommit": "bf4827bfd63ece88c460227cdd9fdbd9648a5c39",
-        "judgeIds": [],
+        "judgeIds": ["task_ac0df4b4"],
         "sourceCommit": "bf4827bfd63ece88c460227cdd9fdbd9648a5c39",
-        "state": "needs-judge",
-        "reason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage."
+        "state": "accepted-joined",
+        "reason": "Read all three scenarios. The first names local running/terminal entries at the manager seam, makes local-a remain running and local-b throw, then explicitly checks partial reporting and that an unrelated manager was not touched. The second shows a real page boundary in adapter.list, a completed child excluded from cancellation, per-child rejection, then a failed second page whose discovered parent still receives cancellation without claiming complete discovery. The third deliberately lists all tasks as running but returns cancelled/completed/failed from cancel, making acknowledged versus already-finished outcomes readable independently of discovery. Positional native injection is verbose but localized; sharing it would not clarify these distinct causes. The file has the identical base and candidate blob. The extension helper does not alter this fixture or cancellation semantics."
       }
     },
     {
       "focus": "tests/subagent-extension.test.ts",
       "initialBlob": "508e9dfd1900ae7387c9254e224eca79e2694473",
-      "status": "pending",
+      "status": "accepted",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "b7d7e0ad3d338b2008660797f7cc0ba806e5cf7b",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "b7d7e0ad3d338b2008660797f7cc0ba806e5cf7b",
         "primaryId": "task_187e7fa2",
         "primaryCommit": "bf4827bfd63ece88c460227cdd9fdbd9648a5c39",
-        "judgeIds": [],
+        "judgeIds": ["task_ac0df4b4"],
         "sourceCommit": "bf4827bfd63ece88c460227cdd9fdbd9648a5c39",
-        "state": "needs-judge",
-        "reason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage."
+        "state": "accepted-joined",
+        "reason": "Read the entire candidate file and every diff hunk. bindJobHandler extracts one coherent test operation: install a success-only executeIsolated stub, capture options.jobHandler through the real registered execute tool, and restore in finally before returning it. The tests now expose their notification/shell/authorization actions without repeated binding boilerplate; clocks, controlled children, input delivery, shutdown ordering and per-test filesystem ownership remain at their scenario sites. RPC completion, print/json idle blocking, attention wakeup, racing completion deduplication, mixed bounded evidence and lifecycle persistence keep their original commands and assertions. The Live delegated-stop test still rejects unconfirmed exact-ID cancellation; the native missing-mailbox test still prevents owner creation then permits the next local attachment using the same captured handler. The real background launch followed by outer execute failure correctly remains its own inline mock, preserving sourceCallId/title/terminal-update assertions. Unchanged identity fail-closed and SSH completion/actionable/replay journeys were read as well; they are not hidden behind the new helper."
       }
     },
     {
       "focus": "tests/subagent-placement.test.ts",
       "initialBlob": "f897af60816f07c9eb116301c0ff626b36c525f4",
-      "status": "pending",
+      "status": "accepted",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "f897af60816f07c9eb116301c0ff626b36c525f4",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "f897af60816f07c9eb116301c0ff626b36c525f4",
         "primaryId": "task_187e7fa2",
         "primaryCommit": "bf4827bfd63ece88c460227cdd9fdbd9648a5c39",
-        "judgeIds": [],
+        "judgeIds": ["task_ac0df4b4"],
         "sourceCommit": "bf4827bfd63ece88c460227cdd9fdbd9648a5c39",
-        "state": "needs-judge",
-        "reason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage."
+        "state": "accepted-joined",
+        "reason": "Read the complete placement file. fixture has one owned state root and explicit fake transport: hello authorizes its synthetic host, launch increments posts, sync reflects the cancelled set, and offline throws. Its injected repository launcher records boundary inputs, checks taskId intent reuse, calls the real client launch path and writes honest snapshot-only provenance. service(policy, environment, native) keeps the native seam explicit, while context/session/branch and identity(invocation,callIndex) show who owns each dispatch. The journeys expose profile/no-laptop-model launch, pre-placement role rejection, exact pinned target and async constraints, retained offline batch IDs and no duplicate posts, cross-session refusal, unknown-intent conflict, ssh:local alias, native policy authority and cross-placement rejection, local spawn/wait/model behavior, transfer allowlisting, unconfirmed preparation retries, explicit SSH overrides, cached target discovery and titles. The local-only prepare/spawn/foreground spies remain scoped to their local test. These are coherent authority fixtures rather than a scattered repeated setup problem. The file is byte-identical to primaryBase; the changed extension helper neither takes over this fixture nor alters its assertions."
       }
     },
     {
       "focus": "tests/subagent-profiles.test.ts",
       "initialBlob": "1b8198ce3eb32c8ae99a69b59897997adc48bf75",
-      "status": "pending",
+      "status": "accepted",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "1b8198ce3eb32c8ae99a69b59897997adc48bf75",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "1b8198ce3eb32c8ae99a69b59897997adc48bf75",
         "primaryId": "task_dc3fa76a",
         "primaryCommit": "632ef5ce3891bfe175447a0f7c0c228851c02465",
-        "judgeIds": [],
+        "judgeIds": ["task_5b5cbe87"],
         "sourceCommit": "632ef5ce3891bfe175447a0f7c0c228851c02465",
-        "state": "needs-judge",
-        "reason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage."
+        "state": "accepted-joined",
+        "reason": "Read all four exact-candidate tests. Explicit thinking off and missing model are asserted beside parent inheritance; the small invalid-value table exposes strict parser failures without an abstraction; root/first-level orchestrator delegation boundaries are directly enumerated. The persistence journey deliberately stays one test: missing nested path inherits, validated orchestrator profile saves/loads, permissions are 0600 on non-Windows, corrupt JSON fails load. Splitting or wrapping that sequence would make the file transitions less visible. Candidate/base focus blobs are identical."
       }
     },
     {
@@ -3517,11 +3523,12 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
+        "acceptedBlob": "83ffc1f0d8cbde59cf476a0edf071167bd117f14",
         "primaryId": "task_dc3fa76a",
         "primaryCommit": "632ef5ce3891bfe175447a0f7c0c228851c02465",
         "judgeIds": [],
         "sourceCommit": "632ef5ce3891bfe175447a0f7c0c228851c02465",
-        "state": "needs-judge",
+        "state": "needs-primary-final-blob",
         "reason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage."
       }
     },
@@ -3535,11 +3542,12 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
+        "acceptedBlob": "e4c8cfb70441fc19b8fb347622a48e7554591cff",
         "primaryId": "task_dc3fa76a",
         "primaryCommit": "632ef5ce3891bfe175447a0f7c0c228851c02465",
         "judgeIds": [],
         "sourceCommit": "632ef5ce3891bfe175447a0f7c0c228851c02465",
-        "state": "needs-judge",
+        "state": "needs-primary-final-blob",
         "reason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage."
       }
     },
@@ -4332,8 +4340,8 @@
     ]
   },
   "resumeStatus": {
-    "accepted": 85,
-    "pending": 16
+    "accepted": 91,
+    "pending": 10
   },
   "extraFiles": [
     {

@@ -14221,11 +14221,11 @@
     {
       "file": "tests/session-costs-tui.test.ts",
       "initialBlob": "cda7fbe6aede6fc1648ba563e149d6a1e782e62d",
-      "status": "pending",
+      "status": "accepted",
       "area": "execution-tasks-questions",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_fdd5f204",
-      "judgeIds": [],
+      "judgeIds": ["task_5b5cbe87"],
       "sourceCommit": "9a568679ae641766995b7f4332b056edfd617a45",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
       "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage.",
@@ -14251,16 +14251,30 @@
         "Existing unchanged TUI test inherits process environment through run/tmuxRunner and creates real tmux/CLI processes; it overrides HOME and BRUV_CODING_AGENT_DIR but not every config/SDK variable. Parent must audit/isolate env before any gate.",
         "Existing finally kills only its uniquely named tmux server and removes the owned mkdtemp home. Under retained-fixture policy this must not be executed as-is without a parent-approved gate fixture strategy.",
         "Built dist/bruv, terminal interaction, SDK writes, idle rendering, resume and offline-network behavior unverified; no build/test or auth access attempted."
+      ],
+      "acceptedBlob": "cda7fbe6aede6fc1648ba563e149d6a1e782e62d",
+      "result": "Read the complete exact-candidate test. The journey is already local: append root $0.125, orchestrator $0.250, nested worker $0.500, and unrelated $9; launch that persisted root and observe $0.875; append another $0.125 to the worker while idle and observe $1.000; toggle /status and assert $1.000 total plus root ↑10 ↓20; kill only the fixture session and relaunch the same launch closure to prove resume. Header and bruv-agent metadata show lineage at creation. The small append helper factors the verbose usage shape without concealing lineage or mutation timing. Extracting child creation or the single launch would not resolve a reader burden. Candidate/base focus blobs are identical.",
+      "systemReason": "Traced extension session-start UI installation through sessionIdentity, createCompactUI, installCompactFooter, and pollDescendantCost. Root history supplies root tokens/cost separately; SessionCostTracker excludes the root and counts only reachable marked descendants, excluding ordinary branches and copied-fork metadata. Compact and detailed rendering add the descendant total; the coarse 2-second refresh requests redraw on change, and footer replacement/shutdown disposes observers. Reopening the persisted root creates a tracker over its session directory. Also read the complete candidate root-runtime test and its base diff: withPrivateRootRuntime owns environment pinning, start, callback, shutdown, and unconditional restoration even if shutdown throws. Persisted ledger fixtures are retained; the other three tests now emit shutdown instead of deleting their directories. Wrong-token, stale-version, wrong-owner, human reply attribution, duplicate-delivery, stop forwarding, incomplete close, and terminal-row assertions remain visible and unchanged. Traced dispatchRootFacet and root-runtime/question-runtime shutdown handlers; this helper is a coherent private-IPC lifetime, not a cost-fixture abstraction. This related change does not constitute an edit to the assigned focus.",
+      "checks": [
+        "git show 9a568679ae641766995b7f4332b056edfd617a45:tests/session-costs-tui.test.ts (whole file).",
+        "git diff 0b42e92c1905ed9e7828f64dc4a0aa67864df90b 9a568679ae641766995b7f4332b056edfd617a45 (all changed paths inspected).",
+        "git rev-parse base:focus candidate:focus confirms unchanged focus; candidate root-runtime blob pinned.",
+        "git diff --check 0b42e92c1905ed9e7828f64dc4a0aa67864df90b 9a568679ae641766995b7f4332b056edfd617a45 exited 0."
+      ],
+      "limits": [
+        "Static actual-code review only: no setup, tests, builds, reinstall, network/auth/device access, or source edits performed. Parent owns audited isolated runtime gates.",
+        "Durable review provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_5b5cbe87. Exact Git objects were read, not checkout HEAD; existing worktrees and candidate evidence retained. No delegation. Parent runtime agent.model verification remains parent-owned.",
+        "Inspected effects without execution: this unchanged test uses an owned mkdtemp HOME/SDK and owned tmux socket, but tmuxRunner/run inherit other environment/config and tmux defaults, shell-compose launch, and finally delete the owned temporary HOME. That is not an audited gate under the user isolation/retention requirements; parent must not run it unchanged as its isolated safety gate. No live rendering/resume result is claimed."
       ]
     },
     {
       "file": "tests/session-costs.test.ts",
       "initialBlob": "6969bb9ed10e0a05b4cfb22c90aafcde4b9b0426",
-      "status": "pending",
+      "status": "accepted",
       "area": "execution-tasks-questions",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_fdd5f204",
-      "judgeIds": [],
+      "judgeIds": ["task_5b5cbe87"],
       "sourceCommit": "9a568679ae641766995b7f4332b056edfd617a45",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
       "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage.",
@@ -14285,6 +14299,20 @@
         "Wisdom/values unchanged: parent owns aggregate wisdom; no worker note pile.",
         "Existing afterEach removes only tracked owned mkdtemp directories; inspected but not executed. Parent retained-fixture gates must account for this unchanged cleanup.",
         "Incremental parsing, replacement, coalescing and SDK integration are source-reviewed only, not test-verified."
+      ],
+      "acceptedBlob": "6969bb9ed10e0a05b4cfb22c90aafcde4b9b0426",
+      "result": "Read the whole exact-candidate file including the standalone failed-compaction test. The first test presents one readable graph: four supported usage sources in the child, a grandchild, unrelated and ordinary branches, and a disconnected cycle. Each subsequent test keeps its causal boundary next to refresh: split JSONL across refreshes with malformed complete lines; root exclusion, fallback marker and later nested discovery; copied-fork header/custom-parent mismatch; negative totals and duplicate IDs; truncation then inode replacement; concurrent promise identity with a synthetic missing root; exact failed-compaction custom type versus arbitrary custom usage. fixture/session/line/usage factor repeated data shapes, while concrete paths and changes remain in the tests. No scattered authority or lifetime needs another fixture layer. Candidate/base focus blobs are identical.",
+      "systemReason": "Read the entire SessionCostTracker implementation: fixed-prefix relation parsing rejects copied mismatched metadata, reachable-set expansion requires bruv-agent identity and excludes disconnected cycles/root; metadata discovery is separate from usage reads. Refresh coalesces one promise; inode changes and shrinking files reset cached usage; pending buffers retain incomplete JSONL; consume deduplicates entry IDs per session and usageCost filters finite positive totals and recognized record types. The footer caller separately adds root history and polls descendants, so the test root exclusion is intentional rather than missing total coverage. Also read the complete candidate root-runtime test and its base diff: withPrivateRootRuntime owns environment pinning, start, callback, shutdown, and unconditional restoration even if shutdown throws. Persisted ledger fixtures are retained; the other three tests now emit shutdown instead of deleting their directories. Wrong-token, stale-version, wrong-owner, human reply attribution, duplicate-delivery, stop forwarding, incomplete close, and terminal-row assertions remain visible and unchanged. Traced dispatchRootFacet and root-runtime/question-runtime shutdown handlers; this helper is a coherent private-IPC lifetime, not a cost-fixture abstraction. This related change does not constitute an edit to the assigned focus.",
+      "checks": [
+        "git show 9a568679ae641766995b7f4332b056edfd617a45:tests/session-costs.test.ts and src/tasks/session-costs.ts (whole files).",
+        "git diff 0b42e92c1905ed9e7828f64dc4a0aa67864df90b 9a568679ae641766995b7f4332b056edfd617a45 (all changed paths inspected).",
+        "git rev-parse base:focus candidate:focus confirms unchanged focus; candidate root-runtime blob pinned.",
+        "git diff --check 0b42e92c1905ed9e7828f64dc4a0aa67864df90b 9a568679ae641766995b7f4332b056edfd617a45 exited 0."
+      ],
+      "limits": [
+        "Static actual-code review only: no setup, tests, builds, reinstall, network/auth/device access, or source edits performed. Parent owns audited isolated runtime gates.",
+        "Durable review provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_5b5cbe87. Exact Git objects were read, not checkout HEAD; existing worktrees and candidate evidence retained. No delegation. Parent runtime agent.model verification remains parent-owned.",
+        "Effects inspected: file writes/appends/truncation/rename and afterEach removal target only directories created by this test via mkdtemp. Tracker itself reads local files only. Existing owned-path cleanup was inspected, not executed; parent retains isolated gate fixtures. No runtime correctness result is claimed."
       ]
     },
     {
@@ -14389,11 +14417,11 @@
     {
       "file": "tests/stop-work.test.ts",
       "initialBlob": "0145fd511ce1d999151bed8710f708be529252f9",
-      "status": "pending",
+      "status": "accepted",
       "area": "execution-tasks-questions",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_187e7fa2",
-      "judgeIds": [],
+      "judgeIds": ["task_ac0df4b4"],
       "sourceCommit": "bf4827bfd63ece88c460227cdd9fdbd9648a5c39",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
       "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage.",
@@ -14415,16 +14443,33 @@
         "Existing tests have real child-shell paths and SDK/config-sensitive extension initialization. Future gates must supply owned HOME/config/SDK and explicit argv/env. Existing rm/rmSync targets were inspected as exact mkdtemp-owned paths, not executed. No shell cleanup or inherited HOME/config/SDK mutation was performed.",
         "Parent must verify runtime agent.model openai-codex/gpt-6.1-sol; this worker did not independently inspect runtime model metadata. No descendant was launched.",
         "No wisdom files changed: parent owns aggregate wisdom; existing guidance already covers coherent lifetime ownership."
+      ],
+      "acceptedBlob": "0145fd511ce1d999151bed8710f708be529252f9",
+      "result": "Read all three scenarios. The first names local running/terminal entries at the manager seam, makes local-a remain running and local-b throw, then explicitly checks partial reporting and that an unrelated manager was not touched. The second shows a real page boundary in adapter.list, a completed child excluded from cancellation, per-child rejection, then a failed second page whose discovered parent still receives cancellation without claiming complete discovery. The third deliberately lists all tasks as running but returns cancelled/completed/failed from cancel, making acknowledged versus already-finished outcomes readable independently of discovery. Positional native injection is verbose but localized; sharing it would not clarify these distinct causes. The file has the identical base and candidate blob. The extension helper does not alter this fixture or cancellation semantics.",
+      "systemReason": "Traced JobService.handle into jobs.stopWork, #withNative and TaskManager.kill/shutdown. Native scoped pagination collects IDs before cancellation and retains IDs after listing failure; local running tasks are read after discovery, each kill/cancel failure is separately recorded, native cancelled maps to acknowledged while completed/failed maps to finished. Final aggregation makes discovery/error partial and running cancellation pending. The extension caller confirms delegated cancellation before dispatch, pauses question handling, captures the report and only then requests foreground stop; it explicitly does not claim pending jobs exited. This test stays focused on report ownership rather than pretending to cover foreground cancellation or question behavior.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read whole exact candidate focus; inspected complete 127b579f405866d2a7745a42155615e068d0806a..bf4827bfd63ece88c460227cdd9fdbd9648a5c39 diff, whose only changed path is tests/subagent-extension.test.ts; read that entire changed file for every decision.",
+        "git diff --check 127b579f405866d2a7745a42155615e068d0806a bf4827bfd63ece88c460227cdd9fdbd9648a5c39: passed (empty output).",
+        "No setup, tests or builds run; checks are static source review only.",
+        "Verified focus blob equality against primaryBase using git rev-parse.",
+        "Static traced local pending/error, native partial discovery, and terminal status mapping against production branches."
+      ],
+      "limits": [
+        "Static review in durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_ac0df4b4; all candidate test/source reads used git show bf4827bfd63ece88c460227cdd9fdbd9648a5c39:path, and the complete diff used primaryBase 127b579f405866d2a7745a42155615e068d0806a, not checkout HEAD. Existing worktrees and evidence retained. No descendants launched.",
+        "Parent owns audited isolated runtime gates. Model identity is not independently verified by this worker; parent must verify runtime agent.model. Live authentication/device access not verified or attempted. No credentials accessed. No wisdom/source/dependency edits, cleanup, publication or setup.",
+        "Safety for ALL descendants: NO sudo, recovery investigation, user secrets, shell deletion/cleanup commands, inherited HOME/config/SDK cleanup, nested shell traps, destructive git, or user-data mutation. User already recovered data and requested no recovery work. Tests must use explicit process argv/env and owned fs.mkdtemp fixture HOME/config/SDK; retain them, do not delete. Review filesystem/network effects BEFORE tests/setup. Existing test-code cleanup of provably owned temporary paths may be inspected but NEVER run a shell trap or inherited HOME removal. Need live auth/device? Report unverified, don't access credentials. Propagate these constraints verbatim. Independent code/review agents get durable worktrees, not /tmp code checkouts. Keep existing worktrees and candidate evidence. Test/source fixtures may use /tmp, but document durable provenance. Parent verifies runtime agent.model openai-codex/gpt-6.1-sol; native normal leaves only, no delegation. Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md. Do NOT run setup, tests, builds: parent owns audited isolated gates. Shared dependencies are read-only; no reinstall or guard bypass. Preserve old worktrees/candidate edits. No push/new PR/merge, publication is parent-owned. No per-worker wisdom note pile; return exact artifact untracked, parent writes aggregate wisdom. Read only assigned focus/evidence rows in large coverage/area ledgers. Real structural reading, no rename churn/context bags/huge abstractions. Preserve existing security/assertions. Every focus including unchanged needs its own actual-source journey reasoning, never accept from counts/tests or batch summary.",
+        "The native adapter is an injected fake with example.invalid URL/fake token; no network was exercised. Managers/spies do not spawn children in this focus. These three tests do not themselves prove SSH or foreground-stop behavior."
       ]
     },
     {
       "file": "tests/subagent-extension.test.ts",
       "initialBlob": "508e9dfd1900ae7387c9254e224eca79e2694473",
-      "status": "pending",
+      "status": "accepted",
       "area": "execution-tasks-questions",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_187e7fa2",
-      "judgeIds": [],
+      "judgeIds": ["task_ac0df4b4"],
       "sourceCommit": "bf4827bfd63ece88c460227cdd9fdbd9648a5c39",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
       "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage.",
@@ -14447,16 +14492,35 @@
         "Existing tests have real child-shell paths and SDK/config-sensitive extension initialization. Future gates must supply owned HOME/config/SDK and explicit argv/env. Existing rm/rmSync targets were inspected as exact mkdtemp-owned paths, not executed. No shell cleanup or inherited HOME/config/SDK mutation was performed.",
         "Parent must verify runtime agent.model openai-codex/gpt-6.1-sol; this worker did not independently inspect runtime model metadata. No descendant was launched.",
         "No wisdom files changed: parent owns aggregate wisdom; existing guidance already covers coherent lifetime ownership."
+      ],
+      "acceptedRelatedJudges": ["task_ac0df4b4"],
+      "acceptedBlob": "b7d7e0ad3d338b2008660797f7cc0ba806e5cf7b",
+      "result": "Read the entire candidate file and every diff hunk. bindJobHandler extracts one coherent test operation: install a success-only executeIsolated stub, capture options.jobHandler through the real registered execute tool, and restore in finally before returning it. The tests now expose their notification/shell/authorization actions without repeated binding boilerplate; clocks, controlled children, input delivery, shutdown ordering and per-test filesystem ownership remain at their scenario sites. RPC completion, print/json idle blocking, attention wakeup, racing completion deduplication, mixed bounded evidence and lifecycle persistence keep their original commands and assertions. The Live delegated-stop test still rejects unconfirmed exact-ID cancellation; the native missing-mailbox test still prevents owner creation then permits the next local attachment using the same captured handler. The real background launch followed by outer execute failure correctly remains its own inline mock, preserving sourceCallId/title/terminal-update assertions. Unchanged identity fail-closed and SSH completion/actionable/replay journeys were read as well; they are not hidden behind the new helper.",
+      "systemReason": "Traced registerExecuteTool: executeIsolated receives the actual jobHandler closure; that closure forwards through ExecuteDelivery.waitSignal and real extension dispatch and records launches, while success finish only closes the outer execute lifetime. Capturing it does not replace JobService or TaskManager. Restoring the stub before job calls preserves actual handling; finally also restores on binding failure. Extension getService/getManager remain lazy and attachment-owned, guard native mailbox before manager creation, and reset manager/service/attention on shutdown. createJobNotifications still owns bounded completion/attention coalescing, print/json wait subscriptions, RPC flush, durable SSH failed-delivery replay and detachment. TaskManager shutdown still drains requested child exits and lifecycle recording. SessionHost still authorizes delegated stop before service dispatch. Adding false stdoutLost/stderrLost to the native binding success result normalizes the helper without weakening an assertion or launching native work.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read whole exact candidate focus; inspected complete 127b579f405866d2a7745a42155615e068d0806a..bf4827bfd63ece88c460227cdd9fdbd9648a5c39 diff, whose only changed path is tests/subagent-extension.test.ts; read that entire changed file for every decision.",
+        "git diff --check 127b579f405866d2a7745a42155615e068d0806a bf4827bfd63ece88c460227cdd9fdbd9648a5c39: passed (empty output).",
+        "No setup, tests or builds run; checks are static source review only.",
+        "Inspected all helper call sites and their preserved scenario-specific finally blocks.",
+        "Inspected unchanged specialized launch-then-error mock separately from the helper.",
+        "Static traced mailbox-before-owner guard, lazy service recreation, delegated confirmation, notification coalescing/replay and child shutdown."
+      ],
+      "limits": [
+        "Static review in durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_ac0df4b4; all candidate test/source reads used git show bf4827bfd63ece88c460227cdd9fdbd9648a5c39:path, and the complete diff used primaryBase 127b579f405866d2a7745a42155615e068d0806a, not checkout HEAD. Existing worktrees and evidence retained. No descendants launched.",
+        "Parent owns audited isolated runtime gates. Model identity is not independently verified by this worker; parent must verify runtime agent.model. Live authentication/device access not verified or attempted. No credentials accessed. No wisdom/source/dependency edits, cleanup, publication or setup.",
+        "Safety for ALL descendants: NO sudo, recovery investigation, user secrets, shell deletion/cleanup commands, inherited HOME/config/SDK cleanup, nested shell traps, destructive git, or user-data mutation. User already recovered data and requested no recovery work. Tests must use explicit process argv/env and owned fs.mkdtemp fixture HOME/config/SDK; retain them, do not delete. Review filesystem/network effects BEFORE tests/setup. Existing test-code cleanup of provably owned temporary paths may be inspected but NEVER run a shell trap or inherited HOME removal. Need live auth/device? Report unverified, don't access credentials. Propagate these constraints verbatim. Independent code/review agents get durable worktrees, not /tmp code checkouts. Keep existing worktrees and candidate evidence. Test/source fixtures may use /tmp, but document durable provenance. Parent verifies runtime agent.model openai-codex/gpt-6.1-sol; native normal leaves only, no delegation. Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md. Do NOT run setup, tests, builds: parent owns audited isolated gates. Shared dependencies are read-only; no reinstall or guard bypass. Preserve old worktrees/candidate edits. No push/new PR/merge, publication is parent-owned. No per-worker wisdom note pile; return exact artifact untracked, parent writes aggregate wisdom. Read only assigned focus/evidence rows in large coverage/area ledgers. Real structural reading, no rename churn/context bags/huge abstractions. Preserve existing security/assertions. Every focus including unchanged needs its own actual-source journey reasoning, never accept from counts/tests or batch summary.",
+        "Runtime mock restoration, scheduling and Bun test isolation are not executed here. Existing real shell scenarios use read/sleep/printf and one exit-1 child; controlled notification scenarios stub child_process.spawn. Existing rmSync calls target only locally created mkdtemp session fixture roots, but were not run. Extension construction includes a default RemoteClient/config-dependent services: parent must supply owned isolated HOME/config/SDK and explicit process argv/env before running. Session fixtures may create lifecycle and notification outbox files. No live auth/device or network behavior is proven."
       ]
     },
     {
       "file": "tests/subagent-placement.test.ts",
       "initialBlob": "f897af60816f07c9eb116301c0ff626b36c525f4",
-      "status": "pending",
+      "status": "accepted",
       "area": "execution-tasks-questions",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_187e7fa2",
-      "judgeIds": [],
+      "judgeIds": ["task_ac0df4b4"],
       "sourceCommit": "bf4827bfd63ece88c460227cdd9fdbd9648a5c39",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
       "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage.",
@@ -14479,16 +14543,33 @@
         "Existing tests have real child-shell paths and SDK/config-sensitive extension initialization. Future gates must supply owned HOME/config/SDK and explicit argv/env. Existing rm/rmSync targets were inspected as exact mkdtemp-owned paths, not executed. No shell cleanup or inherited HOME/config/SDK mutation was performed.",
         "Parent must verify runtime agent.model openai-codex/gpt-6.1-sol; this worker did not independently inspect runtime model metadata. No descendant was launched.",
         "No wisdom files changed: parent owns aggregate wisdom; existing guidance already covers coherent lifetime ownership."
+      ],
+      "acceptedBlob": "f897af60816f07c9eb116301c0ff626b36c525f4",
+      "result": "Read the complete placement file. fixture has one owned state root and explicit fake transport: hello authorizes its synthetic host, launch increments posts, sync reflects the cancelled set, and offline throws. Its injected repository launcher records boundary inputs, checks taskId intent reuse, calls the real client launch path and writes honest snapshot-only provenance. service(policy, environment, native) keeps the native seam explicit, while context/session/branch and identity(invocation,callIndex) show who owns each dispatch. The journeys expose profile/no-laptop-model launch, pre-placement role rejection, exact pinned target and async constraints, retained offline batch IDs and no duplicate posts, cross-session refusal, unknown-intent conflict, ssh:local alias, native policy authority and cross-placement rejection, local spawn/wait/model behavior, transfer allowlisting, unconfirmed preparation retries, explicit SSH overrides, cached target discovery and titles. The local-only prepare/spawn/foreground spies remain scoped to their local test. These are coherent authority fixtures rather than a scattered repeated setup problem. The file is byte-identical to primaryBase; the changed extension helper neither takes over this fixture nor alters its assertions.",
+      "systemReason": "Traced JobService subagent routing: native bridge selection precedes laptop role/depth policy, requires durable identity and rejects cross-placement/overrides; nonnative policy validation precedes SSH routing. SSH requires durable session/branch, reserves stable session-scoped IDs, passes only explicit destination overrides and preserves batch IDs. Local resolves configured/current model, creates depth+1 children and uses the one-second default foreground wait. RemoteJobsAdapter independently checks role and exact human-pinned target (ssh:local for reserved local), constructs trusted allowlisted launch args, filters jobs by parent session and rejects mismatched owner/epoch/question-owner on replay. RemoteClient persists unknown intent before transport, compares retry intent and returns already-accepted IDs without another POST. The test substitute for repository preparation intentionally limits proof to that seam; it does not claim snapshot transfer or human permission was exercised. This clear separation is worth retaining unchanged.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read whole exact candidate focus; inspected complete 127b579f405866d2a7745a42155615e068d0806a..bf4827bfd63ece88c460227cdd9fdbd9648a5c39 diff, whose only changed path is tests/subagent-extension.test.ts; read that entire changed file for every decision.",
+        "git diff --check 127b579f405866d2a7745a42155615e068d0806a bf4827bfd63ece88c460227cdd9fdbd9648a5c39: passed (empty output).",
+        "No setup, tests or builds run; checks are static source review only.",
+        "Verified focus blob equality against primaryBase using git rev-parse.",
+        "Static traced native-before-local-policy routing, session-scoped replay identity, accepted versus unknown outcomes, adapter allowlisting and exact-target authorization."
+      ],
+      "limits": [
+        "Static review in durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_ac0df4b4; all candidate test/source reads used git show bf4827bfd63ece88c460227cdd9fdbd9648a5c39:path, and the complete diff used primaryBase 127b579f405866d2a7745a42155615e068d0806a, not checkout HEAD. Existing worktrees and evidence retained. No descendants launched.",
+        "Parent owns audited isolated runtime gates. Model identity is not independently verified by this worker; parent must verify runtime agent.model. Live authentication/device access not verified or attempted. No credentials accessed. No wisdom/source/dependency edits, cleanup, publication or setup.",
+        "Safety for ALL descendants: NO sudo, recovery investigation, user secrets, shell deletion/cleanup commands, inherited HOME/config/SDK cleanup, nested shell traps, destructive git, or user-data mutation. User already recovered data and requested no recovery work. Tests must use explicit process argv/env and owned fs.mkdtemp fixture HOME/config/SDK; retain them, do not delete. Review filesystem/network effects BEFORE tests/setup. Existing test-code cleanup of provably owned temporary paths may be inspected but NEVER run a shell trap or inherited HOME removal. Need live auth/device? Report unverified, don't access credentials. Propagate these constraints verbatim. Independent code/review agents get durable worktrees, not /tmp code checkouts. Keep existing worktrees and candidate evidence. Test/source fixtures may use /tmp, but document durable provenance. Parent verifies runtime agent.model openai-codex/gpt-6.1-sol; native normal leaves only, no delegation. Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md. Do NOT run setup, tests, builds: parent owns audited isolated gates. Shared dependencies are read-only; no reinstall or guard bypass. Preserve old worktrees/candidate edits. No push/new PR/merge, publication is parent-owned. No per-worker wisdom note pile; return exact artifact untracked, parent writes aggregate wisdom. Read only assigned focus/evidence rows in large coverage/area ledgers. Real structural reading, no rename churn/context bags/huge abstractions. Preserve existing security/assertions. Every focus including unchanged needs its own actual-source journey reasoning, never accept from counts/tests or batch summary.",
+        "Transport and repository launcher are explicit injected fakes; native adapter is injected and local prepare/spawn/foreground are mocked. No real SSH, repository transfer, worktree setup, model access or human source approval was run. fixture creates a mkdtemp state root, remote JSON/SQLite lock and launch-ledger artifacts; cleanup functions refer only to owned fixture paths but were inspected, not executed. Parent-owned gates must provide retained fixture HOME/config/SDK isolation."
       ]
     },
     {
       "file": "tests/subagent-profiles.test.ts",
       "initialBlob": "1b8198ce3eb32c8ae99a69b59897997adc48bf75",
-      "status": "pending",
+      "status": "accepted",
       "area": "execution-tasks-questions",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_dc3fa76a",
-      "judgeIds": [],
+      "judgeIds": ["task_5b5cbe87"],
       "sourceCommit": "632ef5ce3891bfe175447a0f7c0c228851c02465",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
       "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage.",
@@ -14508,6 +14589,20 @@
         "Real-TUI startup still uses the existing one-second command-binding delay and requires the built dist/bruv plus tmux; no new readiness mechanism or provider request was introduced. Direct multi-argument launch was checked against installed tmux documentation, not exercised.",
         "No subagents delegated. Parent owns runtime agent.model verification openai-codex/gpt-6.1-sol.",
         "Durable source provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_dc3fa76a; base ed106a94e39747cd3f7ae856021ad1ed90be5361. Formatter fixtures are retained temporary state, not code checkouts. Existing candidate worktrees/evidence were not modified."
+      ],
+      "acceptedBlob": "1b8198ce3eb32c8ae99a69b59897997adc48bf75",
+      "result": "Read all four exact-candidate tests. Explicit thinking off and missing model are asserted beside parent inheritance; the small invalid-value table exposes strict parser failures without an abstraction; root/first-level orchestrator delegation boundaries are directly enumerated. The persistence journey deliberately stays one test: missing nested path inherits, validated orchestrator profile saves/loads, permissions are 0600 on non-Windows, corrupt JSON fails load. Splitting or wrapping that sequence would make the file transitions less visible. Candidate/base focus blobs are identical.",
+      "systemReason": "Traced strict ProfileSchema/ProfilesSchema, ENOENT-only load fallback, validation before mkdir/write, exclusive UUID temporary 0600 write and atomic rename, nullish profile inheritance preserving off, and canDelegate. JobService checks delegation authority and resolves local profiles from the parent before preparing a session; SSH placement and explicit overrides have their distinct branch. registerSubagentSettings loads before prompting, saves only a returned draft, and reports malformed settings without overwriting. Read both complete changed settings tests and their base diffs: UI saveFromOverview explicitly asserts overview/Save rather than hiding row-dependent down counts, while return-row, draft immutability, cancel, malformed-file, width and exact-search assertions remain. The TUI helper owns socket/HOME/config/cache/data/SDK/temp env and direct argv launch, awaits frames, shuts down only its socket and retains files; the callback still shows the model-search, thinking-off, Save and persisted JSON checks. These related fixture changes leave the assigned profile semantics intact.",
+      "checks": [
+        "git show 632ef5ce3891bfe175447a0f7c0c228851c02465:tests/subagent-profiles.test.ts (whole file), plus whole changed tests and related source journeys.",
+        "git diff ed106a94e39747cd3f7ae856021ad1ed90be5361 632ef5ce3891bfe175447a0f7c0c228851c02465 (both changed paths inspected).",
+        "git rev-parse base:focus candidate:focus confirms unchanged focus; both changed test blobs pinned.",
+        "git diff --check ed106a94e39747cd3f7ae856021ad1ed90be5361 632ef5ce3891bfe175447a0f7c0c228851c02465 exited 0."
+      ],
+      "limits": [
+        "Static actual-code review only: no setup, tests, builds, reinstall, network/auth/device access, or source edits performed. Parent owns audited isolated runtime gates.",
+        "Durable review provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_5b5cbe87. Exact Git objects were read, not checkout HEAD; existing worktrees and candidate evidence retained. No delegation. Parent runtime agent.model verification remains parent-owned.",
+        "Effects inspected: intrinsic profile test passes an owned temporary explicit path, with owned cleanup never executed here; changed UI fixtures retain their owned directories. Changed TUI uses a fresh explicit environment and owned tmux socket with offline placeholder key, no inherited auth. Actual tmux/direct-exec behavior, startup sleep readiness and model-catalog availability remain unverified; parent owns those gates."
       ]
     },
     {
@@ -14515,7 +14610,7 @@
       "initialBlob": "f6345c6670f6dcc1d370372d3d85a3437bbfcb41",
       "status": "pending",
       "area": "execution-tasks-questions",
-      "resumeState": "needs-judge",
+      "resumeState": "needs-primary-final-blob",
       "primaryId": "task_dc3fa76a",
       "judgeIds": [],
       "sourceCommit": "632ef5ce3891bfe175447a0f7c0c228851c02465",
@@ -14537,14 +14632,16 @@
         "Real-TUI startup still uses the existing one-second command-binding delay and requires the built dist/bruv plus tmux; no new readiness mechanism or provider request was introduced. Direct multi-argument launch was checked against installed tmux documentation, not exercised.",
         "No subagents delegated. Parent owns runtime agent.model verification openai-codex/gpt-6.1-sol.",
         "Durable source provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_dc3fa76a; base ed106a94e39747cd3f7ae856021ad1ed90be5361. Formatter fixtures are retained temporary state, not code checkouts. Existing candidate worktrees/evidence were not modified."
-      ]
+      ],
+      "acceptedRelatedJudges": ["task_5b5cbe87"],
+      "acceptedBlob": "83ffc1f0d8cbde59cf476a0edf071167bd117f14"
     },
     {
       "file": "tests/subagent-settings-ui.test.ts",
       "initialBlob": "eacdda0427dd8083b5ddc0491ec2fa26a852d435",
       "status": "pending",
       "area": "execution-tasks-questions",
-      "resumeState": "needs-judge",
+      "resumeState": "needs-primary-final-blob",
       "primaryId": "task_dc3fa76a",
       "judgeIds": [],
       "sourceCommit": "632ef5ce3891bfe175447a0f7c0c228851c02465",
@@ -14566,7 +14663,9 @@
         "Real-TUI startup still uses the existing one-second command-binding delay and requires the built dist/bruv plus tmux; no new readiness mechanism or provider request was introduced. Direct multi-argument launch was checked against installed tmux documentation, not exercised.",
         "No subagents delegated. Parent owns runtime agent.model verification openai-codex/gpt-6.1-sol.",
         "Durable source provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_dc3fa76a; base ed106a94e39747cd3f7ae856021ad1ed90be5361. Formatter fixtures are retained temporary state, not code checkouts. Existing candidate worktrees/evidence were not modified."
-      ]
+      ],
+      "acceptedRelatedJudges": ["task_5b5cbe87"],
+      "acceptedBlob": "e4c8cfb70441fc19b8fb347622a48e7554591cff"
     },
     {
       "file": "tests/system-prompt.test.ts",
