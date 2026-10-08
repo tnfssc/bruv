@@ -1,13 +1,11 @@
-import { afterEach, expect, test } from "bun:test";
+import { expect, test } from "bun:test";
 import { chmod, copyFile, mkdir, mkdtemp, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
+import { ownedFixtureEnv } from "./helpers";
+
 const script = join(import.meta.dir, "..", "scripts/smoke.sh");
-const roots: string[] = [];
-afterEach(async () => {
-  for (const root of roots.splice(0)) await rm(root, { recursive: true, force: true });
-});
 
 const buildDriver = `#!/bin/sh
 set -eu
@@ -48,7 +46,7 @@ exec "$dir/bruv" claude-compat "$@"
 
 async function fixture() {
   const root = await mkdtemp(join(tmpdir(), "bruv-smoke-test-"));
-  roots.push(root);
+  const fixtureEnv = ownedFixtureEnv(root);
   const smokeTemps = join(root, "smoke-temps");
   for (const dir of ["bin", "dist", "smoke-temps"]) await mkdir(join(root, dir));
   await writeFile(join(root, "bin/bun"), buildDriver, { mode: 0o755 });
@@ -63,15 +61,15 @@ async function fixture() {
     const result = Bun.spawnSync(["/bin/sh", script, ...args], {
       cwd: root,
       env: {
-        ...process.env,
-        PATH: join(root, "bin") + ":/usr/bin:/bin",
+        ...fixtureEnv,
+        PATH: join(root, "bin") + ":" + fixtureEnv.PATH,
         TMPDIR: smokeTemps,
         BRUV_SMOKE_PARENT_ENV: "must not reach probes",
       },
       stdout: "pipe",
       stderr: "pipe",
     });
-    // Check the script's trap before afterEach removes the fixture itself.
+    // The smoke script owns its temporary pair; retain the surrounding fixture for inspection.
     expect(await readdir(smokeTemps)).toEqual([]);
     return result;
   };

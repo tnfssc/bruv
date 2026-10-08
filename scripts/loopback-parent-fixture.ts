@@ -68,13 +68,13 @@ function readRpcEvents(stdout: Readable, onEvent: (event: any) => void) {
 export function fixtureRpc(options: {
   bruv: string;
   cwd: string;
-  home: string;
-  agentDir: string;
+  // The caller owns the fixture environment and its retained HOME/config/SDK root.
+  env: Record<string, string>;
   children: ReturnType<typeof spawn>[];
   noSession?: boolean;
   timeoutDetail: (events: any[]) => string;
 }) {
-  const { bruv, cwd, home, agentDir } = options;
+  const { bruv, cwd, env } = options;
   const child = spawn(
     bruv,
     [
@@ -88,7 +88,7 @@ export function fixtureRpc(options: {
     ],
     {
       cwd,
-      env: { ...process.env, HOME: home, BRUV_CODING_AGENT_DIR: agentDir },
+      env,
       stdio: ["pipe", "pipe", "pipe"],
     },
   );

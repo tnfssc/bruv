@@ -1,22 +1,19 @@
-import { afterEach, expect, test } from "bun:test";
-import { mkdtempSync, readFileSync, rmSync, writeFileSync, existsSync, mkdirSync, symlinkSync } from "node:fs";
+import { expect, test } from "bun:test";
+import { mkdtempSync, readFileSync, writeFileSync, existsSync, mkdirSync, symlinkSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { networkNoneFixture, assertFixtureOutputExternal } from "../scripts/network-none-fixture";
 import { fixtureRpc, loopbackParent } from "../scripts/loopback-parent-fixture";
 
-const roots: string[] = [];
-const temp = () => {
-  const root = mkdtempSync(join(tmpdir(), "tooling-fixture-"));
-  roots.push(root);
-  return root;
-};
-afterEach(() => {
-  for (const root of roots.splice(0)) rmSync(root, { recursive: true, force: true });
-});
+import { ownedFixtureEnv } from "./helpers";
+
+// Retain mkdtemp roots; the cleanup assertion below targets only an owned scratch child.
+const temp = () => mkdtempSync(join(tmpdir(), "tooling-fixture-"));
 
 test("network-none fixture isolates secrets/config and owns only its scratch root", () => {
-  const root = temp();
+  const retainedRoot = temp();
+  const root = join(retainedRoot, "scratch");
+  const env = ownedFixtureEnv(retainedRoot);
   const external = temp();
   writeFileSync(join(external, "evidence"), "retained");
   const fixture = networkNoneFixture({
@@ -39,15 +36,16 @@ test("network-none fixture isolates secrets/config and owns only its scratch roo
     "BRUV_NATIVE_TASK_ID",
   ])
     expect(fixture.env).not.toHaveProperty(forbidden);
-  expect(JSON.parse(fixture.run(process.execPath, ["-e", "console.log(JSON.stringify(process.env))"])).HOME).toBe(
-    fixture.env.HOME,
-  );
-  expect(() => fixture.run(process.execPath, ["-e", "console.error('intentional failure');process.exit(7)"])).toThrow(
-    "intentional failure",
-  );
+  expect(
+    JSON.parse(fixture.run(process.execPath, ["-e", "console.log(JSON.stringify(process.env))"], { env })).HOME,
+  ).toBe(fixture.env.HOME);
+  expect(() =>
+    fixture.run(process.execPath, ["-e", "console.error('intentional failure');process.exit(7)"], { env }),
+  ).toThrow("intentional failure");
   expect(fixture.containerStarted).toBe(false);
   fixture.cleanup();
   expect(existsSync(root)).toBe(false);
+  expect(existsSync(env.HOME)).toBe(true);
   expect(readFileSync(join(external, "evidence"), "utf8")).toBe("retained");
 });
 
@@ -125,8 +123,7 @@ createInterface({ input: process.stdin }).on("line", (line) => {
   const rpc = fixtureRpc({
     bruv: binary,
     cwd: root,
-    home: root,
-    agentDir: root,
+    env: ownedFixtureEnv(root),
     children,
     noSession: true,
     timeoutDetail: (events) => "; fixture pane; events=" + JSON.stringify(events),
@@ -187,7 +184,8 @@ console.log("{bad JSON");
     { mode: 0o755 },
   );
   const fixtureModule = new URL("../scripts/loopback-parent-fixture.ts", import.meta.url).pathname;
-  const options = { bruv: binary, cwd: root, home: root, agentDir: root };
+  const env = ownedFixtureEnv(root);
+  const options = { bruv: binary, cwd: root, env };
   writeFileSync(
     driver,
     `
@@ -199,7 +197,7 @@ fixtureRpc({
 });
 `,
   );
-  const proc = Bun.spawn([process.execPath, driver], { stdout: "ignore", stderr: "pipe" });
+  const proc = Bun.spawn([process.execPath, driver], { cwd: root, env, stdout: "ignore", stderr: "pipe" });
   const [code, stderr] = await Promise.all([proc.exited, new Response(proc.stderr).text()]);
   expect(code).not.toBe(0);
   expect(stderr).toContain("Invalid RPC JSON: {bad JSON");

@@ -1,4 +1,5 @@
 import { loopbackParent, fixtureRpc } from "./loopback-parent-fixture";
+import { ownedFixtureEnv } from "../tests/helpers";
 /** Drive the compiled normal CLI PTY; RPC only seeds disposable native owner tasks. */
 import { spawn, spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
@@ -10,6 +11,12 @@ const container = process.env.FIXTURE_CONTAINER!;
 const home = homedir();
 const statePath = join(home, ".bruv/remote/state.json");
 const agentDir = process.env.BRUV_CODING_AGENT_DIR!;
+// remote-e2e.sh owns this root and its SSH/Docker fixture settings.
+const rpcEnv = ownedFixtureEnv(process.env.FIXTURE_DROP_DIR!);
+rpcEnv.PATH = join(process.env.FIXTURE_DROP_DIR!, "bin") + ":" + rpcEnv.PATH;
+rpcEnv.BRUV_CODING_AGENT_DIR = agentDir;
+rpcEnv.PI_CODING_AGENT_DIR = agentDir;
+rpcEnv.DOCKER_HOST = process.env.DOCKER_HOST!;
 process.env.GIT_CONFIG_GLOBAL = "/dev/null";
 process.env.GIT_CONFIG_SYSTEM = "/dev/null";
 process.env.GIT_CONFIG_NOSYSTEM = "1";
@@ -63,8 +70,7 @@ const launchRpc = (cwd = launchRepo, diagnostic = false) =>
   fixtureRpc({
     bruv,
     cwd,
-    home,
-    agentDir,
+    env: rpcEnv,
     children: rpcChildren,
     noSession: diagnostic,
     timeoutDetail: (events) =>

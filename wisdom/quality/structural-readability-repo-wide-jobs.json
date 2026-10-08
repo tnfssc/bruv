@@ -637,6 +637,15 @@
         "branch": "bruv/pr45-judge-1-remote-focuses-19508c94",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "handled"
+      },
+      {
+        "id": "task_f1169a5b",
+        "stage": "primary",
+        "focus": ["tests/remote-root-presenter.test.ts"],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_f1169a5b",
+        "branch": "bruv/pr45-primary-1-remote-focuses-f1169a5b",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
       }
     ]
   },
@@ -3406,6 +3415,15 @@
         "branch": "bruv/pr45-judge-1-execution-tasks-questions-f-e427af86",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "handled"
+      },
+      {
+        "id": "task_7a16f7fe",
+        "stage": "primary",
+        "focus": ["tests/owned-process-suite.ts", "tests/job-bridge-credentials.fixture.ts"],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_7a16f7fe",
+        "branch": "bruv/pr45-primary-2-execution-tasks-questions-7a16f7fe",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
       }
     ]
   },
@@ -4180,7 +4198,7 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_9cd1c88b",
         "branch": "bruv/pr45-judge-3-build-release-ci-tooling-fo-9cd1c88b",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled"
       }
     ]
   },

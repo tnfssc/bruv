@@ -8874,7 +8874,7 @@
       ],
       "chars": 28139,
       "lines": 694,
-      "status": "running",
+      "status": "accepted",
       "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
       "jobId": "task_be1a251b",
       "model": "openai-codex/gpt-6.1-sol",
@@ -8890,6 +8890,97 @@
         "setupTaskId": "task_a44e267f",
         "setupStatus": "failed",
         "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      },
+      "result": {
+        "lane": "lane-45",
+        "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
+        "candidate": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "verdict": "ACCEPT",
+        "diffReadPaths": [
+          "site/scripts/validate.ts",
+          "site/terminal.ts"
+        ],
+        "contextReadPaths": [
+          "site/terminal.ts",
+          "site/scripts/validate.ts",
+          "site/layout.ts",
+          "site/scroll.ts",
+          "site/playback.ts",
+          "site/demos.ts",
+          "site/install-command.ts",
+          "site/content.ts",
+          "site/scripts/build.ts",
+          "site/scripts/browser.ts",
+          "site/scripts/preview.ts",
+          "site/package.json",
+          "site/index.html",
+          "site/styles.css"
+        ],
+        "sourceBlobs": {
+          "site/scripts/validate.ts": "31ae70389bba2af920c96f41f2bcb2292ee53292",
+          "site/terminal.ts": "53be49f1b82e4629de9793286e4db958b467e226"
+        },
+        "sourceJourneys": [
+          {
+            "paths": [
+              "site/terminal.ts",
+              "site/layout.ts",
+              "site/playback.ts",
+              "site/demos.ts",
+              "site/scripts/validate.ts"
+            ],
+            "readingReason": "Followed start -> resize/render -> paint -> layout -> presentFrame. The complete assigned diff retains advance/clock handling before layout, copies frame.scroll into state before presentation, and leaves the 80ms animation timer after presentation. presentFrame owns persistent previousRows/lastFocus without changing the row comparison, synchronous write/render or dataset/announcement sequence. Both variables initialize before the first synchronous paint at terminal.ts:349; neither extraction creates a new cache per frame. Read layout composition, clipped capture projection, action hit indices and cursor-addressed ANSI rows, plus playback advance/inView and the demos public frame/duration adapters. Validator checkCells still rebuilds the same layout from presentation datasets and compares terminal lines and capture glyph/colors; its helper now takes the actual Page instead of capturing it.",
+            "systemReason": "Layout remains the authority for geometry and scroll clamping; terminal presentation remains the authority for cached painting and live-region announcements. Row cache invalidation still follows every resize, and metadata reflects the exact presented frame. Timing has not moved into presentation. This separation reduces the amount of painting detail a reader needs while following scheduling, with no new context object or cross-module lifetime owner."
+          },
+          {
+            "paths": [
+              "site/terminal.ts",
+              "site/scroll.ts",
+              "site/layout.ts",
+              "site/styles.css",
+              "site/scripts/validate.ts",
+              "site/content.ts"
+            ],
+            "readingReason": "Followed bindPointerInput -> cell/hitAt or scrollPixels -> CellScroll.move -> render, and the unchanged keyboard/activate paths sharing scrollInput. The full deletion/addition comparison preserves pointer capture, touch drag threshold, touch-up activation, mouse click suppression, hover updates, document capture-phase wheel filtering, nonpassive cancellation and Ctrl-wheel propagation behavior. The binding runs once before ResizeObserver setup and initial paint. CSS host/canvas touch-action and full-viewport dimensions were inspected. Validator retains tiny-wheel and burst-write checks, keyboard scroll sequence, mouse-install navigation, narrow-screen positioning and CDP touch input in their former order.",
+            "systemReason": "Touch-only gesture variables now have one local input owner, while shared scroll remainder stays in start so keyboard, resize and action resets still coordinate with wheel/touch. Binding is not repeated by rendering and keeps the same document lifetime as the existing page. Actual hit actions from layout remain the sole activation authority; the extraction does not introduce a command evaluator or transport."
+          },
+          {
+            "paths": [
+              "site/scripts/validate.ts",
+              "site/scripts/build.ts",
+              "site/scripts/browser.ts",
+              "site/scripts/preview.ts",
+              "site/package.json",
+              "site/terminal.ts"
+            ],
+            "readingReason": "Followed package test/test:scroll callers into validate main, build output, loopback preview, browser/context/page creation, routed terminal inspection hook, desktop/mobile/fallback helpers, aggregate results and finally. Build still produces a minified terminal bundle; terminal.open(host) remains immediately followed by terminal.write, matching the unchanged inspection-hook contract at source level. Context routes now use page.context(), which is the same context that owns the passed page. Desktop scrolling restores Home before using the initial hit frame; desktop navigation exits at text.html and narrow-screen checks navigate back; touch checks end at the repository and mobile restores the landing page before fallback checks. Every former result field is returned and merged, with errors still checked before evidence writing.",
+            "systemReason": "Scenario helpers accept Page/Browser and URL rather than a large authority bag. The main script still owns build, preview, browser, evidence output and cleanup, while scenario-specific values no longer mutate a shared result accumulator. This makes the scenario sequence and its resource owner easier to locate. No new launch, filesystem cleanup or network destinations are introduced by these extractions. Browser launch failure before try and inherited browser-cache selection are existing limitations, not fixes or regressions claimed here."
+          },
+          {
+            "paths": [
+              "site/terminal.ts",
+              "site/index.html",
+              "site/styles.css",
+              "site/scripts/build.ts",
+              "site/install-command.ts",
+              "site/layout.ts",
+              "site/content.ts",
+              "site/scripts/validate.ts"
+            ],
+            "readingReason": "Followed template/build terminal bootstrap -> terminal start/failure -> semantic text fallback, and layout text/install/copy/demo actions -> activate. Inspected unchanged plain-switch focus escape, sr-only live region, installer constants and copyCommand/enhanceInstall, plus generated text-page content and no-JS/blocked-WASM validator helpers. Escape/text actions still navigate to text.html; repository actions still use location.assign; the same fallback markup remains visible when WASM startup fails. Installer text is copied/displayed, not executed by terminal input.",
+            "systemReason": "Input extraction and presentation extraction preserve accessibility/fallback authority: source markup owns semantic content, terminal owns rendered interaction and focus announcement, and the existing helper owns clipboard behavior. Moving validator fallbacks into one Browser/URL helper neither reroutes them through terminal state nor drops their assertions."
+          }
+        ],
+        "integrationReadingReason": "Fresh source-based lane judgment: both complete baseline-to-candidate diffs, including every deleted line, were read (validate diff lines 1-395 and terminal diff lines 1-297). Candidate assigned-source context and relevant baseline startup/validation lifetime were inspected, along with actual integrated callers and adapters. These changes are mostly extraction, but the extracted units correspond to genuine responsibilities: frame presentation/cache, pointer gesture binding, and validation scenarios. The wrappers introduce only narrow arguments and retain local closure ownership; there is no huge abstraction or context bag. The integrated layout/frame, input/scroll, bootstrap/fallback and validator contracts remain coherent. Improvement is modest but real: main timing and scenario orchestration can be read without all cell-checking/input mechanics. No source-backed integration objection was found in this lane; this is not a whole-repository sign-off.",
+        "objections": [],
+        "limits": [
+          "Read-only source review except the explicitly requested untracked result file. No tests, setup, builds, installs, formatters, auth/device/credential access, recovery investigation or source edits were performed; unsupported Pi preparation was not retried or bypassed. No delegation.",
+          "No prior individual-file judgments, artifacts, coverage summaries or green tests were used as verdict evidence.",
+          "Both assigned diffs are fully read; there are no assigned-diff unread gaps. Related context was selectively read, not attested as whole-file coverage everywhere: styles.css terminal/focus/sr-only sections; demos.ts IDs, duration and frame/transcript adapter sections rather than every scripted story; baseline assigned source only relevant unchanged startup/resource context beyond the full diff. No whole-repo sign-off.",
+          "Runtime behavior of minified inspection-hook matching, Chromium touch dispatch and Ghostty rendering is not execution-verified. External dependency internals were not reviewed. Source adjacency and the existing adapter contracts were reviewed; these limits do not substitute test evidence for the source judgment.",
+          "Reviewed build/browser/preview filesystem and network effects in source only: build replaces worktree site/dist, validation writes regression evidence and launches browser using configured/default cache, preview binds loopback. None was run. No temporary test fixture or code checkout was created or removed.",
+          "Durable provenance: review conducted in /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_be1a251b using git show/diff of the exact baseline and candidate. HEAD was the candidate, worktree status was clean before the result write, and candidate evidence/worktrees were preserved."
+        ]
       }
     },
     {
@@ -8911,7 +9002,7 @@
       ],
       "chars": 95525,
       "lines": 1904,
-      "status": "running",
+      "status": "accepted",
       "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
       "jobId": "task_6317bbac",
       "model": "openai-codex/gpt-6.1-sol",
@@ -8927,6 +9018,151 @@
         "setupTaskId": "task_bc53e4c2",
         "setupStatus": "failed",
         "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      },
+      "result": {
+        "lane": "lane-46",
+        "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
+        "candidate": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "verdict": "ACCEPT",
+        "diffReadPaths": [
+          "scripts/activity-runtime-acceptance.py",
+          "scripts/activity-terminal-acceptance.py",
+          "scripts/ansi_video_renderer.py",
+          "scripts/benchmark-footer-context.ts",
+          "scripts/tasks-ui-native-proof.py",
+          "scripts/tasks-ui-proof-build.ts",
+          "scripts/tasks-ui-proof-screenshots.ts",
+          "scripts/terminal-interactions.ts",
+          "scripts/terminal-perf/action-profiler.ts",
+          "scripts/terminal-perf/audit-probes/disk-callbacks.ts",
+          "scripts/terminal-perf/audit-probes/journal-stop.ts",
+          "scripts/terminal-perf/dashboard.ts"
+        ],
+        "contextReadPaths": [
+          "scripts/activity-runtime-acceptance.py",
+          "scripts/activity-terminal-acceptance.py",
+          "scripts/ansi_video_renderer.py",
+          "scripts/benchmark-footer-context.ts",
+          "scripts/tasks-ui-native-proof.py",
+          "scripts/tasks-ui-proof-build.ts",
+          "scripts/tasks-ui-proof-screenshots.ts",
+          "scripts/terminal-interactions.ts",
+          "scripts/terminal-perf/action-profiler.ts",
+          "scripts/terminal-perf/audit-probes/disk-callbacks.ts",
+          "scripts/terminal-perf/audit-probes/journal-stop.ts",
+          "scripts/terminal-perf/dashboard.ts",
+          "scripts/prepare-assets.ts",
+          "scripts/pi-host-adaptation.ts",
+          "src/cli.ts",
+          "scripts/task-placement-clean-video.py",
+          "src/history/session-manager.ts",
+          "src/agent/manual-shake.ts",
+          "src/ui/footer.ts",
+          "src/tasks/session-costs.ts",
+          "src/tasks/task-lifecycle.ts",
+          "scripts/terminal-perf/interaction-worker.ts",
+          "scripts/terminal-perf/interaction-normalize.ts",
+          "scripts/terminal-perf/tool-event-workloads.ts",
+          "scripts/terminal-perf/profiler.ts",
+          "scripts/terminal-perf/artifacts.ts",
+          "scripts/terminal-perf/report.ts"
+        ],
+        "sourceBlobs": {
+          "scripts/activity-runtime-acceptance.py": "b567863d0802af842a39af34935c9528ef4edc4f",
+          "scripts/activity-terminal-acceptance.py": "8760c4c386ebb251f9d4bcce65f73d68820d8f54",
+          "scripts/ansi_video_renderer.py": "b692fce492c0c227e42e9cc4645ce4bded57b27a",
+          "scripts/benchmark-footer-context.ts": "4a3883306c3a8437a15dbceaf93eae751204c4e0",
+          "scripts/tasks-ui-native-proof.py": "176b6ca6eab97b4bb6e8c31a053e8ee9ec8f8cf2",
+          "scripts/tasks-ui-proof-build.ts": "c6710c2ffd68ce9f89521bda3249f9ed64f8b18f",
+          "scripts/tasks-ui-proof-screenshots.ts": "1e17035bcea3692265434818cf51d1f98bdb5685",
+          "scripts/terminal-interactions.ts": "3dc3648e06896880f7e8ec92326c03e7075e78c3",
+          "scripts/terminal-perf/action-profiler.ts": "062743f9b9d3f410ff09eda39e76db21b717e11a",
+          "scripts/terminal-perf/audit-probes/disk-callbacks.ts": "34edf29c6932231369b0229665db3ddeb35338a5",
+          "scripts/terminal-perf/audit-probes/journal-stop.ts": "a62119275cf02374bfd2d0eee57d0af20c1d413f",
+          "scripts/terminal-perf/dashboard.ts": "b47c5df84073db71231d1d19208b382cee337402"
+        },
+        "sourceJourneys": [
+          {
+            "paths": [
+              "scripts/activity-runtime-acceptance.py",
+              "scripts/activity-terminal-acceptance.py"
+            ],
+            "readingReason": "prepare_long_thread now owns journal construction and state selection; long_thread still owns resize/reopen, draft, group/detail navigation and immutable-prefix/provider-absence assertions. Harness start creates sessions/state before use; launch reads state.session for the next reopen. The fixture dispatcher keeps failed-tool and user-intent priority, delegating unchanged response plans to named branches.",
+            "systemReason": "Fixture writes remain under the supplied evidence root, not live session selection. Retained call IDs, rather than request counts, still determine fixture behavior after replay or task/question delivery. The extraction reduces scenario reading burden without asserting that generated history itself proves UI behavior."
+          },
+          {
+            "paths": [
+              "scripts/tasks-ui-proof-build.ts",
+              "scripts/prepare-assets.ts",
+              "scripts/pi-host-adaptation.ts",
+              "src/cli.ts",
+              "scripts/tasks-ui-native-proof.py",
+              "scripts/tasks-ui-proof-screenshots.ts"
+            ],
+            "readingReason": "The build helper intentionally becomes OUTPUT_BINARY-only and removes unused web archive bytes/link/hash, while preserving tracked-clean checks, stable source commit, binary digest and purpose. CLI source embeds runtime assets, not that archive. Native proof validates the digest and uses the recorded commit. NativeCapture.session owns private HOME/repo/environment, inference fixture and private tmux socket; capture_scenario retains the exact staged handshake and typed shell identity checks. Screenshot capture still uses full viewport ANSI, escaped HTML, text equality, blocked network routes and browser-close finally.",
+            "systemReason": "This is coherent terminal-only proof rather than release provenance. Preflight adaptPiHostFile rejects unsupported/unadapted cached files before importing prepare-assets; preparePiHost independently validates version and every file before writing. No preparation was run. Lifecycle ownership is easier to locate; screenshot success remains distinct from required visual review and overall proof acceptance."
+          },
+          {
+            "paths": [
+              "scripts/ansi_video_renderer.py",
+              "scripts/task-placement-clean-video.py"
+            ],
+            "readingReason": "The renderer now separates SGR color application, font/presentation lifetime and encoding. _SnapshotRenderer recreates per-frame color state while retaining colors across lines; extended color operands, glyph width, original token-local clipping, frame timing, sample names and ffmpeg argv remain equivalent. Caller appends a final duration row and audits every selected row before encoding. Sampling still re-reads the timeline timestamp after audit callback execution.",
+            "systemReason": "Encoding/sampling remain renderer-owned, provenance/redactions/banned-text audits remain caller-owned. Private class state is narrowly fonts and fixed presentation, not a general context bag. PIL replay is not promoted into native terminal or visual acceptance."
+          },
+          {
+            "paths": [
+              "scripts/benchmark-footer-context.ts",
+              "src/history/session-manager.ts",
+              "src/agent/manual-shake.ts",
+              "src/ui/footer.ts"
+            ],
+            "readingReason": "nativeContextUsage is captured before both adapters; contextUsageReaders couples each estimator to its correct receiver. The native host explicitly uses SDK buildSessionProjection on real manager entries, whereas cached host exercises the disk cache plus shake wrapper. Both footer renderers consume ctx.getContextUsage. measureFooterFrames installs materialization counting around warmup plus five timed renders, resets after warmup, and restores the prototype in finally.",
+            "systemReason": "Reference and cached accounting do not accidentally share the adapter cache-seeding hook. Measurement boundaries and output fields survive extraction; manager disposal precedes removal of its owned fixture. Scoping the instrumentation narrows the lifetime a reader must reason about."
+          },
+          {
+            "paths": [
+              "scripts/terminal-perf/audit-probes/disk-callbacks.ts",
+              "scripts/terminal-perf/audit-probes/journal-stop.ts",
+              "src/tasks/session-costs.ts",
+              "src/tasks/task-lifecycle.ts",
+              "src/history/session-manager.ts"
+            ],
+            "readingReason": "measureCostRefresh still wraps each fresh tracker.consume, separating synchronous chunk handling from whole awaited refresh. readUsage calls consume only after awaited reads and closes each handle; audit verifies complete pending bytes and scanned work. Lifecycle audit measures recorder calls and checks persisted line count/hash. Journal audit owns materialize patch/restoration and all managers; terminal-stop audit retains setup exclusion, zero doRender entries and exactly one document restoration render.",
+            "systemReason": "Refactor separates actual measurement domains instead of conflating async elapsed time with CPU or stop restoration with a render frame. Disposing managers/restoring the prototype before the terminal domain removes irrelevant instrumentation lifetime without changing its measured work. Owned temporary cleanup exists in inspected code only; nothing was executed."
+          },
+          {
+            "paths": [
+              "scripts/terminal-interactions.ts",
+              "scripts/terminal-perf/interaction-worker.ts",
+              "scripts/terminal-perf/action-profiler.ts",
+              "scripts/terminal-perf/profiler.ts",
+              "scripts/terminal-perf/interaction-normalize.ts",
+              "scripts/terminal-perf/tool-event-workloads.ts"
+            ],
+            "readingReason": "runInteractionWorker retains explicit argv, timeout kill, concurrent exit/pipe drain, persisted diagnostics and nonzero rejection before reading raw JSON. Driver remains serial, normalizes raw evidence and checkpoints each case. Worker attaches frame then action profiler and disposes action then frame. FrameAttribution privately owns pending batches, first-frame weak associations and link drops; request captures caller root before its own span, enterFrame consumes the batch before rendering, and endRequest/endSpan backfill synchronous reentry timings with null for impossible end-to-entry ordering.",
+            "systemReason": "Schema/counters and normalized evidence-loss rejection remain compatible. WeakMap replaces the per-root field without adding global authority or retaining roots strongly. Request-during-render belongs to the next frame as before. Descriptor restoration and heartbeat cancellation stay attachment-owned, including partial attachment failure; the helper does not hide asynchronous context propagation that never existed."
+          },
+          {
+            "paths": [
+              "scripts/terminal-perf/dashboard.ts",
+              "scripts/terminal-perf/artifacts.ts",
+              "scripts/terminal-perf/report.ts"
+            ],
+            "readingReason": "writeArtifacts supplies run/baseline; dashboard still escapes script payload and obtains summaries/comparison from report. Named overview/table/selection/chart/slow-frame functions replace dense inline logic. Case changes reset metric while retaining cold/steady phase; chart phase fallback remains zero, budget uses the same >= boundary, and spike ranking still uses total duration independently of selected metric.",
+            "systemReason": "The offline report schema and keyboard selection behavior fit unchanged consumers. Expansion is useful separation of presentation tasks, not a new abstraction layer, network dependency or duplicated analysis engine."
+          }
+        ],
+        "integrationReadingReason": "All 12 complete baseline-to-candidate diffs, including deletions, were read in bounded contiguous chunks from exact Git objects. Relevant source journeys show local scenario/measurement ownership rather than cross-file context bags: fixture preparation versus acceptance, replay versus provenance, disk waits versus callback work, attribution versus attachment, and report calculation versus presentation. Most changes preserve existing behavior and make those boundaries explicit. The proof builder has a deliberate interface reduction (one output argument, no web-archive provenance) consistent with terminal-only CLI source and its native-proof consumer. No concrete integrated contradiction, lost owner or burdensome abstraction found in this lane. This accepts the assigned source integration only, not the whole repository or product runtime acceptance.",
+        "objections": [],
+        "limits": [
+          "Read-only source judgment; no tests, setup, builds, install, formatter, authentication, device access, secret access, source edits or delegation. Only this requested untracked result file was written.",
+          "No prior focus judgments, coverage artifacts, summaries or green tests were used as acceptance evidence.",
+          "No unread assigned diff gaps. Related context was read as targeted actual-source excerpts, not a claim to have read complete related files or the whole repository.",
+          "Automatic unsupported Pi preparation was not retried or bypassed; only its source authority was inspected. Cached SDK runtime behavior, Linux PTY/browser/font/ffmpeg execution, visual output, live providers/auth/devices and performance remain unverified.",
+          "Durable provenance is this existing worktree at candidate HEAD, with assigned Git blobs recorded above; no temporary checkout or executed fixtures were created. Candidate and existing evidence were preserved.",
+          "Safety for ALL descendants: NO sudo, recovery investigation, user secrets, shell deletion/cleanup commands, inherited HOME/config/SDK cleanup, nested shell traps, destructive git, or user-data mutation. User already recovered data and requested no recovery work. Tests must use explicit process argv/env and owned fs.mkdtemp fixture HOME/config/SDK; retain them, do not delete. Review filesystem/network effects BEFORE tests/setup. Existing test-code cleanup of provably owned temporary paths may be inspected but NEVER run a shell trap or inherited HOME removal. Need live auth/device? Report unverified, don't access credentials. Propagate these constraints verbatim. Independent code/review agents get durable worktrees, not /tmp code checkouts. Keep existing worktrees and candidate evidence. Test/source fixtures may use /tmp, but document durable provenance."
+        ]
       }
     },
     {
@@ -8949,7 +9185,7 @@
       ],
       "chars": 84429,
       "lines": 1965,
-      "status": "running",
+      "status": "accepted",
       "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
       "jobId": "task_14b1ddb1",
       "model": "openai-codex/gpt-6.1-sol",
@@ -8965,6 +9201,138 @@
         "setupTaskId": "task_a7488298",
         "setupStatus": "failed",
         "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      },
+      "result": {
+        "lane": "lane-47",
+        "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
+        "candidate": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "verdict": "ACCEPT",
+        "diffReadPaths": [
+          "scripts/terminal-perf/interaction-dashboard.ts",
+          "scripts/terminal-perf/interaction-normalize.ts",
+          "scripts/terminal-perf/interaction-options.ts",
+          "scripts/terminal-perf/interaction-report.ts",
+          "scripts/terminal-perf/interaction-tool-events.test.ts",
+          "scripts/terminal-perf/navigation-history.ts",
+          "scripts/terminal-perf/navigation-sdk-probe.ts",
+          "scripts/terminal-perf/navigation-terminal.ts",
+          "scripts/terminal-perf/navigation-workloads.ts",
+          "scripts/terminal-perf/profiler.ts",
+          "scripts/terminal-perf/selector-lifecycle-behavior.ts",
+          "scripts/terminal-perf/selector-lifecycle-probe.ts",
+          "scripts/terminal-perf/selector-lifecycle.test.ts"
+        ],
+        "contextReadPaths": [
+          "scripts/terminal-perf/interaction-options.ts",
+          "scripts/terminal-perf/interaction-normalize.ts",
+          "scripts/terminal-perf/interaction-report.ts",
+          "scripts/terminal-perf/interaction-dashboard.ts",
+          "scripts/terminal-perf/interaction-tool-events.test.ts",
+          "scripts/terminal-perf/navigation-workloads.ts",
+          "scripts/terminal-perf/profiler.ts",
+          "scripts/terminal-perf/selector-lifecycle-behavior.ts",
+          "scripts/terminal-perf/selector-lifecycle-probe.ts",
+          "scripts/terminal-perf/selector-lifecycle.test.ts",
+          "scripts/terminal-interactions.ts",
+          "scripts/terminal-perf/interaction-worker.ts",
+          "scripts/terminal-perf/tool-event-workloads.ts",
+          "scripts/terminal-perf/tool-workloads.ts",
+          "src/history/session-manager.ts",
+          "src/history/selector-lifecycle.ts",
+          "node_modules/@earendil-works/pi-coding-agent/dist/core/agent-session-runtime.js",
+          "node_modules/@earendil-works/pi-coding-agent/dist/modes/interactive/interactive-mode.js",
+          "node_modules/@earendil-works/pi-coding-agent/dist/modes/interactive/components/tree-selector.js",
+          "node_modules/@earendil-works/pi-tui/dist/tui.js",
+          "node_modules/@earendil-works/pi-tui/dist/tui-alt-screen.js"
+        ],
+        "sourceBlobs": {
+          "scripts/terminal-perf/interaction-dashboard.ts": "1142c9e4554230643455f275f492e44829c90ab5",
+          "scripts/terminal-perf/interaction-normalize.ts": "03425e9333f88fd84f0aa26bc11a78a294ae3d0f",
+          "scripts/terminal-perf/interaction-options.ts": "0d8768c9e6995b8954c9c05b298ac5e33f3ddbec",
+          "scripts/terminal-perf/interaction-report.ts": "c65d7a19f9e30836a378c88f12a3493a41031e5b",
+          "scripts/terminal-perf/interaction-tool-events.test.ts": "2e0e6eb8783ba3fcce9fde642717064f933dd67f",
+          "scripts/terminal-perf/navigation-history.ts": "bedf45729fe64d9fbfb6639d6d2dd5c3138742f8",
+          "scripts/terminal-perf/navigation-sdk-probe.ts": "481ff7b573d31037866b107623c8b18aeeed6970",
+          "scripts/terminal-perf/navigation-terminal.ts": "d2643f1280f9769585963939a597ea3154b96dce",
+          "scripts/terminal-perf/navigation-workloads.ts": "6a3240454997193b22f04167d3b7df5ef06b341c",
+          "scripts/terminal-perf/profiler.ts": "067127cee9b9abfbb30d5fac247b1c6edafa70a5",
+          "scripts/terminal-perf/selector-lifecycle-behavior.ts": "9c18d2aceee6255a1fd03d378c8a95cc0b8d3881",
+          "scripts/terminal-perf/selector-lifecycle-probe.ts": "4eb5fec67d1f24e91ab6779e4c563d725f33ba69",
+          "scripts/terminal-perf/selector-lifecycle.test.ts": "2bebb69d99d71d2dd09e5ac4bc36df31a7796f71"
+        },
+        "sourceJourneys": [
+          {
+            "paths": [
+              "scripts/terminal-perf/interaction-options.ts",
+              "scripts/terminal-interactions.ts",
+              "scripts/terminal-perf/interaction-worker.ts",
+              "scripts/terminal-perf/interaction-normalize.ts",
+              "scripts/terminal-perf/interaction-report.ts",
+              "scripts/terminal-perf/interaction-dashboard.ts"
+            ],
+            "readingReason": "Followed options through case selection, serial fresh-process collection, normalization, portable validation, strict peak gate and offline report/dashboard rendering. The switch consumes values only for valued flags and retains numeric limits, errors and budgetExplicit. Validation extraction preserves run-wide ID uniqueness, per-case repetition coverage and span/timing checks. Dashboard removes shared selected state: a case-owned picker closure drives the same sample, raw evidence and top spans even after table filtering.",
+            "systemReason": "Public CLI/report schema and observed-sync budget semantics remain consistent. Summaries use max observed scopes, not sums of nested spans or latency diagnostics. Escaped JSON embedding and textContent sinks remain intact; helper boundaries reduce nested reading without adding a context bag or a new authority."
+          },
+          {
+            "paths": [
+              "scripts/terminal-perf/tool-event-workloads.ts",
+              "scripts/terminal-perf/interaction-normalize.ts",
+              "scripts/terminal-perf/interaction-tool-events.test.ts",
+              "scripts/terminal-perf/interaction-report.ts"
+            ],
+            "readingReason": "Read direct burst dispatch counters, source reset, whole handleEvent callback instrumentation, frame phase capture and returned total counts. Compared the extracted validator with all removed checks: direct callbacks are a subset of total callbacks, burst frames use burst phase, event/update/result counts and finite forward bounds still reconcile before normalized measurements. Read the mixed subscribed-callback fixture and counter/timing mutation assertions as code, not test results.",
+            "systemReason": "The independently collected evidence stays the authority; extraction does not confuse a synchronous direct burst with subsequent subscribed-session callbacks or scheduled frames. Raw evidence identity, separate-turn boundary, measured burst duration and the peak gate are preserved."
+          },
+          {
+            "paths": [
+              "scripts/terminal-perf/navigation-workloads.ts",
+              "scripts/terminal-perf/navigation-history.ts",
+              "scripts/terminal-perf/navigation-terminal.ts",
+              "scripts/terminal-perf/navigation-sdk-probe.ts",
+              "scripts/terminal-perf/interaction-worker.ts",
+              "scripts/terminal-perf/interaction-normalize.ts",
+              "src/history/session-manager.ts",
+              "node_modules/@earendil-works/pi-coding-agent/dist/core/agent-session-runtime.js"
+            ],
+            "readingReason": "Read every deleted inline history, terminal and SDK-probe line and every corresponding new module. Followed retained navigation public reexports into worker lifecycle dispatch and normalizer. Read scheduled fixture setup/disposal separately from SDK runtime manager replacement and shutdown. New capture owner pairs profiler frames with that terminal write buffer/screen, resets before each input/lifecycle action, and preserves timing boundaries and 40ms capture drains.",
+            "systemReason": "The scheduled component fixture still owns its own renderer/manager/history; SDK runtime owns session replacement while the probe tracks instrumented managers and releases disk adapters after runtime shutdown. Narrow capture constructor arguments replace scattered optional capture fields, not a broad context object. Deterministic content excludes temporary header cwd, counting-terminal semantics are unchanged, and CLI source fingerprints now include extracted modules."
+          },
+          {
+            "paths": [
+              "scripts/terminal-perf/profiler.ts",
+              "scripts/terminal-perf/navigation-sdk-probe.ts",
+              "scripts/terminal-perf/navigation-workloads.ts",
+              "scripts/terminal-perf/tool-workloads.ts",
+              "scripts/terminal-perf/interaction-worker.ts",
+              "node_modules/@earendil-works/pi-tui/dist/tui.js",
+              "node_modules/@earendil-works/pi-tui/dist/tui-alt-screen.js"
+            ],
+            "readingReason": "Followed synchronous input dispatch into render requests, nextTick/timer scheduling and doRender entry; read profiler concrete-instance attachment, descriptor restoration, rollback, ring snapshots and callers. PendingRenderRequests owns the same first-request timestamp, per-dispatch input identity and coalesced counters. consume clears only the pending batch at frame entry, leaving dispatch association active so requests made while rendering start a new batch; duringInput restores nested dispatch association in finally.",
+            "systemReason": "Request/input delay remains scheduling-to-entry evidence, not synchronous duration. clear/dispose still drop pending associations; frame/write wrappers retain original return/throw behavior and exclusive phase accounting. The small state owner makes the temporal contract readable without widening the profiler API or changing caller lifetime."
+          },
+          {
+            "paths": [
+              "scripts/terminal-perf/selector-lifecycle-behavior.ts",
+              "scripts/terminal-perf/selector-lifecycle.test.ts",
+              "scripts/terminal-perf/selector-lifecycle-probe.ts",
+              "scripts/terminal-perf/navigation-sdk-probe.ts",
+              "src/history/selector-lifecycle.ts",
+              "src/history/session-manager.ts",
+              "node_modules/@earendil-works/pi-coding-agent/dist/modes/interactive/components/tree-selector.js",
+              "node_modules/@earendil-works/pi-coding-agent/dist/modes/interactive/interactive-mode.js"
+            ],
+            "readingReason": "Read deterministic tree construction and complete replay, actual selector constructor slots and nearest-visible-ancestor/filter logic. The added undefined fixes the previously misplaced label callback slot; setting selection now resolves to root under no-tools while current tool-call leaf remains visible. Only the local test consumed the removed hash field: it keeps the first 13 rendered snapshots under the historical digest and explicitly checks the corrected tail. Followed real disk resume through mounted selector acceptance, completion capture and chat verification; new finally restores both onSelect and doRender.",
+            "systemReason": "Test expectations are grounded in constructor/filter authority rather than quietly blessing the old malformed tail. Keybindings restoration now survives replay failure. Selector confirmation timing excludes settling and verification as before, and restored wrappers no longer outlive the capture. Metadata-based compaction counting keeps native fallback; test fixture cleanup now occurs after adapter readers are released and does not replay bodies for counts."
+          }
+        ],
+        "integrationReadingReason": "ACCEPT for this lane only. Complete assigned baseline-to-candidate diffs, including removals and new files, were read. Integrated changes preserve the observed CLI, normalized evidence, report/dashboard and navigation seam contracts while giving report validation, pending render batches, SDK capture and selector confirmation explicit small ownership boundaries. The navigation split removes an unrelated runtime lifetime from the scheduled workload reader and retains discoverable public reexports. No new cross-file contradiction, missing owner, oversized context bag or behavior regression was found in these journeys. Judgment is from actual code, not prior file judgments, coverage counts, hashes or test passes.",
+        "objections": [],
+        "limits": [
+          "Source-only review; no tests, setup, builds, installs, formatting, live auth/device checks or preparation ran. Unsupported Pi preparation was not retried or bypassed. No delegation. No secrets or user data accessed; no cleanup/deletion commands or source edits. Only this untracked result file was written.",
+          "No unread assigned diff gaps. Related context was read selectively at the exercised caller/authority/lifetime boundaries; this is not a whole-repository sign-off. Existing installed SDK implementation was inspected read-only as context, not treated as verified candidate runtime or green-test evidence.",
+          "Runtime timing, real terminal paint/backpressure, live provider/device behavior and full extension startup remain unverified; existing probe disclaimers and inherited limitations are not removed by these refactors.",
+          "Durable provenance: current worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_14b1ddb1 at candidate dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d; candidate tracked sources preserved. No temporary source checkout or executed fixture was created."
+        ]
       }
     },
     {
@@ -8983,8 +9351,23 @@
       ],
       "chars": 95862,
       "lines": 2285,
-      "status": "pending",
-      "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d"
+      "status": "running",
+      "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+      "jobId": "task_c2006147",
+      "model": "openai-codex/gpt-6.1-sol",
+      "workspace": {
+        "kind": "worktree",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_c2006147",
+        "worktreePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_c2006147",
+        "sourcePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
+        "baseRef": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "baseOid": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "branch": "bruv/pr45-final-integrated-diff-lane-48-ui-te-c2006147",
+        "preparationStatus": "ready",
+        "setupTaskId": "task_b4948386",
+        "setupStatus": "failed",
+        "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      }
     },
     {
       "id": "lane-49",
@@ -9006,8 +9389,23 @@
       ],
       "chars": 93878,
       "lines": 2093,
-      "status": "pending",
-      "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d"
+      "status": "running",
+      "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+      "jobId": "task_0f0ffc58",
+      "model": "openai-codex/gpt-6.1-sol",
+      "workspace": {
+        "kind": "worktree",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_0f0ffc58",
+        "worktreePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_0f0ffc58",
+        "sourcePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
+        "baseRef": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "baseOid": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "branch": "bruv/pr45-final-integrated-diff-lane-49-ui-te-0f0ffc58",
+        "preparationStatus": "ready",
+        "setupTaskId": "task_282d97df",
+        "setupStatus": "running",
+        "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      }
     },
     {
       "id": "lane-50",
@@ -9022,8 +9420,23 @@
       ],
       "chars": 99034,
       "lines": 2144,
-      "status": "pending",
-      "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d"
+      "status": "running",
+      "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+      "jobId": "task_13eda299",
+      "model": "openai-codex/gpt-6.1-sol",
+      "workspace": {
+        "kind": "worktree",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_13eda299",
+        "worktreePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_13eda299",
+        "sourcePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
+        "baseRef": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "baseOid": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "branch": "bruv/pr45-final-integrated-diff-lane-50-ui-te-13eda299",
+        "preparationStatus": "ready",
+        "setupTaskId": "task_1495fb83",
+        "setupStatus": "running",
+        "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      }
     },
     {
       "id": "lane-51",
@@ -9126,8 +9539,5 @@
     }
   ],
   "repairedSourceCandidate": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
-  "currentDiffPaths": 513,
-  "pausedForRework": {
-    "reason": "Use completed site slot for observed rendering repair/new-helper lineage."
-  }
+  "currentDiffPaths": 513
 }

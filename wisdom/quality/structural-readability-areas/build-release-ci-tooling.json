@@ -2684,7 +2684,7 @@
     {
       "focus": "tests/smoke-script.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "pending",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_d0d9d3eb",
@@ -2720,18 +2720,19 @@
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "d82e1ba631ca80b259fdfceb4db0bd2399079b02",
       "readingResult": "Readable shellfixtures and independent pairfailure cases replace escaped strings/sequential mutation;probe/buildcount/cleanup explicit,unchangedcwd limit.",
       "checks": "16focuspass;tsc/Biome/diff;copiedrealpairsmoke/cleanup pass.",
       "integrationState": "Fullfocuspatch integrated;smokesourceunchanged;notesexcluded;stalledjudge noverdict.",
       "resume": {
-        "status": "pending",
-        "acceptedBlob": "b0b5232653b47e05d11275766e5f9ede4229e561",
+        "status": "accepted",
+        "acceptedBlob": "d82e1ba631ca80b259fdfceb4db0bd2399079b02",
         "primaryId": "task_f7db8eb8",
         "primaryCommit": "a1f238b96cc562dfde095f0b486b2d674c410414",
-        "judgeIds": ["task_f209f608"],
+        "judgeIds": ["task_f209f608", "task_9cd1c88b"],
         "sourceCommit": "a1f238b96cc562dfde095f0b486b2d674c410414",
-        "state": "needs-judge"
+        "state": "accepted-joined",
+        "reason": "Read the entire candidate focus and its base diff, then followed fixture() -> installPair()/run() -> scripts/smoke.sh -> shell stand-ins and every assertion. fixture() establishes one retained mkdtemp root and ownedFixtureEnv(root); the outer /bin/sh spawn receives that explicit environment with only fixture-bin PATH, smoke-temps TMPDIR and the intentional sentinel layered. This resolves the earlier contradictory authority: build and bun -e version discovery no longer inherit parent provider/config/SDK/preload state, while the later env -i product/connector/web probes remain a visibly separate authority. Removing the root afterEach deletion makes retained evidence lifetime clear without a context abstraction. The exact smoke-temps emptiness assertion remains at the command boundary."
       }
     },
     {
@@ -2770,12 +2771,12 @@
       "integrationState": "Fullfocuspatch integrated;sharedhelpers unchanged;noteexcluded.",
       "resume": {
         "status": "pending",
-        "acceptedBlob": "0e9728fccb32c1657f09e6d305ac14a10d1621ba",
+        "acceptedBlob": "fd2ba3a77915061356f260161bf1ec68a298141b",
         "primaryId": "task_f7db8eb8",
         "primaryCommit": "a1f238b96cc562dfde095f0b486b2d674c410414",
         "judgeIds": ["task_900a3c32"],
-        "sourceCommit": "a1f238b96cc562dfde095f0b486b2d674c410414",
-        "state": "needs-judge"
+        "sourceCommit": null,
+        "state": "needs-rework"
       }
     },
     {
@@ -3135,7 +3136,7 @@
     {
       "focus": "tests/setup-native-release-gate.test.ts",
       "initialBase": "7211ff984b6c23c684ff364356f43401bd7a17ea",
-      "state": "pending",
+      "state": "accepted",
       "primary": [
         {
           "id": "task_29efc903",
@@ -3162,7 +3163,7 @@
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "7526d7a19167310599a6f540c64027bd30cf760b",
       "origin": {
         "primary": "task_2837e782",
         "candidate": "3cefc2172c5b14d87fce683266e80ce6d8cf6cbd"
@@ -3178,13 +3179,14 @@
       "checks": "15combinedpass;strict tsc/Biome/diffpass;no builds/live.",
       "integrationState": "Full final focus patch integrated;EXTRA primary/finaljudge complete;setup sourceunchanged,notesexcluded.",
       "resume": {
-        "status": "pending",
-        "acceptedBlob": "e1bf5ce576f4f1ddec4c42c86e6b32637ceb5267",
+        "status": "accepted",
+        "acceptedBlob": "7526d7a19167310599a6f540c64027bd30cf760b",
         "primaryId": "task_f7db8eb8",
         "primaryCommit": "a1f238b96cc562dfde095f0b486b2d674c410414",
-        "judgeIds": ["task_6e25dc37"],
+        "judgeIds": ["task_6e25dc37", "task_9cd1c88b"],
         "sourceCommit": "a1f238b96cc562dfde095f0b486b2d674c410414",
-        "state": "needs-judge"
+        "state": "accepted-joined",
+        "reason": "Read the entire candidate focus and its base diff, then followed setup() from owned mkdtemp creation through the command stubs, explicit /bin/bash spawn, result/evidence collection and each success/failure assertion. ownedFixtureEnv(root) is established beside the fixture paths; only the stub PATH, RUNNER_TEMP, GITHUB_ENV, browser location, resolved REAL_NODE and intentional failure control are layered. The real setup and the real Node SDK API import consequently inherit fixture HOME/config/SDK/cache and no worker provider/config/preload state. Removing the finally root deletion also flattens the ownership journey and retains the complete HOME/log/checksum/handoff evidence rather than hiding its destruction behind a return."
       }
     },
     {
@@ -3584,7 +3586,7 @@
     "retainedWorktrees": "Per-file primary[].path and branch retained, including stopped/rejected attempts."
   },
   "resumeStatus": {
-    "accepted": 71,
-    "pending": 3
+    "accepted": 73,
+    "pending": 1
   }
 }

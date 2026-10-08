@@ -1,8 +1,10 @@
 import { expect, test } from "bun:test";
 import { spawnSync } from "node:child_process";
-import { mkdirSync, mkdtempSync, readFileSync, readlinkSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, readlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+
+import { ownedFixtureEnv } from "./helpers";
 
 const existingEnv = "EXISTING=value\n";
 type Failure = "fetch-failure" | "download-failure" | "checksum-failure" | "extraction-failure" | "api-failure";
@@ -19,25 +21,25 @@ function setup({ failure, browserCount = 1 }: { failure?: Failure; browserCount?
     sdkArchive: join(root, "native-claude-sdk/sdk.tgz"),
     sdkModule: join(root, "native-claude-sdk/package/sdk.mjs"),
   };
-  try {
-    const bin = join(root, "bin");
-    const browsers = join(root, "browsers");
-    const envFile = join(root, "env");
-    const callsFile = join(root, "calls.ndjson");
-    const checksumFile = join(root, "checksum-input");
-    mkdirSync(bin);
-    mkdirSync(browsers);
-    mkdirSync(paths.playwrightCore, { recursive: true });
-    for (let i = 0; i < browserCount; i++) {
-      const directory = join(browsers, String(i));
-      mkdirSync(directory);
-      writeFileSync(join(directory, i === 0 ? "chrome-headless-shell" : "headless_shell"), "fixture");
-    }
-    writeFileSync(envFile, existingEnv);
-    writeFileSync(callsFile, "");
-    writeFileSync(checksumFile, "");
-    const stubs = {
-      node: `
+  const fixtureEnv = ownedFixtureEnv(root);
+  const bin = join(root, "bin");
+  const browsers = join(root, "browsers");
+  const envFile = join(root, "env");
+  const callsFile = join(root, "calls.ndjson");
+  const checksumFile = join(root, "checksum-input");
+  mkdirSync(bin);
+  mkdirSync(browsers);
+  mkdirSync(paths.playwrightCore, { recursive: true });
+  for (let i = 0; i < browserCount; i++) {
+    const directory = join(browsers, String(i));
+    mkdirSync(directory);
+    writeFileSync(join(directory, i === 0 ? "chrome-headless-shell" : "headless_shell"), "fixture");
+  }
+  writeFileSync(envFile, existingEnv);
+  writeFileSync(callsFile, "");
+  writeFileSync(checksumFile, "");
+  const stubs = {
+    node: `
 if [[ "$1" == wisdom/claude-compat/proof/official-2644/fetch-official.mjs ]]; then
   [[ "$FAILURE" != fetch-failure ]] || exit 31
   mkdir "$2"
@@ -45,13 +47,13 @@ if [[ "$1" == wisdom/claude-compat/proof/official-2644/fetch-official.mjs ]]; th
 else
   exec "$REAL_NODE" "$@"
 fi`,
-      curl: `
+    curl: `
 [[ "$FAILURE" != download-failure ]] || exit 32
 touch "$RUNNER_TEMP/native-claude-sdk/sdk.tgz"`,
-      sha256sum: `
+    sha256sum: `
 cat > "$RUNNER_TEMP/checksum-input"
 [[ "$FAILURE" != checksum-failure ]] || exit 33`,
-      tar: `
+    tar: `
 [[ "$FAILURE" != extraction-failure ]] || exit 34
 mkdir "$RUNNER_TEMP/native-claude-sdk/package"
 if [[ "$FAILURE" == api-failure ]]; then
@@ -59,47 +61,44 @@ if [[ "$FAILURE" == api-failure ]]; then
 else
   echo "export function getSubagentMessages() {}"
 fi > "$RUNNER_TEMP/native-claude-sdk/package/sdk.mjs"`,
-    };
-    // Keep argv boundaries: the fixture deliberately uses a path containing spaces.
-    for (const [command, body] of Object.entries(stubs)) {
-      writeFileSync(
-        join(bin, command),
-        `#!/bin/bash
+  };
+  // Keep argv boundaries: the fixture deliberately uses a path containing spaces.
+  for (const [command, body] of Object.entries(stubs)) {
+    writeFileSync(
+      join(bin, command),
+      `#!/bin/bash
 set -euo pipefail
 "$REAL_NODE" -e 'require("node:fs").appendFileSync(process.env.RUNNER_TEMP + "/calls.ndjson", JSON.stringify(process.argv.slice(1)) + "\\n")' "${command}" "$@"
 ${body}
 `,
-        { mode: 0o755 },
-      );
-    }
-    const result = spawnSync("/bin/bash", [join(import.meta.dir, "../scripts/setup-native-release-gate.sh")], {
-      encoding: "utf8",
-      cwd: join(import.meta.dir, ".."),
-      env: {
-        ...process.env,
-        PATH: bin + ":" + process.env.PATH,
-        RUNNER_TEMP: root,
-        GITHUB_ENV: envFile,
-        PLAYWRIGHT_BROWSERS_PATH: browsers,
-        REAL_NODE: Bun.which("node")!,
-        FAILURE: failure ?? "",
-      },
-    });
-    return {
-      paths,
-      result,
-      env: readFileSync(envFile, "utf8"),
-      calls: readFileSync(callsFile, "utf8")
-        .trim()
-        .split("\n")
-        .filter(Boolean)
-        .map((line) => JSON.parse(line) as string[]),
-      checksumInput: readFileSync(checksumFile, "utf8"),
-      playwright: readlinkSync(join(paths.runtime, "node_modules/playwright")),
-    };
-  } finally {
-    rmSync(root, { recursive: true, force: true });
+      { mode: 0o755 },
+    );
   }
+  const result = spawnSync("/bin/bash", [join(import.meta.dir, "../scripts/setup-native-release-gate.sh")], {
+    encoding: "utf8",
+    cwd: join(import.meta.dir, ".."),
+    env: {
+      ...fixtureEnv,
+      PATH: bin + ":" + fixtureEnv.PATH,
+      RUNNER_TEMP: root,
+      GITHUB_ENV: envFile,
+      PLAYWRIGHT_BROWSERS_PATH: browsers,
+      REAL_NODE: Bun.which("node")!,
+      FAILURE: failure ?? "",
+    },
+  });
+  return {
+    paths,
+    result,
+    env: readFileSync(envFile, "utf8"),
+    calls: readFileSync(callsFile, "utf8")
+      .trim()
+      .split("\n")
+      .filter(Boolean)
+      .map((line) => JSON.parse(line) as string[]),
+    checksumInput: readFileSync(checksumFile, "utf8"),
+    playwright: readlinkSync(join(paths.runtime, "node_modules/playwright")),
+  };
 }
 
 test("native setup verifies pinned inputs before handing off all three gate paths", () => {
