@@ -6165,7 +6165,7 @@
         "branch": "bruv/pr45-final-integrated-diff-lane-26-execu-6d37f4ed",
         "preparationStatus": "ready",
         "setupTaskId": "task_6d60ed4a",
-        "setupStatus": "running",
+        "setupStatus": "failed",
         "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
       },
       "repairHistory": [
@@ -8146,7 +8146,7 @@
         "branch": "bruv/pr45-final-integrated-diff-lane-37-remot-5de6aadd",
         "preparationStatus": "ready",
         "setupTaskId": "task_05fafdea",
-        "setupStatus": "running",
+        "setupStatus": "failed",
         "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
       },
       "repairHistory": [
@@ -8706,7 +8706,7 @@
         "branch": "bruv/pr45-final-integrated-diff-lane-40-remot-3bac1f85",
         "preparationStatus": "ready",
         "setupTaskId": "task_b17c94d5",
-        "setupStatus": "running",
+        "setupStatus": "failed",
         "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
       },
       "repairHistory": [
@@ -9216,21 +9216,21 @@
       ],
       "chars": 64197,
       "lines": 1486,
-      "status": "pending",
+      "status": "running",
       "candidateOverride": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
-      "jobId": "task_5d43a066",
+      "jobId": "task_ae2c2e7b",
       "model": "openai-codex/gpt-6.1-sol",
       "workspace": {
         "kind": "worktree",
-        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_5d43a066",
-        "worktreePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_5d43a066",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_ae2c2e7b",
+        "worktreePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_ae2c2e7b",
         "sourcePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
-        "baseRef": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
-        "baseOid": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
-        "branch": "bruv/pr45-final-integrated-diff-lane-43-remot-5d43a066",
+        "baseRef": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+        "baseOid": "b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0",
+        "branch": "bruv/pr45-final-integrated-diff-lane-43-remot-ae2c2e7b",
         "preparationStatus": "ready",
-        "setupTaskId": "task_2b08a9f1",
-        "setupStatus": "failed",
+        "setupTaskId": "task_7ccbc5b6",
+        "setupStatus": "running",
         "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
       },
       "repairHistory": [
@@ -11163,7 +11163,7 @@
   ],
   "cap": 6,
   "auxStatus": "completed",
-  "reworkReserve": 3,
+  "reworkReserve": 2,
   "reworkHistory": [
     {
       "lane": "lane-05",

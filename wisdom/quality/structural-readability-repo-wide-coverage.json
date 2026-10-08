@@ -20316,56 +20316,26 @@
       "initialBlob": "823b81438fe53e0bab52108e9ae3ca9733acfedb",
       "status": "pending",
       "area": "execution-tasks-questions",
-      "resumeState": "needs-rework",
-      "primaryId": "task_d848af48",
+      "resumeState": "needs-judge",
+      "primaryId": "task_e7320bb4",
       "judgeIds": ["task_b17a5ed7"],
-      "sourceCommit": null,
+      "sourceCommit": "eed9d67a5b58cc407f34e49f770c74a68503466e",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
       "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage.",
-      "primaryCommit": "9415644f7dd7f71ae14b289930077652d39dbfb7",
-      "primaryBase": "cfd8136a69452f4c4460626f17cb9d4c4a1d3653",
-      "primaryResult": "Separated the source fixture capture and exact-replay upload operations, then made transport isolation and result-export authorization separate scenarios. Upload assertions still explicitly verify the root-owned checkout, dirty tracked bytes, one-commit history and exclusion of unapproved files. The export scenario starts with the same uploaded snapshot and keeps the exact no-root, accepted, unknown, failed-close and successful-close checks plus snapshot/content/digest assertions. No new state container or production abstraction. Complete-file reading also covered create/command replay, detach/observe redaction, unsettled and clean/failed close, pending prompt versus abort, owner-death/crash uncertainty, journal gaps, identity/command/model rejection, duplicate ownership and UI-dialog replay/reconnect. These unchanged scenarios already keep their stimulus, persisted consequence and fake-owner drain visible together; their existing duplication does not require reconstructing an authority across files.",
+      "primaryCommit": "eed9d67a5b58cc407f34e49f770c74a68503466e",
+      "primaryBase": "882cfa3a21f72bbd8b29f4dc169618f3c83cb171",
+      "primaryResult": "Wrapped the complete file in the existing no-filter ownedProcessSuite entry, making every scenario descend from its retained fs.mkdtemp host and ownedFixtureEnv allowlist (HOME/XDG config/cache/data, SDK, TMPDIR, empty hooks, no inherited Git/provider configuration). The direct Git helper keeps explicit argv/env and uses that owned host rather than pretending two flags provide isolation. All test fixture directories are retained; ledgers still close, and the dialog-reconnect ledger now closes in finally. Kept the candidate captureTrackedFixture/uploadWithExactReplay operations and the separate upload/export scenarios. Upload still checks exact replay, root-owned checkout, dirty tracked bytes, one-commit history, and exclusion of unapproved files; export still rejects absent/accepted/unknown/failed-close roots and accepts only closed exitCode 0 with snapshot/content/digest checks. Complete-file reading also traced unchanged create/command replay and conflict rejection, detach/observe redaction and sequence cursors, pending settlement versus clean/failed exit closure, prompt acknowledgement versus abort, uncertain writes/dead-owner/crash dispatch reconciliation, journal gaps, identity/command/model rejection, duplicate owner protection, and UI-response replay/reconnect. Those scenarios already keep stimulus, persisted consequence and fake-owner drain together; no further extraction or state container was warranted.",
       "primaryPaths": ["tests/root-owner.test.ts"],
       "primaryChecks": [
-        {
-          "kind": "source-reading",
-          "result": "Read wisdom/values.md and structural-readability-guidance.md; inspected only focus ledger/evidence rows. Evidence records no prior candidate; focus already existed, so no old branch or candidate bytes were imported."
-        },
-        {
-          "kind": "caller-trace",
-          "paths": [
-            "src/remote/root-client.ts",
-            "src/remote/root-owner.ts",
-            "src/remote/repository.ts",
-            "src/remote/repository-wire.ts"
-          ],
-          "result": "Client uploads pinned source before create and gates return on successful closed root; owner maps closed/exitCode 0 to done for repository result; wire separates upload replay from completion-gated result export."
-        },
-        {
-          "kind": "formatter",
-          "result": "Required read-only Biome executable invoked with node child_process argv on tests/root-owner.test.ts only; formatted one file, no fixes applied.",
-          "retainedFixture": "/tmp/pr45-root-owner-format-6CEauZ",
-          "environment": "Fresh retained HOME, XDG_CONFIG_HOME, TMPDIR; PATH=/usr/bin:/bin."
-        },
-        {
-          "kind": "static-preservation",
-          "result": "Leading owner scenarios and trailing UI-dialog scenarios byte-identical; checkout assertions and export authorization/content/digest block byte-identical; upload replay body unchanged except indentation and replacing direct f.options with options parameter."
-        },
-        {
-          "kind": "git-diff-check",
-          "result": "Passed."
-        },
-        {
-          "kind": "commit-safety",
-          "result": "Inspected configured/default hooks directory; no active hooks. Commit contains only the focus source file.",
-          "durableWorktree": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_d848af48"
-        }
+        "Starting focus bytes exactly matched rejected candidate b55a6caa54d5cd11163e4f2ba7c62bae8d0776e0 (blob 5359344120d28666a3cecfea67d9419de954b890). Read its primary-base diff and assigned reconciliation row.",
+        "Read whole focus and existing owned-process host/fixture allowlist; traced capture/orphan bundle, repository-upload clone/checkout and successful-close result collection children and environment scrubber.",
+        "Required Biome format --write invoked with child_process explicit argv and isolated retained HOME/config/SDK/TMPDIR; exit 0. Evidence retained at /tmp/pr45-root-owner-format-AcXn2u with launch manifest and outputs. Source remains in durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_e7320bb4.",
+        "git diff --check exited 0; reviewed whitespace-insensitive source diff for assertion preservation, retained fixture scope, and close/drain lifetimes. Only tests/root-owner.test.ts changed; source-only commit created."
       ],
       "primaryLimits": [
-        "No tests, setup or builds run: parent owns audited isolated batch gates. Static preservation and formatter are not runtime or independent readability acceptance.",
-        "Reviewed snapshot fixture effects before any possible runtime gate: local Git init/commit/capture/clone and root-owned persistence/result writes; existing owned-temporary-path cleanup remains source-only and was not executed. Snapshot setup now runs independently for each of the two authority scenarios.",
-        "Parent runtime gate must supply explicit process argv/env and fresh retained owned HOME/config/SDK fixtures; current source Git helpers still inherit that gate environment. No inherited HOME/config/SDK mutation or cleanup, shell deletion/traps, recovery work, credential/device access, setup bypass, push, merge, or delegation performed.",
-        "Independent fresh judge is parent-owned. No per-worker wisdom changes; parent writes aggregate wisdom."
+        "No tests, setup or builds run; parent owns audited isolated gates and fresh independent judgment. Runtime behavior remains unverified here.",
+        "No credentials/config inspection, live auth/device access, recovery work, cleanup commands, destructive Git, or shared-dependency mutation. Existing production deletion is confined to task-owned checkout/result paths; no production source was changed.",
+        "Runtime agent.model verification remains parent-owned. Formatter evidence and fixture ownership design are not runtime acceptance proof."
       ],
       "acceptedBlob": "5359344120d28666a3cecfea67d9419de954b890",
       "result": "Read the complete 620-line candidate and exact primary-base diff, including unchanged tests. Previously one scenario mixed local source capture, replay-safe chunk transfer, checkout-content validation and export authority state transitions. captureTrackedFixture now owns the committed baseline, dirty tracked bytes and deliberately unapproved file; uploadWithExactReplay owns chunk construction and exact retry equality. Separate transport and export tests make their distinct authorities readable. The transport test retains root-owned checkout path, dirty content, one-commit history and tracked-only assertions. The export test still starts from the same uploaded snapshot, rejects no-root and accepted roots, rejects unknown and closed/exit-1 states, and accepts only closed/exit-0 with original snapshot/content/digest assertions. Helpers are cohesive operations using explicit arguments, not a new shared state container. Unchanged create/command replay, detach/observe redaction, unsettled-close, clean/failed-exit, outstanding-prompt abort, uncertain-write/owner death, crash reconciliation, journal gaps, identity/model/command rejection, duplicate-owner and dialog/reconnect cases retain stimulus, persisted outcome and owner drain together. They do not need additional extraction to make their authority visible.",
@@ -20411,7 +20381,14 @@
           }
         ],
         "readingReason": "Split real-Git scenarios still run direct and captureRepository Git descendants with ambient host authority. Use accepted no-filter ownedProcessSuite or equally explicit owned process entry, no global env edits, retain scenario/evidence directories; preserve replay/dirty tracked/excluded untracked/successful close assertions. No tests or credential/config inspection."
-      }
+      },
+      "priorPrimaryLineage": [
+        {
+          "primaryId": "task_d848af48",
+          "sourceCommit": null,
+          "primaryBase": "cfd8136a69452f4c4460626f17cb9d4c4a1d3653"
+        }
+      ]
     },
     {
       "file": "tests/root-placement-options.test.ts",
