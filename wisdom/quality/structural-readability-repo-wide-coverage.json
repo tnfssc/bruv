@@ -8733,13 +8733,45 @@
       "initialBlob": "dcfc5d699293bf0adff7c09d0766b2b36d19f909",
       "status": "pending",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_bc4cf36e",
+      "primaryCommit": "8eee7eeac7528f4031ab1568549cf6bac8fadf13",
       "judgeIds": [],
-      "sourceCommit": "713833b3b7093c26fe020d415f972ae122d40970",
+      "sourceCommit": "8eee7eeac7528f4031ab1568549cf6bac8fadf13",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
-      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+      "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
+      "primaryBase": "9dbf1a75460241ed39f732691400bd4ed5621145",
+      "primaryResult": "Journal decoding, text projection, and polling now form a file-local observation boundary. Each of the four journal-dependent phases passes its predicate and deadline directly to waitForSessionEntry, while the chronological scenario retains terminal control, both managed-job-survival assertions, completion cardinality/content assertions, and resumed-answer ordering. The separate file-start wait still uses the same polling operation. Traced the tmux run helper, installed interactive Escape handler, execute foreground wait signal, managed shell launch/foreground wait, and task-complete triggerTurn dispatch. Existing focus was present and matched the preserved baseline; no old branch or unrelated candidate bytes were imported.",
+      "primaryPaths": ["tests/background-interrupt-tui.test.ts"],
+      "primaryChecks": [
+        {
+          "name": "required formatter",
+          "result": "passed",
+          "command": "/home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/@biomejs/biome/bin/biome format --write tests/background-interrupt-tui.test.ts",
+          "environment": "Fresh retained /tmp/pr45-interrupt-format-ZOtZml HOME/config/TMPDIR/SDK directories; node child_process argv; source focus only"
+        },
+        {
+          "name": "git diff --check",
+          "result": "passed before commit"
+        },
+        {
+          "name": "static assertion-text comparison",
+          "result": "All five expect assertion expressions unchanged modulo whitespace"
+        },
+        {
+          "name": "Bun.Transpiler.scan",
+          "result": "Static TS source scan succeeded; no emit or module execution"
+        },
+        {
+          "name": "manual semantic diff",
+          "result": "Journal parsing tolerance, predicates, polling interval, deadlines, evidence timestamps, terminal setup, cleanup, and LLM opt-in gate retained"
+        }
+      ],
+      "primaryLimits": [
+        "No setup, tests, builds, or provider/device/credential access performed; parent owns isolated runtime gates and independent judgment. Existing opt-in test launches tmux/built CLI with an LLM provider, writes temp/session/artifact files, and performs cleanup; it was not executed.",
+        "Attempted read-only TypeScript JS parser import was unavailable: node_modules/typescript/lib/typescript.js returned ENOENT. Static Bun scan and assertion-text comparison used instead.",
+        "No worker wisdom edits: parent owns aggregate wisdom."
+      ]
     },
     {
       "file": "tests/background-ux-tui.test.ts",
