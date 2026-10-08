@@ -219,6 +219,15 @@
         "branch": "bruv/pr45-primary-scripts-remote-root-placeme-4c34a8a9",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
+      },
+      {
+        "id": "task_7d28ea98",
+        "stage": "judge",
+        "focus": "scripts/remote-recovery-e2e.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_7d28ea98",
+        "branch": "bruv/pr45-judge-scripts-remote-recovery-e2e.t-7d28ea98",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
       }
     ]
   },
@@ -975,7 +984,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_48469090",
         "branch": "bruv/pr45-primary-scripts-tasks-ui-proof-scre-48469090",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "70ed7b9be7d505db9c65ca09eab71a1d0843f6b3"
       },
       {
         "id": "task_8399b33f",
@@ -983,6 +993,15 @@
         "focus": "scripts/terminal-perf/audit-probes/disk-callbacks.ts",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_8399b33f",
         "branch": "bruv/pr45-primary-scripts-terminal-perf-audit-8399b33f",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_6e013db2",
+        "stage": "primary",
+        "focus": "scripts/terminal-perf/audit-probes/journal-stop.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_6e013db2",
+        "branch": "bruv/pr45-primary-scripts-terminal-perf-audit-6e013db2",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
       }

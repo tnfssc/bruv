@@ -3199,13 +3199,41 @@
       "initialBlob": "c2db3b69aea3197ac7d013e9ba58ad8443a91199",
       "status": "pending",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-primary",
-      "primaryId": "task_46eaf8ec",
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_48469090",
+      "primaryCommit": "70ed7b9be7d505db9c65ca09eab71a1d0843f6b3",
       "judgeIds": [],
-      "sourceCommit": "7c4bd77934b4974e02a4960eef7f33839d5d79f9",
+      "sourceCommit": "70ed7b9be7d505db9c65ca09eab71a1d0843f6b3",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
-      "pendingReason": "Assigned task_46eaf8ec; no completed primary candidate commit or independent actual-code verdict. Historical primary-running label is not completion. Preserved worktree is clean at launch base; no source candidate exists."
+      "pendingReason": "Assigned task_46eaf8ec; no completed primary candidate commit or independent actual-code verdict. Historical primary-running label is not completion. Preserved worktree is clean at launch base; no source candidate exists.",
+      "primaryBase": "1c5fdc5a8a8953164c2914738af32941fbb07399",
+      "primaryResult": "renderViewportDocument owns exact ANSI-to-document composition. captureScreenshots owns cached Playwright loading, browser launch, network blocking, frame replay, font readiness, text-identity assertion, full-page PNG hashes, and finally-close; it returns hashes only after closure. The contiguous CLI orchestration reads capture inputs, awaits capture, then publishes the unchanged provenance manifest. ANSI interpretation, escaping, routes, screenshot options, assertions, hashes and caller contract remain intact.",
+      "primaryPaths": [
+        "scripts/tasks-ui-proof-screenshots.ts"
+      ],
+      "primaryChecks": [
+        {
+          "kind": "source-reading",
+          "result": "Read wisdom/values.md and structural readability guidance; inspected only focus rows in area/repo coverage ledgers and preserved resume reconciliation evidence. Focus baseline was present at c2db3b69aea3197ac7d013e9ba58ad8443a91199; no old candidate import needed."
+        },
+        {
+          "kind": "caller-trace",
+          "result": "Read NativeCapture.capture, render_screenshots, and main in scripts/tasks-ui-native-proof.py: native ANSI viewport files and timeline are inputs; the caller requires successful exit and every frame PNG, and includes helper hashes in its report."
+        },
+        {
+          "kind": "format",
+          "result": "Repository Biome format --write succeeded on the focus only via node child_process argv with fresh isolated HOME/config/TMPDIR/cache/data/SDK dirs; retained environment at /tmp/pr45-screenshots-format-l7PVSU."
+        },
+        {
+          "kind": "diff-review",
+          "result": "git diff --check passed; reviewed final source diff for preserved replay, HTML contents, network abort, font readiness, text equality, full-page capture, browser finally-close and manifest provenance. Only focus source was committed."
+        }
+      ],
+      "primaryLimits": [
+        "No setup, tests, builds or browser runtime executed; parent owns audited isolated batch gates and independent exact-candidate judgment.",
+        "Cached Playwright import now belongs to captureScreenshots, after timeline/font reads; simultaneous input/module failures can have a different error precedence.",
+        "No wisdom or values edits: aggregate wisdom is parent-owned and no new general lesson was established."
+      ]
     },
     {
       "file": "scripts/terminal-interactions.ts",

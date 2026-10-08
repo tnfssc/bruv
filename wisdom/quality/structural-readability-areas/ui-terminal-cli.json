@@ -545,11 +545,11 @@
       "integrationState": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": "task_46eaf8ec",
-        "primaryCommit": null,
+        "primaryId": "task_48469090",
+        "primaryCommit": "70ed7b9be7d505db9c65ca09eab71a1d0843f6b3",
         "judgeIds": [],
-        "sourceCommit": "7c4bd77934b4974e02a4960eef7f33839d5d79f9",
-        "state": "needs-primary",
+        "sourceCommit": "70ed7b9be7d505db9c65ca09eab71a1d0843f6b3",
+        "state": "needs-judge",
         "reason": "Assigned task_46eaf8ec; no completed primary candidate commit or independent actual-code verdict. Historical primary-running label is not completion. Preserved worktree is clean at launch base; no source candidate exists."
       }
     },
