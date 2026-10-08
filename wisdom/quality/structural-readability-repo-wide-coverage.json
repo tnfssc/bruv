@@ -639,12 +639,14 @@
     {
       "file": "scripts/claude-native-acceptance/history-replay.mjs",
       "initialBlob": "0ccc3cc8c75866a526eb1f6928a936b0752c5496",
-      "status": "pending",
+      "status": "accepted",
       "area": "compatibility-t3",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_f7ff07f4",
       "primaryCommit": "44ea9b254cdf597dd7b7a854ccd3a38adf0d1b1d",
-      "judgeIds": [],
+      "judgeIds": [
+        "task_4b58c5b6"
+      ],
       "sourceCommit": "44ea9b254cdf597dd7b7a854ccd3a38adf0d1b1d",
       "report": "wisdom/quality/structural-readability-areas/compatibility-t3.json",
       "pendingReason": "Primary was killed by session shutdown (143); preserved uncommitted code is retained at the worker path. No submitted candidate commit or readability verdict; resume its original scope rather than count it accepted.",
@@ -678,6 +680,23 @@
         "Runtime retains its existing exact-owned-root removal behavior; no cleanup command was executed during this task, and the syntax-check sandbox is retained.",
         "Early artifact-pin or root-acquisition failures remain outside owned cleanup; setup failures before version execution cannot include a discovered T3 version.",
         "No new wisdom/values edits: this is the existing resource-ownership lesson; parent owns aggregate wisdom."
+      ],
+      "acceptedBlob": "416646505069c09f31812412ef55a0ba5ab16553",
+      "result": "Actual base/parent b80a55a855e65d9bcb4ae8db3bb95d577db79b67 kept fixture creation, version execution and server/log acquisition outside the runtime try, then spread browser/page ownership and exit-only shutdown across a single large try/finally. The candidate makes the lifetime readable in execution order: pin artifact, exclusively acquire root, enter its owner, prepare fixture, discover version, replay, publish failure if needed, release only that root. replayWithServer owns the log outside the spawned process lifetime and its observed close; replayWithBrowser owns browser closure and captures page failure before that closure. These are coherent effect-owning operations, not cosmetic renames, arbitrary blocks or a context bag. stopServer receives the close promise registered immediately after spawn, handles exitCode and signalCode, escalates TERM to KILL if still live, clears the timeout, and awaits close before the log/runtime can be released. Unchanged decision: keep native UI onboarding and history semantics together in exerciseHistory rather than subdividing every locator/action into wrappers; pairing, identity capture, redacted snapshots, wire parsing and final artifact/driver assertions remain directly legible there.",
+      "systemReason": "Traced actual candidate history-run.mjs -> history-replay.mjs -> history-driver.mjs and the shared driver.prepare. history-run creates the proof directory and distinct scoped state/agent/home, writes config, launches replay with an explicit allowlist, waits for its child close, then retains history evidence before releasing its own scoped resources. Thus replay only owns its new t3-runtime directory; the config HOME override points to the runner-owned isolated home, not user HOME. Artifact mismatch and failed exclusive mkdir never enter replay cleanup. Setup/version/startup/readiness/browser failures unwind their acquired owners; page-action failures first attempt local evidence capture, then close browser, stop/observe server, close log, publish failure result and release replay root. Successful replay retains normal local pairing/onboarding, deterministic provider identity, root seed/tool exchange, persisted reopen, checkpoint fork into a fresh owner, unchanged original branch, rollback and reopen continuation. Driver verification still checks one root tool execution, original canonical hash, two distinct session identities, active branch inclusion/exclusion, tool result pairing and imported source mappings. No semantic history authority moved into the harness, and no fabricated events, external sign-in or device proof were introduced. Unchanged related caller/driver contracts need no alteration for this ownership refactor.",
+      "checks": [
+        "Verified candidate parent equals the supplied primary base; compared exact Git objects, not checkout HEAD.",
+        "Read complete changed focus code, exact base ownership/semantic flow and full patch; both base-to-candidate and parent-to-candidate inventories contain only the focus source path.",
+        "Read candidate caller launch/collection boundaries, driver preparation, identity/history exercise and verification; inspected the offline runner fixture boundary, which substitutes replay and does not exercise this actual replay.",
+        "Read wisdom/values.md, structural-readability-guidance.md, repository-wide ledger/assignment/coverage and compatibility-t3 area ledger including the focus pending entry and supplied primary context.",
+        "git diff --check b80a55a855e65d9bcb4ae8db3bb95d577db79b67 44ea9b254cdf597dd7b7a854ccd3a38adf0d1b1d passed; git rev-parse independently verified the exact accepted blob."
+      ],
+      "limits": [
+        "Structural actual-code verdict only: no setup, tests, builds, syntax execution, browser/native replay, external auth, credential or device access performed. Parent owns audited isolated runtime gates.",
+        "No claim of actual process timing, Playwright behavior or authenticated/device acceptance; source reading establishes intended ownership, not runtime success.",
+        "The runner is responsible for proof-directory creation and isolated config. Existing direct-invocation assumptions, best-effort page capture and private-log removal remain; this is not a new diagnostics/privacy guarantee.",
+        "No source/wisdom changes, delegation, setup/hash bypass, recovery, destructive operations, push/PR/merge or old-worktree cleanup. Only this untracked report is written; retained candidates and worktrees are untouched.",
+        "Runtime model verification remains external parent jobs.inspect responsibility; no self-introspection required."
       ]
     },
     {
@@ -699,12 +718,14 @@
     {
       "file": "scripts/claude-native-acceptance/human-driver.mjs",
       "initialBlob": "92e5682af10e949649d0f87236c00b412f02a3df",
-      "status": "pending",
+      "status": "accepted",
       "area": "compatibility-t3",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_f2026c09",
       "primaryCommit": "9660923ad0a58c1017731e992a207647f7ba7643",
-      "judgeIds": [],
+      "judgeIds": [
+        "task_879c9147"
+      ],
       "sourceCommit": "9660923ad0a58c1017731e992a207647f7ba7643",
       "report": "wisdom/quality/structural-readability-areas/compatibility-t3.json",
       "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection.",
@@ -740,6 +761,37 @@
         "Static preservation and syntax checks are not a readability verdict or native acceptance proof.",
         "Optional read-only TypeScript parser dependency path was absent; syntax was checked with /usr/bin/node without executing the driver.",
         "Existing wisdom/values unchanged; parent owns aggregate wisdom."
+      ],
+      "acceptedBlob": "3fddd662b31503d6ab756c096c3d996792531f16",
+      "result": "Compared the actual candidate against primary base b80a55a855e65d9bcb4ae8db3bb95d577db79b67, which is also its parent. The previous exercise interleaved initial model selection, reusable browser helpers, the permission loop, and the long question lifecycle, with five repeated reload/thread-selection sequences. The candidate now ends with the directly awaited journey: select the deterministic model and Supervised mode, snapshot, exercisePermissions, exerciseSavedQuestion, save. These are substantive operation boundaries, not renamed blocks: exercisePermissions contains pre-consent absence, allow/deny side effects, Stop/request cancellation, preserved stale-card evidence and explicit decline; exerciseSavedQuestion keeps the saved identity/owner/version local across pending, stopped, answered/resume-needed and resolved/delivered states, with an explicitly approved resume execute and subsequent no-replay checks. reopenHumanThread owns the entire reload/select/wait operation and states its single-thread anchor. Helpers close over the existing exercise-scoped page/config/evidence rather than introducing a context bag or framework. Unchanged decision: retain ledger/wire/poll/projected and the separate checkHumanWire, verify and capture operations; their read, assertion, projection and export authorities are already distinct. No forced rewrite of these readable paths is needed.",
+      "systemReason": "Traced candidate run.mjs -> native replay -> driver.exercise -> human exercise and driver.verify -> human verify, plus runner failure/final evidence capture. The replay prepares the real native composer before delegation; driver.prepare installs the scoped stop binding and explicitly named deterministic custom model. The extracted operations remain sequentially awaited in the same exercise lifetime and reopen the same allow-created thread, not a new question owner. model.mjs actually emits execute code to write scoped effects, uses questions.ask/block for the durable question, and resolves only an explicitly saved answered question; the driver still acts through browser controls, never fabricated native protocol packets. The unchanged wire checker correlates request IDs, enforces allow/deny/cancel and exactly one native question-answer callback. Command idle still requires a terminal matching the latest /bruv UUID and captures in finally; run.mjs separately rejects /bruv reaching the model and duplicate saved-answer continuations. Evidence snapshots retain redaction, ledger exports retain hashed identity/owner, DB capture remains read-only with close in finally, and the runner retains final capture before release. Unchanged decision: preserve those protocol and evidence boundaries rather than merging them into browser choreography. This is a structural/source verdict, not proof of a real authenticated or device journey.",
+      "checks": [
+        {
+          "check": "Read values, structural guidance, repo-wide and compatibility/T3 ledgers, and PR45 resume ledger",
+          "result": "Read the focus inventory and preserved prior limitations; neither counts nor primary claims determined this verdict."
+        },
+        {
+          "check": "Exact Git candidate/base/parent and changed-path inspection",
+          "result": "Parent equals the named primary base; exactly one changed source path, fully read at the candidate blob, including its unchanged protocol/capture suffix."
+        },
+        {
+          "check": "Actual candidate caller/model/test source tracing",
+          "result": "Read shared dispatch, native composer handoff, deterministic effect/question production, final evidence capture and relevant test assertions. The runner test substitutes a capture stub and cannot establish real browser acceptance."
+        },
+        {
+          "check": "Independent source-only reconstruction",
+          "result": "Inlining all three extracted operations, removing only the new thread-anchor comment and restoring initial setup position reproduces the entire primary-base file modulo whitespace. checkHumanWire/verify/capture suffix is byte-identical."
+        },
+        {
+          "check": "git diff --check primary base to candidate",
+          "result": "Passed with no diagnostics."
+        }
+      ],
+      "limits": [
+        "No repository setup, tests, builds, browser actions, runtime imports, provider calls, device or credential access performed; parent owns audited isolated batch gates. Static preservation supports safety but does not establish runtime acceptance.",
+        "Official T3 stale approval after Stop remains a documented defect: the script records it before explicit UI Decline. Existing fixed delays, textual single-thread anchor and untested full tab-disconnect path were not represented as newly solved.",
+        "Automatic setup host-hash failures documented in the resume ledger remain visible and were not bypassed or treated as successful checks here.",
+        "No source edits, delegation, cleanup/recovery, push, PR or merge. Wisdom and values unchanged; aggregate wisdom belongs to the parent. Runtime agent-model verification belongs to the parent, not self-introspection."
       ]
     },
     {
@@ -811,12 +863,14 @@
     {
       "file": "scripts/claude-native-acceptance/runtime-smoke.mjs",
       "initialBlob": "f13d18e4883ef5fcc47aa785039ceee334cce15f",
-      "status": "pending",
+      "status": "accepted",
       "area": "compatibility-t3",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_8b9d9dd1",
       "primaryCommit": "88870a303cf8cbe8c93818ed174ef03ee7b230a4",
-      "judgeIds": [],
+      "judgeIds": [
+        "task_619d6011"
+      ],
       "sourceCommit": "88870a303cf8cbe8c93818ed174ef03ee7b230a4",
       "report": "wisdom/quality/structural-readability-areas/compatibility-t3.json",
       "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection.",
@@ -857,6 +911,37 @@
         "Existing runtime-fixture side effects remain: private temporary root, loopback model server, child/managed-worker processes, proof write and fs.rm of its own mkdtemp root. They were read, not executed here.",
         "Existing shutdown/error limitations are unchanged: malformed RPC lines can throw in the data callback, and an exception during finalization can interrupt later publication/cleanup. No speculative hardening added.",
         "Wisdom and values unchanged; parent owns aggregate wisdom."
+      ],
+      "acceptedBlob": "614b3fac5c116306d2e0ec7cbc5b81a1b15dc5f2",
+      "result": "Read the actual candidate and its complete primary-base diff; candidate parent is exactly b80a55a855e65d9bcb4ae8db3bb95d577db79b67. The baseline mixed child transport callbacks and prompt helpers into the acceptance scenario while its wait function and finalizer reached into separately declared child/diagnostic/event state. startRpcRuntime now has a real resource boundary: it creates the child, owns newline buffering, records events and stderr, denies confirmation requests by matching ID, writes framed prompts, observes exit during waits, and performs stop escalation. Its returned operations close over that one child rather than pass an invented context bag. The scenario remains directly readable: execute result confirmation, first agent_end, background admission, observed worker start, second agent_end, release, completion wake, endpoint error assertion. Moving directory setup and model startup under the outer try/finally makes partial startup ownership visible; proof-directory creation precedes fixture allocation. This is substantive lifetime/authority grouping rather than renaming. Unchanged decision: retain the inline early.started polling, end-count predicate, marker assertions and proof fields; these small scenario-specific decisions are already next to their effects and would become harder to follow behind generic helpers.",
+      "systemReason": "Traced the candidate README invocation, model.mjs, worker.mjs and runtime entry/execute/job/wake connections at the candidate commit, not checkout HEAD. The README calls this script directly with BRUV_RUNTIME_BINARY and PROOF_OUTPUT and explicitly excludes connector acceptance; no package script or other maintained caller was found. modelsConfig selects the loopback fixture provider/model with a fixture-only key. reply enforces the exact local model ID: ACCEPT_EXECUTE requests real execute and only confirms BRUV_EXECUTE_REAL from a tool result; ACCEPT_EARLY_RETURN requests shell(worker,state,early) with waitSeconds:0 and admits only an actual task_ background result. The worker writes its PID/start marker, waits for the harness release, then emits MANAGED_DONE_early and writes finished state. Normal CLI installs the execute extension; executeIsolated bridges shell to JobService, which spawns a managed command and foregrounds it for the requested wait. The local completion path formats actual task output and sends a steer message with triggerTurn:true; model reply turns MANAGED_DONE_early into TASK_COMPLETED_REAL. The candidate changes none of those authorities. The runtime still uses argv --mode rpc --no-approve with only explicit PATH/HOME/BRUV_CODING_AGENT_DIR, matches confirmation request IDs while denying them, waits with the same bounds/diagnostics, and publishes the same proof schema. Finalization visibly orders runtime stop, worker stop guarded by both worker and state path matches in /proc cmdline, model close, evidence write, then owned-root removal. For failed setup before model/runtime assignment, optional ownership checks produce failed/empty evidence rather than dereference an absent resource. No changes are needed to these unchanged callers for this resource extraction.",
+      "checks": [
+        {
+          "kind": "guidance-and-ledgers",
+          "result": "Read wisdom/values.md, structural-readability-guidance.md, repo-wide ledger and relevant coverage row, compatibility-t3 area ledger and focus entry. Historical status is not acceptance evidence."
+        },
+        {
+          "kind": "exact-git-scope",
+          "result": "Verified candidate parent equals primary base; exactly one changed path, the focus. Read complete base and candidate source plus complete diff. Accepted hash resolved from candidate Git object."
+        },
+        {
+          "kind": "static-system-journeys",
+          "result": "Read candidate fixture imports and direct invocation; followed CLI execute registration, job bridge/shell launch and completion notification routing. No dynamic behavior claim."
+        },
+        {
+          "kind": "diff-whitespace",
+          "result": "git diff --check b80a55a855e65d9bcb4ae8db3bb95d577db79b67 88870a303cf8cbe8c93818ed174ef03ee7b230a4 returned empty output."
+        },
+        {
+          "kind": "worktree-safety",
+          "result": "Worktree initially clean; no source edits, setup, tests, builds, runtime execution, delegation, cleanup, credential access or recovery performed. Only this untracked report was written."
+        }
+      ],
+      "limits": [
+        "Independent structural-code acceptance only; parent owns audited isolated runtime/regression batch gates and external worker-model verification. No real provider, auth, device, T3/connector or built-artifact execution claim.",
+        "The script has loopback-server/process/proof-write and owned-root fs.rm side effects; these were inspected, not executed. No disposable probe directories or cleanup were needed for this review.",
+        "Existing limitations remain visible: malformed JSON lines can throw in a data callback; finalization is sequential so an exception can skip later evidence/removal; SIGKILL and managed-worker SIGTERM are not followed by explicit exit acknowledgement. temporaryScopedStateRemoved is still written before removal. These are not repaired or proven by this readability change.",
+        "No source wisdom/values edits or per-worker wisdom added; parent owns aggregate wisdom. No push, PR, merge or destructive Git operations."
       ]
     },
     {
@@ -864,13 +949,47 @@
       "initialBlob": "b3a839d892d5d6ea15b4bc23a32504ce22a29103",
       "status": "pending",
       "area": "compatibility-t3",
-      "resumeState": "pending-primary-interrupted",
-      "primaryId": "task_3fcde229",
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_48898268",
+      "primaryCommit": "e2da2498bfe0fcb2ea83bc0fb74867b7a2622e20",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "e2da2498bfe0fcb2ea83bc0fb74867b7a2622e20",
       "report": "wisdom/quality/structural-readability-areas/compatibility-t3.json",
-      "pendingReason": "Primary was killed by session shutdown (143); preserved uncommitted code is retained at the worker path. No submitted candidate commit or readability verdict; resume its original scope rather than count it accepted."
+      "pendingReason": "Primary was killed by session shutdown (143); preserved uncommitted code is retained at the worker path. No submitted candidate commit or readability verdict; resume its original scope rather than count it accepted.",
+      "primaryBase": "b80a55a855e65d9bcb4ae8db3bb95d577db79b67",
+      "primaryResult": "exercise now explicitly requires completed-child inspection and same-root next reply before creating the independent cancellation and Stop roots. Each scenario owns its waits, process-exit checks and snapshots; the same-root scenario retains its bounded composer checks and finally capture. verify names the task lifecycle, root/child usage, persisted launch-source resolution and Stop/Continue checks before publishing the unchanged proof payloads. observedConfig still records the live config before exercise, and flushCapture remains byte-identical, including its pre-exercise fallback. The preserved interrupted primary candidate (86ef6f761802edea2844a001ea198a90fe14b87c) was read, its scenario separation retained, and verification authorities were additionally separated; its old worktree was not modified or merged.",
+      "primaryPaths": [
+        "scripts/claude-native-acceptance/subagent-driver.mjs"
+      ],
+      "primaryChecks": [
+        {
+          "check": "Read focus, generated replay caller, shared replay finalization, return-evidence collector, exported-check callers, values/guidance and repo/area/resume ledgers",
+          "result": "completed read-only review"
+        },
+        {
+          "check": "/usr/bin/node --check scripts/claude-native-acceptance/subagent-driver.mjs",
+          "result": "exit 0; syntax only, no repository execution; explicit isolated HOME/config/SDK retained at /tmp/pr45-subagent-driver-syntax-NgfgUT"
+        },
+        {
+          "check": "Normalized lexical expression comparison against pre-change HEAD",
+          "result": "All 38 assertions, 6 fs.writeFile payloads, 13 snapshots and 2 collectReturnEvidence calls retained; only completedTask.usage normalized back to ends[0].usage. checkSameRootReply, checkConsumedPromptOwnership and flushCapture byte-identical. Safety evidence, not a readability acceptance."
+        },
+        {
+          "check": "git diff --check",
+          "result": "passed before commit"
+        },
+        {
+          "check": "Commit source-only audit",
+          "result": "One changed source path; no wisdom, manifest, test or unrelated source committed; no push/PR/merge"
+        }
+      ],
+      "primaryLimits": [
+        "No repository tests, setup or builds run: parent owns audited isolated batch gates and the fresh independent exact-candidate judgment. No runtime/browser/provider/device acceptance claim.",
+        "Static expression comparison is lexical, not AST or behavioral proof; installed TypeScript 7 package had no require-able parser API.",
+        "The Agent-count assertion is now grouped with task lifecycle before usage checks, so the first error reported when both are invalid can change; all assertions and evidence requirements remain intact.",
+        "Runtime agent.model verification and automatic launch-setup diagnostics remain parent-owned; no self-introspection or setup retry/bypass performed.",
+        "No per-worker wisdom edits: parent owns aggregate wisdom; preserved worktrees and candidates retained."
+      ]
     },
     {
       "file": "scripts/claude-native-acceptance/subagent-model.mjs",
@@ -952,12 +1071,14 @@
     {
       "file": "scripts/claude-native-acceptance/worker.mjs",
       "initialBlob": "766989628f65993cbde352037144c85dc25e316f",
-      "status": "pending",
+      "status": "accepted",
       "area": "compatibility-t3",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_eb51c954",
       "primaryCommit": "b80a55a855e65d9bcb4ae8db3bb95d577db79b67",
-      "judgeIds": [],
+      "judgeIds": [
+        "task_27eea40d"
+      ],
       "sourceCommit": "b80a55a855e65d9bcb4ae8db3bb95d577db79b67",
       "report": "wisdom/quality/structural-readability-areas/compatibility-t3.json",
       "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection.",
@@ -982,6 +1103,21 @@
         "No setup, tests, builds, runtime fixture execution, credentials, device access, cleanup or recovery performed. Runtime gates remain parent-owned. Read harness code includes process signalling and recursive temporary-state cleanup, so historical runtime commands were not reused.",
         "No fresh independent judgment claimed; parent owns an independent judge for the exact candidate.",
         "No source changes means no new source commit. Result remains untracked; no wisdom/values edits, publication, push or merge."
+      ],
+      "acceptedBlob": "766989628f65993cbde352037144c85dc25e316f",
+      "result": "Independent reading of the exact candidate finds a single visible lifetime: receive harness-owned state/scenario, persist the PID as .started, announce start, poll the scenario release file, announce completion, then persist .finished. The comment identifies external release/stop authority. The inline loop exposes the only wait condition and keeps its effects next to the two completion effects. Splitting this into helpers or adding a lifecycle object would hide rather than resolve a reading problem. The focus is unchanged from both the primary base (identical to candidate) and candidate parent, and remains its original ledger blob.",
+      "systemReason": "model.mjs builds the Node command with the supplied worker/state and chooses foreground wait for steer/stop or immediate background return for early/cancel. driver.mjs waits for start before steering or stopping; it releases steer/early explicitly and requires early completion to wake the model. For Stop it checks the persisted PID exits and that .finished is absent, distinguishing termination from normal release. Cancellation is owned by jobs.stop plus terminal inspection, not by worker signal handling. run.mjs copies the exact worker into its isolated scope and verifies worker/state in /proc before signalling recorded PIDs; runtime-smoke.mjs consumes real managed completion output to check the early-return wake. The direct runner-test caller also copies this worker and spawns a gated stop process for scoped-cleanup checks. These consumers explain why PID, output markers and finish-file order belong here; no hidden second lifecycle owner needs extraction.",
+      "checks": [
+        "Read wisdom/values.md, structural-readability-guidance.md and repo-wide/compatibility ledgers; focus pending judgment, original blob preserved, no prior rejection to reconcile.",
+        "git show/read at exact candidate, not checkout HEAD; git diff primary base to candidate has no changed paths, so acceptedBlobs contains the sole focus.",
+        "Compared candidate parent changed-path inventory and exact parent focus blob: worker and its model/driver/run/runtime-smoke callers are unchanged. Parent run-subagent change uses subagent-model/normal execute workers, not this shell worker.",
+        "Traced start/release/finish, early-return completion wake, foreground Stop/process-exit, and owned cancellation paths by static code reading.",
+        "Exact candidate and parent focus blob: 766989628f65993cbde352037144c85dc25e316f."
+      ],
+      "limits": [
+        "No setup, tests, builds or runtime fixtures executed; parent owns audited batch gates. Static reading does not prove actual stop/wake execution, connector/T3 acceptance, real authentication or device behavior.",
+        "No source changes, credentials, cleanup/recovery, delegation, push, PR or merge. Harness code contains process signalling and recursive temporary-state cleanup; it was read, not run.",
+        "Candidate equals primary base; this is an independent unchanged-code judgment, not acceptance of the unrelated source changes in the candidate integration commit. No per-worker wisdom edits; aggregate wisdom remains parent-owned."
       ]
     },
     {
@@ -11506,15 +11642,16 @@
       "file": "tests/fixtures/history-sdk-probe-failure.ts",
       "initialBlob": "absent",
       "area": "agent-history-session-goals",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_9e79f658",
       "primaryCommit": "ce7032a68d76defd3b2f40c6bb630f5b8824c0af",
       "judgeIds": [
-        "task_b1d3b7fc"
+        "task_b1d3b7fc",
+        "task_f3981982"
       ],
       "sourceCommit": "ce7032a68d76defd3b2f40c6bb630f5b8824c0af",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
-      "status": "pending",
+      "status": "accepted",
       "pendingReason": "Primary was killed without a completed focused result; preserve worker state and any uncommitted edits. Related-patch review is evidence only; dedicated focus coverage remains required.",
       "primaryBase": "25bb96f0b70a2afad8875dc00ce34412861bac6e",
       "primaryResult": "Read values and structural guidance, then traced tests/history-sdk-probe.test.ts -> preload -> scripts/history-sdk-probe.ts -> session-manager.ts -> disk-entry-store.ts. The child-only preload captures and retains exactly one real pending store, observes its dispose after original disposal, injects failure before the first message append can publish the spool, snapshots disposal/spool existence before delegating rm, optionally mocks only manager disposal, and checks all observations at process exit. runProbe owns manager disposal in finally; the outer probe owns directory removal in finally. Both remain real in the positive case; the negative control preserves the injected failure and directory finalizer but must fail the disposal assertion. These sequential local groups already make the observation boundaries and lifetimes visible; extraction or context bags would add indirection without resolving a scattered authority. Restored exact git-show bytes from 177e687eb82c0768d209db8695f2bc78af2539b4, preserving every helper and caller assertion. No rename-only edits or wider branch import. No wisdom/values edits: no new lesson beyond existing ownership guidance; parent owns aggregate ledger.",
@@ -11533,6 +11670,24 @@
         "No independent judgment claimed; this is the replacement primary result.",
         "No credentials/devices requested or used; no auth availability claim.",
         "No delegation, setup, builds, recovery, cleanup, push, merge or PR actions; old tree untouched."
+      ],
+      "acceptedBlob": "8dc54fdbef477552d6dbb3559cebb797c79ee267",
+      "result": "Compared actual candidate with primary base 25bb96f0b70a2afad8875dc00ce34412861bac6e, which is also its parent. The sole changed source is the restored 69-line preload; the base lacks it despite an existing test caller. Read the complete fixture, caller test and script, then the manager registration/adoption/append/reset/disposal paths and real store pending/append/publication/disposal/exit cleanup. Intrinsically NO CHANGE NEEDED after restoration: the sequential groups express capture of one real store and physical spool, observation after real dispose, first-message failure before publication, snapshot before real directory removal, optional counterfactual, and synchronous exit assertions. Their few local observations correspond to those distinct boundaries rather than a scattered policy or shared context bag. Extraction or a naming-only rewrite would conceal this short journey without relocating an authority. ACCEPT records restoring the missing caller dependency, not a claim of a new structural refactor.",
+      "systemReason": "The unchanged test launches only its child with this preload and drains both streams and exit; preload patches do not enter the parent runner. The script installs the adapted manager, creates one real pending store, and owns the SDK session in the live phase. Its first message traverses appendMessage -> adapted _appendEntry -> patched store.append and throws before real append can publish the spool; earlier non-message appends remain real. Unwinding disposes the SDK session, then runProbe finally calls manager disposal, then the outer finally requests removal of its mkdtemp directory. The fixture records dispose only after originalDispose returns, and captures both that observation and physical spool existence before delegating rm. Disk-store exit unlink and recursive directory removal therefore cannot retroactively satisfy the before-removal snapshot. Positive exit evidence requires the injected failure, cleanup attempt, removed directory, prior dispose and absent prior spool; the unchanged parent still requires error exit and forbids success JSON. The negative control substitutes only manager disposal: failure injection and real directory removal remain, but the expected disposal assertion must reject and withhold the marker. These are explicit separate owners, not a single generic cleanup-success flag. The related callers are byte-identical between base and candidate; no product source behavior is changed.",
+      "checks": [
+        "Read values, structural guidance, repo-wide ledger and focused coverage rows, area ledger and focused prior decisions, and PR45 resume constraints as context, not inherited acceptance.",
+        "git show established candidate parent equals the supplied primary base. git diff --name-status established one added source path only.",
+        "Read actual pinned Git source/callers rather than checkout HEAD. Confirmed all four related code paths have identical candidate/base blobs.",
+        "Restored fixture blob equals historical 177e687eb82c0768d209db8695f2bc78af2539b4 exactly: 8dc54fdbef477552d6dbb3559cebb797c79ee267.",
+        "git diff --check base candidate: no whitespace findings.",
+        "Read existing dependency dist/core/session-manager.js creation/newSession/appendMessage and agent-session.js dispose hooks read-only; no SDK execution."
+      ],
+      "limits": [
+        "No setup, tests, builds, provider calls, device operations or credential access performed; parent owns audited isolated runtime gates. Static journeys are not fresh execution results.",
+        "No GC-invariance proof. Prior negative-control executions recorded in the ledger are historical evidence only; not rerun or counted as this judge’s proof.",
+        "Existing dependency source reading does not validate supported SDK host hashes, runtime compatibility or automatic setup; no host-hash bypass attempted.",
+        "No whole-area/repository, full-soak, authentication, device or platform acceptance claimed. No delegation or model self-introspection; parent verifies runtime identity externally.",
+        "Source, prior worktrees and uncommitted candidates preserved. Only this untracked judgment is written; no wisdom/values change, new framework, push, PR or merge. Parent owns aggregate wisdom."
       ]
     },
     {

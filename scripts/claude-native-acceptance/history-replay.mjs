@@ -19,86 +19,173 @@ const root = config
   ? path.join(path.dirname(config.state), "t3-runtime")
   : path.resolve(".cache/claude-native-ui-replay");
 const proof = path.resolve(process.env.PROOF_OUTPUT || ".cache/claude-native-ui-replay-proof-" + Date.now());
-// Never reuse a credential-bearing runtime or remove an unrelated directory.
-await fs.mkdir(root, { mode: 0o700 });
-const home = path.join(root, "home"),
-  project = path.join(root, "project"),
-  base = path.join(root, "t3-base");
-await fs.mkdir(home);
-await fs.mkdir(project);
-const fixture = config.tap;
-await fs.writeFile(
-  path.join(project, "README.md"),
-  "# Isolated native connector acceptance project\nActual Bruv runtime with a deterministic loopback test model.\n",
-);
+const home = path.join(root, "home");
+const project = path.join(root, "project");
+const base = path.join(root, "t3-base");
+const fixture = config?.tap;
+// The runner supplies an explicit credential-free environment, never the parent environment.
 const env = {
   PATH: [path.dirname(process.execPath), "/usr/bin", "/bin"].join(path.delimiter),
   HOME: home,
   ...config?.env,
 };
-await integration.prepare({ base, fixture, config });
-const git = (args) => execFileSync("/usr/bin/git", ["-C", project, ...args], { env, stdio: "pipe" });
-git(["init", "-q"]);
-git(["add", "README.md"]);
-git([
-  "-c",
-  "user.name=Research fixture",
-  "-c",
-  "user.email=fixture@localhost",
-  "commit",
-  "-qm",
-  "Initialize fixture project",
-]);
-const before = createHash("sha256")
-  .update(await fs.readFile(binary))
-  .digest("hex");
+const before = await binaryHash();
 assert.equal(
   before,
   process.env.T3_EXPECTED_SHA256 ?? "2cc42990ee8ad2ff30bbd43cdcf67686c9ca5aaff5e3ed36b5be40962cc53795",
   "pinned actual T3 artifact",
 );
-const version = execFileSync(binary, ["--version"], { env, encoding: "utf8" }).trim();
-const log = await fs.open(path.join(root, "private-server.log"), "w", 0o600);
-const server = spawn(
-  binary,
-  [
-    "serve",
-    "--host",
-    "127.0.0.1",
-    "--port",
-    String(port),
-    "--base-dir",
-    base,
-    "--auto-bootstrap-project-from-cwd",
-    project,
-  ],
-  { env, stdio: ["ignore", log.fd, log.fd] },
-);
-let browser, page;
+let version;
+
+// Acquisition is exclusive. Only a successfully acquired root enters owned cleanup.
+await fs.mkdir(root, { mode: 0o700 });
 try {
-  let ready = false;
-  for (let i = 0; i < 200; i++) {
-    if (server.exitCode !== null) throw Error("T3 exited before readiness; private log retained only until cleanup");
+  await prepareRuntime();
+  version = execFileSync(binary, ["--version"], { env, encoding: "utf8" }).trim();
+  await replayWithServer();
+  console.log("PASS actual native history replay. Proof: " + proof);
+} catch (error) {
+  await fs.writeFile(
+    path.join(proof, "result.json"),
+    JSON.stringify(
+      {
+        integratedAcceptance: true,
+        passed: false,
+        error: error.message,
+        t3Version: version,
+        t3BinarySha256: before,
+        upstreamUnmodified: (await binaryHash()) === before,
+        syntheticConnectorEvents: false,
+        realCredentialsUsed: false,
+      },
+      null,
+      2,
+    ) + "\n",
+  );
+  throw error;
+} finally {
+  await fs.rm(root, { recursive: true, force: true });
+}
+
+async function binaryHash() {
+  return createHash("sha256")
+    .update(await fs.readFile(binary))
+    .digest("hex");
+}
+
+async function prepareRuntime() {
+  await fs.mkdir(home);
+  await fs.mkdir(project);
+  await fs.writeFile(
+    path.join(project, "README.md"),
+    "# Isolated native connector acceptance project\nActual Bruv runtime with a deterministic loopback test model.\n",
+  );
+  await integration.prepare({ base, fixture, config });
+  const git = (args) => execFileSync("/usr/bin/git", ["-C", project, ...args], { env, stdio: "pipe" });
+  git(["init", "-q"]);
+  git(["add", "README.md"]);
+  git([
+    "-c",
+    "user.name=Research fixture",
+    "-c",
+    "user.email=fixture@localhost",
+    "commit",
+    "-qm",
+    "Initialize fixture project",
+  ]);
+}
+
+async function replayWithServer() {
+  const log = await fs.open(path.join(root, "private-server.log"), "w", 0o600);
+  try {
+    const server = spawn(
+      binary,
+      [
+        "serve",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        String(port),
+        "--base-dir",
+        base,
+        "--auto-bootstrap-project-from-cwd",
+        project,
+      ],
+      { env, stdio: ["ignore", log.fd, log.fd] },
+    );
+    const closed = new Promise((resolve) => server.once("close", resolve));
     try {
-      const r = await fetch(url, { signal: AbortSignal.timeout(300) });
-      if (r.ok) {
-        ready = true;
-        break;
-      }
-    } catch {}
-    await new Promise((r) => setTimeout(r, 100));
+      await new Promise((resolve, reject) => {
+        server.once("spawn", resolve);
+        server.once("error", reject);
+      });
+      await waitForServer(server);
+      await replayWithBrowser();
+    } finally {
+      await stopServer(server, closed);
+    }
+  } finally {
+    await log.close();
   }
-  assert.ok(ready, "T3 local HTTP readiness");
+}
+
+async function waitForServer(server) {
+  for (let i = 0; i < 200; i++) {
+    if (server.exitCode !== null || server.signalCode !== null)
+      throw Error("T3 exited before readiness; private log retained only until cleanup");
+    try {
+      const response = await fetch(url, { signal: AbortSignal.timeout(300) });
+      if (response.ok) return;
+    } catch {}
+    await new Promise((resolve) => setTimeout(resolve, 100));
+  }
+  assert.fail("T3 local HTTP readiness");
+}
+
+async function stopServer(server, closed) {
+  if (server.exitCode === null && server.signalCode === null) {
+    server.kill("SIGTERM");
+    let timer;
+    try {
+      await Promise.race([
+        closed,
+        new Promise((resolve) => {
+          timer = setTimeout(resolve, 3000);
+        }),
+      ]);
+    } finally {
+      clearTimeout(timer);
+    }
+    if (server.exitCode === null && server.signalCode === null) server.kill("SIGKILL");
+  }
+  // Wait for actual close before closing its log or deleting private state.
+  await closed;
+}
+
+async function replayWithBrowser() {
   const { chromium } = await import(
     pathToFileURL(path.join(upstream, "runtime/node_modules/playwright/index.mjs")).href
   );
-  browser = await chromium.launch({
+  const browser = await chromium.launch({
     headless: true,
     executablePath: browserPath,
     args: ["--no-sandbox", "--disable-gpu", "--disable-dev-shm-usage"],
   });
-  const context = await browser.newContext({ viewport: { width: 1400, height: 950 } });
-  page = await context.newPage();
+  try {
+    const context = await browser.newContext({ viewport: { width: 1400, height: 950 } });
+    const page = await context.newPage();
+    try {
+      await exerciseHistory(page);
+    } catch (error) {
+      await capturePageFailure(page);
+      throw error;
+    }
+  } finally {
+    await browser.close();
+  }
+}
+
+async function exerciseHistory(page) {
   page.setDefaultTimeout(10000);
   const paired = execFileSync(binary, ["pair", "--base-dir", base], { env, encoding: "utf8" });
   const token = paired.match(/token=([A-Za-z0-9_-]+)/)?.[1];
@@ -155,55 +242,18 @@ try {
   await page.getByRole("textbox", { name: "Message", exact: true }).waitFor();
   await integration.exercise({ page, url, snapshot, body, assert, config });
   const wire = (await fs.readFile(config.wire, "utf8")).trim().split("\n").filter(Boolean).map(JSON.parse);
-  assert.equal(
-    createHash("sha256")
-      .update(await fs.readFile(binary))
-      .digest("hex"),
-    before,
-  );
+  assert.equal(await binaryHash(), before);
   await integration.verify({ wire, config, proof, t3Version: version, t3BinarySha256: before });
-  console.log("PASS actual native history replay. Proof: " + proof);
-} catch (error) {
-  if (integration) {
-    if (page)
-      try {
-        await page.screenshot({ path: path.join(proof, "failure.png") });
-        await fs.writeFile(
-          path.join(proof, "failure.txt"),
-          (await page.locator("body").innerText())
-            .replaceAll(root, "<RUNTIME>")
-            .replaceAll(path.dirname(config.state), "<FIXTURE>"),
-        );
-      } catch {}
+}
+
+async function capturePageFailure(page) {
+  try {
+    await page.screenshot({ path: path.join(proof, "failure.png") });
     await fs.writeFile(
-      path.join(proof, "result.json"),
-      JSON.stringify(
-        {
-          integratedAcceptance: true,
-          passed: false,
-          error: error.message,
-          t3Version: version,
-          t3BinarySha256: before,
-          upstreamUnmodified:
-            createHash("sha256")
-              .update(await fs.readFile(binary))
-              .digest("hex") === before,
-          syntheticConnectorEvents: false,
-          realCredentialsUsed: false,
-        },
-        null,
-        2,
-      ) + "\n",
+      path.join(proof, "failure.txt"),
+      (await page.locator("body").innerText())
+        .replaceAll(root, "<RUNTIME>")
+        .replaceAll(path.dirname(config.state), "<FIXTURE>"),
     );
-  }
-  throw error;
-} finally {
-  if (browser) await browser.close();
-  if (server.exitCode === null) {
-    server.kill("SIGTERM");
-    await Promise.race([new Promise((r) => server.once("exit", r)), new Promise((r) => setTimeout(r, 3000))]);
-    if (server.exitCode === null) server.kill("SIGKILL");
-  }
-  await log.close();
-  await fs.rm(root, { recursive: true, force: true });
+  } catch {}
 }

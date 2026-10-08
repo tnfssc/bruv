@@ -125,7 +125,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_48898268",
         "branch": "bruv/pr45-primary-scripts-claude-native-accep-48898268",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "e2da2498bfe0fcb2ea83bc0fb74867b7a2622e20"
       },
       {
         "id": "task_32253a22",
@@ -154,7 +155,7 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_27eea40d",
         "branch": "bruv/pr45-judge-scripts-claude-native-accepta-27eea40d",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled"
       },
       {
         "id": "task_4b58c5b6",
@@ -162,7 +163,8 @@
         "focus": "scripts/claude-native-acceptance/history-replay.mjs",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_4b58c5b6",
         "branch": "bruv/pr45-judge-scripts-claude-native-accepta-4b58c5b6",
-        "status": "running"
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled"
       },
       {
         "id": "task_879c9147",
@@ -170,7 +172,8 @@
         "focus": "scripts/claude-native-acceptance/human-driver.mjs",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_879c9147",
         "branch": "bruv/pr45-judge-scripts-claude-native-accepta-879c9147",
-        "status": "running"
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled"
       },
       {
         "id": "task_619d6011",
@@ -178,7 +181,8 @@
         "focus": "scripts/claude-native-acceptance/runtime-smoke.mjs",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_619d6011",
         "branch": "bruv/pr45-judge-scripts-claude-native-accepta-619d6011",
-        "status": "running"
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled"
       }
     ]
   },
@@ -227,7 +231,8 @@
         "focus": "tests/fixtures/history-sdk-probe-failure.ts",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_f3981982",
         "branch": "bruv/pr45-judge-tests-fixtures-history-sdk-pr-f3981982",
-        "status": "running"
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled"
       }
     ]
   },

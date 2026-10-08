@@ -4579,15 +4579,17 @@
         "limit": "Strong store reference does NOT retain manager FinalizationRegistry target; no GC invariance proof. Fixture comment must be assessed in its dedicated primary; exercised counterfactual established."
       },
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "8dc54fdbef477552d6dbb3559cebb797c79ee267",
         "primaryId": "task_9e79f658",
         "primaryCommit": "ce7032a68d76defd3b2f40c6bb630f5b8824c0af",
         "judgeIds": [
-          "task_b1d3b7fc"
+          "task_b1d3b7fc",
+          "task_f3981982"
         ],
         "sourceCommit": "ce7032a68d76defd3b2f40c6bb630f5b8824c0af",
-        "state": "needs-judge",
-        "reason": "Primary was killed without a completed focused result; preserve worker state and any uncommitted edits. Related-patch review is evidence only; dedicated focus coverage remains required."
+        "state": "accepted-joined",
+        "reason": "Compared actual candidate with primary base 25bb96f0b70a2afad8875dc00ce34412861bac6e, which is also its parent. The sole changed source is the restored 69-line preload; the base lacks it despite an existing test caller. Read the complete fixture, caller test and script, then the manager registration/adoption/append/reset/disposal paths and real store pending/append/publication/disposal/exit cleanup. Intrinsically NO CHANGE NEEDED after restoration: the sequential groups express capture of one real store and physical spool, observation after real dispose, first-message failure before publication, snapshot before real directory removal, optional counterfactual, and synchronous exit assertions. Their few local observations correspond to those distinct boundaries rather than a scattered policy or shared context bag. Extraction or a naming-only rewrite would conceal this short journey without relocating an authority. ACCEPT records restoring the missing caller dependency, not a claim of a new structural refactor."
       }
     }
   ],

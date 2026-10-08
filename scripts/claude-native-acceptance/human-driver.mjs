@@ -62,12 +62,6 @@ export async function exercise({ page, url, snapshot: nativeSnapshot, config }) 
   };
   // The shared harness already completed the real native empty/new-thread flow.
   const message = page.getByRole("textbox", { name: "Message", exact: true });
-  await message.waitFor();
-  await page.locator('[data-chat-provider-model-picker="true"]').first().click();
-  await page.getByText("Local deterministic acceptance (not Claude)", { exact: true }).last().click();
-  await page.getByLabel("Runtime mode", { exact: true }).click();
-  await page.getByText("Supervised", { exact: true }).click();
-  await snapshot("human-model-supervised");
   const submit = async (text) => {
     await message.fill(text);
     await page.getByRole("button", { name: "Submit message", exact: true }).click({ timeout: 30000 });
@@ -110,166 +104,161 @@ export async function exercise({ page, url, snapshot: nativeSnapshot, config }) 
       return false;
     }
   };
-  for (const scenario of ["allow", "deny", "stop"]) {
-    await submit("HUMAN_PERMISSION_" + scenario + ": request actual execute side effect.");
-    await page.getByRole("button", { name: "Approve", exact: true }).waitFor({ timeout: 30000 });
-    assert.equal(
-      await exists(path.join(config.state, "permission-" + scenario + ".effect")),
-      false,
-      "effect must not happen before consent",
-    );
-    await snapshot("permission-" + scenario + "-pending");
-    if (scenario === "stop") {
-      await page.keyboard.press("Control+Escape");
-      await visible("Run interrupted by user");
-      const pending = (await wire(config))
-        .filter(
-          (x) => x.kind === "stdout" && x.value.type === "control_request" && x.value.request.tool_name === "execute",
-        )
-        .at(-1).value;
-      await poll(
-        () => wire(config),
-        (rows) =>
-          rows.some(
-            (x) =>
-              x.kind === "stdout" &&
-              x.value.type === "control_cancel_request" &&
-              x.value.request_id === pending.request_id,
-          ),
-        "real pending consent cancelled",
-      );
-      evidence.staleApprovalAfterStop = await page.getByRole("button", { name: "Approve", exact: true }).isVisible();
-      await snapshot("permission-stop-interrupted");
-      // Official T3 persists its already-cancelled approval card even on reload.
-      // Preserve the defect frame; explicitly Decline it through the real UI.
-      if (evidence.staleApprovalAfterStop) await page.getByRole("button", { name: "Decline", exact: true }).click();
-      assert.equal(await exists(path.join(config.state, "permission-stop.effect")), false);
-      await page.reload();
-      await page
-        .locator("[data-thread-item]")
-        .filter({ hasText: "HUMAN_PERMISSION_allow" })
-        .first()
-        .click({ timeout: 30000 });
-      await message.waitFor({ timeout: 30000 });
-      await page.getByRole("button", { name: "Approve", exact: true }).waitFor({ state: "hidden" });
-    } else {
-      await page.getByRole("button", { name: scenario === "allow" ? "Approve" : "Decline", exact: true }).click();
-      await visible("HUMAN_PERMISSION_" + scenario + "_RESULT_REAL");
-    }
-    assert.equal(await exists(path.join(config.state, "permission-" + scenario + ".effect")), scenario === "allow");
-    evidence.effects.push({
-      scenario,
-      beforeConsent: false,
-      afterConsent: await exists(path.join(config.state, "permission-" + scenario + ".effect")),
-      content:
-        scenario === "allow"
-          ? await fs.readFile(path.join(config.state, "permission-allow.effect"), "utf8")
-          : undefined,
-    });
-    evidence.checks.push("execute " + scenario + " real side effect=" + (scenario === "allow"));
-    await record("permission-" + scenario + "-result");
+  async function reopenHumanThread() {
+    // Every scenario belongs to the thread first created by the allow journey.
+    await page.reload();
+    await page
+      .locator("[data-thread-item]")
+      .filter({ hasText: "HUMAN_PERMISSION_allow" })
+      .first()
+      .click({ timeout: 30000 });
+    await message.waitFor({ timeout: 30000 });
   }
-  // Commands must be real human operations, not tools or model prompts.
-  await submit("HUMAN_QUESTION_ASK: save the actual human question.");
-  await page.getByRole("button", { name: "Approve", exact: true }).waitFor({ timeout: 30000 });
-  await page.getByRole("button", { name: "Approve", exact: true }).click();
-  await visible("Acceptance saved human question");
-  await page.getByRole("button", { name: "Keep pending (do not answer)", exact: false }).waitFor();
-  await page.waitForTimeout(500);
-  let q = (await record("question-native-dialog")).find((q) => q.dedupKey === "human-controls-acceptance");
-  assert.ok(q);
-  assert.equal(q.status, "pending");
-  const identity = q.id,
-    owner = JSON.stringify(q.owner),
-    version = q.version;
-  await page.getByRole("button", { name: "Keep pending (do not answer)", exact: false }).click();
-  await visible("HUMAN_QUESTION_SAVED_REAL");
-  q = (await record("question-declined-pending")).find((q) => q.id === identity);
-  assert.equal(q.status, "pending");
-  assert.equal(q.version, version);
-  assert.equal(q.answer, undefined);
-  await submit("/bruv questions open " + identity);
-  await page.getByRole("button", { name: "Keep pending (do not answer)", exact: false }).waitFor();
-  await record("question-explicit-reopen");
-  await page.keyboard.press("Control+Escape");
-  await visible("Run interrupted by user");
-  q = (await record("question-stop-pending")).find((q) => q.id === identity);
-  assert.equal(q.status, "pending");
-  assert.equal(q.version, version);
-  await page.reload();
-  await page
-    .locator("[data-thread-item]")
-    .filter({ hasText: "HUMAN_PERMISSION_allow" })
-    .first()
-    .click({ timeout: 30000 });
-  await message.waitFor({ timeout: 30000 });
-  await submit("/bruv questions open " + identity);
-  await page.getByRole("button", { name: "Use local fixture", exact: false }).waitFor({ timeout: 30000 });
-  q = (await record("question-resume-same-identity")).find((q) => q.id === identity);
-  assert.equal(q.status, "pending");
-  assert.equal(q.version, version);
-  assert.equal(JSON.stringify(q.owner), owner);
-  await page.getByRole("button", { name: "Use local fixture", exact: false }).click();
-  await poll(
-    () => ledger(config),
-    (qs) => qs.some((q) => q.id === identity && q.status === "answered"),
-    "explicit answer saved",
-  );
-  q = (await record("question-answer-saved-resume-needed")).find((q) => q.id === identity);
-  assert.equal(q.answer, "Use local fixture");
-  assert.equal(q.delivery, "resume-needed", "recovered questions require explicit human resume");
-  await idle("question-open-answer-idle");
-  await page.reload();
-  await page
-    .locator("[data-thread-item]")
-    .filter({ hasText: "HUMAN_PERMISSION_allow" })
-    .first()
-    .click({ timeout: 30000 });
-  await message.waitFor({ timeout: 30000 });
-  q = (await record("question-answer-reopened-before-resume")).find((q) => q.id === identity);
-  assert.equal(q.status, "answered");
-  assert.equal(q.delivery, "resume-needed");
-  assert.equal(q.answer, "Use local fixture");
-  await submit("/bruv questions resume " + identity);
-  // Resolving the ledger is another actual execute: explicitly approve it, never an answer callback.
-  await page.getByRole("button", { name: "Approve", exact: true }).waitFor({ timeout: 30000 });
-  await page.getByRole("button", { name: "Approve", exact: true }).click();
-  await visible("HUMAN_ANSWER_DELIVERED_ONCE_REAL");
-  await idle("question-resume-idle");
-  q = (await record("question-answer-used-once")).find((q) => q.id === identity);
-  assert.equal(q.status, "resolved");
-  assert.equal(q.answer, "Use local fixture");
-  assert.equal(q.delivery, "delivered");
-  await page.reload();
-  await page
-    .locator("[data-thread-item]")
-    .filter({ hasText: "HUMAN_PERMISSION_allow" })
-    .first()
-    .click({ timeout: 30000 });
-  await message.waitFor({ timeout: 30000 });
-  await submit("/bruv questions open " + identity);
-  await visible("[resolved]");
-  await idle("question-open-resolved-idle");
-  await page.reload();
-  await page
-    .locator("[data-thread-item]")
-    .filter({ hasText: "HUMAN_PERMISSION_allow" })
-    .first()
-    .click({ timeout: 30000 });
-  await message.waitFor({ timeout: 30000 });
-  await submit("HUMAN_CONTINUE: continue without replaying saved answer.");
-  await visible("HUMAN_CONTINUED_REAL");
-  await record("question-no-duplicate-after-reopen");
-  await submit("/bruv status");
-  await idle("native-status-idle");
-  evidence.checks.push(
-    "saved question real native dialog",
-    "decline remains pending",
-    "Stop remains pending",
-    "same owner/id/version reopen; saved answer requires explicit resume",
-    "one human answer delivered and resolved",
-    "native commands are not model prompts",
-  );
+
+  async function exercisePermissions() {
+    for (const scenario of ["allow", "deny", "stop"]) {
+      await submit("HUMAN_PERMISSION_" + scenario + ": request actual execute side effect.");
+      await page.getByRole("button", { name: "Approve", exact: true }).waitFor({ timeout: 30000 });
+      assert.equal(
+        await exists(path.join(config.state, "permission-" + scenario + ".effect")),
+        false,
+        "effect must not happen before consent",
+      );
+      await snapshot("permission-" + scenario + "-pending");
+      if (scenario === "stop") {
+        await page.keyboard.press("Control+Escape");
+        await visible("Run interrupted by user");
+        const pending = (await wire(config))
+          .filter(
+            (x) => x.kind === "stdout" && x.value.type === "control_request" && x.value.request.tool_name === "execute",
+          )
+          .at(-1).value;
+        await poll(
+          () => wire(config),
+          (rows) =>
+            rows.some(
+              (x) =>
+                x.kind === "stdout" &&
+                x.value.type === "control_cancel_request" &&
+                x.value.request_id === pending.request_id,
+            ),
+          "real pending consent cancelled",
+        );
+        evidence.staleApprovalAfterStop = await page.getByRole("button", { name: "Approve", exact: true }).isVisible();
+        await snapshot("permission-stop-interrupted");
+        // Official T3 persists its already-cancelled approval card even on reload.
+        // Preserve the defect frame; explicitly Decline it through the real UI.
+        if (evidence.staleApprovalAfterStop) await page.getByRole("button", { name: "Decline", exact: true }).click();
+        assert.equal(await exists(path.join(config.state, "permission-stop.effect")), false);
+        await reopenHumanThread();
+        await page.getByRole("button", { name: "Approve", exact: true }).waitFor({ state: "hidden" });
+      } else {
+        await page.getByRole("button", { name: scenario === "allow" ? "Approve" : "Decline", exact: true }).click();
+        await visible("HUMAN_PERMISSION_" + scenario + "_RESULT_REAL");
+      }
+      assert.equal(await exists(path.join(config.state, "permission-" + scenario + ".effect")), scenario === "allow");
+      evidence.effects.push({
+        scenario,
+        beforeConsent: false,
+        afterConsent: await exists(path.join(config.state, "permission-" + scenario + ".effect")),
+        content:
+          scenario === "allow"
+            ? await fs.readFile(path.join(config.state, "permission-allow.effect"), "utf8")
+            : undefined,
+      });
+      evidence.checks.push("execute " + scenario + " real side effect=" + (scenario === "allow"));
+      await record("permission-" + scenario + "-result");
+    }
+  }
+
+  async function exerciseSavedQuestion() {
+    // Commands must be real human operations, not tools or model prompts.
+    await submit("HUMAN_QUESTION_ASK: save the actual human question.");
+    await page.getByRole("button", { name: "Approve", exact: true }).waitFor({ timeout: 30000 });
+    await page.getByRole("button", { name: "Approve", exact: true }).click();
+    await visible("Acceptance saved human question");
+    await page.getByRole("button", { name: "Keep pending (do not answer)", exact: false }).waitFor();
+    await page.waitForTimeout(500);
+    let q = (await record("question-native-dialog")).find((q) => q.dedupKey === "human-controls-acceptance");
+    assert.ok(q);
+    assert.equal(q.status, "pending");
+    const identity = q.id,
+      owner = JSON.stringify(q.owner),
+      version = q.version;
+    await page.getByRole("button", { name: "Keep pending (do not answer)", exact: false }).click();
+    await visible("HUMAN_QUESTION_SAVED_REAL");
+    q = (await record("question-declined-pending")).find((q) => q.id === identity);
+    assert.equal(q.status, "pending");
+    assert.equal(q.version, version);
+    assert.equal(q.answer, undefined);
+    await submit("/bruv questions open " + identity);
+    await page.getByRole("button", { name: "Keep pending (do not answer)", exact: false }).waitFor();
+    await record("question-explicit-reopen");
+    await page.keyboard.press("Control+Escape");
+    await visible("Run interrupted by user");
+    q = (await record("question-stop-pending")).find((q) => q.id === identity);
+    assert.equal(q.status, "pending");
+    assert.equal(q.version, version);
+    await reopenHumanThread();
+    await submit("/bruv questions open " + identity);
+    await page.getByRole("button", { name: "Use local fixture", exact: false }).waitFor({ timeout: 30000 });
+    q = (await record("question-resume-same-identity")).find((q) => q.id === identity);
+    assert.equal(q.status, "pending");
+    assert.equal(q.version, version);
+    assert.equal(JSON.stringify(q.owner), owner);
+    await page.getByRole("button", { name: "Use local fixture", exact: false }).click();
+    await poll(
+      () => ledger(config),
+      (qs) => qs.some((q) => q.id === identity && q.status === "answered"),
+      "explicit answer saved",
+    );
+    q = (await record("question-answer-saved-resume-needed")).find((q) => q.id === identity);
+    assert.equal(q.answer, "Use local fixture");
+    assert.equal(q.delivery, "resume-needed", "recovered questions require explicit human resume");
+    await idle("question-open-answer-idle");
+    await reopenHumanThread();
+    q = (await record("question-answer-reopened-before-resume")).find((q) => q.id === identity);
+    assert.equal(q.status, "answered");
+    assert.equal(q.delivery, "resume-needed");
+    assert.equal(q.answer, "Use local fixture");
+    await submit("/bruv questions resume " + identity);
+    // Resolving the ledger is another actual execute: explicitly approve it, never an answer callback.
+    await page.getByRole("button", { name: "Approve", exact: true }).waitFor({ timeout: 30000 });
+    await page.getByRole("button", { name: "Approve", exact: true }).click();
+    await visible("HUMAN_ANSWER_DELIVERED_ONCE_REAL");
+    await idle("question-resume-idle");
+    q = (await record("question-answer-used-once")).find((q) => q.id === identity);
+    assert.equal(q.status, "resolved");
+    assert.equal(q.answer, "Use local fixture");
+    assert.equal(q.delivery, "delivered");
+    await reopenHumanThread();
+    await submit("/bruv questions open " + identity);
+    await visible("[resolved]");
+    await idle("question-open-resolved-idle");
+    await reopenHumanThread();
+    await submit("HUMAN_CONTINUE: continue without replaying saved answer.");
+    await visible("HUMAN_CONTINUED_REAL");
+    await record("question-no-duplicate-after-reopen");
+    await submit("/bruv status");
+    await idle("native-status-idle");
+    evidence.checks.push(
+      "saved question real native dialog",
+      "decline remains pending",
+      "Stop remains pending",
+      "same owner/id/version reopen; saved answer requires explicit resume",
+      "one human answer delivered and resolved",
+      "native commands are not model prompts",
+    );
+  }
+
+  await message.waitFor();
+  await page.locator('[data-chat-provider-model-picker="true"]').first().click();
+  await page.getByText("Local deterministic acceptance (not Claude)", { exact: true }).last().click();
+  await page.getByLabel("Runtime mode", { exact: true }).click();
+  await page.getByText("Supervised", { exact: true }).click();
+  await snapshot("human-model-supervised");
+  await exercisePermissions();
+  await exerciseSavedQuestion();
   await save();
 }
 export function checkHumanWire(records) {

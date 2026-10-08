@@ -433,13 +433,16 @@
       "acceptedBlob": null,
       "launchBase": "0f31ee8bcbb4a6b9cc4e76121fa0aef55d7c52b2",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "416646505069c09f31812412ef55a0ba5ab16553",
         "primaryId": "task_f7ff07f4",
         "primaryCommit": "44ea9b254cdf597dd7b7a854ccd3a38adf0d1b1d",
-        "judgeIds": [],
+        "judgeIds": [
+          "task_4b58c5b6"
+        ],
         "sourceCommit": "44ea9b254cdf597dd7b7a854ccd3a38adf0d1b1d",
-        "state": "needs-judge",
-        "reason": "Primary was killed by session shutdown (143); preserved uncommitted code is retained at the worker path. No submitted candidate commit or readability verdict; resume its original scope rather than count it accepted."
+        "state": "accepted-joined",
+        "reason": "Actual base/parent b80a55a855e65d9bcb4ae8db3bb95d577db79b67 kept fixture creation, version execution and server/log acquisition outside the runtime try, then spread browser/page ownership and exit-only shutdown across a single large try/finally. The candidate makes the lifetime readable in execution order: pin artifact, exclusively acquire root, enter its owner, prepare fixture, discover version, replay, publish failure if needed, release only that root. replayWithServer owns the log outside the spawned process lifetime and its observed close; replayWithBrowser owns browser closure and captures page failure before that closure. These are coherent effect-owning operations, not cosmetic renames, arbitrary blocks or a context bag. stopServer receives the close promise registered immediately after spawn, handles exitCode and signalCode, escalates TERM to KILL if still live, clears the timeout, and awaits close before the log/runtime can be released. Unchanged decision: keep native UI onboarding and history semantics together in exerciseHistory rather than subdividing every locator/action into wrappers; pairing, identity capture, redacted snapshots, wire parsing and final artifact/driver assertions remain directly legible there."
       }
     },
     {
@@ -509,13 +512,16 @@
       "judges": [],
       "acceptedBlob": null,
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "3fddd662b31503d6ab756c096c3d996792531f16",
         "primaryId": "task_f2026c09",
         "primaryCommit": "9660923ad0a58c1017731e992a207647f7ba7643",
-        "judgeIds": [],
+        "judgeIds": [
+          "task_879c9147"
+        ],
         "sourceCommit": "9660923ad0a58c1017731e992a207647f7ba7643",
-        "state": "needs-judge",
-        "reason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+        "state": "accepted-joined",
+        "reason": "Compared the actual candidate against primary base b80a55a855e65d9bcb4ae8db3bb95d577db79b67, which is also its parent. The previous exercise interleaved initial model selection, reusable browser helpers, the permission loop, and the long question lifecycle, with five repeated reload/thread-selection sequences. The candidate now ends with the directly awaited journey: select the deterministic model and Supervised mode, snapshot, exercisePermissions, exerciseSavedQuestion, save. These are substantive operation boundaries, not renamed blocks: exercisePermissions contains pre-consent absence, allow/deny side effects, Stop/request cancellation, preserved stale-card evidence and explicit decline; exerciseSavedQuestion keeps the saved identity/owner/version local across pending, stopped, answered/resume-needed and resolved/delivered states, with an explicitly approved resume execute and subsequent no-replay checks. reopenHumanThread owns the entire reload/select/wait operation and states its single-thread anchor. Helpers close over the existing exercise-scoped page/config/evidence rather than introducing a context bag or framework. Unchanged decision: retain ledger/wire/poll/projected and the separate checkHumanWire, verify and capture operations; their read, assertion, projection and export authorities are already distinct. No forced rewrite of these readable paths is needed."
       }
     },
     {
@@ -661,13 +667,16 @@
       "judges": [],
       "acceptedBlob": null,
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "614b3fac5c116306d2e0ec7cbc5b81a1b15dc5f2",
         "primaryId": "task_8b9d9dd1",
         "primaryCommit": "88870a303cf8cbe8c93818ed174ef03ee7b230a4",
-        "judgeIds": [],
+        "judgeIds": [
+          "task_619d6011"
+        ],
         "sourceCommit": "88870a303cf8cbe8c93818ed174ef03ee7b230a4",
-        "state": "needs-judge",
-        "reason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+        "state": "accepted-joined",
+        "reason": "Read the actual candidate and its complete primary-base diff; candidate parent is exactly b80a55a855e65d9bcb4ae8db3bb95d577db79b67. The baseline mixed child transport callbacks and prompt helpers into the acceptance scenario while its wait function and finalizer reached into separately declared child/diagnostic/event state. startRpcRuntime now has a real resource boundary: it creates the child, owns newline buffering, records events and stderr, denies confirmation requests by matching ID, writes framed prompts, observes exit during waits, and performs stop escalation. Its returned operations close over that one child rather than pass an invented context bag. The scenario remains directly readable: execute result confirmation, first agent_end, background admission, observed worker start, second agent_end, release, completion wake, endpoint error assertion. Moving directory setup and model startup under the outer try/finally makes partial startup ownership visible; proof-directory creation precedes fixture allocation. This is substantive lifetime/authority grouping rather than renaming. Unchanged decision: retain the inline early.started polling, end-count predicate, marker assertions and proof fields; these small scenario-specific decisions are already next to their effects and would become harder to follow behind generic helpers."
       }
     },
     {
@@ -686,11 +695,11 @@
       "launchBase": "0f31ee8bcbb4a6b9cc4e76121fa0aef55d7c52b2",
       "resume": {
         "status": "pending",
-        "primaryId": "task_3fcde229",
-        "primaryCommit": null,
+        "primaryId": "task_48898268",
+        "primaryCommit": "e2da2498bfe0fcb2ea83bc0fb74867b7a2622e20",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary-interrupted",
+        "sourceCommit": "e2da2498bfe0fcb2ea83bc0fb74867b7a2622e20",
+        "state": "needs-judge",
         "reason": "Primary was killed by session shutdown (143); preserved uncommitted code is retained at the worker path. No submitted candidate commit or readability verdict; resume its original scope rather than count it accepted."
       }
     },
@@ -825,13 +834,16 @@
       "judges": [],
       "acceptedBlob": null,
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "766989628f65993cbde352037144c85dc25e316f",
         "primaryId": "task_eb51c954",
         "primaryCommit": "b80a55a855e65d9bcb4ae8db3bb95d577db79b67",
-        "judgeIds": [],
+        "judgeIds": [
+          "task_27eea40d"
+        ],
         "sourceCommit": "b80a55a855e65d9bcb4ae8db3bb95d577db79b67",
-        "state": "needs-judge",
-        "reason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+        "state": "accepted-joined",
+        "reason": "Independent reading of the exact candidate finds a single visible lifetime: receive harness-owned state/scenario, persist the PID as .started, announce start, poll the scenario release file, announce completion, then persist .finished. The comment identifies external release/stop authority. The inline loop exposes the only wait condition and keeps its effects next to the two completion effects. Splitting this into helpers or adding a lifecycle object would hide rather than resolve a reading problem. The focus is unchanged from both the primary base (identical to candidate) and candidate parent, and remains its original ledger blob."
       }
     },
     {
