@@ -11239,39 +11239,90 @@
       "initialBlob": "a09a77bc3faa327b69ba596c2d1ad79f2d1451cb",
       "status": "pending",
       "area": "remote",
-      "resumeState": "pending-primary-unstarted",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_13049669",
+      "primaryCommit": "4670838ed3a277a2cef4f87efb4a38e774c6af0e",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "4670838ed3a277a2cef4f87efb4a38e774c6af0e",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
-      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
+      "primaryBase": "a1a45b3c26fac604060d3fbf22ba1f37642d06e6",
+      "primaryResult": "No Dockerfile edit. The runner supplies all COPY inputs, the image installs its OS prerequisites, commits the fixture README under /fixture/repo, installs destination model/profile configuration, and names the entrypoint directly. Splitting instructions or adding an init helper would only redistribute an already linear operation. The coherent batch changes only provider internals; all image COPY paths stay valid.",
+      "primaryPaths": ["tests/fixtures/remote-e2e/fake-provider.ts"],
+      "primaryChecks": [
+        "Read complete assigned source and relevant Docker runner, sshd/model/profile configuration, provider unit consumers and owner continuation/question/jobs/repo/capability/cancel caller assertions.",
+        "Manual source journey comparison: preserved scenario priority, generated execution assertions, request-marker effects and completion framing.",
+        "Static source-literal comparison: all 10 original generated program literals occur byte-for-byte in changed source; fixture code not executed.",
+        "Required Biome formatter on changed provider path only, explicit argv in retained owned environment: exit 0.",
+        "git diff --check: exit 0 before source-only commit."
+      ],
+      "primaryLimits": [
+        "No setup, tests, builds, Docker, SSH, live auth/device, or fixture programs executed; parent owns audited isolated gates and fresh independent judgments.",
+        "Assigned reconciliation rows all say pending-primary-unstarted with no candidate/rejection evidence; current assigned files exist, so no candidate bytes were imported.",
+        "Existing runner has shell cleanup traps and Docker/network/package-install effects; read as source only and not run. Provider worker scenarios write fixed /tmp markers and can edit fixture tracked.txt; not exercised here.",
+        "Formatter used explicit child_process argv and owned fs.mkdtemp HOME/config/TMPDIR/SDK, retained at /tmp/pr45-remote-provider-format-25OvcI. Source edits and commit are durable in /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_13049669. Shared dependencies were read-only.",
+        "Parent owns runtime agent.model verification, publication, and aggregate wisdom; no delegation or wisdom edits performed."
+      ]
     },
     {
       "file": "tests/fixtures/remote-e2e/entrypoint.sh",
       "initialBlob": "f55fd6b58bbc113387864d5b49719857abef6a0a",
       "status": "pending",
       "area": "remote",
-      "resumeState": "pending-primary-unstarted",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_13049669",
+      "primaryCommit": "4670838ed3a277a2cef4f87efb4a38e774c6af0e",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "4670838ed3a277a2cef4f87efb4a38e774c6af0e",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
-      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
+      "primaryBase": "a1a45b3c26fac604060d3fbf22ba1f37642d06e6",
+      "primaryResult": "No entrypoint edit. Container-owned provider lifetime and sshd foreground ownership remain visible at their launch sites, and exec preserves signal delivery to the daemon. Adding helpers or supervision would introduce behavior/state not needed for this structural pass. Provider restructuring keeps the same launch path and bound-port diagnostic.",
+      "primaryPaths": ["tests/fixtures/remote-e2e/fake-provider.ts"],
+      "primaryChecks": [
+        "Read complete assigned source and relevant Docker runner, sshd/model/profile configuration, provider unit consumers and owner continuation/question/jobs/repo/capability/cancel caller assertions.",
+        "Manual source journey comparison: preserved scenario priority, generated execution assertions, request-marker effects and completion framing.",
+        "Static source-literal comparison: all 10 original generated program literals occur byte-for-byte in changed source; fixture code not executed.",
+        "Required Biome formatter on changed provider path only, explicit argv in retained owned environment: exit 0.",
+        "git diff --check: exit 0 before source-only commit."
+      ],
+      "primaryLimits": [
+        "No setup, tests, builds, Docker, SSH, live auth/device, or fixture programs executed; parent owns audited isolated gates and fresh independent judgments.",
+        "Assigned reconciliation rows all say pending-primary-unstarted with no candidate/rejection evidence; current assigned files exist, so no candidate bytes were imported.",
+        "Existing runner has shell cleanup traps and Docker/network/package-install effects; read as source only and not run. Provider worker scenarios write fixed /tmp markers and can edit fixture tracked.txt; not exercised here.",
+        "Formatter used explicit child_process argv and owned fs.mkdtemp HOME/config/TMPDIR/SDK, retained at /tmp/pr45-remote-provider-format-25OvcI. Source edits and commit are durable in /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_13049669. Shared dependencies were read-only.",
+        "Parent owns runtime agent.model verification, publication, and aggregate wisdom; no delegation or wisdom edits performed."
+      ]
     },
     {
       "file": "tests/fixtures/remote-e2e/fake-provider.ts",
       "initialBlob": "0ca133ab070c33dc4ef9937017a2bbded956d20e",
       "status": "pending",
       "area": "remote",
-      "resumeState": "pending-primary-unstarted",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_13049669",
+      "primaryCommit": "4670838ed3a277a2cef4f87efb4a38e774c6af0e",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "4670838ed3a277a2cef4f87efb4a38e774c6af0e",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
-      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
+      "primaryBase": "a1a45b3c26fac604060d3fbf22ba1f37642d06e6",
+      "primaryResult": "parentReply now states print/probe/completion/yield/launch precedence through direct returns. workerReply retains marker observations before answering, then separates completed-turn response selection from first-turn program selection using ordered branches. executeReply owns only the execute-call envelope; completionStream owns only shared SSE framing, deriving stop/tool_calls from the actual returned reply. The HTTP handler now parses, selects parent versus worker authority, and frames the result. No shared context bag, new helper file, scenario/assertion removal, or fixture lifetime change. All ten generated execution program literals remain exact.",
+      "primaryPaths": ["tests/fixtures/remote-e2e/fake-provider.ts"],
+      "primaryChecks": [
+        "Read complete assigned source and relevant Docker runner, sshd/model/profile configuration, provider unit consumers and owner continuation/question/jobs/repo/capability/cancel caller assertions.",
+        "Manual source journey comparison: preserved scenario priority, generated execution assertions, request-marker effects and completion framing.",
+        "Static source-literal comparison: all 10 original generated program literals occur byte-for-byte in changed source; fixture code not executed.",
+        "Required Biome formatter on changed provider path only, explicit argv in retained owned environment: exit 0.",
+        "git diff --check: exit 0 before source-only commit."
+      ],
+      "primaryLimits": [
+        "No setup, tests, builds, Docker, SSH, live auth/device, or fixture programs executed; parent owns audited isolated gates and fresh independent judgments.",
+        "Assigned reconciliation rows all say pending-primary-unstarted with no candidate/rejection evidence; current assigned files exist, so no candidate bytes were imported.",
+        "Existing runner has shell cleanup traps and Docker/network/package-install effects; read as source only and not run. Provider worker scenarios write fixed /tmp markers and can edit fixture tracked.txt; not exercised here.",
+        "Formatter used explicit child_process argv and owned fs.mkdtemp HOME/config/TMPDIR/SDK, retained at /tmp/pr45-remote-provider-format-25OvcI. Source edits and commit are durable in /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_13049669. Shared dependencies were read-only.",
+        "Parent owns runtime agent.model verification, publication, and aggregate wisdom; no delegation or wisdom edits performed."
+      ]
     },
     {
       "file": "tests/fixtures/remote-e2e/models.json",

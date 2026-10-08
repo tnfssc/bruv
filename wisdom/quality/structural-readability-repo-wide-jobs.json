@@ -279,7 +279,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_13049669",
         "branch": "bruv/pr45-primary-3-remote-focuses-13049669",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "4670838ed3a277a2cef4f87efb4a38e774c6af0e"
       },
       {
         "id": "task_e2bf3034",
@@ -305,6 +306,15 @@
         ],
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_9cf44661",
         "branch": "bruv/pr45-judge-3-remote-focuses-9cf44661",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_0ebb2fc5",
+        "stage": "primary",
+        "focus": ["tests/fixtures/remote-e2e/subagents.json"],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_0ebb2fc5",
+        "branch": "bruv/pr45-primary-1-remote-focuses-0ebb2fc5",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
       }
