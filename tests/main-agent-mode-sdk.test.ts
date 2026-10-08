@@ -130,7 +130,7 @@ async function sdk(
 test("real SDK defaults main frame to orchestrator and switches to a prose-free fast mode without model/thinking mutation", async () => {
   const f = await sdk();
   await f.session.prompt("first");
-  expect(f.requests[0]).toContain("You lead work.");
+  expect(f.requests[0]).toContain("Delegating independent code or PR work? Give it a worktree.");
   expect(f.requests[0]).not.toContain("Available tools:");
   expect(f.requests[0]).not.toContain("In addition to the tools above");
   expect(f.requests[0]).toContain("shell 3 seconds");
@@ -154,7 +154,7 @@ test("real SDK defaults main frame to orchestrator and switches to a prose-free 
   expect(f.requests).toHaveLength(2);
   expect(f.requests[1]).not.toContain("main agent in fast instruction mode");
   expect(f.requests[1]).not.toContain("You build and fix code.");
-  expect(f.requests[1]).not.toContain("You lead work.");
+  expect(f.requests[1]).not.toContain("Delegating independent code or PR work? Give it a worktree.");
   expect(f.requests[1]).toContain("FRAME_BEFORE");
   expect(f.requests[1]).toContain("FRAME_AFTER");
   expect(f.requests[1].split("MARKER_EXAMPLE")).toHaveLength(3);
@@ -182,7 +182,7 @@ test("real SDK restores root instruction mode from durable session history", asy
   const f = await sdk({ entries: [["bruv-instruction-mode", { mode: "normal" }]] });
   await f.session.prompt("resumed");
   expect(f.requests[0]).not.toContain("You build and fix code.");
-  expect(f.requests[0]).not.toContain("You lead work.");
+  expect(f.requests[0]).not.toContain("Delegating independent code or PR work? Give it a worktree.");
 });
 
 test("real SDK child identity and delegation depth ignore inherited root mode", async () => {
@@ -207,7 +207,7 @@ test("/mode before the first ordinary SDK request controls its startup frame", a
   await f.session.prompt("first ordinary request");
   expect(f.requests).toHaveLength(1);
   expect(f.requests[0]).not.toContain("You build and fix code.");
-  expect(f.requests[0]).not.toContain("You lead work.");
+  expect(f.requests[0]).not.toContain("Delegating independent code or PR work? Give it a worktree.");
 });
 
 test("project marker examples and later hook framing survive mode replacement", async () => {
@@ -231,7 +231,7 @@ test("/mode before the first request overrides a mode restored by a real resume"
   await f.session.prompt("first resumed request");
   expect(f.requests[0]).not.toContain("main agent in fast instruction mode");
   expect(f.requests[0]).not.toContain("You build and fix code.");
-  expect(f.requests[0]).not.toContain("You lead work.");
+  expect(f.requests[0]).not.toContain("Delegating independent code or PR work? Give it a worktree.");
 });
 
 test("real SDK injects the project's configured wisdom and values paths", async () => {

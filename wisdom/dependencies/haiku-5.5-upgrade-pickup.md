@@ -82,3 +82,12 @@ Post-resolution check and guarded asset prep pass. Host/recovery/Haiku tests:
 applies to unchanged runtime code; no need to repeat the entire gate.
 Values unchanged in this follow-up: same recovery lesson applies.
 Next: commit merge, push PR branch, confirm GitHub no longer reports conflicts.
+
+User then requested newest develop sync, new-issue review, merge if green,
+and a new release after merge. Latest base is 486bcc7f (PR #55 prompt
+simplification). It merges without new conflicts. Existing recovery conflicts
+were resolved in 4c83d23c. Full combined Linux validation will run again.
+After green local and hosted checks, merge #54 and dispatch Release workflow
+on develop. It owns version preparation, platform gates and publication.
+No repo edits in this worktree after PR merge. Record later release facts in
+the release or task, not here. Values unchanged by sync/release request.
