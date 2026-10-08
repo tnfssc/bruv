@@ -3707,16 +3707,17 @@
       "initialBlob": "fae64d6c3a8c043e31e264c69e1f1dfaf812783d",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "fae64d6c3a8c043e31e264c69e1f1dfaf812783d",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "fae64d6c3a8c043e31e264c69e1f1dfaf812783d",
         "primaryId": "task_68ab69ce",
         "primaryCommit": "a1b5f18d35fde3ad3345335ae51cb184d40ed078",
-        "judgeIds": [],
+        "judgeIds": ["task_f28d0d10"],
         "sourceCommit": "a1b5f18d35fde3ad3345335ae51cb184d40ed078",
-        "state": "needs-judge",
-        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+        "state": "accepted-joined",
+        "reason": "The complete unchanged focus already exposes its single paid boundary without scattered ownership: opt-in skip guard, AbortController, canonical OpenAI credential resolution, onError collection, setup-only orchestration, awaited connect, empty-error and ready assertions inside try, unconditional abort/close in finally, and a final closed assertion. A shared fixture would hide the credential/network boundary for a one-scenario file without making a decision clearer. Its candidate blob exactly equals primaryBase. I independently read both related changed tests: paired setup/message/process helpers have distinct responsibilities, and passive history keeps scenario associations and expectations local; neither warrants changing this linear acceptance test."
       }
     },
     {
@@ -3724,16 +3725,17 @@
       "initialBlob": "3c8a12296f7d2a2cfe900c71dfe876a64e6472b8",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "aa5b12e2f940b212837066b0331c31a2d80e7f8d",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "aa5b12e2f940b212837066b0331c31a2d80e7f8d",
         "primaryId": "task_68ab69ce",
         "primaryCommit": "a1b5f18d35fde3ad3345335ae51cb184d40ed078",
-        "judgeIds": [],
+        "judgeIds": ["task_f28d0d10"],
         "sourceCommit": "a1b5f18d35fde3ad3345335ae51cb184d40ed078",
-        "state": "needs-judge",
-        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+        "state": "accepted-joined",
+        "reason": "Read the full candidate and every paired-runtime diff hunk. The former duplicated loader/reload/runtime/session/bind sequence is now one coherent acquisition operation, createPairedSession; ownership is returned only after binding succeeds and binding failure disposes its created session. The loader still selects only the local extension factory and execute loadout, fixture auth stays explicit and refresh stays disabled. completedAssistantTurn removes only duplicated provider envelope fields; scenario-selected tool/text content, model/hook assertions and stream turn choices stay visible at their point of use. runPairedFixtureProcess groups explicit no-shell argv, fixture-only environment, stdout collection and exit observation. createPairedDirectory allocates retained owned home/config/sdk/tmp roots instead of deleting fixture roots afterward. Both finally blocks explicitly close the acquired owner before disposing the session. This is a real reduction of repeated acquisition/framing journeys, not rename churn or a context bag. The first scenario still visibly checks duplicate delegate promise identity, interruption/close preserving admitted work, the real execute result, hooks and release. The second still visibly supplies duplicate completion metadata, a passive transcript, canonical-backend continuation, one custom completion/feedback and no synthetic user turn. All original assertions remain; the related passive-history delta only adds three explicit lifecycle/replay scenarios."
       }
     },
     {
@@ -3741,7 +3743,7 @@
       "initialBlob": "973e8cd7089d5efafd89b79bef6eb466ad8c0001",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "ab128e1f7515e20fc4d8d852b7d6beeed8bf9e1f",
       "integration": "related accepted patch integrated; own primary pending",
       "relatedPatchJudgment": {
         "judgeId": "task_189c73c2",
@@ -3749,13 +3751,14 @@
         "blob": "ab128e1f7515e20fc4d8d852b7d6beeed8bf9e1f"
       },
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "ab128e1f7515e20fc4d8d852b7d6beeed8bf9e1f",
         "primaryId": "task_68ab69ce",
         "primaryCommit": "a1b5f18d35fde3ad3345335ae51cb184d40ed078",
-        "judgeIds": ["task_189c73c2"],
+        "judgeIds": ["task_189c73c2", "task_f28d0d10"],
         "sourceCommit": "a1b5f18d35fde3ad3345335ae51cb184d40ed078",
-        "state": "needs-judge",
-        "reason": "Retain exact related-path actual-code acceptance; it is not completion of this file’s distinct primary/fresh focus-judge requirement."
+        "state": "accepted-joined",
+        "reason": "Independently read every scenario, not the prior accepted-hash claim. The whole file is already structurally direct: each input history shows the competing authority records beside the projection and specific expected user/custom records. Restored-session filtering, exact spoken-turn association and replay, unmatched typed requests, old-snapshot speech-only dedup, overlap outside user words, missing-speech suppression, raw-audit preservation and terminal-control sanitization remain explicit. Relative to primaryBase the only change is three appended scenarios. They make distinct lifetimes legible without a shared builder: intervening assistant/passive/task records preserve an audit until exactly the next user consumes it; unreadable latest audit replaces an older association; and legacy dedup is branch-local/idempotent instead of carrying state between projections. Object identity, exact output order, unchanged raw history and negative typed-association expectations are visible locally. The related paired-runtime extraction does not change these pure projection inputs or weaken any privacy/security assertion. No further fixture abstraction is warranted."
       }
     },
     {
@@ -3860,16 +3863,17 @@
       "initialBlob": "b4a12d969bf7c39fd19223b31d233f5ab1f6c78e",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "b4a12d969bf7c39fd19223b31d233f5ab1f6c78e",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "b4a12d969bf7c39fd19223b31d233f5ab1f6c78e",
         "primaryId": "task_82de2654",
         "primaryCommit": "af516eddb0607a24ce9b7e631936af16414cd291",
-        "judgeIds": [],
+        "judgeIds": ["task_eed62836"],
         "sourceCommit": "af516eddb0607a24ce9b7e631936af16414cd291",
-        "state": "needs-judge",
-        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+        "state": "accepted-joined",
+        "reason": "Read the entire single test. Its progression is the construction contract: ordinary root instructions, the sole execute declaration, essential JSON schema fields, then an awaited denial for code that would throw if dispatched. Each assertion consumes the same local setup value; there is no hidden stage or lifetime to recover from scattered helpers. A harness or arbitrary extraction would obscure this small contract rather than clarify it."
       }
     },
     {
@@ -3877,16 +3881,17 @@
       "initialBlob": "21629333879e5eaabf82d51b136cca62e08ff733",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "21629333879e5eaabf82d51b136cca62e08ff733",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "21629333879e5eaabf82d51b136cca62e08ff733",
         "primaryId": "task_82de2654",
         "primaryCommit": "af516eddb0607a24ce9b7e631936af16414cd291",
-        "judgeIds": [],
+        "judgeIds": ["task_eed62836"],
         "sourceCommit": "af516eddb0607a24ce9b7e631936af16414cd291",
-        "state": "needs-judge",
-        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+        "state": "accepted-joined",
+        "reason": "Read the whole opt-in test, including credential acquisition before provider creation and finally cleanup. The real-auth/setup boundary is explicit: canonical service loadKey, real VoiceSession default adapter/model, setup-only orchestration, connect, errors/ready assertions, abort and close in finally, then closed assertion. This is one short lifecycle; extracting a fixture would conceal which parts are deliberately real and which are denied."
       }
     },
     {
@@ -3894,16 +3899,17 @@
       "initialBlob": "025fff9fb0e7475a83241c69c1a150043067273d",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "025fff9fb0e7475a83241c69c1a150043067273d",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "025fff9fb0e7475a83241c69c1a150043067273d",
         "primaryId": "task_82de2654",
         "primaryCommit": "af516eddb0607a24ce9b7e631936af16414cd291",
-        "judgeIds": [],
+        "judgeIds": ["task_eed62836"],
         "sourceCommit": "af516eddb0607a24ce9b7e631936af16414cd291",
-        "state": "needs-judge",
-        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+        "state": "accepted-joined",
+        "reason": "Read the entire test for both widths, from mkdtemp/session seed/quoted CLI launch through tap, hold, stale frame, blur, stop, pane respawn, and saved branch assertions. The sequence tells one stateful user journey: tap produces text without sends/end; repeat hold restores the genuine draft and produces one spoken turn; muted, blurred, and stopped states stop sends; reopening the same branch retains one user and assistant spoken record. Local command/hold/proof helpers own mechanics only. proof waits for the numbered notification, parses the single captures/sends/ends/typed wire layout, and selects its newest match, so positional indexes have a nearby, singular explanation. Splitting stages or adding a context bag would make readers chase the shared terminal/session lifetime."
       }
     },
     {
@@ -4869,7 +4875,7 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 122,
-    "pending": 29
+    "accepted": 128,
+    "pending": 23
   }
 }

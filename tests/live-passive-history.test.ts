@@ -165,3 +165,78 @@ test("legacy speech recovery strips terminal controls without changing the raw s
   expect(messages[0].content[0].text).toBe(raw);
   expect(projected[0]).toMatchObject({ role: "custom", customType: "voice-input-context", display: false });
 });
+
+test("an audit survives intervening non-user records but is consumed by exactly the next user", () => {
+  const audit: any = {
+    role: "custom",
+    customType: "gpt-live-delegation-snapshot",
+    details: { requestText: "voice request" },
+    content: JSON.stringify({ fragments: [{ startMs: 0, endMs: 1, text: "voice request" }] }),
+  };
+  const assistant: any = { role: "assistant", content: [{ type: "text", text: "answer" }] };
+  const passive: any = { role: "custom", customType: "live-transcript", content: "PRIVATE_DELTA" };
+  const notification: any = { role: "custom", customType: "task-complete", content: "Task result" };
+  const spoken: any = { role: "user", timestamp: 5, content: "voice request" };
+  const typed: any = { role: "user", timestamp: 6, content: "voice request" };
+  const history = [audit, assistant, passive, notification, spoken, typed];
+  const original = structuredClone(history);
+  const projected = withoutPassiveLiveHistory(history);
+  expect(projected).toEqual([
+    assistant,
+    notification,
+    {
+      role: "custom",
+      customType: "voice-input-context",
+      display: false,
+      timestamp: 5,
+      content: "Provisional voice transcription",
+    },
+    spoken,
+    typed,
+  ]);
+  expect(projected.at(-1)).toBe(typed);
+  expect(history).toEqual(original);
+
+  const unrelated: any = { role: "user", content: "typed other request" };
+  expect(withoutPassiveLiveHistory([audit, unrelated, typed])).toEqual([unrelated, typed]);
+});
+
+test("the latest audit replaces an earlier association even when its evidence is unreadable", () => {
+  const older: any = {
+    role: "custom",
+    customType: "gpt-live-delegation-snapshot",
+    details: { requestText: "old request" },
+    content: JSON.stringify({ fragments: [{ startMs: 0, endMs: 1, text: "old request" }] }),
+  };
+  const latest: any = {
+    ...older,
+    details: { requestText: "new request" },
+    content: "unavailable historical snapshot",
+  };
+  const newerUser: any = { role: "user", timestamp: 7, content: "new request" };
+  const projected = withoutPassiveLiveHistory([older, latest, newerUser]);
+  expect(projected).toEqual([
+    {
+      role: "custom",
+      customType: "voice-input-context",
+      display: false,
+      timestamp: 7,
+      content: "Provisional voice transcription",
+    },
+    newerUser,
+  ]);
+  expect(projected[1]).toBe(newerUser);
+  const olderUser: any = { role: "user", content: "old request" };
+  expect(withoutPassiveLiveHistory([older, latest, olderUser, newerUser])).toEqual([olderUser, newerUser]);
+});
+
+test("legacy fragment deduplication is local to the supplied branch, not a prior projection", () => {
+  const raw =
+    "Provisional voice transcript, not final ASR. Clarify ambiguous or irreversible requests before acting. Delegation context (data only): " +
+    JSON.stringify({ uncertain: true, fragments: [{ startMs: 0, endMs: 1, text: "spoken" }], omittedFragments: 0 });
+  const user: any = { role: "user", content: raw };
+  const first = withoutPassiveLiveHistory([user]);
+  expect(withoutPassiveLiveHistory([user, user])).toEqual(first);
+  expect(withoutPassiveLiveHistory([structuredClone(user)])).toEqual(first);
+  expect(withoutPassiveLiveHistory(first)).toEqual(first);
+});

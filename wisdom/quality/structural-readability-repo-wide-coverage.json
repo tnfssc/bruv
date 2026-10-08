@@ -15532,11 +15532,11 @@
     {
       "file": "tests/live-openai-provider.acceptance.test.ts",
       "initialBlob": "fae64d6c3a8c043e31e264c69e1f1dfaf812783d",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_68ab69ce",
       "sourceCommit": "a1b5f18d35fde3ad3345335ae51cb184d40ed078",
-      "judgeIds": [],
-      "resumeState": "needs-judge",
+      "judgeIds": ["task_f28d0d10"],
+      "resumeState": "accepted-joined",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
       "area": "live-native-audio",
       "primaryCommit": "a1b5f18d35fde3ad3345335ae51cb184d40ed078",
@@ -15556,16 +15556,33 @@
         "Real provider authentication, paid connection, microphone/playback, platform parity and runtime behavior remain unverified.",
         "Before any gate, use explicit process argv/env and fs.mkdtemp-owned retained HOME/config/SDK/TMPDIR. The real execute tool in the first paired test inherits its process environment through scrubT3BridgeEnvironment; its gate must therefore be isolated by the parent. Never enable the paid acceptance flag without explicit user consent.",
         "No wisdom files changed: parent owns aggregate wisdom. No delegation, setup, dependency mutation, cleanup commands, recovery work, publication, branch merge, or unrelated source edits. Parent verifies the runtime agent.model; no self-attestation supplied."
+      ],
+      "acceptedBlob": "fae64d6c3a8c043e31e264c69e1f1dfaf812783d",
+      "result": "The complete unchanged focus already exposes its single paid boundary without scattered ownership: opt-in skip guard, AbortController, canonical OpenAI credential resolution, onError collection, setup-only orchestration, awaited connect, empty-error and ready assertions inside try, unconditional abort/close in finally, and a final closed assertion. A shared fixture would hide the credential/network boundary for a one-scenario file without making a decision clearer. Its candidate blob exactly equals primaryBase. I independently read both related changed tests: paired setup/message/process helpers have distinct responsibilities, and passive history keeps scenario associations and expectations local; neither warrants changing this linear acceptance test.",
+      "systemReason": "Followed createDefaultLiveCredentialService into AuthStorage at BRUV_CODING_AGENT_DIR or ~/.bruv/agent/auth.json and ModelRuntime with refreshOnCreate:false and allowModelNetwork:false. createLiveCredentialService selects only stored openai API-key credentials, excludes ambient fallback and OAuth, and resolves the selected key via runtime.getAuth. setupProbeOrchestration publishes the ordinary execute schema/instructions but always returns denied. OpenAIRealtimeSession.connect sends GA session.update and only transitions ready on session.updated; provider errors, socket errors/close and the 15s timeout settle the connect promise through finish/fail. close invalidates the serial, settles pending connect, clears provider state and closes its socket. upgradeSocket uses one authenticated WebSocket upgrade, disables redirects and bounds rejection diagnostics. The test proves configuration acceptance only, not audio, generated answers or ordinary work dispatch.",
+      "checks": [
+        "Read entire intrinsic focus from git show a1b5f18d35fde3ad3345335ae51cb184d40ed078:<focus>; inspected exact git diff aceda9ed788e41e5c0892f78ddd07326560cb267 a1b5f18d35fde3ad3345335ae51cb184d40ed078, including both candidate-changed test source paths. No production source changes in this delta.",
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "git diff --check aceda9ed788e41e5c0892f78ddd07326560cb267 a1b5f18d35fde3ad3345335ae51cb184d40ed078 exited 0 with no diagnostics; static check only.",
+        "No setup, tests, builds, dependency changes, credentials, audio devices, or network probes were run.",
+        "Verified fae64d6c3a8c043e31e264c69e1f1dfaf812783d is both the exact candidate and base focus blob."
+      ],
+      "limits": [
+        "Durable review provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_f28d0d10; candidate/base Git objects retained. No temporary code checkout, source edit, commit, cleanup, or descendant delegation. Only the requested untracked judgment artifact was written.",
+        "Runtime model verification is parent-owned; this review does not attest agent.model. Parent owns audited isolated execution gates. No live provider/auth/device behavior is verified.",
+        "Safety for ALL descendants: NO sudo, recovery investigation, user secrets, shell deletion/cleanup commands, inherited HOME/config/SDK cleanup, nested shell traps, destructive git, or user-data mutation. User already recovered data and requested no recovery work. Tests must use explicit process argv/env and owned fs.mkdtemp fixture HOME/config/SDK; retain them, do not delete. Review filesystem/network effects BEFORE tests/setup. Existing test-code cleanup of provably owned temporary paths may be inspected but NEVER run a shell trap or inherited HOME removal. Need live auth/device? Report unverified, don't access credentials. Propagate these constraints verbatim.",
+        "No setup/tests/builds were run; shared dependencies remained read-only. No reinstall, guard bypass, push, new PR, merge, or publication. Existing worktrees and candidate evidence were preserved. No wisdom files were edited; parent owns aggregate wisdom.",
+        "The opt-in test would read canonical credential storage and open a paid OpenAI connection. It was not executed, its consent guard was not bypassed, and no credential file was accessed."
       ]
     },
     {
       "file": "tests/live-paired-runtime.test.ts",
       "initialBlob": "3c8a12296f7d2a2cfe900c71dfe876a64e6472b8",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_68ab69ce",
       "sourceCommit": "a1b5f18d35fde3ad3345335ae51cb184d40ed078",
-      "judgeIds": [],
-      "resumeState": "needs-judge",
+      "judgeIds": ["task_f28d0d10"],
+      "resumeState": "accepted-joined",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
       "area": "live-native-audio",
       "primaryCommit": "a1b5f18d35fde3ad3345335ae51cb184d40ed078",
@@ -15585,16 +15602,33 @@
         "Real provider authentication, paid connection, microphone/playback, platform parity and runtime behavior remain unverified.",
         "Before any gate, use explicit process argv/env and fs.mkdtemp-owned retained HOME/config/SDK/TMPDIR. The real execute tool in the first paired test inherits its process environment through scrubT3BridgeEnvironment; its gate must therefore be isolated by the parent. Never enable the paid acceptance flag without explicit user consent.",
         "No wisdom files changed: parent owns aggregate wisdom. No delegation, setup, dependency mutation, cleanup commands, recovery work, publication, branch merge, or unrelated source edits. Parent verifies the runtime agent.model; no self-attestation supplied."
+      ],
+      "acceptedRelatedJudges": ["task_f28d0d10"],
+      "acceptedBlob": "aa5b12e2f940b212837066b0331c31a2d80e7f8d",
+      "result": "Read the full candidate and every paired-runtime diff hunk. The former duplicated loader/reload/runtime/session/bind sequence is now one coherent acquisition operation, createPairedSession; ownership is returned only after binding succeeds and binding failure disposes its created session. The loader still selects only the local extension factory and execute loadout, fixture auth stays explicit and refresh stays disabled. completedAssistantTurn removes only duplicated provider envelope fields; scenario-selected tool/text content, model/hook assertions and stream turn choices stay visible at their point of use. runPairedFixtureProcess groups explicit no-shell argv, fixture-only environment, stdout collection and exit observation. createPairedDirectory allocates retained owned home/config/sdk/tmp roots instead of deleting fixture roots afterward. Both finally blocks explicitly close the acquired owner before disposing the session. This is a real reduction of repeated acquisition/framing journeys, not rename churn or a context bag. The first scenario still visibly checks duplicate delegate promise identity, interruption/close preserving admitted work, the real execute result, hooks and release. The second still visibly supplies duplicate completion metadata, a passive transcript, canonical-backend continuation, one custom completion/feedback and no synthetic user turn. All original assertions remain; the related passive-history delta only adds three explicit lifecycle/replay scenarios.",
+      "systemReason": "Followed installCurrentConversationAdapter into the AgentSession _buildRuntime registration seam and manager-keyed classic session lookup. acquireMainOwner resolves that ordinary session and checks idle state, extension/runtime availability, prepared instructions and execute-only ordinary policy; the fixture does not replace that ownership path. registerExecuteTool calls executeIsolated for the first scenario rather than an imitation execute function. MainOwner.delegate caches the promise by ID/text and queues ordinary session.prompt; its admitted epoch/branch guards preserve work across voice close but not stopForeground. queueBackendTurn serializes backend work and decrements inFlight before release checks. interrupt only settles transcript/drafts; close stops admission and releases only when inFlight drains, while stopForeground separately aborts. In paired sendContext, only task-complete/task-attention admit canonical custom-message turns; notification keys deduplicate completion, and passive transcript records use triggerTurn:false. These unchanged decisions explain each local assertion and remain unweakened. The async scenario still models completion delivery, not real shell helper admission: its registered fixture tool deliberately ignores the literal code field and executes the owned marker process.",
+      "checks": [
+        "Read entire intrinsic focus from git show a1b5f18d35fde3ad3345335ae51cb184d40ed078:<focus>; inspected exact git diff aceda9ed788e41e5c0892f78ddd07326560cb267 a1b5f18d35fde3ad3345335ae51cb184d40ed078, including both candidate-changed test source paths. No production source changes in this delta.",
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "git diff --check aceda9ed788e41e5c0892f78ddd07326560cb267 a1b5f18d35fde3ad3345335ae51cb184d40ed078 exited 0 with no diagnostics; static check only.",
+        "No setup, tests, builds, dependency changes, credentials, audio devices, or network probes were run."
+      ],
+      "limits": [
+        "Durable review provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_f28d0d10; candidate/base Git objects retained. No temporary code checkout, source edit, commit, cleanup, or descendant delegation. Only the requested untracked judgment artifact was written.",
+        "Runtime model verification is parent-owned; this review does not attest agent.model. Parent owns audited isolated execution gates. No live provider/auth/device behavior is verified.",
+        "Safety for ALL descendants: NO sudo, recovery investigation, user secrets, shell deletion/cleanup commands, inherited HOME/config/SDK cleanup, nested shell traps, destructive git, or user-data mutation. User already recovered data and requested no recovery work. Tests must use explicit process argv/env and owned fs.mkdtemp fixture HOME/config/SDK; retain them, do not delete. Review filesystem/network effects BEFORE tests/setup. Existing test-code cleanup of provably owned temporary paths may be inspected but NEVER run a shell trap or inherited HOME removal. Need live auth/device? Report unverified, don't access credentials. Propagate these constraints verbatim.",
+        "No setup/tests/builds were run; shared dependencies remained read-only. No reinstall, guard bypass, push, new PR, merge, or publication. Existing worktrees and candidate evidence were preserved. No wisdom files were edited; parent owns aggregate wisdom.",
+        "Filesystem/process audit: candidate creates mkdtemp fixture roots plus four subdirectories and retains them; it contains no rm. The async marker child has explicit process.execPath argv, shell:false, fixture cwd and HOME/XDG_CONFIG_HOME/XDG_DATA_HOME/BRUV_CODING_AGENT_DIR/TMPDIR without an inherited environment spread. The first scenario runs the real executeIsolated, whose child uses explicit argv but inherits a scrubbed parent environment. SDK loader/runtime calls also run in the test process. Therefore the parent gate must launch the test process with an explicitly owned HOME/config/SDK environment; this review is not approval to execute it in inherited user directories. Real execute/session disposal, SDK side effects and process behavior have not been dynamically verified."
       ]
     },
     {
       "file": "tests/live-passive-history.test.ts",
       "initialBlob": "973e8cd7089d5efafd89b79bef6eb466ad8c0001",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_68ab69ce",
       "sourceCommit": "a1b5f18d35fde3ad3345335ae51cb184d40ed078",
-      "judgeIds": ["task_189c73c2"],
-      "resumeState": "needs-judge",
+      "judgeIds": ["task_189c73c2", "task_f28d0d10"],
+      "resumeState": "accepted-joined",
       "pendingReason": "Retain exact related-path actual-code acceptance; it is not completion of this file’s distinct primary/fresh focus-judge requirement.",
       "area": "live-native-audio",
       "primaryCommit": "a1b5f18d35fde3ad3345335ae51cb184d40ed078",
@@ -15614,6 +15648,24 @@
         "Real provider authentication, paid connection, microphone/playback, platform parity and runtime behavior remain unverified.",
         "Before any gate, use explicit process argv/env and fs.mkdtemp-owned retained HOME/config/SDK/TMPDIR. The real execute tool in the first paired test inherits its process environment through scrubT3BridgeEnvironment; its gate must therefore be isolated by the parent. Never enable the paid acceptance flag without explicit user consent.",
         "No wisdom files changed: parent owns aggregate wisdom. No delegation, setup, dependency mutation, cleanup commands, recovery work, publication, branch merge, or unrelated source edits. Parent verifies the runtime agent.model; no self-attestation supplied."
+      ],
+      "acceptedRelatedJudges": ["task_f28d0d10"],
+      "acceptedBlob": "ab128e1f7515e20fc4d8d852b7d6beeed8bf9e1f",
+      "result": "Independently read every scenario, not the prior accepted-hash claim. The whole file is already structurally direct: each input history shows the competing authority records beside the projection and specific expected user/custom records. Restored-session filtering, exact spoken-turn association and replay, unmatched typed requests, old-snapshot speech-only dedup, overlap outside user words, missing-speech suppression, raw-audit preservation and terminal-control sanitization remain explicit. Relative to primaryBase the only change is three appended scenarios. They make distinct lifetimes legible without a shared builder: intervening assistant/passive/task records preserve an audit until exactly the next user consumes it; unreadable latest audit replaces an older association; and legacy dedup is branch-local/idempotent instead of carrying state between projections. Object identity, exact output order, unchanged raw history and negative typed-association expectations are visible locally. The related paired-runtime extraction does not change these pure projection inputs or weaken any privacy/security assertion. No further fixture abstraction is warranted.",
+      "systemReason": "Followed the shipped liveExtension context hook into withoutPassiveLiveHistory, rather than treating this as a test-only helper. Its pendingAudit is replaced on each gpt-live-delegation-snapshot, survives non-user messages and passive transcripts, and is consumed even by a nonmatching next user. projectUserTurn compares exact requestText, retains unmatched typed input, and puts provisional/overlap/missing facts in hidden custom context rather than manufacturing user speech. readDelegationAudit retains request association on parse failure, matching the unreadable-latest case. snapshotSpeech uses gptLiveRequest to refuse actionable retained suffixes on omitted fragments, gptLiveRequestOverlaps to distinguish conflicting timing and terminalTranscriptText to strip terminal controls. legacySpeech validates old snapshot fragments and uses a Set allocated per projection; repeated historical fragments cannot duplicate instructions or poison a separate branch. The MainOwner delegated provenance append records the audit immediately before ordinary prompt admission, linking this projection contract to real session history. Raw messages are never rewritten by the projection. These production decisions, including unchanged filtering and missing-evidence decisions, were read directly.",
+      "checks": [
+        "Read entire intrinsic focus from git show a1b5f18d35fde3ad3345335ae51cb184d40ed078:<focus>; inspected exact git diff aceda9ed788e41e5c0892f78ddd07326560cb267 a1b5f18d35fde3ad3345335ae51cb184d40ed078, including both candidate-changed test source paths. No production source changes in this delta.",
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "git diff --check aceda9ed788e41e5c0892f78ddd07326560cb267 a1b5f18d35fde3ad3345335ae51cb184d40ed078 exited 0 with no diagnostics; static check only.",
+        "No setup, tests, builds, dependency changes, credentials, audio devices, or network probes were run.",
+        "Diff confirms original passive-history source through the terminal-control scenario is unchanged; the final hunk appends only the three audit-consumption/latest-audit/branch-dedup scenarios."
+      ],
+      "limits": [
+        "Durable review provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_f28d0d10; candidate/base Git objects retained. No temporary code checkout, source edit, commit, cleanup, or descendant delegation. Only the requested untracked judgment artifact was written.",
+        "Runtime model verification is parent-owned; this review does not attest agent.model. Parent owns audited isolated execution gates. No live provider/auth/device behavior is verified.",
+        "Safety for ALL descendants: NO sudo, recovery investigation, user secrets, shell deletion/cleanup commands, inherited HOME/config/SDK cleanup, nested shell traps, destructive git, or user-data mutation. User already recovered data and requested no recovery work. Tests must use explicit process argv/env and owned fs.mkdtemp fixture HOME/config/SDK; retain them, do not delete. Review filesystem/network effects BEFORE tests/setup. Existing test-code cleanup of provably owned temporary paths may be inspected but NEVER run a shell trap or inherited HOME removal. Need live auth/device? Report unverified, don't access credentials. Propagate these constraints verbatim.",
+        "No setup/tests/builds were run; shared dependencies remained read-only. No reinstall, guard bypass, push, new PR, merge, or publication. Existing worktrees and candidate evidence were preserved. No wisdom files were edited; parent owns aggregate wisdom.",
+        "The focus uses in-memory message literals and pure projection calls, with no fixture filesystem cleanup, credentials, devices, child process or network access in its scenario bodies. No execution was performed; actual SDK context-hook integration and replay remain parent-gate responsibilities."
       ]
     },
     {
@@ -15719,11 +15771,11 @@
     {
       "file": "tests/live-prompt.test.ts",
       "initialBlob": "b4a12d969bf7c39fd19223b31d233f5ab1f6c78e",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_82de2654",
       "sourceCommit": "af516eddb0607a24ce9b7e631936af16414cd291",
-      "judgeIds": [],
-      "resumeState": "needs-judge",
+      "judgeIds": ["task_eed62836"],
+      "resumeState": "accepted-joined",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
       "area": "live-native-audio",
       "primaryCommit": "af516eddb0607a24ce9b7e631936af16414cd291",
@@ -15739,16 +15791,31 @@
         "Primary reading decision only; parent owns fresh independent actual-code judgment and runtime model verification. No repository tests, setup, builds, delegation, credentials, network/device probes, cleanup or recovery operations were run.",
         "No source changed, so no formatter invocation or source commit was necessary; sourceCommit pins the existing HEAD. Artifact is retained untracked in the assigned durable worktree. No wisdom/values changes; no new general lesson identified.",
         "Static reading does not prove the execute string was never run at runtime; that assertion was not executed. The source factory itself returns the unconditional denial."
+      ],
+      "acceptedBlob": "b4a12d969bf7c39fd19223b31d233f5ab1f6c78e",
+      "result": "Read the entire single test. Its progression is the construction contract: ordinary root instructions, the sole execute declaration, essential JSON schema fields, then an awaited denial for code that would throw if dispatched. Each assertion consumes the same local setup value; there is no hidden stage or lifetime to recover from scattered helpers. A harness or arbitrary extraction would obscure this small contract rather than clarify it.",
+      "systemReason": "Traced setupProbeOrchestration into executeDeclaration, the ordinary registerTool spread in src/typescript/extension.ts, and bruvSystemPrompt. The declaration is schema-only; setup-probe maps it to provider tool fields and supplies an unconditional async denial, not the registered execute runtime. bruvSystemPrompt derives the same identity/execute reference base directly. VoiceSession passes orchestration instructions and declarations into the SDK configuration. Keeping this test unchanged preserves the diagnostic/non-dispatch boundary and existing assertions.",
+      "checks": [
+        "Read candidate files with git show af516eddb0607a24ce9b7e631936af16414cd291:<path>, not checkout HEAD.",
+        "git diff --name-status af516eddb0607a24ce9b7e631936af16414cd291 af516eddb0607a24ce9b7e631936af16414cd291: empty; primaryBase equals candidate, so there are no candidate-changed related source paths.",
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Static source/caller/effect inspection only. No setup, tests, builds, credential access, devices, network, delegation, or cleanup executed.",
+        "Durable review worktree: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_eed62836; Git candidate evidence and worktree retained."
+      ],
+      "limits": [
+        "Runtime gates belong to parent; this verdict is structural source review, not test/provider/device acceptance.",
+        "Agent model identity is for parent verification; not independently verified here.",
+        "Schema assertion intentionally checks the essential shape via toMatchObject, not every schema field; no broader exact-schema coverage claim."
       ]
     },
     {
       "file": "tests/live-provider.acceptance.test.ts",
       "initialBlob": "21629333879e5eaabf82d51b136cca62e08ff733",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_82de2654",
       "sourceCommit": "af516eddb0607a24ce9b7e631936af16414cd291",
-      "judgeIds": [],
-      "resumeState": "needs-judge",
+      "judgeIds": ["task_eed62836"],
+      "resumeState": "accepted-joined",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
       "area": "live-native-audio",
       "primaryCommit": "af516eddb0607a24ce9b7e631936af16414cd291",
@@ -15765,16 +15832,33 @@
         "No source changed, so no formatter invocation or source commit was necessary; sourceCommit pins the existing HEAD. Artifact is retained untracked in the assigned durable worktree. No wisdom/values changes; no new general lesson identified.",
         "Paid/auth-dependent path is unverified and was not enabled. createDefaultLiveCredentialService would access canonical auth storage; VoiceSession.connect would contact Gemini. No credential files were read or real provider connection attempted.",
         "The existing test does not assert SDK close success via closeError; preserving its assertions is not claiming broader transport teardown acceptance."
+      ],
+      "acceptedBlob": "21629333879e5eaabf82d51b136cca62e08ff733",
+      "result": "Read the whole opt-in test, including credential acquisition before provider creation and finally cleanup. The real-auth/setup boundary is explicit: canonical service loadKey, real VoiceSession default adapter/model, setup-only orchestration, connect, errors/ready assertions, abort and close in finally, then closed assertion. This is one short lifecycle; extracting a fixture would conceal which parts are deliberately real and which are denied.",
+      "systemReason": "Read createDefaultLiveCredentialService and createLiveCredentialService: canonical auth.json is selected through BRUV_CODING_AGENT_DIR or the home agent directory, ModelRuntime creation disables catalogue/network refresh, loadKey rejects OAuth and does not invoke importLiveEnv. Read VoiceSession construction/configuration, connection race and close: the default adapter is GoogleGenAI, default model is gemini-3.8-live, readiness follows successful SDK connect resolution, stale epochs close late connections, and close invalidates the epoch and cancels pending connect. The denial-only orchestration retains the execute schema without authorizing agent work. These ownership boundaries remain legible in the unchanged test.",
+      "checks": [
+        "Read candidate files with git show af516eddb0607a24ce9b7e631936af16414cd291:<path>, not checkout HEAD.",
+        "git diff --name-status af516eddb0607a24ce9b7e631936af16414cd291 af516eddb0607a24ce9b7e631936af16414cd291: empty; primaryBase equals candidate, so there are no candidate-changed related source paths.",
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Static source/caller/effect inspection only. No setup, tests, builds, credential access, devices, network, delegation, or cleanup executed.",
+        "Durable review worktree: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_eed62836; Git candidate evidence and worktree retained."
+      ],
+      "limits": [
+        "Runtime gates belong to parent; this verdict is structural source review, not test/provider/device acceptance.",
+        "Agent model identity is for parent verification; not independently verified here.",
+        "Paid Gemini setup/auth acceptance is unverified; no credentials were loaded and no provider connection was attempted.",
+        "AuthStorage creation/key resolution and real SDK connection have filesystem/auth/network effects; any runtime gate requires parent authorization and explicit owned HOME/config/SDK environment, not inherited credential paths.",
+        "The closed assertion proves VoiceSession state, not independently observed provider socket teardown; closeError is not asserted."
       ]
     },
     {
       "file": "tests/live-push-to-talk-tui.test.ts",
       "initialBlob": "025fff9fb0e7475a83241c69c1a150043067273d",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_82de2654",
       "sourceCommit": "af516eddb0607a24ce9b7e631936af16414cd291",
-      "judgeIds": [],
-      "resumeState": "needs-judge",
+      "judgeIds": ["task_eed62836"],
+      "resumeState": "accepted-joined",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
       "area": "live-native-audio",
       "primaryCommit": "af516eddb0607a24ce9b7e631936af16414cd291",
@@ -15793,6 +15877,24 @@
         "Reviewed, not executed: home is obtained from fs.mkdtemp and the existing finally invokes tmux kill-server then rm(home). Under this task fixtures must be retained, so this report is not authorization to run the original cleanup.",
         "tmuxRunner uses tests/helpers.ts run(), whose default environment inherits process.env; the launch overrides HOME but not every inherited config/SDK path. Parent must provide explicit owned HOME/config/SDK/env before any runtime gate. BRUV_VOICE_EVIDENCE_DIR can also write outside the fixture root if inherited; leave it unset or explicitly parent-owned.",
         "Project-trust startup helper can grant session-only trust in the real cwd, and source CLI asset extraction is reachable. No trust prompt was answered and no setup/runtime materialization was performed."
+      ],
+      "acceptedBlob": "025fff9fb0e7475a83241c69c1a150043067273d",
+      "result": "Read the entire test for both widths, from mkdtemp/session seed/quoted CLI launch through tap, hold, stale frame, blur, stop, pane respawn, and saved branch assertions. The sequence tells one stateful user journey: tap produces text without sends/end; repeat hold restores the genuine draft and produces one spoken turn; muted, blurred, and stopped states stop sends; reopening the same branch retains one user and assistant spoken record. Local command/hold/proof helpers own mechanics only. proof waits for the numbered notification, parses the single captures/sends/ends/typed wire layout, and selects its newest match, so positional indexes have a nearby, singular explanation. Splitting stages or adding a context bag would make readers chase the shared terminal/session lifetime.",
+      "systemReason": "Read the complete synthetic fixture and followed real extension capture gating, editor attachment, release/endAudio and stop. The fixture owns its interval, previous capture epoch, sends/ends counters and replacement transcript fragments; real CompactEditor/EditorPushToTalk own guarded warmup undos, repeat admission, raw blur/release observation, and abort disposal. Extension closes the heldEpoch gate before ending audio, compares incoming capture epochs, and requires alive/running before sending. Transcript callbacks replace/accumulate drafts and deliver finals to main-owner; main-owner appendText records canonical messages through LiveHistory/record before presentation, while incomplete drafts remain provisional. The fixture replaces model streaming but retains the real owner/session. The replay assertions inspect both rendered history and SessionManager.getBranch, not a second transcript widget. These authorities are already distinct and the unchanged test keeps the end-to-end assertions together.",
+      "checks": [
+        "Read candidate files with git show af516eddb0607a24ce9b7e631936af16414cd291:<path>, not checkout HEAD.",
+        "git diff --name-status af516eddb0607a24ce9b7e631936af16414cd291 af516eddb0607a24ce9b7e631936af16414cd291: empty; primaryBase equals candidate, so there are no candidate-changed related source paths.",
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Static source/caller/effect inspection only. No setup, tests, builds, credential access, devices, network, delegation, or cleanup executed.",
+        "Durable review worktree: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_eed62836; Git candidate evidence and worktree retained."
+      ],
+      "limits": [
+        "Runtime gates belong to parent; this verdict is structural source review, not test/provider/device acceptance.",
+        "Agent model identity is for parent verification; not independently verified here.",
+        "Real terminal rendering/replay, focus timing, and both widths remain unexecuted; synthetic audio/provider do not prove real devices or provider transport.",
+        "Inspected but did not execute the existing finally block: tmux kill-server uses its named fixture socket and rm targets the mkdtemp-owned home. No shell trap or cleanup ran.",
+        "Test launch overrides HOME but helper env inherits other variables, including possible BRUV_CODING_AGENT_DIR/XDG/SDK/evidence paths. Parent must audit and explicitly isolate them; this test alone is not proof of safe inherited-environment isolation. Optional BRUV_VOICE_EVIDENCE_DIR writes are also unaudited at runtime.",
+        "No source checkout or test fixture was created in /tmp. Durable provenance is the retained worktree above; mkdtemp and retained-fixture requirements apply to parent runtime gates."
       ]
     },
     {
@@ -23808,9 +23910,9 @@
     "baselineFiles": 766,
     "finalGate": "pending; incomplete focus coverage",
     "liveAuth": "unverified/failing; preserved",
-    "accepted": 807,
+    "accepted": 813,
     "total": 836,
-    "pending": 29,
+    "pending": 23,
     "sourceExtras": 70,
     "checkout": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
     "branch": "bruv/readability-pr45-sol-continuation",

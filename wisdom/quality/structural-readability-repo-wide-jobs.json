@@ -1399,7 +1399,7 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_f28d0d10",
         "branch": "bruv/pr45-judge-3-live-native-audio-focuses-f28d0d10",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled"
       },
       {
         "id": "task_3812f224",
@@ -1425,7 +1425,7 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_eed62836",
         "branch": "bruv/pr45-judge-3-live-native-audio-focuses-eed62836",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled"
       },
       {
         "id": "task_672eb21c",
@@ -1433,6 +1433,28 @@
         "focus": ["tests/live-picker-tui.test.ts", "tests/live-platform.test.ts", "tests/live-probe-input.test.ts"],
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_672eb21c",
         "branch": "bruv/pr45-judge-3-live-native-audio-focuses-672eb21c",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_da2fc7e1",
+        "stage": "judge",
+        "focus": ["tests/live-session.test.ts", "tests/live-setup-diagnostics.test.ts", "tests/live-setup.test.ts"],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_da2fc7e1",
+        "branch": "bruv/pr45-judge-3-live-native-audio-focuses-da2fc7e1",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_ab82e530",
+        "stage": "primary",
+        "focus": [
+          "tests/live-spoken-tui.test.ts",
+          "tests/live-startup-audio-queue.test.ts",
+          "tests/live-startup-natural-fixture.test.ts"
+        ],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_ab82e530",
+        "branch": "bruv/pr45-primary-3-live-native-audio-focuses-ab82e530",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
       }
