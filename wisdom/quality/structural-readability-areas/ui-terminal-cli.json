@@ -4767,15 +4767,17 @@
       "focus": "tests/fixtures/terminal-perf-tool-event-guard.ts",
       "initialBlob": null,
       "introducedBy": "3dabdaae8f61ab742db85f601d8868e0c20bb325",
-      "state": "pending",
-      "acceptedBlob": null,
+      "state": "accepted",
+      "acceptedBlob": "6e9dba742c41e5debbbaeea7b26fe7b5e5b94ee3",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
         "acceptedBlob": "6e9dba742c41e5debbbaeea7b26fe7b5e5b94ee3",
         "primaryId": "task_e19d935a",
         "primaryCommit": "f6302bb9784eaf07a31e03e76c74c503a8830da7",
+        "judgeIds": ["task_bc558a7a"],
         "sourceCommit": "f6302bb9784eaf07a31e03e76c74c503a8830da7",
-        "state": "needs-judge"
+        "state": "accepted-joined",
+        "reason": "Independently read the entire exact Git fixture, not checkout HEAD or the primary's explanation. The journey is locally visible: snapshot the seven observed process seams before creating the workload; perform setup and the four network probes; take the action's accumulated attempt count; always dispose; only then compare original identities and PI_OFFLINE; finally try setup again and publish the four evidence fields. The literal probe order matches the caller's four-element denied assertion without a label map or helper traversal. Each synchronous catch specifically recognizes the workload guard error, rather than treating any exception as success. One try/finally covers both partial setup and action failure. Keeping the restoration conjunction and the separate fresh-process check inline distinguishes reversible seams from intentionally permanent installation. No scattered authority or reader reconstruction burden warrants extraction in this short executable; retaining it is a substantive no-change decision, not acceptance from test counts."
       }
     }
   ],
@@ -4887,7 +4889,7 @@
     }
   },
   "resumeStatus": {
-    "accepted": 114,
-    "pending": 1
+    "accepted": 115,
+    "pending": 0
   }
 }

@@ -104,18 +104,24 @@ function harness(options: { ui?: boolean; idle?: boolean; path?: string; id?: st
   return { pi, ctx, fire, fireAsync, events, handlers, busHandlers, tools };
 }
 
-async function socketRecorder() {
+async function socketRecorder(shouldReply: (request: WireRequest, requestNumber: number) => boolean = () => true) {
   const dir = await mkdtemp(join(tmpdir(), "bruv-herdr-"));
   const path = join(dir, "herdr.sock");
   const requests: WireRequest[] = [];
   const server: Server = net.createServer((socket) => {
     let input = "";
+    // The reporter destroys its socket once a response arrives. EPIPE from
+    // a late server write is ordinary peer teardown; other errors still fail.
+    socket.on("error", (error: NodeJS.ErrnoException) => {
+      if (error.code !== "EPIPE") throw error;
+    });
     socket.on("data", (chunk) => {
       input += chunk.toString();
       const newline = input.indexOf("\n");
       if (newline < 0) return;
-      requests.push(JSON.parse(input.slice(0, newline)) as WireRequest);
-      socket.end('{"ok":true}\n');
+      const request = JSON.parse(input.slice(0, newline)) as WireRequest;
+      requests.push(request);
+      if (shouldReply(request, requests.length)) socket.end('{"ok":true}\n');
     });
   });
   await new Promise<void>((resolve, reject) => {
@@ -328,21 +334,8 @@ describe("built-in Herdr agent state", () => {
   });
 
   test("quit drops queued working before release when a socket is stalled", async () => {
-    const dir = await mkdtemp(join(tmpdir(), "bruv-herdr-stall-"));
-    const path = join(dir, "herdr.sock");
-    const requests: WireRequest[] = [];
-    const server = net.createServer((socket) => {
-      let input = "";
-      socket.on("data", (chunk) => {
-        input += chunk.toString();
-        const newline = input.indexOf("\n");
-        if (newline < 0) return;
-        const request = JSON.parse(input.slice(0, newline)) as WireRequest;
-        requests.push(request);
-        if (request.method === "pane.release_agent") socket.end('{"ok":true}\n');
-      });
-    });
-    await new Promise<void>((resolve) => server.listen(path, resolve));
+    const recorder = await socketRecorder((request) => request.method === "pane.release_agent");
+    const { path, requests } = recorder;
     try {
       enable(path);
       const h = harness({ id: "stalled" });
@@ -355,8 +348,7 @@ describe("built-in Herdr agent state", () => {
       expect(requests.some((request) => request.params.state === "working")).toBe(false);
       expect(requests.at(-1)?.method).toBe("pane.release_agent");
     } finally {
-      await new Promise<void>((resolve) => server.close(() => resolve()));
-      await rm(dir, { recursive: true, force: true });
+      await recorder.close();
     }
   });
 
@@ -448,28 +440,8 @@ describe("built-in Herdr agent state", () => {
   });
 
   test("stalled sends preserve wire sequence order and the final working state", async () => {
-    const dir = await mkdtemp(join(tmpdir(), "bruv-herdr-order-"));
-    const path = join(dir, "herdr.sock");
-    const requests: WireRequest[] = [];
-    let stallFirst = true;
-    const server = net.createServer((socket) => {
-      let input = "";
-      // The reporter closes its client socket as soon as it receives the
-      // response. A late server-side write completion can therefore report
-      // EPIPE; that is ordinary peer teardown, not a reporter failure.
-      socket.on("error", (error: NodeJS.ErrnoException) => {
-        if (error.code !== "EPIPE") throw error;
-      });
-      socket.on("data", (chunk) => {
-        input += chunk.toString();
-        const newline = input.indexOf("\n");
-        if (newline < 0) return;
-        requests.push(JSON.parse(input.slice(0, newline)) as WireRequest);
-        if (stallFirst) stallFirst = false;
-        else socket.end('{"ok":true}\n');
-      });
-    });
-    await new Promise<void>((resolve) => server.listen(path, resolve));
+    const recorder = await socketRecorder((_request, requestNumber) => requestNumber > 1);
+    const { path, requests } = recorder;
     try {
       enable(path);
       const h = harness({ id: "ordered", idle: true });
@@ -490,27 +462,13 @@ describe("built-in Herdr agent state", () => {
       expect(requests.filter((request) => request.params.state === "working")).toHaveLength(1);
       await h.fireAsync("session_shutdown", { reason: "reload" });
     } finally {
-      await new Promise<void>((resolve) => server.close(() => resolve()));
-      await rm(dir, { recursive: true, force: true });
+      await recorder.close();
     }
   });
 
   test("quit is awaited and a concurrent replacement cancels release retries", async () => {
-    const dir = await mkdtemp(join(tmpdir(), "bruv-herdr-replace-"));
-    const path = join(dir, "herdr.sock");
-    const requests: WireRequest[] = [];
-    const server = net.createServer((socket) => {
-      let input = "";
-      socket.on("data", (chunk) => {
-        input += chunk.toString();
-        const newline = input.indexOf("\n");
-        if (newline < 0) return;
-        const request = JSON.parse(input.slice(0, newline)) as WireRequest;
-        requests.push(request);
-        if (request.method !== "pane.release_agent") socket.end('{"ok":true}\n');
-      });
-    });
-    await new Promise<void>((resolve) => server.listen(path, resolve));
+    const recorder = await socketRecorder((request) => request.method !== "pane.release_agent");
+    const { path, requests } = recorder;
     try {
       enable(path);
       const oldRuntime = harness({ id: "old-concurrent" });
@@ -533,8 +491,7 @@ describe("built-in Herdr agent state", () => {
       expect(requests.slice(firstNew).some((request) => request.method === "pane.release_agent")).toBe(false);
       await replacement.fireAsync("session_shutdown", { reason: "reload" });
     } finally {
-      await new Promise<void>((resolve) => server.close(() => resolve()));
-      await rm(dir, { recursive: true, force: true });
+      await recorder.close();
     }
   });
 

@@ -5,7 +5,7 @@
 - User direction: complete existing PR45 code-only scope; parent publishes, no push/new PR. No recovery/credentials.
 - Workspace: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a; branch bruv/readability-pr45-sol-continuation.
 - Leaves: native normal openai-codex/gpt-6.1-sol verified at launch, maximum six globally; exact focus primary and independent actual-code judge required, unchanged included.
-- Exact coverage in current joined checkout: 689/825 accepted, 136 pending; 766 baseline + 59 source extras. Exact focus hashes, primary/judge IDs and candidate tips remain in aggregate/area ledgers.
+- Exact coverage in current joined checkout: 702/832 accepted, 130 pending; 766 baseline + 66 source extras. Exact focus hashes, primary/judge IDs and candidate tips remain in aggregate/area ledgers.
 - Durable scheduler /home/tnfssc/.bruv/worktrees/pr45-flow-c2a2fd8a{.mjs,-state.json}; old originals/worktrees preserved, no old IDs inspected. Selected text/tool evidence and four terminal journal facts retained in pr45-flow-c2a2fd8a-checkpoint-journal.json alongside scheduler.
 - Next: finish execution/tasks/questions, UI/terminal, agent/history/goals, remote, Live, exact new/deleted sources and changed-accepted rejudgment; final independent whole-diff review and safe constituent gates. Full CI/authenticated background UX/device/macOS are NOT proven.
 
@@ -118,3 +118,5 @@ Denominator now824=766baseline+58sourceextras: accepted terminal CLI/navigation 
 NoEmit at a785978b passed in /tmp/pr45-continuation-ui-types-M32wD1 after current UI joins and fourth new helper source. Remaining terminal focus judgments still pending; compiler success is not their verdict or a full gate.
 
 Denominator now825=766baseline+59sourceextras: accepted tool-event candidate3dabdaae adds tests/fixtures/terminal-perf-tool-event-guard.ts, a coherent owned child probe. Distinct primary task_e19d935a and subsequent fresh independent focus judgment are required; caller/related acceptance is not substituted. Five actual new helpers have expanded the initial820 scope; excluded worker-note artifact remains evidence-only.
+
+Scheduler correction: a related join must preserve an already completed primary for the SAME exact candidate/focus blob as judge-ready, rather than requiring a redundant new primary. One pending goals-SDK focus was redundantly reassigned in task_bc681e2d before this correction; its original task_8519a359/bc35aba9 candidate and artifact are fully retained, and prior primary lineage is now recorded explicitly. No accepted unchanged focus was reauthored or rejudged by this correction. Other two assigned focuses in that leaf still need primary work.

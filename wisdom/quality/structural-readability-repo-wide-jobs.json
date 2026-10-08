@@ -1710,6 +1710,64 @@
         "branch": "bruv/pr45-judge-3-agent-history-session-goals-c7b3eb22",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "handled"
+      },
+      {
+        "id": "task_562b0743",
+        "stage": "judge",
+        "focus": ["tests/goals-tui.test.ts", "tests/herdr-agent-state.test.ts", "tests/history-disk-footer.probe.ts"],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_562b0743",
+        "branch": "bruv/pr45-judge-3-agent-history-session-goals-562b0743",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled"
+      },
+      {
+        "id": "task_572eec54",
+        "stage": "judge",
+        "focus": [
+          "tests/history-disk-footer.test.ts",
+          "tests/history-disk-retrieval.test.ts",
+          "tests/history-projection-parity.test.ts"
+        ],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_572eec54",
+        "branch": "bruv/pr45-judge-3-agent-history-session-goals-572eec54",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled"
+      },
+      {
+        "id": "task_7f911ff4",
+        "stage": "judge",
+        "focus": [
+          "tests/history-publication-collision.test.ts",
+          "tests/history-sdk-099.test.ts",
+          "tests/history-storage-cleanup.test.ts"
+        ],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_7f911ff4",
+        "branch": "bruv/pr45-judge-3-agent-history-session-goals-7f911ff4",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled"
+      },
+      {
+        "id": "task_f98959a3",
+        "stage": "judge",
+        "focus": [
+          "tests/history-storage-lifecycle.test.ts",
+          "tests/history-storage.test.ts",
+          "tests/instruction-continuity-sdk.test.ts"
+        ],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_f98959a3",
+        "branch": "bruv/pr45-judge-3-agent-history-session-goals-f98959a3",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled"
+      },
+      {
+        "id": "task_bc681e2d",
+        "stage": "primary",
+        "focus": ["tests/goals-sdk.test.ts", "tests/last-used-cli-model.test.ts", "tests/llm.test.ts"],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_bc681e2d",
+        "branch": "bruv/pr45-primary-3-agent-history-session-goa-bc681e2d",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled",
+        "sourceCommit": "34fde6ffbcc38fbacc562bdfe0bed13e2d3f431c"
       }
     ]
   },
@@ -2694,6 +2752,15 @@
         "model": "openai-codex/gpt-6.1-sol",
         "status": "handled",
         "sourceCommit": "f6302bb9784eaf07a31e03e76c74c503a8830da7"
+      },
+      {
+        "id": "task_bc558a7a",
+        "stage": "judge",
+        "focus": ["tests/fixtures/terminal-perf-tool-event-guard.ts"],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_bc558a7a",
+        "branch": "bruv/pr45-judge-1-ui-terminal-cli-focuses-bc558a7a",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled"
       }
     ]
   },
