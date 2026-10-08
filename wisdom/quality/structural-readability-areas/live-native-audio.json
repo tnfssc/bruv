@@ -4846,12 +4846,13 @@
       "resume": {
         "status": "pending",
         "acceptedBlob": "d9dead0e2c17b436931bb3174f80ecbe09095e1b",
-        "primaryId": null,
+        "primaryId": "task_dda934b5",
+        "primaryCommit": "8909e9742c8e2eb6ffd6e9f88d1cf491146b3160",
         "judgeIds": [
           "task_c1052b52"
         ],
-        "sourceCommit": "a5642b72d82ac64e94fb58abfb5a2076b07031c3",
-        "state": "needs-primary-final-blob",
+        "sourceCommit": "8909e9742c8e2eb6ffd6e9f88d1cf491146b3160",
+        "state": "needs-judge",
         "reason": "New source, absent in the primary parent. probe owns a single temporary root, extracts one scripted helper, launches one child-local Bun module mock, observes diagnostic outcomes, and finally releases its fixture. self/protocol arguments describe the two executable phases directly. Success, early self-test failure, protocol mismatch/parse failure, and timeout journeys remain local to their cases; fixture cleanup and diagnostic cleanup are separately visible. The generated runner is justified by module-cache isolation, not a new framework or production context bag."
       }
     },
@@ -4866,10 +4867,11 @@
       "resume": {
         "status": "pending",
         "acceptedBlob": "ceee222b98414140f6d2688bd128ace3f1c02add",
-        "primaryId": null,
+        "primaryId": "task_fc50d3f8",
+        "primaryCommit": "4d5a00544d80550f83b16a8650be97c78257602d",
         "judgeIds": [],
-        "sourceCommit": "a2e8025bd3ffba42a24e0b7ba3358ac97de68532",
-        "state": "needs-primary-final-blob",
+        "sourceCommit": "4d5a00544d80550f83b16a8650be97c78257602d",
+        "state": "needs-judge",
         "reason": "New related candidate has no own primary or completed independent focus judgment; withhold integration approval."
       }
     },
@@ -4884,10 +4886,11 @@
       "resume": {
         "status": "pending",
         "acceptedBlob": "4e191af147d30885d04d0d601e21c8dc0eae8481",
-        "primaryId": null,
+        "primaryId": "task_98d54ee6",
+        "primaryCommit": "4d5a00544d80550f83b16a8650be97c78257602d",
         "judgeIds": [],
-        "sourceCommit": "31bf2843d0aad882258288ca512035fe1d64528e",
-        "state": "needs-primary-final-blob",
+        "sourceCommit": "4d5a00544d80550f83b16a8650be97c78257602d",
+        "state": "needs-judge",
         "reason": "New related candidate has no own primary or completed independent focus judgment; withhold integration approval."
       }
     }

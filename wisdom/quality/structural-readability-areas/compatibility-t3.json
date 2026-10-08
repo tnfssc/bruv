@@ -855,18 +855,21 @@
     {
       "file": "scripts/claude-native-acceptance/wrapper-sdk-smoke.mjs",
       "initialBlob": "93411cd8380fc52c7f69afc866bff5bf7912b156",
-      "status": "pending",
+      "status": "accepted",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "7eca00b0192bd3acdd0041d22230e2b7a8cbb426",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "7eca00b0192bd3acdd0041d22230e2b7a8cbb426",
         "primaryId": "task_5f5debab",
         "primaryCommit": "8430875c6bd00f3d4712ae9f695caa5722f1071e",
-        "judgeIds": [],
+        "judgeIds": [
+          "task_ccab22c6"
+        ],
         "sourceCommit": "8430875c6bd00f3d4712ae9f695caa5722f1071e",
-        "state": "needs-judge",
-        "reason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+        "state": "accepted-joined",
+        "reason": "Actual structural improvement, not a naming pass. In the primary base (also the candidate parent), launch owns both SDK iteration and optionally captured process state behind observe=true; callers receive a mixed object whose close is a child close promise while settled is iterator completion. The candidate makes observeWrapperProcess own the public spawn hook, raw stdout, process stderr and close event. launch owns query registration, SDK diagnostics, frames and iterator settlement. The shell call now plainly uses default SDK spawning; Stop and EOF instantiate their own process observer and explicitly wire its spawn function. The removed child getter has no caller. No shared context bag or new lifecycle framework is introduced. Unchanged decision: NO CHANGE NEEDED for pinned-input validation, the small loopback provider/held-request fixture, timeout/until helpers and sequential case assertions. Their control flow and local ownership are already directly readable; further extraction would obscure this short acceptance program."
       }
     },
     {
@@ -3726,11 +3729,11 @@
       "resume": {
         "status": "pending",
         "acceptedBlob": "611d0cb7e7a68d58501488971bb2aa6aeac582e9",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_868d94d9",
+        "primaryCommit": "1fb11ce19951cc51aedb03e77e05b426f8bce20f",
         "judgeIds": [],
-        "sourceCommit": "acba9037095809d012444d28656a733b1fcdcf86",
-        "state": "needs-primary-final-blob",
+        "sourceCommit": "1fb11ce19951cc51aedb03e77e05b426f8bce20f",
+        "state": "needs-judge",
         "reason": "Added only in surviving run-subagent worker commit acba9037, not at area tip or joined tree. Source judge was killed without verdict; test also lacks its own whole-file primary and judge."
       }
     }
@@ -4107,7 +4110,7 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 69,
-    "pending": 29
+    "accepted": 70,
+    "pending": 28
   }
 }

@@ -139,7 +139,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_dda934b5",
         "branch": "bruv/pr45-primary-tests-live-self-test.test.t-dda934b5",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "8909e9742c8e2eb6ffd6e9f88d1cf491146b3160"
       },
       {
         "id": "task_fc50d3f8",
@@ -148,7 +149,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_fc50d3f8",
         "branch": "bruv/pr45-primary-tests-offline-transport-pro-fc50d3f8",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "4d5a00544d80550f83b16a8650be97c78257602d"
       },
       {
         "id": "task_98d54ee6",
@@ -157,7 +159,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_98d54ee6",
         "branch": "bruv/pr45-primary-tests-openai-upgrade-socket-98d54ee6",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "4d5a00544d80550f83b16a8650be97c78257602d"
       }
     ]
   },
@@ -322,7 +325,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_868d94d9",
         "branch": "bruv/pr45-primary-tests-claude-native-accepta-868d94d9",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "1fb11ce19951cc51aedb03e77e05b426f8bce20f"
       },
       {
         "id": "task_ccab22c6",
@@ -331,7 +335,7 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_ccab22c6",
         "branch": "bruv/pr45-judge-scripts-claude-native-accepta-ccab22c6",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled"
       }
     ]
   },
@@ -400,7 +404,7 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_1925c521",
         "branch": "bruv/pr45-judge-scripts-history-storage-probe-1925c521",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled"
       }
     ]
   },

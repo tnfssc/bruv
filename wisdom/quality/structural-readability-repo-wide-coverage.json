@@ -1203,12 +1203,14 @@
     {
       "file": "scripts/claude-native-acceptance/wrapper-sdk-smoke.mjs",
       "initialBlob": "93411cd8380fc52c7f69afc866bff5bf7912b156",
-      "status": "pending",
+      "status": "accepted",
       "area": "compatibility-t3",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_5f5debab",
       "primaryCommit": "8430875c6bd00f3d4712ae9f695caa5722f1071e",
-      "judgeIds": [],
+      "judgeIds": [
+        "task_ccab22c6"
+      ],
       "sourceCommit": "8430875c6bd00f3d4712ae9f695caa5722f1071e",
       "report": "wisdom/quality/structural-readability-areas/compatibility-t3.json",
       "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection.",
@@ -1239,6 +1241,21 @@
         "No setup, repository tests, builds, runtime smoke, network/provider/device access or credential access performed. Parent owns isolated batch gates and fresh independent judge; no readability acceptance claimed.",
         "The existing harness binds a loopback provider, spawns the explicit compiled wrapper, writes isolated fixture configuration, and removes its own mkdtemp root in finally. These existing effects were inspected but not executed; parent must audit runtime filesystem effects against the retained-directory safety policy.",
         "No wisdom/values edits: this is a local application of existing ownership/lifetime guidance; parent owns aggregate wisdom."
+      ],
+      "acceptedBlob": "7eca00b0192bd3acdd0041d22230e2b7a8cbb426",
+      "result": "Actual structural improvement, not a naming pass. In the primary base (also the candidate parent), launch owns both SDK iteration and optionally captured process state behind observe=true; callers receive a mixed object whose close is a child close promise while settled is iterator completion. The candidate makes observeWrapperProcess own the public spawn hook, raw stdout, process stderr and close event. launch owns query registration, SDK diagnostics, frames and iterator settlement. The shell call now plainly uses default SDK spawning; Stop and EOF instantiate their own process observer and explicitly wire its spawn function. The removed child getter has no caller. No shared context bag or new lifecycle framework is introduced. Unchanged decision: NO CHANGE NEEDED for pinned-input validation, the small loopback provider/held-request fixture, timeout/until helpers and sequential case assertions. Their control flow and local ownership are already directly readable; further extraction would obscure this short acceptance program.",
+      "systemReason": "Traced all three local launch callers and the unchanged wrapper control/EOF paths at the candidate revision. Shell: the provider requests the actual execute/shell fixture, validates returned SDK_ACTUAL_SHELL tool output, then supplies SDK_SHELL_CONFIRMED; default SDK query iteration must settle without error and include the successful result. Stop: wait for the held provider request, await interrupt acknowledgement, require clean iterator settlement and a non-success terminal result without the held assistant response, then independently require actual child close {code:0,signal:null} within the same 1800ms budget. EOF: wait for held provider activity, call q.close, first require actual wrapper close before SDK kill grace, then await iterator settlement and inspect raw wire frames for absence of success. This matches the wrapper distinction: runtime interrupt aborts/flushes the turn, whereas stdin end starts close and CLI finally awaits runtime teardown before choosing exit. The candidate preserves all predicates and timeout values. The unchanged finalizer still closes all queries, releases held fixture responses, kills only registered live observed children, stops the server and removes its freshly allocated root; no finalizer was executed by this judge. SDK and process stderr are now separately owned diagnostic channels (Stop can repeat identical stderr text, but this does not alter evidence or behavior). Repository search found no automated caller of this standalone smoke beyond its own invocation comment; acceptance here is readability, not release-gate coverage.",
+      "checks": [
+        "Read wisdom/values.md, structural-readability-guidance.md, repository and compatibility/T3 ledgers and PR45 resume context.",
+        "Read complete candidate focus source from Git, compared primary base and candidate parent source/diff; parent is exactly 3782f6ade0c93e7b7ff441dcef2d22849aeddab6.",
+        "Git name-status comparison establishes the focus is the only changed source path. Base/parent blob: 93411cd8380fc52c7f69afc866bff5bf7912b156; candidate blob: 7eca00b0192bd3acdd0041d22230e2b7a8cbb426.",
+        "Read related candidate CLI stop/finally, runtime interrupt/close, transport EOF/drain and compiled EOF assertions; searched maintained caller/hook references at the candidate revision.",
+        "Static assertion and ownership comparison only; no setup, tests, builds, network/provider calls or cleanup commands run."
+      ],
+      "limits": [
+        "Runtime and pinned SDK hook execution remain for parent-owned audited isolated batch gates. No test pass, actual SDK execution, real provider/auth, device, browser or external release acceptance is claimed.",
+        "Related unchanged source was inspected for relevant journeys, not independently accepted wholesale. Existing pre-try fixture initialization/finalizer structure and SDK-default-spawn child ownership were not changed or hardened speculatively.",
+        "No automatic setup outcome was inspected or bypassed in this judge turn; no setup success is inferred. Parent verifies runtime agent identity externally."
       ]
     },
     {
@@ -1375,12 +1392,14 @@
     {
       "file": "scripts/history-storage-probe.ts",
       "initialBlob": "2e443cc387a687ffd98506aa489c8b8658683593",
-      "status": "pending",
+      "status": "accepted",
       "area": "agent-history-session-goals",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_e6e6e804",
       "primaryCommit": "8f89c50a021b0f98ff5cd8d570a04f6610f27b5f",
-      "judgeIds": [],
+      "judgeIds": [
+        "task_1925c521"
+      ],
       "sourceCommit": "8f89c50a021b0f98ff5cd8d570a04f6610f27b5f",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
       "pendingReason": "Primary was killed without a completed focused result; preserve worker state and any uncommitted edits.",
@@ -1402,6 +1421,24 @@
         "Independent fresh judge and externally verified runtime model remain parent-owned; this primary result is not an acceptance judgment.",
         "No provider/credential/device access, delegation, push, PR, merge, recovery, destructive Git operations or historical worktree changes.",
         "No wisdom edits: parent owns aggregate wisdom; this is a focused application of existing lifecycle-ownership guidance."
+      ],
+      "acceptedBlob": "2f9ac52e0ff8bb4425c6f3d348913204dabdaf35",
+      "result": "Intrinsic final code: captureSnapshot takes the exact live manager and returns only a label and numeric measurements; it neither captures mutable manager state nor mutates a shared snapshot list. writeCompactedFixture owns the complete generation/compaction journey, including baseline and three checkpoint samples, and returns disk coordinates, the first-entry identity/hash and measurements, not the manager, parsed entries or original bodies. child visibly sequences fixture completion, GC, reopen, pre-read sampling, first-original SHA-256 verification, post-read sampling, assertions and publication. Compared with the primary base (also the candidate parent), this removes the reader's need to track one optional manager reassigned across two lifetimes inside a snapshot closure, manually nulled before GC and again in finally. Reopened sampling is directly bound; baseline and cross-process reopened selection no longer require reconstructing array positions. These are coherent lifetime/effect boundaries, not just new names or a context bag. Unchanged decision: textBytes, collectGc, the workload loop and run already express their narrow jobs clearly; no change is needed to their structure.",
+      "systemReason": "The actual standalone entry point has no tracked application/test/package-script caller outside its own invocation comment; history documentation describes manual use. run still launches native and adapted modes sequentially in separate Bun processes and drains stdout, stderr and exit together before parsing the last JSON line. The native child does not install the adapter; the adapted child installs it before creating/opening the SDK manager. Read the candidate adapter paths: create enters adapted newSession, open adopts DiskEntryStore metadata skeletons, getEntry materializes the selected original, and buildSessionContext selects the compacted projection. The read-only installed SDK matches the candidate pin (1.0.3); native loading retains full entries. The fixture still generates 17 x 8 one-MiB bodies, adds the initial assistant flush, compacts each batch around its kept tail, and measures baseline/compactions 1, 8 and 17/reopen/post-read in the same output order. The 128-MiB generation floor, SHA-256 check, compacted-context <1 MiB, zero reopened fileEntries body bytes and heap-growth <64 MiB assertions remain. Numeric JSON fields/comparison shape remain intact. The child retains ownership of its fresh temporary root and finally cleanup; manager creation is now inside that try. Existing adapter/store contracts and history retention tests need no related source change for this patch. This is acceptance of the probe blob, not blanket acceptance of those unchanged implementations.",
+      "checks": [
+        "Read wisdom/values.md, structural-readability-guidance.md, repo-wide/area ownership and coverage ledgers, and pilot review criteria; pending storage-probe lineage was not treated as prior acceptance.",
+        "Verified candidate parent is primary base 3782f6ade0c93e7b7ff441dcef2d22849aeddab6; exact tree diff changes only scripts/history-storage-probe.ts. Read full base and candidate source, changed hunks and actual dependency/caller contracts rather than checkout HEAD.",
+        "Verified base probe blob 2e443cc387a687ffd98506aa489c8b8658683593 and candidate probe blob 2f9ac52e0ff8bb4425c6f3d348913204dabdaf35 using Git.",
+        "Read retained task_b0eea86b partial source and its killed/exit-143 ledger record without edits or branch integration. Retained partial blob d35fa1a66780ed0050947caf36927726731ecb32 was inspected separately and is not the accepted candidate.",
+        "Full-tree non-wisdom reference search found only the script invocation comment; inspected documentation references and existing retention test assertions without executing them.",
+        "git diff --check primary-base candidate produced no output. No setup, tests, builds, probe execution, cleanup command, credentials, recovery or delegation performed."
+      ],
+      "limits": [
+        "Structural/static judgment only. Parent owns audited isolated batch runtime gates; no heap/GC, disk-cleanup execution or full-gate success claim for this candidate.",
+        "An async scope boundary expresses release of generated state but does not itself prove collector behavior or measured heap thresholds. fileEntries body counts and configured cache limits are not total process-memory measurements.",
+        "Read relevant unchanged adapter/store/SDK paths and retention assertions for integration context; no independent whole-file acceptance of those related paths.",
+        "No real authentication, provider, SSH, device or macOS validation. Historical setup/gate successes or failures in ledgers are not reclassified by this review.",
+        "Old worktrees and uncommitted partial candidates preserved. No source/wisdom edits or merge; only this untracked result is written."
       ]
     },
     {
@@ -12286,18 +12323,51 @@
       "file": "tests/claude-native-acceptance-subagent-run.test.mjs",
       "initialBlob": "absent",
       "area": "compatibility-t3",
-      "resumeState": "needs-primary-final-blob",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_868d94d9",
+      "primaryCommit": "1fb11ce19951cc51aedb03e77e05b426f8bce20f",
       "judgeIds": [],
-      "sourceCommit": "acba9037095809d012444d28656a733b1fcdcf86",
+      "sourceCommit": "1fb11ce19951cc51aedb03e77e05b426f8bce20f",
       "report": "wisdom/quality/structural-readability-areas/compatibility-t3.json",
       "status": "pending",
       "pendingReason": "Added only in surviving run-subagent worker commit acba9037, not at area tip or joined tree. Source judge was killed without verdict; test also lacks its own whole-file primary and judge.",
       "acceptedRelatedJudges": [
         "task_7fd4e906"
       ],
-      "acceptedBlob": "611d0cb7e7a68d58501488971bb2aa6aeac582e9"
+      "acceptedBlob": "611d0cb7e7a68d58501488971bb2aa6aeac582e9",
+      "primaryBase": "4d5a00544d80550f83b16a8650be97c78257602d",
+      "primaryResult": "runFailedReplay now owns stand-in installation, isolated execution and guaranteed server shutdown. Scenarios read as expected failure -> runner finalization proof -> retained replay proof where applicable. The test retains fresh fixture/HOME/config/tmp directories and never deletes a child-reported scope. Existing proof, credential-isolation, redaction, wake-count, profile and runner-scope-removal assertions remain intact. Focus was already present at the exact preserved acba9037 candidate blob, so no old branch or candidate import was needed.",
+      "primaryPaths": [
+        "tests/claude-native-acceptance-subagent-run.test.mjs"
+      ],
+      "primaryChecks": [
+        {
+          "check": "Read preserved reconciliation evidence, values, structural guidance, repo-wide/area ledgers, runner lifecycle and callers/neighbor assertions",
+          "result": "completed read-only"
+        },
+        {
+          "check": "git diff --check",
+          "result": "passed"
+        },
+        {
+          "check": "/usr/bin/node --check tests/claude-native-acceptance-subagent-run.test.mjs",
+          "result": "passed with explicit isolated environment; syntax only, no module execution"
+        },
+        {
+          "check": "Original assertions and stand-in source review",
+          "result": "all assertion expressions preserved; stand-in source unchanged"
+        },
+        {
+          "check": "Initial syntax-check attempt via tool runtime process.execPath",
+          "result": "failed: bruv runtime reports Unknown option: --check; corrected to /usr/bin/node without executing tests"
+        }
+      ],
+      "primaryLimits": [
+        "No setup, repository tests or builds executed; parent owns audited isolated runtime gates and independent exact-candidate judgment.",
+        "These tests intentionally use offline owned browser/executable stand-ins; no native acceptance, real SDK, credential or device claim.",
+        "Disposable syntax-check directories retained: /tmp/pr45-subagent-syntax-RTbgjx and /tmp/pr45-subagent-node-syntax-4agPin. Runtime test fixtures will likewise be retained; the runner still removes its own scoped private state as asserted.",
+        "Only source focus committed. No wisdom files changed; parent writes aggregate wisdom. No delegation, push, PR, merge, recovery, cleanup command or credential access."
+      ]
     },
     {
       "file": "tests/claude-native-history-replay.test.mjs",
@@ -12457,12 +12527,12 @@
       "file": "tests/live-self-test.test.ts",
       "initialBlob": "absent",
       "area": "live-native-audio",
-      "primaryId": null,
-      "sourceCommit": "a5642b72d82ac64e94fb58abfb5a2076b07031c3",
+      "primaryId": "task_dda934b5",
+      "sourceCommit": "8909e9742c8e2eb6ffd6e9f88d1cf491146b3160",
       "judgeIds": [
         "task_c1052b52"
       ],
-      "resumeState": "needs-primary-final-blob",
+      "resumeState": "needs-judge",
       "pendingReason": "Related actual-code acceptance is retained, but helper still requires its own distinct primary and fresh independent final focus judge.",
       "status": "pending",
       "acceptedRelatedJudges": [
@@ -12484,37 +12554,118 @@
         "spawnSync timeout is not a hard deadline for signal-ignoring children or descendants.",
         "The resolver and its returned cleanup are synthetic in the child; production platform resolution and Swift audio behavior are not exercised by these shell fixtures.",
         "Side-effect audit: this test writes/extracts into an mkdtemp root, runs /bin/sh and sleep, sends signals to its recorded fixture PID, and recursively removes its own root. Its Bun runner inherits process.env except overridden HOME/TMPDIR and a fake key; it is not a fully hermetic SDK/config environment. No such actions were executed here. Parent must account for this cleanup and inherited environment in its audited gates."
+      ],
+      "primaryCommit": "8909e9742c8e2eb6ffd6e9f88d1cf491146b3160",
+      "primaryBase": "4d5a00544d80550f83b16a8650be97c78257602d",
+      "primaryResult": "probe now shows the lifetime directly: allocate a private environment, extract the scripted helper, run the actual diagnostic in an isolated child, observe extraction removal/credential stripping/process exit/stop-only input, and release a hanging fixture process on assertion failure. Script construction and child-local mock execution are separate coherent operations. Diagnostic cleanup still removes only its extracted helper directory; fixture HOME/config/SDK directories are retained. The child uses argv, a fresh cwd, and an explicit environment rather than process.env. All existing scenario definitions and assertions remain unchanged; no production source or helpers changed.",
+      "primaryPaths": [
+        "tests/live-self-test.test.ts"
+      ],
+      "primaryChecks": [
+        {
+          "check": "Read values, structural readability guidance, repository/area ledgers, and preserved live-native-audio resume reconciliation",
+          "result": "Focus lineage retained: related candidate at a5642b72d82ac64e94fb58abfb5a2076b07031c3 had no completed own primary. The starting tracked focus already matched preserved blob d9dead0e2c17b436931bb3174f80ecbe09095e1b, so no git-show import or branch merge was needed."
+        },
+        {
+          "check": "Static caller and owner tracing",
+          "result": "Read src/live/self-test.ts, src/live/helper.ts, audioEnvironment in src/live/audio.ts, CLI --live-self-test entry, and update/release callers. Resolver replacement remains confined to the child; actual diagnostic/subprocess/credential filtering remains exercised by the fixture when the parent runs it."
+        },
+        {
+          "check": "Assertion/scenario preservation",
+          "result": "The const greeting and all subsequent scenario definitions/assertions are byte-identical to the starting focus. Existing runner error, helper-removal, credential-stripping, process-exit and exact stop-input assertions remain in the lifetime owner."
+        },
+        {
+          "check": "git diff --check",
+          "result": "Passed before commit. Only the focus source path was committed. Commit hooks were inspected: only sample hooks present."
+        },
+        {
+          "check": "Static TypeScript parser availability",
+          "result": "Not completed. The read-only dependency typescript package resolved to lib/version.cjs exposing only version metadata; lib/typescript.js is absent. Initial parser attempt raised TypeError for missing ScriptTarget. No test, build, setup or dependency change was substituted."
+        }
+      ],
+      "primaryLimits": [
+        "No repository tests, builds, setup, provider/device access, delegation, network work, recovery, cleanup commands, destructive Git operations or user-secret reads were performed. Parent owns audited isolated batch gates and independent exact-candidate judging.",
+        "Runtime behavior of the explicit env and private cwd is not validated here; parent should exercise both 5-second timeout phases and neighboring module-cache isolation in its audited gate.",
+        "Fixture runtime side effects: creates retained mkdtemp HOME/config/cache/data/SDK directories; extracts an executable under its private root; runs Bun, /bin/sh, cat and sleep with explicit environment; signals only the recorded fixture PID. Diagnostic cleanup still recursively removes its extraction directory, not HOME. No fixture was executed here.",
+        "Existing resolver substitution does not establish production platform resolution, physical/macOS audio or provider readiness. Existing spawnSync timeout and recorded-PID teardown limitations remain; no speculative child-process framework added.",
+        "Historical automatic setup host-hash failure remains visible in inherited evidence; setup was not rerun or bypassed. Old worktrees and uncommitted candidates remain untouched.",
+        "No wisdom files edited: parent owns aggregate wisdom. No push, PR or merge performed."
       ]
     },
     {
       "file": "tests/offline-transport-probe.test.ts",
       "initialBlob": "absent",
       "area": "live-native-audio",
-      "primaryId": null,
-      "sourceCommit": "a2e8025bd3ffba42a24e0b7ba3358ac97de68532",
+      "primaryId": "task_fc50d3f8",
+      "sourceCommit": "4d5a00544d80550f83b16a8650be97c78257602d",
       "judgeIds": [],
-      "resumeState": "needs-primary-final-blob",
+      "resumeState": "needs-judge",
       "pendingReason": "New related candidate has no own primary or completed independent focus judgment; withhold integration approval.",
       "status": "pending",
       "acceptedRelatedJudges": [
         "task_26c0b5a0"
       ],
-      "acceptedBlob": "ceee222b98414140f6d2688bd128ace3f1c02add"
+      "acceptedBlob": "ceee222b98414140f6d2688bd128ace3f1c02add",
+      "primaryCommit": "4d5a00544d80550f83b16a8650be97c78257602d",
+      "primaryBase": "4d5a00544d80550f83b16a8650be97c78257602d",
+      "primaryResult": "The successful journey calls the real probe, checks every model/outcome loopback listener acquisition (hostname 127.0.0.1, ephemeral port), verifies zero pending WebSockets and an unreachable stopped listener, then checks the single success announcement. The failure journey visibly preserves the first real successful upgrade and substitutes HTTP 403 only on the second acquisition, which probeOpenAITransport orders as its first unauthorized-upgrade fixture. It requires the precise 401-classification rejection, exactly two acquisitions, no success announcement, and release of both listeners. Each test records its own servers before returning them and locally owns finally shutdown and both global spy restorations. In the caller, the CLI gate is explicit and the probe itself owns its timeout/socket/server teardown; readiness and metadata-backed sanitized 401 expectations are separate. The index-1 mutation therefore has a local comment and one explicit orchestration dependency, not a hidden multi-owner state machine. No abstraction, renaming, assertion reduction or source edits are justified.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        "Focus exists in HEAD and working tree; HEAD and preserved a2e8025bd3ffba42a24e0b7ba3358ac97de68532 candidate share exact blob ceee222b98414140f6d2688bd128ace3f1c02add. No import or old-branch merge needed.",
+        "Read values, structural-readability guidance, repo-wide ledgers, live-native-audio area ledgers, PR45 resume context and supplied reconciliation evidence. Prior related acceptance does not substitute for this own-focus primary decision or the upcoming independent judge.",
+        "Read focus assertions, production probe, hidden CLI caller, socket export and connectionFailure classification; inspected relevant repository callers.",
+        "git diff --check passed; no tracked source changes. Repository tests, builds and setup were not run."
+      ],
+      "primaryLimits": [
+        "This is a primary no-change proposal, not an independent judgment or runtime acceptance. Parent must launch the fresh judge for this exact candidate and owns isolated audited runtime gates.",
+        "Historical test claims and previous related-path judgments remain historical; they were not rerun or promoted into own-focus acceptance.",
+        "No source commit created because there are no source changes. Existing candidate bytes, worktrees and uncommitted work preserved. No credentials, devices, recovery, cleanup or delegation used.",
+        "Automatic setup host-hash failure was not rerun, bypassed or repaired. No device/provider/macOS or authenticated-background UX validation claimed.",
+        "Wisdom and values unchanged: existing principles already explain the decision; aggregate wisdom remains parent-owned."
+      ]
     },
     {
       "file": "tests/openai-upgrade-socket-node.test.mjs",
       "initialBlob": "absent",
       "area": "live-native-audio",
-      "primaryId": null,
-      "sourceCommit": "31bf2843d0aad882258288ca512035fe1d64528e",
+      "primaryId": "task_98d54ee6",
+      "sourceCommit": "4d5a00544d80550f83b16a8650be97c78257602d",
       "judgeIds": [],
-      "resumeState": "needs-primary-final-blob",
+      "resumeState": "needs-judge",
       "pendingReason": "New related candidate has no own primary or completed independent focus judgment; withhold integration approval.",
       "status": "pending",
       "acceptedRelatedJudges": [
         "task_1d24c7e5"
       ],
-      "acceptedBlob": "4e191af147d30885d04d0d601e21c8dc0eae8481"
+      "acceptedBlob": "4e191af147d30885d04d0d601e21c8dc0eae8481",
+      "primaryCommit": "4d5a00544d80550f83b16a8650be97c78257602d",
+      "primaryBase": "4d5a00544d80550f83b16a8650be97c78257602d",
+      "primaryResult": "Followed the maintained caller from OpenAIRealtimeSession.defaultSocket into upgradeSocket, then the unexpected-response ownership transfer into readRejectionCode. That reader owns the rejected HTTP response and its one-second diagnostic timer; close cancels that reader before terminating the connecting ws. The focus makes the corresponding journey explicit: a loopback peer writes an incomplete 403 response, responseStarted marks the write, readyState/peer/error assertions establish the inspection window, socket.close cancels it, the peer count proves release, and the 1100ms observation forbids late diagnostics while requests=1 excludes a second probe. The finally block closes the client, destroys only retained fixture peers, and awaits server.close. The runtime comment and Bun skip explain why adjacent session rejection tests cannot replace this Node lifetime check. No assertions, timing, redaction, authentication behavior, or source bytes were changed. The focus exists at HEAD and matches preserved candidate 31bf2843d0aad882258288ca512035fe1d64528e blob 4e191af147d30885d04d0d601e21c8dc0eae8481, so restoration is unnecessary. Historical related review is not treated as an independent own-focus judgment.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        {
+          "check": "Read required values and structural guidance, repository scope/coverage/assignments and area ledgers, preserved reconciliation focus row, focus, transport implementation, session caller/close ownership, adjacent stalled-rejection regression, and package/CI test entry points",
+          "result": "completed; own-focus primary remains historically pending and preserved lineage retained"
+        },
+        {
+          "check": "Git focus provenance",
+          "result": "HEAD blob, working file git hash-object, and preserved candidate blob all equal 4e191af147d30885d04d0d601e21c8dc0eae8481"
+        },
+        {
+          "check": "git diff --check and initial/final source status inspection",
+          "result": "passed; no source edits or pre-existing dirty paths observed"
+        },
+        {
+          "check": "Repository tests, setup, builds, and live/provider/device probes",
+          "result": "not run; parent owns audited isolated batch gates"
+        }
+      ],
+      "primaryLimits": [
+        "This is a primary structural-reading decision, not an independent judge verdict or runtime acceptance. Parent must launch its separate fresh judge and verify runtime agent.model externally.",
+        "The test is explicitly skipped under Bun; the normal Bun root test entry point does not prove this Node-only cancellation lifetime. Node 24 execution remains a parent gate.",
+        "Existing fixed settling/poll intervals were preserved, not executed or newly validated. No physical/provider/macOS parity claim.",
+        "No source commit created because there are no source changes. Report is intentionally untracked; no wisdom edits, delegation, push, PR, merge, setup, recovery, credential use, destructive operations, or user-data mutations. Automatic setup failures were not rerun or bypassed."
+      ]
     }
   ],
   "completedAreas": {

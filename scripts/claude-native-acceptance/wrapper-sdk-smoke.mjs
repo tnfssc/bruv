@@ -110,11 +110,37 @@ await writeFile(
   }),
 );
 await writeFile(join(state, "settings.json"), JSON.stringify({ cacheWarming: "off" }));
-function launch(prompt, observe = true) {
-  let child,
-    raw = "",
+// The SDK iterator may stop before the wrapper exits. Observe the process separately
+// so cancellation cases can prove real EOF, not just iterator completion.
+function observeWrapperProcess() {
+  let raw = "",
     stderr = "",
     close;
+  return {
+    // Public SDK spawn hook: pass command/args/env through unchanged.
+    spawn(options) {
+      assert.equal(options.command, binary);
+      const child = spawn(options.command, options.args, {
+        cwd: options.cwd,
+        env: options.env,
+        signal: options.signal,
+        stdio: ["pipe", "pipe", "pipe"],
+      });
+      children.push(child);
+      child.stdout.on("data", (b) => (raw += b));
+      child.stderr.on("data", (b) => (stderr += b));
+      close = new Promise((resolve) => child.once("close", (code, signal) => resolve({ code, signal })));
+      return child;
+    },
+    get close() {
+      return close;
+    },
+    raw: () => raw,
+    stderr: () => stderr,
+  };
+}
+function launch(prompt, spawnClaudeCodeProcess) {
+  let stderr = "";
   const q = query({
     prompt,
     options: {
@@ -133,23 +159,7 @@ function launch(prompt, observe = true) {
         BRUV_CLAUDE_COMPAT_HOME: state,
         GIT_CONFIG_GLOBAL: "/dev/null",
       },
-      // Public SDK spawn hook: pass its command/args/env through unchanged, only observe exit/frames.
-      spawnClaudeCodeProcess: observe
-        ? (options) => {
-            assert.equal(options.command, binary);
-            child = spawn(options.command, options.args, {
-              cwd: options.cwd,
-              env: options.env,
-              signal: options.signal,
-              stdio: ["pipe", "pipe", "pipe"],
-            });
-            children.push(child);
-            child.stdout.on("data", (b) => (raw += b));
-            child.stderr.on("data", (b) => (stderr += b));
-            close = new Promise((resolve) => child.once("close", (code, signal) => resolve({ code, signal })));
-            return child;
-          }
-        : undefined,
+      spawnClaudeCodeProcess,
     },
   });
   queries.push(q);
@@ -166,56 +176,51 @@ function launch(prompt, observe = true) {
     q,
     frames,
     settled,
-    get child() {
-      return child;
-    },
-    get close() {
-      return close;
-    },
-    raw: () => raw,
     stderr: () => stderr,
   };
 }
 try {
-  const shell = launch("SDK_SHELL: execute the actual shell fixture", false);
+  const shell = launch("SDK_SHELL: execute the actual shell fixture");
   assert.deepEqual(await timeout(shell.settled, "shell result"), {});
   assert.ok(
     shell.frames.some(
       (f) => f.type === "result" && f.subtype === "success" && f.result.includes("SDK_SHELL_CONFIRMED"),
     ),
-    shell.raw() + shell.stderr(),
+    shell.stderr(),
   );
   proof.push({ case: "unmodified SDK default spawn, actual execute/shell", requests: requests.length, exit: 0 });
-  const stop = launch("SDK_STOP_HOLD: hold for SDK interrupt");
+  const stopProcess = observeWrapperProcess();
+  const stop = launch("SDK_STOP_HOLD: hold for SDK interrupt", stopProcess.spawn);
   await until(() => requests.some((r) => JSON.stringify(r.messages).includes("SDK_STOP_HOLD")));
   const start = Date.now();
   await timeout(stop.q.interrupt(), "SDK Stop acknowledgement");
   assert.deepEqual(await timeout(stop.settled, "SDK Stop terminal"), {});
   assert.ok(
     stop.frames.some((f) => f.type === "result" && f.subtype !== "success"),
-    stop.raw() + stop.stderr(),
+    stopProcess.raw() + stopProcess.stderr() + stop.stderr(),
   );
   assert.ok(
     !stop.frames.some((f) => f.type === "assistant" && JSON.stringify(f).includes("HELD_RESPONSE_MUST_NOT_COMPLETE")),
   );
-  assert.deepEqual(await timeout(stop.close, "Stop EOF", 1800), { code: 0, signal: null });
+  assert.deepEqual(await timeout(stopProcess.close, "Stop EOF", 1800), { code: 0, signal: null });
   proof.push({
     case: "SDK interrupt / Stop",
     durationMs: Date.now() - start,
     result: stop.frames.find((f) => f.type === "result")?.subtype,
     exit: 0,
   });
-  const eof = launch("SDK_EOF_HOLD: hold for SDK close / stdin EOF");
+  const eofProcess = observeWrapperProcess();
+  const eof = launch("SDK_EOF_HOLD: hold for SDK close / stdin EOF", eofProcess.spawn);
   await until(() => requests.some((r) => JSON.stringify(r.messages).includes("SDK_EOF_HOLD")));
   const eofStart = Date.now();
   eof.q.close();
-  assert.deepEqual(await timeout(eof.close, "actual wrapper EOF before SDK kill grace", 1800), {
+  assert.deepEqual(await timeout(eofProcess.close, "actual wrapper EOF before SDK kill grace", 1800), {
     code: 0,
     signal: null,
   });
   await timeout(eof.settled, "EOF iterator");
   assert.ok(
-    !eof
+    !eofProcess
       .raw()
       .split("\n")
       .filter(Boolean)
