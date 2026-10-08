@@ -3422,16 +3422,17 @@
       "initialBlob": "b95c39f77a411881b1fdea75836ffb275882afdf",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "b95c39f77a411881b1fdea75836ffb275882afdf",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "b95c39f77a411881b1fdea75836ffb275882afdf",
         "primaryId": "task_0c2af5f0",
         "primaryCommit": "b7b07b830fe785db05a9bfcf94b6a92567aecdf3",
-        "judgeIds": [],
+        "judgeIds": ["task_e6c72f9a"],
         "sourceCommit": "b7b07b830fe785db05a9bfcf94b6a92567aecdf3",
-        "state": "needs-judge",
-        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+        "state": "accepted-joined",
+        "reason": "The whole paid-transport journey fits in one short test. The file-level BRUV_RUN_GPT_LIVE_ACCEPTANCE gate and test-local explicit key check precede construction; callbacks collect errors and terminal finalization. The try then connects, requires ready, sends ten 640-byte silent frames paced at 20 ms, awaits close, and asserts both no errors and finalized=true. The finally independently awaits close, preserving teardown after failed startup or assertions. These statements already expose authority, pacing, successful server close and owned transport lifetime; extracting the loop or close would obscure rather than clarify those obligations. This focus blob is identical to primaryBase."
       }
     },
     {
@@ -3439,16 +3440,17 @@
       "initialBlob": "333c95a90933643b25d6ab77f6ff0f10a77434e9",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "37b905a80a8d954ee101d9f91223a39c255287fe",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "37b905a80a8d954ee101d9f91223a39c255287fe",
         "primaryId": "task_0c2af5f0",
         "primaryCommit": "b7b07b830fe785db05a9bfcf94b6a92567aecdf3",
-        "judgeIds": [],
+        "judgeIds": ["task_e6c72f9a"],
         "sourceCommit": "b7b07b830fe785db05a9bfcf94b6a92567aecdf3",
-        "state": "needs-judge",
-        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+        "state": "accepted-joined",
+        "reason": "The original scenario required reading version lookup, theme-directory/symlink creation, command assembly and tmux configuration before reaching the behavior under test. launchGptTui now expresses that coherent owned-HOME preparation plus real-renderer launch as one operation, with explicit tmux/home/root parameters and no hidden fixture bag or new state. The scenario still allocates the mkdtemp HOME and unique socket before try, calls launch inside try, waits for fixture readiness, submits the command with the original Enter cadence, captures the required complete frame, then asserts uniqueness and absence of participant labels/raw passive JSON. Its original finally still owns teardown even if preparation or new-session fails. This is a meaningful journey boundary rather than rename churn; setup assertions/effects remain visible in the small file-local operation."
       }
     },
     {
@@ -3456,16 +3458,17 @@
       "initialBlob": "efd8339fcd34ca1398bb45b3357bdfe21bd332a3",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "efd8339fcd34ca1398bb45b3357bdfe21bd332a3",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "efd8339fcd34ca1398bb45b3357bdfe21bd332a3",
         "primaryId": "task_0c2af5f0",
         "primaryCommit": "b7b07b830fe785db05a9bfcf94b6a92567aecdf3",
-        "judgeIds": [],
+        "judgeIds": ["task_e6c72f9a"],
         "sourceCommit": "b7b07b830fe785db05a9bfcf94b6a92567aecdf3",
-        "state": "needs-judge",
-        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+        "state": "accepted-joined",
+        "reason": "One adjacent scenario explains why a working task host is not Live authority: two distinct Pi wrappers share the actual SDK event bus and handler registry, while the same fake sessionManager identity supplies both contexts. Before startup no host exists; after startup a copied manager is rejected while the original obtains the same host. Repeated send with one ID produces one follow-up with explicit transcript authority framing, and observed assistant/turn updates establish that host functionality. Only then does Live start with fake key/provider/audio failure sentinels; provider count and dispatch count stay unchanged and the original host survives. Shutdown finally removes access and makes the saved host throw on stale context. Keeping this lifecycle adjacent avoids rebuilding the same shared-identity relationship in separate tests or hiding it in fixture context objects. This focus blob is identical to primaryBase."
       }
     },
     {
@@ -3555,10 +3558,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
+        "primaryId": "task_fe506a23",
+        "primaryCommit": "eda21cbb163553d0af6c7cfe2bcf8d83578d3008",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "own_primary_pending",
+        "sourceCommit": "eda21cbb163553d0af6c7cfe2bcf8d83578d3008",
+        "state": "needs-judge",
         "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
       }
     },
@@ -3571,10 +3575,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
+        "primaryId": "task_fe506a23",
+        "primaryCommit": "eda21cbb163553d0af6c7cfe2bcf8d83578d3008",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "own_primary_pending",
+        "sourceCommit": "eda21cbb163553d0af6c7cfe2bcf8d83578d3008",
+        "state": "needs-judge",
         "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
       }
     },
@@ -3587,10 +3592,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
+        "primaryId": "task_fe506a23",
+        "primaryCommit": "eda21cbb163553d0af6c7cfe2bcf8d83578d3008",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "own_primary_pending",
+        "sourceCommit": "eda21cbb163553d0af6c7cfe2bcf8d83578d3008",
+        "state": "needs-judge",
         "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
       }
     },
@@ -4846,7 +4852,7 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 114,
-    "pending": 37
+    "accepted": 117,
+    "pending": 34
   }
 }

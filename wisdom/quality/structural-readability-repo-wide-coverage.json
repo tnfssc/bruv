@@ -14959,11 +14959,11 @@
     {
       "file": "tests/live-gpt-live-provider.acceptance.test.ts",
       "initialBlob": "b95c39f77a411881b1fdea75836ffb275882afdf",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_0c2af5f0",
       "sourceCommit": "b7b07b830fe785db05a9bfcf94b6a92567aecdf3",
-      "judgeIds": [],
-      "resumeState": "needs-judge",
+      "judgeIds": ["task_e6c72f9a"],
+      "resumeState": "accepted-joined",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
       "area": "live-native-audio",
       "primaryCommit": "b7b07b830fe785db05a9bfcf94b6a92567aecdf3",
@@ -15017,16 +15017,35 @@
         "TUI test uses a mkdtemp-owned HOME, writes theme symlink and tmux configuration there, launches a uniquely named tmux server, and retains existing finally cleanup of that owned directory. This code was inspected, not run. Parent must audit/isolate inherited config/SDK/environment before any gate; no cleanup commands were executed here.",
         "Formatter used explicit child_process argv and a whitelisted fresh HOME/config/TMPDIR/SDK environment; its fixture is retained, with provenance here and in the fixture. Existing dependencies were read-only.",
         "No delegation, recovery, destructive Git, setup guard bypass, push, PR, or merge. No wisdom/values edits; parent owns aggregate wisdom."
+      ],
+      "acceptedBlob": "b95c39f77a411881b1fdea75836ffb275882afdf",
+      "result": "The whole paid-transport journey fits in one short test. The file-level BRUV_RUN_GPT_LIVE_ACCEPTANCE gate and test-local explicit key check precede construction; callbacks collect errors and terminal finalization. The try then connects, requires ready, sends ten 640-byte silent frames paced at 20 ms, awaits close, and asserts both no errors and finalized=true. The finally independently awaits close, preserving teardown after failed startup or assertions. These statements already expose authority, pacing, successful server close and owned transport lifetime; extracting the loop or close would obscure rather than clarify those obligations. This focus blob is identical to primaryBase.",
+      "systemReason": "Followed GPTLiveSession.connect through validated session.started (not merely socket open) to ready, appendMicrophone through the 16 kHz -> wire resampler and bounded send, session.closed to finishTransport(true), and close through its shared terminal promise. Errors/timeouts and early socket close finalize false and call onError; the ready/errors/finalized assertions therefore check distinct outcomes. Repeated close in finally uses the same terminal result, not a second request. Constructor uses direct WebSocket transport and this test only accepts its dedicated environment key, never auth-store or audio-device discovery. The sole candidate change is a file-local TUI launcher with no import/caller connection to this test or transport.",
+      "checks": [
+        "Inspected exact candidate git show and primaryBase 7f4f778b5abe5b511062c7e665016cecb384173d -> candidate diff; only candidate-changed path is tests/live-gpt-tui.test.ts.",
+        "Read full intrinsic focus at candidate and the entire candidate-changed test, including partial-launch teardown.",
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "git diff --check primaryBase candidate exited 0; static inspection only, not runtime proof.",
+        "Static string comparison verified extracted launch statements identical after indentation and dir -> home parameter substitution; imports and scenario from readiness through finally are identical.",
+        "git rev-parse confirms acceptance focus blob is identical in candidate and primaryBase."
+      ],
+      "limits": [
+        "No setup, tests, builds, dependency installation, credential lookup, network transport, or device access performed. Parent owns audited isolated runtime gates; no runtime success claimed.",
+        "Parent verifies runtime agent.model openai-codex/gpt-6.1-sol; native normal leaves only, no delegation.",
+        "Durable review provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_e6c72f9a; candidate and existing worktrees retained. No fixture directories created, no shared dependency writes, no source edits.",
+        "Safety for ALL descendants: NO sudo, recovery investigation, user secrets, shell deletion/cleanup commands, inherited HOME/config/SDK cleanup, nested shell traps, destructive git, or user-data mutation. User already recovered data and requested no recovery work. Tests must use explicit process argv/env and owned fs.mkdtemp fixture HOME/config/SDK; retain them, do not delete. Review filesystem/network effects BEFORE tests/setup. Existing test-code cleanup of provably owned temporary paths may be inspected but NEVER run a shell trap or inherited HOME removal. Need live auth/device? Report unverified, don't access credentials. Propagate these constraints verbatim.",
+        "No descendants launched. No push/new PR/merge/publication or per-worker wisdom notes; parent owns aggregate wisdom.",
+        "Paid provider behavior is unverified; opt-in would open wss://api.openai.com/v1/live/sessions using the explicit acceptance key. It was not enabled or run. This is transport acceptance, not microphone/playback UX proof."
       ]
     },
     {
       "file": "tests/live-gpt-tui.test.ts",
       "initialBlob": "333c95a90933643b25d6ab77f6ff0f10a77434e9",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_0c2af5f0",
       "sourceCommit": "b7b07b830fe785db05a9bfcf94b6a92567aecdf3",
-      "judgeIds": [],
-      "resumeState": "needs-judge",
+      "judgeIds": ["task_e6c72f9a"],
+      "resumeState": "accepted-joined",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
       "area": "live-native-audio",
       "primaryCommit": "b7b07b830fe785db05a9bfcf94b6a92567aecdf3",
@@ -15080,16 +15099,37 @@
         "TUI test uses a mkdtemp-owned HOME, writes theme symlink and tmux configuration there, launches a uniquely named tmux server, and retains existing finally cleanup of that owned directory. This code was inspected, not run. Parent must audit/isolate inherited config/SDK/environment before any gate; no cleanup commands were executed here.",
         "Formatter used explicit child_process argv and a whitelisted fresh HOME/config/TMPDIR/SDK environment; its fixture is retained, with provenance here and in the fixture. Existing dependencies were read-only.",
         "No delegation, recovery, destructive Git, setup guard bypass, push, PR, or merge. No wisdom/values edits; parent owns aggregate wisdom."
+      ],
+      "acceptedRelatedJudges": ["task_e6c72f9a"],
+      "acceptedBlob": "37b905a80a8d954ee101d9f91223a39c255287fe",
+      "result": "The original scenario required reading version lookup, theme-directory/symlink creation, command assembly and tmux configuration before reaching the behavior under test. launchGptTui now expresses that coherent owned-HOME preparation plus real-renderer launch as one operation, with explicit tmux/home/root parameters and no hidden fixture bag or new state. The scenario still allocates the mkdtemp HOME and unique socket before try, calls launch inside try, waits for fixture readiness, submits the command with the original Enter cadence, captures the required complete frame, then asserts uniqueness and absence of participant labels/raw passive JSON. Its original finally still owns teardown even if preparation or new-session fails. This is a meaningful journey boundary rather than rename churn; setup assertions/effects remain visible in the small file-local operation.",
+      "systemReason": "Followed tmuxRunner to explicit argv Bun.spawn via run/offlineTestEnv, startup polling to session-only project trust, and the fixture proxy to the real Live extension. Fixture substitutes only key/provider/audio and emits 24 input deltas plus one provisional output. Live acquires the ordinary main owner before audio/provider, routes provisional records through owner context and TranscriptLog, and conversation renderers use native user/assistant components with Partial transcript instead of exposing JSON. The required frame still demands the first consecutive input deltas, the final delta, the provisional output, mic status and partial-transcript marker; separate uniqueness assertions catch duplicate initial-input/output presentation. CLI materializes runtime assets under homedir/.bruv/runtime/version and sets PI_PACKAGE_DIR before SDK import; the helper preserves the test-HOME-only theme link and exactly the old launch flags/ordering. No production path or assertion changes.",
+      "checks": [
+        "Inspected exact candidate git show and primaryBase 7f4f778b5abe5b511062c7e665016cecb384173d -> candidate diff; only candidate-changed path is tests/live-gpt-tui.test.ts.",
+        "Read full intrinsic focus at candidate and the entire candidate-changed test, including partial-launch teardown.",
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "git diff --check primaryBase candidate exited 0; static inspection only, not runtime proof.",
+        "Static string comparison verified extracted launch statements identical after indentation and dir -> home parameter substitution; imports and scenario from readiness through finally are identical."
+      ],
+      "limits": [
+        "No setup, tests, builds, dependency installation, credential lookup, network transport, or device access performed. Parent owns audited isolated runtime gates; no runtime success claimed.",
+        "Parent verifies runtime agent.model openai-codex/gpt-6.1-sol; native normal leaves only, no delegation.",
+        "Durable review provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_e6c72f9a; candidate and existing worktrees retained. No fixture directories created, no shared dependency writes, no source edits.",
+        "Safety for ALL descendants: NO sudo, recovery investigation, user secrets, shell deletion/cleanup commands, inherited HOME/config/SDK cleanup, nested shell traps, destructive git, or user-data mutation. User already recovered data and requested no recovery work. Tests must use explicit process argv/env and owned fs.mkdtemp fixture HOME/config/SDK; retain them, do not delete. Review filesystem/network effects BEFORE tests/setup. Existing test-code cleanup of provably owned temporary paths may be inspected but NEVER run a shell trap or inherited HOME removal. Need live auth/device? Report unverified, don't access credentials. Propagate these constraints verbatim.",
+        "No descendants launched. No push/new PR/merge/publication or per-worker wisdom notes; parent owns aggregate wisdom.",
+        "Filesystem/process effects reviewed, not executed: mkdtemp HOME, runtime theme directory/link, tmux.conf, isolated tmux socket, child CLI and finally kill-server/rm of the owned dir. Existing cleanup was inspected only; parent gates must retain fixtures under the user instruction.",
+        "The existing run helper inherits environment before overrides; HOME and PI_PACKAGE_DIR handling alone are not proof that all config/SDK paths are isolated. Parent must supply an audited explicit environment and owned HOME/config/SDK before runtime gates. This is a pre-existing harness limitation unchanged by the extraction.",
+        "No actual tmux frame, startup timing, real audio device, or paid provider behavior was verified in this review."
       ]
     },
     {
       "file": "tests/live-host-access.test.ts",
       "initialBlob": "efd8339fcd34ca1398bb45b3357bdfe21bd332a3",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_0c2af5f0",
       "sourceCommit": "b7b07b830fe785db05a9bfcf94b6a92567aecdf3",
-      "judgeIds": [],
-      "resumeState": "needs-judge",
+      "judgeIds": ["task_e6c72f9a"],
+      "resumeState": "accepted-joined",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
       "area": "live-native-audio",
       "primaryCommit": "b7b07b830fe785db05a9bfcf94b6a92567aecdf3",
@@ -15143,6 +15183,25 @@
         "TUI test uses a mkdtemp-owned HOME, writes theme symlink and tmux configuration there, launches a uniquely named tmux server, and retains existing finally cleanup of that owned directory. This code was inspected, not run. Parent must audit/isolate inherited config/SDK/environment before any gate; no cleanup commands were executed here.",
         "Formatter used explicit child_process argv and a whitelisted fresh HOME/config/TMPDIR/SDK environment; its fixture is retained, with provenance here and in the fixture. Existing dependencies were read-only.",
         "No delegation, recovery, destructive Git, setup guard bypass, push, PR, or merge. No wisdom/values edits; parent owns aggregate wisdom."
+      ],
+      "acceptedBlob": "efd8339fcd34ca1398bb45b3357bdfe21bd332a3",
+      "result": "One adjacent scenario explains why a working task host is not Live authority: two distinct Pi wrappers share the actual SDK event bus and handler registry, while the same fake sessionManager identity supplies both contexts. Before startup no host exists; after startup a copied manager is rejected while the original obtains the same host. Repeated send with one ID produces one follow-up with explicit transcript authority framing, and observed assistant/turn updates establish that host functionality. Only then does Live start with fake key/provider/audio failure sentinels; provider count and dispatch count stay unchanged and the original host survives. Shutdown finally removes access and makes the saved host throw on stale context. Keeping this lifecycle adjacent avoids rebuilding the same shared-identity relationship in separate tests or hiding it in fixture context objects. This focus blob is identical to primaryBase.",
+      "systemReason": "Followed host-access event-bus request/accept exchange to tasksExtension.registerSessionHost, which requires exact owning sessionManager identity; session_start sets owningContext. SessionHost.once deduplicates request IDs and tracks dispatch, task message_end forwards only text, and close invalidates scope/listeners/requests. session_shutdown closes the host and clears owningContext, matching both shutdown assertions. Live defaults owner to acquireMainOwner; Run.start awaits owner acquisition before launching audio or constructing the provider. acquire requires the instruction-continuity owning Pi session and classic runtime/tool hooks, absent in this fake host, so Live fails closed without falling back to task-host text bridging. The unrelated file-local TUI launcher cannot alter that authority order or this scenario.",
+      "checks": [
+        "Inspected exact candidate git show and primaryBase 7f4f778b5abe5b511062c7e665016cecb384173d -> candidate diff; only candidate-changed path is tests/live-gpt-tui.test.ts.",
+        "Read full intrinsic focus at candidate and the entire candidate-changed test, including partial-launch teardown.",
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "git diff --check primaryBase candidate exited 0; static inspection only, not runtime proof.",
+        "Static string comparison verified extracted launch statements identical after indentation and dir -> home parameter substitution; imports and scenario from readiness through finally are identical.",
+        "git rev-parse confirms host-access focus blob is identical in candidate and primaryBase."
+      ],
+      "limits": [
+        "No setup, tests, builds, dependency installation, credential lookup, network transport, or device access performed. Parent owns audited isolated runtime gates; no runtime success claimed.",
+        "Parent verifies runtime agent.model openai-codex/gpt-6.1-sol; native normal leaves only, no delegation.",
+        "Durable review provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_e6c72f9a; candidate and existing worktrees retained. No fixture directories created, no shared dependency writes, no source edits.",
+        "Safety for ALL descendants: NO sudo, recovery investigation, user secrets, shell deletion/cleanup commands, inherited HOME/config/SDK cleanup, nested shell traps, destructive git, or user-data mutation. User already recovered data and requested no recovery work. Tests must use explicit process argv/env and owned fs.mkdtemp fixture HOME/config/SDK; retain them, do not delete. Review filesystem/network effects BEFORE tests/setup. Existing test-code cleanup of provably owned temporary paths may be inspected but NEVER run a shell trap or inherited HOME removal. Need live auth/device? Report unverified, don't access credentials. Propagate these constraints verbatim.",
+        "No descendants launched. No push/new PR/merge/publication or per-worker wisdom notes; parent owns aggregate wisdom.",
+        "Fake key and throwing provider/audio factories were read, not invoked. Actual SDK event-bus timing and no-device/no-network runtime behavior remain parent-gate verification; no real auth or device access was attempted."
       ]
     },
     {
@@ -15162,34 +15221,82 @@
       "file": "tests/live-long-audio.test.ts",
       "initialBlob": "37efad69fcf9882df32c37d02b99324bb39a1803",
       "status": "pending",
-      "primaryId": null,
-      "sourceCommit": null,
+      "primaryId": "task_fe506a23",
+      "sourceCommit": "eda21cbb163553d0af6c7cfe2bcf8d83578d3008",
       "judgeIds": [],
-      "resumeState": "own_primary_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "eda21cbb163553d0af6c7cfe2bcf8d83578d3008",
+      "primaryBase": "f65c6b2f3867a4ae87275b0b3516ecc46acee963",
+      "primaryResult": "No change needed in this focus: Clock, tick, playback and stream form a local deterministic producer/drain path. OpenAI response registers the response and item once before returning its audio producer, and each scenario shows completed/tool-continuation, VAD cancellation/failure, and malformed-packet outcomes inline. The single Gemini adapter stays next to its interrupted/new-turn scenario instead of hiding provider differences. The separate stalled-playback test visibly owns its unresolved send, checks the pending budget and single error, then explicitly interrupts to reopen capacity and closes. Scheduler enqueue/interrupt and provider packet handling agree with those journeys; extracting another fixture or unifying providers would add indirection without clarifying authority.",
+      "primaryPaths": ["tests/live-main-integration.test.ts"],
+      "primaryChecks": [
+        "Read whole assigned focus source and applicable production/CI callers; assigned preserved evidence rows contain no candidate, rejected round, or rework to import.",
+        "Repository formatter applied only to tests/live-main-integration.test.ts using child_process argv and fresh retained HOME/XDG_CONFIG_HOME/PI_CODING_AGENT_DIR/TMPDIR; exit 0. Retained fixture: /tmp/pr45-live-main-format-UPGxV6.",
+        "git diff --check passed. Manual full diff review preserved scenario content, terminal reasons, and abort behavior. Static text-span comparison found identical assertion source spans, scenario titles, and execute code literals. These are source checks, not runtime tests.",
+        "Commit hooks were inspected before committing: no active commit hooks found. Commit contains only the listed test source path."
+      ],
+      "primaryLimits": [
+        "No repository tests, setup, builds, typecheck, credentials, devices, network calls, delegation, recovery, cleanup shell commands, destructive Git, or publication performed. Parent owns audited isolated gates and independent judgments.",
+        "An attempted in-process TypeScript AST parser inspection found the installed typescript package exposes version metadata only; no AST/typecheck validation was obtained. Biome successfully parsed the changed file for formatting.",
+        "Read-only side-effect inspection: integration fixture allocates its own mkdtemp session/auth paths and removes that owned root in afterEach; it launches shell marker/cancellation jobs, mutates then restores two BRUV depth/type environment variables, and optionally writes BRUV_LIVE_INPUT_CAPTURE outside the fixture. Parent gates must use explicit argv and owned HOME/config/SDK/temp, retain fixtures, and leave BRUV_LIVE_INPUT_CAPTURE unset or set only to an owned fixture path. scripts/ci.sh contains an install and cleanup trap and was read only, never run.",
+        "Full changed source scope is repeated for every decision for bounded independent review. Unchanged decisions mean their focus bytes were not edited; the batch source change is only tests/live-main-integration.test.ts. No wisdom or values edits; parent owns aggregation."
+      ]
     },
     {
       "file": "tests/live-macos-ci.test.ts",
       "initialBlob": "53f420190ad67578a63e274c8f6060639b7a8942",
       "status": "pending",
-      "primaryId": null,
-      "sourceCommit": null,
+      "primaryId": "task_fe506a23",
+      "sourceCommit": "eda21cbb163553d0af6c7cfe2bcf8d83578d3008",
       "judgeIds": [],
-      "resumeState": "own_primary_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "eda21cbb163553d0af6c7cfe2bcf8d83578d3008",
+      "primaryBase": "f65c6b2f3867a4ae87275b0b3516ecc46acee963",
+      "primaryResult": "No change needed in this focus: its single short test already walks workflow job -> macOS lane -> preparation before deterministic Live tests -> execute/integration wrapper references -> source CLI forwarding. The build/reuse-web prohibitions are adjacent to ordering checks, and fixture assertions expose the real source fallback rather than an opaque helper. The actual ci.sh macOS branch prepares assets, probes source transport, runs Live tests and exits before the Linux build lane; the fixture wrapper execs src/cli.ts with \"$@\". The related main-integration refactor leaves its existsSync(compiled) fallback and wrapper reference untouched. Extracting readers for these single-use blocks would make the chain less direct.",
+      "primaryPaths": ["tests/live-main-integration.test.ts"],
+      "primaryChecks": [
+        "Read whole assigned focus source and applicable production/CI callers; assigned preserved evidence rows contain no candidate, rejected round, or rework to import.",
+        "Repository formatter applied only to tests/live-main-integration.test.ts using child_process argv and fresh retained HOME/XDG_CONFIG_HOME/PI_CODING_AGENT_DIR/TMPDIR; exit 0. Retained fixture: /tmp/pr45-live-main-format-UPGxV6.",
+        "git diff --check passed. Manual full diff review preserved scenario content, terminal reasons, and abort behavior. Static text-span comparison found identical assertion source spans, scenario titles, and execute code literals. These are source checks, not runtime tests.",
+        "Commit hooks were inspected before committing: no active commit hooks found. Commit contains only the listed test source path."
+      ],
+      "primaryLimits": [
+        "No repository tests, setup, builds, typecheck, credentials, devices, network calls, delegation, recovery, cleanup shell commands, destructive Git, or publication performed. Parent owns audited isolated gates and independent judgments.",
+        "An attempted in-process TypeScript AST parser inspection found the installed typescript package exposes version metadata only; no AST/typecheck validation was obtained. Biome successfully parsed the changed file for formatting.",
+        "Read-only side-effect inspection: integration fixture allocates its own mkdtemp session/auth paths and removes that owned root in afterEach; it launches shell marker/cancellation jobs, mutates then restores two BRUV depth/type environment variables, and optionally writes BRUV_LIVE_INPUT_CAPTURE outside the fixture. Parent gates must use explicit argv and owned HOME/config/SDK/temp, retain fixtures, and leave BRUV_LIVE_INPUT_CAPTURE unset or set only to an owned fixture path. scripts/ci.sh contains an install and cleanup trap and was read only, never run.",
+        "Full changed source scope is repeated for every decision for bounded independent review. Unchanged decisions mean their focus bytes were not edited; the batch source change is only tests/live-main-integration.test.ts. No wisdom or values edits; parent owns aggregation."
+      ]
     },
     {
       "file": "tests/live-main-integration.test.ts",
       "initialBlob": "950dd13e9775f57f61cbf37aacc8b1d78446913c",
       "status": "pending",
-      "primaryId": null,
-      "sourceCommit": null,
+      "primaryId": "task_fe506a23",
+      "sourceCommit": "eda21cbb163553d0af6c7cfe2bcf8d83578d3008",
       "judgeIds": [],
-      "resumeState": "own_primary_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "eda21cbb163553d0af6c7cfe2bcf8d83578d3008",
+      "primaryBase": "f65c6b2f3867a4ae87275b0b3516ecc46acee963",
+      "primaryResult": "Added one file-local offlineAssistantStream operation that owns the zero-usage assistant envelope and matching done/error terminal event. Every affected scenario now supplies its selected model identity, content and terminal reason directly; async step selection remains inline, and stop-both shows aborted -> error with empty content, extra call -> stop, first call -> toolUse as explicit returns rather than envelope mutation. Context capture, prompt assembly, production execute calls, owner acquisition/release, passive/raw audit separation, all assertion source spans, scenario titles and execute code literals remain unchanged. The helper has no shared context bag or new lifetime/state and makes no provider requests. The focus and its relevant owner/SDK stream consumers were read; direct terminal-only fixture semantics are preserved.",
+      "primaryPaths": ["tests/live-main-integration.test.ts"],
+      "primaryChecks": [
+        "Read whole assigned focus source and applicable production/CI callers; assigned preserved evidence rows contain no candidate, rejected round, or rework to import.",
+        "Repository formatter applied only to tests/live-main-integration.test.ts using child_process argv and fresh retained HOME/XDG_CONFIG_HOME/PI_CODING_AGENT_DIR/TMPDIR; exit 0. Retained fixture: /tmp/pr45-live-main-format-UPGxV6.",
+        "git diff --check passed. Manual full diff review preserved scenario content, terminal reasons, and abort behavior. Static text-span comparison found identical assertion source spans, scenario titles, and execute code literals. These are source checks, not runtime tests.",
+        "Commit hooks were inspected before committing: no active commit hooks found. Commit contains only the listed test source path."
+      ],
+      "primaryLimits": [
+        "No repository tests, setup, builds, typecheck, credentials, devices, network calls, delegation, recovery, cleanup shell commands, destructive Git, or publication performed. Parent owns audited isolated gates and independent judgments.",
+        "An attempted in-process TypeScript AST parser inspection found the installed typescript package exposes version metadata only; no AST/typecheck validation was obtained. Biome successfully parsed the changed file for formatting.",
+        "Read-only side-effect inspection: integration fixture allocates its own mkdtemp session/auth paths and removes that owned root in afterEach; it launches shell marker/cancellation jobs, mutates then restores two BRUV depth/type environment variables, and optionally writes BRUV_LIVE_INPUT_CAPTURE outside the fixture. Parent gates must use explicit argv and owned HOME/config/SDK/temp, retain fixtures, and leave BRUV_LIVE_INPUT_CAPTURE unset or set only to an owned fixture path. scripts/ci.sh contains an install and cleanup trap and was read only, never run.",
+        "Full changed source scope is repeated for every decision for bounded independent review. Unchanged decisions mean their focus bytes were not edited; the batch source change is only tests/live-main-integration.test.ts. No wisdom or values edits; parent owns aggregation."
+      ]
     },
     {
       "file": "tests/live-main-orchestrator-runtime.probe.ts",
@@ -23397,9 +23504,9 @@
     "baselineFiles": 766,
     "finalGate": "pending; incomplete focus coverage",
     "liveAuth": "unverified/failing; preserved",
-    "accepted": 799,
+    "accepted": 802,
     "total": 836,
-    "pending": 37,
+    "pending": 34,
     "sourceExtras": 70,
     "checkout": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
     "branch": "bruv/readability-pr45-sol-continuation",
