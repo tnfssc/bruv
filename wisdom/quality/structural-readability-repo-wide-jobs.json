@@ -953,6 +953,15 @@
         "branch": "bruv/pr45-primary-src-prompts-execute.md-33bb0613",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
+      },
+      {
+        "id": "task_28dca32b",
+        "stage": "primary",
+        "focus": "src/prompts/fast.md",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_28dca32b",
+        "branch": "bruv/pr45-primary-src-prompts-fast.md-28dca32b",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
       }
     ]
   },
@@ -1174,7 +1183,7 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_a1139c9a",
         "branch": "bruv/pr45-judge-3-ui-terminal-cli-focuses-a1139c9a",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled"
       },
       {
         "id": "task_97f9b348",

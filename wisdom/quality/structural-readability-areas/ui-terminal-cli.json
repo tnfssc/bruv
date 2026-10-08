@@ -1214,10 +1214,10 @@
     {
       "focus": "scripts/terminal-perf/interaction-tool-events.test.ts",
       "initialBlob": "2ba446b1c0b439cc7ee92256ad58ff7ccd3d0836",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "2e0e6eb8783ba3fcce9fde642717064f933dd67f",
       "integrationState": "related patch integrated; primary pending",
       "relatedPatchJudgments": [
         {
@@ -1228,15 +1228,17 @@
         }
       ],
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "2e0e6eb8783ba3fcce9fde642717064f933dd67f",
         "primaryId": "task_efdf5c1a",
         "primaryCommit": "4fb1ae370ec111a0c5a7c1a2ccf216588244eb48",
         "judgeIds": [
-          "task_23bf0f9f"
+          "task_23bf0f9f",
+          "task_a1139c9a"
         ],
         "sourceCommit": "4fb1ae370ec111a0c5a7c1a2ccf216588244eb48",
-        "state": "needs-judge",
-        "reason": "Existing related-path ACCEPT by task_23bf0f9f at e5654ea0d0f92812e5a1bf526f78057f631d4189, blob 2e0e6eb8783ba3fcce9fde642717064f933dd67f; exact candidate verified. Related blob already joined. Dedicated primary-focus acceptance is missing."
+        "state": "accepted-joined",
+        "reason": "The complete typed evidence fixture makes the distinct callback, scheduled-frame, input, burst, visibility and trace authorities inspectable together. Each scenario owns a fresh fixture. The mixed-source scenario modifies only total counts and a subscribed callback, so its adjacent total/burst assertions explain the distinction without an abstraction layer. Mutation loops each alter one evidence field immediately before normalization. The peak assertion explicitly changes input lateness without changing CPU peak. These are already coherent reading journeys, not a scattered lifetime or authority problem."
       }
     },
     {
@@ -1516,8 +1518,8 @@
         "primaryId": "task_72c25417",
         "primaryCommit": "38bb4270a46a5ee9838b649a2d8b240989bde71e",
         "judgeIds": [],
-        "sourceCommit": "38bb4270a46a5ee9838b649a2d8b240989bde71e",
-        "state": "needs-judge",
+        "sourceCommit": null,
+        "state": "needs-rework",
         "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
       }
     },
@@ -1542,19 +1544,22 @@
     {
       "focus": "scripts/terminal-perf/selector-lifecycle.test.ts",
       "initialBlob": "0799d40669ad0f61af0bd252affa18ff53e2ffa0",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "7d49e2f1f018edf87270a8ae18c0d91769e10bf2",
       "integrationState": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "7d49e2f1f018edf87270a8ae18c0d91769e10bf2",
         "primaryId": "task_b483c184",
         "primaryCommit": "2e9f506b874a0acd793f20c4acef448af8b900d1",
-        "judgeIds": [],
+        "judgeIds": [
+          "task_a1139c9a"
+        ],
         "sourceCommit": "2e9f506b874a0acd793f20c4acef448af8b900d1",
-        "state": "needs-judge",
-        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+        "state": "accepted-joined",
+        "reason": "The disk scenario now shows its two manager lifetimes in execution order: write the branched fixture, open and prohibit getEntries, check whole-journal counts/branch/append and the unchanged byte prefix, restore/dispose, then reopen and check persistence. Assertions no longer run inside cleanup. The outer fixture lifetime includes writing, both opens and both disposals, so cleanup ownership is readable even on assertion failure. writeBranchedHistory isolates coherent journal construction rather than hiding assertions or introducing a context bag."
       }
     },
     {
@@ -5293,7 +5298,7 @@
     }
   },
   "resumeStatus": {
-    "accepted": 64,
-    "pending": 47
+    "accepted": 66,
+    "pending": 45
   }
 }

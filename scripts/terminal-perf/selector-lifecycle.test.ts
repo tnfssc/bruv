@@ -44,6 +44,44 @@ test("native session entry count retains in-memory semantics", () => {
 
 test("disk count reads metadata, includes inactive branch compactions, and never rewrites history", () => {
   const root = mkdtempSync(join(tmpdir(), "bruv-selector-count-"));
+  try {
+    const file = writeBranchedHistory(root);
+    const manager = SessionManager.open(file);
+    const getEntries = manager.getEntries;
+    try {
+      const before = readFileSync(file);
+      manager.getEntries = () => {
+        throw new Error("body replay forbidden for count");
+      };
+      expect(manager.getLeafId()).toBe("alternate");
+      expect(manager.getEntryCountByType("compaction")).toBe(1);
+      expect(manager.getEntryCountByType("message")).toBe(2);
+      manager.branch("user");
+      expect(manager.getEntryCountByType("compaction")).toBe(1);
+      manager.appendCompaction("new summary", "user", 20);
+      expect(manager.getEntryCountByType("compaction")).toBe(2);
+      // Append only: all existing bytes remain intact.
+      expect(readFileSync(file).subarray(0, before.length)).toEqual(before);
+    } finally {
+      manager.getEntries = getEntries;
+      disposeDiskBackedSessionManager(manager);
+    }
+
+    // Reopen without the replay guard to verify persisted counts and bodies.
+    const reopened = SessionManager.open(file);
+    try {
+      expect(reopened.getEntryCountByType("compaction")).toBe(2);
+      expect(reopened.getEntries().filter((e) => e.type === "message")).toHaveLength(2);
+    } finally {
+      disposeDiskBackedSessionManager(reopened);
+    }
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+// The alternate message leaves the existing compaction on an inactive branch.
+function writeBranchedHistory(root: string): string {
   const file = join(root, "history.jsonl");
   const timestamp = "2026-01-01T00:00:00.000Z";
   writeFileSync(
@@ -77,32 +115,5 @@ test("disk count reads metadata, includes inactive branch compactions, and never
       .map((entry) => JSON.stringify(entry))
       .join("\n") + "\n",
   );
-  const manager = SessionManager.open(file);
-  const before = readFileSync(file);
-  const getEntries = manager.getEntries;
-  manager.getEntries = () => {
-    throw new Error("body replay forbidden for count");
-  };
-  try {
-    expect(manager.getLeafId()).toBe("alternate");
-    expect(manager.getEntryCountByType("compaction")).toBe(1);
-    expect(manager.getEntryCountByType("message")).toBe(2);
-    manager.branch("user");
-    expect(manager.getEntryCountByType("compaction")).toBe(1);
-    manager.appendCompaction("new summary", "user", 20);
-    expect(manager.getEntryCountByType("compaction")).toBe(2);
-    // Append only: all existing bytes remain intact.
-    expect(readFileSync(file).subarray(0, before.length)).toEqual(before);
-  } finally {
-    manager.getEntries = getEntries;
-    disposeDiskBackedSessionManager(manager);
-    const reopened = SessionManager.open(file);
-    try {
-      expect(reopened.getEntryCountByType("compaction")).toBe(2);
-      expect(reopened.getEntries().filter((e) => e.type === "message")).toHaveLength(2);
-    } finally {
-      disposeDiskBackedSessionManager(reopened);
-      rmSync(root, { recursive: true, force: true });
-    }
-  }
-});
+  return file;
+}

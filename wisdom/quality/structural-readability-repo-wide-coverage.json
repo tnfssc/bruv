@@ -3706,13 +3706,14 @@
     {
       "file": "scripts/terminal-perf/interaction-tool-events.test.ts",
       "initialBlob": "2ba446b1c0b439cc7ee92256ad58ff7ccd3d0836",
-      "status": "pending",
+      "status": "accepted",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_efdf5c1a",
       "primaryCommit": "4fb1ae370ec111a0c5a7c1a2ccf216588244eb48",
       "judgeIds": [
-        "task_23bf0f9f"
+        "task_23bf0f9f",
+        "task_a1139c9a"
       ],
       "sourceCommit": "4fb1ae370ec111a0c5a7c1a2ccf216588244eb48",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
@@ -3750,6 +3751,19 @@
         "Formatter not invoked: no changed source paths and no commit to format.",
         "Independent exact-candidate judge and external runtime model verification remain parent-owned.",
         "No wisdom or values edits; aggregate wisdom is parent-owned and no new general lesson was identified."
+      ],
+      "acceptedBlob": "2e0e6eb8783ba3fcce9fde642717064f933dd67f",
+      "result": "The complete typed evidence fixture makes the distinct callback, scheduled-frame, input, burst, visibility and trace authorities inspectable together. Each scenario owns a fresh fixture. The mixed-source scenario modifies only total counts and a subscribed callback, so its adjacent total/burst assertions explain the distinction without an abstraction layer. Mutation loops each alter one evidence field immediately before normalization. The peak assertion explicitly changes input lateness without changing CPU peak. These are already coherent reading journeys, not a scattered lifetime or authority problem.",
+      "systemReason": "Read the exact candidate test and followed interactionCatalog/toolShapes, interaction-worker.measureInteractionCase, the workload callback/frame/input instrumentation and action evidence return, terminal-interactions.measureInteractions, validateToolEventEvidence, the event normalization branch, and samplePeakSync/summarizeInteraction. The producer changes callback source back to subscribed-session after the direct burst; normalization validates independent timing/count evidence before deriving durations. Reporting takes a maximum of observed sync/frame/burst durations and reports input lateness separately. The fixture deliberately models that contract rather than claiming a real terminal/network integration test.",
+      "checks": [
+        "Read complete focus from git show at the exact candidate, not HEAD; candidate equals primaryBase, so there are no candidate changed paths.",
+        "Resolved focus Git blob; inspected focus-only area and repository ledger evidence.",
+        "Reviewed synthetic positive, mixed-source, malformed timing/count, visibility/network and lost-trace scenarios against their actual normalization/report authorities."
+      ],
+      "limits": [
+        "Static code review only: no setup, tests, builds, formatter, or runtime probes run; parent owns audited isolated batch gates.",
+        "Only these focus records and their evidence were inspected in repository/area ledgers. No source, other candidate, old worktree, wisdom, or values edits.",
+        "Installed dependency source was read-only from the supplied shared dependency location; no host-hash/setup validation was performed."
       ]
     },
     {
@@ -3895,11 +3909,11 @@
       "initialBlob": "35e5c66c596e869e8067a9bb4c2298c671638330",
       "status": "pending",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-judge",
+      "resumeState": "needs-rework",
       "primaryId": "task_72c25417",
       "primaryCommit": "38bb4270a46a5ee9838b649a2d8b240989bde71e",
       "judgeIds": [],
-      "sourceCommit": "38bb4270a46a5ee9838b649a2d8b240989bde71e",
+      "sourceCommit": null,
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
       "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
       "primaryBase": "4134d99b0c4024dedd0f1a4eb4e16d7faa52ca09",
@@ -3931,6 +3945,38 @@
         "Optional static TypeScript parse unavailable: read-only dependency location lacks typescript/lib/typescript.js; initial package-directory require also failed.",
         "Independent exact-candidate judge is parent-owned; no delegation performed.",
         "No per-worker wisdom edits; parent writes aggregate wisdom."
+      ],
+      "resumeRework": {
+        "candidate": "38bb4270a46a5ee9838b649a2d8b240989bde71e",
+        "primaryId": "task_72c25417",
+        "primaryBase": "4134d99b0c4024dedd0f1a4eb4e16d7faa52ca09",
+        "judgeId": "task_a1139c9a",
+        "objections": [
+          {
+            "path": "scripts/terminal-perf/selector-lifecycle-behavior.ts",
+            "lines": "125-137",
+            "severity": "blocking",
+            "reason": "Preserved constructor-argument mismatch makes the final capture misleading. Supply the optional onLabelChange slot explicitly before setting and no-tools (or otherwise align the scenario with the actual constructor contract). Review resulting snapshot expectations in the caller as related source rather than treating the unchanged golden hash as proof of intended coverage."
+          }
+        ],
+        "readingReason": "Separating tree construction from the linear replay is coherent, and the entry point now visibly owns global keybindings with try/finally. However, the final named hidden-ancestor-and-tool-leaf scenario still misstates its actual configuration. Its untyped positional constructor call obscures a concrete reader-facing contract error; extracting it unchanged does not resolve that journey."
+      },
+      "rejectedCandidates": [
+        {
+          "candidate": "38bb4270a46a5ee9838b649a2d8b240989bde71e",
+          "primaryId": "task_72c25417",
+          "primaryBase": "4134d99b0c4024dedd0f1a4eb4e16d7faa52ca09",
+          "judgeId": "task_a1139c9a",
+          "objections": [
+            {
+              "path": "scripts/terminal-perf/selector-lifecycle-behavior.ts",
+              "lines": "125-137",
+              "severity": "blocking",
+              "reason": "Preserved constructor-argument mismatch makes the final capture misleading. Supply the optional onLabelChange slot explicitly before setting and no-tools (or otherwise align the scenario with the actual constructor contract). Review resulting snapshot expectations in the caller as related source rather than treating the unchanged golden hash as proof of intended coverage."
+            }
+          ],
+          "readingReason": "Separating tree construction from the linear replay is coherent, and the entry point now visibly owns global keybindings with try/finally. However, the final named hidden-ancestor-and-tool-leaf scenario still misstates its actual configuration. Its untyped positional constructor call obscures a concrete reader-facing contract error; extracting it unchanged does not resolve that journey."
+        }
       ]
     },
     {
@@ -3979,12 +4025,14 @@
     {
       "file": "scripts/terminal-perf/selector-lifecycle.test.ts",
       "initialBlob": "0799d40669ad0f61af0bd252affa18ff53e2ffa0",
-      "status": "pending",
+      "status": "accepted",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_b483c184",
       "primaryCommit": "2e9f506b874a0acd793f20c4acef448af8b900d1",
-      "judgeIds": [],
+      "judgeIds": [
+        "task_a1139c9a"
+      ],
       "sourceCommit": "2e9f506b874a0acd793f20c4acef448af8b900d1",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
       "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
@@ -4030,6 +4078,22 @@
         "No repository tests, setup, or builds run; parent owns isolated batch gates.",
         "Independent fresh judge verdict pending; this is a primary candidate, not acceptance.",
         "No wisdom/values edits: parent owns aggregate wisdom, and this change follows existing lifecycle-ownership guidance."
+      ],
+      "acceptedBlob": "7d49e2f1f018edf87270a8ae18c0d91769e10bf2",
+      "result": "The disk scenario now shows its two manager lifetimes in execution order: write the branched fixture, open and prohibit getEntries, check whole-journal counts/branch/append and the unchanged byte prefix, restore/dispose, then reopen and check persistence. Assertions no longer run inside cleanup. The outer fixture lifetime includes writing, both opens and both disposals, so cleanup ownership is readable even on assertion failure. writeBranchedHistory isolates coherent journal construction rather than hiding assertions or introducing a context bag.",
+      "systemReason": "Followed the exact candidate through CLI installer ordering, installSelectorLifecycle, SessionManager adoption/open, getDiskBackedEntryMetadata, indexed append/getEntries and disposal, DiskEntryStore open/append, and the native branch/count/append contract. Counts use all owned metadata, not the active branch, while in-memory managers retain the original getEntries-based method. branch only moves the leaf; append adds an indexed entry and journal bytes. Reopening uses persisted metadata and then materializes bodies, after the replay guard is removed. The patched renderInitialMessages caller consumes this whole-journal compaction count instead of replaying all bodies. Thus the reorganized scenario exposes the actual production authority and persistence boundary.",
+      "checks": [
+        "Read complete exact focus, original baseline and full diff; only changed source path is the focus.",
+        "Static text comparison confirmed all expect statement strings and the serialized branched fixture construction unchanged.",
+        "Read native in-memory fallback and branch semantics, owned metadata getter, open/adoption, append/index publication, body materialization, disposal, CLI ordering and patched production count consumer.",
+        "git diff --check primaryBase..candidate returned exit 0.",
+        "Resolved exact focus Git blob; shared adapter/patch blobs are identical across the listed candidates."
+      ],
+      "limits": [
+        "Static code review only: no setup, tests, builds, formatter, or runtime probes run; parent owns audited isolated batch gates.",
+        "Only these focus records and their evidence were inspected in repository/area ledgers. No source, other candidate, old worktree, wisdom, or values edits.",
+        "Installed dependency source was read-only from the supplied shared dependency location; no host-hash/setup validation was performed.",
+        "This accepts the count-test lifetime refactor, not the separate selectorBehavior final scenario rejected above. The exact test candidate still contains the old behavior helper; joining or repairing that separate focus and any resulting golden expectation changes remain parent-owned."
       ]
     },
     {
