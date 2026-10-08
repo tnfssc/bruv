@@ -5153,11 +5153,11 @@
       "resume": {
         "status": "pending",
         "acceptedBlob": "bedf45729fe64d9fbfb6639d6d2dd5c3138742f8",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_130d6085",
+        "primaryCommit": "ca4a39af1b7b3f729c7d04504cd22f2ab880ed13",
         "judgeIds": [],
-        "sourceCommit": "e453ab85d74a043ddd10171d806c4fd9ebe7a6cc",
-        "state": "needs-primary-final-blob",
+        "sourceCommit": "ca4a39af1b7b3f729c7d04504cd22f2ab880ed13",
+        "state": "needs-judge",
         "reason": "Untracked helper blob bedf45729fe64d9fbfb6639d6d2dd5c3138742f8 in preserved /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_09b8c468, from incomplete navigation primary task_09b8c468. No committed source candidate, separate primary-focus coverage, or actual-code judge. Preserve; do not join."
       }
     },

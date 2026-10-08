@@ -13909,18 +13909,54 @@
       "file": "scripts/terminal-perf/navigation-history.ts",
       "initialBlob": "absent",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-primary-final-blob",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_130d6085",
+      "primaryCommit": "ca4a39af1b7b3f729c7d04504cd22f2ab880ed13",
       "judgeIds": [],
-      "sourceCommit": "e453ab85d74a043ddd10171d806c4fd9ebe7a6cc",
+      "sourceCommit": "ca4a39af1b7b3f729c7d04504cd22f2ab880ed13",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
       "status": "pending",
       "pendingReason": "Untracked helper blob bedf45729fe64d9fbfb6639d6d2dd5c3138742f8 in preserved /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6-5442693331ce-task_09b8c468, from incomplete navigation primary task_09b8c468. No committed source candidate, separate primary-focus coverage, or actual-code judge. Preserve; do not join.",
       "acceptedRelatedJudges": [
         "task_cc27bf98"
       ],
-      "acceptedBlob": "bedf45729fe64d9fbfb6639d6d2dd5c3138742f8"
+      "acceptedBlob": "bedf45729fe64d9fbfb6639d6d2dd5c3138742f8",
+      "primaryBase": "ca4a39af1b7b3f729c7d04504cd22f2ab880ed13",
+      "primaryResult": "Read the actual focus and scheduled workload, offline SDK probe, public reexport, CLI fingerprint list, and existing fixture assertions. createNavigationHistory validates size before allocation; its single ordered construction shows the u/a parent chain and the alternate branch attached at u0. A session header contains the temporary cwd, while the explicit slice(1) hash excludes only that header. Persistence, exact byte count, returned leaf IDs, and disposal of the freshly allocated root are adjacent. Scheduled setup opens file and selects primaryLeaf; its branch-switch/resume journeys use both returned leaf IDs and dispose the manager before the fixture. The SDK probe uses the same contract for navigation, session switching and forking, then disposes disk managers before history in its finally. Extracting graph/hash/disposal helpers would split this short linear ownership story without removing a scattered decision or lifetime. This is a primary no-change decision from code reading, not reliance on the previous unrelated acceptance or an unjoined candidate. Current focus bytes equal both the preserved candidate and e453ab85d74a043ddd10171d806c4fd9ebe7a6cc; focus was present, so no candidate import or branch merge was needed.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        {
+          "kind": "read-only-source-inspection",
+          "paths": [
+            "scripts/terminal-perf/navigation-history.ts",
+            "scripts/terminal-perf/navigation-workloads.ts",
+            "scripts/terminal-perf/navigation-sdk-probe.ts",
+            "tests/terminal-perf-navigation.test.ts"
+          ],
+          "result": "Traced consumers, lifecycle disposal, CLI source fingerprint registration, public reexport and assertions; no source/assertion/security edits."
+        },
+        {
+          "kind": "read-only-git-identity",
+          "result": "HEAD focus bedf45729fe64d9fbfb6639d6d2dd5c3138742f8; preserved bedf45729fe64d9fbfb6639d6d2dd5c3138742f8; proposed-source bedf45729fe64d9fbfb6639d6d2dd5c3138742f8; identical bytes."
+        },
+        {
+          "kind": "targeted-evidence",
+          "result": "Read focus rows only in the supplied resume reconciliation, ui-terminal-cli area ledger, and repo-wide coverage; retained old worktrees and candidate evidence untouched."
+        },
+        {
+          "kind": "guidance",
+          "result": "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md."
+        },
+        {
+          "kind": "formatter",
+          "result": "Not applicable: no changed source paths and no source commit created."
+        }
+      ],
+      "primaryLimits": [
+        "No tests, setup, builds, runtime probes, push, merge or PR actions run; parent owns isolated batch gates.",
+        "Independent exact-candidate judgment remains for the parent to launch.",
+        "No wisdom or values edits: no new lesson and parent owns aggregate wisdom."
+      ]
     },
     {
       "file": "scripts/terminal-perf/navigation-sdk-probe.ts",

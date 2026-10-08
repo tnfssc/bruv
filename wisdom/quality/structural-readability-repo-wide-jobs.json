@@ -664,6 +664,19 @@
         "model": "openai-codex/gpt-6.1-sol",
         "status": "handled",
         "sourceCommit": "cb813e8544a802eeda0afe0e01ae45f8b89eacb0"
+      },
+      {
+        "id": "task_4c8d7aef",
+        "stage": "judge",
+        "focus": [
+          "scripts/probe-live-controlled.ts",
+          "src/live/setup.ts",
+          "src/live/speaker-check.ts"
+        ],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_4c8d7aef",
+        "branch": "bruv/pr45-judge-3-live-native-audio-focuses-4c8d7aef",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
       }
     ]
   },
@@ -1250,7 +1263,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_130d6085",
         "branch": "bruv/pr45-primary-scripts-terminal-perf-navig-130d6085",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "ca4a39af1b7b3f729c7d04504cd22f2ab880ed13"
       },
       {
         "id": "task_7ac8ab0a",
