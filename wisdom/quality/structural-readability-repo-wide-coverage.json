@@ -15429,34 +15429,88 @@
       "file": "tests/live-openai-provider.acceptance.test.ts",
       "initialBlob": "fae64d6c3a8c043e31e264c69e1f1dfaf812783d",
       "status": "pending",
-      "primaryId": null,
-      "sourceCommit": null,
+      "primaryId": "task_68ab69ce",
+      "sourceCommit": "a1b5f18d35fde3ad3345335ae51cb184d40ed078",
       "judgeIds": [],
-      "resumeState": "own_primary_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "a1b5f18d35fde3ad3345335ae51cb184d40ed078",
+      "primaryBase": "aceda9ed788e41e5c0892f78ddd07326560cb267",
+      "primaryResult": "No source change needed. Followed createDefaultLiveCredentialService (canonical auth.json, no catalogue/network refresh), setupProbeOrchestration (denied execution), and OpenAIRealtimeSession.connect/close (session.update, session.updated readiness, error/timeout finish, serial-invalidated socket close). The test asserts empty errors and ready within try, aborts and closes in finally, then asserts closed. Keeping this linear paid-probe boundary is clearer than introducing a shared session fixture.",
+      "primaryPaths": ["tests/live-paired-runtime.test.ts", "tests/live-passive-history.test.ts"],
+      "primaryChecks": [
+        "Read complete focus source and applicable production contracts; read wisdom/values.md and structural-readability-guidance.md.",
+        "Inspected the assigned reconciliation rows: provider and paired-runtime have no preserved candidate/rejection rounds; passive-history has verified related-path ACCEPT only, not its own focus acceptance.",
+        "Repository Biome format --write ran by child_process argv on the two changed tests only, with fresh retained HOME/config/SDK/TMPDIR; final run reported no fixes.",
+        "git diff --check passed. Source-only commit inspected; no active Git hooks or core.hooksPath override.",
+        "No tests, setup, builds, typecheck, credential access, device access, or network probes ran.",
+        "Focus blob unchanged from initial HEAD."
+      ],
+      "primaryLimits": [
+        "Parent owns fresh independent actual-code judgments and audited isolated test gates; this artifact is a primary decision, not judge acceptance.",
+        "Real provider authentication, paid connection, microphone/playback, platform parity and runtime behavior remain unverified.",
+        "Before any gate, use explicit process argv/env and fs.mkdtemp-owned retained HOME/config/SDK/TMPDIR. The real execute tool in the first paired test inherits its process environment through scrubT3BridgeEnvironment; its gate must therefore be isolated by the parent. Never enable the paid acceptance flag without explicit user consent.",
+        "No wisdom files changed: parent owns aggregate wisdom. No delegation, setup, dependency mutation, cleanup commands, recovery work, publication, branch merge, or unrelated source edits. Parent verifies the runtime agent.model; no self-attestation supplied."
+      ]
     },
     {
       "file": "tests/live-paired-runtime.test.ts",
       "initialBlob": "3c8a12296f7d2a2cfe900c71dfe876a64e6472b8",
       "status": "pending",
-      "primaryId": null,
-      "sourceCommit": null,
+      "primaryId": "task_68ab69ce",
+      "sourceCommit": "a1b5f18d35fde3ad3345335ae51cb184d40ed078",
       "judgeIds": [],
-      "resumeState": "own_primary_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "a1b5f18d35fde3ad3345335ae51cb184d40ed078",
+      "primaryBase": "aceda9ed788e41e5c0892f78ddd07326560cb267",
+      "primaryResult": "createPairedSession now owns the complete loader/runtime/session/binding operation and disposes the created session on binding failure. completedAssistantTurn owns only the provider envelope; each scenario still selects its turns, hooks, requests and assertions in place. runPairedFixtureProcess groups explicit argv, fixture-only env, output collection and exit observation, without shell execution. createPairedDirectory allocates retained owned home/config/sdk/tmp roots. Scenarios keep duplicate delegate identity, interrupt-versus-close, admitted run/release, duplicate task-complete delivery, passive transcript, canonical backend wake and no synthetic user assertions visible. Both finally blocks explicitly close the acquired owner before session disposal. All original assertion lines remain; no production authority/security/assertions were changed.",
+      "primaryPaths": ["tests/live-paired-runtime.test.ts", "tests/live-passive-history.test.ts"],
+      "primaryChecks": [
+        "Read complete focus source and applicable production contracts; read wisdom/values.md and structural-readability-guidance.md.",
+        "Inspected the assigned reconciliation rows: provider and paired-runtime have no preserved candidate/rejection rounds; passive-history has verified related-path ACCEPT only, not its own focus acceptance.",
+        "Repository Biome format --write ran by child_process argv on the two changed tests only, with fresh retained HOME/config/SDK/TMPDIR; final run reported no fixes.",
+        "git diff --check passed. Source-only commit inspected; no active Git hooks or core.hooksPath override.",
+        "No tests, setup, builds, typecheck, credential access, device access, or network probes ran.",
+        "Static assertion-line comparison confirmed every pre-change paired-runtime expect line remains."
+      ],
+      "primaryLimits": [
+        "Parent owns fresh independent actual-code judgments and audited isolated test gates; this artifact is a primary decision, not judge acceptance.",
+        "Real provider authentication, paid connection, microphone/playback, platform parity and runtime behavior remain unverified.",
+        "Before any gate, use explicit process argv/env and fs.mkdtemp-owned retained HOME/config/SDK/TMPDIR. The real execute tool in the first paired test inherits its process environment through scrubT3BridgeEnvironment; its gate must therefore be isolated by the parent. Never enable the paid acceptance flag without explicit user consent.",
+        "No wisdom files changed: parent owns aggregate wisdom. No delegation, setup, dependency mutation, cleanup commands, recovery work, publication, branch merge, or unrelated source edits. Parent verifies the runtime agent.model; no self-attestation supplied."
+      ]
     },
     {
       "file": "tests/live-passive-history.test.ts",
       "initialBlob": "973e8cd7089d5efafd89b79bef6eb466ad8c0001",
       "status": "pending",
-      "primaryId": null,
-      "sourceCommit": "2e6c8b980ff1f03b0baa81692387c14b9acbd400",
+      "primaryId": "task_68ab69ce",
+      "sourceCommit": "a1b5f18d35fde3ad3345335ae51cb184d40ed078",
       "judgeIds": ["task_189c73c2"],
-      "resumeState": "related_actual_code_accepted_own_primary_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Retain exact related-path actual-code acceptance; it is not completion of this file’s distinct primary/fresh focus-judge requirement.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "a1b5f18d35fde3ad3345335ae51cb184d40ed078",
+      "primaryBase": "aceda9ed788e41e5c0892f78ddd07326560cb267",
+      "primaryResult": "Restored ONLY this file through git show 2e6c8b980ff1f03b0baa81692387c14b9acbd400:tests/live-passive-history.test.ts; its final blob exactly matches the preserved accepted ab128e1f7515e20fc4d8d852b7d6beeed8bf9e1f. Own complete-source reading found no further structural change warranted. Followed the production context hook into pendingAudit replacement/consumption, projectUserTurn provisional/missing/overlap decisions, snapshotSpeech sanitization and branch-local legacyFragments. The tests directly preserve raw private audit while checking restored-session projection, exact spoken-turn association, unmatched typed requests, old snapshot dedup, overlap outside user speech, missing suffix suppression, terminal-control stripping, intervening non-user records, unreadable latest audit replacement, and replay/branch-local idempotence. Restoring these explicit scenarios retains accepted evidence without treating its related-path judgment as this focus’s independent verdict.",
+      "primaryPaths": ["tests/live-paired-runtime.test.ts", "tests/live-passive-history.test.ts"],
+      "primaryChecks": [
+        "Read complete focus source and applicable production contracts; read wisdom/values.md and structural-readability-guidance.md.",
+        "Inspected the assigned reconciliation rows: provider and paired-runtime have no preserved candidate/rejection rounds; passive-history has verified related-path ACCEPT only, not its own focus acceptance.",
+        "Repository Biome format --write ran by child_process argv on the two changed tests only, with fresh retained HOME/config/SDK/TMPDIR; final run reported no fixes.",
+        "git diff --check passed. Source-only commit inspected; no active Git hooks or core.hooksPath override.",
+        "No tests, setup, builds, typecheck, credential access, device access, or network probes ran.",
+        "Verified exact candidate blob equality after restoration and formatting; no candidate branch merge."
+      ],
+      "primaryLimits": [
+        "Parent owns fresh independent actual-code judgments and audited isolated test gates; this artifact is a primary decision, not judge acceptance.",
+        "Real provider authentication, paid connection, microphone/playback, platform parity and runtime behavior remain unverified.",
+        "Before any gate, use explicit process argv/env and fs.mkdtemp-owned retained HOME/config/SDK/TMPDIR. The real execute tool in the first paired test inherits its process environment through scrubT3BridgeEnvironment; its gate must therefore be isolated by the parent. Never enable the paid acceptance flag without explicit user consent.",
+        "No wisdom files changed: parent owns aggregate wisdom. No delegation, setup, dependency mutation, cleanup commands, recovery work, publication, branch merge, or unrelated source edits. Parent verifies the runtime agent.model; no self-attestation supplied."
+      ]
     },
     {
       "file": "tests/live-picker-tui.test.ts",
