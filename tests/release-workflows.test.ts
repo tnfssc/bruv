@@ -296,7 +296,7 @@ describe("release automation", () => {
     expect(Object.keys(workflow.on)).toEqual(["workflow_dispatch", "push"]);
     expect(workflow.on.push).toEqual({ tags: ["v*"] });
     expect(workflow.jobs.publish!.if).toBe(
-      "${{ always() && needs.release-source.result == 'success' && needs.linux-browser-boot.result == 'success' && needs.mac-release-smoke.result == 'success' && needs.release.result == 'success' }}",
+      "${{ !cancelled() && needs.release-source.result == 'success' && needs.linux-browser-boot.result == 'success' && needs.mac-release-smoke.result == 'success' && needs.release.result == 'success' }}",
     );
     expect(workflow.jobs.publish!.needs).toEqual([
       "release",

@@ -52,9 +52,9 @@ jobs:
   release-source:
     name: Select admitted release source
     needs: prepare-manual
-    # Tag pushes skip manual preparation; always() lets them reach this single admission check.
+    # Tag pushes skip manual preparation; !cancelled() admits tags but still honors a stop request.
     if: >-
-      ${{ always() && (
+      ${{ !cancelled() && (
         (github.event_name == 'workflow_dispatch' && needs.prepare-manual.result == 'success') ||
         (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') && !contains(github.ref_name, '-'))
       ) }}
@@ -77,7 +77,7 @@ jobs:
     runs-on: macos-15
     timeout-minutes: 10
     needs: release-source
-    if: ${{ always() && needs.release-source.result == 'success' }}
+    if: ${{ !cancelled() && needs.release-source.result == 'success' }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -115,7 +115,7 @@ jobs:
           retention-days: 2
   release:
     needs: [release-source, mac-helper]
-    if: ${{ always() && needs.release-source.result == 'success' && needs.mac-helper.result == 'success' }}
+    if: ${{ !cancelled() && needs.release-source.result == 'success' && needs.mac-helper.result == 'success' }}
     name: Linux, macOS, and Android release
     permissions:
       contents: read
@@ -254,7 +254,7 @@ jobs:
   linux-browser-boot:
     name: Final Linux pair against unchanged official 2644 (bounded gates)
     needs: [release, release-source]
-    if: ${{ always() && needs.release.result == 'success' }}
+    if: ${{ !cancelled() && needs.release.result == 'success' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
@@ -309,7 +309,7 @@ jobs:
   mac-release-smoke:
     name: Actual Mac release binary and bruv updater (no devices)
     needs: [release, release-source]
-    if: ${{ always() && needs.release.result == 'success' }}
+    if: ${{ !cancelled() && needs.release.result == 'success' }}
     runs-on: macos-15
     timeout-minutes: 10
     steps:
@@ -342,7 +342,7 @@ jobs:
   publish:
     name: Publish stable release after browser, native and updater gates
     needs: [release, linux-browser-boot, mac-release-smoke, release-source]
-    if: ${{ always() && needs.release-source.result == 'success' && needs.linux-browser-boot.result == 'success' && needs.mac-release-smoke.result == 'success' && needs.release.result == 'success' }}
+    if: ${{ !cancelled() && needs.release-source.result == 'success' && needs.linux-browser-boot.result == 'success' && needs.mac-release-smoke.result == 'success' && needs.release.result == 'success' }}
     runs-on: ubuntu-24.04
     env:
       RELEASE_SHA: ${{ needs.release-source.outputs.sha }}

@@ -139,12 +139,13 @@ const workflow = Bun.YAML.parse(await Bun.file(".github/workflows/release.yml").
 const { jobs } = workflow;
 
 // These workflow predicates use the shared JS/Actions boolean subset, not a full Actions emulator.
-function releaseExpression(expression: string, github: object, needs: object): unknown {
+function releaseExpression(expression: string, github: object, needs: object, cancelled = false): unknown {
   const body = expression.slice(3, -2).replace(/needs\.([a-z-]+)/g, 'needs["$1"]');
-  return new Function("github", "needs", "always", "startsWith", "contains", "return " + body)(
+  return new Function("github", "needs", "always", "cancelled", "startsWith", "contains", "return " + body)(
     github,
     needs,
     () => true,
+    () => cancelled,
     (value: string, prefix: string) => value.startsWith(prefix),
     (value: string, part: string) => value.includes(part),
   );
@@ -255,11 +256,26 @@ describe("release workflow", () => {
     const successful = Object.fromEntries(Object.keys(jobs).map((name) => [name, { result: "success" }]));
     const job = jobs[name]!;
     expect(releaseExpression(job.if, {}, successful)).toBe(true);
-    // Every prerequisite that can block this job must stay blocking even with always().
+    // Every prerequisite that can block this job must stay blocking while evaluating after failures.
     for (const prerequisite of required) {
       for (const result of ["failure", "cancelled", "skipped"]) {
         expect(releaseExpression(job.if, {}, { ...successful, [prerequisite]: { result } })).toBe(false);
       }
+    }
+  });
+
+  test("a cancelled run stops admission, build, artifact checks and publish", () => {
+    const github = { event_name: "push", ref: "refs/tags/v1.2.3" };
+    const successful = Object.fromEntries(Object.keys(jobs).map((name) => [name, { result: "success" }]));
+    for (const name of [
+      "release-source",
+      "mac-helper",
+      "release",
+      "linux-browser-boot",
+      "mac-release-smoke",
+      "publish",
+    ]) {
+      expect(releaseExpression(jobs[name]!.if, github, successful, true)).toBe(false);
     }
   });
 
