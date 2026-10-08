@@ -18011,31 +18011,53 @@
       "initialBlob": "dc36d8396fc1d5350784e9af2bf0ea922e1b5fa0",
       "status": "pending",
       "area": "agent-history-session-goals",
-      "resumeState": "needs-rework",
-      "primaryId": "task_230772ed",
-      "primaryCommit": "0257d78607a61856035239f24fa6f2924c300d6e",
+      "resumeState": "needs-judge",
+      "primaryId": "task_d8d2a1e3",
+      "primaryCommit": "021c24f00962cfcef70f0745f666d978c7bb9b29",
       "judgeIds": ["task_a731e652", "task_c0fe8a88"],
-      "sourceCommit": null,
+      "sourceCommit": "021c24f00962cfcef70f0745f666d978c7bb9b29",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
       "pendingReason": "No dedicated primary/final independent focus judgment. Related-patch review is evidence only; dedicated focus coverage remains required.",
-      "primaryBase": "a1a45b3c26fac604060d3fbf22ba1f37642d06e6",
-      "primaryResult": "Restored only this test file via git show from candidate 1430519dd7dbda93b9ccf79b2e8f33690ddbd6a4, then separated trust outcomes from file discovery. CLI tables preserve same-array assertions for trusted overrides and exact injection assertions for denials, with a dedicated positional-boundary authorization case and independent global-only fixture. SDK cases declare the complete file set, trust and expected base beside each scenario; the actual DefaultResourceLoader remains inline and consumes bruvSystemPromptFallback with settings trust, retaining all disabled resource flags and five candidate outcomes. One small filesystem helper owns creation of fresh prompt directories/files, never policy or loader behavior; fixtures are retained and no file removal or shared mutable trust state is needed. Current selection implementation already provides bruvSystemPromptFallback. No runtime or unrelated candidate bytes were imported.",
+      "primaryBase": "0036fb8ecad6af12bce3ac832ea9a8baeb87b842",
+      "primaryResult": "Added a small ProjectPromptScenario interface beside the CLI tables and supplied it as their explicit test.each type argument. Each row now declares mutable string[] at the test/API boundary without casting, copying args inside callbacks, weakening assertions, or modifying production semantics. Same-array trusted preservation and exact denial injection assertion bodies, all row values, positional authorization check, independent global fixture, SDK fallback cases, resource-disable flags and retained fixture helper remain byte-identical to the rejected candidate. SDK nullish prompt discovery remains governed by settings trust; no further extraction improves this already-local journey. The focused rework preserves candidate structure and accepted unrelated work; independent judgment remains parent-owned.",
       "primaryPaths": ["tests/system-prompt.test.ts"],
       "primaryChecks": [
-        "Read complete assigned focus source and relevant implementation/callers; static review only.",
-        "Read assigned reconciliation/evidence rows; no preserved rejection for these focuses.",
-        "Source-only commit scope checked: tests/system-prompt.test.ts.",
-        "git diff --check passed before commit; no tests, setup, build, install, network or credential access.",
-        "Read exact candidate test patch and saved task_a731e652 ACCEPT text as related-patch evidence, not a dedicated focus acceptance.",
-        "Repository Biome format --write ran on tests/system-prompt.test.ts only via child_process argv in retained fresh HOME/config/TMPDIR/SDK at /tmp/pr45-prompt-format-wEQ6x4; exit 0, no fixes needed.",
-        "Static diff review preserved original CLI assertions, candidate short-flag/boundary assertions and all five SDK precedence outcomes."
+        {
+          "kind": "candidate inspection",
+          "result": "Current focus exactly matches rejected candidate before rework; scoped reconciliation rows 110 and relatedPatchEvidence 14 read, with no acceptance inferred."
+        },
+        {
+          "kind": "assertion preservation",
+          "result": "Removing only the added interface and two generic type arguments reproduces the entire rejected candidate file byte-for-byte."
+        },
+        {
+          "kind": "formatter",
+          "result": "exit 0; Formatted 1 file, no fixes applied.",
+          "argv": [
+            "/home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/@biomejs/biome/bin/biome",
+            "format",
+            "--write",
+            "tests/system-prompt.test.ts"
+          ],
+          "fixtureRoot": "/tmp/pr45-system-prompt-format-FQIJkA",
+          "log": "/tmp/pr45-system-prompt-format-FQIJkA/formatter.log",
+          "provenance": "/tmp/pr45-system-prompt-format-FQIJkA/provenance.json",
+          "environment": "Fresh owned mkdtemp HOME, XDG_CONFIG_HOME, XDG_CACHE_HOME, XDG_DATA_HOME, TMPDIR/TMP/TEMP; retained. Direct child_process argv, shared dependencies read-only."
+        },
+        {
+          "kind": "git diff --check",
+          "result": "passed"
+        },
+        {
+          "kind": "source scope",
+          "result": "Source-only commit contains tests/system-prompt.test.ts only; no active repository commit hooks found before commit."
+        }
       ],
       "primaryLimits": [
-        "Parent owns fresh independent judgment and audited isolated runtime gates; no test or type-check proof claimed.",
-        "Runtime agent.model verification remains parent-owned; no live auth/device proof.",
-        "Complete combined commit source scope is listed in changedPaths even for an unchanged focus.",
-        "SDK integration coverage is source-only and not executed. Current native runtime still obtains its fallback through withBruvSystemPrompt([])[1]; this focus tests the direct selector API and Pi discovery, not an end-to-end runtime fix.",
-        "Future tests must run under the parent-owned explicit argv/env isolated HOME/config/SDK gate; helper writes only fresh mkdtemp project/agent paths and retains them."
+        "No tests, setup, builds or noEmit run: parent owns audited isolated gates and fresh independent judgment. Compiler resolution is inferred from actual each<T> signature and explicit mutable scenario type, not a claimed fresh typecheck pass.",
+        "No live authentication, device access, credentials, cleanup of user/config/SDK paths, recovery actions, delegation, push, PR or merge. Formatter fixture retained; only this task-created transient metadata file was copied to retained fixture provenance and unlinked via fs (not shell cleanup).",
+        "Durable source provenance is this worktree and exact source commit; formatter logs are retained fixtures, not code checkouts.",
+        "Values and structural-readability guidance read; unchanged because this bounded type repair introduces no new general lesson. Parent owns aggregate wisdom."
       ],
       "acceptedRelatedJudges": ["task_c0fe8a88"],
       "acceptedBlob": "d873111e2674f9e12366c89659deae21bf0e05c4",
@@ -18092,7 +18114,14 @@
           "line51 TS2345 readonly scenario args supplied to mutable string[] contract"
         ],
         "readingReason": "Joined compiler detects real typed scenario/API contract mismatch."
-      }
+      },
+      "priorPrimaryLineage": [
+        {
+          "primaryId": "task_230772ed",
+          "sourceCommit": null,
+          "primaryBase": "a1a45b3c26fac604060d3fbf22ba1f37642d06e6"
+        }
+      ]
     },
     {
       "file": "tests/t3/local-notifications.test.ts",

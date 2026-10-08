@@ -3847,11 +3847,11 @@
       "resume": {
         "status": "pending",
         "acceptedBlob": "d873111e2674f9e12366c89659deae21bf0e05c4",
-        "primaryId": "task_230772ed",
-        "primaryCommit": "0257d78607a61856035239f24fa6f2924c300d6e",
+        "primaryId": "task_d8d2a1e3",
+        "primaryCommit": "021c24f00962cfcef70f0745f666d978c7bb9b29",
         "judgeIds": ["task_a731e652", "task_c0fe8a88"],
-        "sourceCommit": null,
-        "state": "needs-rework",
+        "sourceCommit": "021c24f00962cfcef70f0745f666d978c7bb9b29",
+        "state": "needs-judge",
         "reason": "The change resolves an actual reading burden: the old override test mutates one filesystem through trust assertions, then removes the project file to switch to global-only policy. The candidate separates same-array preservation from exact fallback injection, names each trust scenario beside its args, gives positional authorization its own assertion, and uses a fresh global-only fixture. The small systemPromptFiles helper owns only directory/file construction; it hides neither trust nor loader decisions. The SDK table declares the complete file set, trust and expected base in each row; DefaultResourceLoader construction, disabled-resource flags, reload and result assertion remain visible in the test body. All old explicit-prompt, positional insertion, trust/denial and config assertions survive; short-flag denial and real SDK discovery/precedence assertions are added. This is coherent fixture/policy separation, not rename churn or a context bag."
       }
     },
