@@ -4540,15 +4540,17 @@
       "focus": "tests/fixtures/wisdom-extension-sdk.ts",
       "initialBlob": null,
       "introducedBy": "04ac60063eebde3592e35840c727d6db40920870",
-      "state": "pending",
-      "acceptedBlob": null,
+      "state": "accepted",
+      "acceptedBlob": "7db5150623e2dee2c09c9726ab91d8cc6f494d82",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
         "acceptedBlob": "7db5150623e2dee2c09c9726ab91d8cc6f494d82",
         "primaryId": "task_11fc1fb2",
         "primaryCommit": "7387dc6be58bd653996e27b8de345440cac50e3c",
+        "judgeIds": ["task_0ba57324"],
         "sourceCommit": "7387dc6be58bd653996e27b8de345440cac50e3c",
-        "state": "needs-judge"
+        "state": "accepted-joined",
+        "reason": "Read the entire exact Git fixture and complete tests/wisdom-extension.test.ts caller, not merely its assertions or the supplied reading evidence. The fixture has one direct journey: validate explicit arguments/SDK directory, construct the shipped resource loader and model runtime, create an in-memory SDK session, replace only provider streaming, bind extensions, attach resumed child identity, optionally dispatch /wisdom, capture two ordinary turns, report observations, and shut down. This keeps the registration-order regression visible without extraction, naming churn, a shared context bag, or a test-owned replacement of production hook results. The fake stream captures the replayed system prompt from actual SDK context and supplies both a done event and completed assistant result; its zero-usage, text-only stop response causes no tool work. The final nested finally guarantees session.dispose even if session_shutdown fails. Existing bytes already express these authorities and lifetimes clearly."
       }
     }
   ],
@@ -4690,7 +4692,7 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 132,
-    "pending": 1
+    "accepted": 133,
+    "pending": 0
   }
 }

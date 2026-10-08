@@ -21662,8 +21662,8 @@
       "file": "tests/fixtures/wisdom-extension-sdk.ts",
       "initialBlob": "absent",
       "area": "agent-history-session-goals",
-      "status": "pending",
-      "resumeState": "needs-judge",
+      "status": "accepted",
+      "resumeState": "accepted-joined",
       "sourceCommit": "7387dc6be58bd653996e27b8de345440cac50e3c",
       "acceptedRelatedJudges": ["task_8e99c74c"],
       "acceptedBlob": "7db5150623e2dee2c09c9726ab91d8cc6f494d82",
@@ -21703,6 +21703,22 @@
         "Unchanged decision: no formatter execution and no new source commit; sourceCommit pins the exact retained HEAD.",
         "No wisdom/value note edits: no new general lesson; parent owns aggregate wisdom.",
         "No temporary test or formatter fixtures created or removed. Durable provenance is this retained worktree plus the preserved candidate commit and evidence worktree."
+      ],
+      "judgeIds": ["task_0ba57324"],
+      "result": "Read the entire exact Git fixture and complete tests/wisdom-extension.test.ts caller, not merely its assertions or the supplied reading evidence. The fixture has one direct journey: validate explicit arguments/SDK directory, construct the shipped resource loader and model runtime, create an in-memory SDK session, replace only provider streaming, bind extensions, attach resumed child identity, optionally dispatch /wisdom, capture two ordinary turns, report observations, and shut down. This keeps the registration-order regression visible without extraction, naming churn, a shared context bag, or a test-owned replacement of production hook results. The fake stream captures the replayed system prompt from actual SDK context and supplies both a done event and completed assistant result; its zero-usage, text-only stop response causes no tool work. The final nested finally guarantees session.dispose even if session_shutdown fails. Existing bytes already express these authorities and lifetimes clearly.",
+      "systemReason": "Traced src/agent/extension.ts from environment identity floor and fail-closed branch scan through registerProjectWisdom, before_agent_start, session_start, and shutdown. SDK bindExtensions emits session_start before this fixture appends bruv-agent normal/depth 1. The wisdom isRoot callback restores identity separately at each command/prompt effect; src/wisdom/extension.ts rejects child authority before project trust/location access. The subsequent ordinary-turn handler restores identity again and withSubagentGuidance appends the normal child frame to the composed SDK prompt. Read src/prompts.ts and normal.md, and src/wisdom/location.ts: project-root markers, trusted project-only settings and values path share one resolver, but a child never enters it. Read installed SDK dispatch: slash commands return handled before auth/model turns, and emitBeforeAgentStart accumulates each handler result in registration order through forceSystemPrompt rather than passing a fixed base. The caller uses mkdtemp-owned HOME/config/cache/SDK/TMP paths and execFile argv with a deliberately narrow environment; it retains its fixtures. Its command checks warning/no root-location notice/no model turn, then independently checks both captured child prompts lack wisdom and values. Runtime creation skips model refresh; SDK auth preflight is short-circuited by the fixture stub and the replaced stream bypasses provider dispatch/cache warming. In-memory session notification attachment has no session file and therefore does not open durable remote delivery. This is a source-reading judgment, not a runtime acceptance claim.",
+      "checks": [
+        "git show read candidate sources at exact commit 7387dc6be58bd653996e27b8de345440cac50e3c; no review source was taken from checkout HEAD.",
+        "git diff --name-only primaryBase..candidate is empty because primaryBase and candidate are the same exact commit; there are no candidate-changed source paths beyond the required focus mapping.",
+        "git rev-parse candidate:tests/fixtures/wisdom-extension-sdk.ts = 7db5150623e2dee2c09c9726ab91d8cc6f494d82.",
+        "Read both requested wisdom guidance files completely.",
+        "Static filesystem/network-effect review: caller creates and retains owned mkdtemp paths; no inherited credentials/environment spreading, cleanup, or shell interpolation. SDK loader can resolve configured packages, but the SDK cases create fresh empty project/global settings. No setup or runtime gate was executed.",
+        "Installed SDK/AI/core versions inspected read-only: 1.0.3, matching candidate declared SDK/AI version; read relevant installed behavior rather than executing it."
+      ],
+      "limits": [
+        "No tests, setup, build, formatter, dependency install, live auth/device, credential access, recovery investigation, deletion, cleanup, source edit, commit, publication, or delegation performed. Only the requested untracked judgment artifact is written. Parent owns audited isolated runtime gates and runtime model verification.",
+        "Provider/network and actual execution behavior remain unverified. Installed dependency files are read-only supporting evidence, not Git blobs from the candidate; a version check is not proof of dependency byte identity.",
+        "Durable review provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_0ba57324. This worktree and candidate evidence are preserved. The reviewed test caller may create retained /tmp mkdtemp fixtures, but none were created or run by this review."
       ]
     }
   ],
@@ -21723,9 +21739,9 @@
     "baselineFiles": 766,
     "finalGate": "pending; incomplete focus coverage",
     "liveAuth": "unverified/failing; preserved",
-    "accepted": 762,
+    "accepted": 763,
     "total": 835,
-    "pending": 73,
+    "pending": 72,
     "sourceExtras": 69,
     "checkout": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
     "branch": "bruv/readability-pr45-sol-continuation",
