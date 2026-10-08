@@ -1081,7 +1081,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_4fcbcb48",
         "branch": "bruv/pr45-primary-tests-claude-compat-native--4fcbcb48",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "b060cdae0f2c664c27e6cde42cd76eff1d8eac02"
       },
       {
         "id": "task_acf92c62",
@@ -1089,6 +1090,15 @@
         "focus": "tests/claude-compat/permissions.test.ts",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_acf92c62",
         "branch": "bruv/pr45-primary-tests-claude-compat-permiss-acf92c62",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_3f207ca0",
+        "stage": "primary",
+        "focus": "tests/claude-native-acceptance-chronology.test.mjs",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_3f207ca0",
+        "branch": "bruv/pr45-primary-tests-claude-native-accepta-3f207ca0",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
       }

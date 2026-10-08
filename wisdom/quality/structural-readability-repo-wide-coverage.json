@@ -9944,13 +9944,40 @@
       "initialBlob": "5ea45ec68845bb716a76b40c94407a36e2c590f9",
       "status": "pending",
       "area": "compatibility-t3",
-      "resumeState": "pending-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_4fcbcb48",
+      "primaryCommit": "b060cdae0f2c664c27e6cde42cd76eff1d8eac02",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "b060cdae0f2c664c27e6cde42cd76eff1d8eac02",
       "report": "wisdom/quality/structural-readability-areas/compatibility-t3.json",
-      "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+      "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection.",
+      "primaryBase": "b060cdae0f2c664c27e6cde42cd76eff1d8eac02",
+      "primaryResult": "The provenance comment names official T3 commit fed41fa88bb27cb4325cb208d571393850bc63c2 and explains erased SDK type references. claudeEchoedPromptUuids contains the entire plural/string-filter/singular decision; isClaudeResultForOtherTurn immediately consumes it and visibly prioritizes an echoed UUID match over the known-echo-mode/non-human-origin fallback. Its only caller (tests/claude-compat-prompt-ownership.test.ts:211-233) optionally checks exact upstream text, transpiles the pinned functions, and uses the foreign task-notification result to check classification. src/claude-compat/frontend.ts owns consumed-human UUID accumulation, per-run reset and result origin generation separately. No scattered authority or lifetime must be reconstructed inside the fixture. Refactoring or renaming it would change the exact upstream-text oracle without reducing that reading burden. Focus exists at its initial recorded blob; reconciliation records pending-primary, no preserved candidate or rejection to reuse. Assertions, security boundaries, and accepted unrelated source remain untouched.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        {
+          "kind": "read-only inspection",
+          "result": "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md; checked focus-only reconciliation, area ledger and repository coverage row."
+        },
+        {
+          "kind": "caller trace",
+          "result": "Read tests/claude-compat-prompt-ownership.test.ts pinned-source loader, exact-source assertion, Bun.Transpiler evaluation and foreign-origin assertion; inspected frontend.ts consumed UUID/reset/origin production."
+        },
+        {
+          "kind": "exact-byte verification",
+          "result": "HEAD focus blob and working-file git hash-object match 5ea45ec68845bb716a76b40c94407a36e2c590f9."
+        },
+        {
+          "kind": "source diff",
+          "result": "No tracked source changes."
+        }
+      ],
+      "primaryLimits": [
+        "No setup, tests or builds run: parent owns audited isolated batch gates. Caller inspection showed SDK process spawn and temporary fixture/auth files with afterEach removal; these were read only, not executed.",
+        "No formatter invoked or commit created because changed source paths are empty.",
+        "No per-worker wisdom edits; parent owns aggregate wisdom.",
+        "Independent readability judgment and runtime model verification remain parent-owned."
+      ]
     },
     {
       "file": "tests/claude-compat/permissions.test.ts",
