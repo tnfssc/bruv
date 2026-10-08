@@ -13,14 +13,86 @@ import {
 } from "@earendil-works/pi-coding-agent";
 import tasks from "../src/agent/extension";
 
+async function openObservedSession(
+  dir: string,
+  manager: SessionManager,
+  runtime: ModelRuntime,
+  model: ReturnType<typeof getModels>[number],
+  evidence: any,
+) {
+  let restoreNotify = () => {};
+  const loader = new DefaultResourceLoader({
+    cwd: dir,
+    agentDir: dir,
+    noExtensions: true,
+    noSkills: true,
+    noThemes: true,
+    noPromptTemplates: true,
+    extensionFactories: [
+      {
+        name: "observe",
+        factory: (pi) => {
+          pi.on("before_agent_start", (_e, ctx) => {
+            restoreNotify();
+            const ui = ctx.ui,
+              old = ui.notify;
+            ui.notify = (message) => {
+              evidence.notices.push(message);
+            };
+            restoreNotify = () => {
+              ui.notify = old;
+            };
+          });
+        },
+      },
+      { name: "bruv-tasks", factory: tasks },
+    ],
+  });
+  await loader.reload();
+  const created = (
+    await createAgentSession({
+      cwd: dir,
+      agentDir: dir,
+      resourceLoader: loader,
+      model,
+      modelRuntime: runtime,
+      sessionManager: manager,
+      settingsManager: SettingsManager.inMemory({
+        transport: "sse",
+        compaction: { enabled: false, keepRecentTokens: 128, reserveTokens: 8192 },
+      }),
+      thinkingLevel: "medium",
+      tools: ["execute"],
+    })
+  ).session;
+  created.subscribe((event) => {
+    if (event.type === "message_end" && event.message.role === "assistant")
+      evidence.requests.push({
+        phase: evidence.phase,
+        usage: event.message.usage,
+        stopReason: event.message.stopReason,
+        text: event.message.content
+          .filter((c) => c.type === "text")
+          .map((c) => c.text)
+          .join("\n"),
+      });
+  });
+  return {
+    session: created,
+    dispose() {
+      restoreNotify();
+      created.dispose();
+    },
+  };
+}
+
 test.skipIf(process.env.BRUV_RUN_LLM_TESTS !== "1")(
   "native Codex live checkpoint and disk-resumed recall",
   async () => {
     const dir = await mkdtemp(join(tmpdir(), "bruv-native-live-"));
     const artifact = resolve("artifacts/compaction/native-live-" + Date.now() + ".json");
     const evidence: any = { phase: "setup", requests: [], notices: [] };
-    let session: Awaited<ReturnType<typeof createAgentSession>>["session"] | undefined;
-    let restoreNotify = () => {};
+    let active: Awaited<ReturnType<typeof openObservedSession>> | undefined;
     try {
       const model = getModels("openai-codex").find(
         (m) => m.id === (process.env.BRUV_COMPACTION_MODEL ?? "gpt-5.6-luna"),
@@ -73,72 +145,14 @@ test.skipIf(process.env.BRUV_RUN_LLM_TESTS !== "1")(
         isError: false,
         timestamp: 3,
       });
-      async function open() {
-        const loader = new DefaultResourceLoader({
-          cwd: dir,
-          agentDir: dir,
-          noExtensions: true,
-          noSkills: true,
-          noThemes: true,
-          noPromptTemplates: true,
-          extensionFactories: [
-            {
-              name: "observe",
-              factory: (pi) => {
-                pi.on("before_agent_start", (_e, ctx) => {
-                  const ui = ctx.ui,
-                    old = ui.notify;
-                  ui.notify = (message) => {
-                    evidence.notices.push(message);
-                  };
-                  restoreNotify = () => {
-                    ui.notify = old;
-                  };
-                });
-              },
-            },
-            { name: "bruv-tasks", factory: tasks },
-          ],
-        });
-        await loader.reload();
-        const created = (
-          await createAgentSession({
-            cwd: dir,
-            agentDir: dir,
-            resourceLoader: loader,
-            model,
-            modelRuntime: runtime,
-            sessionManager: manager,
-            settingsManager: SettingsManager.inMemory({
-              transport: "sse",
-              compaction: { enabled: false, keepRecentTokens: 128, reserveTokens: 8192 },
-            }),
-            thinkingLevel: "medium",
-            tools: ["execute"],
-          })
-        ).session;
-        created.subscribe((event) => {
-          if (event.type === "message_end" && event.message.role === "assistant")
-            evidence.requests.push({
-              phase: evidence.phase,
-              usage: event.message.usage,
-              stopReason: event.message.stopReason,
-              text: event.message.content
-                .filter((c) => c.type === "text")
-                .map((c) => c.text)
-                .join("\n"),
-            });
-        });
-        return created;
-      }
-      session = await open();
+      active = await openObservedSession(dir, manager, runtime, model, evidence);
       evidence.phase = "ordinary";
-      await session.prompt(
+      await active.session.prompt(
         "Reply READY only. No tools. Recent context padding: " + "Preserve the original fixture. ".repeat(180),
       );
       evidence.phase = "native-compaction";
       const started = Date.now();
-      const checkpoint = await session.compact();
+      const checkpoint = await active.session.compact();
       const saved = manager
         .getEntries()
         .slice()
@@ -158,19 +172,18 @@ test.skipIf(process.env.BRUV_RUN_LLM_TESTS !== "1")(
         opaqueSha256: createHash("sha256").update(opaque.encrypted_content).digest("hex"),
       };
       const file = manager.getSessionFile()!;
-      restoreNotify();
-      session.dispose();
-      session = undefined;
+      active.dispose();
+      active = undefined;
       manager = SessionManager.open(file);
-      session = await open();
+      active = await openObservedSession(dir, manager, runtime, model, evidence);
       evidence.phase = "disk-resumed";
-      await session.prompt(
+      await active.session.prompt(
         "What is NATIVE_FIXTURE_VALUE? Reply with the exact value only. Do not call tools. Repeat-compaction fixture padding: " +
           "Keep the original fixture value. ".repeat(180),
       );
       expect(evidence.requests.at(-1).text).toContain("cedar-marble-842");
       evidence.phase = "repeat-compaction";
-      const repeated = await session.compact();
+      const repeated = await active.session.compact();
       const latest = manager
         .getEntries()
         .slice()
@@ -190,8 +203,7 @@ test.skipIf(process.env.BRUV_RUN_LLM_TESTS !== "1")(
     } finally {
       await Bun.write(artifact, JSON.stringify(evidence, null, 2));
       console.log("Native compaction evidence: " + artifact);
-      restoreNotify();
-      session?.dispose();
+      active?.dispose();
       await rm(dir, { recursive: true, force: true });
     }
   },

@@ -311,41 +311,55 @@ test("valid checkpoint without new trace is an honest no-op; automatic shake rem
 });
 
 test("opaque invalid schema, incompatible provider/API, unresolved retained batch and stale hooks fail safe", async () => {
-  for (const mode of [
-    "schema",
-    "provider",
-    "api",
-    "unresolved",
-    "stale",
-    "lost-shim",
-    "changed-runtime",
-    "duplicate-shim",
-  ]) {
+  const scenarios: Record<string, (manager: SessionManager) => ReturnType<typeof harness>> = {
+    schema(manager) {
+      const checkpoint: any = manager.getEntries().find((e: any) => e.type === "compaction");
+      checkpoint.details.version = 999;
+      return harness(manager);
+    },
+    provider(manager) {
+      const h = harness(manager);
+      h.ctx.model = { ...model, provider: "foreign" };
+      return h;
+    },
+    api(manager) {
+      const h = harness(manager);
+      h.ctx.model = { ...model, api: "openai-responses" };
+      return h;
+    },
+    unresolved(manager) {
+      manager.appendMessage(assistant(model, [{ type: "toolCall", id: "pending", name: "execute", arguments: {} }]));
+      return harness(manager);
+    },
+    stale(manager) {
+      return harness(manager, async (messages) => {
+        manager.appendMessage({ role: "user", content: "changed", timestamp: 50 });
+        return messages;
+      });
+    },
+    "lost-shim"(manager) {
+      return harness(manager, (messages) =>
+        adaptNativeCompactionMessages(messages, { sessionManager: manager, model } as any).slice(1),
+      );
+    },
+    "changed-runtime"(manager) {
+      return harness(manager, (messages) =>
+        adaptNativeCompactionMessages(messages, { sessionManager: manager, model } as any).map((m: any, i: number) =>
+          i === 1 ? { ...m, content: "lost" } : m,
+        ),
+      );
+    },
+    "duplicate-shim"(manager) {
+      return harness(manager, (messages) => {
+        const transformed = adaptNativeCompactionMessages(messages, { sessionManager: manager, model } as any);
+        return [transformed[0], ...transformed];
+      });
+    },
+  };
+  for (const [mode, arrange] of Object.entries(scenarios)) {
     const manager = SessionManager.inMemory();
     nativeBranch(manager);
-    const checkpoint: any = manager.getEntries().find((e: any) => e.type === "compaction");
-    const h = harness(
-      manager,
-      mode === "stale"
-        ? async (messages) => {
-            manager.appendMessage({ role: "user", content: "changed", timestamp: 50 });
-            return messages;
-          }
-        : ["lost-shim", "changed-runtime", "duplicate-shim"].includes(mode)
-          ? (messages) => {
-              const transformed = adaptNativeCompactionMessages(messages, { sessionManager: manager, model } as any);
-              if (mode === "lost-shim") return transformed.slice(1);
-              if (mode === "changed-runtime")
-                return transformed.map((m: any, i: number) => (i === 1 ? { ...m, content: "lost" } : m));
-              return [transformed[0], ...transformed];
-            }
-          : undefined,
-    );
-    if (mode === "schema") checkpoint.details.version = 999;
-    if (mode === "provider") h.ctx.model = { ...model, provider: "foreign" };
-    if (mode === "api") h.ctx.model = { ...model, api: "openai-responses" };
-    if (mode === "unresolved")
-      manager.appendMessage(assistant(model, [{ type: "toolCall", id: "pending", name: "execute", arguments: {} }]));
+    const h = arrange(manager);
     await h.command.handler("", h.ctx);
     expect(shakeEntries(manager), mode).toHaveLength(0);
     expect(h.notices.at(-1), mode).toContain("refused");

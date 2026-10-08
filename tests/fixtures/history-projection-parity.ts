@@ -7,11 +7,13 @@ if (process.env.USE_DISK_HISTORY === "1") {
   const { installDiskBackedSessionManager } = await import("../../src/history/session-manager");
   installDiskBackedSessionManager();
 }
-const root = process.env.PROBE_ROOT;
-assert(root, "scenario requires an owned PROBE_ROOT from the history fixture harness");
+const probeRoot = process.env.PROBE_ROOT;
+assert(probeRoot, "scenario requires an owned PROBE_ROOT from the history fixture harness");
+const root: string = probeRoot;
 const simplifyMessage = (message: SessionProjection["messages"][number]) => ({
   role: message.role,
-  content: message.content,
+  // Summary and bash messages have no content; retain their role-only normalization.
+  content: "content" in message ? message.content : undefined,
 });
 function simplify(projection: SessionProjection) {
   return {
@@ -95,7 +97,9 @@ function contextEditsAcrossBranches() {
   const replacements = simplify(manager.buildSessionProjection());
 
   // Reopening preserves projected replacements, not mutations of source bodies.
-  const reopened = SessionManager.open(manager.getSessionFile()!);
+  const sessionFile = manager.getSessionFile();
+  assert(sessionFile, "persisted branch-edit fixture requires a session file to reopen");
+  const reopened = SessionManager.open(sessionFile);
   const reopenedProjection = simplify(reopened.buildSessionProjection());
   const customEntry = reopened.getEntry(custom);
   const toolEntry = reopened.getEntry(tool);

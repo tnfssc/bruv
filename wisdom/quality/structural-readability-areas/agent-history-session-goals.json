@@ -3403,28 +3403,29 @@
     {
       "focus": "tests/native-compaction-shake-coverage.test.ts",
       "initialBlob": "5d65015a7b494c0a76f466a9533a043830a8bf8c",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "5d65015a7b494c0a76f466a9533a043830a8bf8c",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "5d65015a7b494c0a76f466a9533a043830a8bf8c",
         "primaryId": "task_4ac93062",
         "primaryCommit": "16b572eb9d53528063cd53a9e0e6af0defa1d8b5",
-        "judgeIds": [],
+        "judgeIds": ["task_4a50e2fb"],
         "sourceCommit": "16b572eb9d53528063cd53a9e0e6af0defa1d8b5",
-        "state": "needs-judge",
-        "reason": "No dedicated primary/final independent focus judgment."
+        "state": "accepted-joined",
+        "reason": "Read the whole intrinsic file, not just its unchanged status. fixture constructs an opaque checkpoint, 105 completed tool groups, a mixed substantive reply and a durable shake marker; capture applies that marker to model-visible messages, while event calls real SDK prepareCompaction on the raw branch. The first test shows the split-turn mismatch and unchanged event together. The two split-turn tests keep the required slice and full journal entries adjacent, so the kept-side result is visibly pairing evidence, not content silently restored into the capture. Partial markers, missing results, reversed entries and incomplete multi-call selection preserve required messages. Missing/rewritten/reordered substantive content, ordinary signatures, changed/latest-malformed markers, an unrelated pending kept call, and leaf/cut guards each expose a distinct authority. Disk reopen and actual-hook dispatch journeys explicitly own their journals and mocked fetch, and compare original opaque serialization, ordinary shaken prefix and unchanged SDK cut. These are already coherent operations; moving them into one scenario/context harness would conceal why each evidence set differs."
       }
     },
     {
       "focus": "tests/native-compaction.test.ts",
       "initialBlob": "09cda8b18ce7f97ae15e301591969d99e38b80ba",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "d6c296fe8c4af8283bf4e281f4fa3bcf16861254",
       "integration": "pending",
       "relatedPatchReview": {
         "candidate": "08e00ae3c0aa5603288096ddb7d5a3ab73a8c682",
@@ -3434,13 +3435,14 @@
         "primaryFocusStillRequired": true
       },
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "d6c296fe8c4af8283bf4e281f4fa3bcf16861254",
         "primaryId": "task_4ac93062",
         "primaryCommit": "16b572eb9d53528063cd53a9e0e6af0defa1d8b5",
-        "judgeIds": ["task_7caa7713"],
+        "judgeIds": ["task_7caa7713", "task_4a50e2fb"],
         "sourceCommit": "16b572eb9d53528063cd53a9e0e6af0defa1d8b5",
-        "state": "needs-judge",
-        "reason": "No dedicated primary/final independent focus judgment. Related-patch review is evidence only; dedicated focus coverage remains required."
+        "state": "accepted-joined",
+        "reason": "Read the entire request/parser, checkpoint adapter, fail-closed lifecycle and transport file, then every diff hunk against the exact base. expectInvalidatedHttpAttempt is one file-local operation with a real shared lifetime: build a complete capture, subscribe, suspend fetch, await dispatch, perform caller-owned invalidation, settle a valid late SSE response, reject publication, unsubscribe and restore transport. The named session, model and shake tests keep the different invalidation actions and exact expected journals at the call sites; the shake case still explicitly checks freshness, model identity and leaf identity. The dispatch promise is resolved inside the mocked fetch before returning its pending response; awaiting it preserves the original dispatch-before-invalidation boundary without the resolver-polling loop. Result cancellation, dispatch-only observations, absence of appended entries and exact journal assertions are preserved. The shake response fixture identifier changes from cmp_invalidated to cmp_stale only; both are valid opaque fixtures, and no assertion depended on that spelling. Deferred credentials correctly remain a separate pre-dispatch journey. No adapter, coverage, accounting or transport-security assertions were removed. This groups a coherent lifetime rather than making a generic context bag."
       }
     },
     {
@@ -3502,127 +3504,134 @@
     {
       "focus": "tests/native-request-history.test.ts",
       "initialBlob": "afe104b02c5917ffbf94068bef556d59dd0499f0",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "afe104b02c5917ffbf94068bef556d59dd0499f0",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "afe104b02c5917ffbf94068bef556d59dd0499f0",
         "primaryId": "task_4ac93062",
         "primaryCommit": "16b572eb9d53528063cd53a9e0e6af0defa1d8b5",
-        "judgeIds": [],
+        "judgeIds": ["task_4a50e2fb"],
         "sourceCommit": "16b572eb9d53528063cd53a9e0e6af0defa1d8b5",
-        "state": "needs-judge",
-        "reason": "No dedicated primary/final independent focus judgment."
+        "state": "accepted-joined",
+        "reason": "Read the whole intrinsic file. The top-level subprocess boundary explains process-wide SDK prototypes; the child branch installs the disk adapter before constructing fixtures. history/reopen own real journal construction and register managers; trackBodies owns one materialize prototype spy that each test restores locally. compactionHarness exposes its hooks and abort count, while fastHarness owns a different runtime seam, authorization request and shutdown. The compaction tests place zero-body unrelated history, newest-only checkpoint selection, exact opaque replay, malformed/incompatible blocking, branches and reset beside their exact materialization evidence. Fast tests separately show settings surviving compaction but not off-branch/reset navigation, newest corrupt identity/schema/cost records blocking dispatch, well-formed other scope being skipped, switched stores losing old authority and volatile opt-out bypassing persisted premium settings. A single combined harness would obscure these distinct reading/dispatch owners. No structural edit is needed here; the sibling extraction remains confined to deferred native HTTP tests."
       }
     },
     {
       "focus": "tests/native-shake-sdk.test.ts",
       "initialBlob": "ba285f014dee32ff3d9010d99cd80aae98e9a349",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "dfd0eccf82539ffa9ce33ec9ec65e3ecfefba7c7",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "dfd0eccf82539ffa9ce33ec9ec65e3ecfefba7c7",
         "primaryId": "task_bb9fc8cd",
         "primaryCommit": "70c4f28e36daaddacb880a636f60b323a2b21150",
-        "judgeIds": [],
+        "judgeIds": ["task_ec27596f"],
         "sourceCommit": "70c4f28e36daaddacb880a636f60b323a2b21150",
-        "state": "needs-judge",
-        "reason": "No dedicated primary/final independent focus judgment."
+        "state": "accepted-joined",
+        "reason": "The refusal journey is now readable one scenario at a time. Each scenario owns the specific checkpoint mutation, model incompatibility, unresolved retained call, or context-hook transformation and returns the harness on which the command runs. The shared runner visibly constructs a fresh native branch, applies exactly that arrangement, invokes the command, checks absence of a durable shake and a refusal notice, and clears manager-scoped instruction continuity. This removes the old nested ternary plus later mode-dependent mutations without hiding decisions in a context bag. The schema/unresolved mutations now precede harness creation, but harness registration does not inspect branch content; actual planning still occurs in the command. Unchanged full-SDK flow remains direct: seed retained and discarded history, capture checkpoint/shim bytes, shake without inference, serialize exact opaque item once, prove idempotence, reopen append-only journal, and continue through an offline transport stub. The remaining shim provenance, native no-op/deferred auto-shake, hook exclusions, archived checkpoints and context-edit cases still express their own evidence locally."
       }
     },
     {
       "focus": "tests/phase1-compaction-fixture.ts",
       "initialBlob": "b67e4ee62f679187372e03f009db40b20a256403",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "b67e4ee62f679187372e03f009db40b20a256403",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "b67e4ee62f679187372e03f009db40b20a256403",
         "primaryId": "task_bb9fc8cd",
         "primaryCommit": "70c4f28e36daaddacb880a636f60b323a2b21150",
-        "judgeIds": [],
+        "judgeIds": ["task_ec27596f"],
         "sourceCommit": "70c4f28e36daaddacb880a636f60b323a2b21150",
-        "state": "needs-judge",
-        "reason": "No dedicated primary/final independent focus judgment."
+        "state": "accepted-joined",
+        "reason": "The whole unchanged fixture is already a compact authority boundary. Its opening comment says Phase 1 is tested alone without switching or downgrading Codex. The function immediately registers execute, registers cache-affine compaction, activates execute on session start, and appends collaboration guidance only when there is no custom prompt. A reader does not need an indirect wrapper or shared setup object to discover who chooses the strategy or owns prompt augmentation. The exact focus blob equals the primaryBase blob; no edit is warranted merely because the combined candidate changes two other tests."
       }
     },
     {
       "focus": "tests/phase2-native-live.test.ts",
       "initialBlob": "b194b11139adbdc1329f1b43db241e92ccadb013",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "1252004431edd16a0694f313dce7b10859b3f2d0",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "1252004431edd16a0694f313dce7b10859b3f2d0",
         "primaryId": "task_bb9fc8cd",
         "primaryCommit": "70c4f28e36daaddacb880a636f60b323a2b21150",
-        "judgeIds": [],
+        "judgeIds": ["task_ec27596f"],
         "sourceCommit": "70c4f28e36daaddacb880a636f60b323a2b21150",
-        "state": "needs-judge",
-        "reason": "No dedicated primary/final independent focus judgment."
+        "state": "accepted-joined",
+        "reason": "openObservedSession coherently owns construction, request observation and notifier replacement for one explicit manager. It returns that session paired with a disposer restoring its own notifier and disposing that same created session. Before each new turn hook installs an observer it restores the previous override, so it does not capture a prior observer as the baseline. The main journey now explicitly opens a handle, prompts, compacts, records opaque evidence, disposes that handle, opens the saved manager from disk, creates a new handle for it, recalls the fixture value, repeats compaction, and disposes the remaining handle in finally. This resolves the original split lifetime between outer restoreNotify and a nested opener capturing a mutable manager; it is more than a name change. Keeping evidence as one local diagnostic accumulator is appropriate here and does not move session/strategy authority into a context bag."
       }
     },
     {
       "focus": "tests/phase2-native-sdk.test.ts",
       "initialBlob": "a9cad5cefdd2ad24aa78ee97606d77e7c375aa44",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "35880eaccdc43f18adba41d4aa3e211d6cd801c6",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "35880eaccdc43f18adba41d4aa3e211d6cd801c6",
         "primaryId": "task_39f176a7",
         "primaryCommit": "85258ad127c73282f5b2d8b551e633e2aaae9599",
-        "judgeIds": [],
+        "judgeIds": ["task_f5dd5efc"],
         "sourceCommit": "85258ad127c73282f5b2d8b551e633e2aaae9599",
-        "state": "needs-judge",
-        "reason": "No dedicated primary/final independent focus judgment."
+        "state": "accepted-joined",
+        "reason": "Read the entire 363-line candidate test and the exact base diff. Before the change the chronological journey had to cross two distinct protocol implementations before reaching session creation and checkpoint assertions. nativeCompactionResponse now owns only HTTP/SSE response framing and failure output, with request number and mode explicit. captureOrdinaryRequests owns only the real-provider serializer seam, extension header/payload hooks, sentinel stop, and assistant completion/error event synthesis. This is a useful authority boundary, not a rename: the test visibly owns global fetch installation/restoration, auth/header/trigger expectations, request recording, synthetic credentials, and the runtime seam rebound at every open(manager). Neither helper receives a context bag or owns session/global cleanup. Read the unchanged sequence from pre-checkpoint Astra/Sol switches through persisted-entry byte/JSON immutability, both disk reopen rounds, second checkpoint replacement, custom-focus refusal, billable failed attempt, uncaptured-history refusal, and wrong API/foreign-provider blocking. These dependent assertions correctly stay chronological and inline."
       }
     },
     {
       "focus": "tests/pi-host.test.ts",
       "initialBlob": "13a3a72c282c4b42d9dfbab64316c05d6fd3b74c",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "13a3a72c282c4b42d9dfbab64316c05d6fd3b74c",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "13a3a72c282c4b42d9dfbab64316c05d6fd3b74c",
         "primaryId": "task_39f176a7",
         "primaryCommit": "85258ad127c73282f5b2d8b551e633e2aaae9599",
-        "judgeIds": [],
+        "judgeIds": ["task_f5dd5efc"],
         "sourceCommit": "85258ad127c73282f5b2d8b551e633e2aaae9599",
-        "state": "needs-judge",
-        "reason": "No dedicated primary/final independent focus judgment."
+        "state": "accepted-joined",
+        "reason": "Read the entire 356-line candidate file, including unchanged decisions, rather than relying on the primary evidence. Independent behaviors already have distinct tests. The exact/idempotent adaptation test keeps reversal of installed patch text next to original/adapted digest assertions, including the special removed-main-import adjacency; hiding that restoration would make the exact-byte proof harder to follow. The all-files/version test places late-file and viewport drift before the untouched registry assertion. Project selectors, explicit built-in paths, settings-only overrides, retained llama, and user-authored codemode checks expose their different authorities without a shared fixture bag. The source/compiled loop shares the same external contract while argv, env and all assertions remain visible. The configured-MCP sentinel test pairs RPC get_state acknowledgement after extension session_start with proof reads, absent marker and unchanged configs; finally explicitly kills, awaits exit and drains stderr. temp()/afterEach owns only directories returned by mkdtemp. Extraction would obscure these ownership/readiness relationships rather than fix an actual reconstruction problem."
       }
     },
     {
       "focus": "tests/prompt-delivery.test.ts",
       "initialBlob": "f97347e0fc492a83d549848df0d75fddce8cd4e4",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "f97347e0fc492a83d549848df0d75fddce8cd4e4",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "f97347e0fc492a83d549848df0d75fddce8cd4e4",
         "primaryId": "task_39f176a7",
         "primaryCommit": "85258ad127c73282f5b2d8b551e633e2aaae9599",
-        "judgeIds": [],
+        "judgeIds": ["task_f5dd5efc"],
         "sourceCommit": "85258ad127c73282f5b2d8b551e633e2aaae9599",
-        "state": "needs-judge",
-        "reason": "No dedicated primary/final independent focus judgment."
+        "state": "accepted-joined",
+        "reason": "Read the whole 143-line candidate test. The first test has one journey: intercept registerExecuteTool, load resources, supply the captured custom tool to a real Pi session, then inspect session.systemPrompt for registered guidance and execute-versus-bash listing. The second deliberately uses a different authority: real production tasks extension, explicit Bruv base and append/project sentinels, local runtime auth preflight, then a captured synthetic agent stream. Its emitted start/done fixture stays beside stream capture, and assertions examine the actual TranscriptContext for working values, execute reference, handoff, identity, excluded upstream boilerplate, preserved appended/project guidance, cwd and exactly execute. The second prompt checks next-turn equality at the same seam, not only a constructed prompt property. Each test visibly pairs its session disposal and mkdtemp cleanup in finally. Sharing loader options or extracting the short synthetic stream would increase distance between these intentionally different assembly and delivery proofs without removing a scattered ownership problem."
       }
     },
     {
@@ -3642,11 +3651,11 @@
       },
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_125d5689",
+        "primaryCommit": "c8a6fbaa9603fda560f1c4a9fef45b073be46b53",
         "judgeIds": ["task_10247cc9"],
-        "sourceCommit": "904c6fb51b2fb62a4c91580e0120d5eabc1c0f7b",
-        "state": "pending-primary",
+        "sourceCommit": "c8a6fbaa9603fda560f1c4a9fef45b073be46b53",
+        "state": "needs-judge",
         "reason": "No dedicated primary/final independent focus judgment. Related-patch review is evidence only; dedicated focus coverage remains required."
       }
     },
@@ -3667,11 +3676,11 @@
       },
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_125d5689",
+        "primaryCommit": "c8a6fbaa9603fda560f1c4a9fef45b073be46b53",
         "judgeIds": ["task_7f8422ea"],
-        "sourceCommit": "42bec26abf11007f2b0781e1771224c1d5fa63c0",
-        "state": "pending-primary",
+        "sourceCommit": "c8a6fbaa9603fda560f1c4a9fef45b073be46b53",
+        "state": "needs-judge",
         "reason": "No dedicated primary/final independent focus judgment. Related-patch review is evidence only; dedicated focus coverage remains required."
       }
     },
@@ -3685,11 +3694,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_1c106c8b",
+        "primaryCommit": "51a6af6dd26478a4df1501fa858d1edf2d5f3ec6",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary",
+        "sourceCommit": "51a6af6dd26478a4df1501fa858d1edf2d5f3ec6",
+        "state": "needs-judge",
         "reason": "No dedicated primary/final independent focus judgment."
       }
     },
@@ -3703,11 +3712,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_1c106c8b",
+        "primaryCommit": "51a6af6dd26478a4df1501fa858d1edf2d5f3ec6",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary",
+        "sourceCommit": "51a6af6dd26478a4df1501fa858d1edf2d5f3ec6",
+        "state": "needs-judge",
         "reason": "No dedicated primary/final independent focus judgment."
       }
     },
@@ -3721,11 +3730,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_1c106c8b",
+        "primaryCommit": "51a6af6dd26478a4df1501fa858d1edf2d5f3ec6",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary",
+        "sourceCommit": "51a6af6dd26478a4df1501fa858d1edf2d5f3ec6",
+        "state": "needs-judge",
         "reason": "No dedicated primary/final independent focus judgment."
       }
     },
@@ -4401,15 +4410,17 @@
       "focus": "tests/fixtures/history-projection-parity.ts",
       "initialBlob": null,
       "introducedBy": "8d04882c7fd0b6165ac217f9a7a7bf893262dd33",
-      "state": "pending",
-      "acceptedBlob": null,
+      "state": "accepted",
+      "acceptedBlob": "ac4d8ff3343cc52ed7bcb57580eb55c98a6b1757",
       "resume": {
-        "status": "pending",
-        "acceptedBlob": "4d81158abaa1190eb8853d86c72516ce99cb1ac0",
+        "status": "accepted",
+        "acceptedBlob": "ac4d8ff3343cc52ed7bcb57580eb55c98a6b1757",
         "primaryId": "task_2f4118e2",
         "primaryCommit": "1f64a02774c8856fc10ef60485816dade9fd2944",
+        "judgeIds": ["task_e33b7430"],
         "sourceCommit": "1f64a02774c8856fc10ef60485816dade9fd2944",
-        "state": "needs-judge"
+        "state": "accepted-joined",
+        "reason": "The whole fixture presents two understandable causal journeys rather than separating actions from their consequences. The first records edited user/assistant projection before creating a compaction checkpoint, then exposes checkpoint system content, model context, and preserved source IDs together. The second records custom/tool replacements and assistant omission, reopens the persisted file and checks original source bodies before branching away. Only after the pre-edit branch and inactive-edit rejection are captured does it establish the two-checkpoint/settings sequence. simplify owns comparison shape; assistantMessage owns complete SDK message construction; rejectsEdit owns the rejection observation. These are coherent local responsibilities. The exact patch makes the owned-root invariant available as a definite string in both scenario closures, narrows the actual message union without fabricating summary/bash content, and asserts the persisted-file invariant at the reopen boundary. It does not rearrange journeys or drop observations."
       }
     },
     {
@@ -4467,30 +4478,34 @@
       "focus": "tests/fixtures/history-storage-lifecycle.mjs",
       "initialBlob": null,
       "introducedBy": "d7e16f9c897647a63b1f735fb89a3ab9e20c1e7e",
-      "state": "pending",
-      "acceptedBlob": null,
+      "state": "accepted",
+      "acceptedBlob": "111cd72e10e51ed928c7222e625a75666fd54d28",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
         "acceptedBlob": "111cd72e10e51ed928c7222e625a75666fd54d28",
         "primaryId": "task_baac92f1",
         "primaryCommit": "191812d4b948379cfd5d93861e3892041494f153",
+        "judgeIds": ["task_e33b7430"],
         "sourceCommit": "191812d4b948379cfd5d93861e3892041494f153",
-        "state": "needs-judge"
+        "state": "accepted-joined",
+        "reason": "Reading all six scenarios shows a useful division by persistence operation and authority. Rewrite/reset retains one manager, its pre-branch entries, label state and file identity across normal rewrite, URL reopen, symlink rewrite and failed reset; splitting this would hide the common before-state. Publication retry keeps the failed append, preserved thinking-level leaf and successful retry parent next to its deliberately occupied path. Fork collision establishes exact original collision bytes within the Date override lifetime and restores Date in finally. Tree replay puts unsorted siblings and a self-parent beside the expected roots/order. Validation/migration keeps invalid-byte preservation separate from legacy content/reference conversion. Discovery makes a foreign-CWD file newest and then proves it was not rewritten. The bottom-level sequence names all journeys and visibly passes the first persisted file to the fork scenario. No shared context bag or extra phase layer would clarify this further."
       }
     },
     {
       "focus": "tests/helpers/main-agent-mode-sdk.ts",
       "initialBlob": null,
       "introducedBy": "953636ca924944dbf67f42af22a9c7870fe212ac",
-      "state": "pending",
-      "acceptedBlob": null,
+      "state": "accepted",
+      "acceptedBlob": "149e63f761488ffd85204d61911f53861f8721e6",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
         "acceptedBlob": "149e63f761488ffd85204d61911f53861f8721e6",
         "primaryId": "task_f57ee304",
         "primaryCommit": "2a45b24ddace53a140e15cbad9f6521b64cfccb3",
+        "judgeIds": ["task_e33b7430"],
         "sourceCommit": "2a45b24ddace53a140e15cbad9f6521b64cfccb3",
-        "state": "needs-judge"
+        "state": "accepted-joined",
+        "reason": "The complete helper is legible as one SDK fixture assembly, with two actual lifecycle responsibilities extracted. sessionHistory distinguishes in-memory starts from persisted starts and makes exclusive header creation, reopen, custom-entry append and second reopen an explicit durable-startup sequence. sdk then creates its own project/settings, builds that manager, declares ordered before/tasks/after hooks with the frame counter beside them, reloads resources, creates the fixture runtime/session, registers disposal ownership, and replaces the stream with deterministic output. Capturing getCurrentSystemPrompt from stream context records the effective request, not merely loader configuration. disposeModeSessions drains exactly the created sessions while retaining files. The readable probe options and returned observations make the helper usable without reconstructing a hidden context object. Additional helper phases or renaming sdk would not solve an observed reading burden."
       }
     },
     {
@@ -4502,8 +4517,10 @@
       "resume": {
         "status": "pending",
         "acceptedBlob": "e364aad3607a688681d6b7c4a099d19097c5a1c4",
-        "sourceCommit": "953636ca924944dbf67f42af22a9c7870fe212ac",
-        "state": "needs-primary-final-blob"
+        "primaryId": "task_125d5689",
+        "primaryCommit": "c8a6fbaa9603fda560f1c4a9fef45b073be46b53",
+        "sourceCommit": "c8a6fbaa9603fda560f1c4a9fef45b073be46b53",
+        "state": "needs-judge"
       }
     }
   ],
@@ -4645,7 +4662,7 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 108,
-    "pending": 24
+    "accepted": 120,
+    "pending": 12
   }
 }
