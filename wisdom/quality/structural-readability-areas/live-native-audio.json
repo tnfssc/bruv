@@ -976,10 +976,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
+        "primaryId": "task_b212b992",
+        "primaryCommit": "6d9ea74620176d80b99b58ddf384b87d1766e6ce",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "own_primary_pending",
+        "sourceCommit": "6d9ea74620176d80b99b58ddf384b87d1766e6ce",
+        "state": "needs-judge",
         "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
       }
     },
@@ -992,10 +993,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
+        "primaryId": "task_52d3eb17",
+        "primaryCommit": "6d9ea74620176d80b99b58ddf384b87d1766e6ce",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "own_primary_pending",
+        "sourceCommit": "6d9ea74620176d80b99b58ddf384b87d1766e6ce",
+        "state": "needs-judge",
         "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
       }
     },
@@ -1008,10 +1010,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
+        "primaryId": "task_84975626",
+        "primaryCommit": "c1ed27e01a7c06643e017d7c1cf90ff183a80b28",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "own_primary_pending",
+        "sourceCommit": "c1ed27e01a7c06643e017d7c1cf90ff183a80b28",
+        "state": "needs-judge",
         "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
       }
     },
@@ -1024,10 +1027,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
+        "primaryId": "task_c43537b9",
+        "primaryCommit": "6d9ea74620176d80b99b58ddf384b87d1766e6ce",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "own_primary_pending",
+        "sourceCommit": "6d9ea74620176d80b99b58ddf384b87d1766e6ce",
+        "state": "needs-judge",
         "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
       }
     },
@@ -1040,10 +1044,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
+        "primaryId": "task_a848477f",
+        "primaryCommit": "6d9ea74620176d80b99b58ddf384b87d1766e6ce",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "own_primary_pending",
+        "sourceCommit": "6d9ea74620176d80b99b58ddf384b87d1766e6ce",
+        "state": "needs-judge",
         "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
       }
     },
@@ -4893,17 +4898,19 @@
       "primary": null,
       "relatedPaths": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "4e191af147d30885d04d0d601e21c8dc0eae8481",
       "integration": "new related candidate;own primary pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
         "acceptedBlob": "4e191af147d30885d04d0d601e21c8dc0eae8481",
         "primaryId": "task_98d54ee6",
         "primaryCommit": "4d5a00544d80550f83b16a8650be97c78257602d",
-        "judgeIds": [],
+        "judgeIds": [
+          "task_bc56849a"
+        ],
         "sourceCommit": "4d5a00544d80550f83b16a8650be97c78257602d",
-        "state": "needs-judge",
-        "reason": "New related candidate has no own primary or completed independent focus judgment; withhold integration approval."
+        "state": "accepted-joined",
+        "reason": "Independent actual-code reading finds this small fixture already structurally clear. It keeps the peer set, request counter, response-write checkpoint, client and observed errors in one test-owned lifetime. The raw 403 with outstanding Content-Length explains why inspection cannot normally finish from this body. The sequence is visible without chasing helpers: await the write, check CONNECTING/live peer/no diagnostic, close the adapter, observe peer release, then observe beyond the one-second diagnostic deadline and assert no error and one request. The finally block separately closes the client, destroys only remaining fixture peers and awaits server shutdown. Node invocation and the Bun skip explain the runtime distinction rather than hiding it. No abstraction, shared context bag or rename would improve this journey. This is an unchanged-code decision, not claimed new structural progress: candidate equals primary base; its parent also contains the exact same focus blob."
       }
     }
   ],
@@ -5029,7 +5036,7 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 79,
-    "pending": 71
+    "accepted": 80,
+    "pending": 70
   }
 }

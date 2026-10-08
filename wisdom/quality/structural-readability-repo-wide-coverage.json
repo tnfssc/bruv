@@ -1705,56 +1705,198 @@
       "file": "scripts/live-onboarding-smoke.ts",
       "initialBlob": "f02f07cca5ad453ba39de2fe1b0b6b396cc0c1bb",
       "status": "pending",
-      "primaryId": null,
-      "sourceCommit": null,
+      "primaryId": "task_b212b992",
+      "sourceCommit": "6d9ea74620176d80b99b58ddf384b87d1766e6ce",
       "judgeIds": [],
-      "resumeState": "own_primary_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "6d9ea74620176d80b99b58ddf384b87d1766e6ce",
+      "primaryBase": "6d9ea74620176d80b99b58ddf384b87d1766e6ce",
+      "primaryResult": "Followed package.json smoke:live-onboarding to this script, then runLiveSetup and the Live command suggestions. The script checks its binary/tmux prerequisites, allocates its fixture, writes only a fake credential and sentinel audio commands, launches the compiled CLI with env -i and offline flags, opens /live, explicitly selects Import, observes Start voice without selecting it, dismisses setup, and checks suggestions. The final assertions verify exact imported auth, 0600 permissions on both files, unchanged source credential and no audio-command invocation; teardown is in the sole finally. Explicit input actions, rendered outcomes and persisted evidence remain in reading order. Existing assertions and security behavior are unchanged. Preserved reconciliation identifies this focus as own_primary_pending with no source candidate, no earlier primary/judge and the same baseline blob; focus exists, so no historical import is needed.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        {
+          "check": "Read required wisdom, repo-wide and live-native-audio area ledgers and preserved reconciliation",
+          "result": "Complete; prior acceptance was not inferred. Focus has no proposed source candidate."
+        },
+        {
+          "check": "Static caller and scenario trace",
+          "result": "Read package.json, scripts/live-onboarding-smoke.ts, src/live/setup.ts, src/live/extension.ts Live argument suggestions and tests/live-setup.test.ts. Explicit import does not authorize voice; assertions remain intact."
+        },
+        {
+          "check": "Exact candidate identity",
+          "result": "HEAD 6d9ea74620176d80b99b58ddf384b87d1766e6ce; focus Git blob f02f07cca5ad453ba39de2fe1b0b6b396cc0c1bb; no source edits or source commit created."
+        },
+        {
+          "check": "Working tree",
+          "result": "Clean before writing this untracked result."
+        },
+        {
+          "check": "Execution side-effect review",
+          "result": "Not run. The smoke copies a compiled binary, writes an owned temporary HOME/fake credential/tools, spawns a tmux server and compiled CLI, kills that server and recursively removes its fixture (including disposable HOME) in finally. Parent must audit isolation and reconcile that cleanup with the retained-directory rule before any execution."
+        }
+      ],
+      "primaryLimits": [
+        "No setup, repository tests, builds, compiled smoke, device access or provider connection executed. Runtime behavior is not newly verified; parent owns audited isolated batch gates.",
+        "Existing smoke finally recursively deletes its temporary fixture/HOME, and its tmux controller inherits its launching environment/configuration. This worker did not invoke either; any execution needs parent side-effect review under the supplied safety constraints.",
+        "No new wisdom files or source changes; existing guidance supports leaving an already-coherent journey intact. Independent fresh judge and model verification remain parent responsibilities."
+      ]
     },
     {
       "file": "scripts/live-openai-offline-smoke.ts",
       "initialBlob": "c900eaef25ae1b5501a4da8ee24b29854241b78d",
       "status": "pending",
-      "primaryId": null,
-      "sourceCommit": null,
+      "primaryId": "task_52d3eb17",
+      "sourceCommit": "6d9ea74620176d80b99b58ddf384b87d1766e6ce",
       "judgeIds": [],
-      "resumeState": "own_primary_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "6d9ea74620176d80b99b58ddf384b87d1766e6ce",
+      "primaryBase": "6d9ea74620176d80b99b58ddf384b87d1766e6ce",
+      "primaryResult": "Successful journey: the loopback server verifies the literal fake Authorization header, checks GA session type and 24 kHz input configuration, records configuration, and acknowledges session.updated. The socket factory redirects the real defaultSocket transport to that server. After connect, the same block requires ready plus observed configuration, sends synthetic PCM, observes an append, and closes the session before stopping the server in finally. Rejection journey: each explicit status/code pair creates its own rejecting server, error collection and session; after connect, adjacent assertions require exactly one status-bearing diagnostic, withhold private-body and fake-key text, and retain the 429 allowlisted quota meaning. That iteration owns its own finally cleanup. Session connect settles failures through onError, and close is idempotent, so the callback assertion and final close have distinct clear roles. The only repository invocation found is the file’s manual compiled-build comment; no callers require another orchestration layer. Existing direct layout already shows authority, observations and lifetime boundaries.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        "Read wisdom/values.md, structural-readability-guidance.md, repo-wide/area ledgers and the preserved resume-reconciliation focus evidence; focus has no earlier primary/judge/candidate and baseline blob matches current source.",
+        "Read entire focus and traced OpenAIRealtimeSession.connect, fail, sendAudio, close and defaultSocket boundary; searched package.json, scripts, tests and .github for focus invocation.",
+        "Git index and HEAD focus blobs both c900eaef25ae1b5501a4da8ee24b29854241b78d; working-file git hash-object matches HEAD. Initial git status was clean.",
+        "No setup, tests, builds, runtime/device/provider probes or delegation performed.",
+        "git diff --check completed with no output; final git status contains only the requested untracked result JSON."
+      ],
+      "primaryLimits": [
+        "Static reading only; parent owns audited isolated batch runtime gates and an independent fresh judgment at the exact candidate blob.",
+        "The existing 10 ms audio-observation wait is timing-sensitive; no execution or new reliability claim is made.",
+        "The smoke covers loopback compiled transport, not external provider authorization, physical audio, or real user interaction.",
+        "No source changes or new source commit; sourceCommit is the unchanged current HEAD. Result JSON is intentionally untracked. Values/wisdom unchanged: no new lesson or per-worker notes."
+      ]
     },
     {
       "file": "scripts/live-probe-input.ts",
       "initialBlob": "30da7b239c9a9bf9ef9fdfa05be474de72253f57",
       "status": "pending",
-      "primaryId": null,
-      "sourceCommit": null,
+      "primaryId": "task_84975626",
+      "sourceCommit": "c1ed27e01a7c06643e017d7c1cf90ff183a80b28",
       "judgeIds": [],
-      "resumeState": "own_primary_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "c1ed27e01a7c06643e017d7c1cf90ff183a80b28",
+      "primaryBase": "6d9ea74620176d80b99b58ddf384b87d1766e6ce",
+      "primaryResult": "readStudy now directly owns JSON parsing, timestamp validation, cutoff selection, entry admission and the empty-prefix check. A private readStudyLines generator owns chunked UTF-8/JSONL framing, line and byte bounds, and descriptor closure. The reader breaks at the cutoff without a shared stop flag; iterator closure runs the framing owner's finally on that break or on a consumer error. probeArgs and studyTarget are unchanged, as are both callers' plan validation before source reads and credential/provider work. Strict decoding still covers the entire fetched chunk, while later chunks/lines are not consumed after the cutoff.",
+      "primaryPaths": [
+        "scripts/live-probe-input.ts"
+      ],
+      "primaryChecks": [
+        {
+          "kind": "read-only provenance",
+          "result": "Focus exists at original/recorded blob 30da7b239c9a9bf9ef9fdfa05be474de72253f57; preserved reconciliation has no prior primary, candidate source, review or rework. No candidate import or old branch merge was needed."
+        },
+        {
+          "kind": "manual structural reading",
+          "result": "Traced both callers through explicit mode/disclosure gating, trial validation, source selection, target validation and subsequent credential/provider work; only the shared reader internals changed."
+        },
+        {
+          "kind": "manual safety comparison",
+          "result": "Preserved 4096-byte reads, fatal streaming UTF-8 decoding, 8 MiB fetched-prefix bound, 256 KiB line/carry bound, 2048-entry limit, timestamp/cutoff checks, blank-line skipping, final unterminated line handling, empty-prefix rejection and finally-owned closeSync. Test assertions and security gates were not edited."
+        },
+        {
+          "kind": "git diff --check",
+          "result": "Passed before commit; source-only commit contains exactly the focus path."
+        },
+        {
+          "kind": "commit hook inventory",
+          "result": "No non-sample hooks in resolved Git hooks directory; no hook-run setup/tests/builds occurred."
+        }
+      ],
+      "primaryLimits": [
+        "No setup, repository tests, builds, device/credential access, delegation, recovery, cleanup, push, PR or merge performed. Parent owns audited isolated batch runtime validation and a different independent exact-candidate judge.",
+        "This is a primary structural change, not an independent acceptance or runtime equivalence result. EOF/UTF-8/cutoff/descriptor behavior was reviewed statically only.",
+        "Inherited automatic setup host-hash failures were not rerun or bypassed; old worktrees and uncommitted candidates were left untouched.",
+        "Wisdom/values and ledgers remain unchanged; parent writes aggregate wisdom. Related paths were read only."
+      ]
     },
     {
       "file": "scripts/live-startup-fixture.ts",
       "initialBlob": "57daaf09ced917e5130a196b1410cf0b6aa257cc",
       "status": "pending",
-      "primaryId": null,
-      "sourceCommit": null,
+      "primaryId": "task_c43537b9",
+      "sourceCommit": "6d9ea74620176d80b99b58ddf384b87d1766e6ce",
       "judgeIds": [],
-      "resumeState": "own_primary_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "6d9ea74620176d80b99b58ddf384b87d1766e6ce",
+      "primaryBase": "6d9ea74620176d80b99b58ddf384b87d1766e6ce",
+      "primaryResult": "Traced the probe caller from its explicit paid opt-in and credential selection to generateNaturalFixture, naturalFixturePcm, and aggregate-only logging. generateNaturalFixture owns response chunks, transcript replacement/append, byte accounting, completion/error callbacks, the 34-second deadline, connect/readiness, text-triggered response, validation, and timer/session teardown in one contiguous operation. Audio overflow and deadline close and release completion locally; provider errors release completion after VoiceSession has closed; success is validated before the finally closes. VoiceSession owns connection cancellation and late-event filtering. naturalFixturePcm visibly bounds PCM24 input, performs mono PCM16LE conversion through a piped four-second command, appends the fixed silence tail, and checks nonzero speech, output size, and duration. startupWordCounts clearly separates word presence from ordered retention, recognizes numeric 7 diagnostically without accepting it as seven, and returns only fixed booleans/counts. Splitting these short operations further would scatter their existing authorities rather than make a difficult journey easier. No code or assertions changed.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        {
+          "kind": "read-only-source-review",
+          "status": "completed",
+          "paths": [
+            "scripts/live-startup-fixture.ts",
+            "scripts/probe-live-startup-audio.ts",
+            "src/live/session.ts",
+            "tests/live-startup-natural-fixture.test.ts"
+          ],
+          "detail": "Read callers, session connection/error/close ownership, and preserved wording/privacy/conversion/generation assertions; did not execute imports or tests."
+        },
+        {
+          "kind": "read-only-evidence-review",
+          "status": "completed",
+          "detail": "Read wisdom/values.md, structural-readability guidance, repository assignment/coverage/job/integration ledgers, area ledger, and the supplied resume reconciliation. Focus is present at baseline blob 57daaf09ced917e5130a196b1410cf0b6aa257cc; own primary/acceptance and proposed source are absent. No git-show restoration was needed."
+        },
+        {
+          "kind": "exact-source-provenance",
+          "status": "completed",
+          "detail": "Git HEAD 6d9ea74620176d80b99b58ddf384b87d1766e6ce; committed and working focus both 57daaf09ced917e5130a196b1410cf0b6aa257cc; no tracked working or staged changes; git diff --check returned zero."
+        }
+      ],
+      "primaryLimits": [
+        "No repository tests, setup, builds, provider calls, credential/device access, or delegation performed. Parent owns audited isolated batch gates and fresh independent judgment.",
+        "This is a primary no-change-needed reading result, not a judge verdict or whole-area/repository acceptance.",
+        "Preserved reconciliation reports historical automatic-setup unsupported Pi host session-manager.js hash failure; it was not rerun, bypassed, or treated as passing.",
+        "No source changes means no new commit. Existing worktrees, candidate bytes, ledgers and wisdom are unchanged; parent owns aggregate wisdom."
+      ]
     },
     {
       "file": "scripts/live-study-trial.ts",
       "initialBlob": "63d6fd9dd0bdeead65c912d63ac4b50e7a60bb0c",
       "status": "pending",
-      "primaryId": null,
-      "sourceCommit": null,
+      "primaryId": "task_a848477f",
+      "sourceCommit": "6d9ea74620176d80b99b58ddf384b87d1766e6ce",
       "judgeIds": [],
-      "resumeState": "own_primary_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "6d9ea74620176d80b99b58ddf384b87d1766e6ce",
+      "primaryBase": "6d9ea74620176d80b99b58ddf384b87d1766e6ce",
+      "primaryResult": {
+        "startup": "All three paid probe callers own opt-in, trial selection, prompt/tool construction and credential loading. They pass ordered conversation items and synthetic mockOutput callbacks to this transport. studyTrial opens one socket, sends session.update on open, then submits those items and requests a response on session.updated. No generated code is evaluated here.",
+        "toolContinuation": "The message callback ignores non-JSON frames, collects audio/text transcript deltas, decodes completed function arguments (including the caller-selected string coercion and malformed-argument fallback), records the call, marks continuation pending and immediately returns its synthetic output with the original call_id. response.done alone counts responses and decides whether to clear pending and request another response or end; the three-response bound is visible at that decision.",
+        "termination": "Deadline, provider error, socket error and socket close converge on the same idempotent end closure. That closure clears the deadline, initiates socket close and resolves the trial; after resolution the function joins and clips speech once. Provider errors retain selected metadata and socket errors redact sk-prefixed strings. It does not claim to await the close handshake.",
+        "contract": "The existing local-WebSocket test preserves startup/item order, mock call IDs/outputs, malformed-argument fallback, speech clipping, continuation bound and provider-error/close/deadline termination assertions. It was read, not executed. No source or assertion changes were needed.",
+        "lineage": "The preserved reconciliation row identifies this baseline focus as own_primary_pending, with no prior primary, judge, source candidate or related candidate. Current tracked and working bytes both match its joined/initial blob. The focus exists, so no historical bytes were imported."
+      },
+      "primaryPaths": [],
+      "primaryChecks": [
+        {
+          "kind": "reading",
+          "result": "Read wisdom/values.md, structural-readability-guidance.md, repo-wide assignment/coverage/coordination ledgers, area ledger/narrative, preserved resume reconciliation focus row, focus implementation, all three direct callers, and local transport assertions."
+        },
+        {
+          "kind": "provenance",
+          "result": "git rev-parse HEAD:scripts/live-study-trial.ts and git hash-object scripts/live-study-trial.ts both returned 63d6fd9dd0bdeead65c912d63ac4b50e7a60bb0c; git diff for the focus and initial git status were empty."
+        }
+      ],
+      "primaryLimits": [
+        "This is a primary reading result, not an independent judge verdict or area/whole-repository acceptance. Parent must launch a distinct fresh judge for the exact blob.",
+        "No repository tests, builds, setup, paid/provider probes, device access, credential reads, delegation, recovery, cleanup, push, PR or merge were performed. Parent owns audited isolated batch gates.",
+        "Historical automatic-setup host-hash failure evidence remains untouched; setup was not rerun or bypassed.",
+        "No source commit was created because no source changed. sourceCommit identifies the reviewed current HEAD. Only .pr45-primary-result.json is newly written and intentionally untracked.",
+        "No worker-local wisdom or values edits: there is no new general lesson; parent owns aggregate wisdom. Old worktrees and candidates were preserved."
+      ]
     },
     {
       "file": "scripts/loopback-parent-fixture.ts",
@@ -12740,10 +12882,12 @@
       "area": "live-native-audio",
       "primaryId": "task_98d54ee6",
       "sourceCommit": "4d5a00544d80550f83b16a8650be97c78257602d",
-      "judgeIds": [],
-      "resumeState": "needs-judge",
+      "judgeIds": [
+        "task_bc56849a"
+      ],
+      "resumeState": "accepted-joined",
       "pendingReason": "New related candidate has no own primary or completed independent focus judgment; withhold integration approval.",
-      "status": "pending",
+      "status": "accepted",
       "acceptedRelatedJudges": [
         "task_1d24c7e5"
       ],
@@ -12775,6 +12919,31 @@
         "The test is explicitly skipped under Bun; the normal Bun root test entry point does not prove this Node-only cancellation lifetime. Node 24 execution remains a parent gate.",
         "Existing fixed settling/poll intervals were preserved, not executed or newly validated. No physical/provider/macOS parity claim.",
         "No source commit created because there are no source changes. Report is intentionally untracked; no wisdom edits, delegation, push, PR, merge, setup, recovery, credential use, destructive operations, or user-data mutations. Automatic setup failures were not rerun or bypassed."
+      ],
+      "result": "Independent actual-code reading finds this small fixture already structurally clear. It keeps the peer set, request counter, response-write checkpoint, client and observed errors in one test-owned lifetime. The raw 403 with outstanding Content-Length explains why inspection cannot normally finish from this body. The sequence is visible without chasing helpers: await the write, check CONNECTING/live peer/no diagnostic, close the adapter, observe peer release, then observe beyond the one-second diagnostic deadline and assert no error and one request. The finally block separately closes the client, destroys only remaining fixture peers and awaits server shutdown. Node invocation and the Bun skip explain the runtime distinction rather than hiding it. No abstraction, shared context bag or rename would improve this journey. This is an unchanged-code decision, not claimed new structural progress: candidate equals primary base; its parent also contains the exact same focus blob.",
+      "systemReason": "Traced the maintained path in the exact candidate: OpenAIRealtimeSession.defaultSocket forwards to upgradeSocket; the session owns connection settlement and serial invalidation, and its close calls the adapter after invalidating the session. ws unexpected-response transfers rejected-response ownership to readRejectionCode. That operation bounds retained bytes, owns its one-second timer and response destruction, and returns cancellation; adapter close invokes cancellation before terminating a CONNECTING socket. The permanent rejected gate suppresses ws transport error/close after rejection, distinct from reader completion. The fixture exercises adapter cancellation directly so session serial filtering cannot mask a late adapter diagnostic. Retained peers make release observable; the final request count detects a second exchange. Neighboring openai-session rejection tests cover completed/malformed/oversized bodies, status/redaction and stalled-response completion, not this Node close-during-inspection lifetime. The historical adapter change and new fixture in 31bf2843 were read as context, not borrowed as this focus verdict. No runtime, authentication or device success is claimed.",
+      "checks": [
+        {
+          "check": "Required values, structural guidance and repo-wide/area ledgers",
+          "result": "Read policy and relevant focus/provenance records; historical related acceptance is not treated as own-focus judgment."
+        },
+        {
+          "check": "Exact candidate/base/parent comparison",
+          "result": "Primary base is candidate. Parent is 3782f6ade0c93e7b7ff441dcef2d22849aeddab6. Candidate-parent changes are five wisdom JSON ledgers only; no changed source path. Focus blob is identical in candidate, parent and preserved 31bf2843d0aad882258288ca512035fe1d64528e."
+        },
+        {
+          "check": "Actual related-source inspection",
+          "result": "Read entire candidate adapter plus preserved adapter diff; candidate adapter blob e28565a97187ecdf928826917f20c252d4190adb equals preserved candidate. Read socket contract, session connect/error/close ownership, connectionFailure and adjacent rejection tests. Read installed ws unexpected-response/terminate/abortHandshake implementation as dependency context."
+        },
+        {
+          "check": "Runtime gates",
+          "result": "Not run: no setup, tests, builds, provider/device probes or delegation. Parent owns audited isolated batch gates."
+        }
+      ],
+      "limits": [
+        "Structural review only; Node 24 execution remains a parent gate. Bun skips this test, so a Bun pass does not establish this lifetime.",
+        "responseStarted marks the peer write callback, not an internal adapter inspection event. The preserved 40ms settling delay and subsequent assertions bracket the intended inspection window but are not a deterministic internal-event barrier; polling and the 1100ms observation were not newly executed or validated. No timing changes proposed without an observed failure.",
+        "acceptedBlobs records the unchanged own-focus file; related implementation paths were contextual reading, not new own-focus approvals. No source or wisdom edited; no credential/device access, recovery, cleanup, push, PR or merge."
       ]
     }
   ],
