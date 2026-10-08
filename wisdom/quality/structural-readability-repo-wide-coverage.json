@@ -11461,13 +11461,28 @@
       "initialBlob": "77fb8e3477a59a1aa467edd97000701b2227e919",
       "status": "pending",
       "area": "remote",
-      "resumeState": "pending-primary-unstarted",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_0ebb2fc5",
+      "primaryCommit": "dbc48ffafc37b685fde4158082034ec2ef223bbf",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "dbc48ffafc37b685fde4158082034ec2ef223bbf",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
-      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
+      "primaryBase": "dbc48ffafc37b685fde4158082034ec2ef223bbf",
+      "primaryResult": "No structural change warranted. The fixture already groups the two settings beneath the normal profile: fixture/fixture-model and thinking off. scripts/remote-e2e.sh copies this file into its build context; Dockerfile installs it at /root/.bruv/subagents.json alongside the separate models.json provider registry. ProfileSchema validates provider/model and thinking; loadProfiles reads the destination file. owner hello reports the normal profile, launch selects placement.profile or normal and resolves explicit overrides against the configured values, persists that resolved profile, then start passes provider/model/thinking to the child and verifies the actual selected configuration before sending the prompt. Fixture normal launches omit model overrides, and models.json supplies the matching loopback fake provider. Expanding the one-line JSON, adding defaults for unused profiles, or extracting helpers would not reduce any reconstruction burden and would change unrelated ownership or merely reformat data. Assigned reconciliation row records no prior primary/candidate/rejection and confirms the same baseline blob; no candidate restoration is needed.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        "Whole focus read; assigned reconciliation row inspected (pending-primary-unstarted, no candidate or rejection).",
+        "Relevant installer, destination parser/hello/launch/start verification, and fixture normal launch call sites read.",
+        "Static JSON.parse only: normal fixture model/thinking and matching provider registry confirmed.",
+        "git rev-parse confirmed current HEAD and exact focus blob matches preserved baseline; no source changes."
+      ],
+      "primaryLimits": [
+        "No setup, tests, builds, Docker, SSH, live auth, device access, or credentials used. Parent owns audited isolated gates and independent judgment.",
+        "Runner shell traps and removal commands inspected as source only; never executed. No temporary fixture directories created.",
+        "No changed source paths: formatter and source commit intentionally not needed. Existing source HEAD is recorded, result artifact remains untracked.",
+        "No delegation, wisdom edits, push, PR, merge, dependency changes, cleanup, or user-data mutation. Parent verifies runtime agent.model."
+      ]
     },
     {
       "file": "tests/fixtures/remote-owner-error.ts.txt",

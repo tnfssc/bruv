@@ -316,7 +316,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_0ebb2fc5",
         "branch": "bruv/pr45-primary-1-remote-focuses-0ebb2fc5",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "dbc48ffafc37b685fde4158082034ec2ef223bbf"
       },
       {
         "id": "task_9a31ccf2",
@@ -328,6 +329,15 @@
         ],
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_9a31ccf2",
         "branch": "bruv/pr45-judge-3-remote-focuses-9a31ccf2",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_e6d5f424",
+        "stage": "primary",
+        "focus": ["tests/fixtures/remote-owner-error.ts.txt"],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_e6d5f424",
+        "branch": "bruv/pr45-primary-1-remote-focuses-e6d5f424",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
       }
@@ -2106,6 +2116,15 @@
         "focus": ["tests/turn-boundaries.test.ts", "tests/turn-boundaries.ts", "tests/wisdom-extension.test.ts"],
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_4fd8c261",
         "branch": "bruv/pr45-primary-3-agent-history-session-goa-4fd8c261",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_c0fe8a88",
+        "stage": "judge",
+        "focus": ["tests/session-identity.test.ts", "tests/sol-model-catalog.test.ts", "tests/system-prompt.test.ts"],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_c0fe8a88",
+        "branch": "bruv/pr45-judge-3-agent-history-session-goals-c0fe8a88",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
       }
