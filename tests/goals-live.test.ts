@@ -14,6 +14,32 @@ import {
 import tasks from "../src/agent/extension";
 import { assertLiveRuntimeReady, installLiveDispatchBudget, type LiveDispatchEvidence } from "./live-dispatch-budget";
 
+type LiveSession = Awaited<ReturnType<typeof createAgentSession>>["session"];
+
+// Own the timer, abort and drain as one lifetime. Evidence is collected and the
+// dispatch guard is restored only after this workflow can no longer dispatch.
+async function runWithinGoalWallLimit(session: LiveSession, run: () => Promise<void>): Promise<void> {
+  let wallAbort: Promise<void> | undefined;
+  let workflow: Promise<void> | undefined;
+  let rejectWall!: (reason: Error) => void;
+  const wallFailure = new Promise<never>((_resolve, reject) => {
+    rejectWall = reject;
+  });
+  const timer = setTimeout(() => {
+    wallAbort = session.abort();
+    rejectWall(new Error("Goal live smoke exceeded its 120-second wall limit"));
+  }, 120_000);
+
+  try {
+    workflow = run();
+    await Promise.race([workflow, wallFailure]);
+  } finally {
+    clearTimeout(timer);
+    await (wallAbort ?? session.abort());
+    if (workflow) await Promise.allSettled([workflow]);
+  }
+}
+
 // This is a paid, single-scenario smoke test, not a claim about general goal quality.
 // No mocked stream is used: /goal is dispatched by the SDK and the configured model
 // must use bruv's real execute/goal helpers to create and complete the criterion.
@@ -34,12 +60,9 @@ test.skipIf(process.env.BRUV_RUN_LLM_TESTS !== "1")(
     };
     const requestEvidence: LiveDispatchEvidence[] = [];
     const usageEvidence: Array<Record<string, unknown>> = [];
-    let session: Awaited<ReturnType<typeof createAgentSession>>["session"] | undefined;
+    let session: LiveSession | undefined;
     let manager: SessionManager | undefined;
     let budget: ReturnType<typeof installLiveDispatchBudget> | undefined;
-    let wallTimer: ReturnType<typeof setTimeout> | undefined;
-    let wallAbort: Promise<void> | undefined;
-    let workflow: Promise<void> | undefined;
 
     try {
       const modelId = process.env.BRUV_GOAL_MODEL ?? process.env.BRUV_COMPACTION_MODEL ?? "gpt-5.6-luna";
@@ -78,7 +101,7 @@ test.skipIf(process.env.BRUV_RUN_LLM_TESTS !== "1")(
         ],
       });
       await loader.reload();
-      ({ session } = await createAgentSession({
+      const created = await createAgentSession({
         cwd: dir,
         agentDir,
         resourceLoader: loader,
@@ -91,34 +114,26 @@ test.skipIf(process.env.BRUV_RUN_LLM_TESTS !== "1")(
         }),
         thinkingLevel: "medium",
         tools: ["execute"],
-      }));
-      session.subscribe((event) => {
-        if (event.type !== "message_end" || event.message.role !== "assistant") return;
-        if (usageEvidence.length >= 6) return;
-        usageEvidence.push({
-          stopReason: event.message.stopReason,
-          errorMessage:
-            event.message.errorMessage === undefined ? undefined : String(event.message.errorMessage).slice(0, 2_000),
-          usage: event.message.usage,
-          toolNames: event.message.content
-            .filter((part) => part.type === "toolCall")
-            .map((part) => part.name)
-            .slice(0, 8),
+      });
+      session = created.session;
+      await runWithinGoalWallLimit(created.session, async () => {
+        created.session.subscribe((event) => {
+          if (event.type !== "message_end" || event.message.role !== "assistant") return;
+          if (usageEvidence.length >= 6) return;
+          usageEvidence.push({
+            stopReason: event.message.stopReason,
+            errorMessage:
+              event.message.errorMessage === undefined ? undefined : String(event.message.errorMessage).slice(0, 2_000),
+            usage: event.message.usage,
+            toolNames: event.message.content
+              .filter((part) => part.type === "toolCall")
+              .map((part) => part.name)
+              .slice(0, 8),
+          });
         });
-      });
 
-      let rejectWall!: (reason: Error) => void;
-      const wallFailure = new Promise<never>((_resolve, reject) => {
-        rejectWall = reject;
-      });
-      wallTimer = setTimeout(() => {
-        wallAbort = session?.abort() ?? Promise.resolve();
-        rejectWall(new Error("Goal live smoke exceeded its 120-second wall limit"));
-      }, 120_000);
-
-      workflow = (async () => {
         evidence.phase = "goal-command";
-        await session!.prompt(
+        await created.session.prompt(
           "/goal set Create and verify the harmless temporary criterion artifact at " +
             criterionFile +
             " --criteria Write that file with the exact UTF-8 text " +
@@ -128,7 +143,7 @@ test.skipIf(process.env.BRUV_RUN_LLM_TESTS !== "1")(
         );
         for (let attempt = 0; attempt < 12_000 && usageEvidence.length === 0; attempt++) await Bun.sleep(10);
         if (usageEvidence.length === 0) throw new Error("Provider response was not observed before the wall limit");
-        await session!.waitForIdle();
+        await created.session.waitForIdle();
 
         const lastAssistant = usageEvidence.at(-1);
         if (!lastAssistant || lastAssistant.stopReason === "error") {
@@ -174,17 +189,12 @@ test.skipIf(process.env.BRUV_RUN_LLM_TESTS !== "1")(
           sha256: createHash("sha256").update(artifact).digest("hex"),
         };
         evidence.sessionEntries = manager!.getEntries().length;
-      })();
-      await Promise.race([workflow, wallFailure]);
+      });
     } catch (error) {
       evidence.phase = "failed";
       evidence.error = String(error).slice(0, 2_000);
       throw error;
     } finally {
-      if (wallTimer) clearTimeout(wallTimer);
-      if (wallAbort) await wallAbort;
-      else if (session) await session.abort();
-      if (workflow) await Promise.allSettled([workflow]);
       budget?.restore();
       evidence.runtimeInvocations = budget?.invocations ?? 0;
       evidence.providerDispatches = budget?.dispatches ?? 0;

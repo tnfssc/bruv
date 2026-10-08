@@ -2645,16 +2645,17 @@
       "initialBlob": "2a82fccb8c45476d6e8a871afb598c3f11540e83",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "a536e928538a01689141f80b972fea9f8ea0c00a",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "a536e928538a01689141f80b972fea9f8ea0c00a",
         "primaryId": "task_e1c14025",
         "primaryCommit": "3a45bdda6b7ee814cd9013c8e8c8be2b506692bc",
-        "judgeIds": [],
+        "judgeIds": ["task_196e7aee"],
         "sourceCommit": "3a45bdda6b7ee814cd9013c8e8c8be2b506692bc",
-        "state": "needs-judge",
-        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+        "state": "accepted-joined",
+        "reason": "Read the complete 217-line candidate and its base diff. appendToolFixture now owns the zero-usage framing and ordered assistant toolCall -> padded toolResult -> retention-padding user -> assistant acknowledgement. Its explicit manager and selected-model arguments remove the old dependence on a mutable manager closure and model non-null assertions. The scenario still visibly owns the important journey: initial user seed and sequoia fixture, durable manager reopen, first compaction, dispose/reopen, ordinary recall, harbor fixture appended to the newly current manager, agent context rebuild, then second compaction. This is a coherent fixture-authority extraction, not renaming or a context bag. Tool IDs, fixture bytes, timestamps at append, role order and all assertions are preserved."
       }
     },
     {
@@ -2662,7 +2663,7 @@
       "initialBlob": "cfbe46536c1c27623370d592c394ade2b5fad468",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "8602a3f58450df60fd489a9d7ce290a78daa968d",
       "integration": "related accepted patch integrated;own primary pending",
       "relatedPatchJudgment": {
         "judgeId": "task_51a3b4e4",
@@ -2670,13 +2671,14 @@
         "blob": "8602a3f58450df60fd489a9d7ce290a78daa968d"
       },
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "8602a3f58450df60fd489a9d7ce290a78daa968d",
         "primaryId": "task_e1c14025",
         "primaryCommit": "3a45bdda6b7ee814cd9013c8e8c8be2b506692bc",
-        "judgeIds": ["task_51a3b4e4"],
+        "judgeIds": ["task_51a3b4e4", "task_196e7aee"],
         "sourceCommit": "3a45bdda6b7ee814cd9013c8e8c8be2b506692bc",
-        "state": "needs-judge",
-        "reason": "Retain exact related-path actual-code acceptance; it is not completion of this file’s distinct primary/fresh focus-judge requirement."
+        "state": "accepted-joined",
+        "reason": "Read all 218 lines, independently of the historical acceptance evidence, and verified the candidate/base diff is empty for this focus. The fixture controls packet age and guarded text undo without concealing the actual event sequence. Press-only and modifier-changed release tests expose negotiation semantics; legacy rapid/slow taps and new long-gap warmup distinguish intentional draft Spaces from the latest hold. Failed rollback explicitly asserts false input yield, true blocked-repeat handling, unchanged replacement text and admission only after a new press. Changed-draft and no-undo tests retain separate safety claims. Cancelled legacy packets, exported inactivity bound, raw focus loss/gain, orphan repeats and bracketed paste remain readable direct input journeys. A gesture DSL or regrouping would hide the authority these sequences already show; no structural repair is warranted."
       }
     },
     {
@@ -2822,16 +2824,17 @@
       "initialBlob": "0397caa9ef5367b746a6c6020ad6c8ece81dcc18",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "38944cd7f330c44eb08baf08d43bb8ca064a8978",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "38944cd7f330c44eb08baf08d43bb8ca064a8978",
         "primaryId": "task_e1c14025",
         "primaryCommit": "3a45bdda6b7ee814cd9013c8e8c8be2b506692bc",
-        "judgeIds": [],
+        "judgeIds": ["task_196e7aee"],
         "sourceCommit": "3a45bdda6b7ee814cd9013c8e8c8be2b506692bc",
-        "state": "needs-judge",
-        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+        "state": "accepted-joined",
+        "reason": "Read the complete 223-line candidate and the full primaryBase diff. Previously timer/rejection/workflow startup and the finally abort/drain were split across scenario and outer resource cleanup. runWithinGoalWallLimit now owns the complete timer -> run -> race -> timer release -> abort -> workflow drain lifetime. The awaited call makes the boundary before budget restoration and evidence publication explicit. created.session is fully initialized and explicit inside the scenario, while optional outer handles remain for partial setup finalization. Usage subscription and all verification remain visible in the bounded callback rather than behind a runner/context bag. This is a real lifetime extraction with a local single-purpose helper."
       }
     },
     {
@@ -3204,10 +3207,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
+        "primaryId": "task_ae2196d9",
+        "primaryCommit": "c267d92f7761578deebe7ed4839f86237a1ae5a3",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "own_primary_pending",
+        "sourceCommit": "c267d92f7761578deebe7ed4839f86237a1ae5a3",
+        "state": "needs-judge",
         "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
       }
     },
@@ -3266,10 +3270,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
+        "primaryId": "task_ae2196d9",
+        "primaryCommit": "c267d92f7761578deebe7ed4839f86237a1ae5a3",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "own_primary_pending",
+        "sourceCommit": "c267d92f7761578deebe7ed4839f86237a1ae5a3",
+        "state": "needs-judge",
         "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
       }
     },
@@ -3282,10 +3287,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
+        "primaryId": "task_ae2196d9",
+        "primaryCommit": "c267d92f7761578deebe7ed4839f86237a1ae5a3",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "own_primary_pending",
+        "sourceCommit": "c267d92f7761578deebe7ed4839f86237a1ae5a3",
+        "state": "needs-judge",
         "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
       }
     },
@@ -4823,7 +4829,7 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 105,
-    "pending": 46
+    "accepted": 108,
+    "pending": 43
   }
 }

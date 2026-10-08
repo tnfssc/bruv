@@ -10777,11 +10777,11 @@
     {
       "file": "tests/current-pipeline-live.test.ts",
       "initialBlob": "2a82fccb8c45476d6e8a871afb598c3f11540e83",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_e1c14025",
       "sourceCommit": "3a45bdda6b7ee814cd9013c8e8c8be2b506692bc",
-      "judgeIds": [],
-      "resumeState": "needs-judge",
+      "judgeIds": ["task_196e7aee"],
+      "resumeState": "accepted-joined",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
       "area": "live-native-audio",
       "primaryCommit": "3a45bdda6b7ee814cd9013c8e8c8be2b506692bc",
@@ -10799,6 +10799,21 @@
         "Parent owns fresh independent judgment, isolated audited gates, runtime agent.model verification and publication; this is a primary decision, not a judge acceptance.",
         "Paid provider behavior, SDK integration, timer behavior and real-editor/device parity remain unverified at runtime. Existing cleanup touches mkdtemp-owned test directories; inspected but never executed. Existing live tests can read/refresh auth and dispatch providers and the goal test registers real execute; do not run without parent audit and explicit isolated argv/env.",
         "Existing accepted unrelated work and candidate worktrees/evidence preserved. No wisdom changes: parent owns aggregate wisdom. Formatter fixture directories retained, not deleted."
+      ],
+      "acceptedBlob": "a536e928538a01689141f80b972fea9f8ea0c00a",
+      "result": "Read the complete 217-line candidate and its base diff. appendToolFixture now owns the zero-usage framing and ordered assistant toolCall -> padded toolResult -> retention-padding user -> assistant acknowledgement. Its explicit manager and selected-model arguments remove the old dependence on a mutable manager closure and model non-null assertions. The scenario still visibly owns the important journey: initial user seed and sequoia fixture, durable manager reopen, first compaction, dispose/reopen, ordinary recall, harbor fixture appended to the newly current manager, agent context rebuild, then second compaction. This is a coherent fixture-authority extraction, not renaming or a context bag. Tool IDs, fixture bytes, timestamps at append, role order and all assertions are preserved.",
+      "systemReason": "Followed phase1-compaction-fixture into registerCacheAffineCompaction and instruction-continuity, plus the SDK manual-compaction hook. Current preparation reads event.branchEntries and runs normal transformContext/convertToLlm, so the observer redacts private tool text for both fresh and uncaptured results rather than trusting an old wire capture. The selected phase-1 strategy is explicit even though production Codex uses phase 2. First strategy/value, durable recall, second strategy/value, retained-tail exclusion, exactly three payloads, all-payload redaction and final-payload harbor assertions still distinguish the intended failures. The open helper continues to attach observers per session; evidence write precedes disposal and owned-dir removal exactly as before. Also read the entire changed goals-live source and its diff: its bounded owner changes no criterion/budget assertions or production code.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read full candidate versions of all three assigned intrinsic focus files and both candidate-changed source paths.",
+        "Compared exact candidate 3a45bdda6b7ee814cd9013c8e8c8be2b506692bc against primaryBase 0c7548ef6fb41a650d14241382af7acf70cb0331; changed source paths are exactly tests/current-pipeline-live.test.ts and tests/goals-live.test.ts.",
+        "git diff --check primaryBase candidate: exit 0 (static whitespace check only).",
+        "Review performed in existing durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_196e7aee. Exact tracked sources read with git show 3a45bdda6b7ee814cd9013c8e8c8be2b506692bc; comparisons used git diff 0c7548ef6fb41a650d14241382af7acf70cb0331 3a45bdda6b7ee814cd9013c8e8c8be2b506692bc, not checkout HEAD. No delegation, source edit, setup, test, build, install, credential access, device access, cleanup, publication or destructive Git operation was performed.",
+        "Verified candidate Git blobs with git rev-parse candidate:path for both changed files."
+      ],
+      "limits": [
+        "Runtime correctness, live auth, paid provider requests, real terminal routing and audio devices remain unverified. Parent owns audited isolated gates and verification of runtime agent.model openai-codex/gpt-6.1-sol. Installed SDK 1.0.3 was inspected read-only for abort/idle/compaction semantics; package version matches candidate package.json, but no installation or runtime gate was run.",
+        "Effects inspected, not executed: mkdtemp creates the fixture/session directory; runtime points to BRUV_CODING_AGENT_DIR or inherited HOME auth.json and may use paid network requests; evidence writes under artifacts/compaction; finally removes only its mkdtemp directory. This is not an authorization to run with inherited credentials/HOME. Parent must audit and isolate fixture HOME/config/SDK and retain fixture directories."
       ]
     },
     {
@@ -10902,11 +10917,11 @@
     {
       "file": "tests/editor-push-to-talk.test.ts",
       "initialBlob": "cfbe46536c1c27623370d592c394ade2b5fad468",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_e1c14025",
       "sourceCommit": "3a45bdda6b7ee814cd9013c8e8c8be2b506692bc",
-      "judgeIds": ["task_51a3b4e4"],
-      "resumeState": "needs-judge",
+      "judgeIds": ["task_51a3b4e4", "task_196e7aee"],
+      "resumeState": "accepted-joined",
       "pendingReason": "Retain exact related-path actual-code acceptance; it is not completion of this file’s distinct primary/fresh focus-judge requirement.",
       "area": "live-native-audio",
       "primaryCommit": "3a45bdda6b7ee814cd9013c8e8c8be2b506692bc",
@@ -10924,6 +10939,21 @@
         "Parent owns fresh independent judgment, isolated audited gates, runtime agent.model verification and publication; this is a primary decision, not a judge acceptance.",
         "Paid provider behavior, SDK integration, timer behavior and real-editor/device parity remain unverified at runtime. Existing cleanup touches mkdtemp-owned test directories; inspected but never executed. Existing live tests can read/refresh auth and dispatch providers and the goal test registers real execute; do not run without parent audit and explicit isolated argv/env.",
         "Existing accepted unrelated work and candidate worktrees/evidence preserved. No wisdom changes: parent owns aggregate wisdom. Formatter fixture directories retained, not deleted."
+      ],
+      "acceptedBlob": "8602a3f58450df60fd489a9d7ce290a78daa968d",
+      "result": "Read all 218 lines, independently of the historical acceptance evidence, and verified the candidate/base diff is empty for this focus. The fixture controls packet age and guarded text undo without concealing the actual event sequence. Press-only and modifier-changed release tests expose negotiation semantics; legacy rapid/slow taps and new long-gap warmup distinguish intentional draft Spaces from the latest hold. Failed rollback explicitly asserts false input yield, true blocked-repeat handling, unchanged replacement text and admission only after a new press. Changed-draft and no-undo tests retain separate safety claims. Cancelled legacy packets, exported inactivity bound, raw focus loss/gain, orphan repeats and bracketed paste remain readable direct input journeys. A gesture DSL or regrouping would hide the authority these sequences already show; no structural repair is warranted.",
+      "systemReason": "Followed EditorPushToTalk input/observeInput/startTalking/cancel/dispose into CompactEditor attachment, raw observer ordering, release filtering and insertWarmupSpace, then Live extension syncTalkInput/setTalking. Warmup undo consumes newest-first and capture starts only after successful guards; failure yields the current packet and blocks held repeats. CompactEditor guards both post-insert text and cursor and delegates to Pi undo rather than overwriting drafts. Raw focus/paste observation occurs ahead of consuming listeners, and the Live host gate closes before its async helper command. These tests model discriminator ownership rather than claiming hardware coverage. Independently inspected both changed related tests: pipeline fixture framing retains all payload/retention assertions; goal timer/abort/drain boundary preserves verification and dispatch-budget finalization. No related candidate edit weakens this unchanged focus.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read full candidate versions of all three assigned intrinsic focus files and both candidate-changed source paths.",
+        "Compared exact candidate 3a45bdda6b7ee814cd9013c8e8c8be2b506692bc against primaryBase 0c7548ef6fb41a650d14241382af7acf70cb0331; changed source paths are exactly tests/current-pipeline-live.test.ts and tests/goals-live.test.ts.",
+        "git diff --check primaryBase candidate: exit 0 (static whitespace check only).",
+        "Review performed in existing durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_196e7aee. Exact tracked sources read with git show 3a45bdda6b7ee814cd9013c8e8c8be2b506692bc; comparisons used git diff 0c7548ef6fb41a650d14241382af7acf70cb0331 3a45bdda6b7ee814cd9013c8e8c8be2b506692bc, not checkout HEAD. No delegation, source edit, setup, test, build, install, credential access, device access, cleanup, publication or destructive Git operation was performed.",
+        "git diff --exit-code primaryBase candidate -- tests/editor-push-to-talk.test.ts produced no diff; exact unchanged focus blob recorded alongside both changed blobs."
+      ],
+      "limits": [
+        "Runtime correctness, live auth, paid provider requests, real terminal routing and audio devices remain unverified. Parent owns audited isolated gates and verification of runtime agent.model openai-codex/gpt-6.1-sol. Installed SDK 1.0.3 was inspected read-only for abort/idle/compaction semantics; package version matches candidate package.json, but no installation or runtime gate was run.",
+        "Effects inspected, not executed: discriminator fixture mocks Date.now, uses real idle timers and afterEach restores the clock/disposes control; it does not open a microphone, filesystem fixture or network connection. Real editor undo integration and terminal/device experience remain parent-owned gates."
       ]
     },
     {
@@ -13033,11 +13063,11 @@
     {
       "file": "tests/goals-live.test.ts",
       "initialBlob": "0397caa9ef5367b746a6c6020ad6c8ece81dcc18",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_e1c14025",
       "sourceCommit": "3a45bdda6b7ee814cd9013c8e8c8be2b506692bc",
-      "judgeIds": [],
-      "resumeState": "needs-judge",
+      "judgeIds": ["task_196e7aee"],
+      "resumeState": "accepted-joined",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
       "area": "live-native-audio",
       "primaryCommit": "3a45bdda6b7ee814cd9013c8e8c8be2b506692bc",
@@ -13055,6 +13085,22 @@
         "Parent owns fresh independent judgment, isolated audited gates, runtime agent.model verification and publication; this is a primary decision, not a judge acceptance.",
         "Paid provider behavior, SDK integration, timer behavior and real-editor/device parity remain unverified at runtime. Existing cleanup touches mkdtemp-owned test directories; inspected but never executed. Existing live tests can read/refresh auth and dispatch providers and the goal test registers real execute; do not run without parent audit and explicit isolated argv/env.",
         "Existing accepted unrelated work and candidate worktrees/evidence preserved. No wisdom changes: parent owns aggregate wisdom. Formatter fixture directories retained, not deleted."
+      ],
+      "acceptedRelatedJudges": ["task_196e7aee"],
+      "acceptedBlob": "38944cd7f330c44eb08baf08d43bb8ca064a8978",
+      "result": "Read the complete 223-line candidate and the full primaryBase diff. Previously timer/rejection/workflow startup and the finally abort/drain were split across scenario and outer resource cleanup. runWithinGoalWallLimit now owns the complete timer -> run -> race -> timer release -> abort -> workflow drain lifetime. The awaited call makes the boundary before budget restoration and evidence publication explicit. created.session is fully initialized and explicit inside the scenario, while optional outer handles remain for partial setup finalization. Usage subscription and all verification remain visible in the bounded callback rather than behind a runner/context bag. This is a real lifetime extraction with a local single-purpose helper.",
+      "systemReason": "Followed the tasks extension registration into goal command persistence, reminder follow-up, agent_end/agent_settled abort behavior, goal.update completion validation and append-before-state GoalStore save. Read the execute integration signal propagation and SDK abort(), which requests cancellation and awaits session idle. Consequently the helper abort/drain boundary belongs before restoring installLiveDispatchBudget wrappers; wrappers still force maxRetries=0 and cap real provider dispatch at four. Model/auth preflight and temporary-directory prompt constraints remain unchanged. Exact criterion content/hash, latest completed goal, nonempty <=4000-char evidence, dispatch assertions and durable JSONL completion remain intact, with the same 120-second wall and 150-second Bun limits. Outer finalization still disposes the session and publishes bounded evidence. Independently inspected the related pipeline helper diff and full scenario; it only makes fixture manager/model authority explicit and preserves redaction/strategy/three-payload/retention checks.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read full candidate versions of all three assigned intrinsic focus files and both candidate-changed source paths.",
+        "Compared exact candidate 3a45bdda6b7ee814cd9013c8e8c8be2b506692bc against primaryBase 0c7548ef6fb41a650d14241382af7acf70cb0331; changed source paths are exactly tests/current-pipeline-live.test.ts and tests/goals-live.test.ts.",
+        "git diff --check primaryBase candidate: exit 0 (static whitespace check only).",
+        "Review performed in existing durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_196e7aee. Exact tracked sources read with git show 3a45bdda6b7ee814cd9013c8e8c8be2b506692bc; comparisons used git diff 0c7548ef6fb41a650d14241382af7acf70cb0331 3a45bdda6b7ee814cd9013c8e8c8be2b506692bc, not checkout HEAD. No delegation, source edit, setup, test, build, install, credential access, device access, cleanup, publication or destructive Git operation was performed.",
+        "Verified candidate Git blobs with git rev-parse candidate:path for both changed files; read dispatch guard and SDK abort/idle implementation without executing either."
+      ],
+      "limits": [
+        "Runtime correctness, live auth, paid provider requests, real terminal routing and audio devices remain unverified. Parent owns audited isolated gates and verification of runtime agent.model openai-codex/gpt-6.1-sol. Installed SDK 1.0.3 was inspected read-only for abort/idle/compaction semantics; package version matches candidate package.json, but no installation or runtime gate was run.",
+        "Effects inspected, not executed: goal test uses mkdtemp for criterion and sessions, resolves dist/bruv for real execute, writes artifacts/goals, and removes its provably owned mkdtemp directory. Auth preflight may refresh inherited auth and contact provider; loader receives configured/inherited agentDir. Parent must audit explicit argv/env with owned mkdtemp HOME/config/SDK, retain fixtures and not run inherited-HOME cleanup. The wall race requests abort then drains; it is not proof of a force-kill deadline or bounded teardown. Existing polling may continue until it settles after abort; no live timeout behavior was verified."
       ]
     },
     {
@@ -14562,12 +14608,28 @@
       "file": "tests/live-conversation.test.ts",
       "initialBlob": "c9d761bbefe7e6f698b946a1a03cd3af2d9590b1",
       "status": "pending",
-      "primaryId": null,
-      "sourceCommit": null,
+      "primaryId": "task_ae2196d9",
+      "sourceCommit": "c267d92f7761578deebe7ed4839f86237a1ae5a3",
       "judgeIds": [],
-      "resumeState": "own_primary_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "c267d92f7761578deebe7ed4839f86237a1ae5a3",
+      "primaryBase": "50d8449df870b14a6ca79007f49906ffff87fd40",
+      "primaryResult": "Leave the focus unchanged. Each scenario keeps its admission, delivery and replay assertions beside the stimulus. ownerFixture supplies the deliberately minimal classic session, while real-Pi setup stays explicit in the sole scenario whose purpose is validating that actual seam: loader registration, owned auth path, refreshOnCreate:false, stream denial, message subscription, owner admission, passive marker, and persisted-group rendering. The source-reference scenario deliberately retains original fragments plus empty group markers and checks triggerTurn:false and user-only projected context. The deferred scenario exposes the tool gate and proves call/result/voice ordering. Owner close -> released and real session dispose remain visible in each lifetime; extracting these into a fixture context bag would obscure rather than shorten those distinct journeys. Terminal-sanitization and hidden-audit assertions remain intact. The assigned reconciliation row is own_primary_pending with no primary, candidate origin, rejection round, rework, or accepted focus judgment; all focus files exist. No candidate bytes were imported.",
+      "primaryPaths": ["tests/live-credentials.test.ts"],
+      "primaryChecks": [
+        "Whole focus read; relevant authority/caller seams read.",
+        "Exact unchanged focus blob c9d761bbefe7e6f698b946a1a03cd3af2d9590b1 retained.",
+        "Source-only batch commit and clean whitespace diff inspected; no runtime gate run."
+      ],
+      "primaryLimits": [
+        "Primary reading decisions only; the parent owns fresh independent judgments and audited isolated gates.",
+        "No tests, setup, builds, live auth, provider calls, device access, delegation, deletion/cleanup commands, or shared dependency writes were performed. Runtime behavior remains unverified.",
+        "Existing test cleanup was inspected only: rm targets local mkdtemp-owned directories, not inherited HOME/config/SDK. No fixture cleanup was executed. Parent test invocations must supply explicit argv/env and owned fresh retained HOME/config/SDK.",
+        "changedPaths lists the complete source scope of this combined batch commit, including the credentials sibling for unchanged-focus decisions. No other source/helper paths changed.",
+        "Wisdom and values were read but not edited; the parent owns aggregate wisdom. Runtime agent.model verification is parent-owned."
+      ]
     },
     {
       "file": "tests/live-cost.test.ts",
@@ -14586,23 +14648,58 @@
       "file": "tests/live-credentials.test.ts",
       "initialBlob": "2813968a386603df54b51314c4238769805a8b86",
       "status": "pending",
-      "primaryId": null,
-      "sourceCommit": null,
+      "primaryId": "task_ae2196d9",
+      "sourceCommit": "c267d92f7761578deebe7ed4839f86237a1ae5a3",
       "judgeIds": [],
-      "resumeState": "own_primary_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "c267d92f7761578deebe7ed4839f86237a1ae5a3",
+      "primaryBase": "50d8449df870b14a6ca79007f49906ffff87fd40",
+      "primaryResult": "One test-local expectUnavailableKey operation now owns the file-rejection contract: capture only the loader outcome, require an Error, require the existing 0600 guidance, and reject fake-key disclosure. Permission, symlink, malformed, oversized, directory and missing-file cases call that same operation; all source fixtures and the private-file success assertion remain. Success becomes undefined and necessarily fails the Error assertion, including the formerly catch-only malformed-file case. Valid parsing is separate from the invalid/opaque parsing scenario; each invalid literal is evaluated once and its captured Error is required and inspected. The bounds scenario is grouped with the other Live credential scenarios. No production behavior, security guard, fixture filesystem operation, or unrelated source was changed. The assigned reconciliation row is own_primary_pending with no primary, candidate origin, rejection round, rework, or accepted focus judgment; all focus files exist. No candidate bytes were imported.",
+      "primaryPaths": ["tests/live-credentials.test.ts"],
+      "primaryChecks": [
+        "Whole original and final focus read; loader/parser/import call path read.",
+        "Required Biome format --write ran only on tests/live-credentials.test.ts via node:child_process argv and explicit fresh isolated env; exit 0.",
+        "Retained formatter fixture /tmp/pr45-live-credentials-format-QObXjN; formatter-provenance.json records executable, argv, environment, durable source worktree and stdout.",
+        "git diff --check exit 0.",
+        "Reviewed final source-only commit: tests/live-credentials.test.ts is the sole changed path; no test/setup/build run."
+      ],
+      "primaryLimits": [
+        "Primary reading decisions only; the parent owns fresh independent judgments and audited isolated gates.",
+        "No tests, setup, builds, live auth, provider calls, device access, delegation, deletion/cleanup commands, or shared dependency writes were performed. Runtime behavior remains unverified.",
+        "Existing test cleanup was inspected only: rm targets local mkdtemp-owned directories, not inherited HOME/config/SDK. No fixture cleanup was executed. Parent test invocations must supply explicit argv/env and owned fresh retained HOME/config/SDK.",
+        "changedPaths lists the complete source scope of this combined batch commit, including the credentials sibling for unchanged-focus decisions. No other source/helper paths changed.",
+        "Wisdom and values were read but not edited; the parent owns aggregate wisdom. Runtime agent.model verification is parent-owned."
+      ]
     },
     {
       "file": "tests/live-dispatch-budget.test.ts",
       "initialBlob": "d74bfcc059ab24149feda80784335bdd606ef1e6",
       "status": "pending",
-      "primaryId": null,
-      "sourceCommit": null,
+      "primaryId": "task_ae2196d9",
+      "sourceCommit": "c267d92f7761578deebe7ed4839f86237a1ae5a3",
       "judgeIds": [],
-      "resumeState": "own_primary_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "c267d92f7761578deebe7ed4839f86237a1ae5a3",
+      "primaryBase": "50d8449df870b14a6ca79007f49906ffff87fd40",
+      "primaryResult": "Leave the focus unchanged. The first test places the provider recorder and runtime setup rejection side by side, installs the real helper, then executes setup failure -> four SSE calls -> blocked extra call and asserts six runtime invocations versus four provider dispatches/evidence entries. Retry disabling and transport preservation are asserted on what actually reaches the fake provider. The two readiness tests separately expose forbidden auth lookup when unconfigured and the exact 300000ms refresh margin when configured. The production-like helper makes its two wrappers and restore ownership explicit, and smoke callers perform auth preflight before installing the paid dispatch guard and restore it during teardown. Splitting the already-local fake runtime/provider into another helper would hide the precise boundary this test is explaining; no structural edit is justified. The assigned reconciliation row is own_primary_pending with no primary, candidate origin, rejection round, rework, or accepted focus judgment; all focus files exist. No candidate bytes were imported.",
+      "primaryPaths": ["tests/live-credentials.test.ts"],
+      "primaryChecks": [
+        "Whole focus/helper read; relevant smoke setup and teardown and offline SDK callers inspected without execution.",
+        "Exact unchanged focus blob d74bfcc059ab24149feda80784335bdd606ef1e6 retained.",
+        "The unit focus uses only local fake providers/auth; goals-live is credential/network/evidence-writing work and was not run.",
+        "Source-only batch commit and clean whitespace diff inspected; no runtime gate run."
+      ],
+      "primaryLimits": [
+        "Primary reading decisions only; the parent owns fresh independent judgments and audited isolated gates.",
+        "No tests, setup, builds, live auth, provider calls, device access, delegation, deletion/cleanup commands, or shared dependency writes were performed. Runtime behavior remains unverified.",
+        "Existing test cleanup was inspected only: rm targets local mkdtemp-owned directories, not inherited HOME/config/SDK. No fixture cleanup was executed. Parent test invocations must supply explicit argv/env and owned fresh retained HOME/config/SDK.",
+        "changedPaths lists the complete source scope of this combined batch commit, including the credentials sibling for unchanged-focus decisions. No other source/helper paths changed.",
+        "Wisdom and values were read but not edited; the parent owns aggregate wisdom. Runtime agent.model verification is parent-owned."
+      ]
     },
     {
       "file": "tests/live-dispatch-budget.ts",
@@ -22835,9 +22932,9 @@
     "baselineFiles": 766,
     "finalGate": "pending; incomplete focus coverage",
     "liveAuth": "unverified/failing; preserved",
-    "accepted": 790,
+    "accepted": 793,
     "total": 836,
-    "pending": 46,
+    "pending": 43,
     "sourceExtras": 70,
     "checkout": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
     "branch": "bruv/readability-pr45-sol-continuation",
