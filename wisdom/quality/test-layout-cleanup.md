@@ -7,7 +7,10 @@ This cleanup follows [ARCHITECTURE.md](../../ARCHITECTURE.md) and the one-clear-
 - Keep genuinely shared process, environment, compiled-binary and TUI helpers in `helpers/`, and shared image/host fixtures in `fixtures/`. Feature-only probes, fixture scenarios and fixture helpers follow their feature.
 - Preserve basenames, assertions and behavior. Depth changes affect source imports, repo roots, generated child imports, Python parent indexes, Docker fixture contexts and fixture creation paths—not only test imports.
 
-`test-layout-moves.json` is the exact old-to-new file map. The parent owns consumers outside `tests/` (scripts, package commands, CI and docs); do not infer future script paths here. Historical wisdom is not a checkout manifest and remains untouched.
+The one-time move map is retired now that integration is complete. It remains
+in Git at baf2fcd5c9976ee19a8cbc0ae8839875d714cc38 as
+wisdom/quality/test-layout-moves.json. Git rename history also records the moves.
+Historical wisdom is not a current checkout manifest.
 
 The parent refined value 3 after the scope correction; this lane adds no separate value.
 
@@ -24,7 +27,7 @@ The parent refined value 3 after the scope correction; this lane adds no separat
 
 ## Parent integration
 
-The parent integrated the map and updated all outside consumers. The final map
+The parent integrated the map and updated all outside consumers. The final layout
 includes the owner corrections for measurement tools, task-owned agent helpers
 and connector checkpoint restoration. Shared owned-process cwd now comes from
 the helper's stable repo anchor, not the calling test's depth. Copied script

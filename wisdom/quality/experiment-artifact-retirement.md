@@ -9,3 +9,11 @@ Retired on the working branch; old bytes remain in Git at revision baf2fcd5c9976
 Total retired: **142 files, 11,655,727 bytes**. This is tracked-file size, not a packfile reduction guarantee.
 
 No tracked generator for the structural inventories or T3 proof receipts was found; the T3 reproduce instructions write proof into caller-supplied output directories. No .gitignore or generator change is warranted for this scoped retirement. If the parent wants future policy enforcement, add a deliberate output-only destination/pattern to the owning generator or ignore rule; do not blanket-ignore historical wisdom or active resume state.
+
+Parent review also retired the completed ui-only-history-minimal/final-head run
+bundle (54 generated receipts/captures, including its 1.3 MB asset inventory) and
+four old preview-v2 screenshots: 58 files, 6882533 bytes. No maintained
+source, tool, test or workflow reads the final-head bundle. Source revisions,
+PR material, harnesses and result/conclusion notes remain. These outputs are
+recoverable from the same revision above; neither upstream source work nor local
+ignored state was removed. The old output locations are now ignored.

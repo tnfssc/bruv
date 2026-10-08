@@ -97,7 +97,7 @@ claiming a green release gate. Logs: /tmp/bruv-layout-full-ci-final.log,
 - Live packets: db751935, worktree /home/tnfssc/.bruv/worktrees/t3-53f4b259-5442693331ce-task_c1fa7700,
   branch bruv/archive-complete-live-investigation-pack-c1fa7700.
 
-All three scoped commits are integrated. Exact move maps are beside this note:
-[test](test-layout-moves.json), [tooling](tooling-layout-moves.json), and
-[source/notes](source-layout-moves.json). They preserve navigation from old notes
-without keeping compatibility copies of code.
+All three scoped commits are integrated. The one-time move inventories were
+retired with the later artifact cleanup, rather than kept as more clutter. Git
+rename history records the moves. If an exact map is needed, read it from
+baf2fcd5c9976ee19a8cbc0ae8839875d714cc38 at wisdom/quality/*-layout-moves.json.

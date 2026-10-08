@@ -25,7 +25,7 @@ selected wire/DB/UI projections, not private logs or a rewritten passing result.
   turn-item/run/node updates. No subagent rows or task journal entries.
 - The old line-24 immediate isVisible() saw Working after Stop hidden and
   Submit visible. The [subsequent text](proof/official-2644/hosted-v0163-command-final/failure.txt)
-  has **no Working**, and the [screenshot](proof/official-2644/hosted-v0163-command-final/failure.png)
+  has **no Working**, and the screenshot (historical capture)
   already shows **Done**, a submit control, and command output **running: false**.
   The single command output does not contain the text Working and there is no
   unrelated active thread in these captures.
@@ -92,3 +92,5 @@ bounded native acceptance, not Live/devices/paid providers/disconnect coverage.
 
 Values are unchanged: this applies existing “say what proof shows,” bounded
 work, and original-evidence retention values; it adds only feature-local wisdom.
+
+Historical images were retired; [recovery details](../quality/protocol-artifact-retirement.md) preserve the original revision.

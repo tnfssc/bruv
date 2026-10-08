@@ -10,8 +10,8 @@ Chromium 148.0.7778.96 (Playwright build 1223) rendered the full T3 web app with
 
 ## Browser evidence
 
-- [browser-parent.png](browser-parent.png), SHA-256 `932034c501d2fb6934769fcff992fadab76985fcdf179b9d1a111c5ccbd4a95a`: rendered parent transcript and native **Previous agents → Hello Agent** relationship entry.
-- [browser-child-navigation.png](browser-child-navigation.png), SHA-256 `e6c38535a018a8470a25fa9f24b3b2232a4ade3772e4b479fef2b0c268c2afbb`: rendered child after clicking that parent entry. It visibly contains **Subagent of · Replay fixture: subagent_v2_nested**, **Ran 1 subagent**, marker **Subagent says: “Hello.”**, lineage back to the parent, and a yellow evidence banner identifying the fixture boundary and exact child ID.
+- browser-parent.png (historical run output), SHA-256 `932034c501d2fb6934769fcff992fadab76985fcdf179b9d1a111c5ccbd4a95a`: rendered parent transcript and native **Previous agents → Hello Agent** relationship entry.
+- browser-child-navigation.png (historical run output), SHA-256 `e6c38535a018a8470a25fa9f24b3b2232a4ade3772e4b479fef2b0c268c2afbb`: rendered child after clicking that parent entry. It visibly contains **Subagent of · Replay fixture: subagent_v2_nested**, **Ran 1 subagent**, marker **Subagent says: “Hello.”**, lineage back to the parent, and a yellow evidence banner identifying the fixture boundary and exact child ID.
 - Browser assertion checked the post-click URL decodes to the exact expected child ID and checked the marker in rendered body text before taking the screenshot.
 
 Observed IDs/state:
@@ -57,3 +57,5 @@ The host `/tmp` was 99% full and initially caused Chromium `ERR_INSUFFICIENT_RES
 This proves acceptance scenario 4's **rendered navigation surface** against a durable upstream replay-derived child. It does not prove the main agent's changing adapter/engine integration. There was no live provider process spawn, no active model tool list, no T3 MCP scoped bearer exercise, no clientRequestId, and no delivery/ACK/reconnect fault injection in this browser run. Codex is visibly unauthenticated, as expected for replay data. This fixture cannot truthfully provide those observables. A full combined acceptance claim still needs them.
 
 No root README/RESULTS, pins, dist, shared state, credentials, or `upstream.patch` were changed. `upstream.patch` remained SHA-256 `87c48ebfbc6e97bbf832b3e52031eecb06955a9248a4caa528b71de80720370f`.
+
+Generated run outputs were retired; [recovery details](../../../quality/experiment-artifact-retirement.md) retain their Git revision.

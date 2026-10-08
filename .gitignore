@@ -15,3 +15,15 @@ live.env
 
 # Keep pre-move private browser/cache state ignored; tracked research moved to wisdom/experiments/t3/.
 /wisdom/experiments/t3-v2/.runtime/
+
+# Generated run output, not project memory. Current tools use artifacts/.
+/wisdom/landing-page/validation/
+/wisdom/experiments/t3/pr-15598-npm-review/*/proof/
+/wisdom/audits/code-reduction/2026-10-02/reports/
+/wisdom/audits/code-reduction/2026-10-02/coverage.json
+/wisdom/acp/proof/**/*.png
+/wisdom/claude-compat/proof/**/*.png
+# These image rules do not hide fixture code or pinned JSON inputs.
+/wisdom/experiments/t3/ui-only-history-minimal/final-head/
+/wisdom/experiments/t3/preview-v2/*.png
+/wisdom/t3/evidence/**/*.png

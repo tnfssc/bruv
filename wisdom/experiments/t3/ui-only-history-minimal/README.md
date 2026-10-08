@@ -21,12 +21,12 @@ Original remote head **e9efb362e60e82da42a23e3b9daac72eb7ae0b89** is preserved l
 
 ## Actual browser proof
 
-[Result](final-head/result.json): **passed:true**, **acceptanceScope:history**. Full unrelated acceptance remains **false**, not claimed.
-[Invocation](final-head/invocation.json): normal startup args=[], only HOME/PATH; provider binary and custom home configured only through Settings Providers UI. No preset provider env/config, credentials, tap, synthetic connector events or version spoof.
+Result (historical run output): **passed:true**, **acceptanceScope:history**. Full unrelated acceptance remains **false**, not claimed.
+Invocation (historical run output): normal startup args=[], only HOME/PATH; provider binary and custom home configured only through Settings Providers UI. No preset provider env/config, credentials, tap, synthetic connector events or version spoof.
 
-Strict original assertions passed for fork-at-checkpoint, actual model continuation context, rollback, page reload/reopen, exactly one root execute exchange, no inherited job/question authority, unchanged root question and ordinary Claude store, and temporary-state cleanup. [Model checks](final-head/model-checks.json), [pending root question](final-head/root-question-kept-pending.json), [cleanup](final-head/cleanup.json), [reopened screenshot](final-head/reopened.png). Reopen means page reload, not server restart. The unsupported connector version advisory remains visible and is outside this fix (parent task_5c3a7422 remains separate).
+Strict original assertions passed for fork-at-checkpoint, actual model continuation context, rollback, page reload/reopen, exactly one root execute exchange, no inherited job/question authority, unchanged root question and ordinary Claude store, and temporary-state cleanup. Model checks (historical run output), pending root question (historical run output), cleanup (historical run output), reopened screenshot (historical run output). Reopen means page reload, not server restart. The unsupported connector version advisory remains visible and is outside this fix (parent task_5c3a7422 remains separate).
 
-[Provenance](final-head/source-provenance.json) pins every staged asset and both compiled Bruv binaries. Stage/run checked the copied tree before and after, and preserved all original behavioral/authority assertions; no shared cache mutation. [UI log](revision-ui.log).
+Provenance (historical run output) pins every staged asset and both compiled Bruv binaries. Stage/run checked the copied tree before and after, and preserved all original behavioral/authority assertions; no shared cache mutation. [UI log](revision-ui.log).
 
 ## Durable locations / rerun
 
@@ -37,3 +37,5 @@ Strict original assertions passed for fork-at-checkpoint, actual model continuat
 - Private staged host: that worktree's wisdom/experiments/t3/ui-only-history-minimal/build-staging/c1310b242962-1791109410527. Primary agent ran its run.mjs; subagent only prepared harness.
 
 Original strict proof and unchanged-host UI failure are in Bruv **14add8f4**. This revision's baseline regression and final-head browser pass were newly executed; not relabeled old proof. Current upstream merge-tree is conflict-free; public compare and absent PR/check results are saved alongside. No particular maintainer approval, full CI or release compatibility claimed.
+
+Generated run outputs were retired; [recovery details](../../../quality/experiment-artifact-retirement.md) retain their Git revision.

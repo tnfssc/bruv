@@ -74,9 +74,9 @@ From: [Pi upgrade](dependencies/pi-0.87-upgrade.md), [production preservation](t
 
 ## 10. Leave work next person can pick up
 
-Leave code, proof, reasons, and next steps together. Give agents clear jobs. Start independent edits, review, and test setup together. Check their pieces fit. Use focused checks for small changes and the full gate where it matters; do not repeat whole suites or add review rounds without a reason. Cut waiting and duplicate work, not assertions or honest failure reports. Work running in background? Do other useful work or give user turn. No keep checking just to stay busy. Keep ongoing work where it will last. Say how to resume. Same lesson keeps coming back? Put it in values. No copy whole talk or pile up status notes forever.
+Leave code, proof, reasons, and next steps together. Give agents clear jobs. Start independent edits, review, and test setup together. Check their pieces fit. Use focused checks for small changes and the full gate where it matters; do not repeat whole suites or add review rounds without a reason. Cut waiting and duplicate work, not assertions or honest failure reports. Work running in background? Do other useful work or give user turn. No keep checking just to stay busy. Keep ongoing work where it will last. Say how to resume. Same lesson keeps coming back? Put it in values. No copy whole talk or pile up status notes forever. Keep durable decisions and required inputs in Git. Send disposable run outputs to ignored artifacts. Retire old tracked evidence with a short Git recovery reference, not another copy.
 
-From: [shared-memory value](prompts/shared-memory-value.md), [project wisdom](wisdom-system/project-wisdom.md), [PR hygiene](quality/pr-hygiene-final.md), [fast delivery](quality/fast-delivery.md), [wisdom before delivery](wisdom-system/wisdom-before-delivery.md).
+From: [shared-memory value](prompts/shared-memory-value.md), [project wisdom](wisdom-system/project-wisdom.md), [PR hygiene](quality/pr-hygiene-final.md), [fast delivery](quality/fast-delivery.md), [wisdom before delivery](wisdom-system/wisdom-before-delivery.md), [generated clutter retirement](quality/artifact-retirement.md).
 
 ## Keep learning
 
