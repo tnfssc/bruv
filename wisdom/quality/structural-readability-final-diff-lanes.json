@@ -186,7 +186,7 @@
       ],
       "chars": 92655,
       "lines": 1980,
-      "status": "running",
+      "status": "accepted",
       "jobId": "task_7377a9c3",
       "model": "openai-codex/gpt-6.1-sol",
       "workspace": {
@@ -201,6 +201,128 @@
         "setupTaskId": "task_365bd749",
         "setupStatus": "running",
         "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      },
+      "result": {
+        "lane": "lane-02",
+        "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
+        "candidate": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "verdict": "ACCEPT",
+        "diffReadPaths": [
+          "src/agent/last-used-cli-model.ts",
+          "src/agent/manual-shake.ts",
+          "src/agent/native-compaction.ts",
+          "src/agent/native-fast-mode.ts",
+          "src/agent/README.md",
+          "src/goals/extension.ts",
+          "src/goals/store.ts",
+          "src/goals/types.ts",
+          "src/history/disk-entry-store.ts",
+          "src/history/service.ts"
+        ],
+        "contextReadPaths": [
+          "src/agent/extension.ts",
+          "src/agent/cache-affine-compaction.ts",
+          "src/agent/manual-shake.ts",
+          "src/agent/native-compaction.ts",
+          "src/agent/native-fast-mode.ts",
+          "src/agent/last-used-cli-model.ts",
+          "src/history/session-manager.ts",
+          "src/history/shake-record.ts",
+          "src/history/service.ts",
+          "src/history/disk-entry-store.ts",
+          "src/history/types.ts",
+          "src/goals/extension.ts",
+          "src/goals/store.ts",
+          "src/goals/types.ts",
+          "src/goals/controller.ts",
+          "src/session/restore-leaf.ts",
+          "src/session/host-access.ts",
+          "src/session/transcript-snapshots.ts",
+          "src/typescript/job-bridge.ts",
+          "node_modules/@earendil-works/pi-coding-agent/dist/core/model-runtime.js",
+          "node_modules/@earendil-works/pi-coding-agent/dist/core/session-manager.js",
+          "node_modules/@earendil-works/pi-coding-agent/dist/core/agent-session.js"
+        ],
+        "sourceBlobs": {
+          "src/agent/last-used-cli-model.ts": "38ae1734383f3d55a388a9f2f28af122d6ff3e8a",
+          "src/agent/manual-shake.ts": "51bbeaf48a9a3fab8d9cdfb58eca338c92350337",
+          "src/agent/native-compaction.ts": "629695696d1bedafc6147cfac485600ed878e664",
+          "src/agent/native-fast-mode.ts": "07e4935305ca0bca5cd66c7042b15757d87877bf",
+          "src/agent/README.md": "613be07a1fc8c96a91487f30764fa5f213b7182c",
+          "src/goals/extension.ts": "90e7ddd369fad8b41c6cf53a2114b85c4bda5af1",
+          "src/goals/store.ts": "bd72fa6cc6e8ccfebde0677faa87ccff9be764d2",
+          "src/goals/types.ts": "8ccbe88cc95296fc9fa4c224c72c7cf2c447c5bd",
+          "src/history/disk-entry-store.ts": "4bba42698529fdc9183ecd6e93110ab3b4484cff",
+          "src/history/service.ts": "7ccf86cf97d5e1b35a5382d1b6a8b62aca041a9c"
+        },
+        "sourceJourneys": [
+          {
+            "paths": [
+              "src/agent/extension.ts",
+              "src/agent/native-fast-mode.ts",
+              "src/agent/native-compaction.ts",
+              "src/agent/cache-affine-compaction.ts"
+            ],
+            "readingReason": "Followed registration order, branch consent resolution, concrete stream wrapper, credential preparation and final payload validation, then both compaction request paths. requestTierPolicy/captureRequestAuthorization preserve the former capture closure branches; streamAuthorizedRequest keeps the runtime receiver and the immutable authorization through awaited preparation and the complete payload hook. compactNativeCapture keeps scope pinned before credential lookup and checks live generation/manager/session/leaf/model/thinking before publishing results or failure effects.",
+            "systemReason": "Fast registers before payload observation; manual shake remains first compaction owner. Native fallback clears capture so cache-affine handling can own the event; opaque checkpoints still refuse unsafe fallback. Native request builder forces default tier and cache-affine uses request-local AsyncLocalStorage standard tier, so extraction does not turn compaction into hidden premium traffic. Native settlement cannot publish into a changed attachment. Named operation helpers reduce the registration closure burden without introducing an omnibus context bag or extra mutable lifecycle state."
+          },
+          {
+            "paths": [
+              "src/agent/manual-shake.ts",
+              "src/history/shake-record.ts",
+              "src/history/service.ts",
+              "src/history/disk-entry-store.ts",
+              "src/history/session-manager.ts",
+              "src/session/restore-leaf.ts"
+            ],
+            "readingReason": "Followed raw active-entry planning through shared analyzeToolProtocol, exact transformed-copy matching and matchedShakeEntryIds, all three checkpoint commit callers, post-compaction carry-forward failure state and prepareRequest dispatch guard. Followed custom-entry persistence down to manager _appendEntry, store append/publication and branch metadata selection. Read the SDK entry conversion used by replay as source context, not as runtime validation.",
+            "systemReason": "Protocol evidence retains first occurrence ordering and final duplicate association; duplicate/invalid IDs make affected calls unsafe, while replay can still authorize unrelated exact complete groups. Persistence succeeds before failures are cleared, snapshots are invalidated or compaction is cancelled. Failed carry-forward still blocks dispatch. The shared wire validator remains provider-independent and history exclusions remain live on the active branch. Disk flushed is now derived from activePath; pending stores publish on their first user/assistant append, making the removed hasConversation state redundant. The original descriptor can truncate the pending inode on publication failure; indexes are published only after success. Shared analysis and named checkpoint commit remove duplicated authority logic without flattening caller-specific fallback policies."
+          },
+          {
+            "paths": [
+              "src/goals/extension.ts",
+              "src/goals/store.ts",
+              "src/goals/types.ts",
+              "src/goals/controller.ts",
+              "src/agent/extension.ts",
+              "src/typescript/job-bridge.ts"
+            ],
+            "readingReason": "Followed helper routing and command/state writes, branch-derived ensureStore reload, exact pending reminder issue/consume, session restart/shutdown, foreground questions, execute handoff waiting, job completion reconciliation, agent_end accounting and agent_settled scheduling. Compared all restoration cases including clear, malformed entries and mismatched/non-increasing updates.",
+            "systemReason": "GoalReminders owns transport epoch/generation/sequence/pending IDs only; automatic progress accounting stays in GoalContinuationController. Invalidation versus reset still differs deliberately: ordinary goal updates and finished waiting work invalidate pending reminders without erasing no-progress accounting; navigation, clear and interruption reset it. Helper callers still cannot manufacture waiting job authority. latestGoal gates marker identity outside parseEntry and still revokes state on rejected authority entries rather than resurrecting a prior goal. The GoalEntry discriminated union makes set/update payload ownership explicit without changing the persisted schema."
+          },
+          {
+            "paths": [
+              "src/typescript/job-bridge.ts",
+              "src/agent/extension.ts",
+              "src/history/service.ts",
+              "src/history/types.ts",
+              "src/history/session-manager.ts",
+              "src/history/shake-record.ts"
+            ],
+            "readingReason": "Followed history.search/read helpers into selected-session scope, cursor key/session/ancestor validation, metadata branch traversal, live shake exclusions, bounded text scan, search ordering and UTF-16 read paging. Read cross-session regular-file read-only selection and graph validation context.",
+            "systemReason": "The fused retrievalScan continues to pin text to an ancestor cursor snapshot while taking exclusions from the live branch; appends do not expand a pinned page and later shake records can hide earlier results. Search role ordering is identical to the removed rank map. Both search and read fully consume the budget-checked scan, and read retains ref/session/branch checks. One scan owner and provenance-derived ranking eliminate redundant state and repeated branch traversal rather than weakening retrieval authority."
+          },
+          {
+            "paths": [
+              "src/agent/README.md",
+              "src/agent/extension.ts",
+              "src/session/host-access.ts",
+              "src/session/transcript-snapshots.ts",
+              "src/agent/last-used-cli-model.ts"
+            ],
+            "readingReason": "Compared the expanded navigation guide with actual composition attachment/shutdown, lazy host task subscription, manager owner capture, notification batch/claim/dispatch/retry/close operations, and snapshot lease/reuse implementation. Read actual root TUI default-selection handlers and the installed SDK thinking-level event emitter.",
+            "systemReason": "The guide directs readers to the attachment owner rather than inventing another scheduler. Notification close remains separate from delivery acknowledgement; manager/service are cleared after shutdown. Snapshot expiry/renewal is creation/reuse driven, not host-close cleanup. The model-default code change is import order plus a more accurate thinking event comment: its root-TUI gate is unchanged and thinking events are not explicit persistence consent. This is useful architectural navigation, not evidence that every linked subsystem has received this lane’s sign-off."
+          }
+        ],
+        "integrationReadingReason": "Fresh complete baseline-to-candidate diff review, including every deletion, plus actual source journeys across composition, persistence, provider preparation, goal continuation and history retrieval. These integrated changes are predominantly bounded extractions and removal of derivable state. The extracted helpers correspond to coherent obligations (request policy, guarded dispatch, native attempt, protocol eligibility, durable checkpoint, reminder transport, retrieval snapshot) and retain the existing owning attachment and failure policies. No changed-source contradiction, lost authority/lifetime ownership or new giant context bag was found in this lane. Reading burden improves modestly but concretely: registration code exposes orchestration while one operation contains its checks and settlement, and redundant rank/flush/conversation or replay-plan state disappears.",
+        "objections": [],
+        "limits": [
+          "All ten assigned complete diffs were read; no assigned diff gaps remain. Related context was read selectively as needed, not every line of every linked file or the whole repository.",
+          "READ-ONLY source review only. No tests, setup, builds, installs, formatter, auth/device flow, credentials, network request, recovery investigation, destructive Git, cleanup or source edit was performed; only the requested untracked result file was written. Unsupported Pi preparation was not retried or bypassed. No delegation or descendants were launched.",
+          "Installed SDK source was inspected without import/execution; its package reports 1.0.3. This is incidental local source context, not proof of the candidate’s pinned runtime compatibility or provider behavior. Live auth/device and actual transport remain unverified.",
+          "No independent primary/judge artifacts, coverage summaries or green test reports were used as verdict evidence. ACCEPT is a lane source/integration judgment, not a whole-repository or PR sign-off.",
+          "Durable provenance: existing worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_7377a9c3 at candidate af3602cf3d5b62641450c7cc24bb0350334b6652 was preserved; no fixtures or temporary code checkouts were created."
+        ]
       }
     },
     {
@@ -224,7 +346,7 @@
       ],
       "chars": 83808,
       "lines": 1665,
-      "status": "running",
+      "status": "accepted",
       "jobId": "task_2049cf37",
       "model": "openai-codex/gpt-6.1-sol",
       "workspace": {
@@ -239,6 +361,143 @@
         "setupTaskId": "task_48ef458f",
         "setupStatus": "running",
         "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      },
+      "result": {
+        "lane": "lane-03",
+        "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
+        "candidate": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "verdict": "ACCEPT",
+        "diffReadPaths": [
+          "src/history/session-manager.ts",
+          "src/prompt-preview.ts",
+          "src/prompts.ts",
+          "src/prompts/execute-description.md",
+          "src/prompts/execute.md",
+          "src/session/host.ts",
+          "src/session/input.ts",
+          "src/session/transcript-snapshots.ts",
+          "src/session/transcript.ts",
+          "src/system-prompt.ts",
+          "src/wisdom/extension.ts",
+          "tests/cache-affine-compaction-live.test.ts",
+          "tests/cache-affine-compaction-sdk.test.ts",
+          "tests/cache-affine-compaction.test.ts"
+        ],
+        "contextReadPaths": [
+          "src/history/session-manager.ts",
+          "src/history/disk-entry-store.ts",
+          "src/prompt-preview.ts",
+          "src/prompts.ts",
+          "src/session/host.ts",
+          "src/agent/extension.ts",
+          "src/agent/instruction-mode.ts",
+          "src/agent/cache-affine-compaction.ts",
+          "src/live/extension.ts",
+          "src/live/main-owner.ts",
+          "src/wisdom/extension.ts",
+          "src/wisdom/location.ts",
+          "src/cli.ts",
+          "src/claude-compat/runtime.ts",
+          "src/typescript/extension.ts",
+          "tests/cache-affine-compaction-live.test.ts",
+          "tests/cache-affine-compaction-sdk.test.ts",
+          "tests/cache-affine-compaction.test.ts",
+          "tests/phase1-compaction-fixture.ts",
+          "package.json",
+          "node_modules/@earendil-works/pi-coding-agent/package.json",
+          "node_modules/@earendil-works/pi-coding-agent/dist/core/agent-session.js",
+          "node_modules/@earendil-works/pi-coding-agent/dist/core/session-manager.js",
+          "node_modules/@earendil-works/pi-coding-agent/dist/core/system-prompt.js"
+        ],
+        "sourceBlobs": {
+          "src/history/session-manager.ts": "d7032c57091c90f661c37edd3b69bf27f0835243",
+          "src/prompt-preview.ts": "2bfc8a1e7288a43f140742a6895073e70dc34052",
+          "src/prompts.ts": "784be0e71de6893f04168ddbd2b4f2c42dc99723",
+          "src/prompts/execute-description.md": "dd844844a683b300dad8dba1debe58505a2eb06c",
+          "src/prompts/execute.md": "9b9292bd6b0f8cfa09a44a672a310aaba3b972b5",
+          "src/session/host.ts": "cc31676e84612ee72967b28da46f401efcfc4407",
+          "src/session/input.ts": "absent",
+          "src/session/transcript-snapshots.ts": "be5d94bde803903b1cc6d25132f17a9d63a6cb09",
+          "src/session/transcript.ts": "2084f1006598cbc074b94465e751e4ab568453b2",
+          "src/system-prompt.ts": "f581007216760dcdc2f77dfe8dc65415b3c64789",
+          "src/wisdom/extension.ts": "fccd4d3b7dea180016373d025ee580ec242e37c3",
+          "tests/cache-affine-compaction-live.test.ts": "2e84137cada2b7aa5a1139f180ec55bec21c81e0",
+          "tests/cache-affine-compaction-sdk.test.ts": "01d9f3f7b099498d9dfb8e446de430da165f35df",
+          "tests/cache-affine-compaction.test.ts": "e60643f48560c27e07c377cce9dd1f1b6882d125"
+        },
+        "sourceJourneys": [
+          {
+            "paths": [
+              "src/cli.ts",
+              "src/claude-compat/runtime.ts",
+              "src/system-prompt.ts",
+              "src/prompts.ts",
+              "src/agent/extension.ts",
+              "src/agent/instruction-mode.ts",
+              "src/wisdom/extension.ts",
+              "src/wisdom/location.ts"
+            ],
+            "readingReason": "Followed CLI and compatibility resource-loader fallback through Pi assembly and before_agent_start framing. Compared baseline inline framing with the two candidate helpers. The helpers preserve user-owned root custom bases, mandatory child role guidance, and collaboration only on non-user bases. Mode callbacks remain lazy, preserving custom-base bypass, and mode updates replace only the session-owned marker. Wisdom now restores identity with the current command/turn context before granting root effects, rather than relying on potentially stale closure identity.",
+            "systemReason": "Selection/trust authority stays with the transport/Pi loader; role authority stays with the tasks extension and fail-closed resumed identity scan. Narrow framing helpers remove intertwined root/child branching without adding a general prompt context bag. The fallback helper preserves explicit CLI prompts, option boundaries, last trust override, and eligible project/global SYSTEM.md precedence."
+          },
+          {
+            "paths": [
+              "src/prompts.ts",
+              "src/prompts/execute.md",
+              "src/prompts/execute-description.md",
+              "src/typescript/extension.ts",
+              "src/prompt-preview.ts",
+              "src/agent/extension.ts"
+            ],
+            "readingReason": "Traced the embedded execute reference into both Bruv custom base and tool promptGuidelines. Raw Markdown replaces split-and-reassembled base text; the reference export still strips only outer list markers for Pi. Read every moved/added/deleted guidance line: named SSH placement/model policy, human questions and source approval, cancellation uncertainty, and Live teardown remain present. Preview helpers retain synchronous environment restoration and install the synthetic provider stream before session.prompt, validating exactly one capture.",
+            "systemReason": "Description headings and locality of launch/source policy reduce instruction scanning burden without changing capability grants. Preview assembly now reads as isolation, production loading, capture, and presentation; helper ownership is limited to role selection and provider-boundary capture, not a new lifecycle object. Existing finally disposal and cleanup concern only its mkdtemp scratch; no preview was executed."
+          },
+          {
+            "paths": [
+              "src/history/session-manager.ts",
+              "src/history/disk-entry-store.ts",
+              "src/cli.ts",
+              "node_modules/@earendil-works/pi-coding-agent/dist/core/agent-session.js",
+              "node_modules/@earendil-works/pi-coding-agent/dist/core/session-manager.js"
+            ],
+            "readingReason": "Followed journal append commit into SDK metadata publication, rebuild/adoption and failure rollback. The same publication helper now updates fileEntries/byId/leaf and label indexes both incrementally and during rebuild. Rebuild also binds owned.skeletonEntries to the exact SDK metadata array, preserving rewrite materialization distinction. Read projection construction, context-leaf cache validity, trailing-user shortcut, and the SDK estimator called with the already-built projection and branch metadata.",
+            "systemReason": "Journal/body ownership remains with DiskEntryStore; manager owns only indexes and projection. Token estimation extraction owns a single WeakMap and returns a narrow recording callback, preserving installation order and in-memory fallback. It does not introduce a second materialized branch or long-lived context bag. Metadata publication duplication is removed while session reset/branch and footer cache identities remain coherent."
+          },
+          {
+            "paths": [
+              "src/session/input.ts",
+              "src/session/transcript.ts",
+              "src/session/host.ts",
+              "src/session/transcript-snapshots.ts",
+              "src/live/extension.ts",
+              "src/live/main-owner.ts",
+              "src/agent/extension.ts"
+            ],
+            "readingReason": "Checked baseline CompletedInput consumers: only its isolated API tests, no shipped source caller. Followed actual received transcripts through Live owner final-input handling and TranscriptLog, then SessionHost active-branch projection, full snapshot admission and queued delivery. The single draft preserves interleaved speaker order, replacement/superseded handling, bounded audit chunks and exact-final chunk boundaries. Snapshot helper returns only the path the host uses; moved directory checks, lock, expiry, renewal, budgets, exclusive write and error behavior match baseline. Native active-job Set preserves membership/terminal-transition observation formerly represented by unused status values.",
+            "systemReason": "Presentation draft state is not newly promoted to dispatch authority. Main-owner final input and delegation remain actual authority; removing unused CompletedInput removes misleading parallel policy. Host still guards session manager/id/file and leaf across awaited snapshot creation and queue delivery; failed delivery retains shared immutable content for other readers. Snapshot filesystem ownership is now localized without transferring scheduler or cancellation ownership out of tasks/JobService."
+          },
+          {
+            "paths": [
+              "tests/cache-affine-compaction.test.ts",
+              "tests/cache-affine-compaction-sdk.test.ts",
+              "tests/cache-affine-compaction-live.test.ts",
+              "tests/phase1-compaction-fixture.ts",
+              "src/agent/cache-affine-compaction.ts",
+              "src/agent/extension.ts"
+            ],
+            "readingReason": "Read complete test diffs and production summary dispatch/response/cancellation seams. The unit harness binds current instruction continuity and splits the old coupled paid-response/storage/abort scenario into independent assertions, adding accepted-then-rejected uncertainty and observer/projection failures. SDK helper still requires the real serializer to reach its onPayload sentinel before fabricating a reply, retains fetch interception and header/payload transformations. Live archived-history helper preserves the synthetic user/tool-call/tool-result chronology and marker while leaving warm tail, checkpoint and resumed assertions intact.",
+            "systemReason": "The integration distinction is explicit: Codex Phase-1 tests use a fixture registering cache-affine compaction, not a claim that production native Codex was exercised. Successful compaction owns usage through Pi commit; cancelled paid responses are checkpointed once by the extension and never fall through to duplicate inference. Fixture extraction reduces repeated stream ceremony and scenario cross-coupling without hiding the production serializer or changing assertions."
+          }
+        ],
+        "integrationReadingReason": "ACCEPT for this lane only. All 14 exact baseline-to-candidate diffs, including the deleted module and relocated code, were read in bounded overlapping slices (83,808 characters total). Cross-file journeys show preserved behavior and mostly improved local/system reading burden: fewer duplicated metadata operations, one reachable transcript draft, explicit snapshot I/O ownership, centralized root/worker prompt framing, and scenario-focused compaction tests. Added helpers are narrow functions with actual callers and coherent authority/lifetime boundaries, not huge abstractions or context bags. No actionable integrated contradiction was found in the reviewed journeys; parent must integrate other lanes.",
+        "objections": [],
+        "limits": [
+          "Read-only source review; no tests, setup, builds, installs, formatter, auth/device access, credential access, source edits, cleanup, recovery investigation, or delegation performed. Only requested untracked result JSON written. Unsupported Pi preparation was not attempted, retried, or bypassed.",
+          "Complete assigned diffs read; relevant context was read as targeted excerpts, not full current source everywhere. No unread assigned diff gaps. Installed SDK 1.0.3 code was inspected as source only, consistent with candidate package version; this is not runtime verification or a host compatibility claim.",
+          "Live experiment source uses opted-in configured auth and could contact a provider; it was not run. No live authorization/device/provider access verified. SDK test cleanup of mkdtemp-owned directories was inspected but not run; no test fixtures were created in this review.",
+          "Durable provenance: existing worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_2049cf37; baseline and candidate evidence retained unchanged. No /tmp code checkout or fixture created.",
+          "No earlier primary/judge artifacts, coverage or green tests were used as a verdict. A broad deletion-consumer grep incidentally surfaced documentation/quality references; those are not evidence for this judgment. No whole-repository sign-off."
+        ]
       }
     },
     {
@@ -300,7 +559,7 @@
       ],
       "chars": 87666,
       "lines": 1924,
-      "status": "running",
+      "status": "rejected",
       "jobId": "task_49b63983",
       "model": "openai-codex/gpt-6.1-sol",
       "workspace": {
@@ -315,6 +574,188 @@
         "setupTaskId": "task_acc380bc",
         "setupStatus": "running",
         "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      },
+      "result": {
+        "lane": "lane-05",
+        "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
+        "candidate": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "verdict": "REJECT",
+        "diffReadPaths": [
+          "tests/goals.test.ts",
+          "tests/helpers/history-fixture.ts",
+          "tests/helpers/main-agent-mode-sdk.ts",
+          "tests/herdr-agent-state.test.ts",
+          "tests/history-disk-footer.probe.ts",
+          "tests/history-disk-footer.test.ts",
+          "tests/history-disk-retrieval.test.ts",
+          "tests/history-process.ts",
+          "tests/history-projection-parity.test.ts",
+          "tests/history-publication-collision.test.ts",
+          "tests/history-sdk-099.test.ts",
+          "tests/history-sdk-probe.test.ts",
+          "tests/history-storage-cleanup.probe.mjs",
+          "tests/history-storage-cleanup.test.ts"
+        ],
+        "contextReadPaths": [
+          "tests/helpers.ts",
+          "tests/fixtures/history-large-session.ts",
+          "tests/fixtures/history-disk-retrieval.ts",
+          "tests/fixtures/history-projection-parity.ts",
+          "tests/fixtures/history-sdk-probe-failure.ts",
+          "tests/main-agent-mode-sdk.test.ts",
+          "tests/main-agent-mode-sdk.probe.ts",
+          "scripts/history-sdk-probe.ts",
+          "src/goals/store.ts",
+          "src/goals/extension.ts",
+          "src/goals/controller.ts",
+          "src/history/session-manager.ts",
+          "src/history/disk-entry-store.ts",
+          "src/history/service.ts",
+          "src/tasks/agent-session.ts",
+          "src/tasks/session-costs.ts",
+          "src/agent/extension.ts",
+          "src/agent/instruction-mode.ts",
+          "src/herdr-agent-state.ts",
+          "node_modules/@earendil-works/pi-coding-agent/dist/core/resource-loader.js",
+          "node_modules/@earendil-works/pi-coding-agent/dist/core/sdk.js",
+          "node_modules/@earendil-works/pi-coding-agent/dist/config.js",
+          "node_modules/@earendil-works/pi-coding-agent/dist/utils/tools-manager.js"
+        ],
+        "sourceBlobs": {
+          "tests/goals.test.ts": "fa176b1df06db3887321f0c3452a18cd92d4b9e1",
+          "tests/helpers/history-fixture.ts": "173ad097f805cbd0393953b81612c757c6be91f1",
+          "tests/helpers/main-agent-mode-sdk.ts": "149e63f761488ffd85204d61911f53861f8721e6",
+          "tests/herdr-agent-state.test.ts": "864f974c89e250214f6fb572e60cb607d2523436",
+          "tests/history-disk-footer.probe.ts": "1f7d4d8729e5eb75869b65c8ad18581589c411e5",
+          "tests/history-disk-footer.test.ts": "622d926ade53fa65260e011e1a52d7a8b50035ec",
+          "tests/history-disk-retrieval.test.ts": "441c3b79c66fb89ab6dbe4257f79f266d6ae3164",
+          "tests/history-process.ts": "3800d0fbb3857b0a366d6302b52d7d5432196a3b",
+          "tests/history-projection-parity.test.ts": "8d9cab5946ee565e12ff1f798f587148a6c0d87a",
+          "tests/history-publication-collision.test.ts": "6d06eb40e23d4747528bca163372ab1abdd9fef8",
+          "tests/history-sdk-099.test.ts": "a4a794ae47d8af888d4cf24704728d211bd19219",
+          "tests/history-sdk-probe.test.ts": "bd738142f9c2cb7dd0b1652b47294b63fe25788f",
+          "tests/history-storage-cleanup.probe.mjs": "f0661fa8f8a1790a93b2cb8eb00a11e29ecb59fd",
+          "tests/history-storage-cleanup.test.ts": "3a3372795287c146d4563abfb9394ad426357d7b"
+        },
+        "sourceJourneys": [
+          {
+            "paths": [
+              "tests/history-disk-footer.test.ts",
+              "tests/helpers/history-fixture.ts",
+              "tests/helpers.ts",
+              "tests/fixtures/history-large-session.ts",
+              "src/history/session-manager.ts",
+              "src/history/disk-entry-store.ts"
+            ],
+            "readingReason": "Followed the deleted inline large-history scenario into its actual named fixture. The owned environment is passed without merging process.env by run/offlineTestEnv. The fixture still checks Unicode and 8 MiB originals, getEntry caller-mutation isolation, reopen/continueRecent leaf, saved branch, fork parent header, and physical source journal. Added try/finally disposes every collected manager.",
+            "systemReason": "Extraction keeps the public-history assertions instead of replacing them with a success sentinel alone. The manager metadata/materialization boundary and distinct branch/fork storage remain exercised. Explicit fixture root and manager ownership reduce both reading and filesystem burden."
+          },
+          {
+            "paths": [
+              "tests/history-disk-retrieval.test.ts",
+              "tests/fixtures/history-disk-retrieval.ts",
+              "src/history/service.ts",
+              "src/history/session-manager.ts"
+            ],
+            "readingReason": "Compared the full deleted scenario with its extracted implementation and traced boundedBranch, entryBody, textParts, retrievalExcludedResults and live-branch retrieval scan. The throwing getBranch sentinel remains. Source text, inactive branch/private content exclusions, issued ref revocation, old cursor exclusion, reload and surviving public assistant text are preserved.",
+            "systemReason": "The public retrieval authority remains original active-branch history, not compacted provider context. Metadata traversal avoids full branch materialization, and live shake exclusions override earlier cursor snapshots. Extraction adds a manager finalizer without weakening these contracts."
+          },
+          {
+            "paths": [
+              "tests/history-projection-parity.test.ts",
+              "tests/fixtures/history-projection-parity.ts",
+              "tests/history-sdk-099.test.ts",
+              "tests/history-process.ts",
+              "src/history/session-manager.ts"
+            ],
+            "readingReason": "Followed fresh native/adapted child separation, split checkpoint/branch-edit fixture results, and unchanged SDK scenario. All former projection assertions map to checkpoint or branchEdits; the rejection boolean array becomes named cases. Read adapter projection replacement logic, public context construction, open/recent/fork factories and publication metadata seam.",
+            "systemReason": "Global SDK prototype patches stay in separate children. Naming the two projection stories and publication stages lowers positional decoding burden while retaining native parity, original body persistence, branch edit rejection, compaction settings and first-user publication behavior. The two small fixture helpers overlap, but neither is a large context bag."
+          },
+          {
+            "paths": [
+              "tests/history-storage-cleanup.test.ts",
+              "tests/history-storage-cleanup.probe.mjs",
+              "tests/history-publication-collision.test.ts",
+              "src/tasks/agent-session.ts",
+              "src/history/session-manager.ts",
+              "src/history/disk-entry-store.ts"
+            ],
+            "readingReason": "Read each removed inline fault and each extracted check. prepareAgentSession owns both managers and disposes in finally. Fault patches restore in finally. Inspected withTemporaryManager cleanup, manager adoption, pending-store disposal, append rollback, exclusive publication and the collision test retry.",
+            "systemReason": "The extracted fault names expose the lifetime being tested rather than making readers reconstruct one long eval string. The no-pending check is for the owned session root; collision sentinels and rollback retain durable contents. Published fork stores have no persistent open descriptor/spool requiring disposal on failed copy; the temporary factory manager owns its pending journal."
+          },
+          {
+            "paths": [
+              "tests/goals.test.ts",
+              "src/goals/store.ts",
+              "src/goals/extension.ts",
+              "src/goals/controller.ts",
+              "src/agent/extension.ts"
+            ],
+            "readingReason": "Traced newly added malformed/rejected durable updates through latestGoal revocation and closed-schema diagnostics. Followed harness branch/leaf updates and event wrappers into ensureStore, reminder token issuance/consumption, session restart, question gating, jobs reconciliation and controller endRun accounting. Checked the real extension supplies only foreground question blockers and owned running jobs.",
+            "systemReason": "The semantic harness methods remove repeated event-shape noise while preserving actual hook seams. Appended goal entries now belong to the harness active branch and advance its leaf. The pre-session slash case genuinely avoids session_start, unlike the deleted callback-array mutation. Ordinary leaf movement, different-goal navigation, restart and sixteen-token retention correspond to distinct authority/accounting responsibilities; no huge abstraction is introduced."
+          },
+          {
+            "paths": [
+              "tests/herdr-agent-state.test.ts",
+              "src/herdr-agent-state.ts"
+            ],
+            "readingReason": "Read the shared recorder and all three removed socket-server variants. shouldReply retains release-only, all-but-first and non-release policies. Reporter attempt treats first response data as success and destroys its socket; shutdown clears queued state and drains release under retained authority.",
+            "systemReason": "One recorder owns server/listen/close and handles only ordinary late EPIPE. Shared request numbering and explicit response policies preserve the stalled-send and concurrent replacement stories rather than changing reporter protocol expectations. Temporary directory removal is restricted to the recorder-created directory and was not executed."
+          },
+          {
+            "paths": [
+              "tests/history-disk-footer.probe.ts",
+              "src/tasks/session-costs.ts",
+              "src/history/disk-entry-store.ts"
+            ],
+            "readingReason": "Read the complete measurement diff and probe context. measureSync restores JSON.parse, Buffer decode and materialize hooks; measureBranch validates and hashes after that span. cost.consume now attaches pending/chunk observations to its returned sample rather than the mutable last sample. Inspected the tracker newline buffering/parse loop and async handle lifetime.",
+            "systemReason": "Explicit result/sample ownership removes dependence on samples.at(-1), keeps nested timing attribution non-additive, and preserves full-content validation outside the measured synchronous span. Async refresh wall time remains distinct from synchronous consume samples."
+          },
+          {
+            "paths": [
+              "tests/helpers/main-agent-mode-sdk.ts",
+              "tests/main-agent-mode-sdk.test.ts",
+              "tests/main-agent-mode-sdk.probe.ts",
+              "tests/history-process.ts",
+              "src/agent/extension.ts",
+              "src/agent/instruction-mode.ts"
+            ],
+            "readingReason": "Read the complete new SDK helper plus all actual callers. The outer child owns HOME/config/SDK; each sdk scenario owns project/settings/auth and records sessions for afterEach disposal. Durable custom entries reopen twice. Before/after marker factories and a synthetic stream inspect actual requests. Traced identity restoration and instructionMode refresh at before_agent_start, and persistence-before-frame update in /mode.",
+            "systemReason": "The helper centralizes real SDK setup while leaving assertions in their scenarios: root/child identity, restored mode, custom prompt/project marker integrity, automatic custom-message frame continuity, wisdom paths and unchanged model/thinking. Local helper options stay narrow and responsibilities are readable."
+          },
+          {
+            "paths": [
+              "tests/history-sdk-probe.test.ts",
+              "tests/fixtures/history-sdk-probe-failure.ts",
+              "scripts/history-sdk-probe.ts",
+              "tests/history-process.ts",
+              "tests/helpers/history-fixture.ts",
+              "node_modules/@earendil-works/pi-coding-agent/dist/config.js",
+              "node_modules/@earendil-works/pi-coding-agent/dist/utils/tools-manager.js"
+            ],
+            "readingReason": "Followed --preload fault injection, held pending store, disposal tracking, pre-rm snapshot, negative control and exit assertions into the script session/manager finalizers. Unlike both shared child harnesses, runFailedSoak passes a spread of the parent environment. SDK config/tool-manager source shows default getAgentDir/getBinDir environment/home resolution at import time.",
+            "systemReason": "The failure/negative control structure correctly distinguishes manager disposal from mere directory removal, but its process-global SDK/home authority is not isolated like the neighboring SDK tests. Explicit per-script auth/model paths do not constitute a fixture HOME/config/SDK environment."
+          }
+        ],
+        "integrationReadingReason": "Fresh complete 14-path baseline-to-candidate diff review, including every deletion and all added helper code. Most changes genuinely reduce system reading burden: named scenarios replace eval strings, lifecycle/event vocabulary replaces repeated shapes, and measurement values have explicit owners. Public history/projection/collision assertions survive their moves into actual cross-lane fixtures. One new SDK failure test bypasses the otherwise explicit owned-environment boundary, so this lane is not acceptable under the requested safety/isolation contract. This is a lane-only judgment, not a whole-repository sign-off.",
+        "objections": [
+          {
+            "paths": [
+              "tests/history-sdk-probe.test.ts:12-14",
+              "tests/history-process.ts:14-25",
+              "tests/helpers/history-fixture.ts:19-34",
+              "scripts/history-sdk-probe.ts"
+            ],
+            "readingProblem": "runFailedSoak launches the SDK/preload child with env: { ...process.env, BRUV_TEST_SKIP_MANAGER_DISPOSAL: ... }. It therefore inherits user HOME, config/SDK overrides and unrelated process authority, whereas the other integrated SDK scenarios use owned mkdtemp HOME/config/SDK and an explicit replacement environment. The script isolates its own auth/models/session paths but does not replace the inherited HOME/config/SDK environment; SDK import-time default paths still derive from that environment. This is a concrete isolation-boundary exception, not evidence that user data was actually accessed or modified.",
+            "requiredResult": "Launch each failure/negative-control child through an owned retained fixture with explicit argv/env (for example createHistoryFixture/runHistoryProcess), passing only the scenario flag on top of that fixture environment. Keep the before-removal disposal test for the script-owned soak directory; retain the outer HOME/config/SDK fixture and do not clean inherited paths."
+          }
+        ],
+        "limits": [
+          "Read-only source review. No tests, setup, builds, installs, formatter, auth/device flows, recovery investigation, secret access, shell cleanup, source edits or delegation. Unsupported Pi preparation was not attempted or bypassed. Only this explicitly requested untracked result file was written.",
+          "All assigned diff paths fully read: no unread assigned diff gaps. Complete diff bytes were obtained directly from exact Git revisions and read in contiguous bounded chunks; shell preview truncation was not treated as coverage. No prior judgments, artifacts, coverage counts or green tests were used as verdict evidence.",
+          "Related source was read selectively at the actual caller/authority/lifetime seams described above; contextReadPaths does not assert complete-file review everywhere. No whole-repository or live-provider behavior sign-off. SDK failure-test ambient effects were not executed; no claim of observed user-data loss or credential access.",
+          "Durable provenance: review worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_49b63983; HEAD is the exact candidate. Existing worktree and candidate were preserved. Any test-code owned temporary cleanup mentioned above was inspected only, not executed. Installed SDK source excerpts provide context, not an independent package-version/runtime verification."
+        ]
       }
     },
     {
@@ -408,7 +849,22 @@
       ],
       "chars": 55364,
       "lines": 1169,
-      "status": "pending"
+      "status": "running",
+      "jobId": "task_d36e701f",
+      "model": "openai-codex/gpt-6.1-sol",
+      "workspace": {
+        "kind": "worktree",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_d36e701f",
+        "worktreePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_d36e701f",
+        "sourcePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
+        "baseRef": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "baseOid": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "branch": "bruv/pr45-final-integrated-diff-lane-08-build-d36e701f",
+        "preparationStatus": "ready",
+        "setupTaskId": "task_9411ce04",
+        "setupStatus": "running",
+        "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      }
     },
     {
       "id": "lane-09",
@@ -428,7 +884,22 @@
       ],
       "chars": 87360,
       "lines": 1892,
-      "status": "pending"
+      "status": "running",
+      "jobId": "task_464a96fe",
+      "model": "openai-codex/gpt-6.1-sol",
+      "workspace": {
+        "kind": "worktree",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_464a96fe",
+        "worktreePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_464a96fe",
+        "sourcePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
+        "baseRef": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "baseOid": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "branch": "bruv/pr45-final-integrated-diff-lane-09-build-464a96fe",
+        "preparationStatus": "ready",
+        "setupTaskId": "task_c4f0bc89",
+        "setupStatus": "running",
+        "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      }
     },
     {
       "id": "lane-10",
@@ -444,7 +915,22 @@
       ],
       "chars": 98319,
       "lines": 2099,
-      "status": "pending"
+      "status": "running",
+      "jobId": "task_5c03f5eb",
+      "model": "openai-codex/gpt-6.1-sol",
+      "workspace": {
+        "kind": "worktree",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_5c03f5eb",
+        "worktreePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_5c03f5eb",
+        "sourcePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
+        "baseRef": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "baseOid": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "branch": "bruv/pr45-final-integrated-diff-lane-10-build-5c03f5eb",
+        "preparationStatus": "preparing",
+        "setupTaskId": "task_8dd6e1f0",
+        "setupStatus": "running",
+        "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      }
     },
     {
       "id": "lane-11",
