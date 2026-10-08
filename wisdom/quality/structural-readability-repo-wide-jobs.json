@@ -1124,7 +1124,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_8271e96d",
         "branch": "bruv/pr45-primary-tests-claude-native-command-8271e96d",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "e43a0cb01fa81f621191bb33d7a3e57a45600a8d"
       },
       {
         "id": "task_33f15a43",
@@ -1141,6 +1142,24 @@
         "focus": "tests/fixtures/claude-task-worker.ts",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_555b6c64",
         "branch": "bruv/pr45-primary-tests-fixtures-claude-task--555b6c64",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_924e63c3",
+        "stage": "primary",
+        "focus": "tests/t3/native-routing.test.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_924e63c3",
+        "branch": "bruv/pr45-primary-tests-t3-native-routing.tes-924e63c3",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_03c6a29d",
+        "stage": "primary",
+        "focus": "tests/t3/web-launcher-process.test.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_03c6a29d",
+        "branch": "bruv/pr45-primary-tests-t3-web-launcher-proce-03c6a29d",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
       }

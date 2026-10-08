@@ -10317,13 +10317,39 @@
       "initialBlob": "3bd6117eca7ceb80078fb3d22eef42a398560edd",
       "status": "pending",
       "area": "compatibility-t3",
-      "resumeState": "pending-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_8271e96d",
+      "primaryCommit": "e43a0cb01fa81f621191bb33d7a3e57a45600a8d",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "e43a0cb01fa81f621191bb33d7a3e57a45600a8d",
       "report": "wisdom/quality/structural-readability-areas/compatibility-t3.json",
-      "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+      "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection.",
+      "primaryBase": "e43a0cb01fa81f621191bb33d7a3e57a45600a8d",
+      "primaryResult": "The fixture owns the visible indicator map and wait log in one short scope. Its locator records each wait, invokes scenario-specific convergence, rejects a designated stuck indicator, resolves Working, and checks the requested final state; exact role/text selector assertions remain visible in the returned page. The first scenario contrasts the rejected one-shot assertion with the awaited ordered hidden/visible/hidden sequence. The deadline scenario keeps clock installation, advancement, remaining-budget assertions, exhaustion assertion, and descriptor restoration together under try/finally. The final loop expresses the same rejection contract for each indicator without hiding assertions in a helper. In the actual command driver, correlated wire result detection precedes waitForCommandIdle and the idle snapshot; waitForCommandIdle owns the shared deadline, ordered waits, and final simultaneous visibility recheck. Trace command driver re-exports that exercise; run-trace selects it for the replay, which invokes integration.exercise. Splitting these compact scenarios or adding a clock/context helper would add indirection rather than relieve scattered authority or lifetime reconstruction. All existing assertions and security boundaries are unchanged.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        {
+          "kind": "read-only",
+          "result": "Read wisdom/values.md and structural-readability-guidance.md; inspected only assigned focus rows in preserved reconciliation and relevant area/repo-wide ledgers."
+        },
+        {
+          "kind": "read-only",
+          "result": "Traced imported production helper and actual command proof/replay callers; inspected focus diff, index, and Git blob identity. Initial worktree/index clean; focus unchanged from baseline 3bd6117eca7ceb80078fb3d22eef42a398560edd."
+        },
+        {
+          "kind": "formatter",
+          "result": "Not applicable: no changed source paths or source commit; no formatting-only churn."
+        },
+        {
+          "kind": "runtime",
+          "result": "Not run: tests/build/setup are owned by parent audited isolated batch gates."
+        }
+      ],
+      "primaryLimits": [
+        "Static primary readability assessment only; independent fresh judge remains parent-owned.",
+        "No source changes, new source commit, wisdom edits, or values edits: no new reusable lesson was found.",
+        "relatedPaths records inspected caller/helper paths, not edits."
+      ]
     },
     {
       "file": "tests/claude-native-history-model.test.mjs",
