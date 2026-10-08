@@ -76,7 +76,7 @@ function streamAfterPayloadCapture(
   return output;
 }
 
-for (const [provider, id, api] of [
+for (const [provider, , api] of [
   ["openai-codex", "gpt-5.6-luna", codex],
   ["anthropic", "claude-sonnet-4-5", anthropic],
 ] as const) {

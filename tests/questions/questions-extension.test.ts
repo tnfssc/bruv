@@ -473,7 +473,7 @@ test("picker wraps full long labels at narrow width and filters without answerin
     () => {},
     () => 20,
   );
-  let frame = picker.render(24);
+  const frame = picker.render(24);
   expect(frame.join("\n")).toContain("must wrap cleanly");
   const { visibleWidth } = await import("@earendil-works/pi-tui");
   expect(frame.every((line) => visibleWidth(line) <= 24)).toBe(true);

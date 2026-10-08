@@ -20,7 +20,7 @@ export async function nativeHelperPlugin(input: string, target: string): Promise
   return {
     name: "live-helper",
     setup(build) {
-      build.onLoad({ filter: /[\/]src[\/]live[\/]embedded\.ts$/ }, () => ({
+      build.onLoad({ filter: /[/]src[/]live[/]embedded\.ts$/ }, () => ({
         contents:
           "import path from " +
           JSON.stringify(path) +

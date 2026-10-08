@@ -40,7 +40,7 @@ async function code(messages: object[]) {
   expect(call.function.name).toBe("execute");
   return JSON.parse(call.function.arguments).code as string;
 }
-const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
+const AsyncFunction = Object.getPrototypeOf(async () => {}).constructor;
 const quiet = { log() {} };
 test("parent fixture discovers pinned alias and launches normal async placement with returned ID", async () => {
   const source = await code([{ role: "user", content: "REMOTE_JOBS_PROOF_A" }]);

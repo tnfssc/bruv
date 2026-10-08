@@ -186,7 +186,7 @@ export function registerGoalMode(
   };
   const reconcileWaiting = () => {
     const goal = store?.get();
-    if (!goal || goal.status !== "waiting" || !jobsDirty) return;
+    if (goal?.status !== "waiting" || !jobsDirty) return;
     jobsDirty = false;
     const statuses = goal.pendingJobIds!.map((id) => jobs.status(id));
     if (statuses.some((status) => status === "unavailable")) {

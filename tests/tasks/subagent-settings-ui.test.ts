@@ -32,7 +32,10 @@ function panel(profiles = parseProfiles({}), available = models) {
     "parent/model",
     "medium",
   );
-  const send = (...keys: string[]) => keys.forEach((key) => component.handleInput(key));
+  const send = (...keys: string[]) =>
+    keys.forEach((key) => {
+      component.handleInput(key);
+    });
   return {
     component,
     send,
@@ -195,7 +198,9 @@ function command(path: string, action: (component: SubagentSettingsPanel) => voi
 test("command persists only on Save", () =>
   fixture(async (path) => {
     const dialog = command(path, (component) => {
-      [ENTER, "beta", ENTER].forEach((key) => component.handleInput(key));
+      [ENTER, "beta", ENTER].forEach((key) => {
+        component.handleInput(key);
+      });
       saveFromOverview(component);
     });
     await dialog.run();

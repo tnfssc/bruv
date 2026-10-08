@@ -315,7 +315,7 @@ export class InjectedMcpSession {
 
   /** Pi preflight reacquires each app HTTP lease before the next owning run. */
   resumeAppOwned(): Promise<void> {
-    return (this.resuming ??= (async () => {
+    this.resuming ??= (async () => {
       if (this.closed) throw new McpOperationError("closed", "MCP session is closed");
       for (const [name, server] of this.appHttpServers) {
         const connection = this.connections.get(name)!;
@@ -332,11 +332,12 @@ export class InjectedMcpSession {
       }
     })().finally(() => {
       this.resuming = undefined;
-    }));
+    });
+    return this.resuming;
   }
 
   private closeConnection(connection: Connection): Promise<void> {
-    return (connection.closing ??= (async () => {
+    connection.closing ??= (async () => {
       let failed = false;
       try {
         if (connection.transport instanceof StreamableHTTPClientTransport && connection.transport.sessionId)
@@ -351,7 +352,8 @@ export class InjectedMcpSession {
       }
       connection.status = failed ? "close-failed" : "closed";
       if (failed) throw new Error("MCP teardown failed");
-    })());
+    })();
+    return connection.closing;
   }
 
   private assertClosed(results: PromiseSettledResult<void>[]): void {

@@ -72,7 +72,9 @@ function fixture(callbacks: VoiceCallbacks = {}, orchestration?: VoiceOrchestrat
 }
 const pcm = (samples: number[]) => {
   const bytes = Buffer.alloc(samples.length * 2);
-  samples.forEach((v, i) => bytes.writeInt16LE(v, 2 * i));
+  samples.forEach((v, i) => {
+    bytes.writeInt16LE(v, 2 * i);
+  });
   return bytes;
 };
 

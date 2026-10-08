@@ -449,8 +449,7 @@ export class OpenAIRealtimeSession implements VoiceProvider {
   private continueResponse(id: string): void {
     const response = this.responses.get(id);
     if (
-      !response ||
-      !response.done ||
+      !response?.done ||
       response.continued ||
       response.cancelled ||
       response.revision !== this.inputRevision ||

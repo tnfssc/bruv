@@ -18,7 +18,7 @@ function measureSync<T>(name: string, payloadBytes: number, fn: () => T) {
   const parse = JSON.parse,
     decode = Buffer.prototype.toString,
     materialize = DiskEntryStore.prototype.materialize;
-  JSON.parse = function (text: string, reviver?: any) {
+  JSON.parse = (text: string, reviver?: any) => {
     const start = performance.now();
     try {
       return parse(text, reviver);

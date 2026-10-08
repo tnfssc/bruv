@@ -268,7 +268,7 @@ export async function runSubagentAcceptance({
         throw Error("Missing real child source identities");
       const source = (await fs.readFile(meta.bruvSourceSessionId, "utf8")).trim().split("\n").map(JSON.parse);
       const originals = rows.map((r) => source.find((e) => e.id === r.bruv.sourceMessageId));
-      if (originals.some((e) => !e || e.type !== "message"))
+      if (originals.some((e) => e?.type !== "message"))
         throw Error("Child source IDs do not resolve to real committed messages");
       if (new Set(rows.map((r) => r.uuid)).size !== rows.length) throw Error("Duplicate child native history");
       const serialized = JSON.stringify(rows);

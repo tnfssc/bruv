@@ -1,6 +1,6 @@
 import { Database } from "bun:sqlite";
 import { mkdirSync } from "node:fs";
-import { dirname, join } from "node:path";
+import { join } from "node:path";
 import { homedir } from "node:os";
 import type { RootIntent, RootRecord, RootCommand, RootCommandReceipt, RootObservation, RootDialog } from "./contract";
 

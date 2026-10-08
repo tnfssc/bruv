@@ -42,7 +42,7 @@ async function runFixture({ replay = successfulReplay, connectorArgs = '["--owne
     await fs.writeFile(artifact, binaryBytes, { mode: 0o755 });
     await fs.writeFile(
       path.join(scripts, "model.mjs"),
-      String.raw`
+      `
 export const modelSlug = "offline-fixture/local";
 export const modelsConfig = port => ({ fixturePort: port });
 `,

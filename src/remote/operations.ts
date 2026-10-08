@@ -47,9 +47,9 @@ export function createRemoteOperations(client: RemoteClient = new RemoteClient()
   };
   return async (
     args: RemoteOperation,
-    cwd = process.cwd(),
+    _cwd = process.cwd(),
     signal?: AbortSignal,
-    jobSessionFile?: string,
+    _jobSessionFile?: string,
   ): Promise<unknown> => {
     if (!args || typeof args !== "object") throw new Error("Invalid remote operation");
     switch (args.op) {

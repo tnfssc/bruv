@@ -259,8 +259,7 @@ export type RepositoryLaunch = {
 function validatePreparedSnapshot(args: RepositoryLaunch): RepositorySnapshot {
   const snapshot = args.preparedSnapshot;
   if (
-    !snapshot ||
-    snapshot.version !== 1 ||
+    snapshot?.version !== 1 ||
     snapshot.localRoot !== realpathSync(args.localRoot) ||
     !snapshot.bundleSha256 ||
     !/^[a-f0-9]{64}$/.test(snapshot.bundleSha256)

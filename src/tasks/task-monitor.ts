@@ -21,8 +21,7 @@ export function registerTaskMonitor(
         const source = remoteJobs
           ? new MergedTaskMonitorSource(getManager(), remoteJobs, ctx.sessionManager?.getSessionFile?.())
           : getManager();
-        let panel: TaskMonitorPanel;
-        panel = new TaskMonitorPanel(
+        const panel = new TaskMonitorPanel(
           source,
           theme,
           keybindings,

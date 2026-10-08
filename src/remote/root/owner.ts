@@ -274,8 +274,7 @@ class RpcPort implements RootSessionPort {
         this.fatal(Error("Root RPC event gap: oversized or unterminated output"));
         return;
       }
-      let nl: number;
-      while ((nl = buffer.indexOf("\n")) >= 0) {
+      for (let nl = buffer.indexOf("\n"); nl >= 0; nl = buffer.indexOf("\n")) {
         const line = buffer.slice(0, nl);
         buffer = buffer.slice(nl + 1);
         if (!line.trim()) continue;

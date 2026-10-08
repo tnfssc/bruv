@@ -67,7 +67,8 @@ export function parseRootPlacementArgs(args: string[]): { localArgs: string[]; r
         options.cwd = takeValue();
         break;
       case "--remote-include":
-        (options.remoteInclude ??= []).push(takeValue());
+        options.remoteInclude ??= [];
+        options.remoteInclude.push(takeValue());
         break;
       case "--model":
         options.model = takeValue();

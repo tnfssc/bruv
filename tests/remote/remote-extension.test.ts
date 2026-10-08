@@ -220,7 +220,7 @@ test("stale targeted or missing-text remote answers never fall through to a diff
 });
 
 test("no-args inbox binds selected choice to freshly synced owner/version, Escape never submits", async () => {
-  let version = 3;
+  const version = 3;
   const answers: any[] = [];
   const task = () => ({
     taskId: "task-one",
@@ -313,15 +313,7 @@ test("connect editor Escape never connects, even after entering a host", async (
     hasUI: true,
     ui: {
       custom: async (factory: any) => {
-        let result: string | undefined;
-        factory(
-          { terminal: { rows: 30 }, requestRender() {} },
-          { fg: (_c: string, t: string) => t },
-          {},
-          (v: string | undefined) => {
-            result = v;
-          },
-        );
+        factory({ terminal: { rows: 30 }, requestRender() {} }, { fg: (_c: string, t: string) => t }, {}, () => {});
         return choices.shift();
       },
       editor: async () => edits.shift(),

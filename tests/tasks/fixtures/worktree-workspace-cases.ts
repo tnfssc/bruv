@@ -51,7 +51,7 @@ describe("local worktree workspace", () => {
     const { repo } = await fixture();
     await writeFile(
       join(repo, "t3.json"),
-      String.raw`{
+      `{
       // portable setup
       "scripts": [{
         "name": "setup",

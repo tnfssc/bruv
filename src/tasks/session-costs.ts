@@ -1,3 +1,4 @@
+import type { Dirent } from "node:fs";
 import { open, readdir, stat } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
 
@@ -55,7 +56,7 @@ async function mapLimited<T>(values: T[], limit: number, fn: (value: T) => Promi
 async function jsonlFiles(directory: string): Promise<string[]> {
   const files: string[] = [];
   const visit = async (dir: string): Promise<void> => {
-    let entries;
+    let entries: Dirent[];
     try {
       entries = await readdir(dir, { withFileTypes: true });
     } catch {
@@ -174,7 +175,7 @@ export class SessionCostTracker {
   }
 
   private async readMetadata(path: string, session: CachedSession, size: number): Promise<void> {
-    let handle;
+    let handle: Awaited<ReturnType<typeof open>> | undefined;
     try {
       handle = await open(path, "r");
       const length = Math.min(size, PREFIX_BYTES);
@@ -228,7 +229,7 @@ export class SessionCostTracker {
   private async readUsage(path: string, session: CachedSession, size: number): Promise<void> {
     const available = size - session.offset;
     if (available <= 0) return;
-    let handle;
+    let handle: Awaited<ReturnType<typeof open>> | undefined;
     try {
       handle = await open(path, "r");
       let remaining = available;

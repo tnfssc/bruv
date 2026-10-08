@@ -458,9 +458,9 @@ compiledTest(
           );
       }
       expect(childTranscript).toContain("ACTUAL_CHILD_TOOL_RESULT");
-      expect(childTranscript).toContain('\"type\":\"normal\"');
-      expect(childTranscript).toContain('\"depth\":1');
-      expect(childTranscript).toContain('\\\"controls\\\":[]');
+      expect(childTranscript).toContain('"type":"normal"');
+      expect(childTranscript).toContain('"depth":1');
+      expect(childTranscript).toContain('\\"controls\\":[]');
       child.stdin.end();
       expect(await exit).toBe(0);
     } finally {

@@ -24,7 +24,9 @@ export default function (pi: any) {
       const lost = await bridge.handleCreated({ id: "fixture-lost", target: "client", offsetMs: 2 });
       if (lost.kind !== "clarification") throw new Error("Incomplete speech was not refused");
       const request = "Check this repo status, then explain any changes before editing files.";
-      Array.from(request).forEach((text, i) => bridge.addFragment({ startMs: i * 200, endMs: (i + 1) * 200, text }));
+      Array.from(request).forEach((text, i) => {
+        bridge.addFragment({ startMs: i * 200, endMs: (i + 1) * 200, text });
+      });
       void bridge
         .handleCreated({ id: "fixture-spoken", target: "client", offsetMs: 20000 })
         .catch((error) => ctx.ui.notify("SPOKEN DELEGATION FAILED: " + error, "error"))

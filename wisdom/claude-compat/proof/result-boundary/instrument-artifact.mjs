@@ -48,7 +48,7 @@ for(const [name,next] of funcs){
  const tail = s.lastIndexOf('});');
  if(body<0||tail<0) throw Error('Missing body '+name);
  let original = s.slice(body+1,tail);
- original = original.replace(name==='finalizeActiveTurn'?/(^[\t ]*)(yield\*)/gm:/(^[\t ]*)(return;)/gm,(all,indent,token,offset)=>indent+'__bd('+JSON.stringify(name+'.line-'+s.slice(0,body+1+offset).split('\n').length)+','+(name==='finalizeActiveTurn'?'{context:input.context}':name==='releaseHeldRootFrames'?'{context}':'{message:input.message}')+');\n'+indent+token);
+ original = original.replace(name==='finalizeActiveTurn'?/(^[\t ]*)(yield\*)/gm:/(^[\t ]*)(return;)/gm,(_all,indent,token,offset)=>indent+'__bd('+JSON.stringify(name+'.line-'+s.slice(0,body+1+offset).split('\n').length)+','+(name==='finalizeActiveTurn'?'{context:input.context}':name==='releaseHeldRootFrames'?'{context}':'{message:input.message}')+');\n'+indent+token);
  const ctx = name==='finalizeActiveTurn'?'{context:input.context}':name==='releaseHeldRootFrames'?'{context}':'{message:input.message}';
  s = s.slice(0,body+1)+'\n__bd("'+name+'.enter",'+ctx+');try{'+original+'}catch(error){__bd("'+name+'.throw",{error});throw error;}finally{__bd("'+name+'.leave",'+ctx+');}\n});'+s.slice(tail+3);
  section=section.slice(0,from)+s+section.slice(to);
@@ -85,7 +85,7 @@ const rend=re>rs?re:rs+12000;
 let r=binary.subarray(rs,rend).toString();
 r=r.replace('(state) => routeProviderEvent(event, routeIdentity, state)', '(state) => {const route=routeProviderEvent(event,routeIdentity,state);globalThis.__bd("run.route",{event,route,state,identity:routeIdentity});return route;}');
 r=r.replace('yield* trackChildLifecycle(event, deliveredEvent !== null);','yield* trackChildLifecycle(event, deliveredEvent !== null);globalThis.__bd("run.tracked",{event});');
-const ps=r.indexOf('const shouldStopProviderEventIngestion =');const pe=r.indexOf('const filterAssistantEvent =',ps);let pred=r.slice(ps,pe).replaceAll('return false;','{globalThis.__bd("run.stop.result",{phase:false});return false;}').replaceAll('return true;','{globalThis.__bd("run.stop.result",{phase:true});return true;}');r=r.slice(0,ps)+pred+r.slice(pe);
+const ps=r.indexOf('const shouldStopProviderEventIngestion =');const pe=r.indexOf('const filterAssistantEvent =',ps);const pred=r.slice(ps,pe).replaceAll('return false;','{globalThis.__bd("run.stop.result",{phase:false});return false;}').replaceAll('return true;','{globalThis.__bd("run.stop.result",{phase:true});return true;}');r=r.slice(0,ps)+pred+r.slice(pe);
 r=r.replace('mapError$2((cause) => new RunExecutionIngestError({','mapError$2((cause) => new RunExecutionIngestError({diagnostic:(globalThis.__bd("run.cause",{error:cause}),undefined),');
 r=r.replace('const deliveredEvent = filterAssistantEvent(event, toEpochMillis(yield* now));','const deliveredEvent = filterAssistantEvent(event, toEpochMillis(yield* now));globalThis.__bd("run.delivered",{event:deliveredEvent});');
 r=r.replace('storedEventCount = (yield* providerEventIngestor.ingestNormalized({','globalThis.__bd("run.ingest.before",{event});storedEventCount = (yield* providerEventIngestor.ingestNormalized({');

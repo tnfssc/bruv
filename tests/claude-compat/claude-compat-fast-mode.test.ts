@@ -99,8 +99,7 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
         waiters: Array<{ match: (frame: any) => boolean; resolve: (frame: any) => void }> = [];
       output.on("data", (data) => {
         pending += data;
-        let index: number;
-        while ((index = pending.indexOf("\n")) >= 0) {
+        for (let index = pending.indexOf("\n"); index >= 0; index = pending.indexOf("\n")) {
           const frame = JSON.parse(pending.slice(0, index));
           pending = pending.slice(index + 1);
           frames.push(frame);

@@ -4,7 +4,7 @@ import { ownedFixtureEnv } from "../../tests/helpers/helpers";
  * Parent completion wake is deliberately tested separately by remote-jobs-e2e.ts:
  * this proof kills its original parent before the independent owner finishes.
  */
-import { spawn, spawnSync } from "node:child_process";
+import { type spawn, spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { homedir } from "node:os";

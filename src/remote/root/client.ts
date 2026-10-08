@@ -257,7 +257,7 @@ export class RootClient {
       offset = r.offset;
       checkout = r.checkout;
     }
-    if (!checkout || !checkout.startsWith("/")) throw Error("Missing root source checkout");
+    if (!checkout?.startsWith("/")) throw Error("Missing root source checkout");
     return checkout;
   }
   private record(value: unknown, s: RootLocalState): RootRecord {

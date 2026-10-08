@@ -16,7 +16,7 @@ const inside = (root: string, target: string) => {
 /** Bounded, fatal UTF-8 read; reject symlinks at every path element. Node path-based APIs
  * cannot promise confinement against a hostile process concurrently replacing ancestors. */
 export async function readGrantedRepoFile(root: string, name: string): Promise<string> {
-  if (!name || name.includes("\0") || isAbsolute(name) || name.split(/[\/]/).includes(".."))
+  if (!name || name.includes("\0") || isAbsolute(name) || name.split(/[/]/).includes(".."))
     throw new Error("Invalid relative repo file");
   const target = resolve(root, name);
   if (!inside(root, target)) throw new Error("Outside granted repo");

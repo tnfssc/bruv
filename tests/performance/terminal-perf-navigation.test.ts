@@ -63,7 +63,7 @@ describe("scheduled provider-free navigation workloads", () => {
           expect(b.state.searchMatches).toBe(a.state.searchMatches);
           expect(c.state.searchMatches).toBe(0);
           expect(a.state.editorCharacters).toBe(0); // query reached search overlay, NOT editor
-          expect(a.frames[0]!.phasesMs["refreshSearch"]).toBeGreaterThanOrEqual(0);
+          expect(a.frames[0]!.phasesMs.refreshSearch).toBeGreaterThanOrEqual(0);
         }
         if (mode === "tool-detail") {
           expect(a.state.toolExpanded).toBe(true);

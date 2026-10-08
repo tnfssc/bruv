@@ -1,5 +1,5 @@
 import type { RemoteState, RemoteTask } from "./client";
-import { QuestionService, type Question, type QuestionContext, type QuestionOwner } from "../questions/service";
+import type { QuestionService, Question, QuestionContext, QuestionOwner } from "../questions/service";
 
 /** This is a trusted human-route dependency, not an execute/agent tool. */
 export type RemoteQuestionClient = {
@@ -137,10 +137,7 @@ export class RemoteQuestionBridge {
     if (!task || task.jobSessionFile !== ctx.sessionManager.getSessionFile() || !samePinnedOwner(q.remote, task))
       throw new Error("Pinned remote question owner unavailable; human reply remains saved");
     const pending = questions(task).find((r) => r.id === q.remote!.id && sameOwner(r.owner, q.remote!.owner));
-    if (
-      q.remote.replyState === "saved" &&
-      (!pending || pending.status !== "pending" || pending.version !== q.remote.version)
-    )
+    if (q.remote.replyState === "saved" && (pending?.status !== "pending" || pending.version !== q.remote.version))
       throw new Error("Remote question owner/version changed; saved human reply was not retargeted or sent");
     if (q.remote.replyState === "saved") q = await this.service.claimRemoteReply(ctx, q);
     // Explicit human resume replays ONLY the same immutable request/replyId.

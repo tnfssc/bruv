@@ -486,10 +486,7 @@ export async function captureFailure({ page, proof, root }) {
     await page.getByText("CANCEL_CONFIRMED_REAL").last().waitFor();
     await fs.writeFile(
       path.join(proof, name + ".txt"),
-      (await page.locator("body").innerText()).replace(
-        new RegExp("/var/tmp/bruv-native-acceptance-[^/]+", "g"),
-        "<FIXTURE>",
-      ),
+      (await page.locator("body").innerText()).replace(/\/var\/tmp\/bruv-native-acceptance-[^/]+/g, "<FIXTURE>"),
     );
     await page.screenshot({ path: path.join(proof, name + ".png") });
   };

@@ -3,7 +3,7 @@ import { mkdir, mkdtemp, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { bruvSystemPrompt } from "../../src/prompts";
-import { bruvSystemPromptFallback, withBruvSystemPrompt } from "../../src/system-prompt";
+import { withBruvSystemPrompt } from "../../src/system-prompt";
 
 async function systemPromptFiles(files: { project?: string; global?: string }) {
   // Retain each owned fixture for the parent's isolated gate inspection.

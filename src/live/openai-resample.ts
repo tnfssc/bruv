@@ -27,7 +27,9 @@ export class InputResampler {
     }
     const bytes = new Uint8Array(out.length * 2);
     const view = new DataView(bytes.buffer);
-    out.forEach((value, i) => view.setInt16(i * 2, value, true));
+    out.forEach((value, i) => {
+      view.setInt16(i * 2, value, true);
+    });
     return bytes;
   }
   /** One final held sample where linear interpolation needs a future frame. */

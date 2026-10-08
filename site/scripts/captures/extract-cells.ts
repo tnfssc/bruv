@@ -32,7 +32,7 @@ try {
   const text = await Bun.file(resolve(root, "captures/settings/cli-settings.txt")).text();
   const rows = await page.evaluate(
     async ({ text, terminalSize, crop }) => {
-      // @ts-ignore Browser module is served from the installed, pinned package.
+      // @ts-expect-error Browser module is served from the installed, pinned package.
       const { init, Terminal } = await import("/ghostty-web.js");
       await init();
       const t = new Terminal({

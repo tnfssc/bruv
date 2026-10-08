@@ -55,7 +55,7 @@ async function runSetupProbe(key: string): Promise<void> {
             outcome = "setup not reached";
           } else {
             // The production transport open event independently records the handshake.
-            const details = /\((code [a-z_]+|type [a-z_]+|field [a-zA-Z0-9_.\[\]]+)(?:, [^)]+)*\)/.exec(message)?.[0];
+            const details = /\((code [a-z_]+|type [a-z_]+|field [a-zA-Z0-9_.[\]]+)(?:, [^)]+)*\)/.exec(message)?.[0];
             outcome = "setup rejected" + (details ?? " (no safe provider identifiers)");
           }
         },

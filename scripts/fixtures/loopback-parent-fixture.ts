@@ -51,7 +51,7 @@ function readRpcEvents(stdout: Readable, onEvent: (event: any) => void) {
   let buffer = "";
   stdout.on("data", (chunk: Buffer) => {
     buffer += String(chunk);
-    for (let pos; (pos = buffer.indexOf("\n")) !== -1; ) {
+    for (let pos = buffer.indexOf("\n"); pos !== -1; pos = buffer.indexOf("\n")) {
       const line = buffer.slice(0, pos);
       buffer = buffer.slice(pos + 1);
       if (line) {

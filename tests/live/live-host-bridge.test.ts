@@ -160,17 +160,17 @@ test("session host routes task operations through the supplied port, with confir
     new SessionHost({
       context: context as unknown as ExtensionContext,
       tasks: {
-        list: async (params, ctx, signal) => {
+        list: async (params, ctx, _signal) => {
           expect(ctx as object).toBe(context);
           calls.push("list:" + params.count);
           return { jobs: [] };
         },
-        inspect: async (id, offset, ctx, signal) => {
+        inspect: async (id, offset, ctx, _signal) => {
           expect(ctx as object).toBe(context);
           calls.push("inspect:" + id + ":" + offset);
           return { id };
         },
-        stop: async (id, ctx, signal) => {
+        stop: async (id, ctx, _signal) => {
           expect(ctx as object).toBe(context);
           calls.push("stop:" + id);
           return { id };

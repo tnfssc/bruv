@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { placementCode, placementReply } from "./fixtures/remote-e2e/placement-parent";
-const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
+const AsyncFunction = Object.getPrototypeOf(async () => {}).constructor;
 const targets = { targets: [{ name: "fixture-owner", kind: "ssh", authorized: true }] };
 async function run(prompt: string, options: { discovery?: unknown; result?: unknown; retry?: boolean } = {}) {
   const calls: any[] = [],

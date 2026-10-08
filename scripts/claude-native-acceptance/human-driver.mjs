@@ -38,7 +38,7 @@ const projected = (q) => ({
   replyVersion: q.replyVersion,
   blocked: q.blocked,
 });
-export async function exercise({ page, url, snapshot: nativeSnapshot, config }) {
+export async function exercise({ page, snapshot: nativeSnapshot, config }) {
   const snapshot = async (name) => {
     await nativeSnapshot(name);
     const file = path.join(config.proof, name + ".txt");

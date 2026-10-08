@@ -27,7 +27,7 @@ async function installMockUpstream(upstream, proof) {
     binary,
     `#!${process.execPath}\n` +
       mockHooks.replace("process.env.PROOF_OUTPUT", JSON.stringify(proof)) +
-      String.raw`
+      `
 if (process.argv.includes("--version")) {
   console.log("test-version");
 } else if (process.argv.includes("pair")) {
@@ -49,7 +49,7 @@ if (process.argv.includes("--version")) {
   await fs.writeFile(
     path.join(upstream, "runtime/node_modules/playwright/index.mjs"),
     mockHooks +
-      String.raw`
+      `
 const locator = () => ({
   or() {
     return this;
@@ -103,7 +103,7 @@ async function writeMockDriver(driver, mode) {
     mockHooks +
       (mode === "subagent"
         ? ""
-        : String.raw`
+        : `
 export async function capture() {
   await event("capture");
   return {

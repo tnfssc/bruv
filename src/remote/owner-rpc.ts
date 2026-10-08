@@ -10,8 +10,7 @@ export class OwnerRpcOutput {
 
   *push(chunk: string): Generator<unknown> {
     this.buffer += chunk;
-    let newline: number;
-    while ((newline = this.buffer.indexOf("\n")) >= 0) {
+    for (let newline = this.buffer.indexOf("\n"); newline >= 0; newline = this.buffer.indexOf("\n")) {
       const line = this.buffer.slice(0, newline);
       this.buffer = this.buffer.slice(newline + 1);
       if (Buffer.byteLength(line) > this.maxLineBytes) throw new Error("RPC line limit exceeded");

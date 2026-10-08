@@ -12,7 +12,6 @@ test("disk history retrieval traverses metadata, preserving originals, branches,
 
 test("old auxiliary checkpoints do not consume retrieval limits or materialize snapshot bodies", async () => {
   const fixture = createHistoryFixture("bruv-aux-retrieval-");
-  const { root } = fixture;
   const { stdout, stderr, code } = await runProcess(
     [
       process.execPath,
@@ -79,12 +78,11 @@ test("old auxiliary checkpoints do not consume retrieval limits or materialize s
 
 test("shared SDK indexes survive failed reset and branch publication", async () => {
   const fixture = createHistoryFixture("bruv-shared-index-");
-  const { root } = fixture;
   const { stdout, stderr, code } = await runProcess(
     [
       process.execPath,
       "-e",
-      String.raw`
+      `
       import { SessionManager } from "@earendil-works/pi-coding-agent";
       import { installDiskBackedSessionManager, getDiskBackedEntryMetadata } from "./src/history/session-manager.ts";
       import { writeFileSync } from "node:fs";

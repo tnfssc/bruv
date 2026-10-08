@@ -14,4 +14,4 @@ Async work tied to a session must capture `diagnosticRecorder(owner)` when it st
 
 Jobs also have a protected session-owned index at `<session-file>.jobs.jsonl`. It keeps the newest lifecycle records within 2 MiB. Those records include stop causes and child-session pointers, but not commands, prompts, or output. The index does not reconnect old jobs to `jobs.inspect`. An abrupt host death before a record is written cannot be seen later.
 
-Lifecycle locking calls the Linux x64 libc advisory-lock ABI through Bun FFI. It needs no helper executable. The kernel releases the lock when the process dies. If locking is unsupported or busy, the optional record is dropped with a distinct diagnostic. It is never written without a lock.
+Lifecycle locking calls the Linux x64 libc advisory-lock ABI through Bun FFI. Cache the loaded library itself and read `symbols.flock` from it: the library is a process-lifetime ownership root, not a disposable unused binding. It needs no helper executable. The kernel releases the lock when the process dies. If locking is unsupported or busy, the optional record is dropped with a distinct diagnostic. It is never written without a lock.

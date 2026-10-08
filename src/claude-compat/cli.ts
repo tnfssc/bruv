@@ -14,7 +14,7 @@ import dark from "../../dist/runtime-assets/theme/dark.json" with { type: "file"
 import light from "../../dist/runtime-assets/theme/light.json" with { type: "file" };
 import themeSchema from "../../dist/runtime-assets/theme/theme-schema.json" with { type: "file" };
 import { scrubRootEnvironmentInPlace } from "../delegation-environment";
-import { launchPolicy, nativeStorage, permissionBinding, mcpFactory, scopedSettings } from "./binding";
+import { nativeStorage, permissionBinding, mcpFactory, scopedSettings } from "./binding";
 import { InjectedMcpSession } from "./mcp";
 import { preflightNativeHome } from "./preflight";
 import { profilesPath } from "../tasks/subagent-profiles";
@@ -273,7 +273,11 @@ export async function runConnector(
   let closing: Promise<void> | undefined;
   let exitCode = 0;
   let stopped: "EOF" | "SIGTERM" | "SIGINT" | undefined;
-  const close = () => (runtime ? (closing ??= runtime.close()) : Promise.resolve());
+  const close = () => {
+    if (!runtime) return Promise.resolve();
+    closing ??= runtime.close();
+    return closing;
+  };
   const stop = (reason: "EOF" | "SIGTERM" | "SIGINT") => {
     stopped ??= reason;
     transport?.close(new Error("Connector stopped: " + reason));

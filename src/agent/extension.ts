@@ -51,7 +51,6 @@ import {
   taskRowFromLaunch,
   taskRowFromRemote,
   taskRowKey,
-  taskRowsFromDetails,
   taskRowsFromSessionManager,
   upsertTaskRow,
 } from "../ui/task-rows";

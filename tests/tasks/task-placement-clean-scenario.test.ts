@@ -6,7 +6,7 @@ import {
   QUESTION,
   type RequestBody,
 } from "../../scripts/fixtures/task-placement-clean/scenario";
-const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
+const AsyncFunction = Object.getPrototypeOf(async () => {}).constructor;
 const tool = (body: any) => JSON.parse((response(body) as any).tool_calls[0].function.arguments);
 test("presentation tools execute with the real question-list shape and write the notes", async () => {
   const body = { model: "studio", messages: [{ role: "user", content: ANSWER }] };

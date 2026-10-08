@@ -74,7 +74,7 @@ function launch(side: string, session: string) {
     err = "";
   child.stdout.on("data", (data: Buffer) => {
     buffer += String(data);
-    for (let pos; (pos = buffer.indexOf("\n")) >= 0; ) {
+    for (let pos = buffer.indexOf("\n"); pos >= 0; pos = buffer.indexOf("\n")) {
       const line = buffer.slice(0, pos);
       buffer = buffer.slice(pos + 1);
       if (line) events.push(JSON.parse(line));

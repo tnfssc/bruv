@@ -187,7 +187,11 @@ async function readPersistenceEvidence(runtimeFiles) {
 export async function collectReturnEvidence(config, page, filename = "same-root-return-evidence.json") {
   // Share one ID namespace across sources, in capture order, so prompt/session echoes remain comparable.
   const ids = new Map();
-  const id = (v) => (v ? (ids.has(v) ? ids.get(v) : (ids.set(v, "id-" + (ids.size + 1)), ids.get(v))) : null);
+  const id = (v) => {
+    if (!v) return null;
+    if (!ids.has(v)) ids.set(v, "id-" + (ids.size + 1));
+    return ids.get(v);
+  };
   const { lifecycle, correlation } = await readWireEvidence(config.wire, id);
   const journals = await readJournalEvidence(path.join(config.env.BRUV_CODING_AGENT_DIR, "native-sessions"), id);
   const runtimeFiles = await files(path.join(path.dirname(config.state), "t3-runtime", "t3-base"));

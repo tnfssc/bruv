@@ -197,12 +197,7 @@ export class RootControls {
       const current = list(await this.client.result({ kind: "questions.list" }), "questions").find(
         (x) => x.id === q.id,
       );
-      if (
-        !current ||
-        current.status !== "pending" ||
-        current.version !== q.version ||
-        !isDeepStrictEqual(current.owner, q.owner)
-      )
+      if (current?.status !== "pending" || current.version !== q.version || !isDeepStrictEqual(current.owner, q.owner))
         throw Error("Question changed; reopen /questions before answering");
       const r = await this.send({
         kind: "questions.answer",

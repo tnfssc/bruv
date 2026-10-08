@@ -1,7 +1,7 @@
 import { loopbackParent, fixtureRpc } from "../fixtures/loopback-parent-fixture";
 import { ownedFixtureEnv } from "../../tests/helpers/helpers";
 /** Drive the compiled normal CLI PTY; RPC only seeds disposable native owner tasks. */
-import { spawn, spawnSync } from "node:child_process";
+import { type spawn, spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { homedir } from "node:os";

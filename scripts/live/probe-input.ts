@@ -59,8 +59,7 @@ function* readStudyLines(source: string): Generator<string> {
       total += count;
       if (total > 8 * 1024 * 1024) throw Error("Source prefix exceeds 8 MiB");
       carry += decoder.decode(block.subarray(0, count), { stream: true });
-      let end: number;
-      while ((end = carry.indexOf("\n")) >= 0) {
+      for (let end = carry.indexOf("\n"); end >= 0; end = carry.indexOf("\n")) {
         const text = carry.slice(0, end);
         carry = carry.slice(end + 1);
         if (Buffer.byteLength(text) > 262144) throw Error("JSONL line exceeds 256 KiB");

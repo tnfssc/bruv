@@ -226,7 +226,8 @@ function harness(
   const statuses = new Map<string, "running" | "finished" | "unavailable">([["job_1", "running"]]);
   const pi: any = {
     on(name: string, handler: Function) {
-      (handlers[name] ??= []).push(handler);
+      handlers[name] ??= [];
+      handlers[name].push(handler);
     },
     registerCommand(name: string, options: any) {
       commands[name] = options;

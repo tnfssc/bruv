@@ -701,7 +701,7 @@ export default function remoteExtension(pi: ExtensionAPI, client = new RemoteCli
             break;
           case "retry": {
             const id = await choose(rest[0]);
-            let saved;
+            let saved: Awaited<ReturnType<RemoteClient["transcript"]>>;
             try {
               saved = await client.transcript(id);
             } catch {

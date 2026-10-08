@@ -550,8 +550,7 @@ export class RemoteClient {
             | undefined
         )?.find((q) => q.id === input.id);
         if (
-          !question ||
-          question.status !== "pending" ||
+          question?.status !== "pending" ||
           question.version !== input.version ||
           question.owner?.sessionId !== input.owner?.sessionId ||
           question.owner?.branchId !== input.owner?.branchId

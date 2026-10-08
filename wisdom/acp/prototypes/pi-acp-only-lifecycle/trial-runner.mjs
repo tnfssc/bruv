@@ -1,5 +1,5 @@
 import { spawn } from "node:child_process";
-import { mkdirSync, writeFileSync, appendFileSync, readFileSync, existsSync, openSync } from "node:fs";
+import { writeFileSync, appendFileSync, existsSync, openSync } from "node:fs";
 import { resolve, join, dirname } from "node:path";
 import { createServer } from "node:http";
 const base = resolve(import.meta.dirname),

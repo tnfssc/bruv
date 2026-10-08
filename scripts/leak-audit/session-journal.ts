@@ -2,7 +2,7 @@
 import { SessionManager } from "@earendil-works/pi-coding-agent";
 import { heapStats } from "bun:jsc";
 import { randomBytes } from "node:crypto";
-let manager: SessionManager | undefined = SessionManager.inMemory("/tmp/bruv-leak-audit");
+const manager: SessionManager | undefined = SessionManager.inMemory("/tmp/bruv-leak-audit");
 async function sample(label: string) {
   await Bun.sleep(30);
   Bun.gc(true);

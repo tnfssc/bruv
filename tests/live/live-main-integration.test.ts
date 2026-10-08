@@ -23,7 +23,7 @@ import { installCurrentConversationAdapter } from "../../src/agent/instruction-c
 import liveExtension from "../../src/live/extension";
 import { withoutPassiveLiveHistory } from "../../src/live/passive-history";
 import { registerLiveStop } from "../../src/live/lifecycle-access";
-import { acquireMainOwner, type MainOwner } from "../../src/live/main-owner";
+import { acquireMainOwner } from "../../src/live/main-owner";
 import { VoiceSession } from "../../src/live/session";
 import { bruvSystemPrompt } from "../../src/prompts";
 
@@ -890,9 +890,9 @@ test("GPT Live spoken delegation reaches Pi as one clean provisional request", a
     { customType: "live-transcript" },
   );
   const request = "Check this repo status, then explain any changes before editing files.";
-  Array.from(request).forEach((delta, i) =>
-    provider.onInputTranscript({ delta, startMs: i * 200, endMs: (i + 1) * 200 }),
-  );
+  Array.from(request).forEach((delta, i) => {
+    provider.onInputTranscript({ delta, startMs: i * 200, endMs: (i + 1) * 200 });
+  });
   provider.onDelegation({ id: "spoken-status", target: "client", offsetMs: 20000 });
   // Evict while the first bridge admission promise has not settled yet.
   provider.onInputTranscript({ delta: "MISSING_REQUEST ".repeat(5000), startMs: 21000, endMs: 22000 });

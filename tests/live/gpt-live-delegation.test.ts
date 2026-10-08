@@ -251,7 +251,9 @@ describe("Retained evidence and loss settlement", () => {
       { length: 100 },
       (_, i) => "Please check file " + i + ": explain the change without editing it. ",
     );
-    chunks.forEach((text, i) => bridge.addFragment({ startMs: i * 200, endMs: (i + 1) * 200, text }));
+    chunks.forEach((text, i) => {
+      bridge.addFragment({ startMs: i * 200, endMs: (i + 1) * 200, text });
+    });
     await bridge.handleCreated({ id: "after-silence", target: "client", offsetMs: 90000 });
     expect(captured[0]?.fragments).toHaveLength(100);
     expect(captured[0]?.fragments.map((f) => f.text).join("")).toBe(chunks.join(""));
@@ -278,16 +280,18 @@ describe("Retained evidence and loss settlement", () => {
   test("tiny deltas retain a whole request and silence does not consume it", async () => {
     const { bridge, captured } = fixture();
     const speech = "Please inspect the implementation before changing it, then run the focused tests. ".repeat(80);
-    Array.from(speech).forEach((text, i) => bridge.addFragment({ startMs: i * 200, endMs: (i + 1) * 200, text }));
+    Array.from(speech).forEach((text, i) => {
+      bridge.addFragment({ startMs: i * 200, endMs: (i + 1) * 200, text });
+    });
     // This many one-character fragments exceeds the byte budget: genuine loss, no partial dispatch.
     expect((await bridge.handleCreated({ id: "too-big", target: "client", offsetMs: speech.length * 200 })).kind).toBe(
       "clarification",
     );
     expect(captured).toHaveLength(0);
     const repeat = "Please inspect the implementation before changing it, then run the focused tests.";
-    Array.from(repeat).forEach((text, i) =>
-      bridge.addFragment({ startMs: 2000000 + i * 200, endMs: 2000200 + i * 200, text }),
-    );
+    Array.from(repeat).forEach((text, i) => {
+      bridge.addFragment({ startMs: 2000000 + i * 200, endMs: 2000200 + i * 200, text });
+    });
     await bridge.handleCreated({ id: "repeat", target: "client", offsetMs: 3000000 });
     expect(captured[0]?.fragments.map((f) => f.text).join("")).toBe(repeat);
     expect(captured[0]?.omittedFragments).toBe(0);

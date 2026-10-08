@@ -350,7 +350,7 @@ export function createSendWorkload(options: SendOptions = {}): SendWorkload {
   let backgroundPrompt: Promise<void> | undefined;
   let backgroundHeld = false;
   let releaseBackground: (() => void) | undefined;
-  let sourceHashes: Record<string, string> = {};
+  const sourceHashes: Record<string, string> = {};
   let historyHash = "";
   const cleanups: Array<() => void> = [];
   function wrap(
