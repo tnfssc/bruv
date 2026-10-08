@@ -143,7 +143,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_1bad7144",
         "branch": "bruv/pr45-primary-scripts-remote-pty-e2e.ts-1bad7144",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "9c449135513eeb5e5cfa8f20e0371d0fe03abf9f"
       },
       {
         "id": "task_21f18195",
@@ -169,6 +170,15 @@
         "focus": "tests/fixtures/remote-e2e/recovery-ssh.sh",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_4f024748",
         "branch": "bruv/pr45-primary-tests-fixtures-remote-e2e-r-4f024748",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_7f7551b5",
+        "stage": "judge",
+        "focus": "scripts/remote-placement-e2e.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_7f7551b5",
+        "branch": "bruv/pr45-judge-scripts-remote-placement-e2e.-7f7551b5",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
       }

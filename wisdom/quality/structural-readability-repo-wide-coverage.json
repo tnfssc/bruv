@@ -2860,13 +2860,41 @@
       "initialBlob": "ff9c6e8a70b09d2134b07c53336b95f56311bf4b",
       "status": "pending",
       "area": "remote",
-      "resumeState": "pending-primary-unstarted",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_1bad7144",
+      "primaryCommit": "9c449135513eeb5e5cfa8f20e0371d0fe03abf9f",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "9c449135513eeb5e5cfa8f20e0371d0fe03abf9f",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
-      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
+      "primaryBase": "c7a21355e87abe213aeb2b2b3ef06456a17b56e1",
+      "primaryResult": "Repository preparation is now one explicit operation containing the unchanged isolated Git setup and HOME assertion. All helper declarations precede provider acquisition; acquisition is immediately followed by the existing try/finally, whose first operation prepares the launch repository. A reader can see the complete returned-provider lifetime and preparation failures now enter existing teardown. Original diagnostic versus owned RPC authority, SSH confinement, PTY assertions, evidence snapshots, and teardown operations remain unchanged.",
+      "primaryPaths": [
+        "scripts/remote-pty-e2e.ts"
+      ],
+      "primaryChecks": [
+        {
+          "kind": "structural-reading",
+          "result": "Read values, structural guidance, repo-wide/remote ledgers and preserved reconciliation. Focus exists at recorded baseline ff9c6e8a70b09d2134b07c53336b95f56311bf4b; no surviving focus candidate or prior primary/judge recorded. Read remote-e2e.sh caller and loopback-parent-fixture.ts RPC/provider boundary."
+        },
+        {
+          "kind": "formatter",
+          "result": "Required read-only Biome executable invoked via node:child_process argv with fresh retained HOME/config/cache/data/TMPDIR at /tmp/pr45-remote-pty-format-YNCErO. Formatted exactly scripts/remote-pty-e2e.ts; no fixes applied."
+        },
+        {
+          "kind": "static-source-preservation",
+          "result": "Exact baseline-to-candidate transformation checked without executing the harness: repository preparation unchanged except enclosing indentation, original SSH-to-finally journey byte-identical. All existing assertion expressions, command arguments and security environment settings preserved."
+        },
+        {
+          "kind": "git-diff-check",
+          "result": "Passed; source commit changes only the focus path."
+        }
+      ],
+      "primaryLimits": [
+        "No setup, tests, builds, SSH, Docker, credential/device access, recovery, push, PR, or merge performed. Parent owns isolated audited runtime gates and an independent fresh judge.",
+        "Optional read-only TypeScript AST inspection could not load /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/typescript/lib/typescript.js (ENOENT); exact source-movement inspection used instead, not a typecheck.",
+        "Existing cleanup semantics are preserved; this change does not claim joined child shutdown or address failures inside the provider constructor itself."
+      ]
     },
     {
       "file": "scripts/remote-recovery-e2e.ts",
