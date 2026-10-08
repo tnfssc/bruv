@@ -65,3 +65,17 @@ access live provider/device/SSH credentials, or do user-data recovery.
 Inspect effects first. Use retained owned environments and exact owned
 process deadlines. Existing values cover measured proof, safe ownership
 and cutting wait without cutting checks; no new value is needed.
+
+## Integrated local checks
+
+Integrated native lane as 397019fe after the deadline commit 98e6b0e4.
+The moved gate conflicted; kept one ordinary Linux gate with its six-minute
+deadline and log upload. Native checks remain only in their sibling lane.
+Moved the worker report into wisdom/ci/ci-native-lane-result.md.
+
+Focused integrated contracts: 62 pass, 55 filtered, 367 assertions. They
+cover native failure/cancel/skip rejection, docs/full plans, preserved
+native steps and the failure bound. Formatting passed. Evidence:
+/home/tnfssc/.bruv/agent/watchers/ci-speed-integrated-42epcc.
+No full local gate or native hardware/workflow script was executed.
+Independent code review and hosted timing are still pending.
