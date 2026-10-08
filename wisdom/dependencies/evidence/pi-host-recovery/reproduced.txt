@@ -1,0 +1,13 @@
+232 | 
+233 | export function adaptPiHostFile(patch: Patch, text: string): string {
+234 |   const digest = hash(text);
+235 |   if (digest === patch.adaptedSha256) return text;
+236 |   if (digest !== patch.originalSha256)
+237 |     throw new Error(`Unsupported Pi host file: ${patch.path}; review bruv's host adaptations before updating Pi`);
+                    ^
+error: Unsupported Pi host file: dist/core/agent-session.js; review bruv's host adaptations before updating Pi
+      at adaptPiHostFile (/home/tnfssc/.t3/worktrees/bruv/t3-43386b05/scripts/pi-host-adaptation.ts:237:15)
+      at <anonymous> (/home/tnfssc/.t3/worktrees/bruv/t3-43386b05/scripts/pi-host-adaptation.ts:255:37)
+      at async preparePiHost (/home/tnfssc/.t3/worktrees/bruv/t3-43386b05/scripts/pi-host-adaptation.ts:251:34)
+
+Bun v1.4.2 (Linux x64)

@@ -1,7 +1,7 @@
 import { execFile } from "node:child_process";
-import { copyFile, cp, mkdtemp, readFile, rm } from "node:fs/promises";
+import { copyFile, cp, mkdtemp, readFile, realpath, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { isAbsolute, join, relative } from "node:path";
 import { promisify } from "node:util";
 import {
   adaptPiHostFile,
@@ -41,6 +41,18 @@ export async function preparePiHostWithRecovery(
   piRoot: string,
   options: RecoveryOptions = {},
 ): Promise<void> {
+  // Borrowed dependencies may belong to another checkout. Check ownership
+  // before either normal preparation or recovery can write through a link.
+  const owner = await realpath(projectRoot);
+  const targets = [piRoot, ...piHostPatches.map((patch) => join(piRoot, patch.path, ".."))];
+  for (const target of targets) {
+    const local = relative(owner, await realpath(target));
+    if (local === ".." || local.startsWith("../") || local.startsWith("..\\") || isAbsolute(local))
+      throw new Error(
+        "Pi host recovery requires checkout-local dependencies; install them locally, then retry bun run prepare:assets.",
+      );
+  }
+
   try {
     await preparePiHost(piRoot);
     return;
