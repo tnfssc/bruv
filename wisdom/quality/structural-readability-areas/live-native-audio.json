@@ -2732,16 +2732,17 @@
       "initialBlob": "a0f5fe7da7fa86df69413dbe85ea45c6dbcc29f4",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "a0f5fe7da7fa86df69413dbe85ea45c6dbcc29f4",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "a0f5fe7da7fa86df69413dbe85ea45c6dbcc29f4",
         "primaryId": "task_677b6742",
         "primaryCommit": "0765b0b347bae057014f3811af3a5ff778b6378d",
-        "judgeIds": [],
+        "judgeIds": ["task_2be562ae"],
         "sourceCommit": "0765b0b347bae057014f3811af3a5ff778b6378d",
-        "state": "needs-judge",
-        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+        "state": "accepted-joined",
+        "reason": "The entire executable fixture is a shebang and one exec. Its sole authority is translating its own location into the source CLI path. Quoted command substitution preserves that path as one argument, quoted \"$@\" preserves incoming argument boundaries, and exec keeps the wrapper from becoming a second process owner. There is no scattered decision or hidden lifetime to consolidate; a helper or setup layer would obscure this transparent boundary."
       }
     },
     {
@@ -2749,16 +2750,17 @@
       "initialBlob": "04aebb179abb726126dbd1db0b6fe6bc9b1941a0",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "04aebb179abb726126dbd1db0b6fe6bc9b1941a0",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "04aebb179abb726126dbd1db0b6fe6bc9b1941a0",
         "primaryId": "task_677b6742",
         "primaryCommit": "0765b0b347bae057014f3811af3a5ff778b6378d",
-        "judgeIds": [],
+        "judgeIds": ["task_2be562ae"],
         "sourceCommit": "0765b0b347bae057014f3811af3a5ff778b6378d",
-        "state": "needs-judge",
-        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+        "state": "accepted-joined",
+        "reason": "Reading the whole fixture reveals one deliberate boundary: real extension/owner/renderer with local provider/device behavior replaced. The session-start marker precedes a short Proxy that changes only registerCommand to gptflood and binds every other function to the real Pi target. The selected OpenAI GPT-Live continuous config, literal offline token, no-op audio and ready fake session are adjacent to the real liveExtension invocation. connect schedules all 24 ordered user fragments and the sole provisional reply in one visible callback. No helper context or cross-file fake state has to be reconstructed; extracting shared proxy/fake machinery would make these boundaries less explicit."
       }
     },
     {
@@ -2766,16 +2768,17 @@
       "initialBlob": "4be3cc03453bc7c74062545f4b453c9be54d2f3e",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "4be3cc03453bc7c74062545f4b453c9be54d2f3e",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "4be3cc03453bc7c74062545f4b453c9be54d2f3e",
         "primaryId": "task_677b6742",
         "primaryCommit": "0765b0b347bae057014f3811af3a5ff778b6378d",
-        "judgeIds": [],
+        "judgeIds": ["task_2be562ae"],
         "sourceCommit": "0765b0b347bae057014f3811af3a5ff778b6378d",
-        "state": "needs-judge",
-        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+        "state": "accepted-joined",
+        "reason": "The whole fixture keeps the relevant authorities visible: one local config value with adjacent load/save, one command-only Proxy preserving the real Pi receiver, and a credentials status function that deliberately distinguishes Google OAuth from an OpenAI stored API key. The marker and livepicker alias connect directly to the caller. Key loading, microphone creation and session factories have explicit throwing sentinels beside the readiness override. There is no duplicated persistence authority or scattered setup decision to repair. Factoring these simple guards into a toolkit would hide what this fixture permits and forbids."
       }
     },
     {
@@ -4798,7 +4801,7 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 93,
-    "pending": 57
+    "accepted": 96,
+    "pending": 54
   }
 }

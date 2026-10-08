@@ -11244,11 +11244,11 @@
     {
       "file": "tests/fixtures/live-execute-cli.sh",
       "initialBlob": "a0f5fe7da7fa86df69413dbe85ea45c6dbcc29f4",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_677b6742",
       "sourceCommit": "0765b0b347bae057014f3811af3a5ff778b6378d",
-      "judgeIds": [],
-      "resumeState": "needs-judge",
+      "judgeIds": ["task_2be562ae"],
+      "resumeState": "accepted-joined",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
       "area": "live-native-audio",
       "primaryCommit": "0765b0b347bae057014f3811af3a5ff778b6378d",
@@ -11265,16 +11265,31 @@
         "Primary reading decision only; independent actual-code judgment and audited isolated runtime gates belong to parent.",
         "No source changes, so no formatter invocation or source commit was needed. sourceCommit is the exact existing HEAD; changedPaths is the complete empty source scope.",
         "Retained durable worktree: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_677b6742. No new temporary fixture state was created; existing callers allocate temporary homes and contain owned-path cleanup, which was inspected but never run."
+      ],
+      "acceptedBlob": "a0f5fe7da7fa86df69413dbe85ea45c6dbcc29f4",
+      "result": "The entire executable fixture is a shebang and one exec. Its sole authority is translating its own location into the source CLI path. Quoted command substitution preserves that path as one argument, quoted \"$@\" preserves incoming argument boundaries, and exec keeps the wrapper from becoming a second process owner. There is no scattered decision or hidden lifetime to consolidate; a helper or setup layer would obscure this transparent boundary.",
+      "systemReason": "live-execute-controls resolves this wrapper beside the tests and supplies it to registerExecuteTool, then exercises live.stop and acknowledged stopWork through the actual scoped execute route. registerExecuteTool forwards executablePath to executeIsolated; executeIsolated spawns that executable with --bruv-internal-execute, shell:false, cwd, pipes and bridge environment. src/cli.ts handles that internal argument with runTypeScriptFromStdin before ordinary CLI asset/bootstrap work. The runner reads stdin and installs the job globals. live-main-integration chooses BRUV_PROBE_EXECUTABLE, an existing compiled binary, or this wrapper; its task factory passes executablePath through src/agent/extension.ts to the same execute registration. live-macos-ci retains explicit src/cli.ts and quoted \"$@\" assertions. Executable tree mode is 100755. These callers explain both path resolution and process replacement without introducing another authority.",
+      "checks": [
+        "git diff --name-status 0765b0b347bae057014f3811af3a5ff778b6378d 0765b0b347bae057014f3811af3a5ff778b6378d: exit 0, empty; primaryBase equals candidate, so there are no candidate-changed source paths.",
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md. Read focus contents and relevant caller/implementation code using git show at the exact candidate, not checkout HEAD.",
+        "Static reading only; no setup, test, build, provider connection, device operation, dependency mutation, or delegation performed.",
+        "git ls-tree at candidate: mode 100755 and blob a0f5fe7da7fa86df69413dbe85ea45c6dbcc29f4; read entire wrapper and controls/macOS test assertions."
+      ],
+      "limits": [
+        "Readability judgment only; runtime gates belong to the parent. No real auth, audio, TUI, or execution behavior verified.",
+        "Durable review provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_2be562ae; candidate evidence and existing worktrees retained. No /tmp code checkout created.",
+        "No source or wisdom edits; only this untracked result artifact is written. Parent must verify runtime agent.model openai-codex/gpt-6.1-sol; this worker does not independently attest that metadata.",
+        "Source-wrapper startup still requires Bun, dependencies and prepared imported assets. No attempt was made to prepare or execute them. The execute child inherits scrubbed process environment; no claim that existing tests meet the parent isolated-gate requirements is made."
       ]
     },
     {
       "file": "tests/fixtures/live-gpt-tui.ts",
       "initialBlob": "04aebb179abb726126dbd1db0b6fe6bc9b1941a0",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_677b6742",
       "sourceCommit": "0765b0b347bae057014f3811af3a5ff778b6378d",
-      "judgeIds": [],
-      "resumeState": "needs-judge",
+      "judgeIds": ["task_2be562ae"],
+      "resumeState": "accepted-joined",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
       "area": "live-native-audio",
       "primaryCommit": "0765b0b347bae057014f3811af3a5ff778b6378d",
@@ -11291,16 +11306,32 @@
         "Primary reading decision only; independent actual-code judgment and audited isolated runtime gates belong to parent.",
         "No source changes, so no formatter invocation or source commit was needed. sourceCommit is the exact existing HEAD; changedPaths is the complete empty source scope.",
         "Retained durable worktree: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_677b6742. No new temporary fixture state was created; existing callers allocate temporary homes and contain owned-path cleanup, which was inspected but never run."
+      ],
+      "acceptedBlob": "04aebb179abb726126dbd1db0b6fe6bc9b1941a0",
+      "result": "Reading the whole fixture reveals one deliberate boundary: real extension/owner/renderer with local provider/device behavior replaced. The session-start marker precedes a short Proxy that changes only registerCommand to gptflood and binds every other function to the real Pi target. The selected OpenAI GPT-Live continuous config, literal offline token, no-op audio and ready fake session are adjacent to the real liveExtension invocation. connect schedules all 24 ordered user fragments and the sole provisional reply in one visible callback. No helper context or cross-file fake state has to be reconstructed; extracting shared proxy/fake machinery would make these boundaries less explicit.",
+      "systemReason": "live-gpt-tui.test launches the source CLI offline in tmux with its mkdtemp HOME, loads this fixture, waits for its marker, and invokes /gptflood start. It checks delta0 through delta23, one user starting fragment, one provisional reply, mic status and absence of raw labels/passive JSON. The real extension merges injected dependencies with defaults, retaining acquireMainOwner. Its command loads continuous mode, takes the literal key, acquires the owner, launches fake audio and selects configureDelegatedConversation because the model is gpt-live-1. That configuration consumes the injected gptSession and connects it before starting capture. Each callback checks the run is alive, sends provisional fragments to MainOwner and feeds TranscriptLog. MainOwner stores delegated live-transcript records without triggering a coding turn or one bubble per delta; TranscriptLog groups contiguous speech and the extension writes a presentation marker on speaker transition. Conversation renderers reconstruct the grouped source while the active assistant draft remains in the widget. This explains the assertions through real presentation code, not merely through fixture counts.",
+      "checks": [
+        "git diff --name-status 0765b0b347bae057014f3811af3a5ff778b6378d 0765b0b347bae057014f3811af3a5ff778b6378d: exit 0, empty; primaryBase equals candidate, so there are no candidate-changed source paths.",
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md. Read focus contents and relevant caller/implementation code using git show at the exact candidate, not checkout HEAD.",
+        "Static reading only; no setup, test, build, provider connection, device operation, dependency mutation, or delegation performed.",
+        "git ls-tree at candidate: blob 04aebb179abb726126dbd1db0b6fe6bc9b1941a0. Read complete fixture and complete GPT TUI caller; traced injection, owner acquisition, connection ordering, callbacks, passive persistence and transcript presentation."
+      ],
+      "limits": [
+        "Readability judgment only; runtime gates belong to the parent. No real auth, audio, TUI, or execution behavior verified.",
+        "Durable review provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_2be562ae; candidate evidence and existing worktrees retained. No /tmp code checkout created.",
+        "No source or wisdom edits; only this untracked result artifact is written. Parent must verify runtime agent.model openai-codex/gpt-6.1-sol; this worker does not independently attest that metadata.",
+        "The fake connect timer is not tracked or cancelled by fake close. This one-shot presentation fixture is not evidence of provider timer teardown or stop-during-connect correctness; no such lifecycle improvement is claimed.",
+        "Caller source creates an owned temporary HOME/theme link and finally kills its named tmux server/removes its own directory. Those operations were inspected, never run. Environment/config/SDK isolation must be audited by the parent before any gate; no temporary directory was created here."
       ]
     },
     {
       "file": "tests/fixtures/live-picker-tui.ts",
       "initialBlob": "4be3cc03453bc7c74062545f4b453c9be54d2f3e",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_677b6742",
       "sourceCommit": "0765b0b347bae057014f3811af3a5ff778b6378d",
-      "judgeIds": [],
-      "resumeState": "needs-judge",
+      "judgeIds": ["task_2be562ae"],
+      "resumeState": "accepted-joined",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
       "area": "live-native-audio",
       "primaryCommit": "0765b0b347bae057014f3811af3a5ff778b6378d",
@@ -11317,6 +11348,22 @@
         "Primary reading decision only; independent actual-code judgment and audited isolated runtime gates belong to parent.",
         "No source changes, so no formatter invocation or source commit was needed. sourceCommit is the exact existing HEAD; changedPaths is the complete empty source scope.",
         "Retained durable worktree: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_677b6742. No new temporary fixture state was created; existing callers allocate temporary homes and contain owned-path cleanup, which was inspected but never run."
+      ],
+      "acceptedBlob": "4be3cc03453bc7c74062545f4b453c9be54d2f3e",
+      "result": "The whole fixture keeps the relevant authorities visible: one local config value with adjacent load/save, one command-only Proxy preserving the real Pi receiver, and a credentials status function that deliberately distinguishes Google OAuth from an OpenAI stored API key. The marker and livepicker alias connect directly to the caller. Key loading, microphone creation and session factories have explicit throwing sentinels beside the readiness override. There is no duplicated persistence authority or scattered setup decision to repair. Factoring these simple guards into a toolkit would hide what this fixture permits and forbids.",
+      "systemReason": "live-picker-tui.test opens the real source CLI/renderer at 80 and 120 columns, waits for the marker, opens /livepicker model, selects gpt-live-1, reopens selection, then enters provider setup and chooses Done before asserting Live remains off. The extension first loads the fixture config. Its model branch enumerates LIVE_PROVIDERS, reads only credentials.status for readiness labels, persists the choice via deps.config.save before replacing selected, and never starts a Run. The local saved config thus models persistence while the reopened menu uses the real extension selected state; this is not a reload-from-disk test. Its provider branch passes allowStart=false to runOpenAISetup; the configured-key state consequently exposes only Done, not Start voice. The later status branch reports the selected OpenAI model with Live off. The credentials/loadKey and device/session throwing sentinels remain intact, and neither picker action calls them on this journey. This is a coherent offline test boundary around real selection/setup decisions, not an alternative picker implementation.",
+      "checks": [
+        "git diff --name-status 0765b0b347bae057014f3811af3a5ff778b6378d 0765b0b347bae057014f3811af3a5ff778b6378d: exit 0, empty; primaryBase equals candidate, so there are no candidate-changed source paths.",
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md. Read focus contents and relevant caller/implementation code using git show at the exact candidate, not checkout HEAD.",
+        "Static reading only; no setup, test, build, provider connection, device operation, dependency mutation, or delegation performed.",
+        "git ls-tree at candidate: blob 4be3cc03453bc7c74062545f4b453c9be54d2f3e. Read complete fixture and picker caller; traced lazy config load, readiness labels, save-before-selection, provider-only setup and off-status path."
+      ],
+      "limits": [
+        "Readability judgment only; runtime gates belong to the parent. No real auth, audio, TUI, or execution behavior verified.",
+        "Durable review provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_2be562ae; candidate evidence and existing worktrees retained. No /tmp code checkout created.",
+        "No source or wisdom edits; only this untracked result artifact is written. Parent must verify runtime agent.model openai-codex/gpt-6.1-sol; this worker does not independently attest that metadata.",
+        "Persistence is fixture-local memory, not disk durability or a CLI restart. OAuth and stored-key values are fabricated readiness statuses; no real credentials were inspected.",
+        "Caller source creates an owned mkdtemp HOME/theme link and finally kills its named tmux server/removes its own directory. These filesystem/process effects were inspected only. No test execution or inherited HOME/config/SDK cleanup was performed."
       ]
     },
     {
@@ -22596,9 +22643,9 @@
     "baselineFiles": 766,
     "finalGate": "pending; incomplete focus coverage",
     "liveAuth": "unverified/failing; preserved",
-    "accepted": 778,
+    "accepted": 781,
     "total": 835,
-    "pending": 57,
+    "pending": 54,
     "sourceExtras": 69,
     "checkout": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
     "branch": "bruv/readability-pr45-sol-continuation",
