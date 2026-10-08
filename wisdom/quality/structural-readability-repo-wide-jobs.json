@@ -95,7 +95,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_f7ff07f4",
         "branch": "bruv/pr45-primary-scripts-claude-native-accep-f7ff07f4",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "44ea9b254cdf597dd7b7a854ccd3a38adf0d1b1d"
       },
       {
         "id": "task_f2026c09",
@@ -104,7 +105,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_f2026c09",
         "branch": "bruv/pr45-primary-scripts-claude-native-accep-f2026c09",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "9660923ad0a58c1017731e992a207647f7ba7643"
       },
       {
         "id": "task_8b9d9dd1",
@@ -113,7 +115,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_8b9d9dd1",
         "branch": "bruv/pr45-primary-scripts-claude-native-accep-8b9d9dd1",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "88870a303cf8cbe8c93818ed174ef03ee7b230a4"
       },
       {
         "id": "task_48898268",
@@ -131,7 +134,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_32253a22",
         "branch": "bruv/pr45-primary-scripts-claude-native-accep-32253a22",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "766ff44e0f4505dd0412226a2430b97a7090c059"
       },
       {
         "id": "task_eb51c954",
@@ -149,6 +153,7 @@
         "focus": "scripts/claude-native-acceptance/worker.mjs",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_27eea40d",
         "branch": "bruv/pr45-judge-scripts-claude-native-accepta-27eea40d",
+        "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
       }
     ]

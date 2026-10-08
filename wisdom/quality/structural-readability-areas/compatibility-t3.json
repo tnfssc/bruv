@@ -434,11 +434,11 @@
       "launchBase": "0f31ee8bcbb4a6b9cc4e76121fa0aef55d7c52b2",
       "resume": {
         "status": "pending",
-        "primaryId": "task_968a7573",
-        "primaryCommit": null,
+        "primaryId": "task_f7ff07f4",
+        "primaryCommit": "44ea9b254cdf597dd7b7a854ccd3a38adf0d1b1d",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary-interrupted",
+        "sourceCommit": "44ea9b254cdf597dd7b7a854ccd3a38adf0d1b1d",
+        "state": "needs-judge",
         "reason": "Primary was killed by session shutdown (143); preserved uncommitted code is retained at the worker path. No submitted candidate commit or readability verdict; resume its original scope rather than count it accepted."
       }
     },
@@ -510,11 +510,11 @@
       "acceptedBlob": null,
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_f2026c09",
+        "primaryCommit": "9660923ad0a58c1017731e992a207647f7ba7643",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary",
+        "sourceCommit": "9660923ad0a58c1017731e992a207647f7ba7643",
+        "state": "needs-judge",
         "reason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
       }
     },
@@ -662,11 +662,11 @@
       "acceptedBlob": null,
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_8b9d9dd1",
+        "primaryCommit": "88870a303cf8cbe8c93818ed174ef03ee7b230a4",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary",
+        "sourceCommit": "88870a303cf8cbe8c93818ed174ef03ee7b230a4",
+        "state": "needs-judge",
         "reason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
       }
     },
@@ -750,11 +750,11 @@
       "acceptedBlob": null,
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_32253a22",
+        "primaryCommit": "766ff44e0f4505dd0412226a2430b97a7090c059",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary",
+        "sourceCommit": "766ff44e0f4505dd0412226a2430b97a7090c059",
+        "state": "needs-judge",
         "reason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
       }
     },

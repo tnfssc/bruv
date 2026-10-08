@@ -641,13 +641,44 @@
       "initialBlob": "0ccc3cc8c75866a526eb1f6928a936b0752c5496",
       "status": "pending",
       "area": "compatibility-t3",
-      "resumeState": "pending-primary-interrupted",
-      "primaryId": "task_968a7573",
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_f7ff07f4",
+      "primaryCommit": "44ea9b254cdf597dd7b7a854ccd3a38adf0d1b1d",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "44ea9b254cdf597dd7b7a854ccd3a38adf0d1b1d",
       "report": "wisdom/quality/structural-readability-areas/compatibility-t3.json",
-      "pendingReason": "Primary was killed by session shutdown (143); preserved uncommitted code is retained at the worker path. No submitted candidate commit or readability verdict; resume its original scope rather than count it accepted."
+      "pendingReason": "Primary was killed by session shutdown (143); preserved uncommitted code is retained at the worker path. No submitted candidate commit or readability verdict; resume its original scope rather than count it accepted.",
+      "primaryBase": "b80a55a855e65d9bcb4ae8db3bb95d577db79b67",
+      "primaryResult": "Acquisition now enters the runtime owner immediately, with the artifact pin checked before acquisition and version execution after isolated setup. prepareRuntime owns fixture creation. replayWithServer nests log ownership around server startup, readiness, browser work and shutdown; stopServer observes close before releasing the log/runtime and checks both exit and signal status. replayWithBrowser captures page failure evidence while the page is alive and closes the browser locally. exerciseHistory retains the native onboarding, pairing-token assertion, provider identity capture, path redaction, history exercise, wire parsing, artifact-integrity assertion and driver verification without changing the semantic journey. The main flow publishes failure evidence and removes only the exclusively acquired runtime. No framework or shared context bag was introduced.",
+      "primaryPaths": [
+        "scripts/claude-native-acceptance/history-replay.mjs"
+      ],
+      "primaryChecks": [
+        {
+          "kind": "read-only source review",
+          "result": "Read values, structural guidance, repo-wide and area ledger entries, preserved reconciliation evidence, interrupted focus candidate and regression fixture; traced history-run.mjs -> history-replay.mjs -> history-driver.mjs."
+        },
+        {
+          "command": "/usr/bin/node --check scripts/claude-native-acceptance/history-replay.mjs",
+          "result": "passed (exit 0); syntax only, no imports executed",
+          "environment": "Explicit isolated HOME/config/cache/SDK/TMPDIR; retained /tmp/pr45-history-replay-syntax-EzMBoY"
+        },
+        {
+          "command": "git diff --check",
+          "result": "passed before commit"
+        },
+        {
+          "kind": "commit scope",
+          "result": "Only the focus source path committed; hooks inspection found sample hooks only."
+        }
+      ],
+      "primaryLimits": [
+        "No setup, repository tests, builds, browser/native replay, provider or device access performed; runtime gates and independent exact-blob readability judgment remain parent-owned.",
+        "Preserved task_968a7573 worktree and its uncommitted focus/test candidate were read only and remain unchanged; no old branch merge or extra source/test import.",
+        "Runtime retains its existing exact-owned-root removal behavior; no cleanup command was executed during this task, and the syntax-check sandbox is retained.",
+        "Early artifact-pin or root-acquisition failures remain outside owned cleanup; setup failures before version execution cannot include a discovered T3 version.",
+        "No new wisdom/values edits: this is the existing resource-ownership lesson; parent owns aggregate wisdom."
+      ]
     },
     {
       "file": "scripts/claude-native-acceptance/history-run.mjs",
@@ -670,13 +701,46 @@
       "initialBlob": "92e5682af10e949649d0f87236c00b412f02a3df",
       "status": "pending",
       "area": "compatibility-t3",
-      "resumeState": "pending-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_f2026c09",
+      "primaryCommit": "9660923ad0a58c1017731e992a207647f7ba7643",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "9660923ad0a58c1017731e992a207647f7ba7643",
       "report": "wisdom/quality/structural-readability-areas/compatibility-t3.json",
-      "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+      "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection.",
+      "primaryBase": "b80a55a855e65d9bcb4ae8db3bb95d577db79b67",
+      "primaryResult": "exercise now visibly orders supervised-model setup, exercisePermissions, exerciseSavedQuestion, and final evidence saving. The permission operation owns allow/deny/stop side-effect checks and stale-card handling; the saved-question operation owns identity, owner, version, pending/answered/resume-needed/resolved assertions and explicit resume approval. reopenHumanThread owns restoring the same allow-created thread after each reload. Browser actions, assertions, observations, protocol checks, redaction, and read-only DB capture are preserved.",
+      "primaryPaths": [
+        "scripts/claude-native-acceptance/human-driver.mjs"
+      ],
+      "primaryChecks": [
+        {
+          "check": "Read values, structural guidance, repo-wide/area ledgers, preserved reconciliation, callers, and deterministic human fixture model",
+          "result": "Focus exists at the recorded baseline blob; no prior focus candidate or judgment recorded; no historical source imported."
+        },
+        {
+          "check": "Node --check (explicit PATH-only environment; module not executed)",
+          "result": "passed"
+        },
+        {
+          "check": "Static source comparison",
+          "result": "Inlining the three new local operations and restoring setup position reproduces the baseline source modulo whitespace, including all assertions and the untouched verification/capture code. No repository code executed."
+        },
+        {
+          "check": "git diff --check",
+          "result": "passed"
+        },
+        {
+          "check": "Source-only commit audit",
+          "result": "Exactly the focus path committed; no active Git hooks; manifest untracked."
+        }
+      ],
+      "primaryLimits": [
+        "No repository tests, setup, builds, browser/device/provider/credential actions, publication, or delegation performed. Parent owns audited isolated batch gates and independent fresh judgment.",
+        "Static preservation and syntax checks are not a readability verdict or native acceptance proof.",
+        "Optional read-only TypeScript parser dependency path was absent; syntax was checked with /usr/bin/node without executing the driver.",
+        "Existing wisdom/values unchanged; parent owns aggregate wisdom."
+      ]
     },
     {
       "file": "scripts/claude-native-acceptance/model.mjs",
@@ -749,13 +813,51 @@
       "initialBlob": "f13d18e4883ef5fcc47aa785039ceee334cce15f",
       "status": "pending",
       "area": "compatibility-t3",
-      "resumeState": "pending-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_8b9d9dd1",
+      "primaryCommit": "88870a303cf8cbe8c93818ed174ef03ee7b230a4",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "88870a303cf8cbe8c93818ed174ef03ee7b230a4",
       "report": "wisdom/quality/structural-readability-areas/compatibility-t3.json",
-      "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+      "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection.",
+      "primaryBase": "b80a55a855e65d9bcb4ae8db3bb95d577db79b67",
+      "primaryResult": "startRpcRuntime now owns spawning, isolated child environment, JSON-line framing, confirmation denial, event collection, diagnostics/waits, prompts and stop escalation as one RPC resource. The orchestration reads directly as execute confirmation -> first end -> background admission/start -> second end -> release -> completion wake. The outer try/finally visibly owns model/runtime startup, runtime shutdown, identity-scoped managed-worker shutdown, model close and evidence publication. Model startup and directory setup are inside that lifetime; proof-directory creation happens before allocating fixture state. Existing assertions, markers, timeouts, endpoint identity check, no-approve argv, isolated environment, scoped worker identity checks and proof schema remain intact.",
+      "primaryPaths": [
+        "scripts/claude-native-acceptance/runtime-smoke.mjs"
+      ],
+      "primaryChecks": [
+        {
+          "kind": "source-reading",
+          "result": "Read values, structural guidance, repository-wide/area ledgers and supplied reconciliation evidence. Focus exists at baseline f13d18e4883ef5fcc47aa785039ceee334cce15f, pending-primary with no candidate reference or prior rejection; no historical branch import needed."
+        },
+        {
+          "kind": "caller-reading",
+          "result": "Read README manual invocation contract, model.mjs model identity/execute/background/completion transitions and worker.mjs start/release markers. No external importers or runtime-specific repository tests found by tracked-reference search."
+        },
+        {
+          "kind": "syntax-only",
+          "command": "/usr/bin/node --check scripts/claude-native-acceptance/runtime-smoke.mjs",
+          "result": "passed, Node v25.9.0; no module execution; child_process argv and explicitly isolated environment",
+          "retainedIsolation": "/tmp/pr45-runtime-smoke-syntax-myrIUh"
+        },
+        {
+          "kind": "diff-whitespace",
+          "command": "git diff --check",
+          "result": "passed before commit"
+        },
+        {
+          "kind": "commit-scope",
+          "result": "Only focus source committed; no active non-sample Git hooks configured; no wisdom/report committed."
+        }
+      ],
+      "primaryLimits": [
+        "No repository tests, runtime smoke, setup or builds executed; audited runtime/regression gates remain parent-owned.",
+        "Syntax and source review are not independent readability acceptance; parent must launch a fresh judge for this exact blob.",
+        "Retained syntax-check HOME/config/SDK/cache directories. No credentials, devices, network endpoint, recovery, destructive Git operation, user-data cleanup or delegation used.",
+        "Existing runtime-fixture side effects remain: private temporary root, loopback model server, child/managed-worker processes, proof write and fs.rm of its own mkdtemp root. They were read, not executed here.",
+        "Existing shutdown/error limitations are unchanged: malformed RPC lines can throw in the data callback, and an exception during finalization can interrupt later publication/cleanup. No speculative hardening added.",
+        "Wisdom and values unchanged; parent owns aggregate wisdom."
+      ]
     },
     {
       "file": "scripts/claude-native-acceptance/subagent-driver.mjs",
@@ -791,13 +893,45 @@
       "initialBlob": "89a45efad86898aea8b5202b63b3a5bcdf523ac1",
       "status": "pending",
       "area": "compatibility-t3",
-      "resumeState": "pending-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_32253a22",
+      "primaryCommit": "766ff44e0f4505dd0412226a2430b97a7090c059",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "766ff44e0f4505dd0412226a2430b97a7090c059",
       "report": "wisdom/quality/structural-readability-areas/compatibility-t3.json",
-      "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+      "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection.",
+      "primaryBase": "b80a55a855e65d9bcb4ae8db3bb95d577db79b67",
+      "primaryResult": "The exported collector now shows the capture journey: wire, journals, runtime discovery, provider logs, persistence, then one report write. Four private readers own their source-specific parsing and explicit output fields. The collector retains the one ID namespace and source ID allocation order. SQLite import/open/read-only queries/finally-close belong entirely to the persistence reader; provider parsing no longer encloses database work. Existing caller API, report fields, fixture marker filtering, column/table allowlists, projection row limit, and assertions are unchanged.",
+      "primaryPaths": [
+        "scripts/claude-native-acceptance/subagent-return-evidence.mjs"
+      ],
+      "primaryChecks": [
+        {
+          "kind": "static syntax",
+          "command": "/usr/bin/node --check scripts/claude-native-acceptance/subagent-return-evidence.mjs",
+          "result": "passed; no module execution",
+          "isolatedDirectories": "/tmp/pr45-subagent-return-static-A7duA7 (retained)"
+        },
+        {
+          "kind": "patch hygiene",
+          "command": "git diff --check",
+          "result": "passed before commit"
+        },
+        {
+          "kind": "code reading",
+          "result": "Read values/guidance, repository assignment/coverage ledgers, area ledger and preserved reconciliation row. Focus was present at baseline blob 89a45efad86898aea8b5202b63b3a5bcdf523ac1 with no recorded prior primary/judge or preserved candidate to import. Read driver exercise finally/flushCapture call sites and existing evidence fixture/assertions. Checked unchanged field projections, shared ID call order, read-only database and finally-close lifetime."
+        },
+        {
+          "kind": "commit scope",
+          "result": "Source-only commit; only the focus path changed; no active commit hooks found."
+        }
+      ],
+      "primaryLimits": [
+        "No setup, repository tests, builds, live provider/device/browser work, secrets, cleanup, recovery, push, PR or merge performed. Parent owns audited isolated runtime gates and fresh independent judgment.",
+        "Static syntax and code reading do not prove runtime behavior or independent readability acceptance. Existing fixture tests were only read; their filesystem side effects must remain part of parent gate audit.",
+        "Capture remains a non-atomic cross-source observation: provider logs are now collected as a source stage before SQLite inspection, rather than interleaved with databases in runtime directory order.",
+        "Preserved worker worktrees/candidates untouched. No worker wisdom edits; parent owns aggregate wisdom. Runtime model verification remains external."
+      ]
     },
     {
       "file": "scripts/claude-native-acceptance/tap.mjs",
