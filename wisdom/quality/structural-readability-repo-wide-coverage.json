@@ -16641,11 +16641,11 @@
     {
       "file": "tests/live-tui-startup.ts",
       "initialBlob": "a54e5ee4473dde6061371c635228faf76de88b31",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_8d64fb99",
       "sourceCommit": "6ac6b9b5b2ccbf8cc9100721ba33ea4195605062",
-      "judgeIds": [],
-      "resumeState": "needs-judge",
+      "judgeIds": ["task_1853a075"],
+      "resumeState": "accepted-joined",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
       "area": "live-native-audio",
       "primaryCommit": "6ac6b9b5b2ccbf8cc9100721ba33ea4195605062",
@@ -16664,16 +16664,33 @@
         "The durable code workspace is /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_8d64fb99; only formatter HOME/config/cache/SDK/TMPDIR use the retained mkdtemp fixture above. Old worktrees/candidate evidence untouched.",
         "Runtime agent.model verification remains parent-owned. No per-worker wisdom/values edits: this bounded test organization/restoration introduces no new general lesson; parent owns aggregate wisdom.",
         "No rendered trust menu verification. Existing menu-key ordering and wall-clock waits retained. Caller inspection found spoken test invokes prepare-assets and optional evidence writes, and several TUI callers remove their mkdtemp-owned HOME in finally; none were executed. This is not a safety approval to run those callers unchanged."
+      ],
+      "acceptedBlob": "a54e5ee4473dde6061371c635228faf76de88b31",
+      "result": "Read the complete unchanged helper, its two unit tests, all four terminal callers, and the session_start fixture-marker emitters. The first bounded loop either returns on the exact fixture marker or recognizes the trust prompt and sends Down/Down/Enter once. The second loop only observes readiness and sends no more keys. Keeping those two short loops in place makes the authority boundary visible without a polling abstraction or mode flag. Marker checks precede trust handling, so an already-ready terminal is never sent trust keys. Exhaustion ends with a final captured frame in the error. This is a source-level unchanged decision, not acceptance inferred from coverage.",
+      "systemReason": "Each caller gates scenario input on its own session_start marker: picker before navigation, GPT before streaming commands, spoken before delegation, and push-to-talk before both initial interaction and respawn/replay. The two startup unit tests explicitly assert no keys on direct readiness versus exactly the session-only approval sequence. The helper owns only startup observation and conditional key emission; terminal launch, lifecycle and teardown remain caller-owned. The candidate retains the identical startup blob from the primary base.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Enumerated exact candidate changes against 8be6beee6965ec96073b2d5b355cca4f7e626c26: only tests/live-waveform.test.ts and tests/openai-session-diagnostics.test.ts; read both entire changed files and their exact diffs.",
+        "git diff --check 8be6beee6965ec96073b2d5b355cca4f7e626c26 6ac6b9b5b2ccbf8cc9100721ba33ea4195605062 returned exit 0 with no output.",
+        "Resolved acceptedBlobs directly from candidate Git objects.",
+        "Base and candidate startup blob both equal a54e5ee4473dde6061371c635228faf76de88b31.",
+        "Read terminal caller effects before declining execution: tmux child launches, owned mkdtemp HOME writes, symlinks and session files; some pre-existing callers remove their owned temporary directories and the spoken caller invokes prepare-assets. None of these were executed."
+      ],
+      "limits": [
+        "Static actual-source review only: no setup, tests, builds, dependency installation, authentication, microphone or speaker access performed. Parent owns audited isolated runtime gates.",
+        "Runtime agent.model verification is parent-owned; this artifact does not claim to verify it.",
+        "Review ran in the existing durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_1853a075, using exact git show/diff objects rather than checkout HEAD; no code checkout or fixture was created in /tmp. No source, shared dependencies, inherited HOME/config/SDK, user data, or candidate worktrees were modified.",
+        "Trust-menu key mapping was read through the helper and its unit-test contract, not verified with a live SDK terminal. Existing caller environment isolation and cleanup are outside this unchanged helper decision; parent must audit/override any runtime gate to honor retained owned HOME/config/SDK requirements."
       ]
     },
     {
       "file": "tests/live-waveform.test.ts",
       "initialBlob": "7badb15d60945ddde2798584094ab498f4e43645",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_8d64fb99",
       "sourceCommit": "6ac6b9b5b2ccbf8cc9100721ba33ea4195605062",
-      "judgeIds": [],
-      "resumeState": "needs-judge",
+      "judgeIds": ["task_1853a075"],
+      "resumeState": "accepted-joined",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
       "area": "live-native-audio",
       "primaryCommit": "6ac6b9b5b2ccbf8cc9100721ba33ea4195605062",
@@ -16692,6 +16709,25 @@
         "The durable code workspace is /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_8d64fb99; only formatter HOME/config/cache/SDK/TMPDIR use the retained mkdtemp fixture above. Old worktrees/candidate evidence untouched.",
         "Runtime agent.model verification remains parent-owned. No per-worker wisdom/values edits: this bounded test organization/restoration introduces no new general lesson; parent owns aggregate wisdom.",
         "Runtime equivalence is unverified. Fresh waveform instances intentionally remove prior unrelated phase/shown history at scenario boundaries. Queue test retains the original assertion at 2400 (inclusive original scheduled deadline), so it does not newly prove extension beyond that deadline; no coverage expansion claimed."
+      ],
+      "acceptedRelatedJudges": ["task_1853a075"],
+      "acceptedBlob": "e12560fc8c07b0eee1afdda9dcf96816dcdc3b68",
+      "result": "Read both complete base and candidate tests and the entire waveform implementation. The original stateful test requires carrying mic decay, playback interruption, return-to-listening and queue expiry through a single mutable instance. Candidate gives decay and queue expiry their own instance while keeping scheduled playback, capture during playback, resetOutput, immediate quiet output and renewed listening capture together as one interruption journey. A reader now sees each state lifetime locally. The phase-animation assertion is next to the pure renderer width, determinism and level assertions instead of preceding an unrelated stale-mic journey. Quiet scheduled frames and stale mic suppression remain a coherent stateful test inside the waveform group. This is an ownership/lifetime improvement, not merely changed names; original PCM values, assertion expressions, event times and decay loops remain.",
+      "systemReason": "LiveWaveform.capture owns peak accumulation; tick chooses output versus mic, smooths the displayed level and consumes mic peaks; scheduled/queued own an estimated output deadline; resetOutput clears displayed/output state. Independent fixtures match those authorities and avoid making queue expiry depend on a previous interruption or mic test. Read the compact footer waveform assertions: pure renderWave output remains fixed-width and one-row across narrow terminals. Exact candidate source searches show no production LiveWaveform caller; renderWave is referenced in footer tests, so this decision concerns test journeys and does not claim shipped meter integration or audible playback verification. No production code or security assertions changed.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Enumerated exact candidate changes against 8be6beee6965ec96073b2d5b355cca4f7e626c26: only tests/live-waveform.test.ts and tests/openai-session-diagnostics.test.ts; read both entire changed files and their exact diffs.",
+        "git diff --check 8be6beee6965ec96073b2d5b355cca4f7e626c26 6ac6b9b5b2ccbf8cc9100721ba33ea4195605062 returned exit 0 with no output.",
+        "Resolved acceptedBlobs directly from candidate Git objects.",
+        "Compared the complete original state sequence with candidate local instances and preserved renderer/PCM assertions.",
+        "Read waveform.ts in full and used exact-candidate source searches for LiveWaveform, pcmLevel and renderWave; read related footer expectations.",
+        "Reviewed test effects: waveform fixtures allocate in-memory PCM buffers and use synthetic timestamps, with no filesystem, network or device operations in the focus."
+      ],
+      "limits": [
+        "Static actual-source review only: no setup, tests, builds, dependency installation, authentication, microphone or speaker access performed. Parent owns audited isolated runtime gates.",
+        "Runtime agent.model verification is parent-owned; this artifact does not claim to verify it.",
+        "Review ran in the existing durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_1853a075, using exact git show/diff objects rather than checkout HEAD; no code checkout or fixture was created in /tmp. No source, shared dependencies, inherited HOME/config/SDK, user data, or candidate worktrees were modified.",
+        "The existing queue-extension assertion at 2400 is also within scheduled()’s minimum 100ms window; it does not independently prove that queued() extended the deadline. The candidate preserves that pre-existing coverage limitation rather than claiming stronger queue evidence."
       ]
     },
     {
@@ -17328,11 +17364,11 @@
     {
       "file": "tests/openai-session-diagnostics.test.ts",
       "initialBlob": "092f838262b6233b561174bf8c55e2319a455381",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_8d64fb99",
       "sourceCommit": "6ac6b9b5b2ccbf8cc9100721ba33ea4195605062",
-      "judgeIds": ["task_8db4b91e"],
-      "resumeState": "needs-judge",
+      "judgeIds": ["task_8db4b91e", "task_1853a075"],
+      "resumeState": "accepted-joined",
       "pendingReason": "Retain exact related-path actual-code acceptance; it is not completion of this file’s distinct primary/fresh focus-judge requirement.",
       "area": "live-native-audio",
       "primaryCommit": "6ac6b9b5b2ccbf8cc9100721ba33ea4195605062",
@@ -17352,6 +17388,25 @@
         "The durable code workspace is /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_8d64fb99; only formatter HOME/config/cache/SDK/TMPDIR use the retained mkdtemp fixture above. Old worktrees/candidate evidence untouched.",
         "Runtime agent.model verification remains parent-owned. No per-worker wisdom/values edits: this bounded test organization/restoration introduces no new general lesson; parent owns aggregate wisdom.",
         "Historical related ACCEPT task_8db4b91e is not a fresh own-focus verdict. Exact restored candidate blob is 5e91f029981f49fee3848a977cfe92d36da072e8. Fake socket injection avoids real network by inspection; no test was run. Internally nonterminal response failure does not claim the extension keeps Live running after onError."
+      ],
+      "acceptedRelatedJudges": ["task_1853a075"],
+      "acceptedBlob": "5e91f029981f49fee3848a977cfe92d36da072e8",
+      "result": "Read the complete candidate focus and exact additive diff. Existing rejection() appropriately owns a connecting-session fixture, one observed error and closed state; the privacy matrix, safe indexed-field cases and quota assertions are unchanged. The new ready-session scenario intentionally owns a different lifetime: establish readiness, ignore an unknown response failure, register the current response, report its safe failure once without closing the provider session, ignore its replay, then close on a provider error event with a distinct diagnostic. Keeping that timeline together makes the terminal/nonterminal boundary and response identity visible. The tiny failure(id) constructor holds only event shape, not a context bag or hidden state. Reusing rejection() here would impose its connecting/closed contract on the wrong journey.",
+      "systemReason": "Traced exact-candidate connect(), fail()/close(), message error handling, response.created and response.done, plus the complete shared OpenAI error allowlisting. Unknown/done responses are filtered before reporting; a correlated failed response uses error() and remains ready, whereas provider error messages use fail(), close the socket/session and emit one classified diagnostic. The exact array equality excludes the private-key provider message at both ready-session boundaries. Read the real OpenAI session factory and onError consumer in extension.ts: that consumer requests Live stop even for provider callbacks from a response failure. Therefore this test correctly specifies the OpenAIRealtimeSession boundary, not a promise that the end-user Live controller continues. No raw provider details were added to production output and existing privacy assertions were preserved.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Enumerated exact candidate changes against 8be6beee6965ec96073b2d5b355cca4f7e626c26: only tests/live-waveform.test.ts and tests/openai-session-diagnostics.test.ts; read both entire changed files and their exact diffs.",
+        "git diff --check 8be6beee6965ec96073b2d5b355cca4f7e626c26 6ac6b9b5b2ccbf8cc9100721ba33ea4195605062 returned exit 0 with no output.",
+        "Resolved acceptedBlobs directly from candidate Git objects.",
+        "Confirmed the exact diff only appends a coherent ready-session timeline after the unchanged original tests.",
+        "Read socket injection, synchronous fake event dispatch, connect settlement and timer cancellation, response identity/duplicate filtering, and terminal close/report behavior.",
+        "Reviewed focus effects: the supplied fake Socket replaces the network factory; send/close are in-memory and all event payloads including private-key are synthetic. No real authentication or network connection was attempted."
+      ],
+      "limits": [
+        "Static actual-source review only: no setup, tests, builds, dependency installation, authentication, microphone or speaker access performed. Parent owns audited isolated runtime gates.",
+        "Runtime agent.model verification is parent-owned; this artifact does not claim to verify it.",
+        "Review ran in the existing durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_1853a075, using exact git show/diff objects rather than checkout HEAD; no code checkout or fixture was created in /tmp. No source, shared dependencies, inherited HOME/config/SDK, user data, or candidate worktrees were modified.",
+        "No live OpenAI authentication or device interaction verified. The test covers provider-session state and safe messages, not the controller’s user-visible continuation policy."
       ]
     },
     {
@@ -24556,9 +24611,9 @@
     "baselineFiles": 766,
     "finalGate": "pending; incomplete focus coverage",
     "liveAuth": "unverified/failing; preserved",
-    "accepted": 833,
+    "accepted": 836,
     "total": 836,
-    "pending": 3,
+    "pending": 0,
     "sourceExtras": 70,
     "checkout": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
     "branch": "bruv/readability-pr45-sol-continuation",

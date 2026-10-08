@@ -74,3 +74,40 @@ test("friendly quota diagnosis is preserved without raw provider text", async ()
   expect(output).toContain("Check API billing and limits");
   expect(output).not.toContain("private-key");
 });
+
+test("response failures stay correlated and nonterminal; provider error events close the ready session", async () => {
+  const socket = new Socket();
+  const messages: string[] = [];
+  const session = new OpenAIRealtimeSession({ onError: (e) => messages.push(e.message) }, () => socket);
+  const pending = session.connect("private-key");
+  socket.fire("open");
+  socket.fire("message", { type: "session.updated" });
+  await pending;
+
+  const failure = (id: string) => ({
+    type: "response.done",
+    response: {
+      id,
+      status: "failed",
+      status_details: { error: { code: "invalid_value", param: "session.voice", message: "private-key" } },
+    },
+  });
+  socket.fire("message", failure("unknown-response"));
+  expect(messages).toEqual([]);
+  socket.fire("message", { type: "response.created", response: { id: "current-response" } });
+  socket.fire("message", failure("current-response"));
+  expect(session.state).toBe("ready");
+  expect(messages).toEqual(["Voice response did not complete (code invalid_value, field session.voice)"]);
+  socket.fire("message", failure("current-response"));
+  expect(messages).toHaveLength(1);
+
+  socket.fire("message", {
+    type: "error",
+    error: { code: "invalid_value", param: "session.voice", message: "private-key" },
+  });
+  expect(session.state).toBe("closed");
+  expect(messages).toEqual([
+    "Voice response did not complete (code invalid_value, field session.voice)",
+    "Voice provider rejected event (code invalid_value, field session.voice)",
+  ]);
+});
