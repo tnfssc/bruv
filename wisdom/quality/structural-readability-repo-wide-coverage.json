@@ -2808,13 +2808,52 @@
       "initialBlob": "2ec9d0ad139efe872aa17b34dd5497924781223a",
       "status": "pending",
       "area": "remote",
-      "resumeState": "pending-primary-unstarted",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_dbde3103",
+      "primaryCommit": "1f646d49f88f012e1fb29e8c561e7792d962c6b9",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "1f646d49f88f012e1fb29e8c561e7792d962c6b9",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
-      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
+      "primaryBase": "d882fbc6525ed7df8180b1cc9e79d5609830a2e9",
+      "primaryResult": "answerCleanQuestionAfterRestart owns the pending public/source question identities through restart, Escape-without-answer and explicit human approval. assertServerChildWorktree isolates the destination workspace/result proof without changing its execution point. restartParent owns client teardown, ptyStarted state, relaunch and settling for both reconnects. The orchestration now visibly waits for the question, performs the restart-and-answer journey, then observes safe return; all original operations and assertions remain in their original sequence after helper inlining.",
+      "primaryPaths": [
+        "scripts/remote-placement-e2e.ts"
+      ],
+      "primaryChecks": [
+        {
+          "check": "Repository guidance, remote/repo-wide ledgers and preserved remote-resume-reconciliation row",
+          "result": "Read; focus was present at its baseline blob, pending/unstarted, with no prior candidate import needed."
+        },
+        {
+          "check": "Callers and fixture contract",
+          "result": "Read README, fixture acceptance wisdom, scenario-test caller and shared network-none helper; invocation, probe behavior and assertions unchanged."
+        },
+        {
+          "check": "Required repository formatter",
+          "result": "PASS: /usr/bin/node invoked the read-only shared @biomejs/biome/bin/biome format --write on the focus path only, using fresh retained HOME/XDG/TMPDIR environment.",
+          "retainedEnvironment": "/tmp/pr45-remote-placement-format-uXt1pz"
+        },
+        {
+          "check": "Static helper-inlining equivalence",
+          "result": "PASS: reconstructed candidate with all three helpers inlined formats identically to baseline. This verifies the original operation/assertion sequence, not a runtime or readability verdict.",
+          "retainedEnvironment": "/tmp/pr45-remote-placement-equivalence-vqFFI2"
+        },
+        {
+          "check": "git diff --check",
+          "result": "PASS before source-only commit."
+        },
+        {
+          "check": "Optional legacy TypeScript parser import",
+          "result": "Not performed successfully: absolute shared typescript package import failed. Shared package reports TypeScript 7.0.2; this is not counted as a passing check."
+        }
+      ],
+      "primaryLimits": [
+        "No setup, tests, builds, Docker/SSH fixture execution, network/provider/device access, push, PR or merge performed; parent owns audited isolated runtime gates.",
+        "The fixture helper includes image/build and root cleanup behavior, so executing it here would violate the assigned safety boundary. Existing cleanup code was not run or changed.",
+        "Independent exact-candidate structural judgment remains parent-owned and pending.",
+        "No per-worker wisdom edits; parent owns aggregate wisdom."
+      ]
     },
     {
       "file": "scripts/remote-pty-e2e.ts",
