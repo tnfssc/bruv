@@ -14,9 +14,9 @@ const config = process.env.BRUV_ACCEPTANCE_CONFIG
   : null;
 const integration = config
   ? await import(
-      config.delegationCases
+      config.replayDriver ?? (config.delegationCases
         ? '../../../../scripts/claude-native-acceptance/app-delegation-driver.mjs'
-        : '../../../../scripts/claude-native-acceptance/driver.mjs'
+        : '../../../../scripts/claude-native-acceptance/driver.mjs')
     )
   : null;
 const upstream = path.resolve(process.env.T3_UPSTREAM);

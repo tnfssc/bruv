@@ -8,9 +8,9 @@ import { createServer } from "node:net";
 import { fileURLToPath } from "node:url";
 import { DatabaseSync } from "node:sqlite";
 
-// Offline join proof: the real generator, replay, subagent driver and collector run.
+// Offline join proof: the real replay, subagent driver and collector run.
 // Only the external T3 binary/browser are owned stand-ins; this is not native acceptance.
-test("generated subagent replay collects exit evidence before browser close and runtime deletion", async () => {
+test("configured subagent replay collects exit evidence before browser close and runtime deletion", async () => {
   const fixture = await fs.mkdtemp(path.join(os.tmpdir(), "native-replay-finalization-"));
   try {
     const root = path.join(fixture, "t3-runtime");
@@ -27,6 +27,7 @@ test("generated subagent replay collects exit evidence before browser close and 
     await fs.writeFile(
       configFile,
       JSON.stringify({
+        replayDriver: new URL("../scripts/claude-native-acceptance/subagent-driver.mjs", import.meta.url).href,
         root,
         proof,
         state,
@@ -36,7 +37,9 @@ test("generated subagent replay collects exit evidence before browser close and 
       }),
     );
 
-    const replay = await generateSubagentReplay(fixture);
+    const replay = fileURLToPath(
+      new URL("../wisdom/claude-compat/proof/native-ui-fixture/replay.mjs", import.meta.url),
+    );
     await installHealthServer(path.join(upstream, "platform/t3"), seed, path.join(fixture, "server.pid"));
     await installFailingBrowser(path.join(upstream, "runtime/node_modules/playwright/index.mjs"));
 
@@ -111,20 +114,6 @@ async function seedExitEvidence(seed, wire) {
   } finally {
     database.close();
   }
-}
-
-async function generateSubagentReplay(fixture) {
-  const here = fileURLToPath(new URL("../scripts/claude-native-acceptance/", import.meta.url));
-  // Execute the generation block from the shipped runner, including its real import substitutions.
-  const runner = await fs.readFile(path.join(here, "run-subagent.mjs"), "utf8");
-  const start = runner.indexOf("  const template =");
-  const end = runner.indexOf("  const env =", start);
-  assert.ok(start >= 0 && end > start, "shipped replay generation block");
-  const AsyncFunction = Object.getPrototypeOf(async () => {}).constructor;
-  await new AsyncFunction("fs", "path", "here", "root", runner.slice(start, end))(fs, path, here, fixture);
-  const replay = path.join(fixture, "replay.mjs");
-  assert.ok((await fs.readFile(replay, "utf8")).includes("subagent-driver.mjs"));
-  return replay;
 }
 
 // The substitute binary seeds the actual runtime base directory and serves the real health request.
