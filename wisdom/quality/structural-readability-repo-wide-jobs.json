@@ -6,7 +6,15 @@
     "id": "task_cbb4da74",
     "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_cbb4da74",
     "branch": "bruv/whole-repo-structural-readability-remote-cbb4da74",
-    "base": "59413c532e6422983f611915e509e8421aa2f363"
+    "base": "59413c532e6422983f611915e509e8421aa2f363",
+    "resumeResearch": [
+      {
+        "id": "task_1adcf635",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab",
+        "model": "openai-codex/gpt-6.1-sol",
+        "purpose": "saved exact-blob/review reconciliation (not new judge)"
+      }
+    ]
   },
   {
     "group": "live-native-audio",
@@ -15,7 +23,23 @@
     "id": "task_662639e6",
     "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_662639e6",
     "branch": "bruv/whole-repo-structural-readability-live-n-662639e6",
-    "base": "59413c532e6422983f611915e509e8421aa2f363"
+    "base": "59413c532e6422983f611915e509e8421aa2f363",
+    "resumeResearch": [
+      {
+        "id": "task_ca9ed6de",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_ca9ed6de",
+        "branch": "bruv/pr45-live-native-audio-exact-reconciliat-ca9ed6de",
+        "model": "openai-codex/gpt-6.1-sol",
+        "purpose": "saved exact-blob/review reconciliation (not new judge)"
+      },
+      {
+        "id": "task_92b8f95a",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_92b8f95a",
+        "branch": "bruv/pr45-live-native-audio-reconcile-sol-92b8f95a",
+        "model": "openai-codex/gpt-6.1-sol",
+        "purpose": "saved exact-blob/review reconciliation (not new judge)"
+      }
+    ]
   },
   {
     "group": "compatibility-t3",
@@ -24,7 +48,16 @@
     "id": "task_dc14408d",
     "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_dc14408d",
     "branch": "bruv/whole-repo-structural-readability-compat-dc14408d",
-    "base": "59413c532e6422983f611915e509e8421aa2f363"
+    "base": "59413c532e6422983f611915e509e8421aa2f363",
+    "resumeResearch": [
+      {
+        "id": "task_2cc82a24",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_2cc82a24",
+        "branch": "bruv/pr45-compatibility-t3-exact-reconciliati-2cc82a24",
+        "model": "openai-codex/gpt-6.1-sol",
+        "purpose": "saved exact-blob/review reconciliation (not new judge)"
+      }
+    ]
   },
   {
     "group": "agent-history-session-goals",
@@ -33,7 +66,16 @@
     "id": "task_03712bc7",
     "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_03712bc7",
     "branch": "bruv/whole-repo-structural-readability-agent--03712bc7",
-    "base": "59413c532e6422983f611915e509e8421aa2f363"
+    "base": "59413c532e6422983f611915e509e8421aa2f363",
+    "resumeResearch": [
+      {
+        "id": "task_016abd3c",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_016abd3c",
+        "branch": "bruv/pr45-agent-history-session-goals-exact-r-016abd3c",
+        "model": "openai-codex/gpt-6.1-sol",
+        "purpose": "saved exact-blob/review reconciliation (not new judge)"
+      }
+    ]
   },
   {
     "group": "execution-tasks-questions",
@@ -42,7 +84,23 @@
     "id": "task_69c1198d",
     "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d",
     "branch": "bruv/whole-repo-structural-readability-execut-69c1198d",
-    "base": "59413c532e6422983f611915e509e8421aa2f363"
+    "base": "59413c532e6422983f611915e509e8421aa2f363",
+    "resumeResearch": [
+      {
+        "id": "task_1689e615",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_1689e615",
+        "branch": "bruv/pr45-execution-tasks-questions-exact-rec-1689e615",
+        "model": "openai-codex/gpt-6.1-sol",
+        "purpose": "saved exact-blob/review reconciliation (not new judge)"
+      },
+      {
+        "id": "task_6662575a",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_6662575a",
+        "branch": "bruv/pr45-execution-tasks-questions-reconcile-6662575a",
+        "model": "openai-codex/gpt-6.1-sol",
+        "purpose": "saved exact-blob/review reconciliation (not new judge)"
+      }
+    ]
   },
   {
     "group": "ui-terminal-cli",
@@ -51,7 +109,23 @@
     "id": "task_f8e968d6",
     "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_f8e968d6",
     "branch": "bruv/whole-repo-structural-readability-ui-ter-f8e968d6",
-    "base": "59413c532e6422983f611915e509e8421aa2f363"
+    "base": "59413c532e6422983f611915e509e8421aa2f363",
+    "resumeResearch": [
+      {
+        "id": "task_a66d0a13",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_a66d0a13",
+        "branch": "bruv/pr45-ui-terminal-cli-exact-reconciliatio-a66d0a13",
+        "model": "openai-codex/gpt-6.1-sol",
+        "purpose": "saved exact-blob/review reconciliation (not new judge)"
+      },
+      {
+        "id": "task_6aa89530",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_6aa89530",
+        "branch": "bruv/pr45-ui-reconciliation-sol-6aa89530",
+        "model": "openai-codex/gpt-6.1-sol",
+        "purpose": "saved exact-blob/review reconciliation (not new judge)"
+      }
+    ]
   },
   {
     "group": "build-release-ci-tooling",
@@ -60,7 +134,8 @@
     "id": "task_d849d828",
     "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_d849d828",
     "branch": "bruv/whole-repo-structural-readability-build--d849d828",
-    "base": "59413c532e6422983f611915e509e8421aa2f363"
+    "base": "59413c532e6422983f611915e509e8421aa2f363",
+    "resumeResearch": []
   },
   {
     "group": "site-support",
@@ -69,6 +144,7 @@
     "id": "task_6608ea8d",
     "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_6608ea8d",
     "branch": "bruv/whole-repo-structural-readability-site-s-6608ea8d",
-    "base": "59413c532e6422983f611915e509e8421aa2f363"
+    "base": "59413c532e6422983f611915e509e8421aa2f363",
+    "resumeResearch": []
   }
 ]

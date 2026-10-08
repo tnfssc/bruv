@@ -16,8 +16,8 @@ Counts below compare latest committed area ledgers to their actual tips, then to
 |agent-history-session-goals|3d52e3790c62eefb3b63bb6ec6a7a3ad33ab4f7f|114|9|54|42|12|2|69|
 |execution-tasks-questions|f6382b57bd9e4089e2580466a6f607942de23ec7|98|0|66|59|7|0|32|
 |ui-terminal-cli|66fd895899b981590e3ea8fd4f0eb32a2f7309b0|101|9|63|52|11|0|47|
-|build-release-ci-tooling|2d4a18b2d7c646d88b68e9fec887b25cf4d02e9f|0|0|0|0|0|0|0|
-|site-support|2da1ed1b70639cdcc07810df2f0dd139f2642411|0|0|0|0|0|0|0|
+|build-release-ci-tooling|2d4a18b2d7c646d88b68e9fec887b25cf4d02e9f|70|4|74|74|0|0|0|
+|site-support|2da1ed1b70639cdcc07810df2f0dd139f2642411|41|0|41|41|0|0|0|
 
 Area paths/branches remain in structural-readability-repo-wide-jobs.json. Execution latest f6382b57 retains incident evidence and withheld candidates: no automatic permission from safety reporter. Compatibility has uncommitted ledger edits; preserve them. Old Astra coordinator task_36a777ef has only untracked parent checkpoint; read and preserved. Its prepare:assets failed unsupported Pi host dist/core/agent-session.js hash; do not bypass.
 
@@ -29,3 +29,5 @@ Area paths/branches remain in structural-readability-repo-wide-jobs.json. Execut
 4. Audit all766 baseline files and helper additions/removals against final tree. Live-auth background UX was failing: explicitly unverified/failing until real safe proof, never green by relabeling.
 
 Safety for ALL descendants: no sudo, no recovery actions, no deletion/cleanup shell commands, no HOME or inherited SDK/config cleanup, no nested shell traps. Do not read/use user secrets. Use node child_process argv plus explicit isolated env for tests; allocate fresh disposable HOME/config/SDK dirs with fs.mkdtemp and retain them rather than delete. If real credential/device access is required, return that blocker instead of using it. Do not run repository tests or setup without first checking their filesystem/network side effects. Existing dependencies can be used read-only from /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules. Bun is /home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin/bun. Worktree t3 setup may fail because PATH lacks bun; inspect outcome, do not guess. No repetitive full builds for each worker. Limit to SIX concurrent leaf workers total, primary and judge combined. Give independent code/review agents worktrees. Propagate these safety constraints verbatim. No destructive git operations or user-data mutations.
+
+Resume launch verification: jobs.inspect agent.model confirmed openai-codex/gpt-6.1-sol for every worker. Three initial researchers self-stopped because native model metadata is not exposed inside their runtime; replacement prompts use coordinator verification. CLI automatic setups failed closed at unsupported Pi host dist/core/session-manager.js hash. No hash guard bypass. Setup/config effects reviewed before further launches; no manual setup/tests yet.
