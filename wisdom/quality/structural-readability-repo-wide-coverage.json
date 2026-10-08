@@ -17307,8 +17307,8 @@
       "file": "tests/task-monitor-tui-fixture.ts",
       "initialBlob": "absent",
       "area": "execution-tasks-questions",
-      "status": "pending",
-      "resumeState": "needs-judge",
+      "status": "accepted",
+      "resumeState": "accepted-joined",
       "sourceCommit": "f7e77b9fecbb5497a21a08e973eadd136feb638f",
       "acceptedRelatedJudges": ["task_7d16a45a"],
       "acceptedBlob": "c46f9ca37d2c4959cdf48b98dd73844dd651956f",
@@ -17329,6 +17329,31 @@
         "Static filesystem/network effects review: fixture creates owned retained temporary directories/files, launches tmux and dist/bruv with explicit argv/environment, binds a loopback ephemeral provider, and has owned-server shutdown finally blocks. Live provider replies create two intentionally long-lived shell jobs; their runtime behavior and cancellation were not executed here.",
         "The supplied reconciliation predates the added fixture: no focus rejection objections were available there to address.",
         "No new wisdom or values edits: this is a no-change primary reading decision; parent owns aggregate wisdom."
+      ],
+      "judgeIds": ["task_63de35f8"],
+      "result": "Read the complete exact-candidate fixture and sole caller, not checkout HEAD, then the complete process/TUI helpers. The reader can follow two coherent lifetimes without reconstructing scattered ownership: withTaskMonitorTerminal allocates and retains one owned mkdtemp tree, builds its explicit HOME/XDG/SDK/tmp environment, binds every tmux invocation to that environment and cwd, directly launches dist/bruv with argv, exposes terminal operations, and terminates that owned server in finally. withLiveJobTui adds the loopback provider inside that lifetime; its first-request execute response, later FIXTURE_READY response, and SSE framing remain together. It writes owned model/readiness files, launches the terminal, checks visible model, post-registration marker, and real command response under one startup deadline, and asserts zero provider requests before allowing scenario actions. These boundaries already clarify authority; splitting response framing or relocating the handshake would add navigation, not solve a reading burden.",
+      "systemReason": "The /ps caller starts ALPHA/BETA only after the fixture handshake. It waits for monitor-specific frames rather than transcript mentions, preserves selected/inspected task identity, proves opening stop confirmation leaves both jobs active, confirms only BETA cancellation, verifies ALPHA remains, and checks the original cancelled row in Activity. The /resume caller uses only the terminal envelope; it creates root/child sessions within owned home/sessions and retains worker-role, child-ID and explicit-confirmation assertions. Reading prepareAgentSession shows durable child metadata is written and both private managers are disposed; reading registerTaskMonitor shows /ps delegates to the existing task authority and reading registerResumeSafeguards shows role decoration and confirmation remain product-owned. The provider finally precedes terminal teardown. No fixture simplification is needed and none of these assertions or security decisions should be weakened.",
+      "checks": [
+        {
+          "kind": "exact-candidate-inspection",
+          "result": "Used git show at f7e77b9fecbb5497a21a08e973eadd136feb638f for whole focus, whole sole caller, helpers, and related product authorities; used candidate git grep to confirm the sole external fixture caller."
+        },
+        {
+          "kind": "primaryBase-diff",
+          "result": "git diff --name-status f7e77b9fecbb5497a21a08e973eadd136feb638f f7e77b9fecbb5497a21a08e973eadd136feb638f is empty. PrimaryBase equals candidate; there are no candidate-changed related source paths to inspect or include in acceptedBlobs."
+        },
+        {
+          "kind": "blob-identity",
+          "result": "tests/task-monitor-tui-fixture.ts = c46f9ca37d2c4959cdf48b98dd73844dd651956f"
+        },
+        {
+          "kind": "filesystem-network-effects-review",
+          "result": "Static review only: fixture mkdir/mkdtemp and model/session/readiness writes target its owned retained temporary tree; explicit env reaches Bun.spawn through offlineTestEnv without inherited HOME/config/SDK values; tmux uses owned TMUX_TMPDIR and direct binary argv. Provider binds only 127.0.0.1 on an ephemeral port with literal fixture API key. Provider job commands are controlled echo/sleep loops; teardown stops the provider and owned tmux server, not filesystem deletion."
+        }
+      ],
+      "limits": [
+        "No setup, tests, builds, dependency installation, network connections, live authentication, credential access, or source edits were performed. Runtime behavior, packaged dist/bruv, process-tree shutdown, and timing gates remain unverified here; parent owns audited isolated gates. The caller test timeout is 20 seconds whereas fixture startup deadline is 30 seconds; static readability judgment does not certify that timing envelope.",
+        "Durable review provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_63de35f8. Exact candidate Git objects were retained; no temporary code checkout, cleanup, deletion, destructive Git, publication, merge, or wisdom edits. No descendants were launched. Parent owns runtime agent.model verification."
       ]
     }
   ],
@@ -17349,9 +17374,9 @@
     "baselineFiles": 766,
     "finalGate": "pending; incomplete focus coverage",
     "liveAuth": "unverified/failing; preserved",
-    "accepted": 649,
+    "accepted": 650,
     "total": 821,
-    "pending": 172,
+    "pending": 171,
     "sourceExtras": 55,
     "checkout": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
     "branch": "bruv/readability-pr45-sol-continuation",

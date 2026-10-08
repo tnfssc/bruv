@@ -1922,7 +1922,7 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_63de35f8",
         "branch": "bruv/pr45-judge-1-execution-tasks-questions-f-63de35f8",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled"
       }
     ]
   },
@@ -2345,6 +2345,19 @@
         ],
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_3c2b4389",
         "branch": "bruv/pr45-primary-3-ui-terminal-cli-focuses-3c2b4389",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_dd0e6b80",
+        "stage": "judge",
+        "focus": [
+          "tests/context-usage-cache.test.ts",
+          "tests/editor.test.ts",
+          "tests/execute-row-render-performance.test.ts"
+        ],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_dd0e6b80",
+        "branch": "bruv/pr45-judge-3-ui-terminal-cli-focuses-dd0e6b80",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
       }

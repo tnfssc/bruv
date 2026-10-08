@@ -4348,8 +4348,8 @@
     ]
   },
   "resumeStatus": {
-    "accepted": 101,
-    "pending": 1
+    "accepted": 102,
+    "pending": 0
   },
   "extraFiles": [
     {
@@ -4404,15 +4404,17 @@
       "focus": "tests/task-monitor-tui-fixture.ts",
       "initialBlob": null,
       "introducedBy": "88cbf9b4adcbb6d3b8296a9b1c2d89d243d7ff37",
-      "state": "pending",
-      "acceptedBlob": null,
+      "state": "accepted",
+      "acceptedBlob": "c46f9ca37d2c4959cdf48b98dd73844dd651956f",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
         "acceptedBlob": "c46f9ca37d2c4959cdf48b98dd73844dd651956f",
         "primaryId": "task_b39fb78d",
         "primaryCommit": "f7e77b9fecbb5497a21a08e973eadd136feb638f",
+        "judgeIds": ["task_63de35f8"],
         "sourceCommit": "f7e77b9fecbb5497a21a08e973eadd136feb638f",
-        "state": "needs-judge"
+        "state": "accepted-joined",
+        "reason": "Read the complete exact-candidate fixture and sole caller, not checkout HEAD, then the complete process/TUI helpers. The reader can follow two coherent lifetimes without reconstructing scattered ownership: withTaskMonitorTerminal allocates and retains one owned mkdtemp tree, builds its explicit HOME/XDG/SDK/tmp environment, binds every tmux invocation to that environment and cwd, directly launches dist/bruv with argv, exposes terminal operations, and terminates that owned server in finally. withLiveJobTui adds the loopback provider inside that lifetime; its first-request execute response, later FIXTURE_READY response, and SSE framing remain together. It writes owned model/readiness files, launches the terminal, checks visible model, post-registration marker, and real command response under one startup deadline, and asserts zero provider requests before allowing scenario actions. These boundaries already clarify authority; splitting response framing or relocating the handshake would add navigation, not solve a reading burden."
       }
     }
   ]
