@@ -79,3 +79,11 @@ native steps and the failure bound. Formatting passed. Evidence:
 /home/tnfssc/.bruv/agent/watchers/ci-speed-integrated-42epcc.
 No full local gate or native hardware/workflow script was executed.
 Independent code review and hosted timing are still pending.
+
+Independent review task task_0a39740e reads exact code e871ea21 in
+/home/tnfssc/.bruv/worktrees/t3-1dc1185b-5442693331ce-task_0a39740e,
+branch bruv/ci-speed-independent-judge. Publish a draft follow-up based on
+bruv/structural-readability-owner-reviewed so hosted CI can run alongside
+review. PR45 remains at 8d6f27ef and open. No speedup or root repair is
+claimed until evidence supports it. The next notes-only commit does not
+change the source under review.
