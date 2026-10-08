@@ -2737,7 +2737,7 @@
       ],
       "chars": 99910,
       "lines": 2147,
-      "status": "running",
+      "status": "accepted",
       "jobId": "task_6dc5f79d",
       "model": "openai-codex/gpt-6.1-sol",
       "workspace": {
@@ -2940,7 +2940,164 @@
         "priorObjections": [],
         "reason": "Fresh actual integrated-code judgment required after assigned/context source bytes changed; prior quality and rejection evidence retained, never promoted by hashes."
       },
-      "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d"
+      "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+      "result": {
+        "lane": "lane-11",
+        "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
+        "candidate": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "verdict": "ACCEPT",
+        "diffReadPaths": [
+          "tests/manual-release.test.ts",
+          "tests/native-release-gate.test.ts",
+          "tests/offline-process-isolation.test.ts",
+          "tests/prepare-assets.test.ts",
+          "tests/product-identity.test.ts",
+          "tests/production-packaging.test.ts",
+          "tests/publish-release.test.ts",
+          "tests/release-browser-setup.test.ts",
+          "tests/release-launcher-gate.test.ts",
+          "tests/release-workflows.test.ts"
+        ],
+        "contextReadPaths": [
+          "tests/helpers.ts",
+          "tests/tui-helpers.ts",
+          "tests/find-ci-baseline.test.ts",
+          "scripts/prepare-manual-release.ts",
+          "scripts/publish-release.ts",
+          "scripts/select-release-notes.ts",
+          "scripts/validate-release-tag.ts",
+          "scripts/build-pair.ts",
+          "scripts/build-claude-compat.ts",
+          "scripts/build.ts",
+          "scripts/claude-compat-launcher.ts",
+          "scripts/bruv-claude-compat.sh",
+          "scripts/verify-release-launchers.ts",
+          "scripts/run-native-release-gate.mjs",
+          "scripts/setup-release-browser.sh",
+          "scripts/setup-native-release-gate.sh",
+          "wisdom/claude-compat/proof/official-2644/fetch-official.mjs",
+          "scripts/prepare-assets.ts",
+          "scripts/pi-host-adaptation.ts",
+          "scripts/ci.sh",
+          ".github/workflows/release.yml",
+          ".github/workflows/ci.yml",
+          ".github/workflows/live.yml",
+          "package.json",
+          "src/cli.ts",
+          "src/claude-compat/cli.ts",
+          "src/claude-compat/launch.ts",
+          "src/update.ts"
+        ],
+        "sourceBlobs": {
+          "tests/manual-release.test.ts": "9fdf9ef3fc1b9cb88a95e49ca012d78b86561024",
+          "tests/native-release-gate.test.ts": "6762793bbfc261db8c55f7aba82d685c4b146d9b",
+          "tests/offline-process-isolation.test.ts": "2ff5cc4eda8213e4b91e5a632132c490d73ce04a",
+          "tests/prepare-assets.test.ts": "6c6ae2ca09e7f769d3f2ec4dde252ed58d792170",
+          "tests/product-identity.test.ts": "b9e4e9ae5d8185883f905c42d4459d4c213847c5",
+          "tests/production-packaging.test.ts": "aec669688b9fb751badf5e307ca0101fddc26b98",
+          "tests/publish-release.test.ts": "ace4cea386836a04f36cedee9d29c4624191fffc",
+          "tests/release-browser-setup.test.ts": "80b148a19e03c2e30b008964bdbcadc883cd9651",
+          "tests/release-launcher-gate.test.ts": "da1a4e566b38096580f59ed59f15d57f18ef0641",
+          "tests/release-workflows.test.ts": "ffcf4742d5aadb88e1ed76996e43df81e3dc079d"
+        },
+        "sourceJourneys": [
+          {
+            "paths": [
+              "tests/manual-release.test.ts",
+              "scripts/prepare-manual-release.ts",
+              ".github/workflows/release.yml",
+              "tests/release-workflows.test.ts",
+              "scripts/ci.sh",
+              ".github/workflows/ci.yml"
+            ],
+            "readingReason": "The former stateful preparation scenario is split into fresh repositories, with its setup and teardown owned by withReleaseRepository. Independent cases retain version/notes/idempotence checks and explicitly verify failed empty-note preparation leaves package bytes unchanged. readWorkflow, commands and namedStep replace repeated ad hoc YAML casts and one large workflow string search with job-specific assertions; they are small local adapters rather than a workflow framework.",
+            "systemReason": "Followed prepare-manual outputs through release-source admission, pinned checkouts, release build/native prerequisites and publish permissions. Predicate tests exercise the actual YAML boolean subset and shell output step, not a second admission policy. Shared Linux CI remains one scripts/ci.sh caller in both workflows, preceding target packaging. Failure/skipped/cancelled prerequisites remain blocking."
+          },
+          {
+            "paths": [
+              "tests/publish-release.test.ts",
+              "scripts/publish-release.ts",
+              "scripts/select-release-notes.ts",
+              "scripts/validate-release-tag.ts",
+              ".github/workflows/release.yml"
+            ],
+            "readingReason": "ReleaseReads owns and restores the fetch replacement across the awaited assertion, including rejection; this removes the old unawaited rejection-check lifetime. The CLI fixture uses a linear expected-effects transcript, real temporary asset bytes and their digests, so each scenario reads as a publication journey instead of a large mode-dependent mock.",
+            "systemReason": "Followed manual develop confirmation and remote tag peeling/recheck into local asset digest collection, tag-specific notes selection, draft creation/repair, byte readback, publication and final public readback. New negative cases stop the actual CLI before downstream mutation. A public incomplete release cannot be repaired, and passing local decisions alone do not produce publication success."
+          },
+          {
+            "paths": [
+              "tests/production-packaging.test.ts",
+              "scripts/build-pair.ts",
+              "scripts/build-claude-compat.ts",
+              "scripts/build.ts",
+              "package.json",
+              "tests/release-launcher-gate.test.ts",
+              "scripts/claude-compat-launcher.ts",
+              "scripts/bruv-claude-compat.sh",
+              "scripts/verify-release-launchers.ts"
+            ],
+            "readingReason": "The test API follows the removal of the one-element command list: pairedBuildCommand returns the one real child argv, with unchanged target/helper and sibling naming semantics. The CLI fixture checks cwd, input/output and nonzero status relay. Launcher mutations now get independent valid-checksum fixtures, distinguishing stale packaging from wrong dispatch.",
+            "systemReason": "Followed package build to one connector builder, one normal binary build and the thin launcher. The launcher verifier checks checksums, interpreter and executable mode before probing suffixed and installed layouts with their matching sibling only. Shipped template coverage is explicitly host POSIX execution, not native Android/macOS acceptance. Release assetNames matches the four paired targets and shared notices."
+          },
+          {
+            "paths": [
+              "tests/native-release-gate.test.ts",
+              "scripts/run-native-release-gate.mjs",
+              "tests/production-packaging.test.ts",
+              "scripts/setup-native-release-gate.sh",
+              "wisdom/claude-compat/proof/official-2644/fetch-official.mjs",
+              ".github/workflows/release.yml"
+            ],
+            "readingReason": "withFixture now owns incomplete fixture setup as well as scenario cleanup. FixtureOptions is a bounded failure injection rather than a general context bag; structured child source makes evidence-before-failure ordering apparent. SuiteCall makes the asserted inherited/cleared flags readable.",
+            "systemReason": "Followed verified official download and SDK/browser GITHUB_ENV handoff into the gate. Actual gate closes each child and rehashes upstream before accepting suite JSON, and refuses existing output. Added fixtures prove passing JSON cannot override nonzero exit, signal termination or upstream mutation. Fake suites and supplied paths are explicitly orchestration evidence only; no native proof is promoted."
+          },
+          {
+            "paths": [
+              "tests/release-browser-setup.test.ts",
+              "scripts/setup-release-browser.sh",
+              ".github/workflows/release.yml",
+              "tests/release-workflows.test.ts"
+            ],
+            "readingReason": "Named numeric failure inputs and before/after library reports replace opaque mode switches. Exact call sequences make download, inspection, dependency installation and recheck order visible without reimplementing the setup script.",
+            "systemReason": "The fixture executes the shipped setup shell with fake Bun/ldd, checking pinned private harness paths, exactly one headless shell, fatal ldd errors and only demonstrated missing libraries selecting install-deps. Workflow setup and native acceptance remain separate steps so exported environment is available to the consumer."
+          },
+          {
+            "paths": [
+              "tests/offline-process-isolation.test.ts",
+              "tests/helpers.ts",
+              "tests/tui-helpers.ts",
+              "tests/product-identity.test.ts",
+              "src/cli.ts",
+              "src/claude-compat/cli.ts",
+              "src/claude-compat/launch.ts",
+              "src/update.ts",
+              "tests/find-ci-baseline.test.ts"
+            ],
+            "readingReason": "Offline isolation now supplies a hostile environment per call rather than mutating process.env shared by tests. shellQuote/frameContaining centralize mechanics with unchanged bounded-frame expectations. Product identity is split into independent fixture-home cases. Repaired helpers.ts adds an explicit ownedFixtureEnv without changing offlineTestEnv/run semantics; the actual find-ci-baseline fixture caller uses its owned env for Git.",
+            "systemReason": "Followed run through a cloned environment with Herdr identity removed while caller API key remains, and through a private tmux/socket startup probe. Product tests use explicit HOME/PATH and sibling override removal, matching ordinary .bruv runtime materialization and connector early label-only versus Bruv product version responses. The updater identity map matches packaging targets. No provider or broad descendant/network-isolation guarantee is inferred."
+          },
+          {
+            "paths": [
+              "tests/prepare-assets.test.ts",
+              "tests/helpers.ts",
+              "scripts/prepare-assets.ts",
+              "scripts/pi-host-adaptation.ts",
+              "scripts/build-claude-compat.ts"
+            ],
+            "readingReason": "The asset idempotence test no longer writes through the repository preparation path or assumes generated assets already exist. It copies preparation inputs into one mkdtemp fixture, passes that fixture cwd/argv to run, names generated paths and mtimes, and sets old timestamps before the second preparation rather than relying on a sleep.",
+            "systemReason": "Followed preparation into preparePiHost before asset copies and writeIfChanged byte comparisons. Pi adaptation can write its dependency inputs, so copying the package rather than intentionally linking it matters at this seam; the inspected current package root is a regular directory. All expected assets, metadata and photon WASM remain covered. Guarded unsupported Pi bytes/version still fail before adaptation writes; that code was only read, never invoked or bypassed."
+          }
+        ],
+        "integrationReadingReason": "ACCEPT for this lane only. Fully read every assigned baseline-to-candidate diff including deletions and followed actual helper/caller/authority seams. The integrated tests preserve the preparation, release identity, paired packaging and publication contracts while reducing stateful scenario coupling, duplicated YAML casts and opaque fixture modes. New abstractions stay local and purpose-sized; effect transcripts expose authority order rather than hide it. No concrete cross-file contradiction, missing owner or behavior regression found in these inspected journeys. This is not whole-repository approval and uses no previous judgments or test results as acceptance evidence.",
+        "objections": [],
+        "limits": [
+          "No unread assigned diff gaps. Context is selective actual source, not an assertion of full current source everywhere: src/cli.ts entry/bootstrap, src/claude-compat/cli.ts imports/early dispatch, src/update.ts identity map, scripts/pi-host-adaptation.ts patch interface and guarded adaptation executor, tests/find-ci-baseline.test.ts fixture caller, and .github/workflows/ci.yml relevant admission/cache/shared-gate regions were read selectively.",
+          "READ-ONLY source review except this requested untracked result file. No tests/setup/builds/install/formatter/auth/device operations, no delegation, no source edits, no unsupported Pi preparation retries or bypasses. No sudo, recovery investigation, secrets access, shell deletion/cleanup, destructive Git or user-data mutation.",
+          "Existing owned fixture cleanup and workflow shell traps were inspected as source only and never executed. No new test/source fixtures were created. Durable review provenance is the current retained worktree at the exact candidate; candidate preserved.",
+          "No native platform, live auth/provider, hardware, network or release API verification performed. Native unit fixtures and host-shell launcher probes are not native acceptance evidence. run has no timeout and the Herdr socket test observes only startup plus its short post-kill window.",
+          "ownedFixtureEnv is opt-in, not a claim that every assigned test uses a fully sanitized HOME/config/SDK environment. Some inspected test subprocesses retain inherited env by design; none was run under this review. Broader environmental isolation and other lanes remain the parent review responsibility."
+        ]
+      }
     },
     {
       "id": "lane-12",
@@ -5465,7 +5622,7 @@
       ],
       "chars": 57695,
       "lines": 1455,
-      "status": "running",
+      "status": "rejected",
       "jobId": "task_7641420e",
       "model": "openai-codex/gpt-6.1-sol",
       "workspace": {
@@ -5627,7 +5784,139 @@
         "priorObjections": [],
         "reason": "Fresh actual integrated-code judgment required after assigned/context source bytes changed; prior quality and rejection evidence retained, never promoted by hashes."
       },
-      "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d"
+      "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+      "result": {
+        "lane": "lane-26",
+        "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
+        "candidate": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "verdict": "REJECT",
+        "diffReadPaths": [
+          "tests/task-monitor-tui-fixture.ts",
+          "tests/task-monitor-tui.test.ts",
+          "tests/tool-schema.test.ts",
+          "tests/typescript-execution.test.ts",
+          "tests/typescript-images.test.ts",
+          "tests/worktree-workspace.test.ts"
+        ],
+        "contextReadPaths": [
+          "tests/helpers.ts",
+          "tests/tui-helpers.ts",
+          "tests/setup.ts",
+          "bunfig.toml",
+          "package.json",
+          "src/typescript/definition.ts",
+          "src/tool-schema.ts",
+          "src/live/setup-probe.ts",
+          "src/agent/extension.ts",
+          "src/typescript/extension.ts",
+          "src/typescript/execution.ts",
+          "src/typescript/images.ts",
+          "src/tasks/job-service.ts",
+          "src/tasks/task-manager.ts",
+          "src/tasks/worktree-workspace.ts",
+          "src/tasks/agent-session.ts",
+          "src/history/session-manager.ts",
+          "src/delegation-environment.ts",
+          "src/tasks/task-monitor.ts",
+          "src/tasks/resume-safeguards.ts",
+          "scripts/build.ts",
+          "node_modules/@earendil-works/pi-coding-agent/dist/core/session-manager.js",
+          "node_modules/@earendil-works/pi-coding-agent/dist/config.js"
+        ],
+        "sourceBlobs": {
+          "tests/task-monitor-tui-fixture.ts": "c46f9ca37d2c4959cdf48b98dd73844dd651956f",
+          "tests/task-monitor-tui.test.ts": "09003456fc0d06b7bcfdc5b5e16d54771b5da94a",
+          "tests/tool-schema.test.ts": "540a0d1a2cf47c8d09a7040cc7b29637d780655f",
+          "tests/typescript-execution.test.ts": "95801cca1074a934009985ab6f1c24e903b961f5",
+          "tests/typescript-images.test.ts": "c812a1a951d36405c07022c0aaf61963bc51bdd6",
+          "tests/worktree-workspace.test.ts": "7a01e214fe52d9bd144d6e0171b03a22e6863f01"
+        },
+        "sourceJourneys": [
+          {
+            "paths": [
+              "tests/task-monitor-tui.test.ts",
+              "tests/task-monitor-tui-fixture.ts",
+              "tests/helpers.ts",
+              "tests/tui-helpers.ts",
+              "src/tasks/task-monitor.ts",
+              "src/tasks/agent-session.ts"
+            ],
+            "readingReason": "Read entire removal of inlined provider/readiness/terminal setup and its replacement fixture, then actual /ps and /resume callbacks. Repaired run helper passes the supplied allowlist through offlineTestEnv without merging parent env; capturePane/pollFrame/frameContaining still expose actual terminal frames. The extracted fixture owns HOME/XDG/config/temp/tmux server, binds only loopback, keeps readiness distinct from provider requests, and finally stops server and terminal while retaining evidence.",
+            "systemReason": "Preserves target-specific confirmation and task-ID assertions rather than reducing the test to text appearing anywhere. Resume creates root and child in explicit fixture sessions. Two small fixture entrypoints remove duplicated resource lifecycle and shell-quoted launch strings without a giant policy/context bag. Compiled-binary behavior was not executed."
+          },
+          {
+            "paths": [
+              "tests/tool-schema.test.ts",
+              "src/agent/extension.ts",
+              "src/typescript/extension.ts",
+              "src/typescript/definition.ts",
+              "src/tool-schema.ts",
+              "src/live/setup-probe.ts"
+            ],
+            "readingReason": "Followed registeredTools through ordinary extension registration to registerExecuteTool and executeDeclaration; inspected probe use of the same declaration and Zod JSON-schema boundary. Split tests retain registration uniqueness, probe equality, promptSnippet, schema description absence, enum choices, coercion and rejection checks.",
+            "systemReason": "Shared declaration remains the authority; test registration extraction is bounded and does not substitute a separate schema. Splitting responsibilities makes failures and contracts easier to locate without deleting public validation assertions."
+          },
+          {
+            "paths": [
+              "tests/typescript-execution.test.ts",
+              "src/typescript/extension.ts",
+              "src/typescript/execution.ts",
+              "src/delegation-environment.ts"
+            ],
+            "readingReason": "Read all helper substitution/deleted mocks, then event-specific session lifecycle, execute active set/foreground signal combination and ExecuteDelivery recordLaunches/finish. Read cancellation first-cause ownership before controller.abort, watcher installation, process-group escalation and diagnostic result selection.",
+            "systemReason": "registeredExecuteTool chooses callbacks by event rather than registration order and returns only surfaces exercised. It preserves stable background launch rows even on outer execution failure, inline helper identity, image advisory, capture budgets and session reset checks. New synchronous bridge-cancellation assertion agrees with timeout being latched before reentrant shutdown; no change of result authority into the fixture."
+          },
+          {
+            "paths": [
+              "tests/typescript-images.test.ts",
+              "src/typescript/images.ts",
+              "src/typescript/execution.ts"
+            ],
+            "readingReason": "Read the entire regrouping plus new ordered/malformed/count/total-byte tests, current record decoder and channel loop, and parent execute image acceptance after clean process completion. Read existing per-execute fixture lifetime and raw child launch for context.",
+            "systemReason": "Pure format/channel tests no longer allocate process fixtures. Record order and resize metadata assertions agree with parent validation; later invalid records cannot yield partial output, decoded rather than base64 bytes own the aggregate budget, and framing/count checks precede record validation. Existing owned temporary cleanup and inherited raw-child env were inspected, never executed."
+          },
+          {
+            "paths": [
+              "tests/worktree-workspace.test.ts",
+              "tests/helpers.ts",
+              "tests/setup.ts",
+              "bunfig.toml",
+              "src/tasks/job-service.ts",
+              "src/tasks/task-manager.ts",
+              "src/tasks/worktree-workspace.ts",
+              "src/tasks/agent-session.ts",
+              "src/history/session-manager.ts",
+              "src/delegation-environment.ts",
+              "node_modules/@earendil-works/pi-coding-agent/dist/core/session-manager.js",
+              "node_modules/@earendil-works/pi-coding-agent/dist/config.js"
+            ],
+            "readingReason": "Read complete extraction including prior finally deletions, trust/argv assertions and new gated async setup case. Followed service constructor environment argument separately from prepareLaunch/sessionDir and setup spawn env; inspected reservation, async setup publication, real activatePreparedAgent spawn and shutdown. SDK source confirms missing explicit sessionDir selects the configured/default agent sessions path.",
+            "systemReason": "The manager shutdown-before-root-restore ordering and async setup eventual-failure test are coherent, but root ownership stops at BRUV_WORKTREE_ROOT. New case supplies no sessionManager/sessionDir and spyOn does not replace activation. prepareAgentSession persists a header and metadata outside the fixture in the inherited SDK directory, and spawned setup/agent processes inherit process.env despite the service receiving {}. Preload only strips Herdr pane identity. This missing fixture ownership prevents accepting the lane."
+          }
+        ],
+        "integrationReadingReason": "Fresh complete six-path baseline-to-candidate source diff read including deletions, with actual integrated caller/lifetime/authority context. Most extractions genuinely lower system reading burden: shared declaration remains authoritative, event-specific execute registration replaces order-dependent mocks, pure image tests separate from process lifetime, and the TUI fixture centralizes an explicit resource owner. No stylistic rejection and no broad production behavior regression asserted. Reject the incomplete worktree-test ownership boundary: an additional async setup journey can persist SDK sessions and launch children in inherited configuration outside its declared owned fixture. The repaired helpers provide an owned environment capability but withWorktreeJobs does not use an equivalent boundary.",
+        "objections": [
+          {
+            "paths": [
+              "tests/worktree-workspace.test.ts:30-46,337-380",
+              "src/tasks/job-service.ts:prepareLaunch and #runWorktreeSetup",
+              "src/tasks/agent-session.ts:15-26",
+              "tests/setup.ts",
+              "tests/helpers.ts:ownedFixtureEnv"
+            ],
+            "readingProblem": "The newly added async setup test actually traverses prepareAgentSession and activatePreparedAgent (a recording spy, not a mock replacement). Its context has only cwd/model/trust, so sessionDir is undefined. prepareAgentSession writes the SDK-selected default journal and appends metadata, outside root unless the human test launcher happened to isolate SDK configuration. withWorktreeJobs owns only BRUV_WORKTREE_ROOT and TaskManager; {} passed to JobService disables injected native configuration, not process.env copied by setup and child launch. The normal test preload supplies no HOME/config/SDK isolation. This is a concrete missing filesystem/process owner, repeating the pre-existing trust-test gap and adding another persistent outside-fixture writer.",
+            "requiredResult": "Make the worktree test journey own its HOME/config/SDK and session directory under a retained mkdtemp root, with explicit child-test argv/env (or an equally explicit owned runtime boundary). Keep real activation/async publication assertions but do not inherit human configuration or credentials; ensure all journal paths belong to the fixture. Do not clean or delete inherited SDK paths. Reuse the repaired owned environment helper where appropriate, and retain fixtures for audit."
+          }
+        ],
+        "limits": [
+          "Read-only source review; no tests, setup, builds, installs, formatter, auth/device operations, source edits, delegation, recovery investigation or cleanup executed. Unsupported Pi preparation was neither retried nor bypassed. Only this untracked result file was written.",
+          "All six assigned diffs fully read; no assigned unread gaps. Related sources read in relevant portions, not claimed as complete whole files or whole repository. Complete baseline assigned deletions read directly, not inferred from hashes or counts.",
+          "No prior review artifacts, independent-judgment summaries, coverage totals or green tests used as acceptance evidence. Candidate and existing durable worktree preserved.",
+          "SDK default-directory behavior additionally inspected from installed dependency code; it is supporting context, not a candidate Git blob or proof of prepared/compiled parity. No credential files were accessed.",
+          "Actual tmux/compiled bruv/provider and process timing were not run or verified. TUI provider uses fixture loopback credentials; live auth/device remains unverified.",
+          "Existing test cleanup of provably owned mkdtemp roots was inspected only. Several execution fixtures retain inherited process environment in source; this review does not authorize their execution. Any future test invocation must use explicit argv/env and owned retained HOME/config/SDK. Lane-only judgment; parent must integrate other source lanes and cross-domain fit."
+        ]
+      }
     },
     {
       "id": "lane-27",
@@ -5818,7 +6107,7 @@
       ],
       "chars": 96616,
       "lines": 2150,
-      "status": "running",
+      "status": "accepted",
       "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
       "jobId": "task_043908b0",
       "model": "openai-codex/gpt-6.1-sol",
@@ -5834,6 +6123,133 @@
         "setupTaskId": "task_8b5bc632",
         "setupStatus": "running",
         "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      },
+      "result": {
+        "lane": "lane-28",
+        "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
+        "candidate": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "verdict": "ACCEPT",
+        "diffReadPaths": [
+          "native/live/main.swift",
+          "native/live/test-core.c",
+          "native/live/test-waveform.c",
+          "scripts/live-acceptance.ts",
+          "scripts/live-isolated-audio.sh",
+          "scripts/live-probe-input.ts",
+          "scripts/probe-live-capability.ts",
+          "scripts/probe-live-controlled.ts",
+          "scripts/probe-live-recorded.ts",
+          "scripts/probe-live-startup-audio.ts",
+          "scripts/probe-openai-realtime-setup.ts",
+          "src/live/audio.ts"
+        ],
+        "contextReadPaths": [
+          "native/live/main.swift",
+          "native/live/test-core.c",
+          "scripts/live-acceptance.ts",
+          "scripts/live-probe-input.ts",
+          "scripts/probe-live-capability.ts",
+          "scripts/probe-live-controlled.ts",
+          "scripts/probe-live-recorded.ts",
+          "scripts/probe-live-startup-audio.ts",
+          "scripts/probe-openai-realtime-setup.ts",
+          "src/live/audio.ts",
+          "native/live/AudioCore.c",
+          "native/live/AudioCore.h",
+          "native/live-linux/main.cpp",
+          "src/live/playback.ts",
+          "src/live/extension.ts",
+          "src/live/speaker-check.ts",
+          "src/live/session.ts",
+          "src/live/openai-session.ts",
+          "src/live/setup-probe.ts",
+          "scripts/live-study-trial.ts",
+          "scripts/live-startup-fixture.ts"
+        ],
+        "sourceBlobs": {
+          "native/live/main.swift": "e51337959b28907cfa01625a6533bf0f068d014a",
+          "native/live/test-core.c": "182ca301ae67e70cfbaffd43ec6380c2ac9ff377",
+          "native/live/test-waveform.c": "7a88474d51cef3259e49ab8897263f9a19811b17",
+          "scripts/live-acceptance.ts": "4371f041f46991f18308dc9fcaf4bba3cad45062",
+          "scripts/live-isolated-audio.sh": "056491cb8f7267f2cb0821fb5ccdc7911e0a1822",
+          "scripts/live-probe-input.ts": "9fc9b1a38afb2b0f1b099cd881fc545b21e1e37a",
+          "scripts/probe-live-capability.ts": "c0d4758eaa271a1d83ee39302a2983d171a1ab12",
+          "scripts/probe-live-controlled.ts": "e451a8408f4bd0466f9100af49840cbd134cf3ae",
+          "scripts/probe-live-recorded.ts": "fe4b9afb1795931b5f658ac4589b8da4bdcf4518",
+          "scripts/probe-live-startup-audio.ts": "e2109081876ad2509a52ae00b9db8ba30bff0299",
+          "scripts/probe-openai-realtime-setup.ts": "14b7e6e362168526b4b111bf0d6e415b023d8b3a",
+          "src/live/audio.ts": "b3b015c01c83ae297d9b2dbb2a8016d1945bc636"
+        },
+        "sourceJourneys": [
+          {
+            "paths": [
+              "src/live/extension.ts",
+              "src/live/playback.ts",
+              "src/live/audio.ts",
+              "native/live/main.swift",
+              "native/live/AudioCore.c",
+              "native/live/AudioCore.h",
+              "native/live-linux/main.cpp",
+              "src/live/speaker-check.ts"
+            ],
+            "readingReason": "Followed enqueue -> scheduler frame write -> HelperInput pipe acceptance -> native generation-tagged admission/render, then interrupt/flush and stop/close. HelperInput separates the active, irretractable write from unsent queued writes; pending-byte admission still includes both, reserves control headroom, waits for callback plus drain, and rejects all owned promises/detaches drain on shutdown. Scheduler flush precedes new-generation sends and ignores expected prior-generation rejection. LiveOutput owns serial capture conversion, JSON output and queue-depth state; real-time callbacks still only touch LLCore. Stop cancels polling before hardware teardown and uses a serial finishStop barrier to discard capture/resampler tails and emit played(0) then stopped. Host now accepts bounded played events while stopping without treating them as stop acknowledgement. Extension closes schedulers and local hold ownership before audio.stop; speaker-check has bounded stop then close. Linux joins its pump before stopped.",
+            "systemReason": "These are genuine ownership seams rather than parameter bags: pipe backpressure is no longer tangled with protocol state, and main-thread device lifecycle is no longer tangled with serial capture/JSON state. Active writes remain explicitly non-retractable; generation, capture epoch, stop acknowledgement and acoustic silence remain distinct authorities. New played-in-stopping handling fits native ordering and preserves the public acknowledgement boundary."
+          },
+          {
+            "paths": [
+              "native/live/test-core.c",
+              "native/live/test-waveform.c",
+              "native/live/AudioCore.c",
+              "native/live/AudioCore.h"
+            ],
+            "readingReason": "Compared all removed monolithic assertions with the named cases, including full-ring rejection/flush, short tails/restart, continuous versus split packet schedules at four rates, held-sample arrival, stale generation rejection, capacity reclaim and resettable capture drop reporting. Read renderer-owned interpolation window and atomic generation accounting. Waveform extraction preserves the 958-frame initial render, 960-frame packet steps and final two frames; reference and split cores remain independent.",
+            "systemReason": "Named independent fixtures make each lifetime/schedule proof inspectable without tracking prior flush generations through one main function. Exact per-sample tail assertions and new partial-pair/fractional-tail flush cases improve source clarity and specificity. This is an assessment of assertion semantics, not a claim these tests were run."
+          },
+          {
+            "paths": [
+              "scripts/live-isolated-audio.sh",
+              "scripts/live-acceptance.ts",
+              "src/live/audio.ts",
+              "src/live/playback.ts",
+              "src/live/session.ts",
+              "native/live-linux/main.cpp"
+            ],
+            "readingReason": "Followed wrapper command selection, mktemp-owned graph/config construction, private socket environment, pre-test no-hardware graph checks and PID cleanup; inspected but did not execute its trap or removal. The default command remains acceptance; -- explicitly selects a fixture argv and avoids unnecessary Bun/Pulse client prerequisites. Followed fixtureAdapter callback timing through VoiceSession ready/epoch guard to scheduler enqueue and turnComplete, actual helper/monitor routing, drained-tail observation and provePlaybackInterruption. The extracted proof keeps a live capture-count getter and the same outputParts array, flushes only the interruption (not normal turn completion), and retains old/new tone and continued-capture checks. Acceptance closes voice/scheduler before helper stop and unloads only recorded module IDs.",
+            "systemReason": "Graph bootstrap and fixture proof are coherent local phases with explicit ownership; synthetic provider messages do not replace native playback or become acoustic evidence. Extraction leaves timing, deadlines, route checks and failure checks at their existing boundaries. Cleanup remains confined in source to generated graph paths/PIDs/module IDs, not inherited HOME deletion."
+          },
+          {
+            "paths": [
+              "scripts/live-probe-input.ts",
+              "scripts/probe-live-recorded.ts",
+              "scripts/probe-live-controlled.ts",
+              "scripts/probe-live-capability.ts",
+              "scripts/live-study-trial.ts"
+            ],
+            "readingReason": "Followed explicit paid/disclosure/source gates to bounded UTF-8 JSONL framing, study cutoff/targets, root/snapshot preparation, hashed stimulus, and shared WebSocket trial. Generator finally closes the FD on parse error, exhaustion or cutoff break; byte/line/entry budgets remain. Recorded/controlled plans now prepare exact input/snapshot text before credential loads or paid trials, preserving context ordering and hashing the same strings sent. Capability scenario rows bind prompt, optional prior assistant text and mock result; own-property validation uses the same tables. Shared trial emits only mock function_call_output and records generated code; it never dispatches or evaluates it.",
+            "systemReason": "Separating source framing from study semantics reduces parsing/cutoff entanglement. Prepared trial records are narrowly the transport payload plus diagnostic hashes, not ambient context bags. Scenario-table coupling removes a distant ternary authority for mock results. Consent and synthetic-output boundaries remain explicit and consistent across scripts."
+          },
+          {
+            "paths": [
+              "scripts/probe-live-startup-audio.ts",
+              "scripts/live-startup-fixture.ts",
+              "src/live/session.ts",
+              "scripts/probe-openai-realtime-setup.ts",
+              "src/live/setup-probe.ts",
+              "src/live/openai-session.ts"
+            ],
+            "readingReason": "Followed startup credential-source plan (explicit live.env restricts to Google), paid gate, one shared PCM fixture and per-mode trials. Key loading preserves provider-specific skip on unavailable credential; natural generation failure ends the run without retry or controls, while conversion/synthesis exceptions still reach the suppressed CLI failure handler. Fixture generation retains memory-only PCM, session deadline/close and denied execution. Setup probe still gates the single private test-key read with file/ownership/mode/size/key validation; extracted runSetupProbe alone owns session and deadline and closes both in finally. Setup orchestration denies agent execution, and production OpenAI close invalidates serial/cancels pending connect before socket close.",
+            "systemReason": "Credential validation, fixture preparation and session lifetime now have named, bounded responsibilities without expanding permissions, key persistence, retry budgets or provider selection. These helpers make failure/skip/cleanup control flow easier to read; they do not claim successful live access or device behavior."
+          }
+        ],
+        "integrationReadingReason": "Within this lane the integrated extractions preserve the transport and native boundaries while making ownership easier to follow: queue state belongs to HelperInput/LiveOutput, protocol state remains in LiveAudio, and device state remains in Live. Cross-file callers respect stdin acceptance versus playback, strictly increasing generations, capture-origin epochs, and stopped acknowledgement. The deliberate played-during-stopping behavior matches native output ordering instead of rejecting a legitimate queue report. Probe preparation and scenario data remain narrow and keep paid/disclosure/mock-execution authority separate. The C fixture refactoring replaces implicit sequential state with explicit schedule cases and stronger exact expectations. No blocking cross-file contradiction, missing new owner, huge abstraction/context bag, or behavior-breaking churn found in the complete assigned diff and the actual caller/lifetime sections read. This is lane-only source acceptance, not a whole-repository or runtime acceptance verdict.",
+        "objections": [],
+        "limits": [
+          "All 12 assigned baseline-to-candidate diffs, including deletions, were read. No unread assigned diff gaps. Related current source was read in relevant sections, not attested in full everywhere. Exact candidate Git source was used; grep context was checked in the candidate worktree.",
+          "READ-ONLY review except the requested untracked result JSON. No delegation, tests, setup, builds, installs, formatter, auth/device access, credentials, secret files, source edits, cleanup, recovery investigation, sudo or destructive Git. Unsupported Pi preparation was not attempted, retried or bypassed. No prior lane/judge artifacts, coverage or green tests used as verdict evidence.",
+          "Provider API access, live authentication, real devices, acoustic echo cancellation/silence, runtime interleavings and executable test success remain unverified. Existing source cleanup/trap and credential-reading code was inspected, never executed.",
+          "Durable provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_043908b0; baseline 118edf14db266c51d563c83342fef6dacdc5267b; integrated candidate dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d. Worktree and candidate evidence retained. No temporary code checkout or test fixture was created.",
+          "Scope is lane-28 only. Parent must integrate remaining lane source judgments and cross-domain fit; this does not sign off the whole repository."
+        ]
       }
     },
     {
@@ -5852,8 +6268,16 @@
       ],
       "chars": 96528,
       "lines": 2287,
-      "status": "pending",
-      "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d"
+      "status": "running",
+      "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+      "jobId": "task_e259328d",
+      "model": "openai-codex/gpt-6.1-sol",
+      "workspace": {
+        "kind": "worktree",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
+        "baseRef": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "preparationStatus": "preparing"
+      }
     },
     {
       "id": "lane-30",
@@ -5876,8 +6300,20 @@
       ],
       "chars": 90542,
       "lines": 2356,
-      "status": "pending",
-      "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d"
+      "status": "running",
+      "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+      "jobId": "task_4be10fae",
+      "model": "openai-codex/gpt-6.1-sol",
+      "workspace": {
+        "kind": "worktree",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_4be10fae",
+        "worktreePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_4be10fae",
+        "sourcePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
+        "baseRef": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "baseOid": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "branch": "bruv/pr45-final-integrated-diff-lane-30-live--4be10fae",
+        "preparationStatus": "preparing"
+      }
     },
     {
       "id": "lane-31",
@@ -5891,8 +6327,20 @@
       ],
       "chars": 89180,
       "lines": 1971,
-      "status": "pending",
-      "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d"
+      "status": "running",
+      "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+      "jobId": "task_93857017",
+      "model": "openai-codex/gpt-6.1-sol",
+      "workspace": {
+        "kind": "worktree",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_93857017",
+        "worktreePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_93857017",
+        "sourcePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
+        "baseRef": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "baseOid": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "branch": "bruv/pr45-final-integrated-diff-lane-31-live--93857017",
+        "preparationStatus": "preparing"
+      }
     },
     {
       "id": "lane-32",
@@ -5909,8 +6357,16 @@
       ],
       "chars": 99109,
       "lines": 2349,
-      "status": "pending",
-      "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d"
+      "status": "running",
+      "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+      "jobId": "task_80fc1609",
+      "model": "openai-codex/gpt-6.1-sol",
+      "workspace": {
+        "kind": "worktree",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
+        "baseRef": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "preparationStatus": "preparing"
+      }
     },
     {
       "id": "lane-33",
@@ -6353,8 +6809,5 @@
     }
   ],
   "repairedSourceCandidate": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
-  "currentDiffPaths": 513,
-  "pausedForRework": {
-    "reason": "Record repaired lane12 remaining explicit-environment objections."
-  }
+  "currentDiffPaths": 513
 }

@@ -14873,10 +14873,10 @@
       "initialBlob": "100304e6a1f99859c8f452b203c43c67cd5264ac",
       "status": "pending",
       "area": "execution-tasks-questions",
-      "resumeState": "needs-rework",
-      "primaryId": "task_49f70753",
+      "resumeState": "needs-judge",
+      "primaryId": "task_01035810",
       "judgeIds": ["task_d655e78f", "task_846bbe75"],
-      "sourceCommit": null,
+      "sourceCommit": "eb8295ac0714ad9b6c4e548cc9130010949c7dd5",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
       "acceptedBlob": "dc777477cb0379b14073fba859471e30406134d8",
       "result": "Retain NO CHANGE NEEDED by task_d655e78f: the recorded accepted blob equals the actual focus blob at reviewed commit 58aead918c9cd290b432e1c08d9b697b57d740e4. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob.",
@@ -14913,7 +14913,54 @@
           }
         ],
         "readingReason": "Actual refactor changes fabricated foreground records into process-bearing scenarios without owned HOME/config/SDK authority. Coherent4-focus source repair must keep original assertions and public runtime behavior; isolate fixture agent/shell/execute worker environments, no global process.env edits, no test execution before independent effects clearance."
-      }
+      },
+      "priorPrimaryLineage": [
+        {
+          "primaryId": "task_49f70753",
+          "sourceCommit": null
+        }
+      ],
+      "primaryCommit": "eb8295ac0714ad9b6c4e548cc9130010949c7dd5",
+      "primaryBase": "7032a079cb717c688f7f5ca4a73cc07be082363c",
+      "primaryResult": "The entire suite now registers its original cases only inside an explicitly launched owned process. The retained launcher manifest names argv, durable source worktree and an allowlisted mkdtemp HOME/config/cache/data/SDK/temp environment. Every attention task and the real raw-agent stream inherits that owned authority. FakeClock, batching bounds, diagnostics reset, snapshot retirement, method restoration and afterEach manager shutdown remain unchanged; no scheduler/runtime defaults were altered.",
+      "primaryPaths": [
+        "tests/job-attention.test.ts",
+        "tests/job-bridge.test.ts",
+        "tests/job-service.test.ts",
+        "tests/owned-process-suite.ts",
+        "tests/questions-bridge.test.ts",
+        "tests/task-manager.test.ts"
+      ],
+      "primaryChecks": [
+        {
+          "kind": "exact-rejected-baseline",
+          "result": "Before editing, every focus and the four objection runtime paths matched dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d blobs; no historical branch merged."
+        },
+        {
+          "kind": "source-review",
+          "result": "Read whole focus and assigned reconciliation row; traced process spawn/env and filesystem/session/output ownership. No tests/setup/builds run."
+        },
+        {
+          "kind": "formatter",
+          "result": "Biome format --write via child_process explicit argv/env, changed source paths only; retained evidence /tmp/bruv-pr45-format-osccHc and /tmp/bruv-pr45-format-ZROzHo. Final activation-signature alignment formatted with retained evidence /tmp/bruv-pr45-format-LR0GGL."
+        },
+        {
+          "kind": "assertion-preservation",
+          "result": "Static whitespace-normalized expect statements identical to rejected source (70 statements); not runtime proof or a readability verdict."
+        },
+        {
+          "kind": "git-diff-check",
+          "result": "Passed; coherent source range 7032a079cb717c688f7f5ca4a73cc07be082363c..eb8295ac0714ad9b6c4e548cc9130010949c7dd5 changes exactly the six listed test/helper paths. Source-only commits: 84ace37da3ce9a9ca95ff7e0c189931822257548 then eb8295ac0714ad9b6c4e548cc9130010949c7dd5; integrate both, not only the final two-line signature correction."
+        }
+      ],
+      "primaryLimits": [
+        "Fresh independent effects clearance, runtime gates and quality judgments belong to parent; none executed here.",
+        "Compiled binary execution, provider authentication, devices and network access remain unverified; no credentials accessed.",
+        "Fixture execution is Bun-specific and intended for this Linux test environment; suite argv and nested credential scenario have not been run.",
+        "Formatter/commit fixture roots retained; test fixture roots and launch/output evidence will be retained when parent runs audited gates. Source provenance remains this durable worktree and exact commit.",
+        "Existing isolated interactive-terminal source/evidence was untouched. No worktrees or candidate evidence removed, no setup/dependency changes, no push/PR/merge.",
+        "No wisdom or values edits: existing owned-process/safety values apply; parent owns aggregate wisdom and runtime-model verification."
+      ]
     },
     {
       "file": "tests/job-bridge-protocol.test.ts",
@@ -14933,30 +14980,52 @@
       "initialBlob": "41a49cda7d40568bdbe2060020d8b2dcdb9ed4b6",
       "status": "pending",
       "area": "execution-tasks-questions",
-      "resumeState": "needs-rework",
-      "primaryId": "task_f4f56799",
+      "resumeState": "needs-judge",
+      "primaryId": "task_01035810",
       "judgeIds": ["task_a3213d3e"],
-      "sourceCommit": null,
+      "sourceCommit": "eb8295ac0714ad9b6c4e548cc9130010949c7dd5",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
       "pendingReason": "Primary was cancelled during the incident. A changed focus blob survives only in the primary working tree, not its HEAD; no completed independent actual-code judgment or accepted blob is recorded. Preserve the uncommitted candidate, dist and runtime-assets without cleanup.",
-      "primaryCommit": "b54079d88b5e8336af51204d28f117eacae5b07b",
-      "primaryBase": "8f186d90eb5047304492c72c6bc56a7d0f37204d",
-      "primaryResult": "Reused the coherent preserved SessionJobs candidate: one parent-session fixture owns its manager, typed notification sink, service dispatch, raw execute entry, registered-tool entry, and asynchronous shutdown. Each test now presents its launch/race/delivery assertions in sequence, with timing/signal/handler changes explicit at the call site. Cancellation handlers still visibly wrap real dispatch; batch foreground ownership and handoff assertions remain local. Raw RPC-only and credential-isolation tests stay separate. This resolves the original unjoined reading burden rather than assuming the cancelled candidate was integrated. Rework evidence is null; no prior rejected judgment exists.",
-      "primaryPaths": ["tests/job-bridge.test.ts"],
+      "primaryCommit": "eb8295ac0714ad9b6c4e548cc9130010949c7dd5",
+      "primaryBase": "7032a079cb717c688f7f5ca4a73cc07be082363c",
+      "primaryResult": "One owned fixture-process boundary now encloses all SessionJobs and raw-RPC cases, including the real registered tool. Managed shell/agent children and compiled execute workers consequently inherit only fixture HOME/config/SDK/temp values; an owned SHELL executable removes login startup from service shell children without changing production defaults. The credential case launches a separate named fixture process with synthetic credentials supplied as launch input, not global edits. Existing delivery, cancellation, batch, handoff, RPC and credential assertions are retained in their original sequence; asynchronous manager disposal still owns settlement.",
+      "primaryPaths": [
+        "tests/job-attention.test.ts",
+        "tests/job-bridge.test.ts",
+        "tests/job-service.test.ts",
+        "tests/owned-process-suite.ts",
+        "tests/questions-bridge.test.ts",
+        "tests/task-manager.test.ts"
+      ],
       "primaryChecks": [
-        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md; inspected focus ownership/reconciliation rows. Current focus started at baseline blob 41a49cda7d40568bdbe2060020d8b2dcdb9ed4b6.",
-        "Inspected exact preserved uncommitted candidate at /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_bf3b25b4/tests/job-bridge.test.ts; its fdfd204668c37b58853330109de78d0258e6896c bytes are the committed focus. Old worktree, candidate, dist, and runtime-assets untouched; no branch merge.",
-        "Traced shipped routing in src/agent/extension.ts, src/typescript/extension.ts, src/typescript/execution.ts, src/tasks/job-service.ts and src/tasks/task-manager.ts: session manager/service attachment, wrapper cancellation, provisional ACK commit on clean exit, foreground notification handoff, and shutdown.",
-        "Static comparison: every original expect statement remains in original order after normalizing jobs.manager/jobs.notifications accesses and whitespace; test titles unchanged. Credential-isolation scenario byte-identical. No test execution.",
-        "Reviewed filesystem/process effects: focus commands are read/printf/exit or owned child argv; execution inherits scrubbed parent env and TaskManager shutdown terminates its own tasks. Parent must supply isolated env for runtime gates; no runtime gate launched.",
-        "Repository formatter invoked via node child_process argv, executable /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/@biomejs/biome/bin/biome, args [\"format\",\"--write\",\"tests/job-bridge.test.ts\"], isolated retained HOME/config/SDK/TMPDIR fixture /tmp/pr45-job-bridge-format-HIz7q6; exit 0, Formatted 1 file, no fixes applied.",
-        "git diff --check passed. Commit contains only tests/job-bridge.test.ts; no active commit hooks observed, signing disabled to avoid credential use."
+        {
+          "kind": "exact-rejected-baseline",
+          "result": "Before editing, every focus and the four objection runtime paths matched dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d blobs; no historical branch merged."
+        },
+        {
+          "kind": "source-review",
+          "result": "Read whole focus and assigned reconciliation row; traced process spawn/env and filesystem/session/output ownership. No tests/setup/builds run."
+        },
+        {
+          "kind": "formatter",
+          "result": "Biome format --write via child_process explicit argv/env, changed source paths only; retained evidence /tmp/bruv-pr45-format-osccHc and /tmp/bruv-pr45-format-ZROzHo. Final activation-signature alignment formatted with retained evidence /tmp/bruv-pr45-format-LR0GGL."
+        },
+        {
+          "kind": "assertion-preservation",
+          "result": "Static whitespace-normalized expect statements identical to rejected source (85 statements); not runtime proof or a readability verdict."
+        },
+        {
+          "kind": "git-diff-check",
+          "result": "Passed; coherent source range 7032a079cb717c688f7f5ca4a73cc07be082363c..eb8295ac0714ad9b6c4e548cc9130010949c7dd5 changes exactly the six listed test/helper paths. Source-only commits: 84ace37da3ce9a9ca95ff7e0c189931822257548 then eb8295ac0714ad9b6c4e548cc9130010949c7dd5; integrate both, not only the final two-line signature correction."
+        }
       ],
       "primaryLimits": [
-        "No tests, setup, builds, live auth, or device access performed; parent owns audited isolated batch gates and independent exact-candidate judgment. Runtime behavior remains unverified.",
-        "Initial reconciliation logging was broader than the focus restriction; corrected all subsequent ledger/evidence queries to focus rows only. No evidence files or unrelated source edited.",
-        "Formatter fixture and .pr45-format-evidence.json retained; durable source provenance is this worktree commit and the preserved prior candidate path.",
-        "Safety for ALL descendants: no sudo, no recovery actions, no deletion/cleanup shell commands, no HOME or inherited SDK/config cleanup, no nested shell traps. Do not read/use user secrets. Use node child_process argv plus explicit isolated env for tests; allocate fresh disposable HOME/config/SDK dirs with fs.mkdtemp and retain them rather than delete. If real credential/device access is required, return that blocker instead of using it. Do not run repository tests or setup without first checking their filesystem/network side effects. Existing dependencies can be used read-only from /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules. Bun is /home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin/bun. Worktree t3 setup may fail because PATH lacks bun; inspect outcome, do not guess. No repetitive full builds for each worker. Limit to SIX concurrent leaf workers total, primary and judge combined. Give independent code/review agents worktrees. Propagate these safety constraints verbatim. No destructive git operations or user-data mutations."
+        "Fresh independent effects clearance, runtime gates and quality judgments belong to parent; none executed here.",
+        "Compiled binary execution, provider authentication, devices and network access remain unverified; no credentials accessed.",
+        "Fixture execution is Bun-specific and intended for this Linux test environment; suite argv and nested credential scenario have not been run.",
+        "Formatter/commit fixture roots retained; test fixture roots and launch/output evidence will be retained when parent runs audited gates. Source provenance remains this durable worktree and exact commit.",
+        "Existing isolated interactive-terminal source/evidence was untouched. No worktrees or candidate evidence removed, no setup/dependency changes, no push/PR/merge.",
+        "No wisdom or values edits: existing owned-process/safety values apply; parent owns aggregate wisdom and runtime-model verification."
       ],
       "acceptedBlob": "fdfd204668c37b58853330109de78d0258e6896c",
       "result": "Read the whole candidate and exact diff from 8f186d90eb5047304492c72c6bc56a7d0f37204d. SessionJobs joins a genuine parent-session lifetime: manager, typed completion sink, JobService dispatch, raw execute entry, registered-tool entry, and awaited shutdown. A reader can now follow foreground completion, background survival/input/inspection, delayed spawn cancellation, concurrent wait cancellation, pre-delivery disconnect, provisional ACK failure, oversized response release, registered batch ACK, partial batch failure, and handoff without reconstructing repeated ownership setup and finally blocks. Timing, abort points, dispatch wrappers, and batch completion barriers stay visible in their scenarios. Raw multiplexing/unavailable-bridge/budget tests and attention/goal/history RPC checks remain separate; the credential scrub assertion and environment restoration remain explicit. This is a coherent lifetime extraction, not a rename-only improvement or context bag.",
@@ -15008,17 +15077,24 @@
           }
         ],
         "readingReason": "Actual refactor changes fabricated foreground records into process-bearing scenarios without owned HOME/config/SDK authority. Coherent4-focus source repair must keep original assertions and public runtime behavior; isolate fixture agent/shell/execute worker environments, no global process.env edits, no test execution before independent effects clearance."
-      }
+      },
+      "priorPrimaryLineage": [
+        {
+          "primaryId": "task_f4f56799",
+          "sourceCommit": null,
+          "primaryBase": "8f186d90eb5047304492c72c6bc56a7d0f37204d"
+        }
+      ]
     },
     {
       "file": "tests/job-service.test.ts",
       "initialBlob": "01c7c3f343042cbbd544af39be1614fccd8b3a40",
       "status": "pending",
       "area": "execution-tasks-questions",
-      "resumeState": "needs-rework",
-      "primaryId": "task_51bb34f2",
+      "resumeState": "needs-judge",
+      "primaryId": "task_01035810",
       "judgeIds": ["task_207ccf5d", "task_2ae89e04"],
-      "sourceCommit": null,
+      "sourceCommit": "eb8295ac0714ad9b6c4e548cc9130010949c7dd5",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
       "acceptedBlob": "761b16045499f37ce8b52682464b75f864f37ea9",
       "result": "Retain ACCEPT by task_2ae89e04: the recorded accepted blob equals the actual focus blob at reviewed commit a7e7c1de30189ac337e9fec9c3599e9c2e42a53d. Joined tree does not contain that exact accepted blob; an accepted source batch remains to join, not a fresh quality review. Latest area tree also matches the recorded accepted blob.",
@@ -15055,7 +15131,54 @@
           }
         ],
         "readingReason": "Actual refactor changes fabricated foreground records into process-bearing scenarios without owned HOME/config/SDK authority. Coherent4-focus source repair must keep original assertions and public runtime behavior; isolate fixture agent/shell/execute worker environments, no global process.env edits, no test execution before independent effects clearance."
-      }
+      },
+      "priorPrimaryLineage": [
+        {
+          "primaryId": "task_51bb34f2",
+          "sourceCommit": null
+        }
+      ],
+      "primaryCommit": "eb8295ac0714ad9b6c4e548cc9130010949c7dd5",
+      "primaryBase": "7032a079cb717c688f7f5ca4a73cc07be082363c",
+      "primaryResult": "All service cases now execute in the owned allowlisted fixture process, covering both substituted agents and real managed shell children and SDK session preparation. The existing profile/depth/native-fast separation, original launch-argv checks, policy session-dir assertion, spawn-failure stop/notification assertions, refresh isolation and title/UI delivery checks remain. Local profile/session directories are retained instead of removed, and manager shutdown/mock restoration still run. Default SDK storage also resolves into the fixture SDK root; no production policy, child-environment sanitization or public service behavior changed.",
+      "primaryPaths": [
+        "tests/job-attention.test.ts",
+        "tests/job-bridge.test.ts",
+        "tests/job-service.test.ts",
+        "tests/owned-process-suite.ts",
+        "tests/questions-bridge.test.ts",
+        "tests/task-manager.test.ts"
+      ],
+      "primaryChecks": [
+        {
+          "kind": "exact-rejected-baseline",
+          "result": "Before editing, every focus and the four objection runtime paths matched dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d blobs; no historical branch merged."
+        },
+        {
+          "kind": "source-review",
+          "result": "Read whole focus and assigned reconciliation row; traced process spawn/env and filesystem/session/output ownership. No tests/setup/builds run."
+        },
+        {
+          "kind": "formatter",
+          "result": "Biome format --write via child_process explicit argv/env, changed source paths only; retained evidence /tmp/bruv-pr45-format-osccHc and /tmp/bruv-pr45-format-ZROzHo. Final activation-signature alignment formatted with retained evidence /tmp/bruv-pr45-format-LR0GGL."
+        },
+        {
+          "kind": "assertion-preservation",
+          "result": "Static whitespace-normalized expect statements identical to rejected source (52 statements); not runtime proof or a readability verdict."
+        },
+        {
+          "kind": "git-diff-check",
+          "result": "Passed; coherent source range 7032a079cb717c688f7f5ca4a73cc07be082363c..eb8295ac0714ad9b6c4e548cc9130010949c7dd5 changes exactly the six listed test/helper paths. Source-only commits: 84ace37da3ce9a9ca95ff7e0c189931822257548 then eb8295ac0714ad9b6c4e548cc9130010949c7dd5; integrate both, not only the final two-line signature correction."
+        }
+      ],
+      "primaryLimits": [
+        "Fresh independent effects clearance, runtime gates and quality judgments belong to parent; none executed here.",
+        "Compiled binary execution, provider authentication, devices and network access remain unverified; no credentials accessed.",
+        "Fixture execution is Bun-specific and intended for this Linux test environment; suite argv and nested credential scenario have not been run.",
+        "Formatter/commit fixture roots retained; test fixture roots and launch/output evidence will be retained when parent runs audited gates. Source provenance remains this durable worktree and exact commit.",
+        "Existing isolated interactive-terminal source/evidence was untouched. No worktrees or candidate evidence removed, no setup/dependency changes, no push/PR/merge.",
+        "No wisdom or values edits: existing owned-process/safety values apply; parent owns aggregate wisdom and runtime-model verification."
+      ]
     },
     {
       "file": "tests/last-used-cli-model.test.ts",
@@ -18559,49 +18682,52 @@
       "initialBlob": "ecc8311c62fb67efc690bb867c09a7b3e134fc87",
       "status": "pending",
       "area": "execution-tasks-questions",
-      "resumeState": "needs-rework",
-      "primaryId": "task_dcb5f688",
+      "resumeState": "needs-judge",
+      "primaryId": "task_01035810",
       "judgeIds": ["task_a916dfec"],
-      "sourceCommit": null,
+      "sourceCommit": "eb8295ac0714ad9b6c4e548cc9130010949c7dd5",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
       "pendingReason": "Primary cancellation was recorded during the incident; no completed candidate commit or complete-file independent judgment is recorded. Focus working blob currently equals primary HEAD. Preserve the tree and allocate/complete primary work before judging.",
-      "primaryCommit": "c680a340577a3d97e62ebadca541ea26ff07b74d",
-      "primaryBase": "8f186d90eb5047304492c72c6bc56a7d0f37204d",
-      "primaryResult": "One local execution operation owns the session fixture, QuestionService bridge handler, child completion, persisted-state snapshot, and existing owned-directory cleanup. The tests now display the child journeys in order: ask returns before independent work, block returns the version used for resolve; actionable read helpers precede cancellation, replay retains the stale version, and nineteen extra questions plus the remaining original reach the cap. All original assertions, labels, versions, helper authority restrictions, and real isolated executable path remain. The only additional service operation is a read-only persisted-question snapshot after the second scenario as well as the first.",
-      "primaryPaths": ["tests/questions-bridge.test.ts"],
+      "primaryCommit": "eb8295ac0714ad9b6c4e548cc9130010949c7dd5",
+      "primaryBase": "7032a079cb717c688f7f5ca4a73cc07be082363c",
+      "primaryResult": "Both scenarios now run under the explicitly launched owned suite process, so the actual compiled execute workers inherit the same allowlisted HOME/config/SDK/temp boundary as the parent QuestionService. The scenario operation still snapshots persisted state after child completion, but keeps its question directory and session evidence. All original ask/block/read/resolve authority restrictions, stale-version checks, active-question cap, output labels and assertions remain. No question/execute runtime API or environment defaults were changed.",
+      "primaryPaths": [
+        "tests/job-attention.test.ts",
+        "tests/job-bridge.test.ts",
+        "tests/job-service.test.ts",
+        "tests/owned-process-suite.ts",
+        "tests/questions-bridge.test.ts",
+        "tests/task-manager.test.ts"
+      ],
       "primaryChecks": [
         {
-          "kind": "provenance",
-          "result": "Focus reconciliation row records stopped task_1b488934 with unchanged baseline blob ecc8311c62fb67efc690bb867c09a7b3e134fc87 and no committed/rejected candidate; current focus existed, so no candidate import or old-branch merge was needed."
+          "kind": "exact-rejected-baseline",
+          "result": "Before editing, every focus and the four objection runtime paths matched dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d blobs; no historical branch merged."
         },
         {
-          "kind": "caller-trace",
-          "paths": ["src/typescript/execution.ts", "src/typescript/job-bridge.ts", "src/questions/service.ts"],
-          "result": "executeIsolated starts the child with argv and inherited scrubbed environment, routes questions through the supplied parent job handler, and waits for completion; helper exposes ask/list/get/block/resolve/cancel but not answer; service rejects questions.answer and persists beside the supplied session file."
+          "kind": "source-review",
+          "result": "Read whole focus and assigned reconciliation row; traced process spawn/env and filesystem/session/output ownership. No tests/setup/builds run."
         },
         {
           "kind": "formatter",
-          "result": "Specified read-only Biome executable invoked via node child_process argv with fresh retained HOME/XDG_CONFIG_HOME/XDG_CACHE_HOME/XDG_DATA_HOME/TMPDIR; formatted only tests/questions-bridge.test.ts; exit 0, no fixes applied.",
-          "retainedFixture": "/tmp/pr45-questions-bridge-format-bgu9xI"
+          "result": "Biome format --write via child_process explicit argv/env, changed source paths only; retained evidence /tmp/bruv-pr45-format-osccHc and /tmp/bruv-pr45-format-ZROzHo. Final activation-signature alignment formatted with retained evidence /tmp/bruv-pr45-format-LR0GGL."
         },
         {
-          "kind": "static-syntax",
-          "result": "Both embedded child programs parsed by node:vm Script wrapped in async functions; no programs executed."
+          "kind": "assertion-preservation",
+          "result": "Static whitespace-normalized expect statements identical to rejected source (11 statements); not runtime proof or a readability verdict."
         },
         {
-          "kind": "diff-check",
-          "result": "git diff --check passed before commit."
-        },
-        {
-          "kind": "manual-review",
-          "result": "Full changed focus read; original assertions retained. Cleanup remains scoped to exactly the directory created by mkdtempSync. No active git hooks observed; commit contains focus source only."
+          "kind": "git-diff-check",
+          "result": "Passed; coherent source range 7032a079cb717c688f7f5ca4a73cc07be082363c..eb8295ac0714ad9b6c4e548cc9130010949c7dd5 changes exactly the six listed test/helper paths. Source-only commits: 84ace37da3ce9a9ca95ff7e0c189931822257548 then eb8295ac0714ad9b6c4e548cc9130010949c7dd5; integrate both, not only the final two-line signature correction."
         }
       ],
       "primaryLimits": [
-        "No repository tests, setup, or builds run: parent owns audited isolated batch gates. Runtime behavior remains unverified. No credential/device access, network, or recovery work performed. No delegation performed.",
-        "Formatter fixture is retained under /tmp; source and report provenance are the durable assigned worktree and commit, not a temporary code checkout. Existing test-code owned rmSync cleanup was inspected/preserved, never executed.",
-        "Safety for ALL descendants: no sudo, no recovery actions, no deletion/cleanup shell commands, no HOME or inherited SDK/config cleanup, no nested shell traps. Do not read/use user secrets. Use node child_process argv plus explicit isolated env for tests; allocate fresh disposable HOME/config/SDK dirs with fs.mkdtemp and retain them rather than delete. If real credential/device access is required, return that blocker instead of using it. Do not run repository tests or setup without first checking their filesystem/network side effects.",
-        "No wisdom files changed; parent writes aggregate wisdom. Independent judgment is still required."
+        "Fresh independent effects clearance, runtime gates and quality judgments belong to parent; none executed here.",
+        "Compiled binary execution, provider authentication, devices and network access remain unverified; no credentials accessed.",
+        "Fixture execution is Bun-specific and intended for this Linux test environment; suite argv and nested credential scenario have not been run.",
+        "Formatter/commit fixture roots retained; test fixture roots and launch/output evidence will be retained when parent runs audited gates. Source provenance remains this durable worktree and exact commit.",
+        "Existing isolated interactive-terminal source/evidence was untouched. No worktrees or candidate evidence removed, no setup/dependency changes, no push/PR/merge.",
+        "No wisdom or values edits: existing owned-process/safety values apply; parent owns aggregate wisdom and runtime-model verification."
       ],
       "acceptedBlob": "0b3bf8c13cbe38b3a6fdd5a657fcb27d9307cdf3",
       "result": "The complete test now separates one parent-owned execution lifetime from the two child journeys. executeQuestionScenario owns the mkdtemp session, service, bridge handler, awaited child completion, persisted snapshot and existing owned-directory finally cleanup. Each multiline child program shows its consequential order locally: ask then independent work, block then resolve with the returned version; actionable reads, cancellation, stale replay, then nineteen additions beside the remaining original question. This is a coherent operation extraction, not renamed plumbing or a context bag. Output expectations, test labels and resolved-state expectation retain their meaning.",
@@ -18657,7 +18783,14 @@
           }
         ],
         "readingReason": "Actual refactor changes fabricated foreground records into process-bearing scenarios without owned HOME/config/SDK authority. Coherent4-focus source repair must keep original assertions and public runtime behavior; isolate fixture agent/shell/execute worker environments, no global process.env edits, no test execution before independent effects clearance."
-      }
+      },
+      "priorPrimaryLineage": [
+        {
+          "primaryId": "task_dcb5f688",
+          "sourceCommit": null,
+          "primaryBase": "8f186d90eb5047304492c72c6bc56a7d0f37204d"
+        }
+      ]
     },
     {
       "file": "tests/questions-extension.test.ts",
@@ -21589,10 +21722,10 @@
       "initialBlob": "ca3938554cf07fcaf5f5bfa73426e46997c57f57",
       "status": "pending",
       "area": "execution-tasks-questions",
-      "resumeState": "needs-rework",
-      "primaryId": "task_d2a99d2b",
+      "resumeState": "needs-judge",
+      "primaryId": "task_01035810",
       "judgeIds": ["task_69e81429", "task_a01fd3d7"],
-      "sourceCommit": null,
+      "sourceCommit": "eb8295ac0714ad9b6c4e548cc9130010949c7dd5",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
       "acceptedBlob": "5da9d43a261d342a14d7bdadfc12eb767e2ef3b5",
       "result": "Retain NO CHANGE NEEDED by task_69e81429: the recorded accepted blob equals the actual focus blob at reviewed commit bda0a5d07f39e2f3ad038e30623b7107d57c7e02. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob.",
@@ -21625,7 +21758,54 @@
           }
         ],
         "readingReason": "New process-backed activation tests use /bin/sh -lc with inherited environment; coherent5-focus process-fixture repair must use owned explicit child env/argv and preserve deadlines, identity, waiter and cancellation assertions. Existing runtime defaults stay meaningful; no global env edits or test execution."
-      }
+      },
+      "priorPrimaryLineage": [
+        {
+          "primaryId": "task_d2a99d2b",
+          "sourceCommit": null
+        }
+      ],
+      "primaryCommit": "eb8295ac0714ad9b6c4e548cc9130010949c7dd5",
+      "primaryBase": "7032a079cb717c688f7f5ca4a73cc07be082363c",
+      "primaryResult": "The whole manager suite now runs in an allowlisted owned process. Each of the two rejected activation additions additionally allocates its own retained mkdtemp fixture, passes ownedFixtureEnv directly to activatePreparedAgent, and uses explicit Bun argv rather than sleep/login-shell startup. Deadline fixture creation precedes reservation so it does not consume the 200ms preparation deadline. Existing shell-command fixtures use non-login /bin/sh -c; SIGTERM escalation uses an explicit Bun signal-handler process instead of a shell trap. Identity, startedAt, waiter reuse, foreground delivery, diagnostics, timeout, output, cancellation and all other assertions are unchanged. The shutdown pid-file fixture is retained and manager shutdown remains the process owner.",
+      "primaryPaths": [
+        "tests/job-attention.test.ts",
+        "tests/job-bridge.test.ts",
+        "tests/job-service.test.ts",
+        "tests/owned-process-suite.ts",
+        "tests/questions-bridge.test.ts",
+        "tests/task-manager.test.ts"
+      ],
+      "primaryChecks": [
+        {
+          "kind": "exact-rejected-baseline",
+          "result": "Before editing, every focus and the four objection runtime paths matched dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d blobs; no historical branch merged."
+        },
+        {
+          "kind": "source-review",
+          "result": "Read whole focus and assigned reconciliation row; traced process spawn/env and filesystem/session/output ownership. No tests/setup/builds run."
+        },
+        {
+          "kind": "formatter",
+          "result": "Biome format --write via child_process explicit argv/env, changed source paths only; retained evidence /tmp/bruv-pr45-format-osccHc and /tmp/bruv-pr45-format-ZROzHo. Final activation-signature alignment formatted with retained evidence /tmp/bruv-pr45-format-LR0GGL."
+        },
+        {
+          "kind": "assertion-preservation",
+          "result": "Static whitespace-normalized expect statements identical to rejected source (148 statements); not runtime proof or a readability verdict."
+        },
+        {
+          "kind": "git-diff-check",
+          "result": "Passed; coherent source range 7032a079cb717c688f7f5ca4a73cc07be082363c..eb8295ac0714ad9b6c4e548cc9130010949c7dd5 changes exactly the six listed test/helper paths. Source-only commits: 84ace37da3ce9a9ca95ff7e0c189931822257548 then eb8295ac0714ad9b6c4e548cc9130010949c7dd5; integrate both, not only the final two-line signature correction."
+        }
+      ],
+      "primaryLimits": [
+        "Fresh independent effects clearance, runtime gates and quality judgments belong to parent; none executed here.",
+        "Compiled binary execution, provider authentication, devices and network access remain unverified; no credentials accessed.",
+        "Fixture execution is Bun-specific and intended for this Linux test environment; suite argv and nested credential scenario have not been run.",
+        "Formatter/commit fixture roots retained; test fixture roots and launch/output evidence will be retained when parent runs audited gates. Source provenance remains this durable worktree and exact commit.",
+        "Existing isolated interactive-terminal source/evidence was untouched. No worktrees or candidate evidence removed, no setup/dependency changes, no push/PR/merge.",
+        "No wisdom or values edits: existing owned-process/safety values apply; parent owns aggregate wisdom and runtime-model verification."
+      ]
     },
     {
       "file": "tests/task-monitor-source.test.ts",
@@ -23042,15 +23222,45 @@
     {
       "file": "tests/worktree-workspace.test.ts",
       "initialBlob": "e8d8638eed7fa0b4c82670cb2afc79482715a371",
-      "status": "accepted",
+      "status": "pending",
       "area": "execution-tasks-questions",
-      "resumeState": "accepted-joined",
+      "resumeState": "needs-rework",
       "primaryId": "task_f4444bc8",
       "judgeIds": ["task_83034949", "task_6181fd8e"],
-      "sourceCommit": "59fbfcc9b5a88a1488e9f8ce39bb122d1c67da12",
+      "sourceCommit": null,
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
       "acceptedBlob": "7a01e214fe52d9bd144d6e0171b03a22e6863f01",
-      "result": "Retain ACCEPT by task_83034949: the recorded accepted blob equals the actual focus blob at reviewed commit 59fbfcc9b5a88a1488e9f8ce39bb122d1c67da12. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
+      "result": "Retain ACCEPT by task_83034949: the recorded accepted blob equals the actual focus blob at reviewed commit 59fbfcc9b5a88a1488e9f8ce39bb122d1c67da12. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob.",
+      "priorAcceptedIntegrationProof": [
+        {
+          "primaryId": "task_f4444bc8",
+          "judgeIds": ["task_83034949", "task_6181fd8e"],
+          "sourceCommit": "59fbfcc9b5a88a1488e9f8ce39bb122d1c67da12",
+          "acceptedBlob": "7a01e214fe52d9bd144d6e0171b03a22e6863f01",
+          "finalLane": "lane-26",
+          "finalJudge": "task_7641420e"
+        }
+      ],
+      "resumeBatch": "owned-worktree-activation-fixture",
+      "resumeRework": {
+        "candidate": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "primaryId": "task_f4444bc8",
+        "judgeId": "task_7641420e",
+        "objections": [
+          {
+            "paths": [
+              "tests/worktree-workspace.test.ts:30-46,337-380",
+              "src/tasks/job-service.ts:prepareLaunch and #runWorktreeSetup",
+              "src/tasks/agent-session.ts:15-26",
+              "tests/setup.ts",
+              "tests/helpers.ts:ownedFixtureEnv"
+            ],
+            "readingProblem": "The newly added async setup test actually traverses prepareAgentSession and activatePreparedAgent (a recording spy, not a mock replacement). Its context has only cwd/model/trust, so sessionDir is undefined. prepareAgentSession writes the SDK-selected default journal and appends metadata, outside root unless the human test launcher happened to isolate SDK configuration. withWorktreeJobs owns only BRUV_WORKTREE_ROOT and TaskManager; {} passed to JobService disables injected native configuration, not process.env copied by setup and child launch. The normal test preload supplies no HOME/config/SDK isolation. This is a concrete missing filesystem/process owner, repeating the pre-existing trust-test gap and adding another persistent outside-fixture writer.",
+            "requiredResult": "Make the worktree test journey own its HOME/config/SDK and session directory under a retained mkdtemp root, with explicit child-test argv/env (or an equally explicit owned runtime boundary). Keep real activation/async publication assertions but do not inherit human configuration or credentials; ensure all journal paths belong to the fixture. Do not clean or delete inherited SDK paths. Reuse the repaired owned environment helper where appropriate, and retain fixtures for audit."
+          }
+        ],
+        "readingReason": "Actual async setup test reaches real prepareAgentSession with undefined sessionDir and inherited SDK paths, persisting a journal outside its fixture. Own all session/SDK/HOME/config and managed-child paths, preserve real async activation/publication assertions, no global env edits/test execution; coordinate actual existing APIs/source before adding abstractions."
+      }
     },
     {
       "file": "tsconfig.json",
@@ -25572,9 +25782,9 @@
     "baselineFiles": 766,
     "finalGate": "pending; incomplete focus coverage",
     "liveAuth": "unverified/failing; preserved",
-    "accepted": 828,
+    "accepted": 827,
     "total": 836,
-    "pending": 8,
+    "pending": 9,
     "sourceExtras": 70,
     "checkout": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
     "branch": "bruv/readability-pr45-sol-continuation",
