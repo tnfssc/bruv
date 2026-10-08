@@ -1820,7 +1820,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_d65db709",
         "branch": "bruv/pr45-primary-3-execution-tasks-questions-d65db709",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "3e87cdd2f2b1362683fc982e2ceccc00eb244ef0"
       },
       {
         "id": "task_b17a5ed7",
@@ -1846,6 +1847,15 @@
         "focus": ["tests/session-costs-tui.test.ts", "tests/session-costs.test.ts", "tests/subagent-profiles.test.ts"],
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_5b5cbe87",
         "branch": "bruv/pr45-judge-3-execution-tasks-questions-f-5b5cbe87",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_ac0df4b4",
+        "stage": "judge",
+        "focus": ["tests/stop-work.test.ts", "tests/subagent-extension.test.ts", "tests/subagent-placement.test.ts"],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_ac0df4b4",
+        "branch": "bruv/pr45-judge-3-execution-tasks-questions-f-ac0df4b4",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
       }

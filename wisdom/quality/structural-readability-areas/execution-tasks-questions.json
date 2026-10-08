@@ -3651,10 +3651,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
+        "primaryId": "task_d65db709",
+        "primaryCommit": "3e87cdd2f2b1362683fc982e2ceccc00eb244ef0",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary",
+        "sourceCommit": "3e87cdd2f2b1362683fc982e2ceccc00eb244ef0",
+        "state": "needs-judge",
         "reason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage."
       }
     },
@@ -3668,10 +3669,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
+        "primaryId": "task_d65db709",
+        "primaryCommit": "3e87cdd2f2b1362683fc982e2ceccc00eb244ef0",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary",
+        "sourceCommit": "3e87cdd2f2b1362683fc982e2ceccc00eb244ef0",
+        "state": "needs-judge",
         "reason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage."
       }
     },
@@ -3685,10 +3687,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
+        "primaryId": "task_d65db709",
+        "primaryCommit": "3e87cdd2f2b1362683fc982e2ceccc00eb244ef0",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary",
+        "sourceCommit": "3e87cdd2f2b1362683fc982e2ceccc00eb244ef0",
+        "state": "needs-judge",
         "reason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage."
       }
     },

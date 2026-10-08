@@ -14840,12 +14840,60 @@
       "initialBlob": "538c4698f82dee8127b2281b470acf463af9a2d9",
       "status": "pending",
       "area": "execution-tasks-questions",
-      "resumeState": "pending-primary",
-      "primaryId": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_d65db709",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "3e87cdd2f2b1362683fc982e2ceccc00eb244ef0",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
-      "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage."
+      "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage.",
+      "primaryCommit": "3e87cdd2f2b1362683fc982e2ceccc00eb244ef0",
+      "primaryBase": "42fd66090a7d946383ab7efe2f796f341b48e7d1",
+      "primaryResult": "No change. Preserve the local journeys: selection/live output/cancel/confirmed kill and post-disposal render silence; empty/no-output states; row budgets 0-9 and frozen tiny-frame identity; /ps non-TUI refusal; inspect/navigation/Escape; completion race and ID-preserved selection; height/OSC/C1 sanitization; event payload and zero-argument compatibility. The launcher exposes manager.spawn argv and metadata without hiding assertions. A shared fixture/context object would move scenario-specific callbacks and row controls away from these journeys without removing real reconstruction. Focus retains baseline bytes; schema separation is the only batch edit.",
+      "primaryPaths": ["tests/tool-schema.test.ts"],
+      "primaryChecks": [
+        {
+          "kind": "evidence",
+          "result": "Read only assigned reconciliation rows: all pending-primary baseline; candidate=null, judgeRounds=[], no preserved candidate or rejected candidate to restore."
+        },
+        {
+          "kind": "guidance",
+          "result": "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md."
+        },
+        {
+          "kind": "diff",
+          "result": "git diff --check passed before commit. Source diff changes only tests/tool-schema.test.ts. Manually verified all original assertions remain; tools[0] references become a local captured execute tool."
+        },
+        {
+          "kind": "formatter",
+          "result": "Exit 0; changed source path only, child_process.spawnSync with explicit argv and fresh allowlisted HOME/config/SDK/TMPDIR.",
+          "binary": "/home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/@biomejs/biome/bin/biome",
+          "argv": ["format", "--write", "tests/tool-schema.test.ts"],
+          "environment": {
+            "PATH": "/usr/bin:/bin",
+            "HOME": "/tmp/pr45-schema-format-bC9OO2/home",
+            "XDG_CONFIG_HOME": "/tmp/pr45-schema-format-bC9OO2/config",
+            "XDG_CACHE_HOME": "/tmp/pr45-schema-format-bC9OO2/cache",
+            "XDG_DATA_HOME": "/tmp/pr45-schema-format-bC9OO2/data",
+            "BRUV_CODING_AGENT_DIR": "/tmp/pr45-schema-format-bC9OO2/sdk",
+            "PI_CODING_AGENT_DIR": "/tmp/pr45-schema-format-bC9OO2/sdk",
+            "TMPDIR": "/tmp/pr45-schema-format-bC9OO2/tmp"
+          },
+          "fixture": "/tmp/pr45-schema-format-bC9OO2",
+          "provenance": "/tmp/pr45-schema-format-bC9OO2/provenance.json"
+        },
+        {
+          "kind": "execution",
+          "result": "No tests/setup/builds, auth/device/network probes or delegation run. Inspected commit hooks directory: no active hooks; none bypassed."
+        }
+      ],
+      "primaryLimits": [
+        "Primary reading only, not independent acceptance. Parent owns fresh judgments and audited isolated runtime gates; runtime behavior remains unverified.",
+        "Complete coherent batch changedPaths and changed source hashes repeated for every decision. An unchanged decision does not modify its focus.",
+        "Parent must run any tests with explicit process argv/env and retained owned fs.mkdtemp HOME/config/SDK after reviewing filesystem/network effects. Existing monitor fixture launches only printf/sleep scripts but TaskManager falls back to process.env: parent isolation remains necessary.",
+        "Schema registration helper now initializes extension three times, once per relevant test. Stub event/command/render callbacks are not invoked, but extension initialization can read configuration; parent fixture HOME/config/SDK is necessary. No execute handlers or setup probe execute function were invoked.",
+        "No recovery, credentials, user-data mutation, destructive git, shell cleanup, inherited HOME removal, guard bypass, dependency changes, push, PR or merge. No descendants launched; runtime agent.model verification is parent-owned.",
+        "Wisdom unchanged: parent owns aggregate wisdom. Formatter fixture and its provenance are retained; provenance points to this durable worktree, not a /tmp code checkout."
+      ]
     },
     {
       "file": "tests/task-rows.test.ts",
@@ -14866,12 +14914,60 @@
       "initialBlob": "6de23efe560776791c57b3574e1778c9718463dc",
       "status": "pending",
       "area": "execution-tasks-questions",
-      "resumeState": "pending-primary",
-      "primaryId": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_d65db709",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "3e87cdd2f2b1362683fc982e2ceccc00eb244ef0",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
-      "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage."
+      "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage.",
+      "primaryCommit": "3e87cdd2f2b1362683fc982e2ceccc00eb244ef0",
+      "primaryBase": "42fd66090a7d946383ab7efe2f796f341b48e7d1",
+      "primaryResult": "No change. Direct input/output examples show explicit title winning over another prompt, whitespace-only title falling back to normalized text with terminal sequences removed, a long literal prompt becoming exactly 120 characters with preserved prefix and ellipsis, and missing metadata producing empty. This is one small pure transformation contract. Splitting it or adding a table/helper would distance neighboring preview assertions without clarifying a real journey. Baseline source bytes preserved.",
+      "primaryPaths": ["tests/tool-schema.test.ts"],
+      "primaryChecks": [
+        {
+          "kind": "evidence",
+          "result": "Read only assigned reconciliation rows: all pending-primary baseline; candidate=null, judgeRounds=[], no preserved candidate or rejected candidate to restore."
+        },
+        {
+          "kind": "guidance",
+          "result": "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md."
+        },
+        {
+          "kind": "diff",
+          "result": "git diff --check passed before commit. Source diff changes only tests/tool-schema.test.ts. Manually verified all original assertions remain; tools[0] references become a local captured execute tool."
+        },
+        {
+          "kind": "formatter",
+          "result": "Exit 0; changed source path only, child_process.spawnSync with explicit argv and fresh allowlisted HOME/config/SDK/TMPDIR.",
+          "binary": "/home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/@biomejs/biome/bin/biome",
+          "argv": ["format", "--write", "tests/tool-schema.test.ts"],
+          "environment": {
+            "PATH": "/usr/bin:/bin",
+            "HOME": "/tmp/pr45-schema-format-bC9OO2/home",
+            "XDG_CONFIG_HOME": "/tmp/pr45-schema-format-bC9OO2/config",
+            "XDG_CACHE_HOME": "/tmp/pr45-schema-format-bC9OO2/cache",
+            "XDG_DATA_HOME": "/tmp/pr45-schema-format-bC9OO2/data",
+            "BRUV_CODING_AGENT_DIR": "/tmp/pr45-schema-format-bC9OO2/sdk",
+            "PI_CODING_AGENT_DIR": "/tmp/pr45-schema-format-bC9OO2/sdk",
+            "TMPDIR": "/tmp/pr45-schema-format-bC9OO2/tmp"
+          },
+          "fixture": "/tmp/pr45-schema-format-bC9OO2",
+          "provenance": "/tmp/pr45-schema-format-bC9OO2/provenance.json"
+        },
+        {
+          "kind": "execution",
+          "result": "No tests/setup/builds, auth/device/network probes or delegation run. Inspected commit hooks directory: no active hooks; none bypassed."
+        }
+      ],
+      "primaryLimits": [
+        "Primary reading only, not independent acceptance. Parent owns fresh judgments and audited isolated runtime gates; runtime behavior remains unverified.",
+        "Complete coherent batch changedPaths and changed source hashes repeated for every decision. An unchanged decision does not modify its focus.",
+        "Parent must run any tests with explicit process argv/env and retained owned fs.mkdtemp HOME/config/SDK after reviewing filesystem/network effects. Existing monitor fixture launches only printf/sleep scripts but TaskManager falls back to process.env: parent isolation remains necessary.",
+        "Schema registration helper now initializes extension three times, once per relevant test. Stub event/command/render callbacks are not invoked, but extension initialization can read configuration; parent fixture HOME/config/SDK is necessary. No execute handlers or setup probe execute function were invoked.",
+        "No recovery, credentials, user-data mutation, destructive git, shell cleanup, inherited HOME removal, guard bypass, dependency changes, push, PR or merge. No descendants launched; runtime agent.model verification is parent-owned.",
+        "Wisdom unchanged: parent owns aggregate wisdom. Formatter fixture and its provenance are retained; provenance points to this durable worktree, not a /tmp code checkout."
+      ]
     },
     {
       "file": "tests/tasks-ui-proof-tooling.test.py",
@@ -15065,12 +15161,60 @@
       "initialBlob": "2bcea71c82e3f657a622c485085eb03872b3732b",
       "status": "pending",
       "area": "execution-tasks-questions",
-      "resumeState": "pending-primary",
-      "primaryId": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_d65db709",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "3e87cdd2f2b1362683fc982e2ceccc00eb244ef0",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
-      "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage."
+      "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage.",
+      "primaryCommit": "3e87cdd2f2b1362683fc982e2ceccc00eb244ef0",
+      "primaryBase": "42fd66090a7d946383ab7efe2f796f341b48e7d1",
+      "primaryResult": "Separated four contracts into individually named tests. registeredTools owns only extension API capture, returning a fresh list for each registration-dependent test, with no shared mutable fixture or context bag. Inventory/probe parity stays together; required fields/minimum/description omissions and prompt snippet stay together; synthetic enum conversion needs no registration; timeout coercion plus missing-code/invalid-minimum rejection stay together against the actual registered tool. All original assertions and registered-schema/probe equivalence are preserved. No production code changed.",
+      "primaryPaths": ["tests/tool-schema.test.ts"],
+      "primaryChecks": [
+        {
+          "kind": "evidence",
+          "result": "Read only assigned reconciliation rows: all pending-primary baseline; candidate=null, judgeRounds=[], no preserved candidate or rejected candidate to restore."
+        },
+        {
+          "kind": "guidance",
+          "result": "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md."
+        },
+        {
+          "kind": "diff",
+          "result": "git diff --check passed before commit. Source diff changes only tests/tool-schema.test.ts. Manually verified all original assertions remain; tools[0] references become a local captured execute tool."
+        },
+        {
+          "kind": "formatter",
+          "result": "Exit 0; changed source path only, child_process.spawnSync with explicit argv and fresh allowlisted HOME/config/SDK/TMPDIR.",
+          "binary": "/home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/@biomejs/biome/bin/biome",
+          "argv": ["format", "--write", "tests/tool-schema.test.ts"],
+          "environment": {
+            "PATH": "/usr/bin:/bin",
+            "HOME": "/tmp/pr45-schema-format-bC9OO2/home",
+            "XDG_CONFIG_HOME": "/tmp/pr45-schema-format-bC9OO2/config",
+            "XDG_CACHE_HOME": "/tmp/pr45-schema-format-bC9OO2/cache",
+            "XDG_DATA_HOME": "/tmp/pr45-schema-format-bC9OO2/data",
+            "BRUV_CODING_AGENT_DIR": "/tmp/pr45-schema-format-bC9OO2/sdk",
+            "PI_CODING_AGENT_DIR": "/tmp/pr45-schema-format-bC9OO2/sdk",
+            "TMPDIR": "/tmp/pr45-schema-format-bC9OO2/tmp"
+          },
+          "fixture": "/tmp/pr45-schema-format-bC9OO2",
+          "provenance": "/tmp/pr45-schema-format-bC9OO2/provenance.json"
+        },
+        {
+          "kind": "execution",
+          "result": "No tests/setup/builds, auth/device/network probes or delegation run. Inspected commit hooks directory: no active hooks; none bypassed."
+        }
+      ],
+      "primaryLimits": [
+        "Primary reading only, not independent acceptance. Parent owns fresh judgments and audited isolated runtime gates; runtime behavior remains unverified.",
+        "Complete coherent batch changedPaths and changed source hashes repeated for every decision. An unchanged decision does not modify its focus.",
+        "Parent must run any tests with explicit process argv/env and retained owned fs.mkdtemp HOME/config/SDK after reviewing filesystem/network effects. Existing monitor fixture launches only printf/sleep scripts but TaskManager falls back to process.env: parent isolation remains necessary.",
+        "Schema registration helper now initializes extension three times, once per relevant test. Stub event/command/render callbacks are not invoked, but extension initialization can read configuration; parent fixture HOME/config/SDK is necessary. No execute handlers or setup probe execute function were invoked.",
+        "No recovery, credentials, user-data mutation, destructive git, shell cleanup, inherited HOME removal, guard bypass, dependency changes, push, PR or merge. No descendants launched; runtime agent.model verification is parent-owned.",
+        "Wisdom unchanged: parent owns aggregate wisdom. Formatter fixture and its provenance are retained; provenance points to this durable worktree, not a /tmp code checkout."
+      ]
     },
     {
       "file": "tests/tooling-fixtures.test.ts",
