@@ -395,7 +395,8 @@ export class HistoryService {
     // the live active branch: a later shake must also hide earlier cursor pages.
     const activeLeaf = manager.getLeafId();
     const leafId = cursor?.leafId ?? activeLeaf;
-    let branch = activeBranch;
+    // Cursor membership can retain an auxiliary leaf; it must not consume scan capacity.
+    let branch = activeBranch.filter(retrievalCandidate);
     if (leafId === null) branch = [];
     else if (leafId !== activeLeaf) branch = boundedBranch(manager, leafId);
     const scanLimited = branch.length > MAX_SCAN_ENTRIES;

@@ -172,6 +172,34 @@ describe("original history: branch snapshots and pagination", () => {
     );
   });
 
+  for (const candidateCount of [20_000, 20_001]) {
+    test(`auxiliary cursor leaves preserve the scan window with ${candidateCount} candidates`, async () => {
+      const manager = SessionManager.inMemory("/project");
+      if (candidateCount > 20_000) manager.appendMessage(user("outside the scan window"));
+      const oldest = manager.appendMessage(user("window needle user"));
+      for (let i = 0; i < 19_997; i++) manager.appendMessage(user("filler"));
+      manager.appendMessage(assistant([{ type: "text", text: "window needle first answer" }]));
+      manager.appendMessage(assistant([{ type: "text", text: "window needle second answer" }]));
+      manager.appendCustomEntry("bruv-native-task-projection", { status: "running" });
+      const service = new HistoryService();
+      const ctx = { sessionManager: manager };
+
+      const complete = await service.search({ query: "window needle", limit: 10 }, ctx);
+      expect(complete.matches).toHaveLength(3);
+      const first = await service.search({ query: "window needle", limit: 1 }, ctx);
+      expect(first.matches[0]!.provenance.entryId).toBe(oldest);
+      expect(first.nextCursor).toBeString();
+      const rest = await service.search({ query: "window needle", limit: 10, cursor: first.nextCursor }, ctx);
+
+      expect([...first.matches, ...rest.matches].map((match) => match.ref)).toEqual(
+        complete.matches.map((match) => match.ref),
+      );
+      expect(rest.scannedEntries).toBe(complete.scannedEntries);
+      expect(rest.scanLimited).toBe(complete.scanLimited);
+      expect(rest.nextCursor).toBeUndefined();
+    }, 30_000);
+  }
+
   test("read pages respect the character limit and continue at the previous end", async () => {
     const manager = SessionManager.inMemory("/project");
     const text = "paged " + "x".repeat(40);
