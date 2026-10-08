@@ -1,20 +1,16 @@
 /** Real terminal UI and main owner; synthetic mic/provider, no devices or network. */
 
-import { createAssistantMessageEventStream } from "@earendil-works/pi-ai";
-import { getInstructionContinuitySession } from "../../src/agent/instruction-continuity";
+import type { AudioCallbacks } from "../../src/live/audio";
 import liveExtension from "../../src/live/extension";
+import { installOfflineModelReply } from "./live-offline-model";
 
 export default function (pi: any) {
-  let epoch: number | null = null;
-  let previousEpoch = 0;
-  let captures = 0;
+  const microphone = createSyntheticMicrophone();
   let sends = 0;
   let ends = 0;
   let typed = 0;
   let proofs = 0;
   let staleFrames = 0;
-  let timer: ReturnType<typeof setInterval> | undefined;
-  let audioCallbacks: any;
   const fakePi = new Proxy(pi, {
     get(target, key) {
       if (key === "registerCommand") return (_: string, cmd: any) => pi.registerCommand("liveptt", cmd);
@@ -23,44 +19,28 @@ export default function (pi: any) {
     },
   });
   pi.on("session_start", (_: any, ctx: any) => {
-    const session = getInstructionContinuitySession(ctx.sessionManager) as any;
-    session.agent.streamFunction = (model: any) => {
-      const stream = createAssistantMessageEventStream();
-      stream.push({
-        type: "done",
-        reason: "stop",
-        message: {
-          role: "assistant",
-          api: model.api,
-          provider: model.provider,
-          model: model.id,
-          timestamp: Date.now(),
-          stopReason: "stop",
-          usage: {
-            input: 0,
-            output: 0,
-            cacheRead: 0,
-            cacheWrite: 0,
-            totalTokens: 0,
-            cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: 0 },
-          },
-          content: [{ type: "text", text: "UNEXPECTED_NORMAL_MODEL_REPLY" }],
-        },
-      });
-      return stream;
-    };
+    installOfflineModelReply(ctx.sessionManager, "UNEXPECTED_NORMAL_MODEL_REPLY");
     ctx.ui.notify("PTT FIXTURE LOADED", "info");
   });
   pi.registerCommand("pttproof", {
     handler: async (_: string, ctx: any) =>
       ctx.ui.notify(
-        "PTT proof " + ++proofs + ": captures " + captures + " sends " + sends + " ends " + ends + " typed " + typed,
+        "PTT proof " +
+          ++proofs +
+          ": captures " +
+          microphone.captures +
+          " sends " +
+          sends +
+          " ends " +
+          ends +
+          " typed " +
+          typed,
         "info",
       ),
   });
   pi.registerCommand("pttstale", {
     handler: async (_: string, ctx: any) => {
-      audioCallbacks.capture(Buffer.alloc(640, 32), previousEpoch);
+      microphone.injectStaleFrame();
       ctx.ui.notify("PTT stale frame injected " + ++staleFrames, "info");
     },
   });
@@ -104,7 +84,29 @@ export default function (pi: any) {
       },
       close: () => {},
     }),
-    audio: async (callbacks: any) => {
+    audio: microphone.open,
+  } as any);
+}
+
+/** Own the capture clock and gate, including deliberate late frames for the TUI proof. */
+function createSyntheticMicrophone() {
+  let epoch: number | null = null;
+  let previousEpoch = 0;
+  let captures = 0;
+  let timer: ReturnType<typeof setInterval> | undefined;
+  let audioCallbacks: AudioCallbacks;
+  const stop = async () => {
+    clearInterval(timer);
+    timer = undefined;
+  };
+  return {
+    get captures() {
+      return captures;
+    },
+    injectStaleFrame() {
+      audioCallbacks.capture!(Buffer.alloc(640, 32), previousEpoch);
+    },
+    open: async (callbacks: AudioCallbacks) => {
       audioCallbacks = callbacks;
       return {
         diagnostics: {},
@@ -115,20 +117,14 @@ export default function (pi: any) {
         start: async () => {
           timer = setInterval(() => {
             captures++;
-            callbacks.capture(Buffer.alloc(640, 32), epoch ?? undefined);
+            callbacks.capture!(Buffer.alloc(640, 32), epoch ?? undefined);
           }, 20);
         },
-        stop: async () => {
-          clearInterval(timer);
-          timer = undefined;
-        },
-        close: async () => {
-          clearInterval(timer);
-          timer = undefined;
-        },
+        stop,
+        close: stop,
         play: async () => {},
         flush: async () => {},
       };
     },
-  } as any);
+  };
 }

@@ -1184,7 +1184,7 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_7d99ac05",
         "branch": "bruv/pr45-judge-3-live-native-audio-focuses-7d99ac05",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled"
       },
       {
         "id": "task_196e7aee",
@@ -1206,7 +1206,7 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_163f69b0",
         "branch": "bruv/pr45-judge-3-live-native-audio-focuses-163f69b0",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled"
       },
       {
         "id": "task_0655ce99",
@@ -1218,6 +1218,19 @@
         ],
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_0655ce99",
         "branch": "bruv/pr45-primary-3-live-native-audio-focuses-0655ce99",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_0c2af5f0",
+        "stage": "primary",
+        "focus": [
+          "tests/live-gpt-live-provider.acceptance.test.ts",
+          "tests/live-gpt-tui.test.ts",
+          "tests/live-host-access.test.ts"
+        ],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_0c2af5f0",
+        "branch": "bruv/pr45-primary-3-live-native-audio-focuses-0c2af5f0",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
       }

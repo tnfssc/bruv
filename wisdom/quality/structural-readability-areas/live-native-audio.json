@@ -2786,16 +2786,17 @@
       "initialBlob": "179e7292fffc19c5281d1072c7aad31b0b700b77",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "89c48ff62a52d95438b9c97a5247483ff6ddf11f",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "89c48ff62a52d95438b9c97a5247483ff6ddf11f",
         "primaryId": "task_3ad08a2d",
         "primaryCommit": "a01c01f94014adcfffc850335c2e4a505c0a4fa3",
-        "judgeIds": [],
+        "judgeIds": ["task_7d99ac05"],
         "sourceCommit": "a01c01f94014adcfffc850335c2e4a505c0a4fa3",
-        "state": "needs-judge",
-        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+        "state": "accepted-joined",
+        "reason": "Read the complete candidate fixture, its exact diff from 8f4324306649ee3ee91f1fe2d8de2ee7725d9c33, and both related changed fixtures/helper. The real command registration proxy and provider callback sequence remain visibly in the fixture. The substantive ownership improvement is that createSyntheticMicrophone now holds the capture clock, current gate epoch, last admitted epoch, retained callback and cumulative captures together. Installation passes microphone.open, /pttproof observes microphone.captures, and /pttstale asks that same authority to inject the prior epoch. Stop and close share the same clock teardown. This is a coherent local owner rather than a renamed block or context bag. The small offline-model helper removes duplicated wire-message construction while keeping the UNEXPECTED_NORMAL_MODEL_REPLY sentinel explicit at session_start."
       }
     },
     {
@@ -2803,16 +2804,17 @@
       "initialBlob": "03c7168fdf7aa3a91084573c467eb7a94408f67b",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "ea460255bfb0395ea84f01843ca33a13be9f6ee6",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "ea460255bfb0395ea84f01843ca33a13be9f6ee6",
         "primaryId": "task_3ad08a2d",
         "primaryCommit": "a01c01f94014adcfffc850335c2e4a505c0a4fa3",
-        "judgeIds": [],
+        "judgeIds": ["task_7d99ac05"],
         "sourceCommit": "a01c01f94014adcfffc850335c2e4a505c0a4fa3",
-        "state": "needs-judge",
-        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+        "state": "accepted-joined",
+        "reason": "Read the entire spoken fixture and exact diff from 8f4324306649ee3ee91f1fe2d8de2ee7725d9c33, plus every changed related source. The command can now be read straight through: acquire the real main owner, opt it into delegated voice, install the explicit OFFLINE_DELEGATED_REPLY model response, connect the bridge to owner.delegate with gptLiveRequest and original provenance, assert refusal of incomplete retained speech, append a fresh complete request with its original timeline, and close the owner only after the asynchronous bridge operation settles. Extracting only the duplicated response payload materially exposes this journey without hiding acquisition, admission or lifetime decisions. The compact loss/repeat scenario remains inline and needs no larger abstraction."
       }
     },
     {
@@ -3029,16 +3031,17 @@
       "initialBlob": "6b467a7c5c27d31655ae48c9e92828cbe076cf3a",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "9563b6268097649e8f6e36a7a0be13459df98055",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "9563b6268097649e8f6e36a7a0be13459df98055",
         "primaryId": "task_1f74d85d",
         "primaryCommit": "a117a1b109ac56b1298f703df251cb3ec7de37fb",
-        "judgeIds": [],
+        "judgeIds": ["task_7d99ac05"],
         "sourceCommit": "a117a1b109ac56b1298f703df251cb3ec7de37fb",
-        "state": "needs-judge",
-        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+        "state": "accepted-joined",
+        "reason": "Read the complete exact queue candidate and diff from a80eedb79e4bd22780fd4fe8f85de28c74dbd398, as well as both consumers: tests/live-startup-audio-queue.test.ts and scripts/probe-live-startup-audio.ts. A single buffering/replaying/live/stopped phase replaces the stopped/active/draining combinations a reader previously had to reconstruct. push visibly queues in buffering and replaying, sends directly in live and ignores stopped; ready visibly owns entry into replay and the conditional transition into live; stop owns terminal state and backlog discard. This directly clarifies the queue lifecycle without adding an abstraction or renaming churn."
       }
     },
     {
@@ -3138,16 +3141,17 @@
       "initialBlob": "05d9ebf1bdff9f49b9ab4a06a2fbdc67564eca9b",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "05d9ebf1bdff9f49b9ab4a06a2fbdc67564eca9b",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "05d9ebf1bdff9f49b9ab4a06a2fbdc67564eca9b",
         "primaryId": "task_9f4d5386",
         "primaryCommit": "49842eeb431b8eda05ed62efd7e40c29419ffce4",
-        "judgeIds": [],
+        "judgeIds": ["task_163f69b0"],
         "sourceCommit": "49842eeb431b8eda05ed62efd7e40c29419ffce4",
-        "state": "needs-judge",
-        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+        "state": "accepted-joined",
+        "reason": "Read the complete test file. The small fixture owns a specific auth.json, AuthStorage and ModelRuntime; storeKey exposes normal login separately from the migration authority. The first sequence establishes explicit migration while preserving Anthropic, then existing-key and OAuth tests show the no-read/no-overwrite guards. The competing writer wrapper visibly installs OAuth just before modify rather than hiding that race in a generic helper. Concurrent imports, aborted-before-read and aborted-before-locked-write cases expose distinct boundaries. Ambient-key non-persistence, corrupt-file byte preservation, metadata-only status with resolution methods made to throw, configured-directory canonical reuse, early abort and separate OpenAI/openai-codex isolation remain direct assertions. The limited duplication makes each authority legible; a cross-test context bag or table would obscure these different journeys. Keep the current bytes."
       }
     },
     {
@@ -3155,7 +3159,7 @@
       "initialBlob": "f0ba15732398870ba1d0882f466f5c788133b1f2",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "e14d5006f3c1c8cd2ad1ca4d88c2f5021753c817",
       "integration": "related accepted patch integrated; own primary focus pending",
       "relatedPatchJudgment": {
         "judgeId": "task_660502a4",
@@ -3163,13 +3167,14 @@
         "blob": "e14d5006f3c1c8cd2ad1ca4d88c2f5021753c817"
       },
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "e14d5006f3c1c8cd2ad1ca4d88c2f5021753c817",
         "primaryId": "task_9f4d5386",
         "primaryCommit": "49842eeb431b8eda05ed62efd7e40c29419ffce4",
-        "judgeIds": ["task_660502a4"],
+        "judgeIds": ["task_660502a4", "task_163f69b0"],
         "sourceCommit": "49842eeb431b8eda05ed62efd7e40c29419ffce4",
-        "state": "needs-judge",
-        "reason": "Retain exact related-path actual-code acceptance; it is not completion of this file’s distinct primary/fresh focus-judge requirement."
+        "state": "accepted-joined",
+        "reason": "Read the entire nativeTest helper and all four tests. The helper only hides compile/run fixture boilerplate; each call keeps platform compiler, source and warning policy visible. The Linux fixture distinguishes continuous capture, device/server backlog and fresh frontier rearming on a new hold. The C fixture preserves acquisition tags across gate changes and rejects stale/in-flight callbacks instead of relabeling queued data. The Swift assertions separately follow tap origin tagging, drain rejection, command-time cutoff and synchronous gate-before-discard ordering; Linux assertions expose local packet/WebRTC reset and fresh timing. Those are distinct authorities, not interchangeable cases for a generic table. Source-text coupling is intentional and bounded; current structure makes the ordering contract readable. Keep current bytes, including the related accepted Swift-output refactor."
       }
     },
     {
@@ -3177,16 +3182,17 @@
       "initialBlob": "5eda639ce13db2cd96fdaa74f6b8ef03b3da4865",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "5eda639ce13db2cd96fdaa74f6b8ef03b3da4865",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "5eda639ce13db2cd96fdaa74f6b8ef03b3da4865",
         "primaryId": "task_9f4d5386",
         "primaryCommit": "49842eeb431b8eda05ed62efd7e40c29419ffce4",
-        "judgeIds": [],
+        "judgeIds": ["task_163f69b0"],
         "sourceCommit": "49842eeb431b8eda05ed62efd7e40c29419ffce4",
-        "state": "needs-judge",
-        "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
+        "state": "accepted-joined",
+        "reason": "Read the complete focus. The first persistence test deliberately walks missing-file Google/push-to-talk default -> keyless OpenAI selection -> Google extended-thinking/continuous selection and checks that persisted text has no apiKey. The separate short GPT-Live persistence test is a specific model round trip, not a hidden case in that sequence. Parser tests visibly distinguish obsolete memories, missing mode versus invalid mode, mismatched/invented provider-model pairs and the valid OpenAI pair. Keeping policy tests apart from filesystem consequences is clearer than extracting the two short temporary-fixture sequences behind an abstraction or shared context bag. No actual structural reading burden warrants a change."
       }
     },
     {
@@ -4680,6 +4686,19 @@
         "state": "accepted-joined",
         "reason": "Independent actual-code reading finds this small fixture already structurally clear. It keeps the peer set, request counter, response-write checkpoint, client and observed errors in one test-owned lifetime. The raw 403 with outstanding Content-Length explains why inspection cannot normally finish from this body. The sequence is visible without chasing helpers: await the write, check CONNECTING/live peer/no diagnostic, close the adapter, observe peer release, then observe beyond the one-second diagnostic deadline and assert no error and one request. The finally block separately closes the client, destroys only remaining fixture peers and awaits server shutdown. Node invocation and the Bun skip explain the runtime distinction rather than hiding it. No abstraction, shared context bag or rename would improve this journey. This is an unchanged-code decision, not claimed new structural progress: candidate equals primary base; its parent also contains the exact same focus blob."
       }
+    },
+    {
+      "focus": "tests/fixtures/live-offline-model.ts",
+      "initialBlob": null,
+      "introducedBy": "a01c01f94014adcfffc850335c2e4a505c0a4fa3",
+      "state": "pending",
+      "acceptedBlob": null,
+      "resume": {
+        "status": "pending",
+        "acceptedBlob": "24f5a569f4de0b25d4a38eb14108a5f5e7843c09",
+        "sourceCommit": "a01c01f94014adcfffc850335c2e4a505c0a4fa3",
+        "state": "needs-primary-final-blob"
+      }
     }
   ],
   "sharedBrief": "ONGOING whole-repo structural readability task. User rejected shallow rename/comment sweep and required independent judgment. Read wisdom/values.md and wisdom/quality/structural-readability-{guidance,owner-pilot,repo-wide}.md. Maximize actual ease of understanding, not diff count/names/smaller files/boilerplate. Identify concrete mental bookkeeping, trace real callers/shipped paths. Simplify tangled responsibilities, branching/hidden state, unrelated lifetimes, needless indirection/dead machinery. Coherent domain operations and visible effects, not arbitrary splitting/context bags/registries/state-machine frameworks. Good names/comments/types help but are insufficient when structure remains tangled. Already clear code may stay unchanged. Preserve purposeful permission/replay/cancellation/delivery/data-loss/protocol contracts; no invented safety reductions, speculative defenses/dependencies/feature cuts/weakened tests. Explicitly report and test observed incidental fixes. Green tests support safety, not readability. Source focus is not edit-only-one-file restriction: coherent related edits allowed, report overlaps and all changed paths. No push/PR. No global/other area notes/values edits. Shared read-only dependencies /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules. Bun /home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin/bun; use /bin/bash PATH set inside quoted script (automatic fish setup failure known). No per-worker massive builds. Device/provider/macOS gaps honest.",
@@ -4804,7 +4823,7 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 99,
-    "pending": 51
+    "accepted": 105,
+    "pending": 46
   }
 }

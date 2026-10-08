@@ -11369,11 +11369,11 @@
     {
       "file": "tests/fixtures/live-push-to-talk-tui.ts",
       "initialBlob": "179e7292fffc19c5281d1072c7aad31b0b700b77",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_3ad08a2d",
       "sourceCommit": "a01c01f94014adcfffc850335c2e4a505c0a4fa3",
-      "judgeIds": [],
-      "resumeState": "needs-judge",
+      "judgeIds": ["task_7d99ac05"],
+      "resumeState": "accepted-joined",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
       "area": "live-native-audio",
       "primaryCommit": "a01c01f94014adcfffc850335c2e4a505c0a4fa3",
@@ -11398,16 +11398,30 @@
         "No live authentication, credential reads, devices or network accessed; real audio/TUI/runtime behavior remains unverified.",
         "No delegation, candidate checkout/merge, destructive git, shell cleanup, user-data mutation, dependency changes, push or publication. Existing worktrees/evidence retained.",
         "Primary readability proposals only; fresh independent judgments are parent-owned. No per-worker wisdom edits; aggregate wisdom is parent-owned."
+      ],
+      "acceptedBlob": "89c48ff62a52d95438b9c97a5247483ff6ddf11f",
+      "result": "Read the complete candidate fixture, its exact diff from 8f4324306649ee3ee91f1fe2d8de2ee7725d9c33, and both related changed fixtures/helper. The real command registration proxy and provider callback sequence remain visibly in the fixture. The substantive ownership improvement is that createSyntheticMicrophone now holds the capture clock, current gate epoch, last admitted epoch, retained callback and cumulative captures together. Installation passes microphone.open, /pttproof observes microphone.captures, and /pttstale asks that same authority to inject the prior epoch. Stop and close share the same clock teardown. This is a coherent local owner rather than a renamed block or context bag. The small offline-model helper removes duplicated wire-message construction while keeping the UNEXPECTED_NORMAL_MODEL_REPLY sentinel explicit at session_start.",
+      "systemReason": "Followed extension setTalking, startup, launchAudio admission and stopObserved, production transcript callbacks, main-owner typed/input/backend prompting, continuity-session lookup, and the whole terminal harness. The production host closes heldEpoch before endAudio, rejects muted or wrong-epoch captures, marks itself inactive before stopping/closing audio, and calls both teardown methods; the extracted synthetic microphone preserves those observations and retained late-frame injection. Capture still runs every 20 ms even while muted, counters still accumulate at their original scopes, and provider send/end/typed counters and partial-to-replaced-final transcript order are unchanged. The terminal test still checks tap versus hold, draft preservation, stale frames while muted and stopped, complete history and saved-branch replay. No assertions or production security checks were removed. Offline model substitution does not bypass owner/session prompting.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Verified the exact three candidate-changed source paths using git diff --name-only and their exact blob IDs using git rev-parse.",
+        "Read test filesystem/process effects without executing them: owned mkdtemp HOME/session/tmux files, optional environment-selected evidence output and existing owned-home removal. Spoken harness also invokes prepare-assets with its inherited environment, so that unisolated harness/setup was not run.",
+        "Static journey comparison only; no passing-test claim."
+      ],
+      "limits": [
+        "Static actual-source judgment only. No setup, tests, builds, live provider probe, credentials, or device access; runtime/compiler/TUI/acoustic verification remains with the parent audited isolated gates.",
+        "Exact committed candidate trees were read with git show/diff against their assigned primary bases, not checkout HEAD. Durable review worktree: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_7d99ac05. No temporary code checkout or delegated reviewer was created. Parent owns runtime agent.model verification.",
+        "Safety for ALL descendants: NO sudo, recovery investigation, user secrets, shell deletion/cleanup commands, inherited HOME/config/SDK cleanup, nested shell traps, destructive git, or user-data mutation. User already recovered data and requested no recovery work. Tests must use explicit process argv/env and owned fs.mkdtemp fixture HOME/config/SDK; retain them, do not delete. Review filesystem/network effects BEFORE tests/setup. Existing test-code cleanup of provably owned temporary paths may be inspected but NEVER run a shell trap or inherited HOME removal. Need live auth/device? Report unverified, don't access credentials. Propagate these constraints verbatim. Independent code/review agents get durable worktrees, not /tmp code checkouts. Keep existing worktrees and candidate evidence. Test/source fixtures may use /tmp, but document durable provenance. Parent verifies runtime agent.model openai-codex/gpt-6.1-sol; native normal leaves only, no delegation."
       ]
     },
     {
       "file": "tests/fixtures/live-spoken-tui.ts",
       "initialBlob": "03c7168fdf7aa3a91084573c467eb7a94408f67b",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_3ad08a2d",
       "sourceCommit": "a01c01f94014adcfffc850335c2e4a505c0a4fa3",
-      "judgeIds": [],
-      "resumeState": "needs-judge",
+      "judgeIds": ["task_7d99ac05"],
+      "resumeState": "accepted-joined",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
       "area": "live-native-audio",
       "primaryCommit": "a01c01f94014adcfffc850335c2e4a505c0a4fa3",
@@ -11432,6 +11446,21 @@
         "No live authentication, credential reads, devices or network accessed; real audio/TUI/runtime behavior remains unverified.",
         "No delegation, candidate checkout/merge, destructive git, shell cleanup, user-data mutation, dependency changes, push or publication. Existing worktrees/evidence retained.",
         "Primary readability proposals only; fresh independent judgments are parent-owned. No per-worker wisdom edits; aggregate wisdom is parent-owned."
+      ],
+      "acceptedRelatedJudges": ["task_7d99ac05"],
+      "acceptedBlob": "ea460255bfb0395ea84f01843ca33a13be9f6ee6",
+      "result": "Read the entire spoken fixture and exact diff from 8f4324306649ee3ee91f1fe2d8de2ee7725d9c33, plus every changed related source. The command can now be read straight through: acquire the real main owner, opt it into delegated voice, install the explicit OFFLINE_DELEGATED_REPLY model response, connect the bridge to owner.delegate with gptLiveRequest and original provenance, assert refusal of incomplete retained speech, append a fresh complete request with its original timeline, and close the owner only after the asynchronous bridge operation settles. Extracting only the duplicated response payload materially exposes this journey without hiding acquisition, admission or lifetime decisions. The compact loss/repeat scenario remains inline and needs no larger abstraction.",
+      "systemReason": "Followed ProvisionalSpeech eviction/preparation, bridge handleCreated admission/settlement, gptLiveRequest completeness/overlap behavior, main-owner serialized backend operation, provenance persistence, session.prompt, close/release behavior and continuity-session lookup. The oversized MISSING_REQUEST fragment still exceeds the retained-evidence bound and causes clarification before host dispatch. Fresh character fragments still compose the same complete user request, with the same event offsets. The paired owner still writes hidden provenance and submits ordinary production session.prompt; the shared helper changes only streamFunction and constructs the identical done/stop message, model metadata, zero usage and text. The terminal harness still requires natural request plus offline reply and excludes loss text and transport/provenance dumps. Owner-close timing, error notification and all existing assertions are preserved, not newly claimed to cover additional failure modes.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Verified all three changed source blobs at the exact candidate and compared the complete spoken/helper change with its assigned primary base.",
+        "Read harness effects before any possible execution: prepare-assets is a setup invocation outside the fixture HOME, followed by an offline CLI under owned mkdtemp HOME and tmux socket, optional capture-file output and existing owned-home removal. Did not run any of these effects.",
+        "Independent actual-source loss/refusal/repeat/delegation/lifetime reading; no test execution or batch-summary-based verdict."
+      ],
+      "limits": [
+        "Static actual-source judgment only. No setup, tests, builds, live provider probe, credentials, or device access; runtime/compiler/TUI/acoustic verification remains with the parent audited isolated gates.",
+        "Exact committed candidate trees were read with git show/diff against their assigned primary bases, not checkout HEAD. Durable review worktree: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_7d99ac05. No temporary code checkout or delegated reviewer was created. Parent owns runtime agent.model verification.",
+        "Safety for ALL descendants: NO sudo, recovery investigation, user secrets, shell deletion/cleanup commands, inherited HOME/config/SDK cleanup, nested shell traps, destructive git, or user-data mutation. User already recovered data and requested no recovery work. Tests must use explicit process argv/env and owned fs.mkdtemp fixture HOME/config/SDK; retain them, do not delete. Review filesystem/network effects BEFORE tests/setup. Existing test-code cleanup of provably owned temporary paths may be inspected but NEVER run a shell trap or inherited HOME removal. Need live auth/device? Report unverified, don't access credentials. Propagate these constraints verbatim. Independent code/review agents get durable worktrees, not /tmp code checkouts. Keep existing worktrees and candidate evidence. Test/source fixtures may use /tmp, but document durable provenance. Parent verifies runtime agent.model openai-codex/gpt-6.1-sol; native normal leaves only, no delegation."
       ]
     },
     {
@@ -13464,11 +13493,11 @@
     {
       "file": "tests/helpers/live-startup-audio-queue.ts",
       "initialBlob": "6b467a7c5c27d31655ae48c9e92828cbe076cf3a",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_1f74d85d",
       "sourceCommit": "a117a1b109ac56b1298f703df251cb3ec7de37fb",
-      "judgeIds": [],
-      "resumeState": "needs-judge",
+      "judgeIds": ["task_7d99ac05"],
+      "resumeState": "accepted-joined",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
       "area": "live-native-audio",
       "primaryCommit": "a117a1b109ac56b1298f703df251cb3ec7de37fb",
@@ -13513,6 +13542,20 @@
         "Behavior preservation is source-traced, not runtime-verified; existing assertions remain unchanged. Physical/provider timing parity remains unverified.",
         "Retained formatter fixture is under /tmp; durable source provenance is this worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_1f74d85d and exact sourceCommit/sourceBlobs. No code checkout was created under /tmp.",
         "Runtime agent.model verification remains parent-owned. Wisdom/values and structural-readability guidance read; no per-worker wisdom/values edits, per instruction that parent owns aggregate wisdom."
+      ],
+      "acceptedBlob": "9563b6268097649e8f6e36a7a0be13459df98055",
+      "result": "Read the complete exact queue candidate and diff from a80eedb79e4bd22780fd4fe8f85de28c74dbd398, as well as both consumers: tests/live-startup-audio-queue.test.ts and scripts/probe-live-startup-audio.ts. A single buffering/replaying/live/stopped phase replaces the stopped/active/draining combinations a reader previously had to reconstruct. push visibly queues in buffering and replaying, sends directly in live and ignores stopped; ready visibly owns entry into replay and the conditional transition into live; stop owns terminal state and backlog discard. This directly clarifies the queue lifecycle without adding an abstraction or renaming churn.",
+      "systemReason": "Traced delayed provider readiness, reentrant capture during send, paced waits, readiness loss, stop and late ready in the fake-transport tests and optional provider probe. Both consumers supply the unchanged pure session.state readiness predicate; lifecycle/error/deadline callbacks still stop the queue. Capture data is copied before retention/direct send, replay shifts/decrements bytes before send, fresh capture during replay joins the tail, and readiness is checked for every outgoing frame. Overflow still stops/discards then throws the same exception. Concurrent/repeated ready calls cannot start another drain; stopping in send or during pacing cannot be undone by finally. Existing send-exception behavior also remains: if still replaying, finally switches to direct/live behavior with any remaining backlog unchanged. The helper remains experimental, not imported by the production Live flow; the probe control mode still bypasses it. No caller or assertion changes are needed for this ownership simplification.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Verified the queue is the only candidate-changed source path and resolved its exact candidate blob.",
+        "Read both consumers, including fake SDK/socket transport and probe synthesis, paid opt-in, credential load sites, provider sends, deadlines and finally stop/close. No credential data was accessed and the probe was not launched.",
+        "Static state-transition and behavior comparison only; no compiler/test/build gate was run."
+      ],
+      "limits": [
+        "Static actual-source judgment only. No setup, tests, builds, live provider probe, credentials, or device access; runtime/compiler/TUI/acoustic verification remains with the parent audited isolated gates.",
+        "Exact committed candidate trees were read with git show/diff against their assigned primary bases, not checkout HEAD. Durable review worktree: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_7d99ac05. No temporary code checkout or delegated reviewer was created. Parent owns runtime agent.model verification.",
+        "Safety for ALL descendants: NO sudo, recovery investigation, user secrets, shell deletion/cleanup commands, inherited HOME/config/SDK cleanup, nested shell traps, destructive git, or user-data mutation. User already recovered data and requested no recovery work. Tests must use explicit process argv/env and owned fs.mkdtemp fixture HOME/config/SDK; retain them, do not delete. Review filesystem/network effects BEFORE tests/setup. Existing test-code cleanup of provably owned temporary paths may be inspected but NEVER run a shell trap or inherited HOME removal. Need live auth/device? Report unverified, don't access credentials. Propagate these constraints verbatim. Independent code/review agents get durable worktrees, not /tmp code checkouts. Keep existing worktrees and candidate evidence. Test/source fixtures may use /tmp, but document durable provenance. Parent verifies runtime agent.model openai-codex/gpt-6.1-sol; native normal leaves only, no delegation."
       ]
     },
     {
@@ -14393,11 +14436,11 @@
     {
       "file": "tests/live-auth-lifecycle.test.ts",
       "initialBlob": "05d9ebf1bdff9f49b9ab4a06a2fbdc67564eca9b",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_9f4d5386",
       "sourceCommit": "49842eeb431b8eda05ed62efd7e40c29419ffce4",
-      "judgeIds": [],
-      "resumeState": "needs-judge",
+      "judgeIds": ["task_163f69b0"],
+      "resumeState": "accepted-joined",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
       "area": "live-native-audio",
       "primaryCommit": "49842eeb431b8eda05ed62efd7e40c29419ffce4",
@@ -14415,16 +14458,30 @@
         "No setup, tests, builds, dependency writes, credential access, live auth/device access, delegation, recovery work, cleanup commands, or publication performed.",
         "No changed source paths, so no formatter invocation or new source commit; sourceCommit identifies the existing exact reviewed HEAD. Result artifact intentionally untracked. Wisdom/values unchanged: no new structural lesson justified.",
         "Runtime/environment isolation and imported SDK effects remain for parent audit; no credential command references or default credential factory were executed."
+      ],
+      "acceptedBlob": "05d9ebf1bdff9f49b9ab4a06a2fbdc67564eca9b",
+      "result": "Read the complete test file. The small fixture owns a specific auth.json, AuthStorage and ModelRuntime; storeKey exposes normal login separately from the migration authority. The first sequence establishes explicit migration while preserving Anthropic, then existing-key and OAuth tests show the no-read/no-overwrite guards. The competing writer wrapper visibly installs OAuth just before modify rather than hiding that race in a generic helper. Concurrent imports, aborted-before-read and aborted-before-locked-write cases expose distinct boundaries. Ambient-key non-persistence, corrupt-file byte preservation, metadata-only status with resolution methods made to throw, configured-directory canonical reuse, early abort and separate OpenAI/openai-codex isolation remain direct assertions. The limited duplication makes each authority legible; a cross-test context bag or table would obscure these different journeys. Keep the current bytes.",
+      "systemReason": "Followed src/live/credentials.ts end to end: safe migration-file loading is not shell evaluation; status lists stored metadata before checking Google runtime configuration; OpenAI missing state cannot accept ambient or openai-codex auth; loadKey rejects OAuth before resolving API key material. Import checks eligibility before opening live.env, rechecks afterward, and conditionally modifies Google inside the store lock rather than replacing through login. Read the installed pinned storage seam implementation read-only: withLockAsync rereads under lock and checks abort before commit, while modify merges only the selected provider; malformed JSON prevents that write. The lazy factory selects BRUV_CODING_AGENT_DIR/canonical auth.json, modelsPath:null, refreshOnCreate:false and allowModelNetwork:false. Followed extension defaults, provider-only setup, metadata readiness labels, start-key lookup and cancellable setup/loadKey, plus runLiveSetup and OpenAI setup. These callers keep credentials distinct from model choice and never treat metadata readiness as verified provider access.",
+      "checks": [
+        "Read exact candidate files with git show 49842eeb431b8eda05ed62efd7e40c29419ffce4:path; git diff --raw 49842eeb431b8eda05ed62efd7e40c29419ffce4 49842eeb431b8eda05ed62efd7e40c29419ffce4 is empty. Candidate equals each supplied primaryBase; there are no candidate-changed source paths.",
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md. Static reading only; no setup, tests, builds, network calls, auth/device access, delegation, source edits, cleanup, publication or dependency writes.",
+        "Inspected all auth fixture filesystem effects: explicit temporary auth/env files and fake keys; environment overrides are restored by finally. No credential data files were accessed."
+      ],
+      "limits": [
+        "Runtime tests/builds are deliberately NOT RUN: parent owns audited isolated gates. No live authentication, device interaction or acoustic behavior verified.",
+        "Existing test cleanup was inspected only, not executed. Owned mkdtemp paths are the only cleanup targets visible in these focuses; any parent execution must use explicit process argv/env and owned fixture HOME/config/SDK and retain the fixtures. Shared dependencies remain read-only.",
+        "Review provenance is this durable bruv worktree and exact candidate Git objects, not a /tmp code checkout. Agent model identity remains parent-verification responsibility.",
+        "The installed dependency seam was read as observed read-only dependency code, not asserted to be a Git blob of the candidate. Auth tests are ambient-environment-sensitive (notably missing Google/OpenAI auth cases); parent must isolate ambient credentials/network settings before any execution."
       ]
     },
     {
       "file": "tests/live-capture-gate.test.ts",
       "initialBlob": "f0ba15732398870ba1d0882f466f5c788133b1f2",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_9f4d5386",
       "sourceCommit": "49842eeb431b8eda05ed62efd7e40c29419ffce4",
-      "judgeIds": ["task_660502a4"],
-      "resumeState": "needs-judge",
+      "judgeIds": ["task_660502a4", "task_163f69b0"],
+      "resumeState": "accepted-joined",
       "pendingReason": "Retain exact related-path actual-code acceptance; it is not completion of this file’s distinct primary/fresh focus-judge requirement.",
       "area": "live-native-audio",
       "primaryCommit": "49842eeb431b8eda05ed62efd7e40c29419ffce4",
@@ -14444,16 +14501,31 @@
         "No changed source paths, so no formatter invocation or new source commit; sourceCommit identifies the existing exact reviewed HEAD. Result artifact intentionally untracked. Wisdom/values unchanged: no new structural lesson justified.",
         "Existing helper inherits process env and removes its owned fixture; parent must audit isolated argv/env and retained fixtures before any gate execution. No macOS/Xcode, Linux audio-device, or native build verification performed.",
         "Preserved evidence mentions inherited native stop/caller played mismatch; retained as evidence, not investigated or treated as a new focus change."
+      ],
+      "acceptedBlob": "e14d5006f3c1c8cd2ad1ca4d88c2f5021753c817",
+      "result": "Read the entire nativeTest helper and all four tests. The helper only hides compile/run fixture boilerplate; each call keeps platform compiler, source and warning policy visible. The Linux fixture distinguishes continuous capture, device/server backlog and fresh frontier rearming on a new hold. The C fixture preserves acquisition tags across gate changes and rejects stale/in-flight callbacks instead of relabeling queued data. The Swift assertions separately follow tap origin tagging, drain rejection, command-time cutoff and synchronous gate-before-discard ordering; Linux assertions expose local packet/WebRTC reset and fresh timing. Those are distinct authorities, not interchangeable cases for a generic table. Source-text coupling is intentional and bounded; current structure makes the ordering contract readable. Keep current bytes, including the related accepted Swift-output refactor.",
+      "systemReason": "Read the entire candidate native/live/main.swift and followed CaptureResampler -> LiveOutput queue ownership -> gate/discard/drain -> Live command and tap. capture_gate obtains mach_absolute_time on the main command queue; LiveOutput synchronously applies the core gate before resetting converter fragments and draining old ring blocks, without stopping the engine. The tap uses acquisition host time, and drain rejects noncurrent tags before resampling/emitting. Followed AudioCore declarations, initial continuous epoch and gate/current-epoch/push/pop functions: ring blocks retain acquisition epochs, muted/stale pushes do not count as overflow. Followed Linux read acceptance, applyCaptureGate, cancellation of prior timing, gateTimed validation, fresh write-index/source-latency frontier, pump ordering and monotonic command epoch ownership, plus CaptureGate.h and both complete native fixtures. Followed audio.ts setCaptureGate protocol state and extension hold/capture/start callers: release closes the host send gate before async native commands, capture requires active matching epoch, and push-to-talk mutes before starting devices. This is a static ordering judgment, not device/acoustic proof.",
+      "checks": [
+        "Read exact candidate files with git show 49842eeb431b8eda05ed62efd7e40c29419ffce4:path; git diff --raw 49842eeb431b8eda05ed62efd7e40c29419ffce4 49842eeb431b8eda05ed62efd7e40c29419ffce4 is empty. Candidate equals each supplied primaryBase; there are no candidate-changed source paths.",
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md. Static reading only; no setup, tests, builds, network calls, auth/device access, delegation, source edits, cleanup, publication or dependency writes.",
+        "Inspected b01dac0216dfa47d3b40e57f92c6021ea530e368 related-candidate metadata/diff and verified its focus blob exactly equals the assigned candidate focus blob e14d5006f3c1c8cd2ad1ca4d88c2f5021753c817. That evidence is not substituted for this independent focus reading.",
+        "Reviewed nativeTest filesystem/process effects before deciding not to execute: compiler writes only the mkdtemp binary; test fixture removes that owned directory; source checks only read native source files."
+      ],
+      "limits": [
+        "Runtime tests/builds are deliberately NOT RUN: parent owns audited isolated gates. No live authentication, device interaction or acoustic behavior verified.",
+        "Existing test cleanup was inspected only, not executed. Owned mkdtemp paths are the only cleanup targets visible in these focuses; any parent execution must use explicit process argv/env and owned fixture HOME/config/SDK and retain the fixtures. Shared dependencies remain read-only.",
+        "Review provenance is this durable bruv worktree and exact candidate Git objects, not a /tmp code checkout. Agent model identity remains parent-verification responsibility.",
+        "nativeTest supplies argv but inherits process environment; no compiler or native executable was launched. Parent must provide audited explicit isolated env (including HOME/config/SDK) for its gate. Source-string assertions do not prove Swift execution, Pulse behavior or callback race safety on real devices."
       ]
     },
     {
       "file": "tests/live-config.test.ts",
       "initialBlob": "5eda639ce13db2cd96fdaa74f6b8ef03b3da4865",
-      "status": "pending",
+      "status": "accepted",
       "primaryId": "task_9f4d5386",
       "sourceCommit": "49842eeb431b8eda05ed62efd7e40c29419ffce4",
-      "judgeIds": [],
-      "resumeState": "needs-judge",
+      "judgeIds": ["task_163f69b0"],
+      "resumeState": "accepted-joined",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
       "area": "live-native-audio",
       "primaryCommit": "49842eeb431b8eda05ed62efd7e40c29419ffce4",
@@ -14470,6 +14542,20 @@
         "Primary reading only, not an independent judgment. Parent owns fresh independent judgments and audited isolated gates.",
         "No setup, tests, builds, dependency writes, credential access, live auth/device access, delegation, recovery work, cleanup commands, or publication performed.",
         "No changed source paths, so no formatter invocation or new source commit; sourceCommit identifies the existing exact reviewed HEAD. Result artifact intentionally untracked. Wisdom/values unchanged: no new structural lesson justified."
+      ],
+      "acceptedBlob": "5eda639ce13db2cd96fdaa74f6b8ef03b3da4865",
+      "result": "Read the complete focus. The first persistence test deliberately walks missing-file Google/push-to-talk default -> keyless OpenAI selection -> Google extended-thinking/continuous selection and checks that persisted text has no apiKey. The separate short GPT-Live persistence test is a specific model round trip, not a hidden case in that sequence. Parser tests visibly distinguish obsolete memories, missing mode versus invalid mode, mismatched/invented provider-model pairs and the valid OpenAI pair. Keeping policy tests apart from filesystem consequences is clearer than extracting the two short temporary-fixture sequences behind an abstraction or shared context bag. No actual structural reading burden warrants a change.",
+      "systemReason": "Read src/live/config.ts and providers.ts completely. The catalogue owns admissible provider/model pairs and muted default; parse returns only provider/model/inputMode, ignores obsolete memory fields and rejects invalid modes. load defaults only on ENOENT, not malformed or incompatible persisted settings. save validates before filesystem effects, creates a same-directory exclusive 0600 temporary file, then renames to publish; finally removes only that specific temporary name. Followed extension defaults/config injection, initial load failure (selection unchanged), input-mode save and model-selection save: save completion precedes selected-state mutation, failures retain the previous choice and stale owner checks prevent applying outdated selection. Provider setup changes credentials independently of the saved voice model, and model readiness uses credential metadata, so keyless model persistence is an intentional product contract.",
+      "checks": [
+        "Read exact candidate files with git show 49842eeb431b8eda05ed62efd7e40c29419ffce4:path; git diff --raw 49842eeb431b8eda05ed62efd7e40c29419ffce4 49842eeb431b8eda05ed62efd7e40c29419ffce4 is empty. Candidate equals each supplied primaryBase; there are no candidate-changed source paths.",
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md. Static reading only; no setup, tests, builds, network calls, auth/device access, delegation, source edits, cleanup, publication or dependency writes.",
+        "Inspected both persistence fixtures: each supplies an owned mkdtemp settings path; their finally cleanup targets only that exact owned directory. Parser cases do not touch filesystem or network."
+      ],
+      "limits": [
+        "Runtime tests/builds are deliberately NOT RUN: parent owns audited isolated gates. No live authentication, device interaction or acoustic behavior verified.",
+        "Existing test cleanup was inspected only, not executed. Owned mkdtemp paths are the only cleanup targets visible in these focuses; any parent execution must use explicit process argv/env and owned fixture HOME/config/SDK and retain the fixtures. Shared dependencies remain read-only.",
+        "Review provenance is this durable bruv worktree and exact candidate Git objects, not a /tmp code checkout. Agent model identity remains parent-verification responsibility.",
+        "Existing tests do not dynamically establish permission bits, malformed persisted-file behavior or save-error ordering. Those paths were read in implementation/callers; no additional runtime coverage or broad production acceptance is claimed."
       ]
     },
     {
@@ -22720,6 +22806,16 @@
         "Provider/network and actual execution behavior remain unverified. Installed dependency files are read-only supporting evidence, not Git blobs from the candidate; a version check is not proof of dependency byte identity.",
         "Durable review provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_0ba57324. This worktree and candidate evidence are preserved. The reviewed test caller may create retained /tmp mkdtemp fixtures, but none were created or run by this review."
       ]
+    },
+    {
+      "file": "tests/fixtures/live-offline-model.ts",
+      "initialBlob": "absent",
+      "area": "live-native-audio",
+      "status": "pending",
+      "resumeState": "needs-primary-final-blob",
+      "sourceCommit": "a01c01f94014adcfffc850335c2e4a505c0a4fa3",
+      "acceptedRelatedJudges": ["task_7d99ac05"],
+      "acceptedBlob": "24f5a569f4de0b25d4a38eb14108a5f5e7843c09"
     }
   ],
   "completedAreas": {
@@ -22739,10 +22835,10 @@
     "baselineFiles": 766,
     "finalGate": "pending; incomplete focus coverage",
     "liveAuth": "unverified/failing; preserved",
-    "accepted": 784,
-    "total": 835,
-    "pending": 51,
-    "sourceExtras": 69,
+    "accepted": 790,
+    "total": 836,
+    "pending": 46,
+    "sourceExtras": 70,
     "checkout": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
     "branch": "bruv/readability-pr45-sol-continuation",
     "scheduler": "/home/tnfssc/.bruv/worktrees/pr45-flow-c2a2fd8a.mjs"
