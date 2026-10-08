@@ -57,7 +57,7 @@ Read [the code map](ARCHITECTURE.md) before choosing a home for new code. It nam
 
 Prompt text belongs in `src/prompts/`. Start with [Editing prompts](wisdom/prompts/prompts.md) and the assembled input, not an isolated sentence. Preserve explicit custom prompts and instruction continuity.
 
-`scripts/prepare-assets.ts` copies embedded Pi assets. Preserve license banners and update `THIRD_PARTY_NOTICES.md` and `third_party/` inputs when packaged assets or licensing change. Run `bun run generate:notices` to check attribution.
+`scripts/build/prepare-assets.ts` copies embedded Pi assets. Preserve license banners and update `THIRD_PARTY_NOTICES.md` and `third_party/` inputs when packaged assets or licensing change. Run `bun run generate:notices` to check attribution.
 
 Background work belongs to the session. Execute worker exit must not kill jobs by accident. Keep history durable, handoffs cooperative and diagnostics bounded.
 

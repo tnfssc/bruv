@@ -1,5 +1,5 @@
 /** Explicit paid OpenAI Realtime text-input probe. No desktop reads, real tool dispatch or audio playback.
- * Setup: bun install --frozen-lockfile; bun scripts/prepare-assets.ts.
+ * Setup: bun install --frozen-lockfile; bun scripts/build/prepare-assets.ts.
  * Run: BRUV_CAPABILITY_PROBE=1 bun scripts/live/probe-capability.ts --disclose-root baseline:jobs grounding:jobs
  * Output JSONL includes model-generated code: review before sharing. Never execute it.
  */

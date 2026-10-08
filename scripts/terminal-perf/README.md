@@ -56,7 +56,7 @@ For a call-stack profile, use Bun's profiler on a focused workload. A sampling p
 
 ```sh
 bun --cpu-prof --cpu-prof-md --cpu-prof-dir artifacts/terminal-perf \
-  scripts/terminal-perf.ts --case input --scales 1000 --samples 100
+  scripts/terminal-perf/terminal-perf.ts --case input --scales 1000 --samples 100
 ```
 
 ## What we measure

@@ -21,7 +21,7 @@ export BRUV_RUNTIME_BINARY="$PWD/dist/release/bruv-linux-x64"
 export T3_UPSTREAM=/absolute/fresh/official-2644-cache
 export BROWSER_PATH=/absolute/chromium-headless-shell
 export PROOF_OUTPUT="$PWD/.cache/native-release-2644-fresh"
-node scripts/run-native-release-gate.mjs
+node scripts/release/run-native-release-gate.mjs
 ~~~
 
 Requires Linux x64 and node on PATH with node:sqlite (22.13+; proof used 25.9.0).
@@ -143,7 +143,7 @@ local Playwright, the actual compiled connector, and paired normal Bruv,
 run (use supported Bun 1.4.2, not a global install):
 
 ```sh
-/path/to/bun-1.4.2 scripts/build-claude-compat.ts --outfile=.cache/history-connector
+/path/to/bun-1.4.2 scripts/build/build-claude-compat.ts --outfile=.cache/history-connector
 TMPDIR=/var/tmp \
 BRUV_CONNECTOR_EXECUTABLE="$PWD/.cache/history-connector" \
 BRUV_RUNTIME_BINARY=/absolute/path/to/paired/bruv \

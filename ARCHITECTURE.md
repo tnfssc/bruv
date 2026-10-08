@@ -14,6 +14,10 @@ Start here when adding or moving code. A folder names an owner, not the date or 
 | `src/history/` | Durable history storage, retrieval and persisted-record validation | Agent commands or model policy |
 | `src/live/` | Voice providers, audio, provider transcript adaptation and voice UI | A separate task/session authority |
 | `src/t3/` | Bruv-side T3 protocol adapters and external T3 setup guidance | Upstream application source or a separate TaskManager |
+| `src/remote/` | SSH tasks, repository transfer and shared remote rules; `root/` owns main-agent placement | A second local task scheduler |
+| `src/claude-compat/` | Claude-compatible protocol, launcher binding and host adapters | Shared task or session ownership |
+| `src/questions/` | Saved human questions and their terminal flow | Agent-invented human answers |
+| `src/wisdom/` | Project wisdom location and instruction hooks | Historical experiment code |
 | `src/goals/` | Goal state and continuation policy | Task execution |
 | `src/ui/` | Terminal rendering and interaction | Domain state ownership |
 | `src/prompts/` | Maintained prompt text | Generated prompts or provider transport code |
@@ -37,9 +41,9 @@ Keep historical `git show COMMIT:old/path` references intact. They identify Git 
 
 ## Build, tests and generated data
 
-- `scripts/` owns whole-product commands and release orchestration. Feature tooling stays in named folders such as [`scripts/live/`](scripts/live/README.md). The default build owns the CLI/claude-compat pair, not T3.
+- [`scripts/`](scripts/README.md) groups build, CI, release and feature tooling by owner. The default build owns the CLI/claude-compat pair, not T3.
 - `native/` owns native source and native-language tests.
-- `tests/` is the recursive deterministic test root. Feature test folders stay under it.
+- `tests/` is the recursive deterministic test root. Feature tests, probes and fixtures stay with their owner. Shared helpers have one home; whole-repo contracts stay at the root. Tooling tests belong here too, not under `scripts/`.
 - `support/releases/` holds versioned release notes. `third_party/` holds license inputs.
 - `dist/`, `runtime-assets/`, `.cache/` and `artifacts/` are generated, ignored outputs—not alternate source homes.
 

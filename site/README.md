@@ -35,7 +35,7 @@ The site has its own package.json and bun.lock. You do not need to build or run 
 | `playback.ts` | Shared timing, final hold, looping and pause rules. |
 | `html-animation.ts` / `html-cells.ts` | HTML animation and colored text. |
 | `styles.css` | HTML layout, terminal host and local font. Main terminal text is not CSS content. |
-| `index.html` / `scripts/build.ts` | Template, metadata, no-flash startup, semantic content and static bundles. |
+| `index.html` / `scripts/build/build.ts` | Template, metadata, no-flash startup, semantic content and static bundles. |
 | `install-command.ts` | The GitHub installer URL and command used by both views. |
 
 Edit shared content or demo data first, not generated HTML or `dist/`. Reflow narrow panels instead of shrinking a desktop screenshot. Check both views after shared changes.

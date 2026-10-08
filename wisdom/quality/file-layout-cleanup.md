@@ -47,3 +47,60 @@ repo-wide, not just Live and release notes. The root still has 377 loose test
 files and scripts still has 61. Audit all owners before deciding what stays.
 A broader pass is now in progress. Keep tests recursive, fixtures owned and
 all build/CI consumers wired up. Do not mistake this checkpoint for completion.
+
+Test reorganization runs in `/home/tnfssc/.bruv/worktrees/t3-53f4b259-5442693331ce-task_864ff389`,
+branch `bruv/organize-tests-by-feature-owner-864ff389`, task `task_864ff389`.
+It owns tests and its layout map; parent owns scripts and outside consumers.
+
+## Broader pass checkpoint
+
+59 more script/test files moved. The exact map is
+[tooling-layout-moves.json](tooling-layout-moves.json). Tooling root now keeps
+only the published installer and the standalone prompt preview command, plus
+the new tooling guide. Presentation capture/video stay with their shared ANSI
+renderer in scripts/tui; no new Python loader or alias was needed.
+
+The parent changed script consumers outside tests. The isolated test worker
+still owns tests. After its commit returns, integrate it, then apply both maps
+to imports, fixtures and callers across the combined tree. Fix the macOS CI
+glob (currently tests/live-*.test.ts) to the new tests/live location without
+changing the admitted test family. Fixture copies that now create nested script
+paths need matching directories; copied scripts must still find their repo root.
+
+Parent build passes with the new tooling paths. Shell syntax passes. Presentation
+Bun/Python tests pass. Typecheck currently fails only on tests importing old
+script paths; this is an expected integration gap, not a finished result.
+
+Pending audits: task_893ccb43 (tests/tooling), task_fae2a298 (source/docs).
+Read their results before deciding the remaining source/documentation moves.
+Full integrated CI has not run yet. Do not call the broader cleanup complete.
+
+Value 3 now says to map the whole requested area and not silently narrow a
+repo-wide request to easy examples. This repeats the earlier placement lesson.
+
+## Source and evidence ownership
+
+The source audit found one cohesive runtime group: ten main-agent placement
+modules now live in src/remote/root. Ordinary SSH task/repository code stays
+shared above it. The execute-only schema now lives in src/typescript. Four loose
+wisdom notes moved into their feature homes. Exact paths are in
+[source-layout-moves.json](source-layout-moves.json). No wire names or stored
+paths changed. Native code, shared session contracts and top-level product docs
+already have clear owners and stay put.
+
+Retired the byte-identical root install.sh copy. The documented/public installer
+remains scripts/install.sh, unchanged. This deliberately retires the undocumented
+root raw-file URL; there is no fetching wrapper or second maintained copy. Keep
+downloader behavior coverage, but remove the duplicate test entry-point case.
+
+Two performance tooling tests also move under tests/performance. Along with the
+two presentation Bun tests, these add four suites to normal recursive discovery.
+The Python presentation test also moved but still needs an explicit Python run.
+
+Landing capture task task_c7ca3739 owns site changes in
+/home/tnfssc/.bruv/worktrees/t3-53f4b259-5442693331ce-task_c7ca3739, branch
+bruv/separate-historical-landing-capture-pipe-c7ca3739.
+Live packet task task_c1fa7700 owns historical probes in
+/home/tnfssc/.bruv/worktrees/t3-53f4b259-5442693331ce-task_c1fa7700, branch
+bruv/archive-complete-live-investigation-pack-c1fa7700.
+Both start from db10b010 and will return scoped commits for integration.

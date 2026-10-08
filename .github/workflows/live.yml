@@ -74,4 +74,4 @@ jobs:
       - name: Build full production CLI (no helper or devices)
         run: bun run build
       - name: Probe source and full compiled default transport
-        run: bun scripts/offline-openai-default-transport.ts
+        run: bun scripts/ci/offline-openai-default-transport.ts

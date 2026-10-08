@@ -1,6 +1,6 @@
 import * as z from "zod/mini";
 import executeDescription from "../prompts/execute-description.md" with { type: "text" };
-import { toolParameters } from "../tool-schema";
+import { toolParameters } from "./tool-schema";
 
 export const ExecuteParameters = z.object({
   label: z.optional(z.string()),

@@ -56,7 +56,7 @@ export function defaultHelperPath(
   const name = platform === "linux" ? "live-audio-linux" : "live-audio";
   return moduleUrl.includes("/$bunfs/")
     ? join(dirname(executable), name)
-    : fileURLToPath(new URL("../../dist/" + name, moduleUrl));
+    : fileURLToPath(new URL("../../dist" + name, moduleUrl));
 }
 /** Audio server discovery only. Never pass model credentials to the native process. */
 export function audioEnvironment(env: NodeJS.ProcessEnv = process.env): NodeJS.ProcessEnv {

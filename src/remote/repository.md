@@ -4,7 +4,7 @@
 
 [repository.ts](repository.ts) captures snapshots, exports patches and decides whether a result can be applied. It never contacts a host or asks the user a question.
 
-The remote owner/client/operations layer owns task IDs, SSH transfer, authentication, final task state, serialization and artifact retention. The production callers are [repository-wire.ts](repository-wire.ts) and [root-client.ts](root-client.ts); [repository-download.ts](repository-download.ts) only downloads and verifies result bytes, not completion or permission to apply.
+The remote owner/client/operations layer owns task IDs, SSH transfer, authentication, final task state, serialization and artifact retention. The production callers are [repository-wire.ts](repository-wire.ts) and [root/client.ts](root/client.ts); [repository-download.ts](repository-download.ts) only downloads and verifies result bytes, not completion or permission to apply.
 
 Keep capture and integration serialized per repository. Keep the repository quiescent during application: this module does not provide atomicity against external writers or crashes between files.
 

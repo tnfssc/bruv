@@ -137,7 +137,7 @@ if (cliArgs[0] === "--remote-control" || cliArgs[0] === "--remote-owner") {
 
 // Typed root control is human-client transport, not an agent helper or raw TTY.
 if (cliArgs[0] === "--remote-root-control" || cliArgs[0] === "--remote-root-owner") {
-  const { runRootControl, runRootOwner } = await import("./remote/root-entry");
+  const { runRootControl, runRootOwner } = await import("./remote/root/entry");
   try {
     if (cliArgs[0] === "--remote-root-control") {
       if (cliArgs.length !== 1) throw new Error("Usage: bruv --remote-root-control");
@@ -156,10 +156,10 @@ if (cliArgs[0] === "--remote-root-control" || cliArgs[0] === "--remote-root-owne
 // A placed root is a presentation client, never a second local agent/model/tool loop.
 // Resolve before Pi main() and local provider onboarding. Omitted placement stays local.
 try {
-  const { parseRootPlacementArgs } = await import("./remote/root-options");
+  const { parseRootPlacementArgs } = await import("./remote/root/options");
   const placement = parseRootPlacementArgs(cliArgs);
   if (placement.remote) {
-    const { runRemoteRoot } = await import("./remote/root-cli");
+    const { runRemoteRoot } = await import("./remote/root/cli");
     await runRemoteRoot(placement.remote);
     process.exit(0);
   }

@@ -11,7 +11,7 @@ See [the historical audit report](../../wisdom/resources/memory-resource-audit.m
 
 These probes do not assert an old web source pin. The old bundled T3 launcher
 and RPC gates were retired with `integrations/`. Generic CLI probes remain here.
-Current external T3 release validation uses `scripts/run-native-release-gate.mjs`.
+Current external T3 release validation uses `scripts/release/run-native-release-gate.mjs`.
 
 ## Historical web evidence (retired inputs; retained results)
 

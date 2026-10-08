@@ -51,7 +51,7 @@ jobs:
           mkdir -p artifacts/dependency-update
           args=()
           if [[ "$FIXTURE" == true ]]; then args+=(--fixture); fi
-          bun scripts/update-dependencies.ts "${args[@]}" 2>&1 | tee artifacts/dependency-update/update.log
+          bun scripts/dependencies/update-dependencies.ts "${args[@]}" 2>&1 | tee artifacts/dependency-update/update.log
       - name: Commit candidate before validation
         id: candidate
         shell: bash
