@@ -1048,7 +1048,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_376be59e",
         "branch": "bruv/pr45-primary-tests-claude-compat-fixture-376be59e",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "f58c8bc4992d3a96671e8b9b1a3499c346232f19"
       },
       {
         "id": "task_c0e52552",
@@ -1056,6 +1057,28 @@
         "focus": "tests/claude-compat/fixtures/stdio-mcp.ts",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_c0e52552",
         "branch": "bruv/pr45-primary-tests-claude-compat-fixture-c0e52552",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_41a5466e",
+        "stage": "judge",
+        "focus": [
+          "tests/claude-compat-prompt-ownership.test.ts",
+          "tests/claude-compat-retry.test.ts",
+          "tests/claude-compat/credential-isolation.test.ts"
+        ],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_41a5466e",
+        "branch": "bruv/pr45-judge-3-compatibility-t3-focuses-41a5466e",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_4fcbcb48",
+        "stage": "primary",
+        "focus": "tests/claude-compat/native-adapter-prompt-ownership.ts.txt",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_4fcbcb48",
+        "branch": "bruv/pr45-primary-tests-claude-compat-native--4fcbcb48",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
       }

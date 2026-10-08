@@ -9854,13 +9854,48 @@
       "initialBlob": "2885a3af02f178caee3a18d89fda257fa8ef49cb",
       "status": "pending",
       "area": "compatibility-t3",
-      "resumeState": "pending-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_376be59e",
+      "primaryCommit": "f58c8bc4992d3a96671e8b9b1a3499c346232f19",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "f58c8bc4992d3a96671e8b9b1a3499c346232f19",
       "report": "wisdom/quality/structural-readability-areas/compatibility-t3.json",
-      "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+      "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection.",
+      "primaryBase": "961e0df3cabde7ce9b127e395fa9d94bbcabfef1",
+      "primaryResult": "createSessionTransport owns the stable transport, echo peer setup, SDK connection and map-admission/removal callbacks. The HTTP handler now reads as record request, reject deletion, resolve or create transport, reject unknown session, delay deletion, dispatch. Session map and explicit idempotent stopHost remain fixture-owned. All HTTP statuses, request recording, DELETE fault injection, loopback binding, public controls, and caller assertions are preserved.",
+      "primaryPaths": ["tests/claude-compat/fixtures/http-mcp-lifecycle.ts"],
+      "primaryChecks": [
+        {
+          "name": "focus evidence",
+          "result": "Current focus exists at baseline blob 2885a3af02f178caee3a18d89fda257fa8ef49cb. Focus ledger and reconciliation row show pending-primary, no old candidate/rejection to import."
+        },
+        {
+          "name": "actual caller tracing",
+          "result": "Read tests/claude-compat/mcp.test.ts discovery/park/resume, failed release and external lease tests, plus tests/claude-compat-runtime.test.ts delayed and failed release paths. Assertions untouched."
+        },
+        {
+          "name": "SDK callback ordering inspection",
+          "result": "Read installed SDK source: initialization callback occurs during initialize request handling, not construction. Stable helper-local transport is initialized before callbacks execute."
+        },
+        {
+          "name": "repository formatter",
+          "result": "Required read-only Biome executable invoked via node child_process argv on focus only; exit 0, no fixes applied.",
+          "retainedEnvironmentRoot": "/tmp/pr45-http-mcp-format-PZXXpK"
+        },
+        {
+          "name": "git diff --check",
+          "result": "Passed before commit."
+        },
+        {
+          "name": "source scope",
+          "result": "Only focus source committed; no helper/caller/ledger/wisdom edits."
+        }
+      ],
+      "primaryLimits": [
+        "No setup, tests or builds run; parent owns audited isolated batch gates.",
+        "Independent readability judgment and runtime model verification remain parent-owned.",
+        "No per-worker wisdom written; aggregate wisdom remains parent-owned."
+      ]
     },
     {
       "file": "tests/claude-compat/fixtures/stdio-mcp.ts",
