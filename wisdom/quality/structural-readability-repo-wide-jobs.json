@@ -39,6 +39,22 @@
         "model": "openai-codex/gpt-6.1-sol",
         "status": "handled",
         "sourceCommit": "7075ead9e0cc3f5611aeb0337dc4ade36bb532ae"
+      },
+      {
+        "id": "task_2c94381e",
+        "stage": "judge",
+        "focus": "scripts/loopback-parent-fixture.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_2c94381e",
+        "branch": "bruv/pr45-judge-scripts-loopback-parent-fixtu-2c94381e",
+        "status": "running"
+      },
+      {
+        "id": "task_e3461f0e",
+        "stage": "primary",
+        "focus": "scripts/network-none-fixture.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_e3461f0e",
+        "branch": "bruv/pr45-primary-scripts-network-none-fixtur-e3461f0e",
+        "status": "running"
       }
     ]
   },
@@ -320,6 +336,38 @@
         "branch": "bruv/pr45-judge-scripts-live-study-trial.ts-f2207257",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "handled"
+      },
+      {
+        "id": "task_d54f9cf5",
+        "stage": "primary",
+        "focus": "scripts/offline-openai-default-transport.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_d54f9cf5",
+        "branch": "bruv/pr45-primary-scripts-offline-openai-defa-d54f9cf5",
+        "status": "running"
+      },
+      {
+        "id": "task_93771cb4",
+        "stage": "primary",
+        "focus": "scripts/probe-live-capability.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_93771cb4",
+        "branch": "bruv/pr45-primary-scripts-probe-live-capabili-93771cb4",
+        "status": "running"
+      },
+      {
+        "id": "task_852c860e",
+        "stage": "primary",
+        "focus": "scripts/probe-live-controlled.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_852c860e",
+        "branch": "bruv/pr45-primary-scripts-probe-live-controll-852c860e",
+        "status": "running"
+      },
+      {
+        "id": "task_37841a12",
+        "stage": "primary",
+        "focus": "scripts/probe-live-recorded.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_37841a12",
+        "branch": "bruv/pr45-primary-scripts-probe-live-recorded-37841a12",
+        "status": "running"
       }
     ]
   },
