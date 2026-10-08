@@ -2,6 +2,8 @@
 
 ## State and delivery
 
+Current continuation, exact counts, guarded setup proof, safety limits and durable scheduler/worktree provenance are in [PR45 resume map](structural-readability-pr45-resume.md). Initial launch facts below are historical; coverage and area ledgers retain exact current focus decisions. Whole-repo completion still requires all focuses, exact-source audit, independent final whole-diff review and honest safe-gate reporting. Parent alone publishes to PR45.
+
 Whole-repo run started; no whole-repo readability acceptance yet. Eight area orchestrators are launching per-file primary workers and independent judges. Exact IDs, durable paths and branches are in [area jobs](structural-readability-repo-wide-jobs.json). Integration checkout: `/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_e5546eb4`, branch `bruv/structural-readability-repo-wide`. Initial tree was clean at `118edf14db266c51d563c83342fef6dacdc5267b` (judge-accepted owner pilot), descended from upstream `886c4c84`. The rejected 662-file naming sweep is not imported. No source edits, push or PR creation in initialization.
 
 Deliver one integrated result to **existing PR #45**, not area PRs or piecewise pilots. Keep progress quietly in the background until integrated. Read [values](../values.md), [guidance](structural-readability-guidance.md) and [pilot](structural-readability-owner-pilot.md); values already contain the judge lesson and are unchanged.
