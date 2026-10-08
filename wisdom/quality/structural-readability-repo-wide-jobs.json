@@ -1134,7 +1134,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_33f15a43",
         "branch": "bruv/pr45-primary-tests-claude-native-subagen-33f15a43",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "82f05d1928c624a630323fd3f7fb479dedfaa0ad"
       },
       {
         "id": "task_555b6c64",
@@ -1193,6 +1194,15 @@
         "focus": "tests/claude-native-app-delegation-driver.test.mjs",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_2a5cad2b",
         "branch": "bruv/pr45-primary-tests-claude-native-app-del-2a5cad2b",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_e186a894",
+        "stage": "primary",
+        "focus": "tests/claude-native-history-driver.test.mjs",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_e186a894",
+        "branch": "bruv/pr45-primary-tests-claude-native-history-e186a894",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
       }

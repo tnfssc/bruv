@@ -10427,13 +10427,54 @@
       "initialBlob": "58d83d7f782388c516f3897eb8cb6a364de866a4",
       "status": "pending",
       "area": "compatibility-t3",
-      "resumeState": "pending-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_33f15a43",
+      "primaryCommit": "82f05d1928c624a630323fd3f7fb479dedfaa0ad",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "82f05d1928c624a630323fd3f7fb479dedfaa0ad",
       "report": "wisdom/quality/structural-readability-areas/compatibility-t3.json",
-      "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+      "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection.",
+      "primaryBase": "b7e3d4b29cc6e2c333be6e165dc763d2259553ee",
+      "primaryResult": "seedLinkedReturnEvidence(root) owns construction of the linked persisted fixture, including private fields used to exercise redaction. The test visibly owns its temporary-root lifetime, capture with page state, correlation/status/privacy assertions, final capture without a page, and cleanup. All original fixture statements and assertion expressions remain unchanged modulo indentation; other tests and production sources are untouched.",
+      "primaryPaths": ["tests/claude-native-subagent-return.test.mjs"],
+      "primaryChecks": [
+        {
+          "check": "Read wisdom/values.md and structural-readability-guidance.md; inspected only focus matching ledger/evidence entries",
+          "result": "complete; no prior focus candidate/rejection recorded, focus existed at preserved baseline blob"
+        },
+        {
+          "check": "Traced actual callers and implementations",
+          "result": "subagent-driver.mjs captures evidence in same-root return finally and flushCapture without page; checkSameRootReply/checkConsumedPromptOwnership and subagent-model.mjs after-child behavior inspected; no production changes"
+        },
+        {
+          "check": "Repository Biome format --write on changed focus only through node:child_process argv",
+          "result": "passed; no fixes applied",
+          "retainedEnvironment": "/tmp/pr45-return-format-Iu5ks1"
+        },
+        {
+          "check": "Static fixture and assertion preservation comparison against pre-change HEAD",
+          "result": "passed; original setup statements and all assert expressions identical modulo indentation"
+        },
+        {
+          "check": "/usr/bin/node --check tests/claude-native-subagent-return.test.mjs",
+          "result": "passed; syntax only, no imports/test execution",
+          "retainedEnvironment": "/tmp/pr45-return-node-check-Zia5IZ"
+        },
+        {
+          "check": "git diff --check",
+          "result": "passed"
+        },
+        {
+          "check": "Initial syntax command using process.execPath",
+          "result": "failed: runtime executable was /home/tnfssc/.local/bin/bruv, which rejects --check; retried successfully with explicit /usr/bin/node",
+          "retainedEnvironment": "/tmp/pr45-return-syntax-Bwjn87"
+        }
+      ],
+      "primaryLimits": [
+        "No repository setup, tests or builds run; parent owns audited isolated batch gates.",
+        "No independent readability verdict claimed; parent launches fresh judge.",
+        "No per-worker wisdom edits; parent owns aggregate wisdom. No new values change needed for this scoped extraction."
+      ]
     },
     {
       "file": "tests/cli.test.ts",

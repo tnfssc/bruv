@@ -2755,11 +2755,11 @@
       "acceptedBlob": null,
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_33f15a43",
+        "primaryCommit": "82f05d1928c624a630323fd3f7fb479dedfaa0ad",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary",
+        "sourceCommit": "82f05d1928c624a630323fd3f7fb479dedfaa0ad",
+        "state": "needs-judge",
         "reason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
       }
     },
