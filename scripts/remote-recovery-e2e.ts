@@ -142,9 +142,8 @@ const launch = async (command: (s: string) => void, name: string) => {
   await wait(() => !!state().tasks[id]?.task?.questions?.length, "question " + name);
   return id;
 };
-try {
-  send("/remote connect fixture-owner /usr/local/bin/bruv");
-  await wait(() => existsSync(statePath) && !!state().connection, "connect");
+// Each proof keeps the accepted identity, the transport disturbance, and reconciliation together.
+async function verifyLaunchRetryPreservesOwnerProcess() {
   // Discard only a genuine successful launch reply after the owner accepted it.
   // The cached uncertain intent must be retried with its original taskId.
   writeFileSync(join(drop, "drop-next-launch"), "one-shot\n");
@@ -181,7 +180,9 @@ try {
     "owner task count",
     idsBefore.length,
   );
+}
 
+async function verifyAnswerRetryPreservesReply() {
   const lost = await launch(send, "LOST_REPLY");
   const q = state().tasks[lost].task.questions[0];
   writeFileSync(join(drop, "drop-next-answer"), "one-shot\n");
@@ -210,7 +211,9 @@ try {
     "rpc",
     rpcOut.slice(-500),
   );
+}
 
+async function verifySessionSwitchPreservesTaskOwners() {
   // Run real interactive binary in tmux. PATH is explicit: fish/tmux may reset it.
   const quote = (x: string) => "'" + x.replaceAll("'", "'\\''") + "'";
   const cmd = [
@@ -295,6 +298,15 @@ try {
     "newFrame",
     newFrame.slice(-160),
   );
+}
+
+try {
+  send("/remote connect fixture-owner /usr/local/bin/bruv");
+  await wait(() => existsSync(statePath) && !!state().connection, "connect");
+  await verifyLaunchRetryPreservesOwnerProcess();
+  await verifyAnswerRetryPreservesReply();
+  // Keep RPC alive: it answers the old session task from outside the interactive session.
+  await verifySessionSwitchPreservesTaskOwners();
 } finally {
   rpc.kill();
   provider.stop();

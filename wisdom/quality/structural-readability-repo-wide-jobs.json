@@ -228,6 +228,15 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_7d28ea98",
         "branch": "bruv/pr45-judge-scripts-remote-recovery-e2e.t-7d28ea98",
         "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled"
+      },
+      {
+        "id": "task_b27cf32c",
+        "stage": "judge",
+        "focus": "scripts/remote-root-placement-e2e.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_b27cf32c",
+        "branch": "bruv/pr45-judge-scripts-remote-root-placement-b27cf32c",
+        "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
       }
     ]

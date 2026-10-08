@@ -2999,12 +2999,14 @@
     {
       "file": "scripts/remote-recovery-e2e.ts",
       "initialBlob": "7dc219cb2d14530fd8ce0738623792c6016a1de6",
-      "status": "pending",
+      "status": "accepted",
       "area": "remote",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_927bcc06",
       "primaryCommit": "688dd7ab7c441ea13f4a248c4044a1a7455f6be5",
-      "judgeIds": [],
+      "judgeIds": [
+        "task_7d28ea98"
+      ],
       "sourceCommit": "688dd7ab7c441ea13f4a248c4044a1a7455f6be5",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
       "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
@@ -3041,6 +3043,24 @@
         "No repository setup, tests, builds, remote recovery actions or credential/device access performed. Parent owns isolated runtime gates and fresh independent actual-code judgment.",
         "Optional TypeScript AST audit could not load /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/typescript/lib/typescript.js (ENOENT); exact source-preservation audit used instead.",
         "No per-worker wisdom edits; parent owns aggregate wisdom."
+      ],
+      "acceptedBlob": "379a52fc59755bd7eddfaa2f9d00c35ac3d2adcb",
+      "result": "The base already keeps each scenario contiguous, so extraction alone is not proof of improvement. Actual candidate reading nevertheless gains a useful orchestration boundary: the final try now exposes connect -> launch identity proof -> answer identity proof -> session ownership proof -> shared finally without requiring the reader to scan the long assertion sequence to find its phases. Each operation has a complete semantic journey, not an arbitrary chunk: accepted taskId and owner PID/startTime survive a dropped launch response and retry; accepted replyId/answer survive response loss, sync and same-answer retry; original/new session files survive /new, external answer and /resume while pane, scrollback and journal assertions check non-adoption. Local identities no longer visually span the other proofs. The RPC-lifetime comment explains the otherwise non-obvious cross-session sender dependency. I considered NO CHANGE NEEDED because the original bodies were already readable; ACCEPT is warranted for the newly explicit scenario/lifetime overview, not for renaming or test counts. Unchanged decision: retain the direct fixture setup, transport/state helpers and shared cleanup; no context bag, additional framework, unrelated edits or additional extraction is needed.",
+      "systemReason": "Compared the candidate against its actual parent, which equals the supplied primary base. The sole changed source is the focus. scripts/remote-e2e.sh still supplies disposable fixture HOME/agent state, binary and drop directory, installs recovery-ssh.sh only for this script, and dispatches Bun to the selected script. The unchanged shim forwards a genuine owner request before verifying and withholding a successful launch/answer response; ownerQuestion/ownerSaved/ownerTaskIds bypass the shim through /usr/bin/ssh to inspect fixture-owner authority. Traced /remote commands in src/remote/extension.ts to client.ts: launch attributes the current session, retry reuses saved taskId/intent (or syncs accepted work), answer reuses prior reply identity, and sync reconciles remote observations. client.ts persists launch intent and uncertain reply identity before transport, pins owner/epoch, and retains uncertainty on lost replies. owner.ts returns an existing matching launch instead of redispatching and replays matching answer receipts. Session-start replaces the extension observation; owned jobs and job observations filter by jobSessionFile. This matches the interactive proof that answers the old task via the still-live RPC process without adopting it into the new interactive session. The extracted operations remain serially awaited under the same finally; setup, commands, waits, identity assertions, owner reads and cleanup are unchanged. This is a readability judgment of fixture code, not a claim of real authentication, device operation or runtime acceptance.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read only focus records in area/repo-wide ledgers: pending, initialBlob 7dc219cb2d14530fd8ce0738623792c6016a1de6, no previous accepted judgment.",
+        "Git parent verification: 688dd7ab parent is 6adca7ac2ffc4107f298b127600257efb5126e46; diff name list contains only scripts/remote-recovery-e2e.ts.",
+        "Read actual candidate script and base patch/orchestration via git object contents, not checkout HEAD.",
+        "Read-only textual extraction comparison confirms all three proof bodies exactly match their base scenario bodies.",
+        "Resolved exact candidate Git blob 379a52fc59755bd7eddfaa2f9d00c35ac3d2adcb.",
+        "Traced unchanged actual runner, transport loss fixture, command/client/owner reconciliation and session-scoped ownership code."
+      ],
+      "limits": [
+        "No setup, tests, builds, recovery actions, credentials, device access or runtime fixture execution performed; parent owns audited isolated batch gates.",
+        "No source edits, delegation, cleanup, push, PR or merge. Only the requested untracked judgment artifact is written.",
+        "Shared fixture dependencies remain module-scoped; this is intentionally a local scenario refactor, not an isolation redesign. Existing startup/teardown behavior is preserved, not newly runtime-validated.",
+        "Runtime agent.model verification remains external to this judgment."
       ]
     },
     {

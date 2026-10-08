@@ -155,18 +155,21 @@
     {
       "focus": "scripts/remote-recovery-e2e.ts",
       "initialBlob": "7dc219cb2d14530fd8ce0738623792c6016a1de6",
-      "status": "pending",
+      "status": "accepted",
       "judgeRounds": [],
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "379a52fc59755bd7eddfaa2f9d00c35ac3d2adcb",
         "primaryId": "task_927bcc06",
         "primaryCommit": "688dd7ab7c441ea13f4a248c4044a1a7455f6be5",
-        "judgeIds": [],
+        "judgeIds": [
+          "task_7d28ea98"
+        ],
         "sourceCommit": "688dd7ab7c441ea13f4a248c4044a1a7455f6be5",
-        "state": "needs-judge",
-        "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+        "state": "accepted-joined",
+        "reason": "The base already keeps each scenario contiguous, so extraction alone is not proof of improvement. Actual candidate reading nevertheless gains a useful orchestration boundary: the final try now exposes connect -> launch identity proof -> answer identity proof -> session ownership proof -> shared finally without requiring the reader to scan the long assertion sequence to find its phases. Each operation has a complete semantic journey, not an arbitrary chunk: accepted taskId and owner PID/startTime survive a dropped launch response and retry; accepted replyId/answer survive response loss, sync and same-answer retry; original/new session files survive /new, external answer and /resume while pane, scrollback and journal assertions check non-adoption. Local identities no longer visually span the other proofs. The RPC-lifetime comment explains the otherwise non-obvious cross-session sender dependency. I considered NO CHANGE NEEDED because the original bodies were already readable; ACCEPT is warranted for the newly explicit scenario/lifetime overview, not for renaming or test counts. Unchanged decision: retain the direct fixture setup, transport/state helpers and shared cleanup; no context bag, additional framework, unrelated edits or additional extraction is needed."
       },
-      "acceptedBlob": null
+      "acceptedBlob": "379a52fc59755bd7eddfaa2f9d00c35ac3d2adcb"
     },
     {
       "focus": "scripts/remote-root-placement-e2e.ts",
@@ -4326,7 +4329,7 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 80,
-    "pending": 42
+    "accepted": 81,
+    "pending": 41
   }
 }
