@@ -4406,10 +4406,10 @@
       "resume": {
         "status": "pending",
         "acceptedBlob": "4d81158abaa1190eb8853d86c72516ce99cb1ac0",
-        "primaryId": "task_19ac106b",
-        "primaryCommit": "191812d4b948379cfd5d93861e3892041494f153",
-        "sourceCommit": null,
-        "state": "needs-rework"
+        "primaryId": "task_2f4118e2",
+        "primaryCommit": "1f64a02774c8856fc10ef60485816dade9fd2944",
+        "sourceCommit": "1f64a02774c8856fc10ef60485816dade9fd2944",
+        "state": "needs-judge"
       }
     },
     {
@@ -4487,8 +4487,10 @@
       "resume": {
         "status": "pending",
         "acceptedBlob": "149e63f761488ffd85204d61911f53861f8721e6",
-        "sourceCommit": "953636ca924944dbf67f42af22a9c7870fe212ac",
-        "state": "needs-primary-final-blob"
+        "primaryId": "task_f57ee304",
+        "primaryCommit": "2a45b24ddace53a140e15cbad9f6521b64cfccb3",
+        "sourceCommit": "2a45b24ddace53a140e15cbad9f6521b64cfccb3",
+        "state": "needs-judge"
       }
     },
     {

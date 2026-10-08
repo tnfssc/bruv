@@ -19828,8 +19828,8 @@
       "initialBlob": "absent",
       "area": "agent-history-session-goals",
       "status": "pending",
-      "resumeState": "needs-rework",
-      "sourceCommit": null,
+      "resumeState": "needs-judge",
+      "sourceCommit": "1f64a02774c8856fc10ef60485816dade9fd2944",
       "acceptedRelatedJudges": ["task_572eec54"],
       "acceptedBlob": "4d81158abaa1190eb8853d86c72516ce99cb1ac0",
       "validationFailure": {
@@ -19842,23 +19842,46 @@
         ],
         "required": "Resolve real typed fixture contract while preserving all parity assertions; new exact source requires fresh independent judgment."
       },
-      "primaryId": "task_19ac106b",
-      "primaryCommit": "191812d4b948379cfd5d93861e3892041494f153",
-      "primaryBase": "191812d4b948379cfd5d93861e3892041494f153",
-      "primaryResult": "No change needed. The top-level conditional installs the adapter only in its own child process; simplify defines one narrow normalization retaining entry types, messages and settings. editedMessagesAndCheckpoint and contextEditsAcrossBranches own distinct causal journeys with snapshots beside their mutations. The latter visibly captures replacement/reopened/original-body observations before branching away from edits, then captures repeated-compaction settings. The emitted checkpoint/branchEdits keys directly match the caller’s grouped assertions and full native/adapted equality. Process lifetime is owned by the subprocess harness; extracting more phases would shuttle entry IDs and snapshots without clarifying authority.",
-      "primaryPaths": [],
+      "primaryId": "task_2f4118e2",
+      "primaryCommit": "1f64a02774c8856fc10ef60485816dade9fd2944",
+      "primaryBase": "2a45b24ddace53a140e15cbad9f6521b64cfccb3",
+      "primaryResult": "Retained the two causal journeys and every parity observation: edited messages lead directly to their compaction checkpoint; replacement projection, reopened projection and original-body evidence are captured before branching away; inactive edit rejection and branch-without-edits precede repeated compaction/settings observations. The child-only adapter install and harness-owned process lifetime remain distinct. A validated definite-string root now crosses into both scenarios. Normalization narrows the real message union and retains the prior role-only JSON representation for content-less messages instead of inventing content. The persisted session file is asserted where reopening occurs. Further phase extraction would only shuttle entry IDs/snapshots without clarifying authority.",
+      "primaryPaths": ["tests/fixtures/history-projection-parity.ts"],
       "primaryChecks": [
-        "Read complete actual fixture and its test caller, shared history fixture harness, and subprocess helper; read repository values and structural guidance.",
-        "Compared git show candidate bytes to current source and exact HEAD blobs: identical. No old branch merged or candidate files copied.",
-        "Reviewed filesystem/process effects statically: owned PROBE_ROOT and HOME/config/cache/data/state/SDK/session/TMP directories; explicit subprocess argv/environment; no shell cleanup in these fixtures or shared harness. No runtime safety proof claimed.",
-        "Read assigned-focus evidence search and only related caller rows in /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_016abd3c/wisdom/quality/structural-readability-areas/agent-history-session-goals-resume-reconciliation.json."
+        {
+          "kind": "reading",
+          "result": "Read entire current/rejected fixture, caller grouped assertions/full native-adapted equality, owned-fixture helper and subprocess run lifecycle, SDK message union/projection/persistence contracts, values and structural guidance. Assigned focus has no row in the reconciliation rows; inspected only its parity caller row and the supplied exact rejected blob/log."
+        },
+        {
+          "kind": "formatter",
+          "result": "exit 0; Formatted 1 file. No fixes applied.",
+          "command": [
+            "/home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/@biomejs/biome/bin/biome",
+            "format",
+            "--write",
+            "tests/fixtures/history-projection-parity.ts"
+          ],
+          "isolation": "/tmp/pr45-parity-format-5LMECG",
+          "provenance": "/tmp/pr45-parity-format-5LMECG/formatter-provenance.json",
+          "workspace": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_2f4118e2"
+        },
+        {
+          "kind": "static-source-preservation",
+          "result": "Reversing exactly the three contract edits reproduces rejected blob 4d81158abaa1190eb8853d86c72516ce99cb1ac0 byte-for-byte. No caller assertions or other source files changed."
+        },
+        {
+          "kind": "git-diff-check",
+          "result": "passed"
+        },
+        {
+          "kind": "commit-scope",
+          "result": "Source-only commit changes exactly the focus file; no active commit hooks."
+        }
       ],
       "primaryLimits": [
-        "No tests, setup, builds, live authentication, credential access, cleanup, delegation, or publication performed. Parent owns audited isolated gates and independent judgments.",
-        "No source changed; formatter and new source commit are not applicable. sourceCommit is the exact existing Git HEAD.",
-        "Reconciliation evidence contains no listed fixture-focus rows, candidate 8d04882c7fd0b6165ac217f9a7a7bf893262dd33 reference, or matching fixture rejection. Related caller rows say pending-primary / NO COMPLETED FOCUS JUDGMENT; this is not independent acceptance.",
-        "Durable source provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_19ac106b. The harness defines retained mkdtemp test roots; no fixture or temporary test root was executed/created in this review.",
-        "Wisdom and values left unchanged: no new general lesson; parent owns aggregate wisdom."
+        "No setup, tests, build or noEmit gate run: parent owns audited isolated gates. The fresh source still needs parent-owned noEmit/parity validation and independent judgment.",
+        "No delegation, recovery investigation, cleanup/deletion, secret access, shared dependency mutation or publication performed. Retained formatter-owned environment and durable worktree.",
+        "Wisdom and values unchanged: parent owns aggregate wisdom; this bounded contract correction adds no new general lesson."
       ],
       "resumeRework": {
         "candidate": "191812d4b948379cfd5d93861e3892041494f153",
@@ -19879,7 +19902,14 @@
           "line48/79 getSessionFile string|undefined needs correct explicit fixture invariant"
         ],
         "readingReason": "Concrete joined noEmit fixture type-contract failure, not an independent readability rejection."
-      }
+      },
+      "priorPrimaryLineage": [
+        {
+          "primaryId": "task_19ac106b",
+          "sourceCommit": null,
+          "primaryBase": "191812d4b948379cfd5d93861e3892041494f153"
+        }
+      ]
     },
     {
       "file": "tests/helpers/history-fixture.ts",
@@ -20136,10 +20166,30 @@
       "initialBlob": "absent",
       "area": "agent-history-session-goals",
       "status": "pending",
-      "resumeState": "needs-primary-final-blob",
-      "sourceCommit": "953636ca924944dbf67f42af22a9c7870fe212ac",
+      "resumeState": "needs-judge",
+      "sourceCommit": "2a45b24ddace53a140e15cbad9f6521b64cfccb3",
       "acceptedRelatedJudges": ["task_99b868e8"],
-      "acceptedBlob": "149e63f761488ffd85204d61911f53861f8721e6"
+      "acceptedBlob": "149e63f761488ffd85204d61911f53861f8721e6",
+      "primaryId": "task_f57ee304",
+      "primaryCommit": "2a45b24ddace53a140e15cbad9f6521b64cfccb3",
+      "primaryBase": "2a45b24ddace53a140e15cbad9f6521b64cfccb3",
+      "primaryResult": "Read the entire 121-line helper and its complete probe and wrapper. sdk follows a single setup sequence: owned project marker/settings, session history, ordered frame-before/tasks/frame-after hooks, loader reload, fixture-auth runtime, real SDK creation, session registration, then deterministic stream replacement and observation return. sessionHistory owns the non-obvious persistence step: write a new header exclusively, reopen, append custom entries, reopen again; plain scenarios remain in memory. The adjacent comment explains why both opens matter. The hook list makes ordering and the frameCalls closure visible where the loader is configured. requests captures the effective prompt passed to the stream rather than loader input, so mode changes and custom notification turns remain legible in the caller. disposeModeSessions drains the registered sessions; the probe wires it to afterEach, while the wrapper establishes fresh HOME/config/SDK/TMPDIR before importing SDK code in a child. The eight scenarios expose their options and assertions directly. These are coherent responsibilities already; extracting more fixture phases or renaming sdk would add navigation without resolving a remaining reading problem. Preserve the candidate bytes unchanged; this is a primary decision, not an independent acceptance.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md in full.",
+        "Read whole focus, all SDK probe scenarios, wrapper, history-process isolation helper, and its explicit-argv process launcher.",
+        "Read only matching reconciliation records: the wrapper row is pending-primary; no helper-specific candidate or rejected-judgment record exists in the supplied reconciliation JSON. Do not infer helper acceptance from that ledger.",
+        "Inspected exact candidate 953636ca924944dbf67f42af22a9c7870fe212ac and its three-file patch scope; helper, probe, and wrapper blobs already equal current HEAD exactly. No git show import or branch merge needed.",
+        "Read filesystem/network effects statically: retained mkdtemp fixtures, fresh child HOME/config/SDK/TMPDIR, fixture authPath, modelsPath null, refreshOnCreate false, deterministic stream stub, session disposal without filesystem deletion. No tests/setup/build or auth access performed.",
+        "No source changes: formatter not applicable and no new source commit created. Artifact remains untracked; sourceCommit identifies the exact existing source tree."
+      ],
+      "primaryLimits": [
+        "Parent owns fresh independent judgment and audited isolated runtime gates; no test, setup, build, or live-auth/device validation was run.",
+        "Parent verifies runtime agent.model; this artifact makes no independent model-identity claim.",
+        "No delegation, cleanup, recovery investigation, shared dependency writes, publication, or user-data mutation. Existing worktrees and candidate evidence preserved.",
+        "Durable provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_f57ee304. No temporary code checkout or test/formatter fixture was created.",
+        "Wisdom and values unchanged: no new general lesson; aggregate wisdom remains parent-owned."
+      ]
     },
     {
       "file": "tests/main-agent-mode-sdk.probe.ts",
