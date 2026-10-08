@@ -2740,13 +2740,50 @@
       "initialBlob": "036860d89538bd9d6b19c57065c0a71d7a665111",
       "status": "pending",
       "area": "remote",
-      "resumeState": "pending-primary-unstarted",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_40c1becc",
+      "primaryCommit": "208cedce3b6aeeb781db32fc97c26948ab8baed8",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "208cedce3b6aeeb781db32fc97c26948ab8baed8",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
-      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
+      "primaryBase": "dc52072c1ba954f246476d1acd1311c0f47f0a7d",
+      "primaryResult": "Extracted coherent proof operations and left a short orchestration journey: print boundary, paired placement, session correlation, parent yields, terminal completion/isolation, job-access plus owner-execution proof, and repeat-sync/reconnect proof. Placement returns the stable jobs ID; taskId owns its persisted-ID decoding. Completion state, parent acknowledgement and envelope assertions are together. Original launch transport and isolated environment remain intact; one existing process registry and final teardown still own original and reconnect clients. Discovery/background assertions occur at each placement boundary rather than after both launches; all subsequent A/B sequencing and assertions are retained.",
+      "primaryPaths": [
+        "scripts/remote-jobs-e2e.ts"
+      ],
+      "primaryChecks": [
+        {
+          "check": "Read values, structural guidance, repo-wide assignments/coverage and remote area/resume reconciliation evidence; focus is present at recorded baseline and has no surviving proposed candidate.",
+          "result": "completed"
+        },
+        {
+          "check": "Read remote-e2e.ts, remote-e2e.sh caller and fake-provider.ts placement/check contracts and side effects.",
+          "result": "completed; harness not executed"
+        },
+        {
+          "check": "Biome format via stdin, explicit isolated HOME/config/cache/state/SDK/TMPDIR; no repository write mode.",
+          "result": "exit 0; retained environment /tmp/pr45-remote-jobs-static-5kVIEn"
+        },
+        {
+          "check": "Read-only source-block preservation comparisons for fixture setup/RPC transport, print boundary, parent-yield waits, completion waits/assertions, access/owner evidence, repeat-sync/reconnect, final source assertion/teardown.",
+          "result": "matched; initial access comparison flagged formatter-only trailing commas, then normalized comparison matched. Logs retained in /tmp/pr45-remote-jobs-static-5kVIEn/{preservation,access-preservation}.json"
+        },
+        {
+          "check": "git diff --check and exact changed-path review",
+          "result": "passed; only focus source changed"
+        },
+        {
+          "check": "Optional TypeScript AST import",
+          "result": "unavailable: installed typescript package has no lib/typescript.js; no typecheck executed"
+        }
+      ],
+      "primaryLimits": [
+        "No setup, repository tests, builds, Docker/SSH sessions, credential/device access, push/PR/merge, recovery, or delegation performed. Parent owns audited isolated batch runtime/typecheck gates and independent exact-blob judgment.",
+        "Harness source includes a deletion EXIT trap and fixture network/container activity; direct execution was not attempted under current safety constraints.",
+        "Static formatting/source preservation is not runtime or readability acceptance.",
+        "No wisdom edits: parent owns aggregate wisdom; existing ownership/readability and safety values apply."
+      ]
     },
     {
       "file": "scripts/remote-placement-e2e.ts",
