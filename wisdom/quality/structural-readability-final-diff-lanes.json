@@ -521,7 +521,7 @@
       ],
       "chars": 96344,
       "lines": 2170,
-      "status": "running",
+      "status": "accepted",
       "jobId": "task_dd109e19",
       "model": "openai-codex/gpt-6.1-sol",
       "workspace": {
@@ -536,6 +536,189 @@
         "setupTaskId": "task_00a78d20",
         "setupStatus": "running",
         "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      },
+      "result": {
+        "lane": "lane-04",
+        "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
+        "candidate": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "verdict": "ACCEPT",
+        "diffReadPaths": [
+          "tests/cache-countdown-sdk.test.ts",
+          "tests/cache-countdown.test.ts",
+          "tests/current-pipeline-sdk.test.ts",
+          "tests/fixtures/history-disk-retrieval.ts",
+          "tests/fixtures/history-io-cleanup-failure.ts",
+          "tests/fixtures/history-io-short-writes.ts",
+          "tests/fixtures/history-large-session.ts",
+          "tests/fixtures/history-projection-parity.ts",
+          "tests/fixtures/history-sdk-probe-failure.ts",
+          "tests/fixtures/history-storage-lifecycle.mjs",
+          "tests/fixtures/saved-transcript-startup.ts",
+          "tests/fixtures/transcript-snapshots.ts",
+          "tests/fixtures/wisdom-extension-sdk.ts",
+          "tests/goals-sdk.test.ts"
+        ],
+        "contextReadPaths": [
+          "tests/helpers.ts",
+          "tests/helpers/history-fixture.ts",
+          "tests/history-disk-retrieval.test.ts",
+          "tests/history-storage-io.test.ts",
+          "tests/history-projection-parity.test.ts",
+          "tests/history-storage-lifecycle.test.ts",
+          "tests/history-sdk-probe.test.ts",
+          "scripts/history-sdk-probe.ts",
+          "tests/transcript-snapshots.test.ts",
+          "tests/saved-transcript-startup.test.ts",
+          "tests/wisdom-extension.test.ts",
+          "src/agent/cache-countdown.ts",
+          "src/agent/provider-attempts.ts",
+          "src/agent/extension.ts",
+          "src/agent/cache-affine-compaction.ts",
+          "src/history/disk-entry-store.ts",
+          "src/history/session-manager.ts",
+          "src/history/service.ts",
+          "src/session/transcript-snapshots.ts",
+          "src/session/host.ts",
+          "src/wisdom/extension.ts",
+          "patches/@earendil-works%2Fpi-coding-agent@1.0.3.patch",
+          "package.json",
+          "node_modules/@earendil-works/pi-coding-agent/package.json",
+          "node_modules/@earendil-works/pi-coding-agent/dist/core/extensions/runner.js",
+          "node_modules/@earendil-works/pi-ai/dist/api/anthropic-messages.js"
+        ],
+        "sourceBlobs": {
+          "tests/cache-countdown-sdk.test.ts": "07e3fea1b864eaafee3cfcf6c17ab4d42ce2e18a",
+          "tests/cache-countdown.test.ts": "0e9faeaa1de954835aea36d309bede70079c9ec6",
+          "tests/current-pipeline-sdk.test.ts": "0c667532ac6741686caed409d7724672a10b4d39",
+          "tests/fixtures/history-disk-retrieval.ts": "bb589e72dcab627861635a63051e522191a2da20",
+          "tests/fixtures/history-io-cleanup-failure.ts": "baddd5ace399fa55d0903aad88ee4821905d1c22",
+          "tests/fixtures/history-io-short-writes.ts": "a738fc9cace7df491e9267a165a326e2b61511e6",
+          "tests/fixtures/history-large-session.ts": "e5c78470d6b08537685c82256a6c1b7184fb7d60",
+          "tests/fixtures/history-projection-parity.ts": "ac4d8ff3343cc52ed7bcb57580eb55c98a6b1757",
+          "tests/fixtures/history-sdk-probe-failure.ts": "8dc54fdbef477552d6dbb3559cebb797c79ee267",
+          "tests/fixtures/history-storage-lifecycle.mjs": "111cd72e10e51ed928c7222e625a75666fd54d28",
+          "tests/fixtures/saved-transcript-startup.ts": "b0814e8844dab591845aa8c172edd320423649dc",
+          "tests/fixtures/transcript-snapshots.ts": "2eaf2608f31112be616f737b64e8413e29b8c2b1",
+          "tests/fixtures/wisdom-extension-sdk.ts": "7db5150623e2dee2c09c9726ab91d8cc6f494d82",
+          "tests/goals-sdk.test.ts": "53c696d6d477467e5c65e6d9803ae97c350b17c3"
+        },
+        "sourceJourneys": [
+          {
+            "paths": [
+              "tests/cache-countdown.test.ts",
+              "tests/cache-countdown-sdk.test.ts",
+              "src/agent/cache-countdown.ts",
+              "src/agent/provider-attempts.ts",
+              "src/agent/extension.ts"
+            ],
+            "readingReason": "The registration capture removes repeated fake APIs, while scenario-specific assertions remain visible. Explicit http / terminal-only / payload-rejection modes replace boolean argument combinations without moving request hooks or changing simulated response content. Deleted assertions were retained in narrower scenarios, with added timestamp, branch and session-replacement checks.",
+            "systemReason": "Followed before_provider_request snapshots through HTTP status consumption and terminal debt, native response subscription by sessionManager identity, persist-before-memory updates and branch replay. Repeated session_start unsubscribes the previous owner and clears debt; shutdown clears pending requests. SDK isolation and saved-entry assertions still exercise the shipped extension rather than the harness implementing cache policy."
+          },
+          {
+            "paths": [
+              "tests/current-pipeline-sdk.test.ts",
+              "src/agent/cache-affine-compaction.ts",
+              "src/agent/extension.ts",
+              "node_modules/@earendil-works/pi-ai/dist/api/anthropic-messages.js"
+            ],
+            "readingReason": "The extracted captureOfflineRequests owns serializer interception, output completion and its network counter; scenario transforms and timing remain beside their assertions. The isCompacting callback preserves reads of the mutable scenario flag at capture and response time. Removed Codex/JWT/phase1 imports were unused by this Anthropic loop.",
+            "systemReason": "Read scenario context, prompt, payload and header transformations through current-context preparation, identity/capacity cancellation and summary commit. The actual Anthropic serializer invokes onPayload before the request; throwing the sentinel prevents fetch and the fixture converts only that expected interruption into the scripted summary. Final wire and usage assertions remain attached to the same real simple/native option mappings."
+          },
+          {
+            "paths": [
+              "tests/fixtures/history-disk-retrieval.ts",
+              "tests/history-disk-retrieval.test.ts",
+              "tests/helpers/history-fixture.ts",
+              "src/history/service.ts",
+              "src/history/session-manager.ts"
+            ],
+            "readingReason": "The new typed fixture makes the branch, compaction and shake sequence readable as ordinary code rather than an embedded program. Search/read assertions are local to each visibility transition; the harness owns the retained root and explicit HOME/config/SDK/temp environment.",
+            "systemReason": "Followed metadata-only active-branch traversal to original body materialization. Retrieval includes only text parts, excludes custom entries and thinking/tool arguments, and obtains live tool-result exclusions even when cursor text is pinned to an earlier leaf. A issued ref is checked again through the same scan. The fixture deliberately makes getBranch throw to distinguish adapter traversal from accidental full-body loading and disposes its manager in finally."
+          },
+          {
+            "paths": [
+              "tests/fixtures/history-io-short-writes.ts",
+              "tests/fixtures/history-io-cleanup-failure.ts",
+              "tests/history-storage-io.test.ts",
+              "src/history/disk-entry-store.ts"
+            ],
+            "readingReason": "Named child-process fixtures separate fs module mocks from the parent suite. Each fault script keeps its injection, trigger, and publication/reopen assertions together; no generalized fault context bag was introduced.",
+            "systemReason": "Followed writeAll through byte-oriented short writes, append truncation rollback, and unchanged indexes before subsequent append. Pending publication uses a hard link, so a redundant-spool unlink failure must not invalidate an already committed user entry. The cleanup mock fails that unlink once, and the second append plus reopen verifies the committed path. HISTORY_IO_PATH is created by the caller using mkdtemp; inspected cleanup only, did not run it."
+          },
+          {
+            "paths": [
+              "tests/fixtures/history-large-session.ts",
+              "tests/fixtures/history-storage-lifecycle.mjs",
+              "tests/fixtures/history-projection-parity.ts",
+              "tests/history-storage-lifecycle.test.ts",
+              "tests/history-projection-parity.test.ts",
+              "tests/helpers/history-fixture.ts",
+              "src/history/disk-entry-store.ts",
+              "src/history/session-manager.ts"
+            ],
+            "readingReason": "Large-body/cache checks, rewrite/reset/fork/discovery journeys and native-versus-adapted projection scenarios now have domain-named helpers rather than a long generated source string. Baseline parity source was read to compare the original edit/checkpoint sequence with the extracted fixture. The message factory retains original assistant content and the normalized projection contract.",
+            "systemReason": "Followed parse-on-materialization cache isolation, rewrite of original bodies rather than metadata skeletons, transactional reset/adoption, symlink-preserving rewrite, exclusive fork publication, and header filtering before migration during discovery. Projection edits replace model-facing content while getEntry retains originals; active-branch edit validation rejects missing/system/inactive targets. Native and adapted parity run in separate processes so prototype installation cannot contaminate the control. Temporary manager/spool cleanup remains owned by adapter disposal or bounded child exit."
+          },
+          {
+            "paths": [
+              "tests/fixtures/history-sdk-probe-failure.ts",
+              "tests/history-sdk-probe.test.ts",
+              "scripts/history-sdk-probe.ts",
+              "src/history/session-manager.ts",
+              "src/history/disk-entry-store.ts"
+            ],
+            "readingReason": "The preload is a narrow lifecycle verifier: keep the pending store alive, fail first message append, snapshot before directory removal, and assert disposal preceded that removal. The negative control changes only manager disposal, not the failure or directory finalizer.",
+            "systemReason": "Read the soak script through session.dispose, runProbe manager finally, and outer mkdtemp-directory finally. The fixture verifies pending spool removal before outer cleanup rather than treating absent directories or garbage collection as evidence of manager cleanup. Module patches are limited to the spawned test process."
+          },
+          {
+            "paths": [
+              "tests/fixtures/transcript-snapshots.ts",
+              "tests/transcript-snapshots.test.ts",
+              "src/session/transcript-snapshots.ts",
+              "src/session/host.ts"
+            ],
+            "readingReason": "The filesystem contract suite is separated from its subprocess/root owner and explicitly rejects a missing/mismatched private TMPDIR. Tests state identity, TTL, budget, lock, symlink and rollback expectations directly; no fixture wrapper hides their effects.",
+            "systemReason": "Followed host handoff serialization to content-addressed snapshots, byte admission under the shared-store lock, reuse without rewriting and refreshed lifetime, expiry of addressed files only, and partial-write rollback that preserves EEXIST content. The host retains immutable content even if the branch changes after creation because other queued readers can share it. Each fixture cleanup is inside the caller-created private temp store; none was executed."
+          },
+          {
+            "paths": [
+              "tests/fixtures/saved-transcript-startup.ts",
+              "tests/saved-transcript-startup.test.ts",
+              "patches/@earendil-works%2Fpi-coding-agent@1.0.3.patch"
+            ],
+            "readingReason": "Saved and empty startup helper extraction preserves all gate releases, await ordering, invalidation counts and theme/content/width checks from the deleted inline branches. Each helper contains one complete readiness race instead of interleaving both scenarios.",
+            "systemReason": "Read the shipped startup patch: saved messages start grammar readiness after editor mount and await it after extension rebind, before rendering messages; empty sessions paint first and later invalidate only while initialized. The fixture calls the SDK method rather than copying it, isolates managed-tool lookup and grammar scheduling, and the caller retains owned HOME/config/SDK/temp paths."
+          },
+          {
+            "paths": [
+              "tests/fixtures/wisdom-extension-sdk.ts",
+              "tests/wisdom-extension.test.ts",
+              "src/wisdom/extension.ts",
+              "src/agent/extension.ts",
+              "node_modules/@earendil-works/pi-coding-agent/dist/core/extensions/runner.js"
+            ],
+            "readingReason": "A concrete SDK fixture adds an integration witness beyond synthetic hook overwrite tests. Its two first-effect modes differ only at command entry and keep output capture/session teardown straightforward.",
+            "systemReason": "Followed session_start as root, late bruv-agent depth/type append, wisdom command/prompt rootAllowed callback, definitive ordinary-turn identity rehydration and chained SDK prompt contributions. Wisdom is registered before the final framing hook, so the callback must restore identity itself to avoid leaking root guidance. The child marker drives both command refusal and normal subagent guidance on two actual SDK turns; explicit shutdown is awaited before session.dispose."
+          },
+          {
+            "paths": [
+              "tests/goals-sdk.test.ts",
+              "src/agent/extension.ts"
+            ],
+            "readingReason": "offlineResponse removes three copies of event-stream construction without absorbing goal lifecycle policy. The three callers still select tool content and stop reason explicitly; bound model, shared usage and timestamp timing match the removed code.",
+            "systemReason": "Read set/update/clear scripts, task-complete continuation scripts, and failing print-completion cycle scripts. Each returns the same queued done/end sequence into real SDK execute dispatch; the helper does not choose goals, milestones, completion, or handoff behavior. This is a local delivery helper, not a second lifecycle authority."
+          }
+        ],
+        "integrationReadingReason": "ACCEPT for this bounded lane. Complete assigned baseline-to-candidate diffs, including removed setup/assertion blocks, were read and linked to actual candidate callers and authority/lifetime code. The main improvement is separating executable child scenarios and transport delivery from scenario policy: narrow helpers keep mutable timing or fault state within their owner instead of introducing broad reusable context bags. Existing assertions remain locally explainable, and added process isolation aligns global fs mocks/prototype adapters with their lifetime. No source-level contradiction or behavioral regression attributable to these lane changes was found along the reviewed cross-file journeys. This is not a whole-repository or runtime sign-off.",
+        "objections": [],
+        "limits": [
+          "All fourteen assigned diffs fully read; no unread assigned diff gaps. Related context was read selectively, not in full everywhere.",
+          "Read-only review: no tests, setup, builds, install, formatter, auth/device/network access, cleanup, recovery work or source edits. No unsupported Pi preparation was retried or bypassed. No delegated agents were launched. Only the requested untracked result is written.",
+          "Exact candidate HEAD and clean starting worktree verified. Durable provenance is this retained worktree at /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_dd109e19; sourceBlobs are Git candidate objects, not artifact/test summaries. Existing SDK 1.0.3 files were inspected as supplemental option/dispatch context only, without preparing or claiming their runtime patch state.",
+          "Prior per-file judgments, coverage summaries and green tests were not used. Public behavior assessment is source-only; live credentials/device behavior and execution outcomes remain unverified.",
+          "Projection parity intentionally normalizes summary/bash messages to role-only, so its summary-text absence assertion is not evidence of summary-body parity. This normalization existed in the baseline inline scenario; reviewed adapter checkpoint/edit routing separately rather than treating the assertion as a full behavioral proof.",
+          "Some existing SDK/probe/IO/snapshot callers inherit portions of process.env and remove their owned mkdtemp paths; these were inspected but not executed. Any later authorized run still requires explicit isolated HOME/config/SDK argv/env and retained fixtures under the user constraints."
+        ]
       }
     },
     {
@@ -774,7 +957,7 @@
       ],
       "chars": 98037,
       "lines": 2155,
-      "status": "running",
+      "status": "accepted",
       "jobId": "task_285d4886",
       "model": "openai-codex/gpt-6.1-sol",
       "workspace": {
@@ -789,6 +972,129 @@
         "setupTaskId": "task_a47ae319",
         "setupStatus": "running",
         "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      },
+      "result": {
+        "lane": "lane-06",
+        "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
+        "candidate": "af3602cf3d5b62641450c7cc24bb0350334b6652",
+        "verdict": "ACCEPT",
+        "diffReadPaths": [
+          "tests/history-storage-io.test.ts",
+          "tests/history-storage-lifecycle.test.ts",
+          "tests/history.test.ts",
+          "tests/instruction-mode.test.ts",
+          "tests/main-agent-mode-sdk.probe.ts",
+          "tests/main-agent-mode-sdk.test.ts",
+          "tests/manual-shake-sdk.test.ts",
+          "tests/manual-shake.test.ts",
+          "tests/native-compaction.test.ts"
+        ],
+        "contextReadPaths": [
+          "tests/helpers.ts",
+          "tests/history-process.ts",
+          "tests/helpers/main-agent-mode-sdk.ts",
+          "tests/fixtures/history-io-short-writes.ts",
+          "tests/fixtures/history-io-cleanup-failure.ts",
+          "tests/fixtures/history-storage-lifecycle.mjs",
+          "src/history/disk-entry-store.ts",
+          "src/history/session-manager.ts",
+          "src/history/service.ts",
+          "src/history/shake-record.ts",
+          "src/agent/instruction-mode.ts",
+          "src/agent/instruction-continuity.ts",
+          "src/agent/manual-shake.ts",
+          "src/agent/native-compaction.ts",
+          "src/agent/extension.ts",
+          "src/agent/cache-affine-compaction.ts",
+          "src/prompts.ts",
+          "src/typescript/job-bridge.ts",
+          "src/cli.ts"
+        ],
+        "sourceBlobs": {
+          "tests/history-storage-io.test.ts": "7f0efbed4f5941360e28ede13c2c3d4027ec1da9",
+          "tests/history-storage-lifecycle.test.ts": "056cc3b7fde0dbc41c28375a5340620658f4e7fb",
+          "tests/history.test.ts": "2613abbf1434c98127489b87575149ca7d507406",
+          "tests/instruction-mode.test.ts": "83ee0e37976b48d52ce63c562248e3373224f8aa",
+          "tests/main-agent-mode-sdk.probe.ts": "e364aad3607a688681d6b7c4a099d19097c5a1c4",
+          "tests/main-agent-mode-sdk.test.ts": "d67cd10422a127f5163aa70c8d2bbb06fae1f4f5",
+          "tests/manual-shake-sdk.test.ts": "4c78304c6cd0d25410a8ec31ffcf55b4a2dcda12",
+          "tests/manual-shake.test.ts": "cf84c73d7f7669bb6fcb42ec6954c68c2a27f22c",
+          "tests/native-compaction.test.ts": "d6c296fe8c4af8283bf4e281f4fa3bcf16861254"
+        },
+        "sourceJourneys": [
+          {
+            "paths": [
+              "tests/history-storage-io.test.ts",
+              "tests/fixtures/history-io-short-writes.ts",
+              "tests/fixtures/history-io-cleanup-failure.ts",
+              "src/history/disk-entry-store.ts",
+              "src/history/session-manager.ts",
+              "tests/history-storage-lifecycle.test.ts",
+              "tests/fixtures/history-storage-lifecycle.mjs",
+              "tests/helpers.ts"
+            ],
+            "readingReason": "Inline filesystem mock programs become named child fixtures; checked their actual bodies, not merely the replacement calls. Short-write failure still occurs after a partial append, compares exact previous bytes, and reopens successfully. Cleanup-failure now explicitly verifies publication on the user append. Lifecycle fixture preserves original rewrite, symlink, reset-failure, collision, migration and foreign-discovery assertions and adds label removal/replay checks.",
+            "systemReason": "Disk append writes and publication occur before metadata/cache commit; failure truncates the spool and leaves manager leaf unchanged. A successful hard-link publication is not undone by redundant-link unlink failure. Session rewrite materializes original bodies rather than metadata skeletons, and reset recovery resynchronizes indexes and labels while restoring the old leaf. Persistent open may repair/migrate; this remains distinct from history read-only access."
+          },
+          {
+            "paths": [
+              "tests/history.test.ts",
+              "src/history/service.ts",
+              "src/history/shake-record.ts",
+              "src/history/session-manager.ts",
+              "src/typescript/job-bridge.ts",
+              "src/agent/extension.ts"
+            ],
+            "readingReason": "The large test rearrangement replaces mixed scenarios with named provenance, pagination, exclusions, cross-session loading and work-bound groups. Compared deletions with replacement assertions: Unicode offsets and lone surrogates are retained; pagination still checks continuation and abandoned-leaf rejection. Added role/timestamp/ref ordering, pinned-leaf appends, per-call opt-in and full-scan read validation follow actual service control flow.",
+            "systemReason": "Execute history.search/read route to the extension-owned service with the current context. Cursor snapshots select an old branch leaf only while it remains an ancestor; exclusions are recomputed from the live active branch, so later shake entries hide old cursor results. Cross-session access uses its own O_RDONLY|O_NONBLOCK descriptor and validation, never SessionManager.open, avoiding repair or migration. Real-manager exclusion-work test still exceeds the service bound with valid bounded shake records."
+          },
+          {
+            "paths": [
+              "tests/instruction-mode.test.ts",
+              "tests/main-agent-mode-sdk.test.ts",
+              "tests/main-agent-mode-sdk.probe.ts",
+              "tests/helpers/main-agent-mode-sdk.ts",
+              "tests/history-process.ts",
+              "src/agent/instruction-mode.ts",
+              "src/agent/instruction-continuity.ts",
+              "src/agent/extension.ts",
+              "src/agent/cache-affine-compaction.ts",
+              "src/prompts.ts"
+            ],
+            "readingReason": "Typed startModeSession and prepareFrame fixtures expose command persistence and prepared-frame ownership directly. Real SDK cases are moved intact into a child probe, while sessionHistory owns durable reopen wiring and sdk owns loader/stream setup. The outer test checks both child exit status and completion marker; the marker alone cannot turn failures green.",
+            "systemReason": "Mode persistence is the commit point before memory/frame changes. Only the active branch and newest owned mode entry establish authority; a corrupt newest entry does not revive an older mode. Owner markers derive from session ID, whereas continuity state and classic session ownership are keyed by manager and guarded by session ID. Startup/ordinary hooks scope and refresh; shutdown clears ownership. Child process environment has owned HOME/config/SDK/temp and does not inherit root-mode identity. Custom prompts and other owners remain untouched; model/thinking options remain at each scenario caller."
+          },
+          {
+            "paths": [
+              "tests/manual-shake-sdk.test.ts",
+              "tests/manual-shake.test.ts",
+              "src/agent/manual-shake.ts",
+              "src/history/shake-record.ts",
+              "src/agent/extension.ts"
+            ],
+            "readingReason": "openShakeSession only extracts repeated loader/runtime/session binding with a narrow Pi option surface; redaction extension order, distinct model/compaction settings, provider interception and assertion ownership remain at call sites. Binding failure disposes the partial session. Reviewed unchanged redaction, overflow retry, automatic threshold/cost and carry-forward failure caller assertions alongside the new projection cases.",
+            "systemReason": "Planning refuses ambiguous pending/duplicate protocol windows, but replay authorizes unrelated completed groups. Exact occurrence matching and whole-group selection prevent a partial or redacted multi-result batch from being removed. The added tests distinguish these authorities rather than conflating them. Checkpoint persistence precedes provider-snapshot invalidation. SDK helper preserves fake auth configuration, caller-supplied runtime, settings and extension factories; normal disposal still belongs to tests and retained files are not mistaken for active sessions."
+          },
+          {
+            "paths": [
+              "tests/native-compaction.test.ts",
+              "src/agent/native-compaction.ts",
+              "src/agent/manual-shake.ts",
+              "src/agent/extension.ts"
+            ],
+            "readingReason": "expectInvalidatedHttpAttempt extracts the same dispatch, late SSE response, publication assertions and fetch/subscription restoration used by the two deleted scenarios. Its explicit dispatch promise replaces busy microtask polling. New shake invalidation case holds session, leaf and model constant to exercise generation ownership rather than incidental identity changes.",
+            "systemReason": "Native compaction pins manager/session/leaf/model/thinking and generation before asynchronous auth and HTTP, checks ownership after response and before response observation or checkpoint publication. Session/model events and manual-shake invalidation increment the same generation; extension registration wires committed shake changes to native invalidation. Thus the shared helper tests the real cross-feature lifetime boundary, including no stale response observation or usage/custom-entry publication."
+          }
+        ],
+        "integrationReadingReason": "ACCEPT for this lane only: extracted fixtures and session wiring reduce duplicated inline programs and lifecycle setup without relocating scenario-specific policy into a giant context bag. Test groups now name the actual public contracts. Cross-boundary checks found coherent ownership between disk publication and manager metadata, read-only retrieval and live shake exclusions, persisted instruction modes and manager-scoped frames, and committed shake changes and native in-flight generation invalidation. All nine complete baseline-to-candidate diffs, including deletions, were freshly read; no prior judgments, summaries or green tests supplied the verdict.",
+        "objections": [],
+        "limits": [
+          "Read-only source review; no tests, setup, build, install, formatter, authentication/device actions, credential access, network actions or unsupported Pi preparation were run or retried. No delegation. Only this requested untracked result file was written; candidate source and existing worktrees preserved.",
+          "Durable review provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_285d4886 at candidate HEAD; assigned sourceBlobs obtained directly from exact candidate Git objects. No runtime fixtures were created.",
+          "No unread gaps in assigned diffs. Related-source paths denote actual relevant context reads, not a claim to have read every full production module: storage commit/open/atomic replacement; manager adoption, rollback, append, rewrite, tree, reset, discovery, fork and bounded branch; complete history service, mode and continuity implementations; shake protocol/plan/matching/projection and commit invalidation; native capture/generation/response publication; extension lifecycle/routing, CLI installation, cache-affine adapter installation and execute bridge routing.",
+          "Runtime compatibility, test discovery, process scheduling and actual SDK/provider behavior remain unverified. No live authentication or device access was needed. This is not a whole-repository sign-off.",
+          "Existing owned temporary-path rm calls were inspected but never executed. Main-mode and lifecycle child fixtures use owned home/config/SDK/temp and retain files. I/O subprocess helper still spreads process.env and manual-shake SDK tests run in-process; neither was executed here, and these paths must not be launched against inherited user HOME/config/SDK under the imposed safety constraints."
+        ]
       }
     },
     {
@@ -1719,5 +2025,10 @@
     }
   ],
   "cap": 6,
-  "auxStatus": "completed"
+  "auxStatus": "completed",
+  "pausedForRework": {
+    "lane": "lane-05",
+    "jobId": "task_49b63983",
+    "reason": "Concrete inherited-env SDK failure-probe objection; reserve next free slot for fresh source primary/judge."
+  }
 }
