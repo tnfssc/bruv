@@ -2438,7 +2438,7 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_9b67e0db",
         "branch": "bruv/pr45-judge-3-ui-terminal-cli-focuses-9b67e0db",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled"
       },
       {
         "id": "task_beae5cf1",
@@ -2495,6 +2495,15 @@
         "focus": ["tests/tui-helpers.test.ts", "tests/tui-helpers.ts", "tests/tui-stop-restoration.test.ts"],
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_483b50c3",
         "branch": "bruv/pr45-primary-3-ui-terminal-cli-focuses-483b50c3",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_4722617f",
+        "stage": "judge",
+        "focus": ["tests/startup-tui.test.ts", "tests/startup.test.ts", "tests/terminal-perf-cli.test.ts"],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_4722617f",
+        "branch": "bruv/pr45-judge-3-ui-terminal-cli-focuses-4722617f",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
       }

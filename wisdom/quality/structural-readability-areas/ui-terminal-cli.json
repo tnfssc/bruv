@@ -3422,56 +3422,58 @@
     {
       "focus": "tests/sdk-markdown-blocks.test.ts",
       "initialBlob": "d69a3da5367fb93fdc4c47336260d74c0fc10bfd",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "09c98ee174874df966466af24d868502ecfa7004",
       "integrationState": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
         "acceptedBlob": "09c98ee174874df966466af24d868502ecfa7004",
         "primaryId": "task_3c2b4389",
         "primaryCommit": "93c66a662c7fc498a0f5aee0c3bb824bf4156cc0",
-        "judgeIds": [],
+        "judgeIds": ["task_9b67e0db"],
         "sourceCommit": "93c66a662c7fc498a0f5aee0c3bb824bf4156cc0",
-        "state": "needs-primary-final-blob",
-        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+        "state": "accepted-joined",
+        "reason": "Read the complete candidate and its ae69e082a942073837b9f5a8b3154b174515a4f3 diff. Previously two tests reconstructed ownership of RegExp.prototype.exec separately. measurePlainBlockWork now owns save/install, both forbidden whole-block regex assertions, predicate calls/units/max collection, complete raw-token verification and finally restoration for exactly one synchronous lexer invocation. Scale and count thresholds remain beside their respective test scenarios, after the global hook is restored. This groups a real observation lifetime rather than merely renaming data. The reference token/link corpus, non-GFM/pedantic loops, rich ANSI/Unicode complete-content and width/cache assertions, and own-property subclass hook assertions remain unchanged. Also read all of candidate-changed sdk-large-text-tui: its helpers isolate session seeding and offline CLI launch while the scroll/resize/edit/ANSI/persisted-content journey remains in the test."
       }
     },
     {
       "focus": "tests/sdk-text-wrap-performance.test.ts",
       "initialBlob": "ef27b8c491eb4f7f0d3af9da42c023be709eaec7",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "f0b649a2c7a43306fa18f53dda22fbacff3d7565",
       "integrationState": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "f0b649a2c7a43306fa18f53dda22fbacff3d7565",
         "primaryId": "task_14e54bf3",
         "primaryCommit": "591968f724dc8456caee006ac7de8fd25de7420e",
-        "judgeIds": [],
+        "judgeIds": ["task_9b67e0db"],
         "sourceCommit": "591968f724dc8456caee006ac7de8fd25de7420e",
-        "state": "needs-judge",
-        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+        "state": "accepted-joined",
+        "reason": "Read the whole candidate and its 5ca3455425acb5d485f7faebaace5510b1c4bcdc diff. createOriginalSdkReference groups creation of the copied/reversed utility, import redirection and all three reference exports under one construction authority. beforeAll publishes the reference only once construction has completed, instead of exposing separately assigned utility/Text/Markdown variables and a detached fixture lifetime. Sequential module loading gives Text and Markdown the same reversed utility URL; the remaining dependencies deliberately remain installed. This is a cohesive reference factory, not an arbitrary context bag. The Unicode/ANSI corpus, deterministic generation, fractional and narrow widths, full large-content comparisons, repeat-render identity, resize/invalidate and grapheme yield/cache-correctness assertions remain intact. Read the entire related startup-tui change: one owned startup process now supplies the same offline CLI/env to two intentionally distinct transports, leaving warning/skill autocomplete and first-paint assertions in their scenarios."
       }
     },
     {
       "focus": "tests/settled-execute-render.test.ts",
       "initialBlob": "3451aa3fdb6adf55f912719befe93918a1418650",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "3451aa3fdb6adf55f912719befe93918a1418650",
       "integrationState": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "3451aa3fdb6adf55f912719befe93918a1418650",
         "primaryId": "task_14e54bf3",
         "primaryCommit": "591968f724dc8456caee006ac7de8fd25de7420e",
-        "judgeIds": [],
+        "judgeIds": ["task_9b67e0db"],
         "sourceCommit": "591968f724dc8456caee006ac7de8fd25de7420e",
-        "state": "needs-judge",
-        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+        "state": "accepted-joined",
+        "reason": "Read all 153 lines of the exact candidate focus independently, not as a batch inference. Its fixture visibly connects the native ToolExecutionComponent to the real input/output previews and counts result-component rendering. Each test keeps related lifecycle transitions adjacent: completed last-width caching and invalidation/uninstall; pending/partial/other-tool/image exclusions; then native mouse expansion and live task overlays. The first test deliberately calls restore before its final render-work assertions, then restores again in finally; removing that apparent duplication would remove post-uninstall evidence. The theme reset and task-row/density/settled restoration order are explicit at their ownership boundaries. No source restructuring improves this journey. The candidate focus blob is identical to its primary-base blob. Both candidate-changed related source paths were nevertheless read and audited separately; their fixture/reference-authority changes do not alter this focus."
       }
     },
     {
@@ -3484,11 +3486,12 @@
       "integrationState": "pending",
       "resume": {
         "status": "pending",
+        "acceptedBlob": "b7cec94ca80407458a244437d57b47e4aa847154",
         "primaryId": "task_14e54bf3",
         "primaryCommit": "591968f724dc8456caee006ac7de8fd25de7420e",
         "judgeIds": [],
         "sourceCommit": "591968f724dc8456caee006ac7de8fd25de7420e",
-        "state": "needs-judge",
+        "state": "needs-primary-final-blob",
         "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
       }
     },
@@ -4832,7 +4835,7 @@
     }
   },
   "resumeStatus": {
-    "accepted": 93,
-    "pending": 20
+    "accepted": 96,
+    "pending": 17
   }
 }

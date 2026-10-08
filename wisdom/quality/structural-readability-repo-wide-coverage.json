@@ -14621,12 +14621,12 @@
     {
       "file": "tests/sdk-markdown-blocks.test.ts",
       "initialBlob": "d69a3da5367fb93fdc4c47336260d74c0fc10bfd",
-      "status": "pending",
+      "status": "accepted",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-primary-final-blob",
+      "resumeState": "accepted-joined",
       "primaryId": "task_3c2b4389",
       "primaryCommit": "93c66a662c7fc498a0f5aee0c3bb824bf4156cc0",
-      "judgeIds": [],
+      "judgeIds": ["task_9b67e0db"],
       "sourceCommit": "93c66a662c7fc498a0f5aee0c3bb824bf4156cc0",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
       "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
@@ -14648,17 +14648,31 @@
         "No per-worker wisdom notes or values edits: parent owns the aggregate wisdom. Existing candidate evidence and worktrees preserved."
       ],
       "acceptedRelatedJudges": ["task_5883fa01"],
-      "acceptedBlob": "09c98ee174874df966466af24d868502ecfa7004"
+      "acceptedBlob": "09c98ee174874df966466af24d868502ecfa7004",
+      "result": "Read the complete candidate and its ae69e082a942073837b9f5a8b3154b174515a4f3 diff. Previously two tests reconstructed ownership of RegExp.prototype.exec separately. measurePlainBlockWork now owns save/install, both forbidden whole-block regex assertions, predicate calls/units/max collection, complete raw-token verification and finally restoration for exactly one synchronous lexer invocation. Scale and count thresholds remain beside their respective test scenarios, after the global hook is restored. This groups a real observation lifetime rather than merely renaming data. The reference token/link corpus, non-GFM/pedantic loops, rich ANSI/Unicode complete-content and width/cache assertions, and own-property subclass hook assertions remain unchanged. Also read all of candidate-changed sdk-large-text-tui: its helpers isolate session seeding and offline CLI launch while the scroll/resize/edit/ANSI/persisted-content journey remains in the test.",
+      "systemReason": "Followed the candidate pi-tui patch through its exported GfmBlockTokenizer, scanParagraph and Markdown StrictStrikethroughTokenizer, plus the installed implementations and Marked tokenizer registration. scanParagraph evaluates the negative-lookahead predicate on bounded line lookahead; structural interruptions and non-GFM/pedantic modes intentionally delegate to original matchers. The helper still observes precisely these shipped operations, and the megabyte single-line case still forbids both original block matchers while demanding the entire raw token. Marked enumerates tokenizer hooks and calls them on its base tokenizer, explaining why the unchanged own-hook subclass test matters. Markdown renders styled tokens through wrapTextWithAnsi, visibleWidth and a last-width output cache, so the ANSI/Unicode and repeat-render checks remain meaningful. Related large-text code passes explicit argv/env to run, launches the quoted CLI with env -i inside its owned tmux server, uses explicit session cwd/directory, records fixtureHome in worktree artifacts and retains its fixture instead of deleting HOME. The helper run uses the supplied env rather than spreading inherited environment into it.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Exact base-to-candidate git diff and complete candidate changed-file reading; changed-path enumeration confirms only the two recorded paths.",
+        "git diff --check ae69e082a942073837b9f5a8b3154b174515a4f3 93c66a662c7fc498a0f5aee0c3bb824bf4156cc0 exited 0; exact blob IDs obtained with git rev-parse.",
+        "Static filesystem/process-effect audit only: no regex hook, test, CLI, SDK fixture write or tmux command executed."
+      ],
+      "limits": [
+        "Source-only independent judgment; no setup, tests, builds, git apply, terminal launches, dependency reinstall, network/auth/device access or cleanup performed. Parent owns audited isolated runtime gates and runtime agent.model verification.",
+        "Installed SDK/Marked implementations were read without importing or modifying them; candidate source and patch authority were read from the exact Git objects, not checkout HEAD.",
+        "Durable review provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_9b67e0db. Candidate commits and worktrees retained; no test fixtures created by this review. Candidate mkdtemp fixtures are retained and linked by worktree artifact/provenance records; their runtime behavior remains unverified.",
+        "No source or wisdom edits, delegation, recovery investigation, secret access, user-data mutation, push, PR creation or merge. Only this untracked review artifact was written."
+      ]
     },
     {
       "file": "tests/sdk-text-wrap-performance.test.ts",
       "initialBlob": "ef27b8c491eb4f7f0d3af9da42c023be709eaec7",
-      "status": "pending",
+      "status": "accepted",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_14e54bf3",
       "primaryCommit": "591968f724dc8456caee006ac7de8fd25de7420e",
-      "judgeIds": [],
+      "judgeIds": ["task_9b67e0db"],
       "sourceCommit": "591968f724dc8456caee006ac7de8fd25de7420e",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
       "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
@@ -14679,6 +14693,20 @@
         "No per-worker wisdom edits; parent owns aggregate wisdom. Runtime agent.model verification remains parent-owned.",
         "changedPaths is the complete combined source commit scope for EACH decision, including sibling-focus edits. The settled-render focus itself remains byte-identical.",
         "SDK reference fixture retained in fs.mkdtemp bruv-wrap-reference-*; provenance.json records worktree and installed SDK path. No reference import or reverse patch executed during this task. Shared dependencies remain read-only."
+      ],
+      "acceptedBlob": "f0b649a2c7a43306fa18f53dda22fbacff3d7565",
+      "result": "Read the whole candidate and its 5ca3455425acb5d485f7faebaace5510b1c4bcdc diff. createOriginalSdkReference groups creation of the copied/reversed utility, import redirection and all three reference exports under one construction authority. beforeAll publishes the reference only once construction has completed, instead of exposing separately assigned utility/Text/Markdown variables and a detached fixture lifetime. Sequential module loading gives Text and Markdown the same reversed utility URL; the remaining dependencies deliberately remain installed. This is a cohesive reference factory, not an arbitrary context bag. The Unicode/ANSI corpus, deterministic generation, fractional and narrow widths, full large-content comparisons, repeat-render identity, resize/invalidate and grapheme yield/cache-correctness assertions remain intact. Read the entire related startup-tui change: one owned startup process now supplies the same offline CLI/env to two intentionally distinct transports, leaving warning/skill autocomplete and first-paint assertions in their scenarios.",
+      "systemReason": "Read actual SDK Text render/invalidate and Markdown parser/render/cache paths, installed width measurement and the candidate utility patch. Text normalizes tabs, wraps the entire source and caches by text/width; Markdown independently parses with the installed tokenizer, wraps styled lines and publishes its output cache. The reference intentionally reverses only the utility hunk, not the markdown block patch, so it isolates the layout optimization rather than inventing a second tokenizer oracle. measureVisibleWidth can return an early lower bound only before widthCache publication; the later visibleWidth equality checks therefore still detect a poisoned partial width. Printable ASCII long words bypass segmentation, while non-ASCII spans retain grapheme semantics, matching the unchanged instrumentation. Factory writes and git apply are limited to its mkdtemp copy; git has explicit argv, owned HOME/config/agent/TMPDIR and disabled system/global config authority. Startup has owned HOME/XDG/SDK paths, retained fixture.json with worktree provenance and an owned tmux socket; neither transport inherits credentials/config. Read production startup getters and editor init plus CLI install/restore ordering and native startup/skill callers: quiet presentation suppresses listing/promotion, not skill commands or diagnostics, and editor installation must precede native first paint/color wait. The helper preserves the separate tmux versus plain-PTY timing probes.",
+      "checks": [
+        "Exact base-to-candidate diffs and complete reading of both changed paths, including unchanged corpus/assertion and terminal teardown decisions.",
+        "git diff --check 5ca3455425acb5d485f7faebaace5510b1c4bcdc 591968f724dc8456caee006ac7de8fd25de7420e exited 0; exact blob IDs obtained with git rev-parse.",
+        "Static argv/env, fixture write targets, read-only SDK dependency imports and retained provenance audit. No reverse apply, dynamic fixture import, test or terminal process was run."
+      ],
+      "limits": [
+        "Source-only independent judgment; no setup, tests, builds, git apply, terminal launches, dependency reinstall, network/auth/device access or cleanup performed. Parent owns audited isolated runtime gates and runtime agent.model verification.",
+        "Installed SDK/Marked implementations were read without importing or modifying them; candidate source and patch authority were read from the exact Git objects, not checkout HEAD.",
+        "Durable review provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_9b67e0db. Candidate commits and worktrees retained; no test fixtures created by this review. Candidate mkdtemp fixtures are retained and linked by worktree artifact/provenance records; their runtime behavior remains unverified.",
+        "No source or wisdom edits, delegation, recovery investigation, secret access, user-data mutation, push, PR creation or merge. Only this untracked review artifact was written."
       ]
     },
     {
@@ -14821,12 +14849,12 @@
     {
       "file": "tests/settled-execute-render.test.ts",
       "initialBlob": "3451aa3fdb6adf55f912719befe93918a1418650",
-      "status": "pending",
+      "status": "accepted",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_14e54bf3",
       "primaryCommit": "591968f724dc8456caee006ac7de8fd25de7420e",
-      "judgeIds": [],
+      "judgeIds": ["task_9b67e0db"],
       "sourceCommit": "591968f724dc8456caee006ac7de8fd25de7420e",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
       "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
@@ -14847,6 +14875,21 @@
         "No per-worker wisdom edits; parent owns aggregate wisdom. Runtime agent.model verification remains parent-owned.",
         "changedPaths is the complete combined source commit scope for EACH decision, including sibling-focus edits. The settled-render focus itself remains byte-identical.",
         "No runtime claim about native mouse dispatch, image behavior, theme restoration or adapter cache performance."
+      ],
+      "acceptedBlob": "3451aa3fdb6adf55f912719befe93918a1418650",
+      "result": "Read all 153 lines of the exact candidate focus independently, not as a batch inference. Its fixture visibly connects the native ToolExecutionComponent to the real input/output previews and counts result-component rendering. Each test keeps related lifecycle transitions adjacent: completed last-width caching and invalidation/uninstall; pending/partial/other-tool/image exclusions; then native mouse expansion and live task overlays. The first test deliberately calls restore before its final render-work assertions, then restores again in finally; removing that apparent duplication would remove post-uninstall evidence. The theme reset and task-row/density/settled restoration order are explicit at their ownership boundaries. No source restructuring improves this journey. The candidate focus blob is identical to its primary-base blob. Both candidate-changed related source paths were nevertheless read and audited separately; their fixture/reference-authority changes do not alter this focus.",
+      "systemReason": "Followed installSettledExecuteRendering and the native updateResult/updateArgs/setExpanded/setShowImages/invalidate/updateDisplay/render/handleMouse implementations. The production WeakMap caches only the last width of completed execute tools without native images; updateDisplay clears that cache before rebuilding call/result components, and restoration disables retained wrappers and restores prototypes only while owned. Native images can convert asynchronously and invalidate, so their dynamic path must remain uncached. Native self-render height and result mouse regions explain why a cached shell still needs real mouse expansion testing. Read executeInputPreview/executeOutputPreview: the call observes mutable resultVisible, partial output remains dynamic, and completed output is already cached below the shell, making the native traversal counter meaningful. Read conversation-density child/parent restoration and coordinate translation, sdk-task-rows per-frame snapshot/wrapping/restoration, and CLI install/restore order: overlays and density must remain above the settled shell and be removed before its installer. The synthetic /tmp cwd is only passed into renderer context for this text-only fixture; these previews execute no code and perform no cwd fixture operation. Built-in dark/light initTheme does not enable a watcher. Related startup/reference changes have explicit owned process environments and retained fixture evidence; no runtime command was executed in this review.",
+      "checks": [
+        "git diff 5ca3455425acb5d485f7faebaace5510b1c4bcdc 591968f724dc8456caee006ac7de8fd25de7420e -- tests/settled-execute-render.test.ts is empty; candidate/base git rev-parse both return 3451aa3fdb6adf55f912719befe93918a1418650.",
+        "Complete intrinsic focus and native/production caller reading; distinct per-focus judgment based on lifecycle/cache/overlay authority, not test counts.",
+        "Exact related-path diffs and blob hashes recorded; candidate diff --check exited 0.",
+        "Static effect review confirms this focus itself spawns no commands and creates/removes no directories. It was not imported or run."
+      ],
+      "limits": [
+        "Source-only independent judgment; no setup, tests, builds, git apply, terminal launches, dependency reinstall, network/auth/device access or cleanup performed. Parent owns audited isolated runtime gates and runtime agent.model verification.",
+        "Installed SDK/Marked implementations were read without importing or modifying them; candidate source and patch authority were read from the exact Git objects, not checkout HEAD.",
+        "Durable review provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_9b67e0db. Candidate commits and worktrees retained; no test fixtures created by this review. Candidate mkdtemp fixtures are retained and linked by worktree artifact/provenance records; their runtime behavior remains unverified.",
+        "No source or wisdom edits, delegation, recovery investigation, secret access, user-data mutation, push, PR creation or merge. Only this untracked review artifact was written."
       ]
     },
     {
@@ -14887,7 +14930,7 @@
       "initialBlob": "400c8cec0e31e00ca42ae4581de2c9e6dcf4b873",
       "status": "pending",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-judge",
+      "resumeState": "needs-primary-final-blob",
       "primaryId": "task_14e54bf3",
       "primaryCommit": "591968f724dc8456caee006ac7de8fd25de7420e",
       "judgeIds": [],
@@ -14912,7 +14955,9 @@
         "changedPaths is the complete combined source commit scope for EACH decision, including sibling-focus edits. The settled-render focus itself remains byte-identical.",
         "No startup binary, tmux, script or PTY launched. Parent must check the new explicit environment and retained private-socket transports in audited gates; built dist/bruv remains required by these existing integration tests.",
         "Future test fixture writes are confined to mkdtemp bruv-startup-* and a unique artifacts/tui directory in the durable worktree, linked by fixture.json. Fixtures are retained, not deleted."
-      ]
+      ],
+      "acceptedRelatedJudges": ["task_9b67e0db"],
+      "acceptedBlob": "b7cec94ca80407458a244437d57b47e4aa847154"
     },
     {
       "file": "tests/startup.test.ts",
@@ -17897,9 +17942,9 @@
     "baselineFiles": 766,
     "finalGate": "pending; incomplete focus coverage",
     "liveAuth": "unverified/failing; preserved",
-    "accepted": 662,
+    "accepted": 665,
     "total": 823,
-    "pending": 161,
+    "pending": 158,
     "sourceExtras": 57,
     "checkout": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
     "branch": "bruv/readability-pr45-sol-continuation",
