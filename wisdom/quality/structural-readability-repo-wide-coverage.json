@@ -20951,7 +20951,8 @@
         "Remote RPC callers require the existing remote-e2e.sh-owned FIXTURE_DROP_DIR/HOME/agent/SSH/Docker fixture. Their unrelated non-RPC subprocesses and shell harness lifecycle were not changed or executed.",
         "Fixture mkdtemp roots are retained; the network-none cleanup ownership assertion still removes only its nested scratch child in test code. Existing smoke script trap behavior is only source-inspected and its owned-pair cleanup assertion preserved; no shell traps executed.",
         "Durable code provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_f7db8eb8 at a1f238b96cc562dfde095f0b486b2d674c410414. Formatter scratch /tmp/pr45-fixture-format-Fmf2EF retained, not a code checkout. Parent owns runtime agent.model verification and aggregate wisdom; no per-worker wisdom note added."
-      ]
+      ],
+      "forceJudge": true
     },
     {
       "file": "tests/sol-model-catalog.test.ts",
@@ -22819,7 +22820,8 @@
         "Remote RPC callers require the existing remote-e2e.sh-owned FIXTURE_DROP_DIR/HOME/agent/SSH/Docker fixture. Their unrelated non-RPC subprocesses and shell harness lifecycle were not changed or executed.",
         "Fixture mkdtemp roots are retained; the network-none cleanup ownership assertion still removes only its nested scratch child in test code. Existing smoke script trap behavior is only source-inspected and its owned-pair cleanup assertion preserved; no shell traps executed.",
         "Durable code provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_f7db8eb8 at a1f238b96cc562dfde095f0b486b2d674c410414. Formatter scratch /tmp/pr45-fixture-format-Fmf2EF retained, not a code checkout. Parent owns runtime agent.model verification and aggregate wisdom; no per-worker wisdom note added."
-      ]
+      ],
+      "forceJudge": true
     },
     {
       "file": "tests/tui-harness.test.ts",
@@ -23560,7 +23562,8 @@
         "Remote RPC callers require the existing remote-e2e.sh-owned FIXTURE_DROP_DIR/HOME/agent/SSH/Docker fixture. Their unrelated non-RPC subprocesses and shell harness lifecycle were not changed or executed.",
         "Fixture mkdtemp roots are retained; the network-none cleanup ownership assertion still removes only its nested scratch child in test code. Existing smoke script trap behavior is only source-inspected and its owned-pair cleanup assertion preserved; no shell traps executed.",
         "Durable code provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_f7db8eb8 at a1f238b96cc562dfde095f0b486b2d674c410414. Formatter scratch /tmp/pr45-fixture-format-Fmf2EF retained, not a code checkout. Parent owns runtime agent.model verification and aggregate wisdom; no per-worker wisdom note added."
-      ]
+      ],
+      "forceJudge": true
     },
     {
       "file": "tests/update-self-fixture.test.ts",
