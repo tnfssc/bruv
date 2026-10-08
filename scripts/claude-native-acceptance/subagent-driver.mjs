@@ -59,7 +59,10 @@ async function exerciseCompletedChildReturn(page, config, snapshot) {
   const message = page.getByRole("textbox", { name: "Message", exact: true });
   await selectWorkerModel(page);
   await snapshot("model-identity");
-  await submitPrompt(page, "ACCEPT_LOCAL_SUBAGENT: launch the actual normal Bruv worker locally with waitSeconds zero.");
+  await submitPrompt(
+    page,
+    "ACCEPT_LOCAL_SUBAGENT: launch the actual normal Bruv worker locally with waitSeconds zero.",
+  );
   await waitFile(path.join(config.state, "child.ready"));
   await waitForText(page, "ROOT_BACKGROUND_RETURN_REAL");
   await page
