@@ -6560,12 +6560,14 @@
     {
       "file": "src/prompts/execute-description.md",
       "initialBlob": "1a75e9bd8ed0a8f13acc586b6739b35397a9c6b3",
-      "status": "pending",
+      "status": "accepted",
       "area": "agent-history-session-goals",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_46d9c538",
       "primaryCommit": "0d3ffc7abfff084cac5d6322d861174011a3f62d",
-      "judgeIds": [],
+      "judgeIds": [
+        "task_5f25d07a"
+      ],
       "sourceCommit": "0d3ffc7abfff084cac5d6322d861174011a3f62d",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
       "pendingReason": "Primary was killed without a completed focused result; preserve worker state and any uncommitted edits.",
@@ -6620,17 +6622,34 @@
         "Repository Biome invocation ignored the Markdown focus and reported no files processed; formatter executable itself was available. No formatter fallback or unrelated source formatting.",
         "No setup, repository tests, builds, device/credential access, delegation, push, PR, merge, recovery, cleanup, or wisdom changes; parent owns independent judgment and audited gates.",
         "Initial reconciliation read was oversized and overbroad; subsequent evidence/ledger inspection selected only focus rows."
+      ],
+      "acceptedBlob": "dd844844a683b300dad8dba1debe58505a2eb06c",
+      "result": "The baseline interleaves local execution, Live teardown, question mutations, delegation and a long SSH paragraph. The candidate makes four actual reading journeys visible: code/output/images; delegated launch authority; observation/cancellation; human questions. In particular, a reader stopping a job no longer has to mine the Live paragraph, and SSH cached-inspection/unsupported-operation constraints now live with observation rather than authorization. Child clarification and permission ownership conclude the human-question journey. This is substantive organization of the embedded instruction, not a rename-only improvement.",
+      "systemReason": "src/typescript/definition.ts embeds this exact Markdown and trims only trailing whitespace; src/typescript/extension.ts spreads executeDeclaration into the registered execute tool. src/live/setup-probe.ts shares the same declaration, and prompt preview installs the real agent extension. The changed section boundaries therefore reach actual tool descriptions, not a dead document. The separate Live/Job/Question sections match real owners: job-bridge issues distinct requests, execute extension handles live.stop separately, and agent extension routes questions to the question runtime and jobs to JobService. Its stopWork path requests scoped cancellation and defers foreground stop until report delivery. Output/image limits, named-target and capability authorization, override restrictions, pending-observation caveats, owner/version question mutations and non-resumption semantics are retained.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Inspected only the three focus entries in area and repo-wide coverage/jobs/assignments ledgers; no completed independent focus judgments found. Resume/area Markdown and integration-batch evidence contained no matching focus entries.",
+        "Enumerated exact primaryBase-to-candidate changed paths and read each changed source; git diff --check emitted no diagnostics.",
+        "Compared candidate against 3bc899c857b0cc2f2c144108165d4faca833c89b: only the focus path changes. Read both complete texts; normalized sentence comparison found no removed baseline sentence after accounting for section-label changes.",
+        "Inspected existing description assertions: exact embedded source, unchanged opening, output limits, shell/subagent globals, environment-dependent access and absence of handoff prose. Did not execute them."
+      ],
+      "limits": [
+        "Static exact-commit review only; no setup, tests, builds, formatter, prompt-preview execution or runtime probes were run. Parent owns audited isolated batch gates and external model verification.",
+        "No source, existing candidate, worktree, ledger or wisdom edits; only this untracked result is written. No delegation, commits, push, PR or merge.",
+        "Caller files listed were verified to have identical Git blobs at all three candidates; this does not assert runtime or provider behavior."
       ]
     },
     {
       "file": "src/prompts/execute.md",
       "initialBlob": "fa595c85d78fb668d28268d9ad1fb29cf4e0358a",
-      "status": "pending",
+      "status": "accepted",
       "area": "agent-history-session-goals",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_33bb0613",
       "primaryCommit": "2b1f80cee46cb252803c00d2f3bcdb4aca517c5d",
-      "judgeIds": [],
+      "judgeIds": [
+        "task_5f25d07a"
+      ],
       "sourceCommit": "2b1f80cee46cb252803c00d2f3bcdb4aca517c5d",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
       "pendingReason": "No dedicated primary/final independent focus judgment.",
@@ -6674,17 +6693,35 @@
         "Specified formatter does not process this Markdown path; no alternative formatter used.",
         "No setup, tests, builds, delegation, push, PR or merge performed. Parent owns batch gates and independent exact-candidate judgment.",
         "Wisdom/values unchanged: this is a focus-local grouping improvement, not a new general lesson."
+      ],
+      "acceptedBlob": "9b9292bd6b0f8cfa09a44a672a310aaba3b972b5",
+      "result": "Common launch controls now precede a coherent delegation decision: target authorization, destination overrides, workspace snapshot choice, untracked-source human approval and retry identity, setup ownership, then placement-specific async restrictions. Previously the model override paragraph followed Live teardown, and source approval was a final detached bullet. Choosing an SSH launch required reconstructing those decisions across unrelated sections. The candidate puts them together before result handling, while preserving the subsequent observation, questions, history and Live journeys.",
+      "systemReason": "src/prompts.ts imports this asset for both bruvSystemPrompt and executeReference/executeGuidance. The latter parser splits only before top-level list markers; previously the unmarked SSH override paragraph was attached to the Live voice item. The candidate nests it under the new delegation item alongside source approval, so the grouping matters in registered promptGuidelines as well as the default base. The source round-trip remains exact. src/system-prompt.ts preserves eligible user-owned bases, and src/typescript/extension.ts still registers these guidelines independently. JobService actually branches by scoped native versus SSH versus local authority, rejects unsupported overrides/placement/wait/deadlines, and passes SSH source and destination overrides to its existing remote owner. No runtime or authorization code changes are included.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Inspected only the three focus entries in area and repo-wide coverage/jobs/assignments ledgers; no completed independent focus judgments found. Resume/area Markdown and integration-batch evidence contained no matching focus entries.",
+        "Enumerated exact primaryBase-to-candidate changed paths and read each changed source; git diff --check emitted no diagnostics.",
+        "Compared candidate against 0a09df26eca5c4f9de9e7a0702b5d06deec29f9b: only focus source changes. Read exact full candidate and full diff. Every baseline nonblank instruction line remains verbatim after stripping indentation/list markers; only the delegation group label is added.",
+        "Reconstructed executeReference using the actual parser and confirmed adding list markers reproduces exact trimmed candidate source. This is a static text check, not a repository test run.",
+        "Inspected shipped base assembly, fallback selection, tool registration and existing source-round-trip/default-base assertions; read actual native/SSH launch-policy branches and cancellation dispatch."
+      ],
+      "limits": [
+        "Static exact-commit review only; no setup, tests, builds, formatter, prompt-preview execution or runtime probes were run. Parent owns audited isolated batch gates and external model verification.",
+        "No source, existing candidate, worktree, ledger or wisdom edits; only this untracked result is written. No delegation, commits, push, PR or merge.",
+        "Caller files listed were verified to have identical Git blobs at all three candidates; this does not assert runtime or provider behavior."
       ]
     },
     {
       "file": "src/prompts/fast.md",
       "initialBlob": "c25d436553cfa087a560c0647287cdc64f16880c",
-      "status": "pending",
+      "status": "accepted",
       "area": "agent-history-session-goals",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_28dca32b",
       "primaryCommit": "423581639d147c9981fb9a7b5c3afcdc3727aa07",
-      "judgeIds": [],
+      "judgeIds": [
+        "task_5f25d07a"
+      ],
       "sourceCommit": "423581639d147c9981fb9a7b5c3afcdc3727aa07",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
       "pendingReason": "No dedicated primary/final independent focus judgment.",
@@ -6703,6 +6740,22 @@
         "Independent exact-blob judgment and runtime-model verification are parent-owned.",
         "No wisdom/values edits: no new general lesson; parent writes aggregate wisdom.",
         "Initial reconciliation output mistakenly included the broad document and hit the capture limit; subsequent evidence inspection was filtered to this focus. No unrelated candidates were imported or changed."
+      ],
+      "acceptedBlob": "c25d436553cfa087a560c0647287cdc64f16880c",
+      "result": "This focus is already one complete, direct contribution instruction: identify the worker role, find the answer, show its source, distinguish uncertainty. No authority or lifetime is scattered inside it, and the sequence reads naturally as a single short paragraph. Splitting it or importing delegation/session policy would create structure without resolving a real reading burden.",
+      "systemReason": "At this exact commit src/prompts.ts selects the fast text only for the fast role, trims its trailing newline and interpolates {{role}}. withSubagentGuidance always adds role prose to a worker base; a user-owned base retains ownership of collaboration policy, while the default adds collaborationGuidance separately. src/agent/extension.ts restores worker identity before before_agent_start chooses that composition, and actual delegation limits remain in JobService rather than this four-sentence template. The unchanged decision therefore respects the real contribution-versus-policy boundary; fast root mode is not this worker template.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Inspected only the three focus entries in area and repo-wide coverage/jobs/assignments ledgers; no completed independent focus judgments found. Resume/area Markdown and integration-batch evidence contained no matching focus entries.",
+        "Enumerated exact primaryBase-to-candidate changed paths and read each changed source; git diff --check emitted no diagnostics.",
+        "Read exact candidate fast.md and actual template selection/interpolation, default/custom worker composition, before_agent_start dispatch and worker identity restoration.",
+        "Candidate equals its supplied primaryBase; the focus blob matches the initial area/repo-wide ledger blob c25d436553cfa087a560c0647287cdc64f16880c. No changed source paths.",
+        "Inspected existing role-contribution, no-session-continuity-prose and placeholder-interpolation assertions without running them."
+      ],
+      "limits": [
+        "Static exact-commit review only; no setup, tests, builds, formatter, prompt-preview execution or runtime probes were run. Parent owns audited isolated batch gates and external model verification.",
+        "No source, existing candidate, worktree, ledger or wisdom edits; only this untracked result is written. No delegation, commits, push, PR or merge.",
+        "Caller files listed were verified to have identical Git blobs at all three candidates; this does not assert runtime or provider behavior."
       ]
     },
     {
@@ -6871,13 +6924,60 @@
       "initialBlob": "adfaaf70a70bf709a070cef53f29b94505c999b7",
       "status": "pending",
       "area": "agent-history-session-goals",
-      "resumeState": "pending-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_3cd885b2",
+      "primaryCommit": "95650e95d72d022bbd3e31646ed529a46f1a764b",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "95650e95d72d022bbd3e31646ed529a46f1a764b",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
-      "pendingReason": "No dedicated primary/final independent focus judgment."
+      "pendingReason": "No dedicated primary/final independent focus judgment.",
+      "primaryBase": "95650e95d72d022bbd3e31646ed529a46f1a764b",
+      "primaryResult": "Keep the existing 676-byte prompt. Paragraph 1 assigns leadership and integration to the main agent; paragraph 2 distinguishes independent code/PR isolation from research/shared edits; paragraph 3 gives the concrete launch API, returned-path authority, durable placement and saved branch/path handoff. src/prompts.ts selects this text only for orchestrator mode inside owner-specific markers; the before_agent_start caller respects explicit user custom prompts, while instruction-mode.ts persists mode before replacing the owned region. These are separate framing responsibilities, not missing delegation instructions. Adding headings, extracting prose or repeating execute API facts would not reduce reconstruction work. The preserved reconciliation focus row is pending-primary with no prior primary/candidate/judgment, and the focus exists with the exact recorded baseline blob; no candidate import or replacement-lineage reuse was needed.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        {
+          "kind": "manual source trace",
+          "paths": [
+            "src/prompts/main-orchestrator.md",
+            "src/prompts.ts",
+            "src/agent/instruction-mode.ts",
+            "src/agent/extension.ts"
+          ],
+          "result": "Root injection, mode replacement and custom-base ownership traced without changes."
+        },
+        {
+          "kind": "manual assertion inspection",
+          "paths": [
+            "tests/prompts.test.ts"
+          ],
+          "result": "Existing leadership, worktree-isolation and persistent-location assertions inspected and preserved; not executed."
+        },
+        {
+          "kind": "preserved evidence",
+          "result": "Inspected focus row in area ledger and supplied resume reconciliation: baseline/joined blob adfaaf70a70bf709a070cef53f29b94505c999b7; pending-primary; no rejected candidate."
+        },
+        {
+          "kind": "guidance",
+          "paths": [
+            "wisdom/values.md",
+            "wisdom/quality/structural-readability-guidance.md"
+          ],
+          "result": "Read; no general lesson or wisdom edit needed."
+        },
+        {
+          "kind": "git source identity",
+          "result": "Focus HEAD blob matches reconciliation baseline; initial working tree clean."
+        },
+        {
+          "kind": "formatter",
+          "result": "Not applicable: no changed source paths and no source commit created."
+        }
+      ],
+      "primaryLimits": [
+        "No setup, repository tests or builds run, as required; parent owns isolated gates.",
+        "Independent final readability judgment remains with the parent-assigned fresh judge.",
+        "No source edits, recovery, credential access, delegation, push, merge or cleanup performed."
+      ]
     },
     {
       "file": "src/prompts/markdown.d.ts",

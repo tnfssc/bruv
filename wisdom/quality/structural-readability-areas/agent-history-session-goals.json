@@ -1859,7 +1859,7 @@
     {
       "focus": "src/prompts/execute-description.md",
       "initialBlob": "1a75e9bd8ed0a8f13acc586b6739b35397a9c6b3",
-      "status": "pending",
+      "status": "accepted",
       "primary": [
         {
           "id": "task_9a3e6f45",
@@ -1869,52 +1869,61 @@
         }
       ],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "dd844844a683b300dad8dba1debe58505a2eb06c",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "dd844844a683b300dad8dba1debe58505a2eb06c",
         "primaryId": "task_46d9c538",
         "primaryCommit": "0d3ffc7abfff084cac5d6322d861174011a3f62d",
-        "judgeIds": [],
+        "judgeIds": [
+          "task_5f25d07a"
+        ],
         "sourceCommit": "0d3ffc7abfff084cac5d6322d861174011a3f62d",
-        "state": "needs-judge",
-        "reason": "Primary was killed without a completed focused result; preserve worker state and any uncommitted edits."
+        "state": "accepted-joined",
+        "reason": "The baseline interleaves local execution, Live teardown, question mutations, delegation and a long SSH paragraph. The candidate makes four actual reading journeys visible: code/output/images; delegated launch authority; observation/cancellation; human questions. In particular, a reader stopping a job no longer has to mine the Live paragraph, and SSH cached-inspection/unsupported-operation constraints now live with observation rather than authorization. Child clarification and permission ownership conclude the human-question journey. This is substantive organization of the embedded instruction, not a rename-only improvement."
       }
     },
     {
       "focus": "src/prompts/execute.md",
       "initialBlob": "fa595c85d78fb668d28268d9ad1fb29cf4e0358a",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "9b9292bd6b0f8cfa09a44a672a310aaba3b972b5",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "9b9292bd6b0f8cfa09a44a672a310aaba3b972b5",
         "primaryId": "task_33bb0613",
         "primaryCommit": "2b1f80cee46cb252803c00d2f3bcdb4aca517c5d",
-        "judgeIds": [],
+        "judgeIds": [
+          "task_5f25d07a"
+        ],
         "sourceCommit": "2b1f80cee46cb252803c00d2f3bcdb4aca517c5d",
-        "state": "needs-judge",
-        "reason": "No dedicated primary/final independent focus judgment."
+        "state": "accepted-joined",
+        "reason": "Common launch controls now precede a coherent delegation decision: target authorization, destination overrides, workspace snapshot choice, untracked-source human approval and retry identity, setup ownership, then placement-specific async restrictions. Previously the model override paragraph followed Live teardown, and source approval was a final detached bullet. Choosing an SSH launch required reconstructing those decisions across unrelated sections. The candidate puts them together before result handling, while preserving the subsequent observation, questions, history and Live journeys."
       }
     },
     {
       "focus": "src/prompts/fast.md",
       "initialBlob": "c25d436553cfa087a560c0647287cdc64f16880c",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "c25d436553cfa087a560c0647287cdc64f16880c",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "c25d436553cfa087a560c0647287cdc64f16880c",
         "primaryId": "task_28dca32b",
         "primaryCommit": "423581639d147c9981fb9a7b5c3afcdc3727aa07",
-        "judgeIds": [],
+        "judgeIds": [
+          "task_5f25d07a"
+        ],
         "sourceCommit": "423581639d147c9981fb9a7b5c3afcdc3727aa07",
-        "state": "needs-judge",
-        "reason": "No dedicated primary/final independent focus judgment."
+        "state": "accepted-joined",
+        "reason": "This focus is already one complete, direct contribution instruction: identify the worker role, find the answer, show its source, distinguish uncertainty. No authority or lifetime is scattered inside it, and the sequence reads naturally as a single short paragraph. Splitting it or importing delegation/session policy would create structure without resolving a real reading burden."
       }
     },
     {
@@ -2017,11 +2026,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_3cd885b2",
+        "primaryCommit": "95650e95d72d022bbd3e31646ed529a46f1a764b",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary",
+        "sourceCommit": "95650e95d72d022bbd3e31646ed529a46f1a764b",
+        "state": "needs-judge",
         "reason": "No dedicated primary/final independent focus judgment."
       }
     },
@@ -4739,7 +4748,7 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 60,
-    "pending": 63
+    "accepted": 63,
+    "pending": 60
   }
 }
