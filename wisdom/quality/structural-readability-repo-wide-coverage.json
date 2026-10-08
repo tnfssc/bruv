@@ -23436,7 +23436,8 @@
         "Child test dispatch, dynamic case registration, and real activation/publication behavior are source-reviewed but runtime-unverified in this rework. Test execution will retain launch.json, stdout.log, stderr.log, SDK/HOME/config, worktrees, repositories and journals beneath its reported fresh root.",
         "Durable source provenance is this worktree and sourceCommit. Retained tool-only fixtures: /tmp/bruv-worktree-format-cwTPbW, /tmp/bruv-worktree-format-3JbhAt, /tmp/bruv-worktree-git-F5mccS, /tmp/bruv-worktree-commit-Dbt7ZW. No test runtime fixture was created or executed here.",
         "No delegation; parent owns runtime model verification. Wisdom/values unchanged: bounded test ownership rework, aggregate wisdom remains parent-owned."
-      ]
+      ],
+      "forceJudge": true
     },
     {
       "file": "tsconfig.json",
