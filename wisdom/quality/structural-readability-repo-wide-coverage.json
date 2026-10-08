@@ -20693,12 +20693,43 @@
     {
       "file": "tests/smoke-script.test.ts",
       "initialBlob": "751053f8395d0eff039aaaf4538b784bd690d188",
-      "status": "accepted",
+      "status": "pending",
       "area": "build-release-ci-tooling",
       "acceptedBlob": "b0b5232653b47e05d11275766e5f9ede4229e561",
       "primaryId": "task_d0d9d3eb",
       "judgeIds": ["task_f209f608"],
-      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json",
+      "priorAcceptedIntegrationProof": [
+        {
+          "primaryId": "task_d0d9d3eb",
+          "judgeIds": ["task_f209f608"],
+          "acceptedBlob": "b0b5232653b47e05d11275766e5f9ede4229e561",
+          "finalLane": "lane-12",
+          "finalJudge": "task_1351df8b"
+        }
+      ],
+      "resumeState": "needs-rework",
+      "sourceCommit": null,
+      "resumeBatch": "owned-remaining-tooling-fixture-environments",
+      "resumeRework": {
+        "candidate": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "primaryId": "task_d0d9d3eb",
+        "judgeId": "task_1351df8b",
+        "objections": [
+          {
+            "paths": [
+              "tests/setup-native-release-gate.test.ts:75-85",
+              "tests/smoke-script.test.ts:63-70",
+              "tests/tooling-fixtures.test.ts:125-133,202",
+              "scripts/loopback-parent-fixture.ts:85-91",
+              "tests/helpers.ts:5-36"
+            ],
+            "readingProblem": "The integrated fixture story still has contradictory process authority: native setup and outer smoke spread process.env without owned HOME/config/SDK locations; malformed-RPC driver omits env entirely; fixtureRpc spreads process.env and overrides only HOME and BRUV_CODING_AGENT_DIR. Thus parent provider/BRUV authority, PI/config settings, and runtime preload settings can cross these fixture boundaries. Local RUNNER_TEMP/TMPDIR and later smoke env -i probes do not isolate the earlier subprocesses. This is a source-visible violation of the requested explicit fixture environment contract; I do not claim these shell stand-ins reproduced the prior normal CLI HOME write. Smoke/RPC inheritance was present at baseline but remains in the integrated candidate.",
+            "requiredResult": "Use an explicit fresh environment rooted in each already owned mkdtemp fixture for every spawned command in these tests. Reuse ownedFixtureEnv and layer only needed stub PATH, REAL_NODE, RUNNER_TEMP, GITHUB_ENV, browser and sentinel settings. Give the malformed-RPC driver an explicit env; make fixtureRpc accept/use the owned environment rather than inheriting config/SDK/provider/BRUV state (update exercised callers coherently). Preserve setup fail-stop/handoff checks, smoke probe isolation and original assertions, and RPC buffering/trust/timeout assertions. Do not inspect credentials or remove inherited HOME/config/SDK."
+          }
+        ],
+        "readingReason": "New version-probe issue fixed, but source-visible setup/smoke/RPC fixture authority inheritance remains. Coherent3-focus repair needs explicit owned env per spawn and fixtureRpc/caller lifetime; preserve all setup fail-stop/handoff, smoke and RPC buffering/trust/timeout assertions. No tests, shell wrappers/traps or dependency/setup execution; reuse small ownedFixtureEnv, no generalized context."
+      }
     },
     {
       "file": "tests/sol-model-catalog.test.ts",
@@ -22429,12 +22460,43 @@
     {
       "file": "tests/tooling-fixtures.test.ts",
       "initialBlob": "cce26be612e4adc4b7fc70bd9d8c69782bc4d35b",
-      "status": "accepted",
+      "status": "pending",
       "area": "build-release-ci-tooling",
       "acceptedBlob": "0e9728fccb32c1657f09e6d305ac14a10d1621ba",
       "primaryId": "task_8c70c1f6",
       "judgeIds": ["task_900a3c32"],
-      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json",
+      "priorAcceptedIntegrationProof": [
+        {
+          "primaryId": "task_8c70c1f6",
+          "judgeIds": ["task_900a3c32"],
+          "acceptedBlob": "0e9728fccb32c1657f09e6d305ac14a10d1621ba",
+          "finalLane": "lane-12",
+          "finalJudge": "task_1351df8b"
+        }
+      ],
+      "resumeState": "needs-rework",
+      "sourceCommit": null,
+      "resumeBatch": "owned-remaining-tooling-fixture-environments",
+      "resumeRework": {
+        "candidate": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "primaryId": "task_8c70c1f6",
+        "judgeId": "task_1351df8b",
+        "objections": [
+          {
+            "paths": [
+              "tests/setup-native-release-gate.test.ts:75-85",
+              "tests/smoke-script.test.ts:63-70",
+              "tests/tooling-fixtures.test.ts:125-133,202",
+              "scripts/loopback-parent-fixture.ts:85-91",
+              "tests/helpers.ts:5-36"
+            ],
+            "readingProblem": "The integrated fixture story still has contradictory process authority: native setup and outer smoke spread process.env without owned HOME/config/SDK locations; malformed-RPC driver omits env entirely; fixtureRpc spreads process.env and overrides only HOME and BRUV_CODING_AGENT_DIR. Thus parent provider/BRUV authority, PI/config settings, and runtime preload settings can cross these fixture boundaries. Local RUNNER_TEMP/TMPDIR and later smoke env -i probes do not isolate the earlier subprocesses. This is a source-visible violation of the requested explicit fixture environment contract; I do not claim these shell stand-ins reproduced the prior normal CLI HOME write. Smoke/RPC inheritance was present at baseline but remains in the integrated candidate.",
+            "requiredResult": "Use an explicit fresh environment rooted in each already owned mkdtemp fixture for every spawned command in these tests. Reuse ownedFixtureEnv and layer only needed stub PATH, REAL_NODE, RUNNER_TEMP, GITHUB_ENV, browser and sentinel settings. Give the malformed-RPC driver an explicit env; make fixtureRpc accept/use the owned environment rather than inheriting config/SDK/provider/BRUV state (update exercised callers coherently). Preserve setup fail-stop/handoff checks, smoke probe isolation and original assertions, and RPC buffering/trust/timeout assertions. Do not inspect credentials or remove inherited HOME/config/SDK."
+          }
+        ],
+        "readingReason": "New version-probe issue fixed, but source-visible setup/smoke/RPC fixture authority inheritance remains. Coherent3-focus repair needs explicit owned env per spawn and fixtureRpc/caller lifetime; preserve all setup fail-stop/handoff, smoke and RPC buffering/trust/timeout assertions. No tests, shell wrappers/traps or dependency/setup execution; reuse small ownedFixtureEnv, no generalized context."
+      }
     },
     {
       "file": "tests/tui-harness.test.ts",
@@ -23027,12 +23089,43 @@
     {
       "file": "tests/setup-native-release-gate.test.ts",
       "initialBlob": "absent",
-      "status": "accepted",
+      "status": "pending",
       "area": "build-release-ci-tooling",
       "acceptedBlob": "e1bf5ce576f4f1ddec4c42c86e6b32637ceb5267",
       "primaryId": "task_29efc903",
       "judgeIds": ["task_6e25dc37"],
-      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json"
+      "report": "wisdom/quality/structural-readability-areas/build-release-ci-tooling.json",
+      "priorAcceptedIntegrationProof": [
+        {
+          "primaryId": "task_29efc903",
+          "judgeIds": ["task_6e25dc37"],
+          "acceptedBlob": "e1bf5ce576f4f1ddec4c42c86e6b32637ceb5267",
+          "finalLane": "lane-12",
+          "finalJudge": "task_1351df8b"
+        }
+      ],
+      "resumeState": "needs-rework",
+      "sourceCommit": null,
+      "resumeBatch": "owned-remaining-tooling-fixture-environments",
+      "resumeRework": {
+        "candidate": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "primaryId": "task_29efc903",
+        "judgeId": "task_1351df8b",
+        "objections": [
+          {
+            "paths": [
+              "tests/setup-native-release-gate.test.ts:75-85",
+              "tests/smoke-script.test.ts:63-70",
+              "tests/tooling-fixtures.test.ts:125-133,202",
+              "scripts/loopback-parent-fixture.ts:85-91",
+              "tests/helpers.ts:5-36"
+            ],
+            "readingProblem": "The integrated fixture story still has contradictory process authority: native setup and outer smoke spread process.env without owned HOME/config/SDK locations; malformed-RPC driver omits env entirely; fixtureRpc spreads process.env and overrides only HOME and BRUV_CODING_AGENT_DIR. Thus parent provider/BRUV authority, PI/config settings, and runtime preload settings can cross these fixture boundaries. Local RUNNER_TEMP/TMPDIR and later smoke env -i probes do not isolate the earlier subprocesses. This is a source-visible violation of the requested explicit fixture environment contract; I do not claim these shell stand-ins reproduced the prior normal CLI HOME write. Smoke/RPC inheritance was present at baseline but remains in the integrated candidate.",
+            "requiredResult": "Use an explicit fresh environment rooted in each already owned mkdtemp fixture for every spawned command in these tests. Reuse ownedFixtureEnv and layer only needed stub PATH, REAL_NODE, RUNNER_TEMP, GITHUB_ENV, browser and sentinel settings. Give the malformed-RPC driver an explicit env; make fixtureRpc accept/use the owned environment rather than inheriting config/SDK/provider/BRUV state (update exercised callers coherently). Preserve setup fail-stop/handoff checks, smoke probe isolation and original assertions, and RPC buffering/trust/timeout assertions. Do not inspect credentials or remove inherited HOME/config/SDK."
+          }
+        ],
+        "readingReason": "New version-probe issue fixed, but source-visible setup/smoke/RPC fixture authority inheritance remains. Coherent3-focus repair needs explicit owned env per spawn and fixtureRpc/caller lifetime; preserve all setup fail-stop/handoff, smoke and RPC buffering/trust/timeout assertions. No tests, shell wrappers/traps or dependency/setup execution; reuse small ownedFixtureEnv, no generalized context."
+      }
     },
     {
       "file": "tests/update-self-fixture.test.ts",
@@ -25479,9 +25572,9 @@
     "baselineFiles": 766,
     "finalGate": "pending; incomplete focus coverage",
     "liveAuth": "unverified/failing; preserved",
-    "accepted": 831,
+    "accepted": 828,
     "total": 836,
-    "pending": 5,
+    "pending": 8,
     "sourceExtras": 70,
     "checkout": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
     "branch": "bruv/readability-pr45-sol-continuation",

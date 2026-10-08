@@ -2684,7 +2684,7 @@
     {
       "focus": "tests/smoke-script.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted",
+      "state": "pending",
       "primary": [
         {
           "id": "task_d0d9d3eb",
@@ -2720,21 +2720,23 @@
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": "b0b5232653b47e05d11275766e5f9ede4229e561",
+      "acceptedBlob": null,
       "readingResult": "Readable shellfixtures and independent pairfailure cases replace escaped strings/sequential mutation;probe/buildcount/cleanup explicit,unchangedcwd limit.",
       "checks": "16focuspass;tsc/Biome/diff;copiedrealpairsmoke/cleanup pass.",
       "integrationState": "Fullfocuspatch integrated;smokesourceunchanged;notesexcluded;stalledjudge noverdict.",
       "resume": {
-        "status": "accepted",
+        "status": "pending",
         "acceptedBlob": "b0b5232653b47e05d11275766e5f9ede4229e561",
         "primaryId": "task_d0d9d3eb",
-        "judgeIds": ["task_f209f608"]
+        "judgeIds": ["task_f209f608"],
+        "sourceCommit": null,
+        "state": "needs-rework"
       }
     },
     {
       "focus": "tests/tooling-fixtures.test.ts",
       "initialBase": "59413c532e6422983f611915e509e8421aa2f363",
-      "state": "accepted",
+      "state": "pending",
       "primary": [
         {
           "id": "task_8c70c1f6",
@@ -2761,15 +2763,17 @@
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": "0e9728fccb32c1657f09e6d305ac14a10d1621ba",
+      "acceptedBlob": null,
       "readingResult": "Readable embedded childprograms/controlled partial-line delivery/protocol-field assertions replace escaped assembly/timingfragmentation/positional expectations.",
       "checks": "8tests101assertions;tsc/Biome/diff;trustdenial/prompt/malformedJSON/cleanup retained;timeout/text/toolSSE strengthened. Gaps unseededsecret/RPCargv-env-earlyexit unasserted.",
       "integrationState": "Fullfocuspatch integrated;sharedhelpers unchanged;noteexcluded.",
       "resume": {
-        "status": "accepted",
+        "status": "pending",
         "acceptedBlob": "0e9728fccb32c1657f09e6d305ac14a10d1621ba",
         "primaryId": "task_8c70c1f6",
-        "judgeIds": ["task_900a3c32"]
+        "judgeIds": ["task_900a3c32"],
+        "sourceCommit": null,
+        "state": "needs-rework"
       }
     },
     {
@@ -3129,7 +3133,7 @@
     {
       "focus": "tests/setup-native-release-gate.test.ts",
       "initialBase": "7211ff984b6c23c684ff364356f43401bd7a17ea",
-      "state": "accepted",
+      "state": "pending",
       "primary": [
         {
           "id": "task_29efc903",
@@ -3156,7 +3160,7 @@
         }
       ],
       "relatedPaths": [],
-      "acceptedBlob": "e1bf5ce576f4f1ddec4c42c86e6b32637ceb5267",
+      "acceptedBlob": null,
       "origin": {
         "primary": "task_2837e782",
         "candidate": "3cefc2172c5b14d87fce683266e80ce6d8cf6cbd"
@@ -3172,10 +3176,12 @@
       "checks": "15combinedpass;strict tsc/Biome/diffpass;no builds/live.",
       "integrationState": "Full final focus patch integrated;EXTRA primary/finaljudge complete;setup sourceunchanged,notesexcluded.",
       "resume": {
-        "status": "accepted",
+        "status": "pending",
         "acceptedBlob": "e1bf5ce576f4f1ddec4c42c86e6b32637ceb5267",
         "primaryId": "task_29efc903",
-        "judgeIds": ["task_6e25dc37"]
+        "judgeIds": ["task_6e25dc37"],
+        "sourceCommit": null,
+        "state": "needs-rework"
       }
     },
     {
@@ -3575,7 +3581,7 @@
     "retainedWorktrees": "Per-file primary[].path and branch retained, including stopped/rejected attempts."
   },
   "resumeStatus": {
-    "accepted": 74,
-    "pending": 0
+    "accepted": 71,
+    "pending": 3
   }
 }

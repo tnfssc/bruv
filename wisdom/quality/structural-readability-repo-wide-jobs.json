@@ -3327,6 +3327,21 @@
         "branch": "bruv/pr45-judge-1-execution-tasks-questions-f-63de35f8",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "handled"
+      },
+      {
+        "id": "task_01035810",
+        "stage": "primary",
+        "focus": [
+          "tests/job-attention.test.ts",
+          "tests/job-bridge.test.ts",
+          "tests/job-service.test.ts",
+          "tests/questions-bridge.test.ts",
+          "tests/task-manager.test.ts"
+        ],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_01035810",
+        "branch": "bruv/pr45-primary-5-execution-tasks-questions-01035810",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
       }
     ]
   },
