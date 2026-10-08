@@ -1,0 +1,67 @@
+# Haiku 5.5 upgrade: combined proof
+
+User could not see Haiku 5.5. Pi 1.0.3 was pinned. All four Pi dependencies
+now pin 1.1.0. The published catalog supplies anthropic/claude-haiku-5-5.
+No local alias or guessed model was added.
+
+## Changes and reasons
+
+- 409086c9 upgrades the catalog, rebases reviewed patches and exact host
+  hashes, migrates new API fixtures, and checks availability and selection.
+  See [source review](pi-1.1.0-haiku-5.5.md).
+- 49550807 gives only two compiled updater tests 30-second budgets. Two
+  combined runs hit their default five-second budget; both passed alone.
+  Compiler exit and compiled product assertions remain unchanged.
+  See [fixture deadline proof](../ci/update-compiled-fixture-deadlines.md).
+- User supplied sibling recovery commits c3ffd4f7 then 101ce082. Their 1.1.0
+  integration is c117e3b2, 5ad644b2, a1d9e803, in that order. Strict hashes
+  stay intact. Recovery uses a fresh frozen isolated cache, checks local
+  ownership, validates source, and replaces local host files atomically.
+  The fixture comes from the integrity-checked published 1.1.0 package.
+  See [integration proof](pi-1.1.0-recovery-integration.md).
+
+The initial setup inherited a polluted 1.0.3 shared-cache inode, per sibling
+investigation. Do not broaden accepted hashes. Recovery now repairs inherited
+bad state without changing shared cache. Real 1.1.0 recovery proof uses a
+labeled synthetic stale file; it does not claim observed 1.1.0 cache damage.
+
+## Final proof
+
+On combined HEAD a1d9e803, bash scripts/ci.sh linux exited 0:
+- Frozen install, format, lint, typecheck, CI/stress history resource budgets,
+  paired build, and offline OpenAI transport passed.
+- Full root suite: 2,306 passed, 30 opt-in skips, zero failures;
+  115,942 assertions across 319 files.
+- Paired standalone smoke passed. This is not native parity acceptance.
+- Fresh temporary HOME and a nonfunctional Anthropic key, with built
+  dist/bruv --offline --list-models haiku, lists claude-haiku-5-5,
+  1M context and 128K output. Catalog discovery is not provider access proof.
+- Focused read-only migration review found no concrete bugs.
+
+Step logs live in ignored artifacts/ci/. Full final log was
+/tmp/bruv-haiku-final-linux-gate.log. Key facts are saved here; temp logs
+are not required to resume. First full runs had 3 then 2 fixture timeouts;
+the scoped test fix above addressed those observed failures. No product
+assertion or suite-wide deadline changed.
+
+## Workspaces and delivery
+
+Parent: /home/tnfssc/.t3/worktrees/bruv/t3-98a10da6,
+branch t3/update-haiku-deps.
+
+Worker paths under /home/tnfssc/.bruv/worktrees/:
+- t3-98a10da6-5442693331ce-task_c23e6117: catalog upgrade,
+  branch bruv/update-pi-catalog-for-haiku-5.5-c23e6117.
+- t3-98a10da6-5442693331ce-task_1a61a947: updater test budgets,
+  branch bruv/fix-observed-compiled-updater-fixture-ti-1a61a947.
+- t3-98a10da6-5442693331ce-task_0cdc00f7: recovery integration,
+  branch bruv/integrate-pi-recovery-with-1.1-upgrade-0cdc00f7.
+All code and worker wisdom were committed and integrated.
+
+Not run: macOS gate, live Anthropic request/account entitlement, or rendered
+interactive terminal acceptance. No local install, release, push or PR.
+The user's installed binary still needs an install/release to gain this model.
+
+Wisdom now covers upgrade, test deadlines, and recovery integration. Values
+retain the sibling lesson: stopping future damage is not recovery while
+inherited bad state still feeds fresh starts. No extra general value needed.
