@@ -159,8 +159,8 @@ async function child(mode: Mode): Promise<void> {
     await collectGc();
     const manager = SessionManager.open(fixture.file, sessions);
     const reopened = await captureSnapshot(mode, manager, "reopened");
-    const reopenedOriginal = (manager.getEntry(fixture.firstId) as { message?: { content?: unknown } } | undefined)?.message
-      ?.content;
+    const reopenedOriginal = (manager.getEntry(fixture.firstId) as { message?: { content?: unknown } } | undefined)
+      ?.message?.content;
     const originalSurvived =
       typeof reopenedOriginal === "string" &&
       createHash("sha256").update(reopenedOriginal).digest("hex") === fixture.firstHash;
