@@ -3048,13 +3048,48 @@
       "initialBlob": "4acbdfa75d15a03e5e146f1d7761e393f8b1f16f",
       "status": "pending",
       "area": "remote",
-      "resumeState": "pending-primary-unstarted",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_4c34a8a9",
+      "primaryCommit": "75b23bf68ac8c0a7ef5a35b07d28f53b8cb65222",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "75b23bf68ac8c0a7ef5a35b07d28f53b8cb65222",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
-      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
+      "primaryBase": "acb7cba8b7f38ccc4b364e3c86011e6ff948e7f7",
+      "primaryResult": "proveLostReplyRecovery owns unknown receipt persistence, detach/reattach with the same command identity, no-resend evidence, and the active-source postcondition. proveRunningJobCancellation owns live-process observation, ordinary human Cancel/confirmation, stop acknowledgment, subsequent process exit and authoritative inspection, and the still-running-root postcondition. The caller explicitly orders both operations before detach, then checks the local diff stayed unchanged and publishes their command/job IDs in the existing receipt. No context object or new helper file was added.",
+      "primaryPaths": [
+        "scripts/remote-root-placement-e2e.ts"
+      ],
+      "primaryChecks": [
+        {
+          "check": "Repository formatter on changed source only",
+          "result": "passed",
+          "command": "/home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/@biomejs/biome/bin/biome format --write scripts/remote-root-placement-e2e.ts",
+          "execution": "node child_process.spawnSync argv; isolated retained HOME/config/cache/state/TMPDIR/SDK directories at /tmp/pr45-remote-format-BKd0Pc"
+        },
+        {
+          "check": "git diff --check before source commit",
+          "result": "passed"
+        },
+        {
+          "check": "Read-only baseline-to-candidate proof-body token comparison",
+          "result": "Both extracted bodies unchanged modulo whitespace, comments and faultID-to-id binding; includes wait predicates, assertions, UI actions, transport evidence and artifact writes. Cancellation retains Escape then ready before caller detach."
+        },
+        {
+          "check": "Actual focus consumers traced without execution",
+          "result": "Fixture README direct Bun probe/compiled CLI entrypoints; tests/remote-typed-root-placement-fixture.test.ts source assertions; imported scenario/proof and network-none fixture ownership. Preserved CLI flags, proof markers, receipt schema and security assertions."
+        },
+        {
+          "check": "Source-only commit scope",
+          "result": "Only scripts/remote-root-placement-e2e.ts changed in commit; initial worktree clean; accepted unrelated source untouched."
+        }
+      ],
+      "primaryLimits": [
+        "No tests, setup, builds, Docker/SSH fixture execution or credential/device access performed; parent owns audited isolated runtime gates and independent exact-candidate judgment.",
+        "Existing acceptance limits retained: reply loss is not owner crash; idle abort/running-job cancellation do not prove active root-stream abort; unsupported modes here are CLI rejections, not server-protocol proof.",
+        "Isolated HOME initially lacked Git identity; committed using prior repository commit public name/email via invocation-only Git config, empty retained hooks directory and signing disabled. No user config was read or mutated.",
+        "No per-worker wisdom edits; aggregate wisdom and model verification remain parent-owned."
+      ]
     },
     {
       "file": "scripts/run-native-release-gate.mjs",

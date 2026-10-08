@@ -218,7 +218,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_4c34a8a9",
         "branch": "bruv/pr45-primary-scripts-remote-root-placeme-4c34a8a9",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "75b23bf68ac8c0a7ef5a35b07d28f53b8cb65222"
       },
       {
         "id": "task_7d28ea98",
@@ -1002,6 +1003,15 @@
         "focus": "scripts/terminal-perf/audit-probes/journal-stop.ts",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_6e013db2",
         "branch": "bruv/pr45-primary-scripts-terminal-perf-audit-6e013db2",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_050e83e0",
+        "stage": "judge",
+        "focus": "scripts/tasks-ui-proof-screenshots.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_050e83e0",
+        "branch": "bruv/pr45-judge-scripts-tasks-ui-proof-screen-050e83e0",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
       }

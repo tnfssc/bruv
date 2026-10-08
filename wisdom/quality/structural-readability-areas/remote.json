@@ -175,11 +175,11 @@
       "judgeRounds": [],
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_4c34a8a9",
+        "primaryCommit": "75b23bf68ac8c0a7ef5a35b07d28f53b8cb65222",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary-unstarted",
+        "sourceCommit": "75b23bf68ac8c0a7ef5a35b07d28f53b8cb65222",
+        "state": "needs-judge",
         "reason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
       },
       "acceptedBlob": null
