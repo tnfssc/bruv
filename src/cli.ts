@@ -17,6 +17,7 @@ import { withBruvSystemPrompt } from "./system-prompt";
 import { formatThrownValue } from "./typescript/error-diagnostic";
 import { INTERNAL_TYPESCRIPT_RUNNER_ARG, runTypeScriptFromStdin } from "./typescript/runner";
 import { isCompiledInvocation, updateBruv } from "./update";
+import { createDownloadProgressDisplay } from "./update-progress";
 
 const cliArgs = process.argv.slice(2);
 // The thin connector launcher enters here as `bruv claude-compat update`.
@@ -59,13 +60,16 @@ if (cliArgs[0] === "update") {
     console.error("Usage: bruv update [--check]");
     process.exit(1);
   }
+  const downloadProgress = createDownloadProgressDisplay();
   try {
     console.log("Checking for Bruv pair updates...");
     const result = await updateBruv({
       currentVersion: bruvPackage.version,
       check: cliArgs[1] === "--check",
       onDownload: (version) => console.log("Downloading bruv and bruv-claude-compat " + version + "..."),
+      onDownloadProgress: downloadProgress.onProgress,
     });
+    downloadProgress.finish();
     console.log(
       result.status === "updated"
         ? "Updated bruv and bruv-claude-compat to " + result.version + ". Restart Bruv/T3 sessions."
@@ -77,6 +81,7 @@ if (cliArgs[0] === "update") {
     );
     process.exit(0);
   } catch (error) {
+    downloadProgress.finish();
     console.error(error instanceof Error ? error.message : String(error));
     process.exit(1);
   }

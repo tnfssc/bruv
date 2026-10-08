@@ -17,6 +17,14 @@ export function updateAssetFor(platform: NodeJS.Platform, arch: string): string 
   return UPDATE_ASSETS[`${platform}-${arch}` as UpdateAssetKey];
 }
 export type UpdateResult = { status: "updated" | "current" | "newer" | "available"; version: string; path?: string };
+/** Binary body bytes received, before checksum/version verification. */
+export type DownloadProgress = {
+  asset: string;
+  downloadedBytes: number;
+  totalBytes?: number;
+  elapsedMs: number;
+  status: "downloading" | "complete" | "failed";
+};
 export type UpdateDeps = {
   fetch?: typeof fetch;
   executable?: string;
@@ -28,6 +36,7 @@ export type UpdateDeps = {
   runBinary?: (path: string, args: string[], env: NodeJS.ProcessEnv) => Promise<string>;
   rename?: typeof rename;
   onDownload?: (version: string) => void;
+  onDownloadProgress?: (progress: DownloadProgress) => void;
 };
 function version(value: string): [number, number, number] | undefined {
   const match = /^v?(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/.exec(value);
@@ -50,7 +59,7 @@ type Version = [number, number, number];
 const METADATA_TIMEOUT_MS = 300_000;
 const DOWNLOAD_TIMEOUT_MS = 1_800_000;
 type ReleaseRequest = (url: string, accept: string, timeoutMs?: number) => Promise<Response>;
-type ReleaseArtifact = { name: string; binaryUrl: string; checksumUrl: string };
+type ReleaseArtifact = { name: string; binaryUrl: string; checksumUrl: string; size?: number };
 type StableRelease = { version: string; parts: Version; bruv: ReleaseArtifact; connector: ReleaseArtifact };
 type InstalledExecutable = { name: string; path: string; original?: Stats };
 type InstalledPair = {
@@ -103,6 +112,7 @@ export async function updateBruv(deps: UpdateDeps = {}): Promise<UpdateResult> {
     run,
     deps.rename ?? rename,
     platform === "darwin" && arch === "arm64",
+    deps.onDownloadProgress,
   );
   return { status: "updated", version: release.version, path: installed.bruv.path };
 }
@@ -133,11 +143,17 @@ async function fetchStablePair(request: ReleaseRequest, updateAsset: string): Pr
   };
   const connectorAsset = updateAsset.replace(/^bruv-/, "bruv-claude-compat-");
   // Resolve all four official assets before downloading or changing anything.
-  const artifact = (name: string): ReleaseArtifact => ({
-    name,
-    binaryUrl: assetUrl(name),
-    checksumUrl: assetUrl(name + ".sha256"),
-  });
+  const artifact = (name: string): ReleaseArtifact => {
+    const binaryUrl = assetUrl(name);
+    const binary = assets.find((asset) => isRecord(asset) && asset.name === name);
+    const size = isRecord(binary) ? binary.size : undefined;
+    return {
+      name,
+      binaryUrl,
+      checksumUrl: assetUrl(name + ".sha256"),
+      size: typeof size === "number" && Number.isSafeInteger(size) && size >= 0 ? size : undefined,
+    };
+  };
   return { version: latest, parts: latestParts, bruv: artifact(updateAsset), connector: artifact(connectorAsset) };
 }
 
@@ -201,22 +217,66 @@ async function installedConnectorMatches(
   }
 }
 
+async function downloadArtifact(
+  artifact: ReleaseArtifact,
+  request: ReleaseRequest,
+  onProgress?: UpdateDeps["onDownloadProgress"],
+): Promise<Uint8Array> {
+  const started = performance.now();
+  let downloadedBytes = 0;
+  let totalBytes = artifact.size;
+  let reader: ReadableStreamDefaultReader<Uint8Array> | undefined;
+  let finished = false;
+  const report = (status: DownloadProgress["status"]) =>
+    onProgress?.({ asset: artifact.name, downloadedBytes, totalBytes, elapsedMs: performance.now() - started, status });
+  try {
+    report("downloading");
+    const response = await request(artifact.binaryUrl, "application/octet-stream", DOWNLOAD_TIMEOUT_MS);
+    if (!response.ok) throw new Error("HTTP " + response.status);
+    const length = response.headers.get("content-length");
+    if (length && /^\d+$/.test(length) && Number.isSafeInteger(Number(length))) totalBytes = Number(length);
+    if (!response.body) throw new Error("empty download");
+    reader = response.body.getReader();
+    const chunks: Uint8Array[] = [];
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) {
+        finished = true;
+        break;
+      }
+      chunks.push(value);
+      downloadedBytes += value.byteLength;
+      report("downloading");
+    }
+    if (!downloadedBytes) throw new Error("empty download");
+    const bytes = new Uint8Array(downloadedBytes);
+    let offset = 0;
+    for (const chunk of chunks) {
+      bytes.set(chunk, offset);
+      offset += chunk.byteLength;
+    }
+    report("complete");
+    return bytes;
+  } catch (error) {
+    report("failed");
+    throw new Error("Unable to download " + artifact.name + ": " + errorMessage(error));
+  } finally {
+    if (reader) {
+      if (!finished) await reader.cancel().catch(() => undefined);
+      reader.releaseLock();
+    }
+  }
+}
+
 async function stageVerifiedExecutable(
   stage: string,
   file: InstalledExecutable,
   artifact: ReleaseArtifact,
   bruvMode: number,
   request: ReleaseRequest,
+  onProgress?: UpdateDeps["onDownloadProgress"],
 ): Promise<void> {
-  let bytes: Uint8Array;
-  try {
-    const response = await request(artifact.binaryUrl, "application/octet-stream", DOWNLOAD_TIMEOUT_MS);
-    if (!response.ok) throw new Error("HTTP " + response.status);
-    bytes = new Uint8Array(await response.arrayBuffer());
-    if (!bytes.length) throw new Error("empty download");
-  } catch (error) {
-    throw new Error("Unable to download " + artifact.name + ": " + errorMessage(error));
-  }
+  const bytes = await downloadArtifact(artifact, request, onProgress);
   try {
     const response = await request(artifact.checksumUrl, "text/plain");
     if (!response.ok) throw new Error("HTTP " + response.status);
@@ -241,6 +301,7 @@ async function installReleasePair(
   run: PairProbe,
   move: typeof rename,
   checkLiveHelper: boolean,
+  onProgress?: UpdateDeps["onDownloadProgress"],
 ): Promise<void> {
   let stage: string | undefined;
   let keepRecovery = false;
@@ -249,9 +310,23 @@ async function installReleasePair(
   try {
     stage = await mkdtemp(join(dirname(installed.bruv.path), ".bruv-update-"));
     phase = "download and stage " + release.bruv.name;
-    await stageVerifiedExecutable(stage, installed.bruv, release.bruv, installed.bruv.original.mode, request);
+    await stageVerifiedExecutable(
+      stage,
+      installed.bruv,
+      release.bruv,
+      installed.bruv.original.mode,
+      request,
+      onProgress,
+    );
     phase = "download and stage " + release.connector.name;
-    await stageVerifiedExecutable(stage, installed.connector, release.connector, installed.bruv.original.mode, request);
+    await stageVerifiedExecutable(
+      stage,
+      installed.connector,
+      release.connector,
+      installed.bruv.original.mode,
+      request,
+      onProgress,
+    );
     const stagedBruv = join(stage, installed.bruv.name);
     const stagedConnector = join(stage, installed.connector.name);
     phase = "verify staged Bruv pair";

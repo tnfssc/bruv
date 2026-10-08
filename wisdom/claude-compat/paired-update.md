@@ -101,3 +101,9 @@ The updater now separates binary download deadlines from metadata/checksum
 requests and reports the failed phase instead of blanket permissions advice.
 See [timeout investigation](../releases/updater-timeout-diagnostics.md) for
 artifact-size evidence, tests, scope and remaining network limits.
+
+## Download progress
+
+The streamed byte callback and CLI display follow-up are recorded in
+[update download progress](update-download-progress.md). Verification and recovery
+remain this same paired updater. Timeout/error wording is a separate parent integration.
