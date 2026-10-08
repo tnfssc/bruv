@@ -16268,13 +16268,51 @@
       "initialBlob": "5f2cbe002c36d27dc965c984215fa6673bbdaa71",
       "status": "pending",
       "area": "remote",
-      "resumeState": "pending-primary-unstarted",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_ddbd2881",
+      "primaryCommit": "9f0568e39bc7ba3a3fac149125d54a276daea185",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "9f0568e39bc7ba3a3fac149125d54a276daea185",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
-      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
+      "primaryBase": "4204b8d4c510b0ed0e76c4deaf219c069614b8ea",
+      "primaryResult": "Four feature-local operations expose the journey without a generic terminal/context abstraction: seed_offline_task owns the cached task and grant, fixture_environment owns allowlisted process inputs and owned config/SDK/temp directories, prove_offline_revocation owns transcript/paced keys and all original revocation assertions, and main owns process/PTY start and close/wait. Startup is guarded by __main__, slave closure follows Popen even on failure, and master closure is independent of wait outcome. Original keystrokes, delays, pass message and six security/UI assertions remain. Intentional safety changes: repoPath/repoRoot now reference an owned fixture repo instead of /tmp; credentials/runtime-state are excluded by the environment allowlist; HOME/config/SDK files are retained and their path printed, not recursively removed.",
+      "primaryPaths": ["tests/remote-offline-menu-pty.py"],
+      "primaryChecks": [
+        {
+          "check": "Source-only whitespace/diff check",
+          "command": ["git", "diff", "--check"],
+          "result": "passed before commit; exact changed source scope is tests/remote-offline-menu-pty.py"
+        },
+        {
+          "check": "Required formatter attempt",
+          "executable": "/home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/@biomejs/biome/bin/biome",
+          "argv": ["format", "--write", "tests/remote-offline-menu-pty.py"],
+          "environmentFixture": "/tmp/pr45-remote-format-hUqtok",
+          "evidencePath": "/tmp/pr45-remote-format-hUqtok/formatter-evidence.json",
+          "result": "exit 1: Formatted 0 files. Python path ignored; no fallback formatter or bypass used."
+        },
+        {
+          "check": "Execution boundary",
+          "result": "No setup, tests, builds, live auth, device access, or acceptance runners executed. Only source inspection, required formatter invocation, and Git source/diff/commit operations."
+        },
+        {
+          "check": "Reconciliation evidence",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_1adcf635/wisdom/quality/structural-readability-areas/remote-resume-reconciliation.json",
+          "result": "Assigned rows mark all three pending-primary-unstarted, baseline/joined blobs identical, no candidate/rejection rows for these focuses; no old branch or candidate integration."
+        },
+        {
+          "check": "Actual-source journey review",
+          "result": "Read whole original and final focus, offline capability menu/confirmation/revoke branch, honest owner-notified renderer, and offline menu fixture assertions. Reviewed filesystem/network effects before any execution; no test executed. Final proof retains offline-only Popen argv; new writes stay under owned mkdtemp HOME. Explicit environment drops inherited credentials, BRUV_REMOTE_RUNTIME_STATE and SDK overrides."
+        }
+      ],
+      "primaryLimits": [
+        "Parent owns fresh independent readability judgments and audited isolated runtime gates. No tests/setup/builds were run, and changed fixture environment/startup is unverified at runtime.",
+        "Biome does not format the changed Python file; required attempt failed with ignored-path diagnostics.",
+        "Durable code provenance is this worktree and exact sourceCommit. Only formatter environment/evidence uses retained /tmp/pr45-remote-format-hUqtok; no temporary code checkout or descendant delegation. Parent verifies runtime model; this worker did not independently inspect it.",
+        "No wisdom/values edits: parent owns aggregate wisdom; no per-worker note created.",
+        "Preexisting fixed PTY waits and terminate+5s wait remain; no timeout-policy or assertion redesign. Tests may still fail due to terminal/platform behavior; parent must audit/run the compiled proof separately."
+      ]
     },
     {
       "file": "tests/remote-owner-lifecycle.test.ts",
@@ -16309,26 +16347,102 @@
       "initialBlob": "ab54907e3562bd6498fd44eb26bc329eea1f4ff6",
       "status": "pending",
       "area": "remote",
-      "resumeState": "pending-primary-unstarted",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_ddbd2881",
+      "primaryCommit": "9f0568e39bc7ba3a3fac149125d54a276daea185",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "9f0568e39bc7ba3a3fac149125d54a276daea185",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
-      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
+      "primaryBase": "4204b8d4c510b0ed0e76c4deaf219c069614b8ea",
+      "primaryResult": "No change: the short request/user/done/code helpers describe the wire history directly. The syntax-only case table explicitly parses rather than executes generated tools. Launch checks keep authorization and no-remote-shortcut/no-model-override constraints visible; answer-marker spoof checks and saved-answer reads sit in their own focused test; restart, drift and SSE tests each show their input/output boundary. Extracting shared conversation contexts or reorganizing stage tests would hide currently local proof without solving a real journey burden. Scope remains scripted inference, not acceptance; caller code confirms stream is consumed by both local harness and fixture provider.",
+      "primaryPaths": ["tests/remote-offline-menu-pty.py"],
+      "primaryChecks": [
+        {
+          "check": "Source-only whitespace/diff check",
+          "command": ["git", "diff", "--check"],
+          "result": "passed before commit; exact changed source scope is tests/remote-offline-menu-pty.py"
+        },
+        {
+          "check": "Required formatter attempt",
+          "executable": "/home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/@biomejs/biome/bin/biome",
+          "argv": ["format", "--write", "tests/remote-offline-menu-pty.py"],
+          "environmentFixture": "/tmp/pr45-remote-format-hUqtok",
+          "evidencePath": "/tmp/pr45-remote-format-hUqtok/formatter-evidence.json",
+          "result": "exit 1: Formatted 0 files. Python path ignored; no fallback formatter or bypass used."
+        },
+        {
+          "check": "Execution boundary",
+          "result": "No setup, tests, builds, live auth, device access, or acceptance runners executed. Only source inspection, required formatter invocation, and Git source/diff/commit operations."
+        },
+        {
+          "check": "Reconciliation evidence",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_1adcf635/wisdom/quality/structural-readability-areas/remote-resume-reconciliation.json",
+          "result": "Assigned rows mark all three pending-primary-unstarted, baseline/joined blobs identical, no candidate/rejection rows for these focuses; no old branch or candidate integration."
+        },
+        {
+          "check": "Unchanged blob",
+          "result": "Focus remains ab54907e3562bd6498fd44eb26bc329eea1f4ff6, equal to its reconciliation baseline."
+        }
+      ],
+      "primaryLimits": [
+        "Parent owns fresh independent readability judgments and audited isolated runtime gates. No tests/setup/builds were run, and changed fixture environment/startup is unverified at runtime.",
+        "Biome does not format the changed Python file; required attempt failed with ignored-path diagnostics.",
+        "Durable code provenance is this worktree and exact sourceCommit. Only formatter environment/evidence uses retained /tmp/pr45-remote-format-hUqtok; no temporary code checkout or descendant delegation. Parent verifies runtime model; this worker did not independently inspect it.",
+        "No wisdom/values edits: parent owns aggregate wisdom; no per-worker note created.",
+        "No inference fixture code or acceptance harness was executed. Related changedPaths contains the full batch source scope for judge visibility; this focus itself is unchanged."
+      ]
     },
     {
       "file": "tests/remote-placement-entry.test.ts",
       "initialBlob": "d79ea5dfc30377c01a5786c4e8b1d873a73d23eb",
       "status": "pending",
       "area": "remote",
-      "resumeState": "pending-primary-unstarted",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_ddbd2881",
+      "primaryCommit": "9f0568e39bc7ba3a3fac149125d54a276daea185",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "9f0568e39bc7ba3a3fac149125d54a276daea185",
       "report": "wisdom/quality/structural-readability-areas/remote.json",
-      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline."
+      "pendingReason": "Assigned file has no recorded primary or actual-code judgment; surviving area blob equals baseline.",
+      "primaryBase": "4204b8d4c510b0ed0e76c4deaf219c069614b8ea",
+      "primaryResult": "No change: direct launch placement and repository-upload workspace examples mirror the validator allowed-field table, and the rejection loop makes all four disallowed cross-boundary fields inspectable at once. runRemoteControl invokes this validator before handleRemoteRequest and publishes request_failed on rejection; the source contract shows workspace owned by repository-upload. New factories, tables or split tests would add navigation to an already explicit small boundary proof. All existing Unsupported assertions preserved.",
+      "primaryPaths": ["tests/remote-offline-menu-pty.py"],
+      "primaryChecks": [
+        {
+          "check": "Source-only whitespace/diff check",
+          "command": ["git", "diff", "--check"],
+          "result": "passed before commit; exact changed source scope is tests/remote-offline-menu-pty.py"
+        },
+        {
+          "check": "Required formatter attempt",
+          "executable": "/home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/@biomejs/biome/bin/biome",
+          "argv": ["format", "--write", "tests/remote-offline-menu-pty.py"],
+          "environmentFixture": "/tmp/pr45-remote-format-hUqtok",
+          "evidencePath": "/tmp/pr45-remote-format-hUqtok/formatter-evidence.json",
+          "result": "exit 1: Formatted 0 files. Python path ignored; no fallback formatter or bypass used."
+        },
+        {
+          "check": "Execution boundary",
+          "result": "No setup, tests, builds, live auth, device access, or acceptance runners executed. Only source inspection, required formatter invocation, and Git source/diff/commit operations."
+        },
+        {
+          "check": "Reconciliation evidence",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_1adcf635/wisdom/quality/structural-readability-areas/remote-resume-reconciliation.json",
+          "result": "Assigned rows mark all three pending-primary-unstarted, baseline/joined blobs identical, no candidate/rejection rows for these focuses; no old branch or candidate integration."
+        },
+        {
+          "check": "Unchanged blob",
+          "result": "Focus remains d79ea5dfc30377c01a5786c4e8b1d873a73d23eb, equal to its reconciliation baseline."
+        }
+      ],
+      "primaryLimits": [
+        "Parent owns fresh independent readability judgments and audited isolated runtime gates. No tests/setup/builds were run, and changed fixture environment/startup is unverified at runtime.",
+        "Biome does not format the changed Python file; required attempt failed with ignored-path diagnostics.",
+        "Durable code provenance is this worktree and exact sourceCommit. Only formatter environment/evidence uses retained /tmp/pr45-remote-format-hUqtok; no temporary code checkout or descendant delegation. Parent verifies runtime model; this worker did not independently inspect it.",
+        "No wisdom/values edits: parent owns aggregate wisdom; no per-worker note created.",
+        "No compiled control or validator tests executed. The current test concerns extra-field ownership, not full required-field/schema validation; no incidental coverage expansion. Related changedPaths contains the full batch source scope for judge visibility; this focus itself is unchanged."
+      ]
     },
     {
       "file": "tests/remote-placement-legacy-launch.test.ts",
