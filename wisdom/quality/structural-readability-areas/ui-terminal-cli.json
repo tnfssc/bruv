@@ -2693,10 +2693,10 @@
     {
       "focus": "tests/activity-runtime-acceptance-test.py",
       "initialBlob": "ff2cea841882e0d28f20efc8314127b3afac029f",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "ba542d8ff709da709edd5d564ed94d8831bcc745",
       "integrationState": "related patch accepted; primary pending",
       "relatedPatchJudgments": [
         {
@@ -2707,13 +2707,14 @@
         }
       ],
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "ba542d8ff709da709edd5d564ed94d8831bcc745",
         "primaryId": "task_0962494e",
         "primaryCommit": "92cd3318283ccac9f764310c9d1873ed62c0e31c",
-        "judgeIds": ["task_150f5c27"],
+        "judgeIds": ["task_150f5c27", "task_85dfd048"],
         "sourceCommit": "92cd3318283ccac9f764310c9d1873ed62c0e31c",
-        "state": "needs-judge",
-        "reason": "Existing related-path ACCEPT by task_150f5c27 at 98bd940bd8dc870efa814074b7c038649d4df706, blob 0f1dd3b4c1ae423fc0528c369c0a33efc71f6dc8; exact candidate verified. Related blob already joined. Dedicated primary-focus acceptance is missing."
+        "state": "accepted-joined",
+        "reason": "The preparation test now reads as one journal lifetime: install/select the saved session, verify its original records and linked parent chain, check each saved turn, verify the terminal marker, then append evidence without rewriting the prefix. assert_saved_turn is a meaningful semantic unit, not an arbitrary block extraction: it owns the user record and each adjacent execute call/result pair, including shared IDs, original stdout/content and both sides of the metadata contract. The caller supplies a contiguous turn slice and turn number; no fixture context bag or hidden mutable state was introduced. Other short evidence tests remain local and understandable."
       }
     },
     {
@@ -2746,37 +2747,39 @@
     {
       "focus": "tests/background-interrupt-tui.test.ts",
       "initialBlob": "dcfc5d699293bf0adff7c09d0766b2b36d19f909",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "9307e4bdea109e081ce3b9fe2ad55f5ea33c256b",
       "integrationState": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "9307e4bdea109e081ce3b9fe2ad55f5ea33c256b",
         "primaryId": "task_bc4cf36e",
         "primaryCommit": "8eee7eeac7528f4031ab1568549cf6bac8fadf13",
-        "judgeIds": [],
+        "judgeIds": ["task_85dfd048"],
         "sourceCommit": "8eee7eeac7528f4031ab1568549cf6bac8fadf13",
-        "state": "needs-judge",
-        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+        "state": "accepted-joined",
+        "reason": "The four journal-dependent phases now state the event they await and their deadline directly, instead of each reconstructing asynchronous decoding plus some(predicate). readSessionEntries/text/until and waitForSessionEntry form a small file-local observation operation with an explicit session file. This is a modest but real structural improvement beyond hoisting names: the scenario remains a chronological user journey, with Escape, the arithmetic follow-up, two job-survival assertions, completion validation, and post-completion assistant ordering visible together. The independent started-file wait still exposes its different authority."
       }
     },
     {
       "focus": "tests/background-ux-tui.test.ts",
       "initialBlob": "8b58841438e433e4f5cd95783ec097883b9d43ae",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "f5654156092959ad8e07b6b2b901624516972b9f",
       "integrationState": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "f5654156092959ad8e07b6b2b901624516972b9f",
         "primaryId": "task_a14113c6",
         "primaryCommit": "dd1565c25cb94982cf77381100d9ee1472a4feb5",
-        "judgeIds": [],
+        "judgeIds": ["task_85dfd048"],
         "sourceCommit": "dd1565c25cb94982cf77381100d9ee1472a4feb5",
-        "state": "needs-judge",
-        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+        "state": "accepted-joined",
+        "reason": "The transcript relationships have useful owners: backgroundTurn combines the launch result, useful independent work and a subsequent yield; automaticContinuation distinguishes the notification from the later assistant stop and supplies the same interpretation to polling and final verification. verifyCompletedJourney concentrates the temporal/model/runtime contract and returns evidence events only after that contract succeeds. The outer scenario consequently reads as terminal launch, bounded prerequisite observation, visible arithmetic input, bounded completion observation, verification and evidence publication. These are coherent operations with explicit inputs, not a framework or a mutable journey/context object."
       }
     },
     {
@@ -4788,7 +4791,7 @@
     }
   },
   "resumeStatus": {
-    "accepted": 78,
-    "pending": 33
+    "accepted": 81,
+    "pending": 30
   }
 }

@@ -94,23 +94,45 @@ class EvidenceTests(unittest.TestCase):
             self.assertEqual(entries[0]["parentId"], None)
             self.assertEqual([entry["parentId"] for entry in entries[1:]], [entry["id"] for entry in entries[:-1]])
             for turn in range(100):
-                turn_entries = entries[turn * 21:(turn + 1) * 21]
-                self.assertEqual(turn_entries[0]["message"]["content"], "Saved turn " + str(turn))
-                for tool in range(10):
-                    call = turn_entries[1 + tool * 2]["message"]
-                    result = turn_entries[2 + tool * 2]["message"]
-                    cid = f"saved-{turn}-{tool}"
-                    token = "DETAIL_" + cid
-                    self.assertEqual(call["content"], [{"type": "toolCall", "id": cid, "name": "execute", "arguments": {"label": "Read saved file " + cid, "code": 'console.log("' + token + '")'}}])
-                    self.assertEqual((call["role"], call["api"], call["provider"], call["model"], call["stopReason"]), ("assistant", "openai-responses", "activity-fixture", "acceptance", "toolUse"))
-                    self.assertEqual((result["role"], result["toolCallId"], result["toolName"], result["isError"]), ("toolResult", cid, "execute", False))
-                    self.assertEqual(result["content"], [{"type": "text", "text": token}])
-                    self.assertEqual(result["details"], {"exitCode": 0, "stdout": token, "stderr": "", "images": []})
+                self.assert_saved_turn(entries[turn * 21:(turn + 1) * 21], turn)
             self.assertEqual(entries[-1]["message"]["stopReason"], "stop")
             self.assertEqual(entries[-1]["message"]["content"], [{"type": "text", "text": "LONG_THREAD_READY"}])
             with journal.open("a") as f:
                 f.write('{"type":"appended-evidence"}\n')
             self.assertEqual(journal.read_text().splitlines()[:-1], original_lines)
+
+    def assert_saved_turn(self, turn_entries, turn):
+        """Each saved turn contains one user message and ten linked tool exchanges."""
+        self.assertEqual(turn_entries[0]["message"]["content"], "Saved turn " + str(turn))
+        for tool in range(10):
+            call = turn_entries[1 + tool * 2]["message"]
+            result = turn_entries[2 + tool * 2]["message"]
+            cid = f"saved-{turn}-{tool}"
+            token = "DETAIL_" + cid
+            self.assertEqual(call["content"], [{
+                "type": "toolCall",
+                "id": cid,
+                "name": "execute",
+                "arguments": {
+                    "label": "Read saved file " + cid,
+                    "code": 'console.log("' + token + '")',
+                },
+            }])
+            self.assertEqual(
+                (call["role"], call["api"], call["provider"], call["model"], call["stopReason"]),
+                ("assistant", "openai-responses", "activity-fixture", "acceptance", "toolUse"),
+            )
+            self.assertEqual(
+                (result["role"], result["toolCallId"], result["toolName"], result["isError"]),
+                ("toolResult", cid, "execute", False),
+            )
+            self.assertEqual(result["content"], [{"type": "text", "text": token}])
+            self.assertEqual(result["details"], {
+                "exitCode": 0,
+                "stdout": token,
+                "stderr": "",
+                "images": [],
+            })
 
     def test_row_only_check_rejects_expanded_native_details(self):
         run = runner.Run(Path("/unused"), Path("/owner/dist/bruv"))

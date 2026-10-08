@@ -64,6 +64,98 @@ function executeResults(all: Entry[]) {
   );
 }
 
+// A usable yield must follow both the background launch result and independent work.
+function backgroundTurn(all: Entry[]) {
+  const results = executeResults(all);
+  const launchResult = results.find(
+    (entry) =>
+      entry.message.details?.backgroundJobs?.length > 0 ||
+      /background[\s\S]*true|status[\s\S]*running/i.test(text(entry.message.content)),
+  );
+  const launchAt = launchResult ? entryMs(launchResult) : Infinity;
+  const usefulAt = results
+    .filter((entry) => text(entry.message.content).includes("INDEPENDENT_NOTE_ALPHA"))
+    .map(entryMs)
+    .find((at) => at < Infinity);
+  const yieldEntry = yieldedEntries(all).find((entry) => entryMs(entry) >= Math.max(launchAt, usefulAt ?? Infinity));
+  return { launchResult, yieldEntry, usefulAt };
+}
+
+// Completion notification and assistant continuation are distinct transcript events.
+function automaticContinuation(all: Entry[]) {
+  const completions = all.filter((entry) => entry.customType === "task-complete");
+  const completionAt = completions[0] ? entryMs(completions[0]) : Infinity;
+  const resumed = all.find(
+    (entry) =>
+      entry.type === "message" &&
+      entry.message?.role === "assistant" &&
+      entry.message.stopReason === "stop" &&
+      entryMs(entry) > completionAt &&
+      /SLOW_CHECK_OK|INDEPENDENT_NOTE_ALPHA/i.test(text(entry.message.content)),
+  );
+  return { completions, completionAt, resumed };
+}
+
+function verifyCompletedJourney(
+  all: Entry[],
+  launchResult: Entry,
+  yieldEntry: Entry,
+  finishedMs: number,
+  arithmeticSentAt: number,
+): Evidence["events"] {
+  const calls = executeCalls(all);
+  const results = executeResults(all);
+  const { completions, completionAt, resumed } = automaticContinuation(all);
+  const launchAt = entryMs(launchResult);
+  const useful = results.find((entry) => text(entry.message.content).includes("INDEPENDENT_NOTE_ALPHA"));
+
+  // An opportunistic snapshot within useful work is not a polling loop.
+  // This healthy fixture has no fault to diagnose, so repeated status-only
+  // calls are waiting rather than investigation.
+  const waitingOnly = calls.filter(
+    ({ code }) =>
+      /jobs\s*\.\s*(list|inspect)/.test(code) && !/shell\s*\(|subagent\s*\(|Bun\.file|readFile|node:fs/.test(code),
+  );
+  const sleeping = waitingOnly.filter(({ code }) => /Bun\s*\.\s*sleep|setTimeout\s*\(/.test(code));
+  const launchCall = calls.find(({ part }) => part.id === launchResult.message.toolCallId);
+  const launchDurationMs = launchCall ? launchAt - entryMs(launchCall.entry) : Infinity;
+  const arithmeticAnswer = all.some(
+    (entry) =>
+      entry.type === "message" &&
+      entry.message?.role === "assistant" &&
+      entryMs(entry) > arithmeticSentAt &&
+      entryMs(entry) < finishedMs &&
+      /\b42\b/.test(text(entry.message.content)),
+  );
+
+  if (!(finishedMs > launchAt))
+    throw new Error("RUNTIME_UX: execute launch did not return before the command finished");
+  if (!useful || !(entryMs(useful) < finishedMs))
+    throw new Error("MODEL_BEHAVIOR: no useful independent file inspection before completion");
+  if (!(entryMs(yieldEntry) < finishedMs))
+    throw new Error("MODEL_BEHAVIOR: assistant did not yield before command completion");
+  if (launchDurationMs > 3000)
+    throw new Error("MODEL_BEHAVIOR: launch held execute open for " + launchDurationMs + "ms");
+  if (waitingOnly.length > 1 || sleeping.length)
+    throw new Error(
+      "MODEL_BEHAVIOR: repeated waiting-only calls or sleeps: " + waitingOnly.map(({ code }) => code).join(" | "),
+    );
+  if (completions.length !== 1)
+    throw new Error("RUNTIME_UX: expected exactly one automatic completion, got " + completions.length);
+  if (!resumed)
+    throw new Error("RUNTIME_UX: no automatic post-completion assistant continuation reported fixture results");
+  if (!arithmeticAnswer)
+    throw new Error(
+      "MODEL_BEHAVIOR: assistant did not answer the arithmetic follow-up before the background command finished",
+    );
+  return [
+    { name: "launch-duration", at: launchAt, detail: { launchDurationMs, waitingOnlyCalls: waitingOnly.length } },
+    { name: "fixture-finished", at: finishedMs },
+    { name: "automatic-completion", at: completionAt },
+    { name: "automatic-continuation", at: entryMs(resumed) },
+  ];
+}
+
 function safeSession(all: Entry[]) {
   return all.map((entry) => {
     if (entry.type === "message" && entry.message?.role === "assistant")
@@ -174,19 +266,10 @@ test.skipIf(!enabled)(
       const launchDeadline = Date.now() + 75_000;
       while (Date.now() < launchDeadline) {
         const all = await entries(sessionFile);
-        const calls = executeCalls(all);
-        const results = executeResults(all);
-        launchResult = results.find(
-          (entry) =>
-            entry.message.details?.backgroundJobs?.length > 0 ||
-            /background[\s\S]*true|status[\s\S]*running/i.test(text(entry.message.content)),
-        );
-        const launchAt = launchResult ? entryMs(launchResult) : Infinity;
-        const usefulAt = results
-          .filter((entry) => text(entry.message.content).includes("INDEPENDENT_NOTE_ALPHA"))
-          .map(entryMs)
-          .find((at) => at < Infinity);
-        yieldEntry = yieldedEntries(all).find((entry) => entryMs(entry) >= Math.max(launchAt, usefulAt ?? Infinity));
+        const observed = backgroundTurn(all);
+        launchResult = observed.launchResult;
+        yieldEntry = observed.yieldEntry;
+        const usefulAt = observed.usefulAt;
         const unfinished = !(await Bun.file(join(fixture, "slow-finished-ms.txt")).exists());
         if (launchResult && usefulAt && yieldEntry && unfinished) break;
         if (!unfinished) break;
@@ -237,83 +320,17 @@ test.skipIf(!enabled)(
         finalEntries = await entries(sessionFile);
         if (await Bun.file(join(fixture, "slow-finished-ms.txt")).exists())
           finishedMs = Number((await readFile(join(fixture, "slow-finished-ms.txt"), "utf8")).trim());
-        const completions = finalEntries.filter((entry) => entry.customType === "task-complete");
-        const completionAt = completions[0] ? entryMs(completions[0]) : Infinity;
-        const resumed = finalEntries.find(
-          (entry) =>
-            entry.type === "message" &&
-            entry.message?.role === "assistant" &&
-            entry.message.stopReason === "stop" &&
-            entryMs(entry) > completionAt &&
-            /SLOW_CHECK_OK|INDEPENDENT_NOTE_ALPHA/i.test(text(entry.message.content)),
-        );
+        const { completions, resumed } = automaticContinuation(finalEntries);
         if (finishedMs && completions.length && resumed) break;
         await Bun.sleep(100);
       }
       finalEntries = await entries(sessionFile);
       const calls = executeCalls(finalEntries);
       evidence.toolArgs = calls.map(({ entry, code }) => ({ at: entry.timestamp, code }));
-      const results = executeResults(finalEntries);
-      const completions = finalEntries.filter((entry) => entry.customType === "task-complete");
       finishedMs = Number((await readFile(join(fixture, "slow-finished-ms.txt"), "utf8").catch(() => "0")).trim());
-      const launchAt = entryMs(launchResult);
-      const useful = results.find((entry) => text(entry.message.content).includes("INDEPENDENT_NOTE_ALPHA"));
-      const completionAt = completions[0] ? entryMs(completions[0]) : Infinity;
-      const resumed = finalEntries.find(
-        (entry) =>
-          entry.type === "message" &&
-          entry.message?.role === "assistant" &&
-          entry.message.stopReason === "stop" &&
-          entryMs(entry) > completionAt &&
-          /SLOW_CHECK_OK|INDEPENDENT_NOTE_ALPHA/i.test(text(entry.message.content)),
+      evidence.events.push(
+        ...verifyCompletedJourney(finalEntries, launchResult, yieldEntry, finishedMs, arithmeticSentAt),
       );
-      // An opportunistic snapshot within useful work is not a polling loop.
-      // This healthy fixture has no fault to diagnose, so repeated status-only
-      // calls are waiting rather than investigation.
-      const waitingOnly = calls.filter(
-        ({ code }) =>
-          /jobs\s*\.\s*(list|inspect)/.test(code) && !/shell\s*\(|subagent\s*\(|Bun\.file|readFile|node:fs/.test(code),
-      );
-      const sleeping = waitingOnly.filter(({ code }) => /Bun\s*\.\s*sleep|setTimeout\s*\(/.test(code));
-      const launchCall = calls.find(({ part }) => part.id === launchResult.message.toolCallId);
-      const launchDurationMs = launchCall ? launchAt - entryMs(launchCall.entry) : Infinity;
-      const arithmeticAnswer = finalEntries.some(
-        (entry) =>
-          entry.type === "message" &&
-          entry.message?.role === "assistant" &&
-          entryMs(entry) > arithmeticSentAt &&
-          entryMs(entry) < finishedMs &&
-          /\b42\b/.test(text(entry.message.content)),
-      );
-
-      if (!(finishedMs > launchAt))
-        throw new Error("RUNTIME_UX: execute launch did not return before the command finished");
-      if (!useful || !(entryMs(useful) < finishedMs))
-        throw new Error("MODEL_BEHAVIOR: no useful independent file inspection before completion");
-      if (!(entryMs(yieldEntry) < finishedMs))
-        throw new Error("MODEL_BEHAVIOR: assistant did not yield before command completion");
-      if (launchDurationMs > 3000)
-        throw new Error("MODEL_BEHAVIOR: launch held execute open for " + launchDurationMs + "ms");
-      if (waitingOnly.length > 1 || sleeping.length)
-        throw new Error(
-          "MODEL_BEHAVIOR: repeated waiting-only calls or sleeps: " + waitingOnly.map(({ code }) => code).join(" | "),
-        );
-      if (completions.length !== 1)
-        throw new Error("RUNTIME_UX: expected exactly one automatic completion, got " + completions.length);
-      if (!resumed)
-        throw new Error("RUNTIME_UX: no automatic post-completion assistant continuation reported fixture results");
-      if (!arithmeticAnswer)
-        throw new Error(
-          "MODEL_BEHAVIOR: assistant did not answer the arithmetic follow-up before the background command finished",
-        );
-      evidence.events.push({
-        name: "launch-duration",
-        at: launchAt,
-        detail: { launchDurationMs, waitingOnlyCalls: waitingOnly.length },
-      });
-      evidence.events.push({ name: "fixture-finished", at: finishedMs });
-      evidence.events.push({ name: "automatic-completion", at: completionAt });
-      evidence.events.push({ name: "automatic-continuation", at: entryMs(resumed) });
       evidence.classification = "pass";
       await rememberFrame("final");
     } catch (error) {

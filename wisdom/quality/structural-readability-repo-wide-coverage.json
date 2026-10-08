@@ -8568,12 +8568,12 @@
     {
       "file": "tests/activity-runtime-acceptance-test.py",
       "initialBlob": "ff2cea841882e0d28f20efc8314127b3afac029f",
-      "status": "pending",
+      "status": "accepted",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_0962494e",
       "primaryCommit": "92cd3318283ccac9f764310c9d1873ed62c0e31c",
-      "judgeIds": ["task_150f5c27"],
+      "judgeIds": ["task_150f5c27", "task_85dfd048"],
       "sourceCommit": "92cd3318283ccac9f764310c9d1873ed62c0e31c",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
       "pendingReason": "Existing related-path ACCEPT by task_150f5c27 at 98bd940bd8dc870efa814074b7c038649d4df706, blob 0f1dd3b4c1ae423fc0528c369c0a33efc71f6dc8; exact candidate verified. Related blob already joined. Dedicated primary-focus acceptance is missing.",
@@ -8614,6 +8614,23 @@
         "The required Biome executable exists but did not process the Python focus; formatter limitation retained without substituting another formatter.",
         "Static assertion preservation is not runtime acceptance evidence.",
         "Wisdom and values unchanged; parent writes aggregate wisdom as requested."
+      ],
+      "acceptedBlob": "ba542d8ff709da709edd5d564ed94d8831bcc745",
+      "result": "The preparation test now reads as one journal lifetime: install/select the saved session, verify its original records and linked parent chain, check each saved turn, verify the terminal marker, then append evidence without rewriting the prefix. assert_saved_turn is a meaningful semantic unit, not an arbitrary block extraction: it owns the user record and each adjacent execute call/result pair, including shared IDs, original stdout/content and both sides of the metadata contract. The caller supplies a contiguous turn slice and turn number; no fixture context bag or hidden mutable state was introduced. Other short evidence tests remain local and understandable.",
+      "systemReason": "Traced unittest.main and the dynamic import of scripts/activity-runtime-acceptance.py, prepare_long_thread writing the journal and selecting it in state.json, and Run.long_thread consuming that selection through the private harness reopen/--session path. The compiled acceptance journey reads grouped records, opens original result details, preserves anchors/drafts through expand/resize/reopen, and verifies the original journal prefix and absence of provider requests. The candidate retains the preparation/product-acceptance distinction and all prior assertion expressions, slicing, tool pairing and append-only checks. Existing row-token, alignment, notice, lifecycle, and saved-resume tests still exercise their real helper authorities; the previously accepted related work is retained.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md; inspected only the three focus rows and their evidence in area/repo-wide ledgers.",
+        "Read complete focus source at the exact candidate commit and its full diff against the supplied primaryBase, rather than checkout HEAD.",
+        "git diff --name-only confirms the focus is the only changed source path; git diff --check against primaryBase exits 0.",
+        "Read prepare_long_thread, Run.long_thread, Run.command/wait/click/no_details/submit_saved_resume and the tested evidence helpers; read private harness draft_ready/send/launch/reopen/click dispatch.",
+        "Verified primaryBase focus blob is 0f1dd3b4c1ae423fc0528c369c0a33efc71f6dc8, the previously accepted related blob; candidate changes only the per-turn assertion boundary and its formatting.",
+        "Resolved exact candidate focus blob with git rev-parse."
+      ],
+      "limits": [
+        "Preparation fixture correctness is not proof of compiled long-thread responsiveness or visual appearance. No Python test module was imported or executed.",
+        "Primary ledger records Biome ignoring the Python focus with exit 1; that formatter limitation is not a readability verdict and was not bypassed.",
+        "Static structural reading only: no setup, tests, builds, source-module execution, or runtime TUI/provider gates performed. Parent owns audited isolated batch gates.",
+        "No source, wisdom, ledger, worktree, or candidate edits; only this untracked judgment report is written."
       ]
     },
     {
@@ -8808,12 +8825,12 @@
     {
       "file": "tests/background-interrupt-tui.test.ts",
       "initialBlob": "dcfc5d699293bf0adff7c09d0766b2b36d19f909",
-      "status": "pending",
+      "status": "accepted",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_bc4cf36e",
       "primaryCommit": "8eee7eeac7528f4031ab1568549cf6bac8fadf13",
-      "judgeIds": [],
+      "judgeIds": ["task_85dfd048"],
       "sourceCommit": "8eee7eeac7528f4031ab1568549cf6bac8fadf13",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
       "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
@@ -8848,17 +8865,35 @@
         "No setup, tests, builds, or provider/device/credential access performed; parent owns isolated runtime gates and independent judgment. Existing opt-in test launches tmux/built CLI with an LLM provider, writes temp/session/artifact files, and performs cleanup; it was not executed.",
         "Attempted read-only TypeScript JS parser import was unavailable: node_modules/typescript/lib/typescript.js returned ENOENT. Static Bun scan and assertion-text comparison used instead.",
         "No worker wisdom edits: parent owns aggregate wisdom."
+      ],
+      "acceptedBlob": "9307e4bdea109e081ce3b9fe2ad55f5ea33c256b",
+      "result": "The four journal-dependent phases now state the event they await and their deadline directly, instead of each reconstructing asynchronous decoding plus some(predicate). readSessionEntries/text/until and waitForSessionEntry form a small file-local observation operation with an explicit session file. This is a modest but real structural improvement beyond hoisting names: the scenario remains a chronological user journey, with Escape, the arithmetic follow-up, two job-survival assertions, completion validation, and post-completion assistant ordering visible together. The independent started-file wait still exposes its different authority.",
+      "systemReason": "Followed test run through helpers.ts to tmux and the built CLI; src/cli.ts installs the task extension, which registers execute with isolated execution and the JobService bridge. The installed SDK Escape handler aborts the foreground session, execute records a cancellation/error result, and TaskManager.foreground releases the wait and transfers completion notification ownership without stopping the managed shell task. TaskManager completion reaches createJobNotifications, whose local Pi path sends task-complete with triggerTurn:true. The candidate retains journal tolerance, text projection, polling interval/deadlines, timestamps, opt-in setup and teardown, cardinality/content assertions and strictly later resumed stop. This keeps cancellation of waiting distinct from cancellation of the job.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md; inspected only the three focus rows and their evidence in area/repo-wide ledgers.",
+        "Read complete focus source at the exact candidate commit and its full diff against the supplied primaryBase, rather than checkout HEAD.",
+        "git diff --name-only confirms the focus is the only changed source path; git diff --check against primaryBase exits 0.",
+        "Read every observation helper, phase predicate/deadline, assertion and finally block; compared the original inline polling expressions with their replacement calls.",
+        "Read installed SDK onEscape/restoreQueuedMessagesToEditor, execute signal combination and cancellation result formatting, shell spawn/foreground dispatch, foreground ownership transfer, completion callback and task-complete triggerTurn dispatch.",
+        "Resolved exact candidate focus blob with git rev-parse."
+      ],
+      "limits": [
+        "Static structural reading only: no setup, tests, builds, source-module execution, or runtime TUI/provider gates performed. Parent owns audited isolated batch gates.",
+        "Unchanged opt-in TUI fixtures launch a built CLI via tmux, inherit environment through tests/helpers.ts, and write/remove private fixture and artifact paths; this review did not execute them. Runtime isolation and actual rendered behavior remain parent gate responsibilities.",
+        "No source, wisdom, ledger, worktree, or candidate edits; only this untracked judgment report is written.",
+        "Installed SDK reading is dependency-source evidence, not proof that a freshly built CLI packages/runs that version. Existing loose transcript matching is unchanged, not newly strengthened.",
+        "Primary ledger records an unavailable TypeScript parser import; no parser substitution, module execution or gate bypass was attempted."
       ]
     },
     {
       "file": "tests/background-ux-tui.test.ts",
       "initialBlob": "8b58841438e433e4f5cd95783ec097883b9d43ae",
-      "status": "pending",
+      "status": "accepted",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_a14113c6",
       "primaryCommit": "dd1565c25cb94982cf77381100d9ee1472a4feb5",
-      "judgeIds": [],
+      "judgeIds": ["task_85dfd048"],
       "sourceCommit": "dd1565c25cb94982cf77381100d9ee1472a4feb5",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
       "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
@@ -8877,6 +8912,25 @@
         "No setup, tests, builds, provider calls, credential access, or runtime TUI execution performed; parent owns audited isolated batch gates and independent judgment.",
         "Additional TypeScript AST parse attempt could not run because /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/typescript/lib/typescript.js is absent (ENOENT). Biome parsing/formatting succeeded; static preservation checks were used instead.",
         "No wisdom edits: parent writes aggregate wisdom."
+      ],
+      "acceptedBlob": "f5654156092959ad8e07b6b2b901624516972b9f",
+      "result": "The transcript relationships have useful owners: backgroundTurn combines the launch result, useful independent work and a subsequent yield; automaticContinuation distinguishes the notification from the later assistant stop and supplies the same interpretation to polling and final verification. verifyCompletedJourney concentrates the temporal/model/runtime contract and returns evidence events only after that contract succeeds. The outer scenario consequently reads as terminal launch, bounded prerequisite observation, visible arithmetic input, bounded completion observation, verification and evidence publication. These are coherent operations with explicit inputs, not a framework or a mutable journey/context object.",
+      "systemReason": "Read yieldedEntries, including its all-results successful-handoff rule, and execute result production of handoff/backgroundJobs metadata. Followed the same candidate-tree CLI/JobService/TaskManager/completion route used by the interruption journey; verified the relevant runtime/helper blobs are identical across candidate trees before reusing that reading. The candidate preserves natural-flow prerequisites before fixture completion, rendered input responsiveness, arithmetic answer before completion, launch duration, useful work and yield timing, anti-wait-only behavior, exactly one completion and later continuation. Predicate extraction keeps observation and verification aligned without letting polling success replace final assertions. safeSession, setup, failure classification, artifact publication and terminal teardown remain unchanged.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md; inspected only the three focus rows and their evidence in area/repo-wide ledgers.",
+        "Read complete focus source at the exact candidate commit and its full diff against the supplied primaryBase, rather than checkout HEAD.",
+        "git diff --name-only confirms the focus is the only changed source path; git diff --check against primaryBase exits 0.",
+        "Read complete helper, fixture, terminal observation, verification, sanitization, catch and finally journeys and the full extraction diff.",
+        "Read yieldedEntries and actual execute metadata producer; verified tests/helpers.ts, tests/turn-boundaries.ts, src/typescript/extension.ts, src/tasks/job-service.ts, src/tasks/task-manager.ts and src/agent/extension.ts have identical Git blobs in all three candidate trees.",
+        "Manually compared moved guard conditions/messages and evidence event order against the primaryBase; no contract changes found.",
+        "Resolved exact candidate focus blob with git rev-parse."
+      ],
+      "limits": [
+        "Static structural reading only: no setup, tests, builds, source-module execution, or runtime TUI/provider gates performed. Parent owns audited isolated batch gates.",
+        "Unchanged opt-in TUI fixtures launch a built CLI via tmux, inherit environment through tests/helpers.ts, and write/remove private fixture and artifact paths; this review did not execute them. Runtime isolation and actual rendered behavior remain parent gate responsibilities.",
+        "No source, wisdom, ledger, worktree, or candidate edits; only this untracked judgment report is written.",
+        "Existing text/time heuristics and nondeterministic model behavior remain; acceptance here is readability, not fresh runtime or visual evidence.",
+        "Primary ledger records an unavailable TypeScript parser import; no parser substitution, module execution or gate bypass was attempted."
       ]
     },
     {

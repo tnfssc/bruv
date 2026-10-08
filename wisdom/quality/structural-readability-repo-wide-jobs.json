@@ -971,6 +971,15 @@
         "branch": "bruv/pr45-primary-tests-claude-compat-live-fr-9cb924a6",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
+      },
+      {
+        "id": "task_1bf0bce2",
+        "stage": "primary",
+        "focus": "tests/claude-compat-preflight.test.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_1bf0bce2",
+        "branch": "bruv/pr45-primary-tests-claude-compat-preflig-1bf0bce2",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
       }
     ]
   },
@@ -1730,7 +1739,7 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_85dfd048",
         "branch": "bruv/pr45-judge-3-ui-terminal-cli-focuses-85dfd048",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled"
       }
     ]
   },

@@ -4,6 +4,35 @@ import { tmpdir } from "node:os";
 import { resolve, join } from "node:path";
 import { run } from "./helpers";
 
+async function readSessionEntries(file: string): Promise<any[]> {
+  return (await readFile(file, "utf8").catch(() => "")).split("\n").flatMap((line) => {
+    try {
+      return [JSON.parse(line)];
+    } catch {
+      return [];
+    }
+  });
+}
+
+function text(e: any): string {
+  return (e.message?.content ?? [])
+    .filter((p: any) => p.type === "text")
+    .map((p: any) => p.text)
+    .join("\n");
+}
+
+async function until(check: () => Promise<boolean>, timeout = 30000): Promise<void> {
+  const deadline = Date.now() + timeout;
+  while (!(await check())) {
+    if (Date.now() >= deadline) throw new Error("Interruption probe timed out");
+    await Bun.sleep(50);
+  }
+}
+
+async function waitForSessionEntry(file: string, matches: (entry: any) => boolean, timeout: number): Promise<void> {
+  await until(async () => (await readSessionEntries(file)).some(matches), timeout);
+}
+
 const enabled = process.env.BRUV_RUN_LLM_TESTS === "1";
 test.skipIf(!enabled)(
   "Escape cancels execute waiting while its managed job survives and resumes",
@@ -14,26 +43,6 @@ test.skipIf(!enabled)(
       run(["tmux", "-L", socket, "-f", resolve(import.meta.dir, "../scripts/tmux.conf"), ...args]);
     const quote = (s: string) => "'" + s.replaceAll("'", "'\\''") + "'";
     const file = join(dir, "session.jsonl");
-    const entries = async () =>
-      (await readFile(file, "utf8").catch(() => "")).split("\n").flatMap((line) => {
-        try {
-          return [JSON.parse(line)];
-        } catch {
-          return [];
-        }
-      });
-    const text = (e: any) =>
-      (e.message?.content ?? [])
-        .filter((p: any) => p.type === "text")
-        .map((p: any) => p.text)
-        .join("\n");
-    const until = async (check: () => Promise<boolean>, timeout = 30000) => {
-      const deadline = Date.now() + timeout;
-      while (!(await check())) {
-        if (Date.now() >= deadline) throw new Error("Interruption probe timed out");
-        await Bun.sleep(50);
-      }
-    };
     const evidence: any = {};
     try {
       await writeFile(
@@ -72,38 +81,31 @@ test.skipIf(!enabled)(
       await until(() => Bun.file(join(dir, "started")).exists());
       evidence.escapeAt = Date.now();
       await tmux("send-keys", "-t", "interrupt", "Escape");
-      await until(
-        async () =>
-          (await entries()).some(
-            (e) => e.message?.role === "toolResult" && e.message.isError && /cancel|abort/i.test(text(e)),
-          ),
+      await waitForSessionEntry(
+        file,
+        (e) => e.message?.role === "toolResult" && e.message.isError && /cancel|abort/i.test(text(e)),
         5000,
       );
       evidence.executeCancelledAt = Date.now();
       expect(await Bun.file(join(dir, "finished")).exists()).toBe(false);
       await tmux("send-keys", "-t", "interrupt", "-l", "What is 6 times 7? Leave the managed job running.");
       await tmux("send-keys", "-t", "interrupt", "Enter");
-      await until(
-        async () => (await entries()).some((e) => e.message?.role === "assistant" && /\b42\b/.test(text(e))),
-        10000,
-      );
+      await waitForSessionEntry(file, (e) => e.message?.role === "assistant" && /\b42\b/.test(text(e)), 10000);
       evidence.answerAt = Date.now();
       expect(await Bun.file(join(dir, "finished")).exists()).toBe(false);
-      await until(async () => (await entries()).some((e) => e.customType === "task-complete"), 20000);
-      const all = await entries();
+      await waitForSessionEntry(file, (e) => e.customType === "task-complete", 20000);
+      const all = await readSessionEntries(file);
       const completions = all.filter((e) => e.customType === "task-complete");
       expect(completions).toHaveLength(1);
       expect(completions[0].content).toContain("INTERRUPT_JOB_OK");
       evidence.completionAt = Date.parse(completions[0].timestamp);
-      await until(
-        async () =>
-          (await entries()).some(
-            (e) =>
-              e.message?.role === "assistant" &&
-              e.message.stopReason === "stop" &&
-              Date.parse(e.timestamp) > evidence.completionAt &&
-              text(e).includes("INTERRUPT_JOB_OK"),
-          ),
+      await waitForSessionEntry(
+        file,
+        (e) =>
+          e.message?.role === "assistant" &&
+          e.message.stopReason === "stop" &&
+          Date.parse(e.timestamp) > evidence.completionAt &&
+          text(e).includes("INTERRUPT_JOB_OK"),
         15000,
       );
       evidence.resumedAt = Date.now();
