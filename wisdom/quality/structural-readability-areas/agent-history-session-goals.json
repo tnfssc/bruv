@@ -2517,37 +2517,39 @@
     {
       "focus": "tests/auto-shake-sdk.test.ts",
       "initialBlob": "dfd337c15df9a002723db43e3db6023b233b6191",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "dfd337c15df9a002723db43e3db6023b233b6191",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "dfd337c15df9a002723db43e3db6023b233b6191",
         "primaryId": "task_7078093d",
         "primaryCommit": "3f8a9cb2b759245076c3b9a47a798d4e9a23dda4",
-        "judgeIds": [],
+        "judgeIds": ["task_b6cfaf38"],
         "sourceCommit": "3f8a9cb2b759245076c3b9a47a798d4e9a23dda4",
-        "state": "needs-judge",
-        "reason": "No dedicated primary/final independent focus judgment."
+        "state": "accepted-joined",
+        "reason": "The fixture owns isolated session construction and extension binding, while appendTrace, response, and overflow own distinct history/protocol shapes. Each test visibly owns its session and directory through finally. The threshold loop keeps initial history, first provider request, checkpoint persistence, and projected follow-up assertions in one sequence for normal and Codex models. Overflow keeps the failed request and successful retry side by side; rejection keeps the large retained history, small removable trace, and explicit compact cancellation together. A shared scenario/context object would obscure these different event boundaries rather than relieve a scattered-decision burden."
       }
     },
     {
       "focus": "tests/cache-affine-compaction-live.test.ts",
       "initialBlob": "e2dabede2936b961a451e998c071d8ed8e4cae4c",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "2e84137cada2b7aa5a1139f180ec55bec21c81e0",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "2e84137cada2b7aa5a1139f180ec55bec21c81e0",
         "primaryId": "task_6ccdfe54",
         "primaryCommit": "d1d6edce373008bd092ee01813c2718d4fd92723",
-        "judgeIds": [],
+        "judgeIds": ["task_b6cfaf38"],
         "sourceCommit": "d1d6edce373008bd092ee01813c2718d4fd92723",
-        "state": "needs-judge",
-        "reason": "No dedicated primary/final independent focus judgment."
+        "state": "accepted-joined",
+        "reason": "The extracted createArchivedCheckpointHistory is a complete, coherent authority for the synthetic archived turn: in-memory manager, zero usage, model identity, user instruction, execute call, and paired tool result containing the marker. Returning only SessionManager avoids a framework or context bag. Its single call leaves the marker visible at the experiment boundary and lets the reader follow preparation capture, warm-up/retained-tail prompts, checkpoint assertions, resumed marker request, and cold baseline without crossing fixture construction. The improvement is separation of archived-history construction from live experiment orchestration, not renaming or assertion-count reduction."
       }
     },
     {
@@ -2614,19 +2616,20 @@
     {
       "focus": "tests/cache-countdown-tui.test.ts",
       "initialBlob": "69e9a1ad26d212b5c4439c51d96d82ca7ce07be1",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "69e9a1ad26d212b5c4439c51d96d82ca7ce07be1",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "69e9a1ad26d212b5c4439c51d96d82ca7ce07be1",
         "primaryId": "task_0aff1d58",
         "primaryCommit": "a5ad6e645af3add0077e9c6c08e3dd1c077f6282",
-        "judgeIds": [],
+        "judgeIds": ["task_b6cfaf38"],
         "sourceCommit": "a5ad6e645af3add0077e9c6c08e3dd1c077f6282",
-        "state": "needs-judge",
-        "reason": "No dedicated primary/final independent focus judgment."
+        "state": "accepted-joined",
+        "reason": "One short linear PTY journey owns launch configuration, the isolated home and tmux socket, initial unknown footer assertion, literal cache command submission, visible disclaimer assertion, exact persisted JSON assertion, and finally teardown. capturePane/frameContaining/tmuxRunner separate transport and bounded observation while semantic assertions remain in the focus. The small local capture/wait closures bind only this target; another session fixture or command wrapper would hide ownership and visible effects, not solve a reconstruction problem."
       }
     },
     {
@@ -4474,7 +4477,7 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 75,
-    "pending": 48
+    "accepted": 78,
+    "pending": 45
   }
 }

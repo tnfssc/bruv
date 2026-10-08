@@ -33,45 +33,8 @@ test.skipIf(process.env.BRUV_RUN_LLM_TESTS !== "1")(
         modelsPath: null,
         refreshOnCreate: false,
       });
-      const manager = SessionManager.inMemory(dir);
-      const zero = {
-        input: 0,
-        output: 0,
-        cacheRead: 0,
-        cacheWrite: 0,
-        totalTokens: 0,
-        cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: 0 },
-      };
       const marker = "CHECKPOINT_VALUE=fern-copper-731";
-      const common = { api: model.api, provider: model.provider, model: model.id, usage: zero };
-      manager.appendMessage({
-        role: "user",
-        content:
-          "This is a synthetic checkpoint fixture. The tool output contains CHECKPOINT_VALUE; preserve its exact value in any checkpoint. No real work or tool execution is needed.",
-        timestamp: 1,
-      });
-      manager.appendMessage({
-        role: "assistant",
-        ...common,
-        content: [
-          {
-            type: "toolCall",
-            id: "call_fixture_read",
-            name: "execute",
-            arguments: { code: 'console.log("synthetic fixture read")' },
-          },
-        ],
-        stopReason: "toolUse",
-        timestamp: 2,
-      });
-      manager.appendMessage({
-        role: "toolResult",
-        toolCallId: "call_fixture_read",
-        toolName: "execute",
-        content: [{ type: "text", text: "Archive detail. ".repeat(2400) + "\n" + marker }],
-        isError: false,
-        timestamp: 3,
-      });
+      const manager = createArchivedCheckpointHistory(dir, model, marker);
       let preparation: any;
       const loader = new DefaultResourceLoader({
         cwd: dir,
@@ -171,3 +134,50 @@ test.skipIf(process.env.BRUV_RUN_LLM_TESTS !== "1")(
   },
   180_000,
 );
+
+// Keep the synthetic archived turn separate from the live prompts that form the retained tail.
+function createArchivedCheckpointHistory(
+  dir: string,
+  model: ReturnType<typeof getModels>[number],
+  marker: string,
+): SessionManager {
+  const manager = SessionManager.inMemory(dir);
+  const zero = {
+    input: 0,
+    output: 0,
+    cacheRead: 0,
+    cacheWrite: 0,
+    totalTokens: 0,
+    cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: 0 },
+  };
+  const common = { api: model.api, provider: model.provider, model: model.id, usage: zero };
+  manager.appendMessage({
+    role: "user",
+    content:
+      "This is a synthetic checkpoint fixture. The tool output contains CHECKPOINT_VALUE; preserve its exact value in any checkpoint. No real work or tool execution is needed.",
+    timestamp: 1,
+  });
+  manager.appendMessage({
+    role: "assistant",
+    ...common,
+    content: [
+      {
+        type: "toolCall",
+        id: "call_fixture_read",
+        name: "execute",
+        arguments: { code: 'console.log("synthetic fixture read")' },
+      },
+    ],
+    stopReason: "toolUse",
+    timestamp: 2,
+  });
+  manager.appendMessage({
+    role: "toolResult",
+    toolCallId: "call_fixture_read",
+    toolName: "execute",
+    content: [{ type: "text", text: "Archive detail. ".repeat(2400) + "\n" + marker }],
+    isError: false,
+    timestamp: 3,
+  });
+  return manager;
+}

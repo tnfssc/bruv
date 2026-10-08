@@ -8752,12 +8752,12 @@
     {
       "file": "tests/auto-shake-sdk.test.ts",
       "initialBlob": "dfd337c15df9a002723db43e3db6023b233b6191",
-      "status": "pending",
+      "status": "accepted",
       "area": "agent-history-session-goals",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_7078093d",
       "primaryCommit": "3f8a9cb2b759245076c3b9a47a798d4e9a23dda4",
-      "judgeIds": [],
+      "judgeIds": ["task_b6cfaf38"],
       "sourceCommit": "3f8a9cb2b759245076c3b9a47a798d4e9a23dda4",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
       "pendingReason": "No dedicated primary/final independent focus judgment.",
@@ -8788,6 +8788,21 @@
         "Formatter not run: no changed source paths and no commit.",
         "Independent fresh judge remains parent-owned; no runtime model self-introspection or delegation performed.",
         "Wisdom and values unchanged; no new general lesson and parent owns aggregate wisdom."
+      ],
+      "acceptedBlob": "dfd337c15df9a002723db43e3db6023b233b6191",
+      "result": "The fixture owns isolated session construction and extension binding, while appendTrace, response, and overflow own distinct history/protocol shapes. Each test visibly owns its session and directory through finally. The threshold loop keeps initial history, first provider request, checkpoint persistence, and projected follow-up assertions in one sequence for normal and Codex models. Overflow keeps the failed request and successful retry side by side; rejection keeps the large retained history, small removable trace, and explicit compact cancellation together. A shared scenario/context object would obscure these different event boundaries rather than relieve a scattered-decision burden.",
+      "systemReason": "Read the exact candidate production extension registration: manual shake precedes native Codex and cache-affine handlers. The shake hook projects matching assistant thinking/tool-call blocks and paired tool results, requires afterChars * 4 <= beforeChars, commits the custom checkpoint, and only then cancels. The installed SDK extension runner returns immediately on cancel. AgentSession checks response usage after a turn and checks stale usage before a new prompt; the accounting adapter preserves interrupted-response continuation after a shake but suppresses stale pre-prompt usage. This explains why the successful threshold request still contains original history, the follow-up is projected, and overflow retries immediately. For the rejected projection, the existing cache-affine capacity/cancellation path remains authoritative and manual compact surfaces Compaction cancelled. No structural rewrite is needed to expose these relationships.",
+      "checks": [
+        "Read the complete focus with git show at the exact source commit, not checkout HEAD.",
+        "Focus blob matches its preserved initial ledger blob; primaryBase equals candidate and has no changed source paths.",
+        "Inspected only these three focus rows in the area and repo-wide coverage ledgers; each has no prior dedicated judgment.",
+        "Read SDK 1.0.3 installed implementation and candidate package pin, including manual compact, response/pre-prompt compaction call sites, automatic threshold/overflow branches, and cancellation dispatch.",
+        "Inspected fixture filesystem/provider side effects without executing it."
+      ],
+      "limits": [
+        "Static structural review only; no setup, tests, builds, or live/provider execution. Runtime batch gates belong to the parent.",
+        "Installed SDK reading supports the caller trace, not an assertion that a runtime or complete patched dependency integration passed.",
+        "Existing fixture disposal and recursive removal of its allocated temporary directory were read only, not executed."
       ]
     },
     {
@@ -8880,12 +8895,12 @@
     {
       "file": "tests/cache-affine-compaction-live.test.ts",
       "initialBlob": "e2dabede2936b961a451e998c071d8ed8e4cae4c",
-      "status": "pending",
+      "status": "accepted",
       "area": "agent-history-session-goals",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_6ccdfe54",
       "primaryCommit": "d1d6edce373008bd092ee01813c2718d4fd92723",
-      "judgeIds": [],
+      "judgeIds": ["task_b6cfaf38"],
       "sourceCommit": "d1d6edce373008bd092ee01813c2718d4fd92723",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
       "pendingReason": "No dedicated primary/final independent focus judgment.",
@@ -8903,6 +8918,21 @@
         "No setup, repository tests, builds or live provider calls run, as requested; parent owns audited isolated gates.",
         "Runtime/type-check validation and independent readability judgment remain for the parent.",
         "No wisdom or value files changed; parent owns aggregate wisdom."
+      ],
+      "acceptedBlob": "2e84137cada2b7aa5a1139f180ec55bec21c81e0",
+      "result": "The extracted createArchivedCheckpointHistory is a complete, coherent authority for the synthetic archived turn: in-memory manager, zero usage, model identity, user instruction, execute call, and paired tool result containing the marker. Returning only SessionManager avoids a framework or context bag. Its single call leaves the marker visible at the experiment boundary and lets the reader follow preparation capture, warm-up/retained-tail prompts, checkpoint assertions, resumed marker request, and cold baseline without crossing fixture construction. The improvement is separation of archived-history construction from live experiment orchestration, not renaming or assertion-count reduction.",
+      "systemReason": "The actual test imports phase1-compaction-fixture, not the production tasks extension. That fixture registers the execute tool and cache-affine handler alone, deliberately avoiding production native Codex Phase 2. Traced registerCacheAffineCompaction through manager-keyed instruction-continuity binding, final context/provider-payload capture, preparation from current branch entries, request capacity checks, a single summary attempt, and the returned cache-affine-plaintext compaction with usage and preparation.firstKeptEntryId. The test captures the same preparation before that handler and passes it to SDK compact for its cold baseline. Archived call/result pairing and all marker, cache-read, retained-tail, resume, evidence, error, and finally assertions/actions remain unchanged; the helper does not take ownership of live session lifetime or change provider framing.",
+      "checks": [
+        "Read the complete candidate focus and complete primaryBase-to-candidate diff; the only changed source path is this focus.",
+        "Static statement comparison found extracted fixture statements identical after indentation normalization and removal of the external marker binding.",
+        "Static comparison found the pre-existing experiment byte-identical outside the replaced fixture construction, including all assertions and finalization.",
+        "git diff --check for 410281ee739797820d046821586d0a03104701c9..d1d6edce373008bd092ee01813c2718d4fd92723 produced no errors.",
+        "Read actual Phase 1 extension caller and summary/preparation/continuity paths at candidate; shared cache-affine and continuity blobs also match the SDK shake candidate.",
+        "Inspected opt-in provider experiment, evidence writes, and temp-directory finalization without executing them."
+      ],
+      "limits": [
+        "No live cache hit, summary-content, tail-exclusion, latency, or resumed-provider result is claimed; those depend on runtime/provider behavior and parent gates.",
+        "No setup, tests, builds, or provider execution. Existing evidence-write-before-disposal and temporary-directory removal behavior was preserved, not exercised."
       ]
     },
     {
@@ -9050,12 +9080,12 @@
     {
       "file": "tests/cache-countdown-tui.test.ts",
       "initialBlob": "69e9a1ad26d212b5c4439c51d96d82ca7ce07be1",
-      "status": "pending",
+      "status": "accepted",
       "area": "agent-history-session-goals",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_0aff1d58",
       "primaryCommit": "a5ad6e645af3add0077e9c6c08e3dd1c077f6282",
-      "judgeIds": [],
+      "judgeIds": ["task_b6cfaf38"],
       "sourceCommit": "a5ad6e645af3add0077e9c6c08e3dd1c077f6282",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
       "pendingReason": "No dedicated primary/final independent focus judgment.",
@@ -9083,6 +9113,19 @@
       "primaryLimits": [
         "No tests, setup, builds, credential/device access, or runtime UI executed; parent owns audited isolated batch gates.",
         "No independent judgment claimed. No source change/commit, no wisdom edits; parent owns aggregate wisdom."
+      ],
+      "acceptedBlob": "69e9a1ad26d212b5c4439c51d96d82ca7ce07be1",
+      "result": "One short linear PTY journey owns launch configuration, the isolated home and tmux socket, initial unknown footer assertion, literal cache command submission, visible disclaimer assertion, exact persisted JSON assertion, and finally teardown. capturePane/frameContaining/tmuxRunner separate transport and bounded observation while semantic assertions remain in the focus. The small local capture/wait closures bind only this target; another session fixture or command wrapper would hide ownership and visible effects, not solve a reconstruction problem.",
+      "systemReason": "Traced the CLI main extensionFactories handoff into the production tasks extension. It creates one CacheCountdown, registers cache-ttl, and shares the instance with createCompactUI; session start installs the footer. With no recorded provider observation, estimate returns cache est ?, which renderCompactFooter includes. The registered command has no argument-completion hook: its handler parses bounded duration, atomically writes cacheTtlMs, updates the countdown, then emits the exact confirmation/disclaimer asserted here. Footer lifetime owns its subscription and timer disposal. The test transport captures real pane text and throws on bounded missing-text observation; it does not replace semantic assertions with synthetic success. No source change is warranted.",
+      "checks": [
+        "Read the complete focus and transport helpers with git show at the exact candidate.",
+        "Focus blob matches its preserved initial ledger blob; primaryBase equals candidate and has no changed source paths.",
+        "Read command registration, duration/settings validation, temporary-file rename persistence, unknown estimate, footer rendering/subscription/disposal, and CLI extension initialization at candidate.",
+        "Inspected launch, inherited subprocess environment helper, settings write, tmux kill, and temporary-home removal side effects without launching the PTY or binary."
+      ],
+      "limits": [
+        "Static readability judgment only; no built binary, PTY, setup, tests, builds, or runtime rendering executed.",
+        "The existing transport helper inherits environment before launch overrides and the test removes its allocated temporary home in finally. This is not a runtime isolation audit; parent must own any audited execution."
       ]
     },
     {

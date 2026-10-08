@@ -953,6 +953,24 @@
         "branch": "bruv/pr45-judge-3-compatibility-t3-focuses-ac10d745",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
+      },
+      {
+        "id": "task_8b7cafcd",
+        "stage": "primary",
+        "focus": "tests/claude-compat-launcher.test.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_8b7cafcd",
+        "branch": "bruv/pr45-primary-tests-claude-compat-launche-8b7cafcd",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_9cb924a6",
+        "stage": "primary",
+        "focus": "tests/claude-compat-live-frontend.test.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_9cb924a6",
+        "branch": "bruv/pr45-primary-tests-claude-compat-live-fr-9cb924a6",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
       }
     ]
   },
@@ -1296,7 +1314,7 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_b6cfaf38",
         "branch": "bruv/pr45-judge-3-agent-history-session-goals-b6cfaf38",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled"
       }
     ]
   },
