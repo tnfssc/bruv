@@ -21,11 +21,15 @@ const listeners = new WeakMap<object, Set<ProviderAttemptListener>>();
 
 export function subscribeProviderAttempts(owner: object, listener: ProviderAttemptListener): () => void {
   let set = listeners.get(owner);
-  if (!set) listeners.set(owner, (set = new Set()));
-  set.add(listener);
+  if (!set) {
+    set = new Set();
+    listeners.set(owner, set);
+  }
+  const subscribed = set;
+  subscribed.add(listener);
   return () => {
-    set!.delete(listener);
-    if (set!.size === 0) listeners.delete(owner);
+    subscribed.delete(listener);
+    if (subscribed.size === 0) listeners.delete(owner);
   };
 }
 

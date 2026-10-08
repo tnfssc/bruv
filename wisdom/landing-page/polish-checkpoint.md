@@ -32,7 +32,7 @@ Use /home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin/bun (mise's repo confi
 - Coalesced scroll regression: 100 same-turn 1px wheel events produced one terminal write and five rows; twelve individual 1px events stayed below one row. Checked 1,564 desktop, 1,295 mobile390 and 986 mobile320 demo cells against source glyph/color runs.
 - Install/source and HTML navigation exercised (external destinations intercepted, not a remote GitHub availability test). All referenced local HTML links/assets returned 200. Main WASM/font path exercised by renderer startup; no missing asset errors.
 - Axe HTML scans at 1440/390/320: zero violations after adding proper view-navigation landmarks and removing the alternate's redundant self-link. Not a manual screen-reader audit.
-- Screenshots and JSON results: validation/polish/. Reviewed full final outcomes and loop reset/typing samples: stable panel borders, complete outcomes before reset, no sampled chopped lines or transient blank-page flash.
+- Historical screenshots and JSON results (recoverable at Git revision `baf2fcd5`) were reviewed for full final outcomes and loop reset/typing samples: stable panel borders, complete outcomes before reset, no sampled chopped lines or transient blank-page flash.
 
 ## Limits
 

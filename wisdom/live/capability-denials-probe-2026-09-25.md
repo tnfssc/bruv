@@ -1,6 +1,6 @@
 # Live capability denials: connected provider probe (2026-09-25)
 
-Read [values](../values.md), [main-owner investigation](main-orchestrator-openai-investigation.md), [voice prompt evidence](voice-prompt-connected-validation.md), and the probe code. The parent note `capability-denials-2026-09-25.md` was not present in this worktree. No production prompt or executor changed.
+Read [values](../values.md), [main-owner investigation](../experiments/live/main-orchestrator-provider-probes/main-orchestrator-openai-investigation.md), [voice prompt evidence](../experiments/live/voice-prompt-behavior/voice-prompt-connected-validation.md), and the probe code. The parent note `capability-denials-2026-09-25.md` was not present in this worktree. No production prompt or executor changed.
 
 ## Actual selection and method
 

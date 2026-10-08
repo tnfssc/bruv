@@ -331,7 +331,7 @@ function createNavigationWorkload(mode: NavigationMode, size: number, options: N
         expanded = false;
         const globals = globalThis as typeof globalThis & Record<symbol, unknown>;
         priorTheme = globals[themeKey];
-        hadPriorTheme = Object.prototype.hasOwnProperty.call(globals, themeKey);
+        hadPriorTheme = Object.hasOwn(globals, themeKey);
         changeTheme("dark");
         installDiskBackedSessionManager(); // Production process-wide adapter, intentionally irreversible.
         history = createNavigationHistory(size);
@@ -438,7 +438,10 @@ function createNavigationWorkload(mode: NavigationMode, size: number, options: N
             else send("\x1b");
             break;
           case "tool-detail":
-            sync("ToolExecutionComponent.setExpanded", () => tool.setExpanded((expanded = iteration % 2 === 1)));
+            sync("ToolExecutionComponent.setExpanded", () => {
+              expanded = iteration % 2 === 1;
+              tool.setExpanded(expanded);
+            });
             tui.requestRender();
             break;
           case "editor-expand":

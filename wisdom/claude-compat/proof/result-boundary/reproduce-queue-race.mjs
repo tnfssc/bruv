@@ -20,7 +20,7 @@ async function reproduce(Q) {
  let empty=false,injected=false,length=q.messages.length;
  Object.defineProperty(q.messages,'length',{get(){if(length===0)empty=true;return length},set(n){length=n}});
  const scheduler=new Scheduler.MixedScheduler();
- scheduler.shouldYield=fiber=>{
+ scheduler.shouldYield=()=>{
   if(empty&&!injected&&q.state.takers.size===0){injected=true;Q.offerUnsafe(q,signal);}
   return false;
  };

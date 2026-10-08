@@ -9,7 +9,7 @@ import tempfile
 import time
 import unittest
 
-WRAPPER = Path(__file__).resolve().parents[3] / 'scripts/live-isolated-audio.sh'
+WRAPPER = Path(__file__).resolve().parents[3] / 'scripts/live/isolated-audio.sh'
 
 # Each fake executable records its own invocation; actual bash, timeout, Python,
 # ps and kill perform the wrapper's process and exit-status work.
@@ -170,7 +170,7 @@ class IsolatedAudioWrapperTests(unittest.TestCase):
         run, result = self.run_wrapper(['--provider'])
         self.assertEqual(result.returncode, 0, result.stderr)
         call = run.calls('bun')[0]
-        self.assertEqual(call['args'], ['scripts/live-acceptance.ts', '--provider'])
+        self.assertEqual(call['args'], ['scripts/live/acceptance.ts', '--provider'])
         self.assertEqual(call['env']['BRUV_LIVE_ISOLATED'], '1')
         self.assertFalse(run.calls('fixture'))
         self.assert_private_services(run)

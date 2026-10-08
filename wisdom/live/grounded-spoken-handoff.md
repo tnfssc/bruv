@@ -107,7 +107,7 @@ unknowns and lifecycle-specific identity already cover these lessons.
 
 ## Paid provider follow-up
 
-[Device-free real-provider validation](grounded-spoken-provider-validation.md)
+[Device-free real-provider validation](../experiments/live/grounded-spoken-provider/grounded-spoken-provider-validation.md)
 passed manual-activity synthetic speech through actual provider transcription,
 VoiceSession and createOrchestration to captured host dispatch. Wire finished
 was absent; model_contract provenance was retained; agent_send supplied only

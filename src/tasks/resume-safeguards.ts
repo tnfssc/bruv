@@ -25,7 +25,7 @@ function sanitizeTaskId(value: unknown): string | undefined {
 }
 
 export async function readSessionRole(path: string): Promise<SessionRole> {
-  let handle;
+  let handle: Awaited<ReturnType<typeof open>> | undefined;
   try {
     handle = await open(path, "r");
     const buffer = Buffer.allocUnsafe(METADATA_LIMIT);

@@ -338,8 +338,7 @@ async function acquire(
   if (currentMainOwner(manager) || pending.has(manager)) throw new Error("A main owner is already active");
   const session = getInstructionContinuitySession(manager) as OwnerSession | undefined;
   if (
-    !session ||
-    !session._extensionRunner ||
+    !session?._extensionRunner ||
     !session._toolRegistry ||
     session._isAgentRunActive ||
     !ctx.isIdle() ||

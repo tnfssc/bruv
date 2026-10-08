@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Read-only Actions history capture. No workflow runs are started or changed."""
 import concurrent.futures, datetime, json, pathlib, subprocess
-ROOT=pathlib.Path(__file__).resolve().parent
+ROOT=pathlib.Path("artifacts/ci-history")
+ROOT.mkdir(parents=True, exist_ok=True)
 REPO='tnfssc/bruv'
 def api(path):
  p=subprocess.run(['gh','api',path],capture_output=True,text=True)

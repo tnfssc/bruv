@@ -1,5 +1,8 @@
 # Tool group UX follow-up
 
+Completed-run captures/logs mentioned below are now historical Git evidence;
+[recovery and retained inputs](../quality/completed-run-retirement.md). Conclusions remain here.
+
 User wants the CLI activity header padded like nearby transcript content, a distinct theme color and no group chevron. Header click reveals tool rows only; each inner detail is opened separately. Background task notifications should be presented inside activity groups, not as standalone transcript entries. Multiple groups within one human turn are expected; inspect T3 chat grouping as precedent.
 
 Keep model context/history and job/question ownership unchanged. Group actual notification provenance, not prose text guesses. Keep real assistant answers and human questions visible. Failure/cancellation summaries and inner details must remain accessible. Preserve selected-branch replay, /reload, scrolling anchors and long-thread performance. Match T3's useful hierarchy without importing a new UI framework.

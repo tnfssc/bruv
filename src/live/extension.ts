@@ -796,7 +796,7 @@ export default function liveExtension(pi: ExtensionAPI, injected: Partial<LiveDe
           if (!loading) loading = deps.config.load();
           selected = await loading;
           loaded = true;
-        } catch (error) {
+        } catch {
           ctx.ui.notify("Could not read Live settings; selection unchanged. Fix settings before using Live.", "error");
           loading = undefined;
           return;

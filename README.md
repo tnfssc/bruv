@@ -196,6 +196,8 @@ app environment overrides use `BRUV_*`.
 Existing `~/.die` data is not read or migrated. Bruv does not rename or remove
 the old executable; old `die update` versions still expect old asset names.
 
+- [Documentation map](docs/README.md): code ownership, product decisions,
+  versioned release notes and historical explainers.
 - [Resource limits](wisdom/resources/resource-limits.md): output capture,
   truncation, and cache ownership. Original session history is not deleted.
 - [Question inbox implementation](wisdom/questions/interactive-inbox-work.md)
@@ -221,4 +223,4 @@ See [manual release recovery](wisdom/releases/manual-release-dispatch.md).
 
 ## License
 
-[MIT](LICENSE). See [third-party notices](THIRD_PARTY_NOTICES.md) for dependencies.
+[MIT](LICENSE). See [third-party notices](licenses/THIRD_PARTY_NOTICES.md) for dependencies.

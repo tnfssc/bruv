@@ -92,7 +92,7 @@ test("terminal and HTML copy GitHub command at arbitrary origin/subpath; keyboar
   const page = await context.newPage();
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
-  const evidence = resolve(import.meta.dir, "../../wisdom/landing-page/validation/install");
+  const evidence = resolve(import.meta.dir, "../../artifacts/landing-page/install");
   await mkdir(evidence, { recursive: true });
   try {
     const terminal = await observeTerminal(page);

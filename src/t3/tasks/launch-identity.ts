@@ -54,7 +54,7 @@ export class T3LaunchIdentityLedger {
   }
 
   async #read(): Promise<FileShape> {
-    let file;
+    let file: Awaited<ReturnType<typeof open>> | undefined;
     try {
       file = await open(this.path, "r");
       const stats = await file.stat();

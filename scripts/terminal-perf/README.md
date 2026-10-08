@@ -56,7 +56,7 @@ For a call-stack profile, use Bun's profiler on a focused workload. A sampling p
 
 ```sh
 bun --cpu-prof --cpu-prof-md --cpu-prof-dir artifacts/terminal-perf \
-  scripts/terminal-perf.ts --case input --scales 1000 --samples 100
+  scripts/terminal-perf/terminal-perf.ts --case input --scales 1000 --samples 100
 ```
 
 ## What we measure
@@ -71,7 +71,7 @@ Current workloads use full-screen Pi 1.1.0 with real SDK messages, ToolExecution
 
 Add a mode/fixture in `workloads.ts`. Keep it provider-free and deterministic. Use real components and the real TUI layout/diff/write path. Bound live text. Use setup/step/dispose. Install only one fixture at a time: Bruv's adapters patch SDK prototypes and must be restored. Use the renderer-ready hook so the cold render is measured too.
 
-Add assertions in `tests/terminal-perf-workloads.test.ts` for visible changes, output, work counts and disposal. Bump the runner's fixture version when workload meaning changes. Never compare two different fixtures as proof of a code speedup.
+Add assertions in `tests/performance/terminal-perf-workloads.test.ts` for visible changes, output, work counts and disposal. Bump the runner's fixture version when workload meaning changes. Never compare two different fixtures as proof of a code speedup.
 
 ## Known limits
 

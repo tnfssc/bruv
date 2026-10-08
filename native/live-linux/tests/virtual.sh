@@ -4,7 +4,7 @@ cd "$(dirname "$0")/../../.."
 # Desktop policy can move even explicitly named streams (for example to a DSP
 # sink). Reuse the owned, hardware-free graph instead of testing desktop routes.
 if [[ ${BRUV_LIVE_ISOLATED:-} != 1 ]]; then
-  exec bash scripts/live-isolated-audio.sh -- bash native/live-linux/tests/virtual.sh "$@"
+  exec bash scripts/live/isolated-audio.sh -- bash native/live-linux/tests/virtual.sh "$@"
 fi
 command -v pactl >/dev/null
 pactl info >/dev/null # the parent owns the server; never change its defaults

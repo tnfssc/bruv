@@ -1,0 +1,144 @@
+import type { JsonObject } from "@earendil-works/pi-ai";
+import { expect, test } from "bun:test";
+import { mkdtemp, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join, resolve } from "node:path";
+import { SessionManager } from "@earendil-works/pi-coding-agent";
+import { capturePane, frameContaining as waitForText, shellQuote as quote, tmuxRunner } from "../helpers/tui-helpers";
+
+const usage = {
+  input: 0,
+  output: 0,
+  cacheRead: 0,
+  cacheWrite: 0,
+  totalTokens: 0,
+  cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: 0 },
+};
+
+test("real TUI shows one-line collapsed execute/task rows and expandable details at small width and on failure", async () => {
+  const home = await mkdtemp(join(tmpdir(), "bruv-preview-pty-"));
+  const socket = "bruv-preview-" + process.pid + "-" + Date.now();
+  const tmux = tmuxRunner(socket);
+  const key = (...keys: string[]) => tmux("send-keys", "-t", "preview", ...keys);
+
+  const frameContaining = (text: string, history = false) =>
+    waitForText(async () => (await capturePane(tmux, "preview", history)).stdout, text, 80);
+  try {
+    const session = SessionManager.create(home, join(home, "sessions"));
+    session.appendMessage({ role: "user", content: "Preview fixture", timestamp: Date.now() });
+    const appendTool = (
+      id: string,
+      label: string,
+      code: string,
+      text: string,
+      details: JsonObject,
+      isError: boolean,
+    ) => {
+      session.appendMessage({
+        role: "assistant",
+        content: [{ type: "toolCall", id, name: "execute", arguments: { label, code } }],
+        api: "openai-completions",
+        provider: "openai",
+        model: "gpt-4o",
+        usage,
+        stopReason: "toolUse",
+        timestamp: Date.now(),
+      });
+      session.appendMessage({
+        role: "toolResult",
+        toolCallId: id,
+        toolName: "execute",
+        content: [{ type: "text", text }],
+        details,
+        isError,
+        timestamp: Date.now(),
+      });
+    };
+    appendTool(
+      "success-call",
+      "Read fixture",
+      "// COMMAND_FIRST\n" + Array.from({ length: 12 }, (_, i) => "// COMMAND_HIDDEN_" + i).join("\n"),
+      "Execution completed with exit code 0.\n\nstdout:\n" +
+        Array.from({ length: 12 }, (_, i) => "OUTPUT_HIDDEN_" + i).join("\n"),
+      {
+        exitCode: 0,
+        stdout: Array.from({ length: 12 }, (_, i) => "OUTPUT_HIDDEN_" + i).join("\n"),
+        stderr: "",
+        images: [],
+      },
+      false,
+    );
+    appendTool(
+      "failure-call",
+      "Read restricted fixture",
+      "throw new Error('FAILURE_COMMAND_DETAIL')",
+      "Execution failed with exit code 7.\n\nstderr:\nFAILURE_OUTPUT_DETAIL",
+      { exitCode: 7, stdout: "", stderr: "FAILURE_OUTPUT_DETAIL", images: [] },
+      true,
+    );
+    session.appendCustomMessageEntry(
+      "task-complete",
+      "1 asynchronous task completed.\ntask_fixture completed\nFinal output preview:\nTASK_OUTPUT_DETAIL",
+      true,
+      {
+        tasks: [{ id: "task_fixture", status: "completed", exitCode: 0 }],
+        attention: [],
+        omittedTasks: 0,
+        omittedAttention: 0,
+      },
+    );
+    const binary = resolve(import.meta.dir, "../../dist/bruv");
+    const launch = [
+      "env",
+      "HOME=" + home,
+      "BRUV_CODING_AGENT_DIR=" + join(home, ".bruv", "agent"),
+      "OPENAI_API_KEY=offline-test-placeholder",
+      binary,
+      // Expanded details exceed the viewport; this test inspects normal terminal scrollback.
+      "--tui-mode",
+      "regular",
+      "--offline",
+      "--no-approve",
+      "--session",
+      session.getSessionFile()!,
+      "--provider",
+      "openai",
+      "--model",
+      "gpt-4o",
+    ]
+      .map(quote)
+      .join(" ");
+    expect((await tmux("new-session", "-d", "-s", "preview", "-x", "120", "-y", "40", "-c", home, launch)).code).toBe(
+      0,
+    );
+
+    const compact = await frameContaining("task_fixture");
+    expect(compact).toContain("✓ Read fixture");
+    expect(compact).not.toContain("// COMMAND_FIRST");
+    expect(compact).not.toMatch(/executing|executed|running|completed/i);
+    expect(compact).toContain("✗ Read restricted fixture — FAILURE_OUTPUT_DETAIL");
+    expect(compact).toContain("✓ task_fixture");
+    expect(compact).not.toContain("COMMAND_HIDDEN_5");
+    expect(compact).not.toContain("OUTPUT_HIDDEN_5");
+    expect(compact).not.toContain("FAILURE_COMMAND_DETAIL");
+    expect(compact).not.toContain("TASK_OUTPUT_DETAIL");
+    // A settled tool is one combined renderer row, not separate call/result rows.
+    expect(compact.split("\n").filter((line) => line.includes("✓ Read fixture")).length).toBe(1);
+
+    expect((await tmux("resize-window", "-t", "preview", "-x", "38", "-y", "40")).code).toBe(0);
+    await Bun.sleep(300);
+    const narrow = await frameContaining("task_fixture");
+    for (const line of narrow.split("\n")) expect([...line].length).toBeLessThanOrEqual(38);
+    expect(narrow).not.toContain("OUTPUT_HIDDEN_5");
+
+    await key("C-o");
+    const expanded = await frameContaining("TASK_OUTPUT_DETAIL", true);
+    expect(expanded).toContain("COMMAND_HIDDEN_5");
+    expect(expanded).toContain("OUTPUT_HIDDEN_5");
+    expect(expanded).toContain("FAILURE_COMMAND_DETAIL");
+    expect(expanded).toContain("FAILURE_OUTPUT_DETAIL");
+  } finally {
+    await tmux("kill-server");
+    await rm(home, { recursive: true, force: true });
+  }
+}, 15000);

@@ -201,8 +201,7 @@ class Driver {
     this.child.stderr.on("data", (d) => log(label + ":stderr", d.toString()));
     this.child.stdout.on("data", (d) => {
       b += d;
-      let n;
-      while ((n = b.indexOf("\n")) >= 0) {
+      for (let n = b.indexOf("\n"); n >= 0; n = b.indexOf("\n")) {
         const s = b.slice(0, n);
         b = b.slice(n + 1);
         if (!s) continue;

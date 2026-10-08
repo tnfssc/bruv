@@ -72,7 +72,7 @@ function realtimeCost(usage: Record<string, any>, rates: RealtimeRates): number 
   );
 }
 
-export function voiceCost(provider: "google" | "openai", model: string, usage: unknown): number | undefined {
+export function voiceCost(_provider: "google" | "openai", model: string, usage: unknown): number | undefined {
   const u = record(usage);
   if (!u) return;
   switch (model) {

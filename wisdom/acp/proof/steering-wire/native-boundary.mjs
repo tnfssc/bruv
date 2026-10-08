@@ -17,7 +17,7 @@ const model = {
   contextWindow: 10000,
   maxTokens: 1000,
 };
-const streamFunction = (m, context, options) => {
+const streamFunction = (_m, context, options) => {
   n++;
   const texts = context.messages
     .filter((x) => x.role === "user")
@@ -62,7 +62,7 @@ const tools = [
     label: "Long mock",
     description: "Mock long work",
     parameters: params,
-    execute: async (id, args, signal) => {
+    execute: async (id, _args, signal) => {
       record("tool_start", { id });
       signal?.addEventListener("abort", () => record("tool_aborted", { id }));
       agent.steer({
@@ -86,7 +86,7 @@ const tools = [
     label: "Second mock",
     description: "Mock second work",
     parameters: params,
-    execute: async (id, args, signal) => {
+    execute: async (id, _args, signal) => {
       record("tool_start", { id });
       record("tool_end", { id, signalAborted: signal?.aborted ?? false });
       return { content: [{ type: "text", text: "second mock completed" }], details: {} };

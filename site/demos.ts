@@ -10,7 +10,7 @@ export type Cell = { text: string; style: string };
  * src/wisdom/extension.ts + location.ts and src/prompts/wisdom.md (explicit file reuse).
  * /wisdom only reports a directory; it does NOT restore hidden conversational memory.
  * RGB values resolve Pi 1.0.0's bundled dark.json. Background comes from the existing
- * settings-cells.json capture. Product themes are configurable. The Nerd Font idle
+ * historical settings-cells.json capture (not used by current landing entries). Product themes are configurable. The Nerd Font idle
  * icon U+F460 is bundled as a tiny webfont subset. Code previews and other chrome
  * are honestly condensed. No tools, network, paid calls, private paths or timers run.
  */

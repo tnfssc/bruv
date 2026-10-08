@@ -79,7 +79,7 @@ quadratically with the child transcript. Original/derived child journals and
 body-free indexes still grow with history; this is not retention or a promise of
 flat total RSS/disk usage.
 
-Focused checks: `bun test tests/resource-harness-workload.test.ts`.
+Focused checks: `bun test tests/performance/resource-harness-workload.test.ts`.
 Task evidence/limits: [wisdom note](../../wisdom/resources/resource-harness-workload.md).
 
 ## Stable-history stress

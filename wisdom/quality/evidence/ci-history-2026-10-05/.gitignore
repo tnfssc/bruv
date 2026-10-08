@@ -3,3 +3,7 @@ jobs/
 runs.json
 __pycache__/
 same-sha-jobs/
+
+# Completed capture inventories are disposable; capture.json is provenance.
+*.json
+!capture.json

@@ -1,2 +1,0 @@
-normal CLI die 0.15.9 sha256 9feeacbd34912953ddd08a4e1f6cf85904628c329d072f256bcb523c1c471dec
-PASS compiled CLI print/json boundary; normal CLI execute remote.launch -> two parent yields -> Docker remote terminal -> existing task-complete parent wake, isolated sessions, repeat sync and reconnect

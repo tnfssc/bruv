@@ -1,5 +1,8 @@
 # Rolling activity: independent disclosures and grouped task notices
 
+Completed-run captures/logs mentioned below are now historical Git evidence;
+[recovery and retained inputs](../quality/completed-run-retirement.md). Conclusions remain here.
+
 ## Scope / durable workspaces
 
 Integration: /home/tnfssc/.bruv/worktrees/bruv-5442693331ce-task_993dc486 (base bb0dba7403cde61ff9483f95f1223765f2a091e2).
@@ -68,7 +71,7 @@ Results: typecheck passed; focused final gate **146 pass, 0 fail, 2,175 assertio
 
 ### Direct frame review (not just hashes)
 
-[Retained final samples and reviewed report](evidence/rolling-disclosures-2026-10-04/) were read as actual plain and ANSI frames by the integration owner:
+[Final samples and reviewed report (historical)](../quality/completed-run-retirement.md#recovery) were read as actual plain and ANSI frames by the integration owner:
 
 - rows-settled: one leading column aligns both 3/2-tools headers with assistant prose, no chevron. ANSI header uses the semantic muted theme, rendered as ESC[2m dim in this clean default fixture; normal assistant prose does not. This is subdued theme differentiation, not a claim of an RGB color screenshot.
 - group-open-rows: three compact check-mark rows, no source/full output. first-closed-second-open and group-reopened-independent: only RECORD-B detail is open; A/C stay compact. activity-selected proves real keyboard group disclosure after reopen.

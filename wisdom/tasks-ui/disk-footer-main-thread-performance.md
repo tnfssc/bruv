@@ -1,5 +1,8 @@
 # Disk/footer main-thread performance
 
+Completed-run captures/logs mentioned below are now historical Git evidence;
+[recovery and retained inputs](../quality/completed-run-retirement.md). Conclusions remain here.
+
 ## Ownership and decision
 
 Baseline: 9814f356345c450188306de2a7d5b20582c57be0, Pi 1.0.3, Bun 1.4.2, Linux x64 / Ryzen 9 7940HS. This work owns src/history/disk-entry-store.ts, src/history/session-manager.ts, src/tasks/session-costs.ts and dedicated tests. Only disk-entry-store production code changed. No SDK patches, selector/lifecycle modules, shared fixtures/harness/audit probes, existing notes or values changed. Read [values](../values.md) and [stall audit](terminal-stall-surface-audit.md). Values unchanged: existing measurement, complete-content and pickup guidance already covers this work.
@@ -10,7 +13,7 @@ Baseline: 9814f356345c450188306de2a7d5b20582c57be0, Pi 1.0.3, Bun 1.4.2, Linux x
 
 ## Matched clean evidence
 
-Raw evidence: [evidence/disk-footer](evidence/disk-footer/). before-journal.json / after-journal.json and before-cost.json / after-cost.json are from the **unchanged committed provider-free audit probes**. summary.json validates all journal work fingerprints, including full normalized content hashes and serialized materialization bytes. Source hashes are in raw files. Runs were serial on a shared host, with no long concurrent matrix or timing gates. Times are synchronous entry-to-return intervals including possible GC, preemption and synchronous filesystem latency, not pure CPU.
+Raw evidence: [evidence/disk-footer (historical)](../quality/completed-run-retirement.md#recovery). before-journal.json / after-journal.json and before-cost.json / after-cost.json are from the **unchanged committed provider-free audit probes**. summary.json validates all journal work fingerprints, including full normalized content hashes and serialized materialization bytes. Source hashes are in raw files. Runs were serial on a shared host, with no long concurrent matrix or timing gates. Times are synchronous entry-to-return intervals including possible GC, preemption and synchronous filesystem latency, not pure CPU.
 
 Three messages, two short users + one large tool result (not long history):
 

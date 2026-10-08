@@ -7,7 +7,7 @@ import { build } from "./build";
 import { preview } from "./preview";
 import { launchBrowser } from "./browser";
 import type { Browser, Page } from "playwright-core";
-const evidence = resolve(import.meta.dir, "../../wisdom/landing-page/validation/install/regression");
+const evidence = resolve(import.meta.dir, "../../artifacts/landing-page/install/regression");
 
 async function ready(page: Page) {
   await page.locator('#terminal[data-ready="true"]').waitFor();
@@ -56,7 +56,7 @@ async function checkCells(page: Page) {
     f.ansiRows.map((row) => row.replace(/\x1b\[[0-9;?]*[A-Za-z]/g, "").trimEnd()),
   );
   let verified = 0;
-  f.captures.forEach((capture) =>
+  f.captures.forEach((capture) => {
     capture.rows.forEach((row, y) => {
       const ty = capture.y + y;
       if (ty < f.clip.top || ty >= f.clip.bottom) return;
@@ -72,8 +72,8 @@ async function checkCells(page: Page) {
           verified++;
         }
       });
-    }),
-  );
+    });
+  });
   return { f, verified };
 }
 

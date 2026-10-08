@@ -194,13 +194,11 @@ async function exerciseHistory(page) {
   await page.waitForTimeout(1500);
   // Normal native first-run flow, without external sign-in, installation, or license bypass.
   await page.getByText("Connect your computers", { exact: true }).waitFor({ timeout: 20000 });
-  {
-    await page.getByRole("button", { name: "Continue", exact: true }).click();
-    await page.getByText("Connect your agents", { exact: true }).waitFor();
-    await page.getByRole("button", { name: "Continue", exact: true }).click();
-    await page.getByRole("button", { name: "Do not import projects", exact: true }).click();
-    await page.getByText("Set up T3 Code", { exact: true }).waitFor({ state: "hidden" });
-  }
+  await page.getByRole("button", { name: "Continue", exact: true }).click();
+  await page.getByText("Connect your agents", { exact: true }).waitFor();
+  await page.getByRole("button", { name: "Continue", exact: true }).click();
+  await page.getByRole("button", { name: "Do not import projects", exact: true }).click();
+  await page.getByText("Set up T3 Code", { exact: true }).waitFor({ state: "hidden" });
   await page.goto(url + "/settings/providers");
   await page
     .getByRole("button", {

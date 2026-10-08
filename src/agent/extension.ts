@@ -17,7 +17,7 @@ import { clearRemoteJobEvents, type RemoteJobObservation, remoteJobEvents } from
 import { publishRemoteJobObservations, remoteCompletionSummary } from "../remote/job-observations";
 import { createRemoteJobsAdapter, sshJobId } from "../remote/jobs";
 import { createRemoteOperations, type RemoteOperation } from "../remote/operations";
-import { registerRootRuntime } from "../remote/root-runtime";
+import { registerRootRuntime } from "../remote/root/runtime";
 import { SessionHost, type SessionTaskPort } from "../session/host";
 import { registerSessionHost } from "../session/host-access";
 import { createWebTaskEventEmitter } from "../t3/tasks/events";
@@ -51,7 +51,6 @@ import {
   taskRowFromLaunch,
   taskRowFromRemote,
   taskRowKey,
-  taskRowsFromDetails,
   taskRowsFromSessionManager,
   upsertTaskRow,
 } from "../ui/task-rows";

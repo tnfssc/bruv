@@ -122,7 +122,11 @@ export function createClaudeCompatFrontend(options: ClaudeCompatFrontendOptions)
       host = undefined;
     });
     // Resolve lazily: getting the host starts the actual task manager, which init need not do.
-    hostAccess = () => (context ? (host ??= getSessionHost(pi, context)) : undefined);
+    hostAccess = () => {
+      if (!context) return undefined;
+      host ??= getSessionHost(pi, context);
+      return host;
+    };
   };
   let hostAccess: () => SessionHost | undefined = () => undefined;
 

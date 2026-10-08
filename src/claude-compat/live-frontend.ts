@@ -39,7 +39,8 @@ export function createClaudeCompatLiveFrontend(options: ClaudeCompatLiveOptions)
   let selected: LiveConfig | undefined;
   const config = {
     async load() {
-      return (selected ??= await storage.load());
+      selected ??= await storage.load();
+      return selected;
     },
     async save(value: LiveConfig) {
       await storage.save(value);

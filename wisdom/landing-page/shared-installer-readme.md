@@ -76,7 +76,7 @@ Browser copy proof uses an arbitrary loopback origin and /preview/bruv/ subpath:
 both terminal and HTML clipboard values equal README's GitHub command; keyboard
 copy/reset and 320px wrapping pass. GitHub source navigation is asserted in the
 terminal hit action and HTML/no-JS link, not taken as live publication proof.
-Updated evidence under validation/install/ and regression/. Opened mobile
+Updated historical install and regression browser evidence is recoverable at Git revision `baf2fcd5`. Opened mobile
 terminal + HTML screenshots: wrapped command, source link and copy control
 remain readable with no overflow.
 

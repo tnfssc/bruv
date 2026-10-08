@@ -35,8 +35,14 @@ The Linux CI workflow calls the same command. It includes formatting, lint, type
 
 Both pull-request CI and the release workflow run the formatting check. When you format changes, use the pinned Biome version in `devDependencies`.
 
-Do not commit generated `dist/`, `runtime-assets/`, test artifacts, credentials,
-or local configuration.
+Do not commit generated `dist/`, `artifacts/`, credentials, or local configuration.
+
+`dist/runtime-assets/` contains rebuildable compile inputs prepared by
+`bun run prepare:assets` (also run by the paired build). The executables embed
+these assets; release packaging ships the binaries and notices, not this directory.
+Retained CI logs, screenshots, proof runs and performance captures stay in ignored
+root `artifacts/`, outside disposable build/distribution output. Do not move them
+under `dist/` or remove them when cleaning a build.
 
 ## Test policy
 
@@ -47,17 +53,17 @@ fixture must remain discovered and skipped when `BRUV_RUN_LLM_TESTS` is unset ra
 than disappearing behind conditional test registration.
 
 Goal lifecycle changes should test the pure store/controller contract. Where the Pi boundary matters, also use an offline SDK or TUI fixture. The natural real-model goal smoke
-is `tests/goals-live.test.ts`. Run it only with `BRUV_RUN_LLM_TESTS=1` and configured
+is `tests/goals/goals-live.test.ts`. Run it only with `BRUV_RUN_LLM_TESTS=1` and configured
 credentials. It creates temporary local resources and writes bounded evidence under
 ignored `artifacts/goals/`. Do not describe a mocked SDK stream as live-model evidence.
 
 ## Architecture
 
-Read [the code map](ARCHITECTURE.md) before choosing a home for new code. It names runtime owners, shared boundaries, the canonical T3 integration, research archives and test/build discovery rules. Keep code with its real owner, not in whichever file already imports a similar type.
+Read [the code map](docs/ARCHITECTURE.md) before choosing a home for new code. It names runtime owners, shared boundaries, the canonical T3 integration, research archives and test/build discovery rules. Keep code with its real owner, not in whichever file already imports a similar type.
 
 Prompt text belongs in `src/prompts/`. Start with [Editing prompts](wisdom/prompts/prompts.md) and the assembled input, not an isolated sentence. Preserve explicit custom prompts and instruction continuity.
 
-`scripts/prepare-assets.ts` copies embedded Pi assets. Preserve license banners and update `THIRD_PARTY_NOTICES.md` and `third_party/` inputs when packaged assets or licensing change. Run `bun run generate:notices` to check attribution.
+`scripts/build/prepare-assets.ts` copies embedded Pi assets. Preserve license banners and update `licenses/THIRD_PARTY_NOTICES.md` and `licenses/third-party/` inputs when packaged assets or licensing change. Run `bun run generate:notices` to check attribution.
 
 Background work belongs to the session. Execute worker exit must not kill jobs by accident. Keep history durable, handoffs cooperative and diagnostics bounded.
 
@@ -66,4 +72,4 @@ Background work belongs to the session. Execute worker exit must not kill jobs b
 For documentation-only edits, check the Markdown directly. Check links, command names, and claims against the current source. Do not describe planned work as
 implemented. Before opening a pull request, run the deterministic commands above
 and summarize what changed, how it was tested, and any validation you could not run.
-See `LICENSE` and `THIRD_PARTY_NOTICES.md` for licensing requirements.
+See `LICENSE` and `licenses/THIRD_PARTY_NOTICES.md` for licensing requirements.

@@ -1,5 +1,7 @@
 # CI and release failure audit — 2026-10-05
 
+Completed inventories/classifications are retired; [recovery and recapture](evidence/ci-history-2026-10-05/README.md). Historical counts below are unchanged.
+
 Follow-up: [items 2 and 3 are now implemented and locally verified](../ci/ci-failure-pattern-followup-2026-10-05.md). Item 4 remains [proposal-only](../ci/cheap-checks-proposal-2026-10-05.md). The analysis below describes the pre-fix 9906f92e snapshot.
 
 ## What we checked
@@ -8,7 +10,7 @@ Read-only investigation of tnfssc/bruv. No tests weakened, product code changed,
 
 Captured all 587 retained Actions runs returned by the repository API, created from 2026-09-05 23:12 UTC through 2026-10-05 18:13 UTC. Repository was created September 5. This covers the available run history, not deleted runs. Collection began October 5 around 18:19 UTC; results are a snapshot, not a live monitor. Checked failed-job logs, current workflow/test owners, prior repair notes, and relevant git changes.
 
-Evidence: [summary](evidence/ci-history-2026-10-05/summary.json), [test signatures](evidence/ci-history-2026-10-05/test-signatures.json). Raw API metadata and compressed logs remain in the same local evidence folder. Collection scripts allow a fresh read-only capture.
+Evidence: [summary (historical)](completed-run-retirement.md#recovery), [test signatures (historical)](completed-run-retirement.md#recovery). Raw API metadata and compressed logs remain in the same local evidence folder. Collection scripts allow a fresh read-only capture.
 
 ## Counts
 
@@ -108,7 +110,7 @@ Across all captured failing logs, after removing duplicate failure-summary lines
 
 Two CI failures also used whole-process heap growth over 20 MiB as a scheduler retention assertion. GC and unrelated temporary allocations made that the wrong owner-level measurement. The repair checks bounded retained states, one timer, exact deadline batches and disposal instead of raising the heap limit. See [resource-test diagnosis](../resources/job-attention-heap-assertion.md).
 
-These rows overlap other findings and must not be added into a total. The [signature inventory](evidence/ci-history-2026-10-05/test-signatures.json) includes exact run IDs. Some rows include an earlier failed attempt of a now-green run.
+These rows overlap other findings and must not be added into a total. The [signature inventory (historical)](completed-run-retirement.md#recovery) includes exact run IDs. Some rows include an earlier failed attempt of a now-green run.
 
 ### 4. Cheap static failures keep reaching hosted gates
 
@@ -188,6 +190,6 @@ Three narrow research reports carry full source links and per-incident detail:
 - [Current workflow owners and retired gaps](ci-history-workflow-research-2026-10-05.md)
 - [Release history and shipped regressions](ci-history-release-research-2026-10-05.md)
 
-Evidence folder: wisdom/quality/evidence/ci-history-2026-10-05. Local raw metadata/logs are ignored; compact inventories, classifications and scripts are kept. See its README for recapture. Research used this shared workspace, not implementation worktrees. At audit completion, no implementation was underway. The later [implementation follow-up](../ci/ci-failure-pattern-followup-2026-10-05.md) records the shared runner, narrow fixture repairs and passing joined gate.
+Evidence folder: wisdom/quality/evidence/ci-history-2026-10-05. Local raw metadata/logs were ignored and untouched. Completed inventories/classifications are now historical Git evidence; scripts and capture provenance stay. See its README for recapture. Research used this shared workspace, not implementation worktrees. At audit completion, no implementation was underway. The later [implementation follow-up](../ci/ci-failure-pattern-followup-2026-10-05.md) records the shared runner, narrow fixture repairs and passing joined gate.
 
 Values: strengthened value 2 with the repeated fixture-owner/completion lesson and linked this audit. Existing shipped-path and dependency-change values still apply; no new value was added.

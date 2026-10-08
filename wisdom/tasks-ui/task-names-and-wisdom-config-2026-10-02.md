@@ -1,5 +1,8 @@
 # Readable task rows and thin wisdom config
 
+Completed-run captures/logs mentioned below are now historical Git evidence;
+[recovery and retained inputs](../quality/completed-run-retirement.md). Conclusions remain here.
+
 User asked to fix checked raw task IDs, keep project wisdom config thin, and release when done.
 
 ## Actual failure and fix
@@ -24,7 +27,7 @@ Parent: /home/tnfssc/Code/bruv, develop. Base: 9f78878.
 
 At cb292310, fresh build, typecheck, repository formatting/lint and standalone smoke passed. Full root suite: 1,741 passed, 20 intentional skips, zero failures, 33,020 assertions across 239 files.
 
-Parent inspected real Pi rendering from the original saved task metadata. Then the compiled CLI replayed the selected original messages in a private copied session, offline, with no provider request or mutation of the user's session. Both rows showed their exact labels once on cold reopen and after /reload. [Compiled reload frame](evidence/readable-task-names/compiled-reload.txt). This is a copied-session replay, not a new natural provider task. Existing usage metadata in the capture is copied, not a claim of new paid use.
+Parent inspected real Pi rendering from the original saved task metadata. Then the compiled CLI replayed the selected original messages in a private copied session, offline, with no provider request or mutation of the user's session. Both rows showed their exact labels once on cold reopen and after /reload. [Compiled reload frame (historical)](../quality/completed-run-retirement.md#recovery). This is a copied-session replay, not a new natural provider task. Existing usage metadata in the capture is copied, not a claim of new paid use.
 
 Local ignored probes and captures: artifacts/task-names-wisdom/. Logs: /tmp/bruv-task-wisdom-final-{build,tests,smoke}.log and /tmp/bruv-task-wisdom-pty.log.
 

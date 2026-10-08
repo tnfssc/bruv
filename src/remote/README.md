@@ -117,9 +117,9 @@ Read the caller first, then the operation owner; do not treat a cached projectio
 | --- | --- |
 | Normal delegation policy and durable launch identity | [job-service.ts](../tasks/job-service.ts) → [jobs.ts](jobs.ts) → [source-approval.ts](source-approval.ts) / [repository-wire.ts](repository-wire.ts) → [client.ts](client.ts) / [owner.ts](owner.ts). [placement.ts](placement.ts) checks role/depth at both ends. |
 | Parent questions and completion delivery | [extension.ts](extension.ts) refresh → [question-bridge.ts](question-bridge.ts) / [job-observations.ts](job-observations.ts) → [agent extension](../agent/extension.ts) and [job-delivery.ts](job-delivery.ts). |
-| Main-agent startup, presentation and server authority | [cli.ts](../cli.ts) → [root-options.ts](root-options.ts) / [root-cli.ts](root-cli.ts) → [root-client.ts](root-client.ts) / [root-presenter.ts](root-presenter.ts); server [root-entry.ts](root-entry.ts) → [root-owner.ts](root-owner.ts) / [root-runtime.ts](root-runtime.ts). |
+| Main-agent startup, presentation and server authority | [cli.ts](../cli.ts) → [root/options.ts](root/options.ts) / [root/cli.ts](root/cli.ts) → [root/client.ts](root/client.ts) / [root/presenter.ts](root/presenter.ts); server [root/entry.ts](root/entry.ts) → [root/owner.ts](root/owner.ts) / [root/runtime.ts](root/runtime.ts). |
 | Human recovery vs agent operations | [extension.ts](extension.ts) owns human commands; [operations.ts](operations.ts) rejects legacy agent launches; [services.ts](services.ts) coordinates capability grants/replies. |
-| Safe return vs cached text | [repository-wire.ts](repository-wire.ts) / [root-client.ts](root-client.ts) call [repository.ts](repository.ts); [artifacts.ts](artifacts.ts) and [job-artifacts.ts](job-artifacts.ts) verify/cache text independently. |
+| Safe return vs cached text | [repository-wire.ts](repository-wire.ts) / [root/client.ts](root/client.ts) call [repository.ts](repository.ts); [artifacts.ts](artifacts.ts) and [job-artifacts.ts](job-artifacts.ts) verify/cache text independently. |
 
 ## Bounds and evidence limits
 

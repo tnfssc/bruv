@@ -8,7 +8,7 @@ const sanitize = (x) =>
   typeof x === "string"
     ? x
         .replace(/Bearer\s+[^\s"\\]+/g, "Bearer [REDACTED]")
-        .replace(/(token|authorization|secret)(\":\")([^\"]+)/gi, "$1$2[REDACTED]")
+        .replace(/(token|authorization|secret)(":")([^"]+)/gi, "$1$2[REDACTED]")
     : Array.isArray(x)
       ? x.map(sanitize)
       : x && typeof x === "object"

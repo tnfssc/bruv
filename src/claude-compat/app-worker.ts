@@ -82,7 +82,7 @@ export function prepareAppWorkerCall(policy: AppWorkerPolicy | undefined, call: 
   if (call.owner !== "app_owned") return call;
   const tool = call.toolName.split("__").at(-1)!;
   if (!launches.has(tool)) return call;
-  if (!policy || policy.role !== "orchestrator" || policy.depth !== 0)
+  if (policy?.role !== "orchestrator" || policy.depth !== 0)
     throw new Error("App delegation requires an explicit root orchestrator; normal workers cannot delegate");
   if (tool !== "delegate_task")
     throw new Error("App worker policy permits delegate_task, not top-level thread launches");

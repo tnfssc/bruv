@@ -174,14 +174,20 @@ export function mountHtmlDemos(root: Document = document) {
   };
   root.addEventListener("visibilitychange", schedule);
   motion.addEventListener("change", preference);
-  void root.fonts.ready.then(() => panels.forEach((panel) => panel.measure()));
+  void root.fonts.ready.then(() =>
+    panels.forEach((panel) => {
+      panel.measure();
+    }),
+  );
   return () => {
     clearTimeout(timer);
     observer.disconnect();
     resize.disconnect();
     root.removeEventListener("visibilitychange", schedule);
     motion.removeEventListener("change", preference);
-    listeners.forEach((remove) => remove());
+    listeners.forEach((remove) => {
+      remove();
+    });
   };
 }
 

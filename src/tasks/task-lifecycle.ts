@@ -42,13 +42,12 @@ class LockUnavailableError extends Error {}
 // claim support where Linux's flock(2) ABI and constants are known here. Other
 // platforms fail closed: lifecycle diagnostics are dropped and reported rather
 // than being written without inter-process exclusion.
-let libc: unknown;
-let systemFlock: Flock | undefined;
+let libc: { symbols: { flock: Flock } } | undefined;
 let flockResolved = false;
 function resolveFlock(): Flock {
   if (flockResolved) {
-    if (!systemFlock) throw new LockUnavailableError("Advisory locking is unavailable");
-    return systemFlock;
+    if (!libc) throw new LockUnavailableError("Advisory locking is unavailable");
+    return libc.symbols.flock;
   }
   flockResolved = true;
   if (process.platform !== "linux" || process.arch !== "x64")
@@ -58,8 +57,7 @@ function resolveFlock(): Flock {
       flock: { args: [FFIType.i32, FFIType.i32], returns: FFIType.i32 },
     });
     libc = library;
-    systemFlock = library.symbols.flock;
-    return systemFlock;
+    return libc.symbols.flock;
   } catch {
     throw new LockUnavailableError("Advisory locking is unavailable");
   }

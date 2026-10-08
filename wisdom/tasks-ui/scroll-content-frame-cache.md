@@ -1,5 +1,8 @@
 # Share ScrollView content renders within a layout frame
 
+Completed-run captures/logs mentioned below are now historical Git evidence;
+[recovery and retained inputs](../quality/completed-run-retirement.md). Conclusions remain here.
+
 Follow-up to [lazy activity bodies](lazy-activity-body-render.md), based on integrated f7a46bba and the reviewed [frame lab](terminal-frame-lab.md). Target remains **strictly under 8ms**; this patch does not reach it for long histories.
 
 ## Cause and smallest fix
@@ -21,7 +24,7 @@ bun run perf:terminal --samples 40 --out artifacts/terminal-perf/scroll-cache-af
 
 Both runs: Bun 1.4.2, Linux x64, AMD Ryzen 9 7940HS, Pi 1.0.3, 120×40, warmup 5, scales 100/500/1000, full 18-case suite, 40 steady samples/case. Before is clean f7a46bba; after is the dirty dependency patch plus its tests. No other jobs from this task ran during the timing samples. Every one of 720 steady actions changed rows. **All 738 corresponding cold/steady screenHash and outputHash pairs match**, with no intentional behavior changes or comparison warnings.
 
-Tracked [before report](evidence/scroll-content-frame-cache/before-report.txt), [after report](evidence/scroll-content-frame-cache/after-report.txt), and [metadata/fingerprint/work-count comparison](evidence/scroll-content-frame-cache/comparison.json). Full JSON/dashboard/trace remain in the ignored artifact directories above.
+Historical [before report (historical)](../quality/completed-run-retirement.md#recovery), [after report (historical)](../quality/completed-run-retirement.md#recovery), and [metadata/fingerprint/work-count comparison (historical)](../quality/completed-run-retirement.md#recovery). Full JSON/dashboard/trace remain in the ignored artifact directories above.
 
 | 1000-execute case | p50 before → after (ms) | p95 before → after (ms) | cold before → after (ms) |
 | --- | --- | --- | --- |

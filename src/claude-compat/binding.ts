@@ -74,9 +74,8 @@ export function launchPolicy(args: ConnectorArguments) {
   if (args.permissionPromptTool !== undefined && args.permissionPromptTool !== "stdio")
     throw new Error("Only --permission-prompt-tool stdio is supported");
   if (
-    args.settingSources !== undefined &&
     args.settingSources
-      .split(",")
+      ?.split(",")
       .filter(Boolean)
       .some((s) => !["user", "project", "local"].includes(s))
   )

@@ -2,16 +2,16 @@ import { voiceToolResult } from "./tool-result";
 import { Behavior, FunctionResponseScheduling, GoogleGenAI, Modality, ThinkingLevel } from "@google/genai";
 import { bruvSystemPrompt } from "../prompts";
 import { VOICE_MODEL, isLiveModel } from "./providers";
-import {
-  type LiveAdapter,
-  type LiveConnection,
-  type LiveParams,
-  type VoiceCallbacks,
-  type VoiceSessionOptions,
-  type VoiceOrchestration,
-  type VoiceError,
-  type VoiceState,
-  type VoiceTranscript,
+import type {
+  LiveAdapter,
+  LiveConnection,
+  LiveParams,
+  VoiceCallbacks,
+  VoiceSessionOptions,
+  VoiceOrchestration,
+  VoiceError,
+  VoiceState,
+  VoiceTranscript,
 } from "./types.js";
 
 const MAX_INPUT = 3200; // 100 ms PCM16 mono 16 kHz

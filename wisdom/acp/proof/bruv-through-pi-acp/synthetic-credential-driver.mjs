@@ -1,5 +1,5 @@
 import { spawn } from "node:child_process";
-import { mkdirSync, writeFileSync, appendFileSync, readFileSync, existsSync } from "node:fs";
+import { mkdirSync, writeFileSync, appendFileSync, readFileSync } from "node:fs";
 import { resolve, join, dirname } from "node:path";
 import { createServer } from "node:http";
 import { createHash } from "node:crypto";
@@ -201,8 +201,7 @@ class Driver {
     this.child.stderr.on("data", (d) => log(label + ":stderr", d.toString()));
     this.child.stdout.on("data", (d) => {
       b += d;
-      let n;
-      while ((n = b.indexOf("\n")) >= 0) {
+      for (let n = b.indexOf("\n"); n >= 0; n = b.indexOf("\n")) {
         const s = b.slice(0, n);
         b = b.slice(n + 1);
         if (!s) continue;
@@ -283,7 +282,7 @@ async function step(name, fn) {
     log("step:end", { name });
   }
 }
-let d = new Driver("synthetic");
+const d = new Driver("synthetic");
 try {
   await step("initialize", () => d.init());
   const r = await step("session-new", () => d.call("session/new", { cwd: work, mcpServers: [] }));

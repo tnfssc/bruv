@@ -15,7 +15,7 @@ const home = join(root, "home"), agent = join(root, "selected-agent"), native = 
 await mkdir(join(home, ".claude"), { recursive: true }); await mkdir(agent);
 const sentinel = '{"ordinary":"untouched"}\n'; await writeFile(join(home, ".claude", "settings.json"), sentinel);
 let requests = 0;
-const server = createServer((req, res) => { requests++; res.writeHead(500); res.end("must not call provider"); });
+const server = createServer((_req, res) => { requests++; res.writeHead(500); res.end("must not call provider"); });
 await new Promise(r => server.listen(0, "127.0.0.1", r));
 const port = server.address().port;
 await writeFile(join(agent, "models.json"), JSON.stringify({providers:{fixture:{baseUrl:"http://127.0.0.1:"+port+"/v1",api:"openai-completions",apiKey:"fixture-only-not-a-secret",models:[{id:"exact-model",name:"Fixture",contextWindow:32000,maxTokens:1024}]}}}));

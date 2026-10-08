@@ -130,7 +130,7 @@ node --check "$R/fixture.mjs"
 # Concurrently, not after foreground server exits:
 node "$R/browser.mjs" > "$R/private/browser-harness.log" 2>&1
 # Harness privately reads pairing URL, executes numbered actions as they appear.
-# Actions/results/screenshots 01–34 retained. Actual-run crash/restart commands:
+# Numbered action/result records 01–34 retained; historical screenshots were retired (see [protocol artifact retirement](../quality/protocol-artifact-retirement.md)). Actual-run crash/restart commands:
 kill -KILL 3580877
 ss -ltnp 'sport = :18766'  # identify ACTUAL listener, not shell/job wrapper
 kill -TERM 3538038

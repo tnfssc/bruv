@@ -8,7 +8,7 @@ import { FINAL_HOLD, type Playback } from "../playback";
 import { launchBrowser } from "./browser";
 import { preview } from "./preview";
 
-const out = resolve(import.meta.dir, "../../wisdom/landing-page/validation/polish");
+const out = resolve(import.meta.dir, "../../artifacts/landing-page/polish");
 await mkdir(out, { recursive: true });
 
 async function snapshot(page: Page) {

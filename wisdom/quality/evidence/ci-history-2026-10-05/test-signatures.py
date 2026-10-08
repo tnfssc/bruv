@@ -1,5 +1,5 @@
 import collections,gzip,json,pathlib,re
-ROOT=pathlib.Path(__file__).resolve().parent
+ROOT=pathlib.Path("artifacts/ci-history")
 runs={r['id']:r for r in json.loads((ROOT/'runs.json').read_text())}
 seen={};snippets=[]
 for f in (ROOT/'jobs').glob('*.json'):

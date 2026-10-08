@@ -1,6 +1,6 @@
 # Experimental native macOS Live Lab audio helper
 
-Build locally with Xcode Command Line Tools / Xcode: `scripts/build-live-helper.sh`.
+Build locally with Xcode Command Line Tools / Xcode: `scripts/live/build-helper.sh`.
 The script builds `dist/live-audio` and runs `--self-test` (no devices). Linux C ring tests:
 `clang -std=c11 -Wall -Wextra -Werror -fsanitize=address,undefined native/live/AudioCore.c native/live/test-core.c -o /tmp/live-test && /tmp/live-test`.
 
@@ -43,9 +43,9 @@ capture backlog/half-packets are cleared and WebRTC mic processing state reset.
 Unusable timing fails closed. These are native buffer-origin guarantees, not
 claims about opaque device DSP, acoustic echo suppression, or terminal key events.
 
-Focused portable regressions: `bun test tests/live-audio.test.ts tests/live-capture-gate.test.ts`.
+Focused portable regressions: `bun test tests/live/live-audio.test.ts tests/live/live-capture-gate.test.ts`.
 The C ring gate tests run on Linux too; Swift source checks do not substitute for
 macOS compilation and consenting physical-device validation. An opt-in native
 protocol check is `python3 native/live-linux/tests/capture-protocol.py HELPER MIC.monitor SINK`;
 use only explicitly isolated virtual endpoints (for example the private graph
-setup in `scripts/live-isolated-audio.sh`), never desktop hardware/default routes.
+setup in `scripts/live/isolated-audio.sh`), never desktop hardware/default routes.

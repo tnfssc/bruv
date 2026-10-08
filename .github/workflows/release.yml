@@ -39,8 +39,8 @@ jobs:
           git fetch origin develop --tags
           git checkout -B release origin/develop
           test "$(git rev-parse HEAD:.github/workflows/release.yml)" = "$workflow_sha" || { echo "Release workflow changed since dispatch; retry from latest develop"; exit 1; }
-          tag=$(bun scripts/prepare-manual-release.ts)
-          git add package.json "support/release-$tag.md"
+          tag=$(bun scripts/release/prepare-manual-release.ts)
+          git add package.json "docs/releases/release-$tag.md"
           if ! git diff --cached --quiet; then
             git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m "Prepare $tag release"
             git push origin HEAD:refs/heads/develop
@@ -94,7 +94,7 @@ jobs:
       - name: Compile helper and check device-free protocol
         shell: bash
         run: |
-          scripts/build-live-helper.sh
+          scripts/live/build-helper.sh
           file dist/live-audio | grep -E 'Mach-O 64-bit (executable arm64|arm64 executable)'
           dist/live-audio --self-test
           python3 - <<'PY'
@@ -152,17 +152,17 @@ jobs:
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ${{ runner.temp }}/bruv-apt-cache/*.deb
-          key: ubuntu-24.04-apt-v1-${{ runner.arch }}-${{ hashFiles('scripts/install-ci-linux-tools.sh') }}
+          key: ubuntu-24.04-apt-v1-${{ runner.arch }}-${{ hashFiles('scripts/ci/install-ci-linux-tools.sh') }}
       - name: Install Linux test tooling
         shell: bash
         timeout-minutes: 5
-        run: bash scripts/install-ci-linux-tools.sh
+        run: bash scripts/ci/install-ci-linux-tools.sh
       - name: Prepare logs
         run: mkdir -p artifacts/release dist/release
       - name: Validate tag matches package version
         shell: bash
         run: |
-          bun scripts/validate-release-tag.ts "$RELEASE_TAG" 2>&1 | tee artifacts/release/version.log
+          bun scripts/release/validate-release-tag.ts "$RELEASE_TAG" 2>&1 | tee artifacts/release/version.log
       - name: Sanitized, device-free capture-origin tests
         shell: bash
         run: |
@@ -176,7 +176,7 @@ jobs:
         timeout-minutes: 1
         env:
           GH_TOKEN: ${{ github.token }}
-        run: bun scripts/find-release-ci.ts
+        run: bun scripts/release/find-release-ci.ts
       - name: Install locked dependencies after CI reuse
         if: ${{ steps.ci-evidence.outputs.reused == 'true' }}
         shell: bash
@@ -221,7 +221,7 @@ jobs:
           for binary in bruv-{linux-x64,linux-arm64,darwin-arm64,android-arm64} bruv-claude-compat-{linux-x64,linux-arm64,darwin-arm64,android-arm64}; do
             sha256sum "$binary" > "$binary.sha256"
           done
-          cp ../../LICENSE ../../THIRD_PARTY_NOTICES.md .
+          cp ../../LICENSE ../../licenses/THIRD_PARTY_NOTICES.md .
           printf 'Source: https://github.com/%s/tree/%s\nCommit: %s\nTag: %s\nPaired targets: bun-linux-x64-baseline, bun-linux-arm64, bun-darwin-arm64, bun-android-arm64.\nEach target ships one compiled bruv binary and a tiny POSIX exec launcher bruv-claude-compat with checksums. The launcher execs its matching sibling bruv claude-compat. Linux/macOS require /bin/sh; Android requires /system/bin/sh and Android API 28+ (/system/bin/linker64), not glibc.\nT3 Code is external, unmodified, manually installed and not included in these assets.\n' \
             "$GITHUB_REPOSITORY" "$RELEASE_SHA" "$RELEASE_SHA" "$RELEASE_TAG" > SOURCE.txt
           printf '\nEmbedded macOS arm64 native helper (Apple frameworks; experimental voice-only /live):\n' >> SOURCE.txt
@@ -229,12 +229,12 @@ jobs:
       - name: Verify release launcher packaging and Android runtime target
         shell: bash
         run: |
-          bun scripts/verify-release-launchers.ts dist/release
+          bun scripts/release/verify-release-launchers.ts dist/release
           readelf -l dist/release/bruv-android-arm64 | grep -F '/system/bin/linker64'
       - name: Verify bruv updater with actual Linux release binary
         run: |
-          bun scripts/verify-update.ts dist/release/bruv-linux-x64 "$(bun -p 'require("./package.json").version')"
-          bun scripts/verify-update.ts dist/release/bruv-linux-x64 "$(bun -p 'require("./package.json").version')" --legacy-updater
+          bun scripts/release/verify-update.ts dist/release/bruv-linux-x64 "$(bun -p 'require("./package.json").version')"
+          bun scripts/release/verify-update.ts dist/release/bruv-linux-x64 "$(bun -p 'require("./package.json").version')" --legacy-updater
       - name: Stage verified release assets
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
@@ -278,10 +278,10 @@ jobs:
           key: playwright-1.63.0-ubuntu24.04-headless-${{ runner.os }}-${{ runner.arch }}
       - name: Install isolated browser harness
         shell: bash
-        run: bash scripts/setup-release-browser.sh
+        run: bash scripts/release/setup-release-browser.sh
       - name: Download pinned official T3 for native gate (test dependency only)
         shell: bash
-        run: bash scripts/setup-native-release-gate.sh
+        run: bash scripts/release/setup-native-release-gate.sh
       - name: Require external unmodified T3 native acceptance from final Linux pair
         shell: bash
         run: |
@@ -296,7 +296,7 @@ jobs:
           BRUV_CONNECTOR_EXECUTABLE="$GITHUB_WORKSPACE/dist/release/bruv-claude-compat-linux-x64" \
           BRUV_RUNTIME_BINARY="$GITHUB_WORKSPACE/dist/release/bruv-linux-x64" \
           PROOF_OUTPUT="$GITHUB_WORKSPACE/artifacts/release/native-acceptance" \
-          node scripts/run-native-release-gate.mjs
+          node scripts/release/run-native-release-gate.mjs
       - name: Upload external native proof (including failures)
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
@@ -332,8 +332,8 @@ jobs:
           test "$version" = "$(bun -p 'require("./package.json").version')"
           test "$(dist/release/bruv-claude-compat-darwin-arm64 --bruv-version)" = "bruv-claude-compat $version"
           test "$(dist/release/bruv-claude-compat-darwin-arm64 --version)" = "Bruv connector"
-          bun scripts/verify-update.ts dist/release/bruv-darwin-arm64 "$(bun -p 'require("./package.json").version')"
-          bun scripts/verify-update.ts dist/release/bruv-darwin-arm64 "$(bun -p 'require("./package.json").version')" --legacy-updater
+          bun scripts/release/verify-update.ts dist/release/bruv-darwin-arm64 "$(bun -p 'require("./package.json").version')"
+          bun scripts/release/verify-update.ts dist/release/bruv-darwin-arm64 "$(bun -p 'require("./package.json").version')" --legacy-updater
           home=$(mktemp -d)
           trap 'rm -rf "$home"' EXIT
           cd "$home"
@@ -365,5 +365,5 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          bun scripts/publish-release.ts
+          bun scripts/release/publish-release.ts
           echo "Published $RELEASE_TAG from $RELEASE_SHA with verified release assets." >> "$GITHUB_STEP_SUMMARY"

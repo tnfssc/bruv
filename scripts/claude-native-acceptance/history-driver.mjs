@@ -262,7 +262,7 @@ export async function exercise({ page, url, snapshot, body, config }) {
   });
   await snapshot("reopened");
 }
-export async function verify({ wire, config, proof, t3Version, t3BinarySha256 }) {
+export async function verify({ config, proof, t3Version, t3BinarySha256 }) {
   const disk = await collect(config, proof, "final-disk");
   assert.equal(disk.completedRootToolExecutionCount, 1);
   assert.equal(disk.indexes.length, 2);

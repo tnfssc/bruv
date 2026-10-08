@@ -1,5 +1,5 @@
 import { AssistantMessageComponent, InteractiveMode } from "@earendil-works/pi-coding-agent";
-import { Container, MouseRegion, Spacer, Text, type Component } from "@earendil-works/pi-tui";
+import { type Container, MouseRegion, Spacer, Text, type Component } from "@earendil-works/pi-tui";
 
 // Pi 1.0.0 has no public option for either of these two presentation choices.
 // Adapt its mutable UI methods locally; never change the shared SDK installation.

@@ -594,20 +594,28 @@ export class DiskEntryStore {
         typeof jobId === "string"
       ) {
         let sources = this.taskRoots.get(root.namespace);
-        if (!sources) this.taskRoots.set(root.namespace, (sources = new Map()));
+        if (!sources) {
+          sources = new Map();
+          this.taskRoots.set(root.namespace, sources);
+        }
         let sessions = sources.get(root.sourceSessionId);
-        if (!sessions) sources.set(root.sourceSessionId, (sessions = new Map()));
+        if (!sessions) {
+          sessions = new Map();
+          sources.set(root.sourceSessionId, sessions);
+        }
         let owner = sessions.get(root.sessionId);
-        if (!owner)
-          sessions.set(
-            root.sessionId,
-            (owner = {
-              rootKey: JSON.stringify([root.namespace, root.sourceSessionId, root.sessionId]),
-              jobs: new Map(),
-            }),
-          );
+        if (!owner) {
+          owner = {
+            rootKey: JSON.stringify([root.namespace, root.sourceSessionId, root.sessionId]),
+            jobs: new Map(),
+          };
+          sessions.set(root.sessionId, owner);
+        }
         let key = owner.jobs.get(jobId);
-        if (!key) owner.jobs.set(jobId, (key = { rootKey: owner.rootKey, jobId: ownedString(jobId) }));
+        if (!key) {
+          key = { rootKey: owner.rootKey, jobId: ownedString(jobId) };
+          owner.jobs.set(jobId, key);
+        }
         meta.taskProjection = key;
       }
     }

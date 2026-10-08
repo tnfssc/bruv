@@ -21,7 +21,7 @@ export BRUV_RUNTIME_BINARY="$PWD/dist/release/bruv-linux-x64"
 export T3_UPSTREAM=/absolute/fresh/official-2644-cache
 export BROWSER_PATH=/absolute/chromium-headless-shell
 export PROOF_OUTPUT="$PWD/.cache/native-release-2644-fresh"
-node scripts/run-native-release-gate.mjs
+node scripts/release/run-native-release-gate.mjs
 ~~~
 
 Requires Linux x64 and node on PATH with node:sqlite (22.13+; proof used 25.9.0).
@@ -98,7 +98,7 @@ state paths. Failure produces evidence but never a PASS result.
 ## Local model fixture checks (not connector acceptance)
 
 ```sh
-node --test tests/claude-native-acceptance-model.test.mjs
+node --test tests/claude-compat/claude-native-acceptance-model.test.mjs
 BRUV_RUNTIME_BINARY=/absolute/path/to/dist/bruv \
 PROOF_OUTPUT=.cache/claude-runtime-smoke-$(date +%s) \
 node scripts/claude-native-acceptance/runtime-smoke.mjs
@@ -143,7 +143,7 @@ local Playwright, the actual compiled connector, and paired normal Bruv,
 run (use supported Bun 1.4.2, not a global install):
 
 ```sh
-/path/to/bun-1.4.2 scripts/build-claude-compat.ts --outfile=.cache/history-connector
+/path/to/bun-1.4.2 scripts/build/build-claude-compat.ts --outfile=.cache/history-connector
 TMPDIR=/var/tmp \
 BRUV_CONNECTOR_EXECUTABLE="$PWD/.cache/history-connector" \
 BRUV_RUNTIME_BINARY=/absolute/path/to/paired/bruv \
@@ -151,7 +151,7 @@ T3_UPSTREAM=/absolute/path/to/pinned-t3-layout \
 BROWSER_PATH=/absolute/path/to/local/chromium \
 FIXTURE_PORT=18943 PROOF_OUTPUT="$PWD/.cache/history-proof-unique" \
 node scripts/claude-native-acceptance/history-run.mjs
-node --test tests/claude-native-history-model.test.mjs
+node --test tests/claude-compat/claude-native-history-model.test.mjs
 ```
 
 The upstream layout is the existing official artifact at `platform/t3`

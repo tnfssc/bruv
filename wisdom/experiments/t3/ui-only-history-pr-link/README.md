@@ -8,9 +8,9 @@ User-authorized fork and isolated branch publication only. Created tnfssc/t3code
 - Durable source: /home/tnfssc/.bruv/upstream-preparation/t3-ui-history-2644
 - Original patch retained as local branch preserved/ui-history-2644.
 - GitHub compare: ahead 1, behind 0, merge-base equals base, exactly five history/fork implementation/test files (302 additions, 24 deletions).
-- [Exact prefilled body](pr-body.md), [creation URL](pr-url.txt) (1886 characters), [metadata](publication.json), [rebase provenance](rebase-provenance.txt).
+- [Exact prefilled body](pr-body.md), [creation URL](pr-url.txt) (1886 characters), [metadata](publication.json), [rebase provenance (historical)](../../../quality/completed-run-retirement.md#recovery).
 
-Main's touched source files were identical to the original baseline; cherry-pick is patch-equivalent (range-diff '=') with no edits/conflicts. Upstream main nevertheless contains unrelated changes, including Effect RPC patch/lockfile changes; install was refreshed from main's frozen lockfile. Focused tests (133), server no-emit typecheck and format checks all exited 0 on the published head. Test/log artifacts are retained here.
+Main's touched source files were identical to the original baseline; cherry-pick is patch-equivalent (range-diff '=') with no edits/conflicts. Upstream main nevertheless contains unrelated changes, including Effect RPC patch/lockfile changes; install was refreshed from main's frozen lockfile. Focused tests (133), server no-emit typecheck and format checks all exited 0 on the published head. Completed check logs and rebase command output are retired; [recovery decisions](../../../quality/completed-run-retirement.md). The publication metadata, prefilled body and actionable comparison URL stay.
 
 Commands (Node 24.21.0 / pnpm 11.10.0):
 

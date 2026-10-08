@@ -1,5 +1,0 @@
-note: You are running `vp fmt` as a Vite+ built-in command. If you meant to run the fmt npm script, use `vpr fmt` instead.
-Checking formatting...
-
-All matched files use the correct format.
-Finished in 1124ms on 2 files using 16 threads.

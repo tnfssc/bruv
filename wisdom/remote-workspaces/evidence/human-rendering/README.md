@@ -1,5 +1,8 @@
 # Compiled human remote acceptance
 
+Completed-run captures/logs mentioned below are now historical Git evidence;
+[recovery and retained inputs](../../../quality/completed-run-retirement.md). Conclusions remain here.
+
 2026-09-27, Linux compiled CLI with disposable Docker SSH owner and explicit fake provider. The production polling timer ran normally. No real user remote state or provider used. This is actual tmux terminal output, not parsed RPC rendering. Native macOS execution was not available in this Linux workspace; parent owns Mac/release validation.
 
 Compiled CLI SHA256: fcb8f6adc5f7124dd919695dbb3bdfa953889f894b7ca962da7025de8323bd49 (application source through 104152d).
@@ -12,3 +15,7 @@ Compiled CLI SHA256: fcb8f6adc5f7124dd919695dbb3bdfa953889f894b7ca962da7025de832
 Run with existing dependencies and bun scripts/build.ts --reuse-web (existing web assets), then DIE_REMOTE_PTY_ARTIFACTS=<absolute-fixture-evidence-dir> DIE_REMOTE_PTY_E2E=1 bun test tests/remote-e2e.test.ts. Full RPC fixture: DIE_REMOTE_E2E=1 bun test tests/remote-e2e.test.ts.
 
 Transcript capture uses a tall terminal to inspect its complete requested event page, then returns to normal size for offline controls. Conversation status and active-poll proof use the normal 120x35 terminal; choice navigation is also exercised at 50x20. Transcript event/tool content may itself be structured text and is intentionally retained; raw poll/status envelopes are forbidden in ordinary chat.
+
+Current frame writers are scripts/remote/{remote-pty-e2e,remote-capability-pty-e2e,remote-recovery-e2e}.ts;
+set BRUV_REMOTE_PTY_ARTIFACTS to an absolute artifacts/remote-pty directory.
+The DIE_* commands above describe the original proof, not current script names.

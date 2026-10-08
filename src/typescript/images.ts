@@ -1,7 +1,7 @@
 import fs, { createWriteStream } from "node:fs";
 import { fileURLToPath } from "node:url";
 import type { ImageContent } from "@earendil-works/pi-ai";
-import photonWasm from "../../runtime-assets/photon_rs_bg.wasm" with { type: "file" };
+import photonWasm from "../../dist/runtime-assets/photon_rs_bg.wasm" with { type: "file" };
 
 export const MAX_IMAGE_BYTES = 5_000_000;
 // Oversized images may be resized, but input reads remain bounded.
@@ -176,7 +176,7 @@ function decodeImageRecord(record: string): { image: ChannelImageContent; byteLe
   } catch {
     throw new Error("Invalid JSON in image output record");
   }
-  if (!value || value.type !== "image" || typeof value.data !== "string" || typeof value.mimeType !== "string")
+  if (value?.type !== "image" || typeof value.data !== "string" || typeof value.mimeType !== "string")
     throw new Error("Invalid image output record");
   // Validate canonical base64; Buffer.from alone silently accepts bad input.
   if (value.data.length > Math.ceil(MAX_IMAGE_BYTES / 3) * 4)

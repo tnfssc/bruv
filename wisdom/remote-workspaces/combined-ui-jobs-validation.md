@@ -1,5 +1,8 @@
 # Combined human remote UI + shared jobs integration
 
+Completed-run captures/logs mentioned below are now historical Git evidence;
+[recovery and retained inputs](../quality/completed-run-retirement.md). Conclusions remain here.
+
 Integration worktree: /home/tnfssc/.die/worktrees/die-a86675007a5e-task_207191c2
 Branch: die/combine-human-remote-ui-with-shared-jobs-207191c2
 
@@ -30,9 +33,9 @@ Docker CLI/PTY fixture worker: /home/tnfssc/.die/worktrees/die-a86675007a5e-task
 - bun test ./tests: final rerun 1,322 pass, 20 opt-in skips, 0 fail (190 files; 130.81 seconds). Initial run had 1,321 pass, 20 skips, one environmental failure: standalone web extraction hit ENOSPC on the shared /tmp tmpfs (16 GiB, 99% full). No assertion changed. The six web-runtime tests then passed unchanged using a worktree-local TMPDIR; full rerun used private disk-backed /home/tnfssc/.die/probe-207191c2. No other user's temporary data was removed.
 - Compiled build passed using the existing real web runtime described above. Full suite includes standalone embedded web executable acceptance.
 
-Text logs: [combined evidence](evidence/combined-ui-jobs/). Docker opt-ins are independently run by the fixture worker rather than misrepresented as covered by the default-suite skips.
+Text logs: [combined evidence (historical)](../quality/completed-run-retirement.md#recovery). Docker opt-ins are independently run by the fixture worker rather than misrepresented as covered by the default-suite skips.
 
-All three Docker compiled gates passed unchanged: owner-continuation/native questions/repository return, PTY menus/quiet progress/human rendering, and print/JSON + two-parent jobs followup/isolation. See [compiled Docker report](combined-compiled-docker-2026-09-27.md) and [17 retained PTY frames](evidence/combined-ui-jobs/pty/). Integration owner also inspected stable-active-polls, narrow-choice, and human-status frames. The Docker binary tested merge 04e6b45; subsequent production-source change is formatting only (git diff 04e6b45 HEAD -- src). No raw JSON fixture rewrite or interaction assertion weakening was needed.
+All three Docker compiled gates passed unchanged: owner-continuation/native questions/repository return, PTY menus/quiet progress/human rendering, and print/JSON + two-parent jobs followup/isolation. See [compiled Docker report](combined-compiled-docker-2026-09-27.md) and [17 PTY frames (historical)](../quality/completed-run-retirement.md#recovery). Integration owner also inspected stable-active-polls, narrow-choice, and human-status frames. The Docker binary tested merge 04e6b45; subsequent production-source change is formatting only (git diff 04e6b45 HEAD -- src). No raw JSON fixture rewrite or interaction assertion weakening was needed.
 
 Review/release remains parent-owned. Existing jobs dispatch acceptance/crash-uncertainty limits in jobs-integration.md remain unchanged; no exactly-once claim or real-provider/Live-audio proof is inferred.
 

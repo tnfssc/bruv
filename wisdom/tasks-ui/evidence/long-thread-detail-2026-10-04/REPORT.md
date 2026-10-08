@@ -1,10 +1,13 @@
 # Compiled saved-thread detail proof — 2026-10-04
 
+Completed-run captures/logs mentioned below are now historical Git evidence;
+[recovery and retained inputs](../../../quality/completed-run-retirement.md). Conclusions remain here.
+
 ## Findings
 
-The parent full-CI frame and this checkout's isolated baseline agree: expansion remains anchored at turn 93, while the test waits for turn 99 without pressing End. [Baseline failure](baseline-failure.txt) shows actual turn-93 results and the jump-to-latest hint. This was a viewport assumption, not lost results or upstream task-row ownership corruption.
+The parent full-CI frame and this checkout's isolated baseline agree: expansion remains anchored at turn 93, while the test waits for turn 99 without pressing End. [Baseline failure (historical)](../../../quality/completed-run-retirement.md#recovery) shows actual turn-93 results and the jump-to-latest hint. This was a viewport assumption, not lost results or upstream task-row ownership corruption.
 
-A separate measured production issue was quadratic activity group/child lookup: [scaling failure](scaling-before.txt) records 501,500 child reads for N=1,000. The new identity index bounds sync at 2N reads and collapsed projection/member work at 8N without caching old task/result bodies or disabling grouping.
+A separate measured production issue was quadratic activity group/child lookup: [scaling failure (historical)](../../../quality/completed-run-retirement.md#recovery) records 501,500 child reads for N=1,000. The new identity index bounds sync at 2N reads and collapsed projection/member work at 8N without caching old task/result bodies or disabling grouping.
 
 ## Build and checks
 
@@ -17,7 +20,7 @@ env PATH="$HOME/.local/share/mise/installs/bun/1.4.2/bin:$PATH" TMPDIR=/var/tmp 
 env PATH="$HOME/.local/share/mise/installs/bun/1.4.2/bin:$PATH" TMPDIR=/var/tmp bun test tests/long-thread-tui.test.ts tests/task-rows.test.ts tests/rolling-activity.test.ts
 ```
 
-Fresh normal + connector pair build succeeded, without bundled T3. [Final isolated repeat](isolated-results.txt): **47 pass, 0 fail, 1,230 assertions**. [Expanded focused suite](focused-results.txt), also covering conversation density and both source/compiled execution previews: **106 pass, 0 fail, 1,600 assertions**. Focused Biome check and bun run check passed. An intermediate reopen test exposed tmux's last-session teardown race; respawn-pane now replaces the actual CLI process without restarting its terminal server, and the final replay passed twice.
+Fresh normal + connector pair build succeeded, without bundled T3. [Final isolated repeat (historical)](../../../quality/completed-run-retirement.md#recovery): **47 pass, 0 fail, 1,230 assertions**. [Expanded focused suite (historical)](../../../quality/completed-run-retirement.md#recovery), also covering conversation density and both source/compiled execution previews: **106 pass, 0 fail, 1,600 assertions**. Focused Biome check and bun run check passed. An intermediate reopen test exposed tmux's last-session teardown race; respawn-pane now replaces the actual CLI process without restarting its terminal server, and the final replay passed twice.
 
 Final isolated replay pair SHA-256:
 
@@ -28,7 +31,7 @@ These identify the proof build, not parent release assets. CLI terminal replay i
 
 ## Frame review
 
-[Actual frames](compiled-frames.txt) retain:
+[Actual frames (historical)](../../../quality/completed-run-retirement.md#recovery) retain:
 
 - fullscreen loaded/oldest history; grouped collapsed headers;
 - expanded-anchor turn 93 output, followed by End showing the standalone DETAIL_saved-99-9 result;

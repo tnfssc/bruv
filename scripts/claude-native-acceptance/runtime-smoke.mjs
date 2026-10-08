@@ -23,7 +23,7 @@ function startRpcRuntime(binary, root, agent) {
   const send = (message) => child.stdin.write(JSON.stringify(message) + "\n");
   child.stdout.on("data", (b) => {
     buffer += b;
-    for (let p; (p = buffer.indexOf("\n")) >= 0; ) {
+    for (let p = buffer.indexOf("\n"); p >= 0; p = buffer.indexOf("\n")) {
       const line = buffer.slice(0, p);
       buffer = buffer.slice(p + 1);
       if (!line) continue;

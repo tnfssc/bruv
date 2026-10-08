@@ -15,7 +15,7 @@ const run = (args: string[]) => {
   return p.stdout.toString();
 };
 const q = (s: string) => "'" + s.replaceAll("'", "'\"'\"'") + "'";
-const out = resolve(import.meta.dir, "../../wisdom/landing-page/validation/animated-features/source");
+const out = resolve(import.meta.dir, "../../artifacts/landing-page/animated-features/source");
 await mkdir(out, { recursive: true });
 try {
   await mkdir(join(home, ".bruv/agent"), { recursive: true });

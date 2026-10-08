@@ -190,8 +190,7 @@ export class OwnerCapabilityMailbox {
       return old;
     }
     const grant = await this.grant(grantId);
-    if (!grant || !grant.kinds.includes(kindName) || (await read(this.terminalPath())))
-      throw new Error("No active task grant");
+    if (!grant?.kinds.includes(kindName) || (await read(this.terminalPath()))) throw new Error("No active task grant");
     const records = await readdir(join(this.dir(), "requests")).catch((error) => {
       if (error.code === "ENOENT") return [] as string[];
       throw error;
@@ -302,7 +301,7 @@ function safePath(path: string) {
     !path ||
     path.includes("\0") ||
     isAbsolute(path) ||
-    path.split(/[\/]/).some((x) => x === ".." || x === "") ||
+    path.split(/[/]/).some((x) => x === ".." || x === "") ||
     sensitive(path)
   )
     throw new Error("Sensitive or invalid repo path denied");

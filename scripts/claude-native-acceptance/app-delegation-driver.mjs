@@ -112,7 +112,7 @@ async function waitFile(file) {
   }
   throw Error("Actual child did not reach " + path.basename(file));
 }
-export async function exercise({ page, url, snapshot, body, config }) {
+export async function exercise({ page, snapshot, body, config }) {
   // Shared replay already selected the native project and prepared this draft.
   const message = page.getByRole("textbox", { name: "Message", exact: true });
   await message.waitFor();

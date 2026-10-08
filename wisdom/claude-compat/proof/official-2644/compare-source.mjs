@@ -18,8 +18,8 @@ for(const [name,ref] of Object.entries(refs)) {
  }
  const lock=await fs.readFile(path.join(cache,name,'pnpm-lock.yaml'),'utf8');
  result[name].sdk=lock.match(/'@anthropic-ai\/claude-agent-sdk':\n(?: {8}.*\n){2}/)?.[0];
- result[name].sdkPackage=lock.match(/  '@anthropic-ai\/claude-agent-sdk@0\.3\.276':\n(?: {4}.*\n)+/)?.[0];
- result[name].effectPatch=lock.match(/  effect@4\.0\.0-rc\.115: .*/)?.[0];
+ result[name].sdkPackage=lock.match(/ {2}'@anthropic-ai\/claude-agent-sdk@0\.3\.276':\n(?: {4}.*\n)+/)?.[0];
+ result[name].effectPatch=lock.match(/ {2}effect@4\.0\.0-rc\.115: .*/)?.[0];
 }
 result.sdkResolutionIdentical=result.previous.sdk===result.current.sdk && result.previous.sdkPackage===result.current.sdkPackage;
 result.effectPatchByteIdentical=result.previous.hashes[files[4]]===result.current.hashes[files[4]];

@@ -170,7 +170,7 @@ export function normalizeInteraction(
   }
   if (id.startsWith("tools/events/")) {
     const e = (raw as { evidence?: ToolEventEvidence }).evidence;
-    if (!e || e.fixtureVersion !== 1) throw new Error(id + " missing/unsupported tool-event evidence");
+    if (e?.fixtureVersion !== 1) throw new Error(id + " missing/unsupported tool-event evidence");
     const screenText = validateToolEventEvidence(id, e);
     const t = e.trace;
     const sample = Object.assign(base("tool-event-burst"), {
