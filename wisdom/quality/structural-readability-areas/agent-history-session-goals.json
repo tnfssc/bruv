@@ -3320,64 +3320,67 @@
     {
       "focus": "tests/main-agent-mode-sdk.test.ts",
       "initialBlob": "24791f1a577e4ed976f19a37c1b4121b465a5b93",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "d67cd10422a127f5163aa70c8d2bbb06fae1f4f5",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "d67cd10422a127f5163aa70c8d2bbb06fae1f4f5",
         "primaryId": "task_fdf8feb2",
         "primaryCommit": "953636ca924944dbf67f42af22a9c7870fe212ac",
-        "judgeIds": [],
+        "judgeIds": ["task_99b868e8"],
         "sourceCommit": "953636ca924944dbf67f42af22a9c7870fe212ac",
-        "state": "needs-judge",
-        "reason": "No dedicated primary/final independent focus judgment."
+        "state": "accepted-joined",
+        "reason": "The focus now has one comprehensible process authority: create a retained fixture, launch the SDK probe, and require both successful child exit and its completion marker. Following the imports reaches history-process.ts, which makes separate owned HOME/config/SDK/temp/session directories and passes an explicit argv/environment through helpers.run to Bun.spawn. The probe contains the eight original scenario bodies byte-for-byte. Its role reset and afterEach disposer are child-local, rather than shared-test-process environment restoration. The SDK helper groups project/loader/runtime/session construction without hiding scenario choices; sessionHistory visibly writes an exclusive header, reopens, appends custom entries, and reopens again. These are coherent process, fixture, and disk-history boundaries, not rename churn or a context bag."
       }
     },
     {
       "focus": "tests/main-agent-mode-tui.test.ts",
       "initialBlob": "4738e16439b75de7a6b5bdeb15a0f6ee100155c1",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "4738e16439b75de7a6b5bdeb15a0f6ee100155c1",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "4738e16439b75de7a6b5bdeb15a0f6ee100155c1",
         "primaryId": "task_e122aaee",
         "primaryCommit": "29c7ec1d20cd22d6c59a747df673f61d9e11383e",
-        "judgeIds": [],
+        "judgeIds": ["task_99b868e8"],
         "sourceCommit": "29c7ec1d20cd22d6c59a747df673f61d9e11383e",
-        "state": "needs-judge",
-        "reason": "No dedicated primary/final independent focus judgment."
+        "state": "accepted-joined",
+        "reason": "Read this unchanged focus independently: one test creates its HOME fixture and dedicated tmux socket, assembles offline launch flags, observes startup, sends a literal command followed by Enter, waits for the mode notification, and asserts the fast status and model/thinking-unchanged prose. Both the tmux lifetime and the fixture lifetime are visible in the same finally. The tiny local command and frameContaining closures share only this single session. Moving that single lifetime into another wrapper would require a reader to jump files without consolidating competing owners. The focus blob is identical to the primary base; the adjacent manual-shake change is not evidence for this verdict."
       }
     },
     {
       "focus": "tests/manual-shake-sdk.test.ts",
       "initialBlob": "cdcfa1c18f1da93ba6a2948c9d8d99d2a0276839",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "4c78304c6cd0d25410a8ec31ffcf55b4a2dcda12",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "4c78304c6cd0d25410a8ec31ffcf55b4a2dcda12",
         "primaryId": "task_e122aaee",
         "primaryCommit": "29c7ec1d20cd22d6c59a747df673f61d9e11383e",
-        "judgeIds": [],
+        "judgeIds": ["task_99b868e8"],
         "sourceCommit": "29c7ec1d20cd22d6c59a747df673f61d9e11383e",
-        "state": "needs-judge",
-        "reason": "No dedicated primary/final independent focus judgment."
+        "state": "accepted-joined",
+        "reason": "The new file-local openShakeSession is an actual opening authority: it creates or accepts the runtime, loads only the requested extension factories, creates the SDK session, binds print-mode extensions, and disposes a partially bound session on failure. Repeated defaults no longer interrupt the path from seeded history to shake to the observed provider consequence. Its narrow typed options are semantic variations, not a shared context bag: redaction/throwing factories, compaction model/settings, or fake-auth runtime. Each scenario still owns its returned session and visible finally; provider interception, history mutation, recovery invocation, decisions, and assertions stay in the scenario. Removing only owned fixture-directory deletion makes artifacts retained without hiding session disposal."
       }
     },
     {
       "focus": "tests/manual-shake.test.ts",
       "initialBlob": "9157e3f36bc1e1fde3f9b0e668f8d865b5dfeaa5",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "cf84c73d7f7669bb6fcb42ec6954c68c2a27f22c",
       "integration": "pending",
       "relatedPatchReview": {
         "candidate": "16e685366452845e2faff7fe7fbee57c6cdc5a6e",
@@ -3387,13 +3390,14 @@
         "primaryFocusStillRequired": true
       },
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "cf84c73d7f7669bb6fcb42ec6954c68c2a27f22c",
         "primaryId": "task_e122aaee",
         "primaryCommit": "29c7ec1d20cd22d6c59a747df673f61d9e11383e",
-        "judgeIds": ["task_c5c84c0c"],
+        "judgeIds": ["task_c5c84c0c", "task_8f182dc7"],
         "sourceCommit": "29c7ec1d20cd22d6c59a747df673f61d9e11383e",
-        "state": "needs-judge",
-        "reason": "No dedicated primary/final independent focus judgment. Related-patch review is evidence only; dedicated focus coverage remains required."
+        "state": "accepted-joined",
+        "reason": "Read the whole 837-line intrinsic focus. completed and result remove only message/protocol construction; each test still shows its manager, incoming context, durable selection and projected assertions. The projection group moves from exact ordered preservation to duplicate occurrence matching, transformed/partial-group refusal, and independent stable-group removal. Crucially, the pending/duplicate replay case distinguishes refusal to plan a new shake from replay of the settled checkpoint; the adjacent multi-result case makes every-result selection and exact-copy authorization visible in one test. Marker validation/bounds, durable reload/branch/SDK conversion, command snapshot safeguards, diagnostic persistence failures, and pre-compaction policy each have their own local authority. The command harness exposes appends/notices/invalidation; injected append-then-throw tests keep their leaf rollback and failed-closed assertions immediately beside that injection. Combining these with compaction fall-through harnesses would blur different consequences rather than remove a genuine reading burden. No focus rewrite is warranted. Also read the entire changed SDK companion and its full diff: openShakeSession coherently owns runtime/loader/session binding, disposes a partially bound session on failure, and leaves extension ordering, model/settings overrides, stream/fetch interception and scenario assertions with their tests. This is an independently inspected related improvement, not evidence substituting for this unchanged focus verdict."
       }
     },
     {
@@ -3406,11 +3410,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_4ac93062",
+        "primaryCommit": "16b572eb9d53528063cd53a9e0e6af0defa1d8b5",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary",
+        "sourceCommit": "16b572eb9d53528063cd53a9e0e6af0defa1d8b5",
+        "state": "needs-judge",
         "reason": "No dedicated primary/final independent focus judgment."
       }
     },
@@ -3431,11 +3435,11 @@
       },
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_4ac93062",
+        "primaryCommit": "16b572eb9d53528063cd53a9e0e6af0defa1d8b5",
         "judgeIds": ["task_7caa7713"],
-        "sourceCommit": "08e00ae3c0aa5603288096ddb7d5a3ab73a8c682",
-        "state": "pending-primary",
+        "sourceCommit": "16b572eb9d53528063cd53a9e0e6af0defa1d8b5",
+        "state": "needs-judge",
         "reason": "No dedicated primary/final independent focus judgment. Related-patch review is evidence only; dedicated focus coverage remains required."
       }
     },
@@ -3505,11 +3509,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_4ac93062",
+        "primaryCommit": "16b572eb9d53528063cd53a9e0e6af0defa1d8b5",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary",
+        "sourceCommit": "16b572eb9d53528063cd53a9e0e6af0defa1d8b5",
+        "state": "needs-judge",
         "reason": "No dedicated primary/final independent focus judgment."
       }
     },
@@ -3523,11 +3527,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_bb9fc8cd",
+        "primaryCommit": "70c4f28e36daaddacb880a636f60b323a2b21150",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary",
+        "sourceCommit": "70c4f28e36daaddacb880a636f60b323a2b21150",
+        "state": "needs-judge",
         "reason": "No dedicated primary/final independent focus judgment."
       }
     },
@@ -3541,11 +3545,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_bb9fc8cd",
+        "primaryCommit": "70c4f28e36daaddacb880a636f60b323a2b21150",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary",
+        "sourceCommit": "70c4f28e36daaddacb880a636f60b323a2b21150",
+        "state": "needs-judge",
         "reason": "No dedicated primary/final independent focus judgment."
       }
     },
@@ -3559,11 +3563,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_bb9fc8cd",
+        "primaryCommit": "70c4f28e36daaddacb880a636f60b323a2b21150",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary",
+        "sourceCommit": "70c4f28e36daaddacb880a636f60b323a2b21150",
+        "state": "needs-judge",
         "reason": "No dedicated primary/final independent focus judgment."
       }
     },
@@ -3577,11 +3581,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_39f176a7",
+        "primaryCommit": "85258ad127c73282f5b2d8b551e633e2aaae9599",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary",
+        "sourceCommit": "85258ad127c73282f5b2d8b551e633e2aaae9599",
+        "state": "needs-judge",
         "reason": "No dedicated primary/final independent focus judgment."
       }
     },
@@ -3595,11 +3599,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_39f176a7",
+        "primaryCommit": "85258ad127c73282f5b2d8b551e633e2aaae9599",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary",
+        "sourceCommit": "85258ad127c73282f5b2d8b551e633e2aaae9599",
+        "state": "needs-judge",
         "reason": "No dedicated primary/final independent focus judgment."
       }
     },
@@ -3613,11 +3617,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_39f176a7",
+        "primaryCommit": "85258ad127c73282f5b2d8b551e633e2aaae9599",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary",
+        "sourceCommit": "85258ad127c73282f5b2d8b551e633e2aaae9599",
+        "state": "needs-judge",
         "reason": "No dedicated primary/final independent focus judgment."
       }
     },
@@ -4363,30 +4367,34 @@
       "focus": "tests/fixtures/history-disk-retrieval.ts",
       "initialBlob": null,
       "introducedBy": "8d04882c7fd0b6165ac217f9a7a7bf893262dd33",
-      "state": "pending",
-      "acceptedBlob": null,
+      "state": "accepted",
+      "acceptedBlob": "bb589e72dcab627861635a63051e522191a2da20",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
         "acceptedBlob": "bb589e72dcab627861635a63051e522191a2da20",
         "primaryId": "task_19ac106b",
         "primaryCommit": "191812d4b948379cfd5d93861e3892041494f153",
+        "judgeIds": ["task_8f182dc7"],
         "sourceCommit": "191812d4b948379cfd5d93861e3892041494f153",
-        "state": "needs-judge"
+        "state": "accepted-joined",
+        "reason": "Read the complete fixture and both caller layers. One manager/service/context intentionally spans the authority transition. Setup puts an inactive user branch, private assistant thinking/tool arguments, hidden custom content, public assistant prose and a tool result beside the original user evidence before compaction. Reload plus the throwing getBranch override makes metadata-only retrieval a visible requirement, not an incidental implementation detail. The first assertion phase verifies original user read and four hidden-content exclusions and captures a tool ref and search cursor. The next phase appends the shake record in place and checks fresh searches, that previously issued tool ref, and an earlier cursor against live exclusion authority. The final reload phase checks exclusion persistence without suppressing public assistant text or the original user ref. The finally block disposes the same manager. Splitting these phases into helpers would require carrying the manager, context, refs and cursor and would hide the chronology this fixture exists to demonstrate. Existing phase comments are sufficient structure."
       }
     },
     {
       "focus": "tests/fixtures/history-large-session.ts",
       "initialBlob": null,
       "introducedBy": "8d04882c7fd0b6165ac217f9a7a7bf893262dd33",
-      "state": "pending",
-      "acceptedBlob": null,
+      "state": "accepted",
+      "acceptedBlob": "e5c78470d6b08537685c82256a6c1b7184fb7d60",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
         "acceptedBlob": "e5c78470d6b08537685c82256a6c1b7184fb7d60",
         "primaryId": "task_19ac106b",
         "primaryCommit": "191812d4b948379cfd5d93861e3892041494f153",
+        "judgeIds": ["task_8f182dc7"],
         "sourceCommit": "191812d4b948379cfd5d93861e3892041494f153",
-        "state": "needs-judge"
+        "state": "accepted-joined",
+        "reason": "Read the complete 84-line fixture. The two large payloads make Unicode/escaped text and a larger ASCII record visible without a generator abstraction. toolText is the single typed message/role/part authority. assertOriginalsAndCacheIsolation states the actual invariant directly: read exact original, mutate the returned part, read the same ID again and require the untouched original. Each lifecycle path invokes it immediately beside its distinguishing operation: initial create; open and continueRecent with saved leaf equality; branch parent equality and opened saved branch; fork with parentSession linkage. The independent raw-journal read then checks the source record rather than merely repeating a manager read. own registers every successful create/open/resume/branch-open/fork manager, and the finally loop disposes that visible collection. These existing helpers remove the real repetition without turning lifecycle state into a context bag or hiding entry-point differences. Further movement would make the reader reconstruct relationships now visible in one short journey."
       }
     },
     {
@@ -4408,45 +4416,51 @@
       "focus": "tests/helpers/history-fixture.ts",
       "initialBlob": null,
       "introducedBy": "8d04882c7fd0b6165ac217f9a7a7bf893262dd33",
-      "state": "pending",
-      "acceptedBlob": null,
+      "state": "accepted",
+      "acceptedBlob": "173ad097f805cbd0393953b81612c757c6be91f1",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
         "acceptedBlob": "173ad097f805cbd0393953b81612c757c6be91f1",
         "primaryId": "task_00ab83b8",
         "primaryCommit": "191812d4b948379cfd5d93861e3892041494f153",
+        "judgeIds": ["task_20c805d0"],
         "sourceCommit": "191812d4b948379cfd5d93861e3892041494f153",
-        "state": "needs-judge"
+        "state": "accepted-joined",
+        "reason": "Read the complete exact-commit helper and followed each caller, not the primary summary. Allocation creates and retains a single owned root with visibly enumerated HOME, XDG, SDK, session and temporary directories. The returned environment puts PROBE_ROOT beside those assignments. The second small operation owns executable argv and repository cwd; its only current caller override is USE_DISK_HISTORY. Footer writes use the returned root directly, while its large-session journey launches through the fixture; retrieval owns one child; parity allocates independent native/adapted fixtures and processes. These are clear ownership boundaries, not scattered decisions needing another abstraction. Joining this helper to the differently shaped history-process.ts interface is not necessary for these actual callers."
       }
     },
     {
       "focus": "tests/history-process.ts",
       "initialBlob": null,
       "introducedBy": "fc5b9f3e7aba21718b8989b57df4081751558c31",
-      "state": "pending",
-      "acceptedBlob": null,
+      "state": "accepted",
+      "acceptedBlob": "3800d0fbb3857b0a366d6302b52d7d5432196a3b",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
         "acceptedBlob": "3800d0fbb3857b0a366d6302b52d7d5432196a3b",
         "primaryId": "task_fdf8feb2",
         "primaryCommit": "953636ca924944dbf67f42af22a9c7870fe212ac",
+        "judgeIds": ["task_20c805d0"],
         "sourceCommit": "953636ca924944dbf67f42af22a9c7870fe212ac",
-        "state": "needs-judge"
+        "state": "accepted-joined",
+        "reason": "Read the complete helper from the exact candidate and compared it with primaryBase: the focus is unchanged. Allocation/retention and execution/env mapping are adjacent, separate operations. The caller chooses explicit argv while the helper supplies process.execPath, repository cwd, owned HOME/config/SDK/tmp/session paths and only PATH from the parent. Read the publication, SDK parity and cleanup callers as well as the new SDK caller. They use allocated roots rather than reconstructing ownership, and native/adapted parity is genuinely split across children. No focus refactor is needed. Independently read every changed related source: the new SDK helper, probe and outer test form a coherent boundary and are accepted as related changes, not evidence that this already-readable focus needed editing."
       }
     },
     {
       "focus": "tests/history-storage-cleanup.probe.mjs",
       "initialBlob": null,
       "introducedBy": "fc5b9f3e7aba21718b8989b57df4081751558c31",
-      "state": "pending",
-      "acceptedBlob": null,
+      "state": "accepted",
+      "acceptedBlob": "f0661fa8f8a1790a93b2cb8eb00a11e29ecb59fd",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
         "acceptedBlob": "f0661fa8f8a1790a93b2cb8eb00a11e29ecb59fd",
         "primaryId": "task_fdf8feb2",
         "primaryCommit": "953636ca924944dbf67f42af22a9c7870fe212ac",
+        "judgeIds": ["task_20c805d0"],
         "sourceCommit": "953636ca924944dbf67f42af22a9c7870fe212ac",
-        "state": "needs-judge"
+        "state": "accepted-joined",
+        "reason": "Read the whole exact-candidate probe, including unchanged decisions. The entry sequence first prepares its owned source and then runs separately named preparation reopen/collision, published factory, pending replacement, fork copy, recent load, fork collision and fresh disposal checks. Each fault patches its actual SDK/store authority immediately beside the operation, restores it in local finally, then asserts no pending journals. The Date override is equally local. The probe preserves the empty file, collision sentinel and existing fork bytes and explicitly disposes its owned reopened/fresh managers. A generic injection harness would hide precisely which authority and lifetime each scenario checks. No change is needed at this focus."
       }
     },
     {
@@ -4462,6 +4476,32 @@
         "primaryCommit": "191812d4b948379cfd5d93861e3892041494f153",
         "sourceCommit": "191812d4b948379cfd5d93861e3892041494f153",
         "state": "needs-judge"
+      }
+    },
+    {
+      "focus": "tests/helpers/main-agent-mode-sdk.ts",
+      "initialBlob": null,
+      "introducedBy": "953636ca924944dbf67f42af22a9c7870fe212ac",
+      "state": "pending",
+      "acceptedBlob": null,
+      "resume": {
+        "status": "pending",
+        "acceptedBlob": "149e63f761488ffd85204d61911f53861f8721e6",
+        "sourceCommit": "953636ca924944dbf67f42af22a9c7870fe212ac",
+        "state": "needs-primary-final-blob"
+      }
+    },
+    {
+      "focus": "tests/main-agent-mode-sdk.probe.ts",
+      "initialBlob": null,
+      "introducedBy": "953636ca924944dbf67f42af22a9c7870fe212ac",
+      "state": "pending",
+      "acceptedBlob": null,
+      "resume": {
+        "status": "pending",
+        "acceptedBlob": "e364aad3607a688681d6b7c4a099d19097c5a1c4",
+        "sourceCommit": "953636ca924944dbf67f42af22a9c7870fe212ac",
+        "state": "needs-primary-final-blob"
       }
     }
   ],
@@ -4603,7 +4643,7 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 99,
-    "pending": 31
+    "accepted": 108,
+    "pending": 24
   }
 }

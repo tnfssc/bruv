@@ -13796,12 +13796,12 @@
     {
       "file": "tests/main-agent-mode-sdk.test.ts",
       "initialBlob": "24791f1a577e4ed976f19a37c1b4121b465a5b93",
-      "status": "pending",
+      "status": "accepted",
       "area": "agent-history-session-goals",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_fdf8feb2",
       "primaryCommit": "953636ca924944dbf67f42af22a9c7870fe212ac",
-      "judgeIds": [],
+      "judgeIds": ["task_99b868e8"],
       "sourceCommit": "953636ca924944dbf67f42af22a9c7870fe212ac",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
       "pendingReason": "No dedicated primary/final independent focus judgment.",
@@ -13852,17 +13852,34 @@
         "No runtime tests, setup, builds, live authentication/device access, or network provider calls performed; parent owns audited isolated gates and model verification.",
         "Primary source-reading decisions only; parent owns fresh independent judgments, integration, and publication.",
         "changedPaths deliberately lists the full combined source commit scope for each decision, including related SDK consumer changes when the focus itself is unchanged."
+      ],
+      "acceptedBlob": "d67cd10422a127f5163aa70c8d2bbb06fae1f4f5",
+      "result": "The focus now has one comprehensible process authority: create a retained fixture, launch the SDK probe, and require both successful child exit and its completion marker. Following the imports reaches history-process.ts, which makes separate owned HOME/config/SDK/temp/session directories and passes an explicit argv/environment through helpers.run to Bun.spawn. The probe contains the eight original scenario bodies byte-for-byte. Its role reset and afterEach disposer are child-local, rather than shared-test-process environment restoration. The SDK helper groups project/loader/runtime/session construction without hiding scenario choices; sessionHistory visibly writes an exclusive header, reopens, appends custom entries, and reopens again. These are coherent process, fixture, and disk-history boundaries, not rename churn or a context bag.",
+      "systemReason": "Traced extension role restoration, before_agent_start framing, instruction-mode persistence and prepared-frame replacement, session-owner markers, custom-base bypass, instruction continuity, and project wisdom injection. The default/fast scenario still observes automatic-turn framing and unchanged model/thinking; custom prompt and project marker collisions remain protected; durable normal-mode resume, inherited child depth, mode-before-first-request, mode-before-resumed-request, and configured wisdom paths remain explicit. Hook order is still frame-before, tasks, frame-after. Runtime auth is fixture-local with modelsPath null and refreshOnCreate false, and provider output is a local stream stub. Parent requires exit zero as well as the afterAll marker, so the marker alone cannot turn failed child assertions into success. No production source changed.",
+      "checks": [
+        "Read git show for the exact candidate focus and both added source files; inspected exact diff against 191812d4b948379cfd5d93861e3892041494f153.",
+        "Static comparison confirmed the entire original test(...) scenario suffix is byte-identical to the probe suffix.",
+        "Inspected all candidate-changed source paths and obtained exact Git blob identities with git rev-parse.",
+        "Reviewed filesystem and provider effects by source inspection only; no setup, tests, builds, credentials, or live/device calls executed.",
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md."
+      ],
+      "limits": [
+        "Structural/source verdict only. Child test execution, Bun probe selection, completion-marker transport, timeout behavior, and runtime integration remain parent-owned isolated gates, not verified here.",
+        "afterEach calls session.dispose(); the installed dependency implementation aborts/disconnects and releases session resources but does not itself emit session_shutdown. The supplied evidence wording about shutdown is stronger than this code proves; disposal behavior is preserved from the base.",
+        "The installed dependency implementation was inspected read-only; it is not Git candidate source and no dependency reinstall or mutation occurred.",
+        "Durable review provenance: existing worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_99b868e8; source evidence was read from exact candidate/base Git objects. No /tmp code checkout or runtime fixture was created by this review.",
+        "Parent owns runtime agent.model verification and any publication. No delegation, source edits, cleanup, recovery work, or wisdom-note pile performed."
       ]
     },
     {
       "file": "tests/main-agent-mode-tui.test.ts",
       "initialBlob": "4738e16439b75de7a6b5bdeb15a0f6ee100155c1",
-      "status": "pending",
+      "status": "accepted",
       "area": "agent-history-session-goals",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_e122aaee",
       "primaryCommit": "29c7ec1d20cd22d6c59a747df673f61d9e11383e",
-      "judgeIds": [],
+      "judgeIds": ["task_99b868e8"],
       "sourceCommit": "29c7ec1d20cd22d6c59a747df673f61d9e11383e",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
       "pendingReason": "No dedicated primary/final independent focus judgment.",
@@ -13880,6 +13897,22 @@
         "SDK runtime behavior and live TUI behavior remain unverified. Parent must run any tests with explicit process argv/env and owned mkdtemp HOME/config/SDK; never use inherited HOME cleanup or shell traps. Existing provably fixture-local rm in unchanged TUI/durability tests was read, not run.",
         "SDK fixtures now remain on disk; session disposal and fetch restoration remain in each test. The retained formatter fixture is /tmp/pr45-shake-sdk-format-lWpOFB (home-nXSCHq, config-VC3g2g, tmp-XIgNzy, sdk-1CEKWU). Durable source provenance is this worktree and exact committed blobs.",
         "No wisdom/values source changes: existing ownership/readability guidance suffices; parent owns aggregate wisdom. Runtime agent.model verification remains parent-owned."
+      ],
+      "acceptedBlob": "4738e16439b75de7a6b5bdeb15a0f6ee100155c1",
+      "result": "Read this unchanged focus independently: one test creates its HOME fixture and dedicated tmux socket, assembles offline launch flags, observes startup, sends a literal command followed by Enter, waits for the mode notification, and asserts the fast status and model/thinking-unchanged prose. Both the tmux lifetime and the fixture lifetime are visible in the same finally. The tiny local command and frameContaining closures share only this single session. Moving that single lifetime into another wrapper would require a reader to jump files without consolidating competing owners. The focus blob is identical to the primary base; the adjacent manual-shake change is not evidence for this verdict.",
+      "systemReason": "Followed tmuxRunner/capturePane/frameContaining into helpers.run and Bun.spawn, and the compiled CLI bootstrap into tasks extension registration and registerInstructionMode. The CLI materializes runtime assets under HOME; the mode command is root-only, persists before updating its instruction frame/status, and describes instructions-only behavior without changing model/thinking. The test exercises that rendered notification/status rather than merely checking an SDK handler. It deliberately sends text and Enter separately after startup to submit a complete /mode command. No TUI assertion, launch policy, or production decision changed in this candidate.",
+      "checks": [
+        "Read the whole TUI focus from git show 29c7ec1d20cd22d6c59a747df673f61d9e11383e and verified identical Git blob identity against 191812d4b948379cfd5d93861e3892041494f153.",
+        "Inspected every candidate-changed source path, including the whole manual-shake SDK file and its base diff; that separate focus has its own decision.",
+        "Reviewed tmux/process launch, CLI storage effects, and finally cleanup by source inspection only. Did not launch tmux, the binary, or cleanup.",
+        "No setup, tests, builds, live auth/device calls, or source edits performed."
+      ],
+      "limits": [
+        "NO CHANGE NEEDED is a structural journey verdict, not authorization to execute the existing test under the current safety constraints.",
+        "The unchanged TUI fixture has an rm(home) of its provably owned mkdtemp path, and tmuxRunner inherits the invoking environment; only HOME and BRUV_CODING_AGENT_DIR are overridden in the nested launch. It does not itself provide explicit owned XDG_CONFIG_HOME/PI_CODING_AGENT_DIR or retained HOME. The parent must satisfy the current explicit-env and retention requirements before any gate; an unchanged invocation is not approved here.",
+        "Compiled binary availability, actual tmux behavior, visible rendered frames, and real runtime mode switching remain unverified; no live auth/device access attempted.",
+        "Durable review provenance is the existing worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_99b868e8 and exact Git objects, not a /tmp checkout. Existing source/worktrees/evidence preserved.",
+        "Parent owns audited isolated gates, runtime agent.model verification, aggregate wisdom, and publication."
       ]
     },
     {
@@ -13895,12 +13928,12 @@
     {
       "file": "tests/manual-shake-sdk.test.ts",
       "initialBlob": "cdcfa1c18f1da93ba6a2948c9d8d99d2a0276839",
-      "status": "pending",
+      "status": "accepted",
       "area": "agent-history-session-goals",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_e122aaee",
       "primaryCommit": "29c7ec1d20cd22d6c59a747df673f61d9e11383e",
-      "judgeIds": [],
+      "judgeIds": ["task_99b868e8"],
       "sourceCommit": "29c7ec1d20cd22d6c59a747df673f61d9e11383e",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
       "pendingReason": "No dedicated primary/final independent focus judgment.",
@@ -13918,17 +13951,35 @@
         "SDK runtime behavior and live TUI behavior remain unverified. Parent must run any tests with explicit process argv/env and owned mkdtemp HOME/config/SDK; never use inherited HOME cleanup or shell traps. Existing provably fixture-local rm in unchanged TUI/durability tests was read, not run.",
         "SDK fixtures now remain on disk; session disposal and fetch restoration remain in each test. The retained formatter fixture is /tmp/pr45-shake-sdk-format-lWpOFB (home-nXSCHq, config-VC3g2g, tmp-XIgNzy, sdk-1CEKWU). Durable source provenance is this worktree and exact committed blobs.",
         "No wisdom/values source changes: existing ownership/readability guidance suffices; parent owns aggregate wisdom. Runtime agent.model verification remains parent-owned."
+      ],
+      "acceptedRelatedJudges": ["task_99b868e8"],
+      "acceptedBlob": "4c78304c6cd0d25410a8ec31ffcf55b4a2dcda12",
+      "result": "The new file-local openShakeSession is an actual opening authority: it creates or accepts the runtime, loads only the requested extension factories, creates the SDK session, binds print-mode extensions, and disposes a partially bound session on failure. Repeated defaults no longer interrupt the path from seeded history to shake to the observed provider consequence. Its narrow typed options are semantic variations, not a shared context bag: redaction/throwing factories, compaction model/settings, or fake-auth runtime. Each scenario still owns its returned session and visible finally; provider interception, history mutation, recovery invocation, decisions, and assertions stay in the scenario. Removing only owned fixture-directory deletion makes artifacts retained without hiding session disposal.",
+      "systemReason": "Read both transformed-tool cases through context filtering and one-sided redaction, ordinary stream capture, stable-trace removal, transformed-target preservation, and upstream-excluded token estimates. Read overflow through one error, summary, retry, then interrupted assistant/tool-result omission checks; read threshold through preserved usage costs, no stale compaction after shake, and later genuine-history compaction. Read persistence failure through a throwing append proxy, unchanged leaf, fake-auth runtime, zero fetch dispatches, and the refusal error. Followed registerManualShake context projection/request guarding, automatic shake-before-compaction policy, durable checkpoint/carry-forward behavior, and fail-closed error state; also checked extension registration order before native/cache-affine compaction. The extracted defaults exactly preserve local auth path, disabled resource discovery, gpt-4o, execute, default no-compaction settings, and print binding. No security refusal or assertion changed.",
+      "checks": [
+        "Read the whole candidate focus and the full diff against 191812d4b948379cfd5d93861e3892041494f153; this is the only changed source path for this candidate.",
+        "Static diff inspection found no changed assertion-bearing lines; actual scenario decisions and provider consequences were independently read, not inferred from that count.",
+        "Verified the stub SSE helper is unchanged, and obtained exact candidate blob identity with git rev-parse.",
+        "Reviewed fs.mkdtemp, fixture-local auth/runtime configuration, resource discovery exclusions, stream/fetch stubs, and disposal effects before considering execution. No setup, tests, builds, live auth/device calls, or cleanup ran."
+      ],
+      "limits": [
+        "Source/structural acceptance only; runtime assertions and failure-path disposal remain parent-owned audited isolated gates.",
+        "This in-process test does not itself create a separate HOME/config/SDK process environment. In particular tasks extension registration reaches cache settings rooted at homedir(). Therefore a fixture-local authPath is not evidence of whole-process isolation: parent gates must launch with explicit argv/env and owned retained mkdtemp HOME/config/SDK/temp paths before importing the test.",
+        "session.dispose is synchronous in the read-only installed dependency and is not proof that session_shutdown handlers execute. Existing successful-session disposal semantics are retained, not expanded.",
+        "No real provider request, credential read, device use, or user-data recovery was attempted. The inspected recovery call is the assigned SDK compaction test scenario, not investigation of user data.",
+        "Durable review provenance: existing worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_99b868e8 and exact Git candidate/base objects. No /tmp code checkout, test fixture, source mutation, or dependency mutation created.",
+        "Parent owns runtime agent.model verification, isolated gates, aggregate wisdom, and publication. No delegation or per-worker wisdom note added."
       ]
     },
     {
       "file": "tests/manual-shake.test.ts",
       "initialBlob": "9157e3f36bc1e1fde3f9b0e668f8d865b5dfeaa5",
-      "status": "pending",
+      "status": "accepted",
       "area": "agent-history-session-goals",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_e122aaee",
       "primaryCommit": "29c7ec1d20cd22d6c59a747df673f61d9e11383e",
-      "judgeIds": ["task_c5c84c0c"],
+      "judgeIds": ["task_c5c84c0c", "task_8f182dc7"],
       "sourceCommit": "29c7ec1d20cd22d6c59a747df673f61d9e11383e",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
       "pendingReason": "No dedicated primary/final independent focus judgment. Related-patch review is evidence only; dedicated focus coverage remains required.",
@@ -13946,6 +13997,21 @@
         "SDK runtime behavior and live TUI behavior remain unverified. Parent must run any tests with explicit process argv/env and owned mkdtemp HOME/config/SDK; never use inherited HOME cleanup or shell traps. Existing provably fixture-local rm in unchanged TUI/durability tests was read, not run.",
         "SDK fixtures now remain on disk; session disposal and fetch restoration remain in each test. The retained formatter fixture is /tmp/pr45-shake-sdk-format-lWpOFB (home-nXSCHq, config-VC3g2g, tmp-XIgNzy, sdk-1CEKWU). Durable source provenance is this worktree and exact committed blobs.",
         "No wisdom/values source changes: existing ownership/readability guidance suffices; parent owns aggregate wisdom. Runtime agent.model verification remains parent-owned."
+      ],
+      "acceptedBlob": "cf84c73d7f7669bb6fcb42ec6954c68c2a27f22c",
+      "result": "Read the whole 837-line intrinsic focus. completed and result remove only message/protocol construction; each test still shows its manager, incoming context, durable selection and projected assertions. The projection group moves from exact ordered preservation to duplicate occurrence matching, transformed/partial-group refusal, and independent stable-group removal. Crucially, the pending/duplicate replay case distinguishes refusal to plan a new shake from replay of the settled checkpoint; the adjacent multi-result case makes every-result selection and exact-copy authorization visible in one test. Marker validation/bounds, durable reload/branch/SDK conversion, command snapshot safeguards, diagnostic persistence failures, and pre-compaction policy each have their own local authority. The command harness exposes appends/notices/invalidation; injected append-then-throw tests keep their leaf rollback and failed-closed assertions immediately beside that injection. Combining these with compaction fall-through harnesses would blur different consequences rather than remove a genuine reading burden. No focus rewrite is warranted. Also read the entire changed SDK companion and its full diff: openShakeSession coherently owns runtime/loader/session binding, disposes a partially bound session on failure, and leaves extension ordering, model/settings overrides, stream/fetch interception and scenario assertions with their tests. This is an independently inspected related improvement, not evidence substituting for this unchanged focus verdict.",
+      "systemReason": "Traced buildShakePlan through analyzeToolProtocol, occurrence matching and matchedShakeEntryIds: planning refuses ambiguous active protocol, whereas projection authorizes complete unchanged selected groups independently. Traced registerManualShake through transformed-context preview, snapshot staleness, commitShakeCheckpoint restoring the old leaf after append failure, carry-forward projectionFailures and abort, static diagnostics, and the 75% compaction cancellation decision. extension.ts registers shake before native and cache-affine compactors and invalidates their captures only after persistence. The intrinsic tests visibly distinguish those owners. The SDK companion preserves both overflow recovery and pre-request threshold scenarios, including omission of the interrupted assistant plus tool result, cost retention, and zero provider dispatch after carry failure; the extraction does not move those semantic decisions into an opaque context bag. Retained temporary directories are intentional in the related diff.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "git diff --name-status primaryBase..candidate lists only tests/manual-shake-sdk.test.ts; inspected that entire source and full diff.",
+        "git diff primaryBase..candidate -- tests/manual-shake.test.ts is empty. git rev-parse confirms identical cf84c73d7f7669bb6fcb42ec6954c68c2a27f22c at candidate, primaryBase and preserved 16e685366452845e2faff7fe7fbee57c6cdc5a6e evidence.",
+        "git diff --check primaryBase..candidate returned no whitespace errors.",
+        "Reviewed filesystem/provider effects before deciding not to execute: intrinsic disk tests call rm only on their own mkdtemp dirs; SDK tests retain theirs, use fixture authPath and disabled resource discovery, and intercept provider behavior locally. None ran."
+      ],
+      "limits": [
+        "Static actual-source review only. No setup, tests, builds, package installation, credentials, live authentication, network probes, or cleanup ran. Parent owns audited isolated runtime gates and runtime agent.model verification.",
+        "Exact candidates were read through git show and git diff, not checkout HEAD. Review provenance is the retained durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_8f182dc7. No descendant agents were launched; no source or wisdom files were edited.",
+        "The SDK helper itself does not assign process HOME/XDG/SDK directories; parent runtime gates must provide an owned isolated environment. No claim of live-provider behavior or runtime type/test success."
       ]
     },
     {
@@ -13953,26 +14019,60 @@
       "initialBlob": "5d65015a7b494c0a76f466a9533a043830a8bf8c",
       "status": "pending",
       "area": "agent-history-session-goals",
-      "resumeState": "pending-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_4ac93062",
+      "primaryCommit": "16b572eb9d53528063cd53a9e0e6af0defa1d8b5",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "16b572eb9d53528063cd53a9e0e6af0defa1d8b5",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
-      "pendingReason": "No dedicated primary/final independent focus judgment."
+      "pendingReason": "No dedicated primary/final independent focus judgment.",
+      "primaryBase": "405e9ee67ce600b313a34336a9cabf3860c0d739",
+      "primaryResult": "The existing fixture, capture and event operations already separate durable journal authority, transformed capture and SDK preparation. Split-turn tests keep required slices and full entries side by side and assert missing pairing/partial markers fail closed; mutation/reorder/signature/leaf/boundary tests expose each authority directly. Disk reopen and dispatch loops keep transport restoration and owned journal cleanup explicit, and dispatch assertions compare the ordinary serialized prefix and unchanged cut. Extracting their distinct journeys into a shared harness would hide that evidence. Focus unchanged; batch sibling source change is listed in changedPaths for exact review scope.",
+      "primaryPaths": ["tests/native-compaction.test.ts"],
+      "primaryChecks": [
+        "Read the whole assigned focus and trace relevant production hook/projection/metadata callers; dedicated primary reasoning, not acceptance from previous related-patch review.",
+        "Static review: all scenario mutations, cancel result, dispatch-only observations, no appended checkpoint/usage entries, and empty-versus-unchanged journal assertions preserved.",
+        "Static byte comparison: native-compaction.test.ts outside the three deferred-HTTP scenarios is unchanged; committed scope is exactly that source file.",
+        "git diff --check passed.",
+        "Biome format --write on tests/native-compaction.test.ts via child_process spawnSync argv and explicit fresh environment: exit 0; no fixes applied. Retained fixture /tmp/bruv-pr45-primary-format-IrA8a4/provenance.json records durable worktree, executable, argv and env.",
+        "Commit hooks inspected: pre-commit, prepare-commit-msg, commit-msg and post-commit absent; source-only commit created without bypassing hooks."
+      ],
+      "primaryLimits": [
+        "No tests, setup or builds run: parent owns audited isolated gates and independent judgments. No runtime behavior claimed verified.",
+        "No live auth/device/API access or credential reads. No delegation, recovery, cleanup, destructive Git, push, merge or publication. Shared dependencies used read-only.",
+        "Existing journal tests clean only their mkdtemp-created roots; cleanup was read, never executed. Request-history child inherits process.env: parent must supply explicit retained owned fixture HOME/config/SDK/TMPDIR before any runtime gate.",
+        "Formatter HOME/config/cache/SDK/TMPDIR fixture retained; source provenance remains in this durable worktree. No wisdom/values edits: parent owns aggregate wisdom and no new general lesson was established."
+      ]
     },
     {
       "file": "tests/native-compaction.test.ts",
       "initialBlob": "09cda8b18ce7f97ae15e301591969d99e38b80ba",
       "status": "pending",
       "area": "agent-history-session-goals",
-      "resumeState": "pending-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_4ac93062",
+      "primaryCommit": "16b572eb9d53528063cd53a9e0e6af0defa1d8b5",
       "judgeIds": ["task_7caa7713"],
-      "sourceCommit": "08e00ae3c0aa5603288096ddb7d5a3ab73a8c682",
+      "sourceCommit": "16b572eb9d53528063cd53a9e0e6af0defa1d8b5",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
-      "pendingReason": "No dedicated primary/final independent focus judgment. Related-patch review is evidence only; dedicated focus coverage remains required."
+      "pendingReason": "No dedicated primary/final independent focus judgment. Related-patch review is evidence only; dedicated focus coverage remains required.",
+      "primaryBase": "405e9ee67ce600b313a34336a9cabf3860c0d739",
+      "primaryResult": "One file-local expectInvalidatedHttpAttempt operation now owns capture, suspended HTTP dispatch, late response, publication assertions and transport/subscriber teardown. Each of the three named tests keeps its own invalidation action and expected journal visible; the shake test retains fresh-capture/model/leaf assertions from the exact preserved candidate. An explicit dispatch promise replaces the repeated resolver polling without changing the dispatch-before-invalidation boundary. Credential deferral remains separate because its safety boundary is pre-dispatch, and adapter/coverage/transport tests are untouched. This is the primary proposed structural change, pending parent-owned independent review.",
+      "primaryPaths": ["tests/native-compaction.test.ts"],
+      "primaryChecks": [
+        "Read the whole assigned focus and trace relevant production hook/projection/metadata callers; dedicated primary reasoning, not acceptance from previous related-patch review.",
+        "Static review: all scenario mutations, cancel result, dispatch-only observations, no appended checkpoint/usage entries, and empty-versus-unchanged journal assertions preserved.",
+        "Static byte comparison: native-compaction.test.ts outside the three deferred-HTTP scenarios is unchanged; committed scope is exactly that source file.",
+        "git diff --check passed.",
+        "Biome format --write on tests/native-compaction.test.ts via child_process spawnSync argv and explicit fresh environment: exit 0; no fixes applied. Retained fixture /tmp/bruv-pr45-primary-format-IrA8a4/provenance.json records durable worktree, executable, argv and env.",
+        "Commit hooks inspected: pre-commit, prepare-commit-msg, commit-msg and post-commit absent; source-only commit created without bypassing hooks."
+      ],
+      "primaryLimits": [
+        "No tests, setup or builds run: parent owns audited isolated gates and independent judgments. No runtime behavior claimed verified.",
+        "No live auth/device/API access or credential reads. No delegation, recovery, cleanup, destructive Git, push, merge or publication. Shared dependencies used read-only.",
+        "Existing journal tests clean only their mkdtemp-created roots; cleanup was read, never executed. Request-history child inherits process.env: parent must supply explicit retained owned fixture HOME/config/SDK/TMPDIR before any runtime gate.",
+        "Formatter HOME/config/cache/SDK/TMPDIR fixture retained; source provenance remains in this durable worktree. No wisdom/values edits: parent owns aggregate wisdom and no new general lesson was established."
+      ]
     },
     {
       "file": "tests/native-fast-mode.test.ts",
@@ -14013,26 +14113,62 @@
       "initialBlob": "afe104b02c5917ffbf94068bef556d59dd0499f0",
       "status": "pending",
       "area": "agent-history-session-goals",
-      "resumeState": "pending-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_4ac93062",
+      "primaryCommit": "16b572eb9d53528063cd53a9e0e6af0defa1d8b5",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "16b572eb9d53528063cd53a9e0e6af0defa1d8b5",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
-      "pendingReason": "No dedicated primary/final independent focus judgment."
+      "pendingReason": "No dedicated primary/final independent focus judgment.",
+      "primaryBase": "405e9ee67ce600b313a34336a9cabf3860c0d739",
+      "primaryResult": "The top-level isolated-process gate states the disk-before-shake prototype-order policy. history/reopen own journal construction and manager registration; trackBodies owns the prototype spy and each test restores it locally. compactionHarness and fastHarness reflect different hook and runtime authorities rather than hiding them in a common context bag. Tests sequence branch/reset/store switches with their exact materialized-entry and dispatch assertions immediately adjacent. The two reader families are already coherent, and their common disk fixture is narrow. No structural edit needed; tests were not run, and inherited child env isolation remains a parent gate requirement. Batch sibling source change is fully listed in changedPaths.",
+      "primaryPaths": ["tests/native-compaction.test.ts"],
+      "primaryChecks": [
+        "Read the whole assigned focus and trace relevant production hook/projection/metadata callers; dedicated primary reasoning, not acceptance from previous related-patch review.",
+        "Static review: all scenario mutations, cancel result, dispatch-only observations, no appended checkpoint/usage entries, and empty-versus-unchanged journal assertions preserved.",
+        "Static byte comparison: native-compaction.test.ts outside the three deferred-HTTP scenarios is unchanged; committed scope is exactly that source file.",
+        "git diff --check passed.",
+        "Biome format --write on tests/native-compaction.test.ts via child_process spawnSync argv and explicit fresh environment: exit 0; no fixes applied. Retained fixture /tmp/bruv-pr45-primary-format-IrA8a4/provenance.json records durable worktree, executable, argv and env.",
+        "Commit hooks inspected: pre-commit, prepare-commit-msg, commit-msg and post-commit absent; source-only commit created without bypassing hooks."
+      ],
+      "primaryLimits": [
+        "No tests, setup or builds run: parent owns audited isolated gates and independent judgments. No runtime behavior claimed verified.",
+        "No live auth/device/API access or credential reads. No delegation, recovery, cleanup, destructive Git, push, merge or publication. Shared dependencies used read-only.",
+        "Existing journal tests clean only their mkdtemp-created roots; cleanup was read, never executed. Request-history child inherits process.env: parent must supply explicit retained owned fixture HOME/config/SDK/TMPDIR before any runtime gate.",
+        "Formatter HOME/config/cache/SDK/TMPDIR fixture retained; source provenance remains in this durable worktree. No wisdom/values edits: parent owns aggregate wisdom and no new general lesson was established."
+      ]
     },
     {
       "file": "tests/native-shake-sdk.test.ts",
       "initialBlob": "ba285f014dee32ff3d9010d99cd80aae98e9a349",
       "status": "pending",
       "area": "agent-history-session-goals",
-      "resumeState": "pending-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_bb9fc8cd",
+      "primaryCommit": "70c4f28e36daaddacb880a636f60b323a2b21150",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "70c4f28e36daaddacb880a636f60b323a2b21150",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
-      "pendingReason": "No dedicated primary/final independent focus judgment."
+      "pendingReason": "No dedicated primary/final independent focus judgment.",
+      "primaryBase": "405e9ee67ce600b313a34336a9cabf3860c0d739",
+      "primaryResult": "Each named refusal scenario now owns its complete checkpoint/model/history/context-hook arrangement and returns its harness. The common runner visibly seeds the same native branch, applies one arrangement, invokes /shake, checks no persisted shake and a refusal notice, and clears continuity. All eight original scenarios remain: invalid version, foreign provider, wrong API, unresolved call, branch mutation during async hooks, missing shim, changed runtime message and duplicate shim. The remaining full SDK and in-memory tests are unchanged because their checkpoint/projection/journal ownership and assertions already follow the tested journey directly.",
+      "primaryPaths": ["tests/native-shake-sdk.test.ts", "tests/phase2-native-live.test.ts"],
+      "primaryChecks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md; no wisdom edits (parent owns aggregation; no new general lesson).",
+        "Reconciliation rows 96-98 have pending-primary state, matching baseline blobs, no primary commit, accepted candidate, or rejection evidence to import or rework.",
+        "Whole assigned source files read; production compactor/shake registration and relevant fixture callers inspected without executing them.",
+        "Biome format --write ran only on tests/native-shake-sdk.test.ts and tests/phase2-native-live.test.ts via child_process.execFile argv with an explicit minimal env. Exit 0: Formatted 2 files in 9ms. Fixed 1 file.",
+        "Formatter fixture retained at /tmp/pr45-primary-format-3y54tz, with owned home/config/cache/tmp and provenance.json recording the durable source worktree, argv and env. No code checkout in /tmp.",
+        "git diff --check passed; source-only commit inspected. No executable commit hooks found; commit was unsigned explicitly to avoid configured signing/credential access.",
+        "All existing shake refusal/no-op assertions and live checkpoint/recall/repeat-compaction assertions preserved. Manual diff reviewed; assertions are not the readability verdict.",
+        "changedPaths records the complete combined source commit scope for every decision, including the unchanged focus; no helper file additions."
+      ],
+      "primaryLimits": [
+        "No tests, setup, builds, typecheck, dependency installation, native agent delegation or independent judgments run. Parent owns audited isolated gates and runtime model verification.",
+        "Live authentication, device/provider access and Codex recall are unverified. No auth.json content or user secrets accessed.",
+        "Existing tests create mkdtemp-owned session directories and contain owned-path rm cleanup; these were inspected, not run. Live test retains its existing explicit opt-in, auth-path selection and evidence artifact write. Parent must audit and isolate filesystem/network effects before any execution, using explicit argv/env with owned retained HOME/config/SDK fixtures.",
+        "No recovery work, deletion/cleanup shell commands, destructive git, user-data mutation, push, PR, merge or publication. Shared dependencies read-only; preserved worktrees/candidate evidence untouched."
+      ]
     },
     {
       "file": "tests/offline-process-isolation.test.ts",
@@ -14111,52 +14247,124 @@
       "initialBlob": "b67e4ee62f679187372e03f009db40b20a256403",
       "status": "pending",
       "area": "agent-history-session-goals",
-      "resumeState": "pending-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_bb9fc8cd",
+      "primaryCommit": "70c4f28e36daaddacb880a636f60b323a2b21150",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "70c4f28e36daaddacb880a636f60b323a2b21150",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
-      "pendingReason": "No dedicated primary/final independent focus judgment."
+      "pendingReason": "No dedicated primary/final independent focus judgment.",
+      "primaryBase": "405e9ee67ce600b313a34336a9cabf3860c0d739",
+      "primaryResult": "No change needed in this focus. Its existing comment explains isolated Phase 1 testing without runtime downgrade. Registration order, session tool activation and the custom-prompt bypass are all adjacent and directly express the fixture authority. Production separately registers native compaction and gates cache-affine compaction on native capture; nothing in this fixture switches model/provider or silently alters that production route. A wrapper, rename or shared context here would add navigation without solving a reading burden. Other two focus edits are included only as the complete combined commit scope.",
+      "primaryPaths": ["tests/native-shake-sdk.test.ts", "tests/phase2-native-live.test.ts"],
+      "primaryChecks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md; no wisdom edits (parent owns aggregation; no new general lesson).",
+        "Reconciliation rows 96-98 have pending-primary state, matching baseline blobs, no primary commit, accepted candidate, or rejection evidence to import or rework.",
+        "Whole assigned source files read; production compactor/shake registration and relevant fixture callers inspected without executing them.",
+        "Biome format --write ran only on tests/native-shake-sdk.test.ts and tests/phase2-native-live.test.ts via child_process.execFile argv with an explicit minimal env. Exit 0: Formatted 2 files in 9ms. Fixed 1 file.",
+        "Formatter fixture retained at /tmp/pr45-primary-format-3y54tz, with owned home/config/cache/tmp and provenance.json recording the durable source worktree, argv and env. No code checkout in /tmp.",
+        "git diff --check passed; source-only commit inspected. No executable commit hooks found; commit was unsigned explicitly to avoid configured signing/credential access.",
+        "All existing shake refusal/no-op assertions and live checkpoint/recall/repeat-compaction assertions preserved. Manual diff reviewed; assertions are not the readability verdict.",
+        "changedPaths records the complete combined source commit scope for every decision, including the unchanged focus; no helper file additions."
+      ],
+      "primaryLimits": [
+        "No tests, setup, builds, typecheck, dependency installation, native agent delegation or independent judgments run. Parent owns audited isolated gates and runtime model verification.",
+        "Live authentication, device/provider access and Codex recall are unverified. No auth.json content or user secrets accessed.",
+        "Existing tests create mkdtemp-owned session directories and contain owned-path rm cleanup; these were inspected, not run. Live test retains its existing explicit opt-in, auth-path selection and evidence artifact write. Parent must audit and isolate filesystem/network effects before any execution, using explicit argv/env with owned retained HOME/config/SDK fixtures.",
+        "No recovery work, deletion/cleanup shell commands, destructive git, user-data mutation, push, PR, merge or publication. Shared dependencies read-only; preserved worktrees/candidate evidence untouched."
+      ]
     },
     {
       "file": "tests/phase2-native-live.test.ts",
       "initialBlob": "b194b11139adbdc1329f1b43db241e92ccadb013",
       "status": "pending",
       "area": "agent-history-session-goals",
-      "resumeState": "pending-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_bb9fc8cd",
+      "primaryCommit": "70c4f28e36daaddacb880a636f60b323a2b21150",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "70c4f28e36daaddacb880a636f60b323a2b21150",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
-      "pendingReason": "No dedicated primary/final independent focus judgment."
+      "pendingReason": "No dedicated primary/final independent focus judgment.",
+      "primaryBase": "405e9ee67ce600b313a34336a9cabf3860c0d739",
+      "primaryResult": "openObservedSession takes an explicit manager and owns both request observation and notifier replacement. It returns the session paired with dispose(), which restores its notifier and disposes that same session. Before installing a notifier for another turn it restores the previous override, avoiding stacked captured observers. The main journey now reads open -> prompt -> compact -> paired dispose -> disk reopen -> explicit new observed session -> recall -> repeated compact, with one active handle disposed in finally. The synthetic transcript, phase evidence, opaque identity/hash assertions, marker exclusion, resumed recall assertion, repeated strategy assertion, opt-in and provider settings remain intact.",
+      "primaryPaths": ["tests/native-shake-sdk.test.ts", "tests/phase2-native-live.test.ts"],
+      "primaryChecks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md; no wisdom edits (parent owns aggregation; no new general lesson).",
+        "Reconciliation rows 96-98 have pending-primary state, matching baseline blobs, no primary commit, accepted candidate, or rejection evidence to import or rework.",
+        "Whole assigned source files read; production compactor/shake registration and relevant fixture callers inspected without executing them.",
+        "Biome format --write ran only on tests/native-shake-sdk.test.ts and tests/phase2-native-live.test.ts via child_process.execFile argv with an explicit minimal env. Exit 0: Formatted 2 files in 9ms. Fixed 1 file.",
+        "Formatter fixture retained at /tmp/pr45-primary-format-3y54tz, with owned home/config/cache/tmp and provenance.json recording the durable source worktree, argv and env. No code checkout in /tmp.",
+        "git diff --check passed; source-only commit inspected. No executable commit hooks found; commit was unsigned explicitly to avoid configured signing/credential access.",
+        "All existing shake refusal/no-op assertions and live checkpoint/recall/repeat-compaction assertions preserved. Manual diff reviewed; assertions are not the readability verdict.",
+        "changedPaths records the complete combined source commit scope for every decision, including the unchanged focus; no helper file additions."
+      ],
+      "primaryLimits": [
+        "No tests, setup, builds, typecheck, dependency installation, native agent delegation or independent judgments run. Parent owns audited isolated gates and runtime model verification.",
+        "Live authentication, device/provider access and Codex recall are unverified. No auth.json content or user secrets accessed.",
+        "Existing tests create mkdtemp-owned session directories and contain owned-path rm cleanup; these were inspected, not run. Live test retains its existing explicit opt-in, auth-path selection and evidence artifact write. Parent must audit and isolate filesystem/network effects before any execution, using explicit argv/env with owned retained HOME/config/SDK fixtures.",
+        "No recovery work, deletion/cleanup shell commands, destructive git, user-data mutation, push, PR, merge or publication. Shared dependencies read-only; preserved worktrees/candidate evidence untouched."
+      ]
     },
     {
       "file": "tests/phase2-native-sdk.test.ts",
       "initialBlob": "a9cad5cefdd2ad24aa78ee97606d77e7c375aa44",
       "status": "pending",
       "area": "agent-history-session-goals",
-      "resumeState": "pending-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_39f176a7",
+      "primaryCommit": "85258ad127c73282f5b2d8b551e633e2aaae9599",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "85258ad127c73282f5b2d8b551e633e2aaae9599",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
-      "pendingReason": "No dedicated primary/final independent focus judgment."
+      "pendingReason": "No dedicated primary/final independent focus judgment.",
+      "primaryBase": "405e9ee67ce600b313a34336a9cabf3860c0d739",
+      "primaryResult": "Extracted nativeCompactionResponse(requestNumber, mode) and captureOrdinaryRequests(sent) locally. The test now visibly owns global fetch installation/restoration, auth/header/trigger assertions, request recording, synthetic runtime auth, and fresh seam rebinding on every reopened session. Each helper owns one protocol and keeps exactly its original response/event/error behavior; the chronological model-switch, persisted-entry immutability, two checkpoint/resume rounds, failure accounting, coverage refusal, and incompatible API/provider checks remain inline and unchanged. No new context bag, shared helper file, security weakening, or fixture cleanup added.",
+      "primaryPaths": ["tests/phase2-native-sdk.test.ts"],
+      "primaryChecks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md; read each whole focus and the relevant caller paths listed in relatedPaths.",
+        "Assigned reconciliation rows 99-101: all pending-primary, no candidate, rejected candidate, or completed focus judgment to import.",
+        "SOURCE ONLY commit contains tests/phase2-native-sdk.test.ts; other two focus blobs unchanged.",
+        "git diff --check passed before commit.",
+        "Static extraction checks: ordinary serializer body unchanged after whitespace normalization; native response body unchanged except explicit requestNumber/mode parameters; all 48 lines containing expect( unchanged in original order. This is textual preservation, not runtime proof.",
+        "Repository Biome format --write tests/phase2-native-sdk.test.ts via node:child_process execFile argv; exit 0, no fixes. Retained owned fixture /tmp/bruv-pr45-primary-format-vmkylg, HOME=/tmp/bruv-pr45-primary-format-vmkylg/home, XDG_CONFIG_HOME=/tmp/bruv-pr45-primary-format-vmkylg/config, TMPDIR=/tmp/bruv-pr45-primary-format-vmkylg/tmp, PI_CODING_AGENT_DIR=/tmp/bruv-pr45-primary-format-vmkylg/sdk; exact executable /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/@biomejs/biome/bin/biome."
+      ],
+      "primaryLimits": [
+        "No tests, setup, builds, live authentication, device access, credentials, dependency writes, delegation, cleanup, recovery, push, PR, or merge performed. Parent owns audited isolated runtime gates and independent judgments.",
+        "Existing fs.rm calls were inspected only: native/prompt tests remove their mkdtemp-created dirs; pi-host afterEach removes only temp() registered dirs. None executed. CLI cases use explicit argv and fixture HOME; SDK cases use explicit cwd/agentDir/authPath or in-memory managers and synthetic auth. Extension import/global initialization and inherited SDK/config effects still require the parent audited owned HOME/config/SDK environment before execution.",
+        "Formatter fixture retained under /tmp; source and final artifact provenance retained in this durable Git worktree. Every decision lists the entire combined commit changed scope, including the native SDK edit when its own focus is unchanged.",
+        "No per-worker wisdom notes or values edits: no new general lesson; parent owns aggregate wisdom. Parent must verify runtime agent.model openai-codex/gpt-6.1-sol; not independently verified here."
+      ]
     },
     {
       "file": "tests/pi-host.test.ts",
       "initialBlob": "13a3a72c282c4b42d9dfbab64316c05d6fd3b74c",
       "status": "pending",
       "area": "agent-history-session-goals",
-      "resumeState": "pending-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_39f176a7",
+      "primaryCommit": "85258ad127c73282f5b2d8b551e633e2aaae9599",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "85258ad127c73282f5b2d8b551e633e2aaae9599",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
-      "pendingReason": "No dedicated primary/final independent focus judgment."
+      "pendingReason": "No dedicated primary/final independent focus judgment.",
+      "primaryBase": "405e9ee67ce600b313a34336a9cabf3860c0d739",
+      "primaryResult": "Unchanged. Each independent behavior has a dedicated test, the source/compiled loop shares the same contract without hiding assertions, and temporary-directory ownership is centralized in temp()/afterEach. RPC readiness waits for the get_state acknowledgement after session_start, then assertions run before the clearly paired kill/exited/stderr drain in finally. Reading callers confirmed preparePiHost validates all hashes/version before writes and assertBruvPiHost gates factories before CLI launch. Extracting reversal or RPC blocks would hide these exact-byte/readiness relationships without reducing a real journey burden. The combined source commit changes only the other native SDK focus.",
+      "primaryPaths": ["tests/phase2-native-sdk.test.ts"],
+      "primaryChecks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md; read each whole focus and the relevant caller paths listed in relatedPaths.",
+        "Assigned reconciliation rows 99-101: all pending-primary, no candidate, rejected candidate, or completed focus judgment to import.",
+        "SOURCE ONLY commit contains tests/phase2-native-sdk.test.ts; other two focus blobs unchanged.",
+        "git diff --check passed before commit.",
+        "Static extraction checks: ordinary serializer body unchanged after whitespace normalization; native response body unchanged except explicit requestNumber/mode parameters; all 48 lines containing expect( unchanged in original order. This is textual preservation, not runtime proof.",
+        "Repository Biome format --write tests/phase2-native-sdk.test.ts via node:child_process execFile argv; exit 0, no fixes. Retained owned fixture /tmp/bruv-pr45-primary-format-vmkylg, HOME=/tmp/bruv-pr45-primary-format-vmkylg/home, XDG_CONFIG_HOME=/tmp/bruv-pr45-primary-format-vmkylg/config, TMPDIR=/tmp/bruv-pr45-primary-format-vmkylg/tmp, PI_CODING_AGENT_DIR=/tmp/bruv-pr45-primary-format-vmkylg/sdk; exact executable /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/@biomejs/biome/bin/biome."
+      ],
+      "primaryLimits": [
+        "No tests, setup, builds, live authentication, device access, credentials, dependency writes, delegation, cleanup, recovery, push, PR, or merge performed. Parent owns audited isolated runtime gates and independent judgments.",
+        "Existing fs.rm calls were inspected only: native/prompt tests remove their mkdtemp-created dirs; pi-host afterEach removes only temp() registered dirs. None executed. CLI cases use explicit argv and fixture HOME; SDK cases use explicit cwd/agentDir/authPath or in-memory managers and synthetic auth. Extension import/global initialization and inherited SDK/config effects still require the parent audited owned HOME/config/SDK environment before execution.",
+        "Formatter fixture retained under /tmp; source and final artifact provenance retained in this durable Git worktree. Every decision lists the entire combined commit changed scope, including the native SDK edit when its own focus is unchanged.",
+        "No per-worker wisdom notes or values edits: no new general lesson; parent owns aggregate wisdom. Parent must verify runtime agent.model openai-codex/gpt-6.1-sol; not independently verified here."
+      ]
     },
     {
       "file": "tests/prepare-assets.test.ts",
@@ -14193,13 +14401,30 @@
       "initialBlob": "f97347e0fc492a83d549848df0d75fddce8cd4e4",
       "status": "pending",
       "area": "agent-history-session-goals",
-      "resumeState": "pending-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_39f176a7",
+      "primaryCommit": "85258ad127c73282f5b2d8b551e633e2aaae9599",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "85258ad127c73282f5b2d8b551e633e2aaae9599",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
-      "pendingReason": "No dedicated primary/final independent focus judgment."
+      "pendingReason": "No dedicated primary/final independent focus judgment.",
+      "primaryBase": "405e9ee67ce600b313a34336a9cabf3860c0d739",
+      "primaryResult": "Unchanged. The first test keeps registration, resource loading, session construction, and registered-guideline checks together. The second keeps its synthetic local auth, explicit app/project guidance sentinels, captured stream, tool set, excluded upstream boilerplate, cwd checks, and next-turn continuity assertion together. Disposal and owned temporary-path cleanup remain visibly paired in each finally. Extracting the short stream or common-looking loader options would create indirection between two intentionally different delivery authorities. The combined source commit changes only the other native SDK focus.",
+      "primaryPaths": ["tests/phase2-native-sdk.test.ts"],
+      "primaryChecks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md; read each whole focus and the relevant caller paths listed in relatedPaths.",
+        "Assigned reconciliation rows 99-101: all pending-primary, no candidate, rejected candidate, or completed focus judgment to import.",
+        "SOURCE ONLY commit contains tests/phase2-native-sdk.test.ts; other two focus blobs unchanged.",
+        "git diff --check passed before commit.",
+        "Static extraction checks: ordinary serializer body unchanged after whitespace normalization; native response body unchanged except explicit requestNumber/mode parameters; all 48 lines containing expect( unchanged in original order. This is textual preservation, not runtime proof.",
+        "Repository Biome format --write tests/phase2-native-sdk.test.ts via node:child_process execFile argv; exit 0, no fixes. Retained owned fixture /tmp/bruv-pr45-primary-format-vmkylg, HOME=/tmp/bruv-pr45-primary-format-vmkylg/home, XDG_CONFIG_HOME=/tmp/bruv-pr45-primary-format-vmkylg/config, TMPDIR=/tmp/bruv-pr45-primary-format-vmkylg/tmp, PI_CODING_AGENT_DIR=/tmp/bruv-pr45-primary-format-vmkylg/sdk; exact executable /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/@biomejs/biome/bin/biome."
+      ],
+      "primaryLimits": [
+        "No tests, setup, builds, live authentication, device access, credentials, dependency writes, delegation, cleanup, recovery, push, PR, or merge performed. Parent owns audited isolated runtime gates and independent judgments.",
+        "Existing fs.rm calls were inspected only: native/prompt tests remove their mkdtemp-created dirs; pi-host afterEach removes only temp() registered dirs. None executed. CLI cases use explicit argv and fixture HOME; SDK cases use explicit cwd/agentDir/authPath or in-memory managers and synthetic auth. Extension import/global initialization and inherited SDK/config effects still require the parent audited owned HOME/config/SDK environment before execution.",
+        "Formatter fixture retained under /tmp; source and final artifact provenance retained in this durable Git worktree. Every decision lists the entire combined commit changed scope, including the native SDK edit when its own focus is unchanged.",
+        "No per-worker wisdom notes or values edits: no new general lesson; parent owns aggregate wisdom. Parent must verify runtime agent.model openai-codex/gpt-6.1-sol; not independently verified here."
+      ]
     },
     {
       "file": "tests/prompt-preview.test.ts",
@@ -19518,8 +19743,8 @@
       "file": "tests/fixtures/history-disk-retrieval.ts",
       "initialBlob": "absent",
       "area": "agent-history-session-goals",
-      "status": "pending",
-      "resumeState": "needs-judge",
+      "status": "accepted",
+      "resumeState": "accepted-joined",
       "sourceCommit": "191812d4b948379cfd5d93861e3892041494f153",
       "acceptedRelatedJudges": ["task_572eec54"],
       "acceptedBlob": "bb589e72dcab627861635a63051e522191a2da20",
@@ -19540,14 +19765,28 @@
         "Reconciliation evidence contains no listed fixture-focus rows, candidate 8d04882c7fd0b6165ac217f9a7a7bf893262dd33 reference, or matching fixture rejection. Related caller rows say pending-primary / NO COMPLETED FOCUS JUDGMENT; this is not independent acceptance.",
         "Durable source provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_19ac106b. The harness defines retained mkdtemp test roots; no fixture or temporary test root was executed/created in this review.",
         "Wisdom and values left unchanged: no new general lesson; parent owns aggregate wisdom."
+      ],
+      "judgeIds": ["task_8f182dc7"],
+      "result": "Read the complete fixture and both caller layers. One manager/service/context intentionally spans the authority transition. Setup puts an inactive user branch, private assistant thinking/tool arguments, hidden custom content, public assistant prose and a tool result beside the original user evidence before compaction. Reload plus the throwing getBranch override makes metadata-only retrieval a visible requirement, not an incidental implementation detail. The first assertion phase verifies original user read and four hidden-content exclusions and captures a tool ref and search cursor. The next phase appends the shake record in place and checks fresh searches, that previously issued tool ref, and an earlier cursor against live exclusion authority. The final reload phase checks exclusion persistence without suppressing public assistant text or the original user ref. The finally block disposes the same manager. Splitting these phases into helpers would require carrying the manager, context, refs and cursor and would hide the chronology this fixture exists to demonstrate. Existing phase comments are sufficient structure.",
+      "systemReason": "HistoryService.boundedBranch prefers getDiskBackedBranch; entryBody hydrates only requested originals via getEntry, so the overridden full-body getBranch really catches the fallback. textParts exposes only text parts for admitted public roles; hidden custom entries and thinking/tool arguments never become retrieval items. retrievalExcludedResults validates durable shake markers from the live active branch, while retrievalScan can scan an older cursor leaf: the snapshot must not freeze exclusion authority. read consumes the bounded scan and rejects an excluded previously issued ref. setSessionFile adopts a fresh disk store on the same manager, matching the final reload assertions. The outer test owns only isolated child execution and exit/stdout/stderr checks. createHistoryFixture owns retained mkdtemp HOME/XDG/SDK/session/temp roots, and runHistoryFixture uses explicit process.execPath argv through Bun.spawn rather than a shell or inherited HOME cleanup.",
+      "checks": [
+        "Candidate equals exact primaryBase; their focus diff is empty.",
+        "Read full exact candidate fixture, exact caller test, createHistoryFixture/runHistoryFixture and run subprocess helper.",
+        "Read service branch selection, body hydration, public text extraction, shake exclusions, search/ref/read and cursor scan authority; inspected manager reload/disposal effects.",
+        "git rev-parse exact candidate:focus gives bb589e72dcab627861635a63051e522191a2da20. Candidate has no changed related source paths."
+      ],
+      "limits": [
+        "Static actual-source review only. No setup, tests, builds, package installation, credentials, live authentication, network probes, or cleanup ran. Parent owns audited isolated runtime gates and runtime agent.model verification.",
+        "Exact candidates were read through git show and git diff, not checkout HEAD. Review provenance is the retained durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_8f182dc7. No descendant agents were launched; no source or wisdom files were edited.",
+        "The prior-cursor assertion is conditional on nextCursor; this review does not claim runtime coverage of every pagination boundary. Readability approval does not expand the existing assertions. Fixture-created journals remain retained; inspected manager disposal releases its owned spool/cache but did not execute it."
       ]
     },
     {
       "file": "tests/fixtures/history-large-session.ts",
       "initialBlob": "absent",
       "area": "agent-history-session-goals",
-      "status": "pending",
-      "resumeState": "needs-judge",
+      "status": "accepted",
+      "resumeState": "accepted-joined",
       "sourceCommit": "191812d4b948379cfd5d93861e3892041494f153",
       "acceptedRelatedJudges": ["task_572eec54"],
       "acceptedBlob": "e5c78470d6b08537685c82256a6c1b7184fb7d60",
@@ -19568,6 +19807,20 @@
         "Reconciliation evidence contains no listed fixture-focus rows, candidate 8d04882c7fd0b6165ac217f9a7a7bf893262dd33 reference, or matching fixture rejection. Related caller rows say pending-primary / NO COMPLETED FOCUS JUDGMENT; this is not independent acceptance.",
         "Durable source provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_19ac106b. The harness defines retained mkdtemp test roots; no fixture or temporary test root was executed/created in this review.",
         "Wisdom and values left unchanged: no new general lesson; parent owns aggregate wisdom."
+      ],
+      "judgeIds": ["task_8f182dc7"],
+      "result": "Read the complete 84-line fixture. The two large payloads make Unicode/escaped text and a larger ASCII record visible without a generator abstraction. toolText is the single typed message/role/part authority. assertOriginalsAndCacheIsolation states the actual invariant directly: read exact original, mutate the returned part, read the same ID again and require the untouched original. Each lifecycle path invokes it immediately beside its distinguishing operation: initial create; open and continueRecent with saved leaf equality; branch parent equality and opened saved branch; fork with parentSession linkage. The independent raw-journal read then checks the source record rather than merely repeating a manager read. own registers every successful create/open/resume/branch-open/fork manager, and the finally loop disposes that visible collection. These existing helpers remove the real repetition without turning lifecycle state into a context bag or hiding entry-point differences. Further movement would make the reader reconstruct relationships now visible in one short journey.",
+      "systemReason": "Traced disk-backed getEntry to DiskEntryStore.materialize: cached bytes are parsed anew and uncached originals are read at complete offset/length, matching the returned-object mutation invariant. scanJsonl accumulates unfinished byte fragments before UTF-8 parsing, matching the large escaped Unicode records. open and continueRecent adopt stored metadata/body indexes; setSessionFile/rewrite/createBranchedSession materialize originals rather than serializing skeleton metadata. forkFrom scans source originals into the owned target journal and preserves parentSession. This explains why each entry-point assertion and the separate source-journal check are meaningful rather than interchangeable. The history-disk-footer caller delegates only this lifecycle journey to the isolated retained child; the shared fixture harness supplies explicit argv and owned HOME/XDG/SDK/temp paths, and finally disposal belongs to the child that owns the managers.",
+      "checks": [
+        "Candidate equals exact primaryBase; their focus diff is empty.",
+        "Read full exact candidate fixture, its history-disk-footer test caller, shared fixture subprocess isolation and manager lifecycle/cache/disposal implementations.",
+        "git rev-parse exact candidate:focus gives e5c78470d6b08537685c82256a6c1b7184fb7d60. Candidate has no changed related source paths.",
+        "Effects reviewed statically: writes are under caller-owned PROBE_ROOT and its sessions/fork directories; source journal is only read by final assertions; no fixture or disposal code ran."
+      ],
+      "limits": [
+        "Static actual-source review only. No setup, tests, builds, package installation, credentials, live authentication, network probes, or cleanup ran. Parent owns audited isolated runtime gates and runtime agent.model verification.",
+        "Exact candidates were read through git show and git diff, not checkout HEAD. Review provenance is the retained durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_8f182dc7. No descendant agents were launched; no source or wisdom files were edited.",
+        "The final direct journal assertion checks the second large tool record and original first user; both tool bodies are checked through managers at each lifecycle entry point. No runtime truncation/performance claim."
       ]
     },
     {
@@ -19632,8 +19885,8 @@
       "file": "tests/helpers/history-fixture.ts",
       "initialBlob": "absent",
       "area": "agent-history-session-goals",
-      "status": "pending",
-      "resumeState": "needs-judge",
+      "status": "accepted",
+      "resumeState": "accepted-joined",
       "sourceCommit": "191812d4b948379cfd5d93861e3892041494f153",
       "acceptedRelatedJudges": ["task_572eec54"],
       "acceptedBlob": "173ad097f805cbd0393953b81612c757c6be91f1",
@@ -19666,14 +19919,28 @@
         "Fixture source paths have durable provenance in this worktree and candidate commit; runtime mkdtemp roots are intentionally retained. No runtime fixtures were created or executed here.",
         "Runtime model verification is parent-owned; no runtime identity claim made by this artifact.",
         "No wisdom or values changes: no new general lesson; parent owns aggregate wisdom."
+      ],
+      "judgeIds": ["task_20c805d0"],
+      "result": "Read the complete exact-commit helper and followed each caller, not the primary summary. Allocation creates and retains a single owned root with visibly enumerated HOME, XDG, SDK, session and temporary directories. The returned environment puts PROBE_ROOT beside those assignments. The second small operation owns executable argv and repository cwd; its only current caller override is USE_DISK_HISTORY. Footer writes use the returned root directly, while its large-session journey launches through the fixture; retrieval owns one child; parity allocates independent native/adapted fixtures and processes. These are clear ownership boundaries, not scattered decisions needing another abstraction. Joining this helper to the differently shaped history-process.ts interface is not necessary for these actual callers.",
+      "systemReason": "Read all three caller files and all three scenario entry points. The scenarios require PROBE_ROOT and keep session, branch and fork paths beneath it. Large-session checks retain full original Unicode/large bodies through reopen, continue, branch and fork and prove caller mutations do not alias the cache. Retrieval keeps inactive/thinking/tool-argument/custom exclusions, revokes live shake refs/cursors, and retains original user evidence after reload. Projection keeps a native process free of the adapter and checks durable replacements, intact originals, branch edit rejection and repeated checkpoint settings. Shared tests/helpers.ts supplies HERDR-disabled child execution, drains stdout/stderr and awaits exit. No security assertion or retention lifetime needs moving.",
+      "checks": [
+        "git show read of exact candidate focus and callers/scenarios; candidate equals primaryBase, so its candidate/base diff is empty.",
+        "git ls-tree recorded the exact focus blob.",
+        "Inspected allocation, env overrides, process argv, child output/exit ownership and retained filesystem effects; no code was executed."
+      ],
+      "limits": [
+        "Source-only independent judgment. No setup, tests, builds, package installation, credential access, live auth/device work, network probes, cleanup, or source edits were performed. Parent owns audited isolated runtime gates and verification of runtime agent.model openai-codex/gpt-6.1-sol.",
+        "No delegation. Review provenance is the existing durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_20c805d0 and exact Git objects, not a /tmp code checkout. Existing worktrees and candidate evidence remain intact; no fixture was created or removed by this judge.",
+        "No acceptance inferred from primary evidence, previous judgments, reconciliation status, passing-test counts, or current checkout HEAD. No broad ledger was read. Wisdom/values.md and wisdom/quality/structural-readability-guidance.md were read; no per-worker wisdom edit was made.",
+        "Safety for ALL descendants: NO sudo, recovery investigation, user secrets, shell deletion/cleanup commands, inherited HOME/config/SDK cleanup, nested shell traps, destructive git, or user-data mutation. User already recovered data and requested no recovery work. Tests must use explicit process argv/env and owned fs.mkdtemp fixture HOME/config/SDK; retain them, do not delete. Review filesystem/network effects BEFORE tests/setup. Existing test-code cleanup of provably owned temporary paths may be inspected but NEVER run a shell trap or inherited HOME removal. Need live auth/device? Report unverified, don't access credentials."
       ]
     },
     {
       "file": "tests/history-process.ts",
       "initialBlob": "absent",
       "area": "agent-history-session-goals",
-      "status": "pending",
-      "resumeState": "needs-judge",
+      "status": "accepted",
+      "resumeState": "accepted-joined",
       "sourceCommit": "953636ca924944dbf67f42af22a9c7870fe212ac",
       "acceptedRelatedJudges": ["task_7f911ff4"],
       "acceptedBlob": "3800d0fbb3857b0a366d6302b52d7d5432196a3b",
@@ -19726,14 +19993,30 @@
         "No runtime tests, setup, builds, live authentication/device access, or network provider calls performed; parent owns audited isolated gates and model verification.",
         "Primary source-reading decisions only; parent owns fresh independent judgments, integration, and publication.",
         "changedPaths deliberately lists the full combined source commit scope for each decision, including related SDK consumer changes when the focus itself is unchanged."
+      ],
+      "judgeIds": ["task_20c805d0"],
+      "result": "Read the complete helper from the exact candidate and compared it with primaryBase: the focus is unchanged. Allocation/retention and execution/env mapping are adjacent, separate operations. The caller chooses explicit argv while the helper supplies process.execPath, repository cwd, owned HOME/config/SDK/tmp/session paths and only PATH from the parent. Read the publication, SDK parity and cleanup callers as well as the new SDK caller. They use allocated roots rather than reconstructing ownership, and native/adapted parity is genuinely split across children. No focus refactor is needed. Independently read every changed related source: the new SDK helper, probe and outer test form a coherent boundary and are accepted as related changes, not evidence that this already-readable focus needed editing.",
+      "systemReason": "The new outer SDK test establishes an isolated process before SDK imports, tests successful exit with captured diagnostics and requires the child completion marker. The probe confines identity changes to that child and disposes tracked sessions after each scenario. The SDK helper makes durable reopen preparation a named local operation, retains mkdtemp project files, sets explicit resource/runtime paths, disables discovered extensions/skills/themes/templates and runtime refresh, and records requests through a fake stream instead of live provider calls. Its before/task/after factories retain framing order. All eight scenario bodies are byte-identical to the original base test, including model/thinking preservation, custom prompts, resume/child mode behavior, startup mode switching and configured wisdom paths. This removes shared-process identity/SDK effects and fixture deletion without weakening assertions. Shared run() still disables HERDR transport and observes output and child exit.",
+      "checks": [
+        "git diff --name-status 191812d4b948379cfd5d93861e3892041494f153 953636ca924944dbf67f42af22a9c7870fe212ac reports exactly the three related SDK source paths.",
+        "git show read of complete focus and all three candidate-changed sources; focus/base diff is empty.",
+        "git ls-tree/rev-parse verified exact candidate and base focus blob equality and captured all changed-source blob hashes.",
+        "Static string comparison of the eight moved SDK scenario bodies against primaryBase returned byte-identical; this was not a test run.",
+        "Read relevant extension identity/startup framing/shutdown consumers and the shared runner; inspected filesystem/network intent only."
+      ],
+      "limits": [
+        "Source-only independent judgment. No setup, tests, builds, package installation, credential access, live auth/device work, network probes, cleanup, or source edits were performed. Parent owns audited isolated runtime gates and verification of runtime agent.model openai-codex/gpt-6.1-sol.",
+        "No delegation. Review provenance is the existing durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_20c805d0 and exact Git objects, not a /tmp code checkout. Existing worktrees and candidate evidence remain intact; no fixture was created or removed by this judge.",
+        "No acceptance inferred from primary evidence, previous judgments, reconciliation status, passing-test counts, or current checkout HEAD. No broad ledger was read. Wisdom/values.md and wisdom/quality/structural-readability-guidance.md were read; no per-worker wisdom edit was made.",
+        "Safety for ALL descendants: NO sudo, recovery investigation, user secrets, shell deletion/cleanup commands, inherited HOME/config/SDK cleanup, nested shell traps, destructive git, or user-data mutation. User already recovered data and requested no recovery work. Tests must use explicit process argv/env and owned fs.mkdtemp fixture HOME/config/SDK; retain them, do not delete. Review filesystem/network effects BEFORE tests/setup. Existing test-code cleanup of provably owned temporary paths may be inspected but NEVER run a shell trap or inherited HOME removal. Need live auth/device? Report unverified, don't access credentials."
       ]
     },
     {
       "file": "tests/history-storage-cleanup.probe.mjs",
       "initialBlob": "absent",
       "area": "agent-history-session-goals",
-      "status": "pending",
-      "resumeState": "needs-judge",
+      "status": "accepted",
+      "resumeState": "accepted-joined",
       "sourceCommit": "953636ca924944dbf67f42af22a9c7870fe212ac",
       "acceptedRelatedJudges": ["task_7f911ff4"],
       "acceptedBlob": "f0661fa8f8a1790a93b2cb8eb00a11e29ecb59fd",
@@ -19786,6 +20069,21 @@
         "No runtime tests, setup, builds, live authentication/device access, or network provider calls performed; parent owns audited isolated gates and model verification.",
         "Primary source-reading decisions only; parent owns fresh independent judgments, integration, and publication.",
         "changedPaths deliberately lists the full combined source commit scope for each decision, including related SDK consumer changes when the focus itself is unchanged."
+      ],
+      "judgeIds": ["task_20c805d0"],
+      "result": "Read the whole exact-candidate probe, including unchanged decisions. The entry sequence first prepares its owned source and then runs separately named preparation reopen/collision, published factory, pending replacement, fork copy, recent load, fork collision and fresh disposal checks. Each fault patches its actual SDK/store authority immediately beside the operation, restores it in local finally, then asserts no pending journals. The Date override is equally local. The probe preserves the empty file, collision sentinel and existing fork bytes and explicitly disposes its owned reopened/fresh managers. A generic injection harness would hide precisely which authority and lifetime each scenario checks. No change is needed at this focus.",
+      "systemReason": "Followed the parent test through history-process.ts and shared run(): HISTORY_ROOT is an owned sessions directory, the child has owned HOME/config/SDK/tmp, HERDR is disabled, and stdout/stderr/exit are observed. Read prepareAgentSession and the adapter disposal/open/new/continue/fork ownership paths plus DiskEntryStore pending/published/dispose and exclusive atomic publication. Preparation disposes both private managers even if reopen or exclusive header creation fails; temporary factory failure disposes manager state; store disposal removes only its pending spool, and exclusive publication rejects an existing target. These directly explain the probe assertions and why they belong in one isolated patched SDK process. Independently reviewed the same candidate’s three SDK harness source changes: they retain eight original scenario bodies, isolate SDK/identity effects before imports, dispose sessions and retain owned project files. They do not alter this probe or its asserted storage contract.",
+      "checks": [
+        "git show read of entire exact-candidate probe and its parent/helper/system ownership paths.",
+        "git diff 191812d4b948379cfd5d93861e3892041494f153 953636ca924944dbf67f42af22a9c7870fe212ac -- tests/history-storage-cleanup.probe.mjs is empty; rev-parse verified equal base/candidate focus blobs.",
+        "All three candidate-changed related source paths were read and their exact blobs captured; no changed path is omitted from acceptedBlobs.",
+        "Inspected pending spool cleanup and exclusive publication as source only; did not execute any cleanup or failure-injection scenario."
+      ],
+      "limits": [
+        "Source-only independent judgment. No setup, tests, builds, package installation, credential access, live auth/device work, network probes, cleanup, or source edits were performed. Parent owns audited isolated runtime gates and verification of runtime agent.model openai-codex/gpt-6.1-sol.",
+        "No delegation. Review provenance is the existing durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_20c805d0 and exact Git objects, not a /tmp code checkout. Existing worktrees and candidate evidence remain intact; no fixture was created or removed by this judge.",
+        "No acceptance inferred from primary evidence, previous judgments, reconciliation status, passing-test counts, or current checkout HEAD. No broad ledger was read. Wisdom/values.md and wisdom/quality/structural-readability-guidance.md were read; no per-worker wisdom edit was made.",
+        "Safety for ALL descendants: NO sudo, recovery investigation, user secrets, shell deletion/cleanup commands, inherited HOME/config/SDK cleanup, nested shell traps, destructive git, or user-data mutation. User already recovered data and requested no recovery work. Tests must use explicit process argv/env and owned fs.mkdtemp fixture HOME/config/SDK; retain them, do not delete. Review filesystem/network effects BEFORE tests/setup. Existing test-code cleanup of provably owned temporary paths may be inspected but NEVER run a shell trap or inherited HOME removal. Need live auth/device? Report unverified, don't access credentials."
       ]
     },
     {
@@ -19832,6 +20130,26 @@
         "Fixture provenance is the durable current worktree and recorded Git blobs; caller-created temporary fixture roots would be retained if the parent runs it.",
         "Wisdom and values unchanged: no new general lesson; parent owns aggregate wisdom."
       ]
+    },
+    {
+      "file": "tests/helpers/main-agent-mode-sdk.ts",
+      "initialBlob": "absent",
+      "area": "agent-history-session-goals",
+      "status": "pending",
+      "resumeState": "needs-primary-final-blob",
+      "sourceCommit": "953636ca924944dbf67f42af22a9c7870fe212ac",
+      "acceptedRelatedJudges": ["task_99b868e8"],
+      "acceptedBlob": "149e63f761488ffd85204d61911f53861f8721e6"
+    },
+    {
+      "file": "tests/main-agent-mode-sdk.probe.ts",
+      "initialBlob": "absent",
+      "area": "agent-history-session-goals",
+      "status": "pending",
+      "resumeState": "needs-primary-final-blob",
+      "sourceCommit": "953636ca924944dbf67f42af22a9c7870fe212ac",
+      "acceptedRelatedJudges": ["task_99b868e8"],
+      "acceptedBlob": "e364aad3607a688681d6b7c4a099d19097c5a1c4"
     }
   ],
   "completedAreas": {
@@ -19851,10 +20169,10 @@
     "baselineFiles": 766,
     "finalGate": "pending; incomplete focus coverage",
     "liveAuth": "unverified/failing; preserved",
-    "accepted": 705,
-    "total": 832,
-    "pending": 127,
-    "sourceExtras": 66,
+    "accepted": 714,
+    "total": 834,
+    "pending": 120,
+    "sourceExtras": 68,
     "checkout": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
     "branch": "bruv/readability-pr45-sol-continuation",
     "scheduler": "/home/tnfssc/.bruv/worktrees/pr45-flow-c2a2fd8a.mjs"

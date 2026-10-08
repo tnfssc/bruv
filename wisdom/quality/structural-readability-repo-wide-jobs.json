@@ -1835,6 +1835,83 @@
         "model": "openai-codex/gpt-6.1-sol",
         "status": "handled",
         "sourceCommit": "29c7ec1d20cd22d6c59a747df673f61d9e11383e"
+      },
+      {
+        "id": "task_99b868e8",
+        "stage": "judge",
+        "focus": [
+          "tests/main-agent-mode-sdk.test.ts",
+          "tests/main-agent-mode-tui.test.ts",
+          "tests/manual-shake-sdk.test.ts"
+        ],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_99b868e8",
+        "branch": "bruv/pr45-judge-3-agent-history-session-goals-99b868e8",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled"
+      },
+      {
+        "id": "task_8f182dc7",
+        "stage": "judge",
+        "focus": [
+          "tests/manual-shake.test.ts",
+          "tests/fixtures/history-disk-retrieval.ts",
+          "tests/fixtures/history-large-session.ts"
+        ],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_8f182dc7",
+        "branch": "bruv/pr45-judge-3-agent-history-session-goals-8f182dc7",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled"
+      },
+      {
+        "id": "task_20c805d0",
+        "stage": "judge",
+        "focus": [
+          "tests/helpers/history-fixture.ts",
+          "tests/history-process.ts",
+          "tests/history-storage-cleanup.probe.mjs"
+        ],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_20c805d0",
+        "branch": "bruv/pr45-judge-3-agent-history-session-goals-20c805d0",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled"
+      },
+      {
+        "id": "task_4ac93062",
+        "stage": "primary",
+        "focus": [
+          "tests/native-compaction-shake-coverage.test.ts",
+          "tests/native-compaction.test.ts",
+          "tests/native-request-history.test.ts"
+        ],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_4ac93062",
+        "branch": "bruv/pr45-primary-3-agent-history-session-goa-4ac93062",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled",
+        "sourceCommit": "16b572eb9d53528063cd53a9e0e6af0defa1d8b5"
+      },
+      {
+        "id": "task_bb9fc8cd",
+        "stage": "primary",
+        "focus": [
+          "tests/native-shake-sdk.test.ts",
+          "tests/phase1-compaction-fixture.ts",
+          "tests/phase2-native-live.test.ts"
+        ],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_bb9fc8cd",
+        "branch": "bruv/pr45-primary-3-agent-history-session-goa-bb9fc8cd",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled",
+        "sourceCommit": "70c4f28e36daaddacb880a636f60b323a2b21150"
+      },
+      {
+        "id": "task_39f176a7",
+        "stage": "primary",
+        "focus": ["tests/phase2-native-sdk.test.ts", "tests/pi-host.test.ts", "tests/prompt-delivery.test.ts"],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_39f176a7",
+        "branch": "bruv/pr45-primary-3-agent-history-session-goa-39f176a7",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled",
+        "sourceCommit": "85258ad127c73282f5b2d8b551e633e2aaae9599"
       }
     ]
   },
