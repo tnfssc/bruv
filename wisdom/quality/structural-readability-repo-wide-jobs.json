@@ -1725,7 +1725,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_e086888e",
         "branch": "bruv/pr45-primary-tests-questions-tui.test.ts-e086888e",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "6b3af4e72026c86da2ced5f5021d9287a8986799"
       },
       {
         "id": "task_e86a3033",
@@ -1734,7 +1735,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_e86a3033",
         "branch": "bruv/pr45-primary-tests-resume-stream-cancell-e86a3033",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "56e420545b560b70492dff19f3c5ec04addc5253"
       },
       {
         "id": "task_d848af48",
@@ -1760,6 +1762,15 @@
         "focus": ["tests/root-runtime.test.ts", "tests/session-costs-tui.test.ts", "tests/session-costs.test.ts"],
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_fdd5f204",
         "branch": "bruv/pr45-primary-3-execution-tasks-questions-fdd5f204",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_187e7fa2",
+        "stage": "primary",
+        "focus": ["tests/stop-work.test.ts", "tests/subagent-extension.test.ts", "tests/subagent-placement.test.ts"],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_187e7fa2",
+        "branch": "bruv/pr45-primary-3-execution-tasks-questions-187e7fa2",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
       }

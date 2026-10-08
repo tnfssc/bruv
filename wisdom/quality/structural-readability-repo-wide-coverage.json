@@ -13142,12 +13142,31 @@
       "initialBlob": "c05c758c09040f768e443f06da209a98af82dd38",
       "status": "pending",
       "area": "execution-tasks-questions",
-      "resumeState": "pending-primary",
-      "primaryId": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_e086888e",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "6b3af4e72026c86da2ced5f5021d9287a8986799",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
-      "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage."
+      "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage.",
+      "primaryCommit": "6b3af4e72026c86da2ced5f5021d9287a8986799",
+      "primaryBase": "a07c13e5f20348fb4b44e559eb5ac2ad28c16129",
+      "primaryResult": "A focus-local questionsTui driver owns explicit isolated subprocess argv/env, composer submission, private-server lifetime and restart. The test now reads as durable seed/block, independent progress, detail, cancellation, CLI reload, and durable/UI reconciliation, retaining all nine scenario assertions and checked tmux transitions. The progress extension is readable source. The CLI reload changes only the tmux session, not its server socket or durable question file. Fixture HOME/config/SDK directories are retained; shell-based availability and launch quoting are removed.",
+      "primaryPaths": ["tests/questions-tui.test.ts"],
+      "primaryChecks": [
+        "Read wisdom/values.md and structural-readability-guidance.md; inspected only focus ownership row after initial evidence output accidentally included unrelated rows (no unrelated edits).",
+        "Focus present; preserved evidence has no prior primary, candidate, rejected round or accepted blob; no old branch/candidate imported.",
+        "Traced QuestionService ask/get persistence, questions extension detail/render/refresh and runtime session_start attach; read shared run/capture/poll helpers.",
+        "Static baseline/candidate comparison confirms all nine scenario assertions unchanged (apart from driver qualification); tmux command exit assertions consolidated in checked().",
+        "Read installed tmux manual: multiple shell-command arguments execute directly without invoking a shell.",
+        "Reviewed test effects: owned mkdtemp session/ledger/extension/config/SDK/temp writes; private tmux server; offline CLI launch with placeholder key and no inherited credential environment; kill-server remains restricted to private socket. Tests not executed.",
+        "Required read-only Biome executable format --write applied only to focus source via node child_process argv with fresh retained isolated HOME/config/TMPDIR/SDK fixtures: /tmp/pr45-questions-format-xo41n9 and /tmp/pr45-questions-format-sJ5Jna.",
+        "git diff --check passed; no non-sample commit hooks observed; source-only commit created."
+      ],
+      "primaryLimits": [
+        "No repository tests, setup or builds run: parent owns audited isolated batch gates. Runtime behavior and native tmux/CLI execution remain unverified.",
+        "Optional existing BRUV_QUESTIONS_FRAME output writes its explicitly supplied path; parent gates must unset it or point it into their owned fixture.",
+        "No wisdom edits: parent owns aggregate wisdom. No delegation, push, PR, merge, recovery, credential/device access, destructive git or deletion/cleanup shell operations."
+      ]
     },
     {
       "file": "tests/questions.test.ts",
@@ -13785,12 +13804,45 @@
       "initialBlob": "90adb1bb6cdb7f6c526404df57e8fcb87723f943",
       "status": "pending",
       "area": "execution-tasks-questions",
-      "resumeState": "pending-primary",
-      "primaryId": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_e86a3033",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "56e420545b560b70492dff19f3c5ec04addc5253",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
-      "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage."
+      "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage.",
+      "primaryCommit": "56e420545b560b70492dff19f3c5ec04addc5253",
+      "primaryBase": "cfd8136a69452f4c4460626f17cb9d4c4a1d3653",
+      "primaryResult": "Fixture writing is now one cohesive phase. Folder dispatch is defined once and active cancellation owns its own rejection assertion, outside the successful result/late-abort branch. The 100ms observation window visibly follows both outcomes. The process boundary captures exit and both streams using node child_process argv with an explicit environment; each scan retains owned mkdtemp HOME/config/SDK/TMPDIR paths and writes fixtures inside the SDK directory. All five case registrations and outer exit/stdout/stderr assertions are byte-identical; valid-session, unreadable-entry, queued-invalid-header, active AbortError and aborted-signal checks remain. No prior candidate existed in focused preserved evidence; current baseline was present, so no candidate bytes or old branches were imported.",
+      "primaryPaths": ["tests/resume-stream-cancellation.test.ts"],
+      "primaryChecks": [
+        {
+          "kind": "read-only caller trace",
+          "result": "Read test helper environment, resume safeguard list/listAll adapters, SDK list/listAll and buildSessionInfo stream lifetimes, interactive picker current/all caller signatures, and preserved resume abort regression rationale."
+        },
+        {
+          "kind": "source assertion comparison",
+          "result": "All case registrations and outer assertions unchanged byte-for-byte against HEAD baseline before commit."
+        },
+        {
+          "kind": "formatter",
+          "result": "Required read-only Biome executable invoked via node child_process argv with explicit fresh retained HOME/XDG_CONFIG_HOME/TMPDIR; exit 0, no fixes applied.",
+          "retainedFixture": "/tmp/pr45-resume-format-4IAlTj"
+        },
+        {
+          "kind": "git diff --check",
+          "result": "Passed before commit."
+        },
+        {
+          "kind": "commit hooks review",
+          "result": "No active hooks in repository hooks directory; source-only commit created."
+        }
+      ],
+      "primaryLimits": [
+        "No tests, setup, builds, runtime probes, credentials, device access, recovery actions, deletion, push, PR or merge performed. Parent owns audited isolated batch runtime gates and independent fresh judgment.",
+        "Reviewed direct test filesystem effects and SDK list/read lifetimes before any possible test execution; transitive import/network behavior is not runtime-verified here.",
+        "Source now intentionally retains temporary fixture directories; durable regression source/provenance is the committed file in /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_e86a3033. The formatter fixture was retained; regression fixture directories are created only when the parent executes tests.",
+        "No wisdom or values edits: parent owns aggregate wisdom; this is a local ownership/readability application of existing guidance."
+      ]
     },
     {
       "file": "tests/rolling-activity-disk.test.ts",
