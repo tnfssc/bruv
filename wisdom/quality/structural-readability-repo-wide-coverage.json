@@ -11213,34 +11213,79 @@
       "file": "tests/fixtures/live-execute-cli.sh",
       "initialBlob": "a0f5fe7da7fa86df69413dbe85ea45c6dbcc29f4",
       "status": "pending",
-      "primaryId": null,
-      "sourceCommit": null,
+      "primaryId": "task_677b6742",
+      "sourceCommit": "0765b0b347bae057014f3811af3a5ff778b6378d",
       "judgeIds": [],
-      "resumeState": "own_primary_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "0765b0b347bae057014f3811af3a5ff778b6378d",
+      "primaryBase": "0765b0b347bae057014f3811af3a5ff778b6378d",
+      "primaryResult": "No structural burden found. The single exec locates src/cli.ts relative to the wrapper, preserves each incoming argument through quoted \"$@\", and replaces the wrapper process rather than adding a second lifetime. live-execute-controls passes this path to registerExecuteTool; executeIsolated spawns it with --bruv-internal-execute and shell:false, and src/cli.ts routes that argument to runTypeScriptFromStdin before ordinary bootstrap. live-main-integration explicitly selects a supplied executable, compiled binary, or this source wrapper and hands it to the task extension. The wrapper therefore has one transparent job; extracting path/launch helpers or adding setup would make this journey longer. The macOS source-text assertions about src/cli.ts and \"$@\" remain intact.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read the complete assigned fixture source; inspected actual caller routing and extension dependency use.",
+        "Assigned reconciliation row has no preserved candidate, rejection round, related candidate origin, or pending uncommitted change; current HEAD and working fixture blobs exactly match its joinedBlob.",
+        "Static review only: no setup, tests, builds, provider connection, device access, or credential access."
+      ],
+      "primaryLimits": [
+        "Primary reading decision only; independent actual-code judgment and audited isolated runtime gates belong to parent.",
+        "No source changes, so no formatter invocation or source commit was needed. sourceCommit is the exact existing HEAD; changedPaths is the complete empty source scope.",
+        "Retained durable worktree: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_677b6742. No new temporary fixture state was created; existing callers allocate temporary homes and contain owned-path cleanup, which was inspected but never run."
+      ]
     },
     {
       "file": "tests/fixtures/live-gpt-tui.ts",
       "initialBlob": "04aebb179abb726126dbd1db0b6fe6bc9b1941a0",
       "status": "pending",
-      "primaryId": null,
-      "sourceCommit": null,
+      "primaryId": "task_677b6742",
+      "sourceCommit": "0765b0b347bae057014f3811af3a5ff778b6378d",
       "judgeIds": [],
-      "resumeState": "own_primary_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "0765b0b347bae057014f3811af3a5ff778b6378d",
+      "primaryBase": "0765b0b347bae057014f3811af3a5ff778b6378d",
+      "primaryResult": "No structural burden found. The session_start notification is the caller startup marker. The short Proxy changes only registerCommand to gptflood and binds all other methods back to the real Pi object; the ensuing liveExtension call visibly keeps the real extension and owner. Config selects GPT-Live continuous mode, key is a literal offline token, audio methods are no-ops, and the gptSession fake visibly schedules all 24 input fragments and the one output fragment inside connect. The real extension callbacks route those fragments through owner context and transcript presentation. The caller starts /gptflood and checks delta0/delta23, the single provisional reply, mic status, and absence of raw passive JSON. Fake behavior is adjacent to its use and effects are immediately readable; extracting a generic fake/proxy toolkit would hide these deliberate test boundaries. Timer ownership/runtime behavior was not changed or claimed verified.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read the complete assigned fixture source; inspected actual caller routing and extension dependency use.",
+        "Assigned reconciliation row has no preserved candidate, rejection round, related candidate origin, or pending uncommitted change; current HEAD and working fixture blobs exactly match its joinedBlob.",
+        "Static review only: no setup, tests, builds, provider connection, device access, or credential access."
+      ],
+      "primaryLimits": [
+        "Primary reading decision only; independent actual-code judgment and audited isolated runtime gates belong to parent.",
+        "No source changes, so no formatter invocation or source commit was needed. sourceCommit is the exact existing HEAD; changedPaths is the complete empty source scope.",
+        "Retained durable worktree: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_677b6742. No new temporary fixture state was created; existing callers allocate temporary homes and contain owned-path cleanup, which was inspected but never run."
+      ]
     },
     {
       "file": "tests/fixtures/live-picker-tui.ts",
       "initialBlob": "4be3cc03453bc7c74062545f4b453c9be54d2f3e",
       "status": "pending",
-      "primaryId": null,
-      "sourceCommit": null,
+      "primaryId": "task_677b6742",
+      "sourceCommit": "0765b0b347bae057014f3811af3a5ff778b6378d",
       "judgeIds": [],
-      "resumeState": "own_primary_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "0765b0b347bae057014f3811af3a5ff778b6378d",
+      "primaryBase": "0765b0b347bae057014f3811af3a5ff778b6378d",
+      "primaryResult": "No structural burden found. The notification supplies the caller startup marker; the same short binding Proxy changes only the command name to livepicker. The local config variable is the sole fixture persistence authority, with load/save beside each other, making the caller re-selection assertion easy to follow. credentials.status directly supplies Google OAuth versus OpenAI stored-key readiness to the real model/provider picker. loadKey, key, audio, gptSession and geminiSession retain explicit throwing sentinels adjacent to that readiness override rather than silently allowing I/O. The caller navigates model choice, reopens it to verify saved selection, opens provider setup, chooses Done, and checks Live remains off. The real extension merges these overrides and uses status for picker labels and save for selection. No helper layer or shared context is needed to reconstruct that journey; factoring the guards would add indirection without resolving a reading problem. No security sentinel or caller assertion was removed.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read the complete assigned fixture source; inspected actual caller routing and extension dependency use.",
+        "Assigned reconciliation row has no preserved candidate, rejection round, related candidate origin, or pending uncommitted change; current HEAD and working fixture blobs exactly match its joinedBlob.",
+        "Static review only: no setup, tests, builds, provider connection, device access, or credential access."
+      ],
+      "primaryLimits": [
+        "Primary reading decision only; independent actual-code judgment and audited isolated runtime gates belong to parent.",
+        "No source changes, so no formatter invocation or source commit was needed. sourceCommit is the exact existing HEAD; changedPaths is the complete empty source scope.",
+        "Retained durable worktree: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_677b6742. No new temporary fixture state was created; existing callers allocate temporary homes and contain owned-path cleanup, which was inspected but never run."
+      ]
     },
     {
       "file": "tests/fixtures/live-push-to-talk-tui.ts",

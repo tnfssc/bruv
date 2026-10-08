@@ -1086,7 +1086,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_677b6742",
         "branch": "bruv/pr45-primary-3-live-native-audio-focuses-677b6742",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "0765b0b347bae057014f3811af3a5ff778b6378d"
       },
       {
         "id": "task_3ad08a2d",
