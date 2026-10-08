@@ -3503,11 +3503,11 @@
       "launchBase": "b8c0bb7c6ff0fec215e90188666df77225ffe47a",
       "resume": {
         "status": "pending",
-        "primaryId": "task_de00fb25",
-        "primaryCommit": null,
+        "primaryId": "task_2a5cad2b",
+        "primaryCommit": "0d836e5b0d7064e5dc0c1ee655fabb8181a42d16",
         "judgeIds": [],
-        "sourceCommit": "b538064f91afba9b3bb5a79bc8ec8ae6923f630b",
-        "state": "pending-primary-interrupted",
+        "sourceCommit": "0d836e5b0d7064e5dc0c1ee655fabb8181a42d16",
+        "state": "needs-judge",
         "reason": "Primary was killed by session shutdown (143); preserved uncommitted code is retained at the worker path. No submitted candidate commit or readability verdict; resume its original scope rather than count it accepted."
       }
     },
@@ -3530,11 +3530,11 @@
       ],
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_e186a894",
+        "primaryCommit": "67bbb95bf3cda78549db94734a551e03f97e1436",
         "judgeIds": [],
-        "sourceCommit": "8a96f814d110e65250c081c1f2dda9daea098cf2",
-        "state": "pending-primary",
+        "sourceCommit": "67bbb95bf3cda78549db94734a551e03f97e1436",
+        "state": "needs-judge",
         "reason": "Related source patch has an original accepted code judgment, but this test still lacks its distinct whole-file primary/judge. Preserve the related acceptance without promoting it to completed file coverage."
       }
     },

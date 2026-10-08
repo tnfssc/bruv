@@ -1197,7 +1197,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_2a5cad2b",
         "branch": "bruv/pr45-primary-tests-claude-native-app-del-2a5cad2b",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "0d836e5b0d7064e5dc0c1ee655fabb8181a42d16"
       },
       {
         "id": "task_e186a894",
@@ -1206,7 +1207,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_e186a894",
         "branch": "bruv/pr45-primary-tests-claude-native-history-e186a894",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "67bbb95bf3cda78549db94734a551e03f97e1436"
       },
       {
         "id": "task_235c5542",
@@ -1238,6 +1240,15 @@
         "branch": "bruv/pr45-primary-wisdom-quality-structural-r-711f5c1d",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "handled"
+      },
+      {
+        "id": "task_d7c9a73d",
+        "stage": "judge",
+        "focus": ["tests/t3/native-routing.test.ts", "tests/t3/web-launcher.test.ts"],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_d7c9a73d",
+        "branch": "bruv/pr45-judge-2-compatibility-t3-focuses-d7c9a73d",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
       }
     ]
   },

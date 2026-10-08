@@ -15378,27 +15378,95 @@
       "file": "tests/claude-native-app-delegation-driver.test.mjs",
       "initialBlob": "absent",
       "area": "compatibility-t3",
-      "resumeState": "pending-primary-interrupted",
-      "primaryId": "task_de00fb25",
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_2a5cad2b",
+      "primaryCommit": "0d836e5b0d7064e5dc0c1ee655fabb8181a42d16",
       "judgeIds": [],
-      "sourceCommit": "b538064f91afba9b3bb5a79bc8ec8ae6923f630b",
+      "sourceCommit": "0d836e5b0d7064e5dc0c1ee655fabb8181a42d16",
       "report": "wisdom/quality/structural-readability-areas/compatibility-t3.json",
       "status": "pending",
-      "pendingReason": "Primary was killed by session shutdown (143); preserved uncommitted code is retained at the worker path. No submitted candidate commit or readability verdict; resume its original scope rather than count it accepted."
+      "pendingReason": "Primary was killed by session shutdown (143); preserved uncommitted code is retained at the worker path. No submitted candidate commit or readability verdict; resume its original scope rather than count it accepted.",
+      "primaryBase": "bf847b4e968f2f33de93e3acf88d3a28ed16af4e",
+      "primaryResult": "Restored only the absent focus from b538064f91afba9b3bb5a79bc8ec8ae6923f630b, then retained coherent interrupted-primary bytes (preserved blob 91f3288f410300c04c5c621d75a258adfb81837d) and formatted them. Each rejection now starts with independently valid verification evidence, introduces one fault, verifies that specific rejection and checks that success was not published. Preparation owns only a temporary root and its configuration files. Native projection writes open and close their database within try/finally, before verification opens its read-only connection. The unchanged fixture authority split remains explicit: native rows establish completion, lookup files locate rows, and wire scopes establish process isolation. All 37 explicit assertion expressions are preserved; added noSuccess calls apply the publication guard to every independent fault. No prior whole-file acceptance or rejected rework was assumed.",
+      "primaryPaths": ["tests/claude-native-app-delegation-driver.test.mjs"],
+      "primaryChecks": [
+        {
+          "name": "repository formatter",
+          "result": "passed",
+          "command": "/home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/@biomejs/biome/bin/biome format --write tests/claude-native-app-delegation-driver.test.mjs",
+          "retainedIsolatedEnvironment": "/tmp/pr45-driver-format-4wJFWw"
+        },
+        {
+          "name": "syntax only",
+          "result": "passed",
+          "command": "/usr/bin/node --check tests/claude-native-app-delegation-driver.test.mjs"
+        },
+        {
+          "name": "assertion preservation",
+          "result": "37 original and 37 candidate assert expressions match ignoring formatting whitespace; all ten verifier rejection patterns unchanged; noSuccess now asserted independently after each fault"
+        },
+        {
+          "name": "staged whitespace",
+          "result": "git diff --cached --check passed before source-only commit"
+        },
+        {
+          "name": "caller trace",
+          "result": "Read app-delegation-driver prepare/projectWire/verify and native-task/process verification; traced run.mjs delegation config to wisdom/claude-compat/proof/native-ui-fixture/replay.mjs driver selection and calls. Inspected only focus ledger/evidence rows and preserved candidate diff."
+        }
+      ],
+      "primaryLimits": [
+        "No tests, setup or builds run: parent owns audited isolated batch gates. Syntax and source comparisons are not runtime or readability acceptance.",
+        "Independent fresh judge remains parent-owned. No delegation, push, PR, merge, recovery, credential access or unrelated edits.",
+        "Formatter environment directories retained; old worktrees and preserved uncommitted candidate untouched.",
+        "Optional TypeScript AST comparison unavailable because installed typescript exports version metadata only; used a static balanced-call expression comparison instead."
+      ]
     },
     {
       "file": "tests/claude-native-history-driver.test.mjs",
       "initialBlob": "absent",
       "area": "compatibility-t3",
-      "resumeState": "pending-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_e186a894",
+      "primaryCommit": "67bbb95bf3cda78549db94734a551e03f97e1436",
       "judgeIds": [],
-      "sourceCommit": "8a96f814d110e65250c081c1f2dda9daea098cf2",
+      "sourceCommit": "67bbb95bf3cda78549db94734a551e03f97e1436",
       "report": "wisdom/quality/structural-readability-areas/compatibility-t3.json",
       "status": "pending",
-      "pendingReason": "Related source patch has an original accepted code judgment, but this test still lacks its distinct whole-file primary/judge. Preserve the related acceptance without promoting it to completed file coverage."
+      "pendingReason": "Related source patch has an original accepted code judgment, but this test still lacks its distinct whole-file primary/judge. Preserve the related acceptance without promoting it to completed file coverage.",
+      "primaryBase": "cecb6e3c966194d6afdad067573976de8fb943b7",
+      "primaryResult": "encodeSession now owns the paired canonical/native representation without filesystem effects. An explicit turn ordinal selects the imported checkpoint prefix, and the same import decision emits its durable child-source mapping using the already-known canonical entry id. historyFixture owns temporary storage/configuration and the root/fork/rollback/reopen scenario; saveSession only encodes and publishes the canonical file, binding and native transcript. Root/child scenario, wire evidence, every test and assertion remain byte-identical to the preserved candidate. No production code or unrelated accepted work changed.",
+      "primaryPaths": ["tests/claude-native-history-driver.test.mjs"],
+      "primaryChecks": [
+        {
+          "kind": "lineage",
+          "result": "Restored only focus bytes with git show from 8a96f814d110e65250c081c1f2dda9daea098cf2 (original blob 616c6078f3f7af86efe061ec1f652379b0036ef9); no branch merge."
+        },
+        {
+          "kind": "reading",
+          "result": "Read values/guidance and only focus rows/provenance in reconciliation, area and repo-wide ledgers. Traced history-driver collect/readSessionEvidence/reconcileNativeSources/verify and history-run/history-replay callers."
+        },
+        {
+          "kind": "source-preservation",
+          "result": "Byte comparison confirmed root/child scenario, wire setup and all tests/assertions unchanged from preserved candidate. Import-map entry order and empty-map condition remain the same; ordinal equals the old one-push-per-turn native.length."
+        },
+        {
+          "kind": "formatter",
+          "result": "Specified read-only Biome executable via node child_process argv; format --write on focus only, exit 0, no fixes. Fresh retained isolated HOME/config/cache/data/SDK/TMPDIR: /tmp/pr45-history-format-vJ6PYa."
+        },
+        {
+          "kind": "syntax",
+          "result": "/usr/bin/node --check on focus using the explicit isolated environment, exit 0; source not executed."
+        },
+        {
+          "kind": "diff",
+          "result": "git diff --cached --check passed; only focus source staged/committed. No active commit hooks."
+        }
+      ],
+      "primaryLimits": [
+        "Repository tests, setup and builds deliberately not run; parent owns audited isolated batch gates. No runtime behavioral acceptance is claimed.",
+        "Whole-file readability verdict remains for the parent’s distinct independent judge; related-patch ACCEPT was not promoted to a whole-file verdict.",
+        "No wisdom/values edits: parent owns aggregate wisdom. No delegation, recovery, cleanup, credential access, push, PR or merge."
+      ]
     },
     {
       "file": "tests/claude-native-acceptance-subagent-run.test.mjs",
