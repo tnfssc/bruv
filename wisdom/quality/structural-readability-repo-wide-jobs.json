@@ -155,6 +155,30 @@
         "branch": "bruv/pr45-judge-scripts-claude-native-accepta-27eea40d",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
+      },
+      {
+        "id": "task_4b58c5b6",
+        "stage": "judge",
+        "focus": "scripts/claude-native-acceptance/history-replay.mjs",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_4b58c5b6",
+        "branch": "bruv/pr45-judge-scripts-claude-native-accepta-4b58c5b6",
+        "status": "running"
+      },
+      {
+        "id": "task_879c9147",
+        "stage": "judge",
+        "focus": "scripts/claude-native-acceptance/human-driver.mjs",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_879c9147",
+        "branch": "bruv/pr45-judge-scripts-claude-native-accepta-879c9147",
+        "status": "running"
+      },
+      {
+        "id": "task_619d6011",
+        "stage": "judge",
+        "focus": "scripts/claude-native-acceptance/runtime-smoke.mjs",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_619d6011",
+        "branch": "bruv/pr45-judge-scripts-claude-native-accepta-619d6011",
+        "status": "running"
       }
     ]
   },
@@ -196,6 +220,14 @@
         "model": "openai-codex/gpt-6.1-sol",
         "status": "handled",
         "sourceCommit": "ce7032a68d76defd3b2f40c6bb630f5b8824c0af"
+      },
+      {
+        "id": "task_f3981982",
+        "stage": "judge",
+        "focus": "tests/fixtures/history-sdk-probe-failure.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_f3981982",
+        "branch": "bruv/pr45-judge-tests-fixtures-history-sdk-pr-f3981982",
+        "status": "running"
       }
     ]
   },
