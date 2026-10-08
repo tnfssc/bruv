@@ -9567,13 +9567,29 @@
       "initialBlob": "45b60bcac768374ee21c786853c35ab2a763ede3",
       "status": "pending",
       "area": "compatibility-t3",
-      "resumeState": "pending-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_1bf0bce2",
+      "primaryCommit": "b03ccaf833bf786185c9f25588f14eff87d69dd6",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "b03ccaf833bf786185c9f25588f14eff87d69dd6",
       "report": "wisdom/quality/structural-readability-areas/compatibility-t3.json",
-      "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+      "pendingReason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection.",
+      "primaryBase": "b03ccaf833bf786185c9f25588f14eff87d69dd6",
+      "primaryResult": "The single short test already keeps its one authenticated offline ModelRuntime, untrusted in-memory settings, selection assertions, and try/finally-owned temporary directory together. The assertions follow the selection precedence in preflightClaudeCompatModel: explicit model wins over configured default; authenticated availability alone is not selection. The default-specific settings stay beside the success and no-fallback assertions; the concluding readdir assertion proves no session/history files were created. CLI calls this preflight before history allocation or injected tools, and createClaudeCompatRuntime delegates the same selection decision to it. Splitting this coherent sequence or extracting its one-use fixture would add indirection rather than resolve a reading burden. Preserved evidence is pending-primary, not a rejected candidate, and the current focus blob equals both baseline and joined evidence; no candidate import was needed.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        "Read wisdom/values.md and structural-readability guidance.",
+        "Inspected only focus rows in reconciliation, area and repo-wide coverage/assignment ledgers.",
+        "Compared current focus blob against baseline/joined evidence: 45b60bcac768374ee21c786853c35ab2a763ede3.",
+        "Traced preflightClaudeCompatModel and its actual CLI/runtime callers; all assertions and offline/untrusted boundaries retained unchanged.",
+        "Initial git status clean; no source modifications."
+      ],
+      "primaryLimits": [
+        "No repository tests, setup, or builds run: parent owns audited isolated gates.",
+        "Formatter not run because no changed source paths and no source commit is required for a no-change decision.",
+        "Readability decision awaits independent fresh judge; no runtime success claimed.",
+        "No wisdom or values edits; parent owns aggregate wisdom."
+      ]
     },
     {
       "file": "tests/claude-compat-prompt-ownership.test.ts",

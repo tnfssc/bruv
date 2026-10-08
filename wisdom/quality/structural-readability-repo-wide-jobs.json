@@ -981,7 +981,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_1bf0bce2",
         "branch": "bruv/pr45-primary-tests-claude-compat-preflig-1bf0bce2",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "b03ccaf833bf786185c9f25588f14eff87d69dd6"
       },
       {
         "id": "task_76686bee",
@@ -989,6 +990,28 @@
         "focus": "tests/claude-compat-prompt-ownership.test.ts",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_76686bee",
         "branch": "bruv/pr45-primary-tests-claude-compat-prompt--76686bee",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_d6335a2d",
+        "stage": "judge",
+        "focus": [
+          "tests/claude-compat-compiled.test.ts",
+          "tests/claude-compat-composition.test.ts",
+          "tests/claude-compat-defaults.test.ts"
+        ],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_d6335a2d",
+        "branch": "bruv/pr45-judge-3-compatibility-t3-focuses-d6335a2d",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_7896d05f",
+        "stage": "primary",
+        "focus": "tests/claude-compat-retry.test.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_7896d05f",
+        "branch": "bruv/pr45-primary-tests-claude-compat-retry.t-7896d05f",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
       }
