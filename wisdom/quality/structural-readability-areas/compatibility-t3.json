@@ -2752,35 +2752,37 @@
     {
       "file": "tests/claude-native-subagent-return.test.mjs",
       "initialBlob": "58d83d7f782388c516f3897eb8cb6a364de866a4",
-      "status": "pending",
+      "status": "accepted",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "471c38aa3fa4a77c6a17aabaf747b88401e6f942",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "471c38aa3fa4a77c6a17aabaf747b88401e6f942",
         "primaryId": "task_33f15a43",
         "primaryCommit": "82f05d1928c624a630323fd3f7fb479dedfaa0ad",
-        "judgeIds": [],
+        "judgeIds": ["task_235c5542"],
         "sourceCommit": "82f05d1928c624a630323fd3f7fb479dedfaa0ad",
-        "state": "needs-judge",
-        "reason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+        "state": "accepted-joined",
+        "reason": "The former test mixed linked on-disk format construction with the evidence contract. seedLinkedReturnEvidence(root) gives that construction one coherent boundary, including the deliberately private data, rather than splitting it into unrelated format helpers. The test now directly exposes its owned root, capture, cross-source identity/status/privacy checks, page-free final capture and finally cleanup. Fixture details remain adjacent and inspectable. The other tests still state same-session and prompt-consumption decisions directly."
       }
     },
     {
       "file": "tests/fixtures/claude-task-worker.ts",
       "initialBlob": "21bf893d3fffed763700fa4cf96a3ceb135f7c00",
-      "status": "pending",
+      "status": "accepted",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "be824d461a8f5ed253532defa6f05aca893179b4",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "be824d461a8f5ed253532defa6f05aca893179b4",
         "primaryId": "task_555b6c64",
         "primaryCommit": "15c6ac4c86c95c1d2f7308e1438052b0946423df",
-        "judgeIds": [],
+        "judgeIds": ["task_235c5542"],
         "sourceCommit": "15c6ac4c86c95c1d2f7308e1438052b0946423df",
-        "state": "needs-judge",
-        "reason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+        "state": "accepted-joined",
+        "reason": "The top level now makes the real worker lifecycle readable without traversing protocol frame assembly between session creation and subscription. installOfflineModelTransport is a coherent local boundary for the two related transport effects: deterministic stream replacement and rejecting provider fetches. It takes the real runtime plus the model ID and prompt, not a shared context bag; the event sequence, timer and usage remain visibly local below the lifecycle."
       }
     },
     {
@@ -2834,18 +2836,19 @@
     {
       "file": "tests/t3/native-routing.test.ts",
       "initialBlob": "1902efb0c30480cc156329da0a1ceaa420afd3e8",
-      "status": "pending",
+      "status": "accepted",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "f882c78ba7a3197f0ea77bc42c061b1394ceee74",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "f882c78ba7a3197f0ea77bc42c061b1394ceee74",
         "primaryId": "task_924e63c3",
         "primaryCommit": "69363feeeaa83ff4de0eb4061931a4a41150d014",
-        "judgeIds": [],
+        "judgeIds": ["task_d7c9a73d"],
         "sourceCommit": "69363feeeaa83ff4de0eb4061931a4a41150d014",
-        "state": "needs-judge",
-        "reason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+        "state": "accepted-joined",
+        "reason": "The previous nested run(replay) combined transport setup, arrival gating, identity recording, failure/success selection, and shared manager cleanup. The extracted operation now owns one complete bridge/service exchange and its finally teardown. The two test callbacks state the ambiguous original launch and successful replay beside their respective assertions; duplicate detection and replay identity mismatch are explicit, not hidden behind a phase boolean. The helper is a coherent exchange, not a context bag or rename-only extraction. Its arguments expose the parent session, first adapter arrival, and phase-specific launch behavior."
       }
     },
     {
@@ -2899,35 +2902,37 @@
     {
       "file": "tests/t3/web-launcher-process.test.ts",
       "initialBlob": "7a393249d4cd32e63f236ca44eedc2a83440d7d5",
-      "status": "pending",
+      "status": "accepted",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "7a393249d4cd32e63f236ca44eedc2a83440d7d5",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "7a393249d4cd32e63f236ca44eedc2a83440d7d5",
         "primaryId": "task_03c6a29d",
         "primaryCommit": "aea5504bc5ab642ca72ab9c14db0582a00c479cd",
-        "judgeIds": [],
+        "judgeIds": ["task_235c5542"],
         "sourceCommit": "aea5504bc5ab642ca72ab9c14db0582a00c479cd",
-        "state": "needs-judge",
-        "reason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+        "state": "accepted-joined",
+        "reason": "The test already has one local ownership journey: create a disposable home, seed protected state and legacy override, invoke the compiled command in the explicit environment, join exit with both output drains, assert guidance and state preservation, then release the owned fixture in finally. Each assertion is next to the state it checks. Extracting setup, spawn or assertion helpers would add indirection without resolving scattered decisions or lifetimes."
       }
     },
     {
       "file": "tests/t3/web-launcher.test.ts",
       "initialBlob": "f786918777c6f2073e1a6afa4b5e7658b67dbb86",
-      "status": "pending",
+      "status": "accepted",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "f6c1cb1d59f5c32c936016fbb1841f69b6064a6b",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "f6c1cb1d59f5c32c936016fbb1841f69b6064a6b",
         "primaryId": "task_21d9b2c8",
         "primaryCommit": "b5ea2257584c31e38810f6e99dd4c57cd24c3ec1",
-        "judgeIds": [],
+        "judgeIds": ["task_d7c9a73d"],
         "sourceCommit": "b5ea2257584c31e38810f6e99dd4c57cd24c3ec1",
-        "state": "needs-judge",
-        "reason": "No file-specific primary or independent readability judgment is recorded; aggregate pending status is not a rejection."
+        "state": "accepted-joined",
+        "reason": "This is a small but real ownership improvement: accepted setup output and rejected former-server options are separate contracts with independent console spy lifetimes and finally restoration. The rejection no-output assertion no longer requires readers to understand that a log mock was cleared after earlier successful calls. The accepted-flags loop still clears only its own successive observations, and its error spy observes the whole acceptance journey. The modest duplicated spy setup is clearer than a shared helper or hidden mutable context."
       }
     },
     {
@@ -3481,7 +3486,7 @@
       "file": "tests/claude-native-app-delegation-driver.test.mjs",
       "kind": "new",
       "initialBlob": null,
-      "status": "pending",
+      "status": "accepted",
       "introducedBy": "b538064f91afba9b3bb5a79bc8ec8ae6923f630b",
       "primary": {
         "id": "task_de00fb25",
@@ -3491,7 +3496,7 @@
         "commit": null
       },
       "judges": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "6d10b9ac0f9c37f4e65887e2690488d25440f1b4",
       "relatedPatchJudgments": [
         {
           "id": "task_0ffaaac1",
@@ -3502,24 +3507,25 @@
       ],
       "launchBase": "b8c0bb7c6ff0fec215e90188666df77225ffe47a",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "6d10b9ac0f9c37f4e65887e2690488d25440f1b4",
         "primaryId": "task_2a5cad2b",
         "primaryCommit": "0d836e5b0d7064e5dc0c1ee655fabb8181a42d16",
-        "judgeIds": [],
+        "judgeIds": ["task_2a3c512d"],
         "sourceCommit": "0d836e5b0d7064e5dc0c1ee655fabb8181a42d16",
-        "state": "needs-judge",
-        "reason": "Primary was killed by session shutdown (143); preserved uncommitted code is retained at the worker path. No submitted candidate commit or readability verdict; resume its original scope rather than count it accepted."
+        "state": "accepted-joined",
+        "reason": "The whole file has clear preparation, verification and safe-projection journeys. temporaryRoot owns the only cleanup lifetime; preparation constructs just the files it needs rather than acquiring a verification database. verificationFixture keeps native completion rows, lookup references and wire process evidence visibly separate. Each failure starts with fresh valid evidence, changes one authority, persists it where necessary, checks the specific rejection and checks absence of result.json. This removes the old fault/reset dependency between assertions. writeNative now owns its database within try/finally and closes it before the verifier opens its read-only database. The success case checks the emitted artifacts and metadata rather than claiming temporal publication ordering it does not observe."
       }
     },
     {
       "file": "tests/claude-native-history-driver.test.mjs",
       "kind": "new",
       "initialBlob": null,
-      "status": "pending",
+      "status": "accepted",
       "introducedBy": "8a96f814d110e65250c081c1f2dda9daea098cf2",
       "primary": null,
       "judges": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "037272598de0eec7e762f5b5798975a6f5691590",
       "relatedPatchJudgments": [
         {
           "id": "task_e0fec250",
@@ -3529,13 +3535,14 @@
         }
       ],
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "037272598de0eec7e762f5b5798975a6f5691590",
         "primaryId": "task_e186a894",
         "primaryCommit": "67bbb95bf3cda78549db94734a551e03f97e1436",
-        "judgeIds": [],
+        "judgeIds": ["task_2a3c512d"],
         "sourceCommit": "67bbb95bf3cda78549db94734a551e03f97e1436",
-        "state": "needs-judge",
-        "reason": "Related source patch has an original accepted code judgment, but this test still lacks its distinct whole-file primary/judge. Preserve the related acceptance without promoting it to completed file coverage."
+        "state": "accepted-joined",
+        "reason": "encodeSession is a coherent representation boundary, not a cosmetic extraction: it owns canonical entry IDs, native parent links, retained root provenance and durable imported-source mappings together, without filesystem effects. The explicit ordinal selects the supplied leading checkpoint prefix, and the same original-entry decision emits the map using the existing canonical ID. historyFixture owns temporary directories/configuration and the root/fork/rollback/reopen scenario; saveSession only encodes and publishes the canonical file, binding and transcript. The scenario remains readable as ordered turns with deliberate parent-link divergence at rollback. Collection, missing/malformed evidence, valid verification and three independently prepared corruptions each tell a direct story without shared reset state."
       }
     },
     {
@@ -3566,11 +3573,11 @@
       "acceptedBlob": null,
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_c186d7a4",
+        "primaryCommit": "589739a9317a9c014c12f98fd92b66bbb2e92f8a",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "pending-primary-untracked",
+        "sourceCommit": "589739a9317a9c014c12f98fd92b66bbb2e92f8a",
+        "state": "needs-judge",
         "reason": "Untracked related test preserved in interrupted history-replay worker; absent from committed and preserved area ledger and area/joined trees. Requires its own primary and independent readability judgment. No import permission."
       }
     },
@@ -3963,7 +3970,7 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 89,
-    "pending": 8
+    "accepted": 96,
+    "pending": 1
   }
 }
