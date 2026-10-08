@@ -6268,15 +6268,159 @@
       ],
       "chars": 96528,
       "lines": 2287,
-      "status": "running",
+      "status": "accepted",
       "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
       "jobId": "task_e259328d",
       "model": "openai-codex/gpt-6.1-sol",
       "workspace": {
         "kind": "worktree",
-        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_e259328d",
+        "worktreePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_e259328d",
+        "sourcePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
         "baseRef": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
-        "preparationStatus": "preparing"
+        "baseOid": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "branch": "bruv/pr45-final-integrated-diff-lane-29-live--e259328d",
+        "preparationStatus": "ready",
+        "setupTaskId": "task_9611329f",
+        "setupStatus": "failed",
+        "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      },
+      "workspaceHistory": [
+        {
+          "kind": "worktree",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
+          "baseRef": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+          "preparationStatus": "preparing"
+        }
+      ],
+      "result": {
+        "lane": "lane-29",
+        "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
+        "candidate": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "verdict": "ACCEPT",
+        "diffReadPaths": [
+          "src/live/cost.ts",
+          "src/live/editor-push-to-talk.ts",
+          "src/live/extension.ts",
+          "src/live/gpt-live-delegation.ts",
+          "src/live/gpt-live-playback.ts",
+          "src/live/gpt-live-session.ts",
+          "src/live/main-owner.ts",
+          "src/live/offline-transport-probe.ts",
+          "src/live/openai-errors.ts"
+        ],
+        "contextReadPaths": [
+          "src/live/cost.ts",
+          "src/live/editor-push-to-talk.ts",
+          "src/live/extension.ts",
+          "src/live/gpt-live-delegation.ts",
+          "src/live/gpt-live-playback.ts",
+          "src/live/gpt-live-session.ts",
+          "src/live/main-owner.ts",
+          "src/live/offline-transport-probe.ts",
+          "src/live/openai-errors.ts",
+          "src/ui/editor.ts",
+          "src/live/status.ts",
+          "src/live/audio.ts",
+          "src/live/playback.ts",
+          "src/live/session.ts",
+          "src/live/openai-session.ts",
+          "src/live/gpt-live-context.ts",
+          "src/live/gpt-live-request.ts",
+          "src/live/config.ts",
+          "src/live/openai-connect-error.ts",
+          "src/live/openai-upgrade-socket.ts",
+          "src/agent/extension.ts",
+          "src/agent/instruction-continuity.ts"
+        ],
+        "sourceBlobs": {
+          "src/live/cost.ts": "1a6087ab8fb201b5c7d2aa771ab26aec7c899b04",
+          "src/live/editor-push-to-talk.ts": "3fac9c057f3f767a9af84ce9bcbcb3341a952e5b",
+          "src/live/extension.ts": "53b126a8669adebbd44292faeddf782889809825",
+          "src/live/gpt-live-delegation.ts": "160003768942615890ecba4835805cd3954be71a",
+          "src/live/gpt-live-playback.ts": "0ae9b29f607c565fbfe00896627956c5bac3ce18",
+          "src/live/gpt-live-session.ts": "92d985f0bd164825e712218e609930f2262beb0b",
+          "src/live/main-owner.ts": "bb80a4fd5997a18d93cfce3fd34fc8e4b022c7aa",
+          "src/live/offline-transport-probe.ts": "b9185ba4765942830b79097724643510da3a7f62",
+          "src/live/openai-errors.ts": "0292a5e8aa1e33459570f4052a86896331e529c8"
+        },
+        "sourceJourneys": [
+          {
+            "paths": [
+              "src/live/extension.ts",
+              "src/live/editor-push-to-talk.ts",
+              "src/ui/editor.ts",
+              "src/live/audio.ts",
+              "src/live/status.ts"
+            ],
+            "readingReason": "Read the complete Run startup extraction against deleted startup code, plus stopObserved, capture epoch checks, setTalking and syncTalkInput. Followed editor raw-input observation, guarded per-Space undo, cancellation/disposal and capture gate calls. compactLiveStatus uses the same priority order as the removed ternary.",
+            "systemReason": "Provider acceptance and initial-context replay still precede device start; push-to-talk remains gated by a current hold epoch. Warmup timestamps now live with their undo evidence, avoiding a separate firstSpaceAt owner. The extracted startTalking still restores only guarded insertions before enabling capture. Stop detaches capture and presentation before teardown. Checked the local audio handle across the asynchronous gate/start boundary: LiveAudio.stop closes idle/starting helpers and start rejects non-idle helpers, so retaining that handle does not reopen a stopped device."
+          },
+          {
+            "paths": [
+              "src/live/gpt-live-session.ts",
+              "src/live/gpt-live-delegation.ts",
+              "src/live/gpt-live-request.ts",
+              "src/live/extension.ts",
+              "src/live/main-owner.ts",
+              "src/agent/instruction-continuity.ts",
+              "src/live/gpt-live-context.ts"
+            ],
+            "readingReason": "Followed validated session.delegation.created and provisional fragments through ProvisionalSpeech.prepareAdmission, snapshot projection, synchronous MainOwner.delegate admission, delegatedTail serialization and ordinary session.prompt through the pinned instruction-continuity adapter. Compared all removed WeakSet/eviction logic with entry use/retained state and finally settlement.",
+            "systemReason": "Speech evidence is reserved once before asynchronous admission; rejected evicted evidence becomes loss, accepted evidence remains consumed even when correction/barge-in/close silences the spoken result. Loss never authorizes a retained suffix. Barge-in and voice closure invalidate speech delivery without cancelling admitted backend work; explicit stopForeground changes the backend epoch. Delegation still uses the configured current session rather than inventing a second agent or tool authority. Host observations remain quoted bounded data, while initial and live context share one provider protocol."
+          },
+          {
+            "paths": [
+              "src/live/main-owner.ts",
+              "src/live/extension.ts",
+              "src/agent/extension.ts",
+              "src/agent/instruction-continuity.ts"
+            ],
+            "readingReason": "Read LiveHistory reservations and release, the complete extracted registered-tool operation and its deleted implementation, acquire prerequisites, transcript/turn preparation, orchestration.execute, checkRelease, close and stopForeground. Followed unchanged jobs.stopWork caller capture through report delivery and foreground cancellation.",
+            "systemReason": "Tool calls still use the actual execute registry entry, validateToolArguments, beforeToolCall and afterToolCall hooks. Canonical call/result pairs are serialized and observations flush only at their boundaries. Admission validity is distinct from branch-only permission to commit an already-admitted result after voice shutdown. Controllers, byte budget, call-ID deduplication and owner draining stay with acquire; the operation receives explicit authority predicates and the stop-report getter, not a broad context bag. Cancellation evidence still reaches the canonical result before owner release."
+          },
+          {
+            "paths": [
+              "src/live/cost.ts",
+              "src/live/extension.ts",
+              "src/live/gpt-live-session.ts",
+              "src/live/session.ts",
+              "src/live/openai-session.ts"
+            ],
+            "readingReason": "Read complete price/tracker diff and actual provider usage emitters: Gemini usage precedes turnComplete, Realtime response.done supplies response ID, and GPT-Live emits cumulative usage updates and final session.closed usage. Followed both extension callback sets and stopObserved cost closure.",
+            "systemReason": "The single usage entry point now owns accounting mode: Gemini watermark resets per turn, GPT-Live duration watermark spans the connection, Realtime charges independent deduplicated responses. In particular the production GPT callback formerly used per-response usage for cumulative duration; the integrated tracker and final onClosed callback now avoid cumulative overcharge and retain the final duration increment. Unknown/incomplete markers remain explicit. Transport closure is a single terminal promise shared by all close callers; phase fences late callbacks, replacing the redundant serial for a single-use session."
+          },
+          {
+            "paths": [
+              "src/live/gpt-live-playback.ts",
+              "src/live/playback.ts",
+              "src/live/extension.ts",
+              "src/live/audio.ts"
+            ],
+            "readingReason": "Read complete suppression diff, detector thresholds and scheduler wiring, then followed generation interruption, native flush and stale in-flight write completion in PlaybackScheduler.",
+            "systemReason": "The optional quiet-frame counter replaces duplicated muted/settling state. Each speech onset still discards queued output with a new generation; recovery counts captured quiet rather than wall time, faults latch, and suppressed chunks are discarded rather than replayed. The scheduler owns PCM queue bounds and generation checks; the detector never gates microphone forwarding. The existing documented possibility of hearing a stale remote tail after recovery is not falsely strengthened by the refactor."
+          },
+          {
+            "paths": [
+              "src/live/openai-errors.ts",
+              "src/live/openai-session.ts",
+              "src/live/offline-transport-probe.ts",
+              "src/live/openai-connect-error.ts",
+              "src/live/openai-upgrade-socket.ts",
+              "src/live/extension.ts"
+            ],
+            "readingReason": "Read the entire error allowlist addition and probe diff, Realtime setup and response.done failure callers, defaultSocket/upgradeSocket, connectionFailure, and actual probe listener/server/teardown source without invoking it.",
+            "systemReason": "Provider error messages/secret-bearing params are not printable: only allowlisted protocol codes/types and structural session/tool paths are appended to local diagnostics. Realtime setup and response failures use this helper; GPT-Live retains its separate generic classifier. The probe uses a single production transport connection to its owned loopback server with fake credentials, with separate success and HTTP-rejection expectations and socket/server teardown. Extraction preserves the handshake count/session evidence assertions without introducing device or credential access."
+          }
+        ],
+        "integrationReadingReason": "ACCEPT for this bounded lane, not a repository-wide sign-off. All nine assigned baseline-to-candidate diffs, including deletions, were fully read. The integrated code preserves the examined public boundaries and improves system reading burden: Run.start is an ordered startup narrative rather than mixed inline provider implementations; provider context delivery is shared; speech retention and history-pair serialization have cohesive owners; single-use transport closure and playback suppression each lose redundant state; accounting policy moves from scattered callers into the tracker. The registered-tool helper is substantial but contains one real Pi protocol operation, with admission/lifetime retained outside it and no new generic framework or authority bag. The diagnostics allowlists add volume for an explicit privacy boundary rather than ornamental abstraction. No concrete introduced cross-file contradiction or missing owner found in the exercised journeys.",
+        "objections": [],
+        "limits": [
+          "Source-only review. No tests, setup, builds, install, formatter, auth, devices, network requests or production module execution were performed; no unsupported Pi preparation was retried or bypassed. Live provider/device behavior remains unverified.",
+          "No previous primary/judge artifacts, coverage summaries or green tests were used as evidence. No delegation or descendants were launched.",
+          "Assigned diff unread gaps: none. Context paths record actual exercised source excerpts, not claims of complete current-source or whole-repository review. Baseline source was examined via the complete diffs including deleted code; candidate context was read directly from Git objects.",
+          "Durable provenance: existing worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_e259328d. Both exact commits and all nine exact candidate blob IDs were resolved from Git. Candidate/source preserved; the only requested workspace write is this untracked review result. No fixtures or temporary checkout were created."
+        ]
       }
     },
     {
@@ -6300,7 +6444,7 @@
       ],
       "chars": 90542,
       "lines": 2356,
-      "status": "running",
+      "status": "accepted",
       "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
       "jobId": "task_4be10fae",
       "model": "openai-codex/gpt-6.1-sol",
@@ -6313,6 +6457,166 @@
         "baseOid": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
         "branch": "bruv/pr45-final-integrated-diff-lane-30-live--4be10fae",
         "preparationStatus": "preparing"
+      },
+      "result": {
+        "lane": "lane-30",
+        "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
+        "candidate": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "verdict": "ACCEPT",
+        "diffReadPaths": [
+          "src/live/openai-session.ts",
+          "src/live/openai-upgrade-socket.ts",
+          "src/live/passive-history.ts",
+          "src/live/playback.ts",
+          "src/live/session.ts",
+          "src/live/speaker-check.ts",
+          "src/live/status.ts",
+          "tests/current-pipeline-live.test.ts",
+          "tests/editor-push-to-talk.test.ts",
+          "tests/editor-voice-integration.test.ts",
+          "tests/fixtures/live-offline-model.ts",
+          "tests/fixtures/live-push-to-talk-tui.ts",
+          "tests/fixtures/live-spoken-tui.ts",
+          "tests/goals-live.test.ts"
+        ],
+        "contextReadPaths": [
+          "src/live/extension.ts",
+          "src/live/openai-session.ts",
+          "src/live/openai-errors.ts",
+          "src/live/openai-connect-error.ts",
+          "src/live/session.ts",
+          "src/live/playback.ts",
+          "src/live/audio.ts",
+          "src/live/gpt-live-playback.ts",
+          "src/live/speaker-check.ts",
+          "src/live/main-owner.ts",
+          "src/live/passive-history.ts",
+          "src/live/gpt-live-request.ts",
+          "src/live/transcript-text.ts",
+          "src/live/editor-push-to-talk.ts",
+          "src/ui/editor.ts",
+          "src/agent/instruction-continuity.ts",
+          "tests/current-pipeline-live.test.ts",
+          "tests/goals-live.test.ts",
+          "tests/editor-push-to-talk.test.ts",
+          "tests/fixtures/live-push-to-talk-tui.ts",
+          "tests/fixtures/live-spoken-tui.ts",
+          "tests/live-push-to-talk-tui.test.ts",
+          "tests/live-spoken-tui.test.ts"
+        ],
+        "sourceBlobs": {
+          "src/live/openai-session.ts": "aa6e30da2964c45ff7245572bfbbbad910ad8cf9",
+          "src/live/openai-upgrade-socket.ts": "e28565a97187ecdf928826917f20c252d4190adb",
+          "src/live/passive-history.ts": "7070135c72f7a9216c71318e4d47dead85d72dbc",
+          "src/live/playback.ts": "ce0fd68dbcc5487dd3fa1f218dd353f34571feac",
+          "src/live/session.ts": "5d0f66a03d902165e3f1a224e3e607802ca015cb",
+          "src/live/speaker-check.ts": "141bd8d0d32972a110cbf4655b8f1e2caf82f8be",
+          "src/live/status.ts": "d8026fa785047027d133f9ef541ecd6eec0942bf",
+          "tests/current-pipeline-live.test.ts": "a536e928538a01689141f80b972fea9f8ea0c00a",
+          "tests/editor-push-to-talk.test.ts": "8602a3f58450df60fd489a9d7ce290a78daa968d",
+          "tests/editor-voice-integration.test.ts": "89f3ee58570d4e8d08bbb8aedf98e1e218524529",
+          "tests/fixtures/live-offline-model.ts": "24f5a569f4de0b25d4a38eb14108a5f5e7843c09",
+          "tests/fixtures/live-push-to-talk-tui.ts": "89c48ff62a52d95438b9c97a5247483ff6ddf11f",
+          "tests/fixtures/live-spoken-tui.ts": "ea460255bfb0395ea84f01843ca33a13be9f6ee6",
+          "tests/goals-live.test.ts": "38944cd7f330c44eb08baf08d43bb8ca064a8978"
+        },
+        "sourceJourneys": [
+          {
+            "paths": [
+              "src/live/openai-upgrade-socket.ts",
+              "src/live/openai-connect-error.ts",
+              "src/live/openai-errors.ts",
+              "src/live/openai-session.ts"
+            ],
+            "readingReason": "Followed the rejected HTTP Upgrade through bounded response-code reading, diagnostic classification, session failure/close, and cancellation of connection settlement. Compared the entire removed in-session diagnostic allowlists/field normalization with the actual exported voiceProviderFailure implementation: the same allowlists and fallback composition are present. readRejectionCode owns its timer and response, while upgradeSocket owns suppression of competing transport events; close cancels the bounded reader.",
+            "systemReason": "One authenticated Upgrade remains the only request. Raw response content, headers and keys do not enter user diagnostics. Setting rejected before reading prevents a concurrent ws error/close from replacing the HTTP-status diagnostic; session readiness still requires session.updated rather than socket open."
+          },
+          {
+            "paths": [
+              "src/live/openai-session.ts",
+              "src/live/extension.ts",
+              "src/live/playback.ts",
+              "src/live/audio.ts",
+              "src/live/gpt-live-playback.ts"
+            ],
+            "readingReason": "Followed output_item registration and audio delta timing through Run.output, the copied PCM queue, native play, played ring-depth feedback, getPlayedAudioMs, and provider truncate during interruption. Checked response retirement separately from queued audio retirement, and scheduler in-flight write/flush callbacks against epochs. Also read the unchanged GPT recovery scheduler constructor using the smaller pending budget.",
+            "systemReason": "OutputAudioTimeline owns only item identity and truncation timing, not PCM or tool authority. PendingAudio owns unsent bytes and turn boundaries; PlaybackTimeline owns reservation, accepted credit, elapsed estimate and close freezing. The scheduler retains the sole write/flush and generation gate. Full-frame/tail selection, the 60ms refill threshold, pending limits, stale-completion checks and flush-before-new-send ordering preserve baseline semantics. Native play encodes PCM immediately and acknowledges stdin, not audible completion; both helpers keep that distinction."
+          },
+          {
+            "paths": [
+              "src/live/session.ts",
+              "src/live/openai-session.ts",
+              "src/live/main-owner.ts",
+              "src/live/extension.ts"
+            ],
+            "readingReason": "Followed Gemini same-envelope receive ordering, queued tool cancellation, microtask dispatch, reply caching and wire-readiness checks; compared the deleted promise chain with dispatchToolCall. Followed OpenAI response-owned calls and separate duplicate-ID bookkeeping through completion/continuation and response retirement. Read actual main-owner orchestration admission, registered-tool invocation sites, close and explicit stopForeground boundaries.",
+            "systemReason": "The Gemini discriminated progress record makes queued/cancelled/dispatched/resolved mutually legible without introducing a second owner. Pending counts increment before yielding and decrement in finally. Provider cancellation only revokes queued calls; accepted orchestration continues after disconnect, with readiness required only for delivery. OpenAI continuation still requires a done, uncancelled response from the current input revision with every call replied. Main-owner admission and explicit stop-work remain separate from audio interruption and transport close."
+          },
+          {
+            "paths": [
+              "src/live/passive-history.ts",
+              "src/live/main-owner.ts",
+              "src/live/extension.ts",
+              "src/live/gpt-live-request.ts",
+              "src/live/transcript-text.ts",
+              "tests/fixtures/live-spoken-tui.ts"
+            ],
+            "readingReason": "Followed owner.delegate writing the hidden snapshot with exact requestText immediately before ordinary session.prompt, through the extension context projection. Read speech-only reconstruction, omission refusal and transcript normalization. Checked projectUserTurn against the complete deleted projection loop, including malformed audits, mismatch consumption, overlap notices, omitted speech and legacy-fragment deduplication.",
+            "systemReason": "The next-user audit association and branch-wide legacy deduplication remain different lifetimes. Passive live-transcript and raw snapshot records are filtered from model context; uncertainty remains a custom observation adjacent to the associated user turn, never fabricated user prose. Missing fragments produce an incomplete-history notice without an actionable retained suffix. Later unrelated typed turns cannot inherit the association."
+          },
+          {
+            "paths": [
+              "src/live/speaker-check.ts",
+              "src/live/extension.ts",
+              "src/live/audio.ts"
+            ],
+            "readingReason": "Read the complete extraction and the current owner finally block (abort, bounded stop wait and close). Followed the extension local/busy checks and explicit speaker-test consent to the injected audio factory. Inspected native start/play/stop/close contracts, including immediate PCM encoding. Compared measurement callbacks, baseline/stimulus/tail windows, overflow/pending classification and processing validation against their deletions.",
+            "systemReason": "The outer function still owns deadline, external abort, late factory completion and helper shutdown; the inner measurement owns capture buffers and clears them before teardown callbacks can refill them. waitForAudio bounds waits without falsely claiming cancellation of native operations. Signal analysis and configuration reporting stay separate; enabled processing is not recast as proven AEC or barge-in quality. No provider is needed for this explicitly consented local measurement."
+          },
+          {
+            "paths": [
+              "src/live/status.ts",
+              "src/live/extension.ts",
+              "src/live/editor-push-to-talk.ts",
+              "src/ui/editor.ts",
+              "tests/editor-push-to-talk.test.ts",
+              "tests/editor-voice-integration.test.ts"
+            ],
+            "readingReason": "Read the actual compactLiveStatus call mapping from Run state, held epoch, active editor and output activity; followed attachment and local capture-gate closure into the editor raw observer, per-Space guarded undo, focus hook, listener ordering and detach. Compared newly added tests with those actual mechanisms, including failed rollback, cancelled legacy repeats, already-aborted replacement attachment and preservation of existing listeners/focus descriptors.",
+            "systemReason": "The six status inputs are presentation facts, not a lifecycle context bag. PTT talking and input availability deliberately precede output activity. Tests exercise the production editor discriminator and attachment seam rather than implementing their own mic authority. Disposing test attachments before clock restoration and using separate fixtures for input actions reduce lifetime ambiguity without changing the editor/host send gate boundary."
+          },
+          {
+            "paths": [
+              "tests/fixtures/live-offline-model.ts",
+              "tests/fixtures/live-push-to-talk-tui.ts",
+              "tests/fixtures/live-spoken-tui.ts",
+              "src/agent/instruction-continuity.ts",
+              "tests/live-push-to-talk-tui.test.ts",
+              "tests/live-spoken-tui.test.ts"
+            ],
+            "readingReason": "Compared both deleted offline stream implementations with installOfflineModelReply, read the instruction-continuity session accessor, and read fixture consumers/process launch arguments. Read the complete synthetic microphone object and its capture, gate, stale-frame injection, interval stop and close behavior.",
+            "systemReason": "Only model streaming is substituted on the same ordinary session. Real owner delegation and UI routing stay exercised. The microphone helper contains its timer/epoch/counter state and returns the same async stop for stop and close; it does not acquire device/network behavior. Fixture code remains in this durable candidate worktree; consumer mkdtemp homes are test fixtures, not review checkouts."
+          },
+          {
+            "paths": [
+              "tests/current-pipeline-live.test.ts",
+              "tests/goals-live.test.ts"
+            ],
+            "readingReason": "Compared every synthetic assistant/toolResult/user/assistant field in appendToolFixture against the deleted local helper and both call sites. Compared runWithinGoalWallLimit with the removed timer/abort/workflow lifetime, and read live-test setup and final evidence/disposal/owned-temp cleanup source.",
+            "systemReason": "Synthetic compaction history still surrounds each exact tool value with the same durable messages and model metadata. Goal workflow still races the 120-second wall failure, aborts and drains before dispatch-budget restoration/evidence capture. This extraction binds the relevant lifetime without moving evidence ahead of possible dispatch. Paid/authenticated setup remains intentionally outside the offline review and was not executed."
+          }
+        ],
+        "integrationReadingReason": "ACCEPT for this assigned integration lane only. Complete baseline-to-candidate diffs, including deletions, were read for all 14 paths (90542 characters); no primary/judge artifacts, coverage totals, green tests or repaired-scope summaries informed the judgment. The integrated changes improve intrinsic reading burden by grouping state with distinct lifetimes: provider item timing versus PCM queue versus estimated playback, Gemini call progress versus main-owner work admission, measurement storage versus audio-helper ownership, and one-turn audit versus branch projection. Extractions are private/domain-specific or narrowly reused (diagnostic formatting, status presentation, offline stream fixture), not framework/context-bag expansion. Actual caller mappings preserve authoritative ownership and externally visible behavior; no lane-local cross-file contradiction or required corrective result was found.",
+        "objections": [],
+        "limits": [
+          "Source-review judgment only, not whole-repository sign-off or runtime acceptance. Parent must integrate other lanes and cross-domain fit.",
+          "Related context was read in relevant source ranges, not represented as complete current-source review of every contextReadPaths file. All assigned diff paths were fully read; there are no unread assigned diff gaps.",
+          "No tests, setup, builds, installation, formatters, auth/device access, credentials, network requests or source edits were performed. Unsupported automatic Pi preparation was not retried or bypassed. No subagents were launched.",
+          "Paid live-test source uses configured/inherited agent auth locations; that was inspected as code only, not accessed. Live auth, actual transport/service access, native devices and hardware acoustic quality remain unverified.",
+          "TUI consumer code includes preparation and owned-temp cleanup; it was inspected only, never executed. No shell traps, cleanup commands, user-data mutation or recovery investigation occurred.",
+          "The only intentional worktree write is this untracked result JSON. Candidate source and existing durable worktree are preserved; no temporary code checkout was created.",
+          "Durable review provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_4be10fae, HEAD dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d."
+        ]
       }
     },
     {
@@ -6327,7 +6631,7 @@
       ],
       "chars": 89180,
       "lines": 1971,
-      "status": "running",
+      "status": "accepted",
       "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
       "jobId": "task_93857017",
       "model": "openai-codex/gpt-6.1-sol",
@@ -6340,6 +6644,105 @@
         "baseOid": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
         "branch": "bruv/pr45-final-integrated-diff-lane-31-live--93857017",
         "preparationStatus": "preparing"
+      },
+      "result": {
+        "lane": "lane-31",
+        "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
+        "candidate": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "verdict": "ACCEPT",
+        "diffReadPaths": [
+          "tests/gpt-live-delegation.test.ts",
+          "tests/gpt-live-playback.test.ts",
+          "tests/gpt-live-session.test.ts",
+          "tests/helpers/live-startup-audio-queue.ts",
+          "tests/live-audio-lifecycle.test.ts"
+        ],
+        "contextReadPaths": [
+          "src/live/gpt-live-delegation.ts",
+          "src/live/gpt-live-request.ts",
+          "src/live/gpt-live-playback.ts",
+          "src/live/playback.ts",
+          "src/live/gpt-live-session.ts",
+          "src/live/audio.ts",
+          "src/live/extension.ts",
+          "src/live/main-owner.ts",
+          "src/live/openai-errors.ts",
+          "src/live/openai-resample.ts",
+          "tests/live-startup-audio-queue.test.ts",
+          "src/live/session.ts",
+          "src/live/openai-session.ts"
+        ],
+        "sourceBlobs": {
+          "tests/gpt-live-delegation.test.ts": "3ffa47fccf3ea33830d6180d81cbc8812438f18c",
+          "tests/gpt-live-playback.test.ts": "66489a0ad2027a5307cdecb469aa5ba6fa8a633b",
+          "tests/gpt-live-session.test.ts": "21832ae3a8c518914e1e99e849a3f21340bcf303",
+          "tests/helpers/live-startup-audio-queue.ts": "9563b6268097649e8f6e36a7a0be13459df98055",
+          "tests/live-audio-lifecycle.test.ts": "bfd36ef721d8ac677ac5765d0074934659cd9a32"
+        },
+        "sourceJourneys": [
+          {
+            "paths": [
+              "tests/gpt-live-delegation.test.ts",
+              "src/live/gpt-live-delegation.ts",
+              "src/live/gpt-live-request.ts",
+              "src/live/extension.ts",
+              "src/live/main-owner.ts"
+            ],
+            "readingReason": "The fixture now records every actual submitContextual call before forwarding an optional admission stub. All former per-test capture/count responsibilities are reconciled with that change. The reorganized event-time, authority, admission and evidence-loss groups retain the baseline scenarios; named Promise.withResolvers admissions make pending/rejected/accepted lifetimes visible. New independently evicted admissions and later unrelated loss scenarios correspond to ProvisionalSpeech entry.use/retained settlement rather than inventing a transcript finalization rule.",
+            "systemReason": "Followed provisional socket fragments through bridge preparation/reservation, event-offset saved host context, gptLiveRequest overlap-aware speech assembly, extension owner.delegate synchronous onAdmitted, and main-owner queued ordinary session.prompt with snapshot audit. Bridge finally settles real admission even when revision/epoch/close suppresses commentary; interrupt and owner.close do not cancel admitted backend work. Tests still distinguish dispatch from completion and do not promote model targets or raw backend errors to cancellation/spoken results."
+          },
+          {
+            "paths": [
+              "tests/gpt-live-session.test.ts",
+              "src/live/gpt-live-session.ts",
+              "src/live/openai-errors.ts",
+              "src/live/openai-resample.ts",
+              "src/live/extension.ts"
+            ],
+            "readingReason": "The connectedFixture performs only ordinary admission; handshake tests retain explicit socket open/session.started sequencing, and all terminal events remain in their scenarios. Splitting previously combined failure/usage cases removes shared outcome arrays without dropping their assertions. Removing Socket.closed removes unused fixture state, not closure evidence. Concurrent-close and closing-phase acknowledgment cases directly exercise the single terminal promise.",
+            "systemReason": "Followed fixed Live endpoint/model admission into stateful continuous 16-to-24k resampling, client-ID dedupe and scoped typed context append/acknowledge, then close into finishTransport. Closing still accepts usage updates but not context acknowledgment; all close callers await transportClosed, and only session.closed finalizes usage. Timeout/failure fences stale socket callbacks and providerFailure classifies explicit codes without exposing private provider messages or fallback endpoints."
+          },
+          {
+            "paths": [
+              "tests/gpt-live-playback.test.ts",
+              "src/live/gpt-live-playback.ts",
+              "src/live/playback.ts",
+              "src/live/extension.ts",
+              "src/live/audio.ts",
+              "tests/live-audio-lifecycle.test.ts"
+            ],
+            "readingReason": "PlaybackTestClock models actual due times and delivers pre-stall timers once, instead of firing an undifferentiated timer map. The bounded-queue, captured-quiet and terminal-error groups expose distinct responsibilities. Added quiet-without-capture, flush-blocked short tail and flush-failure cases assert actual queue/epoch/error behavior with small local fixtures, not a broad context bag.",
+            "systemReason": "Followed extension capture to the four-frame onset detector, bridge interruption and independent appendMicrophone; speech invalidates scheduler epochs but never gates GPT microphone forwarding. Scheduler flush starts immediately despite an in-flight send, waits before new sends, and stale acceptance earns no played credit. The 15 quiet frames plus 10 guard frames are capture-driven, not playback-clock time. Hard errors latch suppression, repeated onset invalidates again without recursive flush failure. LiveAudio.play/flush remains a pipe-acceptance boundary, not proof of audible playback."
+          },
+          {
+            "paths": [
+              "tests/live-audio-lifecycle.test.ts",
+              "src/live/audio.ts"
+            ],
+            "readingReason": "The Input fake now parses commands once and separates callback from drain. Each scenario explicitly controls their ordering, capture-gate capability, and worker reap; complete remains the simple combined operation for ordinary cases. These narrow fixture changes reduce repeated JSON parsing and make the two independent acceptance signals legible.",
+            "systemReason": "Followed HelperInput active versus queued writes: callback plus drain resolves acceptance, interruptPlayback rejects only unsent play commands, capture_gate survives before flush/stop, and shutdown rejects both active/queued writes. A next-write throw cannot revoke the already resolved active write. Tests check closed notification once and drain detachment, while input/process error guards remain until child close; injected workers record signals and do not spawn or kill real processes."
+          },
+          {
+            "paths": [
+              "tests/helpers/live-startup-audio-queue.ts",
+              "tests/live-startup-audio-queue.test.ts",
+              "src/live/gpt-live-session.ts",
+              "src/live/session.ts",
+              "src/live/openai-session.ts"
+            ],
+            "readingReason": "Read the full experimental queue diff and its unchanged three-provider test callers. One buffering/replaying/live/stopped phase replaces stopped/active/draining combinations without adding an API or production dependency. Reentrant capture during send continues to join the FIFO; finally can only promote replaying, never stopped.",
+            "systemReason": "Caller readiness predicates use each real session state, and error/closed callbacks stop the experimental queue. Before-ready audio remains discarded by the provider classes, which explains the separate bounded copied FIFO. Late admission after close cannot revive it: GPT uses closed phase, Gemini epoch fencing, and Realtime serial fencing. Overflow discards and throws as before. The helper remains experiment-only and is not imported into production Live."
+          }
+        ],
+        "integrationReadingReason": "ACCEPT for these five assigned paths only. Complete baseline-to-candidate diffs, including deleted/moved scenarios, were read afresh. The large textual churn is mostly responsibility-based grouping and splitting compound cases, but the changes also materially clarify actual admission, transport closure, pipe acceptance and playback-clock versus capture-clock ownership. Small purpose-specific fixtures replace scattered resolver/count/parse logic; they do not hide the event under test, accumulate context bags, or conflate acknowledgments with task/speech completion. The experimental startup state enum preserves terminal stop and replay ordering. The integrated production caller journeys align with the asserted contracts. No lane-local behavior regression or cross-file ownership contradiction found.",
+        "objections": [],
+        "limits": [
+          "Read-only source review; no tests, setup, builds, install, formatter, authentication, devices, credential access, recovery work, cleanup, delegation or source edits performed. Unsupported Pi preparation was not retried or bypassed. Only the requested untracked result file was written.",
+          "No assigned diff gaps: all five complete diffs were read in contiguous character slices. Current unchanged test fixture/scenario context was read where needed. Related context was intentionally bounded: extension stop/start/capture/host dispatch/callback paths; main-owner admission/backend queue/close paths; Gemini and Realtime readiness/send/close fences; providerFailure classifier. This is not an attestation to the whole of those larger related files.",
+          "Provider access, acoustic behavior, live auth/device operation and execution outcomes remain unverified. Fake transport/worker tests and source reasoning are not live acceptance evidence; no green-test reports or prior review artifacts were used.",
+          "Review provenance is the existing durable worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_93857017 at the exact candidate. Candidate and existing worktrees preserved; no temporary fixture HOME/config/SDK was created because nothing was executed.",
+          "Bounded lane judgment, not whole-repository sign-off; parent must integrate other lanes and cross-domain fit."
+        ]
       }
     },
     {
@@ -6357,15 +6760,149 @@
       ],
       "chars": 99109,
       "lines": 2349,
-      "status": "running",
+      "status": "accepted",
       "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
       "jobId": "task_80fc1609",
       "model": "openai-codex/gpt-6.1-sol",
       "workspace": {
         "kind": "worktree",
-        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_80fc1609",
+        "worktreePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_80fc1609",
+        "sourcePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
         "baseRef": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
-        "preparationStatus": "preparing"
+        "baseOid": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "branch": "bruv/pr45-final-integrated-diff-lane-32-live--80fc1609",
+        "preparationStatus": "ready",
+        "setupTaskId": "task_36831e1c",
+        "setupStatus": "failed",
+        "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      },
+      "workspaceHistory": [
+        {
+          "kind": "worktree",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
+          "baseRef": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+          "preparationStatus": "preparing"
+        }
+      ],
+      "result": {
+        "lane": "lane-32",
+        "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
+        "candidate": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "verdict": "ACCEPT",
+        "diffReadPaths": [
+          "tests/live-audio.test.ts",
+          "tests/live-capture-gate.test.ts",
+          "tests/live-cost.test.ts",
+          "tests/live-credentials.test.ts",
+          "tests/live-embedded-helper.test.ts",
+          "tests/live-extension.test.ts",
+          "tests/live-gpt-tui.test.ts",
+          "tests/live-host-bridge.test.ts"
+        ],
+        "contextReadPaths": [
+          "src/live/audio.ts",
+          "native/live/main.swift",
+          "src/live/cost.ts",
+          "src/live/credentials.ts",
+          "src/live/helper.ts",
+          "scripts/live-helper-bundle.ts",
+          "src/live/extension.ts",
+          "src/live/gpt-live-session.ts",
+          "src/live/main-owner.ts",
+          "src/session/host.ts",
+          "src/session/transcript-snapshots.ts",
+          "src/agent/extension.ts",
+          "src/tasks/job-service.ts",
+          "tests/helpers.ts",
+          "tests/tui-helpers.ts",
+          "tests/live-tui-startup.ts",
+          "tests/fixtures/live-gpt-tui.ts"
+        ],
+        "sourceBlobs": {
+          "tests/live-audio.test.ts": "a6f73800667e3a3cafc70357e0b2840d366d1290",
+          "tests/live-capture-gate.test.ts": "e14d5006f3c1c8cd2ad1ca4d88c2f5021753c817",
+          "tests/live-cost.test.ts": "b6b973be8cc5a8c93f5cbe2986f2edfe27563806",
+          "tests/live-credentials.test.ts": "30ed313e1467bcf553b0354ccd693af7756006bf",
+          "tests/live-embedded-helper.test.ts": "8c6b069d99bc5919280b220230ee389e1c9c9c86",
+          "tests/live-extension.test.ts": "da0317117b6400fdba6b333935d8bb0b2d951e31",
+          "tests/live-gpt-tui.test.ts": "37b905a80a8d954ee101d9f91223a39c255287fe",
+          "tests/live-host-bridge.test.ts": "3dc74be1639a7877100ff4b4fb8eee5a635a03c1"
+        },
+        "sourceJourneys": [
+          {
+            "paths": [
+              "tests/live-audio.test.ts",
+              "src/live/audio.ts",
+              "native/live/main.swift",
+              "tests/live-capture-gate.test.ts",
+              "src/live/extension.ts"
+            ],
+            "readingReason": "Read all audio/gate diff additions and deletions, then actual message admission, capture epoch validation, stop/shutdown/reaping, Swift captureGate/discardCapture/finishStop and hardware-stop ordering. Split scenarios retain the original playback, metadata, bounded-input and sanitization assertions; new cases distinguish played queue reports from stopped acknowledgement and retain child error guards until close.",
+            "systemReason": "Swift finishStop emits played(0) before stopped, matching LiveAudio admission in stopping. Queue reports alone cannot certify microphone teardown; extension stopObserved surfaces stopError. Gate tests now follow the serialized Output boundary: publish cutoff/epoch before resetting converter and draining capture, without stopping hardware. Extension capture delivery separately requires the current held acquisition epoch."
+          },
+          {
+            "paths": [
+              "tests/live-cost.test.ts",
+              "tests/live-extension.test.ts",
+              "src/live/cost.ts",
+              "src/live/extension.ts",
+              "src/live/gpt-live-session.ts"
+            ],
+            "readingReason": "Compared baseline tracker API and candidate pricing/tracker implementation with the full cost diff and new extension terminal-usage cases. Traced session.usage.updated/session.closed through onUsage/onClosed into persisted bruv-live-cost entries and stopObserved.",
+            "systemReason": "Replacing test calls to gemini/cumulative with usage matches the integrated model-owned accounting dispatch: GPT duration watermark survives turnComplete, Gemini watermark resets per turn, Realtime deduplicates IDs rather than equal usage. Terminal duration is accepted during voice stop before final close bookkeeping. Unknown charges are recorded once without undoing known increments. No test hides the missing OpenAI backend/ASR pricing."
+          },
+          {
+            "paths": [
+              "tests/live-extension.test.ts",
+              "src/live/extension.ts",
+              "src/live/main-owner.ts"
+            ],
+            "readingReason": "Read startup-hold and shared-editor extraction diff, actual fixture dependency injection/cleanup and extension owner acquisition, helper launch, provider construction/connect, initial-context replay, microphone start and late-launch disposal. Read main-owner context preparation and close/release excerpts.",
+            "systemReason": "Separate reached/resume holds let cancellation tests prove which startup boundary was reached, replacing timing guesses and coupled helper/provider defer state. Late helper ownership is still disposed without opening devices. New tool-provider seam assertions follow real orchestration identity and context options, replay before microphone start, and alive fencing after stop. Shared-editor extraction isolates genuine SDK input routing from simulated transport boundaries without adding a production abstraction or a new context bag."
+          },
+          {
+            "paths": [
+              "tests/live-host-bridge.test.ts",
+              "src/session/host.ts",
+              "src/session/transcript-snapshots.ts",
+              "src/agent/extension.ts",
+              "src/tasks/job-service.ts"
+            ],
+            "readingReason": "Read complete host test diff and actual host request cache, scope checks, transcript handoff, task forwarding, native watcher and close paths; followed the owning extension adapter into JobService inspect/stop. Read snapshot locking/admission/expiry source and unchanged real TaskManager+JobService test body.",
+            "systemReason": "Typed taskFixture models the supplied task port directly rather than a redundant method-string dispatcher. Production still routes operations through the one owning JobService, with confirmation and unchanged-session checks. ownHost/afterEach closes subscriptions and polling on assertion failure. Listener replacement does not reset request deduplication; last-listener removal intentionally resets only active native observations. quotedTranscript centralizes the actual wire envelope, not host.context(), preserving ancestry-only immutable exports and failed-delivery replay behavior."
+          },
+          {
+            "paths": [
+              "tests/live-credentials.test.ts",
+              "src/live/credentials.ts"
+            ],
+            "readingReason": "Read full credential test diff and actual parseLiveKey/loadLiveKey implementation. The error helper inspects only fixture errors, not user credentials.",
+            "systemReason": "The prior malformed-file try/catch could pass when no rejection occurred; expectUnavailableKey now requires Error, the opaque 0600 instruction, and no fixture-key leak. This matches the loader catch boundary for unsafe mode, symlink, oversized, directory, missing and invalid-content sources. Parsing remains literal and never evaluates shell assignments."
+          },
+          {
+            "paths": [
+              "tests/live-embedded-helper.test.ts",
+              "scripts/live-helper-bundle.ts",
+              "src/live/helper.ts",
+              "tests/live-gpt-tui.test.ts",
+              "tests/tui-helpers.ts",
+              "tests/helpers.ts",
+              "tests/live-tui-startup.ts",
+              "tests/fixtures/live-gpt-tui.ts"
+            ],
+            "readingReason": "Read both complete diffs, helper/plugin implementation, compiled probe source/env, unchanged extraction fixtures, entire GPT TUI scenario and fake-device/provider fixture, and tmux/run/startup helpers.",
+            "systemReason": "Compiled-probe extraction checks embedded bytes after deleting only its owned original payload, puts child HOME/config/SDK/TMPDIR under its retained mkdtemp root, proves extraction stayed there, and verifies helper cleanup without executing the synthetic native bytes. GPT TUI helper is a mechanical launch extraction: same quoted CLI command/theme link and scenario-owned tmux teardown, with provider/device seams still fake and real renderer/owner intact. These local helpers do not create a general lifecycle framework."
+          }
+        ],
+        "integrationReadingReason": "Assigned tests remain aligned with integrated production boundaries rather than preserving obsolete API names. The strongest improvements are explicit startup-stage rendezvous, close-on-test-exit host ownership, pricing separated from persisted-accounting scenarios, and assertions of terminal/stop events at their real transport owners. Deletions were checked against replacements: original assertions were retained or split into focused cases, with additional ownership and unknown-cost evidence. Added helpers are narrow and local; the broad pre-existing extension fixture is reduced at its SDK input boundary rather than expanded into a shared context abstraction. No contradictory public contract, lost authorization boundary, or newly missing lifetime owner was found in these reviewed journeys. This is a lane-only source judgment, not whole-repository approval or a test verdict.",
+        "objections": [],
+        "limits": [
+          "Complete assigned baseline-to-candidate diff read for all eight paths; no assigned unread gaps. Related source was read in relevant excerpts, not as a whole-repository audit. No prior primary/judge artifacts, coverage summaries, or green tests were used.",
+          "Read-only review: no tests, setup, build, installation, formatter, credential/device/auth access, unsupported Pi preparation retry, recovery investigation, or source edits. Only this untracked result was written; candidate and durable worktree preserved. No delegation or descendants.",
+          "Execution safety is not attested for existing tests: capture-gate native compiler/run inherits environment; GPT TUI tmuxRunner uses run/offlineTestEnv which retains inherited configuration/SDK environment despite overriding HOME in the CLI command; its finally removes its owned HOME fixture. Host snapshot tests use the shared per-user tmpdir snapshot store, whose expiry policy can remove pre-existing expired snapshots. Real TaskManager fixture spawns with argv but without an explicit isolated env. These are inherited source behaviors, not newly introduced by the reviewed local refactors, and none were executed. Future execution must first isolate owned HOME/config/SDK/TMPDIR and retain fixtures per the task constraints.",
+          "Runtime behavior on native audio devices, real providers, actual compiled bundles, or Pi/TUI startup remains unverified. Source-only ACCEPT does not authorize running these tests under inherited user configuration."
+        ]
       }
     },
     {
@@ -6385,8 +6922,196 @@
       ],
       "chars": 96140,
       "lines": 2379,
-      "status": "pending",
-      "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d"
+      "status": "accepted",
+      "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+      "jobId": "task_04b03926",
+      "model": "openai-codex/gpt-6.1-sol",
+      "workspace": {
+        "kind": "worktree",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_04b03926",
+        "worktreePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_04b03926",
+        "sourcePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
+        "baseRef": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "baseOid": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "branch": "bruv/pr45-final-integrated-diff-lane-33-live--04b03926",
+        "preparationStatus": "ready",
+        "setupTaskId": "task_4fac23e6",
+        "setupStatus": "failed",
+        "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      },
+      "workspaceHistory": [
+        {
+          "kind": "worktree",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
+          "baseRef": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+          "preparationStatus": "preparing"
+        }
+      ],
+      "result": {
+        "lane": "lane-33",
+        "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
+        "candidate": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "verdict": "ACCEPT",
+        "diffReadPaths": [
+          "tests/live-main-integration.test.ts",
+          "tests/live-main-orchestrator-runtime.probe.ts",
+          "tests/live-main-owner.test.ts",
+          "tests/live-native-workflows.test.ts",
+          "tests/live-paired-runtime.test.ts",
+          "tests/live-passive-history.test.ts",
+          "tests/live-picker-tui.test.ts",
+          "tests/live-playback.test.ts",
+          "tests/live-probe-input.test.ts",
+          "tests/live-self-test.test.ts"
+        ],
+        "contextReadPaths": [
+          "tests/live-main-integration.test.ts",
+          "tests/live-main-orchestrator-runtime.probe.ts",
+          "tests/live-main-owner.test.ts",
+          "tests/live-paired-runtime.test.ts",
+          "tests/live-playback.test.ts",
+          "src/live/main-owner.ts",
+          "src/agent/instruction-continuity.ts",
+          "src/agent/extension.ts",
+          "src/typescript/extension.ts",
+          "src/live/lifecycle-access.ts",
+          "src/live/extension.ts",
+          "src/live/playback.ts",
+          "src/live/passive-history.ts",
+          "src/live/gpt-live-request.ts",
+          "src/live/transcript-text.ts",
+          "src/live/self-test.ts",
+          "src/live/helper.ts",
+          "src/live/audio.ts",
+          "src/cli.ts",
+          "tests/helpers.ts",
+          "tests/tui-helpers.ts",
+          "tests/live-tui-startup.ts",
+          "tests/fixtures/live-picker-tui.ts",
+          "scripts/live-probe-input.ts",
+          "scripts/probe-live-capability.ts",
+          "scripts/probe-live-recorded.ts",
+          "scripts/probe-live-controlled.ts",
+          ".github/workflows/live.yml",
+          ".github/workflows/release.yml"
+        ],
+        "sourceBlobs": {
+          "tests/live-main-integration.test.ts": "f686e6b4980a927b418525ff76f1a99240a0ee4f",
+          "tests/live-main-orchestrator-runtime.probe.ts": "1fe3e517c2e8243377f1caa5279ed42639e2e282",
+          "tests/live-main-owner.test.ts": "9e228bc0c98e2ae271d679c8aeedcfd3e4a10fe1",
+          "tests/live-native-workflows.test.ts": "ea5008ecc3b7f7184badc6e62dc76fd53b61e6a2",
+          "tests/live-paired-runtime.test.ts": "aa5b12e2f940b212837066b0331c31a2d80e7f8d",
+          "tests/live-passive-history.test.ts": "ab128e1f7515e20fc4d8d852b7d6beeed8bf9e1f",
+          "tests/live-picker-tui.test.ts": "2c740636666cee2691b5664bb9ed6ad9ed572798",
+          "tests/live-playback.test.ts": "af8b12dd1bf13514c5313825d06d9a018d380fcc",
+          "tests/live-probe-input.test.ts": "2a8b1efe9800aaf736388f3fb408ffd37bcfa913",
+          "tests/live-self-test.test.ts": "43cc779434834ecad511d79f2f06cff346ed289d"
+        },
+        "sourceJourneys": [
+          {
+            "paths": [
+              "tests/live-main-integration.test.ts",
+              "tests/live-main-owner.test.ts",
+              "src/live/main-owner.ts",
+              "src/agent/instruction-continuity.ts",
+              "src/typescript/extension.ts"
+            ],
+            "readingReason": "Read complete removed and added response envelopes and owner test restructuring, then real session fixtures, registered execute rendering/execution, ordinary prompt adapter, LiveHistory reservations, user preparation, and result commit. offlineAssistantStream retains the stop/toolUse/aborted terminal-event distinction; textResponseStream retains its start event. withPiSession and executeView remove fixture/render boilerplate without replacing production hooks or renderers. The busy fixture now has one authoritative _isAgentRunActive flag instead of an independently mutable closure.",
+            "systemReason": "Owner tests separately expose registration/rendering, typed-input fencing and post-release text restoration. New ordering cases correspond to pair reservation, boundary flush and preparation wait in production, rather than using a synthetic caller as proof of public Live ownership. No permission or canonical-history assertions were discarded by the regrouping."
+          },
+          {
+            "paths": [
+              "tests/live-main-owner.test.ts",
+              "tests/live-main-integration.test.ts",
+              "src/live/main-owner.ts",
+              "src/agent/extension.ts",
+              "src/live/lifecycle-access.ts",
+              "src/typescript/extension.ts"
+            ],
+            "readingReason": "Followed close -> drainingOwners -> currentMainToolOwner -> jobs.stopWork host report capture -> foreground abort -> afterToolCall -> canonical result/UI terminal event -> release. Inspected registered live.stop session/leaf/signal checks and scoped lifecycle bus. Read added queued-pair rejection and late-update assertions alongside those paths.",
+            "systemReason": "Voice teardown remains distinct from explicit work cancellation. The added drain test checks host evidence reaches both hook and durable result, and checks late updates do not resurrect a completed tool UI. Helper extraction does not move admission/lifetime authority into a broad context object."
+          },
+          {
+            "paths": [
+              "tests/live-paired-runtime.test.ts",
+              "tests/live-main-integration.test.ts",
+              "tests/live-main-orchestrator-runtime.probe.ts",
+              "src/live/main-owner.ts",
+              "src/agent/instruction-continuity.ts",
+              "src/typescript/extension.ts"
+            ],
+            "readingReason": "Read paired session/process/envelope helpers and full deletions; inspected real paired assertions, production delegation dedup, queueBackendTurn, typed delegation and task notification admission. Checked original paired stream envelope against baseline: done.reason=stop with message.stopReason=toolUse on tool turns is preserved, not newly introduced. Read unchanged synthetic probe dispatch and shutdown context for the clarified comment.",
+            "systemReason": "Paired coding remains on the selected ordinary session, retries share an operation, close preserves already-admitted backend work, and duplicate completed notifications authorize one continuation while live-transcript remains passive. The async fixture now uses an explicit executable/argv and private env rather than sh with inherited env. Its result still drives the same notification path; it is not evidence of production JobService delivery. The revised probe comment correctly separates synthetic advertisement from real admission."
+          },
+          {
+            "paths": [
+              "tests/live-passive-history.test.ts",
+              "tests/live-main-integration.test.ts",
+              "src/live/passive-history.ts",
+              "src/live/gpt-live-request.ts",
+              "src/live/transcript-text.ts",
+              "src/live/main-owner.ts",
+              "src/live/extension.ts"
+            ],
+            "readingReason": "Followed delegation audit requestText persistence through the context hook into pendingAudit/projectUserTurn, terminal-control normalization, speech-only request recovery, and branch-local legacy fragment dedup. Read the complete new non-user-interposition, unreadable-latest-audit and repeated-projection cases.",
+            "systemReason": "New tests assert distinct lifetimes: an audit survives non-user records but is consumed by the next user even when unmatched; legacy dedup belongs to a single projection. They preserve source objects and avoid attaching speech provenance to a later identical typed request. This agrees with raw hidden audit retention and clean canonical prompt assertions in the integration test."
+          },
+          {
+            "paths": [
+              "tests/live-playback.test.ts",
+              "src/live/playback.ts",
+              "src/live/extension.ts"
+            ],
+            "readingReason": "Read all playback diff and actual Clock/harness. Followed PendingAudio copy/boundary accounting, PlaybackTimeline reservation vs acceptance, scheduler in-flight/flush/epoch handling, and extension send/flush/played-estimate/turn-boundary callers. HeldPipe keeps separate promises per attempted write; NativeRing relocates the exact block consumption and delayed report model from the prior inline simulation.",
+            "systemReason": "These are small owned test models, not alternate production schedulers. They reduce duplicated timing bookkeeping while preserving cadence assertions. Added tail-copy and successful-old-write tests directly correspond to pending bytes excluding the taken frame, flush not freeing an outstanding pipe slot, and stale epoch success not crediting new playback."
+          },
+          {
+            "paths": [
+              "tests/live-native-workflows.test.ts",
+              "tests/live-self-test.test.ts",
+              ".github/workflows/live.yml",
+              ".github/workflows/release.yml",
+              "src/live/helper.ts",
+              "src/live/self-test.ts",
+              "src/live/audio.ts",
+              "src/cli.ts"
+            ],
+            "readingReason": "Read full workflow extraction diff, workflow hello-only Python context, complete new self-test source, helper integrity/extraction cleanup, audioEnvironment and CLI diagnostic branch. Traced child-only module mock to real diagnostic spawnSync calls and finally cleanup. Cleanup targets the mkdtemp extraction child directory, not fixture HOME; timeout fixture PID is created inside the private root.",
+            "systemReason": "Workflow tests retain exact captureGate handshake validation without running workflow builds or opening devices. New diagnostic tests exercise self-test failure, stop-only framing, timeout/cleanup and credential stripping using a known fixture key. They do not establish actual platform helper embedding or device/provider readiness. Diagnostic protocol-v1 success remains a narrower existing contract than workflow exact capture-gate acceptance; no new public readiness guarantee is claimed by the assertions."
+          },
+          {
+            "paths": [
+              "tests/live-picker-tui.test.ts",
+              "tests/fixtures/live-picker-tui.ts",
+              "tests/helpers.ts",
+              "tests/tui-helpers.ts",
+              "tests/live-tui-startup.ts"
+            ],
+            "readingReason": "Read complete terminal fixture extraction and its deletions, explicit argv quoting, private socket/config paths and allowlisted env. Followed run env handling and unchanged capture/startup helpers into the fixture that injects config/credential status while throwing on provider/device/session construction.",
+            "systemReason": "withPickerTerminal owns tmux and retained private filesystem, leaving model-picker interaction and assertions visible in the scenario. Switching from a named socket with inherited runner env to a socket under the owned root prevents shared terminal/config ownership. Real CLI/rendering remains exercised conceptually, not replaced by a test renderer."
+          },
+          {
+            "paths": [
+              "tests/live-probe-input.test.ts",
+              "scripts/live-probe-input.ts",
+              "scripts/probe-live-capability.ts",
+              "scripts/probe-live-recorded.ts",
+              "scripts/probe-live-controlled.ts"
+            ],
+            "readingReason": "Read full test split and deletions, bounded streaming UTF-8 reader/finally fd close, cutoff handling, argument gates and each probe plan-validation call site before source/config/credential work.",
+            "systemReason": "Per-case retained study files eliminate overwriting one fixture across rejection cases without weakening cutoff, malformed JSON, invalid UTF-8 or size checks. Invalid plans run with an explicit private cwd/env so missing source remains an owned nonexistent path. Actual probe call sites reject the selected invalid plans before private source and credential loading."
+          }
+        ],
+        "integrationReadingReason": "ACCEPT for this lane only. Complete assigned baseline-to-candidate diffs, including removals, show cohesive local test-fixture extraction rather than a generalized testing framework or a context bag. Envelope helpers own response boilerplate, fixture helpers own session/process resources, and scenarios retain authority/ordering assertions. Production context confirms direct and paired owner lifetimes, raw-audit/model projection and playback acceptance semantics remain distinct. New owner/history/playback tests add source-aligned assertions; diagnostic and terminal isolation changes improve comprehensibility of filesystem/process ownership. No lane-local introduced behavior contradiction or lost ownership found. This is a fresh source judgment, not a conclusion from tests, coverage summaries or prior judgments.",
+        "objections": [],
+        "limits": [
+          "All ten assigned diffs fully read; no unread assigned gaps. Related context was read selectively, not whole repository or complete third-party SDK.",
+          "Read-only source review: no tests, setup, builds, installs, formatter, auth/device access, secret access, recovery work or delegation. Unsupported Pi preparation was not attempted, retried or bypassed. No claimed runtime/CI success.",
+          "No whole-repository sign-off. Live auth, macOS audio, actual embedded payload readiness and Pi runtime private-seam compatibility remain unverified. The synthetic orchestration probe is not production advertisement/admission evidence.",
+          "Existing owned-temp cleanup in test code was inspected only, never executed. Paired/picker/probe/diagnostic retained fixture roots were not created in this review. Some pre-existing in-process session fixtures rely on runner isolation rather than themselves replacing HOME; no execution safety attestation is made for running the suite under inherited user env.",
+          "Durable provenance: source reads used exact Git baseline/candidate objects in /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_04b03926 (HEAD at candidate). No /tmp checkout or copied source evidence. Only the requested untracked result file was written; candidate/source/worktree preserved."
+        ]
+      }
     },
     {
       "id": "lane-34",
@@ -6405,8 +7130,178 @@
       ],
       "chars": 53165,
       "lines": 1325,
-      "status": "pending",
-      "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d"
+      "status": "accepted",
+      "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+      "jobId": "task_8ea04e49",
+      "model": "openai-codex/gpt-6.1-sol",
+      "workspace": {
+        "kind": "worktree",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_8ea04e49",
+        "worktreePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_8ea04e49",
+        "sourcePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
+        "baseRef": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "baseOid": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "branch": "bruv/pr45-final-integrated-diff-lane-34-live--8ea04e49",
+        "preparationStatus": "ready",
+        "setupTaskId": "task_c9dd9dc6",
+        "setupStatus": "failed",
+        "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      },
+      "result": {
+        "lane": "lane-34",
+        "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
+        "candidate": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "verdict": "ACCEPT",
+        "diffReadPaths": [
+          "tests/live-session.test.ts",
+          "tests/live-setup-diagnostics.test.ts",
+          "tests/live-status.test.ts",
+          "tests/live-tool-result.test.ts",
+          "tests/live-tools.test.ts",
+          "tests/live-waveform.test.ts",
+          "tests/offline-transport-probe.test.ts",
+          "tests/openai-resample.test.ts",
+          "tests/openai-session-diagnostics.test.ts",
+          "tests/openai-session-schema.test.ts"
+        ],
+        "contextReadPaths": [
+          "tests/live-session.test.ts",
+          "tests/live-setup-diagnostics.test.ts",
+          "tests/live-tool-result.test.ts",
+          "tests/openai-session-diagnostics.test.ts",
+          "tests/openai-session-schema.test.ts",
+          "src/live/session.ts",
+          "src/live/types.ts",
+          "src/live/status.ts",
+          "src/live/extension.ts",
+          "src/live/main-owner.ts",
+          "src/live/tool-result.ts",
+          "src/live/waveform.ts",
+          "src/live/openai-resample.ts",
+          "src/live/gpt-live-session.ts",
+          "src/live/openai-session.ts",
+          "src/live/offline-transport-probe.ts",
+          "src/live/openai-upgrade-socket.ts",
+          "src/live/openai-connect-error.ts",
+          "src/live/openai-errors.ts",
+          "src/live/diagnostics.ts",
+          "src/live/setup-probe.ts",
+          "src/live/providers.ts",
+          "src/typescript/definition.ts",
+          "native/live/main.swift"
+        ],
+        "sourceBlobs": {
+          "tests/live-session.test.ts": "9e7a020ce54ee934ca51bccdfd5f575d777d139a",
+          "tests/live-setup-diagnostics.test.ts": "dfebe3a0f48e57f513209583119326744dff4afd",
+          "tests/live-status.test.ts": "21bfe18b88d0e9e78327414ac63d6fabe2cb51ac",
+          "tests/live-tool-result.test.ts": "138201b97ba93d82f16142099255a2991f57094e",
+          "tests/live-tools.test.ts": "1c93a8e1bdb4066f2ab226871e34415e658d48ea",
+          "tests/live-waveform.test.ts": "e12560fc8c07b0eee1afdda9dcf96816dcdc3b68",
+          "tests/offline-transport-probe.test.ts": "ceee222b98414140f6d2688bd128ace3f1c02add",
+          "tests/openai-resample.test.ts": "92094c7497e5e1b150475d8ae801b3f11901898b",
+          "tests/openai-session-diagnostics.test.ts": "5e91f029981f49fee3848a977cfe92d36da072e8",
+          "tests/openai-session-schema.test.ts": "7cb16bb350d53b4cfc81e45960f4ab4aa34cef74"
+        },
+        "sourceJourneys": [
+          {
+            "paths": [
+              "tests/live-session.test.ts",
+              "src/live/session.ts",
+              "src/live/types.ts"
+            ],
+            "readingReason": "Read every renamed/split scenario including deletions, the unchanged injected SDK harness, and the complete candidate session. Splits keep the pending-connect cancellation, consumed late rejection, throwing callbacks, goAway, ready reentrancy and send reentrancy assertions rather than removing a lifecycle branch.",
+            "systemReason": "connect races SDK setup against bounded local cancellation; epoch gates callbacks and closes late connections. close invalidates epoch before callbacks/SDK close. No added lifecycle owner or revived mic path."
+          },
+          {
+            "paths": [
+              "tests/live-tools.test.ts",
+              "src/live/session.ts",
+              "src/live/types.ts",
+              "src/live/main-owner.ts",
+              "src/live/tool-result.ts"
+            ],
+            "readingReason": "Read complete test reorganization and baseline/candidate dispatch implementation. The typed fixture captures calls at execute invocation, not receipt, while explicit promise resolvers distinguish queued from dispatched work. New cancellation-capacity and rejected-ID replay cases match the progress union and retained per-session ledger.",
+            "systemReason": "Admission reserves a slot before the microtask checkpoint; cancellation revokes queued authority only; resolved replies preserve original name/response and cannot reexecute. pendingTools is released in finally, including cancelled calls. Owner orchestration supplies session artifactDirectory, validates active branch/admission, and its close path does not abort accepted controllers (stopForeground is separate). The fixture is narrow and does not replace owner authority."
+          },
+          {
+            "paths": [
+              "tests/live-tool-result.test.ts",
+              "src/live/tool-result.ts",
+              "src/live/session.ts",
+              "src/live/openai-session.ts",
+              "src/live/main-owner.ts"
+            ],
+            "readingReason": "Read complete artifact test changes and actual serialization/writing helper plus both provider result callers and owner directory assignment. UTF-8 size includes the JSON envelope; preview slices JSON characters; images always get complete artifacts, including small images. Failure tests block mkdir with an owned fixture file, not inherited configuration.",
+            "systemReason": "Both transport callers pass the owner directory. Helper uses private mkdtemp children and mode-0600 JSON, preserves isError in small output, and reports storage/serialization failure without a fabricated evidence path. New artifact-writing tests own fresh retained mkdtemp directories; no cleanup or external credential access is needed."
+          },
+          {
+            "paths": [
+              "tests/live-status.test.ts",
+              "src/live/status.ts",
+              "src/live/extension.ts",
+              "tests/live-waveform.test.ts",
+              "src/live/waveform.ts"
+            ],
+            "readingReason": "Compared status extraction with the actual extension render caller and baseline inline expression. Six presentation facts retain the exact connecting/continuous/PTT/availability/playback/reasoning priority. Read complete waveform scenario splits and complete meter source; each fresh fixture preserves relevant decay/reset/queue assertions.",
+            "systemReason": "compactLiveStatus is pure presentation, not readiness state. Its small facts object is not a context bag. Waveform keeps bounded scalar peaks rather than PCM retention; reset and tick semantics match tests. Candidate live-source search found no production LiveWaveform caller, so these tests are meter-unit evidence, not proof of the current rendered footer."
+          },
+          {
+            "paths": [
+              "tests/live-setup-diagnostics.test.ts",
+              "native/live/main.swift",
+              "src/live/diagnostics.ts"
+            ],
+            "readingReason": "Read new source-level barrier checks against actual LiveOutput event/startPolling/cancelPolling/finishStop/poll/discardCapture and Live.start/stop callers, along with existing sanitization tests/helper branches.",
+            "systemReason": "ready is enqueued on the serial output queue before timer resumes; stop cancels polling before engine teardown/flush and synchronously clears capture and emits played-zero before stopped. The source test correctly labels itself non-runtime macOS evidence; it introduces no generalized AST/test abstraction."
+          },
+          {
+            "paths": [
+              "tests/offline-transport-probe.test.ts",
+              "src/live/offline-transport-probe.ts",
+              "src/live/openai-session.ts",
+              "src/live/openai-upgrade-socket.ts",
+              "src/live/openai-connect-error.ts",
+              "src/live/providers.ts"
+            ],
+            "readingReason": "Read complete new test and complete probe/socket/classifier sources. Both model outcomes use production defaultSocket, not a mocked successful socket. The negative test changes only the rejection fixture to 403 and requires probe failure without success logging.",
+            "systemReason": "Endpoints are constructed from owned ephemeral 127.0.0.1 listeners, not user environment. Probe closes socket/stops listener/clears timer in finally. Upgrade response reader bounds bytes/time, suppresses racing generic errors, forwards only status/code/model into allowlisted diagnostics. Tests restore process-global spies and stop captured owned listeners in finally. No live provider/auth claim follows."
+          },
+          {
+            "paths": [
+              "tests/openai-resample.test.ts",
+              "src/live/openai-resample.ts",
+              "src/live/openai-session.ts",
+              "src/live/gpt-live-session.ts"
+            ],
+            "readingReason": "Read complete new reference/literal/chunk/odd-input/reset tests, complete converter, Realtime sendAudio/endAudio/close reset callers, and unchanged GPT-Live appendMicrophone/finishTransport use. Literal signed endpoints anchor the reference rather than only comparing two calculated outputs.",
+            "systemReason": "Streaming carries previous sample and rational phase across chunks; odd input rejects before state mutation; flush emits a held endpoint and resets; reset discards it. Realtime release flushes, and GPT-Live continuous capture carries phase until transport reset. Shared helper remains a small specialized converter with no policy/lifecycle context."
+          },
+          {
+            "paths": [
+              "tests/openai-session-schema.test.ts",
+              "tests/openai-session-diagnostics.test.ts",
+              "src/live/openai-session.ts",
+              "src/live/openai-errors.ts",
+              "src/live/setup-probe.ts",
+              "src/typescript/definition.ts",
+              "src/live/extension.ts"
+            ],
+            "readingReason": "Read complete assigned diffs, complete schema fixture/socket and diagnostic fake socket, actual setup payload and error/message/response-created/response-done paths, safe field allowlists and setup execute declaration caller. Named case records co-locate optional expectedField instead of branching on scenario prose; schema mutations and error assertions are retained.",
+            "systemReason": "Fixture genuinely validates outgoing setup before async session.updated/error, not blind acknowledgement. Diagnostics correlate response.done to known not-yet-done responses and redact raw messages; provider error events fail/close. IMPORTANT boundary: new nonterminal assertion describes only an isolated provider session with an accumulating onError callback. Production extension still routes every onError to fail -> stopObserved -> voice.close; therefore public Live recovery after response failure is NOT established. This pre-existing behavior is unchanged in baseline response.done and extension callback paths."
+          }
+        ],
+        "integrationReadingReason": "ACCEPT for this bounded test/source seam lane, not whole-repository approval. All 53,165 characters of the assigned baseline-to-candidate diff, including removed combined scenarios, were read in contiguous bounded sections. Refactors improve intrinsic reading by separating lifecycle scenarios, grouping dispatch/admission/host-observation tests, replacing manual promise callbacks with named resolvers, narrowing captured fixture types, and placing schema expectations beside mutations. System burden stays small: session progress states consolidate booleans without new authority; status accepts presentation facts only; artifact ownership and transport cleanup remain explicit. Actual caller journeys agree with preserved test-seam behavior. No new blocking contradiction or large abstraction/context bag was found. Existing narrower-than-public evidence boundaries are spelled out rather than promoted into integration acceptance.",
+        "objections": [],
+        "limits": [
+          "Source-only review. No tests, setup, builds, installs, formatter, auth, devices, network probes or preparation were run; unsupported Pi preparation was not retried or bypassed.",
+          "No delegation, secret access, recovery work, source edits, deletion/cleanup commands, destructive git or user-data mutation. Only the requested untracked result JSON was written.",
+          "All ten assigned diffs fully read; no assigned diff gaps. ContextReadPaths records actual read context, not an assertion that every listed context file was read in full; large callers were read at relevant authority/lifetime/presentation/setup/error sections.",
+          "The response-failure nonterminal unit test is not public-run nonterminal evidence: production extension makes onError terminal. This is inherited baseline behavior, not a regression introduced by assigned changes. Parent should not claim recoverable public Live behavior from this test.",
+          "Swift ordering is source evidence only; AVFoundation runtime, acoustic/device behavior and macOS execution remain unverified. Loopback and schema fixtures are not provider acceptance/auth/model-access evidence.",
+          "No tests were executed and no green-test summaries, prior per-file artifacts or coverage counts were used. Waveform is unit-only with no production LiveWaveform caller found in candidate src/live.",
+          "Durable review provenance: existing worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_8ea04e49 at candidate HEAD. Source was read via exact Git objects; candidate and worktree retained. Test-code tmpdir fixture directories would be owned/retained if run; none were created by this review."
+        ]
+      }
     },
     {
       "id": "lane-35",
@@ -6417,8 +7312,116 @@
       ],
       "chars": 69315,
       "lines": 1560,
-      "status": "pending",
-      "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d"
+      "status": "accepted",
+      "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+      "jobId": "task_65b69a41",
+      "model": "openai-codex/gpt-6.1-sol",
+      "workspace": {
+        "kind": "worktree",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_65b69a41",
+        "worktreePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_65b69a41",
+        "sourcePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
+        "baseRef": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "baseOid": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "branch": "bruv/pr45-final-integrated-diff-lane-35-live--65b69a41",
+        "preparationStatus": "ready",
+        "setupTaskId": "task_64f60ba0",
+        "setupStatus": "failed",
+        "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      },
+      "result": {
+        "lane": "lane-35",
+        "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
+        "candidate": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "verdict": "ACCEPT",
+        "diffReadPaths": [
+          "tests/openai-session.test.ts",
+          "tests/openai-upgrade-socket-node.test.mjs"
+        ],
+        "contextReadPaths": [
+          "src/live/openai-session.ts",
+          "src/live/openai-upgrade-socket.ts",
+          "src/live/tool-result.ts",
+          "src/live/types.ts",
+          "src/live/openai-resample.ts",
+          "src/live/openai-connect-error.ts",
+          "src/live/openai-errors.ts",
+          "src/live/providers.ts",
+          "src/live/extension.ts",
+          "src/live/playback.ts",
+          "src/live/main-owner.ts"
+        ],
+        "sourceBlobs": {
+          "tests/openai-session.test.ts": "db32c13aeccdc9c9a8e7f991fc7a2442ee1575c8",
+          "tests/openai-upgrade-socket-node.test.mjs": "4e191af147d30885d04d0d601e21c8dc0eae8481"
+        },
+        "sourceJourneys": [
+          {
+            "paths": [
+              "tests/openai-session.test.ts",
+              "src/live/openai-session.ts",
+              "src/live/types.ts",
+              "src/live/extension.ts",
+              "src/live/main-owner.ts"
+            ],
+            "readingReason": "Read every removed and added test, then connect/close, inputActivity, toolDone, continueResponse and response retirement. Previously scattered scenarios are retained under setup/transport, input conversion, push-to-talk, transcripts/context, response lifecycle, output timeline, and tool admission sections. Deferred admission promises replace guessing whether an asynchronous execute has started in the two interruption scenarios; parallel results are keyed by call ID instead of callback arrival position.",
+            "systemReason": "The tests preserve the transport admission boundary: cancellation before the dispatch microtask prevents execution; admitted work may publish a result after speech while its response loses continuation authority; close changes serial/state and prevents late socket events/replies. The actual extension supplies orchestration from the ordinary main owner, not a companion authority. Provider invocation in these fake-orchestration tests must not be confused with registered-runtime admission, which the real owner separately guards."
+          },
+          {
+            "paths": [
+              "tests/openai-session.test.ts",
+              "src/live/tool-result.ts",
+              "src/live/openai-session.ts",
+              "src/live/main-owner.ts"
+            ],
+            "readingReason": "Follow the oversized tool result from injected execute through voiceToolResult, its returned artifactPath, and the new Bun.file JSON inspection. Read the real main-owner artifactDirectory assignment.",
+            "systemReason": "The changed test now owns its mkdtemp directory and checks that the full 100,000-character content was saved, rather than only checking a filename substring. voiceToolResult creates a child directory there and stores result.json; finally closes the session and recursively removes only the exact owned fixture directory. This is a meaningful isolation and assertion improvement, not an abstraction or context bag. Cleanup was inspected, never executed."
+          },
+          {
+            "paths": [
+              "tests/openai-upgrade-socket-node.test.mjs",
+              "src/live/openai-upgrade-socket.ts",
+              "src/live/openai-session.ts",
+              "src/live/openai-connect-error.ts",
+              "src/live/openai-errors.ts",
+              "tests/openai-session.test.ts"
+            ],
+            "readingReason": "Read the entire new Node test and entire upgrade adapter. Follow unexpected-response into readRejectionCode, cancelRejection, ws.terminate and suppression of unclassified ws error/close events. Read the existing Bun loopback rejection/setup tests and safe diagnostics classifiers.",
+            "systemReason": "The new test exercises a different lifetime from receiving a completed HTTP rejection: an incomplete Content-Length body keeps diagnostics pending, then close must destroy the response/peer, clear the one-second timer and emit no later diagnostic. The adapter has the matching cancel function and done guard. The fixture opens only an ephemeral 127.0.0.1 server with no Authorization credentials, and closes/destroys only its own sockets. The explicit Bun skip and Node-24 invocation comment explain why this case is outside the Bun suite rather than silently pretending Bun tests establish it."
+          },
+          {
+            "paths": [
+              "tests/openai-session.test.ts",
+              "src/live/openai-session.ts",
+              "src/live/playback.ts",
+              "src/live/types.ts",
+              "src/live/extension.ts"
+            ],
+            "readingReason": "Read the added multi-chunk, completed-response/unheard-audio, flush-reset and heard-items/bound scenarios against the complete OutputAudioTimeline implementation, response handlers and actual PlaybackScheduler epoch/reset adapter. Also read unchanged push-to-talk callers/tests and the complete resampler.",
+            "systemReason": "The tests distinguish item origin authorization from playback timing, retain the first content_index/start across chunks, prevent late chunks from an old response and reset offsets on an interruption. Real callbacks use playback.playedMs and playback.interrupt(epoch); ordinary turn completion does not flush playback. Those boundaries fit the helper and existing shared contract. These scenarios improve discoverability, but do not establish every retirement case; the inherited retirement caveat is recorded below."
+          },
+          {
+            "paths": [
+              "tests/openai-session.test.ts",
+              "src/live/openai-session.ts",
+              "src/live/main-owner.ts"
+            ],
+            "readingReason": "Follow the new retained-call-ID test through response.calls, callIds, pending result publication and subsequent response.created cleanup; compare the corresponding baseline session implementation and baseline main-owner replay cache.",
+            "systemReason": "The pending reply keeps its response/replay ID alive through r2; after settlement and another response creation the provider allows an orchestration invocation for that ID. This matches the baseline provider behavior despite the new response-local map. The actual main owner still memoizes same-ID/same-signature executions for the owner lifetime, so executions in this injected test count provider orchestration invocations, not duplicate real side effects."
+          }
+        ],
+        "integrationReadingReason": "ACCEPT for the two assigned test-source diffs, not whole-repository approval. Complete diff reading shows an organizational rewrite retaining the removed scenarios, strengthened owned artifact validation, more explicit asynchronous admission/result control, focused output-lifetime assertions, and a small runtime-specific rejection-cancellation fixture. The grouping reduces the navigation burden of previously mixed protocol/authority tests without adding a generic harness, broad context object, or hidden fixture lifecycle. Actual candidate implementation and unchanged real callers support the assertions at their stated transport seam. No assigned-diff regression or blocking objection was found. Tests are not execution evidence here. Two inherited context caveats below should remain visible to the parent/owning implementation lane rather than be obscured by this test review.",
+        "objections": [],
+        "limits": [
+          "Read-only source review; no tests, setup, builds, installs, formatting, auth/device access, credentials, network requests, or source edits. Only the required untracked result file was written. No delegation or unsupported Pi preparation was attempted.",
+          "Complete assigned diff including deletions was read in contiguous character ranges from start through end. HEAD is the exact candidate; both working file hashes match the recorded candidate blobs. No assigned diff gaps remain. Existing worktree/candidate retained; durable provenance is this worktree and the exact recorded Git commits/blobs, not a temporary checkout.",
+          "Context was intentionally bounded: complete candidate openai-session, openai-upgrade-socket, tool-result, types, openai-resample, openai-connect-error and openai-errors; provider catalogue/constants; playback source through interrupt/close entry; extension provider factory/output/interrupt/tool-conversation callbacks; main-owner close/orchestration/execute result paths. Baseline comparison covered corresponding response retirement/tool admission and main-owner replay handling, not full unrelated baseline files. No attestation of unread unrelated code.",
+          "Inherited source-level retirement gap for owning-lane/parent attention: response.created first retires only queued items whose response still exists and is done, then deletes settled done responses even if their audio is unheard. At the next response creation, an item whose response was already removed cannot satisfy responses.get(id)?.done, even once heard. OutputAudioTimeline therefore can retain already-heard timing until interruption and eventually hit its 128 queued-item bound across enough un-interrupted responses. The same order/predicate exists in the exact baseline (audioItems), so this is not introduced by the assigned test rewrite. The new heard-items test advances playback before each next response creation, and does not cover this missing-lifetime-owner case. This lane acceptance is not a claim that arbitrary retirement is solved.",
+          "Inherited authority distinction: real main-owner execute waits for pending transcript/turn preparation and memoizes call IDs for its lifetime. Fake-orchestration tests establish transport invocation/replay retirement, not ASR-independent registered execution or owner-level call-ID reuse. The relevant baseline owner has the same replay cache.",
+          "No live auth/device behavior verified. Node/Bun runtime behavior comments were reviewed as source rationale, not independently reproduced. No prior review artifacts, judgments, coverage counts, summaries or green tests were used.",
+          "Safety for ALL descendants: NO sudo, recovery investigation, user secrets, shell deletion/cleanup commands, inherited HOME/config/SDK cleanup, nested shell traps, destructive git, or user-data mutation. User already recovered data and requested no recovery work. Tests must use explicit process argv/env and owned fs.mkdtemp fixture HOME/config/SDK; retain them, do not delete. Review filesystem/network effects BEFORE tests/setup. Existing test-code cleanup of provably owned temporary paths may be inspected but NEVER run a shell trap or inherited HOME removal. Need live auth/device? Report unverified, don't access credentials. Propagate these constraints verbatim. Independent code/review agents get durable worktrees, not /tmp code checkouts. Keep existing worktrees and candidate evidence. Test/source fixtures may use /tmp, but document durable provenance."
+        ]
+      }
     },
     {
       "id": "lane-36",
@@ -6428,8 +7431,79 @@
       ],
       "chars": 1163,
       "lines": 31,
-      "status": "pending",
-      "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d"
+      "status": "accepted",
+      "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+      "jobId": "task_5728b9fb",
+      "model": "openai-codex/gpt-6.1-sol",
+      "workspace": {
+        "kind": "worktree",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_5728b9fb",
+        "worktreePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_5728b9fb",
+        "sourcePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
+        "baseRef": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "baseOid": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "branch": "bruv/pr45-final-integrated-diff-lane-36-paren-5728b9fb",
+        "preparationStatus": "ready",
+        "setupTaskId": "task_52898654",
+        "setupStatus": "failed",
+        "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      },
+      "result": {
+        "lane": "lane-36",
+        "baseline": "118edf14db266c51d563c83342fef6dacdc5267b",
+        "candidate": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "verdict": "ACCEPT",
+        "diffReadPaths": [
+          "tests/live-linux-protocol-regressions.test.ts"
+        ],
+        "contextReadPaths": [
+          "native/live-linux/tests/test_protocol.py",
+          "native/live-linux/tests/protocol.py",
+          "package.json",
+          "scripts/ci.sh",
+          "tests/live-native-workflows.test.ts"
+        ],
+        "sourceBlobs": {
+          "tests/live-linux-protocol-regressions.test.ts": "22517c3026595dc8dd22ecb7dd2f07a1d174c164"
+        },
+        "sourceJourneys": [
+          {
+            "paths": [
+              "package.json",
+              "scripts/ci.sh",
+              "tests/live-linux-protocol-regressions.test.ts",
+              "native/live-linux/tests/test_protocol.py"
+            ],
+            "readingReason": "Root tests and the macOS live wildcard both discover the new thin Bun adapter. Absolute import-relative fileURLToPath resolution, explicit Python argv with -B, non-Windows gating, a 15-second synchronous subprocess timeout inside a 20-second test, and reporting of error/status/signal/stdout/stderr give the runner a clear failure boundary. Python unittest.main runs the regression suite, not the separate device smoke entrypoint.",
+            "systemReason": "Adds offline harness regression coverage to existing test discovery without modifying runtime public behavior, triggering compiled helper builds, or creating a parallel TS implementation of Python protocol logic."
+          },
+          {
+            "paths": [
+              "tests/live-linux-protocol-regressions.test.ts",
+              "native/live-linux/tests/test_protocol.py",
+              "native/live-linux/tests/protocol.py"
+            ],
+            "readingReason": "Read both Python files completely. ProtocolTests launch only sys.executable -c fixture programs through Protocol's piped Popen; __exit__ closes stdin, waits/kills and closes streams. _next_event owns byte buffering and select deadlines, exercised by batched, partial and unterminated lines. Microphone cases patch ctypes.CDLL before entry and inspect write/open failure propagation and stream release; PlaybackFixtureTests use Mock clients and patch the synthetic microphone before check_virtual_audio. protocol.py's actual-device main is guarded and not invoked on import.",
+            "systemReason": "The claimed device-free boundary is supported by actual call paths. Local regression cases exercise the shared harness's lifetime/error semantics rather than requiring Pulse credentials, audio hardware, or a live helper."
+          },
+          {
+            "paths": [
+              "tests/live-native-workflows.test.ts",
+              "tests/live-linux-protocol-regressions.test.ts"
+            ],
+            "readingReason": "Inspected the neighboring workflow test's first 65 lines, including its owned mkdtemp HOME/config/SDK fixture and Python argv. It establishes existing Python subprocess test precedent; the assigned adapter itself supplies no env and inherits its caller environment.",
+            "systemReason": "No file-writing or config/SDK lookup occurs in the assigned Python call path; -B suppresses bytecode writes. Inherited environment is recorded as a review limitation, not claimed to be an isolated execution sandbox."
+          }
+        ],
+        "integrationReadingReason": "Complete assigned addition read (baseline path absent; no deletions). The adapter is intrinsically small and leaves process/protocol ownership in the existing Python helper. Cross-file import, discovery, mocks and shutdown paths agree; no context bag, duplicate parser, runtime behavior change, or concrete integration contradiction found. Acceptance applies only to this lane's source relationship, not whole-repository approval or passing tests.",
+        "objections": [],
+        "limits": [
+          "Read-only review of exact Git candidate content in the existing durable worktree; no tests, setup, builds, installs, formatters, authentication, devices, network probes, recovery work, delegation, or source edits performed. Only the requested untracked result was written.",
+          "No unread assigned diff gaps. Related test_protocol.py and protocol.py read fully; package.json and scripts/ci.sh read fully; tests/live-native-workflows.test.ts inspected only through line 65, sufficient for the related Python fixture launch precedent.",
+          "Subprocess success, installed Python availability, actual audio behavior, and timing are unverified. The adapter inherits env and creates no owned HOME/config/SDK fixture; do not treat this review as authorization to run it with inherited user state. Any later execution must follow the user-required explicit env and retained owned mkdtemp fixtures.",
+          "No prior lane artifacts, coverage summaries or green tests used. Unsupported Pi preparation was not attempted or retried. No whole-repo sign-off."
+        ]
+      }
     },
     {
       "id": "lane-37",
@@ -6452,8 +7526,23 @@
       ],
       "chars": 89787,
       "lines": 1915,
-      "status": "pending",
-      "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d"
+      "status": "running",
+      "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+      "jobId": "task_e516dccb",
+      "model": "openai-codex/gpt-6.1-sol",
+      "workspace": {
+        "kind": "worktree",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_e516dccb",
+        "worktreePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_e516dccb",
+        "sourcePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
+        "baseRef": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "baseOid": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "branch": "bruv/pr45-final-integrated-diff-lane-37-remot-e516dccb",
+        "preparationStatus": "ready",
+        "setupTaskId": "task_6a80325a",
+        "setupStatus": "failed",
+        "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      }
     },
     {
       "id": "lane-38",
@@ -6472,8 +7561,23 @@
       ],
       "chars": 87210,
       "lines": 1663,
-      "status": "pending",
-      "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d"
+      "status": "running",
+      "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+      "jobId": "task_8c9fa9b3",
+      "model": "openai-codex/gpt-6.1-sol",
+      "workspace": {
+        "kind": "worktree",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_8c9fa9b3",
+        "worktreePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_8c9fa9b3",
+        "sourcePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
+        "baseRef": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "baseOid": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "branch": "bruv/pr45-final-integrated-diff-lane-38-remot-8c9fa9b3",
+        "preparationStatus": "ready",
+        "setupTaskId": "task_3e48fe46",
+        "setupStatus": "failed",
+        "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      }
     },
     {
       "id": "lane-39",
@@ -6493,8 +7597,23 @@
       ],
       "chars": 84145,
       "lines": 1779,
-      "status": "pending",
-      "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d"
+      "status": "running",
+      "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+      "jobId": "task_0f27188a",
+      "model": "openai-codex/gpt-6.1-sol",
+      "workspace": {
+        "kind": "worktree",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_0f27188a",
+        "worktreePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_0f27188a",
+        "sourcePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
+        "baseRef": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "baseOid": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "branch": "bruv/pr45-final-integrated-diff-lane-39-remot-0f27188a",
+        "preparationStatus": "ready",
+        "setupTaskId": "task_a149cb84",
+        "setupStatus": "running",
+        "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      }
     },
     {
       "id": "lane-40",
@@ -6513,8 +7632,23 @@
       ],
       "chars": 99875,
       "lines": 2012,
-      "status": "pending",
-      "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d"
+      "status": "running",
+      "candidateOverride": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+      "jobId": "task_9f34e293",
+      "model": "openai-codex/gpt-6.1-sol",
+      "workspace": {
+        "kind": "worktree",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_9f34e293",
+        "worktreePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_9f34e293",
+        "sourcePath": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a",
+        "baseRef": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "baseOid": "dbc75e65ba6c1a14baaecab1a1bb578e995a8a1d",
+        "branch": "bruv/pr45-final-integrated-diff-lane-40-remot-9f34e293",
+        "preparationStatus": "ready",
+        "setupTaskId": "task_c6be079f",
+        "setupStatus": "running",
+        "setupConfigDigest": "5374f7a03c95a5e94fbdfd6ad26c650d9abed88b0225e39dec6911c2494b8932"
+      }
     },
     {
       "id": "lane-41",

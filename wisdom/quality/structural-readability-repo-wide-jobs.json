@@ -3343,6 +3343,31 @@
         "model": "openai-codex/gpt-6.1-sol",
         "status": "handled",
         "sourceCommit": "eb8295ac0714ad9b6c4e548cc9130010949c7dd5"
+      },
+      {
+        "id": "task_80598b58",
+        "stage": "judge",
+        "focus": [
+          "tests/job-attention.test.ts",
+          "tests/job-bridge.test.ts",
+          "tests/job-service.test.ts",
+          "tests/questions-bridge.test.ts",
+          "tests/task-manager.test.ts"
+        ],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_80598b58",
+        "branch": "bruv/pr45-judge-5-execution-tasks-questions-f-80598b58",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_d07c58c2",
+        "stage": "primary",
+        "focus": ["tests/worktree-workspace.test.ts"],
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_d07c58c2",
+        "branch": "bruv/pr45-primary-1-execution-tasks-questions-d07c58c2",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled",
+        "sourceCommit": "af63383a0fb05cba759d32b21788c03f7a3cffa7"
       }
     ]
   },

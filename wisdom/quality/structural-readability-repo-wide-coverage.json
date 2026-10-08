@@ -23313,10 +23313,10 @@
       "initialBlob": "e8d8638eed7fa0b4c82670cb2afc79482715a371",
       "status": "pending",
       "area": "execution-tasks-questions",
-      "resumeState": "needs-rework",
-      "primaryId": "task_f4444bc8",
+      "resumeState": "needs-judge",
+      "primaryId": "task_d07c58c2",
       "judgeIds": ["task_83034949", "task_6181fd8e"],
-      "sourceCommit": null,
+      "sourceCommit": "af63383a0fb05cba759d32b21788c03f7a3cffa7",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
       "acceptedBlob": "7a01e214fe52d9bd144d6e0171b03a22e6863f01",
       "result": "Retain ACCEPT by task_83034949: the recorded accepted blob equals the actual focus blob at reviewed commit 59fbfcc9b5a88a1488e9f8ce39bb122d1c67da12. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob.",
@@ -23349,7 +23349,31 @@
           }
         ],
         "readingReason": "Actual async setup test reaches real prepareAgentSession with undefined sessionDir and inherited SDK paths, persisting a journal outside its fixture. Own all session/SDK/HOME/config and managed-child paths, preserve real async activation/publication assertions, no global env edits/test execution; coordinate actual existing APIs/source before adding abstractions."
-      }
+      },
+      "priorPrimaryLineage": [
+        {
+          "primaryId": "task_f4444bc8",
+          "sourceCommit": null
+        }
+      ],
+      "primaryCommit": "af63383a0fb05cba759d32b21788c03f7a3cffa7",
+      "primaryBase": "3e7300d72c5535ebb552b6b8651944fccd7e10b3",
+      "primaryResult": "The focus is now the explicit owned-runtime entry: retained mkdtemp root -> ownedFixtureEnv whitelist -> recorded child argv/env -> isolated cwd/preload -> delayed import of the existing cases -> captured exit/logs. Cases live in a non-discovered helper module and create retained per-case roots directly beneath that runtime. Every launch context supplies its own session directory and explicitly has no parent session identity; profiles and JobService-managed worktrees are owned by the runtime. Manager shutdown remains the local job lifetime boundary, without global environment edits or fixture deletion. Trust and async tests keep recording real activatePreparedAgent calls and now verify persisted bruv-agent journals are in the case session directory; async preparation/running setup/eventual failed publication assertions remain intact. Existing ownedFixtureEnv is reused unchanged, and no production or unrelated source changes were needed.",
+      "primaryPaths": ["tests/worktree-workspace.test.ts", "tests/fixtures/worktree-workspace-cases.ts"],
+      "primaryChecks": [
+        "Compared exact rejected candidate focus 7a01e214fe52d9bd144d6e0171b03a22e6863f01 with pre-rework focus 7a01e214fe52d9bd144d6e0171b03a22e6863f01: identical, preserving the candidate rather than reverting to pre-candidate code.",
+        "Read assigned reconciliation row for tests/worktree-workspace.test.ts, the entire focus, fixture helper/preload, prepareLaunch/worktree-setup callers, TaskManager spawn/activation, sessionIdentity, and installed SDK SessionManager.create/getAgentDir source.",
+        "Static differential inspection: all 13 existing case titles and original 49 expect calls retained; 5 additional journal/environment assertions. No execution or test-count-based acceptance claim.",
+        "Reviewed effects before any gate: Git effects target retained fixture repositories; child setup/agent subprocesses use the owned child environment; session paths are explicit; no fixture removal, human configuration/credentials, provider authentication, or network actions executed.",
+        "Repository Biome format --write applied only to the two changed source files through node:child_process executable/argv with fresh owned HOME/XDG/SDK/TMPDIR. Final invocation: /tmp/bruv-worktree-format-3JbhAt/launch.json and stdout.log (2 files, no fixes); earlier retained formatter fixture /tmp/bruv-worktree-format-cwTPbW.",
+        "git diff --cached --check passed; exact staged source scope was only the two changed paths; source-only commit made with isolated Git HOME/config/hooks."
+      ],
+      "primaryLimits": [
+        "No setup, tests, builds, reinstall, typecheck, live auth/device access, push, PR, merge, cleanup, or independent judgment performed. Parent owns isolated runtime gates and fresh independent review.",
+        "Child test dispatch, dynamic case registration, and real activation/publication behavior are source-reviewed but runtime-unverified in this rework. Test execution will retain launch.json, stdout.log, stderr.log, SDK/HOME/config, worktrees, repositories and journals beneath its reported fresh root.",
+        "Durable source provenance is this worktree and sourceCommit. Retained tool-only fixtures: /tmp/bruv-worktree-format-cwTPbW, /tmp/bruv-worktree-format-3JbhAt, /tmp/bruv-worktree-git-F5mccS, /tmp/bruv-worktree-commit-Dbt7ZW. No test runtime fixture was created or executed here.",
+        "No delegation; parent owns runtime model verification. Wisdom/values unchanged: bounded test ownership rework, aggregate wisdom remains parent-owned."
+      ]
     },
     {
       "file": "tsconfig.json",

@@ -3914,10 +3914,11 @@
       "resume": {
         "status": "pending",
         "acceptedBlob": "7a01e214fe52d9bd144d6e0171b03a22e6863f01",
-        "primaryId": "task_f4444bc8",
+        "primaryId": "task_d07c58c2",
+        "primaryCommit": "af63383a0fb05cba759d32b21788c03f7a3cffa7",
         "judgeIds": ["task_83034949", "task_6181fd8e"],
-        "sourceCommit": null,
-        "state": "needs-rework",
+        "sourceCommit": "af63383a0fb05cba759d32b21788c03f7a3cffa7",
+        "state": "needs-judge",
         "reason": "Retain ACCEPT by task_83034949: the recorded accepted blob equals the actual focus blob at reviewed commit 59fbfcc9b5a88a1488e9f8ce39bb122d1c67da12. Joined tree contains that exact accepted blob. Latest area tree also matches the recorded accepted blob."
       }
     }
