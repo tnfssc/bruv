@@ -1,4 +1,5 @@
 import { expect, test } from "bun:test";
+import { createHash } from "node:crypto";
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -18,8 +19,25 @@ installSelectorLifecycle();
 
 test("selector projection matches pinned pre-patch geometry and 80/20-column output", () => {
   const result = selectorBehavior(TreeSelectorComponent);
-  // Captured from the pinned 1.0.3 selector before this patch (14 scenario states).
-  expect(result.hash).toBe("285c955d33fdedc527cc7faccd560f1bc630fc097a7049161806197b4aeff685");
+  // Retain the pinned 1.0.3 golden for the 13 rendered replay states. Its final
+  // capture had misplaced constructor arguments (default filter, missing selection).
+  // Freeze that historical tail for the digest; check the corrected scenario directly.
+  const historicalSnapshots = [
+    ...result.snapshots.slice(0, -1),
+    {
+      name: "hidden-ancestor-and-tool-leaf",
+      selected: "second-leaf",
+      ids: ["root", "main", "call", "result", "leaf", "alternate", "alt-leaf", "second-leaf"],
+    },
+  ];
+  expect(createHash("sha256").update(JSON.stringify(historicalSnapshots)).digest("hex")).toBe(
+    "285c955d33fdedc527cc7faccd560f1bc630fc097a7049161806197b4aeff685",
+  );
+  expect(result.snapshots.at(-1)).toEqual({
+    name: "hidden-ancestor-and-tool-leaf",
+    selected: "root", // The requested settings entry is hidden: select its visible ancestor.
+    ids: ["root", "main", "call", "leaf", "alternate", "alt-leaf", "second-leaf"],
+  });
   expect(result.snapshots).toHaveLength(14);
   expect(result.accepted).toBe("alternate");
   expect(result.cancelled).toBe(1);

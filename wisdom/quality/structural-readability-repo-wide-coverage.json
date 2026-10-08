@@ -3917,12 +3917,14 @@
     {
       "file": "scripts/terminal-perf/selector-lifecycle-behavior.ts",
       "initialBlob": "35e5c66c596e869e8067a9bb4c2298c671638330",
-      "status": "pending",
+      "status": "accepted",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_9b8ded9d",
       "primaryCommit": "e7ca3aac5f5bc3504768293001910810e90e49a1",
-      "judgeIds": [],
+      "judgeIds": [
+        "task_e3b69325"
+      ],
       "sourceCommit": "e7ca3aac5f5bc3504768293001910810e90e49a1",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
       "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
@@ -3992,7 +3994,37 @@
           "readingReason": "Separating tree construction from the linear replay is coherent, and the entry point now visibly owns global keybindings with try/finally. However, the final named hidden-ancestor-and-tool-leaf scenario still misstates its actual configuration. Its untyped positional constructor call obscures a concrete reader-facing contract error; extracting it unchanged does not resolve that journey."
         }
       ],
-      "forceJudge": true
+      "forceJudge": true,
+      "acceptedBlob": "9c18d2aceee6255a1fd03d378c8a95cc0b8d3881",
+      "result": "The actual candidate separates three coherent responsibilities rather than hiding arbitrary blocks: selectorBehavior owns temporary global keybindings with visible try/finally; createBranchingTree owns deterministic topology and labels; replaySelectorBehavior retains a linear, locally readable input/capture sequence. The fixture remains independent of the navigation harness. Deliberate private-state access is identified at its boundary. The injected constructor now uses the real component type, and the final constructor explicitly leaves the label callback slot empty before selecting the hidden settings entry and requesting no-tools. The related caller is also accepted: golden hashing belongs with assertions, its frozen historical tail is explicitly labeled as the old misconfigured capture, and the corrected final capture is asserted separately instead of claiming the unchanged digest proves it.",
+      "systemReason": "Traced the sole actual selectorBehavior caller in selector-lifecycle.test.ts and the installed TreeSelectorComponent/TreeList constructor, filter, selection and keyboard contracts. The final scenario now passes current leaf call, initial selection setting and filter no-tools into their proper slots: hidden setting walks to root; the active tool-call-only assistant remains visible; tool result is excluded. The old seven-argument call instead supplied a non-existent initial selection and default filter, which explains its frozen second-leaf/result tail. The rendered replay journeys remain intact: initial projection, branch fold/unfold, five filter modes, search/clear, label update, empty search/selection restoration, accept and cancel. The caller still verifies folded and empty projections and preserves its separate in-memory count and disk metadata/append-only/reopen checks. Read the unchanged selector-lifecycle installer, metadata accessor, relevant CLI startup and pinned selector patch: the fixture exercises the real dependency projection, while the installer changes only count bookkeeping and leaves native managers on the original method. No unrelated accepted source is replaced.",
+      "checks": [
+        {
+          "kind": "guidance",
+          "result": "Read wisdom/values.md and structural-readability-guidance.md; inspected only matching focus evidence in area and repo-wide ledgers."
+        },
+        {
+          "kind": "exact-candidate-source-review",
+          "result": "Read both changed source paths from candidate Git objects and compared against primaryBase f055bd52c8a4cda425bb579cd6d146b7f82304c6, not checkout HEAD. Confirmed those are the only changed paths."
+        },
+        {
+          "kind": "caller-and-contract-trace",
+          "result": "Git grep finds only selector-lifecycle.test.ts as an actual replay caller. Read the installed constructor declaration and implementation, initial selection fallback, no-tools/current-leaf filtering, selection persistence and keyboard confirm/cancel/fold behavior."
+        },
+        {
+          "kind": "fixture-preservation",
+          "result": "createBranchingTree bytes match the rejected extraction exactly. Baseline fixture topology and deterministic timestamps remain represented."
+        },
+        {
+          "kind": "git-diff-check",
+          "result": "Candidate versus primaryBase diff --check returned no errors."
+        }
+      ],
+      "limits": [
+        "Static structural/code-contract judgment only. No setup, tests, builds or runtime replay executed; audited isolated batch gates belong to parent. The golden digest and corrected exact snapshot remain subject to parent runtime verification.",
+        "Dependency contracts were read from the permitted existing shared node_modules, alongside the exact candidate pinned patch; no installation or dependency mutation performed.",
+        "No delegation, model self-introspection, auth/device access, source edits, pushes, merges, cleanup or wisdom edits. Only this untracked review artifact is written; parent owns aggregate wisdom."
+      ]
     },
     {
       "file": "scripts/terminal-perf/selector-lifecycle-probe.ts",
@@ -4056,15 +4088,15 @@
     {
       "file": "scripts/terminal-perf/selector-lifecycle.test.ts",
       "initialBlob": "0799d40669ad0f61af0bd252affa18ff53e2ffa0",
-      "status": "accepted",
+      "status": "pending",
       "area": "ui-terminal-cli",
-      "resumeState": "accepted-joined",
+      "resumeState": "needs-primary-final-blob",
       "primaryId": "task_b483c184",
       "primaryCommit": "2e9f506b874a0acd793f20c4acef448af8b900d1",
       "judgeIds": [
         "task_a1139c9a"
       ],
-      "sourceCommit": "2e9f506b874a0acd793f20c4acef448af8b900d1",
+      "sourceCommit": "e7ca3aac5f5bc3504768293001910810e90e49a1",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
       "pendingReason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees.",
       "primaryBase": "d20c4ed1bc39a43d8fc90960d45858b5836f1419",
@@ -4110,7 +4142,7 @@
         "Independent fresh judge verdict pending; this is a primary candidate, not acceptance.",
         "No wisdom/values edits: parent owns aggregate wisdom, and this change follows existing lifecycle-ownership guidance."
       ],
-      "acceptedBlob": "7d49e2f1f018edf87270a8ae18c0d91769e10bf2",
+      "acceptedBlob": "2bebb69d99d71d2dd09e5ac4bc36df31a7796f71",
       "result": "The disk scenario now shows its two manager lifetimes in execution order: write the branched fixture, open and prohibit getEntries, check whole-journal counts/branch/append and the unchanged byte prefix, restore/dispose, then reopen and check persistence. Assertions no longer run inside cleanup. The outer fixture lifetime includes writing, both opens and both disposals, so cleanup ownership is readable even on assertion failure. writeBranchedHistory isolates coherent journal construction rather than hiding assertions or introducing a context bag.",
       "systemReason": "Followed the exact candidate through CLI installer ordering, installSelectorLifecycle, SessionManager adoption/open, getDiskBackedEntryMetadata, indexed append/getEntries and disposal, DiskEntryStore open/append, and the native branch/count/append contract. Counts use all owned metadata, not the active branch, while in-memory managers retain the original getEntries-based method. branch only moves the leaf; append adds an indexed entry and journal bytes. Reopening uses persisted metadata and then materializes bodies, after the replay guard is removed. The patched renderInitialMessages caller consumes this whole-journal compaction count instead of replaying all bodies. Thus the reorganized scenario exposes the actual production authority and persistence boundary.",
       "checks": [
@@ -4125,6 +4157,9 @@
         "Only these focus records and their evidence were inspected in repository/area ledgers. No source, other candidate, old worktree, wisdom, or values edits.",
         "Installed dependency source was read-only from the supplied shared dependency location; no host-hash/setup validation was performed.",
         "This accepts the count-test lifetime refactor, not the separate selectorBehavior final scenario rejected above. The exact test candidate still contains the old behavior helper; joining or repairing that separate focus and any resulting golden expectation changes remain parent-owned."
+      ],
+      "acceptedRelatedJudges": [
+        "task_e3b69325"
       ]
     },
     {
@@ -7070,13 +7105,28 @@
       "initialBlob": "17c2e5573655696a57d5cae9e8615f8809695eda",
       "status": "pending",
       "area": "agent-history-session-goals",
-      "resumeState": "pending-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_6699937f",
+      "primaryCommit": "ff4e61d7a5026de562b438eb23b768ee3337917d",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "ff4e61d7a5026de562b438eb23b768ee3337917d",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
-      "pendingReason": "No dedicated primary/final independent focus judgment."
+      "pendingReason": "No dedicated primary/final independent focus judgment.",
+      "primaryBase": "ff4e61d7a5026de562b438eb23b768ee3337917d",
+      "primaryResult": "Traced the embedded normal.md import through subagentGuidance(role): fast and orchestrator select their own templates; normal/default selects this template, trims its trailing newline, and substitutes {{role}}. withSubagentGuidance keeps worker role framing on custom bases while leaving their collaboration policy owned by the base. The ordinary-turn handler restores worker identity before selecting child versus root framing; spawned-process capability restrictions remain in restoreAgentIdentity, not this prose. Existing assertions explicitly preserve this contribution sentence and the absence of delegation commentary. Splitting the single sentence, adding lifecycle/security policy, or extracting another template would introduce structure or duplicate authority without relieving an actual reading burden. No surviving candidate or rejected focus exists in the preserved focus row; baseline and current focus blobs match.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        "Read wisdom/values.md and structural-readability guidance.",
+        "Preserved reconciliation focus row: pending-primary, no primary/candidate/rejection, baseline and joined blob 17c2e5573655696a57d5cae9e8615f8809695eda.",
+        "Static caller trace: src/prompts.ts subagentGuidance and withSubagentGuidance; src/agent/extension.ts identity restoration and ordinary-turn prompt injection.",
+        "Read role/contribution and placeholder assertions in tests/prompts.test.ts without running tests.",
+        "No source edits; tracked working tree clean. Formatter and source commit are inapplicable without changed source paths.",
+        "Wisdom and values unchanged: no new general lesson; parent owns aggregate wisdom."
+      ],
+      "primaryLimits": [
+        "Tests, setup, builds, delegation, recovery, and credential access not performed; parent owns audited batch gates and independent judgment.",
+        "Initial evidence read inadvertently emitted broad reconciliation output (truncated); subsequent reconciliation inspection extracted only the normal.md row."
+      ]
     },
     {
       "file": "src/prompts/orchestrator.md",

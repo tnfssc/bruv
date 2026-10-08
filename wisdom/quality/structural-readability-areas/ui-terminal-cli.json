@@ -1511,19 +1511,22 @@
     {
       "focus": "scripts/terminal-perf/selector-lifecycle-behavior.ts",
       "initialBlob": "35e5c66c596e869e8067a9bb4c2298c671638330",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "9c18d2aceee6255a1fd03d378c8a95cc0b8d3881",
       "integrationState": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "9c18d2aceee6255a1fd03d378c8a95cc0b8d3881",
         "primaryId": "task_9b8ded9d",
         "primaryCommit": "e7ca3aac5f5bc3504768293001910810e90e49a1",
-        "judgeIds": [],
+        "judgeIds": [
+          "task_e3b69325"
+        ],
         "sourceCommit": "e7ca3aac5f5bc3504768293001910810e90e49a1",
-        "state": "needs-judge",
-        "reason": "No dedicated primary candidate or independent primary-focus verdict in surviving ledger or preserved area candidate trees."
+        "state": "accepted-joined",
+        "reason": "The actual candidate separates three coherent responsibilities rather than hiding arbitrary blocks: selectorBehavior owns temporary global keybindings with visible try/finally; createBranchingTree owns deterministic topology and labels; replaySelectorBehavior retains a linear, locally readable input/capture sequence. The fixture remains independent of the navigation harness. Deliberate private-state access is identified at its boundary. The injected constructor now uses the real component type, and the final constructor explicitly leaves the label callback slot empty before selecting the hidden settings entry and requesting no-tools. The related caller is also accepted: golden hashing belongs with assertions, its frozen historical tail is explicitly labeled as the old misconfigured capture, and the corrected final capture is asserted separately instead of claiming the unchanged digest proves it."
       }
     },
     {
@@ -1550,21 +1553,21 @@
     {
       "focus": "scripts/terminal-perf/selector-lifecycle.test.ts",
       "initialBlob": "0799d40669ad0f61af0bd252affa18ff53e2ffa0",
-      "status": "accepted",
+      "status": "pending",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": "7d49e2f1f018edf87270a8ae18c0d91769e10bf2",
+      "acceptedBlob": null,
       "integrationState": "pending",
       "resume": {
-        "status": "accepted",
-        "acceptedBlob": "7d49e2f1f018edf87270a8ae18c0d91769e10bf2",
+        "status": "pending",
+        "acceptedBlob": "2bebb69d99d71d2dd09e5ac4bc36df31a7796f71",
         "primaryId": "task_b483c184",
         "primaryCommit": "2e9f506b874a0acd793f20c4acef448af8b900d1",
         "judgeIds": [
           "task_a1139c9a"
         ],
-        "sourceCommit": "2e9f506b874a0acd793f20c4acef448af8b900d1",
-        "state": "accepted-joined",
+        "sourceCommit": "e7ca3aac5f5bc3504768293001910810e90e49a1",
+        "state": "needs-primary-final-blob",
         "reason": "The disk scenario now shows its two manager lifetimes in execution order: write the branched fixture, open and prohibit getEntries, check whole-journal counts/branch/append and the unchanged byte prefix, restore/dispose, then reopen and check persistence. Assertions no longer run inside cleanup. The outer fixture lifetime includes writing, both opens and both disposals, so cleanup ownership is readable even on assertion failure. writeBranchedHistory isolates coherent journal construction rather than hiding assertions or introducing a context bag."
       }
     },

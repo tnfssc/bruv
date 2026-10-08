@@ -1,12 +1,21 @@
 import { getKeybindings, setKeybindings } from "@earendil-works/pi-tui";
 import { KeybindingsManager } from "../../node_modules/@earendil-works/pi-coding-agent/dist/core/keybindings.js";
-import { createHash } from "node:crypto";
+import type { TreeSelectorComponent } from "../../node_modules/@earendil-works/pi-coding-agent/dist/modes/interactive/components/tree-selector.js";
+
+const fixtureTimestamp = "2026-01-01T00:00:00.000Z";
 
 /** Local deterministic branching fixture, independent of the shared navigation harness. */
-export function selectorBehavior(Selector: any) {
+export function selectorBehavior(Selector: typeof TreeSelectorComponent) {
   const previousKeybindings = getKeybindings();
-  setKeybindings(new KeybindingsManager());
-  const stamp = "2026-01-01T00:00:00.000Z";
+  try {
+    setKeybindings(new KeybindingsManager());
+    return replaySelectorBehavior(Selector, createBranchingTree());
+  } finally {
+    setKeybindings(previousKeybindings);
+  }
+}
+
+function createBranchingTree() {
   const user = (content: string) => ({ role: "user", content, timestamp: 0 });
   const assistant = (content: any[]) => ({ role: "assistant", content, stopReason: "stop", timestamp: 0 });
   const text = (value: string) => ({ type: "text", text: value });
@@ -43,15 +52,19 @@ export function selectorBehavior(Selector: any) {
   ];
   const nodes = new Map<string, any>();
   for (const [id, parentId, type, extra] of records)
-    nodes.set(id, { entry: { id, parentId, type, timestamp: stamp, ...extra }, children: [] });
+    nodes.set(id, { entry: { id, parentId, type, timestamp: fixtureTimestamp, ...extra }, children: [] });
   nodes.get("alternate").label = "named branch";
-  nodes.get("alternate").labelTimestamp = stamp;
+  nodes.get("alternate").labelTimestamp = fixtureTimestamp;
   const roots: any[] = [];
   for (const node of nodes.values()) {
     const parent = nodes.get(node.entry.parentId);
     if (parent) parent.children.push(node);
     else roots.push(node);
   }
+  return roots;
+}
+
+function replaySelectorBehavior(Selector: typeof TreeSelectorComponent, roots: any[]) {
   let accepted: string | undefined;
   let cancelled = 0;
   const component = new Selector(
@@ -65,7 +78,8 @@ export function selectorBehavior(Selector: any) {
       cancelled++;
     },
   );
-  const list = component.getTreeList();
+  // The replay deliberately inspects and drives private projection state.
+  const list: any = component.getTreeList();
   const snapshots: any[] = [];
   const capture = (name: string) =>
     snapshots.push({
@@ -98,7 +112,7 @@ export function selectorBehavior(Selector: any) {
   capture("search");
   list.handleInput("\x1b");
   capture("clear-search");
-  list.updateNodeLabel("main", "edited label", stamp);
+  list.updateNodeLabel("main", "edited label", fixtureTimestamp);
   list.filterMode = "labeled-only";
   list.applyFilter();
   capture("edited-label");
@@ -109,12 +123,13 @@ export function selectorBehavior(Selector: any) {
   capture("restore-selection");
   list.handleInput("\r");
   list.handleInput("\x1b");
-  const leafOnly = new Selector(
+  const leafOnly: any = new Selector(
     roots,
     "call",
     24,
     () => {},
     () => {},
+    undefined, // No label-change callback; selection and filter occupy the next slots.
     "setting",
     "no-tools",
   ).getTreeList();
@@ -123,6 +138,5 @@ export function selectorBehavior(Selector: any) {
     selected: leafOnly.getSelectedNode()?.entry.id,
     ids: leafOnly.filteredNodes.map((flat: any) => flat.node.entry.id),
   });
-  setKeybindings(previousKeybindings);
-  return { snapshots, accepted, cancelled, hash: createHash("sha256").update(JSON.stringify(snapshots)).digest("hex") };
+  return { snapshots, accepted, cancelled };
 }
