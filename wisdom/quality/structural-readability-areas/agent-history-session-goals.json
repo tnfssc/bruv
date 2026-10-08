@@ -1960,55 +1960,58 @@
     {
       "focus": "src/prompts/orchestrator.md",
       "initialBlob": "1a844f93188dc4615c0f6115b795e152ff96f7af",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "1a844f93188dc4615c0f6115b795e152ff96f7af",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "1a844f93188dc4615c0f6115b795e152ff96f7af",
         "primaryId": "task_a045de37",
         "primaryCommit": "edaa2585eb9271e967ff89bde602215b8e8b3031",
-        "judgeIds": [],
+        "judgeIds": ["task_bc3ceb60"],
         "sourceCommit": "edaa2585eb9271e967ff89bde602215b8e8b3031",
-        "state": "needs-judge",
-        "reason": "No dedicated primary/final independent focus judgment."
+        "state": "accepted-joined",
+        "reason": "The three paragraphs form one complete delegation-reading journey: identify the child role and contribution, choose isolation versus shared workspace, then launch and keep the durable path/branch together. The specific API example and persistent-root facts are next to the decision they implement. This is already structurally local, not a set of scattered decisions requiring a new helper, rename, or heading. Retaining the unchanged source is justified."
       }
     },
     {
       "focus": "src/prompts/system.md",
       "initialBlob": "4e40ae34cd631f8840affd22c799c4c8bed9a836",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "4e40ae34cd631f8840affd22c799c4c8bed9a836",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "4e40ae34cd631f8840affd22c799c4c8bed9a836",
         "primaryId": "task_3c851044",
         "primaryCommit": "9d3a4eb28e1ec4c616c144298add327756d9f42f",
-        "judgeIds": [],
+        "judgeIds": ["task_bc3ceb60"],
         "sourceCommit": "9d3a4eb28e1ec4c616c144298add327756d9f42f",
-        "state": "needs-judge",
-        "reason": "No dedicated primary/final independent focus judgment."
+        "state": "accepted-joined",
+        "reason": "The two named sections separate collaboration/engineering conduct from choosing a direction. Each bullet is a self-contained decision, with the product-progress bullet retaining security and data-loss protections in the same place as the caution against speculative defenses. Nothing requires reconstruction from other policy copies. Splitting or reordering this short canonical source would add organization churn, not repair an actual reading journey."
       }
     },
     {
       "focus": "src/prompts/wisdom.md",
       "initialBlob": "d3f933dbb141e5b009765351736c8bc0fdbcc956",
-      "status": "pending",
+      "status": "accepted",
       "primary": [],
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "d3f933dbb141e5b009765351736c8bc0fdbcc956",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "d3f933dbb141e5b009765351736c8bc0fdbcc956",
         "primaryId": "task_035453f8",
         "primaryCommit": "dbcd6371cbf67989daa4c18bead4b3c6a749dcdd",
-        "judgeIds": [],
+        "judgeIds": ["task_bc3ceb60"],
         "sourceCommit": "dbcd6371cbf67989daa4c18bead4b3c6a749dcdd",
-        "state": "needs-judge",
-        "reason": "No dedicated primary/final independent focus judgment."
+        "state": "accepted-joined",
+        "reason": "The eight paragraphs already take the reader from why handoff context matters to where task wisdom/values live, when to read them, how to record and promote lessons, what must be checked before delivery, and when the worktree stops accepting edits. The longer promotion paragraph keeps its related decisions together, including the no-new-lesson/no-forced-edit outcome. Completion and post-completion lifetimes are explicit adjacent paragraphs. Lifecycle headings would restyle this localized journey rather than remove hidden ownership or scattered state."
       }
     },
     {
@@ -4471,7 +4474,7 @@
     }
   ],
   "resumeStatus": {
-    "accepted": 72,
-    "pending": 51
+    "accepted": 75,
+    "pending": 48
   }
 }

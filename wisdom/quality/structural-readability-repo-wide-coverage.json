@@ -6633,12 +6633,12 @@
     {
       "file": "src/prompts/orchestrator.md",
       "initialBlob": "1a844f93188dc4615c0f6115b795e152ff96f7af",
-      "status": "pending",
+      "status": "accepted",
       "area": "agent-history-session-goals",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_a045de37",
       "primaryCommit": "edaa2585eb9271e967ff89bde602215b8e8b3031",
-      "judgeIds": [],
+      "judgeIds": ["task_bc3ceb60"],
       "sourceCommit": "edaa2585eb9271e967ff89bde602215b8e8b3031",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
       "pendingReason": "No dedicated primary/final independent focus judgment.",
@@ -6657,17 +6657,55 @@
         "No independent judgment performed; parent must assign a fresh judge.",
         "No runtime model self-introspection performed; parent verifies jobs.inspect.",
         "Values and wisdom unchanged: no new general lesson and no per-worker wisdom pile."
+      ],
+      "acceptedBlob": "1a844f93188dc4615c0f6115b795e152ff96f7af",
+      "result": "The three paragraphs form one complete delegation-reading journey: identify the child role and contribution, choose isolation versus shared workspace, then launch and keep the durable path/branch together. The specific API example and persistent-root facts are next to the decision they implement. This is already structurally local, not a set of scattered decisions requiring a new helper, rename, or heading. Retaining the unchanged source is justified.",
+      "systemReason": "At this exact commit, agent/extension.ts restores child identity before selecting withSubagentGuidance. prompts.ts selects this template only for the orchestrator child, replaces the role token, and preserves role guidance even on a user-owned custom base. Root orchestration uses main-orchestrator.md instead. Collaboration policy is separately owned by system.md/custom-base assembly. Delegation permissions remain with subagent-profiles.ts and job-service.ts (the native backend owns native effective profile/depth); worktree preparation and its workspace result stay in job-service.ts/worktree-workspace.ts. The prompt describes isolation and retention without duplicating enforcement. The root/child distinction and worktree owner are readable across their actual boundaries.",
+      "checks": [
+        {
+          "kind": "exact-git",
+          "result": "Read focus and relevant callers with git show at the exact submitted candidate, not checkout HEAD. Verified the candidate/base diff is empty.",
+          "sourceCommit": "edaa2585eb9271e967ff89bde602215b8e8b3031",
+          "changedSourcePaths": []
+        },
+        {
+          "kind": "focused-ledger",
+          "result": "Read only these focus rows from area baselineFiles and repository files coverage/reconciliation evidence. Each initialBlob matches the accepted focus blob, has empty prior judge rounds/IDs, and awaits an independent judgment."
+        },
+        {
+          "kind": "static-caller-read",
+          "paths": [
+            "src/prompts.ts",
+            "src/agent/extension.ts",
+            "src/prompts/main-orchestrator.md",
+            "src/tasks/subagent-profiles.ts",
+            "src/tasks/job-service.ts",
+            "src/tasks/worktree-workspace.ts",
+            "tests/prompts.test.ts"
+          ],
+          "result": "Inspected actual prompt assembly/eligibility/ownership and relevant assertion source without executing tests."
+        },
+        {
+          "kind": "review-guidance",
+          "paths": ["wisdom/values.md", "wisdom/quality/structural-readability-guidance.md"],
+          "result": "Used intrinsic and system-journey readability criteria, not counts or green tests."
+        }
+      ],
+      "limits": [
+        "Static exact-commit source review only; no setup, tests, builds, formatter, or behavioral execution. Parent owns audited isolated batch gates; test assertions are supporting contract evidence, not a passing-test claim or readability basis.",
+        "All supplied primaryBase values equal their candidates and primaryPaths are empty. No changed related source paths exist in those submitted ranges; unrelated joined history was not treated as part of these candidates.",
+        "No source, tracked ledger, wisdom, or values edits; no delegation or runtime model self-introspection. Parent owns external runtime model verification and aggregate wisdom."
       ]
     },
     {
       "file": "src/prompts/system.md",
       "initialBlob": "4e40ae34cd631f8840affd22c799c4c8bed9a836",
-      "status": "pending",
+      "status": "accepted",
       "area": "agent-history-session-goals",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_3c851044",
       "primaryCommit": "9d3a4eb28e1ec4c616c144298add327756d9f42f",
-      "judgeIds": [],
+      "judgeIds": ["task_bc3ceb60"],
       "sourceCommit": "9d3a4eb28e1ec4c616c144298add327756d9f42f",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
       "pendingReason": "No dedicated primary/final independent focus judgment.",
@@ -6705,17 +6743,47 @@
         "No source commit created because no source change was needed; sourceCommit identifies the exact inspected HEAD.",
         "Initial reconciliation read emitted out-of-focus evidence before switching to parsed focus-only inspections. No out-of-focus source changes or candidate imports resulted.",
         "Wisdom and values unchanged: no new general lesson, and parent owns aggregate wisdom."
+      ],
+      "acceptedBlob": "4e40ae34cd631f8840affd22c799c4c8bed9a836",
+      "result": "The two named sections separate collaboration/engineering conduct from choosing a direction. Each bullet is a self-contained decision, with the product-progress bullet retaining security and data-loss protections in the same place as the caution against speculative defenses. Nothing requires reconstruction from other policy copies. Splitting or reordering this short canonical source would add organization churn, not repair an actual reading journey.",
+      "systemReason": "The exact candidate callers embed this Markdown once. collaborationGuidance returns the full text; workingValues derives bullet content from the same source rather than maintaining a second policy. agent/extension.ts routes restored child identities to withSubagentGuidance and roots to withMainAgentGuidance. Standard framing receives collaboration policy, with child-role/root-mode guidance separate; a user custom base owns its collaboration policy. bruvSystemPrompt keeps identity/tool reference separate from this policy. This separation makes source authority and prompt assembly consequences evident without moving policy into tool reference.",
+      "checks": [
+        {
+          "kind": "exact-git",
+          "result": "Read focus and relevant callers with git show at the exact submitted candidate, not checkout HEAD. Verified the candidate/base diff is empty.",
+          "sourceCommit": "9d3a4eb28e1ec4c616c144298add327756d9f42f",
+          "changedSourcePaths": []
+        },
+        {
+          "kind": "focused-ledger",
+          "result": "Read only these focus rows from area baselineFiles and repository files coverage/reconciliation evidence. Each initialBlob matches the accepted focus blob, has empty prior judge rounds/IDs, and awaits an independent judgment."
+        },
+        {
+          "kind": "static-caller-read",
+          "paths": ["src/prompts.ts", "src/agent/extension.ts", "tests/prompts.test.ts"],
+          "result": "Inspected actual prompt assembly/eligibility/ownership and relevant assertion source without executing tests."
+        },
+        {
+          "kind": "review-guidance",
+          "paths": ["wisdom/values.md", "wisdom/quality/structural-readability-guidance.md"],
+          "result": "Used intrinsic and system-journey readability criteria, not counts or green tests."
+        }
+      ],
+      "limits": [
+        "Static exact-commit source review only; no setup, tests, builds, formatter, or behavioral execution. Parent owns audited isolated batch gates; test assertions are supporting contract evidence, not a passing-test claim or readability basis.",
+        "All supplied primaryBase values equal their candidates and primaryPaths are empty. No changed related source paths exist in those submitted ranges; unrelated joined history was not treated as part of these candidates.",
+        "No source, tracked ledger, wisdom, or values edits; no delegation or runtime model self-introspection. Parent owns external runtime model verification and aggregate wisdom."
       ]
     },
     {
       "file": "src/prompts/wisdom.md",
       "initialBlob": "d3f933dbb141e5b009765351736c8bc0fdbcc956",
-      "status": "pending",
+      "status": "accepted",
       "area": "agent-history-session-goals",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_035453f8",
       "primaryCommit": "dbcd6371cbf67989daa4c18bead4b3c6a749dcdd",
-      "judgeIds": [],
+      "judgeIds": ["task_bc3ceb60"],
       "sourceCommit": "dbcd6371cbf67989daa4c18bead4b3c6a749dcdd",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
       "pendingReason": "No dedicated primary/final independent focus judgment.",
@@ -6756,6 +6824,42 @@
       "primaryLimits": [
         "No setup, tests, builds, delegation, push, PR, merge, recovery, credentials, or cleanup actions performed. Parent owns isolated batch gates and independent exact-candidate judgment.",
         "Runtime model verification is parent-owned; no self-introspection performed."
+      ],
+      "acceptedBlob": "d3f933dbb141e5b009765351736c8bc0fdbcc956",
+      "result": "The eight paragraphs already take the reader from why handoff context matters to where task wisdom/values live, when to read them, how to record and promote lessons, what must be checked before delivery, and when the worktree stops accepting edits. The longer promotion paragraph keeps its related decisions together, including the no-new-lesson/no-forced-edit outcome. Completion and post-completion lifetimes are explicit adjacent paragraphs. Lifecycle headings would restyle this localized journey rather than remove hidden ownership or scattered state.",
+      "systemReason": "At the exact candidate, registerProjectWisdom imports this one template. agent/extension.ts supplies an isRoot callback that restores identity and checks depth zero, so the root-only command/injection boundary has an actual owner. The before_agent_start handler resolves the directory once, substitutes both tokens, and appends guidance to the assembled prompt. projectWisdomDir owns nearest-project discovery, worktree .git-file support, trusted project settings, and validation; values.md is joined from that same directory. Consequently prose does not have to duplicate path resolution or eligibility rules, and the reader can trace location and injection through two small coherent owners.",
+      "checks": [
+        {
+          "kind": "exact-git",
+          "result": "Read focus and relevant callers with git show at the exact submitted candidate, not checkout HEAD. Verified the candidate/base diff is empty.",
+          "sourceCommit": "dbcd6371cbf67989daa4c18bead4b3c6a749dcdd",
+          "changedSourcePaths": []
+        },
+        {
+          "kind": "focused-ledger",
+          "result": "Read only these focus rows from area baselineFiles and repository files coverage/reconciliation evidence. Each initialBlob matches the accepted focus blob, has empty prior judge rounds/IDs, and awaits an independent judgment."
+        },
+        {
+          "kind": "static-caller-read",
+          "paths": [
+            "src/wisdom/extension.ts",
+            "src/wisdom/location.ts",
+            "src/agent/extension.ts",
+            "tests/prompts.test.ts",
+            "tests/wisdom-extension.test.ts"
+          ],
+          "result": "Inspected actual prompt assembly/eligibility/ownership and relevant assertion source without executing tests."
+        },
+        {
+          "kind": "review-guidance",
+          "paths": ["wisdom/values.md", "wisdom/quality/structural-readability-guidance.md"],
+          "result": "Used intrinsic and system-journey readability criteria, not counts or green tests."
+        }
+      ],
+      "limits": [
+        "Static exact-commit source review only; no setup, tests, builds, formatter, or behavioral execution. Parent owns audited isolated batch gates; test assertions are supporting contract evidence, not a passing-test claim or readability basis.",
+        "All supplied primaryBase values equal their candidates and primaryPaths are empty. No changed related source paths exist in those submitted ranges; unrelated joined history was not treated as part of these candidates.",
+        "No source, tracked ledger, wisdom, or values edits; no delegation or runtime model self-introspection. Parent owns external runtime model verification and aggregate wisdom."
       ]
     },
     {
@@ -8430,13 +8534,51 @@
       "initialBlob": "ff2cea841882e0d28f20efc8314127b3afac029f",
       "status": "pending",
       "area": "ui-terminal-cli",
-      "resumeState": "needs-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_0962494e",
+      "primaryCommit": "92cd3318283ccac9f764310c9d1873ed62c0e31c",
       "judgeIds": ["task_150f5c27"],
-      "sourceCommit": "98bd940bd8dc870efa814074b7c038649d4df706",
+      "sourceCommit": "92cd3318283ccac9f764310c9d1873ed62c0e31c",
       "report": "wisdom/quality/structural-readability-areas/ui-terminal-cli.json",
-      "pendingReason": "Existing related-path ACCEPT by task_150f5c27 at 98bd940bd8dc870efa814074b7c038649d4df706, blob 0f1dd3b4c1ae423fc0528c369c0a33efc71f6dc8; exact candidate verified. Related blob already joined. Dedicated primary-focus acceptance is missing."
+      "pendingReason": "Existing related-path ACCEPT by task_150f5c27 at 98bd940bd8dc870efa814074b7c038649d4df706, blob 0f1dd3b4c1ae423fc0528c369c0a33efc71f6dc8; exact candidate verified. Related blob already joined. Dedicated primary-focus acceptance is missing.",
+      "primaryBase": "1a4cb197350046754f9814b5c63ee09c0e86c7e7",
+      "primaryResult": "The preparation test now keeps the journal lifecycle and integrity checks together and delegates each contiguous saved turn to assert_saved_turn. The helper owns the user message plus ten paired execute calls/results, keeping matching IDs, stdout/content, assistant metadata and result metadata together. All original assertion expressions, turn/tool iteration ranges, record slicing, final marker and no-provider-request protection remain unchanged. Other tests already express their small contracts locally and were left untouched. The preserved related candidate was already present at blob 0f1dd3b4c1ae423fc0528c369c0a33efc71f6dc8; no old branch or source recovery was joined.",
+      "primaryPaths": ["tests/activity-runtime-acceptance-test.py"],
+      "primaryChecks": [
+        {
+          "check": "Focus candidate comparison",
+          "result": "Current pre-edit focus exactly matched preserved 98bd940bd8dc870efa814074b7c038649d4df706 candidate blob 0f1dd3b4c1ae423fc0528c369c0a33efc71f6dc8."
+        },
+        {
+          "check": "Actual caller reading",
+          "result": "Read prepare_long_thread producer and Run.long_thread replay consumer, plus helper calls in rows/question/lifecycle/startup. Focus runs via unittest.main; no package or workflow caller found."
+        },
+        {
+          "check": "Required formatter",
+          "command": "/usr/bin/node /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/@biomejs/biome/bin/biome format --write tests/activity-runtime-acceptance-test.py",
+          "result": "Exit 1: Formatted 0 files; focus Python path ignored/no files processed. No source fixes applied.",
+          "retainedEnvironment": "/tmp/pr45-activity-format-8iDP7G"
+        },
+        {
+          "check": "Static AST only, no source execution",
+          "result": "Python ast.parse succeeded; multiset of original unittest assertion expressions and list of test entry points exactly preserved. Source was not imported or executed.",
+          "retainedEnvironment": "/tmp/pr45-activity-static-qJWeGI"
+        },
+        {
+          "check": "git diff --check",
+          "result": "Passed before commit."
+        },
+        {
+          "check": "Commit hook inspection",
+          "result": "No configured core.hooksPath and no non-sample hooks."
+        }
+      ],
+      "primaryLimits": [
+        "No setup, repository tests, builds, compiled CLI, credentials, recovery, push, merge or PR operations performed. Parent owns isolated batch gates and independent judgment.",
+        "The required Biome executable exists but did not process the Python focus; formatter limitation retained without substituting another formatter.",
+        "Static assertion preservation is not runtime acceptance evidence.",
+        "Wisdom and values unchanged; parent writes aggregate wisdom as requested."
+      ]
     },
     {
       "file": "tests/activity-terminal-acceptance-test.py",

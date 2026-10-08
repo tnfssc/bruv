@@ -2707,11 +2707,11 @@
       ],
       "resume": {
         "status": "pending",
-        "primaryId": null,
-        "primaryCommit": null,
+        "primaryId": "task_0962494e",
+        "primaryCommit": "92cd3318283ccac9f764310c9d1873ed62c0e31c",
         "judgeIds": ["task_150f5c27"],
-        "sourceCommit": "98bd940bd8dc870efa814074b7c038649d4df706",
-        "state": "needs-primary",
+        "sourceCommit": "92cd3318283ccac9f764310c9d1873ed62c0e31c",
+        "state": "needs-judge",
         "reason": "Existing related-path ACCEPT by task_150f5c27 at 98bd940bd8dc870efa814074b7c038649d4df706, blob 0f1dd3b4c1ae423fc0528c369c0a33efc71f6dc8; exact candidate verified. Related blob already joined. Dedicated primary-focus acceptance is missing."
       }
     },

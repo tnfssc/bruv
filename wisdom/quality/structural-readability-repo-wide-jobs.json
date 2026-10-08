@@ -1161,7 +1161,7 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_bc3ceb60",
         "branch": "bruv/pr45-judge-3-agent-history-session-goals-bc3ceb60",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled"
       },
       {
         "id": "task_7078093d",
@@ -1172,6 +1172,15 @@
         "model": "openai-codex/gpt-6.1-sol",
         "status": "handled",
         "sourceCommit": "3f8a9cb2b759245076c3b9a47a798d4e9a23dda4"
+      },
+      {
+        "id": "task_6ccdfe54",
+        "stage": "primary",
+        "focus": "tests/cache-affine-compaction-live.test.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_6ccdfe54",
+        "branch": "bruv/pr45-primary-tests-cache-affine-compacti-6ccdfe54",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
       }
     ]
   },
@@ -1530,7 +1539,8 @@
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_0962494e",
         "branch": "bruv/pr45-primary-tests-activity-runtime-acce-0962494e",
         "model": "openai-codex/gpt-6.1-sol",
-        "status": "running"
+        "status": "handled",
+        "sourceCommit": "92cd3318283ccac9f764310c9d1873ed62c0e31c"
       },
       {
         "id": "task_7c18a737",
@@ -1561,6 +1571,15 @@
         ],
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_f6b4ec29",
         "branch": "bruv/pr45-judge-3-ui-terminal-cli-focuses-f6b4ec29",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_a14113c6",
+        "stage": "primary",
+        "focus": "tests/background-ux-tui.test.ts",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_a14113c6",
+        "branch": "bruv/pr45-primary-tests-background-ux-tui.tes-a14113c6",
         "model": "openai-codex/gpt-6.1-sol",
         "status": "running"
       }
