@@ -3021,7 +3021,7 @@
     {
       "focus": "tests/questions-bridge.test.ts",
       "initialBlob": "ecc8311c62fb67efc690bb867c09a7b3e134fc87",
-      "status": "pending",
+      "status": "accepted",
       "primary": {
         "id": "task_1b488934",
         "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_69c1198d-5442693331ce-task_1b488934",
@@ -3030,17 +3030,18 @@
         "commit": null
       },
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "0b3bf8c13cbe38b3a6fdd5a657fcb27d9307cdf3",
       "integration": "pending",
       "launchBase": "4c53837f67bd43253bfb1da1e3be5e11a84b5eb9",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "0b3bf8c13cbe38b3a6fdd5a657fcb27d9307cdf3",
         "primaryId": "task_dcb5f688",
         "primaryCommit": "c680a340577a3d97e62ebadca541ea26ff07b74d",
-        "judgeIds": [],
+        "judgeIds": ["task_a916dfec"],
         "sourceCommit": "c680a340577a3d97e62ebadca541ea26ff07b74d",
-        "state": "needs-judge",
-        "reason": "Primary cancellation was recorded during the incident; no completed candidate commit or complete-file independent judgment is recorded. Focus working blob currently equals primary HEAD. Preserve the tree and allocate/complete primary work before judging."
+        "state": "accepted-joined",
+        "reason": "The complete test now separates one parent-owned execution lifetime from the two child journeys. executeQuestionScenario owns the mkdtemp session, service, bridge handler, awaited child completion, persisted snapshot and existing owned-directory finally cleanup. Each multiline child program shows its consequential order locally: ask then independent work, block then resolve with the returned version; actionable reads, cancellation, stale replay, then nineteen additions beside the remaining original question. This is a coherent operation extraction, not renamed plumbing or a context bag. Output expectations, test labels and resolved-state expectation retain their meaning."
       }
     },
     {
@@ -3128,19 +3129,20 @@
     {
       "focus": "tests/questions-picker.test.ts",
       "initialBlob": "0668492090f6120f5f66d0ee35c946bd87db12d8",
-      "status": "pending",
+      "status": "accepted",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "0668492090f6120f5f66d0ee35c946bd87db12d8",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "0668492090f6120f5f66d0ee35c946bd87db12d8",
         "primaryId": "task_b11891ad",
         "primaryCommit": "8f186d90eb5047304492c72c6bc56a7d0f37204d",
-        "judgeIds": [],
+        "judgeIds": ["task_a916dfec"],
         "sourceCommit": "8f186d90eb5047304492c72c6bc56a7d0f37204d",
-        "state": "needs-judge",
-        "reason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage."
+        "state": "accepted-joined",
+        "reason": "The whole unchanged file is already organized around readable input-to-frame-to-completion journeys. One small fixture owns mutable row height and captured completions while leaving real picker input/render methods visible. The first loop accumulates bounded frames to see both detail tails before confirming unchanged selection; the second navigation journey selects item 18 before shrinking and growing. Cancel and filter deliberately use separate fixtures; the long-label and selection/filter detail-reset tests retain their local stimuli and assertions. Replacing the visibly bounded loops with key-driving or assertion wrappers would obscure their distinct purposes rather than consolidate ownership."
       }
     },
     {
@@ -3201,19 +3203,20 @@
     {
       "focus": "tests/questions-sdk.test.ts",
       "initialBlob": "b986a86dc43a69adbb4c83094bb9c8c5bd6857a8",
-      "status": "pending",
+      "status": "accepted",
       "primary": null,
       "judgeRounds": [],
-      "acceptedBlob": null,
+      "acceptedBlob": "4443dbeb51d2ec3601ad528e1165d7a0c86c768c",
       "integration": "pending",
       "resume": {
-        "status": "pending",
+        "status": "accepted",
+        "acceptedBlob": "4443dbeb51d2ec3601ad528e1165d7a0c86c768c",
         "primaryId": "task_af2a8b9b",
         "primaryCommit": "c9bf669c68307fbcb75740d19b36fc1966e6a0f7",
-        "judgeIds": [],
+        "judgeIds": ["task_a916dfec"],
         "sourceCommit": "c9bf669c68307fbcb75740d19b36fc1966e6a0f7",
-        "state": "needs-judge",
-        "reason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage."
+        "state": "accepted-joined",
+        "reason": "createOfflineModelRuntime extracts a complete fake-provider responsibility: explicit fixture auth path, disabled refresh, fake auth, captured-context stream construction and both stream overrides stay together. The test continues to own the observation array and the real question-runtime/resource-loader/session journey, so readers can follow independent turn, saved-answer command, hidden persisted custom message and duplicate suppression without first traversing provider event scaffolding. The helper accepts only its meaningful fixture path and capture sink, not an invented framework or context bag. Session disposal remains tied to finally, with fixture retention made explicit."
       }
     },
     {
@@ -4306,8 +4309,8 @@
     ]
   },
   "resumeStatus": {
-    "accepted": 76,
-    "pending": 25
+    "accepted": 79,
+    "pending": 22
   },
   "extraFiles": [
     {

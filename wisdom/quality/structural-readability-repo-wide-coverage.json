@@ -12913,11 +12913,11 @@
     {
       "file": "tests/questions-bridge.test.ts",
       "initialBlob": "ecc8311c62fb67efc690bb867c09a7b3e134fc87",
-      "status": "pending",
+      "status": "accepted",
       "area": "execution-tasks-questions",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_dcb5f688",
-      "judgeIds": [],
+      "judgeIds": ["task_a916dfec"],
       "sourceCommit": "c680a340577a3d97e62ebadca541ea26ff07b74d",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
       "pendingReason": "Primary cancellation was recorded during the incident; no completed candidate commit or complete-file independent judgment is recorded. Focus working blob currently equals primary HEAD. Preserve the tree and allocate/complete primary work before judging.",
@@ -12958,6 +12958,26 @@
         "Formatter fixture is retained under /tmp; source and report provenance are the durable assigned worktree and commit, not a temporary code checkout. Existing test-code owned rmSync cleanup was inspected/preserved, never executed.",
         "Safety for ALL descendants: no sudo, no recovery actions, no deletion/cleanup shell commands, no HOME or inherited SDK/config cleanup, no nested shell traps. Do not read/use user secrets. Use node child_process argv plus explicit isolated env for tests; allocate fresh disposable HOME/config/SDK dirs with fs.mkdtemp and retain them rather than delete. If real credential/device access is required, return that blocker instead of using it. Do not run repository tests or setup without first checking their filesystem/network side effects.",
         "No wisdom files changed; parent writes aggregate wisdom. Independent judgment is still required."
+      ],
+      "acceptedBlob": "0b3bf8c13cbe38b3a6fdd5a657fcb27d9307cdf3",
+      "result": "The complete test now separates one parent-owned execution lifetime from the two child journeys. executeQuestionScenario owns the mkdtemp session, service, bridge handler, awaited child completion, persisted snapshot and existing owned-directory finally cleanup. Each multiline child program shows its consequential order locally: ask then independent work, block then resolve with the returned version; actionable reads, cancellation, stale replay, then nineteen additions beside the remaining original question. This is a coherent operation extraction, not renamed plumbing or a context bag. Output expectations, test labels and resolved-state expectation retain their meaning.",
+      "systemReason": "Traced executeIsolated through explicit executable argv, IPC job bridge, stream completion and teardown; installJobGlobals exposes ask/list/get/block/resolve/cancel but no answer. QuestionService stores beside the explicit session file, scopes reads by owner, increments versions after mutation and rejects stale cancellation; only pending records count toward twenty. The helper snapshot is taken after the child and before fixture cleanup. Its extra list in the second scenario is read-only, adds no authority and does not change that journey. The production execute extension invokes the same isolated runner; actual callers are unchanged blobs in this candidate.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read matching focus evidence in area and repo-wide coverage/job ledgers; no previous accepted blob or independent judgment recorded for these rows.",
+        "Resolved exact Git commit and focus blob; enumerated the complete candidate diff against 8f186d90eb5047304492c72c6bc56a7d0f37204d, not checkout HEAD.",
+        "git diff --check against primaryBase produced no findings; this is a whitespace check, not acceptance evidence.",
+        "No repository setup, tests, builds, formatter, credential access or live/device verification performed; no delegation.",
+        "Read the complete baseline and candidate focus; candidate changes only this focus source path.",
+        "Verified listed related caller blobs equal primaryBase; read service ledger, block/resolve/cancel and trusted-answer restriction, and execution/bridge wiring.",
+        "Filesystem effects inspected, not executed: QuestionService atomic ledger/lock operations lie under the mkdtemp fixture; rmSync targets only that owned directory. executeIsolated inherits a scrubbed process environment and can write output artifacts, so parent must isolate HOME/config/SDK before its gate."
+      ],
+      "limits": [
+        "Static actual-code readability decision only. Parent owns audited isolated batch runtime gates; any automatic setup host-hash failure remains unverified here and must not be bypassed.",
+        "Durable review provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_a916dfec. Candidate commits and original primary worktrees retained. No runtime fixtures created or cleaned by this judge.",
+        "No auth/device claim. No source, unrelated accepted work, ledger, wisdom or values edits; parent owns aggregate wisdom.",
+        "Safety for ALL descendants: no sudo, no recovery actions, no deletion/cleanup shell commands, no HOME or inherited SDK/config cleanup, no nested shell traps. Do not read/use user secrets. Use node child_process argv plus explicit isolated env for tests; allocate fresh disposable HOME/config/SDK dirs with fs.mkdtemp and retain them rather than delete. If real credential/device access is required, return that blocker instead of using it. Do not run repository tests or setup without first checking their filesystem/network side effects. Existing dependencies can be used read-only from /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules. Bun is /home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin/bun. Worktree t3 setup may fail because PATH lacks bun; inspect outcome, do not guess. No repetitive full builds for each worker. Limit to SIX concurrent leaf workers total, primary and judge combined. Give independent code/review agents worktrees. Propagate these safety constraints verbatim. No destructive git operations or user-data mutations.",
+        "The preserved bridge test cleanup was inspected but never executed. This fixture uses a minimal session manager and checks bridge behavior, not full parent UI/SDK continuation; that baseline boundary is unchanged. Real dist/bruv behavior remains for the parent gate."
       ]
     },
     {
@@ -13021,11 +13041,11 @@
     {
       "file": "tests/questions-picker.test.ts",
       "initialBlob": "0668492090f6120f5f66d0ee35c946bd87db12d8",
-      "status": "pending",
+      "status": "accepted",
       "area": "execution-tasks-questions",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_b11891ad",
-      "judgeIds": [],
+      "judgeIds": ["task_a916dfec"],
       "sourceCommit": "8f186d90eb5047304492c72c6bc56a7d0f37204d",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
       "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage.",
@@ -13059,6 +13079,25 @@
         "No runtime, test/setup/build or live auth/device verification was attempted. No credentials accessed. No source changes, no empty commit, no push/PR/merge. No wisdom files changed: no new lesson; parent owns aggregate wisdom.",
         ".pr45-primary-result.json is untracked evidence in the durable assigned worktree /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_b11891ad. No temporary code checkout or test fixture was created.",
         "Safety for ALL descendants: no sudo, no recovery actions, no deletion/cleanup shell commands, no HOME or inherited SDK/config cleanup, no nested shell traps. Do not read/use user secrets. Use node child_process argv plus explicit isolated env for tests; allocate fresh disposable HOME/config/SDK dirs with fs.mkdtemp and retain them rather than delete. If real credential/device access is required, return that blocker instead of using it. Do not run repository tests or setup without first checking their filesystem/network side effects. Existing dependencies can be used read-only from /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules. Bun is /home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin/bun. Worktree t3 setup may fail because PATH lacks bun; inspect outcome, do not guess. No repetitive full builds for each worker. Limit to SIX concurrent leaf workers total, primary and judge combined. Give independent code/review agents worktrees. Propagate these safety constraints verbatim. No destructive git operations or user-data mutations."
+      ],
+      "acceptedBlob": "0668492090f6120f5f66d0ee35c946bd87db12d8",
+      "result": "The whole unchanged file is already organized around readable input-to-frame-to-completion journeys. One small fixture owns mutable row height and captured completions while leaving real picker input/render methods visible. The first loop accumulates bounded frames to see both detail tails before confirming unchanged selection; the second navigation journey selects item 18 before shrinking and growing. Cancel and filter deliberately use separate fixtures; the long-label and selection/filter detail-reset tests retain their local stimuli and assertions. Replacing the visibly bounded loops with key-driving or assertion wrappers would obscure their distinct purposes rather than consolidate ownership.",
+      "systemReason": "Read the complete QuestionPicker: it owns SelectList/filter state and detail offset/page, resets detail scroll on navigation/filter change, preserves selection across resize, clamps detail to available space and calls done on confirm/cancel. Questions extension and remote extension use native custom-modal done/render/terminal-row callbacks; remote root presenter separately restores editor focus and resolves modal completion. Tests reproduce this ownership boundary with real getKeybindings and visibleWidth, without moving modal/session authority into a fixture. Adjacent extension test covers narrower mocked bindings; it does not make these real-binding/resize journeys redundant.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read matching focus evidence in area and repo-wide coverage/job ledgers; no previous accepted blob or independent judgment recorded for these rows.",
+        "Resolved exact Git commit and focus blob; enumerated the complete candidate diff against 8f186d90eb5047304492c72c6bc56a7d0f37204d, not checkout HEAD.",
+        "git diff --check against primaryBase produced no findings; this is a whitespace check, not acceptance evidence.",
+        "No repository setup, tests, builds, formatter, credential access or live/device verification performed; no delegation.",
+        "Read the complete exact focus and picker implementation, questions and remote modal construction/completion journeys, and adjacent picker test.",
+        "Exact candidate equals primaryBase; no changed related source path to import. Focus blob matches recorded initial blob."
+      ],
+      "limits": [
+        "Static actual-code readability decision only. Parent owns audited isolated batch runtime gates; any automatic setup host-hash failure remains unverified here and must not be bypassed.",
+        "Durable review provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_a916dfec. Candidate commits and original primary worktrees retained. No runtime fixtures created or cleaned by this judge.",
+        "No auth/device claim. No source, unrelated accepted work, ledger, wisdom or values edits; parent owns aggregate wisdom.",
+        "Safety for ALL descendants: no sudo, no recovery actions, no deletion/cleanup shell commands, no HOME or inherited SDK/config cleanup, no nested shell traps. Do not read/use user secrets. Use node child_process argv plus explicit isolated env for tests; allocate fresh disposable HOME/config/SDK dirs with fs.mkdtemp and retain them rather than delete. If real credential/device access is required, return that blocker instead of using it. Do not run repository tests or setup without first checking their filesystem/network side effects. Existing dependencies can be used read-only from /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules. Bun is /home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin/bun. Worktree t3 setup may fail because PATH lacks bun; inspect outcome, do not guess. No repetitive full builds for each worker. Limit to SIX concurrent leaf workers total, primary and judge combined. Give independent code/review agents worktrees. Propagate these safety constraints verbatim. No destructive git operations or user-data mutations.",
+        "Static reading does not prove interactive terminal presentation, live keybinding configuration or device behavior. No picker runtime executed."
       ]
     },
     {
@@ -13077,11 +13116,11 @@
     {
       "file": "tests/questions-sdk.test.ts",
       "initialBlob": "b986a86dc43a69adbb4c83094bb9c8c5bd6857a8",
-      "status": "pending",
+      "status": "accepted",
       "area": "execution-tasks-questions",
-      "resumeState": "needs-judge",
+      "resumeState": "accepted-joined",
       "primaryId": "task_af2a8b9b",
-      "judgeIds": [],
+      "judgeIds": ["task_a916dfec"],
       "sourceCommit": "c9bf669c68307fbcb75740d19b36fc1966e6a0f7",
       "report": "wisdom/quality/structural-readability-areas/execution-tasks-questions.json",
       "pendingReason": "No own primary candidate or complete-file independent judgment is recorded in the latest area ledger. Current code, parent integration and related reviews do not establish complete-file primary coverage.",
@@ -13135,6 +13174,26 @@
         "Durable source provenance is this retained Git worktree and exact sourceCommit/sourceBlobs. Formatter-only fixture retained at /tmp/pr45-questions-sdk-format-HkRFh3; test fixture paths will be mkdtemp bruv-questions-sdk-* directories retained when the parent executes its isolated gate.",
         "No wisdom changes: parent owns aggregate wisdom, and the existing guidance already covers grouping stubbed transport separately from semantic decisions.",
         "Safety for ALL descendants: no sudo, no recovery actions, no deletion/cleanup shell commands, no HOME or inherited SDK/config cleanup, no nested shell traps. Do not read/use user secrets. Use node child_process argv plus explicit isolated env for tests; allocate fresh disposable HOME/config/SDK dirs with fs.mkdtemp and retain them rather than delete. If real credential/device access is required, return that blocker instead of using it. Do not run repository tests or setup without first checking their filesystem/network side effects. Existing dependencies can be used read-only from /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules. Bun is /home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin/bun. Worktree t3 setup may fail because PATH lacks bun; inspect outcome, do not guess. No repetitive full builds for each worker. Limit to SIX concurrent leaf workers total, primary and judge combined. Give independent code/review agents worktrees. Propagate these safety constraints verbatim. No destructive git operations or user-data mutations."
+      ],
+      "acceptedBlob": "4443dbeb51d2ec3601ad528e1165d7a0c86c768c",
+      "result": "createOfflineModelRuntime extracts a complete fake-provider responsibility: explicit fixture auth path, disabled refresh, fake auth, captured-context stream construction and both stream overrides stay together. The test continues to own the observation array and the real question-runtime/resource-loader/session journey, so readers can follow independent turn, saved-answer command, hidden persisted custom message and duplicate suppression without first traversing provider event scaffolding. The helper accepts only its meaningful fixture path and capture sink, not an invented framework or context bag. Session disposal remains tied to finally, with fixture retention made explicit.",
+      "systemReason": "Traced /questions answer from the extension command into runtime.commands, service.answer and onAnswered, then ParentQuestionContinuations queue/session fencing and durable dispatch claim to sendMessage(customType question-answer, display false, triggerTurn true, followUp). Duplicate command uses the original replyVersion/replyId and service idempotence, so no second onAnswered dispatch occurs. Read installed SDK command dispatch, custom-message send/persistence and runtime/session construction read-only: these support the actual command and manager.getEntries assertions. Auth stubbing is separated but real SDK command/session/persistence paths are not mocked away. Related repository caller blobs are unchanged in this candidate.",
+      "checks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read matching focus evidence in area and repo-wide coverage/job ledgers; no previous accepted blob or independent judgment recorded for these rows.",
+        "Resolved exact Git commit and focus blob; enumerated the complete candidate diff against 8f186d90eb5047304492c72c6bc56a7d0f37204d, not checkout HEAD.",
+        "git diff --check against primaryBase produced no findings; this is a whitespace check, not acceptance evidence.",
+        "No repository setup, tests, builds, formatter, credential access or live/device verification performed; no delegation.",
+        "Read the complete baseline and candidate focus and extraction diff; candidate changes only this focus source path.",
+        "Static comparison confirmed all six original expect expressions unchanged; inspected provider stub and real command/persistence separation rather than using assertion count as a verdict.",
+        "Filesystem/network effects inspected, not executed: explicit authPath, modelsPath null, refreshOnCreate false, both fake streams, fixture cwd/agentDir/sessions, discovery-disable flags, in-memory session settings and tools empty. Installed ModelRuntime does not refresh when refreshOnCreate is false. Fixture deletion removed; session.dispose retained. Parent still must isolate ambient HOME/config/SDK and audit loader/package side effects for its gate."
+      ],
+      "limits": [
+        "Static actual-code readability decision only. Parent owns audited isolated batch runtime gates; any automatic setup host-hash failure remains unverified here and must not be bypassed.",
+        "Durable review provenance: /home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_a916dfec. Candidate commits and original primary worktrees retained. No runtime fixtures created or cleaned by this judge.",
+        "No auth/device claim. No source, unrelated accepted work, ledger, wisdom or values edits; parent owns aggregate wisdom.",
+        "Safety for ALL descendants: no sudo, no recovery actions, no deletion/cleanup shell commands, no HOME or inherited SDK/config cleanup, no nested shell traps. Do not read/use user secrets. Use node child_process argv plus explicit isolated env for tests; allocate fresh disposable HOME/config/SDK dirs with fs.mkdtemp and retain them rather than delete. If real credential/device access is required, return that blocker instead of using it. Do not run repository tests or setup without first checking their filesystem/network side effects. Existing dependencies can be used read-only from /home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules. Bun is /home/tnfssc/.local/share/mise/installs/bun/1.4.2/bin/bun. Worktree t3 setup may fail because PATH lacks bun; inspect outcome, do not guess. No repetitive full builds for each worker. Limit to SIX concurrent leaf workers total, primary and judge combined. Give independent code/review agents worktrees. Propagate these safety constraints verbatim. No destructive git operations or user-data mutations.",
+        "Bounded polling and short duplicate-suppression delay remain baseline runtime limitations; no new timing or lifecycle framework is justified by this extraction. Offline fake auth is not evidence of live provider access; retained fixtures may accumulate disk use and must remain owned."
       ]
     },
     {
