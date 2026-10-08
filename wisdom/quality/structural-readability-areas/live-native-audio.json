@@ -3420,10 +3420,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
+        "primaryId": "task_0c2af5f0",
+        "primaryCommit": "b7b07b830fe785db05a9bfcf94b6a92567aecdf3",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "own_primary_pending",
+        "sourceCommit": "b7b07b830fe785db05a9bfcf94b6a92567aecdf3",
+        "state": "needs-judge",
         "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
       }
     },
@@ -3436,10 +3437,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
+        "primaryId": "task_0c2af5f0",
+        "primaryCommit": "b7b07b830fe785db05a9bfcf94b6a92567aecdf3",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "own_primary_pending",
+        "sourceCommit": "b7b07b830fe785db05a9bfcf94b6a92567aecdf3",
+        "state": "needs-judge",
         "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
       }
     },
@@ -3452,10 +3454,11 @@
       "integration": "pending",
       "resume": {
         "status": "pending",
-        "primaryId": null,
+        "primaryId": "task_0c2af5f0",
+        "primaryCommit": "b7b07b830fe785db05a9bfcf94b6a92567aecdf3",
         "judgeIds": [],
-        "sourceCommit": null,
-        "state": "own_primary_pending",
+        "sourceCommit": "b7b07b830fe785db05a9bfcf94b6a92567aecdf3",
+        "state": "needs-judge",
         "reason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance."
       }
     },
@@ -4705,8 +4708,10 @@
       "resume": {
         "status": "pending",
         "acceptedBlob": "24f5a569f4de0b25d4a38eb14108a5f5e7843c09",
-        "sourceCommit": "a01c01f94014adcfffc850335c2e4a505c0a4fa3",
-        "state": "needs-primary-final-blob"
+        "primaryId": "task_4ea8c12f",
+        "primaryCommit": "f65c6b2f3867a4ae87275b0b3516ecc46acee963",
+        "sourceCommit": "f65c6b2f3867a4ae87275b0b3516ecc46acee963",
+        "state": "needs-judge"
       }
     }
   ],

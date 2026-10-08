@@ -14859,34 +14859,190 @@
       "file": "tests/live-gpt-live-provider.acceptance.test.ts",
       "initialBlob": "b95c39f77a411881b1fdea75836ffb275882afdf",
       "status": "pending",
-      "primaryId": null,
-      "sourceCommit": null,
+      "primaryId": "task_0c2af5f0",
+      "sourceCommit": "b7b07b830fe785db05a9bfcf94b6a92567aecdf3",
       "judgeIds": [],
-      "resumeState": "own_primary_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "b7b07b830fe785db05a9bfcf94b6a92567aecdf3",
+      "primaryBase": "7f4f778b5abe5b511062c7e665016cecb384173d",
+      "primaryResult": "No change recommended. Keep the opt-in/key boundary visible rather than hiding it in acceptance helpers. The state assertion, empty errors assertion, finalized callback assertion, and finally close already express successful startup, server-confirmed close, and teardown together. Moving the PCM loop or close logic behind helpers would add indirection without simplifying a real journey.",
+      "primaryPaths": ["tests/live-gpt-tui.test.ts"],
+      "primaryChecks": [
+        {
+          "kind": "evidence",
+          "result": "Assigned row is own_primary_pending with no candidate, rejection, rework, or prior own-focus judgment; current focus exists. No candidate import needed.",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_92b8f95a/wisdom/quality/structural-readability-areas/live-native-audio-resume-reconciliation.json"
+        },
+        {
+          "kind": "static",
+          "result": "Read whole focus and relevant implementation/helper journeys; no tests, setup, builds, paid provider calls, or device probes executed."
+        },
+        {
+          "kind": "source-scope",
+          "result": "Combined commit changes only tests/live-gpt-tui.test.ts; changedPaths deliberately lists the entire batch source scope for every decision."
+        },
+        {
+          "kind": "formatter",
+          "workspace": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_0c2af5f0",
+          "command": [
+            "/usr/bin/node",
+            "/home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/@biomejs/biome/bin/biome",
+            "format",
+            "--write",
+            "tests/live-gpt-tui.test.ts"
+          ],
+          "env": {
+            "PATH": "/usr/bin:/bin",
+            "HOME": "/tmp/pr45-live-tui-format-E5GzKG/home",
+            "XDG_CONFIG_HOME": "/tmp/pr45-live-tui-format-E5GzKG/config",
+            "XDG_CACHE_HOME": "/tmp/pr45-live-tui-format-E5GzKG/cache",
+            "TMPDIR": "/tmp/pr45-live-tui-format-E5GzKG/tmp",
+            "PI_CODING_AGENT_DIR": "/tmp/pr45-live-tui-format-E5GzKG/sdk"
+          },
+          "status": 0,
+          "provenance": "/tmp/pr45-live-tui-format-E5GzKG/provenance.json",
+          "result": "Formatted 1 file in 2ms. No fixes applied."
+        },
+        {
+          "kind": "diff",
+          "result": "git diff --check passed; launch extraction matches original after indentation and dir-to-home parameter substitution; startup/render/assertion/teardown suffix is byte-identical."
+        }
+      ],
+      "primaryLimits": [
+        "Primary recommendation only; parent owns fresh independent judgments and audited isolated runtime gates.",
+        "No test/build/setup execution. Paid GPT provider behavior, physical audio, and real terminal behavior remain unverified. No credentials or devices accessed.",
+        "TUI test uses a mkdtemp-owned HOME, writes theme symlink and tmux configuration there, launches a uniquely named tmux server, and retains existing finally cleanup of that owned directory. This code was inspected, not run. Parent must audit/isolate inherited config/SDK/environment before any gate; no cleanup commands were executed here.",
+        "Formatter used explicit child_process argv and a whitelisted fresh HOME/config/TMPDIR/SDK environment; its fixture is retained, with provenance here and in the fixture. Existing dependencies were read-only.",
+        "No delegation, recovery, destructive Git, setup guard bypass, push, PR, or merge. No wisdom/values edits; parent owns aggregate wisdom."
+      ]
     },
     {
       "file": "tests/live-gpt-tui.test.ts",
       "initialBlob": "333c95a90933643b25d6ab77f6ff0f10a77434e9",
       "status": "pending",
-      "primaryId": null,
-      "sourceCommit": null,
+      "primaryId": "task_0c2af5f0",
+      "sourceCommit": "b7b07b830fe785db05a9bfcf94b6a92567aecdf3",
       "judgeIds": [],
-      "resumeState": "own_primary_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "b7b07b830fe785db05a9bfcf94b6a92567aecdf3",
+      "primaryBase": "7f4f778b5abe5b511062c7e665016cecb384173d",
+      "primaryResult": "Added a file-local launchGptTui operation that groups owned-HOME materialization and real renderer launch, with explicit tmux/home/root parameters and no context bag or new lifetime state. The scenario now reads launch -> readiness -> command submission -> required frame -> uniqueness/raw-JSON assertions -> existing finally teardown. The scenario still allocates the HOME/socket and owns teardown across partial launch failure. Command arguments, setup order, waits, all assertions, and teardown are preserved.",
+      "primaryPaths": ["tests/live-gpt-tui.test.ts"],
+      "primaryChecks": [
+        {
+          "kind": "evidence",
+          "result": "Assigned row is own_primary_pending with no candidate, rejection, rework, or prior own-focus judgment; current focus exists. No candidate import needed.",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_92b8f95a/wisdom/quality/structural-readability-areas/live-native-audio-resume-reconciliation.json"
+        },
+        {
+          "kind": "static",
+          "result": "Read whole focus and relevant implementation/helper journeys; no tests, setup, builds, paid provider calls, or device probes executed."
+        },
+        {
+          "kind": "source-scope",
+          "result": "Combined commit changes only tests/live-gpt-tui.test.ts; changedPaths deliberately lists the entire batch source scope for every decision."
+        },
+        {
+          "kind": "formatter",
+          "workspace": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_0c2af5f0",
+          "command": [
+            "/usr/bin/node",
+            "/home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/@biomejs/biome/bin/biome",
+            "format",
+            "--write",
+            "tests/live-gpt-tui.test.ts"
+          ],
+          "env": {
+            "PATH": "/usr/bin:/bin",
+            "HOME": "/tmp/pr45-live-tui-format-E5GzKG/home",
+            "XDG_CONFIG_HOME": "/tmp/pr45-live-tui-format-E5GzKG/config",
+            "XDG_CACHE_HOME": "/tmp/pr45-live-tui-format-E5GzKG/cache",
+            "TMPDIR": "/tmp/pr45-live-tui-format-E5GzKG/tmp",
+            "PI_CODING_AGENT_DIR": "/tmp/pr45-live-tui-format-E5GzKG/sdk"
+          },
+          "status": 0,
+          "provenance": "/tmp/pr45-live-tui-format-E5GzKG/provenance.json",
+          "result": "Formatted 1 file in 2ms. No fixes applied."
+        },
+        {
+          "kind": "diff",
+          "result": "git diff --check passed; launch extraction matches original after indentation and dir-to-home parameter substitution; startup/render/assertion/teardown suffix is byte-identical."
+        }
+      ],
+      "primaryLimits": [
+        "Primary recommendation only; parent owns fresh independent judgments and audited isolated runtime gates.",
+        "No test/build/setup execution. Paid GPT provider behavior, physical audio, and real terminal behavior remain unverified. No credentials or devices accessed.",
+        "TUI test uses a mkdtemp-owned HOME, writes theme symlink and tmux configuration there, launches a uniquely named tmux server, and retains existing finally cleanup of that owned directory. This code was inspected, not run. Parent must audit/isolate inherited config/SDK/environment before any gate; no cleanup commands were executed here.",
+        "Formatter used explicit child_process argv and a whitelisted fresh HOME/config/TMPDIR/SDK environment; its fixture is retained, with provenance here and in the fixture. Existing dependencies were read-only.",
+        "No delegation, recovery, destructive Git, setup guard bypass, push, PR, or merge. No wisdom/values edits; parent owns aggregate wisdom."
+      ]
     },
     {
       "file": "tests/live-host-access.test.ts",
       "initialBlob": "efd8339fcd34ca1398bb45b3357bdfe21bd332a3",
       "status": "pending",
-      "primaryId": null,
-      "sourceCommit": null,
+      "primaryId": "task_0c2af5f0",
+      "sourceCommit": "b7b07b830fe785db05a9bfcf94b6a92567aecdf3",
       "judgeIds": [],
-      "resumeState": "own_primary_pending",
+      "resumeState": "needs-judge",
       "pendingReason": "Baseline focus has no allocated primary and no completed focus acceptance. Current bytes do not establish readability acceptance.",
-      "area": "live-native-audio"
+      "area": "live-native-audio",
+      "primaryCommit": "b7b07b830fe785db05a9bfcf94b6a92567aecdf3",
+      "primaryBase": "7f4f778b5abe5b511062c7e665016cecb384173d",
+      "primaryResult": "No change recommended. Keeping both wrappers, the shared bus, the fake manager, and fire closure adjacent lets the reader verify which identity owns access and why a functional task host cannot authorize Live. Splitting into tests or a fixture context bag would hide that relationship or reconstruct the same lifecycle twice. The existing host assertions, no-provider/no-audio failure sentinels, unchanged dispatch count, surviving host identity, and stale-host rejection after shutdown remain explicit.",
+      "primaryPaths": ["tests/live-gpt-tui.test.ts"],
+      "primaryChecks": [
+        {
+          "kind": "evidence",
+          "result": "Assigned row is own_primary_pending with no candidate, rejection, rework, or prior own-focus judgment; current focus exists. No candidate import needed.",
+          "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_92b8f95a/wisdom/quality/structural-readability-areas/live-native-audio-resume-reconciliation.json"
+        },
+        {
+          "kind": "static",
+          "result": "Read whole focus and relevant implementation/helper journeys; no tests, setup, builds, paid provider calls, or device probes executed."
+        },
+        {
+          "kind": "source-scope",
+          "result": "Combined commit changes only tests/live-gpt-tui.test.ts; changedPaths deliberately lists the entire batch source scope for every decision."
+        },
+        {
+          "kind": "formatter",
+          "workspace": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_c2a2fd8a-5442693331ce-task_0c2af5f0",
+          "command": [
+            "/usr/bin/node",
+            "/home/tnfssc/.t3/worktrees/bruv/t3-6b8c09c6/node_modules/@biomejs/biome/bin/biome",
+            "format",
+            "--write",
+            "tests/live-gpt-tui.test.ts"
+          ],
+          "env": {
+            "PATH": "/usr/bin:/bin",
+            "HOME": "/tmp/pr45-live-tui-format-E5GzKG/home",
+            "XDG_CONFIG_HOME": "/tmp/pr45-live-tui-format-E5GzKG/config",
+            "XDG_CACHE_HOME": "/tmp/pr45-live-tui-format-E5GzKG/cache",
+            "TMPDIR": "/tmp/pr45-live-tui-format-E5GzKG/tmp",
+            "PI_CODING_AGENT_DIR": "/tmp/pr45-live-tui-format-E5GzKG/sdk"
+          },
+          "status": 0,
+          "provenance": "/tmp/pr45-live-tui-format-E5GzKG/provenance.json",
+          "result": "Formatted 1 file in 2ms. No fixes applied."
+        },
+        {
+          "kind": "diff",
+          "result": "git diff --check passed; launch extraction matches original after indentation and dir-to-home parameter substitution; startup/render/assertion/teardown suffix is byte-identical."
+        }
+      ],
+      "primaryLimits": [
+        "Primary recommendation only; parent owns fresh independent judgments and audited isolated runtime gates.",
+        "No test/build/setup execution. Paid GPT provider behavior, physical audio, and real terminal behavior remain unverified. No credentials or devices accessed.",
+        "TUI test uses a mkdtemp-owned HOME, writes theme symlink and tmux configuration there, launches a uniquely named tmux server, and retains existing finally cleanup of that owned directory. This code was inspected, not run. Parent must audit/isolate inherited config/SDK/environment before any gate; no cleanup commands were executed here.",
+        "Formatter used explicit child_process argv and a whitelisted fresh HOME/config/TMPDIR/SDK environment; its fixture is retained, with provenance here and in the fixture. Existing dependencies were read-only.",
+        "No delegation, recovery, destructive Git, setup guard bypass, push, PR, or merge. No wisdom/values edits; parent owns aggregate wisdom."
+      ]
     },
     {
       "file": "tests/live-host-bridge.test.ts",
@@ -23017,10 +23173,29 @@
       "initialBlob": "absent",
       "area": "live-native-audio",
       "status": "pending",
-      "resumeState": "needs-primary-final-blob",
-      "sourceCommit": "a01c01f94014adcfffc850335c2e4a505c0a4fa3",
+      "resumeState": "needs-judge",
+      "sourceCommit": "f65c6b2f3867a4ae87275b0b3516ecc46acee963",
       "acceptedRelatedJudges": ["task_7d99ac05"],
-      "acceptedBlob": "24f5a569f4de0b25d4a38eb14108a5f5e7843c09"
+      "acceptedBlob": "24f5a569f4de0b25d4a38eb14108a5f5e7843c09",
+      "primaryId": "task_4ea8c12f",
+      "primaryCommit": "f65c6b2f3867a4ae87275b0b3516ecc46acee963",
+      "primaryBase": "f65c6b2f3867a4ae87275b0b3516ecc46acee963",
+      "primaryResult": "Read the entire 32-line focus, both full fixture callers, and the instruction-continuity ownership adapter. installOfflineModelReply resolves the classic session by the caller’s manager identity, replaces only agent.streamFunction, and creates one fresh completed assistant stream per invocation. The completion envelope visibly retains selected model api/provider/id, caller-supplied reply text, stop reason, timestamp, and zero usage/cost. The spoken fixture acquires the real owner before installing OFFLINE_DELEGATED_REPLY, then delegates through the real bridge and closes its owner on completion. The push-to-talk fixture installs UNEXPECTED_NORMAL_MODEL_REPLY at session_start while its provider callbacks and separately owned synthetic microphone supply the live evidence. Neither caller needs to reconstruct the response envelope; neither helper injects user messages or replaces owner/history orchestration. There is no scattered lifetime or decision burden within this small single-effect helper. Splitting message construction into another helper, adding a context bag, or renaming its fields would add navigation without clarifying authority. Preserve these exact bytes.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Read full assigned focus from current checkout and git show a01c01f94014adcfffc850335c2e4a505c0a4fa3; Git comparison confirms identical focus bytes, blob 24f5a569f4de0b25d4a38eb14108a5f5e7843c09.",
+        "Read both direct fixture callers in full and manager-to-classic-session binding/adapter source; inspected the PTY harnesses as source only.",
+        "Inspected the specified reconciliation JSON for the exact assigned focus/candidate and direct fixture caller rows: it contains no exact focus/candidate row or rejection entry for these paths. No historical judgment inferred from unrelated entries.",
+        "Initial Git status was clean. No source changes, formatter invocation, or source commit needed for the unchanged decision."
+      ],
+      "primaryLimits": [
+        "Primary actual-source reading only; fresh independent judgment belongs to parent.",
+        "No tests, setup, builds, dependency writes, credentials, devices, network probes, cleanup, destructive Git operations, or delegation performed.",
+        "The specified preserved reconciliation does not contain an exact assigned-focus/candidate entry; candidate provenance is verified directly from Git rather than an inferred ledger acceptance.",
+        "Runtime/live provider/device and PTY behavior remain unverified; parent owns audited isolated gates. Existing PTY cleanup code was not executed.",
+        "No wisdom/value changes; parent owns aggregate wisdom."
+      ]
     }
   ],
   "completedAreas": {
