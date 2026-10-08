@@ -87,3 +87,25 @@ bruv/structural-readability-owner-reviewed so hosted CI can run alongside
 review. PR45 remains at 8d6f27ef and open. No speedup or root repair is
 claimed until evidence supports it. The next notes-only commit does not
 change the source under review.
+
+## First independent review
+
+The judge requested changes: two older contracts still expected the combined
+Linux installer. The selected tests missed them. Update their expected
+ordinary command, not the workflow, and name ordinary_packages explicitly.
+Keep ffmpeg ordering, checkout history and the native-only contract intact.
+Search retained consumers when moving a prerequisite; a selected green set
+is not full-suite proof. No new value: this applies the existing integration
+and honest-proof rules.
+
+Parent reproduced both failures, then got 2 pass / 14 assertions. Expanded
+selected set: 64 pass, 61 filtered, 381 assertions. Evidence:
+/home/tnfssc/.bruv/agent/watchers/ci-lane-contract-fix-BVgrOk.
+The judge otherwise found the split minimal, preserved native steps and
+strict policy, with no tool/cache/release regression. Re-review is pending.
+
+Draft PR56: https://github.com/tnfssc/bruv/pull/56, based on PR45.
+PR45 retry passed unchanged: Linux 265s, shared gate 156s, root 127.83s;
+3071 pass / 31 skip / 0 fail, final smoke passed. It does not fix the stall.
+Release/task evidence is in PR45 comment 6066999570; its watch is stopped.
+PR56 remains watched for full hosted validation and comparable timings.

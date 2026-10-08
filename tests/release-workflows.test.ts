@@ -489,7 +489,7 @@ test("Linux needs no retired migration history; feedback retains its baseline hi
   expect(checkout(workflow.jobs.test!).with?.["fetch-depth"] ?? 1).toBe(1);
   expect(checkout(workflow.jobs.feedback!).with?.["fetch-depth"]).toBe(0);
   expect(namedStep(workflow.jobs.test!, "Install Linux test tooling").run).toBe(
-    "bash scripts/install-ci-linux-tools.sh --native-audio",
+    "bash scripts/install-ci-linux-tools.sh",
   );
 });
 
