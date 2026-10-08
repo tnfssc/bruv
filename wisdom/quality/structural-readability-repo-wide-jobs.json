@@ -1001,6 +1001,35 @@
         "model": "openai-codex/gpt-6.1-sol",
         "status": "handled",
         "sourceCommit": "42f9383ee4339b32ab48a4d8480d881c71e5a6a2"
+      },
+      {
+        "id": "task_e558d8f5",
+        "stage": "primary",
+        "focus": "src/prompts/goal.md",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_e558d8f5",
+        "branch": "bruv/pr45-primary-src-prompts-goal.md-e558d8f5",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled",
+        "sourceCommit": "39eafce01057503d50bc3386b23bc220ee88f4b9"
+      },
+      {
+        "id": "task_38e8aa10",
+        "stage": "primary",
+        "focus": "src/prompts/gpt-live.md",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_38e8aa10",
+        "branch": "bruv/pr45-primary-src-prompts-gpt-live.md-38e8aa10",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "running"
+      },
+      {
+        "id": "task_8f111c40",
+        "stage": "primary",
+        "focus": "src/prompts/identity.md",
+        "path": "/home/tnfssc/.bruv/worktrees/t3-6b8c09c6-5442693331ce-task_214f85ab-5442693331ce-task_8f111c40",
+        "branch": "bruv/pr45-primary-src-prompts-identity.md-8f111c40",
+        "model": "openai-codex/gpt-6.1-sol",
+        "status": "handled",
+        "sourceCommit": "39eafce01057503d50bc3386b23bc220ee88f4b9"
       }
     ]
   },

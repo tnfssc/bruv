@@ -6753,13 +6753,28 @@
       "initialBlob": "52b8fdd03d753167b92aba03f175bd85ac2a193c",
       "status": "pending",
       "area": "agent-history-session-goals",
-      "resumeState": "pending-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_e558d8f5",
+      "primaryCommit": "39eafce01057503d50bc3386b23bc220ee88f4b9",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "39eafce01057503d50bc3386b23bc220ee88f4b9",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
-      "pendingReason": "No dedicated primary/final independent focus judgment."
+      "pendingReason": "No dedicated primary/final independent focus judgment.",
+      "primaryBase": "39eafce01057503d50bc3386b23bc220ee88f4b9",
+      "primaryResult": "src/goals/extension.ts imports this prompt and inserts it immediately before authoritative persistent goal state in the context hook, only when a goal exists. src/typescript/job-bridge.ts maps the four documented helpers directly to goal requests; the extension dispatches them to GoalStore. GoalStore records active progress, requires completion evidence and a blocked explanation, and persists set/update/clear; GoalContinuationController counts deliberate progress milestones rather than lifecycle churn. The existing progression from API inventory to evidence discipline to completed/blocked decisions is already a coherent short reading journey. Adding sections or a wrapper would be cosmetic; duplicating store/runtime details would enlarge this prompt without resolving a current reading problem. Reconciliation and focus ledgers identify this unchanged baseline as pending-primary with no accepted/rejected focus candidate; no candidate import is needed.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md.",
+        "Inspected the src/prompts/goal.md row in preserved resume reconciliation and matching area/repo-wide ledgers.",
+        "Read focus; traced import/context assembly, helper request mapping, extension dispatch, store transitions and continuation milestone semantics.",
+        "Verified focus blob equals preserved baseline 52b8fdd03d753167b92aba03f175bd85ac2a193c; tracked worktree remains unchanged."
+      ],
+      "primaryLimits": [
+        "No setup, tests or builds run; parent owns audited batch gates.",
+        "No source changes, so formatter and source commit are not applicable.",
+        "Independent exact-candidate judgment belongs to parent.",
+        "Wisdom and values unchanged: no new general lesson; parent owns aggregate wisdom."
+      ]
     },
     {
       "file": "src/prompts/gpt-live.md",
@@ -6779,13 +6794,47 @@
       "initialBlob": "190938830aaf2a635d8313f46af0ac170d79290c",
       "status": "pending",
       "area": "agent-history-session-goals",
-      "resumeState": "pending-primary",
-      "primaryId": null,
-      "primaryCommit": null,
+      "resumeState": "needs-judge",
+      "primaryId": "task_8f111c40",
+      "primaryCommit": "39eafce01057503d50bc3386b23bc220ee88f4b9",
       "judgeIds": [],
-      "sourceCommit": null,
+      "sourceCommit": "39eafce01057503d50bc3386b23bc220ee88f4b9",
       "report": "wisdom/quality/structural-readability-areas/agent-history-session-goals.json",
-      "pendingReason": "No dedicated primary/final independent focus judgment."
+      "pendingReason": "No dedicated primary/final independent focus judgment.",
+      "primaryBase": "39eafce01057503d50bc3386b23bc220ee88f4b9",
+      "primaryResult": "Traced the text import in src/prompts.ts through bruvSystemPrompt(): identity is visibly the first paragraph, followed by separately owned execute reference. src/system-prompt.ts selects this base only when no eligible user/project base owns selection, preserving trust and explicit CLI overrides. src/agent/extension.ts adds root/worker framing through withMainAgentGuidance/withSubagentGuidance; these keep custom-base ownership and worker-role policy separate from identity. Preview and live callers reuse the same base builder. Keeping the one-sentence identity in its dedicated file is already coherent; moving or adding headings would be cosmetic churn, not reduce a reading burden. Reconciliation and focus area/coverage rows report pending-primary, no accepted candidate and the current baseline blob; no candidate restoration is applicable.",
+      "primaryPaths": [],
+      "primaryChecks": [
+        {
+          "check": "Read wisdom/values.md and wisdom/quality/structural-readability-guidance.md",
+          "result": "read"
+        },
+        {
+          "check": "Focused reconciliation/area/repo-wide coverage evidence",
+          "result": "pending-primary; baseline and joined identity blob 190938830aaf2a635d8313f46af0ac170d79290c; no completed candidate or judgment"
+        },
+        {
+          "check": "Static caller journey",
+          "result": "Reviewed src/prompts.ts, src/system-prompt.ts, src/agent/extension.ts before_agent_start, src/prompt-preview.ts selection; located live/session.ts, live/openai-session.ts and live/setup-probe.ts reuse"
+        },
+        {
+          "check": "git diff --check",
+          "result": "clean"
+        },
+        {
+          "check": "git status --short before result creation",
+          "result": "clean"
+        },
+        {
+          "check": "Exact focus Git blob",
+          "result": "190938830aaf2a635d8313f46af0ac170d79290c"
+        }
+      ],
+      "primaryLimits": [
+        "No setup, tests, builds, delegation, merge, push, or source changes performed; parent owns audited batch gates and independent judgment.",
+        "Formatter not invoked: there are no changed source paths or source commit to format.",
+        "No new general lesson; wisdom/values left unchanged and aggregate wisdom belongs to parent."
+      ]
     },
     {
       "file": "src/prompts/live.md",
