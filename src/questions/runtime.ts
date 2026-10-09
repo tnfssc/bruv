@@ -227,7 +227,7 @@ class ParentQuestionContinuations {
             item.question.id +
             ":\n" +
             JSON.stringify(item.question) +
-            "\nUse this saved reply in a new parent turn. Do not replay prior tool calls or resume a native child in place.",
+            "\nThis saved reply belongs to a new parent turn. Prior tool calls are not replayed. Native children do not resume in place.",
           details: { questionId: item.question.id, replyKey: key, owner: item.question.owner },
         },
         { triggerTurn: true, deliverAs: "followUp" },
@@ -366,11 +366,11 @@ export function registerQuestionRuntime(
       if (!attach(ctx)) throw new Error("Question session is no longer active.");
       if (!supported())
         throw new Error(
-          "Persistent questions need the parent CLI session. Web projection and child in-place replies are not supported; ask the parent to record the question.",
+          "Saved questions need the parent CLI session. No web projection or in-place child replies; the parent can save the question.",
         );
       if (method === "questions.answer")
         throw new Error(
-          "Answer in /questions answer <id> <text>. Tool or voice transcript text is not a targeted user reply.",
+          "Human answers come through /questions answer <id> <text>. Tool text and voice transcripts are not targeted user replies.",
         );
       await remoteBridge?.sync(ctx);
       const result = await service.handle(method, params, ctx);

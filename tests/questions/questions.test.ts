@@ -188,7 +188,9 @@ test("pending and total ledger limits reject new questions without dropping save
     const service = new QuestionService();
     const first = await service.ask(f.ctx, { text: "First" });
     for (let i = 1; i < 20; i++) await service.ask(f.ctx, { text: "Question " + i });
-    await expect(service.ask(f.ctx, { text: "overflow" })).rejects.toThrow("Too many");
+    await expect(service.ask(f.ctx, { text: "overflow" })).rejects.toThrow(
+      "20 questions are active. One needs a human answer or cancellation before another can be saved.",
+    );
     await service.answer(f.ctx, { id: first.id, owner: first.owner, version: first.version, text: "yes" });
     const room = await service.ask(f.ctx, { text: "room" });
     await service.cancel(f.ctx, { id: room.id, owner: room.owner, version: room.version });

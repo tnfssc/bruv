@@ -268,7 +268,7 @@ export class QuestionService {
       if (key) {
         const existing = records.find((q) => q.dedupKey === key && this.owns(ctx, q));
         if (existing) {
-          if (existing.remote) throw new Error("Remote human question is ledger-owned; dedupKey cannot acquire it");
+          if (existing.remote) throw new Error("The remote ledger owns this human question; dedupKey cannot claim it");
           if (
             JSON.stringify([
               existing.text,
@@ -284,7 +284,9 @@ export class QuestionService {
         }
       }
       if (records.filter((q) => q.status === "pending").length >= maxPending)
-        throw new Error("Too many active questions (20). Answer or cancel a pending question first.");
+        throw new Error(
+          "20 questions are active. One needs a human answer or cancellation before another can be saved.",
+        );
       if (records.length >= maxPending + maxHistory)
         throw new Error("Question ledger full (220). Start a new session; existing questions were kept.");
       const now = new Date().toISOString();
@@ -540,7 +542,7 @@ function check(q: Question, version: number): void {
 
 function remoteOwned(q: Question): void {
   if (q.remote)
-    throw new Error("Remote human question is ledger-owned; agents cannot resolve, cancel, block or dispatch it");
+    throw new Error("The remote ledger owns this human question. Agents cannot resolve, cancel, block or dispatch it");
 }
 
 // A remote observation can advance without retargeting a saved human reply.

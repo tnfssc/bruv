@@ -157,9 +157,13 @@ test("navigation and stopWork pause discard queued wake; pending background resu
 test("tool answers and unsupported child/web operations fail closed", async () => {
   const h = harness();
   try {
-    await expect(h.runtime.handle(h.ctx, "questions.answer", {})).rejects.toThrow("targeted user reply");
+    await expect(h.runtime.handle(h.ctx, "questions.answer", {})).rejects.toThrow(
+      "Human answers come through /questions answer <id> <text>. Tool text and voice transcripts are not targeted user replies.",
+    );
     h.supported(false);
-    await expect(h.runtime.handle(h.ctx, "questions.ask", { text: "no" })).rejects.toThrow("not supported");
+    await expect(h.runtime.handle(h.ctx, "questions.ask", { text: "no" })).rejects.toThrow(
+      "Saved questions need the parent CLI session. No web projection or in-place child replies; the parent can save the question.",
+    );
     await expect(h.runtime.commands(h.ctx).handle("questions.list")).rejects.toThrow("parent CLI");
     expect(h.runtime.hasBlockingQuestions()).toBe(false);
   } finally {

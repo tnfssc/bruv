@@ -117,7 +117,7 @@ describe("execute image output", () => {
       `await showImage(Buffer.from(${JSON.stringify(gif.toString("base64"))}, "base64"));`,
     );
     expect(rejected.exitCode).toBe(1);
-    expect(rejected.stderr).toContain("supports PNG, JPEG, and WebP bytes");
+    expect(rejected.stderr).toContain("needs PNG, JPEG, or WebP bytes with a valid image header");
     expect(rejected.images).toEqual([]);
   });
 
@@ -265,7 +265,7 @@ describe("image format detection", () => {
     expect(imageMimeType(png)).toBe("image/png");
     expect(imageMimeType(jpeg)).toBe("image/jpeg");
     expect(imageMimeType(webp)).toBe("image/webp");
-    expect(() => imageMimeType(gif)).toThrow("supports PNG, JPEG, and WebP bytes");
+    expect(() => imageMimeType(gif)).toThrow("needs PNG, JPEG, or WebP bytes with a valid image header");
     expect(() => imageMimeType(Buffer.from("not an image"))).toThrow();
   });
 });
@@ -273,7 +273,7 @@ describe("image format detection", () => {
 describe("image channel validation", () => {
   test("validates untrusted record contents before accepting images", () => {
     expect(() => decodeImageChannel(record(gif.toString("base64"), "image/gif"))).toThrow(
-      "supports PNG, JPEG, and WebP bytes",
+      "needs PNG, JPEG, or WebP bytes with a valid image header",
     );
     expect(() => decodeImageChannel(record(encoded, "image/jpeg"))).toThrow("mismatch");
     expect(() => decodeImageChannel(record("%%%"))).toThrow("base64");

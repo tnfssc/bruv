@@ -455,6 +455,10 @@ describe("isolated TypeScript runner", () => {
   });
 
   test("reports syntax errors and explicit early exits", async () => {
+    const empty = await runTypeScript("  ");
+    expect(empty.code).toBe(1);
+    expect(empty.stderr).toContain("No code to run.");
+    expect(empty.stdout).toBe("");
     expect((await runTypeScript("const = ;")).code).toBe(1);
     expect((await runTypeScript("process.exit(7)")).code).toBe(7);
   });

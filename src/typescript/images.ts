@@ -34,7 +34,7 @@ export function imageMimeType(bytes: Uint8Array): string {
   if (b.length >= 4 && b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff) return "image/jpeg";
   if (b.length >= 20 && b.toString("ascii", 0, 4) === "RIFF" && b.toString("ascii", 8, 12) === "WEBP")
     return "image/webp";
-  throw new Error("showImage supports PNG, JPEG, and WebP bytes; unsupported or missing image header");
+  throw new Error("showImage needs PNG, JPEG, or WebP bytes with a valid image header");
 }
 
 function checkOutputSize(size: number): void {
@@ -105,8 +105,7 @@ async function resizeOversizedImage(
   const detectedMimeType = imageMimeType(resizedBytes);
   if (detectedMimeType !== result.mimeType)
     throw new Error("showImage resized image MIME type did not match its bytes");
-  if (!result.wasResized)
-    throw new Error(`showImage resizer did not reduce oversized image below ${MAX_IMAGE_BYTES} bytes`);
+  if (!result.wasResized) throw new Error(`showImage could not shrink image below ${MAX_IMAGE_BYTES} bytes`);
   return {
     bytes: resizedBytes,
     mimeType: detectedMimeType,
