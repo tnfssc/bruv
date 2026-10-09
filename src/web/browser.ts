@@ -430,9 +430,9 @@ function render() {
           : tab.exited || sessions.get(tab.id)?.loss === "exit"
             ? " · ended"
             : "");
-      entry.setAttribute("aria-label", "Select tab " + tab.name);
+      entry.setAttribute("aria-label", "Select tab " + entry.textContent);
       entry.setAttribute("aria-selected", String(active));
-      entry.title = tab.name + " · Double-click or double-tap to rename (F2)";
+      entry.title = entry.textContent + " · Double-click or double-tap to rename (F2)";
       entry.tabIndex = active ? 0 : -1;
     }
     let close = shell.children[1] as HTMLButtonElement | undefined;
@@ -517,6 +517,7 @@ function render() {
     }
   }
   action("cancel-folder").hidden = !current;
+  action("cancel-folder").disabled = busy;
   action("open-folder").disabled = busy;
   persistSelection();
   renderStatus();
@@ -669,7 +670,7 @@ function connect(session: Session) {
   session.capability = undefined;
   session.ownerId = undefined;
   session.term.options.disableStdin = true;
-  session.status = session.sequence ? "Terminal disconnected · input paused · retrying…" : "Connecting terminal…";
+  session.status = session.socket ? "Terminal disconnected · input paused · retrying…" : "Connecting terminal…";
   const socket = new WebSocket(
     socketOrigin + "/api/terminal?tab=" + encodeURIComponent(session.id) + "&after=" + session.sequence,
     ["bruv", "bruv-token." + token],
@@ -929,7 +930,12 @@ async function openFolder() {
   } catch (error) {
     folderError.textContent = error instanceof Error ? error.message : "Could not open folder. Try again.";
     folderInput.setAttribute("aria-invalid", "true");
-    folderInput.focus();
+    if (!accessRequired) {
+      folderOpen = true;
+      render();
+      if (workspace() && window.innerWidth <= 700) setDrawer(true);
+      folderInput.focus();
+    }
   } finally {
     busy = false;
     render();
@@ -1022,8 +1028,8 @@ window.addEventListener("beforeunload", () => {
 function connectEvents() {
   if (unloading || accessRequired) return;
   const socket = new WebSocket(socketOrigin + "/api/events", ["bruv-state", "bruv-token." + token]);
+  if (!eventsSocket) syncStatus.textContent = "Connecting workspace updates…";
   eventsSocket = socket;
-  syncStatus.textContent = "Connecting workspace updates…";
   socket.onmessage = (event) => {
     if (eventsSocket !== socket || unloading) return;
     const message = JSON.parse(event.data);

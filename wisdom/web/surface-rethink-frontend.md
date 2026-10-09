@@ -29,3 +29,13 @@ Compiled headed X11 visual probe: artifacts/surface-rethink/frontend/probe.mjs, 
 Limits: no physical phone/keyboard/IME/screen reader, real mic/audio quality or paid provider. Final parent integrated build and hosted gate remain parent-owned.
 
 Values assessed: existing finish-the-user-path, truthful-proof, attention and direct-edit values cover these decisions. No new value or expansion needed.
+
+## Integrated proof checkpoint
+
+Durable proof tree: /home/tnfssc/.bruv/worktrees/bruv-web-surface-proof-d42a, branch bruv/web-surface-proof-d42a. It combines frontend 61609792 with parent server d8fb0835 (proof cherry-pick a222f6b3). Only proof integration adds that other owner's server commit; frontend source tree never edits server/launcher/README.
+
+60 focused web tests passed with touch helper. Integrated workspace smoke passed real CLIs, normalized-folder response selection, running shell surviving switch/reload, pending Cancel, late media release, explicit owner/mic-check and observer safety. Integrated two-browser multiplayer probe passed shared PID/I/O/state plus fake-provider voice (zero paid calls). Browser-audio probe passed normal /live, fake provider capture, denial/retry and provider-error release while CLI PID survived. Full-painted owner desktop, observer and owner phone frames were viewed. Fake Chromium device/provider only, no audible/physical acceptance.
+
+Design probe initially hit transient width during shared PTY resize; immediate failure was followed by scrollWidth=390/no overflowing elements and a fully painted phone frame. Probe now waits for shared geometry to settle, rather than adding renderer CSS workarounds. Its phone raw-touch pairs had CDP event timestamps three seconds apart under headed scheduling, not the requested double tap. The probe now labels Chromium emulation and sets 150ms device timestamps; no product timeout expansion. Final complete design probe and updated access/accessible-output/swipe/gap proof remain pending.
+
+Read-only review task_ce39edcb found the inactive lost/ended tab state missing from its aria-label. Fixed it; labels now use the visible title including that state. Folder Cancel is disabled while a request is pending; a failed phone request reopens its form drawer if it was dismissed. Retry messages remain stable even before first terminal output.

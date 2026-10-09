@@ -138,7 +138,13 @@ try {
   browser = await chromium.launch({
     executablePath: process.env.CHROMIUM_BIN,
     headless: process.env.HEADLESS !== "0",
-    args: ["--no-sandbox", ...(process.env.HEADLESS === "0" ? ["--ozone-platform=x11"] : [])],
+    args: [
+      "--no-sandbox",
+      "--disable-background-timer-throttling",
+      "--disable-renderer-backgrounding",
+      "--disable-backgrounding-occluded-windows",
+      ...(process.env.HEADLESS === "0" ? ["--ozone-platform=x11"] : []),
+    ],
   });
   page = await browser.newPage({ viewport: { width: 1100, height: 720 }, hasTouch: true });
   const failures = [];
@@ -147,6 +153,21 @@ try {
     console.error("PAGE_ERROR", error);
   });
   await page.addInitScript(() => {
+    window.touchTrace = [];
+    for (const name of ["pointerup", "click", "dblclick", "focusin", "focusout"])
+      document.addEventListener(
+        name,
+        (event) => {
+          if (event.target.closest?.("#tab-list"))
+            window.touchTrace.push({
+              type: name,
+              target: event.target.id,
+              time: event.timeStamp,
+              active: document.activeElement?.id,
+            });
+        },
+        true,
+      );
     window.terminalSockets = new Map();
     const WS = window.WebSocket;
     window.WebSocket = class extends WS {
@@ -336,6 +357,8 @@ try {
 
   await page.setViewportSize({ width: 390, height: 680 });
   await page.waitForTimeout(300);
+  // Shared PTY size returns over the socket after the viewport changes.
+  await page.waitForFunction(() => document.documentElement.scrollWidth <= innerWidth);
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
   const terminalHeight = await page.locator("#terminal").evaluate((el) => el.clientHeight);
   assert(terminalHeight > 620, "Phone terminal keeps most of the screen");
@@ -372,17 +395,39 @@ try {
 
   const phoneTitleStyle = await titleStyle(title);
   assert.equal(phoneTitleStyle.fontSize, "11px");
-  // Use real touchscreen taps on the phone layout, not a synthetic dblclick.
-  await title.tap();
-  await title.tap();
+  // Chromium touch emulation, not a physical phone. Dispatch both taps in one
+  // short gesture; locator waits can turn them into two unrelated touches.
+  const touch = await page.context().newCDPSession(page);
+  async function doubleTouch(locator) {
+    const rect = await locator.boundingBox();
+    const point = { x: rect.x + rect.width / 2, y: rect.y + rect.height / 2 };
+    await page.bringToFront();
+    // Explicit device timestamps model a 150ms double tap. Headed CDP delivery
+    // can be throttled for seconds; that is not the user's gesture timing.
+    const time = Date.now() / 1000;
+    for (let i = 0; i < 2; i++) {
+      await touch.send("Input.dispatchTouchEvent", {
+        type: "touchStart",
+        touchPoints: [point],
+        timestamp: time + i * 0.15,
+      });
+      await touch.send("Input.dispatchTouchEvent", {
+        type: "touchEnd",
+        touchPoints: [],
+        timestamp: time + i * 0.15 + 0.03,
+      });
+    }
+  }
+  await doubleTouch(title);
   await editor.waitFor();
   assert.deepEqual(await titleStyle(editor), phoneTitleStyle, "Phone edit preserves text size and inset");
   await editor.fill("Phone draft");
   await screenshot({ path: join(proof, "inline-rename-phone.png") });
   await page.keyboard.press("Escape");
-  await title.tap();
-  await title.tap();
+  await doubleTouch(title);
   await editor.fill("Phone saved");
+  // Shared PTY size returns over the socket after the viewport changes.
+  await page.waitForFunction(() => document.documentElement.scrollWidth <= innerWidth);
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
   await page.keyboard.press("Enter");
   await until(async () => (await api()).workspaces[0].tabs[0].name === "Phone saved", "Double-tap rename missing");
@@ -406,6 +451,8 @@ try {
   // Long names do not expand the page; the full name stays accessible.
   await rename("Investigate shared terminal replay and reconnect");
   await page.waitForTimeout(300);
+  // Shared PTY size returns over the socket after the viewport changes.
+  await page.waitForFunction(() => document.documentElement.scrollWidth <= innerWidth);
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
   await page.locator("#terminal .xterm-helper-textarea:visible").focus();
   await page.waitForTimeout(300);
@@ -456,6 +503,8 @@ try {
   const tabBox = await selectedTab().boundingBox();
   const listBox = await page.locator("#tab-list").boundingBox();
   assert(tabBox.x >= listBox.x - 1 && tabBox.x + tabBox.width <= listBox.x + listBox.width + 1);
+  // Shared PTY size returns over the socket after the viewport changes.
+  await page.waitForFunction(() => document.documentElement.scrollWidth <= innerWidth);
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
   assert((await page.locator("#new-tab").boundingBox()).x < 390, "New tab stays in reach");
   await connected();
@@ -567,6 +616,31 @@ try {
     }),
   );
 } catch (error) {
+  if (page) {
+    await screenshot({ path: join(proof, "failure.png") });
+    await Bun.write(
+      join(proof, "failure-geometry.json"),
+      JSON.stringify(
+        await page.evaluate(() => ({
+          touchTrace: window.touchTrace,
+          viewport: innerWidth,
+          scrollWidth: document.documentElement.scrollWidth,
+          overflowing: Array.from(document.querySelectorAll("body *"))
+            .map((el) => ({
+              tag: el.tagName,
+              id: el.id,
+              className: el.className,
+              rect: el.getBoundingClientRect().toJSON(),
+              scrollWidth: el.scrollWidth,
+              clientWidth: el.clientWidth,
+            }))
+            .filter((el) => el.rect.right > innerWidth + 1),
+        })),
+        null,
+        2,
+      ),
+    );
+  }
   console.error(
     "DESIGN_FAILURE",
     await page

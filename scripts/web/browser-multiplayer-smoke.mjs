@@ -438,6 +438,7 @@ try {
   assert.equal((await state()).workspaces[0].tabs[0].pid, pid);
   await b.setViewportSize({ width: 390, height: 680 });
   await Bun.sleep(150);
+  await b.waitForFunction(() => document.documentElement.scrollWidth <= innerWidth);
   assert.equal(await b.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
   for (const page of [a, b]) {
     const revisions = await page.evaluate(() => window.states.map((m) => m.state.revision));

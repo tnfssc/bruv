@@ -786,6 +786,7 @@ test("replay loss freezes output without marking the live CLI ended", async () =
   expect(b.terminals[0].options.disableStdin).toBe(true);
   expect(b.node("status").textContent).toContain("original work still runs");
   expect(b.node("tab-list").children[0].children[0].textContent).toContain("view lost");
+  expect(b.node("tab-list").children[0].children[0].attributes["aria-label"]).toContain("view lost");
   expect(b.node("tab-list").children[0].children[0].textContent).not.toContain("ended");
   expect(b.node("lost-new-tab").hidden).toBe(false);
 });
@@ -827,4 +828,24 @@ test("pending Cancel notifies the matching owner and releases a late device", as
   await tick();
   expect(closed).toBe(1);
   expect(b.node("voice-status").hidden).toBe(true);
+});
+
+test("a pending folder failure reopens its phone drawer and keeps the draft", async () => {
+  const b = await browser();
+  (b.window as any).innerWidth = 390;
+  b.snapshot(snapshot(1));
+  b.requests[0].resolve(snapshot(1));
+  await tick();
+  b.node("open-drawer").click();
+  b.node("add-workspace").click();
+  b.node("folder-input").value = "/my/draft";
+  b.node("folder-form").fire("submit", { preventDefault() {} });
+  expect(b.node("cancel-folder").disabled).toBe(true);
+  b.node("close-drawer").click();
+  b.requests.at(-1)!.fail(503, "Server busy. Try again.");
+  await tick();
+  expect(b.document.body.attributes["data-drawer"]).toBe("open");
+  expect(b.node("folder-input").value).toBe("/my/draft");
+  expect(b.document.activeElement).toBe(b.node("folder-input"));
+  expect(b.node("cancel-folder").disabled).toBe(false);
 });
