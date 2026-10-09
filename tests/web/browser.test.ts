@@ -245,14 +245,14 @@ test("events reconcile monotonically without remote focus or duplicate deletes",
   const b = await browser();
   expect(b.events().protocols).toEqual(["bruv-state", "bruv-token.secret"]);
   b.snapshot(snapshot(2));
-  b.node("tab-list").children[1].fire("click");
+  b.node("tab-list").children[1].children[0].fire("click");
   b.flushFrames();
   const next = snapshot(3);
   next.workspaces[0].tabs.push({ id: "d", name: "D" });
   next.workspaces[0].tabs[0].name = "Renamed";
   b.snapshot(next);
-  expect(b.node("tab-list").children[1].attributes["aria-selected"]).toBe("true");
-  expect(b.node("tab-list").children[0].textContent).toBe("Renamed");
+  expect(b.node("tab-list").children[1].children[0].attributes["aria-selected"]).toBe("true");
+  expect(b.node("tab-list").children[0].children[0].textContent).toBe("Renamed");
   b.snapshot(snapshot(3));
   expect(b.node("tab-list").children).toHaveLength(3);
   b.requests[0].resolve(snapshot(1));
@@ -287,7 +287,7 @@ test("viewport reports never echo shared size and hidden attachments stay inacti
   expect(b.terminal("a").sent).toHaveLength(1);
   b.snapshot(snapshot(2));
   expect(b.terminal("a").sent).toHaveLength(1);
-  b.node("tab-list").children[1].fire("click");
+  b.node("tab-list").children[1].children[0].fire("click");
   b.flushFrames();
   expect(b.terminal("a").sent.at(-1)).toEqual({ type: "visibility", active: false });
   expect(b.terminal("b").sent.at(-1)).toEqual({ type: "resize", cols: 120, rows: 40 });
@@ -407,12 +407,33 @@ test("dialogs cancel safely and rename the captured tab, not a later selection",
   b.node("dialog-form").fire("submit", { preventDefault() {} });
   expect(b.node("workspace-dialog").open).toBe(true);
   expect(b.requests).toHaveLength(count);
-  b.node("tab-list").children[1].fire("click");
+  b.node("tab-list").children[1].children[0].fire("click");
   b.node("dialog-input").value = "  Build  ";
   b.node("dialog-form").fire("submit", { preventDefault() {} });
   await tick();
   expect(b.requests.at(-1)?.path).toBe("/api/tabs/a");
   expect(JSON.parse(b.requests.at(-1)?.options.body)).toEqual({ name: "Build" });
+});
+
+test("per-tab close cancels safely and deletes the captured inactive tab", async () => {
+  const b = await browser();
+  b.snapshot(snapshot(1));
+  b.requests[0].resolve(snapshot(1));
+  await tick();
+  const count = b.requests.length;
+  b.node("tab-list").children[1].children[1].fire("click");
+  expect(b.node("tab-list").children[0].children[0].attributes["aria-selected"]).toBe("true");
+  expect(b.node("dialog-title").textContent).toBe("Close “B”?");
+  b.node("dialog-cancel").fire("click");
+  await tick();
+  expect(b.requests).toHaveLength(count);
+  b.node("tab-list").children[1].children[1].fire("click");
+  b.node("workspace-list").children[1].fire("click");
+  b.node("dialog-form").fire("submit", { preventDefault() {} });
+  await tick();
+  expect(b.requests.at(-1)?.path).toBe("/api/tabs/b");
+  expect(b.requests.at(-1)?.options.method).toBe("DELETE");
+  expect(JSON.parse(b.requests.at(-1)?.options.body)).toEqual({ confirm: true });
 });
 
 test("only a targeted request opens audio; active voice cannot be moved", async () => {

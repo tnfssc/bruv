@@ -171,39 +171,96 @@ aside {
   flex-direction: column;
 }
 .tab-bar {
-  height: 46px;
+  height: 40px;
   display: flex;
   align-items: center;
   flex-shrink: 0;
-  gap: 1px;
-  padding-right: 9px;
-  background: var(--surface);
-  border-bottom: 1px solid var(--line);
+  gap: 3px;
+  padding: 0 9px 0 6px;
+  background: #101010;
+  box-shadow: inset 0 -1px var(--line);
 }
 #tab-list {
   display: flex;
   align-self: stretch;
   min-width: 0;
+  padding-top: 6px;
   overflow-x: auto;
-  scrollbar-width: thin;
+  scrollbar-width: none;
 }
-#tab-list button {
-  flex: 0 0 auto;
-  max-width: 200px;
-  padding: 0 18px;
+#tab-list::-webkit-scrollbar {
+  display: none;
+}
+.terminal-tab {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 0 1 210px;
+  width: 210px;
+  min-width: 112px;
+  max-width: 210px;
+  border-radius: 9px 9px 0 0;
+  padding: 0 6px 0 12px;
+  color: var(--muted);
+}
+.terminal-tab::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 8px;
+  bottom: 8px;
+  width: 1px;
+  background: var(--line);
+}
+.terminal-tab:hover {
+  background: #1c1c1c;
+}
+.terminal-tab[data-active="true"] {
+  background: var(--terminal);
+  color: var(--text);
+}
+.terminal-tab[data-active="true"]::after,
+.terminal-tab:hover::after,
+.terminal-tab:has(+ .terminal-tab[data-active="true"])::after,
+.terminal-tab:has(+ .terminal-tab:hover)::after {
+  background: transparent;
+}
+#tab-list .tab-select {
+  flex: 1;
+  align-self: stretch;
+  min-width: 0;
+  padding: 0 5px 0 0;
+  text-align: left;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   font-size: 12px;
-  border-radius: 0;
-  color: var(--muted);
-  border-right: 1px solid var(--line);
-  border-bottom: 2px solid transparent;
+  color: inherit;
+  background: transparent;
 }
-#tab-list button[aria-selected="true"] {
-  background: var(--terminal);
+#tab-list button:focus-visible {
+  outline-offset: -2px;
+}
+.tab-close {
+  flex: 0 0 22px;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border-radius: 50%;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1;
+}
+.tab-close:hover:not(:disabled),
+.tab-close:focus-visible {
   color: var(--text);
-  border-bottom-color: var(--accent);
+  background: #343434;
+}
+#new-tab {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  font-size: 20px;
 }
 .terminal-controls {
   display: flex;
@@ -425,15 +482,17 @@ dialog input {
     display: inline-flex;
   }
   .tab-bar {
-    height: 44px;
+    height: 40px;
     padding: 0 4px;
   }
-  #tab-list {
-    flex: 1;
+  .terminal-tab {
+    width: 164px;
+    flex-basis: 164px;
+    min-width: 104px;
+    max-width: 164px;
+    padding-left: 9px;
   }
-  #tab-list button {
-    max-width: 140px;
-    padding: 0 12px;
+  #tab-list .tab-select {
     font-size: 11px;
   }
   .terminal-controls {

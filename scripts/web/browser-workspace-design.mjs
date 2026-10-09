@@ -18,6 +18,7 @@ const proc = Bun.spawn(
     cwd: firstCwd,
     env: {
       PATH: process.env.PATH,
+      TMPDIR: process.env.TMPDIR,
       HOME: root,
       LANG: "C.UTF-8",
       SHELL: "/bin/sh",
@@ -70,7 +71,10 @@ try {
   browser = await chromium.launch({ executablePath: process.env.CHROMIUM_BIN, headless: true, args: ["--no-sandbox"] });
   page = await browser.newPage({ viewport: { width: 1100, height: 720 } });
   const failures = [];
-  page.on("pageerror", (error) => failures.push(String(error)));
+  page.on("pageerror", (error) => {
+    failures.push(String(error));
+    console.error("PAGE_ERROR", error);
+  });
   await page.goto(url);
   await page.waitForFunction(() => document.querySelector("#status")?.textContent === "Connected");
   assert.equal(await page.locator(".brand svg").getAttribute("viewBox"), "0 0 530 188", "Canonical Bruv wordmark");
@@ -80,6 +84,11 @@ try {
     await readFile(join(project, "site/assets/brand/bruv-icon.svg"), "utf8"),
   );
   const initial = await api();
+  async function readyToType() {
+    await page.waitForFunction(() =>
+      document.querySelector('#terminal [role="tabpanel"]:not([hidden])')?.textContent.includes("bruv"),
+    );
+  }
   async function rename(name) {
     await page.locator("#tab-menu-toggle").click();
     await page.keyboard.press("Enter");
@@ -111,6 +120,7 @@ try {
   await until(async () => (await api()).workspaces.length === 2, "Workspace missing");
   await page.getByRole("button", { name: "Open workspace bruv", exact: true }).click();
   await page.getByRole("tab", { name: "Select tab Terminal", exact: true }).click();
+  await readyToType();
   await page.locator("#terminal .xterm-helper-textarea:visible").fill("!uname -s");
   await page.keyboard.press("Enter");
   await page.waitForFunction(() => document.querySelector("#terminal")?.textContent?.includes("Linux"));
@@ -181,9 +191,123 @@ try {
 
   // Long names do not expand the page; the full name stays accessible.
   await rename("Investigate shared terminal replay and reconnect");
+  await page.waitForTimeout(300);
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
+  await page.locator("#terminal .xterm-helper-textarea:visible").focus();
+  await page.waitForTimeout(300);
   await page.screenshot({ path: join(proof, "phone-long-tab.png") });
-  for (const tab of (await api()).workspaces[0].tabs) await api("/api/tabs/" + tab.id, "DELETE", { confirm: true });
+  // Close controls are siblings of tabs. An inactive close never selects it.
+  const workspaceId = (await api()).workspaces[0].id;
+  for (let i = 0; i < 5; i++) await api("/api/workspaces/" + workspaceId + "/tabs", "POST", {});
+  const many = (await api()).workspaces[0].tabs;
+  for (const [i, tab] of many.entries())
+    await api("/api/tabs/" + tab.id, "PATCH", {
+      name:
+        i === 0
+          ? "Investigate shared terminal replay and reconnect"
+          : ["Tests", "Review", "Build", "Logs", "Deploy", "Shell", "Notes"][i - 1],
+    });
+  await page.waitForFunction(() => document.querySelectorAll('[role="tab"]').length === 8);
+  assert.equal(await page.locator("button button").count(), 0);
+  await page.setViewportSize({ width: 1100, height: 720 });
+  await page.waitForTimeout(300);
+  await page.getByRole("tab").first().click();
+  const longTitle = await page
+    .getByRole("tab")
+    .first()
+    .evaluate((el) => ({ full: el.title, clipped: el.scrollWidth > el.clientWidth }));
+  assert.match(longTitle.full, /shared terminal replay and reconnect/);
+  assert(longTitle.clipped, "Long title truncates without losing its full name");
+  await page.locator(".tab-close").first().hover();
+  await page.screenshot({ path: join(proof, "tabs-desktop-close-hover.png") });
+  await page.setViewportSize({ width: 390, height: 680 });
+  await page.waitForTimeout(300);
+  await page.getByRole("tab").first().focus();
+  await page.keyboard.press("End");
+  const selectedTab = () => page.locator('[role="tab"][aria-selected="true"]');
+  assert.equal(await selectedTab().getAttribute("id"), "tab-" + many.at(-1).id);
+  const strip = await page
+    .locator("#tab-list")
+    .evaluate((el) => ({ width: el.clientWidth, full: el.scrollWidth, scroll: el.scrollLeft }));
+  assert(strip.full > strip.width && strip.scroll > 0, "Phone tabs scroll to keyboard selection");
+  const tabBox = await selectedTab().boundingBox();
+  const listBox = await page.locator("#tab-list").boundingBox();
+  assert(tabBox.x >= listBox.x - 1 && tabBox.x + tabBox.width <= listBox.x + listBox.width + 1);
+  assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
+  assert((await page.locator("#new-tab").boundingBox()).x < 390, "New tab stays in reach");
+  await page.waitForFunction(() => document.querySelector("#status")?.textContent === "Connected");
+  await page.locator("#terminal .xterm-helper-textarea:visible").fill("!uname -s");
+  await page.keyboard.press("Enter");
+  await page.waitForFunction(() =>
+    document.querySelector('#terminal [role="tabpanel"]:not([hidden])')?.textContent.includes("Linux"),
+  );
+  await page.waitForTimeout(500);
+  await selectedTab().focus();
+  await page.screenshot({ path: join(proof, "tabs-phone-overflow-active.png") });
+  await page.locator("#terminal .xterm-helper-textarea:visible").focus();
+  await page.waitForTimeout(300);
+  await page.screenshot({ path: join(proof, "tabs-phone-overflow-terminal.png") });
+  await selectedTab().focus();
+  await page.keyboard.press("Home");
+  await page.waitForTimeout(300);
+  const activeBefore = await selectedTab().getAttribute("id");
+  const manualScroll = await page.locator("#tab-list").evaluate((el) => {
+    el.scrollLeft = el.scrollWidth;
+    return el.scrollLeft;
+  });
+  await api("/api/tabs/" + many[2].id, "PATCH", { name: "Review changes" });
+  await page.getByRole("tab", { name: "Select tab Review changes", exact: true }).waitFor();
+  assert.equal(
+    await page.locator("#tab-list").evaluate((el) => el.scrollLeft),
+    manualScroll,
+    "Shared rename preserves manual tab scrolling",
+  );
+  await page.locator("#tab-list").evaluate((el) => {
+    el.scrollLeft = 0;
+  });
+  const target = many[1];
+  const closeTarget = page.locator('[id="tab-close-' + target.id + '"]');
+  await closeTarget.focus();
+  await page.screenshot({ path: join(proof, "tabs-phone-close-focus.png") });
+  await closeTarget.press("Enter");
+  assert.equal(await selectedTab().getAttribute("id"), activeBefore, "Inactive close leaves local selection alone");
+  assert.equal(await page.evaluate(() => document.activeElement.id), "dialog-cancel");
+  assert.match(await page.locator("#dialog-description").textContent(), /stop for everyone/);
+  // Shared snapshots may rebuild the strip while its dialog is open.
+  await api("/api/tabs/" + target.id, "PATCH", { name: "Test watch" });
+  await page.getByRole("tab", { name: "Select tab Test watch", exact: true }).waitFor();
+  await page.keyboard.press("Escape");
+  await page.waitForFunction((id) => document.activeElement?.id === id, "tab-close-" + target.id);
+  assert.equal((await api()).workspaces[0].tabs.length, 8, "Cancel keeps running terminals");
+  await closeTarget.press("Enter");
+  await page.locator("#dialog-submit").click();
+  await until(
+    async () => !(await api()).workspaces[0].tabs.some((t) => t.id === target.id),
+    "Captured close did not finish",
+  );
+  await page.waitForFunction((id) => document.activeElement?.id === id, activeBefore);
+  assert.equal(await selectedTab().getAttribute("id"), activeBefore, "Confirmed inactive close leaves selection alone");
+  assert.equal((await api()).workspaces[0].tabs.length, 7);
+  await page.locator('[id="tab-close-' + many[0].id + '"]').click();
+  await page.locator("#dialog-submit").click();
+  await page.waitForFunction(() => document.querySelectorAll('[role="tab"]').length === 6);
+  await page.waitForFunction(() => {
+    const focused = document.activeElement;
+    const panel = focused?.closest('[role="tabpanel"]');
+    return (
+      focused?.classList.contains("xterm-helper-textarea") &&
+      panel?.getAttribute("aria-labelledby") === document.querySelector('[role="tab"][aria-selected="true"]')?.id
+    );
+  });
+  await readyToType();
+  await page.waitForTimeout(300);
+  await page.screenshot({ path: join(proof, "tabs-phone-close-return.png") });
+  const remaining = (await api()).workspaces[0].tabs;
+  for (const tab of remaining.slice(0, -1)) await api("/api/tabs/" + tab.id, "DELETE", { confirm: true });
+  await page.waitForFunction(() => document.querySelectorAll('[role="tab"]').length === 1);
+  await page.locator(".tab-close").click();
+  await page.locator("#dialog-submit").click();
+  await page.waitForFunction(() => document.activeElement?.id === "new-tab");
   await page.getByRole("heading", { name: "Ready when you are." }).waitFor();
   await page.screenshot({ path: join(proof, "empty-tabs-phone.png") });
   await page.locator("#empty-action").click();
@@ -205,9 +329,21 @@ try {
       drawerFocus: true,
       emptyStates: true,
       longNames: true,
+      perTabClose: true,
+      overflowKeyboard: true,
+      sharedUpdateFocusReturn: true,
       proof,
     }),
   );
+} catch (error) {
+  console.error(
+    "DESIGN_FAILURE",
+    await page
+      ?.locator("body")
+      .innerText()
+      .catch(() => "Page unavailable"),
+  );
+  throw error;
 } finally {
   await browser?.close();
   proc.kill("SIGTERM");

@@ -31,6 +31,7 @@ const proc = Bun.spawn(
     cwd: one,
     env: {
       PATH: process.env.PATH,
+      TMPDIR: process.env.TMPDIR,
       HOME: fixture,
       LANG: "C.UTF-8",
       SHELL: "/bin/sh",

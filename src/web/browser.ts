@@ -267,7 +267,15 @@ function selectTab(id: string) {
   render();
   selected()?.term.focus();
 }
+function revealSelectedTab() {
+  document
+    .getElementById("tab-" + selectedTabs[selectedWorkspace])
+    ?.scrollIntoView({ block: "nearest", inline: "nearest" });
+}
+let scrolledTab: string | undefined;
 function render() {
+  const focusedTabControl = document.activeElement?.id;
+  const tabScroll = tabList.scrollLeft;
   workspaceList.replaceChildren();
   for (const item of state.workspaces) {
     const entry = button("", "Open workspace " + item.name, () => selectWorkspace(item.id));
@@ -293,25 +301,39 @@ function render() {
   const current = workspace();
   tabList.replaceChildren();
   for (const tab of current?.tabs ?? []) {
+    const shell = document.createElement("div");
+    shell.className = "terminal-tab";
+    shell.setAttribute("role", "presentation");
+    const active = tab.id === selectedTabs[selectedWorkspace];
+    shell.setAttribute("data-active", String(active));
     const entry = button(
       tab.name + (sessions.get(tab.id)?.halted || tab.exited ? " · ended" : ""),
       "Select tab " + tab.name,
       () => selectTab(tab.id),
     );
-    const active = tab.id === selectedTabs[selectedWorkspace];
+    entry.className = "tab-select";
     entry.id = "tab-" + tab.id;
     entry.setAttribute("role", "tab");
     entry.setAttribute("aria-selected", String(active));
     entry.setAttribute("aria-controls", "terminal-" + tab.id);
     entry.title = tab.name;
     entry.tabIndex = active ? 0 : -1;
-    tabList.append(entry);
+    const close = button("×", "Close tab " + tab.name, () => void closeTab(tab));
+    close.id = "tab-close-" + tab.id;
+    close.className = "tab-close";
+    close.title = "Close tab " + tab.name;
+    close.disabled = busy;
+    shell.append(entry);
+    shell.append(close);
+    tabList.append(shell);
   }
-  requestAnimationFrame(() =>
-    document
-      .getElementById("tab-" + selectedTabs[selectedWorkspace])
-      ?.scrollIntoView({ block: "nearest", inline: "nearest" }),
-  );
+  tabList.scrollLeft = tabScroll;
+  if (focusedTabControl?.startsWith("tab-")) document.getElementById(focusedTabControl)?.focus({ preventScroll: true });
+  const activeTabId = selectedTabs[selectedWorkspace];
+  if (scrolledTab !== activeTabId) {
+    scrolledTab = activeTabId;
+    requestAnimationFrame(revealSelectedTab);
+  }
   const active = selected();
   let selectionChanged = false;
   for (const session of sessions.values()) {
@@ -319,8 +341,8 @@ function render() {
     if (session.element.hidden !== hidden) {
       selectionChanged = true;
       if (hidden) hideSession(session);
-      session.element.hidden = hidden;
     }
+    session.element.hidden = hidden;
   }
   empty.hidden = !!active;
   empty.querySelector("h1")!.textContent = current ? "Ready when you are." : "Your terminal, together.";
@@ -374,7 +396,9 @@ document.addEventListener("visibilitychange", () => {
 });
 new ResizeObserver(resizeSelected).observe(container);
 window.visualViewport?.addEventListener("resize", resizeSelected);
+window.addEventListener("resize", () => requestAnimationFrame(revealSelectedTab));
 tabList.addEventListener("keydown", (event) => {
+  if ((event.target as HTMLElement)?.getAttribute("role") !== "tab") return;
   const tabs = workspace()?.tabs ?? [];
   const index = tabs.findIndex((tab) => tab.id === selectedTabs[selectedWorkspace]);
   let next: number;
@@ -722,18 +746,32 @@ action("rename-tab").addEventListener("click", async () => {
   )?.trim();
   if (name) void change("/api/tabs/" + encodeURIComponent(tab.id), "PATCH", { name });
 });
-action("close-tab").addEventListener("click", async () => {
+async function closeTab(tab: Tab) {
+  const wasActive = selected()?.id === tab.id;
+  const focused = document.activeElement?.id;
+  const origin = focused === "close-tab" ? "tab-menu-toggle" : focused;
+  const confirmed = await askDialog({
+    title: "Close “" + tab.name + "”?",
+    description: "This terminal and its running work will stop for everyone.",
+    submit: "Close tab",
+    destructive: true,
+  });
+  if (confirmed === null) {
+    (
+      document.getElementById(origin ?? "") ??
+      document.getElementById("tab-" + selected()?.id) ??
+      action("new-tab")
+    ).focus();
+    return;
+  }
+  await change("/api/tabs/" + encodeURIComponent(tab.id), "DELETE", { confirm: true });
+  const remaining = selected();
+  if (wasActive && remaining) remaining.term.focus();
+  else (document.getElementById("tab-" + remaining?.id) ?? action("new-tab")).focus();
+}
+action("close-tab").addEventListener("click", () => {
   const tab = workspace()?.tabs.find((tab) => tab.id === selected()?.id);
-  if (
-    tab &&
-    (await askDialog({
-      title: "Close “" + tab.name + "”?",
-      description: "This terminal and its running work will stop for everyone.",
-      submit: "Close tab",
-      destructive: true,
-    })) !== null
-  )
-    void change("/api/tabs/" + encodeURIComponent(tab.id), "DELETE", { confirm: true });
+  if (tab) void closeTab(tab);
 });
 action("remove-workspace").addEventListener("click", async () => {
   const current = workspace();
