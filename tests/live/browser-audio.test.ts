@@ -1,7 +1,8 @@
 import { afterEach, expect, test } from "bun:test";
 import { createAudioRelay, type AudioRelayData } from "../../src/web/audio-relay";
 import { BrowserLiveAudio, browserAudioEnvironment } from "../../src/live/browser-audio";
-import { parseAudio } from "../../src/live/browser-protocol";
+import { createBrowserRequestInput } from "../../src/live/browser-request";
+import { BROWSER_INPUT_MARKER, parseAudio } from "../../src/live/browser-protocol";
 import { liveLocalOnly } from "../../src/live/status";
 import liveExtension from "../../src/live/extension";
 import { LIVE_PROVIDERS } from "../../src/live/providers";
@@ -12,10 +13,24 @@ const cleanup: (() => void | Promise<void>)[] = [];
 afterEach(async () => {
   for (const fn of cleanup.splice(0).reverse()) await fn();
 });
-function fixture() {
+const privateOwner = "private-attachment-capability";
+const publicOwner = "public-presence-id";
+function fixture(targetAvailable = true) {
+  const requests: { session: string; owner: string; request: string }[] = [];
+  const cancelled: typeof requests = [];
   const relay = createAudioRelay({
     allowedOrigins: ["https://bruv.test"],
-    authorizeBrowser: (req, id) => req.headers.get("cookie") === "auth=yes" && id === "owner",
+    authorizeBrowser: (req, id) =>
+      id === "owner" && req.headers.get("cookie") === "auth=yes"
+        ? (req.headers.get("x-attachment") ?? privateOwner)
+        : false,
+    requestBrowser: (session, owner, request) => {
+      requests.push({ session, owner, request });
+      return targetAvailable;
+    },
+    cancelBrowser: (session, owner, request) => {
+      cancelled.push({ session, owner, request });
+    },
   });
   const server = Bun.serve<AudioRelayData>({
     hostname: "127.0.0.1",
@@ -29,17 +44,24 @@ function fixture() {
     server.stop(true);
   });
   const secret = relay.registerSession("owner");
-  relay.registerSession("other");
+  const otherSecret = relay.registerSession("other");
   const base = `ws://127.0.0.1:${server.port}/api/live/audio`;
   return {
     relay,
+    requests,
+    cancelled,
+    ticket: () => relay.inputTicket("owner", privateOwner),
     server,
     secret,
+    otherSecret,
     cli: base + "?role=cli&session=owner",
     browser: base + "?role=browser&session=owner",
   };
 }
-async function openBrowser(url: string, headers = { origin: "https://bruv.test", cookie: "auth=yes" }) {
+async function openBrowser(
+  url: string,
+  headers: Record<string, string> = { origin: "https://bruv.test", cookie: "auth=yes" },
+) {
   // Bun supports custom client headers; DOM typings intentionally do not.
   const Client = WebSocket as unknown as new (url: string, options: { headers: Record<string, string> }) => WebSocket;
   const ws = new Client(url, { headers });
@@ -53,6 +75,19 @@ async function openBrowser(url: string, headers = { origin: "https://bruv.test",
 async function until(check: () => boolean) {
   for (let i = 0; i < 100 && !check(); i++) await Bun.sleep(10);
   expect(check()).toBe(true);
+}
+
+async function acquire(
+  f: ReturnType<typeof fixture>,
+  options: Partial<Parameters<typeof BrowserLiveAudio.launch>[0]> = {},
+) {
+  const request = f.ticket();
+  const pending = BrowserLiveAudio.launch({ url: f.cli, secret: f.secret, ...options, request });
+  await until(() => f.requests.some((r) => r.request === request));
+  const browser = await openBrowser(f.browser + "&request=" + request);
+  const audio = await pending;
+  cleanup.push(() => audio.close());
+  return { browser, audio, request };
 }
 
 test("explicit browser environment allows remote root TUI, never workers/RPC, and validates secret/TLS", () => {
@@ -69,39 +104,120 @@ test("explicit browser environment allows remote root TUI, never workers/RPC, an
   ).toThrow("TLS");
 });
 
-test("browser auth, exact origin/session ownership, duplicates and CLI secret fail closed", async () => {
+test("browser auth and exact request capability fail closed without stealing active ownership", async () => {
   const f = fixture();
-  await expect(openBrowser(f.browser, { origin: "https://evil.test", cookie: "auth=yes" })).rejects.toThrow();
-  await expect(openBrowser(f.browser, { origin: "https://bruv.test", cookie: "" })).rejects.toThrow();
-  await expect(openBrowser(f.browser.replace("owner", "other"))).rejects.toThrow();
-  const browser = await openBrowser(f.browser);
-  await expect(openBrowser(f.browser)).rejects.toThrow();
-  await expect(BrowserLiveAudio.launch({ url: f.cli, secret: "0".repeat(64), timeoutMs: 1000 })).rejects.toThrow();
-  expect(browser.readyState).toBe(WebSocket.OPEN);
-  const audio = await BrowserLiveAudio.launch({ url: f.cli, secret: f.secret });
+  await expect(openBrowser(f.browser)).rejects.toThrow(); // No manual pre-attach.
+  const request = f.ticket();
+  await expect(
+    BrowserLiveAudio.launch({ url: f.cli, secret: "0".repeat(64), request, timeoutMs: 1000 }),
+  ).rejects.toThrow();
+  const pending = BrowserLiveAudio.launch({ url: f.cli, secret: f.secret, request });
+  await until(() => f.requests.length === 1);
+  expect(f.requests).toEqual([{ session: "owner", owner: privateOwner, request }]);
+  const url = f.browser + "&request=" + request;
+  await expect(openBrowser(url, { origin: "https://evil.test", cookie: "auth=yes" })).rejects.toThrow();
+  await expect(openBrowser(url, { origin: "https://bruv.test", cookie: "" })).rejects.toThrow();
+  await expect(openBrowser(url.replace("session=owner", "session=other"))).rejects.toThrow();
+  await expect(
+    openBrowser(url, { origin: "https://bruv.test", cookie: "auth=yes", "x-attachment": "observer-capability" }),
+  ).rejects.toThrow();
+  await expect(
+    openBrowser(url, { origin: "https://bruv.test", cookie: "auth=yes", "x-attachment": publicOwner }),
+  ).rejects.toThrow();
+  await expect(openBrowser(f.browser + "&request=" + f.ticket())).rejects.toThrow();
+  expect(f.cancelled).toEqual([]);
+  const browser = await openBrowser(url);
+  const audio = await pending;
   cleanup.push(() => audio.close());
-  await expect(BrowserLiveAudio.launch({ url: f.cli, secret: f.secret, timeoutMs: 1000 })).rejects.toThrow();
+  await expect(openBrowser(url)).rejects.toThrow();
+  await expect(
+    BrowserLiveAudio.launch({ url: f.cli, secret: f.secret, request: f.ticket(), timeoutMs: 1000 }),
+  ).rejects.toThrow();
+  f.relay.releaseAttachment("owner", publicOwner);
+  f.relay.releaseAttachment("owner", "observer-capability");
   expect(browser.readyState).toBe(WebSocket.OPEN);
+  expect(f.cancelled).toEqual([]);
+  f.relay.releaseAttachment("owner", privateOwner);
+  await until(() => browser.readyState === WebSocket.CLOSED);
+  expect(f.cancelled).toEqual([{ session: "owner", owner: privateOwner, request }]);
+});
+
+test("CLI tickets are required, attributed and consumed once; fresh commands can reacquire", async () => {
+  const f = fixture();
+  const launch = (request?: string) =>
+    BrowserLiveAudio.launch({ url: f.cli, secret: f.secret, request, timeoutMs: 1000 });
+  await expect(launch()).rejects.toThrow("unmixed browser command");
+  const unattributed = f.relay.inputTicket("owner", undefined);
+  await expect(launch(unattributed)).rejects.toThrow("unmixed browser command");
+  expect(f.requests).toEqual([]);
+  const { audio, browser, request } = await acquire(f);
+  audio.close();
+  await until(() => browser.readyState === WebSocket.CLOSED);
+  await expect(launch(request)).rejects.toThrow("unmixed browser command");
+  expect(f.requests).toHaveLength(1);
+  const next = await acquire(f);
+  expect(next.request).not.toBe(request);
+  expect(f.requests).toHaveLength(2);
+});
+
+test("another terminal cannot steal active audio and observer release leaves it alive", async () => {
+  const f = fixture();
+  const { browser, request } = await acquire(f);
+  const otherRequest = f.relay.inputTicket("other", "other-private-owner");
+  await expect(
+    BrowserLiveAudio.launch({
+      url: f.cli.replace("session=owner", "session=other"),
+      secret: f.otherSecret,
+      request: otherRequest,
+    }),
+  ).rejects.toThrow("already active");
+  f.relay.releaseAttachment("owner", "observer-capability");
+  expect(browser.readyState).toBe(WebSocket.OPEN);
+  expect(f.requests).toEqual([{ session: "owner", owner: privateOwner, request }]);
+  expect(f.cancelled).toEqual([]);
+});
+
+test("detached request target and permission refusal cancel acquisition and allow a fresh command", async () => {
+  const detached = fixture(false);
+  const detachedRequest = detached.ticket();
+  await expect(
+    BrowserLiveAudio.launch({ url: detached.cli, secret: detached.secret, request: detachedRequest }),
+  ).rejects.toThrow("detached");
+  expect(detached.cancelled).toEqual(detached.requests);
+
+  const f = fixture();
+  const request = f.ticket();
+  const pending = BrowserLiveAudio.launch({ url: f.cli, secret: f.secret, request });
+  const rejected = pending.then(
+    () => undefined,
+    (error: Error) => error,
+  );
+  await until(() => f.requests.length === 1);
+  // An observer/public ID and the wrong ticket cannot end the pending owner request.
+  f.relay.failRequest("owner", publicOwner, request, "Not the owner");
+  f.relay.failRequest("owner", privateOwner, f.ticket(), "Not this request");
+  expect(f.cancelled).toEqual([]);
+  f.relay.failRequest("owner", privateOwner, request, "Microphone permission denied");
+  expect((await rejected)?.message).toBe("Microphone permission denied");
+  expect(f.cancelled).toEqual([{ session: "owner", owner: privateOwner, request }]);
+  await expect(openBrowser(f.browser + "&request=" + request)).rejects.toThrow();
+  await acquire(f);
 });
 
 test("PCM/epochs/queue reports and observed stop use real relay sockets", async () => {
   const f = fixture();
-  const browser = await openBrowser(f.browser);
   const received: any[] = [];
   const captures: number[] = [];
   const queued: number[] = [];
+  const { browser, audio } = await acquire(f, {
+    callbacks: { capture: (b, e) => captures.push(e ?? b.length), played: (m) => queued.push(m) },
+  });
   browser.onmessage = ({ data }) => {
     const m = JSON.parse(String(data));
     received.push(m);
     if (m.type === "start") browser.send('{"type":"ready"}');
     if (m.type === "stop") browser.send('{"type":"stopped"}');
   };
-  const audio = await BrowserLiveAudio.launch({
-    url: f.cli,
-    secret: f.secret,
-    callbacks: { capture: (b, e) => captures.push(e ?? b.length), played: (m) => queued.push(m) },
-  });
-  cleanup.push(() => audio.close());
   await audio.start();
   browser.send(JSON.stringify({ type: "capture", data: Buffer.alloc(640).toString("base64") }));
   await until(() => captures.length === 1);
@@ -124,22 +240,22 @@ test("malformed/browser tool messages and backpressure close audio; no arbitrary
   expect(parseAudio('{"type":"play","data":"AA==","generation":0}', "cli")).toBeUndefined();
   expect(parseAudio('{"type":"played","queuedMs":2000}', "browser")).toBeUndefined();
   const f = fixture();
-  const browser = await openBrowser(f.browser);
   let closed = false;
-  const audio = await BrowserLiveAudio.launch({
-    url: f.cli,
-    secret: f.secret,
+  const { browser } = await acquire(f, {
     callbacks: {
       closed: () => {
         closed = true;
       },
     },
   });
-  cleanup.push(() => audio.close());
   browser.send('{"type":"execute","code":"jobs.stopWork()"}');
   await until(() => closed);
   // Injectable mount uses bounded server backpressure, independent of a fast loopback socket.
-  const relay = createAudioRelay({ allowedOrigins: [], authorizeBrowser: () => false });
+  const relay = createAudioRelay({
+    allowedOrigins: ["https://bruv.test"],
+    authorizeBrowser: () => privateOwner,
+    requestBrowser: () => true,
+  });
   const secret = relay.registerSession("s");
   const cli: any = {
     data: { channel: "audio", sessionId: "s", role: "cli", authenticated: false },
@@ -156,9 +272,21 @@ test("malformed/browser tool messages and backpressure close audio; no arbitrary
     getBufferedAmount: () => 65536,
     send: () => 1,
   };
-  relay.websocket.open(peer);
   relay.websocket.open(cli);
-  relay.websocket.message(cli, JSON.stringify({ type: "hello", secret }));
+  const request = relay.inputTicket("s", privateOwner);
+  relay.websocket.message(cli, JSON.stringify({ type: "hello", secret, request }));
+  await relay.upgrade(
+    new Request("http://localhost/api/live/audio?role=browser&session=s&request=" + request, {
+      headers: { origin: "https://bruv.test" },
+    }),
+    {
+      upgrade: (_req, options) => {
+        peer.data = options.data;
+        return true;
+      },
+    },
+  );
+  relay.websocket.open(peer);
   relay.websocket.message(cli, '{"type":"start"}');
   expect(releases).toBe(1);
   relay.unregisterSession("s");
@@ -166,7 +294,6 @@ test("malformed/browser tool messages and backpressure close audio; no arbitrary
 
 test("actual /live command defaults use relay audio; fake provider closes on browser loss without cancelling jobs", async () => {
   const f = fixture();
-  const browser = await openBrowser(f.browser);
   const prior = { url: process.env.BRUV_LIVE_RELAY_URL, secret: process.env.BRUV_LIVE_RELAY_SECRET };
   process.env.BRUV_LIVE_RELAY_URL = f.cli;
   process.env.BRUV_LIVE_RELAY_SECRET = f.secret;
@@ -176,9 +303,6 @@ test("actual /live command defaults use relay audio; fake provider closes on bro
     if (prior.secret === undefined) delete process.env.BRUV_LIVE_RELAY_SECRET;
     else process.env.BRUV_LIVE_RELAY_SECRET = prior.secret;
   });
-  browser.onmessage = ({ data }) => {
-    if (JSON.parse(String(data)).type === "start") browser.send('{"type":"ready"}');
-  };
   let command: any;
   let callbacks!: VoiceCallbacks;
   let providerClosed = 0;
@@ -242,7 +366,16 @@ test("actual /live command defaults use relay audio; fake provider closes on bro
   cleanup.push(async () => {
     await command("stop", ctx);
   });
-  await command("start", ctx);
+  const input = createBrowserRequestInput();
+  const request = f.ticket();
+  expect(input.observe(BROWSER_INPUT_MARKER + request + "\x07")).toEqual({ consume: true });
+  const pending = input.run(() => command("start", ctx));
+  await until(() => f.requests.length === 1);
+  const browser = await openBrowser(f.browser + "&request=" + request);
+  browser.onmessage = ({ data }) => {
+    if (JSON.parse(String(data)).type === "start") browser.send('{"type":"ready"}');
+  };
+  await pending;
   const pcm = Buffer.alloc(640).toString("base64");
   browser.send(JSON.stringify({ type: "capture", data: pcm }));
   await until(() => sent.length === 1);
@@ -358,6 +491,20 @@ test("browser client with fake devices sends PCM, schedules 24k output, flushes,
   replace("navigator", { mediaDevices: { getUserMedia: async () => ({ getTracks: () => [track] }) } });
   replace("AudioContext", Context);
   replace("AudioWorkletNode", Worklet);
+  let captures = 0;
+  const request = f.ticket();
+  const pending = BrowserLiveAudio.launch({
+    url: f.cli,
+    secret: f.secret,
+    request,
+    callbacks: {
+      capture: (b) => {
+        expect(b.length).toBe(640);
+        captures++;
+      },
+    },
+  });
+  await until(() => f.requests.length === 1);
   replace(
     "WebSocket",
     class extends Client {
@@ -368,21 +515,9 @@ test("browser client with fake devices sends PCM, schedules 24k output, flushes,
     },
   );
   const states: string[] = [];
-  const browser = await connectBrowserAudio({ url: f.browser, onState: (s) => states.push(s) });
+  const browser = await connectBrowserAudio({ url: f.browser + "&request=" + request, onState: (s) => states.push(s) });
   cleanup.push(() => browser.close());
-  // CLI must have no Origin, just like the real server-side child.
-  Object.defineProperty(globalThis, "WebSocket", { configurable: true, writable: true, value: NativeSocket });
-  let captures = 0;
-  const audio = await BrowserLiveAudio.launch({
-    url: f.cli,
-    secret: f.secret,
-    callbacks: {
-      capture: (b) => {
-        expect(b.length).toBe(640);
-        captures++;
-      },
-    },
-  });
+  const audio = await pending;
   cleanup.push(() => audio.close());
   await audio.start();
   port.onmessage({ data: { bytes: new ArrayBuffer(640) } });
@@ -403,13 +538,15 @@ test("browser client with fake devices sends PCM, schedules 24k output, flushes,
 test("CLI waits for its exact browser; session revocation closes both and rejects reuse", async () => {
   const f = fixture();
   let launched = false;
-  const pending = BrowserLiveAudio.launch({ url: f.cli, secret: f.secret }).then((audio) => {
+  const request = f.ticket();
+  const pending = BrowserLiveAudio.launch({ url: f.cli, secret: f.secret, request }).then((audio) => {
     launched = true;
     return audio;
   });
   await Bun.sleep(20);
   expect(launched).toBe(false);
-  const browser = await openBrowser(f.browser);
+  await until(() => f.requests.length === 1);
+  const browser = await openBrowser(f.browser + "&request=" + request);
   const audio = await pending;
   cleanup.push(() => audio.close());
   let released = false;
@@ -419,5 +556,5 @@ test("CLI waits for its exact browser; session revocation closes both and reject
   f.relay.unregisterSession("owner");
   await until(() => released);
   await expect(openBrowser(f.browser)).rejects.toThrow();
-  await expect(BrowserLiveAudio.launch({ url: f.cli, secret: f.secret, timeoutMs: 1000 })).rejects.toThrow();
+  await expect(BrowserLiveAudio.launch({ url: f.cli, secret: f.secret, request, timeoutMs: 1000 })).rejects.toThrow();
 });
