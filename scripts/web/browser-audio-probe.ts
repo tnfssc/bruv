@@ -192,10 +192,18 @@ try {
           w.contexts.push(this);
         }
       };
+      w.terminals = new Map();
       const WS = window.WebSocket;
       window.WebSocket = class extends WS {
         constructor(...args: [string | URL, (string | string[])?]) {
           super(...args);
+          const parsed = new URL(this.url);
+          if (parsed.pathname === "/api/terminal") {
+            w.terminals.set(parsed.searchParams.get("tab"), this);
+            this.addEventListener("message", ({ data }) => {
+              if (JSON.parse(data).type === "ready") (this as any).probeReady = true;
+            });
+          }
           const send = this.send.bind(this);
           this.send = (data) => {
             if (
@@ -210,7 +218,15 @@ try {
       };
     });
     await p.goto(app.origin + "/#token=" + app.token);
-    await p.waitForFunction(() => document.querySelector("#status")?.textContent?.startsWith("Connected"));
+    await p.waitForFunction(() => {
+      const id = document.querySelector('[role="tab"][aria-selected="true"]')?.id.slice(4);
+      const socket = (window as any).terminals.get(id);
+      return (
+        socket?.readyState === WebSocket.OPEN &&
+        socket.probeReady &&
+        (document.querySelector("#terminal-status") as HTMLElement)?.hidden
+      );
+    });
     await p.waitForFunction(() =>
       document.querySelector("#terminal")?.textContent?.includes("OFFLINE_LIVE_FIXTURE_READY"),
     );
@@ -249,7 +265,15 @@ try {
   );
   assert.equal(await observer.evaluate(() => (window as any).tracks.length), 0);
   await observer.reload();
-  await observer.waitForFunction(() => document.querySelector("#status")?.textContent?.startsWith("Connected"));
+  await observer.waitForFunction(() => {
+    const id = document.querySelector('[role="tab"][aria-selected="true"]')?.id.slice(4);
+    const socket = (window as any).terminals.get(id);
+    return (
+      socket?.readyState === WebSocket.OPEN &&
+      socket.probeReady &&
+      (document.querySelector("#terminal-status") as HTMLElement)?.hidden
+    );
+  });
   assert.equal(await observer.evaluate(() => (window as any).tracks.length), 0, "Rejoin cannot capture");
   await submit(owner, "/live stop");
   await released(owner);
@@ -279,7 +303,11 @@ try {
     (window as any).denyNext = true;
   });
   await submit(owner, "/live");
-  await owner.waitForFunction(() => document.querySelector("#notice")?.textContent?.includes("denied"));
+  await owner.locator("#voice-status").waitFor({ state: "visible" });
+  await owner.waitForFunction(() => document.querySelector("#audio-status")?.textContent?.includes("denied"));
+  assert.equal(await owner.locator("#status").isVisible(), false, "Permission denial is not a PTY outage");
+  await owner.locator("#dismiss-voice").click();
+  await owner.locator("#voice-status").waitFor({ state: "hidden" });
   await released(owner);
   const deniedFrames = await owner.evaluate(() => (window as any).captureFrames);
   await submit(owner, "/live");

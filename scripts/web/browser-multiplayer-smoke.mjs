@@ -65,6 +65,15 @@ async function until(check, message, timeout = 15000) {
   }
 }
 const failures = [];
+async function connected(page) {
+  await page.waitForFunction(() => {
+    const id = document.querySelector('[role="tab"][aria-selected="true"]')?.id.slice(4);
+    const socket = window.terminals.get(id);
+    return (
+      socket?.readyState === WebSocket.OPEN && socket.probeReady && document.querySelector("#terminal-status")?.hidden
+    );
+  });
+}
 try {
   await until(() => output.includes("#token="), "Server URL missing");
   const url = output
@@ -108,7 +117,11 @@ try {
             const id = parsed.searchParams.get("tab") || "terminal";
             window.terminals.set(id, this);
             if (!window.messages.has(id)) window.messages.set(id, []);
-            this.addEventListener("message", (e) => window.messages.get(id).push(JSON.parse(e.data)));
+            this.addEventListener("message", (e) => {
+              const message = JSON.parse(e.data);
+              if (message.type === "ready") this.probeReady = true;
+              window.messages.get(id).push(message);
+            });
             const send = this.send.bind(this);
             this.send = (data) => {
               if (JSON.parse(data).type === "resize") window.resizeCount++;
@@ -136,7 +149,7 @@ try {
       };
     });
     await page.goto(url);
-    await page.waitForFunction(() => document.querySelector("#status")?.textContent?.startsWith("Connected"));
+    await connected(page);
     return page;
   }
   const a = await open(1200),
@@ -177,23 +190,39 @@ try {
     await page.locator(".tab-name-input").waitFor({ state: "hidden" });
     await page.getByRole("tab", { name: "Select tab " + name, exact: true }).waitFor();
   }
-  async function dialog(page, selector, answer) {
-    if (selector === "#close-tab") await page.locator("#tab-menu-toggle").click();
-    if (selector === "#remove-workspace") {
-      if (await page.locator("#open-drawer").isVisible()) await page.locator("#open-drawer").click();
-      await page.locator("#workspace-menu-toggle").click();
-    }
+  async function openFolder(page, cwd) {
+    if (await page.locator("#open-drawer").isVisible()) await page.locator("#open-drawer").click();
+    await page.locator("#add-workspace").click();
+    await page.locator("#rail-entry #folder-form").waitFor({ state: "visible" });
+    assert.equal(await page.locator("#folder-form").count(), 1, "One folder form");
+    await page.locator("#folder-input").fill(cwd);
+    const response = page.waitForResponse(
+      (r) => new URL(r.url()).pathname === "/api/workspaces" && r.request().method() === "POST",
+    );
+    await page.locator("#open-folder").click();
+    const result = await response;
+    assert.equal(result.status(), 200);
+    const next = await result.json();
+    assert.equal(next.created, true);
+    const workspace = next.workspaces.find((w) => w.id === next.workspaceId);
+    assert.equal(workspace?.cwd, cwd);
+    await page.locator('[id="workspace-' + next.workspaceId + '"][aria-pressed="true"]').waitFor();
+    await page.locator("#folder-form").waitFor({ state: "hidden" });
+  }
+  async function dialog(page, selector, confirm) {
+    if (selector.startsWith("#workspace-remove-") && (await page.locator("#open-drawer").isVisible()))
+      await page.locator("#open-drawer").click();
     await page.locator(selector).click();
     await page.locator("#workspace-dialog").waitFor({ state: "visible" });
-    if (typeof answer === "string") await page.locator("#dialog-input").fill(answer);
-    await page.locator(answer === false ? "#dialog-cancel" : "#dialog-submit").click();
+    assert.equal(await page.evaluate(() => document.activeElement?.id), "dialog-cancel");
+    await page.locator(confirm ? "#dialog-submit" : "#dialog-cancel").click();
     await page.locator("#workspace-dialog").waitFor({ state: "hidden" });
   }
   async function select(page, workspace, id) {
     if (await page.locator("#open-drawer").isVisible()) await page.locator("#open-drawer").click();
-    await page.getByRole("button", { name: "Open workspace " + workspace.name, exact: true }).click();
+    await page.locator('[id="workspace-' + workspace.id + '"]').click();
     await page.locator('[id="tab-' + id + '"]').click();
-    await page.waitForFunction(() => document.querySelector("#status")?.textContent?.startsWith("Connected"));
+    await connected(page);
   }
   const selected = (page) => page.locator('[role="tab"][aria-selected="true"]').getAttribute("id");
   await submit(a, "!printf 'A_OUT_%s\\n' $PWD");
@@ -213,8 +242,8 @@ try {
     "Draft input not shared",
   );
   await b.keyboard.press("Control+u");
-  await dialog(b, "#add-workspace", two);
-  await a.getByRole("button", { name: "Open workspace two", exact: true }).waitFor();
+  await openFolder(b, two);
+  await a.getByRole("button", { name: "Open workspace two · " + two, exact: true }).waitFor();
   assert.equal(await selected(a), "tab-" + tab.id, "Remote creation stole A selection");
   let current = await state(),
     second = current.workspaces.find((w) => w.cwd === two);
@@ -260,10 +289,10 @@ try {
   // Deletion from another viewer cancels an edit without submitting it.
   await a.locator('[id="tab-' + bEditId + '"]').dblclick();
   await draft.fill("deleted draft");
-  await dialog(b, "#close-tab", false);
+  await dialog(b, "#tab-close-" + bEditId, false);
   assert.equal((await state()).workspaces.find((w) => w.id === second.id).tabs.length, 4);
   assert.equal(await draft.inputValue(), "deleted draft", "Remote close cancellation keeps the draft");
-  await dialog(b, "#close-tab", true);
+  await dialog(b, "#tab-close-" + bEditId, true);
   await until(
     async () => (await a.getByRole("tab").count()) === 3 && (await b.getByRole("tab").count()) === 3,
     "Close did not propagate",
@@ -273,15 +302,18 @@ try {
   await select(b, first, tab.id);
   await submit(a, "!sleep 2; printf 'JOB_%s\\n' survives-reload");
   await a.reload();
-  await a.waitForFunction(() => document.querySelector("#status")?.textContent?.startsWith("Connected"));
+  await connected(a);
   await until(
     async () => (await text(b)).includes("JOB_survives-reload") && (await text(a)).includes("JOB_survives-reload"),
     "Reload lost shared job or replay",
   );
   assert.equal((await state()).workspaces[0].tabs[0].pid, pid);
   await a.evaluate(() => window.stateSocket.close(4000, "reconnect fixture"));
+  await a.locator("#sync-status").waitFor({ state: "visible" });
+  assert.equal(await a.locator("#status").isVisible(), false, "List outage does not mark the PTY down");
   await rename(b, "shared first");
   await a.getByRole("tab", { name: "Select tab shared first", exact: true }).waitFor();
+  await a.locator("#sync-status").waitFor({ state: "hidden" });
   // Shared dimensions must settle, not resize forever between different viewports.
   await a.setViewportSize({ width: 1100, height: 750 });
   await b.setViewportSize({ width: 650, height: 650 });
@@ -308,10 +340,10 @@ try {
   const voice = (await state()).voice;
   assert.equal(voice.tabId, tab.id);
   await b.evaluate((id) => window.terminals.get(id).close(4000, "observer leaves"), tab.id);
-  await b.waitForFunction(() => document.querySelector("#status")?.textContent?.startsWith("Connected"));
+  await connected(b);
   assert.deepEqual((await state()).voice, voice, "Observer disconnect stopped voice");
   await b.reload();
-  await b.waitForFunction(() => document.querySelector("#status")?.textContent?.startsWith("Connected"));
+  await connected(b);
   assert.deepEqual((await state()).voice, voice, "Observer reload stopped voice");
   assert.equal(await b.evaluate(() => window.mediaTracks.length), 0, "Observer rejoin must not capture");
   await submit(b, "/fixture-live start");
@@ -329,29 +361,26 @@ try {
   });
   await a.setViewportSize({ width: 390, height: 680 });
   await Bun.sleep(200);
-  await a.locator(".voice-control").focus();
+  await a.locator("#voice-status").waitFor({ state: "visible" });
+  assert.equal(await a.locator("#cancel-voice").isVisible(), false, "Active voice is not a pending request");
+  assert.equal(await b.locator("#cancel-voice").isVisible(), false, "Observer has no cancel control");
+  assert.equal(await a.locator("#status").isVisible(), false, "Voice is separate from healthy PTY status");
   const voiceGeometry = await a.evaluate(() => {
     const rect = (selector) => document.querySelector(selector).getBoundingClientRect().toJSON();
     return {
-      voice: rect(".voice-control"),
-      label: rect(".mic-label"),
-      status: rect(".connection"),
-      tab: rect(".tab-close"),
-      tooltip: rect("#audio-status"),
+      voice: rect("#voice-status"),
+      label: rect("#audio-status"),
+      bar: rect(".tab-bar"),
+      terminal: rect("#terminal"),
     };
   });
-  assert.equal(voiceGeometry.voice.height, 32, "Phone voice uses the shared control frame");
+  assert(voiceGeometry.voice.y >= voiceGeometry.bar.bottom, "Voice banner stays below tab controls");
+  assert(voiceGeometry.terminal.y >= voiceGeometry.voice.bottom, "Voice banner does not cover the PTY");
   assert(
-    Math.abs(
-      voiceGeometry.voice.y + voiceGeometry.voice.height / 2 - voiceGeometry.tab.y - voiceGeometry.tab.height / 2,
-    ) < 0.6,
-    "Voice aligns with tabs",
+    voiceGeometry.label.x >= voiceGeometry.voice.x && voiceGeometry.label.right <= voiceGeometry.voice.right,
+    "Voice label fits banner",
   );
-  assert(voiceGeometry.label.y - voiceGeometry.voice.y >= 4, "Voice focus frame does not cross its label");
-  assert(
-    Math.abs(voiceGeometry.tooltip.y - voiceGeometry.voice.bottom - 5) < 0.6,
-    "Voice tooltip uses the shared menu gap",
-  );
+  assert.equal(await a.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
   await Bun.write(join(project, "artifacts/voice-alignment.json"), JSON.stringify(voiceGeometry, null, 2));
   await a.screenshot({
     caret: "initial",
@@ -388,9 +417,9 @@ try {
     .find((w) => w.id === second.id)
     .tabs.map((t) => t.pid)
     .filter(Boolean);
-  await dialog(b, "#remove-workspace", true);
+  await dialog(b, "#workspace-remove-" + second.id, true);
   await until(
-    async () => (await a.getByRole("button", { name: "Open workspace two", exact: true }).count()) === 0,
+    async () => (await a.getByRole("button", { name: "Open workspace two · " + two, exact: true }).count()) === 0,
     "Remote workspace deletion not observed",
   );
   await until(

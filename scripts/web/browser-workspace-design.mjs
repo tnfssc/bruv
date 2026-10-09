@@ -55,27 +55,42 @@ async function until(check, message, timeout = 15000) {
 async function checkAlignment(label) {
   const metrics = await page.evaluate(() => {
     const rect = (selector) => {
-      const r = document.querySelector(selector).getBoundingClientRect();
+      const el = document.querySelector(selector);
+      const r = el.getBoundingClientRect();
       return { x: r.x, y: r.y, width: r.width, height: r.height, right: r.right, centerY: r.y + r.height / 2 };
     };
+    const drawer = document.body.dataset.drawer === "open";
     return {
-      tab: rect(".tab-close"),
+      phone: innerWidth <= 700,
+      tab: rect('.terminal-tab:has([aria-selected="true"]) .tab-close'),
+      select: rect('[role="tab"][aria-selected="true"]'),
       plus: rect("#new-tab"),
-      menu: rect("#tab-menu-toggle"),
-      status: rect(".connection"),
-      folder: rect(".workspace-mark"),
-      copy: rect(".workspace-copy"),
+      drawer: innerWidth <= 700 ? rect("#open-drawer") : null,
+      closeDrawer: drawer ? rect("#close-drawer") : null,
       header: rect(".brand-row"),
+      workspace: innerWidth > 700 || drawer ? rect(".workspace") : null,
+      remove: innerWidth > 700 || drawer ? rect(".workspace-remove") : null,
+      add: innerWidth > 700 || drawer ? rect("#add-workspace") : null,
       terminal: rect("#terminal"),
       screen: rect(".terminal-pane:not([hidden]) .xterm-screen"),
       rows: document.querySelector(".terminal-pane:not([hidden]) .xterm-rows").childElementCount,
     };
   });
-  for (const name of ["plus", "menu", "status"])
-    assert(Math.abs(metrics[name].centerY - metrics.tab.centerY) < 0.6, label + ": " + name + " aligns with tabs");
-  assert(metrics.status.width >= 28 && metrics.status.height >= 28, "Status keeps a usable focus frame");
-  assert(Math.abs(metrics.folder.centerY - metrics.copy.centerY) < 0.6, "Folder aligns with workspace text");
-  if (metrics.header.height > 0) {
+  const minimum = metrics.phone ? 32 : 24;
+  for (const name of ["tab", "select", "plus", "drawer", "closeDrawer", "workspace", "remove", "add"]) {
+    if (!metrics[name]) continue;
+    assert(
+      metrics[name].width >= minimum && metrics[name].height >= minimum,
+      label + ": " + name + " target >= " + minimum,
+    );
+  }
+  for (const name of ["plus", "drawer"]) {
+    if (metrics[name])
+      assert(Math.abs(metrics[name].centerY - metrics.tab.centerY) < 0.6, label + ": " + name + " aligns with tabs");
+  }
+  if (metrics.remove)
+    assert(Math.abs(metrics.workspace.centerY - metrics.remove.centerY) < 0.6, "Row remove aligns with workspace");
+  if (metrics.workspace) {
     const denseHeight = await page.evaluate(() => {
       const list = document.querySelector("#workspace-list");
       const copies = Array.from({ length: 20 }, () => list.firstElementChild.cloneNode(true));
@@ -89,6 +104,18 @@ async function checkAlignment(label) {
   await Bun.write(join(proof, "alignment-" + label + ".json"), JSON.stringify(metrics, null, 2));
 }
 
+async function connected() {
+  await page.waitForFunction(() => {
+    const id = document.querySelector('[role="tab"][aria-selected="true"]')?.id.slice(4);
+    const socket = window.terminalSockets.get(id);
+    return (
+      socket?.readyState === WebSocket.OPEN && socket.probeReady && document.querySelector("#terminal-status")?.hidden
+    );
+  });
+}
+
+// Feature guidance: wisdom/web/workspace-design.md and wisdom/web/live-command-microphone.md.
+// These probes need the integrated compiled frontend; syntax checks are not browser proof.
 // UI proof uses the compiled app and real PTYs. Inspect the saved frames too.
 // Preserve caret styling: Playwright caret hiding corrupts focused xterm DOM captures in Chromium.
 const screenshot = (options) => page.screenshot({ caret: "initial", ...options });
@@ -115,8 +142,24 @@ try {
     failures.push(String(error));
     console.error("PAGE_ERROR", error);
   });
+  await page.addInitScript(() => {
+    window.terminalSockets = new Map();
+    const WS = window.WebSocket;
+    window.WebSocket = class extends WS {
+      constructor(url, protocols) {
+        super(url, protocols);
+        const parsed = new URL(url);
+        if (parsed.pathname === "/api/terminal") {
+          window.terminalSockets.set(parsed.searchParams.get("tab"), this);
+          this.addEventListener("message", ({ data }) => {
+            if (JSON.parse(data).type === "ready") this.probeReady = true;
+          });
+        }
+      }
+    };
+  });
   await page.goto(url);
-  await page.waitForFunction(() => document.querySelector("#status")?.textContent === "Connected");
+  await connected();
   assert.equal(await page.locator(".brand svg").getAttribute("viewBox"), "0 0 530 188", "Canonical Bruv wordmark");
   const favicon = await page.locator('link[rel="icon"]').getAttribute("href");
   assert.equal(
@@ -143,21 +186,76 @@ try {
   await page.waitForFunction(
     () =>
       document.querySelectorAll('[role="tab"]').length === 2 &&
-      document.querySelector("#status")?.textContent === "Connected",
+      window.terminalSockets.get(document.querySelector('[role="tab"][aria-selected="true"]')?.id.slice(4))
+        ?.probeReady &&
+      document.querySelector("#terminal-status")?.hidden,
   );
   await rename("Tests");
   await page.locator("#new-tab").click();
   await page.waitForFunction(
     () =>
       document.querySelectorAll('[role="tab"]').length === 3 &&
-      document.querySelector("#status")?.textContent === "Connected",
+      window.terminalSockets.get(document.querySelector('[role="tab"][aria-selected="true"]')?.id.slice(4))
+        ?.probeReady &&
+      document.querySelector("#terminal-status")?.hidden,
   );
   await rename("Review");
   await page.locator("#add-workspace").click();
-  await page.locator("#dialog-input").fill(secondCwd);
-  await page.locator("#dialog-submit").click();
+  await page.locator("#rail-entry #folder-form").waitFor({ state: "visible" });
+  assert.equal(await page.locator("#folder-form").count(), 1);
+  await page.locator("#folder-input").fill(join(root, "missing-folder"));
+  await page.locator("#open-folder").click();
+  await page.locator('#folder-input[aria-invalid="true"]').waitFor();
+  assert.match(await page.locator("#folder-error").innerText(), /Directory not found/);
+  assert.equal(await page.evaluate(() => document.activeElement?.id), "folder-input");
+  await screenshot({ path: join(proof, "folder-error-desktop.png") });
+  await page.locator("#cancel-folder").click();
+  await page.locator("#folder-form").waitFor({ state: "hidden" });
+  assert.equal((await api()).workspaces.length, 1, "Cancel does not create a workspace");
+  await page.locator("#add-workspace").click();
+  await page.locator("#folder-input").fill(secondCwd);
+  assert.equal(await page.locator("#folder-error").isVisible(), false, "Editing clears folder error");
+  const creation = page.waitForResponse(
+    (r) => new URL(r.url()).pathname === "/api/workspaces" && r.request().method() === "POST",
+  );
+  await page.locator("#open-folder").click();
+  const createdResponse = await creation;
+  assert.equal(createdResponse.status(), 200);
+  const created = await createdResponse.json();
+  assert.equal(created.created, true);
+  assert.equal(created.workspaces.find((w) => w.id === created.workspaceId)?.cwd, secondCwd);
+  await page.locator('[id="workspace-' + created.workspaceId + '"][aria-pressed="true"]').waitFor();
   await until(async () => (await api()).workspaces.length === 2, "Workspace missing");
-  await page.getByRole("button", { name: "Open workspace bruv", exact: true }).click();
+  for (const workspace of (await api()).workspaces) {
+    const row = page.locator('[id="workspace-row-' + workspace.id + '"]');
+    assert.equal(
+      await row.locator('[id="workspace-' + workspace.id + '"]').getAttribute("aria-label"),
+      "Open workspace " + workspace.name + " · " + workspace.cwd,
+    );
+    assert.equal(
+      await row.locator('[id="workspace-remove-' + workspace.id + '"]').getAttribute("aria-label"),
+      "Remove workspace " + workspace.name + " · " + workspace.cwd,
+    );
+  }
+  // Opening an existing folder selects its returned ID, without another PTY.
+  const beforeReopen = await api();
+  await page.locator("#add-workspace").click();
+  await page.locator("#folder-input").fill(firstCwd);
+  const reopening = page.waitForResponse(
+    (r) => new URL(r.url()).pathname === "/api/workspaces" && r.request().method() === "POST",
+  );
+  await page.locator("#open-folder").click();
+  const reopenedResponse = await reopening;
+  assert.equal(reopenedResponse.status(), 200);
+  const reopened = await reopenedResponse.json();
+  assert.equal(reopened.created, false);
+  assert.equal(reopened.workspaceId, initial.workspaces[0].id);
+  await page.locator('[id="workspace-' + reopened.workspaceId + '"][aria-pressed="true"]').waitFor();
+  assert.deepEqual(
+    reopened.workspaces.map((w) => [w.id, w.tabs.map((t) => t.id)]),
+    beforeReopen.workspaces.map((w) => [w.id, w.tabs.map((t) => t.id)]),
+  );
+  await page.getByRole("button", { name: "Open workspace bruv · " + firstCwd, exact: true }).click();
   await page.getByRole("tab", { name: "Select tab Terminal", exact: true }).click();
   await readyToType();
   await page.locator("#terminal .xterm-helper-textarea:visible").fill("!uname -s");
@@ -166,18 +264,8 @@ try {
   await page.waitForTimeout(500);
   assert.equal(await page.locator("#audio-toggle").count(), 0, "No permanent mic control");
   await page.mouse.move(600, 400);
-  assert.equal(
-    await page.locator("#status").evaluate((node) => getComputedStyle(node).opacity),
-    "0",
-    "Connection detail stays on demand",
-  );
-  await page.locator(".connection").focus();
-  assert.equal(
-    await page.locator("#status").evaluate((node) => getComputedStyle(node).opacity),
-    "1",
-    "Connection detail is keyboard-accessible",
-  );
-  await page.locator("#terminal .xterm-helper-textarea:visible").focus();
+  assert.equal(await page.locator("#status").isVisible(), false, "Healthy PTY has no status banner");
+  assert.equal(await page.locator("#voice-status").isVisible(), false, "No voice banner when idle");
   await checkAlignment("desktop");
   await screenshot({ path: join(proof, "populated-desktop.png") });
   await page.setViewportSize({ width: 1440, height: 900 });
@@ -187,14 +275,7 @@ try {
   await page.setViewportSize({ width: 1100, height: 720 });
   await page.waitForTimeout(250);
 
-  // Direct editing, keyboard access and safe cancellation; close stays in the menu.
-  await page.locator("#tab-menu-toggle").focus();
-  await page.keyboard.press("Enter");
-  assert.equal(await page.evaluate(() => document.activeElement?.id), "close-tab");
-  assert.equal(await page.locator("#rename-tab").count(), 0);
-  await screenshot({ path: join(proof, "tab-menu.png") });
-  await page.keyboard.press("Escape");
-  assert.equal(await page.evaluate(() => document.activeElement?.id), "tab-menu-toggle");
+  // Direct editing and close controls keep keyboard access and safe cancellation.
   const firstTab = initial.workspaces[0].tabs[0];
   const title = page.locator('[id="tab-' + firstTab.id + '"]');
   const editor = page.getByRole("textbox", { name: "Tab name", exact: true });
@@ -269,14 +350,13 @@ try {
   await checkAlignment("phone-drawer");
   const drawerAlignment = await page.evaluate(() => ({
     close: document.querySelector("#close-drawer").getBoundingClientRect().right,
-    row: document.querySelector(".workspace").getBoundingClientRect().right,
+    row: document.querySelector(".workspace-row").getBoundingClientRect().right,
   }));
   assert(Math.abs(drawerAlignment.close - drawerAlignment.row) < 0.6, "Drawer close shares the workspace action edge");
   await screenshot({ path: join(proof, "populated-drawer.png") });
   await page.keyboard.press("Escape");
   assert.equal(await page.evaluate(() => document.activeElement?.id), "open-drawer");
-  await page.locator("#tab-menu-toggle").click();
-  await page.locator("#close-tab").click();
+  await page.locator('[id="tab-close-' + firstTab.id + '"]').click();
   assert.equal(
     await page.evaluate(() => document.activeElement?.id),
     "dialog-cancel",
@@ -305,8 +385,7 @@ try {
   // A destructive target must stay fully visible, even without word boundaries.
   const unbrokenName = "integration_release_verification_api_service";
   await rename(unbrokenName);
-  await page.locator("#tab-menu-toggle").click();
-  await page.locator("#close-tab").click();
+  await page.locator('[id="tab-close-' + firstTab.id + '"]').click();
   assert((await page.locator("#dialog-title").textContent()).includes(unbrokenName));
   assert(
     await page.locator("#dialog-title").evaluate((el) => el.scrollWidth <= el.clientWidth),
@@ -374,7 +453,7 @@ try {
   assert(tabBox.x >= listBox.x - 1 && tabBox.x + tabBox.width <= listBox.x + listBox.width + 1);
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
   assert((await page.locator("#new-tab").boundingBox()).x < 390, "New tab stays in reach");
-  await page.waitForFunction(() => document.querySelector("#status")?.textContent === "Connected");
+  await connected();
   await page.locator("#terminal .xterm-helper-textarea:visible").fill("!uname -s");
   await page.keyboard.press("Enter");
   await page.waitForFunction(() =>
@@ -447,13 +526,16 @@ try {
   await page.locator(".tab-close").click();
   await page.locator("#dialog-submit").click();
   await page.waitForFunction(() => document.activeElement?.id === "new-tab");
-  await page.getByRole("heading", { name: "Ready when you are." }).waitFor();
+  await page.getByRole("heading", { name: "No terminals in bruv" }).waitFor();
   await screenshot({ path: join(proof, "empty-tabs-phone.png") });
   await page.locator("#empty-action").click();
-  await page.waitForFunction(() => document.querySelector("#status")?.textContent === "Connected");
+  await connected();
   for (const workspace of (await api()).workspaces)
     await api("/api/workspaces/" + workspace.id, "DELETE", { confirm: true });
-  await page.getByRole("heading", { name: "Your terminal, together." }).waitFor();
+  await page.getByRole("heading", { name: "Open a folder" }).waitFor();
+  await page.locator("#empty-entry #folder-form").waitFor({ state: "visible" });
+  assert.equal(await page.locator("#folder-form").count(), 1, "Empty view owns the same form");
+  assert.equal(await page.locator("#cancel-folder").isVisible(), false, "Empty view needs no reveal or cancel");
   await page.setViewportSize({ width: 1100, height: 720 });
   await screenshot({ path: join(proof, "empty-workspaces-desktop.png") });
   assert.deepEqual(failures, []);
@@ -462,13 +544,15 @@ try {
       pass: true,
       viewports: ["1100x720", "390x680"],
       terminalHeight,
-      menuKeyboard: true,
+      directCloseKeyboard: true,
       inlineRename: true,
       touchRename: true,
       sharedEditFocus: true,
       cancelSafe: true,
       drawerFocus: true,
       emptyStates: true,
+      directFolderForm: true,
+      existingFolderSelection: true,
       longNames: true,
       perTabClose: true,
       overflowKeyboard: true,
