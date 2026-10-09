@@ -1,7 +1,10 @@
 import { resolve } from "node:path";
 
 /** Bundle browser code at build time; the installed binary needs no node_modules. */
-export async function prepareWebAssets(root: string, write: (target: string, content: string) => Promise<void>) {
+export async function prepareWebAssets(
+  root: string,
+  write: (target: string, content: string | Uint8Array) => Promise<void>,
+) {
   const build = await Bun.build({
     entrypoints: [resolve(root, "src/web/browser.ts")],
     target: "browser",
@@ -12,9 +15,15 @@ export async function prepareWebAssets(root: string, write: (target: string, con
   await write(resolve(out, "terminal.js.asset"), await build.outputs[0]!.text());
   await write(resolve(out, "index.html.asset"), await Bun.file(resolve(root, "src/web/index.html")).text());
   await write(
+    resolve(out, "JetBrainsMonoNerdFontMono-Regular.woff2.asset"),
+    await Bun.file(resolve(root, "src/web/fonts/JetBrainsMonoNerdFontMono-Regular.woff2")).bytes(),
+  );
+  await write(
     resolve(out, "terminal.css.asset"),
     (await Bun.file(resolve(root, "node_modules/@xterm/xterm/css/xterm.css")).text()) +
       "\n" +
-      (await Bun.file(resolve(root, "src/web/browser.css")).text()),
+      (await Bun.file(resolve(root, "src/web/browser.css")).text()) +
+      "\n" +
+      (await Bun.file(resolve(root, "src/web/terminal-font.css")).text()),
   );
 }

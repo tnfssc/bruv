@@ -397,6 +397,11 @@ describe("release automation", () => {
       expect(notices).toContain("Permission is hereby granted, free of charge");
       expect(notices).toContain("BUN RUNTIME UPSTREAM LICENSING");
       expect(notices).toContain("JavaScriptCore");
+      expect(notices).toContain("BROWSER TERMINAL FONT");
+      expect(notices).toContain("JetBrainsMono Nerd Font Mono Regular");
+      expect(notices).toContain("Copyright 2020 The JetBrains Mono Project Authors");
+      expect(notices).toContain("SIL OPEN FONT LICENSE Version 1.1");
+      expect(notices).toContain("Font Logos");
       expect(notices.length).toBeGreaterThan(100_000);
     } finally {
       await rm(directory, { recursive: true, force: true });

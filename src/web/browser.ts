@@ -559,6 +559,7 @@ function attach(tab: Tab) {
   const term = new Terminal({
     cursorBlink: true,
     fontSize: 14,
+    fontFamily: '"JetBrainsMono Nerd Font Mono", ui-monospace, monospace',
     scrollback: 5000,
     disableStdin: true,
     // Vesper sources and the pure-black override: wisdom/web/vesper-theme.md.
@@ -778,6 +779,12 @@ function connectEvents() {
 }
 render();
 if (token) {
-  connectEvents();
-  void change("/api/workspaces");
+  // xterm measures cells when it opens. Load the face before attaching any tabs.
+  void document.fonts
+    .load('14px "JetBrainsMono Nerd Font Mono"')
+    .catch((error) => console.warn("Terminal font could not load; using monospace.", error))
+    .then(() => {
+      connectEvents();
+      void change("/api/workspaces");
+    });
 }

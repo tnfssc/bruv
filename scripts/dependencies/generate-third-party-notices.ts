@@ -123,7 +123,7 @@ async function collectProductionNotices(
   return [...entries.values()];
 }
 
-function renderNotices(entries: PackageNotices[], piLicense: string, bunLicense: string): string {
+function renderNotices(entries: PackageNotices[], piLicense: string, bunLicense: string, fontNotices: string): string {
   const lines = [
     "BRUV THIRD-PARTY LICENSE AND COPYRIGHT NOTICES",
     "",
@@ -167,6 +167,7 @@ function renderNotices(entries: PackageNotices[], piLicense: string, bunLicense:
     bunLicense.trimEnd(),
     "",
   );
+  lines.push("=".repeat(78), "BROWSER TERMINAL FONT", fontNotices.trimEnd(), "");
   return lines.join("\n");
 }
 
@@ -180,7 +181,14 @@ export async function generateThirdPartyNotices(
   const piLicense = await readLicense(join(root, "licenses/third-party/pi/LICENSE"), budget);
   const bunLicense = await readLicense(join(root, "licenses/third-party/bun/LICENSE.md"), budget);
   const entries = await collectProductionNotices(root, Object.keys(rootPackage.dependencies ?? {}), budget);
-  const content = renderNotices(entries, piLicense, bunLicense);
+  const fontNotices: string[] = [];
+  for (const name of ["README.md", "OFL.txt", "NERD-FONTS-LICENSE", "UPSTREAM-README.md", "GLYPH-NOTICES.txt"]) {
+    fontNotices.push(
+      `--- ${name} ---`,
+      await readLicense(join(root, "licenses/third-party/jetbrains-mono-nerd-font", name), budget),
+    );
+  }
+  const content = renderNotices(entries, piLicense, bunLicense, fontNotices.join("\n"));
   if (Buffer.byteLength(content) > maximumBytes) throw new Error(`notice bundle exceeds ${maximumBytes} bytes`);
   await Bun.write(output, content);
   console.log(`wrote ${output} with ${entries.length} production packages (${Buffer.byteLength(content)} bytes)`);

@@ -58,7 +58,7 @@ class Element {
   focus() {}
   remove() {}
 }
-function browser() {
+async function browser() {
   const nodes = new Map<string, Element>();
   const node = (id: string) => {
     if (!nodes.has(id)) nodes.set(id, new Element());
@@ -125,6 +125,7 @@ function browser() {
     hidden: false,
     body: new Element(),
     activeElement: null,
+    fonts: { load: async () => [] },
     querySelector: (selector: string) => node(selector.slice(1)),
     createElement: () => new Element(),
     getElementById: (id: string) => node(id),
@@ -179,6 +180,7 @@ function browser() {
     },
   });
   runInContext(source, context);
+  await tick();
   const events = () => sockets.filter((socket) => socket.url.endsWith("/api/events")).at(-1)!;
   const terminal = (id: string) => sockets.filter((socket) => socket.url.includes("tab=" + id + "&")).at(-1)!;
   const flushFrames = () => {
@@ -237,7 +239,7 @@ const tick = async () => {
 };
 
 test("events reconcile monotonically without remote focus or duplicate deletes", async () => {
-  const b = browser();
+  const b = await browser();
   expect(b.events().protocols).toEqual(["bruv-state", "bruv-token.secret"]);
   b.snapshot(snapshot(2));
   b.node("tab-list").children[1].fire("click");
@@ -267,8 +269,8 @@ test("events reconcile monotonically without remote focus or duplicate deletes",
   expect(b.node("sync-status").textContent).toBe("");
 });
 
-test("viewport reports never echo shared size and hidden attachments stay inactive", () => {
-  const b = browser();
+test("viewport reports never echo shared size and hidden attachments stay inactive", async () => {
+  const b = await browser();
   b.snapshot(snapshot(1));
   for (const id of ["a", "b", "c"]) b.ready(id);
   expect(b.terminal("a").sent).toEqual([{ type: "resize", cols: 120, rows: 40 }]);
@@ -296,8 +298,8 @@ test("viewport reports never echo shared size and hidden attachments stay inacti
   expect(b.terminal("b").sent.at(-1)).toEqual({ type: "resize", cols: 50, rows: 10 });
 });
 
-test("each tab keeps replay sequence and terminal across reconnect", () => {
-  const b = browser();
+test("each tab keeps replay sequence and terminal across reconnect", async () => {
+  const b = await browser();
   b.snapshot(snapshot(1));
   b.ready("a");
   b.ready("b");
@@ -315,7 +317,7 @@ test("each tab keeps replay sequence and terminal across reconnect", () => {
 });
 
 test("global voice is named, observers cannot disable it, and selection never transfers it", async () => {
-  const b = browser();
+  const b = await browser();
   b.snapshot(snapshot(1));
   b.ready("a");
   b.ready("b");
@@ -346,7 +348,7 @@ test("global voice is named, observers cannot disable it, and selection never tr
 });
 
 test("authoritative release closes only the local owner device", async () => {
-  const b = browser();
+  const b = await browser();
   b.snapshot(snapshot(1));
   b.ready("a");
   await b.node("audio-toggle").fire("click");
@@ -366,8 +368,8 @@ test("authoritative release closes only the local owner device", async () => {
   expect(b.node("audio-toggle").disabled).toBe(false);
 });
 
-test("compact status keeps connection and voice labels accessible", () => {
-  const b = browser();
+test("compact status keeps connection and voice labels accessible", async () => {
+  const b = await browser();
   b.snapshot(snapshot(1));
   b.ready("a");
   expect(b.node("connection").attributes["data-state"]).toBe("connected");
@@ -379,7 +381,7 @@ test("compact status keeps connection and voice labels accessible", () => {
 });
 
 test("dialogs cancel safely and rename the captured tab, not a later selection", async () => {
-  const b = browser();
+  const b = await browser();
   b.snapshot(snapshot(1));
   b.ready("a");
   b.requests[0].resolve(snapshot(1));

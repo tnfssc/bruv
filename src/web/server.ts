@@ -10,6 +10,7 @@ export interface WebAssets {
   html: string;
   javascript: string;
   css: string;
+  font: Uint8Array<ArrayBuffer>;
 }
 export type WebRouteResult = Response | "upgraded" | undefined;
 
@@ -152,7 +153,7 @@ export function startWebServer(options: WebServerOptions) {
     "Content-Security-Policy":
       "default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self'; font-src 'self'; img-src 'self' data:; frame-ancestors 'none'; base-uri 'none'; form-action 'none'",
   };
-  const response = (body: string, type: string, status = 200) =>
+  const response = (body: BodyInit, type: string, status = 200) =>
     new Response(body, { status, headers: { ...headers, "Content-Type": type } });
   const extension = options.extension;
   const server = Bun.serve<SocketData>({
@@ -271,6 +272,8 @@ export function startWebServer(options: WebServerOptions) {
       if (url.pathname === "/audio-worklet.js") return response(CAPTURE_WORKLET, "text/javascript; charset=utf-8");
       if (url.pathname === "/") return response(options.assets.html, "text/html; charset=utf-8");
       if (url.pathname === "/terminal.js") return response(options.assets.javascript, "text/javascript; charset=utf-8");
+      if (url.pathname === "/fonts/JetBrainsMonoNerdFontMono-Regular.woff2")
+        return response(options.assets.font, "font/woff2");
       if (url.pathname === "/terminal.css") return response(options.assets.css, "text/css; charset=utf-8");
       return response("Not found", "text/plain", 404);
     },

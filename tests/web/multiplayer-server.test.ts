@@ -22,7 +22,11 @@ afterEach(async () => {
   await Promise.all([...apps.splice(0).map((app) => app.stop()), ...terminals.splice(0).map((t) => t.stop())]);
 });
 function start(custom = command) {
-  const app = startWebServer({ command: custom, assets: { html: "", javascript: "", css: "" }, port: 0 });
+  const app = startWebServer({
+    command: custom,
+    assets: { html: "", javascript: "", css: "", font: new Uint8Array() },
+    port: 0,
+  });
   apps.push(app);
   return app;
 }

@@ -3,7 +3,12 @@ import { afterEach, expect, test } from "bun:test";
 import WebSocket from "ws";
 import { startWebServer } from "../../src/web/server";
 
-const assets = { html: "<title>Bruv</title>", javascript: "console.log('terminal')", css: "body{}" };
+const assets = {
+  html: "<title>Bruv</title>",
+  javascript: "console.log('terminal')",
+  css: "body{}",
+  font: new Uint8Array([0x77, 0x4f, 0x46, 0x32]),
+};
 const fixture = [
   process.execPath,
   "-e",
@@ -266,4 +271,18 @@ test("terminal disconnect releases browser audio on the server while CLI survive
   expect(app.terminal.pid).toBe(pid);
   active.socket.send(JSON.stringify({ type: "input", data: "survived-disconnect" }));
   await until(() => active.text().includes("INPUT survived-disconnect"));
+});
+
+test("font uses the same public static route and strict headers as CSS", async () => {
+  const app = start();
+  const path = "/fonts/JetBrainsMonoNerdFontMono-Regular.woff2";
+  const response = await fetch(app.origin + path);
+  expect(response.status).toBe(200);
+  expect(response.headers.get("content-type")).toBe("font/woff2");
+  expect(response.headers.get("content-security-policy")).toContain("font-src 'self'");
+  expect(response.headers.get("x-content-type-options")).toBe("nosniff");
+  expect(response.headers.get("cache-control")).toBe("no-store");
+  expect(new Uint8Array(await response.arrayBuffer())).toEqual(assets.font);
+  expect((await fetch(app.origin + path, { method: "POST" })).status).toBe(405);
+  expect((await fetch(app.origin + path, { headers: { Host: "evil.invalid" } })).status).toBe(403);
 });
