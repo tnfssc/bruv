@@ -1,6 +1,7 @@
 import { FitAddon } from "@xterm/addon-fit";
 import { Terminal } from "@xterm/xterm";
 import { connectBrowserAudio } from "./browser-audio";
+import { installTerminalTouch } from "./browser-terminal-touch";
 
 type Tab = { id: string; name: string; pid?: number; exited?: boolean };
 type Workspace = { id: string; name: string; cwd: string; tabs: Tab[] };
@@ -10,6 +11,7 @@ type WorkspaceState = {
   workspaces: Workspace[];
   defaultCwd: string;
 };
+type OpenedWorkspace = WorkspaceState & { workspaceId: string; created: boolean };
 type Session = {
   id: string;
   term: Terminal;
@@ -19,6 +21,7 @@ type Session = {
   sequence: number;
   ready: boolean;
   halted: boolean;
+  loss?: "view" | "exit";
   capability?: string;
   ownerId?: string;
   reconnect?: ReturnType<typeof setTimeout>;
@@ -45,59 +48,13 @@ const notice = document.querySelector<HTMLElement>("#notice")!;
 const syncStatus = document.querySelector<HTMLElement>("#sync-status")!;
 const audioStatus = document.querySelector<HTMLElement>("#audio-status")!;
 const empty = document.querySelector<HTMLElement>("#empty-terminal")!;
-const connection = document.querySelector<HTMLElement>(".connection")!;
-const voiceControl = document.querySelector<HTMLElement>(".voice-control")!;
-const micLabel = document.querySelector<HTMLElement>(".mic-label")!;
+const voiceControl = document.querySelector<HTMLElement>("#voice-status")!;
+const folderForm = document.querySelector<HTMLFormElement>("#folder-form")!;
+const folderInput = document.querySelector<HTMLInputElement>("#folder-input")!;
+const folderError = document.querySelector<HTMLElement>("#folder-error")!;
 const terminalStatus = document.querySelector<HTMLElement>("#terminal-status")!;
 const action = (id: string) => document.querySelector<HTMLButtonElement>("#" + id)!;
 
-// Menus keep destructive actions out of the working surface.
-let openMenu: { menu: HTMLElement; trigger: HTMLButtonElement } | undefined;
-function closeMenu(restoreFocus = false) {
-  if (!openMenu) return;
-  openMenu.menu.hidden = true;
-  openMenu.trigger.setAttribute("aria-expanded", "false");
-  if (restoreFocus) openMenu.trigger.focus();
-  openMenu = undefined;
-}
-for (const id of ["workspace", "tab"]) {
-  const trigger = action(id + "-menu-toggle");
-  const menu = document.querySelector<HTMLElement>("#" + id + "-menu")!;
-  const items = () => Array.from(menu.querySelectorAll<HTMLButtonElement>("button:not(:disabled)"));
-  trigger.addEventListener("click", () => {
-    const wasOpen = openMenu?.menu === menu;
-    closeMenu();
-    if (wasOpen) return;
-    const rect = trigger.getBoundingClientRect();
-    menu.hidden = false;
-    menu.style.top = rect.bottom + 5 + "px";
-    menu.style.left = Math.max(8, Math.min(rect.left, window.innerWidth - menu.offsetWidth - 8)) + "px";
-    trigger.setAttribute("aria-expanded", "true");
-    openMenu = { menu, trigger };
-    items()[0]?.focus();
-  });
-  menu.addEventListener("keydown", (event) => {
-    const choices = items();
-    const index = choices.indexOf(document.activeElement as HTMLButtonElement);
-    if (event.key === "Escape" || event.key === "Tab") {
-      closeMenu(true);
-      return;
-    }
-    let next: number;
-    if (event.key === "ArrowDown") next = (index + 1) % choices.length;
-    else if (event.key === "ArrowUp") next = (index + choices.length - 1) % choices.length;
-    else if (event.key === "Home") next = 0;
-    else if (event.key === "End") next = choices.length - 1;
-    else return;
-    event.preventDefault();
-    choices[next]?.focus();
-  });
-  menu.addEventListener("click", () => closeMenu(true));
-}
-document.addEventListener("pointerdown", (event) => {
-  if (openMenu && !openMenu.menu.contains(event.target as Node) && !openMenu.trigger.contains(event.target as Node))
-    closeMenu();
-});
 let drawerOpen = false;
 function setDrawer(open: boolean) {
   if (drawerOpen === open) return;
@@ -106,7 +63,6 @@ function setDrawer(open: boolean) {
   action("open-drawer").setAttribute("aria-expanded", String(open));
   action("drawer-backdrop").hidden = !open;
   document.querySelector<HTMLElement>("main")!.inert = open;
-  closeMenu();
   action(open ? "close-drawer" : "open-drawer").focus();
 }
 action("open-drawer").addEventListener("click", () => setDrawer(true));
@@ -118,7 +74,11 @@ document.querySelector<HTMLElement>("#workspace-sidebar")!.addEventListener("key
     return;
   }
   if (event.key !== "Tab") return;
-  const choices = Array.from(document.querySelectorAll<HTMLButtonElement>("#workspace-sidebar button:not(:disabled)"));
+  const choices = Array.from(
+    document.querySelectorAll<HTMLButtonElement>(
+      "#workspace-sidebar button:not(:disabled), #workspace-sidebar input:not(:disabled)",
+    ),
+  );
   const first = choices[0],
     last = choices.at(-1);
   if (event.shiftKey && document.activeElement === first) {
@@ -130,7 +90,6 @@ document.querySelector<HTMLElement>("#workspace-sidebar")!.addEventListener("key
   }
 });
 window.addEventListener("resize", () => {
-  closeMenu();
   if (window.innerWidth > 700) setDrawer(false);
 });
 
@@ -146,7 +105,6 @@ const dialog = document.querySelector<HTMLDialogElement>("#workspace-dialog")!;
 const dialogInput = document.querySelector<HTMLInputElement>("#dialog-input")!;
 let dialogResult: ((value: string | null) => void) | undefined;
 function askDialog(options: DialogOptions): Promise<string | null> {
-  closeMenu(true);
   document.querySelector<HTMLElement>("#dialog-title")!.textContent = options.title;
   document.querySelector<HTMLElement>("#dialog-description")!.textContent = options.description;
   document.querySelector<HTMLElement>("#dialog-label")!.textContent = options.label ?? "";
@@ -207,6 +165,11 @@ let state: WorkspaceState = { revision: -1, voice: null, workspaces: [], default
 let eventsSocket: WebSocket | undefined;
 let eventsReconnect: ReturnType<typeof setTimeout> | undefined;
 const sessions = new Map<string, Session>();
+let accessRequired = !token;
+let listLoaded = false;
+let listFailed = false;
+let folderOpen = false;
+let voiceError: { tabId: string; message: string } | undefined;
 let busy = false;
 let unloading = false;
 let voice: VoiceOwner | undefined;
@@ -239,27 +202,36 @@ function voiceLabel(tabId: string) {
 function renderAudio() {
   const shared = state.voice;
   const elsewhere = shared && sessions.get(shared.tabId)?.ownerId !== shared.ownerId;
-  voiceControl.hidden = !(voice || shared);
-  micLabel.textContent = elsewhere ? "Voice elsewhere" : "Voice";
-  voiceControl.setAttribute("data-active", String(!!(voice || shared)));
-  voiceControl.setAttribute("data-elsewhere", String(!!elsewhere));
-  audioStatus.textContent = elsewhere
-    ? "Voice in another browser · " + voiceLabel(shared.tabId)
+  voiceControl.hidden = !(voice || shared || voiceError);
+  audioStatus.textContent = voiceError
+    ? voiceError.message + " · " + voiceLabel(voiceError.tabId)
     : voice
-      ? (voice.releasing ? "Releasing microphone…" : voice.state) + " · " + voiceLabel(voice.tabId)
+      ? (voice.releasing ? "Releasing microphone…" : voice.state) +
+        (selected()?.id === voice.tabId ? "" : " · " + voiceLabel(voice.tabId))
       : shared
-        ? "Releasing microphone… · " + voiceLabel(shared.tabId)
-        : "Voice off";
-  voiceControl.setAttribute("aria-label", audioStatus.textContent);
+        ? (elsewhere ? "Voice in another browser · " : "Releasing microphone… · ") + voiceLabel(shared.tabId)
+        : "";
+  voiceControl.setAttribute("data-elsewhere", String(!!elsewhere));
+  action("cancel-voice").hidden = !voice?.pending || voice.releasing;
+  action("dismiss-voice").hidden = !voiceError;
 }
+action("cancel-voice").addEventListener("click", () => {
+  const owner = voice;
+  if (!owner?.pending || owner.releasing) return;
+  const session = sessions.get(owner.tabId);
+  if (session && session.capability === owner.capability && session.ownerId === owner.ownerId)
+    send(session, { type: "audio-error", request: owner.request, message: "Microphone request cancelled." });
+  void releaseVoice();
+});
+action("dismiss-voice").addEventListener("click", () => {
+  voiceError = undefined;
+  renderAudio();
+});
 function renderStatus() {
-  status.textContent =
-    selected()?.status ??
-    (token ? "Select or add a workspace." : "Open the full URL printed by bruv web (including its token).");
-  connection.setAttribute("data-state", selected()?.ready ? "connected" : selected()?.halted ? "ended" : "connecting");
-  connection.setAttribute("aria-label", status.textContent);
-  terminalStatus.textContent = status.textContent;
-  terminalStatus.hidden = !!selected()?.ready || (!selected() && !!token);
+  const active = selected();
+  status.textContent = active?.status ?? "";
+  terminalStatus.hidden = !active || active.ready || accessRequired;
+  action("lost-new-tab").hidden = active?.loss !== "view";
   renderAudio();
 }
 function selectWorkspace(id: string) {
@@ -280,6 +252,12 @@ function revealSelectedTab() {
   updateTabOverflow();
 }
 function updateTabOverflow() {
+  const bounds = tabList.getBoundingClientRect();
+  for (const shell of Array.from(tabList.children)) {
+    const rect = shell.getBoundingClientRect();
+    const close = shell.querySelector<HTMLButtonElement>(".tab-close");
+    if (close) close.style.visibility = rect.left < bounds.left - 1 || rect.right > bounds.right + 1 ? "hidden" : "";
+  }
   tabList.setAttribute("data-start-clipped", String(tabList.scrollLeft > 1));
   tabList.setAttribute("data-end-clipped", String(tabList.scrollWidth - tabList.clientWidth - tabList.scrollLeft > 1));
 }
@@ -291,11 +269,18 @@ function finishRename(save: boolean, restoreFocus = true) {
   const edit = editingTab;
   if (!edit) return;
   editingTab = undefined;
+  if (edit.input.parentElement) edit.input.parentElement.style.width = "";
   const name = edit.input.value.trim();
   render();
-  if (restoreFocus) document.getElementById("tab-" + edit.id)?.focus({ preventScroll: true });
-  if (save && name && name !== edit.original && workspace()?.tabs.some((tab) => tab.id === edit.id))
-    void change("/api/tabs/" + encodeURIComponent(edit.id), "PATCH", { name });
+  if (save && name && name !== edit.original && workspace()?.tabs.some((tab) => tab.id === edit.id)) {
+    void change("/api/tabs/" + encodeURIComponent(edit.id), "PATCH", { name }).then((ok) => {
+      if (ok) selected()?.term.focus();
+      else if (restoreFocus) document.getElementById("tab-" + edit.id)?.focus({ preventScroll: true });
+    });
+  } else if (restoreFocus) {
+    if (save) selected()?.term.focus();
+    else document.getElementById("tab-" + edit.id)?.focus({ preventScroll: true });
+  }
 }
 function startRename(id: string) {
   if (busy || editingTab || !token) return;
@@ -322,6 +307,8 @@ function startRename(id: string) {
   });
   input.addEventListener("blur", () => finishRename(false, false));
   editingTab = { id, input, original: tab.name };
+  const shell = entry.parentElement!;
+  shell.style.width = shell.getBoundingClientRect().width + "px";
   entry.replaceWith(input);
   input.focus({ preventScroll: true });
   input.select();
@@ -337,6 +324,10 @@ function tabButton(tab: Tab) {
   entry.setAttribute("aria-keyshortcuts", "F2");
   entry.addEventListener("dblclick", () => startRename(tab.id));
   entry.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      selectTab(tab.id);
+    }
     if (event.key === "F2") {
       event.preventDefault();
       startRename(tab.id);
@@ -354,31 +345,57 @@ function tabButton(tab: Tab) {
   return entry;
 }
 let scrolledTab: string | undefined;
+// Shared snapshots update rows, not their identity or local focus.
+function renderWorkspaces() {
+  const rows = new Map(Array.from(workspaceList.children).map((row) => [row.id, row]));
+  let index = 0;
+  for (const item of state.workspaces) {
+    const id = "workspace-row-" + item.id;
+    let row = rows.get(id);
+    rows.delete(id);
+    if (!row) {
+      row = document.createElement("div");
+      row.id = id;
+      row.className = "workspace-row";
+      const entry = button("", "", () => selectWorkspace(item.id));
+      entry.id = "workspace-" + item.id;
+      entry.className = "workspace";
+      entry.innerHTML = '<span class="workspace-name"></span><small></small>';
+      const remove = button("×", "", () => void removeWorkspace(item.id));
+      remove.id = "workspace-remove-" + item.id;
+      remove.className = "workspace-remove";
+      row.append(entry, remove);
+    }
+    const entry = row.firstElementChild as HTMLButtonElement;
+    entry.title = item.cwd;
+    entry.setAttribute("aria-label", "Open workspace " + item.name + " · " + item.cwd);
+    entry.setAttribute("aria-pressed", String(item.id === selectedWorkspace));
+    entry.querySelector(".workspace-name")!.textContent = item.name;
+    const suffix = entry.querySelector("small")!;
+    const duplicates = state.workspaces.filter((other) => other.name === item.name);
+    suffix.textContent = duplicates.length > 1 ? distinguishingPath(item, duplicates) : "";
+    suffix.hidden = duplicates.length < 2;
+    const remove = row.lastElementChild as HTMLButtonElement;
+    remove.setAttribute("aria-label", "Remove workspace " + item.name + " · " + item.cwd);
+    remove.title = "Remove workspace " + item.name;
+    remove.disabled = busy;
+    if (workspaceList.children[index] !== row) workspaceList.insertBefore(row, workspaceList.children[index] ?? null);
+    index++;
+  }
+  for (const row of rows.values()) row.remove();
+}
+function distinguishingPath(item: Workspace, duplicates: Workspace[]) {
+  const parts = item.cwd.split("/").filter(Boolean);
+  for (let count = 2; count <= parts.length; count++) {
+    const suffix = parts.slice(-count).join("/");
+    if (duplicates.every((other) => other.id === item.id || !other.cwd.endsWith("/" + suffix))) return suffix;
+  }
+  return item.cwd;
+}
 function render() {
   const focusedTabControl = document.activeElement?.id;
   const tabScroll = tabList.scrollLeft;
-  workspaceList.replaceChildren();
-  for (const item of state.workspaces) {
-    const entry = button("", "Open workspace " + item.name, () => selectWorkspace(item.id));
-    entry.className = "workspace";
-    entry.title = item.cwd;
-    entry.setAttribute("aria-pressed", String(item.id === selectedWorkspace));
-    const mark = document.createElement("span");
-    mark.innerHTML =
-      '<svg class="workspace-mark" viewBox="0 0 20 20" aria-hidden="true"><path d="M2 5a1 1 0 0 1 1-1h5l2 2h7a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1z"/></svg>';
-    entry.append(mark);
-    const copy = document.createElement("span");
-    copy.className = "workspace-copy";
-    const name = document.createElement("span");
-    name.className = "workspace-name";
-    name.textContent = item.name;
-    copy.append(name);
-    const cwd = document.createElement("small");
-    cwd.textContent = item.cwd;
-    copy.append(cwd);
-    entry.append(copy);
-    workspaceList.append(entry);
-  }
+  renderWorkspaces();
   const current = workspace();
   if (editingTab && !current?.tabs.some((tab) => tab.id === editingTab?.id)) editingTab = undefined;
   const previous = new Map(Array.from(tabList.children).map((shell) => [shell.id, shell]));
@@ -406,7 +423,13 @@ function render() {
         else shell.append(replacement);
         entry = replacement;
       }
-      entry.textContent = tab.name + (sessions.get(tab.id)?.halted || tab.exited ? " · ended" : "");
+      entry.textContent =
+        tab.name +
+        (sessions.get(tab.id)?.loss === "view"
+          ? " · view lost"
+          : tab.exited || sessions.get(tab.id)?.loss === "exit"
+            ? " · ended"
+            : "");
       entry.setAttribute("aria-label", "Select tab " + tab.name);
       entry.setAttribute("aria-selected", String(active));
       entry.title = tab.name + " · Double-click or double-tap to rename (F2)";
@@ -422,8 +445,9 @@ function render() {
       close.className = "tab-close";
       shell.append(close);
     }
-    close.setAttribute("aria-label", "Close tab " + tab.name);
-    close.title = "Close tab " + tab.name;
+    const closeLabel = (tab.exited || sessions.get(tab.id)?.loss === "exit" ? "Remove tab " : "Close tab ") + tab.name;
+    close.setAttribute("aria-label", closeLabel);
+    close.title = closeLabel;
     close.disabled = busy;
     if (tabList.children[index] !== shell) tabList.insertBefore(shell, tabList.children[index] ?? null);
     index++;
@@ -438,25 +462,62 @@ function render() {
   const active = selected();
   let selectionChanged = false;
   for (const session of sessions.values()) {
-    const hidden = session !== active;
+    const hidden = session !== active || accessRequired;
     if (session.element.hidden !== hidden) {
       selectionChanged = true;
       if (hidden) hideSession(session);
     }
     session.element.hidden = hidden;
+    session.term.options.screenReaderMode = !hidden;
   }
-  empty.hidden = !!active;
-  empty.querySelector("h1")!.textContent = current ? "Ready when you are." : "Your terminal, together.";
-  empty.querySelector("p")!.textContent = current
-    ? "Open a terminal in " + current.name + "."
-    : "Add an existing folder to get started.";
-  action("empty-action").textContent = current ? "New tab" : "Add workspace";
-  action("empty-action").disabled = busy || !token;
-  action("tab-menu-toggle").disabled = busy || !active;
-  for (const id of ["add-workspace", "reload-workspaces"]) action(id).disabled = busy || !token;
-  action("remove-workspace").disabled = busy || !current;
-  action("new-tab").disabled = busy || !current;
-  action("close-tab").disabled = busy || !active;
+  empty.hidden = !!active && !accessRequired;
+  document.querySelector<HTMLElement>(".tab-bar")!.hidden = accessRequired || !state.workspaces.length;
+  const awaiting = !accessRequired && !listLoaded;
+  empty.querySelector("h1")!.textContent = accessRequired
+    ? "Access required"
+    : awaiting
+      ? listFailed
+        ? "Workspace list unavailable"
+        : "Loading workspaces…"
+      : current
+        ? "No terminals in " + current.name
+        : "Open a folder";
+  empty.querySelector("p")!.textContent = accessRequired
+    ? "Open the full URL printed by bruv web, including its token."
+    : awaiting
+      ? listFailed
+        ? "Check the server connection, then retry."
+        : ""
+      : current
+        ? "Start a terminal in this folder."
+        : "Use an existing folder on this server.";
+  action("empty-action").textContent = awaiting ? "Retry" : "New terminal";
+  action("empty-action").hidden = accessRequired || (!current && !listFailed);
+  action("empty-action").disabled = busy;
+  action("add-workspace").hidden = accessRequired || !listLoaded || !state.workspaces.length;
+  action("new-tab").hidden = accessRequired || !current || !active;
+  action("new-tab").disabled = busy;
+  action("open-drawer").hidden = accessRequired || (!current && !state.workspaces.length);
+  document.querySelector<HTMLElement>("#current-workspace")!.textContent = current?.name ?? "Folders";
+  action("open-drawer").title = current?.cwd ?? "Workspaces";
+  action("open-drawer").setAttribute("aria-label", "Open workspaces" + (current ? " · " + current.name : ""));
+  const showFolder = !accessRequired && listLoaded && (!current || folderOpen);
+  folderForm.hidden = !showFolder;
+  if (showFolder) {
+    const host = document.querySelector<HTMLElement>(current ? "#rail-entry" : "#empty-entry")!;
+    if (folderForm.parentElement !== host) {
+      const focused = document.activeElement === folderInput;
+      const start = folderInput.selectionStart,
+        end = folderInput.selectionEnd;
+      host.append(folderForm);
+      if (focused) {
+        folderInput.focus();
+        folderInput.setSelectionRange(start, end);
+      }
+    }
+  }
+  action("cancel-folder").hidden = !current;
+  action("open-folder").disabled = busy;
   persistSelection();
   renderStatus();
   requestAnimationFrame(updateTabOverflow);
@@ -496,6 +557,7 @@ document.addEventListener("visibilitychange", () => {
   }
 });
 new ResizeObserver(resizeSelected).observe(container);
+new ResizeObserver(updateTabOverflow).observe(tabList);
 window.visualViewport?.addEventListener("resize", resizeSelected);
 window.addEventListener("resize", () => requestAnimationFrame(revealSelectedTab));
 tabList.addEventListener("keydown", (event) => {
@@ -547,7 +609,7 @@ async function requestVoice(session: Session, request: string) {
     releasing: false,
   };
   voice = owner;
-  notice.textContent = "";
+  voiceError = undefined;
   renderAudio();
   try {
     const device = await connectBrowserAudio({
@@ -565,7 +627,7 @@ async function requestVoice(session: Session, request: string) {
         if (value === "closed" || value === "error") {
           if (value === "error") {
             const message = "Browser audio failed. Check microphone access and connection, then type /live to retry.";
-            notice.textContent = message;
+            voiceError = { tabId: owner.tabId, message };
             send(session, { type: "audio-error", request, message });
           }
           void releaseVoice();
@@ -588,7 +650,7 @@ async function requestVoice(session: Session, request: string) {
   } catch (error) {
     if (!owner.controller.signal.aborted && session.capability === owner.capability) {
       const message = error instanceof Error ? error.message : "Could not open microphone. Type /live to retry.";
-      notice.textContent = message;
+      voiceError = { tabId: owner.tabId, message };
       send(session, { type: "audio-error", request, message });
     }
     owner.releasing = true;
@@ -607,7 +669,7 @@ function connect(session: Session) {
   session.capability = undefined;
   session.ownerId = undefined;
   session.term.options.disableStdin = true;
-  session.status = "Connecting…";
+  session.status = session.sequence ? "Terminal disconnected · input paused · retrying…" : "Connecting terminal…";
   const socket = new WebSocket(
     socketOrigin + "/api/terminal?tab=" + encodeURIComponent(session.id) + "&after=" + session.sequence,
     ["bruv", "bruv-token." + token],
@@ -639,14 +701,20 @@ function connect(session: Session) {
     } else if (message.type === "output") {
       if (message.seq <= session.sequence) return;
       if (message.seq !== session.sequence + 1) {
-        halt(session, "Output gap; screen is incomplete. Close this tab and start a new one.");
+        session.loss = "view";
+        halt(
+          session,
+          "View lost · this screen is incomplete. The original work still runs. Open a new terminal without closing this one.",
+        );
         return;
       }
       session.term.write(Uint8Array.from(atob(message.data), (char) => char.charCodeAt(0)));
       session.sequence = message.seq;
     } else if (message.type === "exit") {
-      halt(session, "Bruv exited (" + message.code + "). Open a new tab to continue.");
+      session.loss = "exit";
+      halt(session, "CLI ended (exit " + message.code + "). Output is kept here. Use + for a new terminal.");
     } else if (message.type === "gap" || message.type === "error") {
+      if (message.type === "gap") session.loss = "view";
       halt(session, message.message);
     }
     renderStatus();
@@ -661,9 +729,9 @@ function connect(session: Session) {
     if (!session.halted) {
       if (event.code === 1000 || event.code === 1008) {
         session.halted = true;
-        session.status = event.reason || "Terminal detached.";
+        session.status = event.reason || "Terminal unavailable.";
       } else {
-        session.status = "Disconnected · input disabled · reconnecting…";
+        session.status = "Terminal disconnected · input paused · retrying…";
         session.reconnect = setTimeout(() => connect(session), 1000);
       }
     }
@@ -671,7 +739,7 @@ function connect(session: Session) {
   };
   socket.onerror = () => {
     if (session.socket !== socket) return;
-    session.status = "Connection failed. Check the server and token URL.";
+    session.status = "Terminal disconnected · input paused · retrying…";
     renderStatus();
   };
 }
@@ -729,6 +797,7 @@ function attach(tab: Tab) {
   const fit = new FitAddon();
   term.loadAddon(fit);
   term.open(element);
+  installTerminalTouch(element, term);
   const session: Session = {
     id: tab.id,
     term,
@@ -745,6 +814,8 @@ function attach(tab: Tab) {
   connect(session);
 }
 function applyState(next: WorkspaceState) {
+  listLoaded = true;
+  listFailed = false;
   if (next.revision <= state.revision) return;
   const ids = new Set(next.workspaces.flatMap((item) => item.tabs.map((tab) => tab.id)));
   for (const [id, session] of sessions) {
@@ -770,6 +841,14 @@ function normalizeSelection() {
     if (!item.tabs.some((tab) => tab.id === selectedTabs[item.id])) selectedTabs[item.id] = item.tabs[0]?.id ?? "";
   }
 }
+class RequestError extends Error {
+  constructor(
+    message: string,
+    readonly status: number,
+  ) {
+    super(message);
+  }
+}
 async function request(path: string, method = "GET", body?: object): Promise<WorkspaceState> {
   const response = await fetch(path, {
     method,
@@ -778,45 +857,87 @@ async function request(path: string, method = "GET", body?: object): Promise<Wor
   });
   if (!response.ok) {
     const detail = await response.text();
-    throw new Error(detail || "Request failed (" + response.status + ").");
+    if (response.status === 401 || response.status === 403) {
+      accessRequired = true;
+      syncStatus.textContent = "";
+      clearTimeout(eventsReconnect);
+      eventsSocket?.close();
+    }
+    throw new RequestError(detail || "Request failed (" + response.status + ").", response.status);
   }
   return response.json();
 }
 async function change(path: string, method = "GET", body?: object, choose?: (next: WorkspaceState) => void) {
-  if (busy || !token) return;
+  if (busy || accessRequired) return false;
   busy = true;
   notice.textContent = "";
   render();
+  let ok = false;
   try {
     const next = await request(path, method, body);
     applyState(next);
-    // Our own create may already have arrived over events. Choose from its REST
-    // result, but reconcile against the newest snapshot, never the old response.
+    // Events may win the race; select from the response but keep the newest state.
     if (choose) {
       choose(next);
       normalizeSelection();
     }
+    ok = true;
   } catch (error) {
-    notice.textContent = error instanceof Error ? error.message : "Could not update workspaces.";
+    if (method === "GET") listFailed = true;
+    notice.textContent = accessRequired ? "" : error instanceof Error ? error.message : "Could not update workspaces.";
+  } finally {
+    busy = false;
+    render();
+  }
+  return ok;
+}
+action("empty-action").addEventListener("click", () => {
+  if (!listLoaded) void change("/api/workspaces");
+  else action("new-tab").click();
+});
+action("lost-new-tab").addEventListener("click", () => action("new-tab").click());
+action("add-workspace").addEventListener("click", () => {
+  folderOpen = true;
+  render();
+  folderInput.focus();
+});
+action("cancel-folder").addEventListener("click", () => {
+  folderOpen = false;
+  render();
+  action("add-workspace").focus();
+});
+folderForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  void openFolder();
+});
+async function openFolder() {
+  if (busy || accessRequired || !folderInput.value.trim()) return;
+  busy = true;
+  folderError.textContent = "";
+  render();
+  try {
+    const next = (await request("/api/workspaces", "POST", { cwd: folderInput.value.trim() })) as OpenedWorkspace;
+    applyState(next);
+    selectedWorkspace = next.workspaceId;
+    normalizeSelection();
+    folderOpen = false;
+    folderInput.value = "";
+    folderInput.removeAttribute("aria-invalid");
+    setDrawer(false);
+    render();
+    selected()?.term.focus();
+  } catch (error) {
+    folderError.textContent = error instanceof Error ? error.message : "Could not open folder. Try again.";
+    folderInput.setAttribute("aria-invalid", "true");
+    folderInput.focus();
   } finally {
     busy = false;
     render();
   }
 }
-action("empty-action").addEventListener("click", () => action(workspace() ? "new-tab" : "add-workspace").click());
-action("add-workspace").addEventListener("click", async () => {
-  const cwd = await askDialog({
-    title: "Add workspace",
-    description: "Use an existing folder. Each workspace has its own terminals.",
-    label: "Folder path",
-    value: state.defaultCwd,
-    submit: "Add workspace",
-  });
-  if (cwd === null) return;
-  const before = new Set(state.workspaces.map((item) => item.id));
-  void change("/api/workspaces", "POST", { cwd: cwd.trim() || state.defaultCwd }, (next) => {
-    selectedWorkspace = next.workspaces.filter((item) => !before.has(item.id)).at(-1)?.id ?? selectedWorkspace;
-  });
+folderInput.addEventListener("input", () => {
+  folderError.textContent = "";
+  folderInput.removeAttribute("aria-invalid");
 });
 action("new-tab").addEventListener("click", () => {
   const current = workspace();
@@ -831,16 +952,20 @@ action("new-tab").addEventListener("click", () => {
       selectedWorkspace = current.id;
       selectedTabs[current.id] = tab.id;
     }
+  }).then((ok) => {
+    if (ok) selected()?.term.focus();
   });
 });
 async function closeTab(tab: Tab) {
-  const wasActive = selected()?.id === tab.id;
+  const ended = tab.exited || sessions.get(tab.id)?.loss === "exit";
   const focused = document.activeElement?.id;
-  const origin = focused === "close-tab" ? "tab-menu-toggle" : focused;
+  const origin = focused;
   const confirmed = await askDialog({
-    title: "Close “" + tab.name + "”?",
-    description: "This terminal and its running work will stop for everyone.",
-    submit: "Close tab",
+    title: (ended ? "Remove “" : "Close “") + tab.name + "”?",
+    description: ended
+      ? "This CLI has ended. Removing its terminal stops any remaining work for everyone."
+      : "This terminal and its running work will stop for everyone.",
+    submit: ended ? "Remove tab" : "Close tab",
     destructive: true,
   });
   if (confirmed === null) {
@@ -851,29 +976,38 @@ async function closeTab(tab: Tab) {
     ).focus();
     return;
   }
-  await change("/api/tabs/" + encodeURIComponent(tab.id), "DELETE", { confirm: true });
+  const ok = await change("/api/tabs/" + encodeURIComponent(tab.id), "DELETE", { confirm: true });
+  if (!ok) {
+    document.getElementById(origin ?? "")?.focus();
+    return;
+  }
   const remaining = selected();
-  if (wasActive && remaining) remaining.term.focus();
-  else (document.getElementById("tab-" + remaining?.id) ?? action("new-tab")).focus();
+  if (remaining) remaining.term.focus();
+  else action("empty-action").focus();
 }
-action("close-tab").addEventListener("click", () => {
-  const tab = workspace()?.tabs.find((tab) => tab.id === selected()?.id);
-  if (tab) void closeTab(tab);
-});
-action("remove-workspace").addEventListener("click", async () => {
-  const current = workspace();
-  if (
-    current &&
-    (await askDialog({
-      title: "Remove “" + current.name + "”?",
-      description: "All its terminals will stop for everyone. The folder will not be deleted.",
-      submit: "Remove workspace",
-      destructive: true,
-    })) !== null
-  )
-    void change("/api/workspaces/" + encodeURIComponent(current.id), "DELETE", { confirm: true });
-});
-action("reload-workspaces").addEventListener("click", () => void change("/api/workspaces"));
+async function removeWorkspace(id: string) {
+  const current = state.workspaces.find((item) => item.id === id);
+  if (!current) return;
+  const invoker = document.getElementById("workspace-remove-" + id);
+  const confirmed = await askDialog({
+    title: "Remove “" + current.name + "”?",
+    description:
+      current.cwd +
+      "\nAll its terminals and any remaining work will stop for everyone. The folder will not be deleted.",
+    submit: "Remove workspace",
+    destructive: true,
+  });
+  if (confirmed === null) {
+    invoker?.focus();
+    return;
+  }
+  const ok = await change("/api/workspaces/" + encodeURIComponent(id), "DELETE", { confirm: true });
+  if (ok && !drawerOpen) {
+    if (selected()) selected()!.term.focus();
+    else if (!workspace()) folderInput.focus();
+    else action("empty-action").focus();
+  }
+}
 window.addEventListener("beforeunload", () => {
   unloading = true;
   clearTimeout(eventsReconnect);
@@ -886,7 +1020,7 @@ window.addEventListener("beforeunload", () => {
   void releaseVoice();
 });
 function connectEvents() {
-  if (unloading || !token) return;
+  if (unloading || accessRequired) return;
   const socket = new WebSocket(socketOrigin + "/api/events", ["bruv-state", "bruv-token." + token]);
   eventsSocket = socket;
   syncStatus.textContent = "Connecting workspace updates…";
@@ -901,10 +1035,11 @@ function connectEvents() {
   socket.onclose = (event) => {
     if (eventsSocket !== socket || unloading) return;
     if (event.code === 1008) {
-      syncStatus.textContent = event.reason || "Workspace updates denied. Open the full token URL.";
+      void change("/api/workspaces");
       return;
     }
-    syncStatus.textContent = "Workspace updates disconnected · reconnecting…";
+    if (accessRequired) return;
+    syncStatus.textContent = "Workspace list may be out of date · retrying…";
     eventsReconnect = setTimeout(connectEvents, 1000);
   };
 }

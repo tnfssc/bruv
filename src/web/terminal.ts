@@ -91,7 +91,7 @@ export class TerminalSession {
         JSON.stringify({
           type: "gap",
           message:
-            "Terminal replay expired. The CLI is still running; this screen cannot be recovered. Close this tab and open a new one to continue.",
+            "View lost · this screen cannot be recovered. The original work still runs. Open a new terminal without closing this one.",
         }),
       );
       socket.close(1008, "Replay expired");

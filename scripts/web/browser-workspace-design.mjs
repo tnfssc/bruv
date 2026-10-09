@@ -135,7 +135,11 @@ try {
     assert(response.ok);
     return response.json();
   }
-  browser = await chromium.launch({ executablePath: process.env.CHROMIUM_BIN, headless: true, args: ["--no-sandbox"] });
+  browser = await chromium.launch({
+    executablePath: process.env.CHROMIUM_BIN,
+    headless: process.env.HEADLESS !== "0",
+    args: ["--no-sandbox", ...(process.env.HEADLESS === "0" ? ["--ozone-platform=x11"] : [])],
+  });
   page = await browser.newPage({ viewport: { width: 1100, height: 720 }, hasTouch: true });
   const failures = [];
   page.on("pageerror", (error) => {
@@ -258,7 +262,8 @@ try {
   await page.getByRole("button", { name: "Open workspace bruv · " + firstCwd, exact: true }).click();
   await page.getByRole("tab", { name: "Select tab Terminal", exact: true }).click();
   await readyToType();
-  await page.locator("#terminal .xterm-helper-textarea:visible").fill("!uname -s");
+  await page.locator("#terminal .xterm-helper-textarea:visible").focus();
+  await page.keyboard.type("!uname -s");
   await page.keyboard.press("Enter");
   await page.waitForFunction(() => document.querySelector("#terminal")?.textContent?.includes("Linux"));
   await page.waitForTimeout(500);
@@ -454,7 +459,8 @@ try {
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
   assert((await page.locator("#new-tab").boundingBox()).x < 390, "New tab stays in reach");
   await connected();
-  await page.locator("#terminal .xterm-helper-textarea:visible").fill("!uname -s");
+  await page.locator("#terminal .xterm-helper-textarea:visible").focus();
+  await page.keyboard.type("!uname -s");
   await page.keyboard.press("Enter");
   await page.waitForFunction(() =>
     document.querySelector('#terminal [role="tabpanel"]:not([hidden])')?.textContent.includes("Linux"),

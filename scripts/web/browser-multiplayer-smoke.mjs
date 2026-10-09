@@ -90,7 +90,7 @@ try {
   }
   browser = await chromium.launch({
     executablePath: process.env.CHROMIUM_BIN,
-    headless: true,
+    headless: process.env.HEADLESS !== "0",
     args: ["--no-sandbox", "--use-fake-device-for-media-stream", "--use-fake-ui-for-media-stream"],
   });
   const sharedContext = process.env.BRUV_BROWSER_SHARED_CONTEXT === "1" ? await browser.newContext() : null;

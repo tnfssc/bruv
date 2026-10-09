@@ -22,14 +22,25 @@ class Element {
   setAttribute(key: string, value: string) {
     this.attributes[key] = value;
   }
+  style: Record<string, string> = {};
+  getBoundingClientRect() {
+    return { left: 0, right: this.clientWidth, width: this.clientWidth };
+  }
+  removeAttribute(key: string) {
+    delete this.attributes[key];
+  }
+  setSelectionRange() {}
+  get lastElementChild(): Element | null {
+    return this.children.at(-1) ?? null;
+  }
   parentElement: Element | null = null;
   className = "";
   onFocus?: () => void;
   get firstElementChild() {
     return this.children[0] ?? null;
   }
-  append(element: Element) {
-    this.insertBefore(element, null);
+  append(...elements: Element[]) {
+    for (const element of elements) this.insertBefore(element, null);
   }
   insertBefore(element: Element, before: Element | null) {
     element.remove();
@@ -82,10 +93,17 @@ class Element {
     this.parentElement = null;
   }
 }
-async function browser(device?: (options: any) => Promise<{ close(): Promise<void> }>) {
+async function browser(device?: (options: any) => Promise<{ close(): Promise<void> }>, hash = "#token=secret") {
   const nodes = new Map<string, Element>();
   const node = (id: string) => {
-    if (!nodes.has(id)) nodes.set(id, new Element());
+    if (!nodes.has(id)) {
+      const element = new Element();
+      element.id = id;
+      element.onFocus = () => {
+        document.activeElement = element;
+      };
+      nodes.set(id, element);
+    }
     return nodes.get(id)!;
   };
   const terminals: any[] = [];
@@ -101,7 +119,10 @@ async function browser(device?: (options: any) => Promise<{ close(): Promise<voi
     }
     loadAddon() {}
     open() {}
-    focus() {}
+    focused = 0;
+    focus() {
+      this.focused++;
+    }
     dispose() {
       this.disposed = true;
     }
@@ -170,21 +191,27 @@ async function browser(device?: (options: any) => Promise<{ close(): Promise<voi
   let resize = () => {};
   class ResizeObserver {
     constructor(callback: () => void) {
-      resize = callback;
+      if (callback.name === "resizeSelected") resize = callback;
     }
     observe() {}
   }
-  const requests: { path: string; options: any; resolve: (state: any) => void }[] = [];
+  const requests: {
+    path: string;
+    options: any;
+    resolve: (state: any) => void;
+    fail: (status: number, detail: string) => void;
+  }[] = [];
   let deviceClosed = 0;
   let audioOptions: any;
   const context = createContext({
     Terminal,
+    installTerminalTouch() {},
     FitAddon,
     document,
     window,
     WebSocket: Socket,
     ResizeObserver,
-    location: { hash: "#token=secret", pathname: "/", origin: "http://localhost" },
+    location: { hash, pathname: "/", origin: "http://localhost" },
     history: { replaceState() {} },
     sessionStorage: {
       getItem() {
@@ -203,7 +230,12 @@ async function browser(device?: (options: any) => Promise<{ close(): Promise<voi
     clearTimeout() {},
     fetch: (path: string, options: any) =>
       new Promise((resolve) => {
-        requests.push({ path, options, resolve: (state) => resolve({ ok: true, json: async () => state }) });
+        requests.push({
+          path,
+          options,
+          resolve: (state) => resolve({ ok: true, json: async () => state }),
+          fail: (status, detail) => resolve({ ok: false, status, text: async () => detail }),
+        });
       }),
     connectBrowserAudio: async (options: any) => {
       audioOptions = options;
@@ -272,7 +304,7 @@ const snapshot = (revision: number, voice: any = null) => ({
   ],
 });
 const tick = async () => {
-  for (let i = 0; i < 5; i++) await Promise.resolve();
+  for (let i = 0; i < 12; i++) await Promise.resolve();
 };
 
 test("events reconcile monotonically without remote focus or duplicate deletes", async () => {
@@ -299,7 +331,7 @@ test("events reconcile monotonically without remote focus or duplicate deletes",
   expect(b.terminal("b").readyState).toBe(3);
   expect(b.requests.filter((request) => request.options.method === "DELETE")).toHaveLength(0);
   b.events().close(1006);
-  expect(b.node("sync-status").textContent).toContain("reconnecting");
+  expect(b.node("sync-status").textContent).toContain("retrying");
   b.timers.shift()!();
   b.snapshot(snapshot(5));
   expect(b.node("tab-list").children).toHaveLength(2);
@@ -361,20 +393,20 @@ test("global voice is named, observers cannot disable it, and selection never tr
   b.ready("c");
   b.snapshot(snapshot(2, { tabId: "c", ownerId: "another-browser" }));
   expect(b.node("audio-status").textContent).toBe("Voice in another browser · Two / C");
-  expect(b.node("voice-control").hidden).toBe(false);
+  expect(b.node("voice-status").hidden).toBe(false);
   b.terminal("c").close();
   expect(b.deviceClosed).toBe(0);
   b.snapshot(snapshot(3));
-  expect(b.node("voice-control").hidden).toBe(true);
+  expect(b.node("voice-status").hidden).toBe(true);
   b.terminal("a").message({ type: "audio-request", request: "request-a" });
   await tick();
   b.snapshot(snapshot(4, { tabId: "a", ownerId: "owner-a" }));
   b.snapshot(snapshot(3));
-  b.node("workspace-list").children[1].fire("click");
+  b.node("workspace-list").children[1].children[0].fire("click");
   b.flushFrames();
   expect(b.audioOptions.owner).toBe("cap-a");
   expect(b.node("audio-status").textContent).toContain("One / A");
-  expect(b.node("voice-control").attributes["aria-label"]).toContain("One / A");
+  expect(b.node("audio-status").textContent).toContain("One / A");
   expect(b.deviceClosed).toBe(0);
   b.terminal("b").close();
   expect(b.deviceClosed).toBe(0);
@@ -382,7 +414,7 @@ test("global voice is named, observers cannot disable it, and selection never tr
   await tick();
   expect(b.deviceClosed).toBe(1);
   b.snapshot(snapshot(5));
-  expect(b.node("audio-status").textContent).toBe("Voice off");
+  expect(b.node("audio-status").textContent).toBe("");
 });
 
 test("request cancellation closes only the local owner device", async () => {
@@ -398,7 +430,7 @@ test("request cancellation closes only the local owner device", async () => {
   b.terminal("a").message({ type: "audio-cancel", request: "request-a" });
   await tick();
   expect(b.deviceClosed).toBe(1);
-  expect(b.node("audio-status").textContent).toBe("Voice off");
+  expect(b.node("audio-status").textContent).toBe("");
   b.terminal("a").message({ type: "audio-request", request: "request-a" });
   await tick();
   b.snapshot(snapshot(4, { tabId: "a", ownerId: "owner-a" }));
@@ -408,19 +440,17 @@ test("request cancellation closes only the local owner device", async () => {
   expect(b.audioOptions.signal.aborted).toBe(true);
   expect(b.node("audio-status").textContent).toContain("Releasing microphone");
   b.snapshot(snapshot(5));
-  expect(b.node("voice-control").hidden).toBe(true);
+  expect(b.node("voice-status").hidden).toBe(true);
 });
 
 test("compact status keeps connection and voice labels accessible", async () => {
   const b = await browser();
   b.snapshot(snapshot(1));
   b.ready("a");
-  expect(b.node("connection").attributes["data-state"]).toBe("connected");
-  expect(b.node("connection").attributes["aria-label"]).toBe("Connected");
   expect(b.node("terminal-status").hidden).toBe(true);
   b.terminal("a").message({ type: "exit", code: 1 });
   expect(b.node("terminal-status").hidden).toBe(false);
-  expect(b.node("terminal-status").textContent).toContain("Bruv exited");
+  expect(b.node("status").textContent).toContain("CLI ended");
 });
 
 const key = (key: string) => ({ key, preventDefault() {}, stopPropagation() {} });
@@ -501,7 +531,7 @@ test("touch double-tap starts inline rename and close still needs confirmation",
   const input = b.node("tab-list").children[0].children[0];
   expect(input.className).toBe("tab-name-input");
   input.fire("keydown", key("Escape"));
-  void b.node("close-tab").fire("click");
+  void b.node("tab-list").children[0].children[1].fire("click");
   expect(b.node("workspace-dialog").open).toBe(true);
   expect(b.node("dialog-description").textContent).toContain("for everyone");
   b.node("dialog-cancel").fire("click");
@@ -514,9 +544,9 @@ test("Escape then immediate reopen cannot lose destructive confirmation to a lat
   b.snapshot(snapshot(1));
   b.requests[0].resolve(snapshot(1));
   await tick();
-  void b.node("close-tab").fire("click");
+  void b.node("tab-list").children[0].children[1].fire("click");
   b.node("workspace-dialog").fire("cancel", { preventDefault() {} });
-  void b.node("close-tab").fire("click");
+  void b.node("tab-list").children[0].children[1].fire("click");
   // This event belongs to the cancelled dialog, not the fresh confirmation.
   b.node("workspace-dialog").fire("close");
   b.node("dialog-form").fire("submit", { preventDefault() {} });
@@ -538,7 +568,7 @@ test("per-tab close cancels safely and deletes the captured inactive tab", async
   await tick();
   expect(b.requests).toHaveLength(count);
   b.node("tab-list").children[1].children[1].fire("click");
-  b.node("workspace-list").children[1].fire("click");
+  b.node("workspace-list").children[1].children[0].fire("click");
   b.node("dialog-form").fire("submit", { preventDefault() {} });
   await tick();
   expect(b.requests.at(-1)?.path).toBe("/api/tabs/b");
@@ -582,7 +612,7 @@ test("permission denial reports to the owning CLI and a fresh request can retry"
   b.terminal("a").message({ type: "audio-request", request: "denied" });
   await tick();
   expect(b.terminal("a").sent.at(-1)).toMatchObject({ type: "audio-error", request: "denied" });
-  expect(b.node("notice").textContent).toContain("permission denied");
+  expect(b.node("audio-status").textContent).toContain("permission denied");
   b.terminal("a").message({ type: "audio-request", request: "retry" });
   await tick();
   expect(attempts).toBe(2);
@@ -689,4 +719,112 @@ test("overflow cues show only the edges with hidden tabs", async () => {
   list.fire("scroll");
   expect(list.attributes["data-start-clipped"]).toBe("false");
   expect(list.attributes["data-end-clipped"]).toBe("false");
+});
+
+test("keyed workspace rows retain focused remove through snapshots without selecting it", async () => {
+  const b = await browser();
+  b.snapshot(snapshot(1));
+  b.requests[0].resolve(snapshot(1));
+  await tick();
+  const row = b.node("workspace-list").children[1];
+  const remove = row.children[1];
+  remove.focus();
+  b.snapshot(snapshot(2));
+  expect(b.node("workspace-list").children[1]).toBe(row);
+  expect(b.document.activeElement).toBe(remove);
+  remove.fire("click");
+  expect(b.node("dialog-description").textContent).toContain("/two");
+  expect(b.node("workspace-list").children[0].children[0].attributes["aria-pressed"]).toBe("true");
+  b.node("dialog-cancel").click();
+  await tick();
+  expect(b.document.activeElement).toBe(remove);
+});
+
+test("folder failures retain draft and local error; resolved identity selects an existing workspace", async () => {
+  const b = await browser();
+  b.snapshot(snapshot(1));
+  b.requests[0].resolve(snapshot(1));
+  await tick();
+  b.node("add-workspace").click();
+  const field = b.node("folder-input");
+  field.value = "/two";
+  b.node("folder-form").fire("submit", { preventDefault() {} });
+  b.requests.at(-1)!.fail(503, "Server busy. Try again.");
+  await tick();
+  expect(field.value).toBe("/two");
+  expect(b.document.activeElement).toBe(field);
+  expect(b.node("folder-error").textContent).toContain("Server busy");
+  expect(b.node("folder-form").hidden).toBe(false);
+  b.node("folder-form").fire("submit", { preventDefault() {} });
+  b.requests.at(-1)!.resolve({ ...snapshot(2), workspaceId: "two", created: false });
+  await tick();
+  expect(b.node("workspace-list").children[1].children[0].attributes["aria-pressed"]).toBe("true");
+  expect(field.value).toBe("");
+  expect(b.node("folder-form").hidden).toBe(true);
+});
+
+test("missing and known-invalid access are not empty workspaces or endless retry", async () => {
+  const missing = await browser(undefined, "");
+  expect(missing.requests).toHaveLength(0);
+  expect(missing.node("folder-form").hidden).toBe(true);
+  expect(missing.node("empty-action").hidden).toBe(true);
+  const invalid = await browser();
+  invalid.requests[0].fail(403, "Forbidden");
+  await tick();
+  expect(invalid.node("folder-form").hidden).toBe(true);
+  expect(invalid.node("add-workspace").hidden).toBe(true);
+  expect(invalid.node("empty-action").hidden).toBe(true);
+});
+
+test("replay loss freezes output without marking the live CLI ended", async () => {
+  const b = await browser();
+  b.snapshot(snapshot(1));
+  b.ready("a");
+  b.terminal("a").message({ type: "output", seq: 1, data: btoa("kept screen") });
+  b.terminal("a").message({ type: "output", seq: 3, data: btoa("incomplete") });
+  expect(b.terminals[0].writes).toHaveLength(1);
+  expect(b.terminals[0].options.disableStdin).toBe(true);
+  expect(b.node("status").textContent).toContain("original work still runs");
+  expect(b.node("tab-list").children[0].children[0].textContent).toContain("view lost");
+  expect(b.node("tab-list").children[0].children[0].textContent).not.toContain("ended");
+  expect(b.node("lost-new-tab").hidden).toBe(false);
+});
+
+test("only the visible xterm enables screen-reader output", async () => {
+  const b = await browser();
+  b.snapshot(snapshot(1));
+  expect(b.terminals.map((term) => term.options.screenReaderMode)).toEqual([true, false, false]);
+  b.node("tab-list").children[1].children[0].click();
+  expect(b.terminals.map((term) => term.options.screenReaderMode)).toEqual([false, true, false]);
+});
+
+test("pending Cancel notifies the matching owner and releases a late device", async () => {
+  let resolveDevice!: (device: { close(): Promise<void> }) => void;
+  let closed = 0;
+  const b = await browser(
+    () =>
+      new Promise((resolve) => {
+        resolveDevice = resolve;
+      }),
+  );
+  b.snapshot(snapshot(1));
+  b.ready("a");
+  b.terminal("a").message({ type: "audio-owner", id: "cap-a", ownerId: "owner-a" });
+  b.terminal("a").message({ type: "audio-request", request: "pending-a" });
+  expect(b.node("cancel-voice").hidden).toBe(false);
+  b.node("cancel-voice").click();
+  await tick();
+  expect(b.terminal("a").sent.at(-1)).toEqual({
+    type: "audio-error",
+    request: "pending-a",
+    message: "Microphone request cancelled.",
+  });
+  resolveDevice({
+    close: async () => {
+      closed++;
+    },
+  });
+  await tick();
+  expect(closed).toBe(1);
+  expect(b.node("voice-status").hidden).toBe(true);
 });

@@ -126,7 +126,7 @@ test("replay overflow reports a gap instead of presenting a corrupted terminal",
   first.socket.close();
   const second = connect(app, 0);
   await until(() => second.messages.some((m) => m.type === "gap"));
-  expect(second.messages.find((m) => m.type === "gap").message).toContain("Close this tab");
+  expect(second.messages.find((m) => m.type === "gap").message).toContain("without closing this one");
   expect(second.messages.some((m) => m.type === "ready")).toBe(false);
 });
 

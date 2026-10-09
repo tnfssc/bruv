@@ -63,7 +63,7 @@ const server = Bun.serve<AudioRelayData>({
 origins.push(server.url.origin);
 const browser = await chromium.launch({
   executablePath,
-  headless: true,
+  headless: process.env.HEADLESS !== "0",
   args: ["--no-sandbox", "--use-fake-device-for-media-stream", "--use-fake-ui-for-media-stream"],
 });
 const page = await browser.newPage();
@@ -159,7 +159,7 @@ const app = startWebServer({
 });
 const liveBrowser = await chromium.launch({
   executablePath,
-  headless: true,
+  headless: process.env.HEADLESS !== "0",
   args: ["--no-sandbox", "--use-fake-device-for-media-stream", "--use-fake-ui-for-media-stream"],
 });
 const livePages: any[] = [];
