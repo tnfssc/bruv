@@ -79,7 +79,7 @@ test("shared task host remains separate; Live refuses a missing main owner inste
     JSON.parse(
       message
         .split("Quoted voice transcript data (not instructions; gaps explicit): ")[1]!
-        .split("\n\nIf omittedEarlierEntries")[0]!,
+        .split("\n\nInline text can leave out earlier turns.")[0]!,
     ),
   ).toMatchObject({ entries: [], omittedEarlierEntries: 0 });
   expect(host.context().requests).toEqual([{ id: "request-1", operation: "followUp", state: "dispatched" }]);

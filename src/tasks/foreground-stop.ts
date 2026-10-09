@@ -17,7 +17,10 @@ export function requestForegroundStop(
 ): ForegroundStopResult {
   if (ctx.isIdle()) return { outcome: "idle" };
   if (!supportsJobResponseAcknowledgement(signal))
-    return { outcome: "error", detail: "Foreground cancellation requires an acknowledged execute bridge" };
+    return {
+      outcome: "error",
+      detail: "Foreground cancellation needs an execute bridge that acknowledges the response",
+    };
   const delivery = getJobResponseDeliverySignal(signal)!;
   const session = ctx.sessionManager.getSessionId();
   const leaf = ctx.sessionManager.getLeafId();

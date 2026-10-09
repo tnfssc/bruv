@@ -297,7 +297,7 @@ export function registerGoalMode(
     if (controller.endRun(store?.get()) === "pause") {
       store!.update({
         status: "paused",
-        reason: "Paused after repeated automatic turns made no meaningful progress",
+        reason: "Repeated automatic turns made no meaningful progress",
       });
       resetContinuation();
       notify("Goal paused: repeated continuations made no meaningful progress", "warning");
@@ -363,11 +363,13 @@ export function registerGoalMode(
       }
       if (method === "goal.update") {
         if ("pendingJobIds" in input) {
-          throw new Error("goal.update pendingJobIds is runtime-managed; use handoff() to wait for owned running jobs");
+          throw new Error(
+            "goal.update cannot set pendingJobIds; the runtime owns them. Use handoff() to wait for owned running jobs.",
+          );
         }
         if (input.status === "waiting") {
           throw new Error(
-            "goal.update waiting status is runtime-managed; use handoff() to wait for owned running jobs",
+            "goal.update cannot set waiting; the runtime owns that status. Use handoff() to wait for owned running jobs.",
           );
         }
         const result = requireStore().update(input as never);

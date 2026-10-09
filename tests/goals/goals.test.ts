@@ -339,9 +339,9 @@ test("model-facing updates reject runtime-owned waiting bookkeeping", () => {
   const h = harness();
   h.runtime.handle("goal.set", input);
 
-  expect(() => h.runtime.handle("goal.update", { status: "waiting" })).toThrow("waiting status is runtime-managed");
+  expect(() => h.runtime.handle("goal.update", { status: "waiting" })).toThrow("goal.update cannot set waiting");
   expect(() => h.runtime.handle("goal.update", { status: "active", pendingJobIds: ["job_1"] })).toThrow(
-    "pendingJobIds is runtime-managed",
+    "goal.update cannot set pendingJobIds",
   );
   expect(h.runtime.get()?.status).toBe("active");
 });

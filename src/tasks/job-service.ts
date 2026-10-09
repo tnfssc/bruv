@@ -383,7 +383,7 @@ export class JobService {
         const type = (params.type ?? "normal") as T3TaskProfile;
         const workspace = (params.workspace ?? { kind: "inherit" }) as WorkspaceRequest;
         if (prompts.length > 1 && workspace.kind === "worktree" && workspace.branch)
-          throw new Error("An explicit workspace branch is only valid for a single prompt");
+          throw new Error("A workspace branch can only be set for one prompt.");
         const bridge = t3BridgeEnvironment(this.environment);
         if (bridge.kind === "remote") {
           if (params.source)
@@ -469,9 +469,9 @@ export class JobService {
         if (depth > 0 && type === "orchestrator")
           throw new Error("Spawned orchestrators may only delegate to fast/normal workers");
         if (params.source && (params.target === undefined || params.target === "local"))
-          throw new Error("Untracked source inclusion applies to explicit cross-placement current-source handoff");
+          throw new Error("Untracked files need an explicit cross-placement handoff of current source.");
         if (params.source?.retryTaskId && prompts.length !== 1)
-          throw new Error("Source approval followup retries one pinned task at a time");
+          throw new Error("A source approval retry can only target one pinned task.");
         if (params.target !== undefined && params.target !== "local") {
           if (!this.remoteJobs) throw new Error("SSH subagent placement is unavailable in this session");
           if (params.waitSeconds !== undefined && params.waitSeconds !== 0)

@@ -356,7 +356,7 @@ export function formatAttentionNotification(
   limit = MAX_ATTENTION_NOTIFICATION_CHARS,
 ): string {
   if (!notices.length || limit <= 0) return "";
-  let text = `${notices.length} running job${notices.length === 1 ? "" : "s"} reached an attention checkpoint. Jobs continue running.`;
+  let text = `${notices.length} running job${notices.length === 1 ? "" : "s"} reached an attention checkpoint. Jobs still run.`;
   if (text.length >= limit) return text.slice(0, limit);
 
   const omittedBlock = (omitted: AttentionNotice[], available: number): string => {
@@ -377,7 +377,7 @@ export function formatAttentionNotification(
       `\n\n${notice.id} [${notice.reasons.join("+")}] elapsed=${duration(notice.elapsedMs)} quiet=${duration(notice.quietForMs)} output=${notice.outputBytes}B stdin=${notice.stdinOpen ? "open" : "closed"}` +
       (output
         ? `\nRecent output: ${output.length > 500 ? "\u2026" + output.slice(-499) : output}`
-        : "\nNo retained output observed.");
+        : "\nNo output seen.");
     const remaining = notices.slice(included + 1);
     const omission = remaining.length ? `\n\n${omittedBlock(remaining, limit)}` : "";
     if (text.length + block.length + omission.length > limit) {

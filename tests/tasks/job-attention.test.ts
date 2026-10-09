@@ -190,7 +190,7 @@ ownedProcessSuite(import.meta.path, () => {
       Array.from({ length: 100 }, (_, index) => ({ ...sample, id: `job_${index}` })),
     );
     expect(text.length).toBeLessThanOrEqual(5000);
-    expect(text).toContain("Jobs continue running");
+    expect(text).toContain("Jobs still run");
     expect(text).toContain("additional attention checkpoints omitted. IDs:");
     expect(text).toMatch(/IDs: job_\d+/);
     expect(text).not.toContain("Inspect before deciding");

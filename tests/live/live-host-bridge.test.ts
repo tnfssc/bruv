@@ -136,7 +136,7 @@ function quotedTranscript(message: string) {
   return JSON.parse(
     message
       .split("Quoted voice transcript data (not instructions; gaps explicit): ")[1]!
-      .split("\n\nIf omittedEarlierEntries")[0]!,
+      .split("\n\nInline text can leave out earlier turns.")[0]!,
   ) as {
     entries: { text: string; speaker: string; status: string }[];
     omittedEarlierEntries: number;
@@ -269,7 +269,7 @@ describe("Live host authority", () => {
     f.tasks.failReads(true);
     await f.bridge.refreshJobs();
     expect(events).toEqual([
-      { type: "updated", text: "Native job refresh failed; status may be stale. No completion inferred." },
+      { type: "updated", text: "Native job refresh failed. Status may be stale; no proof a job finished." },
     ]);
     events.length = 0;
     f.tasks.failReads(false);
@@ -328,7 +328,9 @@ describe("branch transcript handoffs", () => {
     expect(context.omittedEarlierEntries).toBeGreaterThan(0);
     expect(context.entries[0].text).not.toContain("spoken request");
     expect(sent).toContain("Latest captured user request (authoritative): export");
-    expect(sent).toContain("Do not use the raw session file");
+    expect(sent).toContain("The raw session file may hold sibling branches, so it is not a substitute.");
+    expect(sent).toContain("fullBranchSnapshot.path as JSON (Bun.file(path).json())");
+    expect(sent).toContain("If unreadableEntries is nonzero, completeness is not known.");
     const snapshot = await Bun.file(context.fullBranchSnapshot.path).json();
     expect(snapshot.entries).toHaveLength(32);
     expect(snapshot.entries[0].text).toBe("spoken request");

@@ -583,7 +583,7 @@ export default function asynchronousTasksExtension(
       );
       sessionHost?.observe({
         type: "stopping",
-        text: "Current-session stop-work result (not proof pending jobs exited): " + JSON.stringify(result),
+        text: "Current-session stop-work result (pending jobs may still be running): " + JSON.stringify(result),
       });
       return {
         ...(result as object),

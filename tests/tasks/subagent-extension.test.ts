@@ -277,7 +277,7 @@ test("print agent_end wakes on attention while a job is still running", async ()
     await Bun.sleep(120);
     expect(e.messages).toHaveLength(1);
     expect(e.messages[0].customType).toBe("task-attention");
-    expect(e.messages[0].content).toContain("Jobs continue running");
+    expect(e.messages[0].content).toContain("Jobs still run");
     expect(e.messages[0].content).toContain(task.id);
     await rpc("jobs.stop", { id: task.id }, signal);
   } finally {

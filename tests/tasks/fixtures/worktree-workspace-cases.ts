@@ -140,7 +140,7 @@ describe("local worktree workspace", () => {
           { cwd: runtimeRoot } as never,
           new AbortController().signal,
         ),
-      ).rejects.toThrow("only valid for a single prompt");
+      ).rejects.toThrow("A workspace branch can only be set for one prompt.");
       expect(manager.list()).toHaveLength(0);
     } finally {
       await manager.shutdown();

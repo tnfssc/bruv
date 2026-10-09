@@ -47,7 +47,7 @@ export class AgentProgress {
       }
       this.#bytes += Buffer.byteLength(part);
       if (this.#bytes > MAX_RECORD_BYTES) {
-        if (!this.#dropping) this.emit("[diagnostic] Oversized event omitted; see session JSONL.\n");
+        if (!this.#dropping) this.emit("[diagnostic] Event too large; not shown. See session JSONL.\n");
         this.#pending = "";
         this.#dropping = true;
       } else if (!this.#dropping) this.#pending += part;
