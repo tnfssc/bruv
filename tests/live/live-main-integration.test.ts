@@ -199,7 +199,7 @@ test("main Live owns first-turn instructions, actual execute and background comp
   const instructions = f.owner.orchestration.instructions ?? "";
   expect(instructions).toContain("VERTICAL_PROJECT_GUIDANCE");
   expect(instructions).toContain("VERTICAL_CUSTOM_APPEND");
-  expect(instructions).toContain("Shared work is simpler in one place. Extra worktrees bring extra care.");
+  expect(instructions).toContain("Shared work is simpler in one place. Extra worktrees cost care,");
   expect(instructions).toContain("shell 3 seconds");
   expect(f.owner.orchestration.tools.map((t) => t.name)).toEqual(["execute"]);
   f.owner.inputTranscript("Launch isolated local marker job");
@@ -324,9 +324,9 @@ test("main Live receives capability and delegation guidance in its assembled roo
   const f = await fixture();
   const root = f.owner.orchestration.instructions;
   const execute = f.owner.orchestration.tools?.find((tool) => tool.name === "execute");
-  expect(root).toContain("Network, filesystem, and worker access depend on the actual environment");
-  expect(root).toContain("A past assistant denial is not evidence of a current limit");
-  expect(root).toContain("When the user clearly asks to delegate, launch subagent");
+  expect(root).toContain("Network, files and worker access depend on the environment");
+  expect(root).toContain("Past denial is not proof of a current limit");
+  expect(root).toContain("User asks to delegate? Launch subagent");
   expect(root).toContain("Use tools for authorized work beyond coding too");
   expect(execute?.description).toContain("call the shell() or subagent() globals inside execute");
   expect(execute?.description).toContain("depends on the actual environment and result");
@@ -340,7 +340,7 @@ test("custom root prompt is byte-identical to ordinary prompt assembly before fi
   expect(livePrompt).toContain("VERTICAL_CUSTOM_ROOT_SYSTEM");
   expect(livePrompt).toContain("VERTICAL_PROJECT_GUIDANCE");
   // User-owned custom root prompt retains the ordinary override semantics.
-  expect(livePrompt).not.toContain("Shared work is simpler in one place. Extra worktrees bring extra care.");
+  expect(livePrompt).not.toContain("Shared work is simpler in one place. Extra worktrees cost care,");
   f.owner.close();
   await f.owner.released;
   let ordinaryPrompt: string | undefined;

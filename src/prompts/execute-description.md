@@ -1,4 +1,4 @@
-Run JS/TS code in current directory. Supply a short plain `label` describing the action (for example, "Read task UI code" or "Run focused tests"), not an unverified success finding.
+Run JS/TS code in current directory. A short plain `label` names the action, not an unverified result (for example, "Read task UI code" or "Run focused tests").
 
 ## Code, output, and images
 

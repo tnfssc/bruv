@@ -4,6 +4,6 @@
   - goal.update({status, progress?, evidence?, blocker?, reason?})
   - goal.clear()
 - Goals are opt-in and durable.
-- Before recording progress, check what actually changed. Don't count old evidence again.
-- Check each criterion. All met? Mark completed. Show proof.
-- Need something you can't supply? Mark blocked. Say what would unblock it.
+- Progress needs new evidence. Check what changed; old proof counts once.
+- Complete means every criterion met. Mark completed and show proof.
+- Missing something you cannot supply? Mark blocked. Say what would unblock it.

@@ -45,10 +45,10 @@ describe("project wisdom extension", () => {
     expect(result.systemPrompt).toContain("Project wisdom lives in /repo/wisdom/.");
     expect(result.systemPrompt).toContain("Put it with the feature or system it explains.");
     expect(result.systemPrompt).toContain("Values live in /repo/wisdom/values.md.");
-    expect(result.systemPrompt).toContain("Write prompts and wisdom in same voice as rest.");
+    expect(result.systemPrompt).toContain("Prompts and wisdom use nearby voice.");
     expect(result.systemPrompt).toContain("Before big work ends or changes hands");
-    expect(result.systemPrompt).toContain("At end, say what wisdom changed and what values changed.");
-    expect(result.systemPrompt).toContain("Nothing new? No need change values.");
+    expect(result.systemPrompt).toContain("At handoff, say what wisdom and values changed, or why values stayed same.");
+    expect(result.systemPrompt).toContain("Nothing new? No forced change.");
     expect(result.systemPrompt).not.toContain(".agents/notes");
     expect(result.systemPrompt).not.toContain("pending");
     expect(result.systemPrompt).not.toContain("index.md");
@@ -57,17 +57,17 @@ describe("project wisdom extension", () => {
   test("wisdom goes with the code before saying done", () => {
     const f = fixture(true);
     const { systemPrompt } = f.handlers.get("before_agent_start")![0]({ systemPrompt: "base" }, f.ctx);
-    expect(systemPrompt).toContain("Write wisdom while doing the work.");
-    expect(systemPrompt).toContain("Finish it before the last commit, PR, or handoff.");
-    expect(systemPrompt).toContain("Put it with the code. No wait until the job is done.");
-    expect(systemPrompt).toContain("Any edits not committed? Any commits not shared yet?");
-    expect(systemPrompt).toContain("Send code and wisdom where the user asked. Not there yet? Say what is left.");
-    expect(systemPrompt).toContain("Task done or PR merged? No more edits in that worktree.");
+    expect(systemPrompt).toContain("Save wisdom with code as work moves,");
+    expect(systemPrompt).toContain("before the last commit, PR, or handoff.");
+    expect(systemPrompt).toContain("Save wisdom with code as work moves, before the last commit, PR, or handoff.");
+    expect(systemPrompt).toContain("Edits not committed or commits not shared? Say what is left.");
+    expect(systemPrompt).toContain("Done means code and wisdom are where user asked. Check files and commits.");
+    expect(systemPrompt).toContain("Task done or PR merged? No more edits there.");
     expect(systemPrompt).toContain(
-      "Record release facts with the release or task, not in the old worktree. No new repo notes after shipping.",
+      "Release facts belong with release or task, not old repo notes.",
     );
     expect(systemPrompt).toContain(
-      "Need another repo change? Start a new task and PR. No quiet edits on the old branch.",
+      "Later repo change needs a new task and PR. No quiet edits on the old branch.",
     );
     expect(systemPrompt).not.toContain("After release or broad review, look across the work too.");
     // Do not add a writer or a Git check after the turn has ended.

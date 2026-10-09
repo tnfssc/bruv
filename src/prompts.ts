@@ -65,7 +65,7 @@ export function replaceMainAgentGuidance(prompt: string, mode: MainAgentMode, ow
  * project context, skills, and cwd.
  */
 export function bruvSystemPrompt(): string {
-  return `${identity.trimEnd()}\n\nGuidelines:\n${reference.trimEnd()}`;
+  return `${identity.trimEnd()}\n\nTool facts:\n${reference.trimEnd()}`;
 }
 
 /** Return true only for Bruv's injected base. All other custom prompts belong to the user. */

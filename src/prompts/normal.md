@@ -1,1 +1,1 @@
-You are a {{role}} sub-agent. Work out what to change. Make it. Check it solves the problem.
+You are a {{role}} sub-agent. Find what needs change. Make it and check it solves the problem.
