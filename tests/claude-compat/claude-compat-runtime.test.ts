@@ -1,4 +1,5 @@
 import { getCurrentSystemPrompt, getCurrentTools, type TranscriptContext } from "@earendil-works/pi-ai";
+import { stream as anthropicStream } from "@earendil-works/pi-ai/api/anthropic-messages";
 import { expectExecuteOnce } from "../prompts/combined-request";
 import { afterEach, expect, spyOn, test } from "bun:test";
 import { chmod, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
@@ -153,6 +154,171 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
     throw new Error("Fixture checkpoint timed out");
   }
 
+  test("complete native requests keep external prose and schemas through tool and user continuations", async () => {
+    const description = "EXTERNAL_DESCRIPTION\nShort words. Short sentences. Plain talk.\nEXTERNAL_DESCRIPTION";
+    const schemaDescription = "EXTERNAL_SCHEMA\nEXTERNAL_SCHEMA";
+    const peer = await httpMcpLifecycleFixture({ description, schemaDescription });
+    const captures: unknown[] = [];
+    try {
+      for (const appOwned of [false, true])
+        for (const customPrompt of [undefined, "USER_BASE\nUSER_BASE"]) {
+          const mcp = await InjectedMcpSession.open(peer.config, {
+            cwd: process.cwd(),
+            appOwnedServers: appOwned ? ["t3-code"] : [],
+            policy: {
+              authorizeServer: async () => true,
+              beforeAppOwnedCall: async () => {},
+              authorizeTool: async (request) => ({ behavior: "allow", updatedInput: request.input }),
+            },
+          });
+          try {
+            const { runtime, modelRuntime } = await fixture({
+              customPrompt,
+              extra: {
+                mcp,
+                appendSystemPrompt: ["USER_APPEND\nUSER_APPEND"],
+                extensionFactories: [
+                  { name: "external-fixture", factory: mcpFactory(mcp), hidden: true },
+                  {
+                    name: "final-payload-proof",
+                    factory: (pi: ExtensionAPI) => {
+                      pi.on("before_provider_request", (event) => ({
+                        ...(event.payload as object),
+                        metadata: { user_id: "FINAL_HOOK_SENTINEL" },
+                      }));
+                    },
+                    hidden: true,
+                  },
+                ],
+                tools: ["execute", "mcp__t3-code__echo"],
+              },
+            });
+            await init(runtime);
+            const contexts: TranscriptContext[] = [];
+            const payloads: any[] = [];
+            modelRuntime.streamSimple = (async (model: any, context: TranscriptContext, options: any) => {
+              contexts.push(structuredClone(context));
+              let payload: any;
+              for await (const _event of anthropicStream(model, context, {
+                ...options,
+                apiKey: "offline-fixture",
+                onPayload: async (body, requestModel) => {
+                  payload = (await options?.onPayload?.(body, requestModel)) ?? body;
+                  throw new Error("offline capture");
+                },
+                fetch: (async () => {
+                  throw new Error("unexpected network");
+                }) as unknown as typeof fetch,
+              })) {
+                /* Stop before dispatch, after the final SDK hooks. */
+              }
+              payloads.push(payload);
+              return output(
+                contexts.length === 1
+                  ? assistant("", {
+                      stopReason: "toolUse",
+                      content: [
+                        {
+                          type: "toolCall",
+                          id: "external-echo",
+                          name: "mcp__t3-code__echo",
+                          arguments: { text: "QUOTED_TOOL_DATA" },
+                        },
+                      ],
+                    })
+                  : assistant("done"),
+              );
+            }) as any;
+            await runtime.onUser(user(runtime, "FIRST_USER_DATA"), signal());
+            await runtime.onUser(user(runtime, "NEXT_USER_DATA"), signal());
+            expect(contexts).toHaveLength(3);
+            for (const [turn, context] of contexts.entries()) {
+              const system = getCurrentSystemPrompt(context.messages);
+              const tools = getCurrentTools(context.messages);
+              expectExecuteOnce(system, tools);
+              expect(tools.map((t) => t.name)).toEqual(["execute", "mcp__t3-code__echo"]);
+              const external = tools.find((t) => t.name === "mcp__t3-code__echo")!;
+              expect(external.description).toBe(description);
+              expect((external.parameters as any).properties.text.description).toBe(schemaDescription);
+              expect(system.split("USER_APPEND")).toHaveLength(3);
+              if (customPrompt) expect(system.split("USER_BASE")).toHaveLength(3);
+              const whole = JSON.stringify(context);
+              for (const fact of [
+                "shell 3 seconds",
+                "one pinned commit",
+                "questions.block({",
+                "history.search({",
+                "repo.read",
+              ]) {
+                expect(whole.split(fact).length - 1, fact).toBe(1);
+              }
+              expect(whole.split("EXTERNAL_DESCRIPTION")).toHaveLength(3);
+              expect(whole.split("EXTERNAL_SCHEMA")).toHaveLength(3);
+              if (turn > 0) expect(whole).toContain("QUOTED_TOOL_DATA");
+              if (turn === 2) expect(whole).toContain("NEXT_USER_DATA");
+              const payload = payloads[turn];
+              expect(payload?.metadata.user_id).toBe("FINAL_HOOK_SENTINEL");
+              expect(payload).toBeDefined();
+              const wire = JSON.stringify(payload);
+              expect(wire.split("EXTERNAL_DESCRIPTION")).toHaveLength(3);
+              expect(wire.split("EXTERNAL_SCHEMA")).toHaveLength(3);
+              for (const fact of ["shell 3 seconds", "one pinned commit", "questions.block({", "repo.read"]) {
+                expect(wire.split(fact).length - 1, fact).toBe(1);
+              }
+              captures.push({ appOwned, custom: !!customPrompt, turn, context, payload });
+            }
+          } finally {
+            await mcp.close();
+          }
+        }
+      if (process.env.BRUV_REQUEST_CAPTURE_DIR)
+        await writeFile(
+          join(process.env.BRUV_REQUEST_CAPTURE_DIR, "native-external-requests.json"),
+          JSON.stringify(captures, null, 2),
+        );
+    } finally {
+      await peer.stopHost();
+    }
+  });
+
+  test("selected SDK tools keep their declarations through tool and user continuations", async () => {
+    const names = ["execute", "read", "bash", "powershell", "edit", "write", "grep", "find", "ls"];
+    const { dir, runtime } = await fixture({ extra: { tools: names } });
+    await writeFile(join(dir, "input.txt"), "BUILTIN_QUOTED_DATA");
+    await init(runtime);
+    const contexts: TranscriptContext[] = [];
+    runtime.session.agent.streamFunction = (_model, context) => {
+      contexts.push(structuredClone(context));
+      return output(
+        contexts.length === 1
+          ? assistant("", {
+              stopReason: "toolUse",
+              content: [
+                { type: "toolCall", id: "sdk-read", name: "read", arguments: { path: join(dir, "input.txt") } },
+              ],
+            })
+          : assistant("done"),
+      );
+    };
+    await runtime.onUser(user(runtime), signal());
+    await runtime.onUser(user(runtime, "continue"), signal());
+    expect(contexts).toHaveLength(3);
+    for (const context of contexts) {
+      const tools = getCurrentTools(context.messages);
+      expect(tools.map((tool) => tool.name)).toEqual(names);
+      expectExecuteOnce(getCurrentSystemPrompt(context.messages), tools);
+      for (const tool of tools)
+        expect(tool.description).toBe((runtime.session as any)._toolRegistry.get(tool.name).description);
+      expect(JSON.stringify(context).split("shell 3 seconds")).toHaveLength(2);
+    }
+    expect(JSON.stringify(contexts.at(-1))).toContain("BUILTIN_QUOTED_DATA");
+    if (process.env.BRUV_REQUEST_CAPTURE_DIR)
+      await writeFile(
+        join(process.env.BRUV_REQUEST_CAPTURE_DIR, "sdk-tool-requests.json"),
+        JSON.stringify(contexts, null, 2),
+      );
+  });
+
   test("actual production initialization is local, publishes exact configured models and no fake account", async () => {
     const fetch = spyOn(globalThis, "fetch").mockImplementation((() => {
       throw new Error("unexpected provider request");
@@ -181,31 +347,45 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
     }
   });
 
-  test("native compatibility root and child turns keep custom text and one execute owner", async () => {
+  test("native root and child frames keep one owner on first and later turns", async () => {
     const priorDepth = process.env.BRUV_SUBAGENT_DEPTH;
     const priorType = process.env.BRUV_SUBAGENT_TYPE;
+    const captures: unknown[] = [];
     try {
-      for (const role of ["root", "normal", "orchestrator"]) {
-        process.env.BRUV_SUBAGENT_DEPTH = role === "root" ? "0" : "1";
-        process.env.BRUV_SUBAGENT_TYPE = role;
-        const { runtime } = await fixture({
-          customPrompt: "USER_NATIVE_BASE",
-          extra: { appendSystemPrompt: ["USER_NATIVE_APPEND"] },
-        });
-        await init(runtime);
-        let captured!: TranscriptContext;
-        runtime.session.agent.streamFunction = (_model, context) => {
-          captured = context;
-          return output(assistant("offline"));
-        };
-        await runtime.onUser(user(runtime), signal());
-        const system = getCurrentSystemPrompt(captured.messages);
-        expectExecuteOnce(system, getCurrentTools(captured.messages));
-        expect(system.split("USER_NATIVE_BASE")).toHaveLength(2);
-        expect(system.split("USER_NATIVE_APPEND")).toHaveLength(2);
-        expect(system).not.toContain("Quick work? Finish it.");
-        if (role !== "root") expect(system).toContain("You are a " + role + " sub-agent.");
-      }
+      for (const customPrompt of [undefined, "USER_NATIVE_BASE"])
+        for (const role of ["root", "fast", "normal", "orchestrator"]) {
+          process.env.BRUV_SUBAGENT_DEPTH = role === "root" ? "0" : "1";
+          process.env.BRUV_SUBAGENT_TYPE = role;
+          const { runtime } = await fixture({ customPrompt, extra: { appendSystemPrompt: ["USER_NATIVE_APPEND"] } });
+          await init(runtime);
+          const contexts: TranscriptContext[] = [];
+          runtime.session.agent.streamFunction = (_model, context) => {
+            contexts.push(structuredClone(context));
+            return output(assistant("offline"));
+          };
+          await runtime.onUser(user(runtime), signal());
+          await runtime.onUser(user(runtime, "next turn"), signal());
+          expect(contexts).toHaveLength(2);
+          for (const context of contexts) {
+            const system = getCurrentSystemPrompt(context.messages);
+            expectExecuteOnce(system, getCurrentTools(context.messages));
+            expect(system.split("USER_NATIVE_APPEND")).toHaveLength(2);
+            if (customPrompt) {
+              expect(system.split(customPrompt)).toHaveLength(2);
+              expect(system).not.toContain("Quick work? Finish it.");
+            } else {
+              expect(system.split("Short words. Short sentences. Plain talk.")).toHaveLength(2);
+            }
+            if (role !== "root") expect(system.split("You are a " + role + " sub-agent.")).toHaveLength(2);
+            expect(JSON.stringify(context).split("shell 3 seconds")).toHaveLength(2);
+          }
+          captures.push({ role, custom: !!customPrompt, contexts });
+        }
+      if (process.env.BRUV_REQUEST_CAPTURE_DIR)
+        await writeFile(
+          join(process.env.BRUV_REQUEST_CAPTURE_DIR, "native-role-requests.json"),
+          JSON.stringify(captures, null, 2),
+        );
     } finally {
       if (priorDepth === undefined) delete process.env.BRUV_SUBAGENT_DEPTH;
       else process.env.BRUV_SUBAGENT_DEPTH = priorDepth;
@@ -1018,8 +1198,10 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
       });
       await init(runtime);
       let calls = 0;
-      runtime.session.agent.streamFunction = () =>
-        calls++ === 0
+      const contexts: TranscriptContext[] = [];
+      runtime.session.agent.streamFunction = (_model, context) => {
+        contexts.push(structuredClone(context));
+        return calls++ === 0
           ? output(
               assistant("", {
                 stopReason: "toolUse",
@@ -1037,10 +1219,25 @@ if (process.env.BRUV_TEST_COMPAT_RUNTIME_CHILD !== import.meta.path) {
               }),
             )
           : output(assistant("question saved"));
+      };
       await runtime.onUser(user(runtime), signal());
       await until(() => requests.length === 1);
       expect(requests[0]).toMatchObject({ subtype: "can_use_tool", tool_name: "AskUserQuestion" });
       await until(() => calls >= 3 && runtime.session.isIdle);
+      for (const context of contexts) {
+        expectExecuteOnce(getCurrentSystemPrompt(context.messages), getCurrentTools(context.messages));
+        const whole = JSON.stringify(context);
+        expect(whole.split("Native children do not resume in place.")).toHaveLength(2);
+        expect(whole).not.toContain("This saved reply belongs to a new parent turn.");
+      }
+      const continued = JSON.stringify(contexts.at(-1));
+      expect(continued).toContain("Actual human choice");
+      expect(continued).toContain("reply_");
+      if (process.env.BRUV_REQUEST_CAPTURE_DIR)
+        await writeFile(
+          join(process.env.BRUV_REQUEST_CAPTURE_DIR, "question-requests.json"),
+          JSON.stringify(contexts, null, 2),
+        );
       // The human command dispatches the real saved question command, with visible native output and no model call.
       const before = calls;
       await runtime.onUser(user(runtime, "/bruv questions list"), signal());

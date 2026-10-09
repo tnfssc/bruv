@@ -1,3 +1,5 @@
+import { getCurrentTools } from "@earendil-works/pi-ai";
+import { expectExecuteOnce } from "../prompts/combined-request";
 import { afterAll, afterEach, beforeEach, expect, test } from "bun:test";
 import { join } from "node:path";
 import { COLLISION, disposeModeSessions, sdk } from "./helpers/main-agent-mode-sdk";
@@ -16,7 +18,7 @@ test("real SDK defaults main frame to orchestrator and switches to a prose-free 
   expect(f.requests[0]).toContain("Shared work is simpler in one place. Extra worktrees cost care,");
   expect(f.requests[0]).not.toContain("Available tools:");
   expect(f.requests[0]).not.toContain("In addition to the tools above");
-  expect(f.requests[0]).toContain("shell 3 seconds");
+  expectExecuteOnce(f.requests[0], getCurrentTools(f.contexts[0].messages));
   expect(f.requests[0]).toContain("<cwd>\n" + f.manager.getCwd() + "\n</cwd>");
   expect(f.requests[0]).toContain(`Project wisdom lives in ${join(f.manager.getCwd(), "wisdom")}/.`);
   expect(f.requests[0]).toContain(`Values live in ${join(f.manager.getCwd(), "wisdom", "values.md")}.`);
@@ -42,6 +44,8 @@ test("real SDK defaults main frame to orchestrator and switches to a prose-free 
   expect(f.requests[1]).toContain("FRAME_AFTER");
   expect(f.requests[1].split("MARKER_EXAMPLE")).toHaveLength(3);
   expect(f.frameCalls()).toBe(1);
+  expectExecuteOnce(f.requests[1], getCurrentTools(f.contexts[1].messages));
+  expect(JSON.stringify(f.contexts[1]).split("shell 3 seconds")).toHaveLength(2);
 });
 
 test("real SDK preserves an explicit custom prompt containing marker examples across /mode", async () => {

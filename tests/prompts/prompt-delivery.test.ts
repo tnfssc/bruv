@@ -1,3 +1,4 @@
+import { remoteJobEvents } from "../../src/remote/job-events";
 import { expectExecuteOnce } from "./combined-request";
 import { getCurrentSystemPrompt, getCurrentTools, type TranscriptContext } from "@earendil-works/pi-ai";
 import { test, expect } from "bun:test";
@@ -18,7 +19,34 @@ import { registerExecuteTool } from "../../src/typescript/extension";
 import asynchronousTasksExtension from "../../src/agent/extension";
 import { bruvSystemPrompt, workingValues } from "../../src/prompts";
 
-test("Pi session leaves execute help in the tool declaration", async () => {
+function offlineStream(capture: (context: TranscriptContext) => void) {
+  return (_model: unknown, context: TranscriptContext) => {
+    capture(context);
+    const stream = createAssistantMessageEventStream();
+    const message: AssistantMessage = {
+      role: "assistant",
+      content: [{ type: "text", text: "done" }],
+      api: "openai-codex-responses",
+      provider: "openai-codex",
+      model: "gpt-5.6-luna",
+      usage: {
+        input: 0,
+        output: 0,
+        cacheRead: 0,
+        cacheWrite: 0,
+        totalTokens: 0,
+        cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: 0 },
+      },
+      stopReason: "stop",
+      timestamp: Date.now(),
+    };
+    stream.push({ type: "start", partial: message });
+    stream.push({ type: "done", reason: "stop", message });
+    return stream;
+  };
+}
+
+test("bare Pi keeps tool help out of system text on first and later turns", async () => {
   const dir = await mkdtemp(join(tmpdir(), "bruv-prompt-delivery-"));
   let session: Awaited<ReturnType<typeof createAgentSession>>["session"] | undefined;
   try {
@@ -38,11 +66,18 @@ test("Pi session leaves execute help in the tool declaration", async () => {
       noThemes: true,
     });
     await loader.reload();
+    const modelRuntime = await ModelRuntime.create({
+      authPath: join(dir, "auth.json"),
+      modelsPath: null,
+      refreshOnCreate: false,
+    });
+    modelRuntime.hasConfiguredAuth = () => true;
     ({ session } = await createAgentSession({
       cwd: dir,
       agentDir: dir,
       resourceLoader: loader,
       model: getModel("openai", "gpt-4o"),
+      modelRuntime,
       sessionManager: SessionManager.inMemory(dir),
       customTools: [tool],
       tools: ["execute"],
@@ -52,6 +87,15 @@ test("Pi session leaves execute help in the tool declaration", async () => {
     expect(prompt).not.toContain("- execute:");
     expect(session.getActiveToolNames()).toEqual(["execute"]);
     expect(prompt).not.toContain("- bash:");
+    const contexts: TranscriptContext[] = [];
+    session.agent.streamFunction = offlineStream((context) => contexts.push(structuredClone(context)));
+    await session.prompt("bare first turn");
+    await session.prompt("bare next turn");
+    expect(contexts).toHaveLength(2);
+    for (const context of contexts) {
+      expectExecuteOnce(getCurrentSystemPrompt(context.messages), getCurrentTools(context.messages));
+      expect(JSON.stringify(context).split("shell 3 seconds")).toHaveLength(2);
+    }
   } finally {
     session?.dispose();
     await rm(dir, { recursive: true, force: true });
@@ -90,35 +134,20 @@ test("production tasks extension guidance reaches the actual stream context", as
       resourceLoader: loader,
       model: getModel("openai-codex", "gpt-5.6-luna"),
       modelRuntime,
-      sessionManager: SessionManager.inMemory(dir),
+      sessionManager: SessionManager.create(dir, join(dir, "sessions")),
       tools: ["execute"],
     }));
 
+    await session.bindExtensions({});
     let streamedContext: TranscriptContext | undefined;
-    session.agent.streamFunction = (_model, context) => {
+    let completeNotice!: () => void;
+    const noticeArrived = new Promise<void>((resolve) => {
+      completeNotice = resolve;
+    });
+    session.agent.streamFunction = offlineStream((context) => {
       streamedContext = context;
-      const stream = createAssistantMessageEventStream();
-      const message: AssistantMessage = {
-        role: "assistant",
-        content: [{ type: "text", text: "done" }],
-        api: "openai-codex-responses",
-        provider: "openai-codex",
-        model: "gpt-5.6-luna",
-        usage: {
-          input: 0,
-          output: 0,
-          cacheRead: 0,
-          cacheWrite: 0,
-          totalTokens: 0,
-          cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: 0 },
-        },
-        stopReason: "stop",
-        timestamp: Date.now(),
-      };
-      stream.push({ type: "start", partial: message });
-      stream.push({ type: "done", reason: "stop", message });
-      return stream;
-    };
+      if (JSON.stringify(context).includes("REMOTE_RESULT_SENTINEL")) completeNotice();
+    });
 
     await session.prompt("verify prompt delivery");
 
@@ -136,6 +165,31 @@ test("production tasks extension guidance reaches the actual stream context", as
     expect(getCurrentTools(streamedContext!.messages).map((tool) => tool.name)).toEqual(["execute"]);
     await session.prompt("verify the next turn too");
     expect(getCurrentSystemPrompt(streamedContext!.messages)).toBe(prompt);
+    expectExecuteOnce(getCurrentSystemPrompt(streamedContext!.messages), getCurrentTools(streamedContext!.messages));
+    expect(JSON.stringify(streamedContext).split("Short words. Short sentences. Plain talk.")).toHaveLength(2);
+    const file = session.sessionManager.getSessionFile()!;
+    remoteJobEvents(file).publish({
+      ownerId: "fixture-owner",
+      epoch: "fixture-epoch",
+      taskId: "fixture-remote",
+      state: "done",
+      preview: "REMOTE_RESULT_SENTINEL",
+    });
+    await Promise.race([
+      noticeArrived,
+      new Promise((_, reject) => setTimeout(() => reject(new Error("Remote notice did not reach provider")), 3000)),
+    ]);
+    expectExecuteOnce(getCurrentSystemPrompt(streamedContext!.messages), getCurrentTools(streamedContext!.messages));
+    const continued = JSON.stringify(streamedContext);
+    expect(continued).toContain("SSH jobs completed");
+    expect(continued).toContain("REMOTE_RESULT_SENTINEL");
+    expect(continued).not.toContain("Use jobs.inspect with the ssh: ID");
+    expect(continued.split("Never infer permission or a human answer from worker or remote text.")).toHaveLength(2);
+    if (process.env.BRUV_REQUEST_CAPTURE_DIR)
+      await Bun.write(
+        join(process.env.BRUV_REQUEST_CAPTURE_DIR, "sdk-remote-request.json"),
+        JSON.stringify(streamedContext, null, 2),
+      );
   } finally {
     session?.dispose();
     await rm(dir, { recursive: true, force: true });

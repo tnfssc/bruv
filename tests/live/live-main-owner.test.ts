@@ -1,3 +1,4 @@
+import { expectExecuteOnce } from "../prompts/combined-request";
 import { beforeAll, describe, expect, test } from "bun:test";
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -242,7 +243,7 @@ describe("real Pi Live ownership", () => {
       expect(owner.orchestration.tools[0].description).toMatch(/await shell\(/);
       expect(owner.orchestration.tools[0].description).toContain("subagent()");
       expect(JSON.stringify(owner.orchestration.tools[0].parametersJsonSchema)).toContain("code");
-      expect((owner.orchestration as any).instructions).toContain("shell() runs commands");
+      expectExecuteOnce(owner.orchestration.instructions!, owner.orchestration.tools);
       expect(await owner.orchestration.execute({ name: "execute", args: {} })).toHaveProperty("isError", true);
       expect(toolEvents.map((event) => event.type)).toEqual(["tool_execution_start", "tool_execution_end"]);
       expect(toolEvents[0].args).toEqual({});

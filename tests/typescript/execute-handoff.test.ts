@@ -49,7 +49,7 @@ for (const mode of ["inline", "background", "error"] as const)
           .join("\n");
         if (mode === "background") {
           expect(text).toContain("Background jobs: background-one");
-          expect(text).toContain("Results come later.");
+          expect(text).not.toContain("Results come later.");
           expect(text).not.toContain("inline-two");
           expect((result.details as any).stdout).toBe("");
         } else expect(text).not.toContain("Background handoff");

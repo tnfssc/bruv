@@ -251,7 +251,7 @@ export function mcpFactory(mcp: InjectedMcpSession): ExtensionFactory {
       pi.registerTool({
         name: tool.name,
         label: tool.name,
-        description: tool.description ?? tool.name,
+        description: tool.description ?? "",
         parameters: tool.inputSchema as TSchema,
         async execute(id, input, signal) {
           const result = await mcp.callTool(tool.name, input as Record<string, unknown>, { toolUseId: id, signal });

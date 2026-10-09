@@ -119,3 +119,19 @@ test("MCP error envelope keeps the upstream text", async () => {
     "MCP tool error: " + upstream,
   );
 });
+
+test("MCP registration leaves absent prose empty instead of repeating the wire name", () => {
+  const tools: ToolDefinition[] = [];
+  const schema = { type: "object", properties: { text: { type: "string", description: "EXTERNAL_SCHEMA" } } };
+  mcpFactory({
+    tools: () => [
+      { name: "mcp__peer__bare", inputSchema: schema },
+      { name: "mcp__peer__empty", description: "", inputSchema: schema },
+    ],
+  } as unknown as InjectedMcpSession)({
+    registerTool: (tool: ToolDefinition) => tools.push(tool),
+  } as unknown as ExtensionAPI);
+  expect(tools.map((tool) => tool.name)).toEqual(["mcp__peer__bare", "mcp__peer__empty"]);
+  expect(tools.map((tool) => tool.description)).toEqual(["", ""]);
+  for (const tool of tools) expect(tool.parameters).toBe(schema);
+});

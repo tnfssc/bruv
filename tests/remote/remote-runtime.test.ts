@@ -204,9 +204,9 @@ test("saved remote reply starts one new parent turn, without replay", async () =
     expect(sent[0]!.message.display).toBe(false);
     expect(sent[0]!.message.content).toContain("Saved answer for " + question.id);
     expect(sent[0]!.message.content).toContain(input.text);
-    expect(sent[0]!.message.content).toContain(
-      "Saved reply starts a new parent turn. Past tool calls stay past. Native children do not resume in place.",
-    );
+    const saved = JSON.parse(sent[0]!.message.content.split("\n").slice(1).join("\n"));
+    expect(saved).toMatchObject({ id: question.id, owner: question.owner, replyId: input.replyId, answer: input.text });
+    expect(sent[0]!.message.content).not.toContain("Native children do not resume");
     expect(service.get(ctx, question.id).delivery).toBe("delivered");
     await answer(encoded, ctx);
     expect(sent).toHaveLength(1);

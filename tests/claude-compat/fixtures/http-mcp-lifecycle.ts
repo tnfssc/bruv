@@ -5,7 +5,15 @@ import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/
 import { z } from "zod";
 
 /** Stateful real SDK peer; host shutdown happens only when the test says so. */
-export async function httpMcpLifecycleFixture({ timeout = 2000 }: { timeout?: number } = {}) {
+export async function httpMcpLifecycleFixture({
+  timeout = 2000,
+  description,
+  schemaDescription,
+}: {
+  timeout?: number;
+  description?: string;
+  schemaDescription?: string;
+} = {}) {
   const sessions = new Map<string, StreamableHTTPServerTransport>();
   const requests: { method: string; rpc?: string; session?: string }[] = [];
   let rejectDelete = false;
@@ -23,9 +31,13 @@ export async function httpMcpLifecycleFixture({ timeout = 2000 }: { timeout?: nu
       },
     });
     const server = new McpServer({ name: "lifecycle-fixture", version: "1" });
-    server.registerTool("echo", { inputSchema: { text: z.string() } }, async ({ text }) => ({
-      content: [{ type: "text", text }],
-    }));
+    server.registerTool(
+      "echo",
+      { description, inputSchema: { text: schemaDescription ? z.string().describe(schemaDescription) : z.string() } },
+      async ({ text }) => ({
+        content: [{ type: "text", text }],
+      }),
+    );
     await server.connect(transport);
     return transport;
   }

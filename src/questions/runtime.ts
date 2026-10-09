@@ -222,12 +222,7 @@ class ParentQuestionContinuations {
         {
           customType: "question-answer",
           display: false,
-          content:
-            "Saved answer for " +
-            item.question.id +
-            ":\n" +
-            JSON.stringify(item.question) +
-            "\nThis saved reply belongs to a new parent turn. Prior tool calls are not replayed. Native children do not resume in place.",
+          content: "Saved answer for " + item.question.id + ":\n" + JSON.stringify(item.question),
           details: { questionId: item.question.id, replyKey: key, owner: item.question.owner },
         },
         { triggerTurn: true, deliverAs: "followUp" },

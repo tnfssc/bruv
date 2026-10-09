@@ -42,12 +42,7 @@ export function registerRemoteRuntime(pi: ExtensionAPI): void {
         {
           customType: "question-answer",
           display: false,
-          content:
-            "Saved answer for " +
-            claimed.id +
-            ":\n" +
-            JSON.stringify(claimed) +
-            "\nSaved reply starts a new parent turn. Past tool calls stay past. Native children do not resume in place.",
+          content: "Saved answer for " + claimed.id + ":\n" + JSON.stringify(claimed),
           details: { questionId: claimed.id, replyKey: claimed.replyId, owner: claimed.owner },
         },
         { triggerTurn: true, deliverAs: "followUp" },

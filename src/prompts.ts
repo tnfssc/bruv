@@ -27,7 +27,8 @@ export function backgroundHandoff(ids: string[]): string {
 
 export function subagentGuidance(role: string): string {
   const template = role === "fast" ? fast : role === "orchestrator" ? orchestrator : normal;
-  return template.trimEnd().replace("{{role}}", () => role);
+  const guidance = template.trimEnd().replace("{{role}}", () => role);
+  return role === "orchestrator" ? `${guidance}\n\n${mainOrchestrator.trimEnd()}` : guidance;
 }
 
 export const MAIN_AGENT_MODES = ["fast", "normal", "orchestrator"] as const;
