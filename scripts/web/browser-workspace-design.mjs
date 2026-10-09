@@ -564,7 +564,10 @@ try {
   await page.waitForFunction(() => document.activeElement?.classList.contains("xterm-helper-textarea"));
   assert.equal(await selectedTab().getAttribute("id"), activeBefore, "Confirmed inactive close leaves selection alone");
   assert.equal((await api()).workspaces[0].tabs.length, 7);
-  await page.locator('[id="tab-close-' + many[0].id + '"]').click();
+  const firstClose = page.locator('[id="tab-close-' + many[0].id + '"]');
+  await firstClose.evaluate((el) => el.parentElement.scrollIntoView({ block: "nearest", inline: "nearest" }));
+  await firstClose.waitFor({ state: "visible" });
+  await firstClose.click();
   await page.locator("#dialog-submit").click();
   await page.waitForFunction(() => document.querySelectorAll('[role="tab"]').length === 6);
   await page.waitForFunction(() => {
