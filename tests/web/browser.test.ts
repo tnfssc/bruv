@@ -14,6 +14,7 @@ const touchSource = new Bun.Transpiler({ loader: "ts" }).transformSync(
 );
 class Element {
   hidden = false;
+  inert = false;
   disabled = false;
   textContent = "";
   children: Element[] = [];
@@ -1008,4 +1009,34 @@ test("document hide and pane disposal cancel held touches", async () => {
   pane.hidden = false;
   pane.fire("touchmove", touch(140));
   expect(term.wheels).toEqual([]);
+});
+
+test("removing the last workspace closes its drawer and focuses folder entry", async () => {
+  const b = await browser();
+  b.snapshot(snapshot(1));
+  b.requests[0].resolve(snapshot(1));
+  await tick();
+  b.node("open-drawer").click();
+  expect(b.document.body.attributes["data-drawer"]).toBe("open");
+  const next = snapshot(2);
+  next.workspaces = [];
+  b.snapshot(next);
+  expect(b.document.body.attributes["data-drawer"]).toBe("closed");
+  expect(b.node("drawer-backdrop").hidden).toBe(true);
+  expect(b.document.querySelector("main").inert).toBe(false);
+  expect(b.document.activeElement).toBe(b.node("folder-input"));
+});
+
+test("initial list failure uses the recovery view without stacked notices", async () => {
+  const b = await browser();
+  b.requests[0].fail(503, "Fixture list outage");
+  await tick();
+  expect(b.node("sync-status").hidden).toBe(true);
+  expect(b.node("notice").hidden).toBe(true);
+  expect(b.node("empty-action").hidden).toBe(false);
+  expect(b.node("empty-action").textContent).toBe("Retry");
+  b.snapshot(snapshot(1));
+  expect(b.node("sync-status").hidden).toBe(false);
+  expect(b.node("notice").hidden).toBe(false);
+  expect(b.node("notice").textContent).toBe("");
 });

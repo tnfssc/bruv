@@ -243,10 +243,10 @@ try {
       assert.equal(geometry.gap, "8px");
       assert.equal(geometry.padding, viewport.width <= 700 ? "8px" : "12px");
       for (const button of geometry.buttons) {
-        assert.equal(button.rect.height, viewport.width <= 700 ? 48 : 32);
+        assert.equal(button.rect.height, viewport.width <= 700 ? 44 : 32);
         assert(button.library);
         assert(button.rect.right <= geometry.width);
-        assert.equal(button.font, viewport.width <= 700 ? "16px" : "13px");
+        assert.equal(button.font, "13px");
       }
       const label = name + "-" + (viewport.width <= 700 ? "phone" : "desktop");
       await Bun.write(join(out, label + ".json"), JSON.stringify(geometry, null, 2));

@@ -76,7 +76,7 @@ async function checkAlignment(label) {
       rows: document.querySelector(".terminal-pane:not([hidden]) .xterm-rows").childElementCount,
     };
   });
-  const minimum = metrics.phone ? 48 : 32;
+  const minimum = metrics.phone ? 44 : 32;
   for (const name of ["tab", "select", "plus", "drawer", "closeDrawer", "workspace", "remove", "add"]) {
     if (!metrics[name]) continue;
     assert(
@@ -117,6 +117,7 @@ async function checkSpacing(label) {
       brand: rect(".brand-row"),
       control: rect("#new-tab"),
       title: rect('[role="tab"][aria-selected="true"]'),
+      activeShell: rect('.terminal-tab[data-active="true"]'),
       close: rect(".tab-close"),
       gutter: style("#terminal").marginLeft,
       headerPadding: style(".tab-bar").paddingLeft,
@@ -133,13 +134,14 @@ async function checkSpacing(label) {
     };
   });
   assert.deepEqual(spacing.scale, ["4px", "8px", "12px", "16px", "24px", "32px"]);
-  assert.equal(spacing.header.height, spacing.phone ? 64 : 48, label + ": shared header height");
+  assert.equal(spacing.header.height, spacing.phone ? 48 : 40, label + ": shared header height");
   assert.equal(spacing.brand.height, spacing.header.height, label + ": rail and terminal headers");
+  assert.equal(spacing.activeShell.bottom, spacing.header.bottom, label + ": active tab meets the terminal edge");
   for (const name of ["control", "title", "close"])
-    assert.equal(spacing[name].height, spacing.phone ? 48 : 32, label + ": " + name + " shared height");
+    assert.equal(spacing[name].height, spacing.phone ? 44 : 32, label + ": " + name + " shared height");
   assert.equal(spacing.gutter, spacing.phone ? "8px" : "12px");
   assert.equal(spacing.headerPadding, spacing.gutter, label + ": shared content gutter");
-  assert.equal(spacing.labelGap, "8px");
+  assert.equal(spacing.labelGap, "4px");
   assert.equal(spacing.sectionGap, "16px");
   assert.equal(spacing.actionGap, "8px");
   assert(Math.abs(spacing.logo.width / spacing.logo.height - spacing.logoRatio) < 0.01, "Logo keeps its optical ratio");
@@ -156,6 +158,7 @@ async function checkFormSpacing(selector, label) {
     return {
       phone: innerWidth <= 700,
       field: field && rect(field),
+      fieldFont: field && getComputedStyle(field).fontSize,
       label: label && rect(label),
       actions: rect(actions),
       buttons: [...actions.querySelectorAll("button:not([hidden])")].map(rect),
@@ -165,18 +168,19 @@ async function checkFormSpacing(selector, label) {
       dialogPadding: el.closest("dialog") && getComputedStyle(el.closest("dialog")).padding,
     };
   });
-  const height = form.phone ? 48 : 32;
+  const height = form.phone ? 44 : 32;
   if (form.field && form.field.height) {
     assert.equal(form.field.height, height, label + ": field uses shared control height");
-    assert.equal(form.field.y - form.label.bottom, 8, label + ": label gap");
+    assert.equal(form.fieldFont, form.phone ? "16px" : "13px", label + ": form field text size");
+    assert.equal(form.field.y - form.label.bottom, 4, label + ": label gap");
   }
   for (const button of form.buttons) assert.equal(button.height, height, label + ": actions use shared control height");
   assert.equal(form.actionGap, "8px");
   assert.equal(form.sectionGap, "16px");
-  if (form.dialogPadding) assert.equal(form.dialogPadding, "24px");
+  if (form.dialogPadding) assert.equal(form.dialogPadding, "16px");
   if (form.error) {
     assert.equal(form.error.color, "rgb(245, 161, 145)", label + ": same inline error color in rail and empty form");
-    assert.equal(form.error.marginTop, "8px", label + ": same field-to-error gap");
+    assert.equal(form.error.marginTop, "4px", label + ": same field-to-error gap");
   }
   await Bun.write(join(proof, "spacing-" + label + ".json"), JSON.stringify(form, null, 2));
 }
@@ -288,6 +292,7 @@ try {
   await page.waitForFunction(
     () =>
       document.querySelectorAll('[role="tab"]').length === 2 &&
+      document.querySelector('[role="tab"][aria-selected="true"]') === document.querySelectorAll('[role="tab"]')[1] &&
       window.terminalSockets.get(document.querySelector('[role="tab"][aria-selected="true"]')?.id.slice(4))
         ?.probeReady &&
       document.querySelector("#terminal-status")?.hidden,
@@ -297,6 +302,7 @@ try {
   await page.waitForFunction(
     () =>
       document.querySelectorAll('[role="tab"]').length === 3 &&
+      document.querySelector('[role="tab"][aria-selected="true"]') === document.querySelectorAll('[role="tab"]')[2] &&
       window.terminalSockets.get(document.querySelector('[role="tab"][aria-selected="true"]')?.id.slice(4))
         ?.probeReady &&
       document.querySelector("#terminal-status")?.hidden,
@@ -397,11 +403,24 @@ try {
   const desktopTitleStyle = await titleStyle(title);
   assert(parseFloat(desktopTitleStyle.paddingLeft) >= 4, "Title ink clears the inset focus outline");
   const titleBox = await title.boundingBox();
+  const renameShell = page.locator("#tab-shell-" + firstTab.id);
+  const shellBeforeRename = await renameShell.boundingBox();
   await title.dblclick();
   const editBox = await editor.boundingBox();
   assert.deepEqual(await titleStyle(editor), desktopTitleStyle, "Desktop edit preserves text size and inset");
-  for (const key of ["x", "y", "width", "height"])
+  for (const key of ["x", "y", "height"])
     assert(Math.abs(editBox[key] - titleBox[key]) < 0.6, "Inline edit keeps title geometry: " + key);
+  assert(editBox.width > titleBox.width, "Rename uses the close control space");
+  assert.deepEqual(
+    await renameShell.boundingBox(),
+    shellBeforeRename,
+    "Editing keeps the tab shell and neighbors in place",
+  );
+  assert.equal(
+    await page.locator("#tab-close-" + firstTab.id).isVisible(),
+    false,
+    "Close is not offered during rename",
+  );
   await editor.fill("Unsubmitted draft");
   await screenshot({ path: join(proof, "inline-rename-desktop.png") });
   await page.keyboard.press("Escape");
@@ -439,7 +458,7 @@ try {
   await page.waitForFunction(() => document.documentElement.scrollWidth <= innerWidth);
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
   const terminalHeight = await page.locator("#terminal").evaluate((el) => el.clientHeight);
-  assert.equal(terminalHeight, 600, "Phone: 64px header and two 8px terminal gutters");
+  assert.equal(terminalHeight, 616, "Phone: 48px header and two 8px terminal gutters");
   await page.locator("#terminal .xterm-helper-textarea:visible").focus();
   await checkAlignment("phone");
   await screenshot({ path: join(proof, "populated-phone.png") });
@@ -473,7 +492,7 @@ try {
   await page.keyboard.press("Escape");
 
   const phoneTitleStyle = await titleStyle(title);
-  assert.equal(phoneTitleStyle.fontSize, "16px");
+  assert.equal(phoneTitleStyle.fontSize, "13px");
   // Chromium touch emulation, not a physical phone. Dispatch both taps in one
   // short gesture; locator waits can turn them into two unrelated touches.
   const touch = await page.context().newCDPSession(page);
@@ -694,6 +713,12 @@ try {
   assert.equal(await page.locator("#cancel-folder").isVisible(), false, "Empty view needs no reveal or cancel");
   await page.setViewportSize({ width: 1100, height: 720 });
   await checkFormSpacing("#folder-form", "empty-desktop");
+  assert.equal(await page.locator("#workspace-sidebar").isVisible(), false, "Empty list has no vacant rail");
+  const emptyAlignment = await page.evaluate(() => ({
+    title: document.querySelector("#empty-content h1").getBoundingClientRect().left,
+    field: document.querySelector("#folder-input").getBoundingClientRect().left,
+  }));
+  assert.equal(emptyAlignment.title, emptyAlignment.field, "Empty title and field share one left anchor");
   await screenshot({ path: join(proof, "empty-workspaces-desktop.png") });
   await page.setViewportSize({ width: 390, height: 680 });
   await checkFormSpacing("#folder-form", "empty-phone");

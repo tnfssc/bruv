@@ -8,12 +8,12 @@
   --space-5: 24px;
   --space-6: 32px;
   --content-gutter: var(--space-3);
-  --label-gap: var(--space-2);
+  --label-gap: var(--space-1);
   --section-gap: var(--space-4);
   --action-gap: var(--space-2);
   --control-height: var(--space-6);
-  --row-height: calc(var(--control-height) + var(--space-4));
-  --header-height: calc(var(--control-height) + var(--space-4));
+  --row-height: var(--control-height);
+  --header-height: calc(var(--space-6) + var(--space-2));
   --rail-width: 240px;
   --ui-font-size: 13px;
   --field-font-size: var(--ui-font-size);
@@ -73,6 +73,7 @@ input {
   --input-color: var(--line);
   --font-size: var(--field-font-size);
   --font-size-min: var(--field-font-size);
+  font-size: var(--field-font-size);
   width: 100%;
   padding-inline: var(--space-3);
 }
@@ -126,12 +127,16 @@ aside {
 .tab-bar {
   height: var(--header-height);
   flex-shrink: 0;
-  padding: var(--space-2) var(--content-gutter);
+  padding: var(--space-1) var(--content-gutter) 0;
   display: flex;
   align-items: center;
   gap: var(--space-1);
 }
+.brand-row {
+  padding-inline: var(--space-2);
+}
 .brand {
+  margin-left: var(--space-1);
   margin-right: auto;
   display: block;
   line-height: 0;
@@ -147,12 +152,18 @@ aside {
   gap: var(--space-1);
   overflow: auto;
   min-height: 0;
-  padding: var(--space-2) var(--content-gutter);
+  padding: var(--space-2);
+}
+body:has(#workspace-list:empty) aside {
+  display: none;
 }
 .workspace-row {
   display: flex;
   align-items: center;
   border-radius: var(--radius-field);
+}
+.workspace-row:hover {
+  background: #1c1c1c;
 }
 .workspace-row:has([aria-pressed="true"]) {
   background: #161616;
@@ -164,6 +175,11 @@ aside {
   display: block;
   text-align: left;
   padding-inline: var(--space-2);
+  background: transparent;
+  border-color: transparent;
+}
+.workspace:has(small:not([hidden])) {
+  height: calc(var(--row-height) + var(--space-5));
 }
 .workspace-name,
 .workspace small {
@@ -234,8 +250,8 @@ aside {
   flex: 0 0 auto;
   width: max-content;
   min-width: 128px;
-  max-width: min(240px, 100%);
-  border-radius: var(--radius-field);
+  max-width: min(208px, 100%);
+  border-radius: var(--space-2) var(--space-2) 0 0;
   padding-left: var(--space-1);
   color: var(--muted);
 }
@@ -278,7 +294,16 @@ aside {
   display: block;
 }
 #tab-list .tab-name-input {
+  --font-size: var(--ui-font-size);
+  --font-size-min: var(--ui-font-size);
+  font-size: var(--ui-font-size);
   border-color: var(--accent);
+}
+.terminal-tab:has(.tab-name-input) .tab-close {
+  display: none;
+}
+.terminal-tab:has(.tab-name-input) {
+  padding-right: var(--space-1);
 }
 .tab-close {
   color: var(--muted);
@@ -340,27 +365,31 @@ aside {
   align-items: center;
   justify-content: center;
   padding: var(--space-5);
-  text-align: center;
+  text-align: left;
+}
+#empty-content {
+  width: 100%;
+  max-width: 320px;
 }
 h1 {
   font-size: 18px;
   font-weight: 500;
   margin: 0 0 var(--section-gap);
 }
-#empty-terminal > p:empty {
+#empty-content > p:empty {
   display: none;
 }
-#empty-terminal > p {
+#empty-content > p {
   color: var(--muted);
   margin: 0 0 var(--section-gap);
 }
 #empty-entry {
   width: 100%;
-  max-width: 360px;
+  max-width: 320px;
 }
 dialog {
   width: min(400px, calc(100vw - var(--space-6)));
-  padding: var(--space-5);
+  padding: var(--space-4);
   background: #161616;
   color: var(--text);
   border: 1px solid var(--line);
@@ -395,11 +424,11 @@ dialog label,
 }
 #folder-form {
   width: 100%;
-  max-width: 360px;
+  max-width: 320px;
   text-align: left;
 }
 #rail-entry {
-  padding: var(--space-4) var(--content-gutter);
+  padding: var(--space-4);
 }
 #folder-input[aria-invalid="true"] {
   --input-color: #f5a191;
@@ -434,9 +463,9 @@ dialog label,
 }
 @media (max-width: 700px) {
   :root {
-    --control-height: calc(var(--space-5) * 2);
+    --control-height: calc(var(--space-6) + var(--space-3));
+    --header-height: calc(var(--space-5) * 2);
     --content-gutter: var(--space-2);
-    --ui-font-size: 16px;
     --field-font-size: 16px;
     --rail-width: 280px;
   }

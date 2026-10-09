@@ -19,7 +19,7 @@
       <div id="notice" role="alert"></div>
       <div id="terminal-status" hidden><span id="status" role="status"></span><button type="button" id="lost-new-tab" hidden class="btn btn-outline">New terminal</button></div>
       <div id="voice-status" hidden><span id="audio-status" role="status"></span><button type="button" id="cancel-voice" hidden class="btn btn-outline">Cancel</button><button type="button" id="dismiss-voice" hidden class="btn btn-outline">Dismiss</button></div>
-      <div id="terminal"><div id="empty-terminal"><h1>Open a folder</h1><p></p><div id="empty-entry"></div><button type="button" id="empty-action" class="btn btn-primary" hidden>New terminal</button></div></div>
+      <div id="terminal"><div id="empty-terminal"><div id="empty-content"><h1>Open a folder</h1><p></p><div id="empty-entry"></div><button type="button" id="empty-action" class="btn btn-primary" hidden>New terminal</button></div></div></div>
     </main>
   </div>
   <form id="folder-form" hidden><label for="folder-input">Folder on this server</label><input class="input" id="folder-input" autocomplete="off" spellcheck="false" aria-describedby="folder-error" placeholder="/path/to/folder" required><p id="folder-error" role="alert"></p><div class="folder-actions"><button type="button" id="cancel-folder" class="btn btn-outline">Cancel</button><button type="submit" id="open-folder" class="btn btn-primary">Open folder</button></div></form>

@@ -492,6 +492,8 @@ function render() {
     session.term.options.screenReaderMode = !hidden;
   }
   empty.hidden = !!active && !accessRequired;
+  syncStatus.hidden = !listLoaded;
+  notice.hidden = !listLoaded || accessRequired;
   document.querySelector<HTMLElement>(".tab-bar")!.hidden = accessRequired || !state.workspaces.length;
   const awaiting = !accessRequired && !listLoaded;
   empty.querySelector("h1")!.textContent = accessRequired
@@ -538,6 +540,10 @@ function render() {
   action("cancel-folder").hidden = !current;
   action("cancel-folder").disabled = busy;
   action("open-folder").disabled = busy;
+  if (drawerOpen && !state.workspaces.length) {
+    setDrawer(false);
+    if (showFolder) folderInput.focus();
+  }
   persistSelection();
   renderStatus();
   requestAnimationFrame(updateTabOverflow);
@@ -907,7 +913,8 @@ async function change(path: string, method = "GET", body?: object, choose?: (nex
     ok = true;
   } catch (error) {
     if (method === "GET") listFailed = true;
-    notice.textContent = accessRequired ? "" : error instanceof Error ? error.message : "Could not update workspaces.";
+    notice.textContent =
+      accessRequired || !listLoaded ? "" : error instanceof Error ? error.message : "Could not update workspaces.";
   } finally {
     busy = false;
     render();

@@ -1,57 +1,56 @@
 # Browser spacing system
 
-This follows the user's rejection of the prior padding pass: green alignment tests were not visual acceptance. Baseline: 0c651e35 and [surface rethink](surface-rethink.md). Baseline images stay read-only in /home/tnfssc/.bruv/worktrees/bruv-web-surface-rethink/artifacts/workspace-design.
+The user rejected the prior padding pass and asked for a UI library such as shadcn/ui. Aligned control centers and green tests had not produced a coherent layout. Start from 0c651e35; keep the finished surface-rethink tree read-only.
 
-Implementation tree: /home/tnfssc/.bruv/worktrees/t3-6f8b2e16-5442693331ce-task_16db86df. Branch: bruv/web-spacing-components. Parent integration tree: /home/tnfssc/.bruv/worktrees/bruv-web-spacing-system. Parent owns integration and publication. No push, PR, merge or CLI install here.
+## Source and library
 
-## Library and cost
+Parent: /home/tnfssc/.bruv/worktrees/bruv-web-spacing-system, branch bruv/web-spacing-system. Worker task_16db86df: /home/tnfssc/.bruv/worktrees/t3-6f8b2e16-5442693331ce-task_16db86df, branch bruv/web-spacing-components. Its 8799c907 became 84e4732c here. Parent owns publication as a follow-up to PR64. No merge or install unless asked.
 
-Use real daisyUI 5.7.47 (MIT) native DOM buttons and inputs. Verified npm packaging and license locally. The pinned production package has no dependencies. src/web/controls.css imports only components/button.css and components/input.css; Bun bundles them into the existing same-origin CSS asset. No CDN, Tailwind reset/runtime, React migration or library JavaScript. Keep the native dialog and its existing showModal/focus/confirmation behavior; the modal component's extra variants are not needed.
+Use real daisyUI 5.7.47 native Button/Input CSS. The pinned MIT package has no dependencies. controls.css imports only components/button.css and input.css. Bun embeds the result in the existing same-origin asset. No CDN, React, Tailwind runtime or library JavaScript. Keep the native dialog; it is not a daisyUI modal. Full license is included by the existing notice generator.
 
-Raw selected inputs: button 45,219 bytes and input 29,115 bytes. Full published daisyui.css: 1,138,571 bytes, not shipped. Bun's CSS lowering expands logical corners/nesting: selected output 197,903 bytes. Complete terminal.css asset, including xterm, local layout and font face: 214,568 bytes. Gzip estimate 13,029 bytes is a size comparison, not a claim that the route serves gzip. No new browser JS payload from the library. Packaging tests cap the complete CSS at 250,000 bytes and reject unresolved imports/full modal styles.
+Independent reviewer task_f1496888 favored shadcn for shared controls and overlay behavior, while noting a React view migration and unmeasured bundle cost. Parent chose selective daisyUI CSS to standardize native controls without replacing tested PTY/audio ownership and DOM lifecycle. Custom terminal tabs still need editable titles, sibling close controls and horizontal reveal; stock tabs are not a substitute.
 
-The library owns button/field styling, hover, disabled and variant states. Local .btn/.input rules set shared height, font, padding and gap through the library contract. Layout selectors handle text truncation and inline editing, not replacement handmade primary/secondary controls. Removed old primary-button/danger aliases and the overlapping old overrides. The dependency notice guide records the choice; generated THIRD_PARTY_LICENSES.txt includes the complete daisyUI MIT license. Actual generation: 214 production packages, 728,098 bytes.
+Raw imports are 45,219 and 29,115 bytes. The full 1,138,571-byte daisyUI stylesheet is not shipped. Bun's CSS lowering emits 197,903 bytes for the selected library styles. Complete embedded CSS is 215,215 bytes at integration, including xterm, local layout and font face. Packaging tests cap it at 250,000 bytes and reject unresolved imports/full modal styles. Do not mistake a gzip size estimate for the route's actual transfer size.
 
-## Dimensions and surface inventory
+## Shared dimensions
 
-One spacing scale: 4/8/12/16/24/32px. Border and focus stroke widths, type sizes, content width limits and intrinsic art are not spacing steps.
+Use 4/8/12/16/24/32px spacing tokens and semantic roles, not a token for each old magic number. Type, borders and intrinsic logo ratio are separate concerns.
 
-| Surface | Shared rule |
-| --- | --- |
-| Rail and terminal headers | Same height: 48px desktop, 64px phone. 8px block inset. Shared content gutter: 12px desktop, 8px phone. |
-| Buttons, folder/dialog fields, tab title/edit/close/new, drawer controls | 32px desktop, 48px phone. Phone UI and fields use 16px type; desktop 13px. Square controls use the same semantic height as width. |
-| Workspace rows | Control height + 16px; 4px list gap; 8px list block padding. Text/remove stay centered. Secondary path labels use 4px gap. |
-| Tabs and overflow | Same header gutter and control height. 8px title padding. Keep scroll/reveal, direct rename, close confirmation and keyboard navigation. No extra menu. |
-| Terminal | Shared content gutter on every edge. At 390x680, healthy terminal area is exactly 600px high: 64px header + two 8px gutters. Real PTY/xterm font and palette unchanged. |
-| Folder forms and inline errors | 8px label gap, 8px field-to-error gap, 16px section-to-actions, 8px between actions. Same form moves between rail/drawer and empty state. |
-| Empty/access/retry | 16px title/body/action separation. Centered content, no ornamental card. Empty content padding 24px desktop/16px phone, nested inside terminal gutter. |
-| Voice and recovery strips | 8px block padding, shared content gutter, 8px action gap. Long text wraps; buttons retain their shared size. |
-| Dialogs | 24px content padding, 8px title/detail gap, 16px section/action gap, 8px between actions. Long names wrap. Native destructive confirmation remains explicit. |
-| Phone drawer | Same 48px controls, header and row rules; 8px gutters. Drawer backdrop is not a visible control component. Focus and close target remain visible. |
-| Logo | 80px wordmark width, intrinsic height. Geometry checks compare the SVG viewBox ratio; never force it into a square. |
+- Controls: 32px desktop, 44px phone. Square actions use the same height and width. Chrome text stays 13px; phone form fields use 16px. Inline rename keeps its title font and inset.
+- Headers: 40px desktop, 48px phone, with 4px top inset. Active tabs have rounded top corners and meet the terminal edge. No floating tab pills or bottom gutter.
+- Workspace rows: 32/44px for one line. Only a visible path suffix adds 24px. List inset 8px, row text inset 8px, rail form inset 16px. Header and row trailing actions share an edge.
+- Fields: 4px label and error gaps, 16px before actions, 8px between actions. Same form moves between rail/drawer and empty state.
+- Dialogs: 16px padding, 4px title/detail gap, 16px footer gap. Native destructive confirmation remains.
+- Empty states: one left-aligned 320px block, centered in the page. Hide the vacant rail when no workspaces remain. No ornamental card or repeated subtitle.
+- Terminal gutters: 12px desktop, 8px phone. At 390x680 the healthy terminal area is 616px high. Xterm font, palette and PTY behavior are unchanged.
+- Notices: 8px block padding and the terminal's content gutter. Text wraps; action targets stay full size. Initial list failure uses only the central Retry view, not a raw error plus a stale-list banner.
 
-A viewed empty-folder error exposed an actual selector collision: the old broad empty-state paragraph rule overrode the form's error color and 8px gap. Restrict empty copy to direct children. Geometry now checks inline error color and gap in both hosts. This was missed by alignment-only tests.
+The worker's first component render used 48px desktop rows and a 64px phone header. Parent rejected that bulk. Library adoption is not visual acceptance. The integrated proportions keep the terminal dominant.
 
-## Checks and viewed evidence
+During rename, hide the close action and give its space to the field without moving the tab shell or neighbors. The phone draft is fully visible now. Names longer than the field still use normal input scrolling; that is not lost text. Enter/Escape/blur and failed-save draft retention remain.
 
-Artifacts are retained in the implementation tree, not committed as runtime inputs. Build/check, focused tests, lint and format logs: artifacts/spacing-checks/. Focused gate: tests/web, tests/packaging/prepare-assets.test.ts and tests/packaging/generate-third-party-notices.test.ts: 83 pass, zero fail, 652 assertions. Build and typecheck passed. Lint has existing warnings/info; format has the two existing oversized wisdom JSON warnings. This is not a zero-warning or whole-repo test claim.
+Hiding the empty rail requires closing an open drawer when its last workspace disappears. Clear main.inert and focus folder entry. Added a regression. Initial-outage notices must not reappear as stale errors after the list recovers; that also has a regression.
 
-Run with TMPDIR=/var/tmp, DISPLAY=:0, HEADLESS=0, PLAYWRIGHT_CORE=/home/tnfssc/.cache/ci-speed-browser/release-browser/node_modules/playwright-core/index.mjs and CHROMIUM_BIN=/home/tnfssc/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome. Build first with bun run build. Then:
+## Checks and evidence
 
-- bun scripts/web/browser-workspace-design.mjs: shared scale, header/control/gutter geometry, logo ratio, fields/dialogs, actual PTY shell output, direct rename/failure-safe hooks, safe close, local folder selection, phone drawer and overflow, empty forms. Artifacts: workspace-design/. Geometry assertions now enforce the system, not only old center alignment. Retains substantive keyboard/touch/focus/confirmation assertions.
-- bun scripts/web/browser-recovery-design.mjs: real CLI history expanded with Ctrl+O, emulated swipe and wheel, visible-only xterm accessibility output, replay gap freezes a view but keeps the original PID, New terminal preserves it, independent navigation, folder draft/error/empty/access states, emulated initial list outage and successful Retry. Artifacts: spacing-states/ and observations.json. Adapted the earlier recovery recipe into a tracked, portable script; removed its external capture helper and fictional check-count fixture text.
-- bun scripts/web/browser-workspaces-smoke.mjs: four real CLIs and cwd/input/output separation, shell job survives switch/reload, explicit voice ownership, delayed permission cancellation, emulated denial then fresh retry, observer safety, handoff, reconnect and cleanup. Artifacts: spacing-voice/ and the existing web-workspaces images. New strip geometry/captures use the same shared dimensions. No provider/backend changes.
+Worker checks passed before integration: 83 focused tests plus compiled design, recovery and voice probes. Parent reruns apply to the compact layout, not those older dimensions. Final parent check/build/lint/format and diff checks passed. Focused tests: 85 passed, zero failures, 664 assertions. Compiled design, recovery and workspace/voice probes passed; owned servers exited 0. The last initial-outage change was checked again with the focused suite and full recovery probe. Lint and format retain documented pre-existing warnings; this is not a zero-warning claim.
 
-All three compiled probes passed and their owned fixture servers exited 0. Design widths include 1100 and 1440 desktop, 390 phone and taller variants. Recovery/voice include 1100x720 desktop and 390-wide phone. Phone evidence is Chromium viewport/touch emulation.
+Commands: bun run check; bun run build; bun run lint; bun run format:check; bun test tests/web tests/packaging/prepare-assets.test.ts tests/packaging/generate-third-party-notices.test.ts. Compiled probes: scripts/web/browser-workspace-design.mjs, browser-recovery-design.mjs and browser-workspaces-smoke.mjs. Parent logs: artifacts/spacing-final/.
 
-Viewed baseline populated-desktop.png and populated-phone.png. Viewed rebuilt workspace-design/populated-desktop.png, populated-phone.png, populated-drawer.png, folder-error-desktop.png, inline-rename-phone.png, phone-close-dialog.png, phone-long-target-dialog.png, tabs-phone-overflow-active.png, empty-tabs-phone.png, empty-workspaces-desktop.png and empty-workspaces-phone.png. Populated, rename, dialog and overflow captures contain painted terminal output. Folder-error-desktop is form-only evidence, not terminal proof. Wait for enabled-button transitions before empty-state captures.
+The design probe now checks shared sizes/gutters, field fonts, connected tab edges, stable shell geometry during rename, empty-form anchors, focus, shared edits and overflow. Its new-tab setup used to see the old selection between the event snapshot and POST reply. It now waits for the newly created tab to be selected before renaming. No assertion was dropped to hide that race. Old 48px/16px-chrome expectations were changed to the chosen 44px/13px contract.
 
-Also viewed spacing-states/view-lost-desktop.png, view-lost-phone.png, touch-history-phone.png (real painted terminal output), access-phone.png, path-error-phone.png, empty-path-error-phone.png, retry-desktop.png and retry-phone.png (state/form evidence). Viewed spacing-voice/pending-desktop.png, pending-phone.png, denied-desktop.png, denied-phone.png and live-phone.png; all have real PTY paint behind the strips. Fake voice capture/provider and mocked permission outcomes are labeled fixture behavior, not audible speech acceptance.
+A headed run stalled before its first double-click. That capture is not interaction proof. Final functional probes use headless Chromium; accept screenshots only when actual terminal output is painted. Never change the renderer or extend deadlines to make capture pass.
 
-A read-only second-agent visual review could not start because its model hit a rate limit. The implementation owner performed the viewed review. Parent should view the exact evidence before integration.
+Parent viewed populated desktop/phone, drawer, dialog, empty form and rename images under artifacts/workspace-design; error form, View lost and Retry under artifacts/spacing-states; pending, denied and live voice under artifacts/spacing-voice. Terminal captures contain actual shell output. Folder-error-desktop remains form-only evidence if terminal paint is missing. Voice uses labeled fake device/provider and injected permission outcomes, not audible speech.
 
-No physical phone keyboard/IME, Safari/iOS, physical microphone, audible speech or actual screen-reader acceptance claims. No paid-provider calls. Reject any blank xterm capture as terminal proof; no renderer workaround was added.
+Independent rendered reviewer task_40634376 found the compact proportions coherent across populated views, drawer, dialogs and empty states. Its concern was clipped rename drafts. Parent reclaimed the close action's space, kept the shell still and rechecked desktop/phone captures. Do not claim every long name fits a bounded input. The reviewer had no voice captures yet; parent inspected those separately.
+
+## Setup and limits
+
+TMPDIR=/var/tmp is required here because /tmp is full. Chromium: /home/tnfssc/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome. PLAYWRIGHT_CORE: /home/tnfssc/.cache/ci-speed-browser/release-browser/node_modules/playwright-core/index.mjs. HEADLESS=1 for final functional runs. Headed uses DISPLAY=:0 and --ozone-platform=x11; Xvfb lacks libnettle.so.9.
+
+No physical phone keyboard/IME, Safari/iOS, physical microphone, audible speech, actual screen-reader acceptance or paid-provider call. No backend/provider change. Hosted CI must validate the published head. Record its result on the PR, not in a new commit after handoff.
 
 ## Values
 
-Reassessed wisdom/values.md. Values unchanged: direct flows, scarce attention, visible ownership, preserving shared work and shipped-path/honest evidence already apply. This feature adds concrete component and geometry recipes, not a new general rule.
+Values unchanged. Existing direct-flow, scarce-attention, ownership, work-preservation and honest-evidence values cover this task. The library and spacing recipes belong here, not in another general rule.

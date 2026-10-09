@@ -134,7 +134,7 @@ try {
       assert.equal(strip.gap, "8px");
       assert.equal(strip.padding, geometry.phone ? "8px" : "12px");
       for (const button of strip.buttons) {
-        assert.equal(button.rect.height, geometry.phone ? 48 : 32);
+        assert.equal(button.rect.height, geometry.phone ? 44 : 32);
         assert(button.library);
         assert(button.rect.right <= geometry.width);
       }
@@ -371,9 +371,11 @@ try {
     const geometry = await retryPage.locator("#empty-action").evaluate((el) => ({
       rect: el.getBoundingClientRect().toJSON(),
       library: el.classList.contains("btn"),
-      sectionGap: getComputedStyle(document.querySelector("#empty-terminal > p")).marginBottom,
+      sectionGap: getComputedStyle(document.querySelector("#empty-content > p")).marginBottom,
     }));
-    assert.equal(geometry.rect.height, viewport.width <= 700 ? 48 : 32);
+    assert.equal(geometry.rect.height, viewport.width <= 700 ? 44 : 32);
+    assert.equal(await retryPage.locator("#sync-status").isVisible(), false);
+    assert.equal(await retryPage.locator("#notice").isVisible(), false);
     assert(geometry.library);
     assert.equal(geometry.sectionGap, "16px");
     await retryPage.screenshot({
