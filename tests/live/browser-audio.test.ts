@@ -1,7 +1,6 @@
 import { afterEach, expect, test } from "bun:test";
 import { createAudioRelay, type AudioRelayData } from "../../src/web/audio-relay";
 import { BrowserLiveAudio, browserAudioEnvironment } from "../../src/live/browser-audio";
-import { createBrowserRequestInput } from "../../src/live/browser-request";
 import { BROWSER_INPUT_MARKER, parseAudio } from "../../src/live/browser-protocol";
 import { liveLocalOnly } from "../../src/live/status";
 import liveExtension from "../../src/live/extension";
@@ -311,11 +310,13 @@ test("actual /live command defaults use relay audio; fake provider closes on bro
   const sent: string[] = [];
   const notes: string[] = [];
   const events = { on: () => () => {}, emit: () => {} };
+  const handlers = new Map<string, any>();
+  let observeInput: any;
   liveExtension(
     {
       events,
       appendEntry: () => {},
-      on: () => {},
+      on: (name: string, handler: any) => handlers.set(name, handler),
       registerMessageRenderer: () => {},
       registerCommand: (_name: string, c: any) => {
         command = c.handler;
@@ -361,15 +362,23 @@ test("actual /live command defaults use relay audio; fake provider closes on bro
       getSessionFile: () => "file",
       getBranch: () => [],
     },
-    ui: { notify: (m: string) => notes.push(m), setStatus: () => {}, setWidget: () => {} },
+    ui: {
+      notify: (m: string) => notes.push(m),
+      setStatus: () => {},
+      setWidget: () => {},
+      onTerminalInput: (observer: any) => {
+        observeInput = observer;
+        return () => {};
+      },
+    },
   };
   cleanup.push(async () => {
     await command("stop", ctx);
   });
-  const input = createBrowserRequestInput();
+  handlers.get("session_start")({}, ctx);
   const request = f.ticket();
-  expect(input.observe(BROWSER_INPUT_MARKER + request + "\x07")).toEqual({ consume: true });
-  const pending = input.run(() => command("start", ctx));
+  expect(observeInput(BROWSER_INPUT_MARKER + request + "\x07")).toEqual({ consume: true });
+  const pending = command("start", ctx);
   await until(() => f.requests.length === 1);
   const browser = await openBrowser(f.browser + "&request=" + request);
   browser.onmessage = ({ data }) => {
@@ -488,6 +497,7 @@ test("browser client with fake devices sends PCM, schedules 24k output, flushes,
     protocol: "http:",
     host: `127.0.0.1:${f.server.port}`,
   });
+  replace("isSecureContext", true);
   replace("navigator", { mediaDevices: { getUserMedia: async () => ({ getTracks: () => [track] }) } });
   replace("AudioContext", Context);
   replace("AudioWorkletNode", Worklet);
@@ -557,4 +567,25 @@ test("CLI waits for its exact browser; session revocation closes both and reject
   await until(() => released);
   await expect(openBrowser(f.browser)).rejects.toThrow();
   await expect(BrowserLiveAudio.launch({ url: f.cli, secret: f.secret, request, timeoutMs: 1000 })).rejects.toThrow();
+});
+
+test("insecure browser context reports HTTPS before acquiring devices", async () => {
+  const names = ["location", "isSecureContext"] as const;
+  const descriptors = names.map((name) => Object.getOwnPropertyDescriptor(globalThis, name));
+  try {
+    Object.defineProperty(globalThis, "location", {
+      configurable: true,
+      value: { href: "http://bruv.test/", protocol: "http:", host: "bruv.test" },
+    });
+    Object.defineProperty(globalThis, "isSecureContext", { configurable: true, value: false });
+    await expect(
+      connectBrowserAudio({ url: "ws://bruv.test/api/live/audio?role=browser&session=owner&request=test" }),
+    ).rejects.toThrow("Microphone needs HTTPS or localhost");
+  } finally {
+    names.forEach((name, i) => {
+      const descriptor = descriptors[i];
+      if (descriptor) Object.defineProperty(globalThis, name, descriptor);
+      else Reflect.deleteProperty(globalThis, name);
+    });
+  }
 });

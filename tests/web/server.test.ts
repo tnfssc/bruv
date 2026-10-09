@@ -199,7 +199,7 @@ test("failed CLI startup reports an error and reconnect never retries it", async
 });
 
 test("built-in audio authenticates both peers and disconnect leaves the terminal process alive", async () => {
-  const app = start({ command: [process.execPath, resolve(import.meta.dir, "fixtures/audio-cli.ts")] });
+  const app = start({ command: [process.execPath, resolve(import.meta.dir, "fixtures/command-audio-cli.ts")] });
   const route = app.origin + "/api/live/audio?role=browser&session=terminal";
   for (const headers of [
     {},
@@ -215,8 +215,12 @@ test("built-in audio authenticates both peers and disconnect leaves the terminal
   const terminal = connect(app);
   await until(() => terminal.messages.some((m) => m.type === "audio-owner"));
   const owner = terminal.messages.find((m) => m.type === "audio-owner").id;
+  await until(() => terminal.text().includes("AUDIO_FIXTURE_READY"));
+  terminal.socket.send(JSON.stringify({ type: "input", data: "/live\r" }));
+  await until(() => terminal.messages.some((m) => m.type === "audio-request"));
+  const request = terminal.messages.find((m) => m.type === "audio-request").request;
   const browser = new WebSocket(
-    route.replace(/^http/, "ws"),
+    route.replace(/^http/, "ws") + "&request=" + request,
     ["bruv-audio", "bruv-token." + app.token, "bruv-owner." + owner],
     {
       headers: { Origin: app.origin },
@@ -233,16 +237,20 @@ test("built-in audio authenticates both peers and disconnect leaves the terminal
   await until(() => terminal.text().includes("AUDIO_CLOSED"));
   expect(app.terminal.pid).toBe(pid);
   terminal.socket.send(JSON.stringify({ type: "input", data: "still-running" }));
-  await until(() => terminal.text().includes("INPUT still-running"));
+  await until(() => terminal.text().includes("still-running"));
 });
 
 test("terminal disconnect releases browser audio on the server while CLI survives", async () => {
-  const app = start({ command: [process.execPath, resolve(import.meta.dir, "fixtures/audio-cli.ts")] });
+  const app = start({ command: [process.execPath, resolve(import.meta.dir, "fixtures/command-audio-cli.ts")] });
   const terminal = connect(app);
   await until(() => terminal.messages.some((m) => m.type === "audio-owner"));
   const owner = terminal.messages.find((m) => m.type === "audio-owner").id;
+  await until(() => terminal.text().includes("AUDIO_FIXTURE_READY"));
+  terminal.socket.send(JSON.stringify({ type: "input", data: "/live\r" }));
+  await until(() => terminal.messages.some((m) => m.type === "audio-request"));
+  const request = terminal.messages.find((m) => m.type === "audio-request").request;
   const browser = new WebSocket(
-    app.origin.replace(/^http/, "ws") + "/api/live/audio?role=browser&session=terminal",
+    app.origin.replace(/^http/, "ws") + "/api/live/audio?role=browser&session=terminal&request=" + request,
     ["bruv-audio", "bruv-token." + app.token, "bruv-owner." + owner],
     { headers: { Origin: app.origin } },
   );
@@ -270,7 +278,7 @@ test("terminal disconnect releases browser audio on the server while CLI survive
   ).toBe(403);
   expect(app.terminal.pid).toBe(pid);
   active.socket.send(JSON.stringify({ type: "input", data: "survived-disconnect" }));
-  await until(() => active.text().includes("INPUT survived-disconnect"));
+  await until(() => active.text().includes("survived-disconnect"));
 });
 
 test("font uses the same public static route and strict headers as CSS", async () => {

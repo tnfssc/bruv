@@ -17,7 +17,7 @@
         <button class="icon-button" id="tab-menu-toggle" aria-label="Tab actions" aria-haspopup="menu" aria-expanded="false" aria-controls="tab-menu">⋯</button>
         <div class="terminal-controls">
           <div class="connection" tabindex="0" aria-label="Terminal connection"><span class="connection-dot" aria-hidden="true"></span><span id="status" class="tooltip" role="status">Starting terminal…</span></div>
-          <div class="voice-control" tabindex="0" aria-label="Voice status"><button class="icon-button" type="button" id="audio-toggle" aria-label="Enable microphone" disabled><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="7" y="2" width="6" height="10" rx="3"/><path d="M4 9v1a6 6 0 0 0 12 0V9M10 16v3M7 19h6"/></svg><span class="mic-label">Mic off</span></button><span id="audio-status" class="tooltip" role="status">Voice off</span></div>
+          <div class="voice-control" hidden tabindex="0" aria-label="Voice status"><span class="mic-label">Voice</span><span id="audio-status" class="tooltip" role="status">Voice off</span></div>
         </div>
       </div>
       <div id="sync-status" role="status"></div>

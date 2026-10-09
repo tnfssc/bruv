@@ -237,23 +237,10 @@ aside {
 .connection[data-state="ended"] .connection-dot {
   background: #ff8080;
 }
-#audio-toggle {
-  width: auto;
-  gap: 7px;
-  padding: 0 7px;
-}
 .mic-label {
   font-size: 11px;
 }
-.voice-control[data-active="true"] #audio-toggle {
-  color: var(--accent);
-}
-.voice-control[data-elsewhere="true"]::before {
-  content: "Mic in use";
-  color: var(--accent);
-  font-size: 11px;
-}
-.tooltip {
+.voice-control[data-active="true"] .tooltip {
   position: absolute;
   z-index: 10;
   right: 0;
@@ -452,18 +439,6 @@ dialog input {
   .icon-button {
     width: 28px;
     height: 32px;
-  }
-  .mic-label {
-    display: none;
-  }
-  #audio-toggle {
-    width: 28px;
-    padding: 0;
-  }
-  .voice-control[data-elsewhere="true"]::before {
-    content: "●";
-    font-size: 10px;
-    padding: 0 5px;
   }
   #terminal {
     margin: 8px 6px 4px;

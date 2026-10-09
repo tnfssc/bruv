@@ -1,26 +1,18 @@
+import { StdinBuffer } from "@earendil-works/pi-tui";
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import liveExtension from "../../../src/live/extension";
 import { BrowserLiveAudio, browserAudioEnvironment } from "../../../src/live/browser-audio";
 import { LIVE_PROVIDERS } from "../../../src/live/providers";
 
 /** Real Live command/audio lifecycle; only the provider and root owner are fake. */
-let pendingTicket: string | undefined;
-let framing = "";
-process.stdin.on("data", (chunk) => {
-  framing += chunk.toString();
-  const matches = [...framing.matchAll(/\x1b\]777;bruv-input;([a-f0-9]{32})\x07/g)];
-  if (matches.length) pendingTicket = matches.at(-1)![1];
-  framing = framing.slice(-80);
-});
 
+let failProvider = () => {};
 function install(pi: ExtensionAPI) {
   liveExtension(pi, {
     local: () => true,
-    audio: (callbacks, signal) => {
+    audio: (callbacks, signal, request) => {
       const route = browserAudioEnvironment();
       if (!route) throw new Error("Missing route");
-      const request = pendingTicket;
-      pendingTicket = undefined;
       return BrowserLiveAudio.launch({ ...route, callbacks, signal, request });
     },
     key: async () => "fixture-key",
@@ -35,7 +27,8 @@ function install(pi: ExtensionAPI) {
         stopForeground: () => {},
         released: Promise.resolve(),
       }) as any,
-    voice: () => {
+    voice: (callbacks) => {
+      failProvider = () => callbacks.onError?.({ code: "disconnected", message: "Offline provider failure" });
       let captured = false;
       return {
         state: "ready",
@@ -68,7 +61,13 @@ export default function fixtureExtension(pi: ExtensionAPI) {
                       ...ctx,
                       ui: new Proxy(ctx.ui, {
                         get(ui, key) {
-                          return key === "onTerminalInput" ? () => () => {} : Reflect.get(ui, key);
+                          return key === "onTerminalInput"
+                            ? (observe: (data: string) => unknown) =>
+                                ui.onTerminalInput((data: string) => {
+                                  observe(data);
+                                  return undefined;
+                                })
+                            : Reflect.get(ui, key);
                         },
                       }),
                     })
@@ -84,10 +83,12 @@ if (import.meta.main) {
   process.stdin.setRawMode(true);
   const keepAlive = setInterval(() => {}, 1000);
   let command: any;
+  const events = new Map<string, any>();
+  let observeInput: (data: string) => any = () => undefined;
   install({
     events: { on: () => () => {}, emit: () => {} },
     appendEntry: () => {},
-    on: () => {},
+    on: (name: string, callback: any) => events.set(name, callback),
     registerMessageRenderer: () => {},
     registerCommand: (_name: string, value: any) => {
       command = value.handler;
@@ -101,23 +102,41 @@ if (import.meta.main) {
       getSessionFile: () => "fixture",
       getBranch: () => [],
     },
-    ui: { notify: (text: string) => console.log(text), setStatus: () => {}, setWidget: () => {} },
+    ui: {
+      notify: (text: string) => console.log(text),
+      setStatus: () => {},
+      setWidget: () => {},
+      onTerminalInput: (observe: (data: string) => any) => {
+        observeInput = observe;
+        return () => {};
+      },
+    },
   };
+  events.get("session_start")?.({}, ctx);
+  const stdin = new StdinBuffer();
   let input = "";
-  process.stdin.on("data", (data) => {
-    for (const character of data.toString().replace(/\x1b\]777;bruv-input;[a-f0-9]{32}\x07/g, "")) {
-      if (character === "\r" || character === "\n") {
-        const line = input;
-        input = "";
-        console.log();
-        if (line.startsWith("/live")) void command(line.slice(5).trim(), ctx).catch(console.error);
-      } else {
-        input += character;
-        process.stdout.write(character);
-      }
+  const submit = () => {
+    const line = input;
+    input = "";
+    console.log();
+    if (line === "/fake-provider-error") failProvider();
+    else if (line.startsWith("/live")) void command(line.slice(5).trim(), ctx).catch(console.error);
+  };
+  stdin.on("data", (data) => {
+    if (observeInput(data)?.consume) return;
+    if (data === "\r" || data === "\n") submit();
+    else if (data === "\x03") input = "";
+    else {
+      input += data;
+      process.stdout.write(data);
     }
   });
-  console.log("Type /live to start. /live stop releases the microphone.");
+  stdin.on("paste", (data) => {
+    input += data;
+    process.stdout.write(data);
+  });
+  process.stdin.on("data", (data) => stdin.process(data));
+  console.log("OFFLINE_LIVE_FIXTURE_READY");
   process.on("SIGTERM", () => {
     clearInterval(keepAlive);
     void command("stop", ctx);

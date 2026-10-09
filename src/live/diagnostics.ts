@@ -18,7 +18,7 @@ export function audioDiagnostic(code: string, setup?: AudioSetupError): string {
       : "";
   switch (code) {
     case "browser_disconnected":
-      return "Browser audio disconnected. Enable microphone/speaker for this terminal session again, then retry /live.";
+      return "Browser audio disconnected. Type /live in this terminal to retry.";
     case "permission":
       return "Microphone access denied [permission]. Check System Settings → Privacy & Security → Microphone for your terminal/bruv, then retry. On unsigned builds macOS may attribute access differently.";
     case "input_format":

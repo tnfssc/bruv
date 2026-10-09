@@ -47,6 +47,7 @@ export class BrowserLiveAudio {
     callbacks?: AudioCallbacks;
     signal?: AbortSignal;
     timeoutMs?: number;
+    request?: string;
   }): Promise<BrowserLiveAudio> {
     if (options.signal?.aborted) throw new Error("Browser audio launch cancelled");
     const ws = new WebSocket(options.url);
@@ -54,7 +55,7 @@ export class BrowserLiveAudio {
     const hello = audio.wait("hello", options.timeoutMs ?? 30_000);
     const abort = () => audio.fail();
     options.signal?.addEventListener("abort", abort, { once: true });
-    ws.onopen = () => audio.send({ type: "hello", secret: options.secret });
+    ws.onopen = () => audio.send({ type: "hello", secret: options.secret, request: options.request });
     ws.onmessage = (event) => audio.receive(event.data);
     ws.onerror = () => audio.fail();
     ws.onclose = () => audio.shutdown(!audio.intentional);
@@ -109,6 +110,21 @@ export class BrowserLiveAudio {
     if (text === '{"type":"hello"}') {
       this.ack("hello");
       return;
+    }
+    try {
+      const error = JSON.parse(text);
+      if (error.type === "request-error" && typeof error.message === "string") {
+        for (const waiter of this.waiters.values()) {
+          clearTimeout(waiter.timer);
+          waiter.reject(new Error(error.message));
+        }
+        this.waiters.clear();
+        this.callbacks.error?.("browser_request", error.message);
+        this.close();
+        return;
+      }
+    } catch {
+      /* Normal protocol validation below. */
     }
     const m = parseAudio(text, "browser") as AudioEvent | undefined;
     if (!m) return this.fail();

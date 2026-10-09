@@ -88,8 +88,10 @@ function connect(app: App, path = "/api/terminal", protocol = "bruv", extra: str
     latest: () => messages.filter((m) => m.type === "state").at(-1)?.state,
   };
 }
-function audio(app: App, owner: string) {
-  return connect(app, "/api/live/audio?role=browser&session=terminal", "bruv-audio", ["bruv-owner." + owner]);
+function audio(app: App, owner: string, request = "") {
+  return connect(app, "/api/live/audio?role=browser&session=terminal&request=" + request, "bruv-audio", [
+    "bruv-owner." + owner,
+  ]);
 }
 
 test("same tab shares PID, live output and both users' input; observer rejoin never evicts", async () => {
@@ -227,13 +229,18 @@ test("shared size is the minimum active viewport; inactive joins and empty views
   expect(first.socket.readyState).toBe(WebSocket.OPEN);
 });
 
-test("voice accepts any attached owner; A survives observer joins/leaves, release admits B", async () => {
-  const app = start([process.execPath, resolve(import.meta.dir, "fixtures/audio-cli.ts")]);
+test("voice follows its command owner; A survives observer joins/leaves, fresh request admits B", async () => {
+  const app = start([process.execPath, resolve(import.meta.dir, "fixtures/command-audio-cli.ts")]);
   const events = connect(app, "/api/events", "bruv-state");
   const first = connect(app);
   const second = connect(app);
   await until(() => !!first.owner() && !!second.owner());
-  const firstAudio = audio(app, first.owner());
+  await until(() => first.text().includes("AUDIO_FIXTURE_READY"));
+  first.send({ type: "input", data: "/live\r" });
+  await until(() => first.messages.some((m) => m.type === "audio-request"));
+  const firstRequest = first.messages.find((m) => m.type === "audio-request").request;
+  expect(second.messages.some((m) => m.type === "audio-request")).toBe(false);
+  const firstAudio = audio(app, first.owner(), firstRequest);
   firstAudio.socket.on("message", (raw) => {
     if (JSON.parse(String(raw)).type === "start") firstAudio.send({ type: "ready" });
   });
@@ -241,7 +248,7 @@ test("voice accepts any attached owner; A survives observer joins/leaves, releas
   await until(() => first.text().includes("AUDIO_RUNNING"));
   await until(() => events.latest()?.voice?.ownerId === first.ownerId());
   expect((await state(app)).voice).toEqual({ tabId: "terminal", ownerId: first.ownerId() });
-  expect(await audio(app, second.owner()).status).toBe(409);
+  expect(await audio(app, second.owner(), firstRequest).status).toBe(403);
   second.socket.close();
   await until(() => second.socket.readyState === WebSocket.CLOSED);
   expect(firstAudio.socket.readyState).toBe(WebSocket.OPEN);
@@ -256,7 +263,10 @@ test("voice accepts any attached owner; A survives observer joins/leaves, releas
   firstAudio.socket.close();
   await until(() => events.latest()?.voice === null);
   expect(first.socket.readyState).toBe(WebSocket.OPEN);
-  const nextAudio = audio(app, observer.owner());
+  observer.send({ type: "input", data: "/live\r" });
+  await until(() => observer.messages.some((m) => m.type === "audio-request"));
+  const nextRequest = observer.messages.find((m) => m.type === "audio-request").request;
+  const nextAudio = audio(app, observer.owner(), nextRequest);
   expect(await nextAudio.status).toBe(101);
   await until(() => events.latest()?.voice?.ownerId === observer.ownerId());
   // A's attachment loss must not stop B's new voice ownership.

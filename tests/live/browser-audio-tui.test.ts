@@ -105,9 +105,6 @@ test.skipIf(!Bun.which("tmux"))(
         (await tmux("send-keys", "-t", "audio", "-H", ...Array.from(marker, (byte) => byte.toString(16)))).code,
       ).toBe(0);
       await pasteAndSubmit(tmux, "audio", "/browserlive mic-check");
-      const consent = await frameContaining(frame, "Audio crosses the session relay", 100, 80);
-      expect(consent.replace(/\s+/g, " ")).toContain("No provider or agent tools");
-      await tmux("send-keys", "-t", "audio", "Enter");
       const result = await frameContaining(frame, "Audio route ready. Sound quality not measured.", 100, 80);
       expect(result).not.toContain("Audio helper failed");
       for (let n = 0; n < 100 && messages.length < 2; n++) await Bun.sleep(20);

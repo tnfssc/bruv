@@ -1,5 +1,7 @@
 # Quiet browser terminal workspace
 
+Follow-up: [command-owned microphone](live-command-microphone.md) removes the top-right mic button. The minimal workspace design remains; voice feedback is passive and shown only while in use.
+
 Worktree: /home/tnfssc/.bruv/worktrees/t3-6f8b2e16-5442693331ce-task_818e973e
 Branch: bruv/web-workspace-design, based on bruv/web-multiplayer at 4fe62e80.
 No old shipped worktree edits. No push, PR, release, or install.

@@ -11,22 +11,35 @@ export type AudioRelayData = {
   timer?: ReturnType<typeof setTimeout>;
 };
 type Socket = ServerWebSocket<AudioRelayData>;
-type Session = { secret: string; generation: number; cli?: Socket; browser?: Socket; pending: Set<Socket> };
+type Session = {
+  secret: string;
+  generation: number;
+  cli?: Socket;
+  browser?: Socket;
+  tickets: Map<string, string | undefined>;
+  pending: Set<Socket>;
+};
 export interface AudioRelayOptions {
   pathname?: string;
   /** Exact externally visible origins (scheme + host + port), never a wildcard. */
   allowedOrigins: readonly string[];
   /** Verify web auth and an attached capability. Return its ID to scope voice release. */
   authorizeBrowser(request: Request, sessionId: string): boolean | string | Promise<boolean | string>;
+  requestBrowser?(sessionId: string, ownerId: string, request: string): boolean;
+  cancelBrowser?(sessionId: string, ownerId: string, request: string): void;
   onOwnerChange?(owner: { tabId: string; ownerId: string } | null): void;
 }
 /** Mount in the terminal server. This relay never owns jobs or provider connections. */
 export function createAudioRelay(options: AudioRelayOptions) {
   const sessions = new Map<string, Session>();
-  // Reserve at upgrade, not open: concurrent tabs must not both gain voice.
-  let browserOwner: { session: Session; admission: string; ownerId?: string } | undefined;
+  // Reserve on the CLI request, before any browser can acquire devices.
+  let browserOwner:
+    | { sessionId: string; session: Session; admission?: string; ownerId?: string; request: string }
+    | undefined;
   function clearOwner() {
     if (!browserOwner) return;
+    const owner = browserOwner;
+    if (owner.ownerId) options.cancelBrowser?.(owner.sessionId, owner.ownerId, owner.request);
     browserOwner = undefined;
     options.onOwnerChange?.(null);
   }
@@ -64,8 +77,24 @@ export function createAudioRelay(options: AudioRelayOptions) {
     registerSession(sessionId: string): string {
       if (!sessionId || sessions.has(sessionId)) throw new Error("Audio session already registered or empty");
       const secret = randomBytes(32).toString("hex");
-      sessions.set(sessionId, { secret, generation: 0, pending: new Set() });
+      sessions.set(sessionId, { secret, generation: 0, tickets: new Map(), pending: new Set() });
       return secret;
+    },
+    inputTicket(sessionId: string, ownerId: string | undefined): string {
+      const s = sessions.get(sessionId);
+      if (!s) throw new Error("Unknown audio session");
+      const ticket = randomBytes(16).toString("hex");
+      s.tickets.set(ticket, ownerId);
+      while (s.tickets.size > 64) s.tickets.delete(s.tickets.keys().next().value!);
+      return ticket;
+    },
+    failRequest(sessionId: string, ownerId: string, request: string, message: string) {
+      const s = sessions.get(sessionId);
+      if (s && browserOwner?.session === s && browserOwner.ownerId === ownerId && browserOwner.request === request) {
+        if (s.cli)
+          send(s.cli, { type: "request-error", message: message.replace(/[\x00-\x1f\x7f]/g, "").slice(0, 500) });
+        closeSession(s);
+      }
     },
     /** Release current voice without revoking the surviving CLI's launch secret. */
     releaseSession(sessionId: string) {
@@ -74,6 +103,8 @@ export function createAudioRelay(options: AudioRelayOptions) {
     },
     /** An observer leaving must not release another attachment's voice. */
     releaseAttachment(sessionId: string, ownerId: string) {
+      const s = sessions.get(sessionId);
+      if (s) for (const [ticket, owner] of s.tickets) if (owner === ownerId) s.tickets.delete(ticket);
       if (browserOwner?.session === sessions.get(sessionId) && browserOwner?.ownerId === ownerId)
         closeSession(browserOwner.session);
     },
@@ -112,11 +143,18 @@ export function createAudioRelay(options: AudioRelayOptions) {
         if (!owner) return new Response("Forbidden", { status: 403 });
         if (sessions.get(sessionId) !== s || s.generation !== generation)
           return new Response("Forbidden", { status: 403 });
-        if (browserOwner) return new Response("Voice already attached", { status: 409 });
+        if (
+          !browserOwner ||
+          browserOwner.session !== s ||
+          browserOwner.ownerId !== owner ||
+          browserOwner.request !== url.searchParams.get("request") ||
+          s.browser ||
+          browserOwner.admission
+        )
+          return new Response("No microphone request for this attachment", { status: 403 });
         admission = randomBytes(16).toString("hex");
-        const ownerId = typeof owner === "string" ? owner : undefined;
-        browserOwner = { session: s, admission, ownerId };
-        if (ownerId) options.onOwnerChange?.({ tabId: sessionId, ownerId });
+        browserOwner.admission = admission;
+        if (typeof owner === "string") options.onOwnerChange?.({ tabId: sessionId, ownerId: owner });
       } else if (origin) return new Response("Forbidden", { status: 403 });
       const protocols = request.headers
         .get("sec-websocket-protocol")
@@ -127,7 +165,11 @@ export function createAudioRelay(options: AudioRelayOptions) {
         ...(protocols?.includes("bruv-audio") ? { headers: { "Sec-WebSocket-Protocol": "bruv-audio" } } : {}),
       });
       if (upgraded) return;
-      if (admission && browserOwner?.admission === admission) clearOwner();
+      if (admission && browserOwner?.admission === admission) {
+        if (s.cli)
+          send(s.cli, { type: "request-error", message: "Browser audio connection failed. Type /live to retry." });
+        closeSession(s);
+      }
       return new Response("WebSocket required", { status: 400 });
     },
     websocket: {
@@ -151,7 +193,7 @@ export function createAudioRelay(options: AudioRelayOptions) {
           return ws.close(1008, "Invalid audio message");
         if (!ws.data.authenticated) {
           if (!s.pending.has(ws)) return ws.close(1008, "Stale session");
-          let m: { type?: unknown; secret?: unknown };
+          let m: { type?: unknown; secret?: unknown; request?: unknown };
           try {
             m = JSON.parse(message);
           } catch {
@@ -170,7 +212,22 @@ export function createAudioRelay(options: AudioRelayOptions) {
           ws.data.authenticated = true;
           s.cli = ws;
           ws.data.timer = setTimeout(() => closeSession(s), 30_000);
-          pair(s);
+          const ticket = typeof m.request === "string" ? m.request : "";
+          const ownerId = s.tickets.get(ticket);
+          s.tickets.delete(ticket);
+          const reject = (message: string) => {
+            send(ws, { type: "request-error", message });
+            closeSession(s);
+          };
+          if (!ownerId)
+            return reject(
+              "Voice needs an unmixed browser command. Clear the prompt, then type /live again in one browser.",
+            );
+          if (browserOwner)
+            return reject("Voice is already active in another browser or terminal. Stop it there first.");
+          browserOwner = { sessionId: ws.data.sessionId, session: s, ownerId, request: ticket };
+          if (!options.requestBrowser?.(ws.data.sessionId, ownerId, ticket))
+            return reject("The requesting browser detached. Type /live again after reconnecting.");
           return;
         }
         if ((ws.data.role === "cli" ? s.cli : s.browser) !== ws) return ws.close(1008, "Stale session");

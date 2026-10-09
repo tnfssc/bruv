@@ -39,10 +39,11 @@ export interface BrowserAudioOptions {
   url: string;
   /** Terminal capability sent in WS protocols, never in a request URL. */
   token?: string;
+  signal?: AbortSignal;
   owner?: string;
   onState?: (state: "connecting" | "enabled" | "running" | "closed" | "error") => void;
 }
-/** Call directly from a click. Does not follow terminal selection; create one instance per session. */
+/** Called only by an owning CLI request. Selection never moves this device. */
 export async function connectBrowserAudio(options: BrowserAudioOptions): Promise<{ close(): Promise<void> }> {
   const url = new URL(options.url, location.href);
   const expectedProtocol = location.protocol === "https:" ? "wss:" : "ws:";
@@ -53,8 +54,11 @@ export async function connectBrowserAudio(options: BrowserAudioOptions): Promise
     !url.searchParams.get("session")
   )
     throw new Error("Invalid session audio endpoint");
+  if (!globalThis.isSecureContext || !navigator.mediaDevices?.getUserMedia)
+    throw new Error("Microphone needs HTTPS or localhost. Reopen Bruv securely, then type /live to retry.");
+  if (options.signal?.aborted) throw new Error("Voice request cancelled.");
   options.onState?.("connecting");
-  // Resume in the activation stack, before permission/network awaits.
+  // Keyboard submission activates Chromium audio; permission still belongs to the browser.
   const context = new AudioContext({ latencyHint: "interactive" });
   const resumed = context.resume();
   let stream: MediaStream | undefined;
@@ -63,6 +67,7 @@ export async function connectBrowserAudio(options: BrowserAudioOptions): Promise
   let ws: WebSocket | undefined;
   let closed = false;
   let active = false;
+  let connected = false;
   let generation = 0;
   let gate: number | null | undefined;
   let nextTime = 0;
@@ -99,6 +104,7 @@ export async function connectBrowserAudio(options: BrowserAudioOptions): Promise
     source?.disconnect();
     if (capture) capture.port.onmessage = null;
     for (const track of stream?.getTracks() ?? []) track.stop();
+    options.signal?.removeEventListener("abort", abort);
     await context.close();
   }
   async function close() {
@@ -110,24 +116,34 @@ export async function connectBrowserAudio(options: BrowserAudioOptions): Promise
     }
   }
   async function fail() {
-    try {
-      if (ws?.readyState === WebSocket.OPEN) ws.send('{"type":"error"}');
-      await close();
-    } finally {
-      options.onState?.("error");
-    }
+    options.onState?.("error");
+    if (ws?.readyState === WebSocket.OPEN) ws.send('{"type":"error"}');
+    await close();
   }
+  const abort = () => {
+    void close();
+  };
+  options.signal?.addEventListener("abort", abort, { once: true });
   try {
     await resumed;
+    if (closed) throw new Error("Voice request cancelled.");
     stream = await navigator.mediaDevices.getUserMedia({
       audio: { channelCount: 1, echoCancellation: true, noiseSuppression: true, autoGainControl: true },
       video: false,
     });
+    if (closed) {
+      for (const track of stream.getTracks()) track.stop();
+      throw new Error("Voice request cancelled.");
+    }
     for (const track of stream.getTracks())
       track.onended = () => {
         void fail();
       };
     await context.audioWorklet.addModule("/audio-worklet.js");
+    if (closed) {
+      for (const track of stream.getTracks()) track.stop();
+      throw new Error("Voice request cancelled.");
+    }
     source = context.createMediaStreamSource(stream);
     const worklet = new AudioWorkletNode(context, "bruv-capture", {
       numberOfInputs: 1,
@@ -161,12 +177,11 @@ export async function connectBrowserAudio(options: BrowserAudioOptions): Promise
       socket.onerror = () => {
         clearTimeout(timer);
         reject(new Error("Browser audio connection failed"));
-        void fail();
       };
       socket.onclose = () => {
         clearTimeout(timer);
         reject(new Error("Browser audio disconnected"));
-        void close();
+        if (connected) void close();
       };
     });
     ws.onmessage = ({ data }) => {
@@ -241,10 +256,16 @@ export async function connectBrowserAudio(options: BrowserAudioOptions): Promise
       }
     };
     await opened;
+    if (closed) throw new Error("Voice request cancelled.");
+    connected = true;
     options.onState?.("enabled");
     return { close };
-  } catch {
-    await fail();
-    throw new Error("Browser audio could not start; check microphone permission and connection");
+  } catch (error) {
+    await release();
+    ws?.close();
+    if (error instanceof DOMException && error.name === "NotAllowedError")
+      throw new Error("Microphone permission denied. Allow it in browser site settings, then type /live to retry.");
+    if (options.signal?.aborted) throw new Error("Voice request cancelled.");
+    throw new Error("Browser audio could not start. Check microphone access and connection, then type /live to retry.");
   }
 }

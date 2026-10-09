@@ -1,5 +1,7 @@
 # Shared terminals, local selection
 
+Voice UI and acquisition now follow [command-owned microphone requests](live-command-microphone.md). Manual enable/disable controls described below are historical. Private capability/public owner separation is unchanged.
+
 Browser slice of multiplayer, 2026-10-09. Code: [browser.ts](../../src/web/browser.ts), [browser.css](../../src/web/browser.css), [index.html](../../src/web/index.html). Builds on [browser terminal](browser-terminal.md) and [browser audio](browser-terminal-audio.md).
 
 ## State

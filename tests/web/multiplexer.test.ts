@@ -94,9 +94,16 @@ function connect(app: App, tab = "terminal", after = 0) {
     meta: () => JSON.parse(text().match(/META (.*)\r?\n/)![1]!),
   };
 }
-function audio(app: App, tab: string, owner: string) {
+async function inputRequest(terminal: ReturnType<typeof connect>) {
+  await until(() => terminal.text().includes("AUDIO_FIXTURE_READY"));
+  const count = terminal.messages.filter((m) => m.type === "audio-request").length;
+  terminal.socket.send(JSON.stringify({ type: "input", data: "/live\r" }));
+  await until(() => terminal.messages.filter((m) => m.type === "audio-request").length > count);
+  return terminal.messages.filter((m) => m.type === "audio-request").at(-1).request as string;
+}
+function audio(app: App, tab: string, owner: string, request = "") {
   const socket = new WebSocket(
-    app.origin.replace(/^http/, "ws") + "/api/live/audio?role=browser&session=" + tab,
+    app.origin.replace(/^http/, "ws") + "/api/live/audio?role=browser&session=" + tab + "&request=" + request,
     ["bruv-audio", "bruv-token." + app.token, "bruv-owner." + owner],
     { headers: { Origin: app.origin } },
   );
@@ -216,15 +223,23 @@ test("tabs have their own cwd, PID, input, replay and launch credentials; reconn
 });
 
 test("audio admission is global across live PTYs, and audio close frees only that owner", async () => {
-  const app = start({ command: [process.execPath, resolve(import.meta.dir, "fixtures/audio-cli.ts")] });
+  const app = start({ command: [process.execPath, resolve(import.meta.dir, "fixtures/command-audio-cli.ts")] });
   const current = await mutate(app, "/api/workspaces/workspace/tabs", "POST", {});
   const id = current.workspaces[0]!.tabs[1]!.id;
   const first = connect(app);
   const second = connect(app, id);
   await until(() => !!first.owner() && !!second.owner());
-  const attempts = [audio(app, "terminal", first.owner()), audio(app, id, second.owner())];
+  await until(() => first.text().includes("AUDIO_FIXTURE_READY") && second.text().includes("AUDIO_FIXTURE_READY"));
+  for (const terminal of [first, second]) terminal.socket.send(JSON.stringify({ type: "input", data: "/live\r" }));
+  await until(() =>
+    [first, second].every(
+      (t) => t.messages.some((m) => m.type === "audio-request") || t.text().includes("AUDIO_ERROR"),
+    ),
+  );
+  const tickets = [first, second].map((t) => t.messages.find((m) => m.type === "audio-request")?.request ?? "");
+  const attempts = [audio(app, "terminal", first.owner(), tickets[0]), audio(app, id, second.owner(), tickets[1])];
   const statuses = await Promise.all(attempts.map((a) => a.status));
-  expect([...statuses].sort()).toEqual([101, 409]);
+  expect([...statuses].sort()).toEqual([101, 403]);
   const winner = statuses.indexOf(101);
   const loser = 1 - winner;
   const terminals = [first, second];
@@ -233,7 +248,8 @@ test("audio admission is global across live PTYs, and audio close frees only tha
   const pids = (await state(app)).workspaces[0]!.tabs.map((t) => t.pid);
   attempts[winner]!.socket.close();
   await until(() => attempts[winner]!.socket.readyState === WebSocket.CLOSED);
-  const next = audio(app, ids[loser]!, terminals[loser]!.owner());
+  await until(() => terminals[winner]!.text().includes("AUDIO_CLOSED"));
+  const next = audio(app, ids[loser]!, terminals[loser]!.owner(), await inputRequest(terminals[loser]!));
   expect(await next.status).toBe(101);
   await until(() => terminals[loser]!.text().includes("AUDIO_RUNNING"));
   // Closing an unrelated terminal cannot give away the current tab's voice.
@@ -241,13 +257,13 @@ test("audio admission is global across live PTYs, and audio close frees only tha
   await until(() => terminals[winner]!.socket.readyState === WebSocket.CLOSED);
   const reattached = connect(app, ids[winner]!);
   await until(() => !!reattached.owner());
-  expect(await audio(app, ids[winner]!, reattached.owner()).status).toBe(409);
+  expect(await audio(app, ids[winner]!, reattached.owner()).status).toBe(403);
   expect((await state(app)).workspaces[0]!.tabs.map((t) => t.pid)).toEqual(pids);
 });
 
 for (const mode of ["disconnect", "delete", "delete-workspace"] as const) {
   test("audio owner releases on terminal " + mode + "; stale capabilities stay rejected", async () => {
-    const app = start({ command: [process.execPath, resolve(import.meta.dir, "fixtures/audio-cli.ts")] });
+    const app = start({ command: [process.execPath, resolve(import.meta.dir, "fixtures/command-audio-cli.ts")] });
     const current = await mutate(app, "/api/workspaces", "POST", {});
     const workspace = current.workspaces[1]!;
     const id = workspace.tabs[0]!.id;
@@ -255,7 +271,7 @@ for (const mode of ["disconnect", "delete", "delete-workspace"] as const) {
     const second = connect(app, id);
     await until(() => !!first.owner() && !!second.owner());
     const oldOwner = first.owner();
-    const activeAudio = audio(app, "terminal", oldOwner);
+    const activeAudio = audio(app, "terminal", oldOwner, await inputRequest(first));
     expect(await activeAudio.status).toBe(101);
     await until(() => first.text().includes("AUDIO_RUNNING"));
     const pid = app.terminal.pid!;
@@ -264,21 +280,24 @@ for (const mode of ["disconnect", "delete", "delete-workspace"] as const) {
     if (mode === "delete-workspace") await mutate(app, "/api/workspaces/workspace", "DELETE", { confirm: true });
     await until(() => activeAudio.socket.readyState === WebSocket.CLOSED);
     expect(await audio(app, "terminal", oldOwner).status).toBe(403);
-    const nextAudio = audio(app, id, second.owner());
+    const nextAudio = audio(app, id, second.owner(), await inputRequest(second));
     expect(await nextAudio.status).toBe(101);
     await until(() => second.text().includes("AUDIO_RUNNING"));
     if (mode === "disconnect") expect(() => process.kill(pid, 0)).not.toThrow();
     else expect(() => process.kill(pid, 0)).toThrow();
     second.socket.send(JSON.stringify({ type: "input", data: "still-here" }));
-    await until(() => second.text().includes("INPUT still-here"));
+    await until(() => second.text().includes("still-here"));
   });
 }
 
-test("audio reserves before open; delayed old socket close cannot free the new reservation", async () => {
+test("CLI requests reserve before browser open; stale closes cannot release a fresh request", async () => {
   const origin = "http://127.0.0.1:3773";
-  const relay = createAudioRelay({ allowedOrigins: [origin], authorizeBrowser: () => true });
-  relay.registerSession("one");
-  relay.registerSession("two");
+  const relay = createAudioRelay({
+    allowedOrigins: [origin],
+    authorizeBrowser: () => "private",
+    requestBrowser: () => true,
+  });
+  const secrets = { one: relay.registerSession("one"), two: relay.registerSession("two") };
   const admitted: AudioRelayData[] = [];
   const server = {
     upgrade(_request: Request, options: { data: AudioRelayData }) {
@@ -286,39 +305,70 @@ test("audio reserves before open; delayed old socket close cannot free the new r
       return true;
     },
   };
-  const request = (id: string) =>
-    new Request(origin + relay.pathname + "?role=browser&session=" + id, { headers: { Origin: origin } });
-  expect(await relay.upgrade(request("one"), server)).toBeUndefined();
-  // No open event yet. Admission must already block other sessions.
-  expect((await relay.upgrade(request("two"), server))?.status).toBe(409);
-  const socket = (data: AudioRelayData) => ({ data, close() {} }) as ServerWebSocket<AudioRelayData>;
+  const messages: any[] = [];
+  const socket = (data: AudioRelayData) =>
+    ({
+      data,
+      close() {},
+      send(text: string) {
+        messages.push(JSON.parse(text));
+        return text.length;
+      },
+      getBufferedAmount() {
+        return 0;
+      },
+    }) as unknown as ServerWebSocket<AudioRelayData>;
+  const issue = (id: keyof typeof secrets) => {
+    const ticket = relay.inputTicket(id, "private");
+    const cli = socket({ channel: "live-audio", sessionId: id, role: "cli", authenticated: false });
+    relay.websocket.open(cli);
+    relay.websocket.message(cli, JSON.stringify({ type: "hello", secret: secrets[id], request: ticket }));
+    return ticket;
+  };
+  const request = (id: string, ticket: string) =>
+    new Request(origin + relay.pathname + "?role=browser&session=" + id + "&request=" + ticket, {
+      headers: { Origin: origin },
+    });
+  let ticket = issue("one");
+  expect(await relay.upgrade(request("one", ticket), server)).toBeUndefined();
+  const rejected = issue("two");
+  expect(messages.at(-1)).toMatchObject({ type: "request-error" });
+  expect((await relay.upgrade(request("two", rejected), server))?.status).toBe(403);
   const old = socket(admitted[0]!);
   relay.websocket.open(old);
   relay.releaseSession("one");
-  expect(await relay.upgrade(request("one"), server)).toBeUndefined();
+  ticket = issue("one");
+  expect(await relay.upgrade(request("one", ticket), server)).toBeUndefined();
   const fresh = socket(admitted[1]!);
   relay.websocket.open(fresh);
   relay.websocket.close(old);
-  expect((await relay.upgrade(request("two"), server))?.status).toBe(409);
+  expect((await relay.upgrade(request("two", rejected), server))?.status).toBe(403);
   relay.websocket.close(fresh);
-  expect(await relay.upgrade(request("two"), server)).toBeUndefined();
-  // A reservation cancelled before open is stale, even on the same tab.
+  ticket = issue("two");
+  expect(await relay.upgrade(request("two", ticket), server)).toBeUndefined();
   const cancelled = socket(admitted[2]!);
   relay.releaseSession("two");
-  expect(await relay.upgrade(request("two"), server)).toBeUndefined();
+  ticket = issue("two");
+  expect(await relay.upgrade(request("two", ticket), server)).toBeUndefined();
   relay.websocket.open(cancelled);
   relay.websocket.close(cancelled);
-  expect((await relay.upgrade(request("one"), server))?.status).toBe(409);
+  expect((await relay.upgrade(request("one", ticket), server))?.status).toBe(403);
   relay.unregisterSession("two");
-  const failingServer = {
-    upgrade() {
-      return false;
-    },
-  };
-  expect((await relay.upgrade(request("one"), failingServer))?.status).toBe(400);
-  expect(await relay.upgrade(request("one"), server)).toBeUndefined();
+  ticket = issue("one");
+  expect(
+    (
+      await relay.upgrade(request("one", ticket), {
+        upgrade() {
+          return false;
+        },
+      })
+    )?.status,
+  ).toBe(400);
+  ticket = issue("one");
+  expect(await relay.upgrade(request("one", ticket), server)).toBeUndefined();
   relay.websocket.close(socket(admitted.at(-1)!));
-  expect(await relay.upgrade(request("one"), server)).toBeUndefined();
+  ticket = issue("one");
+  expect(await relay.upgrade(request("one", ticket), server)).toBeUndefined();
   relay.unregisterSession("one");
 });
 

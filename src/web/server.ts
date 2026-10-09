@@ -87,6 +87,11 @@ export function startWebServer(options: WebServerOptions) {
       }
       return false;
     },
+    requestBrowser: (id, owner, request) =>
+      tabs.get(id)?.terminal.sendOwner(owner, { type: "audio-request", request }) ?? false,
+    cancelBrowser: (id, owner, request) => {
+      tabs.get(id)?.terminal.sendOwner(owner, { type: "audio-cancel", request });
+    },
     onOwnerChange(owner) {
       voice = owner ? { tabId: owner.tabId, ownerId: publicOwnerId(owner.ownerId) } : null;
       publish();
@@ -102,9 +107,15 @@ export function startWebServer(options: WebServerOptions) {
     const tab = {
       id,
       name: name ?? "Terminal " + (workspace.tabs.length + 1),
-      terminal: new TerminalSession(options.command, workspace.cwd, env, () => {
-        if (tabs.has(id)) publish();
-      }),
+      terminal: new TerminalSession(
+        options.command,
+        workspace.cwd,
+        env,
+        () => {
+          if (tabs.has(id)) publish();
+        },
+        (owner) => relay.inputTicket(id, owner),
+      ),
     };
     workspace.tabs.push(tab);
     tabs.set(id, tab);
@@ -302,8 +313,17 @@ export function startWebServer(options: WebServerOptions) {
         else extension?.websocket?.open?.(socket);
       },
       message(socket, message) {
-        if (socket.data.channel === "terminal") tabs.get(String(socket.data.tabId))?.terminal.message(socket, message);
-        else if (socket.data.channel === "live-audio") relay.websocket.message(audioSocket(socket), message);
+        if (socket.data.channel === "terminal") {
+          let event;
+          try {
+            event = JSON.parse(String(message));
+          } catch {
+            /* Terminal validates malformed input. */
+          }
+          if (event?.type === "audio-error" && typeof event.request === "string" && typeof event.message === "string")
+            relay.failRequest(String(socket.data.tabId), String(socket.data.audioOwner), event.request, event.message);
+          else tabs.get(String(socket.data.tabId))?.terminal.message(socket, message);
+        } else if (socket.data.channel === "live-audio") relay.websocket.message(audioSocket(socket), message);
         else if (socket.data.channel !== "state") extension?.websocket?.message(socket, message);
       },
       close(socket, code, reason) {

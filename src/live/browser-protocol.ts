@@ -1,3 +1,4 @@
+export const BROWSER_INPUT_MARKER = "\x1b]777;bruv-input;";
 /** Device transport only: no provider keys, transcripts, tools, or job operations. */
 export const AUDIO_MAX_MESSAGE = 16_000;
 export const AUDIO_MAX_BUFFER = 64 * 1024;

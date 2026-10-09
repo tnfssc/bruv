@@ -26,6 +26,8 @@ type Session = {
   viewport?: { cols: number; rows: number };
 };
 type VoiceOwner = {
+  request: string;
+  controller: AbortController;
   tabId: string;
   capability: string;
   ownerId: string;
@@ -41,7 +43,6 @@ const workspaceList = document.querySelector<HTMLElement>("#workspace-list")!;
 const tabList = document.querySelector<HTMLElement>("#tab-list")!;
 const notice = document.querySelector<HTMLElement>("#notice")!;
 const syncStatus = document.querySelector<HTMLElement>("#sync-status")!;
-const audioButton = document.querySelector<HTMLButtonElement>("#audio-toggle")!;
 const audioStatus = document.querySelector<HTMLElement>("#audio-status")!;
 const empty = document.querySelector<HTMLElement>("#empty-terminal")!;
 const connection = document.querySelector<HTMLElement>(".connection")!;
@@ -230,16 +231,12 @@ function voiceLabel(tabId: string) {
   return tabId;
 }
 function renderAudio() {
-  const session = selected();
   const shared = state.voice;
   const elsewhere = shared && sessions.get(shared.tabId)?.ownerId !== shared.ownerId;
-  audioButton.hidden = !!elsewhere;
-  audioButton.setAttribute("aria-label", voice || shared ? "Disable microphone" : "Enable microphone");
-  audioButton.setAttribute("aria-pressed", String(!!voice));
-  micLabel.textContent = voice || shared ? "Mic on" : "Mic off";
+  voiceControl.hidden = !(voice || shared);
+  micLabel.textContent = elsewhere ? "Voice elsewhere" : "Voice";
   voiceControl.setAttribute("data-active", String(!!(voice || shared)));
   voiceControl.setAttribute("data-elsewhere", String(!!elsewhere));
-  audioButton.disabled = voice ? voice.releasing : !!shared || !session?.ready || !session.capability;
   audioStatus.textContent = elsewhere
     ? "Voice in another browser · " + voiceLabel(shared.tabId)
     : voice
@@ -392,31 +389,30 @@ tabList.addEventListener("keydown", (event) => {
   document.getElementById("tab-" + tabs[next].id)?.focus();
 });
 
-// Voice belongs to one attachment, not to the selected terminal. A second click
-// is required to enable another owner after the first one has been released.
+// Only the CLI request can start voice. Selection and focus never move it.
 async function releaseVoice() {
   const owner = voice;
   if (!owner || owner.releasing) return;
   owner.releasing = true;
+  owner.controller.abort();
   ++voiceGeneration;
   renderAudio();
   try {
     await owner.device?.close();
   } finally {
-    // A pending permission request cannot be cancelled. Its eventual device is
-    // closed by the generation check below before another owner can start.
-    if (!owner.pending && voice === owner) voice = undefined;
+    // Permission itself cannot be cancelled. Late tracks are stopped by the device.
+    if (voice === owner) voice = undefined;
     renderAudio();
   }
 }
-audioButton.addEventListener("click", async () => {
-  if (voice) {
-    await releaseVoice();
+async function requestVoice(session: Session, request: string) {
+  if (voice || !session.ready || !session.capability || !session.ownerId || !token) {
+    send(session, { type: "audio-error", request, message: "Voice is already active. Stop it before starting again." });
     return;
   }
-  const session = selected();
-  if (state.voice || !session?.ready || !session.capability || !session.ownerId || !token) return;
   const owner: VoiceOwner = {
+    request,
+    controller: new AbortController(),
     tabId: session.id,
     capability: session.capability,
     ownerId: session.ownerId,
@@ -426,20 +422,31 @@ audioButton.addEventListener("click", async () => {
     releasing: false,
   };
   voice = owner;
+  notice.textContent = "";
   renderAudio();
   try {
     const device = await connectBrowserAudio({
-      url: socketOrigin + "/api/live/audio?role=browser&session=" + encodeURIComponent(owner.tabId),
+      url:
+        socketOrigin +
+        "/api/live/audio?role=browser&session=" +
+        encodeURIComponent(owner.tabId) +
+        "&request=" +
+        encodeURIComponent(request),
+      signal: owner.controller.signal,
       token,
       owner: owner.capability,
       onState(value) {
         if (voice !== owner || owner.generation !== voiceGeneration || owner.releasing) return;
         if (value === "closed" || value === "error") {
+          if (value === "error") {
+            const message = "Browser audio failed. Check microphone access and connection, then type /live to retry.";
+            notice.textContent = message;
+            send(session, { type: "audio-error", request, message });
+          }
           void releaseVoice();
           return;
         }
-        owner.state =
-          value === "running" ? "Live" : value === "enabled" ? "Mic enabled · type /live" : "Requesting microphone…";
+        owner.state = value === "running" ? "Live" : value === "enabled" ? "Starting voice…" : "Requesting microphone…";
         renderAudio();
       },
     });
@@ -453,17 +460,19 @@ audioButton.addEventListener("click", async () => {
       return;
     }
     owner.device = device;
-    selected()?.term.focus();
   } catch (error) {
-    if (voice === owner && !owner.releasing)
-      notice.textContent = error instanceof Error ? error.message : "Could not enable microphone.";
+    if (!owner.controller.signal.aborted && session.capability === owner.capability) {
+      const message = error instanceof Error ? error.message : "Could not open microphone. Type /live to retry.";
+      notice.textContent = message;
+      send(session, { type: "audio-error", request, message });
+    }
     owner.releasing = true;
   } finally {
     owner.pending = false;
     if (owner.releasing && voice === owner) voice = undefined;
     renderAudio();
   }
-});
+}
 
 function connect(session: Session) {
   if (session.halted || unloading) return;
@@ -494,6 +503,10 @@ function connect(session: Session) {
       }
     } else if (message.type === "size") {
       session.term.resize(message.cols, message.rows);
+    } else if (message.type === "audio-request" && typeof message.request === "string") {
+      void requestVoice(session, message.request);
+    } else if (message.type === "audio-cancel") {
+      if (voice?.tabId === session.id && voice.request === message.request) void releaseVoice();
     } else if (message.type === "audio-owner") {
       if (voice?.tabId === session.id && voice.capability !== message.id) void releaseVoice();
       session.capability = message.id;
@@ -608,7 +621,6 @@ function attach(tab: Tab) {
 }
 function applyState(next: WorkspaceState) {
   if (next.revision <= state.revision) return;
-  const previousVoice = state.voice;
   const ids = new Set(next.workspaces.flatMap((item) => item.tabs.map((tab) => tab.id)));
   for (const [id, session] of sessions) {
     if (ids.has(id)) continue;
@@ -621,12 +633,6 @@ function applyState(next: WorkspaceState) {
     session.element.remove();
   }
   state = next;
-  if (
-    voice &&
-    ((next.voice && (next.voice.tabId !== voice.tabId || next.voice.ownerId !== voice.ownerId)) ||
-      (!next.voice && previousVoice?.ownerId === voice.ownerId))
-  )
-    void releaseVoice();
   normalizeSelection();
   for (const item of state.workspaces) {
     for (const tab of item.tabs) if (!sessions.has(tab.id)) attach(tab);

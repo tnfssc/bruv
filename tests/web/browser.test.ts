@@ -58,7 +58,7 @@ class Element {
   focus() {}
   remove() {}
 }
-async function browser() {
+async function browser(device?: (options: any) => Promise<{ close(): Promise<void> }>) {
   const nodes = new Map<string, Element>();
   const node = (id: string) => {
     if (!nodes.has(id)) nodes.set(id, new Element());
@@ -160,6 +160,8 @@ async function browser() {
     },
     URLSearchParams,
     Uint8Array,
+    AbortController,
+    Error,
     atob,
     btoa,
     requestAnimationFrame: (callback: () => void) => frames.push(callback),
@@ -171,6 +173,7 @@ async function browser() {
       }),
     connectBrowserAudio: async (options: any) => {
       audioOptions = options;
+      if (device) return device(options);
       options.onState("enabled");
       return {
         close: async () => {
@@ -324,19 +327,20 @@ test("global voice is named, observers cannot disable it, and selection never tr
   b.ready("c");
   b.snapshot(snapshot(2, { tabId: "c", ownerId: "another-browser" }));
   expect(b.node("audio-status").textContent).toBe("Voice in another browser · Two / C");
-  expect(b.node("audio-toggle").hidden).toBe(true);
+  expect(b.node("voice-control").hidden).toBe(false);
   b.terminal("c").close();
   expect(b.deviceClosed).toBe(0);
   b.snapshot(snapshot(3));
-  expect(b.node("audio-toggle").hidden).toBe(false);
-  await b.node("audio-toggle").fire("click");
+  expect(b.node("voice-control").hidden).toBe(true);
+  b.terminal("a").message({ type: "audio-request", request: "request-a" });
+  await tick();
   b.snapshot(snapshot(4, { tabId: "a", ownerId: "owner-a" }));
   b.snapshot(snapshot(3));
   b.node("workspace-list").children[1].fire("click");
   b.flushFrames();
   expect(b.audioOptions.owner).toBe("cap-a");
   expect(b.node("audio-status").textContent).toContain("One / A");
-  expect(b.node("audio-toggle").attributes["aria-label"]).toBe("Disable microphone");
+  expect(b.node("voice-control").attributes["aria-label"]).toContain("One / A");
   expect(b.deviceClosed).toBe(0);
   b.terminal("b").close();
   expect(b.deviceClosed).toBe(0);
@@ -347,25 +351,30 @@ test("global voice is named, observers cannot disable it, and selection never tr
   expect(b.node("audio-status").textContent).toBe("Voice off");
 });
 
-test("authoritative release closes only the local owner device", async () => {
+test("request cancellation closes only the local owner device", async () => {
   const b = await browser();
   b.snapshot(snapshot(1));
   b.ready("a");
-  await b.node("audio-toggle").fire("click");
+  b.terminal("a").message({ type: "audio-request", request: "request-a" });
+  await tick();
   b.snapshot(snapshot(2, { tabId: "a", ownerId: "owner-a" }));
   b.snapshot(snapshot(3));
   await tick();
+  expect(b.deviceClosed).toBe(0);
+  b.terminal("a").message({ type: "audio-cancel", request: "request-a" });
+  await tick();
   expect(b.deviceClosed).toBe(1);
   expect(b.node("audio-status").textContent).toBe("Voice off");
-  await b.node("audio-toggle").fire("click");
+  b.terminal("a").message({ type: "audio-request", request: "request-a" });
+  await tick();
   b.snapshot(snapshot(4, { tabId: "a", ownerId: "owner-a" }));
   b.audioOptions.onState("closed");
   await tick();
   expect(b.deviceClosed).toBe(2);
-  expect(b.node("audio-toggle").disabled).toBe(true);
+  expect(b.audioOptions.signal.aborted).toBe(true);
   expect(b.node("audio-status").textContent).toContain("Releasing microphone");
   b.snapshot(snapshot(5));
-  expect(b.node("audio-toggle").disabled).toBe(false);
+  expect(b.node("voice-control").hidden).toBe(true);
 });
 
 test("compact status keeps connection and voice labels accessible", async () => {
@@ -404,6 +413,100 @@ test("dialogs cancel safely and rename the captured tab, not a later selection",
   await tick();
   expect(b.requests.at(-1)?.path).toBe("/api/tabs/a");
   expect(JSON.parse(b.requests.at(-1)?.options.body)).toEqual({ name: "Build" });
+});
+
+test("only a targeted request opens audio; active voice cannot be moved", async () => {
+  const b = await browser();
+  b.snapshot(snapshot(1));
+  b.ready("a");
+  b.ready("b");
+  expect(b.audioOptions).toBeUndefined();
+  b.terminal("b").message({ type: "audio-request", request: "request-b" });
+  await tick();
+  expect(b.audioOptions.owner).toBe("cap-b");
+  expect(b.audioOptions.url).toContain("request=request-b");
+  b.terminal("a").message({ type: "audio-request", request: "request-a" });
+  await tick();
+  expect(b.audioOptions.owner).toBe("cap-b");
+  expect(b.terminal("a").sent.at(-1)).toMatchObject({ type: "audio-error", request: "request-a" });
+  b.terminal("b").message({ type: "audio-cancel", request: "old-request" });
+  await tick();
+  expect(b.deviceClosed).toBe(0);
+  b.terminal("b").message({ type: "audio-cancel", request: "request-b" });
+  await tick();
+  expect(b.deviceClosed).toBe(1);
+  b.terminal("a").message({ type: "audio-request", request: "new-request" });
+  await tick();
+  expect(b.audioOptions.owner).toBe("cap-a");
+});
+
+test("permission denial reports to the owning CLI and a fresh request can retry", async () => {
+  let attempts = 0;
+  const b = await browser(async () => {
+    if (++attempts === 1) throw new Error("Microphone permission denied. Allow it, then type /live to retry.");
+    return { close: async () => {} };
+  });
+  b.snapshot(snapshot(1));
+  b.ready("a");
+  b.terminal("a").message({ type: "audio-request", request: "denied" });
+  await tick();
+  expect(b.terminal("a").sent.at(-1)).toMatchObject({ type: "audio-error", request: "denied" });
+  expect(b.node("notice").textContent).toContain("permission denied");
+  b.terminal("a").message({ type: "audio-request", request: "retry" });
+  await tick();
+  expect(attempts).toBe(2);
+  expect(b.audioOptions.url).toContain("request=retry");
+});
+
+test("cancelled permission does not occupy voice; a late device cannot replace a retry", async () => {
+  let finish!: (device: { close(): Promise<void> }) => void;
+  let attempts = 0,
+    lateClosed = 0;
+  const b = await browser(async () => {
+    if (++attempts === 1)
+      return new Promise((resolve) => {
+        finish = resolve;
+      });
+    return { close: async () => {} };
+  });
+  b.snapshot(snapshot(1));
+  b.ready("a");
+  b.ready("b");
+  b.terminal("a").message({ type: "audio-request", request: "pending" });
+  await tick();
+  const signal = b.audioOptions.signal;
+  b.terminal("a").message({ type: "audio-cancel", request: "pending" });
+  await tick();
+  expect(signal.aborted).toBe(true);
+  b.terminal("b").message({ type: "audio-request", request: "retry" });
+  await tick();
+  expect(b.audioOptions.owner).toBe("cap-b");
+  finish({
+    close: async () => {
+      lateClosed++;
+    },
+  });
+  await tick();
+  expect(lateClosed).toBe(1);
+  expect(b.audioOptions.owner).toBe("cap-b");
+  expect(b.node("audio-status").textContent).toContain("One / B");
+});
+
+test("a late presence release cannot close a fresh request from the same attachment", async () => {
+  const b = await browser();
+  b.snapshot(snapshot(1));
+  b.ready("a");
+  b.terminal("a").message({ type: "audio-request", request: "old" });
+  await tick();
+  b.snapshot(snapshot(2, { tabId: "a", ownerId: "owner-a" }));
+  b.terminal("a").message({ type: "audio-cancel", request: "old" });
+  await tick();
+  b.terminal("a").message({ type: "audio-request", request: "fresh" });
+  await tick();
+  b.snapshot(snapshot(3));
+  await tick();
+  expect(b.deviceClosed).toBe(1);
+  expect(b.audioOptions.url).toContain("request=fresh");
 });
 
 test("each terminal uses the pure-black Vesper palette", async () => {

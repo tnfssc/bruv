@@ -1,4 +1,5 @@
 import type { ServerWebSocket, Subprocess } from "bun";
+import { InputOwnership } from "./input-ownership";
 
 export interface SocketData {
   channel: string;
@@ -19,6 +20,7 @@ export class TerminalSession {
   private code?: number;
   private stopping = false;
   private stopped?: Promise<void>;
+  private ownership?: InputOwnership;
   cols = 80;
   rows = 24;
 
@@ -27,7 +29,10 @@ export class TerminalSession {
     private cwd: string,
     private env: NodeJS.ProcessEnv = process.env,
     private onChange: () => void = () => {},
-  ) {}
+    inputTicket?: (owner: string | undefined) => string,
+  ) {
+    if (inputTicket) this.ownership = new InputOwnership(inputTicket, (bytes) => this.process?.terminal?.write(bytes));
+  }
 
   get pid() {
     return this.process?.pid;
@@ -39,6 +44,13 @@ export class TerminalSession {
 
   hasOwner(ownerId: string) {
     return [...this.clients.keys()].some((socket) => socket.readyState === 1 && socket.data.audioOwner === ownerId);
+  }
+
+  sendOwner(owner: string, message: object) {
+    const socket = [...this.clients.keys()].find(
+      (socket) => socket.data.audioOwner === owner && socket.readyState === 1,
+    );
+    return socket ? this.sendTo(socket, message) : false;
   }
 
   private sendTo(socket: ServerWebSocket<SocketData>, message: object) {
@@ -112,6 +124,7 @@ export class TerminalSession {
       });
       this.onChange();
       void this.process.exited.then((code) => {
+        this.ownership?.close();
         this.code = code;
         this.send({ type: "exit", code });
         this.process?.terminal?.close();
@@ -142,9 +155,9 @@ export class TerminalSession {
         Buffer.byteLength(message.data) <= 64 * 1024
       ) {
         if (this.code !== undefined) return;
-        this.process?.terminal?.write(
-          message.encoding === "base64" ? Buffer.from(message.data, "base64") : message.data,
-        );
+        const bytes = message.encoding === "base64" ? Buffer.from(message.data, "base64") : Buffer.from(message.data);
+        if (this.ownership) this.ownership.input(bytes, String(socket.data.audioOwner));
+        else this.process?.terminal?.write(bytes);
       } else if (
         message.type === "resize" &&
         Number.isInteger(message.cols) &&
@@ -173,6 +186,7 @@ export class TerminalSession {
 
   private async cleanup() {
     this.stopping = true;
+    this.ownership?.close();
     for (const socket of this.clients.keys()) socket.close(1001, "Server stopping");
     this.clients.clear();
     const child = this.process;

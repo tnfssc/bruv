@@ -211,6 +211,9 @@ try {
     });
     await p.goto(app.origin + "/#token=" + app.token);
     await p.waitForFunction(() => document.querySelector("#status")?.textContent?.startsWith("Connected"));
+    await p.waitForFunction(() =>
+      document.querySelector("#terminal")?.textContent?.includes("OFFLINE_LIVE_FIXTURE_READY"),
+    );
     assert.equal(await p.evaluate(() => (window as any).tracks.length), 0, "Page load cannot capture");
     assert.equal(await p.locator("#audio-toggle").count(), 0, "No permanent mic button");
   }
@@ -292,6 +295,24 @@ try {
   await observer.waitForFunction(() => (window as any).captureFrames >= 5);
   await submit(observer, "/live stop");
   await released(observer);
+  const rootPid = (
+    await (await fetch(app.origin + "/api/workspaces", { headers: { Authorization: "Bearer " + app.token } })).json()
+  ).workspaces[0].tabs[0].pid;
+  await submit(owner, "/live");
+  await owner.waitForFunction(() => (window as any).tracks.some((t: MediaStreamTrack) => t.readyState === "live"));
+  await submit(owner, "/fake-provider-error");
+  await released(owner);
+  const framesBeforeRestart = await owner.evaluate(() => (window as any).captureFrames);
+  await submit(owner, "/live");
+  await owner.waitForFunction((frames: number) => (window as any).captureFrames >= frames + 5, framesBeforeRestart);
+  await submit(owner, "/live stop");
+  await released(owner);
+  assert.equal(
+    (await (await fetch(app.origin + "/api/workspaces", { headers: { Authorization: "Bearer " + app.token } })).json())
+      .workspaces[0].tabs[0].pid,
+    rootPid,
+    "Voice/provider teardown preserves the coding CLI",
+  );
   console.log(
     JSON.stringify({
       pass: true,
@@ -300,6 +321,8 @@ try {
       observerNoTracks: true,
       stopRetry: true,
       permissionDenialRetry: true,
+      providerErrorReleaseRetry: true,
+      codingPidSurvives: true,
       denial: "injected NotAllowedError",
       autoplayOverride: false,
       providerCalls: 0,
