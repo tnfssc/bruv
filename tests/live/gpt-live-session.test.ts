@@ -101,7 +101,7 @@ describe("Admission and microphone transport", () => {
       session: { id: "live_1", model: "gpt-realtime-2.1", delegation: { type: "client" } },
     });
     await start;
-    expect(errors).toEqual(["Invalid Live session.started"]);
+    expect(errors).toEqual(["Invalid Live session.started event"]);
     expect(session.appendMicrophone(new Uint8Array(640))).toBe(false);
   });
 
@@ -307,7 +307,7 @@ describe("Transport closure and usage", () => {
     });
     socket.bufferedAmount = 192_000;
     expect(session.appendMicrophone(new Uint8Array(640))).toBe(false);
-    expect(errors).toEqual(["Live send queue exceeded limit"]);
+    expect(errors).toEqual(["Live send buffer limit exceeded"]);
     expect(closed).toEqual([false]);
     expect(session.state).toBe("closed");
     socket.event({ type: "session.closed" });

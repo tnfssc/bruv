@@ -31,6 +31,14 @@ function deliveryWithClient(
 }
 
 describe("T3 local notification outbox", () => {
+  test("reports the outbox size limit and pending delivery", () => {
+    const session = fixture();
+    const outbox = new T3LocalNotificationOutbox(session);
+    expect(() => outbox.assertLaunchCapacity(50)).toThrow("T3 local job delivery is full; wait for pending delivery");
+    writeFileSync(outbox.path, Buffer.alloc(4 * 1024 * 1024 + 1));
+    expect(() => outbox.list()).toThrow("T3 local notification outbox exceeds the size limit");
+  });
+
   test("persists before delivery and survives crash/reload", () => {
     const session = fixture();
     const first = new T3LocalNotificationOutbox(session);
@@ -69,10 +77,10 @@ describe("T3 local notification outbox", () => {
 
   test("capacity is reserved before launch, without sacrificing terminal records", () => {
     const outbox = new T3LocalNotificationOutbox(fixture());
-    expect(() => outbox.assertLaunchCapacity(50)).toThrow("capacity");
+    expect(() => outbox.assertLaunchCapacity(50)).toThrow("T3 local job delivery is full; wait for pending delivery");
     for (let i = 0; i < 64; i++) outbox.add({ taskId: "task-" + i, kind: "completion", text: "\u0000".repeat(5000) });
     expect(outbox.list()).toHaveLength(64);
-    expect(() => outbox.assertLaunchCapacity(0)).toThrow("capacity");
+    expect(() => outbox.assertLaunchCapacity(0)).toThrow("T3 local job delivery is full; wait for pending delivery");
   });
 });
 

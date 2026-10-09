@@ -215,7 +215,7 @@ async function executeRegisteredLiveTool(
   let isError = false;
   let acceptingUpdates = true;
   try {
-    if (!valid() || call.name !== "execute") throw new Error("Unavailable Live tool");
+    if (!valid() || call.name !== "execute") throw new Error("Live tool is unavailable");
     const assistantMessage = {
       role: "assistant",
       content: [toolCall],

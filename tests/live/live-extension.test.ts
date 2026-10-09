@@ -515,7 +515,7 @@ describe("Live voice", () => {
     await hold.reached;
     expect(await t.stop()).toEqual({
       stopped: false,
-      errors: ["Audio startup has not finished; teardown is not yet observed"],
+      errors: ["Audio startup is not done; teardown not yet seen"],
       jobsUnchanged: true,
     });
     hold.resume();
@@ -547,7 +547,11 @@ describe("Live voice", () => {
       }),
     });
     await t.run("start");
-    expect(await t.stop()).toEqual({ stopped: false, errors: ["Provider socket close failed"], jobsUnchanged: true });
+    expect(await t.stop()).toEqual({
+      stopped: false,
+      errors: ["Provider socket failed to close"],
+      jobsUnchanged: true,
+    });
     expect(stopped).toBe(true);
   });
   test("self-stop reports audio teardown failure rather than claiming completion", async () => {

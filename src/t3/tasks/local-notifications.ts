@@ -62,7 +62,7 @@ export class T3LocalNotificationOutbox {
   #read(): T3LocalNotification[] {
     try {
       const bytes = readFileSync(this.path);
-      if (bytes.byteLength > MAX_FILE_BYTES) throw new Error("T3 local notification outbox exceeds its bound");
+      if (bytes.byteLength > MAX_FILE_BYTES) throw new Error("T3 local notification outbox exceeds the size limit");
       const parsed: unknown = JSON.parse(bytes.toString("utf8"));
       if (!Array.isArray(parsed) || parsed.length > MAX_RECORDS || !parsed.every(validRecord))
         throw new Error("Invalid T3 local notification outbox");
@@ -81,7 +81,7 @@ export class T3LocalNotificationOutbox {
     // Reserve one terminal record per live job before any child is spawned.
     // 64 worst-case JSON-escaped records fit beneath the 4 MiB file bound.
     if (runningTasks >= 50 || this.list().length + runningTasks >= MAX_RECORDS)
-      throw new Error("T3 local job delivery capacity is exhausted; wait for pending delivery");
+      throw new Error("T3 local job delivery is full; wait for pending delivery");
   }
 
   add(input: { taskId: string; kind: T3LocalNotificationKind; text: string }): T3LocalNotification {

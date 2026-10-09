@@ -9,7 +9,7 @@ export function providerFailure(error: unknown, model: string, fallback: string)
     case "rate_limit_exceeded":
       return "OpenAI reports a rate limit for " + model + ". Retry later; no model was substituted.";
     case "model_not_found":
-      return "OpenAI reports " + model + " unavailable or inaccessible to this API key; no model was substituted.";
+      return "OpenAI says " + model + " is unavailable or this API key cannot access it; no model was substituted.";
     case "invalid_api_key":
       return "OpenAI rejected the API key for " + model + ". Use /login to configure an OpenAI API key.";
     default:

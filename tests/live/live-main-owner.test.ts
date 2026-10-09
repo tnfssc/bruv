@@ -377,6 +377,19 @@ describe("direct Live tool turns", () => {
     await owner.released;
   });
 
+  test("unavailable tool text reaches the Live result", async () => {
+    const f = fixture();
+    const owner = await acquireMainOwner({} as any, f.ctx);
+    try {
+      const result = await owner.orchestration.execute({ name: "other", args: {} });
+      expect((result as any).content).toEqual([{ type: "text", text: "Live tool is unavailable" }]);
+      expect(f.events.at(-1).isError).toBe(true);
+    } finally {
+      owner.close();
+      await owner.released;
+    }
+  });
+
   test("production Live events render through pinned ToolExecutionComponent and execute renderers", async () => {
     const f = fixture();
     const output = {

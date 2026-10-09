@@ -256,7 +256,7 @@ describe("OpenAI session setup and transport", () => {
         else expect(errors[0]).toContain(model);
         if (code === "insufficient_quota") expect(errors[0]).toContain("insufficient quota");
         if (code === "rate_limit_exceeded") expect(errors[0]).toContain("rate limit");
-        if (code === "model_not_found") expect(errors[0]).toContain("unavailable or inaccessible");
+        if (code === "model_not_found") expect(errors[0]).toContain("unavailable or this API key cannot access it");
       }
     }
   });
@@ -399,7 +399,7 @@ describe("Realtime handshake diagnostics (offline)", () => {
         expect(errors).toHaveLength(1);
         expect(errors[0].code).toBe("connect_failed");
         expect(errors[0].message).toContain(`HTTP ${status}`);
-        if (status === 404) expect(errors[0].message).toContain("unavailable or inaccessible");
+        if (status === 404) expect(errors[0].message).toContain("unavailable or this API key cannot access it");
         if (status === 429) expect(errors[0].message).toContain("insufficient quota");
         expect(JSON.stringify(errors)).not.toContain("secret-key");
         expect(JSON.stringify(errors)).not.toContain("private body");
