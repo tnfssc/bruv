@@ -22,6 +22,9 @@ describe("third-party notice collection and rendering", () => {
     output = join(root, "notices.txt");
     await Bun.write(join(root, "licenses/third-party/pi/LICENSE"), "Pi license\n");
     await Bun.write(join(root, "licenses/third-party/bun/LICENSE.md"), "Bun license\n");
+    for (const name of ["README.md", "OFL.txt", "NERD-FONTS-LICENSE", "UPSTREAM-README.md", "GLYPH-NOTICES.txt"]) {
+      await Bun.write(join(root, "licenses/third-party/jetbrains-mono-nerd-font", name), "font license\n");
+    }
   });
 
   afterEach(async () => {
@@ -146,6 +149,9 @@ describe("third-party notice collection and rendering", () => {
     expect(content).toContain("Pi license");
     expect(content).toContain("BUN RUNTIME UPSTREAM LICENSING");
     expect(content).toContain("Bun license");
+    for (const name of ["README.md", "OFL.txt", "NERD-FONTS-LICENSE", "UPSTREAM-README.md", "GLYPH-NOTICES.txt"]) {
+      expect(content).toContain(`--- ${name} ---\nfont license`);
+    }
   });
 
   test("rendered bundle budget failure leaves an existing output untouched", async () => {

@@ -215,9 +215,14 @@ aside {
 }
 .connection,
 .voice-control {
+  padding: 0;
+  cursor: default;
   position: relative;
   display: flex;
   align-items: center;
+}
+.terminal-controls > button:hover {
+  background: transparent;
 }
 .connection {
   padding: 8px 3px;
