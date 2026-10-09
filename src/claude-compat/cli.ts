@@ -196,8 +196,8 @@ const productionRuntime: RuntimeFactory = async (options, args) => {
           },
           beforeAppOwnedCall: async (call) => {
             if (!runtime || runtime.session.isIdle)
-              throw new Error("App-owned MCP requires an active owning model run");
-            if (!runtime.session.model) throw new Error("No active provider");
+              throw new Error("App-owned MCP needs its owning model run active");
+            if (!runtime.session.model) throw new Error("No active model");
             assertAppWorkerCall(appWorker, call);
             // Native server owns admission and returns its real task ID. No Bruv job is minted.
           },

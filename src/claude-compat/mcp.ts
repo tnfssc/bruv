@@ -265,7 +265,7 @@ export class InjectedMcpSession {
     const approved = { ...request, input: structuredClone(decision.updatedInput ?? submitted) };
     if (tool.owner === "app_owned") {
       if (!this.options.policy.beforeAppOwnedCall)
-        throw new McpOperationError("permission-denied", "App-owned MCP requires trusted active-run/provider policy");
+        throw new McpOperationError("permission-denied", "App-owned MCP needs trusted policy for the active run and provider");
       await this.options.policy.beforeAppOwnedCall(approved);
       signal.throwIfAborted();
     }
@@ -299,7 +299,7 @@ export class InjectedMcpSession {
     } catch {
       throw new McpOperationError(
         "call-failed",
-        "MCP call failed; remote mutation outcome may be unknown (not retried)",
+        "MCP call failed; the remote mutation may have happened. It was not retried.",
       );
     }
   }
@@ -326,7 +326,7 @@ export class InjectedMcpSession {
             resumed.status = "connected";
           } catch {
             await this.closeConnection(this.connections.get(name)!);
-            throw new McpOperationError("connection-failed", "App-owned MCP reconnect failed or was denied");
+            throw new McpOperationError("connection-failed", "Reconnect to app-owned MCP failed or was denied");
           }
         }
       }

@@ -45,7 +45,7 @@ export function createPermissionPolicy(options: PermissionOptions) {
     if (policy.disallowedTools.some((rule) => matchesToolRule(request.toolName, rule)))
       return deny("Tool is disallowed");
     if (policy.mode === "plan" && request.effect !== "read-only")
-      return deny("Plan mode requires an enforced read-only tool; arbitrary TypeScript and MCP are not read-only");
+      return deny("Plan mode needs an enforced read-only tool. Arbitrary TypeScript and MCP are not read-only");
     if (
       policy.mode === "bypassPermissions" ||
       policy.allowedTools.some((rule) => matchesToolRule(request.toolName, rule))
@@ -53,7 +53,7 @@ export function createPermissionPolicy(options: PermissionOptions) {
       return { behavior: "allow" };
     if (policy.mode === "acceptEdits" && request.effect === "edit") return { behavior: "allow" };
     if (policy.mode === "plan" && request.effect === "read-only") return { behavior: "allow" };
-    if (policy.mode === "dontAsk" || !policy.canUseTool) return deny("Tool requires explicit permission");
+    if (policy.mode === "dontAsk" || !policy.canUseTool) return deny("Tool needs explicit permission");
     const decision = await policy.canUseTool(request);
     request.signal.throwIfAborted();
     return decision;

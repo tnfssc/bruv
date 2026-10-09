@@ -31,7 +31,10 @@ test("plan rejects arbitrary execute even with explicit allow or human callback"
       return { behavior: "allow" };
     },
   });
-  expect((await policy(execute)).behavior).toBe("deny");
+  expect(await policy(execute)).toEqual({
+    behavior: "deny",
+    message: "Plan mode needs an enforced read-only tool. Arbitrary TypeScript and MCP are not read-only",
+  });
   expect(prompts).toBe(0);
   expect((await policy({ ...execute, toolName: "read", effect: "read-only" })).behavior).toBe("allow");
 });
@@ -39,7 +42,7 @@ test("dontAsk rejects unapproved calls but allows explicitly approved tools", as
   const unapproved = createPermissionPolicy({ mode: "dontAsk" });
   const approved = createPermissionPolicy({ mode: "dontAsk", allowedTools: ["execute"] });
 
-  expect((await unapproved(execute)).behavior).toBe("deny");
+  expect(await unapproved(execute)).toEqual({ behavior: "deny", message: "Tool needs explicit permission" });
   expect((await approved(execute)).behavior).toBe("allow");
 });
 test("disallowed tools take precedence over explicitly allowed tools", async () => {
