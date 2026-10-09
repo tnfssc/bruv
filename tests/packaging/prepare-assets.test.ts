@@ -1,6 +1,5 @@
 import { describe, expect, test } from "bun:test";
 import { copyFile, cp, mkdir, mkdtemp, readFile, readdir, rm, stat, utimes, writeFile } from "node:fs/promises";
-import { tmpdir } from "node:os";
 import { dirname, join, relative, resolve } from "node:path";
 import { run } from "../helpers/helpers";
 
@@ -15,6 +14,7 @@ async function copyPreparationInputs(fixture: string): Promise<void> {
     "scripts/build/web-assets.ts",
     "src/web/browser.ts",
     "src/web/browser-terminal-touch.ts",
+    "src/web/browser-terminal-accessibility.ts",
     "src/web/browser-audio.ts",
     "src/live/browser-protocol.ts",
     "src/web/index.html",
@@ -33,7 +33,7 @@ async function copyPreparationInputs(fixture: string): Promise<void> {
   // Host adaptation may write to Pi. Copy it; never link the shared dependency into this fixture.
   const piPackage = "node_modules/@earendil-works/pi-coding-agent";
   await cp(join(root, piPackage), join(fixture, piPackage), { recursive: true });
-  for (const name of ["@xterm/xterm", "@xterm/addon-fit", "daisyui"]) {
+  for (const name of ["ghostty-web", "daisyui"]) {
     await cp(join(root, "node_modules", name), join(fixture, "node_modules", name), { recursive: true });
   }
 }
@@ -58,7 +58,8 @@ async function prepareAssets(fixture: string): Promise<void> {
 
 describe("build asset preparation", () => {
   test("keeps only required assets and does not rewrite unchanged files", async () => {
-    const fixture = await mkdtemp(join(tmpdir(), "bruv-prepare-assets-"));
+    await mkdir(join(root, ".tmp"), { recursive: true });
+    const fixture = await mkdtemp(join(root, ".tmp/bruv-prepare-assets-"));
     const assets = join(fixture, "dist", "runtime-assets");
     const retained = join(fixture, "artifacts", "retained-run.txt");
     try {
@@ -77,6 +78,7 @@ describe("build asset preparation", () => {
         "theme/dark.json",
         "theme/light.json",
         "theme/theme-schema.json",
+        "web/ghostty-vt.wasm.asset",
         "web/index.html.asset",
         "web/JetBrainsMonoNerdFontMono-Regular.woff2.asset",
         "web/terminal.css.asset",
@@ -110,9 +112,8 @@ describe("build asset preparation", () => {
       );
       expect(html).toContain(wordmark);
       expect(html).not.toContain("<!-- BRUV_WORDMARK -->");
-      expect(await readFile(join(assets, "web/terminal.css.asset"), "utf8")).toContain(
-        await readFile(join(fixture, "node_modules/@xterm/xterm/css/xterm.css"), "utf8"),
-      );
+      const wasm = await readFile(join(fixture, "node_modules/ghostty-web/ghostty-vt.wasm"));
+      expect(await readFile(join(assets, "web/ghostty-vt.wasm.asset"))).toEqual(wasm);
       const css = await readFile(join(assets, "web/terminal.css.asset"), "utf8");
       expect(css).toContain("daisyUI 5.7.47 - MIT License");
       expect(css).toContain(".btn");
@@ -122,8 +123,8 @@ describe("build asset preparation", () => {
       // Bun lowers logical corners and nesting. Keep the selective build well below the full 1.14 MB bundle.
       expect(Buffer.byteLength(css)).toBeLessThan(250_000);
       const browserCode = await readFile(join(assets, "web/terminal.js.asset"), "utf8");
-      expect(browserCode).toContain("xterm");
-      expect(browserCode).not.toContain('from "@xterm');
+      expect(browserCode).toContain("/ghostty-vt.wasm");
+      expect(browserCode).not.toContain(wasm.toString("base64").slice(0, 256));
 
       // Old timestamps make a rewrite observable without relying on a sleep or clock resolution.
       const oldTime = new Date("2000-01-01T00:00:00Z");

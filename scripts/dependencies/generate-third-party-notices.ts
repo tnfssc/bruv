@@ -4,6 +4,23 @@ import { dirname, join, resolve } from "node:path";
 const MAX_PACKAGES = 1000;
 const MAX_BYTES = 4 * 1024 * 1024;
 const PI_VERSION = "1.1.0";
+const GHOSTTY_VERSION = "0.4.0";
+const ghosttyNoticeFiles = [
+  "README.md",
+  "CODER-LICENSE",
+  "GHOSTTY-LICENSE",
+  "UUCODE-LICENSE.md",
+  "UNICODE-LICENSE",
+  "ZIG-LICENSE",
+  "uucode/licenses/LICENSE_Bjoern_Hoehrmann",
+  "uucode/resources/wcwidth/LICENSE_go_runewidth.txt",
+  "uucode/resources/wcwidth/LICENSE_unicode_width.txt",
+  "uucode/resources/wcwidth/LICENSE_uniseg.txt",
+  "uucode/resources/wcwidth/LICENSE_utf8proc.md",
+  "uucode/resources/wcwidth/LICENSE_wcwidth.txt",
+  "uucode/resources/wcwidth/LICENSE_zg.txt",
+  "uucode/resources/wcwidth/LICENSE_ziglyph.txt",
+];
 const pinnedPiPackages = new Set([
   "@earendil-works/chord",
   "@earendil-works/pi-agent-core",
@@ -123,7 +140,13 @@ async function collectProductionNotices(
   return [...entries.values()];
 }
 
-function renderNotices(entries: PackageNotices[], piLicense: string, bunLicense: string, fontNotices: string): string {
+function renderNotices(
+  entries: PackageNotices[],
+  piLicense: string,
+  bunLicense: string,
+  fontNotices: string,
+  ghosttyNotices: string,
+): string {
   const lines = [
     "BRUV THIRD-PARTY LICENSE AND COPYRIGHT NOTICES",
     "",
@@ -168,6 +191,8 @@ function renderNotices(entries: PackageNotices[], piLicense: string, bunLicense:
     "",
   );
   lines.push("=".repeat(78), "BROWSER TERMINAL FONT", fontNotices.trimEnd(), "");
+  if (ghosttyNotices)
+    lines.push("=".repeat(78), "BROWSER TERMINAL WASM (ghostty-web 0.4.0)", ghosttyNotices.trimEnd(), "");
   return lines.join("\n");
 }
 
@@ -188,7 +213,19 @@ export async function generateThirdPartyNotices(
       await readLicense(join(root, "licenses/third-party/jetbrains-mono-nerd-font", name), budget),
     );
   }
-  const content = renderNotices(entries, piLicense, bunLicense, fontNotices.join("\n"));
+  const ghosttyNotices: string[] = [];
+  const ghostty = entries.find((entry) => entry.info.name === "ghostty-web");
+  if (ghostty) {
+    if (ghostty.info.version !== GHOSTTY_VERSION)
+      throw new Error(`ghostty-web@${ghostty.info.version} needs a WASM license review`);
+    for (const name of ghosttyNoticeFiles) {
+      ghosttyNotices.push(
+        `--- ${name} ---`,
+        await readLicense(join(root, "licenses/third-party/ghostty-web", name), budget),
+      );
+    }
+  }
+  const content = renderNotices(entries, piLicense, bunLicense, fontNotices.join("\n"), ghosttyNotices.join("\n"));
   if (Buffer.byteLength(content) > maximumBytes) throw new Error(`notice bundle exceeds ${maximumBytes} bytes`);
   await Bun.write(output, content);
   console.log(`wrote ${output} with ${entries.length} production packages (${Buffer.byteLength(content)} bytes)`);

@@ -348,12 +348,20 @@ body:has(#workspace-list:empty) aside {
   overflow: hidden;
   margin: var(--content-gutter);
 }
-.terminal-pane {
+.terminal-pane,
+.terminal-renderer {
   width: 100%;
   height: 100%;
 }
-.xterm {
-  height: 100%;
+.terminal-accessible-output {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: pre;
 }
 [hidden] {
   display: none !important;

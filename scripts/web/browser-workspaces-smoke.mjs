@@ -124,7 +124,12 @@ async function connected(page) {
     const id = document.querySelector('[role="tab"][aria-selected="true"]')?.id.slice(4);
     const socket = window.terminalSockets.get(id);
     return (
-      socket?.readyState === WebSocket.OPEN && socket.probeReady && document.querySelector("#terminal-status")?.hidden
+      socket?.readyState === WebSocket.OPEN &&
+      socket.probeReady &&
+      document.querySelector("#terminal-status")?.hidden &&
+      (window.terminalMessages.get(id) || []).some(
+        (m) => m.type === "output" && atob(m.data).includes("BROWSER_FIXTURE_READY"),
+      )
     );
   });
 }
@@ -154,7 +159,10 @@ try {
   page = await browser.newPage({ viewport: { width: 1100, height: 720 } });
   page.setDefaultTimeout(15000);
   const failures = [];
-  page.on("pageerror", (error) => failures.push(String(error)));
+  page.on("pageerror", (error) => {
+    failures.push(String(error));
+    console.error("PAGE_ERROR", String(error));
+  });
   await page.addInitScript(instrumentBrowser);
   await page.goto(url);
   await connected(page);
@@ -200,8 +208,9 @@ try {
     await page.locator('[id="tab-' + tab.id + '"]').click();
     await connected(page);
   }
+  // Pi groups bare ESC + Enter within 10ms as Alt+Enter. Keep the keys distinct.
   async function paste(text) {
-    await page.locator("#terminal .xterm-helper-textarea:visible").evaluate((element, text) => {
+    await page.locator("#terminal textarea:visible").evaluate((element, text) => {
       const clipboardData = new DataTransfer();
       clipboardData.setData("text/plain", text);
       element.dispatchEvent(new ClipboardEvent("paste", { clipboardData, bubbles: true }));
@@ -219,7 +228,7 @@ try {
   }
 
   async function captureVoice(name) {
-    const out = join(project, "artifacts/spacing-voice");
+    const out = join(project, "artifacts/ghostty/spacing-voice");
     await mkdir(out, { recursive: true });
     for (const viewport of [
       { width: 1100, height: 720 },
@@ -303,7 +312,6 @@ try {
     await select(workspace, tab);
     const marker = "PROOF_" + tab.id;
     await paste("!printf '" + marker + " '; pwd");
-    await page.keyboard.press("Escape");
     await page.keyboard.press("Enter");
     await until(
       async () => (await terminalText(tab.id)).includes(marker + " " + workspace.cwd),
@@ -325,7 +333,6 @@ try {
   const jobOwner = tabs[0];
   await select(jobOwner.workspace, jobOwner.tab);
   await paste("!sleep 5; printf 'JOB_%s_%s\\n' survived switching");
-  await page.keyboard.press("Escape");
   await page.keyboard.press("Enter");
   await select(tabs[3].workspace, tabs[3].tab);
   await page.reload();
@@ -351,13 +358,13 @@ try {
     window.delayNextMedia = true;
   });
   await paste("/fixture-live start");
-  await page.keyboard.press("Escape");
+  await page.keyboard.press("Escape", { delay: 20 });
   await page.keyboard.press("Enter");
   await page.waitForFunction(() => typeof window.releaseMedia === "function");
   await captureVoice("pending");
   await select(other.workspace, other.tab);
   await paste("/fixture-live start");
-  await page.keyboard.press("Escape");
+  await page.keyboard.press("Escape", { delay: 20 });
   await page.keyboard.press("Enter");
   assert.equal(await page.locator("#audio-toggle").count(), 0, "No permanent microphone control");
   await page.locator("#cancel-voice").waitFor({ state: "visible" });
@@ -377,7 +384,7 @@ try {
     window.denyNextMedia = true;
   });
   await paste("/fixture-live start");
-  await page.keyboard.press("Escape");
+  await page.keyboard.press("Escape", { delay: 20 });
   await page.keyboard.press("Enter");
   await page.locator("#dismiss-voice").waitFor({ state: "visible" });
   assert.match(await page.locator("#audio-status").innerText(), /denied/i);
@@ -391,7 +398,7 @@ try {
 
   await select(owner.workspace, owner.tab);
   await paste("/fixture-live start");
-  await page.keyboard.press("Escape");
+  await page.keyboard.press("Escape", { delay: 20 });
   await page.keyboard.press("Enter");
   await page.waitForFunction(() => document.querySelector("#audio-status")?.textContent?.includes("Live"));
   assert.equal(await page.locator("#cancel-voice").isVisible(), false, "Only pending requests can be cancelled");
@@ -422,8 +429,8 @@ try {
   );
   assert.equal((await state()).voice.tabId, owner.tab.id, "Switching did not move voice");
 
-  await page.screenshot({ caret: "initial", path: join(project, "artifacts/web-workspaces-voice-owner.png") });
-  await page.locator("#terminal .xterm-helper-textarea:visible").focus();
+  await page.screenshot({ caret: "initial", path: join(project, "artifacts/ghostty/web-workspaces-voice-owner.png") });
+  await page.locator("#terminal textarea:visible").focus();
   assert(
     await page.evaluate(() => window.mediaTracks.some((t) => t.readyState === "live")),
     "Switching kept microphone",
@@ -434,14 +441,14 @@ try {
   );
   await select(owner.workspace, owner.tab);
   await paste("/fixture-live stop");
-  await page.keyboard.press("Escape");
+  await page.keyboard.press("Escape", { delay: 20 });
   await page.keyboard.press("Enter");
   await allDevicesReleased();
   await page.locator("#voice-status").waitFor({ state: "hidden" });
   assert.equal(await page.locator("#audio-status").textContent(), "", "Explicit release clears voice banner");
   await select(other.workspace, other.tab);
   await paste("/fixture-live start");
-  await page.keyboard.press("Escape");
+  await page.keyboard.press("Escape", { delay: 20 });
   await page.keyboard.press("Enter");
   await page.waitForFunction(() => document.querySelector("#audio-status")?.textContent?.includes("Live"));
   assert.equal(
@@ -462,7 +469,7 @@ try {
   await allDevicesReleased();
   await select(other.workspace, other.tab);
   await paste("/live mic-check");
-  await page.keyboard.press("Escape");
+  await page.keyboard.press("Escape", { delay: 20 });
   await page.keyboard.press("Enter");
   await until(
     async () => (await terminalText(other.tab.id)).includes("Audio route ready. Sound quality not measured."),
@@ -503,7 +510,10 @@ try {
   for (const { workspace, tab } of tabs) {
     await select(workspace, tab);
     await page.waitForFunction(
-      (id) => document.querySelector('[id="terminal-' + id + '"] .xterm-rows')?.textContent?.includes("draft-" + id),
+      (id) =>
+        document
+          .querySelector('[id="terminal-' + id + '"] .terminal-accessible-output')
+          ?.textContent?.includes("draft-" + id),
       tab.id,
     );
   }
@@ -519,13 +529,13 @@ try {
     "Only visible terminal resized",
   );
   assert(!(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)), "Narrow page overflow");
-  await page.screenshot({ caret: "initial", path: join(project, "artifacts/web-workspaces-narrow.png") });
+  await page.screenshot({ caret: "initial", path: join(project, "artifacts/ghostty/web-workspaces-narrow.png") });
   await page.locator("#open-drawer").click();
-  await page.screenshot({ caret: "initial", path: join(project, "artifacts/web-workspaces-drawer.png") });
+  await page.screenshot({ caret: "initial", path: join(project, "artifacts/ghostty/web-workspaces-drawer.png") });
   await page.keyboard.press("Escape");
   await page.setViewportSize({ width: 1100, height: 720 });
   await page.waitForTimeout(300);
-  await page.screenshot({ caret: "initial", path: join(project, "artifacts/web-workspaces-wide.png") });
+  await page.screenshot({ caret: "initial", path: join(project, "artifacts/ghostty/web-workspaces-wide.png") });
   // Arrow navigation is local to this workspace's tab strip.
   await page.locator('[id="tab-' + owner.tab.id + '"]').focus();
   await page.keyboard.press("ArrowRight");
@@ -533,10 +543,10 @@ try {
 
   await select(other.workspace, other.tab);
   // This tab still has its replayed draft. Clear it before an explicit voice command.
-  await page.locator("#terminal .xterm-helper-textarea:visible").focus();
+  await page.locator("#terminal textarea:visible").focus();
   await page.keyboard.press("Control+c");
   await paste("/fixture-live start");
-  await page.keyboard.press("Escape");
+  await page.keyboard.press("Escape", { delay: 20 });
   await page.keyboard.press("Enter");
   await page.waitForFunction(() => document.querySelector("#audio-status")?.textContent?.includes("Live"));
   const oldCapability = await page.evaluate(
@@ -598,7 +608,7 @@ try {
   assert.throws(() => process.kill(tabs[1].tab.pid, 0), "Closed CLI gone");
   await select(other.workspace, other.tab);
   await paste("/fixture-live start");
-  await page.keyboard.press("Escape");
+  await page.keyboard.press("Escape", { delay: 20 });
   await page.keyboard.press("Enter");
   await page.waitForFunction(() => document.querySelector("#audio-status")?.textContent?.includes("Live"));
   await dialogClick("#workspace-remove-" + other.workspace.id, false);
@@ -629,7 +639,21 @@ try {
   assert.deepEqual(failures, []);
 } catch (error) {
   console.error("WORKSPACES_FAILURE", await page?.locator("body").innerText());
-  await page?.screenshot({ caret: "initial", path: join(project, "artifacts/web-workspaces-failure.png") });
+  if (page)
+    console.error(
+      "STATE",
+      await page.evaluate(() => ({
+        selected: document.querySelector('[role="tab"][aria-selected="true"]')?.id,
+        status: document.querySelector("#status")?.textContent,
+        hiddenStatus: document.querySelector("#terminal-status")?.hidden,
+        sockets: [...window.terminalSockets].map(([id, socket]) => ({
+          id,
+          ready: socket.readyState,
+          probeReady: socket.probeReady,
+        })),
+      })),
+    );
+  await page?.screenshot({ caret: "initial", path: join(project, "artifacts/ghostty/web-workspaces-failure.png") });
   throw error;
 } finally {
   await browser?.close();

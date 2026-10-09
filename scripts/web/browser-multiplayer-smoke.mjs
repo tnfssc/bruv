@@ -1,3 +1,4 @@
+import { watchRenderer, paintedTerminal } from "./browser-renderer-proof.mjs";
 import assert from "node:assert/strict";
 import { access, mkdir, mkdtemp, readlink } from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -12,7 +13,7 @@ const fixture = await mkdtemp(join(tmpdir(), "bruv-multiplayer-"));
 const one = join(fixture, "one"),
   two = join(fixture, "two"),
   agent = join(fixture, "agent");
-await Promise.all([one, two, agent, join(project, "artifacts")].map((p) => mkdir(p, { recursive: true })));
+await Promise.all([one, two, agent, join(project, "artifacts/ghostty")].map((p) => mkdir(p, { recursive: true })));
 const proc = Bun.spawn(
   [
     join(project, "dist/bruv"),
@@ -70,7 +71,10 @@ async function connected(page) {
     const id = document.querySelector('[role="tab"][aria-selected="true"]')?.id.slice(4);
     const socket = window.terminals.get(id);
     return (
-      socket?.readyState === WebSocket.OPEN && socket.probeReady && document.querySelector("#terminal-status")?.hidden
+      socket?.readyState === WebSocket.OPEN &&
+      socket.probeReady &&
+      document.querySelector("#terminal-status")?.hidden &&
+      (window.messages.get(id) || []).some((m) => m.type === "output" && atob(m.data).includes("BROWSER_FIXTURE_READY"))
     );
   });
 }
@@ -100,6 +104,7 @@ try {
     await page.setViewportSize({ width, height: 800 });
     pages.push(page);
     page.setDefaultTimeout(15000);
+    await watchRenderer(page);
     page.on("pageerror", (error) => failures.push(String(error)));
     await page.addInitScript(() => {
       window.terminals = new Map();
@@ -155,6 +160,8 @@ try {
   const a = await open(1200),
     b = await open(850);
   await until(async () => (await state()).workspaces[0].tabs[0].pid, "Initial CLI missing");
+  await paintedTerminal(a);
+  await paintedTerminal(b);
   const initial = await state(),
     first = initial.workspaces[0],
     tab = first.tabs[0],
@@ -170,9 +177,10 @@ try {
       id,
     );
   }
+  // Pi groups bare ESC + Enter within 10ms as Alt+Enter. Keep the keys distinct.
   async function paste(page, value) {
-    await page.locator("#terminal .xterm-helper-textarea:visible").focus();
-    await page.locator("#terminal .xterm-helper-textarea:visible").evaluate((el, value) => {
+    await page.locator("#terminal textarea:visible").focus();
+    await page.locator("#terminal textarea:visible").evaluate((el, value) => {
       const clipboardData = new DataTransfer();
       clipboardData.setData("text/plain", value);
       el.dispatchEvent(new ClipboardEvent("paste", { clipboardData, bubbles: true }));
@@ -180,7 +188,7 @@ try {
   }
   async function submit(page, value) {
     await paste(page, value);
-    await page.keyboard.press("Escape");
+    await page.keyboard.press("Escape", { delay: 20 });
     await page.keyboard.press("Enter");
   }
   async function rename(page, name) {
@@ -212,6 +220,12 @@ try {
   async function dialog(page, selector, confirm) {
     if (selector.startsWith("#workspace-remove-") && (await page.locator("#open-drawer").isVisible()))
       await page.locator("#open-drawer").click();
+    if (selector.startsWith("#tab-close-")) {
+      // Rename can widen the selected tab. Scroll its whole shell into view.
+      await page
+        .locator(selector)
+        .evaluate((button) => button.parentElement.scrollIntoView({ block: "nearest", inline: "nearest" }));
+    }
     await page.locator(selector).click();
     await page.locator("#workspace-dialog").waitFor({ state: "visible" });
     assert.equal(await page.evaluate(() => document.activeElement?.id), "dialog-cancel");
@@ -238,7 +252,8 @@ try {
   assert.equal((await state()).workspaces[0].tabs[0].pid, pid, "Second browser duplicated CLI");
   await a.keyboard.type("shared-draft");
   await until(
-    async () => (await b.locator(".terminal-pane:visible .xterm-rows").innerText()).includes("shared-draft"),
+    async () =>
+      (await b.locator(".terminal-pane:visible .terminal-accessible-output").innerText()).includes("shared-draft"),
     "Draft input not shared",
   );
   await b.keyboard.press("Control+u");
@@ -353,11 +368,11 @@ try {
   assert(await a.evaluate(() => window.mediaTracks.some((t) => t.readyState === "live")));
   await a.screenshot({
     caret: "initial",
-    path: join(project, "artifacts/web-multiplayer-owner.png"),
+    path: join(project, "artifacts/ghostty/web-multiplayer-owner.png"),
   });
   await b.screenshot({
     caret: "initial",
-    path: join(project, "artifacts/web-multiplayer-observer.png"),
+    path: join(project, "artifacts/ghostty/web-multiplayer-observer.png"),
   });
   await a.setViewportSize({ width: 390, height: 680 });
   await Bun.sleep(200);
@@ -381,10 +396,10 @@ try {
     "Voice label fits banner",
   );
   assert.equal(await a.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
-  await Bun.write(join(project, "artifacts/voice-alignment.json"), JSON.stringify(voiceGeometry, null, 2));
+  await Bun.write(join(project, "artifacts/ghostty/voice-alignment.json"), JSON.stringify(voiceGeometry, null, 2));
   await a.screenshot({
     caret: "initial",
-    path: join(project, "artifacts/web-multiplayer-owner-phone.png"),
+    path: join(project, "artifacts/ghostty/web-multiplayer-owner-phone.png"),
   });
   await a.setViewportSize({ width: 1100, height: 800 });
   await submit(a, "/fixture-live stop");
@@ -466,9 +481,27 @@ try {
   for (const [index, page] of pages.entries()) {
     try {
       console.error("BROWSER", index, await page.locator("body").innerText());
+      console.error(
+        "STATE",
+        failures,
+        await page.evaluate(() => ({
+          selected: document.querySelector('[role="tab"][aria-selected="true"]')?.id,
+          status: document.querySelector("#status")?.textContent,
+          hiddenStatus: document.querySelector("#terminal-status")?.hidden,
+          sockets: [...window.terminals].map(([id, socket]) => ({
+            id,
+            ready: socket.readyState,
+            probeReady: socket.probeReady,
+          })),
+          messages: [...window.messages].map(([id, messages]) => ({
+            id,
+            messages: messages.filter((m) => m.type !== "output"),
+          })),
+        })),
+      );
       await page.screenshot({
         caret: "initial",
-        path: join(project, "artifacts/web-multiplayer-failure-" + index + ".png"),
+        path: join(project, "artifacts/ghostty/web-multiplayer-failure-" + index + ".png"),
       });
     } catch {}
   }

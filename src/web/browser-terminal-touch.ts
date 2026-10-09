@@ -1,73 +1,88 @@
-import type { Terminal } from "@xterm/xterm";
+import type { Terminal } from "ghostty-web";
 
-// xterm handles wheel input, but not finger swipes. Keep CLI history in its
-// existing wheel path; normal scrollback uses xterm's public scrolling API.
+// Finger swipes use Ghostty's wheel path in the CLI and scrollLines in history.
 export function installTerminalTouch(element: HTMLElement, term: Terminal) {
-  // The pane owner cancels held touches when hiding or disposing.
-  let gesture: { y: number; startX: number; startY: number; lines: number; scrolling: boolean } | undefined;
-  element.addEventListener(
-    "touchstart",
-    (event) => {
-      if (element.hidden || !element.isConnected || event.touches.length !== 1) {
-        gesture = undefined;
-        return;
-      }
-      const touch = event.touches[0];
-      gesture = {
-        y: touch.clientY,
-        startX: touch.clientX,
-        startY: touch.clientY,
-        lines: 0,
-        scrolling: false,
-      };
-    },
-    { passive: true },
-  );
-  element.addEventListener(
-    "touchmove",
-    (event) => {
-      if (element.hidden || !element.isConnected || !gesture || event.touches.length !== 1) {
-        gesture = undefined;
-        return;
-      }
-      const touch = event.touches[0];
-      const delta = gesture.y - touch.clientY;
-      const vertical = Math.abs(touch.clientY - gesture.startY);
-      if (!gesture.scrolling && vertical > 6 && vertical > Math.abs(touch.clientX - gesture.startX))
-        gesture.scrolling = true;
-      gesture.y = touch.clientY;
-      if (!gesture.scrolling) return;
-      event.preventDefault();
-      const screen = element.querySelector<HTMLElement>(".xterm-screen");
-      if (!screen) return;
-      if (term.buffer.active.type === "alternate") {
-        screen.dispatchEvent(
-          new WheelEvent("wheel", {
-            deltaY: delta,
-            deltaMode: 0,
-            clientX: touch.clientX,
-            clientY: touch.clientY,
-            bubbles: true,
-            cancelable: true,
-          }),
-        );
-      } else {
-        const cellHeight = screen.clientHeight / term.rows;
-        if (!cellHeight) return;
-        gesture.lines += delta / cellHeight;
-        const lines = Math.trunc(gesture.lines);
-        if (lines) {
-          term.scrollLines(lines);
-          gesture.lines -= lines;
-        }
-      }
-    },
-    { passive: false },
-  );
+  let disposed = false;
+  let gesture:
+    | { id: number; y: number; startX: number; startY: number; lines: number; moved: boolean; scrolling: boolean }
+    | undefined;
+  const visible = () => !disposed && !element.hidden && element.isConnected;
   const cancel = () => {
     gesture = undefined;
   };
-  element.addEventListener("touchend", cancel);
-  element.addEventListener("touchcancel", cancel);
-  return cancel;
+  const start = (event: TouchEvent) => {
+    if (!visible() || event.touches.length !== 1) return cancel();
+    const touch = event.touches[0];
+    gesture = {
+      id: touch.identifier,
+      y: touch.clientY,
+      startX: touch.clientX,
+      startY: touch.clientY,
+      lines: 0,
+      moved: false,
+      scrolling: false,
+    };
+  };
+  const move = (event: TouchEvent) => {
+    if (!visible() || !gesture || event.touches.length !== 1 || event.touches[0].identifier !== gesture.id)
+      return cancel();
+    const touch = event.touches[0];
+    const delta = gesture.y - touch.clientY;
+    const vertical = Math.abs(touch.clientY - gesture.startY);
+    const horizontal = Math.abs(touch.clientX - gesture.startX);
+    if (Math.max(vertical, horizontal) > 6) gesture.moved = true;
+    if (!gesture.scrolling && vertical > 6 && vertical > horizontal) gesture.scrolling = true;
+    gesture.y = touch.clientY;
+    if (!gesture.scrolling) return;
+    event.preventDefault();
+    const screen = element.querySelector<HTMLCanvasElement>("canvas");
+    if (!screen) return;
+    const cellHeight = screen.clientHeight / term.rows;
+    if (!cellHeight) return;
+    gesture.lines += delta / cellHeight;
+    const lines = Math.trunc(gesture.lines);
+    if (!lines) return;
+    gesture.lines -= lines;
+    if (term.buffer.active.type === "alternate") {
+      screen.dispatchEvent(
+        new WheelEvent("wheel", {
+          deltaY: lines,
+          deltaMode: 1,
+          clientX: touch.clientX,
+          clientY: touch.clientY,
+          bubbles: true,
+          cancelable: true,
+        }),
+      );
+    } else {
+      term.scrollLines(lines);
+    }
+  };
+  const end = (event: TouchEvent) => {
+    // Ghostty 0.4.0 otherwise focuses unconditionally, even after cancellation.
+    event.preventDefault();
+    event.stopPropagation();
+    const tap = visible() && gesture && !gesture.moved && event.touches.length === 0;
+    cancel();
+    if (tap) term.focus();
+  };
+  const canceled = (event: TouchEvent) => {
+    event.stopPropagation();
+    cancel();
+  };
+  element.addEventListener("touchstart", start, { passive: true, capture: true });
+  element.addEventListener("touchmove", move, { passive: false, capture: true });
+  element.addEventListener("touchend", end, { passive: false, capture: true });
+  element.addEventListener("touchcancel", canceled, { capture: true });
+  return {
+    cancel,
+    dispose() {
+      disposed = true;
+      cancel();
+      element.removeEventListener("touchstart", start, true);
+      element.removeEventListener("touchmove", move, true);
+      element.removeEventListener("touchend", end, true);
+      element.removeEventListener("touchcancel", canceled, true);
+    },
+  };
 }

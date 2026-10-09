@@ -11,6 +11,7 @@ export interface WebAssets {
   javascript: string;
   css: string;
   font: Uint8Array<ArrayBuffer>;
+  wasm: Uint8Array<ArrayBuffer>;
 }
 export type WebRouteResult = Response | "upgraded" | undefined;
 
@@ -162,7 +163,7 @@ export function startWebServer(options: WebServerOptions) {
     "Referrer-Policy": "no-referrer",
     "X-Content-Type-Options": "nosniff",
     "Content-Security-Policy":
-      "default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self'; font-src 'self'; img-src 'self' data:; frame-ancestors 'none'; base-uri 'none'; form-action 'none'",
+      "default-src 'none'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; connect-src 'self'; font-src 'self'; img-src 'self' data:; frame-ancestors 'none'; base-uri 'none'; form-action 'none'",
   };
   const response = (body: BodyInit, type: string, status = 200) =>
     new Response(body, { status, headers: { ...headers, "Content-Type": type } });
@@ -298,6 +299,7 @@ export function startWebServer(options: WebServerOptions) {
       if (url.pathname === "/terminal.js") return response(options.assets.javascript, "text/javascript; charset=utf-8");
       if (url.pathname === "/fonts/JetBrainsMonoNerdFontMono-Regular.woff2")
         return response(options.assets.font, "font/woff2");
+      if (url.pathname === "/ghostty-vt.wasm") return response(options.assets.wasm, "application/wasm");
       if (url.pathname === "/terminal.css") return response(options.assets.css, "text/css; charset=utf-8");
       return response("Not found", "text/plain", 404);
     },

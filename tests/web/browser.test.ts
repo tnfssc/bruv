@@ -1,9 +1,10 @@
 import { expect, test } from "bun:test";
+import { CellFlags } from "ghostty-web";
 import { readFileSync } from "node:fs";
 import { createContext, runInContext } from "node:vm";
 
 // Exercise the browser entry point without a server or devices. The parent
-// integration checks use real xterm, sockets and two browser windows.
+// integration checks use the real renderer, sockets and two browser windows.
 const source = new Bun.Transpiler({ loader: "ts" }).transformSync(
   readFileSync(new URL("../../src/web/browser.ts", import.meta.url), "utf8").replace(/^import .*;\n/gm, ""),
 );
@@ -12,14 +13,27 @@ const touchSource = new Bun.Transpiler({ loader: "ts" }).transformSync(
     .replace(/^import .*;\n/gm, "")
     .replace("export function", "function"),
 );
+const accessibilitySource = new Bun.Transpiler({ loader: "ts" }).transformSync(
+  readFileSync(new URL("../../src/web/browser-terminal-accessibility.ts", import.meta.url), "utf8")
+    .replace(/^import .*;\n/gm, "")
+    .replaceAll("export function", "function"),
+);
+
 class Element {
   hidden = false;
   inert = false;
   disabled = false;
   textContent = "";
+  set innerHTML(html: string) {
+    this.replaceChildren();
+    for (const match of html.matchAll(/<([a-z]+)(?: class="([^"]+)")?>/g)) {
+      this.append(Object.assign(new Element(), { tagName: match[1].toUpperCase(), className: match[2] ?? "" }));
+    }
+  }
   children: Element[] = [];
   attributes: Record<string, string> = {};
-  listeners = new Map<string, (event: any) => any>();
+  listeners = new Map<string, { listener: (event: any) => any; capture: boolean }[]>();
+  tagName = "DIV";
   clientWidth = 1000;
   clientHeight = 600;
   scrollLeft = 0;
@@ -66,14 +80,56 @@ class Element {
   replaceChildren() {
     this.children = [];
   }
-  addEventListener(type: string, listener: (event: any) => any) {
-    this.listeners.set(type, listener);
+  addEventListener(type: string, listener: (event: any) => any, options?: boolean | { capture?: boolean }) {
+    const capture = typeof options === "boolean" ? options : !!options?.capture;
+    this.listeners.set(type, [...(this.listeners.get(type) ?? []), { listener, capture }]);
+  }
+  removeEventListener(type: string, listener: (event: any) => any) {
+    const remaining = (this.listeners.get(type) ?? []).filter((entry) => entry.listener !== listener);
+    if (remaining.length) this.listeners.set(type, remaining);
+    else this.listeners.delete(type);
   }
   fire(type: string, event: any = {}) {
-    return this.listeners.get(type)?.(event);
+    let stopped = false;
+    event.stopImmediatePropagation = () => {
+      stopped = true;
+    };
+    event.stopPropagation = () => {
+      stopped = true;
+    };
+    event.preventDefault ??= () => {};
+    let result: any;
+    if (type === "touchend") {
+      const ancestors: Element[] = [];
+      for (let parent = this.parentElement; parent; parent = parent.parentElement) ancestors.unshift(parent);
+      for (const ancestor of ancestors) {
+        for (const { listener, capture } of ancestor.listeners.get(type) ?? []) {
+          // The pane capture guard runs before Ghostty's canvas target listener.
+          if (capture) listener(event);
+          if (stopped) return result;
+        }
+      }
+    }
+    for (const { listener } of [...(this.listeners.get(type) ?? [])].sort(
+      (a, b) => Number(b.capture) - Number(a.capture),
+    )) {
+      result = listener(event);
+      if (stopped) break;
+    }
+    return result;
   }
-  querySelector() {
-    return new Element();
+  querySelector(selector: string): Element | null {
+    for (const child of this.children) {
+      if (
+        selector.startsWith(".")
+          ? child.classList.contains(selector.slice(1))
+          : child.tagName === selector.toUpperCase()
+      )
+        return child;
+      const nested = child.querySelector(selector);
+      if (nested) return nested;
+    }
+    return null;
   }
   querySelectorAll() {
     return this.children;
@@ -103,18 +159,34 @@ class Element {
     this.parentElement = null;
   }
 }
-async function browser(device?: (options: any) => Promise<{ close(): Promise<void> }>, hash = "#token=secret") {
+async function browser(
+  device?: (options: any) => Promise<{ close(): Promise<void> }>,
+  hash = "#token=secret",
+  loading: { fonts?: Promise<void>; wasm?: Promise<void> } = {},
+) {
   const nodes = new Map<string, Element>();
   const node = (id: string) => {
     if (!nodes.has(id)) {
       const element = new Element();
       element.id = id;
+      if (id === "empty-terminal") {
+        for (const tagName of ["H1", "P"]) element.append(Object.assign(new Element(), { tagName }));
+      }
       element.onFocus = () => {
         document.activeElement = element;
       };
       nodes.set(id, element);
     }
     return nodes.get(id)!;
+  };
+  const startup: string[] = [];
+  const ghostty = {};
+  const Ghostty = {
+    async load(path: string) {
+      startup.push("wasm:" + path);
+      await loading.wasm;
+      return ghostty;
+    },
   };
   const terminals: any[] = [];
   class Terminal {
@@ -123,44 +195,118 @@ async function browser(device?: (options: any) => Promise<{ close(): Promise<voi
     disposed = false;
     writes: Uint8Array[] = [];
     options: any;
+    element?: Element;
+    renderListeners = new Set<(event: any) => void>();
+    scrollListeners = new Set<(event: any) => void>();
+    resizeListeners = new Set<(event: any) => void>();
     constructor(options: any) {
       this.options = options;
       terminals.push(this);
     }
-    loadAddon() {}
-    buffer = { active: { type: "normal" } };
+    loadAddon(addon: any) {
+      addon.activate?.(this);
+    }
+    screen: string[] = [];
+    buffer = {
+      active: {
+        type: "normal",
+        viewportY: 0,
+        getLine: (row: number) =>
+          this.screen[row] === undefined
+            ? undefined
+            : {
+                translateToString: (trimRight: boolean) => (trimRight ? this.screen[row].trimEnd() : this.screen[row]),
+              },
+      },
+    };
+    wasmTerm = {
+      getScrollbackLength: () => Math.max(0, this.screen.length - this.rows),
+      getScrollbackLine: (row: number) => this.cells(this.screen[row]),
+      getLine: (row: number) => this.cells(this.screen[Math.max(0, this.screen.length - this.rows) + row]),
+    };
+    cells(line?: string) {
+      return line === undefined
+        ? null
+        : Array.from(line, (char) => ({ codepoint: char.codePointAt(0), width: 1, flags: 0, grapheme_len: 0 }));
+    }
+    getViewportY() {
+      return Math.max(0, this.screen.length - this.rows - this.buffer.active.viewportY);
+    }
+    setScreen(lines: string[], viewportY = 0) {
+      this.screen = lines;
+      this.buffer.active.viewportY = viewportY;
+    }
+    render() {
+      for (const listener of this.renderListeners) listener({ start: 0, end: this.rows - 1 });
+    }
+    onRender(callback: (event: any) => void) {
+      this.renderListeners.add(callback);
+      return { dispose: () => this.renderListeners.delete(callback) };
+    }
+    onScroll(callback: (event: any) => void) {
+      this.scrollListeners.add(callback);
+      return { dispose: () => this.scrollListeners.delete(callback) };
+    }
+    onResize(callback: (event: any) => void) {
+      this.resizeListeners.add(callback);
+      return { dispose: () => this.resizeListeners.delete(callback) };
+    }
     lines: number[] = [];
     wheels: any[] = [];
     data = (_data: string) => {};
+    binary = (_data: string) => {};
     scrollLines(lines: number) {
       this.lines.push(lines);
+      for (const listener of this.scrollListeners) listener(this.buffer.active.viewportY);
     }
     open(element: Element) {
-      const screen = Object.assign(new Element(), {
+      this.element = element;
+      const canvas = Object.assign(new Element(), {
+        tagName: "CANVAS",
         dispatchEvent: (event: any) => {
           this.wheels.push(event);
           this.data("\x1b[A");
         },
       });
-      element.querySelector = () => screen;
+      canvas.addEventListener("touchend", () => this.focus());
+      element.append(canvas);
     }
     focused = 0;
     focus() {
       this.focused++;
     }
+    blur() {}
     dispose() {
       this.disposed = true;
+      this.renderListeners.clear();
+      this.scrollListeners.clear();
+      this.resizeListeners.clear();
     }
     onData(callback: (data: string) => void) {
       this.data = callback;
+      return {
+        dispose: () => {
+          this.data = () => {};
+        },
+      };
     }
-    onBinary() {}
+    onBinary(callback: (data: string) => void) {
+      this.binary = callback;
+      return {
+        dispose: () => {
+          this.binary = () => {};
+        },
+      };
+    }
     resize(cols: number, rows: number) {
       this.cols = cols;
       this.rows = rows;
+      for (const listener of this.resizeListeners) listener({ cols, rows });
     }
-    write(bytes: Uint8Array) {
+    write(bytes: Uint8Array, callback?: () => void) {
       this.writes.push(bytes);
+      callback?.();
+      this.render();
     }
   }
   let dimensions = { cols: 120, rows: 40 };
@@ -197,10 +343,18 @@ async function browser(device?: (options: any) => Promise<{ close(): Promise<voi
     hidden: false,
     body: new Element(),
     activeElement: null as Element | null,
-    fonts: { load: async () => [] },
+    fonts: {
+      load: async () => {
+        startup.push("fonts");
+        await loading.fonts;
+        startup.push("fonts-ready");
+        return [];
+      },
+    },
     querySelector: (selector: string) => node(selector.slice(1)),
-    createElement: () => {
+    createElement: (tag: string) => {
       const element = new Element();
+      element.tagName = tag.toUpperCase();
       element.onFocus = () => {
         document.activeElement = element;
       };
@@ -213,7 +367,8 @@ async function browser(device?: (options: any) => Promise<{ close(): Promise<voi
     },
   });
   const window = new Element();
-  const frames: (() => void)[] = [];
+  const frames = new Map<number, () => void>();
+  let frameId = 0;
   const timers: (() => void)[] = [];
   let resize = () => {};
   class ResizeObserver {
@@ -232,6 +387,8 @@ async function browser(device?: (options: any) => Promise<{ close(): Promise<voi
   let audioOptions: any;
   const context = createContext({
     Terminal,
+    Ghostty,
+    CellFlags,
     WheelEvent: class {
       constructor(
         public type: string,
@@ -259,7 +416,12 @@ async function browser(device?: (options: any) => Promise<{ close(): Promise<voi
     Error,
     atob,
     btoa,
-    requestAnimationFrame: (callback: () => void) => frames.push(callback),
+    requestAnimationFrame: (callback: () => void) => {
+      const id = ++frameId;
+      frames.set(id, callback);
+      return id;
+    },
+    cancelAnimationFrame: (id: number) => frames.delete(id),
     setTimeout: (callback: () => void) => timers.push(callback),
     clearTimeout() {},
     fetch: (path: string, options: any) =>
@@ -282,12 +444,16 @@ async function browser(device?: (options: any) => Promise<{ close(): Promise<voi
       };
     },
   });
-  runInContext(touchSource + "\n" + source, context);
+  runInContext(touchSource + "\n" + accessibilitySource + "\n" + source, context);
   await tick();
   const events = () => sockets.filter((socket) => socket.url.endsWith("/api/events")).at(-1)!;
   const terminal = (id: string) => sockets.filter((socket) => socket.url.includes("tab=" + id + "&")).at(-1)!;
   const flushFrames = () => {
-    while (frames.length) frames.shift()!();
+    while (frames.size) {
+      const [id, callback] = frames.entries().next().value!;
+      frames.delete(id);
+      callback();
+    }
   };
   return {
     node,
@@ -296,6 +462,8 @@ async function browser(device?: (options: any) => Promise<{ close(): Promise<voi
     sockets,
     requests,
     terminals,
+    startup,
+    ghostty,
     timers,
     events,
     terminal,
@@ -340,6 +508,47 @@ const snapshot = (revision: number, voice: any = null) => ({
 const tick = async () => {
   for (let i = 0; i < 12; i++) await Promise.resolve();
 };
+
+test("fonts finish before Ghostty loads once, then every pane uses that instance", async () => {
+  let finishFonts!: () => void;
+  let finishWasm!: () => void;
+  const b = await browser(undefined, "#token=secret", {
+    fonts: new Promise<void>((resolve) => {
+      finishFonts = resolve;
+    }),
+    wasm: new Promise<void>((resolve) => {
+      finishWasm = resolve;
+    }),
+  });
+  expect(b.startup).toEqual(["fonts"]);
+  expect(b.sockets).toEqual([]);
+  finishFonts();
+  await tick();
+  expect(b.startup).toEqual(["fonts", "fonts-ready", "wasm:/ghostty-vt.wasm"]);
+  expect(b.sockets).toEqual([]);
+  finishWasm();
+  await tick();
+  b.snapshot(snapshot(1));
+  expect(b.terminals).toHaveLength(3);
+  expect(b.terminals.every((term) => term.options.ghostty === b.ghostty)).toBe(true);
+  b.snapshot(snapshot(2));
+  expect(b.startup.filter((step) => step.startsWith("wasm:"))).toHaveLength(1);
+});
+
+test("text and binary input stay with their pane socket", async () => {
+  const b = await browser();
+  b.snapshot(snapshot(1));
+  b.ready("a");
+  b.ready("b");
+  b.terminals[0].data("a-input");
+  b.terminals[1].binary("\x1b[M\xff\x80\x00");
+  expect(b.terminal("a").sent.filter((message) => message.type === "input")).toEqual([
+    { type: "input", data: "a-input" },
+  ]);
+  expect(b.terminal("b").sent.filter((message) => message.type === "input")).toEqual([
+    { type: "input", data: btoa("\x1b[M\xff\x80\x00"), encoding: "base64" },
+  ]);
+});
 
 test("events reconcile monotonically without remote focus or duplicate deletes", async () => {
   const b = await browser();
@@ -828,12 +1037,68 @@ test("replay loss freezes output without marking the live CLI ended", async () =
   expect(b.node("lost-new-tab").hidden).toBe(false);
 });
 
-test("only the visible xterm enables screen-reader output", async () => {
+test("only the active pane exposes rendered viewport text", async () => {
   const b = await browser();
   b.snapshot(snapshot(1));
-  expect(b.terminals.map((term) => term.options.screenReaderMode)).toEqual([true, false, false]);
+  b.ready("a");
+  b.ready("b");
+  const pane = (id: string) => b.document.getElementById("terminal-" + id)!;
+  const output = (id: string) => pane(id).querySelector(".terminal-accessible-output")!;
+  const exposed = () =>
+    ["a", "b", "c"].filter(
+      (id) =>
+        !pane(id).hidden && !pane(id).inert && !output(id).hidden && output(id).attributes["aria-hidden"] !== "true",
+    );
+  expect(["a", "b", "c"].map(output).every(Boolean)).toBe(true);
+  expect(b.terminals.every((term) => term.options.screenReaderMode === undefined)).toBe(true);
+  b.terminals[0].setScreen(["outside viewport", "rendered A   ", "next row", "outside viewport"], 1);
+  b.terminal("a").message({ type: "size", cols: 70, rows: 2 });
+  b.terminal("b").message({ type: "size", cols: 70, rows: 2 });
+  b.flushFrames();
+  b.terminal("a").message({ type: "output", seq: 1, data: btoa("\x1b[2Jraw input is not the screen") });
+  b.flushFrames();
+  expect(output("a").textContent).toBe("rendered A\nnext row");
+  expect(exposed()).toEqual(["a"]);
+  expect(output("a").attributes.role).toBe("region");
+  expect(output("a").attributes["aria-label"]).toBe("Terminal output");
+  expect(output("b").textContent).toBe("");
+  b.terminals[1].setScreen(["rendered B"]);
+  b.terminals[1].render();
+  b.flushFrames();
+  expect(exposed()).toEqual(["a"]);
   b.node("tab-list").children[1].children[0].click();
-  expect(b.terminals.map((term) => term.options.screenReaderMode)).toEqual([false, true, false]);
+  b.flushFrames();
+  expect(exposed()).toEqual(["b"]);
+  expect(output("a").textContent).toBe("");
+  expect(output("b").textContent.trimEnd()).toBe("rendered B");
+  b.terminals[1].setScreen(["old line", "scrolled B", "last B"], 1);
+  b.terminals[1].scrollLines(1);
+  b.flushFrames();
+  expect(output("b").textContent.trimEnd()).toBe("scrolled B\nlast B");
+  b.document.hidden = true;
+  b.document.fire("visibilitychange");
+  expect(exposed()).toEqual([]);
+  b.terminals[1].setScreen(["resumed B"]);
+  b.document.hidden = false;
+  b.document.fire("visibilitychange");
+  b.flushFrames();
+  expect(exposed()).toEqual(["b"]);
+  expect(output("b").textContent.trimEnd()).toBe("resumed B");
+  const removedOutput = output("b");
+  const removedPane = pane("b");
+  const lastText = removedOutput.textContent;
+  b.terminals[1].setScreen(["queued output"]);
+  b.terminals[1].scrollLines(1);
+  const next = snapshot(2);
+  next.workspaces[0].tabs = [{ id: "a", name: "A" }];
+  b.snapshot(next);
+  expect(removedPane.isConnected).toBe(false);
+  expect(b.terminals[1].disposed).toBe(true);
+  b.terminals[1].setScreen(["late render"]);
+  b.terminals[1].render();
+  b.flushFrames();
+  expect(removedOutput.textContent).toBe(lastText);
+  expect(b.terminals[1].renderListeners.size).toBe(0);
 });
 
 test("pending Cancel notifies the matching owner and releases a late device", async () => {
@@ -937,7 +1202,7 @@ test("a failed rename keeps the editor, draft and focus for retry", async () => 
 });
 
 const touch = (y: number) => ({
-  touches: [{ clientX: 20, clientY: y }],
+  touches: [{ identifier: 1, clientX: 20, clientY: y }],
   preventDefault() {},
 });
 for (const type of ["alternate", "normal"]) {
@@ -984,6 +1249,46 @@ for (const type of ["alternate", "normal"]) {
   });
 }
 
+test("touch end focuses only a fresh tap, never a held gesture after hide or drag", async () => {
+  const b = await browser();
+  b.snapshot(snapshot(1));
+  b.ready("a");
+  b.ready("b");
+  const pane = b.document.getElementById("terminal-a")!;
+  const canvas = pane.querySelector("canvas")!;
+  const term = b.terminals[0];
+  const end = () =>
+    canvas.fire("touchend", { touches: [], changedTouches: [{ identifier: 1, clientX: 20, clientY: 100 }] });
+  let focused = term.focused;
+  pane.fire("touchstart", touch(100));
+  end();
+  expect(term.focused).toBe(focused + 1);
+  pane.fire("touchstart", touch(100));
+  pane.fire("touchmove", touch(140));
+  focused = term.focused;
+  end();
+  expect(term.focused).toBe(focused);
+  pane.fire("touchstart", touch(100));
+  b.node("tab-list").children[1].children[0].click();
+  b.node("tab-list").children[0].children[0].click();
+  b.flushFrames();
+  focused = term.focused;
+  end();
+  expect(term.focused).toBe(focused);
+  pane.fire("touchstart", touch(100));
+  b.document.hidden = true;
+  b.document.fire("visibilitychange");
+  b.document.hidden = false;
+  b.document.fire("visibilitychange");
+  b.flushFrames();
+  focused = term.focused;
+  end();
+  expect(term.focused).toBe(focused);
+  pane.fire("touchstart", touch(100));
+  end();
+  expect(term.focused).toBe(focused + 1);
+});
+
 test("document hide and pane disposal cancel held touches", async () => {
   const b = await browser();
   b.snapshot(snapshot(1));
@@ -1004,6 +1309,10 @@ test("document hide and pane disposal cancel held touches", async () => {
   b.snapshot(next);
   expect(term.disposed).toBe(true);
   expect(pane.isConnected).toBe(false);
+  for (const event of ["touchstart", "touchmove", "touchend", "touchcancel"])
+    expect(pane.listeners.has(event)).toBe(false);
+  expect(term.scrollListeners.size).toBe(0);
+  expect(term.resizeListeners.size).toBe(0);
   // Reattach the old node to prove disposal cleared the gesture, not just the guard.
   b.node("terminal").append(pane);
   pane.hidden = false;
@@ -1023,7 +1332,7 @@ test("removing the last workspace closes its drawer and focuses folder entry", a
   b.snapshot(next);
   expect(b.document.body.attributes["data-drawer"]).toBe("closed");
   expect(b.node("drawer-backdrop").hidden).toBe(true);
-  expect(b.document.querySelector("main").inert).toBe(false);
+  expect(b.document.querySelector("main")!.inert).toBe(false);
   expect(b.document.activeElement).toBe(b.node("folder-input"));
 });
 

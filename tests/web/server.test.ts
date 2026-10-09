@@ -8,6 +8,7 @@ const assets = {
   javascript: "console.log('terminal')",
   css: "body{}",
   font: new Uint8Array([0x77, 0x4f, 0x46, 0x32]),
+  wasm: new Uint8Array([0x00, 0x61, 0x73, 0x6d, 0x01, 0x00, 0x00, 0x00]),
 };
 const fixture = [
   process.execPath,
@@ -82,6 +83,33 @@ test("loopback, token, Origin and Host guard terminal and extension routes", asy
   expect((await fetch(app.origin + "/api/terminal", { headers: auth })).status).toBe(426);
   expect(app.terminal.pid).toBeUndefined();
   expect(() => startWebServer({ command: fixture, assets, hostname: "0.0.0.0" })).toThrow("loopback");
+});
+
+test("WASM is GET-only, exact-Host guarded and permits only WASM compilation", async () => {
+  const app = start();
+  const url = app.origin + "/ghostty-vt.wasm";
+  const response = await fetch(url);
+  expect(response.status).toBe(200);
+  expect(response.headers.get("content-type")).toBe("application/wasm");
+  expect(new Uint8Array(await response.arrayBuffer())).toEqual(assets.wasm);
+  const policy = response.headers.get("content-security-policy")!;
+  expect(
+    policy
+      .split(";")
+      .find((rule) => rule.trim().startsWith("script-src"))
+      ?.trim(),
+  ).toBe("script-src 'self' 'wasm-unsafe-eval'");
+  expect(policy).not.toContain("'unsafe-eval'");
+  expect(policy).not.toContain("https:");
+  for (const method of ["HEAD", "POST", "PUT", "DELETE", "OPTIONS"]) {
+    expect((await fetch(url, { method })).status).toBe(405);
+    expect((await fetch(url, { method, headers: { Host: "evil.example" } })).status).toBe(403);
+  }
+  for (const host of ["evil.example", "localhost:" + new URL(app.origin).port, "127.0.0.1"]) {
+    expect((await fetch(url, { headers: { Host: host } })).status).toBe(403);
+  }
+  expect((await fetch(url + "/extra")).status).toBe(404);
+  expect(app.terminal.pid).toBeUndefined();
 });
 
 test("real PTY input, resize, reconnect replay and honest exit", async () => {
@@ -293,4 +321,21 @@ test("font uses the same public static route and strict headers as CSS", async (
   expect(new Uint8Array(await response.arrayBuffer())).toEqual(assets.font);
   expect((await fetch(app.origin + path, { method: "POST" })).status).toBe(405);
   expect((await fetch(app.origin + path, { headers: { Host: "evil.invalid" } })).status).toBe(403);
+});
+
+// Legacy mouse coordinates are bytes, not UTF-8 text. Keep the existing wire path.
+test("base64 input reaches the raw PTY without UTF-8 conversion", async () => {
+  const app = start({
+    command: [
+      process.execPath,
+      "-e",
+      'process.stdin.setRawMode(true); console.log("RAW READY"); process.stdin.on("data", d => console.log("BYTES " + Buffer.from(d).toString("hex"))); setInterval(() => {}, 1000);',
+    ],
+  });
+  const peer = connect(app);
+  await until(() => peer.text().includes("RAW READY"));
+  const bytes = Buffer.from([0x1b, 0x5b, 0x4d, 0x20, 0x80, 0xff]);
+  peer.socket.send(JSON.stringify({ type: "input", data: bytes.toString("base64"), encoding: "base64" }));
+  await until(() => peer.text().includes("BYTES " + bytes.toString("hex")));
+  expect(peer.text()).toContain("BYTES 1b5b4d2080ff");
 });

@@ -1,3 +1,4 @@
+import { watchRenderer, paintedTerminal } from "./browser-renderer-proof.mjs";
 import assert from "node:assert/strict";
 import { mkdir, mkdtemp, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -5,7 +6,7 @@ import { join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 const { chromium } = await import(pathToFileURL(process.env.PLAYWRIGHT_CORE).href);
 const project = resolve(import.meta.dir, "../..");
-const proof = join(project, "artifacts/font");
+const proof = join(project, "artifacts/ghostty/font");
 const isolated = await mkdtemp(join(tmpdir(), "bruv-font-proof-"));
 await mkdir(proof, { recursive: true });
 const binary = join(isolated, "font-server");
@@ -52,6 +53,7 @@ try {
     ["phone", { width: 390, height: 680 }],
   ]) {
     const page = await browser.newPage({ viewport });
+    await watchRenderer(page);
     const failures = [],
       sent = [];
     let text = "",
@@ -77,7 +79,7 @@ try {
     await page.goto(url, { waitUntil: "domcontentloaded" });
     await until(() => fontRequested, "Font not requested");
     await page.waitForTimeout(300);
-    assert.equal(await page.locator(".xterm").count(), 0, "Terminal measured before font ready");
+    assert.equal(await page.locator(".terminal-pane canvas").count(), 0, "Terminal measured before font ready");
     release();
     await page.waitForFunction(() => document.querySelector("#status")?.textContent === "Connected");
     await until(() => sent.some((m) => m.type === "resize"), "No fitted resize");
@@ -91,15 +93,21 @@ try {
         ctx = canvas.getContext("2d");
       ctx.font = "14px " + family;
       const widths = [..."Mi0\uf07b\uf120\uf013\ue0b0"].map((c) => ctx.measureText(c).width);
-      const rows = document.querySelector(".terminal-pane:not([hidden]) .xterm-rows");
+      const screen = document.querySelector(".terminal-pane:not([hidden]) canvas");
+      const cells = [...window.terminalPaint.get(screen).values()];
+      const font = cells.find((c) => c.text.trim()).font;
+      ctx.font = font;
+      const ys = [...new Set(cells.map((c) => c.y))].sort((a, b) => a - b);
+      const cellHeight = Math.min(...ys.slice(1).map((y, i) => y - ys[i]));
       return {
         loaded: document.fonts.check("14px " + family),
         widths,
-        family: getComputedStyle(rows).fontFamily,
-        rowWidth: rows.getBoundingClientRect().width,
-        rowHeight: rows.children[0].getBoundingClientRect().height,
-        rows: rows.children.length,
-        text: rows.textContent,
+        family: font,
+        rowWidth: screen.getBoundingClientRect().width,
+        rowHeight: cellHeight,
+        rows: screen.getBoundingClientRect().height / cellHeight,
+        text: document.querySelector(".terminal-pane:not([hidden]) .terminal-accessible-output").textContent,
+        paintedGlyphs: [...new Set(cells.map((c) => c.text))],
         overflow: document.documentElement.scrollWidth > innerWidth,
         fontLoads: performance.getEntriesByType("resource").filter((e) => e.name.endsWith(".woff2")).length,
         ink: [..."\uf07b\uf120\uf013\ue0b0"].map((c) => {
@@ -114,10 +122,12 @@ try {
     assert(geometry.ink.every((w) => w > 0));
     assert(!geometry.overflow);
     assert.equal(geometry.rows, size.rows);
-    assert(Math.abs(geometry.rowWidth / size.cols - geometry.widths[0]) < 0.02);
+    assert(Math.abs(geometry.rowWidth / size.cols - Math.ceil(geometry.widths[0])) < 0.02);
     assert(geometry.text.includes("\uf07b"));
+    assert(geometry.paintedGlyphs.includes("\uf07b"), "Nerd glyph was not painted");
+    const paint = await paintedTerminal(page);
     assert.equal(geometry.fontLoads, 1);
-    await page.locator(".terminal-pane:not([hidden]) .xterm-helper-textarea").focus();
+    await page.locator(".terminal-pane:not([hidden]) textarea").focus();
     text = "";
     await page.keyboard.type("k");
     await until(() => text.includes("INPUT k"), "Keyboard input missing");
@@ -128,7 +138,7 @@ try {
     await page.waitForTimeout(250);
     assert.deepEqual(sent.filter((m) => m.type === "resize").at(-1), size);
     assert.deepEqual(failures, []);
-    results.push({ name, size, geometry });
+    results.push({ name, size, geometry, paint: { ink: paint.ink, width: paint.width, height: paint.height } });
     await page.close();
   }
   await writeFile(join(proof, "measurements.json"), JSON.stringify(results, null, 2));

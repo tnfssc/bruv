@@ -72,8 +72,10 @@ async function checkAlignment(label) {
       remove: innerWidth > 700 || drawer ? rect(".workspace-remove") : null,
       add: innerWidth > 700 || drawer ? rect("#add-workspace") : null,
       terminal: rect("#terminal"),
-      screen: rect(".terminal-pane:not([hidden]) .xterm-screen"),
-      rows: document.querySelector(".terminal-pane:not([hidden]) .xterm-rows").childElementCount,
+      screen: rect(".terminal-pane:not([hidden]) canvas"),
+      outputLines: document
+        .querySelector(".terminal-pane:not([hidden]) .terminal-accessible-output")
+        .textContent.split("\n").length,
     };
   });
   const minimum = metrics.phone ? 44 : 32;
@@ -128,9 +130,9 @@ async function checkSpacing(label) {
       logoRatio:
         document.querySelector(".brand svg").viewBox.baseVal.width /
         document.querySelector(".brand svg").viewBox.baseVal.height,
-      controlsUseLibrary: [
-        ...document.querySelectorAll("button:not(#drawer-backdrop), input:not(.xterm-helper-textarea)"),
-      ].every((el) => el.classList.contains(el.tagName === "BUTTON" ? "btn" : "input")),
+      controlsUseLibrary: [...document.querySelectorAll("button:not(#drawer-backdrop), input")].every((el) =>
+        el.classList.contains(el.tagName === "BUTTON" ? "btn" : "input"),
+      ),
     };
   });
   assert.deepEqual(spacing.scale, ["4px", "8px", "12px", "16px", "24px", "32px"]);
@@ -198,9 +200,9 @@ async function connected() {
 // Feature guidance: wisdom/web/workspace-design.md and wisdom/web/live-command-microphone.md.
 // These probes need the integrated compiled frontend; syntax checks are not browser proof.
 // UI proof uses the compiled app and real PTYs. Inspect the saved frames too.
-// Preserve caret styling: Playwright caret hiding corrupts focused xterm DOM captures in Chromium.
+// Keep the input caret visible in focused terminal captures.
 const screenshot = (options) => page.screenshot({ caret: "initial", ...options });
-const proof = join(project, "artifacts/workspace-design");
+const proof = join(project, "artifacts/ghostty/workspace-design");
 await mkdir(proof, { recursive: true });
 try {
   await until(() => output.includes("#token="), "No server URL");
@@ -367,7 +369,7 @@ try {
   await page.getByRole("button", { name: "Open workspace bruv · " + firstCwd, exact: true }).click();
   await page.getByRole("tab", { name: "Select tab Terminal", exact: true }).click();
   await readyToType();
-  await page.locator("#terminal .xterm-helper-textarea:visible").focus();
+  await page.locator("#terminal textarea:visible").focus();
   await page.keyboard.type("!uname -s");
   await page.keyboard.press("Enter");
   await page.waitForFunction(() => document.querySelector("#terminal")?.textContent?.includes("Linux"));
@@ -459,7 +461,7 @@ try {
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
   const terminalHeight = await page.locator("#terminal").evaluate((el) => el.clientHeight);
   assert.equal(terminalHeight, 616, "Phone: 48px header and two 8px terminal gutters");
-  await page.locator("#terminal .xterm-helper-textarea:visible").focus();
+  await page.locator("#terminal textarea:visible").focus();
   await checkAlignment("phone");
   await screenshot({ path: join(proof, "populated-phone.png") });
   await page.setViewportSize({ width: 390, height: 780 });
@@ -552,7 +554,7 @@ try {
   // Shared PTY size returns over the socket after the viewport changes.
   await page.waitForFunction(() => document.documentElement.scrollWidth <= innerWidth);
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
-  await page.locator("#terminal .xterm-helper-textarea:visible").focus();
+  await page.locator("#terminal textarea:visible").focus();
   await page.waitForTimeout(300);
   await screenshot({ path: join(proof, "phone-long-tab.png") });
   // Close controls are siblings of tabs. An inactive close never selects it.
@@ -606,7 +608,7 @@ try {
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
   assert((await page.locator("#new-tab").boundingBox()).x < 390, "New tab stays in reach");
   await connected();
-  await page.locator("#terminal .xterm-helper-textarea:visible").focus();
+  await page.locator("#terminal textarea:visible").focus();
   await page.keyboard.type("!uname -s");
   await page.keyboard.press("Enter");
   await page.waitForFunction(() =>
@@ -615,7 +617,7 @@ try {
   await page.waitForTimeout(500);
   await selectedTab().focus();
   await screenshot({ path: join(proof, "tabs-phone-overflow-active.png") });
-  await page.locator("#terminal .xterm-helper-textarea:visible").focus();
+  await page.locator("#terminal textarea:visible").focus();
   await page.waitForTimeout(300);
   await screenshot({ path: join(proof, "tabs-phone-overflow-terminal.png") });
   await selectedTab().focus();
@@ -626,6 +628,8 @@ try {
     return shell.left >= list.left - 1 && shell.right <= list.right + 1;
   });
   const activeBefore = await selectedTab().getAttribute("id");
+  // Home queues a reveal. Let that action paint before testing a later manual scroll.
+  await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
   const manualScroll = await page.locator("#tab-list").evaluate((el) => {
     el.scrollLeft = el.scrollWidth;
     return el.scrollLeft;
@@ -668,7 +672,11 @@ try {
     async () => !(await api()).workspaces[0].tabs.some((t) => t.id === target.id),
     "Captured close did not finish",
   );
-  await page.waitForFunction(() => document.activeElement?.classList.contains("xterm-helper-textarea"));
+  await page.waitForFunction(() => {
+    const pane = document.querySelector(".terminal-pane:not([hidden])");
+    const focused = document.activeElement;
+    return focused === pane?.querySelector(".terminal-renderer") || focused === pane?.querySelector("textarea");
+  });
   assert.equal(await selectedTab().getAttribute("id"), activeBefore, "Confirmed inactive close leaves selection alone");
   assert.equal((await api()).workspaces[0].tabs.length, 7);
   const firstClose = page.locator('[id="tab-close-' + many[0].id + '"]');
@@ -686,7 +694,7 @@ try {
     const focused = document.activeElement;
     const panel = focused?.closest('[role="tabpanel"]');
     return (
-      focused?.classList.contains("xterm-helper-textarea") &&
+      (focused?.matches('.terminal-renderer[role="textbox"]') || focused?.tagName === "TEXTAREA") &&
       panel?.getAttribute("aria-labelledby") === document.querySelector('[role="tab"][aria-selected="true"]')?.id
     );
   });

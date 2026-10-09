@@ -1,12 +1,16 @@
 import { describe, expect, test } from "bun:test";
-import { mkdir, mkdtemp, rm } from "node:fs/promises";
-import { tmpdir } from "node:os";
+import { cp, mkdir, mkdtemp, rm } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { generateThirdPartyNotices } from "../../scripts/dependencies/generate-third-party-notices";
 import { selectReleaseNotes } from "../../scripts/release/select-release-notes";
 import { validateReleaseTag } from "../../scripts/release/validate-release-tag";
 
 const root = resolve(import.meta.dir, "../..");
+async function scratchDirectory(prefix: string): Promise<string> {
+  await mkdir(join(root, ".tmp"), { recursive: true });
+  return mkdtemp(join(root, ".tmp", prefix));
+}
+
 const read = (path: string) => Bun.file(resolve(root, path)).text();
 
 type WorkflowStep = {
@@ -59,6 +63,9 @@ async function writeNoticeFixture(
   );
   await Bun.write(join(directory, "licenses/third-party/pi/LICENSE"), "Pi license\n");
   await Bun.write(join(directory, "licenses/third-party/bun/LICENSE.md"), "Bun license\n");
+  for (const name of ["README.md", "OFL.txt", "NERD-FONTS-LICENSE", "UPSTREAM-README.md", "GLYPH-NOTICES.txt"]) {
+    await Bun.write(join(directory, "licenses/third-party/jetbrains-mono-nerd-font", name), "Font license\n");
+  }
   for (const [name, fixture] of Object.entries(packages)) {
     const packageDirectory = join(directory, "node_modules", name);
     await mkdir(packageDirectory, { recursive: true });
@@ -354,7 +361,7 @@ describe("release automation", () => {
     expect(implementation.indexOf("scripts/release/select-release-notes.ts")).toBeLessThan(
       implementation.indexOf('"create",'),
     );
-    const directory = await mkdtemp(join(tmpdir(), "bruv-release-notes-"));
+    const directory = await scratchDirectory("bruv-release-notes-");
     try {
       await mkdir(join(directory, "docs/releases"), { recursive: true });
       await Bun.write(join(directory, "docs/releases/release-v9.8.7.md"), "current release\n");
@@ -385,7 +392,7 @@ describe("release automation", () => {
   });
 
   test("generated attribution bundle contains full Pi and Bun license notices", async () => {
-    const directory = await mkdtemp(join(tmpdir(), "bruv-notices-"));
+    const directory = await scratchDirectory("bruv-notices-");
     const output = join(directory, "THIRD_PARTY_LICENSES.txt");
     try {
       const result = Bun.spawnSync({
@@ -406,6 +413,13 @@ describe("release automation", () => {
       expect(notices).toContain("Permission is hereby granted, free of charge");
       expect(notices).toContain("BUN RUNTIME UPSTREAM LICENSING");
       expect(notices).toContain("JavaScriptCore");
+      expect(notices).toContain("ghostty-web@0.4.0");
+      expect(notices).toContain("BROWSER TERMINAL WASM (ghostty-web 0.4.0)");
+      expect(notices).toContain("Copyright (c) 2025 Coder");
+      expect(notices).toContain("Copyright (c) 2024 Mitchell Hashimoto, Ghostty contributors");
+      expect(notices).toContain("Copyright (c) 2025 Jacob Sandlund");
+      expect(notices).toContain("UNICODE LICENSE V3");
+      expect(notices).toContain("Copyright (c) Zig contributors");
       expect(notices).toContain("BROWSER TERMINAL FONT");
       expect(notices).toContain("JetBrainsMono Nerd Font Mono Regular");
       expect(notices).toContain("Copyright 2020 The JetBrains Mono Project Authors");
@@ -417,8 +431,40 @@ describe("release automation", () => {
     }
   });
 
+  test("WASM notices include all curated inputs and fail when the review is incomplete", async () => {
+    const directory = await scratchDirectory("ghostty-notices-");
+    try {
+      await writeNoticeFixture(directory, ["ghostty-web"], {
+        "ghostty-web": { manifest: { version: "0.4.0", license: "MIT" }, license: "Coder license\n" },
+      });
+      await cp(join(root, "licenses/third-party/ghostty-web"), join(directory, "licenses/third-party/ghostty-web"), {
+        recursive: true,
+      });
+      const output = join(directory, "notices.txt");
+      expect(await generateThirdPartyNotices(directory, output)).toBe(1);
+      const notices = await Bun.file(output).text();
+      expect(notices).toContain("Coder license");
+      for (const name of ["GHOSTTY-LICENSE", "UUCODE-LICENSE.md", "UNICODE-LICENSE", "ZIG-LICENSE"]) {
+        expect(notices).toContain(await read("licenses/third-party/ghostty-web/" + name));
+      }
+      expect(notices).toContain("LICENSE_Bjoern_Hoehrmann");
+      expect(notices).toContain("LICENSE_utf8proc.md");
+      await rm(join(directory, "licenses/third-party/ghostty-web/UNICODE-LICENSE"));
+      await expect(generateThirdPartyNotices(directory, output)).rejects.toThrow("ENOENT");
+      await Bun.write(
+        join(directory, "node_modules/ghostty-web/package.json"),
+        JSON.stringify({ name: "ghostty-web", version: "0.5.0", license: "MIT" }),
+      );
+      await expect(generateThirdPartyNotices(directory, output)).rejects.toThrow(
+        "ghostty-web@0.5.0 needs a WASM license review",
+      );
+    } finally {
+      await rm(directory, { recursive: true, force: true });
+    }
+  });
+
   test("attribution generation fails when a required transitive dependency is missing", async () => {
-    const directory = await mkdtemp(join(tmpdir(), "bruv-notices-required-"));
+    const directory = await scratchDirectory("bruv-notices-required-");
     try {
       await writeNoticeFixture(directory, ["present"], {
         present: { manifest: { dependencies: { missing: "1.0.0" } }, license: "MIT\n" },
@@ -436,7 +482,7 @@ describe("release automation", () => {
       ["@earendil-works/not-pi", "0.99.1"],
       ["@earendil-works/pi-ai", "0.85.1"],
     ]) {
-      const directory = await mkdtemp(join(tmpdir(), "bruv-notices-fallback-"));
+      const directory = await scratchDirectory("bruv-notices-fallback-");
       try {
         await writeNoticeFixture(directory, [name], { [name]: { manifest: { version } } });
         await expect(generateThirdPartyNotices(directory, join(directory, "notices.txt"))).rejects.toThrow(
@@ -449,7 +495,7 @@ describe("release automation", () => {
   });
 
   test("license input budget is checked before an oversized file is read", async () => {
-    const directory = await mkdtemp(join(tmpdir(), "bruv-notices-budget-"));
+    const directory = await scratchDirectory("bruv-notices-budget-");
     try {
       await writeNoticeFixture(directory, ["large-license"], {
         "large-license": { manifest: {}, license: "x".repeat(512) },

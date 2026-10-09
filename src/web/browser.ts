@@ -1,5 +1,5 @@
-import { FitAddon } from "@xterm/addon-fit";
-import { Terminal } from "@xterm/xterm";
+import { FitAddon, Ghostty, Terminal } from "ghostty-web";
+import { installTerminalAccessibility } from "./browser-terminal-accessibility";
 import { connectBrowserAudio } from "./browser-audio";
 import { installTerminalTouch } from "./browser-terminal-touch";
 
@@ -17,7 +17,8 @@ type Session = {
   term: Terminal;
   fit: FitAddon;
   element: HTMLElement;
-  cancelTouch: () => void;
+  touch: ReturnType<typeof installTerminalTouch>;
+  accessibility: ReturnType<typeof installTerminalAccessibility>;
   socket?: WebSocket;
   sequence: number;
   ready: boolean;
@@ -489,7 +490,7 @@ function render() {
       if (hidden) hideSession(session);
     }
     session.element.hidden = hidden;
-    session.term.options.screenReaderMode = !hidden;
+    session.accessibility.setActive(!hidden && !document.hidden);
   }
   empty.hidden = !!active && !accessRequired;
   syncStatus.hidden = !listLoaded;
@@ -553,7 +554,8 @@ function send(session: Session, message: object) {
   if (session.ready && session.socket?.readyState === WebSocket.OPEN) session.socket.send(JSON.stringify(message));
 }
 function hideSession(session: Session) {
-  session.cancelTouch();
+  session.touch.cancel();
+  session.term.blur();
   send(session, { type: "visibility", active: false });
   session.viewport = undefined;
 }
@@ -568,7 +570,7 @@ function resizeSelected() {
     container.clientHeight < 1
   )
     return;
-  // Measure our available space without resizing xterm. Only the server chooses
+  // Measure our available space without resizing locally. Only the server chooses
   // shared geometry; its size messages must never cause a resize reply.
   const dimensions = session.fit.proposeDimensions();
   if (!dimensions || !Number.isFinite(dimensions.cols) || !Number.isFinite(dimensions.rows)) return;
@@ -578,8 +580,13 @@ function resizeSelected() {
 }
 document.addEventListener("visibilitychange", () => {
   if (document.hidden) {
-    for (const session of sessions.values()) hideSession(session);
+    for (const session of sessions.values()) {
+      hideSession(session);
+      session.accessibility.setActive(false);
+    }
   } else {
+    const session = selected();
+    if (session) session.accessibility.setActive(!session.element.hidden);
     requestAnimationFrame(resizeSelected);
   }
 });
@@ -736,6 +743,7 @@ function connect(session: Session) {
         return;
       }
       session.term.write(Uint8Array.from(atob(message.data), (char) => char.charCodeAt(0)));
+      session.accessibility.refresh();
       session.sequence = message.seq;
     } else if (message.type === "exit") {
       session.loss = "exit";
@@ -790,6 +798,7 @@ function attach(tab: Tab) {
   element.setAttribute("aria-labelledby", "tab-" + tab.id);
   container.append(element);
   const term = new Terminal({
+    ghostty,
     cursorBlink: true,
     fontSize: 14,
     fontFamily: '"JetBrainsMono Nerd Font Mono", ui-monospace, monospace',
@@ -823,14 +832,20 @@ function attach(tab: Tab) {
   });
   const fit = new FitAddon();
   term.loadAddon(fit);
-  term.open(element);
-  const cancelTouch = installTerminalTouch(element, term);
+  // Ghostty makes its host editable. Keep the tabpanel and output region outside it.
+  const renderer = document.createElement("div");
+  renderer.className = "terminal-renderer";
+  element.append(renderer);
+  term.open(renderer);
+  const touch = installTerminalTouch(element, term);
+  const accessibility = installTerminalAccessibility(element, term);
   const session: Session = {
     id: tab.id,
     term,
     fit,
     element,
-    cancelTouch,
+    touch,
+    accessibility,
     sequence: 0,
     ready: false,
     halted: false,
@@ -853,7 +868,8 @@ function applyState(next: WorkspaceState) {
     session.halted = true;
     clearTimeout(session.reconnect);
     session.socket?.close();
-    session.cancelTouch();
+    session.touch.dispose();
+    session.accessibility.dispose();
     session.term.dispose();
     session.element.remove();
   }
@@ -1081,14 +1097,24 @@ function connectEvents() {
     eventsReconnect = setTimeout(connectEvents, 1000);
   };
 }
+let ghostty: Ghostty;
 render();
 if (token) {
-  // xterm measures cells when it opens. Load the face before attaching any tabs.
+  // Load the face and one WASM instance before Ghostty measures any cells.
   void document.fonts
     .load('14px "JetBrainsMono Nerd Font Mono"')
     .catch((error) => console.warn("Terminal font could not load; using monospace.", error))
-    .then(() => {
+    .then(() => Ghostty.load("/ghostty-vt.wasm"))
+    .then((loaded) => {
+      ghostty = loaded;
       connectEvents();
       void change("/api/workspaces");
+    })
+    .catch((error) => {
+      console.error("Terminal renderer could not load.", error);
+      listLoaded = true;
+      listFailed = true;
+      empty.querySelector("h1")!.textContent = "Terminal unavailable";
+      empty.querySelector("p")!.textContent = "Reload to try again.";
     });
 }

@@ -271,7 +271,7 @@ try {
   const observer = requireValue(livePages[1]);
   const submit = async (p: ProbePage, command: string) => {
     await p.bringToFront();
-    await p.locator(".xterm-helper-textarea:visible").focus();
+    await p.locator(".terminal-pane:not([hidden]) textarea").focus();
     await p.keyboard.type(command);
     await p.keyboard.press("Enter");
   };

@@ -77,6 +77,11 @@ export default function fixtureExtension(pi: ExtensionAPI) {
       },
     }),
   );
+  // session_start runs after Pi installs its normal editor submit handler.
+  pi.on("session_start", () => {
+    // An ignored OSC marks the real input boundary without adding a visible status.
+    process.stdout.write("\x1b]1337;BROWSER_FIXTURE_READY\x07");
+  });
 }
 
 if (import.meta.main) {

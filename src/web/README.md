@@ -1,6 +1,6 @@
 # Browser terminal
 
-Run `bruv web` in a project. Open the printed token URL. This is xterm.js attached to a native Bun PTY running the ordinary Bruv CLI, not a separate chat app.
+Run `bruv web` in a project. Open the printed token URL. This is Ghostty attached to a native Bun PTY running the ordinary Bruv CLI, not a separate chat app.
 
 ## Remote use
 
@@ -42,13 +42,13 @@ Voice has one microphone owner across the server. Everyone sees its workspace/ta
 - `bruv web --setup` retains the separate external T3 setup guide.
 - Each CLI starts on its first authenticated terminal connection. Static pages alone grant no control.
 - Disconnect keeps the CLI and other viewers alive. Input is disabled while disconnected; it is never queued and replayed later. Losing the microphone owner releases voice; losing an observer does not. Voice is never silently restarted.
-- Reconnect keeps the existing xterm screen and resumes from its output cursor. Refresh replays a bounded raw stream (2 MiB). This is not a durable snapshot or resize history. Refresh after earlier resizes is best effort; the next CLI redraw repairs it. Expired replay reports a gap instead of guessing a screen or starting a second CLI.
+- Reconnect keeps the existing terminal screen and resumes from its output cursor. Refresh replays a bounded raw stream (2 MiB). This is not a durable snapshot or resize history. Refresh after earlier resizes is best effort; the next CLI redraw repairs it. Expired replay reports a gap instead of guessing a screen or starting a second CLI.
 - Server Ctrl-C/SIGTERM sends TERM to its PTY process group, then KILL after 1.5 seconds if needed. Detached jobs are outside that group. This differs from turning off voice.
 - Linux with Bun 1.4.2 is tested. Other platforms and real physical microphone quality are not yet verified.
 
 ## Code map
 
-`launcher.ts` starts the server. `terminal.ts` owns the PTY and replay. `browser.ts` owns xterm and command-requested browser audio. Browser assets are bundled by `scripts/build/web-assets.ts` and embedded through `assets.ts`; the installed binary needs no browser-side CDN or node_modules.
+`launcher.ts` starts the server. `terminal.ts` owns the PTY and replay. `browser.ts` owns Ghostty and command-requested browser audio. Browser assets are bundled by `scripts/build/web-assets.ts` and embedded through `assets.ts`; the installed binary needs no browser-side CDN or node_modules.
 
 `server.ts` owns the workspace/tab registry. `/api/events` broadcasts revisioned snapshots; REST responses use the same revision, so stale responses cannot overwrite newer state. Terminal sockets share one PTY per tab with private replay for each joining viewer. Exact Host/Origin and token checks still apply. Each attachment gets a private audio capability and a separate public owner ID for shared status. Only the actual microphone attachment loss releases its voice. CLI relay credentials remain root-only and are stripped from tool/worker environment copies. The worklet stays same-origin under strict CSP.
 
@@ -70,3 +70,7 @@ CHROMIUM_BIN=/path/to/chrome PLAYWRIGHT_CORE=/path/to/playwright-core/index.mjs 
 ```
 
 The first browser check runs the compiled CLI, enables fake browser media, pastes and runs `/live mic-check`, confirms device release, and checks typing, reconnect, refresh, narrow layout, and shutdown. The multiplayer check uses independent browser contexts, shared input/output on one PID, live workspace/tab updates, local selection, reload/reconnect, close cleanup, shared resize, and explicit voice handoff. The device probe checks capture frames, playback queues, capture gates, interruption flush, stop, and explicit reconnect. Fake media and a fake-provider command test are not audible-speech or paid-provider acceptance. Physical speech quality remains a manual check.
+
+The renderer uses the site's pinned ghostty-web 0.4.0 with a small Bun package patch. WASM and the Nerd Mono font are embedded and served from the same origin. The server alone chooses shared terminal size.
+
+Only the active pane exposes a bounded, visually hidden current viewport for accessibility. This is real cell state, not a chat transcript. Chromium accessibility-tree checks do not prove screen-reader acceptance. The pinned package patch supports fullscreen SGR mouse input and legacy byte mouse input through the existing base64 transport. UTF-8, urxvt and pixel mouse encodings are not supported. See [renderer proof and limits](../../wisdom/web/ghostty-renderer.md).

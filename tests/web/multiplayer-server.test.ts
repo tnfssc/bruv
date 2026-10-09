@@ -28,7 +28,7 @@ afterEach(async () => {
 function start(custom = command) {
   const app = startWebServer({
     command: custom,
-    assets: { html: "", javascript: "", css: "", font: new Uint8Array() },
+    assets: { html: "", javascript: "", css: "", font: new Uint8Array(), wasm: new Uint8Array() },
     port: 0,
   });
   apps.push(app);

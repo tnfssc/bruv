@@ -7,7 +7,7 @@ import type { ServerWebSocket } from "bun";
 import { createAudioRelay, type AudioRelayData } from "../../src/web/audio-relay";
 import { startWebServer } from "../../src/web/server";
 
-const assets = { html: "terminal", javascript: "", css: "", font: new Uint8Array() };
+const assets = { html: "terminal", javascript: "", css: "", font: new Uint8Array(), wasm: new Uint8Array() };
 const command = [
   process.execPath,
   "-e",

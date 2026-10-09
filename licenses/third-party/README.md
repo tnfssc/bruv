@@ -16,4 +16,8 @@ from installed production packages. These files cover the compiled runtime. They
   and upstream tag have no license file. The proxy-agents sibling packages carry
   the same MIT grant (upstream tag commit b7e5f7ccce1a3ac5b339cc4c587974e8989cbc16).
 
+- ghostty-web/: Coder MIT, Ghostty MIT, Zig MIT and the pinned uucode/Unicode
+  notices for ghostty-web 0.4.0's browser WASM. See its README for the build
+  graph review and source revisions.
+
 Update a pinned input when its dependency or runtime version changes. The generator puts these files in the release materials. They are not a legal opinion.

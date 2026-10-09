@@ -9,7 +9,7 @@ const { chromium } = await import(
   process.env.PLAYWRIGHT_CORE ? pathToFileURL(process.env.PLAYWRIGHT_CORE).href : "playwright"
 );
 const project = resolve(import.meta.dir, "../..");
-const out = join(project, "artifacts/spacing-states");
+const out = join(project, "artifacts/ghostty/spacing-states");
 await mkdir(out, { recursive: true });
 const root = await mkdtemp(join(tmpdir(), "bruv-spacing-recovery-"));
 const cwd = join(root, "bruv"),
@@ -107,7 +107,7 @@ try {
   await page.waitForFunction(() => document.querySelector("#status")?.textContent === "Connected");
   const ready = async () => {
     await page.waitForFunction(() =>
-      document.querySelector(".terminal-pane:not([hidden]) .xterm-rows")?.textContent.includes("bruv"),
+      document.querySelector(".terminal-pane:not([hidden]) .terminal-accessible-output")?.textContent.includes("bruv"),
     );
     await page.waitForTimeout(700);
   };
@@ -149,17 +149,17 @@ try {
   console.log("READY");
   if (
     await page
-      .locator(".terminal-pane:not([hidden]) .xterm-rows")
+      .locator(".terminal-pane:not([hidden]) .terminal-accessible-output")
       .textContent()
       .then((s) => s.includes("Trust project folder?"))
   ) {
-    await page.locator(".terminal-pane:not([hidden]) .xterm-helper-textarea").focus();
+    await page.locator(".terminal-pane:not([hidden]) textarea").focus();
     await page.keyboard.press("ArrowDown");
     await page.keyboard.press("Enter");
     await page.waitForFunction(
       () =>
         !document
-          .querySelector(".terminal-pane:not([hidden]) .xterm-rows")
+          .querySelector(".terminal-pane:not([hidden]) .terminal-accessible-output")
           ?.textContent.includes("Trust project folder?"),
     );
   }
@@ -175,22 +175,24 @@ try {
   await api("/api/workspaces", "POST", { cwd: docsCwd });
   await page.getByRole("tab", { name: "Select tab Terminal", exact: true }).click();
   await ready();
-  await page.locator(".terminal-pane:not([hidden]) .xterm-helper-textarea").focus();
+  await page.locator(".terminal-pane:not([hidden]) textarea").focus();
   await page.keyboard.type('!printf "Spacing proof: actual shell output\\nReady for input\\n"');
   await page.keyboard.press("Enter");
   await page.waitForFunction(() =>
-    document.querySelector(".terminal-pane:not([hidden]) .xterm-rows")?.textContent.includes("Spacing proof"),
+    document
+      .querySelector(".terminal-pane:not([hidden]) .terminal-accessible-output")
+      ?.textContent.includes("Spacing proof"),
   );
   await page.waitForTimeout(1000);
   await page.waitForFunction(() =>
     document
-      .querySelector(".terminal-pane:not([hidden]) .xterm-accessibility-tree")
+      .querySelector(".terminal-pane:not([hidden]) .terminal-accessible-output")
       ?.textContent.includes("Spacing proof"),
   );
   observations.accessibility = {
-    visibleTrees: await page.locator(".terminal-pane:not([hidden]) .xterm-accessibility-tree").count(),
-    hiddenTrees: await page.locator(".terminal-pane[hidden] .xterm-accessibility-tree").count(),
-    text: await page.locator(".terminal-pane:not([hidden]) .xterm-accessibility-tree").textContent(),
+    visibleTrees: await page.locator(".terminal-pane:not([hidden]) .terminal-accessible-output").count(),
+    hiddenTrees: await page.locator(".terminal-pane[hidden] .terminal-accessible-output").count(),
+    text: await page.locator(".terminal-pane:not([hidden]) .terminal-accessible-output").textContent(),
   };
   await shot("populated-desktop");
   await page.getByRole("tab", { name: "Select tab Terminal", exact: true }).press("F2");
@@ -212,24 +214,24 @@ try {
   await page.locator("#cancel-folder").click();
   await page.setViewportSize({ width: 390, height: 780 });
   await shot("populated-phone");
-  await page.locator(".terminal-pane:not([hidden]) .xterm-helper-textarea").focus();
+  await page.locator(".terminal-pane:not([hidden]) textarea").focus();
   await page.keyboard.type("!seq 1 140");
   await page.keyboard.press("Enter");
   await page.waitForTimeout(1200);
   await page.keyboard.press("Control+o");
   await page.waitForTimeout(700);
-  const rows = () => page.locator(".terminal-pane:not([hidden]) .xterm-rows").textContent();
+  const rows = () => page.locator(".terminal-pane:not([hidden]) .terminal-accessible-output").textContent();
   const beforeSwipe = await rows();
   const touchSession = await context.newCDPSession(page);
-  const box = await page.locator(".terminal-pane:not([hidden]) .xterm-screen").boundingBox();
+  const box = await page.locator(".terminal-pane:not([hidden]) canvas").boundingBox();
   await touchSession.send("Input.dispatchTouchEvent", {
     type: "touchStart",
-    touchPoints: [{ x: box.x + box.width / 2, y: box.y + 100 }],
+    touchPoints: [{ x: box.x + box.width / 2, y: box.y + box.height - 100 }],
   });
   for (let i = 1; i <= 8; i++) {
     await touchSession.send("Input.dispatchTouchEvent", {
       type: "touchMove",
-      touchPoints: [{ x: box.x + box.width / 2, y: box.y + 100 + i * 30 }],
+      touchPoints: [{ x: box.x + box.width / 2, y: box.y + box.height - 100 - i * 30 }],
     });
     await page.waitForTimeout(30);
   }
@@ -240,6 +242,11 @@ try {
   await page.mouse.wheel(0, 240);
   await page.waitForTimeout(400);
   const afterWheel = await rows();
+  const firstNumber = (text) =>
+    text
+      .split("\n")
+      .map((line) => line.replace(/[┃│]/g, "").trim())
+      .find((line) => /^\d+$/.test(line));
   observations.touch = {
     fixture: "real CLI !seq 1 140 expanded with Ctrl+O",
     before: beforeSwipe,
@@ -247,14 +254,25 @@ try {
     afterWheel,
     swipeChanged: beforeSwipe !== afterSwipe,
     wheelChanged: afterSwipe !== afterWheel,
+    firstBefore: firstNumber(beforeSwipe),
+    firstAfterSwipe: firstNumber(afterSwipe),
+    firstAfterWheel: firstNumber(afterWheel),
   };
   if (!observations.touch.swipeChanged || !observations.touch.wheelChanged)
     throw Error("Expanded CLI history did not move for swipe and wheel");
+  assert.notEqual(
+    observations.touch.firstBefore,
+    observations.touch.firstAfterSwipe,
+    "Swipe recalled input instead of scrolling numbered CLI history",
+  );
+  assert.notEqual(
+    observations.touch.firstAfterSwipe,
+    observations.touch.firstAfterWheel,
+    "Wheel did not scroll numbered CLI history",
+  );
   await shot("touch-history-phone");
   await page.setViewportSize({ width: 1100, height: 720 });
-  await page.waitForFunction(
-    () => document.querySelector(".terminal-pane:not([hidden]) .xterm-screen").clientWidth > 700,
-  );
+  await page.waitForFunction(() => document.querySelector(".terminal-pane:not([hidden]) canvas").clientWidth > 700);
   const originalId = await page
     .locator(".terminal-pane:not([hidden])")
     .getAttribute("id")
@@ -332,16 +350,16 @@ try {
   await page.locator("#folder-input").fill(cwd);
   await page.locator("#open-folder").click();
   await page.waitForFunction(() =>
-    document.querySelector(".terminal-pane:not([hidden]) .xterm-accessibility-tree")?.textContent.includes("bruv"),
+    document.querySelector(".terminal-pane:not([hidden]) .terminal-accessible-output")?.textContent.includes("bruv"),
   );
   observations.accessibility.reopenedVisibleTrees = await page
-    .locator(".terminal-pane:not([hidden]) .xterm-accessibility-tree")
+    .locator(".terminal-pane:not([hidden]) .terminal-accessible-output")
     .count();
   observations.accessibility.reopenedHiddenTrees = await page
-    .locator(".terminal-pane[hidden] .xterm-accessibility-tree")
+    .locator(".terminal-pane[hidden] .terminal-accessible-output")
     .count();
   observations.accessibility.reopenedText = await page
-    .locator(".terminal-pane:not([hidden]) .xterm-accessibility-tree")
+    .locator(".terminal-pane:not([hidden]) .terminal-accessible-output")
     .textContent();
 
   // Emulated list outage in a second browser, not a server/provider change.
@@ -387,7 +405,7 @@ try {
   await retryPage.getByRole("button", { name: "Retry", exact: true }).click();
   await retryPage.getByRole("heading", { name: "Workspace list unavailable" }).waitFor({ state: "hidden" });
   await retryPage.waitForFunction(() =>
-    document.querySelector(".terminal-pane:not([hidden]) .xterm-accessibility-tree")?.textContent.includes("bruv"),
+    document.querySelector(".terminal-pane:not([hidden]) .terminal-accessible-output")?.textContent.includes("bruv"),
   );
   observations.listRetry = true;
   await retryContext.close();
