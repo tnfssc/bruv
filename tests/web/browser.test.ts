@@ -35,6 +35,7 @@ class Element {
   }
   parentElement: Element | null = null;
   className = "";
+  classList = { contains: (name: string) => this.className.split(" ").includes(name) };
   onFocus?: () => void;
   get firstElementChild() {
     return this.children[0] ?? null;

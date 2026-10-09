@@ -540,6 +540,9 @@ try {
   });
   const target = many[1];
   const closeTarget = page.locator('[id="tab-close-' + target.id + '"]');
+  // A partial tab has no orphan close target. Reveal its whole shell without selecting it.
+  await closeTarget.evaluate((el) => el.parentElement.scrollIntoView({ block: "nearest", inline: "nearest" }));
+  await closeTarget.waitFor({ state: "visible" });
   await closeTarget.focus();
   await screenshot({ path: join(proof, "tabs-phone-close-focus.png") });
   await closeTarget.press("Enter");
@@ -558,7 +561,7 @@ try {
     async () => !(await api()).workspaces[0].tabs.some((t) => t.id === target.id),
     "Captured close did not finish",
   );
-  await page.waitForFunction((id) => document.activeElement?.id === id, activeBefore);
+  await page.waitForFunction(() => document.activeElement?.classList.contains("xterm-helper-textarea"));
   assert.equal(await selectedTab().getAttribute("id"), activeBefore, "Confirmed inactive close leaves selection alone");
   assert.equal((await api()).workspaces[0].tabs.length, 7);
   await page.locator('[id="tab-close-' + many[0].id + '"]').click();

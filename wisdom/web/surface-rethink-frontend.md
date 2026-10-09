@@ -43,3 +43,11 @@ Read-only review task_ce39edcb found the inactive lost/ended tab state missing f
 ## Observed viewport containment fix
 
 Later eight-tab phone navigation showed a persistent scrollWidth=678 on a 390px page. failure-geometry.json identifies only xterm-accessibility and its tree as overflowing, at 672px, while the screen rows had already resized. This is different from the earlier transient PTY size race. The terminal viewport now clips overflowing shared/frozen geometry and that invisible xterm layer with overflow:hidden. No forced refresh, fake renderer state or timeout expansion. Accessible text remains in xterm's tree. Status text can wrap long owner names, and phone status buttons have 32px targets.
+
+## Recovery and output proof
+
+Latest compiled proof at a6824584 finished with no page errors and owned server exit 0. Populated xterm accessibility text exists: one visible tree, no hidden-tab trees, including real shell output. Reopened terminal also has text. The actual server rejected a fixture reconnect cursor of 900000; the UI froze as View lost, did not call the CLI ended, and New terminal left the original PID 837056 present. Lost desktop/phone, clean empty-folder phone and clean access-phone frames were viewed; the auth stale-list banner is gone. Phone lost view stays at scrollWidth=390 despite the frozen desktop geometry.
+
+The first CLI history probe used the collapsed !seq preview, which fit in the viewport; neither wheel nor swipe moved it. This is not touch acceptance. The updated probe expands real history with Ctrl+O before testing and requires both gestures to move output. No physical-device claim.
+
+Design probe now reaches eight-tab keyboard overflow. Its old inactive-close step targeted a deliberately clipped shell, whose close control is correctly hidden. Probe now reveals the whole shell without selecting it. Cancel reveals that invoker again if a shared rename widened the tab. The old confirmed-inactive-close expectation was strip focus; it now checks surviving xterm focus, matching the chosen design.

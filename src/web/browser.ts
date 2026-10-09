@@ -975,11 +975,15 @@ async function closeTab(tab: Tab) {
     destructive: true,
   });
   if (confirmed === null) {
-    (
+    const invoker =
       document.getElementById(origin ?? "") ??
       document.getElementById("tab-" + selected()?.id) ??
-      action("new-tab")
-    ).focus();
+      (workspace() ? action("empty-action") : folderInput);
+    if (invoker.classList.contains("tab-close")) {
+      invoker.parentElement?.scrollIntoView({ block: "nearest", inline: "nearest" });
+      updateTabOverflow();
+    }
+    invoker.focus();
     return;
   }
   const ok = await change("/api/tabs/" + encodeURIComponent(tab.id), "DELETE", { confirm: true });
