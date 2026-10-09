@@ -198,9 +198,23 @@ try {
   const firstTab = initial.workspaces[0].tabs[0];
   const title = page.locator('[id="tab-' + firstTab.id + '"]');
   const editor = page.getByRole("textbox", { name: "Tab name", exact: true });
+  async function titleStyle(locator) {
+    return locator.evaluate((el) => {
+      const style = getComputedStyle(el);
+      return {
+        fontSize: style.fontSize,
+        lineHeight: style.lineHeight,
+        paddingLeft: style.paddingLeft,
+        textX: el.getBoundingClientRect().x + parseFloat(style.paddingLeft),
+      };
+    });
+  }
+  const desktopTitleStyle = await titleStyle(title);
+  assert(parseFloat(desktopTitleStyle.paddingLeft) >= 4, "Title ink clears the inset focus outline");
   const titleBox = await title.boundingBox();
   await title.dblclick();
   const editBox = await editor.boundingBox();
+  assert.deepEqual(await titleStyle(editor), desktopTitleStyle, "Desktop edit preserves text size and inset");
   for (const key of ["x", "y", "width", "height"])
     assert(Math.abs(editBox[key] - titleBox[key]) < 0.6, "Inline edit keeps title geometry: " + key);
   await editor.fill("Unsubmitted draft");
@@ -271,10 +285,13 @@ try {
   await screenshot({ path: join(proof, "phone-close-dialog.png") });
   await page.keyboard.press("Escape");
 
+  const phoneTitleStyle = await titleStyle(title);
+  assert.equal(phoneTitleStyle.fontSize, "11px");
   // Use real touchscreen taps on the phone layout, not a synthetic dblclick.
   await title.tap();
   await title.tap();
   await editor.waitFor();
+  assert.deepEqual(await titleStyle(editor), phoneTitleStyle, "Phone edit preserves text size and inset");
   await editor.fill("Phone draft");
   await screenshot({ path: join(proof, "inline-rename-phone.png") });
   await page.keyboard.press("Escape");
@@ -284,6 +301,23 @@ try {
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
   await page.keyboard.press("Enter");
   await until(async () => (await api()).workspaces[0].tabs[0].name === "Phone saved", "Double-tap rename missing");
+
+  // A destructive target must stay fully visible, even without word boundaries.
+  const unbrokenName = "integration_release_verification_api_service";
+  await rename(unbrokenName);
+  await page.locator("#tab-menu-toggle").click();
+  await page.locator("#close-tab").click();
+  assert((await page.locator("#dialog-title").textContent()).includes(unbrokenName));
+  assert(
+    await page.locator("#dialog-title").evaluate((el) => el.scrollWidth <= el.clientWidth),
+    "Long target wraps inside heading",
+  );
+  assert(
+    await page.locator("dialog").evaluate((el) => el.scrollWidth <= el.clientWidth),
+    "Long target does not overflow dialog",
+  );
+  await screenshot({ path: join(proof, "phone-long-target-dialog.png") });
+  await page.keyboard.press("Escape");
 
   // Long names do not expand the page; the full name stays accessible.
   await rename("Investigate shared terminal replay and reconnect");

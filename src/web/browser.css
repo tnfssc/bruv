@@ -221,7 +221,7 @@ aside {
   min-width: 112px;
   max-width: 210px;
   border-radius: 9px 9px 0 0;
-  padding: 0 6px 0 12px;
+  padding: 0 6px 0 7px;
   color: var(--muted);
 }
 .terminal-tab::after {
@@ -251,7 +251,7 @@ aside {
   flex: 1;
   align-self: stretch;
   min-width: 0;
-  padding: 0 5px 0 0;
+  padding: 0 5px;
   text-align: left;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -458,6 +458,7 @@ dialog::backdrop {
   background: #0008;
 }
 dialog h2 {
+  overflow-wrap: anywhere;
   font-size: 16px;
   font-weight: 500;
   margin: 0 0 8px;
@@ -530,9 +531,10 @@ dialog input {
     flex-basis: 164px;
     min-width: 104px;
     max-width: 164px;
-    padding-left: 9px;
+    padding-left: 4px;
   }
-  #tab-list .tab-select {
+  #tab-list .tab-select,
+  #tab-list .tab-name-input {
     font-size: 11px;
   }
   .terminal-controls {
