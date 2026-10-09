@@ -100,7 +100,7 @@ test("real PTY input, resize, reconnect replay and honest exit", async () => {
   await until(() => second.text().includes("INPUT again"));
   const replay = connect(app, 0);
   await until(() => replay.text().includes("INPUT hello") && replay.text().includes("INPUT again"));
-  await until(() => second.socket.readyState === WebSocket.CLOSED);
+  expect(second.socket.readyState).toBe(WebSocket.OPEN);
   replay.socket.send(JSON.stringify({ type: "input", data: "exit" }));
   await until(() => replay.messages.some((m) => m.type === "exit" && m.code === 7));
   const exited = connect(app, replay.messages.filter((m) => m.type === "output").at(-1).seq);
@@ -231,42 +231,39 @@ test("built-in audio authenticates both peers and disconnect leaves the terminal
   await until(() => terminal.text().includes("INPUT still-running"));
 });
 
-for (const mode of ["disconnect", "replace"] as const) {
-  test("terminal " + mode + " releases browser audio on the server while CLI survives", async () => {
-    const app = start({ command: [process.execPath, resolve(import.meta.dir, "fixtures/audio-cli.ts")] });
-    const terminal = connect(app);
-    await until(() => terminal.messages.some((m) => m.type === "audio-owner"));
-    const owner = terminal.messages.find((m) => m.type === "audio-owner").id;
-    const browser = new WebSocket(
-      app.origin.replace(/^http/, "ws") + "/api/live/audio?role=browser&session=terminal",
-      ["bruv-audio", "bruv-token." + app.token, "bruv-owner." + owner],
-      { headers: { Origin: app.origin } },
-    );
-    sockets.push(browser);
-    browser.on("message", (raw) => {
-      if (JSON.parse(String(raw)).type === "start") browser.send('{"type":"ready"}');
-    });
-    await until(() => terminal.text().includes("AUDIO_RUNNING"));
-    const pid = app.terminal.pid;
-    if (mode === "disconnect") terminal.socket.close();
-    const replacement = mode === "replace" ? connect(app) : undefined;
-    await until(() => browser.readyState === WebSocket.CLOSED);
-    const active = replacement ?? connect(app);
-    await until(() => active.text().includes("AUDIO_CLOSED"));
-    // An old tab keeps the shared terminal token, but its audio attachment is stale.
-    expect(
-      (
-        await fetch(app.origin + "/api/live/audio?role=browser&session=terminal", {
-          headers: {
-            Origin: app.origin,
-            Authorization: "Bearer " + app.token,
-            "Sec-WebSocket-Protocol": "bruv-audio, bruv-owner." + owner,
-          },
-        })
-      ).status,
-    ).toBe(403);
-    expect(app.terminal.pid).toBe(pid);
-    active.socket.send(JSON.stringify({ type: "input", data: "survived-" + mode }));
-    await until(() => active.text().includes("INPUT survived-" + mode));
+test("terminal disconnect releases browser audio on the server while CLI survives", async () => {
+  const app = start({ command: [process.execPath, resolve(import.meta.dir, "fixtures/audio-cli.ts")] });
+  const terminal = connect(app);
+  await until(() => terminal.messages.some((m) => m.type === "audio-owner"));
+  const owner = terminal.messages.find((m) => m.type === "audio-owner").id;
+  const browser = new WebSocket(
+    app.origin.replace(/^http/, "ws") + "/api/live/audio?role=browser&session=terminal",
+    ["bruv-audio", "bruv-token." + app.token, "bruv-owner." + owner],
+    { headers: { Origin: app.origin } },
+  );
+  sockets.push(browser);
+  browser.on("message", (raw) => {
+    if (JSON.parse(String(raw)).type === "start") browser.send('{"type":"ready"}');
   });
-}
+  await until(() => terminal.text().includes("AUDIO_RUNNING"));
+  const pid = app.terminal.pid;
+  terminal.socket.close();
+  await until(() => browser.readyState === WebSocket.CLOSED);
+  const active = connect(app);
+  await until(() => active.text().includes("AUDIO_CLOSED"));
+  // An old tab keeps the shared terminal token, but its audio attachment is stale.
+  expect(
+    (
+      await fetch(app.origin + "/api/live/audio?role=browser&session=terminal", {
+        headers: {
+          Origin: app.origin,
+          Authorization: "Bearer " + app.token,
+          "Sec-WebSocket-Protocol": "bruv-audio, bruv-owner." + owner,
+        },
+      })
+    ).status,
+  ).toBe(403);
+  expect(app.terminal.pid).toBe(pid);
+  active.socket.send(JSON.stringify({ type: "input", data: "survived-disconnect" }));
+  await until(() => active.text().includes("INPUT survived-disconnect"));
+});

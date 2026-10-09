@@ -245,7 +245,7 @@ test("audio admission is global across live PTYs, and audio close frees only tha
   expect((await state(app)).workspaces[0]!.tabs.map((t) => t.pid)).toEqual(pids);
 });
 
-for (const mode of ["disconnect", "replace", "delete", "delete-workspace"] as const) {
+for (const mode of ["disconnect", "delete", "delete-workspace"] as const) {
   test("audio owner releases on terminal " + mode + "; stale capabilities stay rejected", async () => {
     const app = start({ command: [process.execPath, resolve(import.meta.dir, "fixtures/audio-cli.ts")] });
     const current = await mutate(app, "/api/workspaces", "POST", {});
@@ -260,10 +260,6 @@ for (const mode of ["disconnect", "replace", "delete", "delete-workspace"] as co
     await until(() => first.text().includes("AUDIO_RUNNING"));
     const pid = app.terminal.pid!;
     if (mode === "disconnect") first.socket.close();
-    if (mode === "replace") {
-      const replacement = connect(app);
-      await until(() => !!replacement.owner());
-    }
     if (mode === "delete") await mutate(app, "/api/tabs/terminal", "DELETE", { confirm: true });
     if (mode === "delete-workspace") await mutate(app, "/api/workspaces/workspace", "DELETE", { confirm: true });
     await until(() => activeAudio.socket.readyState === WebSocket.CLOSED);
@@ -271,7 +267,7 @@ for (const mode of ["disconnect", "replace", "delete", "delete-workspace"] as co
     const nextAudio = audio(app, id, second.owner());
     expect(await nextAudio.status).toBe(101);
     await until(() => second.text().includes("AUDIO_RUNNING"));
-    if (mode === "disconnect" || mode === "replace") expect(() => process.kill(pid, 0)).not.toThrow();
+    if (mode === "disconnect") expect(() => process.kill(pid, 0)).not.toThrow();
     else expect(() => process.kill(pid, 0)).toThrow();
     second.socket.send(JSON.stringify({ type: "input", data: "still-here" }));
     await until(() => second.text().includes("INPUT still-here"));

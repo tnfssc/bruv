@@ -1,4 +1,4 @@
-import { randomBytes, randomUUID, timingSafeEqual } from "node:crypto";
+import { createHash, randomBytes, randomUUID, timingSafeEqual } from "node:crypto";
 import { statSync } from "node:fs";
 import { basename, resolve } from "node:path";
 import type { Server, ServerWebSocket, WebSocketHandler } from "bun";
@@ -38,10 +38,13 @@ export function startWebServer(options: WebServerOptions) {
     throw new Error("bruv web only binds loopback; use an SSH tunnel for remote access.");
   const token = randomBytes(32).toString("hex");
   const defaultCwd = resolve(options.cwd ?? process.cwd());
-  type Tab = { id: string; name: string; terminal: TerminalSession; controller?: ServerWebSocket<SocketData> };
+  type Tab = { id: string; name: string; terminal: TerminalSession };
   type Workspace = { id: string; name: string; cwd: string; tabs: Tab[] };
   const workspaces: Workspace[] = [];
   const tabs = new Map<string, Tab>();
+  const listeners = new Set<ServerWebSocket<SocketData>>();
+  let revision = 0;
+  let voice: { tabId: string; ownerId: string } | null = null;
   let origin = "";
   const sameToken = (candidate: string) => {
     const bytes = Buffer.from(candidate);
@@ -64,20 +67,28 @@ export function startWebServer(options: WebServerOptions) {
       sameToken(websocket ? bearer || protocol : bearer)
     );
   };
+  // State is shared; never publish the capability that authorizes a microphone.
+  const publicOwnerId = (capability: string) => createHash("sha256").update(capability).digest("hex");
   const audioOrigins: string[] = [];
   const relay = createAudioRelay({
     allowedOrigins: audioOrigins,
     authorizeBrowser: (request, id) => {
-      const controller = tabs.get(id)?.controller;
-      return (
-        controller?.readyState === 1 &&
-        authenticated(request, true) &&
+      if (!authenticated(request, true)) return false;
+      const protocols =
         request.headers
           .get("sec-websocket-protocol")
           ?.split(",")
-          .map((value) => value.trim())
-          .includes("bruv-owner." + controller.data.audioOwner) === true
-      );
+          .map((value) => value.trim()) ?? [];
+      for (const protocol of protocols) {
+        if (!protocol.startsWith("bruv-owner.")) continue;
+        const ownerId = protocol.slice(11);
+        if (tabs.get(id)?.terminal.hasOwner(ownerId)) return ownerId;
+      }
+      return false;
+    },
+    onOwnerChange(owner) {
+      voice = owner ? { tabId: owner.tabId, ownerId: publicOwnerId(owner.ownerId) } : null;
+      publish();
     },
   });
   function addTab(workspace: Workspace, name?: string, id: string = randomUUID()): Tab {
@@ -90,7 +101,9 @@ export function startWebServer(options: WebServerOptions) {
     const tab = {
       id,
       name: name ?? "Terminal " + (workspace.tabs.length + 1),
-      terminal: new TerminalSession(options.command, workspace.cwd, env),
+      terminal: new TerminalSession(options.command, workspace.cwd, env, () => {
+        if (tabs.has(id)) publish();
+      }),
     };
     workspace.tabs.push(tab);
     tabs.set(id, tab);
@@ -98,6 +111,8 @@ export function startWebServer(options: WebServerOptions) {
   }
   function state() {
     return {
+      revision,
+      voice,
       workspaces: workspaces.map((workspace) => ({
         id: workspace.id,
         name: workspace.name,
@@ -112,9 +127,20 @@ export function startWebServer(options: WebServerOptions) {
       defaultCwd,
     };
   }
+  function sendState(socket: ServerWebSocket<SocketData>, snapshot: ReturnType<typeof state>) {
+    const text = JSON.stringify({ type: "state", state: snapshot });
+    if (socket.getBufferedAmount() + Buffer.byteLength(text) > SOCKET_BYTES || socket.send(text) === 0) {
+      listeners.delete(socket);
+      socket.close(1013, "State backlog; reconnect for current state");
+    }
+  }
+  function publish() {
+    revision++;
+    const snapshot = state();
+    for (const socket of listeners) sendState(socket, snapshot);
+  }
   function disposeTab(tab: Tab) {
     tabs.delete(tab.id);
-    tab.controller = undefined;
     relay.unregisterSession(tab.id);
     return tab.terminal.stop();
   }
@@ -147,6 +173,19 @@ export function startWebServer(options: WebServerOptions) {
           )
         )
           return response("Forbidden", "text/plain", 403);
+        if (url.pathname === "/api/events") {
+          if (request.method !== "GET") return response("Method not allowed", "text/plain", 405);
+          const protocols = request.headers
+            .get("sec-websocket-protocol")
+            ?.split(",")
+            .map((value) => value.trim());
+          if (!protocols?.includes("bruv-state")) return response("State protocol required", "text/plain", 400);
+          if (
+            server.upgrade(request, { data: { channel: "state" }, headers: { "Sec-WebSocket-Protocol": "bruv-state" } })
+          )
+            return;
+          return response("WebSocket required", "text/plain", 426);
+        }
         if (url.pathname === "/api/terminal") {
           if (request.method !== "GET") return response("Method not allowed", "text/plain", 405);
           const tabId = url.searchParams.get("tab") ?? "terminal";
@@ -191,6 +230,7 @@ export function startWebServer(options: WebServerOptions) {
             return response("Name required", "text/plain", 400);
           if ((deleteTab || deleteWorkspace) && body.confirm !== true)
             return response("Deletion requires confirm: true", "text/plain", 400);
+          let cleanup: Promise<void> | undefined;
           if (createWorkspace) {
             if (body.cwd !== undefined && typeof body.cwd !== "string")
               return response("Invalid directory", "text/plain", 400);
@@ -213,12 +253,15 @@ export function startWebServer(options: WebServerOptions) {
           else if (deleteTab) {
             const owner = workspaces.find((w) => w.tabs.includes(tab!))!;
             owner.tabs.splice(owner.tabs.indexOf(tab!), 1);
-            await disposeTab(tab!);
+            cleanup = disposeTab(tab!);
           } else if (deleteWorkspace) {
             workspaces.splice(workspaces.indexOf(workspace!), 1);
-            await Promise.all(workspace!.tabs.map(disposeTab));
+            cleanup = Promise.all(workspace!.tabs.map(disposeTab)).then(() => {});
           }
-          return json();
+          publish();
+          const result = json();
+          if (cleanup) await cleanup;
+          return result;
         }
         const result = await extension?.fetch(request, server);
         if (result === "upgraded") return;
@@ -242,30 +285,36 @@ export function startWebServer(options: WebServerOptions) {
           const tab = tabs.get(String(socket.data.tabId));
           if (!tab) return socket.close(1008, "Tab not found");
           if (!tab.terminal.attach(socket)) return;
-          if (tab.controller && tab.controller !== socket) relay.releaseSession(tab.id);
-          tab.controller = socket;
-          socket.send(JSON.stringify({ type: "audio-owner", id: socket.data.audioOwner }));
+          socket.send(
+            JSON.stringify({
+              type: "audio-owner",
+              id: socket.data.audioOwner,
+              ownerId: publicOwnerId(String(socket.data.audioOwner)),
+            }),
+          );
+        } else if (socket.data.channel === "state") {
+          listeners.add(socket);
+          sendState(socket, state());
         } else if (socket.data.channel === "live-audio") relay.websocket.open(audioSocket(socket));
         else extension?.websocket?.open?.(socket);
       },
       message(socket, message) {
         if (socket.data.channel === "terminal") tabs.get(String(socket.data.tabId))?.terminal.message(socket, message);
         else if (socket.data.channel === "live-audio") relay.websocket.message(audioSocket(socket), message);
-        else extension?.websocket?.message(socket, message);
+        else if (socket.data.channel !== "state") extension?.websocket?.message(socket, message);
       },
       close(socket, code, reason) {
         if (socket.data.channel === "terminal") {
           const tab = tabs.get(String(socket.data.tabId));
-          if (tab?.controller === socket) {
-            tab.controller = undefined;
-            relay.releaseSession(tab.id);
-          }
+          if (tab) relay.releaseAttachment(tab.id, String(socket.data.audioOwner));
           tab?.terminal.detach(socket);
-        } else if (socket.data.channel === "live-audio") relay.websocket.close(audioSocket(socket));
+        } else if (socket.data.channel === "state") listeners.delete(socket);
+        else if (socket.data.channel === "live-audio") relay.websocket.close(audioSocket(socket));
         else extension?.websocket?.close?.(socket, code, reason);
       },
       drain(socket) {
-        if (socket.data.channel !== "terminal") extension?.websocket?.drain?.(socket);
+        if (socket.data.channel !== "terminal" && socket.data.channel !== "state")
+          extension?.websocket?.drain?.(socket);
       },
     },
   });
@@ -279,6 +328,7 @@ export function startWebServer(options: WebServerOptions) {
   };
   workspaces.push(initialWorkspace);
   const terminal = addTab(initialWorkspace, undefined, "terminal").terminal;
+  publish();
   let stopped: Promise<void> | undefined;
   return {
     server,

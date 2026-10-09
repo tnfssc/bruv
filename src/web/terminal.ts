@@ -12,7 +12,7 @@ export const SOCKET_BYTES = 2 * 1024 * 1024;
 /** One real CLI process. Disconnects detach; they never restart or kill it. */
 export class TerminalSession {
   private process?: Subprocess;
-  private client?: ServerWebSocket<SocketData>;
+  private clients = new Map<ServerWebSocket<SocketData>, { active: boolean; cols: number; rows: number }>();
   private chunks: { seq: number; data: string; bytes: number }[] = [];
   private bytes = 0;
   private sequence = 0;
@@ -26,6 +26,7 @@ export class TerminalSession {
     private command: string[],
     private cwd: string,
     private env: NodeJS.ProcessEnv = process.env,
+    private onChange: () => void = () => {},
   ) {}
 
   get pid() {
@@ -36,15 +37,34 @@ export class TerminalSession {
     return this.code !== undefined;
   }
 
-  private send(message: object) {
-    const socket = this.client;
-    if (!socket) return;
-    if (socket.getBufferedAmount() > SOCKET_BYTES) {
+  hasOwner(ownerId: string) {
+    return [...this.clients.keys()].some((socket) => socket.readyState === 1 && socket.data.audioOwner === ownerId);
+  }
+
+  private sendTo(socket: ServerWebSocket<SocketData>, message: object) {
+    const text = JSON.stringify(message);
+    if (socket.getBufferedAmount() + Buffer.byteLength(text) > SOCKET_BYTES || socket.send(text) === 0) {
+      this.clients.delete(socket);
       socket.close(1013, "Output backlog; reconnect to replay");
-      this.client = undefined;
-      return;
+      return false;
     }
-    socket.send(JSON.stringify(message));
+    return true;
+  }
+
+  private send(message: object) {
+    for (const socket of this.clients.keys()) this.sendTo(socket, message);
+  }
+
+  private resize() {
+    const active = [...this.clients.values()].filter((view) => view.active);
+    if (!active.length) return;
+    const cols = Math.min(...active.map((view) => view.cols));
+    const rows = Math.min(...active.map((view) => view.rows));
+    if (cols === this.cols && rows === this.rows) return;
+    this.cols = cols;
+    this.rows = rows;
+    if (this.code === undefined) this.process?.terminal?.resize(cols, rows);
+    this.send({ type: "size", cols, rows });
   }
 
   attach(socket: ServerWebSocket<SocketData>) {
@@ -65,13 +85,12 @@ export class TerminalSession {
       socket.close(1008, "Replay expired");
       return false;
     }
-    this.client?.close(1000, "Another browser attached");
-    this.client = socket;
-    this.send({ type: "ready", cols: this.cols, rows: this.rows });
+    this.clients.set(socket, { active: false, cols: this.cols, rows: this.rows });
+    if (!this.sendTo(socket, { type: "ready", cols: this.cols, rows: this.rows })) return false;
     for (const chunk of this.chunks)
-      if (chunk.seq > after) this.send({ type: "output", seq: chunk.seq, data: chunk.data });
+      if (chunk.seq > after && !this.sendTo(socket, { type: "output", seq: chunk.seq, data: chunk.data })) return false;
     if (this.code !== undefined) {
-      this.send({ type: "exit", code: this.code });
+      this.sendTo(socket, { type: "exit", code: this.code });
       return true;
     }
     if (this.process) return true;
@@ -91,13 +110,16 @@ export class TerminalSession {
           },
         },
       });
+      this.onChange();
       void this.process.exited.then((code) => {
         this.code = code;
         this.send({ type: "exit", code });
         this.process?.terminal?.close();
+        this.onChange();
       });
     } catch (error) {
       this.code = 1;
+      this.onChange();
       this.send({ type: "error", message: "CLI startup failed: " + String(error) });
       socket.close(1011, "CLI startup failed");
     }
@@ -105,11 +127,13 @@ export class TerminalSession {
   }
 
   detach(socket: ServerWebSocket<SocketData>) {
-    if (socket === this.client) this.client = undefined;
+    this.clients.delete(socket);
+    this.resize();
   }
 
   message(socket: ServerWebSocket<SocketData>, raw: string | Buffer) {
-    if (socket !== this.client || this.code !== undefined || this.stopping) return;
+    const view = this.clients.get(socket);
+    if (!view || this.stopping) return;
     try {
       const message = JSON.parse(String(raw));
       if (
@@ -117,6 +141,7 @@ export class TerminalSession {
         typeof message.data === "string" &&
         Buffer.byteLength(message.data) <= 64 * 1024
       ) {
+        if (this.code !== undefined) return;
         this.process?.terminal?.write(
           message.encoding === "base64" ? Buffer.from(message.data, "base64") : message.data,
         );
@@ -129,9 +154,13 @@ export class TerminalSession {
         message.rows >= 2 &&
         message.rows <= 200
       ) {
-        this.cols = message.cols;
-        this.rows = message.rows;
-        this.process?.terminal?.resize(this.cols, this.rows);
+        view.active = true;
+        view.cols = message.cols;
+        view.rows = message.rows;
+        this.resize();
+      } else if (message.type === "visibility" && message.active === false) {
+        view.active = false;
+        this.resize();
       } else socket.close(1008, "Invalid terminal message");
     } catch {
       socket.close(1008, "Invalid terminal message");
@@ -144,8 +173,8 @@ export class TerminalSession {
 
   private async cleanup() {
     this.stopping = true;
-    this.client?.close(1001, "Server stopping");
-    this.client = undefined;
+    for (const socket of this.clients.keys()) socket.close(1001, "Server stopping");
+    this.clients.clear();
     const child = this.process;
     if (!child) return;
     // Bun's POSIX PTY child is a session/process-group leader. Kill only that
