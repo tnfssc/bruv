@@ -53,8 +53,13 @@ button:disabled {
   font-size: 12px;
   overflow-wrap: anywhere;
 }
+#sync-status:empty,
 #notice:empty {
   display: none;
+}
+#sync-status {
+  padding: 8px 14px;
+  color: #a9b0c1;
 }
 #notice {
   padding: 8px 14px;

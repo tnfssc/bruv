@@ -4,7 +4,12 @@ import { FitAddon } from "@xterm/addon-fit";
 
 type Tab = { id: string; name: string; pid?: number; exited?: boolean };
 type Workspace = { id: string; name: string; cwd: string; tabs: Tab[] };
-type WorkspaceState = { workspaces: Workspace[]; defaultCwd: string };
+type WorkspaceState = {
+  revision: number;
+  voice: { tabId: string; ownerId: string } | null;
+  workspaces: Workspace[];
+  defaultCwd: string;
+};
 type Session = {
   id: string;
   term: Terminal;
@@ -17,11 +22,11 @@ type Session = {
   capability?: string;
   reconnect?: ReturnType<typeof setTimeout>;
   status: string;
+  viewport?: { cols: number; rows: number };
 };
 type VoiceOwner = {
   tabId: string;
   capability: string;
-  label: string;
   generation: number;
   state: string;
   pending: boolean;
@@ -33,6 +38,7 @@ const container = document.querySelector<HTMLElement>("#terminal")!;
 const workspaceList = document.querySelector<HTMLElement>("#workspace-list")!;
 const tabList = document.querySelector<HTMLElement>("#tab-list")!;
 const notice = document.querySelector<HTMLElement>("#notice")!;
+const syncStatus = document.querySelector<HTMLElement>("#sync-status")!;
 const audioButton = document.querySelector<HTMLButtonElement>("#audio-toggle")!;
 const audioStatus = document.querySelector<HTMLElement>("#audio-status")!;
 const empty = document.querySelector<HTMLElement>("#empty-terminal")!;
@@ -56,7 +62,9 @@ try {
     selectedTabs = saved.tabs;
   }
 } catch {}
-let state: WorkspaceState = { workspaces: [], defaultCwd: "" };
+let state: WorkspaceState = { revision: -1, voice: null, workspaces: [], defaultCwd: "" };
+let eventsSocket: WebSocket | undefined;
+let eventsReconnect: ReturnType<typeof setTimeout> | undefined;
 const sessions = new Map<string, Session>();
 let busy = false;
 let unloading = false;
@@ -78,23 +86,29 @@ function button(text: string, label: string, click: () => void) {
   element.addEventListener("click", click);
   return element;
 }
-function voiceLabel(owner: VoiceOwner) {
+function voiceLabel(tabId: string) {
   for (const item of state.workspaces) {
-    const tab = item.tabs.find((tab) => tab.id === owner.tabId);
+    const tab = item.tabs.find((tab) => tab.id === tabId);
     if (tab) {
-      owner.label = item.name + " / " + tab.name;
-      return owner.label;
+      return item.name + " / " + tab.name;
     }
   }
-  return owner.label;
+  return tabId;
 }
 function renderAudio() {
   const session = selected();
-  audioButton.textContent = voice ? "Disable microphone" : "Enable microphone";
-  audioButton.disabled = voice ? voice.releasing : !session?.ready || !session.capability;
-  audioStatus.textContent = voice
-    ? (voice.releasing ? "Releasing microphone…" : voice.state) + " · " + voiceLabel(voice)
-    : "Voice off";
+  const shared = state.voice;
+  const elsewhere = shared && sessions.get(shared.tabId)?.capability !== shared.ownerId;
+  audioButton.hidden = !!elsewhere;
+  audioButton.textContent = voice || shared ? "Disable microphone" : "Enable microphone";
+  audioButton.disabled = voice ? voice.releasing : !!shared || !session?.ready || !session.capability;
+  audioStatus.textContent = elsewhere
+    ? "Voice in another browser · " + voiceLabel(shared.tabId)
+    : voice
+      ? (voice.releasing ? "Releasing microphone…" : voice.state) + " · " + voiceLabel(voice.tabId)
+      : shared
+        ? "Releasing microphone… · " + voiceLabel(shared.tabId)
+        : "Voice off";
 }
 function renderStatus() {
   status.textContent =
@@ -141,7 +155,15 @@ function render() {
     tabList.append(entry);
   }
   const active = selected();
-  for (const session of sessions.values()) session.element.hidden = session !== active;
+  let selectionChanged = false;
+  for (const session of sessions.values()) {
+    const hidden = session !== active;
+    if (session.element.hidden !== hidden) {
+      selectionChanged = true;
+      if (hidden) hideSession(session);
+      session.element.hidden = hidden;
+    }
+  }
   empty.hidden = !!active;
   empty.textContent = current
     ? "Open a new tab to start a terminal in this workspace."
@@ -153,17 +175,41 @@ function render() {
   action("close-tab").disabled = busy || !active;
   persistSelection();
   renderStatus();
-  requestAnimationFrame(resizeSelected);
+  if (selectionChanged) requestAnimationFrame(resizeSelected);
 }
 function send(session: Session, message: object) {
   if (session.ready && session.socket?.readyState === WebSocket.OPEN) session.socket.send(JSON.stringify(message));
 }
+function hideSession(session: Session) {
+  send(session, { type: "visibility", active: false });
+  session.viewport = undefined;
+}
 function resizeSelected() {
   const session = selected();
-  if (!session || session.element.hidden || container.clientWidth < 1 || container.clientHeight < 1) return;
-  session.fit.fit();
-  send(session, { type: "resize", cols: session.term.cols, rows: session.term.rows });
+  if (
+    !session ||
+    session.element.hidden ||
+    document.hidden ||
+    !session.ready ||
+    container.clientWidth < 1 ||
+    container.clientHeight < 1
+  )
+    return;
+  // Measure our available space without resizing xterm. Only the server chooses
+  // shared geometry; its size messages must never cause a resize reply.
+  const dimensions = session.fit.proposeDimensions();
+  if (!dimensions || !Number.isFinite(dimensions.cols) || !Number.isFinite(dimensions.rows)) return;
+  if (session.viewport?.cols === dimensions.cols && session.viewport.rows === dimensions.rows) return;
+  session.viewport = dimensions;
+  send(session, { type: "resize", ...dimensions });
 }
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) {
+    for (const session of sessions.values()) hideSession(session);
+  } else {
+    requestAnimationFrame(resizeSelected);
+  }
+});
 new ResizeObserver(resizeSelected).observe(container);
 window.visualViewport?.addEventListener("resize", resizeSelected);
 tabList.addEventListener("keydown", (event) => {
@@ -204,10 +250,9 @@ audioButton.addEventListener("click", async () => {
     return;
   }
   const session = selected();
-  if (!session?.ready || !session.capability || !token) return;
+  if (state.voice || !session?.ready || !session.capability || !token) return;
   const owner: VoiceOwner = {
     tabId: session.id,
-    label: session.id,
     capability: session.capability,
     generation: ++voiceGeneration,
     state: "Requesting microphone…",
@@ -258,6 +303,7 @@ function connect(session: Session) {
   if (session.halted || unloading) return;
   if (voice?.tabId === session.id) void releaseVoice();
   session.ready = false;
+  session.viewport = undefined;
   session.capability = undefined;
   session.term.options.disableStdin = true;
   session.status = "Connecting…";
@@ -278,6 +324,8 @@ function connect(session: Session) {
         resizeSelected();
         if (document.activeElement === document.body) session.term.focus();
       }
+    } else if (message.type === "size") {
+      session.term.resize(message.cols, message.rows);
     } else if (message.type === "audio-owner") {
       if (voice?.tabId === session.id && voice.capability !== message.id) void releaseVoice();
       session.capability = message.id;
@@ -363,6 +411,8 @@ function attach(tab: Tab) {
   connect(session);
 }
 function applyState(next: WorkspaceState) {
+  if (next.revision <= state.revision) return;
+  const previousVoice = state.voice;
   const ids = new Set(next.workspaces.flatMap((item) => item.tabs.map((tab) => tab.id)));
   for (const [id, session] of sessions) {
     if (ids.has(id)) continue;
@@ -375,12 +425,23 @@ function applyState(next: WorkspaceState) {
     session.element.remove();
   }
   state = next;
-  if (!workspace()) selectedWorkspace = state.workspaces[0]?.id ?? "";
+  if (
+    voice &&
+    ((next.voice && (next.voice.tabId !== voice.tabId || next.voice.ownerId !== voice.capability)) ||
+      (!next.voice && previousVoice?.ownerId === voice.capability))
+  )
+    void releaseVoice();
+  normalizeSelection();
   for (const item of state.workspaces) {
-    if (!item.tabs.some((tab) => tab.id === selectedTabs[item.id])) selectedTabs[item.id] = item.tabs[0]?.id ?? "";
     for (const tab of item.tabs) if (!sessions.has(tab.id)) attach(tab);
   }
   render();
+}
+function normalizeSelection() {
+  if (!workspace()) selectedWorkspace = state.workspaces[0]?.id ?? "";
+  for (const item of state.workspaces) {
+    if (!item.tabs.some((tab) => tab.id === selectedTabs[item.id])) selectedTabs[item.id] = item.tabs[0]?.id ?? "";
+  }
 }
 async function request(path: string, method = "GET", body?: object): Promise<WorkspaceState> {
   const response = await fetch(path, {
@@ -401,8 +462,13 @@ async function change(path: string, method = "GET", body?: object, choose?: (nex
   render();
   try {
     const next = await request(path, method, body);
-    choose?.(next);
     applyState(next);
+    // Our own create may already have arrived over events. Choose from its REST
+    // result, but reconcile against the newest snapshot, never the old response.
+    if (choose) {
+      choose(next);
+      normalizeSelection();
+    }
   } catch (error) {
     notice.textContent = error instanceof Error ? error.message : "Could not update workspaces.";
   } finally {
@@ -415,7 +481,7 @@ action("add-workspace").addEventListener("click", () => {
   if (cwd === null) return;
   const before = new Set(state.workspaces.map((item) => item.id));
   void change("/api/workspaces", "POST", { cwd: cwd.trim() || state.defaultCwd }, (next) => {
-    selectedWorkspace = next.workspaces.find((item) => !before.has(item.id))?.id ?? selectedWorkspace;
+    selectedWorkspace = next.workspaces.filter((item) => !before.has(item.id)).at(-1)?.id ?? selectedWorkspace;
   });
 });
 action("new-tab").addEventListener("click", () => {
@@ -423,7 +489,10 @@ action("new-tab").addEventListener("click", () => {
   if (!current) return;
   const before = new Set(current.tabs.map((tab) => tab.id));
   void change("/api/workspaces/" + encodeURIComponent(current.id) + "/tabs", "POST", {}, (next) => {
-    const tab = next.workspaces.find((item) => item.id === current.id)?.tabs.find((tab) => !before.has(tab.id));
+    const tab = next.workspaces
+      .find((item) => item.id === current.id)
+      ?.tabs.filter((tab) => !before.has(tab.id))
+      .at(-1);
     if (tab) {
       selectedWorkspace = current.id;
       selectedTabs[current.id] = tab.id;
@@ -449,6 +518,8 @@ action("remove-workspace").addEventListener("click", () => {
 action("reload-workspaces").addEventListener("click", () => void change("/api/workspaces"));
 window.addEventListener("beforeunload", () => {
   unloading = true;
+  clearTimeout(eventsReconnect);
+  eventsSocket?.close();
   for (const session of sessions.values()) {
     session.halted = true;
     clearTimeout(session.reconnect);
@@ -456,5 +527,31 @@ window.addEventListener("beforeunload", () => {
   }
   void releaseVoice();
 });
+function connectEvents() {
+  if (unloading || !token) return;
+  const socket = new WebSocket(socketOrigin + "/api/events", ["bruv-state", "bruv-token." + token]);
+  eventsSocket = socket;
+  syncStatus.textContent = "Connecting workspace updates…";
+  socket.onmessage = (event) => {
+    if (eventsSocket !== socket || unloading) return;
+    const message = JSON.parse(event.data);
+    if (message.type === "state") {
+      applyState(message.state);
+      syncStatus.textContent = "";
+    }
+  };
+  socket.onclose = (event) => {
+    if (eventsSocket !== socket || unloading) return;
+    if (event.code === 1008) {
+      syncStatus.textContent = event.reason || "Workspace updates denied. Open the full token URL.";
+      return;
+    }
+    syncStatus.textContent = "Workspace updates disconnected · reconnecting…";
+    eventsReconnect = setTimeout(connectEvents, 1000);
+  };
+}
 render();
-if (token) void change("/api/workspaces");
+if (token) {
+  connectEvents();
+  void change("/api/workspaces");
+}
