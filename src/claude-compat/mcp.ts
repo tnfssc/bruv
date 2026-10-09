@@ -97,6 +97,7 @@ export class InjectedMcpSession {
   private readonly connections = new Map<string, Connection>();
   private readonly registry = new Map<string, InjectedMcpTool>();
   private readonly appHttpServers = new Map<string, InjectedMcpServer>();
+  private authenticatedT3 = false;
   private closed = false;
   private closing?: Promise<void>;
   private resuming?: Promise<void>;
@@ -113,6 +114,12 @@ export class InjectedMcpSession {
       selectedTools: options.selectedTools && [...options.selectedTools],
       appOwnedServers: [...(options.appOwnedServers ?? [])],
     });
+    const t3 = parsed.mcpServers["t3-code"];
+    session.authenticatedT3 =
+      options.appOwnedServers.includes("t3-code") &&
+      !!t3 &&
+      "url" in t3 &&
+      /^Bearer \S+$/.test(t3.headers?.Authorization ?? "");
     if (options.signal) {
       options.signal.throwIfAborted();
       const abort = () => {
@@ -301,6 +308,51 @@ export class InjectedMcpSession {
         "call-failed",
         "MCP call failed; remote mutation outcome may be unknown (not retried)",
       );
+    }
+  }
+
+  /** Connector-only current-thread read. No model tool selection or idle permission bypass. */
+  get hasAuthenticatedT3(): boolean {
+    return this.authenticatedT3;
+  }
+
+  async readCurrentThreadFastMode(model: string): Promise<boolean> {
+    if (!this.authenticatedT3) throw new Error("No authenticated T3 configuration connection");
+    const connection = this.connections.get("t3-code");
+    if (!connection || connection.status !== "connected") throw new Error("T3 configuration connection is not open");
+    try {
+      const result = (await connection.client.callTool(
+        { name: "t3_thread_configuration", arguments: {} },
+        CallToolResultSchema,
+        { signal: this.lifetime.signal, timeout: connection.timeout },
+      )) as CallToolResult;
+      if (result.isError) throw new Error();
+      const value =
+        result.structuredContent ??
+        JSON.parse(
+          result.content
+            .filter((part) => part.type === "text")
+            .map((part) => part.text)
+            .join("\n"),
+        );
+      const config = z
+        .object({
+          threadId: z.string().min(1),
+          modelSelection: z.object({
+            instanceId: z.string().min(1),
+            model: z.string().min(1),
+            options: z.array(z.object({ id: z.string(), value: z.union([z.boolean(), z.string()]) })).optional(),
+          }),
+        })
+        .parse(value);
+      // The authenticated endpoint binds the current thread/provider instance.
+      // The owning Pi model supplies the exact provider/model identity available at launch.
+      if (config.modelSelection.model !== model) throw new Error();
+      const fast = config.modelSelection.options?.filter((option) => option.id === "fastMode") ?? [];
+      if (fast.length > 1 || (fast.length === 1 && typeof fast[0]!.value !== "boolean")) throw new Error();
+      return fast[0]?.value === true;
+    } catch {
+      throw new Error("T3 Fast configuration is unavailable or does not match the owning model");
     }
   }
 

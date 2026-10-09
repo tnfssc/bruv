@@ -80,7 +80,7 @@ export interface ClaudeCompatRuntimeOptions {
   disableSlashCommands?: boolean;
   thinkingLevel?: "off" | "minimal" | "low" | "medium" | "high" | "xhigh" | "max";
   thinkingDisplay?: string;
-  /** Official host --settings fastMode: explicit user premium-tier opt-in. */
+  /** Explicit host consent. Authenticated T3 choice wins at each root consumption. */
   fastMode?: boolean;
   profilesPath?: string;
   /** The actual enforced policy, not a readiness label. */
@@ -358,6 +358,7 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
     sessionId: () => options.nativeSessionId ?? session.sessionId,
     model: () => (session.model ? session.model.provider + "/" + session.model.id : (options.model ?? "")),
   });
+  const rootUserMessages = new WeakSet<object>();
   let nativeFast: ReturnType<typeof import("../agent/native-fast-mode").registerNativeFastMode> | undefined;
   let factories: { name: string; factory: ExtensionFactory; hidden: boolean }[] = [];
   if (!options.auxiliary) {
@@ -464,6 +465,24 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
             // Finish the previous result/lease release before acquiring another.
             if (options.mcp) await frontend.flush();
             await options.mcp?.resumeAppOwned();
+          });
+          pi.on("message_start", async (event, ctx) => {
+            if (event.message.role !== "user" || !rootUserMessages.delete(event.message)) return;
+            if (!options.mcp?.hasAuthenticatedT3 || options.auxiliary) return;
+            // Queued follow-ups reach this awaited boundary only when Pi consumes them.
+            // Steers, task wakes and tool rounds never enter this set.
+            try {
+              await frontend.flush();
+              if (!nativeFast || !ctx.model) throw new Error("Native Fast is unavailable");
+              nativeFast.setWithCostConsent(
+                await options.mcp.readCurrentThreadFastMode(ctx.model.provider + "/" + ctx.model.id),
+              );
+            } catch {
+              // A failed read must not leave an old premium authorization in force.
+              nativeFast?.setWithCostConsent(false);
+              frontend.notice("T3 Fast could not be applied to this model. Fast is off for this turn.", "error");
+              await frontend.flush();
+            }
           });
           pi.on("agent_start", () => {
             toolTurn = new AbortController();
@@ -749,7 +768,9 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
     let handled = false;
     const checkpoint = frontend.checkpoint();
     // Capture object identity only; the subscriber attributes it when Pi consumes it.
+    let rootTurn = true;
     const onUserMessageCreated = (created: object) => {
+      if (rootTurn) rootUserMessages.add(created);
       inboundUserUuids.set(created, message.uuid);
       if (message.uuid) messageIds.set(created, message.uuid);
     };
@@ -765,6 +786,7 @@ export async function createClaudeCompatRuntime(options: ClaudeCompatRuntimeOpti
       if (signal.aborted) throw signal.reason;
       if (message.priority === "now" && session.isStreaming) {
         // Genuine Pi steering (not cancel + fresh prompt, not a second scheduling authority).
+        rootTurn = false;
         run = session.steer(text, images, { source: "rpc", onUserMessageCreated });
         void run.then(accepted, accepted);
       } else {
