@@ -59,7 +59,7 @@ export class TerminalSession {
         JSON.stringify({
           type: "gap",
           message:
-            "Terminal replay expired. The CLI is still running; this screen cannot be recovered. Restart bruv web to start a new terminal.",
+            "Terminal replay expired. The CLI is still running; this screen cannot be recovered. Close this tab and open a new one to continue.",
         }),
       );
       socket.close(1008, "Replay expired");
