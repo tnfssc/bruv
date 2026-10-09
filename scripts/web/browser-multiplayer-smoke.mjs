@@ -196,7 +196,7 @@ try {
   await dialog(b, "#rename-tab", "from-B");
   const bSelectionBefore = await selected(b);
   await select(a, second, second.tabs[0].id);
-  await a.getByRole("tab", { name: "from-B", exact: true }).waitFor();
+  await a.getByRole("tab", { name: "Select tab from-B", exact: true }).waitFor();
   assert.equal(await selected(b), bSelectionBefore, "A navigation changed B selection");
   // Concurrent UI mutations return potentially interleaved snapshots. Both must converge.
   await Promise.all([a.locator("#new-tab").click(), b.locator("#new-tab").click()]);
@@ -210,7 +210,7 @@ try {
   );
   const selectedBefore = await selected(a);
   await dialog(b, "#rename-tab", "renamed-remotely");
-  await a.getByRole("tab", { name: "renamed-remotely", exact: true }).waitFor();
+  await a.getByRole("tab", { name: "Select tab renamed-remotely", exact: true }).waitFor();
   assert.equal(await selected(a), selectedBefore, "Remote rename stole focus");
   await dialog(b, "#close-tab", false);
   assert.equal((await state()).workspaces.find((w) => w.id === second.id).tabs.length, 4);
@@ -231,7 +231,7 @@ try {
   assert.equal((await state()).workspaces[0].tabs[0].pid, pid);
   await a.evaluate(() => window.stateSocket.close(4000, "reconnect fixture"));
   await dialog(b, "#rename-tab", "shared first");
-  await a.getByRole("tab", { name: "shared first", exact: true }).waitFor();
+  await a.getByRole("tab", { name: "Select tab shared first", exact: true }).waitFor();
   // Shared dimensions must settle, not resize forever between different viewports.
   await a.setViewportSize({ width: 1100, height: 750 });
   await b.setViewportSize({ width: 650, height: 650 });

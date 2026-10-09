@@ -20,6 +20,7 @@ type Session = {
   ready: boolean;
   halted: boolean;
   capability?: string;
+  ownerId?: string;
   reconnect?: ReturnType<typeof setTimeout>;
   status: string;
   viewport?: { cols: number; rows: number };
@@ -27,6 +28,7 @@ type Session = {
 type VoiceOwner = {
   tabId: string;
   capability: string;
+  ownerId: string;
   generation: number;
   state: string;
   pending: boolean;
@@ -98,7 +100,7 @@ function voiceLabel(tabId: string) {
 function renderAudio() {
   const session = selected();
   const shared = state.voice;
-  const elsewhere = shared && sessions.get(shared.tabId)?.capability !== shared.ownerId;
+  const elsewhere = shared && sessions.get(shared.tabId)?.ownerId !== shared.ownerId;
   audioButton.hidden = !!elsewhere;
   audioButton.textContent = voice || shared ? "Disable microphone" : "Enable microphone";
   audioButton.disabled = voice ? voice.releasing : !!shared || !session?.ready || !session.capability;
@@ -250,10 +252,11 @@ audioButton.addEventListener("click", async () => {
     return;
   }
   const session = selected();
-  if (state.voice || !session?.ready || !session.capability || !token) return;
+  if (state.voice || !session?.ready || !session.capability || !session.ownerId || !token) return;
   const owner: VoiceOwner = {
     tabId: session.id,
     capability: session.capability,
+    ownerId: session.ownerId,
     generation: ++voiceGeneration,
     state: "Requesting microphone…",
     pending: true,
@@ -305,6 +308,7 @@ function connect(session: Session) {
   session.ready = false;
   session.viewport = undefined;
   session.capability = undefined;
+  session.ownerId = undefined;
   session.term.options.disableStdin = true;
   session.status = "Connecting…";
   const socket = new WebSocket(
@@ -317,6 +321,7 @@ function connect(session: Session) {
     if (session.socket !== socket || !sessions.has(session.id)) return;
     const message = JSON.parse(event.data);
     if (message.type === "ready") {
+      session.term.resize(message.cols, message.rows);
       session.ready = true;
       session.term.options.disableStdin = false;
       session.status = "Connected · real Bruv TUI";
@@ -329,6 +334,7 @@ function connect(session: Session) {
     } else if (message.type === "audio-owner") {
       if (voice?.tabId === session.id && voice.capability !== message.id) void releaseVoice();
       session.capability = message.id;
+      session.ownerId = message.ownerId;
     } else if (message.type === "output") {
       if (message.seq <= session.sequence) return;
       if (message.seq !== session.sequence + 1) {
@@ -348,6 +354,7 @@ function connect(session: Session) {
     if (session.socket !== socket || !sessions.has(session.id)) return;
     session.ready = false;
     session.capability = undefined;
+    session.ownerId = undefined;
     session.term.options.disableStdin = true;
     if (voice?.tabId === session.id) void releaseVoice();
     if (!session.halted) {
@@ -371,6 +378,7 @@ function halt(session: Session, message: string) {
   session.halted = true;
   session.ready = false;
   session.capability = undefined;
+  session.ownerId = undefined;
   session.status = message;
   session.term.options.disableStdin = true;
   if (voice?.tabId === session.id) void releaseVoice();
@@ -427,8 +435,8 @@ function applyState(next: WorkspaceState) {
   state = next;
   if (
     voice &&
-    ((next.voice && (next.voice.tabId !== voice.tabId || next.voice.ownerId !== voice.capability)) ||
-      (!next.voice && previousVoice?.ownerId === voice.capability))
+    ((next.voice && (next.voice.tabId !== voice.tabId || next.voice.ownerId !== voice.ownerId)) ||
+      (!next.voice && previousVoice?.ownerId === voice.ownerId))
   )
     void releaseVoice();
   normalizeSelection();

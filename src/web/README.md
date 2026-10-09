@@ -20,6 +20,14 @@ Open the printed `http://127.0.0.1:3773/#token=...` URL on the laptop. Use the s
 
 Click **Enable microphone**, allow browser permission, then type `/live` in the terminal. Existing Live model/key setup still applies. `/live mic-check` checks the browser route without a provider call. The browser captures and plays audio; the remote process owns the provider, agent, files, and tools. No remote audio device is needed. Voice stays bound to the labeled workspace and tab, even when you select another terminal. Click **Disable microphone** to release it before enabling it for another tab, or use `/live stop` to end voice. Coding jobs are not cancelled. Enable the microphone again explicitly for the next voice session.
 
+## Multiplayer
+
+Open the same server URL and token on each device, with its own SSH tunnel when remote. Workspace and tab creation, renaming, and closure appear live. The same tab is the same running CLI: all attached browsers receive its output and can type into its input. Navigation stays local. New viewers do not evict old ones. This is one shared server, not federation between separate servers.
+
+Collaborators share shell authority; there are no user accounts or read-only roles. Only share the token with people you trust to control every terminal. Concurrent typing is an interleaved input stream, not a collaborative document editor. Shared terminal size is the smallest active visible viewport. Hidden views do not shrink it.
+
+Voice keeps one explicit microphone owner across the server. Everyone sees its workspace/tab; observers have no toggle for another browser's microphone and cannot silently take it. Shared terminal commands, including `/live stop`, still belong to all trusted collaborators. Observer joins, departures, and tab changes do not stop voice. The owner must release it or disconnect before somebody else enables theirs. Only the owner browser captures and plays audio: this is not a group call or shared audio playback.
+
 ## Behavior
 
 - The sidebar lists server folders. **Add workspace** uses an existing directory; the launch directory is the default. Removing a workspace never deletes files.
@@ -29,7 +37,7 @@ Click **Enable microphone**, allow browser permission, then type `/live` in the 
 - Arguments after `--` go to Bruv. Example: `bruv web -- --offline --provider openai --model gpt-4o`.
 - `bruv web --setup` retains the separate external T3 setup guide.
 - Each CLI starts on its first authenticated terminal connection. Static pages alone grant no control.
-- A new browser attachment detaches the previous browser. Disconnect keeps the CLI alive. Input is disabled while disconnected; it is never queued and replayed later. Browser voice is released, not silently restarted.
+- Disconnect keeps the CLI and other viewers alive. Input is disabled while disconnected; it is never queued and replayed later. Losing the microphone owner releases voice; losing an observer does not. Voice is never silently restarted.
 - Reconnect keeps the existing xterm screen and resumes from its output cursor. Refresh replays a bounded raw stream (2 MiB). This is not a durable snapshot or resize history. Refresh after earlier resizes is best effort; the next CLI redraw repairs it. Expired replay reports a gap instead of guessing a screen or starting a second CLI.
 - Server Ctrl-C/SIGTERM sends TERM to its PTY process group, then KILL after 1.5 seconds if needed. Detached jobs are outside that group. This differs from turning off voice.
 - Linux with Bun 1.4.2 is tested. Other platforms and real physical microphone quality are not yet verified.
@@ -38,7 +46,7 @@ Click **Enable microphone**, allow browser permission, then type `/live` in the 
 
 `launcher.ts` starts the server. `terminal.ts` owns the PTY and replay. `browser.ts` owns xterm and explicit audio controls. Browser assets are bundled by `scripts/build/web-assets.ts` and embedded through `assets.ts`; the installed binary needs no browser-side CDN or node_modules.
 
-`server.ts` owns workspace/tab state and reserves `/api/workspaces`, `/api/tabs/*`, `/api/terminal`, and `/api/live/audio`. REST reads use a bearer token and exact Host; writes also need the exact same-origin Origin. Terminal sockets use token subprotocols and exact Origin/Host checks. Browser audio uses the same token and Origin checks plus a fresh capability for the controlling browser attachment. Disconnect or replacement closes both audio peers on the server. CLI audio has no Origin and authenticates with a separate secret passed only to the owning CLI. Tool and delegated-worker environment copies strip the relay credentials. Each tab has its own relay identity and secret. The server admits only one browser audio owner across all tabs. Disposal, controlling-browser loss, or replacement releases it; stale attachments cannot reopen voice. Audio sockets use channel `live-audio`. `/audio-worklet.js` serves the capture worklet from the same origin, so CSP does not need blob scripts.
+`server.ts` owns the workspace/tab registry. `/api/events` broadcasts revisioned snapshots; REST responses use the same revision, so stale responses cannot overwrite newer state. Terminal sockets share one PTY per tab with private replay for each joining viewer. Exact Host/Origin and token checks still apply. Each attachment gets a private audio capability and a separate public owner ID for shared status. Only the actual microphone attachment loss releases its voice. CLI relay credentials remain root-only and are stripped from tool/worker environment copies. The worklet stays same-origin under strict CSP.
 
 Other optional extensions still use authenticated `/api/*` routes and their own socket channels. Return `"upgraded"` after successful upgrades. Their stop hooks are awaited with PTY cleanup.
 
@@ -50,8 +58,8 @@ bun run build
 bun test tests/web tests/live/browser-audio.test.ts tests/t3/web-launcher.test.ts
 # Use installed test tools; Playwright is not a production dependency.
 CHROMIUM_BIN=/path/to/chrome PLAYWRIGHT_CORE=/path/to/playwright-core/index.mjs bun scripts/web/browser-smoke.mjs
-CHROMIUM_BIN=/path/to/chrome PLAYWRIGHT_CORE=/path/to/playwright-core/index.mjs bun scripts/web/browser-workspaces-smoke.mjs
+CHROMIUM_BIN=/path/to/chrome PLAYWRIGHT_CORE=/path/to/playwright-core/index.mjs bun scripts/web/browser-multiplayer-smoke.mjs
 CHROMIUM_BIN=/path/to/chrome PLAYWRIGHT_CORE=/path/to/playwright-core/index.mjs bun scripts/web/browser-audio-probe.ts
 ```
 
-The first browser check runs the compiled CLI, enables fake browser media, pastes and runs `/live mic-check`, confirms device release, and checks typing, reconnect, refresh, narrow layout, and shutdown. The workspace check runs two folders with two real CLIs each, isolated input/output, reload, close cleanup, visible resize, and explicit voice ownership. The device probe checks capture frames, playback queues, capture gates, interruption flush, stop, and explicit reconnect. Fake media and a fake-provider command test are not audible-speech or paid-provider acceptance. Physical speech quality remains a manual check.
+The first browser check runs the compiled CLI, enables fake browser media, pastes and runs `/live mic-check`, confirms device release, and checks typing, reconnect, refresh, narrow layout, and shutdown. The multiplayer check uses independent browser contexts, shared input/output on one PID, live workspace/tab updates, local selection, reload/reconnect, close cleanup, shared resize, and explicit voice handoff. The device probe checks capture frames, playback queues, capture gates, interruption flush, stop, and explicit reconnect. Fake media and a fake-provider command test are not audible-speech or paid-provider acceptance. Physical speech quality remains a manual check.

@@ -296,6 +296,7 @@ try {
   );
   await page.locator("#audio-toggle").click();
   await allDevicesReleased();
+  await page.waitForFunction(() => document.querySelector("#audio-status")?.textContent === "Voice off");
   assert.equal(await page.locator("#audio-status").innerText(), "Voice off", "Explicit release before new owner");
   await page.locator("#audio-toggle").click();
   await page.waitForFunction(() => document.querySelector("#audio-status")?.textContent?.includes("Mic enabled"));
@@ -391,10 +392,14 @@ try {
         .at(-1).id,
     other.tab.id,
   );
+  const voiceBeforeObserver = (await state()).voice;
   const replacement = await browser.newPage();
   try {
     await replacement.goto(url);
     await replacement.waitForFunction(() => document.querySelector("#status")?.textContent?.startsWith("Connected"));
+    assert.deepEqual((await state()).voice, voiceBeforeObserver, "New viewer does not steal voice");
+    assert(await page.evaluate(() => window.mediaTracks.some((track) => track.readyState === "live")));
+    await page.evaluate((id) => window.terminalSockets.get(id).close(4000, "owner disconnect"), other.tab.id);
     await allDevicesReleased();
     const stale = await fetch(origin + "/api/live/audio?role=browser&session=" + other.tab.id, {
       headers: {
@@ -403,11 +408,11 @@ try {
         "Sec-WebSocket-Protocol": "bruv-audio, bruv-owner." + oldCapability,
       },
     });
-    assert.equal(stale.status, 403, "Replaced controlling-browser capability rejected");
+    assert.equal(stale.status, 403, "Disconnected owner capability rejected");
     assert.deepEqual(
       (await state()).workspaces.flatMap((w) => w.tabs.map((t) => t.pid)),
       pids,
-      "Replacement kept CLIs",
+      "Viewer join and owner disconnect kept CLIs",
     );
   } finally {
     await replacement.close();
@@ -415,7 +420,7 @@ try {
   await page.reload();
   await page.waitForFunction(() => document.querySelector("#status")?.textContent?.startsWith("Connected"));
   await select(owner.workspace, tabs[1].tab);
-  console.log("CONTROLLING_BROWSER_REPLACEMENT_RELEASED_VOICE");
+  console.log("OBSERVER_JOIN_PRESERVED_VOICE_OWNER_DISCONNECT_RELEASED");
 
   await dialogClick("#close-tab", false);
   assert.deepEqual(
@@ -426,6 +431,14 @@ try {
   await dialogClick("#close-tab", true);
   await until(async () => (await state()).workspaces[0].tabs.length === 1, "Tab close not applied");
   await page.waitForFunction((id) => !document.getElementById("terminal-" + id), tabs[1].tab.id);
+  await until(() => {
+    try {
+      process.kill(tabs[1].tab.pid, 0);
+      return false;
+    } catch {
+      return true;
+    }
+  }, "Closed CLI cleanup did not finish");
   assert.throws(() => process.kill(tabs[1].tab.pid, 0), "Closed CLI gone");
   await select(other.workspace, other.tab);
   await page.locator("#audio-toggle").click();
@@ -438,6 +451,18 @@ try {
   await page.waitForFunction(
     (ids) => ids.every((id) => !document.getElementById("terminal-" + id)),
     tabs.slice(2).map(({ tab }) => tab.id),
+  );
+  await until(
+    () =>
+      tabs.slice(2).every(({ tab }) => {
+        try {
+          process.kill(tab.pid, 0);
+          return false;
+        } catch {
+          return true;
+        }
+      }),
+    "Workspace CLI cleanup did not finish",
   );
   for (const { tab } of tabs.slice(2)) assert.throws(() => process.kill(tab.pid, 0), "Workspace CLI gone");
   await access(secondCwd);

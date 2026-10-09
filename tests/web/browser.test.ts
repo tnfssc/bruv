@@ -181,8 +181,8 @@ function browser() {
       flushFrames();
     },
     ready: (id: string) => {
-      terminal(id).message({ type: "ready" });
-      terminal(id).message({ type: "audio-owner", id: "owner-" + id });
+      terminal(id).message({ type: "ready", cols: 70, rows: 20 });
+      terminal(id).message({ type: "audio-owner", id: "cap-" + id, ownerId: "owner-" + id });
     },
     get deviceClosed() {
       return deviceClosed;
@@ -250,6 +250,9 @@ test("viewport reports never echo shared size and hidden attachments stay inacti
   for (const id of ["a", "b", "c"]) b.ready(id);
   expect(b.terminal("a").sent).toEqual([{ type: "resize", cols: 120, rows: 40 }]);
   expect(b.terminal("b").sent).toEqual([]);
+  expect(b.terminals[0].cols).toBe(70);
+  expect(b.terminals[1].cols).toBe(70);
+  expect(b.terminals[1].rows).toBe(20);
   b.terminal("a").message({ type: "size", cols: 70, rows: 20 });
   b.resize();
   expect(b.terminals[0].cols).toBe(70);
@@ -306,7 +309,7 @@ test("global voice is named, observers cannot disable it, and selection never tr
   b.snapshot(snapshot(3));
   b.node("workspace-list").children[1].fire("click");
   b.flushFrames();
-  expect(b.audioOptions.owner).toBe("owner-a");
+  expect(b.audioOptions.owner).toBe("cap-a");
   expect(b.node("audio-status").textContent).toContain("One / A");
   expect(b.node("audio-toggle").textContent).toBe("Disable microphone");
   expect(b.deviceClosed).toBe(0);
