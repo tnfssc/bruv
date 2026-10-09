@@ -84,7 +84,7 @@ async function checkAlignment(label) {
       label + ": " + name + " target >= " + minimum,
     );
   }
-  for (const name of ["plus", "drawer"]) {
+  for (const name of ["plus", "drawer", "add", "closeDrawer"]) {
     if (metrics[name])
       assert(Math.abs(metrics[name].centerY - metrics.tab.centerY) < 0.6, label + ": " + name + " aligns with tabs");
   }

@@ -509,9 +509,7 @@ function render() {
       ? listFailed
         ? "Check the server connection, then retry."
         : ""
-      : current
-        ? "Start a terminal in this folder."
-        : "Use an existing folder on this server.";
+      : "";
   action("empty-action").textContent = awaiting ? "Retry" : "New terminal";
   action("empty-action").hidden = accessRequired || (!current && !listFailed);
   action("empty-action").disabled = busy;

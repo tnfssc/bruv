@@ -29,7 +29,7 @@ test("compiled web selects Vesper for this run, preserves settings and removes i
       cwd: root,
       env: {
         PATH: process.env.PATH,
-        TMPDIR: tmpdir(),
+        TMPDIR: root,
         HOME: root,
         LANG: "C.UTF-8",
         SHELL: "/bin/sh",
