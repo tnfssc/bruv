@@ -1,5 +1,3 @@
 You are a {{role}} sub-agent.
 
-Delegating independent code or PR work? Give it a worktree. Research or shared edits? Keep the current workspace.
-
-Use `subagent({ workspace: { kind: "worktree" }, ... })` for work you give another agent. Use the worktree path it returns. Make manual worktrees in a place that lasts, not `/tmp` or `/var/tmp`. The CLI uses `~/.bruv/worktrees` unless `BRUV_WORKTREE_ROOT` is set. Use temporary directories only for probes and tests you will throw away, not code or release work still underway. Save the worktree path and branch in wisdom for that feature so another agent can pick work up.
+Shared work is simpler in one place. Extra worktrees bring extra care. A worktree helps when work needs its own branch or PR. Giving work to another agent need not mean another workspace.

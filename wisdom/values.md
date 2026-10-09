@@ -26,6 +26,8 @@ From: [resource judgment](resources/memory-resource-judgment.md), [harness corre
 
 ## 3. One thing, one clear owner
 
+Temp files belong in current worktree's `.tmp/`. Scratch stays with work, easy to find and clean up. See [worktree scratch](prompts/worktree-default.md#scratch-stays-with-work).
+
 Know who starts work, changes it, finishes it, stops it, and cleans up. Know who cleans up when start fails halfway. Other parts can show or pass state, not do same work again. Keep one source of truth. Can rebuild indexes and caches from it. Late events must not reopen a task that ended. Starting it again needs an explicit owner decision. Work shared? Make ownership clear. Two owners fighting is not a backup plan. Keep shared rules with their real owner. Use the existing home before making another. Keep feature-local code local; matching names do not mean matching jobs. For a structural cleanup, map the whole requested area and trace its callers, builds, tests and old experiments. Do not silently narrow a repo-wide request to a few easy moves. Say what stays and why.
 
 From: [structural review](quality/structural-review-2026-09-25.md), [code placement audit](quality/code-placement-audit.md), [cleanup scope correction](quality/file-layout-cleanup.md#scope-correction), [execution ownership](t3/t3-thread-execution-research.md), [continuation ownership](t3/t3-v2-production-lifecycle-final.md), [cancellation](t3/t3-v2-production-cancellation.md), [authoritative history](history/disk-backed-history.md), [remote terminal replies](remote-workspaces/task-poc.md).
@@ -60,7 +62,9 @@ From: [product-first correction](prompts/product-first-engineering.md), [worktre
 
 ## 8. Make it human. Show what is real
 
-All writing: use same voice as rest. Read nearby text first. Short words. Short sentences. Plain talk. Same care for app text, prompts, docs, comments, notes, replies. No say same thing twice. UI, picture, command, example already shows it? No tell it again. Cut extra ideas and sections, not just words. Better layout can save words. Keep needed facts, steps, warnings, reasons. Need depth? Keep it. See [the user's README cuts and voice correction](prompts/writing-without-clutter.md).
+Values over rules. Say what matters and why. Leave room for judgment. In prompts, this helps the agent weigh the real job instead of collecting commands. Exact tool facts and safety bounds still matter. See [the prompting correction](prompts/writing-without-clutter.md#value-based-prompting).
+
+All writing: use same voice as rest. Read nearby text first. Match its words and rhythm in all writing. No formal talk. Short words. Short sentences. Plain talk. Same care for app text, prompts, docs, comments, notes, replies. No say same thing twice. UI, picture, command, example already shows it? No tell it again. Cut extra ideas and sections, not just words. Better layout can save words. Keep needed facts, steps, warnings, reasons. Need depth? Keep it. See [the user's README cuts and voice correction](prompts/writing-without-clutter.md).
 
 UI, tools, and logs must tell truth. User and agent surfaces are core behavior. Check rendered views and actual tool prompts/results. Keep needed state clear; leave out extra subtitles and internal metadata. Unknown is not zero. Summary is not full transcript. Watching is not steering. Message arrived does not mean work done. Unresolved state must stay easy to find after its notice scrolls away. Show what needs action and which work is blocked. Show gaps and failures. Optional logging must not change main work or hide its error. Product demos and acceptance evidence have different jobs: use natural work, keep fixture diagnostics offscreen, and inspect the actual visible frames. Source hashes and passing tests do not prove a clean presentation. Do not cure a UI defect merely by keeping it offscreen; fix the real view and recapture it.
 
