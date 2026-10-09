@@ -240,7 +240,7 @@ aside {
 .mic-label {
   font-size: 11px;
 }
-.voice-control[data-active="true"] .tooltip {
+.tooltip {
   position: absolute;
   z-index: 10;
   right: 0;

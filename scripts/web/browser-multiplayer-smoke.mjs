@@ -82,9 +82,11 @@ try {
     headless: true,
     args: ["--no-sandbox", "--use-fake-device-for-media-stream", "--use-fake-ui-for-media-stream"],
   });
+  const sharedContext = process.env.BRUV_BROWSER_SHARED_CONTEXT === "1" ? await browser.newContext() : null;
   async function open(width) {
-    const context = await browser.newContext({ viewport: { width, height: 800 } });
+    const context = sharedContext ?? (await browser.newContext());
     const page = await context.newPage();
+    await page.setViewportSize({ width, height: 800 });
     pages.push(page);
     page.setDefaultTimeout(15000);
     page.on("pageerror", (error) => failures.push(String(error)));

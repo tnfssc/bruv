@@ -16,6 +16,8 @@ async function copyPreparationInputs(fixture: string): Promise<void> {
     "src/live/browser-protocol.ts",
     "src/web/index.html",
     "src/web/browser.css",
+    "src/web/terminal-font.css",
+    "src/web/fonts/JetBrainsMonoNerdFontMono-Regular.woff2",
     "scripts/build/pi-host-adaptation.ts",
     "scripts/build/pi-host-recovery.ts",
     "node_modules/@silvia-odwyer/photon-node/photon_rs_bg.wasm",
@@ -72,6 +74,7 @@ describe("build asset preparation", () => {
         "theme/light.json",
         "theme/theme-schema.json",
         "web/index.html.asset",
+        "web/JetBrainsMonoNerdFontMono-Regular.woff2.asset",
         "web/terminal.css.asset",
         "web/terminal.js.asset",
       ]);

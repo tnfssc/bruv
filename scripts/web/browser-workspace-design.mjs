@@ -105,17 +105,24 @@ try {
   await until(async () => (await api()).workspaces.length === 2, "Workspace missing");
   await page.getByRole("button", { name: "Open workspace bruv", exact: true }).click();
   await page.getByRole("tab", { name: "Select tab Terminal", exact: true }).click();
-  await page
-    .locator("#terminal .xterm-helper-textarea:visible")
-    .fill(
-      "!printf 'Browser voice review\\n\\n  /live            start in this browser\\n  /live stop       release microphone\\n  /live mic-check  check the route\\n\\nChecks\\n  terminal replay     ready\\n  shared resize       ready\\n  observer capture    off\\n  device on page load off\\n\\nWorkspace: '; pwd",
-    );
+  await page.locator("#terminal .xterm-helper-textarea:visible").fill("!uname -s");
   await page.keyboard.press("Enter");
-  await page.waitForFunction(() =>
-    document.querySelector("#terminal")?.textContent?.includes("device on page load off"),
-  );
+  await page.waitForFunction(() => document.querySelector("#terminal")?.textContent?.includes("Linux"));
   await page.waitForTimeout(500);
   assert.equal(await page.locator("#audio-toggle").count(), 0, "No permanent mic control");
+  await page.mouse.move(600, 400);
+  assert.equal(
+    await page.locator("#status").evaluate((node) => getComputedStyle(node).opacity),
+    "0",
+    "Connection detail stays on demand",
+  );
+  await page.locator(".connection").focus();
+  assert.equal(
+    await page.locator("#status").evaluate((node) => getComputedStyle(node).opacity),
+    "1",
+    "Connection detail is keyboard-accessible",
+  );
+  await page.locator("#terminal .xterm-helper-textarea:visible").focus();
   await page.screenshot({ path: join(proof, "populated-desktop.png") });
 
   // Menu arrows, Escape, dialog focus, validation, and cancellation.
