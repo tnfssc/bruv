@@ -600,7 +600,7 @@ try {
   await page.waitForFunction(() => document.querySelectorAll('[role="tab"]').length === 1);
   await page.locator(".tab-close").click();
   await page.locator("#dialog-submit").click();
-  await page.waitForFunction(() => document.activeElement?.id === "new-tab");
+  await page.waitForFunction(() => document.activeElement?.id === "empty-action");
   await page.getByRole("heading", { name: "No terminals in bruv" }).waitFor();
   await screenshot({ path: join(proof, "empty-tabs-phone.png") });
   await page.locator("#empty-action").click();

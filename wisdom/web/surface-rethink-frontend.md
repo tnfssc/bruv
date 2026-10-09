@@ -57,3 +57,9 @@ Design probe now reaches eight-tab keyboard overflow. Its old inactive-close ste
 Expanded real CLI history now moves for both swipe and wheel after Ctrl+O. The compiled probe asserts both changes, records actual rows, and retains original PID 882817 after View lost/New terminal. touch-history-phone.png was viewed with full CLI output and its Jump to latest affordance. This is Chromium emulation, not physical-phone acceptance.
 
 The isolated inactive-close geometry probe shows a complete Tests shell at x=238.9..334.9 inside a x=58.9..347 strip, close visible, while another tab stays selected. The long headed design run still had delayed native scroll/focus interactions. Tab reveal is now scoped to the strip's own scrollLeft, not scrollIntoView on outer ancestors. Home proof waits for the selected shell to be revealed before manual scrolling. Long tabs cap width at the strip's available width, so narrow phones can still expose a whole close target. Workspace row removal prunes absent rows before ordering survivors, just like the tab strip, so an earlier row deletion need not detach a focused surviving row.
+
+## Draft and final-gate corrections
+
+Enter compares the visible rename draft with the current shared name, not the original name captured on opening. This preserves explicit local intent if another browser renamed the same tab while its editor stayed open. Rename fields stay in place until PATCH succeeds; 503 leaves the draft and focus for retry. No extra persistence or fallback state.
+
+The final headless design probe reached its last empty-tab check; an old assertion still expected focus on hidden new-tab. It now expects the sole visible empty-action. The final isolated row probe passed: deleting an earlier workspace kept the later Remove control focused. No implicit workspace selection was added.

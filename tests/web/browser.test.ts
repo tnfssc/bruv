@@ -865,3 +865,37 @@ test("removing a preceding workspace keeps the surviving row and its focused con
   expect(b.node("workspace-list").children[0]).toBe(row);
   expect(b.document.activeElement).toBe(remove);
 });
+
+test("Enter saves the visible draft even if a shared rename changed its original name", async () => {
+  const b = await browser();
+  b.snapshot(snapshot(1));
+  b.requests[0].resolve(snapshot(1));
+  await tick();
+  b.node("tab-list").children[0].children[0].fire("keydown", key("F2"));
+  const input = b.node("tab-list").children[0].children[0];
+  const next = snapshot(2);
+  next.workspaces[0].tabs[0].name = "Remote name";
+  b.snapshot(next);
+  expect(input.value).toBe("A");
+  input.fire("keydown", key("Enter"));
+  expect(b.requests.at(-1)?.path).toBe("/api/tabs/a");
+  expect(JSON.parse(b.requests.at(-1)!.options.body)).toEqual({ name: "A" });
+});
+
+test("a failed rename keeps the editor, draft and focus for retry", async () => {
+  const b = await browser();
+  b.snapshot(snapshot(1));
+  b.requests[0].resolve(snapshot(1));
+  await tick();
+  b.node("tab-list").children[0].children[0].fire("keydown", key("F2"));
+  const input = b.node("tab-list").children[0].children[0];
+  input.value = "Keep my draft";
+  input.fire("keydown", key("Enter"));
+  b.requests.at(-1)!.fail(503, "Try again");
+  await tick();
+  expect(b.node("tab-list").children[0].children[0]).toBe(input);
+  expect(input.value).toBe("Keep my draft");
+  expect(b.document.activeElement).toBe(input);
+  input.fire("keydown", key("Enter"));
+  expect(JSON.parse(b.requests.at(-1)!.options.body)).toEqual({ name: "Keep my draft" });
+});

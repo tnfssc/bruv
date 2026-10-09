@@ -268,21 +268,30 @@ function updateTabOverflow() {
 }
 tabList.addEventListener("scroll", updateTabOverflow);
 // Keep the input node in place across shared snapshots. Only Enter submits.
-let editingTab: { id: string; input: HTMLInputElement; original: string } | undefined;
+let editingTab: { id: string; input: HTMLInputElement } | undefined;
 let lastTouch: { id: string; time: number } | undefined;
 function finishRename(save: boolean, restoreFocus = true) {
   const edit = editingTab;
   if (!edit) return;
+  const name = edit.input.value.trim();
+  const currentTab = workspace()?.tabs.find((tab) => tab.id === edit.id);
+  if (save && name && currentTab && name !== currentTab.name) {
+    if (busy) return;
+    edit.input.readOnly = true;
+    void change("/api/tabs/" + encodeURIComponent(edit.id), "PATCH", { name }).then((ok) => {
+      if (editingTab !== edit) return;
+      edit.input.readOnly = false;
+      if (ok) {
+        finishRename(false, false);
+        if (restoreFocus) selected()?.term.focus();
+      } else edit.input.focus({ preventScroll: true });
+    });
+    return;
+  }
   editingTab = undefined;
   if (edit.input.parentElement) edit.input.parentElement.style.width = "";
-  const name = edit.input.value.trim();
   render();
-  if (save && name && name !== edit.original && workspace()?.tabs.some((tab) => tab.id === edit.id)) {
-    void change("/api/tabs/" + encodeURIComponent(edit.id), "PATCH", { name }).then((ok) => {
-      if (ok) selected()?.term.focus();
-      else if (restoreFocus) document.getElementById("tab-" + edit.id)?.focus({ preventScroll: true });
-    });
-  } else if (restoreFocus) {
+  if (restoreFocus) {
     if (save) selected()?.term.focus();
     else document.getElementById("tab-" + edit.id)?.focus({ preventScroll: true });
   }
@@ -311,7 +320,7 @@ function startRename(id: string) {
     }
   });
   input.addEventListener("blur", () => finishRename(false, false));
-  editingTab = { id, input, original: tab.name };
+  editingTab = { id, input };
   const shell = entry.parentElement!;
   shell.style.width = shell.getBoundingClientRect().width + "px";
   entry.replaceWith(input);
